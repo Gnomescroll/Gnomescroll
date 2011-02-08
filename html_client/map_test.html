@@ -1,0 +1,406 @@
+<html>
+<head>
+<script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>  
+<script>!window.jQuery && document.write('<script src="http://127.0.0.1:8080/jquery-1.4.2.min.js"><\/script>')</script>
+
+</head>
+
+<body>
+<canvas id="board" width="1024" height="800"></canvas> 
+<div id="text">Coordinates</div>
+<div id="timer1">0</div>
+<div id="timer2">0</div>
+<script>
+
+
+
+////////////////////////////
+/// high performance map ///
+////////////////////////////
+var div = 8;
+var fog_tile = 2;
+
+function Map() {
+	//state
+	this.z_levels = new Array();
+	
+	//methods
+	
+	//returns map square type at x,y,z using global cordinates
+	this.get = function(x,y,z) {
+		if(this.z_levels[z] == undefined) { return fog_tile ;}
+		var mx = (x - (x % div)) / div;
+		var my = (y - (y % div)) / div;
+		var unit = this.z_levels[z][mx + "_" + my];
+		//if map unit is completely unexplored, set to fog_tile
+		if(unit == undefined) { return fog_tile ; }
+		//if map unit is completely empty space, set to null
+		if(unit == null) { return 0; }
+		var px = x % div;
+		var py = y % div;
+		var temp = unit[px + "_" + py];
+		if(temp == undefined) {return fog_tile;} else { return temp;}
+	}
+
+	this.set = function(x,y,z, tile_value) {
+		if(this.z_levels[z] == undefined) { this.z_levels[z] = new Array();}
+		var mx = (x - (x % div)) / div;
+		var my = (y - (y % div)) / div;
+		if(this.z_levels[z][mx + "_" + my] == undefined) { this.z_levels[z][mx + "_" + my] = new Array();}
+		var px = x % div;
+		var py = y % div;
+		this.z_levels[z][mx + "_" + my][px + "_" + py] = tile_value;
+		//check to see if map square is completely empty; if so set to null
+		x=this.z_levels[z][mx + "_" + my];
+		var stop = false;
+		for (i=0; i< div; i++) {
+			for(j=0; j<div; j++) {
+				if(x[i + "_" + j] != 0) { stop = true;}
+				}
+			if(stop == true) { break;}	
+				}
+		if(stop == false) {
+			this.z_levels[z][mx + "_" + my] = undefined;
+		}
+	}
+}
+
+var board_width = 64;
+var board_height = 64;
+var x_offset = 0;
+var y_offset = 0;
+var z_level = 4;
+
+function set_board_size(x,y) {
+	board_width = x;
+	board_height = y;
+}
+
+//draws to local map, refreshes local cordinates x,y
+function draw_board_tile(x,y) {
+	px= x+x_offset;
+	py= y+y_offset;
+	tile_type = map.get(px,py,z_level);
+	draw_tile (x, y, tile_type);
+}
+
+//takes absolute cordinates
+function draw_tile_abs(x,y) {
+	px= x - x_offset;
+	if(px < 0 || px > board_width) { return 0; }
+	py= y - y_offset;
+	if(py < 0 || py > board_height) { return 0; }
+	tile_type = map.get(px,py,z_level);
+	draw_tile (x, y, tile_type);
+}
+
+var tileColor = new Array(3);
+tileColor[0] = "rgba(0,0,0,1.0)";
+tileColor[1] = "rgba(0, 0, 200, 0.5)";
+tileColor[2] = "rgba(40, 40, 40, .3)";
+
+//low level tile drawing
+
+var canvas = document.getElementById('board');
+var ctx;
+if (canvas.getContext) {
+	ctx = canvas.getContext('2d');
+} else {
+	canvas.text('Your browser does not support canvas.');
+}
+
+var s_width = 10;
+var s_height = 10;
+
+function draw_tile(x,y,type) {
+	//calculate square position
+	var x = (s_width + 2) * x +1;
+	var y = (s_height + 2) * y +1;
+	
+	ctx.fillStyle = tileColor[type];
+    ctx.clearRect (x, y, s_width, s_height);
+    ctx.fillRect (x, y, s_width, s_height);
+}
+
+function draw_board() {
+
+	for(x=0;x<board_width;x++)
+		for(y=0;y<board_height;y++)
+			draw_board_tile(x,y);
+}
+
+
+function draw_agents() {
+	for(var i in agents) {
+	//alert('Agent: '+i+' px: '+agents[i].px+ ' py: '+agents[i].py);
+	draw_agent(agents[i]);
+	}
+}
+
+
+
+function draw_agent(agent) {
+	x = agent.gx;
+	y = agent.gy;
+	z = agent.gz;
+	
+	if(z != z_level) { return 0; }
+	px= x - x_offset;
+	if(px < 0 || px > board_width) { return 0; }
+	py= y - y_offset;
+	if(py < 0 || py > board_height) { return 0; }
+
+	x = (s_width + 2) * px +1;
+	y = (s_height+2) * py +1;
+	ctx.fillStyle = "rgba(0,200,0,1.0)";  
+	ctx.clearRect (x, y, s_width, s_height);
+	ctx.fillRect (x, y, s_width, s_height);
+}
+
+
+//scroll board by change in x, change in y
+function scroll_board(dx,dy) {
+	x_offset =+ dx;
+	y_offset =+ dy;
+	draw_board();
+	draw_agents();
+}
+
+var map = new Map;
+//map.set(1,1,4,0);
+//alert(map.get(1,1,1,0));
+//map.set(1,2,4,1);
+//map.set(5,6,4,0);
+//set(x,y,z,tile_type)
+//alert(map.get(-1,1,1));
+//alert(map.get(0,4,7));
+//alert(map.get(0,-4,7));
+
+  ////////////////////	
+ /// actions crap ///
+////////////////////
+
+//Register events
+$('#board').mousedown(toggleTile); 
+$(document).keydown(checkMoveAgent); //FIX!!
+
+//$(document).keyup(enableMove);
+
+//change map tile with a single mouse click
+function toggleTile(event) {
+	start_timer();
+	event.preventDefault();
+	
+	//Get the mouse cords on the Canvas
+	var offset = $('#board').offset();
+	var x_pos = Math.floor(event.pageX - offset.left);
+	var y_pos = Math.floor(event.pageY - offset.top);
+	
+	//find block coordinate
+	gx = Math.floor((x_pos-1)/(s_width+2)) + x_offset;
+	gy = Math.floor((y_pos-1)/(s_height+2)) + y_offset;
+	
+	//send block change message to django
+	//1. detect current block type
+	var block_type = map.get(gx,gy,z_level);
+	var gz = z_level;
+	
+
+	switch (block_type) {
+	case 2:
+		block_type=1; map.set(gx,gy,gz,block_type)
+		break;
+	case 0:
+		block_type=1; map.set(gx,gy,gz,block_type)
+		break;
+	case 1:
+		block_type=0; map.set(gx,gy,gz,block_type)
+		break;
+	default:
+	  alert("error!");
+	}
+
+	$.post('http://127.0.0.1:8000/admin/set_block', { gx:gx, gy:gy, gz:gz, block_type:block_type});
+	draw_tile_abs(gx,gy); //z level is implicit
+	
+	//Display coordinates
+	$("#text").html( "("+ x_pos +","+ y_pos +")<br>("+gx+","+gy+","+gz+")" );
+}
+
+//move agent
+var oldTime = 0;
+var newTime;
+var delayTime = 200;
+function checkMoveAgent(evt) {
+	//alert(evt.keyCode);
+	start_timer();
+	newTime = new Date().getTime();
+	evt.preventDefault();
+	//get agent location
+	var agent = agents[agent_id]; //hard code agent
+	var x = agent.gx;
+	var y = agent.gy;
+	var z = agent.gz;
+	if (newTime-oldTime > delayTime) {
+		switch(parseInt(evt.keyCode)) {
+			case 37:
+				//left
+				if (map.get(x-1,y,z)==1) {return;}
+				moveAgent(-1,0,0,agent);
+				break;
+			case 38:
+				//up
+				if (map.get(x-1,y-1,z)==1) {return;}
+				moveAgent(0,-1,0,agent);
+				break;
+			case 39:
+				//right
+				if (map.get(x+1,y,z)==1) {return;}
+				agent.px += 1;
+				moveAgent(1,0,0,agent);
+				break;
+			case 40:
+				//down
+				if (map.get(x,y+1,z)==1) {return;}
+				agent.py += 1;
+				moveAgent(0,1,0,agent);
+				break;
+		}
+		oldTime = new Date().getTime();
+	}
+}
+
+function moveAgent(dx,dy,dz,agent) {
+	if(agent.gz == z_level){ draw_tile_abs(agent.gx, agent.gy); }
+	agent.gx += dx;
+	agent.gy += dy;
+	agent.gz += dz;
+	draw_agent(agent);
+	$.post('http://127.0.0.1:8000/api/move0',{ agent_id:agent.agent_id, gx:agent.gx, gy:agent.gy, gz:agent.gz});
+}
+
+function enableMove() {
+	alert('keyup');
+	move = true;
+}
+
+function moveForeignAgent(gx,gy,gz,agent_id) {
+	agent = agents[agent_id];
+	if(agent.gz == z_level){ draw_tile_abs(agent.gx, agent.gy); }
+	agent.gx = gx;
+	agent.gy = gy;
+	agent.gz = gz;
+	draw_agent(agent);
+}
+
+
+  //////////////
+ /// agents ///
+//////////////
+var agents = new Array();
+
+//hard code for test
+var agent_id = 0;
+agents[agent_id] = new agent;
+agents[1] = new agent;
+
+
+var i = 0;
+for (var an_agent in agents) {
+	agents[an_agent].gx = 2*(i+1);
+	agents[an_agent].gy = 4*(i+1);
+	agents[an_agent].gz = 4
+	agents[an_agent].agent_id = an_agent;
+	i++;
+}
+
+
+
+//agent functions
+function agent() {
+	this.agent_id = 0;
+
+	this.gx =0;
+	this.gy =0;
+	this.gz =0;
+}
+
+
+  ////////////////////////	
+ /// message handling ///
+////////////////////////
+
+function processMessage(msg) {
+	var msg = eval('(' + msg + ')');
+	if (typeof msg.message == 'undefined') return true;
+	var eval_str = msg.message+'('+msg.gx+','+msg.gy+','+msg.gz;
+	if (msg.agent_id) { eval_str += ','+msg.agent_id;}
+	else if (msg.block_type) { eval_str += ','+msg.block_type;}
+	eval_str += ')';
+	eval(eval_str);
+	//possible messages:
+	//	set_block (gx,gy,gz,bt)
+	//  move0 (gx,gy,gz,agent_id)
+	//  agent_connect (gx,gy,gz,agent_id)
+}
+
+function set_block(gx,gy,gz,bt) {
+	//draw_tile(px,py, map[px][py] = (bt+1)%2);
+	//alert(bt)
+	map.set(gx,gy,gz,bt);
+	if(gz == z_level) {
+		draw_tile_abs(gx,gy);
+		draw_agents();
+		}
+}
+
+function move_agent(gx,gy,gz,agent_id) {
+	if (agent_id != agent_id) { moveForeignAgent(gx,gy,gz,agent_id); }
+}
+
+
+var timer = 0;
+function start_timer() {
+	 timer = new Date().getTime();
+}
+
+function stop_timer1() {
+	var elapsed = new Date().getTime() - timer;
+	$("#timer1").html( elapsed + " ms");
+}
+
+function stop_timer2() {
+	var elapsed = new Date().getTime() - timer;
+	$("#timer2").html( elapsed + " ms");
+}
+  ///////////////////
+ /// socket crap ///
+///////////////////
+var socket = new io.Socket('127.0.0.1', { 'port': 8080 });
+
+socket.on('connect', function () {
+	//alert('connect');
+	//$.post('http://127.0.0.1:8000/api/get_map',{ cx:0,cy:0 });
+});
+socket.on('message', function (msg) {
+	stop_timer1();
+	//alert(msg);
+	processMessage(msg);
+	stop_timer2();
+});
+socket.on('close', function () {
+	alert('close');
+});
+socket.on('disconnect', function () {
+	alert('disconnect');
+});
+socket.connect();
+
+draw_board();
+draw_agents();
+
+</script>
+
+</body>
+</html>
