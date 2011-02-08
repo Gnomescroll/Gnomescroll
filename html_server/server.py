@@ -1,6 +1,10 @@
 import string,cgi,time
 from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+import sys 
+import urlparse
+
+PORT = 8055
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -14,7 +18,7 @@ class MyHandler(BaseHTTPRequestHandler):
 	#Setup Global Environment
 	        #self.globals = dict(cgi.parse_qsl(self.query_string))
 			params = dict(cgi.parse_qsl(self.query_string))          
-
+			#params = dict(urlparse.parse_qs(self.query_string))
 			print "path= " + self.path
 			self.send_response(200)
 			self.send_header('Content-type',	'text/html')
@@ -31,23 +35,38 @@ class MyHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         global rootnode
         try:
-            ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
-            if ctype == 'multipart/form-data':
-                query=cgi.parse_multipart(self.rfile, pdict)
-            self.send_response(301)
+			ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+			#print "ctype, pdict= " + ctype + ", " + str(pdict)
+			if ctype == 'multipart/form-data':
+				postvars = cgi.parse_multipart(self.rfile, pdict)
+			elif ctype == 'application/x-www-form-urlencoded':
+				length = int(self.headers.getheader('content-length'))
+				postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
+			else:
+				postvars = {}
+			print "postvars= " + str(postvars)
+#			print str(postvars['gx'])
+			for x,y  in postvars.items():
+				if type(y)==type([]) and len(y) == 1:
+					postvars[x] = y[0]
+			print "postvars= " + str(postvars)
+
+			self.send_response(301)
+
+			self.end_headers()
+            #upfilecontent = query.get('upfile')
+            #print "filecontent", upfilecontent[0]
+			self.wfile.write("<HTML>POST OK.<BR><BR>");
+            #self.wfile.write(upfilecontent[0]);
             
-            self.end_headers()
-            upfilecontent = query.get('upfile')
-            print "filecontent", upfilecontent[0]
-            self.wfile.write("<HTML>POST OK.<BR><BR>");
-            self.wfile.write(upfilecontent[0]);
-            
-        except :
-            pass
+	except Exception, err:
+			print "Post Error: %s: %s" %(sys.stderr, err)
+			self.send_error(404,'404 Error: %s' % self.path)
+			pass
 
 def main():
     try:
-        server = HTTPServer(('', 8080), MyHandler)
+        server = HTTPServer(('', PORT), MyHandler)
         print 'started httpserver...'
         server.serve_forever()
     except KeyboardInterrupt:

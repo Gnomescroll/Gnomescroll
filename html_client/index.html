@@ -1,7 +1,20 @@
 <html>
-<head><title>python.my sample</title></head>
+<head>
+<title>Nomic</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+<script>
+window.ajax_server = 'http://127.0.0.1:8055/';
+</script>
+
+</head>
 <body>
-<h1>Sample Python Server</h1>
+<h1>TEST</h1>
+
+<script>
+$.post(window.ajax_server, { gx:1, gy:2});
+alert('test')
+</script>
 
 </body>
 </html>

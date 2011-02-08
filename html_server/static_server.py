@@ -1,7 +1,7 @@
 import SimpleHTTPServer
 import SocketServer
 
-PORT = 8080
+PORT = 8056
 dir = "../html_client"
 
 class StaticHTMLServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
