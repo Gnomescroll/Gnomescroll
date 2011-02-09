@@ -11,19 +11,22 @@ server = http.createServer(function(request, response){
 }); 
 server.listen(8080);
 
-var client = require('./lib/redis-client.js').createClient();
+/*
+var client = require('redis').createClient();
 client.info(function (err, info) {
     if (err) throw new Error(err);
     sys.puts("Redis Version is: " + info.redis_version);
     client.close();
 });
+*/
 
 var socket = io.listen(server); 
-console.log('Client Disconnect');
+//console.log('Client Disconnect');
+console.log('Server Listening');
 
 socket.on('connection', function(client) {
 	//subscribe to client id channel when client connects
-	
+	console.log('Client Connected');
 	/*
 	r_client.subscribeTo("0_0", function(channel, message, pattern) {
     socket.broadcast(message);
@@ -44,17 +47,23 @@ socket.on('connection', function(client) {
     });
   });
 
-redis = require('./lib/redis-client.js');
+//console.log('Not Crashed Yet');
+
+//redis = require('./lib/redis-client.js');
+var redis = require("redis");
 var r = redis.createClient(6379, '127.0.0.1');
 
+//console.log('Not Crashed Yet');
+
 //this client connects to the Redis instance for direct to client communications
-var r_client = redis.createClient(6379, '127.0.0.1');
-//subscribe to message stream for a whole map chunk
-r.subscribeTo("0_0", function(channel, message, pattern) {
+//var r_client = redis.createClient(6379, '127.0.0.1');
+//subscribe to message stream for map/world
+
+r.subscribe("0_0", function(channel, message, pattern) {
         socket.broadcast(message);
 });
 
 //global admin messages
-r.subscribeTo("global_admin", function(channel, message, pattern) {
+r.subscribe("global_admin", function(channel, message, pattern) {
         socket.broadcast(message);
 });
