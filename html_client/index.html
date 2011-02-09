@@ -1,10 +1,18 @@
 <html>
 <head>
 <title>Nomic</title>
+
+<STYLE TYPE="text/css">
+canvas { 
+background: #777777;
+}
+</STYLE>
+
 <script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 
-<script src='http://127.0.0.1:8056/js/classes.js'></script>
+<script src='http://127.0.0.1:8056/js/board.js'></script>
+<script src='http://127.0.0.1:8056/js/game_state.js'></script>
 
 <script>
 //configuration
@@ -69,7 +77,7 @@ function init()
 <body onLoad = "init();">
 <h1>TEST</h1>
 
-<div id="game_board"></div>
+<div id="game_board" ></div>
 
 </body>
 </html>
