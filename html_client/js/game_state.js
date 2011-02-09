@@ -26,7 +26,7 @@ function Terrain_map()
 
 function Game_world(world_id)
 {
-	this.world_id = world_id;
+	this.world_id = 0; //fixed for debugging
 	this.agent_list = [];
 	this.object_list = [];
 	

@@ -4,7 +4,19 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import sys 
 import urlparse
 
+import redis
+from marshal import dumps
+import marshal
+import sys
+import json
+
 PORT = 8055
+
+r_client = redis.Redis('localhost')
+
+def send_message(msg):
+	world_id = msg['world_id']
+	r_client.lpush("world_"+world_id, dumps(msg))
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -50,6 +62,8 @@ class MyHandler(BaseHTTPRequestHandler):
 				if type(y)==type([]) and len(y) == 1:
 					postvars[x] = y[0]
 			print "postvars= " + str(postvars)
+			
+			send_message(msg)
 
 			self.send_response(301)
 
