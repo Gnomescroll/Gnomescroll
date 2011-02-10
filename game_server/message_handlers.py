@@ -3,7 +3,7 @@ class Message_handlers:
 	def __init__(self):
 		pass
 		
-	def define_handlers():
+	def define_handlers(self):
 		
 		self.info_handler = {
 		'get_agent' : self.info_commands.get_agent,

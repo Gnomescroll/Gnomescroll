@@ -5,8 +5,8 @@ class Admin_commands:
 	def __init__(self):
 		pass
 		
-	def create_agent(msg):
+	def create_agent(self, msg):
 		pass
-		
-	def set_map(msg):
+	
+	def set_map(self, msg):
 		pass
