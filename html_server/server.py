@@ -16,7 +16,7 @@ r_client = redis.Redis('localhost')
 
 def send_message(msg):
 	world_id = msg['world_id']
-	r_client.lpush("world_"+world_id, dumps(msg))
+	r_client.lpush("world_"+str(world_id), dumps(msg))
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -63,7 +63,7 @@ class MyHandler(BaseHTTPRequestHandler):
 					postvars[x] = y[0]
 			print "postvars= " + str(postvars)
 			
-			send_message(msg)
+			send_message(postvars)
 
 			self.send_response(301)
 

@@ -46,9 +46,11 @@ function Game_world(world_id)
 
 function info_get_map(world_id) {
 	client_id = 5;
+	world_id = 0;
 	
 	data = { 
-		command: "info_get_map",
+		command: "get_map",
+		type: "info",
 		client_id: client_id,
 		world_id: world_id 
 		};
