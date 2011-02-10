@@ -16,7 +16,7 @@ function Terrain_map()
 	}
 	
 	this.prototype.set = function(x,y,z,tile_value) {
-		this.map[this.y_size * y + x] = tile_value;
+		this.map[y * this.x_size + x] = tile_value;
 	}
 	
 	this.prototype.get = function(x,y,z) {
