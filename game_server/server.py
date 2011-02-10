@@ -21,13 +21,15 @@ info_handler = {
 
 agent_handler = {
 'move_0' : agent_commands.move_0,
+'dig' : agent_commands.dig,
+'construct_wall' : agent_commands.construct_wall
+
 'pickup_item' : agent_commands.pickup_item,
 'drop_item' : agent_commands.drop_item,
 #'plant_tree' : self.agent_actions.plant_tree,
 'till_soil' : agent_commands.till_soil,
 'plant_crop' : agent_commands.plant_crop,
-'dig' : agent_commands.dig,
-'construct_wall' : agent_commands.construct_wall
+'harvest' : agent_commands.harvest,
 #'store_item_in_container' : self.agent_actions.store_item_in_container,
 #'remove_item_from_container' : self.agent_actions.remove_item_from_container
 }

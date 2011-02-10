@@ -1,12 +1,15 @@
 #imports
 
-class Agent_commands:
+class Info_commands:
 	
 	def __init__(self):
 		pass
 		
-	def create_agent(msg):
+	def get_agent(msg):
 		pass
 		
-	def set_map(msg):
+	def get_object(msg):
+		pass
+
+	def get_map(msg):
 		pass

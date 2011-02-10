@@ -11,5 +11,20 @@ class Agent_commands:
 	def dig(msg):
 		pass
 		
-	def build_wall(msg):
+	def construct_wall(msg):
+		pass
+
+	def pickup_item(msg):
+		pass
+		
+	def drop_item(msg):
+		pass
+		
+	def till_soil(msg):
+		pass
+		
+	def plant_crop(msg):
+		pass
+		
+	def harvest(msg):
 		pass
