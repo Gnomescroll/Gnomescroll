@@ -39,14 +39,12 @@ class Server:
 	def share_state(self):
 		not_singletons = ['pygame','handlers']
 		to_share = [singleton for singleton in self.__dict__.items() if singleton[0] not in not_singletons]
-
 		def share(a,b):
 			name1, object1 = a[0], a[1]
 			name2, object2 = b[0], b[1]
 			if getattr(object1,name2,'xx') != 'xx':
 				print 'Assigning',name2,'to',name1
 				setattr(object1,name2,object2)
-
 		[[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
                              
 	def run():
