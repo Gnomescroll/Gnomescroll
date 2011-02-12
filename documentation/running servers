@@ -1,6 +1,5 @@
 1> Start redis server
 
-$ cd html_server
 $ redis-server
 
 2> Start static HTML server
