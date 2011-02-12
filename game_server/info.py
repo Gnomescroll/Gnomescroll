@@ -12,8 +12,7 @@ def info_out_worker(info_out_q):
 		try:
 			(client_id, msg) = info_out_q.get()
 			msg = json.dumps(msg)
-			#print msg # DEBUGGING
-			
+			#print "info_out_worker: " + str(msg) # DEBUGGING
 			##change in production
 			#dest = "client_%s" % (str(client_id))
 			dest = "world_0_out"
@@ -59,18 +58,6 @@ class Info: #non-blocking client notification
 		msg['object_info'] = self.object.agents[object_id].serialize()   #SCOPE
 		self.info_out_q.put((client_id,msg))
 		pass
-		
-	#def map_chunk_z_level_info(self, cx, cy, z_level, client_id):
-		#print 'info.py map_chunk_z_level_info (cx, cy): ', (cx,cy)
-		#msg = {}
-		#msg['msg'] = 'map_chunk_z_level_info'
-		#msg['z_level'] = z_level
-		#msg['client_id'] = client_id
-		#msg['cx'] = cx
-		#msg['cy'] = cy
-		#msg['tile_value_array'] = self.map.get_z_level(cx, cy, z_level)  #SCOPE
-		##tile value array is currently a 256x256 integer array
-		#self.info_out_q.put((client_id,msg))
 		
 	def map_chunk_agent_list_info(self, cx, cy, client_id, **extra):
 		msg = {}

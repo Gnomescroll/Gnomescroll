@@ -12,5 +12,6 @@ class Admin_commands:
 		pass
 	
 	#required ['x','y','z','value', 'world_id']
+	#optional []
 	def set_map(self, msg):
 		self.world_map.set(x, y, z, value)
