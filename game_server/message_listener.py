@@ -19,6 +19,9 @@ class Message_listener:
 					continue
 				cmd = i['cmd']
 				type = i['type']
+				world_id = i['world_id']
+				#if self.world_id != world id: #this should not occur
+				#	print "world id error"
 				if type == "info":
 					print 'info: ',self.message_handlers.info_handler[cmd]
 					pass

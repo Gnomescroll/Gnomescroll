@@ -11,4 +11,5 @@ class World_map:
 
 	def set(x,y,z,value):
 		self.map[y * self.x_size + x] = value
+		self.delta.set_map(x,y,z,value)
 		#creates notification

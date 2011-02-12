@@ -117,3 +117,14 @@ class Delta: #non-blocking client notification
 		msg['object_type'] = object_type
 		msg['location_state'] = location_state
 		self.delta_out_q.put(msg)
+
+	#map notifications
+	def set_map(self, x, y, z, value): #called when map tile is changed
+		msg = {}
+		msg['msg'] = 'set_map'
+		msg['value'] = value
+		msg['x'] = x
+		msg['y'] = y
+		msg['z'] = z	
+		self.delta_out_q.put(msg)
+		pass
