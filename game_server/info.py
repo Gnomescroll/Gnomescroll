@@ -69,36 +69,25 @@ class Info: #non-blocking client notification
 		msg['world_id'] = self.world_map.world_id
 		msg['client_id'] = client_id
 		self.info_out_q.put((client_id,msg))
-		
-	#deprecated
-	def map_chunk_agent_list_info(self, cx, cy, client_id, **extra):
+	
+	def get_agent_list(self, client_id, world_id, **extra):
 		msg = {}
-		msg['msg'] = 'map_chunk_agent_list_info'
+		msg['msg'] = 'agent_list'
+		msg['world_id'] = world_id
 		msg['client_id'] = client_id
-		msg['cx'] = cx
-		msg['cy'] = cy
-		agent_list = []
-		for agent in self.agents.agents.values():
-			#print "agents= "+ str(agent.serialize())  #debugging
-			(gx,gy,gz) = agent.position()
-			(acx,acy) = self.map.get_chunk_key(gx,gy,gz=gz)
-			if (cx,cy) == (acx,acy):
-				agent_list.append(agent.serialize())
-		msg['agent_list'] = agent_list
+		list = []
+		for id in self.agents.agents.keys():
+			list.append(Agent(agent_id).simple_serialize())
+		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
 	
-	#deprecated
-	def map_chunk_object_list_info(self, cx, cy, client_id, **extra):
+	def get_object_list(self, client_id, world_id, **extra):
 		msg = {}
-		msg['msg'] = 'map_chunk_object_list_info'
+		msg['msg'] = 'object_list'
+		msg['world_id'] = world_id
 		msg['client_id'] = client_id
-		msg['cx'] = cx
-		msg['cy'] = cy
-		object_list = []
-		for object in self.objects.objects.values():
-			(gx,gy,gz) = self.objects.get_position_from_location_state(object.location_state)
-			(acx,acy) = self.map.get_chunk_key(gx,gy,gz=gz)
-			if (cx,cy) == (acx,acy):
-				object_list.append(object.serialize())
-		msg['object_list'] = object_list
+		list = []
+		for id in self.agents.agents.keys():
+			list.append(Agent(agent_id).simple_serialize())
+		msg['list'] = list
 		self.info_out_q.put((client_id,msg))

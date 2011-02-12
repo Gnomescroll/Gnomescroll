@@ -16,7 +16,7 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	a['x'] = x
 	a['y'] = y
 	a['z'] = z
-	a['position_type'] = ground #position type
+	a['position_type'] = 'ground' #position type
 	a['player_id'] = player_id
 	a['world_id'] = world_id
 	a['version'] = 0
