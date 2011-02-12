@@ -11,5 +11,8 @@ class Info_commands:
 	def get_object(self, msg):
 		pass
 
-	def get_map(self, msg):
+	#required = ['client_id', 'world_id']
+	#optional = ['z']
+	def get_map(self, z=0, msg**):
+		self.info.get_map(z, client_id, world_id):
 		pass

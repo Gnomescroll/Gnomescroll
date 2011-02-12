@@ -46,7 +46,16 @@ class Server:
 				print 'Assigning',name2,'to',name1
 				setattr(object1,name2,object2)
 		[[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
-                             
+		
+		#Agent class init
+		Agent.world_map = self.world_map
+		Agent.delta = self.delta
+		Agent.agents = self.agents.agents
+		#Object class init
+		#Object.world_map = self.world_map
+		#Object.delta = self.world_map
+		#Object.objects = self.objects.objects
+		           
 	def run():
 		self.share_state()
 		self.world_map.init() #load map

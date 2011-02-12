@@ -46,7 +46,7 @@ class Info: #non-blocking client notification
 		msg['msg'] = 'agent_info'
 		msg['agent_id'] = agent_id
 		msg['client_id'] = client_id
-		msg['value'] = self.agents.agents[agent_id].serialize()   #SCOPE
+		msg['value'] = self.agents.agents[agent_id] #SCOPE
 		self.info_out_q.put((client_id,msg))
 		pass
 		
@@ -55,11 +55,11 @@ class Info: #non-blocking client notification
 		msg['msg'] = 'object_info'
 		msg['object_id'] = object_id
 		msg['client_id'] = client_id
-		msg['object_info'] = self.object.agents[object_id].serialize()   #SCOPE
+		msg['object_info'] = self.object.objects[object_id] #SCOPE
 		self.info_out_q.put((client_id,msg))
 		pass
 	
-	def get_map(world_id=0, z=0, client_id=0):
+	def get_map(z=0, client_id=0):
 		array = self.world_map.get_z_level(z)
 		msg = {}
 		msg['map'] = array
