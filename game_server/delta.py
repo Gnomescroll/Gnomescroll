@@ -34,13 +34,13 @@ class Delta: #non-blocking client notification
 			t.start()
 			
     #agent notifications
-	def agent_position_change(self, agent_id, gx, gy, gz, player_id): #called when agent changes position
+	def agent_position_change(self, agent_id, x, y, z, player_id): #called when agent changes position
 		msg = {}
 		msg['msg'] = 'agent_position_update'
-		msg['agent_id'] = agent_id
-		msg['gx'] = gx
-		msg['gy'] = gy
-		msg['gz'] = gz
+		msg['id'] = id
+		msg['x'] = x
+		msg['y'] = y
+		msg['z'] = z
 		#msg['player_id'] = player_id
 		self.delta_out_q.put(msg)
 		pass
@@ -65,13 +65,13 @@ class Delta: #non-blocking client notification
 		self.delta_out_q.put(msg)
 		pass
 	
-	def agent_create(self, agent_id, gx, gy, gz, player_id=None):
+	def agent_create(self, id, x, y, z, player_id=None):
 		msg = {}
 		msg['msg'] = 'agent_create_update'
-		msg['agent_id'] = agent_id
-		msg['gx'] = gx
-		msg['gy'] = gy
-		msg['gz'] = gz
+		msg['id'] = id
+		msg['x'] = x
+		msg['y'] = y
+		msg['z'] = z
 		msg['player_id'] = player_id
 		self.delta_out_q.put(msg)
 		#print 'agent_create_update put'

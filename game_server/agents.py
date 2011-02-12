@@ -2,16 +2,19 @@
 
 #creates an agent from a template
 def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
-	if prototype == None:
-		pass
+	#if prototype == None:
+	#	pass
 	a = {}
 	a['id'] = id
 	a['types'] = ['agent']
-	a['x'] = x
-	a['y'] = y
-	a['z'] = z
+	a['position'] = {}
+	a['position']['x'] = x
+	a['position']['y'] = y
+	a['position']['z'] = z
+	a['position']['type'] = 'ground'
 	a['player_id'] = player_id
 	a['world_id'] = world_id
+	#a['version'] = 0 #versioning counter
 	
 class Agents()
 
@@ -23,7 +26,8 @@ class Agents()
 		self.unique_id = self.unique_id + 1
 		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.world_id)
 		
-		pass
-		
+		agent_list[id] = a
+		self.delta.agent_create(id, x, y, z, player_id=None):
+
 	def delete(self, id):
 		pass
