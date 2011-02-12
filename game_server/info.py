@@ -58,7 +58,19 @@ class Info: #non-blocking client notification
 		msg['object_info'] = self.object.agents[object_id].serialize()   #SCOPE
 		self.info_out_q.put((client_id,msg))
 		pass
+	
+	def get_map(world_id=0, z=0, client_id=0):
+		array = self.world_map.get_z_level(z)
+		msg = {}
+		msg['map'] = array
+		msg['z_level'] = z
+		msg['x_size'] = self.world_map.x_size
+		msg['y_size'] = self.world_map.y_size
+		msg['world_id'] = self.world_map.world_id
+		msg['client_id'] = client_id
+		self.info_out_q.put((client_id,msg))
 		
+	#deprecated
 	def map_chunk_agent_list_info(self, cx, cy, client_id, **extra):
 		msg = {}
 		msg['msg'] = 'map_chunk_agent_list_info'
@@ -74,7 +86,8 @@ class Info: #non-blocking client notification
 				agent_list.append(agent.serialize())
 		msg['agent_list'] = agent_list
 		self.info_out_q.put((client_id,msg))
-		 
+	
+	#deprecated
 	def map_chunk_object_list_info(self, cx, cy, client_id, **extra):
 		msg = {}
 		msg['msg'] = 'map_chunk_object_list_info'

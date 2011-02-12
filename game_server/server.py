@@ -49,6 +49,9 @@ class Server:
                              
 	def run():
 		self.share_state()
+		self.world_map.init() #load map
+		self.agents.init() #load agents
+		#self.objects.init() #load objects
 		self.message_handlers.define_handlers()
 		self.message_listener.start()
 
