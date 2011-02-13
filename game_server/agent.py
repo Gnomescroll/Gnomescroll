@@ -51,5 +51,6 @@ class Agent:
 		msg['z'] = self.z
 		msg['position_type'] = self.position_type
 		msg['player_id'] = self.player_id
+		msg['type'] = self.type
 		msg['version'] = self.version
 		return msg

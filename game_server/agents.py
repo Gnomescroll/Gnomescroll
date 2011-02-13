@@ -6,7 +6,7 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	#	pass
 	a = {}
 	a['id'] = id
-	a['types'] = ['agent']
+	a['type'] = ['agent']
 	a['name'] = 'generic agent type'
 #	a['position'] = {}
 #	a['position']['x'] = x

@@ -29,10 +29,6 @@ def info_out_worker(info_out_q):
 class Info: #non-blocking client notification
 	
 	def __init__(self):
-		#self.agents = None
-		#self.objects = None
-		#self.map = None
-
 		self.info_out_q = Queue.Queue() 
 		num_worker_threads = 1
 		for i in range(num_worker_threads):
@@ -40,22 +36,21 @@ class Info: #non-blocking client notification
 			t.daemon = True
 			t.start()
 	
-	#is it really required to return the client id?
-	def agent_info(self, agent_id, client_id):
+	def agent_info(self, id, client_id):
 		msg = {}
 		msg['msg'] = 'agent_info'
-		msg['agent_id'] = agent_id
+		msg['id'] = id
 		msg['client_id'] = client_id
-		msg['value'] = self.agents.agents[agent_id] #SCOPE
+		msg['value'] = Agent(agent_id).serialize()
 		self.info_out_q.put((client_id,msg))
 		pass
 		
-	def object_info(self, object_id, client_id):
+	def object_info(self, id, client_id):
 		msg = {}
 		msg['msg'] = 'object_info'
-		msg['object_id'] = object_id
+		msg['id'] = id
 		msg['client_id'] = client_id
-		msg['object_info'] = self.object.objects[object_id] #SCOPE
+		msg['object_info'] = Object(id).serialize()
 		self.info_out_q.put((client_id,msg))
 		pass
 	
