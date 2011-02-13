@@ -4,6 +4,7 @@ import time
 import json
 import Queue
 from threading import Thread
+import itertools
 
 #game state classes
 from game_server.state.world_map import *
@@ -18,7 +19,7 @@ from game_server.input.message_handlers import *
 from game_server.input.message_listener import *
  
 from game_server.interface.agent import *
-from game_server.interface.object import *
+from game_server.interface.entities import *
 
 #interface helpers
 from game_server.interface.message_handlers import *
@@ -28,7 +29,7 @@ class Server:
 	def __init__(self, world_id):
 		#server globals
 		self.world_id = world_id
-		self.unique_id = 1
+		self.unique_id = itertools.count(1) #will be replaced by a unique-id pool
 		# listeners for input
 		self.message_listener = Message_lister()
 		self.message_handlers = Message_handlers()
@@ -41,10 +42,10 @@ class Server:
 		#game state
 		self.world_map = World_map()
 		self.agents = Agents()
-		#self.objects = Objects()
+		#self.entities = Entities()
 
 	def share_state(self):
-		not_singletons = ['pygame','handlers']
+		not_singletons = []
 		to_share = [singleton for singleton in self.__dict__.items() if singleton[0] not in not_singletons]
 		def share(a,b):
 			name1, object1 = a[0], a[1]
@@ -58,16 +59,22 @@ class Server:
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
 		Agent.agents = self.agents.agents
-		#Object class init
-		#Object.world_map = self.world_map
-		#Object.delta = self.world_map
-		#Object.objects = self.objects.objects
-		           
+		#Entity class init
+		#Entity.world_map = self.world_map
+		#Entity.delta = self.world_map
+		#Entity.entities = self.entity.entities
+
+
+		#!!! FIX !!!
+		#in future, will have pool/list of global unique_ids
+	def get_unique_id()
+		next(self.unique_id)
+
 	def run():
 		self.share_state()
 		self.world_map.init() #load map
 		self.agents.init() #load agents
-		#self.objects.init() #load objects
+		#self.entities.init() #load objects
 		self.message_handlers.define_handlers()
 		self.message_listener.start()
 
