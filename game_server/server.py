@@ -5,16 +5,23 @@ import json
 import Queue
 from threading import Thread
 
-from world_map import *
+#game state classes
+from game_server.state.world_map import *
+from game_server.state.agents import *
+from game_server.state.objects import *
 
 ##message handling
-from info_commands import *
-from agent_commands import *
-from admin_commands import *
-from message_handlers import *
-from message_listener import * 
-from delta import *
-from info import *
+from game_server.input.info_commands import *
+from game_server.input.agent_commands import *
+from game_server.input.admin_commands import *
+from game_server.input.message_handlers import *
+from game_server.input.message_listener import *
+ 
+from game_server.interface.agent import *
+from game_server.interface.object import *
+
+#interface helpers
+from game_server.interface.message_handlers import *
 
 class Server:
 
