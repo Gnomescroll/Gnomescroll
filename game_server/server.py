@@ -11,7 +11,6 @@ from game_server.state.world_map import *
 from game_server.state.agents import *
 from game_server.state.entities import *
 from game_server.state.world_time import *
-from game_server.state.world_ids import *
 
 ##message handling
 from game_server.input.info_commands import *
@@ -44,7 +43,6 @@ class Server:
 		#game state
 		self.world_map = World_map()
 		self.world_time = World_time()
-		self.world_ids = World_ids()
 		self.agents = Agents()
 		#self.objects = Objects()
 
@@ -65,12 +63,11 @@ class Server:
 		Agent.agents = self.agents.agents
 		#Object class init
 		#Object.world_map = self.world_map
-		#Object.delta = self.world_map
-		#Object.entities = self.entity.entities
-
+		#Object.delta = self.delta
+		#Object.objects = self.entity.objects
 
 		#!!! FIX !!!
-		#in future, will have pool/list of global unique_ids
+		#in future, will have pool/list of global unique_ids	
 	def get_unique_id()
 		next(self.unique_id)
 
