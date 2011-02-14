@@ -6,8 +6,16 @@ from threading import Thread
 
 #import agent
 
-def process_timer_call_back(timer_id, timer_type, id):
-	if timer_type == "agent":
+def process_timer_call_back(timer_dict):
+	if timer_dict == {}:
+		print "timer deleted!!!"
+		
+	type = timer_dict['timer_type']
+	id = timer_dict['id']
+	
+	if timer_id
+	##mature 
+	
 		agent = agent.Agent(id)
 		agent.handle_timer(timer_id)
 #	if timer_type == "plant_maturity":
@@ -41,8 +49,8 @@ class World_time:
 	def update_world_time(self):
 		old_time = self.time
 		self.time = int(100*(time.time() - self.base_time)) #updates ticks
-		print str((int(100*(time.time() - self.base_time)), time.time(), self.base_time))
-		print "ticks = " + str(self.time)
+		#print str((int(100*(time.time() - self.base_time)), time.time(), self.base_time))
+		#print "ticks = " + str(self.time)
 		self.check_scheduler()
 
 	def check_scheduler(self):
@@ -53,23 +61,28 @@ class World_time:
 				return
 			#remove lowest element on heap
 			self.timer_heap.remove((scheduled_time, timer_id))
-			timer = self.timers.pop(timer_id, (0, 0, 0, 0))
-			(scheduled_time, timer_id, timer_type, id) = timer
+			(scheduled_time, timer_id, timer_dict) = self.timers.pop(timer_id, (0, 0, {}))
 			if timer_id == 0:
 				#print "Deleted Timer Processed"
 				continue
 			print str(timer)
-			process_timer_call_back(timer_id, timer_type, id)
+			process_timer_call_back(timer_dict)
 
 	def print_time(self):
 		print "Time= " + str(self.time)
 
-	def add_timer(self, timer_type, id, ticks):
+	def add_timer(self, timer_dict, ticks):
 		timer_id = next(self.timer_index)
-		scheduled_time = ticks + self.time
+		current_time = self.time
+		scheduled_time = ticks + current_time
 		if scheduled_time < self.next_event_time:
 			self.next_event_time = scheduled_time
-		timer = (scheduled_time, timer_id, timer_type, id)
+		#pack meta data into the timer dictionary
+		timer_dict['set_at'] = current_time
+		timer_dict['expires'] = scheduled_time
+		timer_dict['timer_id'] = timer_id
+		#put timer onto que
+		timer = (scheduled_time, timer_id, timer_dict)
 		self.timers[timer_id] = timer
 		self.timer_heap.append((scheduled_time, timer_id))
 		print str(timer)

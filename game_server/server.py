@@ -9,7 +9,8 @@ import itertools
 #game state classes
 from game_server.state.world_map import *
 from game_server.state.agents import *
-from game_server.state.objects import *
+from game_server.state.entities import *
+from game_server.state.world_time import *
 
 ##message handling
 from game_server.input.info_commands import *
@@ -19,7 +20,7 @@ from game_server.input.message_handlers import *
 from game_server.input.message_listener import *
  
 from game_server.interface.agent import *
-from game_server.interface.entities import *
+from game_server.interface.objects import *
 
 #interface helpers
 from game_server.interface.message_handlers import *
@@ -42,7 +43,7 @@ class Server:
 		#game state
 		self.world_map = World_map()
 		self.agents = Agents()
-		#self.entities = Entities()
+		#self.objects = Objects()
 
 	def share_state(self):
 		not_singletons = []
@@ -59,10 +60,10 @@ class Server:
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
 		Agent.agents = self.agents.agents
-		#Entity class init
-		#Entity.world_map = self.world_map
-		#Entity.delta = self.world_map
-		#Entity.entities = self.entity.entities
+		#Object class init
+		#Object.world_map = self.world_map
+		#Object.delta = self.world_map
+		#Object.entities = self.entity.entities
 
 
 		#!!! FIX !!!
