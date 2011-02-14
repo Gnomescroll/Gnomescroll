@@ -36,32 +36,25 @@ class Delta: #non-blocking client notification
     #agent notifications
 	def agent_position_change(self, agent_id, x, y, z, player_id): #called when agent changes position
 		msg = {}
-		msg['msg'] = 'agent_position_update'
+		msg['msg'] = 'agent_position'
 		msg['id'] = id
-		msg['x'] = x
-		msg['y'] = y
-		msg['z'] = z
+		msg['position'] = (0, x, y, z)
 		#msg['player_id'] = player_id
 		self.delta_out_q.put(msg)
 		pass
 
-	def agent_state_change(self, agent_id, gx, gy, gz):
+	def agent_state_change(self, agent_id, x, y, z):
 		msg = {}
 		msg['msg'] = 'agent_state_change_update'
-		msg['agent_id'] = agent_id
-		msg['gx'] = gx
-		msg['gy'] = gy
-		msg['gz'] = gz
+		msg['id'] = agent_id
+		msg['position'] = (0,x,y,z)
 		self.delta_out_q.put(msg)
 		pass
 				
 	def agent_delete(self, agent_id):
 		msg = {}
 		msg['msg'] = 'agent_delete_update'
-		msg['agent_id'] = agent_id
-		#msg['gx'] = gx
-		#msg['gy'] = gy
-		#msg['gz'] = gz
+		msg['id'] = agent_id
 		self.delta_out_q.put(msg)
 		pass
 	
@@ -69,9 +62,7 @@ class Delta: #non-blocking client notification
 		msg = {}
 		msg['msg'] = 'agent_create_update'
 		msg['id'] = id
-		msg['x'] = x
-		msg['y'] = y
-		msg['z'] = z
+		msg['position'] = (0,x,y,z)
 		msg['player_id'] = player_id
 		self.delta_out_q.put(msg)
 		#print 'agent_create_update put'
@@ -82,9 +73,9 @@ class Delta: #non-blocking client notification
 	#USE THIS INSTEAD
 	def object_position_change(self, object_id, location_state):
 		msg = {}
-		msg['msg'] = 'object_location_update'
+		msg['msg'] = 'object_position_change'
 		msg['object_id'] = object_id
-		msg['location_state'] = location_state
+		msg['position'] = (0,x,y,z)
 		#msg['object_type'] = self.objects.objects[object_id]['object_type']
 		self.delta_out_q.put(msg)
 	
@@ -93,20 +84,15 @@ class Delta: #non-blocking client notification
 		msg = {}
 		msg['msg'] = 'object_state_change_update'
 		msg['object_id'] = object_id
-		msg['gx'] = gx
-		msg['gy'] = gy
-		msg['gz'] = gz
+		msg['position'] = (0,x,y,z)
 		self.delta_out_q.put(msg)
 		pass
 		
 	#this has problems if the object is in inventory
 	def object_delete(self, object_id, gx, gy, gz):
 		msg = {}
-		msg['msg'] = 'object_delete_update'
-		msg['agent_id'] = object_id
-		#msg['gx'] = gx
-		#msg['gy'] = gy
-		#msg['gz'] = gz
+		msg['msg'] = 'object_delete'
+		msg['id'] = object_id
 		self.delta_out_q.put(msg)
 		pass
 	

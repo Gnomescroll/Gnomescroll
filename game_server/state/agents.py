@@ -8,6 +8,7 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	a['id'] = id
 	a['type'] = ['agent']
 	a['name'] = 'generic agent type'
+	#position is (type, x, y, z)
 	a['position'] = (0, x, y, z)
 	a['player_id'] = player_id
 	a['world_id'] = world_id
@@ -25,8 +26,7 @@ class Agents()
 		pass
 
 	def create(self, x, y, z=0, player_id=0):
-		id = self.unique_id
-		self.unique_id = self.unique_id + 1
+		id = self.globals.get_unique_id()
 		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.world_id)
 		agent_list[id] = a
 		self.delta.agent_create(id, x, y, z, player_id=None):

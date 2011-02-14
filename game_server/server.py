@@ -28,9 +28,6 @@ from game_server.interface.message_handlers import *
 class Server:
 
 	def __init__(self, world_id):
-		#server globals
-		self.world_id = world_id
-		self.unique_id = itertools.count(1) #will be replaced by a unique-id pool
 		# listeners for input
 		self.message_listener = Message_lister()
 		self.message_handlers = Message_handlers()
@@ -44,6 +41,7 @@ class Server:
 		self.world_map = World_map()
 		self.world_time = World_time()
 		self.agents = Agents()
+		self.globals = Globals()
 		#self.objects = Objects()
 
 	def share_state(self):
@@ -65,11 +63,6 @@ class Server:
 		#Object.world_map = self.world_map
 		#Object.delta = self.delta
 		#Object.objects = self.entity.objects
-
-		#!!! FIX !!!
-		#in future, will have pool/list of global unique_ids	
-	def get_unique_id()
-		next(self.unique_id)
 
 	def run():
 		self.share_state()
