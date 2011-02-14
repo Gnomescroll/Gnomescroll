@@ -11,6 +11,7 @@ from game_server.state.world_map import *
 from game_server.state.agents import *
 from game_server.state.entities import *
 from game_server.state.world_time import *
+from game_server.state.world_ids import *
 
 ##message handling
 from game_server.input.info_commands import *
@@ -42,6 +43,8 @@ class Server:
 		self.info = Info()
 		#game state
 		self.world_map = World_map()
+		self.world_time = World_time()
+		self.world_ids = World_ids()
 		self.agents = Agents()
 		#self.objects = Objects()
 
@@ -76,6 +79,7 @@ class Server:
 		self.world_map.init() #load map
 		self.agents.init() #load agents
 		#self.entities.init() #load objects
+		self.world_time.start()
 		self.message_handlers.define_handlers()
 		self.message_listener.start()
 

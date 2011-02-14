@@ -80,7 +80,7 @@ class Delta: #non-blocking client notification
 	#object notifications
 	
 	#USE THIS INSTEAD
-	def object_location_update(self, object_id, location_state):
+	def object_position_change(self, object_id, location_state):
 		msg = {}
 		msg['msg'] = 'object_location_update'
 		msg['object_id'] = object_id

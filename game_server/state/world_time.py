@@ -6,14 +6,20 @@ from threading import Thread
 
 #import agent
 
-def process_timer_call_back(timer_dict):
+#all timers must have a timer_type, and event_type: 
+#then custom parameters for each pair
+def process_timer_callback(timer_dict):
 	if timer_dict == {}:
 		print "timer deleted!!!"
 		
-	type = timer_dict['timer_type']
-	id = timer_dict['id']
+	timer_type = timer_dict['timer_type']
+	event_type = timer_dict['event_type']
 	
-	if timer_id
+	if timer_type == "crop":
+		id = timer_dict['id']
+		crop = Crop(id)
+		if event_type = "maturity":
+		crop.mature()
 	##mature 
 	
 		agent = agent.Agent(id)
@@ -66,7 +72,7 @@ class World_time:
 				#print "Deleted Timer Processed"
 				continue
 			print str(timer)
-			process_timer_call_back(timer_dict)
+			process_timer_callback(timer_dict)
 
 	def print_time(self):
 		print "Time= " + str(self.time)
@@ -78,7 +84,8 @@ class World_time:
 		if scheduled_time < self.next_event_time:
 			self.next_event_time = scheduled_time
 		#pack meta data into the timer dictionary
-		timer_dict['set_at'] = current_time
+		timer_dict['timer_id'] = timer_id
+		timer_dict['begins'] = current_time
 		timer_dict['expires'] = scheduled_time
 		timer_dict['timer_id'] = timer_id
 		#put timer onto que
@@ -86,7 +93,7 @@ class World_time:
 		self.timers[timer_id] = timer
 		self.timer_heap.append((scheduled_time, timer_id))
 		print str(timer)
-		return timer_id #lets object know the timer id
+		return timer_dict #lets object know the timer id
 	
 	def remove_timer(self, timer_id):
 		del self.timers[timer_id]
