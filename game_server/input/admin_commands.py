@@ -5,10 +5,11 @@ class Admin_commands:
 	def __init__(self):
 		pass
 	
-	# required = ['x', 'y', 'z']
+	# required = ['position']
 	# optional = ['player_id']
-	def create_agent(self, **msg):
-		self.agents.create x, y, z=0, player_id):
+	def create_agent(self, position, player_id = 0, **msg):
+		(position_type, x, y, z) = position
+		self.agents.create(x, y, z, player_id):
 		pass
 	
 	#required ['x','y','z','value', 'world_id']
