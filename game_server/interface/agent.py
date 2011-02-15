@@ -4,6 +4,13 @@ custom_agent_attributes = []
 
 class Agent:
 
+	def move_0(dx,dy,dz):
+		[type, x, y, z] = self.position
+		[type, x, y, z] = [type, x+gx, y+gy, 0]
+		self.position = [type, x, y, z]
+		self.delta.agent_position_change(agent_id, x, y, z)
+
+	### Generic Stuff ###
 	agents = None #agent dictionary
 	objects = None	 #object dictionary
 	world_map = None #world map object

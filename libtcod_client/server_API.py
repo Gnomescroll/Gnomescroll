@@ -20,6 +20,10 @@ class Admin_commands:
 	def create_agent(self, x, y, z=0):
 		#create msg to be sent to server
 		msg = {}
+		#specify command type and command
+		msg['type'] = 'admin'
+		msg['cmd'] = 'create_agent'
+		#command parameters
 		msg['world_id'] = 0
 		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		#send message to server
@@ -34,10 +38,15 @@ class Agent_commands:
 		world_id = msg['world_id']
 		this.r_client.lpush("world_"+str(world_id), dumps(msg))
 
-	def create_agent(self, x, y, z=0):
+	# required = ['dp, agent_id']
+	# optional = ['player_id']
+	def move_0(self, agent_id, dx, dy, dz=0):
 		#create msg to be sent to server
-		msg = {}
+		msg = {}	
+		msg['type'] = 'agent'
+		msg['cmd'] = 'move_0'
 		msg['world_id'] = 0
-		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		msg['agent_id'] = agent_id
+		msg['dp'] = (dx,dy,dz) #position is a 4, tuple (position_type, x, y, z)
 		#send message to server
 		send_message(msg)
