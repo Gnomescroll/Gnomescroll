@@ -4,8 +4,8 @@ import redis.client
 import json
 import sys
 
-from game_server.interface.agent import *
-from game_server.interface.object import *
+from interface.agent import Agent
+from interface.object import Nobject
 
 #output block, so may need more worker threads for performance
 def info_out_worker(info_out_q):

@@ -26,14 +26,14 @@ from output.delta import Delta
 
 #interfaces 
 from interface.agent import Agent
-from interface.object import Noject
+from interface.object import Nobject
 from interface.crop import Crop
 
 class Server:
 
 	def __init__(self, world_id):
 		# listeners for input
-		self.message_listener = Message_lister()
+		self.message_listener = Message_listener()
 		self.message_handlers = Message_handlers()
 		self.info_commands = Info_commands()
 		self.agent_commands = Agent_commands()
@@ -44,7 +44,7 @@ class Server:
 		#game state
 		self.world_map = World_map()
 		self.world_time = World_time()
-		self.globals = Globals()
+		self.globals = Globals(world_id)
 		self.agents = Agents()
 		self.objects = Objects()
 
@@ -63,13 +63,13 @@ class Server:
 		#Agent class init
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
-		Agent.agents = self.agents.agents
+		Agent.agents = self.agents.agent_list
 		#Object class init
 		Nobject.world_map = self.world_map
 		Nobject.delta = self.delta
-		Nobject.objects = self.entity.objects
+		Nobject.objects = self.objects.object_list
 
-	def run():
+	def run(self):
 		self.share_state()
 		self.world_map.init() #load map
 		self.agents.init() #load agents

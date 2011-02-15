@@ -1,3 +1,5 @@
+import itertools
+
 class Globals:
 
 	def __init__(self, world_id):
