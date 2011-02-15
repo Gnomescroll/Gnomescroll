@@ -19,12 +19,11 @@ from game_server.input.agent_commands import *
 from game_server.input.admin_commands import *
 from game_server.input.message_handlers import *
 from game_server.input.message_listener import *
- 
-from game_server.interface.agent import *
-from game_server.interface.object import *
 
-#interface helpers
-from game_server.interface.message_handlers import *
+#interfaces 
+from game_server.interface.agent import Agent
+from game_server.interface.object import Noject
+from game_Server.interface.crop import Crop
 
 class Server:
 
