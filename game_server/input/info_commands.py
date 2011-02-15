@@ -4,18 +4,21 @@ class Info_commands:
 	
 	def __init__(self):
 		pass
-		
-	def get_agent(self, msg):
-		pass
-		
+
+	#required = ['agent_id', 'client_id', 'world_id']
+	#optional = []		
+	def get_agent(self, agent_id, client_id, msg**):
+		self.info.agent_info(agent_id, client_id)
+
+	#required = ['object_id', 'client_id', 'world_id']
+	#optional = []			
 	def get_object(self, msg):
-		pass
+		self.info.object_info(object_id, client_id):
 
 	#required = ['client_id', 'world_id']
 	#optional = ['z']
-	def get_map(self, z=0, msg**):
-		self.info.get_map(z, client_id, world_id):
-		pass
+	def get_map(self, z=0, client_id, msg**):
+		self.info.get_map(z, client_id):
 
 	#required = ['client_id', 'world_id']
 	#optional = []

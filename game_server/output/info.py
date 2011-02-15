@@ -4,6 +4,9 @@ import redis.client
 import json
 import sys
 
+from game_server.interface.agent import *
+from game_server.interface.object import *
+
 #output block, so may need more worker threads for performance
 def info_out_worker(info_out_q):
 	out = redis.Redis("localhost")
@@ -41,7 +44,7 @@ class Info: #non-blocking client notification
 		msg['msg'] = 'agent_info'
 		msg['id'] = id
 		msg['client_id'] = client_id
-		msg['value'] = Agent(agent_id).serialize()
+		msg['value'] = Agent(id).serialize()
 		self.info_out_q.put((client_id,msg))
 		pass
 		
@@ -50,7 +53,7 @@ class Info: #non-blocking client notification
 		msg['msg'] = 'object_info'
 		msg['id'] = id
 		msg['client_id'] = client_id
-		msg['object_info'] = Object(id).serialize()
+		msg['object_info'] = Nobject(id).serialize()
 		self.info_out_q.put((client_id,msg))
 		pass
 	
@@ -72,7 +75,7 @@ class Info: #non-blocking client notification
 		msg['client_id'] = client_id
 		list = []
 		for id in self.agents.agents.keys():
-			list.append(Agent(agent_id).simple_serialize())
+			list.append(Agent(id).simple_serialize())
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
 	
@@ -83,6 +86,6 @@ class Info: #non-blocking client notification
 		msg['client_id'] = client_id
 		list = []
 		for id in self.agents.agents.keys():
-			list.append(Agent(agent_id).simple_serialize())
+			list.append(Nobject(id).simple_serialize())
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
