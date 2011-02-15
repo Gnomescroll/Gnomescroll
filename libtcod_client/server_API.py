@@ -29,6 +29,26 @@ class Admin_commands:
 		#send message to server
 		send_message(msg)
 
+	#Not implemented yet
+	def create_item(self, x, y, z=0):
+		msg = {}
+		msg['type'] = 'admin'
+		msg['cmd'] = 'create_item'
+		msg['world_id'] = 0
+		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		send_message(msg)		
+
+	#required ['position', 'value', 'world_id']
+	#optional []		
+	def set_map(self, x, y, z, value):
+		msg = {}
+		msg['type'] = 'admin'
+		msg['cmd'] = 'create_item'
+		msg['world_id'] = 0
+		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		msg['value'] = value
+		send_message(msg)			
+	
 class Info_commands:
 	
 	def __init__(self):
@@ -67,7 +87,8 @@ class Info_commands:
 		msg['world_id'] = 0
 		msg['client_id'] = 0 #will need this
 		send_message(msg)		
-		
+
+
 class Agent_commands:
 	
 	def __init__(self):
@@ -80,12 +101,10 @@ class Agent_commands:
 	# required = ['dp, agent_id']
 	# optional = ['player_id']
 	def move_0(self, agent_id, dx, dy, dz=0):
-		#create msg to be sent to server
 		msg = {}	
 		msg['type'] = 'agent'
 		msg['cmd'] = 'move_0'
 		msg['world_id'] = 0
 		msg['agent_id'] = agent_id
 		msg['dp'] = (dx,dy,dz) #position is a 4, tuple (position_type, x, y, z)
-		#send message to server
 		send_message(msg)

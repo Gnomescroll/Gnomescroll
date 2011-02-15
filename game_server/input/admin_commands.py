@@ -12,7 +12,8 @@ class Admin_commands:
 		self.agents.create(x, y, z, player_id):
 		pass
 	
-	#required ['x','y','z','value', 'world_id']
+	#required ['position', 'value', 'world_id']
 	#optional []
-	def set_map(self, msg):
+	def set_map(self, position, value, **msg):
+		(type, x, y, z) = position
 		self.world_map.set(x, y, z, value)
