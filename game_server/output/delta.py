@@ -71,37 +71,38 @@ class Delta: #non-blocking client notification
 	#object notifications
 	
 	#USE THIS INSTEAD
-	def object_position_change(self, object_id, location_state):
+	def object_position_change(self, object_id, position):
 		msg = {}
 		msg['msg'] = 'object_position_change'
 		msg['object_id'] = object_id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = position
 		#msg['object_type'] = self.objects.objects[object_id]['object_type']
 		self.delta_out_q.put(msg)
 	
 	#does not work when object is in inventory
-	def object_state_change(self, object_id, gx, gy, gz):
+	def object_state_change(self, object_id, position):
 		msg = {}
-		msg['msg'] = 'object_state_change_update'
+		msg['msg'] = 'object_state_change'
 		msg['object_id'] = object_id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = position
 		self.delta_out_q.put(msg)
 		pass
 		
 	#this has problems if the object is in inventory
-	def object_delete(self, object_id, gx, gy, gz):
+	def object_delete(self, object_id):
 		msg = {}
 		msg['msg'] = 'object_delete'
 		msg['id'] = object_id
 		self.delta_out_q.put(msg)
 		pass
 	
-	def object_create(self, object_id, object_type, location_state, var_dict={}):
+	#object type is a list of types
+	def object_create(self, object_id, object_type, position):
 		msg = var_dict
-		msg['msg'] = 'object_create_update'
-		msg['object_id'] = object_id
-		msg['object_type'] = object_type
-		msg['location_state'] = location_state
+		msg['msg'] = 'object_create'
+		msg['id'] = object_id
+		msg['type'] = object_type
+		msg['position'] = position
 		self.delta_out_q.put(msg)
 
 	#map notifications

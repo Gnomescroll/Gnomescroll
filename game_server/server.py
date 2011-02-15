@@ -9,8 +9,9 @@ import itertools
 #game state classes
 from game_server.state.world_map import *
 from game_server.state.agents import *
-from game_server.state.entities import *
+from game_server.state.objects import *
 from game_server.state.world_time import *
+from game_server.state.globals import *
 
 ##message handling
 from game_server.input.info_commands import *
@@ -20,7 +21,7 @@ from game_server.input.message_handlers import *
 from game_server.input.message_listener import *
  
 from game_server.interface.agent import *
-from game_server.interface.objects import *
+from game_server.interface.object import *
 
 #interface helpers
 from game_server.interface.message_handlers import *
@@ -42,7 +43,7 @@ class Server:
 		self.world_time = World_time()
 		self.agents = Agents()
 		self.globals = Globals()
-		#self.objects = Objects()
+		self.objects = Objects()
 
 	def share_state(self):
 		not_singletons = []
@@ -55,14 +56,15 @@ class Server:
 				setattr(object1,name2,object2)
 		[[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
 		
+		### INIT Templates ###
 		#Agent class init
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
 		Agent.agents = self.agents.agents
 		#Object class init
-		#Object.world_map = self.world_map
-		#Object.delta = self.delta
-		#Object.objects = self.entity.objects
+		Nobject.world_map = self.world_map
+		Nobject.delta = self.delta
+		Nobject.objects = self.entity.objects
 
 	def run():
 		self.share_state()

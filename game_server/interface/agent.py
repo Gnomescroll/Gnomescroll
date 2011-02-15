@@ -1,20 +1,20 @@
 
-custom_agent_attributes = ['position'] #attributes with class defined get/set properties
+#custom_agent_attributes = ['position'] #attributes with class defined get/set properties
+custom_agent_attributes = []
 
 class Agent:
 
-	agents = None	 #agent dictionary
+	agents = None #agent dictionary
+	objects = None	 #object dictionary
 	world_map = None #world map object
 	delta = None #delta object
 	
-	#custom get/set methods
-	def _get_position(self):
-		return (self.x, self.y, self.z)
-	def _set_position(self, (x,y,z)):
-		self.x = x
-		self.y = y
-		self.z = z
-	position = property(_get_position, _set_position)
+	##custom get/set methods
+	#def _get_position(self):
+		#return self.position
+	#def _set_position(self, position):
+		#self.position = position
+	#position = property(_get_position, _set_position)
 
 	#override handling
 	def __setattr__(self, name, value):
@@ -46,9 +46,7 @@ class Agent:
 	def simple_serialize(self):
 		msg = {}
 		msg['id'] = self.__dict__['id']
-		msg['x'] = self.x
-		msg['y'] = self.y
-		msg['z'] = self.z
+		msg['position'] = self.position
 		msg['position_type'] = self.position_type
 		msg['player_id'] = self.player_id
 		msg['type'] = self.type

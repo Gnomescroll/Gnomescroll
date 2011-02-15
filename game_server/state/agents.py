@@ -9,7 +9,7 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	a['type'] = ['agent']
 	a['name'] = 'generic agent type'
 	#position is (type, x, y, z)
-	a['position'] = (0, x, y, z)
+	a['position'] = [0, x, y, z]
 	a['player_id'] = player_id
 	a['world_id'] = world_id
 	a['version'] = 0
