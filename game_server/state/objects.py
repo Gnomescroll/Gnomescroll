@@ -15,7 +15,7 @@ def create_object(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	a['version'] = 0
 	#a['version'] = 0 #versioning counter
 	
-class Objects()
+class Objects:
 
 	def __init__(self):
 		object_list = {}
@@ -29,7 +29,7 @@ class Objects()
 		id = self.globals.get_unique_id()
 		a = create_object(id, x, y, z, player_id=player_id, world_id = self.world_id)
 		object_list[id] = a
-		self.delta.object_create(id, x, y, z, player_id=None):
+		self.delta.object_create(id, x, y, z, player_id=None)
 		
 	def delete(self, id):
 		pass

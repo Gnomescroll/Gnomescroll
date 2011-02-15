@@ -9,7 +9,7 @@ class Admin_commands:
 	# optional = ['player_id']
 	def create_agent(self, position, player_id = 0, **msg):
 		(position_type, x, y, z) = position
-		self.agents.create(x, y, z, player_id):
+		self.agents.create(x, y, z, player_id)
 		pass
 	
 	#required ['position', 'value', 'world_id']

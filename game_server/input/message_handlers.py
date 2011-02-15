@@ -9,14 +9,14 @@ class Message_handlers:
 		'get_agent' : self.info_commands.get_agent,
 		'get_object' : self.info_commands.get_object,
 		'get_map' : self.info_commands.get_map,
-		'get_agent_list' : self.info_commands.get_agent_list
+		'get_agent_list' : self.info_commands.get_agent_list,
 		'get_object_list' : self.info_commands.get_object_list
 		}
 		
 		self.agent_handler = {
 		'move_0' : self.agent_commands.move_0,
 		'dig' : self.agent_commands.dig,
-		'construct_wall' : self.agent_commands.construct_wall
+		'construct_wall' : self.agent_commands.construct_wall,
 		
 		'pickup_item' : self.agent_commands.pickup_item,
 		'drop_item' : self.agent_commands.drop_item,

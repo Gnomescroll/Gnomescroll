@@ -1,4 +1,4 @@
-from game_server.interface.object import Nobject
+from interface.object import Nobject
 
 custom_crop_attributes = [] #attributes with class defined get/set properties
 
@@ -12,7 +12,8 @@ class Crop:
 	### Object Specific Functions ###
 	
 	def	mature(self):
-		
+		print "CROP MATURED!!!"
+		pass
 	
 	
 	### GENERIC CRAP ###

@@ -1,4 +1,4 @@
-from game_server.interface.agent import *
+from interface.agent import Agent
 
 class Agent_commands:
 	

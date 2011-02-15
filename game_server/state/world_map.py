@@ -20,5 +20,5 @@ class World_map:
 		self.version = self.version + 1
 
 	#needs to return an array, may be sparse
-	def get_z_level(self, z = 0)
+	def get_z_level(self, z = 0):
 		return self.map

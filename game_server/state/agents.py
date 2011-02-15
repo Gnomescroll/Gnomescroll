@@ -15,7 +15,7 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	a['version'] = 0
 	#a['version'] = 0 #versioning counter
 	
-class Agents()
+class Agents:
 
 	def __init__(self):
 		agent_list = {}
@@ -29,7 +29,7 @@ class Agents()
 		id = self.globals.get_unique_id()
 		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.world_id)
 		agent_list[id] = a
-		self.delta.agent_create(id, x, y, z, player_id=None):
+		self.delta.agent_create(id, x, y, z, player_id=None)
 		
 	def delete(self, id):
 		pass

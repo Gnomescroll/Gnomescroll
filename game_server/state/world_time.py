@@ -4,9 +4,9 @@ import heapq
 import itertools
 from threading import Thread
 
-from game_server.interface.agent import Agent
-from game_server.interface.object import Noject
-from game_Server.interface.crop import Crop
+from interface.agent import Agent
+from interface.object import Nobject
+from interface.crop import Crop
 
 #all timers must have a timer_type, and event_type: 
 #then custom parameters for each pair
@@ -20,8 +20,8 @@ def process_timer_callback(timer_dict):
 	if timer_type == "crop":
 		id = timer_dict['id']
 		crop = Crop(id)
-		if event_type = "maturity":
-		crop.mature()
+		if event_type == "maturity":
+			crop.mature()
 
 class World_time:
 

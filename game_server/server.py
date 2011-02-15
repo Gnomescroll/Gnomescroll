@@ -14,7 +14,7 @@ from state.agents import Agents
 from state.objects import Objects
 
 ##input message handling
-from input.message_listener import Message_lister
+from input.message_listener import Message_listener
 from input.message_handlers import Message_handlers
 from input.info_commands import Info_commands
 from input.agent_commands import Agent_commands
