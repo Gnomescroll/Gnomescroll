@@ -61,14 +61,14 @@ class Info: #non-blocking client notification
 		msg['z_level'] = z
 		msg['x_size'] = self.world_map.x_size
 		msg['y_size'] = self.world_map.y_size
-		msg['world_id'] = self.world_map.world_id
+		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		self.info_out_q.put((client_id,msg))
 	
-	def get_agent_list(self, client_id, world_id, **extra):
+	def get_agent_list(self, client_id, **extra):
 		msg = {}
 		msg['msg'] = 'agent_list'
-		msg['world_id'] = world_id
+		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		list = []
 		for id in self.agents.agents.keys():
@@ -76,10 +76,10 @@ class Info: #non-blocking client notification
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
 	
-	def get_object_list(self, client_id, world_id, **extra):
+	def get_object_list(self, client_id, **extra):
 		msg = {}
 		msg['msg'] = 'object_list'
-		msg['world_id'] = world_id
+		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		list = []
 		for id in self.agents.agents.keys():

@@ -28,7 +28,46 @@ class Admin_commands:
 		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		#send message to server
 		send_message(msg)
+
+class Info_commands:
 	
+	def __init__(self):
+		r_client = redis.Redis('localhost')
+
+	def send_message(self,msg, world_id = 0):
+		world_id = msg['world_id']
+		this.r_client.lpush("world_"+str(world_id), dumps(msg))
+
+	#required = ['client_id', 'world_id']
+	#optional = ['z']
+	def get_map():
+		msg = {}	
+		msg['type'] = 'info'
+		msg['cmd'] = 'get_map'
+		msg['world_id'] = 0
+		msg['client_id'] = 0 #will need this
+		send_message(msg)
+
+	#required = ['client_id', 'world_id']
+	#optional = []
+	def get_agent_list():
+		msg = {}	
+		msg['type'] = 'info'
+		msg['cmd'] = 'get_agent_list'
+		msg['world_id'] = 0
+		msg['client_id'] = 0 #will need this
+		send_message(msg)
+
+	#required = ['client_id', 'world_id']
+	#optional = []
+	def get_object_list():
+		msg = {}	
+		msg['type'] = 'info'
+		msg['cmd'] = 'get_agent_list'
+		msg['world_id'] = 0
+		msg['client_id'] = 0 #will need this
+		send_message(msg)		
+		
 class Agent_commands:
 	
 	def __init__(self):

@@ -8,7 +8,9 @@ class Message_handlers:
 		self.info_handler = {
 		'get_agent' : self.info_commands.get_agent,
 		'get_object' : self.info_commands.get_object,
-		'get_map' : self.info_commands.get_map
+		'get_map' : self.info_commands.get_map,
+		'get_agent_list' : self.info_commands.get_agent_list
+		'get_object_list' : self.info_commands.get_object_list
 		}
 		
 		self.agent_handler = {

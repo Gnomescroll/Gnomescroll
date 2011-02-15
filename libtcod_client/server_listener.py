@@ -10,12 +10,11 @@ def message_worker():
 	world_id = 0
 	key = "world_%s_out" % (world_id)
 	r_client.subscribe(key)
-	for m in r_client.listen()
+	
+	for m in r_client.listen():
 		print str(m)
 			
 class Server_listener:
-	
-	delta_out_q = None
 	def __init__(self):
 		t = Thread(target=message_worker, args=())
 		t.daemon = True

@@ -21,3 +21,6 @@ class Info_commands:
 	#optional = []
 	def get_agent_list(self, client_id, msg**):
 		self.info.get_agent_list(client_id)
+
+	def get_object_list(self, client_id, msg**):
+		self.info.get_object_list(client_id)
