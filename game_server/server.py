@@ -7,27 +7,27 @@ from threading import Thread
 import itertools
 
 #game state classes
-from game_server.state.world_map import *
-from game_server.state.agents import *
-from game_server.state.objects import *
-from game_server.state.world_time import *
-from game_server.state.globals import *
+from state.world_map import World_map
+from state.world_time import World_time
+from state.globals import Globals
+from state.agents import Agents
+from state.objects import Objects
 
 ##input message handling
-from game_server.input.info_commands import *
-from game_server.input.agent_commands import *
-from game_server.input.admin_commands import *
-from game_server.input.message_handlers import *
-from game_server.input.message_listener import *
+from input.message_listener import Message_lister
+from input.message_handlers import Message_handlers
+from input.info_commands import Info_commands
+from input.agent_commands import Agent_commands
+from input.admin_commands import Admin_commands
 
 ## output messages
-from game_server.output.info import *
-from game_server.output.delta import *
+from output.info import Info
+from output.delta import Delta
 
 #interfaces 
-from game_server.interface.agent import Agent
-from game_server.interface.object import Noject
-from game_Server.interface.crop import Crop
+from interface.agent import Agent
+from interface.object import Noject
+from interface.crop import Crop
 
 class Server:
 
@@ -39,13 +39,13 @@ class Server:
 		self.agent_commands = Agent_commands()
 		self.admin_commands = Admin_commands()
 		# output to server
-		self.delta = Delta()
 		self.info = Info()
+		self.delta = Delta()
 		#game state
 		self.world_map = World_map()
 		self.world_time = World_time()
-		self.agents = Agents()
 		self.globals = Globals()
+		self.agents = Agents()
 		self.objects = Objects()
 
 	def share_state(self):
