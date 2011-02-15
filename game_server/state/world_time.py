@@ -22,13 +22,6 @@ def process_timer_callback(timer_dict):
 		crop = Crop(id)
 		if event_type = "maturity":
 		crop.mature()
-	##mature 
-	
-	#	agent = agent.Agent(id)
-	#	agent.handle_timer(timer_id)
-#	if timer_type == "plant_maturity":
-#		crop = agent.Crop(id)
-#		crop.timer(timer_id)
 
 class World_time:
 

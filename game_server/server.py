@@ -13,12 +13,16 @@ from game_server.state.objects import *
 from game_server.state.world_time import *
 from game_server.state.globals import *
 
-##message handling
+##input message handling
 from game_server.input.info_commands import *
 from game_server.input.agent_commands import *
 from game_server.input.admin_commands import *
 from game_server.input.message_handlers import *
 from game_server.input.message_listener import *
+
+## output messages
+from game_server.output.info import *
+from game_server.output.delta import *
 
 #interfaces 
 from game_server.interface.agent import Agent
