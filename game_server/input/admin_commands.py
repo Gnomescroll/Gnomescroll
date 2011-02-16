@@ -15,6 +15,18 @@ class Admin_commands:
 		self.agents.create(x, y, z, player_id)
 		pass
 	
+	# required = ['position', 'item_template']
+	# optional = ['player_id']
+	def create_item(self, position, item_template= None, **msg):
+		type = "item"
+		self.objects.create(position, object_type=type)
+		pass
+
+	# required = ['position,', 'object_type', 'template']
+	# optional = ['player_id']
+	def create_object(self, position, object_type, template, **msg):
+		pass
+		
 	#required ['position', 'value', 'world_id']
 	#optional []
 	def set_map(self, position, value, **msg):

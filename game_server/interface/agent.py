@@ -59,9 +59,8 @@ class Agent:
 	def simple_serialize(self):
 		msg = {}
 		msg['id'] = self.__dict__['id']
-		msg['position'] = self.position
-		msg['position_type'] = self.position_type
-		msg['player_id'] = self.player_id
 		msg['type'] = self.type
+		msg['position'] = self.position
+		msg['player_id'] = self.player_id
 		msg['version'] = self.version
 		return msg

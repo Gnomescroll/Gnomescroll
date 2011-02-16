@@ -17,7 +17,7 @@ class Admin_commands:
 	# required = ['position']
 	# optional = ['player_id']
 	## command for creating a new agent at position (x,y,z)
-	def create_agent(self, x, y, z=0):
+	def create_agent(self, x, y, z=0, player_id = 0):
 		#create msg to be sent to server
 		msg = {}
 		#specify command type and command
@@ -26,6 +26,7 @@ class Admin_commands:
 		#command parameters
 		msg['world_id'] = 0
 		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		msg['player_id'] = player_id
 		#send message to server
 		self.send_message(msg)
 
@@ -43,7 +44,7 @@ class Admin_commands:
 	def set_map(self, x, y, z, value):
 		msg = {}
 		msg['type'] = 'admin'
-		msg['cmd'] = 'create_item'
+		msg['cmd'] = 'set_map'
 		msg['world_id'] = 0
 		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		msg['value'] = value

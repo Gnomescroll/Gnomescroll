@@ -33,5 +33,7 @@ class Message_handlers:
 		
 		self.admin_handler = {
 		'create_agent' : self.admin_commands.create_agent,
+		'create_item' : self.admin_commands.create_item,
+		'create_object' : self.admin_commands.create_object,
 		'set_map' : self.admin_commands.set_map
 		}

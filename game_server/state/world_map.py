@@ -14,10 +14,10 @@ class World_map:
 		#grab state from persistant store
 		pass
 		
-	def get(x,y,z):
+	def get(self, x,y,z):
 		return self.map[y * self.x_size + x]
 
-	def set(x,y,z,value):
+	def set(self, x,y,z,value):
 		self.map[y * self.x_size + x] = value
 		self.delta.set_map(x,y,z,value)
 		self.version = self.version + 1

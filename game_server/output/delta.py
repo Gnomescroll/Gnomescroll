@@ -105,11 +105,11 @@ class Delta: #non-blocking client notification
 		pass
 	
 	#object type is a list of types
-	def object_create(self, object_id, object_type, position):
-		msg = var_dict
+	def object_create(self, object_id, position, type):
+		msg = {}
 		msg['msg'] = 'object_create'
 		msg['id'] = object_id
-		msg['type'] = object_type
+		msg['type'] = type
 		msg['position'] = position
 		self.delta_out_q.put(msg)
 

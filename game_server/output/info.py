@@ -32,6 +32,8 @@ class Info: #non-blocking client notification
 	def __init__(self):
 		self.world_map = None
 		self.globals = None
+		self.agents = None
+		self.objects = None
 		pass
 		
 	def start(self, world_id):
@@ -77,7 +79,7 @@ class Info: #non-blocking client notification
 		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		list = []
-		for id in self.agents.agents.keys():
+		for id in self.agents.agent_list.keys():
 			list.append(Agent(id).simple_serialize())
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
@@ -88,7 +90,7 @@ class Info: #non-blocking client notification
 		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		list = []
-		for id in self.agents.agents.keys():
+		for id in self.objects.object_list.keys():
 			list.append(Nobject(id).simple_serialize())
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))

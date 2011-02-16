@@ -28,11 +28,13 @@ class Objects:
 		#grab state from persistant store
 		pass
 
-	def create(self, x, y, z=0, player_id=0):
+	def create(self, position, object_type = None, template = None, player_id=0):
+		(position_type, x, y, z) = position
+		
 		id = self.globals.get_unique_id()
 		a = create_object(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		self.object_list[id] = a
-		self.delta.object_create(id, x, y, z, player_id=None)
+		self.delta.object_create(id, position, a['type'])
 		
 	def delete(self, id):
 		pass
