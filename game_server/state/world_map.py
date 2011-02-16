@@ -10,7 +10,7 @@ class World_map:
 		self.version = 0 #versioning for objects
 		
 	def init(self):
-		this.world_id = self.globals.world_id
+		self.world_id = self.globals.world_id
 		#grab state from persistant store
 		pass
 		

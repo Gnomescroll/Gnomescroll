@@ -1,11 +1,14 @@
+from threading import Thread
+
 class Message_listener:
 	
 	def __init__(self):
 		self.message_handlers = None
+		self.globals = None
 		pass
 	
 	def start(self):
-		t = Thread(target=self.message_worker, args= (self.world_id))
+		t = Thread(target=self.message_worker, args= (self.globals.world_id))
 		t.daemon = True
 		t.start()
 	
