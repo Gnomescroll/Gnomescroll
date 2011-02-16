@@ -19,7 +19,7 @@ def info_out_worker(info_out_q, world_id):
 			##change in production
 			#dest = "client_%s" % (str(client_id))
 			dest = "world_0_out"
-			num_subs = out.publish(dest, msg)
+			num_subs = out.publish(key, msg)
 			if num_subs == 0:
 				print "info_out_worker: no subscribers"
 			else:

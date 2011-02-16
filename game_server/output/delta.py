@@ -10,9 +10,9 @@ def delta_out_worker(delta_out_q, world_id):
 		try:
 			msg = delta_out_q.get()
 			msg = json.dumps(msg)
-			#print "delta_out_worker: " + msg # DEBUGGING
+			print "delta_out_worker: " + msg # DEBUGGING
 			key = "world_%s_out" % (world_id)
-			num_subs = out.publish(dest, msg)
+			num_subs = out.publish(key, msg)
 			if num_subs == 0:
 				print "delta_out_worker: No servers were listening"
 			else:
@@ -37,12 +37,13 @@ class Delta: #non-blocking client notification
 			t.start()
 			
     #agent notifications
-	def agent_position_change(self, agent_id, x, y, z, player_id): #called when agent changes position
+	def agent_position_change(self, agent_id, x, y, z, player_id=0): #called when agent changes position
 		msg = {}
 		msg['msg'] = 'agent_position'
-		msg['id'] = id
-		msg['position'] = (0, x, y, z)
+		msg['id'] = agent_id
+		msg['position'] = [0, x, y, z]
 		#msg['player_id'] = player_id
+		print str(msg)
 		self.delta_out_q.put(msg)
 		pass
 
@@ -50,7 +51,7 @@ class Delta: #non-blocking client notification
 		msg = {}
 		msg['msg'] = 'agent_state_change_update'
 		msg['id'] = agent_id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = [0,x,y,z]
 		self.delta_out_q.put(msg)
 		pass
 				
@@ -61,7 +62,7 @@ class Delta: #non-blocking client notification
 		self.delta_out_q.put(msg)
 		pass
 	
-	def agent_create(self, id, x, y, z, player_id=None):
+	def agent_create(self, id, x, y, z, player_id=0):
 		msg = {}
 		msg['msg'] = 'agent_create_update'
 		msg['id'] = id

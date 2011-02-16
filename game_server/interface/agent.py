@@ -1,14 +1,15 @@
+import sys
 
 #custom_agent_attributes = ['position'] #attributes with class defined get/set properties
 custom_agent_attributes = []
 
 class Agent:
 
-	def move_0(dx,dy,dz):
+	def move_0(self,dx,dy,dz):
 		[type, x, y, z] = self.position
-		[type, x, y, z] = [type, x+gx, y+gy, 0]
+		[type, x, y, z] = [type, x+dx, y+dy, 0]
 		self.position = [type, x, y, z]
-		self.delta.agent_position_change(agent_id, x, y, z)
+		self.delta.agent_position_change(self.__dict__['id'], x, y, z)
 
 	### Generic Stuff ###
 	agents = None #agent dictionary
@@ -43,9 +44,14 @@ class Agent:
 			return self.__dict__['agent_dict'][name]
 
 	def __init__(self, id):
-		self.__dict__['agent_dict'] = Agent.agents[id]
-		self.__dict__['id'] = id
-	
+		#print "id = " + str(id)
+		try:
+			id = int(id)
+			self.__dict__['agent_dict'] = Agent.agents.agent_list[id]
+			self.__dict__['id'] = id
+		except Exception, err:
+			print "Agent.__init__ , agent id does not exist %s: %s" %(sys.stderr, err)
+			
 	def serialize(self):
 		return self.__dict__['agent_dict']
 

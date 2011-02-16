@@ -10,5 +10,5 @@ class Globals:
 
 	#!!! FIX !!!
 	#in future, will have pool/list of global unique_ids	
-	def get_unique_id():
-		next(self.unique_id)
+	def get_unique_id(self):
+		return next(self.unique_id)

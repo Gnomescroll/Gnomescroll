@@ -1,10 +1,10 @@
-import redis.client
-import marshal
+#import redis.client
+#import marshal
 import time
-import json
-import Queue
-from threading import Thread
-import itertools
+#import json
+#import Queue
+#from threading import Thread
+#import itertools
 
 #game state classes
 from state.world_map import World_map
@@ -64,11 +64,11 @@ class Server:
 		#Agent class init
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
-		Agent.agent_list = self.agents.agent_list
+		Agent.agents = self.agents
 		#Object class init
 		Nobject.world_map = self.world_map
 		Nobject.delta = self.delta
-		Nobject.object_list = self.objects.object_list
+		Nobject.objects = self.objects
 
 	def run(self):
 		self.share_state()
@@ -79,8 +79,9 @@ class Server:
 		#self.entities.init() #load objects
 		self.world_time.start()
 		self.message_handlers.define_handlers()
-		self.message_listener.start()
-
+		#self.message_listener.start()
+		self.message_listener.single_threaded_start()
+		
 if __name__ == '__main__':
 	server = Server(0) #world _id = 0
 	server.run()
