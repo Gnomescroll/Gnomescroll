@@ -1,13 +1,16 @@
 class World_map:
 
 	def __init__(self):
+		self.globals = None
+		self.delta = None
+
 		self.x_size = 128
 		self.y_size = 128
 		self.map = [-1 for col in range(self.x_size * self.y_size) ] #-1 is unknown or not defined
 		self.version = 0 #versioning for objects
 		
-	def init(self, world_id =0):
-		world_id = self.world_id
+	def init(self):
+		this.world_id = self.globals.world_id
 		#grab state from persistant store
 		pass
 		

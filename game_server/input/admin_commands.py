@@ -3,7 +3,10 @@
 class Admin_commands:
 	
 	def __init__(self):
-		pass
+		self.world_map = None
+		self.agents = None
+		self.objects = None
+		self.globals = None
 	
 	# required = ['position']
 	# optional = ['player_id']

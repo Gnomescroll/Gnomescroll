@@ -1,6 +1,9 @@
 class Message_handlers:
 	
 	def __init__(self):
+		self.info_commands = None
+		self.agent_commands = None
+		self.admin_commands = None
 		pass
 		
 	def define_handlers(self):

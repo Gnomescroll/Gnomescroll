@@ -49,6 +49,7 @@ class Server:
 		self.objects = Objects()
 
 	def share_state(self):
+		print "Share State Start"
 		not_singletons = []
 		to_share = [singleton for singleton in self.__dict__.items() if singleton[0] not in not_singletons]
 		def share(a,b):
@@ -58,19 +59,21 @@ class Server:
 				print 'Assigning',name2,'to',name1
 				setattr(object1,name2,object2)
 		[[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
-		
+
 		### INIT Templates ###
 		#Agent class init
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
-		Agent.agents = self.agents.agent_list
+		Agent.agent_list = self.agents.agent_list
 		#Object class init
 		Nobject.world_map = self.world_map
 		Nobject.delta = self.delta
-		Nobject.objects = self.objects.object_list
+		Nobject.object_list = self.objects.object_list
 
 	def run(self):
 		self.share_state()
+		self.info.start(self.globals.world_id)
+		self.delta.start(self.globals.world_id)
 		self.world_map.init() #load map
 		self.agents.init() #load agents
 		#self.entities.init() #load objects

@@ -3,7 +3,8 @@
 class Info_commands:
 	
 	def __init__(self):
-		pass
+		self.info = None
+		self.globals = None
 
 	#required = ['agent_id', 'client_id', 'world_id']
 	#optional = []		

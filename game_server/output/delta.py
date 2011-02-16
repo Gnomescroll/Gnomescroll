@@ -26,10 +26,13 @@ class Delta: #non-blocking client notification
 	
 	delta_out_q = None
 	def __init__(self):
-		self.delta_out_q = Queue.Queue()
+		pass
+		
+	def start(self, world_id):
+		self.delta_out_q = Queue.Queue() 
 		num_worker_threads = 1
 		for i in range(num_worker_threads):
-			t = Thread(target=delta_out_worker, args=(self.delta_out_q,))
+			t = Thread(target=delta_out_worker, args=(self.delta_out_q, world_id,))
 			t.daemon = True
 			t.start()
 			

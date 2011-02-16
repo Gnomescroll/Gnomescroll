@@ -18,16 +18,19 @@ def create_object(id, x, y, z, template = None, player_id = 0, world_id = 0):
 class Objects:
 
 	def __init__(self):
-		object_list = {}
+		self.globals = None
+		self.delta = None
+		#
+		self.object_list = {}
 
-	def init(self, world_id =0):
-		world_id = self.world_id
+	def init(self):
+		world_id = self.globals.world_id
 		#grab state from persistant store
 		pass
 
 	def create(self, x, y, z=0, player_id=0):
 		id = self.globals.get_unique_id()
-		a = create_object(id, x, y, z, player_id=player_id, world_id = self.world_id)
+		a = create_object(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		object_list[id] = a
 		self.delta.object_create(id, x, y, z, player_id=None)
 		

@@ -1,6 +1,7 @@
 class Message_listener:
 	
 	def __init__(self):
+		self.message_handlers = None
 		pass
 	
 	def start(self):

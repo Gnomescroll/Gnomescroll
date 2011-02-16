@@ -3,7 +3,7 @@ from interface.agent import Agent
 class Agent_commands:
 	
 	def __init__(self):
-		pass
+		self.globals = None
 
 	# required = ['dp, agent_id']
 	# optional = ['player_id']		

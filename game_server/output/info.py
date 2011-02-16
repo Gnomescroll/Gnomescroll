@@ -8,7 +8,7 @@ from interface.agent import Agent
 from interface.object import Nobject
 
 #output block, so may need more worker threads for performance
-def info_out_worker(info_out_q):
+def info_out_worker(info_out_q, world_id):
 	out = redis.Redis("localhost")
 	#the output buffer may depend on the client_id in the future
 	while True:
@@ -32,10 +32,13 @@ def info_out_worker(info_out_q):
 class Info: #non-blocking client notification
 	
 	def __init__(self):
+		pass
+		
+	def start(self, world_id):
 		self.info_out_q = Queue.Queue() 
 		num_worker_threads = 1
 		for i in range(num_worker_threads):
-			t = Thread(target=info_out_worker, args=(self.info_out_q,))
+			t = Thread(target=info_out_worker, args=(self.info_out_q, world_id,))
 			t.daemon = True
 			t.start()
 	

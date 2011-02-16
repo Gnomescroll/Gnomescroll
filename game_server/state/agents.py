@@ -18,16 +18,19 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 class Agents:
 
 	def __init__(self):
-		agent_list = {}
+		self.globals = None
+		self.delta = None
+		#
+		self.agent_list = {}
 
 	def init(self, world_id =0):
-		world_id = self.world_id
+		world_id = self.globals.world_id
 		#grab state from persistant store
 		pass
 
 	def create(self, x, y, z=0, player_id=0):
 		id = self.globals.get_unique_id()
-		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.world_id)
+		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		agent_list[id] = a
 		self.delta.agent_create(id, x, y, z, player_id=None)
 		
