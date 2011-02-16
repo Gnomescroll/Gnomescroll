@@ -56,7 +56,7 @@ class Server:
 			name1, object1 = a[0], a[1]
 			name2, object2 = b[0], b[1]
 			if getattr(object1,name2,'xx') != 'xx':
-				print 'Assigning',name2,'to',name1
+				#print 'Assigning',name2,'to',name1
 				setattr(object1,name2,object2)
 		[[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
 
@@ -84,3 +84,4 @@ class Server:
 if __name__ == '__main__':
 	server = Server(0) #world _id = 0
 	server.run()
+	time.sleep(3600)
