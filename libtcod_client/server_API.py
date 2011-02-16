@@ -69,6 +69,28 @@ class Info_commands:
 		msg['client_id'] = 0 #will need this
 		self.send_message(msg)
 
+	#required = ['agent_id', 'client_id', 'world_id']
+	#optional = []			
+	def get_agent(self, id):
+		msg = {}	
+		msg['type'] = 'info'
+		msg['cmd'] = 'get_agent'
+		msg['world_id'] = 0
+		msg['client_id'] = 0
+		msg['agent_id'] = id
+		self.send_message(msg)
+
+	#required = ['object_id', 'client_id', 'world_id']
+	#optional = []			
+	def get_object(self, id):
+		msg = {}	
+		msg['type'] = 'info'
+		msg['cmd'] = 'get_object'
+		msg['world_id'] = 0
+		msg['client_id'] = 0
+		msg['object_id'] = id
+		self.send_message(msg)		
+		
 	#required = ['client_id', 'world_id']
 	#optional = []
 	def get_agent_list(self):

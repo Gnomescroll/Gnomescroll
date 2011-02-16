@@ -13,7 +13,7 @@ class Info_commands:
 
 	#required = ['object_id', 'client_id', 'world_id']
 	#optional = []			
-	def get_object(self, **msg):
+	def get_object(self, object_id, client_id, **msg):
 		self.info.object_info(object_id, client_id)
 
 	#required = ['client_id', 'world_id']
