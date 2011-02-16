@@ -36,7 +36,7 @@ class Nobject:
 			return self.__dict__['agent_dict'][name]
 
 	def __init__(self, id):
-		self.__dict__['object_dict'] = Nobject.objects[id]
+		self.__dict__['object_dict'] = Nobject.objects.object_list[id]
 		self.__dict__['id'] = id
 	
 	def serialize(self):
