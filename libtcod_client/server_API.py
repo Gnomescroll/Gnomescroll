@@ -60,7 +60,7 @@ class Info_commands:
 
 	#required = ['client_id', 'world_id']
 	#optional = ['z']
-	def get_map():
+	def get_map(self):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_map'
@@ -70,7 +70,7 @@ class Info_commands:
 
 	#required = ['client_id', 'world_id']
 	#optional = []
-	def get_agent_list():
+	def get_agent_list(self):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_agent_list'
@@ -80,7 +80,7 @@ class Info_commands:
 
 	#required = ['client_id', 'world_id']
 	#optional = []
-	def get_object_list():
+	def get_object_list(self):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_agent_list'

@@ -15,15 +15,13 @@ def info_out_worker(info_out_q, world_id):
 		try:
 			(client_id, msg) = info_out_q.get()
 			msg = json.dumps(msg)
-			#print "info_out_worker: " + str(msg) # DEBUGGING
-			##change in production
-			#dest = "client_%s" % (str(client_id))
-			dest = "world_0_out"
+			print "info_out_worker: " + str(msg) # DEBUGGING
+			key = "world_0_out"
 			num_subs = out.publish(key, msg)
-			if num_subs == 0:
-				print "info_out_worker: no subscribers"
-			else:
-				print "info_out_worker: " + str(num_subs) + " subscribers" 
+#			if num_subs == 0:
+#				print "info_out_worker: no subscribers"
+#			else:
+#				print "info_out_worker: " + str(num_subs) + " subscribers" 
 			info_out_q.task_done()
 		except:
 			print "redis_info_worker: Error In Worker Process"
@@ -32,6 +30,8 @@ def info_out_worker(info_out_q, world_id):
 class Info: #non-blocking client notification
 	
 	def __init__(self):
+		self.world_map = None
+		self.globals = None
 		pass
 		
 	def start(self, world_id):
@@ -60,7 +60,7 @@ class Info: #non-blocking client notification
 		self.info_out_q.put((client_id,msg))
 		pass
 	
-	def get_map(z=0, client_id=0):
+	def get_map(self, z=0, client_id=0):
 		array = self.world_map.get_z_level(z)
 		msg = {}
 		msg['map'] = array
