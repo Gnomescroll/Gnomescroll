@@ -13,12 +13,10 @@ function Globals()
 	}	
 }
 
-function Admin_commands()
+function Admin_commands(globals)
 {
-	this.globals = null;
+	this.globals = globals;
 	this.type = 'info';
-	
-	this.init = function(globals) {	this.globals = globals; }
 	
 	this.create_agent = function(x,y,z, player_id) {
 		if(player_id == null) { player_id=0;}
@@ -64,9 +62,9 @@ function Admin_commands()
 	}	
 }
 
-function Info_commands()
+function Info_commands(globals)
 {
-	this.globals = null;
+	this.globals = globals;
 	this.type = "info";
 	
 	this.init = function(globals) {	this.globals = globals; }
@@ -139,9 +137,9 @@ function Info_commands()
 			
 }
 
-function Agent_commands()
+function Agent_commands(globals)
 {
-	this.globals = null;
+	this.globals = globals;
 	this.type = 'agent'
 	
 	this.init = function(globals) {	this.globals = globals; }
