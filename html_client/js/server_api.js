@@ -27,7 +27,8 @@ function Admin_commands()
 		cmd: "create_agent",
 		type: this.type
 		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
+		world_id: this.globals.world_id,
+		player_id: player_id
 		};
 		
 		$.post(this.globals.server_out, data);	
@@ -39,7 +40,8 @@ function Admin_commands()
 		cmd: "create_item",
 		type: this.type
 		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
+		world_id: this.globals.world_id,
+		position: [0, x, y, z]
 		};
 		
 		$.post(this.globals.server_out, data);	
@@ -52,7 +54,9 @@ function Admin_commands()
 		cmd: "set_map",
 		type: this.type
 		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
+		world_id: this.globals.world_id,
+		position: [0, x, y, z],
+		value: value
 		};
 		
 		$.post(this.globals.server_out, data);	
@@ -86,7 +90,8 @@ function Info_commands()
 		cmd: "get_agent",
 		type: this.type
 		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
+		world_id: this.globals.world_id,
+		agent_id: id
 		};
 		
 		$.post(this.globals.server_out, data);	
@@ -99,7 +104,8 @@ function Info_commands()
 		cmd: "get_object",
 		type: this.type
 		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
+		world_id: this.globals.world_id,
+		object_id = id
 		};
 		
 		$.post(this.globals.server_out, data);	
@@ -146,7 +152,9 @@ function Agent_commands()
 		cmd: "move_0",
 		type: this.type
 		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
+		world_id: this.globals.world_id,
+		agent_id: agent_id,
+		dp: [dx, dy, dz]
 		};
 		
 		$.post(this.globals.server_out, data);	
