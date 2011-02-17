@@ -12,3 +12,5 @@ create_item
 get_map
 get_agent_list
 get_agent
+get_object
+get_object_list
