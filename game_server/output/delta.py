@@ -9,14 +9,17 @@ def delta_out_worker(delta_out_q, world_id):
 	while True:
 		try:
 			msg = delta_out_q.get()
+			#print "delta_out_worker: " + str(msg) # DEBUGGING
 			msg = json.dumps(msg)
-			#print "delta_out_worker: " + msg # DEBUGGING
+			print "delta_out_worker: " + msg # DEBUGGING
 			key = "world_%s_out" % (world_id)
-			num_subs = out.publish(dest, msg)
-			if num_subs == 0:
-				print "delta_out_worker: No servers were listening"
-			else:
-				print "delta_out_worker: %i servers were listening" % (num_subs)
+			num_subs = out.publish(key, msg)
+			
+#			if num_subs == 0:
+#				print "delta_out_worker: No servers were listening"
+#			else:
+#				print "delta_out_worker: %i servers were listening" % (num_subs)
+				
  			delta_out_q.task_done()
 		except Exception, err:
 			print "redis_delta_worker: Error In Worker Process,  %s: %s" %(sys.stderr, err)
@@ -26,20 +29,25 @@ class Delta: #non-blocking client notification
 	
 	delta_out_q = None
 	def __init__(self):
-		self.delta_out_q = Queue.Queue()
+		self.globals = None
+		pass
+		
+	def start(self, world_id):
+		self.delta_out_q = Queue.Queue() 
 		num_worker_threads = 1
 		for i in range(num_worker_threads):
-			t = Thread(target=delta_out_worker, args=(self.delta_out_q,))
+			t = Thread(target=delta_out_worker, args=(self.delta_out_q, self.globals.world_id,))
 			t.daemon = True
 			t.start()
 			
     #agent notifications
-	def agent_position_change(self, agent_id, x, y, z, player_id): #called when agent changes position
+	def agent_position_change(self, agent_id, x, y, z, player_id=0): #called when agent changes position
 		msg = {}
 		msg['msg'] = 'agent_position'
-		msg['id'] = id
-		msg['position'] = (0, x, y, z)
+		msg['id'] = agent_id
+		msg['position'] = [0, x, y, z]
 		#msg['player_id'] = player_id
+		#print str(msg)
 		self.delta_out_q.put(msg)
 		pass
 
@@ -47,7 +55,7 @@ class Delta: #non-blocking client notification
 		msg = {}
 		msg['msg'] = 'agent_state_change_update'
 		msg['id'] = agent_id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = [0,x,y,z]
 		self.delta_out_q.put(msg)
 		pass
 				
@@ -58,7 +66,7 @@ class Delta: #non-blocking client notification
 		self.delta_out_q.put(msg)
 		pass
 	
-	def agent_create(self, id, x, y, z, player_id=None):
+	def agent_create(self, id, x, y, z, player_id=0):
 		msg = {}
 		msg['msg'] = 'agent_create_update'
 		msg['id'] = id
@@ -71,37 +79,38 @@ class Delta: #non-blocking client notification
 	#object notifications
 	
 	#USE THIS INSTEAD
-	def object_position_change(self, object_id, location_state):
+	def object_position_change(self, object_id, position):
 		msg = {}
 		msg['msg'] = 'object_position_change'
 		msg['object_id'] = object_id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = position
 		#msg['object_type'] = self.objects.objects[object_id]['object_type']
 		self.delta_out_q.put(msg)
 	
 	#does not work when object is in inventory
-	def object_state_change(self, object_id, gx, gy, gz):
+	def object_state_change(self, object_id, position):
 		msg = {}
-		msg['msg'] = 'object_state_change_update'
+		msg['msg'] = 'object_state_change'
 		msg['object_id'] = object_id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = position
 		self.delta_out_q.put(msg)
 		pass
 		
 	#this has problems if the object is in inventory
-	def object_delete(self, object_id, gx, gy, gz):
+	def object_delete(self, object_id):
 		msg = {}
 		msg['msg'] = 'object_delete'
 		msg['id'] = object_id
 		self.delta_out_q.put(msg)
 		pass
 	
-	def object_create(self, object_id, object_type, location_state, var_dict={}):
-		msg = var_dict
-		msg['msg'] = 'object_create_update'
-		msg['object_id'] = object_id
-		msg['object_type'] = object_type
-		msg['location_state'] = location_state
+	#object type is a list of types
+	def object_create(self, object_id, position, type):
+		msg = {}
+		msg['msg'] = 'object_create'
+		msg['id'] = object_id
+		msg['type'] = type
+		msg['position'] = position
 		self.delta_out_q.put(msg)
 
 	#map notifications

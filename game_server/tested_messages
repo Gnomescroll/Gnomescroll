@@ -1,0 +1,14 @@
+Tested as Working:
+
+-- Agent --
+move_0
+
+-- Admin --
+create_agent
+set_map
+create_item
+
+-- Info --
+get_map
+get_agent_list
+get_agent

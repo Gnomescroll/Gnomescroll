@@ -1,20 +1,28 @@
+import sys
 
-custom_agent_attributes = ['position'] #attributes with class defined get/set properties
+#custom_agent_attributes = ['position'] #attributes with class defined get/set properties
+custom_agent_attributes = []
 
 class Agent:
 
-	agents = None	 #agent dictionary
+	def move_0(self,dx,dy,dz):
+		[type, x, y, z] = self.position
+		[type, x, y, z] = [type, x+dx, y+dy, 0]
+		self.position = [type, x, y, z]
+		self.delta.agent_position_change(self.__dict__['id'], x, y, z)
+
+	### Generic Stuff ###
+	agents = None #agent dictionary
+	objects = None	 #object dictionary
 	world_map = None #world map object
 	delta = None #delta object
 	
-	#custom get/set methods
-	def _get_position(self):
-		return (self.x, self.y, self.z)
-	def _set_position(self, (x,y,z)):
-		self.x = x
-		self.y = y
-		self.z = z
-	position = property(_get_position, _set_position)
+	##custom get/set methods
+	#def _get_position(self):
+		#return self.position
+	#def _set_position(self, position):
+		#self.position = position
+	#position = property(_get_position, _set_position)
 
 	#override handling
 	def __setattr__(self, name, value):
@@ -36,9 +44,14 @@ class Agent:
 			return self.__dict__['agent_dict'][name]
 
 	def __init__(self, id):
-		self.__dict__['agent_dict'] = Agent.agents[id]
-		self.__dict__['id'] = id
-	
+		#print "id = " + str(id)
+		try:
+			id = int(id)
+			self.__dict__['agent_dict'] = Agent.agents.agent_list[id]
+			self.__dict__['id'] = id
+		except Exception, err:
+			print "Agent.__init__ , agent id does not exist %s: %s" %(sys.stderr, err)
+			
 	def serialize(self):
 		return self.__dict__['agent_dict']
 
@@ -46,11 +59,8 @@ class Agent:
 	def simple_serialize(self):
 		msg = {}
 		msg['id'] = self.__dict__['id']
-		msg['x'] = self.x
-		msg['y'] = self.y
-		msg['z'] = self.z
-		msg['position_type'] = self.position_type
-		msg['player_id'] = self.player_id
 		msg['type'] = self.type
+		msg['position'] = self.position
+		msg['player_id'] = self.player_id
 		msg['version'] = self.version
 		return msg

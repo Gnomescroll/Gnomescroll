@@ -4,7 +4,9 @@ import heapq
 import itertools
 from threading import Thread
 
-#import agent
+from interface.agent import Agent
+from interface.object import Nobject
+from interface.crop import Crop
 
 #all timers must have a timer_type, and event_type: 
 #then custom parameters for each pair
@@ -18,15 +20,8 @@ def process_timer_callback(timer_dict):
 	if timer_type == "crop":
 		id = timer_dict['id']
 		crop = Crop(id)
-		if event_type = "maturity":
-		crop.mature()
-	##mature 
-	
-		agent = agent.Agent(id)
-		agent.handle_timer(timer_id)
-#	if timer_type == "plant_maturity":
-#		crop = agent.Crop(id)
-#		crop.timer(timer_id)
+		if event_type == "maturity":
+			crop.mature()
 
 class World_time:
 
