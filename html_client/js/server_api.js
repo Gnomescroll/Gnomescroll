@@ -1,4 +1,20 @@
 
+/*
+//globals.update( { world_id: 7, client_id: 15 } ) and it will update that
+
+var globals = {
+
+world_id: 0,
+client_id: 0,
+server_out: null,
+update: update = function(params) {
+this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
+this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
+this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
+}
+}
+*/
+
 
 var globals = {
 
@@ -27,6 +43,7 @@ function Globals()
 	}	
 }
 */
+
 
 function Admin_commands(globals)
 {
