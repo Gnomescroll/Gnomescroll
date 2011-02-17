@@ -18,14 +18,14 @@ function Admin_commands()
 	this.globals = null;
 	this.type = 'info';
 	
-	this.prototype.init = function(globals) {	this.globals = globals }
+	this.prototype.init = function(globals) {	this.globals = globals; }
 	
 	this.prototype.create_agent = function(x,y,z, player_id) {
 		if(player_id == null) { player_id=0;}
 	
 		data = { 
 		cmd: "create_agent",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
 		player_id: player_id
@@ -38,7 +38,7 @@ function Admin_commands()
 
 		data = { 
 		cmd: "create_item",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
 		position: [0, x, y, z]
@@ -52,7 +52,7 @@ function Admin_commands()
 
 		data = { 
 		cmd: "set_map",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
 		position: [0, x, y, z],
@@ -69,13 +69,13 @@ function Info_commands()
 	this.globals = null;
 	this.type = "info";
 	
-	this.prototype.init = function(globals) {	this.globals = globals }
+	this.prototype.init = function(globals) {	this.globals = globals; }
 	
 	this.prototype.get_map = function() {
 
 		data = { 
 		cmd: "get_map",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id
 		};
@@ -88,7 +88,7 @@ function Info_commands()
 
 		data = { 
 		cmd: "get_agent",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
 		agent_id: id
@@ -102,10 +102,10 @@ function Info_commands()
 
 		data = { 
 		cmd: "get_object",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
-		object_id = id
+		object_id: id
 		};
 		
 		$.post(this.globals.server_out, data);	
@@ -116,7 +116,7 @@ function Info_commands()
 		
 		data = { 
 		cmd: "get_agent_list",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id
 		};
@@ -129,7 +129,7 @@ function Info_commands()
 		
 		data = { 
 		cmd: "get_object_list",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id
 		};
@@ -144,13 +144,13 @@ function Agent_commands()
 	this.globals = null;
 	this.type = 'agent'
 	
-	this.prototype.init = function(globals) {	this.globals = globals }
+	this.prototype.init = function(globals) {	this.globals = globals; }
 	
 	this.prototype.move_0 = function(agent_id, dx, dy, dz) {
 
 		data = { 
 		cmd: "move_0",
-		type: this.type
+		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
 		agent_id: agent_id,
