@@ -33,7 +33,7 @@ function Game_world(world_id)
 	this.map = new Terrain_map;
 	
 	
-	this.protype.load = function() {
+	this.prototype.load = function() {
 		//load map from server
 		
 		//make request for map data from server
