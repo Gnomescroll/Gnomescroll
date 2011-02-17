@@ -6,7 +6,7 @@ function Globals()
 	this.client_id = 0;
 	this.server_out = null;
 
-	this.prototype.init = function(world_id, client_id, server_out) {
+	this.init = function(world_id, client_id, server_out) {
 	this.world_id = world_id;
 	this.client_id = client_id;
 	this.server_out = server_out;
@@ -18,9 +18,9 @@ function Admin_commands()
 	this.globals = null;
 	this.type = 'info';
 	
-	this.prototype.init = function(globals) {	this.globals = globals; }
+	this.init = function(globals) {	this.globals = globals; }
 	
-	this.prototype.create_agent = function(x,y,z, player_id) {
+	this.create_agent = function(x,y,z, player_id) {
 		if(player_id == null) { player_id=0;}
 	
 		data = { 
@@ -34,7 +34,7 @@ function Admin_commands()
 		$.post(this.globals.server_out, data);	
 	}
 
-	this.prototype.create_item = function(x,y,z) {
+	this.create_item = function(x,y,z) {
 
 		data = { 
 		cmd: "create_item",
@@ -48,7 +48,7 @@ function Admin_commands()
 				
 	}
 	
-	this.prototype.set_map = function(x,y,z, value) {
+	this.set_map = function(x,y,z, value) {
 
 		data = { 
 		cmd: "set_map",
@@ -69,9 +69,9 @@ function Info_commands()
 	this.globals = null;
 	this.type = "info";
 	
-	this.prototype.init = function(globals) {	this.globals = globals; }
+	this.init = function(globals) {	this.globals = globals; }
 	
-	this.prototype.get_map = function() {
+	this.get_map = function() {
 
 		data = { 
 		cmd: "get_map",
@@ -84,7 +84,7 @@ function Info_commands()
 				
 	}
 
-	this.prototype.get_agent = function(id) {
+	this.get_agent = function(id) {
 
 		data = { 
 		cmd: "get_agent",
@@ -98,7 +98,7 @@ function Info_commands()
 				
 	}
 
-	this.prototype.get_object = function(id) {
+	this.get_object = function(id) {
 
 		data = { 
 		cmd: "get_object",
@@ -112,7 +112,7 @@ function Info_commands()
 				
 	}
 	
-	this.prototype.get_agent_list = function() {
+	this.get_agent_list = function() {
 		
 		data = { 
 		cmd: "get_agent_list",
@@ -125,7 +125,7 @@ function Info_commands()
 				
 	}
 
-	this.prototype.get_object_list = function() {
+	this.get_object_list = function() {
 		
 		data = { 
 		cmd: "get_object_list",
@@ -144,9 +144,9 @@ function Agent_commands()
 	this.globals = null;
 	this.type = 'agent'
 	
-	this.prototype.init = function(globals) {	this.globals = globals; }
+	this.init = function(globals) {	this.globals = globals; }
 	
-	this.prototype.move_0 = function(agent_id, dx, dy, dz) {
+	this.move_0 = function(agent_id, dx, dy, dz) {
 
 		data = { 
 		cmd: "move_0",
