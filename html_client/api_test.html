@@ -24,12 +24,9 @@ function init()
 	g = Globals;
 	//g.server_out = 'http://127.0.0.1:8055/';
 	//alert(g.server_out);
-	info = new Info_commands;
-	info.init(g);
-	admin = new Admin_commands;
-	admin.init(g);
-	agent = new Agent_commands;
-	agent.init(g);
+	info = new Info_commands(g);
+	admin = new Admin_commands(g);
+	agent = new Agent_commands(g);
 	
 	//info = Info_commands;
 	//admin = Admin_commands;
