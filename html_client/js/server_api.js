@@ -24,7 +24,7 @@ function Admin_commands()
 		if(player_id == null) { player_id=0;}
 	
 		data = { 
-		cmd: "create_agent",
+		cmd: 'create_agent',
 		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
