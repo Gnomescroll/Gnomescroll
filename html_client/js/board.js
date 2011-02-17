@@ -1,3 +1,14 @@
+//selectors
+
+var selectors;
+
+selectors = { //put hardcoded selectors here
+            
+            };
+
+
+
+
 //class
 function Board(div_id, width, height)
 {
