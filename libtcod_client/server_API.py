@@ -106,7 +106,7 @@ class Info_commands:
 	def get_object_list(self):
 		msg = {}	
 		msg['type'] = 'info'
-		msg['cmd'] = 'get_agent_list'
+		msg['cmd'] = 'get_object_list'
 		msg['world_id'] = 0
 		msg['client_id'] = 0 #will need this
 		self.send_message(msg)		

@@ -33,7 +33,7 @@ class Nobject:
 			value = property.fget(self)
 			return value
 		else:
-			return self.__dict__['agent_dict'][name]
+			return self.__dict__['object_dict'][name]
 
 	def __init__(self, id):
 		self.__dict__['object_dict'] = Nobject.objects.object_list[id]
