@@ -58,9 +58,28 @@ class MyHandler(BaseHTTPRequestHandler):
 				postvars = {}
 			print "postvars= " + str(postvars)
 #			print str(postvars['gx'])
+
 			for x,y  in postvars.items():
 				if type(y)==type([]) and len(y) == 1:
 					postvars[x] = y[0]
+			#strip []s
+			array_cases = ['dp', 'position'] #arrays that are passed through
+			for prefix in array_cases:
+				x= prefix + '[]'
+				if x in postvars.keys():
+					postvars[prefix] = postvars[x]
+					del postvars[x]
+					
+			single_ints = ['agent_id', 'id', 'world_id', 'player_id']
+			int_arrays = ['position', 'dp']
+			
+			for x,y  in postvars.items():
+				if x in single_ints:
+					postvars[x] = int(y)
+				if type(y)==type([]) and x in int_arrays:	
+					for index, g in enumerate(y):
+						y[index] = int(y[index])
+
 			print "postvars= " + str(postvars)
 			
 			send_message(postvars)

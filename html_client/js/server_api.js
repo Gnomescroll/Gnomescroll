@@ -48,7 +48,7 @@ function Globals()
 function Admin_commands(globals)
 {
 	this.globals = globals;
-	this.type = 'info';
+	this.type = 'admin';
 	
 	this.create_agent = function(x,y,z, player_id) {
 		if(player_id == null) { player_id=0;}
@@ -58,7 +58,8 @@ function Admin_commands(globals)
 		type: this.type,
 		client_id: this.globals.client_id,
 		world_id: this.globals.world_id,
-		player_id: player_id
+		player_id: player_id,
+		position: [0, x, y, z]
 		};
 		
 		$.post(this.globals.server_out, data);	
