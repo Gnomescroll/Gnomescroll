@@ -86,6 +86,8 @@ var screen = ( function () {
             $('body').prepend(canvas);
         }
         
+        canvas.css('margin-left', parseInt((window.innerWidth - x_res) / 2.5)); //shift it to the right
+        
         canvas = canvas[0];
         
         canvas.width = x_res;
@@ -104,6 +106,11 @@ var screen = ( function () {
         // 2 resize events:
         // window resize
         // user adjust cell size
+        
+        $(window).resize( function (event) {
+            resizeScreen();
+            test();
+        });
 
     }
     
@@ -113,8 +120,11 @@ var screen = ( function () {
         
         ctx = canvas.getContext("2d");
         
-        var drawCircle, drawSquare, checkerboard;
-        // draw a circle
+        var drawCircle,
+            drawSquare,
+            drawOutlinedSquare,
+            checkerboard,
+            gridBoard;
         
         drawCircle = function () {
             
@@ -125,34 +135,72 @@ var screen = ( function () {
         }
 
         drawSquare = function(x, y, width, height, color) {
-            //ctx.save();
             ctx.fillStyle = color || "black";
             ctx.fillRect(x, y, width, height);
-            //ctx.restore();
+        }
+        
+        drawOutlinedSquare = function(x, y, width, height, color) {
+            ctx.strokeStyle = color || "black";
+            ctx.strokeRect(x, y, width, height);
         }
 
-        checkerboard = function()  {
+        checkerboard = function(color, grid)  {
+            
+            var draw_func = drawSquare;
+            
+            if (grid !== undefined) {
+                draw_func = drawOutlinedSquare;
+            }
+            
+            var even_width = function(i, x, y) {
+                var row, col;
+                col = i % grid_cells;
+                row = (i-col)/grid_cells;
+                if (row%2 === 0 && i%2 === 0) {
+                    draw_func(x, y, cell_width, cell_height, color);
+                } else if (row%2 === 1 && i%2 === 1) {
+                    draw_func(x, y, cell_width, cell_height, color);
+                }
+            }
+            
+            var odd_width = function(i, x, y) {
+                if (i%2 === 0) {
+                    draw_func(x, y, cell_width, cell_height, color);
+                }
+            }
+            
+            var pattern;
+            
+            if (grid_cells % 2 === 0) {
+                pattern = even_width;
+            } else {
+                pattern = odd_width;
+            }
+            
             $.each(cells, function(i, cell) {
             
                 var x = cell[0],
                     y = cell[1];
-                    
-                if (i%2 != 0) {
-                    drawSquare(x, y, cell_width, cell_height, "red");
-                }
+                
+                pattern(i, x, y);
             });
         }
-    
+        
+        gridBoard = function(color) {
+            checkerboard(color, true);
+        }
+        
         //drawCircle();
-        checkerboard();
+        //checkerboard("red");
+        gridBoard("red");
     
     }
     
     public_ = {
-                    init: init,
-                    resizeScreen: resizeScreen,
-                    test: test
-                  }
+                init: init,
+                resizeScreen: resizeScreen,
+                test: test
+              }
     
     return public_;
 
