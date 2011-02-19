@@ -18,6 +18,12 @@ var send = function (data) {
     
 }
 
+var inspect = function (data) {
+
+    data = JSON.stringify(data);
+	return data;
+	
+}
 // e.g.
 
 // send(admin_commands.create_item(5,5,6));
