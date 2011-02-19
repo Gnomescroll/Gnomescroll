@@ -41,21 +41,20 @@ class Delta: #non-blocking client notification
 			t.start()
 			
     #agent notifications
-	def agent_position_change(self, agent_id, x, y, z, player_id=0): #called when agent changes position
+	def agent_position_change(self, agent_id, position, player_id=0): #called when agent changes position
 		msg = {}
 		msg['msg'] = 'agent_position'
 		msg['id'] = agent_id
-		msg['position'] = [0, x, y, z]
-		#msg['player_id'] = player_id
-		#print str(msg)
+		msg['position'] = position #[0, x, y, z]
 		self.delta_out_q.put(msg)
 		pass
 
-	def agent_state_change(self, agent_id, x, y, z):
+	def agent_state_change(self, agent_id, position, version):
 		msg = {}
 		msg['msg'] = 'agent_state_change_update'
 		msg['id'] = agent_id
-		msg['position'] = [0,x,y,z]
+		msg['version'] = version
+		msg['position'] = position # [0,x,y,z]
 		self.delta_out_q.put(msg)
 		pass
 				
@@ -70,7 +69,7 @@ class Delta: #non-blocking client notification
 		msg = {}
 		msg['msg'] = 'agent_create_update'
 		msg['id'] = id
-		msg['position'] = (0,x,y,z)
+		msg['position'] = position #(0,x,y,z)
 		msg['player_id'] = player_id
 		self.delta_out_q.put(msg)
 		#print 'agent_create_update put'
@@ -82,16 +81,17 @@ class Delta: #non-blocking client notification
 	def object_position_change(self, object_id, position):
 		msg = {}
 		msg['msg'] = 'object_position_change'
-		msg['object_id'] = object_id
+		msg['id'] = object_id
 		msg['position'] = position
 		#msg['object_type'] = self.objects.objects[object_id]['object_type']
 		self.delta_out_q.put(msg)
 	
 	#does not work when object is in inventory
-	def object_state_change(self, object_id, position):
+	def object_state_change(self, object_id, position, version):
 		msg = {}
 		msg['msg'] = 'object_state_change'
-		msg['object_id'] = object_id
+		msg['id'] = object_id
+		msg['version'] = version
 		msg['position'] = position
 		self.delta_out_q.put(msg)
 		pass

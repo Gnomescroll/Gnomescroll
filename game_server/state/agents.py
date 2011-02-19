@@ -32,7 +32,7 @@ class Agents:
 		id = self.globals.get_unique_id()
 		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		self.agent_list[id] = a
-		self.delta.agent_create(id, x, y, z, player_id=None)
+		self.delta.agent_create(id, [0, x, y, z], player_id=None)
 		
 	def delete(self, id):
 		pass

@@ -44,21 +44,25 @@ class Info: #non-blocking client notification
 			t.daemon = True
 			t.start()
 	
-	def agent_info(self, id, client_id):
+	def agent_info(self, id, client_id, version = -1):
 		msg = {}
 		msg['msg'] = 'agent_info'
 		msg['id'] = id
 		msg['client_id'] = client_id
-		msg['value'] = Agent(id).serialize()
+		x = Agent(id)
+		msg['version'] = x.version
+		msg['value'] = x.serialize()
 		self.info_out_q.put((client_id,msg))
 		pass
 		
-	def object_info(self, id, client_id):
+	def object_info(self, id, client_id, version = -1):
 		msg = {}
 		msg['msg'] = 'object_info'
 		msg['id'] = id
 		msg['client_id'] = client_id
-		msg['object_info'] = Nobject(id).serialize()
+		x = Nobject(id)
+		msg['version'] = x.version
+		msg['value'] = x.serialize()
 		self.info_out_q.put((client_id,msg))
 		pass
 	

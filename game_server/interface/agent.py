@@ -9,7 +9,7 @@ class Agent:
 		[type, x, y, z] = self.position
 		[type, x, y, z] = [type, x+dx, y+dy, 0]
 		self.position = [type, x, y, z]
-		self.delta.agent_position_change(self.__dict__['id'], x, y, z)
+		self.delta.agent_position_change(self.__dict__['id'], [0,x, y, z])
 
 	### Generic Stuff ###
 	agents = None #agent dictionary
