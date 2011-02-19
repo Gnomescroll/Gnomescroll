@@ -1,193 +1,194 @@
-
-/*
-//globals.update( { world_id: 7, client_id: 15 } ) and it will update that
-
-var globals = {
-
-world_id: 0,
-client_id: 0,
-server_out: null,
-update: update = function(params) {
-this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
-this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
-this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
-}
-}
-*/
-
-
 var globals = {
 
     world_id: 0,
     client_id: 0,
     server_out: null,
-    update: update = function(params) {
+    update: update = function (params) {
                         this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
                         this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
                         this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
                     }
 }
-           
 
-/*
-function Globals()
-{
-	this.world_id = 0;
-	this.client_id = 0;
-	this.server_out = null;
+var admin_commands = ( function () {
 
-	this.init = function(world_id, client_id, server_out) {
-	this.world_id = world_id;
-	this.client_id = client_id;
-	this.server_out = server_out;
-	}	
-}
-*/
-
-
-function Admin_commands(globals)
-{
-	this.globals = globals;
-	this.type = 'info';
-	
-	this.create_agent = function(x,y,z, player_id) {
-		if(player_id == null) { player_id=0;}
+    var type = 'info',
+        create_agent,
+        create_item,
+        set_map,
+        public_;
+        	
+	create_agent = function (x,y,z, player_id) {
+		
+        var data;
+        
+        if (player_id === undefined) { 
+            player_id = 0;
+        }
 	
 		data = { 
-		cmd: 'create_agent',
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id,
-		player_id: player_id
-		};
-		
-		$.post(this.globals.server_out, data);	
+                cmd: 'create_agent',
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id,
+                player_id: player_id
+               }
+        
+		$.post(globals.server_out, data);
 	}
 
-	this.create_item = function(x,y,z) {
+	create_item = function (x,y,z) {
 
 		data = { 
-		cmd: "create_item",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id,
-		position: [0, x, y, z]
-		};
+                cmd: "create_item",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id,
+                position: [0, x, y, z]
+               }
 		
-		$.post(this.globals.server_out, data);	
+		$.post(globals.server_out, data);	
 				
 	}
 	
-	this.set_map = function(x,y,z, value) {
+	set_map = function (x,y,z, value) {
 
 		data = { 
-		cmd: "set_map",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id,
-		position: [0, x, y, z],
-		value: value
-		};
+                cmd: "set_map",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id,
+                position: [0, x, y, z],
+                value: value
+               }
 		
-		$.post(this.globals.server_out, data);	
-				
-	}	
-}
-
-function Info_commands(globals)
-{
-	this.globals = globals;
-	this.type = "info";
-	
-	this.init = function(globals) {	this.globals = globals; }
-	
-	this.get_map = function() {
-
-		data = { 
-		cmd: "get_map",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
-		};
-		
-		$.post(this.globals.server_out, data);	
+		$.post(globals.server_out, data);	
 				
 	}
+    
+    public_ = {
+                create_agent: create_agent,
+                create_item: create_item,
+                set_map: set_map
+              }
+              
+    return public_;
 
-	this.get_agent = function(id) {
+}());
 
-		data = { 
-		cmd: "get_agent",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id,
-		agent_id: id
-		};
-		
-		$.post(this.globals.server_out, data);	
-				
-	}
 
-	this.get_object = function(id) {
-
-		data = { 
-		cmd: "get_object",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id,
-		object_id: id
-		};
-		
-		$.post(this.globals.server_out, data);	
-				
-	}
+var info_commands = ( function () {
 	
-	this.get_agent_list = function() {
+    var type = "info",
+        get_map,
+        get_agent,
+        get_object,
+        get_agent_list,
+        get_object_list,
+        public_;
 		
+	get_map = function () {
+
 		data = { 
-		cmd: "get_agent_list",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
-		};
+                cmd: "get_map",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id
+               }
 		
-		$.post(this.globals.server_out, data);	
+		$.post(globals.server_out, data);	
 				
 	}
 
-	this.get_object_list = function() {
-		
-		data = { 
-		cmd: "get_object_list",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id
-		};
-		
-		$.post(this.globals.server_out, data);	
-	}
-			
-}
-
-function Agent_commands(globals)
-{
-	this.globals = globals;
-	this.type = 'agent'
-	
-	this.init = function(globals) {	this.globals = globals; }
-	
-	this.move_0 = function(agent_id, dx, dy, dz) {
+	get_agent = function (id) {
 
 		data = { 
-		cmd: "move_0",
-		type: this.type,
-		client_id: this.globals.client_id,
-		world_id: this.globals.world_id,
-		agent_id: agent_id,
-		dp: [dx, dy, dz]
-		};
+                cmd: "get_agent",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id,
+                agent_id: id
+               }
 		
-		$.post(this.globals.server_out, data);	
-
+		$.post(globals.server_out, data);	
+				
 	}
-}
+
+	get_object = function (id) {
+
+		data = { 
+                cmd: "get_object",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id,
+                object_id: id
+               };
+		
+		$.post(globals.server_out, data);	
+				
+	}
+	
+	get_agent_list = function() {
+		
+		data = { 
+                cmd: "get_agent_list",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id
+               };
+		
+		$.post(globals.server_out, data);	
+				
+	}
+
+	get_object_list = function() {
+		
+		data = { 
+                cmd: "get_object_list",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id
+               };
+		
+		$.post(globals.server_out, data);	
+	}
+	
+    public_ = {
+                get_map: get_map,
+                get_agent: get_agent,
+                get_object: get_object,
+                get_agent_list: get_agent_list,
+                get_object_list: get_object_list
+              }
+              
+    return public_;
+    		
+}());
+
+var agent_commands = ( function () {
+
+    var type = 'agent',
+        move_0,
+        public_;
+		
+	move_0 = function (agent_id, dx, dy, dz) {
+
+		data = { 
+                cmd: "move_0",
+                type: type,
+                client_id: globals.client_id,
+                world_id: globals.world_id,
+                agent_id: agent_id,
+                dp: [dx, dy, dz]
+               }
+		
+		$.post(globals.server_out, data);	
+	}
+    
+    public_ = {
+                move_0: move_0
+              }
+              
+    return public_;
+    
+}());

@@ -238,9 +238,14 @@ var screen = ( function () {
             y = cells[cell_num][1];
             
         var colors = {
+            // the object properties are which values to reassign
+            // e.g. for red, just remove all g+b
+            // Non-primary colors will need a different approach
             red: {g:0, b:0},
             green: {r:0, b:0},
-            blue: [0,0,255]
+            blue: {r:0, g:0},
+            white: {},
+            black: {r:0, g:0, b:0}
         }
             
         imageData = ctx.getImageData(x, y, cell_width, cell_height);
@@ -359,9 +364,25 @@ var screen = ( function () {
             if (color != undefined) {
                 draw_func = function (ctx, tile_num, cell_num, color) {
                     drawTile(ctx, tile_num, cell_num);
-                    if (cell_num === 1) {
-                        colorTile(ctx, cell_num, color);
+                    //if (cell_num % 4 === 0) {
+                    //    colorTile(ctx, cell_num, color);
+                    //}
+                    
+                    switch (cell_num % 4) {
+                        case 0:
+                            color = 'red';
+                            break;
+                        case 1:
+                            color = 'green';
+                            break;
+                        case 2:
+                            color = "blue";
+                            break;
+                        default:
+                            color = "white";
                     }
+                    colorTile(ctx, cell_num, color);
+                            
                 }
             } else {
                 draw_func = function (ctx, tile_num, cell_num) {
