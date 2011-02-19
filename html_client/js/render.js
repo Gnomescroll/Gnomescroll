@@ -17,6 +17,7 @@ var screen = ( function () {
     var calculateGridSize, resizeScreen;
     
     var canvas, setCanvas;
+    var controlMap, setControls;
     var init, test, public_;
     
     generateCells = function () {
@@ -79,6 +80,8 @@ var screen = ( function () {
     
     setCanvas = function () {
         
+        $('h1').remove();
+        
         canvas = $('#screen');
 
         if (!canvas.length) {
@@ -86,12 +89,54 @@ var screen = ( function () {
             $('body').prepend(canvas);
         }
         
-        canvas.css('margin-left', parseInt((window.innerWidth - x_res) / 2.5)); //shift it to the right
+        canvas.css('margin-left', parseInt((window.innerWidth - x_res) / 3)); //shift it to the right
         
         canvas = canvas[0];
         
         canvas.width = x_res;
         canvas.height = y_res;
+        
+    }
+    
+    controlMap = {
+        
+        increment: 2,
+        
+        increase_cell_size: function (event) {
+            
+            if (cell_width >= Math.floor(x_res/2) || cell_height >= Math.floor(y_res/2)) { //don't go bigger than would fit 2x2
+                return false;
+            }
+            
+            cell_width += 2;
+            cell_height += 2;
+            resizeScreen();
+        },
+        
+        decrease_cell_size: function (event) {
+            
+            if (cell_width <= 4 || cell_height <= 4) { // don't get smaller
+                return false;
+            }
+            
+            cell_width += -2;
+            cell_height += -2;
+            resizeScreen();
+                
+        }
+        
+    }
+    
+    setControls = function () {
+        
+        $('a[id="button"]').click( function (event) {
+            event.preventDefault;
+            controlMap[$(this).attr('class')](event);
+            
+            test(); //redraw tests to check
+            
+            return false;
+        });
         
     }
     
@@ -102,6 +147,7 @@ var screen = ( function () {
         generateCells();
         setCanvas();
 
+        setControls();
         // bind resize event here
         // 2 resize events:
         // window resize
