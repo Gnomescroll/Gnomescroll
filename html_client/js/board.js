@@ -110,14 +110,79 @@ Board_set_tile = function(x, y, value) {
 	context.drawImage(this.tile_set, sx, sy, sw, sh, dx, dy, dw, dh);
 	
 	tile_pw = 20; //tile pixel width for tileset
-	tile_ph = 20; //tile pixel height for tilset
-	//context.drawImage(this.tile_set, xs, ys, tile_pw, tile_ph, 0, 0, this.tpw, this.tph);
-/*
-	$(selector).css({
-				'background': 'url(http://127.0.0.1:8056/static/tiles/Bisasam_20x20_ascii.png)',
-				'background-position': '-'+xs+'px -'+ys+'px',				
-				//'clip': 'rect('+ys+'px,'+xe+'px,'+ye+'px,'+xs+'px)',
-				'background-color':'#777777'
-				});
-*/
+	tile_ph = 20; //tile pixel height for tilsets
+}
+
+    function Color_morph(x, y, value)
+    {
+        
+        // get subimage of selected area
+
+	var tx = value % 16;
+	if(value < 16) { var ty = 0; } else { var ty = (value - tx) / 16; }
+	
+	sx = 20*tx;
+	sy = 20*ty;
+
+	sh = 20;
+	sw = 20;
+	
+	/*
+      var imageData = gCtx.getImageData( Math.min(gStartX, gEndX),
+                                         Math.min(gStartY, gEndY),
+                                         Math.abs(gEndX - gStartX),
+                                         Math.abs(gEndY - gStartY));
+	*/
+	var canvas = document.getElementById('test_canvas');
+	var context = canvas.getContext("2d");
+	
+	var imageData = context.getImageData(sx, sy, sh, sw);
+	
+      for (var x = 0; x < imageData.width; x++)
+        for (var y = 0; y < imageData.height; y++)
+        {
+          var offset = (y * imageData.width + x) * 4;
+          var r = imageData.data[offset];
+          var g = imageData.data[offset + 1];
+          var b = imageData.data[offset + 2];
+          var alpha = imageData.data[offset + 4]; //will be unchanged
+          
+          // if(alpha != 1) {} //skill transparent pixels
+              
+        }
+        alert("Ok!");
+     //context.putImageData(imageData, Math.min(gStartX, gEndX), Math.min(gStartY, gEndY));
+    }
+
+
+set_tile_with_color = function(x, y, value, r, g, b) {
+	
+	//create a temporary canvas object
+	//do multiplication of pixels by rgb value
+	//draw to another canvas
+
+	//var canvas_temp = new Canvas();
+	
+	canvas_id = this.div_id+"_"+x+"_"+y+"_canvas";
+	var canvas = document.getElementById(canvas_id);
+	var context = canvas.getContext("2d");
+	
+	var tx = value % 16;
+	if(value < 16) { var ty = 0; } else { var ty = (value - tx) / 16; }
+	
+	sx = 20*tx;
+	sy = 20*ty;
+
+	sh = 20;
+	sw = 20;
+	
+	dw = 300;
+	dh = 150;
+	dx = 0;
+	dy = 0;
+	
+	context.drawImage(this.tile_set, sx, sy, sw, sh, dx, dy, dw, dh);
+	
+	tile_pw = 20; //tile pixel width for tileset
+	tile_ph = 20; //tile pixel height for tilsets
 }
