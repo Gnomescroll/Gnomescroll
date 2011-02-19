@@ -25,8 +25,9 @@ FPS_MONITOR_HEIGHT = 1
 LIMIT_FPS = 20
 #Flags to optimize drawing
 redraw_messages = True
+redraw_map = True
+redraw_side = True
 show_fps = True
-
 
 def message(new_msg, color = libtcod.white):
 	redraw_messages = True
@@ -41,14 +42,14 @@ def message(new_msg, color = libtcod.white):
 		#add the new line as a tuple, with the text and the color
 		game_msgs.append((line, color))
 
-	
-
 def render_all():
-	global redraw_messages, show_fps
+	global redraw_messages, redraw_map, redraw_side, show_fps
 
-	libtcod.console_set_background_color(map_viewer, libtcod.red)
-	libtcod.console_clear(map_viewer)
-	libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
+	if redraw_map:
+		libtcod.console_set_background_color(map_viewer, libtcod.red)
+		libtcod.console_clear(map_viewer)
+		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
+		redraw_map = False
 
 	if redraw_messages:
 		libtcod.console_set_background_color(message_log, libtcod.black)
@@ -61,9 +62,11 @@ def render_all():
 		libtcod.console_blit(message_log, 0, 0, MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT, 0, 0, MAP_VIEWER_HEIGHT)
 		redraw_messages = False;
 
-	libtcod.console_set_background_color(side_panel, libtcod.blue)
-	libtcod.console_clear(side_panel)
-	libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, 0)
+	if redraw_side:
+		libtcod.console_set_background_color(side_panel, libtcod.blue)
+		libtcod.console_clear(side_panel)
+		libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, 0)
+		redraw_side = False
 	
 	if show_fps:
 		libtcod.console_set_background_color(fps_monitor, libtcod.black)
@@ -71,7 +74,7 @@ def render_all():
 		libtcod.console_clear(fps_monitor)
 		fps = "FPS: " +str(libtcod.sys_get_fps())
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
-		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0)
+		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
 
 
 ###MAIN PROGRAM###
