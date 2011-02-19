@@ -14,9 +14,9 @@ var screen = ( function () {
     
     var generateCells, cells=[];
         
-    var calculateGridSize, resizeScreen;
-    
-    var canvas, setCanvas;
+    var calculateCanvasResolution, resizeScreen;
+    var calculateGridCells;
+    var canvas, setCanvas, colorCanvas;
     var controlMap, setControls;
     var init, test, public_;
     
@@ -43,7 +43,14 @@ var screen = ( function () {
         
     }
     
-    calculateGridSize = function (height, width) {
+    calculateGridCells = function () {
+        
+        grid_cells = parseInt(Math.floor( x_res / cell_width));
+        //res = grid_cells * cell_width; //readjust
+        //x_res = y_res = res;
+    }
+    
+    calculateCanvasResolution = function (height, width) {
         
         var scale, res;
         
@@ -62,15 +69,14 @@ var screen = ( function () {
         res = res * 10;
         x_res = y_res = res; //make it a square
         
-        grid_cells = parseInt(Math.floor(res / cell_width));
-        res = grid_cells * cell_width; //readjust
-        x_res = y_res = res;
+        calculateGridCells();
+
         
     }
     
     resizeScreen = function () {
         
-        calculateGridSize();
+        calculateGridCells();
         generateCells();
         setCanvas();
         
@@ -96,36 +102,51 @@ var screen = ( function () {
         canvas.width = x_res;
         canvas.height = y_res;
         
+        colorCanvas('black');
     }
     
-    controlMap = {
+    colorCanvas = function (color) {
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    controlMap = ( function () {
         
-        increment: 2,
+        var increment = 2,
+            increase_cell_size,
+            decrease_cell_size;
         
-        increase_cell_size: function (event) {
+        increment = 2;
+        
+        increase_cell_size = function (event) {
             
             if (cell_width >= Math.floor(x_res/2) || cell_height >= Math.floor(y_res/2)) { //don't go bigger than would fit 2x2
                 return false;
             }
             
-            cell_width += 2;
-            cell_height += 2;
+            cell_width += increment;
+            cell_height += increment;
             resizeScreen();
-        },
+        }
         
-        decrease_cell_size: function (event) {
+        decrease_cell_size = function (event) {
             
             if (cell_width <= 4 || cell_height <= 4) { // don't get smaller
                 return false;
             }
             
-            cell_width += -2;
-            cell_height += -2;
+            cell_width += -increment;
+            cell_height += -increment;
             resizeScreen();
-                
         }
         
-    }
+        return {
+                increase_cell_size: increase_cell_size,
+                decrease_cell_size: decrease_cell_size
+               }  
+        
+    }());
     
     setControls = function () {
         
@@ -143,7 +164,7 @@ var screen = ( function () {
     // init canvas
     init = function () {
     
-        calculateGridSize();
+        calculateCanvasResolution();
         generateCells();
         setCanvas();
 
@@ -159,6 +180,48 @@ var screen = ( function () {
         });
 
     }
+    
+        /*
+    var tilemap = $('img#tilemap')[0];
+    var tilemap_image = new Image();
+    tilemap_image.src = "static/tiles/Bisasam_24x24.png";
+    */
+    
+    var tilemap = {
+        
+        elem: $('img#tilemap')[0],
+        
+        image: ( function() {
+                            var img = new Image();
+                            img.src = "static/tiles/Bisasam_24x24.png";
+                            return img;
+                        }()),
+                        
+        tiles_wide: 16,
+        tiles_high: 16,
+        tile_width: 24,
+        tile_height: 24
+    }
+    
+    var drawTile = function (tile_num, cell_num) {
+        
+        var ctx = canvas.getContext('2d'),
+            cell_x = cells[cell_num][0],
+            cell_y = cells[cell_num][1],
+            x_offset,
+            y_offset,
+            tile_x_pos;
+            
+        tile_x_pos = tile_num % tilemap.tiles_wide;
+        x_offset = tile_x_pos * tilemap.tile_width; 
+        y_offset = ((tile_num - tile_x_pos)/tilemap.tiles_wide) * tilemap.tile_height;
+        
+        ctx.drawImage(tilemap.image, 
+                      x_offset, y_offset, tilemap.tile_width, tilemap.tile_height,
+                      cell_x, cell_y, cell_width, cell_height);
+        
+    }
+    
     
     test = function () {
         
@@ -190,13 +253,9 @@ var screen = ( function () {
             ctx.strokeRect(x, y, width, height);
         }
 
-        checkerboard = function(color, grid)  {
+        checkerboard = function(color)  {
             
             var draw_func = drawSquare;
-            
-            if (grid !== undefined) {
-                draw_func = drawOutlinedSquare;
-            }
             
             var even_width = function(i, x, y) {
                 var row, col;
@@ -233,14 +292,33 @@ var screen = ( function () {
         }
         
         gridBoard = function(color) {
-            checkerboard(color, true);
+            
+            $.each(cells, function (i, cell) {
+                
+                var x = cell[0],
+                    y = cell[1];
+                    
+                drawOutlinedSquare(x, y, cell_width, cell_height, color);
+            
+            });
+        }
+        
+        tileCheckers = function () {
+            
+            $.each(cells, function(i, cell) {
+                drawTile(19, i);
+            });
         }
         
         //drawCircle();
         //checkerboard("red");
-        gridBoard("red");
+        //gridBoard("red");
+        
+        tileCheckers();
     
     }
+    
+
     
     public_ = {
                 init: init,
