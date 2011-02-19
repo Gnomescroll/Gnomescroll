@@ -16,7 +16,7 @@ var screen = ( function () {
         
     var calculateCanvasResolution, resizeScreen;
     var calculateGridCells;
-    var canvas, setCanvas, colorCanvas;
+    var canvas, setCanvas, colorCanvas, colorMap;
     var controlMap, setControls;
     var init, test, public_;
     
@@ -107,9 +107,19 @@ var screen = ( function () {
     
     colorCanvas = function (color) {
         var ctx = canvas.getContext('2d');
-        ctx.fillStyle = color;
+        ctx.fillStyle = colorMap[color];
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+    
+    colorMap = {
+        
+        red: "rgba(255,0,0,1)",
+        green: "rgba(0,255,0,1)",
+        blue: "rgba(0,0,255,1)",
+        white: "rgba(255,255,255,1)",
+        black: "rgba(0,0,0,1)"
+    }
+        
     
     controlMap = ( function () {
         
@@ -203,10 +213,9 @@ var screen = ( function () {
         tile_height: 24
     }
     
-    var drawTile = function (tile_num, cell_num) {
+    var drawTile = function (ctx, tile_num, cell_num) {
         
-        var ctx = canvas.getContext('2d'),
-            cell_x = cells[cell_num][0],
+        var cell_x = cells[cell_num][0],
             cell_y = cells[cell_num][1],
             x_offset,
             y_offset,
@@ -220,12 +229,51 @@ var screen = ( function () {
                       x_offset, y_offset, tilemap.tile_width, tilemap.tile_height,
                       cell_x, cell_y, cell_width, cell_height);
         
+    }    
+    
+    var colorTile = function (ctx, cell_num, color) {
+        
+        var imageData,
+            x = cells[cell_num][0],
+            y = cells[cell_num][1];
+            
+        var colors = {
+            red: {g:0, b:0},
+            green: {r:0, b:0},
+            blue: [0,0,255]
+        }
+            
+        imageData = ctx.getImageData(x, y, cell_width, cell_height);
+        
+        var _x,_y, k;
+        var offset, r, g, b, a, bg = [];
+        for (_x = 0; _x < imageData.width; _x++) {
+            for (_y = 0; _y < imageData.height; _y++) {
+                offset = (_y * imageData.width + _x) * 4;
+                
+                for (k = 0; k < 4; k++) {
+                    bg.push(imageData.data[offset+k]);
+                }
+                //alert(bg.toString());
+                //alert(imageData.data[offset+3]);
+                //if (bg.toString() !== '0,0,0') {                        
+                if (imageData.data[offset+3] !== 0) {                        
+                    imageData.data[offset] = (colors[color].r !== undefined) ? colors[color].r : imageData.data[offset];
+                    imageData.data[offset + 1] = (colors[color].g !== undefined) ? colors[color].g : imageData.data[offset + 1];
+                    imageData.data[offset + 2] = (colors[color].b !== undefined) ? colors[color].b : imageData.data[offset + 2];
+                }
+                
+                bg = []; // reset pixel check
+            }
+        }
+                
+        ctx.putImageData(imageData, x, y);
     }
     
     
     test = function () {
         
-        var context;
+        var ctx;
         
         ctx = canvas.getContext("2d");
         
@@ -303,10 +351,27 @@ var screen = ( function () {
             });
         }
         
-        tileCheckers = function () {
+        tileCheckers = function (color) {
+            var tile_num = 19; // the crate
+            
+            var draw_func;
+            
+            if (color != undefined) {
+                draw_func = function (ctx, tile_num, cell_num, color) {
+                    drawTile(ctx, tile_num, cell_num);
+                    if (cell_num === 1) {
+                        colorTile(ctx, cell_num, color);
+                    }
+                }
+            } else {
+                draw_func = function (ctx, tile_num, cell_num) {
+                    drawTile(ctx, tile_num, cell_num);
+                }
+            }
+                    
             
             $.each(cells, function(i, cell) {
-                drawTile(19, i);
+                draw_func(ctx, tile_num, i, color);
             });
         }
         
@@ -314,7 +379,7 @@ var screen = ( function () {
         //checkerboard("red");
         //gridBoard("red");
         
-        tileCheckers();
+        tileCheckers("red");
     
     }
     
