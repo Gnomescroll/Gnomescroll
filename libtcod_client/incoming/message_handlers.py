@@ -1,40 +1,32 @@
-from incoming.agent_messages import Agent_messages
-from incoming.object_messages import Object_messages
-from incoming.map_messages import Map_messages
+from incoming.agent_update import Agent_update
+from incoming.object_update import Object_update
+from incoming.map_update import Map_update
 
 class Message_handlers:
 	
 	def __init__(self):
-		pass
+
+		self.handler = {
+	#delta handling
+		#agent
+		'agent_create_update' : Agent_update.agent_create,
+		'agent_position_change' :Agent_update.agent_position_change,
+		'agent_state_change' : Agent_update.agent_state_change,
+		#object
+		'object_create_update' : Agent_update.info_commands.get_agent,
+		'object_position_change' : self.info_commands.get_object,
+		'object_state_change' : self.info_commands.get_map,
+				
+	#info request handling
+		'agent_info' : self.info_commands.get_agent_list,
+		'agent_info' : self.info_commands.get_object_list
 		
-	def define_handlers(self):
-		
-		self.info_handler = {
-		'get_agent' : self.info_commands.get_agent,
-		'get_object' : self.info_commands.get_object,
-		'get_map' : self.info_commands.get_map,
-		'get_agent_list' : self.info_commands.get_agent_list,
-		'get_object_list' : self.info_commands.get_object_list
-		}
-		
-		self.agent_handler = {
+		#object message handling
 		'move_0' : self.agent_commands.move_0,
 		'dig' : self.agent_commands.dig,
 		'construct_wall' : self.agent_commands.construct_wall,
 		
-		'pickup_item' : self.agent_commands.pickup_item,
-		'drop_item' : self.agent_commands.drop_item,
-		#'plant_tree' : self.agent_actions.plant_tree,
-		'till_soil' : self.agent_commands.till_soil,
-		'plant_crop' : self.agent_commands.plant_crop,
-		'harvest' : self.agent_commands.harvest,
-		#'store_item_in_container' : self.agent_actions.store_item_in_container,
-		#'remove_item_from_container' : self.agent_actions.remove_item_from_container
-		}
-		
-		self.admin_handler = {
-		'create_agent' : self.admin_commands.create_agent,
-		'create_item' : self.admin_commands.create_item,
-		'create_object' : self.admin_commands.create_object,
-		'set_map' : self.admin_commands.set_map
+		#map message handling
+		'set_map' : Map_update.set_map,
+		'get_map' : Map_update.get_map
 		}
