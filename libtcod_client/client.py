@@ -62,7 +62,7 @@ def render_all():
 
 	libtcod.console_set_background_color(side_panel, libtcod.blue)
 	libtcod.console_clear(side_panel)
-	libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, 0)
+	libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, .5)
 
 	libtcod.console_set_background_color(fps_monitor, libtcod.blue)
 	libtcod.console_clear(fps_monitor)
