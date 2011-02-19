@@ -55,7 +55,7 @@ def render_all():
 		y = 1
 		for (line, color) in game_msgs:
 			libtcod.console_set_foreground_color(message_log, color)
-			libtcod.console_print_left(panel, 1, y, libtcod.BKGND_NONE, line)
+			libtcod.console_print_left(message_log, 1, y, libtcod.BKGND_NONE, line)
 			y += 1
 		libtcod.console_blit(message_log, 0, 0, MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT, 0, 0, MAP_VIEWER_HEIGHT)
 		redraw_messages = False;
