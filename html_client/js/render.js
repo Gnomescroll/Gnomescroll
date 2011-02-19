@@ -9,30 +9,16 @@ var screen = ( function () {
         cell_width = 16,
         cell_height = 16; // 16x16 cells
     
-    x_res = window.innerWidth;
-    y_res = window.innerHeight;
-    
-    var scale = y_scale,
-        res = y_res; // assume y is shortest
-        
-    if (x_res < y_res) { //browser in portrait
-        scale = x_scale;
-        res = x_res;
-    }
-    
-    res = parseInt( Math.round( (res * scale)/10. ) ); //scale
-    res = res * 10;
-    x_res = y_res = res; //make it a square
-    
-    grid_cells = Math.floor( res / cell_width );    
-    res = grid_cells * cell_width; //readjust
-    x_res = y_res = res;
-    
     // cell coordinate generation
     // to be called on resize
     
-    var generateCells, cells;
+    var generateCells, cells=[];
         
+    var calculateGridSize, resizeScreen;
+    
+    var canvas, setCanvas;
+    var init, test, public_;
+    
     generateCells = function () {
         
         // row, col are 0-indexed
@@ -45,25 +31,16 @@ var screen = ( function () {
             total_cells = Math.pow(grid_cells,2);
         
         for ( i=0; i < total_cells; i++ ) {
-            var square = i;
-            col = (square % grid_cells) - 1;
-            row = (( square - row ) / grid_cells) - 1;
+            col = i % grid_cells;
+            row = (( i - col ) / grid_cells);
             x = col * cell_width;
             y = row * cell_height;
             cell_coordinates.push([x,y]);
-            
         }
         
-        return cell_coordinates;
+        cells = cell_coordinates;
         
     }
-    
-    cells = generateCells();
-    
-    var calculateGridSize, resizeScreen;
-    
-    var canvas, setCanvas;
-    var init, test, public_;
     
     calculateGridSize = function (height, width) {
         
@@ -93,6 +70,7 @@ var screen = ( function () {
     resizeScreen = function () {
         
         calculateGridSize();
+        generateCells();
         setCanvas();
         
         //needs to scale all the shit down
@@ -119,6 +97,7 @@ var screen = ( function () {
     init = function () {
     
         calculateGridSize();
+        generateCells();
         setCanvas();
 
         // bind resize event here
@@ -134,13 +113,39 @@ var screen = ( function () {
         
         ctx = canvas.getContext("2d");
         
+        var drawCircle, drawSquare, checkerboard;
         // draw a circle
         
-        ctx.beginPath();
-        ctx.arc(x_res/2, y_res/2, x_res/2, 0, Math.PI*0.5, true); 
-        ctx.closePath();
-        ctx.fill();
-        
+        drawCircle = function () {
+            
+            ctx.beginPath();
+            ctx.arc(x_res/2, y_res/2, x_res/2, 0, Math.PI*0.5, true); 
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        drawSquare = function(x, y, width, height, color) {
+            //ctx.save();
+            ctx.fillStyle = color || "black";
+            ctx.fillRect(x, y, width, height);
+            //ctx.restore();
+        }
+
+        checkerboard = function()  {
+            $.each(cells, function(i, cell) {
+            
+                var x = cell[0],
+                    y = cell[1];
+                    
+                if (i%2 != 0) {
+                    drawSquare(x, y, cell_width, cell_height, "red");
+                }
+            });
+        }
+    
+        //drawCircle();
+        checkerboard();
+    
     }
     
     public_ = {
