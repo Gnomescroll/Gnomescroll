@@ -1,0 +1,79 @@
+# Map Info
+
+msg: set_map
+value (int)
+x (int)
+y (int)
+z (int)
+
+msg: get_map
+map (array of int tile values)
+z_level (int)
+x_size (int)
+y_size (int)
+world_id (int)
+client_id (int/string)
+
+
+# Agent Messages
+msg: agent_create_update
+id (int)
+position (4 array)
+player_id (int)
+
+msg: agent_delete_update
+id (int)
+
+msg: agent_position_change
+id (int)
+position (4 array)
+
+msg: agent_state_change
+id (int)
+position (4 array)
+version (int)
+
+## Agent Info
+
+msg: agent_info
+id (int)
+client_id (int/string)
+value (dict)
+
+msg: get_agent_list
+world_id (int)
+client_id (int/string)
+list (list of dicts)
+	each dict contains, type, position, id, owner and version
+
+#Object Messages
+
+msg: object_create
+id (int)
+position (4 array)
+
+msg: object_delete
+id (int)
+
+msg: object_position_change
+id (int)
+position (4 array)
+
+msg: object_state_change
+id (int)
+position (4 array)
+version (int)
+
+# Object Info
+
+msg: object_info
+id (int)
+client_id (int/string)
+value (dict)
+
+msg: object_list
+world_id (int)
+client_id (int/string)
+list (list of dicts)
+	each dict contains, type, position, id, owner and version
+
