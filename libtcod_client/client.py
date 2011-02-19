@@ -50,8 +50,13 @@ def render_all():
 	libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 
 	if redraw_messages:
-		libtcod.console_set_background_color(message_log, libtcod.green)
+		libtcod.console_set_background_color(message_log, libtcod.black)
 		libtcod.console_clear(message_log)
+		y = 1
+		for (line, color) in game_msgs:
+			libtcod.console_set_foreground_color(message_log, color)
+			libtcod.console_print_left(panel, 1, y, libtcod.BKGND_NONE, line)
+			y += 1
 		libtcod.console_blit(message_log, 0, 0, MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT, 0, 0, MAP_VIEWER_HEIGHT)
 		redraw_messages = False;
 
