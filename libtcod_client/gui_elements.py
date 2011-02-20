@@ -51,16 +51,35 @@ class Menu:
 		self.x = x
 		self.y = y
 		self.lines = []
-		self.keys = []
+		self.hotkeys = []
+		self.width = 0
+		self.height = 0
 		
-	def add_button():
-		pass
-		
+	def add_button(button):
+		lines.append(["button", button])
+		if button.width > self.width:
+			self.width = button.width
+		height += 1
 
+	def add_text(text):
+		lines.append(["text", text])
+		if len(text) > self.width:
+			self.width = len(text)
+		height += 1
+		
 	def initialize():
+		#ensure that the menu is wide enough for the cancel button
+		if self.width < 11:
+			self.width = 1
 		#todo add a cancel button at the end of all menus
-		self.menu_con = libtcod.console_new(self.width, self.height)
 		self.separator = '_' * self.width
+		height += 4 #Height increased by four, since we are adding two separators, a title, and a cancel button
+		self.lines.insert(0, ["text", self.title])
+		self.lines.insert(0, ["text", self.separator])
+		self.lines.append(["text", self.separator])
+		self.lines.append(["button", Button(11, 1, "Cancel", "x", "Close this menu")
+		self.menu_con = libtcod.console_new(self.width, self.height)
+		
 		
 		
 
