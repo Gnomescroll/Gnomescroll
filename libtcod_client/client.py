@@ -85,8 +85,6 @@ def render_all():
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
 
-	libtcod.console_blit(con, 0, 0, 10, 1, 0, 0, 0, 1)
-
 
 ###MAIN PROGRAM###
 
