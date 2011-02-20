@@ -55,6 +55,7 @@ class Menu:
 		self.redraw = True
 		self.close = False
 		self.latest_hover_index = None
+		self.button_pressed = None
 
 	#This should be called after initialize()
 	#current alignment options: center, exact. Still to come: north, south, east, west, northwest, southwest, northeast, southeast
@@ -143,7 +144,7 @@ class Menu:
 				self.latest_hover_index = index
 				self.redraw = True
 				if mouse.lbutton_pressed:
-					pass #the user pressed this button
+					self.button_pressed = index
 				
 		if mouse.rbutton_pressed:
 			self.close = True
