@@ -43,7 +43,7 @@ class Button:
 		return self.button_con
 
 class Menu:
-	def __init__(self, title, fore_color, back_color, align="center", x=0, y=0):
+	def __init__(self, title, fore_color, back_color, has_cancel_button = True, align="center", x=0, y=0):
 		self.title
 		self.fore_color = fore_color
 		self.back_color = back_color
@@ -54,6 +54,7 @@ class Menu:
 		self.hotkeys = []
 		self.width = 0
 		self.height = 0
+		self.has_cancel_button = has_cancel_button
 		
 	def add_button(button):
 		lines.append(["button", button])
@@ -68,19 +69,27 @@ class Menu:
 		height += 1
 		
 	def initialize():
-		#ensure that the menu is wide enough for the cancel button
-		if self.width < 11:
-			self.width = 1
-		#todo add a cancel button at the end of all menus
-		self.separator = '_' * self.width
-		height += 4 #Height increased by four, since we are adding two separators, a title, and a cancel button
+		if self.has_cancel_button:
+			#ensure that the menu is wide enough for the cancel button and the title
+			if self.width < 11:
+				self.width = 1
+			if self.width < len(self.title):
+				self.width = len(self.title)
+			self.separator = '_' * self.width
+			height += 4 #Height increased by four, since we are adding two separators, a title, and a cancel button
+			self.lines.append(["text", self.separator])
+			self.lines.append(["button", Button(11, 1, "Cancel", "x", "Close this menu")])
+
+		else:
+			#ensure that the menu is wide enough for the cancel button and the title
+			if self.width < len(self.title):
+				self.width = len(self.title)
+			self.separator = '_' * self.width
+			height += 2 #Height increased by two, since we are adding a separator and a title
+
 		self.lines.insert(0, ["text", self.title])
 		self.lines.insert(0, ["text", self.separator])
-		self.lines.append(["text", self.separator])
-		self.lines.append(["button", Button(11, 1, "Cancel", "x", "Close this menu")
 		self.menu_con = libtcod.console_new(self.width, self.height)
-		
-		
 		
 
 
