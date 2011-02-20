@@ -59,13 +59,14 @@ class Info_commands:
 		world_id = msg['world_id']
 		self.r_client.lpush("world_"+str(world_id), dumps(msg))
 
-	#required = ['client_id', 'world_id']
+	#required = ['z', 'client_id', 'world_id']
 	#optional = ['z']
-	def get_map(self):
+	def get_map(self, world_id = 0, z = 0):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_map'
-		msg['world_id'] = 0
+		msg['world_id'] = world_id
+		msg['z'] = z
 		msg['client_id'] = 0 #will need this
 		self.send_message(msg)
 
@@ -93,21 +94,21 @@ class Info_commands:
 		
 	#required = ['client_id', 'world_id']
 	#optional = []
-	def get_agent_list(self):
+	def get_agent_list(self, world_id = 0):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_agent_list'
-		msg['world_id'] = 0
+		msg['world_id'] = world_id
 		msg['client_id'] = 0 #will need this
 		self.send_message(msg)
 
 	#required = ['client_id', 'world_id']
 	#optional = []
-	def get_object_list(self):
+	def get_object_list(self, world_id = 0):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_object_list'
-		msg['world_id'] = 0
+		msg['world_id'] = world_id
 		msg['client_id'] = 0 #will need this
 		self.send_message(msg)		
 

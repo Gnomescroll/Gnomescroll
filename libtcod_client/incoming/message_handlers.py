@@ -4,7 +4,7 @@ from incoming.object_handler import Object_handler
 
 class Message_handlers:
 
-	def __init__(self, agents):
+	def __init__(self):
 		self.terrain_map_handler = None
 		self.agent_handler = None
 		self.object_handler = None
@@ -25,7 +25,7 @@ class Message_handlers:
 		'agent_state_change' : Agent_handler.agent_state_change,
 		#object
 		'object_info' : Object_handler.object_info,
-		'object_list' : Object_handler.object_list
+		'object_list' : Object_handler.object_list,
 		'object_create' : Object_handler.object_create,
 		'object_delete' : Object_handler.object_delete,
 		'object_position_change' : Object_handler.object_position_change,

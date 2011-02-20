@@ -1,7 +1,7 @@
 
 class Agent_handler:
 
-	def __init__(self, agents):
+	def __init__(self):
 		self.Agents = None
 		pass
 

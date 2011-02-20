@@ -26,8 +26,8 @@ class Server_listener:
 	def __init__(self):
 		self.globals = None
 
-	def start():
-		t = Thread(target=message_worker, args=(world_id = self.globals.world_id))
+	def start(self):
+		t = Thread(target=self.message_worker, args= (self.globals.world_id,))
 		t.daemon = True
 		t.start()
 

@@ -1,4 +1,4 @@
-from incoming.message_handlers import Message_handler
+from incoming.message_handlers import Message_handlers
 from incoming.server_listener import Server_listener
 
 from incoming.terrain_map_handler import Terrain_map_handler
@@ -22,7 +22,7 @@ class Client:
 	def __init__(self, world_id):
 		#listener 
 		self.server_listener = Server_listener()
-		self.message_handlers = Message_handler()	
+		self.message_handlers = Message_handlers()	
 		#messages handles
 		self.terrain_map_handler = Terrain_map_handler()
 		self.agent_handler = Agent_handler()
@@ -33,15 +33,15 @@ class Client:
 		self.globals = Globals(world_id) #world id zero
 		self.terrain_map = Terrain_map
 
-	def start():
-		self.share_state(self)
+	def setup(self):
+		self.share_state()
 		self.server_listener.start()
 		#load map
 		info.get_map(0)
 		#load agents
-		info.agent_list()
+		info.get_agent_list()
 		#load objects
-		info.object_list()
+		info.get_object_list()
 
 	def share_state(self):
 		print "Share State Start"
@@ -57,7 +57,7 @@ class Client:
 
 
 if __name__ == '__main__':
-	server = Server(0) #world _id = 0
-	server.run()
+	client = Client(0) #world _id = 0
+	client.setup()
 	#Do something!
 	time.sleep(3600)
