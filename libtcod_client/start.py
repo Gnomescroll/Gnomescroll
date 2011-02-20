@@ -40,11 +40,11 @@ class Client:
 		self.message_handlers.start()
 		self.server_listener.start()
 		#load map
-		info.get_map(0)
+		#info.get_map(0)
 		#load agents
-		info.get_agent_list()
+		#info.get_agent_list()
 		#load objects
-		info.get_object_list()
+		#info.get_object_list()
 
 	def share_state(self):
 		print "Share State Start"
@@ -64,6 +64,10 @@ if __name__ == '__main__':
 	client.setup()
 	#Do something!
 	#debugging
+	time.sleep(1)
+	info.get_map(0)
+	info.get_agent_list()
+	info.get_object_list()
 	time.sleep(5)
 	#from pudb import set_trace; set_trace()
 	time.sleep(3600)
