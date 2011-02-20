@@ -39,6 +39,21 @@ class Button:
 
 		return self.button_con
 
+##Usage:
+#test = Menu("Test Menu", has_cancel_button = True)
+#test.add_button(Button(11, 1, "Button 1", 'b', "Test button 1 tooltip"))
+#test.add_button(Button(5, 1, "a", 'a', "Second button tooptip"))
+#test.add_text("Test message")
+#test.add_button(Button(10, 1, "Button 2", 'b', "Test 3"))
+#test.add_text("Test 2")
+#test.initialize()
+#test.set_position("center", 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+#####
+#then, you can call this in the main game loop every update:
+#test.update()
+#in the main key handler, check if there is a menu open, and send the keypress to that menu's key handler:
+#current_menu.handle_key(char)
+
 class Menu:
 	#If you set x and y here, you still need to do it later with set_position(), just use alignment = "exact"
 	def __init__(self, title, fore_color=libtcod.white, back_color=libtcod.black, has_cancel_button = True, x=0, y=0):
@@ -48,7 +63,7 @@ class Menu:
 		self.x = x
 		self.y = y
 		self.lines = []
-		self.hotkeys = []
+		self.hotkeys = {}
 		self.width = 0
 		self.height = 0
 		self.has_cancel_button = has_cancel_button
@@ -73,8 +88,9 @@ class Menu:
 		self.lines.append(["button", button])
 		if button.width > self.width:
 			self.width = button.width
+		hotkeys[button.hotkey] = height		
 		self.height += 1
-		self.hotkeys.append(button.hotkey)
+		
 
 	def add_text(self, text, align = "left"):
 		self.lines.append([align, text])
@@ -128,7 +144,8 @@ class Menu:
 		return self.menu_con #returns regardless of redraw status, but still try not to call draw() if redraw is False. More efficient
 
 	#because checking keys in different functions simultaneously doesn't work, this only checks the mouse
-	def check_mouse(self):
+	#in the main key handler, check if there is a menu open, and send the keypress to that menu's key handler
+	def update(self):
 		#clear out the last button
 		if self.latest_hover_index:
 			self.lines[self.latest_hover_index][1].mouse_is_hovering = False
@@ -148,10 +165,13 @@ class Menu:
 				
 		if mouse.rbutton_pressed:
 			self.close = True
-		
 
-	
+	def handle_key(self, char):
+		if char in hotkeys:
+			self.button_pressed = hotkeys[char] #they pressed a hotkey, so mark the corresponding button as pressed 
 
-		
+
+
+
 
 

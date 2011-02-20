@@ -37,16 +37,6 @@ admin = Admin_commands()
 info = Info_commands()
 agent = Agent_commands()
 
-test = Menu("Test Menu", has_cancel_button = True)
-test.add_button(Button(11, 1, "Button 1", 'b', "Test button 1 tooltip"))
-test.add_button(Button(5, 1, "a", 'a', "Second button tooptip"))
-test.add_text("Test message")
-test.add_button(Button(10, 1, "Button 2", 'b', "Test 3"))
-test.add_text("Test 2")
-test.initialize()
-test.set_position("center", 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-
-
 def message(new_msg, color = libtcod.white):
 	redraw_messages = True
 	#split the message if necessary, among multiple lines
@@ -119,7 +109,6 @@ message("Welcome to dc_mmo")
 info.get_map()
 
 while not libtcod.console_is_window_closed():
-	test.check_mouse()
 	render_all()
 	libtcod.console_flush()
 
