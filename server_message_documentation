@@ -1,12 +1,12 @@
 # Map Info
 
-msg: set_map
+msg: set_terrain_map
 value (int)
 x (int)
 y (int)
 z (int)
 
-msg: get_map
+msg: terrain_map
 map (array of int tile values)
 z_level (int)
 x_size (int)
@@ -40,7 +40,7 @@ id (int)
 client_id (int/string)
 value (dict)
 
-msg: get_agent_list
+msg: agent_list
 world_id (int)
 client_id (int/string)
 list (list of dicts)

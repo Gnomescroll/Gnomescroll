@@ -69,6 +69,7 @@ class Info: #non-blocking client notification
 	def get_map(self, z=0, client_id=0):
 		array = self.world_map.get_z_level(z)
 		msg = {}
+		msg['msg'] = 'terrain_map'
 		msg['map'] = array
 		msg['z_level'] = z
 		msg['x_size'] = self.world_map.x_size
