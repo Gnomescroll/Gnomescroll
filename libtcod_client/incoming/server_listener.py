@@ -36,6 +36,7 @@ class Server_listener:
 					msg = i['msg']
 					#print str(i)
 					if msg in self.message_handlers.handlers.keys():
+						print "valid"
 						self.message_handlers.handlers[msg](**i)
 					else:
 						print "msg does not exist in handler: " + str(msg)
