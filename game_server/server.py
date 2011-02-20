@@ -32,6 +32,7 @@ from interface.crop import Crop
 class Server:
 
 	def __init__(self, world_id):
+		self.globals = Globals(world_id) #takes world_if as input
 		# listeners for input
 		self.message_listener = Message_listener()
 		self.message_handlers = Message_handlers()
@@ -44,7 +45,6 @@ class Server:
 		#game state
 		self.world_map = World_map()
 		self.world_time = World_time()
-		self.globals = Globals(world_id)
 		self.agents = Agents()
 		self.objects = Objects()
 

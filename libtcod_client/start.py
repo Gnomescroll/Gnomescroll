@@ -10,9 +10,16 @@ from state.objects import Objects
 from state.terrain_map import Terrain_map
 from state.globals import Globals
 
+from server_API import *
+
+admin = Admin_commands()
+agent = Agent_commands()
+info = Info_commands()
+
+
 class Client:
 	
-	def __init__(self):
+	def __init__(self, world_id):
 		#listener 
 		self.server_listener = Server_listener()
 		self.message_handlers = Message_handler()	
@@ -21,15 +28,21 @@ class Client:
 		self.agent_handler = Agent_handler()
 		self.object_handler = Object_handler()
 		#state
-		self.globals = Globals(0) #world id zero
 		self.agents = Agents()
 		self.objects = Objects()
+		self.globals = Globals(world_id) #world id zero
 		self.terrain_map = Terrain_map
 
 	def start():
 		self.share_state(self)
-		self.
-		
+		self.server_listener.start()
+		#load map
+		info.get_map(0)
+		#load agents
+		info.agent_list()
+		#load objects
+		info.object_list()
+
 	def share_state(self):
 		print "Share State Start"
 		not_singletons = []
@@ -41,3 +54,10 @@ class Client:
 				#print 'Assigning',name2,'to',name1
 				setattr(object1,name2,object2)
 		[[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
+
+
+if __name__ == '__main__':
+	server = Server(0) #world _id = 0
+	server.run()
+	#Do something!
+	time.sleep(3600)
