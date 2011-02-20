@@ -53,6 +53,10 @@ class Button:
 #test.update()
 #in the main key handler, check if there is a menu open, and send the keypress to that menu's key handler:
 #current_menu.handle_key(char)
+#Then to draw:
+#if test.redraw:
+#       menu_con = test.draw()
+#       libtcod.console_blit(menu_con, 0, 0, test.width, test.height, 0, test.x, test.y)
 
 class Menu:
 	#If you set x and y here, you still need to do it later with set_position(), just use alignment = "exact"

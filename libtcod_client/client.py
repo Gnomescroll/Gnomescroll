@@ -84,9 +84,6 @@ def render_all():
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
 
-	if test.redraw:
-		menu_con = test.draw()
-		libtcod.console_blit(menu_con, 0, 0, test.width, test.height, 0, test.x, test.y)
 
 
 ###MAIN PROGRAM###
@@ -105,8 +102,6 @@ fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 game_msgs = []
 
 message("Welcome to dc_mmo")
-
-info.get_map()
 
 while not libtcod.console_is_window_closed():
 	render_all()
