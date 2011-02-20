@@ -12,7 +12,7 @@ class Terrain_map_handler:
 		#self.terrain_map.map = map
 		pass
 
-	def set_terrain_map(self, x,y,z,value, **msg):
+	def set_tmap(self, x,y,z,value, **msg):
 		self.terrain_map.set(x,y,z,value)
 		pass
 		
