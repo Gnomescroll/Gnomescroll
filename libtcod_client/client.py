@@ -37,6 +37,14 @@ admin = Admin_commands()
 info = Info_commands()
 agent = Agent_commands()
 
+test = Menu("Test Menu")
+test.add_button(Button(11, 1, "Button 1", 'b', "Test button 1 tooltip"))
+test.add_button(Button(5, 1, "a", 'a', "Second button tooptip"))
+test.add_text("Test message")
+test.add_button(Button(10, 1, "Button 2", 'b', "Test 3"))
+test.add_text("Test 2")
+test.initialize()
+
 
 def message(new_msg, color = libtcod.white):
 	redraw_messages = True
@@ -52,7 +60,7 @@ def message(new_msg, color = libtcod.white):
 		game_msgs.append((line, color))
 
 def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y
+	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
 	if redraw_map:
 		libtcod.console_set_background_color(map_viewer, libtcod.red)
@@ -85,6 +93,10 @@ def render_all():
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
 
+	if test.redraw:
+		menu_con = test.draw()
+		libtcod.console_blit(menu_con, 0, 0, test.width, test.height, 0, 1, 1)
+
 
 ###MAIN PROGRAM###
 
@@ -96,7 +108,7 @@ side_panel = libtcod.console_new(SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 
 #declare the server listener
-sl = Server_listener()
+#sl = Server_listener()
 
 #list of game messages
 game_msgs = []
