@@ -1,5 +1,6 @@
 from server_listener import *
 from server_API import *
+from gui_elements import *
 import libtcodpy as libtcod
 import textwrap
 
@@ -23,11 +24,19 @@ FPS_MONITOR_WIDTH = 8
 FPS_MONITOR_HEIGHT = 1
 #Screen update frequency
 LIMIT_FPS = 20
+#Describes what part of the map is currently in view
+viewer_start_x = 0
+viewer_start_y = 0
 #Flags to optimize drawing
 redraw_messages = True
 redraw_map = True
 redraw_side = True
 show_fps = True
+#Server communications
+admin = Admin_commands()
+info = Info_commands()
+agent = Agent_commands()
+
 
 def message(new_msg, color = libtcod.white):
 	redraw_messages = True
@@ -43,7 +52,7 @@ def message(new_msg, color = libtcod.white):
 		game_msgs.append((line, color))
 
 def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps
+	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y
 
 	if redraw_map:
 		libtcod.console_set_background_color(map_viewer, libtcod.red)
@@ -52,7 +61,7 @@ def render_all():
 		redraw_map = False
 
 	if redraw_messages:
-		libtcod.console_set_background_color(message_log, libtcod.black)
+		libtcod.console_set_background_color(message_log, libtcod.darker_blue)
 		libtcod.console_clear(message_log)
 		y = 1
 		for (line, color) in game_msgs:
@@ -63,7 +72,7 @@ def render_all():
 		redraw_messages = False;
 
 	if redraw_side:
-		libtcod.console_set_background_color(side_panel, libtcod.blue)
+		libtcod.console_set_background_color(side_panel, libtcod.dark_blue)
 		libtcod.console_clear(side_panel)
 		libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, 0)
 		redraw_side = False
@@ -75,6 +84,8 @@ def render_all():
 		fps = "FPS: " +str(libtcod.sys_get_fps())
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
+
+	libtcod.console_blit(con, 0, 0, 10, 1, 0, 0, 0, 1)
 
 
 ###MAIN PROGRAM###
@@ -93,6 +104,8 @@ sl = Server_listener()
 game_msgs = []
 
 message("Welcome to dc_mmo")
+
+info.get_map()
 
 while not libtcod.console_is_window_closed():
 	render_all()
