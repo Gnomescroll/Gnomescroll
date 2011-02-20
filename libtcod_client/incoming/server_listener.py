@@ -35,7 +35,10 @@ class Server_listener:
 					i = simplejson.loads(i)
 					msg = i['msg']
 					#print str(i)
-					self.message_handlers.handlers[msg](**i)
+					if msg in self.message_handlers.handlers.keys():
+						self.message_handlers.handlers[msg](**i)
+					else:
+						print "msg does not exist in handler: " + str(msg)
 				#print str(m)
 				#(pattern, subscribe, channel, msg) = m
 				#print "listener: " + str(msg)
