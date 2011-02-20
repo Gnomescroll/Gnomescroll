@@ -112,7 +112,6 @@ class Menu:
 		current_line = 0
 		if self.redraw:
 			for line in self.lines:
-				print line[0]
 				if line[0] == "center":
 					libtcod.console_print_center(self.menu_con, self.center_x, current_line, libtcod.BKGND_SET, line[1])
 					current_line += 1
@@ -143,7 +142,6 @@ class Menu:
 				self.lines[index][1].redraw = True
 				self.latest_hover_index = index
 				self.redraw = True
-				print "user is hovering over element at index", index
 				if mouse.lbutton_pressed:
 					pass #the user pressed this button
 				
