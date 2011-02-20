@@ -43,7 +43,7 @@ class Button:
 		return self.button_con
 
 class Menu:
-	#If you set x and y here, no need to do it later with set_position()
+	#If you set x and y here, you still need to do it later with set_position(), just use alignment = "exact"
 	def __init__(self, title, fore_color=libtcod.white, back_color=libtcod.black, has_cancel_button = True, x=0, y=0):
 		self.title = title
 		self.fore_color = fore_color
@@ -56,9 +56,11 @@ class Menu:
 		self.height = 0
 		self.has_cancel_button = has_cancel_button
 		self.redraw = True
+		self.close = False
+		self.latest_hover_index = None
 
 	#This should be called after initialize()
-	#current alignment options: center. Still to come: north, south, east, west, northwest, southwest, northeast, southeast
+	#current alignment options: center, exact. Still to come: north, south, east, west, northwest, southwest, northeast, southeast
 	#padding: the minimum number of tiles that the menu must be from an edge. It is ignored for "center" alignment
 	#window_start_x, window_start_y, window_width, and window_height describe the window the menu is going to be placed in
 	def set_position(self, align, padding, window_start_x, window_start_y, window_width, window_height):
@@ -135,10 +137,28 @@ class Menu:
 
 	#because checking keys in different functions simultaneously doesn't work, this only checks the mouse
 	def check_mouse(self):
-		pass
+		#clear out the last button
+		if self.latest_hover_index:
+			self.lines[self.latest_hover_index][1].mouse_is_hovering = False
+			self.lines[self.latest_hover_index][1].redraw = True
+			self.latest_hover_index = None
+			self.redraw = True
+		mouse = libtcod.mouse_get_status()
+		if mouse.cx >= self.x and mouse.cx < (self.x + self.width) and mouse.cy >= self.y and mouse.cy < (self.y + self.height):
+			index = mouse.cy - self.y
+			if self.lines[index][0] == "button":
+				self.lines[index][1].mouse_is_hovering = True
+				self.lines[index][1].redraw = True
+				self.latest_hover_index = index
+				self.redraw = True
+				print "user is hovering over element at index", index
+				if mouse.lbutton_pressed:
+					pass #the user pressed this button
+				
+		if mouse.rbutton_pressed:
+			self.close = True
+		
 
-	def resolve_mouse_to_element(self):
-		pass
 	
 
 		

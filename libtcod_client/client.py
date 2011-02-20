@@ -119,6 +119,7 @@ message("Welcome to dc_mmo")
 info.get_map()
 
 while not libtcod.console_is_window_closed():
+	test.check_mouse()
 	render_all()
 	libtcod.console_flush()
 
