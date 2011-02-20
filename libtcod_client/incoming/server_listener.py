@@ -31,11 +31,11 @@ class Server_listener:
 				i = m['data']
 				
 				if type == 'message':
-					#print str(msg)
+					print str(i)
 					i = simplejson.loads(i)
 					msg = i['msg']
 					#print str(i)
-					self.message_handlers.admin_handler[cmd](**i)
+					self.message_handlers.handlers[msg](**i)
 				#print str(m)
 				#(pattern, subscribe, channel, msg) = m
 				#print "listener: " + str(msg)
