@@ -43,7 +43,8 @@ class Button:
 		return self.button_con
 
 class Menu:
-	def __init__(self, title, fore_color=libtcod.white, back_color=libtcod.black, has_cancel_button = True, align="center", x=0, y=0):
+	#If you set x and y here, no need to do it later with set_position()
+	def __init__(self, title, fore_color=libtcod.white, back_color=libtcod.black, has_cancel_button = True, x=0, y=0):
 		self.title = title
 		self.fore_color = fore_color
 		self.back_color = back_color
@@ -56,12 +57,26 @@ class Menu:
 		self.height = 0
 		self.has_cancel_button = has_cancel_button
 		self.redraw = True
+
+	#This should be called after initialize()
+	#current alignment options: center. Still to come: north, south, east, west, northwest, southwest, northeast, southeast
+	#padding: the minimum number of tiles that the menu must be from an edge. It is ignored for "center" alignment
+	#window_start_x, window_start_y, window_width, and window_height describe the window the menu is going to be placed in
+	def set_position(self, align, padding, window_start_x, window_start_y, window_width, window_height):
+		width = window_width - window_start_x
+		height = window_height - window_start_y
+		if align == "center":
+			self.x = (int)(width/2)-(int)(self.width/2)
+			self.y = (int)(heigh/2)-(int)(self.height/2)
+			
+			
 		
 	def add_button(self, button):
 		self.lines.append(["button", button])
 		if button.width > self.width:
 			self.width = button.width
 		self.height += 1
+		self.hotkeys.append(button.hotkey)
 
 	def add_text(self, text, align = "left"):
 		self.lines.append([align, text])
@@ -117,6 +132,9 @@ class Menu:
 						current_line += 1
 		self.redraw = False
 		return self.menu_con #returns regardless of redraw status, but still try not to call draw() if redraw is False. More efficient
+
+	def check_mouse(self):
+		pass
 	
 
 		

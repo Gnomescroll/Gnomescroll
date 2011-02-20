@@ -44,6 +44,7 @@ test.add_text("Test message")
 test.add_button(Button(10, 1, "Button 2", 'b', "Test 3"))
 test.add_text("Test 2")
 test.initialize()
+test.set_position("center", 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
 def message(new_msg, color = libtcod.white):
@@ -95,7 +96,7 @@ def render_all():
 
 	if test.redraw:
 		menu_con = test.draw()
-		libtcod.console_blit(menu_con, 0, 0, test.width, test.height, 0, 1, 1)
+		libtcod.console_blit(menu_con, 0, 0, test.width, test.height, 0, test.x, test.y)
 
 
 ###MAIN PROGRAM###
