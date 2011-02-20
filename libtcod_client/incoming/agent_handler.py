@@ -10,7 +10,10 @@ class Agent_handler:
 
 	def agent_position_change(self, id, position, **msg):
 		pass
-	
+
+	def agent_state_change(self, id, position, version ,**msg):
+		pass
+
 	def agent_list(self, list, world_id, client_id, **msg):
 		pass
 

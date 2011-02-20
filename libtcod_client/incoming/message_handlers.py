@@ -10,15 +10,15 @@ class Message_handlers:
 		self.object_handler = None
 		pass
 
-	def start():
-		handlers = {
+	def start(self):
+		self.handlers = {
 	#delta handling
 		#map
 		'set_terrain_map' : Terrain_map_handler.set_terrain_map,
 		'terrain_map' : Terrain_map_handler.terrain_map,
 		#agent
 		'agent_info' : Agent_handler.agent_info,
-		'agent_list' : Agent_handler.get_agent_list,				
+		'agent_list' : Agent_handler.agent_list,				
 		'agent_create' : Agent_handler.agent_create,
 		'agent_delete' : Agent_handler.agent_delete,
 		'agent_position_change' : Agent_handler.agent_position_change,

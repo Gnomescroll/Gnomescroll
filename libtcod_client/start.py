@@ -33,10 +33,11 @@ class Client:
 		self.agents = Agents()
 		self.objects = Objects()
 		self.globals = Globals(world_id) #world id zero
-		self.terrain_map = Terrain_map
+		self.terrain_map = Terrain_map()
 
 	def setup(self):
 		self.share_state()
+		self.message_handlers.start()
 		self.server_listener.start()
 		#load map
 		info.get_map(0)
@@ -63,5 +64,6 @@ if __name__ == '__main__':
 	client.setup()
 	#Do something!
 	#debugging
+	time.sleep(5)
 	from pudb import set_trace; set_trace()
 	time.sleep(3600)
