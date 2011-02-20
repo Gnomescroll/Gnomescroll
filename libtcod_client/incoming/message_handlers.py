@@ -4,35 +4,28 @@ from incoming.info_handler import Info_handler
 class Message_handlers:
 	
 	def __init__(self):
-
-		self.handler = {
+		pass
+		self.handlers = {
 	#delta handling
+		#map
+		'set_terrain_map' : Delta_handler.set_terrain_map,		
 		#agent
-		'agent_create_update' : Delta_handler.agent_create_update,
-		'agent_delete_update' : Delta_handler.agent_delete_update,
+		'agent_create' : Delta_handler.agent_create,
+		'agent_delete' : Delta_handler.agent_delete,
 		'agent_position_change' : Delta_handler.agent_position_change,
 		'agent_state_change' : Delta_handler.agent_state_change,
 		#object
-		'object_create_update' : Delta_handler.info_commands.get_agent,
-		'object_delete_update' : Delta_handler.object_delete_update,
-		'object_position_change' : Delta_handler.get_object,
-		'object_state_change' : Delta_handler.get_map,
-		#map
-		'set_map' : Delta_handler.set_map,		
+		'object_create' : Delta_handler.object_create,
+		'object_delete' : Delta_handler.object_delete,
+		'object_position_change' : Delta_handler.object_position_change,
+		'object_state_change' : Delta_handler.object_state_change,
 	#info request handling
+		#map
+		'terrain_map' : Info_handler.terrain_map,
 		#gets
 		'agent_info' : Info_handler.agent_info,
-		'agent_info' : Info_handler.agent_info
+		'object_info' : Info_handler.object_info,
 		#lists
 		'agent_list' : Info_handler.get_agent_list,
 		'object_list' : Info_handler.get_object_list
-		#map
-		#object message handling
-		'move_0' : self.agent_commands.move_0,
-		'dig' : self.agent_commands.dig,
-		'construct_wall' : self.agent_commands.construct_wall,
-		
-		#map message handling
-		'set_map' : Map_update.set_map,
-		'get_map' : Map_update.get_map
-		}
+}

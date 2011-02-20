@@ -60,14 +60,14 @@ class Delta: #non-blocking client notification
 				
 	def agent_delete(self, agent_id):
 		msg = {}
-		msg['msg'] = 'agent_delete_update'
+		msg['msg'] = 'agent_delete'
 		msg['id'] = agent_id
 		self.delta_out_q.put(msg)
 		pass
 	
 	def agent_create(self, id, position, player_id=0):
 		msg = {}
-		msg['msg'] = 'agent_create_update'
+		msg['msg'] = 'agent_create'
 		msg['id'] = id
 		msg['position'] = position #(0,x,y,z)
 		msg['player_id'] = player_id
