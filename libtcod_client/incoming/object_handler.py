@@ -2,11 +2,10 @@
 class Object_handler:
 
 	def __init__(self):
+		self.objects = None
 		pass
 
-
-
-	def object_info(self, ,**msg):
+	def object_info(self, id, client_id, value, **msg):
 		pass
 
 	def object_position_change(self, id, position, version, **msg):

@@ -2,6 +2,7 @@
 class Terrain_map_handler:
 
 	def __init__(self):
+		self.terrain_map = None
 		pass
 
 	def terrain_map(self, map, z_level, x_size, y_size, world_id, client_id, **msg):

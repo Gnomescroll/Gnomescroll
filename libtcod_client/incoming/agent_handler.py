@@ -1,10 +1,11 @@
 
 class Agent_handler:
 
-	def __init__(self):
+	def __init__(self, agents):
+		self.Agents = None
 		pass
 
-	def agent_info(self, ,**msg):
+	def agent_info(self, id, client_id, value, **msg):
 		pass
 
 	def agent_position_change(self, id, position, **msg):

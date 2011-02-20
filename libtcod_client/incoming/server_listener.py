@@ -4,6 +4,8 @@ import redis.client
 import json
 import sys
 
+from incoming.message_handlers import Message_handlers
+
 def message_worker():
 	print "Message Worker Started"
 	r_client = redis.Redis("localhost") #will eventually need multiple output buffer servers
@@ -12,8 +14,14 @@ def message_worker():
 	r_client.subscribe(key)
 	
 	for m in r_client.listen():
-		print str(m)
-			
+		try:
+			print str(m)
+
+		except Exception, err:
+			print "message_worker: %s: %s" %(sys.stderr, err)
+			print "crash msg = " + str(i)
+			continue
+		
 class Server_listener:
 	def __init__(self):
 		t = Thread(target=message_worker, args=())

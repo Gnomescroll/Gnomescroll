@@ -3,10 +3,15 @@ from incoming.agent_handler import Agent_handler
 from incoming.object_handler import Object_handler
 
 class Message_handlers:
-	
-	def __init__(self):
+
+	def __init__(self, agents):
+		self.terrain_map_handler = None
+		self.agent_handler = None
+		self.object_handler = None
 		pass
-		self.handlers = {
+
+	def start():
+		handlers = {
 	#delta handling
 		#map
 		'set_terrain_map' : Terrain_map_handler.set_terrain_map,
@@ -25,4 +30,4 @@ class Message_handlers:
 		'object_delete' : Object_handler.object_delete,
 		'object_position_change' : Object_handler.object_position_change,
 		'object_state_change' : Object_handler.object_state_change
-}
+	}
