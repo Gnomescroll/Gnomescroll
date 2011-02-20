@@ -1,7 +1,7 @@
 import Queue
 from threading import Thread
 import redis.client
-import json
+import simplejson
 import sys
 
 from interface.agent import Agent
@@ -14,7 +14,7 @@ def info_out_worker(info_out_q, world_id):
 	while True:
 		try:
 			(client_id, msg) = info_out_q.get()
-			msg = json.dumps(msg)
+			msg = simplejson.dumps(msg)
 			print "info_out_worker: " + str(msg) # DEBUGGING
 			key = "world_0_out"
 			num_subs = out.publish(key, msg)

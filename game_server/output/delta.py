@@ -1,7 +1,7 @@
 import Queue
 from threading import Thread
 import redis.client
-import json
+import simplejson
 import sys
 
 def delta_out_worker(delta_out_q, world_id):
@@ -10,7 +10,7 @@ def delta_out_worker(delta_out_q, world_id):
 		try:
 			msg = delta_out_q.get()
 			#print "delta_out_worker: " + str(msg) # DEBUGGING
-			msg = json.dumps(msg)
+			msg = simplejson.dumps(msg)
 			print "delta_out_worker: " + msg # DEBUGGING
 			key = "world_%s_out" % (world_id)
 			num_subs = out.publish(key, msg)

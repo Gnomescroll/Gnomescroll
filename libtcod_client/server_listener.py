@@ -13,7 +13,8 @@ def message_worker():
 	
 	for m in r_client.listen():
 		print str(m)
-			
+		print "ERROR, wrong server listener in use!"
+
 class Server_listener:
 	def __init__(self):
 		t = Thread(target=message_worker, args=())

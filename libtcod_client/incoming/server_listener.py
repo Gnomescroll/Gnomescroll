@@ -1,30 +1,16 @@
 import Queue
 from threading import Thread
 import redis.client
-import json
 import sys
+import simplejson
 
-from incoming.message_handlers import Message_handlers
+#from incoming.message_handlers import Message_handlers
 
-def message_worker():
-	print "Message Worker Started"
-	r_client = redis.Redis("localhost") #will eventually need multiple output buffer servers
-	world_id = 0
-	key = "world_%s_out" % (world_id)
-	r_client.subscribe(key)
-	
-	for m in r_client.listen():
-		try:
-			print str(m)
-
-		except Exception, err:
-			print "message_worker: %s: %s" %(sys.stderr, err)
-			print "crash msg = " + str(i)
-			continue
-		
+#need to subsribe and unsubscribe in the future	
 class Server_listener:
 	def __init__(self):
 		self.globals = None
+		self.message_handlers = None
 
 	def start(self):
 		t = Thread(target=self.message_worker, args= (self.globals.world_id,))
@@ -39,8 +25,20 @@ class Server_listener:
 		
 		for m in r_client.listen():
 			try:
-				print str(m)
-	
+				pattern = m['pattern']
+				type = m['type']
+				channel = m['channel']
+				i = m['data']
+				
+				if type == 'message':
+					#print str(msg)
+					i = simplejson.loads(i)
+					print str(i)
+					
+				#print str(m)
+				#(pattern, subscribe, channel, msg) = m
+				#print "listener: " + str(msg)
+				
 			except Exception, err:
 				print "message_worker: %s: %s" %(sys.stderr, err)
 				print "crash msg = " + str(i)

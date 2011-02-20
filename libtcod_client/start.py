@@ -62,4 +62,6 @@ if __name__ == '__main__':
 	client = Client(0) #world _id = 0
 	client.setup()
 	#Do something!
+	#debugging
+	from pudb import set_trace; set_trace()
 	time.sleep(3600)
