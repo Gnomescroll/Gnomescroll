@@ -48,7 +48,6 @@ class Menu:
 		self.title = title
 		self.fore_color = fore_color
 		self.back_color = back_color
-		self.align = align
 		self.x = x
 		self.y = y
 		self.lines = []
@@ -65,9 +64,10 @@ class Menu:
 	def set_position(self, align, padding, window_start_x, window_start_y, window_width, window_height):
 		width = window_width - window_start_x
 		height = window_height - window_start_y
+		self.align = align
 		if align == "center":
 			self.x = (int)(width/2)-(int)(self.width/2)
-			self.y = (int)(heigh/2)-(int)(self.height/2)
+			self.y = (int)(height/2)-(int)(self.height/2)
 			
 			
 		
@@ -133,7 +133,11 @@ class Menu:
 		self.redraw = False
 		return self.menu_con #returns regardless of redraw status, but still try not to call draw() if redraw is False. More efficient
 
+	#because checking keys in different functions simultaneously doesn't work, this only checks the mouse
 	def check_mouse(self):
+		pass
+
+	def resolve_mouse_to_element(self):
 		pass
 	
 

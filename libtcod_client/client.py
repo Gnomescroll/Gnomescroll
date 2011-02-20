@@ -37,7 +37,7 @@ admin = Admin_commands()
 info = Info_commands()
 agent = Agent_commands()
 
-test = Menu("Test Menu")
+test = Menu("Test Menu", has_cancel_button = True)
 test.add_button(Button(11, 1, "Button 1", 'b', "Test button 1 tooltip"))
 test.add_button(Button(5, 1, "a", 'a', "Second button tooptip"))
 test.add_text("Test message")
