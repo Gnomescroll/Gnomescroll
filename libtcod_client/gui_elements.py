@@ -18,7 +18,6 @@ class Button:
 		self.back_color = back_color
 		self.mouse_is_hovering = False
 		self.button_con = libtcod.console_new(width, height)
-		self.redraw = True #True initially for first draw. After that, it should only be set to True if it is being hovered/clicked
 		self.msg = self.hotkey + ": " + self.text
 		self.center_x = (int)(width/2)
 		self.center_y = (int)(height/2)
@@ -37,8 +36,6 @@ class Button:
 
 		#Print the button to the button_con, and return that
 		libtcod.console_print_center(self.button_con, self.center_x, self.center_y, libtcod.BKGND_SET, self.msg)
-
-		self.redraw = False
 
 		return self.button_con
 
@@ -70,9 +67,7 @@ class Menu:
 		if align == "center":
 			self.x = (int)(width/2)-(int)(self.width/2)
 			self.y = (int)(height/2)-(int)(self.height/2)
-			
-			
-		
+
 	def add_button(self, button):
 		self.lines.append(["button", button])
 		if button.width > self.width:
@@ -82,7 +77,6 @@ class Menu:
 
 	def add_text(self, text, align = "left"):
 		self.lines.append([align, text])
-		print align, text
 		if len(text) > self.width:
 			self.width = len(text)
 		self.height += 1
@@ -127,11 +121,9 @@ class Menu:
 					current_line += 1
 
 				else:
-					print line[1]
-					if line[1].redraw:
-						button_con = line[1].draw()
-						libtcod.console_blit(button_con, 0, 0, line[1].width, line[1].height, self.menu_con, 0, current_line)
-						current_line += 1
+					button_con = line[1].draw()
+					libtcod.console_blit(button_con, 0, 0, line[1].width, line[1].height, self.menu_con, 0, current_line)
+					current_line += 1
 		self.redraw = False
 		return self.menu_con #returns regardless of redraw status, but still try not to call draw() if redraw is False. More efficient
 
