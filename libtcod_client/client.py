@@ -122,4 +122,3 @@ while not libtcod.console_is_window_closed():
 	render_all()
 	libtcod.console_flush()
 
-
