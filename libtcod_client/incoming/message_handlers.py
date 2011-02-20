@@ -1,5 +1,6 @@
-from incoming.delta_handler import Delta_handler
-from incoming.info_handler import Info_handler
+from incoming.terrain_map_handler import Terrain_map_handler
+from incoming.agent_handler import Agent_handler
+from incoming.object_handler import Object_handler
 
 class Message_handlers:
 	
@@ -8,24 +9,20 @@ class Message_handlers:
 		self.handlers = {
 	#delta handling
 		#map
-		'set_terrain_map' : Delta_handler.set_terrain_map,		
+		'set_terrain_map' : Terrain_map_handler.set_terrain_map,
+		'terrain_map' : Terrain_map_handler.terrain_map,
 		#agent
-		'agent_create' : Delta_handler.agent_create,
-		'agent_delete' : Delta_handler.agent_delete,
-		'agent_position_change' : Delta_handler.agent_position_change,
-		'agent_state_change' : Delta_handler.agent_state_change,
+		'agent_info' : Agent_handler.agent_info,
+		'agent_list' : Agent_handler.get_agent_list,				
+		'agent_create' : Agent_handler.agent_create,
+		'agent_delete' : Agent_handler.agent_delete,
+		'agent_position_change' : Agent_handler.agent_position_change,
+		'agent_state_change' : Agent_handler.agent_state_change,
 		#object
-		'object_create' : Delta_handler.object_create,
-		'object_delete' : Delta_handler.object_delete,
-		'object_position_change' : Delta_handler.object_position_change,
-		'object_state_change' : Delta_handler.object_state_change,
-	#info request handling
-		#map
-		'terrain_map' : Info_handler.terrain_map,
-		#gets
-		'agent_info' : Info_handler.agent_info,
-		'object_info' : Info_handler.object_info,
-		#lists
-		'agent_list' : Info_handler.get_agent_list,
-		'object_list' : Info_handler.get_object_list
+		'object_info' : Object_handler.object_info,
+		'object_list' : Object_handler.object_list
+		'object_create' : Object_handler.object_create,
+		'object_delete' : Object_handler.object_delete,
+		'object_position_change' : Object_handler.object_position_change,
+		'object_state_change' : Object_handler.object_state_change
 }
