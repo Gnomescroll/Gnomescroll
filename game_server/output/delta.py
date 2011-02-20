@@ -116,7 +116,7 @@ class Delta: #non-blocking client notification
 	#map notifications
 	def set_map(self, x, y, z, value): #called when map tile is changed
 		msg = {}
-		msg['msg'] = 'set_map'
+		msg['msg'] = 'set_terrain_map'
 		msg['value'] = value
 		msg['x'] = x
 		msg['y'] = y
