@@ -1,4 +1,5 @@
 import libtcodpy as libtcod
+import textwrap
 
 ##A simple button GUI element framework. 
 ##Simple usage example:
@@ -175,7 +176,38 @@ class Menu:
 			self.button_pressed = hotkeys[char] #they pressed a hotkey, so mark the corresponding button as pressed 
 
 
+class Message_Log:
+	def __init__(self, width, height, back_color = libtcod.darker_blue):
+		self.game_msgs = []
+		self.redraw = True
+		self.width = width
+		self.height = height
+		self.message_con = libtcod.console_new(width, height)
+		self.back_color = back_color
 
+	def add(self, new_msg, color = libtcod.white):
+		self.redraw = True
+		#split the message if necessary, among multiple lines
+		new_msg_lines = textwrap.wrap(new_msg, self.width)
+
+		for line in new_msg_lines:
+			#if the buffer is full, remove the first line to make room for the new one
+			if len(self.game_msgs) == self.height:
+			    del self.game_msgs[0]
+
+			#add the new line as a tuple, with the text and the color
+			self.game_msgs.append((line, color))
+
+	def draw(self):
+		libtcod.console_set_background_color(self.message_con, self.back_color)
+		libtcod.console_clear(self.message_con)
+		y = 1
+		for (line, color) in self.game_msgs:
+			libtcod.console_set_foreground_color(self.message_con, color)
+			libtcod.console_print_left(self.message_con, 1, y, libtcod.BKGND_NONE, line)
+			y += 1
+		redraw = False;
+		return self.message_con
 
 
 
