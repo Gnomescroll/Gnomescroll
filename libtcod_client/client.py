@@ -37,7 +37,6 @@ admin = Admin_commands()
 info = Info_commands()
 agent = Agent_commands()
 
-
 def message(new_msg, color = libtcod.white):
 	redraw_messages = True
 	#split the message if necessary, among multiple lines
@@ -52,7 +51,7 @@ def message(new_msg, color = libtcod.white):
 		game_msgs.append((line, color))
 
 def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y
+	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
 	if redraw_map:
 		libtcod.console_set_background_color(map_viewer, libtcod.red)
@@ -85,7 +84,6 @@ def render_all():
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
 
-	libtcod.console_blit(con, 0, 0, 10, 1, 0, 0, 0, 1)
 
 
 ###MAIN PROGRAM###
@@ -98,17 +96,14 @@ side_panel = libtcod.console_new(SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 
 #declare the server listener
-sl = Server_listener()
+#sl = Server_listener()
 
 #list of game messages
 game_msgs = []
 
 message("Welcome to dc_mmo")
 
-info.get_map()
-
 while not libtcod.console_is_window_closed():
 	render_all()
 	libtcod.console_flush()
-
 

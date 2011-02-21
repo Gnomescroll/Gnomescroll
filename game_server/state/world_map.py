@@ -4,8 +4,8 @@ class World_map:
 		self.globals = None
 		self.delta = None
 
-		self.x_size = 16
-		self.y_size = 16
+		self.x_size = 200
+		self.y_size = 200
 		self.map = [-1 for col in range(self.x_size * self.y_size) ] #-1 is unknown or not defined
 		self.version = 0 #versioning for objects
 		
