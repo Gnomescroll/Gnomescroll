@@ -1,5 +1,4 @@
-from server_listener import *
-from server_API import *
+from start import *
 from gui_elements import *
 import libtcodpy as libtcod
 import textwrap
@@ -32,10 +31,13 @@ redraw_messages = True
 redraw_map = True
 redraw_side = True
 show_fps = True
-#Server communications
-admin = Admin_commands()
-info = Info_commands()
-agent = Agent_commands()
+#Other random but important variables, mostly having to do with the gui
+game_state = "playing" 		#Could also be "paused"
+gui_state = "default"		#There is a game state handler for each multi-step process
+gui_status = 0			#This describes how far through a gui_state we've gotten
+current_menu = None
+mouse_x				#should be updated every tic
+mouse_y
 
 def message(new_msg, color = libtcod.white):
 	redraw_messages = True
@@ -87,16 +89,12 @@ def render_all():
 
 
 ###MAIN PROGRAM###
-
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 map_viewer = libtcod.console_new(MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 message_log = libtcod.console_new(MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT)
 side_panel = libtcod.console_new(SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
-
-#declare the server listener
-#sl = Server_listener()
 
 #list of game messages
 game_msgs = []
