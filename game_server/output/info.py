@@ -19,6 +19,8 @@ def info_out_worker(info_out_q, world_id):
 			msg = simplejson.dumps(msg)
 			if type != 'terrain_map': 
 				print "info_out_worker: " + str(msg) # DEBUGGING
+			else:
+				print "info_out_worker: sending map"
 			key = "world_0_out"
 			num_subs = out.publish(key, msg)
 #			if num_subs == 0:
