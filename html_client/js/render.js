@@ -17,6 +17,7 @@ var screen = ( function () {
     var calculateCanvasResolution, resizeScreen;
     var calculateGridCells;
     var canvas, setCanvas, colorCanvas, colorMap;
+    var staging_canvas, staging_ctx, setStagingCanvas;
     var controlMap, setControls;
     var init, test, public_;
     
@@ -79,6 +80,7 @@ var screen = ( function () {
         calculateGridCells();
         generateCells();
         setCanvas();
+        setStagingCanvas();
         
         //needs to scale all the shit down
         
@@ -102,10 +104,30 @@ var screen = ( function () {
         canvas.width = x_res;
         canvas.height = y_res;
         
-        colorCanvas('black');
+        colorCanvas(canvas, 'black');
     }
     
-    colorCanvas = function (color) {
+    setStagingCanvas = function () {
+        
+        staging_canvas = $('#stage');
+        
+        if (!staging_canvas.length) {
+            staging_canvas = $('<canvas></canvas>').attr('id', 'stage');
+            staging_canvas.css('display','none');
+            $('body').prepend(staging_canvas);
+        }
+        
+        staging_canvas = staging_canvas[0]
+        
+        staging_canvas.width = cell_width;
+        staging_canvas.height = cell_height;
+        
+        colorCanvas( staging_canvas, "transparent");
+        
+        staging_ctx = staging_canvas.getContext('2d');
+    };
+    
+    colorCanvas = function (canvas, color) {
         var ctx = canvas.getContext('2d');
         ctx.fillStyle = colorMap[color];
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -117,7 +139,8 @@ var screen = ( function () {
         green: "rgba(0,255,0,1)",
         blue: "rgba(0,0,255,1)",
         white: "rgba(255,255,255,1)",
-        black: "rgba(0,0,0,1)"
+        black: "rgba(0,0,0,1)",
+        transparent: "rgba(255,255,255,0)"
     }
         
     
@@ -177,6 +200,7 @@ var screen = ( function () {
         calculateCanvasResolution();
         generateCells();
         setCanvas();
+        setStagingCanvas();
 
         setControls();
         // bind resize event here
@@ -231,9 +255,11 @@ var screen = ( function () {
         
     }    
     
-    var colorTile = function (ctx, cell_num, color) {
+    
+    var colorTile = function (ctx, cell_num, tile_num, color) {
         
         var imageData,
+            staged_tile,
             x = cells[cell_num][0],
             y = cells[cell_num][1];
             
@@ -247,8 +273,15 @@ var screen = ( function () {
             white: {},
             black: {r:0, g:0, b:0}
         }
-            
-        imageData = ctx.getImageData(x, y, cell_width, cell_height);
+        
+        // put tile on stage
+        // get imageData from stage
+        // manipulate all staged image data with alpha > 0
+        // put the staged image data on the #screen
+        
+        drawTile(staging_ctx, tile_num, 0);
+        
+        imageData = staging_ctx.getImageData(0, 0, cell_width, cell_height);
         
         if (colors[color] !== undefined) {
             color = colors[color];
@@ -265,7 +298,8 @@ var screen = ( function () {
                 }
                 //alert(bg.toString());
                 //alert(imageData.data[offset+3]);
-                //if (bg.toString() !== '0,0,0') {                        
+                //if (bg.toString() !== '0,0,0') {         
+                //alert(imageData.data[offset+3]);
                 if (imageData.data[offset+3] !== 0) {                        
                     imageData.data[offset] = (color.r !== undefined) ? color.r : imageData.data[offset];
                     imageData.data[offset + 1] = (color.g !== undefined) ? color.g : imageData.data[offset + 1];
@@ -277,6 +311,8 @@ var screen = ( function () {
         }
                 
         ctx.putImageData(imageData, x, y);
+        
+        //colorCanvas(staging_canvas, "transparent");
     }
     
     
@@ -502,7 +538,7 @@ var screen = ( function () {
 
                 color = {r: red, g: green, b: blue};
                 
-                colorTile(ctx, cell_num, color);
+                colorTile(ctx, cell_num, tile_num, color);
             }
             
             $.each(cells, function(i, cell) {
