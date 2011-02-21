@@ -267,6 +267,8 @@ var screen = ( function () {
             // the object properties are which values to reassign
             // e.g. for red, just remove all g+b
             // Non-primary colors will need a different approach
+            
+            // Subtractive coloring
             red: {g:0, b:0},
             green: {r:0, b:0},
             blue: {r:0, g:0},
@@ -287,7 +289,7 @@ var screen = ( function () {
             color = colors[color];
         }
         
-        var _x,_y, k;
+        var _x,_y, k, grad;
         var offset, r, g, b, a, bg = [];
         for (_x = 0; _x < imageData.width; _x++) {
             for (_y = 0; _y < imageData.height; _y++) {
@@ -296,14 +298,21 @@ var screen = ( function () {
                 for (k = 0; k < 4; k++) {
                     bg.push(imageData.data[offset+k]);
                 }
-                //alert(bg.toString());
-                //alert(imageData.data[offset+3]);
-                //if (bg.toString() !== '0,0,0') {         
-                //alert(imageData.data[offset+3]);
+                
+                // subtractive coloring conditions
+                /*
                 if (imageData.data[offset+3] !== 0) {                        
                     imageData.data[offset] = (color.r !== undefined) ? color.r : imageData.data[offset];
                     imageData.data[offset + 1] = (color.g !== undefined) ? color.g : imageData.data[offset + 1];
                     imageData.data[offset + 2] = (color.b !== undefined) ? color.b : imageData.data[offset + 2];
+                }*/
+                
+                // normal coloring of a greyscale image
+                if (imageData.data[offset+3] !== 0) {
+                    grad = imageData.data[offset]/255; // (or max, but 255 is max)
+                    imageData.data[offset] = Math.floor(color.r * grad);
+                    imageData.data[offset+1] = Math.floor(color.g * grad);
+                    imageData.data[offset+2] = Math.floor(color.b * grad);
                 }
                 
                 bg = []; // reset pixel check
