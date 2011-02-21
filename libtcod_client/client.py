@@ -30,10 +30,10 @@ redraw_map = True
 redraw_side = True
 show_fps = True
 #Other random but important variables, mostly having to do with the gui
-game_state = "playing" 		#Could also be "paused"
 gui_state = "default"		#There is a game state handler for each multi-step process
 gui_status = 0			#This describes how far through a gui_state we've gotten
-current_menu = None
+current_menu = None		#This keeps track of whatever temporary menu is up at the moment.
+main_menu = None		#This menu is always up, still to come
 mouse_x	= None			#should be updated every tic
 mouse_y = None
 
@@ -66,6 +66,29 @@ def render_all():
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
 
+def handle_keys():
+	global current_menu, main_menu, game_state, message_log
+	key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED) 
+	key_char = chr(key.c)
+
+	if key.vk == libtcod.KEY_ESCAPE:
+		return "exit"
+
+	if key.vk == libtcod.KEY_UP or key_char == 'w':
+		#move up
+		pass
+
+	if key.vk == libtcod.KEY_DOWN or key_char == 's':
+		#move down
+		pass
+
+	if key.vk == libtcod.KEY_LEFT or key_char == 'a':
+		#move left
+		pass
+
+	if key.vk == libtcod.KEY_RIGHT or key_char == 'd':
+		#move right
+		pass
 
 
 ###MAIN PROGRAM###
@@ -83,4 +106,7 @@ message_log.add("Welcome to dc_mmo")
 while not libtcod.console_is_window_closed():
 	render_all()
 	libtcod.console_flush()
+	key_result = handle_keys()
+	if key_result == "exit":
+		break
 
