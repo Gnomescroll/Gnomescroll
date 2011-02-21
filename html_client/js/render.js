@@ -250,6 +250,10 @@ var screen = ( function () {
             
         imageData = ctx.getImageData(x, y, cell_width, cell_height);
         
+        if (colors[color] !== undefined) {
+            color = colors[color];
+        }
+        
         var _x,_y, k;
         var offset, r, g, b, a, bg = [];
         for (_x = 0; _x < imageData.width; _x++) {
@@ -263,9 +267,9 @@ var screen = ( function () {
                 //alert(imageData.data[offset+3]);
                 //if (bg.toString() !== '0,0,0') {                        
                 if (imageData.data[offset+3] !== 0) {                        
-                    imageData.data[offset] = (colors[color].r !== undefined) ? colors[color].r : imageData.data[offset];
-                    imageData.data[offset + 1] = (colors[color].g !== undefined) ? colors[color].g : imageData.data[offset + 1];
-                    imageData.data[offset + 2] = (colors[color].b !== undefined) ? colors[color].b : imageData.data[offset + 2];
+                    imageData.data[offset] = (color.r !== undefined) ? color.r : imageData.data[offset];
+                    imageData.data[offset + 1] = (color.g !== undefined) ? color.g : imageData.data[offset + 1];
+                    imageData.data[offset + 2] = (color.b !== undefined) ? color.b : imageData.data[offset + 2];
                 }
                 
                 bg = []; // reset pixel check
@@ -356,17 +360,28 @@ var screen = ( function () {
             });
         }
         
+        var gaussian_lame = function (mean, sd) {
+            var iters = 5,
+                g = 0;
+            
+            for (var i =0; i < 5; i++) {
+                g += Math.random()*2-1;
+            }
+            
+            return Math.round(g*sd + mean);
+            
+        }
+        
         tileCheckers = function (color) {
             var tile_num = 19; // the crate
             
             var draw_func;
             
             if (color != undefined) {
+                
                 draw_func = function (ctx, tile_num, cell_num, color) {
+                    
                     drawTile(ctx, tile_num, cell_num);
-                    //if (cell_num % 4 === 0) {
-                    //    colorTile(ctx, cell_num, color);
-                    //}
                     
                     switch (cell_num % 4) {
                         case 0:
@@ -381,6 +396,7 @@ var screen = ( function () {
                         default:
                             color = "white";
                     }
+                    
                     colorTile(ctx, cell_num, color);
                             
                 }
@@ -396,11 +412,115 @@ var screen = ( function () {
             });
         }
         
+        
+        var adjustable_random_colors = function(scale) {
+            var tile_num = 19; // the crate
+            
+            if (scale === undefined) {
+                scale = 1;
+            }
+            
+            var draw_func,
+                random_sort;
+            
+            random_sort = function (thing) {
+                return (0.5 - Math.random());
+            }
+                
+            var tick = -1;
+            
+            draw_func = function (ctx, tile_num, cell_num, color) {
+                
+                var tick_color;
+                
+                drawTile(ctx, tile_num, cell_num);
+                
+                tick += 1;
+
+                //random color
+                tick_color = [tick % 4, (tick-1) % 4, (tick-2) % 4, (tick-3) % 4];
+                tick_color.sort(random_sort);
+                
+                switch (cell_num % 4) {
+                    case tick_color[0]:
+                        color = 'red';
+                        break;
+                    case tick_color[1]:
+                        color = 'green';
+                        break;
+                    case tick_color[2]:
+                        color = "blue";
+                        break;
+                    default:
+                        color = "white";
+                }
+                var r, g, b;
+                r = Math.min(Math.floor(Math.random()*256)*0.3, 255);
+                g = Math.min(Math.floor(Math.random()*256)*1.5, 255);
+                b = Math.min(Math.floor(Math.random()*256)*0.7, 255);
+                color = { r: r, g: g, b: b};
+                
+                colorTile(ctx, cell_num, color);
+            };
+            
+            $.each(cells, function(i, cell) {
+                draw_func(ctx, tile_num, i, scale);
+            });
+        };
+        
+        var orb = function() {
+
+            var tile_num = 19; // the crate
+
+            var draw_func;
+            
+            draw_func = function (ctx, tile_num, cell_num) {
+                
+                drawTile(ctx, tile_num, cell_num);
+                
+                // distributed color
+                var gauss, origin, dist, cell_coord = [];
+                var max_dist, red, blue, green;
+                
+                cell_coord.push( cell_num % grid_cells );
+                cell_coord.push( (cell_num - cell_coord[0]) / grid_cells);
+                
+                //gauss = gaussian_lame(0, grid_cells*100);
+                origin = [grid_cells/2, grid_cells/2];
+                
+                dist = Math.sqrt(Math.pow((cell_coord[0] - origin[0]),2) + Math.pow((cell_coord[1] - origin[1]), 2));
+                max_dist = Math.sqrt(Math.pow(grid_cells/2, 2));
+                
+                //dist = dist*gauss;
+                //max_dist = max_dist*gauss;
+                
+                red = Math.min(Math.floor((255/max_dist) * dist), 255);
+                blue = 255-red;
+                //blue = Math.min(Math.floor(dist*gauss), 255);
+                //red = 255-blue;
+                green = 0;
+
+                color = {r: red, g: green, b: blue};
+                
+                colorTile(ctx, cell_num, color);
+            }
+            
+            $.each(cells, function(i, cell) {
+                draw_func(ctx, tile_num, i);
+            });
+        };
+        
+        
+        
         //drawCircle();
         //checkerboard("red");
         //gridBoard("red");
         
-        tileCheckers("red");
+        //tileCheckers("red");
+        
+        //adjustable_random_colors(0.7);
+        
+        orb();
     
     }
     
