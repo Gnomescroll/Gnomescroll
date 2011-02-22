@@ -120,11 +120,11 @@ n = 0
 if client.server_listener.ready == 1:
 	print "Redis Ready"
 	refresh_data()
+	time.sleep(1)
 else:
 	n = n+1
 	print "Redis Not Ready"
 
-time.sleep(1)
 print "n= " + str(n)
 print "If n equals 1 or greater, than attempt is made to refresh before listener is ready"
 #n = 0
