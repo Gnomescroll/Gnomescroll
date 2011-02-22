@@ -116,14 +116,17 @@ message_log.add("Welcome to dc_mmo")
 #get updated map, object, and agent data
 #time.sleep(1)
 
+if client.server_listener.ready == 1:
+	refresh_data()
+else:
+	print "Not Ready"
+	
+#n = 0
+#while client.terrain_map.map == None:
+#	time.sleep(1)
+#	print "waiting: " + str(n)
+#	n = n+1
 
-refresh_data()
-
-n = 0
-while client.terrain_map.map == None:
-	time.sleep(1)
-	print "waiting: " + str(n)
-	n = n+1
 #time.sleep(3600)
 
 #test print the terrain at 1,1

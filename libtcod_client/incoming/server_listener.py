@@ -8,9 +8,11 @@ import simplejson
 
 #need to subsribe and unsubscribe in the future    
 class Server_listener:
+
     def __init__(self):
         self.globals = None
         self.message_handlers = None
+        self.ready = 0
 
     def start(self):
         t = Thread(target=self.message_worker, args= (self.globals.world_id,))
@@ -22,6 +24,7 @@ class Server_listener:
         r_client = redis.Redis("localhost") #will eventually need multiple output buffer servers
         key = "world_%s_out" % (world_id)
         r_client.subscribe(key)
+        self.ready = 1
         
         for m in r_client.listen():
             #try:
