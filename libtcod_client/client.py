@@ -39,6 +39,7 @@ mouse_y = None
 
 client = Client(0) #world _id = 0
 client.setup()
+time.sleep(0.25)
 
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
