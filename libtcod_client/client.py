@@ -41,6 +41,8 @@ client = Client(0) #world _id = 0
 client.setup()
 time.sleep(1)
 
+#time.sleep(3600)
+
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
@@ -115,10 +117,13 @@ message_log.add("Welcome to dc_mmo")
 
 #get updated map, object, and agent data
 #time.sleep(1)
+
 refresh_data()
 
+#time.sleep(3600)
+
 #test print the terrain at 1,1
-print client.terrain_map.get(1, 1, 0)
+#print client.terrain_map.get(1, 1, 0)
 
 while not libtcod.console_is_window_closed():
 	render_all()
