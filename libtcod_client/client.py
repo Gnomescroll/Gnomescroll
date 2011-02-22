@@ -116,12 +116,17 @@ message_log.add("Welcome to dc_mmo")
 #get updated map, object, and agent data
 #time.sleep(1)
 
+n = 0
 if client.server_listener.ready == 1:
 	print "Redis Ready"
 	refresh_data()
 else:
+	n = n+1
 	print "Redis Not Ready"
-	
+
+time.sleep(1)
+print "n= " + str(n)
+print "If n equals 1 or greater, than attempt is made to refresh before listener is ready"
 #n = 0
 #while client.terrain_map.map == None:
 #	time.sleep(1)
