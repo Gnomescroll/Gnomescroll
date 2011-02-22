@@ -109,6 +109,7 @@ message_log.add("Welcome to dc_mmo")
 
 #start server-client communications
 client.setup()
+time.sleep(1)
 
 #get updated map, object, and agent data
 refresh_data()
