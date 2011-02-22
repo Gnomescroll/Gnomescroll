@@ -39,7 +39,7 @@ mouse_y = None
 
 client = Client(0) #world _id = 0
 client.setup()
-time.sleep(0.25)
+#time.sleep(0.25)
 
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
@@ -117,9 +117,10 @@ message_log.add("Welcome to dc_mmo")
 #time.sleep(1)
 
 if client.server_listener.ready == 1:
+	print "Redis Ready"
 	refresh_data()
 else:
-	print "Not Ready"
+	print "Redis Not Ready"
 	
 #n = 0
 #while client.terrain_map.map == None:
