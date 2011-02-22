@@ -90,6 +90,10 @@ def handle_keys():
 		#move right
 		pass
 
+def refresh_data():
+	info.get_map(0)
+	info.get_agent_list()
+	info.get_object_list()
 
 ###MAIN PROGRAM###
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False)
@@ -100,8 +104,15 @@ side_panel = libtcod.console_new(SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 
 #list of game messages
-
 message_log.add("Welcome to dc_mmo")
+
+#start server
+client = Client(0) #world _id = 0
+client.setup()
+refresh_data()
+
+#test print the terrain at 1,1
+print client.terrain_map.get(1, 1, 0)
 
 while not libtcod.console_is_window_closed():
 	render_all()
