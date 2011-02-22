@@ -36,8 +36,10 @@ current_menu = None		#This keeps track of whatever temporary menu is up at the m
 main_menu = None		#This menu is always up, still to come
 mouse_x	= None			#should be updated every tic
 mouse_y = None
-client = Client(0) #world _id = 0
 
+client = Client(0) #world _id = 0
+client.setup()
+time.sleep(1)
 
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
@@ -108,10 +110,11 @@ fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 message_log.add("Welcome to dc_mmo")
 
 #start server-client communications
-client.setup()
-time.sleep(1)
+#client.setup()
+
 
 #get updated map, object, and agent data
+#time.sleep(1)
 refresh_data()
 
 #test print the terrain at 1,1
