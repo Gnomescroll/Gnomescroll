@@ -422,7 +422,7 @@ var screen = ( function () {
             
             var draw_func;
             
-            if (color != undefined) {
+            if (color !== undefined) {
                 
                 draw_func = function (ctx, tile_num, cell_num, color) {
                     
@@ -442,7 +442,7 @@ var screen = ( function () {
                             color = "white";
                     }
                     
-                    colorTile(ctx, cell_num, color);
+                    colorTile(ctx, cell_num, tile_num, color);
                             
                 }
             } else {
@@ -505,7 +505,7 @@ var screen = ( function () {
                 b = Math.min(Math.floor(Math.random()*256)*0.7, 255);
                 color = { r: r, g: g, b: b};
                 
-                colorTile(ctx, cell_num, color);
+                colorTile(ctx, cell_num, tile_num, color);
             };
             
             $.each(cells, function(i, cell) {
