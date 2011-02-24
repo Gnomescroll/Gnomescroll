@@ -37,9 +37,8 @@ main_menu = None		#This menu is always up, still to come
 mouse_x	= None			#should be updated every tic
 mouse_y = None
 
-client = Client(0) #world _id = 0
-client.setup()
-#time.sleep(0.25)
+client = Client(0) 		#world _id = 0
+client.setup()			#start server-client communications
 
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
@@ -73,27 +72,14 @@ def handle_keys():
 	key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED) 
 	key_char = chr(key.c)
 
+	#Can also test: if key_char == 'c': ...
+
 	if key.vk == libtcod.KEY_ESCAPE:
 		return "exit"
 
-	if key.vk == libtcod.KEY_UP or key_char == 'w':
-		#move up
-		pass
-
-	if key.vk == libtcod.KEY_DOWN or key_char == 's':
-		#move down
-		pass
-
-	if key.vk == libtcod.KEY_LEFT or key_char == 'a':
-		#move left
-		pass
-
-	if key.vk == libtcod.KEY_RIGHT or key_char == 'd':
-		#move right
-		pass
 
 def refresh_data():
-	#get updated map, object, and agent data
+	#get updated map, object, and agent data	
 	info.get_map(0)
 	info.get_agent_list()
 	info.get_object_list()
@@ -109,34 +95,16 @@ fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 #list of game messages
 message_log.add("Welcome to dc_mmo")
 
-#start server-client communications
-#client.setup()
-
-
 #get updated map, object, and agent data
-#time.sleep(1)
-
-n = 0
 if client.server_listener.ready == 1:
 	print "Redis Ready"
 	refresh_data()
 	time.sleep(1)
 else:
-	n = n+1
 	print "Redis Not Ready"
 
-print "n= " + str(n)
-print "If n equals 1 or greater, than attempt is made to refresh before listener is ready"
-#n = 0
-#while client.terrain_map.map == None:
-#	time.sleep(1)
-#	print "waiting: " + str(n)
-#	n = n+1
-
-#time.sleep(3600)
-
 #test print the terrain at 1,1
-#print client.terrain_map.get(1, 1, 0)
+print client.terrain_map.get(1, 1, 0)
 
 while not libtcod.console_is_window_closed():
 	render_all()
