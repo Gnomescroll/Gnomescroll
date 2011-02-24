@@ -49,12 +49,13 @@ class Delta: #non-blocking client notification
 		self.delta_out_q.put(msg)
 		pass
 
-	def agent_state_change(self, agent_id, position, version):
+	def agent_state_change(self, agent_id, position, version, meta=None):
 		msg = {}
 		msg['msg'] = 'agent_state_change_update'
 		msg['id'] = agent_id
 		msg['version'] = version
 		msg['position'] = position # [0,x,y,z]
+		msg['meta'] = meta
 		self.delta_out_q.put(msg)
 		pass
 				
@@ -78,11 +79,12 @@ class Delta: #non-blocking client notification
 	#object notifications
 	
 	#USE THIS INSTEAD
-	def object_position_change(self, object_id, position):
+	def object_position_change(self, object_id, position, meta = None):
 		msg = {}
 		msg['msg'] = 'object_position_change'
 		msg['id'] = object_id
 		msg['position'] = position
+		msg['meta'] = meta
 		#msg['object_type'] = self.objects.objects[object_id]['object_type']
 		self.delta_out_q.put(msg)
 	

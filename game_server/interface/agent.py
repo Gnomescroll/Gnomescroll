@@ -1,5 +1,7 @@
 import sys
 
+from interface.object import Nobject
+
 #custom_agent_attributes = ['position'] #attributes with class defined get/set properties
 custom_agent_attributes = []
 
@@ -10,6 +12,35 @@ class Agent:
 		[type, x, y, z] = [type, x+dx, y+dy, 0]
 		self.position = [type, x, y, z]
 		self.delta.agent_position_change(self.__dict__['id'], [0,x, y, z])
+
+	def pickup_item(self, item_id):
+		if self.holding == 1:
+			print "Agent cannot hold multiple items!"
+		else:
+			item = Nobject(item_id)
+			if self.position != item.position:
+				print "Agent is too far from item!"
+			else:
+				item.position = (1, self.__dict__['id'])
+				self.holding = item.id
+				meta = { type : "pickup_item", item_id: item.id, agent_id: self.__dict__['id'] }
+				self.delta.agent_state_change(self.__dict__['id'], self.position, self.verion, meta = meta )
+				meta = {type : 'drop_item'}
+				self.object_position_change(self.holding, self.position, meta=meta)
+		pass
+
+	def drop_item(self):
+		if self.holding == 0:
+			print "Agent is not holding anything!"
+		else:
+			item = Nobject(self.holding)
+			item.position = self.position
+			meta = {type : "drop_item", agent_id : self.__dict__['id'], object_id : self.holding}
+			self.delta.agent_state_change(self.__dict__['id'], self.position, self.verion, meta = meta)
+			meta = {type : 'drop_item'}
+			self.object_position_change(self.holding, self.position, meta=meta)
+			self.holding = 0
+		pass
 
 	### Generic Stuff ###
 	agents = None #agent dictionary
