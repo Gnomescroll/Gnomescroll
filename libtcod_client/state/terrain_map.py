@@ -28,14 +28,17 @@ class Terrain_map:
 	#returns a section of the map, starting at x, y, z, with width width, and height height
 	#this could probably be rewritten with list comprehensions if I understood them better
 	def get_map_section(self, x, y, z, width, height):
+		if self.map == None:
+			print "map is not initialized!"
+		
 		map_section = []
 		map_row = []
 		for h in range(y, height+1):
 			for w in range(x, width+1):
 				index = h * self.x_size + w
 				print "asking for index", index
-				map_row[w] = self.map[index]
-			map_section[h] = map_row
+				map_row.insert(w, self.map[index])
+			map_section.insert(h, map_row)
 		return map_section
 
 
