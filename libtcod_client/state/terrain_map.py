@@ -17,8 +17,8 @@ class Terrain_map:
 
 	def set(self, x,y,z,value):
 		self.map[y * self.x_size + x] = value
-		self.delta.set_map(x,y,z,value)
-		#self.version = self.version + 1
+		#self.delta.set_map(x,y,z,value)
+		self.version = self.version + 1
 
 	#needs to return an array, may be sparse
 	def get_z_level(self, z = 0):
