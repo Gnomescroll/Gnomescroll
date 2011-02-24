@@ -25,6 +25,7 @@ LIMIT_FPS = 20
 #Describes what part of the map is currently in view
 viewer_start_x = 0
 viewer_start_y = 0
+current_z = 0
 #Flags to optimize drawing
 redraw_map = True
 redraw_side = True
@@ -44,6 +45,7 @@ def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
 	if redraw_map:
+		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 		libtcod.console_set_background_color(map_viewer, libtcod.red)
 		libtcod.console_clear(map_viewer)
 		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
@@ -103,17 +105,18 @@ if client.server_listener.ready == 1:
 else:
 	print "Redis Not Ready"
 
-#test print the terrain at 1,1
-print client.terrain_map.get(1, 1, 0)
-admin.set_map(1, 1, 0, 5)
-#refresh_data()
-#print client.terrain_map.get(1, 1, 0)
-print client.terrain_map.get_map_section(0, 0, 0, 10, 10) #Get a 10x10 section starting at 0,0
-
 while not libtcod.console_is_window_closed():
 	render_all()
 	libtcod.console_flush()
 	key_result = handle_keys()
 	if key_result == "exit":
 		break
+	refresh_data()
+
+
+
+
+
+
+
 
