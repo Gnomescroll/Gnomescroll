@@ -106,8 +106,8 @@ else:
 #test print the terrain at 1,1
 print client.terrain_map.get(1, 1, 0)
 admin.set_map(1, 1, 0, 5)
-refresh_data()
-print client.terrain_map.get(1, 1, 0)
+#refresh_data()
+#print client.terrain_map.get(1, 1, 0)
 print client.terrain_map.get_map_section(0, 0, 0, 10, 10) #Get a 10x10 section starting at 0,0
 
 while not libtcod.console_is_window_closed():
