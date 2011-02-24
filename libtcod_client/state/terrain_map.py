@@ -31,15 +31,12 @@ class Terrain_map:
 			print "map is not initialized!"
 		
 		map_section = []
-		map_row = []
-		print width, height
 		for h in range(y, height):
+			map_row = []
 			for w in range(x, width):
 				index = h * self.x_size + w
-				print "asking for index", index
 				map_row.insert(w, self.map[index])
 			map_section.insert(h, map_row)
-			del map_row[:]
 		return map_section
 
 
