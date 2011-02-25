@@ -32,11 +32,12 @@ class Server_listener:
             type = m['type']
             channel = m['channel']
             i = m['data']
-            
+            print 'message received'
             if type == 'message':
                 #print str(i)
                 i = simplejson.loads(i)
                 msg = i['msg']
+                print msg
                 #print str(i)
                 if msg in self.message_handlers.handlers:
                     #print "valid"

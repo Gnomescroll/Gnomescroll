@@ -36,7 +36,7 @@ var admin_commands = ( function () {
         set_map,
         public_;
         	
-	create_agent = function (x,y,z, player_id) {
+	create_agent = function (location, x, y, z, player_id) {
 		
         if (player_id === undefined) { 
             player_id = 0;
@@ -47,7 +47,8 @@ var admin_commands = ( function () {
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id,
-                player_id: player_id
+                player_id: player_id,
+                position: [location, x, y, z],
                }
         
         return data;
