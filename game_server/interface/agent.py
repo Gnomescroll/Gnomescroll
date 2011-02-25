@@ -60,9 +60,22 @@ class Agent:
 		pass
 
 	def till_soil(self):
+		(type, x, y, z) = self.position
+		tile_value = self.world_map.get(x,y,z)
+		if tile_value == -1 or tile_value == 0: #check to see if tile is tillable
+			self.world_map.set(x,y,z, 1) #check to see what type tile becomes when tilled
+		else:
+			print "tile_type cannot be tilled: " + str(tile_value)
 		pass
 
-	def plant_crop(self):
+	def plant_crop(self, seed_id = 0):
+		#pretend they have a seed
+		(type, x, y, z) = self.position
+		tile_value = self.world_map.get(x,y,z)
+		if not tile_value == 1:	#check to see if tile can support crops and if this seed will grow
+			print "Tile or seed type invalid"
+			return
+		
 		pass
 		
 	def harvest_crop(self):
