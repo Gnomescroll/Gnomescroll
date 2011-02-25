@@ -66,7 +66,7 @@ def create_crop(id, x,y,z,template = None, world_id = 0):
 		template = 'generic_crop'
 	a = crops_dat[template]
 	
-	a = {}
+	#a = {}
 	a['id'] = id
 	#position is (type, x, y, z)
 	a['position'] = [0 , x, y, z] #type zero is ground
@@ -111,13 +111,37 @@ class Objects:
 		if object_type == None:
 			a = create_object(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		if object_type == 'item':
+			a = create_item(position, template)
 			pass
 		if object_type == 'crop':
+			a = create_crop(position, template)
 			pass
 		if object_type == 'plant':
 			pass
 		self.object_list[id] = a
 		self.delta.object_create(id, position, a['type'])
+	
+	def _create_crop(self, position, template):
+		if template == None:
+			template = 'generic_crop'
+		a = self.dat.get_crop_template(template)
+		a['id'] = id
+		#position is (type, x, y, z)
+		a['position'] = position
+		a['world_id'] = self.globals.world_id
+		a['version'] = 0
+		return a
+
+	def _create_item(self, position, template):
+		if template == None:
+			template = 'generic_item'
+		a = self.dat.get_item_template(template)
+		a['id'] = id
+		#position is (type, x, y, z)
+		a['position'] = position
+		a['world_id'] = self.globals.world_id
+		a['version'] = 0
+		return a
 		
 	def delete(self, id):
 		pass
