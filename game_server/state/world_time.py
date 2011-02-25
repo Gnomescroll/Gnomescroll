@@ -20,7 +20,7 @@ def process_timer_callback(timer_dict):
 	if timer_type == "crop":
 		id = timer_dict['id']
 		crop = Crop(id)
-		if event_type == "maturity":
+		if event_type == "mature":
 			crop.mature()
 
 class World_time:

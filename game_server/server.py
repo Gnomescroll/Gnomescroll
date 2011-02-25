@@ -12,6 +12,7 @@ from state.world_time import World_time
 from state.globals import Globals
 from state.agents import Agents
 from state.objects import Objects
+from state.dat import Dat
 
 ##input message handling
 from input.message_listener import Message_listener
@@ -47,6 +48,7 @@ class Server:
 		self.world_time = World_time()
 		self.agents = Agents()
 		self.objects = Objects()
+		self.dat = Dat()
 
 	def share_state(self):
 		print "Share State Start"

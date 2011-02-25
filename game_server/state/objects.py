@@ -94,9 +94,10 @@ class Objects:
 	def __init__(self):
 		self.globals = None
 		self.delta = None
-		#
+		self.world_time = None
+		self.dat = None
+		
 		self.object_list = {}
-
 	def init(self):
 		world_id = self.globals.world_id
 		#grab state from persistant store

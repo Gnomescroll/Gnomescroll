@@ -8,7 +8,8 @@ class Crop:
 	objects = None	 #object dictionary
 	world_map = None #world map object
 	delta = None #delta object
-	
+	dat = None
+
 	### Object Specific Functions ###
 	
 	def	mature(self):
