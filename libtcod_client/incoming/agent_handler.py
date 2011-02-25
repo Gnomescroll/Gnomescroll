@@ -15,7 +15,6 @@ class Agent_handler:
 		pass
 
 	def agent_list(self, list, world_id, client_id, **msg):
-		print "agent list works"
 		pass
 
 	def agent_create(self, id, position, player_id, **msg):

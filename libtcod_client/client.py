@@ -37,6 +37,7 @@ current_menu = None		#This keeps track of whatever temporary menu is up at the m
 main_menu = None		#This menu is always up, still to come
 mouse_x	= None			#should be updated every tic
 mouse_y = None
+server_counter = 0
 
 client = Client(0) 		#world _id = 0
 client.setup()			#start server-client communications
@@ -111,8 +112,12 @@ while not libtcod.console_is_window_closed():
 	key_result = handle_keys()
 	if key_result == "exit":
 		break
-	refresh_data()
-
+	#ask for new data from the server about 2 times every second, can be increased if required
+	if server_counter == 10:
+		refresh_data()
+		server_counter = 0
+	else:
+		server_counter += 1
 
 
 

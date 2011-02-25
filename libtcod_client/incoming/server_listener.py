@@ -34,7 +34,7 @@ class Server_listener:
             i = m['data']
             
             if type == 'message':
-                print str(i)
+                #print str(i)
                 i = simplejson.loads(i)
                 msg = i['msg']
                 #print str(i)

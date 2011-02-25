@@ -17,7 +17,6 @@ class Object_handler:
 
 	#list
 	def object_list(self, list, client_id, world_id, **msg):
-		print "object list works"
 		pass
 	
 	#creation and deletion
