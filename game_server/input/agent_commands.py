@@ -31,10 +31,13 @@ class Agent_commands:
 		pass
 		
 	def till_soil(self, **msg):
+		Agent(agent_id).till_soil()
 		pass
 		
 	def plant_crop(self, **msg):
+		Agent(agent_id).plant_crop(object_id)
 		pass
 		
-	def harvest(self, **msg):
+	def harvest_crop(self, **msg):
+		Agent(agent_id).harvest_crop(object_id)
 		pass

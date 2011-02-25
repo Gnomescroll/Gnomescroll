@@ -26,7 +26,7 @@ class Message_handlers:
 		#'plant_tree' : self.agent_actions.plant_tree,
 		'till_soil' : self.agent_commands.till_soil,
 		'plant_crop' : self.agent_commands.plant_crop,
-		'harvest' : self.agent_commands.harvest,
+		'harvest_crop' : self.agent_commands.harvest_crop,
 		#'store_item_in_container' : self.agent_actions.store_item_in_container,
 		#'remove_item_from_container' : self.agent_actions.remove_item_from_container
 		}
