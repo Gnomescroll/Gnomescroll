@@ -10,8 +10,13 @@ crops_dat = {
 			type : ["crop"],
 			version : 0
 		},
-		harvestable : 0,
+		plantable : 1,
+		planting_experience : 20 
+		planting_difficulty : 1,
 		grows_from : "generic_seeds",
+		
+		harvestable : 0,
+		matures : 1,
 		mature_time : 900,
 		matures_into : "generic_mature_crop"
 	},
@@ -19,9 +24,19 @@ crops_dat = {
 	generic_mature_crop:
 	{
 		name : "generic_mature_crop"
+		{
+			name : "generic_mature_crop",
+			type : ["crop"],
+			version : 0
+		},
+		plantable : 0,
+		harvestable : 1,
+		harvest_produces : [(1,3, 'generic_food')], # 1d3 generic food
+		harvest_experience : 10
+		matures : 0, #disable maturing for now
+		mature_time : 5000,
+		matures_into : "generic_dead_crop"
 	}
-
-
 
 
 }
