@@ -1,62 +1,62 @@
 
 
 crops_dat = {
-	generic_crop: 
+	'generic_crop' : 
 	{
-		template_params : ['id','position', 'version', 'world_id'],
-		template : 
+		'template_params' : ['id','position', 'version', 'world_id'],
+		'template' : 
 		{
-			name : "generic_crop",
-			type : ["crop"],
-			parent : "generic_crop",
+			'name' : "generic_crop",
+			'type' : ["crop"],
+			'parent' : "generic_crop",
 			#version : 0
 		},
 
-		plantable : 1,
-		planting_experience : 20 ,
-		planting_difficulty : 1,
-		grows_from : "generic_seeds",
+		'plantable' : 1,
+		'planting_experience' : 20 ,
+		'planting_difficulty' : 1,
+		'grows_from' : "generic_seeds",
 		
-		harvestable : 0,
-		matures : 1,
-		mature_time : 900,
-		matures_into : "generic_mature_crop"
+		'harvestable' : 0,
+		'matures' : 1,
+		'mature_time' : 900,
+		'matures_into' : "generic_mature_crop"
 	},
 
-	generic_mature_crop:
+	'generic_mature_crop' :
 	{
-		template_params : ['id','position', 'version', 'world_id'],
-		template : 
+		'template_params' : ['id','position', 'version', 'world_id'],
+		'template' : 
 		{
-			name : "generic_mature_crop",
-			type : ["crop"],
-			parent : "generic_mature_crop",
+			'name' : "generic_mature_crop",
+			'type' : ["crop"],
+			'parent' : "generic_mature_crop",
 			#version : 0
 		},
-		plantable : 0,
-		harvestable : 1,
-		harvest_produces : [(1,3, 'generic_food')], # 1d3 generic food
-		harvest_experience : 10,
-		matures : 0, #disable maturing for now
-		mature_time : 5000,
-		matures_into : "generic_dead_crop"
+		'plantable' : 0,
+		'harvestable' : 1,
+		'harvest_produces' : [(1,3, 'generic_food')], # 1d3 generic food
+		'harvest_experience' : 10,
+		'matures' : 0, #disable maturing for now
+		'mature_time' : 5000,
+		'matures_into' : "generic_dead_crop"
 	},
 
-	generic_dead_crop:
+	'generic_dead_crop' :
 	{
-		template_params : ['id','position', 'version', 'world_id'],
-		template : 
+		'template_params' : ['id','position', 'version', 'world_id' ],
+		'template' : 
 		{
-			name : "generic_dead_crop",
-			type : ["crop"],
-			parent : "generic_dead_crop",
+			'name' : "generic_dead_crop",
+			'type' : ["crop"],
+			'parent' : "generic_dead_crop",
 			#version : 0
 		},
-		plantable : 0,
-		harvestable : 1,
-		harvest_produces : [], # 1d3 generic food
-		harvest_experience : 5,
-		matures : 0
+		'plantable' : 0,
+		'harvestable' : 1,
+		'harvest_produces' : [], # 1d3 generic food
+		'harvest_experience' : 5,
+		'matures' : 0
 	}
 	
 }
