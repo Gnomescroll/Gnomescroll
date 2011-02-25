@@ -31,21 +31,20 @@ redraw_map = True
 redraw_side = True
 show_fps = True
 #Other random but important variables, mostly having to do with the gui
-gui_state = "default"		#There is a game state handler for each multi-step process
-gui_status = 0			#This describes how far through a gui_state we've gotten
-current_menu = None		#This keeps track of whatever temporary menu is up at the moment.
-main_menu = None		#This menu is always up, still to come
-mouse_x	= None			#should be updated every tic
+gui_state = "default"        #There is a game state handler for each multi-step process
+gui_status = 0            #This describes how far through a gui_state we've gotten
+current_menu = None        #This keeps track of whatever temporary menu is up at the moment.
+main_menu = None        #This menu is always up, still to come
+mouse_x    = None            #should be updated every tic
 mouse_y = None
 server_counter = 0
 
 client = Client(0) 		#world _id = 0
 client.setup()			#start server-client communications
-
 def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
+    global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
-	if redraw_map:
+    if redraw_map:
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 		for x in range(viewer_start_x, MAP_VIEWER_WIDTH):
 			for y in range(viewer_start_y, MAP_VIEWER_HEIGHT):
