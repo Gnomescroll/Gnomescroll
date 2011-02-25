@@ -47,8 +47,13 @@ def render_all():
 
 	if redraw_map:
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
-		libtcod.console_set_background_color(map_viewer, libtcod.red)
-		libtcod.console_clear(map_viewer)
+		for x in range(viewer_start_x, MAP_VIEWER_WIDTH):
+			for y in range(viewer_start_y, MAP_VIEWER_HEIGHT):
+				if tmap[x][y] == -1:
+					color = libtcod.darker_green
+				else:
+					color = libtcod.black
+				libtcod.console_set_back(map_viewer, x, y, color, libtcod.BKGND_SET)
 		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 		redraw_map = False
 
@@ -68,7 +73,7 @@ def render_all():
 		libtcod.console_clear(fps_monitor)
 		fps = "FPS: " +str(libtcod.sys_get_fps())
 		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
-		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0, 1, 0.6)
+		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0)
 
 def handle_keys():
 	global current_menu, main_menu, game_state, message_log
@@ -106,6 +111,9 @@ if client.server_listener.ready == 1:
 else:
 	print "Redis Not Ready"
 
+admin.set_map(2, 2, 0, 5)
+admin.set_map(1, 1, 0, 5)
+
 while not libtcod.console_is_window_closed():
 	render_all()
 	libtcod.console_flush()
@@ -116,6 +124,7 @@ while not libtcod.console_is_window_closed():
 	if server_counter == 10:
 		refresh_data()
 		server_counter = 0
+		redraw_map = True
 	else:
 		server_counter += 1
 
