@@ -23,10 +23,18 @@ class Agent:
 			else:
 				item.position = (1, self.__dict__['id'])
 				self.holding = item.id
-				meta = { type : "pickup_item", item_id: item.id, agent_id: self.__dict__['id'] }
-				self.delta.agent_state_change(self.__dict__['id'], self.position, self.verion, meta = meta )
-				meta = {type : 'drop_item'}
-				self.object_position_change(self.holding, self.position, meta=meta)
+				#update message
+				type = 'agent_pickup_item'
+				meta = {
+				agent_id : self.id(),
+				item_id : item.id,
+				position : self.position
+				}
+				self.delta.meta(type, meta)
+				#meta = { type : "pickup_item", item_id: item.id, agent_id: self.__dict__['id'] }
+				#self.delta.agent_state_change(self.__dict__['id'], self.position, self.verion, meta = meta )
+				#meta = {type : 'drop_item'}
+				#self.object_position_change(self.holding, self.position, meta=meta)
 		pass
 
 	def drop_item(self):
@@ -35,13 +43,24 @@ class Agent:
 		else:
 			item = Nobject(self.holding)
 			item.position = self.position
-			meta = {type : "drop_item", agent_id : self.__dict__['id'], object_id : self.holding}
-			self.delta.agent_state_change(self.__dict__['id'], self.position, self.verion, meta = meta)
-			meta = {type : 'drop_item'}
-			self.object_position_change(self.holding, self.position, meta=meta)
+			self.holding = 0
+			#update message
+			type = 'agent_drop_item'
+			meta = {
+			agent_id : self.id(),
+			item_id : item.id,
+			position : self.position
+			}
+			self.delta.meta(type, meta)			
+			#self.delta.agent_state_change(self.__dict__['id'], self.position, self.version, meta = meta)
+			#meta = {type : 'drop_item'}
+			#self.object_position_change(self.holding, self.position, meta=meta)
 			self.holding = 0
 		pass
 
+	def id(self):
+		return self.__dict__['id']
+	
 	### Generic Stuff ###
 	agents = None #agent dictionary
 	objects = None	 #object dictionary
