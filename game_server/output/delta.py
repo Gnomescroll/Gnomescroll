@@ -39,7 +39,15 @@ class Delta: #non-blocking client notification
 			t = Thread(target=delta_out_worker, args=(self.delta_out_q, self.globals.world_id,))
 			t.daemon = True
 			t.start()
-			
+	
+	## Agent Action relatd ##
+	def meta(self, type, meta):
+		msg = {}
+		msg['msg'] = type
+		for i,x in meta.items():
+			msg[i] = x		
+		self.delta_out_q.put(msg)
+		
     #agent notifications
 	def agent_position_change(self, agent_id, position, player_id=0): #called when agent changes position
 		msg = {}
