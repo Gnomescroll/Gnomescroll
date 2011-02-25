@@ -26,7 +26,7 @@ class Agent:
 				#update message
 				type = 'agent_pickup_item'
 				meta = {
-				type = 'agent_pickup_item'
+				type : 'agent_pickup_item',
 				agent_id : self.id(),
 				item_id : item.id,
 				position : self.position
@@ -79,6 +79,7 @@ class Agent:
 		pass
 		
 	def harvest_crop(self):
+		pass
 		
 	##internal commands	
 	def id(self):

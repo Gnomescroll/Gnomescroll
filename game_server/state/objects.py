@@ -3,15 +3,17 @@
 crops_dat = {
 	generic_crop: 
 	{
-		name : "generic_crop",
+		template_params : ['id','position', 'version', 'world_id'],
 		template : 
 		{
 			name : "generic_crop",
 			type : ["crop"],
-			version : 0
+			parent : "generic_crop",
+			#version : 0
 		},
+
 		plantable : 1,
-		planting_experience : 20 
+		planting_experience : 20 ,
 		planting_difficulty : 1,
 		grows_from : "generic_seeds",
 		
@@ -23,51 +25,55 @@ crops_dat = {
 
 	generic_mature_crop:
 	{
-		name : "generic_mature_crop"
+		template_params : ['id','position', 'version', 'world_id'],
+		template : 
 		{
 			name : "generic_mature_crop",
 			type : ["crop"],
-			version : 0
+			parent : "generic_mature_crop",
+			#version : 0
 		},
 		plantable : 0,
 		harvestable : 1,
 		harvest_produces : [(1,3, 'generic_food')], # 1d3 generic food
-		harvest_experience : 10
+		harvest_experience : 10,
 		matures : 0, #disable maturing for now
 		mature_time : 5000,
 		matures_into : "generic_dead_crop"
+	},
+
+	generic_dead_crop:
+	{
+		template_params : ['id','position', 'version', 'world_id'],
+		template : 
+		{
+			name : "generic_dead_crop",
+			type : ["crop"],
+			parent : "generic_dead_crop",
+			#version : 0
+		},
+		plantable : 0,
+		harvestable : 1,
+		harvest_produces : [], # 1d3 generic food
+		harvest_experience : 5,
+		matures : 0
 	}
-
-
+	
 }
 
 def create_crop(id, x,y,z,template = None, world_id = 0):
-	templates = {
-		generic_crop : {
-				name : "generic_crop",
-				type : "crop",
-				version : 0	
-				},
-		
-		blood_berries : {
-				name : "generic_crop",
-				type : "crop",
-				version : 0
-		}
-	
-	
-	}
+	if template == None:
+		template = 'generic_crop'
+	a = crops_dat[template]
 	
 	a = {}
 	a['id'] = id
-	a['type'] = ['item']
-	a['name'] = 'generic item'
 	#position is (type, x, y, z)
 	a['position'] = [0 , x, y, z] #type zero is ground
-	a['player_id'] = player_id
 	a['world_id'] = world_id
 	a['version'] = 0
 	return a
+
 #creates an oject from a template
 def create_object(id, x, y, z, template = None, player_id = 0, world_id = 0):
 	#if prototype == None:
