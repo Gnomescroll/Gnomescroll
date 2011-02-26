@@ -14,11 +14,22 @@ class Crop:
 	### Object Specific Functions ###
 	
 	def	mature(self):
-		print "CROP MATURED!!!"
+		#print "CROP MATURED!!!"
+		template = self.dat.get_crop(self.parent)
+		mature_crop = template['matures_into']
+		mature_crop_template = self.dat.get_crop_template(mature_crop)
+		print str(mature_crop_template)
+		#from pudb import set_trace; set_trace()
+		for i, x in mature_crop_template.items():
+			self.__dict__['object_dict'][i] = x
+		
+		self.version = self.version + 1
+		self.delta.object_state_change(self.id, self.position, self.version)
+		self.set_timer()
 		pass
 	
 	def set_timer(self):
-		print "Set Timer!!!"
+		#print "Set Timer!!!"
 		template = self.dat.get_crop(self.parent)
 		if template['matures'] == 1:
 			mature_time = int(template['mature_time'])
