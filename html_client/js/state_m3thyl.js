@@ -60,26 +60,7 @@ var state = ( function () {
     // public update methods to be routed to by message handler
     // data is an object with update data from server
     
-    addZLevel = function(data) {
-        
-        // validate data
-        if (data.z === undefined) {
-            console.log('addZLevel data is missing .z');
-            console.log(data);
-        }
-        if (data.level_info === undefined) {
-            console.log('addZLevel data is missing .level_info');
-            console.log(data);
-        }
-        
-        // add z-lvl to z_lvls list
-        if (data.level_info !== undefined) {
-            z_lvls[data.z] = data.level_info;
-        } else { // zeroed
-            z_lvls[data.z] = blocks();
-        }
-    }
-    
+    // update a z-level with map info
     updateLevel = function (data) {
         
         if (typeof data !== 'object') {
@@ -144,14 +125,17 @@ var state = ( function () {
         }
     };
     
+    // update a block type
     updateBlock = function(data) {
         // a coordinate and block type
     };
     
+    // update agent status
     updateAgent = function (data) {
         // an agent id and updates
     };
     
+    // update object status
     updateObject = function (data) {
         // an object id and updates
     };
@@ -165,7 +149,6 @@ var state = ( function () {
               }
               
     return public_
-    
     
 }());
 

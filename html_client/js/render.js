@@ -6,8 +6,8 @@ var screen = ( function () {
         x_scale = 0.9, // 90%
         y_scale = 0.9,
         grid_cells = 40, // 40x40 grid, default
-        cell_width = 16,
-        cell_height = 16; // 16x16 cells
+        cell_width = 24,
+        cell_height = 24; // 16x16 cells
     
     // cell coordinate generation
     // to be called on resize

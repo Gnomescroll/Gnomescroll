@@ -21,7 +21,7 @@ class Nobject:
 	#override handling
 	def __setattr__(self, name, value):
 		if name in custom_object_attributes:
-			property = Nobject.__dict__[name] #Agent == self.__class__
+			property = self.__class__.__dict__[name] #Agent == self.__class__
 			property.fset(self, value)
 		else:
 			self.__dict__['object_dict'][name] = value
@@ -31,14 +31,14 @@ class Nobject:
 		#print "oops"
 		if name in custom_object_attributes:
 			print "object, __getattr__, Should never occur! Revise assumptions"
-			property = Nobject.__dict__[name]
+			property = self.__class__.__dict__[name]
 			value = property.fget(self)
 			return value
 		else:
 			return self.__dict__['object_dict'][name]
 
 	def __init__(self, id):
-		self.__dict__['object_dict'] = Nobject.objects.object_list[id]
+		self.__dict__['object_dict'] = self.__class__.objects.object_list[id]
 		self.__dict__['id'] = id
 	
 	def serialize(self):
