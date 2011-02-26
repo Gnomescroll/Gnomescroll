@@ -75,8 +75,8 @@ class Server:
 		Nobject.delta = self.delta
 		Nobject.agents = self.agents
 		Nobject.objects = self.objects
-		Noject.world_time = self.world_time
-		Noject.dat = self.dat
+		Nobject.world_time = self.world_time
+		Nobject.dat = self.dat
 		#Crop class init
 		Crop.world_map = self.world_map
 		Crop.delta = self.delta

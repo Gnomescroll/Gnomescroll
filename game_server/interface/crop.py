@@ -18,6 +18,7 @@ class Crop:
 		pass
 	
 	def set_timer(self):
+		print "Set Timer!!!"
 		pass
 		
 	### GENERIC CRAP ###
