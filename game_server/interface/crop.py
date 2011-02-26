@@ -26,8 +26,7 @@ class Crop:
 			timer = {}
 			timer['id'] = self.__dict__['id']
 			timer['timer_type'] = 'crop'
-			timer['event_type'] = 'mature'
-		
+			timer['event_type'] = 'mature'	
 			self.world_time.add_timer(timer, mature_time)
 		pass
 		
@@ -59,7 +58,7 @@ class Crop:
 			value = property.fget(self)
 			return value
 		else:
-			return self.__dict__['agent_dict'][name]
+			return self.__dict__['object_dict'][name]
 
 	def __init__(self, id):
 		id = int(id)

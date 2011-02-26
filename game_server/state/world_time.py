@@ -66,7 +66,7 @@ class World_time:
 			if timer_id == 0:
 				#print "Deleted Timer Processed"
 				continue
-			print str(timer)
+			print str(timer_dict)
 			process_timer_callback(timer_dict)
 
 	def print_time(self):
