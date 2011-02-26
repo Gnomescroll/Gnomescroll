@@ -42,9 +42,9 @@ server_counter = 0
 client = Client(0) 		#world _id = 0
 client.setup()			#start server-client communications
 def render_all():
-    global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
+	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
-    if redraw_map:
+	if client.terrain_map.redraw:
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 		for x in range(viewer_start_x, MAP_VIEWER_WIDTH):
 			for y in range(viewer_start_y, MAP_VIEWER_HEIGHT):
@@ -54,7 +54,7 @@ def render_all():
 					color = libtcod.black
 				libtcod.console_set_back(map_viewer, x, y, color, libtcod.BKGND_SET)
 		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
-		redraw_map = False
+		client.terrain_map.redraw = False
 
 	if message_log.redraw:
 		message_con = message_log.draw()
@@ -84,6 +84,9 @@ def handle_keys():
 	if key.vk == libtcod.KEY_ESCAPE:
 		return "exit"
 
+	if key_char == 'a':
+		admin.set_map(1, 1, 0, 5)
+
 
 def refresh_data():
 	#get updated map, object, and agent data	
@@ -110,22 +113,12 @@ if client.server_listener.ready == 1:
 else:
 	print "Redis Not Ready"
 
-admin.set_map(2, 2, 0, 5)
-admin.set_map(1, 1, 0, 5)
-
 while not libtcod.console_is_window_closed():
 	render_all()
 	libtcod.console_flush()
 	key_result = handle_keys()
 	if key_result == "exit":
 		break
-	#ask for new data from the server about 2 times every second, can be increased if required
-	if server_counter == 10:
-		refresh_data()
-		server_counter = 0
-		redraw_map = True
-	else:
-		server_counter += 1
 
 
 
