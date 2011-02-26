@@ -19,6 +19,16 @@ class Crop:
 	
 	def set_timer(self):
 		print "Set Timer!!!"
+		template = self.dat.get_crop(self.parent)
+		if template['matures'] == 1:
+			mature_time = int(template['mature_time'])
+		
+			timer = {}
+			timer['id'] = self.__dict__['id']
+			timer['timer_type'] = 'crop'
+			timer['event_type'] = 'mature'
+		
+			self.world_time.add_timer(timer, mature_time)
 		pass
 		
 	### GENERIC CRAP ###
