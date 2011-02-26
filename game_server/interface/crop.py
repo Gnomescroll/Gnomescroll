@@ -7,6 +7,7 @@ class Crop:
 	agents = None #agent dictionary
 	objects = None	 #object dictionary
 	world_map = None #world map object
+	world_time = None
 	delta = None #delta object
 	dat = None
 
@@ -16,7 +17,9 @@ class Crop:
 		print "CROP MATURED!!!"
 		pass
 	
-	
+	def set_timer(self):
+		pass
+		
 	### GENERIC CRAP ###
 	
 	##custom get/set methods

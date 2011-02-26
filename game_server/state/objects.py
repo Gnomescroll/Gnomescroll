@@ -1,66 +1,5 @@
 
 
-crops_dat = {
-	'generic_crop' : 
-	{
-		'template_params' : ['id','position', 'version', 'world_id'],
-		'template' : 
-		{
-			'name' : "generic_crop",
-			'type' : ["crop"],
-			'parent' : "generic_crop",
-			#version : 0
-		},
-
-		'plantable' : 1,
-		'planting_experience' : 20 ,
-		'planting_difficulty' : 1,
-		'grows_from' : "generic_seeds",
-		
-		'harvestable' : 0,
-		'matures' : 1,
-		'mature_time' : 900,
-		'matures_into' : "generic_mature_crop"
-	},
-
-	'generic_mature_crop' :
-	{
-		'template_params' : ['id','position', 'version', 'world_id'],
-		'template' : 
-		{
-			'name' : "generic_mature_crop",
-			'type' : ["crop"],
-			'parent' : "generic_mature_crop",
-			#version : 0
-		},
-		'plantable' : 0,
-		'harvestable' : 1,
-		'harvest_produces' : [(1,3, 'generic_food')], # 1d3 generic food
-		'harvest_experience' : 10,
-		'matures' : 0, #disable maturing for now
-		'mature_time' : 5000,
-		'matures_into' : "generic_dead_crop"
-	},
-
-	'generic_dead_crop' :
-	{
-		'template_params' : ['id','position', 'version', 'world_id' ],
-		'template' : 
-		{
-			'name' : "generic_dead_crop",
-			'type' : ["crop"],
-			'parent' : "generic_dead_crop",
-			#version : 0
-		},
-		'plantable' : 0,
-		'harvestable' : 1,
-		'harvest_produces' : [], # 1d3 generic food
-		'harvest_experience' : 5,
-		'matures' : 0
-	}
-	
-}
-
 def create_crop(id, x,y,z,template = None, world_id = 0):
 	if template == None:
 		template = 'generic_crop'
@@ -110,18 +49,20 @@ class Objects:
 
 		if object_type == None:
 			a = create_object(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
+			self.object_list[id] = a
 		if object_type == 'item':
-			a = create_item(position, template)
-			pass
+			a = self._create_item(id, position, template)
+
 		if object_type == 'crop':
-			a = create_crop(position, template)
+			a = self._create_crop(id, position, template)
+			#self.object_list[id] = a
 			pass
 		if object_type == 'plant':
 			pass
-		self.object_list[id] = a
+		#self.object_list[id] = a
 		self.delta.object_create(id, position, a['type'])
 	
-	def _create_crop(self, position, template):
+	def _create_crop(self, id, position, template):
 		if template == None:
 			template = 'generic_crop'
 		a = self.dat.get_crop_template(template)
@@ -130,9 +71,14 @@ class Objects:
 		a['position'] = position
 		a['world_id'] = self.globals.world_id
 		a['version'] = 0
+		self.object_list[id] = a
+		Crop(id).set_timer()
+		#tdict = self.dat.get_item(template)
+		#if tdict['matures'] == 1:
+		#	timer = 
 		return a
 
-	def _create_item(self, position, template):
+	def _create_item(self, id, position, template):
 		if template == None:
 			template = 'generic_item'
 		a = self.dat.get_item_template(template)
@@ -141,6 +87,11 @@ class Objects:
 		a['position'] = position
 		a['world_id'] = self.globals.world_id
 		a['version'] = 0
+		self.object_list[id] = a
+		
+		#tdict = self.dat.get_item(template)
+		#handle timers
+		
 		return a
 		
 	def delete(self, id):

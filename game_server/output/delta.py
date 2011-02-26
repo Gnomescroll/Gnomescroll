@@ -124,12 +124,14 @@ class Delta: #non-blocking client notification
 		self.delta_out_q.put(msg)
 
 	#map notifications
-	def set_map(self, x, y, z, value): #called when map tile is changed
+	def set_map(self, x, y, z, value, meta = None): #called when map tile is changed
 		msg = {}
 		msg['msg'] = 'set_terrain_map'
 		msg['value'] = value
 		msg['x'] = x
 		msg['y'] = y
-		msg['z'] = z	
+		msg['z'] = z
+		if meta != None:
+			msg['meta'] = meta
 		self.delta_out_q.put(msg)
 		pass

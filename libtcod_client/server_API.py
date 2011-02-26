@@ -135,7 +135,7 @@ class Agent_commands:
 
 	#required = ['client_id', 'world_id']
 	#optional = []
-	def till_soil(self):
+	def till_soil(self, agent_id):
 		msg = {}	
 		msg['type'] = 'agent'
 		msg['cmd'] = 'till_soil'
@@ -145,7 +145,7 @@ class Agent_commands:
 
 	#required = ['client_id', 'world_id']
 	#optional = []
-	def plant_crop(self):
+	def plant_crop(self, agent_id):
 		msg = {}	
 		msg['type'] = 'agent'
 		msg['cmd'] = 'plant_crop'
@@ -153,7 +153,7 @@ class Agent_commands:
 		msg['agent_id'] = agent_id
 		self.send_message(msg)		
 		
-	def harvest_crop(self):
+	def harvest_crop(self, agent_id):
 		msg = {}	
 		msg['type'] = 'agent'
 		msg['cmd'] = 'move_0'

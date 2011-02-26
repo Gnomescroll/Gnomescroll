@@ -105,22 +105,22 @@ class Dat:
 	#crop helper
 
 	def get_crop(self, template):
-		if not template in self.crops_date.keys():
+		if not template in self.crops_dat.keys():
 			template = 'generic_crop'
 		return self.crops_dat[template]
 				
 	def get_crop_template(self, template):
-		if not template in self.crops_date.keys():
+		if not template in self.crops_dat.keys():
 			template = 'generic_crop'
 		return self.crops_dat[template]['template']
 
 	#item helper
 	def get_item(self, template):
-		if not template in self.items_date.keys():
+		if not template in self.items_dat.keys():
 			template = 'generic_item'
 		return self.item_dat[template]
 
 	def get_item_template(self, template):
-		if not template in self.items_date.keys():
+		if not template in self.items_dat.keys():
 			template = 'generic_item'
 		return self.crops_date[template]['template']

@@ -67,11 +67,22 @@ class Server:
 		Agent.world_map = self.world_map
 		Agent.delta = self.delta
 		Agent.agents = self.agents
+		Agent.objects = self.objects
+		Agent.world_time = self.world_time
+		Agent.dat = self.dat
 		#Object class init
 		Nobject.world_map = self.world_map
 		Nobject.delta = self.delta
 		Nobject.objects = self.objects
-
+		Noject.world_time = self.world_time
+		Noject.dat = self.dat
+		#Crop class init
+		Crop.world_map = self.world_map
+		Crop.agents = self.agents
+		Crop.objects = self.objects
+		Crop.world_time = self.world_time
+		Crop.dat = self.dat
+		
 	def run(self):
 		self.share_state()
 		self.info.start(self.globals.world_id)

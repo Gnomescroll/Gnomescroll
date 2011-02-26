@@ -26,18 +26,21 @@ class Agent_commands:
 
 	# required = ['agent_id']
 	# optional = ['item_id']			
-	def drop_item(self, **msg):
+	def drop_item(self, agent_id, **msg):
 		Agent(agent_id).drop_item()
 		pass
 		
-	def till_soil(self, **msg):
+	def till_soil(self, agent_id, **msg):
 		Agent(agent_id).till_soil()
 		pass
 		
-	def plant_crop(self, **msg):
-		Agent(agent_id).plant_crop(object_id)
+	def plant_crop(self, agent_id, seed_id = None, **msg):
+		if seed_id == None:
+			Agent(agent_id).plant_crop(seed_id)
+		else:
+			Agent(agent_id).plant_crop()
 		pass
 		
-	def harvest_crop(self, **msg):
+	def harvest_crop(self, agent_id, **msg):
 		Agent(agent_id).harvest_crop(object_id)
 		pass

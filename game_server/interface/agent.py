@@ -75,6 +75,7 @@ class Agent:
 		if not tile_value == 1:	#check to see if tile can support crops and if this seed will grow
 			print "Tile or seed type invalid"
 			return
+		#from pudb import set_trace; set_trace()
 		self.objects.create(self.position, object_type = 'crop', template = 'generic_crop')
 		pass
 		
