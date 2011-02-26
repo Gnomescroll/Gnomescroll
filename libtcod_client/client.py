@@ -5,18 +5,15 @@ import libtcodpy as libtcod
 ##Constants##
 SCREEN_WIDTH = 140
 SCREEN_HEIGHT = 80
-#Size of the map itself
-MAP_WIDTH = 400
-MAP_HEIGHT = 400
 #How much of the map is displayed on the screen at one time
-MAP_VIEWER_WIDTH = 100
-MAP_VIEWER_HEIGHT = 70
+MAP_VIEWER_WIDTH = SCREEN_WIDTH-40
+MAP_VIEWER_HEIGHT = SCREEN_HEIGHT-10
 #Message log, at the bottom
-MESSAGE_LOG_WIDTH = 100
-MESSAGE_LOG_HEIGHT = 10
+MESSAGE_LOG_WIDTH = MAP_VIEWER_WIDTH
+MESSAGE_LOG_HEIGHT = SCREEN_HEIGHT - MAP_VIEWER_HEIGHT
 #Side panel, for information that will be added such as health, character overview, jobs, inventory, etc
-SIDE_PANEL_WIDTH = 40
-SIDE_PANEL_HEIGHT = 80
+SIDE_PANEL_WIDTH = SCREEN_WIDTH - MAP_VIEWER_WIDTH
+SIDE_PANEL_HEIGHT = SCREEN_HEIGHT
 #FPS Monitor width
 FPS_MONITOR_WIDTH = 8
 FPS_MONITOR_HEIGHT = 1
@@ -39,6 +36,7 @@ mouse_x    = None            #should be updated every tic
 mouse_y = None
 drawing_demo = 0
 gui_redraw_map = False
+check_mouse_drag = True
 
 client = Client(0) 		#world _id = 0
 client.setup()			#start server-client communications
@@ -90,12 +88,6 @@ def handle_keys():
 		drawing_demo += 1
 
 
-def refresh_data():
-	#get updated map, object, and agent data	
-	info.get_map(0)
-	info.get_agent_list()
-	info.get_object_list()
-
 ###MAIN PROGRAM###
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False)
 libtcod.sys_set_fps(LIMIT_FPS)
@@ -110,7 +102,10 @@ message_log.add("Welcome to dc_mmo")
 #get updated map, object, and agent data
 if client.server_listener.ready == 1:
 	print "Redis Ready"
-	refresh_data()
+	#get updated map, object, and agent data	
+	info.get_map(0)
+	info.get_agent_list()
+	info.get_object_list()
 	time.sleep(1)
 else:
 	print "Redis Not Ready"
