@@ -4,11 +4,11 @@ custom_crop_attributes = [] #attributes with class defined get/set properties
 
 class Crop:
 
-	agents = None #agent dictionary
-	objects = None	 #object dictionary
-	world_map = None #world map object
+	world_map = None
+	delta = None
+	agents = None
+	objects = None
 	world_time = None
-	delta = None #delta object
 	dat = None
 
 	### Object Specific Functions ###

@@ -2,11 +2,13 @@ custom_object_attributes = [] #attributes with class defined get/set properties
 
 class Nobject:
 
-	agents = None #agent dictionary
-	objects = None	 #object dictionary
-	world_map = None #world map object
-	delta = None #delta object
-	
+	world_map = None
+	delta = None
+	agents = None
+	objects = None
+	world_time = None
+	dat = None
+
 	##custom get/set methods
 	#def _get_position(self):
 		#return (self.x, self.y, self.z)

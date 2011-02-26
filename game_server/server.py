@@ -73,11 +73,13 @@ class Server:
 		#Object class init
 		Nobject.world_map = self.world_map
 		Nobject.delta = self.delta
+		Nobject.agents = self.agents
 		Nobject.objects = self.objects
 		Noject.world_time = self.world_time
 		Noject.dat = self.dat
 		#Crop class init
 		Crop.world_map = self.world_map
+		Crop.delta = self.delta
 		Crop.agents = self.agents
 		Crop.objects = self.objects
 		Crop.world_time = self.world_time
