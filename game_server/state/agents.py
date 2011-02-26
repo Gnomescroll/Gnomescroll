@@ -1,4 +1,7 @@
-
+#interfaces 
+from interface.agent import Agent
+from interface.object import Nobject
+from interface.crop import Crop
 
 #creates an agent from a template
 def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
