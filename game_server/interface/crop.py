@@ -1,5 +1,7 @@
 from interface.object import Nobject
 
+import random
+
 custom_crop_attributes = [] #attributes with class defined get/set properties
 
 class Crop:
@@ -13,6 +15,7 @@ class Crop:
 
 	### Object Specific Functions ###
 	
+	#timer callback
 	def	mature(self):
 		#print "CROP MATURED!!!"
 		template = self.dat.get_crop(self.parent)
@@ -40,7 +43,30 @@ class Crop:
 			timer['event_type'] = 'mature'	
 			self.world_time.add_timer(timer, mature_time)
 		pass
+	
+	#harvest action, return 0 on failure, return xp on success
+	def harvest(self):
+		template = self.dat.get_crop(self.parent)
+		if template['harvestable'] != 1:
+			return 0
+		produces = 	template['harvest_produces'] 
 		
+		for (i, j, item) in produces:
+			r = random.randint(i, j)
+			x = 0
+			while x < r:
+				x = x+1
+				self.objects.create(self.position, object_type = 'item', template = item)
+
+		self.objects.delete(self.id)
+			
+		#'harvest_produces' : [(1,3, 'generic_food')]
+	#
+	
+	def template(self):
+		template = self.dat.get_crop(self.parent)
+		return template
+
 	### GENERIC CRAP ###
 	
 	##custom get/set methods

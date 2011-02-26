@@ -24,7 +24,8 @@ class Admin_commands:
 
 	# required = ['position,', 'object_type', 'template']
 	# optional = ['player_id']
-	def create_object(self, position, object_type, template, **msg):
+	def create_object(self, position, object_type, template = None, player_id = 0, **msg):
+		self.objects.create(position, object_type, template , player_id)
 		pass
 		
 	#required ['position', 'value', 'world_id']

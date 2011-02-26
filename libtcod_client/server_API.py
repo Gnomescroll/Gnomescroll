@@ -39,6 +39,19 @@ class Admin_commands:
 		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)		
 
+	def create_object(self, x, y, z, object_type = None, template = None):
+		msg = {}
+		msg['type'] = 'admin'
+		msg['cmd'] = 'create_object'
+		msg['object_type'] = object_type
+		msg['template'] = template
+		msg['world_id'] = 0
+		msg['position'] = (0,x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		self.send_message(msg)	
+	
+	def create_crop(self, x, y, z, template = None):
+		self.create_object(x,y,z, 'crop', template)
+		
 	#required ['position', 'value', 'world_id']
 	#optional []		
 	def set_map(self, x, y, z, value):

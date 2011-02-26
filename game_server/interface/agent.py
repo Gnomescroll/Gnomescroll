@@ -79,7 +79,21 @@ class Agent:
 		self.objects.create(self.position, object_type = 'crop', template = 'generic_crop')
 		pass
 		
-	def harvest_crop(self):
+	def harvest_crop(self, crop_id = 0):
+		if crop_id == 0:
+			return	#get crop at this location
+		crop = Crop(crop_id)
+		if self.position != crop.position:
+			print "Agent is too far away from the crop"
+			return
+		#if conditions are met, harvest
+		result = crop.harvest()
+		
+		if result == 0:
+			print "Crop harvest failure!"
+			return
+		exp = crop.template()['harvest_exp'] 
+		#give exp
 		pass
 		
 	##internal commands	

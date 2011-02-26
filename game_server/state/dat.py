@@ -1,3 +1,13 @@
+tiles_dat = {
+	0 : 
+	{
+	
+	}
+
+
+
+}
+
 crops_dat = {
 	'generic_crop' : 
 	{
@@ -7,17 +17,16 @@ crops_dat = {
 			'name' : "generic_crop",
 			'type' : ["crop"],
 			'parent' : "generic_crop",
-			#version : 0
 		},
 
 		'plantable' : 1,
-		'planting_experience' : 20 ,
+		'planting_exp' : 20 ,
 		'planting_difficulty' : 1,
 		'grows_from' : "generic_seeds",
 		
 		'harvestable' : 0,
 		'matures' : 1,
-		'mature_time' : 100,
+		'mature_time' : 400,
 		'matures_into' : "generic_mature_crop"
 	},
 
@@ -29,12 +38,11 @@ crops_dat = {
 			'name' : "generic_mature_crop",
 			'type' : ["crop"],
 			'parent' : "generic_mature_crop",
-			#version : 0
 		},
 		'plantable' : 0,
 		'harvestable' : 1,
 		'harvest_produces' : [(1,3, 'generic_food')], # 1d3 generic food
-		'harvest_experience' : 10,
+		'harvest_exp' : 10,
 		'matures' : 0, #disable maturing for now
 		'mature_time' : 5000,
 		'matures_into' : "generic_dead_crop"
@@ -53,7 +61,7 @@ crops_dat = {
 		'plantable' : 0,
 		'harvestable' : 1,
 		'harvest_produces' : [],
-		'harvest_experience' : 5,
+		'harvest_exp' : 5,
 		'matures' : 0
 	}
 	
@@ -118,9 +126,9 @@ class Dat:
 	def get_item(self, template):
 		if not template in self.items_dat.keys():
 			template = 'generic_item'
-		return self.item_dat[template]
+		return self.items_dat[template]
 
 	def get_item_template(self, template):
 		if not template in self.items_dat.keys():
 			template = 'generic_item'
-		return self.crops_date[template]['template']
+		return self.items_dat[template]['template']

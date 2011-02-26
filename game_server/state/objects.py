@@ -40,6 +40,7 @@ class Objects:
 		self.dat = None
 		
 		self.object_list = {}
+
 	def init(self):
 		world_id = self.globals.world_id
 		#grab state from persistant store
@@ -97,4 +98,5 @@ class Objects:
 		return a
 		
 	def delete(self, id):
+		print "Delete object: " + str(id)
 		pass
