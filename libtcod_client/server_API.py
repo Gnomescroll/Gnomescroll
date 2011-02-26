@@ -132,3 +132,31 @@ class Agent_commands:
 		msg['agent_id'] = agent_id
 		msg['dp'] = (dx,dy,dz) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
+
+	#required = ['client_id', 'world_id']
+	#optional = []
+	def till_soil(self):
+		msg = {}	
+		msg['type'] = 'agent'
+		msg['cmd'] = 'till_soil'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		self.send_message(msg)		
+
+	#required = ['client_id', 'world_id']
+	#optional = []
+	def plant_crop(self):
+		msg = {}	
+		msg['type'] = 'agent'
+		msg['cmd'] = 'plant_crop'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		self.send_message(msg)		
+		
+	def harvest_crop(self):
+		msg = {}	
+		msg['type'] = 'agent'
+		msg['cmd'] = 'move_0'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		self.send_message(msg)		
