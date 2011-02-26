@@ -37,8 +37,8 @@ class Terrain_map:
 			map_row = []
 			for h in range(y, height):
 				index = h * self.x_size + w
-				map_row.insert(w, self.map[index])
-			map_section.insert(h, map_row)
+				map_row.append(self.map[index])
+			map_section.append(map_row)
 		return map_section
 
 

@@ -37,14 +37,15 @@ current_menu = None        #This keeps track of whatever temporary menu is up at
 main_menu = None        #This menu is always up, still to come
 mouse_x    = None            #should be updated every tic
 mouse_y = None
-server_counter = 0
+drawing_demo = 0
+gui_redraw_map = False
 
 client = Client(0) 		#world _id = 0
 client.setup()			#start server-client communications
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
 
-	if client.terrain_map.redraw:
+	if client.terrain_map.redraw or gui_redraw_map:
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 		for x in range(viewer_start_x, MAP_VIEWER_WIDTH):
 			for y in range(viewer_start_y, MAP_VIEWER_HEIGHT):
@@ -75,7 +76,7 @@ def render_all():
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0)
 
 def handle_keys():
-	global current_menu, main_menu, game_state, message_log
+	global current_menu, main_menu, game_state, message_log, drawing_demo
 	key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED) 
 	key_char = chr(key.c)
 
@@ -85,7 +86,8 @@ def handle_keys():
 		return "exit"
 
 	if key_char == 'a':
-		admin.set_map(1, 1, 0, 5)
+		admin.set_map(drawing_demo, drawing_demo, 0, 5)
+		drawing_demo += 1
 
 
 def refresh_data():
