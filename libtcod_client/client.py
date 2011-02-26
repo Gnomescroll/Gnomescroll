@@ -5,6 +5,9 @@ import libtcodpy as libtcod
 ##Constants##
 SCREEN_WIDTH = 140
 SCREEN_HEIGHT = 80
+#Map size
+MAP_WIDTH = 200
+MAP_HEIGHT = 200
 #How much of the map is displayed on the screen at one time
 MAP_VIEWER_WIDTH = SCREEN_WIDTH-40
 MAP_VIEWER_HEIGHT = SCREEN_HEIGHT-10
@@ -37,23 +40,35 @@ mouse_y = None
 drawing_demo = 0
 gui_redraw_map = False
 check_mouse_drag = True
-
+mouse_on_drag_start = None
+current_mouse = None
 client = Client(0) 		#world _id = 0
 client.setup()			#start server-client communications
+
 def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test
+	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test, gui_redraw_map
 
 	if client.terrain_map.redraw or gui_redraw_map:
-		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
-		for x in range(viewer_start_x, MAP_VIEWER_WIDTH):
-			for y in range(viewer_start_y, MAP_VIEWER_HEIGHT):
-				if tmap[x][y] == -1:
+		viewer_bot_x = MAP_VIEWER_WIDTH+viewer_start_x
+		viewer_bot_y = MAP_VIEWER_HEIGHT+viewer_start_y
+		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, viewer_bot_x, viewer_bot_y)
+		x = 0
+		y = 0
+		#this section is messy. I'm not actually sure why it works. 
+		#TODO clean this up
+		for row in tmap:
+			for element in row:
+				if element == -1:
 					color = libtcod.darker_green
 				else:
 					color = libtcod.black
 				libtcod.console_set_back(map_viewer, x, y, color, libtcod.BKGND_SET)
+				y += 1
+			y = 0
+			x += 1
 		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 		client.terrain_map.redraw = False
+		gui_redraw_map = False
 
 	if message_log.redraw:
 		message_con = message_log.draw()
@@ -87,6 +102,43 @@ def handle_keys():
 		admin.set_map(drawing_demo, drawing_demo, 0, 5)
 		drawing_demo += 1
 
+def handle_mouse():
+	#For now, all this function does is see if the mouse is dragging.
+	#Eventually it will handle clicks as well
+	global check_mouse_drag, mouse_x, mouse_y, mouse_on_drag_start, current_mouse
+
+        if check_mouse_drag:
+		if current_mouse.lbutton:
+		        dx = mouse_on_drag_start.cx - current_mouse.cx;
+		        dy = mouse_on_drag_start.cy - current_mouse.cy;
+		        move_screen(dx, dy);
+		        mouse_on_drag_start = current_mouse;
+		else:
+		    mouse_on_drag_start = current_mouse;
+
+def move_screen(dx, dy):
+	#moves the screen if that wouldn't cause the edge of the map to be exceeded.
+	#If it would, it moves as much as it can without passing the edge of the map.
+	global viewer_start_x, viewer_start_y, gui_redraw_map
+	viewer_bot_x = viewer_start_x + MAP_VIEWER_WIDTH
+	viewer_bot_y = viewer_start_y + MAP_VIEWER_HEIGHT
+
+	if viewer_start_x + dx < 0: 
+		dx = viewer_start_x * -1
+    
+	elif viewer_bot_x + dx >= MAP_WIDTH:
+		dx = MAP_WIDTH - viewer_bot_x
+
+	if  viewer_start_y + dy < 0:
+		dy = viewer_start_y * -1
+
+	elif viewer_bot_y + dy >= MAP_HEIGHT:
+		dy = MAP_HEIGHT - viewer_bot_y
+
+	
+	viewer_start_x = viewer_start_x + dx
+	viewer_start_y = viewer_start_y + dy
+	gui_redraw_map = True
 
 ###MAIN PROGRAM###
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False)
@@ -111,12 +163,16 @@ else:
 	print "Redis Not Ready"
 
 while not libtcod.console_is_window_closed():
-	render_all()
-	libtcod.console_flush()
+	#handle mouse
+	current_mouse = libtcod.mouse_get_status();
+	handle_mouse()
+	#handle keyboard
 	key_result = handle_keys()
 	if key_result == "exit":
 		break
-
+	#redraw whatever is needed
+	libtcod.console_flush()
+	render_all()
 
 
 

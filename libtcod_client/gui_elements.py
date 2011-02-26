@@ -150,14 +150,13 @@ class Menu:
 
 	#because checking keys in different functions simultaneously doesn't work, this only checks the mouse
 	#in the main key handler, check if there is a menu open, and send the keypress to that menu's key handler
-	def update(self):
+	def update(self, mouse):
 		#clear out the last button
 		if self.latest_hover_index:
 			self.lines[self.latest_hover_index][1].mouse_is_hovering = False
 			self.lines[self.latest_hover_index][1].redraw = True
 			self.latest_hover_index = None
 			self.redraw = True
-		mouse = libtcod.mouse_get_status()
 		if mouse.cx >= self.x and mouse.cx < (self.x + self.width) and mouse.cy >= self.y and mouse.cy < (self.y + self.height):
 			index = mouse.cy - self.y
 			if self.lines[index][0] == "button":
