@@ -57,51 +57,40 @@ var state = ( function () {
         });
     };
     
+    positionInState = function(x, y, z) {
+        // checks if the position is in current state.
+        // if it is, returns a row of y values from level
+        // else false
+      
+        if (typeof x === 'object') {
+            if (g.length === undefined) {
+                y = x.y;
+                z = x.z;
+                x = x.x;
+            } else {
+                y = x[1];
+                z = x[2];
+                x = x[0];
+            }
+        }
+      
+        z_ = levels[z];
+        if (z_ === undefined) return false;
+        x_ = z_[x];
+        if (x_ === undefined) return false;
+        if (x_[y] === undefined) return false;
+        
+        return x_;  
+    };
+    
     // public update methods to be routed to by message handler
     // data is an object with update data from server
     
     // update a z-level with map info
     updateLevel = function (data) {
         
-        if (typeof data !== 'object') {
-            console.log('Tried passing bullshit to updateLevel. Please send a data object.');
-            console.log(data);
-            return;
-        }
-        
-        if (data.client_id !== globals.client_id) { // ignore immediately, actually move this to main message handler
-            return;
-        }
-        
-        // map data for a z-level
-        var required = ['map', // (array of int tile values)
-                        'z_level', // (int)
-                        'x_size', // (int)
-                        'y_size', // (int)
-                        'world_id', // (int)
-                       ];
-               
-        var missing = [];
-        $.each(required, function(i, req) {
-            if (data[req] === undefined) {
-                missing.push(req);
-            }
-        });
-        
-        if (missing.length > 0) {
-            var msg = missing.join();
-            console.log('Cannot update z-level. The following data attrs are missing: '+msg.slice(0, msg.length-2));
-            console.log(data);
-            return;
-        }
-        
-        data.x_size = parseInt(data.x_size);
-        data.y_size = parseInt(data.y_size);
-        var map_size = data.x_size*data.y_size;
-        if (map_size !== data.map.length) {
-            console.log('The map dimensions do not match the map sent.');
-            console.log(data);
-            return;
+        if (!validate.levelData(data)) {
+            return false;
         }
         
         var arr = [],
@@ -126,18 +115,86 @@ var state = ( function () {
     };
     
     // update a block type
-    updateBlock = function(data) {
+    updateBlock = function(block) {
         // a coordinate and block type
+        if (!validate.blockData(block)) {
+            return false;            
+        } 
+        
+        var x_;
+    
+        x_ = positionInState(block.x, block.y, block.z);
+        if (x_ === false) return false;
+        
+        x_[data.y] = data.type
+        
+        return true;
+    };
+    
+    agentKnown = function(agent_id) {
+        var a = agents[agent_id];
+        if (a === undefined) return false;
+        else return a;
+    };
+    
+    addAgent = function(agent) {
+        agents[agent.id] = agent;
+        
+        pos_string = agent.pos.toString();
+        ao_loc = ao_map[pos_string]
+        if (ao_loc === undefined) {
+            ao_map[pos_string] = { agent.pos: { 'agents': [agent.id] } }
+        } else {
+            var ag = ao_loc['agents'];
+            if (ag === undefined) {
+                ao_loc['agents'] = [agent.id];
+            } else {
+                ag.push(agent.id);
+            }
+        }
     };
     
     // update agent status
-    updateAgent = function (data) {
+    updateAgent = function (agent) {
         // an agent id and updates
+        if (!validate.agentData(data)) {
+            return false;
+        }
+        
+        if (positionInState(agent.pos) !== false) {
+            
+            
+        } else {
+            
+            
+        }
+        
+        
+        
+        // if agent in state
+        //   if agent was in state
+        //      move it
+        //   else
+        //      add it
+        //
+        // else if agent not in state
+        //   if it was in state
+        //      remove it
+        //   else
+        //      ignore
+        
+        return true;
     };
     
     // update object status
     updateObject = function (data) {
         // an object id and updates
+        
+        if (!validate.objectData(data)) {
+            return false;
+        }
+        
+        return true;
     };
     
     public_ = {
@@ -148,7 +205,114 @@ var state = ( function () {
                 updateLevel: updateLevel,
               }
               
-    return public_
+    return public_;
+    
+}());
+
+var validate = ( function () {
+    
+    var levelData,
+        blockData,
+        agentData,
+        objectData,
+        public_;
+        
+    levelData = function (data) {
+        
+        if (typeof data !== 'object') {
+            console.log('Tried passing bullshit to updateLevel. Please send a data object.');
+            console.log(data);
+            return false;
+        }
+        
+        if (data.client_id !== globals.client_id) { // ignore immediately, actually move this to main message handler
+            console.log('Message client_ids don\'t match. Ignoring.');
+            return false;
+        }
+        
+        // map data for a z-level
+        var required = ['map', // (array of int tile values)
+                        'z_level', // (int)
+                        'x_size', // (int)
+                        'y_size', // (int)
+                        'world_id', // (int)
+                       ];
+               
+        var missing = [];
+        $.each(required, function(i, req) {
+            if (data[req] === undefined) {
+                missing.push(req);
+            }
+        });
+        
+        if (missing.length > 0) {
+            var msg = missing.join();
+            console.log('Cannot update z-level. The following data attrs are missing: '+msg.slice(0, msg.length-2));
+            console.log(data);
+            return false;
+        }
+        
+        data.x_size = parseInt(data.x_size);
+        data.y_size = parseInt(data.y_size);
+        var map_size = data.x_size*data.y_size;
+        if (map_size !== data.map.length) {
+            console.log('The map dimensions do not match the map sent.');
+            console.log(data);
+            return false;
+        }
+
+        return true;
+    };
+        
+    var check = function(data, req, msg) {
+        
+        var missing = false,
+            int_val;
+        
+        $.each(req, function(i, val) { // check for missing and NaN
+            if (data[val] === undefined) {
+                console.log(msg +' is missing: '+val);
+                missing = true;
+                return true; //continue
+            }
+            int_val = parseInt(data[val]);
+            if (isNaN(int_val)) {
+                console.log(msg +' is NaN: '+val);
+                missing = true;
+                return true;
+            } else {
+                data[val] = int_val;
+            }
+        });
+        
+        if (missing === true) { // log data if bad, bail
+            console.log(data);
+        }
+        
+        return !missing;
+    }
+        
+    blockData = function (data) {
+        return check(data, ['type','x','y','z'], 'blockData');
+    };
+    
+    agentData = function (data) {
+        // 'loc' is the location_type (e.g. ground, agent, container)
+        return check(data, ['loc','x','y','z','id'], 'agentData');        
+    };
+    
+    objectData = function (data) {
+        return check(data, ['loc','x','y','z','id'], 'objectData');
+    };
+    
+    public_ = {
+                levelData: levelData,
+                blockData: blockData,
+                agentData: agentData,
+                objectData: objectData
+              }
+              
+    return public_;
     
 }());
 
