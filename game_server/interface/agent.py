@@ -1,6 +1,7 @@
 import sys
 
 from interface.object import Nobject
+from interface.crop import Crop
 
 #custom_agent_attributes = ['position'] #attributes with class defined get/set properties
 custom_agent_attributes = []
@@ -81,9 +82,11 @@ class Agent:
 		
 	def harvest_crop(self, crop_id = 0):
 		if crop_id == 0:
+			print "Needs crop id"
 			return	#get crop at this location
 		crop = Crop(crop_id)
 		if self.position != crop.position:
+			print "out: " + str(self.position) + " " + str(crop.position)
 			print "Agent is too far away from the crop"
 			return
 		#if conditions are met, harvest

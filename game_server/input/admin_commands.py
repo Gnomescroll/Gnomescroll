@@ -18,6 +18,7 @@ class Admin_commands:
 	# required = ['position', 'item_template']
 	# optional = ['player_id']
 	def create_item(self, position, item_template= None, **msg):
+		position = list(position)
 		type = "item"
 		self.objects.create(position, object_type=type)
 		pass
@@ -25,6 +26,7 @@ class Admin_commands:
 	# required = ['position,', 'object_type', 'template']
 	# optional = ['player_id']
 	def create_object(self, position, object_type, template = None, player_id = 0, **msg):
+		position = list(position)
 		self.objects.create(position, object_type, template , player_id)
 		pass
 		

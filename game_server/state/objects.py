@@ -47,7 +47,7 @@ class Objects:
 		pass
 
 	def create(self, position, object_type = None, template = None, player_id=0):
-		(position_type, x, y, z) = position
+		[position_type, x, y, z] = position
 		
 		id = self.globals.get_unique_id()
 

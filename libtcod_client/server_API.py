@@ -166,10 +166,11 @@ class Agent_commands:
 		msg['agent_id'] = agent_id
 		self.send_message(msg)		
 		
-	def harvest_crop(self, agent_id):
+	def harvest_crop(self, agent_id, crop_id = 0):
 		msg = {}	
 		msg['type'] = 'agent'
-		msg['cmd'] = 'move_0'
+		msg['cmd'] = 'harvest_crop'
 		msg['world_id'] = 0
 		msg['agent_id'] = agent_id
+		msg['crop_id'] = crop_id
 		self.send_message(msg)		

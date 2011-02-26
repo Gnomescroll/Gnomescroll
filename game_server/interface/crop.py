@@ -21,7 +21,7 @@ class Crop:
 		template = self.dat.get_crop(self.parent)
 		mature_crop = template['matures_into']
 		mature_crop_template = self.dat.get_crop_template(mature_crop)
-		print str(mature_crop_template)
+		#print str(mature_crop_template)
 		#from pudb import set_trace; set_trace()
 		for i, x in mature_crop_template.items():
 			self.__dict__['object_dict'][i] = x

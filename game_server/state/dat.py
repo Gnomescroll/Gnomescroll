@@ -26,7 +26,7 @@ crops_dat = {
 		
 		'harvestable' : 0,
 		'matures' : 1,
-		'mature_time' : 400,
+		'mature_time' : 40,
 		'matures_into' : "generic_mature_crop"
 	},
 

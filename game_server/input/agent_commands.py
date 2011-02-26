@@ -42,5 +42,5 @@ class Agent_commands:
 		pass
 		
 	def harvest_crop(self, agent_id, crop_id = 0, **msg):
-		Agent(agent_id).harvest_crop(object_id, crop_id)
+		Agent(agent_id).harvest_crop(crop_id)
 		pass
