@@ -3,7 +3,6 @@ class Terrain_map_handler:
 
 	def __init__(self):
 		self.terrain_map = None
-		self.redraw_map = True
 		pass
 
 	def init_terrain_map(self, map, z_level, x_size, y_size, world_id, client_id, **msg):
