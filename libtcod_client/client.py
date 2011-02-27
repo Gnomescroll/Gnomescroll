@@ -165,6 +165,9 @@ if client.server_listener.ready == 1:
 else:
 	print "Redis Not Ready"
 
+admin.create_agent(2,1,0)
+info.get_agent(0)
+
 while not libtcod.console_is_window_closed():
 	#handle mouse
 	current_mouse = libtcod.mouse_get_status();
