@@ -66,9 +66,12 @@ def render_all():
 				y += 1
 			y = 0
 			x += 1
-		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 		client.terrain_map.redraw = False
-		gui_redraw_map = False
+		gui_redraw_map = False	
+
+	#re-blit the map if the map in case an agent position has changed
+	libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
+		
 
 	if message_log.redraw:
 		message_con = message_log.draw()
