@@ -27,12 +27,12 @@ class Button:
 	def draw(self):
 		#If the user is hovering over the button, swap foreground and background colors
 		if self.mouse_is_hovering:
-			libtcod.console_set_background_color(self.button_con, self.fore_color)
-			libtcod.console_set_foreground_color(self.button_con, self.back_color)
+			libtcod.console_set_default_background(self.button_con, self.fore_color)
+			libtcod.console_set_default_foreground(self.button_con, self.back_color)
 			libtcod.console_rect(self.button_con, 0, 0, self.width, self.height, True, libtcod.BKGND_SET)
 		else:
-			libtcod.console_set_background_color(self.button_con, self.back_color)
-			libtcod.console_set_foreground_color(self.button_con, self.fore_color)
+			libtcod.console_set_default_background(self.button_con, self.back_color)
+			libtcod.console_set_default_foreground(self.button_con, self.fore_color)
 			libtcod.console_rect(self.button_con, 0, 0, self.width, self.height, True, libtcod.BKGND_SET)
 
 		#Print the button to the button_con, and return that
@@ -126,8 +126,8 @@ class Menu:
 		self.lines.insert(0, ["center", self.title])
 		self.menu_con = libtcod.console_new(self.width, self.height)
 		self.center_x = (int)(self.width/2)
-		libtcod.console_set_background_color(self.menu_con, self.back_color)
-		libtcod.console_set_foreground_color(self.menu_con, self.fore_color)
+		libtcod.console_set_default_background(self.menu_con, self.back_color)
+		libtcod.console_set_default_foreground(self.menu_con, self.fore_color)
 		libtcod.console_rect(self.menu_con, 0, 0, self.width, self.height, True, libtcod.BKGND_SET)
 
 	def draw(self):
@@ -198,12 +198,12 @@ class Message_Log:
 			self.game_msgs.append((line, color))
 
 	def draw(self):
-		libtcod.console_set_background_color(self.message_con, self.back_color)
+		libtcod.console_set_default_background(self.message_con, self.back_color)
 		libtcod.console_clear(self.message_con)
 		y = 1
 		for (line, color) in self.game_msgs:
-			libtcod.console_set_foreground_color(self.message_con, color)
-			libtcod.console_print_left(self.message_con, 1, y, libtcod.BKGND_NONE, line)
+			libtcod.console_set_default_foreground(self.message_con, color)
+			libtcod.console_print(self.message_con, 1, y, line)
 			y += 1
 		redraw = False;
 		return self.message_con

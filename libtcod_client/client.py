@@ -62,7 +62,7 @@ def render_all():
 					color = libtcod.darker_green
 				else:
 					color = libtcod.black
-				libtcod.console_set_back(map_viewer, x, y, color, libtcod.BKGND_SET)
+				libtcod.console_set_char_background(map_viewer, x, y, color, libtcod.BKGND_SET)
 				y += 1
 			y = 0
 			x += 1
@@ -78,17 +78,17 @@ def render_all():
 		libtcod.console_blit(message_con, 0, 0, MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT, 0, 0, MAP_VIEWER_HEIGHT)
 
 	if redraw_side:
-		libtcod.console_set_background_color(side_panel, libtcod.dark_blue)
+		libtcod.console_set_default_background(side_panel, libtcod.dark_blue)
 		libtcod.console_clear(side_panel)
 		libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, 0)
 		redraw_side = False
 	
 	if show_fps:
-		libtcod.console_set_background_color(fps_monitor, libtcod.black)
-		libtcod.console_set_foreground_color(fps_monitor, libtcod.white)
+		libtcod.console_set_default_background(fps_monitor, libtcod.black)
+		libtcod.console_set_default_foreground(fps_monitor, libtcod.white)
 		libtcod.console_clear(fps_monitor)
 		fps = "FPS: " +str(libtcod.sys_get_fps())
-		libtcod.console_print_left(fps_monitor, 0, 0, libtcod.BKGND_NONE, fps)	
+		libtcod.console_print(fps_monitor, 0, 0, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0)
 
 def handle_keys():
