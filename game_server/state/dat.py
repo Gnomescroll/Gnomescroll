@@ -1,11 +1,103 @@
 tiles_dat = {
-	0 : 
+
+	1 :
 	{
-	
-	}
+			'name' : "empty_block",
+			'blocking' : 0,
+			'pourous' : 1,
+			
+			#actions
+			'till' : 0,
+			'dig' : 0
+	},
 
+	0 :
+	{
+			'name' : "generic_soil",
+			'blocking' : 0,
+			'pourous' : 0,
+			
+			#actions
+			'till' : 1,
+			'till_into' : 'generic_tilled_soil',
 
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'empty_block'
+	},
 
+	2 :
+	{
+			'name' : "generic_wall",
+			'blocking' : 0,
+			'pourous' : 0,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'generic_floor'
+	},
+
+	3 : 
+	{
+			'name' : "generic_floor",
+			'blocking' : 1, #can agents walk through it
+			'pourous' : 1, #can fluids walk through it
+			'gravity' : 0, #does it fall if not supporting something
+			'vertical' : 0, #does it prevent the thing above it from falling
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'empty_block',
+	},
+
+	4 :
+	{
+			'name'     : 'generic_stone_block',
+			'blocks' : 1,
+			'porous'   : 0,
+			'gravity'   : 0,
+			'vertical'  : 1,
+			
+			'till'   : 0,
+			'dig': 1,
+			'dig_produces' : [ (1,1, 'generic_stone') ],
+			'dig_into' : 'generic_floor'
+	},
+
+	5 :
+	{
+			'name' : "generic_tilled_soil",
+			'blocking' : 0,
+			'pourous' : 0,
+			'gravity' : 0,
+			'vertical' : 1,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'empty_block'
+	},
+
+	6 :
+	{
+			'name' : "generic_wood_block",
+			'blocking' : 1,
+			'pourous' : 0,
+			'gravity' : 1,
+			'vertical' : 1,
+			
+			#actions
+			'till' : 0,
+			'dig' : 0
+	}		
 }
 
 crops_dat = {
@@ -132,3 +224,10 @@ class Dat:
 		if not template in self.items_dat.keys():
 			template = 'generic_item'
 		return self.items_dat[template]['template']
+
+	#tile helper
+	def get_tile(self, value):
+		if value not in self.tiles_day.key():
+			print "Tile Does not Exist"
+			return self.tiles_dat[0]
+		return self.tiles_dat[value]
