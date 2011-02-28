@@ -38,6 +38,8 @@ class Agents:
 		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		self.agent_list[id] = a
 		self.delta.agent_create(id, [0, x, y, z], player_id=None)
-		
+
 	def delete(self, id):
-		pass
+		print "Delete agent: " + str(id)
+		del self.agent_list[id]
+		self.delta.agent_delete(id):
