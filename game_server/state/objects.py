@@ -100,4 +100,4 @@ class Objects:
 	def delete(self, id):
 		print "Delete object: " + str(id)
 		del self.object_list[id]
-		self.delta.object_delete(id):
+		self.delta.object_delete(id)

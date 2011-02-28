@@ -42,4 +42,4 @@ class Agents:
 	def delete(self, id):
 		print "Delete agent: " + str(id)
 		del self.agent_list[id]
-		self.delta.agent_delete(id):
+		self.delta.agent_delete(id)
