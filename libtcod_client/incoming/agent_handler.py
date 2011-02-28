@@ -11,13 +11,13 @@ class Agent_handler:
 
 	def agent_position_change(self, id, position, **msg):
 		for element in self.Agents:
-			if element[id] = id:
+			if element[id] == id:
 				element[position] = position
 				break
 
 	def agent_state_change(self, id, position, version ,**msg):
 		for element in self.Agents:
-			if element[id] = id:
+			if element[id] == id:
 				element[version] = version
 				break
 
@@ -31,6 +31,6 @@ class Agent_handler:
 		
 	def agent_delete(self, id, **msg):
 		for element in self.Agents:
-			if element[id] = id:
+			if element[id] == id:
 				del element
 				break
