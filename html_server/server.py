@@ -1,5 +1,5 @@
 import string,cgi,time
-from os import curdir, sep
+#from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import sys 
 import urlparse
@@ -7,10 +7,11 @@ import urlparse
 import redis
 from marshal import dumps
 import marshal
-import sys
-import SimpleHTTPServer
-import SocketServer
+#import SimpleHTTPServer
+#import SocketServer
 import simplejson
+
+import io
 
 PORT = 8055
 
@@ -20,21 +21,43 @@ def send_message(msg):
     world_id = msg['world_id']
     r_client.lpush("world_"+str(world_id), dumps(msg))
 
-class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-     
+class MyHandler(BaseHTTPRequestHandler):
+	
     def do_GET(self):
-        dir = "../html_client"
-        print  "path= " + self.path
-        path = self.path
-        if path == "/":
-            path = "/index.html"
-        try:
-            print "open: " + dir+path
-            f = open(dir+path, 'r')
-            self.copyfile(f, self.wfile)
-        except:
-            self.send_error(404,'404 Error: %s' % self.path)
 
+		try:
+			if self.path.find('?') != -1:
+				self.path, self.query_string = self.path.split('?', 1)
+			else:
+				self.query_string = ''
+							
+			#params = dict(cgi.parse_qsl(self.query_string))   
+	
+			dir = "../html_client"
+			print  "path= " + self.path
+			path = self.path
+			if path == "/":
+				path = "/index.html"
+			
+			self.send_response(200)
+			self.send_header('Content-type',	'text/html')
+			self.end_headers()
+			
+			try:
+				print "open: " + dir+path
+				f = open(dir+path, 'r')
+				
+				#self.wfile.copyfile(f, self.wfile)
+				self.wfile.write(f.read())
+				
+			except Exception, err:
+				print "error: %s: %s" %(sys.stderr, err)
+				self.send_error(404,'404 Error: %s' % self.path)
+
+		except Exception, err:
+			print "error: %s: %s" %(sys.stderr, err)
+#		except IOError:
+#			self.send_error(404,'404 Error: %s' % self.path)
 
     def do_POST(self):
         global rootnode
