@@ -61,9 +61,14 @@ var r = redis.createClient(6379, '127.0.0.1');
 
 r.subscribe("world_0_out", function(channel, message, pattern) {
         socket.broadcast(message);
+        console.log("message received!");
 });
 
+/*
 //global admin messages
 r.subscribe("global_admin", function(channel, message, pattern) {
         socket.broadcast(message);
 });
+*/
+
+console.log("started");
