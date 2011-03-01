@@ -8,9 +8,10 @@ app = Flask(__name__)
 dir = "html_client"
 PORT = 8055
 
-r_client = redis.Redis('localhost')
+#r_client = redis.Redis('localhost')
 # redis
 def send_message(msg):
+	r_client = redis.Redis('localhost')
     world_id = msg['world_id']
     r_client.lpush("world_"+str(world_id), dumps(msg))
 
