@@ -45,10 +45,10 @@ process.info.agent_info = function (msg) {
     
     var value = msg.value;
     
-    msg.x = value.pos[1];
-    msg.y = value.pos[2];
-    msg.z = value.pos[3];
-    msg.loc_type = value.pos[0];
+    msg.x = value.position[1];
+    msg.y = value.position[2];
+    msg.z = value.position[3];
+    msg.loc_type = value.position[0];
     
     msg.obj_type = 'agent';
     
@@ -61,9 +61,9 @@ process.info.agent_info = function (msg) {
     }
     
     var agent = state.gameObjectKnown(msg);
-    if agent { // update
+    if (agent) {            // update
         agent.update(msg);
-    } else { // create
+    } else {                // create
         var agent = Agent.create(msg);
     }
     
@@ -79,10 +79,10 @@ process.info.object_info = function (msg) {
     
     var value = msg.value;
     
-    msg.x = value.pos[1];
-    msg.y = value.pos[2];
-    msg.z = value.pos[3];
-    msg.loc_type = value.pos[0];
+    msg.x = value.position[1];
+    msg.y = value.position[2];
+    msg.z = value.position[3];
+    msg.loc_type = value.position[0];
     
     // unpack value
     $.each(value, function (key, val) {
@@ -91,16 +91,17 @@ process.info.object_info = function (msg) {
     
     // if the server does not distinguish containers from objects,
     // need to detect that here
-    msg.obj_type = 'object';
+    msg.obj_type = 'obj';
     
+    delete msg.position;
     delete msg.msg;
     delete msg.client_id;
     
     var obj = state.gameObjectKnown(msg);
-    if obj { // update
+    if (obj) {              // update
         obj.update(msg);
-    } else { // create
-        var obj = obj.create(msg);
+    } else {                // create
+        var obj = Obj.create(msg);
     }
     
     obj.toState();
@@ -114,20 +115,22 @@ process.info.agent_list = function (msg) {
     //if (!validate.agent_list(msg)) return;
     
     $.each(msg.list, function (i, list_agent) {
+        
+        list_agent.x = list_agent.position[1];
+        list_agent.y = list_agent.position[2];
+        list_agent.z = list_agent.position[3];
+        list_agent.loc_type = list_agent.position[0];
+        delete list_agent.position;
+        
         var agent = state.gameObjectKnown(list_agent);
-        if agent { // update
+        if (agent) {                    // update
             agent.update(list_agent);
-        } else { // create
+        } else {                        // create
             var agent = Agent.create(list_agent);
         }
         
         agent.toState();
     });
-    
-    delete msg.list;
-    delete msg.msg;
-    delete msg.client_id;
-    delete msg.world_id;
 
 }
 
@@ -138,34 +141,70 @@ process.info.object_list = function (msg) {
     //if (!validate.object_list(msg)) return;
     
     $.each(msg.list, function(i, list_obj) {
+        
+        list_object.x = list_object.position[1];
+        list_object.y = list_object.position[2];
+        list_object.z = list_object.position[3];
+        list_object.loc_type = list_object.position[0];
+        delete list_object.position;
+        
         var obj = state.gameObjectKnown(list_obj);
-        if obj { // update
+        if (obj) {                  // update
             obj.update(list_obj);
-        } else { // create
-            var obj = obj.create(list_obj);
+        } else {                    // create
+            var obj = Obj.create(list_obj);
         }
         
         obj.toState();
     });
     
-    delete msg.list;
-    delete msg.msg;
-    delete msg.client_id;
-    delete msg.world_id;
 }
 
 process.delta.agent_position_change = function (msg) {
     
     console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.agent_position_change(msg)) return;
+    
+    msg.x = msg.position[1];
+    msg.y = msg.position[2];
+    msg.z = msg.position[3];
+    msg.loc_type = msg.position[0];
+    delete msg.position;
+    
+    var agent = state.gameObjectKnown(msg.id, 'agent');
+    
+    if (agent) {
+        agent.update(msg);
+        agent.toState();
+    } else if (state.contains(GameObject.pos.apply(msg))) {
+        agent = Agent.create(msg);
+        agent.toState();
+    }
+            
 };
 
 process.delta.agent_state_change = function (msg) {
     
     console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.agent_state_change(msg)) return;
+    
+    msg.x = msg.position[1];
+    msg.y = msg.position[2];
+    msg.z = msg.position[3];
+    msg.loc_type = msg.position[0];
+    delete msg.position;
+    
+    var agent = state.gameObjectKnown(msg.id, 'agent');
+    
+    if (agent) {
+        agent.update(msg);
+        agent.toState();
+    } else if (state.contains(GameObject.pos.apply(msg))) {
+        agent = Agent.create(msg);
+        agent.toState();
+    }
     
 }
 
@@ -173,7 +212,18 @@ process.delta.agent_create = function (msg) {
     
     console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.agent_create(msg)) return;
+    
+    msg.x = msg.position[1];
+    msg.y = msg.position[2];
+    msg.z = msg.position[3];
+    msg.loc_type = msg.position[0];
+    delete msg.position;
+    
+    if (state.contains(GameObject.pos.apply(msg))) {
+        var agent = Agent.create(msg);
+        agent.toState();
+    }
     
 }
 
@@ -181,39 +231,97 @@ process.delta.agent_delete = function (msg) {
     
     console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.agent_delete(msg)) return;
     
+    var agent = state.gameObjectKnown(msg);
+    if (agent) {
+        agent.remove();
+    }
 }
 
 process.delta.object_position_change = function (msg) {
     
-        console.log(msg);
+    console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.object_position_change(msg)) return;
+    
+    msg.x = msg.position[1];
+    msg.y = msg.position[2];
+    msg.z = msg.position[3];
+    msg.loc_type = msg.position[0];
+    delete msg.position;
+    
+    var obj = state.gameObjectKnown(msg.id, 'obj');
+    
+    if (obj) {
+        obj.update(msg);
+        obj.toState();
+    } else if (state.contains(GameObject.pos.apply(msg))) {
+        obj = Obj.create(msg);
+        obj.toState();
+    }
 }
 
 process.delta.object_state_change = function (msg) {
         console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.object_state_change(msg)) return;
+    
+    msg.x = msg.position[1];
+    msg.y = msg.position[2];
+    msg.z = msg.position[3];
+    msg.loc_type = msg.position[0];
+    delete msg.position;
+    
+    var obj = state.gameObjectKnown(msg.id, 'obj');
+    
+    if (obj) {
+        obj.update(msg);
+        obj.toState();
+    } else if (state.contains(GameObject.pos.apply(msg))) {
+        obj = Obj.create(msg);
+        obj.toState();
+    }
+    
 }
 
 process.delta.object_create = function (msg) {
         console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.object_create(msg)) return;
+    
+    msg.x = msg.position[1];
+    msg.y = msg.position[2];
+    msg.z = msg.position[3];
+    msg.loc_type = msg.position[0];
+    delete msg.position;
+    
+    if (state.contains(GameObject.pos.apply(msg))) {
+        var obj = Obj.create(msg);
+        obj.toState();
+    }
 }
 
 process.delta.object_delete = function (msg) {
         console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.object_delete(msg)) return;
+    
+    var obj = state.gameObjectKnown(msg);
+    if (obj) {
+        obj.remove();
+    }
 }
 
 process.delta.set_terrain_map = function (msg) {
         console.log(msg);
     
-    //if (!validate.agent_list(msg)) return;
+    //if (!validate.set_terrain_map(msg)) return;
+    
+    if (state.contains(GameObject.pos.apply(msg))) {
+        state.updateBlock(msg);
+    }
+
 }
 
 route = {
@@ -224,8 +332,8 @@ route = {
     agent_list: process.info.agent_list,
     object_list: process.info.object_list,
     
-    agent_position_change: process.delta.agent_position_change,
-    agent_state_change: process.delta.agent_state_change,
+    agent_position: process.delta.agent_position_change,
+    agent_state_change_update: process.delta.agent_state_change,
     agent_create: process.delta.agent_create,
     agent_delete: process.delta.agent_delete,
 

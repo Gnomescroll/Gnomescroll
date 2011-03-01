@@ -57,7 +57,7 @@ GameObject = {
     toState: // set object to the state
     function () {
                 
-        if (state.positionInState(this.pos())) { // agent pos in state
+        if (state.contains(this.pos())) { // agent pos in state
             
             if (state.gameObjectKnown(this)) { // known agent, updating
                 state.cleanLocation(this.old());
@@ -93,6 +93,12 @@ GameObject = {
         
         return agent;
     },
+    
+    remove:
+    function (data) {
+        state.cleanLocation(this);
+        state.removeGameObject(this);
+    },
 
 }
 
@@ -117,6 +123,14 @@ Agent = $.extend({}, GameObject);
 Agent = $.extend(Agent, InventoryMethods);
 
 Obj = $.extend({}, GameObject);
+
+Obj.remove = function () {
+    
+    state.cleanLocation(this);
+    // find what inventory it is stored in (if it is at all), and remove it
+    
+    state.removeGameObject(this);
+};
 
 Container = $.extend({}, GameObject);
 Container = $.extend(Container, InventoryMethods);

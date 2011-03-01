@@ -20,7 +20,7 @@ var state = ( function () {
     
     var gameObjectKnown,
         gameObjectTypeMap = { 'agent': agents,
-                              'object': objects,
+                              'obj': objects,
                               'container': containers
                             }
     
@@ -70,7 +70,7 @@ var state = ( function () {
     
     // checks if a position is in current state bounds.
     // returns false or a row of y values from [z][x]
-    positionInState = function(pos) {
+    contains = function(pos) {
     
         var x, y, z,
             x_, z_;
@@ -120,24 +120,28 @@ var state = ( function () {
 
         var x_;
     
-        x_ = positionInState(block.x, block.y, block.z);
+        x_ = contains(block.x, block.y, block.z);
         if (x_ === false) return false;
         
-        x_[data.y] = data.type
+        x_[data.y] = data.value
         
         return true;
     };
     
     // checks if a game_object exists in state
     // returns false or the object
-    gameObjectKnown = function(game_object) {
+    gameObjectKnown = function(game_object, type) {
         
         var type,
             id,
             obj;
         
-        type = game_object.obj_type;
-        id = game_object.id;
+        if (typeof game_object === 'object') {
+            type = game_object.obj_type;
+            id = game_object.id;
+        } else {        
+            id = game_object;
+        }
         
         obj = gameObjectTypeMap[type][id];
         
