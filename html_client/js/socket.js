@@ -15,7 +15,9 @@ Socket = ( function () {
 	
         socket.on('connect', function () {
             if (debug) console.log('connect');
-            $.post(ajax_server+'/api/get_map',{ cx:0,cy:0 });
+            var data = { cx:0,cy:0, world_id:1 };
+            data = JSON.stringify(data);
+            $.post(ajax_server+'/api/get_map',{json: data});
         });
 
         socket.on('message', function (msg) {
