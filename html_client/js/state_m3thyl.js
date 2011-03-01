@@ -7,6 +7,7 @@ var state = ( function () {
         levels = [],
         agents = {},
         objects = {},
+        containers = {},
         ao_map = {}; // coordinate map; maps coordinate.toString() to a another object, { agent: [], object: [], container: [] }
         
     // need some translation function for global/map/server coords to block's coords
@@ -18,6 +19,15 @@ var state = ( function () {
         updateAgent,
         updateObject,
         updateLevel;
+    
+    var gameObjectKnown,
+        gameObjectTypeMap = { 'agent': agents,
+                              'object': objects,
+                              'container': containers
+                            }
+    
+    var setLocation,
+        cleanLocation;
     
     var init,
         public_;
@@ -117,10 +127,7 @@ var state = ( function () {
     // update a block type
     updateBlock = function(block) {
         // a coordinate and block type
-        if (!validate.blockData(block)) {
-            return false;            
-        } 
-        
+
         var x_;
     
         x_ = positionInState(block.x, block.y, block.z);
@@ -131,29 +138,102 @@ var state = ( function () {
         return true;
     };
     
-    agentKnown = function(agent_id) {
-        var a = agents[agent_id];
-        if (a === undefined) return false;
+    // checks if a game_object exists in state
+    gameObjectKnown = function(game_object) {
+        
+        var type,
+            id,
+            obj;
+        
+        type = game_object.type;
+        id = game_object.id;
+        
+        obj = gameObjectTypeMap[type][id];
+        
+        if (obj === undefined) return false;
         else return a;
     };
     
-    addAgent = function(agent) {
-        agents[agent.id] = agent;
+    addGameObject = function(game_object) {
         
-        pos_string = agent.pos.toString();
-        ao_loc = ao_map[pos_string]
-        if (ao_loc === undefined) {
-            ao_map[pos_string] = { agent.pos: { 'agents': [agent.id] } }
+        var type,
+            id;
+            
+        type = game_object.type;
+        id = game_object.id;
+            
+        gameObjectTypeMap[type][id] = game_object;
+        
+    }
+    
+    // removes a game_object from the ao_loc map
+    cleanLocation = function(game_object) {
+        
+        var type,
+            pos,
+            id,
+            ao_loc,
+            ao_loc_type,
+            index;
+            
+        type = game_object.type;
+        id = game_object.id;
+        
+        pos = game_object.pos();
+        pos = pos.toString();
+        
+        ao_loc = ao_map[pos];
+        
+        if (ao_loc === undefined) { // if pos is not in ao_map
+            return; // leave
+        }
+        
+        ao_loc_type = ao_loc[type];
+        index = $.inArray(id, objs);
+        if (index > -1) { // if game_object is in its type's array
+            ao_loc_type.slice(index,1); // remove it
+        }
+        
+        if (ao_loc_type.length === 0) { // if array is now empty
+            delete ao_loc[type]; // remove the key to type
+        }
+        
+        if ($.isEmptyObject(ao_loc)) { // if ao_loc is now just {}
+            delete ao_map[pos]; // remove it from ao_map
+        }
+        
+    };
+    
+    // sets a game_object (agent, obj, cont) in the ao_loc map
+    setLocation = function (game_object) {
+        
+        var type,
+            pos,
+            ao_loc,
+            ao_loc_type;
+        
+        type = game_object.type; // agent, object, container
+        id = game_object.id;
+        
+        pos = game_object.pos();
+        pos = pos.toString();
+        
+        ao_loc = ao_map[pos];
+        
+        if (ao_loc === undefined) { // if pos not in ao_map
+            ao_map[pos] = { type: [game_object.id] } // add new obj
         } else {
-            var ag = ao_loc['agents'];
-            if (ag === undefined) {
-                ao_loc['agents'] = [agent.id];
+            ao_loc_type = ao_loc[type]; // get existing obj
+            if (ao_loc_type === undefined) { // if there is no key for type
+                ao_loc[type] = [game_object.type]; // add it w/ new id array
             } else {
-                ag.push(agent.id);
+                if ($.inArray(id, ao_loc_type) === -1) { // check if it is here already
+                    ao_loc_type.push(id); // if not, add it
+                }
             }
         }
     };
-    
+        
     // update agent status
     updateAgent = function (agent) {
         // an agent id and updates
@@ -199,168 +279,14 @@ var state = ( function () {
     
     public_ = {
                 init: init,
+                setLocation: setLocation,
+                cleanLocation: cleanLocation,
+                gameObjectKnown: gameObjectKnown,
+                addGameObject: addGameObject,
                 updateBlock: updateBlock,
-                updateAgent: updateAgent,
-                updateObject: updateObject,
                 updateLevel: updateLevel,
               }
               
     return public_;
     
 }());
-
-var validate = ( function () {
-    
-    var levelData,
-        blockData,
-        agentData,
-        objectData,
-        public_;
-        
-    levelData = function (data) {
-        
-        if (typeof data !== 'object') {
-            console.log('Tried passing bullshit to updateLevel. Please send a data object.');
-            console.log(data);
-            return false;
-        }
-        
-        if (data.client_id !== globals.client_id) { // ignore immediately, actually move this to main message handler
-            console.log('Message client_ids don\'t match. Ignoring.');
-            return false;
-        }
-        
-        // map data for a z-level
-        var required = ['map', // (array of int tile values)
-                        'z_level', // (int)
-                        'x_size', // (int)
-                        'y_size', // (int)
-                        'world_id', // (int)
-                       ];
-               
-        var missing = [];
-        $.each(required, function(i, req) {
-            if (data[req] === undefined) {
-                missing.push(req);
-            }
-        });
-        
-        if (missing.length > 0) {
-            var msg = missing.join();
-            console.log('Cannot update z-level. The following data attrs are missing: '+msg.slice(0, msg.length-2));
-            console.log(data);
-            return false;
-        }
-        
-        data.x_size = parseInt(data.x_size);
-        data.y_size = parseInt(data.y_size);
-        var map_size = data.x_size*data.y_size;
-        if (map_size !== data.map.length) {
-            console.log('The map dimensions do not match the map sent.');
-            console.log(data);
-            return false;
-        }
-
-        return true;
-    };
-        
-    var check = function(data, req, msg) {
-        
-        var missing = false,
-            int_val;
-        
-        $.each(req, function(i, val) { // check for missing and NaN
-            if (data[val] === undefined) {
-                console.log(msg +' is missing: '+val);
-                missing = true;
-                return true; //continue
-            }
-            int_val = parseInt(data[val]);
-            if (isNaN(int_val)) {
-                console.log(msg +' is NaN: '+val);
-                missing = true;
-                return true;
-            } else {
-                data[val] = int_val;
-            }
-        });
-        
-        if (missing === true) { // log data if bad, bail
-            console.log(data);
-        }
-        
-        return !missing;
-    }
-        
-    blockData = function (data) {
-        return check(data, ['type','x','y','z'], 'blockData');
-    };
-    
-    agentData = function (data) {
-        // 'loc' is the location_type (e.g. ground, agent, container)
-        return check(data, ['loc','x','y','z','id'], 'agentData');        
-    };
-    
-    objectData = function (data) {
-        return check(data, ['loc','x','y','z','id'], 'objectData');
-    };
-    
-    public_ = {
-                levelData: levelData,
-                blockData: blockData,
-                agentData: agentData,
-                objectData: objectData
-              }
-              
-    return public_;
-    
-}());
-
-// agent and object methods bundled here
-// should have a convenience method for creating an object
-// and should have methods for applying mods to the object
-
-// might need to do a bit different inheritance , like .beget()
-// so we can keep methods and static properties in a single object
-// that can be looked up from the instance object 
-// (python object hierarchy; saves a lot of memory)
-
-var agent = function () {
-    
-    var create, update;
-    
-    create = function (data) {
-        // takes some data, adds any static class properties defined above
-        return {};
-    }
-    
-    // meant to be .apply'd -- e.g. agent.update.apply(an_agent, data);
-    update = function (data) {
-        // some kind of type checking here?
-        var property;
-        for (property in data) {
-            this[property] = data[property]; //indiscriminately overwrite existing properties, and add new ones
-        }
-    }
-}
-
-
-var game_object = function () {
-    
-    var create, update;
-    
-    create = function (data) {
-        // takes some data, adds any static class properties defined above
-        return {};
-    }
-    
-    // meant to be .apply'd -- e.g. agent.update.apply(an_agent, data);
-    update = function (data) {
-        // some kind of type checking here?
-        var property;
-        for (property in data) {
-            this[property] = data[property]; //indiscriminately overwrite existing properties, and add new ones
-        }
-    }
-    
-}
