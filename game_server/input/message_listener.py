@@ -22,6 +22,7 @@ class Message_listener:
 	def message_worker(self, world_id):
 		r_in = redis.Redis("localhost") #going to be local host for now
 		key = "world_%s" % (str(world_id),)
+        i = ''
 		while True:
 			try:
 				j = r_in.brpop(key)
