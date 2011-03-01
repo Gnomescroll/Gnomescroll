@@ -12,16 +12,16 @@ Socket = ( function () {
         
         var socket = new io.Socket(node_server,
                                   {'port': node_port});
-	
+
         socket.on('connect', function () {
             if (debug) console.log('connect');
-            var data = { cx:0,cy:0, world_id:1 };
+            var data = { cmd:'get_map', type:'info',client_id:0,z:5, world_id:0 };
             data = JSON.stringify(data);
             $.post(ajax_server+'/api/get_map',{json: data});
         });
 
         socket.on('message', function (msg) {
-            if (debug) console.log(msg);
+            if (debug) {console.log('message'); console.log(msg);}
             routeMessage(msg);
         });
 
