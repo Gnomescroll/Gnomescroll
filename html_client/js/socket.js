@@ -21,8 +21,13 @@ Socket = ( function () {
         });
 
         socket.on('message', function (msg) {
-            if (debug) {console.log('message'); console.log(msg);}
-            routeMessage(msg);
+            if (debug) console.log(msg);
+            msg = $.parseJSON(msg);
+            console.log(msg.msg);
+            var fn = route[msg.msg];
+            if (fn !== undefined) {
+                fn(msg);
+            }
         });
 
         socket.on('close', function () {
