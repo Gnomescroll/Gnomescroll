@@ -68,10 +68,10 @@ var state = ( function () {
         });
     };
     
+    // checks if a position is in current state bounds.
+    // returns false or a row of y values from [z][x]
     positionInState = function(pos) {
-        // checks if the position is in current state.
-        // if it is, returns a row of y values from level
-
+    
         var x, y, z,
             x_, z_;
       
@@ -91,9 +91,8 @@ var state = ( function () {
     // update a z-level with map info
     updateLevel = function (data) {
         
-        if (!validate.levelData(data)) {
-            return false;
-        }
+        // data object requires:
+        // z_level, map, y_size, x_size
         
         var arr = [],
             col = [],
@@ -108,17 +107,20 @@ var state = ( function () {
             col = [];
         }
         
-        data.z_level = parseInt(data.z_level);
         levels[data.z_level] = arr;
         
         if ($.inArray(data.z_level, z_lvls) === -1) {
             z_lvls.push(data.z_level);
         }
+        
+        console.log('update level confirm')
+        console.log(levels[data.z_level]);
+        console.log(levels[data.z_level].length);
+        console.log(z_lvls);
     };
     
     // update a block type
     updateBlock = function(block) {
-        // a coordinate and block type
 
         var x_;
     
@@ -146,6 +148,7 @@ var state = ( function () {
         else return a;
     };
     
+    // add game_object to lists
     addGameObject = function(game_object) {
         
         var type,
@@ -158,6 +161,7 @@ var state = ( function () {
         
     };
     
+    // remove game_object from lists
     removeGameObject = function(game_object) {
         
         var type,
@@ -236,39 +240,6 @@ var state = ( function () {
                 }
             }
         }
-    };
-        
-    // update agent status
-    updateAgent = function (agent) {
-        // an agent id and updates
-        if (!validate.agentData(data)) {
-            return false;
-        }
-        
-        if (positionInState(agent.pos) !== false) {
-            
-            
-        } else {
-            
-            
-        }
-        
-        
-        
-
-        
-        return true;
-    };
-    
-    // update object status
-    updateObject = function (data) {
-        // an object id and updates
-        
-        if (!validate.objectData(data)) {
-            return false;
-        }
-        
-        return true;
     };
     
     public_ = {
