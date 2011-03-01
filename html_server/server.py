@@ -33,7 +33,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             f = open(dir+path, 'r')
             self.copyfile(f, self.wfile)
         except:
-            self.send_error(404,'404 Error: %s' % self.path)
+            self.send_error(404,'GET GET 404 Error: %s' % self.path)
 
 
     def do_POST(self):
