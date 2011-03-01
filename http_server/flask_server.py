@@ -37,7 +37,6 @@ def api_call(msg=None):
     vars = request.form
     
     data = vars.get('json', {})
-    #data = simplejson.loads(data)
     data = simplejson.loads(data, encoding = 'utf-8')
     print str(data)
 

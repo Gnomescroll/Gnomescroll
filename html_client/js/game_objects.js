@@ -71,8 +71,7 @@ GameObject = {
         } else { // agent pos not in state
             
             if (state.gameObjectKnown(this)) { // known agent, removing
-                state.cleanLocation(this.old());
-                state.removeGameObject(this);
+                this.remove();
                 
             } else { // don't know don't care
                 return;
@@ -95,7 +94,7 @@ GameObject = {
     },
     
     remove:
-    function (data) {
+    function () {
         state.cleanLocation(this);
         // find what inventory it is stored in (if it is at all), and remove it
         // IMPLEMENT
