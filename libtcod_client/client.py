@@ -144,7 +144,7 @@ def move_screen(dx, dy):
 	gui_redraw_map = True
 
 ###MAIN PROGRAM###
-libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False)
+libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False, libtcod.RENDERER_OPENGL)
 libtcod.sys_set_fps(LIMIT_FPS)
 map_viewer = libtcod.console_new(MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 message_log = Message_Log(MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT)
