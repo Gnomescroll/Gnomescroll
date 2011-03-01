@@ -18,7 +18,7 @@ var route, process, validate;
 
 process = {};
 
-process.info = {}
+process.info = {};
     
 // world_id, client_id, x_size, y_size, z_level, map
 process.info.terrain_map = function (msg) {
@@ -58,7 +58,7 @@ process.info.agent_info = function (msg) {
     // unpack value
     $.each(value, function (key, val) {
         msg[key] = val;
-    }
+    });
     
     var agent = state.gameObjectKnown(msg);
     if (agent) {            // update
@@ -69,7 +69,7 @@ process.info.agent_info = function (msg) {
     
     agent.toState();
     
-}
+};
 
 process.info.object_info = function (msg) {
     
@@ -87,7 +87,7 @@ process.info.object_info = function (msg) {
     // unpack value
     $.each(value, function (key, val) {
         msg[key] = val;
-    }
+    });
     
     // if the server does not distinguish containers from objects,
     // need to detect that here
@@ -106,7 +106,7 @@ process.info.object_info = function (msg) {
     
     obj.toState();
     
-}
+};
 
 process.info.agent_list = function (msg) {
     
@@ -132,7 +132,7 @@ process.info.agent_list = function (msg) {
         agent.toState();
     });
 
-}
+};
 
 process.info.object_list = function (msg) {
     
@@ -158,7 +158,9 @@ process.info.object_list = function (msg) {
         obj.toState();
     });
     
-}
+};
+
+process.delta = {};
 
 process.delta.agent_position_change = function (msg) {
     
@@ -206,7 +208,7 @@ process.delta.agent_state_change = function (msg) {
         agent.toState();
     }
     
-}
+};
 
 process.delta.agent_create = function (msg) {
     
@@ -225,7 +227,7 @@ process.delta.agent_create = function (msg) {
         agent.toState();
     }
     
-}
+};
 
 process.delta.agent_delete = function (msg) {
     
@@ -237,7 +239,7 @@ process.delta.agent_delete = function (msg) {
     if (agent) {
         agent.remove();
     }
-}
+};
 
 process.delta.object_position_change = function (msg) {
     
@@ -260,10 +262,11 @@ process.delta.object_position_change = function (msg) {
         obj = Obj.create(msg);
         obj.toState();
     }
-}
+};
 
 process.delta.object_state_change = function (msg) {
-        console.log(msg);
+    
+    console.log(msg);
     
     //if (!validate.object_state_change(msg)) return;
     
@@ -283,10 +286,11 @@ process.delta.object_state_change = function (msg) {
         obj.toState();
     }
     
-}
+};
 
 process.delta.object_create = function (msg) {
-        console.log(msg);
+    
+    console.log(msg);
     
     //if (!validate.object_create(msg)) return;
     
@@ -300,10 +304,11 @@ process.delta.object_create = function (msg) {
         var obj = Obj.create(msg);
         obj.toState();
     }
-}
+};
 
 process.delta.object_delete = function (msg) {
-        console.log(msg);
+    
+    console.log(msg);
     
     //if (!validate.object_delete(msg)) return;
     
@@ -311,10 +316,11 @@ process.delta.object_delete = function (msg) {
     if (obj) {
         obj.remove();
     }
-}
+};
 
 process.delta.set_terrain_map = function (msg) {
-        console.log(msg);
+    
+    console.log(msg);
     
     //if (!validate.set_terrain_map(msg)) return;
     
@@ -322,7 +328,7 @@ process.delta.set_terrain_map = function (msg) {
         state.updateBlock(msg);
     }
 
-}
+};
 
 route = {
     
@@ -337,11 +343,11 @@ route = {
     agent_create: process.delta.agent_create,
     agent_delete: process.delta.agent_delete,
 
-    object_position_change = process.delta.object_position_change,
-    object_state_change = process.delta.object_state_change,
-    object_create = process.delta.object_create,
-    object_delete = process.delta.object_delete,
+    object_position_change: process.delta.object_position_change,
+    object_state_change: process.delta.object_state_change,
+    object_create: process.delta.object_create,
+    object_delete: process.delta.object_delete,
 
-    set_terrain_map = process.delta.set_terrain_map,
+    set_terrain_map: process.delta.set_terrain_map,
     
 };

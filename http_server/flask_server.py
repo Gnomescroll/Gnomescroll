@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 import simplejson
 import redis
 from marshal import dumps
 
 app = Flask(__name__)
 
-dir = "html_client"
+dir = "./html_client"
 PORT = 8055
 
 #r_client = redis.Redis('localhost')
@@ -18,28 +18,28 @@ def send_message(msg):
 
 @app.route("/")
 def root():
-    
-    return render_template(dir+'/index.html')
+    with open(dir+'/index.html') as f:
+        return Response(f.read())
     
 @app.route('/<file>')
 def static_file(file=None):
-    print file
     if file == 'favicon.ico': return ''
-    return render_template(dir+'/'+file)
+    with open(dir+'/'+file) as f:
+        return Response(f.read())
     
 @app.route('/js/<file>')
 def js_file(file=None):
-    print file
-    return render_template(dir+'/js/'+file, mimetype='application/javascript')
-    
-@app.route('/api/<msg>', methods=['POST'])
+    with open(dir+'/js/'+file) as f:
+        return Response(f.read(), mimetype='application/javascript')
+
+@app.route('/api', methods=['POST'])
 def api_call(msg=None):
     vars = request.form
     
     data = vars.get('json', {})
     #data = simplejson.loads(data)
-	data = simplejson.loads(data, encoding = 'utf-8')
-	print str(data)
+    data = simplejson.loads(data, encoding = 'utf-8')
+    print str(data)
 
     send_message(data)
 

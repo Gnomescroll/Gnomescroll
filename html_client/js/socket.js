@@ -44,15 +44,15 @@ Socket = ( function () {
     initRequests = function () {
         var data = { cmd:'get_map', type:'info',client_id:0,z:5, world_id:0 };
         data = JSON.stringify(data);
-        $.post(ajax_server+'/api/get_map',{json: data});
+        $.post(ajax_server+'/api',{json: data});
         
         data = {cmd: 'get_agent_list', type:'info', client_id:0, world_id:0};
         data = JSON.stringify(data);
-        $.post(ajax_server+'/api/agent_list', {json:data});
+        $.post(ajax_server+'/api', {json:data});
         
         data = {cmd: 'get_object_list', type:'info', client_id:0, world_id:0};
         data = JSON.stringify(data);
-        $.post(ajax_server+'/api/object_list', {json:data});
+        $.post(ajax_server+'/api', {json:data});
     };
     
     return {

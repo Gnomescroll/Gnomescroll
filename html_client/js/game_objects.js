@@ -97,6 +97,9 @@ GameObject = {
     remove:
     function (data) {
         state.cleanLocation(this);
+        // find what inventory it is stored in (if it is at all), and remove it
+        // IMPLEMENT
+    
         state.removeGameObject(this);
     },
 
@@ -123,14 +126,6 @@ Agent = $.extend({}, GameObject);
 Agent = $.extend(Agent, InventoryMethods);
 
 Obj = $.extend({}, GameObject);
-
-Obj.remove = function () {
-    
-    state.cleanLocation(this);
-    // find what inventory it is stored in (if it is at all), and remove it
-    
-    state.removeGameObject(this);
-};
 
 Container = $.extend({}, GameObject);
 Container = $.extend(Container, InventoryMethods);
