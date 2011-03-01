@@ -113,10 +113,6 @@ var state = ( function () {
             z_lvls.push(data.z_level);
         }
         
-        console.log('update level confirm')
-        console.log(levels[data.z_level]);
-        console.log(levels[data.z_level].length);
-        console.log(z_lvls);
     };
     
     // update a block type
@@ -133,19 +129,20 @@ var state = ( function () {
     };
     
     // checks if a game_object exists in state
+    // returns false or the object
     gameObjectKnown = function(game_object) {
         
         var type,
             id,
             obj;
         
-        type = game_object.type;
+        type = game_object.obj_type;
         id = game_object.id;
         
         obj = gameObjectTypeMap[type][id];
         
         if (obj === undefined) return false;
-        else return a;
+        else return obj;
     };
     
     // add game_object to lists
@@ -154,7 +151,7 @@ var state = ( function () {
         var type,
             id;
             
-        type = game_object.type;
+        type = game_object.obj_type;
         id = game_object.id;
             
         gameObjectTypeMap[type][id] = game_object;
@@ -167,7 +164,7 @@ var state = ( function () {
         var type,
             id;
             
-        type = game_object.type;
+        type = game_object.obj_type;
         id = game_object.id;
         
         delete gameObjectTypeMap[type][id];
@@ -184,7 +181,7 @@ var state = ( function () {
             ao_loc_type,
             index;
             
-        type = game_object.type;
+        type = game_object.obj_type;
         id = game_object.id;
         
         pos = game_object.pos();
@@ -220,7 +217,7 @@ var state = ( function () {
             ao_loc,
             ao_loc_type;
         
-        type = game_object.type; // agent, object, container
+        type = game_object.obj_type; // agent, object, container
         id = game_object.id;
         
         pos = game_object.pos();
@@ -233,7 +230,7 @@ var state = ( function () {
         } else {
             ao_loc_type = ao_loc[type]; // get existing obj
             if (ao_loc_type === undefined) { // if there is no key for type
-                ao_loc[type] = [game_object.type]; // add it w/ new id array
+                ao_loc[type] = [game_object.obj_type]; // add it w/ new id array
             } else {
                 if ($.inArray(id, ao_loc_type) === -1) { // check if it is here already
                     ao_loc_type.push(id); // if not, add it

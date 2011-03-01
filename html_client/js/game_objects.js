@@ -21,6 +21,7 @@ GameObject = {
     update: // update an agent instance attributes. do not call on Agent, only agent instance
     function (data) {
         $.each(data, function(key, val) {
+            agent[key+'_old'] = agent[key];
             this[key] = val;
         });
     },
@@ -87,7 +88,6 @@ GameObject = {
         var agent = Object.beget(this);
         
         $.each(data, function(key, val) {
-            agent[key+'_old'] = agent[key];
             agent[key] = val;
         });
         
