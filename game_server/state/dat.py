@@ -1,12 +1,109 @@
-tiles_dat = {
-	0 : 
+tiles_dat = [
+
 	{
-	
-	}
+			'name' : 'unknown_tile',
+			'till' : 0,
+			'dig' : 0
+	},
+
+	{
+			'name' : "empty_block",
+			'blocking' : 0,
+			'pourous' : 1,
+			
+			#actions
+			'till' : 0,
+			'dig' : 0
+	},
 
 
+	{
+			'name' : "generic_soil",
+			'blocking' : 0,
+			'pourous' : 0,
+			
+			#actions
+			'till' : 1,
+			'till_into' : 'generic_tilled_soil',
 
-}
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'empty_block'
+	},
+
+
+	{
+			'name' : "generic_wall",
+			'blocking' : 0,
+			'pourous' : 0,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'generic_floor'
+	},
+
+
+	{
+			'name' : "generic_floor",
+			'blocking' : 1, #can agents walk through it
+			'pourous' : 1, #can fluids walk through it
+			'gravity' : 0, #does it fall if not supporting something
+			'vertical' : 0, #does it prevent the thing above it from falling
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'empty_block',
+	},
+
+
+	{
+			'name'     : 'generic_stone_block',
+			'blocks' : 1,
+			'porous'   : 0,
+			'gravity'   : 0,
+			'vertical'  : 1,
+			
+			'till'   : 0,
+			'dig': 1,
+			'dig_produces' : [ (1,1, 'generic_stone') ],
+			'dig_into' : 'generic_floor'
+	},
+
+
+	{
+			'name' : "generic_tilled_soil",
+			'blocking' : 0,
+			'pourous' : 0,
+			'gravity' : 0,
+			'vertical' : 1,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'empty_block'
+	},
+
+
+	{
+			'name' : "generic_wood_block",
+			'blocking' : 1,
+			'pourous' : 0,
+			'gravity' : 1,
+			'vertical' : 1,
+			
+			#actions
+			'till' : 0,
+			'dig' : 0
+	}		
+]
 
 crops_dat = {
 	'generic_crop' : 
@@ -106,12 +203,30 @@ items_dat = {
 
 class Dat:
 	
+	tiles_by_value = {}
+	tiles_by_name = {}
+	tile_name_value_pairs = []
+
 	def __init__(self):
 		self.crops_dat = crops_dat
 		self.items_dat = items_dat
-
+		self._init_tile()
 	#crop helper
 
+	def _init_tile(self):
+		id = 0
+		for x in tiles_dat:
+			x['id'] = id
+			self.tiles_by_value[id] = x
+			self.tiles_by_name[x['name']] = x
+			self.tile_name_value_pairs.append((id, x['name']))
+			id = id + 1
+		#print "!!! START !!!"
+		#print str(self.tiles_by_name)
+		#print "!!! MIDDLE !!!"
+		print "Tile name/value pairs: " + str(self.tile_name_value_pairs)
+		#print "!!! END !!!"		
+		
 	def get_crop(self, template):
 		if not template in self.crops_dat.keys():
 			template = 'generic_crop'
@@ -132,3 +247,24 @@ class Dat:
 		if not template in self.items_dat.keys():
 			template = 'generic_item'
 		return self.items_dat[template]['template']
+
+	#Deprecated
+#	def get_tile(self, value):
+#		if value not in self.tiles_day.key():
+#			print "Tile Does not Exist"
+#			return self.tiles_dat[0]
+#		return self.tiles_dat[value]
+		
+	def get_tile_by_name(self, name):
+		if name not in self.tiles_by_name.key():
+			print "Tile Does not Exist"
+			return self.tiles_by_name['unknown_tile']
+		else:
+			return self.tiles_by_name[name]
+	
+	def get_tile_by_value(self, value):
+		if value not in self.tiles_by_value.key():
+			print "Tile Does not Exist"
+			return self.tiles_by_name['unknown_tile']
+		else:
+			return self.tiles_by_value[value]
