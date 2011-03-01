@@ -9,6 +9,7 @@ dir = "html_client"
 PORT = 8055
 
 #r_client = redis.Redis('localhost')
+
 # redis
 def send_message(msg):
     r_client = redis.Redis('localhost')

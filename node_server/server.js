@@ -59,7 +59,7 @@ var r = redis.createClient(6379, '127.0.0.1');
 //var r_client = redis.createClient(6379, '127.0.0.1');
 //subscribe to message stream for map/world
 
-r.subscribe("0_0", function(channel, message, pattern) {
+r.subscribe("world_0_out", function(channel, message, pattern) {
         socket.broadcast(message);
 });
 
