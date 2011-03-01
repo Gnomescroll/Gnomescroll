@@ -16,8 +16,6 @@ var state = ( function () {
         current_z_lvl = 5;
         
     var updateBlock,
-        updateAgent,
-        updateObject,
         updateLevel;
     
     var gameObjectKnown,
@@ -25,6 +23,9 @@ var state = ( function () {
                               'object': objects,
                               'container': containers
                             }
+    
+    var addGameObject,
+        removeGameObject;
     
     var setLocation,
         cleanLocation;
@@ -67,22 +68,16 @@ var state = ( function () {
         });
     };
     
-    positionInState = function(x, y, z) {
+    positionInState = function(pos) {
         // checks if the position is in current state.
         // if it is, returns a row of y values from level
-        // else false
+
+        var x, y, z,
+            x_, z_;
       
-        if (typeof x === 'object') {
-            if (g.length === undefined) {
-                y = x.y;
-                z = x.z;
-                x = x.x;
-            } else {
-                y = x[1];
-                z = x[2];
-                x = x[0];
-            }
-        }
+        x = pos[0]
+        y = pos[1];
+        z = pos[2];
       
         z_ = levels[z];
         if (z_ === undefined) return false;
@@ -92,9 +87,6 @@ var state = ( function () {
         
         return x_;  
     };
-    
-    // public update methods to be routed to by message handler
-    // data is an object with update data from server
     
     // update a z-level with map info
     updateLevel = function (data) {
@@ -164,7 +156,19 @@ var state = ( function () {
             
         gameObjectTypeMap[type][id] = game_object;
         
-    }
+    };
+    
+    removeGameObject = function(game_object) {
+        
+        var type,
+            id;
+            
+        type = game_object.type;
+        id = game_object.id;
+        
+        delete gameObjectTypeMap[type][id];
+        
+    };
     
     // removes a game_object from the ao_loc map
     cleanLocation = function(game_object) {
@@ -251,17 +255,7 @@ var state = ( function () {
         
         
         
-        // if agent in state
-        //   if agent was in state
-        //      move it
-        //   else
-        //      add it
-        //
-        // else if agent not in state
-        //   if it was in state
-        //      remove it
-        //   else
-        //      ignore
+
         
         return true;
     };
@@ -283,6 +277,7 @@ var state = ( function () {
                 cleanLocation: cleanLocation,
                 gameObjectKnown: gameObjectKnown,
                 addGameObject: addGameObject,
+                removeGameObject: removeGameObject,
                 updateBlock: updateBlock,
                 updateLevel: updateLevel,
               }
