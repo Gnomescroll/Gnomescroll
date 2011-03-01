@@ -1,11 +1,3 @@
-var locationStateMap = {
-    
-    0: 'ground',
-    1: 'agent',
-    2: 'container',
-    
-}
-
 // prototype beget
 if (typeof Object.beget !== 'function') {
      Object.beget = function (o) {

@@ -14,73 +14,17 @@ background: #777777;
 <script type="text/javascript" src='http://127.0.0.1:8056/js/board.js'></script>
 <script type="text/javascript" src='http://127.0.0.1:8056/js/game_state.js'></script>
 
-<script>
-//configuration
-
-//ajax server config
-window.ajax_server = 'http://127.0.0.1:8055/';
-//node server config
-window.node_server = '127.0.0.1';
-window.node_port = 8080
-
-//board config
-window.board_width = 20;
-window.board_height = 20;
-</script>
-
-
-<script>
-function init_socket()
-{
-	  ///////////////////
-	 /// socket crap ///
-	///////////////////
-//	alert('Init Socket')
-	var socket = new io.Socket(window.node_server, { 'port': window.node_port });
-	
-	socket.on('connect', function () {
-		//alert('connect');
-		//$.post('http://127.0.0.1:8000/api/get_map',{ cx:0,cy:0 });
-	});
-	socket.on('message', function (msg) {
-		//stop_timer1();
-		alert(msg);
-		//processMessage(msg);
-		//stop_timer2();
-	});
-	socket.on('close', function () {
-		alert('close');
-	});
-	socket.on('disconnect', function () {
-		alert('disconnect');
-	});
-	socket.connect();	
-	
-}
-
-function init_game_state()
-{
-	window.board = new Board("game_board", window.board_width, window.board_height)
-}
-
-function init()
-{
-	//alert("init");
-	init_socket();
-	init_game_state();
-	
-	alert("game state test");
-	info_get_map(5);
-}
-
-</script>
-
 </head>
 
-<body onLoad = "init();">
+<body>
 <h1>TEST</h1>
 
 <div id="game_board" ></div>
 
 </body>
+<script src="js/process_msg.js"></script>
+<script src="js/socket.js"></script>
+<script src="js/game_objects.js"></script>
+<script src="js/state_m3thyl.js"></script>
+
 </html>
