@@ -1,11 +1,10 @@
-// agent and object methods bundled here
-// should have a convenience method for creating an object
-// and should have methods for applying mods to the object
-
-// might need to do a bit different inheritance , like .beget()
-// so we can keep methods and static properties in a single object
-// that can be looked up from the instance object 
-// (python object hierarchy; saves a lot of memory)
+var locationStateMap = {
+    
+    0: 'ground',
+    1: 'agent',
+    2: 'container',
+    
+}
 
 // prototype beget
 if (typeof Object.beget !== 'function') {
@@ -16,19 +15,11 @@ if (typeof Object.beget !== 'function') {
      };
 }
 
-var locationStateMap = {
-    
-    0: 'ground',
-    1: 'agent',
-    2: 'container',
-    
-}
+var GameObject, Obj, Agent, Container;
 
-// need agent interface methods
-// and agent object creator
 
 // interface
-Agent = {
+GameObject = {
     
     pos: // return pos array
     function () {
@@ -70,20 +61,7 @@ Agent = {
         });
     },
     
-    addInventory:
-    function(game_object) {
-        this.inventory.push(game_object.id);
-    },
-    
-    removeInventory:
-    function (game_object) {
-        var index = $.inArray(game_object.id);
-        if (index > -1) {
-            this.inventory.splice(index,1);
-        }
-    },
-    
-    toState:
+    toState: // set object to the state
     function () {
                 
         if (state.positionInState(this.pos())) { // agent pos in state
@@ -107,20 +85,46 @@ Agent = {
                 return;
             }
         }
+        
+        this.cleanOld();
     },
     
+    create:
+    function (data) {
     
+        var agent = Object.beget(this);
+        
+        $.each(data, function(key, val) {
+            agent[key+'_old'] = agent[key];
+            agent[key] = val;
+        });
+        
+        return agent;
+    },
+
 }
 
-// agent obj creator
-Agent.create = function (data) {
+InventoryMethods = {
     
-    var agent = Object.beget(this);
+    addInventory:
+    function(game_object) {
+        this.inventory.push(game_object.id);
+    },
     
-    $.each(data, function(key, val) {
-        agent[key+'_old'] = agent[key];
-        agent[key] = val;
-    });
-    
-    return agent;
-}
+    removeInventory:
+    function (game_object) {
+        var index = $.inArray(game_object.id);
+        if (index > -1) {
+            this.inventory.splice(index,1);
+        }
+    },
+},
+
+// interface
+Agent = $.extend({}, GameObject);
+Agent = $.extend(Agent, InventoryMethods);
+
+Obj = $.extend({}, GameObject);
+
+Container = $.extend({}, GameObject);
+Container = $.extend(Container, InventoryMethods);
