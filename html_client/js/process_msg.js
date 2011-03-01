@@ -2,6 +2,7 @@ var globals = {
     
     client_id: 0,
     world_id: 0,
+    ajax_server: '',
 
 };
 
@@ -13,8 +14,8 @@ var locationStateMap = {
     
 };
 
-var route, process, validate;
 
+var route, process, validate;
 
 process = {};
 

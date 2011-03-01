@@ -3,9 +3,8 @@ var send, admin, agent_out, info_out;
 send = function () {
     
     var url = '/api';
-    
     this = JSON.stringify(this);
-    $.post(globals.ajax_server+url, {json: data});
+    $.post(globals.ajax_server+url, {json: this});
 };
 
 
