@@ -105,6 +105,35 @@ tiles_dat = [
 	}		
 ]
 
+crafting_dat = [
+
+	{
+		'name' : 'bake bread',
+		'workshop' : 'oven',
+		'reagent' : ['generic_food'],
+		'product' : ['wheat_bread']
+	}
+
+]
+
+workshops_dat = {
+	
+	'oven' : 
+	{
+		'name' : 'oven',
+		'size' : (3,3),
+		'active_square' : (1,1),
+		'template_params' : ['id','position', 'version', 'world_id'],
+		'template' : 
+		{
+			'name' : "oven",
+			'type' : ["workshop"]
+		}
+				
+	}
+
+}
+
 crops_dat = {
 	'generic_crop' : 
 	{
@@ -196,6 +225,24 @@ items_dat = {
 		'value' : 5,
 		'edible' : 1,
 		'food_value' : 15,
+		'status_effects' : []
+	}
+
+	'wheat_bread' :
+	{
+		'template_params' : ['id','position', 'version', 'world_id' ],
+		'template' : 
+		{
+			'name' : "wheat_bread",
+			'type' : ["item"],
+			'parent' : "generic_food",
+			'material' : 'generic_material',
+			'flammable' : 1
+		},
+		'weight' : 1,
+		'value' : 100,
+		'edible' : 1,
+		'food_value' : 100,
 		'status_effects' : []
 	}
 	
