@@ -1,0 +1,6 @@
+libtcod client:
+
+    Implement Agent and Object handlers and state.
+    Add Menu.
+    Designate jobs: Building walls, workshops, crafting.
+    pathfinding.
