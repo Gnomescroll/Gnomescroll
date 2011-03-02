@@ -111,7 +111,14 @@ class Objects:
 		for x in range(0,x_size):
 			for y in range (0, y_size):
 				list.append((x,y))
-				
+		
+		
+		## For each space, check to see if it can be built on and fail otherwise
+		for (x,y) in list:
+			p = (0, position[1] + x, position[2] +y, position[3])
+			
+			#check to see if square is blocked
+			
 		for (x,y) in  list:
 			if (x,y) == active_square:
 				temp = wp['template']

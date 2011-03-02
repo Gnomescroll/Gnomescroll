@@ -137,10 +137,10 @@ workshop_dat = {
 		'template' : 
 		{
 			'name' : "generic_workshop",
-			'workshop' : "generic_workshop"
+			'workshop' : "generic_workshop",
 			'type' : ["workshop", "building"]
 		}			
-	}	
+	},
 	
 	'oven' : 
 	{
@@ -250,7 +250,7 @@ items_dat = {
 		'edible' : 1,
 		'food_value' : 15,
 		'status_effects' : []
-	}
+	},
 
 	'wheat_bread' :
 	{
