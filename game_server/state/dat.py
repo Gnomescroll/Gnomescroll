@@ -281,6 +281,9 @@ class Dat:
 	def __init__(self):
 		self.crops_dat = crops_dat
 		self.items_dat = items_dat
+		self.workshop_dat = workshop_dat
+		self.crafting_dat = crafting_dat
+		
 		self._init_tile()
 	#crop helper
 

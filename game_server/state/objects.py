@@ -121,7 +121,7 @@ class Objects:
 			
 		for (x,y) in  list:
 			if (x,y) == active_square:
-				temp = wp['template']
+				temp = wt['template']
 				temp['id'] = id
 				id_t = id
 				temp['position'] = (0, position[1] + x, position[2] +y, position[3]) #only 2d for now 
