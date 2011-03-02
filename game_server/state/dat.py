@@ -304,29 +304,29 @@ class Dat:
 	def get_crop(self, template):
 		if not template in self.crops_dat.keys():
 			template = 'generic_crop'
-		return self.crops_dat[template]
+		return self.crops_dat[template].copy()
 				
 	def get_crop_template(self, template):
 		if not template in self.crops_dat.keys():
 			template = 'generic_crop'
-		return self.crops_dat[template]['template']
+		return self.crops_dat[template]['template'].copy()
 
 	#item helper
 	def get_item(self, template):
 		if not template in self.items_dat.keys():
 			template = 'generic_item'
-		return self.items_dat[template]
+		return self.items_dat[template].copy()
 
 	def get_item_template(self, template):
 		if not template in self.items_dat.keys():
 			template = 'generic_item'
-		return self.items_dat[template]['template']
+		return self.items_dat[template]['template'].copy()
 
 	#workshop helper
 	def get_workshop(self, template):
 		if not template in self.workshop_dat.keys():
 			template = 'generic_workshop'
-		return self.workshop_dat[template]
+		return self.workshop_dat[template].copy()
 	
 	#Deprecated
 #	def get_tile(self, value):

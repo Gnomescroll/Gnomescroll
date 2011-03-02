@@ -101,7 +101,7 @@ class Objects:
 	
 	def _create_workshop(self, id, position, template):
 		wt = self.dat.get_workshop(template)
-		place_holder = self.dat.get_workshop(template)['template']
+		place_holder = self.dat.get_workshop('place_holder')['template']
 		
 		active_square = wt['active_square']
 		template = wt['template']
@@ -124,18 +124,18 @@ class Objects:
 				temp = wt['template']
 				temp['id'] = id
 				id_t = id
-				temp['position'] = (0, position[1] + x, position[2] +y, position[3]) #only 2d for now 
+				temp['position'] = [0, position[1] + x, position[2] +y, position[3]] #only 2d for now 
 				temp['name'] = wt['name']
 				temp['version'] = 0				
 			else:
-				temp = place_holder #make copy by value!!! else will cause errors
+				temp = place_holder.copy() #make copy by value!!! else will cause errors
 				id_t = self.globals.get_unique_id()
 				temp['id'] = id_t
-				temp['position'] = (0, position[1] + x, position[2] +y, position[3]) #only 2d for now 
+				temp['position'] = [0, position[1] + x, position[2] +y, position[3]] #only 2d for now 
 				temp['name'] = "placeholder " + wt['name']
 				temp['part_of'] = id
 				temp['version'] = 0
-			self.object_list[id] = temp
+			self.object_list[id_t] = temp
 			self.delta.object_create(id_t, temp['position'], temp['type'])
 			
 	def delete(self, id):
