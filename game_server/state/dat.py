@@ -116,20 +116,44 @@ crafting_dat = [
 
 ]
 
-workshops_dat = {
+workshop_dat = {
+	
+	'place_holder' : #used as a 1x1 square
+	{
+		'size' : (1,1),
+		'template_params' : ['id','position', 'version', 'world_id', 'part_of', 'name'],
+		'template' : 
+		{
+			'type' : ["building"]
+		}				
+	},
+	
+	'generic_workshop' : 
+	{
+		'name' : 'generic_workshop',
+		'size' : (3,3),
+		'active_square' : (1,1),
+		'template_params' : ['id','position', 'version', 'world_id'],
+		'template' : 
+		{
+			'name' : "generic_workshop",
+			'workshop' : "generic_workshop"
+			'type' : ["workshop", "building"]
+		}			
+	}	
 	
 	'oven' : 
 	{
 		'name' : 'oven',
 		'size' : (3,3),
 		'active_square' : (1,1),
-		'template_params' : ['id','position', 'version', 'world_id'],
+		'template_params' : ['id','position', 'version', 'world_id', 'active'],
 		'template' : 
 		{
 			'name' : "oven",
-			'type' : ["workshop"]
-		}
-				
+			'workshop' : 'oven',
+			'type' : ["workshop", "building"]
+		}			
 	}
 
 }
@@ -295,6 +319,12 @@ class Dat:
 			template = 'generic_item'
 		return self.items_dat[template]['template']
 
+	#workshop helper
+	def get_workshop(self, template):
+		if not template in self.workshop_dat.keys():
+			template = 'generic_workshop'
+		return self.workshop_dat[template]
+	
 	#Deprecated
 #	def get_tile(self, value):
 #		if value not in self.tiles_day.key():

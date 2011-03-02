@@ -63,6 +63,8 @@ class Objects:
 			pass
 		if object_type == 'plant':
 			pass
+		if object_type == 'workshop':
+			a = self._create_workshop(id, position, template)
 	
 	def _create_crop(self, id, position, template):
 		if template == None:
@@ -96,7 +98,39 @@ class Objects:
 		#handle timers
 		
 		return a
+	
+	def _create_workshop(self, id, position, template):
+		wt = self.dat.get_workshop(template)
+		place_holder = self.dat.get_workshop(template)['template']
 		
+		active_square = wt['active_square']
+		template = wt['template']
+		(x_size, y_size) = wt['size']
+		
+		list = []
+		for x in range(0,x_size):
+			for y in range (0, y_size):
+				list.append((x,y))
+				
+		for (x,y) in  list:
+			if (x,y) == active_square:
+				temp = wp['template']
+				temp['id'] = id
+				id_t = id
+				temp['position'] = (0, position[1] + x, position[2] +y, position[3]) #only 2d for now 
+				temp['name'] = wt['name']
+				temp['version'] = 0				
+			else:
+				temp = place_holder #make copy by value!!! else will cause errors
+				id_t = self.globals.get_unique_id()
+				temp['id'] = id_t
+				temp['position'] = (0, position[1] + x, position[2] +y, position[3]) #only 2d for now 
+				temp['name'] = "placeholder " + wt['name']
+				temp['part_of'] = id
+				temp['version'] = 0
+			self.object_list[id] = temp
+			self.delta.object_create(id_t, temp['position'], temp['type'])
+			
 	def delete(self, id):
 		print "Delete object: " + str(id)
 		del self.object_list[id]
