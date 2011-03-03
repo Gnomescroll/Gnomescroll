@@ -20,10 +20,6 @@ var send = function (data) {
     
 }
 
-// e.g.
-
-// send(admin_commands.create_item(5,5,6));
-
 var admin, info, action;
 
 admin = ( function () {
@@ -31,59 +27,120 @@ admin = ( function () {
     var type = 'info',
         create_agent,
         create_item,
+        create_object,
         set_map,
         public_;
             
-	create_agent = function (location, x, y, z, player_id) {
-		
-        if (player_id === undefined) { 
-            player_id = 0;
-        }
+	create_agent = function (x, y, z, location) {
 	
+        var position;
+    
+        if (location === undefined) {
+            location = 0;
+        }
+    
+        if (x.constuctor.name === 'Array' && x.length === 4) {
+            position = x;
+        } else {
+            position = [location, x, y, z];
+        }
+    
 		var data = { 
                 cmd: 'create_agent',
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id,
-                player_id: player_id,
-                position: [location, x, y, z],
+                player_id: globals.player_id,
+                position: position,
                }
         
         send(data);
-	}
+	};
 
-	create_item = function (x,y,z) {
+	create_item = function (x,y,z, location) {
+
+        var position;
+    
+        if (location === undefined) {
+            location = 0;
+        }
+    
+        if (x.constuctor.name === 'Array' && x.length === 4) {
+            position = x;
+        } else {
+            position = [location, x, y, z];
+        }
 
 		var data = { 
                 cmd: "create_item",
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id,
-                position: [0, x, y, z]
+                position: position
                }
                
         send(data);
-	}
+	};
+    
+    create_object = function (x, y, z, object_type, template) {
+        
+        var position;
+    
+        if (location === undefined) {
+            location = 0;
+        }
+    
+        if (x.constuctor.name === 'Array' && x.length === 4) {
+            position = x;
+        } else {
+            position = [location, x, y, z];
+        }
+        
+        
+        var data = {
+                type: 'admin',
+                cmd: 'create_item',
+                object_type: object_type,
+                template: template,
+                world_id: globals.world_id,
+                position: position,
+            }
+        
+        send(data);
+    };
 	
 	set_map = function (x,y,z, value) {
 
-		data = { 
+        var position;
+    
+        if (location === undefined) {
+            location = 0;
+        }
+    
+        if (x.constuctor.name === 'Array' && x.length === 4) {
+            position = x;
+        } else {
+            position = [location, x, y, z];
+        }
+
+		var data = { 
                 cmd: "set_map",
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id,
-                position: [0, x, y, z],
+                position: position,
                 value: value
                }
                
         send(data);
-	}
+	};
     
     public_ = {
                 create_agent: create_agent,
                 create_item: create_item,
+                create_object: create_object,
                 set_map: set_map
-              }
+              };
               
     return public_;
 
@@ -93,16 +150,16 @@ admin = ( function () {
 info = ( function () {
 	
     var type = "info",
-        get_map,
-        get_agent,
-        get_object,
-        get_agents,
-        get_objects,
+        map,
+        agent,
+        object,
+        agents,
+        objects,
         public_;
 		
-	get_map = function (z) {
+	map = function (z) {
 
-		data = { 
+		var data = { 
                 cmd: "get_map",
                 type: type,
                 client_id: globals.client_id,
@@ -116,9 +173,9 @@ info = ( function () {
         send(data);
 	}
 
-	get_agent = function (id) {
+	agent = function (id) {
 
-		data = { 
+		var data = { 
                 cmd: "get_agent",
                 type: type,
                 client_id: globals.client_id,
@@ -129,49 +186,49 @@ info = ( function () {
 		send(data);	
 	}
 
-	get_object = function (id) {
+	object = function (id) {
 
-		data = { 
+		var data = { 
                 cmd: "get_object",
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id,
                 object_id: id
-               };
+               }
 		
 		send(data);
 	}
 	
-	get_agents = function() {
+	agents = function() {
 		
-		data = { 
+		var data = { 
                 cmd: "get_agent_list",
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id
-               };
+               }
 		
 		send(data);
 	}
 
-	get_objects = function() {
+	objects = function() {
 		
-		data = { 
+		var data = { 
                 cmd: "get_object_list",
                 type: type,
                 client_id: globals.client_id,
                 world_id: globals.world_id
-               };
+               }
 		
 		send(data);
 	}
 	
     public_ = {
-                get_map: get_map,
-                get_agent: get_agent,
-                get_object: get_object,
-                get_agents: get_agents,
-                get_objects: get_objects
+                map: map,
+                agent: agent,
+                object: object,
+                agents: agents,
+                objects: objects
               };
               
     return public_;
@@ -181,12 +238,15 @@ info = ( function () {
 action = ( function () {
 
     var type = 'agent',
-        move_0,
+        move,
+        till,
+        plant,
+        harvest,
         public_;
 		
-	move_0 = function (agent_id, dx, dy, dz) {
+	move = function (agent_id, dx, dy, dz) {
 
-		data = { 
+		var data = { 
                 cmd: "move_0",
                 type: type,
                 client_id: globals.client_id,
@@ -198,8 +258,48 @@ action = ( function () {
 		send(data);
 	}
     
+    till = function (agent_id) {
+
+        var data = {
+                    type: type,
+                    cmd: 'till_soil',
+                    world_id: globals.world_id,
+                    agent_id: agent_id,
+                   }
+                   
+        send(data);
+    },
+
+    plant = function (agent_id) {
+
+        var data = {
+                    type: type,
+                    cmd: 'plant_crop',
+                    world_id: globals.world_id,
+                    agent_id: agent_id,
+                   }
+                   
+        send(data);
+    },
+
+    harvest = function (agent_id, crop_id) {
+        
+        var data = {
+                    type: type,
+                    cmd: 'harvest_crop',
+                    world_id: globals.world_id,
+                    agent_id: agent_id,
+                    crop_id: crop_id,
+                   }
+                   
+        send(data);
+    };
+    
     public_ = {
-                move_0: move_0
+                move: move
+                till: till,
+                plant: plant,
+                harvest: harvest
               };
               
     return public_;

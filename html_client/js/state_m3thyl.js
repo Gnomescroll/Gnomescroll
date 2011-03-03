@@ -75,12 +75,12 @@ var state = ( function () {
         // request z-levels
         $.each(z_lvls, function (i, z) {
             levels[z] = blocks();
-            info.get_map(z);
+            info.map(z);
         });
         
         // request agents/objects
-        info.get_agents();
-        info.get_objects();
+        info.agents();
+        info.objects();
     };
     
     // checks if a position is in current state bounds.
