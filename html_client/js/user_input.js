@@ -1,0 +1,6 @@
+var input;
+
+input = function () {
+
+
+};

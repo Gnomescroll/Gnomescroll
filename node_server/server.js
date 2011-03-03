@@ -70,6 +70,6 @@ socket.on('connection', function(client) {
 
 //console.log('Not Crashed Yet');
 
-        socket.broadcast(message);
+        //socket.broadcast(message);
         //console.log("message received!");
 
