@@ -296,7 +296,7 @@ action = ( function () {
     };
     
     public_ = {
-                move: move
+                move: move,
                 till: till,
                 plant: plant,
                 harvest: harvest

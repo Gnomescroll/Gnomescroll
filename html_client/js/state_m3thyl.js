@@ -60,10 +60,12 @@ var state = ( function () {
          return arr;   
     };
     
-        
+    // requests state data from server
     init = function () {
         
-        var z_levels_to_add = [current_z_lvl-1, current_z_lvl, current_z_lvl+1];
+        var z_levels_to_add = [ current_z_lvl-1, 
+                                current_z_lvl, 
+                                current_z_lvl+1 ];
         
         $.each(z_levels_to_add, function (i, z) {
             if ($.inArray(z, z_lvls) === -1) {
@@ -71,16 +73,14 @@ var state = ( function () {
             }
         });
         
-        // zero-d array for each z-level
-        // request z-levels
         $.each(z_lvls, function (i, z) {
-            levels[z] = blocks();
-            info.map(z);
+            levels[z] = blocks();       // zero-d array for each z-level
+            info.map(z);                // request z-levels
         });
         
-        // request agents/objects
-        info.agents();
-        info.objects();
+        
+        info.agents();                  // request agents
+        info.objects();                 //         objects
     };
     
     // checks if a position is in current state bounds.
