@@ -2,7 +2,8 @@ var globals = {
 
     world_id: 0,
     client_id: 0,
-    server_out: null,
+    player_id: 0,
+    server_out: '',
     update: update = 
         function (params) {
             this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
@@ -13,29 +14,26 @@ var globals = {
 
 var send = function (data) {
     
+    var url = '/api';
     data = JSON.stringify(data);
-    $.post(globals.server_out, { json: data });
+    $.post(globals.server_out+url, { json: data });
     
 }
 
-var inspect = function (data) {
-
-    data = JSON.stringify(data);
-	return data;
-	
-}
 // e.g.
 
 // send(admin_commands.create_item(5,5,6));
 
-var admin_commands = ( function () {
+var admin, info, action;
+
+admin = ( function () {
 
     var type = 'info',
         create_agent,
         create_item,
         set_map,
         public_;
-        	
+            
 	create_agent = function (location, x, y, z, player_id) {
 		
         if (player_id === undefined) { 
@@ -51,7 +49,7 @@ var admin_commands = ( function () {
                 position: [location, x, y, z],
                }
         
-        return data;
+        send(data);
 	}
 
 	create_item = function (x,y,z) {
@@ -64,7 +62,7 @@ var admin_commands = ( function () {
                 position: [0, x, y, z]
                }
                
-        return data;
+        send(data);
 	}
 	
 	set_map = function (x,y,z, value) {
@@ -78,7 +76,7 @@ var admin_commands = ( function () {
                 value: value
                }
                
-        return data;
+        send(data);
 	}
     
     public_ = {
@@ -92,17 +90,17 @@ var admin_commands = ( function () {
 }());
 
 
-var info_commands = ( function () {
+info = ( function () {
 	
     var type = "info",
         get_map,
         get_agent,
         get_object,
-        get_agent_list,
-        get_object_list,
+        get_agents,
+        get_objects,
         public_;
 		
-	get_map = function () {
+	get_map = function (z) {
 
 		data = { 
                 cmd: "get_map",
@@ -110,8 +108,12 @@ var info_commands = ( function () {
                 client_id: globals.client_id,
                 world_id: globals.world_id
                }
+               
+        if (z !== undefined) {
+            data.z = z;
+        }
 		
-        return data;
+        send(data);
 	}
 
 	get_agent = function (id) {
@@ -124,7 +126,7 @@ var info_commands = ( function () {
                 agent_id: id
                }
 		
-		return data;	
+		send(data);	
 	}
 
 	get_object = function (id) {
@@ -137,10 +139,10 @@ var info_commands = ( function () {
                 object_id: id
                };
 		
-		return data;
+		send(data);
 	}
 	
-	get_agent_list = function() {
+	get_agents = function() {
 		
 		data = { 
                 cmd: "get_agent_list",
@@ -149,10 +151,10 @@ var info_commands = ( function () {
                 world_id: globals.world_id
                };
 		
-		return data;
+		send(data);
 	}
 
-	get_object_list = function() {
+	get_objects = function() {
 		
 		data = { 
                 cmd: "get_object_list",
@@ -161,22 +163,22 @@ var info_commands = ( function () {
                 world_id: globals.world_id
                };
 		
-		return data;
+		send(data);
 	}
 	
     public_ = {
                 get_map: get_map,
                 get_agent: get_agent,
                 get_object: get_object,
-                get_agent_list: get_agent_list,
-                get_object_list: get_object_list
-              }
+                get_agents: get_agents,
+                get_objects: get_objects
+              };
               
     return public_;
     		
 }());
 
-var agent_commands = ( function () {
+action = ( function () {
 
     var type = 'agent',
         move_0,
@@ -193,12 +195,12 @@ var agent_commands = ( function () {
                 dp: [dx, dy, dz]
                }
 		
-		return data;
+		send(data);
 	}
     
     public_ = {
                 move_0: move_0
-              }
+              };
               
     return public_;
     

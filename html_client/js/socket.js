@@ -1,11 +1,10 @@
-var Socket;
+var socket;
 
-Socket = ( function () {
+socket = ( function () {
     
     var init,
         initRequests,
         debug = true,
-        ajax_server = 'http://127.0.0.1:8055',
         node_server = '127.0.0.1',
         node_port = 8080;
     
@@ -38,21 +37,6 @@ Socket = ( function () {
 
         socket.connect();	
         
-        initRequests();
-    };
-    
-    initRequests = function () {
-        var data = { cmd:'get_map', type:'info',client_id:0,z:5, world_id:0 };
-        data = JSON.stringify(data);
-        $.post(ajax_server+'/api',{json: data});
-        
-        data = {cmd: 'get_agent_list', type:'info', client_id:0, world_id:0};
-        data = JSON.stringify(data);
-        $.post(ajax_server+'/api', {json:data});
-        
-        data = {cmd: 'get_object_list', type:'info', client_id:0, world_id:0};
-        data = JSON.stringify(data);
-        $.post(ajax_server+'/api', {json:data});
     };
     
     return {
