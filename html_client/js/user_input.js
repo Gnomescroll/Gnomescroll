@@ -7,31 +7,37 @@ input = ( function () {
         init,
         next;
         
+    // init $ bindings
     init = function () {
         
-        $('body').keypress(function (event) {
+        $('body').keydown(function (event) {
             var key = keymap[event.which];
             queue.push({key: key, timestamp: event.timeStamp});
         });
     };
         
+    // shifts the queue, FIFO
     next = (function () {
         
-        var timestamp = 0,
+        var func,
+            timestamp = 0,
             delay = 300; // millisecond delay between input
         
-        return
-        function () {
+        
+        func = function () {
             var event = queue.shift();
             
-            if (event === undefined) return false;
-            if (! event.timestamp - timestamp > delay) return false;
+            if (event === undefined || !(event.timestamp - timestamp) > delay) {
+                //timestamp = event.timestamp;
+                return false;
+            }
             
             timestamp = event.timestamp;
             
             return event.key;
-            
         };
+        
+        return func;
         
     }());
         
@@ -41,6 +47,8 @@ input = ( function () {
 
 }());
 
+// for the keydown event.
+// NOTE: keypress keymap is COMPLETELY DIFFERENT FOR NO REASON
 keymap = {
     
     81: 'q',
@@ -90,6 +98,7 @@ keymap = {
     91: 'WIN',
     9:  'TAB',
     8:  'BACK',
+    32: 'SPACE',
     
     37: 'LEFT',
     38: 'UP',
@@ -124,6 +133,7 @@ keymap = {
     109: '-NUMPAD',
     107: '+NUMPAD',
     
+    /* these are completely different depending on numlock y/n
     35: '1NUMPAD',
     40: '2NUMPAD',
     34: '3NUMPAD',
@@ -132,6 +142,7 @@ keymap = {
     36: '7NUMPAD',
     38: '8NUMPAD',
     33: '9NUMPAD',
+    */
     
     13: 'ENTERNUMPAD',
     

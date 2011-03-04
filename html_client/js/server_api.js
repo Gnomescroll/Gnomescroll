@@ -39,7 +39,10 @@ admin = ( function () {
             location = 0;
         }
     
-        if (x.constuctor.name === 'Array' && x.length === 4) {
+        if (x.constuctor.name === 'Array') {
+            if (x.length === 3) {
+                x.splice(0,0,location);
+            }
             position = x;
         } else {
             position = [location, x, y, z];
@@ -56,33 +59,8 @@ admin = ( function () {
         
         send(data);
 	};
-
-	create_item = function (x,y,z, location) {
-
-        var position;
     
-        if (location === undefined) {
-            location = 0;
-        }
-    
-        if (x.constuctor.name === 'Array' && x.length === 4) {
-            position = x;
-        } else {
-            position = [location, x, y, z];
-        }
-
-		var data = { 
-                cmd: "create_item",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                position: position
-               }
-               
-        send(data);
-	};
-    
-    create_object = function (x, y, z, object_type, template) {
+    create_object = function (x, y, z, location, object_type, template) {
         
         var position;
     
@@ -90,18 +68,21 @@ admin = ( function () {
             location = 0;
         }
     
-        if (x.constuctor.name === 'Array' && x.length === 4) {
+        if (x.constuctor.name === 'Array') {
+            if (x.length === 3) {
+                x.splice(0,0,location);
+            }
             position = x;
         } else {
             position = [location, x, y, z];
         }
-        
         
         var data = {
-                type: 'admin',
+                type: type,
                 cmd: 'create_item',
                 object_type: object_type,
                 template: template,
+                client_id: globals.client_id,
                 world_id: globals.world_id,
                 position: position,
             }
@@ -109,18 +90,19 @@ admin = ( function () {
         send(data);
     };
 	
-	set_map = function (x,y,z, value) {
+	set_map = function (x, y, z, value) {
 
         var position;
     
-        if (location === undefined) {
-            location = 0;
+        if (value === undefined) {
+            value = 1;
         }
     
-        if (x.constuctor.name === 'Array' && x.length === 4) {
+        if (x.constuctor.name === 'Array') {
             position = x;
+            value = y;
         } else {
-            position = [location, x, y, z];
+            position = [x, y, z];
         }
 
 		var data = { 
@@ -283,6 +265,11 @@ action = ( function () {
     },
 
     harvest = function (agent_id, crop_id) {
+        
+        //temporary
+        if (crop_id === undefined) {
+            crop_id = 1;
+        }
         
         var data = {
                     type: type,

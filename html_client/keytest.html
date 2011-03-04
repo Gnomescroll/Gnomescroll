@@ -30,14 +30,10 @@ $(document).ready(function () {
     var count = 0;
     var l = '1234567890';
     var keyevent = function(event) {
-        if (event.which == last) { console.log('same'); return false;}
-        if (event.timeStamp == last_time) { console.log('same'); return false;}
+        console.log(event.which);
+        console.log(event);
         var htm = $('body').html();
         $('body').html(htm+event.which+': '+l[count]+',<br>');
-        last = event.which;
-        last_time = event.timeStamp;
-        //console.log(event);
-        console.log(count);
         count += 1;
     };
     
