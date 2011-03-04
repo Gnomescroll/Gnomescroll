@@ -104,9 +104,9 @@ class Agent:
 
 	def craft_item(self, agent_id, recipe):
 		print "Debug: Start Crafting"
-		recipe_d = self.dat.get_crafting_recipe(action)
+		recipe_d = self.dat.get_crafting_recipe(recipe)
 		name = recipe_d['name']
-		workshop = recipe_d['name']
+		workshop = recipe_d['workshop']
 		reagent = recipe_d['reagent']
 		product = recipe_d['product']
 		
@@ -116,10 +116,16 @@ class Agent:
 		list = self.objects.get_all(x, y, z)
 		print "list: " + str(list)
 		
+		#print "0: " + str(workshop)
+		
 		workshop_obj = None
 		for ob in list:
-			if 'workshop' in ob['type'] and ob['workshop'] == workshop:
-				workshop_obj = ob
+		#	print "1: " + str(ob['type'])
+		#	print "2: " + str(ob['workshop'])
+			if 'workshop' in ob['type']:  #types are defined by required fields
+		#		print "2: " + str(ob['workshop'])
+				if ob['workshop'] == workshop: #workshop type object must have a workshop parameter
+					workshop_obj = ob
 		
 		if workshop_obj == None:
 			print "Crafting Error: required workshop for recipe does not exist on agent square"
@@ -127,7 +133,7 @@ class Agent:
 		
 		#compile list of recipe ingrediants on the square
 		ingredients_list = None
- 		for re in reagant:
+ 		for re in reagent:
 			for obj in list:
 				if 'item' in obj['type'] and re in obj['name'] and not obj['id'] in ingredients_list:
 					ingredients_list.append(obj['id'])

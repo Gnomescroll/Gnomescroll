@@ -50,15 +50,15 @@ class Objects:
 	def get_all(self, x, y, z, type = None):
 		list = []
 		if type == None:
-			for x in self.object_list.values():
-				if x['position'] == [0,x,y,z]:
+			for obj in self.object_list.values():
+				if obj['position'] == [0,x,y,z]:
 					#list.append(x['id'])
-					list.append(x)
+					list.append(obj)
 		else:
-			for x in self.object_list.values():
-				if x['position'] == [0,x,y,z] and type in x['type']:
+			for obj in self.object_list.values():
+				if obj['position'] == [0,x,y,z] and type in obj['type']:
 					#list.append(x['id'])
-					list.append(x)
+					list.append(obj)
 		return list
 		
 	def create(self, position, object_type = None, template = None, player_id=0):
