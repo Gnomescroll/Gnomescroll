@@ -101,6 +101,19 @@ class Agent:
 		exp = crop.template()['harvest_exp'] 
 		#give exp
 		pass
+
+	def craft_item(self, agent_id, recipe):
+		recipe_d = self.dat.get_crafting_recipe(action)
+		name = recipe_d['name']
+		workshop = recipe_d['name']
+		reagent = recipe_d['reagent']
+		product = recipe_d['product']
+		
+		agent = Agent(agent_id)
+		#check to see if agent is standing on a workshop square
+		(ptype, x, y, z) = agent.position
+		list = self.objects.get_all(x, y, z, 'workshop')
+		print "list: " + str(list)
 		
 	##internal commands	
 	def id(self):

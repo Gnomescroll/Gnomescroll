@@ -46,6 +46,19 @@ class Objects:
 		#grab state from persistant store
 		pass
 
+	#returns a list of objects at a position which have a given type 
+	def get_all(self, x, y, z, type = None):
+		list = []
+		if type = None:
+			for x in self.object_list.values()
+				if x['position'] == [0,x,y,z]:
+					list.append(x['id'])
+		else:
+			for x in self.object_list.values()
+				if x['position'] == [0,x,y,z] and type in x['type']:
+					list.append(x['id'])			
+		return list
+		
 	def create(self, position, object_type = None, template = None, player_id=0):
 		[position_type, x, y, z] = position
 		

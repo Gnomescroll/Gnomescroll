@@ -44,3 +44,6 @@ class Agent_commands:
 	def harvest_crop(self, agent_id, crop_id = 0, **msg):
 		Agent(agent_id).harvest_crop(crop_id)
 		pass
+
+	def craft_item(self, agent_id, recipe, **msg):
+		Agent(agent_id).craft_item(agent_id, recipe) 
