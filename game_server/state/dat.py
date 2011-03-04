@@ -332,10 +332,10 @@ class Dat:
 	
 	def get_crafting_recipe(self, recipe):
 		for x in self.crafting_dat:
-			if x['name'] == recipe
+			if x['name'] == recipe:
 				return x.copy()
 		print "Crafting Recipe Does Not Exist: " + str(recipe)
-			return None
+		return None
 		
 		
 		
