@@ -259,7 +259,7 @@ items_dat = {
 		{
 			'name' : "wheat_bread",
 			'type' : ["item"],
-			'parent' : "generic_food",
+			#'parent' : "generic_food",
 			'material' : 'generic_material',
 			'flammable' : 1
 		},

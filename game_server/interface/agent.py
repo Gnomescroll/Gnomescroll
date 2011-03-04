@@ -108,13 +108,13 @@ class Agent:
 		name = recipe_d['name']
 		workshop = recipe_d['workshop']
 		reagent = recipe_d['reagent']
-		product = recipe_d['product']
+		#product = recipe_d['product']
 		
 		agent = Agent(agent_id)
 		#check to see if agent is standing on a workshop square
 		(ptype, x, y, z) = agent.position
 		list = self.objects.get_all(x, y, z)
-		print "list: " + str(list)
+		#print "list: " + str(list)
 		
 		#print "0: " + str(workshop)
 		
@@ -132,17 +132,30 @@ class Agent:
 			return		
 		
 		#compile list of recipe ingrediants on the square
-		ingredients_list = None
+		ingredients_list = []
+		
+		#print "4: " + str(reagent)
+		
  		for re in reagent:
 			for obj in list:
-				if 'item' in obj['type'] and re in obj['name'] and not obj['id'] in ingredients_list:
+				if 'item' in obj['type'] and re == obj['name'] and not obj['id'] in ingredients_list:
 					ingredients_list.append(obj['id'])
 					
-		if len(ingrediants_list) != len(reagent):
+		if len(ingredients_list) != len(reagent): #checks to see if all the ingrediants exist
 			print "Crafting Error: missing reagents"
 			print "ingrediants_list: " + str(ingrediants_list)
 			print "recipe_d: " + str(recipe_d)
 			return
+		else:
+			print "ingrediants list: " + str(ingredients_list)
+		
+		#delete crafting ingrediants
+		for obj_id in ingredients_list:
+			self.objects.delete(obj_id)
+		#create crafting result
+		
+		for item_name in recipe_d['product']:
+			self.objects.create([0, x, y, z], 'item', item_name)
 		
 	##internal commands	
 	def id(self):
