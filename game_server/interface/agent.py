@@ -103,6 +103,7 @@ class Agent:
 		pass
 
 	def craft_item(self, agent_id, recipe):
+		print "Debug: Start Crafting"
 		recipe_d = self.dat.get_crafting_recipe(action)
 		name = recipe_d['name']
 		workshop = recipe_d['name']
@@ -112,8 +113,30 @@ class Agent:
 		agent = Agent(agent_id)
 		#check to see if agent is standing on a workshop square
 		(ptype, x, y, z) = agent.position
-		list = self.objects.get_all(x, y, z, 'workshop')
+		list = self.objects.get_all(x, y, z)
 		print "list: " + str(list)
+		
+		workshop_obj = None
+		for ob in list:
+			if 'workshop' in ob['type'] and ob['workshop'] == workshop:
+				workshop_obj = ob
+		
+		if workshop_obj == None:
+			print "Crafting Error: required workshop for recipe does not exist on agent square"
+			return		
+		
+		#compile list of recipe ingrediants on the square
+		ingredients_list = None
+ 		for re in reagant:
+			for obj in list:
+				if 'item' in obj['type'] and re in obj['name'] and not obj['id'] in ingredients_list:
+					ingredients_list.append(obj['id'])
+					
+		if len(ingrediants_list) != len(reagent):
+			print "Crafting Error: missing reagents"
+			print "ingrediants_list: " + str(ingrediants_list)
+			print "recipe_d: " + str(recipe_d)
+			return
 		
 	##internal commands	
 	def id(self):
