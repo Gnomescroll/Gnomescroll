@@ -56,9 +56,9 @@ tiles_dat = [
 			#actions
 			'till' : 0,
 			
-			'dig' : 1,
-			'dig_produces' : [],
-			'dig_into' : 'empty_block',
+			'dig' : 0,
+			#'dig_produces' : [],
+			#'dig_into' : 'empty_block',
 	},
 
 
@@ -66,7 +66,6 @@ tiles_dat = [
 			'name'     : 'generic_stone_block',
 			'blocks' : 1,
 			'porous'   : 0,
-			'gravity'   : 0,
 			'vertical'  : 1,
 			
 			'till'   : 0,
@@ -75,20 +74,30 @@ tiles_dat = [
 			'dig_into' : 'generic_floor'
 	},
 
-
+	{
+			'name'     : 'generic_soil_block',
+			'blocks' : 1,
+			'porous'   : 0,
+			'vertical'  : 1,
+			
+			'till'   : 0,
+			'dig': 0
+			#'dig_produces' : [],
+			#'dig_into' : 'generic_soil'
+	},
+	
 	{
 			'name' : "generic_tilled_soil",
 			'blocking' : 0,
 			'pourous' : 0,
-			'gravity' : 0,
 			'vertical' : 1,
 			
 			#actions
 			'till' : 0,
 			
-			'dig' : 1,
-			'dig_produces' : [],
-			'dig_into' : 'empty_block'
+			'dig' : 0
+			#'dig_produces' : [],
+			#'dig_into' : 'empty_block'
 	},
 
 
@@ -96,7 +105,6 @@ tiles_dat = [
 			'name' : "generic_wood_block",
 			'blocking' : 1,
 			'pourous' : 0,
-			'gravity' : 1,
 			'vertical' : 1,
 			
 			#actions

@@ -60,6 +60,31 @@ class Agent:
 			self.holding = 0
 		pass
 
+	#action will be wall, ditch, etc...
+	def dig(self, position, type, action):
+		if action == "wall":
+			(type_a, x_a, y_a, z_a) = self.position
+			(type_b, x_b, y_b, z_b) = position
+			if not -1 <= x_a - x_b <=1 or -1 <= y_a - y_b <=1 or -1 <= z_a - z_b <=1:
+				print "Agent Dig Error: Agent is too far away!"
+				return
+				
+			tile_value = self.world_map.get(x_b,y_b,z_b)
+			tile_dict = self.dat.get_tile_by_value(tile_value)
+			
+			(type, x, y, z) = position
+			if tile_dict['dig'] != 0:
+				print "tile_type cannot be dug: " + str(tile_value)
+			else:
+				dig_into = tile_dict['dig_into']
+				dig_into = self.dat.get_tile_by_name[dig_into]
+				self.world_map.set(x,y,z, dig_into[id])
+			
+			
+		if action == "ramp":
+			print "Ramps not implemented yet!"
+			return
+		
 	def till_soil(self):
 		(type, x, y, z) = self.position
 		tile_value = self.world_map.get(x,y,z)
@@ -109,15 +134,12 @@ class Agent:
 		workshop = recipe_d['workshop']
 		reagent = recipe_d['reagent']
 		#product = recipe_d['product']
-		
 		agent = Agent(agent_id)
 		#check to see if agent is standing on a workshop square
 		(ptype, x, y, z) = agent.position
 		list = self.objects.get_all(x, y, z)
 		#print "list: " + str(list)
-		
 		#print "0: " + str(workshop)
-		
 		workshop_obj = None
 		for ob in list:
 		#	print "1: " + str(ob['type'])
@@ -126,21 +148,16 @@ class Agent:
 		#		print "2: " + str(ob['workshop'])
 				if ob['workshop'] == workshop: #workshop type object must have a workshop parameter
 					workshop_obj = ob
-		
 		if workshop_obj == None:
 			print "Crafting Error: required workshop for recipe does not exist on agent square"
 			return		
-		
 		#compile list of recipe ingrediants on the square
 		ingredients_list = []
-		
 		#print "4: " + str(reagent)
-		
  		for re in reagent:
 			for obj in list:
 				if 'item' in obj['type'] and re == obj['name'] and not obj['id'] in ingredients_list:
-					ingredients_list.append(obj['id'])
-					
+					ingredients_list.append(obj['id'])			
 		if len(ingredients_list) != len(reagent): #checks to see if all the ingrediants exist
 			print "Crafting Error: missing reagents"
 			print "ingrediants_list: " + str(ingrediants_list)
@@ -148,15 +165,13 @@ class Agent:
 			return
 		else:
 			print "ingrediants list: " + str(ingredients_list)
-		
 		#delete crafting ingrediants
 		for obj_id in ingredients_list:
 			self.objects.delete(obj_id)
 		#create crafting result
-		
 		for item_name in recipe_d['product']:
 			self.objects.create([0, x, y, z], 'item', item_name)
-		
+
 	##internal commands	
 	def id(self):
 		return self.__dict__['id']

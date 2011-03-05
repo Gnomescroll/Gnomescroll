@@ -11,8 +11,14 @@ class Agent_commands:
 		(dx, dy, dz) = dp
 		Agent(agent_id).move_0(dx,dy,dz)
 		pass
+
+	# required = ['position', agent_id']
+	# optional = ['action']				
+	def dig(self, agent_id, position, action = None, **msg):
+		if action == None:
+			action = "wall"
+		Agent(agent_id).dig(position, action)		
 		
-	def dig(self, **msg):
 		pass
 		
 	def construct_wall(self, **msg):

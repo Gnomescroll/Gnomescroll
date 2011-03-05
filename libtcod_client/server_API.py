@@ -146,6 +146,19 @@ class Agent_commands:
 		msg['dp'] = (dx,dy,dz) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
 
+	# required = ['position', agent_id']
+	# optional = ['action']		
+	def dig(self, agent_id, x, y, z, action = None):
+		msg = {}	
+		msg['type'] = 'agent'
+		msg['cmd'] = 'dig'
+		msg['position'] = (0, x, y, z)
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		if action != None:
+			msg['action'] = action
+		self.send_message(msg)		
+
 	#required = ['client_id', 'world_id']
 	#optional = []
 	def till_soil(self, agent_id):

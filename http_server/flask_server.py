@@ -5,7 +5,7 @@ from marshal import dumps
 
 app = Flask(__name__)
 
-dir = "./html_client"
+dir = "../html_client"
 PORT = 8055
 
 #r_client = redis.Redis('localhost')
