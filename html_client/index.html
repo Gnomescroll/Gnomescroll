@@ -6,6 +6,8 @@
 canvas { 
 background: #777777;
 }
+
+
 </STYLE>
 
 <script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
@@ -14,7 +16,16 @@ background: #777777;
 </head>
 
 <body>
-<h1>TEST</h1>
+<h1>
+TEST
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a id="init" href="">INIT</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a id="start" href="">START</a>
+
+</h1>
 
 <div id="game_board" ></div>
 
@@ -24,5 +35,23 @@ background: #777777;
 <script src="js/socket.js"></script>
 <script src="js/game_objects.js"></script>
 <script src="js/state_m3thyl.js"></script>
+<script src="js/server_api.js"></script>
+<script src="js/user_input.js"></script>
+<script src="js/render.js"></script>
+<script src="js/game.js"></script>
+
+<script>
+$('#init').click(function (event) {
+    event.preventDefault;
+    game.init();
+    return false;
+});
+
+$('#start').click(function (event) {
+    event.preventDefault;
+    game.start();
+    return false;
+});
+</script>
 
 </html>

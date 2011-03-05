@@ -173,4 +173,13 @@ class Agent_commands:
 		msg['world_id'] = 0
 		msg['agent_id'] = agent_id
 		msg['crop_id'] = crop_id
-		self.send_message(msg)		
+		self.send_message(msg)
+	
+	def craft_item(self, agent_id, recipe):
+		msg = {}
+		msg['type'] = 'agent'
+		msg['cmd'] = 'craft_item'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		msg['recipe'] = recipe
+		self.send_message(msg)	

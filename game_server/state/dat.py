@@ -259,7 +259,7 @@ items_dat = {
 		{
 			'name' : "wheat_bread",
 			'type' : ["item"],
-			'parent' : "generic_food",
+			#'parent' : "generic_food",
 			'material' : 'generic_material',
 			'flammable' : 1
 		},
@@ -328,6 +328,17 @@ class Dat:
 			template = 'generic_workshop'
 		return self.workshop_dat[template].copy()
 	
+	#crafting helper
+	
+	def get_crafting_recipe(self, recipe):
+		for x in self.crafting_dat:
+			if x['name'] == recipe:
+				return x.copy()
+		print "Crafting Recipe Does Not Exist: " + str(recipe)
+		return None
+		
+		
+		
 	#Deprecated
 #	def get_tile(self, value):
 #		if value not in self.tiles_day.key():

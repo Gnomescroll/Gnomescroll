@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>Key Tests</title>
+
+<STYLE TYPE="text/css">
+canvas { 
+background: #777777;
+}
+
+
+</STYLE>
+
+<script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+
+
+</body>
+
+
+<script>
+
+$(document).ready(function () {
+    
+    var last, last_time;
+    var count = 0;
+    var l = '1234567890';
+    var keyevent = function(event) {
+        console.log(event.which);
+        console.log(event);
+        var htm = $('body').html();
+        $('body').html(htm+event.which+': '+l[count]+',<br>');
+        count += 1;
+    };
+    
+    $(document).keydown(keyevent);
+    
+    
+});
+
+</script>
+
+</html>

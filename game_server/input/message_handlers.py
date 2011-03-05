@@ -27,6 +27,7 @@ class Message_handlers:
 		'till_soil' : self.agent_commands.till_soil,
 		'plant_crop' : self.agent_commands.plant_crop,
 		'harvest_crop' : self.agent_commands.harvest_crop,
+		'craft_item' : self.agent_commands.craft_item,
 		#'store_item_in_container' : self.agent_actions.store_item_in_container,
 		#'remove_item_from_container' : self.agent_actions.remove_item_from_container
 		}

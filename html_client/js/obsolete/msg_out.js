@@ -1,4 +1,4 @@
-var send, admin, agent_out, info_out;
+var send, admin_out, agent_out, info_out;
 
 send = function () {
     
@@ -8,7 +8,7 @@ send = function () {
 };
 
 
-admin = {
+admin_out = {
 
     // required = ['position'];
     // optional = ['player_id'];

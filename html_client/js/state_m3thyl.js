@@ -12,7 +12,7 @@ var state = ( function () {
         
     // need some translation function for global/map/server coords to block's coords
         
-    var z_lvls = [5],
+    var z_lvls = [],
         current_z_lvl = 5;
         
     var updateBlock,
@@ -22,7 +22,7 @@ var state = ( function () {
         gameObjectTypeMap = { 'agent': agents,
                               'obj': objects,
                               'container': containers
-                            }
+                            };
     
     var addGameObject,
         removeGameObject;
@@ -60,12 +60,27 @@ var state = ( function () {
          return arr;   
     };
     
-        
+    // requests state data from server
     init = function () {
-        // zero-d array for each z-level
-        $.each(z_lvls, function (i, val) {
-            levels[val] = blocks();
+        
+        var z_levels_to_add = [ current_z_lvl-1, 
+                                current_z_lvl, 
+                                current_z_lvl+1 ];
+        
+        $.each(z_levels_to_add, function (i, z) {
+            if ($.inArray(z, z_lvls) === -1) {
+                z_lvls.push(z);
+            }
         });
+        
+        $.each(z_lvls, function (i, z) {
+            levels[z] = blocks();       // zero-d array for each z-level
+            info.map(z);                // request z-levels
+        });
+        
+        
+        info.agents();                  // request agents
+        info.objects();                 //         objects
     };
     
     // checks if a position is in current state bounds.
@@ -252,7 +267,7 @@ var state = ( function () {
                 removeGameObject: removeGameObject,
                 updateBlock: updateBlock,
                 updateLevel: updateLevel,
-              }
+              };
               
     return public_;
     
