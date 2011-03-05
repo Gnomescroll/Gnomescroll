@@ -1,6 +1,12 @@
 var game,
     renderState,
-    processInput;
+    processInput,
+    delay = 300; // ms delay for input check
+    
+var interval_func = function () {
+    console.log('called');
+    processInput(input.next(delay))
+}
     
 /* *******************************
  * *******************************
@@ -32,14 +38,11 @@ game = {
            // check user input, server updates, render game.
     function () {
         
-        var done = false
-        
-        while (true) {
-            
-            done = processInput();
-            renderState();
-            
-        }
+        var done = false,
+            interval;
+
+        interval = setInterval('interval_func()', delay);
+
     },
         
 };
@@ -51,12 +54,11 @@ var selected_agent = { x: 5,
                        pos: function() { return [this.x, this.y, this.z]; } 
                      };
 
-processInput = function () {
-    var key;
+processInput = function (key) {
     
-    key = input.next();
+    if (!key) return false;
     
-    //console.log(key);
+    console.log(key);
     
     switch (key) {
         
@@ -110,9 +112,13 @@ processInput = function () {
         case 'v':
             action.harvest(selected_agent.id);
             break;
+            
+        case 'i':
+            info.map(5);
+            break;
     }
     
-    console.log(key);
+    //console.log(key);
     
     return true;
 };

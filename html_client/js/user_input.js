@@ -17,29 +17,28 @@ input = ( function () {
     };
         
     // shifts the queue, FIFO
-    next = (function () {
+    next = function (delay) {
         
-        var func,
-            timestamp = 0,
-            delay = 300; // millisecond delay between input
+        var timestamp = 0,
+            delay = delay || 300; // millisecond delay between input
         
         
-        func = function () {
+        while (queue.length > 0) {
             var event = queue.shift();
             
             if (event === undefined || !(event.timestamp - timestamp) > delay) {
-                //timestamp = event.timestamp;
-                return false;
+                continue;
             }
             
             timestamp = event.timestamp;
+            console.log(timestamp);
+            queue = [];
             
             return event.key;
-        };
+        }
         
-        return func;
-        
-    }());
+        return false;
+    };
         
     return { init: init,
              next: next,

@@ -39,7 +39,7 @@ admin = ( function () {
             location = 0;
         }
     
-        if (x.constuctor.name === 'Array') {
+        if (x.constructor.name === 'Array') {
             if (x.length === 3) {
                 x.splice(0,0,location);
             }
@@ -68,7 +68,7 @@ admin = ( function () {
             location = 0;
         }
     
-        if (x.constuctor.name === 'Array') {
+        if (x.constructor.name === 'Array') {
             if (x.length === 3) {
                 x.splice(0,0,location);
             }
@@ -98,7 +98,7 @@ admin = ( function () {
             value = 1;
         }
     
-        if (x.constuctor.name === 'Array') {
+        if (x.constructor.name === 'Array') {
             position = x;
             value = y;
         } else {
