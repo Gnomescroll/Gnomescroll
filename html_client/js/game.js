@@ -1,13 +1,5 @@
 var game,
-    renderState,
-    processInput,
-    delay = 300; // ms delay for input check
-    
-// called in game.start setInterval
-var input_interval = function () {
-    //console.log('called');
-    processInput(input.next(delay))
-}
+    processInput;
     
 /* *******************************
  * *******************************
@@ -46,6 +38,14 @@ game = {
         input.init();
     },
     
+    delay: 300, // ms delay for input check
+    
+    input_interval: // called in game.start setInterval
+    function () { 
+        //console.log('called');
+        processInput(input.next(this.delay))
+    },
+    
     start: // main game loop.  is it async/threaded?
            // check user input, server updates, render game.
     function () {
@@ -53,12 +53,13 @@ game = {
         var interval;
 
         // input check interval
-        interval = setInterval('input_interval()', delay);
+        interval = setInterval('game.input_interval()', this.delay);
 
     },
         
 };
 
+// temporary, just to keep processInput action calls from throwing
 var selected_agent = { x: 5,
                        y: 5,
                        z: 5,
@@ -133,11 +134,4 @@ processInput = function (key) {
     //console.log(key);
     
     return true;
-};
-
-// links state to render functions
-renderState = function () {
-    
-    
-    
 };
