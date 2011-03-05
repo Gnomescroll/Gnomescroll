@@ -3,8 +3,9 @@ var game,
     processInput,
     delay = 300; // ms delay for input check
     
-var interval_func = function () {
-    console.log('called');
+// called in game.start setInterval
+var input_interval = function () {
+    //console.log('called');
     processInput(input.next(delay))
 }
     
@@ -38,10 +39,10 @@ game = {
            // check user input, server updates, render game.
     function () {
         
-        var done = false,
-            interval;
+        var interval;
 
-        interval = setInterval('interval_func()', delay);
+        // input check interval
+        interval = setInterval('input_interval()', delay);
 
     },
         
