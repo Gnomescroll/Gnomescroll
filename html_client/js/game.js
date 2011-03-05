@@ -22,7 +22,18 @@ var input_interval = function () {
  * Have a setInterval for pulling from the queue.
  * Pick the first event w/ timestamp diff > delay, then flush queue
  *
- */ 
+ * 
+ * UPDATE 3/5/2011
+ *      User input checking w/ delay seems to work well
+ *      
+ *      Next, implement rendering of initial state.
+ *      Then, render updates on message received.
+ *      Then, efficient rendering on view change
+ *      Then, scrolling based on position & movement of selected agents/moving things
+ *      Then, mouse input clicks for selecting agent
+ *      Then, mouse input for onHover tooltips/cell info
+ *      Then, mouse input for drag selection (multiagent)
+ */     
 
 
 // main loop
