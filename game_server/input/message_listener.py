@@ -20,11 +20,11 @@ class Message_listener:
         self.message_worker(self.globals.world_id)
         
     def message_worker(self, world_id):
-		debug = 1
 		r_in = redis.Redis("localhost") #going to be local host for now
 		key = "world_%s" % (str(world_id),)
 		i = ''
-        
+		
+		debug = 0
 		if debug == 0:
 			while True:
 				try:
