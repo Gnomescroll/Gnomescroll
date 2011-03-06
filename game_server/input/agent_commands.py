@@ -26,7 +26,7 @@ class Agent_commands:
 
 
 	# required = ['agent_id', 'target_id']
-	# optional = ['target_type']			
+	# optional = ['target_type', 'attack_type']			
 	def attack(self, agent_id, target_id, target_type = 'agent', attack_type = 'default' **msg):
 		Agent(agent_id).attack(target_id)
 		

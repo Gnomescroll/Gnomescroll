@@ -146,8 +146,23 @@ class Agent_commands:
 		msg['dp'] = (dx,dy,dz) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
 
+	# required = ['agent_id', 'target_id']
+	# optional = ['target_type', 'attack_type']
+	def attack(self, agent_id, target_id, target_type = None, attack_type = None):
+		msg = {}	
+		msg['type'] = 'agent'
+		msg['cmd'] = 'attack'
+		msg['agent_id'] = agent_id
+		msg['target_id'] = target_id
+		msg['world_id'] = 0
+		if target_type != None:
+			msg['target_type'] = target_type
+		if attack_type != None:
+			msg['attack_type'] = attack_type
+		self.send_message(msg)			
+	
 	# required = ['position', agent_id']
-	# optional = ['action']		
+	# optional = ['action']
 	def dig(self, agent_id, x, y, z, action = None):
 		msg = {}	
 		msg['type'] = 'agent'
