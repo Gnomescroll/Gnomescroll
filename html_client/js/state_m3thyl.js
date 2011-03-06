@@ -4,7 +4,7 @@
 var state = ( function () {
     
     var blocks,
-        levels = [],
+        levels = {},
         agents = {},
         objects = {},
         containers = {},
@@ -267,6 +267,11 @@ var state = ( function () {
                 removeGameObject: removeGameObject,
                 updateBlock: updateBlock,
                 updateLevel: updateLevel,
+                ao_map: ao_map,
+                levels: levels,
+                current_z_lvl: current_z_lvl,
+                map_width: map_width,
+                map_height: map_height,
               };
               
     return public_;
