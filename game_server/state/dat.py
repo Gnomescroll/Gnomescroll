@@ -242,6 +242,22 @@ items_dat = {
 		'edible' : 0,
 	},
 
+	'generic_stone' :
+	{
+		'template_params' : ['id','position', 'version', 'world_id' ],
+		'template' : 
+		{
+			'name' : "generic_stone",
+			'type' : ["item"],
+			'parent' : "generic_item",
+			'material' : 'generic_stone',
+			'flammable' : 0
+		},
+		'weight' : 50,
+		'value' : 1,
+		'edible' : 0,
+	},
+	
 	'generic_food' :
 	{
 		'template_params' : ['id','position', 'version', 'world_id' ],

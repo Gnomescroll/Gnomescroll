@@ -28,6 +28,6 @@ admin.create_object(1,1,1,'item', 'generic_food')
 agent.craft_item(1, 'bake bread')
 
 admin.create_agent(1,1,1)
-admin.set_map(2,1,1,3)
+admin.set_map(2,1,1,5)
 agent.dig(1,2,1,1)
 
