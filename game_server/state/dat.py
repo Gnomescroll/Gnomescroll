@@ -355,14 +355,14 @@ class Dat:
 #		return self.tiles_dat[value]
 		
 	def get_tile_by_name(self, name):
-		if name not in self.tiles_by_name.key():
+		if name not in self.tiles_by_name.keys():
 			print "Tile Does not Exist"
 			return self.tiles_by_name['unknown_tile']
 		else:
 			return self.tiles_by_name[name]
 	
 	def get_tile_by_value(self, value):
-		if value not in self.tiles_by_value.key():
+		if value not in self.tiles_by_value.keys():
 			print "Tile Does not Exist"
 			return self.tiles_by_name['unknown_tile']
 		else:

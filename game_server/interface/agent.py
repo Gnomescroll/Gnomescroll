@@ -61,24 +61,37 @@ class Agent:
 		pass
 
 	#action will be wall, ditch, etc...
-	def dig(self, position, type, action):
+	def dig(self, position, action):
 		if action == "wall":
+			print "0: " + str(self.position)
+			print "1: " + str(position)
+
 			(type_a, x_a, y_a, z_a) = self.position
 			(type_b, x_b, y_b, z_b) = position
-			if not -1 <= x_a - x_b <=1 or -1 <= y_a - y_b <=1 or -1 <= z_a - z_b <=1:
+			if not -1 <= x_a - x_b <=1:
 				print "Agent Dig Error: Agent is too far away!"
 				return
+			if not -1 <= y_a - y_b <=1:
+				print "Agent Dig Error: Agent is too far away!"
+		#		print "2"
+				return
+			if not -1 <= z_a - z_b <=1:
+				print "Agent Dig Error: Agent is too far away!"
+		#		print "3"
+				return
 				
-			tile_value = self.world_map.get(x_b,y_b,z_b)
+			tile_value = self.world_map.get(x_b, y_b ,z_b)
+			print "tv: " + str(tile_value)
 			tile_dict = self.dat.get_tile_by_value(tile_value)
 			
 			(type, x, y, z) = position
-			if tile_dict['dig'] != 0:
+			if tile_dict['dig'] == 0:
 				print "tile_type cannot be dug: " + str(tile_value)
 			else:
+				print "2: " + str(tile_dict)
 				dig_into = tile_dict['dig_into']
-				dig_into = self.dat.get_tile_by_name[dig_into]
-				self.world_map.set(x,y,z, dig_into[id])
+				dig_into = self.dat.get_tile_by_name(dig_into)
+				self.world_map.set(x,y,z, dig_into['id'])
 			
 			
 		if action == "ramp":
@@ -95,7 +108,7 @@ class Agent:
 		else:
 			till_into = tile_dict['till_into']
 			till_into = self.dat.get_tile_by_name[till_into]
-			self.world_map.set(x,y,z, till_into[id])
+			self.world_map.set(x,y,z, till_into['id'])
 
 	def plant_crop(self, seed_id = 0):
 		#pretend they have a seed
