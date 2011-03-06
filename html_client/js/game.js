@@ -50,6 +50,8 @@ game = {
            // check user input, server updates, render game.
     function () {
         
+        render.start();
+        
         var interval;
 
         // input check interval
@@ -57,6 +59,25 @@ game = {
 
     },
         
+};
+
+var render = {
+    
+    start: // initial rendering of state
+    function () {
+        
+        // for each block in state's curr_z_lvl
+        // if block == 0
+        //      draw the block underneath it (white/black if also empty)
+        // for each 3-ple location in view
+        //      check whats there
+        //      draw it
+        
+    },
+    
+    
+    
+    
 };
 
 // temporary, just to keep processInput action calls from throwing

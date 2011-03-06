@@ -215,12 +215,6 @@ var screen = ( function () {
 
     }
     
-        /*
-    var tilemap = $('img#tilemap')[0];
-    var tilemap_image = new Image();
-    tilemap_image.src = "static/tiles/Bisasam_24x24.png";
-    */
-    
     var tilemap = {
         
         elem: $('img#tilemap')[0],
@@ -298,14 +292,6 @@ var screen = ( function () {
                 for (k = 0; k < 4; k++) {
                     bg.push(imageData.data[offset+k]);
                 }
-                
-                // subtractive coloring conditions
-                /*
-                if (imageData.data[offset+3] !== 0) {                        
-                    imageData.data[offset] = (color.r !== undefined) ? color.r : imageData.data[offset];
-                    imageData.data[offset + 1] = (color.g !== undefined) ? color.g : imageData.data[offset + 1];
-                    imageData.data[offset + 2] = (color.b !== undefined) ? color.b : imageData.data[offset + 2];
-                }*/
                 
                 // normal coloring of a greyscale image
                 if (imageData.data[offset+3] !== 0) {

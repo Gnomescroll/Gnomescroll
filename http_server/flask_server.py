@@ -5,7 +5,7 @@ from marshal import dumps
 
 app = Flask(__name__)
 
-dir = "../html_client"
+dir = "./html_client"
 PORT = 8055
 
 #r_client = redis.Redis('localhost')
@@ -44,6 +44,27 @@ def api_call(msg=None):
 
     return 'ok'
     
+@app.route('/static/<subdir>/<file>')
+def static_image(subdir='',file=None):
+    print subdir
+    print file
+    ext = ''
+    try:
+        ext = file.split('.')[-1].lower()
+    except KeyError:
+        return Response('Unknown mimetype.')
+    
+    mimetype = 'text/plain'
+    if ext in ['png', 'jpg', 'jpeg']:
+        ext = 'jpeg' if ext == 'jpg' else ext
+        mimetype = 'image/'+ext
+
+    path = dir+'/static/'+subdir+'/'+file
+    with open(path, 'rb') as f:
+        return Response(f.read(), mimetype=mimetype)
+
+        
+        
 if __name__ == '__main__':
     app.debug = True
     app.run(port=PORT)
