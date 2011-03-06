@@ -25,7 +25,7 @@ class Message_listener:
 		key = "world_%s" % (str(world_id),)
 		i = ''
         
-		if debug == 1:
+		if debug == 0:
 			while True:
 				try:
 					j = r_in.brpop(key)

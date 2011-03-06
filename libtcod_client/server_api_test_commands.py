@@ -31,3 +31,7 @@ admin.create_agent(1,1,1)
 admin.set_map(2,1,1,5)
 agent.dig(1,2,1,1)
 
+admin.create_agent(1,1,1)
+admin.create_agent(1,2,1)
+agent.attack(1,2)
+

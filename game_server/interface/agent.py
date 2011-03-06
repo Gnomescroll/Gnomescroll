@@ -1,4 +1,5 @@
 import sys
+import random
 
 from interface.object import Nobject
 from interface.crop import Crop
@@ -14,7 +15,7 @@ class Agent:
 		self.position = [type, x, y, z]
 		self.delta.agent_position_change(self.__dict__['id'], [0,x, y, z])
 
-	def attack(self, target_id, attack_type):
+	def attack(self, target_id, attack_type = 'default'):
 		#agent_id = self.id()
 		agent_position = self.position
 		target = Agent(target_id)
@@ -24,17 +25,17 @@ class Agent:
 		if not target_position[3] == agent_position[3]:
 			print "Agent Attack Fail: agents are on different z-levels"
 			return
-		if not -1 < target_position[1] - agent_position[1] < 1:
-			print "Agent Attack Fail: agents are too far away"
+		if not -1 <= target_position[1] - agent_position[1] <= 1:
+			print "Agent Attack Fail 1: agents are too far away"
 			return
-		if not -1 < target_position[2] - agent_position[2] < 1:
-			print "Agent Attack Fail: agents are too far away"
+		if not -1 <= target_position[2] - agent_position[2] <= 1:
+			print "Agent Attack Fail 2: agents are too far away"
 			return
 		
 		#get attack information for agent	
-		if not attack_type in self.attack.values():
+		if not attack_type in self.attacks.values():
 			attack_type = 'default'
-		attack = self.attack[attack_type]
+		attack = self.attacks[attack_type]
 		damage = 0
 		for x in range(0, attack['damage'][0]):
 			damage = damage + random.randint(0, attack['damage'][1])
@@ -42,9 +43,9 @@ class Agent:
 		
 		target.health = target.health - damage
 		message = "Attack: " + str(self.id) + " " + str(target_id) + " " + str(damage)
-		self.delta.attack_log(self.id(), target_id, damage, message)
+		self.delta.attack_log(self.id, target_id, damage, message)
 		
-		if target.hp < 0:
+		if target.health < 0:
 			print "Agent " + str(target.id) + " is dead"
 		
 	def pickup_item(self, item_id):
