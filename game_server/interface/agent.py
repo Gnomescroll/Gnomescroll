@@ -14,6 +14,39 @@ class Agent:
 		self.position = [type, x, y, z]
 		self.delta.agent_position_change(self.__dict__['id'], [0,x, y, z])
 
+	def attack(self, target_id, attack_type):
+		#agent_id = self.id()
+		agent_position = self.position
+		target = Agent(target_id)
+		target_position = target.position
+		
+		#check to see if agents are within attack range of each other
+		if not target_position[3] == agent_position[3]:
+			print "Agent Attack Fail: agents are on different z-levels"
+			return
+		if not -1 < target_position[1] - agent_position[1] < 1:
+			print "Agent Attack Fail: agents are too far away"
+			return
+		if not -1 < target_position[2] - agent_position[2] < 1:
+			print "Agent Attack Fail: agents are too far away"
+			return
+		
+		#get attack information for agent	
+		if not attack_type in self.attack.values():
+			attack_type = 'default'
+		attack = self.attack[attack_type]
+		damage = 0
+		for x in range(0, attack['damage'][0]):
+			damage = damage + random.randint(0, attack['damage'][1])
+		print "Attack: " + str(self.id) + " " + str(target_id) + " " + str(damage)
+		
+		target.health = target.health - damage
+		message = "Attack: " + str(self.id) + " " + str(target_id) + " " + str(damage)
+		self.delta.attack_log(self.id(), target_id, damage, message)
+		
+		if target.hp < 0:
+			print "Agent " + str(target.id) + " is dead"
+		
 	def pickup_item(self, item_id):
 		if self.holding == 1:
 			print "Agent cannot hold multiple items!"

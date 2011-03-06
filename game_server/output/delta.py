@@ -83,7 +83,17 @@ class Delta: #non-blocking client notification
 		self.delta_out_q.put(msg)
 		#print 'agent_create_update put'
 		pass
-		
+	
+	def attack_log(self, agent_id, target_id, damage, message = ""):
+		msg = {}
+		msg['msg'] = 'attack_log'
+		msg['agent_id'] = agent_id
+		msg['target_id'] = target_id
+		msg['damage'] = damage
+		msg['message'] = message
+		self.delta_out_q.put(msg)
+		#print 'agent_create_update put'
+		pass		
 	#object notifications
 	
 	#USE THIS INSTEAD
