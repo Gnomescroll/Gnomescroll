@@ -24,6 +24,8 @@ Full Canvas Test
 <body>
 <h1>Full Canvas Test</h1>
 
+<div id="game" >
+
 <span id="controls">
 <a id="button" class="increase_cell_size" href="">
     <img src="static/buttons/increase_cell_size.png" />
@@ -35,6 +37,8 @@ Full Canvas Test
 
 <img id="tilemap" src="static/tiles/Bisasam_24x24.png" />
 
+</div>
+
 </body>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
@@ -45,8 +49,8 @@ Full Canvas Test
 
 $(document).ready(function () {
     
-screen.init();
-screen.test();
+render.init();
+render.test();
 
 });
 

@@ -123,8 +123,11 @@ InventoryMethods = {
 // interface
 Agent = $.extend({}, GameObject);
 Agent = $.extend(Agent, InventoryMethods);
+Agent.tile_num = 7;
 
 Obj = $.extend({}, GameObject);
+Obj.tile_num = 8;
 
 Container = $.extend({}, GameObject);
 Container = $.extend(Container, InventoryMethods);
+Container.tile_num = 9;

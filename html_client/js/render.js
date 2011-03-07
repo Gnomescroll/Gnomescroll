@@ -1,5 +1,5 @@
 
-var screen = ( function () {
+var render = ( function () {
 
     var x_res,
         y_res,
@@ -16,7 +16,7 @@ var screen = ( function () {
         
     var calculateCanvasResolution, resizeScreen;
     var calculateGridCells;
-    var canvas, setCanvas, colorCanvas, colorMap;
+    var canvas, setCanvas, colorCanvas, colorMap, ctx;
     var staging_canvas, staging_ctx, setStagingCanvas;
     var controlMap, setControls;
     var init, test, public_;
@@ -24,8 +24,7 @@ var screen = ( function () {
     generateCells = function () {
         
         // row, col are 0-indexed
-        var cell_coordinates = [],
-            i = 0,
+        var i = 0,
             col,
             row,
             x,
@@ -37,11 +36,10 @@ var screen = ( function () {
             row = (( i - col ) / grid_cells);
             x = col * cell_width;
             y = row * cell_height;
-            cell_coordinates.push([x,y]);
+            cells.push([x,y]);
         }
         
-        cells = cell_coordinates;
-        
+        console.log(cells.length);
     }
     
     calculateGridCells = function () {
@@ -88,23 +86,23 @@ var screen = ( function () {
     
     setCanvas = function () {
         
-        $('h1').remove();
-        
         canvas = $('#screen');
 
         if (!canvas.length) {
             canvas = $('<canvas></canvas>').attr('id','screen');
-            $('body').prepend(canvas);
+            $('#game').prepend(canvas);
         }
         
         canvas.css('margin-left', parseInt((window.innerWidth - x_res) / 3)); //shift it to the right
         
         canvas = canvas[0];
         
-        canvas.width = x_res;
-        canvas.height = y_res;
+        canvas.width = cell_width*grid_cells;
+        canvas.height = cell_height*grid_cells;
         
         colorCanvas(canvas, 'black');
+        
+        ctx = canvas.getContext('2d');
     }
     
     setStagingCanvas = function () {
@@ -114,7 +112,7 @@ var screen = ( function () {
         if (!staging_canvas.length) {
             staging_canvas = $('<canvas></canvas>').attr('id', 'stage');
             staging_canvas.css('display','none');
-            $('body').prepend(staging_canvas);
+            $('#game').prepend(staging_canvas);
         }
         
         staging_canvas = staging_canvas[0]
@@ -122,7 +120,7 @@ var screen = ( function () {
         staging_canvas.width = cell_width;
         staging_canvas.height = cell_height;
         
-        colorCanvas( staging_canvas, "transparent");
+        colorCanvas(staging_canvas, "transparent");
         
         staging_ctx = staging_canvas.getContext('2d');
     };
@@ -208,10 +206,10 @@ var screen = ( function () {
         // window resize
         // user adjust cell size
         
-        $(window).resize( function (event) {
-            resizeScreen();
-            test();
-        });
+        //$(window).resize( function (event) {
+            //resizeScreen();
+            //test();
+        //});
 
     }
     
@@ -249,6 +247,9 @@ var screen = ( function () {
         
     }    
     
+    var canvasContext = function () {
+        return canvas.getContext('2d');
+    }
     
     var colorTile = function (ctx, cell_num, tile_num, color) {
         
@@ -258,15 +259,10 @@ var screen = ( function () {
             y = cells[cell_num][1];
             
         var colors = {
-            // the object properties are which values to reassign
-            // e.g. for red, just remove all g+b
-            // Non-primary colors will need a different approach
-            
-            // Subtractive coloring
-            red: {g:0, b:0},
-            green: {r:0, b:0},
-            blue: {r:0, g:0},
-            white: {},
+            red: {r:255, g:0, b:0},
+            green: {r:0, g:255, b:0},
+            blue: {r:0, g:0, b:255},
+            white: {r:255, g:255, b:255},
             black: {r:0, g:0, b:0}
         }
         
@@ -315,7 +311,7 @@ var screen = ( function () {
         
         var ctx;
         
-        ctx = canvas.getContext("2d");
+        ctx = canvasContext("2d");
         
         var drawCircle,
             drawSquare,
@@ -507,8 +503,6 @@ var screen = ( function () {
             
             draw_func = function (ctx, tile_num, cell_num) {
                 
-                drawTile(ctx, tile_num, cell_num);
-                
                 // distributed color
                 var gauss, origin, dist, cell_coord = [];
                 var max_dist, red, blue, green;
@@ -541,8 +535,6 @@ var screen = ( function () {
             });
         };
         
-        
-        
         //drawCircle();
         //checkerboard("red");
         //gridBoard("red");
@@ -554,13 +546,15 @@ var screen = ( function () {
         orb();
     
     }
-    
-
-    
+        
     public_ = {
                 init: init,
                 resizeScreen: resizeScreen,
-                test: test
+                canvasContext: canvasContext,
+                colorTile: colorTile,
+                grid_cells: grid_cells,
+                cells: cells,
+                test: test,
               }
     
     return public_;

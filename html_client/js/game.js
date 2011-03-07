@@ -36,6 +36,7 @@ game = {
         socket.init();
         state.init();
         input.init();
+        render.init();
     },
     
     delay: 300, // ms delay for input check
@@ -50,7 +51,7 @@ game = {
            // check user input, server updates, render game.
     function () {
         
-        render.start();
+        renderState.start();
         
         var interval;
 
@@ -61,7 +62,10 @@ game = {
         
 };
 
-var render = {
+var renderState = {
+    
+    view_x_offset: 0,
+    view_y_offset: 0, // offsets against state
     
     start: // initial rendering of state
     function () {
@@ -69,15 +73,73 @@ var render = {
         // for each block in state's curr_z_lvl
         // if block == 0
         //      draw the block underneath it (white/black if also empty)
+        // else
+        //      draw block's tile png
         // for each 3-ple location in view
         //      check whats there
         //      draw it
         
+        var z = state.current_z_lvl,
+            ctx = render.canvasContext();
+        
+        console.log(render.grid_cells);
+        
+        var x_, y, y_, 
+            block, 
+            ao, ao_loc,
+            cell_num = 0,
+            render_dim = Math.sqrt(render.cells.length),
+            max_x_ = Math.min(this.view_x_offset + render_dim, state.map_width),
+            max_y_ = Math.min(this.view_y_offset + render_dim, state.map_height);
+        
+        console.log('state levels');
+        //console.log(state.levels);
+        
+        console.log(render.cells.length);
+        
+        for (x_ = this.view_x_offset; x_ < max_x_; x_++) {
+            
+           // console.log('inner x_ loop');
+            
+            y = state.levels[z][x_];
+            
+           // console.log(y);
+            for (y_ = this.view_y_offset; y_ < max_y_; y_++) {
+                
+              //  console.log('inner y_ loop');
+               // console.log(cell_num);
+                block = y[y_];
+                color = 'red';
+                
+                if (block <= 0) { // draw block in z_lvl below (just drawing a black square for now)
+                    //block = state.levels[z-1][x_][y_];
+                    block = 0;
+                    color = 'black';
+                }
+                
+                ao = [x_, y_, z].toString();
+                ao_loc = state.ao_map[ao];
+                if (ao_loc !== undefined) {                    
+                    ao_types = ['agent', 'object', 'container'];
+                    
+                    $.each(ao_types, function (i, type) {
+                        var ao_type = ao_loc[type];
+                        if (ao_type !== undefined && ao_type.length > 0) {
+                            block = ao_type[0].tile_num; // draw the first game_object in the first ao_types to exist
+                            color = 'blue';
+                            return false;
+                        }
+                    });
+                }
+                
+                if (block == 1) block = 7;
+                
+                render.colorTile(ctx, cell_num, block, 'red');
+                cell_num += 1;
+            }
+        }
+        
     },
-    
-    
-    
-    
 };
 
 // temporary, just to keep processInput action calls from throwing
@@ -116,6 +178,7 @@ processInput = function (key) {
             break;
             
         case 'c':                   // set map solid
+            console.log('set map');
             admin.set_map(selected_agent.pos(), 1);
             break;
             
