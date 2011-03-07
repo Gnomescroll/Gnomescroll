@@ -50,13 +50,13 @@ class Client:
         self.info.get_object_list()
     
     def set_agent(self, agent):
-        self.agents.update({agent['id']: agent})
-        
+        self.agents[agent['id']] = agent
+
     def get_agent(self, agent_id):
         return self.agents[agent_id]
         
     def set_object(self, obj):
-        self.objects.update({obj['id']: obj})
+        self.objects[obj['id']] = obj
         
     def get_object(self, object_id):
         return self.objects[object_id]
