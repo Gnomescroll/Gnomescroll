@@ -50,16 +50,16 @@ class Client:
         self.info.get_object_list()
     
     def set_agent(self, agent):
-        pass
+        self.agents.update({agent['id']: agent})
         
     def get_agent(self, agent_id):
-        pass
+        return self.agents[agent_id]
         
-    def set_object(self, object):
-        pass
+    def set_object(self, obj):
+        self.objects.update({obj['id']: obj})
         
     def get_object(self, object_id):
-        pass
+        return self.objects[object_id]
         
     def share_state(self):
         print "Share State Start"
