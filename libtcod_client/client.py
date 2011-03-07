@@ -1,5 +1,5 @@
 from incoming.message_handlers import Message_handlers
-from incoming.server_listener import Server_listener
+from incoming.listener import Server_listener
 
 from incoming.terrain_map_handler import Terrain_map_handler
 from incoming.agent_handler import Agent_handler
@@ -13,12 +13,10 @@ from state.globals import Globals
 from server_API import Admin_commands, Agent_commands, Info_commands
 
 
-
 class Client:
-    
     def __init__(self, world_id=0):
         #listener 
-        self.server_listener = Server_listener()
+        self.listener = Server_listener()
         self.message_handlers = Message_handlers()    
         
         #messages handles
@@ -32,15 +30,15 @@ class Client:
         self.info = Info_commands()
         
         #state
-        #self.agents = Agents()
-        #self.objects = Objects()
+        self.agents = {}
+        self.objects = {}
         self.globals = Globals(world_id) 
         self.terrain_map = Terrain_map()
 
     def setup(self):
         self.share_state()
         self.message_handlers.start()
-        self.server_listener.start()
+        self.listener.start()
         
         #load map
         self.info.get_map(0)
@@ -50,7 +48,19 @@ class Client:
         
         #load objects
         self.info.get_object_list()
-
+    
+    def set_agent(self, agent):
+        pass
+        
+    def get_agent(self, agent_id):
+        pass
+        
+    def set_object(self, object):
+        pass
+        
+    def get_object(self, object_id):
+        pass
+        
     def share_state(self):
         print "Share State Start"
         not_singletons = []
@@ -59,7 +69,7 @@ class Client:
             name1, object1 = a[0], a[1]
             name2, object2 = b[0], b[1]
             if getattr(object1,name2,'xx') != 'xx':
-                #print 'Assigning',name2,'to',name1
+                print 'Assigning',name2,'to',name1
                 setattr(object1,name2,object2)
         [[share(singleton1,singleton2) for singleton2 in to_share] for singleton1 in to_share]
 
@@ -70,11 +80,11 @@ if __name__ == '__main__':
     client.setup()
     #Do something!
     #debugging
-    time.sleep(1)
-    client.info.get_map(0)
-    client.info.get_agent_list()
-    client.info.get_object_list()
-    time.sleep(5)
-    print client.terrain_map.x_size
-    #from pudb import set_trace; set_trace()
-    time.sleep(3600)
+    while 1:
+        time.sleep(1)
+        client.info.get_map(0)
+        client.info.get_agent_list()
+        client.info.get_object_list()
+        time.sleep(5)
+        print "Current Map Size: %s" %client.terrain_map.x_size
+        print '\n'

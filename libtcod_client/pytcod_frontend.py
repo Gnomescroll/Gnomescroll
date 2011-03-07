@@ -104,7 +104,7 @@ def handle_keys():
 		return "exit"
 
 	if key_char == 'a':
-		admin.set_map(drawing_demo, drawing_demo, 0, 5)
+		client.admin.set_map(drawing_demo, drawing_demo, 0, 5)
 		drawing_demo += 1
 
 def handle_mouse():
@@ -158,7 +158,9 @@ message_log.add("Welcome to dc_mmo")
 
 #get updated map, object, and agent data
 if client.server_listener.ready == 1:
+	print '***'
 	print "Redis Ready"
+	print '***'
 	#get updated map, object, and agent data	
 	client.info.get_map(0)
 	client.info.get_agent_list()

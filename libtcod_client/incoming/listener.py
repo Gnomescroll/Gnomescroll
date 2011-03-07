@@ -8,7 +8,7 @@ import simplejson
 
 #need to subsribe and unsubscribe in the future    
 class Server_listener:
-
+    """listens to messages coming from redis."""
     def __init__(self):
         self.globals = None
         self.message_handlers = None
@@ -38,7 +38,7 @@ class Server_listener:
                 i = simplejson.loads(i)
                 msg = i['msg']
                 print msg
-                #print str(i)
+                print str(i)
                 if msg in self.message_handlers.handlers:
                     #print "valid"
                     self.message_handlers.handlers[msg](**i)

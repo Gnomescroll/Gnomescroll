@@ -1,9 +1,3 @@
-from server_listener import *
-from server_API import *
+from new_server_api import Admin
 
-import time
-
-sl = Server_listener()
-
-while True:
-	time.sleep(1)
+admin = Admin()

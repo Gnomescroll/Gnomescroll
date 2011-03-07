@@ -1,5 +1,5 @@
 class Agents:
-
+    """Agent object"""
 	def __init__(self, agent_id, gx, gy, gz, player_id):
 		self.gx = gx
 		self.gy = gy

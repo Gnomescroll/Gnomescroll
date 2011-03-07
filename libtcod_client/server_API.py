@@ -1,8 +1,7 @@
 import redis
 from marshal import dumps
-import marshal
-import sys
-import json
+#import sys
+#import json
 
 class Admin_commands:
 	
@@ -30,7 +29,6 @@ class Admin_commands:
 		#send message to server
 		self.send_message(msg)
 
-	#Not implemented yet
 	def create_item(self, x, y, z=0):
 		msg = {}
 		msg['type'] = 'admin'
@@ -69,6 +67,7 @@ class Info_commands:
 		self.r_client = redis.Redis('localhost')
 
 	def send_message(self,msg, world_id = 0):
+		"""Sends message to redis server."""
 		world_id = msg['world_id']
 		self.r_client.lpush("world_"+str(world_id), dumps(msg))
 
