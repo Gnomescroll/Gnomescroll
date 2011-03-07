@@ -131,7 +131,9 @@ var renderState = {
                         }
                     });
                 }
-
+                
+                if (block == 1) block = 7;
+                
                 render.colorTile(ctx, cell_num, block, 'red');
                 cell_num += 1;
             }
@@ -176,6 +178,7 @@ processInput = function (key) {
             break;
             
         case 'c':                   // set map solid
+            console.log('set map');
             admin.set_map(selected_agent.pos(), 1);
             break;
             
