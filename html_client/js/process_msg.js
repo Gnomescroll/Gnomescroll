@@ -116,7 +116,7 @@ process.info.agent_list = function (msg) {
     //if (!validate.agent_list(msg)) return;
     
     $.each(msg.list, function (i, list_agent) {
-        
+        console.log('agent item');
         list_agent.x = list_agent.position[1];
         list_agent.y = list_agent.position[2];
         list_agent.z = list_agent.position[3];
@@ -125,8 +125,10 @@ process.info.agent_list = function (msg) {
         
         var agent = state.gameObjectKnown(list_agent);
         if (agent) {                    // update
+            console.log('agent known');
             agent.update(list_agent);
         } else {                        // create
+            console.log('agent unknown, creating');
             var agent = Agent.create(list_agent);
         }
         

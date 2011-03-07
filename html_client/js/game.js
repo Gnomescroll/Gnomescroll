@@ -34,9 +34,16 @@ game = {
     init: // load z_level +/- 1. Load agents, objects. init render object.
     function () {
         socket.init();
-        state.init();
-        input.init();
-        render.init();
+        
+        var wait_func = function () {
+            state.init();
+            input.init();
+            render.init();
+        }
+        setTimeout(wait_func(), 1500); // wait half a sec (does this work?)
+        //state.init();
+        //input.init();
+        //render.init();
     },
     
     delay: 300, // ms delay for input check
@@ -96,7 +103,9 @@ var renderState = {
         //console.log(state.levels);
         
         console.log(render.cells.length);
-        
+        console.log('ao_map');
+        console.log(state.ao_map);
+        var color='black', ao_types = ['agent', 'object', 'container'];
         for (x_ = this.view_x_offset; x_ < max_x_; x_++) {
             
            // console.log('inner x_ loop');
@@ -120,23 +129,27 @@ var renderState = {
                 ao = [x_, y_, z].toString();
                 ao_loc = state.ao_map[ao];
                 if (ao_loc !== undefined) {                    
-                    ao_types = ['agent', 'object', 'container'];
                     
+                    console.log(ao);
                     $.each(ao_types, function (i, type) {
                         var ao_type = ao_loc[type];
+                        console.log(ao_type);
                         if (ao_type !== undefined && ao_type.length > 0) {
-                            block = ao_type[0].tile_num; // draw the first game_object in the first ao_types to exist
-                            color = 'blue';
+                            //block = ao_type[0].tile_num; // draw the first game_object in the first ao_types to exist
+                            color = 'green';
+                            if (type == 'agent') { block = 17;}
+                            else {block = 20;}
+                            console.log('agent render');
                             return false;
                         }
                     });
                 }
                 
-                if (block == 1) {block = 7; color="blue"; console.log(color);}
+                if (block == 1) {block = 3; color="blue";}
                 
-                if (block == 0) {block = 4; color="red";}
+                if (block == 0) {block = 7; color="red";}
                 //console.log('block: '+block);
-                
+                if (color == 'green') console.log(color);
                 render.colorTile(ctx, cell_num, block, color);
                 cell_num += 1;
             }
@@ -146,8 +159,8 @@ var renderState = {
 };
 
 // temporary, just to keep processInput action calls from throwing
-var selected_agent = { x: 5,
-                       y: 5,
+var selected_agent = { x: 15,
+                       y: 15,
                        z: 5,
                        id:0,
                        pos: function() { return [this.x, this.y, this.z]; } 

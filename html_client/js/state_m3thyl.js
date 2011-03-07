@@ -152,12 +152,17 @@ var state = ( function () {
             obj;
         
         if (typeof game_object === 'object') {
-            type = game_object.obj_type;
+            type = game_object.type[0]; // workaround
             id = game_object.id;
         } else {        
             id = game_object;
         }
         
+        console.log('GOK');
+        console.log(type);
+        console.log(id);
+        
+        console.log(gameObjectTypeMap);
         obj = gameObjectTypeMap[type][id];
         
         if (obj === undefined) return false;
@@ -170,11 +175,12 @@ var state = ( function () {
         var type,
             id;
             
-        type = game_object.obj_type;
+        type = game_object.type[0]; // workaround
+        console.log('add game object type: '+type);
         id = game_object.id;
-            
+        console.log('add game object id: '+id);
         gameObjectTypeMap[type][id] = game_object;
-        
+        console.log(ao_map);
     };
     
     // remove game_object from lists
@@ -230,13 +236,14 @@ var state = ( function () {
     
     // sets a game_object (agent, obj, cont) in the ao_loc map
     setLocation = function (game_object) {
-        
+        console.log('set location');
+        console.log(game_object);
         var type,
             pos,
             ao_loc,
             ao_loc_type;
         
-        type = game_object.obj_type; // agent, object, container
+        type = game_object.type[0]; // agent, object, container (type[0] is a workaround)
         id = game_object.id;
         
         pos = game_object.pos();
@@ -245,7 +252,12 @@ var state = ( function () {
         ao_loc = ao_map[pos];
         
         if (ao_loc === undefined) { // if pos not in ao_map
-            ao_map[pos] = { type: [game_object.id] } // add new obj
+            ao_loc = {};
+            ao_loc[type] = [game_object.id];
+            ao_map[pos] = ao_loc // add new obj
+            console.log('ao_loc is new');
+            console.log(pos);
+            console.log(ao_map[pos]);
         } else {
             ao_loc_type = ao_loc[type]; // get existing obj
             if (ao_loc_type === undefined) { // if there is no key for type
