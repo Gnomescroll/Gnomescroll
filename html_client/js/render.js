@@ -127,6 +127,7 @@ var render = ( function () {
     
     colorCanvas = function (canvas, color) {
         var ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = colorMap[color];
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
@@ -247,8 +248,11 @@ var render = ( function () {
         
     }    
     
-    var canvasContext = function () {
-        return canvas.getContext('2d');
+    var canvasContext = function (c) {
+        if (c === undefined) {
+            c = canvas;
+        }
+        return c.getContext('2d');
     }
     
     var colorTile = function (ctx, cell_num, tile_num, color) {
@@ -303,7 +307,7 @@ var render = ( function () {
                 
         ctx.putImageData(imageData, x, y);
         
-        //colorCanvas(staging_canvas, "transparent");
+        colorCanvas(staging_canvas, "transparent");
     }
     
     

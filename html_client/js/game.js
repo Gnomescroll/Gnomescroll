@@ -132,9 +132,12 @@ var renderState = {
                     });
                 }
                 
-                if (block == 1) block = 7;
+                if (block == 1) {block = 7; color="blue"; console.log(color);}
                 
-                render.colorTile(ctx, cell_num, block, 'red');
+                if (block == 0) {block = 4; color="red";}
+                //console.log('block: '+block);
+                
+                render.colorTile(ctx, cell_num, block, color);
                 cell_num += 1;
             }
         }

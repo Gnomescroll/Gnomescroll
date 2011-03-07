@@ -24,7 +24,7 @@ var admin, info, action;
 
 admin = ( function () {
 
-    var type = 'info',
+    var type = 'admin',
         create_agent,
         create_item,
         create_object,
@@ -100,9 +100,12 @@ admin = ( function () {
     
         if (x.constructor.name === 'Array') {
             position = x;
-            value = y;
+            if (position.length < 4 && value !== undefined) {
+                value = y;
+                position.splice(0,0,value);
+            }
         } else {
-            position = [x, y, z];
+            position = [value, x, y, z];
         }
 
 		var data = { 

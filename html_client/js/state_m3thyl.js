@@ -260,6 +260,7 @@ var state = ( function () {
     
     public_ = {
                 init: init,
+                contains: contains,
                 setLocation: setLocation,
                 cleanLocation: cleanLocation,
                 gameObjectKnown: gameObjectKnown,
