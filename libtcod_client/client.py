@@ -5,8 +5,8 @@ from incoming.terrain_map_handler import Terrain_map_handler
 from incoming.agent_handler import Agent_handler
 from incoming.object_handler import Object_handler
 
-from state.agents import Agents
-from state.objects import Objects
+#from state.agents import Agents
+#from state.objects import Objects
 from state.terrain_map import Terrain_map
 from state.globals import Globals
 
@@ -49,18 +49,31 @@ class Client:
         #load objects
         self.info.get_object_list()
     
-    def set_agent(self, agent):
-        self.agents[agent['id']] = agent
+    def update_agents(self):
+        """updates self.agents based on changes to self.agent_handler.Agents"""
+        """Agent_Handler should provide a dict, instead of fiddling with the same
+           3 times before it's used."""
+        #TODO: deletion
+        for agent in self.agent_handler.agents:
+            self.agents[agent['id']] = agent
+    
+    def move_agent(self, agent_id, x, y):
+        """adds x, y, to agent's current x, y"""
+        if agent_id in self.agents.keys():
+            self.agent.move_0(agent_id, x, y, 0)
+        else:
+            raise Exception("Can't move what I can't see.")
+        
 
-    def get_agent(self, agent_id):
-        return self.agents[agent_id]
-        
-    def set_object(self, obj):
-        self.objects[obj['id']] = obj
-        
-    def get_object(self, object_id):
-        return self.objects[object_id]
-        
+    def update_objects(self):
+        #TODO: deletion
+        for object in self.object_handler.objects:
+            self.objects[object['id']] = object
+    
+    def update(self):
+        self.update_agents()
+        self.update_objects()
+            
     def share_state(self):
         print "Share State Start"
         not_singletons = []
@@ -78,13 +91,13 @@ if __name__ == '__main__':
     import time
     client = Client(0) #world _id = 0
     client.setup()
-    #Do something!
     #debugging
     while 1:
         time.sleep(1)
         client.info.get_map(0)
         client.info.get_agent_list()
         client.info.get_object_list()
+        client.update()
         time.sleep(5)
         print "Current Map Size: %s" %client.terrain_map.x_size
         print '\n'

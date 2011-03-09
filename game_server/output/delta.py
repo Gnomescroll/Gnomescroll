@@ -51,7 +51,7 @@ class Delta: #non-blocking client notification
     #agent notifications
 	def agent_position_change(self, agent_id, position, player_id=0): #called when agent changes position
 		msg = {}
-		msg['msg'] = 'agent_position'
+		msg['msg'] = 'agent_position_change'
 		msg['id'] = agent_id
 		msg['position'] = position #[0, x, y, z]
 		self.delta_out_q.put(msg)
