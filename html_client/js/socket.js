@@ -12,10 +12,15 @@ socket = ( function () {
         
         var socket = new io.Socket(node_server,
                                   {'port': node_port});
-
+        
+        var started = false;
+        
         socket.on('connect', function () {
             if (debug) console.log('connect');
-            
+            if (!started) {
+                game.init2();
+                started = true;
+            }
         });
 
         socket.on('message', function (msg) {

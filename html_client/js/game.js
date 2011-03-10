@@ -34,16 +34,16 @@ game = {
     init: // load z_level +/- 1. Load agents, objects. init render object.
     function () {
         socket.init();
-        
+    },
+    
+    init2: function () {
         var wait_func = function () {
+            console.log('wait_func');
             state.init();
             input.init();
             render.init();
         }
-        setTimeout(wait_func(), 1500); // wait half a sec (does this work?)
-        //state.init();
-        //input.init();
-        //render.init();
+        setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
     },
     
     delay: 300, // ms delay for input check
@@ -145,7 +145,7 @@ var renderState = {
                     });
                 }
                 
-                if (block == 1) {block = 3; color="blue";}
+                if (block == 1) {block = 3; color="blue"; console.log(color);}
                 
                 if (block == 0) {block = 7; color="red";}
                 //console.log('block: '+block);
@@ -195,11 +195,13 @@ processInput = function (key) {
             
         case 'c':                   // set map solid
             console.log('set map');
-            admin.set_map(selected_agent.pos(), 1);
+            //admin.set_map(selected_agent.pos(), 1);
+            admin.set_map([5, 5, 5], 1);
             break;
             
         case 'x':                   // set map empty
-            admin.set_map(selected_agent.pos(), 0);
+            //admin.set_map(selected_agent.pos(), 0);
+            admin.set_map([5, 5, 5], 0);
             break;
             
         case 'p':                   // create agent

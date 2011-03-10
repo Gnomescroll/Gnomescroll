@@ -23,7 +23,7 @@ process.info = {};
     
 // world_id, client_id, x_size, y_size, z_level, map
 process.info.terrain_map = function (msg) {
-        
+        //console.log(msg);
     if (!validate.terrain_map(msg)) return;
     
     msg.x_size = parseInt(msg.x_size);
@@ -323,12 +323,15 @@ process.delta.object_delete = function (msg) {
 
 process.delta.set_terrain_map = function (msg) {
     
+    console.log('delta set_terrain_map');
     console.log(msg);
     
     //if (!validate.set_terrain_map(msg)) return;
     
     if (state.contains(GameObject.pos.apply(msg))) {
         state.updateBlock(msg);
+        // this is naive and will break:
+        render.colorTile(render.canvasContext(), render.grid_cells*msg.y+msg.x, msg.value, "black");
     }
 
 };
