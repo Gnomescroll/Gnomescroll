@@ -1,12 +1,16 @@
 tiles_dat = [
 
+
+	#empty things
 	{
+			'id' : '000',
 			'name' : 'unknown_tile',
 			'till' : 0,
 			'dig' : 0
 	},
 
 	{
+			'id' : '001',
 			'name' : "empty_block",
 			'blocking' : 0,
 			'pourous' : 1,
@@ -16,8 +20,9 @@ tiles_dat = [
 			'dig' : 0
 	},
 
-
+	# soils
 	{
+			'id' : '100',
 			'name' : "generic_soil",
 			'blocking' : 0,
 			'pourous' : 0,
@@ -31,9 +36,42 @@ tiles_dat = [
 			'dig_into' : 'empty_block'
 	},
 
+	{
+			'id' : '101',
+			'name' : "generic_tilled_soil",
+			'blocking' : 0,
+			'pourous' : 0,
+			'vertical' : 1,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 0
+			#'dig_produces' : [],
+			#'dig_into' : 'empty_block'
+	},
+
+	# walls
+	{
+			'id' : '200',
+			'name' : "generic_wall",
+			'blocking' : 1,
+			'pourous' : 0,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'generic_floor',
+			
+			'buildable' : 1,
+			'build_requires' : []
+	},
 
 	{
-			'name' : "generic_wall",
+			'id' : '201',
+			'name' : "clay_brick_wall",
 			'blocking' : 0,
 			'pourous' : 0,
 			
@@ -42,11 +80,15 @@ tiles_dat = [
 			
 			'dig' : 1,
 			'dig_produces' : [],
-			'dig_into' : 'generic_floor'
+			'dig_into' : 'generic_floor',
+			
+			'buildable' : 1,
+			'build_requires' : ['clay_brick']
 	},
-
-
+	
+	# floors
 	{
+			'id' : '300',
 			'name' : "generic_floor",
 			'blocking' : 1, #can agents walk through it
 			'pourous' : 1, #can fluids walk through it
@@ -61,8 +103,10 @@ tiles_dat = [
 			#'dig_into' : 'empty_block',
 	},
 
-
+	#blocks
 	{
+	
+			'id' : '400',
 			'name'     : 'generic_stone_block',
 			'blocks' : 1,
 			'porous'   : 0,
@@ -85,21 +129,6 @@ tiles_dat = [
 			#'dig_produces' : [],
 			#'dig_into' : 'generic_soil'
 	},
-	
-	{
-			'name' : "generic_tilled_soil",
-			'blocking' : 0,
-			'pourous' : 0,
-			'vertical' : 1,
-			
-			#actions
-			'till' : 0,
-			
-			'dig' : 0
-			#'dig_produces' : [],
-			#'dig_into' : 'empty_block'
-	},
-
 
 	{
 			'name' : "generic_wood_block",
@@ -110,6 +139,20 @@ tiles_dat = [
 			#actions
 			'till' : 0,
 			'dig' : 0
+	},
+	
+	{
+			'name' : "generic_clay_block",
+			'blocking' : 1,
+			'pourous' : 0,
+			'vertical' : 1,
+			
+			#actions
+			'till' : 0,
+
+			'dig': 1,
+			'dig_produces' : [ (1,1, 'clay') ],
+			'dig_into' : 'generic_floor'
 	}		
 ]
 
@@ -292,8 +335,24 @@ items_dat = {
 		'edible' : 1,
 		'food_value' : 100,
 		'status_effects' : []
-	}
-	
+	},
+
+## building materials
+
+	'clay' :
+	{
+		'template_params' : ['id','position', 'version', 'world_id' ],
+		'template' : 
+		{
+			'name' : "clay",
+			'type' : ["item"],
+			'material' : 'generic_material',
+			'flammable' : 0
+		},
+		'weight' : 5,
+		'value' : 10,
+		'edible' : 0
+	}	
 }
 
 class Dat:
@@ -312,13 +371,21 @@ class Dat:
 	#crop helper
 
 	def _init_tile(self):
-		id = 0
+		id = 1000
 		for x in tiles_dat:
-			x['id'] = id
-			self.tiles_by_value[id] = x
-			self.tiles_by_name[x['name']] = x
-			self.tile_name_value_pairs.append((id, x['name']))
-			id = id + 1
+			if not 'id' in x.keys():
+				print "Tile does not have id defined: " + x['name']
+			
+				x['id'] = id
+				self.tiles_by_value[id] = x
+				self.tiles_by_name[x['name']] = x
+				self.tile_name_value_pairs.append((id, x['name']))
+				id = id + 1
+			else:
+				id_ = x['id']
+				self.tiles_by_value[id_] = x
+				self.tiles_by_name[x['name']] = x
+				self.tile_name_value_pairs.append((id_, x['name']))				
 		#print "!!! START !!!"
 		#print str(self.tiles_by_name)
 		#print "!!! MIDDLE !!!"

@@ -21,7 +21,6 @@ admin.create_agent(1,1,1)
 admin.create_object(1,1,1,'crop')
 agent.harvest_crop(1,2)
 
-
 admin.create_agent(1,1,1)
 admin.create_object(0,0,1, 'workshop', 'oven') 
 admin.create_object(1,1,1,'item', 'generic_food')
