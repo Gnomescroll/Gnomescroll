@@ -330,8 +330,7 @@ process.delta.set_terrain_map = function (msg) {
     
     if (state.contains(GameObject.pos.apply(msg))) {
         state.updateBlock(msg);
-        // this is naive and will break:
-        render.colorTile(render.canvasContext(), render.grid_cells*msg.y+msg.x, msg.value, "black");
+        renderState.updateTile(msg);
     }
 
 };

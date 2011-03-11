@@ -38,7 +38,13 @@ socket = ( function () {
 
         socket.on('disconnect', function () {
             if (debug) console.log('disconnect');
+            socket.connect();
         });
+        
+        socket.on('connect_failed', function () {
+            if (debug) console.log('connection failed. reconnecting...');
+            socket.connect();
+        })
 
         socket.connect();	
         

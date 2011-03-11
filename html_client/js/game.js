@@ -156,6 +156,29 @@ var renderState = {
         }
         
     },
+    
+    updateTile: function(msg) {
+        
+        if (typeof msg !== 'object') return false;
+        
+        var render_dim = Math.sqrt(render.cells.length),
+            max_x = Math.min(this.view_x_offset + render_dim, state.map_width),
+            max_y = Math.min(this.view_y_offset + render_dim, state.map_height),
+            color = "red",
+            cell_num = render_dim*msg.y + msg.x;
+        
+        if (this.view_x_offset < msg.x < max_x) {
+            if (this.view_y_offset < msg.y < max_y) {
+                if (msg.z == state.current_z_lvl) {
+                    console.log('update tile');
+                    render.colorTile(render.canvasContext(), cell_num, msg.value, color);
+                }
+            }
+        }
+            
+        return true;
+    },
+    
 };
 
 // temporary, just to keep processInput action calls from throwing
