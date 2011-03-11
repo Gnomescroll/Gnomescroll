@@ -3,14 +3,17 @@ tiles_dat = [
 
 	#empty things
 	{
-			'id' : '000',
+			'id' : -0001,
 			'name' : 'unknown_tile',
+			'blocking' : 0,
+			'pourous' : 1,
+	
 			'till' : 0,
 			'dig' : 0
 	},
 
 	{
-			'id' : '001',
+			'id' : 0001,
 			'name' : "empty_block",
 			'blocking' : 0,
 			'pourous' : 1,
@@ -22,7 +25,7 @@ tiles_dat = [
 
 	# soils
 	{
-			'id' : '100',
+			'id' : 0100,
 			'name' : "generic_soil",
 			'blocking' : 0,
 			'pourous' : 0,
@@ -37,7 +40,7 @@ tiles_dat = [
 	},
 
 	{
-			'id' : '101',
+			'id' : 0101,
 			'name' : "generic_tilled_soil",
 			'blocking' : 0,
 			'pourous' : 0,
@@ -53,7 +56,7 @@ tiles_dat = [
 
 	# walls
 	{
-			'id' : '200',
+			'id' : 0200,
 			'name' : "generic_wall",
 			'blocking' : 1,
 			'pourous' : 0,
@@ -70,7 +73,7 @@ tiles_dat = [
 	},
 
 	{
-			'id' : '201',
+			'id' : 0201,
 			'name' : "clay_brick_wall",
 			'blocking' : 0,
 			'pourous' : 0,
@@ -88,7 +91,7 @@ tiles_dat = [
 	
 	# floors
 	{
-			'id' : '300',
+			'id' : 0300,
 			'name' : "generic_floor",
 			'blocking' : 1, #can agents walk through it
 			'pourous' : 1, #can fluids walk through it
@@ -106,9 +109,9 @@ tiles_dat = [
 	#blocks
 	{
 	
-			'id' : '400',
+			'id' : 0400,
 			'name'     : 'generic_stone_block',
-			'blocks' : 1,
+			'blocking' : 1,
 			'porous'   : 0,
 			'vertical'  : 1,
 			
@@ -120,7 +123,7 @@ tiles_dat = [
 
 	{
 			'name'     : 'generic_soil_block',
-			'blocks' : 1,
+			'blocking' : 1,
 			'porous'   : 0,
 			'vertical'  : 1,
 			
@@ -350,7 +353,22 @@ items_dat = {
 			'flammable' : 0
 		},
 		'weight' : 5,
-		'value' : 10,
+		'value' : 3,
+		'edible' : 0
+	},
+
+	'clay_brick' :
+	{
+		'template_params' : ['id','position', 'version', 'world_id' ],
+		'template' : 
+		{
+			'name' : "clay_brick",
+			'type' : ["item"],
+			'material' : 'generic_material',
+			'flammable' : 0
+		},
+		'weight' : 5,
+		'value' : 25,
 		'edible' : 0
 	}	
 }
@@ -439,14 +457,14 @@ class Dat:
 		
 	def get_tile_by_name(self, name):
 		if name not in self.tiles_by_name.keys():
-			print "Tile Does not Exist"
+			print "Tile Does not Exist: " + str(name)
 			return self.tiles_by_name['unknown_tile']
 		else:
 			return self.tiles_by_name[name]
 	
 	def get_tile_by_value(self, value):
 		if value not in self.tiles_by_value.keys():
-			print "Tile Does not Exist"
+			print "Tile Does not Exist: " + str(value)
 			return self.tiles_by_name['unknown_tile']
 		else:
 			return self.tiles_by_value[value]

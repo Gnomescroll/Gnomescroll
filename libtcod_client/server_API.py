@@ -210,3 +210,15 @@ class Agent_commands:
 		msg['agent_id'] = agent_id
 		msg['recipe'] = recipe
 		self.send_message(msg)	
+
+	# required = ['position, agent_id', 'wall_type']
+	# optional = []		
+	def construct_wall(self, agent_id, x, y, z, wall_type = 'generic_wall'):
+		msg = {}
+		msg['type'] = 'agent'
+		msg['cmd'] = 'construct_wall'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		msg['position'] = (0, x, y, z)
+		msg['wall_type'] = wall_type
+		self.send_message(msg)			

@@ -222,6 +222,46 @@ class Agent:
 		for item_name in recipe_d['product']:
 			self.objects.create([0, x, y, z], 'item', item_name)
 
+	#place items on a square, then attempt command. wall_type is the type of tile to build
+	def construct_wall(self, position, wall_type):
+		(type_a, x_a, y_a, z_a) = self.position
+		(type_b, x_b, y_b, z_b) = position
+		if not -1 <= x_a - x_b <=1:
+			print "Agent construct_wall Error: Agent is too far away!"
+			return
+		if not -1 <= y_a - y_b <=1:
+			print "Agent construct_wall Error: Agent is too far away!"
+			return
+		if not z_a == z_b:
+			print "Agent construct_wall Error: Agent is on wrong z-level!"
+			return	
+		#check to see if target square is blocked
+		tile = self.dat.get_tile_by_value(self.world_map.get(x_b, y_b, z_b))
+		if tile['blocking'] == 1:
+			print "Agent construct_wall Error: square is already occupied"
+		wall_tile = self.dat.get_tile_by_name(wall_type)
+		if not 'buildable' in wall_tile.keys() or wall_tile['buildable'] == 0: #should short-circuit evaluation?
+			print "Agent construct_wall Error: this tile cannot be build"
+			return
+		#check material requirements
+		requires = wall_tile['build_requires']	
+		objects = self.objects.get_all(x_b, y_b, z_b, 'item')
+		#print str(objects)
+		list = []
+		for req in requires:
+			for obj in objects:
+				if obj['name'] == req and obj['id'] not in list:
+					list.append(obj['id'])
+		#eventually check to see if there are other items on the square
+		if len(list) != len(requires):
+			print "Agent construct_wall Error: required items are missing"
+			#print str(list)
+			#print str(requires)
+			return
+		for obj_id in list:
+			self.objects.delete(obj_id)
+		self.world_map.set(x_b, y_b, z_b, wall_tile['id'])
+		
 	##internal commands	
 	def id(self):
 		return self.__dict__['id']
