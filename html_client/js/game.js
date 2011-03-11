@@ -155,6 +155,9 @@ var renderState = {
             }
         }
         
+        // now draw cursor
+        this.updateTile(cursor);
+        
     },
     
     updateTile: function(msg) {
@@ -188,14 +191,40 @@ var renderState = {
         console.log(pos);
         
         var cell_num = this.posInView(pos),
-            color = 'red';
+            color = 'red',
+            ao_types = ['agent', 'object', 'container'];
         
         if (cell_num !== null) {
-            console.log(cell_num);
-            console.log(state.levels[pos.z]);
-            console.log(state.levels[pos.z][pos.x]);
             var block = state.levels[pos.z][pos.x][pos.y];
-            if (block <= 0) block = 7;
+            
+            if (block <= 0) { // draw block in z_lvl below (just drawing a black square for now)
+                //block = state.levels[z-1][x_][y_];
+                block = 0;
+                color = 'black';
+            }
+            
+            ao = [pos.x, pos.y, pos.z].toString();
+            ao_loc = state.ao_map[ao];
+            if (ao_loc !== undefined) {                    
+                
+                console.log(ao);
+                $.each(ao_types, function (i, type) {
+                    var ao_type = ao_loc[type];
+                    console.log(ao_type);
+                    if (ao_type !== undefined && ao_type.length > 0) {
+                        //block = ao_type[0].tile_num; // draw the first game_object in the first ao_types to exist
+                        color = 'green';
+                        if (type == 'agent') { block = 17;}
+                        else {block = 20;}
+                        console.log('agent render');
+                        return false;
+                    }
+                });
+            }
+            
+            if (block == 1) {block = 3; color="blue";}
+            
+            if (block == 0) {block = 7; color="red";}
             
             render.colorTile(render.canvasContext(), cell_num, block, color);
         }
