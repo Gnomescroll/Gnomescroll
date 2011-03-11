@@ -30,6 +30,8 @@ var state = ( function () {
     var setLocation,
         cleanLocation;
     
+    var locationEmpty;
+    
     var init,
         public_;
     
@@ -271,6 +273,37 @@ var state = ( function () {
         }
     };
     
+    locationEmpty = function (loc) {
+        
+        var x, y, z,
+            ao_loc,
+            empty = true;
+        
+        if (loc.constructor.name === 'Array' && loc.length >= 3) {
+            x = loc[0];
+            y = loc[1];
+            z = loc[2];
+        } else if (typeof loc === 'object') {
+            x = loc.x;
+            y = loc.y;
+            z = loc.z;
+        } else {
+            return true;
+        }
+        
+        ao_loc = ao_map[[x,y,z].toString()]
+        if (ao_loc !== undefined) {
+            $.each(ao_loc, function (key, val) {
+                if (key in gameObjectTypeMap && val.constructor.name === 'Array' && val.length > 0) {
+                    empty = false;
+                    return false;
+                }
+            });
+        }
+        
+        return empty;
+    };
+    
     public_ = {
                 init: init,
                 contains: contains,
@@ -286,6 +319,7 @@ var state = ( function () {
                 current_z_lvl: current_z_lvl,
                 map_width: map_width,
                 map_height: map_height,
+                locationEmpty: locationEmpty,
               };
               
     return public_;

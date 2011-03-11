@@ -171,7 +171,9 @@ var renderState = {
             if (this.view_y_offset < msg.y < max_y) {
                 if (msg.z == state.current_z_lvl) {
                     console.log('update tile');
-                    render.colorTile(render.canvasContext(), cell_num, msg.value, color);
+                    if (msg.type === 'cursor' || state.locationEmpty(msg)) {
+                        render.colorTile(render.canvasContext(), cell_num, msg.value, color);
+                    }
                 }
             }
         }
@@ -188,6 +190,14 @@ var selected_agent = { x: 15,
                        id:0,
                        pos: function() { return [this.x, this.y, this.z]; } 
                      };
+                     
+var cursor = { x: 15,
+               y: 12,
+               z: 5,
+               value: 176,
+               type: 'cursor',
+               pos: function() { return [this.x, this.y, this.z]; },
+             };
 
 processInput = function (key) {
     
@@ -201,38 +211,46 @@ processInput = function (key) {
             return false;
             
         case 'LEFT':
-            action.move(selected_agent.id, -1, 0, 0);
+            //action.move(selected_agent.id, -1, 0, 0);
+            cursor.x += -1;
+            renderState.updateTile(cursor);
             break;
             
         case 'RIGHT':
-            action.move(selected_agent.id, 1, 0, 0);
+            //action.move(selected_agent.id, 1, 0, 0);
+            cursor.x += 1;
+            renderState.updateTile(cursor);
             break;
             
         case 'UP':
-            action.move(selected_agent.id, 0, 1, 0);
+            //action.move(selected_agent.id, 0, 1, 0);
+            cursor.y += -1;
+            renderState.updateTile(cursor);
             break;
             
         case 'DOWN':
-            action.move(selected_agent.id, 0, -1, 0);
+            //action.move(selected_agent.id, 0, -1, 0);
+            cursor.y += 1;
+            renderState.updateTile(cursor);
             break;
             
         case 'c':                   // set map solid
             console.log('set map');
             //admin.set_map(selected_agent.pos(), 1);
-            admin.set_map([5, 5, 5], 1);
+            admin.set_map(cursor.pos(), 1);
             break;
             
         case 'x':                   // set map empty
             //admin.set_map(selected_agent.pos(), 0);
-            admin.set_map([5, 5, 5], 0);
+            admin.set_map(cursor.pos(), 0);
             break;
             
         case 'p':                   // create agent
-            admin.create_agent(selected_agent.pos());
+            admin.create_agent(cursor.pos());
             break;
             
         case 't':
-            admin.create_object(selected_agent.pos());
+            admin.create_object(cursor.pos());
             break;
             
         case 'g':
