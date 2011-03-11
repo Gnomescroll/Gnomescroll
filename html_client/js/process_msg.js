@@ -224,7 +224,7 @@ process.delta.agent_create = function (msg) {
     msg.z = msg.position[3];
     msg.loc_type = msg.position[0];
     delete msg.position;
-    
+    msg.type = ['agent'];
     if (state.contains(GameObject.pos.apply(msg))) {
         var agent = Agent.create(msg);
         agent.toState();

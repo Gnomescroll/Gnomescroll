@@ -124,6 +124,8 @@ var renderState = {
                     block = 0;
                     color = 'black';
                 }
+                if (block == 1) {block = 8; color="red";}
+                if (block == 0) {block = 7; color="red";}
                 
                 ao = [x_, y_, z].toString();
                 ao_loc = state.ao_map[ao];
@@ -136,19 +138,14 @@ var renderState = {
                         if (ao_type !== undefined && ao_type.length > 0) {
                             //block = ao_type[0].tile_num; // draw the first game_object in the first ao_types to exist
                             color = 'green';
-                            if (type == 'agent') { block = 17;}
-                            else {block = 20;}
+                            if (type == 'agent') { block = 1;}
+                            else {block = 15;}
                             console.log('agent render');
                             return false;
                         }
                     });
                 }
                 
-                if (block == 1) {block = 3; color="blue"; console.log(color);}
-                
-                if (block == 0) {block = 7; color="red";}
-                //console.log('block: '+block);
-                if (color == 'green') console.log(color);
                 cell_num = render_dim*y_ + x_;
                 render.colorTile(ctx, cell_num, block, color);
             }
@@ -168,9 +165,16 @@ var renderState = {
         
         if (cell_num !== null) {
             console.log('update tile');
-            if (msg.type === 'cursor' || state.locationEmpty(msg)) {
+            
+            if (msg.type === 'cursor') {
+                render.colorTile(render.canvasContext(), cell_num, msg.value, color);
+            } else if (state.locationEmpty(msg) && GameObject.pos.apply(msg).toString() !== cursor.pos().toString()) {
+                console.log(state.locationEmpty(msg));
+                console.log(GameObject.pos.apply(msg));
+                console.log(cursor.pos());
                 render.colorTile(render.canvasContext(), cell_num, msg.value, color);
             }
+            
         }
             
         return true;
@@ -201,6 +205,8 @@ var renderState = {
                 block = 0;
                 color = 'black';
             }
+            if (block == 1) {block = 8; color="red";}
+            if (block == 0) {block = 7; color="red";}
             
             ao = [pos.x, pos.y, pos.z].toString();
             ao_loc = state.ao_map[ao];
@@ -213,17 +219,13 @@ var renderState = {
                     if (ao_type !== undefined && ao_type.length > 0) {
                         //block = ao_type[0].tile_num; // draw the first game_object in the first ao_types to exist
                         color = 'green';
-                        if (type == 'agent') { block = 17;}
-                        else {block = 20;}
+                        if (type == 'agent') { block = 1;}
+                        else {block = 15;}
                         console.log('agent render');
                         return false;
                     }
                 });
             }
-            
-            if (block == 1) {block = 3; color="blue";}
-            
-            if (block == 0) {block = 7; color="red";}
             
             render.colorTile(render.canvasContext(), cell_num, block, color);
         }

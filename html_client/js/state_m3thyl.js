@@ -137,12 +137,12 @@ var state = ( function () {
         console.log('updateBlock, ');
         var x_;
         
-        x_ = contains(block.x, block.y, block.z);
+        x_ = contains([block.x, block.y, block.z]);
         if (x_ === false) return false;
         
-        x_[data.y] = data.value
+        x_[block.y] = block.value
         console.log('value:');
-        console.log(x_[data.y]);
+        console.log(x_[block.y]);
         return true;
     };
     
