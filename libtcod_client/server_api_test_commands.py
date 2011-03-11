@@ -34,3 +34,10 @@ admin.create_agent(1,1,1)
 admin.create_agent(1,2,1)
 agent.attack(1,2)
 
+admin.create_agent(1,1,1)
+agent.construct_wall(1, 2, 1, 1)
+admin.create_object(1, 2, 1, 'item', 'clay_brick')
+agent.construct_wall(1, 1, 2, 1, 'clay_brick_wall')
+
+
+

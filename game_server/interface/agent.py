@@ -251,6 +251,8 @@ class Agent:
 		requires = wall_tile['build_requires']
 		
 		objects = self.objects.get_all(x_b, y_b, z_b, 'item')
+		print str(objects)
+		
 		list = []
 		
 		for req in requires:
@@ -261,11 +263,13 @@ class Agent:
 		#eventually check to see if there are other items on the square
 		if len(list) != len(requires):
 			print "Agent construct_wall Error: required items are missing"
+			print str(list)
+			print str(requires)
 			return
 
 		for obj_id in list:
 			self.objects.delete(obj_id)
-		self.world_map.set(x_b, y_b, z_b)
+		self.world_map.set(x_b, y_b, z_b, wall_tile['id'])
 		
 	##internal commands	
 	def id(self):

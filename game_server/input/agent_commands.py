@@ -23,7 +23,7 @@ class Agent_commands:
 
 	# required = ['position, agent_id', 'wall_type']
 	# optional = []		
-	def construct_wall(self, agent_id, position, wall_type):
+	def construct_wall(self, agent_id, position, wall_type, **msg):
 		Agent(agent_id).construct_wall(position, wall_type)
 		pass
 
