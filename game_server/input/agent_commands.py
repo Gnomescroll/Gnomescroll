@@ -21,7 +21,8 @@ class Agent_commands:
 		
 		pass
 		
-	def construct_wall(self, **msg):
+	def construct_wall(self, agent_id, position, wall_type)
+		Agent(agent_id).construct_wall(position, wall_type)
 		pass
 
 

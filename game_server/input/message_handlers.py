@@ -31,6 +31,7 @@ class Message_handlers:
 		#'store_item_in_container' : self.agent_actions.store_item_in_container,
 		#'remove_item_from_container' : self.agent_actions.remove_item_from_container
 		'attack' : self.agent_commands.attack,
+		'construct_wall' : self.agent_commands.construct_wall,
 		}
 		
 		self.admin_handler = {
