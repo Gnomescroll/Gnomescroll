@@ -57,10 +57,10 @@ class Client:
         for agent in self.agent_handler.agents:
             self.agents[agent['id']] = agent
     
-    def move_agent(self, agent_id, x, y):
+    def move_agent(self, agent_id, x, y, z):
         """adds x, y, to agent's current x, y"""
         if agent_id in self.agents.keys():
-            self.agent.move_0(agent_id, x, y, 0)
+            self.agent.move_0(agent_id, x, y, z)
         else:
             raise Exception("Can't move what I can't see.")
         

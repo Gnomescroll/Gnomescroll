@@ -16,7 +16,7 @@ class Admin_commands:
 	# required = ['position']
 	# optional = ['player_id']
 	## command for creating a new agent at position (x,y,z)
-	def create_agent(self, x, y, z=0, player_id = 0):
+	def create_agent(self, x, y, z, player_id = 0):
 		#create msg to be sent to server
 		msg = {}
 		#specify command type and command
@@ -29,7 +29,7 @@ class Admin_commands:
 		#send message to server
 		self.send_message(msg)
 
-	def create_item(self, x, y, z=0):
+	def create_item(self, x, y, z):
 		msg = {}
 		msg['type'] = 'admin'
 		msg['cmd'] = 'create_item'
@@ -73,7 +73,7 @@ class Info_commands:
 
 	#required = ['z', 'client_id', 'world_id']
 	#optional = ['z']
-	def get_map(self, world_id = 0, z = 0):
+	def get_map(self, world_id=0, z=0):
 		msg = {}	
 		msg['type'] = 'info'
 		msg['cmd'] = 'get_map'
@@ -136,7 +136,7 @@ class Agent_commands:
 
 	# required = ['dp, agent_id']
 	# optional = ['player_id']
-	def move_0(self, agent_id, dx, dy, dz=0):
+	def move_0(self, agent_id, dx, dy, dz):
 		msg = {}	
 		msg['type'] = 'agent'
 		msg['cmd'] = 'move_0'

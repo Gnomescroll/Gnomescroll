@@ -157,7 +157,7 @@ fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 message_log.add("Welcome to dc_mmo")
 
 #get updated map, object, and agent data
-if client.server_listener.ready == 1:
+if client.listener.ready == 1:
 	print '***'
 	print "Redis Ready"
 	print '***'
@@ -165,6 +165,7 @@ if client.server_listener.ready == 1:
 	client.info.get_map(0)
 	client.info.get_agent_list()
 	client.info.get_object_list()
+	client.update()
 	time.sleep(1)
 else:
 	print "Redis Not Ready"
