@@ -94,7 +94,7 @@ var renderState = {
         var x_, y, y_, 
             block, 
             ao, ao_loc,
-            cell_num = 0,
+            cell_num,
             render_dim = Math.sqrt(render.cells.length),
             max_x_ = Math.min(this.view_x_offset + render_dim, state.map_width),
             max_y_ = Math.min(this.view_y_offset + render_dim, state.map_height);
@@ -114,7 +114,6 @@ var renderState = {
             
            // console.log(y);
             for (y_ = this.view_y_offset; y_ < max_y_; y_++) {
-                
               //  console.log('inner y_ loop');
                // console.log(cell_num);
                 block = y[y_];
@@ -150,8 +149,8 @@ var renderState = {
                 if (block == 0) {block = 7; color="red";}
                 //console.log('block: '+block);
                 if (color == 'green') console.log(color);
+                cell_num = render_dim*y_ + x_;
                 render.colorTile(ctx, cell_num, block, color);
-                cell_num += 1;
             }
         }
         
