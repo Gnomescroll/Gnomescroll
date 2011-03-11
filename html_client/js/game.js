@@ -169,9 +169,6 @@ var renderState = {
             if (msg.type === 'cursor') {
                 render.colorTile(render.canvasContext(), cell_num, msg.value, color);
             } else if (state.locationEmpty(msg) && GameObject.pos.apply(msg).toString() !== cursor.pos().toString()) {
-                console.log(state.locationEmpty(msg));
-                console.log(GameObject.pos.apply(msg));
-                console.log(cursor.pos());
                 render.colorTile(render.canvasContext(), cell_num, msg.value, color);
             }
             
@@ -302,32 +299,32 @@ processInput = function (key) {
             //action.move(selected_agent.id, -1, 0, 0);
             old = cursor.pos();
             cursor.moveX(-1);
-            renderState.updateTile(cursor);
             renderState.drawLoc(old);
+            renderState.updateTile(cursor);
             break;
             
         case 'RIGHT':
             //action.move(selected_agent.id, 1, 0, 0);
             old = cursor.pos();
             cursor.moveX(1);
-            renderState.updateTile(cursor);
             renderState.drawLoc(old);
+            renderState.updateTile(cursor);
             break;
             
         case 'UP':
             //action.move(selected_agent.id, 0, 1, 0);
             old = cursor.pos();
             cursor.moveY(-1);
-            renderState.updateTile(cursor);
             renderState.drawLoc(old);
+            renderState.updateTile(cursor);
             break;
             
         case 'DOWN':
             //action.move(selected_agent.id, 0, -1, 0);
             old = cursor.pos();
             cursor.moveY(1);
-            renderState.updateTile(cursor);
             renderState.drawLoc(old);
+            renderState.updateTile(cursor);
             break;
             
         case 'c':                   // set map solid
