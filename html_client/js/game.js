@@ -161,26 +161,74 @@ var renderState = {
         
         if (typeof msg !== 'object') return false;
         
-        var render_dim = Math.sqrt(render.cells.length),
-            max_x = Math.min(this.view_x_offset + render_dim, state.map_width),
-            max_y = Math.min(this.view_y_offset + render_dim, state.map_height),
-            color = "red",
-            cell_num = render_dim*msg.y + msg.x;
+        var color = "red",
+            cell_num = this.posInView(msg);
         
-        if (this.view_x_offset < msg.x < max_x) {
-            if (this.view_y_offset < msg.y < max_y) {
-                if (msg.z == state.current_z_lvl) {
-                    console.log('update tile');
-                    if (msg.type === 'cursor' || state.locationEmpty(msg)) {
-                        render.colorTile(render.canvasContext(), cell_num, msg.value, color);
-                    }
-                }
+        if (cell_num !== null) {
+            console.log('update tile');
+            if (msg.type === 'cursor' || state.locationEmpty(msg)) {
+                render.colorTile(render.canvasContext(), cell_num, msg.value, color);
             }
         }
             
         return true;
     },
     
+    drawLoc: function(pos) {
+        console.log('drawLoc');
+        console.log(pos);
+        
+        if (pos.constructor.name === 'Array' && pos.length >= 3) {
+            var pos_ = {}
+            pos_.x = pos[0];
+            pos_.y = pos[1];
+            pos_.z = pos[2];
+            pos = pos_;
+        }
+        console.log(pos);
+        
+        var cell_num = this.posInView(pos),
+            color = 'red';
+        
+        if (cell_num !== null) {
+            console.log(cell_num);
+            console.log(state.levels[pos.z]);
+            console.log(state.levels[pos.z][pos.x]);
+            var block = state.levels[pos.z][pos.x][pos.y];
+            if (block <= 0) block = 7;
+            
+            render.colorTile(render.canvasContext(), cell_num, block, color);
+        }
+        
+    },
+    
+    posInView: function (msg) {
+        
+        if (msg.constructor.name === 'Array' && msg.length >= 3) {
+            var msg_ = {}
+            msg_.x = msg[0];
+            msg_.y = msg[1];
+            msg_.z = msg[2];
+            msg = msg_;
+        }
+        
+        var render_dim = Math.sqrt(render.cells.length),
+            max_x = Math.min(this.view_x_offset + render_dim, state.map_width),
+            max_y = Math.min(this.view_y_offset + render_dim, state.map_height),
+            cell_num = render_dim*msg.y+msg.x;
+        
+        if (this.view_x_offset < msg.x < max_x) {
+            if (this.view_y_offset < msg.y < max_y) {
+                if (msg.z == state.current_z_lvl) {
+                    return cell_num;
+                }
+            }
+        }
+        
+        return null;
+        
+    },
+        
 };
 
 // temporary, just to keep processInput action calls from throwing
@@ -197,6 +245,14 @@ var cursor = { x: 15,
                value: 176,
                type: 'cursor',
                pos: function() { return [this.x, this.y, this.z]; },
+               moveX: function(amt) {
+                        this.x += amt;
+                        this.x = Math.max(0, this.x);
+                    },
+               moveY: function(amt) {
+                        this.y += amt;
+                        this.y = Math.max(0, this.y);
+                    },
              };
 
 processInput = function (key) {
@@ -205,6 +261,8 @@ processInput = function (key) {
     
     console.log(key);
     
+    var old;
+    
     switch (key) {
         
         case 'ESC':               //quit ? remove this
@@ -212,26 +270,34 @@ processInput = function (key) {
             
         case 'LEFT':
             //action.move(selected_agent.id, -1, 0, 0);
-            cursor.x += -1;
+            old = cursor.pos();
+            cursor.moveX(-1);
             renderState.updateTile(cursor);
+            renderState.drawLoc(old);
             break;
             
         case 'RIGHT':
             //action.move(selected_agent.id, 1, 0, 0);
-            cursor.x += 1;
+            old = cursor.pos();
+            cursor.moveX(1);
             renderState.updateTile(cursor);
+            renderState.drawLoc(old);
             break;
             
         case 'UP':
             //action.move(selected_agent.id, 0, 1, 0);
-            cursor.y += -1;
+            old = cursor.pos();
+            cursor.moveY(-1);
             renderState.updateTile(cursor);
+            renderState.drawLoc(old);
             break;
             
         case 'DOWN':
             //action.move(selected_agent.id, 0, -1, 0);
-            cursor.y += 1;
+            old = cursor.pos();
+            cursor.moveY(1);
             renderState.updateTile(cursor);
+            renderState.drawLoc(old);
             break;
             
         case 'c':                   // set map solid
