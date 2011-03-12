@@ -50,7 +50,7 @@ client.setup()			#start server-client communications
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test, gui_redraw_map
 
-	if client.terrain_map.redraw or gui_redraw_map or client.agents_changed:
+	if client.terrain_map.redraw or gui_redraw_map or client.agent_handler.agents_changed:
 		viewer_bot_x = MAP_VIEWER_WIDTH+viewer_start_x
 		viewer_bot_y = MAP_VIEWER_HEIGHT+viewer_start_y
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, viewer_bot_x, viewer_bot_y)
@@ -70,14 +70,14 @@ def render_all():
 			x += 1
 		
 		#draw the characters
-		for index, agent in client.agents.iteritems():
+		for agent in client.agent_handler.agents:
 			position = agent['position']
 			libtcod.console_set_char(map_viewer, position[1], position[2], '@')
 
 		#clear flags
 		client.terrain_map.redraw = False
 		gui_redraw_map = False
-		client.agents_changed = False
+		client.agent_handler.agents_changed = False
 
 		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 
@@ -209,7 +209,6 @@ while not libtcod.console_is_window_closed():
 	key_result = handle_keys()
 	if key_result == "exit":
 		break
-	client.update() ##eventually, get this to auto-update, just like the map?
 	libtcod.console_flush()
 	render_all()
 

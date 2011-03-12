@@ -5,8 +5,6 @@ from incoming.terrain_map_handler import Terrain_map_handler
 from incoming.agent_handler import Agent_handler
 from incoming.object_handler import Object_handler
 
-#from state.agents import Agents
-#from state.objects import Objects
 from state.terrain_map import Terrain_map
 from state.globals import Globals
 
@@ -55,31 +53,37 @@ class Client:
 	def update_agents(self):
 		"""updates self.agents based on changes to self.agent_handler.Agents"""
 		"""Agent_Handler should provide a dict, instead of fiddling with the same
-		3 times before it's used."""
+		3 times before it's used.
 		#TODO: deletion
 		if self.agent_handler.agents_changed:
 			for agent in self.agent_handler.agents:
 				self.agents[agent['id']] = agent
 			self.agent_handler.agents_changed = False
-			self.agents_changed = True
+			self.agents_changed = True"""
     
 
 	def move_agent(self, agent_id, x, y, z):
 		"""adds x, y, to agent's current x, y"""
+		"""
 		if agent_id in self.agents.keys():
 			self.agent.move_0(agent_id, x, y, z)
 		else:
 			raise Exception("Can't move what I can't see.")
+		"""
 
 	def update_objects(self):
+		"""
 		#TODO: deletion
 		for object in self.object_handler.objects:
     			self.objects[object['id']] = object
-    
+    		"""
+
 	def update(self):
+		"""
 		self.update_agents()
 		self.update_objects()
-	
+		"""
+
 	def share_state(self):            
 		print "Share State Start"
 		not_singletons = []
