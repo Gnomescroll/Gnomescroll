@@ -50,7 +50,7 @@ client.setup()			#start server-client communications
 def render_all():
 	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test, gui_redraw_map
 
-	if client.terrain_map.redraw or gui_redraw_map:
+	if client.terrain_map.redraw or gui_redraw_map or client.agents_changed:
 		viewer_bot_x = MAP_VIEWER_WIDTH+viewer_start_x
 		viewer_bot_y = MAP_VIEWER_HEIGHT+viewer_start_y
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, viewer_bot_x, viewer_bot_y)
@@ -68,12 +68,18 @@ def render_all():
 				y += 1
 			y = 0
 			x += 1
-		client.terrain_map.redraw = False
-		gui_redraw_map = False	
-
-	#re-blit the map if the map in case an agent position has changed
-	libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 		
+		#draw the characters
+		for index, agent in client.agents.iteritems():
+			position = agent['position']
+			libtcod.console_set_char(map_viewer, position[1], position[2], '@')
+
+		#clear flags
+		client.terrain_map.redraw = False
+		gui_redraw_map = False
+		client.agents_changed = False
+
+		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
 
 	if message_log.redraw:
 		message_con = message_log.draw()
@@ -93,18 +99,22 @@ def render_all():
 		libtcod.console_print(fps_monitor, 0, 0, fps)	
 		libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0)
 
+	
+
 def handle_keys():
 	global current_menu, main_menu, game_state, message_log, drawing_demo
 	key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED) 
 	key_char = chr(key.c)
-
-	#Can also test: if key_char == 'c': ...
 
 	if key.vk == libtcod.KEY_ESCAPE:
 		return "exit"
 
 	if key_char == 'a':
 		client.admin.set_map(drawing_demo, drawing_demo, 0, 5)
+		drawing_demo += 1
+
+	if key_char == 'c':
+		client.admin.create_agent(drawing_demo+5, drawing_demo, 0)
 		drawing_demo += 1
 
 	if key.vk == libtcod.KEY_UP and key.shift:
@@ -132,8 +142,7 @@ def handle_keys():
 		move_screen(1, 0)
 
 def handle_mouse():
-	#For now, all this function does is see if the mouse is dragging.
-	#Eventually it will handle clicks as well
+	#TODO handle mouse clicks
 	global check_mouse_drag, mouse_x, mouse_y, mouse_on_drag_start, current_mouse
 
         if check_mouse_drag:
@@ -194,18 +203,13 @@ if client.listener.ready == 1:
 else:
 	print "Redis Not Ready"
 
-client.admin.create_agent(2,1,0)
-client.info.get_agent(0)
-
 while not libtcod.console_is_window_closed():
-	#handle mouse
 	current_mouse = libtcod.mouse_get_status();
 	handle_mouse()
-	#handle keyboard
 	key_result = handle_keys()
 	if key_result == "exit":
 		break
-	#redraw whatever is needed
+	client.update() ##eventually, get this to auto-update, just like the map?
 	libtcod.console_flush()
 	render_all()
 
