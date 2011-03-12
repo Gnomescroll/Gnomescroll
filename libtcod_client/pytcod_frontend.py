@@ -107,6 +107,30 @@ def handle_keys():
 		client.admin.set_map(drawing_demo, drawing_demo, 0, 5)
 		drawing_demo += 1
 
+	if key.vk == libtcod.KEY_UP and key.shift:
+        	move_screen(0, -10)
+ 
+	elif key.vk == libtcod.KEY_DOWN and key.shift:
+		move_screen(0, 10)
+
+	elif key.vk == libtcod.KEY_LEFT and key.shift:
+		move_screen(-10, 0)
+
+	elif key.vk == libtcod.KEY_RIGHT and key.shift:
+		move_screen(10, 0)
+
+	elif key.vk == libtcod.KEY_UP:
+		move_screen(0, -1)
+
+	elif key.vk == libtcod.KEY_DOWN:
+		move_screen(0, 1)
+
+	elif key.vk == libtcod.KEY_LEFT:
+		move_screen(-1, 0)
+
+	elif key.vk == libtcod.KEY_RIGHT:
+		move_screen(1, 0)
+
 def handle_mouse():
 	#For now, all this function does is see if the mouse is dragging.
 	#Eventually it will handle clicks as well
