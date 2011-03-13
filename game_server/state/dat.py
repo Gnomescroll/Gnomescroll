@@ -522,8 +522,13 @@ class Dat:
 		else:
 			return self.tiles_by_value[value]
 
-### Rendering Information
+### Info
 
+	def get_tiles(self):
+		return self.tiles_by_value.copy()
+
+### Rendering Information
+	
 	def get_tile_rendering(self):
 		dict = {}
 		default_tile_visual = {
@@ -536,7 +541,9 @@ class Dat:
 
 		for id, x in self.tiles_by_value:
 			if 'visual' in x.keys():
-				dict[id] = x['visual']
+				dict[id] = x['visual'].copy()
+				dict[id]['tile_id'] = id
 			else
 				dict[id] = default_tile_visual
-		return dict.copy()
+				dict[id]['tile_id'] = id
+		return dict

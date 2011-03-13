@@ -13,7 +13,8 @@ class Message_handlers:
 		'get_object' : self.info_commands.get_object,
 		'get_map' : self.info_commands.get_map,
 		'get_agent_list' : self.info_commands.get_agent_list,
-		'get_object_list' : self.info_commands.get_object_list
+		'get_object_list' : self.info_commands.get_object_list,
+		'get_tiles' : self.info_commands.get_tiles
 		}
 		
 		self.agent_handler = {
