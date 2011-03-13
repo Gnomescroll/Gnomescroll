@@ -36,9 +36,9 @@ class Button:
 			libtcod.console_rect(self.button_con, 0, 0, self.width, self.height, True, libtcod.BKGND_SET)
 
 		#Print the button to the button_con, and return that
-		libtcod.console_set_alignment(self.button_con, libtcod.CENTER)
+		libtcod.console_set_alignment(self.button_con, libtcod.LEFT)
 		libtcod.console_set_background_flag(self.button_con, libtcod.BKGND_SET)
-		libtcod.console_print(self.button_con, self.center_x,self.center_y, self.msg)
+		libtcod.console_print(self.button_con, 0, self.center_y, self.msg)
 
 		return self.button_con
 
@@ -118,7 +118,7 @@ class Menu:
 			self.lines.append(["button", Button(11, 1, "Cancel", "x", "Close this menu")])
 
 		else:
-			#ensure that the menu is wide enough for the cancel button and the title
+			#ensure that the menu is wide enough for the title
 			if self.width < len(self.title):
 				self.width = len(self.title)
 			self.separator = '_' * self.width
@@ -143,7 +143,7 @@ class Menu:
 					current_line += 1
 				elif line[0] == "left":
 					libtcod.console_set_alignment(self.menu_con, libtcod.LEFT)
-					libtcod.console_print(self.menu_con, self.center_x, current_line, line[1])
+					libtcod.console_print(self.menu_con, 0, current_line, line[1])
 					current_line += 1
 				else:
 					button_con = line[1].draw()

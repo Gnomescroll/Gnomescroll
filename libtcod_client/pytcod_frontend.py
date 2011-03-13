@@ -122,7 +122,8 @@ class Display:
 
 		if current_menu.redraw:
 			menu_con = current_menu.draw()
-			libtcod.console_blit(menu_con, 0, 0, current_menu.width, current_menu.height, 0, current_menu.x, current_menu.y)
+			libtcod.console_blit(menu_con, 0, 0, current_menu.width, current_menu.height, 0, 100, 5)
+			#libtcod.console_blit(menu_con, 0, 0, current_menu.width, current_menu.height, 0, current_menu.x, current_menu.y)
 
 class Input:
 	"""handles keyboard and mouse"""
@@ -229,11 +230,11 @@ message_log = Message_Log(MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT)
 side_panel = libtcod.console_new(SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
 main_menu = Menu("Main Menu", libtcod.darker_red, libtcod.black, False)
-main_menu.add_button(Button(11, 1, "Mine", 'm', "Mine some stone"))
-main_menu.add_button(Button(11, 1, "Build", 'b', "Construct something"))
-main_menu.add_button(Button(11, 1, "Plant", 'p', "Plant crops"))
-main_menu.add_button(Button(11, 1, "Designate", 'd', "Designate an area"))
-main_menu.add_button(Button(11, 1, "Info", 'i', "Get information"))
+main_menu.add_button(Button(13, 1, "Mine", 'm', "Mine some stone", libtcod.darker_red, libtcod.black))
+main_menu.add_button(Button(13, 1, "Build", 'b', "Construct something", libtcod.darker_red, libtcod.black))
+main_menu.add_button(Button(13, 1, "Plant", 'p', "Plant crops", libtcod.darker_red, libtcod.black))
+main_menu.add_button(Button(13, 1, "Designate", 'd', "Designate an area", libtcod.darker_red, libtcod.black))
+main_menu.add_button(Button(13, 1, "Info", 'i', "Get information", libtcod.darker_red, libtcod.black))
 main_menu.initialize()
 main_menu.set_position("center", 0, MAP_VIEWER_WIDTH, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 current_menu = main_menu
