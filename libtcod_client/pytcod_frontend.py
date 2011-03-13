@@ -75,7 +75,8 @@ class Display:
 			#draw the characters
 			for agent in client.agent_handler.agents:
 				position = agent['position']
-				libtcod.console_set_char(map_viewer, position[1] - self.offset_x, position[2] - self.offset_y, '@')
+				if position[1] >= self.viewer_start_x and position[1] <= self.viewer_bot_x and position[2] >= self.viewer_start_y and position[2] <= self.viewer_bot_x:
+					libtcod.console_set_char(map_viewer, position[1] - self.offset_x, position[2] - self.offset_y, '@')
 
 			#clear flags
 			client.terrain_map.redraw = False
