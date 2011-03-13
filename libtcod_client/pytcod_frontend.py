@@ -25,13 +25,8 @@ FPS_MONITOR_HEIGHT = 1
 #Screen update frequency
 LIMIT_FPS = 20
 #Describes what part of the map is currently in view
-viewer_start_x = 0
-viewer_start_y = 0
 current_z = 0
-#Flags to optimize drawing
-redraw_map = True
-redraw_side = True
-show_fps = True
+
 #Other random but important variables, mostly having to do with the gui
 gui_state = "default"        #There is a game state handler for each multi-step process
 gui_status = 0            #This describes how far through a gui_state we've gotten
@@ -40,21 +35,29 @@ main_menu = None        #This menu is always up, still to come
 mouse_x    = None            #should be updated every tic
 mouse_y = None
 drawing_demo = 0
-gui_redraw_map = False
 check_mouse_drag = True
 mouse_on_drag_start = None
 current_mouse = None
 client = Client(world_id=0)
 client.setup()			#start server-client communications
-offset_x = 0
-offset_y = 0
-def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test, gui_redraw_map, offset_x, offset_y
 
-	if client.terrain_map.redraw or gui_redraw_map or client.agent_handler.agents_changed:
-		viewer_bot_x = MAP_VIEWER_WIDTH+viewer_start_x
-		viewer_bot_y = MAP_VIEWER_HEIGHT+viewer_start_y
-		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, viewer_bot_x, viewer_bot_y)
+class Display:
+	def __init__(self, redraw_side=True, show_fps=True, viewer_start_x=0, viewer_start_y=0, gui_redraw_map=False, offset_x=0, offset_y=0):
+		self.redraw_side = redraw_side
+		self.show_fps = show_fps
+		self.viewer_start_x = viewer_start_x
+		self.viewer_start_y = viewer_start_y
+		self.gui_redraw_map = gui_redraw_map
+		self.offset_x = offset_x
+		self.offset_y = offset_y
+		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.viewer_start_x
+		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.viewer_start_y
+Display = Display()
+def render_all(Display):
+	if client.terrain_map.redraw or Display.gui_redraw_map or client.agent_handler.agents_changed:
+		Display.viewer_bot_x = MAP_VIEWER_WIDTH  + Display.viewer_start_x
+		Display.viewer_bot_y = MAP_VIEWER_HEIGHT + Display.viewer_start_y
+		tmap = client.terrain_map.get_map_section(Display.viewer_start_x, Display.viewer_start_y, current_z, Display.viewer_bot_x, Display.viewer_bot_y)
 		#print tmap
 		x = 0
 		y = 0
@@ -75,11 +78,11 @@ def render_all():
 		#draw the characters
 		for agent in client.agent_handler.agents:
 			position = agent['position']
-			libtcod.console_set_char(map_viewer, position[1] - offset_x, position[2] - offset_y, '@')
+			libtcod.console_set_char(map_viewer, position[1] - Display.offset_x, position[2] - Display.offset_y, '@')
 
 		#clear flags
 		client.terrain_map.redraw = False
-		gui_redraw_map = False
+		Display.gui_redraw_map = False
 		client.agent_handler.agents_changed = False
 
 		libtcod.console_blit(map_viewer, 0, 0, MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT, 0, 0, 0)
@@ -88,13 +91,13 @@ def render_all():
 		message_con = message_log.draw()
 		libtcod.console_blit(message_con, 0, 0, MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT, 0, 0, MAP_VIEWER_HEIGHT)
 
-	if redraw_side:
+	if Display.redraw_side:
 		libtcod.console_set_default_background(side_panel, libtcod.dark_blue)
 		libtcod.console_clear(side_panel)
 		libtcod.console_blit(side_panel, 0, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT, 0, MAP_VIEWER_WIDTH, 0)
-		redraw_side = False
+		Display.redraw_side = False
 	
-	if show_fps:
+	if Display.show_fps:
 		libtcod.console_set_default_background(fps_monitor, libtcod.black)
 		libtcod.console_set_default_foreground(fps_monitor, libtcod.white)
 		libtcod.console_clear(fps_monitor)
@@ -160,30 +163,30 @@ def handle_mouse():
 def move_screen(dx, dy):
 	#moves the screen if that wouldn't cause the edge of the map to be exceeded.
 	#If it would, it moves as much as it can without passing the edge of the map.
-	global viewer_start_x, viewer_start_y, gui_redraw_map, offset_x, offset_y
-	viewer_bot_x = viewer_start_x + MAP_VIEWER_WIDTH
-	viewer_bot_y = viewer_start_y + MAP_VIEWER_HEIGHT
+	Display.viewer_bot_x = Display.viewer_start_x + MAP_VIEWER_WIDTH
+	Display.viewer_bot_y = Display.viewer_start_y + MAP_VIEWER_HEIGHT
 	#for the lulz
-	offset_x = viewer_start_x + dx
-	offset_y = viewer_start_y + dy
-	if offset_x < 0: 
-		dx = viewer_start_x * -1
+	Display.offset_x = Display.viewer_start_x + dx
+	Display.offset_y = Display.viewer_start_y + dy
+	if Display.offset_x < 0: 
+		dx = Display.viewer_start_x * -1
 		
-	elif viewer_bot_x + dx >= MAP_WIDTH:
-		dx = MAP_WIDTH - viewer_bot_x
+	elif Display.viewer_bot_x + dx >= MAP_WIDTH:
+		dx = MAP_WIDTH - Display.viewer_bot_x
 
-	if  offset_y < 0:
-		dy = viewer_start_y * -1
+	if  Display.offset_y < 0:
+		dy = Display.viewer_start_y * -1
 
-	elif viewer_bot_y + dy >= MAP_HEIGHT:
-		dy = MAP_HEIGHT - viewer_bot_y
+	elif Display.viewer_bot_y + dy >= MAP_HEIGHT:
+		dy = MAP_HEIGHT - Display.viewer_bot_y
 
 	
-	viewer_start_x = offset_x
-	viewer_start_y = offset_y
-	gui_redraw_map = True
+	Display.viewer_start_x = Display.offset_x
+	Display.viewer_start_y = Display.offset_y
+	Display.gui_redraw_map = True
 
 ###MAIN PROGRAM###
+
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'dc_mmo', False, libtcod.RENDERER_OPENGL)
 libtcod.sys_set_fps(LIMIT_FPS)
 map_viewer = libtcod.console_new(MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
@@ -215,7 +218,7 @@ while not libtcod.console_is_window_closed():
 	if key_result == "exit":
 		break
 	libtcod.console_flush()
-	render_all()
+	render_all(Display)
 
 
 
