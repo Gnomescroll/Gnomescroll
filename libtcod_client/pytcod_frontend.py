@@ -39,10 +39,8 @@ class Display:
 		self.offset_y = self.offset_y + dy
 		self.gui_redraw_map = True
 		
-		#update cursor pos
-		#self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
-		#message = "X,Y: %s, %s" %(self.cursor_pos[0], self.cursor_pos[1])
-		#message_log.add(message)
+	def set_cursor(self, x, y):
+		self.cursor_pos = (x, y)
 		self.gui_redraw_map = True
 
 	def render_all(self):
@@ -67,8 +65,9 @@ class Display:
 					y += 1
 				y = 0
 				x += 1
+
 			#draw cursor
-			#libtcod.console_set_char_background(map_viewer, self.cursor_pos[0], self.cursor_pos[1], libtcod.red, libtcod.BKGND_SET)
+			libtcod.console_set_char_background(map_viewer, self.cursor_pos[0], self.cursor_pos[1], libtcod.red, libtcod.BKGND_SET)
 			
 			#draw the characters
 			for agent in client.agent_handler.agents:
@@ -163,6 +162,8 @@ class Input:
 		else:
 		    self.mouse_on_drag_start = self.current_mouse;
 
+		self.display.set_cursor(current_mouse.cx, current_mouse.cy)
+		
 
 ##Constants##
 SCREEN_WIDTH = 140
