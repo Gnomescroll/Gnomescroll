@@ -174,7 +174,7 @@ class Menu:
 
 	def handle_key(self, char):
 		if char in self.hotkeys:
-			self.button_pressed = self.hotkeys[char] #they pressed a hotkey, so mark the corresponding button as pressed 
+			self.button_pressed = (self.hotkeys[char])+1 #they pressed a hotkey, so mark the corresponding button as pressed 
 
 
 class Message_Log:

@@ -268,3 +268,6 @@ while not libtcod.console_is_window_closed():
 		break
 	libtcod.console_flush()
 	Display.render_all()
+
+	if current_menu.button_pressed:
+		print "User chose option: ", current_menu.button_pressed
