@@ -39,6 +39,7 @@ class Info: #non-blocking client notification
 		self.globals = None
 		self.agents = None
 		self.objects = None
+		self.dat = None
 		pass
 		
 	def start(self, world_id):
@@ -104,3 +105,12 @@ class Info: #non-blocking client notification
 			list.append(Nobject(id).simple_serialize())
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
+
+	def get_tiles(self, client_id, **extra):
+		msg = {}
+		msg['msg'] = 'object_list'
+		msg['world_id'] = self.globals.world_id
+		msg['client_id'] = client_id
+		msg['tile_dict'] = self.dat.get_tiles()
+		msg['tile_rendering_dict'] = self.dat.get_tile_rendering()
+		self.info_out_q.put((client_id,msg))			
