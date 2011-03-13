@@ -16,6 +16,7 @@ class Display:
 		self.offset_y = offset_y
 		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.viewer_start_x
 		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.viewer_start_y
+		self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
 		
 	def move_screen(self, dx, dy):
 		#moves the screen if that wouldn't cause the edge of the map to be exceeded.
@@ -39,6 +40,11 @@ class Display:
 		self.viewer_start_y = self.offset_y
 		self.viewer_bot_x = self.viewer_start_x + MAP_VIEWER_WIDTH
 		self.viewer_bot_y = self.viewer_start_y + MAP_VIEWER_HEIGHT
+		
+		#update cursor pos
+		self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
+		message = "X,Y: %s, %s" %(self.cursor_pos[0], self.cursor_pos[1])
+		message_log.add(message)
 		self.gui_redraw_map = True
 
 	def render_all(self):
@@ -47,20 +53,25 @@ class Display:
 			#print tmap
 			x = 0
 			y = 0
+			char = ' '
+			color = libtcod.darker_green
 			#this section is messy. I'm not actually sure why it works. 
 			#TODO clean this up
 			for row in tmap:
 				for element in row:
 					if element == -1:
+						char  = ' '
 						color = libtcod.darker_green
-					else:
-						color = libtcod.black
-					libtcod.console_set_char(map_viewer,  x, y, ' ')	
+					else: #there is a whole of code that will go here.
+						char = unichr(87)
+					libtcod.console_set_char(map_viewer,  x, y, chr(ord(char))) #BRILLIANT!
 					libtcod.console_set_char_background(map_viewer, x, y, color, libtcod.BKGND_SET)
 					y += 1
 				y = 0
 				x += 1
-
+			#draw cursor
+			libtcod.console_set_char_background(map_viewer, self.cursor_pos[0], self.cursor_pos[1], libtcod.red, libtcod.BKGND_SET)
+			
 			#draw the characters
 			for agent in client.agent_handler.agents:
 				position = agent['position']
@@ -119,28 +130,28 @@ class Input:
 			self.drawing_demo += 1
 			
 		if key.vk == libtcod.KEY_UP and key.shift:
-			move_screen(0, -10)
+			self.display.move_screen(0, -10)
 			
 		elif key.vk == libtcod.KEY_DOWN and key.shift:
-			move_screen(0, 10)
+			self.display.move_screen(0, 10)
 			
 		elif key.vk == libtcod.KEY_LEFT and key.shift:
-			move_screen(-10, 0)
+			self.display.move_screen(-10, 0)
 			
 		elif key.vk == libtcod.KEY_RIGHT and key.shift:
-			move_screen(10, 0)
+			self.display.move_screen(10, 0)
 			
 		elif key.vk == libtcod.KEY_UP:
-			move_screen(0, -1)
+			self.display.move_screen(0, -1)
 			
 		elif key.vk == libtcod.KEY_DOWN:
-			move_screen(0, 1)
+			self.display.move_screen(0, 1)
 			
 		elif key.vk == libtcod.KEY_LEFT:
-			move_screen(-1, 0)
+			self.display.move_screen(-1, 0)
 			
 		elif key.vk == libtcod.KEY_RIGHT:
-			move_screen(1, 0)
+			self.display.move_screen(1, 0)
 	
 	def handle_mouse(self, current_mouse):
 		self.current_mouse = current_mouse #!!!
