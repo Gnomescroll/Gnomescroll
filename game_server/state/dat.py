@@ -5,6 +5,15 @@ tiles_dat = [
 	{
 			'id' : -0001,
 			'name' : 'unknown_tile',
+			
+			'visual' : {
+				'type' : 'tile_set',
+				'tile_set' : 0,
+				'symbol' : 00,
+				'symbol_rgb' : (0, 0, 0),
+				'background_rgb' : (256, 256, 256)
+			},
+		
 			'blocking' : 0,
 			'pourous' : 1,
 	
@@ -15,6 +24,15 @@ tiles_dat = [
 	{
 			'id' : 0001,
 			'name' : "empty_block",
+			
+			'visual' : {
+				'type' : 'tile_set',
+				'tile_set' : 0,
+				'symbol' : 96,
+				'symbol_rgb' : (50, 50, 50),
+				'background_rgb' : (256, 256, 256)
+			},
+			
 			'blocking' : 0,
 			'pourous' : 1,
 			
@@ -27,6 +45,15 @@ tiles_dat = [
 	{
 			'id' : 0100,
 			'name' : "generic_soil",
+			
+			'visual' : {
+				'type' : 'tile_set',
+				'tile_set' : 0,
+				'symbol' : 96,
+				'symbol_rgb' : (139, 69, 19), #139-69-19
+				'background_rgb' : (256, 256, 256)
+			},
+			
 			'blocking' : 0,
 			'pourous' : 0,
 			
@@ -42,6 +69,15 @@ tiles_dat = [
 	{
 			'id' : 0101,
 			'name' : "generic_tilled_soil",
+			
+			'visual' : {
+				'type' : 'tile_set',
+				'tile_set' : 0,
+				'symbol' : 248,
+				'symbol_rgb' : (139, 69, 19), #139-69-19
+				'background_rgb' : (256, 256, 256)
+			},
+			
 			'blocking' : 0,
 			'pourous' : 0,
 			'vertical' : 1,
@@ -58,6 +94,23 @@ tiles_dat = [
 	{
 			'id' : 0200,
 			'name' : "generic_wall",
+				
+			'visual' : {
+				'type' : 'tile_set',
+				'tile_set' : 0,
+				'symbol' : 09,
+				'symbol_rgb' : (139, 69, 19), #139-69-19
+				'background_rgb' : (256, 256, 256),
+				
+				'connection_map' : 1
+				'normal_connection_map' : 
+				[ [0, 0, 0],
+				 [0, 0, 0],
+				 [0, 0, 0] ]
+				 
+			},
+			
+			#properties
 			'blocking' : 1,
 			'pourous' : 0,
 			
@@ -468,3 +521,22 @@ class Dat:
 			return self.tiles_by_name['unknown_tile']
 		else:
 			return self.tiles_by_value[value]
+
+### Rendering Information
+
+	def get_tile_rendering(self):
+		dict = {}
+		default_tile_visual = {
+			'type' : 'tile_set',
+			'tile_set' : 0,
+			'symbol' : 63,
+			'symbol_rgb' : (256, 0, 0)
+			'background_rgb' : (0, 0, 0)
+		}
+
+		for id, x in self.tiles_by_value:
+			if 'visual' in x.keys():
+				dict[id] = x['visual']
+			else
+				dict[id] = default_tile_visual
+		return dict.copy()
