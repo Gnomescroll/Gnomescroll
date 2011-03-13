@@ -120,6 +120,10 @@ class Display:
 			libtcod.console_print(fps_monitor, 0, 0, fps)	
 			libtcod.console_blit(fps_monitor, 0, 0, FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT, 0, 0, 0)
 
+		if current_menu.redraw:
+			menu_con = current_menu.draw()
+			libtcod.console_blit(menu_con, 0, 0, current_menu.width, current_menu.height, 0, current_menu.x, current_menu.y)
+
 class Input:
 	"""handles keyboard and mouse"""
 	def __init__(self, display):
@@ -143,11 +147,11 @@ class Input:
 			client.admin.set_map(self.drawing_demo, self.drawing_demo, 0, 5)
 			self.drawing_demo += 1
 			
-		if key_char == 'c':
+		elif key_char == 'c':
 			client.admin.create_agent(self.drawing_demo+5, self.drawing_demo, 0)
 			self.drawing_demo += 1
 			
-		if key.vk == libtcod.KEY_UP and key.shift:
+		elif key.vk == libtcod.KEY_UP and key.shift:
 			self.display.move_screen(0, -10)
 			
 		elif key.vk == libtcod.KEY_DOWN and key.shift:
@@ -170,6 +174,9 @@ class Input:
 			
 		elif key.vk == libtcod.KEY_RIGHT:
 			self.display.move_screen(1, 0)
+
+		else:
+			current_menu.handle_key(key_char)
 	
 	def handle_mouse(self, current_mouse):
 		self.current_mouse = current_mouse #!!!
@@ -183,6 +190,9 @@ class Input:
 		    self.mouse_on_drag_start = self.current_mouse;
 
 		self.display.set_cursor_pos(current_mouse.cx, current_mouse.cy)
+		current_menu.update(current_mouse)
+
+		#TODO- deal with user clicking an agent (would need to display info, changing current menu to an info menu or something.)
 		
 
 ##Constants##
@@ -218,6 +228,15 @@ map_viewer = libtcod.console_new(MAP_VIEWER_WIDTH, MAP_VIEWER_HEIGHT)
 message_log = Message_Log(MESSAGE_LOG_WIDTH, MESSAGE_LOG_HEIGHT)
 side_panel = libtcod.console_new(SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
 fps_monitor = libtcod.console_new(FPS_MONITOR_WIDTH, FPS_MONITOR_HEIGHT)
+main_menu = Menu("Main Menu", libtcod.darker_red, libtcod.black, False)
+main_menu.add_button(Button(11, 1, "Mine", 'm', "Mine some stone"))
+main_menu.add_button(Button(11, 1, "Build", 'b', "Construct something"))
+main_menu.add_button(Button(11, 1, "Plant", 'p', "Plant crops"))
+main_menu.add_button(Button(11, 1, "Designate", 'd', "Designate an area"))
+main_menu.add_button(Button(11, 1, "Info", 'i', "Get information"))
+main_menu.initialize()
+main_menu.set_position("center", 0, MAP_VIEWER_WIDTH, 0, SIDE_PANEL_WIDTH, SIDE_PANEL_HEIGHT)
+current_menu = main_menu
 
 #list of game messages
 message_log.add("Welcome to dc_mmo")

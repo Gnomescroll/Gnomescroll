@@ -36,7 +36,9 @@ class Button:
 			libtcod.console_rect(self.button_con, 0, 0, self.width, self.height, True, libtcod.BKGND_SET)
 
 		#Print the button to the button_con, and return that
-		libtcod.console_print_center(self.button_con, self.center_x, self.center_y, libtcod.BKGND_SET, self.msg)
+		libtcod.console_set_alignment(self.button_con, libtcod.CENTER)
+		libtcod.console_set_background_flag(self.button_con, libtcod.BKGND_SET)
+		libtcod.console_print(self.button_con, self.center_x,self.center_y, self.msg)
 
 		return self.button_con
 
@@ -93,7 +95,7 @@ class Menu:
 		self.lines.append(["button", button])
 		if button.width > self.width:
 			self.width = button.width
-		hotkeys[button.hotkey] = height		
+		self.hotkeys[button.hotkey] = self.height		
 		self.height += 1
 		
 
@@ -134,13 +136,15 @@ class Menu:
 		current_line = 0
 		if self.redraw:
 			for line in self.lines:
+				libtcod.console_set_background_flag(self.menu_con, libtcod.BKGND_SET)
 				if line[0] == "center":
-					libtcod.console_print_center(self.menu_con, self.center_x, current_line, libtcod.BKGND_SET, line[1])
+					libtcod.console_set_alignment(self.menu_con, libtcod.CENTER)
+					libtcod.console_print(self.menu_con, self.center_x, current_line, line[1])
 					current_line += 1
 				elif line[0] == "left":
-					libtcod.console_print_left(self.menu_con, 0 , current_line, libtcod.BKGND_SET, line[1])
+					libtcod.console_set_alignment(self.menu_con, libtcod.LEFT)
+					libtcod.console_print(self.menu_con, self.center_x, current_line, line[1])
 					current_line += 1
-
 				else:
 					button_con = line[1].draw()
 					libtcod.console_blit(button_con, 0, 0, line[1].width, line[1].height, self.menu_con, 0, current_line)
@@ -171,8 +175,8 @@ class Menu:
 			self.close = True
 
 	def handle_key(self, char):
-		if char in hotkeys:
-			self.button_pressed = hotkeys[char] #they pressed a hotkey, so mark the corresponding button as pressed 
+		if char in self.hotkeys:
+			self.button_pressed = self.hotkeys[char] #they pressed a hotkey, so mark the corresponding button as pressed 
 
 
 class Message_Log:
