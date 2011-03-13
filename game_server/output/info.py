@@ -17,10 +17,13 @@ def info_out_worker(info_out_q, world_id):
 			type = msg['msg']
 						
 			msg = simplejson.dumps(msg)
-			if type != 'terrain_map': 
-				print "info_out_worker: " + str(msg) # DEBUGGING
-			else:
+			if type == 'terrain_map':
 				print "info_out_worker: sending map"
+			elif type == 'get_tiles':
+				print "info_out_worker: get_tiles"
+			else:		
+				print "info_out_worker: " + str(msg) # DEBUGGING
+
 			key = "world_0_out"
 			num_subs = out.publish(key, msg)
 #			if num_subs == 0:
@@ -108,7 +111,7 @@ class Info: #non-blocking client notification
 
 	def get_tiles(self, client_id, **extra):
 		msg = {}
-		msg['msg'] = 'object_list'
+		msg['msg'] = 'get_tiles'
 		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		msg['tile_dict'] = self.dat.get_tiles()
