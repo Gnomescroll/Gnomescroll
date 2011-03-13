@@ -46,14 +46,16 @@ mouse_on_drag_start = None
 current_mouse = None
 client = Client(world_id=0)
 client.setup()			#start server-client communications
-
+offset_x = 0
+offset_y = 0
 def render_all():
-	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test, gui_redraw_map
+	global redraw_messages, redraw_map, redraw_side, show_fps, viewer_start_x, viewer_start_y, test, gui_redraw_map, offset_x, offset_y
 
 	if client.terrain_map.redraw or gui_redraw_map or client.agent_handler.agents_changed:
 		viewer_bot_x = MAP_VIEWER_WIDTH+viewer_start_x
 		viewer_bot_y = MAP_VIEWER_HEIGHT+viewer_start_y
 		tmap = client.terrain_map.get_map_section(viewer_start_x, viewer_start_y, current_z, viewer_bot_x, viewer_bot_y)
+		#print tmap
 		x = 0
 		y = 0
 		#this section is messy. I'm not actually sure why it works. 
@@ -64,6 +66,7 @@ def render_all():
 					color = libtcod.darker_green
 				else:
 					color = libtcod.black
+				libtcod.console_set_char(map_viewer,  x, y, ' ')	
 				libtcod.console_set_char_background(map_viewer, x, y, color, libtcod.BKGND_SET)
 				y += 1
 			y = 0
@@ -72,7 +75,7 @@ def render_all():
 		#draw the characters
 		for agent in client.agent_handler.agents:
 			position = agent['position']
-			libtcod.console_set_char(map_viewer, position[1], position[2], '@')
+			libtcod.console_set_char(map_viewer, position[1] - offset_x, position[2] - offset_y, '@')
 
 		#clear flags
 		client.terrain_map.redraw = False
@@ -157,25 +160,27 @@ def handle_mouse():
 def move_screen(dx, dy):
 	#moves the screen if that wouldn't cause the edge of the map to be exceeded.
 	#If it would, it moves as much as it can without passing the edge of the map.
-	global viewer_start_x, viewer_start_y, gui_redraw_map
+	global viewer_start_x, viewer_start_y, gui_redraw_map, offset_x, offset_y
 	viewer_bot_x = viewer_start_x + MAP_VIEWER_WIDTH
 	viewer_bot_y = viewer_start_y + MAP_VIEWER_HEIGHT
-
-	if viewer_start_x + dx < 0: 
+	#for the lulz
+	offset_x = viewer_start_x + dx
+	offset_y = viewer_start_y + dy
+	if offset_x < 0: 
 		dx = viewer_start_x * -1
-    
+		
 	elif viewer_bot_x + dx >= MAP_WIDTH:
 		dx = MAP_WIDTH - viewer_bot_x
 
-	if  viewer_start_y + dy < 0:
+	if  offset_y < 0:
 		dy = viewer_start_y * -1
 
 	elif viewer_bot_y + dy >= MAP_HEIGHT:
 		dy = MAP_HEIGHT - viewer_bot_y
 
 	
-	viewer_start_x = viewer_start_x + dx
-	viewer_start_y = viewer_start_y + dy
+	viewer_start_x = offset_x
+	viewer_start_y = offset_y
 	gui_redraw_map = True
 
 ###MAIN PROGRAM###
