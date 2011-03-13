@@ -124,6 +124,15 @@ class Info_commands:
 		msg['client_id'] = 0 #will need this
 		self.send_message(msg)		
 
+	#required = ['client_id', 'world_id']
+	#optional = []
+	def get_tiles(self, world_id = 0):
+		msg = {}	
+		msg['type'] = 'info'
+		msg['cmd'] = 'get_tiles'
+		msg['world_id'] = world_id
+		msg['client_id'] = 0 #will need this
+		self.send_message(msg)		
 
 class Agent_commands:
 	

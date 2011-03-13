@@ -28,3 +28,6 @@ class Info_commands:
 
 	def get_object_list(self, client_id, **msg):
 		self.info.get_object_list(client_id)
+
+	def get_tiles(self, client_id, **msg):
+		self.info.get_tiles(client_id)

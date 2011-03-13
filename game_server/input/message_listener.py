@@ -24,7 +24,7 @@ class Message_listener:
 		key = "world_%s" % (str(world_id),)
 		i = ''
 		
-		debug = 0
+		debug = 1
 		if debug == 0:
 			while True:
 				try:
