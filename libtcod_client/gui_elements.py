@@ -84,12 +84,10 @@ class Menu:
 	#padding: the minimum number of tiles that the menu must be from an edge. It is ignored for "center" alignment
 	#window_start_x, window_start_y, window_width, and window_height describe the window the menu is going to be placed in
 	def set_position(self, align, padding, window_start_x, window_start_y, window_width, window_height):
-		width = window_width - window_start_x
-		height = window_height - window_start_y
 		self.align = align
 		if align == "center":
-			self.x = (int)(width/2)-(int)(self.width/2)
-			self.y = (int)(height/2)-(int)(self.height/2)
+			self.x = (int)(window_width/2)-(int)(self.width/2) + window_start_x
+			self.y = (int)(window_height/2)-(int)(self.height/2) + window_start_y
 
 	def add_button(self, button):
 		self.lines.append(["button", button])
