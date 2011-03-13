@@ -106,7 +106,7 @@ class Info: #non-blocking client notification
 		msg['list'] = list
 		self.info_out_q.put((client_id,msg))
 
-	def get_tiles(self, client_id, **extra)
+	def get_tiles(self, client_id, **extra):
 		msg = {}
 		msg['msg'] = 'object_list'
 		msg['world_id'] = self.globals.world_id

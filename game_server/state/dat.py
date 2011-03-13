@@ -98,11 +98,11 @@ tiles_dat = [
 			'visual' : {
 				'type' : 'tile_set',
 				'tile_set' : 0,
-				'symbol' : 09,
+				'symbol' : 9,
 				'symbol_rgb' : (139, 69, 19), #139-69-19
 				'background_rgb' : (256, 256, 256),
 				
-				'connection_map' : 1
+				'connection_map' : 1,
 				'normal_connection_map' : 
 				[ [0, 0, 0],
 				 [0, 0, 0],
@@ -535,7 +535,7 @@ class Dat:
 			'type' : 'tile_set',
 			'tile_set' : 0,
 			'symbol' : 63,
-			'symbol_rgb' : (256, 0, 0)
+			'symbol_rgb' : (256, 0, 0),
 			'background_rgb' : (0, 0, 0)
 		}
 
@@ -543,7 +543,7 @@ class Dat:
 			if 'visual' in x.keys():
 				dict[id] = x['visual'].copy()
 				dict[id]['tile_id'] = id
-			else
+			else:
 				dict[id] = default_tile_visual
 				dict[id]['tile_id'] = id
 		return dict
