@@ -6,50 +6,48 @@ import libtcodpy as libtcod
 
 class Display:
 	"""handles rendering"""
-	def __init__(self, redraw_side=True, show_fps=True, viewer_start_x=0, viewer_start_y=0, gui_redraw_map=False, offset_x=0, offset_y=0):
+	def __init__(self, redraw_side=True, show_fps=True, gui_redraw_map=False, offset_x=0, offset_y=0):
 		self.redraw_side = redraw_side
 		self.show_fps = show_fps
-		self.viewer_start_x = viewer_start_x
-		self.viewer_start_y = viewer_start_y
-		self.gui_redraw_map = gui_redraw_map
 		self.offset_x = offset_x
 		self.offset_y = offset_y
-		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.viewer_start_x
-		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.viewer_start_y
+		self.gui_redraw_map = gui_redraw_map
+		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.offset_x
+		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.offset_y
 		self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
 		
 	def move_screen(self, dx, dy):
 		#moves the screen if that wouldn't cause the edge of the map to be exceeded.
 		#If it would, it moves as much as it can without passing the edge of the map.
-		self.offset_x = self.viewer_start_x + dx
-		self.offset_y = self.viewer_start_y + dy
-		if self.offset_x < 0: 
-			dx = self.viewer_start_x * -1
+		self.viewer_bot_x = self.offset_x + MAP_VIEWER_WIDTH
+		self.viewer_bot_y = self.offset_y + MAP_VIEWER_HEIGHT
 
+		if self.offset_x + dx < 0: 
+		        dx = self.offset_x * -1
+	    
 		elif self.viewer_bot_x + dx >= MAP_WIDTH:
-			dx = MAP_WIDTH - self.viewer_bot_x
+		        dx = MAP_WIDTH - self.viewer_bot_x
 
-		if  self.offset_y < 0:
-			dy = self.viewer_start_y * -1
+		if  self.offset_y + dy < 0:
+		        dy = self.offset_y * -1
 
 		elif self.viewer_bot_y + dy >= MAP_HEIGHT:
-			dy = MAP_HEIGHT - self.viewer_bot_y
+		        dy = MAP_HEIGHT - self.viewer_bot_y
 
-
-		self.viewer_start_x = self.offset_x
-		self.viewer_start_y = self.offset_y
-		self.viewer_bot_x = self.viewer_start_x + MAP_VIEWER_WIDTH
-		self.viewer_bot_y = self.viewer_start_y + MAP_VIEWER_HEIGHT
+		
+		self.offset_x = self.offset_x + dx
+		self.offset_y = self.offset_y + dy
+		self.gui_redraw_map = True
 		
 		#update cursor pos
-		self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
-		message = "X,Y: %s, %s" %(self.cursor_pos[0], self.cursor_pos[1])
-		message_log.add(message)
+		#self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
+		#message = "X,Y: %s, %s" %(self.cursor_pos[0], self.cursor_pos[1])
+		#message_log.add(message)
 		self.gui_redraw_map = True
 
 	def render_all(self):
 		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed:
-			tmap = client.terrain_map.get_map_section(self.viewer_start_x, self.viewer_start_y, current_z, self.viewer_bot_x, self.viewer_bot_y)
+			tmap = client.terrain_map.get_map_section(self.offset_x, self.offset_y, current_z, self.viewer_bot_x, self.viewer_bot_y)
 			#print tmap
 			x = 0
 			y = 0
@@ -70,12 +68,12 @@ class Display:
 				y = 0
 				x += 1
 			#draw cursor
-			libtcod.console_set_char_background(map_viewer, self.cursor_pos[0], self.cursor_pos[1], libtcod.red, libtcod.BKGND_SET)
+			#libtcod.console_set_char_background(map_viewer, self.cursor_pos[0], self.cursor_pos[1], libtcod.red, libtcod.BKGND_SET)
 			
 			#draw the characters
 			for agent in client.agent_handler.agents:
 				position = agent['position']
-				if position[1] >= self.viewer_start_x and position[1] <= self.viewer_bot_x and position[2] >= self.viewer_start_y and position[2] <= self.viewer_bot_x:
+				if position[1] >= self.offset_x and position[1] <= self.viewer_bot_x and position[2] >= self.offset_y and position[2] <= self.viewer_bot_x:
 					libtcod.console_set_char(map_viewer, position[1] - self.offset_x, position[2] - self.offset_y, '@')
 
 			#clear flags
