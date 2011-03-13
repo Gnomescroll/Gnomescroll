@@ -112,5 +112,5 @@ class Info: #non-blocking client notification
 		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		msg['tile_dict'] = self.dat.get_tiles()
-		msg['tile_rendering_dict'] = self.dat.get_tile_render()
+		msg['tile_rendering_dict'] = self.dat.get_tile_rendering()
 		self.info_out_q.put((client_id,msg))			

@@ -539,11 +539,13 @@ class Dat:
 			'background_rgb' : (0, 0, 0)
 		}
 
-		for id, x in self.tiles_by_value:
+		for id, x in self.tiles_by_value.items():
 			if 'visual' in x.keys():
 				dict[id] = x['visual'].copy()
 				dict[id]['tile_id'] = id
+				dict[id]['tile_name'] = x['name']
 			else:
 				dict[id] = default_tile_visual
 				dict[id]['tile_id'] = id
+				dict[id]['tile_name'] = x['name']
 		return dict
