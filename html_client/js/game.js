@@ -74,6 +74,8 @@ var renderState = {
     view_x_offset: 0,
     view_y_offset: 0, // offsets against state
     
+    render_dim: function() { return Math.sqrt(render.cells.length); }, // dims of render area. for some reason it is not working in render itself; fix that, and remove this
+    
     start: // initial rendering of state
     function () {
         
@@ -239,13 +241,13 @@ var renderState = {
             msg = msg_;
         }
         
-        var render_dim = Math.sqrt(render.cells.length),
+        var render_dim = this.render_dim(),
             max_x = Math.min(this.view_x_offset + render_dim, state.map_width),
             max_y = Math.min(this.view_y_offset + render_dim, state.map_height),
             cell_num = render_dim*msg.y+msg.x;
         
-        if (this.view_x_offset < msg.x < max_x) {
-            if (this.view_y_offset < msg.y < max_y) {
+        if (this.view_x_offset < msg.x && msg.x < max_x) {
+            if (this.view_y_offset < msg.y && msg.y < max_y) {
                 if (msg.z == state.current_z_lvl) {
                     return cell_num;
                 }
@@ -253,6 +255,59 @@ var renderState = {
         }
         
         return null;
+    },
+    
+    // takes a cursor and updates view_A_offset if at the boundary
+    scrollMap: function(cursor) {
+        
+        var render_dim = this.render_dim() - 1,
+            scrollAmt = {},
+            x_delta = 0,
+            y_delta = 0,
+            scrollEdge = 0; // how far inside the map to start scrolling, when cursor pushes that boundary
+        
+        if (cursor.x) {
+            x_delta = cursor.x - (this.view_x_offset + render_dim - scrollEdge);
+            if (x_delta > 0) {
+                this.view_x_offset += x_delta;
+                scrollAmt.x = x_delta;
+                console.log('x upper bound');
+            } else {
+                x_delta = cursor.x - (this.view_x_offset + scrollEdge);
+                if (x_delta < 0) {
+                    this.view_x_offset += x_delta;
+                    scrollAmt.x = x_delta;
+                    console.log('x lower bound');
+                }
+            }
+        }
+        console.log(x_delta);
+        
+        if (cursor.y) {
+            y_delta = cursor.y - (this.view_y_offset + render_dim - scrollEdge);
+            if (y_delta > 0) {
+                this.view_y_offset += y_delta;
+                scrollAmt.y = y_delta;
+                console.log('y upper bound');
+            } else {
+                y_delta = cursor.y - (this.view_y_offset + scrollEdge);
+                if (y_delta < 0) {
+                    this.view_y_offset += y_delta;
+                    scrollAmt.y = y_delta;
+                    console.log('y lower bound');
+                }
+            }
+        }
+        console.log(y_delta);
+        
+        console.log('scrollmap');
+        console.log(scrollAmt);
+        console.log(this.view_x_offset);
+        console.log(this.view_y_offset);
+        console.log(cursor);
+        if (scrollAmt.x || scrollAmt.y) {
+            //render.pan(scrollAmt);
+        }
         
     },
         
@@ -266,7 +321,7 @@ var selected_agent = { x: 15,
                        pos: function() { return [this.x, this.y, this.z]; } 
                      };
                      
-var cursor = { x: 15,
+var cursor = { x: 25,
                y: 12,
                z: 5,
                value: 176,
@@ -275,10 +330,12 @@ var cursor = { x: 15,
                moveX: function(amt) {
                         this.x += amt;
                         this.x = Math.max(0, this.x);
+                        //renderState.scrollMap(this);
                     },
                moveY: function(amt) {
                         this.y += amt;
                         this.y = Math.max(0, this.y);
+                        //renderState.scrollMap(this);
                     },
              };
 
