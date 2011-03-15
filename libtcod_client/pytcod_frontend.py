@@ -14,11 +14,6 @@ class Display:
 		self.gui_redraw_map = gui_redraw_map
 		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.offset_x
 		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.offset_y
-		self.cursor_pos = (self.viewer_bot_x/2, self.viewer_bot_y/2)
-		self.display_cursor = True
-		self.cursor_char = 'X'
-		self.cursor_fore_color = libtcod.black
-		self.cursor_back_color = libtcod.red
 		
 	def move_screen(self, dx, dy):
 		#moves the screen if that wouldn't cause the edge of the map to be exceeded.
@@ -42,22 +37,6 @@ class Display:
 		self.offset_x = self.offset_x + dx
 		self.offset_y = self.offset_y + dy
 		self.gui_redraw_map = True
-		
-	def set_cursor_pos(self, x, y):
-		self.cursor_pos = (x, y)
-		if self.display_cursor:
-			self.gui_redraw_map = True
-
-	def set_cursor_char(self, char):
-		self.cursor_char = char
-		if self.display_cursor:
-			self.gui_redraw_map = True
-	
-	def set_cursor_colors(self, back, fore):
-		self.cursor_fore_color = fore
-		self.cursor_back_color = back
-		if self.display_cursor:
-			self.gui_redraw_map = True	
 
 	def render_all(self):
 		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed:
@@ -89,11 +68,7 @@ class Display:
 					libtcod.console_set_char(map_viewer, position[1] - self.offset_x, position[2] - self.offset_y, '@')
 
 			#draw cursor
-			if self.display_cursor:
-				libtcod.console_set_default_background(map_viewer, self.cursor_back_color)
-				libtcod.console_set_default_foreground(map_viewer, self.cursor_fore_color)
-				libtcod.console_set_char(map_viewer, self.cursor_pos[0], self.cursor_pos[1], self.cursor_char)
-				libtcod.console_set_char_background(map_viewer, self.cursor_pos[0], self.cursor_pos[1], libtcod.red, libtcod.BKGND_SET)			
+			#blit what is returned by cursor.draw(), checking cursor.transparency		
 
 			#clear flags
 			client.terrain_map.redraw = False
@@ -189,7 +164,6 @@ class Input:
 		else:
 		    self.mouse_on_drag_start = self.current_mouse;
 
-		self.display.set_cursor_pos(current_mouse.cx, current_mouse.cy)
 		current_menu.update(current_mouse)
 
 		#TODO- deal with user clicking an agent (would need to display info, changing current menu to an info menu or something.)
