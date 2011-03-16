@@ -26,6 +26,8 @@ def process_timer_callback(timer_dict):
 class World_time:
 
 	def __init__(self):
+		self.globals = None
+		
 		self.base_time = time.time() #base time for calculating ticks
 		self.time = 0 #game time in ticks
 		self.next_event_time = float("inf") #3600*3600*3600 #this needs to be large number or there is a bug on init
@@ -35,7 +37,7 @@ class World_time:
 		
 	def start(self):
 		#should init intial time from persistant
-		if self.globals.debug == 0
+		if self.globals.debug == 0:
 			t = Thread(target=self.time_worker)
 			t.daemon = True
 			t.start()

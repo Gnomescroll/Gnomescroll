@@ -26,7 +26,7 @@ class Agent_command_scheduler:
 			pass
 			
 	def time_step(self, current_time):
-		if self.last_time = 0:
+		if self.last_time == 0:
 			self.last_time = current_time
 
 		## Debug ##
@@ -44,13 +44,13 @@ class Agent_command_scheduler:
 					if value == 0: #this means no command executed or command execution failure
 						del next_move[agent_id] #agent is free to move immediately next move
 						##Agent is idle here
-					else
+					else:
 						self.schedule(agent_id, t + agent.action_delay())
 						#next_move[agent_id] = t + agent.action_delay() #agent_action delay
 				del time_slots[t] #cleanup
 		
 		
-	def schedule(self, agent_id, time)
+	def schedule(self, agent_id, time):
 		next_move[agent_id]
 		if not time in time_slot:
 			time_slot[time] = [time]

@@ -3,6 +3,7 @@ import itertools
 class Globals:
 
 	debug = 1
+	time_debug = 1 #runs time checks in main thread, instead of as seperate process
 
 	def __init__(self, world_id):
 		#server globals
