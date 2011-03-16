@@ -2,6 +2,8 @@ import itertools
 
 class Globals:
 
+	debug = 1
+
 	def __init__(self, world_id):
 		#server globals
 		self.world_id = world_id

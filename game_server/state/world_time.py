@@ -35,10 +35,14 @@ class World_time:
 		
 	def start(self):
 		#should init intial time from persistant
-		t = Thread(target=self.time_worker)
-		t.daemon = True
-		t.start()
-	
+		if self.globals.debug == 0
+			t = Thread(target=self.time_worker)
+			t.daemon = True
+			t.start()
+		else:
+			print "Starting World Time in single threaded mode"
+			
+			
 	def time_worker(self):
 		while True:
 			self.update_world_time()

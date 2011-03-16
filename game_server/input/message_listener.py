@@ -8,6 +8,7 @@ class Message_listener:
     def __init__(self):
         self.message_handlers = None
         self.globals = None
+        self.world_time = None
         pass
     
     def start(self):
@@ -24,8 +25,7 @@ class Message_listener:
 		key = "world_%s" % (str(world_id),)
 		i = ''
 		
-		debug = 1
-		if debug == 0:
+		if self.globals.debug == 0:
 			while True:
 				try:
 					j = r_in.brpop(key)
@@ -57,9 +57,15 @@ class Message_listener:
 					print "crash msg = " + str(i)
 					continue
 				
-		elif debug == 1:
+		elif self.globals.debug == 1:
 			while True:
-				j = r_in.brpop(key)
+				if self.globals.time_debug == 1:
+					j = r_in.brpop(key, 0.025)
+					print str(j)
+					self.world_time.update_world_time()
+				else:
+					j = r_in.brpop(key)
+				
 				i=marshal.loads(j[1])
 				if not i:
 					continue
