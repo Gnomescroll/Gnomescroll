@@ -3,6 +3,10 @@ import marshal
 from threading import Thread
 import redis
 
+
+#for debugging
+import time
+
 class Message_listener:
     
     def __init__(self):
@@ -60,9 +64,11 @@ class Message_listener:
 		elif self.globals.debug == 1:
 			while True:
 				if self.globals.time_debug == 1:
-					j = r_in.brpop(key, 0.025)
-					print str(j)
-					self.world_time.update_world_time()
+					j = r_in.rpop(key)
+					if j == None:
+						self.world_time.update_world_time()
+						time.sleep(0.025)
+						continue
 				else:
 					j = r_in.brpop(key)
 				
