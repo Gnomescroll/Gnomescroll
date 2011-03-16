@@ -19,10 +19,11 @@ class Agent_command_scheduler:
 			print "agent_command_scheduler, execute: this should never happen, race condition or off by one error"
 			agent = Agent(agent_id)
 			agent_command(agent, *params)
-			next_move[agent_id] = self.last_time + agent.action_delay() #set agent_next_move time
-			
+			self.schedule(agent_id, self.last_time + agent.action_delay())
+			#next_move[agent_id] = self.last_time + agent.action_delay() #set agent_next_move time
 		else: #pass command to agent controller
-			
+			print "need to implement scheduler!"
+			pass
 			
 	def time_step(self, current_time):
 		if self.last_time = 0:

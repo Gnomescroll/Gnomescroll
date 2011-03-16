@@ -261,6 +261,14 @@ class Agent:
 		for obj_id in list:
 			self.objects.delete(obj_id)
 		self.world_map.set(x_b, y_b, z_b, wall_tile['id'])
+
+	## stats / AI / command scheduler
+	
+	
+	def action_delay(self):
+	#this determines how many clicks between agent actions; should be a function of agent speed
+		return 30
+
 		
 	##internal commands	
 	def id(self):
