@@ -39,17 +39,13 @@ class Agent_command_scheduler:
 		for t in range(last_time, current_time):
 			if t in time_slots:
 				for agent_id in time_slots[t]:
-					try:
-						value = self.agent_controller.process_next_action(agent_id)
-						if value == 0: #this means no command executed or command execution failure
-							del next_move[agent_id] #agent is free to move immediately next move
-							##Agent is idle here
-						else
-							self.schedule(agent_id, t + agent.action_delay())
-							#next_move[agent_id] = t + agent.action_delay() #agent_action delay
-							
-					except:
-						print "agent_command_scheduler, time_step: oops"
+					value = self.agent_controller.process_next_action(agent_id)
+					if value == 0: #this means no command executed or command execution failure
+						del next_move[agent_id] #agent is free to move immediately next move
+						##Agent is idle here
+					else
+						self.schedule(agent_id, t + agent.action_delay())
+						#next_move[agent_id] = t + agent.action_delay() #agent_action delay
 				del time_slots[t] #cleanup
 		
 		
