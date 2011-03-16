@@ -13,6 +13,7 @@ from state.globals import Globals
 from state.agents import Agents
 from state.objects import Objects
 from state.dat import Dat
+from state.agent_command_scheduler import Agent_command_scheduler
 
 ##input message handling
 from input.message_listener import Message_listener
@@ -49,6 +50,7 @@ class Server:
 		self.agents = Agents()
 		self.objects = Objects()
 		self.dat = Dat()
+		self.agent_command_scheduler = Agent_command_scheduler()
 
 	def share_state(self):
 		print "Share State Start"
