@@ -69,10 +69,13 @@ class Message_listener:
 						self.world_time.update_world_time()
 						time.sleep(0.025)
 						continue
+					else:
+						i=marshal.loads(j)
 				else:
 					j = r_in.brpop(key)
+					i=marshal.loads(j[1])
 				
-				i=marshal.loads(j[1])
+				#i=marshal.loads(j[1])
 				if not i:
 					continue
 				cmd = i['cmd']
