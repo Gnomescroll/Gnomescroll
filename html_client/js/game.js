@@ -306,9 +306,29 @@ var renderState = {
         console.log(this.view_y_offset);
         console.log(cursor);
         if (scrollAmt.x || scrollAmt.y) {
-            //render.pan(scrollAmt);
+            render.pan(scrollAmt);
         }
         
+    },
+    
+    renderColumn: function (col) {
+        var cells = this.render_dim(),
+            i = 0;
+        
+        while (i < cells) {
+            this.drawLoc([i, col, cursor.z]);
+            i++;
+        }
+    },
+    
+    renderRow: function (row) {
+        var cells = this.render_dim(),
+            i = 0;
+        
+        while (i < cells) {
+            this.drawLoc([i, row, cursor.z]);
+            i++;
+        }
     },
         
 };
@@ -330,12 +350,12 @@ var cursor = { x: 25,
                moveX: function(amt) {
                         this.x += amt;
                         this.x = Math.max(0, this.x);
-                        //renderState.scrollMap(this);
+                        renderState.scrollMap(this);
                     },
                moveY: function(amt) {
                         this.y += amt;
                         this.y = Math.max(0, this.y);
-                        //renderState.scrollMap(this);
+                        renderState.scrollMap(this);
                     },
              };
 
