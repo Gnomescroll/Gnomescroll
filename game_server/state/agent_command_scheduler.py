@@ -4,18 +4,18 @@ class Agent_command_scheduler:
 	def __init__(self):
 		globals = None
 		world_time = None
-
+		print "1"
 		last_time = 0
-
+		print "2"
 		next_move = {}
 		time_slot = {}
 
 	def execute(self, agent_id, agent_command, params):
-		if not agent_id in next_move:	#execute immediately
+		if not agent_id in self.next_move:	#execute immediately
 			agent = Agent(agent_id)
 			agent_command(agent, *params)
 			#set agent_next_move time
-		elif next_move[agent_id] <= self.last_time: #execute immediately
+		elif self.next_move[agent_id] <= self.last_time: #execute immediately
 			print "agent_command_scheduler, execute: this should never happen, race condition or off by one error"
 			agent = Agent(agent_id)
 			agent_command(agent, *params)
