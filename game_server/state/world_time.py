@@ -38,7 +38,7 @@ class World_time:
 		
 	def start(self):
 		#should init intial time from persistant
-		if self.globals.debug == 0:
+		if self.globals.time_debug == 0:
 			t = Thread(target=self.time_worker)
 			t.daemon = True
 			t.start()
