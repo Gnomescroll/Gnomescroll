@@ -267,7 +267,7 @@ class Agent:
 	
 	def action_delay(self):
 	#this determines how many clicks between agent actions; should be a function of agent speed
-		return 30
+		return 120
 
 		
 	##internal commands	

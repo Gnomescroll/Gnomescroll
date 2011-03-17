@@ -17,6 +17,7 @@ class Agent_command_scheduler:
 		if not agent_id in self.next_move:	#execute immediately
 			agent = Agent(agent_id)
 			agent_command(agent, *params)
+			self.schedule(agent_id, self.last_time + agent.action_delay())
 			#set agent_next_move time
 		elif self.next_move[agent_id] <= self.last_time: #execute immediately
 			print "agent_command_scheduler, execute: this should never happen, race condition or off by one error"
@@ -53,8 +54,8 @@ class Agent_command_scheduler:
 				del time_slots[t] #cleanup
 		
 	def schedule(self, agent_id, time):
-		next_move[agent_id]
-		if not time in time_slot:
-			time_slot[time] = [time]
+		self.next_move[agent_id] = time
+		if not time in self.time_slot:
+			self.time_slot[time] = [time]
 		else:
-			time_slot[time].append(time)
+			self.time_slot[time].append(time)
