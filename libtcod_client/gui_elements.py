@@ -211,4 +211,44 @@ class Message_Log:
 		return self.message_con
 
 
+class Cursor:
+	#Note: this whole class doesn't make much sense just yet, but it will. I promise. 
+	#It isn't a cursor in the strictest sense of the word. Essentially, the cursor will also be a grayed out area when
+	#a player is designating an area or making a wall or something like that. 
+	def __init__(self, viewer_bot_x, viewer_bot_y):
+		self.top_left_corner = (viewer_bot_x/2, viewer_bot_y/2)		#when working with an area, this will always hold the top left coordinates
+		self.pos = self.top_left_corner					#this will hold the current position of the mouse
+		self.end_coords = self.pos					#this will hold the final ending coordinates of the selection with the cursor
+		self.display_cursor = False	#The client main will determine when to display the cursor
+		self.display_fore = True	#If false, the cursor character will not be drawn
+		self.display_back = True	#If false, the cursor will not affect the background of the tile it is over
+		self.char = 'X'
+		self.fore_color = libtcod.black
+		self.back_color = libtcod.red
+		self.transparency = 1		#Default is to completely opaque
+		self.con = None			#The TCOD console that will 
+		self.width = 1
+		self.height = 1
+		self.constraint = "none"	#could also be "circle" or "wall" or "square" eventually, the shape the cursor will form
+		self.cancel = False		#Set to true if the user hits escape or right-clicks while using the cursor
+
+	def update(self, mouse):
+		self.pos = (mouse.cx, mouse.cy)
+
+	def set_appearance(self, display_fore, display_back, char, fore_color, back_color):
+		self.display_fore = display_fore
+		self.display_back = display_back
+		self.char = char
+		self.fore_color = fore.color
+		self.back_color = back.color
+
+	def draw(self):
+		#returns a TCOD Console of the cursor:
+		del self.con	#because the cursor can change in size every turn, it needs to be recreated every turn.
+		self.con = libtcod.console_new(self.width, self.height)
+		
+		#return con
+		
+		
+
 
