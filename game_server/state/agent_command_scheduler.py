@@ -26,7 +26,11 @@ class Agent_command_scheduler:
 			self.schedule(agent_id, self.last_time + agent.action_delay())
 			#next_move[agent_id] = self.last_time + agent.action_delay() #set agent_next_move time
 		else: #pass command to agent controller
-			print "need to implement scheduler!"
+			#print "need to implement scheduler!"
+			## DELETE below when scheduler is ready !!! # ###
+			agent = Agent(agent_id)
+			agent_command(agent, *params)
+			self.schedule(agent_id, self.last_time + agent.action_delay())
 			pass
 			
 	def time_step(self, current_time):
@@ -50,20 +54,22 @@ class Agent_command_scheduler:
 		for t in range(self.last_time, current_time):
 			if t in self.time_slot:
 				for agent_id in self.time_slot[t]:
-					value = self.agent_controller.process_next_action(agent_id)
+					#value = self.agent_controller.process_next_action(agent_id)
+					value = 0
 					if value == 0: #this means no command executed or command execution failure
-						del next_move[agent_id] #agent is free to move immediately next move
+						print str(agent_id)
+						del self.next_move[agent_id] #agent is free to move immediately next move
 						##Agent is idle here
 					else:
 						self.schedule(agent_id, t + agent.action_delay())
 						#next_move[agent_id] = t + agent.action_delay() #agent_action delay
-				del time_slots[t] #cleanup
+				del self.time_slot[t] #cleanup
 		self.last_time = current_time
 
 	def schedule(self, agent_id, time):
 		self.next_move[agent_id] = time
 		if not time in self.time_slot:
-			self.time_slot[time] = [time]
+			self.time_slot[time] = [agent_id]
 		else:
 			self.time_slot[time].append(time)
 
