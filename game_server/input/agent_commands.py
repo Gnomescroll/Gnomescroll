@@ -11,7 +11,7 @@ class Agent_commands:
 	def move_0(self, agent_id, dp, **msg):
 		(dx, dy, dz) = dp
 #		Agent(agent_id).move_0(dx,dy,dz)
-		self.agent_command_scheduler.execute(agent_id, Agent.move_0, (agent_id, dp))
+		self.agent_command_scheduler.execute(agent_id, Agent.move_0, (dx, dy, dz))
 		pass
 
 	# required = ['position', agent_id']
