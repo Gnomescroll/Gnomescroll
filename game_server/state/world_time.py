@@ -27,6 +27,7 @@ class World_time:
 
 	def __init__(self):
 		self.globals = None
+		self.agent_command_scheduler = None
 		
 		self.base_time = time.time() #base time for calculating ticks
 		self.time = 0 #game time in ticks
@@ -59,7 +60,8 @@ class World_time:
 		#print str((int(100*(time.time() - self.base_time)), time.time(), self.base_time))
 		#print "ticks = " + str(self.time)
 		self.check_scheduler()
-
+		self.agent_command_scheduler.time_step(self.time) #debug
+		
 	def check_scheduler(self):
 		while self.timer_heap and self.next_event_time <= self.time:
 			(scheduled_time, timer_id) = min(self.timer_heap)

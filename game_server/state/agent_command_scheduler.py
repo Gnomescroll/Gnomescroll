@@ -30,20 +30,22 @@ class Agent_command_scheduler:
 			pass
 			
 	def time_step(self, current_time):
+		print " 1"
+		#current_time = self.world_time.time
 		if self.last_time == 0:
 			self.last_time = current_time
 
 		## Debug ##
-		if len(last_time, current_time) == 0:
+		if self.last_time - current_time == 0:
 			print "agent_command_scheduler, time_step: wtf #1"
 			#this may happen if timer thread is run more than one per click
-		if len(last_time, current_time) > 1:
+		if current_time - self.last_time > 1:
 			print "agent_command_scheduler, time_step: lagg, clicks are being skipped, fix this"
 		## End Debug ##
 
-		for t in range(last_time, current_time):
-			if t in time_slots:
-				for agent_id in time_slots[t]:
+		for t in range(self.last_time, current_time):
+			if t in self.time_slots:
+				for agent_id in self.time_slots[t]:
 					value = self.agent_controller.process_next_action(agent_id)
 					if value == 0: #this means no command executed or command execution failure
 						del next_move[agent_id] #agent is free to move immediately next move
@@ -59,3 +61,6 @@ class Agent_command_scheduler:
 			self.time_slot[time] = [time]
 		else:
 			self.time_slot[time].append(time)
+
+	def process_next_action(agent_id)
+		return 0
