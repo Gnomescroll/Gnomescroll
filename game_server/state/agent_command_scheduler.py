@@ -1,16 +1,19 @@
+from interface.agent import Agent
 
 class Agent_command_scheduler:
 	
 	def __init__(self):
-		globals = None
-		world_time = None
+		self.globals = None
+		self.world_time = None
 		print "1"
-		last_time = 0
+		self.last_time = 0
 		print "2"
-		next_move = {}
-		time_slot = {}
+		self.next_move = {}
+		self.time_slot = {}
 
 	def execute(self, agent_id, agent_command, params):
+		#from pudb import set_trace; set_trace()
+		#debug
 		if not agent_id in self.next_move:	#execute immediately
 			agent = Agent(agent_id)
 			agent_command(agent, *params)
