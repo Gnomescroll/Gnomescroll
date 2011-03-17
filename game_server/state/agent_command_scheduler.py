@@ -35,14 +35,17 @@ class Agent_command_scheduler:
 			self.last_time = current_time
 
 		## Debug ##
-		if self.last_time - current_time == 0:
-			print "agent_command_scheduler, time_step: wtf #1"
-			#this may happen if timer thread is run more than one per click
-		if current_time - self.last_time > 1:
-			print "agent_command_scheduler, time_step: lagg, clicks are being skipped, fix this: " + str(current_time - self.last_time)
-		else:
-			print "working"
-		## End Debug ##
+		
+		debug = 0
+		if debug == 1:
+			if self.last_time - current_time == 0:
+				print "agent_command_scheduler, time_step: wtf #1"
+				#this may happen if timer thread is run more than one per click
+			if current_time - self.last_time > 1:
+				print "agent_command_scheduler, time_step: lagg, clicks are being skipped, fix this: " + str(current_time - self.last_time)
+			else:
+				print "working"
+			## End Debug ##
 
 		for t in range(self.last_time, current_time):
 			if t in self.time_slot:
