@@ -132,6 +132,13 @@ var render = ( function () {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     
+    var canvasContext = function (c) {
+        if (c === undefined) {
+            c = canvas;
+        }
+        return c.getContext('2d');
+    }
+    
     colorMap = {
         
         red: "rgba(255,0,0,1)",
@@ -142,7 +149,6 @@ var render = ( function () {
         transparent: "rgba(255,255,255,0)"
     }
         
-    
     controlMap = ( function () {
         
         var increment = 2,
@@ -190,7 +196,6 @@ var render = ( function () {
             
             return false;
         });
-        
     }
     
     // init canvas
@@ -245,15 +250,7 @@ var render = ( function () {
         ctx.drawImage(tilemap.image, 
                       x_offset, y_offset, tilemap.tile_width, tilemap.tile_height,
                       cell_x, cell_y, cell_width, cell_height);
-        
     }    
-    
-    var canvasContext = function (c) {
-        if (c === undefined) {
-            c = canvas;
-        }
-        return c.getContext('2d');
-    }
     
     var colorTile = function (ctx, cell_num, tile_num, color) {
         
@@ -310,7 +307,93 @@ var render = ( function () {
         colorCanvas(staging_canvas, "transparent");
     }
     
+    pan = function(amt) {
+        
+        if (typeof amt !== 'object') return;
+        if (amt.x === undefined && amt.y === undefined) return;
+        
+        // need:
+        // edge cells to be redrawn
+        // subgrid to keep
+        // where to put subgrid
+        var x = amt.x || 0,
+            y = amt.y || 0,
+            x_, y_,
+            h, w,
+            subimg,
+            ctx = canvasContext(canvas),
+            grid_cells = Math.sqrt(cells.length);
+        
+        // if negative, subtract from grid cells
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+        
+        x_ = x * cell_width;
+        y_ = y * cell_height;
+        
+        w = (grid_cells - Math.abs(x)) * cell_width;
+        h = (grid_cells - Math.abs(y)) * cell_height;
+        
+        subimg = ctx.getImageData(x_, y_, w, h); // subimg to keep
+        
+        // pull subgrid from canvas into var
+        // put subgrid in new area
+        // redraw edge cells
+        
+        // redraw subgrid
+        x = (amt.x >= 0) ? 0 : Math.abs(x) * cell_width;
+        y = (amt.y >= 0) ? 0 : Math.abs(y) * cell_height;
+        
+        ctx.putImageData(subimg, x, y);
+        
+        // draw edges. probably not the best way to do this panning, since it references renderState.
+        x = amt.x
+        if (x < 0) {
+            while (x <= 0) {
+                renderState.renderColumn(Math.abs(x));
+                x++;
+            }
+        } else {
+            while (x >= 0) {
+                renderState.renderRow(grid_cells-1-x);
+                x--;
+            }
+        }
+            
+        y = amt.y;
+        if (y < 0) {
+            while (y <= 0) {
+                renderState.renderRow(Math.abs(y));
+                y++;
+            }
+        } else {
+            while (y >= 0) {
+                renderState.renderRow(grid_cells-1-y);
+                y--;
+            }
+        }
+    }
     
+    public_ = {
+                init: init,
+                resizeScreen: resizeScreen,
+                canvasContext: canvasContext,
+                colorTile: colorTile,
+                grid_cells: grid_cells,
+                cells: cells,
+                pan: pan,
+                //test: test,
+              }
+    
+    return public_;
+}());
+
+
+
+
+/*
+ * 
+ *  TESTS
     test = function () {
         
         var ctx;
@@ -550,17 +633,4 @@ var render = ( function () {
         orb();
     
     }
-        
-    public_ = {
-                init: init,
-                resizeScreen: resizeScreen,
-                canvasContext: canvasContext,
-                colorTile: colorTile,
-                grid_cells: grid_cells,
-                cells: cells,
-                test: test,
-              }
-    
-    return public_;
-
-}());
+    */
