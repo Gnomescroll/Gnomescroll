@@ -49,7 +49,6 @@ class Agent_command_scheduler:
 						#next_move[agent_id] = t + agent.action_delay() #agent_action delay
 				del time_slots[t] #cleanup
 		
-		
 	def schedule(self, agent_id, time):
 		next_move[agent_id]
 		if not time in time_slot:

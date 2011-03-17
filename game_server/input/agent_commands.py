@@ -4,12 +4,14 @@ class Agent_commands:
 	
 	def __init__(self):
 		self.globals = None
-
+		self.agent_command_scheduler = None
+		
 	# required = ['dp', agent_id']
 	# optional = ['player_id']		
 	def move_0(self, agent_id, dp, **msg):
 		(dx, dy, dz) = dp
-		Agent(agent_id).move_0(dx,dy,dz)
+#		Agent(agent_id).move_0(dx,dy,dz)
+		self.agent_command_scheduler(agent_id, agent_command, params)
 		pass
 
 	# required = ['position', agent_id']
