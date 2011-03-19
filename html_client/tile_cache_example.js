@@ -33,7 +33,34 @@ var tilemap = {
 	tile_pixel_width: 24,
 	tile_width: 24,
 	tile_height: 24
+	}
+
+var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
+
+	var cell_x = cells[cell_num][0],
+		cell_y = cells[cell_num][1],
+		x_offset,
+		y_offset,
+		tile_x_pos;
+	
+	tile_x_pos = tile_num % tilemap.tile_width;
+	tile_y_pos = tile_num - title_x_position;
+	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
+	
+	x_offset = tile_x_pos * tilemap.tile_pixel_width;
+	y_offset = tile_y_pos * tilemap.tile_pixel_height;
+	
+	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
+				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
+				
+	
+	y_offset = ((tile_num - tile_x_pos)/tilemap.tiles_wide) * tilemap.tile_height;
+	
+	ctx.drawImage(tilemap.image, 
+				  x_offset, y_offset, tile_pixel_width, tile_pixel_width,
+				  cell_x, cell_y, cell_width, cell_height);
 }
+
     
 var tile_cache = (function () {
 
