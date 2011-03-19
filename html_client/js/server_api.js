@@ -135,21 +135,28 @@ admin = ( function () {
 info = ( function () {
 	
     var type = "info",
+        consts = {},
+        tileset, 
         map,
         agent,
         object,
         agents,
         objects,
         public_;
+        
+    consts = { type: type,
+               client_id: globals.client_id,
+               world_id: globals.world_id
+             };
 		
+    tileset = function () {
+        var data = $.extend(consts, { cmd: 'get_tiles', });
+        send(data);
+    };
+        
 	map = function (z) {
 
-		var data = { 
-                cmd: "get_map",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id
-               }
+		var data = $.extend(consts, { cmd: "get_map", });
                
         if (z !== undefined) {
             data.z = z;
@@ -160,60 +167,37 @@ info = ( function () {
 
 	agent = function (id) {
 
-		var data = { 
-                cmd: "get_agent",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                agent_id: id
-               }
-		
+		var data = $.extend(consts, { cmd: "get_agent",
+                                      agent_id: id, });
 		send(data);	
 	}
 
 	object = function (id) {
 
-		var data = { 
-                cmd: "get_object",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                object_id: id
-               }
-		
+		var data = $.extend(consts, { cmd: "get_object",
+                                      object_id: id, });
 		send(data);
 	}
 	
 	agents = function() {
 		
-		var data = { 
-                cmd: "get_agent_list",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id
-               }
-		
+		var data = $.extend(consts, { cmd: "get_agent_list", });
 		send(data);
 	}
 
 	objects = function() {
 		
-		var data = { 
-                cmd: "get_object_list",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id
-               }
-		
+		var data = $.extend(consts, { cmd: "get_object_list", });
 		send(data);
 	}
 	
     public_ = {
+                tileset: tileset,
                 map: map,
                 agent: agent,
                 object: object,
                 agents: agents,
-                objects: objects
+                objects: objects,
               };
               
     return public_;
@@ -289,7 +273,7 @@ action = ( function () {
                 move: move,
                 till: till,
                 plant: plant,
-                harvest: harvest
+                harvest: harvest,
               };
               
     return public_;
