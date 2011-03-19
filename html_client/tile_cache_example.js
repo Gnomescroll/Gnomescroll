@@ -14,9 +14,9 @@ var tile_cache_canvas = {
 	ctx: null, // drawing surface
     
     init: function () {
-            $('body').append(this.cache_canvas_dom);
-            $('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
-                             .height(this.canvas_tile_height * this.tile_pixel_width);
+            //$('body').append(this.cache_canvas_dom);
+            //$('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
+            //                 .height(this.canvas_tile_height * this.tile_pixel_height);
             this.cache_canvas_dom = $('canvas#cache')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d");
         },
@@ -43,9 +43,9 @@ var board_canvas = {
 	ctx: null, // drawing surface
     
     init: function () {
-            $('body').append(this.cache_canvas_dom);
-            $('canvas#board').width(this.canvas_tile_width * this.tile_pixel_width)
-                             .height(this.canvas_tile_height * this.tile_pixel_width);
+            //$('body').append(this.cache_canvas_dom);
+            //$('canvas#board').width(this.canvas_tile_width * this.tile_pixel_width)
+            //                .height(this.canvas_tile_height * this.tile_pixel_height);
             this.cache_canvas_dom = $('canvas#board')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d")
         },
@@ -65,12 +65,12 @@ var tilemap = {
 	//tiles_high: 16,
 	
 	tile_pixel_width: 24,
-	tile_pixel_width: 24,
+	tile_pixel_height: 24,
 	tile_width: 24,
 	tile_height: 24
 	}
 
-var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
+var drawTileToCache = function (tcc, tile_num, tilemap) {
 
 	var x_offset,
 		y_offset,
@@ -86,7 +86,7 @@ var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
 	
 	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
-				0, 0, tile_cache_canvas.tile_pixel_width, tile_cache_canvas.tile_pixel_height);
+				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
 
 //	ctx.drawImage(tilemap.image, 
 //				  x_offset, y_offset, tile_pixel_width, tile_pixel_width,
@@ -115,7 +115,7 @@ var tile_cache = (function () {
 		//alert('entry 0');
     var tcc = tile_cache_canvas,
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-        cache_counter = 0, //gives the next free spot in cache
+        cache_counter = 1, //gives the next free spot in cache
         tdp = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
         bc = board_canvas; // canvas that we are drawing to
 	
@@ -127,8 +127,11 @@ var tile_cache = (function () {
 		//if so, much do garabage collection on cache
 	}
 	
-	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
+	function draw_tile(board_x, board_y, tile_id, draw_type, symbol) { //takes the x,y position and id of tile type to draw
 
+		if (draw_type === undefined) draw_type = 1;
+		if (symbol === undefined) draw_type = 1;
+		
         var symbol,
             symbol_color,
             background_color,
@@ -162,9 +165,9 @@ var tile_cache = (function () {
 			 */
 			
 			//hardcode for now, but get drawing properties from tileset_data eventually
-			symbol = 1; 
-			symbol_color = [256, 256, 256]; //rgb
-			background_color = [200, 0, 0]; //rgb
+			//symbol = 1; 
+			symbol_color = [0, 150, 150]; //rgb
+			background_color = [0, 0, 0]; //rgb
 			
 			//use square (0,0) as temporary drawing canvas
 			
@@ -202,17 +205,81 @@ var tile_cache = (function () {
             tcc.set_ctx();
 			tcc.ctx.fillRect(x_offset, y_offset, width, height);
 			
+			
+			//tcc.ctx.fillRect(0, 0, 100, 100);
+			
 			//clear canvas cache at (0, 0, width, height)
 			tcc.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
 			drawTileToCache(tcc, symbol, tilemap);
+
+			// Get the CanvasPixelArray from the given coordinates and dimensions.
+			
+			///MATH WARNING
+			var imgd = tcc.ctx.getImageData(0, 0, width, height);
+			var pix = imgd.data;
+			
+			if(draw_type == 1) {
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+				  
+				  if(pix[i+3] == 0) {
+				//alpha channel is 0, show background
+					pix[i  ] = background_color[0]; // red
+					pix[i+1] = background_color[1]; // green
+					pix[i+2] = background_color[2]; // blue				  
+					pix[i+3] = 255;
+					} else {
 	
-			console.log(tcc);
+				  pix[i  ] = Math.floor( pix[i  ] * symbol_color[0] / 256 ); // red
+				  pix[i+1] = Math.floor( pix[i+1] * symbol_color[1] / 256 ); // green
+				  pix[i+2] = Math.floor( pix[i+2] * symbol_color[2] / 256 ); // blue
+				  // i+3 is alpha (the fourth element)
+					}
+				}
+			}
+			
+			if(draw_type == 2) {
+				var a, r, g, b;
+				var b_r, b_g, b_b;
+				
+				b_r = background_color[0] / 255;
+				b_g = background_color[1] / 255;
+				b_b = background_color[2] / 255;
+				
+				s_r = symbol_color[0] / 255;
+				s_g = symbol_color[1] / 255;
+				s_b = symbol_color[2] / 255;
+
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+
+					r = pix[i  ] / 255;
+					g = pix[i+1] / 255;
+					b = pix[i+2] / 255;
+					a = pix[i+3] / 255;
+					a_ = 1 - a;
+					
+					
+					pix[i  ] = Math.floor( (s_r*r*a + b_r*a_)* 255 ); // red
+					pix[i+1] = Math.floor( (s_g*g*a + b_g*a_)* 255 ); // green
+					pix[i+2] = Math.floor( (s_b*b*a + b_b*a_)* 255 ); // blue
+					pix[i+3] = 255;
+					
+				}
+				
+				
+				
+				
+				
+			}
+
+			// Draw the ImageData at the given (x,y) coordinates.
+			tcc.ctx.putImageData(imgd, x_offset, y_offset);
+			
+			/// MATH WARNING
 			
 			//color symbol based upon symbol_color
 			/*INSERT CODE HERE*/
-			
 			//copy (0, 0, width, height) onto (x_offset, y_offset, width, height)
 			/*INSERT CODE HERE*/
 		}

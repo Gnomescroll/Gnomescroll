@@ -22,6 +22,11 @@ Tileset Caching Test
 <canvas id="tilesetCacheCanvas" width="200" height="200"></canvas>
 -->
 
+
+<canvas id ="cache" width="384" height="384" > </canvas>
+
+<canvas id ="board" width="384" height="384" > </canvas>
+
 <img id="tilemap" src="static/tiles/Bisasam_24x24.png" />
 
 </div>
@@ -38,7 +43,38 @@ $(document).ready(function () {
     
     tile_cache_canvas.init();
     board_canvas.init();
-    tile_cache.draw_tile(5,7,2);
+    
+    for(var i=0; i< 16 ; i++) {
+	
+		tile_cache.draw_tile(5,7,2, 1,i );
+	    tile_cache.draw_tile(5,7,2,2,i );	
+}
+	
+    tile_cache.draw_tile(5,7,2, 1,35 );
+    tile_cache.draw_tile(5,7,2,2,35 );
+ /*
+    tile_cache.draw_tile(5,7,2, 1,2 );
+    tile_cache.draw_tile(5,7,2,2,2 );
+
+    tile_cache.draw_tile(5,7,2, 1,3 );
+    tile_cache.draw_tile(5,7,2,2,3 );
+    
+     tile_cache.draw_tile(5,7,2, 1,4 );
+	 tile_cache.draw_tile(5,7,2,2,4 );
+	 
+     tile_cache.draw_tile(5,7,2, 1,4 );
+	 tile_cache.draw_tile(5,7,2,2,4 );   
+	 
+     tile_cache.draw_tile(5,7,2, 1,4 );
+	 tile_cache.draw_tile(5,7,2,2,4 );   
+	 
+     tile_cache.draw_tile(5,7,2, 1,4 );
+	 tile_cache.draw_tile(5,7,2,2,4 );   
+	 
+     tile_cache.draw_tile(5,7,2, 1,4 );
+	 tile_cache.draw_tile(5,7,2,2,4 );   
+	 */
+	 
 //render.init();
 //render.test();
 
