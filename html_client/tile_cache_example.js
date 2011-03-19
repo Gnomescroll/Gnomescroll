@@ -177,7 +177,7 @@ var tile_cache = (function () {
              cache_dict: cache_dict,
              cache_counter: cache_counter,
              tile_drawing_properties: tile_drawing_properties,
-             board_canvas: board_canvas;
+             board_canvas: board_canvas,
            }
 }());
 
