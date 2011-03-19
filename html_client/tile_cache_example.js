@@ -127,7 +127,7 @@ var tile_drawing_properties = (function () {
 	}
 	
 	function set(tile_id, symbol, symbol_r, symbol_g, symbol_b, background_r, background_g, background_b) {
-		tile_drawing_property_array[tile_id] = [symbol, [symbol_r, symbol_g, symbol_b], [backgrond_r, background_g, background_b]];
+		tile_drawing_property_array[tile_id] = [symbol, [symbol_r, symbol_g, symbol_b], [background_r, background_g, background_b]];
 	}
     
     return { get: get,
