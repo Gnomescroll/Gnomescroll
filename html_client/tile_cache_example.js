@@ -182,8 +182,8 @@ var tile_cache = (function () {
 			console.log(x_offset)
 			console.log(y_offset)
 			
-			width = tcc.tile_width; //in pixels
-			height = tcc.tile_height; //in pixels
+			width = tcc.tile_pixel_width; //in pixels
+			height = tcc.tile_pixel_height; //in pixels
 			
 			//possibly clear canvas at (x_offset, y_offset, width, height)
 			
