@@ -74,7 +74,8 @@ var tile_cache = (function () {
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
         cache_counter = 0, //gives the next free spot in cache
         tile_drawing_properties = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
-        board_canvas = board_canvas; // canvas that we are drawing to
+        board_canvas = board_canvas,
+        tile_cache_canvas = tile_cache_canvas; // canvas that we are drawing to
 	
 	function free_index() {
         
@@ -105,7 +106,7 @@ var tile_cache = (function () {
 		
 		if(!( tile_id in cache_dict)) {
 			
-			alert("Works");
+			//alert("Works");
 		}
 		
 
@@ -124,8 +125,8 @@ var tile_cache = (function () {
 			
 			//hardcode for now, but get drawing properties from tileset_data eventually
 			symbol = 1; 
-			symbol_color = [256, 256, 256] //rgb
-			background_color = [100, 0, 0] //rgb
+			symbol_color = [256, 256, 256]; //rgb
+			background_color = [100, 0, 0]; //rgb
 			
 			//use square (0,0) as temporary drawing canvas
 			
