@@ -61,11 +61,11 @@ var tilemap = {
 	
 	tile_pixel_width: 24,
 	tile_pixel_height: 24,
-	tile_width: 24,
-	tile_height: 24
+	tile_width: 16,
+	tile_height: 16
 	}
 
-var drawTileToCache = function (tcc, tile_num, tilemap) {
+var drawTileToCache = function (tcc, tile_num) {
 
 	var x_offset,
 		y_offset,
