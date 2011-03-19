@@ -18,8 +18,13 @@ var tile_cache_canvas = {
             $('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
                              .height(this.canvas_tile_height * this.tile_pixel_width);
             this.cache_canvas_dom = $('canvas#cache')[0];
-            this.ctx = this.cache_canvas_dom.getContext("2d")
+            this.ctx = this.cache_canvas_dom.getContext("2d");
         },
+        
+    set_ctx: function () {
+                this.cache_canvas_dom = $('canvas#cache')[0];
+                this.ctx = this.cache_canvas_dom.getContext("2d");
+            },
 }
 
 var board_canvas = {
@@ -192,6 +197,9 @@ var tile_cache = (function () {
 			
 			//draw solid color background onto canvas 
 			tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
+            console.log('draw coords');
+            console.log([x_offset, y_offset, width, height]);
+            tcc.set_ctx();
 			tcc.ctx.fillRect(x_offset, y_offset, width, height);
 			
 			//clear canvas cache at (0, 0, width, height)
