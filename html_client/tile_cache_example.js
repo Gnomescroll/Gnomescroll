@@ -76,7 +76,8 @@ function tile_cache() {
 			
 			//draw solid color background onto canvas 
 			self.tile_cache_canvas.ctx.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
-			self.tile_cache_canvas.ctx.ctx.fillRect(x,y,width,height);
+			self.tile_cache_canvas.ctx.ctx.fillRect(x_offset, y_offset, width,height);
+			
 			
 		}
 		
