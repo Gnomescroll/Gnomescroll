@@ -66,11 +66,11 @@ var tilemap = {
 	
 	tile_pixel_width: 24,
 	tile_pixel_height: 24,
-	tile_width: 24,
-	tile_height: 24
+	tile_width: 16,
+	tile_height: 16
 	}
 
-var drawTileToCache = function (tcc, tile_num, tilemap) {
+var drawTileToCache = function (tcc, tile_num) {
 
 	var x_offset,
 		y_offset,
@@ -81,9 +81,15 @@ var drawTileToCache = function (tcc, tile_num, tilemap) {
 	tile_y_pos = tile_num - tile_x_pos;
 	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
 	
+	
 	x_offset = tile_x_pos * tilemap.tile_pixel_width;
 	y_offset = tile_y_pos * tilemap.tile_pixel_height;
 	
+	console.log("tile_x_pos: " + tile_x_pos)
+	console.log("tile_y_pos: " + tile_y_pos)
+	console.log("x_offset: " + x_offset)
+	console.log("y_offset: " + y_offset)
+			
 	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
 				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
@@ -112,25 +118,27 @@ var tile_drawing_properties = (function () {
 }());
 
 var tile_cache = (function () {
-		//alert('entry 0');
+
     var tcc = tile_cache_canvas,
+		tilemap = tilemap,
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-        cache_counter = 1, //gives the next free spot in cache
+        image_data_array = [],
+        cache_counter = 0, //gives the next free spot in cache
         tdp = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
         bc = board_canvas; // canvas that we are drawing to
 	
 	function free_index() {
         
-		return ++cache_counter;
+        cache_counter = cache_counter + 1;
+		return cache_counter;
 		
 		//check to see if free_index is greater than number of spots in cache
 		//if so, much do garabage collection on cache
 	}
 	
-	function draw_tile(board_x, board_y, tile_id, draw_type, symbol) { //takes the x,y position and id of tile type to draw
+	function draw_tile(board_x, board_y, tile_id, symbol) { //takes the x,y position and id of tile type to draw
 
-		if (draw_type === undefined) draw_type = 1;
-		if (symbol === undefined) draw_type = 1;
+		var draw_type = 2;
 		
         var symbol,
             symbol_color,
@@ -144,12 +152,6 @@ var tile_cache = (function () {
             height;
         
 		//check to see if tile is in cache, if not; add to cache
-		
-		if(!( tile_id in cache_dict)) {
-			
-			//alert("Works");
-		}
-		
 
 		if(! (tile_id in cache_dict)) {
 			//tile not in cache, draw tile into cache
@@ -181,41 +183,35 @@ var tile_cache = (function () {
 			y_row = tile_cache_position - x_row;
 			if (y_row != 0) { y_row = y_row / tcc.canvas_tile_width; }
 						
-			console.log("x_row: " + x_row)
-			console.log("y_row: " + y_row)
-			
 			x_offset = x_row * tcc.tile_pixel_width;	//in pixels
 			y_offset = y_row * tcc.tile_pixel_height;	// in pixels
-			
-			console.log("x_offset: " + x_offset)
-			console.log("y_offset: " + y_offset)
 			
 			width = tcc.tile_pixel_width;	//in pixels
 			height = tcc.tile_pixel_height;	//in pixels
 
+/*
+			console.log("x_row: " + x_row)
+			console.log("y_row: " + y_row)
+			
+			console.log("x_offset: " + x_offset)
+			console.log("y_offset: " + y_offset)
+			
 			console.log("width: " + width)
 			console.log("height: " + height)
+*/
 						
 			//possibly clear canvas at (x_offset, y_offset, width, height)
 			
 			//draw solid color background onto canvas 
-			tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
-            console.log('draw coords');
-            console.log([x_offset, y_offset, width, height]);
-            tcc.set_ctx();
-			tcc.ctx.fillRect(x_offset, y_offset, width, height);
-			
-			
-			//tcc.ctx.fillRect(0, 0, 100, 100);
-			
+			//tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
+			//tcc.ctx.fillRect(x_offset, y_offset, width, height);
+		
 			//clear canvas cache at (0, 0, width, height)
 			tcc.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
 			drawTileToCache(tcc, symbol, tilemap);
 
-			// Get the CanvasPixelArray from the given coordinates and dimensions.
-			
 			///MATH WARNING
 			var imgd = tcc.ctx.getImageData(0, 0, width, height);
 			var pix = imgd.data;
@@ -259,36 +255,30 @@ var tile_cache = (function () {
 					a = pix[i+3] / 255;
 					a_ = 1 - a;
 					
-					
 					pix[i  ] = Math.floor( (s_r*r*a + b_r*a_)* 255 ); // red
 					pix[i+1] = Math.floor( (s_g*g*a + b_g*a_)* 255 ); // green
 					pix[i+2] = Math.floor( (s_b*b*a + b_b*a_)* 255 ); // blue
-					pix[i+3] = 255;
-					
-				}
-				
-				
-				
-				
-				
+					pix[i+3] = 255;	
+				}	
 			}
-
 			// Draw the ImageData at the given (x,y) coordinates.
 			tcc.ctx.putImageData(imgd, x_offset, y_offset);
-			
+			image_data_array[tile_id] = imgd;
 			/// MATH WARNING
-			
-			//color symbol based upon symbol_color
-			/*INSERT CODE HERE*/
-			//copy (0, 0, width, height) onto (x_offset, y_offset, width, height)
-			/*INSERT CODE HERE*/
 		}
+
 		
 		//copy tile from the tile_cache onto the board
 		
 
 		//copy (x_offset, y_offset, width, height) from canvas tcc.ctx
 		/*INSERT CODE HERE*/
+		//tcc.ctx.putImageData(imgd, x_offset, y_offset);
+		
+		board_x_offset = board_x * bc.tile_pixel_width;	//in pixels
+		board_y_offset = board_y * bc.tile_pixel_height;	// in pixels
+			
+		bc.ctx.putImageData(image_data_array[tile_id], board_x_offset, board_y_offset);
 		
 		//to position x,y on board cavnas (need to calculate region)
 		/*INSERT CODE HERE*/
