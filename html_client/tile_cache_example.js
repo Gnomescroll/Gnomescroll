@@ -88,6 +88,7 @@ var tile_cache = (function () {
 		
 		 console.log('cache_dict');
 		 console.log(cache_dict);
+
 		
         var symbol,
             symbol_color,
