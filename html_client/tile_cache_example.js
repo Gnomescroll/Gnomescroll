@@ -3,34 +3,73 @@ var tile_cache_canvas = {
 	//needs init code
 	//will re-init the cache when board is re-sized
 	
+	canvas_tile_width: 16,  //width of canvas in number of tiles
+	canvas_tile_height: 16, //width of canvas in number of tiles
+	
+	tile_pixel_width: 24,
+	tile_pixel_width: 24,
+
 	cache_canvas_dom: $('<canvas></canvas>')
                        .width(this.canvas_tile_width * this.tile_pixel_width)
                        .height(this.canvas_tile_height * this.tile_pixel_width), // the thing used for reading/writing to canvas
 	ctx: this.cache_canvas_dom.getContext("2d"), // drawing surface
 	
-	canvas_tile_width: 16,  //width of canvas in number of tiles
-	canvas_tile_height: 16, //width of canvas in number of tiles
-	
-	tile_pixel_width: 20,
-	tile_pixel_width: 20,
-	
 }
 
-var tile_map_canvas = {
+var tilemap = {
 	
+	elem: $('img#tilemap')[0],
+	
+	image: ( function() {
+						var img = new Image();
+						img.src = "static/tiles/Bisasam_24x24.png";
+						return img;
+					}()),
+					
+	//tiles_wide: 16,
+	//tiles_high: 16,
+	
+	tile_pixel_width: 24,
+	tile_pixel_width: 24,
+	tile_width: 24,
+	tile_height: 24
+	}
+
+var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
+
+	var x_offset,
+		y_offset,
+		tile_x_pos,
+		tile_y_pos;
+	
+	tile_x_pos = tile_num % tilemap.tile_width;
+	tile_y_pos = tile_num - title_x_position;
+	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
+	
+	x_offset = tile_x_pos * tilemap.tile_pixel_width;
+	y_offset = tile_y_pos * tilemap.tile_pixel_height;
+	
+	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
+				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
+				0, 0, tile_cache_canvas.tile_pixel_width, tile_cache_canvas.tile_pixel_height);
+
+//	ctx.drawImage(tilemap.image, 
+//				  x_offset, y_offset, tile_pixel_width, tile_pixel_width,
+//				  cell_x, cell_y, cell_width, cell_height);
 }
 
+    
 var tile_cache = (function () {
 
     var tile_cache_canvas = tile_cache_canvas,
         cache_dict = {}, //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
         cache_counter = 0, //gives the next free spot in cache
-        tileset_metadata tileset_metadata, //stores the rendering metadata returned by the get_tiles info command
+        tile_drawing_properties = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
         board_canvas = board_canvas; // canvas that we are drawing to
 	
 	function free_index() {
         
-		return cache_counter++;
+		return ++cache_counter;
 		
 		//check to see if free_index is greater than number of spots in cache
 		//if so, much do garabage collection on cache
@@ -94,7 +133,7 @@ var tile_cache = (function () {
 			tile_cache_canvas.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
-			/*INSERT CODE HERE*/
+			drawTileToCache(tile_cache_canvas, symbol, tilemap);
 	
 			//color symbol based upon symbol_color
 			/*INSERT CODE HERE*/
