@@ -133,7 +133,7 @@ var tile_cache = (function () {
 			tile_cache_canvas.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
-			/*INSERT CODE HERE*/
+			drawTileToCache(tile_cache_canvas, symbol, tilemap);
 	
 			//color symbol based upon symbol_color
 			/*INSERT CODE HERE*/
