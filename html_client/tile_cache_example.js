@@ -9,16 +9,15 @@ var tile_cache_canvas = {
 	tile_pixel_width: 24,
 	tile_pixel_width: 24,
 
-	cache_canvas_dom: $('<canvas></canvas>')
-                       .attr('id', 'cache')
-                       .width(this.canvas_tile_width * this.tile_pixel_width)
-                       .height(this.canvas_tile_height * this.tile_pixel_width), // the thing used for reading/writing to canvas
+	cache_canvas_dom: $('<canvas></canvas>').attr('id', 'cache'), // the thing used for reading/writing to canvas
                        
 	ctx: null, // drawing surface
     
     init: function () {
             $('body').append(this.cache_canvas_dom);
-            this.cache_canvas_dom = $('canvas#cache');
+            $('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
+                             .height(this.canvas_tile_height * this.tile_pixel_width);
+            this.cache_canvas_dom = $('canvas#cache')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d")
         },
         
