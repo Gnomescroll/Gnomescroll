@@ -1,32 +1,32 @@
-function tile_cache_canvas() {
-	
+var tile_cache_canvas = {
+	    
 	//needs init code
 	//will re-init the cache when board is re-sized
 	
-	cache_canvas_dom = ??? // the thing used for reading/writing to canvas
-	ctx = canvas_dom.getContext("2d");// drawing surface
+	cache_canvas_dom: ???, // the thing used for reading/writing to canvas
+	ctx: this.canvas_dom.getContext("2d"), // drawing surface
 	
-	canvas_tile_width = 16;  //width of canvas in number of tiles
-	canvas_tile_height = 16; //width of canvas in number of tiles
+	canvas_tile_width: 16,  //width of canvas in number of tiles
+	canvas_tile_height: 16, //width of canvas in number of tiles
 	
-	tile_pixel_width = 20;
-	tile_pixel_width = 20;
+	tile_pixel_width: 20,
+	tile_pixel_width: 20,
 	
 }
 
-function tile_cache() {
+var tile_cache = (function () {
 
-	tile_cache_canvas = ??? // assign an instance
-		
-	cache_dict = []; //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-	//contains the data needed for copying a tile from cache canvas to the board canvas
-	cache_counter = 1; //gives the next free spot in cache
-	
-	tileset_metadata = ??? //stores the rendering metadata returned by the get_tiles info command
-	
-	board_canvas // canvas that we are drawing to
+    var tile_cache_canvas = tile_cache_canvas,
+        cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
+        cache_counter = 1, //gives the next free spot in cache
+        tileset_metadata tileset_metadata, //stores the rendering metadata returned by the get_tiles info command
+        board_canvas = board_canvas; // canvas that we are drawing to
 	
 	function get_free_cache_index() {
+        
+        var free_index,
+            cache_counter;
+        
 		free_index = cache_counter;
 		cache_counter = cache_counter + 1;
 		return free_index;
@@ -37,6 +37,17 @@ function tile_cache() {
 	
 	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
 		
+        var symbol,
+            symbol_color,
+            background_color,
+            tile_cache_position,
+            x_row,
+            y_row,
+            x_offset,
+            y_offset,
+            width,
+            height;
+        
 		//check to see if tile is in cache, if not; add to cache
 		if(! tile_id in cache_dict) {
 			//tile not in cache, draw tile into cache
@@ -60,23 +71,23 @@ function tile_cache() {
 			
 			//DO: draw background color onto (x,y)
 			
-			tile_cache_position = self.get_free_cache_index();
+			tile_cache_position = get_free_cache_index();
 			
-			x_row = tile_cache_position % self.tile_cache_canvas.canvas_tile_width;
+			x_row = tile_cache_position % tile_cache_canvas.canvas_tile_width;
 			y_row = tile_cache_position - x_row;
-			if (y_row != 0) { y_row = y_row / self.tile_cache_canvas.canvas_tile_height; }
+			if (y_row != 0) { y_row = y_row / tile_cache_canvas.canvas_tile_height; }
 			
-			x_offset = x_row * self.tile_cache_canvas.tile_width; //in pixels
-			y_offset = y_row * self.tile_cache_canvas.tile_height; // in pixels
+			x_offset = x_row * tile_cache_canvas.tile_width; //in pixels
+			y_offset = y_row * tile_cache_canvas.tile_height; // in pixels
 			
-			width = self.tile_cache_canvas.tile_width; //in pixels
-			height = self.tile_cache_canvas.tile_height; //in pixels
+			width = tile_cache_canvas.tile_width; //in pixels
+			height = tile_cache_canvas.tile_height; //in pixels
 			
 			//possibly clear canvas at (x_offset, y_offset, width, height)
 			
 			//draw solid color background onto canvas 
-			self.tile_cache_canvas.ctx.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
-			self.tile_cache_canvas.ctx.ctx.fillRect(x_offset, y_offset, width,height);
+			tile_cache_canvas.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
+			tile_cache_canvas.ctx.fillRect(x_offset, y_offset, width,height);
 			
 			//clear canvas cache at (0, 0, width, height)
 			/*INSERT CODE HERE*/
@@ -94,25 +105,30 @@ function tile_cache() {
 		//copy tile from the tile_cache onto the board
 		
 
-		//copy (x_offset, y_offset, width, height) from canvas self.tile_cache_canvas.ctx
+		//copy (x_offset, y_offset, width, height) from canvas tile_cache_canvas.ctx
 		/*INSERT CODE HERE*/
 		
 		//to position x,y on board cavnas (need to calculate region)
 		/*INSERT CODE HERE*/
 	}
 	
-}
+    return { get_free_cache_index: get_free_cache_index,
+             draw_tile: draw_tile }
+}());
 
 //this stores tile
-function tileset_metadata() {
+var tile_drawing_properties = (function () {
 	
-	tile_drawing_property_array = [];
+	var tile_drawing_property_array = [];
 	
-	function get_tile_drawing_properties(tile_id) {
+	function get(tile_id) {
 		return tile_drawing_property_array[tile_id];
 	}
 	
-	function set_tile_drawing_properties(tile_id, symbol, symbol_r, symbol_g, symbol_b, background_r, background_g, background_b) {
+	function set(tile_id, symbol, symbol_r, symbol_g, symbol_b, background_r, background_g, background_b) {
 		tile_drawing_property_array[tile_id] = [symbol, [symbol_r, symbol_g, symbol_b], [backgrond_r, background_g, background_b]];
 	}
-}
+    
+    return { get: get,
+             set: set }
+}());
