@@ -18,7 +18,7 @@ var tile_cache_canvas = {
     
     init: function () {
             $('body').append(this.cache_canvas_dom);
-            this.cache_canvas_dom = $('canvas#cache');
+            this.cache_canvas_dom = $('canvas#cache')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d")
         },
         
