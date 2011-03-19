@@ -60,12 +60,12 @@ var tilemap = {
 	//tiles_high: 16,
 	
 	tile_pixel_width: 24,
-	tile_pixel_width: 24,
+	tile_pixel_height: 24,
 	tile_width: 24,
 	tile_height: 24
 	}
 
-var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
+var drawTileToCache = function (tcc, tile_num, tilemap) {
 
 	var x_offset,
 		y_offset,
@@ -81,7 +81,7 @@ var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
 	
 	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
-				0, 0, tile_cache_canvas.tile_pixel_width, tile_cache_canvas.tile_pixel_height);
+				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
 
 //	ctx.drawImage(tilemap.image, 
 //				  x_offset, y_offset, tile_pixel_width, tile_pixel_width,
@@ -158,7 +158,7 @@ var tile_cache = (function () {
 			
 			//hardcode for now, but get drawing properties from tileset_data eventually
 			symbol = 1; 
-			symbol_color = [256, 256, 256]; //rgb
+			symbol_color = [0, 150, 0]; //rgb
 			background_color = [200, 0, 0]; //rgb
 			
 			//use square (0,0) as temporary drawing canvas
@@ -193,19 +193,47 @@ var tile_cache = (function () {
 			//draw solid color background onto canvas 
 			tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
 			tcc.ctx.fillRect(x_offset, y_offset, width, height);
-			tcc.ctx.fillRect(50, 50, 100, 100);
+			
+			
+			tcc.ctx.fillRect(0, 0, 100, 100);
 			
 			//clear canvas cache at (0, 0, width, height)
 			tcc.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
 			drawTileToCache(tcc, symbol, tilemap);
-	
-			console.log(tcc);
+
+			// Get the CanvasPixelArray from the given coordinates and dimensions.
+			
+			///MATH WARNING
+			var imgd = tcc.ctx.getImageData(0, 0, width, height);
+			var pix = imgd.data;
+			
+			// Loop over each pixel and invert the color.
+			for (var i = 0, n = pix.length; i < n; i += 4) {
+			  
+			  if(pix[i+3] == 0) {
+			//alpha channel is 0, show background
+				  
+			  pix[i  ] = background_color[0]; // red
+			  pix[i+1] = background_color[1]; // green
+			  pix[i+2] = background_color[2]; // blue				  
+				  
+				} else {
+
+			  pix[i  ] = Math.floor( pix[i  ] * symbol_color[0] / 256 ); // red
+			  pix[i+1] = Math.floor( pix[i+1] * symbol_color[1] / 256 ); // green
+			  pix[i+2] = Math.floor( pix[i+2] * symbol_color[2] / 256 ); // blue
+			  // i+3 is alpha (the fourth element)
+				}
+			}
+			// Draw the ImageData at the given (x,y) coordinates.
+			tcc.ctx.putImageData(imgd, x_offset, y_offset);
+			
+			/// MATH WARNING
 			
 			//color symbol based upon symbol_color
 			/*INSERT CODE HERE*/
-			
 			//copy (0, 0, width, height) onto (x_offset, y_offset, width, height)
 			/*INSERT CODE HERE*/
 		}
