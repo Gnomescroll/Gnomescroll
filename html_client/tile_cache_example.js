@@ -69,8 +69,9 @@ var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
     
 var tile_cache = (function () {
 
+		//alert('entry 0');
     var tile_cache_canvas = tile_cache_canvas,
-        cache_dict = {}, //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
+        cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
         cache_counter = 0, //gives the next free spot in cache
         tile_drawing_properties = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
         board_canvas = board_canvas; // canvas that we are drawing to
@@ -85,6 +86,8 @@ var tile_cache = (function () {
 	
 	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
 		
+		 console.log(this);
+		
         var symbol,
             symbol_color,
             background_color,
@@ -97,6 +100,13 @@ var tile_cache = (function () {
             height;
         
 		//check to see if tile is in cache, if not; add to cache
+		
+		if(! tile_id in cache_dict) {
+			
+			alert("Works");
+		}
+		
+
 		if(! tile_id in cache_dict) {
 			//tile not in cache, draw tile into cache
 			
