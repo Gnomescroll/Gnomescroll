@@ -17,12 +17,22 @@ function tile_cache() {
 
 	tile_cache_canvas = ??? // assign an instance
 		
-	cache_dict = []; //maps tile_id to number, [tile_cache_position, x_offset, y_offset, x_width, y_width]
+	cache_dict = []; //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
 	//contains the data needed for copying a tile from cache canvas to the board canvas
+	cache_counter = 1; //gives the next free spot in cache
 	
 	tileset_metadata = ??? //stores the rendering metadata returned by the get_tiles info command
 	
 	board_canvas // canvas that we are drawing to
+	
+	function get_free_cache_index() {
+		free_index = cache_counter;
+		cache_counter = cache_counter + 1;
+		return free_index;
+		
+		//check to see if free_index is greater than number of spots in cache
+		//if so, much do garabage collection on cache
+	}
 	
 	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
 		
@@ -47,12 +57,19 @@ function tile_cache() {
 			
 			//use square (0,0) as temporary drawing canvas
 			
-			//draw background color onto (x,y)
+			//DO: draw background color onto (x,y)
 			
-			x_row = 
-			y_row = 
+			tile_cache_position = self.get_free_cache_index();
 			
-			x_offset = 
+			x_row = tile_cache_position % self.tile_cache_canvas.canvas_tile_width;
+			y_row = tile_cache_position - x_row;
+			if (y_row != 0) { y_row = y_row / self.tile_cache_canvas.canvas_tile_height; }
+			
+			x_offset = x_row * self.tile_cache_canvas.tile_width; //in pixels
+			y_offset = y_row * self.tile_cache_canvas.tile_height; // in pixels
+			
+			width = self.tile_cache_canvas.tile_width; //in pixels
+			height = self.tile_cache_canvas.tile_height; //in pixels
 			
 		}
 		
