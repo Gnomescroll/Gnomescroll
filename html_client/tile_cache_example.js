@@ -76,9 +76,15 @@ var drawTileToCache = function (tcc, tile_num, tilemap) {
 	tile_y_pos = tile_num - tile_x_pos;
 	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
 	
+	
 	x_offset = tile_x_pos * tilemap.tile_pixel_width;
 	y_offset = tile_y_pos * tilemap.tile_pixel_height;
 	
+	console.log("tile_x_pos: " + tile_x_pos)
+	console.log("tile_y_pos: " + tile_y_pos)
+	console.log("x_offset: " + x_offset)
+	console.log("y_offset: " + y_offset)
+			
 	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
 				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
@@ -109,6 +115,7 @@ var tile_drawing_properties = (function () {
 var tile_cache = (function () {
 
     var tcc = tile_cache_canvas,
+		tilemap = tilemap,
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
         image_data_array = [],
         cache_counter = 0, //gives the next free spot in cache
@@ -117,7 +124,8 @@ var tile_cache = (function () {
 	
 	function free_index() {
         
-		return ++cache_counter;
+        cache_counter = cache_counter + 1;
+		return cache_counter;
 		
 		//check to see if free_index is greater than number of spots in cache
 		//if so, much do garabage collection on cache
@@ -139,12 +147,6 @@ var tile_cache = (function () {
             height;
         
 		//check to see if tile is in cache, if not; add to cache
-		
-		if(!( tile_id in cache_dict)) {
-			
-			//alert("Works");
-		}
-		
 
 		if(! (tile_id in cache_dict)) {
 			//tile not in cache, draw tile into cache
@@ -256,7 +258,7 @@ var tile_cache = (function () {
 			}
 			// Draw the ImageData at the given (x,y) coordinates.
 			tcc.ctx.putImageData(imgd, x_offset, y_offset);
-			image_data_array[tile_cache_position] = imgd;
+			image_data_array[tile_id] = imgd;
 			/// MATH WARNING
 		}
 
