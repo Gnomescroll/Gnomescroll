@@ -4,6 +4,7 @@ function tile_cache_canvas() {
 	//will re-init the cache when board is re-sized
 	
 	cache_canvas_dom = ??? // the thing used for reading/writing to canvas
+	ctx = canvas_dom.getContext("2d");// drawing surface
 	
 	canvas_tile_width = 16;  //width of canvas in number of tiles
 	canvas_tile_height = 16; //width of canvas in number of tiles
@@ -70,6 +71,12 @@ function tile_cache() {
 			
 			width = self.tile_cache_canvas.tile_width; //in pixels
 			height = self.tile_cache_canvas.tile_height; //in pixels
+			
+			//possibly clear canvas at (x_offset, y_offset, width, height)
+			
+			//draw solid color background onto canvas 
+			self.tile_cache_canvas.ctx.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
+			self.tile_cache_canvas.ctx.ctx.fillRect(x,y,width,height);
 			
 		}
 		
