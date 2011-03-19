@@ -3,8 +3,10 @@ var tile_cache_canvas = {
 	//needs init code
 	//will re-init the cache when board is re-sized
 	
-	cache_canvas_dom: ???, // the thing used for reading/writing to canvas
-	ctx: this.canvas_dom.getContext("2d"), // drawing surface
+	cache_canvas_dom: $('<canvas></canvas>')
+                       .width(this.canvas_tile_width * this.tile_pixel_width)
+                       .height(this.canvas_tile_height * this.tile_pixel_width), // the thing used for reading/writing to canvas
+	ctx: this.cache_canvas_dom.getContext("2d"), // drawing surface
 	
 	canvas_tile_width: 16,  //width of canvas in number of tiles
 	canvas_tile_height: 16, //width of canvas in number of tiles
