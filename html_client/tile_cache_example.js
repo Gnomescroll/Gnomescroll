@@ -24,11 +24,10 @@ var tile_cache = (function () {
 	
 	function get_free_cache_index() {
         
-        var free_index,
-            cache_counter;
+        var free_index;
         
 		free_index = cache_counter;
-		cache_counter = cache_counter + 1;
+		cache_counter++;
 		return free_index;
 		
 		//check to see if free_index is greater than number of spots in cache
