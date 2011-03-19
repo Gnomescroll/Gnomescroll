@@ -78,11 +78,22 @@ function tile_cache() {
 			self.tile_cache_canvas.ctx.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
 			self.tile_cache_canvas.ctx.ctx.fillRect(x_offset, y_offset, width,height);
 			
+			//clear canvas cache at (0, 0, width, height)
+			/*INSERT CODE HERE*/
 			
+			//draw symbol from tile map to (0, 0, width, height)
+			/*INSERT CODE HERE*/
+	
+			//color symbol based upon symbol_color
+			/*INSERT CODE HERE*/
+			
+			//copy (0, 0, width, height) onto (x_offset, y_offset, width, height)
+						/*INSERT CODE HERE*/
 		}
 		
 		//copy tile from the tile_cache onto the board
 		
+
 		
 		
 	}
