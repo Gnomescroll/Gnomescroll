@@ -86,7 +86,9 @@ var tile_cache = (function () {
 	
 	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
 		
-		 console.log(this);
+		console.log(this);
+		#console.log(cache_counter);
+
 		
         var symbol,
             symbol_color,
