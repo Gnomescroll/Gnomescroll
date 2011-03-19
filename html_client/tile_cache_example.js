@@ -107,7 +107,7 @@ var tile_drawing_properties = (function () {
 }());
 
 var tile_cache = (function () {
-		//alert('entry 0');
+
     var tcc = tile_cache_canvas,
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
         cache_counter = 1, //gives the next free spot in cache
@@ -124,8 +124,7 @@ var tile_cache = (function () {
 	
 	function draw_tile(board_x, board_y, tile_id, draw_type, symbol) { //takes the x,y position and id of tile type to draw
 
-		if (draw_type === undefined) draw_type = 1;
-		if (symbol === undefined) draw_type = 1;
+		if (draw_type === undefined) draw_type = 2;
 		
         var symbol,
             symbol_color,
@@ -176,38 +175,35 @@ var tile_cache = (function () {
 			y_row = tile_cache_position - x_row;
 			if (y_row != 0) { y_row = y_row / tcc.canvas_tile_width; }
 						
-			console.log("x_row: " + x_row)
-			console.log("y_row: " + y_row)
-			
 			x_offset = x_row * tcc.tile_pixel_width;	//in pixels
 			y_offset = y_row * tcc.tile_pixel_height;	// in pixels
-			
-			console.log("x_offset: " + x_offset)
-			console.log("y_offset: " + y_offset)
 			
 			width = tcc.tile_pixel_width;	//in pixels
 			height = tcc.tile_pixel_height;	//in pixels
 
+/*
+			console.log("x_row: " + x_row)
+			console.log("y_row: " + y_row)
+			
+			console.log("x_offset: " + x_offset)
+			console.log("y_offset: " + y_offset)
+			
 			console.log("width: " + width)
 			console.log("height: " + height)
+*/
 						
 			//possibly clear canvas at (x_offset, y_offset, width, height)
 			
 			//draw solid color background onto canvas 
-			tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
-			tcc.ctx.fillRect(x_offset, y_offset, width, height);
-			
-			
-			//tcc.ctx.fillRect(0, 0, 100, 100);
-			
+			//tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
+			//tcc.ctx.fillRect(x_offset, y_offset, width, height);
+		
 			//clear canvas cache at (0, 0, width, height)
 			tcc.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
 			drawTileToCache(tcc, symbol, tilemap);
 
-			// Get the CanvasPixelArray from the given coordinates and dimensions.
-			
 			///MATH WARNING
 			var imgd = tcc.ctx.getImageData(0, 0, width, height);
 			var pix = imgd.data;
