@@ -110,7 +110,7 @@ var tile_cache = (function () {
 		//alert('entry 0');
     var tcc = tile_cache_canvas,
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-        cache_counter = 0, //gives the next free spot in cache
+        cache_counter = 1, //gives the next free spot in cache
         tdp = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
         bc = board_canvas; // canvas that we are drawing to
 	
@@ -122,10 +122,11 @@ var tile_cache = (function () {
 		//if so, much do garabage collection on cache
 	}
 	
-	function draw_tile(board_x, board_y, tile_id, draw_type) { //takes the x,y position and id of tile type to draw
+	function draw_tile(board_x, board_y, tile_id, draw_type, symbol) { //takes the x,y position and id of tile type to draw
 
 		if (draw_type === undefined) draw_type = 1;
-
+		if (symbol === undefined) draw_type = 1;
+		
         var symbol,
             symbol_color,
             background_color,
@@ -159,9 +160,9 @@ var tile_cache = (function () {
 			 */
 			
 			//hardcode for now, but get drawing properties from tileset_data eventually
-			symbol = 1; 
-			symbol_color = [0, 0, 255]; //rgb
-			background_color = [0, 255, 0]; //rgb
+			//symbol = 1; 
+			symbol_color = [0, 150, 150]; //rgb
+			background_color = [0, 0, 0]; //rgb
 			
 			//use square (0,0) as temporary drawing canvas
 			
@@ -234,33 +235,29 @@ var tile_cache = (function () {
 				var a, r, g, b;
 				var b_r, b_g, b_b;
 				
-				b_r = background_color[0];
-				b_g = background_color[1];
-				b_b = background_color[2];
+				b_r = background_color[0] / 255;
+				b_g = background_color[1] / 255;
+				b_b = background_color[2] / 255;
 				
-				for (var i = 0, n = pix.length; i < n; i += 4) {
-				  
-				  if(pix[i+3] == 0) {
-				//alpha channel is 0, show background
-					pix[i  ] = background_color[0]; // red
-					pix[i+1] = background_color[1]; // green
-					pix[i+2] = background_color[2]; // blue				  
-					pix[i+3] = 255;
-					} else {
+				s_r = symbol_color[0] / 255;
+				s_g = symbol_color[1] / 255;
+				s_b = symbol_color[2] / 255;
 
-					r = pix[i] / 255;
-					g = pix[i] / 255;
-					b = pix[i] /255;
-					a = pix[i+3] /255;
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+
+					r = pix[i  ] / 255;
+					g = pix[i+1] / 255;
+					b = pix[i+2] / 255;
+					a = pix[i+3] / 255;
 					a_ = 1 - a;
 					
 					
-					pix[i  ] = Math.floor( (r*a + b_r*a_)* 256 ); // red
-					pix[i+1] = Math.floor( (g*a + g_r*a_)* 256 ); // green
-					pix[i+2] = Math.floor( (b*a + b_r*a_)* 256 ); // blue
+					pix[i  ] = Math.floor( (s_r*r*a + b_r*a_)* 255 ); // red
+					pix[i+1] = Math.floor( (s_g*g*a + b_g*a_)* 255 ); // green
+					pix[i+2] = Math.floor( (s_b*b*a + b_b*a_)* 255 ); // blue
 					pix[i+3] = 255;
-					}
-				}				
+					
+				}
 				
 				
 				
