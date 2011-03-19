@@ -179,12 +179,15 @@ var tile_cache = (function () {
 			x_offset = x_row * tcc.tile_pixel_width; //in pixels
 			y_offset = y_row * tcc.tile_pixel_height; // in pixels
 			
-			console.log(x_offset)
-			console.log(y_offset)
+			console.log("x_offset: " + x_offset)
+			console.log("x_offset: " + y_offset)
 			
 			width = tcc.tile_pixel_width; //in pixels
 			height = tcc.tile_pixel_height; //in pixels
-			
+
+			console.log("width: " + width)
+			console.log("height: " + height)
+						
 			//possibly clear canvas at (x_offset, y_offset, width, height)
 			
 			//draw solid color background onto canvas 
