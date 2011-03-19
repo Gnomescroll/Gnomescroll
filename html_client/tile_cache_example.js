@@ -105,6 +105,7 @@ var tile_drawing_properties = (function () {
              set: set,
              array: tile_drawing_property_array }
 }());
+
 var tile_cache = (function () {
 		//alert('entry 0');
     var tcc = tile_cache_canvas,
@@ -175,8 +176,8 @@ var tile_cache = (function () {
 			console.log("x_row: " + x_row)
 			console.log("y_row: " + y_row)
 			
-			x_offset = x_row * tcc.tile_width; //in pixels
-			y_offset = y_row * tcc.tile_height; // in pixels
+			x_offset = x_row * tcc.canvas_tile_width; //in pixels
+			y_offset = y_row * tcc.canvas_tile_height; // in pixels
 			
 			console.log(x_offset)
 			console.log(y_offset)
