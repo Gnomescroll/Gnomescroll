@@ -63,7 +63,7 @@ var tile_cache = (function () {
 
     var tile_cache_canvas = tile_cache_canvas,
         cache_dict = {}, //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-        cache_counter = 0, //gives the next free spot in cache
+        cache_counter = 1, //gives the next free spot in cache
         tileset_metadata tileset_metadata, //stores the rendering metadata returned by the get_tiles info command
         board_canvas = board_canvas; // canvas that we are drawing to
 	
