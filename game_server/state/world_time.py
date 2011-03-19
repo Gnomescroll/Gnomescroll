@@ -26,6 +26,9 @@ def process_timer_callback(timer_dict):
 class World_time:
 
 	def __init__(self):
+		self.globals = None
+		self.agent_command_scheduler = None
+		
 		self.base_time = time.time() #base time for calculating ticks
 		self.time = 0 #game time in ticks
 		self.next_event_time = float("inf") #3600*3600*3600 #this needs to be large number or there is a bug on init
@@ -35,10 +38,14 @@ class World_time:
 		
 	def start(self):
 		#should init intial time from persistant
-		t = Thread(target=self.time_worker)
-		t.daemon = True
-		t.start()
-	
+		if self.globals.time_debug == 0:
+			t = Thread(target=self.time_worker)
+			t.daemon = True
+			t.start()
+		else:
+			print "Starting World Time in single threaded mode"
+			
+			
 	def time_worker(self):
 		while True:
 			self.update_world_time()
@@ -53,7 +60,8 @@ class World_time:
 		#print str((int(100*(time.time() - self.base_time)), time.time(), self.base_time))
 		#print "ticks = " + str(self.time)
 		self.check_scheduler()
-
+		self.agent_command_scheduler.time_step(self.time) #debug
+		
 	def check_scheduler(self):
 		while self.timer_heap and self.next_event_time <= self.time:
 			(scheduled_time, timer_id) = min(self.timer_heap)
