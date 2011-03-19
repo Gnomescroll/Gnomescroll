@@ -14,6 +14,10 @@ var tile_cache_canvas = {
 	
 }
 
+var tile_map_canvas = {
+	
+}
+
 var tile_cache = (function () {
 
     var tile_cache_canvas = tile_cache_canvas,
@@ -89,7 +93,7 @@ var tile_cache = (function () {
 			tile_cache_canvas.ctx.fillRect(x_offset, y_offset, width,height);
 			
 			//clear canvas cache at (0, 0, width, height)
-			/*INSERT CODE HERE*/
+			tile_cache_canvas.ctx.clearRect(0, 0, width, height);
 			
 			//draw symbol from tile map to (0, 0, width, height)
 			/*INSERT CODE HERE*/
@@ -98,7 +102,7 @@ var tile_cache = (function () {
 			/*INSERT CODE HERE*/
 			
 			//copy (0, 0, width, height) onto (x_offset, y_offset, width, height)
-						/*INSERT CODE HERE*/
+			/*INSERT CODE HERE*/
 		}
 		
 		//copy tile from the tile_cache onto the board
