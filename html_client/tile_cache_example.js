@@ -6,8 +6,8 @@ var tile_cache_canvas = {
 	canvas_tile_width: 16,  //width of canvas in number of tiles
 	canvas_tile_height: 16, //width of canvas in number of tiles
 	
-	tile_pixel_width: 20,
-	tile_pixel_width: 20,
+	tile_pixel_width: 24,
+	tile_pixel_width: 24,
 
 	cache_canvas_dom: $('<canvas></canvas>')
                        .width(this.canvas_tile_width * this.tile_pixel_width)
@@ -16,10 +16,25 @@ var tile_cache_canvas = {
 	
 }
 
-var tile_map_canvas = {
+var tilemap = {
 	
+	elem: $('img#tilemap')[0],
+	
+	image: ( function() {
+						var img = new Image();
+						img.src = "static/tiles/Bisasam_24x24.png";
+						return img;
+					}()),
+					
+	//tiles_wide: 16,
+	//tiles_high: 16,
+	
+	tile_pixel_width: 24,
+	tile_pixel_width: 24,
+	tile_width: 24,
+	tile_height: 24
 }
-
+    
 var tile_cache = (function () {
 
     var tile_cache_canvas = tile_cache_canvas,
