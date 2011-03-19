@@ -148,7 +148,7 @@ var renderState = {
                     });
                 }
                 
-                cell_num = render_dim*y_ + x_;
+                cell_num = render_dim*(y_ - this.view_y_offset) + (x_ - this.view_x_offset);
                 render.colorTile(ctx, cell_num, block, color);
             }
         }
@@ -306,7 +306,8 @@ var renderState = {
         console.log(this.view_y_offset);
         console.log(cursor);
         if (scrollAmt.x || scrollAmt.y) {
-            render.pan(scrollAmt);
+            //render.pan(scrollAmt);
+            this.start();
         }
         
     },

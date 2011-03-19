@@ -20,6 +20,7 @@ var render = ( function () {
     var staging_canvas, staging_ctx, setStagingCanvas;
     var controlMap, setControls;
     var init, test, public_;
+    var red_tiles, setColoredCanvases;
     
     generateCells = function () {
         
@@ -69,8 +70,6 @@ var render = ( function () {
         x_res = y_res = res; //make it a square
         
         calculateGridCells();
-
-        
     }
     
     resizeScreen = function () {
@@ -131,6 +130,49 @@ var render = ( function () {
         ctx.fillStyle = colorMap[color];
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+    
+    setColoredCanvases = function () {
+        
+        var tileimg;
+        
+        tileimg = tilemap.image
+        
+                var imageData,
+            staged_tile,
+            x = cells[cell_num][0],
+            y = cells[cell_num][1];
+            
+        var colors = {
+            red: {r:255, g:0, b:0},
+        }
+        
+        var _x,_y, k, grad;
+        var offset, r, g, b, a, bg = [];
+        for (_x = 0; _x < imageData.width; _x++) {
+            for (_y = 0; _y < imageData.height; _y++) {
+                offset = (_y * imageData.width + _x) * 4;
+                
+                for (k = 0; k < 4; k++) {
+                    bg.push(imageData.data[offset+k]);
+                }
+                
+                // normal coloring of a greyscale image
+                if (imageData.data[offset+3] !== 0) {
+                    grad = imageData.data[offset]/255; // (or max, but 255 is max)
+                    imageData.data[offset] = Math.floor(color.r * grad);
+                    imageData.data[offset+1] = Math.floor(color.g * grad);
+                    imageData.data[offset+2] = Math.floor(color.b * grad);
+                }
+                
+                bg = []; // reset pixel check
+            }
+        }
+                
+        ctx.putImageData(imageData, x, y);
+        
+        red_tiles = '';
+        
+    };
     
     var canvasContext = function (c) {
         if (c === undefined) {
@@ -206,6 +248,8 @@ var render = ( function () {
         setCanvas();
         setStagingCanvas();
 
+        setColoredCanvases();
+
         setControls();
         // bind resize event here
         // 2 resize events:
@@ -250,7 +294,7 @@ var render = ( function () {
         ctx.drawImage(tilemap.image, 
                       x_offset, y_offset, tilemap.tile_width, tilemap.tile_height,
                       cell_x, cell_y, cell_width, cell_height);
-    }    
+    }
     
     var colorTile = function (ctx, cell_num, tile_num, color) {
         
