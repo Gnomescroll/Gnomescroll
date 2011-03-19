@@ -103,13 +103,13 @@ var tile_cache = (function () {
         
 		//check to see if tile is in cache, if not; add to cache
 		
-		if(! tile_id in cache_dict) {
+		if(!( tile_id in cache_dict)) {
 			
 			alert("Works");
 		}
 		
 
-		if(! tile_id in cache_dict) {
+		if(! (tile_id in cache_dict)) {
 			//tile not in cache, draw tile into cache
 			
 			//tile drawing properies are symbol, symbol_color, and background color
