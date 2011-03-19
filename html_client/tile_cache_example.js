@@ -86,7 +86,8 @@ var tile_cache = (function () {
 	
 	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
 		
-		 console.log(this);
+		 console.log('cache_dict');
+		 console.log(cache_dict);
 		
         var symbol,
             symbol_color,
@@ -171,7 +172,13 @@ var tile_cache = (function () {
 	}
 	
     return { free_index: free_index,
-             draw_tile: draw_tile }
+             draw_tile: draw_tile,
+             tile_cache_canvas: tile_cache_canvas,
+             cache_dict: cache_dict,
+             cache_counter: cache_counter,
+             tile_drawing_properties: tile_drawing_properties,
+             board_canvas: board_canvas;
+           }
 }());
 
 //this stores tile
