@@ -176,14 +176,14 @@ var tile_cache = (function () {
 			console.log("x_row: " + x_row)
 			console.log("y_row: " + y_row)
 			
-			x_offset = x_row * tcc.tile_pixel_width; //in pixels
-			y_offset = y_row * tcc.tile_pixel_height; // in pixels
+			x_offset = x_row * tcc.tile_pixel_width;	//in pixels
+			y_offset = y_row * tcc.tile_pixel_height;	// in pixels
 			
 			console.log("x_offset: " + x_offset)
-			console.log("x_offset: " + y_offset)
+			console.log("y_offset: " + y_offset)
 			
-			width = tcc.tile_pixel_width; //in pixels
-			height = tcc.tile_pixel_height; //in pixels
+			width = tcc.tile_pixel_width;	//in pixels
+			height = tcc.tile_pixel_height;	//in pixels
 
 			console.log("width: " + width)
 			console.log("height: " + height)
@@ -192,7 +192,7 @@ var tile_cache = (function () {
 			
 			//draw solid color background onto canvas 
 			tcc.ctx.fillStyle = fillStyle =  'rgb(' + background_color .join(',') + ')';
-			tcc.ctx.fillRect(x_offset, y_offset, width,height);
+			tcc.ctx.fillRect(x_offset, y_offset, width, height);
 			
 			//clear canvas cache at (0, 0, width, height)
 			tcc.ctx.clearRect(0, 0, width, height);
