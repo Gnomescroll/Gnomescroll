@@ -158,8 +158,8 @@ var tile_cache = (function () {
 			
 			//hardcode for now, but get drawing properties from tileset_data eventually
 			symbol = 1; 
-			symbol_color = [0, 150, 0]; //rgb
-			background_color = [200, 0, 0]; //rgb
+			symbol_color = [0, 0, 255]; //rgb
+			background_color = [0, 255, 0]; //rgb
 			
 			//use square (0,0) as temporary drawing canvas
 			
@@ -195,7 +195,7 @@ var tile_cache = (function () {
 			tcc.ctx.fillRect(x_offset, y_offset, width, height);
 			
 			
-			tcc.ctx.fillRect(0, 0, 100, 100);
+			//tcc.ctx.fillRect(0, 0, 100, 100);
 			
 			//clear canvas cache at (0, 0, width, height)
 			tcc.ctx.clearRect(0, 0, width, height);
@@ -211,14 +211,15 @@ var tile_cache = (function () {
 			
 			// Loop over each pixel and invert the color.
 			for (var i = 0, n = pix.length; i < n; i += 4) {
+			  //console.log(pix[i+3])
 			  
 			  if(pix[i+3] == 0) {
 			//alpha channel is 0, show background
-				  
-			  pix[i  ] = background_color[0]; // red
-			  pix[i+1] = background_color[1]; // green
-			  pix[i+2] = background_color[2]; // blue				  
-				  
+			//console.log(pix[i+3]) 
+				pix[i  ] = background_color[0]; // red
+				pix[i+1] = background_color[1]; // green
+				pix[i+2] = background_color[2]; // blue				  
+				pix[i+3] = 255;
 				} else {
 
 			  pix[i  ] = Math.floor( pix[i  ] * symbol_color[0] / 256 ); // red
