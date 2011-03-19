@@ -7,7 +7,7 @@ var tile_cache_canvas = {
 	canvas_tile_height: 16, //width of canvas in number of tiles
 	
 	tile_pixel_width: 24,
-	tile_pixel_width: 24,
+	tile_pixel_height: 24,
 
 	cache_canvas_dom: $('<canvas></canvas>').attr('id', 'cache'), // the thing used for reading/writing to canvas
                        
@@ -176,8 +176,8 @@ var tile_cache = (function () {
 			console.log("x_row: " + x_row)
 			console.log("y_row: " + y_row)
 			
-			x_offset = x_row * tcc.canvas_tile_width; //in pixels
-			y_offset = y_row * tcc.canvas_tile_height; // in pixels
+			x_offset = x_row * tcc.tile_pixel_width; //in pixels
+			y_offset = y_row * tcc.tile_pixel_height; // in pixels
 			
 			console.log(x_offset)
 			console.log(y_offset)
