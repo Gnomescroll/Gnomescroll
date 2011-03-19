@@ -110,8 +110,8 @@ var tile_cache = (function () {
 
     var tcc = tile_cache_canvas,
         cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-        img_data_array = [],
-        cache_counter = 1, //gives the next free spot in cache
+        image_data_array = [],
+        cache_counter = 0, //gives the next free spot in cache
         tdp = tile_drawing_properties, //stores the rendering metadata returned by the get_tiles info command
         bc = board_canvas; // canvas that we are drawing to
 	
@@ -123,9 +123,9 @@ var tile_cache = (function () {
 		//if so, much do garabage collection on cache
 	}
 	
-	function draw_tile(board_x, board_y, tile_id, draw_type, symbol) { //takes the x,y position and id of tile type to draw
+	function draw_tile(board_x, board_y, tile_id, symbol) { //takes the x,y position and id of tile type to draw
 
-		if (draw_type === undefined) draw_type = 2;
+		var draw_type = 2;
 		
         var symbol,
             symbol_color,
@@ -251,19 +251,12 @@ var tile_cache = (function () {
 					pix[i  ] = Math.floor( (s_r*r*a + b_r*a_)* 255 ); // red
 					pix[i+1] = Math.floor( (s_g*g*a + b_g*a_)* 255 ); // green
 					pix[i+2] = Math.floor( (s_b*b*a + b_b*a_)* 255 ); // blue
-					pix[i+3] = 255;
-					
-				}
-				
-				
-				
-				
-				
+					pix[i+3] = 255;	
+				}	
 			}
-
 			// Draw the ImageData at the given (x,y) coordinates.
 			tcc.ctx.putImageData(imgd, x_offset, y_offset);
-			image_data_data[tile_cache_position] = imgd;
+			image_data_array[tile_cache_position] = imgd;
 			/// MATH WARNING
 		}
 
@@ -278,7 +271,7 @@ var tile_cache = (function () {
 		board_x_offset = board_x * bc.tile_pixel_width;	//in pixels
 		board_y_offset = board_y * bc.tile_pixel_height;	// in pixels
 			
-		bc.ctx.putImageData(image_data_data[tile_id], board_x_offset, board_y_offset);
+		bc.ctx.putImageData(image_data_array[tile_id], board_x_offset, board_y_offset);
 		
 		//to position x,y on board cavnas (need to calculate region)
 		/*INSERT CODE HERE*/
