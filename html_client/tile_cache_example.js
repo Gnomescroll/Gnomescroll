@@ -14,9 +14,9 @@ var tile_cache_canvas = {
 	ctx: null, // drawing surface
     
     init: function () {
-            $('body').append(this.cache_canvas_dom);
-            $('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
-                             .height(this.canvas_tile_height * this.tile_pixel_height);
+            //$('body').append(this.cache_canvas_dom);
+            //$('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
+            //                 .height(this.canvas_tile_height * this.tile_pixel_height);
             this.cache_canvas_dom = $('canvas#cache')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d")
         },
@@ -38,9 +38,9 @@ var board_canvas = {
 	ctx: null, // drawing surface
     
     init: function () {
-            $('body').append(this.cache_canvas_dom);
-            $('canvas#board').width(this.canvas_tile_width * this.tile_pixel_width)
-                             .height(this.canvas_tile_height * this.tile_pixel_height);
+            //$('body').append(this.cache_canvas_dom);
+            //$('canvas#board').width(this.canvas_tile_width * this.tile_pixel_width)
+            //                .height(this.canvas_tile_height * this.tile_pixel_height);
             this.cache_canvas_dom = $('canvas#board')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d")
         },
