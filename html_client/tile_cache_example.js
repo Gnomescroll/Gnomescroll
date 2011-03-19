@@ -122,9 +122,6 @@ var tile_cache = (function () {
 	}
 	
 	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
-		
-		 console.log('cache_dict');
-		 console.log(cache_dict);
 
         var symbol,
             symbol_color,
@@ -161,7 +158,7 @@ var tile_cache = (function () {
 			//hardcode for now, but get drawing properties from tileset_data eventually
 			symbol = 1; 
 			symbol_color = [256, 256, 256]; //rgb
-			background_color = [100, 0, 0]; //rgb
+			background_color = [200, 0, 0]; //rgb
 			
 			//use square (0,0) as temporary drawing canvas
 			
@@ -169,12 +166,20 @@ var tile_cache = (function () {
 			
 			tile_cache_position = free_index();
 			
+			console.log("index: " + tile_cache_position);
+			
 			x_row = tile_cache_position % tcc.canvas_tile_width;
 			y_row = tile_cache_position - x_row;
-			if (y_row != 0) { y_row = y_row / tcc.canvas_tile_height; }
+			if (y_row != 0) { y_row = y_row / tcc.canvas_tile_width; }
+						
+			console.log("x_row: " + x_row)
+			console.log("y_row: " + y_row)
 			
 			x_offset = x_row * tcc.tile_width; //in pixels
 			y_offset = y_row * tcc.tile_height; // in pixels
+			
+			console.log(x_offset)
+			console.log(y_offset)
 			
 			width = tcc.tile_width; //in pixels
 			height = tcc.tile_height; //in pixels
@@ -191,6 +196,8 @@ var tile_cache = (function () {
 			//draw symbol from tile map to (0, 0, width, height)
 			drawTileToCache(tcc, symbol, tilemap);
 	
+			console.log(tcc);
+			
 			//color symbol based upon symbol_color
 			/*INSERT CODE HERE*/
 			
