@@ -73,7 +73,7 @@ var drawTileToCache = function (tile_cache_canvas, tile_num, tilemap) {
 		tile_y_pos;
 	
 	tile_x_pos = tile_num % tilemap.tile_width;
-	tile_y_pos = tile_num - title_x_position;
+	tile_y_pos = tile_num - tile_x_pos;
 	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
 	
 	x_offset = tile_x_pos * tilemap.tile_pixel_width;
