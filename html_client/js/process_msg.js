@@ -21,6 +21,14 @@ process = {};
 
 process.info = {};
     
+process.info.tileset = function(msg) {
+    
+    // take tileset msg and process/copy to a native format
+    // suitable for drawing.
+    // ideally it is a map from object_type identifiers to drawing properties
+    // these drawing properties should be easily checked by the tilecache
+};
+    
 // world_id, client_id, x_size, y_size, z_level, map
 process.info.terrain_map = function (msg) {
         //console.log(msg);
@@ -337,6 +345,7 @@ process.delta.set_terrain_map = function (msg) {
 
 route = {
     
+    tileset: process.info.tileset,
     terrain_map: process.info.terrain_map,
     agent_info: process.info.agent_info,
     object_info: process.info.object_info,
