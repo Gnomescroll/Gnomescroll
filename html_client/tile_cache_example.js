@@ -31,7 +31,7 @@ var board_canvas = {
 	canvas_tile_height: 16, //width of canvas in number of tiles
 	
 	tile_pixel_width: 24,
-	tile_pixel_width: 24,
+	tile_pixel_height: 24,
     
 	cache_canvas_dom: $('<canvas></canvas>').attr('id', 'board'), // the thing used for reading/writing to canvas
                        
