@@ -10,9 +10,18 @@ var tile_cache_canvas = {
 	tile_pixel_width: 24,
 
 	cache_canvas_dom: $('<canvas></canvas>')
+                       .attr('id', 'cache')
                        .width(this.canvas_tile_width * this.tile_pixel_width)
                        .height(this.canvas_tile_height * this.tile_pixel_width), // the thing used for reading/writing to canvas
-	ctx: this.cache_canvas_dom.getContext("2d"), // drawing surface
+                       
+	ctx: null, // drawing surface
+    
+    init: function () {
+            $('body').append(this.cache_canvas_dom);
+            this.cache_canvas_dom = $('canvas#cache');
+            this.ctx = this.cache_canvas_dom.getContext("2d")
+        },
+        
 	
 }
 
