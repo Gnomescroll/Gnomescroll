@@ -122,7 +122,9 @@ var tile_cache = (function () {
 		//if so, much do garabage collection on cache
 	}
 	
-	function draw_tile(board_x, board_y, tile_id) { //takes the x,y position and id of tile type to draw
+	function draw_tile(board_x, board_y, tile_id, draw_type) { //takes the x,y position and id of tile type to draw
+
+		if (draw_type === undefined) draw_type = 1;
 
         var symbol,
             symbol_color,
@@ -209,25 +211,63 @@ var tile_cache = (function () {
 			var imgd = tcc.ctx.getImageData(0, 0, width, height);
 			var pix = imgd.data;
 			
-			// Loop over each pixel and invert the color.
-			for (var i = 0, n = pix.length; i < n; i += 4) {
-			  //console.log(pix[i+3])
-			  
-			  if(pix[i+3] == 0) {
-			//alpha channel is 0, show background
-			//console.log(pix[i+3]) 
-				pix[i  ] = background_color[0]; // red
-				pix[i+1] = background_color[1]; // green
-				pix[i+2] = background_color[2]; // blue				  
-				pix[i+3] = 255;
-				} else {
-
-			  pix[i  ] = Math.floor( pix[i  ] * symbol_color[0] / 256 ); // red
-			  pix[i+1] = Math.floor( pix[i+1] * symbol_color[1] / 256 ); // green
-			  pix[i+2] = Math.floor( pix[i+2] * symbol_color[2] / 256 ); // blue
-			  // i+3 is alpha (the fourth element)
+			if(draw_type == 1) {
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+				  
+				  if(pix[i+3] == 0) {
+				//alpha channel is 0, show background
+					pix[i  ] = background_color[0]; // red
+					pix[i+1] = background_color[1]; // green
+					pix[i+2] = background_color[2]; // blue				  
+					pix[i+3] = 255;
+					} else {
+	
+				  pix[i  ] = Math.floor( pix[i  ] * symbol_color[0] / 256 ); // red
+				  pix[i+1] = Math.floor( pix[i+1] * symbol_color[1] / 256 ); // green
+				  pix[i+2] = Math.floor( pix[i+2] * symbol_color[2] / 256 ); // blue
+				  // i+3 is alpha (the fourth element)
+					}
 				}
 			}
+			
+			if(draw_type == 2) {
+				var a, r, g, b;
+				var b_r, b_g, b_b;
+				
+				b_r = background_color[0];
+				b_g = background_color[1];
+				b_b = background_color[2];
+				
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+				  
+				  if(pix[i+3] == 0) {
+				//alpha channel is 0, show background
+					pix[i  ] = background_color[0]; // red
+					pix[i+1] = background_color[1]; // green
+					pix[i+2] = background_color[2]; // blue				  
+					pix[i+3] = 255;
+					} else {
+
+					r = pix[i] / 255;
+					g = pix[i] / 255;
+					b = pix[i] /255;
+					a = pix[i+3] /255;
+					a_ = 1 - a;
+					
+					
+					pix[i  ] = Math.floor( (r*a + b_r*a_)* 256 ); // red
+					pix[i+1] = Math.floor( (g*a + g_r*a_)* 256 ); // green
+					pix[i+2] = Math.floor( (b*a + b_r*a_)* 256 ); // blue
+					pix[i+3] = 255;
+					}
+				}				
+				
+				
+				
+				
+				
+			}
+
 			// Draw the ImageData at the given (x,y) coordinates.
 			tcc.ctx.putImageData(imgd, x_offset, y_offset);
 			
