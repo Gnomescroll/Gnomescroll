@@ -94,8 +94,11 @@ function tile_cache() {
 		//copy tile from the tile_cache onto the board
 		
 
+		//copy (x_offset, y_offset, width, height) from canvas self.tile_cache_canvas.ctx.ctx
+		/*INSERT CODE HERE*/
 		
-		
+		//to position x,y on board cavnas (need to calculate region)
+		/*INSERT CODE HERE*/
 	}
 	
 }
