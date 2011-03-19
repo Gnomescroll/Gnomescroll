@@ -180,7 +180,7 @@ var tile_cache = (function () {
              cache_counter: cache_counter,
              tile_drawing_properties: tile_drawing_properties,
              board_canvas: board_canvas,
-             tile_cache_canvas = tile_cache_canvas
+             tile_cache_canvas: tile_cache_canvas
            }
 }());
 
