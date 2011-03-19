@@ -23,18 +23,14 @@ var tile_map_canvas = {
 var tile_cache = (function () {
 
     var tile_cache_canvas = tile_cache_canvas,
-        cache_dict = [], //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
-        cache_counter = 1, //gives the next free spot in cache
+        cache_dict = {}, //maps tile_id to number, [tile_cache_position, x_offset, y_offset, width, height]
+        cache_counter = 0, //gives the next free spot in cache
         tileset_metadata tileset_metadata, //stores the rendering metadata returned by the get_tiles info command
         board_canvas = board_canvas; // canvas that we are drawing to
 	
-	function get_free_cache_index() {
+	function free_index() {
         
-        var free_index;
-        
-		free_index = cache_counter;
-		cache_counter++;
-		return free_index;
+		return cache_counter++;
 		
 		//check to see if free_index is greater than number of spots in cache
 		//if so, much do garabage collection on cache
@@ -76,7 +72,7 @@ var tile_cache = (function () {
 			
 			//DO: draw background color onto (x,y)
 			
-			tile_cache_position = get_free_cache_index();
+			tile_cache_position = free_index();
 			
 			x_row = tile_cache_position % tile_cache_canvas.canvas_tile_width;
 			y_row = tile_cache_position - x_row;
@@ -117,7 +113,7 @@ var tile_cache = (function () {
 		/*INSERT CODE HERE*/
 	}
 	
-    return { get_free_cache_index: get_free_cache_index,
+    return { free_index: free_index,
              draw_tile: draw_tile }
 }());
 
