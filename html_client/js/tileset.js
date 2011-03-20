@@ -11,7 +11,7 @@ var tileset_state = {
 			//validate
 			tile_name: param.tile_name,
 			tile_id :  param.tile_id,	
-			tile_set:  0,
+			tilemap:  0,
 			draw_style: 2,
 			background_rgb:  param.background_rgb,
 			symbol:  param.symbol,
@@ -171,10 +171,16 @@ var drawingCache = {
 
 	//insert tile into tile_drawing_cache
 	insertTile : function insertTile(tile_id) {
-	
-		var tilemap_id, tile_num, draw_style; //need this
-	
-		var tile_map,
+
+		var tile = tileset_state.get_tile_rendering_info(tile_id);
+			
+		var tilemap_id, tile_num; //need this
+
+		var tile = tileset_state.get_tile_rendering_info(tile_id);
+		tilemap_id = tile.tile_map;
+		tile_num = tile.symbol;
+
+		var tilemap,
 			x_offset,
 			y_offset,
 			tile_x_pos,
@@ -200,7 +206,11 @@ var drawingCache = {
 		var pix = imgd.data;
 		
 		//do manipulations
+		var draw_style, background_rgb, symbol_rgb;
 		
+		draw_style = tile.draw_style;
+		background_rgb = tile.background_rgb;
+		symbol_rgb = tile.symbol_rgb;
 		
 		var cache_index = ++this.img_cache_count;
 		this.img_cache[cache_index] = imgd;
@@ -215,7 +225,6 @@ var drawingCache = {
 			var rvalue = this.insertTile(tile_id);
 			if(rvalue == 0) return 0; //usually means tileset is not loaded
 		}
-
 		var index = this.tlookup[tile_id];
 		this.board.ctx.putImageData(img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
 	},
