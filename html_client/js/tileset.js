@@ -5,31 +5,33 @@ var tileset_state = {
 	tile_name_to_id : [],
 	
 	add_tile : function(param) {
-		tile_name_to_id[ param.tile_name] =  param.tile_id;
+		this.tile_name_to_id[ param.tile_name] =  param.tile_id;
 			
 		var data = {
 			//validate
 			tile_name: param.tile_name,
 			tile_id :  param.tile_id,	
-			tilemap:  0,
-			draw_style: 2,
+			tilemap:  param.tilemap,
+			tilemap_id:  param.tilemap_id,
+			draw_style: param.draw_style,
 			background_rgb:  param.background_rgb,
 			symbol:  param.symbol,
 			symbol_rgb: param.symbol_rgb,
 		};
-		tile_rendering[param.tile_id] = data;
+		this.tile_rendering[param.tile_id] = data;
 	},
 	
 	get_tile_rendering_info : function(tile_id) {
-		if(tile_id in this.tile_rendering) { return tile_rendering[tile_id]; }
+		if(tile_id in this.tile_rendering) { return this.tile_rendering[tile_id]; }
 		else {
 			//return default if tile does not exist in rendering info
 			console.log("Tile rendering infomation missing: " + tile_id)
 			data = {
 				tile_name: 'non-existance tile',
 				tile_id :  -1,	
-				tile_set:  0,
-				draw_type: 2,
+				tilemap:  'default',
+				tilemap_id: 0,
+				draw_style: 2,
 				background_rgb: [0, 0, 0],
 				symbol:  1,
 				symbol_rgb: [0, 150, 150],	
@@ -148,8 +150,12 @@ var drawingCache = {
 			return 0;
 		}
 		
-		var _dom_element = $('<img />').attr('src', src).attr('id', 'tilemap_'+tilemap_id);
-		$('body').append(_dom_element);
+		//var _dom_element = $('<img />').attr('src', src).attr('id', 'tilemap_'+tilemap_id);
+		//$('body').append(_dom_element);
+		var _dom_element = $('img#tileset_'+tilemap_id)
+		
+		console.log(_dom_element)
+		
 		var img = new Image();
 		
 		console.time("loaded: "+tilemap_id)
@@ -177,7 +183,7 @@ var drawingCache = {
 		var tilemap_id, tile_num; //need this
 
 		var tile = tileset_state.get_tile_rendering_info(tile_id);
-		tilemap_id = tile.tile_map;
+		tilemap_id = tile.tilemap_id;
 		tile_num = tile.symbol;
 
 		var tilemap,
@@ -197,6 +203,10 @@ var drawingCache = {
 		y_offset = tile_y_pos * tilemap.tile_pixel_height;
 		
 		this.ctx.clearRect(0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height); //needed?
+		
+		console.log(tilemap)
+		console.log(tilemap_id)
+		console.log(tile_num)
 		
 		this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 					tilemap.tile_pixel_width, tilemap.tile_pixel_height,
@@ -221,12 +231,16 @@ var drawingCache = {
 	
 	drawTile : function drawTile(x, y, tile_id) {
 		if(!(tile_id in this.tlookup)) {
-			console.log("Tile not loaded: " + tilemap_id)
+			console.log("Tile not loaded: " + tile_id)
 			var rvalue = this.insertTile(tile_id);
 			if(rvalue == 0) return 0; //usually means tileset is not loaded
 		}
 		var index = this.tlookup[tile_id];
-		this.board.ctx.putImageData(img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
+		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
+	
+		console.log(this.img_cache[index])
+		console.log(index)
+	
 	},
 }
 
