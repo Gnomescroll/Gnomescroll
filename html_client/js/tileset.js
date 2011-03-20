@@ -113,7 +113,7 @@ var tilemap = {
 */
 
 var drawingCache = {
-	
+	this.board : null,
 	tilemaps : [],
 	
 	img_cache : [],
@@ -128,6 +128,7 @@ var drawingCache = {
 	init : function init() {
             this.workspace_canvas_dom = $('canvas#DrawingCacheWorkspace')[0];
             this.ctx = this.workspace_canvas_dom.getContext("2d");
+            this.board = board_canvas;
 	},
 	
 	resize : function resize() {
@@ -189,13 +190,13 @@ var drawingCache = {
 		x_offset = tile_x_pos * tilemap.tile_pixel_width;
 		y_offset = tile_y_pos * tilemap.tile_pixel_height;
 		
-		this.ctx.clearRect(0, 0, board_canvas.tile_pixel_width, board_canvas.tile_pixel_height); //needed?
+		this.ctx.clearRect(0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height); //needed?
 		
 		this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 					tilemap.tile_pixel_width, tilemap.tile_pixel_height,
-					0, 0, board_canvas.tile_pixel_width, board_canvas.tile_pixel_height);
+					0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height);
 		
-		var imgd = this.ctx.getImageData(0, 0, board_canvas.tile_pixel_width, board_canvas.tile_pixel_height);
+		var imgd = this.ctx.getImageData(0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height);
 		var pix = imgd.data;
 		
 		//do manipulations
@@ -211,11 +212,12 @@ var drawingCache = {
 	drawTile : function drawTile(x, y, tile_id) {
 		if(!(tile_id in this.tlookup) {
 			console.log("Tile not loaded: " + tilemap_id)
-			var x = this.insertTile(tile_id);
-			if(x == 0) return 0; //usually means tileset is not loaded
+			var rvalue = this.insertTile(tile_id);
+			if(rvalue == 0) return 0; //usually means tileset is not loaded
 		}
+
 		var index = this.tlookup[tile_id];
-		board_cavas.ctx.putImageData(img_cache[index], x_offset, y_offset);
+		this.board.ctx.putImageData(img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
 	},
 }
 
