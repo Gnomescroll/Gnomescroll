@@ -1,13 +1,4 @@
 
-function timer(msg) {
-	last_time: 0
-	this_time: 0
-
-	getTime()
-	
-	
-}
-
 var tile_cache_canvas = {
 	    
 	//needs init code
@@ -70,13 +61,11 @@ var tilemap = {
 						img.src = "static/tiles/Bisasam_24x24.png";
 						return img;
 					}()),
-					
-	//tiles_wide: 16,
-	//tiles_high: 16,
+				
 	
-	tile_pixel_width: 24,
+	tile_pixel_width: 24, //in pixels
 	tile_pixel_height: 24,
-	tile_width: 16,
+	tile_width: 16, //in tiles
 	tile_height: 16
 	}
 
