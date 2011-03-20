@@ -75,27 +75,20 @@ var tile_cache_canvas = {
 }
 
 function create_tilemap(src, tilemap_id, tpw, tph, tw, th) {
-	
 	var _dom_element;
-	
 	_dom_element = $('<img />').attr('src', src).attr('id', 'tilemap_'+tilemap_id);
 	$('body').append(_dom_element);
-	
 	var img = new Image();
 	img.src = src; // "static/tiles/Bisasam_24x24.png";
-	
 	var tilemap = {
-
 	dom_element: _dom_element,
 	image: img,
 				
 	tile_pixel_width: tpw, //in pixels
 	tile_pixel_height: tph,
 	tile_width: tw, //in tiles
-	tile_height: th,
-		
+	tile_height: th,		
 	};
-	
 	return tilemap;	
 }
 
@@ -151,3 +144,30 @@ var board_canvas = {
 	},
 }
 
+//insert tile into tile_drawing_cache
+
+var insertTileIntoTileDrawingCache = function (tileset, tile_num, ) {
+
+	var x_offset,
+		y_offset,
+		tile_x_pos,
+		tile_y_pos;
+	
+	tile_x_pos = tile_num % tilemap.tile_width;
+	tile_y_pos = tile_num - tile_x_pos;
+	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
+	
+	x_offset = tile_x_pos * tilemap.tile_pixel_width;
+	y_offset = tile_y_pos * tilemap.tile_pixel_height;
+	
+	/*
+	console.log("tile_x_pos: " + tile_x_pos)
+	console.log("tile_y_pos: " + tile_y_pos)
+	console.log("x_offset: " + x_offset)
+	console.log("y_offset: " + y_offset)
+	*/
+	
+	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
+				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
+				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
+}
