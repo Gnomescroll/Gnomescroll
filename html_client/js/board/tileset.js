@@ -114,6 +114,76 @@ var tilemap = {
 	}
 */
 
+var DrawingCache = {
+	
+	tile_maps = [],
+	
+	img_cache = [],
+	img_cache_count = 0,
+	
+	workspace_canvas_dom : null,
+	ctx: null,
+	
+	init : function () {
+            this.workspace_canvas_dom = $('canvas#DrawingCacheWorkspace')[0];
+            this.ctx = this.workspace_canvas_dom.getContext("2d");
+	}
+	
+	resize : function() {
+		//clears cache, changes size of tiles being drawn to cache
+	}
+
+	//adds a tilemap to cache
+	insertTilemap : function (src, tilemap_id, tpw, tph, tw, th) {
+		var _dom_element;
+		_dom_element = $('<img />').attr('src', src).attr('id', 'tilemap_'+tilemap_id);
+		$('body').append(_dom_element);
+		var img = new Image();
+		img.src = src; // "static/tiles/Bisasam_24x24.png";
+		var tilemap = {
+		dom_element: _dom_element,
+		image: img,
+		tile_pixel_width: tpw, //in pixels
+		tile_pixel_height: tph,
+		tile_width: tw, //in tiles
+		tile_height: th,		
+		};
+		return tilemap;	
+	},
+
+	//insert tile into tile_drawing_cache
+	insertTile : function (tilemap_id, tile_num) {
+	
+		var tile_map,
+			x_offset,
+			y_offset,
+			tile_x_pos,
+			tile_y_pos;
+		
+		if(!(tilemap_id in tile_maps)) { console.log("tilemap does not exist!") }
+		tile_map = tile_maps[tilemap_id];
+		
+		tile_x_pos = tile_num % tilemap.tile_width;
+		tile_y_pos = tile_num - tile_x_pos;
+		if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
+		
+		x_offset = tile_x_pos * tilemap.tile_pixel_width;
+		y_offset = tile_y_pos * tilemap.tile_pixel_height;
+		
+		/*
+		console.log("tile_x_pos: " + tile_x_pos)
+		console.log("tile_y_pos: " + tile_y_pos)
+		console.log("x_offset: " + x_offset)
+		console.log("y_offset: " + y_offset)
+		*/
+		
+		this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
+					tilemap.tile_pixel_width, tilemap.tile_pixel_height,
+					0, 0, board_canvas.tile_pixel_width, board_canvas.tile_pixel_height);
+	},
+
+}
+
 /// MOVE THIS to board.js
 //this is where drawing occurs
 var board_canvas = {
@@ -142,32 +212,4 @@ var board_canvas = {
     resize: function() {
 		///Will be called to handle resizing of board and/or zooming
 	},
-}
-
-//insert tile into tile_drawing_cache
-
-var insertTileIntoTileDrawingCache = function (tileset, tile_num, ) {
-
-	var x_offset,
-		y_offset,
-		tile_x_pos,
-		tile_y_pos;
-	
-	tile_x_pos = tile_num % tilemap.tile_width;
-	tile_y_pos = tile_num - tile_x_pos;
-	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
-	
-	x_offset = tile_x_pos * tilemap.tile_pixel_width;
-	y_offset = tile_y_pos * tilemap.tile_pixel_height;
-	
-	/*
-	console.log("tile_x_pos: " + tile_x_pos)
-	console.log("tile_y_pos: " + tile_y_pos)
-	console.log("x_offset: " + x_offset)
-	console.log("y_offset: " + y_offset)
-	*/
-	
-	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
-				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
-				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
 }
