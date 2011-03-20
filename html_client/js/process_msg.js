@@ -23,6 +23,8 @@ process.info = {};
     
 process.info.tileset = function(msg) {
     
+    console.log(msg)
+    
     // take tileset msg and process/copy to a native format
     // suitable for drawing.
     // ideally it is a map from object_type identifiers to drawing properties

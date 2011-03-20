@@ -1,3 +1,13 @@
+
+function timer(msg) {
+	last_time: 0
+	this_time: 0
+
+	getTime()
+	
+	
+}
+
 var tile_cache_canvas = {
 	    
 	//needs init code
@@ -81,22 +91,19 @@ var drawTileToCache = function (tcc, tile_num) {
 	tile_y_pos = tile_num - tile_x_pos;
 	if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
 	
-	
 	x_offset = tile_x_pos * tilemap.tile_pixel_width;
 	y_offset = tile_y_pos * tilemap.tile_pixel_height;
 	
+	/*
 	console.log("tile_x_pos: " + tile_x_pos)
 	console.log("tile_y_pos: " + tile_y_pos)
 	console.log("x_offset: " + x_offset)
 	console.log("y_offset: " + y_offset)
-			
+	*/
+	
 	tile_cache_canvas.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 				tilemap.tile_pixel_width, tilemap.tile_pixel_height,
 				0, 0, tcc.tile_pixel_width, tcc.tile_pixel_height);
-
-//	ctx.drawImage(tilemap.image, 
-//				  x_offset, y_offset, tile_pixel_width, tile_pixel_width,
-//				  cell_x, cell_y, cell_width, cell_height);
 }
 
 //this stores tile
@@ -153,7 +160,7 @@ var tile_cache = (function () {
         
 		//check to see if tile is in cache, if not; add to cache
 
-		if(! (tile_id in cache_dict)) {
+		if(! (tile_id in image_data_array)) {
 			//tile not in cache, draw tile into cache
 			
 			//tile drawing properies are symbol, symbol_color, and background color
@@ -167,7 +174,7 @@ var tile_cache = (function () {
 			 */
 			
 			//hardcode for now, but get drawing properties from tileset_data eventually
-			//symbol = 1; 
+			symbol = tile_id; 
 			symbol_color = [0, 150, 150]; //rgb
 			background_color = [0, 0, 0]; //rgb
 			
