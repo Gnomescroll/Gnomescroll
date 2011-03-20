@@ -111,7 +111,7 @@ class Info: #non-blocking client notification
 
 	def get_tiles(self, client_id, **extra):
 		msg = {}
-		msg['msg'] = 'get_tiles'
+		msg['msg'] = 'tileset'
 		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
 		msg['tile_dict'] = self.dat.get_tiles()
