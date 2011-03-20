@@ -118,6 +118,7 @@ var drawingCache = {
 		this.img_cache = [];
 		this.cache_count = 0;
 		
+		this.tlookup = [];
 		for(index in this.slookup) {
 			this.slookup = [];
 		}
@@ -149,7 +150,7 @@ var drawingCache = {
 			tile_height: th,		
 		};
 		this.tilemaps[tilemap_id] = tilemap;
-		this.tlookup[tilemap_id] = [];
+		this.slookup[tilemap_id] = [];
 	},
 
 	//insert tile into tile_drawing_cache
@@ -240,13 +241,13 @@ var drawingCache = {
 		this.slookup[tilemap_id][tile_num] = cache_index;
 	},
 
-	drawSprite : function drawSprite(x, y, tile_num, tileset_id) {
-		if(!(tileset_id in this.slookup)) { 
-			console.log("DrawingCache.drawSprite Error: Tilemap not loaded: " + tileset_id)
+	drawSprite : function drawSprite(x, y, sprite_num, spriteMap_id) {
+		if(!(spriteMap_id in this.slookup)) { 
+			console.log("DrawingCache.drawSprite Error: Tilemap/spriteMap not loaded: " + spriteMap_id)
 			return 0;
 			}
-		if(!(tile_num in this.slookup[tileset_id])) { this.insertSprite(tile_num, tilemap_id); }
-		var index = this.slookup[tileset_id][tile_num];
+		if(!(sprite_num in this.slookup[spriteMap_id])) { this.insertSprite(sprite_num, spriteMap_id); }
+		var index = this.slookup[spriteMap_id][sprite_num];
 		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
 	}
 }
