@@ -25,6 +25,12 @@ process.info.tileset = function(msg) {
     
     console.log(msg)
     
+    //store this; contains tile rendering information 
+    //msg.tile_rendering_dict
+
+    //store this; contains tile meta information
+    //msg.tile_dict
+    
     // take tileset msg and process/copy to a native format
     // suitable for drawing.
     // ideally it is a map from object_type identifiers to drawing properties
