@@ -12,7 +12,7 @@ var tileset_state = {
 			tile_name: param.tile_name,
 			tile_id :  param.tile_id,	
 			tile_set:  0,
-			draw_type: 2,
+			draw_style: 2,
 			background_rgb:  param.background_rgb,
 			symbol:  param.symbol,
 			symbol_rgb: param.symbol_rgb,
@@ -118,6 +118,8 @@ var drawingCache = {
 	
 	img_cache : [],
 	img_cache_count : 0,
+	
+	//for tiles
 	tlookup : [],
 	
 	workspace_canvas_dom : null,
@@ -130,7 +132,6 @@ var drawingCache = {
 	
 	resize : function resize() {
 		//clears cache, changes size of tiles being drawn to cache
-		console.log("WTF")
 		this.img_cache = [];
 		this.cache_count = 0;
 		
@@ -150,10 +151,9 @@ var drawingCache = {
 		$('body').append(_dom_element);
 		var img = new Image();
 		
-		console.time(tilemap_id)
+		console.time("loaded: "+tilemap_id)
 		img.onload = function() { 
-			console.log("loaded")
-			console.timeEnd(tilemap_id)
+			console.timeEnd("loaded: "+tilemap_id)
 			 }
 		img.src = src; // "static/tiles/Bisasam_24x24.png";
 		var tilemap = {
@@ -169,7 +169,9 @@ var drawingCache = {
 	},
 
 	//insert tile into tile_drawing_cache
-	insertTile : function insertTile(tilemap_id, tile_num) {
+	insertTile : function insertTile(tile_id) {
+	
+		var tilemap_id, tile_num, draw_style; //need this
 	
 		var tile_map,
 			x_offset,
@@ -202,11 +204,19 @@ var drawingCache = {
 		var cache_index = ++this.img_cache_count;
 		this.img_cache[cache_index] = imgd;
 		
-		this.tlookup[tilemap_id][tile_num] = cache_index;
-		
-		console.log(this.tlookup)
-	},
+		this.tlookup[tile_id] = cache_index;
 
+	},
+	
+	drawTile : function drawTile(x, y, tile_id) {
+		if(!(tile_id in this.tlookup) {
+			console.log("Tile not loaded: " + tilemap_id)
+			var x = this.insertTile(tile_id);
+			if(x == 0) return 0; //usually means tileset is not loaded
+		}
+		var index = this.tlookup[tile_id];
+		board_cavas.ctx.putImageData(img_cache[index], x_offset, y_offset);
+	},
 }
 
 /// MOVE THIS to board.js
