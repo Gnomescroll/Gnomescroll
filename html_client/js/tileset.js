@@ -21,7 +21,7 @@ var tileset_state = {
 	},
 	
 	get_tile_rendering_info : function(tile_id) {
-		if(tile_id in tile_rendering) { return tile_rendering[tile_id]; }
+		if(tile_id in this.tile_rendering) { return tile_rendering[tile_id]; }
 		else {
 			//return default if tile does not exist in rendering info
 			console.log("Tile rendering infomation missing: " + tile_id)
@@ -113,7 +113,7 @@ var tilemap = {
 */
 
 var drawingCache = {
-	this.board : null,
+	board : null,
 	tilemaps : [],
 	
 	img_cache : [],
@@ -186,7 +186,7 @@ var drawingCache = {
 			tile_x_pos,
 			tile_y_pos;
 		
-		if(!(tilemap_id in this.tilemaps)) { console.log("tilemap does not exist!") }
+		if(!(tilemap_id in this.tilemaps)) { console.log("tilemap does not exist:" + tilemap_id) }
 		tilemap = this.tilemaps[tilemap_id];
 		
 		tile_x_pos = tile_num % tilemap.tile_width;
@@ -220,7 +220,7 @@ var drawingCache = {
 	},
 	
 	drawTile : function drawTile(x, y, tile_id) {
-		if(!(tile_id in this.tlookup) {
+		if(!(tile_id in this.tlookup)) {
 			console.log("Tile not loaded: " + tilemap_id)
 			var rvalue = this.insertTile(tile_id);
 			if(rvalue == 0) return 0; //usually means tileset is not loaded
