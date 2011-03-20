@@ -92,28 +92,6 @@ function create_tilemap(src, tilemap_id, tpw, tph, tw, th) {
 	return tilemap;	
 }
 
-function create_default_tilemap() { return create_tilemap("static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16); }
-
-/*
-var tilemap = {
-	
-	elem: $('img#tilemap')[0],
-	
-	///!?!? Is this being evaluated everytime it is called?
-	image: ( function() {
-						var img = new Image();
-						img.src = "static/tiles/Bisasam_24x24.png";
-						return img;
-					}()),
-				
-	
-	tile_pixel_width: 24, //in pixels
-	tile_pixel_height: 24,
-	tile_width: 16, //in tiles
-	tile_height: 16
-	}
-*/
-
 var drawingCache = {
 	board : null,
 	tilemaps : [],
@@ -123,6 +101,8 @@ var drawingCache = {
 	
 	//for tiles
 	tlookup : [],
+	//for sprites (items, objects, building, agent sprites)
+	slookup : [],
 	
 	workspace_canvas_dom : null,
 	ctx: null,
@@ -138,8 +118,8 @@ var drawingCache = {
 		this.img_cache = [];
 		this.cache_count = 0;
 		
-		for(index in this.tlookup) {
-			this.tlookup = [];
+		for(index in this.slookup) {
+			this.slookup = [];
 		}
 	},
 
@@ -153,11 +133,8 @@ var drawingCache = {
 		//var _dom_element = $('<img />').attr('src', src).attr('id', 'tilemap_'+tilemap_id);
 		//$('body').append(_dom_element);
 		var _dom_element = $('img#tileset_'+tilemap_id)
-		
-		console.log(_dom_element)
-		
+		//console.log(_dom_element)
 		var img = new Image();
-		
 		console.time("loaded: "+tilemap_id)
 		img.onload = function() { 
 			console.timeEnd("loaded: "+tilemap_id)
@@ -179,9 +156,7 @@ var drawingCache = {
 	insertTile : function insertTile(tile_id) {
 
 		var tile = tileset_state.get_tile_rendering_info(tile_id);
-			
 		var tilemap_id, tile_num; //need this
-
 		var tile = tileset_state.get_tile_rendering_info(tile_id);
 		tilemap_id = tile.tilemap_id;
 		tile_num = tile.symbol;
@@ -203,10 +178,6 @@ var drawingCache = {
 		y_offset = tile_y_pos * tilemap.tile_pixel_height;
 		
 		this.ctx.clearRect(0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height); //needed?
-		
-		console.log(tilemap)
-		console.log(tilemap_id)
-		console.log(tile_num)
 		
 		this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
 					tilemap.tile_pixel_width, tilemap.tile_pixel_height,
@@ -237,11 +208,47 @@ var drawingCache = {
 		}
 		var index = this.tlookup[tile_id];
 		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
-	
-		console.log(this.img_cache[index])
-		console.log(index)
-	
+
 	},
+	
+	//insert tile into tile_drawing_cache
+	insertSprite : function insertSprite(tile_num, tilemap_id) {
+
+		var tilemap,
+			x_offset,
+			y_offset,
+			tile_x_pos,
+			tile_y_pos;
+		
+		if(!(tilemap_id in this.tilemaps)) { console.log("tilemap does not exist:" + tilemap_id) }
+		tilemap = this.tilemaps[tilemap_id];
+		
+		tile_x_pos = tile_num % tilemap.tile_width;
+		tile_y_pos = tile_num - tile_x_pos;
+		if(tile_y_pos != 0) { tile_y_pos = tile_y_pos / tilemap.tile_width; }
+		x_offset = tile_x_pos * tilemap.tile_pixel_width;
+		y_offset = tile_y_pos * tilemap.tile_pixel_height;
+		this.ctx.clearRect(0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height); //needed?
+		this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
+					tilemap.tile_pixel_width, tilemap.tile_pixel_height,
+					0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height);
+		var imgd = this.ctx.getImageData(0, 0, this.board.tile_pixel_width, this.board.tile_pixel_height);
+		var pix = imgd.data;
+		//do manipulations (assume copy/paste for sprites)
+		var cache_index = ++this.img_cache_count;
+		this.img_cache[cache_index] = imgd;	
+		this.slookup[tilemap_id][tile_num] = cache_index;
+	},
+
+	drawSprite : function drawSprite(x, y, tile_num, tileset_id) {
+		if(!(tileset_id in this.slookup)) { 
+			console.log("DrawingCache.drawSprite Error: Tilemap not loaded: " + tileset_id)
+			return 0;
+			}
+		if(!(tile_num in this.slookup[tileset_id])) { this.insertSprite(tile_num, tilemap_id); }
+		var index = this.slookup[tileset_id][tile_num];
+		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
+	}
 }
 
 /// MOVE THIS to board.js
