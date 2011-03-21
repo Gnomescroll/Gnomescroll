@@ -1,13 +1,17 @@
+
+## Drawing properties for tiles
+
+#	tile_name: param.tile_name,
+#	tile_id :  param.tile_id,	
+
+#	tilemap_id:  param.tilemap_id,
+#	draw_style: param.draw_style,
+#	background_rgb:  param.background_rgb,
+#	symbol:  param.symbol,
+#	symbol_rgb: param.symbol_rgb,
+
+
 tiles_dat = [
-
-			tile_name: param.tile_name,
-			tile_id :  param.tile_id,	
-
-			tilemap_id:  param.tilemap_id,
-			draw_style: param.draw_style,
-			background_rgb:  param.background_rgb,
-			symbol:  param.symbol,
-			symbol_rgb: param.symbol_rgb,
 			
 	#empty things
 	{
