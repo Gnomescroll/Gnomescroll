@@ -41,8 +41,9 @@ game = {
             console.log('wait_func');
             state.init();
             input.init();
-            render.init();
-            
+            //render.init();
+            ///board_canvas.init();
+			///drawingCache.init();
         }
         setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
     },
