@@ -104,20 +104,22 @@ var board_manager = {
 			}		
 		}
 	}
-	
+
 	// tile -> agents -> objects -> tile
-	advance_drawing_cursor : function(i) {
+	advance_drawing_cursor : function(bx, by) {
+		this._advance_drawing_cursor
 		
-	}
+	},
 	
 	advance_all_drawing_cursor : function() {
 		for(x in this.index) {
-			
+			this._advance_drawing_cursor(x)
 		}
-	}
+	},
 		
-		for(x in this.index) {
-			if(x.drawing_cursor[0] != -1) 
+	// takes an this.index element
+	_advance_drawing_cursor : function(x) {
+		if(x.drawing_cursor[0] != -1) 
 			{
 				if(x.agent_num > 0) 
 				{
@@ -161,9 +163,7 @@ var board_manager = {
 				}
 				
 			}
-			
-		}
-	},
+	}
 	
 	//
 	//internal utility functions, non-interface functions
