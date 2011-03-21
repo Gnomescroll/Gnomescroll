@@ -106,7 +106,16 @@ var board_manager = {
 	}
 	
 	// tile -> agents -> objects -> tile
-	advance_drawing_cursor : function() {
+	advance_drawing_cursor : function(i) {
+		
+	}
+	
+	advance_all_drawing_cursor : function() {
+		for(x in this.index) {
+			
+		}
+	}
+		
 		for(x in this.index) {
 			if(x.drawing_cursor[0] != -1) 
 			{
@@ -120,16 +129,37 @@ var board_manager = {
 					x.drawing_cursor[0] = -1;
 					x.drawing_cursor[2] = 0;
 				}
+				else
+				{
+					//do nothing, only the tile exists on this square
+				}
 			}
 			else if(x.drawing_cursor[1] != -1)
 			{
-				console.log("Advance drawing cursor WTF 0")
+				console.log("board_manager.advance_drawing_cursor: WTF 0")
 				x.drawing_cursor[1]++;
-				if(x.drawing_cursor[1] == x.agent_num)
+				if(x.drawing_cursor[1] < x.agent_num)
 				{
-					x.drawing_cursor[1] = -1;
-					x.drawing_cursor[0] = 0;
+					//do nothings
 				}
+				else if(x.drawing_cursor[1] == x.agent_num)
+				{
+					if(x.object_num > 0)
+					{
+						x.drawing_cursor[1] = -1;
+						x.drawing_cursor[2] = 0;
+					}
+					else
+					{
+						x.drawing_cursor[1] = -1;
+						x.drawing_cursor[0] = 0;
+					}
+				}
+				else if(x.drawing_cursor[1] > x.agent_num)
+				{
+					console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
+				}
+				
 			}
 			
 		}
