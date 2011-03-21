@@ -11,7 +11,6 @@ var tileset_state = {
 			//validate
 			tile_name: param.tile_name,
 			tile_id :  param.tile_id,	
-			tilemap:  param.tilemap,
 			tilemap_id:  param.tilemap_id,
 			draw_style: param.draw_style,
 			background_rgb:  param.background_rgb,
@@ -29,7 +28,6 @@ var tileset_state = {
 			data = {
 				tile_name: 'non-existance tile',
 				tile_id :  -1,	
-				tilemap:  'default',
 				tilemap_id: 0,
 				draw_style: 2,
 				background_rgb: [0, 0, 0],

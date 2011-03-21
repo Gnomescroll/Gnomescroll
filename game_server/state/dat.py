@@ -1,17 +1,27 @@
 tiles_dat = [
 
+			tile_name: param.tile_name,
+			tile_id :  param.tile_id,	
 
+			tilemap_id:  param.tilemap_id,
+			draw_style: param.draw_style,
+			background_rgb:  param.background_rgb,
+			symbol:  param.symbol,
+			symbol_rgb: param.symbol_rgb,
+			
 	#empty things
 	{
 			'id' : -0001,
 			'name' : 'unknown_tile',
 			
 			'visual' : {
-				'type' : 'tile_set',
-				'tile_set' : 0,
-				'symbol' : 00,
-				'symbol_rgb' : (0, 0, 0),
-				'background_rgb' : (256, 256, 256)
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 00,
+					'symbol_rgb' : (0, 0, 0),
+					'background_rgb' : (256, 256, 256)
+				}
 			},
 		
 			'blocking' : 0,
@@ -532,13 +542,15 @@ class Dat:
 	def get_tile_rendering(self):
 		dict = {}
 		default_tile_visual = {
-			'type' : 'tile_set',
-			'tile_set' : 0,
-			'symbol' : 63,
-			'symbol_rgb' : (256, 0, 0),
-			'background_rgb' : (0, 0, 0)
+			'tilemap' : {
+				'tilemap_id' : 0,
+				'draw_style' : 1,
+				'symbol' : 63,
+				'symbol_rgb' : (256, 0, 0),
+				'background_rgb' : (0, 0, 0)
+			},
 		}
-
+			
 		for id, x in self.tiles_by_value.items():
 			if 'visual' in x.keys():
 				dict[id] = x['visual'].copy()
