@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>Nomic</title>
+
+<style type="text/css">
+
+#controls {
+}
+
+#controls img {
+    display: inline;
+    padding: 0 5px;
+}
+
+#tilemap {
+    display: none;
+}
+
+.tilemap {
+    display: none;
+}
+
+</style>
+
+<script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+</head>
+
+<body>
+<h1>
+TEST
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a id="init" href="">INIT</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a id="start" href="">START</a>
+
+</h1>
+
+<div id="game" >
+
+<span id="controls">
+<a id="button" class="increase_cell_size" href="">
+    <img src="static/buttons/increase_cell_size.png" />
+</a>
+<a id="button" class="decrease_cell_size" href="">
+    <img src="static/buttons/decrease_cell_size.png" />
+</a>
+</span>
+
+<canvas id ="DrawingCacheWorkspace" width="384" height="384" > </canvas>
+<canvas id ="board" width="384" height="384" > </canvas>
+
+<img id="tilemap" src="static/tiles/Bisasam_24x24.png" />
+
+<br>
+<img id="tileset_0" class="tilemap" src="static/tiles/Bisasam_24x24.png" />
+<img id="tileset_1" class="tilemap" src="static/tiles/dwarves.png" />
+
+</div>
+
+</body>
+<script src="js/process_msg.js"></script>
+<script src="js/validate.js"></script>
+<script src="js/socket.js"></script>
+<script src="js/game_objects.js"></script>
+<script src="js/state_m3thyl.js"></script>
+<script src="js/server_api.js"></script>
+<script src="js/user_input.js"></script>
+<script src="js/render.js"></script>
+<script src="js/game.js"></script>
+
+<script src="js/tileset.js"></script>
+
+<script>
+$('#init').click(function (event) {
+    event.preventDefault;
+    game.init();
+    return false;
+});
+
+$('#start').click(function (event) {
+    event.preventDefault;
+    game.start();
+    return false;
+});
+
+$(document).ready(function () {
+    
+board_canvas.init();
+drawingCache.init();
+
+drawingCache.insertTilemap("static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
+drawingCache.insertTilemap("static/tiles/dwarves.png", 1, 18, 20, 16, 16);
+
+//test1();
+});
+
+</script>
+
+</html>
