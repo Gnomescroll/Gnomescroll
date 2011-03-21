@@ -123,8 +123,13 @@ var board_manager = {
 			}
 			else if(x.drawing_cursor[1] != -1)
 			{
-				x.drawing
-				if(x.object_num 
+				console.log("Advance drawing cursor WTF 0")
+				x.drawing_cursor[1]++;
+				if(x.drawing_cursor[1] == x.agent_num)
+				{
+					x.drawing_cursor[1] = -1;
+					x.drawing_cursor[0] = 0;
+				}
 			}
 			
 		}
