@@ -83,18 +83,49 @@ var board_manager = {
 		//partial drop of data, get new data, then redraw
 	},
 	
+	//does a full redraw
 	blip : function() {
 		for(var x=0; x < this.board_tile_width; x++) {
 			for(var y=0; y < this.board_tile_height; y++) {
-				
-				
+				this.draw_board(x,y);
 			}	
 		}
 	},
 
-	advance_drawing_cursors : function() {
+	draw_board : function() {
 		for(x in this.index) {
-			
+			if(x.drawing_cursor[0] != -1) {
+				//draw tile
+				// x.tile_id, x.bx, x.by
+			} else if(x.drawing_cursor[1] != -1) {
+				//draw agent
+			} else if(x.drawing_cursor[2] != -1) {
+				//draw object
+			}		
+		}
+	}
+	
+	// tile -> agents -> objects -> tile
+	advance_drawing_cursor : function() {
+		for(x in this.index) {
+			if(x.drawing_cursor[0] != -1) 
+			{
+				if(x.agent_num > 0) 
+				{
+					x.drawing_cursor[0] = -1;
+					x.drawing_cursor[1] = 0;
+				} 
+				else if(x.object_num > 0) 
+				{
+					x.drawing_cursor[0] = -1;
+					x.drawing_cursor[2] = 0;
+				}
+			}
+			else if(x.drawing_cursor[1] != -1)
+			{
+				x.drawing
+				if(x.object_num 
+			}
 			
 		}
 	},
@@ -110,13 +141,14 @@ var board_manager = {
 				this.index[i] = {
 					drawing_cursor: [0,-1,-1],
 					//last_blip : 0, //needed?
-					tile : 1,
+					tile_id : 1,
 					agent_num : 0,
 					agent_list : [],
 					object_num : 0,
 					object_list: [],
 					//debugging information
-					board_position : [x,y],
+					bx : x,
+					by : y,
 					position : [x+this.x_min,y+y_min,this.z_level],
 				}
 			}	
