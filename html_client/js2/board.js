@@ -83,7 +83,7 @@ var board_manager = {
 		//partial drop of data, get new data, then redraw
 	},
 	
-	redraw_all : function() {
+	blip : function() {
 		for(var x=0; x < this.board_tile_width; x++) {
 			for(var y=0; y < this.board_tile_height; y++) {
 				
@@ -93,7 +93,10 @@ var board_manager = {
 	},
 
 	advance_drawing_cursors : function() {
-		
+		for(x in this.index) {
+			
+			
+		}
 	},
 	
 	//
@@ -106,6 +109,7 @@ var board_manager = {
 				i = x + y*board_tile_width;
 				this.index[i] = {
 					drawing_cursor: [0,-1,-1],
+					//last_blip : 0, //needed?
 					tile : 1,
 					agent_num : 0,
 					agent_list : [],
