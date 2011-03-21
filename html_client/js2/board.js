@@ -3,9 +3,9 @@
 
 var board = {
 	
-	board_z_level: 1,
-	board_x_offset: 0,
-	board_y_offset: 0,
+	z_level: 1,
+	x_offset: 0,
+	y_offset: 0,
 
 	board_tile_width: 16,
 	board_tile_height: 16,
@@ -25,13 +25,13 @@ var board = {
 	},
 	
 	scroll : function(dx, dy) {
-		this.board_x_offset += dx;
-		this.board_y_offset += dy;
+		this.x_offset += dx;
+		this.y_offset += dy;
 		this.reset();
 	},
 
 	scroll_z : function(zLevel) {
-		this.board_z_level = zLevel;
+		this.z_level = zLevel;
 		this.reset();
 	}
 	
@@ -62,30 +62,13 @@ var board_manager = {
 		this.board_canvas = board.board_canvas;
 		
 		this.x_min = this.board.x_offset;
-		this.y_min = this.board.y_offset;
 		this.x_max = this.board.tile_height + this.x_min;
+		this.y_min = this.board.y_offset;
 		this.y_max = this.board.tile_height + this.x_max;
-		
-		var i;
-		for(var x=0; x < this.board_tile_width; x++) {
-			for(var y=0; y < this.board_tile_height; y++) {
-				i = x + y*board_tile_width;
-				this.index[i] = {
-					x_pos : x,
-					y_pos : y,
-					drawing_cursor: [0,-1,-1],
-					tile : 1,
-					agent_num : 0,
-					agent_list : [],
-					object_num : 0,
-					object_list: [],
-				}
-			}	
-		}
-		this.tile = [];
-		this.agents = [];
-		this.objects = [];
-		
+		this.z_level = this.board.z_level;
+
+		this.reset_index();
+		this.populate_index();
 	},
 
 	resize : function () {
@@ -107,7 +90,41 @@ var board_manager = {
 				
 			}	
 		}
+	},
+
+	advance_drawing_cursors : function() {
+		
+	},
+	
+	//
+	//internal utility functions, non-interface functions
+	//
+	reset_index: function() {
+		var i;
+		for(var x=0; x < this.board_tile_width; x++) {
+			for(var y=0; y < this.board_tile_height; y++) {
+				i = x + y*board_tile_width;
+				this.index[i] = {
+					drawing_cursor: [0,-1,-1],
+					tile : 1,
+					agent_num : 0,
+					agent_list : [],
+					object_num : 0,
+					object_list: [],
+					//debugging information
+					board_position : [x,y],
+					position : [x+this.x_min,y+y_min,this.z_level],
+				}
+			}	
+		}
+	},
+	
+	populate_index: function() {
+		//for list of agents, if agent is on map add to list
+		
 	}
+	
+	
 }
 
 //this is where drawing occurs to
