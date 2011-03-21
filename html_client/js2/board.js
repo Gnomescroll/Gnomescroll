@@ -103,12 +103,11 @@ var board_manager = {
 				//draw object
 			}		
 		}
-	}
+	},
 
 	// tile -> agents -> objects -> tile
 	advance_drawing_cursor : function(bx, by) {
-		this._advance_drawing_cursor
-		
+		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width);
 	},
 	
 	advance_all_drawing_cursor : function() {
@@ -119,50 +118,50 @@ var board_manager = {
 		
 	// takes an this.index element
 	_advance_drawing_cursor : function(x) {
-		if(x.drawing_cursor[0] != -1) 
+		if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
+		{
+			if(x.agent_num > 0) //then if agents are on tile, render agent
 			{
-				if(x.agent_num > 0) 
+				x.drawing_cursor[0] = -1;
+				x.drawing_cursor[1] = 0;
+			} 
+			else if(x.object_num > 0)  //if no agents, then render objects if they else
+			{
+				x.drawing_cursor[0] = -1;
+				x.drawing_cursor[2] = 0;
+			}
+			else //else keep rendering the tile
+			{
+				//do nothing, only the tile exists on this square
+			}
+		}
+		else if(x.drawing_cursor[1] != -1)
+		{
+			console.log("board_manager.advance_drawing_cursor: WTF 0")
+			x.drawing_cursor[1]++;
+			if(x.drawing_cursor[1] < x.agent_num)
+			{
+				//do nothings
+			}
+			else if(x.drawing_cursor[1] == x.agent_num)
+			{
+				if(x.object_num > 0)
 				{
-					x.drawing_cursor[0] = -1;
-					x.drawing_cursor[1] = 0;
-				} 
-				else if(x.object_num > 0) 
-				{
-					x.drawing_cursor[0] = -1;
+					x.drawing_cursor[1] = -1;
 					x.drawing_cursor[2] = 0;
 				}
 				else
 				{
-					//do nothing, only the tile exists on this square
+					x.drawing_cursor[1] = -1;
+					x.drawing_cursor[0] = 0;
 				}
 			}
-			else if(x.drawing_cursor[1] != -1)
+			else if(x.drawing_cursor[1] > x.agent_num)
 			{
-				console.log("board_manager.advance_drawing_cursor: WTF 0")
-				x.drawing_cursor[1]++;
-				if(x.drawing_cursor[1] < x.agent_num)
-				{
-					//do nothings
-				}
-				else if(x.drawing_cursor[1] == x.agent_num)
-				{
-					if(x.object_num > 0)
-					{
-						x.drawing_cursor[1] = -1;
-						x.drawing_cursor[2] = 0;
-					}
-					else
-					{
-						x.drawing_cursor[1] = -1;
-						x.drawing_cursor[0] = 0;
-					}
-				}
-				else if(x.drawing_cursor[1] > x.agent_num)
-				{
-					console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
-				}
-				
-			}
+				console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
+			}	
+		}
+		else if(x.drawing_cursor[2] != -1)
 	}
 	
 	//
