@@ -34,15 +34,17 @@ tiles_dat = [
 	{
 			'id' : 0001,
 			'name' : "empty_block",
-			
+
 			'visual' : {
-				'type' : 'tile_set',
-				'tile_set' : 0,
-				'symbol' : 96,
-				'symbol_rgb' : (50, 50, 50),
-				'background_rgb' : (256, 256, 256)
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 96,
+					'symbol_rgb' : (50, 50, 50),
+					'background_rgb' : (256, 256, 256)
+				}
 			},
-			
+
 			'blocking' : 0,
 			'pourous' : 1,
 			
@@ -55,15 +57,17 @@ tiles_dat = [
 	{
 			'id' : 0100,
 			'name' : "generic_soil",
-			
+
 			'visual' : {
-				'type' : 'tile_set',
-				'tile_set' : 0,
-				'symbol' : 96,
-				'symbol_rgb' : (139, 69, 19), #139-69-19
-				'background_rgb' : (256, 256, 256)
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 96,
+					'symbol_rgb' : (139, 69, 19), #139-69-19
+					'background_rgb' : (256, 256, 256)
+				}
 			},
-			
+						
 			'blocking' : 0,
 			'pourous' : 0,
 			
@@ -79,13 +83,15 @@ tiles_dat = [
 	{
 			'id' : 0101,
 			'name' : "generic_tilled_soil",
-			
+
 			'visual' : {
-				'type' : 'tile_set',
-				'tile_set' : 0,
-				'symbol' : 248,
-				'symbol_rgb' : (139, 69, 19), #139-69-19
-				'background_rgb' : (256, 256, 256)
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 248,
+					'symbol_rgb' : (139, 69, 19), #139-69-19
+					'background_rgb' : (256, 256, 256)
+				}
 			},
 			
 			'blocking' : 0,
@@ -104,20 +110,21 @@ tiles_dat = [
 	{
 			'id' : 0200,
 			'name' : "generic_wall",
-				
+
 			'visual' : {
-				'type' : 'tile_set',
-				'tile_set' : 0,
-				'symbol' : 9,
-				'symbol_rgb' : (139, 69, 19), #139-69-19
-				'background_rgb' : (256, 256, 256),
-				
-				'connection_map' : 1,
-				'normal_connection_map' : 
-				[ [0, 0, 0],
-				 [0, 0, 0],
-				 [0, 0, 0] ]
-				 
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 9,
+					'symbol_rgb' : (139, 69, 19), #139-69-19
+					'background_rgb' : (256, 256, 256),
+					
+					'connection_map' : 1,
+					'normal_connection_map' : 
+					[ [0, 0, 0],
+					 [0, 0, 0],
+					 [0, 0, 0] ]
+				}
 			},
 			
 			#properties
