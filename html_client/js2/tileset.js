@@ -192,6 +192,60 @@ var drawingCache = {
 		background_rgb = tile.background_rgb;
 		symbol_rgb = tile.symbol_rgb;
 		
+	/// MATH MATH MATH		
+
+			if(draw_style == 0) {
+				//This is copy/paste unmodified
+			}
+			
+			if(draw_style == 1) {
+				var a, r, g, b;
+				var b_r, b_g, b_b;
+				
+				b_r = background_rgb[0] / 255;
+				b_g = background_rgb[1] / 255;
+				b_b = background_rgb[2] / 255;
+				
+				s_r = symbol_rgb[0] / 255;
+				s_g = symbol_rgb[1] / 255;
+				s_b = symbol_rgb[2] / 255;
+
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+
+					r = pix[i  ] / 255;
+					g = pix[i+1] / 255;
+					b = pix[i+2] / 255;
+					a = pix[i+3] / 255;
+					a_ = 1 - a;
+					
+					pix[i  ] = Math.floor( (s_r*r*a + b_r*a_)* 255 ); // red
+					pix[i+1] = Math.floor( (s_g*g*a + b_g*a_)* 255 ); // green
+					pix[i+2] = Math.floor( (s_b*b*a + b_b*a_)* 255 ); // blue
+					pix[i+3] = 255;	
+				}	
+			}
+			
+			if(draw_style == 2) {
+				for (var i = 0, n = pix.length; i < n; i += 4) {
+				  
+				  if(pix[i+3] == 0) {
+				//alpha channel is 0, show background
+					pix[i  ] = background_rgb[0]; // red
+					pix[i+1] = background_rgb[1]; // green
+					pix[i+2] = background_rgb[2]; // blue				  
+					pix[i+3] = 255;
+					} else {
+	
+				  pix[i  ] = Math.floor( pix[i  ] * symbol_rgb[0] / 256 ); // red
+				  pix[i+1] = Math.floor( pix[i+1] * symbol_rgb[1] / 256 ); // green
+				  pix[i+2] = Math.floor( pix[i+2] * symbol_rgb[2] / 256 ); // blue
+				  // i+3 is alpha (the fourth element)
+					}
+				}
+			}
+			
+		/// MATH MATH MATH
+
 		var cache_index = ++this.img_cache_count;
 		this.img_cache[cache_index] = imgd;
 		
