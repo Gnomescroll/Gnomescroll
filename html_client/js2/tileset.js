@@ -105,7 +105,7 @@ var drawingCache = {
 	workspace_canvas_dom : null,
 	ctx: null,
 	
-	init : function init() {
+	init : function init(board_canvas) {
             this.workspace_canvas_dom = $('canvas#DrawingCacheWorkspace')[0];
             this.ctx = this.workspace_canvas_dom.getContext("2d");
             this.board = board_canvas;

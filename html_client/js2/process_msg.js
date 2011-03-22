@@ -26,13 +26,13 @@ process.info = {};
 ///retain/store tile_dict somewhere    
 process.info.tileset = function(msg) {
     
-    console.log("Tileset Data!")
-    console.log(msg)
+    console.log("Tileset Data Received!")
+    //console.log(msg)
     //alert("tileset processing");
     
     var param;
     for(x in msg.tile_rendering) {
-		console.log("x:" + x )
+		//console.log("x:" + x )
 		param = msg.tile_rendering[x];
 		
 	    var data = {
@@ -48,7 +48,9 @@ process.info.tileset = function(msg) {
 		tileset_state.add_tile(data);
 }
 
-		console.log(tileset_state)
+	console.log(tileset_state)
+    
+    
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 

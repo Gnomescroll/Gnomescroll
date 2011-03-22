@@ -74,6 +74,17 @@ TEST
 <script src="js2/board.js"></script>
 
 <script>
+
+function test1() {
+
+drawingCache.drawTile(1,1,5);
+
+drawingCache.drawSprite(0,0,1,1);
+drawingCache.drawSprite(4,4,7,1);
+drawingCache.drawSprite(5,5,127,1);
+}
+
+
 $('#init').click(function (event) {
     event.preventDefault;
     game.init();
@@ -82,7 +93,9 @@ $('#init').click(function (event) {
 
 $('#start').click(function (event) {
     event.preventDefault;
-    game.start();
+    //test1();
+    drawingCache.drawTile(1,1,5);
+//    game.start();
     return false;
 });
 

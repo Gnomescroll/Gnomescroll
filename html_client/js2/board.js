@@ -12,12 +12,14 @@ var board = {
 	
 	board_canvas : null,
 	board_manager : null,
-	
+	drawingCache : null,
 	init : function() {
 		this.board_canvas = board_canvas;
 		this.board_canvas.init(this);
 		this.board_manager = board_manager;
 		this.board_manager.init(this);
+		this.drawingCache = drawingCache;
+		this.drawingCache.init(board_canvas);
 	},
 	
 	resize : function() {
