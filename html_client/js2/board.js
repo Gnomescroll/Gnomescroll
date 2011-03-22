@@ -280,6 +280,14 @@ var board_manager = {
 	},
 	
 	
+	_add_agent_to_index : function(id, x_pos, y_pos, z_pos) {
+		
+	},
+	
+	_add_object_to_index : function(id, x_pos, y_pos, z_pos) {
+		
+	},
+	
 }
 
 var cursor_manager = {
