@@ -232,30 +232,35 @@ var board_manager = {
 	},
 	
 	populate_index: function() {
-		//for list of agents, if agent is on map add to list
+		this.reset_index();
 		
-		/*
-		var i, cursor;
-		for(var x=0; x < this.board_tile_width; x++) {
-			for(var y=0; y < this.board_tile_height; y++) {
-				i = x + y*board_tile_width;			
-				cursor = this.index[i];
-				cursor.bx = x;
-				cursor.by = y;
-				cursor.position = [x+this.x_min,y+y_min,this.z_level];
-			}
-		}
-		*/
 		
+		///for each agent/ determine if agent is on board and if so, add it to the index
 		var agent_x_pos, agent_y_pos; //x,y positions
-		agents = /// get list of agents loaded by client
-		for( agent in agents) {
+		agents = /// fill this in; get list of agents
+		for( agent in agents) 
+		{
 			agent_x_pos = /// fill this in
 			agent_y_pos = ///fill this in
 		
 			if( this.x_min <= agent_x_pos && agent_x_pos < this.x_max && this.y_min <= agent_y_pos && this.y_max > agent_y_pos)
 			{
-				//if agent is on board
+				//if agent is with confines of the board, add object to index
+				this._add_agent_to_index( **agent_id**,x ,y, z); //agent_id and x,y,z position
+			}
+		}
+		
+		
+		agents = /// fill this in; get list of agents
+		for( agent in agents) 
+		{
+			object_x_pos = /// fill this in
+			object_y_pos = ///fill this in
+		
+			if( this.x_min <= object_x_pos && object_x_pos < this.x_max && this.y_min <= object_y_pos && this.y_max > object_y_pos)
+			{
+				//if object is with confines of the board, add object to index
+				this._add_object_to_index( **object_id**, x, y, z);
 			}
 		}
 	},
