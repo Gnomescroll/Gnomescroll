@@ -69,7 +69,9 @@ class Display:
 					libtcod.console_set_char(map_viewer, position[1] - self.offset_x, position[2] - self.offset_y, '@')
 
 			#draw cursor
-			#blit what is returned by cursor.draw(), checking cursor.transparency		
+			#blit what is returned by cur.draw(), checking cur.transparency	
+			self.cursor_con = self.cur.draw()
+			libtcod.console_blit(self.cursor_con, 0, 0, self.cur.width, self.cur.height, self.cur.pos[0], self.cur.pos[1], self.cur.transparency, self.cur.transparency)
 
 			#clear flags
 			client.terrain_map.redraw = False
@@ -169,6 +171,9 @@ class Input:
 		    self.mouse_on_drag_start = self.current_mouse;
 
 		current_menu.update(current_mouse)
+
+		#handle cursor
+		self.display.cur.update(current_mouse)
 
 		#TODO- deal with user clicking an agent (would need to display info, changing current menu to an info menu or something.)
 		

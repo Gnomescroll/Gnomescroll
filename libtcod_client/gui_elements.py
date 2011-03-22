@@ -207,7 +207,7 @@ class Message_Log:
 			libtcod.console_set_default_foreground(self.message_con, color)
 			libtcod.console_print(self.message_con, 1, y, line)
 			y += 1
-		redraw = False;
+		self.redraw = False;
 		return self.message_con
 
 
@@ -244,10 +244,14 @@ class Cursor:
 
 	def draw(self):
 		#returns a TCOD Console of the cursor:
-		del self.con	#because the cursor can change in size every turn, it needs to be recreated every turn.
+		#del self.con	#because the cursor can change in size every turn, it needs to be recreated every turn.
 		self.con = libtcod.console_new(self.width, self.height)
-		
-		#return con
+		libtcod.console_set_default_background(self.con, self.back_color)
+		libtcod.console_set_default_foreground(self.con, self.fore_color)
+		for w in range(self.width):
+			for h in range(self.height):
+				libtcod.console_print(self.con, w, h, self.char)
+		return self.con
 		
 		
 
