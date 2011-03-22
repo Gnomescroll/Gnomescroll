@@ -79,9 +79,22 @@ var board_manager = {
 		//redraw everything
 	},
 	
-	scroll : function () {
+	scroll : function (dx, dy) {
+		var method = "slow";
+		if(method == slow) { this._easy_scroll(dx,dy); }
+		if(method == fast) { this._fast_scroll(dx,dy); }
 		//partial drop of data, get new data, then redraw
 	},
+	
+	_easy_scroll : function (dx, dy) {
+		///implement the easy to implement way (drop everything and recompute from scratch)
+	}
+	
+	_fast_scroll : function(dx, dy) {
+		///implement scrolling the quick way
+	},
+	
+	
 	
 	//does a full redraw
 	blip : function() {
@@ -115,7 +128,8 @@ var board_manager = {
 			this._advance_drawing_cursor(x)
 		}
 	},
-		
+	
+	//internal method, not interface method
 	// takes an this.index element
 	_advance_drawing_cursor : function(x) {
 		if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
@@ -179,7 +193,7 @@ var board_manager = {
 				console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition")				
 			}
 		}
-	}
+	},
 	
 	//
 	//internal utility functions, non-interface functions
@@ -214,6 +228,12 @@ var board_manager = {
 	
 }
 
+var cursor_manager = {
+	
+	
+	
+	
+}
 //this is where drawing occurs to
 var board_canvas = {
 	
