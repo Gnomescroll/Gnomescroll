@@ -281,13 +281,21 @@ var board_manager = {
 	
 	
 	_add_agent_to_index : function(id, x_pos, y_pos, z_pos) {
-		
+		//add id to the list
+		/// add id or add reference?
 	},
 	
 	_add_object_to_index : function(id, x_pos, y_pos, z_pos) {
+		//add 
+	},
+	
+	_remove_agent_from_index(id) : function(id) {
 		
 	},
 	
+	_remove_object_from_index(id) : function(id) {
+		
+	},
 }
 
 var cursor_manager = {
