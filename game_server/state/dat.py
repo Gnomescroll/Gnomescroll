@@ -477,7 +477,7 @@ class Dat:
 				id_ = x['id']
 				self.tiles_by_value[id_] = x
 				self.tiles_by_name[x['name']] = x
-				self.tile_name_value_pairs.append((id_, x['name']))				
+				self.tile_name_value_pairs.append((id_, x['name']))			
 		#print "!!! START !!!"
 		#print str(self.tiles_by_name)
 		#print "!!! MIDDLE !!!"

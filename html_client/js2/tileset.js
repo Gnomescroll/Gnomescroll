@@ -24,12 +24,12 @@ var tileset_state = {
 		if(tile_id in this.tile_rendering) { return this.tile_rendering[tile_id]; }
 		else {
 			//return default if tile does not exist in rendering info
-			console.log("Tile rendering infomation missing: " + tile_id)
+			//console.log("Tile rendering infomation missing: " + tile_id)
 			data = {
 				tile_name: 'non-existance tile',
 				tile_id :  -1,	
 				tilemap_id: 0,
-				draw_style: 2,
+				draw_style: 1,
 				background_rgb: [0, 0, 0],
 				symbol:  1,
 				symbol_rgb: [0, 150, 150],	
@@ -193,7 +193,7 @@ var drawingCache = {
 		symbol_rgb = tile.symbol_rgb;
 		
 	/// MATH MATH MATH		
-
+			console.log("draw_style: " + draw_style)
 			if(draw_style == 0) {
 				//This is copy/paste unmodified
 			}
