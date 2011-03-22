@@ -44,8 +44,8 @@ tiles_dat = [
 					'tilemap_id' : 0,
 					'draw_style' : 1,
 					'symbol' : 96,
-					'symbol_rgb' : (50, 50, 50),
-					'background_rgb' : (256, 256, 256)
+					'symbol_rgb' : (256, 256, 256),
+					'background_rgb' : (0, 0, 0)
 				}
 			},
 
