@@ -207,7 +207,7 @@ class Message_Log:
 			libtcod.console_set_default_foreground(self.message_con, color)
 			libtcod.console_print(self.message_con, 1, y, line)
 			y += 1
-		redraw = False;
+		self.redraw = False;
 		return self.message_con
 
 
@@ -215,8 +215,8 @@ class Cursor:
 	#Note: this whole class doesn't make much sense just yet, but it will. I promise. 
 	#It isn't a cursor in the strictest sense of the word. Essentially, the cursor will also be a grayed out area when
 	#a player is designating an area or making a wall or something like that. 
-	def __init__(self, viewer_bot_x, viewer_bot_y):
-		self.top_left_corner = (viewer_bot_x/2, viewer_bot_y/2)		#when working with an area, this will always hold the top left coordinates
+	def __init__(self):
+		self.top_left_corner = (0, 0)		#when working with an area, this will always hold the top left coordinates
 		self.pos = self.top_left_corner					#this will hold the current position of the mouse
 		self.end_coords = self.pos					#this will hold the final ending coordinates of the selection with the cursor
 		self.display_cursor = False	#The client main will determine when to display the cursor
@@ -244,10 +244,17 @@ class Cursor:
 
 	def draw(self):
 		#returns a TCOD Console of the cursor:
+		#TODO implement display fore and display back options
 		del self.con	#because the cursor can change in size every turn, it needs to be recreated every turn.
 		self.con = libtcod.console_new(self.width, self.height)
-		
-		#return con
+		libtcod.console_set_default_background(self.con, self.back_color)
+		libtcod.console_set_default_foreground(self.con, self.fore_color)
+		libtcod.console_set_background_flag(self.con, libtcod.BKGND_SET)
+		for w in range(self.width):
+			for h in range(self.height):
+				libtcod.console_print(self.con, w, h, self.char)
+		print "drawing: ", self.pos[0], self.pos[1]
+		return self.con
 		
 		
 

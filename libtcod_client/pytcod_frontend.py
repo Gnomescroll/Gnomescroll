@@ -1,6 +1,6 @@
 import time
 from client import Client
-from gui_elements import Button, Menu, Message_Log
+from gui_elements import Button, Menu, Message_Log, Cursor
 
 import libtcodpy as libtcod
 
@@ -14,6 +14,7 @@ class Display:
 		self.gui_redraw_map = gui_redraw_map
 		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.offset_x
 		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.offset_y
+		self.cur = Cursor()
 		
 	def move_screen(self, dx, dy):
 		#moves the screen if that wouldn't cause the edge of the map to be exceeded.
@@ -39,7 +40,7 @@ class Display:
 		self.gui_redraw_map = True
 
 	def render_all(self):
-		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed:
+		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed or self.cur.display_cursor:
 			tmap = client.terrain_map.get_map_section(self.offset_x, self.offset_y, current_z, self.viewer_bot_x, self.viewer_bot_y)
 			#print tmap
 			x = 0
@@ -68,7 +69,9 @@ class Display:
 					libtcod.console_set_char(map_viewer, position[1] - self.offset_x, position[2] - self.offset_y, '@')
 
 			#draw cursor
-			#blit what is returned by cursor.draw(), checking cursor.transparency		
+			#blit what is returned by cur.draw(), checking cur.transparency	
+			self.cursor_con = self.cur.draw()
+			libtcod.console_blit(self.cursor_con, 0, 0, self.cur.width, self.cur.height, map_viewer, self.cur.pos[0], self.cur.pos[1], self.cur.transparency, self.cur.transparency)
 
 			#clear flags
 			client.terrain_map.redraw = False
@@ -125,6 +128,9 @@ class Input:
 		elif key_char == 'c':
 			client.admin.create_agent(self.drawing_demo+5, self.drawing_demo, 0)
 			self.drawing_demo += 1
+
+		elif key_char == 's':
+			self.display.cur.display_cursor = True
 			
 		elif key.vk == libtcod.KEY_UP and key.shift:
 			self.display.move_screen(0, -10)
@@ -165,6 +171,9 @@ class Input:
 		    self.mouse_on_drag_start = self.current_mouse;
 
 		current_menu.update(current_mouse)
+
+		#handle cursor
+		self.display.cur.update(current_mouse)
 
 		#TODO- deal with user clicking an agent (would need to display info, changing current menu to an info menu or something.)
 		
