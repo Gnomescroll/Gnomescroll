@@ -236,31 +236,45 @@ var board_manager = {
 		
 		
 		///for each agent/ determine if agent is on board and if so, add it to the index
-		var agent_x_pos, agent_y_pos; //x,y positions
-		agents = /// fill this in; get list of agents
+		var x_pos, y_pos, z_pos, pos; //x,y positions
+		
+		agents = state.agents;/// fill this in; get list of agents
 		for( agent in agents) 
 		{
-			agent_x_pos = /// fill this in
-			agent_y_pos = ///fill this in
-		
-			if( this.x_min <= agent_x_pos && agent_x_pos < this.x_max && this.y_min <= agent_y_pos && this.y_max > agent_y_pos)
+			pos = agent.pos();
+			x_pos = agent_pos[0];
+			y_pos = agent_pos[1];
+			z_pos = agent_pos[2];
+			
+			if(z_pos != this.z_level) {
+				console.log("agent z level errr")
+				continue;
+			}
+			
+			if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
 			{
 				//if agent is with confines of the board, add object to index
-				this._add_agent_to_index( **agent_id**,x ,y, z); //agent_id and x,y,z position
+				this._add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
 			}
 		}
 		
-		
-		agents = /// fill this in; get list of agents
-		for( agent in agents) 
+		var x_pos, agent_y_pos, agent_z_pos;
+		for( object in state.objects) 
 		{
-			object_x_pos = /// fill this in
-			object_y_pos = ///fill this in
+			pos = object.pos();
+			x_pos = pos[0];
+			y_pos = pos[1];
+			z_pos = pos[2];
 		
-			if( this.x_min <= object_x_pos && object_x_pos < this.x_max && this.y_min <= object_y_pos && this.y_max > object_y_pos)
+
+			if(z_pos != this.z_level) {
+				console.log("object z level errr")
+				continue;
+			}
+			
+			if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
 			{
-				//if object is with confines of the board, add object to index
-				this._add_object_to_index( **object_id**, x, y, z);
+				this._add_object_to_index( object.id, x_pos ,y_pos, z_pos);
 			}
 		}
 	},
