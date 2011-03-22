@@ -135,11 +135,11 @@ var board_manager = {
 				//do nothing, only the tile exists on this square
 			}
 		}
-		else if(x.drawing_cursor[1] != -1)
+		else if(x.drawing_cursor[1] != -1) //if cursor is rendering a agent
 		{
-			console.log("board_manager.advance_drawing_cursor: WTF 0")
+			console.log("board_manager.advance_drawing_cursor: WTF 0.0")
 			x.drawing_cursor[1]++;
-			if(x.drawing_cursor[1] < x.agent_num)
+			if(x.drawing_cursor[1] < x.agent_num) //if more agents, switch to next agent
 			{
 				//do nothings
 			}
@@ -150,7 +150,7 @@ var board_manager = {
 					x.drawing_cursor[1] = -1;
 					x.drawing_cursor[2] = 0;
 				}
-				else
+				else //if no objects on square, then render tile
 				{
 					x.drawing_cursor[1] = -1;
 					x.drawing_cursor[0] = 0;
@@ -159,9 +159,18 @@ var board_manager = {
 			else if(x.drawing_cursor[1] > x.agent_num)
 			{
 				console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
-			}	
+			}
 		}
 		else if(x.drawing_cursor[2] != -1)
+		{
+			console.log("board_manager.advance_drawing_cursor: WTF 0.1")
+			x.drawing_cursor[2]++;
+			if(x.drawing_cusor[2] < x.object_num)
+			{
+				//do nothing
+			}
+			
+		}
 	}
 	
 	//
