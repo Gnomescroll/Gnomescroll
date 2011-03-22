@@ -81,9 +81,11 @@ var board_manager = {
 	
 	scroll : function (dx, dy) {
 		var method = "slow";
+			console.timeEnd('a')
+		console.time('Scroll: ' + dx + " " + dy)
 		if(method == slow) { this._easy_scroll(dx,dy); }
 		if(method == fast) { this._fast_scroll(dx,dy); }
-		//partial drop of data, get new data, then redraw
+		console.timeEnd('Scroll: ' + dx + " " + dy)
 	},
 	
 	_easy_scroll : function (dx, dy) {
@@ -92,6 +94,7 @@ var board_manager = {
 	
 	_fast_scroll : function(dx, dy) {
 		///implement scrolling the quick way
+		//partial drop of data, get new data, then redraw
 	},
 	
 	
