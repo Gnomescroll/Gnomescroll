@@ -115,8 +115,10 @@ var board_manager = {
 				// x.tile_id, x.bx, x.by
 			} else if(x.drawing_cursor[1] != -1) {
 				//draw agent
+				// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
 			} else if(x.drawing_cursor[2] != -1) {
 				//draw object
+				// x.object_list[x.drawing_cursor[2]], x.bx, x.by
 			}		
 		}
 	},
