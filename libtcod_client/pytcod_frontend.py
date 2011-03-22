@@ -1,6 +1,6 @@
 import time
 from client import Client
-from gui_elements import Button, Menu, Message_Log
+from gui_elements import Button, Menu, Message_Log, Cursor
 
 import libtcodpy as libtcod
 
@@ -14,6 +14,7 @@ class Display:
 		self.gui_redraw_map = gui_redraw_map
 		self.viewer_bot_x = MAP_VIEWER_WIDTH  + self.offset_x
 		self.viewer_bot_y = MAP_VIEWER_HEIGHT + self.offset_y
+		self.cur = Cursor()
 		
 	def move_screen(self, dx, dy):
 		#moves the screen if that wouldn't cause the edge of the map to be exceeded.
@@ -125,6 +126,9 @@ class Input:
 		elif key_char == 'c':
 			client.admin.create_agent(self.drawing_demo+5, self.drawing_demo, 0)
 			self.drawing_demo += 1
+
+		elif key_char == 's':
+			display.cur.display_cursor = True
 			
 		elif key.vk == libtcod.KEY_UP and key.shift:
 			self.display.move_screen(0, -10)
