@@ -165,11 +165,19 @@ var board_manager = {
 		{
 			console.log("board_manager.advance_drawing_cursor: WTF 0.1")
 			x.drawing_cursor[2]++;
-			if(x.drawing_cusor[2] < x.object_num)
+			if(x.drawing_cursor[2] < x.object_num)
 			{
 				//do nothing
 			}
-			
+			else if(x.drawing_cursor[2] == x.object_num)
+			{
+				x.drawing_cursor[2] = -1;
+				x.drawing_cursor[0] = 0;
+			}
+			else if(x.drawing_cursor[2] > x.object_num)
+			{
+				console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition")				
+			}
 		}
 	}
 	
