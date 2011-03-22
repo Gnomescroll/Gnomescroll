@@ -40,7 +40,7 @@ class Display:
 		self.gui_redraw_map = True
 
 	def render_all(self):
-		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed:
+		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed or self.cur.display_cursor:
 			tmap = client.terrain_map.get_map_section(self.offset_x, self.offset_y, current_z, self.viewer_bot_x, self.viewer_bot_y)
 			#print tmap
 			x = 0
@@ -71,7 +71,7 @@ class Display:
 			#draw cursor
 			#blit what is returned by cur.draw(), checking cur.transparency	
 			self.cursor_con = self.cur.draw()
-			libtcod.console_blit(self.cursor_con, 0, 0, self.cur.width, self.cur.height, 0, self.cur.pos[0], self.cur.pos[1], self.cur.transparency, self.cur.transparency)
+			libtcod.console_blit(self.cursor_con, 0, 0, self.cur.width, self.cur.height, map_viewer, self.cur.pos[0], self.cur.pos[1], self.cur.transparency, self.cur.transparency)
 
 			#clear flags
 			client.terrain_map.redraw = False
@@ -130,7 +130,7 @@ class Input:
 			self.drawing_demo += 1
 
 		elif key_char == 's':
-			display.cur.display_cursor = True
+			self.display.cur.display_cursor = True
 			
 		elif key.vk == libtcod.KEY_UP and key.shift:
 			self.display.move_screen(0, -10)
