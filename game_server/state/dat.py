@@ -22,9 +22,9 @@ tiles_dat = [
 				'tilemap' : {
 					'tilemap_id' : 0,
 					'draw_style' : 1,
-					'symbol' : 00,
-					'symbol_rgb' : (0, 0, 0),
-					'background_rgb' : (256, 256, 256)
+					'symbol' : 63,
+					'symbol_rgb' : (50, 0, 0),
+					'background_rgb' : (0, 0, 0)
 				}
 			},
 		

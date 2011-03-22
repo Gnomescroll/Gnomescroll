@@ -27,15 +27,18 @@ process.info = {};
 process.info.tileset = function(msg) {
     
     console.log("Tileset Data Received!")
+    console.log(msg)
     //console.log(msg)
     //alert("tileset processing");
     
-    var param;
+    var param, data, x;
+    console.log(msg.tile_rendering)
     for(x in msg.tile_rendering) {
 		//console.log("x:" + x )
 		param = msg.tile_rendering[x];
+		console.log(param.tile_id)
 		
-	    var data = {
+	    data = {
 				tile_name: param.tile_name,
 				tile_id :  param.tile_id,	
 				tilemap_id:  param.tilemap.tilemap_id,

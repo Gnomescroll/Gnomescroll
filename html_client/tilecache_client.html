@@ -94,7 +94,14 @@ $('#init').click(function (event) {
 $('#start').click(function (event) {
     event.preventDefault;
     //test1();
-    drawingCache.drawTile(1,1,5);
+    drawingCache.drawTile(6,1,1);
+    drawingCache.drawTile(1,1,64);
+    drawingCache.drawTile(2,1,65);
+    drawingCache.drawTile(3,1,128);
+    drawingCache.drawTile(4,2,1002);
+    drawingCache.drawTile(5,5,666);
+	drawingCache.drawTile(5,1,-1);
+	drawingCache.drawTile(6,1,65);
 //    game.start();
     return false;
 });
