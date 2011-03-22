@@ -90,6 +90,8 @@ var board_manager = {
 	
 	_easy_scroll : function (dx, dy) {
 		///implement the easy to implement way (drop everything and recompute from scratch)
+		this.populate_index();
+		this.blip();
 	}
 	
 	_fast_scroll : function(dx, dy) {
@@ -120,10 +122,20 @@ var board_manager = {
 		if(x.drawing_cursor[0] != -1) {
 			//draw tile
 			// x.tile_id, x.bx, x.by
+			///
+			console.log("Draw Tile")
+			drawingCache.drawTile(x.bx, x.by, x.tile_id);
+			///
 		} else if(x.drawing_cursor[1] != -1) {
 			//draw agent
 			// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
+			///
+			console.log("Draw Agent")
+			drawingCache.drawSprite(b.bx, b.by, 1, 1);
+			///
 		} else if(x.drawing_cursor[2] != -1) {
+		
+			console.log("Draw Object")
 			//draw object
 			// x.object_list[x.drawing_cursor[2]], x.bx, x.by
 		}
@@ -233,13 +245,12 @@ var board_manager = {
 	
 	populate_index: function() {
 		this.reset_index();
-		
-		
+
 		///for each agent/ determine if agent is on board and if so, add it to the index
 		var x_pos, y_pos, z_pos, pos; //x,y positions
-		
 		agents = state.agents;/// fill this in; get list of agents
-		for( agent in agents) 
+
+		for(agent in agents) 
 		{
 			pos = agent.pos();
 			x_pos = agent_pos[0];
@@ -258,7 +269,6 @@ var board_manager = {
 			}
 		}
 		
-		var x_pos, agent_y_pos, agent_z_pos;
 		for( object in state.objects) 
 		{
 			pos = object.pos();
@@ -294,6 +304,10 @@ var board_manager = {
 	},
 	
 	_remove_object_from_index(id) : function(id) {
+		
+	},
+	
+	_update_tile(tile_id, x, y, z) {
 		
 	},
 }
