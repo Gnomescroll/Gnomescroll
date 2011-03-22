@@ -109,17 +109,23 @@ var board_manager = {
 	},
 
 	draw_board : function() {
-		for(x in this.index) {
-			if(x.drawing_cursor[0] != -1) {
-				//draw tile
-				// x.tile_id, x.bx, x.by
-			} else if(x.drawing_cursor[1] != -1) {
-				//draw agent
-				// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
-			} else if(x.drawing_cursor[2] != -1) {
-				//draw object
-				// x.object_list[x.drawing_cursor[2]], x.bx, x.by
-			}		
+		for(x in this.index) { this._draw_board_tile(x); }
+	}
+	
+	draw_board_tile : function(bx,by) {
+		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width);	
+	}
+
+	_draw_board_tile : function(x) {
+		if(x.drawing_cursor[0] != -1) {
+			//draw tile
+			// x.tile_id, x.bx, x.by
+		} else if(x.drawing_cursor[1] != -1) {
+			//draw agent
+			// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
+		} else if(x.drawing_cursor[2] != -1) {
+			//draw object
+			// x.object_list[x.drawing_cursor[2]], x.bx, x.by
 		}
 	},
 
