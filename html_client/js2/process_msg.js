@@ -23,8 +23,26 @@ process.info = {};
     
 process.info.tileset = function(msg) {
     
+    console.log("Tileset Data!")
     console.log(msg)
     
+    
+    /*
+    for( x in ...) {
+	    var data = {
+				tile_name: param.tile_name,
+				tile_id :  param.tile_id,	
+				tilemap_id:  param.tilemap_id,
+				draw_style: param.draw_style,
+				background_rgb:  param.background_rgb,
+				symbol:  param.symbol,
+				symbol_rgb: param.symbol_rgb,
+			};
+			* 
+		tileset_state.add_tile(data);
+}
+	*/
+		
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 
