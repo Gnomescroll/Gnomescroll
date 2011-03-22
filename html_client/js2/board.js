@@ -234,7 +234,31 @@ var board_manager = {
 	populate_index: function() {
 		//for list of agents, if agent is on map add to list
 		
-	}
+		/*
+		var i, cursor;
+		for(var x=0; x < this.board_tile_width; x++) {
+			for(var y=0; y < this.board_tile_height; y++) {
+				i = x + y*board_tile_width;			
+				cursor = this.index[i];
+				cursor.bx = x;
+				cursor.by = y;
+				cursor.position = [x+this.x_min,y+y_min,this.z_level];
+			}
+		}
+		*/
+		
+		var agent_x_pos, agent_y_pos; //x,y positions
+		agents = /// get list of agents loaded by client
+		for( agent in agents) {
+			agent_x_pos = /// fill this in
+			agent_y_pos = ///fill this in
+		
+			if( this.x_min <= agent_x_pos && agent_x_pos < this.x_max && this.y_min <= agent_y_pos && this.y_max > agent_y_pos)
+			{
+				//if agent is on board
+			}
+		}
+	},
 	
 	
 }
