@@ -15,9 +15,9 @@ var board = {
 	
 	init : function() {
 		this.board_canvas = board_canvas;
-		this.board_canvas.init();
+		this.board_canvas.init(this);
 		this.board_manager = board_manager;
-		this.board_manager.init();
+		this.board_manager.init(this);
 	},
 	
 	resize : function() {
@@ -33,7 +33,7 @@ var board = {
 	scroll_z : function(zLevel) {
 		this.z_level = zLevel;
 		this.reset();
-	}
+	},
 	
 	///redraw
 	reset : function() {
@@ -92,7 +92,7 @@ var board_manager = {
 		///implement the easy to implement way (drop everything and recompute from scratch)
 		this.populate_index();
 		this.blip();
-	}
+	},
 	
 	_fast_scroll : function(dx, dy) {
 		///implement scrolling the quick way
@@ -112,11 +112,11 @@ var board_manager = {
 
 	draw_board : function() {
 		for(x in this.index) { this._draw_board_tile(x); }
-	}
+	},
 	
 	draw_board_tile : function(bx,by) {
-		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width);	
-	}
+		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);	
+	},
 
 	_draw_board_tile : function(x) {
 		if(x.drawing_cursor[0] != -1) {
@@ -143,7 +143,7 @@ var board_manager = {
 
 	// tile -> agents -> objects -> tile
 	advance_drawing_cursor : function(bx, by) {
-		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width);
+		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
 	},
 	
 	advance_all_drawing_cursor : function() {
@@ -299,15 +299,15 @@ var board_manager = {
 		//add 
 	},
 	
-	_remove_agent_from_index(id) : function(id) {
+	_remove_agent_from_index : function(id) {
 		
 	},
 	
-	_remove_object_from_index(id) : function(id) {
+	_remove_object_from_index: function(id) {
 		
 	},
 	
-	_update_tile(tile_id, x, y, z) {
+	_update_tile: function(tile_id, x, y, z) {
 		
 	},
 }

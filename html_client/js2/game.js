@@ -60,8 +60,8 @@ game = {
            // check user input, server updates, render game.
     function () {
         
-        renderState.start();
-        
+        //renderState.start();
+        ///start drawing
         var interval;
 
         // input check interval

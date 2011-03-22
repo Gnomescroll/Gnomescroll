@@ -20,29 +20,35 @@ var route, process, validate;
 process = {};
 
 process.info = {};
-    
+
+///todo
+///current stores rendering information for tile, but discards meta information
+///retain/store tile_dict somewhere    
 process.info.tileset = function(msg) {
     
     console.log("Tileset Data!")
     console.log(msg)
-    alert("tileset processing");
+    //alert("tileset processing");
     
-    /*
-    for( x in ...) {
+    var param;
+    for(x in msg.tile_rendering) {
+		console.log("x:" + x )
+		param = msg.tile_rendering[x];
+		
 	    var data = {
 				tile_name: param.tile_name,
 				tile_id :  param.tile_id,	
-				tilemap_id:  param.tilemap_id,
-				draw_style: param.draw_style,
-				background_rgb:  param.background_rgb,
-				symbol:  param.symbol,
-				symbol_rgb: param.symbol_rgb,
+				tilemap_id:  param.tilemap.tilemap_id,
+				draw_style: param.tilemap.draw_style,
+				background_rgb:  param.tilemap.background_rgb,
+				symbol:  param.tilemap.symbol,
+				symbol_rgb: param.tilemap.symbol_rgb,
 			};
-			* 
+			
 		tileset_state.add_tile(data);
 }
-	*/
-		
+
+		console.log(tileset_state)
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 

@@ -83,6 +83,7 @@ var state = ( function () {
         
         info.agents();                  // request agents
         info.objects();                 //         objects
+        info.tileset();
     };
     
     // checks if a position is in current state bounds.
@@ -161,9 +162,8 @@ var state = ( function () {
             id = game_object;
         }
         
-        console.log('GOK');
-        console.log(type);
-        console.log(id);
+       // console.log('GOK');
+        console.log("type: " + type + ", id: " + id);
         
         console.log(gameObjectTypeMap);
         obj = gameObjectTypeMap[type][id];
