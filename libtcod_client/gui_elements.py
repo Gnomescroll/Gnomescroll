@@ -244,7 +244,7 @@ class Cursor:
 
 	def draw(self):
 		#returns a TCOD Console of the cursor:
-		#del self.con	#because the cursor can change in size every turn, it needs to be recreated every turn.
+		del self.con	#because the cursor can change in size every turn, it needs to be recreated every turn.
 		self.con = libtcod.console_new(self.width, self.height)
 		libtcod.console_set_default_background(self.con, self.back_color)
 		libtcod.console_set_default_foreground(self.con, self.fore_color)

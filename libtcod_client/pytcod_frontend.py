@@ -71,7 +71,7 @@ class Display:
 			#draw cursor
 			#blit what is returned by cur.draw(), checking cur.transparency	
 			self.cursor_con = self.cur.draw()
-			libtcod.console_blit(self.cursor_con, 0, 0, self.cur.width, self.cur.height, self.cur.pos[0], self.cur.pos[1], self.cur.transparency, self.cur.transparency)
+			libtcod.console_blit(self.cursor_con, 0, 0, self.cur.width, self.cur.height, 0, self.cur.pos[0], self.cur.pos[1], self.cur.transparency, self.cur.transparency)
 
 			#clear flags
 			client.terrain_map.redraw = False
