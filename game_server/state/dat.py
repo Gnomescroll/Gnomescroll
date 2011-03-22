@@ -472,9 +472,10 @@ class Dat:
 
 		for x in tiles_dat:
 			id = x['id']
-			#x['visual']['tile_id'] = id_
+			name = x['name']
+			print "id: " + str(id) + ", name: " + name
 			self.tiles_by_value[id] = x
-			self.tiles_by_name[x['name']] = x
+			self.tiles_by_name[name] = x
 			self.tile_name_value_pairs.insert(id, x['name'])			
 
 	def get_crop(self, template):
@@ -554,7 +555,7 @@ class Dat:
 				'background_rgb' : (0, 0, 0)
 			},
 		}
-			
+		
 		for a, x in self.tiles_by_value.items():
 			id = x['id']
 			if(a != id):
@@ -565,7 +566,7 @@ class Dat:
 				dict[id]['tile_id'] = id
 				dict[id]['tile_name'] = x['name']
 			else:
-				dict[id] = default_tile_visual
+				dict[id] = default_tile_visual.copy()
 				dict[id]['tile_id'] = id
 				dict[id]['tile_name'] = x['name']
 		return dict
