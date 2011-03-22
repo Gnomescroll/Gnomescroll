@@ -25,7 +25,7 @@ process.info.tileset = function(msg) {
     
     console.log("Tileset Data!")
     console.log(msg)
-    
+    alert("tileset processing");
     
     /*
     for( x in ...) {

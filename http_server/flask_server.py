@@ -34,7 +34,7 @@ def js_file(file=None):
 
 @app.route('/js2/<file>')
 def js_file(file=None):
-    with open(dir+'/js/'+file) as f:
+    with open(dir+'/js2/'+file) as f:
         return Response(f.read(), mimetype='application/javascript')
         
 @app.route('/api', methods=['POST'])
