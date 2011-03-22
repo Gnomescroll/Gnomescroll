@@ -463,27 +463,20 @@ class Dat:
 	#crop helper
 
 	def _init_tile(self):
-		id = 1000
+		id = 3000
 		for x in tiles_dat:
 			if not 'id' in x.keys():
 				print "Tile does not have id defined: " + x['name']
-			
 				x['id'] = id
-				self.tiles_by_value[id] = x
-				self.tiles_by_name[x['name']] = x
-				self.tile_name_value_pairs.append((id, x['name']))
 				id = id + 1
-			else:
-				id_ = x['id']
-				self.tiles_by_value[id_] = x
-				self.tiles_by_name[x['name']] = x
-				self.tile_name_value_pairs.append((id_, x['name']))			
-		#print "!!! START !!!"
-		#print str(self.tiles_by_name)
-		#print "!!! MIDDLE !!!"
-		print "Tile name/value pairs: " + str(self.tile_name_value_pairs)
-		#print "!!! END !!!"		
-		
+
+		for x in tiles_dat:
+			id = x['id']
+			#x['visual']['tile_id'] = id_
+			self.tiles_by_value[id] = x
+			self.tiles_by_name[x['name']] = x
+			self.tile_name_value_pairs.insert(id, x['name'])			
+
 	def get_crop(self, template):
 		if not template in self.crops_dat.keys():
 			template = 'generic_crop'
@@ -562,7 +555,11 @@ class Dat:
 			},
 		}
 			
-		for id, x in self.tiles_by_value.items():
+		for a, x in self.tiles_by_value.items():
+			id = x['id']
+			if(a != id):
+				print "ERROR: dat.py get_tile_rendering error!!!!"
+			#print "a: " + str(a) + ", id: " + str(id)
 			if 'visual' in x.keys():
 				dict[id] = x['visual'].copy()
 				dict[id]['tile_id'] = id
