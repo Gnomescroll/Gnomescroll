@@ -43,6 +43,22 @@ var board = {
 	},
 }
 
+var board_event = {
+	
+	agent_change : function (id, type) {
+		
+	},
+	
+	object_change : function (id, type) {
+	
+	},
+	
+	terrain_map_change : function(x, y, z, value) {
+		
+	},
+}
+	
+	
 var board_manager = {
 	
 	board: null,

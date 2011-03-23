@@ -3,10 +3,12 @@
 var tileset_state = {
 	tile_rendering: [],
 	tile_name_to_id : [],
-	
+	tile_id_to_name : [],
+
 	add_tile : function(param) {
 		this.tile_name_to_id[ param.tile_name] =  param.tile_id;
-			
+		this.tile_id_to_name[ param.tile_id ] = param.tile_name;
+
 		var data = {
 			//validate
 			tile_name: param.tile_name,
@@ -255,9 +257,15 @@ var drawingCache = {
 	
 	drawTile : function drawTile(x, y, tile_id) {
 		if(!(tile_id in this.tlookup)) {
+			//if(tileset_state.tile_id_to_name[tile_id] == undefined) {
+			//	console.log("Tile metadata does not exist: " + tile_id)
+				//return 0;
+				//tile_id = -1; //render unknown tile
+			//} else {
 			console.log("Tile not loaded: " + tile_id)
 			var rvalue = this.insertTile(tile_id);
 			if(rvalue == 0) return 0; //usually means tileset is not loaded
+			//}
 		}
 		var index = this.tlookup[tile_id];
 		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
