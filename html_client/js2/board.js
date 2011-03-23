@@ -199,6 +199,21 @@ var board_manager = {
 	
 	populate_index: function() {
 		this.board_cursor_manager.reset_cursor_index();
+
+		var x, y,xm, ym, zl;
+		xm = this.x_max;
+		ym = this.y_max;
+		zl = this.z_level;
+
+		//could have quick method for grabbing a region of map in x-y plane to reduce function calls
+		//region could be returned as an array?
+		for(x = x_min; x<xm; x++) {
+			for(y = y_min; y<xm; y++)
+			{
+				this.update_tile(x,y,zl, levels[zl][x][y]);
+			}
+		}
+
 		///for each agent/ determine if agent is on board and if so, add it to the index
 		var x_pos, y_pos, z_pos, pos; //x,y positions
 		agents = state.agents;/// fill this in; get list of agents
@@ -255,7 +270,7 @@ var board_manager = {
 		
 	},
 	
-	update_tile: function(tile_id, x, y, z) {
+	update_tile: function(x, y, z, value) {
 		
 	},
 }
