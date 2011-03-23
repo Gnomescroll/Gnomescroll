@@ -13,13 +13,18 @@ var board = {
 	board_canvas : null,
 	board_manager : null,
 	drawingCache : null,
+	cursor_manager : null,
+
 	init : function() {
 		this.board_canvas = board_canvas;
-		this.board_canvas.init(this);
 		this.board_manager = board_manager;
-		this.board_manager.init(this);
 		this.drawingCache = drawingCache;
+		this.cursor_manager = cursor_manager;
+
+		this.board_canvas.init(this);
+		this.board_manager.init(this);
 		this.drawingCache.init(board_canvas);
+		this.cursor_manager.init(this);
 	},
 	
 	resize : function() {
@@ -63,7 +68,8 @@ var board_manager = {
 	
 	board: null,
 	board_canvas: null,
-	
+	cursor_manager: null,
+
 	x_min : null,
 	x_max : null,
 	y_min : null,
@@ -78,7 +84,8 @@ var board_manager = {
 	init : function(board) {
 		this.board = board;
 		this.board_canvas = board.board_canvas;
-		
+		this.board_cursor_manager = this.board.cursor_manager;
+
 		this.x_min = this.board.x_offset;
 		this.x_max = this.board.tile_height + this.x_min;
 		this.y_min = this.board.y_offset;
@@ -158,108 +165,11 @@ var board_manager = {
 			// x.object_list[x.drawing_cursor[2]], x.bx, x.by
 		}
 	},
-
-	// tile -> agents -> objects -> tile
-	advance_drawing_cursor : function(bx, by) {
-		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
-	},
-	
-	advance_all_drawing_cursor : function() {
-		for(x in this.index) {
-			this._advance_drawing_cursor(x)
-		}
-	},
-	
-	//internal method, not interface method
-	// takes an this.index element
-	_advance_drawing_cursor : function(x) {
-		if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
-		{
-			if(x.agent_num > 0) //then if agents are on tile, render agent
-			{
-				x.drawing_cursor[0] = -1;
-				x.drawing_cursor[1] = 0;
-			} 
-			else if(x.object_num > 0)  //if no agents, then render objects if they else
-			{
-				x.drawing_cursor[0] = -1;
-				x.drawing_cursor[2] = 0;
-			}
-			else //else keep rendering the tile
-			{
-				//do nothing, only the tile exists on this square
-			}
-		}
-		else if(x.drawing_cursor[1] != -1) //if cursor is rendering a agent
-		{
-			console.log("board_manager.advance_drawing_cursor: WTF 0.0")
-			x.drawing_cursor[1]++;
-			if(x.drawing_cursor[1] < x.agent_num) //if more agents, switch to next agent
-			{
-				//do nothings
-			}
-			else if(x.drawing_cursor[1] == x.agent_num)
-			{
-				if(x.object_num > 0)
-				{
-					x.drawing_cursor[1] = -1;
-					x.drawing_cursor[2] = 0;
-				}
-				else //if no objects on square, then render tile
-				{
-					x.drawing_cursor[1] = -1;
-					x.drawing_cursor[0] = 0;
-				}
-			}
-			else if(x.drawing_cursor[1] > x.agent_num)
-			{
-				console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
-			}
-		}
-		else if(x.drawing_cursor[2] != -1)
-		{
-			console.log("board_manager.advance_drawing_cursor: WTF 0.1")
-			x.drawing_cursor[2]++;
-			if(x.drawing_cursor[2] < x.object_num)
-			{
-				//do nothing
-			}
-			else if(x.drawing_cursor[2] == x.object_num)
-			{
-				x.drawing_cursor[2] = -1;
-				x.drawing_cursor[0] = 0;
-			}
-			else if(x.drawing_cursor[2] > x.object_num)
-			{
-				console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition")				
-			}
-		}
-	},
 	
 	//
 	//internal utility functions, non-interface functions
 	//
-	reset_index: function() {
-		var i;
-		for(var x=0; x < this.board_tile_width; x++) {
-			for(var y=0; y < this.board_tile_height; y++) {
-				i = x + y*board_tile_width;
-				this.index[i] = {
-					drawing_cursor: [0,-1,-1],
-					//last_blip : 0, //needed?
-					tile_id : 1,
-					agent_num : 0,
-					agent_list : [],
-					object_num : 0,
-					object_list: [],
-					//debugging information
-					bx : x,
-					by : y,
-					position : [x+this.x_min,y+y_min,this.z_level],
-				}
-			}	
-		}
-	},
+
 	
 	populate_index: function() {
 		this.reset_index();
@@ -331,7 +241,106 @@ var board_manager = {
 }
 
 var cursor_manager = {
+
+	// tile -> agents -> objects -> tile
+	advance_drawing_cursor : function(bx, by) {
+		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
+	},
 	
+	advance_all_drawing_cursor : function() {
+		for(x in this.index) {
+			this._advance_drawing_cursor(x)
+		}
+	},
+	
+	//internal method, not interface method
+	// takes an this.index element
+
+	reset_index: function() {
+		var i;
+		for(var x=0; x < this.board_tile_width; x++) {
+			for(var y=0; y < this.board_tile_height; y++) {
+				i = x + y*board_tile_width;
+				this.index[i] = {
+					drawing_cursor: [0,-1,-1],
+					//last_blip : 0, //needed?
+					tile_id : 1,
+					agent_num : 0,
+					agent_list : [],
+					object_num : 0,
+					object_list: [],
+					//debugging information
+					bx : x,
+					by : y,
+					position : [x+this.x_min,y+y_min,this.z_level],
+				}
+			}	
+		}
+	},
+
+	_advance_drawing_cursor : function(x) {
+		if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
+		{
+			if(x.agent_num > 0) //then if agents are on tile, render agent
+			{
+				x.drawing_cursor[0] = -1;
+				x.drawing_cursor[1] = 0;
+			} 
+			else if(x.object_num > 0)  //if no agents, then render objects if they else
+			{
+				x.drawing_cursor[0] = -1;
+				x.drawing_cursor[2] = 0;
+			}
+			else //else keep rendering the tile
+			{
+				//do nothing, only the tile exists on this square
+			}
+		}
+		else if(x.drawing_cursor[1] != -1) //if cursor is rendering a agent
+		{
+			console.log("board_manager.advance_drawing_cursor: WTF 0.0")
+			x.drawing_cursor[1]++;
+			if(x.drawing_cursor[1] < x.agent_num) //if more agents, switch to next agent
+			{
+				//do nothings
+			}
+			else if(x.drawing_cursor[1] == x.agent_num)
+			{
+				if(x.object_num > 0)
+				{
+					x.drawing_cursor[1] = -1;
+					x.drawing_cursor[2] = 0;
+				}
+				else //if no objects on square, then render tile
+				{
+					x.drawing_cursor[1] = -1;
+					x.drawing_cursor[0] = 0;
+				}
+			}
+			else if(x.drawing_cursor[1] > x.agent_num)
+			{
+				console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
+			}
+		}
+		else if(x.drawing_cursor[2] != -1)
+		{
+			console.log("board_manager.advance_drawing_cursor: WTF 0.1")
+			x.drawing_cursor[2]++;
+			if(x.drawing_cursor[2] < x.object_num)
+			{
+				//do nothing
+			}
+			else if(x.drawing_cursor[2] == x.object_num)
+			{
+				x.drawing_cursor[2] = -1;
+				x.drawing_cursor[0] = 0;
+			}
+			else if(x.drawing_cursor[2] > x.object_num)
+			{
+				console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition")				
+			}
+		}
+	},	
 	
 	
 	
