@@ -76,11 +76,12 @@ var board_manager = {
 	y_max : null,
 	z_level : null,
 	
-	index : [], //index stores drawing cursor information for each board position
+	//index : [], //index stores drawing cursor information for each board position
 
 	agents : [],
 	objects : [],
 
+	
 	init : function(board) {
 		this.board = board;
 		this.board_canvas = board.board_canvas;
@@ -95,6 +96,10 @@ var board_manager = {
 		this.reset_index();
 		this.populate_index();
 	},
+
+	on_board : function(x_pos,y_pos,z_pos) {
+	return (this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos); 		
+	}
 
 	resize : function () {
 		//resizing
@@ -140,7 +145,7 @@ var board_manager = {
 	},
 	
 	draw_board_tile : function(bx,by) {
-		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);	
+		this._draw_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);	
 	},
 
 	_draw_board_tile : function(x) {
