@@ -97,9 +97,9 @@ var board_manager = {
 		this.populate_index();
 	},
 
-	on_board : function(x_pos,y_pos,z_pos) {
-	return (this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos); 		
-	}
+//	on_board : function(x_pos,y_pos,z_pos) {
+//	return (this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos); 		
+//	}
 
 	resize : function () {
 		//resizing
@@ -125,12 +125,26 @@ var board_manager = {
 	},
 	
 	_fast_scroll : function(dx, dy) {
-		///implement scrolling the quick way
-		//partial drop of data, get new data, then redraw
+		///incremental update of index
+		
+		//remove from index objects on squares off screen
+		//add objects on index that is now on screen
+		
+		/*
+		calculate two regions; first region is region of objects off screen
+		objects in this region can be removed by
+			1> iterate over all objects in object list
+			2> get objects in this region, from cursor data (can return these objects on scroll)
+		purge objects from index that are in the off-screen region
+		iterate over all objects to get those objects in the new region
+		redraw methods
+			full redraw of screen
+			translation of existing and 
+		*/
 	},
 	
 	
-	
+// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	//does a full redraw
 	blip : function() {
 		for(var x=0; x < this.board_tile_width; x++) {
@@ -140,14 +154,17 @@ var board_manager = {
 		}
 	},
 
+// MOVE TO DRAWING FUNCTION INTERFACE CLASS
 	draw_board : function() {
 		for(x in this.index) { this._draw_board_tile(x); }
 	},
-	
+
+// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	draw_board_tile : function(bx,by) {
 		this._draw_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);	
 	},
 
+// MOVE TO DRAWING FUNCTION INTERFACE CLASS
 	_draw_board_tile : function(x) {
 		if(x.drawing_cursor[0] != -1) {
 			//draw tile
@@ -171,14 +188,8 @@ var board_manager = {
 		}
 	},
 	
-	//
-	//internal utility functions, non-interface functions
-	//
-
-	
 	populate_index: function() {
-		this.reset_index();
-
+		this.board_cursor_manager.reset_cursor_index();
 		///for each agent/ determine if agent is on board and if so, add it to the index
 		var x_pos, y_pos, z_pos, pos; //x,y positions
 		agents = state.agents;/// fill this in; get list of agents
@@ -189,12 +200,10 @@ var board_manager = {
 			x_pos = agent_pos[0];
 			y_pos = agent_pos[1];
 			z_pos = agent_pos[2];
-			
 			if(z_pos != this.z_level) {
 				console.log("agent z level errr")
 				continue;
 			}
-			
 			if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
 			{
 				//if agent is with confines of the board, add object to index
@@ -208,52 +217,54 @@ var board_manager = {
 			x_pos = pos[0];
 			y_pos = pos[1];
 			z_pos = pos[2];
-		
-
 			if(z_pos != this.z_level) {
 				console.log("object z level errr")
 				continue;
 			}
-			
 			if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
 			{
-				this._add_object_to_index( object.id, x_pos ,y_pos, z_pos);
+				this.add_object_to_index( object.id, x_pos ,y_pos, z_pos);
 			}
 		}
 	},
 	
 	
-	_add_agent_to_index : function(id, x_pos, y_pos, z_pos) {
+	add_agent_to_index : function(id, x_pos, y_pos, z_pos) {
 		//add id to the list
 		/// add id or add reference?
 	},
 	
-	_add_object_to_index : function(id, x_pos, y_pos, z_pos) {
+	add_object_to_index : function(id, x_pos, y_pos, z_pos) {
 		//add 
 	},
 	
-	_remove_agent_from_index : function(id) {
+	remove_agent_from_index : function(id) {
 		
 	},
 	
-	_remove_object_from_index: function(id) {
+	remove_object_from_index: function(id) {
 		
 	},
 	
-	_update_tile: function(tile_id, x, y, z) {
+	update_tile: function(tile_id, x, y, z) {
 		
 	},
 }
 
 var cursor_manager = {
 
+
+	index = [],
+	
 	// tile -> agents -> objects -> tile
 	advance_drawing_cursor : function(bx, by) {
 		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
 	},
 	
 	advance_all_drawing_cursor : function() {
-		for(x in this.index) {
+		var len = this.index.length;
+		
+		for(var x=0; x < len; x++) {
 			this._advance_drawing_cursor(x)
 		}
 	},
@@ -261,7 +272,7 @@ var cursor_manager = {
 	//internal method, not interface method
 	// takes an this.index element
 
-	reset_index: function() {
+	reset_cursor_index: function() {
 		var i;
 		for(var x=0; x < this.board_tile_width; x++) {
 			for(var y=0; y < this.board_tile_height; y++) {
