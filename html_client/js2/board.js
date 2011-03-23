@@ -104,10 +104,12 @@ var board_manager = {
 	resize : function () {
 		//resizing
 	},
-	
+
+/*  Use case?
 	reset : function () {
 		//redraw everything
 	},
+*/
 	
 	scroll : function (dx, dy) {
 		var method = "slow";
@@ -262,12 +264,16 @@ var cursor_manager = {
 
 	index = [],
 	
+	
+	//naive scroll is accomplished by cursor index reset and index reconstruction
+	//this is non-naive scroll that perserves cursor state for objects still on screen
 	scroll : function(bx, by) {
 		/*
-		 
+		This shuffles the index around and nulls the cursor objects now off screen
 		*/
 	},
 	
+
 	// tile -> agents -> objects -> tile
 	advance_drawing_cursor : function(bx, by) {
 		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
