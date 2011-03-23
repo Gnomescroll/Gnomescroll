@@ -113,6 +113,7 @@ var board_manager = {
 		var method = "slow";
 			console.timeEnd('a')
 		console.time('Scroll: ' + dx + " " + dy)
+		
 		if(method == slow) { this._easy_scroll(dx,dy); }
 		if(method == fast) { this._fast_scroll(dx,dy); }
 		console.timeEnd('Scroll: ' + dx + " " + dy)
@@ -127,6 +128,8 @@ var board_manager = {
 	_fast_scroll : function(dx, dy) {
 		///incremental update of index
 		
+		this.board_cursor_manager.scroll(dx,dy); //incremental update, renames cursor
+
 		//remove from index objects on squares off screen
 		//add objects on index that is now on screen
 		
@@ -141,6 +144,10 @@ var board_manager = {
 			full redraw of screen
 			translation of existing and 
 		*/
+		
+		//this.add_object_to_index( object.id, x_pos ,y_pos, z_pos);
+		//this.add_agent_to_index( agent.id, x_pos ,y_pos, z_pos);
+		
 	},
 	
 	
@@ -207,7 +214,7 @@ var board_manager = {
 			if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
 			{
 				//if agent is with confines of the board, add object to index
-				this._add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
+				this.add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
 			}
 		}
 		
@@ -253,8 +260,13 @@ var board_manager = {
 
 var cursor_manager = {
 
-
 	index = [],
+	
+	scroll : function(bx, by) {
+		/*
+		 
+		*/
+	},
 	
 	// tile -> agents -> objects -> tile
 	advance_drawing_cursor : function(bx, by) {
@@ -356,11 +368,10 @@ var cursor_manager = {
 				console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition")				
 			}
 		}
-	},	
-	
-	
+	},
 	
 }
+
 //this is where drawing occurs to
 var board_canvas = {
 	
