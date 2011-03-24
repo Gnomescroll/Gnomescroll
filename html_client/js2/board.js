@@ -55,7 +55,7 @@ var board_event = {
 	this.board_manager = board_manager;
 	
 	agent_change : function (agent, type) {
-			this.board_manager.agent_update
+			this.board_manager.agent_update(agent);
 	},
 	
 	object_change : function (id, type) {
@@ -268,7 +268,7 @@ var board_manager = {
 	update_tile: function(x_pos, y_pos, z_pos, tile_id) {
 		if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos
 		this.cursor_manager.index.
-		console.log("tile is on board")
+		console.log("update tile: tile is on board")
 		
 		var bx, by, i;
 		bx = x_pos - this.x_min;
@@ -277,7 +277,7 @@ var board_manager = {
 		this.cursor_manager.update_tile(i, tile_id);
 		
 		} else {
-			console.log("Tile is not on board ")
+			console.log("update tile: tile is not on board ")
 		}
 	},
 }
@@ -445,7 +445,7 @@ var cursor_manager = {
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	draw_board_tile : function(bx,by) {
-		this._draw_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);	
+		this._draw_board_tile(this.index[bx + by*this.board.board_tile_width]);	
 	},
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS

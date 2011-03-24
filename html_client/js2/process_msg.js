@@ -231,7 +231,9 @@ process.delta.agent_position_change = function (msg) {
         agent = Agent.create(msg);
         agent.toState();
     }
-            
+     ///
+     board_event.agent_change(agent);
+	 ///
 };
 
 process.delta.agent_state_change = function (msg) {
