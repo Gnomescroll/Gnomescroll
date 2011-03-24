@@ -27,12 +27,12 @@ process.info = {};
 process.info.tileset = function(msg) {
     
     console.log("Tileset Data Received!")
-    console.log(msg)
+    //console.log(msg)
     //console.log(msg)
     //alert("tileset processing");
     
     var param, data, x;
-    console.log(msg.tile_rendering)
+    //console.log(msg.tile_rendering)
     for(x in msg.tile_rendering) {
 		//console.log("x:" + x )
 		param = msg.tile_rendering[x];
@@ -51,7 +51,7 @@ process.info.tileset = function(msg) {
 		tileset_state.add_tile(data);
 }
 
-	console.log(tileset_state)
+	//console.log(tileset_state)
     
     
     //store this; contains tile rendering information 
@@ -211,7 +211,7 @@ process.info.object_list = function (msg) {
 process.delta = {};
 
 process.delta.agent_position_change = function (msg) {
-    
+    console.log("entry");
     console.log(msg);
     
     //if (!validate.agent_position_change(msg)) return;
@@ -227,11 +227,26 @@ process.delta.agent_position_change = function (msg) {
     if (agent) {
         agent.update(msg);
         agent.toState();
+
     } else if (state.contains(GameObject.pos.apply(msg))) {
         agent = Agent.create(msg);
         agent.toState();
+
     }
-            
+    
+    
+    
+    //callback
+	console.log(msg.id)
+    agent = state.gameObjectKnown(msg.id, 'agent');
+    
+    if(agent == false) {
+		console.log("process.delta.agent_position_change : WTF, should not occur")
+		console.log(agent)
+	} else {
+		board_event.agent_change(agent);
+	}
+
 };
 
 process.delta.agent_state_change = function (msg) {
@@ -375,7 +390,7 @@ process.delta.set_terrain_map = function (msg) {
     
     if (state.contains(GameObject.pos.apply(msg))) {
         state.updateBlock(msg);
-        renderState.updateTile(msg);
+        //renderState.updateTile(msg);
     }
 
 };
@@ -389,7 +404,7 @@ route = {
     agent_list: process.info.agent_list,
     object_list: process.info.object_list,
     
-    agent_position: process.delta.agent_position_change,
+    agent_position_change: process.delta.agent_position_change,
     agent_state_change_update: process.delta.agent_state_change,
     agent_create: process.delta.agent_create,
     agent_delete: process.delta.agent_delete,
