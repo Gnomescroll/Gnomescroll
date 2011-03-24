@@ -20,9 +20,10 @@ GameObject = {
         
     update: // update an agent instance attributes. do not call on Agent, only agent instance
     function (data) {
+        var that = this;
         $.each(data, function(key, val) {
-            this[key+'_old'] = this[key];
-            this[key] = val;
+            that[key+'_old'] = that[key];
+            that[key] = val;
         });
         
         // emit message to renderer
@@ -34,11 +35,13 @@ GameObject = {
         var dummy = {};
         
         $.each(this, function(key, val) {
-            if (key.slice(key.length-4) === 'old') {
-                dummy[key] = val;
+            if (key.slice(key.length-4) === '_old') {
+                dummy[key.slice(0,key.length-4)] = val;
             }
         });
+        dummy.isOld = true;
         
+        dummy = $.extend($.extend({}, this), dummy);
         return dummy;
     },
     

@@ -170,8 +170,9 @@ process.info.agent_list = function (msg) {
         delete list_agent.position;
         
         agent = state.gameObjectKnown(list_agent, 'agent');
-        if (agent) {                    // update
+        if (agent !== false) {                    // update
             console.log('agent known');
+            console.log(agent);
             agent.update(list_agent);
         } else {                        // create
             console.log('agent unknown, creating');

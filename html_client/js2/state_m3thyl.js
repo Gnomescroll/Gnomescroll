@@ -209,12 +209,18 @@ var state = ( function () {
             id,
             ao_loc,
             ao_loc_type,
-            index;
+            index,
+            objs;
             
-        type = game_object.obj_type;
+        type = game_object.base_type;
         id = game_object.id;
+        objs = gameObjectTypeMap[game_object.base_type];
         
-        pos = game_object.pos();
+        if (!game_object.hasOwnProperty('pos')) {
+            pos = GameObject.pos.apply(game_object);
+        } else {
+            pos = game_object.pos();
+        }
         pos = pos.toString();
         
         ao_loc = ao_map[pos];
