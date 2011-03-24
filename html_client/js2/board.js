@@ -64,6 +64,7 @@ var board_event = {
 	},
 	
 	terrain_map_change : function(x, y, z, value) {
+		console.log("board_event.terrain_map_change")
 		board_manager.update_tile(x, y, z, value);
 	},
 }

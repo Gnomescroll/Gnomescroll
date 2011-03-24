@@ -390,7 +390,8 @@ process.delta.set_terrain_map = function (msg) {
     
     if (state.contains(GameObject.pos.apply(msg))) {
         state.updateBlock(msg);
-        renderState.updateTile(msg);
+        terrain_map_change(msg.x, msg.y, msg.z. msg.value);
+        //renderState.updateTile(msg);
     }
 
 };

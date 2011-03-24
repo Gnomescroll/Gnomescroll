@@ -13,7 +13,7 @@ var state = ( function () {
     // need some translation function for global/map/server coords to block's coords
         
     var z_lvls = [],
-        current_z_lvl = 5;
+        current_z_lvl = 1;
         
     var updateBlock,
         updateLevel;
@@ -142,8 +142,7 @@ var state = ( function () {
         if (x_ === false) return false;
         
         x_[block.y] = block.value
-        console.log('value:');
-        console.log(x_[block.y]);
+        console.log('value:' + x_[block.y]);
         return true;
     };
     
