@@ -363,8 +363,8 @@ var cursor_manager = {
 	reset_cursor_index: function() {
 		var i;
 		for(var x=0; x < this.board.board_tile_width; x++) {
-			for(var y=0; y < this.board_manager.board_tile_height; y++) {
-				i = x + y*this.board_manager.board_tile_width;
+			for(var y=0; y < this.board.board_tile_height; y++) {
+				i = x + y*this.board.board_tile_width;
 				this.index[i] = {
 					drawing_cursor: [0,-1,-1],
 					//last_blip : 0, //needed?
