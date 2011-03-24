@@ -36,7 +36,7 @@ process.info.tileset = function(msg) {
     for(x in msg.tile_rendering) {
 		//console.log("x:" + x )
 		param = msg.tile_rendering[x];
-		console.log(param.tile_id)
+		//console.log(param.tile_id)
 		
 	    data = {
 				tile_name: param.tile_name,

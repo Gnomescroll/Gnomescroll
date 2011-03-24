@@ -25,8 +25,8 @@ var board = {
 
 		this.board_canvas.init(this);
 		this.drawingCache.init(this.board_canvas);
+		this.cursor_manager.init(this);
 		this.board_manager.init(this);
-		//this.cursor_manager.init(this);
 	},
 	
 	resize : function() {
@@ -152,7 +152,7 @@ var board_manager = {
 	},
 	
 	populate_index: function() {
-		this.board_cursor_manager.reset_cursor_index();
+		this.cursor_manager.reset_cursor_index();
 
 		var x, y,xm, ym, zl;
 		xm = this.x_max;
@@ -305,6 +305,8 @@ var cursor_manager = {
 	otc : {}, //object to cursor
 	
 	init : function(board) {
+		console('init')
+		console(board)
 		this.board = board;
 		this.reset_cursor_index();
 	},
