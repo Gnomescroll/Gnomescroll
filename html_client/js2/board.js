@@ -29,6 +29,10 @@ var board = {
 		this.board_manager.init(this);
 	},
 	
+	start : function() {
+		this.board_manager.start();
+	},
+	
 	resize : function() {
 		///resize board
 	},
@@ -99,9 +103,13 @@ var board_manager = {
 		this.z_level = this.board.z_level;
 
 		//this.reset_index();
+		//this.populate_index();
+	},
+	
+	start : function() {
 		this.populate_index();
 	},
-
+	
 //	on_board : function(x_pos,y_pos,z_pos) {
 //	return (this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos); 		
 //	}
