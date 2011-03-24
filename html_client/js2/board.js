@@ -52,8 +52,10 @@ var board = {
 
 var board_event = {
 	
-	agent_change : function (id, type) {
-		
+	this.board_manager = board_manager;
+	
+	agent_change : function (agent, type) {
+			this.board_manager.agent_update
 	},
 	
 	object_change : function (id, type) {
@@ -206,25 +208,42 @@ var board_manager = {
 		
 	},
 	
-	agent_update : function(agent, x_pos, y_pos, z_pos) {
+	agent_update : function(agent) {
+		var pos, x_pos, y_pos, z_pos;
+		
+		pos = agent.pos();
+		x_pos = agent_pos[0];
+		y_pos = agent_pos[1];
+		z_pos = agent_pos[2];
+
 		var onBoard, inIndex;
 		
 		inIndex = $.inArray(agent.id, this.agents);
 		onBoard = (z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);
 		
-		if(inIndex && onBoard) { 
+		console.log("agent_update: " + inIndex + ", " + onBoard)
+		
+		if(inIndex != -1 && onBoard) { ///agent moves around on the board
 			this.cursor_manager.move_agent(id, x_pos - this.x_min, y_pos - this.y_min);
+			console.log("1")
 			return 0;
 			 }
 
-		if(!inIndex && onBoard) {
+		if(inIndex == -1 && onBoard) { ///agent moves onto board
 			this.agents.push(agent.id);
 			this.cursor_manager.add_agent_to_cursor(id, x_pos - this.x_min, y_pos - this.y_min);
+			console.log("2")
 			return 0;
 		}
-		if(inIndex && !onBoard) {
+		if(inIndex != -1 && !onBoard) { ///agent moves off board
 			this.agents.splice(inIndex,1); 
-			this.cursor_manager.remove_agent_from_cursor(agent.id)
+			this.cursor_manager.remove_agent_from_cursor(agent.id);
+			console.log("3")
+			return 0;
+		}
+		if(inIndex == -1 && !onBoard) { //agent is off map
+			console.log("4")
+			return 0;
 		}
 	}
 /*	
