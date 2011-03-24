@@ -24,6 +24,9 @@ GameObject = {
             this[key+'_old'] = this[key];
             this[key] = val;
         });
+        
+        // emit message to renderer
+        //board_event.objectUpdate(this);
     },
     
     old: // past state, after update
@@ -79,23 +82,26 @@ GameObject = {
         }
         
         this.cleanOld();
+        
+        // emit message to renderer
+        //board_event.objectToState(this);
     },
     
     create:
     function (data) {
     
         //var agent = Object.beget(this);
-        console.log('agent create');
+        console.log('gameObject create');
         console.log(this);
-        var agent = $.extend({},this);
+        var gobj = $.extend({},this);
         
         $.each(data, function(key, val) {
-            agent[key] = val;
+            gobj[key] = val;
         });
         
-        delete agent.create;
+        delete gobj.create;
         
-        return agent;
+        return gobj;
     },
     
     remove:
@@ -105,6 +111,9 @@ GameObject = {
         // IMPLEMENT
     
         state.removeGameObject(this);
+        
+        // emit message to renderer
+        //board_event.removedObject(this);
     },
 
 }

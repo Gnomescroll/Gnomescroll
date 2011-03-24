@@ -248,7 +248,7 @@ var board_manager = {
 	populate_index: function() {
 		this.reset_index();
 
-		///for each agent/ determine if agent is on board and if so, add it to the index
+		// for each agent/ determine if agent is on board and if so, add it to the index
 		var x_pos, y_pos, z_pos, pos; //x,y positions
 		agents = state.agents;/// fill this in; get list of agents
 
