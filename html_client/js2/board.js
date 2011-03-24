@@ -25,8 +25,8 @@ var board = {
 
 		this.board_canvas.init(this);
 		this.drawingCache.init(this.board_canvas);
+		this.cursor_manager.init(this);
 		this.board_manager.init(this);
-		//this.cursor_manager.init(this);
 	},
 	
 	resize : function() {
@@ -152,9 +152,9 @@ var board_manager = {
 	},
 	
 	populate_index: function() {
-		this.board_cursor_manager.reset_cursor_index();
+		this.cursor_manager.reset_cursor_index();
 
-		var x, y,xm, ym, zl;
+		var x, y,xm, ym, zl, tile_value;
 		xm = this.x_max;
 		ym = this.y_max;
 		zl = this.z_level;
@@ -162,9 +162,11 @@ var board_manager = {
 		//could have quick method for grabbing a region of map in x-y plane to reduce function calls
 		//region could be returned as an array?
 		for(x = this.x_min; x<xm; x++) {
-			for(y = y_min; y<xm; y++)
+			for(y = this.y_min; y<xm; y++)
 			{
-				this.update_tile(x,y,zl, levels[zl][x][y]);
+				//tile_value = state.levels[zl][x][y];
+				tile_vale = 1; ///FIX
+				this.update_tile(x,y,zl, tile_value);
 			}
 		}
 
@@ -283,11 +285,11 @@ var board_manager = {
 
 		console.log("update tile: tile is on board")
 		
-		var bx, by, i;
+		var bx, by;
 		bx = x_pos - this.x_min;
 		by = y_pos - this.y_min;
-		i = bx + by*this.board.board_tile_width;
-		this.cursor_manager.update_tile(i, tile_id);
+		
+		this.cursor_manager.update_tile(bx, by, tile_id);
 		
 		} else {
 			console.log("update tile: tile is not on board ")
@@ -296,14 +298,28 @@ var board_manager = {
 }
 
 var cursor_manager = {
-
+	
+	board : null,
+	
 	index : [],
 	
 	atc : {}, //agent to cursor
 	otc : {}, //object to cursor
 	
-	update_tile : function(i,tile_id) {
-		var temp = this.index[i]
+	init : function(board) {
+		console.log('init')
+		console.log(board)
+		this.board = board;
+		this.reset_cursor_index();
+	},
+
+	update_tile : function(bx, by,tile_id) {
+		
+		console.log(this.index)
+		
+		var i, temp;
+		i = bx + by*this.board.board_tile_width;
+		temp = this.index[i]
 		temp.tile_id = tile_id;
 		temp.drawing_cursor = [0, -1, -1];
 		this._draw_board_tile(i);
