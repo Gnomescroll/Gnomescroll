@@ -296,12 +296,19 @@ var board_manager = {
 }
 
 var cursor_manager = {
-
+	
+	board : null,
+	
 	index : [],
 	
 	atc : {}, //agent to cursor
 	otc : {}, //object to cursor
 	
+	init : function(board) {
+		this.board = board;
+		this.reset_cursor_index();
+	},
+
 	update_tile : function(bx, by,tile_id) {
 		
 		console.log(this.index)
