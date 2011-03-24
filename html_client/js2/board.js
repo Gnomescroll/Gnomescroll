@@ -154,7 +154,7 @@ var board_manager = {
 	populate_index: function() {
 		this.cursor_manager.reset_cursor_index();
 
-		var x, y,xm, ym, zl;
+		var x, y,xm, ym, zl, tile_value;
 		xm = this.x_max;
 		ym = this.y_max;
 		zl = this.z_level;
@@ -162,9 +162,10 @@ var board_manager = {
 		//could have quick method for grabbing a region of map in x-y plane to reduce function calls
 		//region could be returned as an array?
 		for(x = this.x_min; x<xm; x++) {
-			for(y = y_min; y<xm; y++)
+			for(y = this.y_min; y<xm; y++)
 			{
-				this.update_tile(x,y,zl, levels[zl][x][y]);
+				tile_value = state.levels[zl][x][y];
+				this.update_tile(x,y,zl, tile_value);
 			}
 		}
 
@@ -305,8 +306,8 @@ var cursor_manager = {
 	otc : {}, //object to cursor
 	
 	init : function(board) {
-		console('init')
-		console(board)
+		console.log('init')
+		console.log(board)
 		this.board = board;
 		this.reset_cursor_index();
 	},
