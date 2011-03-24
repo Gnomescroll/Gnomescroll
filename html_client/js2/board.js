@@ -56,7 +56,7 @@ var board_event = {
 	
 	agent_change : function (agent, type) {
 		console.log("agent change start...")
-			this.board_manager.agent_update(agent);
+			board_manager.agent_update(agent);
 	},
 	
 	object_change : function (id, type) {
@@ -64,7 +64,7 @@ var board_event = {
 	},
 	
 	terrain_map_change : function(x, y, z, value) {
-		
+		board_manager.update_tile(x, y, z, value);
 	},
 }
 

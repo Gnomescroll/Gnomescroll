@@ -227,14 +227,26 @@ process.delta.agent_position_change = function (msg) {
     if (agent) {
         agent.update(msg);
         agent.toState();
+
     } else if (state.contains(GameObject.pos.apply(msg))) {
         agent = Agent.create(msg);
         agent.toState();
+
     }
-     ///
-     console.log("test")
-     board_event.agent_change(agent);
-	 ///
+    
+    
+    
+    //callback
+	console.log(msg.id)
+    agent = state.gameObjectKnown(msg.id, 'agent');
+    
+    if(agent == false) {
+		console.log("process.delta.agent_position_change : WTF, should not occur")
+		console.log(agent)
+	} else {
+		board_event.agent_change(agent);
+	}
+
 };
 
 process.delta.agent_state_change = function (msg) {
