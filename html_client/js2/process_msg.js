@@ -160,6 +160,7 @@ process.info.agent_list = function (msg) {
     
     //if (!validate.agent_list(msg)) return;
     
+    var agent;
     $.each(msg.list, function (i, list_agent) {
         console.log('agent item');
         list_agent.x = list_agent.position[1];
@@ -168,13 +169,13 @@ process.info.agent_list = function (msg) {
         list_agent.loc_type = list_agent.position[0];
         delete list_agent.position;
         
-        var agent = state.gameObjectKnown(list_agent);
+        agent = state.gameObjectKnown(list_agent, 'agent');
         if (agent) {                    // update
             console.log('agent known');
             agent.update(list_agent);
         } else {                        // create
             console.log('agent unknown, creating');
-            var agent = Agent.create(list_agent);
+            agent = Agent.create(list_agent);
         }
         
         agent.toState();
@@ -187,20 +188,20 @@ process.info.object_list = function (msg) {
     console.log(msg);
     
     //if (!validate.object_list(msg)) return;
-    
+    var obj;
     $.each(msg.list, function(i, list_obj) {
         
-        list_object.x = list_object.position[1];
-        list_object.y = list_object.position[2];
-        list_object.z = list_object.position[3];
-        list_object.loc_type = list_object.position[0];
-        delete list_object.position;
+        list_obj.x = list_obj.position[1];
+        list_obj.y = list_obj.position[2];
+        list_obj.z = list_obj.position[3];
+        list_obj.loc_type = list_obj.position[0];
+        delete list_obj.position;
         
-        var obj = state.gameObjectKnown(list_obj);
+        obj = state.gameObjectKnown(list_obj, 'obj');
         if (obj) {                  // update
             obj.update(list_obj);
         } else {                    // create
-            var obj = Obj.create(list_obj);
+            obj = Obj.create(list_obj);
         }
         
         obj.toState();

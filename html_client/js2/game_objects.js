@@ -138,10 +138,13 @@ InventoryMethods = {
 Agent = $.extend({}, GameObject);
 Agent = $.extend(Agent, InventoryMethods);
 Agent.tile_num = 7;
+Agent.base_type = 'agent';
 
 Obj = $.extend({}, GameObject);
 Obj.tile_num = 8;
+Obj.base_type = 'obj';
 
 Container = $.extend({}, GameObject);
 Container = $.extend(Container, InventoryMethods);
 Container.tile_num = 9;
+Container.base_type = 'container';

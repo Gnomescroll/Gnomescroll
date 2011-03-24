@@ -152,12 +152,13 @@ var state = ( function () {
     // returns false or the object
     gameObjectKnown = function(game_object, type) {
         
-        var type,
-            id,
+        var id,
             obj;
         
         if (typeof game_object === 'object') {
-            type = game_object.type[0]; // workaround
+            if (type === undefined) {
+                type = game_object.base_type;
+            }
             id = game_object.id;
         } else {        
             id = game_object;
@@ -179,7 +180,7 @@ var state = ( function () {
         var type,
             id;
             
-        type = game_object.type[0]; // workaround
+        type = game_object.base_type;
         console.log('add game object type: '+type);
         id = game_object.id;
         console.log('add game object id: '+id);
@@ -247,7 +248,7 @@ var state = ( function () {
             ao_loc,
             ao_loc_type;
         
-        type = game_object.type[0]; // agent, object, container (type[0] is a workaround)
+        type = game_object.base_type;
         id = game_object.id;
         
         pos = game_object.pos();
