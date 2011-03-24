@@ -87,18 +87,18 @@ drawingCache.drawSprite(5,5,127,1);
 
 $('#init').click(function (event) {
     event.preventDefault;
-    game.init();
-    
 	board.init();
-
 	drawingCache.insertTilemap("static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
 	drawingCache.insertTilemap("static/tiles/dwarves.png", 1, 18, 20, 16, 16);
+	
+    game.init();
 
     return false;
 });
 
 $('#start').click(function (event) {
     event.preventDefault;
+    
     //test1();
   /*
     drawingCache.drawTile(1,1,0);
