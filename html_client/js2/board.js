@@ -283,11 +283,11 @@ var board_manager = {
 
 		console.log("update tile: tile is on board")
 		
-		var bx, by, i;
+		var bx, by;
 		bx = x_pos - this.x_min;
 		by = y_pos - this.y_min;
-		i = bx + by*this.board.board_tile_width;
-		this.cursor_manager.update_tile(i, tile_id);
+		
+		this.cursor_manager.update_tile(bx, by, tile_id);
 		
 		} else {
 			console.log("update tile: tile is not on board ")
@@ -302,8 +302,13 @@ var cursor_manager = {
 	atc : {}, //agent to cursor
 	otc : {}, //object to cursor
 	
-	update_tile : function(i,tile_id) {
-		var temp = this.index[i]
+	update_tile : function(bx, by,tile_id) {
+		
+		console.log(this.index)
+		
+		var i, temp;
+		i = bx + by*this.board.board_tile_width;
+		temp = this.index[i]
 		temp.tile_id = tile_id;
 		temp.drawing_cursor = [0, -1, -1];
 		this._draw_board_tile(i);
