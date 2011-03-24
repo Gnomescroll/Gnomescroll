@@ -325,7 +325,7 @@ var cursor_manager = {
 
 	update_tile : function(bx, by,tile_id) {
 		
-		console.log(this.index)
+		console.log({ x : this.index, })
 		
 		var i, temp;
 		i = bx + by*this.board.board_tile_width;
@@ -489,6 +489,7 @@ var cursor_manager = {
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS
 	_draw_board_tile : function(x) {
+		x = this.index[x];
 		if(x.drawing_cursor[0] != -1) {
 			//draw tile
 			// x.tile_id, x.bx, x.by
