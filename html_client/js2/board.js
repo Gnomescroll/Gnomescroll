@@ -164,7 +164,8 @@ var board_manager = {
 		for(x = this.x_min; x<xm; x++) {
 			for(y = this.y_min; y<xm; y++)
 			{
-				tile_value = state.levels[zl][x][y];
+				//tile_value = state.levels[zl][x][y];
+				tile_vale = 1; ///FIX
 				this.update_tile(x,y,zl, tile_value);
 			}
 		}
