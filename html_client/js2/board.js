@@ -90,12 +90,12 @@ var board_manager = {
 	init : function(board) {
 		this.board = board;
 		//this.board_canvas = board.board_canvas;
-		this.board_cursor_manager = this.board.cursor_manager;
+		this.cursor_manager = this.board.cursor_manager;
 
 		this.x_min = this.board.x_offset;
-		this.x_max = this.board.tile_height + this.x_min;
+		this.x_max = this.board.board_tile_width + this.x_min;
 		this.y_min = this.board.y_offset;
-		this.y_max = this.board.tile_height + this.x_max;
+		this.y_max = this.board.board_tile_height + this.y_min;
 		this.z_level = this.board.z_level;
 
 		//this.reset_index();
@@ -268,6 +268,17 @@ var board_manager = {
 */
 	
 	update_tile: function(x_pos, y_pos, z_pos, tile_id) {
+		
+		
+		console.log(z_pos == this.z_level )
+		console.log(this.x_min <= x_pos)
+		console.log(x_pos < this.x_max)
+		console.log(this.y_min <= y_pos)
+		console.log(this.y_max > y_pos)
+
+		console.log(x_pos +" "+ this.x_max)
+		console.log(y_pos +" "+ this.y_max)
+				
 		if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos) {
 
 		console.log("update tile: tile is on board")
