@@ -24,9 +24,9 @@ var board = {
 //		this.drawing_manager = drawing_manager;
 
 		this.board_canvas.init(this);
+		this.drawingCache.init(this.board_canvas);
 		this.board_manager.init(this);
-		this.drawingCache.init(board_canvas);
-		this.cursor_manager.init(this);
+		//this.cursor_manager.init(this);
 	},
 	
 	resize : function() {
@@ -52,9 +52,10 @@ var board = {
 
 var board_event = {
 	
-	this.board_manager = board_manager;
+	board_manager : board_manager,
 	
 	agent_change : function (agent, type) {
+		console.log("agent change start...")
 			this.board_manager.agent_update(agent);
 	},
 	
@@ -96,7 +97,7 @@ var board_manager = {
 		this.y_max = this.board.tile_height + this.x_max;
 		this.z_level = this.board.z_level;
 
-		this.reset_index();
+		//this.reset_index();
 		this.populate_index();
 	},
 
@@ -159,7 +160,7 @@ var board_manager = {
 
 		//could have quick method for grabbing a region of map in x-y plane to reduce function calls
 		//region could be returned as an array?
-		for(x = x_min; x<xm; x++) {
+		for(x = this.x_min; x<xm; x++) {
 			for(y = y_min; y<xm; y++)
 			{
 				this.update_tile(x,y,zl, levels[zl][x][y]);
@@ -245,7 +246,7 @@ var board_manager = {
 			console.log("4")
 			return 0;
 		}
-	}
+	},
 /*	
 	add_agent_to_index : function(id, x_pos, y_pos, z_pos) {
 		//add id to the list
@@ -266,8 +267,8 @@ var board_manager = {
 */
 	
 	update_tile: function(x_pos, y_pos, z_pos, tile_id) {
-		if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos
-		this.cursor_manager.index.
+		if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos) {
+
 		console.log("update tile: tile is on board")
 		
 		var bx, by, i;
@@ -284,17 +285,17 @@ var board_manager = {
 
 var cursor_manager = {
 
-	index = [],
+	index : [],
 	
-	atc = {}, //agent to cursor
-	otc = {}, //object to cursor
+	atc : {}, //agent to cursor
+	otc : {}, //object to cursor
 	
-	update_tile, function(i,tile_id) {
+	update_tile : function(i,tile_id) {
 		var temp = this.index[i]
 		temp.tile_id = tile_id;
 		temp.drawing_cursor = [0, -1, -1];
 		this._draw_board_tile(i);
-	}
+	},
 	
 	//naive scroll is accomplished by cursor index reset and index reconstruction
 	//this is non-naive scroll that perserves cursor state for objects still on screen
@@ -320,7 +321,7 @@ var cursor_manager = {
 	
 	//internal method, not interface method
 	// takes an this.index element
-
+	
 	reset_cursor_index: function() {
 		var i;
 		for(var x=0; x < this.board_tile_width; x++) {
@@ -409,24 +410,24 @@ var cursor_manager = {
 	
 	agent_to_cursor : function(id) {
 		
-	}
+	},
 	
 	object_to_cursor : function(id) {
 		
-	}
+	},
 	///
 	add_agent_to_cursor : function(id, bx, by) {
 		var bx, by, i;
 		i = bx + by*this.board.board_tile_width;
 		
 				
-	}
+	},
 	
 	remove_agent_from_cursor : function(id) {
 		var cursor = self.agent_to_cursor(id);
-		
-		var ind = self.
-	}
+		console.log("cursor_manageR: remove agent from cursor, needs implementation")
+		//var ind = self.
+	},
 	
 	// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	//does a full redraw

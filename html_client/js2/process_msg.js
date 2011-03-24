@@ -211,7 +211,7 @@ process.info.object_list = function (msg) {
 process.delta = {};
 
 process.delta.agent_position_change = function (msg) {
-    
+    console.log("entry");
     console.log(msg);
     
     //if (!validate.agent_position_change(msg)) return;
@@ -232,6 +232,7 @@ process.delta.agent_position_change = function (msg) {
         agent.toState();
     }
      ///
+     console.log("test")
      board_event.agent_change(agent);
 	 ///
 };
@@ -391,7 +392,7 @@ route = {
     agent_list: process.info.agent_list,
     object_list: process.info.object_list,
     
-    agent_position: process.delta.agent_position_change,
+    agent_position_change: process.delta.agent_position_change,
     agent_state_change_update: process.delta.agent_state_change,
     agent_create: process.delta.agent_create,
     agent_delete: process.delta.agent_delete,
