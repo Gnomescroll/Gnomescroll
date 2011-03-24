@@ -308,7 +308,8 @@ var board_manager = {
 var cursor_manager = {
 	
 	board : null,
-	
+	board_manager: null,
+
 	index : [],
 	
 	atc : {}, //agent to cursor
@@ -318,6 +319,7 @@ var cursor_manager = {
 		console.log('init')
 		console.log(board)
 		this.board = board;
+		this.board_manager = board.board_manager;
 		this.reset_cursor_index();
 	},
 
@@ -361,8 +363,8 @@ var cursor_manager = {
 	reset_cursor_index: function() {
 		var i;
 		for(var x=0; x < this.board.board_tile_width; x++) {
-			for(var y=0; y < this.board.board_tile_height; y++) {
-				i = x + y*board_tile_width;
+			for(var y=0; y < this.board_manager.board_tile_height; y++) {
+				i = x + y*this.board_manager.board_tile_width;
 				this.index[i] = {
 					drawing_cursor: [0,-1,-1],
 					//last_blip : 0, //needed?
@@ -374,7 +376,7 @@ var cursor_manager = {
 					//debugging information
 					bx : x,
 					by : y,
-					position : [x+this.x_min,y+y_min,this.z_level],
+					position : [x+this.board_manager.x_min,y+this.board_manager.y_min,this.board_manager.z_level],
 				}
 			}	
 		}
