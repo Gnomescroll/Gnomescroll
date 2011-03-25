@@ -10,6 +10,22 @@ if (typeof Object.beget !== 'function') {
 var GameObject, Obj, Agent, Container;
 
 
+var get_board_event_name = function(game_obj) {
+    var event_name;
+    switch (that.base_type) {
+        case 'agent':
+            event_name = 'agent_change';
+            break;
+        case 'obj':
+            event_name = 'object_change';
+            break;
+        case 'container':
+            event_name = 'object_change';
+            break;
+    }
+    return event_name;
+}
+
 // interface
 GameObject = {
     
@@ -27,7 +43,7 @@ GameObject = {
         });
         
         // emit message to renderer
-        //board_event.objectUpdate(this);
+        board_event[get_board_event_name(that)](that);
     },
     
     old: // past state, after update
@@ -87,7 +103,7 @@ GameObject = {
         this.cleanOld();
         
         // emit message to renderer
-        //board_event.objectToState(this);
+        board_event[get_board_event_name(that)](that);
     },
     
     create:
@@ -116,7 +132,7 @@ GameObject = {
         state.removeGameObject(this);
         
         // emit message to renderer
-        //board_event.removedObject(this);
+        board_event[get_board_event_name(that)](that);
     },
 
 }
