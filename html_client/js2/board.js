@@ -496,7 +496,7 @@ var cursor_manager = {
 			//draw tile
 			// x.tile_id, x.bx, x.by
 			///
-			console.log("Draw Tile")
+			//console.log("Draw Tile")
 			drawingCache.drawTile(x.bx, x.by, x.tile_id);
 			///
 		} else if(x.drawing_cursor[1] != -1) {
