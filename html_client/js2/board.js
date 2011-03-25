@@ -557,6 +557,7 @@ var cursor_manager = {
 	test_draw_board_2 : function() {
 	var i, len, drawing_cursor;
 	len = this.index.length;
+	console("len: " + len)
 	for(i=0; i<len; i++) {
 		drawing_cursor = this.index[i].drawing_cursor;
 		if(drawing_cursor[0] != -1) {
