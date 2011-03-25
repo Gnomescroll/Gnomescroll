@@ -69,6 +69,12 @@ var board_event = {
 	
 	terrain_map_change : function(x, y, z, value) {
 		console.log("board_event.terrain_map_change")
+        if (typeof x === 'object') { // allow block object to be passed in
+            value = x.value;
+            z = x.z;
+            y = x.y;
+            x = x.x;
+        }
 		board_manager.update_tile(x, y, z, value);
 	},
 }
