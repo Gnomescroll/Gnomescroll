@@ -557,6 +557,30 @@ var cursor_manager = {
 		 }	
 	},
 
+	test_draw_board_2 : function() {
+	var i, len, drawing_cursor;
+	len = this.index.length;
+	for(i=0; i<len; i++) {
+		drawing_cursor = this.index[i].drawing_cursor;
+		
+		if(drawing_cursor[0] != -1) {
+			drawingCache.drawTile(x.bx, x.by, x.tile_id);
+			return 0;
+
+		}
+		if(drawing_cursor[1] != -1) {
+			console.log("Draw Agent")
+			drawingCache.drawSprite(b.bx, b.by, 1, 1);
+			return 0;
+		}
+		if(drawing_cursor[2] != -1) {
+			console.log("Draw Object")
+			return 0;
+		}		
+		
+		 }	
+	},
+
 }
 
 var drawing_manager = {
