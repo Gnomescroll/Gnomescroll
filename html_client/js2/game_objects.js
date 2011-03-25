@@ -12,7 +12,7 @@ var GameObject, Obj, Agent, Container;
 
 var get_board_event_name = function(game_obj) {
     var event_name;
-    switch (that.base_type) {
+    switch (game_obj.base_type) {
         case 'agent':
             event_name = 'agent_change';
             break;
