@@ -78,7 +78,9 @@ GameObject = {
     
     toState: // set object to the state
     function () {
-                
+        
+        var that = this;
+        
         if (state.contains(this.pos())) { // agent pos in state
             
             if (state.gameObjectKnown(this)) { // known agent, updating
@@ -125,6 +127,9 @@ GameObject = {
     
     remove:
     function () {
+        
+        var that = $.extend({}, this);
+        
         state.cleanLocation(this);
         // find what inventory it is stored in (if it is at all), and remove it
         // IMPLEMENT
@@ -133,6 +138,7 @@ GameObject = {
         
         // emit message to renderer
         board_event[get_board_event_name(that)](that);
+        delete that;
     },
 
 }
