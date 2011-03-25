@@ -105,22 +105,26 @@ $('#start').click(function (event) {
     board.start();
 	console.timeEnd("board_draw")
 
+var i;
+var times = 1000;
+
 	console.time("default_draw")
-	cursor_manager.draw_board()
+	
+	for(i=0; i<times; i++)	cursor_manager.draw_board()
 	console.timeEnd("default_draw")
 	
 	
 	console.time("test0")	
 	//cursor_manager.draw_board()
-	cursor_manager.test_draw_board_0();
+	for(i=0; i<times; i++)	cursor_manager.test_draw_board_0();
 	console.timeEnd("test0")	
 
 	console.time("test1")	
-	cursor_manager.test_draw_board_1();
+	for(i=0; i<times; i++)	cursor_manager.test_draw_board_1();
 	console.timeEnd("test1")
 
 	console.time("test2")	
-	cursor_manager.test_draw_board_2();
+	for(i=0; i<times; i++)	cursor_manager.test_draw_board_2();
 	console.timeEnd("test2")
 			
     //test1();
