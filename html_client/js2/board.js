@@ -239,6 +239,17 @@ var board_manager = {
 		inIndex = $.inArray(agent.id, this.agents);
 		onBoard = (z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);
 		
+		
+		console.log(z_pos == this.z_level)
+		console.log(this.x_min <= x_pos)
+		console.log(x_pos < this.x_max)
+		console.log(this.y_min <= y_pos )
+		console.log(this.y_max > y_pos)
+
+		console.log("Agent: " + x_pos + " " + y_pos + " " + z_pos) 
+		console.log("x min-max: " + this.x_min + " " + this.x_max)
+		console.log("y min-may: " + this.y_min + " " + this.y_max)
+		console.log("z-level: " + this.z_level)
 		console.log("agent_update: " + inIndex + ", " + onBoard)
 		
 		if(inIndex != -1 && onBoard) { ///agent moves around on the board
@@ -284,30 +295,14 @@ var board_manager = {
 */
 	
 	update_tile: function(x_pos, y_pos, z_pos, tile_id) {
-		
-/*		
-		console.log(z_pos == this.z_level )
-		console.log(this.x_min <= x_pos)
-		console.log(x_pos < this.x_max)
-		console.log(this.y_min <= y_pos)
-		console.log(this.y_max > y_pos)
-
-		console.log(x_pos +" "+ this.x_max)
-		console.log(y_pos +" "+ this.y_max)
-*/
-			
 		if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos) {
-
-		console.log("update tile: tile is on board")
-		
+		//console.log("update tile: tile is on board")
 		var bx, by;
 		bx = x_pos - this.x_min;
 		by = y_pos - this.y_min;
-		
 		this.cursor_manager.update_tile(bx, by, tile_id);
-		
 		} else {
-			console.log("update tile: tile is not on board ")
+			//console.log("update tile: tile is not on board ")
 		}
 	},
 }
@@ -330,7 +325,7 @@ var cursor_manager = {
 		this.reset_cursor_index();
 	},
 
-	update_tile : function(bx, by,tile_id) {
+	update_tile : function(bx, by, tile_id) {
 		
 		console.log({ x : this.index, })
 		
@@ -469,7 +464,7 @@ var cursor_manager = {
 	},
 	
 	remove_agent_from_cursor : function(id) {
-		var cursor = self.agent_to_cursor(id);
+		var cursor = self.atc(id);
 		console.log("cursor_manageR: remove agent from cursor, needs implementation")
 		//var ind = self.
 	},
@@ -477,8 +472,8 @@ var cursor_manager = {
 	// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	//does a full redraw
 	blip : function() {
-		for(var x=0; x < this.board_tile_width; x++) {
-			for(var y=0; y < this.board_tile_height; y++) {
+		for(var x=0; x < this.board.board_tile_width; x++) {
+			for(var y=0; y < this.board.board_tile_height; y++) {
 				this.draw_board(x,y);
 			}	
 		}
