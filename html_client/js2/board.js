@@ -178,8 +178,8 @@ var board_manager = {
 		for(x = this.x_min; x<xm; x++) {
 			for(y = this.y_min; y<xm; y++)
 			{
-				//tile_value = state.levels[zl][x][y];
-				tile_vale = 1; ///FIX
+				tile_value = state.levels[zl][x][y];
+				//tile_vale = 1; ///FIX
 				this.update_tile(x,y,zl, tile_value);
 			}
 		}
@@ -232,7 +232,7 @@ var board_manager = {
 		pos = agent.pos();
 		x_pos = pos[0];
 		y_pos = pos[1];
-		z_pos =ppos[2];
+		z_pos = pos[2];
 
 		var onBoard, inIndex;
 		
@@ -375,7 +375,7 @@ var cursor_manager = {
 				this.index[i] = {
 					drawing_cursor: [0,-1,-1],
 					//last_blip : 0, //needed?
-					tile_id : 1,
+					tile_id : 0,
 					agent_num : 0,
 					agent_list : [],
 					object_num : 0,
