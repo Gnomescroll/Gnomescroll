@@ -230,9 +230,9 @@ var board_manager = {
 		var pos, x_pos, y_pos, z_pos;
 		
 		pos = agent.pos();
-		x_pos = agent_pos[0];
-		y_pos = agent_pos[1];
-		z_pos = agent_pos[2];
+		x_pos = pos[0];
+		y_pos = pos[1];
+		z_pos =ppos[2];
 
 		var onBoard, inIndex;
 		
@@ -285,7 +285,7 @@ var board_manager = {
 	
 	update_tile: function(x_pos, y_pos, z_pos, tile_id) {
 		
-		
+/*		
 		console.log(z_pos == this.z_level )
 		console.log(this.x_min <= x_pos)
 		console.log(x_pos < this.x_max)
@@ -294,7 +294,8 @@ var board_manager = {
 
 		console.log(x_pos +" "+ this.x_max)
 		console.log(y_pos +" "+ this.y_max)
-				
+*/
+			
 		if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos) {
 
 		console.log("update tile: tile is on board")
