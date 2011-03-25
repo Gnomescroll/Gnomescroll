@@ -522,54 +522,36 @@ var cursor_manager = {
 		x = this.index[i];
 
 		if(x.drawing_cursor[0] != -1) {
-			//draw tile
-			// x.tile_id, x.bx, x.by
-			///
-			console.log("Draw Tile")
 			drawingCache.drawTile(x.bx, x.by, x.tile_id);
-			///
 		} else if(x.drawing_cursor[1] != -1) {
-			//draw agent
-			// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
-			///
 			console.log("Draw Agent")
 			drawingCache.drawSprite(b.bx, b.by, 1, 1);
-			///
 		} else if(x.drawing_cursor[2] != -1) {
-		
 			console.log("Draw Object")
-			//draw object
-			// x.object_list[x.drawing_cursor[2]], x.bx, x.by
 		}		
 		
-		 }	
+		}	
 	},
 
 	test_draw_board_1 : function() {
-	for(x in this.index) { 
+	var i, len;
+	len = this.index.length;
+	for(i=0; i<len; i++) {
+		x = this.index[i];
+		
 		if(x.drawing_cursor[0] != -1) {
-			//draw tile
-			// x.tile_id, x.bx, x.by
-			///
-			console.log("Draw Tile")
 			drawingCache.drawTile(x.bx, x.by, x.tile_id);
 			return 0;
-			///
+
 		}
 		if(x.drawing_cursor[1] != -1) {
-			//draw agent
-			// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
-			///
 			console.log("Draw Agent")
 			drawingCache.drawSprite(b.bx, b.by, 1, 1);
 			return 0;
 		}
 		if(x.drawing_cursor[2] != -1) {
-		
 			console.log("Draw Object")
 			return 0;
-			//draw object
-			// x.object_list[x.drawing_cursor[2]], x.bx, x.by
 		}		
 		
 		 }	
