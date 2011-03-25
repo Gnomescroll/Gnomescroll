@@ -538,7 +538,6 @@ var cursor_manager = {
 	len = this.index.length;
 	for(i=0; i<len; i++) {
 		x = this.index[i];
-		
 		if(x.drawing_cursor[0] != -1) {
 			drawingCache.drawTile(x.bx, x.by, x.tile_id);
 			return 0;
