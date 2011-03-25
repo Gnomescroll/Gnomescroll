@@ -143,9 +143,8 @@ var state = ( function () {
         
         x_[block.y] = block.value
         console.log('value:' + x_[block.y]);
-        ///return notification
-        board_event.terrain_map_change(block.x, block.y, block.z, block.value);
-        return true;
+       
+        return block;
     };
     
     // checks if a game_object exists in state
