@@ -327,7 +327,7 @@ var cursor_manager = {
 
 	update_tile : function(bx, by, tile_id) {
 		
-		console.log({ x : this.index, })
+		//console.log({ x : this.index, })
 		
 		var i, temp;
 		i = bx + by*this.board.board_tile_width;
@@ -504,7 +504,7 @@ var cursor_manager = {
 			// x.agent_list[x.drawing_cursor[1]], x.bx, x.by
 			///
 			console.log("Draw Agent")
-			drawingCache.drawSprite(b.bx, b.by, 1, 1);
+			drawingCache.drawSprite(x.bx, x.by, 1, 1);
 			///
 		} else if(x.drawing_cursor[2] != -1) {
 		
@@ -525,7 +525,7 @@ var cursor_manager = {
 			drawingCache.drawTile(x.bx, x.by, x.tile_id);
 		} else if(x.drawing_cursor[1] != -1) {
 			console.log("Draw Agent")
-			drawingCache.drawSprite(b.bx, b.by, 1, 1);
+			drawingCache.drawSprite(x.bx, x.by, 1, 1);
 		} else if(x.drawing_cursor[2] != -1) {
 			console.log("Draw Object")
 		}		
@@ -534,7 +534,7 @@ var cursor_manager = {
 	},
 
 	test_draw_board_1 : function() {
-	var i, len;
+	var i, len, x;
 	len = this.index.length;
 	for(i=0; i<len; i++) {
 		x = this.index[i];
@@ -546,7 +546,7 @@ var cursor_manager = {
 		}
 		if(x.drawing_cursor[1] != -1) {
 			console.log("Draw Agent")
-			drawingCache.drawSprite(b.bx, b.by, 1, 1);
+			drawingCache.drawSprite(x.bx, x.by, 1, 1);
 			return 0;
 		}
 		if(x.drawing_cursor[2] != -1) {
@@ -570,7 +570,7 @@ var cursor_manager = {
 		}
 		if(drawing_cursor[1] != -1) {
 			console.log("Draw Agent")
-			drawingCache.drawSprite(b.bx, b.by, 1, 1);
+			drawingCache.drawSprite(x.bx, x.by, 1, 1);
 			return 0;
 		}
 		if(drawing_cursor[2] != -1) {
