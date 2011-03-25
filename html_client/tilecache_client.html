@@ -108,10 +108,10 @@ $('#start').click(function (event) {
 var i;
 var times = 1000;
 
-	console.time("default_draw")
+	console.time("default_drawing_function")
 	
 	for(i=0; i<times; i++)	cursor_manager.draw_board()
-	console.timeEnd("default_draw")
+	console.timeEnd("default_drawing_function")
 	
 	
 	console.time("drawing_function_0")	
