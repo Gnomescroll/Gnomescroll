@@ -11,7 +11,7 @@ class Agent:
 
 	def move_0(self,dx,dy,dz):
 		[type, x, y, z] = self.position
-		[type, x, y, z] = [type, x+dx, y+dy, 0]
+		[type, x, y, z] = [type, x+dx, y+dy, z]
 		self.position = [type, x, y, z]
 		self.delta.agent_position_change(self.__dict__['id'], [0,x, y, z])
 

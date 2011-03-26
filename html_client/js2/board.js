@@ -241,6 +241,7 @@ var board_manager = {
 		
 		
 		console.log(z_pos == this.z_level)
+		console.log("(z_pos, z_level): " + z_pos + " " + this.z_level)
 		console.log(this.x_min <= x_pos)
 		console.log(x_pos < this.x_max)
 		console.log(this.y_min <= y_pos )

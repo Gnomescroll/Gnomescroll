@@ -42,7 +42,7 @@ class Agents:
 		#grab state from persistant store
 		pass
 
-	def create(self, x, y, z=0, player_id=0):
+	def create(self, x, y, z, player_id=0):
 		id = self.globals.get_unique_id()
 		a = create_agent(id, x, y, z, player_id=player_id, world_id = self.globals.world_id)
 		self.agent_list[id] = a
