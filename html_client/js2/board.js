@@ -475,10 +475,24 @@ var cursor_manager = {
 	
 	remove_agent_from_cursor : function(id) {
 		var cursor = this.atc[id];
-		console.log("cursor_manageR: remove agent from cursor, needs implementation")
-		//var ind = self.
+		//console.log("cursor_manageR: remove agent from cursor, needs implementation")
+		this._remove_agent_from_cursor(cursor, id);
 	},
 	
+	_remove_agent_from_cursor : function(cursor, id) {
+		
+	},
+	
+	move_agent(id, bx, by) {
+		//var i, cursor1, cursor2;
+		//i = bx + by*this.board.board_tile_width;		
+		//cursor1 = this.index[i];
+		
+		this._remove_agent_from_cursor(cursor, id);
+		//remove_agent_from_cursor : function(id)
+		
+		this.add_agent_to_cursor(id, bx, by);
+	}
 	// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	//does a full redraw
 	blip : function() {
