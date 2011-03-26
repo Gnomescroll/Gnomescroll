@@ -457,14 +457,23 @@ var cursor_manager = {
 	},
 	///
 	add_agent_to_cursor : function(id, bx, by) {
+		console.log("cursor_manager: add agent to cursor")
+		
 		var bx, by, i;
 		i = bx + by*this.board.board_tile_width;
 		
-				
+		var cursor = this.index[i];
+		
+		this.atc[id] = cursor;
+		cursor.agent_list.push(id);
+		cursor.drawing_cursor = [-1, cursor.agent_num, -1];
+		cursor.agent_num++;
+		
+		this._draw_board_tile(i);
 	},
 	
 	remove_agent_from_cursor : function(id) {
-		var cursor = self.atc(id);
+		var cursor = this.atc[id];
 		console.log("cursor_manageR: remove agent from cursor, needs implementation")
 		//var ind = self.
 	},
@@ -557,7 +566,7 @@ var cursor_manager = {
 	test_draw_board_2 : function() {
 	var i, len, drawing_cursor;
 	len = this.index.length;
-	console("len: " + len)
+	//console("len: " + len)
 	for(i=0; i<len; i++) {
 		drawing_cursor = this.index[i].drawing_cursor;
 		if(drawing_cursor[0] != -1) {
