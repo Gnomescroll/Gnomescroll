@@ -540,7 +540,7 @@ var cursor_manager = {
 	
 
 	test_draw_board_0 : function() {
-	var i, len;
+	var i, len, x;
 	len = this.index.length;
 	for(i=0; i<len; i++) {
 		x = this.index[i];
@@ -559,6 +559,10 @@ var cursor_manager = {
 
 	test_draw_board_1 : function() {
 	var i, len, x;
+        index = this.index,
+        len = this.index.length,
+        dc = drawingCache,
+        x;
 	len = this.index.length;
 	for(i=0; i<len; i++) {
 		x = this.index[i];
