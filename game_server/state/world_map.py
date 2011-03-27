@@ -18,6 +18,11 @@ class World_map:
 		return self.map[y * self.x_size + x]
 
 	def set(self, x,y,z,value):
+		
+		# fix crashes for bad input
+		if None in [x,y,z,value]:
+			return
+			
 		self.map[y * self.x_size + x] = value
 		self.delta.set_map(x,y,z,value)
 		self.version = self.version + 1

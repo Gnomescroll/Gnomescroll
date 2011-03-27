@@ -24,7 +24,7 @@ var map_editor = {
             tile = $('<canvas></canvas>').attr({'class':'map_tile', 'id':tile_value})
                                          .width(bc.tile_pixel_width)
                                          .height(bc.tile_pixel_height)
-                                         .click(functon() {
+                                         .click(function() {
                                             var t = $(this);
                                             t.css('border','1px solid red');
                                             map_editor.current_tile = t.attr('id');
@@ -39,9 +39,44 @@ var map_editor = {
         }
     },
     
+    init_lazy_panel: function () {
+        var pane = $('#map_editor'),
+            tile_values = 40,
+            i = 0,
+            table = $('<table></table>'),
+            cells_wide = 2,
+            tr, td;
+            
+        for (i=0; i < tile_values; i++) {
+            if (i%cells_wide === 0) {
+                tr = $('<tr></tr>');
+                table.append(tr);
+            }
+            td = $('<td></td>').attr('id',i).html(i);
+            if (i == this.current_tile) td.attr('class','selected');
+            tr.append(td);
+        }
+        pane.css('float','left');
+        pane.append(table);
+    },
+    
+    init_lazy_panel_controls: function () {
+        var cells = $('td');
+            
+        cells.click(function(event) {
+            var cell = $(this),
+                cls;
+            map_editor.current_tile = parseInt(cell.text());
+            $('td.selected').attr('class','');
+            cell.attr('class','selected');
+        });
+        
+        
+    },
+    
     init_controls: function() {
         $(window).click(function(event) {
-           
+           console.log('window click');
            // find if click is inside canvas
            // if so, which coordinate tile
            // call admin.set_map for the current_tile_value and at coord
@@ -54,9 +89,14 @@ var map_editor = {
                 bc = board_canvas;
                 
             // change coordinate system relative to canvas
-            coord.x = event.offsetX - canvas_offset.left;
-            coord.y = event.offsetY - canvas_offset.top;
-            
+            //coord.x = event.offsetX - canvas_offset.left;
+            //coord.y = event.offsetY - canvas_offset.top;
+            coord.x = event.pageX - canvas_offset.left;
+            coord.y = event.pageY - canvas_offset.top;
+            console.log(event);
+            console.log({pageX: event.pageX, pageY: event.pageY});
+            console.log(canvas_offset);
+            console.log(coord);
             // check if in canvas
             if (coord.x < 0 || coord.x > bc.canvas_tile_width*bc.tile_pixel_width) return false;
             if (coord.y < 0 || coord.y > bc.canvas_tile_height*bc.tile_pixel_height) return false;
@@ -69,8 +109,10 @@ var map_editor = {
             global_coord.x = board_coord.x + board.x_offset;
             global_coord.y = board_coord.y + board.y_offset;
             
+            console.log('admin set map');
             console.log(global_coord);
-            admin.set_map(global_coord.x, global_coord.z, board.z_level, map_editor.current_tile);
+            admin.set_map(global_coord.x, global_coord.y, board.z_level, map_editor.current_tile, true);
+            
         });
         
     },

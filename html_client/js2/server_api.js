@@ -90,8 +90,9 @@ admin = ( function () {
         send(data);
     };
 	
-	set_map = function (x, y, z, value) {
-
+	set_map = function (x, y, z, value, debug) {
+        
+        if (debug) console.log(arguments);
         var position;
     
         if (value === undefined) {
@@ -116,7 +117,7 @@ admin = ( function () {
                 position: position,
                 value: value
                }
-               
+        if (debug) console.log(data);
         send(data);
 	};
     

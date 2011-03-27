@@ -10,7 +10,7 @@ input = ( function () {
     // init $ bindings
     init = function () {
         
-        $('body').keydown(function (event) {
+        $('h1').keydown(function (event) {
             var key = keymap[event.which];
             queue.push({key: key, timestamp: event.timeStamp});
         });
