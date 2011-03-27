@@ -483,7 +483,7 @@ var cursor_manager = {
 		
 	},
 	
-	move_agent(id, bx, by) {
+	move_agent: function(id, bx, by) {
 		//var i, cursor1, cursor2;
 		//i = bx + by*this.board.board_tile_width;		
 		//cursor1 = this.index[i];
@@ -492,7 +492,7 @@ var cursor_manager = {
 		//remove_agent_from_cursor : function(id)
 		
 		this.add_agent_to_cursor(id, bx, by);
-	}
+	},
 	// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	//does a full redraw
 	blip : function() {
