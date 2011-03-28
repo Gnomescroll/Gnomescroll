@@ -42,22 +42,20 @@ var map_editor = {
     init_lazy_panel: function () {
         var pane = $('#map_editor'),
             tile_values = tileset_state.tile_id_to_name,
-            tv_len = tile_values.length,
-            i = 0,
             j = 0,
-            index,
+            name,
             table = $('<table></table>'),
             cells_wide = 1,
             tr, td;
             
-        for (i=0; i < tv_len; i++) {
-            index = tile_values[i];
-            if (index === undefined) continue;
+        for (i in tile_values) {
+            name = tile_values[i];
+            if (name === undefined) continue;
             if (j%cells_wide === 0) {
                 tr = $('<tr></tr>');
                 table.append(tr);
             }
-            td = $('<td></td>').attr('id',i).html(index);
+            td = $('<td></td>').attr('id',i).html(name);
             if (i == this.current_tile) td.attr('class','selected');
             tr.append(td);
             j++;

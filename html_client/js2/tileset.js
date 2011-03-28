@@ -3,7 +3,7 @@
 var tileset_state = {
 	tile_rendering: [],
 	tile_name_to_id : [],
-	tile_id_to_name : [],
+	tile_id_to_name : {},
 
 	add_tile : function(param) {
 		this.tile_name_to_id[ param.tile_name] =  param.tile_id;
