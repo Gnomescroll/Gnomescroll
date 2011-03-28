@@ -343,6 +343,24 @@ var drawingCache = {
 		if(!(sprite_num in this.slookup[spriteMap_id])) { this.insertSprite(sprite_num, spriteMap_id); }
 		var index = this.slookup[spriteMap_id][sprite_num];
 		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
-	}
+	},
+    
+	drawSpriteToCtx : function (ctx, sprite_num, spriteMap_id, x_offset, y_offset) {
+        
+        if(x_offset === undefined) {
+			x_offset = 0;
+        }
+        if(y_offset === undefined) {
+			y_offset = 0;
+		}
+        
+		if(!(spriteMap_id in this.slookup)) { 
+			console.log("DrawingCache.drawSprite Error: Tilemap/spriteMap not loaded: " + spriteMap_id)
+			return 0;
+			}
+		if(!(sprite_num in this.slookup[spriteMap_id])) { this.insertSprite(sprite_num, spriteMap_id); }
+		var index = this.slookup[spriteMap_id][sprite_num];
+		ctx.putImageData(this.img_cache[index], x_offset, y_offset);
+	},
 }
 

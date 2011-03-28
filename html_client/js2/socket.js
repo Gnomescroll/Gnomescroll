@@ -34,6 +34,7 @@ socket = ( function () {
 
         socket.on('close', function () {
             if (debug) console.log('close');
+            socket.connect();
         });
 
         socket.on('disconnect', function () {

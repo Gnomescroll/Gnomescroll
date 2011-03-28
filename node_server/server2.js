@@ -1,21 +1,19 @@
-var sys = require('sys');
-var http = require('http'),  
-    io = require('./socket.io'), // for npm, otherwise use require('./path/to/socket.io') 
-    //require( './lib/redis-client.js' )
+var sys = require('sys'),
+    http = require('http'),  
+    io = require('./socket.io'),
+    redis = require("redis"),
+    r = redis.createClient(6379, '127.0.0.1'),
+    server,
+    socket;
   
 server = http.createServer(function(request, response){ 
  // your normal server code 
  response.writeHead(200, {'Content-Type': 'text/html'}); 
  response.writeBody('<h1>Hello world</h1>'); 
- response.end(); 
+ response.finish(); 
 }); 
 server.listen(8080);
 
-//redis = require('./lib/redis-client.js');
-var redis = require("redis");
-var r = redis.createClient(6379, '127.0.0.1');
-
-//console.log('Not Crashed Yet');
 
 //this client connects to the Redis instance for direct to client communications
 //var r_client = redis.createClient(6379, '127.0.0.1');
@@ -31,7 +29,7 @@ r.subscribe("global_admin", function(channel, message, pattern) {
 });
 
 
-var socket = io.listen(server); 
+socket = io.listen(server); 
 //console.log('Client Disconnect');
 console.log('Server Listening');
 

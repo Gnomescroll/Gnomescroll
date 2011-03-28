@@ -39,14 +39,23 @@ var map_editor = {
         }
     },
     
+    panel_canvas_tile: function(id) {
+        var bc = board_canvas,
+            canvas = $('<canvas></canvas>').attr({'id' : id,
+                                               'class' : 'panel_tile'});
+        canvas[0].width = bc.tile_pixel_width;
+        canvas[0].height = bc.tile_pixel_height;
+        
+        return canvas;
+    },
+    
     init_panel: function () {
-        var pane = $('#map_editor'),
+        var pane = $('#map_editor').css('float','left'),
             tile_values = tileset_state.tile_id_to_name,
             j = 0,
             name,
             canvas,
-            bc = board_canvas,
-            table = $('<table></table>').attr('class','panel'),
+            table = $('<table></table>').attr('class','panel tiles'),
             cells_wide = 1,
             tr, td;
             
@@ -58,11 +67,8 @@ var map_editor = {
                 tr = $('<tr></tr>');
                 table.append(tr);
             }
-            td = $('<td></td>');
-            canvas = $('<canvas></canvas>').attr({'id' : i,
-                                               'class' : 'panel_tile'});
-            canvas[0].width = bc.tile_pixel_width;
-            canvas[0].height = bc.tile_pixel_height;
+            td = $('<td></td>').attr('class','canvas');
+            canvas = this.panel_canvas_tile(i);
             tr.append(td.append(canvas));
             
             td = $('<td></td>').attr('id',i).html(name);
@@ -70,21 +76,41 @@ var map_editor = {
             tr.append(td);
             j++;
         }
-        table.append($('<hr>'));
-        pane.css('float','left');
         pane.append(table);
         
-        table = $('table.panel');
+        pane.append($('<hr>'));
+
+        // agent
+        table = $('<table></table>').attr('class','panel agents');
+        tr = $('<tr></tr>');
+        td = $('<td></td>').attr('class','canvas');
+        canvas = this.panel_canvas_tile('agent');
+        tr.append(td.append(canvas));
+        td = $('<td></td>').attr('id','agent').html('agent');
+        tr.append(td);
+        table.append(tr);
+        
+        pane.append(table);
+        
+        table = $('table.panel.tiles');
         table.find('canvas.panel_tile')
              .each(function (i) {
-                 
                     var tile = $(this),
                         ctx = this.getContext('2d'),
                         tile_id = tile.attr('id');
                     console.log('draw panel tile');
                     console.log(tile_id);
                     drawingCache.drawTileToCtx(ctx, tile_id);
-        });
+              });
+        
+        table = $('table.panel.agents');
+        table.find('canvas.panel_tile')
+             .each(function (i) {
+                    var ctx = this.getContext('2d');
+                    console.log('draw agent tile');
+                    drawingCache.drawSpriteToCtx(ctx, 1, 1);
+             });
+        
     },
     
     init_panel_controls: function () {
@@ -93,7 +119,8 @@ var map_editor = {
         cells.click(function(event) {
             var cell = $(this),
                 cls;
-            map_editor.current_tile = parseInt(cell.attr('id'));
+            if (cell.attr('class') === 'canvas') cell = cell.next();
+            map_editor.current_tile = cell.attr('id');
             $('td.selected').attr('class','');
             cell.attr('class','selected');
         });
@@ -130,9 +157,13 @@ var map_editor = {
         global_coord.x = board_coord.x + board.x_offset;
         global_coord.y = board_coord.y + board.y_offset;
 
-        admin.set_map(global_coord.x, global_coord.y, board.z_level, map_editor.current_tile);
+        if (this.current_tile === 'agent') {
+            admin.create_agent(global_coord.x, global_coord.y, board.z_level);
+        } else {
+            admin.set_map(global_coord.x, global_coord.y, board.z_level, this.current_tile);
+        }
     },
     
-    current_tile: 0, // currently selected map tile for editor
+    current_tile: '0', // currently selected map tile for editor
 }
 
