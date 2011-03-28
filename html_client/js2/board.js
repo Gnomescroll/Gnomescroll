@@ -374,17 +374,6 @@ var cursor_manager = {
 		*/
 	},
 	
-
-	// tile -> agents -> objects -> tile
-	
-	advance_all_drawing_cursor : function() {
-		var len = this.index.length;
-		
-		for(var x=0; x < len; x++) {
-			this._advance_drawing_cursor(x)
-		}
-	},
-	
 	//internal method, not interface method
 	// takes an this.index element
 	
@@ -413,17 +402,36 @@ var cursor_manager = {
 		}
 	},
 
+	// tile -> agents -> objects -> tile
+	
+	blipa : function() {
+		this.advance_all_drawing_cursor();
+		this.blip();
+	},
+	
+	advance_all_drawing_cursor : function() {
+		var len = this.index.length;
+		
+		//console.log(this.index)
+		for(var x=0; x < len; x++) {
+			this._advance_drawing_cursor(this.index[x]);
+		}
+	},
+
 	advance_drawing_cursor : function(bx, by) {
+		console.log("advance_drawing_cursor: ")
+		console.log(this.index[bx + by*this.board.board_tile_width])
+		
 		this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
 	},
 
 	_advance_drawing_cursor : function(x) {
 		
-		console.log(x)
+		//console.log(x)
 		
 		if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
 		{
-			console.log("1")
+			//console.log("1")
 			if(x.agent_num > 0) //then if agents are on tile, render agent
 			{
 				console.log("1.1")
@@ -438,38 +446,45 @@ var cursor_manager = {
 			}
 			else //else keep rendering the tile
 			{
-				console.log("1.3")
+				//console.log("1.3")
 				//do nothing, only the tile exists on this square
 			}
 		}
 		else if(x.drawing_cursor[1] != -1) //if cursor is rendering a agent
 		{
-			console.log("board_manager.advance_drawing_cursor: WTF 0.0")
+			//console.log("2")
+
+			//console.log("board_manager.advance_drawing_cursor: WTF 0.0")
 			x.drawing_cursor[1]++;
 			if(x.drawing_cursor[1] < x.agent_num) //if more agents, switch to next agent
 			{
+				console.log("2.0")
 				//do nothings
 			}
 			else if(x.drawing_cursor[1] == x.agent_num)
 			{
 				if(x.object_num > 0)
 				{
-					x.drawing_cursor[1] = -1;
-					x.drawing_cursor[2] = 0;
+					console.log("2.1")
+					x.drawing_cursor = [-1, -1, 0];
 				}
 				else //if no objects on square, then render tile
 				{
-					x.drawing_cursor[1] = -1;
-					x.drawing_cursor[0] = 0;
+					console.log("2.2")
+					x.drawing_cursor = [0, -1, -1]
 				}
 			}
 			else if(x.drawing_cursor[1] > x.agent_num)
-			{
+			{	
+				console.log("2.3")
 				console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
+				console.log(x)
 			}
 		}
 		else if(x.drawing_cursor[2] != -1)
-		{
+		{			
+			console.log("3")
+
 			console.log("board_manager.advance_drawing_cursor: WTF 0.1")
 			x.drawing_cursor[2]++;
 			if(x.drawing_cursor[2] < x.object_num)
@@ -487,7 +502,7 @@ var cursor_manager = {
 			}
 		}
 		
-		console.log(x)
+		//console.log(x)
 	},
 	
 	agent_to_cursor : function(id) {
@@ -515,8 +530,8 @@ var cursor_manager = {
 		console.log("agent num: " + cursor.agent_num)
 		this._draw_board_tile(i);
 
-		console.log(cursor)		
-		console.log(this.index[i])
+		//console.log(cursor)		
+		//console.log(this.index[i])
 	},
 	
 	remove_agent_from_cursor : function(id) {
