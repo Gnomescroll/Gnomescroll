@@ -29,7 +29,7 @@ r.subscribe("global_admin", function(channel, message, pattern) {
 });
 
 
-socket = io.listen(server); 
+socket = io.listen(server, { websocket: { closeTimeout: 15000 }}); 
 //console.log('Client Disconnect');
 console.log('Server Listening');
 

@@ -190,8 +190,9 @@ var board_manager = {
 		var x_pos, y_pos, z_pos, pos, id; //x,y positions
 		agents = state.agents;/// fill this in; get list of agents
 
-		for(agent in agents) 
+		for(agent_id in agents) 
 		{
+            var agent = agents[agent_id];
 			console.log('populate index, agent_update: ' + agent.id)
 			this.agent_update(agent);
 /*
@@ -217,9 +218,10 @@ var board_manager = {
 */
 		}
 		
-		for( object in state.objects) 
+		for(object_id in state.objects) 
 		{
-			pos = object.pos();
+            var obj = state.objects[object_id];
+			pos = obj.pos();
 			x_pos = pos[0];
 			y_pos = pos[1];
 			z_pos = pos[2];
@@ -229,8 +231,8 @@ var board_manager = {
 			}
 			if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
 			{
-				this.objects.push(object.id);
-				this.cursor_manager.add_object_to_cursor(object.id, x_pos - this.x_min ,y_pos - this.ymin);
+				this.objects.push(obj.id);
+				this.cursor_manager.add_object_to_cursor(obj.id, x_pos - this.x_min ,y_pos - this.ymin);
 			}
 		}
 		

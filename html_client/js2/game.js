@@ -70,7 +70,7 @@ game = {
     },
         
 };
-
+/*
 var renderState = {
     
     view_x_offset: 0,
@@ -335,7 +335,7 @@ var renderState = {
     },
         
 };
-
+*/
 // temporary, just to keep processInput action calls from throwing
 var selected_agent = { x: 15,
                        y: 15,
