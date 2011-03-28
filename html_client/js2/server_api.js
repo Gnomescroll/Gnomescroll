@@ -17,7 +17,8 @@ var send = function (data) {
     var url = '/api';
     data = JSON.stringify(data);
     $.post(globals.server_out+url, { json: data });
-    
+    console.log('socket.socket');
+    console.log(socket.socket);
 }
 
 var admin, info, action;

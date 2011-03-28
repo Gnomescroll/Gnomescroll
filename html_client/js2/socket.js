@@ -1,19 +1,28 @@
 var socket;
 
-socket = ( function () {
+socket = {
     
-    var init,
-        initRequests,
-        debug = true,
-        node_server = '127.0.0.1',
-        node_port = 8080;
     
-    init = function () {
+    debug: true,
+    node_server: '127.0.0.1',
+    node_port: 8080,
+    socket: null,
+    
+    init: function () {
         
-        var socket = new io.Socket(node_server,
-                                  {'port': node_port});
+        var started = false,
+            debug = this.debug,
+            socket = new io.Socket(this.node_server, {
+                                   'port' : this.node_port,
+                         'connectTimeout' : 200,
+                      'rememberTransport' : false,     
+                                  });
         
-        var started = false;
+        // this will adjust the rate of connection cycling by a websocket
+        // the default is 15000
+        socket.transport.options.timeout = 1500;
+        
+        this.socket = socket;
         
         socket.on('connect', function () {
             if (debug) console.log('connect');
@@ -49,11 +58,7 @@ socket = ( function () {
 
         socket.connect();	
         
-    };
+    },
     
-    return {
-             init: init,
-           }
-
-}());
+};
 
