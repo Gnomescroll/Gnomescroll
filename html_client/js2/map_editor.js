@@ -41,20 +41,26 @@ var map_editor = {
     
     init_lazy_panel: function () {
         var pane = $('#map_editor'),
-            tile_values = 40,
+            tile_values = tileset_state.tile_id_to_name,
+            tv_len = tile_values.length,
             i = 0,
+            j = 0,
+            index,
             table = $('<table></table>'),
-            cells_wide = 2,
+            cells_wide = 1,
             tr, td;
             
-        for (i=0; i < tile_values; i++) {
-            if (i%cells_wide === 0) {
+        for (i=0; i < tv_len; i++) {
+            index = tile_values[i];
+            if (index === undefined) continue;
+            if (j%cells_wide === 0) {
                 tr = $('<tr></tr>');
                 table.append(tr);
             }
-            td = $('<td></td>').attr('id',i).html(i);
+            td = $('<td></td>').attr('id',i).html(index);
             if (i == this.current_tile) td.attr('class','selected');
             tr.append(td);
+            j++;
         }
         pane.css('float','left');
         pane.append(table);
@@ -66,7 +72,7 @@ var map_editor = {
         cells.click(function(event) {
             var cell = $(this),
                 cls;
-            map_editor.current_tile = parseInt(cell.text());
+            map_editor.current_tile = parseInt(cell.attr('id'));
             $('td.selected').attr('class','');
             cell.attr('class','selected');
         });

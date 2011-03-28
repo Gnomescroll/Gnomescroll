@@ -98,10 +98,6 @@ $('#init').click(function (event) {
 	board.init();
 	drawingCache.insertTilemap("static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
 	drawingCache.insertTilemap("static/tiles/dwarves.png", 1, 18, 20, 16, 16);
-	
-    map_editor.init_lazy_panel();
-    map_editor.init_lazy_panel_controls();
-    //map_editor.init_controls();
     
     game.init();
 
@@ -115,7 +111,10 @@ $('#start').click(function (event) {
 //	console.time('b')
     console.time("board_draw")
     board.start();
-	console.timeEnd("board_draw")
+	console.timeEnd("board_draw");
+    
+    map_editor.init_lazy_panel();
+    map_editor.init_lazy_panel_controls();
 
 /* //benchmarking
 var i;
