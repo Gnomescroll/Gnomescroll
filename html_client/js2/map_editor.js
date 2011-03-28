@@ -98,8 +98,8 @@ var map_editor = {
                     var tile = $(this),
                         ctx = this.getContext('2d'),
                         tile_id = tile.attr('id');
-                    console.log('draw panel tile');
-                    console.log(tile_id);
+                   // console.log('draw panel tile');
+                   // console.log(tile_id);
                     drawingCache.drawTileToCtx(ctx, tile_id);
               });
         
@@ -107,7 +107,7 @@ var map_editor = {
         table.find('canvas.panel_tile')
              .each(function (i) {
                     var ctx = this.getContext('2d');
-                    console.log('draw agent tile');
+                  //  console.log('draw agent tile');
                     drawingCache.drawSpriteToCtx(ctx, 1, 1);
              });
         

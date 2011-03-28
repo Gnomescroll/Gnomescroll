@@ -25,7 +25,7 @@ class Agent_command_scheduler:
 			agent_command(agent, *params)
 			self.schedule(agent_id, self.last_time + agent.action_delay())
 			#next_move[agent_id] = self.last_time + agent.action_delay() #set agent_next_move time
-		else: #pass command to agent controller
+		else: #agent is already scheduled, pass to agent_msg que
 			#print "need to implement scheduler!"
 			## DELETE below when scheduler is ready !!! # ###
 			agent = Agent(agent_id)

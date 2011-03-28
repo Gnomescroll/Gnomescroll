@@ -208,7 +208,7 @@ var drawingCache = {
 		symbol_rgb = tile.symbol_rgb;
 		
 	/// MATH MATH MATH		
-			console.log("draw_style: " + draw_style)
+			//console.log("draw_style: " + draw_style)
 			if(draw_style == 0) {
 				//This is copy/paste unmodified
 			}
@@ -275,7 +275,7 @@ var drawingCache = {
 				//return 0;
 				//tile_id = -1; //render unknown tile
 			//} else {
-			console.log("Tile not loaded: " + tile_id)
+			//console.log("Tile not loaded: " + tile_id)
 			var rvalue = this.insertTile(tile_id);
 			if(rvalue == 0) return 0; //usually means tileset is not loaded
 			//}
