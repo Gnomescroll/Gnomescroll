@@ -118,7 +118,7 @@ var board_manager = {
 	},
 	
 	start : function() {
-		///this.populate_index();
+		this.populate_index();
 	},
 	
 //	on_board : function(x_pos,y_pos,z_pos) {
