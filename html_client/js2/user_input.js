@@ -15,9 +15,7 @@ input = ( function () {
             queue.push({key: key, timestamp: event.timeStamp});
                }).click(function (event) {
                   var key = keymap[event.which];
-                  console.log(key);
                   if (key === 'left-click') { 
-                      console.log(key);
                       map_editor.set_tile(event);
                   } 
                });

@@ -39,7 +39,7 @@ var map_editor = {
         }
     },
     
-    init_lazy_panel: function () {
+    init_panel: function () {
         var pane = $('#map_editor'),
             tile_values = tileset_state.tile_id_to_name,
             j = 0,
@@ -87,7 +87,7 @@ var map_editor = {
         });
     },
     
-    init_lazy_panel_controls: function () {
+    init_panel_controls: function () {
         var cells = $('td');
             
         cells.click(function(event) {
@@ -115,14 +115,9 @@ var map_editor = {
             bc = board_canvas;
             
         // change coordinate system relative to canvas
-        //coord.x = event.offsetX - canvas_offset.left;
-        //coord.y = event.offsetY - canvas_offset.top;
         coord.x = event.pageX - canvas_offset.left;
         coord.y = event.pageY - canvas_offset.top;
-        console.log(event);
-        console.log({pageX: event.pageX, pageY: event.pageY});
-        console.log(canvas_offset);
-        console.log(coord);
+
         // check if in canvas
         if (coord.x < 0 || coord.x > bc.canvas_tile_width*bc.tile_pixel_width) return false;
         if (coord.y < 0 || coord.y > bc.canvas_tile_height*bc.tile_pixel_height) return false;
@@ -134,10 +129,8 @@ var map_editor = {
         // convert to global game coordinate
         global_coord.x = board_coord.x + board.x_offset;
         global_coord.y = board_coord.y + board.y_offset;
-        
-        console.log('admin set map');
-        console.log(global_coord);
-        admin.set_map(global_coord.x, global_coord.y, board.z_level, map_editor.current_tile, true);
+
+        admin.set_map(global_coord.x, global_coord.y, board.z_level, map_editor.current_tile);
     },
     
     current_tile: 0, // currently selected map tile for editor
