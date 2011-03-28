@@ -20,7 +20,7 @@ socket = {
         
         // this will adjust the rate of connection cycling by a websocket
         // the default is 15000
-        socket.transport.options.timeout = 1500;
+        //socket.transport.options.timeout = 1500;
         
         this.socket = socket;
         
