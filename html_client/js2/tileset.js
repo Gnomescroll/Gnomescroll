@@ -24,6 +24,7 @@ var tileset_state = {
 	
 	get_tile_rendering_info : function(tile_id) {
 		if(tile_id in this.tile_rendering) { return this.tile_rendering[tile_id]; }
+		//if(-1 in this.tile_rendering) { return this.tile_rendering[-1]; }
 		else {
 			//return default if tile does not exist in rendering info
 			//console.log("Tile rendering infomation missing: " + tile_id)
@@ -33,8 +34,8 @@ var tileset_state = {
 				tilemap_id: 0,
 				draw_style: 1,
 				background_rgb: [0, 0, 0],
-				symbol:  1,
-				symbol_rgb: [0, 150, 150],	
+				symbol:  63,
+				symbol_rgb: [0, 30, 30],	
 			}
 			return data;
 		}
@@ -156,6 +157,14 @@ var drawingCache = {
 	//insert tile into tile_drawing_cache
 	insertTile : function insertTile(tile_id) {
 
+/*
+		if(!(tild_id in this.tileset_state.tile_rendering)) {
+			console.log("Tile drawing information not loaded: " + tile_id)
+			//return 0;
+			tile_id = -1;
+		}
+*/
+
 		var tile = tileset_state.get_tile_rendering_info(tile_id);
 		var tilemap_id, tile_num; //need this
 		var tile = tileset_state.get_tile_rendering_info(tile_id);
@@ -167,9 +176,13 @@ var drawingCache = {
 			y_offset,
 			tile_x_pos,
 			tile_y_pos;
+
+		if(!(tilemap_id in this.tilemaps)) { 
+			console.log("Tilemap does not exist:" + tilemap_id) 
+			}
 		
-		if(!(tilemap_id in this.tilemaps)) { console.log("tilemap does not exist:" + tilemap_id) }
 		tilemap = this.tilemaps[tilemap_id];
+		
 		
 		tile_x_pos = tile_num % tilemap.tile_width;
 		tile_y_pos = tile_num - tile_x_pos;
