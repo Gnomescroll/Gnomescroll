@@ -13,15 +13,17 @@ var board = {
 	board_manager : null,
 	drawingCache : null,
 	cursor_manager : null,
-//	drawing_manager : null,
+	board_event : null,
 	
 	init : function() {
 		this.board_canvas = board_canvas;
 		this.board_manager = board_manager;
 		this.drawingCache = drawingCache;
 		this.cursor_manager = cursor_manager;
+		this.board_event = board_event;
 //		this.drawing_manager = drawing_manager;
-
+		
+		this.board_event.init(this);
 		this.board_canvas.init(this);
 		this.drawingCache.init(this.board_canvas);
 		this.cursor_manager.init(this);
@@ -55,7 +57,11 @@ var board = {
 
 var board_event = {
 	
-	board_manager : board_manager,
+	board_manager : null,
+	
+	init : function(board) {
+	this.board_manager = board.board_manager;	
+	},
 	
 	agent_change : function agent_change(agent, type) {
 		console.log("agent change start...")
@@ -165,6 +171,7 @@ var board_manager = {
 	},
 	
 	populate_index: function() {
+		console.log("populate_index")
 		this.cursor_manager.reset_cursor_index();
 
 		this.agents = []; //clear index
@@ -382,6 +389,8 @@ var cursor_manager = {
 	// takes an this.index element
 	
 	reset_cursor_index: function() {
+		console.log("reset_cursor_index")
+		
 		var i;
 		for(var x=0; x < this.board.board_tile_width; x++) {
 			for(var y=0; y < this.board.board_tile_height; y++) {
