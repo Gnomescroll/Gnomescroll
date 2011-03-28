@@ -271,7 +271,26 @@ var drawingCache = {
 		this.board.ctx.putImageData(this.img_cache[index], x*this.board.tile_pixel_width, y*this.board.tile_pixel_height);
 
 	},
-	
+
+	//draw tiles to an arbritary canvas
+	drawTileToCtx : function drawTileToCTX(ctx, tile_id, x_offset, y_offset) {
+		if(x_offset !== undefined || y_offset !== undefined) {
+			x_offset = 0;
+			y_offset = 0;
+		}
+
+		if(!(tile_id in this.tlookup)) {
+			var rvalue = this.insertTile(tile_id);
+			if(rvalue == 0) return 0;
+		}
+		var index = this.tlookup[tile_id];			
+		this.ctx.putImageData(this.img_cache[index], x_offset, y_offset);		
+	}
+/*
+	///used for drawing a tile to the sidebar or other canvas
+	drawTileToCtx : function drawTileToCtx(ctx, tile_id, ctr
+*/
+
 	//insert tile into tile_drawing_cache
 	insertSprite : function insertSprite(tile_num, tilemap_id) {
 
