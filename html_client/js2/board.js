@@ -496,9 +496,15 @@ var cursor_manager = {
 	// MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	//does a full redraw
 	blip : function() {
-		for(var x=0; x < this.board.board_tile_width; x++) {
-			for(var y=0; y < this.board.board_tile_height; y++) {
-				this.draw_board(x,y);
+		console.log(this.index)
+		
+		var x, y, cursor, w, h
+		w = this.board.board_tile_width
+		h = this.board.board_tile_height
+		console.log("wh: " + w + " " + h)
+		for(var x=0; x <w; x++) {
+			for(var y=0; y < h; y++) {
+				this._draw_board_tile(x + y*w);
 			}	
 		}
 	},
@@ -510,7 +516,7 @@ var cursor_manager = {
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS	
 	draw_board_tile : function(bx,by) {
-		this._draw_board_tile(this.index[bx + by*this.board.board_tile_width]);	
+		this._draw_board_tile(bx + by*this.board.board_tile_width);	
 	},
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS

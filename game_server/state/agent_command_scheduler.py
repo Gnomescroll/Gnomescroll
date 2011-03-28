@@ -30,7 +30,7 @@ class Agent_command_scheduler:
 			## DELETE below when scheduler is ready !!! # ###
 			agent = Agent(agent_id)
 			agent_command(agent, *params)
-			self.schedule(agent_id, self.last_time + agent.action_delay())
+			#self.schedule(agent_id, self.last_time + agent.action_delay())
 			pass
 			
 	def time_step(self, current_time):
@@ -57,7 +57,7 @@ class Agent_command_scheduler:
 					#value = self.agent_controller.process_next_action(agent_id)
 					value = 0
 					if value == 0: #this means no command executed or command execution failure
-						print str(agent_id)
+						#print str(agent_id)
 						del self.next_move[agent_id] #agent is free to move immediately next move
 						##Agent is idle here
 					else:
