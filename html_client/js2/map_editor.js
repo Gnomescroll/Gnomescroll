@@ -44,24 +44,47 @@ var map_editor = {
             tile_values = tileset_state.tile_id_to_name,
             j = 0,
             name,
-            table = $('<table></table>'),
+            canvas,
+            bc = board_canvas,
+            table = $('<table></table>').attr('class','panel'),
             cells_wide = 1,
             tr, td;
             
         for (i in tile_values) {
             name = tile_values[i];
-            if (name === undefined) continue;
+            i = parseInt(i)
+            if (isNaN(i) || i < 0 || name === undefined) continue;
             if (j%cells_wide === 0) {
                 tr = $('<tr></tr>');
                 table.append(tr);
             }
+            td = $('<td></td>');
+            canvas = $('<canvas></canvas>').attr({'id' : i,
+                                               'class' : 'panel_tile'});
+            canvas[0].width = bc.tile_pixel_width;
+            canvas[0].height = bc.tile_pixel_height;
+            tr.append(td.append(canvas));
+            
             td = $('<td></td>').attr('id',i).html(name);
             if (i == this.current_tile) td.attr('class','selected');
             tr.append(td);
             j++;
         }
+        table.append($('<hr>'));
         pane.css('float','left');
         pane.append(table);
+        
+        table = $('table.panel');
+        table.find('canvas.panel_tile')
+             .each(function (i) {
+                 
+                    var tile = $(this),
+                        ctx = this.getContext('2d'),
+                        tile_id = tile.attr('id');
+                    console.log('draw panel tile');
+                    console.log(tile_id);
+                    drawingCache.drawTileToCtx(ctx, tile_id);
+        });
     },
     
     init_lazy_panel_controls: function () {

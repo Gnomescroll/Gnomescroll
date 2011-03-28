@@ -1,8 +1,8 @@
 
 //stores tileset drawing information
 var tileset_state = {
-	tile_rendering: [],
-	tile_name_to_id : [],
+	tile_rendering: {},
+	tile_name_to_id : {},
 	tile_id_to_name : {},
 
 	add_tile : function(param) {
@@ -101,9 +101,9 @@ var drawingCache = {
 	img_cache_count : 0,
 	
 	//for tiles
-	tlookup : [],
+	tlookup : {},
 	//for sprites (items, objects, building, agent sprites)
-	slookup : [],
+	slookup : {},
 	
 	workspace_canvas_dom : null,
 	ctx: null,
@@ -119,9 +119,9 @@ var drawingCache = {
 		this.img_cache = [];
 		this.cache_count = 0;
 		
-		this.tlookup = [];
+		this.tlookup = {};
 		for(index in this.slookup) {
-			this.slookup = [];
+			this.slookup = {};
 		}
 	},
 
@@ -286,9 +286,11 @@ var drawingCache = {
 	},
 
 	//draw tiles to an arbritary canvas
-	drawTileToCtx : function drawTileToCTX(ctx, tile_id, x_offset, y_offset) {
-		if(x_offset !== undefined || y_offset !== undefined) {
+	drawTileToCtx : function(ctx, tile_id, x_offset, y_offset) {
+		if(x_offset === undefined) {
 			x_offset = 0;
+        }
+        if(y_offset === undefined) {
 			y_offset = 0;
 		}
 
