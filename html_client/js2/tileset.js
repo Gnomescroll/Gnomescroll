@@ -284,7 +284,7 @@ var drawingCache = {
 			if(rvalue == 0) return 0;
 		}
 		var index = this.tlookup[tile_id];			
-		this.ctx.putImageData(this.img_cache[index], x_offset, y_offset);		
+		ctx.putImageData(this.img_cache[index], x_offset, y_offset);		
 	},
 /*
 	///used for drawing a tile to the sidebar or other canvas
