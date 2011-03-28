@@ -519,6 +519,8 @@ var cursor_manager = {
 	},
 	
 	remove_agent_from_cursor : function(id) {
+		console.log("remove_agent_from_cursor: " + id)
+		
 		if(id in this.atc) {
 		var cursor = this.atc[id];
 		this._remove_agent_from_cursor(cursor, id);
@@ -540,8 +542,9 @@ var cursor_manager = {
 		{
 			cursor.agent_list.splice(inIndex,1);	
 			delete this.atc[id];
-			cusor.agent_num--;
-	
+			cursor.agent_num--;
+			
+			var drawing_cursor = cursor.drawing_cursor;	
 			if(drawing_cursor[1] == -1 && cursor.agent_num >= 1) { cursor.drawing_cursor = [-1, 0, -1]; } 
 			else if(cursor.agent_num > drawing_cursor[1]  && cursor.agent_num != 0) { cursor.drawing_cursor = [-1, 0, -1]; }
 			else if (cursor.object_num > 0) { cursor.drawing_cursor = [-1, -1, 0]; }
@@ -556,7 +559,7 @@ var cursor_manager = {
 		//i = bx + by*this.board.board_tile_width;		
 		//cursor1 = this.index[i];
 		
-		this._remove_agent_from_cursor(id);
+		this.remove_agent_from_cursor(id);
 		//remove_agent_from_cursor : function(id)
 		
 		this.add_agent_to_cursor(id, bx, by);
