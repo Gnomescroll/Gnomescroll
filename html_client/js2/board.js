@@ -385,6 +385,7 @@ var cursor_manager = {
 			for(var y=0; y < this.board.board_tile_height; y++) {
 				i = x + y*this.board.board_tile_width;
 				this.index[i] = {
+					index: i,
 					drawing_cursor: [0,-1,-1],
 					//last_blip : 0, //needed?
 					tile_id : 0,
@@ -508,13 +509,36 @@ var cursor_manager = {
 	},
 	
 	remove_agent_from_cursor : function(id) {
+		if(id in this.atc) {
 		var cursor = this.atc[id];
-		//console.log("cursor_manageR: remove agent from cursor, needs implementation")
 		this._remove_agent_from_cursor(cursor, id);
+		} 
+		else {
+		console.log("remove_agent_from_cursor: agent is missing")
+		}
 	},
 	
 	_remove_agent_from_cursor : function(cursor, id) {
-		
+		console.log("cursor: " + cursor)
+
+		var inIndex = $.inArray(id, cursor.agent_list);
+		if(inIndex == -1) 
+		{ 
+			console.log("cursor_manager, _remove_agent_from_cursor: Agent id does not exist in cursor!") 
+		}
+		else 
+		{
+			cursor.agent_list.splice(inIndex,1);	
+			delete this.atc[id];
+			cusor.agent_num--;
+	
+			if(drawing_cursor[1] == -1 && cursor.agent_num >= 1) { cursor.drawing_cursor = [-1, 0, -1]; } 
+			else if(cursor.agent_num > drawing_cursor[1]  && cursor.agent_num != 0) { cursor.drawing_cursor = [-1, 0, -1]; }
+			else if (cursor.object_num > 0) { cursor.drawing_cursor = [-1, -1, 0]; }
+			else { cursor.drawing_cursor = [0, -1, -1]; }
+			
+			this._draw_board_tile(cursor.index);
+		}
 	},
 	
 	move_agent: function(id, bx, by) {
@@ -522,7 +546,7 @@ var cursor_manager = {
 		//i = bx + by*this.board.board_tile_width;		
 		//cursor1 = this.index[i];
 		
-		this._remove_agent_from_cursor(cursor, id);
+		this._remove_agent_from_cursor(id);
 		//remove_agent_from_cursor : function(id)
 		
 		this.add_agent_to_cursor(id, bx, by);
