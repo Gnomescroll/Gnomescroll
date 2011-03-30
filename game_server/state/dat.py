@@ -249,7 +249,7 @@ tiles_dat = [
 					'tilemap_id' : 0,
 					'draw_style' : 1,
 					'symbol' : 254,
-					'symbol_rgb' : (255, 55, 55), #139-69-19
+					'symbol_rgb' : (155, 155, 155), #139-69-19
 					'background_rgb' : (0,0,0)
 				}
 			},
@@ -289,6 +289,17 @@ tiles_dat = [
 	
 	{
 			'name' : "generic_clay_block",
+			
+			'visual' : {
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 254,
+					'symbol_rgb' : (255, 55, 55), #139-69-19
+					'background_rgb' : (0,0,0)
+				}
+			},
+
 			'blocking' : 1,
 			'pourous' : 0,
 			'vertical' : 1,
