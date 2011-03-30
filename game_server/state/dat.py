@@ -67,8 +67,8 @@ tiles_dat = [
 					'tilemap_id' : 0,
 					'draw_style' : 1,
 					'symbol' : 96,
-					'symbol_rgb' : (139, 69, 19), #139-69-19
-					'background_rgb' : (256, 256, 256)
+					'symbol_rgb' : (193, 154, 107), #139-69-19
+					'background_rgb' : (0,0,0)
 				}
 			},
 						
@@ -92,9 +92,9 @@ tiles_dat = [
 				'tilemap' : {
 					'tilemap_id' : 0,
 					'draw_style' : 1,
-					'symbol' : 248,
-					'symbol_rgb' : (139, 69, 19), #139-69-19
-					'background_rgb' : (256, 256, 256)
+					'symbol' : 247,
+					'symbol_rgb' : (193, 154, 107), #139-69-19
+					'background_rgb' : (0,0,0)
 				}
 			},
 			
@@ -121,7 +121,7 @@ tiles_dat = [
 					'draw_style' : 1,
 					'symbol' : 9,
 					'symbol_rgb' : (139, 69, 19), #139-69-19
-					'background_rgb' : (256, 256, 256),
+					'background_rgb' : (0, 0 ,0),
 					
 					'connection_map' : 1,
 					'normal_connection_map' : 
@@ -148,7 +148,54 @@ tiles_dat = [
 
 	{
 			'id' : 0201,
+			'name' : "generic_smooth_wall",
+
+			'visual' : {
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 176,
+					'symbol_rgb' : (255, 255, 255), #139-69-19
+					'background_rgb' : (0, 0 ,0),
+					
+					'connection_map' : 1,
+					'normal_connection_map' : 
+					[ [0, 0, 0],
+					 [0, 0, 0],
+					 [0, 0, 0] ]
+				}
+			},
+			
+			#properties
+			'blocking' : 1,
+			'pourous' : 0,
+			
+			#actions
+			'till' : 0,
+			
+			'dig' : 1,
+			'dig_produces' : [],
+			'dig_into' : 'generic_floor',
+			
+			'buildable' : 1,
+			'build_requires' : []
+	},
+
+	{
+			'id' : 0202,
 			'name' : "clay_brick_wall",
+
+			'visual' : {
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 177,
+					'symbol_rgb' : (255, 55, 55), #139-69-19
+					'background_rgb' : (0,0,0)
+				}
+			},
+			
+
 			'blocking' : 0,
 			'pourous' : 0,
 			
@@ -167,6 +214,17 @@ tiles_dat = [
 	{
 			'id' : 0300,
 			'name' : "generic_floor",
+			
+			'visual' : {
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 43,
+					'symbol_rgb' : (155, 155, 155), #139-69-19
+					'background_rgb' : (0,0,0)
+				}
+			},
+			
 			'blocking' : 1, #can agents walk through it
 			'pourous' : 1, #can fluids walk through it
 			'gravity' : 0, #does it fall if not supporting something
@@ -185,6 +243,17 @@ tiles_dat = [
 	
 			'id' : 0400,
 			'name'     : 'generic_stone_block',
+			
+			'visual' : {
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 254,
+					'symbol_rgb' : (255, 55, 55), #139-69-19
+					'background_rgb' : (0,0,0)
+				}
+			},
+
 			'blocking' : 1,
 			'porous'   : 0,
 			'vertical'  : 1,
