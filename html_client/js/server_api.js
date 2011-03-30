@@ -17,7 +17,8 @@ var send = function (data) {
     var url = '/api';
     data = JSON.stringify(data);
     $.post(globals.server_out+url, { json: data });
-    
+    console.log('socket.socket');
+    console.log(socket.socket);
 }
 
 var admin, info, action;
@@ -90,8 +91,9 @@ admin = ( function () {
         send(data);
     };
 	
-	set_map = function (x, y, z, value) {
-
+	set_map = function (x, y, z, value, debug) {
+        
+        if (debug) console.log(arguments);
         var position;
     
         if (value === undefined) {
@@ -116,7 +118,7 @@ admin = ( function () {
                 position: position,
                 value: value
                }
-               
+        if (debug) console.log(data);
         send(data);
 	};
     

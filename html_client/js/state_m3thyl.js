@@ -13,7 +13,7 @@ var state = ( function () {
     // need some translation function for global/map/server coords to block's coords
         
     var z_lvls = [],
-        current_z_lvl = 5;
+        current_z_lvl = 1;
         
     var updateBlock,
         updateLevel;
@@ -83,6 +83,7 @@ var state = ( function () {
         
         info.agents();                  // request agents
         info.objects();                 //         objects
+        info.tileset();
     };
     
     // checks if a position is in current state bounds.
@@ -141,29 +142,29 @@ var state = ( function () {
         if (x_ === false) return false;
         
         x_[block.y] = block.value
-        console.log('value:');
-        console.log(x_[block.y]);
-        return true;
+        console.log('value:' + x_[block.y]);
+       
+        return block;
     };
     
     // checks if a game_object exists in state
     // returns false or the object
     gameObjectKnown = function(game_object, type) {
         
-        var type,
-            id,
+        var id,
             obj;
         
         if (typeof game_object === 'object') {
-            type = game_object.type[0]; // workaround
+            if (type === undefined) {
+                type = game_object.base_type;
+            }
             id = game_object.id;
         } else {        
             id = game_object;
         }
         
-        console.log('GOK');
-        console.log(type);
-        console.log(id);
+       // console.log('GOK');
+        console.log("type: " + type + ", id: " + id);
         
         console.log(gameObjectTypeMap);
         obj = gameObjectTypeMap[type][id];
@@ -178,7 +179,7 @@ var state = ( function () {
         var type,
             id;
             
-        type = game_object.type[0]; // workaround
+        type = game_object.base_type;
         console.log('add game object type: '+type);
         id = game_object.id;
         console.log('add game object id: '+id);
@@ -207,12 +208,18 @@ var state = ( function () {
             id,
             ao_loc,
             ao_loc_type,
-            index;
+            index,
+            objs;
             
-        type = game_object.obj_type;
+        type = game_object.base_type;
         id = game_object.id;
+        objs = gameObjectTypeMap[game_object.base_type];
         
-        pos = game_object.pos();
+        if (!game_object.hasOwnProperty('pos')) {
+            pos = GameObject.pos.apply(game_object);
+        } else {
+            pos = game_object.pos();
+        }
         pos = pos.toString();
         
         ao_loc = ao_map[pos];
@@ -246,7 +253,7 @@ var state = ( function () {
             ao_loc,
             ao_loc_type;
         
-        type = game_object.type[0]; // agent, object, container (type[0] is a workaround)
+        type = game_object.base_type;
         id = game_object.id;
         
         pos = game_object.pos();
@@ -316,6 +323,9 @@ var state = ( function () {
                 updateLevel: updateLevel,
                 ao_map: ao_map,
                 levels: levels,
+                agents: agents,
+                objects: objects,
+                containers: containers,
                 current_z_lvl: current_z_lvl,
                 map_width: map_width,
                 map_height: map_height,

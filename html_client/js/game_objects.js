@@ -10,6 +10,22 @@ if (typeof Object.beget !== 'function') {
 var GameObject, Obj, Agent, Container;
 
 
+var get_board_event_name = function(game_obj) {
+    var event_name;
+    switch (game_obj.base_type) {
+        case 'agent':
+            event_name = 'agent_change';
+            break;
+        case 'obj':
+            event_name = 'object_change';
+            break;
+        case 'container':
+            event_name = 'object_change';
+            break;
+    }
+    return event_name;
+}
+
 // interface
 GameObject = {
     
@@ -20,10 +36,14 @@ GameObject = {
         
     update: // update an agent instance attributes. do not call on Agent, only agent instance
     function (data) {
+        var that = this;
         $.each(data, function(key, val) {
-            this[key+'_old'] = this[key];
-            this[key] = val;
+            that[key+'_old'] = that[key];
+            that[key] = val;
         });
+        
+        // emit message to renderer
+        board_event[get_board_event_name(that)](that);
     },
     
     old: // past state, after update
@@ -31,11 +51,13 @@ GameObject = {
         var dummy = {};
         
         $.each(this, function(key, val) {
-            if (key.slice(key.length-4) === 'old') {
-                dummy[key] = val;
+            if (key.slice(key.length-4) === '_old') {
+                dummy[key.slice(0,key.length-4)] = val;
             }
         });
+        dummy.isOld = true;
         
+        dummy = $.extend($.extend({}, this), dummy);
         return dummy;
     },
     
@@ -56,7 +78,9 @@ GameObject = {
     
     toState: // set object to the state
     function () {
-                
+        
+        var that = this;
+        
         if (state.contains(this.pos())) { // agent pos in state
             
             if (state.gameObjectKnown(this)) { // known agent, updating
@@ -79,32 +103,42 @@ GameObject = {
         }
         
         this.cleanOld();
+        
+        // emit message to renderer
+        board_event[get_board_event_name(that)](that);
     },
     
     create:
     function (data) {
     
         //var agent = Object.beget(this);
-        console.log('agent create');
+        console.log('gameObject create');
         console.log(this);
-        var agent = $.extend({},this);
+        var gobj = $.extend({},this);
         
         $.each(data, function(key, val) {
-            agent[key] = val;
+            gobj[key] = val;
         });
         
-        delete agent.create;
+        delete gobj.create;
         
-        return agent;
+        return gobj;
     },
     
     remove:
     function () {
+        
+        var that = $.extend({}, this);
+        
         state.cleanLocation(this);
         // find what inventory it is stored in (if it is at all), and remove it
         // IMPLEMENT
     
         state.removeGameObject(this);
+        
+        // emit message to renderer
+        board_event[get_board_event_name(that)](that);
+        delete that;
     },
 
 }
@@ -129,10 +163,13 @@ InventoryMethods = {
 Agent = $.extend({}, GameObject);
 Agent = $.extend(Agent, InventoryMethods);
 Agent.tile_num = 7;
+Agent.base_type = 'agent';
 
 Obj = $.extend({}, GameObject);
 Obj.tile_num = 8;
+Obj.base_type = 'obj';
 
 Container = $.extend({}, GameObject);
 Container = $.extend(Container, InventoryMethods);
 Container.tile_num = 9;
+Container.base_type = 'container';

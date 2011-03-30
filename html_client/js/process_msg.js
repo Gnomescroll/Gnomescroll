@@ -20,10 +20,39 @@ var route, process, validate;
 process = {};
 
 process.info = {};
-    
+
+///todo
+///current stores rendering information for tile, but discards meta information
+///retain/store tile_dict somewhere    
 process.info.tileset = function(msg) {
     
-    console.log(msg)
+    console.log("Tileset Data Received!")
+    //console.log(msg)
+    //console.log(msg)
+    //alert("tileset processing");
+    
+    var param, data, x;
+    //console.log(msg.tile_rendering)
+    for(x in msg.tile_rendering) {
+		//console.log("x:" + x )
+		param = msg.tile_rendering[x];
+		//console.log(param.tile_id)
+		
+	    data = {
+				tile_name: param.tile_name,
+				tile_id :  param.tile_id,	
+				tilemap_id:  param.tilemap.tilemap_id,
+				draw_style: param.tilemap.draw_style,
+				background_rgb:  param.tilemap.background_rgb,
+				symbol:  param.tilemap.symbol,
+				symbol_rgb: param.tilemap.symbol_rgb,
+			};
+			
+		tileset_state.add_tile(data);
+}
+
+	//console.log(tileset_state)
+    
     
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
@@ -131,6 +160,7 @@ process.info.agent_list = function (msg) {
     
     //if (!validate.agent_list(msg)) return;
     
+    var agent;
     $.each(msg.list, function (i, list_agent) {
         console.log('agent item');
         list_agent.x = list_agent.position[1];
@@ -139,13 +169,14 @@ process.info.agent_list = function (msg) {
         list_agent.loc_type = list_agent.position[0];
         delete list_agent.position;
         
-        var agent = state.gameObjectKnown(list_agent);
-        if (agent) {                    // update
+        agent = state.gameObjectKnown(list_agent, 'agent');
+        if (agent !== false) {                    // update
             console.log('agent known');
+            console.log(agent);
             agent.update(list_agent);
         } else {                        // create
             console.log('agent unknown, creating');
-            var agent = Agent.create(list_agent);
+            agent = Agent.create(list_agent);
         }
         
         agent.toState();
@@ -158,20 +189,20 @@ process.info.object_list = function (msg) {
     console.log(msg);
     
     //if (!validate.object_list(msg)) return;
-    
+    var obj;
     $.each(msg.list, function(i, list_obj) {
         
-        list_object.x = list_object.position[1];
-        list_object.y = list_object.position[2];
-        list_object.z = list_object.position[3];
-        list_object.loc_type = list_object.position[0];
-        delete list_object.position;
+        list_obj.x = list_obj.position[1];
+        list_obj.y = list_obj.position[2];
+        list_obj.z = list_obj.position[3];
+        list_obj.loc_type = list_obj.position[0];
+        delete list_obj.position;
         
-        var obj = state.gameObjectKnown(list_obj);
+        obj = state.gameObjectKnown(list_obj, 'obj');
         if (obj) {                  // update
             obj.update(list_obj);
         } else {                    // create
-            var obj = Obj.create(list_obj);
+            obj = Obj.create(list_obj);
         }
         
         obj.toState();
@@ -182,7 +213,7 @@ process.info.object_list = function (msg) {
 process.delta = {};
 
 process.delta.agent_position_change = function (msg) {
-    
+    console.log("entry");
     console.log(msg);
     
     //if (!validate.agent_position_change(msg)) return;
@@ -198,11 +229,26 @@ process.delta.agent_position_change = function (msg) {
     if (agent) {
         agent.update(msg);
         agent.toState();
+
     } else if (state.contains(GameObject.pos.apply(msg))) {
         agent = Agent.create(msg);
         agent.toState();
+
     }
-            
+    
+    
+    
+    //callback
+	console.log(msg.id)
+    agent = state.gameObjectKnown(msg.id, 'agent');
+    
+    if(agent == false) {
+		console.log("process.delta.agent_position_change : WTF, should not occur")
+		console.log(agent)
+	} else {
+		board_event.agent_change(agent);
+	}
+
 };
 
 process.delta.agent_state_change = function (msg) {
@@ -345,8 +391,11 @@ process.delta.set_terrain_map = function (msg) {
     //if (!validate.set_terrain_map(msg)) return;
     
     if (state.contains(GameObject.pos.apply(msg))) {
-        state.updateBlock(msg);
-        renderState.updateTile(msg);
+        var block = state.updateBlock(msg);
+        if (block !== false) {
+            board_event.terrain_map_change(block);//.x, block.y, block.z, block.value);
+        }
+        //renderState.updateTile(msg);
     }
 
 };
@@ -360,7 +409,7 @@ route = {
     agent_list: process.info.agent_list,
     object_list: process.info.object_list,
     
-    agent_position: process.delta.agent_position_change,
+    agent_position_change: process.delta.agent_position_change,
     agent_state_change_update: process.delta.agent_state_change,
     agent_create: process.delta.agent_create,
     agent_delete: process.delta.agent_delete,

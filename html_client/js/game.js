@@ -41,8 +41,9 @@ game = {
             console.log('wait_func');
             state.init();
             input.init();
-            render.init();
-            
+            //render.init();
+            ///board_canvas.init();
+			///drawingCache.init();
         }
         setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
     },
@@ -59,8 +60,8 @@ game = {
            // check user input, server updates, render game.
     function () {
         
-        renderState.start();
-        
+        //renderState.start();
+        ///start drawing
         var interval;
 
         // input check interval
@@ -69,7 +70,7 @@ game = {
     },
         
 };
-
+/*
 var renderState = {
     
     view_x_offset: 0,
@@ -334,7 +335,7 @@ var renderState = {
     },
         
 };
-
+*/
 // temporary, just to keep processInput action calls from throwing
 var selected_agent = { x: 15,
                        y: 15,

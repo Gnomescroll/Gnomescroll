@@ -13,7 +13,12 @@ input = ( function () {
         $('body').keydown(function (event) {
             var key = keymap[event.which];
             queue.push({key: key, timestamp: event.timeStamp});
-        });
+               }).click(function (event) {
+                  var key = keymap[event.which];
+                  if (key === 'left-click') { 
+                      map_editor.set_tile(event);
+                  } 
+               });
     };
         
     // shifts the queue, FIFO
@@ -49,6 +54,7 @@ input = ( function () {
 // for the keydown event.
 // NOTE: keypress keymap is COMPLETELY DIFFERENT FOR NO REASON
 keymap = {
+    1: 'left-click',
     
     81: 'q',
     87: 'w',
