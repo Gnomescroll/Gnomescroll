@@ -529,6 +529,8 @@ items_dat = {
 
 class Dat:
 	
+	world_map = None
+		
 	tiles_by_value = {}
 	tiles_by_name = {}
 	tile_name_value_pairs = []
@@ -600,12 +602,14 @@ class Dat:
 		
 		
 		
-	#Deprecated
-#	def get_tile(self, value):
-#		if value not in self.tiles_day.key():
-#			print "Tile Does not Exist"
-#			return self.tiles_dat[0]
-#		return self.tiles_dat[value]
+	def tile_property(self, property, x, y, z):
+		tile_value = self.world_map.get(x, y ,z)
+		tile_dict = self.tiles_by_value[tile_value]
+		if not property in tile_dict.keys():
+			print "Dat.tile_property error: property not in tile"
+			return 0
+		else:
+			return tile_dict[property]
 		
 	def get_tile_by_name(self, name):
 		if name not in self.tiles_by_name.keys():

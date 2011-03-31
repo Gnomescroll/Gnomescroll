@@ -13,13 +13,17 @@ class Agent:
 		[type, x, y, z] = self.position
 		[type, x, y, z] = [type, x+dx, y+dy, z]
 		
-		tile_value = self.world_map.get(x, y ,z)
-		tile_dict = self.dat.get_tile_by_value(tile_value)
+		#tile_value = self.world_map.get(x, y ,z)
+		#tile_dict = self.dat.get_tile_by_value(tile_value)
 		
-		if(tile_dict['blocking'] == 1):
+		#if(tile_dict['blocking'] == 1):
+		#	print "Agent Move Failed: Tile is blocking!"
+		#	return
+		
+		if(self.dat.tile_property('blocking', x, y, z)):
 			print "Agent Move Failed: Tile is blocking!"
 			return
-			
+				
 		self.position = [type, x, y, z]
 		self.delta.agent_position_change(self.__dict__['id'], [0,x, y, z])
 
