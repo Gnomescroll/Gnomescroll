@@ -35,7 +35,8 @@
 			attribute: "title",
 			content: false, // HTML or String to fill TipTIp with
 		  	enter: function(){},
-		  	exit: function(){}
+		  	exit: function(){},
+            activeMethod: function() { active_tiptip(); }
 	  	};
 	 	var opts = $.extend(defaults, options);
 	 	
@@ -66,11 +67,7 @@
 				
 				if(opts.activation == "hover"){
 					org_elem.hover(function(event){
-                        /*if (opts.position === 'absolute') {
-                            opts.edgeOffset = -1 * event.offsetY;
-                            opts.edgeInset = event.offsetX;
-                            opts.content = tooltip_text.text(event.offsetX, event.offsetX);
-                        }*/
+                        if ($.isFunction(opts.activeMethod)) org_title = opts.activeMethod(event);
 						active_tiptip();
 					}, function(){
 						if(!opts.keepAlive){
@@ -84,27 +81,18 @@
 					}
 				} else if(opts.activation == "focus"){
 					org_elem.focus(function(event){
-						active_tiptip();
-                        if (opts.position === 'absolute') {
-                            opts.edgeOffset = -1 * event.offsetY;
-                            opts.edgeInset = event.offsetX;
-                            opts.content = tooltip_text.text(event.offsetX, event.offsetY);
-                            $('#tiptip_content').html(opts.content);
-                        }
+						if ($.isFunction(opts.activeMethod)) org_title = opts.activeMethod(event);
+                        active_tiptip();
 					}).blur(function(){
 						deactive_tiptip();
 					});
 				} else if(opts.activation == "click"){
-					org_elem.click(function(event){
+                    org_elem.click(function(event){
                         if (opts.position === 'absolute') {
                             opts.edgeOffset = -1 * event.offsetY;
                             opts.edgeInset = event.offsetX;
-                            opts.content = tooltip_text.text(event.offsetX, event.offsetY);
-                            console.log(event);
-                            $('#tiptip_content').html(opts.content);
-                            org_title = opts.content;
-                            $('body').trigger(event);
                         }
+                        if ($.isFunction(opts.activeMethod)) org_title = opts.activeMethod(event);
 						active_tiptip();
 						return false;
 					}).hover(function(){},function(){

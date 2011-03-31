@@ -744,9 +744,9 @@ var board_canvas = {
 	},
 }
 
-var tooltip_text = {
+var board_info = {
     
-    text: function(dx, dy) {
+    tooltip_text: function(dx, dy) {
         var bx, by, i;
         bx = Math.floor(dx / board_canvas.tile_pixel_width);
         by = Math.floor(dy / board_canvas.tile_pixel_height);
@@ -799,4 +799,13 @@ var tooltip_text = {
         }
         return str;
     },
+    
+    // called by tooltip extension on activate event
+    tooltip_active_method: function(event) {
+        var txt;
+        $('body').trigger(event); // trigger body click events
+        console.log(event);
+        txt = board_info.tooltip_text(event.offsetX, event.offsetY);
+        return txt;
+    }
 }
