@@ -373,6 +373,7 @@ processInput = function (key) {
     switch (key) {
         
         case 'ESC':               //quit ? remove this
+            map_editor.clear_current();
             return false;
             
         case 'LEFT':

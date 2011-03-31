@@ -95,6 +95,8 @@ var map_editor = {
             $('td.selected').attr('class','');
             if (!selected) {
                 cell.attr('class','selected');
+            } else {
+                map_editor.current_tile = null;
             }
         });
         
@@ -106,6 +108,8 @@ var map_editor = {
        // find if click is inside canvas
        // if so, which coordinate tile
        // call admin.set_map for the current_tile_value and at coord
+        
+        if (this.current_tile === null) return;
         
         var canvas = $('canvas#board'),
             canvas_offset = canvas.offset(),
@@ -138,5 +142,10 @@ var map_editor = {
     },
     
     current_tile: null, // currently selected map tile for editor
+    
+    clear_current: function() {
+        $('td.selected').attr('class','');
+        this.current_tile = null;
+    },
 }
 
