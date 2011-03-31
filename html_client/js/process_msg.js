@@ -51,9 +51,10 @@ process.info.tileset = function(msg) {
 		tileset_state.add_tile(data);
 }
 
-	for(x in msg.tile_properties) {
+	console.log(msg.tile_properties)
+	for(tile in msg.tile_properties) {
 		console.log("Tileset dictionary...")
-		tile_properties.add_tile(x);
+		tile_properties.add_tile(tile);
 	}
 	
 	
