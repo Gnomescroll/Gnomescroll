@@ -23,6 +23,16 @@ def create_agent(id, x, y, z, template = None, player_id = 0, world_id = 0):
 #		'damage_type' : 'bludgeon'
 		}
 	}
+	
+	a['visual'] = {
+				'tilemap' : {
+					'tilemap_id' : 0,
+					'draw_style' : 1,
+					'symbol' : 219,
+					'symbol_rgb' : (256, 256, 256), #139-69-19
+					'background_rgb' : (0,0,0)
+				}
+	},
 	#meta
 	a['player_id'] = player_id
 	a['world_id'] = world_id

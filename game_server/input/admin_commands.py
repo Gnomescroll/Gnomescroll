@@ -34,4 +34,6 @@ class Admin_commands:
 	#optional []
 	def set_map(self, position, value, **msg):
 		(type, x, y, z) = position
+		(type, x, y, z) = (int(type), int(x), int(y), int(z)) ##assert that inputs are integers
+		value = int(value) #must be integers
 		self.world_map.set(x, y, z, value)

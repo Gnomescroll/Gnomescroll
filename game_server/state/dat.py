@@ -241,14 +241,14 @@ tiles_dat = [
 	#blocks
 	{
 	
-			'id' : 0400,
+			'id' : 250,
 			'name'     : 'generic_stone_block',
 			
 			'visual' : {
 				'tilemap' : {
 					'tilemap_id' : 0,
 					'draw_style' : 1,
-					'symbol' : 254,
+					'symbol' : 219,
 					'symbol_rgb' : (155, 155, 155), #139-69-19
 					'background_rgb' : (0,0,0)
 				}
@@ -545,18 +545,29 @@ class Dat:
 	def _init_tile(self):
 		id = 3000
 		for x in tiles_dat:
+			if 'id' in x.keys():
+				if type(5) != type(x['id']):
+					print "WTF: Unicode, " + str(x['id'])
+				x['id'] = int(x['id'])
 			if not 'id' in x.keys():
 				print "Tile does not have id defined: " + x['name']
-				x['id'] = id
+				x['id'] = int(id)
 				id = id + 1
 
 		for x in tiles_dat:
 			id = x['id']
+			#checks
+			if type(5) != type(id):
+				print "WTF: Unicode, " + str(x['id'])
+			#checks
 			name = x['name']
 			print "id: " + str(id) + ", name: " + name
-			self.tiles_by_value[id] = x
+			self.tiles_by_value[int(id)] = x
 			self.tiles_by_name[name] = x
 			self.tile_name_value_pairs.insert(id, x['name'])			
+		
+		#print "out: " + str(self.tiles_by_value)
+		#print ":"
 
 	def get_crop(self, template):
 		if not template in self.crops_dat.keys():
@@ -611,11 +622,15 @@ class Dat:
 			return self.tiles_by_name[name]
 	
 	def get_tile_by_value(self, value):
-		if value not in self.tiles_by_value.keys():
-			print "Tile Does not Exist: " + str(value)
-			return self.tiles_by_name['unknown_tile']
-		else:
+		print str(type(value)) + ", " + str(value)
+		for x in self.tiles_by_value.keys():
+			print str(type(x)) + ", " + str(x)
+		if value in self.tiles_by_value.keys():
 			return self.tiles_by_value[value]
+		else:
+			print "Tile Does not Exist: " + str(value)
+			print str(self.tiles_by_value.keys())
+			return self.tiles_by_name['unknown_tile']
 
 ### Info
 
