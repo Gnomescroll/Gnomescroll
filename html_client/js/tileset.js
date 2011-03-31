@@ -1,5 +1,19 @@
 
 //stores tileset drawing information
+
+var tile_properties = {
+	tiles: {},
+	
+	add_tile : function(property_object) {
+		var id = property_object.id;
+		console.log("Add tile: " + id)
+		console.log(property_object)
+		this.tiles[id] = property_object;
+	},
+	
+	
+}
+
 var tileset_state = {
 	tile_rendering: {},
 	tile_name_to_id : {},

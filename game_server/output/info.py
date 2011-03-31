@@ -111,9 +111,9 @@ class Info: #non-blocking client notification
 
 	def get_tiles(self, client_id, **extra):
 		msg = {}
-		msg['msg'] = 'tileset'
+		msg['msg'] = 'tileset'  #!!! should standardize
 		msg['world_id'] = self.globals.world_id
 		msg['client_id'] = client_id
-		msg['tile_dict'] = self.dat.get_tiles()
+		msg['tile_properties'] = self.dat.get_tiles()
 		msg['tile_rendering'] = self.dat.get_tile_rendering() #add tileset rendering later
 		self.info_out_q.put((client_id,msg))			
