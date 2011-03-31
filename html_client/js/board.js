@@ -256,6 +256,7 @@ var board_manager = {
 		z_pos = pos[2];
 
 		var onBoard, inIndex;
+		var id = agent.id;
 		
 		inIndex = $.inArray(agent.id, this.agents);
 		
