@@ -247,6 +247,7 @@ var board_manager = {
 	},
 	
 	agent_update : function(agent) {
+		console.log("board_manager agent_update")
 		var pos, x_pos, y_pos, z_pos;
 		
 		pos = agent.pos();
@@ -258,10 +259,10 @@ var board_manager = {
 		
 		inIndex = $.inArray(agent.id, this.agents);
 		
-		console.log("id: " + agent.id + ", inIndex: " + inIndex);
+		//console.log("id: " + agent.id + ", inIndex: " + inIndex);
 		onBoard = (z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);
 		
-		console.log("board_manager: agent_update")
+		//console.log("board_manager: agent_update")
 		
 		/*
 		console.log(z_pos == this.z_level)
@@ -279,7 +280,7 @@ var board_manager = {
 		*/
 		
 		if(inIndex != -1 && onBoard) { ///agent moves around on the board
-			this.cursor_manager.move_agent(id, x_pos - this.x_min, y_pos - this.y_min);
+			this.cursor_manager.move_agent(agent.id, x_pos - this.x_min, y_pos - this.y_min);
 			console.log("1")
 			return 0;
 			 }
@@ -530,7 +531,7 @@ var cursor_manager = {
 		cursor.agent_list.push(id);
 		cursor.drawing_cursor = [-1, cursor.agent_num, -1];
 		cursor.agent_num++;
-		console.log("agent num: " + cursor.agent_num)
+		//console.log("agent num: " + cursor.agent_num)
 		this._draw_board_tile(i);
 
 		//console.log(cursor)		
@@ -550,7 +551,8 @@ var cursor_manager = {
 	},
 	
 	_remove_agent_from_cursor : function(cursor, id) {
-		console.log("cursor: " + cursor)
+		console.log("cursor: ")
+		console.log(cursor)
 
 		var inIndex = $.inArray(id, cursor.agent_list);
 		if(inIndex == -1) 
@@ -757,7 +759,7 @@ var tooltip_text = {
         bx = Math.floor(dx / board_canvas.tile_pixel_width);
         by = Math.floor(dy / board_canvas.tile_pixel_height);
         i = bx + by * board.board_tile_width;
-        console.log(cursor_manager.index[i]);
+        //console.log(cursor_manager.index[i]);
         return this.cursor_info_string(cursor_manager.index[i]);
     },
     

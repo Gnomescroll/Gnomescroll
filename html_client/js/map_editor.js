@@ -104,7 +104,7 @@ var map_editor = {
     },
     
     set_tile: function(event) {
-       console.log('window click');
+       //console.log('window click');
        // find if click is inside canvas
        // if so, which coordinate tile
        // call admin.set_map for the current_tile_value and at coord
