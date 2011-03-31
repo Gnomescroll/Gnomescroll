@@ -26,6 +26,8 @@
 			keepAlive: false,
 			maxWidth: "200px",
 			edgeOffset: 3,
+            edgeInset: 0,
+            position: 'relative',
 			defaultPosition: "bottom",
 			delay: 400,
 			fadeIn: 200,
@@ -63,7 +65,12 @@
 				var timeout = false;
 				
 				if(opts.activation == "hover"){
-					org_elem.hover(function(){
+					org_elem.hover(function(event){
+                        /*if (opts.position === 'absolute') {
+                            opts.edgeOffset = -1 * event.offsetY;
+                            opts.edgeInset = event.offsetX;
+                            opts.content = tooltip_text.text(event.offsetX, event.offsetX);
+                        }*/
 						active_tiptip();
 					}, function(){
 						if(!opts.keepAlive){
@@ -76,13 +83,28 @@
 						});
 					}
 				} else if(opts.activation == "focus"){
-					org_elem.focus(function(){
+					org_elem.focus(function(event){
 						active_tiptip();
+                        if (opts.position === 'absolute') {
+                            opts.edgeOffset = -1 * event.offsetY;
+                            opts.edgeInset = event.offsetX;
+                            opts.content = tooltip_text.text(event.offsetX, event.offsetY);
+                            $('#tiptip_content').html(opts.content);
+                        }
 					}).blur(function(){
 						deactive_tiptip();
 					});
 				} else if(opts.activation == "click"){
-					org_elem.click(function(){
+					org_elem.click(function(event){
+                        if (opts.position === 'absolute') {
+                            opts.edgeOffset = -1 * event.offsetY;
+                            opts.edgeInset = event.offsetX;
+                            opts.content = tooltip_text.text(event.offsetX, event.offsetY);
+                            console.log(event);
+                            $('#tiptip_content').html(opts.content);
+                            org_title = opts.content;
+                            $('body').trigger(event);
+                        }
 						active_tiptip();
 						return false;
 					}).hover(function(){},function(){
@@ -111,7 +133,11 @@
 					var tip_h = tiptip_holder.outerHeight();
 					var w_compare = Math.round((org_width - tip_w) / 2);
 					var h_compare = Math.round((org_height - tip_h) / 2);
-					var marg_left = Math.round(left + w_compare);
+					if (opts.position === 'relative') {
+                        var marg_left = Math.round(left + w_compare);
+                    } else if (opts.position === 'absolute') {
+                        var marg_left = Math.round(left + opts.edgeInset - (tip_w/2));
+                    }
 					var marg_top = Math.round(top + org_height + opts.edgeOffset);
 					var t_class = "";
 					var arrow_top = "";

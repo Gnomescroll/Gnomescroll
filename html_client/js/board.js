@@ -744,3 +744,58 @@ var board_canvas = {
 	},
 }
 
+var tooltip_text = {
+    
+    text: function(dx, dy) {
+        var bx, by, i;
+        bx = Math.floor(dx / board_canvas.tile_pixel_width);
+        by = Math.floor(dy / board_canvas.tile_pixel_height);
+        i = bx + by * board.board_tile_width;
+        console.log(cursor_manager.index[i]);
+        return this.cursor_info_string(cursor_manager.index[i]);
+    },
+    
+    to_display: [ 'agent_list',
+                  'agent_num',
+                  'object_list',
+                  'object_num',
+                  'tile_id',
+                  'drawing_cursor',
+                  //'bx',
+                  //'by',
+                  //'position',
+                  //'index', 
+                  ],
+                  
+    add_to_display: function(key) {
+        if (!$.isArray(key)) key = [key];
+        $.each(key, function(i, val) {
+            if ($.inArray(val.toString(), this.to_display) === -1) {
+                this.to_display.push(val);
+            }
+        });
+    },
+    
+    remove_from_display: function(key) {
+        if (!$.isArray(key)) key = [key];
+        $.each(key, function(i, val) {
+            var index = $.inArray(val.toString(), this.to_display);
+            if (index > -1) {
+                this.to_display.splice(index, 1);
+            }
+        });
+    },
+    
+    cursor_info_string: function(obj) {
+        var str='', len, i=0, key;
+        len = this.to_display.length;
+        for (i=0; i < len; i++) {
+            key = this.to_display[i];
+            str += key;
+            str += ' : ';
+            str += obj[key].toString();
+            if (i !== len-1) str += '<br>';
+        }
+        return str;
+    },
+}

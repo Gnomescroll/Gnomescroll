@@ -64,8 +64,16 @@ def static_image(subdir='',file=None):
         ext = 'jpeg' if ext == 'jpg' else ext
         mimetype = 'image/'+ext
 
+    elif ext == 'js':
+        mimetype = 'application/javascript'
+    elif ext == 'css':
+        mimetype = 'text/css'
+
     path = dir+'/static/'+subdir+'/'+file
-    with open(path, 'rb') as f:
+    read_mode = 'r'
+    if mimetype.split('/')[0] == 'image':
+        read_mode += 'b'
+    with open(path, read_mode) as f:
         return Response(f.read(), mimetype=mimetype)
 
         

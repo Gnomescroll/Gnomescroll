@@ -8,37 +8,6 @@ var terrain_tiles = {
 
 var map_editor = {
     
-    init_panel: function() {
-        var pane = $('#map_editor'),
-            tile,
-            tile_value,
-            image_data,
-            bc = board_canvas,
-            cached_tile_coords;
-        // loads tiles from tileset into a bunch of divs or span
-        // which requires css spriting (adjusting background-image position
-        // but that requires a copy of the tileset per tile
-        // so may be best to just use the cached tiles and stick them in <canvas class="map_tile" id="4">
-        
-        for (tile_value in terrain_tiles) {
-            tile = $('<canvas></canvas>').attr({'class':'map_tile', 'id':tile_value})
-                                         .width(bc.tile_pixel_width)
-                                         .height(bc.tile_pixel_height)
-                                         .click(function() {
-                                            var t = $(this);
-                                            t.css('border','1px solid red');
-                                            map_editor.current_tile = t.attr('id');
-                                        });
-            pane.append(tile);
-            tile = pane.children('#'+tile_value)[0];
-            
-            cached_tile_coords = terrain_tiles[tile_value];
-            image_data = drawingCache.getImageData(cached_tile_coords[0], cached_tile_coords[1],
-                                       bc.tile_pixel_width, bc.tile_pixel_height);
-            tile.putImageData(0, 0, bc.tile_pixel_width, bc.tile_pixel_height);
-        }
-    },
-    
     panel_canvas_tile: function(id) {
         var bc = board_canvas,
             canvas = $('<canvas></canvas>').attr({'id' : id,
@@ -118,11 +87,15 @@ var map_editor = {
             
         cells.click(function(event) {
             var cell = $(this),
-                cls;
+                cls,
+                selected = false;
             if (cell.attr('class') === 'canvas') cell = cell.next();
             map_editor.current_tile = cell.attr('id');
+            selected = (cell.attr('class') === 'selected');
             $('td.selected').attr('class','');
-            cell.attr('class','selected');
+            if (!selected) {
+                cell.attr('class','selected');
+            }
         });
         
         
@@ -164,6 +137,6 @@ var map_editor = {
         }
     },
     
-    current_tile: '0', // currently selected map tile for editor
+    current_tile: null, // currently selected map tile for editor
 }
 

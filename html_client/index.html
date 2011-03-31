@@ -25,8 +25,13 @@ td.selected {
 }
 </style>
 
+<link rel="stylesheet" type="text/css" href="http://127.0.0.1:8055/static/tipTip/tipTip.css" />
+
 <script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="http://127.0.0.1:8055/static/tipTip/jquery.tipTip.js"></script>
+
+
 
 </head>
 
@@ -35,10 +40,10 @@ td.selected {
 TEST
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a id="init" href="">INIT</a>
+<a id="init" class="tip" title="Initialize game state" href="">INIT</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a id="start" href="">START</a>
+<a id="start" class="tip" title="Start game" href="">START</a>
 
 </h1>
 
@@ -156,6 +161,18 @@ var times = 1000;
 	drawingCache.drawSprite(6,6,0,1);
 	*/
 	game.start();
+    
+    $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
+    $('.tip.click').tipTip({ activation: 'click', 
+                             delay: 100,
+                             fadeIn: 100,
+                             fadeOut: 400,
+                             edgeOffset: -250, 
+                             edgeInset: 100, 
+                             defaultPosition: 'top', 
+                             position: 'absolute',
+                            });
+    
     return false;
 });
 
@@ -164,6 +181,11 @@ $(document).ready(function () {
 console.log("Ready")
 return false;
 //test1();
+});
+
+// tooltip
+$(function(){
+    $(".tip").tipTip();
 });
 
 </script>
