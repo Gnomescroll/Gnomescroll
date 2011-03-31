@@ -546,8 +546,6 @@ class Dat:
 		id = 3000
 		for x in tiles_dat:
 			if 'id' in x.keys():
-				if type(5) != type(x['id']):
-					print "WTF: Unicode, " + str(x['id'])
 				x['id'] = int(x['id'])
 			if not 'id' in x.keys():
 				print "Tile does not have id defined: " + x['name']
@@ -556,10 +554,6 @@ class Dat:
 
 		for x in tiles_dat:
 			id = x['id']
-			#checks
-			if type(5) != type(id):
-				print "WTF: Unicode, " + str(x['id'])
-			#checks
 			name = x['name']
 			print "id: " + str(id) + ", name: " + name
 			self.tiles_by_value[int(id)] = x
@@ -622,9 +616,6 @@ class Dat:
 			return self.tiles_by_name[name]
 	
 	def get_tile_by_value(self, value):
-		print str(type(value)) + ", " + str(value)
-		for x in self.tiles_by_value.keys():
-			print str(type(x)) + ", " + str(x)
 		if value in self.tiles_by_value.keys():
 			return self.tiles_by_value[value]
 		else:
