@@ -6,8 +6,8 @@ var tile_properties = {
 	
 	add_tile : function(property_object) {
 		var id = property_object.id;
-		console.log("Add tile: " + id)
-		console.log(property_object)
+		//console.log("Add tile: " + id)
+		//console.log(property_object)
 		this.tiles[id] = property_object;
 	},
 	
