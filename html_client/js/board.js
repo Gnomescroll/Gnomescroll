@@ -791,6 +791,7 @@ var tooltip_text = {
         len = this.to_display.length;
         for (i=0; i < len; i++) {
             key = this.to_display[i];
+            if (key === undefined) continue;
             str += key;
             str += ' : ';
             str += obj[key].toString();
