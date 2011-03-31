@@ -377,34 +377,38 @@ processInput = function (key) {
             
         case 'LEFT':
             //action.move(selected_agent.id, -1, 0, 0);
+            /*
             old = cursor.pos();
             cursor.moveX(-1);
             renderState.drawLoc(old);
-            renderState.updateTile(cursor);
+            renderState.updateTile(cursor);*/
             break;
             
         case 'RIGHT':
             //action.move(selected_agent.id, 1, 0, 0);
+            /*
             old = cursor.pos();
             cursor.moveX(1);
             renderState.drawLoc(old);
-            renderState.updateTile(cursor);
+            renderState.updateTile(cursor);*/
             break;
             
         case 'UP':
             //action.move(selected_agent.id, 0, 1, 0);
+            /*
             old = cursor.pos();
             cursor.moveY(-1);
             renderState.drawLoc(old);
-            renderState.updateTile(cursor);
+            renderState.updateTile(cursor);*/
             break;
             
         case 'DOWN':
             //action.move(selected_agent.id, 0, -1, 0);
+            /*
             old = cursor.pos();
             cursor.moveY(1);
             renderState.drawLoc(old);
-            renderState.updateTile(cursor);
+            renderState.updateTile(cursor);*/
             break;
             
         case 'c':                   // set map solid
