@@ -552,6 +552,7 @@ class Dat:
 				x['id'] = int(id)
 				id = id + 1
 
+		print "Map Tiles: "
 		for x in tiles_dat:
 			id = x['id']
 			name = x['name']
@@ -559,9 +560,7 @@ class Dat:
 			self.tiles_by_value[int(id)] = x
 			self.tiles_by_name[name] = x
 			self.tile_name_value_pairs.insert(id, x['name'])			
-		
-		#print "out: " + str(self.tiles_by_value)
-		#print ":"
+		print " "
 
 	def get_crop(self, template):
 		if not template in self.crops_dat.keys():
