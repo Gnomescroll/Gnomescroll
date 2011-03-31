@@ -11,7 +11,16 @@ var tile_properties = {
 		this.tiles[id] = property_object;
 	},
 	
-	
+	get_tile_properties : function(id) {
+		
+		if(id in this.tile){
+			return tiles[id];
+		}
+		else {
+			console.log("Tile id is not stored")
+			//return default?
+		}
+	}
 }
 
 var tileset_state = {
