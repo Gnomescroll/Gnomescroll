@@ -200,7 +200,8 @@ var board_manager = {
 		for(agent_id in agents) 
 		{
             var agent = agents[agent_id];
-			console.log('populate index, agent_update: ' + agent.id)
+			//console.log('populate index, agent_update: ' + agent.id)
+			this.agents.append
 			this.agent_update(agent);
 /*
 			pos = agent.pos();
@@ -256,6 +257,8 @@ var board_manager = {
 		var onBoard, inIndex;
 		
 		inIndex = $.inArray(agent.id, this.agents);
+		
+		console.log("id: " + agent.id + ", inIndex: " + inIndex);
 		onBoard = (z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);
 		
 		console.log("board_manager: agent_update")
@@ -283,7 +286,7 @@ var board_manager = {
 		if(inIndex == -1 && onBoard) { ///agent moves onto board
 			if(!(agent.id in this.agents)) {
 				this.agents.push(agent.id);
-				this.cursor_manager.add_agent_to_cursor(id, x_pos - this.x_min, y_pos - this.y_min);
+				this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min, y_pos - this.y_min);
 				console.log("2")
 				return 0;
 			}
@@ -552,7 +555,8 @@ var cursor_manager = {
 		var inIndex = $.inArray(id, cursor.agent_list);
 		if(inIndex == -1) 
 		{ 
-			console.log("cursor_manager, _remove_agent_from_cursor: Agent id does not exist in cursor!") 
+			console.log("cursor_manager, _remove_agent_from_cursor: Agent id does not exist in cursor!")
+			return;
 		}
 		else 
 		{
@@ -562,9 +566,11 @@ var cursor_manager = {
 			
 			var drawing_cursor = cursor.drawing_cursor;	
 			if(drawing_cursor[1] == -1 && cursor.agent_num >= 1) { cursor.drawing_cursor = [-1, 0, -1]; } 
-			else if(cursor.agent_num > drawing_cursor[1]  && cursor.agent_num != 0) { cursor.drawing_cursor = [-1, 0, -1]; }
-			else if (cursor.object_num > 0) { cursor.drawing_cursor = [-1, -1, 0]; }
 			else { cursor.drawing_cursor = [0, -1, -1]; }
+			
+			//else if(cursor.agent_num > drawing_cursor[1]  && cursor.agent_num != 0) { cursor.drawing_cursor = [-1, 0, -1]; }
+			//else if (cursor.object_num > 0) { cursor.drawing_cursor = [-1, -1, 0]; }
+			//else { cursor.drawing_cursor = [0, -1, -1]; }
 			
 			this._draw_board_tile(cursor.index);
 		}
