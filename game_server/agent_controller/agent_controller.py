@@ -53,42 +53,37 @@ class Agent_controller:
 		agent = Agent(agent_id)
 		item = Nobject(item_id)
 
+		(a_type, a_x, a_y, a_z) = agent.position
+		(i_type, i_x, i_y, i_z) = item.position		
+		(type, x, y, z) = position
+
 		goal = {
 			'active_goal' : 0,
 
 			0 : {
 				'goal' : 'move',
-				'position' : (0, x, y, z),
+				'position' : (0, i_x, i_y, i_z), #move to item position
 				'next' : 1,
 				},
 			1 : {
 				'goal' : 'pickup_item',
 				'item_id' : item_id,
-				'position' : item.position,
+				'position' : item.position, #pickup item at position
 				'next' : 2,
 				},
 			2 : {
 				'goal' : 'move',
-				'position' : position,
-				'next' : 1,
+				'position' : position, #move to dropoff position
+				'next' : 3,
 				},
 			3 : {
-				'goal' : 'drop_item',
+				'goal' : 'drop_item', #drop item
 				'item_id' : item_id,
 				'position' : position,			
 				},
 			}
-
-		(a_type, a_x, a_y, a_z) = agent.position
-		(i_type, i_x, i_y, i_z) = item.position		
-		(type, x, y, z) = position
 		
 		if i_type != 0:
 			print "Need support for moving items which are in containers"
 			return
-
-		goal = {
-		'goal' : 'move_item',
-		'item_position' : (0, x, y, z)
-		}		
 		
