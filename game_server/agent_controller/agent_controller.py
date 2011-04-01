@@ -1,5 +1,5 @@
 from interface.agent import Agent
-from state.objects import Objects
+from interface.agent import Nobject
 
 class Agent_controller:
 	
@@ -23,7 +23,7 @@ class Agent_controller:
 			return 0 #stop
 
 	### goal implementation
-	def move_goal(self, id, position)
+	def move_goal(self, id, position):
 		agent = Agent(id)
 		(ptype, x, y, z) = agent.position
 		(ptype_, x_, y_, z_) = position
@@ -49,9 +49,10 @@ class Agent_controller:
 		active_goal = goal['active_goal']
 		
 		if not active_goal in goal.keys():
+			print "term 0"
 			return 0
 		
-		if goal[active_goal][goal] == 'pickup_item':
+		if goal[active_goal]['goal'] == 'pickup_item':
 			#object = Noject(goal[active_goal]['item_id'])
 			position = goal[active_goal]['position']
 			agent = Agent(id)
@@ -60,9 +61,11 @@ class Agent_controller:
 			else:
 				agent.pickup_item(goal[active_goal]['item_id'])
 				if not 'next' in goal[active_goal].keys():
+					print "term 1"
 					return 0
 				else: 
 					goal['active_goal'] = goal[active_goal]['next']
+					print "term 2"
 					return 1
 
 		return 0
@@ -77,6 +80,7 @@ class Agent_controller:
 	
 	def create_move_item_goal(self, agent_id, item_id, position):
 		agent = Agent(agent_id)
+		print "item_id: " + str(item_id)
 		item = Nobject(item_id)
 
 		(a_type, a_x, a_y, a_z) = agent.position
@@ -119,4 +123,4 @@ class Agent_controller:
 			print "Need support for moving items which are in containers"
 			return
 
-		self.agent_goals[id] = goal
+		self.agent_goals[agent_id] = goal

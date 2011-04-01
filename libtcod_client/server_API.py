@@ -233,6 +233,7 @@ class Agent_commands:
 		self.send_message(msg)			
 
 
+
 class Controller_commands:
 	
 	def __init__(self):
@@ -261,6 +262,6 @@ class Controller_commands:
 		msg['cmd'] = 'move_item_goal'
 		msg['world_id'] = 0
 		msg['agent_id'] = agent_id
-		msg['item_id'] = agent_id
+		msg['item_id'] = item_id
 		msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
