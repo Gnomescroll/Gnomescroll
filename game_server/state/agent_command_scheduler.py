@@ -5,9 +5,9 @@ class Agent_command_scheduler:
 	def __init__(self):
 		self.globals = None
 		self.world_time = None
-		print "1"
+		self.agent_controller = None
+		
 		self.last_time = 0
-		print "2"
 		self.next_move = {}
 		self.time_slot = {}
 
@@ -28,8 +28,11 @@ class Agent_command_scheduler:
 		else: #agent is already scheduled, pass to agent_msg que
 			#print "need to implement scheduler!"
 			## DELETE below when scheduler is ready !!! # ###
-			agent = Agent(agent_id)
-			agent_command(agent, *params)
+			if False:
+				agent = Agent(agent_id)
+				agent_command(agent, *params)
+			else:
+				self.agent_controller.next_action(agent_id)
 			#self.schedule(agent_id, self.last_time + agent.action_delay())
 			pass
 			
@@ -54,13 +57,13 @@ class Agent_command_scheduler:
 		for t in range(self.last_time, current_time):
 			if t in self.time_slot:
 				for agent_id in self.time_slot[t]:
-					#value = self.agent_controller.process_next_action(agent_id)
-					value = 0
+					value = self.agent_controller.next_action(agent_id)
 					if value == 0: #this means no command executed or command execution failure
 						#print str(agent_id)
 						del self.next_move[agent_id] #agent is free to move immediately next move
 						##Agent is idle here
 					else:
+						agent = Agent(agent_id)
 						self.schedule(agent_id, t + agent.action_delay())
 						#next_move[agent_id] = t + agent.action_delay() #agent_action delay
 				del self.time_slot[t] #cleanup

@@ -2,7 +2,8 @@ from server_API import *
 admin = Admin_commands()
 agent = Agent_commands()
 info = Info_commands()
-
+controller = Controller_commands()
+	
 admin.create_agent(1,1,1)
 
 #agent.move_0(1, 1,1)

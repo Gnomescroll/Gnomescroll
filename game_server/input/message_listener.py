@@ -87,3 +87,5 @@ class Message_listener:
 					self.message_handlers.agent_handler[cmd](**i)
 				if type == "admin":
 					self.message_handlers.admin_handler[cmd](**i)
+				if type == "controller":
+					self.message_handlers.agent_controller_handler[cmd](**i)

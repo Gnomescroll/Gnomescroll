@@ -19,7 +19,7 @@ def info_out_worker(info_out_q, world_id):
 			msg = simplejson.dumps(msg)
 			if type == 'terrain_map':
 				print "info_out_worker: sending map"
-			elif type == 'get_tiles':
+			elif type == 'tileset':
 				print "info_out_worker: get_tiles"
 			else:		
 				print "info_out_worker: " + str(msg) # DEBUGGING

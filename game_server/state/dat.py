@@ -659,3 +659,15 @@ class Dat:
 				dict[id]['tile_id'] = id
 				dict[id]['tile_name'] = x['name']
 		return dict
+
+### Actions
+
+	def get_build_action(self):
+		build_dict = {}
+		for i, x in self.tiles_dat.items:
+			if('buildable' in x):
+				build_dict[i] = {}
+				build_dict[i]['tile_name'] = x['name']
+				build_dict[i]['id'] = x['id']
+				build_dict[i]['build_requires'] = x['build_requires']
+		return build_dict

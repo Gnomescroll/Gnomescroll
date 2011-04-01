@@ -231,3 +231,24 @@ class Agent_commands:
 		msg['position'] = (0, x, y, z)
 		msg['wall_type'] = wall_type
 		self.send_message(msg)			
+
+
+class Controller_commands:
+	
+	def __init__(self):
+		self.r_client = redis.Redis('localhost')
+
+	def send_message(self,msg, world_id = 0):
+		world_id = msg['world_id']
+		self.r_client.lpush("world_"+str(world_id), dumps(msg))
+
+	# required = ['dp, agent_id']
+	# optional = ['player_id']
+	def move_goal(self, agent_id, x, y, z):
+		msg = {}	
+		msg['type'] = 'controller'
+		msg['cmd'] = 'move_goal'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		msg['position'] = (x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		self.send_message(msg)

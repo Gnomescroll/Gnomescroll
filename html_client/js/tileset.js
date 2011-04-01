@@ -20,7 +20,7 @@ var tile_properties = {
 			console.log("Tile id is not stored")
 			//return default?
 		}
-	}
+	},
 }
 
 var tileset_state = {

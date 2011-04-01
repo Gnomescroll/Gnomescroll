@@ -165,7 +165,7 @@ process.info.object_info = function (msg) {
 
 process.info.agent_list = function (msg) {
     
-    console.log(msg);
+    //console.log(msg);
     
     //if (!validate.agent_list(msg)) return;
     
@@ -195,7 +195,7 @@ process.info.agent_list = function (msg) {
 
 process.info.object_list = function (msg) {
     
-    console.log(msg);
+    //console.log(msg);
     
     //if (!validate.object_list(msg)) return;
     var obj;

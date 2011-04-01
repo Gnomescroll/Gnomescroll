@@ -4,6 +4,7 @@ class Message_handlers:
 		self.info_commands = None
 		self.agent_commands = None
 		self.admin_commands = None
+		self.agent_controller_commands = None
 		pass
 		
 	def define_handlers(self):
@@ -39,5 +40,9 @@ class Message_handlers:
 		'create_agent' : self.admin_commands.create_agent,
 		'create_item' : self.admin_commands.create_item,
 		'create_object' : self.admin_commands.create_object,
-		'set_map' : self.admin_commands.set_map
+		'set_map' : self.admin_commands.set_map,
+		}
+
+		self.agent_controller_handler = {
+		'move_goal' : self.agent_controller_commands.move_goal,		
 		}

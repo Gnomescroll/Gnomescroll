@@ -15,12 +15,16 @@ from state.objects import Objects
 from state.dat import Dat
 from state.agent_command_scheduler import Agent_command_scheduler
 
+#agent controller class
+from agent_controller.agent_controller import Agent_controller
+
 ##input message handling
 from input.message_listener import Message_listener
 from input.message_handlers import Message_handlers
 from input.info_commands import Info_commands
 from input.agent_commands import Agent_commands
 from input.admin_commands import Admin_commands
+from input.agent_controller_commands import Agent_controller_commands
 
 ## output messages
 from output.info import Info
@@ -41,6 +45,7 @@ class Server:
 		self.info_commands = Info_commands()
 		self.agent_commands = Agent_commands()
 		self.admin_commands = Admin_commands()
+		self.agent_controller_commands = Agent_controller_commands()
 		# output to server
 		self.info = Info()
 		self.delta = Delta()
@@ -51,7 +56,9 @@ class Server:
 		self.objects = Objects()
 		self.dat = Dat()
 		self.agent_command_scheduler = Agent_command_scheduler()
-
+		#agent controller
+		self.agent_controller = Agent_controller()
+		
 	def share_state(self):
 		print "Share State Start"
 		not_singletons = []
