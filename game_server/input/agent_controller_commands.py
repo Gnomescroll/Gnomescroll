@@ -12,7 +12,7 @@ class Agent_controller_commands:
 	# required = ['position']
 	# optional = ['player_id']	
 	def move_goal(self, agent_id, position, **msg):
-		(x,y,z) = position
+		(type, x,y,z) = position
 		self.agent_controller.create_move_goal(agent_id, x, y, z)
 		self.agent_command_scheduler.executeNoop(agent_id)
 	# required = ['position']

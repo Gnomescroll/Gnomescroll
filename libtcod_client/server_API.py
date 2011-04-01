@@ -250,5 +250,5 @@ class Controller_commands:
 		msg['cmd'] = 'move_goal'
 		msg['world_id'] = 0
 		msg['agent_id'] = agent_id
-		msg['position'] = (x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
