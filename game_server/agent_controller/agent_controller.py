@@ -20,6 +20,7 @@ class Agent_controller:
 		if(goal['goal'] == 'FSM1'):
 			return self.FSM1(id, goal)
 		else:
+			print "Agent_controller.next_action: goal type not valid"
 			return 0 #stop
 
 	### goal implementation
@@ -28,6 +29,7 @@ class Agent_controller:
 		(ptype, x, y, z) = agent.position
 		(ptype_, x_, y_, z_) = position
 		if ptype != 0:
+			print "agent_controller.move_goal: ptype error"
 			return 0
 		dx = 0
 		dy = 0
@@ -56,9 +58,15 @@ class Agent_controller:
 			#object = Noject(goal[active_goal]['item_id'])
 			position = goal[active_goal]['position']
 			agent = Agent(id)
-			if agent.position != position:
-				return self.move_goal(id, position)
+			
+			(a_type, ax, ay, az) = agent.position
+			(type, x, y, z) = position
+			if (ax, ay, az) != (x, y, z):
+				print str(agent.position) + " " + str(position)
+				self.move_goal(id, position)
+				return 1
 			else:
+				print "pickup attempt"
 				agent.pickup_item(goal[active_goal]['item_id'])
 				if not 'next' in goal[active_goal].keys():
 					print "term 1"
@@ -67,7 +75,7 @@ class Agent_controller:
 					goal['active_goal'] = goal[active_goal]['next']
 					print "term 2"
 					return 1
-
+		print "term 3"
 		return 0
 
 	### goal creation code
