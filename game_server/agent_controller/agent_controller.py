@@ -16,15 +16,19 @@ class Agent_controller:
 		agent = Agent(id)
 		
 		if(goal['goal'] == 'move'):
-			return self.move_goal(id, goal)
+			return self.move_goal(id, goal['position'])
+		if(goal['goal'] == 'FSM1'):
+			return self.FSM1(id, goal)
 		else:
 			return 0 #stop
 
 	### goal implementation
-	def move_goal(self, id, goal)
+	def move_goal(self, id, position)
 		agent = Agent(id)
 		(ptype, x, y, z) = agent.position
-		(ptype_, x_, y_, z_) = goal['position']
+		(ptype_, x_, y_, z_) = position
+		if ptype != 0:
+			return 0
 		dx = 0
 		dy = 0
 		if x > x_:
@@ -40,7 +44,22 @@ class Agent_controller:
 		else:
 			agent.move_0(dx, dy, 0)
 			return 1 #keep going		
+
+	def FSM1(self, id, goal):
+		active_goal = goal['active_goal']
 		
+		if not active_goal in goal.keys():
+			return 0
+		
+		if goal[active_goal][goal] == 'pickup_item':
+			#object = Noject(goal[active_goal]['item_id'])
+			position = goal[active_goal]['position']
+			agent = Agent(id)
+			if agent.position != position:
+				return self.move_goal(id, position)
+			else:
+				agent.pick
+				
 	### goal creation code
 	def create_move_goal(self, id, x, y, z):
 		goal = {
@@ -58,17 +77,23 @@ class Agent_controller:
 		(type, x, y, z) = position
 
 		goal = {
-			'active_goal' : 0,
+			'goal' : 'FSM1',
+			'active_goal' : 1,
 
-			0 : {
-				'goal' : 'move',
-				'position' : (0, i_x, i_y, i_z), #move to item position
-				'next' : 1,
-				},
+#			'type' : "create_move_item_goal",
+#			'agent_id' : agent_id,
+#			'item_id'  : item_id,
+#			'position' : position,
+
+#			0 : {
+#				'goal' : 'move',
+#				'position' : (0, i_x, i_y, i_z), #move to item position
+#				'next' : 1,
+#				},
 			1 : {
 				'goal' : 'pickup_item',
 				'item_id' : item_id,
-				'position' : item.position, #pickup item at position
+				'position' : (0, i_x, i_y, i_z), #pickup item at position
 				'next' : 2,
 				},
 			2 : {
@@ -86,4 +111,5 @@ class Agent_controller:
 		if i_type != 0:
 			print "Need support for moving items which are in containers"
 			return
-		
+
+		self.agent_goals[id] = goal
