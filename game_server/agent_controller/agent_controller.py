@@ -26,7 +26,7 @@ class Agent_controller:
 			if y > y_:
 				dy = 1
 			if y < y_:
-				dy = 1
+				dy = -1
 			if dx == 0 and dy == 0:
 				return 0
 			else:
