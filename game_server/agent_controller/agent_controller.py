@@ -58,8 +58,15 @@ class Agent_controller:
 			if agent.position != position:
 				return self.move_goal(id, position)
 			else:
-				agent.pick
-				
+				agent.pickup_item(goal[active_goal]['item_id'])
+				if not 'next' in goal[active_goal].keys():
+					return 0
+				else: 
+					goal['active_goal'] = goal[active_goal]['next']
+					return 1
+
+		return 0
+
 	### goal creation code
 	def create_move_goal(self, id, x, y, z):
 		goal = {

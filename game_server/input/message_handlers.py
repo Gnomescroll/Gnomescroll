@@ -44,5 +44,6 @@ class Message_handlers:
 		}
 
 		self.agent_controller_handler = {
-		'move_goal' : self.agent_controller_commands.move_goal,		
+		'move_agent_goal' : self.agent_controller_commands.move_agent_goal,
+		'move_item_goal' : self.agent_controller_commands.item_move_goal,
 		}

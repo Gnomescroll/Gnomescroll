@@ -9,11 +9,16 @@ class Agent_controller_commands:
 		self.globals = None
 
 
-	# required = ['position']
-	# optional = ['player_id']	
+	# required = ['']
+	# optional = ['']	
 	def move_goal(self, agent_id, position, **msg):
 		(type, x,y,z) = position
 		self.agent_controller.create_move_goal(agent_id, x, y, z)
 		self.agent_command_scheduler.executeNoop(agent_id)
-	# required = ['position']
-	# optional = ['player_id']
+		
+	# required = ['']
+	# optional = ['']
+	def move_goal(self, agent_id, item_id, position, **msg):
+		self.agent_controller. create_move_item_goal(agent_id, item_id, position)
+		self.agent_command_scheduler.executeNoop(agent_id)
+		

@@ -61,8 +61,8 @@ class Agent:
 			print "Agent " + str(target.id) + " is dead"
 		
 	def pickup_item(self, item_id):
-		if self.holding == 1:
-			print "Agent cannot hold multiple items!"
+		if self.holding != 0:
+			print "Agent cannot carry multiple items!"
 		else:
 			item = Nobject(item_id)
 			if self.position != item.position:
