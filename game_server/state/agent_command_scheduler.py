@@ -35,7 +35,12 @@ class Agent_command_scheduler:
 				self.agent_controller.next_action(agent_id)
 			#self.schedule(agent_id, self.last_time + agent.action_delay())
 			pass
-			
+	
+	def executeNoop(self, agent_id):
+		agent = Agent(agent_id)
+		if not agent_id in self.next_move:
+			self.schedule(agent_id, self.last_time + agent.action_delay())		
+
 	def time_step(self, current_time):
 		#current_time = self.world_time.time
 		if self.last_time == 0:

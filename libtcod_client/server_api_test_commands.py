@@ -6,6 +6,10 @@ controller = Controller_commands()
 	
 admin.create_agent(1,1,1)
 
+admin.create_agent(1,1,1)
+controller.move_goal(1,12,7,1)
+agent.move_0(1, 1,0,0)
+
 #agent.move_0(1, 1,1)
 
 info.get_agent_list()
