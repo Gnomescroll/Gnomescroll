@@ -9,18 +9,41 @@ you should add these to issue tracker actually
 8> (possibly) an html interface for editing tiles/items/crafting stuff/agents (serialize in python dictionaries to disc for now, return dictionaries with get request)
 
 
+
+
+Infrastructure:
+
+	Player account creation
+		Spawning dwarfs functionality
+		Respawning functionality (init by client)
+
+	HTTP server for terrain_tile management
+		serialize to python dictionaries on disc
+		server loads tiles from json interface (eventually client loads from json interface)
+		add items, crafting, agents, tilesets
+
 Social Interaction Features:
 
 	Messaging System across world
 	Construct Signs / Engrave message on signs
-	Notification feeds for each player (for game events)
+	!!! Notification feeds for each player (for game events)
 	Engrave messages on rock
 
-Infrastructure:
-	Player account creation
-		Spawning dwarfs functionality
-		Respawning Dwarfs
-
 Graphical:
+
 	Get objects rendering/displayed on client
-	Refactor out 
+	Refactor out cursor drawing /priority functionality so that it is modular
+	Add cursor support for trees/doors/objects
+	Send rendering meta-data for objects to client
+
+Gameplay:
+	
+	implement job manager
+		design job representation language
+		add job
+		delete job
+		pause/cancel job
+
+	implement autonomous dwarf actions/behaviors (getting food, sleeping)
+		stuff in /game_server/agent_controller/agent_controller.py
+
