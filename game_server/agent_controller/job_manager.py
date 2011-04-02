@@ -11,15 +11,14 @@ job_validation = {
 	
 }
 
-class job_manager:
-	
-	self.globals = None
-	self.dat = None
-	self.delta = None
+class Job_manager:
 
 	def __init__(self):
 		self.job_pool = {}
-		
+		self.globals = None
+		self.dat = None
+		self.delta = None
+
 	def job_id(self):
 		return self.globals.get_unique_id()
 
@@ -51,8 +50,7 @@ class job_manager:
 		
 		## move each item to build location
 		for item_id in material_list:
-			job['stages'][num] =
-			{
+			job['stages'][num] =	{
 					'status' : '-',
 					'completed' : 0,
 					'script' : [
@@ -62,8 +60,7 @@ class job_manager:
 			num = num + 1
 		
 		##  build wall
-		job['stages'][num] = 
-		{
+		job['stages'][num] = 	{
 			'status' : '-',
 			'completed' : 0,
 			'script' : [
@@ -71,57 +68,7 @@ class job_manager:
 			],
 		}
 		this.job_pool[job_id] = job
-		this.delta.create_job(player_id, job_id, job.copy))
+		this.delta.create_job(player_id, job_id, job)
+		
 	def assign_agent_job(self, agent_id, job_id):
-		
-		
-class job_list:
-
-	self.globals = None
-	
-	def __init__(self):
-		self.job_id = 0
-		self.job_pool = {}
-
-	def get_id(self):
-		id = self.job_id
-		self.job_id = self.job_id + 1
-		return id
- 
-	def add_job(self, task_name):
 		pass
-
-	def remove_job(self, id):
-		pass
-	
-	def delegate_agent(self, task_id, agent_id):
-		pass
-
-
-class job_entry:
-	self.task_manager = None
-	self.dat = None
-
-	def __init__(self):
-		this.agent_id = 0
-		this.job_type = []
-
-		this.task = 
-
-### define sequence of commands
-### determine state requirements
-
-	def build_wall(job_id):
-	#check requirements / parameters
-	action = {
-	'action' : 'move',
-	'position' : (0, 2, 2, 2)
-	}
-	#move agent to rock
-	#move rock to build location
-	#build
-	
-	
-	
-#create task
-#modify task

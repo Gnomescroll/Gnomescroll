@@ -673,7 +673,7 @@ class Dat:
 		return build_dict
 
 	def build_tile_requirements(self, tile_id):
-		if tile_id not in self.tiles_dat.items() 
+		if tile_id not in self.tiles_dat.items() :
 			print "Dat build_tile_requirements: tile not in storage"
 			return 0 #return 0 on failure
 		tile_dict = self.tiles_dat[tile_id]

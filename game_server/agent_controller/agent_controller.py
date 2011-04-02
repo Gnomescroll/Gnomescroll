@@ -86,13 +86,6 @@ class Agent_controller:
 		('%agent_position', agent_id)
 		('%item_position', item_id)
 
-	def set_prolog_agent_goal(self, goal_state):
-		
-		goal = {
-			
-		
-		}
-		
 		
 	def FSM1(self, id, goal):
 		active_goal = goal['active_goal']
