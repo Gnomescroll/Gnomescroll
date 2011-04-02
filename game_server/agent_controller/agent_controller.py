@@ -7,7 +7,7 @@ class Agent_controller:
 		self.globals = None
 
 		self.agent_goals = {}
-		self.agent_behavior = {} #eat, jobs, wander
+		self.agent_behavior = {} #eating, working, wandering
 		#self.agents_tasks = {} #get next goal in task...
 
 	def next_action(self, id):

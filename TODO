@@ -24,10 +24,16 @@ Infrastructure:
 
 Social Interaction Features:
 
-	Messaging System across world
-	Construct Signs / Engrave message on signs
+	Player to Player Communication
+		Messaging System across world
+		Construct Signs / Engrave message on signs
+		Engrave messages on rock
+
 	!!! Notification feeds for each player (for game events)
-	Engrave messages on rock
+		"Player 435 stole your wheat"
+		"Dwarf 4 has died"
+
+	Stats server for player stats and analytics
 
 Graphical:
 
@@ -46,4 +52,9 @@ Gameplay:
 
 	implement autonomous dwarf actions/behaviors (getting food, sleeping)
 		stuff in /game_server/agent_controller/agent_controller.py
+		implement "controller.set_agent_behavior()" for testing
 
+	Dwarf Hunger
+		should decrement
+	
+	Furniture Placement Job
