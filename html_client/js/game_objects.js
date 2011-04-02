@@ -9,7 +9,6 @@ if (typeof Object.beget !== 'function') {
 
 var GameObject, Obj, Agent, Container;
 
-
 var get_board_event_name = function(game_obj) {
     var event_name;
     switch (game_obj.base_type) {
@@ -107,22 +106,36 @@ GameObject = {
         // emit message to renderer
         board_event[get_board_event_name(that)](that);
     },
+
+    instance_properties: ['inventory'],
+    defaults:
+        function(name) {
+            var defaults = {
+                inventory: [],
+            }
+            return defaults[name];
+    },
     
     create:
     function (data) {
+
+        var obj = Object.beget(this);
+        obj = $.extend(obj, data);
+
+        // add inventory here, until more elegant solution is found for creating
+        // default instance values
+        var len = this.instance_properties.length,
+            i = 0,
+            name;
+        for (i=0; i < len; i++) {
+            name = this.instance_properties[i];
+            if ((!obj.hasOwnProperty(name)) && this.hasOwnProperty(name)) {
+                obj[name] = this.defaults(name);
+            }
+        }
+         
+        return obj;
     
-        //var agent = Object.beget(this);
-        console.log('gameObject create');
-        console.log(this);
-        var gobj = $.extend({},this);
-        
-        $.each(data, function(key, val) {
-            gobj[key] = val;
-        });
-        
-        delete gobj.create;
-        
-        return gobj;
     },
     
     remove:
@@ -141,12 +154,16 @@ GameObject = {
         delete that;
     },
 
-}
+};
 
 InventoryMethods = {
+
+    inventory: [],
     
     addInventory:
     function(game_object) {
+        console.log('add inventory');
+        console.log(this);
         this.inventory.push(game_object.id);
     },
     
@@ -157,7 +174,8 @@ InventoryMethods = {
             this.inventory.splice(index,1);
         }
     },
-},
+};
+
 
 // interface
 Agent = $.extend({}, GameObject);
