@@ -47,3 +47,8 @@ class Message_handlers:
 		'move_agent_goal' : self.agent_controller_commands.move_agent_goal,
 		'move_item_goal' : self.agent_controller_commands.item_move_goal,
 		}
+
+		self.job_manager_handler = {
+		'create_job' : self.agent_controller_commands.create_job,
+		'delete_job' : self.agent_controller_commands.delete_job,		
+		}
