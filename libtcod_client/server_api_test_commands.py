@@ -10,6 +10,10 @@ admin.create_agent(5,5,1)
 admin.create_object(1,1,1,'crop', 'generic_dead_crop')
 controller.move_item(1, 2)
 
+admin.create_agent(1,1,1)
+controller.move(1, 5, 6, 4)
+
+controller.move_item(1, 5, 5 ,1)
 
 #agent.move_0(1, 1,1)
 

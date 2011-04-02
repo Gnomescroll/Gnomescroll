@@ -1,6 +1,26 @@
-libtcod client:
+1> map scrolling on client
+2> ability to send messages to individual clients, instead of to every player connected to game world 
+you should add these to issue tracker actually
+3> object drawing on client
+4> client storage/display of job list
+5> (working on now) job creation/deletion API
+6> (working on now) agent multistep command API
+7> (working on now) interface between atomic agent actions, compound action controller and job manager 
+8> (possibly) an html interface for editing tiles/items/crafting stuff/agents (serialize in python dictionaries to disc for now, return dictionaries with get request)
 
-    Implement Agent and Object handlers and state.
-    Add Menu.
-    Designate jobs: Building walls, workshops, crafting.
-    pathfinding.
+
+Social Interaction Features:
+
+	Messaging System across world
+	Construct Signs / Engrave message on signs
+	Notification feeds for each player (for game events)
+	Engrave messages on rock
+
+Infrastructure:
+	Player account creation
+		Spawning dwarfs functionality
+		Respawning Dwarfs
+
+Graphical:
+	Get objects rendering/displayed on client
+	Refactor out 

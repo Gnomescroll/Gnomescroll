@@ -664,10 +664,21 @@ class Dat:
 
 	def get_build_action(self):
 		build_dict = {}
-		for i, x in self.tiles_dat.items:
+		for i, x in self.tiles_dat.items():
 			if('buildable' in x):
 				build_dict[i] = {}
 				build_dict[i]['tile_name'] = x['name']
 				build_dict[i]['id'] = x['id']
 				build_dict[i]['build_requires'] = x['build_requires']
 		return build_dict
+
+	def build_tile_requirements(self, tile_id):
+		if tile_id not in self.tiles_dat.items() 
+			print "Dat build_tile_requirements: tile not in storage"
+			return 0 #return 0 on failure
+		tile_dict = self.tiles_dat[tile_id]
+		if tile_dict['buildable'] != 1:
+			print "Dat build_tile_requirements: tile type cannot be build"
+			return 0
+		
+		return tile_dict['build_requires']
