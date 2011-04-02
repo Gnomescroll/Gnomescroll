@@ -50,26 +50,35 @@ class Agent_controller:
 
 	def command_index():
 		
+		#symbols *,@,#,$,%
+		
 		#predicates
-		('agent_holding_item', agent_id, item_id)
-		('item_at_location', item_id, (t, x, y, z))
-		('agent_at_location', agent_id, (t, x, y, z)
+		('?agent_holding_item', agent_id, item_id)
+		('?item_at_location', item_id, (t, x, y, z))
+		('?agent_at_location', agent_id, (t, x, y, z))
 
 		#actions
-		('move', agent_id, x, y, z)
-		('pickup_item', agent_id, item_id)
-		('move_item', agent_id, item_id, position)
+		('::move', agent_id, x, y, z)
+		('::pickup_item', agent_id, item_id)
+		('::move_item', agent_id, item_id, position)
 		
-		#atomic actions
-		('atomic_move', agent_id, dx, dy, dz)
-		('atomic_move_item', agent_id, item_id, (t, x, y, z)) #into chests, etc...
-		('atomic_drop_item', agent_id, item_id)
-		('atomic_pickup_item', agent_id, item_id)
+		#atomic agent actions
+		(':move', agent_id, dx, dy, dz)
+		(':move_item', agent_id, item_id, (t, x, y, z)) #into chests, etc...
+		(':drop_item', agent_id, item_id)
+		(':pickup_item', agent_id, item_id)
 
-		#production commands
-		('assert', predicate)
+		#flow control commands
+		('@label', string)
+		('@assert', predicate, label)
+		('@jump', label)
+		('@if', predicate, label) #same as assert
+		('@fail', label) #what do on failure
 		
-		
+		#job management
+		('&pause', string) #failure message
+		('&error', string) #failure message
+
 	def set_prolog_agent_goal(self, goal_state):
 		
 		goal = {

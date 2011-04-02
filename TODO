@@ -22,6 +22,11 @@ Infrastructure:
 		server loads tiles from json interface (eventually client loads from json interface)
 		add items, crafting, agents, tilesets
 
+	Server Improvements
+		logging of message failure, with messages sent back to client 
+		message validation
+		testing framework
+
 Social Interaction Features:
 
 	Player to Player Communication
@@ -58,3 +63,31 @@ Gameplay:
 		should decrement
 	
 	Furniture Placement Job
+
+
+Bonus:
+	http://en.wikipedia.org/wiki/ZZT-oop
+	Slides Tiles like ZZT
+	"Magic"/ZZT type tiles with scripting system
+	ZZT puzzle dungeons
+
+Social: 
+	Map Repository
+		Upload map
+		Annotate map
+		Discuss /comment on map
+
+	Movies/Playback
+		Similar to DF playback database
+
+	Save Macros/designs; upload to design database
+
+	User profiles
+		User photo-albums
+		Activity Feed
+		Player Stats
+		Post to Social Media
+
+	Forums
+		Cordinate/discuss feature development
+
