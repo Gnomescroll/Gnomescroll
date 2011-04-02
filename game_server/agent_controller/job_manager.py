@@ -38,17 +38,43 @@ class job_manager:
 ##individual jobs
 	
 	def construct_tile(self, player_id, tile_id, material_list, build_from, build_at):
-		##validation
-		
-		
 		job_id = self.job_id()
 		job = {
-			'player_id' : ''
-			'status' : 'active',
-		
+			'job_id' : job_id,
+			'job_type' : 'construct_tile',
+			'player_id' : player_id,
+			'agent_id' : 0,
+			'stages' : {},
+			
 		}
+		num = 0 
 		
-
+		## move each item to build location
+		for item_id in material_list:
+			job['stages'][num] =
+			{
+					'status' : '-',
+					'completed' : 0,
+					'script' : [
+					('::move_item', item_id, position),
+					],
+			},
+			num = num + 1
+		
+		##  build wall
+		job['stages'][num] = 
+		{
+			'status' : '-',
+			'completed' : 0,
+			'script' : [
+				(':construct_tile', tile_id, position),
+			],
+		}
+		this.job_pool[job_id] = job
+		this.delta.create_job(player_id, job_id, job.copy))
+	def assign_agent_job(self, agent_id, job_id):
+		
+		
 class job_list:
 
 	self.globals = None

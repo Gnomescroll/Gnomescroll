@@ -79,6 +79,13 @@ class Agent_controller:
 		('&pause', string) #failure message
 		('&error', string) #failure message
 
+		('&lock_item', item_id) 
+		('&unlock_item', item_id)
+
+		#functions
+		('%agent_position', agent_id)
+		('%item_position', item_id)
+
 	def set_prolog_agent_goal(self, goal_state):
 		
 		goal = {
