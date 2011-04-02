@@ -5,6 +5,7 @@ class Message_handlers:
 		self.agent_commands = None
 		self.admin_commands = None
 		self.agent_controller_commands = None
+		self.job_manager = None
 		pass
 		
 	def define_handlers(self):
@@ -49,6 +50,6 @@ class Message_handlers:
 		}
 
 		self.job_manager_handler = {
-		'create_job' : self.agent_controller_commands.create_job,
-		'delete_job' : self.agent_controller_commands.delete_job,		
+		'create_job' : self.job_manager_commands.create_job,
+		'delete_job' : self.job_manager_commands.delete_job,		
 		}
