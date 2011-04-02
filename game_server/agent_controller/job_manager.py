@@ -36,7 +36,7 @@ class Job_manager:
 		
 ##individual jobs
 	
-	def construct_tile(self, player_id, tile_id, material_list, build_from, build_at):
+	def construct_tile(self, player_id, tile_id, material_list, build_from, build_at, **misc):
 		job_id = self.job_id()
 		job = {
 			'job_id' : job_id,
@@ -64,11 +64,11 @@ class Job_manager:
 			'status' : '-',
 			'completed' : 0,
 			'script' : [
-				(':construct_tile', tile_id, position),
+				(':construct_tile', tile_id, build_at),
 			],
 		}
-		this.job_pool[job_id] = job
-		this.delta.create_job(player_id, job_id, job)
+		self.job_pool[job_id] = job
+		self.delta.create_job(player_id, job_id, job)
 		
 	def assign_agent_job(self, agent_id, job_id):
 		pass

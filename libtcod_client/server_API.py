@@ -282,9 +282,8 @@ class Job_manager_commands:
 		msg['type'] = 'manager'
 		msg['cmd'] = 'create_job'
 		msg['world_id'] = 0
-		msg['player_id'] = agent_id
+		msg['player_id'] = player_id
 		msg['job'] = job
-		msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
 		
 	# required = []
@@ -295,10 +294,19 @@ class Job_manager_commands:
 		msg['cmd'] = 'delete_job'
 		msg['world_id'] = 0
 		msg['player_id'] = player_id
-		msg['job_id'] =  job_Id
-		msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		msg['job_id'] =  job_id
 		self.send_message(msg)
 
+	def construct_tile(self, tile_id, player_id, build_from, build_at):
+		job = {
+		'type' : 'construct_tile',
+		'tile_id' : tile_id,
+		'material_list' : [],
+		'build_from' : build_from,
+		'build_at' : build_at,	
+		}
+		self.create_job(player_id, job)
+		
 	## required = []
 	## optional = []
 	#def move_item(self, agent_id, item_id, x=0, y=0, z=0):
