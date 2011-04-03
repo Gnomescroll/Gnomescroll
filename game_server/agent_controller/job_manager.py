@@ -96,11 +96,11 @@ class Job_manager:
 		job = self.job_pool[job_id]
 		#sanity checks
 		if agent_id != None:
-			if agent_id != job['agent_id']
+			if agent_id != job['agent_id']:
 				print "job_manager agent_release_job error: agent releasing job does not match agent grabbbing job"
 		#end
 		job['agent_id'] = 0
-		self.delta.modify_job(job['player_id', job_id, job)
+		self.delta.modify_job(job['player_id'], job_id, job)
 		pass
 		
 	def complete_sub_task(self, job_id, sub_task): 

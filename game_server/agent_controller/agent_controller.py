@@ -39,8 +39,10 @@ class Agent_controller:
 			script = self.script[id]
 		
 	def execute_job_script(self, id, goal):
+		pass
 		
-	def load_job_script(self, agent_id, job_id, 
+	def load_job_script(self, agent_id, job_id, **finish):
+		pass
 	
 	### goal implementation
 	def move_goal(self, id, position):
