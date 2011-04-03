@@ -8,22 +8,40 @@ class Agent_controller:
 
 		self.agent_goals = {}
 		self.agent_behavior = {} #eating, working, wandering
+		
+		self.agent_behavior_state = {}
+		self.script = {}
 		#self.agents_tasks = {} #get next goal in task...
 
 	def next_action(self, id):
-		if not(id in self.agent_goals.keys()):
-			return 0
-		goal = self.agent_goals[id]
-		agent = Agent(id)
-		
-		if(goal['goal'] == 'move'):
-			return self.move_goal(id, goal['position'])
-		if(goal['goal'] == 'FSM1'):
-			return self.FSM1(id, goal)
+		if id in self.agent_behavior_state.keys():
+			return behavior_state(id)
 		else:
-			print "Agent_controller.next_action: goal type not valid"
-			return 0 #stop
+			if not(id in self.agent_goals.keys()):
+				return 0
+			goal = self.agent_goals[id]
+			agent = Agent(id)
+			
+			if(goal['goal'] == 'move'):
+				return self.move_goal(id, goal['position'])
+			if(goal['goal'] == 'FSM1'):
+				return self.FSM1(id, goal)
+			if(goal['job'] == 'job'):
+				return self.execute_job_scipt(id, goal)
+			else:
+				print "Agent_controller.next_action: goal type not valid"
+				return 0 #stop
 
+	def behavior_state(self, id):
+		behavior_state = self.agent_behavior_state[id]
+		
+		if behavior_state == 'job_script':
+			script = self.script[id]
+		
+	def execute_job_script(self, id, goal):
+		
+	def load_job_script(self, agent_id, job_id, 
+	
 	### goal implementation
 	def move_goal(self, id, position):
 		agent = Agent(id)
@@ -58,7 +76,7 @@ class Agent_controller:
 		('?agent_at_location', agent_id, (t, x, y, z))
 
 		#actions
-		('::move', agent_id, x, y, z)
+		('::move', agent_id, position)
 		('::pickup_item', agent_id, item_id)
 		('::move_item', agent_id, item_id, position)
 		
