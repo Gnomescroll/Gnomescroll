@@ -50,6 +50,6 @@ class Message_handlers:
         }
 
         self.job_manager_handler = {
-        #'create_job' : self.job_manager_commands.create_job,
-        #'delete_job' : self.job_manager_commands.delete_job,       
+        'create_job' : self.job_manager_commands.create_job,
+        'delete_job' : self.job_manager_commands.delete_job,       
         }

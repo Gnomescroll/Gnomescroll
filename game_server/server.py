@@ -26,7 +26,7 @@ from input.info_commands import Info_commands
 from input.agent_commands import Agent_commands
 from input.admin_commands import Admin_commands
 from input.agent_controller_commands import Agent_controller_commands
-#from input.job_manager_commands import Job_manager_commands
+from input.job_manager_commands import Job_manager_commands
 ## output messages
 from output.info import Info
 from output.delta import Delta
@@ -47,7 +47,7 @@ class Server:
         self.agent_commands = Agent_commands()
         self.admin_commands = Admin_commands()
         self.agent_controller_commands = Agent_controller_commands()
-        #self.job_manager_commands = Job_manager_commands()
+        self.job_manager_commands = Job_manager_commands()
         # output to server
         self.info = Info()
         self.delta = Delta()
@@ -60,7 +60,7 @@ class Server:
         self.agent_command_scheduler = Agent_command_scheduler()
         #agent controller
         self.agent_controller = Agent_controller()
-        #self.job_manager = Job_manager()
+        self.job_manager = Job_manager()
 
     def share_state(self):
         print "Share State Start"
