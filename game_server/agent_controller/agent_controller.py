@@ -5,7 +5,8 @@ class Agent_controller:
 	
 	def __init__(self):
 		self.globals = None
-
+		self.job_manager = None
+		
 		self.agent_goals = {}
 		self.agent_behavior = {} #eating, working, wandering
 		

@@ -43,39 +43,36 @@ class Job_manager:
 			'job_type' : 'construct_tile',
 			'player_id' : player_id,
 			'agent_id' : 0,
-			'sub_task' : 0,
-			'stages' : {},
-			'num_stages' : 0
+
+			'status' : '-',
+			'current_task' : 0,
+
+			'tasks' : None,
+			'num_tasks' : 0
 			
 		}
-		num = 0 
 		
+		tasks = []
 		## move each item to build location
 		for item_id in material_list:
-			job['stages'][num] =	{
-					'status' : '-',
-					'completed' : 0,
-					'script' : [
+			tasks.append([
 					('::move_item', item_id, build_from),
-					],
-			},
-			num = num + 1
+					])
 		
 		##  build wall
-		job['stages'][num] = 	{
-			'status' : '-',
-			'completed' : 0,
-			'script' : [
+		tasks.append([
 				('::move', build_from),
 				(':construct_tile', tile_id, build_at),
-			],
-		}
-		job['num_stages'] = num
+			])
+		
+		job['num_tasks'] = len(tasks)
+		job['tasks'] = tasks
 		self.job_pool[job_id] = job
 		self.delta.create_job(player_id, job_id, job)
 	
 	#agent claims job and sub-job task script is released
 	def agent_claim_job(self, agent_id, job_id):
+		print "job: agent_claim_job, " + str((agent_id, job_id))
 		job = self.job_pool[job_id]
 		#sanity checks
 		if job['agent_id'] != 0:
@@ -83,16 +80,20 @@ class Job_manager:
 			return 0
 		#end
 		job['agent_id'] = agent_id
-		sub_task = job['sub_task']
-		task = job['stages'][sub_task]
-		script = task['script']
+		
+		current_task = job['current_task']
+		script = job['tasks'][current_task]
+		
+		self.delta.modify_job(job['player_id'], job_id, job)
+		
 		return {
 		'script' : script.copy(),
 		'job_id' : job_id,
-		'sub_task' : sub_task, 
+		'task_num' : current_task, 
 		}
 
 	def agent_release_job(self, job_id, agent_id = None):
+		print "job: agent_release_job, " + str((job_id, agent_id))
 		job = self.job_pool[job_id]
 		#sanity checks
 		if agent_id != None:
@@ -103,22 +104,34 @@ class Job_manager:
 		self.delta.modify_job(job['player_id'], job_id, job)
 		pass
 		
-	def complete_sub_task(self, job_id, sub_task): 
+	def complete_sub_task(self, job_id, task_num): 
+		print "job: complete_subtask, " + str((job_id, task_num))		
 		job = self.job_pool[job_id]
-		if sub_task != 	job['sub_task']:
+		if task_num != 	job['current_task']:
 			print "job_manager complete_sub_task error: jobs subtasks do not match"
 		stage = job['stages'][sub_task] 
-		stage['completed'] = 1
-		stage['status'] = 'completed'
-		job['sub_task'] = job['sub_task'] + 1 #increment
-		if job['sub_task'] == job['num_stages']:
+		job['current_task'] = job['current_task'] + 1 #increment
+		if job['current_task'] == job['num_task']:
 			print "Job Finished"
-			return 0
+			job['status'] = 'completed'
+			#self.delta.modify_job(player_id, job_id, job)
+			return None
 		else:
 			print "More Job Tasks Left"
-			return job_id
+			#self.delta.modify_job(player_id, job_id, job)
+			return 1
+	
+	def next_sub_job(self, job_id):
 
-		self.delta.modify_job(player_id, job_id, job)
+		job = self.job_pool[job_id]		
+		current_task = job['current_task']
+		script = job['tasks'][current_task]
+			
+		return {
+			'script' : script.copy(),
+			'job_id' : job_id,
+			'task_num' : current_task, 
+			}
 		
 	def assign_agent_job(self, agent_id, job_id):
 		pass
