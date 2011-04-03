@@ -243,8 +243,8 @@ class Controller_commands:
 		world_id = msg['world_id']
 		self.r_client.lpush("world_"+str(world_id), dumps(msg))
 
-	# required = ['dp, agent_id']
-	# optional = ['player_id']
+	# required = []
+	# optional = []
 	def move(self, agent_id, x, y, z):
 		msg = {}	
 		msg['type'] = 'controller'
@@ -254,8 +254,8 @@ class Controller_commands:
 		msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
 
-	# required = ['dp, agent_id']
-	# optional = ['player_id']
+	# required = []
+	# optional = []
 	def move_item(self, agent_id, item_id, x=0, y=0, z=0):
 		msg = {}	
 		msg['type'] = 'controller'
@@ -265,3 +265,56 @@ class Controller_commands:
 		msg['item_id'] = item_id
 		msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
 		self.send_message(msg)
+		
+class Job_manager_commands:
+	
+	def __init__(self):
+		self.r_client = redis.Redis('localhost')
+		
+	def send_message(self,msg, world_id = 0):
+		world_id = msg['world_id']
+		self.r_client.lpush("world_"+str(world_id), dumps(msg))
+		
+	# required = []
+	# optional = []
+	def create_job(self, player_id, job):
+		msg = {}	
+		msg['type'] = 'manager'
+		msg['cmd'] = 'create_job'
+		msg['world_id'] = 0
+		msg['player_id'] = player_id
+		msg['job'] = job
+		self.send_message(msg)
+		
+	# required = []
+	# optional = []
+	def delete_job(self, job_id, player_id = 0):
+		msg = {}	
+		msg['type'] = 'manager'
+		msg['cmd'] = 'delete_job'
+		msg['world_id'] = 0
+		msg['player_id'] = player_id
+		msg['job_id'] =  job_id
+		self.send_message(msg)
+
+	def construct_tile(self, tile_id, player_id, build_from, build_at):
+		job = {
+		'type' : 'construct_tile',
+		'tile_id' : tile_id,
+		'material_list' : [],
+		'build_from' : build_from,
+		'build_at' : build_at,	
+		}
+		self.create_job(player_id, job)
+		
+	## required = []
+	## optional = []
+	#def move_item(self, agent_id, item_id, x=0, y=0, z=0):
+		#msg = {}	
+		#msg['type'] = 'manager'
+		#msg['cmd'] = 'move_item_goal'
+		#msg['world_id'] = 0
+		#msg['agent_id'] = agent_id
+		#msg['item_id'] = item_id
+		#msg['position'] = (0, x,y,z) #position is a 4, tuple (position_type, x, y, z)
+		#self.send_message(msg)	

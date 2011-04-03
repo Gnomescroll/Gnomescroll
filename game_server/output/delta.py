@@ -150,11 +150,11 @@ class Delta: #non-blocking client notification
 
 	def create_job(self, player_id, job_id, job_meta): #variable output
 		msg = {}
-		msg['msg'] = 'delete_job'
+		msg['msg'] = 'create_job'
 		msg['player_id'] = player_id
 		msg['job_id'] = job_id
 		if job_meta != None:
-			msg['job_meta'] = meta
+			msg['job_meta'] = job_meta
 		self.delta_out_q.put(msg)
 		pass
 

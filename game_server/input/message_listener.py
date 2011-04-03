@@ -57,7 +57,9 @@ class Message_listener:
 						#self.handlers.msg_to_function[cmd](**i)
 					if type == "controller":
 						self.message_handlers.agent_controller_handler[cmd](**i)
-					
+					if type == "manager":
+						self.message_handlers.job_manager_handler[cmd](**i)				
+							
 				except Exception, err:
 					print "message_worker: %s: %s" %(sys.stderr, err)
 					print "crash msg = " + str(i)
@@ -91,3 +93,5 @@ class Message_listener:
 					self.message_handlers.admin_handler[cmd](**i)
 				if type == "controller":
 					self.message_handlers.agent_controller_handler[cmd](**i)
+				if type == "manager":
+					self.message_handlers.job_manager_handler[cmd](**i)
