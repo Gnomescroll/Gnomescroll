@@ -1,34 +1,57 @@
 from interface.agent import Agent
 from interface.agent import Nobject
 
+class Agent_script:
+	
+	def __init__(self):
+		self.agent_id = None
+		self.script = None
+		
+	def load_job(self, job_id):
+		pass
+		
+	def next(self):
+		pass
+
 class Agent_controller:
 	
 	def __init__(self):
 		self.globals = None
 		self.job_manager = None
 		
-		self.agent_goals = {}
-		self.agent_behavior = {} #eating, working, wandering
-		
-		self.agent_behavior_state = {}
 		self.script = {}
-		#self.agents_tasks = {} #get next goal in task...
+		self.state = {}
+	
+	def load_job(self, id, job_id):
+		print "agent_controller, loading job: " + str((id, job_id))
+		(script, job_id, sub_job) = self.job_manager.claim_job(agent_id, job_id)
+		self.script[id] = script
+		self.state[id] = {
+		'mode' : 'job_script',
+		'job_id' : job_id,
+		'sub_job' : sub_job
+		}
+		
+	def next_action(self, id):
+		
+		if not id in self.state.keys():
+			print "No agent_state loaded"
+			return 0
+		state = self.state[id]
+		if state['mode'] == 'job_script':
+			print "run job script: " + str(id)
+			self.run_job_script(id)
+			return 1
+		else:
+			print "Mode not valid"
+			return 0
 
-	def set_agent_job(self, agent_id, 
-	
-	def next_action(self, agent_id):
-		
-		if not agent_id in self.agent_behavior_state.keys():
-			return 0
-		else:
-			behavior_state = self.agent_behavior_state[agent_id]
-		
-		if behavior_state == 'job':
-			self.run_agent_script(agent_id)
-		else:
-			print "Behavior State Unknown"
-			return 0
-	
+
+###
+###
+### DEPRECATE BELOW LINE
+###
+###		
 	def run_agent_script(self, id):
 		pass
 	

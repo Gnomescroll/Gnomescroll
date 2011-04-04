@@ -71,7 +71,7 @@ class Job_manager:
 		self.delta.create_job(player_id, job_id, job)
 	
 	#agent claims job and sub-job task script is released
-	def agent_claim_job(self, agent_id, job_id):
+	def claim_job(self, agent_id, job_id):
 		print "job: agent_claim_job, " + str((agent_id, job_id))
 		job = self.job_pool[job_id]
 		#sanity checks
@@ -86,11 +86,7 @@ class Job_manager:
 		
 		self.delta.modify_job(job['player_id'], job_id, job)
 		
-		return {
-		'script' : script.copy(),
-		'job_id' : job_id,
-		'task_num' : current_task, 
-		}
+		return (script.copy(),job_id,current_task)
 
 	def agent_release_job(self, job_id, agent_id = None):
 		print "job: agent_release_job, " + str((job_id, agent_id))
