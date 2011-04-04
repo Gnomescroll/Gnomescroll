@@ -14,7 +14,28 @@ class Agent_controller:
 		self.script = {}
 		#self.agents_tasks = {} #get next goal in task...
 
-	def next_action(self, id):
+	def set_agent_job(self, agent_id, 
+	
+	def next_action(self, agent_id):
+		
+		if not agent_id in self.agent_behavior_state.keys():
+			return 0
+		else:
+			behavior_state = self.agent_behavior_state[agent_id]
+		
+		if behavior_state == 'job':
+			self.run_agent_script(agent_id)
+		else:
+			print "Behavior State Unknown"
+			return 0
+	
+	def run_agent_script(self, id):
+		pass
+	
+	def agent_get_job(self, agent_id, job_id):
+		self.agent_behavior_state[agent_id]
+	
+	def next_action_deprecated(self, id):
 		if id in self.agent_behavior_state.keys():
 			return behavior_state(id)
 		else:
