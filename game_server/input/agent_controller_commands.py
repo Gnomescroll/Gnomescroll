@@ -11,6 +11,15 @@ class Agent_controller_commands:
 
 	# required = ['']
 	# optional = ['']	
+	def load_script(self, agent_id, script, **msg):
+		self.agent_controller.load_script(agent_id, script)
+		self.agent_command_scheduler.executeNoop(agent_id)
+
+
+### DEPRECATED BELOW LINE
+
+	# required = ['']
+	# optional = ['']	
 	def move_agent_goal(self, agent_id, position, **msg):
 		(type, x,y,z) = position
 		self.agent_controller.create_move_goal(agent_id, x, y, z)

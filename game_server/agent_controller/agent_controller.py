@@ -18,8 +18,7 @@ class Agent_controller:
 	def __init__(self):
 		self.globals = None
 		self.job_manager = None
-		
-		self.script = {}
+
 		self.state = {}
 	
 	def load_job(self, id, job_id):
@@ -29,7 +28,8 @@ class Agent_controller:
 		self.state[id] = {
 		'mode' : 'job_script',
 		'job_id' : job_id,
-		'sub_job' : sub_job
+		'sub_job' : sub_job,
+		'script' : script,
 		}
 		
 	def next_action(self, id):
@@ -42,10 +42,19 @@ class Agent_controller:
 			print "run job script: " + str(id)
 			self.run_job_script(id)
 			return 1
+		if state['mode'] == 'custom_script':
+			print "run custom script: " + str(id)			
 		else:
 			print "Mode not valid"
 			return 0
 
+	#loads a user defined script
+	def load_script(agent_id, script):
+		print " agent_controller load_script: custom script"
+		self.state[id] = {
+		'mode' : 'custom_script',
+		'script' : script,
+		}
 
 ###
 ###
