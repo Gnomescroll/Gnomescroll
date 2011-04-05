@@ -232,7 +232,24 @@ class Agent_commands:
 		msg['wall_type'] = wall_type
 		self.send_message(msg)			
 
+	def pickup_item(self, agent_id, item_id):
+		msg = {}
+		msg['type'] = 'agent'
+		msg['cmd'] = 'pickup_item'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		msg['item_id'] = item_id
+		self.send_message(msg)			
 
+	def drop_item(self, agent_id, item_id = None):
+		msg = {}
+		msg['type'] = 'agent'
+		msg['cmd'] = 'drop_item'
+		msg['world_id'] = 0
+		msg['agent_id'] = agent_id
+		if item_id != None:
+			msg['item_id'] = item_id
+		self.send_message(msg)
 
 class Controller_commands:
 	

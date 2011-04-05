@@ -35,6 +35,9 @@ class Message_handlers:
         #'remove_item_from_container' : self.agent_actions.remove_item_from_container
         'attack' : self.agent_commands.attack,
         'construct_wall' : self.agent_commands.construct_wall,
+        #
+        'pickup_item' : self.agent_commands.pickup_item,
+        'drop_item' : self.agent_commands.drop_item,
         }
         
         self.admin_handler = {
