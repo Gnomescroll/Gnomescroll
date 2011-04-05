@@ -12,8 +12,8 @@ class Agent_controller_commands:
 	# required = ['']
 	# optional = ['']	
 	def load_script(self, agent_id, script, **msg):
-		self.agent_controller.load_script(agent_id, script)
-		self.agent_command_scheduler.executeNoop(agent_id)
+		self.agent_controller.load_script(agent_id, script) #load the script into agent controller
+		self.agent_command_scheduler.executeNoop(agent_id) #starts running agent
 
 
 ### DEPRECATED BELOW LINE

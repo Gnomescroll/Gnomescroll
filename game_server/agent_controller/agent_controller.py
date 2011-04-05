@@ -1,18 +1,87 @@
 from interface.agent import Agent
 from interface.agent import Nobject
 
+def positions_equal(pos1, pos2):
+	assert len(pos1) != 4
+	assert len(pos2) != 4
+	assert pos1[0] == pos2[0]
+
+	if pos1[1] != pos2[1] or pos1[2] != pos2[2] or pos1[3] != pos2[3]:
+		return False
+	return True
+
+def agent_holding_item(agent, item_id):
+	assert type(item_id) == 'int'
+	assert hasattr(agent, 'holding')
+	
+	if agent.hold == item_id:
+		return True
+	else:
+		return False
+
 class Agent_script:
 	
-	def __init__(self):
-		self.agent_id = None
-		self.script = None
-		
-	def load_job(self, job_id):
-		pass
-		
-	def next(self):
-		pass
+	self.job_manager = None
 
+	#implemented commands
+	cmd_map = [
+		"::move_item",
+		'::move'
+	]
+
+	__init__(self):
+		self.id = None #agent_id
+		self.mode = None
+		self.job_id = None #optional
+		self.sub_job = None #optional
+		self.script = None
+		self.local = None
+		self.ip = 0
+	
+	def run()
+		current_line = self.script[self.ip]
+		if current_line[0] in this.cmd_map:
+			self.execute(current_line)
+		else:
+			print "Command is not implemented"
+			self.advance_id()
+		
+	def advance_ip(self):
+		self.ip = self.ip +1
+		if self.ip >= len(self.script):
+			self._complete_script()
+			
+	def _complete_script(self):
+		if self.job_id != None:
+			if self.job_manager.complete_sub_task(self.job_id, self.sub_job) == 1:
+				print "agent script: more of job is left"
+				#self.job_managernext_sub_job(self.job_id):
+			else:
+				print "agent script: no more scripts in job"
+	
+	def execute(self, line):
+		cmd = line[0]
+		if cmd == "::move_item":
+			self.__move(line[1], line[2])
+		if cmd == "::move":
+			self.__move(line[1])
+		else:
+			print "agent_script: this should never happen!"
+			
+	def __move_item(item_id, location):
+		if location[0] != 1 or len(location) != 4:
+			print "Error in position cordinate in script"
+		item = Nobject(item_id)
+		agent = Agent(self.id)
+		if agent.holding == item_id:
+			if positions_equal(agent.position, item.location):
+				
+	
+	def __move(location):
+		pass
+		
+		
+		
 class Agent_controller:
 	
 	def __init__(self):
@@ -30,6 +99,8 @@ class Agent_controller:
 		'job_id' : job_id,
 		'sub_job' : sub_job,
 		'script' : script,
+		'local' : {},
+		'ip' : 0, #instruction pointer
 		}
 		
 	def next_action(self, id):
@@ -40,7 +111,7 @@ class Agent_controller:
 		state = self.state[id]
 		if state['mode'] == 'job_script':
 			print "run job script: " + str(id)
-			self.run_job_script(id)
+			run_script(id, state )
 			return 1
 		if state['mode'] == 'custom_script':
 			print "run custom script: " + str(id)			
@@ -49,18 +120,57 @@ class Agent_controller:
 			return 0
 
 	#loads a user defined script
-	def load_script(agent_id, script):
+	def load_script(id, script):
 		print " agent_controller load_script: custom script"
 		self.state[id] = {
 		'mode' : 'custom_script',
 		'script' : script,
+		'local' : {},
+		'ip' : 0, #instruction pointer
 		}
-
 ###
 ###
 ### DEPRECATE BELOW LINE
 ###
 ###		
+
+	def command_index():
+		
+		#symbols *,@,#,$,%
+		
+		#predicates
+		('?agent_holding_item', agent_id, item_id)
+		('?item_at_location', item_id, position)
+		('?agent_at_location', agent_id, position)
+
+		#actions
+		('::move', position)
+		('::pickup_item', item_id)
+		('::move_item', item_id, position)
+		
+		#atomic agent actions
+		(':move', position)
+		(':drop_item', item_id)
+		(':pickup_item', item_id)
+
+		#flow control commands
+		('@label', string)
+		('@assert', predicate, label)
+		('@jump', label)
+		('@if', predicate, label) #same as assert
+		('@fail', label) #what do on failure
+		
+		#job management
+		('&pause', string) #failure message
+		('&error', string) #failure message
+
+		('&lock_item', item_id) 
+		('&unlock_item', item_id)
+
+		#functions
+		('%agent_position', agent_id)
+		('%item_position', item_id)
+
 	def run_agent_script(self, id):
 		pass
 	
@@ -121,44 +231,6 @@ class Agent_controller:
 		else:
 			agent.move_0(dx, dy, 0)
 			return 1 #keep going		
-
-	def command_index():
-		
-		#symbols *,@,#,$,%
-		
-		#predicates
-		('?agent_holding_item', agent_id, item_id)
-		('?item_at_location', item_id, (t, x, y, z))
-		('?agent_at_location', agent_id, (t, x, y, z))
-
-		#actions
-		('::move', agent_id, position)
-		('::pickup_item', agent_id, item_id)
-		('::move_item', agent_id, item_id, position)
-		
-		#atomic agent actions
-		(':move', agent_id, dx, dy, dz)
-		(':move_item', agent_id, item_id, (t, x, y, z)) #into chests, etc...
-		(':drop_item', agent_id, item_id)
-		(':pickup_item', agent_id, item_id)
-
-		#flow control commands
-		('@label', string)
-		('@assert', predicate, label)
-		('@jump', label)
-		('@if', predicate, label) #same as assert
-		('@fail', label) #what do on failure
-		
-		#job management
-		('&pause', string) #failure message
-		('&error', string) #failure message
-
-		('&lock_item', item_id) 
-		('&unlock_item', item_id)
-
-		#functions
-		('%agent_position', agent_id)
-		('%item_position', item_id)
 
 		
 	def FSM1(self, id, goal):

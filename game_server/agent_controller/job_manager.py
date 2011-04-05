@@ -48,7 +48,7 @@ class Job_manager:
 			'current_task' : 0,
 
 			'tasks' : None,
-			'num_tasks' : 0
+			'num_tasks' : None
 			
 		}
 		
