@@ -14,10 +14,11 @@ def agent_holding_item(agent, item_id):
 	assert type(item_id) == 'int'
 	assert hasattr(agent, 'holding')
 	
-	if agent.hold == item_id:
+	if agent.holding == item_id:
 		return True
 	else:
 		return False
+
 
 class Agent_script:
 	
@@ -39,6 +40,7 @@ class Agent_script:
 		self.ip = 0
 	
 	def run()
+		#do try and use fail/except
 		current_line = self.script[self.ip]
 		if current_line[0] in this.cmd_map:
 			self.execute(current_line)
@@ -73,15 +75,51 @@ class Agent_script:
 			print "Error in position cordinate in script"
 		item = Nobject(item_id)
 		agent = Agent(self.id)
-		if agent.holding == item_id:
-			if positions_equal(agent.position, item.location):
+		if not agent_holding_item(agent, item_id):
+			if not positions_equal(agent.position, item.position):
+				self.__move(item.position)
+			else:
+				self._pickup_item(item_id)
+		else:
+			if positions_equal(agent.position, position):
+				self._drop_item(item_id)
+				self.advance_ip() #exit condition
+			else:
+				self.__move(location)
 				
+	def __move(self, location):
+		self.simple_move(location)
 	
-	def __move(location):
+	def _pickup_item(self, item_id):
 		pass
 		
-		
-		
+	def _drop_item(self, item_id = None):
+		pass
+
+	def simple_move(self, position):
+		agent = Agent(self.id)
+		(ptype, x, y, z) = agent.position
+		(ptype_, x_, y_, z_) = position
+		if ptype != 0:
+			print "agent_controller.move_goal: ptype error"
+			return 0
+		dx = 0
+		dy = 0
+		if x > x_:
+			dx = -1
+		if x < x_:
+			dx = 1
+		if y > y_:
+			dy = -1
+		if y < y_:
+			dy = 1
+		if dx == 0 and dy == 0:
+			print "Impossible state!!! simple move error" 
+			return 0
+		else:
+			agent.move_0(dx, dy, 0)
+			return 1 #keep going	
+	
 class Agent_controller:
 	
 	def __init__(self):
