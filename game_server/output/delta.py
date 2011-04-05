@@ -102,7 +102,8 @@ class Delta: #non-blocking client notification
 		msg['msg'] = 'object_position_change'
 		msg['id'] = object_id
 		msg['position'] = position
-		msg['meta'] = meta
+		if meta != None:
+			msg['meta'] = meta
 		#msg['object_type'] = self.objects.objects[object_id]['object_type']
 		self.delta_out_q.put(msg)
 	

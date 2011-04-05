@@ -22,7 +22,7 @@ def agent_holding_item(agent, item_id):
 
 class Agent_script:
 	
-	self.job_manager = None
+	job_manager = None
 
 	#implemented commands
 	cmd_map = [
@@ -30,7 +30,7 @@ class Agent_script:
 		'::move'
 	]
 
-	__init__(self):
+	def __init__(self):
 		self.id = None #agent_id
 		self.mode = None
 		self.job_id = None #optional
@@ -39,7 +39,7 @@ class Agent_script:
 		self.local = None
 		self.ip = 0
 	
-	def run()
+	def run():
 		#do try and use fail/except
 		current_line = self.script[self.ip]
 		if current_line[0] in this.cmd_map:

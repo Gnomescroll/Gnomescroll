@@ -14,6 +14,12 @@ controller.move_item(1, 2)
 admin.create_agent(1,1,1)
 controller.move(1, 5, 6, 4)
 
+admin.create_agent(1,1,1)
+admin.create_object(1,1,1,'item', 'generic_food')
+agent.pickup_item(1, 2)
+##testing
+agent.move_0(1,1,0,0)
+agent.drop_item()
 
 admin.create_agent(5,5,1)
 job_manager.construct_tile(200, 0, (5,5,1), (5,6,1))
