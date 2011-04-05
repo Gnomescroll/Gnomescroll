@@ -84,11 +84,9 @@ class Agent:
 			item = Nobject(self.holding)
 			item.position = self.position
 			self.holding = 0
-			#update message
-			self.delta.meta(type, meta)			
+			#update message		
 			self.delta.agent_state_change(self.__dict__['id'], self.position, self.version)#, meta = meta)
-			#meta = {type : 'drop_item'}
-			self.object_position_change(self.holding, self.position)#, meta=meta)
+			self.delta.object_position_change(self.holding, self.position)#, meta=meta)
 		pass
 
 	#action will be wall, ditch, etc...
