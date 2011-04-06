@@ -27,7 +27,8 @@ class Agent_script:
 	#implemented commands
 	cmd_map = [
 		"::move_item",
-		'::move'
+		'::move',
+		':construct_tile',
 	]
 
 	def __init__(self, agent_id, mode, job_id, sub_job, script, local = {}, ip = 0):
@@ -112,8 +113,10 @@ class Agent_script:
 		agent = Agent(self.id)
 		agent.drop_item
 
-	def _construct_tile(self):
-		pass
+	def _construct_tile(self, position, tile_name):
+		agent = Agent(self.id)
+		agent.construct_tile(position, tile_name)
+		self.advance_ip()
 		
 	def simple_move(self, position):
 		agent = Agent(self.id)

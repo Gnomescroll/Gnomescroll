@@ -36,7 +36,10 @@ class Job_manager:
 		
 ##individual jobs
 	
-	def construct_tile(self, player_id, tile_id, material_list, build_from, build_at, **misc):
+	def construct_tile(self, player_id, tile_name, material_list, build_from, build_at, **misc):
+		
+		tile_id = 
+		
 		job_id = self.job_id()
 		job = {
 			'job_id' : job_id,

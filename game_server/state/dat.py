@@ -610,6 +610,15 @@ class Dat:
 			return 0
 		else:
 			return tile_dict[property]
+	
+	def tile_name_to_id(self, tile_name):
+		if tile_name in self.tiles_by_name:
+			id = self.tile_by_name[tile_name]['id']
+			print "ID= " + str(id)
+			return id
+		else:
+			print "dat tile_name_to_id: invalid tile_name"
+			return -1 #change to invalid later? to -2?
 		
 	def get_tile_by_name(self, name):
 		if name not in self.tiles_by_name.keys():
