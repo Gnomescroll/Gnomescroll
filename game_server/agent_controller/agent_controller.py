@@ -49,12 +49,15 @@ class Agent_script:
 			print "Command is not implemented: " + str(current_line[0])
 			self.advance_ip()
 		
-	def advance_ip(self):
+	def advance_ip(self, next_op = False):
 		self.ip = self.ip +1
 		if self.ip >= len(self.script):
 			self._complete_script()
+		if next_op != False:
+			self.run()
 			
 	def _complete_script(self):
+		print "script execution complete"
 		self.mode = 'sub_job_complete'
 		self.script = None
 		self.local = None
@@ -76,7 +79,7 @@ class Agent_script:
 			self.__move(line[1])
 		elif cmd == ":construct_tile":
 			print ":construct_tile"
-			#self._construct_tile()
+			self._construct_tile(line[1], line[2])
 		else:
 			print "agent_script: this should never happen!"
 			
@@ -115,7 +118,7 @@ class Agent_script:
 
 	def _construct_tile(self, position, tile_name):
 		agent = Agent(self.id)
-		agent.construct_tile(position, tile_name)
+		agent.construct_tile(tile_name, position)
 		self.advance_ip()
 		
 	def simple_move(self, position):
@@ -138,7 +141,7 @@ class Agent_script:
 			dy = 1
 		if dx == 0 and dy == 0:
 			print "Simple Move: At Destination"
-			self.advance_ip()
+			self.advance_ip(next_op= True)
 			return 0
 		else:
 			agent.move_0(dx, dy, 0)
@@ -175,7 +178,7 @@ class Agent_controller:
 			return 0
 		state = self.state[id]
 		if state.mode == 'job_script':
-			print "run job script: " + str(id)
+			#print "run job script: " + str(id)
 			#run_script(id, state )
 			self.state[id].run()
 			return 1

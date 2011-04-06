@@ -20,18 +20,13 @@ agent.pickup_item(1, 2)
 agent.move_0(1,1,0,0)
 agent.drop_item(1)
 
-admin.create_agent(5,5,1)
+admin.create_agent(1,1,1)
 job_manager.construct_tile('generic_wall', 0, (1, 5,5,1), (1, 5,6,1))
 controller.load_job(1,2)
 
 controller.move_item(1, 5, 5 ,1)
 
-#agent.move_0(1, 1,1)
-
-info.get_agent_list()
-
 admin.set_map(2,2,0,1)
-
 
 admin.create_object(1,1,1,'crop')
 admin.create_object(1,3,1,'crop', 'generic_crop')
@@ -54,6 +49,9 @@ agent.dig(1,2,1,1)
 admin.create_agent(1,1,1)
 admin.create_agent(1,2,1)
 agent.attack(1,2)
+
+admin.create_agent(1,1,1)
+agent.construct_tile(1, 1, 2, 1, 'generic_wall')
 
 admin.create_agent(1,1,1)
 agent.construct_tile(1, 2, 1, 1)

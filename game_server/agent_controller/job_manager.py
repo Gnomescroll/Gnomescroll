@@ -38,7 +38,7 @@ class Job_manager:
 	
 	def construct_tile(self, player_id, tile_name, material_list, build_from, build_at, **misc):
 		
-		tile_id = self.dat.tile_name_to_id(tile_name)
+		#tile_id = self.dat.tile_name_to_id(tile_name)
 		
 		job_id = self.job_id()
 		job = {
@@ -65,7 +65,7 @@ class Job_manager:
 		##  build wall
 		tasks.append([
 				('::move', build_from),
-				(':construct_tile', tile_id, build_at),
+				(':construct_tile', tile_name, build_at),
 			])
 		
 		job['num_tasks'] = len(tasks)

@@ -112,7 +112,7 @@ tiles_dat = [
 
 	# walls
 	{
-			'id' : 0200,
+			'id' : 200,
 			'name' : "generic_wall",
 
 			'visual' : {
@@ -610,7 +610,7 @@ class Dat:
 			return 0
 		else:
 			return tile_dict[property]
-	
+
 	def tile_name_to_id(self, tile_name):
 		if tile_name in self.tiles_by_name:
 			id = self.get_tile_by_name(tile_name)['id']
