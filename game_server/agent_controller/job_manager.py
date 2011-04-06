@@ -77,7 +77,7 @@ class Job_manager:
 		#sanity checks
 		if job['agent_id'] != 0:
 			print "job_manager agent_claim_job error: job is held by another agent"
-			return 0
+			return (None, None, None)
 		#end
 		job['agent_id'] = agent_id
 		
@@ -86,7 +86,7 @@ class Job_manager:
 		
 		self.delta.modify_job(job['player_id'], job_id, job)
 		
-		return (script.copy(),job_id,current_task)
+		return (script,job_id,current_task)
 
 	def agent_release_job(self, job_id, agent_id = None):
 		print "job: agent_release_job, " + str((job_id, agent_id))

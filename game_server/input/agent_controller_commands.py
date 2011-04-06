@@ -31,3 +31,8 @@ class Agent_controller_commands:
 		self.agent_controller. create_move_item_goal(agent_id, item_id, position)
 		self.agent_command_scheduler.executeNoop(agent_id)
 		
+	# required = ['']
+	# optional = ['']
+	def load_job(self, agent_id, job_id, **msg):
+		self.agent_controller.load_job(agent_id, job_id)
+		self.agent_command_scheduler.executeNoop(agent_id)

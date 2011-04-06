@@ -30,23 +30,23 @@ class Agent_script:
 		'::move'
 	]
 
-	def __init__(self):
-		self.id = None #agent_id
-		self.mode = None
-		self.job_id = None #optional
-		self.sub_job = None #optional
-		self.script = None
-		self.local = None
-		self.ip = 0
+	def __init__(self, agent_id, mode, job_id, sub_job, script, local = {}, ip = 0):
+		self.id = agent_id #agent_id
+		self.mode = mode
+		self.job_id = job_id #optional
+		self.sub_job = sub_job #optional
+		self.script = script
+		self.local = local
+		self.ip = ip
 	
-	def run():
+	def run(self):
 		#do try and use fail/except
 		current_line = self.script[self.ip]
-		if current_line[0] in this.cmd_map:
+		if current_line[0] in self.cmd_map:
 			self.execute(current_line)
 		else:
-			print "Command is not implemented"
-			self.advance_id()
+			print "Command is not implemented: " + str(current_line[0])
+			self.advance_ip()
 		
 	def advance_ip(self):
 		self.ip = self.ip +1
@@ -64,8 +64,10 @@ class Agent_script:
 	def execute(self, line):
 		cmd = line[0]
 		if cmd == "::move_item":
-			self.__move(line[1], line[2])
+			print "::move_item"
+			self.__move_item(line[1], line[2])
 		if cmd == "::move":
+			print "::move"
 			self.__move(line[1])
 		else:
 			print "agent_script: this should never happen!"
@@ -77,27 +79,35 @@ class Agent_script:
 		agent = Agent(self.id)
 		if not agent_holding_item(agent, item_id):
 			if not positions_equal(agent.position, item.position):
+				print "1"
 				self.__move(item.position)
 			else:
+				print "2"
 				self._pickup_item(item_id)
 		else:
 			if positions_equal(agent.position, position):
+				print "3"
 				self._drop_item(item_id)
 				self.advance_ip() #exit condition
 			else:
+				print "4"
 				self.__move(location)
 				
 	def __move(self, location):
 		self.simple_move(location)
 	
 	def _pickup_item(self, item_id):
-		pass
+		agent = Agent(self.id)
+		item = Nobject(item_id)
+		agent.pickup_item(item.id)
 		
 	def _drop_item(self, item_id = None):
-		pass
+		agent = Agent(self.id)
+		agent.drop_item
 
 	def simple_move(self, position):
 		agent = Agent(self.id)
+		#print str(position)
 		(ptype, x, y, z) = agent.position
 		(ptype_, x_, y_, z_) = position
 		if ptype != 0:
@@ -114,7 +124,8 @@ class Agent_script:
 		if y < y_:
 			dy = 1
 		if dx == 0 and dy == 0:
-			print "Impossible state!!! simple move error" 
+			print "Simple Move: At Destination"
+			self.advance_ip()
 			return 0
 		else:
 			agent.move_0(dx, dy, 0)
@@ -130,9 +141,11 @@ class Agent_controller:
 	
 	def load_job(self, id, job_id):
 		print "agent_controller, loading job: " + str((id, job_id))
-		(script, job_id, sub_job) = self.job_manager.claim_job(agent_id, job_id)
-		self.script[id] = script
-		self.state[id] = {
+		(script, job_id, sub_job) = self.job_manager.claim_job(id, job_id)
+		if script == None:
+			print "load job error"
+			return
+		temp = {
 		'mode' : 'job_script',
 		'job_id' : job_id,
 		'sub_job' : sub_job,
@@ -141,17 +154,27 @@ class Agent_controller:
 		'ip' : 0, #instruction pointer
 		}
 		
+		state = Agent_script(**{
+		'agent_id' : id,
+		'mode' : 'job_script',
+		'job_id' : job_id,
+		'sub_job' : sub_job,
+		'script' : script,			
+		})
+		self.state[id] = state
+		
 	def next_action(self, id):
 		
 		if not id in self.state.keys():
 			print "No agent_state loaded"
 			return 0
 		state = self.state[id]
-		if state['mode'] == 'job_script':
+		if state.mode == 'job_script':
 			print "run job script: " + str(id)
-			run_script(id, state )
+			#run_script(id, state )
+			self.state[id].run()
 			return 1
-		if state['mode'] == 'custom_script':
+		if state.mode == 'custom_script':
 			print "run custom script: " + str(id)			
 		else:
 			print "Mode not valid"

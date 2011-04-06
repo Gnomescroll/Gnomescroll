@@ -50,6 +50,7 @@ class Message_handlers:
         self.agent_controller_handler = {
         'move_agent_goal' : self.agent_controller_commands.move_agent_goal,
         'move_item_goal' : self.agent_controller_commands.item_move_goal,
+        'load_job' : self.agent_controller_commands.load_job,
         }
 
         self.job_manager_handler = {

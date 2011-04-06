@@ -21,8 +21,8 @@ agent.move_0(1,1,0,0)
 agent.drop_item(1)
 
 admin.create_agent(5,5,1)
-job_manager.construct_tile(200, 0, (5,5,1), (5,6,1))
-
+job_manager.construct_tile(200, 0, (1, 5,5,1), (1, 5,6,1))
+controller.load_job(1,2)
 
 controller.move_item(1, 5, 5 ,1)
 
