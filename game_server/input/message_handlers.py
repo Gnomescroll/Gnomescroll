@@ -22,7 +22,7 @@ class Message_handlers:
         self.agent_handler = {
         'move_0' : self.agent_commands.move_0,
         'dig' : self.agent_commands.dig,
-        'construct_wall' : self.agent_commands.construct_wall,
+        'construct_tile' : self.agent_commands.construct_tile,
         
         'pickup_item' : self.agent_commands.pickup_item,
         'drop_item' : self.agent_commands.drop_item,

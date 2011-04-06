@@ -225,7 +225,7 @@ class Agent_commands:
 	def construct_tile(self, agent_id, x, y, z, tile_name = 'generic_wall'):
 		msg = {}
 		msg['type'] = 'agent'
-		msg['cmd'] = 'construct_wall'
+		msg['cmd'] = 'construct_tile'
 		msg['world_id'] = 0
 		msg['agent_id'] = agent_id
 		msg['position'] = (0, x, y, z)

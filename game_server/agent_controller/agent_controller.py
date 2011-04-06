@@ -70,12 +70,12 @@ class Agent_script:
 		if cmd == "::move_item":
 			print "::move_item"
 			self.__move_item(line[1], line[2])
-		if cmd == "::move":
+		elif cmd == "::move":
 			print "::move"
 			self.__move(line[1])
-		if cmd == ":construct_tile"
+		elif cmd == ":construct_tile":
 			print ":construct_tile"
-			self._construct_tile(
+			#self._construct_tile()
 		else:
 			print "agent_script: this should never happen!"
 			
