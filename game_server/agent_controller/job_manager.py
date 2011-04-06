@@ -105,9 +105,9 @@ class Job_manager:
 		job = self.job_pool[job_id]
 		if task_num != 	job['current_task']:
 			print "job_manager complete_sub_task error: jobs subtasks do not match"
-		stage = job['stages'][sub_task] 
+
 		job['current_task'] = job['current_task'] + 1 #increment
-		if job['current_task'] == job['num_task']:
+		if job['current_task'] == job['num_tasks']:
 			print "Job Finished"
 			job['status'] = 'completed'
 			#self.delta.modify_job(player_id, job_id, job)

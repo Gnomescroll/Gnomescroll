@@ -19,6 +19,8 @@ from state.agent_command_scheduler import Agent_command_scheduler
 from agent_controller.agent_controller import Agent_controller
 from agent_controller.job_manager import Job_manager
 
+from agent_controller.agent_controller import Agent_script
+
 ##input message handling
 from input.message_listener import Message_listener
 from input.message_handlers import Message_handlers
@@ -39,29 +41,29 @@ from interface.crop import Crop
 class Server:
 
     def __init__(self, world_id):
-        self.globals = Globals(world_id) #takes world_if as input
-        # listeners for input
-        self.message_listener = Message_listener()
-        self.message_handlers = Message_handlers()
-        self.info_commands = Info_commands()
-        self.agent_commands = Agent_commands()
-        self.admin_commands = Admin_commands()
-        self.agent_controller_commands = Agent_controller_commands()
-        self.job_manager_commands = Job_manager_commands()
-        # output to server
-        self.info = Info()
-        self.delta = Delta()
-        #game state
-        self.world_map = World_map()
-        self.world_time = World_time()
-        self.agents = Agents()
-        self.objects = Objects()
-        self.dat = Dat()
-        self.agent_command_scheduler = Agent_command_scheduler()
-        #agent controller
-        self.agent_controller = Agent_controller()
-        self.job_manager = Job_manager()
-
+		self.globals = Globals(world_id) #takes world_if as input
+		# listeners for input
+		self.message_listener = Message_listener()
+		self.message_handlers = Message_handlers()
+		self.info_commands = Info_commands()
+		self.agent_commands = Agent_commands()
+		self.admin_commands = Admin_commands()
+		self.agent_controller_commands = Agent_controller_commands()
+		self.job_manager_commands = Job_manager_commands()
+		# output to server
+		self.info = Info()
+		self.delta = Delta()
+		#game state
+		self.world_map = World_map()
+		self.world_time = World_time()
+		self.agents = Agents()
+		self.objects = Objects()
+		self.dat = Dat()
+		self.agent_command_scheduler = Agent_command_scheduler()
+		#agent controller
+		self.agent_controller = Agent_controller()
+		self.job_manager = Job_manager()
+		
     def share_state(self):
         print "Share State Start"
         not_singletons = []
@@ -96,6 +98,8 @@ class Server:
         Crop.objects = self.objects
         Crop.world_time = self.world_time
         Crop.dat = self.dat
+        #controller
+        Agent_script.job_manager = self.job_manager
         
     def run(self):
         self.share_state()

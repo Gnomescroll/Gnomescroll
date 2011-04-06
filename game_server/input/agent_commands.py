@@ -25,10 +25,9 @@ class Agent_commands:
 
 	# required = ['position, agent_id', 'wall_type']
 	# optional = []		
-	def construct_wall(self, agent_id, position, wall_type, **msg):
-		Agent(agent_id).construct_wall(position, wall_type)
+	def construct_tile(self, agent_id, position, tile_name, **msg):
+		Agent(agent_id).construct_tile(position, tile_name)
 		pass
-
 
 	# required = ['agent_id', 'target_id']
 	# optional = ['target_type', 'attack_type']			

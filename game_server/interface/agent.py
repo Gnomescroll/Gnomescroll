@@ -218,25 +218,25 @@ class Agent:
 			self.objects.create([0, x, y, z], 'item', item_name)
 
 	#place items on a square, then attempt command. wall_type is the type of tile to build
-	def construct_wall(self, position, wall_type):
+	def construct_tile(self, position, tile_name):
 		(type_a, x_a, y_a, z_a) = self.position
 		(type_b, x_b, y_b, z_b) = position
 		if not -1 <= x_a - x_b <=1:
-			print "Agent construct_wall Error: Agent is too far away!"
+			print "agent construct_tile: Agent is too far away!"
 			return
 		if not -1 <= y_a - y_b <=1:
-			print "Agent construct_wall Error: Agent is too far away!"
+			print "agent construct_tile: Agent is too far away!"
 			return
 		if not z_a == z_b:
-			print "Agent construct_wall Error: Agent is on wrong z-level!"
+			print "agent construct_tile: Agent is on wrong z-level!"
 			return	
 		#check to see if target square is blocked
 		tile = self.dat.get_tile_by_value(self.world_map.get(x_b, y_b, z_b))
 		if tile['blocking'] == 1:
-			print "Agent construct_wall Error: square is already occupied"
-		wall_tile = self.dat.get_tile_by_name(wall_type)
+			print "agent construct_tile: square is already occupied"
+		wall_tile = self.dat.get_tile_by_name(tile_name)
 		if not 'buildable' in wall_tile.keys() or wall_tile['buildable'] == 0: #should short-circuit evaluation?
-			print "Agent construct_wall Error: this tile cannot be build"
+			print "agent construct_tile error: this tile cannot be build"
 			return
 		#check material requirements
 		requires = wall_tile['build_requires']	

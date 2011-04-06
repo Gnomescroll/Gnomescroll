@@ -54,6 +54,10 @@ class Agent_script:
 			self._complete_script()
 			
 	def _complete_script(self):
+		self.mode = 'sub_job_complete'
+		self.script = None
+		self.local = None
+
 		if self.job_id != None:
 			if self.job_manager.complete_sub_task(self.job_id, self.sub_job) == 1:
 				print "agent script: more of job is left"
@@ -69,6 +73,9 @@ class Agent_script:
 		if cmd == "::move":
 			print "::move"
 			self.__move(line[1])
+		if cmd == ":construct_tile"
+			print ":construct_tile"
+			self._construct_tile(
 		else:
 			print "agent_script: this should never happen!"
 			
@@ -79,18 +86,18 @@ class Agent_script:
 		agent = Agent(self.id)
 		if not agent_holding_item(agent, item_id):
 			if not positions_equal(agent.position, item.position):
-				print "1"
+				#print "1"
 				self.__move(item.position)
 			else:
-				print "2"
+				#print "2"
 				self._pickup_item(item_id)
 		else:
 			if positions_equal(agent.position, position):
-				print "3"
+				#print "3"
 				self._drop_item(item_id)
 				self.advance_ip() #exit condition
 			else:
-				print "4"
+				#print "4"
 				self.__move(location)
 				
 	def __move(self, location):
@@ -105,6 +112,9 @@ class Agent_script:
 		agent = Agent(self.id)
 		agent.drop_item
 
+	def _construct_tile(self):
+		pass
+		
 	def simple_move(self, position):
 		agent = Agent(self.id)
 		#print str(position)
@@ -145,14 +155,6 @@ class Agent_controller:
 		if script == None:
 			print "load job error"
 			return
-		temp = {
-		'mode' : 'job_script',
-		'job_id' : job_id,
-		'sub_job' : sub_job,
-		'script' : script,
-		'local' : {},
-		'ip' : 0, #instruction pointer
-		}
 		
 		state = Agent_script(**{
 		'agent_id' : id,
@@ -175,7 +177,10 @@ class Agent_controller:
 			self.state[id].run()
 			return 1
 		if state.mode == 'custom_script':
-			print "run custom script: " + str(id)			
+			print "run custom script: " + str(id)
+		if state.mode == 'sub_job_complete':
+			print "Subjob complete: select next behavior"
+			return 0
 		else:
 			print "Mode not valid"
 			return 0
