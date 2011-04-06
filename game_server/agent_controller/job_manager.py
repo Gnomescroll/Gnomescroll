@@ -38,7 +38,7 @@ class Job_manager:
 	
 	def construct_tile(self, player_id, tile_name, material_list, build_from, build_at, **misc):
 		
-		tile_id = 
+		tile_id = self.dat.tile_name_to_id(tile_name)
 		
 		job_id = self.job_id()
 		job = {

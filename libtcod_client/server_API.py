@@ -325,10 +325,10 @@ class Job_manager_commands:
 		msg['job_id'] =  job_id
 		self.send_message(msg)
 
-	def construct_tile(self, tile_id, player_id, build_from, build_at):
+	def construct_tile(self, tile_name, player_id, build_from, build_at):
 		job = {
 		'type' : 'construct_tile',
-		'tile_id' : tile_id,
+		'tile_name' : tile_name,
 		'material_list' : [],
 		'build_from' : build_from,
 		'build_at' : build_at,	

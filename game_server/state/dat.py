@@ -613,7 +613,7 @@ class Dat:
 	
 	def tile_name_to_id(self, tile_name):
 		if tile_name in self.tiles_by_name:
-			id = self.tile_by_name[tile_name]['id']
+			id = self.get_tile_by_name(tile_name)['id']
 			print "ID= " + str(id)
 			return id
 		else:
