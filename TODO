@@ -8,8 +8,18 @@ you should add these to issue tracker actually
 7> (working on now) interface between atomic agent actions, compound action controller and job manager 
 8> (possibly) an html interface for editing tiles/items/crafting stuff/agents (serialize in python dictionaries to disc for now, return dictionaries with get request)
 
+Dynamic World:
+!!! Cows Grazing on grass
+	-random walk
+	-eat grass, with probability of converting terrain
+	-have mechanism (etct timer) for grass regrowth
+	advanced
+	-cow hunger
+	-cow reproduction
 
-
+	Fires
+		self reproducing
+		random walk
 
 Infrastructure:
 
@@ -90,4 +100,10 @@ Social:
 
 	Forums
 		Cordinate/discuss feature development
+
+Mechanical:
+	Pistons
+		push fluids
+		act as valves
+		push upto 16 spaces of certain blocks
 
