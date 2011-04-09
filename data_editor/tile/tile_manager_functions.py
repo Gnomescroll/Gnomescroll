@@ -49,28 +49,28 @@ class Tile:
 					#'dig_into' : 'empty_block'
 			}
 			
-		dict_to_redis(object_type, id, default_tile)
-		add_object_to_index(object_type, id)
+		dict_to_redis(self.object_type, id, default_tile)
+		add_object_to_index(self.object_type, id)
 		return id
 		
 	def get(self, id):
-		type = self.type
+		object_type = self.object_type
 		output_dict = {}
 		meta_info_dict = {}
-		dict_from_redis(id, type, output_dict, meta_info_dict)
+		dict_from_redis(id, object_type, output_dict, meta_info_dict)
 		
 	def get_all_keys(self):
-		type = self.type
-		lista = get_object_list(type)
+		object_type = self.object_type
+		lista = get_object_list(object_type)
 		return lista
 		
 	def get_all(self, id):
-		type = self.type
-		lista = get_object_list(type)
+		object_type = self.object_type
+		lista = get_object_list(object_type)
 		results = []
 		for key in lista:
 			t0 = {}
 			t1 = {}
-			dict_from_redis_by_key(key, type, t0, t1)
+			dict_from_redis_by_key(key, object_type, t0, t1)
 			results.append((t0,t1))
 		return results

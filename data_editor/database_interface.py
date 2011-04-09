@@ -81,15 +81,15 @@ import string
 #	id = get_free_id(type)
 #	return dict_to_redis(type, id, default_dict)
 	
-def dict_to_redis(type, id, input_dict):
+def dict_to_redis(object_type, id, input_dict):
 	#serialize
 	map_dict = {}
 	serialize_dict(input_dict, map_dict)
 	#now set database from dictionary
 	r = get_redis_client()
-	object_key = get_object_key(type, id)
+	object_key = get_object_key(object_type, id)
 	r.hmset(object_key, map_dict)
-	add_object_to_index(type, id)
+	add_object_to_index(object_type, id)
 	
 def serialize_dict(input_dict, map_dict, prefix = ""):
 	supported_types = [ 'str', 'int', 'tuple', 'list']
