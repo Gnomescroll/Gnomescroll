@@ -3,8 +3,10 @@ import simplejson
 import redis
 from marshal import dumps
 
-from database_interface import get_object_list, delete_object, dict_from_redis, dict_to_redis
+#from database_interface import get_object_list, delete_object, dict_from_redis, dict_to_redis
+#from database_interface import get_object_list, delete_object, dict_from_redis, dict_to_redis
 
+from tile.tile_manager_functions import *
 
 
 # get_object_list(type)
@@ -15,7 +17,7 @@ from database_interface import get_object_list, delete_object, dict_from_redis, 
 # dict_from_redis(id, object_type, output_dict = {}, meta_info_dict = {})
 # dict_to_redis(type, id, input_dict):
 
-from tile.tile_manager.py import *
+from tile.tile_manager import *
 
 app = Flask(__name__)
 
@@ -23,28 +25,26 @@ PORT = 8060
 
 @app.route("/")
 def root():
-    return render_template('tile_list.html', {})
+    return render_template('tile_list.html', tile_list = {})
 
-@app.rout("/tile/tile_list")
+@app.route("/tile/tile_list")
 def tile_list():
-    return render_template('tile_list.html', {
-		'tile_list' : Tile.get_all()
-		})
+	tile = Tile()
+	return render_template('tile_list.html', tile_list = tile.get_all() )
 
-@app.rout("/tile/tile_key_list")
+@app.route("/tile/tile_key_list")
 def tile_list():
-    return render_template('tile_list.html', {
-		'tile_list' : Tile.get_all_keys()
-		})
+	tile = Tile()
+	return render_template('tile_list.html', tile_list = tile.get_all_keys()
+		)
 
 		
 @app.route("/tile/create_tile")
 def create_tile():
-	try:
-		id = Tile.create_new_tile()
-		return "Works: " + str(id)
-	except:
-		return "Error"
+	tile = Tile()
+	id = tile.create_new_tile()
+	return "Works: " + str(id)
+
 	#return redirect(url_for('edit_tile', tile_id = Tile().id)
     #return render_template('tile_editor.html', {})
 
@@ -61,15 +61,14 @@ def edit_tile(tile_id):
   
 @app.route('/api', methods=['POST'])
 def api_call(msg=None):
-    vars = request.form
-    
-    data = vars.get('json', {})
-    data = simplejson.loads(data, encoding = 'utf-8')
-    print str(data)
+	vars = request.form
+	
+	data = vars.get('json', {})
+	data = simplejson.loads(data, encoding = 'utf-8')
+	print str(data)
 
-    send_message(data)
-
-    return 'ok'
+	send_message(data)
+	return 'ok'
     
 @app.route('/static/<subdir>/<file>')
 def static_image(subdir='',file=None):

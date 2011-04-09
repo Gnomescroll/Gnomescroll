@@ -43,6 +43,7 @@ def get_free_id(type):
 	
 def get_object_list(type):
 	r = get_redis_client()
+	index_key = get_index_key(type)
 	key_list = r.smembers(index_key)
 	return key_list
 
@@ -110,7 +111,7 @@ def dict_from_redis_by_id(id, object_type, output_dict = {}, meta_info_dict = {}
 	object_key = get_object_key(id, object_type)
 	dict_from_redis_by_key(object_key, object_type, output_dict, meta_info_dict)
 	
-def dict_from_redis_by_key(key, object_type output_dict = {}, meta_info_dict = {}):
+def dict_from_redis_by_key(key, object_type, output_dict = {}, meta_info_dict = {}):
 	output_dict = {}
 	meta_info_dict = {}
 	r = get_redis_client()

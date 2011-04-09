@@ -9,9 +9,9 @@ class Tile:
 	def __init__(self, id = None):
 		print "Error,shoul neve be instatiated"
 		
-	def create_new_tile():
+	def create_new_tile(self):
 		id = get_free_id(type)
-		assert type(id) = type("0")
+		assert type(id) == type("0")
 		
 		default_tile =	{
 					'type' : 'tile',
@@ -50,7 +50,7 @@ class Tile:
 			}
 			
 		dict_to_redis(type, id, default_tile)
-		add_object_to_index(type, id)ssss
+		add_object_to_index(type, id)
 		return id
 		
 	def get(self, id):
@@ -59,10 +59,10 @@ class Tile:
 		meta_info_dict = {}
 		dict_from_redis(id, type, output_dict, meta_info_dict)
 		
-	def get_all_keys(self, id):
+	def get_all_keys(self):
 		type = self.type
 		lista = get_object_list(type)
-		return listallfolders
+		return lista
 		
 	def get_all(self, id):
 		type = self.type
