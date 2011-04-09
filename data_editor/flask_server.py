@@ -3,17 +3,31 @@ import simplejson
 import redis
 from marshal import dumps
 
-import redis_functions
+from database_interface import get_object_list, delete_object, dict_from_redis, dict_to_redis
+
+
+
+# get_object_list(type)
+# add_to_index(type, id)
+# remove_from_index(type, id)
+# delete_object(type, id)
+
+# dict_from_redis(id, object_type, output_dict = {}, meta_info_dict = {})
+# dict_to_redis(type, id, input_dict):
+
 
 app = Flask(__name__)
 
-dir = "./html_client"
 PORT = 8060
 
 @app.route("/")
 def root():
     return render_template('tile_editor.html', {})
 
+@app.rout("/tile_editor/tile_list")
+def tile_list():
+    return render_template('tile_editor.html', {})
+	sss
 @app.route("/tile_editor/create_tile")
 def create_tile():
 	return redirect(url_for('edit_tile', tile_id = Tile().id)

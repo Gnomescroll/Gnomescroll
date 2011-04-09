@@ -75,6 +75,10 @@ def delete_object(type, id):
 import pprint
 import string 
 
+#def new_dict_to_redis(type, default_dict):
+#	id = get_free_id(type)
+#	return dict_to_redis(type, id, default_dict)
+	
 def dict_to_redis(type, id, input_dict):
 	#serialize
 	map_dict = {}
@@ -99,11 +103,17 @@ def serialize_dict(input_dict, map_dict, prefix = ""):
 		else:
 				print "serialize_dictionary: type not supported! " + vtype + ", " + str(key) + ", " + str(value)
 
-def dict_from_redis(id, object_type, output_dict = {}, meta_info_dict = {}):
+
+
+
+def dict_from_redis_by_id(id, object_type, output_dict = {}, meta_info_dict = {}):
+	object_key = get_object_key(id, object_type)
+	dict_from_redis_by_key(object_key, object_type, output_dict, meta_info_dict)
+	
+def dict_from_redis_by_key(key, object_type output_dict = {}, meta_info_dict = {}):
 	output_dict = {}
 	meta_info_dict = {}
 	r = get_redis_client()
-	object_key = get_object_key(id, object_type)
 	temp = r.hgetall(object_key)
 	#r = get_redis_client()
 	#temp = r.hgetall(get_key(id, object_type))

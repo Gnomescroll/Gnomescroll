@@ -1,27 +1,19 @@
-from database_interface import 
+from database_interface import *
 
-from util import serialize
+
 
 class Tile:
 	
 	type = "tile"
-	id_counter = "tile_id"
-	index = "tile_index"
-	
-	def __init__(self, id = None):
-		self.r = redis.Redis('localhost')
-		if id == None:
-			self.id = int(r.incr(self.id_counter))
-			print "tile_id: " + str(self.id)
-			self.create_default(self.id)
-		else:
-			self.id = id
-			self.load(id)
-		
-	def create_default(id):
-		assert type(id) == type("0")
 
-		d =	{
+	def __init__(self, id = None):
+		print "Error,shoul neve be instatiated"
+		
+	def create_new_tile():
+		id = get_free_id(type)
+		assert type(id) = type("0")
+		
+		default_tile =	{
 					'type' : 'tile',
 					'id' : id,
 					'name' : "default_tile",
@@ -56,21 +48,29 @@ class Tile:
 					#'dig_produces' : [],
 					#'dig_into' : 'empty_block'
 			}
-		self.tile = d
+			
+		dict_to_redis(type, id, default_tile)
+		add_object_to_index(type, id)ssss
+		pass
 		
-		output_list = []
-		output_dictionary = {}
-		serialize(d, id, this.type, output_list, output_dictionary):
+	def get(self, id):
+		type = self.type
+		output_dict = {}
+		meta_info_dict = {}
+		dict_from_redis(id, type, output_dict, meta_info_dict)
 		
+	def get_all_keys(self, id):
+		type = self.type
+		lista = get_object_list(type)
+		return listallfolders
 		
-		#self.r.set(self.prefix+str(self.id))
-		
-	def load(self, id):
-		key = self.prefix + str(id)
-		self.r.get(key)
-		
-		
-	def save(self, id, value):
-		key = self.prefix + str(id)
-		data = simplejson.loads(value, encoding = 'utf-8')
-		self.r.set(key, data)
+	def get_all(self, id):
+		type = self.type
+		lista = get_object_list(type)
+		results = []
+		for key in lista:
+			t0 = {}
+			t1 = {}
+			dict_from_redis_by_key(key, type, t0, t1)
+			results.append((t0,t1))
+		return results
