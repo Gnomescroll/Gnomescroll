@@ -10,12 +10,12 @@ class Tile:
 		pass
 
 	def create_new_tile(self):
-		id = get_free_id(self.object_type)
-		assert type(id) == type(0)
+		object_id = get_free_id(self.object_type)
+		assert type(object_id) == type(0)
 		
 		default_tile =	{
 					'type' : 'tile',
-					'id' : id,
+					'id' : object_id,
 					'name' : "default_tile",
 					
 					'admin' : {
@@ -49,18 +49,21 @@ class Tile:
 					#'dig_into' : 'empty_block'
 			}
 			
-		dict_to_redis(self.object_type, id, default_tile)
-		add_object_to_index(self.object_type, id)
-		return id
+		dict_to_redis(self.object_type, object_id, default_tile)
+		add_object_to_index(self.object_type, object_id)
+		return object_id
 		
-	def get(self, id):
+	def get(self, object_id):
+		assert type(object_id) == type(0)
 		object_type = self.object_type
+		assert type(object_type) == type("d ")
 		output_dict = {}
 		meta_info_dict = {}
-		dict_from_redis(id, object_type, output_dict, meta_info_dict)
+		dict_from_redis(object_id, object_type, output_dict, meta_info_dict)
 		
 	def get_all_keys(self):
 		object_type = self.object_type
+		assert type(object_type) == type("d ")
 		lista = get_object_list(object_type)
 		return lista
 		
@@ -71,11 +74,11 @@ class Tile:
 		results = []
 		print "lista: " + str(lista)
 		for key in lista:
-			print "1: " + str(key)
+			#print "1: " + str(key)
 			t0 = {}
 			t1 = {}
 			dict_from_redis_by_key(key, object_type, t0, t1)
-			print "2: " + str(t0)
-			print "3: " + str(t1)
+			#print "2: " + str(t0)
+			#print "3: " + str(t1)
 			results.append((t0,t1))
 		return results
