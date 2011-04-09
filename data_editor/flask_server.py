@@ -8,7 +8,7 @@ from marshal import dumps
 
 from tile.tile_manager_functions import *
 
-
+import string
 # get_object_list(type)
 # add_to_index(type, id)
 # remove_from_index(type, id)
@@ -32,20 +32,34 @@ def root():
 @app.route("/tile/tile_list")
 def tile_list():
 	tile = Tile()
-	tile_list = tile.get_all()
+	list1 = []
+	list2 = []
+	tile_list = tile.get_all(list1, list2)
 	
-	return render_template('tile_list.html', tile_list = tile_list)
+	return render_template('tile_list.html', tile_list_1 = list1, tile_list_2 = list2)
 
 @app.route("/tile/tile_key_list")
 def tile_key_list():
 	print "asdfsfd"
 	tile = Tile()
 	tile_list = tile.get_all_keys()
-	print str(tile_list)
-	return render_template('tile_list.html', tile_list = tile_list
+	id_list = []
+	for x in tile_list:
+		(otype, oid) = string.split(x, ":")
+		id_list.append(oid)
+
+	return render_template('tile_list.html', tile_list = tile_list, id_list = id_list
 		)
 
-		
+	#tile:1//visual/tilemap/symbol:int
+@app.route("/tile/api/edit_field/<ref>/<value>")
+def edit_field():
+	(prefix, key) = string.split(ref, "//")
+	(otype, oid) = string.split(prefix, ':')
+	oid = int(oid)
+	return "Works"
+	
+	
 @app.route("/tile/create_tile")
 def create_tile():
 	tile = Tile()
