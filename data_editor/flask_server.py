@@ -15,6 +15,7 @@ from database_interface import get_object_list, delete_object, dict_from_redis, 
 # dict_from_redis(id, object_type, output_dict = {}, meta_info_dict = {})
 # dict_to_redis(type, id, input_dict):
 
+from tile.tile_manager.py import *
 
 app = Flask(__name__)
 
@@ -22,20 +23,38 @@ PORT = 8060
 
 @app.route("/")
 def root():
-    return render_template('tile_editor.html', {})
+    return render_template('tile_list.html', {})
 
-@app.rout("/tile_editor/tile_list")
+@app.rout("/tile/tile_list")
 def tile_list():
-    return render_template('tile_editor.html', {})
-	sss
-@app.route("/tile_editor/create_tile")
+    return render_template('tile_list.html', {
+		'tile_list' : Tile.get_all()
+		})
+
+@app.rout("/tile/tile_key_list")
+def tile_list():
+    return render_template('tile_list.html', {
+		'tile_list' : Tile.get_all_keys()
+		})
+
+		
+@app.route("/tile/create_tile")
 def create_tile():
-	return redirect(url_for('edit_tile', tile_id = Tile().id)
+	try:
+		id = Tile.create_new_tile()
+		return "Works: " + str(id)
+	except:
+		return "Error"
+	#return redirect(url_for('edit_tile', tile_id = Tile().id)
     #return render_template('tile_editor.html', {})
 
-@app.route("/tile_editor/edit_tile/<tile_id>")
+@app.route("/tile/edit/<tile_id>")
 def edit_tile(tile_id):
-    return render_template('tile_editor.html', {})
+	tile_id = int(tile_id)
+	return render_template('tile_editor.html', { 'tile_dict' : Tile.get(tile_id),
+		'tile_id' : tile_id,
+		
+		})
     
 
 ### 
