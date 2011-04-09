@@ -64,13 +64,18 @@ class Tile:
 		lista = get_object_list(object_type)
 		return lista
 		
-	def get_all(self, id):
+	def get_all(self):
+		print "start"
 		object_type = self.object_type
 		lista = get_object_list(object_type)
 		results = []
+		print "lista: " + str(lista)
 		for key in lista:
+			print "1: " + str(key)
 			t0 = {}
 			t1 = {}
 			dict_from_redis_by_key(key, object_type, t0, t1)
+			print "2: " + str(t0)
+			print "3: " + str(t1)
 			results.append((t0,t1))
 		return results

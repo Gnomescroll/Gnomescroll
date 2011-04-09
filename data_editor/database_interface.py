@@ -111,7 +111,7 @@ def dict_from_redis_by_id(id, object_type, output_dict = {}, meta_info_dict = {}
 	object_key = get_object_key(id, object_type)
 	dict_from_redis_by_key(object_key, object_type, output_dict, meta_info_dict)
 	
-def dict_from_redis_by_key(key, object_type, output_dict = {}, meta_info_dict = {}):
+def dict_from_redis_by_key(object_key, object_type, output_dict = {}, meta_info_dict = {}):
 	output_dict = {}
 	meta_info_dict = {}
 	r = get_redis_client()
@@ -121,7 +121,7 @@ def dict_from_redis_by_key(key, object_type, output_dict = {}, meta_info_dict = 
 	tlist = []
 	for k,value in temp.items():
 		(key, type) = string.split(k, ':')
-		tlist.append((key, value, type, get_key(id, object_type) + "/" + k))
+		tlist.append((key, value, type, get_object_key(object_type, id) + "/" + k))
 	for (key, value, type, k) in tlist:
 		dict_from_list(k, key, value, type, output_dict, meta_info_dict)
 	
