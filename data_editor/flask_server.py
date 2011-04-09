@@ -35,7 +35,9 @@ def tile_list():
 @app.route("/tile/tile_key_list")
 def tile_list():
 	tile = Tile()
-	return render_template('tile_list.html', tile_list = tile.get_all_keys()
+	tile_list = tile.get_all_keys()
+	print str(tile_list)
+	return render_template('tile_list.html', tile_list = tile_list
 		)
 
 		

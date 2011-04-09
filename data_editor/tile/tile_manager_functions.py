@@ -4,14 +4,14 @@ from database_interface import *
 
 class Tile:
 	
-	type = "tile"
+	object_type = "tile"
 
 	def __init__(self, id = None):
-		print "Error,shoul neve be instatiated"
-		
+		pass
+
 	def create_new_tile(self):
-		id = get_free_id(type)
-		assert type(id) == type("0")
+		id = get_free_id(self.object_type)
+		assert type(id) == type(0)
 		
 		default_tile =	{
 					'type' : 'tile',
@@ -49,8 +49,8 @@ class Tile:
 					#'dig_into' : 'empty_block'
 			}
 			
-		dict_to_redis(type, id, default_tile)
-		add_object_to_index(type, id)
+		dict_to_redis(object_type, id, default_tile)
+		add_object_to_index(object_type, id)
 		return id
 		
 	def get(self, id):

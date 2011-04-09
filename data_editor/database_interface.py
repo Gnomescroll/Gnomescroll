@@ -36,27 +36,28 @@ def deleted_objects_key(type, id):
 ### OBJECT INDEX manipulation interface ###
 
 #do garabage detection/recycling eventually	
-def get_free_id(type):
+def get_free_id(object_type):
 	r = get_redis_client()
-	id =  r.incr(get_index_counter_key(type))
+	id =  r.incr(get_index_counter_key(object_type))
+	assert type(id) == type(0)
 	return id
 	
-def get_object_list(type):
+def get_object_list(object_type):
 	r = get_redis_client()
-	index_key = get_index_key(type)
+	index_key = get_index_key(object_type)
 	key_list = r.smembers(index_key)
 	return key_list
 
-def add_object_to_index(type, id):
+def add_object_to_index(object_type, id):
 	r = get_redis_client()
-	index_key = get_index_key(type)
-	object_key = get_object_key(type, id)
+	index_key = get_index_key(object_type)
+	object_key = get_object_key(object_type, id)
 	r.sadd(index_key, object_key)
 
-def remove_object_from_index(type, id):
+def remove_object_from_index(object_type, id):
 	r = get_redis_client()
-	index_key = get_index_key(type)
-	object_key = get_object_key(type, id)
+	index_key = get_index_key(object_type)
+	object_key = get_object_key(object_type, id)
 	r.srem(index_key, object_key)
 
 """ Stuff """ 
@@ -86,7 +87,6 @@ def dict_to_redis(type, id, input_dict):
 	serialize_dict(input_dict, map_dict)
 	#now set database from dictionary
 	r = get_redis_client()
-	object_id = get_free_id(type)
 	object_key = get_object_key(type, id)
 	r.hmset(object_key, map_dict)
 	add_object_to_index(type, id)
