@@ -25,18 +25,12 @@ PORT = 8060
 
 @app.route("/")
 def root():
-	#print "test"
-	
 	return render_template('tile_list.html', tile_list = {})
 
 @app.route("/tile/tile_list")
 def tile_list():
 	tile = Tile()
-	list1 = []
-	list2 = []
-	tile_list = tile.get_all(list1, list2)
-	
-	return render_template('tile_list.html', tile_list_1 = list1, tile_list_2 = list2)
+	return render_template('tile_list.html', tile_list = tile.get_all())
 
 @app.route("/tile/tile_key_list")
 def tile_key_list():

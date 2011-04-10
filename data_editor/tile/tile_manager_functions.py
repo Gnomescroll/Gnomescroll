@@ -5,31 +5,41 @@ from database_interface import *
 class Tile:
 	
 	object_type = "tile"
-
+	
+	#key to storage
+	object_schema = {
+	'meta' : "/meta",
+	'admin' : "/admin",
+	'visual_tilemap' : '/visual/tilemap',
+	'properties' : '/properties',
+	'actions' : '/actions',
+	}
+	
 	def __init__(self, id = None):
-		pass
-
+		pass			
+		
+###
 	def create_new_tile(self):
 		object_id = get_free_id(self.object_type)
 		assert type(object_id) == type(0)
 		
 		default_tile =	{
-					'type' : 'tile',
-					'id' : object_id,
-					'name' : "default_tile",
+					'meta' : {
+						'type' : 'tile',
+						'id' : object_id,
+						'name' : "default_tile",
+					},
 					
 					'admin' : {
 						'active' : 0,
 					},
 					
-					'visual' : {
-						'tilemap' : {
-							'tilemap_id' : 0,
-							'draw_style' : 1,
-							'symbol' : 63,
-							'symbol_rgb' : (50, 0, 0),
-							'background_rgb' : (0, 0, 0)
-						}
+					'visual_tilemap' : {
+						'tilemap_id' : 0,
+						'draw_style' : 1,
+						'symbol' : 63,
+						'symbol_rgb' : (50, 0, 0),
+						'background_rgb' : (0, 0, 0)
 					},
 					
 					'properties' : {
@@ -45,8 +55,6 @@ class Tile:
 					'dig' : 0,
 					
 					}
-					#'dig_produces' : [],
-					#'dig_into' : 'empty_block'
 			}
 			
 		dict_to_redis(self.object_type, object_id, default_tile)
@@ -55,30 +63,15 @@ class Tile:
 		
 	def get(self, object_id):
 		assert type(object_id) == type(0)
-		object_type = self.object_type
-		assert type(object_type) == type("d ")
-		output_dict = {}
-		meta_info_dict = {}
-		dict_from_redis(object_id, object_type, output_dict, meta_info_dict)
+		dict = dict_from_redis(object_id, self.object_type)
 		
 	def get_all_keys(self):
-		object_type = self.object_type
-		assert type(object_type) == type("d ")
-		lista = get_object_list(object_type)
+		lista = get_object_list(self.object_type)
 		return lista
 		
-	def get_all(self, result0, result1):
-		print "start"
-		object_type = self.object_type
-		lista = get_object_list(object_type)
-		print "lista: " + str(lista)
-		for key in lista:
-			#print "1: " + str(key)
-			t0 = {}
-			t1 = {}
-			dict_from_redis_by_key(key, object_type, t0, t1)
-			#print "2: " + str(t0)
-			#print "3: " + str(t1)
-			result0.append(t0)
-			result1.append(t1)
-		return None
+	def get_all(self):
+		result_list = get_object_list(self.object_type)
+		for key in result_list:
+			temp = dict_from_redis_by_key(key, self.object_type))
+			result_list.append(temp)
+		return result_list
