@@ -25,7 +25,8 @@ PORT = 8060
 
 @app.route("/")
 def root():
-	return render_template('tile_list.html', tile_list = {})
+	return "Use a URL"
+	#return render_template('tile_list.html', tile_list = {})
 
 @app.route("/tile/tile_list")
 def tile_list():

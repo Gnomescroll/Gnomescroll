@@ -94,21 +94,24 @@ def dict_to_redis(object_type, object_id, input_dict):
 	r.hmset(object_key, map_dict)
 	add_object_to_index(object_type, object_id)
 
-def dict_from_redis(object_type, object_id):
-	map_dict = input_dict
+def dict_from_redis_by_key(object_key):
 	r = get_redis_client()
-	object_key = get_object_key(object_type, object_id)	
+	#object_key = get_object_key(object_type, object_id)	
 	output_dict = r.hgetall(object_key)
-	
 	pp = pprint.PrettyPrinter(indent=4)  #Debugging
 	pp.pprint(output_dict)
 	print "---"
 	##
-	for k, v in output_dict:
+	for k, v in output_dict.items():
 		output_dict[k] = eval(v)
 	
 	pp.pprint(output_dict)	
 	return output_dict
+	
+def dict_from_redis(object_type, object_id):
+	object_key = get_object_key(object_type, object_id)	
+	return dict_from_redis_by_key(object_key)
+
 	
 #def serialize_dict(input_dict, map_dict, prefix = ""):
 	#supported_types = [ 'str', 'int', 'tuple', 'list']

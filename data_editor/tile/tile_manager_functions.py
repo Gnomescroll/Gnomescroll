@@ -70,8 +70,8 @@ class Tile:
 		return lista
 		
 	def get_all(self):
-		result_list = get_object_list(self.object_type)
-		for key in result_list:
-			temp = dict_from_redis_by_key(key, self.object_type))
-			result_list.append(temp)
+		key_list = get_object_list(self.object_type)
+		result_list = []
+		for key in key_list:
+			result_list.append(dict_from_redis_by_key(key))
 		return result_list

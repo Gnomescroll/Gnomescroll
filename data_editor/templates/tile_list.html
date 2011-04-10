@@ -13,22 +13,11 @@ List of tile object keys
 <br>
 Id List
 <br>
-{% for id in id_list %}
-<li>{{ id }}</li>
-{% endfor %}
-
-Tile_list_1 <br>
-
-{% for tile in tile_list_1 %}
-<li>{{ tile }}</li>
-{% endfor %}
-
-<br>
-Tile_list_2
-{% for tile in tile_list_2 %}
-<li>{{ tile }}</li>
-{% endfor %}
-
+{% if id_list %}
+	{% for id in id_list %}
+	<li>{{ id }}</li>
+	{% endfor %}
+{% endif %}
 </body>
 
 </html>
