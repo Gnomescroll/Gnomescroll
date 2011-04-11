@@ -1,4 +1,5 @@
 import redis
+import ast
 
 ## Public Interface
 
@@ -86,6 +87,7 @@ def delete_object(type, object_id):
 #pp.pprint(output_dict)	
 
 import string 
+import ast
 
 def dict_to_redis(object_type, object_id, input_dict):
 	map_dict = input_dict
@@ -94,13 +96,22 @@ def dict_to_redis(object_type, object_id, input_dict):
 	r.hmset(object_key, map_dict)
 	add_object_to_index(object_type, object_id)
 
+def dict_from_redis(object_type, object_id):
+	object_key = get_object_key(object_type, object_id)
+	return dict_from_redis_by_key(object_key)
+
 def dict_from_redis_by_key(object_key):
 	r = get_redis_client()
 	output_dict = r.hgetall(object_key)
 	for k, v in output_dict.items():
-		output_dict[k] = eval(v)
+		print str(v)
+		output_dict[k] = ast.literal_eval(v)
 	return output_dict
-	
-def dict_from_redis(object_type, object_id):
-	object_key = get_object_key(object_type, object_id)	
-	return dict_from_redis_by_key(object_key)
+
+def raw_dict_from_redis(object_type, object_id):
+	object_key = get_object_key(object_type, object_id)
+	return raw_dict_from_redis_by_key(object_key)
+
+def raw_dict_from_redis_by_key(object_key):
+	r = get_redis_client()
+	return r.hgetall(object_key)

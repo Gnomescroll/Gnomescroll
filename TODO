@@ -8,6 +8,8 @@ you should add these to issue tracker actually
 7> (working on now) interface between atomic agent actions, compound action controller and job manager 
 8> (possibly) an html interface for editing tiles/items/crafting stuff/agents (serialize in python dictionaries to disc for now, return dictionaries with get request)
 
+As soon as babies are implemented, the first AI job I am implementing is "snatch baby" which requires an agent with "burlack sack". Each baby causes 1d4 goblin baby snatchers and/or a wolf pack of 1d3 wolves to spawn which target the baby with "snatch baby job".
+
 Dynamic World:
 !!! Cows Grazing on grass
 	-random walk
@@ -107,3 +109,5 @@ Mechanical:
 		act as valves
 		push upto 16 spaces of certain blocks
 
+User Challenges
+	when women have babies, the babies follow the mother around for the first 6 months. Babies attract wolves and goblin baby snatchers. Goblin baby snatchers put the baby into a bag and run back to their fort to use the babies for slave labor (mining and agriculture). Need child snatching job.

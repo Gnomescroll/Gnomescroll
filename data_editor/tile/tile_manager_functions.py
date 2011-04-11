@@ -1,6 +1,6 @@
 from database_interface import *
 
-
+import time
 
 class Tile:
 	
@@ -28,6 +28,7 @@ class Tile:
 						'type' : 'tile',
 						'id' : object_id,
 						'name' : "default_tile",
+						'created' : int(time.time())
 					},
 					
 					'admin' : {
@@ -58,12 +59,15 @@ class Tile:
 			}
 			
 		dict_to_redis(self.object_type, object_id, default_tile)
-		add_object_to_index(self.object_type, object_id)
+		#add_object_to_index(self.object_type, object_id)
 		return object_id
 		
 	def get(self, object_id):
 		assert type(object_id) == type(0)
-		dict = dict_from_redis(object_id, self.object_type)
+		return dict_from_redis(self.object_type, object_id)
+		
+	def get_raw(self, object_id):
+		return raw_dict_from_redis(self.object_type, object_id)
 		
 	def get_all_keys(self):
 		lista = get_object_list(self.object_type)

@@ -42,35 +42,32 @@ def tile_key_list():
 	for x in tile_list:
 		(otype, oid) = string.split(x, ":")
 		id_list.append(oid)
+	return render_template('tile_list.html', tile_list = tile_list, id_list = id_list)
+	
+@app.route("/tile/create_tile")
+def create_tile():
+	tile = Tile()
+	tile_id = tile.create_new_tile()
+	return "Works: " + str(tile_id)
+	#return redirect(url_for('edit_tile', tile_id = tile_id)
 
-	return render_template('tile_list.html', tile_list = tile_list, id_list = id_list
-		)
-
-	#tile:1//visual/tilemap/symbol:int
-@app.route("/tile/api/edit_field/<ref>/<value>")
+@app.route("/api/tile_edit")
 def edit_field():
 	(prefix, key) = string.split(ref, "//")
 	(otype, oid) = string.split(prefix, ':')
 	oid = int(oid)
 	return "Works"
-	
-	
-@app.route("/tile/create_tile")
-def create_tile():
-	tile = Tile()
-	id = tile.create_new_tile()
-	return "Works: " + str(id)
 
-	#return redirect(url_for('edit_tile', tile_id = Tile().id)
-    #return render_template('tile_editor.html', {})
-
-@app.route("/tile/edit/<tile_id>")
+@app.route("/tile/edit/<int:tile_id>")
 def edit_tile(tile_id):
-	tile_id = int(tile_id)
-	return render_template('tile_editor.html', { 'tile_dict' : Tile.get(tile_id),
-		'tile_id' : tile_id,
-		
-		})
+	tile_raw = {}
+	tile = Tile()
+	#print str(type(tile.get(tile_id)))
+	return render_template('tile_editor.html', 
+		tile_dict = tile.get(tile_id),
+		tile_raw = tile.get_raw(tile_id),
+		tile_id = tile_id,	
+		)
     
 
 ### 

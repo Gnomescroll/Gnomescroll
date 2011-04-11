@@ -9,7 +9,20 @@
 
 {{ tile_id }} <br>
 
-{{ tile_dict }} <br>
+{{ tile_dict }} <br><br>
+
+---- <br>
+
+
+{% for topic,dict in tile_dict.items() %}
+>> {{topic}} <br>
+	{% for key,value in dict.items() %}
+		> {{key}} : {{ value }} <br>
+	{% endfor %}
+{% endfor %}
+
+
+
 
 </body>
 
