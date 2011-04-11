@@ -18,31 +18,31 @@ name: {{tile_dict.name}} <br>
 type: {{tile_dict.type}} <br>
 <br>
 
-meta: <br>
-{% for key,value in tile_dict.meta %}
-	> {{key}} : {{ value }} <br>
-{% endfor %} <br>
-
-admin: <br>
-{% for key,value in tile_dict.admin %}
-	> {{key}} : {{ value }} <br>
-{% endfor %} <br>
-
 visual_tilemap: <br>
-{% for key,value in tile_dict.visual_tilemap %}
+{% for key,value in tile_dict.visual_tilemap.items() %}
 	> {{key}} : {{ value }} <br>
 {% endfor %} <br>
 
 properties: <br>
-{% for key,value in tile_dict.properties %}
+{% for key,value in tile_dict.properties.items() %}
 	> {{key}} : {{ value }} <br>
 {% endfor %} <br>
 
 actions: <br>
-{% for key,value in tile_dict.actions %}
+{% for key,value in tile_dict.actions.items() %}
 	> {{key}} : {{ value }} <br>
 {% endfor %} <br>
-						
+
+meta: <br>
+{% for key,value in tile_dict.meta.items() %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
+
+admin: <br>
+{% for key,value in tile_dict.admin.items() %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
+				
 </body>
 
 </html>
