@@ -24,10 +24,11 @@ class Tile:
 		assert type(object_id) == type(0)
 		
 		default_tile =	{
+					'type' : 'tile',
+					'id' : object_id,
+					'name' : "default_tile_" + str(object_id),
+					
 					'meta' : {
-						'type' : 'tile',
-						'id' : object_id,
-						'name' : "default_tile",
 						'created' : int(time.time())
 					},
 					
@@ -57,7 +58,8 @@ class Tile:
 					
 					}
 			}
-			
+		
+		associate_name_with_id(self.object_type, object_id, default_tile['name'])
 		dict_to_redis(self.object_type, object_id, default_tile)
 		#add_object_to_index(self.object_type, object_id)
 		return object_id

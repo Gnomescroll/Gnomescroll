@@ -104,8 +104,12 @@ def dict_from_redis_by_key(object_key):
 	r = get_redis_client()
 	output_dict = r.hgetall(object_key)
 	for k, v in output_dict.items():
-		print str(v)
-		output_dict[k] = ast.literal_eval(v)
+		if k == "id":
+			output_dict[k] = int(v)
+		elif k == "name" or k == "type":
+			output_dict[k] = str(v)
+		else:
+			output_dict[k] = ast.literal_eval(v)
 	return output_dict
 
 def raw_dict_from_redis(object_type, object_id):
@@ -115,3 +119,8 @@ def raw_dict_from_redis(object_type, object_id):
 def raw_dict_from_redis_by_key(object_key):
 	r = get_redis_client()
 	return r.hgetall(object_key)
+
+### Name to ID pairing
+
+def associate_name_with_id(object_type, object_id, name):
+	pass ##IMPLEMENT

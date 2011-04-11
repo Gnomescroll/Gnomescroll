@@ -13,17 +13,36 @@
 
 ---- <br>
 
+id: {{tile_dict.id}} <br>
+name: {{tile_dict.name}} <br>
+type: {{tile_dict.type}} <br>
+<br>
 
-{% for topic,dict in tile_dict.items() %}
->> {{topic}} <br>
-	{% for key,value in dict.items() %}
-		> {{key}} : {{ value }} <br>
-	{% endfor %}
-{% endfor %}
+meta: <br>
+{% for key,value in tile_dict.meta %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
 
+admin: <br>
+{% for key,value in tile_dict.admin %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
 
+visual_tilemap: <br>
+{% for key,value in tile_dict.visual_tilemap %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
 
+properties: <br>
+{% for key,value in tile_dict.properties %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
 
+actions: <br>
+{% for key,value in tile_dict.actions %}
+	> {{key}} : {{ value }} <br>
+{% endfor %} <br>
+						
 </body>
 
 </html>
