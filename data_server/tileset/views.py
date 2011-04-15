@@ -8,7 +8,7 @@ import sys
 def list_tileset(request):
 	#stuff
 	tileset_list = []
-	t = loader.get_template('tileset/list.html')
+	t = loader.get_template('tileset/tileset_list.html')
 	c = Context({
         'tileset_list': tileset_list,
     })
@@ -17,7 +17,7 @@ def list_tileset(request):
 def edit_tileset(request, tileeset_id):
 	##Stuff
 	tileset = None
-	t = loader.get_template('tileset/edit.html')
+	t = loader.get_template('tileset/edit_tileset.html')
 	c = Context({
         'tile_id': tileset_id,
 		'tileset' : tileset

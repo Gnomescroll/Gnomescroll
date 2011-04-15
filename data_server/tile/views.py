@@ -27,7 +27,7 @@ def edit_tile(request, tile_id):
     })
 	return HttpResponse(t.render(c))
 
-def edit_tile(request, tile_id):
+def create_tile(request, tile_id):
 	tile = Tile()
 	tile.save()
 	return HttpResponse("Success")

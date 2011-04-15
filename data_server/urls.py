@@ -18,15 +18,15 @@ urlpatterns = patterns('',
     
     (r'^$', 'data_server.interface.views.index'),
     #tile
-	(r'^tile/list$', 'data_server.tile.views.tile_list'),
-	(r'^tile/edit/(?P<tile_id>\d+)$', 'data_server.tile.views.edit_tile'),
+	(r'^tile/list/$', 'data_server.tile.views.tile_list'),
+	(r'^tile/edit/(?P<tile_id>\d+)/$', 'data_server.tile.views.edit_tile'),
 	
-	(r'^tile/api/get_tile/(?P<tile_id>\d+)$', 'data_server.tile.views.json_get_tile'),
-	(r'^tile/api/get_tile_visual/(?P<tile_id>\d+)$', 'data_server.tile.views.API_get_tile_visual'),
-	(r'^tile/api/get_tile_id_list$', 'data_server.tile.views.API_get_tile_id_list'),	
-	(r'^tile/api/get_tile_list$', 'data_server.tile.views.API_get_tile_list'),
+	(r'^tile/api/get_tile/(?P<tile_id>\d+)/$', 'data_server.tile.views.json_get_tile'),
+	(r'^tile/api/get_tile_visual/(?P<tile_id>\d+)/$', 'data_server.tile.views.API_get_tile_visual'),
+	(r'^tile/api/get_tile_id_list/$', 'data_server.tile.views.API_get_tile_id_list'),	
+	(r'^tile/api/get_tile_list/$', 'data_server.tile.views.API_get_tile_list'),
 	
 	#tileset
-	(r'^tileset/list$', 'data_server.tile.views.list_tileset'),
-	(r'^tileset/edit/(?P<tileset_id>\d+)$', 'data_server.tile.views.edit_tileset'),
+	(r'^tileset/list/$', 'data_server.tileset.views.list_tileset'),
+	(r'^tileset/edit/(?P<tileset_id>\d+)/$', 'data_server.tileset.views.edit_tileset'),
 )
