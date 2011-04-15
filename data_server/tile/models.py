@@ -77,3 +77,6 @@ class Tile(models.Model):
 		
 	def to_json(self):
 		return simplejson.dumps(self.to_dict())
+
+	def to_str(self):
+		return str(self.to_dict())

@@ -51,7 +51,7 @@ def API_get_tile_id_list(request):
 
 def API_get_tile_list(request):
 	tiles = Tile.objects.all()
-	id_list = []
+	tile_list = []
 	for tile in tiles:
-		id_list.append(tile.id)
-	return HttpResponse(str(id_list))
+		tile_list.append(tile.to_dict())
+	return HttpResponse(str(tile_list))
