@@ -21,6 +21,11 @@ urlpatterns = patterns('',
 	(r'^tile/list$', 'data_server.tile.list_tile'),
 	(r'^tile/edit/(?P<tile_id>\d+)$', 'data_server.tile.edit_tile'),
 	
+	(r'^tile/api/get_tile/(?P<tile_id>\d+)$', 'data_server.tile.json_get_tile'),
+	(r'^tile/api/get_tile_visual/(?P<tile_id>\d+)$', 'data_server.tile.API_get_tile_visual'),
+	(r'^tile/api/get_tile_id_list$', 'data_server.tile.API_get_tile_id_list'),	
+	(r'^tile/api/get_tile_list$', 'data_server.tile.API_get_tile_list'),
+	
 	#tileset
 	(r'^tileset/list$', 'data_server.tile.list_tileset'),
 	(r'^tileset/edit/(?P<tileset_id>\d+)$', 'data_server.tile.edit_tileset'),

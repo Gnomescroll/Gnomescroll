@@ -1,10 +1,13 @@
 from django.db import models
 
+import ast
+
 #id
 #name
 #visual_tile_map
 #properties
 #actions
+
 ##visual_isometric
 ##visual_3d
 
@@ -20,3 +23,14 @@ class Tile(models.Model):
 	#meta-data crap
 	created_at = models.DateTimeField(auto_now_add=True)
 	deleted = models.BooleanField(default = False)
+	
+	def to_dict()
+		dict = {}
+		dict['name'] = self.name
+		dict['id'] = self.id
+		dict['visual'] = {}
+		dict['visual']['tilemap'] = 
+		dict['visual']['isometric'] = 
+		dict['visual']['3d'] = 
+		dict['properties'] = 
+		dict['actions'] = 
