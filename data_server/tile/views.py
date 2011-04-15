@@ -8,8 +8,9 @@ import simplejson
 import ast
 
 def list_tile(request):
-	#stuff
-	tile_list = []
+	tiles = Tile.objects.all()
+	tile_list = tiles
+	#tile_list = []
 	t = loader.get_template('tile/tile_list.html')
 	c = Context({
         'tile_list': tile_list,
@@ -25,6 +26,11 @@ def edit_tile(request, tile_id):
 		'tile' : tile
     })
 	return HttpResponse(t.render(c))
+
+def edit_tile(request, tile_id):
+	tile = Tile()
+	tile.save()
+	return HttpResponse("Success")
 
 def API_get_tile(request, tile_id):
 	tile = Tile.objects.get(id = tile_id)
