@@ -37,14 +37,23 @@ default_tile = 	{
 				'pourous' : 1,			
 			},
 
-	},
+	}
 
+def test():
+	#dict = default_tile['visual']['tilemap']
+	#print str(dict)
+	#print type(dict)
+	s = pprint.pformat(default_tile['visual']['tilemap'])
+	#print s
+	#print type(s)
+	return pprint.pformat(default_tile['visual']['tilemap'])
 #pp = pprint.PrettyPrinter(indent=4)
 
 class Tile(models.Model):
 	name = models.CharField(max_length=128, default= 'new_tile')
-	misc = models.TextField(default= str())
-	tilemap = models.TextField(default= pprint..default_tile['visual']['tilemap'])
+	misc = models.TextField(default= '{}')
+	tilemap = models.TextField(default= test())
+	#tilemap = models.TextField(default= '{}')
 	isometric = models.TextField(default= '{}')
 	axonometric = models.TextField(default= '{}')
 	properties = models.TextField(default= '{}')

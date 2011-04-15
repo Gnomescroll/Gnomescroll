@@ -7,7 +7,7 @@ import sys
 import simplejson
 import ast
 
-def list_tile(request):
+def tile_list(request):
 	tiles = Tile.objects.all()
 	tile_list = tiles
 	#tile_list = []
