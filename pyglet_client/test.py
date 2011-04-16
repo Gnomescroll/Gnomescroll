@@ -63,20 +63,55 @@ label = pyglet.text.Label('FPS: %f' % pyglet.clock.get_fps(),
                           font_name='Times New Roman',
                           font_size=12,
                           x= 10  , y=window.height, anchor_x='left', anchor_y='top')
-                          
+
+def draw_plane(tile_id, vertices):
+	#assert len(vertices) == 12
+	array = (GLfloat * 32)(
+	0., 0., 0., 
+    0., 1. , 0.,
+    1., 1 , 0.,
+    1., 0. ,0. )
+    
+	pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+    ("v3f", (
+	0., 0., 0., 
+    100., 0. , 0.,
+    100., 100 , 0.,
+    0., 100. ,0. )),
+    ("c4B", [255, 255, 255, 255] * 4),
+    ("t3f", tile_texture_grid[convert_index(tile_id, 16, 16)].tex_coords )
+    #("t2f", (0., 0., 0., 1., 1., 1., 1., 0.) )
+)
+
+glEnable(tile_texture_grid.target) 
+
+c = 0
+n = 1
+		
 @window.event
 def on_draw():
+	global c, n
+
+	c = c + 1
+	if c % 2 == 0:
+		c = 0 
+		n = (n+1) % 255
+	
+	#tile_texture_grid[convert_index(n, 16, 16)].blit(30, 30, z=0, width=None, height=None)
 	window.clear()
-	n = 0
-	tile_texture_grid[convert_index(n, 16, 16)].blit(30, 30, z=0, width=None, height=None)
-	#glClear(GL_COLOR_BUFFER_BIT)
-	#glLoadIdentity()
+	glClear(GL_COLOR_BUFFER_BIT)
+	glLoadIdentity()
+	
+	#glEnable(tile_texture_grid.target)        # typically target is GL_TEXTURE_2D
+	glBindTexture(tile_texture_grid.target, tile_texture_grid.id)
 	#glDrawArrays(GL_TRIANGLES, 0, len(vertices) // 2)
     #pyglet.graphics.draw_indexed(2, pyglet.gl.GL_POINTS, [0, 1, 2, 3], ('v2i', (10, 15, 30, 35)))
+	draw_plane(n, None)
+
  #   pyglet.graphics.draw(2, pyglet.gl.GL_POINTS,
  #   ('v2i', (10, 15, 30, 35)),
 #    ('c3B', (0, 0, 255, 0, 255, 0))
-#)
+#
 	#x = 0.
 	#y = 0.
 	#z = 0.
@@ -95,3 +130,5 @@ pyglet.app.run()
     
 def draw_tile(tile_id, x, y, z):
 	pass
+
+#need 4 vertices, clockwise
