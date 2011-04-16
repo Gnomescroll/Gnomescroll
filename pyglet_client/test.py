@@ -22,7 +22,7 @@ from pyglet.gl import *
 ## Saving screenshot
 # pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot.png')
 
-tile_image = pyglet.image.load('textures_01.png')
+tile_image = pyglet.image.load('./texture/textures_01.png')
 tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
 tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
 
@@ -72,20 +72,30 @@ def draw_plane(tile_id, vertices):
     0., 1. , 0.,
     1., 1 , 0.,
     1., 0. ,0. )
-    
-	pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-    ("v3f", (
+ 
+	xa = (
 	0., 0., 0., 
     100., 0. , 0.,
     100., 100 , 0.,
-    0., 100. ,0. )),
+    0., 100. ,0. )
+    
+	xb = (
+	0., 0., 0., 
+    0., 0. , 100.,
+    0., 100 , 100.,
+    0., 100. ,0. )
+    
+	pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+    ("v3f", xb),
     ("c4B", [255, 255, 255, 255] * 4),
     ("t3f", tile_texture_grid[convert_index(tile_id, 16, 16)].tex_coords )
     #("t2f", (0., 0., 0., 1., 1., 1., 1., 0.) )
 )
 
 glEnable(tile_texture_grid.target) 
-##gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
+
+gluPerspective( 45.0, 640.0 / 480.0, 0.1, 100.0);
+
 c = 0
 n = 1
 
@@ -97,6 +107,13 @@ camera_z = 0
 camera_x_angle = 0
 camera_y_angle = 0
 
+@window.event
+def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+	global camera_x_angle, camera_y_angle
+	print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
+	camera_x_angle = camera_x_angle + dx/100
+	camera_z_angle = camera_y_angle + dx/100
+	
 @window.event
 def on_draw():
 	global c, n
@@ -118,7 +135,7 @@ def on_draw():
 	camera_focus_y = camera_y + math.sin( camera_x_angle * math.pi)
 	camera_focus_z = camera_z
     
-    gluLookAt(camera_x, camera_y, camera_z,
+	gluLookAt(camera_x, camera_y, camera_z,
                camera_focus_x, camera_focus_y, camera_focus_z,
                0, 0, 1) #z is up
                
