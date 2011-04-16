@@ -47,7 +47,10 @@ def API_get_tile_id_list(request):
 	id_list = []
 	for tile in tiles:
 		id_list.append(tile.id)
-	return HttpResponse(str(id_list))
+	if REQUEST.has_key('json')
+
+	else:
+		return HttpResponse(str(id_list))
 
 def API_get_tile_list(request):
 	tiles = Tile.objects.all()
