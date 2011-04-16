@@ -1,4 +1,5 @@
 import pyglet
+import math
 
 # Disable error checking for increased performance
 ##pyglet.options['debug_gl'] = False
@@ -84,14 +85,22 @@ def draw_plane(tile_id, vertices):
 )
 
 glEnable(tile_texture_grid.target) 
-
+##gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
 c = 0
 n = 1
-		
+
+
+camera_x = 0
+camera_y = 0
+camera_z = 0
+
+camera_x_angle = 0
+camera_y_angle = 0
+
 @window.event
 def on_draw():
 	global c, n
-
+	global camera_x, camera_y, camera_z, camera_x_angle, camera_y_angle
 	c = c + 1
 	if c % 2 == 0:
 		c = 0 
@@ -100,8 +109,19 @@ def on_draw():
 	#tile_texture_grid[convert_index(n, 16, 16)].blit(30, 30, z=0, width=None, height=None)
 	window.clear()
 	glClear(GL_COLOR_BUFFER_BIT)
+	glMatrixMode( GL_MODELVIEW ) #needed?
+	
 	glLoadIdentity()
 	
+	
+	camera_focus_x = camera_x + math.cos( camera_x_angle * math.pi)
+	camera_focus_y = camera_y + math.sin( camera_x_angle * math.pi)
+	camera_focus_z = camera_z
+    
+    gluLookAt(camera_x, camera_y, camera_z,
+               camera_focus_x, camera_focus_y, camera_focus_z,
+               0, 0, 1) #z is up
+               
 	#glEnable(tile_texture_grid.target)        # typically target is GL_TEXTURE_2D
 	glBindTexture(tile_texture_grid.target, tile_texture_grid.id)
 	#glDrawArrays(GL_TRIANGLES, 0, len(vertices) // 2)
