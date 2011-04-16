@@ -19,9 +19,9 @@ class Target(object):
     pan/zoom/tilt
     """
     def __init__(self, camera):
-        self.x, self.y, self.z = camera.x, camera.y, camera.z
-        self.size = camera.scale
-        self.x_angle = camera.x_angle
+		self.x, self.y, self.z = camera.x, camera.y, camera.z
+		self.size = camera.scale
+		self.x_angle = camera.x_angle
 		self.y_angle = camera.y_angle
 
 class RTS_Camera(object):
@@ -77,7 +77,7 @@ class RTS_Camera(object):
         self.z += (self.target.z - self.z) * 0.1
         self.scale += (self.target.size * 2 - self.scale) * 0.1
         self.x_angle += (self.target.x_angle - self.x_angle) * 0.1
-		self.y_angle += (self.target.y_angle - self.y_angle) * 0.1
+        self.y_angle += (self.target.y_angle - self.y_angle) * 0.1
 
     def focus(self):
         "Set projection and modelview matrices ready for rendering"
@@ -91,7 +91,7 @@ class RTS_Camera(object):
         #    +self.scale * aspect,
         #    -self.scale,
         #    +self.scale)
-		gluPerspective( 45.0, aspect, 0.1f, 100.0f);
+        gluPerspective( 45.0, aspect, 0.1, 100.0);
 		
         # Set modelview matrix to move, scale & rotate to camera position"
         glMatrixMode(GL_MODELVIEW)
@@ -99,7 +99,12 @@ class RTS_Camera(object):
         gluLookAt(
             self.x, self.y, +1.0,
             self.x, self.y, -1.0,
-            sin(self.angle), cos(self.angle), 0.0)
+            0, 0, 1.0)     
+      
+        #gluLookAt(
+        #    self.x, self.y, +1.0,
+        #    self.x, self.y, -1.0,
+        #    sin(self.angle), cos(self.angle), 0.0)
 
 
 	def hud_mode(self):

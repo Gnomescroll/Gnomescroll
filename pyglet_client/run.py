@@ -2,9 +2,9 @@
 
 from pyglet import app, clock
 from pyglet.window import key, Window
-from camera import Camera
+from rts_camera import RTS_Camera
 from mouse import Mouse
-#from keyboard import Keyboard
+from keyboard import Keyboard
 from renderer import Renderer
 
 #@window.event
@@ -19,7 +19,7 @@ def main():
     camera = RTS_Camera(win.width, win.height, (0, 0, 0))
     renderer = Renderer()
     keyboard = Keyboard()
-    mouse = Mouse()
+    mouse = Mouse(camera)
     keyboard.key_handlers[key.ESCAPE] = win.close
     keyboard.key_handlers.update(camera.key_handlers) #use to add handlers
     #clock.schedule(maze.update)
