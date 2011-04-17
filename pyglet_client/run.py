@@ -46,6 +46,7 @@ class App(object):
 	    #self.keyboard.print_handlers()
 		win.set_visible()
 	    
+		self.camera = camera
 		self.win = win
 		self.renderer = renderer
 		self.keyboard = keyboard
