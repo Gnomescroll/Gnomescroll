@@ -7,17 +7,20 @@ viewer_top_x = 0
 viewer_top_y = 0
 viewer_bot_x = SCREEN_WIDTH
 viewer_bot_y = SCREEN_HEIGHT
-MAP_WIDTH = 100
-MAP_HEIGHT = 100
+MAP_WIDTH = 200
+MAP_HEIGHT = 200
 map_viewer = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 mouse_on_drag_start = None
 
 LIMIT_FPS = 20  #20 frames-per-second maximum
 
-map = [[-1 for col in range(MAP_WIDTH)] for row in range(MAP_HEIGHT )]
-map[3][3] = 1
-map[2][5] = 1
-map[20][5] = 1
+#3 zoom
+#defaults
+#6 octaves
+
+noise_zoom = 60
+noise = libtcod.noise_new(2, 0.5, 2.0)
+map = [[libtcod.noise_get(noise, [noise_zoom * x, noise_zoom * y]) for col, x in enumerate(range(MAP_WIDTH))] for row, y in enumerate(range(MAP_HEIGHT))]
 
 def move_screen(dx, dy):
 	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
@@ -50,11 +53,58 @@ def render():
 	libtcod.console_flush()
 	for x, row in enumerate(map):
 		for y, element in enumerate(row):
-			if element == -1:
-				color = libtcod.green
+		
+			"""if element == -1:
+				color = libtcod.black
+			elif element == 0:
+				color = libtcod.darkest_blue
 			elif element == 1:
+				color = libtcod.dark_blue
+			elif element == 2:
 				color = libtcod.blue
-			libtcod.console_set_default_background(map_viewer, color)
+			elif element == 3:
+				color = libtcod.light_blue
+			elif element == 4:
+				color = libtcod.lighter_blue
+			elif element == 5:
+				color = libtcod.lightest_blue
+			elif element == 6:
+				color = libtcod.lighter_amber
+			elif element == 7:  
+				color = libtcod.lightest_green
+			elif element == 8:  
+				color = libtcod.lighter_green
+			elif element == 9:  
+				color = libtcod.light_green
+			elif element == 10: 
+				color = libtcod.green
+			elif element == 11: 
+				color = libtcod.dark_green
+			elif element == 12: 
+				color = libtcod.darker_green
+			elif element == 13:
+				color = libtcod.darkest_green
+			elif element == 14:
+				color = libtcod.darker_sepia
+			elif element == 15:
+				color = libtcod.darkest_sepia
+			elif element == 16:
+				color = libtcod.darker_grey
+			elif element == 17:
+				color = libtcod.grey
+			elif element == 18:
+				color = libtcod.light_grey
+			elif element == 19:
+				color = libtcod.white"""
+
+			h = map[x][y];
+			c = int((h + 1.0) / 2.0 * 255)
+			if c < 0:
+				c = 0
+			elif c > 255:
+				c = 255
+			col = libtcod.Color(c / 2, c / 2, c)
+			libtcod.console_set_default_background(map_viewer, c)
 			libtcod.console_put_char(map_viewer, x, y, " ", libtcod.BKGND_SET)
 	libtcod.console_blit(map_viewer, viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y, 0, 0, 0)
 	
