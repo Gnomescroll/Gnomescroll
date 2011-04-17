@@ -36,7 +36,7 @@ class App(object):
 		camera = RTS_Camera(win.width, win.height, (0, 0, 0))
 	    #self.hud = Hud(self.win)
 		renderer = Renderer()
-		keyboard = Keyboard()
+		keyboard = Keyboard(app)
 		mouse = Mouse(camera)
 		keyboard.key_handlers[key.ESCAPE] = win.close
 	    #self.keyboard.key_handlers.update(self.camera.key_handlers) #use to add handlers
@@ -56,7 +56,10 @@ class App(object):
 		while not self.win.has_exit:
 			self.win.dispatch_events()
 			#self.world.tick()
-
+			keyboard = key.KeyStateHandler()  #test
+			win.push_handlers(keyboard)  #test
+			self.keyboard.stateHandler(keyboard)
+			
 			self.camera.focus()
 			#self.camera.worldProjection()
 			#self.world.draw()
