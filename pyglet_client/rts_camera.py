@@ -60,9 +60,9 @@ class RTS_Camera(object):
     def zoom(self, factor):
         self.target.size *= factor
 
-    def pan(self, length, angle):
-        self.target.x += length * sin(angle + self.angle)
-        self.target.y += length * cos(angle + self.angle)
+	def pan(self, dx_angle, dy_angle):
+		self.x_angle += dx_angle
+		self.y_angle += dy_angle
 
 #    def tilt(self, angle):
 #        self.target.angle += angle
@@ -95,12 +95,17 @@ class RTS_Camera(object):
 		
         # Set modelview matrix to move, scale & rotate to camera position"
         glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        gluLookAt(
-            self.x, self.y, +1.0,
-            self.x, self.y, -1.0,
-            0, 0, 1.0)     
-      
+		glLoadIdentity() 
+
+		camera_focus_x = self.x + cos( self.x_angle * pi);
+		camera_focus_y = self.y + sin( self.x_angle * pi);
+		camera_focus_z = self.z + sin( self.y_angle);
+    
+		gluLookAt(
+			self.x, self.y, self.z,
+			camera_focus_x, camera_focus_y, camera_focus_z,
+			0., 0., 1.0)  
+
         #gluLookAt(
         #    self.x, self.y, +1.0,
         #    self.x, self.y, -1.0,
