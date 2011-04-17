@@ -7,14 +7,17 @@ viewer_top_x = 0
 viewer_top_y = 0
 viewer_bot_x = SCREEN_WIDTH
 viewer_bot_y = SCREEN_HEIGHT
-MAP_WIDTH = 15
-MAP_HEIGHT = 15
+MAP_WIDTH = 100
+MAP_HEIGHT = 100
 map_viewer = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 mouse_on_drag_start = None
 
 LIMIT_FPS = 20  #20 frames-per-second maximum
 
 map = [[-1 for col in range(MAP_WIDTH)] for row in range(MAP_HEIGHT )]
+map[3][3] = 1
+map[2][5] = 1
+map[20][5] = 1
 
 def move_screen(dx, dy):
 	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
@@ -49,9 +52,11 @@ def render():
 		for y, element in enumerate(row):
 			if element == -1:
 				color = libtcod.green
+			elif element == 1:
+				color = libtcod.blue
 			libtcod.console_set_default_background(map_viewer, color)
 			libtcod.console_put_char(map_viewer, x, y, " ", libtcod.BKGND_SET)
-	libtcod.console_blit(map_viewer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0)
+	libtcod.console_blit(map_viewer, viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y, 0, 0, 0)
 	
 def handle_mouse(current_mouse):
 	global mouse_on_drag_start
