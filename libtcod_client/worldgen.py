@@ -17,11 +17,20 @@ LIMIT_FPS = 20  #20 frames-per-second maximum
 #3 zoom
 #defaults
 #6 octaves
+noise_octaves = 4.0
+noise_zoom = 3.0
+noise_hurst = libtcod.NOISE_DEFAULT_HURST
+noise_lacunarity = libtcod.NOISE_DEFAULT_LACUNARITY
 
-noise_zoom = 60
-noise = libtcod.noise_new(2, 0.5, 2.0)
-map = [[libtcod.noise_get(noise, [noise_zoom * x, noise_zoom * y]) for col, x in enumerate(range(MAP_WIDTH))] for row, y in enumerate(range(MAP_HEIGHT))]
+map = [[-1 for col, x in enumerate(range(MAP_WIDTH))] for row, y in enumerate(range(MAP_HEIGHT))]
 
+noise = libtcod.noise_new(2, noise_hurst, noise_lacunarity)
+for y in range(MAP_HEIGHT):
+        for x in range(MAP_WIDTH):
+            f = [noise_zoom * x / (MAP_WIDTH), noise_zoom * y / (MAP_HEIGHT)]
+            map[x][y] = libtcod.noise_get(noise, f, libtcod.NOISE_PERLIN)
+			
+			
 def move_screen(dx, dy):
 	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
 	
