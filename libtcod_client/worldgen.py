@@ -27,10 +27,9 @@ map = [[-1 for col, x in enumerate(range(MAP_WIDTH))] for row, y in enumerate(ra
 noise = libtcod.noise_new(2, noise_hurst, noise_lacunarity)
 for y in range(MAP_HEIGHT):
         for x in range(MAP_WIDTH):
-            f = [noise_zoom * x / (MAP_WIDTH), noise_zoom * y / (MAP_HEIGHT)]
-            map[x][y] = libtcod.noise_get(noise, f, libtcod.NOISE_PERLIN)
-			
-			
+			f = [noise_zoom * x / (MAP_WIDTH), noise_zoom * y / (MAP_HEIGHT)]
+			map[x][y] = libtcod.noise_get(noise, f, libtcod.NOISE_PERLIN)
+
 def move_screen(dx, dy):
 	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
 	
@@ -60,8 +59,8 @@ def render():
 	x = 0;
 	y = 0;
 	libtcod.console_flush()
-	for x, row in enumerate(map):
-		for y, element in enumerate(row):
+	for (x, row) in enumerate(map):
+		for (y, element) in enumerate(row):
 		
 			"""if element == -1:
 				color = libtcod.black
