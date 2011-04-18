@@ -47,7 +47,7 @@ class Main(object):
 	    #self.keyboard.print_handlers()
 		win.set_visible()
 	    
-	    self.world = world
+		self.world = world
 		self.camera = camera
 		self.win = win
 		self.renderer = renderer
@@ -65,6 +65,7 @@ class Main(object):
 			
 			self.camera.focus()
 			self.world.draw()
+
 			#self.camera.worldProjection()
 			#self.world.draw()
 
