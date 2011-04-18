@@ -63,6 +63,7 @@ class Main(object):
 			##self.win.push_handlers(keyboard)  #test
 			##self.keyboard.stateHandler(keyboard)
 			
+			self.win.clear()
 			self.camera.focus()
 			self.world.draw()
 
