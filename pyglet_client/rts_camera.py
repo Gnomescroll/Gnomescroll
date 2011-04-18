@@ -64,7 +64,7 @@ class RTS_Camera:
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
 		aspect = self.win_width / self.win_height
-		gluPerspective( 45.0, aspect, 0.1, 100.0);
+		gluPerspective( 45.0 / self.scale, aspect, 0.1, 100.0);
 		
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity() 
@@ -72,7 +72,7 @@ class RTS_Camera:
 		camera_focus_x = self.x + cos( self.x_angle * pi);
 		camera_focus_y = self.y + sin( self.x_angle * pi);
 		camera_focus_z = self.z + sin( self.y_angle);
-		print "Camera Angle: (%s, %s)" % (str(self.x_angle/(2*pi)), str(self.y_angle/(2*pi)))
+		#print "Camera Angle: (%s, %s)" % (str(self.x_angle/(2*pi)), str(self.y_angle/(2*pi)))
 		
 		
 		#print "Camera Focus Vector: (%s, %s, %s)" % ( str(cos( self.x_angle * pi)), str(sin( self.x_angle * pi)), str(sin( self.y_angle)))
@@ -89,10 +89,15 @@ class RTS_Camera:
 		self.target.size *= factor
 
 	def pan(self, dx_angle, dy_angle):
-		print "dx_angle= " + str(dx_angle)
-		print "dy_angle= " + str(dy_angle)
+		#print "dx_angle= " + str(dx_angle)
+		#print "dy_angle= " + str(dy_angle)
 		self.x_angle += dx_angle
 		self.y_angle += dy_angle
+
+	def move_camera(self, dx, dy, dz):
+		self.x += dx
+		self.y += dy
+		self.z += dz
 
 #    def tilt(self, angle):
 #        self.target.angle += angle

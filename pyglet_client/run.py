@@ -8,6 +8,8 @@ from mouse import Mouse
 from keyboard import Keyboard
 from renderer import Renderer
 
+from world import World
+
 #@window.event
 #def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
 #	global camera_x_angle, camera_y_angle
@@ -15,7 +17,7 @@ from renderer import Renderer
 #	camera_x_angle = camera_x_angle + dx/100
 #	camera_z_angle = camera_y_angle + dx/100
 
-class App(object):
+class Main(object):
 
 	def __init__(self):
 		#configure window
@@ -28,15 +30,14 @@ class App(object):
 		context = config.create_context(None)
 		window = pyglet.window.Window(context=context)
 		win = window
-		#self.win = window.window(fullscreen=False)
-        #self.camera = Camera(self.win, zoom=100.0)
-        #self.hud = Hud(self.win)
+		
+		camera = RTS_Camera(win.width, win.height, (0, 0, 0))
+		world = World(camera)
         #clock.set_fps_limit(60)
 
-		camera = RTS_Camera(win.width, win.height, (0, 0, 0))
 	    #self.hud = Hud(self.win)
 		renderer = Renderer()
-		keyboard = Keyboard(app)
+		keyboard = Keyboard(self, camera)
 		mouse = Mouse(camera)
 		keyboard.key_handlers[key.ESCAPE] = win.close
 	    #self.keyboard.key_handlers.update(self.camera.key_handlers) #use to add handlers
@@ -46,6 +47,7 @@ class App(object):
 	    #self.keyboard.print_handlers()
 		win.set_visible()
 	    
+	    self.world = world
 		self.camera = camera
 		self.win = win
 		self.renderer = renderer
@@ -55,12 +57,14 @@ class App(object):
 	def main(self):
 		while not self.win.has_exit:
 			self.win.dispatch_events()
-			#self.world.tick()
-			keyboard = key.KeyStateHandler()  #test
-			win.push_handlers(keyboard)  #test
-			self.keyboard.stateHandler(keyboard)
+			self.world.tick()
+			
+			##keyboard = key.KeyStateHandler()  #test
+			##self.win.push_handlers(keyboard)  #test
+			##self.keyboard.stateHandler(keyboard)
 			
 			self.camera.focus()
+			self.world.draw()
 			#self.camera.worldProjection()
 			#self.world.draw()
 
@@ -87,5 +91,5 @@ class App(object):
 			self.win.flip()
 
 if __name__ == "__main__":
-	app = App()
+	app = Main()
 	app.main()	
