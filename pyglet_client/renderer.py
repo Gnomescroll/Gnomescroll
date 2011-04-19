@@ -12,10 +12,11 @@ rad2deg = 180 / pi
 class Renderer(object):
 
     def __init__(self):
-        glClearColor(0.1, 0.2, 0.5, 0.0)
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        pass
+        #glClearColor(0.1, 0.2, 0.5, 0.0)
+        #glEnable(GL_LINE_SMOOTH)
+        #glEnable(GL_BLEND)
+        #glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def on_draw(self, camera, win_width, win_height):
         glClear(GL_COLOR_BUFFER_BIT)

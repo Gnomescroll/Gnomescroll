@@ -6,7 +6,7 @@ from pyglet.window import key
 from rts_camera import RTS_Camera
 from mouse import Mouse
 from keyboard import Keyboard
-from renderer import Renderer
+#from renderer import Renderer
 
 from world import World
 
@@ -36,7 +36,7 @@ class Main(object):
         #clock.set_fps_limit(60)
 
 	    #self.hud = Hud(self.win)
-		renderer = Renderer()
+		#renderer = Renderer()
 		keyboard = Keyboard(self, camera)
 		mouse = Mouse(camera)
 		keyboard.key_handlers[key.ESCAPE] = win.close
@@ -50,7 +50,7 @@ class Main(object):
 		self.world = world
 		self.camera = camera
 		self.win = win
-		self.renderer = renderer
+		#self.renderer = renderer
 		self.keyboard = keyboard
 		self.mouse = mouse
 	    
@@ -63,22 +63,25 @@ class Main(object):
 			##self.win.push_handlers(keyboard)  #test
 			##self.keyboard.stateHandler(keyboard)
 			
-			self.win.clear()
+			#self.win.clear()
 			self.camera.focus()
 			self.world.draw()
 
+			#self.camera.hud_mode()
+			#self.camera.draw_fps()
+			
 			#self.camera.worldProjection()
 			#self.world.draw()
 
-			#self.camera.hudProjection()
-			#self.hud.draw()
 
-			clock.tick()
+		 ##	#clock.tick()
 			self.win.flip()
     
 
 
 	def mainLoop(self):
+		print "WTF"
+		return
 		while not self.win.has_exit:
 			self.win.dispatch_events()
 			self.world.tick()

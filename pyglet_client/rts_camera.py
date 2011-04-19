@@ -7,11 +7,8 @@ from __future__ import division
 from math import cos, pi, sin
 
 from pyglet.window import key
-from pyglet.gl import (
-    glLoadIdentity, glMatrixMode, gluLookAt, gluPerspective, gluOrtho2D,
-    GL_MODELVIEW, GL_PROJECTION,
-)
-
+from pyglet.gl import *
+import pyglet
 
 """
 A location/scale/angle, towards which a camera will quickly but smoothly
@@ -24,7 +21,7 @@ class Target(object):
 		self.size = camera.scale
 		self.x_angle = camera.x_angle
 		self.y_angle = camera.y_angle
-
+		
 
 class RTS_Camera:
 	
@@ -47,6 +44,7 @@ class RTS_Camera:
 		self.target = Target(self)
 		self.key_handlers = {}
 		
+		gluPerspective( 45.0, 640.0 / 480.0, 0.1, 100.0);
 		   # key.PAGEUP: lambda: self.zoom(2),
 		   # key.PAGEDOWN: lambda: self.zoom(0.5),
 		   # key.LEFT: lambda: self.pan(self.scale, -pi/2),
@@ -58,26 +56,27 @@ class RTS_Camera:
 			#}
 	
 	def focus(self):
-		pass
-		"Set projection and modelview matrices ready for rendering"
-        # Set projection matrix suitable for 2D rendering"
-		glMatrixMode(GL_PROJECTION)
-		glLoadIdentity()
-		aspect = self.win_width / self.win_height
-		gluPerspective( 45.0 / self.scale, aspect, 0.1, 100.0);
+		#glMatrixMode(GL_PROJECTION)
+		#glLoadIdentity()
+		#aspect = self.win_width / self.win_height
+		#gluPerspective( 45.0 / self.scale, aspect, 0.1, 100.0);
 		
-		glMatrixMode(GL_MODELVIEW)
-		glLoadIdentity() 
+		glClear(GL_COLOR_BUFFER_BIT)
+		glMatrixMode( GL_MODELVIEW ) #needed?
+		glLoadIdentity()
+		
+		
+
 
 		camera_focus_x = self.x + cos( self.x_angle * pi);
 		camera_focus_y = self.y + sin( self.x_angle * pi);
 		camera_focus_z = self.z + sin( self.y_angle);
 		#print "Camera Angle: (%s, %s)" % (str(self.x_angle/(2*pi)), str(self.y_angle/(2*pi)))
-		
-		
 		#print "Camera Focus Vector: (%s, %s, %s)" % ( str(cos( self.x_angle * pi)), str(sin( self.x_angle * pi)), str(sin( self.y_angle)))
+		
+		print "camera= " + str((self.x, self.y, self.z, camera_focus_x, camera_focus_y, camera_focus_z))
 		gluLookAt( self.x, self.y, self.z,
-				camera_focus_x, camera_focus_y, camera_focus_z,
+				camera_focus_x- self.x, camera_focus_y-self.y, camera_focus_z-self.z,
 				0., 0., 1.0)
 		        #gluOrtho2D(
         #    -self.scale * aspect,
@@ -98,7 +97,7 @@ class RTS_Camera:
 		self.x += dx
 		self.y += dy
 		self.z += dz
-
+		#print 'camera= ' + str((self.x, self.y, self.z))
 #    def tilt(self, angle):
 #        self.target.angle += angle
 
@@ -122,3 +121,12 @@ class RTS_Camera:
 		gluOrtho2D(0, self.win_width, 0, self.win_height)
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
+
+	def draw_fps(self):
+		#label.text = 'FPS: %f' % pyglet.clock.get_fps()
+		label = pyglet.text.Label('FPS: %f' % pyglet.clock.get_fps(),
+                          font_name='Times New Roman',
+                          font_size=12,
+                          x= 10  , y=self.win_height, anchor_x='left', anchor_y='top')
+		label.draw()	
+	
