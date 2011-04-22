@@ -8,10 +8,10 @@ var terrain_tiles = {
 
 var map_editor = {
     
-    panel_canvas_tile: function(id) {
+    panel_canvas_tile: function (id) {
         var bc = board_canvas,
             canvas = $('<canvas></canvas>').attr({'id' : id,
-                                               'class' : 'panel_tile'});
+                                                'class' : 'panel_tile'});
         canvas[0].width = bc.tile_pixel_width;
         canvas[0].height = bc.tile_pixel_height;
         
@@ -29,21 +29,23 @@ var map_editor = {
             tr, td;
             
         for (i in tile_values) {
-            name = tile_values[i];
-            i = parseInt(i)
-            if (isNaN(i) || i < 0 || name === undefined) continue;
-            if (j%cells_wide === 0) {
-                tr = $('<tr></tr>');
-                table.append(tr);
+            if (tile_values.hasOwnProperty(i)) {
+                name = tile_values[i];
+                i = parseInt(i)
+                if (isNaN(i) || i < 0 || name === undefined) continue;
+                if (j%cells_wide === 0) {
+                    tr = $('<tr></tr>');
+                    table.append(tr);
+                }
+                td = $('<td></td>').attr('class','canvas');
+                canvas = this.panel_canvas_tile(i);
+                tr.append(td.append(canvas));
+                
+                td = $('<td></td>').attr('id',i).html(name);
+                if (i == this.current_tile) td.attr('class','selected');
+                tr.append(td);
+                j++;
             }
-            td = $('<td></td>').attr('class','canvas');
-            canvas = this.panel_canvas_tile(i);
-            tr.append(td.append(canvas));
-            
-            td = $('<td></td>').attr('id',i).html(name);
-            if (i == this.current_tile) td.attr('class','selected');
-            tr.append(td);
-            j++;
         }
         pane.append(table);
         
@@ -99,12 +101,9 @@ var map_editor = {
                 map_editor.current_tile = null;
             }
         });
-        
-        
     },
     
-    set_tile: function(event) {
-       //console.log('window click');
+    set_tile: function (event) {
        // find if click is inside canvas
        // if so, which coordinate tile
        // call admin.set_map for the current_tile_value and at coord
@@ -143,7 +142,7 @@ var map_editor = {
     
     current_tile: null, // currently selected map tile for editor
     
-    clear_current: function() {
+    clear_current: function () {
         $('td.selected').attr('class','');
         this.current_tile = null;
     },
