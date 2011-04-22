@@ -29,9 +29,115 @@ def convert_index(index, height, width):
     #print "rvalue= " + str(rvalue)
     return rvalue
 
-class TerrainMap(object):
+
+class CubeProperies(object):
+
     def __init__(self):
-        pass
+        self.cubes = {
+        0 : {
+            'id' : 0,
+            'occludes' : False
+            'active' : False
+            }
+        1 : {
+            'id' : 0,
+            'occludes' : False
+            'active' : False
+
+            'top_tex' : 0,
+            'bottom_tex' : 0,
+            'west_tex' : 0,
+            'east_tex' : 0,
+            'north_tex' : 0,
+            'south_tex' : 0,
+        }
+     }
+
+    def isActive(self, tile_id):
+        if self.cubes.has_key(tile_id):
+            return self.cubes[tile_id][active]
+        else:
+            print "Error, cube type does not exist"
+            return False
+
+    def isOcclude(self, tile_id):
+        if self.cubes.has_key(tile_id):
+            return self.cubes[tile_id][active]
+        else:
+            print "Error, cube type does not exist"
+            return False
+
+class CubeRenderCache(object):
+
+    def __init__(self, cubeProperties):
+        self.cubeProperties = cubeProperties
+        #c4B_cache = {}
+        #t4f_cache = {}
+
+        self.v_index = [
+        [ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 ], #top
+        [ 1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 ], #bottom
+        [ 0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 ], #north
+        [ 0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 ], #south
+        [ 0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 ], #west
+        [ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 ], #east
+    ]
+
+    def _get_cube_side(self, v3f_list)
+
+        ("v3f", v_list),
+        ("c4B", [255, 255, 255, 255] * 4*6),
+        ("t3f", tc_list))
+
+    ## t, b, n, s, w, e
+    def get_side(x, y, z, tile_id, side_num):
+        ta = self.v_index[side_num]
+        #v_list = (GLfloat * 12) [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
+        v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
+
+        c4B_list = self._get_c4B(tile_id, side_num)
+
+
+
+    def _get_c4B(tile_id, side_num)
+        if self.c4B_cache.has_key((tile_id, side_num)):
+            return self.c4B_cache[(tile_id, side_num)]
+        else:
+            ##compute from dict!
+            temp = (GLbyte * 4)[255, 255, 255, 255] * 4
+            self.c4B_cache[(tile_id, side_num)] = temp
+            return temp
+
+class MapChunk(object):
+
+    self.terrainMap = terrainMap
+    self.cubeProperties = cubeProperties
+
+    x_chunk_size = 8
+    y_chunk_size = 8
+    z_chunk_size = 8
+
+    def __init__(self, x_offset, y_offset):
+        self.x_offset = x_offset
+        self.y_offset = y_offset
+        active_cubes = []
+        changed_cubes = []
+        state = {}
+
+    def update_vertex_buffer():
+        for x in range(0,x_chunk_size):
+            for y in range(0, y_chunk_size):
+                for z in range(0, z_chunk_size):
+                    tile_id = self.terrainMap.get(x,y,z)
+                    if self.cubeProperties.isActive(tile_id)
+                        state[(x,y,z)] = {
+                        'tile_id' = tile_id,
+                        'render' = (0,0, 0,0, 0,0),
+                        'occludes' = self.cubeProperties.isOcclude(tile_id), }
+                        changed_cubes.append([x,y,z])
+
+    def update_tile(x,y,z):
+
 
 class World(object):
 
@@ -229,7 +335,7 @@ class Keyboard(object):
             self.key_handlers[symbol]()
 
     def stateHandler(self, keyboard):
-        v = 0.2
+        v = 0.1
         if keyboard[key.W]:
             self.camera.move_camera(v,0,0)
         if keyboard[key.S]:
@@ -238,6 +344,10 @@ class Keyboard(object):
             self.camera.move_camera(0,v,0)
         if keyboard[key.D]:
             self.camera.move_camera(0,-v,0)
+        if keyboard[key.R]:
+            self.camera.move_camera(0,0,v)
+        if keyboard[key.F]:
+            self.camera.move_camera(0,0,-v)
         if keyboard[key.SPACE]:
             print "Event A.1"
 
