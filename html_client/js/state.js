@@ -1,55 +1,73 @@
 // need object mapping tile_values with (maybe) tile_type names
 // and also mapping the tile_values to positions in the tileset
 
-var state = ( function () {
+var state = {
     
-    var blocks,
-        levels = {},
-        agents = {},
-        objects = {},
-        containers = {},
-        ao_map = {}; // coordinate map; maps coordinate.toString() to a another object, { agent: [], object: [], container: [] }
+    levels:     {}, // tile map state, 2x2 arrays indexed by z-level (levels[z][x][y] to access a specific tile by coordinate)
+    agents:     {},
+    objects:    {},
+    containers: {},
+    ao_map:     {}, // coordinate map; maps coordinate.toString() to a another object, { agent: [], object: [], container: [] }        
+    z_lvls:     [], // z-levels that are loaded
+    current_z_lvl: 1,
+
+    gameObjectTypeMap: { // map from game object types to state's cache for the type (loaded on init)
+        'agent'    : 'agents',
+        'obj'      : 'objects',
+        'container': 'containers'
+    },
+    
+    map_width: 100,
+    map_height: 100,
+    
+    
+    // requests state data from server
+    init: function () {
         
-    // need some translation function for global/map/server coords to block's coords
+        var z_levels_to_add = [ this.current_z_lvl-1, 
+                                this.current_z_lvl, 
+                                this.current_z_lvl+1 ],
+            len = z_levels_to_add.length,
+            i   = 0,
+            z,
+            name;
+
+        // init game object type map
+        for(name in this.gameObjectTypeMap) {
+            if (this.gameObjectTypeMap.hasOwnProperty(name)) {
+                this.gameObjectTypeMap[name] = this[this.gameObjectTypeMap[name]];
+            }
+        }
+
+        // add z-level numbers to z_lvls[]
+        for(i=0; i < len; i++) {
+            z = z_levels_to_add[i];
+            if ($.inArray(z, this.z_lvls) === -1) {
+                this.z_lvls.push(z);
+            }
+        }
+
+        // init levels{} with zeroed array, request map for each lvl
+        len = this.z_lvls.length;
+        for (i=0; i < len; i++) {
+            z = this.z_lvls[i];
+            this.levels[z] = this.blocks();       // zero-d array for each z-level
+            info.map(z);                // request z-levels
+        }
         
-    var z_lvls = [],
-        current_z_lvl = 1;
-        
-    var updateBlock,
-        updateLevel;
-    
-    var gameObjectKnown,
-        gameObjectTypeMap = { 'agent': agents,
-                              'obj': objects,
-                              'container': containers
-                            };
-    
-    var addGameObject,
-        removeGameObject;
-    
-    var setLocation,
-        cleanLocation;
-    
-    var locationEmpty;
-    
-    var init,
-        public_;
-    
-    
-    // generate blank block matrix
-    // stores tile values
-    
-    var map_width = 100,
-        map_height = 100;
-    
+        info.agents();                  // request agents
+        info.objects();                 //         objects
+        info.tileset();
+    },
+
     // generate zeroed matrix
-    blocks = function (width, height) {
+    blocks: function (width, height) {
         var arr = [],
             row = [],
-            i = 0,
-            j = 0,
-            width = width || map_width,
-            height = height || map_height;
+            i   = 0,
+            j   = 0,
+            width  = width || this.map_width,
+            height = height || this.map_height;
             
          for (i=0; i < width; i++) {
              for (j=0; j < height; j++) {
@@ -60,36 +78,11 @@ var state = ( function () {
          }
          
          return arr;   
-    };
-    
-    // requests state data from server
-    init = function () {
-        
-        var z_levels_to_add = [ current_z_lvl-1, 
-                                current_z_lvl, 
-                                current_z_lvl+1 ];
-        
-        $.each(z_levels_to_add, function (i, z) {
-            if ($.inArray(z, z_lvls) === -1) {
-                z_lvls.push(z);
-            }
-        });
-        
-        $.each(z_lvls, function (i, z) {
-            levels[z] = blocks();       // zero-d array for each z-level
-            info.map(z);                // request z-levels
-        });
-        
-        
-        info.agents();                  // request agents
-        info.objects();                 //         objects
-        info.tileset();
-    };
+    },
     
     // checks if a position is in current state bounds.
     // returns false or a row of y values from [z][x]
-    contains = function(pos) {
-    
+    contains: function(pos) {
         var x, y, z,
             x_, z_;
       
@@ -97,60 +90,52 @@ var state = ( function () {
         y = pos[1];
         z = pos[2];
       
-        z_ = levels[z];
+        z_ = this.levels[z];
         if (z_ === undefined) return false;
         x_ = z_[x];
         if (x_ === undefined) return false;
         if (x_[y] === undefined) return false;
-        
         return x_;  
-    };
+    },
     
     // update a z-level with map info
-    updateLevel = function (data) {
-        
+    updateLevel: function (data) {
         // data object requires:
         // z_level, map, y_size, x_size
-        
         var arr = [],
             col = [],
-            i = 0,
-            j = 0;
+            i   = 0,
+            j   = 0,
+            data_map_length;
             
         for (j=0; j < data.x_size; j += 1) {
-            for (i=j; i < data.map.length; i += data.y_size) {
+            data_map_length = data.map.length;
+            for (i=j; i < data_map_length; i += data.y_size) {
                 col.push(data.map[i]);
             }
             arr.push(col);
             col = [];
         }
         
-        levels[data.z_level] = arr;
+        this.levels[data.z_level] = arr;
         
-        if ($.inArray(data.z_level, z_lvls) === -1) {
-            z_lvls.push(data.z_level);
+        if ($.inArray(data.z_level, this.z_lvls) === -1) {
+            this.z_lvls.push(data.z_level);
         }
-        
-    };
+        return true;
+    },
     
     // update a block type
-    updateBlock = function(block) {
-        console.log('updateBlock, ');
-        var x_;
-        
-        x_ = contains([block.x, block.y, block.z]);
+    updateBlock: function(block) {
+        var x_ = this.contains([block.x, block.y, block.z]);
         if (x_ === false) return false;
-        
         x_[block.y] = block.value
-        console.log('value:' + x_[block.y]);
-       
         return block;
-    };
+    },
     
     // checks if a game_object exists in state
     // returns false or the object
-    gameObjectKnown = function(game_object, type) {
-        
+    gameObjectKnown: function(game_object, type) {
         var id,
             obj;
         
@@ -163,46 +148,37 @@ var state = ( function () {
             id = game_object;
         }
         
-       // console.log('GOK');
-        console.log("type: " + type + ", id: " + id);
-        
-        console.log(gameObjectTypeMap);
-        obj = gameObjectTypeMap[type][id];
+        obj = this.gameObjectTypeMap[type][id];
         
         if (obj === undefined) return false;
         else return obj;
-    };
+    },
     
     // add game_object to lists
-    addGameObject = function(game_object) {
-        
+    addGameObject: function(game_object) {
         var type,
             id;
             
         type = game_object.base_type;
-        console.log('add game object type: '+type);
         id = game_object.id;
-        console.log('add game object id: '+id);
-        gameObjectTypeMap[type][id] = game_object;
-        console.log(ao_map);
-    };
+        this.gameObjectTypeMap[type][id] = game_object;
+        return true;
+    },
     
     // remove game_object from lists
-    removeGameObject = function(game_object) {
-        
+    removeGameObject: function(game_object) {
         var type,
             id;
             
         type = game_object.obj_type;
         id = game_object.id;
         
-        delete gameObjectTypeMap[type][id];
-        
-    };
+        delete this.gameObjectTypeMap[type][id];
+        return true;
+    },
     
     // removes a game_object from the ao_loc map
-    cleanLocation = function(game_object) {
-        
+    cleanLocation: function(game_object) {
         var type,
             pos,
             id,
@@ -213,7 +189,7 @@ var state = ( function () {
             
         type = game_object.base_type;
         id = game_object.id;
-        objs = gameObjectTypeMap[game_object.base_type];
+        objs = this.gameObjectTypeMap[game_object.base_type];
         
         if (!game_object.hasOwnProperty('pos')) {
             pos = GameObject.pos.apply(game_object);
@@ -222,10 +198,10 @@ var state = ( function () {
         }
         pos = pos.toString();
         
-        ao_loc = ao_map[pos];
+        ao_loc = this.ao_map[pos];
         
         if (ao_loc === undefined) { // if pos is not in ao_map
-            return; // leave
+            return false; // leave
         }
         
         ao_loc_type = ao_loc[type];
@@ -239,15 +215,13 @@ var state = ( function () {
         }
         
         if ($.isEmptyObject(ao_loc)) { // if ao_loc is now just {}
-            delete ao_map[pos]; // remove it from ao_map
+            delete this.ao_map[pos]; // remove it from ao_map
         }
-        
-    };
+        return true;
+    },
     
     // sets a game_object (agent, obj, cont) in the ao_loc map
-    setLocation = function (game_object) {
-        console.log('set location');
-        console.log(game_object);
+    setLocation: function (game_object) {
         var type,
             pos,
             ao_loc,
@@ -259,15 +233,12 @@ var state = ( function () {
         pos = game_object.pos();
         pos = pos.toString();
         
-        ao_loc = ao_map[pos];
+        ao_loc = this.ao_map[pos];
         
         if (ao_loc === undefined) { // if pos not in ao_map
             ao_loc = {};
             ao_loc[type] = [game_object.id];
-            ao_map[pos] = ao_loc // add new obj
-            console.log('ao_loc is new');
-            console.log(pos);
-            console.log(ao_map[pos]);
+            this.ao_map[pos] = ao_loc // add new obj
         } else {
             ao_loc_type = ao_loc[type]; // get existing obj
             if (ao_loc_type === undefined) { // if there is no key for type
@@ -278,12 +249,14 @@ var state = ( function () {
                 }
             }
         }
-    };
+        return true;
+    },
     
-    locationEmpty = function (loc) {
-        
+    locationEmpty: function (loc) {
         var x, y, z,
             ao_loc,
+            ao_loc_item,
+            item,
             empty = true;
         
         if (loc.constructor.name === 'Array' && loc.length >= 3) {
@@ -298,40 +271,18 @@ var state = ( function () {
             return true;
         }
         
-        ao_loc = ao_map[[x,y,z].toString()]
+        ao_loc = this.ao_map[[x,y,z].toString()]
         if (ao_loc !== undefined) {
-            $.each(ao_loc, function (key, val) {
-                if (key in gameObjectTypeMap && val.constructor.name === 'Array' && val.length > 0) {
-                    empty = false;
-                    return false;
+            for(item in ao_loc) {
+                if (ao_loc.hasOwnProperty(item)) {
+                    ao_loc_item = ao_loc[item];
+                    if (this.gameObjectTypeMap.hasOwnProperty(item) && $.isArray(ao_loc_item) && ao_loc_item.length > 0) {
+                        empty = false;
+                        return false;
+                    }
                 }
-            });
+            }
         }
-        
         return empty;
-    };
-    
-    public_ = {
-                init: init,
-                contains: contains,
-                setLocation: setLocation,
-                cleanLocation: cleanLocation,
-                gameObjectKnown: gameObjectKnown,
-                addGameObject: addGameObject,
-                removeGameObject: removeGameObject,
-                updateBlock: updateBlock,
-                updateLevel: updateLevel,
-                ao_map: ao_map,
-                levels: levels,
-                agents: agents,
-                objects: objects,
-                containers: containers,
-                current_z_lvl: current_z_lvl,
-                map_width: map_width,
-                map_height: map_height,
-                locationEmpty: locationEmpty,
-              };
-              
-    return public_;
-    
-}());
+    }
+};
