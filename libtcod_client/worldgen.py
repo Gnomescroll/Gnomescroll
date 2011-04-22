@@ -1,4 +1,5 @@
 import libtcodpy as libtcod
+import random
  
 #actual size of the window
 SCREEN_WIDTH = 80
@@ -12,10 +13,23 @@ MAP_HEIGHT = 200
 map_viewer = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 mouse_on_drag_start = None
 
+#For creating noise for heightmaps:
+#First number = degrees of noise 1-4, should always be 2.
+#Second number needs to decrease as the map size increases, adjusts "zoom"
+#Third number is seems to adjust variance - a value around 20 makes a 
+#detailed noise model, but the noise in general is smoother, larger, and farther apart.
+
 LIMIT_FPS = 20  #20 frames-per-second maximum
 
-rnd=libtcod.random_new_from_seed(34534534)
-noise=libtcod.noise_new(2, 0.5, 2.0 ,rnd) #First number has to do with smoothness/jaggedness of the form
+local_detail_random=libtcod.random_new_from_seed(random.randint(1, 1000000))
+local_detail_noise=libtcod.noise_new(2, 0.5, 2, local_detail_random) 
+
+roughness_random = libtcod.random_new_from_seed(random.randint(1, 1000000))
+roughness_noise=libtcod.noise_new(2, 0.5, 20, roughness_random)
+
+elevation_random = libtcod.random_new_from_seed(random.randint(1, 1000000))
+elevation_noise=libtcod.noise_new(2, 0.5, 20, elevation_random)
+
 # 3x3 kernel for smoothing operations
 smoothKernelSize=9
 smoothKernelDx=[-1,0,1,-1,0,1,-1,0,1]
@@ -24,12 +38,32 @@ smoothKernelWeight=[1.0,2.0,1.0,2.0,20.0,2.0,1.0,2.0,1.0]
 
 
 # function building the heightmap
-def buildMap(hm) :
-	libtcod.heightmap_add_fbm(hm,noise,5,5,0,0,6,0.5,1)
+def build_local_detail(hm) :
+	libtcod.heightmap_add_fbm(hm,local_detail_noise,5,5,0,0,6,0.5,1)
 	#for i in range(2,-1,-1):
 		#libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
 	libtcod.heightmap_normalize(hm,0,1)
-	print "done"
+	print "done with local detail map"
+	
+# function building the heightmap
+def build_roughness(hm) :
+	libtcod.heightmap_add_fbm(hm,roughness_noise,5,5,0,0,6,0.5,1)
+	libtcod.heightmap_normalize(hm,0,1)
+	print "done with roughness map"
+	
+# function building the heightmap
+def build_elevation(hm) :
+	libtcod.heightmap_add_fbm(hm,elevation_noise,5,5,0,0,6,0.5,1)
+	for i in range(2,-1,-1):
+		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
+	for i in range(2,-1,-1):
+		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
+	for i in range(2,-1,-1):
+		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
+	for i in range(2,-1,-1):
+		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
+	libtcod.heightmap_normalize(hm,0,1)
+	print "done with elevation map"
 
 def move_screen(dx, dy):
 	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
@@ -63,7 +97,7 @@ def render():
 			
 	for x in range(MAP_WIDTH) :
 		for y in range(MAP_HEIGHT) :
-			z = libtcod.heightmap_get_value(hm,x,y)
+			z = libtcod.heightmap_get_value(hm_to_display, x ,y)
 			val=int(z*255) & 0xFF
 			c=libtcod.Color(val/2,val/2,val)
 			libtcod.console_set_char_background(map_viewer,x,y,c,libtcod.BKGND_SET)
@@ -80,14 +114,24 @@ def handle_mouse(current_mouse):
 		mouse_on_drag_start = current_mouse;
 		
 def handle_keys():
-    key = libtcod.console_check_for_keypress()  #real-time
- 
-    if key.vk == libtcod.KEY_ENTER and libtcod.KEY_ALT:
-        #Alt+Enter: toggle fullscreen
-        libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
- 
-    elif key.vk == libtcod.KEY_ESCAPE:
-        return True  #exit game
+	global hm_to_display, elevation_hm
+	key = libtcod.console_check_for_keypress()  #real-time
+
+	if key.vk == libtcod.KEY_ENTER and libtcod.KEY_ALT:
+		#Alt+Enter: toggle fullscreen
+		libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+
+	elif key.vk == libtcod.KEY_SPACE:
+	#SPACE cycles through the different heightmaps
+		if hm_to_display == elevation_hm:
+			hm_to_display = roughness_hm
+		elif hm_to_display == roughness_hm:
+			hm_to_display = local_detail_hm
+		elif hm_to_display == local_detail_hm:
+			hm_to_display = elevation_hm
+			
+	elif key.vk == libtcod.KEY_ESCAPE:
+		return True  #exit game
  
 
  
@@ -99,8 +143,17 @@ def handle_keys():
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Gnomescroll Worldgen', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 
-hm=libtcod.heightmap_new(MAP_WIDTH,MAP_HEIGHT)
-buildMap(hm)
+local_detail_hm=libtcod.heightmap_new(MAP_WIDTH,MAP_HEIGHT)
+build_local_detail(local_detail_hm)
+
+roughness_hm=libtcod.heightmap_new(MAP_WIDTH,MAP_HEIGHT)
+build_roughness(roughness_hm)
+
+elevation_hm=libtcod.heightmap_new(MAP_WIDTH,MAP_HEIGHT)
+build_elevation(elevation_hm)
+
+##WHICH MAP TO SHOW IN VIEWER
+hm_to_display = roughness_hm
 
 while not libtcod.console_is_window_closed():
  
