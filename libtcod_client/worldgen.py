@@ -14,7 +14,8 @@ map_viewer = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 mouse_on_drag_start = None
 LEVELS_ABOVE = 64
 LEVELS_BELOW = 64
-z_to_display = 127
+levels_to_display = 10
+z_to_display = (LEVELS_ABOVE + LEVELS_BELOW) - levels_to_display - 1
 
 #For creating noise for heightmaps:
 #First number = degrees of noise 1-4, should always be 2.
@@ -139,14 +140,13 @@ def move_screen(dx, dy):
 	viewer_top_y = viewer_top_y + dy
 		
 def render():
-	global SCREEN_WIDTH, SCREEN_HEIGHT, map_viewer, terrain
 	x = 0;
 	y = 0;
 	libtcod.console_flush()
 			
 	for x in range(MAP_WIDTH):
 		for y in range(MAP_HEIGHT):
-			if terrain[x][y][z_to_display] == 1:
+			if terrain[x][y][z_to_display] == 1 and terrain[x][y][z_to_display + levels_to_display] == 0:
 				z = libtcod.heightmap_get_value(final_hm, x ,y)
 				c = get_color(z)
 			else:
