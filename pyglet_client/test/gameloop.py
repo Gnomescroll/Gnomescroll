@@ -144,10 +144,33 @@ class CubeRenderCache(object):
                 self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
                 return list(tex_tuple)
 
+
+class TerrainMap(object):
+
+    def __init__(self):
+        map = {}
+
+    def get(x,y,z):
+        pass
+
+    def set(x,y,z,value):
+        pass
+
+class MapChunkManager(object):
+
+    def __init__(self, terrainMap, cubeProperties):
+        MapChunk.terrainMap = terrainMap
+        MapChunk.cubeProperties = cubeProperties
+        self.terrainMap = terrainMap
+        self.cubeProperties = cubeProperties
+
+    def set_map(x,y,z,tile_id):
+        pass
+
 class MapChunk(object):
 
-    #terrainMap = terrainMap
-    #cubeProperties = cubeProperties
+    terrainMap = None
+    cubeProperties = None
 
     x_chunk_size = 8
     y_chunk_size = 8
@@ -181,6 +204,7 @@ class MapChunk(object):
         pass
 
 
+
 class World(object):
 
     def __init__(self):
@@ -189,10 +213,12 @@ class World(object):
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
         tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
         self.texture_grid = tile_texture_grid
-        #test
+
         self.cubeProperties = CubeProperties()
         self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
-
+        #test
+        self.terrainMap = TerrainMap()
+        MapChunkManager(terrainMap, cubeProperties)
     def tick(self):
         pass
 
