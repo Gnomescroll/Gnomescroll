@@ -271,7 +271,13 @@ class World(object):
         self.mct.cubeProperties = self.cubeProperties
         self.mct.cubeRenderCache = self.cubeRenderCache
 
-        self.mct.set_tile(1,1,0,2)
+
+        for x in range(0, 8):
+            for y in range(0, 8):
+                for z in range(0, 8):
+                    rnd = random.randint(0,2)
+                    self.mct.set_tile(x,y,z,rnd)
+       # self.mct.set_tile(1,1,0,2)
         #fill with random crap
         self.mct.update_vertex_buffer()
 
@@ -527,7 +533,7 @@ class App(object):
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
         self.hud = Hud(self.win)
-        clock.set_fps_limit(60)
+        #clock.set_fps_limit(60)
         #setup events
         self.keyboard.key_handlers[key.ESCAPE] = self.win.close
         self.win.on_mouse_drag = self.mouse.on_mouse_drag
@@ -536,6 +542,7 @@ class App(object):
         print "App init finished"
 
     def mainLoop(self):
+        clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         while not self.win.has_exit:
             self.win.push_handlers(keyboard)
