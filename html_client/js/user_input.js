@@ -3,16 +3,13 @@ var input,
 
 input = ( function () {
 
-    var queue = [],
-        init,
-        next;
-        
-    // init $ bindings
-    init = function () {
+    queue: [],  // queue of events received
+    
+    init = function () { // init $ bindings
         
         $('body').keydown(function (event) {
             var key = keymap[event.which];
-            queue.push({key: key, timestamp: event.timeStamp});
+            input.queue.push({key: key, timestamp: event.timeStamp});
                }).click(function (event) {
                   var key = keymap[event.which];
                   if (key === 'left-click') { 
@@ -21,12 +18,10 @@ input = ( function () {
                });
     };
         
-    // shifts the queue, FIFO
-    next = function (delay) {
-        
+    next = function (delay) { // shifts the queue, FIFO
         var timestamp = 0,
-            delay = delay || 300; // millisecond delay between input
-        
+            delay = delay || 300, // millisecond delay between input
+            queue = this.queue;
         
         while (queue.length > 0) {
             var event = queue.shift();
@@ -36,20 +31,13 @@ input = ( function () {
             }
             
             timestamp = event.timestamp;
-            console.log(timestamp);
             queue = [];
             
             return event.key;
         }
-        
         return false;
-    };
-        
-    return { init: init,
-             next: next,
-           };
-
-}());
+    }
+};
 
 // for the keydown event.
 // NOTE: keypress keymap is COMPLETELY DIFFERENT FOR NO REASON
@@ -168,4 +156,4 @@ keymap = {
     //0: '5NUMPAD',
     //0: '.NUMPAD',
     //0: '0NUMPAD',
-}
+};
