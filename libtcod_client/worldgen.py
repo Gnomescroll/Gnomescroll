@@ -36,19 +36,67 @@ smoothKernelDx=[-1,0,1,-1,0,1,-1,0,1]
 smoothKernelDy=[-1,-1,-1,0,0,0,1,1,1]
 smoothKernelWeight=[1.0,2.0,1.0,2.0,20.0,2.0,1.0,2.0,1.0]
 
+def get_color(element):
+	#TODO: make this a dictionary
+	if element <= 0:
+		return libtcod.darkest_blue
+	elif element <= 0.05:
+		return libtcod.dark_blue
+	elif element <= 0.1:
+		return libtcod.blue
+	elif element <= 0.15:
+		return libtcod.light_blue
+	elif element <= 0.2:
+		return libtcod.lighter_blue
+	elif element <= 0.25:
+		return libtcod.lightest_blue
+	elif element <= 0.3:
+		return libtcod.lighter_amber
+	elif element <= 0.35:  
+		return libtcod.lightest_green
+	elif element <= 0.4:  
+		return libtcod.lighter_green
+	elif element <= 0.45:  
+		return libtcod.light_green
+	elif element <= 0.5: 
+		return libtcod.green
+	elif element <= 0.55: 
+		return libtcod.dark_green
+	elif element <= 0.6: 
+		return libtcod.darker_green
+	elif element <= 0.65:
+		return libtcod.darkest_green
+	elif element <= 0.7:
+		return libtcod.darker_sepia
+	elif element <= 0.75:
+		return libtcod.darkest_sepia
+	elif element <= 0.8:
+		return libtcod.darker_grey
+	elif element <= 0.85:
+		return libtcod.grey
+	elif element <= 0.9:
+		return libtcod.light_grey
+	elif element <= 0.95:
+		return libtcod.lighter_grey
+	else:
+		return libtcod.white
 
 # function building the heightmap
 def build_local_detail(hm) :
 	libtcod.heightmap_add_fbm(hm,local_detail_noise,5,5,0,0,6,0.5,1)
 	#for i in range(2,-1,-1):
 		#libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
-	libtcod.heightmap_normalize(hm,0,1)
+	#libtcod.heightmap_normalize(hm,0,1)
 	print "done with local detail map"
 	
 # function building the heightmap
 def build_roughness(hm) :
 	libtcod.heightmap_add_fbm(hm,roughness_noise,5,5,0,0,6,0.5,1)
-	libtcod.heightmap_normalize(hm,0,1)
+	for i in range(2,-1,-1):
+		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
+	for i in range(2,-1,-1):
+		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
+	#libtcod.heightmap_normalize(hm,0,1)
 	print "done with roughness map"
 	
 # function building the heightmap
@@ -62,7 +110,7 @@ def build_elevation(hm) :
 		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
 	for i in range(2,-1,-1):
 		libtcod.heightmap_kernel_transform(hm,smoothKernelSize,smoothKernelDx,smoothKernelDy,smoothKernelWeight,-0.5,3.26)
-	libtcod.heightmap_normalize(hm,0,1)
+	#libtcod.heightmap_normalize(hm,0,1)
 	print "done with elevation map"
 
 def move_screen(dx, dy):
@@ -98,8 +146,7 @@ def render():
 	for x in range(MAP_WIDTH) :
 		for y in range(MAP_HEIGHT) :
 			z = libtcod.heightmap_get_value(hm_to_display, x ,y)
-			val=int(z*255) & 0xFF
-			c=libtcod.Color(val/2,val/2,val)
+			c= get_color(z)
 			libtcod.console_set_char_background(map_viewer,x,y,c,libtcod.BKGND_SET)
 	libtcod.console_blit(map_viewer, viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y, 0, 0, 0)
 	
@@ -152,8 +199,21 @@ build_roughness(roughness_hm)
 elevation_hm=libtcod.heightmap_new(MAP_WIDTH,MAP_HEIGHT)
 build_elevation(elevation_hm)
 
+multiplied_hm = libtcod.heightmap_new(MAP_WIDTH, MAP_HEIGHT)
+libtcod.heightmap_multiply_hm(local_detail_hm, roughness_hm, multiplied_hm)
+libtcod.heightmap_delete(local_detail_hm)
+libtcod.heightmap_delete(roughness_hm)
+
+
+final_hm = libtcod.heightmap_new(MAP_WIDTH, MAP_HEIGHT)
+libtcod.heightmap_add_hm(elevation_hm, multiplied_hm, final_hm)
+libtcod.heightmap_delete(elevation_hm)
+libtcod.heightmap_delete(multiplied_hm)
+
+libtcod.heightmap_normalize(final_hm)
+
 ##WHICH MAP TO SHOW IN VIEWER
-hm_to_display = roughness_hm
+hm_to_display = final_hm
 
 while not libtcod.console_is_window_closed():
  
@@ -165,51 +225,3 @@ while not libtcod.console_is_window_closed():
 	
 	if exit:
 		break
-
-
-
-
-# stuff to be used later
-	
-"""if element == -1:
-	color = libtcod.black
-elif element == 0:
-	color = libtcod.darkest_blue
-elif element == 1:
-	color = libtcod.dark_blue
-elif element == 2:
-	color = libtcod.blue
-elif element == 3:
-	color = libtcod.light_blue
-elif element == 4:
-	color = libtcod.lighter_blue
-elif element == 5:
-	color = libtcod.lightest_blue
-elif element == 6:
-	color = libtcod.lighter_amber
-elif element == 7:  
-	color = libtcod.lightest_green
-elif element == 8:  
-	color = libtcod.lighter_green
-elif element == 9:  
-	color = libtcod.light_green
-elif element == 10: 
-	color = libtcod.green
-elif element == 11: 
-	color = libtcod.dark_green
-elif element == 12: 
-	color = libtcod.darker_green
-elif element == 13:
-	color = libtcod.darkest_green
-elif element == 14:
-	color = libtcod.darker_sepia
-elif element == 15:
-	color = libtcod.darkest_sepia
-elif element == 16:
-	color = libtcod.darker_grey
-elif element == 17:
-	color = libtcod.grey
-elif element == 18:
-	color = libtcod.light_grey
-elif element == 19:
-	color = libtcod.white"""
