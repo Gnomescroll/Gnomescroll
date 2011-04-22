@@ -149,8 +149,10 @@ def render():
 			if terrain[x][y][z_to_display] == 1 and terrain[x][y][z_to_display + levels_to_display] == 0:
 				z = libtcod.heightmap_get_value(final_hm, x ,y)
 				c = get_color(z)
-			else:
+			elif terrain[x][y][z_to_display] == 1:
 				c = libtcod.black
+			else:
+				c = libtcod.lightest_blue
 			libtcod.console_set_char_background(map_viewer,x,y,c,libtcod.BKGND_SET)
 	libtcod.console_blit(map_viewer, viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y, 0, 0, 0)
 	
