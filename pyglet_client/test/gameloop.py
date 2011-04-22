@@ -36,24 +36,30 @@ class CubeProperies(object):
         self.cubes = {
         0 : {
             'id' : 0,
-            'occludes' : False
-            'active' : False
-            }
+            'occludes' : False,
+            'active' : False,
+            },
         1 : {
             'id' : 0,
-            'occludes' : False
-            'active' : False
+            'occludes' : True,
+            'active' : True,
 
-            'texture' : 0, #top, bottom, west, east, north, south
-            'bottom_tex' : 0,
-            'west_tex' : 0,
-            'east_tex' : 0,
-            'north_tex' : 0,
-            'south_tex' : 0,
-        }
+            'texture' : [ #t, b, w, e, n, s
+            (0),  #top
+            (0),  #bottom
+            (0), #west
+            (0), #east
+            (0), #north
+            (0), #south
+            ],
+        },
      }
 
-    def getTexture
+    def getTexture(self, tile_id, side_num):
+        if self.cubes.has_key(tile_id):
+            return self.cubes[tile_id][texture][side_num][0]
+        else:
+            return 0
 
     def isActive(self, tile_id):
         if self.cubes.has_key(tile_id):
@@ -86,12 +92,6 @@ class CubeRenderCache(object):
         [ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 ], #east
     ]
 
-    def _get_cube_side(self, v3f_list)
-
-        ("v3f", v_list),
-        ("c4B", [255, 255, 255, 255] * 4*6),
-        ("t3f", tc_list))
-
     ## t, b, n, s, w, e
     def get_side(x, y, z, tile_id, side_num):
         ta = self.v_index[side_num]
@@ -112,8 +112,7 @@ class CubeRenderCache(object):
             return temp
 
     def _get_t4f(tile_id, side_num):
-        texture_id =
-
+        texture_id = cubeProperties.getTexture(tile_id, side_num)
         return self.texture_grid[convert_index(texture_id, 16, 16)].tex_coords
 
 
@@ -176,6 +175,7 @@ class World(object):
             self.draw_point(0, y, 0, 0, 255)
 
         self.draw_cube(0,0,0)
+        self.draw_cube2(2,0,0)
 
     def draw_point(self, x, y, r, g, b):
         z=0
