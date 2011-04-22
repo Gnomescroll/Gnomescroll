@@ -213,14 +213,14 @@ class Keyboard(object):
 
         if symbol == key.SPACE:
             print "Space Bar Pressed"
-        elif symbol == key.W:
-            self.camera.move_camera(v,0,0)
-        elif symbol == key.S:
-            self.camera.move_camera(-v,0,0)
-        elif symbol == key.A:
-            self.camera.move_camera(0,v,0)
-        elif symbol == key.D:
-            self.camera.move_camera(0,-v,0)
+        #elif symbol == key.W:
+            #self.camera.move_camera(v,0,0)
+        #elif symbol == key.S:
+            #self.camera.move_camera(-v,0,0)
+        #elif symbol == key.A:
+            #self.camera.move_camera(0,v,0)
+        #elif symbol == key.D:
+            #self.camera.move_camera(0,-v,0)
         elif symbol == key.R:
             self.camera.move_camera(0,0,v)
         elif symbol == key.F:
@@ -228,12 +228,24 @@ class Keyboard(object):
         elif symbol in self.key_handlers:
             self.key_handlers[symbol]()
 
+    def stateHandler(self, keyboard):
+        v = 0.2
+        if keyboard[key.W]:
+            self.camera.move_camera(v,0,0)
+        if keyboard[key.S]:
+            self.camera.move_camera(-v,0,0)
+        if keyboard[key.A]:
+            self.camera.move_camera(0,v,0)
+        if keyboard[key.D]:
+            self.camera.move_camera(0,-v,0)
+        if keyboard[key.SPACE]:
+            print "Event A.1"
 
 class App(object):
 
     def __init__(self):
         self.world = World()
-        self.win = window.Window(fullscreen=False, vsync=True)
+        self.win = window.Window(fullscreen=False, vsync=False)
 #        self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
@@ -246,8 +258,15 @@ class App(object):
         self.win.on_key_press = self.keyboard.on_key_press
 
     def mainLoop(self):
+        keyboard = key.KeyStateHandler()
         while not self.win.has_exit:
+ #           keyboard = key.KeyStateHandler()  #test
+            self.win.push_handlers(keyboard)
             self.win.dispatch_events()
+
+            #keyboard = key.KeyStateHandler()  #test
+            #self.win.push_handlers(keyboard)  #test
+            self.keyboard.stateHandler(keyboard)
 
             self.world.tick()
 
