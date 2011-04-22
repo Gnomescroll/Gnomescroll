@@ -79,7 +79,7 @@ class CubeProperties(object):
 
     def isActive(self, tile_id):
         if self.cubes.has_key(tile_id):
-            return self.cubes[tile_id][active]
+            return self.cubes[tile_id]['active']
         else:
             print "Error, cube type does not exist"
             return False
@@ -167,43 +167,86 @@ class MapChunkManager(object):
     def set_map(x,y,z,tile_id):
         pass
 
+import ctypes
+
 class MapChunk(object):
 
     terrainMap = None
     cubeProperties = None
+    cubeRenderCache = None
 
     x_chunk_size = 8
     y_chunk_size = 8
     z_chunk_size = 8
 
     def __init__(self, x_offset, y_offset):
+        int_array_type = ctypes.c_int * (self.x_chunk_size * self.y_chunk_size *self.z_chunk_size) #map storage
+        self.map_array = int_array_type()
 
+        self.vertexList = None
         self.x_offset = x_offset
         self.y_offset = y_offset
-        active_cubes = []
-        changed_cubes = []
-        state = {}
+        self.update = False
+        self.empty = True
 
     def update_vertex_buffer(self):
-        for x in range(0,x_chunk_size):
-            for y in range(0, y_chunk_size):
-                for z in range(0, z_chunk_size):
-                    tile_id = self.terrainMap.get(x,y,z)
-                    if self.cubeProperties.isActive(tile_id):
-                        state[(x,y,z)] = {
-                        'tile_id' : tile_id,
-                        'render' : (0,0, 0,0, 0,0),
-                        'occludes' : self.cubeProperties.isOcclude(tile_id),
-                        }
-                        changed_cubes.append([x,y,z])
+        draw_list = []
+        for x in range(0, self.x_chunk_size):
+            for y in range(0, self.y_chunk_size):
+                for z in range(0, self.z_chunk_size):
+                    tile_id = self.get_tile(x,y,z)
+                    if self.cubeProperties.isActive(tile_id): #non-active tiles are not draw
+                        for side_num in [0,1,2,3,4,5]:
+                            if not self._is_occluded(x,y,z,side_num):
+                                draw_list.append((x,y,z,tile_id, side_num))
+        v_list = []
+        c_list = []
+        tex_list = []
+        v_num = 0
+        for (x,y,z,tile_id, side_num) in draw_list:
+            rx = self.x_offset + x
+            ry = self.x_offset + y
+            rz = z
 
-    def update_tile(self,x,y,z):
-        pass
+            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
+            v_list += tv_list
+            c_list += tc_list
+            tex_list += ttex_list
+            v_num += 4
 
-    def update_buffer(self):
-        pass
 
+        print str(v_list)
+        print str(c_list)
+        print str(tex_list)
 
+        print str((len(v_list), len(c_list), len(tex_list)))
+
+        if v_num != 0:
+            self.vertexList = pyglet.graphics.vertex_list(v_num,
+            ('v3f\static', v_list),
+            ('c4B\static', c_list),
+            ("t3f\static", tex_list)
+        )
+            self.empty = False
+        else:
+            print "v_num = 0!"
+            self.empty = True
+
+        self.update = False
+    def _is_occluded(self,x,y,z,side):
+        return False
+ #           return False
+ #       if x+1 == self.s_chunk_size or y+1 == self.y_chunk_size or z+1 ==
+
+    def get_tile(self, x,y,z):
+       index = x+y*self.y_chunk_size+z*self.x_chunk_size * self.y_chunk_size
+       return self.map_array[index]
+
+    def set_tile(self,x,y,z, value):
+        index = x+y*self.y_chunk_size+z*self.x_chunk_size * self.y_chunk_size
+        self.map_array[index] = c_int(value)
+
+import random
 
 class World(object):
 
@@ -218,9 +261,33 @@ class World(object):
         self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
         #test
         self.terrainMap = TerrainMap()
-        MapChunkManager(terrainMap, cubeProperties)
+        #MapChunkManager(terrainMap, cubeProperties)
     def tick(self):
         pass
+
+
+    def test_chunk(self):
+        self.mct = MapChunk(0,0)
+        self.mct.cubeProperties = self.cubeProperties
+        self.mct.cubeRenderCache = self.cubeRenderCache
+
+
+        for x in range(0, 8):
+            for y in range(0, 8):
+                for z in range(0, 8):
+                    rnd = random.randint(0,2)
+                    self.mct.set_tile(x,y,z,rnd)
+       # self.mct.set_tile(1,1,0,2)
+        #fill with random crap
+        self.mct.update_vertex_buffer()
+
+    def draw_chunk(self):
+        glEnable(GL_CULL_FACE);
+        glEnable(self.texture_grid.target)
+        glBindTexture(self.texture_grid.target, self.texture_grid.id)
+
+        self.mct.vertexList.draw(pyglet.gl.GL_QUADS)
+
 
     def draw(self):
         for x in range(-20, 20):
@@ -466,7 +533,7 @@ class App(object):
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
         self.hud = Hud(self.win)
-        clock.set_fps_limit(60)
+        #clock.set_fps_limit(60)
         #setup events
         self.keyboard.key_handlers[key.ESCAPE] = self.win.close
         self.win.on_mouse_drag = self.mouse.on_mouse_drag
@@ -475,6 +542,7 @@ class App(object):
         print "App init finished"
 
     def mainLoop(self):
+        clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         while not self.win.has_exit:
             self.win.push_handlers(keyboard)
@@ -492,6 +560,27 @@ class App(object):
             clock.tick()
             self.win.flip()
 
+    def mainLoop2(self):
+        self.world.test_chunk()
+        keyboard = key.KeyStateHandler()
+        while not self.win.has_exit:
+            self.win.push_handlers(keyboard)
+            self.win.dispatch_events()
+            self.keyboard.stateHandler(keyboard)
+
+            self.world.tick()
+            self.win.clear() #?
+
+            self.camera.worldProjection()
+
+
+            self.world.draw_chunk()
+            self.camera.hudProjection()
+            self.hud.draw()
+
+            clock.tick()
+            self.win.flip()
+
 app = App()
-app.mainLoop()
+app.mainLoop2()
 
