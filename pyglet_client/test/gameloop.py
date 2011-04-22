@@ -187,6 +187,7 @@ class MapChunk(object):
         self.x_offset = x_offset
         self.y_offset = y_offset
         self.update = False
+        self.empty = True
 
     def update_vertex_buffer(self):
         draw_list = []
@@ -196,11 +197,11 @@ class MapChunk(object):
                     tile_id = self.get_tile(x,y,z)
                     if self.cubeProperties.isActive(tile_id): #non-active tiles are not draw
                         for side_num in [0,1,2,3,4,5]:
-                            if self._is_occluded(x,y,z,side_num):
-                                draw_list.append(x,y,z,tile_id, side_num)
+                            if not self._is_occluded(x,y,z,side_num):
+                                draw_list.append((x,y,z,tile_id, side_num))
         v_list = []
         c_list = []
-        text_list = []
+        tex_list = []
         v_num = 0
         for (x,y,z,tile_id, side_num) in draw_list:
             rx = x_offset + x
@@ -208,20 +209,28 @@ class MapChunk(object):
             rz = z
 
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
-            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
             v_list += tv_list
             c_list += tc_list
             tex_list += ttex_list
             v_num += 4
 
-        self.vertexList = vertexlist = vertex_list(v_num,
+
+        print str(v_list)
+        print str(c_list)
+        print str(tex_list)
+
+        if v_num != 0:
+            self.vertexList = pyglet.graphics.vertex_list(v_num,
             ('v3f\static', v_list),
-            ('c3B\static', primitive.colors),
+            ('c3B\static', c_list),
             ("t3f\static", tex_list)
         )
+            self.empty = False
+        else:
+            print "v_num = 0!"
+            self.empty = True
 
         self.update = False
-
     def _is_occluded(self,x,y,z,side):
         return False
  #           return False
