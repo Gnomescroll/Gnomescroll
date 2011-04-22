@@ -204,8 +204,8 @@ class MapChunk(object):
         tex_list = []
         v_num = 0
         for (x,y,z,tile_id, side_num) in draw_list:
-            rx = x_offset + x
-            ry = x_offset + y
+            rx = self.x_offset + x
+            ry = self.x_offset + y
             rz = z
 
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
@@ -219,10 +219,12 @@ class MapChunk(object):
         print str(c_list)
         print str(tex_list)
 
+        print str((len(v_list), len(c_list), len(tex_list)))
+
         if v_num != 0:
             self.vertexList = pyglet.graphics.vertex_list(v_num,
             ('v3f\static', v_list),
-            ('c3B\static', c_list),
+            ('c4B\static', c_list),
             ("t3f\static", tex_list)
         )
             self.empty = False
