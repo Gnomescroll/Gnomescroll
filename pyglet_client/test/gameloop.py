@@ -44,7 +44,7 @@ class CubeProperies(object):
             'occludes' : False
             'active' : False
 
-            'top_tex' : 0,
+            'texture' : 0, #top, bottom, west, east, north, south
             'bottom_tex' : 0,
             'west_tex' : 0,
             'east_tex' : 0,
@@ -52,6 +52,8 @@ class CubeProperies(object):
             'south_tex' : 0,
         }
      }
+
+    def getTexture
 
     def isActive(self, tile_id):
         if self.cubes.has_key(tile_id):
@@ -69,8 +71,9 @@ class CubeProperies(object):
 
 class CubeRenderCache(object):
 
-    def __init__(self, cubeProperties):
+    def __init__(self, cubeProperties, textureGrid):
         self.cubeProperties = cubeProperties
+        self.textureGrid = textureGrid
         #c4B_cache = {}
         #t4f_cache = {}
 
@@ -94,19 +97,25 @@ class CubeRenderCache(object):
         ta = self.v_index[side_num]
         #v_list = (GLfloat * 12) [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
         v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
-
         c4B_list = self._get_c4B(tile_id, side_num)
+        t4f_list = self._get_t4f(tile_id, side_num)
+        return(v_list, c4B_list, t4f_list)
 
-
-
-    def _get_c4B(tile_id, side_num)
+    def _get_c4B(tile_id, side_num):
         if self.c4B_cache.has_key((tile_id, side_num)):
             return self.c4B_cache[(tile_id, side_num)]
         else:
             ##compute from dict!
-            temp = (GLbyte * 4)[255, 255, 255, 255] * 4
+            #temp = (GLbyte * 4)[255, 255, 255, 255] * 4
+            temp = [255, 255, 255, 255] * 4
             self.c4B_cache[(tile_id, side_num)] = temp
             return temp
+
+    def _get_t4f(tile_id, side_num):
+        texture_id =
+
+        return self.texture_grid[convert_index(texture_id, 16, 16)].tex_coords
+
 
 class MapChunk(object):
 
@@ -118,13 +127,14 @@ class MapChunk(object):
     z_chunk_size = 8
 
     def __init__(self, x_offset, y_offset):
+
         self.x_offset = x_offset
         self.y_offset = y_offset
         active_cubes = []
         changed_cubes = []
         state = {}
 
-    def update_vertex_buffer():
+    def update_vertex_buffer(self):
         for x in range(0,x_chunk_size):
             for y in range(0, y_chunk_size):
                 for z in range(0, z_chunk_size):
@@ -136,17 +146,24 @@ class MapChunk(object):
                         'occludes' = self.cubeProperties.isOcclude(tile_id), }
                         changed_cubes.append([x,y,z])
 
-    def update_tile(x,y,z):
+    def update_tile(self,x,y,z):
+        pass
 
+    def update_buffer(self):
+        pass
 
 class World(object):
 
     def __init__(self):
+        self.cubeRenderCache
         #texture loading
         tile_image = pyglet.image.load('../texture/textures_01.png')
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
         tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
         self.texture_grid = tile_texture_grid
+        #test
+        self.cubeProperties = CubeProperties()
+        self.cubeRenderCache = CubeRenderCache(self.cubeProperties, texture_grid) #needs texture grid
 
     def tick(self):
         pass
@@ -206,6 +223,27 @@ class World(object):
         ("v3f", v_list),
         ("c4B", [255, 255, 255, 255] * 4*6),
         ("t3f", tc_list))
+
+    def draw_cube2(self, x, y, z, tile_id):
+        v_list = []
+        c_list = []
+        tex_list = []
+
+        v_num = 0
+        for side_num in range(0, 5):
+            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(x, y, z, tile_id, side_num)
+            v_list += tv_list
+            c_list += tc_list
+            ttex_list += tex_list
+            v_num += 4
+
+        glEnable(GL_CULL_FACE);
+        glEnable(self.texture_grid.target) #???
+        glBindTexture(self.texture_grid.target, self.texture_grid.id)
+        pyglet.graphics.draw(4*6, pyglet.gl.GL_QUADS,
+        ("v3f", v_list),
+        ("c4B", c_list),
+        ("t3f", tex_list))
 
 def draw():
     pass
