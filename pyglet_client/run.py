@@ -24,24 +24,22 @@ class Main(object):
 		platform = pyglet.window.get_platform()
 		display = platform.get_default_display()
 		screen = display.get_default_screen()
-
 		template = pyglet.gl.Config(alpha_size=8)
 		config = screen.get_best_config(template)
 		context = config.create_context(None)
-		window = pyglet.window.Window(context=context)
-		win = window
+		win = pyglet.window.Window(context=context)
 		
 		camera = RTS_Camera(win.width, win.height, (0, 0, 0))
 		world = World(camera)
         #clock.set_fps_limit(60)
 
-	    #self.hud = Hud(self.win)
-		#renderer = Renderer()
 		keyboard = Keyboard(self, camera)
 		mouse = Mouse(camera)
 		keyboard.key_handlers[key.ESCAPE] = win.close
 	    #self.keyboard.key_handlers.update(self.camera.key_handlers) #use to add handlers
 	    #self.win.on_draw = lambda: renderer.on_draw(camera, win.width, win.height)
+		win.on_resize = camera.on_resize
+	    
 		win.on_mouse_drag = mouse.on_mouse_drag
 		win.on_key_press = keyboard.on_key_press
 	    #self.keyboard.print_handlers()
@@ -50,7 +48,6 @@ class Main(object):
 		self.world = world
 		self.camera = camera
 		self.win = win
-		#self.renderer = renderer
 		self.keyboard = keyboard
 		self.mouse = mouse
 	    
@@ -63,18 +60,18 @@ class Main(object):
 			##self.win.push_handlers(keyboard)  #test
 			##self.keyboard.stateHandler(keyboard)
 			
-			#self.win.clear()
-			self.camera.focus()
-			self.world.draw()
+			self.win.clear()
+			#self.camera.focus()
+			#self.world.draw(self.win)
 
-			#self.camera.hud_mode()
-			#self.camera.draw_fps()
-			
+			self.camera.hud_mode()
+			#self.camera.draw_fps(clock.get_fps())
+			self.camera.draw_camera_indicator()
 			#self.camera.worldProjection()
 			#self.world.draw()
 
 
-		 ##	#clock.tick()
+			clock.tick()
 			self.win.flip()
     
 
