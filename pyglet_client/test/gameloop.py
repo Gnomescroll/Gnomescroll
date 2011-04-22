@@ -40,17 +40,31 @@ class CubeProperties(object):
             'active' : False,
             },
         1 : {
-            'id' : 0,
+            'id' : 1,
             'occludes' : True,
             'active' : True,
 
             'texture' : [ #t, b, w, e, n, s
-            (0,),  #top
-            (0,),  #bottom
-            (0,), #west
-            (0,), #east
-            (0,), #north
-            (0,), #south
+            (0, []),  #top
+            (0, []),  #bottom
+            (0, []), #west
+            (0, []), #east
+            (0, []), #north
+            (0, []), #south
+            ],
+            },
+        2 : {
+            'id' : 2,
+            'occludes' : True,
+            'active' : True,
+
+            'texture' : [ #t, b, w, e, n, s
+            (0, [0,1,2,3]),  #top
+            (6, [0,1,2,3]),  #bottom
+            (7, [0,1,2,3]), #west
+            (3, [0,1,2,3]), #east
+            (4, [0,1,2,3]), #north
+            (5, [0,1,2,3]), #south
             ],
         },
      }
@@ -58,7 +72,7 @@ class CubeProperties(object):
     def getTexture(self, tile_id, side_num):
         if self.cubes.has_key(tile_id):
             tex_a = self.cubes[tile_id]['texture']
-            return tex_a[side_num][0]
+            return tex_a[side_num]
 
         else:
             return 0
@@ -94,6 +108,13 @@ class CubeRenderCache(object):
         [ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 ], #east
     ]
 
+        north_side = [ [0,1,1],[1,1,1],[1,1,0],[0,1,0] ]
+        south_side = [[0,0,1],[0,0,0],[1,0,0],[1,0,1]]
+        west_side = [[0,1,1],[0,1,0],[0,0,0],[0,0,1]]
+        east_side = [[1,0,1],[1,0,0],[1,1,0],[1,1,1]]
+        top_side = [[0,1,1],[0,0,1],[1,0,1],[1,1,1]]
+        bottom_side = [[1,0,0],[0,0,0],[0,1,0],[1,1,0]]
+
     ## t, b, n, s, w, e
     def get_side(self, x, y, z, tile_id, side_num):
         ta = self.v_index[side_num]
@@ -114,9 +135,14 @@ class CubeRenderCache(object):
             return temp
 
     def _get_t4f(self, tile_id, side_num):
-        texture_id = self.cubeProperties.getTexture(tile_id, side_num)
-        return self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
-
+        if self.t4f_cache.has_key((tile_id, side_num)):
+            return self.t4f_cache[(tile_id, side_num)]
+        else:
+            (texture_id, rotation) = self.cubeProperties.getTexture(tile_id, side_num)
+            tex_tuple = self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
+            if True:
+                self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
+                return list(tex_tuple)
 
 class MapChunk(object):
 
@@ -179,6 +205,8 @@ class World(object):
 
         self.draw_cube(0,0,0)
         self.draw_cube2(2,0,0,1)
+        self.draw_cube2(0,2,0,2)
+        #self.draw_cube2(0,0,0,2)
 
     def draw_point(self, x, y, r, g, b):
         z=0
@@ -233,14 +261,14 @@ class World(object):
         tex_list = []
 
         v_num = 0
-        for side_num in range(0, 5):
+        for side_num in range(0, 6):
+            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(x, y, z, tile_id, side_num)
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(x, y, z, tile_id, side_num)
             v_list += tv_list
             c_list += tc_list
-            tex_list += list(ttex_list)
+            tex_list += ttex_list
             v_num += 4
 
-        glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target) #???
         glBindTexture(self.texture_grid.target, self.texture_grid.id)
         pyglet.graphics.draw(v_num, pyglet.gl.GL_QUADS,
@@ -285,6 +313,9 @@ class Camera(object):
                 camera_focus_x, camera_focus_y, camera_focus_z,
                 0., 0., 1.0)
 
+        glEnable (GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE);
+
     def hudProjection(self):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -310,6 +341,12 @@ class Camera(object):
         #print "dy_angle= " + str(dy_angle)
         self.x_angle += dx_angle
         self.y_angle += dy_angle
+
+    def on_resize(self, width, height):
+        print "Resize Window"
+        glViewport(0, 0, width, height)
+        self.worldProjection()
+        return pyglet.event.EVENT_HANDLED
 
 class Hud(object):
 
@@ -395,9 +432,10 @@ class Keyboard(object):
 class App(object):
 
     def __init__(self):
+
         self.world = World()
         self.win = window.Window(fullscreen=False, vsync=False)
-#        self.camera = Camera(self.win)
+        self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
@@ -408,23 +446,20 @@ class App(object):
         self.win.on_mouse_drag = self.mouse.on_mouse_drag
         self.win.on_key_press = self.keyboard.on_key_press
 
+        print "App init finished"
+
     def mainLoop(self):
         keyboard = key.KeyStateHandler()
         while not self.win.has_exit:
- #           keyboard = key.KeyStateHandler()  #test
             self.win.push_handlers(keyboard)
             self.win.dispatch_events()
-
-            #keyboard = key.KeyStateHandler()  #test
-            #self.win.push_handlers(keyboard)  #test
             self.keyboard.stateHandler(keyboard)
 
             self.world.tick()
-
             self.win.clear() #?
+
             self.camera.worldProjection()
             self.world.draw()
-
             self.camera.hudProjection()
             self.hud.draw()
 
