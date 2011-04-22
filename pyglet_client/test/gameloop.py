@@ -67,6 +67,20 @@ class CubeProperties(object):
             (5, [0,1,2,3]), #south
             ],
         },
+        3 : {
+            'id' : 3,
+            'occludes' : True,
+            'active' : True,
+
+            'texture' : [ #t, b, w, e, n, s
+            (1, [0,1,2,3]),  #top
+            (1, [0,1,2,3]),  #bottom
+            (1, [0,1,2,3]), #west
+            (1, [0,1,2,3]), #east
+            (1, [0,1,2,3]), #north
+            (1, [0,1,2,3]), #south
+            ],
+        },
      }
 
     def getTexture(self, tile_id, side_num):
@@ -86,7 +100,7 @@ class CubeProperties(object):
 
     def isOcclude(self, tile_id):
         if self.cubes.has_key(tile_id):
-            return self.cubes[tile_id][active]
+            return self.cubes[tile_id]['occludes']
         else:
             print "Error, cube type does not exist"
             return False
@@ -191,14 +205,25 @@ class MapChunk(object):
 
     def update_vertex_buffer(self):
         draw_list = []
+        active_cube_number = 0
+        culled_quads = 0
         for x in range(0, self.x_chunk_size):
             for y in range(0, self.y_chunk_size):
                 for z in range(0, self.z_chunk_size):
                     tile_id = self.get_tile(x,y,z)
                     if self.cubeProperties.isActive(tile_id): #non-active tiles are not draw
+                        active_cube_number += 1
                         for side_num in [0,1,2,3,4,5]:
                             if not self._is_occluded(x,y,z,side_num):
                                 draw_list.append((x,y,z,tile_id, side_num))
+                            else:
+                                culled_quads += 1
+
+        print "quads in chunk=" + str(active_cube_number*6)
+        print "culled quads=" + str(culled_quads)
+        print "draw_list= "
+        for xa in draw_list:
+            print str(xa)
         v_list = []
         c_list = []
         tex_list = []
@@ -215,11 +240,10 @@ class MapChunk(object):
             v_num += 4
 
 
-        print str(v_list)
-        print str(c_list)
-        print str(tex_list)
-
-        print str((len(v_list), len(c_list), len(tex_list)))
+        #print str(v_list)
+        #print str(c_list)
+        #print str(tex_list)
+        #print str((len(v_list), len(c_list), len(tex_list)))
 
         if v_num != 0:
             self.vertexList = pyglet.graphics.vertex_list(v_num,
@@ -231,16 +255,37 @@ class MapChunk(object):
         else:
             print "v_num = 0!"
             self.empty = True
-
         self.update = False
-    def _is_occluded(self,x,y,z,side):
-        return False
+
+    def _is_occluded(self,x,y,z,side_num):
+        s_array = [(0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (-1,0,0),(1,0,0)]
+        temp = s_array[side_num]
+        _x = temp[0] + x
+        _y = temp[1] + y
+        _z = temp[2] + z
+
+        print str((x,y,z,self.get_tile(_x,_y,_z), side_num))
+
+        if _x < 0 or _y < 0 or _z < 0:
+            return False
+        elif _x >= self.x_chunk_size or _y >= self.y_chunk_size or _z >= self.z_chunk_size:
+            return False
+
+        tile_id = self.get_tile(_x,_y,_z)
+        #print str((x,y,z,tile_id, side_num))
+        return self.cubeProperties.isOcclude(tile_id)
+
+
  #           return False
  #       if x+1 == self.s_chunk_size or y+1 == self.y_chunk_size or z+1 ==
 
     def get_tile(self, x,y,z):
        index = x+y*self.y_chunk_size+z*self.x_chunk_size * self.y_chunk_size
-       return self.map_array[index]
+       if index < 0 or index >= self.x_chunk_size * self.y_chunk_size*self.z_chunk_size:
+           print "invalid map index"
+           return 0
+       else:
+           return self.map_array[index]
 
     def set_tile(self,x,y,z, value):
         index = x+y*self.y_chunk_size+z*self.x_chunk_size * self.y_chunk_size
@@ -272,13 +317,18 @@ class World(object):
         self.mct.cubeRenderCache = self.cubeRenderCache
 
 
-        for x in range(0, 8):
-            for y in range(0, 8):
-                for z in range(0, 8):
-                    rnd = random.randint(0,2)
-                    self.mct.set_tile(x,y,z,rnd)
+        if True:
+            for x in range(0, 8):
+                for y in range(0, 8):
+                    for z in range(0, 8):
+                        rnd = random.randint(0,3)
+                        self.mct.set_tile(x,y,z,rnd)
        # self.mct.set_tile(1,1,0,2)
         #fill with random crap
+        self.mct.set_tile(0,0,0,3)
+        self.mct.set_tile(1,0,0,3)
+        self.mct.set_tile(2,0,0,3)
+        #profile.run(self.mct.update_vertex_buffer)
         self.mct.update_vertex_buffer()
 
     def draw_chunk(self):
@@ -288,7 +338,6 @@ class World(object):
 
         self.mct.vertexList.draw(pyglet.gl.GL_QUADS)
 
-
     def draw(self):
         for x in range(-20, 20):
             self.draw_point(x, 0, 0, 255, 0)
@@ -296,9 +345,10 @@ class World(object):
         for y in range(-20, 20):
             self.draw_point(0, y, 0, 0, 255)
 
-        self.draw_cube(0,0,0)
-        self.draw_cube2(2,0,0,1)
-        self.draw_cube2(0,2,0,2)
+        self.draw_chunk()
+        #self.draw_cube(0,0,0)
+        #self.draw_cube2(2,0,0,1)
+        #self.draw_cube2(0,2,0,2)
         #self.draw_cube2(0,0,0,2)
 
     def draw_point(self, x, y, r, g, b):
@@ -368,9 +418,6 @@ class World(object):
         ("v3f", v_list),
         ("c4B", c_list),
         ("t3f", tex_list))
-
-def draw():
-    pass
 
 from math import sin, cos, pi
 
@@ -522,12 +569,14 @@ class Keyboard(object):
         if keyboard[key.SPACE]:
             print "Event A.1"
 
+import cProfile
+
 class App(object):
 
     def __init__(self):
 
         self.world = World()
-        self.win = window.Window(fullscreen=False, vsync=False)
+        self.win = window.Window(fullscreen=True, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
@@ -562,6 +611,7 @@ class App(object):
 
     def mainLoop2(self):
         self.world.test_chunk()
+        clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         while not self.win.has_exit:
             self.win.push_handlers(keyboard)
@@ -574,13 +624,15 @@ class App(object):
             self.camera.worldProjection()
 
 
-            self.world.draw_chunk()
+            self.world.draw()
             self.camera.hudProjection()
             self.hud.draw()
 
             clock.tick()
             self.win.flip()
+            #return
 
 app = App()
+#cProfile.run('app.mainLoop2()')
 app.mainLoop2()
 
