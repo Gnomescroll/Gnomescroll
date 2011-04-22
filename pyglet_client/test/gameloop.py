@@ -117,16 +117,7 @@ class Camera(object):
         self.y_angle = 0.0
         self.rot = rot
         self.zoom = zoom
-
-    #def worldProjection(self):
-        #glMatrixMode(GL_PROJECTION)
-        #glLoadIdentity()
-        #widthRatio = self.win.width / self.win.height
-        #gluOrtho2D(
-            #-self.zoom * widthRatio,
-            #self.zoom * widthRatio,
-            #-self.zoom,
-            #self.zoom)
+        self.rts = True
 
     def worldProjection(self):
         glMatrixMode(GL_PROJECTION)
@@ -139,9 +130,9 @@ class Camera(object):
         glMatrixMode( GL_MODELVIEW )
         glLoadIdentity()
 
-        camera_focus_x = self.x + cos( self.x_angle * pi);
-        camera_focus_y = self.y + sin( self.x_angle * pi);
-        camera_focus_z = self.z + sin( self.y_angle);
+        camera_focus_x = self.x + cos( self.x_angle * pi)
+        camera_focus_y = self.y + sin( self.x_angle * pi)
+        camera_focus_z = self.z + sin( self.y_angle)
 
         gluLookAt( self.x, self.y, self.z,
                 camera_focus_x, camera_focus_y, camera_focus_z,
@@ -153,8 +144,18 @@ class Camera(object):
         gluOrtho2D(0, self.win.width, 0, self.win.height)
 
     def move_camera(self, dx, dy, dz):
-        self.x += dx
-        self.y += dy
+
+        if self.rts == True:
+            #dx delta
+            self.x += dx*cos(self.x_angle * pi)
+            self.y += dx*sin(self.x_angle * pi)
+            #dy delta
+            self.x += dy*cos(self.x_angle * pi + pi/2)
+            self.y += dy*sin(self.x_angle * pi + pi/2)
+        else:
+            self.x += dx
+            self.y += dy
+        #dz delta
         self.z += dz
 
     def pan(self, dx_angle, dy_angle):
@@ -194,7 +195,7 @@ class Mouse(object):
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         #print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
         sen = 50
-        self.camera.pan(dx*1.0 / sen, dy*1.0 / sen)
+        self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
 
 from pyglet.window.key import symbol_string
@@ -233,6 +234,7 @@ class App(object):
     def __init__(self):
         self.world = World()
         self.win = window.Window(fullscreen=False, vsync=True)
+#        self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
