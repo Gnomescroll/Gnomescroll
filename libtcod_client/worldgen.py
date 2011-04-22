@@ -175,6 +175,8 @@ def handle_keys():
 	elif key.vk == libtcod.KEY_SPACE:
 	#SPACE cycles through the different z-levels
 		z_to_display = z_to_display - 1
+		if z_to_display < 0:
+			z_to_display = (LEVELS_ABOVE + LEVELS_BELOW) - levels_to_display - 1
 	elif key.vk == libtcod.KEY_ESCAPE:
 		return True  #exit game
  
