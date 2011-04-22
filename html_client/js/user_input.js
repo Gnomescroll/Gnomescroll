@@ -1,11 +1,11 @@
 var input,
     keymap;
 
-input = ( function () {
+input = {
 
     queue: [],  // queue of events received
     
-    init = function () { // init $ bindings
+    init: function () { // init $ bindings
         
         $('body').keydown(function (event) {
             var key = keymap[event.which];
@@ -16,9 +16,9 @@ input = ( function () {
                       map_editor.set_tile(event);
                   } 
                });
-    };
+    },
         
-    next = function (delay) { // shifts the queue, FIFO
+    next: function (delay) { // shifts the queue, FIFO
         var timestamp = 0,
             delay = delay || 300, // millisecond delay between input
             queue = this.queue;
