@@ -146,11 +146,14 @@ def render():
 			
 	for x in range(MAP_WIDTH):
 		for y in range(MAP_HEIGHT):
+			#If the current square is ground, and there is air above, color it
 			if terrain[x][y][z_to_display] == 1 and terrain[x][y][z_to_display + levels_to_display] == 0:
 				z = libtcod.heightmap_get_value(final_hm, x ,y)
 				c = get_color(z)
+			#if the current square is ground, and there is rock above it, it should be black, for the cross section
 			elif terrain[x][y][z_to_display] == 1:
 				c = libtcod.black
+			#otherwise, it is air, it is blue
 			else:
 				c = libtcod.lightest_blue
 			libtcod.console_set_char_background(map_viewer,x,y,c,libtcod.BKGND_SET)
@@ -174,11 +177,18 @@ def handle_keys():
 		#Alt+Enter: toggle fullscreen
 		libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
 
-	elif key.vk == libtcod.KEY_SPACE:
-	#SPACE cycles through the different z-levels
-		z_to_display = z_to_display - 1
-		if z_to_display < 0:
-			z_to_display = (LEVELS_ABOVE + LEVELS_BELOW) - levels_to_display - 1
+	elif key.vk == libtcod.KEY_DOWN:
+	#Down to the next z-level
+		if  z_to_display != 0:
+			z_to_display = z_to_display - 1
+			print "Current z levels are", z_to_display, "to", z_to_display + levels_to_display
+	
+	elif key.vk == libtcod.KEY_UP:
+	#Up to the next z-level
+		if z_to_display != (LEVELS_ABOVE + LEVELS_BELOW) - levels_to_display - 1:
+			z_to_display = z_to_display + 1
+			print "Current z levels are", z_to_display, "to", z_to_display + levels_to_display
+	
 	elif key.vk == libtcod.KEY_ESCAPE:
 		return True  #exit game
  
