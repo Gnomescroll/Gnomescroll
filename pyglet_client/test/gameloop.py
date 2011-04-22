@@ -30,7 +30,7 @@ def convert_index(index, height, width):
     return rvalue
 
 
-class CubeProperies(object):
+class CubeProperties(object):
 
     def __init__(self):
         self.cubes = {
@@ -45,19 +45,21 @@ class CubeProperies(object):
             'active' : True,
 
             'texture' : [ #t, b, w, e, n, s
-            (0),  #top
-            (0),  #bottom
-            (0), #west
-            (0), #east
-            (0), #north
-            (0), #south
+            (0,),  #top
+            (0,),  #bottom
+            (0,), #west
+            (0,), #east
+            (0,), #north
+            (0,), #south
             ],
         },
      }
 
     def getTexture(self, tile_id, side_num):
         if self.cubes.has_key(tile_id):
-            return self.cubes[tile_id][texture][side_num][0]
+            tex_a = self.cubes[tile_id]['texture']
+            return tex_a[side_num][0]
+
         else:
             return 0
 
@@ -80,8 +82,8 @@ class CubeRenderCache(object):
     def __init__(self, cubeProperties, textureGrid):
         self.cubeProperties = cubeProperties
         self.textureGrid = textureGrid
-        #c4B_cache = {}
-        #t4f_cache = {}
+        self.c4b_cache = {}
+        self.t4f_cache = {}
 
         self.v_index = [
         [ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 ], #top
@@ -93,33 +95,33 @@ class CubeRenderCache(object):
     ]
 
     ## t, b, n, s, w, e
-    def get_side(x, y, z, tile_id, side_num):
+    def get_side(self, x, y, z, tile_id, side_num):
         ta = self.v_index[side_num]
         #v_list = (GLfloat * 12) [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
-        v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
+        v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ta[9]+x,ta[10]+y,ta[11]+z ]
         c4B_list = self._get_c4B(tile_id, side_num)
         t4f_list = self._get_t4f(tile_id, side_num)
         return(v_list, c4B_list, t4f_list)
 
-    def _get_c4B(tile_id, side_num):
-        if self.c4B_cache.has_key((tile_id, side_num)):
-            return self.c4B_cache[(tile_id, side_num)]
+    def _get_c4B(self, tile_id, side_num):
+        if self.c4b_cache.has_key((tile_id, side_num)):
+            return self.c4b_cache[(tile_id, side_num)]
         else:
             ##compute from dict!
             #temp = (GLbyte * 4)[255, 255, 255, 255] * 4
             temp = [255, 255, 255, 255] * 4
-            self.c4B_cache[(tile_id, side_num)] = temp
+            self.c4b_cache[(tile_id, side_num)] = temp
             return temp
 
-    def _get_t4f(tile_id, side_num):
-        texture_id = cubeProperties.getTexture(tile_id, side_num)
-        return self.texture_grid[convert_index(texture_id, 16, 16)].tex_coords
+    def _get_t4f(self, tile_id, side_num):
+        texture_id = self.cubeProperties.getTexture(tile_id, side_num)
+        return self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
 
 
 class MapChunk(object):
 
-    self.terrainMap = terrainMap
-    self.cubeProperties = cubeProperties
+    #terrainMap = terrainMap
+    #cubeProperties = cubeProperties
 
     x_chunk_size = 8
     y_chunk_size = 8
@@ -138,11 +140,12 @@ class MapChunk(object):
             for y in range(0, y_chunk_size):
                 for z in range(0, z_chunk_size):
                     tile_id = self.terrainMap.get(x,y,z)
-                    if self.cubeProperties.isActive(tile_id)
+                    if self.cubeProperties.isActive(tile_id):
                         state[(x,y,z)] = {
-                        'tile_id' = tile_id,
-                        'render' = (0,0, 0,0, 0,0),
-                        'occludes' = self.cubeProperties.isOcclude(tile_id), }
+                        'tile_id' : tile_id,
+                        'render' : (0,0, 0,0, 0,0),
+                        'occludes' : self.cubeProperties.isOcclude(tile_id),
+                        }
                         changed_cubes.append([x,y,z])
 
     def update_tile(self,x,y,z):
@@ -151,10 +154,10 @@ class MapChunk(object):
     def update_buffer(self):
         pass
 
+
 class World(object):
 
     def __init__(self):
-        self.cubeRenderCache
         #texture loading
         tile_image = pyglet.image.load('../texture/textures_01.png')
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
@@ -162,7 +165,7 @@ class World(object):
         self.texture_grid = tile_texture_grid
         #test
         self.cubeProperties = CubeProperties()
-        self.cubeRenderCache = CubeRenderCache(self.cubeProperties, texture_grid) #needs texture grid
+        self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
 
     def tick(self):
         pass
@@ -175,7 +178,7 @@ class World(object):
             self.draw_point(0, y, 0, 0, 255)
 
         self.draw_cube(0,0,0)
-        self.draw_cube2(2,0,0)
+        self.draw_cube2(2,0,0,1)
 
     def draw_point(self, x, y, r, g, b):
         z=0
@@ -234,13 +237,13 @@ class World(object):
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(x, y, z, tile_id, side_num)
             v_list += tv_list
             c_list += tc_list
-            ttex_list += tex_list
+            tex_list += list(ttex_list)
             v_num += 4
 
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target) #???
         glBindTexture(self.texture_grid.target, self.texture_grid.id)
-        pyglet.graphics.draw(4*6, pyglet.gl.GL_QUADS,
+        pyglet.graphics.draw(v_num, pyglet.gl.GL_QUADS,
         ("v3f", v_list),
         ("c4B", c_list),
         ("t3f", tex_list))
