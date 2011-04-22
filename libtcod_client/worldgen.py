@@ -12,6 +12,9 @@ MAP_WIDTH = 200
 MAP_HEIGHT = 200
 map_viewer = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 mouse_on_drag_start = None
+LEVELS_ABOVE = 64
+LEVELS_BELOW = 64
+z_to_display = 127
 
 #For creating noise for heightmaps:
 #First number = degrees of noise 1-4, should always be 2.
@@ -115,7 +118,6 @@ def build_elevation(hm) :
 
 def move_screen(dx, dy):
 	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
-	
 	#moves the screen if that wouldn't cause the edge of the map to be exceeded.
 	#If it would, it moves as much as it can without passing the edge of the map.
 	viewer_bot_x = viewer_top_x + SCREEN_WIDTH
@@ -133,20 +135,22 @@ def move_screen(dx, dy):
 	elif viewer_bot_y + dy >= MAP_HEIGHT:
 			dy = MAP_HEIGHT - viewer_bot_y
 
-	
 	viewer_top_x = viewer_top_x + dx
 	viewer_top_y = viewer_top_y + dy
 		
 def render():
-	global SCREEN_WIDTH, SCREEN_HEIGHT, map_viewer
+	global SCREEN_WIDTH, SCREEN_HEIGHT, map_viewer, terrain
 	x = 0;
 	y = 0;
 	libtcod.console_flush()
 			
-	for x in range(MAP_WIDTH) :
-		for y in range(MAP_HEIGHT) :
-			z = libtcod.heightmap_get_value(hm_to_display, x ,y)
-			c= get_color(z)
+	for x in range(MAP_WIDTH):
+		for y in range(MAP_HEIGHT):
+			if terrain[x][y][z_to_display] == 1:
+				z = libtcod.heightmap_get_value(final_hm, x ,y)
+				c = get_color(z)
+			else:
+				c = libtcod.black
 			libtcod.console_set_char_background(map_viewer,x,y,c,libtcod.BKGND_SET)
 	libtcod.console_blit(map_viewer, viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y, 0, 0, 0)
 	
@@ -161,7 +165,7 @@ def handle_mouse(current_mouse):
 		mouse_on_drag_start = current_mouse;
 		
 def handle_keys():
-	global hm_to_display, elevation_hm
+	global z_to_display, elevation_hm
 	key = libtcod.console_check_for_keypress()  #real-time
 
 	if key.vk == libtcod.KEY_ENTER and libtcod.KEY_ALT:
@@ -169,20 +173,20 @@ def handle_keys():
 		libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
 
 	elif key.vk == libtcod.KEY_SPACE:
-	#SPACE cycles through the different heightmaps
-		if hm_to_display == elevation_hm:
-			hm_to_display = roughness_hm
-		elif hm_to_display == roughness_hm:
-			hm_to_display = local_detail_hm
-		elif hm_to_display == local_detail_hm:
-			hm_to_display = elevation_hm
-			
+	#SPACE cycles through the different z-levels
+		z_to_display = z_to_display - 1
 	elif key.vk == libtcod.KEY_ESCAPE:
 		return True  #exit game
  
-
- 
- 
+def translate_to_terrain(hm):
+	terrain = [[[0 for z in range(LEVELS_ABOVE + LEVELS_BELOW)] for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+	for x in range(MAP_WIDTH):
+		for y in range(MAP_HEIGHT):
+			height = (int(libtcod.heightmap_get_value(final_hm, x ,y)*64 + 64))
+			for z in range(height):
+				terrain[x][y][z] = 1
+	return terrain
+	
 #############################################
 # Initialization
 #############################################
@@ -212,8 +216,10 @@ libtcod.heightmap_delete(multiplied_hm)
 
 libtcod.heightmap_normalize(final_hm)
 
+#translate the 2D hm to a 3D terrain map
+terrain = translate_to_terrain(final_hm)
+
 ##WHICH MAP TO SHOW IN VIEWER
-hm_to_display = final_hm
 
 while not libtcod.console_is_window_closed():
  
