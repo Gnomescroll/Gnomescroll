@@ -200,7 +200,7 @@ class MapChunk(object):
         self.vertexList = None
         self.x_offset = x_offset
         self.y_offset = y_offset
-        self.update = False
+        self.update = True
         self.empty = True
 
     def update_vertex_buffer(self):
@@ -219,18 +219,20 @@ class MapChunk(object):
                             else:
                                 culled_quads += 1
 
-        print "quads in chunk=" + str(active_cube_number*6)
-        print "culled quads=" + str(culled_quads)
-        print "draw_list= "
-        for xa in draw_list:
-            print str(xa)
+        if False:
+            print "quads in chunk=" + str(active_cube_number*6)
+            print "culled quads=" + str(culled_quads)
+            print "draw_list= "
+            for xa in draw_list:
+                print str(xa)
+
         v_list = []
         c_list = []
         tex_list = []
         v_num = 0
         for (x,y,z,tile_id, side_num) in draw_list:
             rx = self.x_offset + x
-            ry = self.x_offset + y
+            ry = self.y_offset + y
             rz = z
 
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
@@ -264,7 +266,7 @@ class MapChunk(object):
         _y = temp[1] + y
         _z = temp[2] + z
 
-        print str((x,y,z,self.get_tile(_x,_y,_z), side_num))
+        #print str((x,y,z,self.get_tile(_x,_y,_z), side_num))
 
         if _x < 0 or _y < 0 or _z < 0:
             return False
@@ -312,12 +314,30 @@ class World(object):
 
 
     def test_chunk(self):
-        self.mct = MapChunk(0,0)
-        self.mct.cubeProperties = self.cubeProperties
-        self.mct.cubeRenderCache = self.cubeRenderCache
+        MapChunk.cubeProperties = self.cubeProperties
+        MapChunk.cubeRenderCache = self.cubeRenderCache
+
+        print "Start chunk generation"
+        self.mct_array = {}
+        for xa in range(0, 8):
+            for ya in range(0, 8):
+                self.mct_array[(xa,ya)] = MapChunk(8*xa,8*ya)
+                for x in range(0, 8):
+                    for y in range(0, 8):
+                        for z in range(0, 8):
+                            rnd = random.randint(0,3)
+                            self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
+        print "Chunk generation finished"
+        #for mct in self.mct_array.values():
+        #    mct.update_vertex_buffer()
+        #    mct.update_vertex_buffer()
+#        self.mct = MapChunk(0,0)
+
+        #self.mct.cubeProperties = self.cubeProperties
+        #self.mct.cubeRenderCache = self.cubeRenderCache
 
 
-        if True:
+        if False:
             for x in range(0, 8):
                 for y in range(0, 8):
                     for z in range(0, 8):
@@ -325,25 +345,33 @@ class World(object):
                         self.mct.set_tile(x,y,z,rnd)
        # self.mct.set_tile(1,1,0,2)
         #fill with random crap
-        self.mct.set_tile(0,0,0,3)
-        self.mct.set_tile(1,0,0,3)
-        self.mct.set_tile(2,0,0,3)
+        #self.mct.set_tile(0,0,0,3)
+        #self.mct.set_tile(1,0,0,3)
+        #self.mct.set_tile(2,0,0,3)
         #profile.run(self.mct.update_vertex_buffer)
-        self.mct.update_vertex_buffer()
+        #self.mct.update_vertex_buffer()
 
     def draw_chunk(self):
+
+        for mct in self.mct_array.values(): #update only one buffer per frame
+            if mct.update == True:
+                mct.update_vertex_buffer()
+                break
+
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target)
         glBindTexture(self.texture_grid.target, self.texture_grid.id)
 
-        self.mct.vertexList.draw(pyglet.gl.GL_QUADS)
+        for mct in self.mct_array.values():
+            if mct.empty == False:
+                mct.vertexList.draw(pyglet.gl.GL_QUADS)
 
     def draw(self):
-        for x in range(-20, 20):
-            self.draw_point(x, 0, 0, 255, 0)
-
-        for y in range(-20, 20):
-            self.draw_point(0, y, 0, 0, 255)
+        if False:
+            for x in range(-20, 20):
+                self.draw_point(x, 0, 0, 255, 0)
+            for y in range(-20, 20):
+                self.draw_point(0, y, 0, 0, 255)
 
         self.draw_chunk()
         #self.draw_cube(0,0,0)
@@ -511,6 +539,7 @@ class Hud(object):
         self.fps.draw()
 
     def draw_recticle(self):
+        return
         x=win.width / 2,
         y=win.height / 2,
 
