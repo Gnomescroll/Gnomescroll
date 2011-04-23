@@ -157,3 +157,73 @@ keymap = {
     //0: '.NUMPAD',
     //0: '0NUMPAD',
 };
+
+var processInput = function (key) {
+    
+    if (!key) return false;
+    
+    var old;
+    
+    switch (key) {
+        
+        case 'ESC':               //quit ? remove this
+            map_editor.clear_current();
+            return false;
+            
+        case 'LEFT':
+            board.scroll(-1, 0);
+            break;
+            
+        case 'RIGHT':
+            board.scroll(1, 0);
+            break;
+            
+        case 'UP':
+            board.scroll(0, -1);
+            break;
+            
+        case 'DOWN':
+            board.scroll(0, 1);
+            break;
+            
+        case 'c':                   // set map solid
+            console.log('set map');
+            //admin.set_map(selected_agent.pos(), 1);
+            admin.set_map(cursor.pos(), 1);
+            break;
+            
+        case 'x':                   // set map empty
+            //admin.set_map(selected_agent.pos(), 0);
+            admin.set_map(cursor.pos(), 0);
+            break;
+            
+        case 'p':                   // create agent
+            admin.create_agent(cursor.pos());
+            break;
+            
+        case 't':
+            admin.create_object(cursor.pos());
+            break;
+            
+        case 'g':
+            //admin.create_object(selected_agent.pos(), 
+            break;
+            
+        case 'r':
+            action.plant(selected_agent.id);
+            break;
+            
+        case 'f':
+            action.till(selected_agent.id);
+            break;
+            
+        case 'v':
+            action.harvest(selected_agent.id);
+            break;
+            
+        case 'i':
+            info.map(5);
+            break;
+    }
+    return true;
+};

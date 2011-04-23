@@ -1,6 +1,3 @@
-var game,
-    processInput;
-    
 /* *******************************
  * *******************************
  * 
@@ -29,7 +26,7 @@ var game,
 
 
 // main loop
-game = {
+var game = {
 
     init: // load z_level +/- 1. Load agents, objects. init render object.
     function () {
@@ -48,7 +45,7 @@ game = {
         setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
     },
     
-    delay: 300, // ms delay for input check
+    delay: 3, // ms delay for input check
     
     input_interval: // called in game.start setInterval
     function () { 
@@ -96,94 +93,4 @@ var cursor = {
             this.y = Math.max(0, this.y);
             renderState.scrollMap(this);
     }
-};
-
-processInput = function (key) {
-    
-    if (!key) return false;
-    
-    var old;
-    
-    switch (key) {
-        
-        case 'ESC':               //quit ? remove this
-            map_editor.clear_current();
-            return false;
-            
-        case 'LEFT':
-            //action.move(selected_agent.id, -1, 0, 0);
-            /*
-            old = cursor.pos();
-            cursor.moveX(-1);
-            renderState.drawLoc(old);
-            renderState.updateTile(cursor);*/
-            break;
-            
-        case 'RIGHT':
-            //action.move(selected_agent.id, 1, 0, 0);
-            /*
-            old = cursor.pos();
-            cursor.moveX(1);
-            renderState.drawLoc(old);
-            renderState.updateTile(cursor);*/
-            break;
-            
-        case 'UP':
-            //action.move(selected_agent.id, 0, 1, 0);
-            /*
-            old = cursor.pos();
-            cursor.moveY(-1);
-            renderState.drawLoc(old);
-            renderState.updateTile(cursor);*/
-            break;
-            
-        case 'DOWN':
-            //action.move(selected_agent.id, 0, -1, 0);
-            /*
-            old = cursor.pos();
-            cursor.moveY(1);
-            renderState.drawLoc(old);
-            renderState.updateTile(cursor);*/
-            break;
-            
-        case 'c':                   // set map solid
-            console.log('set map');
-            //admin.set_map(selected_agent.pos(), 1);
-            admin.set_map(cursor.pos(), 1);
-            break;
-            
-        case 'x':                   // set map empty
-            //admin.set_map(selected_agent.pos(), 0);
-            admin.set_map(cursor.pos(), 0);
-            break;
-            
-        case 'p':                   // create agent
-            admin.create_agent(cursor.pos());
-            break;
-            
-        case 't':
-            admin.create_object(cursor.pos());
-            break;
-            
-        case 'g':
-            //admin.create_object(selected_agent.pos(), 
-            break;
-            
-        case 'r':
-            action.plant(selected_agent.id);
-            break;
-            
-        case 'f':
-            action.till(selected_agent.id);
-            break;
-            
-        case 'v':
-            action.harvest(selected_agent.id);
-            break;
-            
-        case 'i':
-            info.map(5);
-            break;
-    }
-    return true;
 };
