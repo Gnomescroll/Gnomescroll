@@ -6,32 +6,18 @@ var board = {
     x_offset : 0,
     y_offset : 0,
 
-    board_tile_width  : 16,
-    board_tile_height : 16,
-    
-    board_canvas   : null,
-    board_manager  : null,
-    drawingCache   : null,
-    cursor_manager : null,
-    board_event    : null,
+    tile_width  : 16,
+    tile_height : 16,
     
     init : function() {
-        this.board_canvas = board_canvas;
-        this.board_manager = board_manager;
-        this.drawingCache = drawingCache;
-        this.cursor_manager = cursor_manager;
-        this.board_event = board_event;
-        //this.drawing_manager = drawing_manager;
-        
-        this.board_event.init(this);
-        this.board_canvas.init(this);
-        this.drawingCache.init(this.board_canvas);
+        this.canvas.init(this);
         this.cursor_manager.init(this);
-        this.board_manager.init(this);
+        this.manager.init(this);
+        drawingCache.init(this.canvas);
     },
     
     start : function() {
-        this.board_manager.start();
+        this.manager.start();
     },
     
     resize : function resize() {
@@ -51,21 +37,16 @@ var board = {
     
     //redraw
     reset : function() {
-        this.board_manager.reset();     
+        this.manager.reset();     
     }
 };
 
-var board_event = {
-    
-    board_manager : null,
-    
-    init : function(board) {
-        this.board_manager = board.board_manager;   
-    },
+//var board_event = {
+board.event = {
     
     agent_change : function agent_change(agent, type) {
         console.log("agent change start...");
-        board_manager.agent_update(agent);
+        board.manager.agent_update(agent);
     },
     
     object_change : function (id, type) {
@@ -80,57 +61,42 @@ var board_event = {
             y = x.y;
             x = x.x;
         }
-        board_manager.update_tile(x, y, z, value);
+        board.manager.update_tile(x, y, z, value);
     }
 };
 
-var board_manager = {
+//var board_manager = {
+board.manager = {
     
-    board: null,
-    //board_canvas: null,
-    cursor_manager: null,
-
     x_min : null,
     x_max : null,
     y_min : null,
     y_max : null,
     z_level : null,
     
-    //index : [], //index stores drawing cursor information for each board position
-
     agents  : [],
     objects : [],
 
-    
     init : function(board) {
-        this.board = board;
-        //this.board_canvas = board.board_canvas;
-        this.cursor_manager = this.board.cursor_manager;
-
-        this.x_min = this.board.x_offset;
-        this.x_max = this.board.board_tile_width + this.x_min;
-        this.y_min = this.board.y_offset;
-        this.y_max = this.board.board_tile_height + this.y_min;
-        this.z_level = this.board.z_level;
-
-        //this.reset_index();
-        //this.populate_index();
+        this.x_min = board.x_offset;
+        this.x_max = board.tile_width + this.x_min;
+        this.y_min = board.y_offset;
+        this.y_max = board.tile_height + this.y_min;
+        this.z_level = board.z_level;
     },
     
     start : function() {
         this.populate_index();
     },
-    
-//  on_board : function(x_pos,y_pos,z_pos) {
-//  return (this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);        
-//  }
 
     resize : function () {
         //resizing
     },
     
-    scroll : function (dx, dy) {
-        var method = "slow";
+    scroll : function (dx, dy, method) {
+        if (method === undefined) {
+            method = "slow";
+        }
 
         console.timeEnd('a');
         console.time('Scroll: ' + dx + " " + dy);
@@ -173,7 +139,7 @@ var board_manager = {
     
     populate_index: function() {
         console.log("populate_index");
-        this.cursor_manager.reset_cursor_index();
+        board.cursor_manager.reset_cursor_index();
 
         this.agents  = []; //clear index
         this.objects = []; //clear index
@@ -212,7 +178,7 @@ var board_manager = {
             if (agents.hasOwnProperty(agent_id)) {
                 agent = agents[agent_id];
                 //console.log('populate index, agent_update: ' + agent.id)
-                this.agents.append
+                this.agents.push(agent_id);
                 this.agent_update(agent);
                 /*
                 pos = agent.pos();
@@ -304,7 +270,7 @@ var board_manager = {
         if(inIndex === -1 && onBoard) { //agent moves onto board
             if(!(agent.id in this.agents)) {
                 this.agents.push(agent.id);
-                this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min, y_pos - this.y_min);
+                board.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min, y_pos - this.y_min);
                 console.log("2");
                 return 0;
             }
@@ -314,7 +280,7 @@ var board_manager = {
         }
         if(inIndex !== -1 && !onBoard) { //agent moves off board
             this.agents.splice(inIndex, 1); 
-            this.cursor_manager.remove_agent_from_cursor(agent.id);
+            board.cursor_manager.remove_agent_from_cursor(agent.id);
             console.log("3");
             return 0;
         }
@@ -353,17 +319,14 @@ var board_manager = {
                 //console.log("update tile: tile is on board");
                 bx = x_pos - this.x_min;
                 by = y_pos - this.y_min;
-                this.cursor_manager.update_tile(bx, by, tile_id);
+                board.cursor_manager.update_tile(bx, by, tile_id);
         } else {
             //console.log("update tile: tile is not on board ");
         }
     }
 };
 
-var cursor_manager = {
-    
-    board : null,
-    board_manager: null,
+board.cursor_manager = {
 
     index : [],
     
@@ -371,16 +334,12 @@ var cursor_manager = {
     otc : {}, //object to cursor
     
     init : function(board) {
-        console.log('init');
-        console.log(board);
-        this.board = board;
-        this.board_manager = board.board_manager;
         this.reset_cursor_index();
     },
 
     update_tile : function(bx, by, tile_id) {
         //console.log({ x : this.index, });
-        var i = bx + by*this.board.board_tile_width,
+        var i = bx + by*board.tile_width,
             temp = this.index[i];
             
         temp.tile_id = tile_id;
@@ -405,9 +364,9 @@ var cursor_manager = {
         var i,
             x = 0,
             y = 0;
-        for(x=0; x < this.board.board_tile_width; x++) {
-            for(y=0; y < this.board.board_tile_height; y++) {
-                i = x + y*this.board.board_tile_width;
+        for(x=0; x < board.tile_width; x++) {
+            for(y=0; y < board.tile_height; y++) {
+                i = x + y*board.tile_width;
                 this.index[i] = {
                     index          : i,
                     drawing_cursor : [0, -1, -1],
@@ -420,7 +379,7 @@ var cursor_manager = {
                     //debugging information
                     bx       : x,
                     by       : y,
-                    position : [x + this.board_manager.x_min, y + this.board_manager.y_min, this.board_manager.z_level]
+                    position : [x + board.manager.x_min, y + board.manager.y_min, board.manager.z_level]
                 }
             }   
         }
@@ -445,9 +404,9 @@ var cursor_manager = {
 
     advance_drawing_cursor : function(bx, by) {
         console.log("advance_drawing_cursor: ");
-        console.log(this.index[bx + by*this.board.board_tile_width]);
+        console.log(this.index[bx + by*this.board.tile_width]);
         
-        this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
+        this._advance_drawing_cursor(this.index[bx + by*board.tile_width]);
     },
 
     _advance_drawing_cursor : function(x) {
@@ -541,7 +500,7 @@ var cursor_manager = {
     add_agent_to_cursor : function(id, bx, by) {
         console.log("cursor_manager: add agent to cursor");
         
-        var i = bx + by*this.board.board_tile_width,
+        var i = bx + by*board.tile_width,
             cursor = this.index[i];
         
         console.log(cursor);
@@ -599,7 +558,7 @@ var cursor_manager = {
     
     move_agent: function(id, bx, by) {
         //var i, cursor1, cursor2;
-        //i = bx + by*this.board.board_tile_width;      
+        //i = bx + by*this.board.tile_width;      
         //cursor1 = this.index[i];
         
         this.remove_agent_from_cursor(id);
@@ -612,8 +571,8 @@ var cursor_manager = {
     blip : function() {
         //console.log(this.index);
         
-        var w = this.board.board_tile_width,
-            h = this.board.board_tile_height,
+        var w = board.tile_width,
+            h = board.tile_height,
             x = 0,
             y = 0;
             
@@ -641,7 +600,7 @@ var cursor_manager = {
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS 
     draw_board_tile : function(bx, by) {
-        this._draw_board_tile(bx + by*this.board.board_tile_width); 
+        this._draw_board_tile(bx + by*board.tile_width); 
     },
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS
@@ -649,7 +608,7 @@ var cursor_manager = {
         // x is an int or integer string
         if (isNaN(parseInt(x, 10)) || !(x in this.index)) {
             console.log('error');
-            return;
+            return false;
         }
         
         x = this.index[x];
@@ -699,17 +658,17 @@ var cursor_manager = {
         for(i=0; i<len; i++) {
             x = this.index[i];
             if (x.drawing_cursor[0] != -1) {
-                drawingCache.drawTile(x.bx, x.by, x.tile_id);
-                return 0;
+                dc.drawTile(x.bx, x.by, x.tile_id);
+                return false;
             }
             if (x.drawing_cursor[1] != -1) {
                 console.log("Draw Agent");
-                drawingCache.drawSprite(x.bx, x.by, 1, 1);
-                return 0;
+                dc.drawSprite(x.bx, x.by, 1, 1);
+                return false;
             }
             if (x.drawing_cursor[2] != -1) {
                 console.log("Draw Object");
-                return 0;
+                return false;
             }       
         }   
     },
@@ -722,33 +681,27 @@ var cursor_manager = {
             drawing_cursor = this.index[i].drawing_cursor;
             if (drawing_cursor[0] != -1) {
                 drawingCache.drawTile(x.bx, x.by, x.tile_id);
-                return 0;
+                return false;
             }
             if (drawing_cursor[1] != -1) {
                 console.log("Draw Agent");
                 drawingCache.drawSprite(x.bx, x.by, 1, 1);
-                return 0;
+                return false;
             }
             if (drawing_cursor[2] != -1) {
                 console.log("Draw Object");
-                return 0;
+                return false;
             }       
         }   
     }
 };
 
-var drawing_manager = {
+board.drawing_manager = {
     // EMPTY
 };
 
 //this is where drawing occurs to
-var board_canvas = {
-    
-    board : null,
-    board_manager: null,
-    
-    //needs init code
-    //will re-init the cache when board is re-sized
+board.canvas = {
     
     canvas_tile_width  : 16,  //width of canvas in number of tiles
     canvas_tile_height : 16, //width of canvas in number of tiles
@@ -763,9 +716,7 @@ var board_canvas = {
     init: function (board) {
             this.cache_canvas_dom = $('canvas#board')[0];
             this.ctx = this.cache_canvas_dom.getContext("2d");
-            this.board = board;
-            this.board_manager = board.board_manager;
-        },
+    },
         
     resize: function() {
         // Will be called to handle resizing of board and/or zooming
@@ -774,15 +725,15 @@ var board_canvas = {
 };
 
 // tooltip methods
-var board_info = {
+board.info = {
 
     // text displayed in tooltip
     tooltip_text: function(dx, dy) {
         var bx, by, i;
-        bx = Math.floor(dx / board_canvas.tile_pixel_width);
-        by = Math.floor(dy / board_canvas.tile_pixel_height);
-        i = bx + by * board.board_tile_width;
-        return this.cursor_info_string(cursor_manager.index[i]);
+        bx = Math.floor(dx / board.canvas.tile_pixel_width);
+        by = Math.floor(dy / board.canvas.tile_pixel_height);
+        i = bx + by * board.tile_width;
+        return this.cursor_info_string(board.cursor_manager.index[i]);
     },
 
     // which board properties to display
@@ -845,7 +796,7 @@ var board_info = {
         var txt;
         $('body').trigger(event); // trigger body click events
         console.log(event);
-        txt = board_info.tooltip_text(event.offsetX, event.offsetY);
+        txt = board.info.tooltip_text(event.offsetX, event.offsetY);
         return txt;
     }
 };

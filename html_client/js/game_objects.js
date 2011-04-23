@@ -47,7 +47,7 @@ GameObject = {
             }
         }
         // emit message to renderer
-        board_event[get_board_event_name(that)](that);
+        board.event[get_board_event_name(that)](that);
     },
     
     old: // past state, after update
@@ -123,7 +123,7 @@ GameObject = {
         this.cleanOld();
         
         // emit message to renderer
-        board_event[get_board_event_name(that)](that);
+        board.event[get_board_event_name(that)](that);
     },
 
     instance_properties: ['inventory'],
@@ -168,7 +168,7 @@ GameObject = {
         state.removeGameObject(this);
         
         // emit message to renderer
-        board_event[get_board_event_name(that)](that);
+        board.event[get_board_event_name(that)](that);
         delete that;
     },
 

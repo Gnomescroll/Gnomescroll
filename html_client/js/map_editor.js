@@ -9,7 +9,7 @@ var terrain_tiles = {
 var map_editor = {
     
     panel_canvas_tile: function (id) {
-        var bc = board_canvas,
+        var bc = board.canvas,
             canvas = $('<canvas></canvas>').attr({'id' : id,
                                                 'class' : 'panel_tile'});
         canvas[0].width = bc.tile_pixel_width;
@@ -115,7 +115,7 @@ var map_editor = {
             coord = {},
             board_coord = {},
             global_coord = {},
-            bc = board_canvas;
+            bc = board.canvas;
             
         // change coordinate system relative to canvas
         coord.x = event.pageX - canvas_offset.left;

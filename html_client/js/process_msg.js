@@ -48,7 +48,7 @@ process.info.tileset = function(msg) {
     for(index in msg.tile_properties) {
         if (msg.tile_properties.hasOwnProperty(index)) {
             tile = msg.tile_properties[index];
-            tile_properties.add_tile(tile);
+            tile_properties.add(tile);
         }
     }
 
@@ -225,7 +225,7 @@ process.delta.agent_position_change = function (msg) {
         console.log("process.delta.agent_position_change : WTF, should not occur")
         console.log(agent)
     } else {
-        board_event.agent_change(agent);
+        board.event.agent_change(agent);
     }
 
 };
@@ -349,7 +349,7 @@ process.delta.set_terrain_map = function (msg) {
     if (state.contains(GameObject.pos.apply(msg))) {
         block = state.updateBlock(msg);
         if (block !== false) {
-            board_event.terrain_map_change(block);
+            board.event.terrain_map_change(block);
         }
     }
 
