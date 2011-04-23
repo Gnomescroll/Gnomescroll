@@ -4,36 +4,26 @@ var globals = {
     client_id: 0,
     player_id: 0,
     server_out: '',
-    update: update = 
-        function (params) {
-            this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
-            this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
-            this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
-        }
-}
+    update: function (params) {
+                this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
+                this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
+                this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
+    },
+};
 
 var send = function (data) {
-    
     var url = '/api';
     data = JSON.stringify(data);
     $.post(globals.server_out+url, { json: data });
-    console.log('socket.socket');
-    console.log(socket.socket);
-}
+};
 
 var admin, info, action;
 
-admin = ( function () {
+admin = {
 
-    var type = 'admin',
-        create_agent,
-        create_item,
-        create_object,
-        set_map,
-        public_;
+    type: 'admin',
             
-	create_agent = function (x, y, z, location) {
-	
+    create_agent: function (x, y, z, location) {
         var position;
     
         if (location === undefined) {
@@ -49,20 +39,18 @@ admin = ( function () {
             position = [location, x, y, z];
         }
     
-		var data = { 
-                cmd: 'create_agent',
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                player_id: globals.player_id,
-                position: position,
-               }
-        
+        var data = { 
+            cmd: 'create_agent',
+            type: this.type,
+            client_id: globals.client_id,
+            world_id: globals.world_id,
+            player_id: globals.player_id,
+            position: position,
+        };
         send(data);
-	};
+    },
     
-    create_object = function (x, y, z, location, object_type, template) {
-        
+    create_object: function (x, y, z, location, object_type, template) {
         var position;
     
         if (location === undefined) {
@@ -79,20 +67,18 @@ admin = ( function () {
         }
         
         var data = {
-                type: type,
-                cmd: 'create_item',
-                object_type: object_type,
-                template: template,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                position: position,
-            }
-        
+            cmd: 'create_item',
+            type: this.type,
+            object_type: object_type,
+            template: template,
+            client_id: globals.client_id,
+            world_id: globals.world_id,
+            position: position,
+        };
         send(data);
-    };
-	
-	set_map = function (x, y, z, value, debug) {
-        
+    },
+    
+    set_map: function (x, y, z, value, debug) {
         if (debug) console.log(arguments);
         var position;
     
@@ -110,174 +96,115 @@ admin = ( function () {
             position = [value, x, y, z];
         }
 
-		var data = { 
-                cmd: "set_map",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                position: position,
-                value: value
-               }
+        var data = { 
+            cmd: "set_map",
+            type: this.type,
+            client_id: globals.client_id,
+            world_id: globals.world_id,
+            position: position,
+            value: value
+        };
         if (debug) console.log(data);
         send(data);
-	};
+    }
+};
+
+info = {
     
-    public_ = {
-                create_agent: create_agent,
-                create_item: create_item,
-                create_object: create_object,
-                set_map: set_map
-              };
-              
-    return public_;
-
-}());
-
-
-info = ( function () {
-	
-    var type = "info",
-        consts = {},
-        tileset, 
-        map,
-        agent,
-        object,
-        agents,
-        objects,
-        public_;
+    type: 'info',
+    consts: {
+        type: 'info',
+        client_id: globals.client_id,
+        world_id: globals.world_id
+    },
         
-    consts = { type: type,
-               client_id: globals.client_id,
-               world_id: globals.world_id
-             };
-		
-    tileset = function () {
-        var data = $.extend(consts, { cmd: 'get_tiles', });
+    tileset: function () {
+        var data = $.extend({}, this.consts, { cmd: 'get_tiles' });
         send(data);
-    };
+    },
         
-	map = function (z) {
-
-		var data = $.extend(consts, { cmd: "get_map", });
+    map: function (z) {
+        var data = $.extend({}, this.consts, { cmd: 'get_map' });
                
         if (z !== undefined) {
             data.z = z;
         }
-		
         send(data);
-	}
+    },
 
-	agent = function (id) {
+    agent: function (id) {
+        var data = $.extend({}, this.consts, { cmd: 'get_agent',
+                                      agent_id: id });
+        send(data); 
+    },
 
-		var data = $.extend(consts, { cmd: "get_agent",
-                                      agent_id: id, });
-		send(data);	
-	}
-
-	object = function (id) {
-
-		var data = $.extend(consts, { cmd: "get_object",
+    object: function (id) {
+        var data = $.extend({}, this.consts, { cmd: 'get_object',
                                       object_id: id, });
-		send(data);
-	}
-	
-	agents = function() {
-		
-		var data = $.extend(consts, { cmd: "get_agent_list", });
-		send(data);
-	}
-
-	objects = function() {
-		
-		var data = $.extend(consts, { cmd: "get_object_list", });
-		send(data);
-	}
-	
-    public_ = {
-                tileset: tileset,
-                map: map,
-                agent: agent,
-                object: object,
-                agents: agents,
-                objects: objects,
-              };
-              
-    return public_;
-    		
-}());
-
-action = ( function () {
-
-    var type = 'agent',
-        move,
-        till,
-        plant,
-        harvest,
-        public_;
-		
-	move = function (agent_id, dx, dy, dz) {
-
-		var data = { 
-                cmd: "move_0",
-                type: type,
-                client_id: globals.client_id,
-                world_id: globals.world_id,
-                agent_id: agent_id,
-                dp: [dx, dy, dz]
-               }
-		
-		send(data);
-	}
+        send(data);
+    },
     
-    till = function (agent_id) {
-
-        var data = {
-                    type: type,
-                    cmd: 'till_soil',
-                    world_id: globals.world_id,
-                    agent_id: agent_id,
-                   }
-                   
+    agents: function () {
+        var data = $.extend({}, this.consts, { cmd: 'get_agent_list' });
         send(data);
     },
 
-    plant = function (agent_id) {
-
-        var data = {
-                    type: type,
-                    cmd: 'plant_crop',
-                    world_id: globals.world_id,
-                    agent_id: agent_id,
-                   }
-                   
+    objects: function() {
+        var data = $.extend({}, this.consts, { cmd: 'get_object_list' });
         send(data);
-    },
+    }
+};
 
-    harvest = function (agent_id, crop_id) {
+action = {
+
+    type: 'agent',
         
+    move: function (agent_id, dx, dy, dz) {
+        var data = { 
+            cmd: "move_0",
+            type: this.type,
+            client_id: globals.client_id,
+            world_id: globals.world_id,
+            agent_id: agent_id,
+            dp: [dx, dy, dz]
+        };
+        
+        send(data);
+    },
+    
+    till: function (agent_id) {
+        var data = {
+            cmd: 'till_soil',
+            type: this.type,
+            world_id: globals.world_id,
+            agent_id: agent_id,
+        };
+        send(data);
+    },
+
+    plant: function (agent_id) {
+        var data = {
+            cmd: 'plant_crop',
+            type: this.type,
+            world_id: globals.world_id,
+            agent_id: agent_id,
+        };
+        send(data);
+    },
+
+    harvest: function (agent_id, crop_id) {
         //temporary
         if (crop_id === undefined) {
             crop_id = 1;
         }
         
         var data = {
-                    type: type,
-                    cmd: 'harvest_crop',
-                    world_id: globals.world_id,
-                    agent_id: agent_id,
-                    crop_id: crop_id,
-                   }
-                   
+            cmd: 'harvest_crop',
+            type: this.type,
+            world_id: globals.world_id,
+            agent_id: agent_id,
+            crop_id: crop_id,
+        };
         send(data);
-    };
-    
-    public_ = {
-                move: move,
-                till: till,
-                plant: plant,
-                harvest: harvest,
-              };
-              
-    return public_;
-    
-}());
+    }
+};

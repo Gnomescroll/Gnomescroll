@@ -2,40 +2,26 @@
     
 var board = {
     
-    z_level: 1,
-    x_offset: 0,
-    y_offset: 0,
+    z_level  : 1,
+    x_offset : 0,
+    y_offset : 0,
 
-    board_tile_width: 16,
-    board_tile_height: 16,
-    
-    board_canvas : null,
-    board_manager : null,
-    drawingCache : null,
-    cursor_manager : null,
-    board_event : null,
+    tile_width  : 16,
+    tile_height : 16,
     
     init : function() {
-        this.board_canvas = board_canvas;
-        this.board_manager = board_manager;
-        this.drawingCache = drawingCache;
-        this.cursor_manager = cursor_manager;
-        this.board_event = board_event;
-//      this.drawing_manager = drawing_manager;
-        
-        this.board_event.init(this);
-        this.board_canvas.init(this);
-        this.drawingCache.init(this.board_canvas);
+        this.canvas.init(this);
         this.cursor_manager.init(this);
-        this.board_manager.init(this);
+        this.manager.init(this);
+        drawingCache.init(this.canvas);
     },
     
     start : function() {
-        this.board_manager.start();
+        this.manager.start();
     },
     
     resize : function resize() {
-        ///resize board
+        //resize board
     },
     
     scroll : function(dx, dy) {
@@ -49,106 +35,87 @@ var board = {
         this.reset();
     },
     
-    ///redraw
+    //redraw
     reset : function() {
-        this.board_manager.reset();     
-    },
-}
+        this.manager.reset();     
+    }
+};
 
-var board_event = {
-    
-    board_manager : null,
-    
-    init : function(board) {
-    this.board_manager = board.board_manager;   
-    },
+//var board_event = {
+board.event = {
     
     agent_change : function agent_change(agent, type) {
-        console.log("agent change start...")
-            board_manager.agent_update(agent);
+        console.log("agent change start...");
+        board.manager.agent_update(agent);
     },
     
     object_change : function (id, type) {
-    
+        //implement
     },
     
     terrain_map_change : function(x, y, z, value) {
-        console.log("board_event.terrain_map_change")
+        console.log("board_event.terrain_map_change");
         if (typeof x === 'object') { // allow block object to be passed in
             value = x.value;
             z = x.z;
             y = x.y;
             x = x.x;
         }
-        board_manager.update_tile(x, y, z, value);
-    },
-}
+        board.manager.update_tile(x, y, z, value);
+    }
+};
 
-var board_manager = {
+//var board_manager = {
+board.manager = {
     
-    board: null,
-    //board_canvas: null,
-    cursor_manager: null,
-
     x_min : null,
     x_max : null,
     y_min : null,
     y_max : null,
     z_level : null,
     
-    //index : [], //index stores drawing cursor information for each board position
-
-    agents : [],
+    agents  : [],
     objects : [],
 
-    
     init : function(board) {
-        this.board = board;
-        //this.board_canvas = board.board_canvas;
-        this.cursor_manager = this.board.cursor_manager;
-
-        this.x_min = this.board.x_offset;
-        this.x_max = this.board.board_tile_width + this.x_min;
-        this.y_min = this.board.y_offset;
-        this.y_max = this.board.board_tile_height + this.y_min;
-        this.z_level = this.board.z_level;
-
-        //this.reset_index();
-        //this.populate_index();
+        this.x_min = board.x_offset;
+        this.x_max = board.tile_width + this.x_min;
+        this.y_min = board.y_offset;
+        this.y_max = board.tile_height + this.y_min;
+        this.z_level = board.z_level;
     },
     
     start : function() {
         this.populate_index();
     },
-    
-//  on_board : function(x_pos,y_pos,z_pos) {
-//  return (this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);        
-//  }
 
     resize : function () {
         //resizing
     },
     
-    scroll : function (dx, dy) {
-        var method = "slow";
-            console.timeEnd('a')
-        console.time('Scroll: ' + dx + " " + dy)
+    scroll : function (dx, dy, method) {
+        if (method === undefined) {
+            method = "slow";
+        }
+
+        console.timeEnd('a');
+        console.time('Scroll: ' + dx + " " + dy);
         
-        if(method == slow) { this._easy_scroll(dx,dy); }
-        if(method == fast) { this._fast_scroll(dx,dy); }
-        console.timeEnd('Scroll: ' + dx + " " + dy)
+        if(method === slow) { this._easy_scroll(dx,dy); }
+        if(method === fast) { this._fast_scroll(dx,dy); }
+        console.timeEnd('Scroll: ' + dx + " " + dy);
     },
     
     _easy_scroll : function (dx, dy) {
-        ///implement the easy to implement way (drop everything and recompute from scratch)
+        //implement the easy to implement way (drop everything and recompute from scratch)
         this.populate_index();
         this.blip();
     },
     
     _fast_scroll : function(dx, dy) {
-        ///incremental update of index
+        //incremental update of index
         
-        this.board_cursor_manager.scroll(dx,dy); //incremental update, renames cursor
+        board.cursor_manager.scroll(dx,dy); //incremental update, renames cursor
 
         //remove from index objects on squares off screen
         //add objects on index that is now on screen
@@ -171,142 +138,154 @@ var board_manager = {
     },
     
     populate_index: function() {
-        console.log("populate_index")
-        this.cursor_manager.reset_cursor_index();
+        console.log("populate_index");
+        board.cursor_manager.reset_cursor_index();
 
-        this.agents = []; //clear index
+        this.agents  = []; //clear index
         this.objects = []; //clear index
 
-        var x, y,xm, ym, zl, tile_value;
-        xm = this.x_max;
-        ym = this.y_max;
-        zl = this.z_level;
-
+        var x,
+            y,
+            tile_value,
+            xm = this.x_max,
+            ym = this.y_max,
+            zl = this.z_level;
+            
         //could have quick method for grabbing a region of map in x-y plane to reduce function calls
         //region could be returned as an array?
-        for(x = this.x_min; x<xm; x++) {
-            for(y = this.y_min; y<xm; y++)
-            {
+        for(x = this.x_min; x < xm; x++) {
+            for(y = this.y_min; y < xm; y++) {
                 tile_value = state.levels[zl][x][y];
-                //tile_vale = 1; ///FIX
-                this.update_tile(x,y,zl, tile_value);
+                //tile_vale = 1; //FIX
+                this.update_tile(x, y, zl, tile_value);
             }
         }
 
-        ///for each agent/ determine if agent is on board and if so, add it to the index
-        var x_pos, y_pos, z_pos, pos, id; //x,y positions
-        agents = state.agents;/// fill this in; get list of agents
+        //for each agent/ determine if agent is on board and if so, add it to the index
+        var x_pos,
+            y_pos, //x,y positions
+            z_pos,
+            pos,
+            id,
+            agent_id,
+            agent,
+            agents = state.agents, // fill this in; get list of agents
+            object_id,
+            obj,
+            objects = state.objects;
 
-        for(agent_id in agents) 
-        {
-            var agent = agents[agent_id];
-            //console.log('populate index, agent_update: ' + agent.id)
-            this.agents.append
-            this.agent_update(agent);
-/*
-            pos = agent.pos();
-            x_pos = agent_pos[0];
-            y_pos = agent_pos[1];
-            z_pos = agent_pos[2];
-            if(z_pos != this.z_level) {
-                console.log("agent z level errr")
-                continue;
-            }
-            if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
-            {
-                this.agents.push(agent.id);
-                this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min ,y_pos - this.ymin);               
+        for(agent_id in agents) {
+            if (agents.hasOwnProperty(agent_id)) {
+                agent = agents[agent_id];
+                //console.log('populate index, agent_update: ' + agent.id)
+                this.agents.push(agent_id);
+                this.agent_update(agent);
+                /*
+                pos = agent.pos();
+                x_pos = agent_pos[0];
+                y_pos = agent_pos[1];
+                z_pos = agent_pos[2];
+                if(z_pos != this.z_level) {
+                    console.log("agent z level errr")
+                    continue;
+                }
+                if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
+                {
+                    this.agents.push(agent.id);
+                    this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min ,y_pos - this.ymin);               
 
-                //this.add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
+                    //this.add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
+                }
+                else
+                {
+                        console.log("Index Population: agent not on board, " + agent.id)
+                }
+                */
             }
-            else
-            {
-                    console.log("Index Population: agent not on board, " + agent.id)
-            }
-*/
         }
         
-        for(object_id in state.objects) 
-        {
-            var obj = state.objects[object_id];
-            pos = obj.pos();
-            x_pos = pos[0];
-            y_pos = pos[1];
-            z_pos = pos[2];
-            if(z_pos != this.z_level) {
-                console.log("object z level errr")
-                continue;
-            }
-            if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
-            {
-                this.objects.push(obj.id);
-                // TODO
-                // implement cursor_manager.add_object_to_cursor
-                //this.cursor_manager.add_object_to_cursor(obj.id, x_pos - this.x_min ,y_pos - this.ymin);
+        for(object_id in objects) {
+            if (objects.hasOwnProperty(object_id)) {
+                obj = state.objects[object_id];
+                pos = obj.pos();
+                x_pos = pos[0];
+                y_pos = pos[1];
+                z_pos = pos[2];
+                if (z_pos != this.z_level) {
+                    console.log("object z level errr");
+                    continue;
+                }
+                if ( this.x_min <= x_pos &&
+                     this.x_max > x_pos  &&
+                     this.y_min <= y_pos &&
+                     this.y_max > y_pos ) {
+                        this.objects.push(obj.id);
+                        // TODO
+                        // implement cursor_manager.add_object_to_cursor
+                        //this.cursor_manager.add_object_to_cursor(obj.id, x_pos - this.x_min ,y_pos - this.ymin);
+                }
             }
         }
         
     },
     
     agent_update : function(agent) {
-        console.log("board_manager agent_update")
-        var pos, x_pos, y_pos, z_pos;
-        
-        pos = agent.pos();
-        x_pos = pos[0];
-        y_pos = pos[1];
-        z_pos = pos[2];
+        console.log("board_manager agent_update");
 
-        var onBoard, inIndex;
-        var id = agent.id;
-        
-        inIndex = $.inArray(agent.id, this.agents);
+        var pos     = agent.pos(),
+            x_pos   = pos[0],
+            y_pos   = pos[1],
+            z_pos   = pos[2];
+            id      = agent.id,
+            inIndex = $.inArray(agent.id, this.agents),
+            onBoard = ( z_pos == this.z_level &&
+                          this.x_min <= x_pos &&
+                          this.x_max > x_pos  &&
+                          this.y_min <= y_pos &&
+                          this.y_max > y_pos );
         
         //console.log("id: " + agent.id + ", inIndex: " + inIndex);
-        onBoard = (z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos);
-        
-        //console.log("board_manager: agent_update")
+        //console.log("board_manager: agent_update");
         
         /*
-        console.log(z_pos == this.z_level)
-        console.log("(z_pos, z_level): " + z_pos + " " + this.z_level)
-        console.log(this.x_min <= x_pos)
-        console.log(x_pos < this.x_max)
-        console.log(this.y_min <= y_pos )
-        console.log(this.y_max > y_pos)
+        console.log(z_pos == this.z_level);
+        console.log("(z_pos, z_level): " + z_pos + " " + this.z_level);
+        console.log(this.x_min <= x_pos);
+        console.log(x_pos < this.x_max);
+        console.log(this.y_min <= y_pos );
+        console.log(this.y_max > y_pos);
 
-        console.log("Agent: " + x_pos + " " + y_pos + " " + z_pos) 
-        console.log("x min-max: " + this.x_min + " " + this.x_max)
-        console.log("y min-may: " + this.y_min + " " + this.y_max)
-        console.log("z-level: " + this.z_level)
-        console.log("agent_update: " + inIndex + ", " + onBoard)
+        console.log("Agent: " + x_pos + " " + y_pos + " " + z_pos);
+        console.log("x min-max: " + this.x_min + " " + this.x_max);
+        console.log("y min-may: " + this.y_min + " " + this.y_max);
+        console.log("z-level: " + this.z_level);
+        console.log("agent_update: " + inIndex + ", " + onBoard);
         */
         
-        if(inIndex != -1 && onBoard) { ///agent moves around on the board
+        if(inIndex !== -1 && onBoard) { //agent moves around on the board
             this.cursor_manager.move_agent(agent.id, x_pos - this.x_min, y_pos - this.y_min);
-            console.log("1")
+            console.log("1");
             return 0;
-             }
-        if(inIndex == -1 && onBoard) { ///agent moves onto board
+        }
+        if(inIndex === -1 && onBoard) { //agent moves onto board
             if(!(agent.id in this.agents)) {
                 this.agents.push(agent.id);
-                this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min, y_pos - this.y_min);
-                console.log("2")
+                board.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min, y_pos - this.y_min);
+                console.log("2");
                 return 0;
             }
-            else
-            {
-                console.log("inIndex == -1 && onBoard : error, agent id is in list already")
+            else {
+                console.log("inIndex == -1 && onBoard : error, agent id is in list already");
             }
         }
-        if(inIndex != -1 && !onBoard) { ///agent moves off board
-            this.agents.splice(inIndex,1); 
-            this.cursor_manager.remove_agent_from_cursor(agent.id);
-            console.log("3")
+        if(inIndex !== -1 && !onBoard) { //agent moves off board
+            this.agents.splice(inIndex, 1); 
+            board.cursor_manager.remove_agent_from_cursor(agent.id);
+            console.log("3");
             return 0;
         }
-        if(inIndex == -1 && !onBoard) { //agent is off map
-            console.log("4")
+        if(inIndex === -1 && !onBoard) { //agent is off map
+            console.log("4");
             return 0;
         }
 
@@ -331,22 +310,23 @@ var board_manager = {
 */
     
     update_tile: function(x_pos, y_pos, z_pos, tile_id) {
-        if(z_pos == this.z_level && this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos) {
-        //console.log("update tile: tile is on board")
         var bx, by;
-        bx = x_pos - this.x_min;
-        by = y_pos - this.y_min;
-        this.cursor_manager.update_tile(bx, by, tile_id);
+        if (this.z_level == z_pos &&
+            this.x_min <= x_pos   &&
+            this.x_max > x_pos    &&
+            this.y_min <= y_pos   &&
+            this.y_max > y_pos ){
+                //console.log("update tile: tile is on board");
+                bx = x_pos - this.x_min;
+                by = y_pos - this.y_min;
+                board.cursor_manager.update_tile(bx, by, tile_id);
         } else {
-            //console.log("update tile: tile is not on board ")
+            //console.log("update tile: tile is not on board ");
         }
-    },
-}
+    }
+};
 
-var cursor_manager = {
-    
-    board : null,
-    board_manager: null,
+board.cursor_manager = {
 
     index : [],
     
@@ -354,20 +334,14 @@ var cursor_manager = {
     otc : {}, //object to cursor
     
     init : function(board) {
-        console.log('init')
-        console.log(board)
-        this.board = board;
-        this.board_manager = board.board_manager;
         this.reset_cursor_index();
     },
 
     update_tile : function(bx, by, tile_id) {
-        
-        //console.log({ x : this.index, })
-        
-        var i, temp;
-        i = bx + by*this.board.board_tile_width;
-        temp = this.index[i]
+        //console.log({ x : this.index, });
+        var i = bx + by*board.tile_width,
+            temp = this.index[i];
+            
         temp.tile_id = tile_id;
         temp.drawing_cursor = [0, -1, -1];
         this._draw_board_tile(i);
@@ -385,25 +359,27 @@ var cursor_manager = {
     // takes an this.index element
     
     reset_cursor_index: function() {
-        console.log("reset_cursor_index")
+        console.log("reset_cursor_index");
         
-        var i;
-        for(var x=0; x < this.board.board_tile_width; x++) {
-            for(var y=0; y < this.board.board_tile_height; y++) {
-                i = x + y*this.board.board_tile_width;
+        var i,
+            x = 0,
+            y = 0;
+        for(x=0; x < board.tile_width; x++) {
+            for(y=0; y < board.tile_height; y++) {
+                i = x + y*board.tile_width;
                 this.index[i] = {
-                    index: i,
-                    drawing_cursor: [0,-1,-1],
-                    //last_blip : 0, //needed?
-                    tile_id : 0,
-                    agent_num : 0,
-                    agent_list : [],
-                    object_num : 0,
-                    object_list: [],
+                    index          : i,
+                    drawing_cursor : [0, -1, -1],
+                    //last_blip      : 0, //needed?
+                    tile_id        : 0,
+                    agent_num      : 0,
+                    agent_list     : [],
+                    object_num     : 0,
+                    object_list    : [],
                     //debugging information
-                    bx : x,
-                    by : y,
-                    position : [x+this.board_manager.x_min,y+this.board_manager.y_min,this.board_manager.z_level],
+                    bx       : x,
+                    by       : y,
+                    position : [x + board.manager.x_min, y + board.manager.y_min, board.manager.z_level]
                 }
             }   
         }
@@ -417,82 +393,83 @@ var cursor_manager = {
     },
     
     advance_all_drawing_cursor : function() {
-        var len = this.index.length;
+        var len = this.index.length,
+            x = 0;
         
-        //console.log(this.index)
-        for(var x=0; x < len; x++) {
+        //console.log(this.index);
+        for(x=0; x < len; x++) {
             this._advance_drawing_cursor(this.index[x]);
         }
     },
 
     advance_drawing_cursor : function(bx, by) {
-        console.log("advance_drawing_cursor: ")
-        console.log(this.index[bx + by*this.board.board_tile_width])
+        console.log("advance_drawing_cursor: ");
+        console.log(this.index[bx + by*board.tile_width]);
         
-        this._advance_drawing_cursor(this.index[bx + by*this.board.board_tile_width]);
+        this._advance_drawing_cursor(this.index[bx + by*board.tile_width]);
     },
 
     _advance_drawing_cursor : function(x) {
         
-        //console.log(x)
+        //console.log(x);
         
         if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
         {
-            //console.log("1")
+            //console.log("1");
             if(x.agent_num > 0) //then if agents are on tile, render agent
             {
-                console.log("1.1")
+                console.log("1.1");
                 x.drawing_cursor[0] = -1;
                 x.drawing_cursor[1] = 0;
             } 
             else if(x.object_num > 0)  //if no agents, then render objects if they else
             {
-                console.log("1.2")
+                console.log("1.2");
                 x.drawing_cursor[0] = -1;
                 x.drawing_cursor[2] = 0;
             }
             else //else keep rendering the tile
             {
-                //console.log("1.3")
+                //console.log("1.3");
                 //do nothing, only the tile exists on this square
             }
         }
         else if(x.drawing_cursor[1] != -1) //if cursor is rendering a agent
         {
-            //console.log("2")
+            //console.log("2");
 
-            //console.log("board_manager.advance_drawing_cursor: WTF 0.0")
+            //console.log("board_manager.advance_drawing_cursor: WTF 0.0");
             x.drawing_cursor[1]++;
             if(x.drawing_cursor[1] < x.agent_num) //if more agents, switch to next agent
             {
-                console.log("2.0")
+                console.log("2.0");
                 //do nothings
             }
             else if(x.drawing_cursor[1] == x.agent_num)
             {
                 if(x.object_num > 0)
                 {
-                    console.log("2.1")
+                    console.log("2.1");
                     x.drawing_cursor = [-1, -1, 0];
                 }
                 else //if no objects on square, then render tile
                 {
-                    console.log("2.2")
+                    console.log("2.2");
                     x.drawing_cursor = [0, -1, -1]
                 }
             }
             else if(x.drawing_cursor[1] > x.agent_num)
             {   
-                console.log("2.3")
-                console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition")
-                console.log(x)
+                console.log("2.3");
+                console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition");
+                console.log(x);
             }
         }
         else if(x.drawing_cursor[2] != -1)
         {           
-            console.log("3")
+            console.log("3");
 
-            console.log("board_manager.advance_drawing_cursor: WTF 0.1")
+            console.log("board_manager.advance_drawing_cursor: WTF 0.1");
             x.drawing_cursor[2]++;
             if(x.drawing_cursor[2] < x.object_num)
             {
@@ -505,11 +482,11 @@ var cursor_manager = {
             }
             else if(x.drawing_cursor[2] > x.object_num)
             {
-                console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition")               
+                console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition");             
             }
         }
         
-        //console.log(x)
+        //console.log(x);
     },
     
     agent_to_cursor : function(id) {
@@ -519,59 +496,57 @@ var cursor_manager = {
     object_to_cursor : function(id) {
         
     },
-    ///
+
     add_agent_to_cursor : function(id, bx, by) {
-        console.log("cursor_manager: add agent to cursor")
+        console.log("cursor_manager: add agent to cursor");
         
-        var bx, by, i;
-        i = bx + by*this.board.board_tile_width;
+        var i = bx + by*board.tile_width,
+            cursor = this.index[i];
         
-        var cursor = this.index[i];
-        
-        console.log(cursor)
+        console.log(cursor);
         
         this.atc[id] = cursor;
         cursor.agent_list.push(id);
         cursor.drawing_cursor = [-1, cursor.agent_num, -1];
         cursor.agent_num++;
-        //console.log("agent num: " + cursor.agent_num)
+        //console.log("agent num: " + cursor.agent_num);
         this._draw_board_tile(i);
 
-        //console.log(cursor)       
-        //console.log(this.index[i])
+        //console.log(cursor);
+        //console.log(this.index[i]);
     },
     
     remove_agent_from_cursor : function(id) {
-        console.log("remove_agent_from_cursor: " + id)
-        
+        console.log("remove_agent_from_cursor: " + id);
+        var cursor;
         if(id in this.atc) {
-        var cursor = this.atc[id];
-        this._remove_agent_from_cursor(cursor, id);
-        } 
-        else {
-        console.log("remove_agent_from_cursor: agent is missing")
+            cursor = this.atc[id];
+            this._remove_agent_from_cursor(cursor, id);
+        } else {
+            console.log("remove_agent_from_cursor: agent is missing");
         }
     },
     
     _remove_agent_from_cursor : function(cursor, id) {
-        console.log("cursor: ")
-        console.log(cursor)
+        console.log("cursor: ");
+        console.log(cursor);
 
-        var inIndex = $.inArray(id, cursor.agent_list);
-        if(inIndex == -1) 
-        { 
-            console.log("cursor_manager, _remove_agent_from_cursor: Agent id does not exist in cursor!")
+        var inIndex = $.inArray(id, cursor.agent_list),
+            drawing_cursor;
+        if(inIndex == -1) { 
+            console.log("cursor_manager, _remove_agent_from_cursor: Agent id does not exist in cursor!");
             return;
-        }
-        else 
-        {
-            cursor.agent_list.splice(inIndex,1);    
+        } else {
+            cursor.agent_list.splice(inIndex, 1);    
             delete this.atc[id];
             cursor.agent_num--;
             
-            var drawing_cursor = cursor.drawing_cursor; 
-            if(drawing_cursor[1] == -1 && cursor.agent_num >= 1) { cursor.drawing_cursor = [-1, 0, -1]; } 
-            else { cursor.drawing_cursor = [0, -1, -1]; }
+            drawing_cursor = cursor.drawing_cursor; 
+            if (drawing_cursor[1] == -1 && cursor.agent_num >= 1) {
+                cursor.drawing_cursor = [-1, 0, -1];
+            } else {
+                cursor.drawing_cursor = [0, -1, -1];
+            }
             
             //else if(cursor.agent_num > drawing_cursor[1]  && cursor.agent_num != 0) { cursor.drawing_cursor = [-1, 0, -1]; }
             //else if (cursor.object_num > 0) { cursor.drawing_cursor = [-1, -1, 0]; }
@@ -583,7 +558,7 @@ var cursor_manager = {
     
     move_agent: function(id, bx, by) {
         //var i, cursor1, cursor2;
-        //i = bx + by*this.board.board_tile_width;      
+        //i = bx + by*board.tile_width;      
         //cursor1 = this.index[i];
         
         this.remove_agent_from_cursor(id);
@@ -594,15 +569,18 @@ var cursor_manager = {
     // MOVE TO DRAWING FUNCTION INTERFACE CLASS 
     //does a full redraw
     blip : function() {
-        //console.log(this.index)
+        //console.log(this.index);
         
-        var x, y, cursor, w, h;
-        w = this.board.board_tile_width;
-        h = this.board.board_tile_height;
-        console.log("Blip Start: wh= " + w + " " + h)
-        for(var x=0; x < w; x++) {
-            for(var y=0; y < h; y++) {
-                //console.log(x + " " + y)
+        var w = board.tile_width,
+            h = board.tile_height,
+            x = 0,
+            y = 0;
+            
+        console.log("Blip Start: wh= " + w + " " + h);
+        
+        for(x=0; x < w; x++) {
+            for(y=0; y < h; y++) {
+                //console.log(x + " " + y);
                 this._draw_board_tile(x + y*w);
             }   
         }
@@ -610,39 +588,42 @@ var cursor_manager = {
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS
     draw_board : function() {
-        for(x in this.index) { this._draw_board_tile(x); }
+        var i = 0,
+            len = this.index.length,
+            x;
+            
+        for(i=0; i < len; i++) {
+            x = this.index[i];
+            this._draw_board_tile(x);
+        }
     },
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS 
-    draw_board_tile : function(bx,by) {
-        this._draw_board_tile(bx + by*this.board.board_tile_width); 
+    draw_board_tile : function(bx, by) {
+        this._draw_board_tile(bx + by*board.tile_width); 
     },
 
 // MOVE TO DRAWING FUNCTION INTERFACE CLASS
     _draw_board_tile : function(x) {
-        
-        if(!(x in this.index)) {
-            console.log('error')
+        // x is an int or integer string
+        if (isNaN(parseInt(x, 10)) || !(x in this.index)) {
+            console.log('error');
+            return false;
         }
         
         x = this.index[x];
-        if(x.drawing_cursor[0] != -1) {
+        if (x.drawing_cursor[0] != -1) {
             //draw tile
             // x.tile_id, x.bx, x.by
-            ///
             //console.log("Draw Tile")
             drawingCache.drawTile(x.bx, x.by, x.tile_id);
-            ///
-        } else if(x.drawing_cursor[1] != -1) {
+        } else if (x.drawing_cursor[1] != -1) {
             //draw agent
             // x.agent_list[x.drawing_cursor[1]], x.bx, x.by
-            ///
-            console.log("Draw Agent")
+            console.log("Draw Agent");
             drawingCache.drawSprite(x.bx, x.by, 1, 1);
-            ///
-        } else if(x.drawing_cursor[2] != -1) {
-        
-            console.log("Draw Object")
+        } else if (x.drawing_cursor[2] != -1) {
+            console.log("Draw Object");
             //draw object
             // x.object_list[x.drawing_cursor[2]], x.bx, x.by
         }
@@ -650,92 +631,83 @@ var cursor_manager = {
     
 
     test_draw_board_0 : function() {
-    var i, len, x;
-    len = this.index.length;
-    for(i=0; i<len; i++) {
-        x = this.index[i];
+        var i = 0,
+            len = this.index.length,
+            x;
+        for(i=0; i<len; i++) {
+            x = this.index[i];
 
-        if(x.drawing_cursor[0] != -1) {
-            drawingCache.drawTile(x.bx, x.by, x.tile_id);
-        } else if(x.drawing_cursor[1] != -1) {
-            console.log("Draw Agent")
-            drawingCache.drawSprite(x.bx, x.by, 1, 1);
-        } else if(x.drawing_cursor[2] != -1) {
-            console.log("Draw Object")
-        }       
-        
+            if (x.drawing_cursor[0] != -1) {
+                drawingCache.drawTile(x.bx, x.by, x.tile_id);
+            } else if (x.drawing_cursor[1] != -1) {
+                console.log("Draw Agent");
+                drawingCache.drawSprite(x.bx, x.by, 1, 1);
+            } else if (x.drawing_cursor[2] != -1) {
+                console.log("Draw Object");
+            }       
+            
         }   
     },
 
     test_draw_board_1 : function() {
-    var i, len, x;
-        index = this.index,
-        len = this.index.length,
-        dc = drawingCache,
-        x;
-    len = this.index.length;
-    for(i=0; i<len; i++) {
-        x = this.index[i];
-        if(x.drawing_cursor[0] != -1) {
-            drawingCache.drawTile(x.bx, x.by, x.tile_id);
-            return 0;
-        }
-        if(x.drawing_cursor[1] != -1) {
-            console.log("Draw Agent")
-            drawingCache.drawSprite(x.bx, x.by, 1, 1);
-            return 0;
-        }
-        if(x.drawing_cursor[2] != -1) {
-            console.log("Draw Object")
-            return 0;
-        }       
+        var i,
+            index = this.index,
+            len = this.index.length,
+            dc = drawingCache,
+            x;
+        for(i=0; i<len; i++) {
+            x = this.index[i];
+            if (x.drawing_cursor[0] != -1) {
+                dc.drawTile(x.bx, x.by, x.tile_id);
+                return false;
+            }
+            if (x.drawing_cursor[1] != -1) {
+                console.log("Draw Agent");
+                dc.drawSprite(x.bx, x.by, 1, 1);
+                return false;
+            }
+            if (x.drawing_cursor[2] != -1) {
+                console.log("Draw Object");
+                return false;
+            }       
         }   
     },
 
     test_draw_board_2 : function() {
-    var i, len, drawing_cursor;
-    len = this.index.length;
-    //console("len: " + len)
-    for(i=0; i<len; i++) {
-        drawing_cursor = this.index[i].drawing_cursor;
-        if(drawing_cursor[0] != -1) {
-            drawingCache.drawTile(x.bx, x.by, x.tile_id);
-            return 0;
-        }
-        if(drawing_cursor[1] != -1) {
-            console.log("Draw Agent")
-            drawingCache.drawSprite(x.bx, x.by, 1, 1);
-            return 0;
-        }
-        if(drawing_cursor[2] != -1) {
-            console.log("Draw Object")
-            return 0;
-        }       
+        var i, len, drawing_cursor;
+        len = this.index.length;
+        //console("len: " + len);
+        for(i=0; i<len; i++) {
+            drawing_cursor = this.index[i].drawing_cursor;
+            if (drawing_cursor[0] != -1) {
+                drawingCache.drawTile(x.bx, x.by, x.tile_id);
+                return false;
+            }
+            if (drawing_cursor[1] != -1) {
+                console.log("Draw Agent");
+                drawingCache.drawSprite(x.bx, x.by, 1, 1);
+                return false;
+            }
+            if (drawing_cursor[2] != -1) {
+                console.log("Draw Object");
+                return false;
+            }       
         }   
-    },
+    }
+};
 
-}
-
-var drawing_manager = {
-    
-
-    
-}
+board.drawing_manager = {
+    // EMPTY
+};
 
 //this is where drawing occurs to
-var board_canvas = {
+board.canvas = {
     
-    board : null,
-    board_manager: null,
+    canvas_tile_width  : 16,  //width of canvas in number of tiles
+    canvas_tile_height : 16, //width of canvas in number of tiles
     
-    //needs init code
-    //will re-init the cache when board is re-sized
-    
-    canvas_tile_width: 16,  //width of canvas in number of tiles
-    canvas_tile_height: 16, //width of canvas in number of tiles
-    
-    tile_pixel_width: 24,
-    tile_pixel_height: 24,
+    tile_pixel_width  : 24,
+    tile_pixel_height : 24,
     
     cache_canvas_dom: $('<canvas></canvas>').attr('id', 'board'), // the thing used for reading/writing to canvas
                        
@@ -743,41 +715,42 @@ var board_canvas = {
     
     init: function (board) {
             this.cache_canvas_dom = $('canvas#board')[0];
-            this.ctx = this.cache_canvas_dom.getContext("2d")
-            this.board = board;
-            this.board_manager = board.board_manager;
-        },
+            this.ctx = this.cache_canvas_dom.getContext("2d");
+    },
         
     resize: function() {
-        ///Will be called to handle resizing of board and/or zooming
-        
-        ///resize can increase/decrease number of map tile or can increase/decrease tilepixel size
-    },
-}
+        // Will be called to handle resizing of board and/or zooming
+        // resize can increase/decrease number of map tile or can increase/decrease tilepixel size
+    }
+};
 
-var board_info = {
-    
+// tooltip methods
+board.info = {
+
+    // text displayed in tooltip
     tooltip_text: function(dx, dy) {
         var bx, by, i;
-        bx = Math.floor(dx / board_canvas.tile_pixel_width);
-        by = Math.floor(dy / board_canvas.tile_pixel_height);
-        i = bx + by * board.board_tile_width;
-        //console.log(cursor_manager.index[i]);
-        return this.cursor_info_string(cursor_manager.index[i]);
+        bx = Math.floor(dx / board.canvas.tile_pixel_width);
+        by = Math.floor(dy / board.canvas.tile_pixel_height);
+        i = bx + by * board.tile_width;
+        return this.cursor_info_string(board.cursor_manager.index[i]);
     },
-    
-    to_display: [ 'agent_list',
-                  'agent_num',
-                  'object_list',
-                  'object_num',
-                  'tile_id',
-                  'drawing_cursor',
-                  //'bx',
-                  //'by',
-                  //'position',
-                  //'index', 
-                  ],
-                  
+
+    // which board properties to display
+    to_display: [
+        'agent_list',
+        'agent_num',
+        'object_list',
+        'object_num',
+        'tile_id',
+        'drawing_cursor',
+        //'bx',
+        //'by',
+        //'position',
+        //'index', 
+    ],
+
+    // add a board property to display (in the command line, for example)
     add_to_display: function(key) {
         if (!$.isArray(key)) key = [key];
         $.each(key, function(i, val) {
@@ -786,7 +759,8 @@ var board_info = {
             }
         });
     },
-    
+
+    // remove a board property from to display (in the command line, for example)
     remove_from_display: function(key) {
         if (!$.isArray(key)) key = [key];
         $.each(key, function(i, val) {
@@ -796,17 +770,23 @@ var board_info = {
             }
         });
     },
-    
+
+    // formats the data for display in the tooltip
     cursor_info_string: function(obj) {
-        var str='', len, i=0, key;
-        len = this.to_display.length;
+        var str = '',
+            i   = 0,
+            len = this.to_display.length,
+            key;
+
         for (i=0; i < len; i++) {
             key = this.to_display[i];
             if (key === undefined) continue;
             str += key;
             str += ' : ';
             str += obj[key].toString();
-            if (i !== len-1) str += '<br>';
+            if (i !== len-1) {
+                str += '<br>';
+            }
         }
         return str;
     },
@@ -816,7 +796,7 @@ var board_info = {
         var txt;
         $('body').trigger(event); // trigger body click events
         console.log(event);
-        txt = board_info.tooltip_text(event.offsetX, event.offsetY);
+        txt = board.info.tooltip_text(event.offsetX, event.offsetY);
         return txt;
     }
-}
+};
