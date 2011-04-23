@@ -45,12 +45,12 @@ var game = {
         setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
     },
     
-    delay: 3, // ms delay for input check
+    delay: 3000, // ms delay for input check
     
     input_interval: // called in game.start setInterval
     function () { 
         //console.log('called');
-        processInput(input.next(this.delay))
+        //processInput(input.next(this.delay))
     },
     
     start: // main game loop.  is it async/threaded?

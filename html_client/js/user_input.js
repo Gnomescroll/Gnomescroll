@@ -4,18 +4,26 @@ var input,
 input = {
 
     queue: [],  // queue of events received
-    
-    init: function () { // init $ bindings
+    keys: {},  // for detecting multiple keys pressed
         
+    init: function () { // init $ bindings
+        var that = this;
         $('body').keydown(function (event) {
             var key = keymap[event.which];
             input.queue.push({key: key, timestamp: event.timeStamp});
-               }).click(function (event) {
-                  var key = keymap[event.which];
-                  if (key === 'left-click') { 
-                      map_editor.set_tile(event);
-                  } 
-               });
+            that.keys[key] = true;
+            processInput(key);
+        }).click(function (event) {
+            var key = keymap[event.which];
+            if (key === 'left-click') { 
+                map_editor.set_tile(event);
+            } 
+        });
+
+        $('body').keyup(function (event) {
+            var key = keymap[event.which];
+            delete that.keys[key];
+        });
     },
         
     next: function (delay) { // shifts the queue, FIFO
@@ -29,8 +37,10 @@ input = {
             if (event === undefined || !(event.timestamp - timestamp) > delay) {
                 continue;
             }
+
+            // check any other held down keys
             
-            timestamp = event.timestamp;
+            timestamp = event.timestamp; // set timestamp of last event
             queue = [];
             
             return event.key;
@@ -162,7 +172,30 @@ var processInput = function (key) {
     
     if (!key) return false;
     
-    var old;
+    var old,
+        panning_delta = {x: 0, y: 0},
+        key_type;
+        
+    for (key_type in input.keys) {
+        if (!input.keys.hasOwnProperty(key_type)) {
+            continue;
+        }
+        switch (key_type) {
+            case 'LEFT':
+                panning_delta.x += -1;
+                break;
+            case 'RIGHT':
+                panning_delta.x += 1;
+                break;
+            case 'UP':
+                panning_delta.y += -1;
+                break;
+            case 'DOWN':
+                panning_delta.y += 1;
+                break;
+        }
+    }
+    
     
     switch (key) {
         
@@ -171,19 +204,19 @@ var processInput = function (key) {
             return false;
             
         case 'LEFT':
-            board.scroll(-1, 0);
+            board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'RIGHT':
-            board.scroll(1, 0);
+            board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'UP':
-            board.scroll(0, -1);
+            board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'DOWN':
-            board.scroll(0, 1);
+            board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'c':                   // set map solid
