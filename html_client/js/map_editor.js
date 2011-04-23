@@ -17,6 +17,11 @@ var map_editor = {
         
         return canvas;
     },
+
+    init: function () {
+        this.init_panel();
+        this.init_panel_controls();
+    },
     
     init_panel: function () {
         var pane = $('#map_editor').css('float','left'),

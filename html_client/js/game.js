@@ -59,44 +59,44 @@ game = {
     start: // main game loop.  is it async/threaded?
            // check user input, server updates, render game.
     function () {
-        
-        //renderState.start();
-        //start drawing
-        var interval;
-
         // input check interval
-        interval = setInterval('game.input_interval()', this.delay);
-
-    },
+        var interval = setInterval('game.input_interval()', this.delay);
+    }
         
 };
 
 
 // temporary, just to keep processInput action calls from throwing
-var selected_agent = { x: 15,
-                       y: 15,
-                       z: 5,
-                       id:0,
-                       pos: function() { return [this.x, this.y, this.z]; } 
-                     };
+var selected_agent = {
+    x: 15,
+    y: 15,
+    z: 5,
+    id:0,
+    pos: function() {
+        return [this.x, this.y, this.z];
+    } 
+};
                      
-var cursor = { x: 25,
-               y: 12,
-               z: 5,
-               value: 176,
-               type: 'cursor',
-               pos: function() { return [this.x, this.y, this.z]; },
-               moveX: function(amt) {
-                        this.x += amt;
-                        this.x = Math.max(0, this.x);
-                        renderState.scrollMap(this);
-                    },
-               moveY: function(amt) {
-                        this.y += amt;
-                        this.y = Math.max(0, this.y);
-                        renderState.scrollMap(this);
-                    },
-             };
+var cursor = {
+    x: 25,
+    y: 12,
+    z: 5,
+    value: 176,
+    type: 'cursor',
+    pos: function() {
+        return [this.x, this.y, this.z];
+    },
+    moveX: function(amt) {
+            this.x += amt;
+            this.x = Math.max(0, this.x);
+            renderState.scrollMap(this);
+    },
+    moveY: function(amt) {
+            this.y += amt;
+            this.y = Math.max(0, this.y);
+            renderState.scrollMap(this);
+    }
+};
 
 processInput = function (key) {
     

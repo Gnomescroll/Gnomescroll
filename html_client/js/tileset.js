@@ -134,6 +134,10 @@ var drawingCache = {
     init : function (board_canvas) {
         this.workspace_canvas_dom = $('canvas#DrawingCacheWorkspace')[0];
         this.ctx = this.workspace_canvas_dom.getContext("2d");
+        this.img_cache   = [];
+        this.cache_count = 0;
+        this.tlookup     = {};
+        this.slookup     = {};
     },
     
     resize : function () {
@@ -342,4 +346,3 @@ var drawingCache = {
         ctx.putImageData(this.img_cache[index], x_offset, y_offset);
     }
 };
-

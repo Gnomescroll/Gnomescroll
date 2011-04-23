@@ -2,7 +2,6 @@ var socket;
 
 socket = {
     
-    
     debug: false,
     node_server: '127.0.0.1',
     node_port: 8080,
@@ -56,7 +55,7 @@ socket = {
             socket.connect();
         })
 
-        socket.connect();	
+        socket.connect();   
         
     },
     
