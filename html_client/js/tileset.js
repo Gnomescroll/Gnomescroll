@@ -102,8 +102,9 @@ function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
         throw new Error('Tilemap() construction has invalid number of arguments.');
     }
     var img = new Image(),
-        _dom_element = $('<img />').attr('src', src)
-                                   .attr('id', 'tilemap_'+tilemap_id);
+        _dom_element = $('<img />').attr({ 'src': src,
+                                           'id': 'tilemap_'+tilemap_id })
+                                   .css('display', 'none');
 
     $('body').append(_dom_element);
     img.src = src;
