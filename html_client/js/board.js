@@ -115,7 +115,7 @@ board.manager = {
     _fast_scroll : function(dx, dy) {
         //incremental update of index
         
-        this.board_cursor_manager.scroll(dx,dy); //incremental update, renames cursor
+        board.cursor_manager.scroll(dx,dy); //incremental update, renames cursor
 
         //remove from index objects on squares off screen
         //add objects on index that is now on screen
@@ -404,7 +404,7 @@ board.cursor_manager = {
 
     advance_drawing_cursor : function(bx, by) {
         console.log("advance_drawing_cursor: ");
-        console.log(this.index[bx + by*this.board.tile_width]);
+        console.log(this.index[bx + by*board.tile_width]);
         
         this._advance_drawing_cursor(this.index[bx + by*board.tile_width]);
     },
@@ -558,7 +558,7 @@ board.cursor_manager = {
     
     move_agent: function(id, bx, by) {
         //var i, cursor1, cursor2;
-        //i = bx + by*this.board.tile_width;      
+        //i = bx + by*board.tile_width;      
         //cursor1 = this.index[i];
         
         this.remove_agent_from_cursor(id);
