@@ -506,9 +506,13 @@ class Hud(object):
     def draw(self):
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        self.text.draw()
+        #self.text.draw()
+        self.draw_recticle()
         self.fps.draw()
 
+    def draw_recticle(self):
+        x=win.width / 2,
+        y=win.height / 2,
 
 class Mouse(object):
 
@@ -576,7 +580,7 @@ class App(object):
     def __init__(self):
 
         self.world = World()
-        self.win = window.Window(fullscreen=True, vsync=False)
+        self.win = window.Window(fullscreen=False, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
