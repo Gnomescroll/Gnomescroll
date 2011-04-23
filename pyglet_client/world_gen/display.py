@@ -31,6 +31,52 @@ def convert_index(index, height, width):
 
 import random
 
+
+def elevation_to_color(element):
+    if element < 0:
+        return (0,0,63)
+    elif element <= 0.05:
+        return (0,0,191)
+    elif element <= 0.1:
+        return (0,0,255)
+    elif element <= 0.15:
+        return (114,114,255)
+    elif element <= 0.2:
+        return (165,165,255)
+    elif element <= 0.25:
+        return (191,191,255)
+    elif element <= 0.3:
+        return (255,232,165)
+    elif element <= 0.35:
+        return (191,255,191)
+    elif element <= 0.4:
+        return (165,255,165)
+    elif element <= 0.45:
+        return (114,255,114)
+    elif element <= 0.5:
+        return (0,255,0)
+    elif element <= 0.55:
+        return (0,191,0)
+    elif element <= 0.6:
+        return (0,127,0)
+    elif element <= 0.65:
+        return (0,63,0)
+    elif element <= 0.7:
+        return (63,50,31)
+    elif element <= 0.75:
+        return (31,24,15)
+    elif element <= 0.8:
+        return (63,63,63)
+    elif element <= 0.85:
+        return (127,127,127)
+    elif element <= 0.9:
+        return (159,159,159)
+    elif element <= 0.95:
+        return (191,191,191)
+    else:
+        return (255,255,255)
+    pass
+
 class World(object):
 
     def __init__(self):
@@ -54,9 +100,16 @@ class World(object):
         c_list = []
         v_num = 0
         for (x,y,z) in v_array:
-            print str((x,y,z))
-            v_list += [x,y,20*z]
-            c_list += [255, 255,0,0]
+            #print str((x,y,z))
+            v_list += [x,y,30*z]
+
+            if False:
+                co = list(elevation_to_color(z))
+                co.insert(4, 0)
+                c_list += co
+            else:
+                c_list += [255, 255,0,0]
+
             v_num += 1
             #self.draw_point2(x, y, z, 255, 255,0)
 
@@ -65,11 +118,11 @@ class World(object):
             ('c4B\static', c_list),
         )
     def draw(self):
-        for x in range(-20, 20):
-            self.draw_point(x, 0, 0, 255, 0)
+        #for x in range(-20, 20):
+        #    self.draw_point(x, 0, 0, 255, 0)
 
-        for y in range(-20, 20):
-            self.draw_point(0, y, 0, 0, 255)
+        #for y in range(-20, 20):
+        #    self.draw_point(0, y, 0, 0, 255)
 
         self.vertexList.draw(pyglet.gl.GL_POINTS)
 
@@ -236,7 +289,7 @@ class App(object):
     def __init__(self):
 
         self.world = World()
-        self.win = window.Window(fullscreen=False, vsync=False)
+        self.win = window.Window(fullscreen=True, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
