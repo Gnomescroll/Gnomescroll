@@ -2,3 +2,5 @@ syntax: glob
 *.pyc
 *.so
 dump.rdb
+
+steve.py
