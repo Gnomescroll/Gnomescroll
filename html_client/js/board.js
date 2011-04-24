@@ -13,6 +13,7 @@ var board = {
         this.canvas.init(this);
         this.cursor_manager.init(this);
         drawingCache.init(this.canvas);
+        tile_cache_canvas.init();
     },
     
     start : function() {
@@ -576,7 +577,7 @@ board.cursor_manager = {
             len = this.index.length,
             x;
             
-        for(i=0; i < len; i++) {
+        for (i=0; i < len; i++) {
             x = this.index[i];
             this._draw_board_tile(x);
         }
@@ -618,7 +619,7 @@ board.cursor_manager = {
         var i = 0,
             len = this.index.length,
             x;
-        for(i=0; i<len; i++) {
+        for (i=0; i<len; i++) {
             x = this.index[i];
 
             if (x.drawing_cursor[0] != -1) {
@@ -639,7 +640,7 @@ board.cursor_manager = {
             len = this.index.length,
             dc = drawingCache,
             x;
-        for(i=0; i<len; i++) {
+        for (i=0; i<len; i++) {
             x = this.index[i];
             if (x.drawing_cursor[0] != -1) {
                 dc.drawTile(x.bx, x.by, x.tile_id);
@@ -660,8 +661,7 @@ board.cursor_manager = {
     test_draw_board_2 : function() {
         var i, len, drawing_cursor;
         len = this.index.length;
-        //console("len: " + len);
-        for(i=0; i<len; i++) {
+        for (i=0; i<len; i++) {
             drawing_cursor = this.index[i].drawing_cursor;
             if (drawing_cursor[0] != -1) {
                 drawingCache.drawTile(x.bx, x.by, x.tile_id);
@@ -685,28 +685,10 @@ board.drawing_manager = {
 };
 
 //this is where drawing occurs to
-board.canvas = {
-    
-    canvas_tile_width  : 16,  //width of canvas in number of tiles
-    canvas_tile_height : 16, //width of canvas in number of tiles
-    
-    tile_pixel_width  : 24,
-    tile_pixel_height : 24,
-    
-    cache_canvas_dom: $('<canvas></canvas>').attr('id', 'board'), // the thing used for reading/writing to canvas
-                       
-    ctx: null, // drawing surface
-    
-    init: function (board) {
-            this.cache_canvas_dom = $('canvas#board')[0];
-            this.ctx = this.cache_canvas_dom.getContext("2d");
-    },
-        
-    resize: function() {
-        // Will be called to handle resizing of board and/or zooming
-        // resize can increase/decrease number of map tile or can increase/decrease tilepixel size
-    }
-};
+board.canvas = new TileCanvas('board', '#game', { width: 16,
+                                                  height: 16,
+                                                  pixel_width: 24,
+                                                  pixel_height: 24 });
 
 // tooltip methods
 board.info = {
@@ -714,8 +696,8 @@ board.info = {
     // text displayed in tooltip
     tooltip_text: function(dx, dy) {
         var bx, by, i;
-        bx = Math.floor(dx / board.canvas.tile_pixel_width);
-        by = Math.floor(dy / board.canvas.tile_pixel_height);
+        bx = Math.floor(dx / board.canvas.pixel_width);
+        by = Math.floor(dy / board.canvas.pixel_height);
         i = bx + by * board.tile_width;
         return this.cursor_info_string(board.cursor_manager.index[i]);
     },

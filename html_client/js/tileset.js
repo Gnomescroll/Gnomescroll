@@ -6,8 +6,6 @@ var tile_properties = {
     
     add : function(property_object) {
         var id = property_object.id;
-        //console.log("Add tile: " + id);
-        //console.log(property_object);
         this.tiles[id] = property_object;
     },
     
@@ -26,11 +24,11 @@ var tileset_state = {
 
     default_tile : {
         tile_name      : 'non-existance tile',
-        tile_id        :  -1,  
+        tile_id        : -1,  
         tilemap_id     : 0,
         draw_style     : 1,
         background_rgb : [0, 0, 0],
-        symbol         :  63,
+        symbol         : 63,
         symbol_rgb     : [0, 30, 30]
     },
 
@@ -63,39 +61,43 @@ var tileset_state = {
     }
 };
 
-// This canvas is scratch space for drawing tiles, before they are stored in the tile_cache
-var tile_cache_canvas = {
-    //will re-init the cache when board is re-sized
-    
-    canvas_tile_width  : 16,  //width of canvas in number of tiles
-    canvas_tile_height : 16, //width of canvas in number of tiles
-    
-    tile_pixel_width  : 24,
-    tile_pixel_height : 24,
+function TileCanvas(id, parent_selector, dim) {
 
-    cache_canvas_dom: $('<canvas></canvas>').attr('id', 'cache'), // the thing used for reading/writing to canvas
-                       
-    ctx: null, // drawing surface
-    
-    init: function () {
-        //$('body').append(this.cache_canvas_dom);
-        //$('canvas#cache').width(this.canvas_tile_width * this.tile_pixel_width)
-        //                 .height(this.canvas_tile_height * this.tile_pixel_height);
-        this.cache_canvas_dom = $('canvas#cache')[0];
-        this.ctx = this.cache_canvas_dom.getContext("2d");
-    },
+    this.width = dim.width || 16;
+    this.height = dim.height || 16;
+    this.pixel_width = dim.pixel_width || 24;
+    this.pixel_height = dim.pixel_height || 24;
+    this.canvas = $('<canvas></canvas').attr('id', id);
+    this.ctx = null;
+
+    this.init = function () {
+        $(parent_selector).append(this.canvas);
+        var cache_canvas = $('canvas#'+id).attr({ 'width' : this.width * this.pixel_width,
+                                                  'height' : this.height * this.pixel_height
+                                          });
+        this.canvas = cache_canvas[0];
+        this.ctx = this.canvas.getContext("2d");
+    };
         
-    set_ctx: function () {
-        this.cache_canvas_dom = $('canvas#cache')[0];
-        this.ctx = this.cache_canvas_dom.getContext("2d");
-    },
+    this.set_ctx = function () {
+        console.log('set_ctx id: '+id);
+        return;
+        this.canvas = $('canvas#'+id)[0];
+        this.ctx = this.canvas.getContext("2d");
+    };
             
-    resize_map: function () {
+    this.resize = function () {
         //Will be called to handle tileset re-sizing on map
-    }
+    };
 };
 
-// constructor for a new tilemap
+// This canvas is scratch space for drawing tiles, before they are stored in the tile_cache
+var tile_cache_canvas = new TileCanvas('cache', 'body', { width: 16,
+                                                          height: 16,
+                                                          pixel_width: 24,
+                                                          pixel_height: 24 });
+
+// constructor for a new tilemap/tileset <img>
 function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
     // enforce exact arguments count
     if (this.constructor.length !== arguments.length) {
@@ -103,17 +105,17 @@ function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
     }
     var img = new Image(),
         _dom_element = $('<img />').attr({ 'src': src,
-                                           'id': 'tilemap_'+tilemap_id })
-                                   .css('display', 'none');
+                                           'id': 'tilemap_'+tilemap_id,
+                                           'class': 'tilemap' });
 
     $('body').append(_dom_element);
     img.src = src;
 
     this.dom_element = _dom_element;
     this.image = img;
-    this.tile_pixel_width = tpw;  //in pixels
-    this.tile_pixel_height = tph;
-    this.tile_width = tw;         //in tiles
+    this.pixel_width = tpw;  //in pixels
+    this.pixel_height = tph;
+    this.tile_width = tw;    //in tiles
     this.tile_height = th;
 };
 
@@ -133,12 +135,11 @@ var drawingCache = {
     ctx: null,
     
     init : function (board_canvas) {
-        this.workspace_canvas_dom = $('canvas#DrawingCacheWorkspace')[0];
+        var workspace_canvas = $('canvas#DrawingCacheWorkspace').attr({ 'width' : board.canvas.width * board.canvas.pixel_width,
+                                                                        'height' : board.canvas.height * board.canvas.pixel_height
+                                                                      });
+        this.workspace_canvas_dom = workspace_canvas[0];
         this.ctx = this.workspace_canvas_dom.getContext("2d");
-        this.img_cache   = [];
-        this.cache_count = 0;
-        this.tlookup     = {};
-        this.slookup     = {};
     },
     
     resize : function () {
@@ -188,16 +189,16 @@ var drawingCache = {
             tile_y_pos = tile_y_pos / tilemap.tile_width;
         }
         
-        x_offset = tile_x_pos * tilemap.tile_pixel_width;
-        y_offset = tile_y_pos * tilemap.tile_pixel_height;
+        x_offset = tile_x_pos * tilemap.pixel_width;
+        y_offset = tile_y_pos * tilemap.pixel_height;
         
-        this.ctx.clearRect(0, 0, board.canvas.tile_pixel_width, board.canvas.tile_pixel_height); //needed?
+        this.ctx.clearRect(0, 0, board.canvas.pixel_width, board.canvas.pixel_height); //needed?
         
         this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
-                    tilemap.tile_pixel_width, tilemap.tile_pixel_height,
-                    0, 0, board.canvas.tile_pixel_width, board.canvas.tile_pixel_height);
+                    tilemap.pixel_width, tilemap.pixel_height,
+                    0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
 
-        imgd = this.ctx.getImageData(0, 0, board.canvas.tile_pixel_width, board.canvas.tile_pixel_height);
+        imgd = this.ctx.getImageData(0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
         pix  = imgd.data;
         pix_len = pix.length;
 
@@ -260,7 +261,7 @@ var drawingCache = {
         } else {
             index = this.tlookup[tile_id];
         }
-        board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.tile_pixel_width, y*board.canvas.tile_pixel_height);
+        board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.pixel_width, y*board.canvas.pixel_height);
     },
 
     //draw tiles to an arbritary canvas
@@ -296,15 +297,15 @@ var drawingCache = {
         if (tile_y_pos != 0) {
             tile_y_pos = tile_y_pos / tilemap.tile_width;
         }
-        x_offset = tile_x_pos * tilemap.tile_pixel_width;
-        y_offset = tile_y_pos * tilemap.tile_pixel_height;
+        x_offset = tile_x_pos * tilemap.pixel_width;
+        y_offset = tile_y_pos * tilemap.pixel_height;
 
-        this.ctx.clearRect(0, 0, board.canvas.tile_pixel_width, board.canvas.tile_pixel_height); //needed?
+        this.ctx.clearRect(0, 0, board.canvas.pixel_width, board.canvas.pixel_height); //needed?
         this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
-                    tilemap.tile_pixel_width, tilemap.tile_pixel_height,
-                    0, 0, board.canvas.tile_pixel_width, board.canvas.tile_pixel_height);
+                    tilemap.pixel_width, tilemap.pixel_height,
+                    0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
 
-        imgd = this.ctx.getImageData(0, 0, board.canvas.tile_pixel_width, board.canvas.tile_pixel_height);
+        imgd = this.ctx.getImageData(0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
         pix = imgd.data;
 
         this.img_cache[cache_index] = imgd; 
@@ -323,7 +324,7 @@ var drawingCache = {
         } else {
             index = this.slookup[spriteMap_id][sprite_num];
         }
-        board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.tile_pixel_width, y*board.canvas.tile_pixel_height);
+        board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.pixel_width, y*board.canvas.pixel_height);
     },
     
     drawSpriteToCtx : function (ctx, sprite_num, spriteMap_id, x_offset, y_offset) {

@@ -1,56 +1,49 @@
-// map of tile_values -> coordinates of tile in cached canvas
-var terrain_tiles = {
-    
-    // e.g.
-    // '5': [48, 72],
-    // tile_value: [x, y],
-}
-
+// map editor panels & controls
 var map_editor = {
     
     panel_canvas_tile: function (id) {
         var bc = board.canvas,
-            canvas = $('<canvas></canvas>').attr({'id' : id,
-                                                'class' : 'panel_tile'});
-        canvas[0].width = bc.tile_pixel_width;
-        canvas[0].height = bc.tile_pixel_height;
-        
+            canvas = $('<canvas></canvas>').attr({ 'id' : id,
+                                                   'class' : 'panel_tile',
+                                                   'width' : bc.pixel_width,
+                                                   'height': bc.pixel_height });
         return canvas;
     },
 
     init: function () {
-        this.init_panel();
-        this.init_panel_controls();
+        this._init_panel();
+        this._init_panel_controls();
     },
     
-    init_panel: function () {
+    _init_panel: function () {
         var pane = $('#map_editor').css('float','left'),
             tile_values = tileset_state.tile_id_to_name,
-            j = 0,
-            name,
-            canvas,
             table = $('<table></table>').attr('class','panel tiles'),
             cells_wide = 1,
-            tr, td;
+            j = 0,
+            i,
+            name,
+            canvas,
+            tr,
+            td;
             
         for (i in tile_values) {
-            if (tile_values.hasOwnProperty(i)) {
-                name = tile_values[i];
-                i = parseInt(i)
-                if (isNaN(i) || i < 0 || name === undefined) continue;
-                if (j%cells_wide === 0) {
-                    tr = $('<tr></tr>');
-                    table.append(tr);
-                }
-                td = $('<td></td>').attr('class','canvas');
-                canvas = this.panel_canvas_tile(i);
-                tr.append(td.append(canvas));
-                
-                td = $('<td></td>').attr('id',i).html(name);
-                if (i == this.current_tile) td.attr('class','selected');
-                tr.append(td);
-                j++;
+            if (!tile_values.hasOwnProperty(i)) continue;
+            name = tile_values[i];
+            i = parseInt(i, 10)
+            if (isNaN(i) || i < 0 || name === undefined) continue;
+            if (j%cells_wide === 0) {
+                tr = $('<tr></tr>');
+                table.append(tr);
             }
+            td = $('<td></td>').attr('class','canvas');
+            canvas = this.panel_canvas_tile(i);
+            tr.append(td.append(canvas));
+            
+            td = $('<td></td>').attr('id',i).html(name);
+            if (i == this.current_tile) td.attr('class','selected');
+            tr.append(td);
+            j++;
         }
         pane.append(table);
         
@@ -89,7 +82,7 @@ var map_editor = {
         
     },
     
-    init_panel_controls: function () {
+    _init_panel_controls: function () {
         var cells = $('td');
             
         cells.click(function(event) {
@@ -127,12 +120,12 @@ var map_editor = {
         coord.y = event.pageY - canvas_offset.top;
 
         // check if in canvas
-        if (coord.x < 0 || coord.x > bc.canvas_tile_width*bc.tile_pixel_width) return false;
-        if (coord.y < 0 || coord.y > bc.canvas_tile_height*bc.tile_pixel_height) return false;
+        if (coord.x < 0 || coord.x > bc.width*bc.pixel_width) return false;
+        if (coord.y < 0 || coord.y > bc.height*bc.pixel_height) return false;
         
         // convert to board coordinate
-        board_coord.x = Math.floor(coord.x/bc.tile_pixel_width);
-        board_coord.y = Math.floor(coord.y/bc.tile_pixel_height);
+        board_coord.x = Math.floor(coord.x/bc.pixel_width);
+        board_coord.y = Math.floor(coord.y/bc.pixel_height);
         
         // convert to global game coordinate
         global_coord.x = board_coord.x + board.x_offset;
@@ -148,8 +141,7 @@ var map_editor = {
     current_tile: null, // currently selected map tile for editor
     
     clear_current: function () {
-        $('td.selected').attr('class','');
+        $('td.selected').attr('class', '');
         this.current_tile = null;
-    },
-}
-
+    }
+};
