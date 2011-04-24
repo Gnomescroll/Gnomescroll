@@ -500,6 +500,13 @@ class Camera(object):
         glLoadIdentity()
         gluOrtho2D(0, self.win.width, 0, self.win.height)
 
+        glMatrixMode( GL_MODELVIEW )
+        glLoadIdentity()
+
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+
+
     def move_camera(self, dx, dy, dz):
 
         if self.rts == True:
@@ -530,6 +537,7 @@ class Camera(object):
 class Hud(object):
 
     def __init__(self, win):
+        self.win = win
         helv = font.load('Helvetica', win.width / 15.0)
         self.text = font.Text(
             helv,
@@ -541,18 +549,50 @@ class Hud(object):
             color=(1, 1, 1, 0.5),
         )
         self.fps = clock.ClockDisplay()
+        self._init_reticle()
+
+    def _init_reticle(self):
+        self.reticle = pyglet.image.load('./target.png')
+        self.reticle_texture = self.reticle.get_texture()
+
+        rh = 16.
+        rw = 16.
+
+        w = float(self.win.width)/2
+        h = float(self.win.height)/2
+        print str((h,w))
+        x_min = w - rw/2
+        x_max = w + rw/2
+        y_min = h - rh/2
+        y_max = h + rh/2
+
+        v_list = [
+        x_min, y_max,
+        x_max, y_max,
+        x_max, y_min,
+        x_min, y_min
+        ]
+        print str(v_list)
+
+        self.reticleVertexList = pyglet.graphics.vertex_list(4,
+            ('v2f\static', v_list),
+            ('c3B\static', (255,255,255) *4),
+            ("t3f\static", self.reticle_texture.tex_coords),
+            )
 
     def draw(self):
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
         #self.text.draw()
-        self.draw_recticle()
+        self.draw_reticle()
         self.fps.draw()
 
-    def draw_recticle(self):
-        return
-        x=win.width / 2,
-        y=win.height / 2,
+    def draw_reticle(self):
+        glEnable(GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
+        glBindTexture(self.reticle_texture.target, self.reticle_texture.id)
+
+        glEnable (GL_BLEND)
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        self.reticleVertexList.draw(pyglet.gl.GL_QUADS)
+        glDisable (GL_BLEND);
 
 class Mouse(object):
 
