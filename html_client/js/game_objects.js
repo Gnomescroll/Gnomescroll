@@ -138,8 +138,8 @@ GameObject = {
     create:
     function (data) {
 
-        var obj = Object.beget(this);
-        obj = $.extend(obj, data);
+        var obj = Object.beget(this); // link prototype to GameObject
+        obj = $.extend(obj, data);    // add instance properties
 
         // add inventory here, until more elegant solution is found for creating
         // default instance values

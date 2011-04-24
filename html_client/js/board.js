@@ -12,7 +12,7 @@ var board = {
     init : function() {
         this.canvas.init(this);
         this.cursor_manager.init(this);
-        drawingCache.init(this.canvas);
+        drawingCache.init();
         tile_cache_canvas.init();
     },
     

@@ -61,42 +61,6 @@ var tileset_state = {
     }
 };
 
-function TileCanvas(id, parent_selector, dim) {
-
-    this.width = dim.width || 16;
-    this.height = dim.height || 16;
-    this.pixel_width = dim.pixel_width || 24;
-    this.pixel_height = dim.pixel_height || 24;
-    this.canvas = $('<canvas></canvas').attr('id', id);
-    this.ctx = null;
-
-    this.init = function () {
-        $(parent_selector).append(this.canvas);
-        var cache_canvas = $('canvas#'+id).attr({ 'width' : this.width * this.pixel_width,
-                                                  'height' : this.height * this.pixel_height
-                                          });
-        this.canvas = cache_canvas[0];
-        this.ctx = this.canvas.getContext("2d");
-    };
-        
-    this.set_ctx = function () {
-        console.log('set_ctx id: '+id);
-        return;
-        this.canvas = $('canvas#'+id)[0];
-        this.ctx = this.canvas.getContext("2d");
-    };
-            
-    this.resize = function () {
-        //Will be called to handle tileset re-sizing on map
-    };
-};
-
-// This canvas is scratch space for drawing tiles, before they are stored in the tile_cache
-var tile_cache_canvas = new TileCanvas('cache', 'body', { width: 16,
-                                                          height: 16,
-                                                          pixel_width: 24,
-                                                          pixel_height: 24 });
-
 // constructor for a new tilemap/tileset <img>
 function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
     // enforce exact arguments count
@@ -119,6 +83,62 @@ function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
     this.tile_height = th;
 };
 
+// constructor for a Canvas
+function TileCanvas(id, parent_selector, dim) {
+    // id is the html id attr, parent_selector is a selector for the container
+    // where the canvas will be placed in, and dim is an object of properties
+    if (dim && typeof dim === 'object') {
+        this.width = dim.width || 16;
+        this.height = dim.height || 16;
+        this.pixel_width = dim.pixel_width || 24;
+        this.pixel_height = dim.pixel_height || 24;
+    }
+    this.ctx = null;
+    this.id = id;
+    this.parent_selector = parent_selector;
+
+    //this.prototype = this.constructor.methods; // assign class methods
+};
+
+TileCanvas.prototype = {
+    
+    init : function () {
+        var w = this.width * this.pixel_width,
+            h = this.height * this.pixel_height;
+        w = w || 24*16;
+        h = h || 24*16; // defaults
+        
+        if (!this.canvas) {
+            this.canvas = $('<canvas></canvas>').attr('id', this.id);
+        }
+        parent_selector = this.parent_selector || 'body';
+        $(parent_selector).append(this.canvas);
+        this.canvas.attr({ 'width' : w,
+                           'height' : h });
+        this.canvas = this.canvas[0];
+        this.ctx = this.canvas.getContext("2d");
+    },
+        
+    set_ctx : function () {
+        if (this.canvas.constructor.name !== 'HTMLCanvasElement') {
+            this.canvas = $('canvas#'+this.id)[0];
+        }
+        this.ctx = this.canvas.getContext("2d");
+    },
+            
+    resize : function () {
+        //Will be called to handle tileset re-sizing on map
+    }
+};
+
+// This canvas is scratch space for drawing tiles, before they are stored in the tile_cache
+var tile_cache_canvas = new TileCanvas('cache', 'body', { width: 16,
+                                                          height: 16,
+                                                          pixel_width: 24,
+                                                          pixel_height: 24 });
+
+
+// canvas workspace for building a tile image
 var drawingCache = {
 
     tilemaps : [],
@@ -131,16 +151,11 @@ var drawingCache = {
     //for sprites (items, objects, building, agent sprites)
     slookup : {},
     
-    workspace_canvas_dom : null,
+    canvas: null,
     ctx: null,
+    id: 'DrawingCacheWorkspace',
     
-    init : function (board_canvas) {
-        var workspace_canvas = $('canvas#DrawingCacheWorkspace').attr({ 'width' : board.canvas.width * board.canvas.pixel_width,
-                                                                        'height' : board.canvas.height * board.canvas.pixel_height
-                                                                      });
-        this.workspace_canvas_dom = workspace_canvas[0];
-        this.ctx = this.workspace_canvas_dom.getContext("2d");
-    },
+    init : TileCanvas.prototype.init,
     
     resize : function () {
         //clears cache, changes size of tiles being drawn to cache
