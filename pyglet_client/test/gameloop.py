@@ -191,7 +191,7 @@ class MapChunk(object):
 
     x_chunk_size = 8
     y_chunk_size = 8
-    z_chunk_size = 8
+    z_chunk_size = 64
 
     def __init__(self, x_offset, y_offset):
         int_array_type = ctypes.c_int * (self.x_chunk_size * self.y_chunk_size *self.z_chunk_size) #map storage
@@ -203,7 +203,7 @@ class MapChunk(object):
         self.update = True
         self.empty = True
 
-    def update_vertex_buffer(self):
+    def update_vertex_buffer(self, batch = None):
         draw_list = []
         active_cube_number = 0
         culled_quads = 0
@@ -247,16 +247,24 @@ class MapChunk(object):
         #print str(tex_list)
         #print str((len(v_list), len(c_list), len(tex_list)))
 
-        if v_num != 0:
+        if v_num == 0:
+            self.empty = True
+            self.update = False
+            return
+
+        if batch == None:
             self.vertexList = pyglet.graphics.vertex_list(v_num,
             ('v3f\static', v_list),
             ('c4B\static', c_list),
             ("t3f\static", tex_list)
         )
-            self.empty = False
         else:
-            print "v_num = 0!"
-            self.empty = True
+            self.vertexList = batch.add(v_num, pyglet.gl.GL_QUADS, None,
+            ('v3f\static', v_list),
+            ('c4B\static', c_list),
+            ("t3f\static", tex_list)
+            )
+
         self.update = False
 
     def _is_occluded(self,x,y,z,side_num):
@@ -298,6 +306,7 @@ import random
 class World(object):
 
     def __init__(self):
+        self.batch = pyglet.graphics.Batch()
         #texture loading
         tile_image = pyglet.image.load('../texture/textures_01.png')
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
@@ -326,6 +335,7 @@ class World(object):
                     for y in range(0, 8):
                         for z in range(0, 8):
                             rnd = random.randint(0,3)
+                            #rnd = 3
                             self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
         print "Chunk generation finished"
         #for mct in self.mct_array.values():
@@ -355,16 +365,17 @@ class World(object):
 
         for mct in self.mct_array.values(): #update only one buffer per frame
             if mct.update == True:
-                mct.update_vertex_buffer()
+                mct.update_vertex_buffer(self.batch)
                 break
 
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target)
         glBindTexture(self.texture_grid.target, self.texture_grid.id)
 
-        for mct in self.mct_array.values():
-            if mct.empty == False:
-                mct.vertexList.draw(pyglet.gl.GL_QUADS)
+        #for mct in self.mct_array.values():
+        #    if mct.empty == False:
+        #        mct.vertexList.draw(pyglet.gl.GL_QUADS)
+        self.batch.draw()
 
     def draw(self):
         if False:
@@ -489,6 +500,13 @@ class Camera(object):
         glLoadIdentity()
         gluOrtho2D(0, self.win.width, 0, self.win.height)
 
+        glMatrixMode( GL_MODELVIEW )
+        glLoadIdentity()
+
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+
+
     def move_camera(self, dx, dy, dz):
 
         if self.rts == True:
@@ -519,6 +537,7 @@ class Camera(object):
 class Hud(object):
 
     def __init__(self, win):
+        self.win = win
         helv = font.load('Helvetica', win.width / 15.0)
         self.text = font.Text(
             helv,
@@ -530,18 +549,50 @@ class Hud(object):
             color=(1, 1, 1, 0.5),
         )
         self.fps = clock.ClockDisplay()
+        self._init_reticle()
+
+    def _init_reticle(self):
+        self.reticle = pyglet.image.load('./target.png')
+        self.reticle_texture = self.reticle.get_texture()
+
+        rh = 16.
+        rw = 16.
+
+        w = float(self.win.width)/2
+        h = float(self.win.height)/2
+        print str((h,w))
+        x_min = w - rw/2
+        x_max = w + rw/2
+        y_min = h - rh/2
+        y_max = h + rh/2
+
+        v_list = [
+        x_min, y_max,
+        x_max, y_max,
+        x_max, y_min,
+        x_min, y_min
+        ]
+        print str(v_list)
+
+        self.reticleVertexList = pyglet.graphics.vertex_list(4,
+            ('v2f\static', v_list),
+            ('c3B\static', (255,255,255) *4),
+            ("t3f\static", self.reticle_texture.tex_coords),
+            )
 
     def draw(self):
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
         #self.text.draw()
-        self.draw_recticle()
+        self.draw_reticle()
         self.fps.draw()
 
-    def draw_recticle(self):
-        return
-        x=win.width / 2,
-        y=win.height / 2,
+    def draw_reticle(self):
+        glEnable(GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
+        glBindTexture(self.reticle_texture.target, self.reticle_texture.id)
+
+        glEnable (GL_BLEND)
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        self.reticleVertexList.draw(pyglet.gl.GL_QUADS)
+        glDisable (GL_BLEND);
 
 class Mouse(object):
 
