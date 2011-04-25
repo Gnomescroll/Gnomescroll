@@ -1,6 +1,5 @@
 var sys = require('sys'),
     http = require('http'),  
-    //io = require('./socket.io'),
     io = require('socket.io'),
     redis = require("redis"),
     r = redis.createClient(6379, '127.0.0.1'),
@@ -14,7 +13,6 @@ server = http.createServer(function(request, response){
     response.finish(); 
 }); 
 server.listen(8080);
-
 
 //this client connects to the Redis instance for direct to client communications
 //var r_client = redis.createClient(6379, '127.0.0.1');
