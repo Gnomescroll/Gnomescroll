@@ -12,8 +12,12 @@ PORT = 8055
 
 # redis
 def send_message(msg):
+    if type(msg) != dict:
+        return
+    world_id = msg.get('world_id', None)
+    if world_id is None:
+        return 
     r_client = redis.Redis('localhost')
-    world_id = msg['world_id']
     r_client.lpush("world_"+str(world_id), dumps(msg))
 
 @app.route("/")
