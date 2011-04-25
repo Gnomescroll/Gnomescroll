@@ -160,14 +160,16 @@ def translate_to_terrain(hm):
 def create_top_terrain(noise):
 	#zoom must be equal to or greater than the map size
 	ZOOM = 200.0
-	CUTOFF = 0
+	cutoff = -1.1
 	terrain = [[[0 for z in range(LEVELS_ABOVE)] for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
 	for z in range(0, LEVELS_ABOVE):
 		print "Now generating level", z+1, "out of", LEVELS_ABOVE, "total levels."
+		if z <= 10:
+			cutoff = cutoff + 0.1
 		for x in range(0, MAP_WIDTH):
 			for y in range(0, MAP_WIDTH):
 				terrain[x][y][z] = libtcod.noise_get_fbm(noise, [(x/ZOOM), (y/ZOOM), (z/ZOOM)], 32.0, libtcod.NOISE_PERLIN)
-				if terrain[x][y][z] < CUTOFF:
+				if terrain[x][y][z] < cutoff:
 					terrain[x][y][z] = 0
 				else:
 					terrain[x][y][z] = 1
