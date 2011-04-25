@@ -40,7 +40,7 @@ class Camera(object):
                 0., 0., 1.0)
 
         glEnable (GL_DEPTH_TEST)
-        glEnable(GL_CULL_FACE);
+        #glEnable(GL_CULL_FACE);
 
     def hudProjection(self):
         glMatrixMode(GL_PROJECTION)
@@ -51,7 +51,7 @@ class Camera(object):
         glLoadIdentity()
 
         glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
+        #glDisable(GL_CULL_FACE);
 
 
     def move_camera(self, dx, dy, dz):

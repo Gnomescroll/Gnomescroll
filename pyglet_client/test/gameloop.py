@@ -318,6 +318,8 @@ class World(object):
         #test
         self.terrainMap = TerrainMap()
         #MapChunkManager(terrainMap, cubeProperties)
+        self.players = []
+
     def tick(self):
         pass
 
@@ -334,35 +336,13 @@ class World(object):
                 for x in range(0, 8):
                     for y in range(0, 8):
                         for z in range(0, 8):
-                            rnd = random.randint(0,3)
+                            rnd = random.randint(0,64)
                             #rnd = 3
-                            self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
-        print "Chunk generation finished"
-        #for mct in self.mct_array.values():
-        #    mct.update_vertex_buffer()
-        #    mct.update_vertex_buffer()
-#        self.mct = MapChunk(0,0)
-
-        #self.mct.cubeProperties = self.cubeProperties
-        #self.mct.cubeRenderCache = self.cubeRenderCache
-
-
-        if False:
-            for x in range(0, 8):
-                for y in range(0, 8):
-                    for z in range(0, 8):
-                        rnd = random.randint(0,3)
-                        self.mct.set_tile(x,y,z,rnd)
-       # self.mct.set_tile(1,1,0,2)
-        #fill with random crap
-        #self.mct.set_tile(0,0,0,3)
-        #self.mct.set_tile(1,0,0,3)
-        #self.mct.set_tile(2,0,0,3)
-        #profile.run(self.mct.update_vertex_buffer)
-        #self.mct.update_vertex_buffer()
+                            if rnd < 16:
+                                rnd = rnd = random.randint(0,3)
+                                self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
 
     def draw_chunk(self):
-
         for mct in self.mct_array.values(): #update only one buffer per frame
             if mct.update == True:
                 mct.update_vertex_buffer(self.batch)
@@ -377,6 +357,9 @@ class World(object):
         #        mct.vertexList.draw(pyglet.gl.GL_QUADS)
         self.batch.draw()
 
+        glDisable(GL_CULL_FACE);
+        glDisable(self.texture_grid.target)
+
     def draw(self):
         if False:
             for x in range(-20, 20):
@@ -384,11 +367,10 @@ class World(object):
             for y in range(-20, 20):
                 self.draw_point(0, y, 0, 0, 255)
 
+
         self.draw_chunk()
-        #self.draw_cube(0,0,0)
-        #self.draw_cube2(2,0,0,1)
-        #self.draw_cube2(0,2,0,2)
-        #self.draw_cube2(0,0,0,2)
+        self.draw_players()
+        #self.draw_players()
 
     def draw_point(self, x, y, r, g, b):
         z=0
@@ -396,67 +378,51 @@ class World(object):
             ('v3f', (x, y, z)),
             ('c3B', (r, g, b)) )
 
-    def _quad_vertices(self, list):
-        x = []
-        for v in list:
-            for c in v:
-                x.append(c)
-        return x
+    def add_player(self):
+        self.players.append(Player())
 
-    def draw_cube(self, x,y,z):
-        vertex = [
-        (0,0,0), (0,1,0), (1,1,0), (1,0,0),
-        (0,0,1), (0,1,1), (1,1,1), (1,0,1) ]
+    def draw_players(self):
+        for p in self.players:
+            p.draw()
 
-        #by default, counterclockwise polygons are frontfacing
-        north_side = [ [0,1,1],[1,1,1],[1,1,0],[0,1,0] ]
-        south_side = [[0,0,1],[0,0,0],[1,0,0],[1,0,1]]
-        west_side = [[0,1,1],[0,1,0],[0,0,0],[0,0,1]]
-        east_side = [[1,0,1],[1,0,0],[1,1,0],[1,1,1]]
-        top_side = [[0,1,1],[0,0,1],[1,0,1],[1,1,1]]
-        bottom_side = [[1,0,0],[0,0,0],[0,1,0],[1,1,0]]
+from math import sin, cos, pi
 
-        quad_list = [north_side, south_side, west_side, east_side, top_side, bottom_side]
+class Player:
+
+    def __init__(self, main=None):
+        self.main = main
+
+        self.x = 0
+        self.y = 0
+        self.z = -1
+        self.x_angle = 0
+        self.y_angle = 0
+
+    def draw(self):
+        self.draw_aiming_direction()
+
+    def draw_aiming_direction(self):
+        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        dz = sin( self.y_angle)
+
+        ep = 0.33
         v_list = []
-        for quad in quad_list:
-            v_list = v_list + self._quad_vertices(quad)
-
-        t_list = [0,6,7,3,4,5]
-        tc_list = []
-        for texture_id in t_list:
-            #tc_list = tc_list + list(self.texture_grid[0].tex_coords)
-            tc_list = tc_list + list(self.texture_grid[convert_index(texture_id, 16, 16)].tex_coords)
-
-        tile_id = 1
-
-        glEnable(GL_CULL_FACE);
-        glEnable(self.texture_grid.target) #???
-        glBindTexture(self.texture_grid.target, self.texture_grid.id)
-        pyglet.graphics.draw(4*6, pyglet.gl.GL_QUADS,
-        ("v3f", v_list),
-        ("c4B", [255, 255, 255, 255] * 4*6),
-        ("t3f", tc_list))
-
-    def draw_cube2(self, x, y, z, tile_id):
-        v_list = []
-        c_list = []
-        tex_list = []
-
         v_num = 0
-        for side_num in range(0, 6):
-            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(x, y, z, tile_id, side_num)
-            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(x, y, z, tile_id, side_num)
-            v_list += tv_list
-            c_list += tc_list
-            tex_list += ttex_list
-            v_num += 4
-
-        glEnable(self.texture_grid.target) #???
-        glBindTexture(self.texture_grid.target, self.texture_grid.id)
-        pyglet.graphics.draw(v_num, pyglet.gl.GL_QUADS,
+        cf = 0.
+        for i in range(0,10):
+            v_num += 1
+            x= self.x + cf*dx
+            y= self.y + cf*dy
+            z= self.z + cf*dz
+            cf += ep
+            v_list += [x,y,z]
+        #print str(v_list)
+        #print str(v_num)
+        pyglet.graphics.draw(v_num, GL_POINTS,
         ("v3f", v_list),
-        ("c4B", c_list),
-        ("t3f", tex_list))
+        ("c3B", [0, 255, 255]*v_num)
+        )
 
 
 from input import Mouse, Keyboard
@@ -504,9 +470,10 @@ class App(object):
 
     def mainLoop2(self):
         self.world.test_chunk()
+        self.world.add_player()
         #clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
-        self.win.push_handlers(keyboard)
+        #self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
         while not self.win.has_exit:
             self.win.dispatch_events()
