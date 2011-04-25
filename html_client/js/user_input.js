@@ -23,6 +23,7 @@ input = {
         $('body').keyup(function (event) {
             var key = keymap[event.which];
             delete that.keys[key];
+            processInput();
         });
     },
         
@@ -169,17 +170,12 @@ keymap = {
 };
 
 var processInput = function (key) {
-    
-    if (!key) return false;
-    
     var old,
         panning_delta = {x: 0, y: 0},
         key_type;
         
     for (key_type in input.keys) {
-        if (!input.keys.hasOwnProperty(key_type)) {
-            continue;
-        }
+        if (!input.keys.hasOwnProperty(key_type)) continue;
         switch (key_type) {
             case 'LEFT':
                 panning_delta.x += -1;
@@ -195,8 +191,9 @@ var processInput = function (key) {
                 break;
         }
     }
-    
-    
+    board.scroll(panning_delta.x, panning_delta.y);
+
+    if (!key) return false;
     switch (key) {
         
         case 'ESC':               //quit ? remove this
@@ -204,19 +201,19 @@ var processInput = function (key) {
             return false;
             
         case 'LEFT':
-            board.scroll(panning_delta.x, panning_delta.y);
+            //board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'RIGHT':
-            board.scroll(panning_delta.x, panning_delta.y);
+            //board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'UP':
-            board.scroll(panning_delta.x, panning_delta.y);
+            //board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'DOWN':
-            board.scroll(panning_delta.x, panning_delta.y);
+            //board.scroll(panning_delta.x, panning_delta.y);
             break;
             
         case 'c':                   // set map solid
