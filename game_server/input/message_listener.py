@@ -1,6 +1,7 @@
 import sys
 import marshal
 from threading import Thread
+from simplejson import loads as jsonloads
 import redis
 
 
@@ -28,12 +29,19 @@ class Message_listener:
         r_in = redis.Redis("localhost") #going to be local host for now
         key = "world_%s" % (str(world_id),)
         i = ''
-        
+        #self.globals.debug = 0 # DEBUG DEBUG
         if self.globals.debug == 0:
             while True:
                 try:
                     j = r_in.brpop(key)
-                    i=marshal.loads(j[1])
+                    print j
+                    try:
+                        i=marshal.loads(j[1])
+                    except ValueError:
+                        try:    # fall back on json encoding
+                            i = jsonloads(j[1])
+                        except:
+                            continue
                     if not i:
                         continue
                     cmd = i['cmd']
@@ -77,7 +85,11 @@ class Message_listener:
                         try:
                             i=marshal.loads(j)
                         except ValueError:
-                            continue
+                            try:    # fall back on json encoding
+                                i = jsonloads(j)
+                            except:
+                                continue
+                            
                 else:
                     j = r_in.brpop(key)
                     i=marshal.loads(j[1])

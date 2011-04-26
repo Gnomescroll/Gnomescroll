@@ -39,6 +39,7 @@ function tell_redis(json, msg) {
     if (msg.world_id === undefined) return;
     
     var r = redis.createClient();
+    console.log(json);
     r.lpush("world_"+msg.world_id, json);
 }
 
