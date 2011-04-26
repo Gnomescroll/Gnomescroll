@@ -66,6 +66,7 @@ var http_port = 8080,
     return function () {
         var http = require('http'),
             URL = require('url'),
+            fs = require('fs'),
             views,
             urls;
 
@@ -75,20 +76,33 @@ var http_port = 8080,
             };
         }
 
+        function set_mimetype(request, response) {
+            var ext = request.url.split('.'),
+                typemap = { // extensions to mimetypes
+                    'js'  : 'text/javascript',
+                    'css' : 'text/css',
+                    'html': 'text/html',
+                },
+                content_type = typemap[ext[ext.length-1]];
+            content_type = content_type || 'text/html';
+            response.setHeader('Content-Type', content_type);
+        }
+
         views = {
             hello : function (request) {
-                        return '<h1>Gnomescroll</h1>';
-                    },
+                return '<h1>Gnomescroll</h1>';
+            },
 
-            api : function (request) {
-                      var json = URL.Query(request.message.content).json,
-                          vars;
-                      if (!json) {
-                          return 'api - no json received';
-                      }
-                      tell_redis(json);
-                      return 'api received: ' + json;
-                  },
+            api : function (request, response) {
+                response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8055');
+                var json = URL.Query(request.message.content).json,
+                  vars;
+                if (!json) {
+                  return 'api - no json received';
+                }
+                tell_redis(json);
+                return 'api received: ' + json;
+            },
 
             post : function(request) { // example post method
                 var msg  = '',
@@ -104,19 +118,57 @@ var http_port = 8080,
                 msg += vars.message || '';
                 return msg;
             },
+
+            _read_static: function (request, response, type, fp) {
+                var path_prefix = '../html_client',
+                    fn = request.url.split('/'),
+                    f,
+                    body = '';
+
+                fn = fn[fn.length-1];
+
+                fp = (fp) ? path_prefix + fp : path_prefix + '/' + type + '/' + fn;
+                body = fs.readFileSync(fp, 'utf-8');
+                return body;
+            },
+
+            static_media : function(request, response) {    // static files
+                var filepath = request.url.split('?')[0];
+
+                if (response.getHeader('Content-Type') === 'text/javascript') { // this breaks if set_mimetype() isn't called before routing to url
+                    return this.views._read_static(request, response, 'js', filepath);
+                }
+                if (response.getHeader('Content-Type') === 'text/css') {
+                    return this.views._read_static(request, response, 'css', filepath);
+                }
+            },
+
+            js : function (request, response, filepath) {
+                return this.views._read_static(request, response, 'js');
+            },
+
+            css : function (request, response) {
+                return this.views._read_static(request, response, 'css');
+            },
         };
 
         this.views = views;
         
         urls = {
-            ''     : views.hello,
-            '/'    : views.hello,
-            '/api' : views.api,
-            '/post': views.post,
+            ''       : views.hello,
+            '/'      : views.hello,
+            '/api'   : views.api,
+            '/post'  : views.post,
+
+            media    : {
+                '/static': views.static_media,
+                '/js'    : views.js,
+            },
         };
 
         this.urls = urls;
 
+        var that = this;
         this.server = http.createServer(function(request, response){
             var message = {'content': request.url+'?'};
             request.message = message;
@@ -125,13 +177,23 @@ var http_port = 8080,
             });
             
             request.on('end', function () {
-                response.setHeader('Content-Type', 'text/html');
-                response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8055');
+                set_mimetype(request, response);
                 var status = 200,
-                    body = urls[request.url];
+                    body = urls[request.url],
+                    media_path;
+
+                if (!body) {    // route to files for static urls
+                    for (media_path in urls.media) {
+                        if (!urls.media.hasOwnProperty(media_path)) continue;
+                        if (request.url.slice(0, media_path.length) === media_path) {
+                            body = urls.media[media_path];
+                        }
+                    }
+                }
+
                 status = (body) ? status : 404;
                 response.statusCode = status;
-                body = (body) ? body(request, message) : '';
+                body = (body) ? body.call(that, request, response) : '';
                 response.write(body);
                 response.end();
             });
