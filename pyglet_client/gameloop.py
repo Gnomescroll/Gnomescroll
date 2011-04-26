@@ -308,7 +308,7 @@ class World(object):
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
         #texture loading
-        tile_image = pyglet.image.load('../texture/textures_01.png')
+        tile_image = pyglet.image.load('./texture/textures_01.png')
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
         tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
         self.texture_grid = tile_texture_grid
@@ -378,14 +378,19 @@ class World(object):
             ('v3f', (x, y, z)),
             ('c3B', (r, g, b)) )
 
-    def add_player(self):
-        self.players.append(Player())
+    def add_player(self, player =None):
+        if Player == None:
+            self.players.append(Player())
+        else:
+            self.players.append(player)
 
     def draw_players(self):
         for p in self.players:
             p.draw()
 
 from math import sin, cos, pi
+
+from math import floor, ceil
 
 class Player:
 
@@ -400,6 +405,7 @@ class Player:
 
     def draw(self):
         self.draw_aiming_direction()
+        self.draw_selected_cube()
 
     def draw_aiming_direction(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
@@ -424,6 +430,58 @@ class Player:
         ("c3B", [0, 255, 255]*v_num)
         )
 
+    def pan(self, dx_angle, dy_angle):
+        self.x_angle += dx_angle
+        self.y_angle += dy_angle
+        if self.y_angle < -0.499:
+            self.y_angle = -0.499
+        if self.y_angle > 0.499:
+            self.y_angle = 0.499
+
+    def draw_side(self, x,y,z,side):
+
+        v_index = [
+        [ [0,1,1] , [0,0,1] , [1,0,1] , [1,1,1] ], #top
+        [ [1,0,0] , [0,0,0] , [0,1,0] , [1,1,0] ], #bottom
+        [ [0,1,1] , [1,1,1] , [1,1,0] , [0,1,0] ], #north
+        [ [0,0,1] , [0,0,0] , [1,0,0] , [1,0,1] ], #south
+        [ [0,1,1] , [0,1,0] , [0,0,0] , [0,0,1] ], #west
+        [ [1,0,1] , [1,0,0] , [1,1,0] , [1,1,1] ], #east
+    ]
+        v_set = v_index[side]
+        v_list = []
+        v_num = 0
+        for i in [0,1,2,3]:
+            v_num += 2
+            v_list += [v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]]
+            v_list += [v_set[(i+1)%4][0]+x, v_set[(i+1)%4][1]+y, v_set[(i+1)%4][2]]
+
+        pyglet.graphics.draw(v_num, GL_LINES,
+        ("v3f", v_list),
+        ("c3B", [0, 255, 0] *v_num)
+        )
+
+    def draw_selected_cube(self):
+        x = self.x
+        y = self.y
+        z = self.z
+        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        dz = sin( self.y_angle)
+
+        if dx > 0:
+            pass #south side
+            l_list = []
+            for x in range (0, 5):
+                l = (x-self.x)/dx
+                (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
+                #print str((x_,y_,z_))
+                self.draw_side(x_, floor(y_), floor(z_), 3)
+
+
+        if dx < 0:
+            pass #north side
+
 
 from input import Mouse, Keyboard
 from camera import Camera, Hud
@@ -439,6 +497,7 @@ class App(object):
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
+        self.player = Player() #for testing
         self.mouse = Mouse(self)
         self.hud = Hud(self.win)
         #clock.set_fps_limit(60)
@@ -470,10 +529,10 @@ class App(object):
 
     def mainLoop2(self):
         self.world.test_chunk()
-        self.world.add_player()
+        self.world.add_player(self.player)
         #clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
-        #self.win.push_handlers(keyboard)
+        self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
         while not self.win.has_exit:
             self.win.dispatch_events()

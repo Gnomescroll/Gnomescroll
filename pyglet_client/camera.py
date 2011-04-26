@@ -103,7 +103,7 @@ class Hud(object):
         self._init_reticle()
 
     def _init_reticle(self):
-        self.reticle = pyglet.image.load('./target.png')
+        self.reticle = pyglet.image.load('./texture/target.png')
         self.reticle_texture = self.reticle.get_texture()
 
         rh = 16.

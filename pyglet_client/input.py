@@ -3,11 +3,15 @@ class Mouse(object):
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
+        self.player = main.player
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         #print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
         sen = 50
-        self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
+        if buttons == 4:
+            self.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
+        else:
+            self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
 
 from pyglet.window.key import symbol_string
@@ -22,9 +26,9 @@ class Keyboard(object):
 
     def on_key_press(self, symbol, modifiers):
         v = 0.2
-        print "key press"
-        if symbol == key.SPACE:
-            print "Space Bar Pressed"
+        #print "key press"
+        #if symbol == key.SPACE:
+        #    print "Space Bar Pressed"
         #elif symbol == key.W:
             #self.camera.move_camera(v,0,0)
         #elif symbol == key.S:
@@ -33,10 +37,12 @@ class Keyboard(object):
             #self.camera.move_camera(0,v,0)
         #elif symbol == key.D:
             #self.camera.move_camera(0,-v,0)
-        elif symbol == key.R:
-            self.camera.move_camera(0,0,v)
-        elif symbol == key.F:
-            self.camera.move_camera(0,0,-v)
+        #elif symbol == key.R:
+        #    self.camera.move_camera(0,0,v)
+        #elif symbol == key.F:
+        #    self.camera.move_camera(0,0,-v)
+        if False:
+            pass
         elif symbol in self.key_handlers:
             self.key_handlers[symbol]()
 
@@ -54,5 +60,6 @@ class Keyboard(object):
             self.camera.move_camera(0,0,v)
         if keyboard[key.F]:
             self.camera.move_camera(0,0,-v)
+
         if keyboard[key.SPACE]:
             print "Event A.1"
