@@ -118,14 +118,13 @@ class Player:
         c_list = []
         v_num = 0
 
-        for (x,y,z,sides) in p_list:
-            for side in sides:
-                for k in side_v[side]:
-                    [i,j] = vertex_index[k]
-                    v_num += 2
-                    v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
-                    v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
-                    c_list += [150,0,0]*2
+        for (x,y,z,side) in p_list:
+            for k in side_v[side]:
+                [i,j] = vertex_index[k]
+                v_num += 2
+                v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
+                v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
+                c_list += [150,0,0]*2
 
         pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
