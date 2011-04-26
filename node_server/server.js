@@ -11,11 +11,11 @@ var http_port = 8080,
             urls;
 
         views = {
-            hello : function (request, response) {
+            hello : function (request) {
                         return '<h1>Gnomescroll</h1>';
                     },
 
-            api : function (request, response) {
+            api : function (request) {
                       return 'api';
                   },
         };
@@ -34,36 +34,28 @@ var http_port = 8080,
             //console.log(request.url);
             var http_code = 200,
                 body = urls[request.url];
-            if (body === undefined) {
-                http_code = 404;
-                body = '';
-            } else {
-                body = body();
-            }
+            http_code = (body) ? http_code : 404;
             response.writeHead(http_code, {'Content-Type': 'text/html'});
-            response.write(body); 
+            body = (body) ? body(request) : '';
+            response.write(body);
             response.end(); 
         });
 
         this.port = port || 8080;
         this.server.listen(this.port);
-    }
+    };
 }(http_port));
 
-//var http = new HttpServer(8080);
 
 /*
  * 
- * Redis init
+ * Redis
  * 
  */
-
 var redis = require("redis"),
     r = redis.createClient(6379, '127.0.0.1');
 
-//this client connects to the Redis instance for direct to client communications
 //subscribe to message stream for map/world
-
 r.subscribe("world_0_out", function(channel, message, pattern) {
     client.broadcast(message);
 });
@@ -79,7 +71,6 @@ r.subscribe("global_admin", function(channel, message, pattern) {
  * Socket.io
  * 
  */
-
 var io = require('socket.io'),
     socket,
     clients = {};
@@ -105,7 +96,7 @@ socket.on('connection', function(client) {
     });
     
     client.on('disconnect', function() {
-        client.send(JSON.stringify([['disconnect', client.sessionId]]));
+        client.send(JSON.stringify([{'disconnect': client.sessionId}]));
         console.log('Client Disconnect');
         redisClient.quit();
         //r_client.unsubscribeTo("0_0", function(channel, message, pattern) {});  
