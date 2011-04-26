@@ -1,23 +1,38 @@
-var sys = require('sys'),
-    http = require('http'),  
-    io = require('socket.io'),
-    redis = require("redis"),
-    r = redis.createClient(6379, '127.0.0.1'),
-    server,
+var io = require('socket.io'),
     socket,
-    clients = {},
-    urls;
+    clients = {};
+
+/*
+ * 
+ * HTTP Server
+ * 
+ */
+
+var http = require('http'),
+    urls,
+    views,
+    server;
 
 urls = {
-    ''     : '<h1>Gnomescroll</h1>',
-    '/'    : '<h1>Gnomescroll</h1>',
-    '/api' : 'api'
+    ''     : views.hello,
+    '/'    : views.hello,
+    '/api' : views.api,
+};
+
+views = {
+    hello : function (request, response) {
+                return '<h1>Gnomescroll</h1>';
+            },
+
+    api : function (request, response) [
+              return 'api';
+          },
 };
 
 server = http.createServer(function(request, response){
     //console.log(request.url);
     var http_code = 200,
-        body = urls[request.url];
+        body = urls[request.url]();
     if (body === undefined) {
         http_code = 404;
         body = '';
@@ -27,6 +42,15 @@ server = http.createServer(function(request, response){
     response.end(); 
 }); 
 server.listen(8080);
+
+/*
+ * 
+ * Redis init
+ * 
+ */
+
+var redis = require("redis"),
+    r = redis.createClient(6379, '127.0.0.1'),
 
 //this client connects to the Redis instance for direct to client communications
 //subscribe to message stream for map/world
@@ -42,6 +66,12 @@ r.subscribe("global_admin", function(channel, message, pattern) {
 
 socket = io.listen(server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Server Listening');
+
+/*
+ * 
+ * Socket.io client handling
+ * 
+ */
 
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
