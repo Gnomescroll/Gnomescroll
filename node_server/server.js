@@ -14,6 +14,10 @@
  */
 
 
+// Client connect message -
+//  Can they send in the 'connect' event?
+// If not, do i send the message back through socket, or via the api?
+
 /*
  * 
  * Redis
@@ -51,7 +55,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     if (msg.world_id === undefined) return;
     
     var r = redis.createClient();
-    channel = channel || 'world_'+msg.world_id;
+    channel = channel || 'world_' + msg.world_id;
     r.lpush(channel, json);
 }
 

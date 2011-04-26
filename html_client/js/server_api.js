@@ -1,7 +1,19 @@
 var globals = {
 
     world_id: 0,
-    client_id: 0,
+    client_id: function () {    // generate random 16 char string
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
+            num_chars = chars.length,
+            string_length = 16,
+            randomstring = '',
+            i = 0,
+            rnum;
+        for (i=0; i<string_length; i++) {
+            rnum = Math.floor(Math.random() * num_chars);
+            randomstring += chars.charAt(rnum);
+        }
+        return randomstring;
+    },
     player_id: 0,
     server_out: '',//'http://127.0.0.1:8080',
     update: function (params) {
@@ -15,6 +27,11 @@ var send = function (data) {
     var url = '/api';
     data = JSON.stringify(data);
     $.post(globals.server_out+url, { json: data });
+};
+
+var hello = function () {
+    send({ world_id  : globals.world_id,
+           client_id : globals.client_id });
 };
 
 var admin, info, action;

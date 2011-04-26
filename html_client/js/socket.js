@@ -32,6 +32,8 @@ socket = {
         
         socket.on('connect', function () {
             if (debug) console.log('connect');
+            // send client id to server
+            //socket.send(JSON.stringify({ wo
             if (!started) {
                 game.init2();
                 started = true;
