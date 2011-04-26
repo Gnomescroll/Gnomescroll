@@ -82,6 +82,11 @@ var http_port = 8080,
                     'js'  : 'text/javascript',
                     'css' : 'text/css',
                     'html': 'text/html',
+                    'png' : 'image/png',
+                    'jpg' : 'image/jpeg',
+                    'jpeg': 'image/jpeg',
+                    'gif' : 'image/gif',
+                    'bmp' : 'image/bmp',
                 },
                 content_type = typemap[ext[ext.length-1]];
             content_type = content_type || 'text/html';
@@ -90,7 +95,11 @@ var http_port = 8080,
 
         views = {
             hello : function (request) {
-                return '<h1>Gnomescroll</h1>';
+                return '<h1><a href="/">Gnomescroll</a></h1>';
+            },
+
+            game : function (request) {
+                return fs.readFileSync('../html_client/index.html', 'utf8');
             },
 
             api : function (request, response) {
@@ -104,43 +113,24 @@ var http_port = 8080,
                 return 'api received: ' + json;
             },
 
-            post : function(request) { // example post method
-                var msg  = '',
-                    vars = URL.Query(request.message.content);
-                msg += '<form method="post" action="/post">';
-                msg += '<input type="text" name="message" />';
-                msg += '<br>';
-                msg += '<input type="submit" value="Send Message" />';
-                msg += '</form>';
-                msg += '<br>';
-                msg += '<strong>Message you last sent:</strong>';
-                msg += '<br>';
-                msg += vars.message || '';
-                return msg;
-            },
-
             _read_static: function (request, response, type, fp) {
                 var path_prefix = '../html_client',
+                    encoding = response.getHeader('Content-Type').split('/')[0],
                     fn = request.url.split('/'),
                     f,
-                    body = '';
-
+                    body;
+                if (type === 'javascript') type = 'js';
                 fn = fn[fn.length-1];
-
                 fp = (fp) ? path_prefix + fp : path_prefix + '/' + type + '/' + fn;
-                body = fs.readFileSync(fp, 'utf-8');
+                encoding = (encoding === 'text') ? 'utf8' : '';
+                body = fs.readFileSync(fp, encoding);
                 return body;
             },
 
             static_media : function(request, response) {    // static files
-                var filepath = request.url.split('?')[0];
-
-                if (response.getHeader('Content-Type') === 'text/javascript') { // this breaks if set_mimetype() isn't called before routing to url
-                    return this.views._read_static(request, response, 'js', filepath);
-                }
-                if (response.getHeader('Content-Type') === 'text/css') {
-                    return this.views._read_static(request, response, 'css', filepath);
-                }
+                var filepath = request.url.split('?')[0],
+                    type = response.getHeader('Content-Type').split('/')[1];
+                return this.views._read_static(request, response, type, filepath);
             },
 
             js : function (request, response, filepath) {
@@ -155,14 +145,14 @@ var http_port = 8080,
         this.views = views;
         
         urls = {
-            ''       : views.hello,
-            '/'      : views.hello,
+            ''       : views.game,
+            '/'      : views.game,
             '/api'   : views.api,
-            '/post'  : views.post,
 
             media    : {
                 '/static': views.static_media,
                 '/js'    : views.js,
+                '/css'   : views.css,
             },
         };
 
@@ -177,7 +167,7 @@ var http_port = 8080,
             });
             
             request.on('end', function () {
-                set_mimetype(request, response);
+                var ext = set_mimetype(request, response);
                 var status = 200,
                     body = urls[request.url],
                     media_path;
@@ -191,9 +181,9 @@ var http_port = 8080,
                     }
                 }
 
-                status = (body) ? status : 404;
+                //status = (body) ? status : 404;
                 response.statusCode = status;
-                body = (body) ? body.call(that, request, response) : '';
+                body = (body) ? body.call(that, request, response) : views.hello();
                 response.write(body);
                 response.end();
             });
