@@ -8,15 +8,16 @@ var options = {
     callbacks: {
         'tooltips': function () {
                         if (this.options.tooltips) {
+                            var tt = $('.tip.click');
                             $('.tip.click').tipTip({ activation: 'click', 
-                             delay: 100,
-                             fadeIn: 100,
-                             fadeOut: 400,
-                             edgeOffset: -250, 
-                             edgeInset: 100, 
-                             defaultPosition: 'top', 
-                             position: 'absolute',
-                             activeMethod: board.info.tooltip_active_method,
+                                                     delay: 100,
+                                                     fadeIn: 100,
+                                                     fadeOut: 400,
+                                                     edgeOffset: -250, 
+                                                     edgeInset: 100, 
+                                                     defaultPosition: 'top', 
+                                                     position: 'absolute',
+                                                     activeMethod: board.info.tooltip_active_method
                             });
                         } else {
                             $('.tip.click').tipTip('unbind');
@@ -32,7 +33,9 @@ var options = {
     init_event_bindings: function () {
         var that = this,
             opt,
-            val;
+            val,
+            callback,
+            input;
 
         function event_method (val) {
             var f = function () {};
@@ -65,8 +68,10 @@ var options = {
         for (opt in this.options) {
             if (!this.options.hasOwnProperty(opt)) continue;
             val = this.options[opt];
-            $('input[name="'+opt+'"]').change(event_method(val)(opt))
-                                      .trigger('change');
+            input = $('input[name="'+opt+'"]');
+            callback = event_method(val)(opt);
+            input.bind('change.options', callback)
+            this.callbacks[opt].call(this);
         }
     },
 

@@ -117,7 +117,8 @@ $('#start').click(function (event) {
     console.time("board_draw")
     board.start();
     console.timeEnd("board_draw");
-    
+    $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
+        
     map_editor.init();
     options.init();
     
@@ -161,18 +162,6 @@ var times = 1000;
     drawingCache.drawSprite(6,6,0,1);
     */
     game.start();
-    
-    $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
-    $('.tip.click').tipTip({ activation: 'click', 
-                             delay: 100,
-                             fadeIn: 100,
-                             fadeOut: 400,
-                             edgeOffset: -250, 
-                             edgeInset: 100, 
-                             defaultPosition: 'top', 
-                             position: 'absolute',
-                             activeMethod: board.info.tooltip_active_method,
-                            });
     
     return false;
 });
