@@ -397,15 +397,40 @@ class Player:
     def __init__(self, main=None):
         self.main = main
 
-        self.x = 0
-        self.y = 0
-        self.z = -1
+        self.x = -.5
+        self.y = -.5
+        self.z = -.5
         self.x_angle = 0
         self.y_angle = 0
 
     def draw(self):
         self.draw_aiming_direction()
         self.draw_selected_cube()
+        self.draw_player_bounding_box()
+
+    def draw_player_bounding_box(self):
+        v_sets = [
+        [ [0,1,1] , [0,0,1] , [1,0,1] , [1,1,1] ], #top
+        [ [1,0,0] , [0,0,0] , [0,1,0] , [1,1,0] ], #bottom
+        [ [0,1,1] , [1,1,1] , [1,1,0] , [0,1,0] ], #north
+        [ [0,0,1] , [0,0,0] , [1,0,0] , [1,0,1] ], #south
+        [ [0,1,1] , [0,1,0] , [0,0,0] , [0,0,1] ], #west
+        [ [1,0,1] , [1,0,0] , [1,1,0] , [1,1,1] ], #east
+    ]
+
+        (x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
+        v_list = []
+        v_num = 0
+        for v_set in v_sets:
+            for i in [0,1,2,3]:
+                v_num += 2
+                v_list += [v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z]
+                v_list += [v_set[(i+1)%4][0]+x, v_set[(i+1)%4][1]+y, v_set[(i+1)%4][2]+z]
+
+        pyglet.graphics.draw(v_num, GL_LINES,
+        ("v3f", v_list),
+        ("c3B", [255, 255, 0] *v_num)
+        )
 
     def draw_aiming_direction(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
@@ -416,7 +441,7 @@ class Player:
         v_list = []
         v_num = 0
         cf = 0.
-        for i in range(0,10):
+        for i in range(0,50):
             v_num += 1
             x= self.x + cf*dx
             y= self.y + cf*dy
@@ -427,7 +452,7 @@ class Player:
         #print str(v_num)
         pyglet.graphics.draw(v_num, GL_POINTS,
         ("v3f", v_list),
-        ("c3B", [0, 255, 255]*v_num)
+        ("c3B", [255, 0, 0]*v_num)
         )
 
     def pan(self, dx_angle, dy_angle):
@@ -453,13 +478,83 @@ class Player:
         v_num = 0
         for i in [0,1,2,3]:
             v_num += 2
-            v_list += [v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]]
-            v_list += [v_set[(i+1)%4][0]+x, v_set[(i+1)%4][1]+y, v_set[(i+1)%4][2]]
+            v_list += [v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z]
+            v_list += [v_set[(i+1)%4][0]+x, v_set[(i+1)%4][1]+y, v_set[(i+1)%4][2]+z]
 
         pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
         ("c3B", [0, 255, 0] *v_num)
         )
+
+    def draw_cube(self, x,y,z, side = None):
+        v_sets = [
+        [ [0,1,1] , [0,0,1] , [1,0,1] , [1,1,1] ], #top
+        [ [1,0,0] , [0,0,0] , [0,1,0] , [1,1,0] ], #bottom
+        [ [0,1,1] , [1,1,1] , [1,1,0] , [0,1,0] ], #north
+        [ [0,0,1] , [0,0,0] , [1,0,0] , [1,0,1] ], #south
+        [ [0,1,1] , [0,1,0] , [0,0,0] , [0,0,1] ], #west
+        [ [1,0,1] , [1,0,0] , [1,1,0] , [1,1,1] ], #east
+    ]
+
+        v_set = [
+            [0,0,0],
+            [1,0,0],
+            [1,1,0],
+            [0,1,0],
+            [0,0,1],
+            [1,0,1],
+            [1,1,1],
+            [0,1,1]
+        ]
+
+        vertex_index = [
+            [0,1],
+            [1,2],
+            [2,3],
+            [3,0],
+
+            [4,5],
+            [5,6],
+            [6,7],
+            [7,4],
+
+            [0,4],
+            [1,5],
+            [2,6],
+            [3,7],
+        ]
+
+        side_v = [
+        [4,5,6,7],   #top (z=1)
+        [0,1,2,3],   #bottom (z=0)
+        [1,5,9,10],  #north (y=1)
+        [7,3,11,8],  #south (y=0)
+        [6,2,10,11], #west (x=0)
+        [4,0,9,8].   #east (x=1)
+
+
+        ]
+
+        #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
+        v_list = []
+        c_list = []
+        v_num = 0
+        for [i,j] in vertex_index:
+            v_num += 2
+            v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
+            v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
+
+            if True:
+                c_list += [155,0,0]*2
+                #print str(j)
+            else:
+                c_list += [0,155,155]*2
+
+        pyglet.graphics.draw(v_num, GL_LINES,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+
 
     def draw_selected_cube(self):
         x = self.x
@@ -476,8 +571,12 @@ class Player:
                 l = (x-self.x)/dx
                 (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
                 #print str((x_,y_,z_))
-                self.draw_side(x_, floor(y_), floor(z_), 3)
+                #self.draw_side(x_, floor(y_), floor(z_), 3)
 
+                if x < 0:
+                    self.draw_cube(x_, floor(y_), floor(z_), 4)
+                elif x>= 0:
+                    self.draw_cube(x_, floor(y_), floor(z_), 5)
 
         if dx < 0:
             pass #north side
