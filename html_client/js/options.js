@@ -1,14 +1,13 @@
 var options = {
 
     options: {
-        'tooltips': true,    // boolean for check boxes
-        //'group' : { 'option1': true, 'option2': false } // radio buttons (not fully implemented)
+        'tooltips': false,    // boolean for check boxes
+        //'group' : { 'option1': true, 'option2': false } // radio buttons
     },
 
     callbacks: {
         'tooltips': function () {
                         if (this.options.tooltips) {
-                            var tt = $('.tip.click');
                             $('.tip.click').tipTip({ activation: 'click', 
                                                      delay: 100,
                                                      fadeIn: 100,
@@ -23,6 +22,9 @@ var options = {
                             $('.tip.click').tipTip('unbind');
                         }
                     },
+        //'group': function () {
+                    //console.log(this.options.group);
+                //},
     },
 
     init: function () {
@@ -62,6 +64,19 @@ var options = {
 
         function radio (opt) {
             return function (event) {
+                var inputs = $(this),
+                    checked_value = inputs.filter(':checked').attr('id'),
+                    callback_args = [checked_value],
+                    option;
+                for (option in that.options[opt]) {
+                    if (!that.options[opt].hasOwnProperty(option)) continue;
+                    if (option == checked_value) {
+                        that.options[opt][option] = true;
+                    } else {
+                        that.options[opt][option] = false;
+                    }
+                }
+                that.callbacks[opt].apply(that, callback_args);
             };
         };
 
@@ -80,17 +95,20 @@ var options = {
             table = $('<table></table>'),
             opt,
             val,
+            grp,
+            grp_val,
             tr,
             td,
             label,
             input;
 
-        function get_opt_attrs(val) {
+        function get_opt_attrs(val, val2) {
             var attrs = {},
                 type = 'hidden';
             switch (typeof val) {
                 case 'object':
                     type = 'radio';
+                    attrs.checked = val2 || '';
                     break;
                 case 'boolean':
                     type = 'checkbox';
@@ -104,18 +122,39 @@ var options = {
         for (opt in this.options) {
             if (!this.options.hasOwnProperty(opt)) continue;
             val = this.options[opt];
-            tr = $('<tr></tr>');
-            td = $('<td></td>');
-            label = $('<label></label>').attr('for', opt)
-                                        .html(opt);
-            td.append(label);
-            tr.append(td);
-            td = $('<td></td>');
-            input = $('<input></input>').attr('name', opt)
-                                        .attr(get_opt_attrs(val));
-            td.append(input);
-            tr.append(td);
-            table.append(tr);
+            if (typeof val === 'object') {
+                for (grp in val) {
+                    if (!val.hasOwnProperty(grp)) continue;
+                    grp_val = val[grp];
+                    tr = $('<tr></tr>');
+                    td = $('<td></td>');
+                    label = $('<label></label>').attr('for', grp)
+                                                .html(grp);
+                    td.append(label);
+                    tr.append(td);
+                    td = $('<td></td>');
+                    input = $('<input></input>').attr($.extend({ 'name': opt,
+                                                                 'id'  : grp }, get_opt_attrs(val, grp_val)));
+                    td.append(input);
+                    tr.append(td);
+                    table.append(tr);
+                }
+                
+            } else if (typeof val === 'boolean') {
+                tr = $('<tr></tr>');
+                td = $('<td></td>');
+                label = $('<label></label>').attr('for', opt)
+                                            .html(opt);
+                td.append(label);
+                tr.append(td);
+                td = $('<td></td>');
+                input = $('<input></input>').attr($.extend({ 'name': opt,
+                                                             'id'  : opt }, get_opt_attrs(val)));
+                td.append(input);
+                tr.append(td);
+                table.append(tr);
+            }
+            table.append($('<tr></tr>').append($('<td></td>').append('<hr>')));
         }
 
         container.append($('<hr>'));
