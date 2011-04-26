@@ -530,21 +530,19 @@ class Player:
         [1,5,9,10],  #north (y=1)
         [7,3,11,8],  #south (y=0)
         [6,2,10,11], #west (x=0)
-        [4,0,9,8].   #east (x=1)
-
-
+        [4,0,9,8],   #east (x=1)
         ]
 
         #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
         v_list = []
         c_list = []
         v_num = 0
-        for [i,j] in vertex_index:
+        for index,[i,j] in enumerate(vertex_index):
             v_num += 2
             v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
             v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
 
-            if True:
+            if side != None and index in side_v[side]:
                 c_list += [155,0,0]*2
                 #print str(j)
             else:
