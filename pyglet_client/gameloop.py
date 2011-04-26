@@ -390,7 +390,7 @@ class World(object):
 
 from math import sin, cos, pi
 
-from math import floor, ceil
+from math import floor, ceil, fabs
 
 class Player:
 
@@ -405,8 +405,9 @@ class Player:
 
     def draw(self):
         self.draw_aiming_direction()
-        self.draw_selected_cube()
+        #self.draw_selected_cube()
         self.draw_player_bounding_box()
+        self.draw_selected_cube2()
 
     def draw_player_bounding_box(self):
         v_sets = [
@@ -463,38 +464,64 @@ class Player:
         if self.y_angle > 0.499:
             self.y_angle = 0.499
 
-    def draw_side(self, x,y,z,side):
+    def draw_side(self, x,y,z,sides):
 
-        v_index = [
-        [ [0,1,1] , [0,0,1] , [1,0,1] , [1,1,1] ], #top
-        [ [1,0,0] , [0,0,0] , [0,1,0] , [1,1,0] ], #bottom
-        [ [0,1,1] , [1,1,1] , [1,1,0] , [0,1,0] ], #north
-        [ [0,0,1] , [0,0,0] , [1,0,0] , [1,0,1] ], #south
-        [ [0,1,1] , [0,1,0] , [0,0,0] , [0,0,1] ], #west
-        [ [1,0,1] , [1,0,0] , [1,1,0] , [1,1,1] ], #east
-    ]
-        v_set = v_index[side]
+        v_set = [
+            [0,0,0],
+            [1,0,0],
+            [1,1,0],
+            [0,1,0],
+            [0,0,1],
+            [1,0,1],
+            [1,1,1],
+            [0,1,1]
+        ]
+
+        vertex_index = [
+            [0,1],
+            [1,2],
+            [2,3],
+            [3,0],
+
+            [4,5],
+            [5,6],
+            [6,7],
+            [7,4],
+
+            [0,4],
+            [1,5],
+            [2,6],
+            [3,7],
+        ]
+
+        side_v = [
+        [4,5,6,7],   #top (z=1)
+        [0,1,2,3],   #bottom (z=0)
+        [1,5,9,10],  #north (y=1)
+        [7,3,11,8],  #south (y=0)
+        [6,2,10,11], #west (x=0)
+        [4,0,9,8],   #east (x=1)
+        ]
+
+        #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
         v_list = []
+        c_list = []
         v_num = 0
-        for i in [0,1,2,3]:
-            v_num += 2
-            v_list += [v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z]
-            v_list += [v_set[(i+1)%4][0]+x, v_set[(i+1)%4][1]+y, v_set[(i+1)%4][2]+z]
+
+        for side in sides:
+            for k in side_v[side]:
+                [i,j] = vertex_index[k]
+                v_num += 2
+                v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
+                v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
+                c_list += [155,0,0]*2
 
         pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
-        ("c3B", [0, 255, 0] *v_num)
+        ("c3B", c_list)
         )
 
     def draw_cube(self, x,y,z, side = None):
-        v_sets = [
-        [ [0,1,1] , [0,0,1] , [1,0,1] , [1,1,1] ], #top
-        [ [1,0,0] , [0,0,0] , [0,1,0] , [1,1,0] ], #bottom
-        [ [0,1,1] , [1,1,1] , [1,1,0] , [0,1,0] ], #north
-        [ [0,0,1] , [0,0,0] , [1,0,0] , [1,0,1] ], #south
-        [ [0,1,1] , [0,1,0] , [0,0,0] , [0,0,1] ], #west
-        [ [1,0,1] , [1,0,0] , [1,1,0] , [1,1,1] ], #east
-    ]
 
         v_set = [
             [0,0,0],
@@ -555,30 +582,69 @@ class Player:
 
 
     def draw_selected_cube(self):
-        x = self.x
-        y = self.y
-        z = self.z
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
         dz = sin( self.y_angle)
 
-        if dx > 0:
-            pass #south side
-            l_list = []
-            for x in range (0, 5):
-                l = (x-self.x)/dx
-                (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
-                #print str((x_,y_,z_))
-                #self.draw_side(x_, floor(y_), floor(z_), 3)
+        l_list = []
+        for ix in range (0, 5):
+            if dx*dx < 0.00000001: #prevent division by zero errors
+                continue
+            l = (ix-self.x)/fabs(dx)
+            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
+            if dx < 0:
+                self.draw_cube(x_-1, floor(y_), floor(z_), 2) #north
+            elif dx >= 0:
+                self.draw_cube(x_, floor(y_), floor(z_), 3) #south
 
-                if x < 0:
-                    self.draw_cube(x_, floor(y_), floor(z_), 2)
-                elif x>= 0:
-                    self.draw_cube(x_, floor(y_), floor(z_), 3)
+        for iy in range(0,5):
+            if dy*dy < 0.00000001: #prevent division by zero errors
+                continue
+            l = (iy-self.x)/fabs(dy)
+            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
+            if dy < 0:
+                self.draw_cube(floor(x_), y_-1, floor(z_), 4) #west
+            elif dy >= 0:
+                self.draw_cube(floor(x_), y_, floor(z_), 5) #east
 
         if dx < 0:
             pass #north side
 
+    def draw_selected_cube2(self):
+        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        dz = sin( self.y_angle)
+
+        cube_dict = {}
+
+        for ix in range (0, 5):
+            if dx*dx < 0.00000001: #prevent division by zero errors
+                continue
+            l = (ix-self.x)/fabs(dx)
+            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
+            if dx < 0:
+                self._append_side(cube_dict,x_-1, floor(y_), floor(z_), 2) #north
+            elif dx >= 0:
+                self._append_side(cube_dict,x_, floor(y_), floor(z_), 3) #south
+
+        for iy in range(0,5):
+            if dy*dy < 0.00000001: #prevent division by zero errors
+                continue
+            l = (iy-self.x)/fabs(dy)
+            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
+            if dy < 0:
+                self._append_side(cube_dict, floor(x_), y_-1, floor(z_), 4) #west
+            elif dy >= 0:
+                self._append_side(cube_dict, floor(x_), y_, floor(z_), 5) #east
+
+        for (x,y,z), sides in cube_dict.items():
+            self.draw_side(x,y,z,sides)
+
+    def _append_side(self, cube_dict, x,y,z,side):
+        (x,y,z) = (int(round(x)),int(round(y)), int(round(z)))
+        if not cube_dict.has_key((x,y,z)):
+            cube_dict[(x,y,z)] = []
+        cube_dict[(x,y,z)].append(side)
 
 from input import Mouse, Keyboard
 from camera import Camera, Hud
