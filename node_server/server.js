@@ -1,4 +1,20 @@
 /*
+ *
+ *
+ * Todo:
+ *      Clients generate unique clientID and send it in first message (server checks it is unique and replies)
+ *      clientID is stored in a mapping from sessionID -> {clientID: clientID, timestamp: sys.time(), connected: boolean}
+ *      A redis channel is created for the client, and is stored in a mapping from clientID -> {channel: channel, queue: [] }
+ *      Channel sends message -
+ *          client connected: send
+ *          client disconnected: add to queue
+ *      ...more
+ *      
+ *      
+ */
+
+
+/*
  * 
  * Redis
  * 
@@ -16,16 +32,13 @@ r.subscribe("global_admin", function(channel, message, pattern) {
     socket.broadcast(message);
 });
 
-
-/*
- * 
- * HTTP Server
- * 
- */
-function tell_redis(json, msg) {
+function tell_redis(json, msg, channel) {    // publish json or a js object to redis
+    // json can be either encoded or decoded json.
+    // if encoded, msg can be the decoded object.
+    //      if msg is the decoded object, channel can be the redis channel, or undefined
+    // if decoded, msg can be the channel, or undefined
     if (typeof json !== 'object') {
         try {
-            console.log(json);
             msg = JSON.parse(json);
             if (typeof msg !== 'object') return;
         } catch (e) {
@@ -35,14 +48,19 @@ function tell_redis(json, msg) {
         msg = json;
         json = JSON.stringify(msg);
     }
-    console.log('world_id: '+msg.world_id.toString());
     if (msg.world_id === undefined) return;
     
     var r = redis.createClient();
-    console.log(json);
-    r.lpush("world_"+msg.world_id, json);
+    channel = channel || 'world_'+msg.world_id;
+    r.lpush(channel, json);
 }
 
+
+/*
+ * 
+ * HTTP Server
+ * 
+ */
 var http_port = 8080,
     http = new (function(port) {
     return function () {
@@ -68,9 +86,8 @@ var http_port = 8080,
                       if (!json) {
                           return 'api - no json received';
                       }
-                      //vars = JSON.parse(json);
                       tell_redis(json);
-                      return 'api - json received' + json;
+                      return 'api received: ' + json;
                   },
 
             post : function(request) { // example post method
