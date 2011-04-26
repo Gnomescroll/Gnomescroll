@@ -1,7 +1,3 @@
-var io = require('socket.io'),
-    socket,
-    clients = {};
-
 /*
  * 
  * HTTP Server
@@ -9,9 +5,19 @@ var io = require('socket.io'),
  */
 
 var http = require('http'),
-    urls,
     views,
+    urls,
     server;
+
+views = {
+    hello : function (request, response) {
+                return '<h1>Gnomescroll</h1>';
+            },
+
+    api : function (request, response) {
+              return 'api';
+          },
+};
 
 urls = {
     ''     : views.hello,
@@ -19,29 +25,23 @@ urls = {
     '/api' : views.api,
 };
 
-views = {
-    hello : function (request, response) {
-                return '<h1>Gnomescroll</h1>';
-            },
-
-    api : function (request, response) [
-              return 'api';
-          },
-};
-
 server = http.createServer(function(request, response){
     //console.log(request.url);
     var http_code = 200,
-        body = urls[request.url]();
+        body = urls[request.url];
     if (body === undefined) {
         http_code = 404;
         body = '';
+    } else {
+        body = body();
     }
     response.writeHead(http_code, {'Content-Type': 'text/html'});
     response.write(body); 
     response.end(); 
 }); 
 server.listen(8080);
+
+
 
 /*
  * 
@@ -50,7 +50,7 @@ server.listen(8080);
  */
 
 var redis = require("redis"),
-    r = redis.createClient(6379, '127.0.0.1'),
+    r = redis.createClient(6379, '127.0.0.1');
 
 //this client connects to the Redis instance for direct to client communications
 //subscribe to message stream for map/world
@@ -64,14 +64,20 @@ r.subscribe("global_admin", function(channel, message, pattern) {
     socket.broadcast(message);
 });
 
-socket = io.listen(server, { websocket: { closeTimeout: 15000 }}); 
-console.log('Server Listening');
+
 
 /*
  * 
- * Socket.io client handling
+ * Socket.io
  * 
  */
+
+var io = require('socket.io'),
+    socket,
+    clients = {};
+
+socket = io.listen(server, { websocket: { closeTimeout: 15000 }}); 
+console.log('Socket.io Listening');
 
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
@@ -100,6 +106,7 @@ socket.on('connection', function(client) {
 
 
 ////Client Connected
+////a sample client object:
 //{ listener: 
    //{ server: 
       //{ connections: 1,
