@@ -1,6 +1,7 @@
 var globals = {
 
     world_id: 0,
+    
     client_id: (function () {    // generate random 16 char string
         var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
             num_chars = chars.length,
@@ -14,24 +15,33 @@ var globals = {
         }
         return randomstring;
     }()),
+    
     player_id: 0,
-    server_out: '',//'http://127.0.0.1:8080',
+    session_id: null,
+
+    server_out: '',
+    api_path : '/api',
+    
     update: function (params) {
-                this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
-                this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
-                this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
+        this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
+        this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
+        this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
     },
 };
 
 var send = function (data) {
-    var url = '/api';
+    if (globals.session_id === null) {
+        return false;
+    }
     data = JSON.stringify(data);
-    $.post(globals.server_out+url, { json: data });
+    $.post(globals.server_out + globals.api_path, { json: data });
+    return true;
 };
 
 var hello = function () {
-    send({ world_id  : globals.world_id,
-           client_id : globals.client_id });
+    return send({ 'cmd'     : 'hello',
+                  world_id  : globals.world_id,
+                  client_id : globals.client_id });
 };
 
 var admin, info, action;
@@ -64,7 +74,7 @@ admin = {
             player_id: globals.player_id,
             position: position,
         };
-        send(data);
+        return send(data);
     },
     
     create_object: function (x, y, z, location, object_type, template) {
@@ -92,7 +102,7 @@ admin = {
             world_id: globals.world_id,
             position: position,
         };
-        send(data);
+        return send(data);
     },
     
     set_map: function (x, y, z, value, debug) {
@@ -122,7 +132,7 @@ admin = {
             value: value
         };
         if (debug) console.log(data);
-        send(data);
+        return send(data);
     }
 };
 
@@ -137,7 +147,7 @@ info = {
         
     tileset: function () {
         var data = $.extend({}, this.consts, { cmd: 'get_tiles' });
-        send(data);
+        return send(data);
     },
         
     map: function (z) {
@@ -146,29 +156,29 @@ info = {
         if (z !== undefined) {
             data.z = z;
         }
-        send(data);
+        return send(data);
     },
 
     agent: function (id) {
         var data = $.extend({}, this.consts, { cmd: 'get_agent',
                                       agent_id: id });
-        send(data); 
+        return send(data); 
     },
 
     object: function (id) {
         var data = $.extend({}, this.consts, { cmd: 'get_object',
                                       object_id: id, });
-        send(data);
+        return send(data);
     },
     
     agents: function () {
         var data = $.extend({}, this.consts, { cmd: 'get_agent_list' });
-        send(data);
+        return send(data);
     },
 
     objects: function() {
         var data = $.extend({}, this.consts, { cmd: 'get_object_list' });
-        send(data);
+        return send(data);
     }
 };
 
@@ -186,7 +196,7 @@ action = {
             dp: [dx, dy, dz]
         };
         
-        send(data);
+        return send(data);
     },
     
     till: function (agent_id) {
@@ -196,7 +206,7 @@ action = {
             world_id: globals.world_id,
             agent_id: agent_id,
         };
-        send(data);
+        return send(data);
     },
 
     plant: function (agent_id) {
@@ -206,7 +216,7 @@ action = {
             world_id: globals.world_id,
             agent_id: agent_id,
         };
-        send(data);
+        return send(data);
     },
 
     harvest: function (agent_id, crop_id) {
@@ -222,6 +232,6 @@ action = {
             agent_id: agent_id,
             crop_id: crop_id,
         };
-        send(data);
+        return send(data);
     }
 };

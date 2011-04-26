@@ -220,12 +220,25 @@ socket.on('connection', function(client) {
     redisClient.subscribe('world_0_out');
     
     redisClient.on('message', function(channel, message) {
+        console.log('redis said something');
+        console.log(message);
         client.send(message);
     });
     
     client.on('message', function(message) {
+        if (message === undefined) return;
         console.log('client sent message: '+ message.toString());
-        client.send(message);
+        message = JSON.parse(message);
+        if (typeof message !== 'object') return;
+        if (message.cmd === 'register') {
+            console.log('client registering: '+ message.client_id);
+            message.session_id = client.sessionId;
+            message.msg = message.cmd;
+            delete message.cmd;
+        } else {
+            tell_redis(message);
+        }
+        client.send(JSON.stringify(message));
     });
     
     client.on('disconnect', function() {

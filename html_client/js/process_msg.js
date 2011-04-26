@@ -1,11 +1,3 @@
-var globals = {
-    
-    client_id: 0,
-    world_id: 0,
-    ajax_server: '',
-
-};
-
 var locationStateMap = {
     0: 'ground',
     1: 'agent',
@@ -17,6 +9,12 @@ var route, process, validate;
 
 process = {};
 
+process.register = function(msg) {
+    console.log('register');
+    console.log(msg);
+    globals.session_id = msg.session_id;
+};
+
 process.info = {};
 
 //todo
@@ -26,30 +24,31 @@ process.info.tileset = function(msg) {
     
     var param,
         data,
-        x;
-    //console.log(msg.tile_rendering)
+        x,
+        tile,
+        index;
+
     for(x in msg.tile_rendering) {
+        if (!msg.hasOwnProperty(x)) continue;
         param = msg.tile_rendering[x];
         
         data = {
-            tile_name: param.tile_name,
-            tile_id :  param.tile_id,   
-            tilemap_id:  param.tilemap.tilemap_id,
-            draw_style: param.tilemap.draw_style,
-            background_rgb:  param.tilemap.background_rgb,
-            symbol:  param.tilemap.symbol,
-            symbol_rgb: param.tilemap.symbol_rgb,
+            tile_name     : param.tile_name,
+            tile_id       : param.tile_id,   
+            tilemap_id    : param.tilemap.tilemap_id,
+            draw_style    : param.tilemap.draw_style,
+            background_rgb: param.tilemap.background_rgb,
+            symbol        : param.tilemap.symbol,
+            symbol_rgb    : param.tilemap.symbol_rgb,
         };
             
         tileset_state.add_tile(data);
     }
 
-    var tile, index;
     for(index in msg.tile_properties) {
-        if (msg.tile_properties.hasOwnProperty(index)) {
-            tile = msg.tile_properties[index];
-            tile_properties.add(tile);
-        }
+        if (!msg.tile_properties.hasOwnProperty(index)) continue;
+        tile = msg.tile_properties[index];
+        tile_properties.add(tile);
     }
 
     //store this; contains tile rendering information 
@@ -356,6 +355,8 @@ process.delta.set_terrain_map = function (msg) {
 };
 
 route = {
+
+    register: process.register,
     
     tileset: process.info.tileset,
     terrain_map: process.info.terrain_map,

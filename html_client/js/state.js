@@ -55,9 +55,9 @@ var state = {
             info.map(z);                // request z-levels
         }
         
-        info.agents();                  // request agents
-        info.objects();                 //         objects
-        info.tileset();
+        return ( info.agents()  &&    // request agents
+                 info.objects() &&    //         objects
+                 info.tileset() );    //         tileset
     },
 
     // generate zeroed matrix

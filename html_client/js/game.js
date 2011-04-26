@@ -34,15 +34,20 @@ var game = {
     },
     
     init2: function () {
-        var wait_func = function () {
-            console.log('wait_func');
-            state.init();
-            input.init();
-            //render.init();
-            //board_canvas.init();
-            //drawingCache.init();
-        }
-        setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
+        var success = false,
+            interval,
+            wait_func = function () {
+                console.log('wait_func');
+                if (!success) {
+                    //input.init();
+                    console.log('state init call');
+                    success = state.init();
+                } else {
+                    input.init();
+                    clearInterval(interval);
+                }
+            };
+        interval = setInterval(wait_func(), 500); // wait half a sec (does this work?)
     },
     
     delay: 3000, // ms delay for input check
