@@ -9,13 +9,12 @@ var sys = require('sys'),
   
 server = http.createServer(function(request, response){ 
     response.writeHead(200, {'Content-Type': 'text/html'}); 
-    response.writeBody('<h1>Hello world</h1>'); 
-    response.finish(); 
+    response.write('<h1>Hello world</h1>'); 
+    response.end(); 
 }); 
 server.listen(8080);
 
 //this client connects to the Redis instance for direct to client communications
-//var r_client = redis.createClient(6379, '127.0.0.1');
 //subscribe to message stream for map/world
 
 r.subscribe("world_0_out", function(channel, message, pattern) {
@@ -33,7 +32,8 @@ console.log('Server Listening');
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
     console.log('Client Connected');
-    console.log(client);
+    //console.log(client);
+    clients[client.sessionId] = client;
     const redisClient = redis.createClient();
     redisClient.subscribe('world_0_out');
     
