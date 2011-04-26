@@ -1,3 +1,9 @@
+#!/usr/bin/python
+
+'''
+    Deprecated
+    Use node_server
+'''
 from flask import Flask, render_template, request, Response
 import simplejson
 import redis
