@@ -3,52 +3,54 @@
  * HTTP Server
  * 
  */
+var http_port = 8080,
+    http = new (function(port) {
+    return function () {
+        var http = require('http'),
+            views,
+            urls;
 
-function HttpServer(port) {
-    var http = require('http'),
-        views,
-        urls;
+        views = {
+            hello : function (request, response) {
+                        return '<h1>Gnomescroll</h1>';
+                    },
 
-    views = {
-        hello : function (request, response) {
-                    return '<h1>Gnomescroll</h1>';
-                },
+            api : function (request, response) {
+                      return 'api';
+                  },
+        };
 
-        api : function (request, response) {
-                  return 'api';
-              },
-    };
+        this.views = views;
+        
+        urls = {
+            ''     : views.hello,
+            '/'    : views.hello,
+            '/api' : views.api,
+        };
 
-    this.views = views;
-    
-    urls = {
-        ''     : views.hello,
-        '/'    : views.hello,
-        '/api' : views.api,
-    };
+        this.urls = urls;
 
-    this.urls = urls;
+        this.server = http.createServer(function(request, response){
+            //console.log(request.url);
+            var http_code = 200,
+                body = urls[request.url];
+            if (body === undefined) {
+                http_code = 404;
+                body = '';
+            } else {
+                body = body();
+            }
+            response.writeHead(http_code, {'Content-Type': 'text/html'});
+            response.write(body); 
+            response.end(); 
+        });
 
-    this.server = http.createServer(function(request, response){
-        //console.log(request.url);
-        var http_code = 200,
-            body = urls[request.url];
-        if (body === undefined) {
-            http_code = 404;
-            body = '';
-        } else {
-            body = body();
-        }
-        response.writeHead(http_code, {'Content-Type': 'text/html'});
-        response.write(body); 
-        response.end(); 
-    });
+        this.port = port || 8080;
+        this.server.listen(this.port);
+    }
+}(http_port));
 
-    this.port = port || 8080;
-    this.server.listen(this.port);
-}
-
-var http = new HttpServer(8080);
+//var http = new HttpServer(8080);
 
 /*
  * 
