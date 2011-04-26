@@ -23,6 +23,10 @@
 td.selected {
     color: red;
 }
+
+#control_panel {
+    float: left;
+}
 </style>
 
 <link rel="stylesheet" type="text/css" href="http://127.0.0.1:8055/static/tipTip/tipTip.css" />
@@ -47,8 +51,12 @@ TEST
 
 </h1>
 
-<span id="map_editor">
-</span>
+<div id="control_panel">
+    <div id="map_editor">
+    </div>
+    <div id="options">
+    </div>
+</div>
 
 <div id="game" >
 <!--
@@ -61,7 +69,6 @@ TEST
 </a>
 </span>
 -->
-
 </div>
 
 </body>
@@ -79,6 +86,7 @@ TEST
 <script src="js/board.js"></script>
 
 <script src="js/map_editor.js"></script>
+<script src="js/options.js"></script>
 
 <script>
 
@@ -111,6 +119,7 @@ $('#start').click(function (event) {
     console.timeEnd("board_draw");
     
     map_editor.init();
+    options.init();
     
 /* //benchmarking
 var i;

@@ -16,7 +16,7 @@ var map_editor = {
     },
     
     _init_panel: function () {
-        var pane = $('#map_editor').css('float','left'),
+        var pane = $('#map_editor'),
             tile_values = tileset_state.tile_id_to_name,
             table = $('<table></table>').attr('class','panel tiles'),
             cells_wide = 1,
