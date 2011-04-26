@@ -18,6 +18,22 @@ var http_port = 8080,
             api : function (request) {
                       return 'api';
                   },
+
+            post : function(request) {
+                var msg = '',
+                    vars;
+                msg += '<form method="post" action="/post">';
+                msg += '<input type="text" name="message" />';
+                msg += '<br>';
+                msg += '<input type="submit" value="Send Message" />';
+                msg += '</form>';
+                msg += '<br>';
+                msg += '<strong>Message you last sent:</strong>';
+                msg += '<br>';
+                vars = require('url').parse(request.message.content, true).query;
+                msg += vars.message || '';
+                return msg;
+            },
         };
 
         this.views = views;
@@ -26,19 +42,28 @@ var http_port = 8080,
             ''     : views.hello,
             '/'    : views.hello,
             '/api' : views.api,
+            '/post': views.post,
         };
 
         this.urls = urls;
 
         this.server = http.createServer(function(request, response){
             //console.log(request.url);
-            var http_code = 200,
-                body = urls[request.url];
-            http_code = (body) ? http_code : 404;
-            response.writeHead(http_code, {'Content-Type': 'text/html'});
-            body = (body) ? body(request) : '';
-            response.write(body);
-            response.end(); 
+            var message = {'content': request.url+'?'};
+            request.message = message;
+            request.on('data', function (chunk) {
+                message.content += chunk.toString();
+            });
+            
+            request.on('end', function () {
+                var status = 200,
+                    body = urls[request.url];
+                status = (body) ? status : 404;
+                response.writeHead(status, {'Content-Type': 'text/html'});
+                body = (body) ? body(request, message) : '';
+                response.write(body);
+                response.end();
+            });
         });
 
         this.port = port || 8080;
