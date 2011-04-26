@@ -1,14 +1,60 @@
 /*
  * 
+ * Redis
+ * 
+ */
+var redis = require("redis"),
+    r = redis.createClient(6379, '127.0.0.1');
+
+//subscribe to message stream for map/world
+r.subscribe("world_0_out", function(channel, message, pattern) {
+    client.broadcast(message);
+});
+
+//global admin messages
+r.subscribe("global_admin", function(channel, message, pattern) {
+    socket.broadcast(message);
+});
+
+
+/*
+ * 
  * HTTP Server
  * 
  */
+function tell_redis(json, msg) {
+    if (typeof json !== 'object') {
+        try {
+            console.log(json);
+            msg = JSON.parse(json);
+            if (typeof msg !== 'object') return;
+        } catch (e) {
+            return;
+        }
+    } else {
+        msg = json;
+        json = JSON.stringify(msg);
+    }
+    console.log('world_id: '+msg.world_id.toString());
+    if (msg.world_id === undefined) return;
+    
+    var r = redis.createClient();
+    r.lpush("world_"+msg.world_id, json);
+}
+
 var http_port = 8080,
     http = new (function(port) {
     return function () {
         var http = require('http'),
+            URL = require('url'),
             views,
             urls;
+
+        if (URL.Query === undefined) {
+            URL.Query = function(url) {
+                return URL.parse(url, true).query;
+            };
+        }
 
         views = {
             hello : function (request) {
@@ -16,12 +62,19 @@ var http_port = 8080,
                     },
 
             api : function (request) {
-                      return 'api';
+                      var json = URL.Query(request.message.content).json,
+                          vars;
+                      if (!json) {
+                          return 'api - no json received';
+                      }
+                      //vars = JSON.parse(json);
+                      tell_redis(json);
+                      return 'api - json received' + json;
                   },
 
-            post : function(request) {
-                var msg = '',
-                    vars;
+            post : function(request) { // example post method
+                var msg  = '',
+                    vars = URL.Query(request.message.content);
                 msg += '<form method="post" action="/post">';
                 msg += '<input type="text" name="message" />';
                 msg += '<br>';
@@ -30,7 +83,6 @@ var http_port = 8080,
                 msg += '<br>';
                 msg += '<strong>Message you last sent:</strong>';
                 msg += '<br>';
-                vars = require('url').parse(request.message.content, true).query;
                 msg += vars.message || '';
                 return msg;
             },
@@ -48,7 +100,6 @@ var http_port = 8080,
         this.urls = urls;
 
         this.server = http.createServer(function(request, response){
-            //console.log(request.url);
             var message = {'content': request.url+'?'};
             request.message = message;
             request.on('data', function (chunk) {
@@ -56,10 +107,12 @@ var http_port = 8080,
             });
             
             request.on('end', function () {
+                response.setHeader('Content-Type', 'text/html');
+                response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8055');
                 var status = 200,
                     body = urls[request.url];
                 status = (body) ? status : 404;
-                response.writeHead(status, {'Content-Type': 'text/html'});
+                response.statusCode = status;
                 body = (body) ? body(request, message) : '';
                 response.write(body);
                 response.end();
@@ -70,25 +123,6 @@ var http_port = 8080,
         this.server.listen(this.port);
     };
 }(http_port));
-
-
-/*
- * 
- * Redis
- * 
- */
-var redis = require("redis"),
-    r = redis.createClient(6379, '127.0.0.1');
-
-//subscribe to message stream for map/world
-r.subscribe("world_0_out", function(channel, message, pattern) {
-    client.broadcast(message);
-});
-
-//global admin messages
-r.subscribe("global_admin", function(channel, message, pattern) {
-    socket.broadcast(message);
-});
 
 
 /*

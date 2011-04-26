@@ -3,7 +3,7 @@ var globals = {
     world_id: 0,
     client_id: 0,
     player_id: 0,
-    server_out: '',
+    server_out: 'http://127.0.0.1:8080',
     update: function (params) {
                 this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
                 this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;

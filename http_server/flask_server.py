@@ -23,7 +23,8 @@ def send_message(msg):
 @app.route("/")
 def root():
     with open(dir+'/index.html') as f:
-        return Response(f.read())
+        headers = { 'Access-Control-Allow-Origin': 'http://127.0.0.1:8080' }
+        return Response(f.read(), headers=headers)
     
 @app.route('/<file>')
 def static_file(file=None):
