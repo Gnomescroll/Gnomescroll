@@ -9,7 +9,7 @@ if (typeof Object.beget !== 'function') {
 
 var GameObject, Obj, Agent, Container;
 
-var get_board_event_name = function(game_obj) {
+var get_board_event_name = function (game_obj) {
     var event_name;
     switch (game_obj.base_type) {
         case 'agent':
@@ -35,44 +35,63 @@ GameObject = {
         
     update: // update an agent instance attributes. do not call on Agent, only agent instance
     function (data) {
-        var that = this;
-        $.each(data, function(key, val) {
-            that[key+'_old'] = that[key];
-            that[key] = val;
-        });
-        
+        var that = this,
+            key,
+            val;
+
+        for(key in data) {
+            if (data.hasOwnProperty(key)) {
+                val = data[key];
+                that[key+'_old'] = that[key];
+                that[key] = val;
+            }
+        }
         // emit message to renderer
-        board_event[get_board_event_name(that)](that);
+        board.event[get_board_event_name(that)](that);
     },
     
     old: // past state, after update
     function () {
-        var dummy = {};
-        
-        $.each(this, function(key, val) {
-            if (key.slice(key.length-4) === '_old') {
-                dummy[key.slice(0,key.length-4)] = val;
+        var dummy = {},
+            key,
+            val;
+
+        for(key in this) {
+            if (this.hasOwnProperty(key)) {
+                val = this[key];
+                if (key.slice(key.length-4) === '_old') {
+                    dummy[key.slice(0, key.length-4)] = val;
+                }
             }
-        });
+        }
         dummy.isOld = true;
         
-        dummy = $.extend($.extend({}, this), dummy);
+        dummy = $.extend({}, this, dummy);
         return dummy;
     },
     
     cleanOld: // removing past state, after not needed
     function () {
-        var to_delete = [];
-        
-        $.each(this, function(key, val) {
-            if (key.slice(key.length-4) === '_old') {
-                to_delete.push(key);
+        var to_delete = [],
+            key,
+            val,
+            i = 0,
+            len;
+
+        for(key in this) {
+            if (this.hasOwnProperty(key)) {
+                val = this[key];
+                if (key.slice(key.length-4) === '_old') {
+                    to_delete.push(key);
+                }
             }
-        });
-        
-        $.each(to_delete, function(i, key) {
+        }
+
+        len = to_delete.length;
+        for(i=0; i < len; i++) {
+            key = to_delete[i];
             delete this[key];
-        });
+        }
     },
     
     toState: // set object to the state
@@ -104,7 +123,7 @@ GameObject = {
         this.cleanOld();
         
         // emit message to renderer
-        board_event[get_board_event_name(that)](that);
+        board.event[get_board_event_name(that)](that);
     },
 
     instance_properties: ['inventory'],
@@ -119,8 +138,8 @@ GameObject = {
     create:
     function (data) {
 
-        var obj = Object.beget(this);
-        obj = $.extend(obj, data);
+        var obj = Object.beget(this); // link prototype to GameObject
+        obj = $.extend(obj, data);    // add instance properties
 
         // add inventory here, until more elegant solution is found for creating
         // default instance values
@@ -140,7 +159,6 @@ GameObject = {
     
     remove:
     function () {
-        
         var that = $.extend({}, this);
         
         state.cleanLocation(this);
@@ -150,7 +168,7 @@ GameObject = {
         state.removeGameObject(this);
         
         // emit message to renderer
-        board_event[get_board_event_name(that)](that);
+        board.event[get_board_event_name(that)](that);
         delete that;
     },
 
@@ -162,8 +180,6 @@ InventoryMethods = {
     
     addInventory:
     function(game_object) {
-        console.log('add inventory');
-        console.log(this);
         this.inventory.push(game_object.id);
     },
     
@@ -171,7 +187,7 @@ InventoryMethods = {
     function (game_object) {
         var index = $.inArray(game_object.id);
         if (index > -1) {
-            this.inventory.splice(index,1);
+            this.inventory.splice(index, 1);
         }
     },
 };

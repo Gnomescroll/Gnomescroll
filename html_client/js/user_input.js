@@ -1,32 +1,36 @@
 var input,
     keymap;
 
-input = ( function () {
+input = {
 
-    var queue = [],
-        init,
-        next;
+    queue: [],  // queue of events received
+    keys: {},  // for detecting multiple keys pressed
         
-    // init $ bindings
-    init = function () {
-        
+    init: function () { // init $ bindings
+        var that = this;
         $('body').keydown(function (event) {
             var key = keymap[event.which];
-            queue.push({key: key, timestamp: event.timeStamp});
-               }).click(function (event) {
-                  var key = keymap[event.which];
-                  if (key === 'left-click') { 
-                      map_editor.set_tile(event);
-                  } 
-               });
-    };
+            input.queue.push({key: key, timestamp: event.timeStamp});
+            that.keys[key] = true;
+            processInput(key);
+        }).click(function (event) {
+            var key = keymap[event.which];
+            if (key === 'left-click') { 
+                map_editor.set_tile(event);
+            } 
+        });
+
+        $('body').keyup(function (event) {
+            var key = keymap[event.which];
+            delete that.keys[key];
+            processInput();
+        });
+    },
         
-    // shifts the queue, FIFO
-    next = function (delay) {
-        
+    next: function (delay) { // shifts the queue, FIFO
         var timestamp = 0,
-            delay = delay || 300; // millisecond delay between input
-        
+            delay = delay || 300, // millisecond delay between input
+            queue = this.queue;
         
         while (queue.length > 0) {
             var event = queue.shift();
@@ -34,22 +38,17 @@ input = ( function () {
             if (event === undefined || !(event.timestamp - timestamp) > delay) {
                 continue;
             }
+
+            // check any other held down keys
             
-            timestamp = event.timestamp;
-            console.log(timestamp);
+            timestamp = event.timestamp; // set timestamp of last event
             queue = [];
             
             return event.key;
         }
-        
         return false;
-    };
-        
-    return { init: init,
-             next: next,
-           };
-
-}());
+    }
+};
 
 // for the keydown event.
 // NOTE: keypress keymap is COMPLETELY DIFFERENT FOR NO REASON
@@ -168,4 +167,93 @@ keymap = {
     //0: '5NUMPAD',
     //0: '.NUMPAD',
     //0: '0NUMPAD',
-}
+};
+
+var processInput = function (key) {
+    var old,
+        panning_delta = {x: 0, y: 0},
+        key_type;
+        
+    for (key_type in input.keys) {
+        if (!input.keys.hasOwnProperty(key_type)) continue;
+        switch (key_type) {
+            case 'LEFT':
+                panning_delta.x += -1;
+                break;
+            case 'RIGHT':
+                panning_delta.x += 1;
+                break;
+            case 'UP':
+                panning_delta.y += -1;
+                break;
+            case 'DOWN':
+                panning_delta.y += 1;
+                break;
+        }
+    }
+    board.scroll(panning_delta.x, panning_delta.y);
+
+    if (!key) return false;
+    switch (key) {
+        
+        case 'ESC':               //quit ? remove this
+            map_editor.clear_current();
+            return false;
+            
+        case 'LEFT':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'RIGHT':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'UP':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'DOWN':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'c':                   // set map solid
+            console.log('set map');
+            //admin.set_map(selected_agent.pos(), 1);
+            admin.set_map(cursor.pos(), 1);
+            break;
+            
+        case 'x':                   // set map empty
+            //admin.set_map(selected_agent.pos(), 0);
+            admin.set_map(cursor.pos(), 0);
+            break;
+            
+        case 'p':                   // create agent
+            admin.create_agent(cursor.pos());
+            break;
+            
+        case 't':
+            admin.create_object(cursor.pos());
+            break;
+            
+        case 'g':
+            //admin.create_object(selected_agent.pos(), 
+            break;
+            
+        case 'r':
+            action.plant(selected_agent.id);
+            break;
+            
+        case 'f':
+            action.till(selected_agent.id);
+            break;
+            
+        case 'v':
+            action.harvest(selected_agent.id);
+            break;
+            
+        case 'i':
+            info.map(5);
+            break;
+    }
+    return true;
+};

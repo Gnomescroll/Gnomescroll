@@ -1,5 +1,7 @@
+from __future__ import division
 import libtcodpy as libtcod
 import random
+
  
 #actual size of the window
 SCREEN_WIDTH = 80
@@ -12,11 +14,9 @@ MAP_WIDTH = 200
 MAP_HEIGHT = 200
 map_viewer = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 mouse_on_drag_start = None
-LEVELS_ABOVE = 64
+LEVELS_ABOVE = 20
 LEVELS_BELOW = 64
-levels_to_display = 1
-z_to_display = (LEVELS_ABOVE + LEVELS_BELOW) - levels_to_display - 1
-view_mode = "color"
+z_to_display = 19
 
 #For creating noise for heightmaps:
 #First number = degrees of noise 1-4, should always be 2.
@@ -26,13 +26,15 @@ view_mode = "color"
 
 LIMIT_FPS = 20  #20 frames-per-second maximum
 
-local_detail_random=libtcod.random_new_from_seed(random.randint(1, 1000000))
+SEED = 555555
+
+local_detail_random=libtcod.random_new_from_seed(SEED)
 local_detail_noise=libtcod.noise_new(2, 0.5, 2, local_detail_random) 
 
-roughness_random = libtcod.random_new_from_seed(random.randint(1, 1000000))
+roughness_random = libtcod.random_new_from_seed(SEED)
 roughness_noise=libtcod.noise_new(2, 0.5, 20, roughness_random)
 
-elevation_random = libtcod.random_new_from_seed(random.randint(1, 1000000))
+elevation_random = libtcod.random_new_from_seed(SEED)
 elevation_noise=libtcod.noise_new(2, 0.5, 20, elevation_random)
 
 # 3x3 kernel for smoothing operations
@@ -40,47 +42,6 @@ smoothKernelSize=9
 smoothKernelDx=[-1,0,1,-1,0,1,-1,0,1]
 smoothKernelDy=[-1,-1,-1,0,0,0,1,1,1]
 smoothKernelWeight=[1.0,2.0,1.0,2.0,20.0,2.0,1.0,2.0,1.0]
-
-def get_color(element):
-	#TODO: make this a dictionary
-	if element <= 0.15:
-		return libtcod.blue
-	elif element <= 0.2:
-		return libtcod.lightest_yellow
-	elif element <= 0.25:
-		return libtcod.lightest_amber
-	elif element <= 0.3:
-		return libtcod.lighter_amber
-	elif element <= 0.35:  
-		return libtcod.lightest_green
-	elif element <= 0.4:  
-		return libtcod.lighter_green
-	elif element <= 0.45:  
-		return libtcod.light_green
-	elif element <= 0.5: 
-		return libtcod.green
-	elif element <= 0.55: 
-		return libtcod.dark_green
-	elif element <= 0.6: 
-		return libtcod.darker_green
-	elif element <= 0.65:
-		return libtcod.darkest_green
-	elif element <= 0.7:
-		return libtcod.darker_sepia
-	elif element <= 0.75:
-		return libtcod.darkest_sepia
-	elif element <= 0.8:
-		return libtcod.darker_grey
-	elif element <= 0.85:
-		return libtcod.grey
-	elif element <= 0.9:
-		return libtcod.light_grey
-	elif element <= 0.95:
-		return libtcod.lighter_grey
-	elif element <= 1.0:
-		return libtcod.lightest_grey
-	else:
-		return libtcod.white
 
 # function building the heightmap
 def build_local_detail(hm) :
@@ -115,62 +76,46 @@ def build_elevation(hm) :
 	print "done with elevation map"
 
 def move_screen(dx, dy):
-	global viewer_top_x, viewer_top_y, viewer_bottom_x, viewer_bottom_y
+	global viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y
 	#moves the screen if that wouldn't cause the edge of the map to be exceeded.
 	#If it would, it moves as much as it can without passing the edge of the map.
+	#CRASH: Not working for some reason right now, still a crash if it moves off, probably just a last index issue
 	viewer_bot_x = viewer_top_x + SCREEN_WIDTH
 	viewer_bot_y = viewer_top_y + SCREEN_HEIGHT
 
 	if viewer_top_x + dx < 0: 
-			dx = viewer_top_x * -1
+		dx = viewer_top_x * -1
 	
 	elif viewer_bot_x + dx >= MAP_WIDTH:
-			dx = MAP_WIDTH - viewer_bot_x
+		dx = MAP_WIDTH - viewer_bot_x
 
 	if  viewer_top_y + dy < 0:
-			dy = viewer_top_y * -1
+		dy = viewer_top_y * -1
 
 	elif viewer_bot_y + dy >= MAP_HEIGHT:
-			dy = MAP_HEIGHT - viewer_bot_y
+		dy = MAP_HEIGHT - viewer_bot_y
 
 	viewer_top_x = viewer_top_x + dx
 	viewer_top_y = viewer_top_y + dy
-		
-def render(mode):
+	viewer_bot_x = viewer_top_x + SCREEN_WIDTH
+	viewer_bot_y = viewer_top_y + SCREEN_HEIGHT
+	print viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y
+            
+def render():
+	global top_terrain
 	x = 0;
 	y = 0;
 	libtcod.console_flush()
+
+	for x in range(viewer_top_x, viewer_bot_x):
+		for y in range(viewer_top_y, viewer_bot_y):
+			z = top_terrain[x][y][z_to_display]
+			if z == 0:
+				c = libtcod.lighter_blue
+			else:
+				c = libtcod.black
+			libtcod.console_set_char_background(map_viewer, x, y, c, libtcod.BKGND_SET)
 	
-	if mode == "levels":
-		for x in range(viewer_top_x, viewer_top_x + SCREEN_WIDTH):
-			for y in range(viewer_top_y, viewer_top_y + SCREEN_HEIGHT):
-				#If the current square is ground, and there is air above, color it
-				if terrain[x][y][z_to_display] == 1 and terrain[x][y][z_to_display + levels_to_display] == 0:
-					z = libtcod.heightmap_get_value(final_hm, x ,y)
-					c = get_color(z)
-				#if the current square is ground, and there is rock above it, it should be black, for the cross section
-				elif terrain[x][y][z_to_display] == 1:
-					c = libtcod.black
-				#otherwise, it is air, it is blue
-				else:
-					c = libtcod.lightest_blue
-				libtcod.console_set_char_background(map_viewer, x, y, c, libtcod.BKGND_SET)
-				
-	elif mode == "shade":
-		for x in range(viewer_top_x, viewer_top_x + SCREEN_WIDTH):
-			for y in range(viewer_top_y, viewer_top_y + SCREEN_HEIGHT):
-				z = libtcod.heightmap_get_value(final_hm, x, y)
-				val = int(z*255) & 0xFF
-				c = libtcod.Color(val, val, val)
-				libtcod.console_set_char_background(map_viewer, x, y, c, libtcod.BKGND_SET)
-				
-	elif mode == "color":
-		for x in range(viewer_top_x, viewer_top_x + SCREEN_WIDTH):
-			for y in range(viewer_top_y, viewer_top_y + SCREEN_HEIGHT):
-				z = libtcod.heightmap_get_value(final_hm, x, y)
-				c = get_color(z)
-				libtcod.console_set_char_background(map_viewer, x, y, c, libtcod.BKGND_SET)
-				
 	libtcod.console_blit(map_viewer, viewer_top_x, viewer_top_y, viewer_bot_x, viewer_bot_y, 0, 0, 0)
 	
 def handle_mouse(current_mouse):
@@ -187,47 +132,55 @@ def handle_keys():
 	global z_to_display, view_mode
 	key = libtcod.console_check_for_keypress()  #real-time
 
-	if key.vk == libtcod.KEY_ENTER and libtcod.KEY_ALT:
-		#Alt+Enter: toggle fullscreen
-		libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
-
-	elif key.vk == libtcod.KEY_DOWN:
+	if key.vk == libtcod.KEY_DOWN:
 	#Down to the next z-level
 		if  z_to_display != 0:
 			z_to_display = z_to_display - 1
-			print "Current z levels are", z_to_display, "to", z_to_display + levels_to_display
+			print "Current z levels is", z_to_display
 	
 	elif key.vk == libtcod.KEY_UP:
 	#Up to the next z-level
-		if z_to_display != (LEVELS_ABOVE + LEVELS_BELOW) - levels_to_display - 1:
+		if z_to_display != (LEVELS_ABOVE) - 1:
 			z_to_display = z_to_display + 1
-			print "Current z levels are", z_to_display, "to", z_to_display + levels_to_display
-				
-	elif key.vk == libtcod.KEY_SPACE:
-	#Down to the next z-level
-		if  view_mode == "shade":
-			view_mode = "levels"
-			print "View mode set to show a single z level at a time."
-			
-		elif  view_mode == "levels":
-			view_mode = "color"
-			print "View mode set to show a colored overview of the terrain."
-			
-		elif  view_mode == "color":
-			view_mode = "shade"
-			print "View mode set to show a grayscale shading of height variance."
+			print "Current z levels is", z_to_display
 	
 	elif key.vk == libtcod.KEY_ESCAPE:
 		return True  #exit game
  
 def translate_to_terrain(hm):
-	terrain = [[[0 for z in range(LEVELS_ABOVE + LEVELS_BELOW)] for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+	#This function will be used to erode the top of the perlin noise using a heightmap
+	"""terrain = [[[0 for z in range(LEVELS_ABOVE + LEVELS_BELOW)] for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
 	for x in range(MAP_WIDTH):
 		for y in range(MAP_HEIGHT):
 			height = (int(libtcod.heightmap_get_value(final_hm, x ,y)*64 + 64))
 			for z in range(height):
 				terrain[x][y][z] = 1
+	return terrain"""
+	
+def create_top_terrain(noise):
+	#zoom must be equal to or greater than the map size
+	ZOOM = 200.0
+	cutoff = -1.1
+	terrain = [[[0 for z in range(LEVELS_ABOVE)] for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+	for z in range(0, LEVELS_ABOVE):
+		print "Now generating level", z+1, "out of", LEVELS_ABOVE, "total levels."
+		if z <= 10:
+			cutoff = cutoff + 0.1
+		for x in range(0, MAP_WIDTH):
+			for y in range(0, MAP_WIDTH):
+				terrain[x][y][z] = libtcod.noise_get_fbm(noise, [(x/ZOOM), (y/ZOOM), (z/ZOOM)], 32.0, libtcod.NOISE_PERLIN)
+				if terrain[x][y][z] < cutoff:
+					terrain[x][y][z] = 0
+				else:
+					terrain[x][y][z] = 1
 	return terrain
+	
+def drange(start, stop, step):
+	#Stole this from stackoverflow
+	r = start
+	while r < stop:
+		yield r
+		r += step
 	
 #############################################
 # Initialization
@@ -236,6 +189,18 @@ def translate_to_terrain(hm):
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Gnomescroll Worldgen', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 
+###########
+## Generate 3D Perlin noise for the top of the world.
+## Not worrying about below ground just yet
+###########
+
+noise3d = libtcod.noise_new(3, 0.5, 2.0)
+libtcod.noise_set_type(noise3d, libtcod.NOISE_PERLIN)
+top_terrain = create_top_terrain(noise3d)
+
+###########
+## Heightmap is flipped upside down and used for top boundaries.
+###########
 local_detail_hm=libtcod.heightmap_new(MAP_WIDTH,MAP_HEIGHT)
 build_local_detail(local_detail_hm)
 
@@ -250,23 +215,17 @@ libtcod.heightmap_multiply_hm(local_detail_hm, roughness_hm, multiplied_hm)
 libtcod.heightmap_delete(local_detail_hm)
 libtcod.heightmap_delete(roughness_hm)
 
-
-
 final_hm = libtcod.heightmap_new(MAP_WIDTH, MAP_HEIGHT)
 libtcod.heightmap_add_hm(elevation_hm, multiplied_hm, final_hm)
 libtcod.heightmap_delete(elevation_hm)
 libtcod.heightmap_delete(multiplied_hm)
 
 libtcod.heightmap_normalize(final_hm)
-print "Final heightmap generated. Now translating to a three dimensional array."
-
-#translate the 2D hm to a 3D terrain map
-terrain = translate_to_terrain(final_hm)
-print "Translation complete."
+print "Top boundary heightmap generated."
 
 while not libtcod.console_is_window_closed():
  
-	render(view_mode);
+	render();
 	
 	handle_mouse(libtcod.mouse_get_status())
 	#handle keys and exit game if needed

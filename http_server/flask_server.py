@@ -1,3 +1,9 @@
+#!/usr/bin/python
+
+'''
+    Deprecated
+    Use node_server
+'''
 from flask import Flask, render_template, request, Response
 import simplejson
 import redis
@@ -12,14 +18,19 @@ PORT = 8055
 
 # redis
 def send_message(msg):
+    if type(msg) != dict:
+        return
+    world_id = msg.get('world_id', None)
+    if world_id is None:
+        return 
     r_client = redis.Redis('localhost')
-    world_id = msg['world_id']
     r_client.lpush("world_"+str(world_id), dumps(msg))
 
 @app.route("/")
 def root():
     with open(dir+'/index.html') as f:
-        return Response(f.read())
+        headers = { 'Access-Control-Allow-Origin': 'http://127.0.0.1:8080' }
+        return Response(f.read(), headers=headers)
     
 @app.route('/<file>')
 def static_file(file=None):

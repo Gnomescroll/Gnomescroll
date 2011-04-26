@@ -23,13 +23,17 @@
 td.selected {
     color: red;
 }
+
+#control_panel {
+    float: left;
+}
 </style>
 
-<link rel="stylesheet" type="text/css" href="http://127.0.0.1:8055/static/tipTip/tipTip.css" />
+<link rel="stylesheet" type="text/css" href="http://127.0.0.1:8080/static/tipTip/tipTip.css" />
 
 <script src='http://127.0.0.1:8080/socket.io/socket.io.js'></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="http://127.0.0.1:8055/static/tipTip/jquery.tipTip.js"></script>
+<script src="http://127.0.0.1:8080/static/tipTip/jquery.tipTip.js"></script>
 
 
 
@@ -47,11 +51,15 @@ TEST
 
 </h1>
 
-<span id="map_editor">
-</span>
+<div id="control_panel">
+    <div id="map_editor">
+    </div>
+    <div id="options">
+    </div>
+</div>
 
 <div id="game" >
-
+<!--
 <span id="controls">
 <a id="button" class="increase_cell_size" href="">
     <img src="static/buttons/increase_cell_size.png" />
@@ -60,31 +68,25 @@ TEST
     <img src="static/buttons/decrease_cell_size.png" />
 </a>
 </span>
-
-<canvas id ="DrawingCacheWorkspace" width="384" height="384" > </canvas>
-<canvas id ="board" width="384" height="384" > </canvas>
-
-<br>
-<img id="tileset_0" class="tilemap" src="static/tiles/Bisasam_24x24.png" />
-<img id="tileset_1" class="tilemap" src="static/tiles/dwarves.png" />
-
+-->
 </div>
 
 </body>
-<script src="js/process_msg.js"></script>
-<script src="js/validate.js"></script>
-<script src="js/socket.js"></script>
-<script src="js/game_objects.js"></script>
-<script src="js/state_m3thyl.js"></script>
-<script src="js/server_api.js"></script>
-<script src="js/user_input.js"></script>
+<script src="http://127.0.0.1:8080/js/process_msg.js"></script>
+<script src="http://127.0.0.1:8080/js/validate.js"></script>
+<script src="http://127.0.0.1:8080/js/socket.js"></script>
+<script src="http://127.0.0.1:8080/js/game_objects.js"></script>
+<script src="http://127.0.0.1:8080/js/state.js"></script>
+<script src="http://127.0.0.1:8080/js/server_api.js"></script>
+<script src="http://127.0.0.1:8080/js/user_input.js"></script>
 
-<script src="js/game.js"></script>
+<script src="http://127.0.0.1:8080/js/game.js"></script>
 
-<script src="js/tileset.js"></script>
-<script src="js/board.js"></script>
+<script src="http://127.0.0.1:8080/js/tileset.js"></script>
+<script src="http://127.0.0.1:8080/js/board.js"></script>
 
-<script src="js/map_editor.js"></script>
+<script src="http://127.0.0.1:8080/js/map_editor.js"></script>
+<script src="http://127.0.0.1:8080/js/options.js"></script>
 
 <script>
 
@@ -99,10 +101,9 @@ drawingCache.drawSprite(5,5,127,1);
 
 
 $('#init').click(function (event) {
-    event.preventDefault;
-	board.init();
-	drawingCache.insertTilemap("static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
-	drawingCache.insertTilemap("static/tiles/dwarves.png", 1, 18, 20, 16, 16);
+    board.init();
+    drawingCache.insertTilemap("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
+    drawingCache.insertTilemap("/static/tiles/dwarves.png", 1, 18, 20, 16, 16);
     
     game.init();
 
@@ -110,39 +111,39 @@ $('#init').click(function (event) {
 });
 
 $('#start').click(function (event) {
-    event.preventDefault;
     
- //   	console.timeEnd('a')
-//	console.time('b')
+ //     console.timeEnd('a')
+//  console.time('b')
     console.time("board_draw")
     board.start();
-	console.timeEnd("board_draw");
+    console.timeEnd("board_draw");
+    $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
+        
+    map_editor.init();
+    options.init();
     
-    map_editor.init_panel();
-    map_editor.init_panel_controls();
-
 /* //benchmarking
 var i;
 var times = 1000;
 
-	console.time("default_drawing_function")
-	for(i=0; i<times; i++)	cursor_manager.draw_board()
-	console.timeEnd("default_drawing_function")
-	
-	console.time("drawing_function_0")	
-	//cursor_manager.draw_board()
-	for(i=0; i<times; i++)	cursor_manager.test_draw_board_0();
-	console.timeEnd("drawing_function_0")	
+    console.time("default_drawing_function")
+    for(i=0; i<times; i++)  cursor_manager.draw_board()
+    console.timeEnd("default_drawing_function")
+    
+    console.time("drawing_function_0")  
+    //cursor_manager.draw_board()
+    for(i=0; i<times; i++)  cursor_manager.test_draw_board_0();
+    console.timeEnd("drawing_function_0")   
 
-	console.time("drawing_function_1")	
-	for(i=0; i<times; i++)	cursor_manager.test_draw_board_1();
-	console.timeEnd("drawing_function_1")
+    console.time("drawing_function_1")  
+    for(i=0; i<times; i++)  cursor_manager.test_draw_board_1();
+    console.timeEnd("drawing_function_1")
 
-	console.time("drawing_function_2")	
-	for(i=0; i<times; i++)	cursor_manager.test_draw_board_2();
-	console.timeEnd("drawing_function_2")
+    console.time("drawing_function_2")  
+    for(i=0; i<times; i++)  cursor_manager.test_draw_board_2();
+    console.timeEnd("drawing_function_2")
 */
-			
+            
     //test1();
   /*
     drawingCache.drawTile(1,1,0);
@@ -154,25 +155,13 @@ var times = 1000;
     drawingCache.drawTile(3,1,128);
     drawingCache.drawTile(4,2,1002);
     drawingCache.drawTile(5,5,666);
-	drawingCache.drawTile(5,1,-1);
-	drawingCache.drawTile(6,1,65);
-	
-	drawingCache.drawSprite(5,5,127,1);
-	drawingCache.drawSprite(6,6,0,1);
-	*/
-	game.start();
+    drawingCache.drawTile(5,1,-1);
+    drawingCache.drawTile(6,1,65);
     
-    $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
-    $('.tip.click').tipTip({ activation: 'click', 
-                             delay: 100,
-                             fadeIn: 100,
-                             fadeOut: 400,
-                             edgeOffset: -250, 
-                             edgeInset: 100, 
-                             defaultPosition: 'top', 
-                             position: 'absolute',
-                             activeMethod: board_info.tooltip_active_method,
-                            });
+    drawingCache.drawSprite(5,5,127,1);
+    drawingCache.drawSprite(6,6,0,1);
+    */
+    game.start();
     
     return false;
 });
