@@ -1,7 +1,7 @@
 var globals = {
 
     world_id: 0,
-    client_id: function () {    // generate random 16 char string
+    client_id: (function () {    // generate random 16 char string
         var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
             num_chars = chars.length,
             string_length = 16,
@@ -13,7 +13,7 @@ var globals = {
             randomstring += chars.charAt(rnum);
         }
         return randomstring;
-    },
+    }()),
     player_id: 0,
     server_out: '',//'http://127.0.0.1:8080',
     update: function (params) {

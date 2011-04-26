@@ -33,7 +33,7 @@ socket = {
         socket.on('connect', function () {
             if (debug) console.log('connect');
             // send client id to server
-            //socket.send(JSON.stringify({ wo
+            socket.send(JSON.stringify({ world_id: globals.world_id, client_id: globals.client_id }));
             if (!started) {
                 game.init2();
                 started = true;
