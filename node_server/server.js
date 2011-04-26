@@ -4,44 +4,51 @@
  * 
  */
 
-var http = require('http'),
-    views,
-    urls,
-    server;
+function HttpServer(port) {
+    var http = require('http'),
+        views,
+        urls;
 
-views = {
-    hello : function (request, response) {
-                return '<h1>Gnomescroll</h1>';
-            },
+    views = {
+        hello : function (request, response) {
+                    return '<h1>Gnomescroll</h1>';
+                },
 
-    api : function (request, response) {
-              return 'api';
-          },
-};
+        api : function (request, response) {
+                  return 'api';
+              },
+    };
 
-urls = {
-    ''     : views.hello,
-    '/'    : views.hello,
-    '/api' : views.api,
-};
+    this.views = views;
+    
+    urls = {
+        ''     : views.hello,
+        '/'    : views.hello,
+        '/api' : views.api,
+    };
 
-server = http.createServer(function(request, response){
-    //console.log(request.url);
-    var http_code = 200,
-        body = urls[request.url];
-    if (body === undefined) {
-        http_code = 404;
-        body = '';
-    } else {
-        body = body();
-    }
-    response.writeHead(http_code, {'Content-Type': 'text/html'});
-    response.write(body); 
-    response.end(); 
-}); 
-server.listen(8080);
+    this.urls = urls;
 
+    this.server = http.createServer(function(request, response){
+        //console.log(request.url);
+        var http_code = 200,
+            body = urls[request.url];
+        if (body === undefined) {
+            http_code = 404;
+            body = '';
+        } else {
+            body = body();
+        }
+        response.writeHead(http_code, {'Content-Type': 'text/html'});
+        response.write(body); 
+        response.end(); 
+    });
 
+    this.port = port || 8080;
+    this.server.listen(this.port);
+}
+
+var http = new HttpServer(8080);
 
 /*
  * 
@@ -65,7 +72,6 @@ r.subscribe("global_admin", function(channel, message, pattern) {
 });
 
 
-
 /*
  * 
  * Socket.io
@@ -76,7 +82,7 @@ var io = require('socket.io'),
     socket,
     clients = {};
 
-socket = io.listen(server, { websocket: { closeTimeout: 15000 }}); 
+socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Socket.io Listening');
 
 socket.on('connection', function(client) {
