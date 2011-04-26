@@ -5,11 +5,25 @@ var sys = require('sys'),
     r = redis.createClient(6379, '127.0.0.1'),
     server,
     socket,
-    clients = {};
-  
-server = http.createServer(function(request, response){ 
-    response.writeHead(200, {'Content-Type': 'text/html'}); 
-    response.write('<h1>Hello world</h1>'); 
+    clients = {},
+    urls;
+
+urls = {
+    ''     : '<h1>Gnomescroll</h1>',
+    '/'    : '<h1>Gnomescroll</h1>',
+    '/api' : 'api'
+};
+
+server = http.createServer(function(request, response){
+    //console.log(request.url);
+    var http_code = 200,
+        body = urls[request.url];
+    if (body === undefined) {
+        http_code = 404;
+        body = '';
+    }
+    response.writeHead(http_code, {'Content-Type': 'text/html'});
+    response.write(body); 
     response.end(); 
 }); 
 server.listen(8080);
