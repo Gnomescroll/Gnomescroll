@@ -572,9 +572,9 @@ class Player:
                 #self.draw_side(x_, floor(y_), floor(z_), 3)
 
                 if x < 0:
-                    self.draw_cube(x_, floor(y_), floor(z_), 4)
+                    self.draw_cube(x_, floor(y_), floor(z_), 2)
                 elif x>= 0:
-                    self.draw_cube(x_, floor(y_), floor(z_), 5)
+                    self.draw_cube(x_, floor(y_), floor(z_), 3)
 
         if dx < 0:
             pass #north side
