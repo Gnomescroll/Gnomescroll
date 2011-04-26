@@ -82,7 +82,7 @@
                             deactive_tiptip();
                         }
                     });
-                    tiptip_holder.hover(function(){}, function(){
+                    tiptip_holder.hover(function(){
                         deactive_tiptip();
                     });
                 } else if(opts.activation == "focus"){
@@ -106,7 +106,7 @@
                             deactive_tiptip();
                         }
                     });
-                    tiptip_holder.hover(function(){}, function(){
+                    tiptip_holder.hover(function(){
                         deactive_tiptip();
                     });
                 }
