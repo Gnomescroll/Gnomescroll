@@ -514,7 +514,7 @@ class Player:
                 v_num += 2
                 v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
                 v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
-                c_list += [155,0,0]*2
+                c_list += [150,0,0]*2
 
         pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
@@ -636,6 +636,16 @@ class Player:
                 self._append_side(cube_dict, floor(x_), y_-1, floor(z_), 4) #west
             elif dy >= 0:
                 self._append_side(cube_dict, floor(x_), y_, floor(z_), 5) #east
+
+        for iz in range(0,5):
+            if dz*dz < 0.00000001: #prevent division by zero errors
+                continue
+            l = (iz-self.x)/fabs(dz)
+            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
+            if dz < 0:
+                self._append_side(cube_dict, floor(x_), floor(y_), z_-1, 0) #top
+            elif dz >= 0:
+                self._append_side(cube_dict, floor(x_), floor(y_), z_, 1) #bottom
 
         for (x,y,z), sides in cube_dict.items():
             self.draw_side(x,y,z,sides)
