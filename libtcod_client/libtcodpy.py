@@ -43,7 +43,7 @@ if sys.platform.find('linux') != -1:
     _lib = ctypes.cdll['./libtcod.so']
 else:
     try:
-        _lib = ctypes.cdll['./libtcod-mingw.dll']
+        _lib = ctypes.cdll['./libtcod.dylib']
     except WindowsError:
         _lib = ctypes.cdll['./libtcod-VS.dll']
     # On Windows, ctypes doesn't work well with function returning structs,
