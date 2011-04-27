@@ -221,21 +221,17 @@ console.log('Socket.io Listening');
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
     console.log('Client Connected');
-    //console.log(client);
     client.confirm_register = confirm_register;
     clients[client.sessionId] = client;
     const redisClient = redis.createClient();
     redisClient.subscribe('world_0_out');
 
     redisClient.on('message', function(channel, message) {
-        console.log('redis said something');
-        //console.log(message);
         client.send(message);
     });
     
     client.on('message', function(message) {
         if (message === undefined) return;
-        console.log('client sent message: '+ message.toString());
         message = JSON.parse(message);
         if (typeof message !== 'object') return;
         if (message.cmd === 'register') {

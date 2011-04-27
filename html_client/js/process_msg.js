@@ -21,16 +21,16 @@ process.info = {};
 //current stores rendering information for tile, but discards meta information
 //retain/store tile_dict somewhere    
 process.info.tileset = function(msg) {
-    console.log('tileset received');
     var param,
         data,
         x,
         tile,
-        index;
+        tr = msg.tile_rendering,
+        tp = msg.tile_properties;
 
-    for(x in msg.tile_rendering) {
-        if (!msg.tile_rendering.hasOwnProperty(x)) continue;
-        param = msg.tile_rendering[x];
+    for(x in tr) {
+        if (!tr.hasOwnProperty(x)) continue;
+        param = tr[x];
         
         data = {
             tile_name     : param.tile_name,
@@ -45,9 +45,9 @@ process.info.tileset = function(msg) {
         tileset_state.add_tile(data);
     }
 
-    for(index in msg.tile_properties) {
-        if (!msg.tile_properties.hasOwnProperty(index)) continue;
-        tile = msg.tile_properties[index];
+    for(x in tp) {
+        if (!tp.hasOwnProperty(x)) continue;
+        tile = tp[x];
         tile_properties.add(tile);
     }
 
@@ -62,7 +62,7 @@ process.info.tileset = function(msg) {
     // ideally it is a map from object_type identifiers to drawing properties
     // these drawing properties should be easily checked by the tilecache
 };
-    
+
 // world_id, client_id, x_size, y_size, z_level, map
 process.info.terrain_map = function (msg) {
         //console.log(msg);

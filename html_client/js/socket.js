@@ -8,21 +8,15 @@ socket = {
     socket: null,
     
     init: function () {
-        
+        this.socket = this.socket || new io.Socket(this.node_server, {
+                                                   'port' : this.node_port,
+                                         'connectTimeout' : 200,
+                                      'rememberTransport' : false,
+                                           'closeTimeout' : 12000,
+                                                  });
         var started = false,
             debug = this.debug,
-            socket = new io.Socket(this.node_server, {
-                                   'port' : this.node_port,
-                         'connectTimeout' : 200,
-                      'rememberTransport' : false,
-                           'closeTimeout' : 12000,
-                                  });
-        
-        // this will adjust the rate of connection cycling by a websocket
-        // the default is 15000
-        //socket.transport.options.timeout = 1500;
-        
-        this.socket = socket;
+            socket = this.socket;
         
         socket.on('connect', function () {
             if (debug) console.log('connect');
@@ -68,5 +62,12 @@ socket = {
         socket.connect();
 
         //setInterval('socket.socket.send("ping")', this.ping_delay); // start pinging the server to keep-alive
+    },
+
+    reset : function () {
+        if (this.socket) {
+            this.socket.disconnect();
+        }
+        this.init();
     }
 };
