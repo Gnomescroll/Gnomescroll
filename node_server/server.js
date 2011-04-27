@@ -206,6 +206,8 @@ var http_port = 8080,
  */
 var io = require('socket.io'),
     socket,
+    clients = {}, // maps client_id to client objects
+    session_clients = {}, // maps session_id to client objects
     client_id_to_session = {},
     session_id_to_client = {},
     confirm_register = function (msg) { // response the client after receipt of client_id
@@ -214,6 +216,7 @@ var io = require('socket.io'),
             msg.session_id = this.sessionId;
             client_id_to_session[msg.client_id] = msg.session_id;
             session_id_to_client[msg.session_id] = msg.client_id;
+            clients[msg.client_id] = this;
         } else {
             msg.session_id = 'taken'; // client_id in use
         }
@@ -237,13 +240,38 @@ console.log('Socket.io Listening');
  */
 
 
+/*
+ *  Session -> ID       A
+ *  ID -> Session       B
+ *  Session -> Client   C
+ *  ID -> Client        D
+ *
+ * On connect:
+ *      C
+ * On register:
+ *      If known:
+ *          subscribe to redis channel
+ *      Else:
+ *          Create redis channel and subscribe
+ *      A, B, D
+ * On disconnect:
+ *      Remove:
+ *          A, C
+ *      Set to null:
+ *          B, D
+ * 
+ *
+ *
+ */
+
+
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
     console.log('Client Connected');
     if (client.confirm_register === undefined) {
         client.confirm_register = confirm_register;
     }
-    //clients[client.sessionId] = client;
+    session_clients[client.sessionId] = client;
     
     const redisClient = redis.createClient();
     redisClient.subscribe('world_0_out');
