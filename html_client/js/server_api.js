@@ -1,8 +1,6 @@
 var globals = {
 
-    world_id : 0,
-    
-    client_id : (function () {    // generate random 16 char string
+    _generate_id : function () {    // generate random 16 char string
         var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
             num_chars = chars.length,
             string_length = 16,
@@ -14,13 +12,11 @@ var globals = {
             randomstring += chars.charAt(rnum);
         }
         return randomstring;
-    }()),
-    
-    player_id  : 0,
-    session_id : null,
+    },
 
-    server_out : '',
-    api_path   : '/api',
+    create_client_id : function () {
+        this.client_id = this._generate_id();
+    },
     
     update : function (params) {
         this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
@@ -28,6 +24,16 @@ var globals = {
         this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
     },
 };
+    
+$.extend(globals, {
+    world_id   : 0,
+    client_id  : globals.create_client_id(),
+    player_id  : 0,
+    session_id : null,
+    server_out : '',
+    api_path   : '/api',
+});
+
 
 var send = function (data) {
     if (globals.session_id === null) {

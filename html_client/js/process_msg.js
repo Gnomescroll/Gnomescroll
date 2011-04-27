@@ -12,7 +12,14 @@ process = {};
 process.register = function(msg) {
     console.log('register');
     console.log(msg);
+    if (msg.session_id === 'taken') {
+        console.log('client_id in use');
+        globals.create_client_id();
+        socket.register();
+        return false;
+    }
     globals.session_id = msg.session_id;
+    return true;
 };
 
 process.info = {};

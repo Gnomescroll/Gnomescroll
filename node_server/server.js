@@ -206,10 +206,17 @@ var http_port = 8080,
  */
 var io = require('socket.io'),
     socket,
-    clients = {},
+    client_id_to_session = {},
+    session_id_to_client = {},
     confirm_register = function (msg) { // response the client after receipt of client_id
         console.log('client registering: '+ msg.client_id);
-        msg.session_id = this.sessionId;
+        if (!client_id_to_session.hasOwnProperty(msg.client_id)) {
+            msg.session_id = this.sessionId;
+            client_id_to_session[msg.client_id] = msg.session_id;
+            session_id_to_client[msg.session_id] = msg.client_id;
+        } else {
+            msg.session_id = 'taken'; // client_id in use
+        }
         msg.msg = msg.cmd;
         delete msg.cmd;
         this.send(JSON.stringify(msg));
@@ -218,11 +225,26 @@ var io = require('socket.io'),
 socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Socket.io Listening');
 
+/* Channels:
+ *  global
+ *  world_X (1 per world chunk, analogous to groups)
+ *  client_id (1 per client)
+ *
+ *
+ * On client connect,
+ *  Tell game_server or redis to create a new channel for the client_id
+ *  
+ */
+
+
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
     console.log('Client Connected');
-    client.confirm_register = confirm_register;
-    clients[client.sessionId] = client;
+    if (client.confirm_register === undefined) {
+        client.confirm_register = confirm_register;
+    }
+    //clients[client.sessionId] = client;
+    
     const redisClient = redis.createClient();
     redisClient.subscribe('world_0_out');
 
