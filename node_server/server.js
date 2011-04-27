@@ -24,11 +24,13 @@
  * 
  */
 var redis = require("redis"),
-    r = redis.createClient(6379, '127.0.0.1');
+    redis_port = 6379,
+    redis_host = '127.0.0.1',
+    r = redis.createClient(redis_port, redis_host);
 
 //subscribe to message stream for map/world
 r.subscribe("world_0_out", function(channel, message, pattern) {
-    client.broadcast(message);
+    //client.broadcast(message);
 });
 
 //global admin messages
@@ -49,7 +51,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
             return;
         }
     } else {
-        msg = json;
+        msg  = json;
         json = JSON.stringify(msg);
     }
     if (msg.world_id === undefined) return;
@@ -69,8 +71,8 @@ var http_port = 8080,
     http = new (function(port) {
     return function () {
         var http = require('http'),
-            URL = require('url'),
-            fs = require('fs'),
+            URL  = require('url'),
+            fs   = require('fs'),
             views,
             urls;
 
@@ -171,9 +173,9 @@ var http_port = 8080,
             });
             
             request.on('end', function () {
-                var ext = set_mimetype(request, response);
-                var status = 200,
-                    body = urls[request.url],
+                var ext    = set_mimetype(request, response),
+                    status = 200,
+                    body   = urls[request.url],
                     media_path;
 
                 if (!body) {    // route to files for static urls
@@ -277,7 +279,7 @@ socket.on('connection', function(client) {
     }
     session_clients[client.sessionId] = client;
     
-    const redisClient = redis.createClient();
+    const redisClient = redis.createClient(redis_port, redis_host);
 
     redisClient.on('message', function(channel, message) {
         client.send(message);
