@@ -187,10 +187,15 @@ r_global.subscribe("global_admin", function(channel, message, pattern) {
 /*
  * Socket.io
  */
+
+//
+//  Something is broken with the client/redis_client/client management
+//  Client eventually loses map state msgs after several reloads
+//      (Possibly triggered by a 2nd client)
+//
 var io = require('socket.io'),
     socket,
     clients = {}, // maps client_id to client objects
-    session_clients = {}, // maps session_id to client objects
     client_id_to_session = {},
     session_id_to_client = {},
     confirm_register = function (msg) { // respond to the client after receipt of client_id
@@ -223,51 +228,31 @@ var io = require('socket.io'),
 socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Socket.io Listening');
 
-/* Channels:
- *  global
- *  world_X (1 per world chunk, analogous to groups)
- *  client_id (1 per client)
- *
- * On client connect,
- *  Tell game_server or redis to create a new channel for the client_id
- *  
- */
-
-
-/*
- *  Session -> ID       A
- *  ID -> Session       B
- *  Session -> Client   C
- *  ID -> Client        D
- *
- * On connect:
- *      C
- * On register:
- *      If known:
- *          subscribe to redis channel
- *      Else:
- *          Create redis channel and subscribe
- *      A, B, D
- * On disconnect:
- *      Remove:
- *          A, C
- *      Set to null:
- *          B, D
- */
-
 /*
  * TODO: culling clients that have disconnected too long
  */
 
-function RedisClient(data, client) {
-    const redisClient = redis.createClient(redis_port, redis_host);
-    redisClient.on('message', function(channel, message) {
-        client.send(message);
-    });
-    redisClient.subscribe('world_'+data.world_id+'_out');
-    redisClient.subscribe('client_'+client.client_id);
-    return redisClient;
-}
+
+var update_redis = function (data) {
+
+    var that = this,
+        bind_message = function() {
+            that.redis_client.on('message', function(channel, message) {
+                that.send(message);
+            });
+        };
+    if (!that.redis_client) { // new redis client
+        that.redis_client = redis.createClient(redis_port, redis_host);
+        bind_message();
+        that.redis_client.subscribe('world_'+data.world_id+'_out');
+        that.redis_client.subscribe('client_'+that.client_id);
+    } else {    // update client object in redis_client.on('message');
+        bind_message();
+    }
+    return that;
+};
+
+
 
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
@@ -275,7 +260,9 @@ socket.on('connection', function(client) {
     if (client.confirm_register === undefined) {
         client.confirm_register = confirm_register;
     }
-    session_clients[client.sessionId] = client;
+    if (client.update_redis === undefined) {
+        client.update_redis = update_redis;
+    }
     
     client.on('message', function(message) {
         var redis_client,
@@ -285,10 +272,7 @@ socket.on('connection', function(client) {
         if (typeof message !== 'object') return;
         if (message.cmd === 'register') {
             if (client.confirm_register(message).confirmed) {
-                // grab old redis client (or make new), reassign
-                if (client.redis_client === undefined) {
-                    client.redis_client = new RedisClient(message, client);
-                }
+                client.update_redis(message);
             }
         } else {
             tell_redis(message);
@@ -300,7 +284,7 @@ socket.on('connection', function(client) {
         var client_id = session_id_to_client[client.sessionId];
         delete session_id_to_client[client.sessionId];
         delete client_id_to_session[client_id];
-        clients[client_id] = null;
+        //clients[client_id] = null;
         client.send(JSON.stringify([{'disconnect': client.sessionId}]));
         //redisClient.quit(); // quit will be in the timeout culling
     };
