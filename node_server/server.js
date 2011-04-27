@@ -212,18 +212,21 @@ var io = require('socket.io'),
     session_id_to_client = {},
     confirm_register = function (msg) { // respond to the client after receipt of client_id
         console.log('client registering: '+ msg.client_id);
-        if (!client_id_to_session.hasOwnProperty(msg.client_id)) {
+        var confirmed = false;
+        if (msg.msg === 'new' && client_id_to_session.hasOwnProperty(msg.client_id)) {
+            msg.session_id = 'taken';
+        } else {
             msg.session_id = this.sessionId;
             client_id_to_session[msg.client_id] = { session_id: msg.session_id,
                                                     timestamp : Date.now() };
             session_id_to_client[msg.session_id] = msg.client_id;
             clients[msg.client_id] = this;
-        } else {
-            msg.session_id = 'taken'; // client_id in use (alter this code. it currently defeats the purpose of a client_id)
+            confirmed = true;
         }
         msg.msg = msg.cmd;
         delete msg.cmd;
         this.send(JSON.stringify(msg));
+        this.confirmed = confirmed;
     };
 
 socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
@@ -275,7 +278,6 @@ socket.on('connection', function(client) {
     session_clients[client.sessionId] = client;
     
     const redisClient = redis.createClient();
-    redisClient.subscribe('world_0_out');
 
     redisClient.on('message', function(channel, message) {
         client.send(message);
@@ -287,6 +289,9 @@ socket.on('connection', function(client) {
         if (typeof message !== 'object') return;
         if (message.cmd === 'register') {
             client.confirm_register(message);
+            if (client.confirmed) {
+                redisClient.subscribe('world_'+message.world_id+'_out');
+            }
         } else {
             tell_redis(message);
         }

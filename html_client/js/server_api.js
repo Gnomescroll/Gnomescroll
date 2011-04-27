@@ -17,17 +17,19 @@ var globals = {
     create_client_id : function () {
         this.client_id = this._generate_id();
         localStorage.client_id = this.client_id;
+        this.new_client = true;
     },
     
     update : function (params) {
-        this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
-        this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
+        this.world_id   = typeof params.world_id   === 'number'  ? params.world_id   : this.world_id;
+        this.client_id  = typeof params.client_id  === 'number'  ? params.client_id  : this.client_id;
         this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
     },
 };
     
 $.extend(globals, {
     world_id   : 0,
+    new_client : !!localStorage.client_id,
     client_id  : localStorage.client_id || globals.create_client_id(),
     player_id  : 0,
     session_id : null,

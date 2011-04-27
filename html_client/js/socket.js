@@ -75,7 +75,8 @@ socket = {
         this.socket.send(JSON.stringify({
                 world_id : globals.world_id,
                client_id : globals.client_id,
-                     cmd : 'register'
+                     cmd : 'register',
+                     msg : (globals.new_client) ? 'new' : '',
         }));
     },
 };
