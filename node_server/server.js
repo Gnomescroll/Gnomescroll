@@ -1,42 +1,7 @@
-/*
- *
- *
- * Todo:
- *      Clients generate unique clientID and send it in first message (server checks it is unique and replies)
- *      clientID is stored in a mapping from sessionID -> {clientID: clientID, timestamp: sys.time(), connected: boolean}
- *      A redis channel is created for the client, and is stored in a mapping from clientID -> {channel: channel, queue: [] }
- *      Channel sends message -
- *          client connected: send
- *          client disconnected: add to queue
- *      ...more
- *      
- *      
- */
-
-
-// Client connect message -
-//  Can they send in the 'connect' event?
-// If not, do i send the message back through socket, or via the api?
-
-/*
- * 
- * Redis
- * 
- */
 var redis = require("redis"),
     redis_port = 6379,
     redis_host = '127.0.0.1',
-    r = redis.createClient(redis_port, redis_host);
-
-//subscribe to message stream for map/world
-r.subscribe("world_0_out", function(channel, message, pattern) {
-    //client.broadcast(message);
-});
-
-//global admin messages
-r.subscribe("global_admin", function(channel, message, pattern) {
-    socket.broadcast(message);
-});
+    r_api = redis.createClient(redis_port, redis_host);
 
 function tell_redis(json, msg, channel) {    // publish json or a js object to redis
     // json can be either encoded or decoded json.
@@ -56,9 +21,8 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     }
     if (msg.world_id === undefined) return;
     
-    var r = redis.createClient();
     channel = channel || 'world_' + msg.world_id;
-    r.lpush(channel, json);
+    r_api.lpush(channel, json);
 }
 
 
@@ -201,10 +165,27 @@ var http_port = 8080,
 }(http_port));
 
 
+
 /*
- * 
+ * Global broadcast
+ */
+
+var r_global = redis.createClient(redis_port, redis_host);
+
+//subscribe to message stream for map/world
+r_global.subscribe("world_0_out", function(channel, message, pattern) {
+    //client.broadcast(message);
+});
+
+//global admin messages
+r_global.subscribe("global_admin", function(channel, message, pattern) {
+    socket.broadcast(message);
+});
+
+
+
+/*
  * Socket.io
- * 
  */
 var io = require('socket.io'),
     socket,
@@ -214,14 +195,21 @@ var io = require('socket.io'),
     session_id_to_client = {},
     confirm_register = function (msg) { // respond to the client after receipt of client_id
         console.log('client registering: '+ msg.client_id);
-        var confirmed = false;
+        var confirmed = false,
+            old_client;
         if (msg.msg === 'new' && client_id_to_session.hasOwnProperty(msg.client_id)) {
             msg.session_id = 'taken';
         } else {
+            this.client_id = msg.client_id;
             msg.session_id = this.sessionId;
             client_id_to_session[msg.client_id] = { session_id: msg.session_id,
                                                     timestamp : Date.now() };
             session_id_to_client[msg.session_id] = msg.client_id;
+            
+            old_client = clients[this.client_id];
+            if (old_client && old_client.redis_client !== undefined) {
+                this.redis_client = old_client.redis_client;
+            }
             clients[msg.client_id] = this;
             confirmed = true;
         }
@@ -229,6 +217,7 @@ var io = require('socket.io'),
         delete msg.cmd;
         this.send(JSON.stringify(msg));
         this.confirmed = confirmed;
+        return this;
     };
 
 socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
@@ -238,7 +227,6 @@ console.log('Socket.io Listening');
  *  global
  *  world_X (1 per world chunk, analogous to groups)
  *  client_id (1 per client)
- *
  *
  * On client connect,
  *  Tell game_server or redis to create a new channel for the client_id
@@ -265,11 +253,21 @@ console.log('Socket.io Listening');
  *          A, C
  *      Set to null:
  *          B, D
- * 
- *
- *
  */
 
+/*
+ * TODO: culling clients that have disconnected too long
+ */
+
+function RedisClient(data, client) {
+    const redisClient = redis.createClient(redis_port, redis_host);
+    redisClient.on('message', function(channel, message) {
+        client.send(message);
+    });
+    redisClient.subscribe('world_'+data.world_id+'_out');
+    redisClient.subscribe('client_'+client.client_id);
+    return redisClient;
+}
 
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
@@ -279,32 +277,36 @@ socket.on('connection', function(client) {
     }
     session_clients[client.sessionId] = client;
     
-    const redisClient = redis.createClient(redis_port, redis_host);
-
-    redisClient.on('message', function(channel, message) {
-        client.send(message);
-    });
-    
     client.on('message', function(message) {
+        var redis_client,
+            old_client;
         if (message === undefined) return;
         message = JSON.parse(message);
         if (typeof message !== 'object') return;
         if (message.cmd === 'register') {
-            client.confirm_register(message);
-            if (client.confirmed) {
-                redisClient.subscribe('world_'+message.world_id+'_out');
+            if (client.confirm_register(message).confirmed) {
+                // grab old redis client (or make new), reassign
+                if (client.redis_client === undefined) {
+                    client.redis_client = new RedisClient(message, client);
+                }
             }
         } else {
             tell_redis(message);
         }
     });
-    
-    client.on('disconnect', function() {
-        client.send(JSON.stringify([{'disconnect': client.sessionId}]));
+
+    var exit_func = function() {
         console.log('Client Disconnect');
-        redisClient.quit();
-        //r_client.unsubscribeTo("0_0", function(channel, message, pattern) {});  
-    });
+        var client_id = session_id_to_client[client.sessionId];
+        delete session_id_to_client[client.sessionId];
+        delete client_id_to_session[client_id];
+        clients[client_id] = null;
+        client.send(JSON.stringify([{'disconnect': client.sessionId}]));
+        //redisClient.quit(); // quit will be in the timeout culling
+    };
+    
+    client.on('disconnect', exit_func);
+    client.on('close', exit_func);  /* "Be careful with using this event, as some transports will fire it even under temporary, expected disconnections (such as XHR-Polling)." */
 });
 
 
