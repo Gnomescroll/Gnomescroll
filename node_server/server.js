@@ -14,6 +14,10 @@
  */
 
 
+// Client connect message -
+//  Can they send in the 'connect' event?
+// If not, do i send the message back through socket, or via the api?
+
 /*
  * 
  * Redis
@@ -51,7 +55,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     if (msg.world_id === undefined) return;
     
     var r = redis.createClient();
-    channel = channel || 'world_'+msg.world_id;
+    channel = channel || 'world_' + msg.world_id;
     r.lpush(channel, json);
 }
 
@@ -202,26 +206,89 @@ var http_port = 8080,
  */
 var io = require('socket.io'),
     socket,
-    clients = {};
+    clients = {}, // maps client_id to client objects
+    session_clients = {}, // maps session_id to client objects
+    client_id_to_session = {},
+    session_id_to_client = {},
+    confirm_register = function (msg) { // response the client after receipt of client_id
+        console.log('client registering: '+ msg.client_id);
+        if (!client_id_to_session.hasOwnProperty(msg.client_id)) {
+            msg.session_id = this.sessionId;
+            client_id_to_session[msg.client_id] = msg.session_id;
+            session_id_to_client[msg.session_id] = msg.client_id;
+            clients[msg.client_id] = this;
+        } else {
+            msg.session_id = 'taken'; // client_id in use
+        }
+        msg.msg = msg.cmd;
+        delete msg.cmd;
+        this.send(JSON.stringify(msg));
+    };
 
 socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Socket.io Listening');
 
+/* Channels:
+ *  global
+ *  world_X (1 per world chunk, analogous to groups)
+ *  client_id (1 per client)
+ *
+ *
+ * On client connect,
+ *  Tell game_server or redis to create a new channel for the client_id
+ *  
+ */
+
+
+/*
+ *  Session -> ID       A
+ *  ID -> Session       B
+ *  Session -> Client   C
+ *  ID -> Client        D
+ *
+ * On connect:
+ *      C
+ * On register:
+ *      If known:
+ *          subscribe to redis channel
+ *      Else:
+ *          Create redis channel and subscribe
+ *      A, B, D
+ * On disconnect:
+ *      Remove:
+ *          A, C
+ *      Set to null:
+ *          B, D
+ * 
+ *
+ *
+ */
+
+
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
     console.log('Client Connected');
-    //console.log(client);
-    clients[client.sessionId] = client;
+    if (client.confirm_register === undefined) {
+        client.confirm_register = confirm_register;
+    }
+    session_clients[client.sessionId] = client;
+    
     const redisClient = redis.createClient();
     redisClient.subscribe('world_0_out');
-    
+
     redisClient.on('message', function(channel, message) {
         client.send(message);
     });
     
     client.on('message', function(message) {
-        console.log('client sent message: '+ message.toString());
-        client.send(message);
+        if (message === undefined) return;
+        message = JSON.parse(message);
+        if (typeof message !== 'object') return;
+        if (message.cmd === 'register') {
+            client.confirm_register(message);
+        } else {
+            tell_redis(message);
+        }
     });
     
     client.on('disconnect', function() {

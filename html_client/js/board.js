@@ -10,10 +10,8 @@ var board = {
     tile_height : 16,
     
     init : function() {
-        this.canvas.init(this);
-        this.cursor_manager.init(this);
-        drawingCache.init();
-        tile_cache_canvas.init();
+        this.canvas.init();
+        this.cursor_manager.init();
     },
     
     start : function() {
@@ -167,7 +165,6 @@ board.manager = {
     populate_index: function() {
         console.log("populate_index");
         board.cursor_manager.reset_cursor_index();
-
         this.agents  = []; //clear index
         this.objects = []; //clear index
 
@@ -318,7 +315,7 @@ board.cursor_manager = {
     atc : {}, //agent to cursor
     otc : {}, //object to cursor
     
-    init : function(board) {
+    init : function() {
         this.reset_cursor_index();
     },
 
