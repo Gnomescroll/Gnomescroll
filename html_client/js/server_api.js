@@ -1,8 +1,8 @@
 var globals = {
 
-    world_id: 0,
+    world_id : 0,
     
-    client_id: (function () {    // generate random 16 char string
+    client_id : (function () {    // generate random 16 char string
         var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
             num_chars = chars.length,
             string_length = 16,
@@ -16,13 +16,13 @@ var globals = {
         return randomstring;
     }()),
     
-    player_id: 0,
-    session_id: null,
+    player_id  : 0,
+    session_id : null,
 
-    server_out: '',
-    api_path : '/api',
+    server_out : '',
+    api_path   : '/api',
     
-    update: function (params) {
+    update : function (params) {
         this.world_id = typeof params.world_id === 'number' ? params.world_id : this.world_id;
         this.client_id = typeof params.client_id === 'number' ? params.client_id : this.client_id;
         this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
@@ -146,6 +146,7 @@ info = {
     },
         
     tileset: function () {
+        console.log('tileset request');
         var data = $.extend({}, this.consts, { cmd: 'get_tiles' });
         return send(data);
     },
@@ -161,13 +162,13 @@ info = {
 
     agent: function (id) {
         var data = $.extend({}, this.consts, { cmd: 'get_agent',
-                                      agent_id: id });
+                                               agent_id: id });
         return send(data); 
     },
 
     object: function (id) {
         var data = $.extend({}, this.consts, { cmd: 'get_object',
-                                      object_id: id, });
+                                               object_id: id, });
         return send(data);
     },
     

@@ -21,7 +21,7 @@ process.info = {};
 //current stores rendering information for tile, but discards meta information
 //retain/store tile_dict somewhere    
 process.info.tileset = function(msg) {
-    
+    console.log('tileset received');
     var param,
         data,
         x,
@@ -29,7 +29,7 @@ process.info.tileset = function(msg) {
         index;
 
     for(x in msg.tile_rendering) {
-        if (!msg.hasOwnProperty(x)) continue;
+        if (!msg.tile_rendering.hasOwnProperty(x)) continue;
         param = msg.tile_rendering[x];
         
         data = {

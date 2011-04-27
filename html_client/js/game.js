@@ -34,21 +34,25 @@ var game = {
     },
     
     init2: function () {
+        this.retry.interval = setInterval('game.retry();', 500); // wait half a sec (does this work?)
+    },
+
+    retry : (function () {
         var success = false,
-            interval,
             wait_func = function () {
                 console.log('wait_func');
                 if (!success) {
-                    //input.init();
                     console.log('state init call');
                     success = state.init();
+                    console.log(success);
                 } else {
+                    console.log('input init call');
                     input.init();
-                    clearInterval(interval);
+                    clearInterval(arguments.callee.interval);
                 }
             };
-        interval = setInterval(wait_func(), 500); // wait half a sec (does this work?)
-    },
+        return wait_func;
+    }()),
     
     delay: 3000, // ms delay for input check
     

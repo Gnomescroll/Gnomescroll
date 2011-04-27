@@ -206,7 +206,14 @@ var http_port = 8080,
  */
 var io = require('socket.io'),
     socket,
-    clients = {};
+    clients = {},
+    confirm_register = function (msg) { // response the client after receipt of client_id
+        console.log('client registering: '+ msg.client_id);
+        msg.session_id = this.sessionId;
+        msg.msg = msg.cmd;
+        delete msg.cmd;
+        this.send(JSON.stringify(msg));
+    };
 
 socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Socket.io Listening');
@@ -215,13 +222,14 @@ socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
     console.log('Client Connected');
     //console.log(client);
+    client.confirm_register = confirm_register;
     clients[client.sessionId] = client;
     const redisClient = redis.createClient();
     redisClient.subscribe('world_0_out');
-    
+
     redisClient.on('message', function(channel, message) {
         console.log('redis said something');
-        console.log(message);
+        //console.log(message);
         client.send(message);
     });
     
@@ -231,14 +239,10 @@ socket.on('connection', function(client) {
         message = JSON.parse(message);
         if (typeof message !== 'object') return;
         if (message.cmd === 'register') {
-            console.log('client registering: '+ message.client_id);
-            message.session_id = client.sessionId;
-            message.msg = message.cmd;
-            delete message.cmd;
+            client.confirm_register(message);
         } else {
             tell_redis(message);
         }
-        client.send(JSON.stringify(message));
     });
     
     client.on('disconnect', function() {
