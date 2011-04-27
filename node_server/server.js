@@ -210,15 +210,16 @@ var io = require('socket.io'),
     session_clients = {}, // maps session_id to client objects
     client_id_to_session = {},
     session_id_to_client = {},
-    confirm_register = function (msg) { // response the client after receipt of client_id
+    confirm_register = function (msg) { // respond to the client after receipt of client_id
         console.log('client registering: '+ msg.client_id);
         if (!client_id_to_session.hasOwnProperty(msg.client_id)) {
             msg.session_id = this.sessionId;
-            client_id_to_session[msg.client_id] = msg.session_id;
+            client_id_to_session[msg.client_id] = { session_id: msg.session_id,
+                                                    timestamp : Date.now() };
             session_id_to_client[msg.session_id] = msg.client_id;
             clients[msg.client_id] = this;
         } else {
-            msg.session_id = 'taken'; // client_id in use
+            msg.session_id = 'taken'; // client_id in use (alter this code. it currently defeats the purpose of a client_id)
         }
         msg.msg = msg.cmd;
         delete msg.cmd;

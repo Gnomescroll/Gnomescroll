@@ -16,6 +16,7 @@ var globals = {
 
     create_client_id : function () {
         this.client_id = this._generate_id();
+        localStorage.client_id = this.client_id;
     },
     
     update : function (params) {
@@ -27,7 +28,7 @@ var globals = {
     
 $.extend(globals, {
     world_id   : 0,
-    client_id  : globals.create_client_id(),
+    client_id  : localStorage.client_id || globals.create_client_id(),
     player_id  : 0,
     session_id : null,
     server_out : '',
