@@ -27,6 +27,20 @@ td.selected {
 #control_panel {
     float: left;
 }
+
+.main_button > a {
+    color: black;
+    text-decoration: none;
+}
+
+.main_button > a.ready {
+    color: blue;
+}
+
+.main_button > a.complete {
+    color: green;
+}
+
 </style>
 
 <link rel="stylesheet" type="text/css" href="http://127.0.0.1:8080/static/tipTip/tipTip.css" />
@@ -35,20 +49,28 @@ td.selected {
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script src="http://127.0.0.1:8080/static/tipTip/jquery.tipTip.js"></script>
 
-
-
 </head>
 
 <body>
+
 <h1>
-TEST
+<span id="controls">
+
+<span class="main_button"><a id="test" class="tip" title="Run tests" href="">TEST</a></span>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a id="init" class="tip" title="Initialize game state" href="">INIT</a>
+<span class="main_button"><a id="init" class="tip ready" title="Initialize game state" href="">INIT</a></span>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a id="start" class="tip" title="Start game" href="">START</a>
+<span class="main_button"><a id="start" class="tip" title="Start game" href="">START</a></span>
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="main_button"><a id="update" class="tip" title="Updates game state with full info requests" href="">UPDATE</a></span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="main_button"><a id="reset" class="tip" title="Reset game (clear everything and run init/start)" href="">RESET</a></span>
+
+</span>
 </h1>
 
 <div id="control_panel">
@@ -58,18 +80,7 @@ TEST
     </div>
 </div>
 
-<div id="game" >
-<!--
-<span id="controls">
-<a id="button" class="increase_cell_size" href="">
-    <img src="static/buttons/increase_cell_size.png" />
-</a>
-<a id="button" class="decrease_cell_size" href="">
-    <img src="static/buttons/decrease_cell_size.png" />
-</a>
-</span>
--->
-</div>
+<div id="game" ><!-- canvas inserted here --></div>
 
 </body>
 <script src="http://127.0.0.1:8080/js/process_msg.js"></script>
@@ -99,35 +110,9 @@ drawingCache.drawSprite(4,4,7,1);
 drawingCache.drawSprite(5,5,127,1);
 }
 
-
-
-$('#init').click(function (event) {
-    
-    //tile_cache_canvas.init();
-    //drawingCache.init();
-    drawingCache.insertTilemap("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
-    drawingCache.insertTilemap("/static/tiles/dwarves.png", 1, 18, 20, 16, 16);
-    game.init();
-    board.init_board_interval = setInterval('board.init();', 200);
-
-    return false;
-});
-
-$('#start').click(function (event) {
-    
- //     console.timeEnd('a')
-//  console.time('b')
-    console.time("board_draw")
-    board.start();
-    console.timeEnd("board_draw");
-    $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
-        
-    map_editor.init();
-    options.init();
-    
-/* //benchmarking
-var i;
-var times = 1000;
+function benchmark() {
+    var i,
+        times = 1000;
 
     console.time("default_drawing_function")
     for(i=0; i<times; i++)  cursor_manager.draw_board()
@@ -145,10 +130,8 @@ var times = 1000;
     console.time("drawing_function_2")  
     for(i=0; i<times; i++)  cursor_manager.test_draw_board_2();
     console.timeEnd("drawing_function_2")
-*/
             
     //test1();
-  /*
     drawingCache.drawTile(1,1,0);
     drawingCache.drawTile(1,2,1);
     drawingCache.drawTile(1,3,2);
@@ -163,17 +146,119 @@ var times = 1000;
     
     drawingCache.drawSprite(5,5,127,1);
     drawingCache.drawSprite(6,6,0,1);
-    */
-    game.start();
-    
-    return false;
-});
+}
+
+// initialization list:
+// load:
+//  tileset
+//  map state
+//  agents
+//  objects
+
+// manages controls for test/init/start/reset button
+var controls = {
+
+    init$ : function () {
+        var that = this;
+        
+        $('#init').click(function (event) {
+
+            if ($(this).attr('class').match(/ready/) !== null) {
+                game.init(that._initialized);
+            }
+            return false;
+        });
+
+        $('#start').click(function (event) {
+
+            if ($(this).attr('class').match(/ready/) !== null) {
+                board.start();
+                $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});        
+                map_editor.init();
+                options.init();
+                //benchmark();
+                game.start(that._started);
+            }
+            return false;
+        });
+
+        $('#update').click(function (event) {   // not tested
+            if ($(this).attr('class').match(/ready/) !== null) {
+                game.update(that._updated);
+            }
+            return false;
+        });
+
+        $('#reset').click(function (event) {    // not implemented
+            // reset map state
+            if ($(this).attr('class').match(/ready/) !== null) {
+                game.reset(that._reset_complete);
+            }
+            return false;
+        });
+
+        $('#test').click(function (event) {     // not implemented
+            // run tests
+            //tests.run(that._tests_complete);
+            return false;
+        });
+            
+    },
+
+    _initialized : function () {
+        var init_btn = $('#init'),
+            start_btn = $('#start'),
+            init_btn_cls,
+            start_btn_cls;
+
+        init_btn_cls = init_btn.attr('class').match(/ready/);
+        if (init_btn_cls !== null) {
+            init_btn_cls = init_btn.attr('class').replace(init_btn_cls[0], 'complete');
+        } else {
+            init_btn_cls = init_btn.attr('class') + ' complete';
+        }
+        init_btn.attr('class', init_btn_cls);
+
+        start_btn_cls = start_btn.attr('class') + ' ready';
+        start_btn.attr('class', start_btn_cls);
+    },
+
+    _started : function () {
+        var start_btn = $('#start'),
+            update_btn = $('#update'),
+            reset_btn = $('#reset'),
+            start_btn_cls,
+            update_btn_cls,
+            reset_btn_cls;
+
+        start_btn_cls = start_btn.attr('class').match(/ready/);
+        if (start_btn_cls !== null) {
+            start_btn_cls = start_btn.attr('class').replace(start_btn_cls[0], 'complete');
+        } else {
+            start_btn_cls = start_btn.attr('class') + ' complete';
+        }
+        start_btn.attr('class', start_btn_cls);
+
+        update_btn_cls = update_btn.attr('class') + ' ready';
+        update_btn.attr('class', update_btn_cls);
+
+        reset_btn_cls = reset_btn.attr('class') + ' ready';
+        reset_btn.attr('class', reset_btn_cls);
+    },
+
+    _updated : function () {
+    },
+
+    _reset_complete : function () {
+    },
+
+    _tests_complete : function () {
+    },
+
+};
 
 $(document).ready(function () {
-//alert("WTF");
-console.log("Ready")
-return false;
-//test1();
+    controls.init$();
 });
 
 </script>

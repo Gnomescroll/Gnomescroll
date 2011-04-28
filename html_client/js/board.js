@@ -11,12 +11,14 @@ var board = {
 
     init_board_interval: 0,
     
-    init : function() {
-        //this.canvas.init();
+    init : function(callback) {
         if (tileset_state.loaded) {
             this.cursor_manager.init();
             clearInterval(this.init_board_interval);
-        }        
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }
     },
     
     start : function() {

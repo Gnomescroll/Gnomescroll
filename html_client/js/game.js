@@ -31,8 +31,17 @@ var game = {
     started : false,
 
     init: // load z_level +/- 1. Load agents, objects. init render object.
-    function () {
+    function (callback) {
+        drawingCache.insertTilemap("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
+        drawingCache.insertTilemap("/static/tiles/dwarves.png", 1, 18, 20, 16, 16);
         socket.init();
+        if (typeof callback === 'function') {
+            window._game_init_callback = function () {
+                callback();
+                delete window._game_init_callback;
+            }
+            board.init_board_interval = setInterval('board.init(_game_init_callback);', 200);
+        }
     },
     
     init2: function () {
@@ -67,14 +76,28 @@ var game = {
     
     start: // main game loop.  is it async/threaded?
            // check user input, server updates, render game.
-    function () {
+    function (callback) {
         // input check interval
         var interval = setInterval('game.input_interval()', this.delay);
+        if (typeof callback === 'function') {
+            callback();
+        }
     },
 
     update : function () { // game requests info updates after it has started
         state.load_game_state();
         board.reset();
+    },
+
+    reset : function () { // resets everything
+        // reset:
+        //  socket
+        //  board
+        //  tilesets
+        //  state
+        //  game
+        //
+        // essentially, wipe everything and run init/start
     },
     
 };
