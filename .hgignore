@@ -1,5 +1,7 @@
 syntax: glob
 *.pyc
+*.pxd
+*.pyd
 *.so
 dump.rdb
 
