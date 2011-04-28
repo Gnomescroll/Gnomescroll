@@ -4,6 +4,9 @@ from random import uniform
 from pyglet import clock, font, image, window
 from pyglet.gl import *
 
+import cython
+import pyximport; pyximport.install()
+
 def draw(self):
     glLoadIdentity()
     glTranslatef(self.x, self.y, 0.0)
@@ -32,8 +35,7 @@ from pyglet.window import key
 
 #from World import World
 #import pyximport; pyximport.install()
-import cython
-import pyximport; pyximport.install()
+
 import world
 #from world import World
 #from world import World

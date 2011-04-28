@@ -3,8 +3,6 @@ from math import sin, cos, pi
 from pyglet.gl import *
 from pyglet import clock, font, image, window
 
-base_dir = "./"
-
 class Camera(object):
 
     def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0):
@@ -105,7 +103,7 @@ class Hud(object):
         self._init_reticle()
 
     def _init_reticle(self):
-        self.reticle = pyglet.image.load(base_dir + 'texture/target.png')
+        self.reticle = pyglet.image.load('./texture/target.png')
         self.reticle_texture = self.reticle.get_texture()
 
         rh = 16.
