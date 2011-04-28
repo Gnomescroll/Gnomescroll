@@ -18,6 +18,9 @@ process.register = function(msg) {
         socket.register();
         return false;
     }
+    if (parseInt(msg.update, 10)) { // request updates?
+        game.update();
+    }
     globals.session_id = msg.session_id;
     return true;
 };
@@ -35,7 +38,7 @@ process.info.tileset = function(msg) {
         tr = msg.tile_rendering,
         tp = msg.tile_properties;
 
-    for(x in tr) {
+    for (x in tr) {
         if (!tr.hasOwnProperty(x)) continue;
         param = tr[x];
         
@@ -51,13 +54,14 @@ process.info.tileset = function(msg) {
             
         tileset_state.add_tile(data);
     }
-
-    for(x in tp) {
+    tileset_state.loaded = true;
+    
+    for (x in tp) {
         if (!tp.hasOwnProperty(x)) continue;
         tile = tp[x];
         tile_properties.add(tile);
     }
-
+    
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 
@@ -83,7 +87,9 @@ process.info.terrain_map = function (msg) {
     delete msg.client_id;
     delete msg.msg;
     
-    state.updateLevel(msg);
+    if (state.updateLevel(msg)) {
+        board.event.terrain_map(msg);
+    }
 };
 
 process.info.agent_info = function (msg) {
@@ -163,7 +169,7 @@ process.info.agent_list = function (msg) {
         delete list_agent.position;
         
         agent = state.gameObjectKnown(list_agent, 'agent');
-        if (agent !== false) {                    // update
+        if (agent) {                    // update
             agent.update(list_agent);
         } else {                        // create
             agent = Agent.create(list_agent);

@@ -38,9 +38,8 @@ var socket = {
             if (that.debug) console.log('connect');
             // send client id to server
             that.register();
-            if (!started) {
+            if (!game.started) {
                 game.init2();
-                started = true;
             }
         });
 
@@ -74,14 +73,15 @@ var socket = {
         this.init();
     },
     
-    reset_delayed : function () {
+    reset_delayed : function (delay) {
         console.log('resetting socket');
         if (this.socket) {
             this.no_reconnect = true;
             this.socket.disconnect();
         }
         //wait(3500);
-        setTimeout('socket.socket.connect();', 3500);
+        delay = delay || 3500;
+        setTimeout('socket.socket.connect();', delay);
     },
 
     reset : function () {

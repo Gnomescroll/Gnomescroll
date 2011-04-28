@@ -100,8 +100,9 @@ drawingCache.drawSprite(5,5,127,1);
 }
 
 
+
 $('#init').click(function (event) {
-    board.init();
+    
     drawingCache.init();
     tile_cache_canvas.init();
     drawingCache.insertTilemap("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
@@ -109,6 +110,9 @@ $('#init').click(function (event) {
     
     game.init();
 
+
+    board.init_board_interval = setInterval('board.init();', 200);
+    
     return false;
 });
 

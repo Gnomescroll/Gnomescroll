@@ -18,6 +18,7 @@ var tile_properties = {
 };
 
 var tileset_state = {
+    loaded : false,
     tile_rendering  : {},
     tile_name_to_id : {},
     tile_id_to_name : {},
@@ -50,7 +51,6 @@ var tileset_state = {
     },
     
     get_tile_rendering_info : function(tile_id) {
-        var data;
         if (this.tile_rendering.hasOwnProperty(tile_id)) {
             return this.tile_rendering[tile_id];
         } else {
@@ -111,6 +111,11 @@ TileCanvas.prototype = {
         if (!this.canvas) {
             this.canvas = $('<canvas></canvas>').attr('id', this.id);
         }
+
+        if (this.canvas.constructor.name === 'HTMLCanvasElement') { // already init'd
+            return false;
+        }
+        
         parent_selector = this.parent_selector || 'body';
         $(parent_selector).append(this.canvas);
         this.canvas.attr({ 'width' : w,
@@ -181,10 +186,10 @@ var drawingCache = {
 
     //insert tile into tile_drawing_cache
     insertTile : function (tile_id) {
-        var tile = tileset_state.get_tile_rendering_info(tile_id),
+        var tile       = tileset_state.get_tile_rendering_info(tile_id),
             tilemap_id = tile.tilemap_id,
-            tile_num = tile.symbol, //need this
-            tilemap = this.tilemaps[tilemap_id],
+            tile_num   = tile.symbol, //need this
+            tilemap    = this.tilemaps[tilemap_id],
             tile_x_pos = tile_num % tilemap.tile_width,
             tile_y_pos = tile_num - tile_x_pos,
             x_offset,
@@ -192,8 +197,8 @@ var drawingCache = {
             imgd,
             pix,
             draw_style = tile.draw_style,
-            background_rgb = tile.background_rgb,
             symbol_rgb = tile.symbol_rgb,
+            background_rgb = tile.background_rgb,
             a, r, g, b,
             b_r, b_g, b_b,
             pix_len,
