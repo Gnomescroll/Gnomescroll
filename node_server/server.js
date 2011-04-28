@@ -100,7 +100,11 @@ var cull_clients = function () {
             client_id = clients_array[i];
             //console.log(clients);
             client = clients[client_id];
-            client.redis_client.quit();
+            if (client !== undefined) {
+                if (client.redis_client !== undefined) {
+                    client.redis_client.quit();
+                }
+            }
             delete clients[client_id];
             console.log('culled client '+client_id);
         }
@@ -108,7 +112,6 @@ var cull_clients = function () {
     }
     
     arguments.callee.last_timestamp = now;
-    //cull_interval();
 };
 
 cull_clients.timeout = 5000; // 5 seconds.  Time to wait before removing client

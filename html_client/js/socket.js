@@ -100,4 +100,11 @@ var socket = {
                      msg : (globals.new_client) ? 'new' : '',
         }));
     },
+
+    disconnect : function (no_reconnect) {
+        if (this.socket) {
+            this.no_reconnect = no_reconnect || true;
+            this.socket.disconnect();
+        }
+    },
 };

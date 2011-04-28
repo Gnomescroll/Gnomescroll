@@ -20,6 +20,15 @@ var state = {
     map_width: 100,
     map_height: 100,
     
+
+    reset : function () {
+        this.levels = {};
+        this.agents = {};
+        this.objects = {};
+        this.containers = {};
+        this.ao_map = {};
+        this.z_lvls = [];
+    },
     
     // requests state data from server
     init: function () {

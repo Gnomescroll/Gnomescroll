@@ -30,8 +30,8 @@ var game = {
 
     started : false,
 
-    init: // load z_level +/- 1. Load agents, objects. init render object.
-    function (callback) {
+    init : function (callback) { // load z_level +/- 1. Load agents, objects. init render object.
+        var board_init_eval = 'board.init();';
         drawingCache.init();
         socket.init();
         if (typeof callback === 'function') {
@@ -39,11 +39,12 @@ var game = {
                 callback();
                 delete window._game_init_callback;
             }
-            board.init_board_interval = setInterval('board.init(_game_init_callback);', 200);
+            board_init_eval = 'board.init(_game_init_callback);';
         }
+        board.init_board_interval = setInterval(board_init_eval, 200);
     },
     
-    init2: function () {
+    init2 : function () {
         this.retry.interval = setInterval('game.retry();', 500); // wait half a sec (does this work?)
         this.started = true;
     },
@@ -65,19 +66,14 @@ var game = {
         return wait_func;
     }()),
     
-    delay: 3000, // ms delay for input check
+    input_delay : 3000, // ms delay for input check
     
-    input_interval: // called in game.start setInterval
-    function () { 
-        //console.log('called');
-        //processInput(input.next(this.delay))
+    input_interval : function () { // called in game.start setInterval
+        processInput(input.next(this.input_delay));
     },
     
-    start: // main game loop.  is it async/threaded?
-           // check user input, server updates, render game.
-    function (callback) {
-        // input check interval
-        var interval = setInterval('game.input_interval()', this.delay);
+    start : function (callback) { // main game loop
+        //var interval = setInterval('game.input_interval()', this.input_delay); // start input rate-limit queue
         if (typeof callback === 'function') {
             callback();
         }
@@ -97,6 +93,17 @@ var game = {
         //  game
         //
         // essentially, wipe everything and run init/start
+        controls.reset();
+        socket.disconnect();
+        tile_properties.reset();
+        tileset_state.reset();
+        drawingCache.reset();
+        board.reset();
+        state.reset();
+        map_editor.reset();
+        options.reset();
+
+        controls.trigger_load();
     },
     
 };

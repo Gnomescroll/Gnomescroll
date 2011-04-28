@@ -26,8 +26,10 @@ var board = {
     },
 
     reset : function () {
+        this.canvas.reset();
         this.cursor_manager.reset();
         this.manager.reset();
+        this.init();
     },
     
     resize : function resize() {
