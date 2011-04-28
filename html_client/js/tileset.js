@@ -24,7 +24,8 @@ var tileset_state = {
     tile_id_to_name : {},
 
     default_tile : {
-        tile_name      : 'non-existance tile',
+        tile_name      : 'non-existant tile',
+        is_default     : true,
         tile_id        : -1,  
         tilemap_id     : 0,
         draw_style     : 1,
@@ -98,6 +99,7 @@ function TileCanvas(id, parent_selector, dim) {
     this.parent_selector = parent_selector;
 
     //this.prototype = this.constructor.methods; // assign class methods
+    this.init();
 };
 
 TileCanvas.prototype = {
@@ -267,26 +269,34 @@ var drawingCache = {
             }
         }
 
-        this.img_cache[cache_index] = imgd;
-        this.tlookup[tile_id] = cache_index;
+        if (! tile.is_default) {    // don't cache default (non-existant) tile
+            this.img_cache[cache_index] = imgd;
+            this.tlookup[tile_id] = cache_index;
+        }
         return cache_index;
     },
 
     // draws tile to board canvas
     drawTile : function (x, y, tile_id) {
-        var index;
-
+        var index,
+            imgd;
         if(!this.tlookup.hasOwnProperty(tile_id)) {
             index = this.insertTile(tile_id);
         } else {
             index = this.tlookup[tile_id];
         }
-        board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.pixel_width, y*board.canvas.pixel_height);
+        imgd = this.img_cache[index];
+        if (imgd !== undefined) {
+            board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.pixel_width, y*board.canvas.pixel_height);
+        } else {
+            console.log('Attempted to drawTile, but there was no data in the image cache');
+        }
     },
 
     //draw tiles to an arbritary canvas
     drawTileToCtx : function(ctx, tile_id, x_offset, y_offset) {
-        var index;
+        var index,
+            imgd;
 
         if (x_offset === undefined) {
             x_offset = 0;
@@ -300,7 +310,13 @@ var drawingCache = {
         } else {
             index = this.tlookup[tile_id];
         }
-        ctx.putImageData(this.img_cache[index], x_offset, y_offset);        
+        
+        imgd = this.img_cache[index];
+        if (imgd !== undefined) {
+            ctx.putImageData(this.img_cache[index], x_offset, y_offset);
+        } else {
+            console.log('Attempted to drawTileTocCtx, but there was no data in the image cache');
+        }     
     },
 
     //insert tile into tile_drawing_cache
@@ -334,7 +350,8 @@ var drawingCache = {
     },
 
     drawSprite : function (x, y, sprite_num, spriteMap_id) {
-        var index;
+        var index,
+            imgd;
         if (!this.slookup.hasOwnProperty(spriteMap_id)) { 
             console.log("DrawingCache.drawSprite Error: Tilemap/spriteMap not loaded: " + spriteMap_id);
             return false;
@@ -344,11 +361,18 @@ var drawingCache = {
         } else {
             index = this.slookup[spriteMap_id][sprite_num];
         }
-        board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.pixel_width, y*board.canvas.pixel_height);
+
+        imgd = this.img_cache[index];
+        if (imgd !== undefined) {
+            board.canvas.ctx.putImageData(this.img_cache[index], x*board.canvas.pixel_width, y*board.canvas.pixel_height);
+        } else {
+            console.log('Attempted to drawSprite, but there was no data in the image cache');
+        }  
     },
     
     drawSpriteToCtx : function (ctx, sprite_num, spriteMap_id, x_offset, y_offset) {
-        var index;
+        var index,
+            imgd;
         if (x_offset === undefined) {
             x_offset = 0;
         }
@@ -365,6 +389,13 @@ var drawingCache = {
         } else {
             index = this.slookup[spriteMap_id][sprite_num];
         }
-        ctx.putImageData(this.img_cache[index], x_offset, y_offset);
+
+        imgd = this.img_cache[index];
+        if (imgd !== undefined) {
+            ctx.putImageData(this.img_cache[index], x_offset, y_offset);
+        } else {
+            console.log('Attempted to drawSpriteToCtx, but there was no data in the image cache');
+        } 
     }
 };
+drawingCache.init();

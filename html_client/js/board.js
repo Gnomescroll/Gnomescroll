@@ -12,8 +12,8 @@ var board = {
     init_board_interval: 0,
     
     init : function() {
+        //this.canvas.init();
         if (tileset_state.loaded) {
-            this.canvas.init();
             this.cursor_manager.init();
             clearInterval(this.init_board_interval);
         }        
@@ -52,7 +52,6 @@ var board = {
     },
 };
 
-//var board_event = {
 board.event = {
     
     agent_change : function agent_change(agent, type) {
@@ -213,7 +212,7 @@ board.manager = {
             obj,
             objects = state.objects;
 
-        for(agent_id in agents) {
+        for(agent_id in agents) { // DOESN'T CHECK AGENTS IN VIEW
             if (agents.hasOwnProperty(agent_id)) {
                 agent = agents[agent_id];
                 //console.log('populate index, agent_update: ' + agent.id)
