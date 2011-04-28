@@ -162,7 +162,11 @@ var drawingCache = {
     ctx: null,
     id: 'DrawingCacheWorkspace',
     
-    init : TileCanvas.prototype.init,
+    init : function () {
+        TileCanvas.prototype.init.call(this);
+        drawingCache.insertTileset("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
+        drawingCache.insertTileset("/static/tiles/dwarves.png", 1, 18, 20, 16, 16);
+    },
     
     resize : function () {
         //clears cache, changes size of tiles being drawn to cache
@@ -173,8 +177,17 @@ var drawingCache = {
         // implement the rest
     },
 
+    reset : function () {   // resets drawingCache (but does not re-insert tilesets)
+
+    },
+
+    reset_full : function () { // reset everything, including re-downloading tilesets
+
+        this.reset();
+    },
+
     //adds a tilemap to cache
-    insertTilemap : function (src, tilemap_id, tpw, tph, tw, th) {
+    insertTileset : function (src, tilemap_id, tpw, tph, tw, th) {
         if(tilemap_id in this.tilemaps) {
             console.log("Error: Attempt to insert same tilemap twice");
             return false;
@@ -398,4 +411,3 @@ var drawingCache = {
         } 
     }
 };
-drawingCache.init();

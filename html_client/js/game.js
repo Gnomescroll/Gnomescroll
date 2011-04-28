@@ -32,8 +32,7 @@ var game = {
 
     init: // load z_level +/- 1. Load agents, objects. init render object.
     function (callback) {
-        drawingCache.insertTilemap("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
-        drawingCache.insertTilemap("/static/tiles/dwarves.png", 1, 18, 20, 16, 16);
+        drawingCache.init();
         socket.init();
         if (typeof callback === 'function') {
             window._game_init_callback = function () {
