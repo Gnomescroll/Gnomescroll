@@ -1,5 +1,6 @@
 from __future__ import division
-import libtcodpy as libtcod
+#import windows_libtcodpy as libtcod	#WINDOWS
+import linux_libtcodpy as libtcod	#LINUX
 import random
 
  
@@ -181,7 +182,25 @@ def drange(start, stop, step):
 	while r < stop:
 		yield r
 		r += step
-	
+
+def save_terrain(filename='test'):
+    """Rude and Crude."""
+    import cPickle
+    global top_terrain	
+    f = open(filename, 'wb')
+    cPickle.dump(top_terrain, f)
+    f.close()
+    return
+
+def load_terrain(filename='test'):
+    """Equally if not more Rude and Crude, dude."""
+    import cPickle
+    global top_terrain
+    f = open(filename, 'rb')
+    top_terrain = cPickle.load(f)
+    f.close()
+    return
+    
 #############################################
 # Initialization
 #############################################

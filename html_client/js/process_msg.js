@@ -1,11 +1,3 @@
-var globals = {
-    
-    client_id: 0,
-    world_id: 0,
-    ajax_server: '',
-
-};
-
 var locationStateMap = {
     0: 'ground',
     1: 'agent',
@@ -17,41 +9,59 @@ var route, process, validate;
 
 process = {};
 
+process.register = function(msg) {
+    console.log('register');
+    console.log(msg);
+    if (msg.session_id === 'taken') {
+        console.log('client_id in use');
+        globals.create_client_id();
+        socket.register();
+        return false;
+    }
+    if (parseInt(msg.update, 10)) { // request updates?
+        game.update();
+    }
+    globals.session_id = msg.session_id;
+    return true;
+};
+
 process.info = {};
 
 //todo
 //current stores rendering information for tile, but discards meta information
 //retain/store tile_dict somewhere    
 process.info.tileset = function(msg) {
-    
     var param,
         data,
-        x;
-    //console.log(msg.tile_rendering)
-    for(x in msg.tile_rendering) {
-        param = msg.tile_rendering[x];
+        x,
+        tile,
+        tr = msg.tile_rendering,
+        tp = msg.tile_properties;
+
+    for (x in tr) {
+        if (!tr.hasOwnProperty(x)) continue;
+        param = tr[x];
         
         data = {
-            tile_name: param.tile_name,
-            tile_id :  param.tile_id,   
-            tilemap_id:  param.tilemap.tilemap_id,
-            draw_style: param.tilemap.draw_style,
-            background_rgb:  param.tilemap.background_rgb,
-            symbol:  param.tilemap.symbol,
-            symbol_rgb: param.tilemap.symbol_rgb,
+            tile_name     : param.tile_name,
+            tile_id       : param.tile_id,   
+            tilemap_id    : param.tilemap.tilemap_id,
+            draw_style    : param.tilemap.draw_style,
+            background_rgb: param.tilemap.background_rgb,
+            symbol        : param.tilemap.symbol,
+            symbol_rgb    : param.tilemap.symbol_rgb,
         };
             
         tileset_state.add_tile(data);
     }
-
-    var tile, index;
-    for(index in msg.tile_properties) {
-        if (msg.tile_properties.hasOwnProperty(index)) {
-            tile = msg.tile_properties[index];
-            tile_properties.add(tile);
-        }
+    tileset_state.loaded = true;
+    
+    for (x in tp) {
+        if (!tp.hasOwnProperty(x)) continue;
+        tile = tp[x];
+        tile_properties.add(tile);
     }
-
+    
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 
@@ -63,7 +73,7 @@ process.info.tileset = function(msg) {
     // ideally it is a map from object_type identifiers to drawing properties
     // these drawing properties should be easily checked by the tilecache
 };
-    
+
 // world_id, client_id, x_size, y_size, z_level, map
 process.info.terrain_map = function (msg) {
         //console.log(msg);
@@ -77,7 +87,9 @@ process.info.terrain_map = function (msg) {
     delete msg.client_id;
     delete msg.msg;
     
-    state.updateLevel(msg);
+    if (state.updateLevel(msg)) {
+        board.event.terrain_map(msg);
+    }
 };
 
 process.info.agent_info = function (msg) {
@@ -157,7 +169,7 @@ process.info.agent_list = function (msg) {
         delete list_agent.position;
         
         agent = state.gameObjectKnown(list_agent, 'agent');
-        if (agent !== false) {                    // update
+        if (agent) {                    // update
             agent.update(list_agent);
         } else {                        // create
             agent = Agent.create(list_agent);
@@ -356,6 +368,8 @@ process.delta.set_terrain_map = function (msg) {
 };
 
 route = {
+
+    register: process.register,
     
     tileset: process.info.tileset,
     terrain_map: process.info.terrain_map,

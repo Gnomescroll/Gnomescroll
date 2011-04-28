@@ -28,22 +28,34 @@
 // main loop
 var game = {
 
+    started : false,
+
     init: // load z_level +/- 1. Load agents, objects. init render object.
     function () {
         socket.init();
     },
     
     init2: function () {
-        var wait_func = function () {
-            console.log('wait_func');
-            state.init();
-            input.init();
-            //render.init();
-            //board_canvas.init();
-            //drawingCache.init();
-        }
-        setTimeout(wait_func(), 2000); // wait half a sec (does this work?)
+        this.retry.interval = setInterval('game.retry();', 500); // wait half a sec (does this work?)
+        this.started = true;
     },
+
+    retry : (function () {
+        var success = false,
+            wait_func = function () {
+                console.log('wait_func');
+                if (!success) {
+                    console.log('state init call');
+                    success = state.init();
+                    console.log(success);
+                } else {
+                    console.log('input init call');
+                    input.init();
+                    clearInterval(arguments.callee.interval);
+                }
+            };
+        return wait_func;
+    }()),
     
     delay: 3000, // ms delay for input check
     
@@ -58,8 +70,13 @@ var game = {
     function () {
         // input check interval
         var interval = setInterval('game.input_interval()', this.delay);
-    }
-        
+    },
+
+    update : function () { // game requests info updates after it has started
+        state.load_game_state();
+        board.reset();
+    },
+    
 };
 
 

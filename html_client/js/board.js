@@ -8,16 +8,24 @@ var board = {
 
     tile_width  : 16,
     tile_height : 16,
+
+    init_board_interval: 0,
     
     init : function() {
-        this.canvas.init(this);
-        this.cursor_manager.init(this);
-        drawingCache.init();
-        tile_cache_canvas.init();
+        //this.canvas.init();
+        if (tileset_state.loaded) {
+            this.cursor_manager.init();
+            clearInterval(this.init_board_interval);
+        }        
     },
     
     start : function() {
         this.manager.start();
+    },
+
+    reset : function () {
+        this.cursor_manager.reset();
+        this.manager.reset();
     },
     
     resize : function resize() {
@@ -42,15 +50,8 @@ var board = {
         this.z_level = zLevel;
         this.reset();
     },
-    
-    //redraw
-    reset : function() {
-        this.manager.reset();
-        //this.cursor_manager.test_draw_board_1();
-    }
 };
 
-//var board_event = {
 board.event = {
     
     agent_change : function agent_change(agent, type) {
@@ -62,7 +63,7 @@ board.event = {
         //implement
     },
     
-    terrain_map_change : function(x, y, z, value) {
+    terrain_map_change : function(x, y, z, value) { // single terrain tile
         console.log("board_event.terrain_map_change");
         if (typeof x === 'object') { // allow block object to be passed in
             value = x.value;
@@ -71,7 +72,13 @@ board.event = {
             x = x.x;
         }
         board.manager.update_tile(x, y, z, value);
-    }
+    },
+
+    terrain_map : function (data) { // full terrain map
+        if (data.z_level == board.z_level) {
+            board.reset();
+        }
+    },
 };
 
 //var board_manager = {
@@ -166,6 +173,7 @@ board.manager = {
     
     populate_index: function() {
         console.log("populate_index");
+
         board.cursor_manager.reset_cursor_index();
 
         this.agents  = []; //clear index
@@ -178,14 +186,16 @@ board.manager = {
             x_max = x_min + board.tile_width,
             y_max = y_min + board.tile_height,
             tile_value,
-            zl = board.z_level;
-            
+            zl = board.z_level,
+            lvl = state.levels[zl];
+
+        if (lvl === undefined) return;
+        
         //could have quick method for grabbing a region of map in x-y plane to reduce function calls
         //region could be returned as an array?
         for(x = x_min; x < x_max; x++) {
             for(y = y_min; y < y_max; y++) {
-                tile_value = state.levels[zl][x][y];
-                //tile_vale = 1; //FIX
+                tile_value = lvl[x][y];
                 this.update_tile(x, y, zl, tile_value);
             }
         }
@@ -202,7 +212,7 @@ board.manager = {
             obj,
             objects = state.objects;
 
-        for(agent_id in agents) {
+        for(agent_id in agents) { // DOESN'T CHECK AGENTS IN VIEW
             if (agents.hasOwnProperty(agent_id)) {
                 agent = agents[agent_id];
                 //console.log('populate index, agent_update: ' + agent.id)
@@ -260,7 +270,7 @@ board.manager = {
             onBoard = this.on_board(pos);
         
         if(inIndex !== -1 && onBoard) { //agent moves around on the board
-            this.cursor_manager.move_agent(agent.id, x_pos, y_pos);
+            board.cursor_manager.move_agent(agent.id, x_pos, y_pos);
             console.log("1");
         }
         else if(inIndex === -1 && onBoard) { //agent moves onto board
@@ -306,7 +316,7 @@ board.manager = {
             by = y - board.y_offset;
             board.cursor_manager.update_tile(bx, by, tile_id);
         } else {
-            //console.log("update tile: tile is not on board ");
+            console.log("update tile: tile is not on board ");
         }
     }
 };
@@ -318,7 +328,11 @@ board.cursor_manager = {
     atc : {}, //agent to cursor
     otc : {}, //object to cursor
     
-    init : function(board) {
+    init : function() {
+        this.reset_cursor_index();
+    },
+
+    reset : function () {
         this.reset_cursor_index();
     },
 

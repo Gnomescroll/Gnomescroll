@@ -94,12 +94,12 @@ class Message_listener:
                     j = r_in.brpop(key)
                     i=marshal.loads(j[1])
                 
-                #i=marshal.loads(j[1])
                 if not i:
                     continue
                 cmd = i['cmd']
                 type = i['type']
                 world_id = i['world_id']
+                print i
                 if type == "info":
                     self.message_handlers.info_handler[cmd](**i)
                 if type == "agent":

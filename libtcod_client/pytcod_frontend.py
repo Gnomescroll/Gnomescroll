@@ -42,13 +42,10 @@ class Display:
 	def render_all(self):
 		if client.terrain_map.redraw or self.gui_redraw_map or client.agent_handler.agents_changed or self.cur.display_cursor:
 			tmap = client.terrain_map.get_map_section(self.offset_x, self.offset_y, current_z, self.viewer_bot_x, self.viewer_bot_y)
-			#print tmap
 			x = 0
 			y = 0
 			char = ' '
 			color = libtcod.darker_green
-			#this section is messy. I'm not actually sure why it works. 
-			#TODO clean this up
 			for row in tmap:
 				for element in row:
 					if element == -1:
@@ -107,7 +104,7 @@ class Input:
 	def __init__(self, display):
 		self.drawing_demo = 0 #variable used for testing.
 		self.check_mouse_drag = True
-		self.mouse_x = None            #should be updated every tic
+		self.mouse_x = None #should be updated every tic
 		self.mouse_y = None
 		self.check_mouse_drag = True
 		self.mouse_on_drag_start = None
@@ -177,7 +174,16 @@ class Input:
 
 		#TODO- deal with user clicking an agent (would need to display info, changing current menu to an info menu or something.)
 		
-
+class Board:
+	"""Caches board state"""
+	def __init__(self):
+		self.map = None #The whole map section from the server
+		self.agents = None #Agents seen in map section
+		self.objects = None #Objects seen in map section
+		
+		pass
+		
+		
 ##Constants##
 SCREEN_WIDTH = 140
 SCREEN_HEIGHT = 80
