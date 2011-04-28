@@ -74,7 +74,7 @@ var socket = {
         this.init();
     },
     
-    reset : function () {
+    reset_delayed : function () {
         console.log('resetting socket');
         if (this.socket) {
             this.no_reconnect = true;
@@ -82,6 +82,12 @@ var socket = {
         }
         //wait(3500);
         setTimeout('socket.socket.connect();', 3500);
+    },
+
+    reset : function () {
+        if (this.socket) {
+            this.socket.disconnect();
+        }
     },
 
     register : function () {

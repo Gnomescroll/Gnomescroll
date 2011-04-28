@@ -82,8 +82,10 @@ var update_redis = function (data) {
         bind_message = function() {
             that.redis_client.on('message', function(channel, message) {
                 if (that.connected) {
+                    console.log('sending redis msg');
                     that.send(message);
                 } else {
+                    console.log('queuing');
                     that.queue.push(message);
                 }
             });
