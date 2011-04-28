@@ -39,9 +39,9 @@ $.extend(globals, {
 
 
 var send = function (data) {
-    if (globals.session_id === null) {
-        return false;
-    }
+    //if (globals.session_id === null) {
+    //    return false;
+    //}
     data = JSON.stringify(data);
     $.post(globals.server_out + globals.api_path, { json: data });
     return true;

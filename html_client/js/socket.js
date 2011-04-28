@@ -1,11 +1,18 @@
-var socket;
+function wait_blocking(delay) {
+    delay = delay || 1500; // 1.5 seconds default
+    var now = Date.now();
+    while (Date.now() - now < delay) {
+        continue;
+    }
+}
 
-socket = {
+var socket = {
     
     debug       : true,
     node_server : '127.0.0.1',
-    node_port   : 8080,
+    node_port   : 8081,
     socket      : null,
+    no_reconnect: false,
     
     init : function () {
         this.socket = this.socket || new io.Socket(this.node_server, {
@@ -16,11 +23,19 @@ socket = {
                                                   });
         var started = false,
             that = this,
-            debug = this.debug,
-            socket = this.socket;
+            reconnect = function(event_name) {
+                return function () {
+                    globals.session_id = null;
+                    if (that.debug) console.log(event_name);
+                    if (! that.no_reconnect) {
+                        that.socket.connect();
+                    }
+                    that.no_reconnect = false;
+                };
+            };
         
-        socket.on('connect', function () {
-            if (debug) console.log('connect');
+        this.socket.on('connect', function () {
+            if (that.debug) console.log('connect');
             // send client id to server
             that.register();
             if (!started) {
@@ -29,10 +44,10 @@ socket = {
             }
         });
 
-        socket.on('message', function (msg) {
+        this.socket.on('message', function (msg) {
             console.log('message received');
             msg = $.parseJSON(msg);
-            if (debug) {
+            if (that.debug) {
                 console.log(msg.msg);
                 console.log(msg);
             }
@@ -42,36 +57,36 @@ socket = {
             }
         });
 
-        socket.on('close', function () {
-            globals.session_id = null;
-            if (debug) console.log('close');
-            socket.connect();
-        });
+        this.socket.on('close', reconnect('close'));
 
-        socket.on('disconnect', function () {
-            globals.session_id = null;
-            if (debug) console.log('disconnect');
-            socket.connect();
-        });
+        this.socket.on('disconnect', reconnect('disconnect'));
         
-        socket.on('connect_failed', function () {
-            globals.session_id = null;
-            if (debug) console.log('connection failed. reconnecting...');
-            socket.connect();
-        })
+        this.socket.on('connect_failed', reconnect('connect_failed'));
 
-        socket.connect();
+        this.socket.connect();
     },
 
-    reset : function () {
+    reset_init : function () {
+        console.log('resetting socket');
         if (this.socket) {
             this.socket.disconnect();
         }
         this.init();
     },
+    
+    reset : function () {
+        console.log('resetting socket');
+        if (this.socket) {
+            this.no_reconnect = true;
+            this.socket.disconnect();
+        }
+        //wait(3500);
+        setTimeout('socket.socket.connect();', 3500);
+    },
 
     register : function () {
         // send client id to server
+        console.log('registering');
         this.socket.send(JSON.stringify({
                 world_id : globals.world_id,
                client_id : globals.client_id,

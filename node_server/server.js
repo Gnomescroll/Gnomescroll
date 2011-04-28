@@ -1,174 +1,19 @@
-var redis = require("redis"),
-    redis_port = 6379,
-    redis_host = '127.0.0.1',
-    r_api = redis.createClient(redis_port, redis_host);
-
-function tell_redis(json, msg, channel) {    // publish json or a js object to redis
-    // json can be either encoded or decoded json.
-    // if encoded, msg can be the decoded object.
-    //      if msg is the decoded object, channel can be the redis channel, or undefined
-    // if decoded, msg can be the channel, or undefined
-    if (typeof json !== 'object') {
-        try {
-            msg = JSON.parse(json);
-            if (typeof msg !== 'object') return;
-        } catch (e) {
-            return;
-        }
-    } else {
-        msg  = json;
-        json = JSON.stringify(msg);
-    }
-    if (msg.world_id === undefined) return;
-    
-    channel = channel || 'world_' + msg.world_id;
-    r_api.lpush(channel, json);
-}
-
-
-/*
- * 
- * HTTP Server
- * 
- */
-var http_port = 8080,
-    http = new (function(port) {
-    return function () {
-        var http = require('http'),
-            URL  = require('url'),
-            fs   = require('fs'),
-            views,
-            urls;
-
-        if (URL.Query === undefined) {
-            URL.Query = function(url) {
-                return URL.parse(url, true).query;
-            };
-        }
-
-        function set_mimetype(request, response) {
-            var ext = request.url.split('.'),
-                typemap = { // extensions to mimetypes
-                    'js'  : 'text/javascript',
-                    'css' : 'text/css',
-                    'html': 'text/html',
-                    'png' : 'image/png',
-                    'jpg' : 'image/jpeg',
-                    'jpeg': 'image/jpeg',
-                    'gif' : 'image/gif',
-                    'bmp' : 'image/bmp',
-                },
-                content_type = typemap[ext[ext.length-1]];
-            content_type = content_type || 'text/html';
-            response.setHeader('Content-Type', content_type);
-        }
-
-        views = {
-            hello : function (request) {
-                return '<h1><a href="/">Gnomescroll</a></h1>';
-            },
-
-            game : function (request) {
-                return fs.readFileSync('../html_client/index.html', 'utf8');
-            },
-
-            api : function (request, response) {
-                response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8055');
-                var json = URL.Query(request.message.content).json,
-                  vars;
-                if (!json) {
-                  return 'api - no json received';
-                }
-                tell_redis(json);
-                return 'api received: ' + json;
-            },
-
-            _read_static: function (request, response, type, fp) {
-                var path_prefix = '../html_client',
-                    encoding = response.getHeader('Content-Type').split('/')[0],
-                    fn = request.url.split('/'),
-                    f,
-                    body;
-                if (type === 'javascript') type = 'js';
-                fn = fn[fn.length-1];
-                fp = (fp) ? path_prefix + fp : path_prefix + '/' + type + '/' + fn;
-                encoding = (encoding === 'text') ? 'utf8' : '';
-                body = fs.readFileSync(fp, encoding);
-                return body;
-            },
-
-            static_media : function(request, response) {    // static files
-                var filepath = request.url.split('?')[0],
-                    type = response.getHeader('Content-Type').split('/')[1];
-                return this.views._read_static(request, response, type, filepath);
-            },
-
-            js : function (request, response, filepath) {
-                return this.views._read_static(request, response, 'js');
-            },
-
-            css : function (request, response) {
-                return this.views._read_static(request, response, 'css');
-            },
-        };
-
-        this.views = views;
-        
-        urls = {
-            ''       : views.game,
-            '/'      : views.game,
-            '/api'   : views.api,
-
-            media    : {
-                '/static': views.static_media,
-                '/js'    : views.js,
-                '/css'   : views.css,
-            },
-        };
-
-        this.urls = urls;
-
-        var that = this;
-        this.server = http.createServer(function(request, response){
-            var message = {'content': request.url+'?'};
-            request.message = message;
-            request.on('data', function (chunk) {
-                message.content += chunk.toString();
-            });
-            
-            request.on('end', function () {
-                var ext    = set_mimetype(request, response),
-                    status = 200,
-                    body   = urls[request.url],
-                    media_path;
-
-                if (!body) {    // route to files for static urls
-                    for (media_path in urls.media) {
-                        if (!urls.media.hasOwnProperty(media_path)) continue;
-                        if (request.url.slice(0, media_path.length) === media_path) {
-                            body = urls.media[media_path];
-                        }
-                    }
-                }
-
-                //status = (body) ? status : 404;
-                response.statusCode = status;
-                body = (body) ? body.call(that, request, response) : views.hello();
-                response.write(body);
-                response.end();
-            });
-        });
-
-        this.port = port || 8080;
-        this.server.listen(this.port);
-    };
-}(http_port));
-
-
+var http = require('http'),
+    port = 8081,
+    server = http.createServer(function(request, response) {
+        response.statusCode = 200;
+        response.setHeader('Content-Type', 'text/html');
+        response.write('socket server');
+        response.end();
+    });
+server.listen(port);
 
 /*
  * Global broadcast
  */
+var redis = require("redis"),
+    redis_port = 6379,
+    redis_host = '127.0.0.1';
 
 var r_global = redis.createClient(redis_port, redis_host);
 
@@ -182,17 +27,10 @@ r_global.subscribe("global_admin", function(channel, message, pattern) {
     socket.broadcast(message);
 });
 
-
-
 /*
  * Socket.io
  */
 
-//
-//  Something is broken with the client/redis_client/client management
-//  Client eventually loses map state msgs after several reloads
-//      (Possibly triggered by a 2nd client)
-//
 var io = require('socket.io'),
     socket,
     clients = {}, // maps client_id to client objects
@@ -212,8 +50,11 @@ var io = require('socket.io'),
             session_id_to_client[msg.session_id] = msg.client_id;
             
             old_client = clients[this.client_id];
-            if (old_client && old_client.redis_client !== undefined) {
-                this.redis_client = old_client.redis_client;
+            if (old_client) {
+                if (old_client.redis_client !== undefined) {
+                    this.redis_client = old_client.redis_client;
+                }
+                this.queue = old_client.queue || [];
             }
             clients[msg.client_id] = this;
             confirmed = true;
@@ -222,23 +63,29 @@ var io = require('socket.io'),
         delete msg.cmd;
         this.send(JSON.stringify(msg));
         this.confirmed = confirmed;
+        this.queue = this.queue || [];
         return this;
     };
 
-socket = io.listen(http.server, { websocket: { closeTimeout: 15000 }}); 
+console.log(server);
+socket = io.listen(server, { websocket: { closeTimeout: 15000 }}); 
 console.log('Socket.io Listening');
 
 /*
  * TODO: culling clients that have disconnected too long
  */
 
-
+// update client's redis_client
 var update_redis = function (data) {
 
     var that = this,
         bind_message = function() {
             that.redis_client.on('message', function(channel, message) {
-                that.send(message);
+                if (that.connected) {
+                    that.send(message);
+                } else {
+                    that.queue.push(message);
+                }
             });
         };
     if (!that.redis_client) { // new redis client
@@ -252,7 +99,14 @@ var update_redis = function (data) {
     return that;
 };
 
-
+var flush_queue = function () {
+    console.log('flushing queue');
+    console.log(this.queue.length + ' items in queue');
+    while (this.queue.length) {
+        this.send(this.queue.shift());
+    }
+    console.log('queue flushed');
+};
 
 socket.on('connection', function(client) {
     //subscribe to client id channel when client connects
@@ -262,6 +116,9 @@ socket.on('connection', function(client) {
     }
     if (client.update_redis === undefined) {
         client.update_redis = update_redis;
+    }
+    if (client.flush_queue === undefined) {
+        client.flush_queue = flush_queue;
     }
     
     client.on('message', function(message) {
@@ -273,6 +130,7 @@ socket.on('connection', function(client) {
         if (message.cmd === 'register') {
             if (client.confirm_register(message).confirmed) {
                 client.update_redis(message);
+                client.flush_queue();
             }
         } else {
             tell_redis(message);
@@ -280,19 +138,26 @@ socket.on('connection', function(client) {
     });
 
     var exit_func = function() {
-        console.log('Client Disconnect');
-        var client_id = session_id_to_client[client.sessionId];
+        console.log('Client Disconnect or Close');
+        
         delete session_id_to_client[client.sessionId];
-        delete client_id_to_session[client_id];
-        //clients[client_id] = null;
+        delete client_id_to_session[client.client_id];
         client.send(JSON.stringify([{'disconnect': client.sessionId}]));
-        //redisClient.quit(); // quit will be in the timeout culling
     };
     
     client.on('disconnect', exit_func);
     client.on('close', exit_func);  /* "Be careful with using this event, as some transports will fire it even under temporary, expected disconnections (such as XHR-Polling)." */
 });
 
+
+// clean up clients that have been gone too long
+var cull_clients = function () {
+    //client.redis_client.quit();
+};
+
+cull_clients.timeout = 5000; // 5 seconds
+
+//setInterval('cull_clients();', cull_clients.timeout);
 
 ////Client Connected
 ////a sample client object:

@@ -257,7 +257,7 @@ board.manager = {
             onBoard = this.on_board(pos);
         
         if(inIndex !== -1 && onBoard) { //agent moves around on the board
-            this.cursor_manager.move_agent(agent.id, x_pos, y_pos);
+            board.cursor_manager.move_agent(agent.id, x_pos, y_pos);
             console.log("1");
         }
         else if(inIndex === -1 && onBoard) { //agent moves onto board
