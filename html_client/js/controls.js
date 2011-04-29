@@ -6,11 +6,44 @@
 //  objects
 
 // manages controls for test/init/start/reset button
-var controls = {
+function Controls () {
 
-    defaults : {}, // control default classes
+    /* constructor help */
+    if (!(this instanceof arguments.callee)) {
+        return new Controls();
+    }
 
-    _init_defaults : function () {
+    if (!Function().calledOnce.call(arguments.callee)) {
+        return null;
+    }
+
+    /* public */
+    
+    this.init = function () { // bind callbacks to button events
+        this._init_defaults();
+        $('#init').click(this._init_event);
+        $('#start').click(this._start_event);
+        $('#update').click(this._update_event);
+        $('#reset').click(this._reset_event);
+        $('#test').click(this._test_event);
+    };
+    
+    this.reset = function () {  // reset all the buttons
+        for (var name in this._defaults) {   // set default classes on controls
+            if (!this._defaults.hasOwnProperty(name)) continue;
+            $('#'+name).attr('class', this._defaults[name]);
+        }
+    };
+
+    this.trigger_load = function () { // starts chain of init/start
+        this._init_event();
+    };
+
+    /* private */
+
+    this._defaults = {}, // control default classes
+
+    this._init_defaults = function () { // initializes default classes (only once)
         if (!arguments.callee.loaded) {
             var d = {
                     init  : $('#init'),
@@ -22,231 +55,126 @@ var controls = {
             
             for (name in d) {
                 if (!d.hasOwnProperty(name)) continue;
-                this.defaults[name] = d[name].attr('class');
+                this._defaults[name] = d[name].attr('class');
             }
             arguments.callee.loaded = true;
         }
-    },
+    };
 
-    _init_event : function (event) {
-        var selector = $(this).attr('id'),
-            elem_cls,
-            args = [];
-        if (selector !== undefined) {
-            selector = this;
-        } else {
-            selector = '#init';
-        }
-        selector = $(selector);
-        elem_cls = selector.attr('class');
-        if (elem_cls.match(/ready/) !== null) {
-            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
-            args.push(controls._initialized);
-            if (typeof selector === 'string') {
-                args.push(controls._start_event);
-            }
-            game.init.apply(game, args);
-        }
-        return false;
-    },
+    /* DOM event callbacks */
 
-    _start_event : function (event) {
-        var selector = $(this).attr('id'),
-            elem_cls,
-            args = [],
-            len = arguments.length,
-            i = 1;
+    function _get_selector () {
+        var selector = $(this).attr('id');
         if (selector !== undefined && $(this).parent().attr('class') === 'main_button') {
             selector = this;
         } else {
-            selector = '#start';
+            selector = false;
         }
-        selector = $(selector);
-        elem_cls = selector.attr('class');
-        if (elem_cls.match(/ready/) !== null) {
-            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
-            //board.start();
-            //map_editor.init();
-            //options.init();
-            //benchmark();
-            game.start(controls._started);
-        }
-        if (typeof event === 'function') { // callback
-            for (i=1; i < len; i++) {
-                args[i-1] = arguments[i];
+        return selector;
+    }
+
+    function _event_wrapper (alt_selector, fn, fn_args) {
+        fn = fn || function () {};
+        return function (event) {
+            var selector = _get_selector.call(this) || alt_selector,
+                elem_cls,
+                args;
+            selector = $(selector);
+            elem_cls = selector.attr('class');
+            if (elem_cls.match(/ready/) !== null) {
+                selector.attr('class', elem_cls.replace(/ready/, 'processing'));
+                fn.apply(this, fn_args);
             }
-            event.apply(this, args);
-        }
-        return false;
-    },
-
-    _update_event : function (event) {   // not tested
-        var selector = $(this).attr('id'),
-            elem_cls,
-            args = [],
-            len = arguments.length,
-            i = 1;
-        if (selector !== undefined) {
-            selector = this;
-        } else {
-            selector = '#update';
-        }
-        selector = $(selector);
-        elem_cls = selector.attr('class');
-        if (elem_cls.match(/ready/) !== null) {
-            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
-            game.update(controls._updated);
-        }
-        if (typeof event === 'function') { // callback
-            for (i=1; i < len; i++) {
-                args[i-1] = arguments[i];
+            if (typeof event === 'function') { // callback
+                args = Array().convertArgs(arguments, 1);
+                event.apply(this, args);
             }
-            event.apply(this, args);
-        }
-        return false;
-    },
+            return false;
+        };
+    }
 
-    _reset_event : function (event) {    // not implemented
-        // reset map state
-        var selector = $(this).attr('id'),
-            elem_cls,
-            args = [],
-            len = arguments.length,
-            i = 1;
-        if (selector !== undefined) {
-            selector = this;
-        } else {
-            selector = '#reset';
+    this._init_event = _event_wrapper('#init', function () {
+        var args = [controls._initialized];
+        if (!_get_selector.call(this)) {
+            args.push(controls._start_event);
         }
-        selector = $(selector);
-        elem_cls = selector.attr('class');
-        if (elem_cls.match(/ready/) !== null) {
-            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
-            game.reset(controls._reset_complete);
-        }
-        if (typeof event === 'function') { // callback
-            for (i=1; i < len; i++) {
-                args[i-1] = arguments[i];
+        game.init.apply(game, args);
+    });
+
+    this._start_event = _event_wrapper('#start', function () {
+        //board.start();
+        //map_editor.init();
+        //options.init();
+        //benchmark();
+        game.start(controls._started);
+    });
+
+    this._update_event = _event_wrapper('#update',  function () {  // not tested
+        game.update(controls._updated);
+    });
+
+    this._reset_event = _event_wrapper('#reset', function () {
+        game.reset(controls._reset_complete);
+    });
+
+    this._test_event = _event_wrapper('#test'); // not implemented
+
+    /* DOM event callback callbacks
+     * i.e. callback triggered after dom event callback is 100% complete */
+
+    function complete_ready(selcompl, selready) { // for buttons that go from processing -> complete and cause other buttons to become ready
+        return function (callback) {
+            var btn = $(selcompl),
+                cls = btn.attr('class'),
+                cls_match = cls.match(/processing/),
+                i,
+                len = selready.length;
+
+            if (cls_match !== null) {
+                cls = cls.replace(cls_match[0], 'complete');
+            } else {
+                cls += ' complete';
             }
-            event.apply(this, args);
-        }
-        return false;
-    },
+            btn.attr('class', cls);
 
-    _test_event : function (event) {     // not implemented
-        var selector = $(this).attr('id'),
-            elem_cls,
-            args = [],
-            len = arguments.length,
-            i = 1;
-        if (selector !== undefined) {
-            selector = this;
-        } else {
-            selector = '#test';
-        }
-        selector = $(selector);
-        elem_cls = selector.attr('class');
-        if (elem_cls.match(/ready/) !== null) {
-            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
-        }
-        // run tests
-        //tests.run(controls._tests_complete);
-        if (typeof event === 'function') { // callback
-            for (i=1; i < len; i++) {
-                args[i-1] = arguments[i];
+            if (typeof selready === 'string') {
+                _is_ready(selready);
+            } else {
+                for(i=0; i < len; i++) {
+                    _is_ready(selready[i]);
+                }
             }
-            event.apply(this, args);
-        }
-        return false;
-    },
 
-    trigger_load : function () {
-        this._init_event();
-    },
-    
-    init$ : function () {
-        this._init_defaults();
-        $('#init').click(this._init_event);
-        $('#start').click(this._start_event);
-        $('#update').click(this._update_event);
-        $('#reset').click(this._reset_event);
-        $('#test').click(this._test_event);
-    },
-
-    _initialized : function (callback) {
-        var init_btn = $('#init'),
-            start_btn = $('#start'),
-            init_btn_cls,
-            start_btn_cls;
-
-        init_btn_cls = init_btn.attr('class').match(/processing/);
-        if (init_btn_cls !== null) {
-            init_btn_cls = init_btn.attr('class').replace(init_btn_cls[0], 'complete');
-        } else {
-            init_btn_cls = init_btn.attr('class') + ' complete';
-        }
-        init_btn.attr('class', init_btn_cls);
-
-        start_btn_cls = start_btn.attr('class') + ' ready';
-        start_btn.attr('class', start_btn_cls);
-
-        if (typeof callback === 'function') { // callback
-            var args = [],
-                len = arguments.length,
-                i = 1;
-            for (i=1; i < len; i++) {
-                args[i-1] = arguments[i];
+            if (typeof callback === 'function') { // callback
+                args = Array().convertArgs(arguments, 1);
+                callback.apply(this, args);
             }
-            callback.apply(this, args);
-        }
-    },
+        };
+    }
 
-    _started : function () {
-        var start_btn = $('#start'),
-            update_btn = $('#update'),
-            reset_btn = $('#reset'),
-            start_btn_cls,
-            update_btn_cls,
-            reset_btn_cls;
+    function _is_ready(sel) {   // adds ' ready' to a class
+        var btn = $(sel),
+            cls = btn.attr('class') + ' ready';
+        btn.attr('class', cls);
+    }
 
-        start_btn_cls = start_btn.attr('class').match(/processing/);
-        if (start_btn_cls !== null) {
-            start_btn_cls = start_btn.attr('class').replace(start_btn_cls[0], 'complete');
-        } else {
-            start_btn_cls = start_btn.attr('class') + ' complete';
-        }
-        start_btn.attr('class', start_btn_cls);
+    function processing2ready(selector) { // for buttons that just go from processing -> ready
+        return function () {
+            var btn = $(selector),
+                cls = btn.attr('class');
+            btn.attr('class', cls.replace(/processing/, 'ready'));
+        };
+    }
 
-        update_btn_cls = update_btn.attr('class') + ' ready';
-        update_btn.attr('class', update_btn_cls);
+    this._initialized = complete_ready('#init', '#start');
 
-        reset_btn_cls = reset_btn.attr('class') + ' ready';
-        reset_btn.attr('class', reset_btn_cls);
-    },
+    this._started = complete_ready('#start', ['#update', '#reset']);
 
-    _updated : function () {
-        var btn = $('#update'),
-            cls = btn.attr('class');
-        btn.attr('class', cls.replace(/processing/, 'ready'));
-    },
+    this._updated = processing2ready('#update');
 
-    _reset_complete : function () {
-        var btn = $('#reset'),
-            cls = btn.attr('class');
-        btn.attr('class', cls.replace(/processing/, 'ready'));
-    },
+    this._reset_complete = processing2ready('#reset');
 
-    _tests_complete : function () {
-        var btn = $('#test'),
-            cls = btn.attr('class');
-        btn.attr('class', cls.replace(/processing/, 'ready'));
-    },
+    this._tests_complete = processing2ready('#test');
+}
 
-    reset : function () {
-        var name;
-        for (name in this.defaults) {   // set default classes on controls
-            if (!this.defaults.hasOwnProperty(name)) continue;
-            $('#'+name).attr('class', this.defaults[name]);
-        }
-    },
-};
+var controls = new Controls();
