@@ -83,6 +83,9 @@ function Tileset(src, tileset_id, tpw, tph, tw, th) {
     if (this.constructor.length !== arguments.length) {
         throw new Error(this.constructor.name +' construction has invalid number of arguments.');
     }
+    if (!(this instanceof arguments.callee)) {
+        return new arguments.callee(src, tileset_id, tpw, tph, tw, th);
+    }
     var img = new Image(),
         _elem_id = 'tileset_' + tileset_id,
         _dom_element = $('<img />').attr({ 'src': src,
@@ -104,6 +107,9 @@ function Tileset(src, tileset_id, tpw, tph, tw, th) {
 function TileCanvas(id, parent_selector, dim) {
     // id is the html id attr, parent_selector is a selector for the container
     // where the canvas will be placed in, and dim is an object of properties
+    if (!(this instanceof arguments.callee)) {
+        return new arguments.callee(id, parent_selector, dim);
+    }
     if (dim && typeof dim === 'object') {
         this.width = dim.width || 16;
         this.height = dim.height || 16;
