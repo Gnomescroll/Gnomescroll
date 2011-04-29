@@ -1,0 +1,7 @@
+-fulstrum culling for map chunks
+-storing tile properties in structs
+-storing pointers to map tile structs, instead of tile_ids
+
+-computation of vertex buffers in C?
+
+-openGL C rendering

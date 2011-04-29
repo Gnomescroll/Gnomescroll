@@ -12,13 +12,29 @@
 
 
 from twisted.internet.protocol import Factory, Protocol
-
 from twisted.internet import reactor, protocol
+from twisted.protocols.basic import Int32StringReceiver
 
-class TestProtocol(protocol.Protocol):
-    def sendMessage(self, msg):
-        self.transport.write("MESSAGE %s\n" % msg)
+#sendString(self, data)
+#Send an int32-prefixed string to the other end of the connection.
 
+class TestProtocol(Int32StringReceiver):
+
+    def connectionMade(self):
+        reactor.callLater(4, self.sendString,'test message')
+        print "connected"
+
+
+    def stringReceived(self, string):
+        print "string received: %s" % string
+        pass
+
+#    def sendString(self, string):
+#        pass
+
+    def lengthLimitExceeded(self, length):
+        print "string length exceeds max length" #default implementation closes connection
+        pass
 
 class TestFactory(protocol.ClientFactory):
     protocol = TestProtocol
@@ -31,16 +47,14 @@ class TestFactory(protocol.ClientFactory):
         print "Connection lost - goodbye!"
         reactor.stop()
 
-#factory = TestFactory()
-#reactor.connectTCP("localhost", 8066, factory)
+factory = TestFactory()
+reactor.connectTCP("localhost", 8066, factory)
 
-i = TestProtocol()
-
-reactor.connectTCP("localhost", 8066, i)
-#reactor.callLater(4, instance.sendMessage('test message'))
+#reactor.callLater(4, x.sendString('test message'))
+reactor.run()
 
 #d = point.connect(factory)
 #d.addCallback(gotProtocol)
 
-reactor.run()
+
 
