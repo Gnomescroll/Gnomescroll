@@ -27,7 +27,14 @@ var options = {
                 //},
     },
 
+    panel_selector : '#options',
+
+    reset : function () {
+        $(this.panel_selector).html('');
+    },
+
     init: function () {
+        $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
         this.init_controls();
         this.init_event_bindings();
     },
@@ -91,7 +98,7 @@ var options = {
     },
 
     init_controls: function () { // interface_options in control_panel
-        var container = $('#options'),
+        var container = $(this.panel_selector),
             table = $('<table></table>'),
             opt,
             val,

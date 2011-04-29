@@ -14,7 +14,11 @@ var tile_properties = {
             console.log("Tile id is not stored");
         }
         return this.tiles[id];
-    }
+    },
+
+    reset : function () {
+        this.tiles = {};
+    },
 };
 
 var tileset_state = {
@@ -23,11 +27,15 @@ var tileset_state = {
     tile_name_to_id : {},
     tile_id_to_name : {},
 
+    init : function () {
+        info.tileset();
+    },
+
     default_tile : {
         tile_name      : 'non-existant tile',
         is_default     : true,
         tile_id        : -1,  
-        tilemap_id     : 0,
+        tileset_id     : 0,
         draw_style     : 1,
         background_rgb : [0, 0, 0],
         symbol         : 63,
@@ -42,7 +50,7 @@ var tileset_state = {
             //validate
             tile_name      : param.tile_name,
             tile_id        : param.tile_id,   
-            tilemap_id     : param.tilemap_id,
+            tileset_id     : param.tilemap_id,
             draw_style     : param.draw_style,
             background_rgb : param.background_rgb,
             symbol         : param.symbol,
@@ -59,23 +67,34 @@ var tileset_state = {
             //console.log("Tile rendering infomation missing: " + tile_id);
             return this.default_tile;
         }
-    }
+    },
+
+    reset : function () {
+        this.loaded = false;
+        this.tile_rendering = {};
+        this.tile_name_to_id = {};
+        this.tile_id_to_name = {};
+    },
 };
 
-// constructor for a new tilemap/tileset <img>
-function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
+// constructor for a new tileset <img>
+function Tileset(src, tileset_id, tpw, tph, tw, th) {
     // enforce exact arguments count
     if (this.constructor.length !== arguments.length) {
-        throw new Error('Tilemap() construction has invalid number of arguments.');
+        throw new Error(this.constructor.name +' construction has invalid number of arguments.');
+    }
+    if (!(this instanceof arguments.callee)) {
+        return new arguments.callee(src, tileset_id, tpw, tph, tw, th);
     }
     var img = new Image(),
+        _elem_id = 'tileset_' + tileset_id,
         _dom_element = $('<img />').attr({ 'src': src,
-                                           'id': 'tilemap_'+tilemap_id,
-                                           'class': 'tilemap' });
+                                           'id': _elem_id,
+                                           'class': 'tileset' });
 
     $('body').append(_dom_element);
     img.src = src;
-
+    this.selector = '#' + _elem_id;
     this.dom_element = _dom_element;
     this.image = img;
     this.pixel_width = tpw;  //in pixels
@@ -88,6 +107,9 @@ function Tilemap(src, tilemap_id, tpw, tph, tw, th) {
 function TileCanvas(id, parent_selector, dim) {
     // id is the html id attr, parent_selector is a selector for the container
     // where the canvas will be placed in, and dim is an object of properties
+    if (!(this instanceof arguments.callee)) {
+        return new arguments.callee(id, parent_selector, dim);
+    }
     if (dim && typeof dim === 'object') {
         this.width = dim.width || 16;
         this.height = dim.height || 16;
@@ -135,20 +157,27 @@ TileCanvas.prototype = {
             
     resize : function () {
         //Will be called to handle tileset re-sizing on map
-    }
+    },
+
+    reset : function () {
+        $('canvas#'+this.id).remove();
+        this.canvas = null;
+        this.ctx = null;
+        this.init();
+    },
 };
 
 // This canvas is scratch space for drawing tiles, before they are stored in the tile_cache
-var tile_cache_canvas = new TileCanvas('cache', 'body', { width: 16,
-                                                          height: 16,
-                                                          pixel_width: 24,
-                                                          pixel_height: 24 });
+var tile_cache_canvas = new TileCanvas('cache', '#caches', { width : 16,
+                                                             height: 16,
+                                                             pixel_width : 24,
+                                                             pixel_height: 24 });
 
 
 // canvas workspace for building a tile image
 var drawingCache = {
 
-    tilemaps : [],
+    tilesets : [],
     
     img_cache : [],
     img_cache_count : 0,
@@ -161,38 +190,65 @@ var drawingCache = {
     canvas: null,
     ctx: null,
     id: 'DrawingCacheWorkspace',
+    parent_selector: '#caches',
     
-    init : TileCanvas.prototype.init,
+    init : function () {
+        TileCanvas.prototype.init.call(this);
+        //this.loadTilesets();
+    },
     
     resize : function () {
         //clears cache, changes size of tiles being drawn to cache
-        this.img_cache   = [];
-        this.cache_count = 0;
-        this.tlookup     = {};
-        this.slookup     = {};
+        this.reset();
         // implement the rest
     },
 
-    //adds a tilemap to cache
-    insertTilemap : function (src, tilemap_id, tpw, tph, tw, th) {
-        if(tilemap_id in this.tilemaps) {
-            console.log("Error: Attempt to insert same tilemap twice");
+    reset : function () {   // resets drawingCache (but does not re-insert tilesets)
+        this.img_cache   = [];
+        this.img_cache_count = 0;
+        this.tlookup     = {};
+        this.slookup     = {};
+    },
+
+    reset_full : function () { // reset everything, including re-downloading tilesets
+        this.removeTilesets();
+        this.reset();
+    },
+
+    removeTilesets : function () {
+        var t;
+        for (t in this.tilesets) {
+            if (!this.tilesets.hasOwnProperty(t)) continue;
+            $(this.tilesets[t].selector).remove();
+        }
+        this.tilesets = [];
+    },
+
+    loadTilesets : function () {
+        drawingCache.insertTileset("/static/tiles/Bisasam_24x24.png", 0, 24, 24, 16, 16);
+        drawingCache.insertTileset("/static/tiles/dwarves.png", 1, 18, 20, 16, 16);
+    },
+
+    //adds a tileset to cache
+    insertTileset : function (src, tileset_id, tpw, tph, tw, th) {
+        if(tileset_id in this.tilesets) {
+            console.log("Error: Attempt to insert same tileset twice");
             return false;
         }
         
-        var tilemap = new Tilemap(src, tilemap_id, tpw, tph, tw, th);
+        var tileset = new Tileset(src, tileset_id, tpw, tph, tw, th);
         
-        this.tilemaps[tilemap_id] = tilemap;
-        this.slookup[tilemap_id] = [];
+        this.tilesets[tileset_id] = tileset;
+        this.slookup[tileset_id] = [];
     },
 
     //insert tile into tile_drawing_cache
     insertTile : function (tile_id) {
         var tile       = tileset_state.get_tile_rendering_info(tile_id),
-            tilemap_id = tile.tilemap_id,
+            tileset_id = tile.tileset_id,
             tile_num   = tile.symbol, //need this
-            tilemap    = this.tilemaps[tilemap_id],
-            tile_x_pos = tile_num % tilemap.tile_width,
+            tileset    = this.tilesets[tileset_id],
+            tile_x_pos = tile_num % tileset.tile_width,
             tile_y_pos = tile_num - tile_x_pos,
             x_offset,
             y_offset,
@@ -208,16 +264,16 @@ var drawingCache = {
             cache_index = ++this.img_cache_count;
 
         if (tile_y_pos != 0) {
-            tile_y_pos = tile_y_pos / tilemap.tile_width;
+            tile_y_pos = tile_y_pos / tileset.tile_width;
         }
         
-        x_offset = tile_x_pos * tilemap.pixel_width;
-        y_offset = tile_y_pos * tilemap.pixel_height;
+        x_offset = tile_x_pos * tileset.pixel_width;
+        y_offset = tile_y_pos * tileset.pixel_height;
         
         this.ctx.clearRect(0, 0, board.canvas.pixel_width, board.canvas.pixel_height); //needed?
         
-        this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
-                    tilemap.pixel_width, tilemap.pixel_height,
+        this.ctx.drawImage(tileset.image, x_offset, y_offset, 
+                    tileset.pixel_width, tileset.pixel_height,
                     0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
 
         imgd = this.ctx.getImageData(0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
@@ -315,14 +371,14 @@ var drawingCache = {
         if (imgd !== undefined) {
             ctx.putImageData(this.img_cache[index], x_offset, y_offset);
         } else {
-            console.log('Attempted to drawTileTocCtx, but there was no data in the image cache');
+            console.log('Attempted to drawTileToCtx, but there was no data in the image cache');
         }     
     },
 
     //insert tile into tile_drawing_cache
-    insertSprite : function (tile_num, tilemap_id) {
-        var tilemap = this.tilemaps[tilemap_id],
-            tile_x_pos = tile_num % tilemap.tile_width,
+    insertSprite : function (tile_num, tileset_id) {
+        var tileset = this.tilesets[tileset_id],
+            tile_x_pos = tile_num % tileset.tile_width,
             tile_y_pos = tile_num - tile_x_pos,
             x_offset,
             y_offset,
@@ -331,21 +387,21 @@ var drawingCache = {
             cache_index = ++this.img_cache_count;
         
         if (tile_y_pos != 0) {
-            tile_y_pos = tile_y_pos / tilemap.tile_width;
+            tile_y_pos = tile_y_pos / tileset.tile_width;
         }
-        x_offset = tile_x_pos * tilemap.pixel_width;
-        y_offset = tile_y_pos * tilemap.pixel_height;
+        x_offset = tile_x_pos * tileset.pixel_width;
+        y_offset = tile_y_pos * tileset.pixel_height;
 
         this.ctx.clearRect(0, 0, board.canvas.pixel_width, board.canvas.pixel_height); //needed?
-        this.ctx.drawImage(tilemap.image, x_offset, y_offset, 
-                    tilemap.pixel_width, tilemap.pixel_height,
+        this.ctx.drawImage(tileset.image, x_offset, y_offset, 
+                    tileset.pixel_width, tileset.pixel_height,
                     0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
 
         imgd = this.ctx.getImageData(0, 0, board.canvas.pixel_width, board.canvas.pixel_height);
         pix = imgd.data;
 
         this.img_cache[cache_index] = imgd; 
-        this.slookup[tilemap_id][tile_num] = cache_index;
+        this.slookup[tileset_id][tile_num] = cache_index;
         return cache_index;
     },
 
@@ -353,7 +409,7 @@ var drawingCache = {
         var index,
             imgd;
         if (!this.slookup.hasOwnProperty(spriteMap_id)) { 
-            console.log("DrawingCache.drawSprite Error: Tilemap/spriteMap not loaded: " + spriteMap_id);
+            console.log("DrawingCache.drawSprite Error: tileset/spriteMap not loaded: " + spriteMap_id);
             return false;
         }
         if (!this.slookup[spriteMap_id].hasOwnProperty(sprite_num)) {
@@ -381,7 +437,7 @@ var drawingCache = {
         }
         
         if (!this.slookup.hasOwnProperty(spriteMap_id)) {
-            console.log("DrawingCache.drawSprite Error: Tilemap/spriteMap not loaded: " + spriteMap_id)
+            console.log("DrawingCache.drawSprite Error: tileset/spriteMap not loaded: " + spriteMap_id)
             return false;
         }
         if (!this.slookup[spriteMap_id].hasOwnProperty(sprite_num)) {
@@ -398,4 +454,3 @@ var drawingCache = {
         } 
     }
 };
-drawingCache.init();

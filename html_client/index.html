@@ -12,11 +12,11 @@
     padding: 0 5px;
 }
 
-#tilemap {
+.tileset {
     display: none;
 }
 
-.tilemap {
+#caches {
     display: none;
 }
 
@@ -37,8 +37,12 @@ td.selected {
     color: blue;
 }
 
+.main_button > a.processing {
+    color: red;
+}
+
 .main_button > a.complete {
-    color: green;
+    color: green;    
 }
 
 </style>
@@ -80,9 +84,13 @@ td.selected {
     </div>
 </div>
 
-<div id="game" ><!-- canvas inserted here --></div>
+<div id="game" ><!-- board canvas inserted here --></div>
+
+<div id="caches"><!-- cache canvases inserted here --></div>
 
 </body>
+<script src="http://127.0.0.1:8080/js/common.js"></script>
+
 <script src="http://127.0.0.1:8080/js/process_msg.js"></script>
 <script src="http://127.0.0.1:8080/js/validate.js"></script>
 <script src="http://127.0.0.1:8080/js/socket.js"></script>
@@ -98,6 +106,8 @@ td.selected {
 
 <script src="http://127.0.0.1:8080/js/map_editor.js"></script>
 <script src="http://127.0.0.1:8080/js/options.js"></script>
+
+<script src="http://127.0.0.1:8080/js/controls.js"></script>
 
 <script>
 
@@ -148,117 +158,8 @@ function benchmark() {
     drawingCache.drawSprite(6,6,0,1);
 }
 
-// initialization list:
-// load:
-//  tileset
-//  map state
-//  agents
-//  objects
-
-// manages controls for test/init/start/reset button
-var controls = {
-
-    init$ : function () {
-        var that = this;
-        
-        $('#init').click(function (event) {
-
-            if ($(this).attr('class').match(/ready/) !== null) {
-                game.init(that._initialized);
-            }
-            return false;
-        });
-
-        $('#start').click(function (event) {
-
-            if ($(this).attr('class').match(/ready/) !== null) {
-                board.start();
-                $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});        
-                map_editor.init();
-                options.init();
-                //benchmark();
-                game.start(that._started);
-            }
-            return false;
-        });
-
-        $('#update').click(function (event) {   // not tested
-            if ($(this).attr('class').match(/ready/) !== null) {
-                game.update(that._updated);
-            }
-            return false;
-        });
-
-        $('#reset').click(function (event) {    // not implemented
-            // reset map state
-            if ($(this).attr('class').match(/ready/) !== null) {
-                game.reset(that._reset_complete);
-            }
-            return false;
-        });
-
-        $('#test').click(function (event) {     // not implemented
-            // run tests
-            //tests.run(that._tests_complete);
-            return false;
-        });
-            
-    },
-
-    _initialized : function () {
-        var init_btn = $('#init'),
-            start_btn = $('#start'),
-            init_btn_cls,
-            start_btn_cls;
-
-        init_btn_cls = init_btn.attr('class').match(/ready/);
-        if (init_btn_cls !== null) {
-            init_btn_cls = init_btn.attr('class').replace(init_btn_cls[0], 'complete');
-        } else {
-            init_btn_cls = init_btn.attr('class') + ' complete';
-        }
-        init_btn.attr('class', init_btn_cls);
-
-        start_btn_cls = start_btn.attr('class') + ' ready';
-        start_btn.attr('class', start_btn_cls);
-    },
-
-    _started : function () {
-        var start_btn = $('#start'),
-            update_btn = $('#update'),
-            reset_btn = $('#reset'),
-            start_btn_cls,
-            update_btn_cls,
-            reset_btn_cls;
-
-        start_btn_cls = start_btn.attr('class').match(/ready/);
-        if (start_btn_cls !== null) {
-            start_btn_cls = start_btn.attr('class').replace(start_btn_cls[0], 'complete');
-        } else {
-            start_btn_cls = start_btn.attr('class') + ' complete';
-        }
-        start_btn.attr('class', start_btn_cls);
-
-        update_btn_cls = update_btn.attr('class') + ' ready';
-        update_btn.attr('class', update_btn_cls);
-
-        reset_btn_cls = reset_btn.attr('class') + ' ready';
-        reset_btn.attr('class', reset_btn_cls);
-    },
-
-    _updated : function () {
-    },
-
-    _reset_complete : function () {
-    },
-
-    _tests_complete : function () {
-    },
-
-};
-
 $(document).ready(function () {
-    controls.init$();
+    controls.init();
 });
 
 </script>

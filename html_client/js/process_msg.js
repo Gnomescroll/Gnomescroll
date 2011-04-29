@@ -18,7 +18,7 @@ process.register = function(msg) {
         socket.register();
         return false;
     }
-    if (parseInt(msg.update, 10)) { // request updates?
+    if (parseInt(msg.update, 10)) { // request updates
         game.update();
     }
     globals.session_id = msg.session_id;
@@ -61,7 +61,8 @@ process.info.tileset = function(msg) {
         tile = tp[x];
         tile_properties.add(tile);
     }
-    
+
+    game.update2();
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 
@@ -177,6 +178,8 @@ process.info.agent_list = function (msg) {
         
         agent.toState();
     }
+    delete state.requests_waiting.agents;
+    state.check_loaded();
 };
 
 process.info.object_list = function (msg) {
@@ -204,7 +207,8 @@ process.info.object_list = function (msg) {
         
         obj.toState();
     }
-    
+    delete state.requests_waiting.objects;
+    state.check_loaded();
 };
 
 process.delta = {};

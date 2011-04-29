@@ -49,6 +49,9 @@ var io = require('socket.io'),
         } else {
             this.client_id = msg.client_id;
             msg.session_id = this.sessionId;
+            if (msg.update) {
+                msg.requested_update = '1';
+            }
             msg.update = '1'; // 0 or 1, tells client if it should request updates or not (i.e. if there is no queue of messages waiting for it)
             client_id_to_session[msg.client_id] = { session_id: msg.session_id,
                                                     timestamp : Date.now() };
@@ -58,7 +61,7 @@ var io = require('socket.io'),
             if (old_client) {
                 if (old_client.redis_client !== undefined) {
                     this.redis_client = old_client.redis_client;
-                    msg.update = '0';
+                    msg.update = msg.requested_update || '0';
                 }
                 this.queue = old_client.queue || [];
                 // remove from disconnected clients
@@ -74,6 +77,7 @@ var io = require('socket.io'),
         }
         msg.msg = msg.cmd;
         delete msg.cmd;
+        delete msg.requested_update;
         this.send(JSON.stringify(msg));
         this.confirmed = confirmed;
         this.queue = this.queue || [];
@@ -100,7 +104,11 @@ var cull_clients = function () {
             client_id = clients_array[i];
             //console.log(clients);
             client = clients[client_id];
-            client.redis_client.quit();
+            if (client !== undefined) {
+                if (client.redis_client !== undefined) {
+                    client.redis_client.quit();
+                }
+            }
             delete clients[client_id];
             console.log('culled client '+client_id);
         }
@@ -108,7 +116,6 @@ var cull_clients = function () {
     }
     
     arguments.callee.last_timestamp = now;
-    //cull_interval();
 };
 
 cull_clients.timeout = 5000; // 5 seconds.  Time to wait before removing client
@@ -183,9 +190,9 @@ socket.on('connection', function(client) {
         }
     });
 
-    var exit_func = function(client) {
+    var disconnect_func = function(client) {
         return function () {
-            console.log('Client Disconnect or Close');
+            console.log('Client Disconnect');
             var timestamp = Date.now();
             client.disconnect_time = timestamp;
             disconnected_clients[timestamp] = disconnected_clients[timestamp] || [];
@@ -195,9 +202,18 @@ socket.on('connection', function(client) {
             client.send(JSON.stringify([{'disconnect': client.sessionId}]));
         };
     };
+
+    var close_func = function (client) {
+        return function () {
+            console.log('Client closed');
+            delete session_id_to_client[client.sessionId];
+            delete client_id_to_session[client.client_id];
+            delete clients[client.client_id];
+        };
+    };
     
-    client.on('disconnect', exit_func(client));
-    client.on('close', exit_func(client));  /* "Be careful with using this event, as some transports will fire it even under temporary, expected disconnections (such as XHR-Polling)." */
+    client.on('disconnect', disconnect_func(client));
+    client.on('close', close_func(client));  /* "Be careful with using this event, as some transports will fire it even under temporary, expected disconnections (such as XHR-Polling)." */
 });
 
 ////Client Connected

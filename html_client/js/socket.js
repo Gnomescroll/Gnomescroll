@@ -1,11 +1,3 @@
-function wait_blocking(delay) {
-    delay = delay || 1500; // 1.5 seconds default
-    var now = Date.now();
-    while (Date.now() - now < delay) {
-        continue;
-    }
-}
-
 var socket = {
     
     debug       : true,
@@ -13,8 +5,9 @@ var socket = {
     node_port   : 8081,
     socket      : null,
     no_reconnect: false,
+    first_connect: true,
     
-    init : function () {
+    init : function (update) {
         this.socket = this.socket || new io.Socket(this.node_server, {
                                                        'port' : this.node_port,
                                              'connectTimeout' : 200,
@@ -37,10 +30,8 @@ var socket = {
         this.socket.on('connect', function () {
             if (that.debug) console.log('connect');
             // send client id to server
-            that.register();
-            if (!game.started) {
-                game.init2();
-            }
+            that.register(that.first_connect);
+            that.first_connect = false;
         });
 
         this.socket.on('message', function (msg) {
@@ -90,7 +81,7 @@ var socket = {
         }
     },
 
-    register : function () {
+    register : function (update) {
         // send client id to server
         console.log('registering');
         this.socket.send(JSON.stringify({
@@ -98,6 +89,14 @@ var socket = {
                client_id : globals.client_id,
                      cmd : 'register',
                      msg : (globals.new_client) ? 'new' : '',
+                  update : (update) ? '1' : '',
         }));
+    },
+
+    disconnect : function (no_reconnect) {
+        if (this.socket) {
+            this.no_reconnect = no_reconnect || true;
+            this.socket.disconnect();
+        }
     },
 };

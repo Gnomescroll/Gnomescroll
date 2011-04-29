@@ -10,13 +10,20 @@ var map_editor = {
         return canvas;
     },
 
+    panel_selector : '#map_editor',
+
+    reset : function () {
+        this.current_tile = null;
+        $(this.panel_selector).html('');
+    },
+
     init: function () {
         this._init_panel();
         this._init_panel_controls();
     },
     
     _init_panel: function () {
-        var pane = $('#map_editor'),
+        var pane = $(this.panel_selector),
             tile_values = tileset_state.tile_id_to_name,
             table = $('<table></table>').attr('class','panel tiles'),
             cells_wide = 1,

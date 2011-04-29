@@ -20,37 +20,55 @@ var state = {
     map_width: 100,
     map_height: 100,
     
+    started : false,
+
+    fully_loaded : false,
+    requests_waiting : {},
+
+    reset : function () {
+        this.gameObjectTypeMap = {};
+        this.levels = {};
+        this.agents = {};
+        this.objects = {};
+        this.containers = {};
+        this.ao_map = {};
+        this.z_lvls = [];
+        this.started = false;
+    },
     
     // requests state data from server
     init: function () {
+        this._initGameObjectTypeMap();
+        
         var z_levels_to_add = [ this.current_z_lvl-1, 
                                 this.current_z_lvl, 
                                 this.current_z_lvl+1 ],
             len = z_levels_to_add.length,
             i,
-            z,
-            tileset_request;
-        
-        this._initGameObjectTypeMap();
-        
-        // add z-level numbers to z_lvls[]
-        for(i=0; i < len; i++) {
-            z = z_levels_to_add[i];
-            if ($.inArray(z, this.z_lvls) === -1) {
-                this.z_lvls.push(z);
+            z;
+
+        if (! this.started) {
+            // add z-level numbers to z_lvls[]
+            for(i=0; i < len; i++) {
+                z = z_levels_to_add[i];
+                if ($.inArray(z, this.z_lvls) === -1) {
+                    this.z_lvls.push(z);
+                }
             }
-        }
 
-        // init levels{} with zeroed array, request map for each lvl
-        len = this.z_lvls.length;
-        for (i=0; i < len; i++) {
-            z = this.z_lvls[i];
-            this.levels[z] = this.blocks();  // zero-d array for each z-level
-            this.load_map(z);                // request z-levels
-        }
+            // init levels{} with zeroed array, request map for each lvl
+            len = this.z_lvls.length;
+            for (i=0; i < len; i++) {
+                z = this.z_lvls[i];
+                this.levels[z] = this.blocks();  // zero-d array for each z-level
+                this.load_map(z);                // request z-levels
+                this.requests_waiting[z] = true;
+            }
 
-        tileset_request = info.tileset();
-        return (this.load_game_objects() && tileset_request); // agent, objects && tileset
+            return this.load_game_objects(); // agent, objects && tileset
+        } else {
+            return this.load_game_state();
+        }
     },
 
     _initGameObjectTypeMap : function () {
@@ -62,6 +80,7 @@ var state = {
     },
 
     load_game_state : function (z) {
+        this._initGameObjectTypeMap();
         this.load_map(z);
         return this.load_game_objects();
     },
@@ -85,8 +104,24 @@ var state = {
     },
 
     load_game_objects : function () {
-         return ( info.agents() &&    // request agents
-                  info.objects());    //         objects
+        this.requests_waiting.agents = true;
+        this.requests_waiting.objects = true;
+        return ( info.agents() &&    // request agents
+                 info.objects());    //         objects
+    },
+
+    check_loaded : function () { // check if there are outstanding requests
+        var n;
+        this.fully_loaded = true;
+        for (n in this.requests_waiting) {
+            if (!this.requests_waiting.hasOwnProperty(n)) continue;
+            if (n === 'agents' || n === 'objects' || !isNaN(parseInt(n, 10))) {
+                this.fully_loaded = false;
+            }
+        }
+        if (game.waiting_for_state && this.fully_loaded) {
+            game.update3();
+        }
     },
 
     // generate zeroed matrix
@@ -151,6 +186,8 @@ var state = {
         if ($.inArray(data.z_level, this.z_lvls) === -1) {  // add z_lvl number to this.z_lvls
             this.z_lvls.push(data.z_level);
         }
+        delete this.requests_waiting[data.z_level];
+        this.check_loaded();
         return true;
     },
     
