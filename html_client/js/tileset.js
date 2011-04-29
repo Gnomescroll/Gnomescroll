@@ -190,6 +190,7 @@ var drawingCache = {
     canvas: null,
     ctx: null,
     id: 'DrawingCacheWorkspace',
+    parent_selector: '#caches',
     
     init : function () {
         TileCanvas.prototype.init.call(this);

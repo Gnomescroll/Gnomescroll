@@ -2,26 +2,6 @@ var game = {
 
     started : false,
 
-    //init : function (callback) { // load z_level +/- 1. Load agents, objects. init render object.
-        //var board_init_eval = 'board.init();';
-        //drawingCache.init();
-        //socket.init();
-        //if (typeof callback === 'function') {
-            //var args = [],
-                //len = arguments.length,
-                //i = 1;
-            //for (i=1; i < len; i++) {
-                //args[i-1] = arguments[i];
-            //}
-            //window._game_init_callback = function () {
-                //callback.apply(this, args);
-                //delete window._game_init_callback;
-            //}
-            //board_init_eval = 'board.init(_game_init_callback);';
-        //}
-        //board.init_board_interval = setInterval(board_init_eval, 200);
-    //},
-
     init : function (callback) {
         drawingCache.init();
         socket.init();
@@ -52,28 +32,12 @@ var game = {
         return wait_func;
     }()),
     
-    input_delay : 3000, // ms delay for input check
-    
-    input_interval : function () { // called in game.start setInterval
-        processInput(input.next(this.input_delay));
-    },
-    
-    start : function (callback) { 
-        //var interval = setInterval('game.input_interval()', this.input_delay); // start input rate-limit queue
+    start : function (callback) {
+        input.run();
         if (typeof callback === 'function') {
             callback();
         }
     },
-
-    //update : function (callback) { // game requests info updates after it has started
-        //state.init();
-        //input.init();
-        //board.reset();
-        //board.init();
-        //if (typeof callback === 'function') {
-            //callback();
-        //}
-    //},
 
     update : function (callback) {
         drawingCache.loadTilesets();
@@ -82,11 +46,12 @@ var game = {
             callback();
         }
     },
-
-    waiting_for_state : true,
+    
     update2 : function() {
         state.init();
     },
+
+    waiting_for_state : true,
 
     update3 : function () {
         this.waiting_for_state = false;

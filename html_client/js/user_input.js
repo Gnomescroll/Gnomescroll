@@ -6,6 +6,9 @@ input = {
     queue: [],  // queue of events received
     keys: {},  // for detecting multiple keys pressed
 
+    delay : 300, // ms delay for input check
+    interval : 0, // setInterval id
+    
     started : false,
         
     init: function () { // init $ bindings
@@ -15,7 +18,7 @@ input = {
                 var key = keymap[event.which];
                 input.queue.push({key: key, timestamp: event.timeStamp});
                 that.keys[key] = true;
-                processInput(key);
+                that.process(key);
             }).click(function (event) {
                 var key = keymap[event.which];
                 if (key === 'left-click') { 
@@ -26,16 +29,15 @@ input = {
             $('body').keyup(function (event) {
                 var key = keymap[event.which];
                 delete that.keys[key];
-                processInput();
+                that.process();
             });
-
             this.started = true;
         }
     },
         
     next: function (delay) { // shifts the queue, FIFO
         var timestamp = 0,
-            delay = delay || 300, // millisecond delay between input
+            delay = delay || this.delay, // millisecond delay between input
             queue = this.queue;
         
         while (queue.length > 0) {
@@ -53,7 +55,102 @@ input = {
             return event.key;
         }
         return false;
+    },
+
+    run : function () {
+        //var interval = setInterval('processInput(input.next());', this.input_delay); // start input rate-limit queue
+        this.interval = setInterval('input.process();', this.delay);
     }
+};
+
+input.process = function (key) {
+    key = key || this.next();
+    var old,
+        panning_delta = {x: 0, y: 0},
+        key_type;
+        
+    for (key_type in this.keys) {
+        if (!this.keys.hasOwnProperty(key_type)) continue;
+        switch (key_type) {
+            case 'LEFT':
+                panning_delta.x += -1;
+                break;
+            case 'RIGHT':
+                panning_delta.x += 1;
+                break;
+            case 'UP':
+                panning_delta.y += -1;
+                break;
+            case 'DOWN':
+                panning_delta.y += 1;
+                break;
+        }
+    }
+    board.scroll(panning_delta.x, panning_delta.y);
+
+    if (!key) return false;
+    switch (key) {
+        
+        case 'ESC':               //quit ? remove this
+            map_editor.clear_current();
+            return false;
+            
+        case 'LEFT':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'RIGHT':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'UP':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'DOWN':
+            //board.scroll(panning_delta.x, panning_delta.y);
+            break;
+            
+        case 'c':                   // set map solid
+            console.log('set map');
+            //admin.set_map(selected_agent.pos(), 1);
+            admin.set_map(cursor.pos(), 1);
+            break;
+            
+        case 'x':                   // set map empty
+            //admin.set_map(selected_agent.pos(), 0);
+            admin.set_map(cursor.pos(), 0);
+            break;
+            
+        case 'p':                   // create agent
+            admin.create_agent(cursor.pos());
+            break;
+            
+        case 't':
+            admin.create_object(cursor.pos());
+            break;
+            
+        case 'g':
+            //admin.create_object(selected_agent.pos(), 
+            break;
+            
+        case 'r':
+            action.plant(selected_agent.id);
+            break;
+            
+        case 'f':
+            action.till(selected_agent.id);
+            break;
+            
+        case 'v':
+            action.harvest(selected_agent.id);
+            break;
+            
+        case 'i':
+            info.map(5);
+            break;
+    }
+    return true;
 };
 
 // for the keydown event.
@@ -173,93 +270,4 @@ keymap = {
     //0: '5NUMPAD',
     //0: '.NUMPAD',
     //0: '0NUMPAD',
-};
-
-var processInput = function (key) {
-    var old,
-        panning_delta = {x: 0, y: 0},
-        key_type;
-        
-    for (key_type in input.keys) {
-        if (!input.keys.hasOwnProperty(key_type)) continue;
-        switch (key_type) {
-            case 'LEFT':
-                panning_delta.x += -1;
-                break;
-            case 'RIGHT':
-                panning_delta.x += 1;
-                break;
-            case 'UP':
-                panning_delta.y += -1;
-                break;
-            case 'DOWN':
-                panning_delta.y += 1;
-                break;
-        }
-    }
-    board.scroll(panning_delta.x, panning_delta.y);
-
-    if (!key) return false;
-    switch (key) {
-        
-        case 'ESC':               //quit ? remove this
-            map_editor.clear_current();
-            return false;
-            
-        case 'LEFT':
-            //board.scroll(panning_delta.x, panning_delta.y);
-            break;
-            
-        case 'RIGHT':
-            //board.scroll(panning_delta.x, panning_delta.y);
-            break;
-            
-        case 'UP':
-            //board.scroll(panning_delta.x, panning_delta.y);
-            break;
-            
-        case 'DOWN':
-            //board.scroll(panning_delta.x, panning_delta.y);
-            break;
-            
-        case 'c':                   // set map solid
-            console.log('set map');
-            //admin.set_map(selected_agent.pos(), 1);
-            admin.set_map(cursor.pos(), 1);
-            break;
-            
-        case 'x':                   // set map empty
-            //admin.set_map(selected_agent.pos(), 0);
-            admin.set_map(cursor.pos(), 0);
-            break;
-            
-        case 'p':                   // create agent
-            admin.create_agent(cursor.pos());
-            break;
-            
-        case 't':
-            admin.create_object(cursor.pos());
-            break;
-            
-        case 'g':
-            //admin.create_object(selected_agent.pos(), 
-            break;
-            
-        case 'r':
-            action.plant(selected_agent.id);
-            break;
-            
-        case 'f':
-            action.till(selected_agent.id);
-            break;
-            
-        case 'v':
-            action.harvest(selected_agent.id);
-            break;
-            
-        case 'i':
-            info.map(5);
-            break;
-    }
-    return true;
 };
