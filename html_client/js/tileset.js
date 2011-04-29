@@ -149,6 +149,7 @@ TileCanvas.prototype = {
     },
 
     reset : function () {
+        $('canvas#'+this.id).remove();
         this.canvas = null;
         this.ctx = null;
         this.init();
