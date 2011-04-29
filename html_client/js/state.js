@@ -22,6 +22,9 @@ var state = {
     
     started : false,
 
+    fully_loaded : false,
+    requests_waiting : {},
+
     reset : function () {
         this.gameObjectTypeMap = {};
         this.levels = {};
@@ -42,8 +45,7 @@ var state = {
                                 this.current_z_lvl+1 ],
             len = z_levels_to_add.length,
             i,
-            z,
-            tileset_request;
+            z;
 
         if (! this.started) {
             // add z-level numbers to z_lvls[]
@@ -60,10 +62,10 @@ var state = {
                 z = this.z_lvls[i];
                 this.levels[z] = this.blocks();  // zero-d array for each z-level
                 this.load_map(z);                // request z-levels
+                this.requests_waiting[z] = true;
             }
 
-            tileset_request = info.tileset();
-            return (this.load_game_objects() && tileset_request); // agent, objects && tileset
+            return this.load_game_objects(); // agent, objects && tileset
         } else {
             return this.load_game_state();
         }
@@ -102,8 +104,24 @@ var state = {
     },
 
     load_game_objects : function () {
-         return ( info.agents() &&    // request agents
-                  info.objects());    //         objects
+        this.requests_waiting.agents = true;
+        this.requests_waiting.objects = true;
+        return ( info.agents() &&    // request agents
+                 info.objects());    //         objects
+    },
+
+    check_loaded : function () { // check if there are outstanding requests
+        var n;
+        this.fully_loaded = true;
+        for (n in this.requests_waiting) {
+            if (!this.requests_waiting.hasOwnProperty(n)) continue;
+            if (n === 'agents' || n === 'objects' || !isNaN(parseInt(n, 10))) {
+                this.fully_loaded = false;
+            }
+        }
+        if (game.waiting_for_state && this.fully_loaded) {
+            game.update3();
+        }
     },
 
     // generate zeroed matrix
@@ -168,6 +186,8 @@ var state = {
         if ($.inArray(data.z_level, this.z_lvls) === -1) {  // add z_lvl number to this.z_lvls
             this.z_lvls.push(data.z_level);
         }
+        delete this.requests_waiting[data.z_level];
+        this.check_loaded();
         return true;
     },
     

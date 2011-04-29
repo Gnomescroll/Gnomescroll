@@ -27,6 +27,10 @@ var tileset_state = {
     tile_name_to_id : {},
     tile_id_to_name : {},
 
+    init : function () {
+        info.tileset();
+    },
+
     default_tile : {
         tile_name      : 'non-existant tile',
         is_default     : true,
@@ -183,7 +187,7 @@ var drawingCache = {
     
     init : function () {
         TileCanvas.prototype.init.call(this);
-        this.loadTilesets();
+        //this.loadTilesets();
     },
     
     resize : function () {

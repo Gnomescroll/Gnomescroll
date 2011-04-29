@@ -65,9 +65,9 @@ var controls = {
         elem_cls = selector.attr('class');
         if (elem_cls.match(/ready/) !== null) {
             selector.attr('class', elem_cls.replace(/ready/, 'processing'));
-            board.start();
-            map_editor.init();
-            options.init();
+            //board.start();
+            //map_editor.init();
+            //options.init();
             //benchmark();
             game.start(controls._started);
         }
