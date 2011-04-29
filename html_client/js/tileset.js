@@ -80,13 +80,14 @@ function Tileset(src, tileset_id, tpw, tph, tw, th) {
         throw new Error(this.constructor.name +' construction has invalid number of arguments.');
     }
     var img = new Image(),
+        _elem_id = 'tileset_' + tileset_id,
         _dom_element = $('<img />').attr({ 'src': src,
-                                           'id': 'tileset_'+tileset_id,
+                                           'id': _elem_id,
                                            'class': 'tileset' });
 
     $('body').append(_dom_element);
     img.src = src;
-
+    this.selector = '#' + _elem_id;
     this.dom_element = _dom_element;
     this.image = img;
     this.pixel_width = tpw;  //in pixels
@@ -157,10 +158,10 @@ TileCanvas.prototype = {
 };
 
 // This canvas is scratch space for drawing tiles, before they are stored in the tile_cache
-var tile_cache_canvas = new TileCanvas('cache', 'body', { width: 16,
-                                                          height: 16,
-                                                          pixel_width: 24,
-                                                          pixel_height: 24 });
+var tile_cache_canvas = new TileCanvas('cache', '#caches', { width : 16,
+                                                             height: 16,
+                                                             pixel_width : 24,
+                                                             pixel_height: 24 });
 
 
 // canvas workspace for building a tile image
@@ -193,13 +194,22 @@ var drawingCache = {
 
     reset : function () {   // resets drawingCache (but does not re-insert tilesets)
         this.img_cache   = [];
-        this.cache_count = 0;
+        this.img_cache_count = 0;
         this.tlookup     = {};
         this.slookup     = {};
     },
 
     reset_full : function () { // reset everything, including re-downloading tilesets
+        this.removeTilesets();
         this.reset();
+    },
+
+    removeTilesets : function () {
+        var t;
+        for (t in this.tilesets) {
+            if (!this.tilesets.hasOwnProperty(t)) continue;
+            $(this.tilesets[t].selector).remove();
+        }
         this.tilesets = [];
     },
 
@@ -350,7 +360,7 @@ var drawingCache = {
         if (imgd !== undefined) {
             ctx.putImageData(this.img_cache[index], x_offset, y_offset);
         } else {
-            console.log('Attempted to drawTileTocCtx, but there was no data in the image cache');
+            console.log('Attempted to drawTileToCtx, but there was no data in the image cache');
         }     
     },
 

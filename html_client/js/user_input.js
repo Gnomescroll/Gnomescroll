@@ -5,26 +5,32 @@ input = {
 
     queue: [],  // queue of events received
     keys: {},  // for detecting multiple keys pressed
+
+    started : false,
         
     init: function () { // init $ bindings
-        var that = this;
-        $('body').keydown(function (event) {
-            var key = keymap[event.which];
-            input.queue.push({key: key, timestamp: event.timeStamp});
-            that.keys[key] = true;
-            processInput(key);
-        }).click(function (event) {
-            var key = keymap[event.which];
-            if (key === 'left-click') { 
-                map_editor.set_tile(event);
-            } 
-        });
+        if (!this.started) {
+            var that = this;
+            $('body').keydown(function (event) {
+                var key = keymap[event.which];
+                input.queue.push({key: key, timestamp: event.timeStamp});
+                that.keys[key] = true;
+                processInput(key);
+            }).click(function (event) {
+                var key = keymap[event.which];
+                if (key === 'left-click') { 
+                    map_editor.set_tile(event);
+                } 
+            });
 
-        $('body').keyup(function (event) {
-            var key = keymap[event.which];
-            delete that.keys[key];
-            processInput();
-        });
+            $('body').keyup(function (event) {
+                var key = keymap[event.which];
+                delete that.keys[key];
+                processInput();
+            });
+
+            this.started = true;
+        }
     },
         
     next: function (delay) { // shifts the queue, FIFO

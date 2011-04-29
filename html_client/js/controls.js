@@ -29,46 +29,49 @@ var controls = {
     },
 
     _init_event : function (event) {
-        var selector = $(this).attr('id');
+        var selector = $(this).attr('id'),
+            elem_cls,
+            args = [];
         if (selector !== undefined) {
             selector = this;
         } else {
             selector = '#init';
         }
-        if ($(selector).attr('class').match(/ready/) !== null) {
-            game.init(controls._initialized);
-        }
-        if (typeof event === 'function') { // callback
-            var args = [],
-                len = arguments.length,
-                i = 1;
-            for (i=1; i < len; i++) {
-                args[i-1] = arguments[i];
+        selector = $(selector);
+        elem_cls = selector.attr('class');
+        if (elem_cls.match(/ready/) !== null) {
+            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
+            args.push(controls._initialized);
+            if (typeof selector === 'string') {
+                args.push(controls._start_event);
             }
-            event.apply(this, args);
+            game.init.apply(game, args);
         }
         return false;
     },
 
     _start_event : function (event) {
-        var selector = $(this).attr('id');
-        if (selector !== undefined) {
+        var selector = $(this).attr('id'),
+            elem_cls,
+            args = [],
+            len = arguments.length,
+            i = 1;
+        if (selector !== undefined && $(this).parent().attr('class') === 'main_button') {
             selector = this;
         } else {
             selector = '#start';
         }
-        if ($(selector).attr('class').match(/ready/) !== null) {
+        selector = $(selector);
+        elem_cls = selector.attr('class');
+        if (elem_cls.match(/ready/) !== null) {
+            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
             board.start();
-            $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});        
             map_editor.init();
             options.init();
             //benchmark();
             game.start(controls._started);
         }
         if (typeof event === 'function') { // callback
-            var args = [],
-                len = arguments.length,
-                i = 1;
             for (i=1; i < len; i++) {
                 args[i-1] = arguments[i];
             }
@@ -78,19 +81,23 @@ var controls = {
     },
 
     _update_event : function (event) {   // not tested
-        var selector = $(this).attr('id');
+        var selector = $(this).attr('id'),
+            elem_cls,
+            args = [],
+            len = arguments.length,
+            i = 1;
         if (selector !== undefined) {
             selector = this;
         } else {
             selector = '#update';
         }
-        if ($(selector).attr('class').match(/ready/) !== null) {
+        selector = $(selector);
+        elem_cls = selector.attr('class');
+        if (elem_cls.match(/ready/) !== null) {
+            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
             game.update(controls._updated);
         }
         if (typeof event === 'function') { // callback
-            var args = [],
-                len = arguments.length,
-                i = 1;
             for (i=1; i < len; i++) {
                 args[i-1] = arguments[i];
             }
@@ -101,19 +108,23 @@ var controls = {
 
     _reset_event : function (event) {    // not implemented
         // reset map state
-        var selector = $(this).attr('id');
+        var selector = $(this).attr('id'),
+            elem_cls,
+            args = [],
+            len = arguments.length,
+            i = 1;
         if (selector !== undefined) {
             selector = this;
         } else {
             selector = '#reset';
         }
-        if ($(selector).attr('class').match(/ready/) !== null) {
+        selector = $(selector);
+        elem_cls = selector.attr('class');
+        if (elem_cls.match(/ready/) !== null) {
+            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
             game.reset(controls._reset_complete);
         }
         if (typeof event === 'function') { // callback
-            var args = [],
-                len = arguments.length,
-                i = 1;
             for (i=1; i < len; i++) {
                 args[i-1] = arguments[i];
             }
@@ -123,18 +134,24 @@ var controls = {
     },
 
     _test_event : function (event) {     // not implemented
-        var selector = $(this).attr('id');
+        var selector = $(this).attr('id'),
+            elem_cls,
+            args = [],
+            len = arguments.length,
+            i = 1;
         if (selector !== undefined) {
             selector = this;
         } else {
             selector = '#test';
         }
+        selector = $(selector);
+        elem_cls = selector.attr('class');
+        if (elem_cls.match(/ready/) !== null) {
+            selector.attr('class', elem_cls.replace(/ready/, 'processing'));
+        }
         // run tests
         //tests.run(controls._tests_complete);
         if (typeof event === 'function') { // callback
-            var args = [],
-                len = arguments.length,
-                i = 1;
             for (i=1; i < len; i++) {
                 args[i-1] = arguments[i];
             }
@@ -144,7 +161,7 @@ var controls = {
     },
 
     trigger_load : function () {
-        this._init_event(this._start_event);
+        this._init_event();
     },
     
     init$ : function () {
@@ -156,13 +173,13 @@ var controls = {
         $('#test').click(this._test_event);
     },
 
-    _initialized : function () {
+    _initialized : function (callback) {
         var init_btn = $('#init'),
             start_btn = $('#start'),
             init_btn_cls,
             start_btn_cls;
 
-        init_btn_cls = init_btn.attr('class').match(/ready/);
+        init_btn_cls = init_btn.attr('class').match(/processing/);
         if (init_btn_cls !== null) {
             init_btn_cls = init_btn.attr('class').replace(init_btn_cls[0], 'complete');
         } else {
@@ -172,6 +189,16 @@ var controls = {
 
         start_btn_cls = start_btn.attr('class') + ' ready';
         start_btn.attr('class', start_btn_cls);
+
+        if (typeof callback === 'function') { // callback
+            var args = [],
+                len = arguments.length,
+                i = 1;
+            for (i=1; i < len; i++) {
+                args[i-1] = arguments[i];
+            }
+            callback.apply(this, args);
+        }
     },
 
     _started : function () {
@@ -182,7 +209,7 @@ var controls = {
             update_btn_cls,
             reset_btn_cls;
 
-        start_btn_cls = start_btn.attr('class').match(/ready/);
+        start_btn_cls = start_btn.attr('class').match(/processing/);
         if (start_btn_cls !== null) {
             start_btn_cls = start_btn.attr('class').replace(start_btn_cls[0], 'complete');
         } else {
@@ -198,17 +225,26 @@ var controls = {
     },
 
     _updated : function () {
+        var btn = $('#update'),
+            cls = btn.attr('class');
+        btn.attr('class', cls.replace(/processing/, 'ready'));
     },
 
     _reset_complete : function () {
+        var btn = $('#reset'),
+            cls = btn.attr('class');
+        btn.attr('class', cls.replace(/processing/, 'ready'));
     },
 
     _tests_complete : function () {
+        var btn = $('#test'),
+            cls = btn.attr('class');
+        btn.attr('class', cls.replace(/processing/, 'ready'));
     },
 
     reset : function () {
         var name;
-        for (name in this.defaults) {
+        for (name in this.defaults) {   // set default classes on controls
             if (!this.defaults.hasOwnProperty(name)) continue;
             $('#'+name).attr('class', this.defaults[name]);
         }

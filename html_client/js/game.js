@@ -1,31 +1,3 @@
-/* *******************************
- * *******************************
- * 
- * Get rid of the game loop.
- * In init, render the starting game state after the messages have been received.
- * When later messages come in, render the update only.
- 
- * Meanwhile, key inputs will be caught.
- * Still, add these to a queue, so can compare timestamps. 
- * (For some reason, keypress/keydown always trigger twice w/ same timestamp after the first press, and a simple tracking var doesn't catch the 2nd)
- * Have a setInterval for pulling from the queue.
- * Pick the first event w/ timestamp diff > delay, then flush queue
- *
- * 
- * UPDATE 3/5/2011
- *      User input checking w/ delay seems to work well
- *      
- *      Next, implement rendering of initial state.
- *      Then, render updates on message received.
- *      Then, efficient rendering on view change
- *      Then, scrolling based on position & movement of selected agents/moving things
- *      Then, mouse input clicks for selecting agent
- *      Then, mouse input for onHover tooltips/cell info
- *      Then, mouse input for drag selection (multiagent)
- */     
-
-
-// main loop
 var game = {
 
     started : false,
@@ -35,8 +7,14 @@ var game = {
         drawingCache.init();
         socket.init();
         if (typeof callback === 'function') {
+            var args = [],
+                len = arguments.length,
+                i = 1;
+            for (i=1; i < len; i++) {
+                args[i-1] = arguments[i];
+            }
             window._game_init_callback = function () {
-                callback();
+                callback.apply(this, args);
                 delete window._game_init_callback;
             }
             board_init_eval = 'board.init(_game_init_callback);';
@@ -72,19 +50,24 @@ var game = {
         processInput(input.next(this.input_delay));
     },
     
-    start : function (callback) { // main game loop
+    start : function (callback) { 
         //var interval = setInterval('game.input_interval()', this.input_delay); // start input rate-limit queue
         if (typeof callback === 'function') {
             callback();
         }
     },
 
-    update : function () { // game requests info updates after it has started
-        state.load_game_state();
+    update : function (callback) { // game requests info updates after it has started
+        state.init();
+        input.init();
         board.reset();
+        board.init();
+        if (typeof callback === 'function') {
+            callback();
+        }
     },
 
-    reset : function () { // resets everything
+    reset : function (callback) { // resets everything
         // reset:
         //  socket
         //  board
@@ -93,50 +76,23 @@ var game = {
         //  game
         //
         // essentially, wipe everything and run init/start
+        this.started = false;
         controls.reset();
-        socket.disconnect();
+        //socket.disconnect();
+        delete socket.socket;
         tile_properties.reset();
         tileset_state.reset();
-        drawingCache.reset();
+        drawingCache.reset_full();
         board.reset();
         state.reset();
         map_editor.reset();
         options.reset();
-
+        
         controls.trigger_load();
+
+        if (typeof callback === 'function') {
+            callback();
+        }
     },
     
-};
-
-
-// temporary, just to keep processInput action calls from throwing
-var selected_agent = {
-    x: 15,
-    y: 15,
-    z: 5,
-    id:0,
-    pos: function() {
-        return [this.x, this.y, this.z];
-    } 
-};
-                     
-var cursor = {
-    x: 25,
-    y: 12,
-    z: 5,
-    value: 176,
-    type: 'cursor',
-    pos: function() {
-        return [this.x, this.y, this.z];
-    },
-    moveX: function(amt) {
-            this.x += amt;
-            this.x = Math.max(0, this.x);
-            renderState.scrollMap(this);
-    },
-    moveY: function(amt) {
-            this.y += amt;
-            this.y = Math.max(0, this.y);
-            renderState.scrollMap(this);
-    }
 };

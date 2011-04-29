@@ -33,8 +33,12 @@ td.selected {
     color: blue;
 }
 
+.main_button > a.processing {
+    color: red;
+}
+
 .main_button > a.complete {
-    color: green;
+    color: green;    
 }
 
 </style>
@@ -76,7 +80,9 @@ td.selected {
     </div>
 </div>
 
-<div id="game" ><!-- canvas inserted here --></div>
+<div id="game" ><!-- board canvas inserted here --></div>
+
+<div id="caches"><!-- cache canvases inserted here --></div>
 
 </body>
 <script src="http://127.0.0.1:8080/js/process_msg.js"></script>

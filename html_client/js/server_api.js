@@ -45,7 +45,7 @@ var send = function (data) {
 };
 
 var hello = function () {
-    return send({ 'cmd'     : 'hello',
+    return send({ cmd       : 'hello',
                   world_id  : globals.world_id,
                   client_id : globals.client_id });
 };

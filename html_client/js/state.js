@@ -20,18 +20,23 @@ var state = {
     map_width: 100,
     map_height: 100,
     
+    started : false,
 
     reset : function () {
+        this.gameObjectTypeMap = {};
         this.levels = {};
         this.agents = {};
         this.objects = {};
         this.containers = {};
         this.ao_map = {};
         this.z_lvls = [];
+        this.started = false;
     },
     
     // requests state data from server
     init: function () {
+        this._initGameObjectTypeMap();
+        
         var z_levels_to_add = [ this.current_z_lvl-1, 
                                 this.current_z_lvl, 
                                 this.current_z_lvl+1 ],
@@ -39,27 +44,29 @@ var state = {
             i,
             z,
             tileset_request;
-        
-        this._initGameObjectTypeMap();
-        
-        // add z-level numbers to z_lvls[]
-        for(i=0; i < len; i++) {
-            z = z_levels_to_add[i];
-            if ($.inArray(z, this.z_lvls) === -1) {
-                this.z_lvls.push(z);
+
+        if (! this.started) {
+            // add z-level numbers to z_lvls[]
+            for(i=0; i < len; i++) {
+                z = z_levels_to_add[i];
+                if ($.inArray(z, this.z_lvls) === -1) {
+                    this.z_lvls.push(z);
+                }
             }
-        }
 
-        // init levels{} with zeroed array, request map for each lvl
-        len = this.z_lvls.length;
-        for (i=0; i < len; i++) {
-            z = this.z_lvls[i];
-            this.levels[z] = this.blocks();  // zero-d array for each z-level
-            this.load_map(z);                // request z-levels
-        }
+            // init levels{} with zeroed array, request map for each lvl
+            len = this.z_lvls.length;
+            for (i=0; i < len; i++) {
+                z = this.z_lvls[i];
+                this.levels[z] = this.blocks();  // zero-d array for each z-level
+                this.load_map(z);                // request z-levels
+            }
 
-        tileset_request = info.tileset();
-        return (this.load_game_objects() && tileset_request); // agent, objects && tileset
+            tileset_request = info.tileset();
+            return (this.load_game_objects() && tileset_request); // agent, objects && tileset
+        } else {
+            return this.load_game_state();
+        }
     },
 
     _initGameObjectTypeMap : function () {
@@ -71,6 +78,7 @@ var state = {
     },
 
     load_game_state : function (z) {
+        this._initGameObjectTypeMap();
         this.load_map(z);
         return this.load_game_objects();
     },

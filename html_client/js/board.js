@@ -29,7 +29,7 @@ var board = {
         this.canvas.reset();
         this.cursor_manager.reset();
         this.manager.reset();
-        this.init();
+        //this.init();
     },
     
     resize : function resize() {
@@ -81,6 +81,7 @@ board.event = {
     terrain_map : function (data) { // full terrain map
         if (data.z_level == board.z_level) {
             board.reset();
+            board.init();
         }
     },
 };
@@ -100,7 +101,8 @@ board.manager = {
     },
 
     reset : function () {
-        this.populate_index();
+        this.agents = [];
+        this.objects = [];
     },
     
     scroll : function (dx, dy, method) {
@@ -315,12 +317,9 @@ board.manager = {
             by;
             
         if (this.on_board(x, y, z)) {
-            //console.log("update tile: tile is on board");
             bx = x - board.x_offset;
             by = y - board.y_offset;
             board.cursor_manager.update_tile(bx, by, tile_id);
-        } else {
-            console.log("update tile: tile is not on board ");
         }
     }
 };
@@ -337,11 +336,13 @@ board.cursor_manager = {
     },
 
     reset : function () {
+        //this.index = [];
         this.reset_cursor_index();
+        this.atc = {};
+        this.otc = {};
     },
 
     update_tile : function(bx, by, tile_id) {
-        //console.log({ x : this.index, });
         var i = bx + by*board.tile_width,
             temp = this.index[i]; // cursor obj
             
