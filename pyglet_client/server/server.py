@@ -6,8 +6,8 @@ class TestServer(LineReceiver):
 
     answers = {'How are you?': 'Fine', None : "I don't know what you mean"}
 
-    def connectionMade(self):
-        print "client connected"
+#    def connectionMade(self):
+#        print "client connected"
 
     def connectionMade(self):
         self.factory.numProtocols = self.factory.numProtocols+1
@@ -30,7 +30,11 @@ class TestServer(LineReceiver):
         else:
             self.sendLine(self.answers[None])
 
+class TestFactory(protocol.ServerFactory):
+    proticol = TestServer
 
+    def over_ride_methods():
+        pass
 
 factory = protocol.ServerFactory()
 factory.protocol = TestServer
