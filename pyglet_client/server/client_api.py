@@ -1,8 +1,21 @@
 import socket
 
+from struct import *
+
 class Decoder:
 
     def __init__(self):
+        self.current_message = None
+        self.message_length_remaining = None
+
+    def decode(data):
+        if self.message_length_remaining = None:
+            (data,length) = self.read_prefix(data)
+
+    def read_prefix(self, data):
+
+
+class Encoder:
 
 
 class connection:
