@@ -5,7 +5,7 @@ import time
 
 def _listen():
     TCP_IP = '127.0.0.1'
-    TCP_PORT = 5052
+    TCP_PORT = 5053
     BUFFER_SIZE = 10  # Normally 1024, but we want fast response
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,10 +16,14 @@ def _listen():
     print 'Connected to:', addr
     return conn
 
+import simplejson as json
+def pm(id, msg):
+    return struct.pack('H',id) +msg
+
 M = [
-'testmsg',
-'testmsg2',
-'asf343',
+pm(0,"test!"),
+pm(1,json.dumps(['test1','test2','test3']))
+#'asf343',
 ]
 
 s = _listen()

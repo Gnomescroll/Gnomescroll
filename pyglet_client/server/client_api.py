@@ -7,23 +7,39 @@ import simplejson as json
 
 from collections import namedtuple
 
+msg_types = [
+(1, 'json'),
+(2, 'create_agent'),
+(3, 'agent_position_update'),
+]
+
 class DatagramDecoder:
 
     def __init__(self):
         pass
 
     def decode(self, message):
-        prefix = message[0:2]
-        (msg_type,) = struct.unpack('H', message[0:2])
-        msg = json.loads(message[2:])
+        print "decoding datagram"
+        (prefix, datagram) = (message[0:2],message[2:])
+        (msg_type,) = struct.unpack('H', prefix)
 
-
+        if msg_type == 0:
+            print "test message received"
+        if msg_type == 1:
+            print "json message"
+            msg = json.loads(message[2:])
+            print str(msg)
+        if msg_type == 2:
+            CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
+            n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
+            print str(n)
         #Point = namedtuple('Point', 'x y')
 
 
 
 class PacketDecoder:
     def __init__(self):
+        self.datagramDecoder = DatagramDecoder()
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -60,9 +76,9 @@ class PacketDecoder:
         return (length, data[4:])
 
     def process_msg(self, message):
-        print "process message= " + str(message)
         self.count += 1
-        print "message count: " +str(self.count)
+        print "processed message count: " +str(self.count)
+        self.datagramDecoder.decode(message)
 
 class PacketEncoder:
 
@@ -74,8 +90,8 @@ class PacketEncoder:
 
 class Connection:
     server = '127.0.0.1'
-    tcp_port = 5052
-    udp_port = 5053
+    tcp_port = 5053
+    udp_port = 5054
 
     def __init__(self):
         self.tcp = None
