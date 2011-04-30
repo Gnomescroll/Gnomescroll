@@ -20,6 +20,8 @@ class World():
         tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
         self.texture_grid = tile_texture_grid
 
+        self.texture_grid_mipmap = tile_image.get_mipmapped_texture()
+
         self.cubeProperties = CubeProperties()
         self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
         #test
@@ -27,6 +29,11 @@ class World():
         #MapChunkManager(terrainMap, cubeProperties)
         self.players = []
 
+        self.mipmap = 0
+
+    def toggle_mipmap(self):
+        self.mipmap = (self.mipmap+1) % 7
+        print "mipmap= %i" % self.mipmap
     def tick(self):
         pass
 
@@ -55,16 +62,50 @@ class World():
                 mct.update_vertex_buffer(self.batch)
                 break
 
+
+        #gluBuild2DMipmaps(GL_TEXTURE_2D, depth, width, height, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+        #err = gluBuild2DMipmaps(GL_TEXTURE_2D,GLU_RGBA,  2048, 2048, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+        #print "err= " + str(err)
+
+        #glShadeModel(GL_FLAT);glShadeModel(GL_SMOOTH);
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target)
-        glBindTexture(self.texture_grid.target, self.texture_grid.id)
+
+        _mipmap = self.mipmap
+        if _mipmap == 0:
+            glBindTexture(self.texture_grid.target, self.texture_grid.id)
+        elif _mipmap == 1:
+            glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        elif _mipmap == 2:
+            glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        elif _mipmap == 3:
+            glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        elif _mipmap == 4:
+            glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        elif _mipmap == 5:
+            glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+        elif _mipmap == 6:
+            glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+        #if _mipmap:
+            #glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
+            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        #else:
+            #glBindTexture(self.texture_grid.target, self.texture_grid.id)
 
         #for mct in self.mct_array.values():
         #    if mct.empty == False:
         #        mct.vertexList.draw(pyglet.gl.GL_QUADS)
         self.batch.draw()
 
-        glDisable(GL_CULL_FACE);
+        #glDisable(GL_SMOOTH)
+        glDisable(GL_CULL_FACE)
         glDisable(self.texture_grid.target)
 
     def draw(self):

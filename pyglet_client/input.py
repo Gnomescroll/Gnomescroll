@@ -27,8 +27,9 @@ class Keyboard(object):
     def on_key_press(self, symbol, modifiers):
         v = 0.2
         #print "key press"
-        #if symbol == key.SPACE:
-        #    print "Space Bar Pressed"
+        if symbol == key.E:
+            print "E"
+            self.main.world.toggle_mipmap()
         #elif symbol == key.W:
             #self.camera.move_camera(v,0,0)
         #elif symbol == key.S:
