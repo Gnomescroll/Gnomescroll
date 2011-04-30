@@ -14,7 +14,7 @@ class Decoder:
         self.buffer += data
         self.attempt_decode()
 
-    def atempt_decode():
+    def attempt_decode():
         if len(self.buffer) < self.message_length:
             print "decode: need more packets of data to decode message"
             return
@@ -48,8 +48,8 @@ class Encoder:
 
 class Connection:
     server = '127.0.0.1'
-    tcp_port = 5050
-    udp_port = 5051
+    tcp_port = 5052
+    udp_port = 5053
 
     def __init__(self):
         self.tcp = None
@@ -77,8 +77,10 @@ class Connection:
         BUFFER_SIZE = 512
         try:
             data = self.tcp.recv(BUFFER_SIZE)
-            self.decoder.decode(data)
-        except:
+            print "get_tcp: data received"
+            self.decoder.add_to_buffer(data)
+        except socket.error, (value,message):
+            print "get_tcp: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
     def connect_udp(self):
