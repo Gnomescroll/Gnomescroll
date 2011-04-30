@@ -13,7 +13,11 @@ msg_types = [
 (3, 'agent_position_update'),
 ]
 
-class DatagramEncoder:
+#301 admin_create_agent //should be a json command!
+#200 agent control state
+#600 admin json command
+
+class ClientDatagramEncoder:
     def __init__(self, connection):
         self.connection = connection
         pass
@@ -23,10 +27,24 @@ class DatagramEncoder:
 
     def admin_create_agent(agent_id, player_id, x, y, z, x_angle, y_angle):
         t1 = struct.pack('IIfffhh', agent_id, player_id, x, y, z, x_angle, y_angle)
-        t2 = self._pm(2, t1)
+        t2 = self._pm(301, t1)
         self.connection.send_tcp(t2)
 
-class DatagramDecoder:
+    def admin_create_agent2(player_id,x,y,z,x_angle=0, y_angle = 0):
+        d = {
+                'cmd':'create_agent',
+                'type':'admin',
+                'value':(x,y,z, x_angle, y_angle),
+            }
+        self.connection.send_tcp(self._pm(600, json.dump(d)))
+
+
+    def agent_control_state(agent_id, tick, W, S, A, D, JUMP, JETPACK):
+        t1 = struct.pack('II BB BB BB BB', agent_id, tick, W, S, A, D, JUMP, JETPACK, x_angle, y_angle)
+        t2 = self._pm(200, t1)
+        self.connection.send_tcp(t2)
+
+class ClientDatagramDecoder:
 
     def __init__(self, connection):
         self.connection = connection
@@ -65,7 +83,7 @@ class DatagramDecoder:
 
 class PacketDecoder:
     def __init__(self,connection):
-        self.datagramDecoder = DatagramDecoder(connection)
+        self.datagramDecoder = ClientDatagramDecoder(connection)
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -108,13 +126,13 @@ class PacketDecoder:
 
 class Connection:
     server = '127.0.0.1'
-    tcp_port = 5053
-    udp_port = 5054
+    tcp_port = 5055
+    udp_port = 5000
 
     def __init__(self):
         self.tcp = None
         self.udp = None
-        self.encoder = DatagramEncoder(self)
+        self.encoder = ClientDatagramEncoder(self)
         self.decoder = PacketDecoder(self)
         self.connect()
 
