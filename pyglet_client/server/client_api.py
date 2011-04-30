@@ -32,6 +32,7 @@ class Decoder:
         print "message= " + str(message)
 
 class Encoder:
+
     def prefix_data(self, data):
         length = len(data)
         prefix = struct.pack('I', length)
@@ -46,7 +47,9 @@ class connection:
     def __init__(self):
         self.tcp = None
         self.udp = None
+        self.encoder = Encoder()
         self.decoder = Decoder()
+
     def connect()
         self.connect_tcp()
         self.connect_udp()
@@ -69,15 +72,13 @@ class connection:
         except:
             return #in non-blocking, will fail when no data
 
-print "received data:", data
-
     def connect_udp()
         pass
 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
-s.send(MESSAGE)
-data = s.recv(BUFFER_SIZE)
-print "size= " + str(len(data))
-s.close()
+#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#s.connect((TCP_IP, TCP_PORT))
+#s.send(MESSAGE)
+#data = s.recv(BUFFER_SIZE)
+#print "size= " + str(len(data))
+#s.close()
