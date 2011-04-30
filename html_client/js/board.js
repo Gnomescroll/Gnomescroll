@@ -79,9 +79,11 @@ board.event = {
     },
 
     terrain_map : function (data) { // full terrain map
+        var init_args = [];
         if (data.z_level == board.z_level) {
             board.reset();
             board.init();
+            board.start();
         }
     },
 };
