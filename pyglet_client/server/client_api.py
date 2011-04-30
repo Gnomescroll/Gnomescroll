@@ -12,16 +12,23 @@ class Decoder:
 
     def add_to_buffer(self,data):
         self.buffer += data
+        self.attempt_decode()
 
-    def decode(data):
+    def atempt_decode():
         if len(self.buffer) < self.message_length:
+            print "decode: need more packets of data to decode message"
             return
-        elif self.message_length = 0:
-            print "decode: get prefix"
+        elif len(self.buffer) == 0:
+            print "decode: buffer empty"
+            return
+        elif self.message_length == 0:
+            print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix(data)
         if len(self.buffer) <= self.message_length:
             (message, self.buffer) = (self.buffer[:message_length], self.buffer[message_length:])
+            self.message_length = 0
             self.process_msg(message)
+            self.attempt_decode()
 
     def read_prefix(self, data):
         prefix = data[0:4]
@@ -29,7 +36,7 @@ class Decoder:
         return (length, data[4:])
 
     def process_msg(self, message):
-        print "message= " + str(message)
+        print "process message= " + str(message)
 
 class Encoder:
 
@@ -39,7 +46,7 @@ class Encoder:
         data = prefix + data
         return data
 
-class connection:
+class Connection:
     server = '127.0.0.1'
     tcp_port = 5050
     udp_port = 5051
@@ -60,6 +67,7 @@ class connection:
         self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.tcp.connect((TCP_IP, TCP_PORT))
         self.tcp.setblocking(0) #test
+        print "Connection: tcp connected"
 
     def send_tcp(self, MESSAGE):
         self.tcp.send(MESSAGE)
