@@ -131,40 +131,53 @@ class PacketDecoder:
 #events = epoll.poll(1)
 
 import atexit
+import socket
+import select
 
 class ServerListener:
 
-    TCP_IP = '127.0.0.1'
+    IP = '127.0.0.1'
     TCP_PORT = 5055
+    UDP_PORT = 5060
 
     def __init__(self):
-        self.connected = False
-        self.socket_bind = False
-        #clean up
+        self.tcp = None
+        self.tcp_fileno = 0
+        self.udp = None
+        self.udp_fileno = 0
+        self.epoll = select.epoll(2) #2 sockets
+        self._setup_tcp_socket()
+        atexit.register(self.on_exit)
 
-        #atexit.register(self.disconnect_tcp)
+    def on_exit(self):
+        self.tcp.close()
+        self.udp.close()
 
-    def run(self):
-        self._listen()
-
-    def _bind_socket(self):
-        print "Binding Port"
+    def _setup_tcp_socket(self):
+        print "Setting up TCP socket"
         try:
-            TCP_IP = '127.0.0.1'
-            TCP_PORT = 5055
-            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.bind((self.TCP_IP, self.TCP_PORT))
-            self.s.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
-            self.s.listen(1)
-            self.s.setblocking(0)
-
-
-            bufsize = self.s.getsockopt( socket.SOL_SOCKET, socket.SO_SNDBUF)
-            print "socket buffer size: %i" % bufsize
-            self.socket_bind = True
+            self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.tcp.bind((self.IP, self.TCP_PORT))
+            self.tcp.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
+            self.tcp.listen(1)
+            self.tcp.setblocking(0)
+            self.tcp.listen(1)
+            self.tcp_fileno = self.tcp.fileno()
+            self.epoll.register(self.tcp.fileno(), select.EPOLLIN)
         except socket.error, (value,message):
-            print "bind failed: " + str(value) + ", " + message
-            self.socket_bind = False
+            print "TCP socket setup failed: " + str(value) + ", " + message
+
+    def accept_connections(self):
+        events = self.epoll.poll(0) #wait upto 0 seconds
+        for fileno, event in events:
+            if file_no == self.tcp_fileno:
+                print "TCP event"
+                connection, address = serversocket.accept()
+                print 'TCP connection established with:', address
+                connection.setblocking(0)
+                #hand off connection to connection pool
+            if file_no == self.udp_fileno:
+                print "UDP event"
 
     def _listen(self): #this should be a thread, need list of connected clients
 
@@ -180,9 +193,13 @@ class ServerListener:
 
 ## Move into connect handler class ##
 
-    def __init__(self):
+    def __init__3(self):
         self.decoder = PacketDecoder(self)
         self.encoder = DatagramEncoder(self)
+
+
+        #bufsize = self.s.getsockopt( socket.SOL_SOCKET, socket.SO_SNDBUF)
+        #print "socket buffer size: %i" % bufsize
 
     def send(self, MESSAGE):
         try:
@@ -266,10 +283,16 @@ pm(1,json.dumps(['test1','test2','test3'])),
 create_agent_message(0,1,5,5,5,0,0)
 ]
 
-s = ServerInstance()
-s.run()
 
+test = ServerListener()
 while True:
+    test.accept_connections()
+    time.sleep(1)
+
+#s = ServerInstance()
+#s.run()
+
+while False:
     for data in M:
         (prefix) = struct.pack('I', len(data))
         message = prefix + data
