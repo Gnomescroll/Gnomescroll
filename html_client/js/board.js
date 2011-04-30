@@ -47,6 +47,7 @@ var board = {
 
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
             this.reset();
+            this.start();
         }
     },
 
@@ -79,9 +80,11 @@ board.event = {
     },
 
     terrain_map : function (data) { // full terrain map
+        var init_args = [];
         if (data.z_level == board.z_level) {
             board.reset();
             board.init();
+            board.start();
         }
     },
 };
@@ -336,7 +339,7 @@ board.cursor_manager = {
     },
 
     reset : function () {
-        //this.index = [];
+        this.index = [];
         this.reset_cursor_index();
         this.atc = {};
         this.otc = {};
@@ -364,7 +367,6 @@ board.cursor_manager = {
     
     reset_cursor_index: function() {
         console.log("reset_cursor_index");
-        this.index = [];
         var i,
             x = 0,
             y = 0;
@@ -383,7 +385,7 @@ board.cursor_manager = {
                     //debugging information
                     bx       : x,
                     by       : y,
-                    position : [x + board.manager.x_min, y + board.manager.y_min, board.manager.z_level]
+                    position : [x + board.x_offset, y + board.y_offset, board.z_level]
                 }
             }   
         }
