@@ -179,15 +179,11 @@ board.manager = {
         }
         return on;
     },
-    
-    populate_index: function() {
-        console.log("populate_index");
 
-        board.cursor_manager.reset_cursor_index();
-
-        this.agents  = []; //clear index
-        this.objects = []; //clear index
-
+    _populate_tiles : function (reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
         var x,
             y,
             x_min = board.x_offset,
@@ -198,7 +194,7 @@ board.manager = {
             zl = board.z_level,
             lvl = state.levels[zl];
 
-        if (lvl === undefined) return;
+        if (lvl === undefined) return false;
         
         //could have quick method for grabbing a region of map in x-y plane to reduce function calls
         //region could be returned as an array?
@@ -208,64 +204,59 @@ board.manager = {
                 this.update_tile(x, y, zl, tile_value);
             }
         }
+        return true;
+    },
 
-        //for each agent/ determine if agent is on board and if so, add it to the index
-        var x_pos,
-            y_pos,
-            pos,
-            id,
-            agent_id,
+    _populate_agents : function (reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
+        this.agents  = []; //clear index
+        
+        var id,
             agent,
-            agents = state.agents, // fill this in; get list of agents
-            object_id,
+            agents = state.agents;
+
+        for (id in agents) { // DOESN'T CHECK AGENTS IN VIEW
+            if (!agents.hasOwnProperty(id)) continue;
+            agent = agents[id];
+            if (this.on_board(agent.pos())) {
+                this.agents.push(id);
+                this.agent_update(agent);
+            }
+        }
+    },
+
+    _populate_objects : function (reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
+        this.objects = []; //clear index
+        
+        var id,
             obj,
             objects = state.objects;
 
-        for(agent_id in agents) { // DOESN'T CHECK AGENTS IN VIEW
-            if (agents.hasOwnProperty(agent_id)) {
-                agent = agents[agent_id];
-                //console.log('populate index, agent_update: ' + agent.id)
-                this.agents.push(agent_id);
-                this.agent_update(agent);
-                /*
-                pos = agent.pos();
-                x_pos = agent_pos[0];
-                y_pos = agent_pos[1];
-                z_pos = agent_pos[2];
-                if(z_pos != board.z_level) {
-                    console.log("agent z level errr")
-                    continue;
-                }
-                if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
-                {
-                    this.agents.push(agent.id);
-                    this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min ,y_pos - this.ymin);               
-
-                    //this.add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
-                }
-                else
-                {
-                        console.log("Index Population: agent not on board, " + agent.id)
-                }
-                */
+        for (id in objects) {
+            if (!objects.hasOwnProperty(id)) continue;
+            obj = objects[id];
+            if (this.on_board(obj.pos())) {
+                    this.objects.push(obj.id);
+                    // TODO
+                    // implement cursor_manager.add_object_to_cursor
+                    //this.cursor_manager.add_object_to_cursor(obj.id, x_pos, y_pos);
             }
         }
-        
-        for(object_id in objects) {
-            if (objects.hasOwnProperty(object_id)) {
-                obj = state.objects[object_id];
-                pos = obj.pos();
-                x_pos = pos[0] - board.x_offset;
-                y_pos = pos[1] - board.y_offset;
-                if (this.on_board(pos)) {
-                        this.objects.push(obj.id);
-                        // TODO
-                        // implement cursor_manager.add_object_to_cursor
-                        //this.cursor_manager.add_object_to_cursor(obj.id, x_pos, y_pos);
-                }
-            }
+    },
+    
+    populate_index: function() {
+        console.log("populate_index");
+        board.cursor_manager.reset_cursor_index();
+        if (! this._populate_tiles()) {
+            return;
         }
-        
+        this._populate_agents();
+        this._populate_objects();
     },
     
     agent_update : function(agent) {
