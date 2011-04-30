@@ -56,8 +56,9 @@ class Connection:
         self.udp = None
         self.encoder = Encoder()
         self.decoder = Decoder()
+        self.connect()
 
-    def connect()
+    def connect(self):
         self.connect_tcp()
         self.connect_udp()
 
@@ -72,7 +73,7 @@ class Connection:
     def send_tcp(self, MESSAGE):
         self.tcp.send(MESSAGE)
 
-    def get_tcp(self)
+    def get_tcp(self):
         BUFFER_SIZE = 512
         try:
             data = self.tcp.recv(BUFFER_SIZE)
@@ -80,7 +81,7 @@ class Connection:
         except:
             return #in non-blocking, will fail when no data
 
-    def connect_udp()
+    def connect_udp(self):
         pass
 
 
