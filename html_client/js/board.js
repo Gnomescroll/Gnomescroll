@@ -47,6 +47,7 @@ var board = {
 
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
             this.reset();
+            this.start();
         }
     },
 
