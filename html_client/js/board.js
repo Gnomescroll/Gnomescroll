@@ -42,9 +42,11 @@ var board = {
         
         this.x_offset += dx;
         this.x_offset = Math.max(this.x_offset, 0);
+        this.x_offset = Math.min(this.x_offset, state.map_width);
         this.y_offset += dy;
         this.y_offset = Math.max(this.y_offset, 0);
-
+        this.y_offset = Math.min(this.y_offset, state.map_height);
+        
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
             this.reset();
             this.start();
