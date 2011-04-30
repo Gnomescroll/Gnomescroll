@@ -84,7 +84,8 @@ class Connection:
         self.tcp.close()
 
     def send_tcp(self, MESSAGE):
-        self.tcp.send(MESSAGE)
+        #self.tcp.send(MESSAGE)
+        self.tcp.sendall(MESSAGE)
 
     def get_tcp(self):
         BUFFER_SIZE = 512
