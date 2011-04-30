@@ -151,32 +151,32 @@ class ServerListener:
 
     def on_exit(self):
         self.tcp.close()
-        self.udp.close()
+        #self.udp.close()
 
     def _setup_tcp_socket(self):
         print "Setting up TCP socket"
         try:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.tcp.bind((self.IP, self.TCP_PORT))
             self.tcp.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
+            self.tcp.bind((self.IP, self.TCP_PORT))
             self.tcp.listen(1)
             self.tcp.setblocking(0)
             self.tcp.listen(1)
             self.tcp_fileno = self.tcp.fileno()
             self.epoll.register(self.tcp.fileno(), select.EPOLLIN)
+            print "TCP socket listening on port %i" % self.TCP_PORT
         except socket.error, (value,message):
             print "TCP socket setup failed: " + str(value) + ", " + message
 
-    def accept_connections(self):
+    def accept(self):
         events = self.epoll.poll(0) #wait upto 0 seconds
         for fileno, event in events:
-            if file_no == self.tcp_fileno:
-                print "TCP event"
-                connection, address = serversocket.accept()
+            if fileno == self.tcp_fileno:
+                connection, address = self.tcp.accept()
                 print 'TCP connection established with:', address
                 connection.setblocking(0)
                 #hand off connection to connection pool
-            if file_no == self.udp_fileno:
+            if fileno == self.udp_fileno:
                 print "UDP event"
 
     def _listen(self): #this should be a thread, need list of connected clients
@@ -232,25 +232,15 @@ class ServerListener:
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
 #events = epoll.poll(1)
 
-class ServerListener:
-
-    def __init__(self):
-        pass
-
-import select
-
-def ConnectionPool:
+class ConnectionPool:
 
     def __init__(self):
         self.epoll = select.epoll()
 
     def process_events(self):
-
-
-
-    connections = {}; requests = {}; responses = {}
-    while True:
-        events = epoll.poll(1)
+        connections = {}; requests = {}; responses = {}
+        while True:
+            events = epoll.poll(1)
             for fileno, event in events:
                 if fileno == serversocket.fileno():
                     connection, address = serversocket.accept()
@@ -286,7 +276,7 @@ create_agent_message(0,1,5,5,5,0,0)
 
 test = ServerListener()
 while True:
-    test.accept_connections()
+    test.accept()
     time.sleep(1)
 
 #s = ServerInstance()
