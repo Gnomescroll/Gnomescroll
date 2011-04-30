@@ -29,11 +29,18 @@ class DatagramDecoder:
             print "json message"
             msg = json.loads(message[2:])
             print str(msg)
-        if msg_type == 2:
-            CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
-            n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
-            print str(n)
-        #Point = namedtuple('Point', 'x y')
+        if msg_type == 2: #
+            #CreateAgent
+            (agent_id, player_id, x, y, z, x_angle, y_angle) = struct.unpack('IIfffhh', datagram)
+            print str((agent_id, player_id, x, y, z, x_angle, y_angle))
+            #n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
+            #print str(n)
+        if msg_type == 3:
+            #agentPositionUpdate
+            (agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle) = struct.unpack('II fff fff fff hh', datagram)
+            print str(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
+        if msg_type == 4:
+            #latency estimation
 
 
 

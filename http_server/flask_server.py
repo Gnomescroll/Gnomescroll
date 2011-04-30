@@ -12,7 +12,7 @@ from marshal import dumps
 app = Flask(__name__)
 
 dir = "./html_client"
-PORT = 8055
+PORT = 8080
 
 #r_client = redis.Redis('localhost')
 
