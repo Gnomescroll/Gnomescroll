@@ -1,6 +1,8 @@
 import socket
 import struct
 
+import select
+
 import time
 
 import simplejson as json
@@ -122,27 +124,28 @@ class PacketDecoder:
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
+
+#epoll = select.epoll()
+#epoll.register(serversocket.fileno(), select.EPOLLIN)
+
+#events = epoll.poll(1)
+
 import atexit
 
-class ServerInstance:
+class ServerListener:
+
+    TCP_IP = '127.0.0.1'
+    TCP_PORT = 5055
+
     def __init__(self):
-        self.decoder = PacketDecoder(self)
-        self.encoder = DatagramEncoder(self)
         self.connected = False
         self.socket_bind = False
         #clean up
 
-        atexit.register(self.disconnect_tcp)
+        #atexit.register(self.disconnect_tcp)
 
     def run(self):
         self._listen()
-
-    def _set_connection_status(self, status):
-        if status == False:
-            print "connection status: disconnected"
-        elif status == True:
-            print "connection status: connected"
-        self.connected = status
 
     def _bind_socket(self):
         print "Binding Port"
@@ -150,8 +153,11 @@ class ServerInstance:
             TCP_IP = '127.0.0.1'
             TCP_PORT = 5055
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.bind((TCP_IP, TCP_PORT))
+            self.s.bind((self.TCP_IP, self.TCP_PORT))
             self.s.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
+            self.s.listen(1)
+            self.s.setblocking(0)
+
 
             bufsize = self.s.getsockopt( socket.SOL_SOCKET, socket.SO_SNDBUF)
             print "socket buffer size: %i" % bufsize
@@ -161,22 +167,22 @@ class ServerInstance:
             self.socket_bind = False
 
     def _listen(self): #this should be a thread, need list of connected clients
-        if self.socket_bind == False:
-            self._bind_socket()
 
-        print "Listening"
-        TCP_IP = '127.0.0.1'
-        TCP_PORT = 5055
-        BUFFER_SIZE = 10  # Normally 1024, but we want fast response
         try:
             self.s.listen(1)
             conn, addr = self.s.accept()
             print 'Connected to:', addr
-            self._set_connection_status(True)
             self.tcp = conn
         except socket.error, (value,message):
             print "listen: socket_error: " + str(value) + ", " + message
-            self._set_connection_status(False)
+
+
+
+## Move into connect handler class ##
+
+    def __init__(self):
+        self.decoder = PacketDecoder(self)
+        self.encoder = DatagramEncoder(self)
 
     def send(self, MESSAGE):
         try:
@@ -204,6 +210,55 @@ class ServerInstance:
             print "get_tcp: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
+
+#epoll = select.epoll()
+#epoll.register(serversocket.fileno(), select.EPOLLIN)
+#events = epoll.poll(1)
+
+class ServerListener:
+
+    def __init__(self):
+        pass
+
+import select
+
+def ConnectionPool:
+
+    def __init__(self):
+        self.epoll = select.epoll()
+
+    def process_events(self):
+
+
+
+    connections = {}; requests = {}; responses = {}
+    while True:
+        events = epoll.poll(1)
+            for fileno, event in events:
+                if fileno == serversocket.fileno():
+                    connection, address = serversocket.accept()
+                    connection.setblocking(0)
+                    epoll.register(connection.fileno(), select.EPOLLIN)
+                    connections[connection.fileno()] = connection
+                    requests[connection.fileno()] = b''
+                    responses[connection.fileno()] = response
+                elif event & select.EPOLLIN:
+                    requests[fileno] += connections[fileno].recv(1024)
+                if EOL1 in requests[fileno] or EOL2 in requests[fileno]:
+                    epoll.modify(fileno, select.EPOLLOUT)
+                    print('-'*40 + '\n' + requests[fileno].decode()[:-2])
+                elif event & select.EPOLLOUT:
+                    byteswritten = connections[fileno].send(responses[fileno])
+                    responses[fileno] = responses[fileno][byteswritten:]
+                if len(responses[fileno]) == 0:
+                    epoll.modify(fileno, 0)
+                    connections[fileno].shutdown(socket.SHUT_RDWR)
+                elif event & select.EPOLLHUP:
+                    epoll.unregister(fileno)
+                    connections[fileno].close()
+                    del connections[fileno]
+
+#rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
 M = [
 pm(0,"test!"),
