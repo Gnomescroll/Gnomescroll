@@ -6,7 +6,7 @@ input = {
     queue: [],  // queue of events received
     keys: {},  // for detecting multiple keys pressed
 
-    delay : 300, // ms delay for input check
+    delay : 2, // ms delay for input check
     interval : 0, // setInterval id
     
     started : false,
@@ -18,7 +18,7 @@ input = {
                 var key = keymap[event.which];
                 input.queue.push({key: key, timestamp: event.timeStamp});
                 that.keys[key] = true;
-                that.process(key);
+                //that.process(key);
             }).click(function (event) {
                 var key = keymap[event.which];
                 if (key === 'left-click') { 
@@ -29,7 +29,7 @@ input = {
             $('body').keyup(function (event) {
                 var key = keymap[event.which];
                 delete that.keys[key];
-                that.process();
+                //that.process();
             });
             this.started = true;
         }
