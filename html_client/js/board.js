@@ -247,7 +247,7 @@ board.manager = {
         }
     },
     
-    populate_index: function() {
+    populate_index : function() {
         console.log("populate_index");
         board.cursor_manager.reset_cursor_index();
         if (!this._populate_tiles()) {
@@ -268,17 +268,17 @@ board.manager = {
             onBoard = this.on_board(pos);
         
         if(inIndex !== -1 && onBoard) { //agent moves around on the board
-            board.cursor_manager.move_agent(agent.id, x_pos, y_pos);
+            board.cursor_manager.move_agent(id, x_pos, y_pos);
             console.log("1");
         }
         else if(inIndex === -1 && onBoard) { //agent moves onto board
             this.agents.push(agent.id);
-            board.cursor_manager.add_agent_to_cursor(agent.id, x_pos, y_pos);
+            board.cursor_manager.add_agent_to_cursor(id, x_pos, y_pos);
             console.log("2");
         }
         else if(inIndex !== -1 && !onBoard) { //agent moves off board
             this.agents.splice(inIndex, 1); 
-            board.cursor_manager.remove_agent_from_cursor(agent.id);
+            board.cursor_manager.remove_agent_from_cursor(id);
             console.log("3");
         }
         else if(inIndex === -1 && !onBoard) { //agent is off map
@@ -304,7 +304,7 @@ board.manager = {
     },
 */
     
-    update_tile: function(x, y, z, tile_id) {
+    update_tile : function(x, y, z, tile_id) {
         var bx,
             by;
             
@@ -313,7 +313,7 @@ board.manager = {
             by = y - board.y_offset;
             board.cursor_manager.update_tile(bx, by, tile_id);
         }
-    }
+    },
 };
 
 board.cursor_manager = {
@@ -353,29 +353,86 @@ board.cursor_manager = {
     
     //internal method, not interface method
     // takes an this.index element
+
+    _generic_cursor_index_properties_reset : function (cursor_type, props) {
+        if (typeof props === 'string') {
+            props = [props];
+        }
+        var cursor_type_indexes = {
+                'tile'  : 0,
+                'agent' : 1,
+                'object': 2
+            },
+            cursor_type_index = cursor_type_indexes[cursor_type],
+            i, x, y,
+            prop_len = props.length,
+            j,
+            cursor,
+            prop,
+            default_val,
+            max_x = board.tile_width,
+            max_y = board.tile_height;
+        for (x=0; x < max_x; x++) {
+            for (y=0; y < max_y; y++) {
+                i = x + y*max_x;
+                cursor = this.index[i];
+                if (cursor !== undefined) {
+                    for (j=0; j < props_len; j++) {
+                        prop = props[j];
+                        default_val = _default_cursor[prop];
+                        if (prop === 'drawing_cursor') {
+                            cursor[prop][cursor_type_index] = default_val[cursor_type_index];
+                        } else {
+                            cursor[prop] = default_val;
+                        }
+                    }
+                }
+            }
+        }
+    },
+    
+    _reset_tile_cursors : function () {
+        this._generic_cursor_index_properties_reset('tile', ['tile_id', 'drawing_cursor']);
+    },
+
+    _reset_agent_cursors : function () {
+        this._generic_cursor_index_properties_reset('agent', ['agent_list', 'drawing_cursor', 'agent_num']);
+    },
+
+    _reset_object_cursors : function () {
+        this._generic_cursor_index_properties_reset('object', ['object_list', 'drawing_cursor', 'object_num']);
+    },
+
+    _default_cursor : {
+        drawing_cursor : [0, -1, -1],
+        //last_blip      : 0, //needed?
+        tile_id        : 0,
+        agent_num      : 0,
+        agent_list     : [],
+        object_num     : 0,
+        object_list    : []
+    },
+
+    _load_default_cursor : function (i) {
+        return $.extend({ index: i }, this._default_cursor);
+    },
     
     reset_cursor_index: function() {
         console.log("reset_cursor_index");
-        var i,
-            x = 0,
-            y = 0;
-        for(x=0; x < board.tile_width; x++) {
-            for(y=0; y < board.tile_height; y++) {
-                i = x + y*board.tile_width;
-                this.index[i] = {
-                    index          : i,
-                    drawing_cursor : [0, -1, -1],
-                    //last_blip      : 0, //needed?
-                    tile_id        : 0,
-                    agent_num      : 0,
-                    agent_list     : [],
-                    object_num     : 0,
-                    object_list    : [],
-                    //debugging information
-                    bx       : x,
-                    by       : y,
-                    position : [x + board.x_offset, y + board.y_offset, board.z_level]
-                }
+        var i, x, y,
+            max_x = board.tile_width,
+            max_y = board.tile_height,
+            x_off = board.x_offset,
+            y_off = board.y_offset,
+            z_lvl = board.z_level;
+        for (x=0; x < max_x; x++) {
+            for (y=0; y < max_y; y++) {
+                i = x + y*max_x;
+                this.index[i] = $.extend({
+                    bx: x,      //debugging information
+                    by: y,
+                    position : [x + x_off, y + y_off, z_lvl]
+                }, this._load_default_cursor(i));
             }   
         }
     },
