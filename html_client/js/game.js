@@ -22,7 +22,6 @@ var game = {
                 if (!success) {
                     console.log('state init call');
                     success = state.init();
-                    console.log(success);
                 } else {
                     console.log('input init call');
                     input.init();
@@ -33,7 +32,7 @@ var game = {
     }()),
     
     start : function (callback) {
-        input.run();
+        //input.run();
         if (typeof callback === 'function') {
             callback();
         }

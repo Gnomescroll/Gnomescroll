@@ -170,9 +170,9 @@ board.manager = {
             x_max = x_min + board.tile_width,
             y_max = y_min + board.tile_height,
             on = (x_min <= x &&
-                  x_max > x  &&
+                  x_max >  x &&
                   y_min <= y &&
-                  y_max > y);
+                  y_max >  y);
                   
         if (z !== undefined) {
             on = (on && board.z_level == z)
@@ -190,9 +190,8 @@ board.manager = {
             y_min = board.y_offset,
             x_max = x_min + board.tile_width,
             y_max = y_min + board.tile_height,
-            tile_value,
-            zl = board.z_level,
-            lvl = state.levels[zl];
+            zl    = board.z_level,
+            lvl   = state.levels[zl];
 
         if (lvl === undefined) return false;
         
@@ -200,8 +199,7 @@ board.manager = {
         //region could be returned as an array?
         for(x = x_min; x < x_max; x++) {
             for(y = y_min; y < y_max; y++) {
-                tile_value = lvl[x][y];
-                this.update_tile(x, y, zl, tile_value);
+                this.update_tile(x, y, zl, lvl[x][y]);
             }
         }
         return true;
@@ -252,7 +250,7 @@ board.manager = {
     populate_index: function() {
         console.log("populate_index");
         board.cursor_manager.reset_cursor_index();
-        if (! this._populate_tiles()) {
+        if (!this._populate_tiles()) {
             return;
         }
         this._populate_agents();
