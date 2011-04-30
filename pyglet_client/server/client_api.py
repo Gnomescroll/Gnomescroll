@@ -3,9 +3,26 @@ import socket
 import struct
 import binascii
 
+import simplejson as json
+
+from collections import namedtuple
+
+class DatagramDecoder:
+
+    def __init__(self):
+        pass
+
+    def decode(self, message):
+        prefix = message[0:2]
+        (msg_type,) = struct.unpack('H', message[0:2])
+        msg = json.loads(message[2:])
 
 
-class Decoder:
+        #Point = namedtuple('Point', 'x y')
+
+
+
+class PacketDecoder:
     def __init__(self):
         self.buffer = ''
         self.message_length = 0
@@ -19,10 +36,10 @@ class Decoder:
         if len(self.buffer) < self.message_length:
             print "decode: need more packets of data to decode message"
             return
-        elif len(self.buffer) == 0:
+        if len(self.buffer) == 0:
             print "decode: buffer empty"
             return
-        elif self.message_length == 0:
+        if self.message_length == 0:
             print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix()
             print "prefix length: " + str(self.message_length)
@@ -47,7 +64,7 @@ class Decoder:
         self.count += 1
         print "message count: " +str(self.count)
 
-class Encoder:
+class PacketEncoder:
 
     def prefix_data(self, data):
         length = len(data)
@@ -63,8 +80,8 @@ class Connection:
     def __init__(self):
         self.tcp = None
         self.udp = None
-        self.encoder = Encoder()
-        self.decoder = Decoder()
+        self.encoder = PacketEncoder()
+        self.decoder = PacketDecoder()
         self.connect()
 
     def connect(self):
