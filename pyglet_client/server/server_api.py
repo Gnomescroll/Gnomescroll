@@ -13,7 +13,8 @@ def _listen():
     s.listen(1)
 
     conn, addr = s.accept()
-    print 'Connection address:', addr
+    print 'Connected to:', addr
+    return conn
 
 M = [
 'testmsg',
@@ -21,7 +22,7 @@ M = [
 'asf343',
 ]
 
-_listen()
+s = _listen()
 
 while True:
     for data in M:
@@ -29,13 +30,12 @@ while True:
         message = prefix + data
         print "sending data: " + str(data)
         try:
-            conn.send(message)  # echo
+            s.send(message)  # echo
         except socket.error, (value,message):
             print "socket_error: " + str(value) + ", " + message
-            break
+            s = _listen()
     time.sleep(15)
 
-_listen()
 
 #while 1:
 #    data = conn.recv(BUFFER_SIZE)

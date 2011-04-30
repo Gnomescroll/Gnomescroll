@@ -9,12 +9,13 @@ class Decoder:
     def __init__(self):
         self.buffer = ''
         self.message_length = 0
+        self.count = 0
 
     def add_to_buffer(self,data):
         self.buffer += data
         self.attempt_decode()
 
-    def attempt_decode():
+    def attempt_decode(self):
         if len(self.buffer) < self.message_length:
             print "decode: need more packets of data to decode message"
             return
@@ -23,20 +24,28 @@ class Decoder:
             return
         elif self.message_length == 0:
             print "decode: get message prefix"
-            (self.message_length, self.buffer) = self.read_prefix(data)
-        if len(self.buffer) <= self.message_length:
-            (message, self.buffer) = (self.buffer[:message_length], self.buffer[message_length:])
+            (self.message_length, self.buffer) = self.read_prefix()
+            print "prefix length: " + str(self.message_length)
+
+        if len(self.buffer) >= self.message_length:
+            print "process message in buffer"
+            (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             self.message_length = 0
             self.process_msg(message)
             self.attempt_decode()
+        else:
+            print "Need more characters in buffer"
 
-    def read_prefix(self, data):
+    def read_prefix(self):
+        data = self.buffer
         prefix = data[0:4]
-        (length) = struct.unpack('I', data[0:4])
+        (length,) = struct.unpack('I', data[0:4])
         return (length, data[4:])
 
     def process_msg(self, message):
         print "process message= " + str(message)
+        self.count += 1
+        print "message count: " +str(self.count)
 
 class Encoder:
 
@@ -69,6 +78,10 @@ class Connection:
         self.tcp.connect((TCP_IP, TCP_PORT))
         self.tcp.setblocking(0) #test
         print "Connection: tcp connected"
+
+    def disconnect_tcp(self):
+        print "Connection: tcp disonnected by program"
+        self.tcp.close()
 
     def send_tcp(self, MESSAGE):
         self.tcp.send(MESSAGE)
