@@ -13,10 +13,23 @@ msg_types = [
 (3, 'agent_position_update'),
 ]
 
+class DatagramEncoder:
+    def __init__(self, connection):
+        self.connection = connection
+        pass
+
+    def _pm(id, msg):
+        return struct.pack('H',id) +msg
+
+    def admin_create_agent(agent_id, player_id, x, y, z, x_angle, y_angle):
+        t1 = struct.pack('IIfffhh', agent_id, player_id, x, y, z, x_angle, y_angle)
+        t2 = self._pm(2, t1)
+        self.connection.send_tcp(t2)
+
 class DatagramDecoder:
 
-    def __init__(self):
-        pass
+    def __init__(self, connection):
+        self.connection = connection
 
     def decode(self, message):
         print "decoding datagram"
@@ -39,14 +52,20 @@ class DatagramDecoder:
             #agentPositionUpdate
             (agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle) = struct.unpack('II fff fff fff hh', datagram)
             print str(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
-        if msg_type == 4:
+
+        if msg_type == 99:
             #latency estimation
-
-
+            (time, tick) = struct.unpack('I f', datagram)
+            print str((time, tick))
+            #immediately send message 5 back
+        if msg_type == 100:
+            (time, tick) = struct.unpack('I f', datagram)
+            #return packet for latency testing
+            print str((time, tick))
 
 class PacketDecoder:
-    def __init__(self):
-        self.datagramDecoder = DatagramDecoder()
+    def __init__(self,connection):
+        self.datagramDecoder = DatagramDecoder(connection)
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -87,14 +106,6 @@ class PacketDecoder:
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
-class PacketEncoder:
-
-    def prefix_data(self, data):
-        length = len(data)
-        prefix = struct.pack('I', length)
-        data = prefix + data
-        return data
-
 class Connection:
     server = '127.0.0.1'
     tcp_port = 5053
@@ -103,8 +114,8 @@ class Connection:
     def __init__(self):
         self.tcp = None
         self.udp = None
-        self.encoder = PacketEncoder()
-        self.decoder = PacketDecoder()
+        self.encoder = DatagramEncoder(self)
+        self.decoder = PacketDecoder(self)
         self.connect()
 
     def connect(self):
