@@ -1,22 +1,42 @@
 import socket
 
-from struct import *
+import struct
+import binascii
+
+
 
 class Decoder:
-
     def __init__(self):
-        self.current_message = None
-        self.message_length_remaining = None
+        self.buffer = ''
+        self.message_length = 0
+
+    def add_to_buffer(self,data):
+        self.buffer += data
 
     def decode(data):
-        if self.message_length_remaining = None:
-            (data,length) = self.read_prefix(data)
+        if len(self.buffer) < self.message_length:
+            return
+        elif self.message_length = 0:
+            print "decode: get prefix"
+            (self.message_length, self.buffer) = self.read_prefix(data)
+        if len(self.buffer) <= self.message_length:
+            (message, self.buffer) = (self.buffer[:message_length], self.buffer[message_length:])
+            self.process_msg(message)
 
     def read_prefix(self, data):
+        prefix = data[0:4]
+        (length) = struct.unpack('I', data[0:4])
+        return (length, data[4:])
 
+    def process_msg(self, message):
+        print "message= " + str(message)
 
 class Encoder:
-
+    def prefix_data(self, data):
+        length = len(data)
+        prefix = struct.pack('I', length)
+        data = prefix + data
+        return data
 
 class connection:
     server = '127.0.0.1'
