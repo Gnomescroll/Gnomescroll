@@ -261,7 +261,7 @@ var drawingCache = {
             b_r, b_g, b_b,
             pix_len,
             i = 0,
-            cache_index = ++this.img_cache_count;
+            cache_index;
 
         if (tile_y_pos != 0) {
             tile_y_pos = tile_y_pos / tileset.tile_width;
@@ -283,8 +283,7 @@ var drawingCache = {
         if (draw_style == 0) {
             //This is copy/paste unmodified
         }
-        
-        if (draw_style == 1) {
+        else if (draw_style == 1) {
             b_r = background_rgb[0] / 255;
             b_g = background_rgb[1] / 255;
             b_b = background_rgb[2] / 255;
@@ -307,8 +306,7 @@ var drawingCache = {
                 pix[i+3] = 255; 
             }   
         }
-        
-        if (draw_style == 2) {
+        else if (draw_style == 2) {
             for (i = 0; i < pix_len; i += 4) {
                 if (pix[i+3] == 0) {
                     //alpha channel is 0, show background
@@ -326,8 +324,11 @@ var drawingCache = {
         }
 
         if (! tile.is_default) {    // don't cache default (non-existant) tile
+            cache_index = ++this.img_cache_count;
             this.img_cache[cache_index] = imgd;
             this.tlookup[tile_id] = cache_index;
+        } else {
+            cache_index = this.img_cache_count;
         }
         return cache_index;
     },
@@ -386,7 +387,7 @@ var drawingCache = {
             pix,
             cache_index = ++this.img_cache_count;
         
-        if (tile_y_pos != 0) {
+        if (parseInt(tile_y_pos, 10) !== 0) {
             tile_y_pos = tile_y_pos / tileset.tile_width;
         }
         x_offset = tile_x_pos * tileset.pixel_width;
