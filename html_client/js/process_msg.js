@@ -156,9 +156,7 @@ process.info.object_info = function (msg) {
     } else {                // create
         var obj = Obj.create(msg);
     }
-    
     obj.toState();
-    
 };
 
 process.info.agent_list = function (msg) {
@@ -185,7 +183,6 @@ process.info.agent_list = function (msg) {
         } else {                        // create
             agent = Agent.create(list_agent);
         }
-        
         agent.toState();
     }
     delete state.requests_waiting.agents;
