@@ -32,6 +32,7 @@ input = {
                 //that.process();
             });
             this.started = true;
+            this.run();
         }
     },
         

@@ -42,9 +42,11 @@ var board = {
         
         this.x_offset += dx;
         this.x_offset = Math.max(this.x_offset, 0);
+        this.x_offset = Math.min(this.x_offset, state.map_width);
         this.y_offset += dy;
         this.y_offset = Math.max(this.y_offset, 0);
-
+        this.y_offset = Math.min(this.y_offset, state.map_height);
+        
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
             this.reset();
             this.start();
@@ -170,102 +172,91 @@ board.manager = {
             x_max = x_min + board.tile_width,
             y_max = y_min + board.tile_height,
             on = (x_min <= x &&
-                  x_max > x  &&
+                  x_max >  x &&
                   y_min <= y &&
-                  y_max > y);
+                  y_max >  y);
                   
         if (z !== undefined) {
             on = (on && board.z_level == z)
         }
         return on;
     },
-    
-    populate_index: function() {
-        console.log("populate_index");
 
-        board.cursor_manager.reset_cursor_index();
-
-        this.agents  = []; //clear index
-        this.objects = []; //clear index
-
+    _populate_tiles : function (reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
         var x,
             y,
             x_min = board.x_offset,
             y_min = board.y_offset,
             x_max = x_min + board.tile_width,
             y_max = y_min + board.tile_height,
-            tile_value,
-            zl = board.z_level,
-            lvl = state.levels[zl];
+            zl    = board.z_level,
+            lvl   = state.levels[zl];
 
-        if (lvl === undefined) return;
+        if (lvl === undefined) return false;
         
         //could have quick method for grabbing a region of map in x-y plane to reduce function calls
         //region could be returned as an array?
         for(x = x_min; x < x_max; x++) {
             for(y = y_min; y < y_max; y++) {
-                tile_value = lvl[x][y];
-                this.update_tile(x, y, zl, tile_value);
+                this.update_tile(x, y, zl, lvl[x][y]);
             }
         }
+        return true;
+    },
 
-        //for each agent/ determine if agent is on board and if so, add it to the index
-        var x_pos,
-            y_pos,
-            pos,
-            id,
-            agent_id,
+    _populate_agents : function (reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
+        this.agents  = []; //clear index
+        
+        var id,
             agent,
-            agents = state.agents, // fill this in; get list of agents
-            object_id,
+            agents = state.agents;
+
+        for (id in agents) { // DOESN'T CHECK AGENTS IN VIEW
+            if (!agents.hasOwnProperty(id)) continue;
+            agent = agents[id];
+            if (this.on_board(agent.pos())) {
+                this.agents.push(id);
+                this.agent_update(agent);
+            }
+        }
+    },
+
+    _populate_objects : function (reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
+        this.objects = []; //clear index
+        
+        var id,
             obj,
             objects = state.objects;
 
-        for(agent_id in agents) { // DOESN'T CHECK AGENTS IN VIEW
-            if (agents.hasOwnProperty(agent_id)) {
-                agent = agents[agent_id];
-                //console.log('populate index, agent_update: ' + agent.id)
-                this.agents.push(agent_id);
-                this.agent_update(agent);
-                /*
-                pos = agent.pos();
-                x_pos = agent_pos[0];
-                y_pos = agent_pos[1];
-                z_pos = agent_pos[2];
-                if(z_pos != board.z_level) {
-                    console.log("agent z level errr")
-                    continue;
-                }
-                if( this.x_min <= x_pos && x_pos < this.x_max && this.y_min <= y_pos && this.y_max > y_pos)
-                {
-                    this.agents.push(agent.id);
-                    this.cursor_manager.add_agent_to_cursor(agent.id, x_pos - this.x_min ,y_pos - this.ymin);               
-
-                    //this.add_agent_to_index( agent.id, x_pos ,y_pos, z_pos); //agent_id and x,y,z position
-                }
-                else
-                {
-                        console.log("Index Population: agent not on board, " + agent.id)
-                }
-                */
+        for (id in objects) {
+            if (!objects.hasOwnProperty(id)) continue;
+            obj = objects[id];
+            if (this.on_board(obj.pos())) {
+                    this.objects.push(obj.id);
+                    // TODO
+                    // implement cursor_manager.add_object_to_cursor
+                    //this.cursor_manager.add_object_to_cursor(obj.id, x_pos, y_pos);
             }
         }
-        
-        for(object_id in objects) {
-            if (objects.hasOwnProperty(object_id)) {
-                obj = state.objects[object_id];
-                pos = obj.pos();
-                x_pos = pos[0] - board.x_offset;
-                y_pos = pos[1] - board.y_offset;
-                if (this.on_board(pos)) {
-                        this.objects.push(obj.id);
-                        // TODO
-                        // implement cursor_manager.add_object_to_cursor
-                        //this.cursor_manager.add_object_to_cursor(obj.id, x_pos, y_pos);
-                }
-            }
+    },
+    
+    populate_index : function() {
+        console.log("populate_index");
+        board.cursor_manager.reset_cursor_index();
+        if (!this._populate_tiles()) {
+            return;
         }
-        
+        this._populate_agents();
+        this._populate_objects();
     },
     
     agent_update : function(agent) {
@@ -279,17 +270,17 @@ board.manager = {
             onBoard = this.on_board(pos);
         
         if(inIndex !== -1 && onBoard) { //agent moves around on the board
-            board.cursor_manager.move_agent(agent.id, x_pos, y_pos);
+            board.cursor_manager.move_agent(id, x_pos, y_pos);
             console.log("1");
         }
         else if(inIndex === -1 && onBoard) { //agent moves onto board
             this.agents.push(agent.id);
-            board.cursor_manager.add_agent_to_cursor(agent.id, x_pos, y_pos);
+            board.cursor_manager.add_agent_to_cursor(id, x_pos, y_pos);
             console.log("2");
         }
         else if(inIndex !== -1 && !onBoard) { //agent moves off board
             this.agents.splice(inIndex, 1); 
-            board.cursor_manager.remove_agent_from_cursor(agent.id);
+            board.cursor_manager.remove_agent_from_cursor(id);
             console.log("3");
         }
         else if(inIndex === -1 && !onBoard) { //agent is off map
@@ -315,7 +306,7 @@ board.manager = {
     },
 */
     
-    update_tile: function(x, y, z, tile_id) {
+    update_tile : function(x, y, z, tile_id) {
         var bx,
             by;
             
@@ -324,7 +315,7 @@ board.manager = {
             by = y - board.y_offset;
             board.cursor_manager.update_tile(bx, by, tile_id);
         }
-    }
+    },
 };
 
 board.cursor_manager = {
@@ -364,29 +355,86 @@ board.cursor_manager = {
     
     //internal method, not interface method
     // takes an this.index element
+
+    _generic_cursor_index_properties_reset : function (cursor_type, props) {
+        if (typeof props === 'string') {
+            props = [props];
+        }
+        var cursor_type_indexes = {
+                'tile'  : 0,
+                'agent' : 1,
+                'object': 2
+            },
+            cursor_type_index = cursor_type_indexes[cursor_type],
+            i, x, y,
+            prop_len = props.length,
+            j,
+            cursor,
+            prop,
+            default_val,
+            max_x = board.tile_width,
+            max_y = board.tile_height;
+        for (x=0; x < max_x; x++) {
+            for (y=0; y < max_y; y++) {
+                i = x + y*max_x;
+                cursor = this.index[i];
+                if (cursor !== undefined) {
+                    for (j=0; j < props_len; j++) {
+                        prop = props[j];
+                        default_val = _default_cursor[prop];
+                        if (prop === 'drawing_cursor') {
+                            cursor[prop][cursor_type_index] = default_val[cursor_type_index];
+                        } else {
+                            cursor[prop] = default_val;
+                        }
+                    }
+                }
+            }
+        }
+    },
+    
+    _reset_tile_cursors : function () {
+        this._generic_cursor_index_properties_reset('tile', ['tile_id', 'drawing_cursor']);
+    },
+
+    _reset_agent_cursors : function () {
+        this._generic_cursor_index_properties_reset('agent', ['agent_list', 'drawing_cursor', 'agent_num']);
+    },
+
+    _reset_object_cursors : function () {
+        this._generic_cursor_index_properties_reset('object', ['object_list', 'drawing_cursor', 'object_num']);
+    },
+
+    _default_cursor : {
+        drawing_cursor : [0, -1, -1],
+        //last_blip      : 0, //needed?
+        tile_id        : 0,
+        agent_num      : 0,
+        agent_list     : [],
+        object_num     : 0,
+        object_list    : []
+    },
+
+    _load_default_cursor : function (i) {
+        return $.extend({ index: i }, this._default_cursor);
+    },
     
     reset_cursor_index: function() {
         console.log("reset_cursor_index");
-        var i,
-            x = 0,
-            y = 0;
-        for(x=0; x < board.tile_width; x++) {
-            for(y=0; y < board.tile_height; y++) {
-                i = x + y*board.tile_width;
-                this.index[i] = {
-                    index          : i,
-                    drawing_cursor : [0, -1, -1],
-                    //last_blip      : 0, //needed?
-                    tile_id        : 0,
-                    agent_num      : 0,
-                    agent_list     : [],
-                    object_num     : 0,
-                    object_list    : [],
-                    //debugging information
-                    bx       : x,
-                    by       : y,
-                    position : [x + board.x_offset, y + board.y_offset, board.z_level]
-                }
+        var i, x, y,
+            max_x = board.tile_width,
+            max_y = board.tile_height,
+            x_off = board.x_offset,
+            y_off = board.y_offset,
+            z_lvl = board.z_level;
+        for (x=0; x < max_x; x++) {
+            for (y=0; y < max_y; y++) {
+                i = x + y*max_x;
+                this.index[i] = $.extend({
+                    bx: x,      //debugging information
+                    by: y,
+                    position : [x + x_off, y + y_off, z_lvl]
+                }, this._load_default_cursor(i));
             }   
         }
     },
