@@ -22,6 +22,7 @@ process.register = function(msg) {
         game.update();
     }
     globals.session_id = msg.session_id;
+    globals.new_client = false;
     return true;
 };
 

@@ -21,8 +21,8 @@ var globals = {
     },
     
     update : function (params) {
-        this.world_id   = typeof parseInt(params.world_id, 10)   === 'number'  ? params.world_id   : this.world_id;
-        this.client_id  = typeof parseInt(params.client_id, 10)  === 'number'  ? params.client_id  : this.client_id;
+        this.world_id   = typeof parseInt(params.world_id, 10)  === 'number' ? params.world_id  : this.world_id;
+        this.client_id  = typeof parseInt(params.client_id, 10) === 'number' ? params.client_id : this.client_id;
         this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
     },
 };
