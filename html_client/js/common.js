@@ -1,13 +1,5 @@
 // Common helper methods
 
-// converts arguments to an array
-if (Array.prototype.convertArgs === undefined) {
-    Array.prototype.convertArgs = function (args, start_index, slice_count) {
-        return Array().slice.call(args, start_index, slice_count);
-    };
-}
-
-
 // enforces things that should only be called once
 if (Function.prototype.calledOnce === undefined) {
     Function.prototype.calledOnce = function () {
@@ -20,16 +12,37 @@ if (Function.prototype.calledOnce === undefined) {
     };
 }
 
+
+function Arguments () {
+    if (!(this instanceof arguments.callee)) {
+        return new Arguments();
+    }
+}
+Arguments.prototype = new Array();
+// converts arguments to an array
+if (Arguments.prototype.toArray === undefined) {
+    Arguments.prototype.toArray = function (args, start_index, slice_count) {
+        return Array().slice.call(args, start_index, slice_count);
+    };
+}
+
+
+/* Extended Object: the Dict */
+/* Has methods similar to python dictionaries */
+
+function Dict () {
+    if (!(this instanceof arguments.callee)) {
+        return new Dict();
+    }
+}
+Dict.prototype = new Object();
 // Same function as python dict's setDefault method
 // obj.setDefault(key [, default]);
 // If key exists, returns obj[key],
 // Else sets obj[key] = default and returns default.
 // Default defaults to null.
-if (Object.prototype.setDefault === undefined) {
-    Object.prototype.setDefault = function (key, value) {
-        if (typeof key !== 'string') {
-            throw { message: 'Object.setDefault() called with invalid args.' };
-        }
+if (Dict.prototype.setDefault === undefined) {
+    Dict.prototype.setDefault = function (key, value) {
         value = value || null;
         if (this.hasOwnProperty(key)) {
             return this[key];
@@ -42,11 +55,8 @@ if (Object.prototype.setDefault === undefined) {
 
 // returns the value if it exists, else default
 // Default defaults to undefined
-if (Object.prototype.getDefault === undefined) {
-    Object.prototype.getDefault = function (key, value) {
-        if (typeof key !== 'string') {
-            throw { message: 'Object.getDefault() called with invalid args.' };
-        }
+if (Dict.prototype.getDefault === undefined) {
+    Dict.prototype.getDefault = function (key, value) {
         value = value || undefined;
         if (this.hasOwnProperty(key)) {
             return this[key];
@@ -57,8 +67,8 @@ if (Object.prototype.getDefault === undefined) {
 }
 
 // returns an object's keys as an array
-if (Object.prototype.keysArray === undefined) {
-    Object.prototype.keysArray = function () {
+if (Dict.prototype.keysArray === undefined) {
+    Dict.prototype.keysArray = function () {
         var arr = [],
             n;
         for (n in this) {
@@ -71,8 +81,8 @@ if (Object.prototype.keysArray === undefined) {
 }
 
 // returns an object's values as an array
-if (Object.prototype.valuesArray === undefined) {
-    Object.prototype.valuesArray = function () {
+if (Dict.prototype.valuesArray === undefined) {
+    Dict.prototype.valuesArray = function () {
         var arr = [],
             n;
         for (n in this) {
@@ -85,8 +95,8 @@ if (Object.prototype.valuesArray === undefined) {
 }
 
 // returns an objects key:value pairs as an array [key, value]
-if (Object.prototype.keysArray === undefined) {
-    Object.prototype.keysArray = function () {
+if (Dict.prototype.keysArray === undefined) {
+    Dict.prototype.keysArray = function () {
         var arr = [],
             n;
         for (n in this) {

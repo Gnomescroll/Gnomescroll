@@ -23,7 +23,7 @@ var tile_properties = {
 
 var tileset_state = {
     loaded : false,
-    tile_rendering  : {},
+    tile_rendering  : new Dict(),
     tile_name_to_id : {},
     tile_id_to_name : {},
 
@@ -60,13 +60,7 @@ var tileset_state = {
     },
     
     get_tile_rendering_info : function(tile_id) {
-        if (this.tile_rendering.hasOwnProperty(tile_id)) {
-            return this.tile_rendering[tile_id];
-        } else {
-            //return default if tile does not exist in rendering info
-            //console.log("Tile rendering infomation missing: " + tile_id);
-            return this.default_tile;
-        }
+        return this.tile_rendering.getDefault(tile_id, this.default_tile);
     },
 
     reset : function () {
@@ -79,17 +73,17 @@ var tileset_state = {
 
 // constructor for a new tileset <img>
 function Tileset(src, tileset_id, tpw, tph, tw, th) {
-    // enforce exact arguments count
-    if (this.constructor.length !== arguments.length) {
+    if (this.constructor.length !== arguments.length) { // enforce exact arguments count
         throw new Error(this.constructor.name +' construction has invalid number of arguments.');
     }
     if (!(this instanceof arguments.callee)) {
-        return new arguments.callee(src, tileset_id, tpw, tph, tw, th);
+        return new Tileset(src, tileset_id, tpw, tph, tw, th);
     }
+
     var img = new Image(),
         _elem_id = 'tileset_' + tileset_id,
-        _dom_element = $('<img />').attr({ 'src': src,
-                                           'id': _elem_id,
+        _dom_element = $('<img />').attr({ 'src'  : src,
+                                           'id'   : _elem_id,
                                            'class': 'tileset' });
 
     $('body').append(_dom_element);
@@ -108,7 +102,7 @@ function TileCanvas(id, parent_selector, dim) {
     // id is the html id attr, parent_selector is a selector for the container
     // where the canvas will be placed in, and dim is an object of properties
     if (!(this instanceof arguments.callee)) {
-        return new arguments.callee(id, parent_selector, dim);
+        return new TileCanvas(id, parent_selector, dim);
     }
     if (dim && typeof dim === 'object') {
         this.width = dim.width || 16;

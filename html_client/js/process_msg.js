@@ -62,6 +62,8 @@ process.info.tileset = function(msg) {
         tile_properties.add(tile);
     }
 
+    dispatcher.trigger('info_tileset');
+
     game.update2();
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
@@ -87,6 +89,8 @@ process.info.terrain_map = function (msg) {
     delete msg.world_id;
     delete msg.client_id;
     delete msg.msg;
+
+    dispatcher.trigger('info_terrain_map');
     
     if (state.updateLevel(msg)) {
         board.event.terrain_map(msg);
@@ -111,6 +115,8 @@ process.info.agent_info = function (msg) {
     
     // merge msg.value with msg
     $.extend(msg, value);
+
+    dispatcher.trigger('info_agent_info');
     
     agent = state.gameObjectKnown(msg);
     if (agent) {            // update
@@ -141,6 +147,8 @@ process.info.object_info = function (msg) {
     delete msg.position;
     delete msg.msg;
     delete msg.client_id;
+
+    dispatcher.trigger('info_object_info');
     
     var obj = state.gameObjectKnown(msg);
     if (obj) {              // update
@@ -159,6 +167,8 @@ process.info.agent_list = function (msg) {
         msg_len = msg.list.length,
         i = 0,
         list_agent;
+
+    dispatcher.trigger('info_agent_list');
         
     for(i=0; i < msg_len; i++) {
         list_agent = msg.list[i];
@@ -188,6 +198,8 @@ process.info.object_list = function (msg) {
         msg_len = msg.list.length,
         i = 0,
         list_obj;
+
+    dispatcher.trigger('info_object_list');
         
     for(i=0; i < msg_len; i++) {
         list_obj = msg.list[i];

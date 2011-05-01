@@ -34,6 +34,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
  * 
  */
 var http_port = 8080,
+    CACHE     = false,
     http = new (function(port) {
     return function () {
         var http = require('http'),
@@ -65,7 +66,18 @@ var http_port = 8080,
             response.setHeader('Content-Type', content_type);
         }
 
-		_static_cache = {};
+        _static_cache = {};
+
+        _access_cache = function (cache_key, fp, encoding) {
+            var body;
+            if (_static_cache[cache_key] !== undefined) {
+                body = _static_cache[cache_key];
+            } else {
+                body = fs.readFileSync(fp, encoding);
+                _static_cache[cache_key] = body;
+            }
+            return body;
+        };
 
         views = {
             hello : function (request) {
@@ -99,12 +111,11 @@ var http_port = 8080,
                 fp = cache_key = (fp) ? fp : '/' + type + '/' + fn;
                 fp = path_prefix + fp;
                 encoding = (encoding === 'text') ? 'utf8' : '';
-                if (_static_cache[cache_key] !== undefined) {
-					body = _static_cache[cache_key];
-				} else {
-					body = fs.readFileSync(fp, encoding);
-					_static_cache[cache_key] = body;
-				}
+                if (CACHE) {
+                    body = _access_cache(cache_key, fp, encoding);
+                } else {
+                    body = fs.readFileSync(fp, encoding);
+                }
                 return body;
             },
 

@@ -86,7 +86,7 @@ function Controls () {
                 fn.apply(this, fn_args);
             }
             if (typeof event === 'function') { // callback
-                args = Array().convertArgs(arguments, 1);
+                args = Arguments().toArray(arguments, 1);
                 event.apply(this, args);
             }
             return false;
@@ -146,7 +146,7 @@ function Controls () {
             }
 
             if (typeof callback === 'function') { // callback
-                args = Array().convertArgs(arguments, 1);
+                args = Arguments().toArray(arguments, 1);
                 callback.apply(this, args);
             }
         };
