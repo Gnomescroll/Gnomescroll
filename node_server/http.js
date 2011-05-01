@@ -65,6 +65,8 @@ var http_port = 8080,
             response.setHeader('Content-Type', content_type);
         }
 
+		_static_cache = {};
+
         views = {
             hello : function (request) {
                 return '<h1><a href="/">Gnomescroll</a></h1>';
@@ -90,12 +92,19 @@ var http_port = 8080,
                     encoding = response.getHeader('Content-Type').split('/')[0],
                     fn = request.url.split('/'),
                     f,
-                    body;
+                    body,
+                    cache_key;
                 if (type === 'javascript') type = 'js';
                 fn = fn[fn.length-1];
-                fp = (fp) ? path_prefix + fp : path_prefix + '/' + type + '/' + fn;
+                fp = cache_key = (fp) ? fp : '/' + type + '/' + fn;
+                fp = path_prefix + fp;
                 encoding = (encoding === 'text') ? 'utf8' : '';
-                body = fs.readFileSync(fp, encoding);
+                if (_static_cache[cache_key] !== undefined) {
+					body = _static_cache[cache_key];
+				} else {
+					body = fs.readFileSync(fp, encoding);
+					_static_cache[cache_key] = body;
+				}
                 return body;
             },
 
