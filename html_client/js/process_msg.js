@@ -19,11 +19,6 @@ process.register = function(msg) {
         return false;
     }
     dispatcher.trigger('register', msg);
-    //if (parseInt(msg.update, 10)) { // request updates
-        //game.update();
-    //}
-    //globals.session_id = msg.session_id;
-    //globals.new_client = false;
     return true;
 };
 
