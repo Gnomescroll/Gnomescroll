@@ -63,7 +63,11 @@ var dispatcher = {
 
         for (i=0; i < len; i++) {
             callback = callbacks[i];
-            if (callback.count-- <= 0) {
+            try {
+                if (callback.count-- <= 0) {
+                    callbacks[i] = callback = null;
+                }
+            } catch (e) {
                 callbacks[i] = callback = null;
             }
             if (callback === null) continue;
