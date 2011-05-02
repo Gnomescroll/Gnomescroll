@@ -356,3 +356,7 @@ var state = {
         return empty;
     }
 };
+
+dispatcher.listen('info_terrain_map', function(name, msg) {
+	this.updateLevel(msg);
+}, state);

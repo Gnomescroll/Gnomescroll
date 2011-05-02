@@ -207,3 +207,24 @@ Container = $.extend({}, GameObject);
 Container = $.extend(Container, InventoryMethods);
 Container.tile_num = 9;
 Container.base_type = 'container';
+
+dispatcher.listen('info_agent_info', function(name, msg) {
+    var agent = state.gameObjectKnown(msg);
+    if (agent) {            // update
+        agent.update(msg);
+    } else {                // create
+        agent = Agent.create(msg);
+    }
+    agent.toState();
+});
+
+dispatcher.listen('info_object_info', function(name, msg) {
+    var obj = state.gameObjectKnown(msg);
+    if (obj) {              // update
+        obj.update(msg);
+    } else {                // create
+        obj = Obj.create(msg);
+    }
+    obj.toState();
+});
+

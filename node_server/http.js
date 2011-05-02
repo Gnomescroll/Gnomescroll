@@ -181,5 +181,6 @@ var http_port = 8080,
             });
         });
         this.server.listen(this.port);
+        console.log('HTTP Server now listening at port '+this.port);
     };
 }(http_port));

@@ -77,7 +77,9 @@ board.event = {
             z = x.z;
             y = x.y;
             x = x.x;
-        }
+        } else if (arguments.length !== 4) {
+			return false;
+		}
         board.manager.update_tile(x, y, z, value);
     },
 
@@ -835,3 +837,8 @@ board.info = {
         return txt;
     }
 };
+
+
+dispatcher.listen('info_terrain_map', function(name, msg) {
+	this.event.terrain_map(msg);
+}, board);

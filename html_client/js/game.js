@@ -95,6 +95,10 @@ dispatcher.listen('register', function (event_name, msg) {
     console.log('game listener triggered');
     console.log(msg);
     if (parseInt(msg.update, 10)) { // request updates
-        game.update();
+        this.update();
     }
-}, 1);
+}, 1, game);
+
+dispatcher.listen('info_tileset', function (event_name, msg) {
+	this.update2();
+}, 1, game);

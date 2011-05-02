@@ -59,9 +59,10 @@ process.info.tileset = function(msg) {
         tile_properties.add(tile);
     }
 
-    dispatcher.trigger('info_tileset');
+    dispatcher.trigger('info_tileset', msg);
 
-    game.update2();
+    //game.update2();
+    
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
 
@@ -87,18 +88,13 @@ process.info.terrain_map = function (msg) {
     delete msg.client_id;
     delete msg.msg;
 
-    dispatcher.trigger('info_terrain_map');
-    
-    if (state.updateLevel(msg)) {
-        board.event.terrain_map(msg);
-    }
+    dispatcher.trigger('info_terrain_map', msg);
 };
 
 process.info.agent_info = function (msg) {
     //if(!validate.agent_info(msg)) return;
     
-    var value = msg.value,
-        agent;
+    var value = msg.value;
     
     msg.x = value.position[1];
     msg.y = value.position[2];
@@ -113,15 +109,7 @@ process.info.agent_info = function (msg) {
     // merge msg.value with msg
     $.extend(msg, value);
 
-    dispatcher.trigger('info_agent_info');
-    
-    agent = state.gameObjectKnown(msg);
-    if (agent) {            // update
-        agent.update(msg);
-    } else {                // create
-        agent = Agent.create(msg);
-    }
-    agent.toState();
+    dispatcher.trigger('info_agent_info', msg);
 };
 
 process.info.object_info = function (msg) {
@@ -145,15 +133,7 @@ process.info.object_info = function (msg) {
     delete msg.msg;
     delete msg.client_id;
 
-    dispatcher.trigger('info_object_info');
-    
-    var obj = state.gameObjectKnown(msg);
-    if (obj) {              // update
-        obj.update(msg);
-    } else {                // create
-        var obj = Obj.create(msg);
-    }
-    obj.toState();
+    dispatcher.trigger('info_object_info', msg);
 };
 
 process.info.agent_list = function (msg) {
@@ -163,7 +143,7 @@ process.info.agent_list = function (msg) {
         i = 0,
         list_agent;
 
-    dispatcher.trigger('info_agent_list');
+    dispatcher.trigger('info_agent_list', msg);
         
     for(i=0; i < msg_len; i++) {
         list_agent = msg.list[i];
@@ -193,7 +173,7 @@ process.info.object_list = function (msg) {
         i = 0,
         list_obj;
 
-    dispatcher.trigger('info_object_list');
+    dispatcher.trigger('info_object_list', msg);
         
     for(i=0; i < msg_len; i++) {
         list_obj = msg.list[i];
@@ -249,7 +229,8 @@ process.delta.agent_position_change = function (msg) {
     } else {
         board.event.agent_change(agent);
     }
-
+    
+    dispatcher.trigger('agent_position_change', msg);
 };
 
 process.delta.agent_state_change = function (msg) {
@@ -271,6 +252,7 @@ process.delta.agent_state_change = function (msg) {
         agent.toState();
     }
     
+    dispatcher.trigger('agent_state_change', msg);
 };
 
 process.delta.agent_create = function (msg) {
@@ -288,6 +270,7 @@ process.delta.agent_create = function (msg) {
         agent.toState();
     }
     
+    dispatcher.trigger('agent_create', msg);
 };
 
 process.delta.agent_delete = function (msg) {
@@ -317,6 +300,8 @@ process.delta.object_position_change = function (msg) {
         obj = Obj.create(msg);
         obj.toState();
     }
+    
+    dispatcher.trigger('object_position_change', msg);
 };
 
 process.delta.object_state_change = function (msg) {
@@ -338,6 +323,7 @@ process.delta.object_state_change = function (msg) {
         obj.toState();
     }
     
+    dispatcher.trigger('object_state_change', msg);
 };
 
 process.delta.object_create = function (msg) {
@@ -354,6 +340,8 @@ process.delta.object_create = function (msg) {
         obj = Obj.create(msg);
         obj.toState();
     }
+    
+    dispatcher.trigger('object_create', msg);
 };
 
 process.delta.object_delete = function (msg) {
@@ -363,6 +351,8 @@ process.delta.object_delete = function (msg) {
     if (obj) {
         obj.remove();
     }
+    
+    dispatcher.trigger('object_delete', msg);
 };
 
 process.delta.set_terrain_map = function (msg) {
@@ -374,7 +364,8 @@ process.delta.set_terrain_map = function (msg) {
             board.event.terrain_map_change(block);
         }
     }
-
+    
+	dispatcher.trigger('set_terrain_map', msg);
 };
 
 route = {
