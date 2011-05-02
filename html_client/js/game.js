@@ -90,3 +90,11 @@ var game = {
     },
     
 };
+
+dispatcher.listen('register', function (event_name, msg) {
+    console.log('game listener triggered');
+    console.log(msg);
+    if (parseInt(msg.update, 10)) { // request updates
+        game.update();
+    }
+}, 1);

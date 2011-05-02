@@ -37,6 +37,11 @@ $.extend(globals, {
     api_path   : '/api',
 });
 
+dispatcher.listen('register', function (event_name, msg) {
+    globals.session_id = msg.session_id;
+    globals.new_client = false;
+});
+
 
 var send = function (data) {
     data = JSON.stringify(data);
@@ -45,9 +50,11 @@ var send = function (data) {
 };
 
 var hello = function () {
-    return send({ cmd       : 'hello',
-                  world_id  : globals.world_id,
-                  client_id : globals.client_id });
+    return send({
+        cmd       : 'hello',
+        world_id  : globals.world_id,
+        client_id : globals.client_id
+    });
 };
 
 var admin, info, action;
