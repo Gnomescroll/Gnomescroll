@@ -70,7 +70,6 @@ var socket = {
             this.no_reconnect = true;
             this.socket.disconnect();
         }
-        //wait(3500);
         delay = delay || 3500;
         setTimeout('socket.socket.connect();', delay);
     },

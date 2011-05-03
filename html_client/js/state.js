@@ -230,19 +230,17 @@ var state = {
         if (typeof obj !== 'object') {
             this._initGameObjectTypeMap();
             obj = this.gameObjectTypeMap[type][id];
-            if (obj === undefined) return false;
+            if (obj === undefined) {
+                return false;
+            }
+        } else {
+            return obj;
         }
-        else return obj;
     },
     
     // add game_object to lists
-    addGameObject: function(game_object) {
-        var type,
-            id;
-            
-        type = game_object.base_type;
-        id = game_object.id;
-        this.gameObjectTypeMap[type][id] = game_object;
+    addGameObject: function(gobj) {
+        this.gameObjectTypeMap[gobj.base_type][gobj.id] = gobj;
         return true;
     },
     
@@ -438,7 +436,7 @@ state.event = new function StateEvent () {
     var _generic_object_create = function (obj_type) {
         return function (name, msg) {
             var obj;
-            if (state.contains(GameObject.pos.apply(msg))) {
+            if (state.contains(GameObject.pos.apply(msg)) !== false) {
                 obj = obj_type_map[obj_type]._class.create(msg);
                 obj.toState();
             }

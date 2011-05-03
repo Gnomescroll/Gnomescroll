@@ -768,7 +768,7 @@ board.event = {
     agent_position_change : function (name, msg) {
         var agent = state.gameObjectKnown(msg.id, 'agent');
         if (agent === false) {
-            alert("process.delta.agent_position_change fail: WTF, should not occur");
+            console.log("process.delta.agent_position_change fail: WTF, should not occur");
             console.log(agent);
             return false;
         }
@@ -778,8 +778,20 @@ board.event = {
     object_position_change : function (name, msg) {
         //implement
     },
+    
+    game_object_to_state : function (name, obj) {
+        obj = state.gameObjectKnown(obj);
+        if (obj === false) {
+            console.log('process.delta.game_object_to_state fail: WTF, should not occur');
+            console.log(obj);
+            return false;
+        }
+        board.manager[obj.base_type + '_update'](obj);
+    },
 };
 
 dispatcher.listen('info_terrain_map', board.event.info_terrain_map);
 dispatcher.listen('agent_position_change', board.event.agent_position_change);
 dispatcher.listen('set_terrain_map', board.event.set_terrain_map);
+
+dispatcher.listen('game_object_to_state', board.event.game_object_to_state);

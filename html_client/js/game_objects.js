@@ -96,8 +96,8 @@ GameObject = {
                 return;
             }
         }
-        
         this.cleanOld();
+        dispatcher.trigger('game_object_to_state', this);
     },
 
     instance_properties : ['inventory'],

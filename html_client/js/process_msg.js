@@ -129,7 +129,8 @@ process.delta.agent_state_change = function (msg) {
 process.delta.agent_create = function (msg) {
     //if (!validate.agent_create(msg)) return;    
     process._convert_position(msg);
-    msg.type = ['agent'];
+    //msg.type = ['agent'];
+    delete msg.msg;
     dispatcher.trigger('agent_create', msg);
 };
 
@@ -147,12 +148,14 @@ process.delta.object_position_change = function (msg) {
 process.delta.object_state_change = function (msg) {
     //if (!validate.object_state_change(msg)) return;
     process._convert_position(msg);
+    delete msg.msg;
     dispatcher.trigger('object_state_change', msg);
 };
 
 process.delta.object_create = function (msg) {
     //if (!validate.object_create(msg)) return;
     process._convert_position(msg);
+    delete msg.msg;
     dispatcher.trigger('object_create', msg);
 };
 
