@@ -8,15 +8,15 @@ var game = {
         dispatcher.trigger('game_init');
     },
     
-    update : function () {
+    registered : function () {
         drawingCache.loadTilesets();
         tileset_state.init();
-        dispatcher.trigger('game_update');
+        dispatcher.trigger('game_registered');
     },
     
-    update2 : function() {
+    update : function() {
         state.init();
-        dispatcher.trigger('game_update2');
+        dispatcher.trigger('game_update');
     },
 
     update3 : function () {
@@ -41,7 +41,7 @@ var game = {
         map_editor.reset();
         options.reset();
         dispatcher.trigger('game_reset');
-        controls.trigger_load(); // begin chain of init events
+        controls.trigger_init(); // begin chain of init events
     },
     
 };
@@ -49,12 +49,12 @@ var game = {
 dispatcher.listen('register', function (name, msg) {
     console.log('register triggered; game.update() being called');
     if (parseInt(msg.update, 10)) { // request updates
-        game.update();
+        game.registered();
     }
 });
 
 dispatcher.listen('tileset_state_loaded', function () {
-    game.update2();
+    game.update();
 });
 
 dispatcher.listen('state_loaded', function () {

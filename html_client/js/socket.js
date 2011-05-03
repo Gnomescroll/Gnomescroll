@@ -85,13 +85,14 @@ var socket = {
     register : function (update) {
         // send client id to server
         console.log('registering');
-        this.socket.send(JSON.stringify({
-                world_id : globals.world_id,
-               client_id : globals.client_id,
-                     cmd : 'register',
-                     msg : (globals.new_client) ? 'new' : '',
-                  update : (update) ? '1' : '',
-        }));
+        var msg = JSON.stringify({
+            world_id : globals.world_id,
+           client_id : globals.client_id,
+                 cmd : 'register',
+                 msg : (globals.new_client) ? 'new' : '',
+              update : (update) ? 1 : 0,
+        })
+        this.socket.send(msg);
     },
 
     disconnect : function (no_reconnect) {

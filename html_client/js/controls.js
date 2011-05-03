@@ -29,7 +29,7 @@ var controls = new function Controls () {
         }
     };
 
-    this.trigger_load = function () { // starts chain of init/start
+    this.trigger_init = function () { // starts chain of init/start
         this._init_event();
     };
 
@@ -39,12 +39,12 @@ var controls = new function Controls () {
 
     this._init_defaults = function () { // initializes default classes (only once)
         if (!arguments.callee.loaded) {
-            var d = {
+            var name,
+                d = {
                     init  : $('#init'),
                     update: $('#update'),
                     reset : $('#reset')
-                },
-                name;
+                };
             
             for (name in d) {
                 if (!d.hasOwnProperty(name)) continue;
@@ -97,7 +97,7 @@ var controls = new function Controls () {
         dispatcher.listen('state_loaded', function () {
             controls._updated();
         }, 1);
-        state.init();
+        game.update();
     });
 
     this._reset_event = _event_wrapper('#reset', function () {
