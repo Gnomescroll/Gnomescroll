@@ -45,7 +45,7 @@ var game = {
         this.started = false;
         controls.reset();
         input.reset();
-        socket.reset(true);
+        socket.reset(false);
         tile_properties.reset();
         tileset_state.reset();
         drawingCache.reset_full();

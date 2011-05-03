@@ -1,10 +1,10 @@
 var socket = {
     
-    debug       : false,
-    node_server : '127.0.0.1',
-    node_port   : 8081,
-    socket      : null,
-    no_reconnect: false,
+    debug        : false,
+    node_server  : '127.0.0.1',
+    node_port    : 8081,
+    socket       : null,
+    reconnect    : true,
     first_connect: true,
     
     init : function (update) {
@@ -20,10 +20,10 @@ var socket = {
                 return function () {
                     globals.session_id = null;
                     if (that.debug) console.log(event_name);
-                    if (! that.no_reconnect) {
+                    if (that.reconnect) {
                         that.socket.connect();
                     }
-                    that.no_reconnect = false;
+                    that.reconnect = true;
                 };
             };
         
@@ -67,15 +67,15 @@ var socket = {
     reset_delayed : function (delay) {
         console.log('resetting socket');
         if (this.socket) {
-            this.no_reconnect = true;
+            this.reconnect = false;
             this.socket.disconnect();
         }
         delay = delay || 3500;
         setTimeout('socket.socket.connect();', delay);
     },
 
-    reset : function (no_reconnect) {
-        this.no_reconnect = no_reconnect || this.no_reconnect;
+    reset : function (reconnect) {
+        this.reconnect = reconnect || this.reconnect;
         if (this.socket) {
             this.socket.disconnect();
         }
@@ -96,9 +96,9 @@ var socket = {
         this.socket.send(msg);
     },
 
-    disconnect : function (no_reconnect) {
+    disconnect : function (reconnect) {
         if (this.socket) {
-            this.no_reconnect = no_reconnect || true;
+            this.reconnect = reconnect || false;
             this.socket.disconnect();
         }
     },
