@@ -8,28 +8,6 @@ var game = {
         dispatcher.trigger('game_init');
     },
     
-    init2 : function () {
-        this.retry.interval = setInterval('game.retry();', 500);
-        this.started = true;
-        dispatcher.trigger('game_init2');
-    },
-
-    retry : (function () {
-        var success = false,
-            wait_func = function () {
-                console.log('wait_func');
-                if (!success) {
-                    console.log('state init call');
-                    success = state.init();
-                } else {
-                    console.log('input init call');
-                    input.init();
-                    clearInterval(arguments.callee.interval);
-                }
-            };
-        return wait_func;
-    }()),
-
     update : function () {
         drawingCache.loadTilesets();
         tileset_state.init();
