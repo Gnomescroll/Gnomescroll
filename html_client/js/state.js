@@ -34,6 +34,8 @@ var state = {
         this.ao_map = {};
         this.z_lvls = [];
         this.started = false;
+        this.fully_loaded = false;
+        this.requests_waiting = {};
     },
     
     // requests state data from server
@@ -80,8 +82,10 @@ var state = {
     },
 
     load_game_state : function (z) {
+        this.fully_loaded = false;
         this._initGameObjectTypeMap();
         this.load_map(z);
+        this.requests_waiting[z] = true;
         return this.load_game_objects();
     },
 
@@ -104,10 +108,11 @@ var state = {
     },
 
     load_game_objects : function () {
+        this.fully_loaded = false;
         this.requests_waiting.agents = true;
         this.requests_waiting.objects = true;
-        return ( info.agents() &&    // request agents
-                 info.objects());    //         objects
+        return (info.agents() &&    // request agents
+                info.objects());    //         objects
     },
 
     check_loaded : function () { // check if there are outstanding requests
@@ -119,7 +124,7 @@ var state = {
                 this.fully_loaded = false;
             }
         }
-        if (game.waiting_for_state && this.fully_loaded) {
+        if (this.fully_loaded) {
             dispatcher.trigger('state_loaded');
             this.fully_loaded = false;
         }

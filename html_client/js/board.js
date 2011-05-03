@@ -711,6 +711,7 @@ board.cursor_manager = {
             }
             if (drawing_cursor[2] != -1) {
                 console.log("Draw Object");
+                // implement
                 return false;
             }       
         }   

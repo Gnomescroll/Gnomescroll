@@ -93,7 +93,7 @@ var controls = new function Controls () {
             controls._initialized();
         }, 1);
         if (!_get_selector.call(this)) {
-            dispatcher.listen('game_init', function () {
+            dispatcher.listen('state_loaded', function () {
                 controls._start_event();
             }, 1);
         }
@@ -108,10 +108,10 @@ var controls = new function Controls () {
     });
 
     this._update_event = _event_wrapper('#update',  function () {  // not tested
-        dispatcher.listen('game_update', function () {
+        dispatcher.listen('state_loaded', function () {
             controls._updated();
         }, 1);
-        game.update();
+        state.init();
     });
 
     this._reset_event = _event_wrapper('#reset', function () {

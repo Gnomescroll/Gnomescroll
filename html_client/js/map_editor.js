@@ -18,8 +18,10 @@ var map_editor = {
     },
 
     init: function () {
-        this._init_panel();
-        this._init_panel_controls();
+        if ($(this.panel_selector).children().length === 0) {
+            this._init_panel();
+            this._init_panel_controls();
+        }
     },
     
     _init_panel: function () {

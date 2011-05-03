@@ -89,6 +89,7 @@ dispatcher.listen('info_tileset', function (name, msg) {
         tileset_state.add_tile(tr[x]);
     }
     tileset_state.loaded = true;
+    dispatcher.trigger('tileset_state_loaded');
 });
 
 // constructor for a new tileset <img>

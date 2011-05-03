@@ -46,10 +46,7 @@ var game = {
         dispatcher.trigger('game_update2');
     },
 
-    waiting_for_state : true,
-
     update3 : function () {
-        this.waiting_for_state = false;
         input.init();
         board.init();
         board.start();
@@ -92,7 +89,7 @@ dispatcher.listen('register', function (name, msg) {
     }
 });
 
-dispatcher.listen('info_tileset', function () {
+dispatcher.listen('tileset_state_loaded', function () {
     game.update2();
 });
 
