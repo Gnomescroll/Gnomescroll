@@ -87,7 +87,7 @@ class DatagramEncoder:
         t2 = self._pm(200, t1)
         self.connection.send_tcp(t2)
 
-class PacketDecoder:
+class TcpPacketDecoder:
     def __init__(self,connection, messageHandler):
         self.datagramDecoder = DatagramDecoder(connection, messageHandler)
         self.buffer = ''
@@ -145,7 +145,8 @@ class ServerListener:
     TCP_PORT = 5055
     UDP_PORT = 5060
 
-    def __init__(self):
+    def __init__(self, connectionPool):
+        self.connectionPool = connectionPool
         self.tcp = None
         self.tcp_fileno = 0
         self.udp = None
@@ -182,28 +183,39 @@ class ServerListener:
                     print 'TCP connection established with:', address
                     connection.setblocking(0)
                     #cc = self.ClientConnection(connection, address) ##create connection
-                    self.connectionPool.addPendingConnection(cc) #hand off connection to connection pool
+                    self.connectionPool.addConnection(connection, address) #hand off connection to connection pool
                  except socket.error, (value,message):
                         print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
                 print "UDP event"
 
+
+
 ### PURGE
-## Move into connect handler class ##
 
-    def __init__3(self):
-        self.decoder = PacketDecoder(self)
-        self.encoder = DatagramEncoder(self)
+#epoll = select.epoll()
+#epoll.register(serversocket.fileno(), select.EPOLLIN)
+#events = epoll.poll(1)
 
+class TcpClient:
 
-        #bufsize = self.s.getsockopt( socket.SOL_SOCKET, socket.SO_SNDBUF)
-        #print "socket buffer size: %i" % bufsize
+    def __init__(self, pool, connection, addresss):
+        self.pool = pool
+        self.tcp = connection
+
+        self.tcp_fileno = 0
+        self.TcpPacketDecoder = TcpPacketDecoder(self)
+        self.tcp = connection
+
+        self.player_id = 0
+        self.client_id = 0
+
 
     def send(self, MESSAGE):
         try:
-            self.send_tcp(MESSAGE)
+            self.tcp.sendall(MESSAGE)
         except socket.error, (value,message):
-            print "send: socket_error: " + str(value) + ", " + message
+            print "TcpClient.send error: " + str(value) + ", " + message
             self.connected = False
             self._listen()
 
@@ -225,28 +237,15 @@ class ServerListener:
             print "get_tcp: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
-### PURGE
-
-#epoll = select.epoll()
-#epoll.register(serversocket.fileno(), select.EPOLLIN)
-#events = epoll.poll(1)
-
-class ClientConnection:
-    def __init__(self, connection, address):
-        self.tcp = connection
-        self.player_id = 0
-        self.client_id = 0
-
-        self.PacketDecoder = PacketDecoder(self)
-        self.tcp = connection
-
-
 class ConnectionPool:
 
     def __init__(self):
         self.epoll = select.epoll()
 
-    def
+    def addClient(self, connection, address, type = 'tcp'):
+        if type == 'tcp':
+            client =  TcpClient(self, connection, address)
+
     def process_events(self):
         connections = {}; requests = {}; responses = {}
         while True:
@@ -285,7 +284,8 @@ if __name__ == "__main__":
     create_agent_message(0,1,5,5,5,0,0)
     ]
 
-    test = ServerListener()
+    connectionPool = connectionPool()
+    test = ServerListener(connectionPool)
     while True:
         test.accept()
         time.sleep(1)
