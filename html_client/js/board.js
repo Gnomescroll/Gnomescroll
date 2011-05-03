@@ -342,7 +342,8 @@ board.cursor_manager = {
             temp = this.index[i]; // cursor obj
             
         temp.tile_id = tile_id;   // set cursor obj properties
-        temp.drawing_cursor = [0, -1, -1];
+        //temp.drawing_cursor = [0, -1, -1];
+        temp.drawing_cursor[0] = 0;
         this._draw_board_tile(i);
     },
     
@@ -627,17 +628,17 @@ board.cursor_manager = {
         }
         
         x = this.index[x];
-        if (x.drawing_cursor[0] != -1) {
-            //draw tile
-            // x.tile_id, x.bx, x.by
-            drawingCache.drawTile(x.bx, x.by, x.tile_id);
+        if (x.drawing_cursor[2] != -1) {
+            //draw object
+            // x.object_list[x.drawing_cursor[2]], x.bx, x.by
         } else if (x.drawing_cursor[1] != -1) {
             //draw agent
             // x.agent_list[x.drawing_cursor[1]], x.bx, x.by
             drawingCache.drawSprite(x.bx, x.by, 1, 1);
-        } else if (x.drawing_cursor[2] != -1) {
-            //draw object
-            // x.object_list[x.drawing_cursor[2]], x.bx, x.by
+        } else if (x.drawing_cursor[0] != -1) {
+            //draw tile
+            // x.tile_id, x.bx, x.by
+            drawingCache.drawTile(x.bx, x.by, x.tile_id);
         }
     },
     
