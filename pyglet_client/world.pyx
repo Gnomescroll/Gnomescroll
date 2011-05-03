@@ -53,7 +53,7 @@ class World():
                             rnd = random.randint(0,64)
                             #rnd = 3
                             if rnd < 16:
-                                rnd = rnd = random.randint(0,3)
+                                rnd = rnd = random.randint(0,4)
                                 self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
 
     def draw_chunk(self):
