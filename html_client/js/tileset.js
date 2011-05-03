@@ -21,6 +21,16 @@ var tile_properties = {
     },
 };
 
+dispatcher.listen('info_tileset', function (name, msg) {
+    var tp = msg.tile_properties,
+        x;
+    for (x in tp) {
+        if (!tp.hasOwnProperty(x)) continue;
+        tile = tp[x];
+        tile_properties.add(tile);
+    }
+});
+
 var tileset_state = {
     loaded : false,
     tile_rendering  : new Dict(),
@@ -65,11 +75,21 @@ var tileset_state = {
 
     reset : function () {
         this.loaded = false;
-        this.tile_rendering = {};
+        this.tile_rendering = new Dict();
         this.tile_name_to_id = {};
         this.tile_id_to_name = {};
     },
 };
+
+dispatcher.listen('info_tileset', function (name, msg) {
+    var tr = msg.tile_rendering,
+        x;
+    for (x in tr) {
+        if (!tr.hasOwnProperty(x)) continue;
+        tileset_state.add_tile(tr[x]);
+    }
+    tileset_state.loaded = true;
+});
 
 // constructor for a new tileset <img>
 function Tileset(src, tileset_id, tpw, tph, tw, th) {

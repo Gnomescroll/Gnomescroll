@@ -26,8 +26,8 @@ var dispatcher = {
             count: count,
             context: context
         });
-        console.log('added listener');
-        console.log(listeners);
+        //console.log('added listener');
+        //console.log(listeners);
         return true;
     },
 
@@ -73,7 +73,7 @@ var dispatcher = {
             context = callback.context || this;
             callback = callback.callback;
             callback.apply(context, args);
-            console.log('triggered event');
+            //console.log('triggered event');
         }
     },
 };

@@ -26,51 +26,18 @@ process.info = {};
 
 //todo
 //current stores rendering information for tile, but discards meta information
-//retain/store tile_dict somewhere    
-process.info.tileset = function(msg) {
-    var param,
-        data,
-        x,
-        tile,
-        tr = msg.tile_rendering,
-        tp = msg.tile_properties;
-
+//retain/store tile_dict somewhere
+process.info.tileset = function (msg) {
+    var tr = msg.tile_rendering,
+        param,
+        x;
     for (x in tr) {
         if (!tr.hasOwnProperty(x)) continue;
         param = tr[x];
-        
-        data = {
-            tile_name     : param.tile_name,
-            tile_id       : param.tile_id,   
-            tilemap_id    : param.tilemap.tilemap_id,
-            draw_style    : param.tilemap.draw_style,
-            background_rgb: param.tilemap.background_rgb,
-            symbol        : param.tilemap.symbol,
-            symbol_rgb    : param.tilemap.symbol_rgb,
-        };
-            
-        tileset_state.add_tile(data);
+        $.extend(param, param.tilemap);
     }
-    tileset_state.loaded = true;
     
-    for (x in tp) {
-        if (!tp.hasOwnProperty(x)) continue;
-        tile = tp[x];
-        tile_properties.add(tile);
-    }
-
     dispatcher.trigger('info_tileset', msg);
-    
-    //store this; contains tile rendering information 
-    //msg.tile_rendering_dict
-
-    //store this; contains tile meta information
-    //msg.tile_dict
-    
-    // take tileset msg and process/copy to a native format
-    // suitable for drawing.
-    // ideally it is a map from object_type identifiers to drawing properties
-    // these drawing properties should be easily checked by the tilecache
 };
 
 process.info.terrain_map = function (msg) {

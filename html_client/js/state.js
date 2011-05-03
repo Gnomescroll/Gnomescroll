@@ -120,7 +120,8 @@ var state = {
             }
         }
         if (game.waiting_for_state && this.fully_loaded) {
-            game.update3();
+            dispatcher.trigger('state_loaded');
+            this.fully_loaded = false;
         }
     },
 
@@ -140,7 +141,6 @@ var state = {
             arr.push(row);
             row = [];
          }
-         
          return arr;   
     },
     
@@ -178,7 +178,7 @@ var state = {
             j,
             data_map_length;
             
-        for (j=0; j < data.x_size; j += 1) {
+        for (j=0; j < data.x_size; j++) {
             col = [];
             data_map_length = data.map.length;
             for (i=j; i < data_map_length; i += data.y_size) {

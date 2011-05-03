@@ -208,22 +208,21 @@ Container = $.extend(Container, InventoryMethods);
 Container.tile_num = 9;
 Container.base_type = 'container';
 
-dispatcher.listen('info_agent_info', function(name, msg) {
-    var agent = state.gameObjectKnown(msg);
-    if (agent) {            // update
-        agent.update(msg);
-    } else {                // create
-        agent = Agent.create(msg);
-    }
-    agent.toState();
-});
+function _generic_object_info (obj_type) {
+    var obj_class = {
+        'agent' : Agent,
+        'obj'   : Obj
+    };
+    return function (name, msg) {
+        var obj = state.gameObjectKnown(msg);
+        if (obj) {            // update
+            obj.update(msg);
+        } else {                // create
+            obj = obj_class[obj_type].create(msg);
+        }
+        obj.toState();
+    };
+};
 
-dispatcher.listen('info_object_info', function(name, msg) {
-    var obj = state.gameObjectKnown(msg);
-    if (obj) {              // update
-        obj.update(msg);
-    } else {                // create
-        obj = Obj.create(msg);
-    }
-    obj.toState();
-});
+dispatcher.listen('info_agent_info', _generic_object_info('agent'));
+dispatcher.listen('info_object_info', _generic_object_info('obj'));

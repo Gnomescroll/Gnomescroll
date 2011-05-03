@@ -805,6 +805,20 @@ board.info = {
 };
 
 board.event = {
+
+    info_terrain_map : function (name, msg) { // full terrain map
+        if (msg.z_level == board.z_level) {
+            board.reset();
+            board.init();
+            board.start();
+        }
+    },
+
+    set_terrain_map : function (name, msg) { // single terrain tile
+        if (state.contains(msg)) {
+            board.manager.update_tile(msg.x, msg.y, msg.z, msg.value);
+        }
+    },
     
     agent_position_change : function (name, msg) {
         var agent = state.gameObjectKnown(msg.id, 'agent');
@@ -819,24 +833,8 @@ board.event = {
     object_position_change : function (name, msg) {
         //implement
     },
-    
-    set_terrain_map : function(name, msg) { // single terrain tile
-        if (state.contains(msg)) {
-            board.manager.update_tile(msg.x, msg.y, msg.z, msg.value);
-        }
-    },
-
-    info_terrain_map : function (name, msg) { // full terrain map
-        if (msg.z_level == board.z_level) {
-            board.reset();
-            board.init();
-            board.start();
-        }
-    },
 };
 
 dispatcher.listen('info_terrain_map', board.event.info_terrain_map);
-
 dispatcher.listen('agent_position_change', board.event.agent_position_change);
-
 dispatcher.listen('set_terrain_map', board.event.set_terrain_map);

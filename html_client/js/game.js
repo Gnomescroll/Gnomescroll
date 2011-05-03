@@ -2,17 +2,16 @@ var game = {
 
     started : false,
 
-    init : function (callback) {
+    init : function () {
         drawingCache.init();
         socket.init();
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_init');
     },
     
     init2 : function () {
-        this.retry.interval = setInterval('game.retry();', 500); // wait half a sec (does this work?)
+        this.retry.interval = setInterval('game.retry();', 500);
         this.started = true;
+        dispatcher.trigger('game_init2');
     },
 
     retry : (function () {
@@ -31,23 +30,20 @@ var game = {
         return wait_func;
     }()),
     
-    start : function (callback) {
+    start : function () {
         //input.run();
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_start');
     },
 
-    update : function (callback) {
+    update : function () {
         drawingCache.loadTilesets();
         tileset_state.init();
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_update');
     },
     
     update2 : function() {
         state.init();
+        dispatcher.trigger('game_update2');
     },
 
     waiting_for_state : true,
@@ -59,9 +55,10 @@ var game = {
         board.start();
         map_editor.init();
         options.init();
+        dispatcher.trigger('game_update3');
     },
 
-    reset : function (callback) { // resets everything
+    reset : function () { // resets everything
         // reset:
         //  socket
         //  board
@@ -81,24 +78,24 @@ var game = {
         state.reset();
         map_editor.reset();
         options.reset();
-        
-        controls.trigger_load();
-
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_reset');
+        controls.trigger_load(); // begin chain of init events
     },
     
 };
 
-dispatcher.listen('register', function (event_name, msg) {
+dispatcher.listen('register', function (name, msg) {
     console.log('game listener triggered');
     console.log(msg);
     if (parseInt(msg.update, 10)) { // request updates
-        this.update();
+        game.update();
     }
-}, 1, game);
+});
 
-dispatcher.listen('info_tileset', function (event_name, msg) {
-	this.update2();
-}, 1, game);
+dispatcher.listen('info_tileset', function () {
+    game.update2();
+});
+
+dispatcher.listen('state_loaded', function () {
+    game.update3();
+});

@@ -6,15 +6,10 @@
 //  objects
 
 // manages controls for test/init/start/reset button
-function Controls () {
+var controls = new function Controls () {
 
-    /* constructor help */
-    if (!(this instanceof arguments.callee)) {
-        return new Controls();
-    }
-
-    if (!Function().calledOnce.call(arguments.callee)) {
-        return null;
+    if (!Function().calledOnce.call(arguments.callee)) { // enforce single instance
+        throw { message: 'Attempted to create more than one instance of Controls.' };
     }
 
     /* public */
@@ -94,30 +89,44 @@ function Controls () {
     }
 
     this._init_event = _event_wrapper('#init', function () {
-        var args = [controls._initialized];
+        dispatcher.listen('game_init', function () {
+            controls._initialized();
+        }, 1);
         if (!_get_selector.call(this)) {
-            args.push(controls._start_event);
+            dispatcher.listen('game_init', function () {
+                controls._start_event();
+            }, 1);
         }
-        game.init.apply(game, args);
+        game.init();
     });
 
     this._start_event = _event_wrapper('#start', function () {
-        //board.start();
-        //map_editor.init();
-        //options.init();
-        //benchmark();
-        game.start(controls._started);
+        dispatcher.listen('game_start', function () {
+            controls._started();
+        }, 1);
+        game.start();
     });
 
     this._update_event = _event_wrapper('#update',  function () {  // not tested
-        game.update(controls._updated);
+        dispatcher.listen('game_update', function () {
+            controls._updated();
+        }, 1);
+        game.update();
     });
 
     this._reset_event = _event_wrapper('#reset', function () {
-        game.reset(controls._reset_complete);
+        dispatcher.listen('game_reset', function () {
+            controls._reset_complete();
+        }, 1);
+        game.reset();
     });
 
-    this._test_event = _event_wrapper('#test'); // not implemented
+    this._test_event = _event_wrapper('#test', function () {
+        //dispatcher.listen('test', function () {
+            // not implemented
+        //}, 1);
+        //tests.run();
+    });
 
     /* DOM event callback callbacks
      * i.e. callback triggered after dom event callback is 100% complete */
@@ -175,6 +184,4 @@ function Controls () {
     this._reset_complete = processing2ready('#reset');
 
     this._tests_complete = processing2ready('#test');
-}
-
-var controls = new Controls();
+};
