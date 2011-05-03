@@ -181,7 +181,8 @@ class ServerListener:
                     connection, address = self.tcp.accept()
                     print 'TCP connection established with:', address
                     connection.setblocking(0)
-                    self.connectionPool.addConnect(connection, address) #hand off connection to connection pool
+                    #cc = self.ClientConnection(connection, address) ##create connection
+                    self.connectionPool.addPendingConnection(cc) #hand off connection to connection pool
                  except socket.error, (value,message):
                         print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
@@ -229,6 +230,16 @@ class ServerListener:
 #epoll = select.epoll()
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
 #events = epoll.poll(1)
+
+class ClientConnection:
+    def __init__(self, connection, address):
+        self.tcp = connection
+        self.player_id = 0
+        self.client_id = 0
+
+        self.PacketDecoder = PacketDecoder(self)
+        self.tcp = connection
+
 
 class ConnectionPool:
 
