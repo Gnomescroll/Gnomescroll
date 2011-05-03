@@ -69,8 +69,7 @@ var board = {
         this.y_offset = Math.min(this.y_offset, state.map_height);
         
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
-            this.reset();
-            this.start();
+            this.manager.redraw();
         }
     },
 
@@ -92,6 +91,10 @@ board.manager = {
 
     resize : function () {
         //resizing
+    },
+
+    redraw : function () {
+        this.populate_index();
     },
 
     reset : function () {
@@ -238,8 +241,10 @@ board.manager = {
         }
     },
     
-    populate_index : function() {
-        board.cursor_manager.reset_cursor_index();
+    populate_index : function(reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
+        }
         if (!this._populate_tiles()) {
             return;
         }
