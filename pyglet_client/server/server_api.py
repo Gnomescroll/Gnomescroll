@@ -25,12 +25,14 @@ def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle
 
 #200 agent control state
 #600 admin json command
+class MessageHandler:
+
 
 class DatagramDecoder:
 
-    def __init__(self, connection):
+    def __init__(self, connection, messageHandler):
         self.connection = connection
-
+        self.messageHandler = messageHandler
     def decode(self, message):
         print "decoding datagram"
         (prefix, datagram) = (message[0:2],message[2:])
@@ -41,7 +43,7 @@ class DatagramDecoder:
         if msg_type == 1:
             print "Generatic JSON message"
             dict = json.loads(message[2:])
-
+            self.messageHandler.process(dict)
         if msg_type == 600:
             print "json admin message"
             msg = json.loads(message[2:])
@@ -86,8 +88,8 @@ class DatagramEncoder:
         self.connection.send_tcp(t2)
 
 class PacketDecoder:
-    def __init__(self,connection):
-        self.datagramDecoder = DatagramDecoder(connection)
+    def __init__(self,connection, messageHandler):
+        self.datagramDecoder = DatagramDecoder(connection, messageHandler)
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -131,7 +133,6 @@ class PacketDecoder:
 
 #epoll = select.epoll()
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
-
 #events = epoll.poll(1)
 
 import atexit
@@ -176,25 +177,17 @@ class ServerListener:
         events = self.epoll.poll(0) #wait upto 0 seconds
         for fileno, event in events:
             if fileno == self.tcp_fileno:
-                connection, address = self.tcp.accept()
-                print 'TCP connection established with:', address
-                connection.setblocking(0)
-                #hand off connection to connection pool
+                try:
+                    connection, address = self.tcp.accept()
+                    print 'TCP connection established with:', address
+                    connection.setblocking(0)
+                    self.connectionPool.addConnect(connection, address) #hand off connection to connection pool
+                 except socket.error, (value,message):
+                        print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
                 print "UDP event"
 
-    def _listen(self): #this should be a thread, need list of connected clients
-
-        try:
-            self.s.listen(1)
-            conn, addr = self.s.accept()
-            print 'Connected to:', addr
-            self.tcp = conn
-        except socket.error, (value,message):
-            print "listen: socket_error: " + str(value) + ", " + message
-
-
-
+### PURGE
 ## Move into connect handler class ##
 
     def __init__3(self):
@@ -231,6 +224,7 @@ class ServerListener:
             print "get_tcp: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
+### PURGE
 
 #epoll = select.epoll()
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
@@ -241,6 +235,7 @@ class ConnectionPool:
     def __init__(self):
         self.epoll = select.epoll()
 
+    def
     def process_events(self):
         connections = {}; requests = {}; responses = {}
         while True:
