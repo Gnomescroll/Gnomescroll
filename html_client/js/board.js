@@ -260,9 +260,10 @@ board.manager = {
         if (reset_index) {
             board.cursor_manager.reset_cursor_index();
         }
-        if (!this._populate_tiles()) {
-            return;
-        }
+        //if (!this._populate_tiles()) {
+            //return;
+        //}
+        this._populate_tiles();
         this._populate_agents();
         this._populate_objects();
     },
@@ -375,7 +376,8 @@ board.cursor_manager = {
             prop,
             default_val,
             max_x = board.tile_width,
-            max_y = board.tile_height;
+            max_y = board.tile_height,
+            default_type;
         for (x=0; x < max_x; x++) {
             for (y=0; y < max_y; y++) {
                 i = x + y*max_x;
@@ -384,8 +386,13 @@ board.cursor_manager = {
                     for (j=0; j < props_len; j++) {
                         prop = props[j];
                         default_val = _default_cursor[prop];
-                        if (prop === 'drawing_cursor') {
-                            cursor[prop][cursor_type_index] = default_val[cursor_type_index];
+                        if (typeof cursor[prop] === 'object') {
+                            if (prop === 'drawing_cursor') {
+                                cursor[prop][cursor_type_index] = default_val[cursor_type_index];
+                            } else {
+                                default_type = ($.isArray(cursor[prop])) ? [] : {};
+                                cursor[prop][cursor_type_index] = $.extend(true, default_type, default_val);
+                            }
                         } else {
                             cursor[prop] = default_val;
                         }
@@ -418,7 +425,7 @@ board.cursor_manager = {
     },
 
     _load_default_cursor : function (i) {
-        return $.extend({ index: i }, this._default_cursor);
+        return $.extend(true, { index: i }, this._default_cursor);
     },
     
     reset_cursor_index: function() {
