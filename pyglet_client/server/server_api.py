@@ -20,8 +20,8 @@ def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle
     t2 = pm(3, t1)
     return t2
 
-#           CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
-#            n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
+#   CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
+#   n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
 
 #200 agent control state
 #600 admin json command
@@ -38,6 +38,10 @@ class DatagramDecoder:
 
         if msg_type == 0:
             print "test message received"
+        if msg_type == 1:
+            print "Generatic JSON message"
+            dict = json.loads(message[2:])
+
         if msg_type == 600:
             print "json admin message"
             msg = json.loads(message[2:])
@@ -267,17 +271,18 @@ class ConnectionPool:
 
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
-M = [
-pm(0,"test!"),
-pm(1,json.dumps(['test1','test2','test3'])),
-create_agent_message(0,1,5,5,5,0,0)
-]
+if __name__ == "__main__":
 
+    M = [
+    pm(0,"test!"),
+    pm(1,json.dumps(['test1','test2','test3'])),
+    create_agent_message(0,1,5,5,5,0,0)
+    ]
 
-test = ServerListener()
-while True:
-    test.accept()
-    time.sleep(1)
+    test = ServerListener()
+    while True:
+        test.accept()
+        time.sleep(1)
 
 #s = ServerInstance()
 #s.run()
