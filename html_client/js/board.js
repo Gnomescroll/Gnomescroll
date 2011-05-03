@@ -191,7 +191,7 @@ board.manager = {
 
     _populate_tiles : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            board.cursor_manager._reset_tile_cursors();
         }
         var x,
             y,
@@ -216,7 +216,7 @@ board.manager = {
 
     _populate_agents : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            board.cursor_manager._reset_agent_cursors();
         }
         this.agents  = []; //clear index
         
@@ -236,7 +236,7 @@ board.manager = {
 
     _populate_objects : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            board.cursor_manager._reset_object_cursors();
         }
         this.objects = []; //clear index
         
@@ -804,11 +804,9 @@ board.info = {
 board.event = {
 
     info_terrain_map : function (name, msg) { // full terrain map
-        //if (msg.z_level == board.z_level) {   
-            //board.reset();                 
-            //board.init();                 // causing init problems! need more specialized method
-            //board.start();
-        //}
+        if (msg.z_level == board.z_level) {
+            board.manager._populate_tiles();
+        }
     },
 
     set_terrain_map : function (name, msg) { // single terrain tile
@@ -819,12 +817,9 @@ board.event = {
     
     agent_position_change : function (name, msg) {
         var agent = state.gameObjectKnown(msg.id, 'agent');
-        if (agent === false) {
-            console.log("process.delta.agent_position_change fail: WTF, should not occur");
-            console.log(agent);
-            return false;
+        if (agent !== false) {
+            board.manager.agent_update(agent);
         }
-        board.manager.agent_update(agent);
     },
     
     object_position_change : function (name, msg) {
@@ -833,12 +828,9 @@ board.event = {
     
     game_object_to_state : function (name, obj) {
         obj = state.gameObjectKnown(obj);
-        if (obj === false) {
-            console.log('process.delta.game_object_to_state fail: WTF, should not occur');
-            console.log(obj);
-            return false;
+        if (obj !== false) {
+            board.manager[obj.base_type + '_update'](obj);
         }
-        board.manager[obj.base_type + '_update'](obj);
     },
 
     board_init_fail : function () {
