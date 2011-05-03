@@ -26,12 +26,12 @@ def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle
 #200 agent control state
 #600 admin json command
 class MessageHandler:
-
+    def __init__(self, main):
+        self.main = main
 
 class DatagramDecoder:
 
-    def __init__(self, messageHandler)
-        self.connection = connection
+    def __init__(self, messageHandler):
         self.messageHandler = messageHandler
     def decode(self, message):
         print "decoding datagram"
@@ -185,8 +185,8 @@ class ServerListener:
                     connection.setblocking(0)
                     #cc = self.ClientConnection(connection, address) ##create connection
                     self.connectionPool.addConnection(connection, address) #hand off connection to connection pool
-                 except socket.error, (value,message):
-                        print "ServerListener.accept error: " + str(value) + ", " + message
+                except socket.error, (value,message):
+                    print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
                 print "UDP event"
 
@@ -197,10 +197,6 @@ class ServerListener:
 #epoll = select.epoll()
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
 #events = epoll.poll(1)
-
-class MessageHandle:
-    def __init__(self):
-        pass
 
 class TcpClient:
 
@@ -227,15 +223,14 @@ class TcpClient:
         print "TcpClient.close : connection cloesed by program"
         self.tcp.close()
 
-    def get(self):
-        BUFFER_SIZE = 512
+    def receive(self):
+        BUFFER_SIZE = 4096
         try:
-            data = self.tcp.recv(BUFFER_SIZE)
+            data = self.connection.recv(BUFFER_SIZE)
             print "get_tcp: data received"
-            self.decoder.add_to_buffer(data)
+            self.TcpPacketDecoder.add_to_buffer(data)
         except socket.error, (value,message):
-            print "TcpClient.get: socket error " + str(value) + ", " + message
-            return #in non-blocking, will fail when no data
+            print "TcpClient.get: socket error %i, %s" % (value, message)
 
 class ConnectionPool:
 
@@ -250,6 +245,12 @@ class ConnectionPool:
         self._client_count = 0
         self._client_pool = {}
 
+        atexit.register(self.on_exit)
+
+    def on_exit(self):
+        for client in self._client_pool:
+            client.close()
+
     def addClient(self, connection, messageHandler, address, type = 'tcp'):
         self._client_count += 1
         if type == 'tcp':
@@ -258,18 +259,19 @@ class ConnectionPool:
             self._client_pool[client.fileno] = client #save client
 
     def process_events(self):
-        connections = {}; requests = {}; responses = {}
+        #connections = {}; requests = {}; responses = {}
         while True:
-            events = epoll.poll(1)
+            events = self._epoll.poll(1)
             for fileno, event in events:
                 if event & select.EPOLLIN:
-                    requests[fileno] += connections[fileno].recv(1024)
+                    assert fileno in self._client_pool.has_key(fileno)
+                    self._client_pool[fileno].receive()
                 elif event & select.EPOLLOUT:
                     print "EPOLLOUT event?"
-                    return
                     #byteswritten = connections[fileno].send(responses[fileno])
                     #responses[fileno] = responses[fileno][byteswritten:]
                 elif event & select.EPOLLHUP:
+                    print "EPOLLHUP: teardown socket"
                     epoll.unregister(fileno)
                     self._client_pool[fileno].close()
                     del self._client_pool[fileno] #remove from client pool
@@ -279,17 +281,20 @@ class ConnectionPool:
 class Main:
 
     def __init__(self):
-        self.messageHandler = messageHandler(self)
-        self.connectionPool = connectionPool(self, self.messageHandler)
+        self.messageHandler = MessageHandler(self)
+        self.connectionPool = ConnectionPool(self, self.messageHandler)
         self.ServerListener = ServerListener(self.connectionPool)
 
-    def main(self):
-        self.ServerListener.accept() #accept incoming connections
-        self.connectPool.process_events() #check for new data
-
-        time.sleep(.025)
+    def run(self):
+        while True:
+            self.ServerListener.accept() #accept incoming connections
+            self.connectionPool.process_events() #check for new data
+            time.sleep(.025)
 
 if __name__ == "__main__":
+
+    main = Main()
+    main.run()
 
     M = [
     pm(0,"test!"),
