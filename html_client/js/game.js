@@ -17,31 +17,35 @@ var game = {
     },
     
     update : function() {
+        board.cursor_manager.init();
         state.init();                   // requests terrain/game_objects; once all have been received, 'state_loaded' event triggers
         dispatcher.trigger('game_update_complete');
     },
 
     start : function () {
-        //input.init();                   // start accepting user input
-        board.init();                   // 
-        //board.start();
-        //map_editor.init();
-        //options.init();
+        board.init();                   // Inits if tileset_state is loaded, else continues to attempt to init until tileset_state is loaded. Calls board.start() once ready, which triggers 'board_start'
         dispatcher.trigger('game_start');
     },
 
-    activate : function () {
+    activate : function () {    // triggered by 'board_start'
         input.init();                   // start accepting user input
-        map_editor.init();
-        options.init();
+        map_editor.init();              // load map editor
+        options.init();                 // load UI options
         dispatcher.trigger('game_activate');
     },
 
     reset : function () { // resets everything
         // wipe everything and run init/start
+        this.quit();
+        dispatcher.trigger('game_reset_complete');
+        controls.trigger_init(); // begin chain of init events
+    },
+
+    quit : function (err) { // wipes everything, notifies user of error. Use for things like completely failing to connect to server, or some other serious issue.
         this.started = false;
         controls.reset();
-        socket.reset();
+        input.reset();
+        socket.reset(true);
         tile_properties.reset();
         tileset_state.reset();
         drawingCache.reset_full();
@@ -49,8 +53,7 @@ var game = {
         state.reset();
         map_editor.reset();
         options.reset();
-        dispatcher.trigger('game_reset_complete');
-        controls.trigger_init(); // begin chain of init events
+        dispatcher.trigger('game_quit_complete', err);
     },
     
 };
@@ -84,4 +87,14 @@ dispatcher.listen('game_reset', function () {
 
 dispatcher.listen('board_start', function () {
     game.activate();
+});
+
+dispatcher.listen('board_init_fail', function (name, err) {
+    game.quit(err);
+});
+
+dispatcher.listen('game_quit_complete', function (name, err) {
+    if (err) {
+        alert(err);
+    }
 });

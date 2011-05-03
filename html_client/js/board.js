@@ -9,22 +9,39 @@ var board = {
     tile_width  : 16,
     tile_height : 16,
 
-    init_interval: 0,
+    _init_interval   : 0,
+    _retry_delay     : 100,
+    _retry_attempts  : 30,  // 30*100 = 3000ms
 
-    _init : function () {
-        if (tileset_state.loaded) { // possible race condition!
-            clearInterval(this.init_interval);
-            this.init_interval = 0;
-            this.cursor_manager.init();
-            this.start();
-            return true;
-        }
-        return false;
-    },
+    _init : (function () {
+        var count = 0;
+        return function () {
+            var err;
+            //tileset_state.loaded = false;
+            if (tileset_state.loaded) { // possible race condition!
+            //if (false) { // possible race condition!
+                clearInterval(this._init_interval);
+                this._init_interval = 0;
+                //this.cursor_manager.init();
+                this.start();
+                return true;
+            } else if (++count === this._retry_attempts) { // give up after n tries
+                count = 0;
+                //clearInterval(this._init_interval);
+                //this._init_interval = 0;
+                err  = 'tileset_state never loaded; board failed to init ';
+                err += this._retry_attempts;
+                err += ' (' + (this._retry_delay * this._retry_attempts) + 'ms total)';
+                console.log('board init fail');
+                dispatcher.trigger('board_init_fail', err);
+            }
+            return false;
+        };
+    }()),
     
     init : function() {
         if (!this._init()) {
-            this.init_interval = setInterval('board._init();', 100);
+            this._init_interval = setInterval('board._init();', this._retry_delay);
         }
     },
     
@@ -37,8 +54,8 @@ var board = {
         this.canvas.reset();
         this.cursor_manager.reset();
         this.manager.reset();
-        clearInterval(this.init_interval);
-        this.init_interval = 0;
+        clearInterval(this._init_interval);
+        this._init_interval = 0;
     },
     
     resize : function resize() {
@@ -161,7 +178,7 @@ board.manager = {
 
     _populate_tiles : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            //board.cursor_manager.reset_cursor_index();
         }
         var x,
             y,
@@ -420,7 +437,6 @@ board.cursor_manager = {
             index = this.index,
             len = index.length,
             x;
-        
         for(x=0; x < len; x++) {
             adc(index[x]);
         }
@@ -774,11 +790,11 @@ board.info = {
 board.event = {
 
     info_terrain_map : function (name, msg) { // full terrain map
-        if (msg.z_level == board.z_level) {
-            board.reset();
-            board.init();
-            board.start();
-        }
+        //if (msg.z_level == board.z_level) {   
+            //board.reset();                 
+            //board.init();                 // causing init problems! need more specialized method
+            //board.start();
+        //}
     },
 
     set_terrain_map : function (name, msg) { // single terrain tile
@@ -810,7 +826,14 @@ board.event = {
         }
         board.manager[obj.base_type + '_update'](obj);
     },
+
+    board_init_fail : function () {
+        clearInterval(board._init_interval);
+        board._init_interval = 0;
+    },
 };
+
+dispatcher.listen('board_init_fail', board.event.board_init_fail);
 
 dispatcher.listen('info_terrain_map', board.event.info_terrain_map);
 dispatcher.listen('agent_position_change', board.event.agent_position_change);

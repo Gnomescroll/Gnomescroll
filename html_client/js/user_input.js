@@ -9,8 +9,6 @@ input = {
     delay : 2, // ms delay for input check
     interval : 0, // setInterval id
     
-    started : false,
-        
     init: function () { // init $ bindings
         if (!this.started) {
             var that = this;
@@ -18,7 +16,6 @@ input = {
                 var key = keymap[event.which];
                 input.queue.push({key: key, timestamp: event.timeStamp});
                 that.keys[key] = true;
-                //that.process(key);
             }).click(function (event) {
                 var key = keymap[event.which];
                 if (key === 'left-click') { 
@@ -29,9 +26,7 @@ input = {
             $('body').keyup(function (event) {
                 var key = keymap[event.which];
                 delete that.keys[key];
-                //that.process();
             });
-            this.started = true;
             this.run();
         }
     },
@@ -47,21 +42,21 @@ input = {
             if (event === undefined || !(event.timestamp - timestamp) > delay) {
                 continue;
             }
-
-            // check any other held down keys
-            
             timestamp = event.timestamp; // set timestamp of last event
             queue = [];
-            
             return event.key;
         }
         return false;
     },
 
     run : function () {
-        //var interval = setInterval('processInput(input.next());', this.input_delay); // start input rate-limit queue
         this.interval = setInterval('input.process();', this.delay);
-    }
+    },
+
+    reset : function () {
+        this.queue = [];
+        this.keys = {};
+    },
 };
 
 input.process = function (key) {

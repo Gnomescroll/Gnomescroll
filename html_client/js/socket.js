@@ -74,7 +74,8 @@ var socket = {
         setTimeout('socket.socket.connect();', delay);
     },
 
-    reset : function () {
+    reset : function (no_reconnect) {
+        this.no_reconnect = no_reconnect || this.no_reconnect;
         if (this.socket) {
             this.socket.disconnect();
         }
