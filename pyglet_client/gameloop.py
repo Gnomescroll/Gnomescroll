@@ -54,17 +54,20 @@ class App(object):
         self.hud = Hud(self.win)
         #clock.set_fps_limit(60)
         #setup events
-        self.keyboard.key_handlers[key.ESCAPE] = self.win.close
+        self.keyboard.key_handlers[key.ESCAPE] = self.exit
         self.win.on_mouse_drag = self.mouse.on_mouse_drag
         self.win.on_key_press = self.keyboard.on_key_press
-
+        self.exit = False
         print "App init finished"
+
+    def exit(self):
+        self.exit = True
 
     def mainLoop(self):
         clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         self.win.push_handlers(keyboard)
-        while not self.win.has_exit:
+        while not self.exit:
             self.win.dispatch_events()
             self.keyboard.stateHandler(keyboard)
 
@@ -78,6 +81,7 @@ class App(object):
 
             clock.tick()
             self.win.flip()
+        self.win.close
 
     def mainLoop2(self):
         self.world.test_chunk()
@@ -86,7 +90,7 @@ class App(object):
         keyboard = key.KeyStateHandler()
         self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
-        while not self.win.has_exit:
+        while not self.exit:
             self.win.dispatch_events()
             self.keyboard.stateHandler(keyboard)
 
@@ -95,7 +99,6 @@ class App(object):
 
             self.camera.worldProjection()
 
-
             self.world.draw()
             self.camera.hudProjection()
             self.hud.draw()
@@ -103,8 +106,13 @@ class App(object):
             clock.tick()
             self.win.flip()
             #return
+        self.win.close
 
 app = App()
 #cProfile.run('app.mainLoop2()')
 app.mainLoop2()
 
+#import pycallgraph
+#pycallgraph.start_trace()
+#pycallgraph.stop_trace()
+#pycallgraph.make_dot_graph('call-graph.png')

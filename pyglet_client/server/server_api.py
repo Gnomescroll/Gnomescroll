@@ -20,17 +20,19 @@ def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle
     t2 = pm(3, t1)
     return t2
 
-#           CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
-#            n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
+#   CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
+#   n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
 
 #200 agent control state
 #600 admin json command
+class MessageHandler:
+    def __init__(self, main):
+        self.main = main
 
 class DatagramDecoder:
 
-    def __init__(self, connection):
-        self.connection = connection
-
+    def __init__(self, messageHandler):
+        self.messageHandler = messageHandler
     def decode(self, message):
         print "decoding datagram"
         (prefix, datagram) = (message[0:2],message[2:])
@@ -38,6 +40,10 @@ class DatagramDecoder:
 
         if msg_type == 0:
             print "test message received"
+        if msg_type == 1:
+            print "Generatic JSON message"
+            dict = json.loads(message[2:])
+            self.messageHandler.process(dict)
         if msg_type == 600:
             print "json admin message"
             msg = json.loads(message[2:])
@@ -81,9 +87,10 @@ class DatagramEncoder:
         t2 = self._pm(200, t1)
         self.connection.send_tcp(t2)
 
-class PacketDecoder:
-    def __init__(self,connection):
-        self.datagramDecoder = DatagramDecoder(connection)
+class TcpPacketDecoder:
+    def __init__(self, client, messageHandler):
+        #self.client = client
+        self.datagramDecoder = DatagramDecoder(client)
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -127,7 +134,6 @@ class PacketDecoder:
 
 #epoll = select.epoll()
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
-
 #events = epoll.poll(1)
 
 import atexit
@@ -140,7 +146,8 @@ class ServerListener:
     TCP_PORT = 5055
     UDP_PORT = 5060
 
-    def __init__(self):
+    def __init__(self, connectionPool):
+        self.connectionPool = connectionPool
         self.tcp = None
         self.tcp_fileno = 0
         self.udp = None
@@ -172,112 +179,134 @@ class ServerListener:
         events = self.epoll.poll(0) #wait upto 0 seconds
         for fileno, event in events:
             if fileno == self.tcp_fileno:
-                connection, address = self.tcp.accept()
-                print 'TCP connection established with:', address
-                connection.setblocking(0)
-                #hand off connection to connection pool
+                try:
+                    connection, address = self.tcp.accept()
+                    print 'TCP connection established with:', address
+                    connection.setblocking(0)
+                    #cc = self.ClientConnection(connection, address) ##create connection
+                    self.connectionPool.addConnection(connection, address) #hand off connection to connection pool
+                except socket.error, (value,message):
+                    print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
                 print "UDP event"
 
-    def _listen(self): #this should be a thread, need list of connected clients
-
-        try:
-            self.s.listen(1)
-            conn, addr = self.s.accept()
-            print 'Connected to:', addr
-            self.tcp = conn
-        except socket.error, (value,message):
-            print "listen: socket_error: " + str(value) + ", " + message
 
 
-
-## Move into connect handler class ##
-
-    def __init__3(self):
-        self.decoder = PacketDecoder(self)
-        self.encoder = DatagramEncoder(self)
-
-
-        #bufsize = self.s.getsockopt( socket.SOL_SOCKET, socket.SO_SNDBUF)
-        #print "socket buffer size: %i" % bufsize
-
-    def send(self, MESSAGE):
-        try:
-            self.send_tcp(MESSAGE)
-        except socket.error, (value,message):
-            print "send: socket_error: " + str(value) + ", " + message
-            self.connected = False
-            self._listen()
-
-    def disconnect_tcp(self):
-        print "Connection: tcp disconnected by program"
-        self.tcp.close()
-
-    def send_tcp(self, MESSAGE):
-        #self.tcp.send(MESSAGE)
-        self.tcp.sendall(MESSAGE)
-
-    def get_tcp(self):
-        BUFFER_SIZE = 512
-        try:
-            data = self.tcp.recv(BUFFER_SIZE)
-            print "get_tcp: data received"
-            self.decoder.add_to_buffer(data)
-        except socket.error, (value,message):
-            print "get_tcp: socket error " + str(value) + ", " + message
-            return #in non-blocking, will fail when no data
-
+### PURGE
 
 #epoll = select.epoll()
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
 #events = epoll.poll(1)
 
+class TcpClient:
+
+    def __init__(self, pool, messageHandler, connection, address):
+        self.pool = pool
+        self.messageHandler = messageHandler
+
+        self.connection = connection
+        self.address = address
+
+        self.fileno = connection.fileno()
+        self.TcpPacketDecoder = TcpPacketDecoder(self)
+
+        self.player_id = 0
+        self.client_id = 0
+
+    def send(self, MESSAGE):
+        try:
+            self.connection.sendall(MESSAGE)
+        except socket.error, (value,message):
+            print "TcpClient.send error: " + str(value) + ", " + message
+
+    def close(self):
+        print "TcpClient.close : connection cloesed by program"
+        self.tcp.close()
+
+    def receive(self):
+        BUFFER_SIZE = 4096
+        try:
+            data = self.connection.recv(BUFFER_SIZE)
+            print "get_tcp: data received"
+            self.TcpPacketDecoder.add_to_buffer(data)
+        except socket.error, (value,message):
+            print "TcpClient.get: socket error %i, %s" % (value, message)
+
 class ConnectionPool:
 
-    def __init__(self):
-        self.epoll = select.epoll()
+    def __init__(self, main, messageHandler):
+        #parents
+        self.main = main
+        self.messageHandler = messageHandler
+        #children
+        self.datagramDecoder = DatagramDecoder(self.messageHandler)
+        #local
+        self._epoll = select.epoll()
+        self._client_count = 0
+        self._client_pool = {}
+
+        atexit.register(self.on_exit)
+
+    def on_exit(self):
+        for client in self._client_pool:
+            client.close()
+
+    def addClient(self, connection, messageHandler, address, type = 'tcp'):
+        self._client_count += 1
+        if type == 'tcp':
+            client =  TcpClient(self, connection, address)
+            self._epoll.register(client.fileno, select.EPOLLIN) #register client
+            self._client_pool[client.fileno] = client #save client
 
     def process_events(self):
-        connections = {}; requests = {}; responses = {}
+        #connections = {}; requests = {}; responses = {}
         while True:
-            events = epoll.poll(1)
+            events = self._epoll.poll(1)
             for fileno, event in events:
-                if fileno == serversocket.fileno():
-                    connection, address = serversocket.accept()
-                    connection.setblocking(0)
-                    epoll.register(connection.fileno(), select.EPOLLIN)
-                    connections[connection.fileno()] = connection
-                    requests[connection.fileno()] = b''
-                    responses[connection.fileno()] = response
-                elif event & select.EPOLLIN:
-                    requests[fileno] += connections[fileno].recv(1024)
-                if EOL1 in requests[fileno] or EOL2 in requests[fileno]:
-                    epoll.modify(fileno, select.EPOLLOUT)
-                    print('-'*40 + '\n' + requests[fileno].decode()[:-2])
+                if event & select.EPOLLIN:
+                    assert fileno in self._client_pool.has_key(fileno)
+                    self._client_pool[fileno].receive()
                 elif event & select.EPOLLOUT:
-                    byteswritten = connections[fileno].send(responses[fileno])
-                    responses[fileno] = responses[fileno][byteswritten:]
-                if len(responses[fileno]) == 0:
-                    epoll.modify(fileno, 0)
-                    connections[fileno].shutdown(socket.SHUT_RDWR)
+                    print "EPOLLOUT event?"
+                    #byteswritten = connections[fileno].send(responses[fileno])
+                    #responses[fileno] = responses[fileno][byteswritten:]
                 elif event & select.EPOLLHUP:
+                    print "EPOLLHUP: teardown socket"
                     epoll.unregister(fileno)
-                    connections[fileno].close()
-                    del connections[fileno]
+                    self._client_pool[fileno].close()
+                    del self._client_pool[fileno] #remove from client pool
 
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
-M = [
-pm(0,"test!"),
-pm(1,json.dumps(['test1','test2','test3'])),
-create_agent_message(0,1,5,5,5,0,0)
-]
+class Main:
 
+    def __init__(self):
+        self.messageHandler = MessageHandler(self)
+        self.connectionPool = ConnectionPool(self, self.messageHandler)
+        self.ServerListener = ServerListener(self.connectionPool)
 
-test = ServerListener()
-while True:
-    test.accept()
-    time.sleep(1)
+    def run(self):
+        while True:
+            self.ServerListener.accept() #accept incoming connections
+            self.connectionPool.process_events() #check for new data
+            time.sleep(.025)
+
+if __name__ == "__main__":
+
+    main = Main()
+    main.run()
+
+    M = [
+    pm(0,"test!"),
+    pm(1,json.dumps(['test1','test2','test3'])),
+    create_agent_message(0,1,5,5,5,0,0)
+    ]
+
+    connectionPool = connectionPool()
+    test = ServerListener(connectionPool)
+    while True:
+        test.accept()
+        time.sleep(1)
 
 #s = ServerInstance()
 #s.run()

@@ -64,6 +64,20 @@ class CubeProperties(object):
             (1, [0,1,2,3]), #south
             ],
         },
+        4 : {
+            'id' : 4,
+            'occludes' : True,
+            'active' : True,
+
+            'texture' : [ #t, b, w, e, n, s
+            (16, [0,1,2,3]),  #top
+            (16, [0,1,2,3]),  #bottom
+            (16, [0,1,2,3]), #west
+            (16, [0,1,2,3]), #east
+            (16, [0,1,2,3]), #north
+            (16, [0,1,2,3]), #south
+            ],
+        },
      }
 
     def getTexture(self, tile_id, side_num):
