@@ -56,26 +56,41 @@ var board = {
     resize : function resize() {
         //resize board
     },
+
+    _bounded_adjust : function (prop, delta, upper, lower) {
+        var tmp;
+        lower = lower || 0;
+        if (upper < lower) {
+            tmp = upper;
+            upper = lower;
+            lower = upper;
+        }
+        this[prop] += delta;
+        this[prop] = Math.max(this[prop], lower);
+        this[prop] = Math.min(this[prop], upper);
+    },
     
     scroll : function(dx, dy) {
         var old_x = this.x_offset,
             old_y = this.y_offset;
         
-        this.x_offset += dx;
-        this.x_offset = Math.max(this.x_offset, 0);
-        this.x_offset = Math.min(this.x_offset, state.map_width);
-        this.y_offset += dy;
-        this.y_offset = Math.max(this.y_offset, 0);
-        this.y_offset = Math.min(this.y_offset, state.map_height);
-        
+        this._bounded_adjust('x_offset', dx, state.map_width);
+        this._bounded_adjust('y_offset', dy, state.map_height);
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
             this.manager.redraw();
         }
     },
 
-    scroll_z : function(zLevel) {
-        this.z_level = zLevel;
-        this.reset();
+    scroll_z : function(z, delta_mode) {
+        var old_z = this.z_level;
+        if (delta_mode) {
+            this._bounded_adjust('z_level', z, state.max_z_level);
+        } else {
+            this.z_level = z;
+        }
+        if (old_z != this.z_level) {
+            this.manager.redraw();
+        }
     },
 };
 
