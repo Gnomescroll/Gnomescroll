@@ -29,11 +29,6 @@ var game = {
             };
         return wait_func;
     }()),
-    
-    start : function () {
-        //input.run();
-        dispatcher.trigger('game_start');
-    },
 
     update : function () {
         drawingCache.loadTilesets();

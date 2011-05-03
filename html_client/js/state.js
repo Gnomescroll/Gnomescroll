@@ -155,14 +155,14 @@ var state = {
         var x, y, z,
             x_, z_;
 
-        if (typeof pos === 'object') {
-            x = pos.x;
-            y = pos.y;
-            z = pos.z;
-        } else {
+        if ($.isArray(pos)) {
             x = pos[0]
             y = pos[1];
             z = pos[2];
+        } else {
+            x = pos.x;
+            y = pos.y;
+            z = pos.z;
         }
       
         z_ = this.levels[z];
@@ -445,7 +445,7 @@ state.event = new function StateEvent () {
         };
     };
 
-    this.agent_create = _generic_object_create('agent');
+    this.agent_create  = _generic_object_create('agent');
     this.object_create = _generic_object_create('obj');
 
     var _generic_object_delete = function (obj_type) {
