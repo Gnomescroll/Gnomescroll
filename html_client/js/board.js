@@ -229,7 +229,6 @@ board.manager = {
     
     agent_update : function(agent) {
         console.log("board_manager agent_update");
-
         var pos     = agent.pos(),
             x_pos   = pos[0] - board.x_offset,
             y_pos   = pos[1] - board.y_offset,
@@ -239,20 +238,16 @@ board.manager = {
         
         if(inIndex !== -1 && onBoard) { //agent moves around on the board
             board.cursor_manager.move_agent(id, x_pos, y_pos);
-            console.log("1");
         }
         else if(inIndex === -1 && onBoard) { //agent moves onto board
             this.agents.push(agent.id);
             board.cursor_manager.add_agent_to_cursor(id, x_pos, y_pos);
-            console.log("2");
         }
         else if(inIndex !== -1 && !onBoard) { //agent moves off board
             this.agents.splice(inIndex, 1); 
             board.cursor_manager.remove_agent_from_cursor(id);
-            console.log("3");
         }
         else if(inIndex === -1 && !onBoard) { //agent is off map
-            console.log("4");
         }
     },
 /*  
@@ -415,82 +410,68 @@ board.cursor_manager = {
     },
     
     advance_all_drawing_cursor : function() {
-        var len = this.index.length,
-            x = 0;
+        var adc = this._advance_drawing_cursor,
+            index = this.index,
+            len = index.length,
+            x;
         
-        //console.log(this.index);
         for(x=0; x < len; x++) {
-            this._advance_drawing_cursor(this.index[x]);
+            adc(index[x]);
         }
     },
 
     advance_drawing_cursor : function(bx, by) {
-        console.log("advance_drawing_cursor: ");
-        console.log(this.index[bx + by*board.tile_width]);
-        
+        console.log("advance_drawing_cursor: ");        
         this._advance_drawing_cursor(this.index[bx + by*board.tile_width]);
     },
 
     _advance_drawing_cursor : function(x) {
         
-        //console.log(x);
-        
         if(x.drawing_cursor[0] != -1) //if cursor is on tile/rendering tile
         {
-            //console.log("1");
             if(x.agent_num > 0) //then if agents are on tile, render agent
             {
-                console.log("1.1");
                 x.drawing_cursor[0] = -1;
                 x.drawing_cursor[1] = 0;
             } 
             else if(x.object_num > 0)  //if no agents, then render objects if they else
             {
-                console.log("1.2");
                 x.drawing_cursor[0] = -1;
                 x.drawing_cursor[2] = 0;
             }
             else //else keep rendering the tile
             {
-                //console.log("1.3");
                 //do nothing, only the tile exists on this square
             }
         }
         else if(x.drawing_cursor[1] != -1) //if cursor is rendering a agent
         {
-            //console.log("2");
 
             //console.log("board_manager.advance_drawing_cursor: WTF 0.0");
             x.drawing_cursor[1]++;
             if(x.drawing_cursor[1] < x.agent_num) //if more agents, switch to next agent
             {
-                console.log("2.0");
                 //do nothings
             }
             else if(x.drawing_cursor[1] == x.agent_num)
             {
                 if(x.object_num > 0)
                 {
-                    console.log("2.1");
                     x.drawing_cursor = [-1, -1, 0];
                 }
                 else //if no objects on square, then render tile
                 {
-                    console.log("2.2");
                     x.drawing_cursor = [0, -1, -1]
                 }
             }
             else if(x.drawing_cursor[1] > x.agent_num)
             {   
-                console.log("2.3");
                 console.log("board_manager.advance_drawing_cursor: WTF 1, absolute error, probably a race condition");
                 console.log(x);
             }
         }
         else if(x.drawing_cursor[2] != -1)
         {           
-            console.log("3");
-
             console.log("board_manager.advance_drawing_cursor: WTF 0.1");
             x.drawing_cursor[2]++;
             if(x.drawing_cursor[2] < x.object_num)
@@ -507,8 +488,6 @@ board.cursor_manager = {
                 console.log("board_manager.advance_drawing_cursor: WTF 2, absolute error, probably a race condition");             
             }
         }
-        
-        //console.log(x);
     },
     
     agent_to_cursor : function(id) {
@@ -520,43 +499,28 @@ board.cursor_manager = {
     },
 
     add_agent_to_cursor : function(id, bx, by) {
-        console.log("cursor_manager: add agent to cursor");
-        
         var i = bx + by*board.tile_width,
             cursor = this.index[i];
-        
-        console.log(cursor);
         
         this.atc[id] = cursor;
         cursor.agent_list.push(id);
         cursor.drawing_cursor = [-1, cursor.agent_num, -1];
         cursor.agent_num++;
-        //console.log("agent num: " + cursor.agent_num);
         this._draw_board_tile(i);
-
-        //console.log(cursor);
-        //console.log(this.index[i]);
     },
     
     remove_agent_from_cursor : function(id) {
-        console.log("remove_agent_from_cursor: " + id);
         var cursor;
-        if(id in this.atc) {
+        if (id in this.atc) {
             cursor = this.atc[id];
             this._remove_agent_from_cursor(cursor, id);
-        } else {
-            console.log("remove_agent_from_cursor: agent is missing");
         }
     },
     
     _remove_agent_from_cursor : function(cursor, id) {
-        console.log("cursor: ");
-        console.log(cursor);
-
         var inIndex = $.inArray(id, cursor.agent_list),
             drawing_cursor;
         if(inIndex == -1) { 
-            console.log("cursor_manager, _remove_agent_from_cursor: Agent id does not exist in cursor!");
             return;
         } else {
             cursor.agent_list.splice(inIndex, 1);    
@@ -591,18 +555,13 @@ board.cursor_manager = {
     // MOVE TO DRAWING FUNCTION INTERFACE CLASS 
     //does a full redraw
     blip : function() {
-        //console.log(this.index);
-        
         var w = board.tile_width,
             h = board.tile_height,
             x = 0,
             y = 0;
-            
-        console.log("Blip Start: wh= " + w + " " + h);
         
         for(x=0; x < w; x++) {
             for(y=0; y < h; y++) {
-                //console.log(x + " " + y);
                 this._draw_board_tile(x + y*w);
             }   
         }
@@ -629,7 +588,6 @@ board.cursor_manager = {
     _draw_board_tile : function(x) {
         // x is an int or integer string
         if (isNaN(parseInt(x, 10)) || !(x in this.index)) {
-            console.log('error');
             return false;
         }
         
@@ -637,15 +595,12 @@ board.cursor_manager = {
         if (x.drawing_cursor[0] != -1) {
             //draw tile
             // x.tile_id, x.bx, x.by
-            //console.log("Draw Tile")
             drawingCache.drawTile(x.bx, x.by, x.tile_id);
         } else if (x.drawing_cursor[1] != -1) {
             //draw agent
             // x.agent_list[x.drawing_cursor[1]], x.bx, x.by
-            console.log("Draw Agent");
             drawingCache.drawSprite(x.bx, x.by, 1, 1);
         } else if (x.drawing_cursor[2] != -1) {
-            console.log("Draw Object");
             //draw object
             // x.object_list[x.drawing_cursor[2]], x.bx, x.by
         }
@@ -662,10 +617,8 @@ board.cursor_manager = {
             if (x.drawing_cursor[0] != -1) {
                 drawingCache.drawTile(x.bx, x.by, x.tile_id);
             } else if (x.drawing_cursor[1] != -1) {
-                console.log("Draw Agent");
                 drawingCache.drawSprite(x.bx, x.by, 1, 1);
             } else if (x.drawing_cursor[2] != -1) {
-                console.log("Draw Object");
             }       
             
         }   
@@ -684,12 +637,10 @@ board.cursor_manager = {
                 return false;
             }
             if (x.drawing_cursor[1] != -1) {
-                console.log("Draw Agent");
                 dc.drawSprite(x.bx, x.by, 1, 1);
                 return false;
             }
             if (x.drawing_cursor[2] != -1) {
-                console.log("Draw Object");
                 return false;
             }       
         }   
@@ -705,12 +656,10 @@ board.cursor_manager = {
                 return false;
             }
             if (drawing_cursor[1] != -1) {
-                console.log("Draw Agent");
                 drawingCache.drawSprite(x.bx, x.by, 1, 1);
                 return false;
             }
             if (drawing_cursor[2] != -1) {
-                console.log("Draw Object");
                 // implement
                 return false;
             }       
@@ -799,7 +748,6 @@ board.info = {
     tooltip_active_method: function(event) {
         var txt;
         $('body').trigger(event); // trigger body click events
-        console.log(event);
         txt = board.info.tooltip_text(event.offsetX, event.offsetY);
         return txt;
     }

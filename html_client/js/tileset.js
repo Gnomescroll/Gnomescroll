@@ -10,9 +10,6 @@ var tile_properties = {
     },
     
     get : function(id) {
-        if(!this.tiles.hasOwnProperty(id)){
-            console.log("Tile id is not stored");
-        }
         return this.tiles[id];
     },
 
@@ -247,12 +244,9 @@ var drawingCache = {
     //adds a tileset to cache
     insertTileset : function (src, tileset_id, tpw, tph, tw, th) {
         if(tileset_id in this.tilesets) {
-            console.log("Error: Attempt to insert same tileset twice");
             return false;
         }
-        
         var tileset = new Tileset(src, tileset_id, tpw, tph, tw, th);
-        
         this.tilesets[tileset_id] = tileset;
         this.slookup[tileset_id] = [];
     },

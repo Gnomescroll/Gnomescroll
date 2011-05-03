@@ -40,7 +40,7 @@ var game = {
         this.started = false;
         controls.reset();
         //socket.disconnect();
-        delete socket.socket;
+        socket.reset();
         tile_properties.reset();
         tileset_state.reset();
         drawingCache.reset_full();
@@ -55,8 +55,7 @@ var game = {
 };
 
 dispatcher.listen('register', function (name, msg) {
-    console.log('game listener triggered');
-    console.log(msg);
+    console.log('register triggered; game.update() being called');
     if (parseInt(msg.update, 10)) { // request updates
         game.update();
     }

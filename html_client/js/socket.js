@@ -1,6 +1,6 @@
 var socket = {
     
-    debug       : true,
+    debug       : false,
     node_server : '127.0.0.1',
     node_port   : 8081,
     socket      : null,
@@ -79,6 +79,7 @@ var socket = {
         if (this.socket) {
             this.socket.disconnect();
         }
+        delete this.socket;
     },
 
     register : function (update) {

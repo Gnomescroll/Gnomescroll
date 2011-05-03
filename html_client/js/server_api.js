@@ -119,7 +119,6 @@ admin = {
     },
     
     set_map: function (x, y, z, value, debug) {
-        if (debug) console.log(arguments);
         var position;
     
         if (value === undefined) {
@@ -144,7 +143,6 @@ admin = {
             position: position,
             value: value
         };
-        if (debug) console.log(data);
         return send(data);
     }
 };
@@ -159,7 +157,6 @@ info = {
     },
         
     tileset: function () {
-        console.log('tileset request');
         var data = $.extend({}, this.consts, { cmd: 'get_tiles' });
         return send(data);
     },
