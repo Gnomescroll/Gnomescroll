@@ -149,10 +149,16 @@ var state = {
     contains: function(pos) {
         var x, y, z,
             x_, z_;
-      
-        x = pos[0]
-        y = pos[1];
-        z = pos[2];
+
+        if (typeof pos === 'object') {
+            x = pos.x;
+            y = pos.y;
+            z = pos.z;
+        } else {
+            x = pos[0]
+            y = pos[1];
+            z = pos[2];
+        }
       
         z_ = this.levels[z];
         if (z_ === undefined) return false;
@@ -193,7 +199,7 @@ var state = {
     
     // update a block type
     updateBlock: function(block) {
-        var x_ = this.contains([block.x, block.y, block.z]);
+        var x_ = this.contains(block);
         if (x_ === false) return false;
         x_[block.y] = block.value
         return block;
@@ -357,6 +363,114 @@ var state = {
     }
 };
 
-dispatcher.listen('info_terrain_map', function(name, msg) {
-	this.updateLevel(msg);
-}, state);
+state.event = new function StateEvent () {
+
+    this.info_terrain_map = function (name, msg) {
+        state.updateLevel(msg);
+    };
+
+    this.set_terrain_map = function (name, msg) {
+        state.updateBlock(msg);
+    };
+
+    var obj_type_map = {
+        'agent' : {
+            _class : Agent,
+            waiting_label : 'agents'
+        },
+        'obj' : {
+            _class : Obj,
+            waiting_label : 'objects'
+        }
+    };
+
+    var _generic_list_event = function(obj_type) {
+        return function (name, msg) {
+            var msg_list = msg.list,
+                msg_len = msg_list.length,
+                obj,
+                list_obj,
+                i;
+
+            for(i=0; i < msg_len; i++) {
+                list_obj = msg_list[i];
+                obj = state.gameObjectKnown(list_obj, obj_type);
+                if (obj) {                  // update
+                    obj.update(list_obj);
+                } else {                    // create
+                    obj = obj_type_map[obj_type]._class.create(list_obj);
+                }
+                obj.toState();
+            }
+            delete state.requests_waiting[obj_type_map[obj_type].waiting_label];
+            state.check_loaded();
+        };
+    };
+
+    this.info_object_list = _generic_list_event('obj');
+
+    this.info_agent_list = _generic_list_event('agent');
+
+    var _generic_object_change = function (obj_type) {
+        return function (name, msg) {
+            var obj = state.gameObjectKnown(msg.id, obj_type);
+            if (obj) {
+                obj.update(msg);
+                obj.toState();
+            } else if (state.contains(GameObject.pos.apply(msg))) {
+                obj = obj_type_map[obj_type]._class.create(msg);
+                obj.toState();
+            }
+        };
+    };
+
+    this.agent_position_change = _generic_object_change('agent');
+    this.object_position_change = _generic_object_change('obj');
+    
+    this.agent_state_change = _generic_object_change('agent');
+    this.object_state_change = _generic_object_change('obj');
+
+    var _generic_object_create = function (obj_type) {
+        return function (name, msg) {
+            var obj;
+            if (state.contains(GameObject.pos.apply(msg))) {
+                obj = obj_type_map[obj_type]._class.create(msg);
+                obj.toState();
+            }
+        };
+    };
+
+    this.agent_create = _generic_object_create('agent');
+    this.object_create = _generic_object_create('obj');
+
+    var _generic_object_delete = function (obj_type) {
+        return function (name, msg) {
+            var obj = state.gameObjectKnown(msg);
+            if (obj) {
+                obj.remove();
+            }
+        };
+    };
+
+    this.agent_delete = _generic_object_delete('agent');
+    this.object_delete = _generic_object_delete('obj');
+
+};
+
+dispatcher.listen('info_terrain_map', state.event.info_terrain_map);
+dispatcher.listen('set_terrain_map', state.event.set_terrain_map);
+
+dispatcher.listen('info_agent_list', state.event.info_agent_list);
+dispatcher.listen('info_object_list', state.event.info_object_list);
+
+dispatcher.listen('agent_position_change', state.event.agent_position_change);
+dispatcher.listen('object_position_change', state.event.object_position_change);
+
+dispatcher.listen('agent_state_change', state.event.agent_state_change);
+dispatcher.listen('object_state_change', state.event.object_state_change);
+
+dispatcher.listen('agent_create', state.event.agent_create);
+dispatcher.listen('object_create', state.event.object_create);
+
+dispatcher.listen('agent_delete', state.event.agent_delete);
+dispatcher.listen('object_delete', state.event.object_delete);

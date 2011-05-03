@@ -59,40 +59,6 @@ var board = {
     },
 };
 
-board.event = {
-    
-    agent_change : function agent_change(agent, type) {
-        console.log("agent change start...");
-        board.manager.agent_update(agent);
-    },
-    
-    object_change : function (id, type) {
-        //implement
-    },
-    
-    terrain_map_change : function(x, y, z, value) { // single terrain tile
-        console.log("board_event.terrain_map_change");
-        if (typeof x === 'object') { // allow block object to be passed in
-            value = x.value;
-            z = x.z;
-            y = x.y;
-            x = x.x;
-        } else if (arguments.length !== 4) {
-			return false;
-		}
-        board.manager.update_tile(x, y, z, value);
-    },
-
-    terrain_map : function (data) { // full terrain map
-        var init_args = [];
-        if (data.z_level == board.z_level) {
-            board.reset();
-            board.init();
-            board.start();
-        }
-    },
-};
-
 //var board_manager = {
 board.manager = {
     
@@ -838,7 +804,39 @@ board.info = {
     }
 };
 
+board.event = {
+    
+    agent_position_change : function (name, msg) {
+        var agent = state.gameObjectKnown(msg.id, 'agent');
+        if (agent === false) {
+            alert("process.delta.agent_position_change fail: WTF, should not occur");
+            console.log(agent);
+            return false;
+        }
+        board.manager.agent_update(agent);
+    },
+    
+    object_position_change : function (name, msg) {
+        //implement
+    },
+    
+    set_terrain_map : function(name, msg) { // single terrain tile
+        if (state.contains(msg)) {
+            board.manager.update_tile(msg.x, msg.y, msg.z, msg.value);
+        }
+    },
 
-dispatcher.listen('info_terrain_map', function(name, msg) {
-	this.event.terrain_map(msg);
-}, board);
+    info_terrain_map : function (name, msg) { // full terrain map
+        if (msg.z_level == board.z_level) {
+            board.reset();
+            board.init();
+            board.start();
+        }
+    },
+};
+
+dispatcher.listen('info_terrain_map', board.event.info_terrain_map);
+
+dispatcher.listen('agent_position_change', board.event.agent_position_change);
+
+dispatcher.listen('set_terrain_map', board.event.set_terrain_map);

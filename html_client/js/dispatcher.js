@@ -9,8 +9,7 @@ var dispatcher = {
     // If you wish to pass context but no count, this method will detect that, and count will default to Infinity
     listen : function (event_name, callback, count, context) {
         if (typeof event_name !== 'string' || typeof callback !== 'function') {
-            console.log('Attempt to listen to listen to dispatcher, but bad arguments.');
-            return false;
+            throw { message: 'dispatcher.listen -- bad args' };
         }
         var listeners = this.listeners.setDefault(event_name, []);
         if (callback.LISTENING_TO === undefined) {
