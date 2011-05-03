@@ -215,10 +215,10 @@ board.manager = {
     },
 
     _populate_agents : function (reset_index) {
-        if (reset_index) {
+        //if (reset_index) {
             board.cursor_manager._reset_agent_cursors();
-        }
-        this.agents  = []; //clear index
+        //}
+        this.agents = []; //clear index
         
         var id,
             agent,
@@ -383,9 +383,9 @@ board.cursor_manager = {
                 i = x + y*max_x;
                 cursor = this.index[i];
                 if (cursor !== undefined) {
-                    for (j=0; j < props_len; j++) {
+                    for (j=0; j < prop_len; j++) {
                         prop = props[j];
-                        default_val = _default_cursor[prop];
+                        default_val = this._default_cursor[prop];
                         if (typeof cursor[prop] === 'object') {
                             if (prop === 'drawing_cursor') {
                                 cursor[prop][cursor_type_index] = default_val[cursor_type_index];
@@ -438,7 +438,7 @@ board.cursor_manager = {
         for (x=0; x < max_x; x++) {
             for (y=0; y < max_y; y++) {
                 i = x + y*max_x;
-                this.index[i] = $.extend({
+                this.index[i] = $.extend(true, {
                     bx: x,      //debugging information
                     by: y,
                     position : [x + x_off, y + y_off, z_lvl]
@@ -563,7 +563,7 @@ board.cursor_manager = {
     _remove_agent_from_cursor : function(cursor, id) {
         var inIndex = $.inArray(id, cursor.agent_list),
             drawing_cursor;
-        if(inIndex == -1) { 
+        if(inIndex === -1) { 
             return;
         } else {
             cursor.agent_list.splice(inIndex, 1);    
