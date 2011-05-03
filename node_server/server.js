@@ -63,7 +63,7 @@ var io = require('socket.io'),
                     this.redis_client = old_client.redis_client;
                     msg.update = msg.requested_update || '0';
                 }
-                this.queue = old_client.queue || [];
+                this.queue = (msg.requested_update) ? [] : old_client.queue || [];
                 // remove from disconnected clients
                 disconnect_time = old_client.disconnect_time
                 if (disconnect_time) {
