@@ -87,24 +87,24 @@ var controls = new function Controls () {
     }
 
     this._init_event = _event_wrapper('#init', function () {
-        dispatcher.listen('game_init', function () {
+        dispatcher.listen('game_init_complete', function () {
             controls._initialized();
         }, 1);
-        game.init();
+        dispatcher.trigger('game_init');
     });
 
     this._update_event = _event_wrapper('#update',  function () {  // not tested
         dispatcher.listen('state_loaded', function () {
             controls._updated();
         }, 1);
-        game.update();
+        dispatcher.trigger('game_update');
     });
 
     this._reset_event = _event_wrapper('#reset', function () {
-        dispatcher.listen('game_reset', function () {
+        dispatcher.listen('game_reset_complete', function () {
             controls._reset_complete();
         }, 1);
-        game.reset();
+        dispatcher.trigger('game_reset');
     });
 
     this._test_event = _event_wrapper('#test', function () {
