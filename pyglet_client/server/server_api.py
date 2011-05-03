@@ -30,7 +30,7 @@ class MessageHandler:
 
 class DatagramDecoder:
 
-    def __init__(self, connection, messageHandler):
+    def __init__(self, messageHandler)
         self.connection = connection
         self.messageHandler = messageHandler
     def decode(self, message):
@@ -88,8 +88,9 @@ class DatagramEncoder:
         self.connection.send_tcp(t2)
 
 class TcpPacketDecoder:
-    def __init__(self,connection, messageHandler):
-        self.datagramDecoder = DatagramDecoder(connection, messageHandler)
+    def __init__(self, client, messageHandler):
+        #self.client = client
+        self.datagramDecoder = DatagramDecoder(client)
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -197,84 +198,96 @@ class ServerListener:
 #epoll.register(serversocket.fileno(), select.EPOLLIN)
 #events = epoll.poll(1)
 
+class MessageHandle:
+    def __init__(self):
+        pass
+
 class TcpClient:
 
-    def __init__(self, pool, connection, addresss):
+    def __init__(self, pool, messageHandler, connection, address):
         self.pool = pool
-        self.tcp = connection
+        self.messageHandler = messageHandler
 
-        self.tcp_fileno = 0
+        self.connection = connection
+        self.address = address
+
+        self.fileno = connection.fileno()
         self.TcpPacketDecoder = TcpPacketDecoder(self)
-        self.tcp = connection
 
         self.player_id = 0
         self.client_id = 0
 
-
     def send(self, MESSAGE):
         try:
-            self.tcp.sendall(MESSAGE)
+            self.connection.sendall(MESSAGE)
         except socket.error, (value,message):
             print "TcpClient.send error: " + str(value) + ", " + message
-            self.connected = False
-            self._listen()
 
-    def disconnect_tcp(self):
-        print "Connection: tcp disconnected by program"
+    def close(self):
+        print "TcpClient.close : connection cloesed by program"
         self.tcp.close()
 
-    def send_tcp(self, MESSAGE):
-        #self.tcp.send(MESSAGE)
-        self.tcp.sendall(MESSAGE)
-
-    def get_tcp(self):
+    def get(self):
         BUFFER_SIZE = 512
         try:
             data = self.tcp.recv(BUFFER_SIZE)
             print "get_tcp: data received"
             self.decoder.add_to_buffer(data)
         except socket.error, (value,message):
-            print "get_tcp: socket error " + str(value) + ", " + message
+            print "TcpClient.get: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
 class ConnectionPool:
 
-    def __init__(self):
-        self.epoll = select.epoll()
+    def __init__(self, main, messageHandler):
+        #parents
+        self.main = main
+        self.messageHandler = messageHandler
+        #children
+        self.datagramDecoder = DatagramDecoder(self.messageHandler)
+        #local
+        self._epoll = select.epoll()
+        self._client_count = 0
+        self._client_pool = {}
 
-    def addClient(self, connection, address, type = 'tcp'):
+    def addClient(self, connection, messageHandler, address, type = 'tcp'):
+        self._client_count += 1
         if type == 'tcp':
             client =  TcpClient(self, connection, address)
+            self._epoll.register(client.fileno, select.EPOLLIN) #register client
+            self._client_pool[client.fileno] = client #save client
 
     def process_events(self):
         connections = {}; requests = {}; responses = {}
         while True:
             events = epoll.poll(1)
             for fileno, event in events:
-                if fileno == serversocket.fileno():
-                    connection, address = serversocket.accept()
-                    connection.setblocking(0)
-                    epoll.register(connection.fileno(), select.EPOLLIN)
-                    connections[connection.fileno()] = connection
-                    requests[connection.fileno()] = b''
-                    responses[connection.fileno()] = response
-                elif event & select.EPOLLIN:
+                if event & select.EPOLLIN:
                     requests[fileno] += connections[fileno].recv(1024)
-                if EOL1 in requests[fileno] or EOL2 in requests[fileno]:
-                    epoll.modify(fileno, select.EPOLLOUT)
-                    print('-'*40 + '\n' + requests[fileno].decode()[:-2])
                 elif event & select.EPOLLOUT:
-                    byteswritten = connections[fileno].send(responses[fileno])
-                    responses[fileno] = responses[fileno][byteswritten:]
-                if len(responses[fileno]) == 0:
-                    epoll.modify(fileno, 0)
-                    connections[fileno].shutdown(socket.SHUT_RDWR)
+                    print "EPOLLOUT event?"
+                    return
+                    #byteswritten = connections[fileno].send(responses[fileno])
+                    #responses[fileno] = responses[fileno][byteswritten:]
                 elif event & select.EPOLLHUP:
                     epoll.unregister(fileno)
-                    connections[fileno].close()
-                    del connections[fileno]
+                    self._client_pool[fileno].close()
+                    del self._client_pool[fileno] #remove from client pool
 
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
+
+class Main:
+
+    def __init__(self):
+        self.messageHandler = messageHandler(self)
+        self.connectionPool = connectionPool(self, self.messageHandler)
+        self.ServerListener = ServerListener(self.connectionPool)
+
+    def main(self):
+        self.ServerListener.accept() #accept incoming connections
+        self.connectPool.process_events() #check for new data
+
+        time.sleep(.025)
 
 if __name__ == "__main__":
 
