@@ -39,7 +39,6 @@ var game = {
         // essentially, wipe everything and run init/start
         this.started = false;
         controls.reset();
-        //socket.disconnect();
         socket.reset();
         tile_properties.reset();
         tileset_state.reset();

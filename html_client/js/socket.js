@@ -79,7 +79,8 @@ var socket = {
         if (this.socket) {
             this.socket.disconnect();
         }
-        delete this.socket;
+        this.socket = null;
+        this.first_connect = true;
     },
 
     register : function (update) {

@@ -218,7 +218,6 @@ board.manager = {
     },
     
     populate_index : function() {
-        console.log("populate_index");
         board.cursor_manager.reset_cursor_index();
         if (!this._populate_tiles()) {
             return;
@@ -228,7 +227,6 @@ board.manager = {
     },
     
     agent_update : function(agent) {
-        console.log("board_manager agent_update");
         var pos     = agent.pos(),
             x_pos   = pos[0] - board.x_offset,
             y_pos   = pos[1] - board.y_offset,
@@ -383,7 +381,6 @@ board.cursor_manager = {
     },
     
     reset_cursor_index: function() {
-        console.log("reset_cursor_index");
         var i, x, y,
             max_x = board.tile_width,
             max_y = board.tile_height,
@@ -421,7 +418,6 @@ board.cursor_manager = {
     },
 
     advance_drawing_cursor : function(bx, by) {
-        console.log("advance_drawing_cursor: ");        
         this._advance_drawing_cursor(this.index[bx + by*board.tile_width]);
     },
 
