@@ -228,3 +228,45 @@ dispatcher.listen('info_object_info', function(name, msg) {
     obj.toState();
 });
 
+dispatcher.listen('info_agent_list', function(name, msg) {
+    var msg_list = msg.list,
+        msg_len = msg_list.length,
+        agent,
+        agent_data,
+        i;
+        
+    for (i=0; i < msg_len; i++) {
+        agent_data = msg_list[i];
+        agent = state.gameObjectKnown(agent_data, 'agent');
+        if (agent) {                    // update
+            agent.update(agent_data);
+        } else {                        // create
+            agent = Agent.create(agent_data);
+        }
+        agent.toState();
+    }
+    
+    delete state.requests_waiting.agents;
+    state.check_loaded();
+});
+
+dispatcher.listen('info_object_list', function(name, msg) {
+    var msg_list = msg.list,
+        msg_len = msg_list.length,
+        obj,
+        list_obj,
+        i;
+
+    for(i=0; i < msg_len; i++) {
+        list_obj = msg_list[i];
+        obj = state.gameObjectKnown(list_obj, 'obj');
+        if (obj) {                  // update
+            obj.update(list_obj);
+        } else {                    // create
+            obj = Obj.create(list_obj);
+        }
+        obj.toState();
+    }
+    delete state.requests_waiting.objects;
+    state.check_loaded();
+});

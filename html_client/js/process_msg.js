@@ -60,8 +60,6 @@ process.info.tileset = function(msg) {
     }
 
     dispatcher.trigger('info_tileset', msg);
-
-    //game.update2();
     
     //store this; contains tile rendering information 
     //msg.tile_rendering_dict
@@ -75,9 +73,7 @@ process.info.tileset = function(msg) {
     // these drawing properties should be easily checked by the tilecache
 };
 
-// world_id, client_id, x_size, y_size, z_level, map
 process.info.terrain_map = function (msg) {
-        //console.log(msg);
     if (!validate.terrain_map(msg)) return;
     
     msg.x_size = parseInt(msg.x_size, 10);
@@ -136,65 +132,33 @@ process.info.object_info = function (msg) {
     dispatcher.trigger('info_object_info', msg);
 };
 
+process.info._generic_list = function (msg) {
+    var msg_list = msg.list,
+        msg_len = msg_list.length,
+        list_item,
+        i;
+
+    for (i=0; i < msg_len; i++) {
+        list_item = msg_list[i];
+        list_item.x = list_item.position[1];
+        list_item.y = list_item.position[2];
+        list_item.z = list_item.position[3];
+        list_item.loc_type = list_item.position[0];
+        delete list_item.position;
+    }
+    return msg;
+};
+
 process.info.agent_list = function (msg) {
     //if (!validate.agent_list(msg)) return;
-    var agent,
-        msg_len = msg.list.length,
-        i = 0,
-        list_agent;
-
+    msg = process.info._generic_list(msg);
     dispatcher.trigger('info_agent_list', msg);
-        
-    for(i=0; i < msg_len; i++) {
-        list_agent = msg.list[i];
-
-        list_agent.x = list_agent.position[1];
-        list_agent.y = list_agent.position[2];
-        list_agent.z = list_agent.position[3];
-        list_agent.loc_type = list_agent.position[0];
-        delete list_agent.position;
-        
-        agent = state.gameObjectKnown(list_agent, 'agent');
-        if (agent) {                    // update
-            agent.update(list_agent);
-        } else {                        // create
-            agent = Agent.create(list_agent);
-        }
-        agent.toState();
-    }
-    delete state.requests_waiting.agents;
-    state.check_loaded();
 };
 
 process.info.object_list = function (msg) {
     //if (!validate.object_list(msg)) return;
-    var obj,
-        msg_len = msg.list.length,
-        i = 0,
-        list_obj;
-
+    msg = process.info._generic_list(msg);
     dispatcher.trigger('info_object_list', msg);
-        
-    for(i=0; i < msg_len; i++) {
-        list_obj = msg.list[i];
-        
-        list_obj.x = list_obj.position[1];
-        list_obj.y = list_obj.position[2];
-        list_obj.z = list_obj.position[3];
-        list_obj.loc_type = list_obj.position[0];
-        delete list_obj.position;
-        
-        obj = state.gameObjectKnown(list_obj, 'obj');
-        if (obj) {                  // update
-            obj.update(list_obj);
-        } else {                    // create
-            obj = Obj.create(list_obj);
-        }
-        
-        obj.toState();
-    }
-    delete state.requests_waiting.objects;
-    state.check_loaded();
 };
 
 process.delta = {};
@@ -365,7 +329,7 @@ process.delta.set_terrain_map = function (msg) {
         }
     }
     
-	dispatcher.trigger('set_terrain_map', msg);
+    dispatcher.trigger('set_terrain_map', msg);
 };
 
 route = {
