@@ -17,18 +17,13 @@ var board = {
         var count = 0;
         return function () {
             var err;
-            //tileset_state.loaded = false;
-            if (tileset_state.loaded) { // possible race condition!
-            //if (false) { // possible race condition!
+            if (tileset_state.loaded) {
                 clearInterval(this._init_interval);
                 this._init_interval = 0;
-                //this.cursor_manager.init();
                 this.start();
                 return true;
             } else if (++count === this._retry_attempts) { // give up after n tries
                 count = 0;
-                //clearInterval(this._init_interval);
-                //this._init_interval = 0;
                 err  = 'tileset_state never loaded; board failed to init ';
                 err += this._retry_attempts;
                 err += ' (' + (this._retry_delay * this._retry_attempts) + 'ms total)';
@@ -178,7 +173,7 @@ board.manager = {
 
     _populate_tiles : function (reset_index) {
         if (reset_index) {
-            //board.cursor_manager.reset_cursor_index();
+            board.cursor_manager.reset_cursor_index();
         }
         var x,
             y,
@@ -318,7 +313,6 @@ board.cursor_manager = {
 
     reset : function () {
         this.index = [];
-        this.reset_cursor_index();
         this.atc = {};
         this.otc = {};
     },
