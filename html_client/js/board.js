@@ -687,9 +687,9 @@ board.info = {
 
     // which board properties to display
     to_display: [
-        'agent_list',
+        //'agent_list',
         'agent_num',
-        'object_list',
+        //'object_list',
         'object_num',
         'tile_id',
         'drawing_cursor',
@@ -700,24 +700,35 @@ board.info = {
     ],
 
     // add a board property to display (in the command line, for example)
-    add_to_display: function(key) {
-        if (!$.isArray(key)) key = [key];
-        $.each(key, function(i, val) {
-            if ($.inArray(val.toString(), this.to_display) === -1) {
-                this.to_display.push(val);
+    add_to_display: function(keys) {
+        if (!$.isArray(keys)) {
+            keys = [keys];
+        }
+        var len = keys.length,
+            i,
+            key;
+        for (i=0; i < len; i++) {
+            key = keys[i];
+            if ($.inArray(key.toString(), this.to_display) === -1) {
+                this.to_display.push(key);
             }
-        });
+        }
     },
 
     // remove a board property from to display (in the command line, for example)
-    remove_from_display: function(key) {
-        if (!$.isArray(key)) key = [key];
-        $.each(key, function(i, val) {
-            var index = $.inArray(val.toString(), this.to_display);
+    remove_from_display: function(keys) {
+        if (!$.isArray(keys)) {
+            keys = [keys];
+        }
+        var len = keys.length,
+            i,
+            index;
+        for (i=0; i < len; i++) {
+            index = $.inArray(keys[i].toString(), this.to_display);
             if (index > -1) {
                 this.to_display.splice(index, 1);
             }
-        });
+        }
     },
 
     // formats the data for display in the tooltip
