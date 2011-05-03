@@ -29,14 +29,7 @@ var game = {
     },
 
     reset : function () { // resets everything
-        // reset:
-        //  socket
-        //  board
-        //  tilesets
-        //  state
-        //  game
-        //
-        // essentially, wipe everything and run init/start
+        // wipe everything and run init/start
         this.started = false;
         controls.reset();
         socket.reset();

@@ -17,7 +17,6 @@ var controls = new function Controls () {
     this.init = function () { // bind callbacks to button events
         this._init_defaults();
         $('#init').click(this._init_event);
-        //$('#start').click(this._start_event);
         $('#update').click(this._update_event);
         $('#reset').click(this._reset_event);
         $('#test').click(this._test_event);
@@ -42,7 +41,6 @@ var controls = new function Controls () {
         if (!arguments.callee.loaded) {
             var d = {
                     init  : $('#init'),
-                    //start : $('#start'),
                     update: $('#update'),
                     reset : $('#reset')
                 },
@@ -92,20 +90,8 @@ var controls = new function Controls () {
         dispatcher.listen('game_init', function () {
             controls._initialized();
         }, 1);
-        //if (!_get_selector.call(this)) {
-            //dispatcher.listen('state_loaded', function () {
-                //controls._start_event();
-            //}, 1);
-        //}
         game.init();
     });
-
-    //this._start_event = _event_wrapper('#start', function () {
-        //dispatcher.listen('game_start', function () {
-            //controls._started();
-        //}, 1);
-        //game.start();
-    //});
 
     this._update_event = _event_wrapper('#update',  function () {  // not tested
         dispatcher.listen('state_loaded', function () {
@@ -175,10 +161,7 @@ var controls = new function Controls () {
         };
     }
 
-    //this._initialized = complete_ready('#init', '#start');
     this._initialized = complete_ready('#init', ['#update', '#reset']);
-
-    //this._started = complete_ready('#start', ['#update', '#reset']);
 
     this._updated = processing2ready('#update');
 
