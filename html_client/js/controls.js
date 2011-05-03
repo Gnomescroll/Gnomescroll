@@ -108,10 +108,10 @@ var controls = new function Controls () {
     });
 
     this._test_event = _event_wrapper('#test', function () {
-        //dispatcher.listen('test', function () {
+        //dispatcher.listen('tests_complete', function () {
             // not implemented
         //}, 1);
-        //tests.run();
+        //dispatcher.trigger('run_tests');
     });
 
     /* DOM event callback callbacks

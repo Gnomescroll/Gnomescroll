@@ -9,27 +9,36 @@ var board = {
     tile_width  : 16,
     tile_height : 16,
 
-    init_board_interval: 0,
-    
-    init : function(callback) {
-        if (tileset_state.loaded) {
+    init_interval: 0,
+
+    _init : function () {
+        if (tileset_state.loaded) { // possible race condition!
+            clearInterval(this.init_interval);
+            this.init_interval = 0;
             this.cursor_manager.init();
-            clearInterval(this.init_board_interval);
-            if (typeof callback === 'function') {
-                callback();
-            }
+            this.start();
+            return true;
+        }
+        return false;
+    },
+    
+    init : function() {
+        if (!this._init()) {
+            this.init_interval = setInterval('board._init();', 100);
         }
     },
     
     start : function() {
         this.manager.start();
+        dispatcher.trigger('board_start');
     },
 
     reset : function () {
         this.canvas.reset();
         this.cursor_manager.reset();
         this.manager.reset();
-        //this.init();
+        clearInterval(this.init_interval);
+        this.init_interval = 0;
     },
     
     resize : function resize() {
