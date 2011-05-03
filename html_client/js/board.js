@@ -668,10 +668,12 @@ board.drawing_manager = {
 };
 
 //this is where drawing occurs to
-board.canvas = new TileCanvas('board', '#game', { width: 16,
-                                                  height: 16,
-                                                  pixel_width: 24,
-                                                  pixel_height: 24 });
+board.canvas = new TileCanvas('board', '#game', {
+    width       : 16,
+    height      : 16,
+    pixel_width : 24,
+    pixel_height: 24
+});
 
 // tooltip methods
 board.info = {
