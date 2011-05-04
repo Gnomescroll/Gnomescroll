@@ -292,18 +292,30 @@ class ConnectionPool:
 
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
+class GameState:
+
+    def __init__(self):
+        self.time = 0
+
+    def tick(self):
+        self.time += 1
+        if self.time % 500 == 0:
+            print "time= %i" % (self.time)
+
 class Main:
 
     def __init__(self):
         self.messageHandler = MessageHandler(self)
         self.connectionPool = ConnectionPool(self, self.messageHandler)
-        self.ServerListener = ServerListener(self.connectionPool)
+        self.serverListener = ServerListener(self.connectionPool)
+        self.gameState = GameState()
 
     def run(self):
         while True:
-            self.ServerListener.accept() #accept incoming connections
+            self.serverListener.accept() #accept incoming connections
             self.connectionPool.process_events() #check for new data
-            time.sleep(.025)
+            self.gameState.tick()
+            time.sleep(.01)
 
 if __name__ == "__main__":
 
