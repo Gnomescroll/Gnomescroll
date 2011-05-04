@@ -23,12 +23,138 @@ def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle
 #0 is test message
 #1 is json
 
+import math
+
+class PlayerAgent:
+
+    def __init__(self, id, x,y,z,xa, ya):
+        [x,y,z] = [float(x),float(y),float(z)]
+        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
+        self.xa = xa
+        self.ya = ya
+        self.player_id = player_id
+
+        self.last_control_tick = 0
+        self.d_x = 0
+        self.d_y = 0
+        self.d_xa = 0
+        self.d_za = 0
+        self.jetpack = 0
+        self.brake = 0
+
+    def set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake):
+        self.last_control_tick = tick
+        self.d_x = d_x #a byte
+        self.d_y = d_y #a byte
+        self.d_xa = d_xa
+        self.d_za = d_za
+        self.jetpack = jetpack
+        self.brake = brake
+
+    def tick():
+        [x,y,z,vx,vx,vy,vz,ax,ay,az] = self.state
+        tr = 100. #tick rate
+        tr2 = tr*tr #tick rate squared
+        if z <= 0.:
+            az = .10 / tr2
+        else:
+            az = -0.10 / tr2
+        if self.jetpack:
+            az += 0.15 / tr2
+
+        xy_speed = 0.1 / tr2
+        ax = xy_speed * self.d_x
+        ay = xy_speed * self.d_y
+
+        vz += az
+
+        xy_brake = math.pow(.50, 1/(float(tr)) #in percent per second
+        vx += ax
+        vy += ay
+        if self.brake != 0:
+            vx *= xy_brake
+            vz *= xy_brake
+
+        x += vx
+        y += vy
+        z += vz
+        self.state = [x,y,z,vx,vx,vy,vz,ax,ay,az]
+
+
+class AgentList:
+    def __init__(self, gameState):
+        self.gameState = gameState
+        self.agents = {}
+
+    def create_agent(self, x,y,z,xa,ya):
+        #(x,y,z,xa,ya) = position
+        id = self.agentList.new_id()
+        agent = PlayerAgent(id, x,y,z,xa,ya)
+        self.agents[id] = agent
+        print "AgentList: Agent Created, id= %i" %id
+
+    def get_agent(self,id)
+        if not self.agents.has_key(id):
+            print "Agentlist.set_agent_control_state: Agent does not exist: %i" % id
+            return None
+        return self.agent[id]
+
+class GameState:
+
+    def __init__(self):
+        self.time = 0
+        self.id = 0
+        self.agentList = AgentList()
+
+    def new_id(self):
+        self.id += 1
+        return self.id
+
+    def tick(self):
+        for agent in  self.agentList.agents.values():
+            agent.tick()
+        self.time += 1
+        if self.time % 100 == 0:
+            print "time= %i" % (self.time)
+
+class SendMessage:
+
+    def __init__(self, client):
+        self.client = client
+
+    def json(self, dict):
+        self.client.send(self.add_prefix(1, json.dumps(dict)))
+
+    def add_prefix(self, id, msg):
+        return struct.pack('I H', 4+2+len(msg), id) + msg
+
+    ### agent messages
+
+    def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
+        d = {
+            'cmd' : 'agent_control_state',
+            'id' : id,
+            'tick' : 0,
+            'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
+           }
+        self.json(d)
+
 class MessageHandler:
+
     def __init__(self, main):
         self.main = main
+        self.gameState = main.gameState
 
     def process_json(self, msg):
         print "MessageHandler.process_json: " + str(msg)
+        if msg['cmd'] == 'create_agent':
+            self.gameState.create_agent(**msg)
+        if msg['cmd'] == 'agent_control_state':
+            id = int(msg['id'])
+            agent = GameState.agentList.get_agent(id)
+            tick = msg[tick]
+            [d_x, d_y, d_xa, d_za, jetpack, brake] = msg['state']
+            agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake):
 
 class DatagramDecoder:
     messageHandler = None
@@ -46,73 +172,13 @@ class DatagramDecoder:
         if msg_type == 0:
             print "test message received"
         if msg_type == 1:
-            print "Generatic JSON message"
-            #print str(datagram)
+            print "DatagramDecoder: JSON message"
             try:
                 msg = json.loads(datagram)
             except:
                 print "JSON DECODING ERROR: " +str(msg)
                 return
-
             self.messageHandler.process_json(msg)
-        #if msg_type == 600:
-            #print "json admin message"
-            #msg = json.loads(message[2:])
-            #print str(msg)
-        #if msg_type == 2: #
-            ##CreateAgent
-            #(agent_id, player_id, x, y, z, x_angle, y_angle) = struct.unpack('IIfffhh', datagram)
-            #print str((agent_id, player_id, x, y, z, x_angle, y_angle))
-            ##n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
-            ##print str(n)
-        #if msg_type == 3:
-            ##agentPositionUpdate
-            #(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle) = struct.unpack('II fff fff fff hh', datagram)
-            #print str(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
-
-        #if msg_type == 99:
-            ##latency estimation
-            #(time, tick) = struct.unpack('I f', datagram)
-            #print str((time, tick))
-            ##immediately send message 5 back
-        #if msg_type == 100:
-            #(time, tick) = struct.unpack('I f', datagram)
-            ##return packet for latency testing
-            #print str((time, tick))
-
-class DatagramEncoder:
-
-    #messageHandler = None
-
-    def __init__(self, client):
-        assert self.messageHandler != None
-        self.connection = client
-        pass
-
-    def json(self, dict):
-        #t = json.dumps(dict)
-        #t = self._pm(1, t)
-        #t = add_length_prefix(self, t)
-        self.client.send(self.add_prefix(1, json.dumps(dict)))
-
-    def add_prefix(self, id, msg):
-        return struct.pack('H I', (id, 2+len(msg))) + msg
-
-#    def add_length_prefix(self, msg):
-        return struct.pack('I', len(msg)) + msg
-
-#    def _pm(self, id, msg):
-#       return struct.pack('H',id) +msg
-
-    def _create_agent(self, agent_id, player_id, x, y, z, x_angle, y_angle):
-        t1 = struct.pack('IIfffhh', agent_id, player_id, x, y, z, x_angle, y_angle)
-        t2 = self._pm(301, t1)
-        self.connection.send_tcp(t2)
-
-    def _agent_control_state(self, agent_id, tick, W, S, A, D, JUMP, JETPACK):
-        t1 = struct.pack('II BB BB BB BB', agent_id, tick, W, S, A, D, JUMP, JETPACK, x_angle, y_angle)
-        t2 = self._pm(200, t1)
-        self.connection.send_tcp(t2)
 
 class TcpPacketDecoder:
 
@@ -320,17 +386,6 @@ class ConnectionPool:
                 print "EPOLLOUT weird event: %i" % event
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
-class GameState:
-
-    def __init__(self):
-        self.time = 0
-
-    def tick(self):
-        self.time += 1
-        #print str(self.time)
-        if self.time % 100 == 0:
-            print "time= %i" % (self.time)
-
 class Main:
 
     def __init__(self):
@@ -343,6 +398,8 @@ class Main:
 
     def run(self):
         print "Server Started"
+        print "Create Agent"
+        self.gameState.agentList.create_agent(0,0,0,0,0)
         while True:
             self.serverListener.accept() #accept incoming connections
             self.connectionPool.process_events() #check for new data

@@ -1,9 +1,6 @@
 import socket
-
 import struct
 import binascii
-
-import simplejson as json
 
 from collections import namedtuple
 
@@ -20,10 +17,21 @@ class SendMessage:
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg
 
+    ### agent messages
+
+    def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
+        d = {
+            'cmd' : 'agent_control_state',
+            'id' : id,
+            'tick' : 0,
+            'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
+           }
+        self.json(d)
+
 class ClientDatagramEncoder:
+
     def __init__(self, connection):
         self.connection = connection
-        pass
 
     def _pm(id, msg):
         return struct.pack('H',id) +msg
