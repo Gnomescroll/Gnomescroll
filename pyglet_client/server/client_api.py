@@ -195,7 +195,7 @@ if __name__ == "__main__":
     print "Running client as program"
     x= TcpConnection()
     #x.connect()
-    x.out.json({'message' : 'test' })
+    x.out.json({'cmd' : 'test' })
     time.sleep(3)
     x.disconnect()
 #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

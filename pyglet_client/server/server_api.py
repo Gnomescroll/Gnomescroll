@@ -14,14 +14,15 @@ import math
 
 class PlayerAgent:
     eventOut = None
+    GameState = None
 
     def __init__(self, id, x,y,z,xa, ya):
-        assert eventOut != None
+        assert self.eventOut != None
         [x,y,z] = [float(x),float(y),float(z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
         self.ya = ya
-        self.player_id = player_id
+        #self.player_id = player_id
 
         self.last_control_tick = 0
         self.d_x = 0
@@ -40,7 +41,7 @@ class PlayerAgent:
         self.jetpack = jetpack
         self.brake = brake
 
-    def tick():
+    def tick(self):
         [x,y,z,vx,vx,vy,vz,ax,ay,az] = self.state
         tr = 100. #tick rate
         tr2 = tr*tr #tick rate squared
@@ -57,7 +58,7 @@ class PlayerAgent:
 
         vz += az
 
-        xy_brake = math.pow(.50, 1/(float(tr)) #in percent per second
+        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         vx += ax
         vy += ay
         if self.brake != 0:
@@ -78,12 +79,12 @@ class AgentList:
 
     def create_agent(self, x,y,z,xa,ya):
         #(x,y,z,xa,ya) = position
-        id = self.agentList.new_id()
+        id = self.gameState.new_id()
         agent = PlayerAgent(id, x,y,z,xa,ya)
         self.agents[id] = agent
         print "AgentList: Agent Created, id= %i" %id
 
-    def get_agent(self,id)
+    def get_agent(self,id):
         if not self.agents.has_key(id):
             print "Agentlist.set_agent_control_state: Agent does not exist: %i" % id
             return None
@@ -94,7 +95,7 @@ class GameState:
     def __init__(self):
         self.time = 0
         self.id = 0
-        self.agentList = AgentList()
+        self.agentList = AgentList(self)
 
     def new_id(self):
         self.id += 1
@@ -158,20 +159,28 @@ class SendMessage:
 
 class MessageHandler:
 
+    gameState = None
+
     def __init__(self, main):
+        assert self.gameState != None
         self.main = main
-        self.gameState = main.gameState
 
     def process_json(self, msg):
+        if not msg.has_key['cmd']:
+            print "Json message need cmd parameter: " + str(msg)
+            return
+
         print "MessageHandler.process_json: " + str(msg)
         if msg['cmd'] == 'create_agent':
             self.gameState.create_agent(**msg)
-        if msg['cmd'] == 'agent_control_state':
+        elif msg['cmd'] == 'agent_control_state':
             id = int(msg['id'])
             agent = GameState.agentList.get_agent(id)
             tick = msg[tick]
             [d_x, d_y, d_xa, d_za, jetpack, brake] = msg['state']
-            agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake):
+            agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
+        else:
+            print "MessageHandler.process_json: cmd unknown = " + str(msg)
 
 class DatagramDecoder:
     messageHandler = None
@@ -212,15 +221,15 @@ class TcpPacketDecoder:
     def attempt_decode(self):
         buff_len = len(self.buffer)
         if buff_len == 0:
-            print "decode: buffer empty"
+            #print "decode: buffer empty"
             return
         elif buff_len < self.message_length:
-            print "decode: need more packets of data to decode message"
+            #print "decode: need more packets of data to decode message"
             return
         elif self.message_length == 0 and buff_len > 4:
-            print "decode: get message prefix"
+            #print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix()
-            print "prefix length: " + str(self.message_length)
+            #print "prefix length: " + str(self.message_length)
             self.attempt_decode()
 
         if buff_len >= self.message_length:
@@ -230,7 +239,8 @@ class TcpPacketDecoder:
             self.process_datagram(message)
             self.attempt_decode()
         else:
-            print "Need more characters in buffer"
+            pass
+            #print "Need more characters in buffer"
 
     def read_prefix(self):
         data = self.buffer
@@ -393,13 +403,15 @@ class ConnectionPool:
 class Main:
 
     def __init__(self):
+        self.gameState = GameState()
+        MessageHandler.gameState = self.gameState
         self.messageHandler = MessageHandler(self)
         DatagramDecoder.messageHandler = self.messageHandler #set global
         self.connectionPool = ConnectionPool(self, self.messageHandler)
         self.serverListener = ServerListener(self.connectionPool)
-        self.gameState = GameState()
         self.eventOut = EventOut(self.connectionPool)
         PlayerAgent.eventOut = self.eventOut
+        PlayerAgent.gameState = self.gameState
         #globals
 
     def run(self):
