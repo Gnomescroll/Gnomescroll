@@ -119,18 +119,19 @@ class TcpPacketDecoder:
         self.attempt_decode()
 
     def attempt_decode(self):
-        if len(self.buffer) < self.message_length:
-            print "decode: need more packets of data to decode message"
-            return
-        if len(self.buffer) == 0:
+        buff_len = len(self.buffer)
+        if buff_len == 0:
             print "decode: buffer empty"
             return
-        if self.message_length == 0:
+        elif buff_len < self.message_length:
+            print "decode: need more packets of data to decode message"
+            return
+        elif self.message_length == 0:
             print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix()
             print "prefix length: " + str(self.message_length)
 
-        if len(self.buffer) >= self.message_length:
+        if buff_len >= self.message_length:
             print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             self.message_length = 0
@@ -239,16 +240,23 @@ class TcpClient:
 
     def close(self):
         print "TcpClient.close : connection cloesed by program"
-        self.tcp.close()
+        self.connection.close()
 
     def receive(self):
         BUFFER_SIZE = 4096
         try:
             data = self.connection.recv(BUFFER_SIZE)
-            print "get_tcp: data received"
-            self.TcpPacketDecoder.add_to_buffer(data)
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
+
+        print "get_tcp: data received, %i bytes" % len(data)
+        if len(data) == 0:
+            self.ec += 1
+            if self.ec > 3:
+                self.pool.tearDownClient(self.fileno)
+        else:
+            self.ec = 0
+            self.TcpPacketDecoder.add_to_buffer(data)
 
 class ConnectionPool:
 
@@ -269,30 +277,36 @@ class ConnectionPool:
 
     def on_exit(self):
         self._epoll.close()
-        for client in self._client_pool:
+        for client in self._client_pool.values():
             client.close()
 
     def addClient(self, connection, address, type = 'tcp'):
         self._client_count += 1
         if type == 'tcp':
             client =  TcpClient(connection, address)
-            self._epoll.register(client.fileno, select.EPOLLIN) #register client
+            self._epoll.register(client.fileno, select.EPOLLIN | select.EPOLLHUP ) #register client
             self._client_pool[client.fileno] = client #save client
+
+    def tearDownClient(self, fileno):
+        self._epoll.unregister(fileno)
+        self._client_pool[fileno].close()
+        del self._client_pool[fileno] #remove from client pool
 
     def process_events(self):
         events = self._epoll.poll(0)
         for fileno, event in events:
+            print "(event, fileno) = %i, %i" % (event, fileno)
             if event & select.EPOLLIN:
-                assert fileno in self._client_pool.has_key(fileno)
+                assert self._client_pool.has_key(fileno)
                 self._client_pool[fileno].receive()
             elif event & select.EPOLLOUT:
+                pass
                 print "EPOLLOUT event?"
             elif event & select.EPOLLHUP:
                 print "EPOLLHUP: teardown socket"
-                epoll.unregister(fileno)
-                self._client_pool[fileno].close()
-                del self._client_pool[fileno] #remove from client pool
-
+                self.tearDownClient(fileno)
+            else:
+                print "EPOLLOUT weird event: %i" % event
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
 class GameState:

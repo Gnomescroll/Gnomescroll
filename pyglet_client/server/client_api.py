@@ -132,21 +132,27 @@ class Connection:
     def __init__(self):
         self.tcp = None
         self.udp = None
+        self.connected = False
         self.encoder = ClientDatagramEncoder(self)
         self.decoder = PacketDecoder(self)
         self.connect()
 
     def connect(self):
         self.connect_tcp()
-        self.connect_udp()
+        #self.connect_udp()
 
     def connect_tcp(self):
         TCP_IP = self.server
         TCP_PORT = self.tcp_port
-        self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcp.connect((TCP_IP, TCP_PORT))
-        self.tcp.setblocking(0) #test
-        print "Connection: tcp connected"
+        try:
+            self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.tcp.connect((TCP_IP, TCP_PORT))
+            self.tcp.setblocking(0) #test
+            print "Connection: tcp connected"
+            self.connected = True
+        except socket.error, (value,message):
+            print "Connection failed: socket error " + str(value) + ", " + message
+            self.connected = False
 
     def disconnect_tcp(self):
         print "Connection: tcp disonnected by program"
