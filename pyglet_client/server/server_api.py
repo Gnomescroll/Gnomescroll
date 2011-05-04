@@ -18,11 +18,12 @@ class PlayerAgent:
 
     def __init__(self, id, x,y,z,xa, ya):
         assert self.eventOut != None
+        assert GameState != None
         [x,y,z] = [float(x),float(y),float(z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
         self.ya = ya
-        #self.player_id = player_id
+        self.id = id
 
         self.last_control_tick = 0
         self.d_x = 0
@@ -42,7 +43,7 @@ class PlayerAgent:
         self.brake = brake
 
     def tick(self):
-        [x,y,z,vx,vx,vy,vz,ax,ay,az] = self.state
+        [x,y,z, vx,vy,vz, ax,ay,az] = self.state
         tr = 100. #tick rate
         tr2 = tr*tr #tick rate squared
         if z <= 0.:
@@ -69,12 +70,13 @@ class PlayerAgent:
         y += vy
         z += vz
 
-        self.state = [x,y,z,vx,vx,vy,vz,ax,ay,az]
-        self.eventOut.agent_state_change(self.id, self.GameState.time, self.state)
+        self.state = [x,y,z, vx,vx,vz, ax,ay,az]
+        self.eventOut.agent_state_change(self.id, self.gameState.time, self.state)
 
 class AgentList:
     def __init__(self, gameState):
         self.gameState = gameState
+        AgentList.gameState = self.gameState
         self.agents = {}
 
     def create_agent(self, x,y,z,xa,ya):
@@ -115,13 +117,14 @@ class EventOut:
         self.sendMessage = SendMessage(None)
 
     def process_events(self):
-        for event_packet in event_packets:
-            for client in pool.pool:
+        #print "Process Events.num_events = %i" % len(self.event_packets)
+        for event_packet in self.event_packets:
+            for client in self.pool._client_pool:
                 client.send(event_packet)
-        self.events = []
+        self.event_packets = []
 
     def add_json_event(self, dict):
-        self.events.append(self.sendMessage.get_json(dict))
+        self.event_packets.append(self.sendMessage.get_json(dict))
 
     def agent_state_change(self, id, tick, state):
         d = {
