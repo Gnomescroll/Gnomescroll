@@ -7,19 +7,6 @@ import simplejson as json
 def pm(id, msg):
     return struct.pack('H',id) +msg
 
-def create_agent_message(agent_id, player_id, x, y, z, x_angle, y_angle):
-    t1 = struct.pack('IIfffhh', agent_id, player_id, x, y, z, x_angle, y_angle)
-    t2 = pm(2, t1)
-    return t2
-
-def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle, y_angle):
-    t1 = struct.pack('II fff fff fff hh', agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
-    t2 = pm(3, t1)
-    return t2
-
-#   CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
-#   n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
-
 #0 is test message
 #1 is json
 
@@ -226,11 +213,6 @@ class TcpPacketDecoder:
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
-
-#epoll = select.epoll()
-#epoll.register(serversocket.fileno(), select.EPOLLIN)
-#events = epoll.poll(1)
-
 import atexit
 import socket
 import select
@@ -278,20 +260,11 @@ class ServerListener:
                     connection, address = self.tcp.accept()
                     print 'TCP connection established with:', address
                     connection.setblocking(0)
-                    #cc = self.ClientConnection(connection, address) ##create connection
                     self.connectionPool.addClient(connection, address) #hand off connection to connection pool
                 except socket.error, (value,message):
                     print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
                 print "UDP event"
-
-
-
-### PURGE
-
-#epoll = select.epoll()
-#epoll.register(serversocket.fileno(), select.EPOLLIN)
-#events = epoll.poll(1)
 
 class TcpClient:
     pool = None
