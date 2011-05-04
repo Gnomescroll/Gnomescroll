@@ -13,8 +13,10 @@ def pm(id, msg):
 import math
 
 class PlayerAgent:
+    eventOut = None
 
     def __init__(self, id, x,y,z,xa, ya):
+        assert eventOut != None
         [x,y,z] = [float(x),float(y),float(z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
@@ -65,8 +67,9 @@ class PlayerAgent:
         x += vx
         y += vy
         z += vz
-        self.state = [x,y,z,vx,vx,vy,vz,ax,ay,az]
 
+        self.state = [x,y,z,vx,vx,vy,vz,ax,ay,az]
+        self.eventOut.agent_state_change(self.id, self.GameState.time, self.state)
 
 class AgentList:
     def __init__(self, gameState):
@@ -104,25 +107,52 @@ class GameState:
         if self.time % 100 == 0:
             print "time= %i" % (self.time)
 
+class EventOut:
+    def __init__(self, pool):
+        self.pool = pool
+        self.event_packets = []
+        self.sendMessage = SendMessage(None)
+
+    def process_events(self):
+        for event_packet in event_packets:
+            for client in pool.pool:
+                client.send(event_packet)
+        self.events = []
+
+    def add_json_event(self, dict):
+        self.events.append(self.sendMessage.get_json(dict))
+
+    def agent_state_change(self, id, tick, state):
+        d = {
+            'cmd' : 'agent_position',
+            'id' : id,
+            'tick' : tick,
+            'state': state #is a 9 tuple
+           }
+        self.add_json_event(d)
+
 class SendMessage:
 
     def __init__(self, client):
         self.client = client
 
-    def json(self, dict):
-        self.client.send(self.add_prefix(1, json.dumps(dict)))
-
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg
 
+    def send_json(self, dict):
+        self.client.send(self.add_prefix(1, json.dumps(dict)))
+
+    def get_json(self, dict):
+        return self.add_prefix(1, json.dumps(dict))
+
     ### agent messages
 
-    def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
+    def send_agent_state(self, id, tick, state):
         d = {
-            'cmd' : 'agent_control_state',
+            'cmd' : 'agent_position',
             'id' : id,
-            'tick' : 0,
-            'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
+            'tick' : tick,
+            'state': state #is a 9 tuple
            }
         self.json(d)
 
@@ -368,6 +398,8 @@ class Main:
         self.connectionPool = ConnectionPool(self, self.messageHandler)
         self.serverListener = ServerListener(self.connectionPool)
         self.gameState = GameState()
+        self.eventOut = EventOut(self.connectionPool)
+        PlayerAgent.eventOut = self.eventOut
         #globals
 
     def run(self):
@@ -378,6 +410,7 @@ class Main:
             self.serverListener.accept() #accept incoming connections
             self.connectionPool.process_events() #check for new data
             self.gameState.tick()
+            self.eventOut.process_events()
             time.sleep(.01)
 
 if __name__ == "__main__":
