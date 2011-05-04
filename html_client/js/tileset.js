@@ -154,8 +154,10 @@ TileCanvas.prototype = {
         
         parent_selector = this.parent_selector || 'body';
         $(parent_selector).append(this.canvas);
-        this.canvas.attr({ 'width' : w,
-                           'height' : h });
+        this.canvas.attr({
+            'width'  : w,
+            'height' : h
+        });
         this.canvas = this.canvas[0];
         this.ctx = this.canvas.getContext("2d");
     },
