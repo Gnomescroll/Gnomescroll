@@ -303,6 +303,7 @@ class TcpClient:
 
         self.fileno = connection.fileno()
         self.TcpPacketDecoder = TcpPacketDecoder()
+        self.sendMessage = SendMessage(self)
 
         self.player_id = 0
         self.client_id = 0
@@ -410,36 +411,3 @@ if __name__ == "__main__":
 
     main = Main()
     main.run()
-
-
-
-#M = [
-#pm(0,"test!"),
-#pm(1,json.dumps(['test1','test2','test3'])),
-#create_agent_message(0,1,5,5,5,0,0)
-#]
-
-#connectionPool = connectionPool()
-#test = ServerListener(connectionPool)
-#while True:
-    #test.accept()
-    #time.sleep(1)
-
-#s = ServerInstance()
-#s.run()
-
-while False:
-    for data in M:
-        (prefix) = struct.pack('I', len(data))
-        message = prefix + data
-        print "sending data: " + str(data)
-
-        s.send(message)  # echo
-
-    time.sleep(15)
-
-
-#while 1:
-#    data = conn.recv(BUFFER_SIZE)
-#    if not data: break
-#    print "received data:", data
