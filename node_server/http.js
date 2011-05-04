@@ -88,10 +88,24 @@ var http_port = 8080,
                 return fs.readFileSync('../html_client/index.html', 'utf8');
             },
 
+            chat : function (request) {
+                return fs.readFileSync('../html_client/chat.html', 'utf8');
+            },
+
+            chat_api : function (request, response) {
+                var json = URL.Query(request.message.content).json,
+                    vars;
+                if (!json) {
+                  return 'chat api - no json received';
+                }
+                tell_redis(json);
+                return 'api received: ' + json;
+            },
+
             api : function (request, response) {
                 response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8055');
                 var json = URL.Query(request.message.content).json,
-                  vars;
+                    vars;
                 if (!json) {
                   return 'api - no json received';
                 }
@@ -140,6 +154,8 @@ var http_port = 8080,
             ''       : views.game,
             '/'      : views.game,
             '/api'   : views.api,
+            //'/chat'  : views.chat,
+            //'/chat_api': views.chat_api,
 
             media    : {
                 '/static': views.static_media,
