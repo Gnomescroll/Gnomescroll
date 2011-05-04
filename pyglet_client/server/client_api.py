@@ -7,15 +7,18 @@ import simplejson as json
 
 from collections import namedtuple
 
-msg_types = [
-(1, 'json'),
-(2, 'create_agent'),
-(3, 'agent_position_update'),
-]
+import simplejson as json
 
-#301 admin_create_agent //should be a json command!
-#200 agent control state
-#600 admin json command
+class SendMessage:
+
+    def __init__(self, client):
+        self.client = client
+
+    def json(self, dict):
+        self.client.send(self.add_prefix(1, json.dumps(dict)))
+
+    def add_prefix(self, id, msg):
+        return struct.pack('H I', id, 2+len(msg)) + msg
 
 class ClientDatagramEncoder:
     def __init__(self, connection):
@@ -124,45 +127,46 @@ class PacketDecoder:
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
-class Connection:
+class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
     udp_port = 5000
 
     def __init__(self):
         self.tcp = None
-        self.udp = None
         self.connected = False
-        self.encoder = ClientDatagramEncoder(self)
+        self.out = SendMessage(self)
+        #self.encoder = ClientDatagramEncoder(self)
         self.decoder = PacketDecoder(self)
         self.connect()
 
     def connect(self):
-        self.connect_tcp()
-        #self.connect_udp()
-
-    def connect_tcp(self):
         TCP_IP = self.server
         TCP_PORT = self.tcp_port
         try:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.connect((TCP_IP, TCP_PORT))
-            self.tcp.setblocking(0) #test
+            #self.tcp.setblocking(0) #should be blocking?
             print "Connection: tcp connected"
             self.connected = True
         except socket.error, (value,message):
             print "Connection failed: socket error " + str(value) + ", " + message
             self.connected = False
 
-    def disconnect_tcp(self):
+    def disconnect(self):
         print "Connection: tcp disonnected by program"
         self.tcp.close()
 
-    def send_tcp(self, MESSAGE):
-        #self.tcp.send(MESSAGE)
-        self.tcp.sendall(MESSAGE)
+    def send(self, MESSAGE):
+        if self.connected == True:
+            try:
+                self.tcp.sendall(MESSAGE)
+            except socket.error, (value,message):
+                print "Connection failed: socket error " + str(value) + ", " + message
+        else:
+            print "TcpConnection.send: Socket is not connected!"
 
-    def get_tcp(self):
+    def recv(self):
         BUFFER_SIZE = 512
         try:
             data = self.tcp.recv(BUFFER_SIZE)
@@ -172,15 +176,14 @@ class Connection:
             print "get_tcp: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
-    def connect_udp(self):
-        pass
-
-
+import time
 if __name__ == "__main__":
     print "Running client as program"
-    x= Connection()
+    x= TcpConnection()
     #x.connect()
-
+    time.sleep(3)
+    x.out.json({'message' : 'test' })
+    x.disconnect()
 #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #s.connect((TCP_IP, TCP_PORT))
 #s.send(MESSAGE)

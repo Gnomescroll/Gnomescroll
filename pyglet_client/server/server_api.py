@@ -47,34 +47,35 @@ class DatagramDecoder:
             print "Generatic JSON message"
             dict = json.loads(message[2:])
             self.messageHandler.process_json(dict)
-        if msg_type == 600:
-            print "json admin message"
-            msg = json.loads(message[2:])
-            print str(msg)
-        if msg_type == 2: #
-            #CreateAgent
-            (agent_id, player_id, x, y, z, x_angle, y_angle) = struct.unpack('IIfffhh', datagram)
-            print str((agent_id, player_id, x, y, z, x_angle, y_angle))
-            #n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
-            #print str(n)
-        if msg_type == 3:
-            #agentPositionUpdate
-            (agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle) = struct.unpack('II fff fff fff hh', datagram)
-            print str(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
 
-        if msg_type == 99:
-            #latency estimation
-            (time, tick) = struct.unpack('I f', datagram)
-            print str((time, tick))
-            #immediately send message 5 back
-        if msg_type == 100:
-            (time, tick) = struct.unpack('I f', datagram)
-            #return packet for latency testing
-            print str((time, tick))
+        #if msg_type == 600:
+            #print "json admin message"
+            #msg = json.loads(message[2:])
+            #print str(msg)
+        #if msg_type == 2: #
+            ##CreateAgent
+            #(agent_id, player_id, x, y, z, x_angle, y_angle) = struct.unpack('IIfffhh', datagram)
+            #print str((agent_id, player_id, x, y, z, x_angle, y_angle))
+            ##n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
+            ##print str(n)
+        #if msg_type == 3:
+            ##agentPositionUpdate
+            #(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle) = struct.unpack('II fff fff fff hh', datagram)
+            #print str(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
+
+        #if msg_type == 99:
+            ##latency estimation
+            #(time, tick) = struct.unpack('I f', datagram)
+            #print str((time, tick))
+            ##immediately send message 5 back
+        #if msg_type == 100:
+            #(time, tick) = struct.unpack('I f', datagram)
+            ##return packet for latency testing
+            #print str((time, tick))
 
 class DatagramEncoder:
 
-    messageHandler = None
+    #messageHandler = None
 
     def __init__(self, client):
         assert self.messageHandler != None
@@ -231,6 +232,7 @@ class TcpClient:
 
         self.player_id = 0
         self.client_id = 0
+        self.ec = 0
 
     def send(self, MESSAGE):
         try:
@@ -249,12 +251,13 @@ class TcpClient:
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
 
-        print "get_tcp: data received, %i bytes" % len(data)
-        if len(data) == 0:
+        if len(data) == 0: #if we read three times and get no data, close socket
+            print "tcp data: empty read"
             self.ec += 1
             if self.ec > 3:
                 self.pool.tearDownClient(self.fileno)
         else:
+            print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
             self.TcpPacketDecoder.add_to_buffer(data)
 
