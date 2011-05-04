@@ -10,8 +10,6 @@ var route, process, validate;
 process = {};
 
 process.register = function(msg) {
-    console.log('register');
-    console.log(msg);
     if (msg.session_id === 'taken') {
         console.log('client_id in use');
         globals.create_client_id();
@@ -26,51 +24,18 @@ process.info = {};
 
 //todo
 //current stores rendering information for tile, but discards meta information
-//retain/store tile_dict somewhere    
-process.info.tileset = function(msg) {
-    var param,
-        data,
-        x,
-        tile,
-        tr = msg.tile_rendering,
-        tp = msg.tile_properties;
-
+//retain/store tile_dict somewhere
+process.info.tileset = function (msg) {
+    var tr = msg.tile_rendering,
+        param,
+        x;
     for (x in tr) {
         if (!tr.hasOwnProperty(x)) continue;
         param = tr[x];
-        
-        data = {
-            tile_name     : param.tile_name,
-            tile_id       : param.tile_id,   
-            tilemap_id    : param.tilemap.tilemap_id,
-            draw_style    : param.tilemap.draw_style,
-            background_rgb: param.tilemap.background_rgb,
-            symbol        : param.tilemap.symbol,
-            symbol_rgb    : param.tilemap.symbol_rgb,
-        };
-            
-        tileset_state.add_tile(data);
+        $.extend(param, param.tilemap);
     }
-    tileset_state.loaded = true;
     
-    for (x in tp) {
-        if (!tp.hasOwnProperty(x)) continue;
-        tile = tp[x];
-        tile_properties.add(tile);
-    }
-
     dispatcher.trigger('info_tileset', msg);
-    
-    //store this; contains tile rendering information 
-    //msg.tile_rendering_dict
-
-    //store this; contains tile meta information
-    //msg.tile_dict
-    
-    // take tileset msg and process/copy to a native format
-    // suitable for drawing.
-    // ideally it is a map from object_type identifiers to drawing properties
-    // these drawing properties should be easily checked by the tilecache
 };
 
 process.info.terrain_map = function (msg) {
@@ -164,7 +129,8 @@ process.delta.agent_state_change = function (msg) {
 process.delta.agent_create = function (msg) {
     //if (!validate.agent_create(msg)) return;    
     process._convert_position(msg);
-    msg.type = ['agent'];
+    //msg.type = ['agent'];
+    delete msg.msg;
     dispatcher.trigger('agent_create', msg);
 };
 
@@ -182,12 +148,14 @@ process.delta.object_position_change = function (msg) {
 process.delta.object_state_change = function (msg) {
     //if (!validate.object_state_change(msg)) return;
     process._convert_position(msg);
+    delete msg.msg;
     dispatcher.trigger('object_state_change', msg);
 };
 
 process.delta.object_create = function (msg) {
     //if (!validate.object_create(msg)) return;
     process._convert_position(msg);
+    delete msg.msg;
     dispatcher.trigger('object_create', msg);
 };
 

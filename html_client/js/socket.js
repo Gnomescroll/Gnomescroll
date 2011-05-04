@@ -1,6 +1,6 @@
 var socket = {
     
-    debug       : true,
+    debug       : false,
     node_server : '127.0.0.1',
     node_port   : 8081,
     socket      : null,
@@ -70,7 +70,6 @@ var socket = {
             this.no_reconnect = true;
             this.socket.disconnect();
         }
-        //wait(3500);
         delay = delay || 3500;
         setTimeout('socket.socket.connect();', delay);
     },
@@ -79,6 +78,8 @@ var socket = {
         if (this.socket) {
             this.socket.disconnect();
         }
+        this.socket = null;
+        this.first_connect = true;
     },
 
     register : function (update) {

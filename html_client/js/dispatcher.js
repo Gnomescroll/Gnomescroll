@@ -26,8 +26,6 @@ var dispatcher = {
             count: count,
             context: context
         });
-        console.log('added listener');
-        console.log(listeners);
         return true;
     },
 
@@ -53,7 +51,6 @@ var dispatcher = {
     // additional arguments will be passed on to the callbacks
     // the event_name is always passed as the first argument to a callback
     trigger : function (event_name) {
-        console.log(event_name + ' triggered');
         var callbacks = this.listeners.getDefault(event_name, []),
             len = callbacks.length,
             i,
@@ -73,7 +70,6 @@ var dispatcher = {
             context = callback.context || this;
             callback = callback.callback;
             callback.apply(context, args);
-            console.log('triggered event');
         }
     },
 };

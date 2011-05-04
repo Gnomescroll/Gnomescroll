@@ -34,9 +34,11 @@ var options = {
     },
 
     init: function () {
-        $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
-        this.init_controls();
-        this.init_event_bindings();
+        if ($(this.panel_selector).children().length === 0) {
+            $('canvas#board').attr({'class': 'tip click', 'title': 'Game board'});
+            this.init_controls();
+            this.init_event_bindings();
+        }
     },
 
     init_event_bindings: function () {

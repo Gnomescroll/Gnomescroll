@@ -10,9 +10,6 @@ var tile_properties = {
     },
     
     get : function(id) {
-        if(!this.tiles.hasOwnProperty(id)){
-            console.log("Tile id is not stored");
-        }
         return this.tiles[id];
     },
 
@@ -20,6 +17,16 @@ var tile_properties = {
         this.tiles = {};
     },
 };
+
+dispatcher.listen('info_tileset', function (name, msg) {
+    var tp = msg.tile_properties,
+        x;
+    for (x in tp) {
+        if (!tp.hasOwnProperty(x)) continue;
+        tile = tp[x];
+        tile_properties.add(tile);
+    }
+});
 
 var tileset_state = {
     loaded : false,
@@ -65,11 +72,22 @@ var tileset_state = {
 
     reset : function () {
         this.loaded = false;
-        this.tile_rendering = {};
+        this.tile_rendering = new Dict();
         this.tile_name_to_id = {};
         this.tile_id_to_name = {};
     },
 };
+
+dispatcher.listen('info_tileset', function (name, msg) {
+    var tr = msg.tile_rendering,
+        x;
+    for (x in tr) {
+        if (!tr.hasOwnProperty(x)) continue;
+        tileset_state.add_tile(tr[x]);
+    }
+    tileset_state.loaded = true;
+    dispatcher.trigger('tileset_state_loaded');
+});
 
 // constructor for a new tileset <img>
 function Tileset(src, tileset_id, tpw, tph, tw, th) {
@@ -226,12 +244,9 @@ var drawingCache = {
     //adds a tileset to cache
     insertTileset : function (src, tileset_id, tpw, tph, tw, th) {
         if(tileset_id in this.tilesets) {
-            console.log("Error: Attempt to insert same tileset twice");
             return false;
         }
-        
         var tileset = new Tileset(src, tileset_id, tpw, tph, tw, th);
-        
         this.tilesets[tileset_id] = tileset;
         this.slookup[tileset_id] = [];
     },

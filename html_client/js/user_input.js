@@ -113,7 +113,6 @@ input.process = function (key) {
             break;
             
         case 'c':                   // set map solid
-            console.log('set map');
             //admin.set_map(selected_agent.pos(), 1);
             admin.set_map(cursor.pos(), 1);
             break;

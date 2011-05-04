@@ -34,6 +34,8 @@ var state = {
         this.ao_map = {};
         this.z_lvls = [];
         this.started = false;
+        this.fully_loaded = false;
+        this.requests_waiting = {};
     },
     
     // requests state data from server
@@ -80,8 +82,10 @@ var state = {
     },
 
     load_game_state : function (z) {
+        this.fully_loaded = false;
         this._initGameObjectTypeMap();
         this.load_map(z);
+        this.requests_waiting[z] = true;
         return this.load_game_objects();
     },
 
@@ -104,10 +108,11 @@ var state = {
     },
 
     load_game_objects : function () {
+        this.fully_loaded = false;
         this.requests_waiting.agents = true;
         this.requests_waiting.objects = true;
-        return ( info.agents() &&    // request agents
-                 info.objects());    //         objects
+        return (info.agents() &&    // request agents
+                info.objects());    //         objects
     },
 
     check_loaded : function () { // check if there are outstanding requests
@@ -119,8 +124,9 @@ var state = {
                 this.fully_loaded = false;
             }
         }
-        if (game.waiting_for_state && this.fully_loaded) {
-            game.update3();
+        if (this.fully_loaded) {
+            dispatcher.trigger('state_loaded');
+            this.fully_loaded = false;
         }
     },
 
@@ -140,7 +146,6 @@ var state = {
             arr.push(row);
             row = [];
          }
-         
          return arr;   
     },
     
@@ -150,14 +155,14 @@ var state = {
         var x, y, z,
             x_, z_;
 
-        if (typeof pos === 'object') {
-            x = pos.x;
-            y = pos.y;
-            z = pos.z;
-        } else {
+        if ($.isArray(pos)) {
             x = pos[0]
             y = pos[1];
             z = pos[2];
+        } else {
+            x = pos.x;
+            y = pos.y;
+            z = pos.z;
         }
       
         z_ = this.levels[z];
@@ -178,7 +183,7 @@ var state = {
             j,
             data_map_length;
             
-        for (j=0; j < data.x_size; j += 1) {
+        for (j=0; j < data.x_size; j++) {
             col = [];
             data_map_length = data.map.length;
             for (i=j; i < data_map_length; i += data.y_size) {
@@ -225,19 +230,17 @@ var state = {
         if (typeof obj !== 'object') {
             this._initGameObjectTypeMap();
             obj = this.gameObjectTypeMap[type][id];
-            if (obj === undefined) return false;
+            if (obj === undefined) {
+                return false;
+            }
+        } else {
+            return obj;
         }
-        else return obj;
     },
     
     // add game_object to lists
-    addGameObject: function(game_object) {
-        var type,
-            id;
-            
-        type = game_object.base_type;
-        id = game_object.id;
-        this.gameObjectTypeMap[type][id] = game_object;
+    addGameObject: function(gobj) {
+        this.gameObjectTypeMap[gobj.base_type][gobj.id] = gobj;
         return true;
     },
     
@@ -433,14 +436,14 @@ state.event = new function StateEvent () {
     var _generic_object_create = function (obj_type) {
         return function (name, msg) {
             var obj;
-            if (state.contains(GameObject.pos.apply(msg))) {
+            if (state.contains(GameObject.pos.apply(msg)) !== false) {
                 obj = obj_type_map[obj_type]._class.create(msg);
                 obj.toState();
             }
         };
     };
 
-    this.agent_create = _generic_object_create('agent');
+    this.agent_create  = _generic_object_create('agent');
     this.object_create = _generic_object_create('obj');
 
     var _generic_object_delete = function (obj_type) {

@@ -2,66 +2,33 @@ var game = {
 
     started : false,
 
-    init : function (callback) {
+    init : function () {
         drawingCache.init();
         socket.init();
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_init');
     },
     
-    init2 : function () {
-        this.retry.interval = setInterval('game.retry();', 500); // wait half a sec (does this work?)
-        this.started = true;
-    },
-
-    retry : (function () {
-        var success = false,
-            wait_func = function () {
-                console.log('wait_func');
-                if (!success) {
-                    console.log('state init call');
-                    success = state.init();
-                } else {
-                    console.log('input init call');
-                    input.init();
-                    clearInterval(arguments.callee.interval);
-                }
-            };
-        return wait_func;
-    }()),
-    
-    start : function (callback) {
-        //input.run();
-        if (typeof callback === 'function') {
-            callback();
-        }
-    },
-
-    update : function (callback) {
+    update : function () {
         drawingCache.loadTilesets();
         tileset_state.init();
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_update');
     },
     
     update2 : function() {
         state.init();
+        dispatcher.trigger('game_update2');
     },
 
-    waiting_for_state : true,
-
     update3 : function () {
-        this.waiting_for_state = false;
         input.init();
         board.init();
         board.start();
         map_editor.init();
         options.init();
+        dispatcher.trigger('game_update3');
     },
 
-    reset : function (callback) { // resets everything
+    reset : function () { // resets everything
         // reset:
         //  socket
         //  board
@@ -72,8 +39,7 @@ var game = {
         // essentially, wipe everything and run init/start
         this.started = false;
         controls.reset();
-        //socket.disconnect();
-        delete socket.socket;
+        socket.reset();
         tile_properties.reset();
         tileset_state.reset();
         drawingCache.reset_full();
@@ -81,24 +47,23 @@ var game = {
         state.reset();
         map_editor.reset();
         options.reset();
-        
-        controls.trigger_load();
-
-        if (typeof callback === 'function') {
-            callback();
-        }
+        dispatcher.trigger('game_reset');
+        controls.trigger_load(); // begin chain of init events
     },
     
 };
 
-dispatcher.listen('register', function (event_name, msg) {
-    console.log('game listener triggered');
-    console.log(msg);
+dispatcher.listen('register', function (name, msg) {
+    console.log('register triggered; game.update() being called');
     if (parseInt(msg.update, 10)) { // request updates
-        this.update();
+        game.update();
     }
-}, 1, game);
+});
 
-dispatcher.listen('info_tileset', function (event_name, msg) {
-	this.update2();
-}, 1, game);
+dispatcher.listen('tileset_state_loaded', function () {
+    game.update2();
+});
+
+dispatcher.listen('state_loaded', function () {
+    game.update3();
+});
