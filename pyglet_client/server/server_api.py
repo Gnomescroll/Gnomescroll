@@ -27,8 +27,8 @@ class MessageHandler:
     def __init__(self, main):
         self.main = main
 
-    def process_json(dict):
-        print "MessageHandler.process_json: " + str(dict)
+    def process_json(self, msg):
+        print "MessageHandler.process_json: " + str(msg)
 
 class DatagramDecoder:
     messageHandler = None
@@ -40,14 +40,21 @@ class DatagramDecoder:
         print "decoding datagram"
         (prefix, datagram) = (message[0:2],message[2:])
         (msg_type,) = struct.unpack('H', prefix)
+        #print "t= " + str(len(prefix))
+        #print "t2= " + str(len(datagram))
 
         if msg_type == 0:
             print "test message received"
         if msg_type == 1:
             print "Generatic JSON message"
-            dict = json.loads(message[2:])
-            self.messageHandler.process_json(dict)
+            #print str(datagram)
+            try:
+                msg = json.loads(datagram)
+            except:
+                print "JSON DECODING ERROR: " +str(msg)
+                return
 
+            self.messageHandler.process_json(msg)
         #if msg_type == 600:
             #print "json admin message"
             #msg = json.loads(message[2:])
@@ -127,10 +134,11 @@ class TcpPacketDecoder:
         elif buff_len < self.message_length:
             print "decode: need more packets of data to decode message"
             return
-        elif self.message_length == 0:
+        elif self.message_length == 0 and buff_len > 4:
             print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix()
             print "prefix length: " + str(self.message_length)
+            self.attempt_decode()
 
         if buff_len >= self.message_length:
             print "process message in buffer"
@@ -241,7 +249,7 @@ class TcpClient:
             print "TcpClient.send error: " + str(value) + ", " + message
 
     def close(self):
-        print "TcpClient.close : connection cloesed by program"
+        print "TcpClient.close : client closed connection"
         self.connection.close()
 
     def receive(self):
@@ -252,7 +260,7 @@ class TcpClient:
             print "TcpClient.get: socket error %i, %s" % (value, message)
 
         if len(data) == 0: #if we read three times and get no data, close socket
-            print "tcp data: empty read"
+            #print "tcp data: empty read"
             self.ec += 1
             if self.ec > 3:
                 self.pool.tearDownClient(self.fileno)
