@@ -19,14 +19,21 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
         msg  = json;
         json = JSON.stringify(msg);
     }
-    if (msg.world_id === undefined) return;
-    if (msg.content === undefined || msg.content === '') return;
-    if (msg.name === undefined || msg.name === '') return;
+    if (!validate_chat_message(msg)) {
+        return;
+    }
     
     channel = channel || 'chat_' + msg.world_id;
     console.log('tell redis');
     console.log(json);
     r_api.publish(channel, json);
+}
+
+function validate_chat_message (msg) {
+    if (msg.world_id === undefined) return false;
+    if (msg.content === undefined || msg.content === '') return false;
+    if (msg.name === undefined || msg.name === '') return false;
+    return true;
 }
 
 var http_port = 8082,
