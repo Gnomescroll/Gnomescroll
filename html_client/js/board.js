@@ -113,7 +113,7 @@ board.manager = {
     },
 
     reset : function () {
-        this.agents = [];
+        this.agents  = [];
         this.objects = [];
     },
     

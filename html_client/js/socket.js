@@ -6,6 +6,11 @@ var socket = {
     socket       : null,
     reconnect    : true,
     first_connect: true,
+
+    configure : function (data) {
+        $.extend(this, data);
+        return this;
+    },
     
     init : function (update) {
         this.socket = this.socket || new io.Socket(this.node_server, {
