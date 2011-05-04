@@ -131,6 +131,8 @@ class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
     udp_port = 5000
+    #settings
+    noDelay = True
 
     def __init__(self):
         self.tcp = None
@@ -146,7 +148,10 @@ class TcpConnection:
         try:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.connect((TCP_IP, TCP_PORT))
-            #self.tcp.setblocking(0) #should be blocking?
+
+            if self.noDelay == True:
+                self.tcp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            self.tcp.setblocking(0) #should be blocking?
             print "Connection: tcp connected"
             self.connected = True
         except socket.error, (value,message):
@@ -182,8 +187,8 @@ if __name__ == "__main__":
     print "Running client as program"
     x= TcpConnection()
     #x.connect()
-    time.sleep(3)
     x.out.json({'message' : 'test' })
+    time.sleep(3)
     x.disconnect()
 #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #s.connect((TCP_IP, TCP_PORT))
