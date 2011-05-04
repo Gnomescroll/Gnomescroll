@@ -1,9 +1,6 @@
 import socket
-
 import struct
 import binascii
-
-import simplejson as json
 
 from collections import namedtuple
 
@@ -20,10 +17,21 @@ class SendMessage:
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg
 
+    ### agent messages
+
+    def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
+        d = {
+            'cmd' : 'agent_control_state',
+            'id' : id,
+            'tick' : 0,
+            'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
+           }
+        self.json(d)
+
 class ClientDatagramEncoder:
+
     def __init__(self, connection):
         self.connection = connection
-        pass
 
     def _pm(id, msg):
         return struct.pack('H',id) +msg
@@ -131,6 +139,8 @@ class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
     udp_port = 5000
+    #settings
+    noDelay = True
 
     def __init__(self):
         self.tcp = None
@@ -146,7 +156,10 @@ class TcpConnection:
         try:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.connect((TCP_IP, TCP_PORT))
-            #self.tcp.setblocking(0) #should be blocking?
+
+            if self.noDelay == True:
+                self.tcp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            self.tcp.setblocking(0) #should be blocking?
             print "Connection: tcp connected"
             self.connected = True
         except socket.error, (value,message):
@@ -182,8 +195,8 @@ if __name__ == "__main__":
     print "Running client as program"
     x= TcpConnection()
     #x.connect()
-    time.sleep(3)
     x.out.json({'message' : 'test' })
+    time.sleep(3)
     x.disconnect()
 #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #s.connect((TCP_IP, TCP_PORT))
