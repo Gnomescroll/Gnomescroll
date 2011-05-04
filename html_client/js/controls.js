@@ -17,7 +17,6 @@ var controls = new function Controls () {
     this.init = function () { // bind callbacks to button events
         this._init_defaults();
         $('#init').click(this._init_event);
-        //$('#start').click(this._start_event);
         $('#update').click(this._update_event);
         $('#reset').click(this._reset_event);
         $('#test').click(this._test_event);
@@ -30,7 +29,7 @@ var controls = new function Controls () {
         }
     };
 
-    this.trigger_load = function () { // starts chain of init/start
+    this.trigger_init = function () { // starts chain of init/start
         this._init_event();
     };
 
@@ -40,13 +39,12 @@ var controls = new function Controls () {
 
     this._init_defaults = function () { // initializes default classes (only once)
         if (!arguments.callee.loaded) {
-            var d = {
+            var name,
+                d = {
                     init  : $('#init'),
-                    //start : $('#start'),
                     update: $('#update'),
                     reset : $('#reset')
-                },
-                name;
+                };
             
             for (name in d) {
                 if (!d.hasOwnProperty(name)) continue;
@@ -89,43 +87,31 @@ var controls = new function Controls () {
     }
 
     this._init_event = _event_wrapper('#init', function () {
-        dispatcher.listen('game_init', function () {
+        dispatcher.listen('game_init_complete', function () {
             controls._initialized();
         }, 1);
-        //if (!_get_selector.call(this)) {
-            //dispatcher.listen('state_loaded', function () {
-                //controls._start_event();
-            //}, 1);
-        //}
-        game.init();
+        dispatcher.trigger('game_init');
     });
-
-    //this._start_event = _event_wrapper('#start', function () {
-        //dispatcher.listen('game_start', function () {
-            //controls._started();
-        //}, 1);
-        //game.start();
-    //});
 
     this._update_event = _event_wrapper('#update',  function () {  // not tested
         dispatcher.listen('state_loaded', function () {
             controls._updated();
         }, 1);
-        state.init();
+        dispatcher.trigger('game_update');
     });
 
     this._reset_event = _event_wrapper('#reset', function () {
-        dispatcher.listen('game_reset', function () {
+        dispatcher.listen('game_reset_complete', function () {
             controls._reset_complete();
         }, 1);
-        game.reset();
+        dispatcher.trigger('game_reset');
     });
 
     this._test_event = _event_wrapper('#test', function () {
-        //dispatcher.listen('test', function () {
+        //dispatcher.listen('tests_complete', function () {
             // not implemented
         //}, 1);
-        //tests.run();
+        //dispatcher.trigger('run_tests');
     });
 
     /* DOM event callback callbacks
@@ -175,10 +161,7 @@ var controls = new function Controls () {
         };
     }
 
-    //this._initialized = complete_ready('#init', '#start');
     this._initialized = complete_ready('#init', ['#update', '#reset']);
-
-    //this._started = complete_ready('#start', ['#update', '#reset']);
 
     this._updated = processing2ready('#update');
 

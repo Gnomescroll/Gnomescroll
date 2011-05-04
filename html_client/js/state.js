@@ -2,6 +2,8 @@
 // and also mapping the tile_values to positions in the tileset
 
 var state = {
+
+    MAX_Z_LEVELS: 64, // fix this, should be loaded from server msg or something
     
     levels:     {}, // tile map state, 2x2 arrays indexed by z-level (levels[z][x][y] to access a specific tile by coordinate)
     agents:     {},
@@ -19,6 +21,7 @@ var state = {
     
     map_width: 100,
     map_height: 100,
+    max_z_level: 63,
     
     started : false,
 

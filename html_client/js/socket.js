@@ -1,10 +1,10 @@
 var socket = {
     
-    debug       : false,
-    node_server : '127.0.0.1',
-    node_port   : 8081,
-    socket      : null,
-    no_reconnect: false,
+    debug        : false,
+    node_server  : '127.0.0.1',
+    node_port    : 8081,
+    socket       : null,
+    reconnect    : true,
     first_connect: true,
     
     init : function (update) {
@@ -20,10 +20,10 @@ var socket = {
                 return function () {
                     globals.session_id = null;
                     if (that.debug) console.log(event_name);
-                    if (! that.no_reconnect) {
+                    if (that.reconnect) {
                         that.socket.connect();
                     }
-                    that.no_reconnect = false;
+                    that.reconnect = true;
                 };
             };
         
@@ -67,14 +67,15 @@ var socket = {
     reset_delayed : function (delay) {
         console.log('resetting socket');
         if (this.socket) {
-            this.no_reconnect = true;
+            this.reconnect = false;
             this.socket.disconnect();
         }
         delay = delay || 3500;
         setTimeout('socket.socket.connect();', delay);
     },
 
-    reset : function () {
+    reset : function (reconnect) {
+        this.reconnect = reconnect || this.reconnect;
         if (this.socket) {
             this.socket.disconnect();
         }
@@ -85,18 +86,19 @@ var socket = {
     register : function (update) {
         // send client id to server
         console.log('registering');
-        this.socket.send(JSON.stringify({
-                world_id : globals.world_id,
-               client_id : globals.client_id,
-                     cmd : 'register',
-                     msg : (globals.new_client) ? 'new' : '',
-                  update : (update) ? '1' : '',
-        }));
+        var msg = JSON.stringify({
+            world_id : globals.world_id,
+           client_id : globals.client_id,
+                 cmd : 'register',
+                 msg : (globals.new_client) ? 'new' : '',
+              update : (update) ? 1 : 0,
+        })
+        this.socket.send(msg);
     },
 
-    disconnect : function (no_reconnect) {
+    disconnect : function (reconnect) {
         if (this.socket) {
-            this.no_reconnect = no_reconnect || true;
+            this.reconnect = reconnect || false;
             this.socket.disconnect();
         }
     },

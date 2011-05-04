@@ -50,9 +50,10 @@ var io = require('socket.io'),
             this.client_id = msg.client_id;
             msg.session_id = this.sessionId;
             if (msg.update) {
-                msg.requested_update = '1';
+                console.log('requested update');
+                msg.requested_update = 1;
             }
-            msg.update = '1'; // 0 or 1, tells client if it should request updates or not (i.e. if there is no queue of messages waiting for it)
+            msg.update = 1; // 0 or 1, tells client if it should request updates or not (i.e. if there is no queue of messages waiting for it)
             client_id_to_session[msg.client_id] = { session_id: msg.session_id,
                                                     timestamp : Date.now() };
             session_id_to_client[msg.session_id] = msg.client_id;
@@ -61,7 +62,7 @@ var io = require('socket.io'),
             if (old_client) {
                 if (old_client.redis_client !== undefined) {
                     this.redis_client = old_client.redis_client;
-                    msg.update = msg.requested_update || '0';
+                    msg.update = msg.requested_update || 0;
                 }
                 this.queue = (msg.requested_update) ? [] : old_client.queue || [];
                 // remove from disconnected clients

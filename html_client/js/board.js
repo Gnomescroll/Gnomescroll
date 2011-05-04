@@ -9,53 +9,88 @@ var board = {
     tile_width  : 16,
     tile_height : 16,
 
-    init_board_interval: 0,
-    
-    init : function(callback) {
-        if (tileset_state.loaded) {
-            this.cursor_manager.init();
-            clearInterval(this.init_board_interval);
-            if (typeof callback === 'function') {
-                callback();
+    _init_interval   : 0,
+    _retry_delay     : 100,
+    _retry_attempts  : 30,  // 30*100 = 3000ms
+
+    _init : (function () {
+        var count = 0;
+        return function () {
+            var err;
+            if (tileset_state.loaded) {
+                clearInterval(this._init_interval);
+                this._init_interval = 0;
+                this.start();
+                return true;
+            } else if (++count === this._retry_attempts) { // give up after n tries
+                count = 0;
+                err  = 'tileset_state never loaded; board failed to init ';
+                err += this._retry_attempts;
+                err += ' (' + (this._retry_delay * this._retry_attempts) + 'ms total)';
+                console.log('board init fail');
+                dispatcher.trigger('board_init_fail', err);
             }
+            return false;
+        };
+    }()),
+    
+    init : function() {
+        if (!this._init()) {
+            this._init_interval = setInterval('board._init();', this._retry_delay);
         }
     },
     
     start : function() {
         this.manager.start();
+        dispatcher.trigger('board_start');
     },
 
     reset : function () {
         this.canvas.reset();
         this.cursor_manager.reset();
         this.manager.reset();
-        //this.init();
+        clearInterval(this._init_interval);
+        this._init_interval = 0;
     },
     
     resize : function resize() {
         //resize board
+    },
+
+    _bounded_adjust : function (prop, delta, upper, lower) {
+        var tmp;
+        lower = lower || 0;
+        if (upper < lower) {
+            tmp = upper;
+            upper = lower;
+            lower = upper;
+        }
+        this[prop] += delta;
+        this[prop] = Math.max(this[prop], lower);
+        this[prop] = Math.min(this[prop], upper);
     },
     
     scroll : function(dx, dy) {
         var old_x = this.x_offset,
             old_y = this.y_offset;
         
-        this.x_offset += dx;
-        this.x_offset = Math.max(this.x_offset, 0);
-        this.x_offset = Math.min(this.x_offset, state.map_width);
-        this.y_offset += dy;
-        this.y_offset = Math.max(this.y_offset, 0);
-        this.y_offset = Math.min(this.y_offset, state.map_height);
-        
+        this._bounded_adjust('x_offset', dx, state.map_width);
+        this._bounded_adjust('y_offset', dy, state.map_height);
         if (old_x != this.x_offset || old_y != this.y_offset) { // check that the view actually scrolled
-            this.reset();
-            this.start();
+            this.manager.redraw();
         }
     },
 
-    scroll_z : function(zLevel) {
-        this.z_level = zLevel;
-        this.reset();
+    scroll_z : function(z, delta_mode) {
+        var old_z = this.z_level;
+        if (delta_mode) {
+            this._bounded_adjust('z_level', z, state.max_z_level);
+        } else {
+            this.z_level = z;
+        }
+        if (old_z != this.z_level) {
+            this.manager.redraw();
+        }
     },
 };
 
@@ -71,6 +106,10 @@ board.manager = {
 
     resize : function () {
         //resizing
+    },
+
+    redraw : function () {
+        this.populate_index(true);
     },
 
     reset : function () {
@@ -152,7 +191,7 @@ board.manager = {
 
     _populate_tiles : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            board.cursor_manager._reset_tile_cursors();
         }
         var x,
             y,
@@ -177,9 +216,9 @@ board.manager = {
 
     _populate_agents : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            board.cursor_manager._reset_agent_cursors();
         }
-        this.agents  = []; //clear index
+        this.agents = []; //clear index
         
         var id,
             agent,
@@ -197,7 +236,7 @@ board.manager = {
 
     _populate_objects : function (reset_index) {
         if (reset_index) {
-            board.cursor_manager.reset_cursor_index();
+            board.cursor_manager._reset_object_cursors();
         }
         this.objects = []; //clear index
         
@@ -217,11 +256,11 @@ board.manager = {
         }
     },
     
-    populate_index : function() {
-        board.cursor_manager.reset_cursor_index();
-        if (!this._populate_tiles()) {
-            return;
+    populate_index : function(reset_index) {
+        if (reset_index) {
+            board.cursor_manager.reset_cursor_index();
         }
+        this._populate_tiles();
         this._populate_agents();
         this._populate_objects();
     },
@@ -292,7 +331,6 @@ board.cursor_manager = {
 
     reset : function () {
         this.index = [];
-        this.reset_cursor_index();
         this.atc = {};
         this.otc = {};
     },
@@ -302,7 +340,8 @@ board.cursor_manager = {
             temp = this.index[i]; // cursor obj
             
         temp.tile_id = tile_id;   // set cursor obj properties
-        temp.drawing_cursor = [0, -1, -1];
+        //temp.drawing_cursor = [0, -1, -1];
+        temp.drawing_cursor[0] = 0;
         this._draw_board_tile(i);
     },
     
@@ -334,17 +373,23 @@ board.cursor_manager = {
             prop,
             default_val,
             max_x = board.tile_width,
-            max_y = board.tile_height;
+            max_y = board.tile_height,
+            default_type;
         for (x=0; x < max_x; x++) {
             for (y=0; y < max_y; y++) {
                 i = x + y*max_x;
                 cursor = this.index[i];
                 if (cursor !== undefined) {
-                    for (j=0; j < props_len; j++) {
+                    for (j=0; j < prop_len; j++) {
                         prop = props[j];
-                        default_val = _default_cursor[prop];
-                        if (prop === 'drawing_cursor') {
-                            cursor[prop][cursor_type_index] = default_val[cursor_type_index];
+                        default_val = this._default_cursor[prop];
+                        if (typeof cursor[prop] === 'object') {
+                            if (prop === 'drawing_cursor') {
+                                cursor[prop][cursor_type_index] = default_val[cursor_type_index];
+                            } else {
+                                default_type = ($.isArray(cursor[prop])) ? [] : {};
+                                cursor[prop][cursor_type_index] = $.extend(true, default_type, default_val);
+                            }
                         } else {
                             cursor[prop] = default_val;
                         }
@@ -377,7 +422,7 @@ board.cursor_manager = {
     },
 
     _load_default_cursor : function (i) {
-        return $.extend({ index: i }, this._default_cursor);
+        return $.extend(true, { index: i }, this._default_cursor);
     },
     
     reset_cursor_index: function() {
@@ -390,7 +435,7 @@ board.cursor_manager = {
         for (x=0; x < max_x; x++) {
             for (y=0; y < max_y; y++) {
                 i = x + y*max_x;
-                this.index[i] = $.extend({
+                this.index[i] = $.extend(true, {
                     bx: x,      //debugging information
                     by: y,
                     position : [x + x_off, y + y_off, z_lvl]
@@ -411,7 +456,6 @@ board.cursor_manager = {
             index = this.index,
             len = index.length,
             x;
-        
         for(x=0; x < len; x++) {
             adc(index[x]);
         }
@@ -516,7 +560,7 @@ board.cursor_manager = {
     _remove_agent_from_cursor : function(cursor, id) {
         var inIndex = $.inArray(id, cursor.agent_list),
             drawing_cursor;
-        if(inIndex == -1) { 
+        if(inIndex === -1) { 
             return;
         } else {
             cursor.agent_list.splice(inIndex, 1);    
@@ -588,17 +632,17 @@ board.cursor_manager = {
         }
         
         x = this.index[x];
-        if (x.drawing_cursor[0] != -1) {
-            //draw tile
-            // x.tile_id, x.bx, x.by
-            drawingCache.drawTile(x.bx, x.by, x.tile_id);
+        if (x.drawing_cursor[2] != -1) {
+            //draw object
+            // x.object_list[x.drawing_cursor[2]], x.bx, x.by
         } else if (x.drawing_cursor[1] != -1) {
             //draw agent
             // x.agent_list[x.drawing_cursor[1]], x.bx, x.by
             drawingCache.drawSprite(x.bx, x.by, 1, 1);
-        } else if (x.drawing_cursor[2] != -1) {
-            //draw object
-            // x.object_list[x.drawing_cursor[2]], x.bx, x.by
+        } else if (x.drawing_cursor[0] != -1) {
+            //draw tile
+            // x.tile_id, x.bx, x.by
+            drawingCache.drawTile(x.bx, x.by, x.tile_id);
         }
     },
     
@@ -766,9 +810,7 @@ board.event = {
 
     info_terrain_map : function (name, msg) { // full terrain map
         if (msg.z_level == board.z_level) {
-            board.reset();
-            board.init();
-            board.start();
+            board.manager._populate_tiles();
         }
     },
 
@@ -780,12 +822,9 @@ board.event = {
     
     agent_position_change : function (name, msg) {
         var agent = state.gameObjectKnown(msg.id, 'agent');
-        if (agent === false) {
-            console.log("process.delta.agent_position_change fail: WTF, should not occur");
-            console.log(agent);
-            return false;
+        if (agent !== false) {
+            board.manager.agent_update(agent);
         }
-        board.manager.agent_update(agent);
     },
     
     object_position_change : function (name, msg) {
@@ -794,14 +833,18 @@ board.event = {
     
     game_object_to_state : function (name, obj) {
         obj = state.gameObjectKnown(obj);
-        if (obj === false) {
-            console.log('process.delta.game_object_to_state fail: WTF, should not occur');
-            console.log(obj);
-            return false;
+        if (obj !== false) {
+            board.manager[obj.base_type + '_update'](obj);
         }
-        board.manager[obj.base_type + '_update'](obj);
+    },
+
+    board_init_fail : function () {
+        clearInterval(board._init_interval);
+        board._init_interval = 0;
     },
 };
+
+dispatcher.listen('board_init_fail', board.event.board_init_fail);
 
 dispatcher.listen('info_terrain_map', board.event.info_terrain_map);
 dispatcher.listen('agent_position_change', board.event.agent_position_change);
