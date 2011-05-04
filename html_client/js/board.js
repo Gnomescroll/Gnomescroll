@@ -109,7 +109,7 @@ board.manager = {
     },
 
     redraw : function () {
-        this.populate_index();
+        this.populate_index(true);
     },
 
     reset : function () {
@@ -215,9 +215,9 @@ board.manager = {
     },
 
     _populate_agents : function (reset_index) {
-        //if (reset_index) {
+        if (reset_index) {
             board.cursor_manager._reset_agent_cursors();
-        //}
+        }
         this.agents = []; //clear index
         
         var id,
@@ -260,9 +260,6 @@ board.manager = {
         if (reset_index) {
             board.cursor_manager.reset_cursor_index();
         }
-        //if (!this._populate_tiles()) {
-            //return;
-        //}
         this._populate_tiles();
         this._populate_agents();
         this._populate_objects();
