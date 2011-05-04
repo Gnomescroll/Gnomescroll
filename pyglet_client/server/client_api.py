@@ -170,6 +170,11 @@ class Connection:
         pass
 
 
+if __name__ == "__main__":
+    print "Running client as program"
+    x= Connection()
+    #x.connect()
+
 #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #s.connect((TCP_IP, TCP_PORT))
 #s.send(MESSAGE)

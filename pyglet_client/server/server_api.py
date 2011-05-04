@@ -31,9 +31,11 @@ class MessageHandler:
         print "MessageHandler.process_json: " + str(dict)
 
 class DatagramDecoder:
+    messageHandler = None
 
-    def __init__(self, messageHandler):
-        self.messageHandler = messageHandler
+    def __init__(self):
+        assert self.messageHandler != None
+
     def decode(self, message):
         print "decoding datagram"
         (prefix, datagram) = (message[0:2],message[2:])
@@ -71,7 +73,11 @@ class DatagramDecoder:
             print str((time, tick))
 
 class DatagramEncoder:
+
+    messageHandler = None
+
     def __init__(self, client):
+        assert self.messageHandler != None
         self.connection = client
         pass
 
@@ -101,9 +107,9 @@ class DatagramEncoder:
         self.connection.send_tcp(t2)
 
 class TcpPacketDecoder:
-    def __init__(self, client, messageHandler):
-        #self.client = client
-        self.datagramDecoder = DatagramDecoder(client)
+
+    def __init__(self):
+        self.datagramDecoder = DatagramDecoder()
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -197,7 +203,7 @@ class ServerListener:
                     print 'TCP connection established with:', address
                     connection.setblocking(0)
                     #cc = self.ClientConnection(connection, address) ##create connection
-                    self.connectionPool.addConnection(connection, address) #hand off connection to connection pool
+                    self.connectionPool.addClient(connection, address) #hand off connection to connection pool
                 except socket.error, (value,message):
                     print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
@@ -212,16 +218,15 @@ class ServerListener:
 #events = epoll.poll(1)
 
 class TcpClient:
+    pool = None
 
-    def __init__(self, pool, messageHandler, connection, address):
-        self.pool = pool
-        self.messageHandler = messageHandler
-
+    def __init__(self, connection, address):
+        assert self.pool != None
         self.connection = connection
         self.address = address
 
         self.fileno = connection.fileno()
-        self.TcpPacketDecoder = TcpPacketDecoder(self)
+        self.TcpPacketDecoder = TcpPacketDecoder()
 
         self.player_id = 0
         self.client_id = 0
@@ -251,8 +256,10 @@ class ConnectionPool:
         #parents
         self.main = main
         self.messageHandler = messageHandler
+        TcpClient.pool = self
+
         #children
-        self.datagramDecoder = DatagramDecoder(self.messageHandler)
+        self.datagramDecoder = DatagramDecoder()
         #local
         self._epoll = select.epoll()
         self._client_count = 0
@@ -265,30 +272,26 @@ class ConnectionPool:
         for client in self._client_pool:
             client.close()
 
-    def addClient(self, connection, messageHandler, address, type = 'tcp'):
+    def addClient(self, connection, address, type = 'tcp'):
         self._client_count += 1
         if type == 'tcp':
-            client =  TcpClient(self, connection, address)
+            client =  TcpClient(connection, address)
             self._epoll.register(client.fileno, select.EPOLLIN) #register client
             self._client_pool[client.fileno] = client #save client
 
     def process_events(self):
-        #connections = {}; requests = {}; responses = {}
-        while True:
-            events = self._epoll.poll(1)
-            for fileno, event in events:
-                if event & select.EPOLLIN:
-                    assert fileno in self._client_pool.has_key(fileno)
-                    self._client_pool[fileno].receive()
-                elif event & select.EPOLLOUT:
-                    print "EPOLLOUT event?"
-                    #byteswritten = connections[fileno].send(responses[fileno])
-                    #responses[fileno] = responses[fileno][byteswritten:]
-                elif event & select.EPOLLHUP:
-                    print "EPOLLHUP: teardown socket"
-                    epoll.unregister(fileno)
-                    self._client_pool[fileno].close()
-                    del self._client_pool[fileno] #remove from client pool
+        events = self._epoll.poll(0)
+        for fileno, event in events:
+            if event & select.EPOLLIN:
+                assert fileno in self._client_pool.has_key(fileno)
+                self._client_pool[fileno].receive()
+            elif event & select.EPOLLOUT:
+                print "EPOLLOUT event?"
+            elif event & select.EPOLLHUP:
+                print "EPOLLHUP: teardown socket"
+                epoll.unregister(fileno)
+                self._client_pool[fileno].close()
+                del self._client_pool[fileno] #remove from client pool
 
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
@@ -299,18 +302,22 @@ class GameState:
 
     def tick(self):
         self.time += 1
-        if self.time % 500 == 0:
+        #print str(self.time)
+        if self.time % 100 == 0:
             print "time= %i" % (self.time)
 
 class Main:
 
     def __init__(self):
         self.messageHandler = MessageHandler(self)
+        DatagramDecoder.messageHandler = self.messageHandler #set global
         self.connectionPool = ConnectionPool(self, self.messageHandler)
         self.serverListener = ServerListener(self.connectionPool)
         self.gameState = GameState()
+        #globals
 
     def run(self):
+        print "Server Started"
         while True:
             self.serverListener.accept() #accept incoming connections
             self.connectionPool.process_events() #check for new data
@@ -322,17 +329,19 @@ if __name__ == "__main__":
     main = Main()
     main.run()
 
-    M = [
-    pm(0,"test!"),
-    pm(1,json.dumps(['test1','test2','test3'])),
-    create_agent_message(0,1,5,5,5,0,0)
-    ]
 
-    connectionPool = connectionPool()
-    test = ServerListener(connectionPool)
-    while True:
-        test.accept()
-        time.sleep(1)
+
+#M = [
+#pm(0,"test!"),
+#pm(1,json.dumps(['test1','test2','test3'])),
+#create_agent_message(0,1,5,5,5,0,0)
+#]
+
+#connectionPool = connectionPool()
+#test = ServerListener(connectionPool)
+#while True:
+    #test.accept()
+    #time.sleep(1)
 
 #s = ServerInstance()
 #s.run()
