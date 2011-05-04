@@ -18,7 +18,7 @@ class SendMessage:
         self.client.send(self.add_prefix(1, json.dumps(dict)))
 
     def add_prefix(self, id, msg):
-        return struct.pack('H I', id, 2+len(msg)) + msg
+        return struct.pack('I H', 4+2+len(msg), id) + msg
 
 class ClientDatagramEncoder:
     def __init__(self, connection):
@@ -158,6 +158,7 @@ class TcpConnection:
         self.tcp.close()
 
     def send(self, MESSAGE):
+        print "send len: " + str(len(MESSAGE))
         if self.connected == True:
             try:
                 self.tcp.sendall(MESSAGE)
