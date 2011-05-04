@@ -1,10 +1,7 @@
 import socket
 import struct
 
-import select
-
 import time
-
 import simplejson as json
 
 def pm(id, msg):
@@ -23,11 +20,15 @@ def agent_position_update(agent_id, tick, x,y,z, vx, vy, vz, ax, ay, az, x_angle
 #   CreateAgentMessage = namedtuple('CreateAgent', 'agent_id', 'player_id', 'x','y','z','x_angle','y_angle')
 #   n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
 
-#200 agent control state
-#600 admin json command
+#0 is test message
+#1 is json
+
 class MessageHandler:
     def __init__(self, main):
         self.main = main
+
+    def process_json(dict):
+        print "MessageHandler.process_json: " + str(dict)
 
 class DatagramDecoder:
 
@@ -43,7 +44,7 @@ class DatagramDecoder:
         if msg_type == 1:
             print "Generatic JSON message"
             dict = json.loads(message[2:])
-            self.messageHandler.process(dict)
+            self.messageHandler.process_json(dict)
         if msg_type == 600:
             print "json admin message"
             msg = json.loads(message[2:])
@@ -70,19 +71,31 @@ class DatagramDecoder:
             print str((time, tick))
 
 class DatagramEncoder:
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self, client):
+        self.connection = client
         pass
 
-    def _pm(id, msg):
-        return struct.pack('H',id) +msg
+    def json(self, dict):
+        #t = json.dumps(dict)
+        #t = self._pm(1, t)
+        #t = add_length_prefix(self, t)
+        self.client.send(self.add_prefix(1, json.dumps(dict)))
 
-    def create_agent(agent_id, player_id, x, y, z, x_angle, y_angle):
+    def add_prefix(self, id, msg):
+        return struct.pack('H I', (id, 2+len(msg))) + msg
+
+#    def add_length_prefix(self, msg):
+        return struct.pack('I', len(msg)) + msg
+
+#    def _pm(self, id, msg):
+#       return struct.pack('H',id) +msg
+
+    def _create_agent(self, agent_id, player_id, x, y, z, x_angle, y_angle):
         t1 = struct.pack('IIfffhh', agent_id, player_id, x, y, z, x_angle, y_angle)
         t2 = self._pm(301, t1)
         self.connection.send_tcp(t2)
 
-    def agent_control_state(agent_id, tick, W, S, A, D, JUMP, JETPACK):
+    def _agent_control_state(self, agent_id, tick, W, S, A, D, JUMP, JETPACK):
         t1 = struct.pack('II BB BB BB BB', agent_id, tick, W, S, A, D, JUMP, JETPACK, x_angle, y_angle)
         t2 = self._pm(200, t1)
         self.connection.send_tcp(t2)
@@ -115,7 +128,7 @@ class TcpPacketDecoder:
             print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             self.message_length = 0
-            self.process_msg(message)
+            self.process_datagram(message)
             self.attempt_decode()
         else:
             print "Need more characters in buffer"
@@ -126,7 +139,7 @@ class TcpPacketDecoder:
         (length,) = struct.unpack('I', data[0:4])
         return (length, data[4:])
 
-    def process_msg(self, message):
+    def process_datagram(self, message):
         self.count += 1
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
@@ -248,6 +261,7 @@ class ConnectionPool:
         atexit.register(self.on_exit)
 
     def on_exit(self):
+        self._epoll.close()
         for client in self._client_pool:
             client.close()
 
