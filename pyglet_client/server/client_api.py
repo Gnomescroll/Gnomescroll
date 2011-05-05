@@ -69,7 +69,7 @@ class ClientDatagramDecoder:
 
         if msg_type == 0:
             print "test message received"
-        if msg_type == 1:
+        elif msg_type == 1:
             try:
                 print "json message"
                 msg = json.loads(datagram)
@@ -77,11 +77,15 @@ class ClientDatagramDecoder:
                 print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
                 print str(datagram)
                 print binascii.b2a_hex(datagram)
-            print str(msg)
-
+            #print str(msg)
+        else:
+            print "unknown message type: %i" % msg_type
 class PacketDecoder:
     def __init__(self,connection):
         self.datagramDecoder = ClientDatagramDecoder(connection)
+        self.reset()
+
+    def reset(self):
         self.buffer = ''
         self.message_length = 0
         self.count = 0
@@ -95,22 +99,21 @@ class PacketDecoder:
         if buff_len == 0:
             #print "decode: buffer empty"
             return
+        elif self.message_length == 0 and buff_len > 6:
+            #print "decode: get message prefix"
+            (self.message_length, self.buffer) = self.read_prefix()
+            print "prefix length: " + str(self.message_length)
+            self.attempt_decode()
         elif buff_len < self.message_length:
             #print "decode: need more packets of data to decode message"
             return
-        elif self.message_length == 0 and buff_len > 4:
-            #print "decode: get message prefix"
-            (self.message_length, self.buffer) = self.read_prefix()
-            #print "prefix length: " + str(self.message_length)
-            self.attempt_decode()
 
         if buff_len >= self.message_length:
             print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
-            self.message_length = 0
-            #self.process_datagram(message)
             self.datagramDecoder.process_datagram(message, length)
+            self.message_length = 0
             self.attempt_decode()
         else:
             pass
@@ -153,6 +156,7 @@ class TcpConnection:
         TCP_IP = self.server
         TCP_PORT = self.tcp_port
         try:
+            self.decoder.reset()
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.connect((TCP_IP, TCP_PORT))
 
@@ -197,10 +201,10 @@ class TcpConnection:
             else:
                 print "Strange Epoll Event: %i" % eventOut
 
-    def receive(self):
+    def recv(self):
         BUFFER_SIZE = 4096
         try:
-            data = self.connection.recv(BUFFER_SIZE)
+            data = self.tcp.recv(BUFFER_SIZE)
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
             data = ''
@@ -212,7 +216,7 @@ class TcpConnection:
         else:
             print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
-            self.TcpPacketDecoder.add_to_buffer(data)
+            self.decoder.add_to_buffer(data)
 
     def recv_DEPRICATED(self):
         BUFFER_SIZE = 2048

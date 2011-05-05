@@ -110,6 +110,8 @@ class GameState:
         if self.time % 100 == 0:
             print "time= %i" % (self.time)
 
+import binascii
+
 class EventOut:
     gameState = None
 
@@ -118,13 +120,18 @@ class EventOut:
         self.event_packets = []
         self.sendMessage = SendMessage(None)
 
+    def validate_packet(self, packet):
+        prefix = self.packet[:4]
+        (length,) = struct.unpack('I', prefix)
+        print "len1= %i, len2= %%i" % (length, len(prefix))
+        #print binascii.b2a_hex(prefix)
+
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
+            self.validate_packet(event_packet)
             for client in self.pool._client_pool.values():
                 client.send(event_packet)
-                print "tick= %i" % self.gameState.time
-                print binascii.b2a_hex(event_packet)
         self.event_packets = []
 
     def add_json_event(self, dict):
@@ -145,24 +152,14 @@ class SendMessage:
         self.client = client
 
     def add_prefix(self, id, msg):
-        return struct.pack('I H', 4+2+len(msg), id) + msg
+        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix not included in length?
+#        return struct.pack('I H', 4+2+len(msg), id) + msg
 
     def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))
 
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
-
-    ### agent messages
-
-    def send_agent_state(self, id, tick, state):
-        d = {
-            'cmd' : 'agent_position',
-            'id' : id,
-            'tick' : tick,
-            'state': state #is a 9 tuple
-           }
-        self.json(d)
 
 class MessageHandler:
 
@@ -230,9 +227,9 @@ class TcpPacketDecoder:
         if buff_len == 0:
             #print "decode: buffer empty"
             return
-        elif buff_len < self.message_length:
-            #print "decode: need more packets of data to decode message"
-            return
+#        elif buff_len < self.message_length:
+#            #print "decode: need more packets of data to decode message"
+#            return
         elif self.message_length == 0 and buff_len > 4:
             #print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix()
@@ -331,7 +328,13 @@ class TcpClient:
 
     def send(self, MESSAGE):
         try:
-            self.connection.sendall(MESSAGE)
+            if False:
+                length = len(MESSAGE)
+                sent = self.connection.send(MESSAGE)
+                if length != sent:
+                    print "ALL DATA NOT SENT!"
+            else:
+                self.connection.sendall(MESSAGE)
         except socket.error, (value,message):
             print "TcpClient.send error: " + str(value) + ", " + message
             if value == 32:  #connection reset by peer
@@ -433,7 +436,7 @@ class Main:
             self.connectionPool.process_events() #check for new data
             self.gameState.tick()
             self.eventOut.process_events()
-            time.sleep(.50)
+            time.sleep(.01)
 
 if __name__ == "__main__":
 
