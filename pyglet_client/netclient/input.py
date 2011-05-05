@@ -79,7 +79,7 @@ class Keyboard(object):
             brake = 1
         if keyboard[key.SPACE]:
             jetpack = 1
-        self.Player.control_state = [d_x, d_y, d_xa, d_za, jetpack, brake]
+        self.player.control_state = [d_x, d_y, d_xa, d_za, jetpack, brake]
 
     def camera_input_mode(self, keyboard):
         v = 0.1
