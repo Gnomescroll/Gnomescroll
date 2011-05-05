@@ -33,7 +33,7 @@ class PlayerAgent:
         self.jetpack = 0
         self.brake = 0
 
-    def set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake):
+    def set_agent_control_state(self, tick, d_x, d_y, d_xa, d_za, jetpack, brake):
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
@@ -90,7 +90,7 @@ class AgentList:
         if not self.agents.has_key(id):
             print "Agentlist.set_agent_control_state: Agent does not exist: %i" % id
             return None
-        return self.agent[id]
+        return self.agents[id]
 
 class GameState:
 
@@ -182,8 +182,8 @@ class MessageHandler:
             self.gameState.create_agent(**msg)
         elif msg['cmd'] == 'agent_control_state':
             id = int(msg['id'])
-            agent = GameState.agentList.get_agent(id)
-            tick = msg[tick]
+            agent = self.gameState.agentList.get_agent(id)
+            tick = msg['tick']
             [d_x, d_y, d_xa, d_za, jetpack, brake] = msg['state']
             agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
         else:
@@ -210,55 +210,6 @@ class DatagramDecoder:
                 print "JSON DECODING ERROR: " +str(msg)
                 return
             self.messageHandler.process_json(msg)
-
-
-#delete
-class TcpPacketDecoder_DEPRECATED:
-
-    def __init__(self):
-        self.datagramDecoder = DatagramDecoder()
-        self.buffer = ''
-        self.message_length = 0
-        self.count = 0
-
-    def add_to_buffer(self,data):
-        self.buffer += data
-        self.attempt_decode()
-
-    def attempt_decode(self):
-        buff_len = len(self.buffer)
-        if buff_len == 0:
-            #print "decode: buffer empty"
-            return
-#        elif buff_len < self.message_length:
-#            #print "decode: need more packets of data to decode message"
-#            return
-        elif self.message_length == 0 and buff_len > 4:
-            #print "decode: get message prefix"
-            (self.message_length, self.buffer) = self.read_prefix()
-            #print "prefix length: " + str(self.message_length)
-            self.attempt_decode()
-
-        if buff_len >= self.message_length:
-            print "process message in buffer"
-            (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
-            self.message_length = 0
-            self.process_datagram(message)
-            self.attempt_decode()
-        else:
-            pass
-            #print "Need more characters in buffer"
-
-    def read_prefix(self):
-        data = self.buffer
-        prefix = data[0:4]
-        (length,) = struct.unpack('I', data[0:4])
-        return (length, data[4:])
-
-    def process_datagram(self, message):
-        self.count += 1
-        print "processed message count: " +str(self.count)
-        self.datagramDecoder.decode(message)
 
 class TcpPacketDecoder:
 
