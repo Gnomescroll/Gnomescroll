@@ -50,7 +50,7 @@ class ClientDatagramDecoder:
             print "test message received"
         elif msg_type == 1:
             try:
-                print "json message"
+                #print "json message"
                 msg = json.loads(datagram)
             except:
                 print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
@@ -81,7 +81,7 @@ class PacketDecoder:
         elif self.message_length == 0 and buff_len > 6:
             #print "decode: get message prefix"
             self.message_length = self.read_prefix()
-            print "prefix length: " + str(self.message_length)
+            #print "prefix length: " + str(self.message_length)
         elif buff_len < self.message_length:
             return
         elif self.message_length == 0:
@@ -89,10 +89,11 @@ class PacketDecoder:
 
         if buff_len >= self.message_length:
             assert self.message_length > 0
-            print "process message in buffer"
+            #print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
-            self.datagramDecoder.process_datagram(message)
+            #self.datagramDecoder.process_datagram(message)
+            self.process_msg(message)
             self.message_length = 0
             self.attempt_decode()
 
@@ -105,7 +106,7 @@ class PacketDecoder:
     def process_msg(self, message):
         self.count += 1
         print "processed message count: " +str(self.count)
-        self.datagramDecoder.decode(message)
+        self.datagramDecoder.process_datagram(message)
 
 import select
 class TcpConnection:
@@ -155,7 +156,7 @@ class TcpConnection:
         self.tcp.close()
 
     def send(self, MESSAGE):
-        print "send len: " + str(len(MESSAGE))
+        #print "send len: " + str(len(MESSAGE))
         if self.connected == True:
             try:
                 self.tcp.sendall(MESSAGE)
@@ -171,7 +172,7 @@ class TcpConnection:
         for fileno, event in events:
             assert fileno == self.fileno
             if event & select.EPOLLIN:
-                print "Read Event"
+                #print "Read Event"
                 self.recv()
             elif event & select.EPOLLOUT:
                 pass #ready to write
@@ -191,7 +192,7 @@ class TcpConnection:
             if self.ec > 3:
                 self.disconnect()
         else:
-            print "get_tcp: data received, %i bytes" % len(data)
+            #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
             self.decoder.add_to_buffer(data)
 

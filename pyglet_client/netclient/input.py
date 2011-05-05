@@ -17,6 +17,8 @@ class Mouse(object):
 from pyglet.window.key import symbol_string
 from pyglet.window import key
 
+import math
+
 class Keyboard(object):
 
     def __init__(self, main):
