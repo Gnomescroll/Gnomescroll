@@ -111,6 +111,8 @@ class GameState:
             print "time= %i" % (self.time)
 
 class EventOut:
+    gameState = None
+
     def __init__(self, pool):
         self.pool = pool
         self.event_packets = []
@@ -119,8 +121,10 @@ class EventOut:
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
-            for client in self.pool._client_pool:
+            for client in self.pool._client_pool.values():
                 client.send(event_packet)
+                print "tick= %i" % self.gameState.time
+                print binascii.b2a_hex(event_packet)
         self.event_packets = []
 
     def add_json_event(self, dict):
@@ -169,7 +173,7 @@ class MessageHandler:
         self.main = main
 
     def process_json(self, msg):
-        if not msg.has_key['cmd']:
+        if not msg.has_key('cmd'):
             print "Json message need cmd parameter: " + str(msg)
             return
 
@@ -330,9 +334,11 @@ class TcpClient:
             self.connection.sendall(MESSAGE)
         except socket.error, (value,message):
             print "TcpClient.send error: " + str(value) + ", " + message
+            if value == 32:  #connection reset by peer
+                self.pool.tearDownClient(self.fileno)
 
     def close(self):
-        print "TcpClient.close : client closed connection"
+        print "TcpClient.close : connection closed gracefully"
         self.connection.close()
 
     def receive(self):
@@ -341,7 +347,7 @@ class TcpClient:
             data = self.connection.recv(BUFFER_SIZE)
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
-
+            data = ''
         if len(data) == 0: #if we read three times and get no data, close socket
             #print "tcp data: empty read"
             self.ec += 1
@@ -413,6 +419,7 @@ class Main:
         self.connectionPool = ConnectionPool(self, self.messageHandler)
         self.serverListener = ServerListener(self.connectionPool)
         self.eventOut = EventOut(self.connectionPool)
+        self.eventOut.gameState = self.gameState
         PlayerAgent.eventOut = self.eventOut
         PlayerAgent.gameState = self.gameState
         #globals
@@ -426,7 +433,7 @@ class Main:
             self.connectionPool.process_events() #check for new data
             self.gameState.tick()
             self.eventOut.process_events()
-            time.sleep(.01)
+            time.sleep(.50)
 
 if __name__ == "__main__":
 

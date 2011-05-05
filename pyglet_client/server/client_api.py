@@ -55,12 +55,14 @@ class ClientDatagramEncoder:
         t2 = self._pm(200, t1)
         self.connection.send_tcp(t2)
 
+import binascii
+
 class ClientDatagramDecoder:
 
     def __init__(self, connection):
         self.connection = connection
 
-    def decode(self, message):
+    def process_datagram(self, message, length):
         print "decoding datagram"
         (prefix, datagram) = (message[0:2],message[2:])
         (msg_type,) = struct.unpack('H', prefix)
@@ -68,29 +70,14 @@ class ClientDatagramDecoder:
         if msg_type == 0:
             print "test message received"
         if msg_type == 1:
-            print "json message"
-            msg = json.loads(message[2:])
+            try:
+                print "json message"
+                msg = json.loads(datagram)
+            except:
+                print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
+                print str(datagram)
+                print binascii.b2a_hex(datagram)
             print str(msg)
-        if msg_type == 2: #
-            #CreateAgent
-            (agent_id, player_id, x, y, z, x_angle, y_angle) = struct.unpack('IIfffhh', datagram)
-            print str((agent_id, player_id, x, y, z, x_angle, y_angle))
-            #n = CreateAgentMessage(struct.unpack('IIfffhh', datagram))
-            #print str(n)
-        if msg_type == 3:
-            #agentPositionUpdate
-            (agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle) = struct.unpack('II fff fff fff hh', datagram)
-            print str(agent_id, tick, x, y, z, vx, vz, vz, ax, ay, az, x_angle, y_angle)
-
-        if msg_type == 99:
-            #latency estimation
-            (time, tick) = struct.unpack('I f', datagram)
-            print str((time, tick))
-            #immediately send message 5 back
-        if msg_type == 100:
-            (time, tick) = struct.unpack('I f', datagram)
-            #return packet for latency testing
-            print str((time, tick))
 
 class PacketDecoder:
     def __init__(self,connection):
@@ -104,25 +91,30 @@ class PacketDecoder:
         self.attempt_decode()
 
     def attempt_decode(self):
-        if len(self.buffer) < self.message_length:
-            print "decode: need more packets of data to decode message"
+        buff_len = len(self.buffer)
+        if buff_len == 0:
+            #print "decode: buffer empty"
             return
-        if len(self.buffer) == 0:
-            print "decode: buffer empty"
+        elif buff_len < self.message_length:
+            #print "decode: need more packets of data to decode message"
             return
-        if self.message_length == 0:
-            print "decode: get message prefix"
+        elif self.message_length == 0 and buff_len > 4:
+            #print "decode: get message prefix"
             (self.message_length, self.buffer) = self.read_prefix()
-            print "prefix length: " + str(self.message_length)
+            #print "prefix length: " + str(self.message_length)
+            self.attempt_decode()
 
-        if len(self.buffer) >= self.message_length:
+        if buff_len >= self.message_length:
             print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
+            length = self.message_length
             self.message_length = 0
-            self.process_msg(message)
+            #self.process_datagram(message)
+            self.datagramDecoder.process_datagram(message, length)
             self.attempt_decode()
         else:
-            print "Need more characters in buffer"
+            pass
+            #print "Need more characters in buffer"
 
     def read_prefix(self):
         data = self.buffer
@@ -135,6 +127,7 @@ class PacketDecoder:
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
+import select
 class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
@@ -142,12 +135,18 @@ class TcpConnection:
     #settings
     noDelay = True
 
+
     def __init__(self):
         self.tcp = None
         self.connected = False
         self.out = SendMessage(self)
         #self.encoder = ClientDatagramEncoder(self)
         self.decoder = PacketDecoder(self)
+
+        self.fileno = 0
+        self._epoll = select.epoll()
+
+        self.ec = 0
         self.connect()
 
     def connect(self):
@@ -160,7 +159,9 @@ class TcpConnection:
             if self.noDelay == True:
                 self.tcp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.tcp.setblocking(0) #should be blocking?
+            self._epoll.register(self.tcp.fileno(), select.EPOLLIN | select.EPOLLHUP | select.EPOLLOUT )
             print "Connection: tcp connected"
+            self.fileno = self.tcp.fileno()
             self.connected = True
         except socket.error, (value,message):
             print "Connection failed: socket error " + str(value) + ", " + message
@@ -168,6 +169,8 @@ class TcpConnection:
 
     def disconnect(self):
         print "Connection: tcp disonnected by program"
+        self.connected = False
+        self._epoll.unregister(self.fileno)
         self.tcp.close()
 
     def send(self, MESSAGE):
@@ -177,11 +180,42 @@ class TcpConnection:
                 self.tcp.sendall(MESSAGE)
             except socket.error, (value,message):
                 print "Connection failed: socket error " + str(value) + ", " + message
+                if value == 32:  #connection reset by peer
+                    self.close()
         else:
             print "TcpConnection.send: Socket is not connected!"
 
-    def recv(self):
-        BUFFER_SIZE = 512
+    def attempt_recv(self):
+        events = self._epoll.poll(0)
+        for fileno, event in events:
+            assert fileno == self.fileno
+            if event & select.EPOLLIN:
+                print "Read Event"
+                self.recv()
+            elif event & select.EPOLLOUT:
+                pass #ready to write
+            else:
+                print "Strange Epoll Event: %i" % eventOut
+
+    def receive(self):
+        BUFFER_SIZE = 4096
+        try:
+            data = self.connection.recv(BUFFER_SIZE)
+        except socket.error, (value,message):
+            print "TcpClient.get: socket error %i, %s" % (value, message)
+            data = ''
+        if len(data) == 0: #if we read three times and get no data, close socket
+            #print "tcp data: empty read"
+            self.ec += 1
+            if self.ec > 3:
+                self.disconnect()
+        else:
+            print "get_tcp: data received, %i bytes" % len(data)
+            self.ec = 0
+            self.TcpPacketDecoder.add_to_buffer(data)
+
+    def recv_DEPRICATED(self):
+        BUFFER_SIZE = 2048
         try:
             data = self.tcp.recv(BUFFER_SIZE)
             print "get_tcp: data received"
@@ -190,17 +224,33 @@ class TcpConnection:
             print "get_tcp: socket error " + str(value) + ", " + message
             return #in non-blocking, will fail when no data
 
+class ClientMain:
+
+    def __init__(self):
+        self.connection =  TcpConnection()
+
+    def main(self):
+        self.connection.out.json({'cmd' : 'test' })
+        n = 0
+        while True:
+            self.connection.attempt_recv()
+            #can tick
+            time.sleep(0.01)
+            n += 1
+            if n %100 == 0:
+                print "tick= %i" % n
+
+
 import time
 if __name__ == "__main__":
-    print "Running client as program"
-    x= TcpConnection()
-    #x.connect()
-    x.out.json({'cmd' : 'test' })
-    time.sleep(3)
-    x.disconnect()
-#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#s.connect((TCP_IP, TCP_PORT))
-#s.send(MESSAGE)
-#data = s.recv(BUFFER_SIZE)
-#print "size= " + str(len(data))
-#s.close()
+
+    x = ClientMain()
+    x.main()
+
+    if False:
+        print "Running client as program"
+        x= TcpConnection()
+        #x.connect()
+        x.out.json({'cmd' : 'test' })
+        time.sleep(3)
+        x.disconnect()
