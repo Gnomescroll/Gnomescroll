@@ -24,6 +24,9 @@ class Keyboard(object):
         self.camera = main.camera
         self.key_handlers = {}
 
+        self.player = main.player
+        self.mode = 'camera'
+
     def on_key_press(self, symbol, modifiers):
         v = 0.2
         #print "key press"
@@ -48,6 +51,37 @@ class Keyboard(object):
             self.key_handlers[symbol]()
 
     def stateHandler(self, keyboard):
+        #mode switch
+        if keyboard[key.Q]:
+            if self.mode == 'camera':
+                self.mode = 'agent'
+            elif self.mode == 'agent':
+                self.mode = 'camera'
+
+        if self.mode == 'camera':
+            self.camera_input_mode(keyboard)
+        if self.mode == 'agent':
+            self.agent_input_mode(keyboard)
+
+    def agent_input_mode(self, keyboard):
+        # d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
+        v = 1
+        [d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
+        if keyboard[key.W]:
+            d_x = v
+        if keyboard[key.S]:
+            d_x = -v
+        if keyboard[key.A]:
+            d_y = v
+        if keyboard[key.D]:
+            d_y = -v
+        if keyboard[key.E]:
+            brake = 1
+        if keyboard[key.SPACE]:
+            jetpack = 1
+        [d_x, d_y, d_xa, d_za, jetpack, brake] = self.Player.control_state
+
+    def camera_input_mode(self, keyboard)
         v = 0.1
         if keyboard[key.W]:
             self.camera.move_camera(v,0,0)
@@ -61,6 +95,7 @@ class Keyboard(object):
             self.camera.move_camera(0,0,v)
         if keyboard[key.F]:
             self.camera.move_camera(0,0,-v)
-
         if keyboard[key.SPACE]:
             print "Event A.1"
+
+        if keyboard[key

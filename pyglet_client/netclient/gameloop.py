@@ -50,7 +50,7 @@ class ClientMain:
         self.out = self.connection.out
     def main(self):
         self.connection.out.send_json({'cmd' : 'test' })
-        self.out.send_agent_control_state(id=1., d_x=1., d_y=0., d_xa=0., d_za=0., jetpack=0., brake=0.)
+        self.out.send_agent_control_state(id=1, d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
         n = 0
         while True:
             self.connection.attempt_recv()
@@ -73,8 +73,8 @@ class App(object):
         self.win = window.Window(fullscreen=False, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
-        self.keyboard = Keyboard(self)
         self.player = Player() #for testing
+        self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
         self.hud = Hud(self.win)
         #clock.set_fps_limit(60)
