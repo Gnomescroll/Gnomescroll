@@ -34,6 +34,12 @@ class MessageHandler:
         self.player.x = x
         self.player.y = y
         self.player.z = z
+        self.player.vx = vx
+        self.player.vy = vy
+        self.player.vz = vz
+        self.player.ax = ax
+        self.player.ay = ay
+        self.player.az = az
 
 class App(object):
 

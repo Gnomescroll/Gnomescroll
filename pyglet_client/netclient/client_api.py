@@ -105,7 +105,8 @@ class PacketDecoder:
 
     def process_msg(self, message):
         self.count += 1
-        print "processed message count: " +str(self.count)
+        if self.count % 500 == 0:
+            print "processed message count: " +str(self.count)
         self.datagramDecoder.process_datagram(message)
 
 import select
