@@ -44,7 +44,7 @@ import world
 import client_api
 
 class MessageHandler:
-    def __init__(self, player)
+    def __init__(self, player):
         self.player = player
 
     def process_json(self, msg):
@@ -66,15 +66,17 @@ class App(object):
     def __init__(self):
 
         #networking code
-        self.messageHandler = MessageHandler()
-        self.connection =  client_api.TcpConnection(self.messageHandler)
+        self.player = Player() #for testing
+        self.messageHandler = MessageHandler(self.player)
+        client_api.ClientDatagramDecoder.messageHandler = self.messageHandler #handles networking callbacks
+
+        self.connection =  client_api.TcpConnection()
         self.out = self.connection.out
         #other
         self.world = world.World()
         self.win = window.Window(fullscreen=False, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
-        self.player = Player() #for testing
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
         self.hud = Hud(self.win)

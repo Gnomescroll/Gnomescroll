@@ -38,7 +38,7 @@ class ClientDatagramDecoder:
     messageHandler = None
 
     def __init__(self, connection):
-        assert messageHandler != None
+        assert self.messageHandler != None
         self.connection = connection
 
     def process_datagram(self, message):
@@ -197,8 +197,7 @@ class TcpConnection:
 ## Not Needed
 class ClientMain:
 
-    def __init__(self, messageHandler):
-        ClientDatagramDecoder.messageHandler  = messageHandler #handles call backs from networking
+    def __init__(self):
         self.connection =  TcpConnection()
         self.out = self.connection.out
     def main(self):
@@ -212,19 +211,3 @@ class ClientMain:
             n += 1
             if n %100 == 0:
                 print "tick= %i" % n
-
-## Can delete
-import time
-if __name__ == "__main__":
-
-    x = ClientMain()
-    x.main()
-
-    if False:
-        print "Running client as program"
-        x= TcpConnection()
-        #x.connect()
-
-        x.out.send_json({'cmd' : 'test' })
-        time.sleep(3)
-        x.disconnect()

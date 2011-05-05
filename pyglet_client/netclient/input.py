@@ -79,9 +79,9 @@ class Keyboard(object):
             brake = 1
         if keyboard[key.SPACE]:
             jetpack = 1
-        [d_x, d_y, d_xa, d_za, jetpack, brake] = self.Player.control_state
+        self.Player.control_state = [d_x, d_y, d_xa, d_za, jetpack, brake]
 
-    def camera_input_mode(self, keyboard)
+    def camera_input_mode(self, keyboard):
         v = 0.1
         if keyboard[key.W]:
             self.camera.move_camera(v,0,0)
@@ -97,5 +97,3 @@ class Keyboard(object):
             self.camera.move_camera(0,0,-v)
         if keyboard[key.SPACE]:
             print "Event A.1"
-
-        if keyboard[key
