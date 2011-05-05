@@ -28,33 +28,6 @@ class SendMessage:
            }
         self.json(d)
 
-class ClientDatagramEncoder:
-
-    def __init__(self, connection):
-        self.connection = connection
-
-    def _pm(id, msg):
-        return struct.pack('H',id) +msg
-
-    def admin_create_agent(agent_id, player_id, x, y, z, x_angle, y_angle):
-        t1 = struct.pack('IIfffhh', agent_id, player_id, x, y, z, x_angle, y_angle)
-        t2 = self._pm(301, t1)
-        self.connection.send_tcp(t2)
-
-    def admin_create_agent2(player_id,x,y,z,x_angle=0, y_angle = 0):
-        d = {
-                'cmd':'create_agent',
-                'type':'admin',
-                'value':(x,y,z, x_angle, y_angle),
-            }
-        self.connection.send_tcp(self._pm(600, json.dump(d)))
-
-
-    def agent_control_state(agent_id, tick, W, S, A, D, JUMP, JETPACK):
-        t1 = struct.pack('II BB BB BB BB', agent_id, tick, W, S, A, D, JUMP, JETPACK, x_angle, y_angle)
-        t2 = self._pm(200, t1)
-        self.connection.send_tcp(t2)
-
 import binascii
 
 class ClientDatagramDecoder:
@@ -62,10 +35,10 @@ class ClientDatagramDecoder:
     def __init__(self, connection):
         self.connection = connection
 
-    def process_datagram(self, message, length):
+    def process_datagram(self, message):
         print "decoding datagram"
-        (prefix, datagram) = (message[0:2],message[2:])
-        (msg_type,) = struct.unpack('H', prefix)
+        (prefix, datagram) = (message[0:6],message[6:])
+        (length, msg_type) = struct.unpack('I H', prefix)
 
         if msg_type == 0:
             print "test message received"
@@ -77,9 +50,10 @@ class ClientDatagramDecoder:
                 print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
                 print str(datagram)
                 print binascii.b2a_hex(datagram)
-            #print str(msg)
+            print str(msg)
         else:
             print "unknown message type: %i" % msg_type
+
 class PacketDecoder:
     def __init__(self,connection):
         self.datagramDecoder = ClientDatagramDecoder(connection)
@@ -101,29 +75,27 @@ class PacketDecoder:
             return
         elif self.message_length == 0 and buff_len > 6:
             #print "decode: get message prefix"
-            (self.message_length, self.buffer) = self.read_prefix()
+            self.message_length = self.read_prefix()
             print "prefix length: " + str(self.message_length)
-            self.attempt_decode()
         elif buff_len < self.message_length:
-            #print "decode: need more packets of data to decode message"
+            return
+        elif self.message_length == 0:
             return
 
         if buff_len >= self.message_length:
+            assert self.message_length > 0
             print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
-            self.datagramDecoder.process_datagram(message, length)
+            self.datagramDecoder.process_datagram(message)
             self.message_length = 0
             self.attempt_decode()
-        else:
-            pass
-            #print "Need more characters in buffer"
 
     def read_prefix(self):
         data = self.buffer
         prefix = data[0:4]
         (length,) = struct.unpack('I', data[0:4])
-        return (length, data[4:])
+        return length
 
     def process_msg(self, message):
         self.count += 1
@@ -239,7 +211,7 @@ class ClientMain:
         while True:
             self.connection.attempt_recv()
             #can tick
-            time.sleep(0.01)
+            time.sleep(0.02)
             n += 1
             if n %100 == 0:
                 print "tick= %i" % n

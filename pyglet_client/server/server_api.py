@@ -121,9 +121,11 @@ class EventOut:
         self.sendMessage = SendMessage(None)
 
     def validate_packet(self, packet):
-        prefix = self.packet[:4]
+        assert len(packet) >= 4
+        prefix = packet[:4]
         (length,) = struct.unpack('I', prefix)
-        print "len1= %i, len2= %%i" % (length, len(prefix))
+        if length != len(packet):
+            print "len1= %i, len2= %i" % (length, len(packet))
         #print binascii.b2a_hex(prefix)
 
     def process_events(self):
