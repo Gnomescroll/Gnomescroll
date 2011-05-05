@@ -35,7 +35,10 @@ import binascii
 
 class ClientDatagramDecoder:
 
+    messageHandler = None
+
     def __init__(self, connection):
+        assert messageHandler != None
         self.connection = connection
 
     def process_datagram(self, message):
@@ -49,11 +52,9 @@ class ClientDatagramDecoder:
             try:
                 print "json message"
                 msg = json.loads(datagram)
+                self.messageHandler.process_json(msg)
             except:
                 print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
-                print str(datagram)
-                print binascii.b2a_hex(datagram)
-            print str(msg)
         else:
             print "unknown message type: %i" % msg_type
 
@@ -193,19 +194,11 @@ class TcpConnection:
             self.ec = 0
             self.decoder.add_to_buffer(data)
 
-    def recv_DEPRICATED(self):
-        BUFFER_SIZE = 2048
-        try:
-            data = self.tcp.recv(BUFFER_SIZE)
-            print "get_tcp: data received"
-            self.decoder.add_to_buffer(data)
-        except socket.error, (value,message):
-            print "get_tcp: socket error " + str(value) + ", " + message
-            return #in non-blocking, will fail when no data
-
+## Not Needed
 class ClientMain:
 
-    def __init__(self):
+    def __init__(self, messageHandler):
+        ClientDatagramDecoder.messageHandler  = messageHandler #handles call backs from networking
         self.connection =  TcpConnection()
         self.out = self.connection.out
     def main(self):
@@ -220,7 +213,7 @@ class ClientMain:
             if n %100 == 0:
                 print "tick= %i" % n
 
-
+## Can delete
 import time
 if __name__ == "__main__":
 

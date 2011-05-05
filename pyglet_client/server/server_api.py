@@ -433,7 +433,7 @@ class Main:
     def run(self):
         print "Server Started"
         print "Create Agent"
-        self.gameState.agentList.create_agent(0,0,0,0,0)
+        self.gameState.agentList.create_agent(-10,0,-3,0,0)
         while True:
             self.serverListener.accept() #accept incoming connections
             self.connectionPool.process_events() #check for new data

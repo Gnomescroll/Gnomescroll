@@ -43,30 +43,31 @@ import world
 
 import client_api
 
-class ClientMain:
+class MessageHandler:
+    def __init__(self, player)
+        self.player = player
 
-    def __init__(self):
-        self.connection =  client_api.TcpConnection()
-        self.out = self.connection.out
-    def main(self):
-        self.connection.out.send_json({'cmd' : 'test' })
-        self.out.send_agent_control_state(id=1, d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
-        n = 0
-        while True:
-            self.connection.attempt_recv()
-            #can tick
-            time.sleep(0.02)
-            n += 1
-            if n %100 == 0:
-                print "tick= %i" % n
+    def process_json(self, msg):
+        if msg['cmd'] == 'agent_position':
+            self._agent_position(**msg)
+        else:
+            print "JSON message type unregonized"
 
+    def _agent_position(self, id, tick, state):
+        [x,y,z,vx, vy, vz,ax, ay, az] = state
+        [x,y,z] = [float(x),float(y),float(z)]
+
+        self.player.x = x
+        self.player.y = y
+        self.player.z = z
 
 class App(object):
 
     def __init__(self):
 
         #networking code
-        self.connection =  client_api.TcpConnection()
+        self.messageHandler = MessageHandler()
+        self.connection =  client_api.TcpConnection(self.messageHandler)
         self.out = self.connection.out
         #other
         self.world = world.World()
@@ -105,6 +106,10 @@ class App(object):
             self.connection.attempt_recv()
 
             self.world.tick()
+
+            [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
+            self.out.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
+
             self.win.clear() #?
 
             self.camera.worldProjection()
