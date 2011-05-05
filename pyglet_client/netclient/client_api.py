@@ -52,9 +52,9 @@ class ClientDatagramDecoder:
             try:
                 print "json message"
                 msg = json.loads(datagram)
-                self.messageHandler.process_json(msg)
             except:
                 print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
+            self.messageHandler.process_json(msg)
         else:
             print "unknown message type: %i" % msg_type
 
