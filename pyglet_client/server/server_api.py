@@ -294,7 +294,7 @@ class TcpPacketDecoder:
             print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
-            self.datagramDecoder.process_datagram(message)
+            self.process_datagram(message)
             self.message_length = 0
             self.attempt_decode()
 
@@ -304,7 +304,7 @@ class TcpPacketDecoder:
         (length,) = struct.unpack('I', data[0:4])
         return length
 
-    def process_msg(self, message):
+    def process_datagram(self, message):
         self.count += 1
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)

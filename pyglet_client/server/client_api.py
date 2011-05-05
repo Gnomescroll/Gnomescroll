@@ -11,11 +11,14 @@ class SendMessage:
     def __init__(self, client):
         self.client = client
 
-    def json(self, dict):
+    def add_prefix(self, id, msg):
+        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
+
+    def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))
 
-    def add_prefix(self, id, msg):
-        return struct.pack('I H', 4+2+len(msg), id) + msg
+    def get_json(self, dict):
+        return self.add_prefix(1, json.dumps(dict))
 
     ### agent messages
 
@@ -206,7 +209,7 @@ class ClientMain:
         self.connection =  TcpConnection()
 
     def main(self):
-        self.connection.out.json({'cmd' : 'test' })
+        self.connection.out.send_json({'cmd' : 'test' })
         n = 0
         while True:
             self.connection.attempt_recv()
