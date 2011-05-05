@@ -126,6 +126,7 @@ class EventOut:
         (length,) = struct.unpack('I', prefix)
         if length != len(packet):
             print "len1= %i, len2= %i" % (length, len(packet))
+            x5
         #print binascii.b2a_hex(prefix)
 
     def process_events(self):
@@ -195,11 +196,9 @@ class DatagramDecoder:
         assert self.messageHandler != None
 
     def decode(self, message):
-        print "decoding datagram"
-        (prefix, datagram) = (message[0:2],message[2:])
-        (msg_type,) = struct.unpack('H', prefix)
-        #print "t= " + str(len(prefix))
-        #print "t2= " + str(len(datagram))
+
+        (prefix, datagram) = (message[0:6],message[6:])
+        (length, msg_type) = struct.unpack('I H', prefix)
 
         if msg_type == 0:
             print "test message received"
@@ -212,7 +211,9 @@ class DatagramDecoder:
                 return
             self.messageHandler.process_json(msg)
 
-class TcpPacketDecoder:
+
+#delete
+class TcpPacketDecoder_DEPRECATED:
 
     def __init__(self):
         self.datagramDecoder = DatagramDecoder()
@@ -255,6 +256,55 @@ class TcpPacketDecoder:
         return (length, data[4:])
 
     def process_datagram(self, message):
+        self.count += 1
+        print "processed message count: " +str(self.count)
+        self.datagramDecoder.decode(message)
+
+class TcpPacketDecoder:
+
+    def __init__(self):
+        self.datagramDecoder = DatagramDecoder()
+        self.reset()
+
+    def reset(self):
+        self.buffer = ''
+        self.message_length = 0
+        self.count = 0
+
+    def add_to_buffer(self,data):
+        self.buffer += data
+        self.attempt_decode()
+
+    def attempt_decode(self):
+        buff_len = len(self.buffer)
+        if buff_len == 0:
+            #print "decode: buffer empty"
+            return
+        elif self.message_length == 0 and buff_len > 6:
+            #print "decode: get message prefix"
+            self.message_length = self.read_prefix()
+            print "prefix length: " + str(self.message_length)
+        elif buff_len < self.message_length:
+            return
+        elif self.message_length == 0:
+            return
+
+        if buff_len >= self.message_length:
+            assert self.message_length > 0
+            print "process message in buffer"
+            (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
+            length = self.message_length
+            self.datagramDecoder.process_datagram(message)
+            self.message_length = 0
+            self.attempt_decode()
+
+    def read_prefix(self):
+        data = self.buffer
+        prefix = data[0:4]
+        (length,) = struct.unpack('I', data[0:4])
+        return length
+
+    def process_msg(self, message):
         self.count += 1
         print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)

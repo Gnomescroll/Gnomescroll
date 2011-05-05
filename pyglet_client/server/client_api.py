@@ -36,7 +36,7 @@ class ClientDatagramDecoder:
         self.connection = connection
 
     def process_datagram(self, message):
-        print "decoding datagram"
+        #print "decoding datagram"
         (prefix, datagram) = (message[0:6],message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
 
