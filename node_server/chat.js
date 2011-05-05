@@ -1,3 +1,22 @@
+/* Chat todo:
+ *
+ * server:
+ * 
+ *  History
+ *  PMs
+ *
+ *  client:
+ *      Message history buffer
+ *      Fixed size windows
+ *      CSS
+ *      message div attributes
+ *      Error notifications
+ *      PM interface
+ *
+ *
+ */
+
+
 var redis = require("redis"),
     redis_port = 6379,
     redis_host = '127.0.0.1',
