@@ -5,8 +5,9 @@ $('#submit').click(function (event) {
         chat.send(input.val());
     }
     input.val('');
-
 });
+
+$('#input').attr('maxlength', chat.max_msg_length);
 
 var globals = {
 
@@ -61,6 +62,19 @@ var chat = {
         $.post(globals.server_out + globals.api_path, { json: data });
         return true;
     },
+
+    history : [],
+    max_history : 200,
+
+    max_msg_length : 500,
+
+    blacklist : (function () {
+        localStorage.blacklist = localStorage.blacklist || {};
+        return localStorage.blacklist;
+    }()),
+
+    
+    
 }
 
 var route = {};

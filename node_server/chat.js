@@ -4,6 +4,8 @@
  * 
  *  History
  *  PMs
+ *  anti-spam (ratelimit)
+ *  sanitize msgs (no html tags)
  *
  *  client:
  *      Message history buffer
