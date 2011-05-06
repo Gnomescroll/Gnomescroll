@@ -13,38 +13,14 @@ $('#input').attr({
 
 $('#name').attr({
     value : localStorage.name || ''
-}).blur(function (event) {
+}).blur(function() {
     localStorage.name = $(this).val();
 });
 
-var globals = {
-
-    _generate_id : function () {    // generate random 16 char string
-        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
-            num_chars = chars.length,
-            string_length = 16,
-            randomstring = '',
-            i = 0,
-            rnum;
-        for (i=0; i<string_length; i++) {
-            rnum = Math.floor(Math.random() * num_chars);
-            randomstring += chars.charAt(rnum);
-        }
-        return randomstring;
-    },
-
-    create_client_id : function () {
-        this.client_id = this._generate_id();
-        localStorage.client_id = this.client_id;
-        this.new_client = true;
-    },
-    
-    update : function (params) {
-        this.world_id   = typeof parseInt(params.world_id, 10)  === 'number' ? params.world_id  : this.world_id;
-        this.client_id  = typeof parseInt(params.client_id, 10) === 'number' ? params.client_id : this.client_id;
-        this.server_out = typeof params.server_out !== undefined ? params.server_out : this.server_out;
-    },
-};
+$(window).unload(function () {
+    blacklist.save();
+    chat_history.save();
+});
 
 $.extend(globals, {
     world_id   : 0,
@@ -82,17 +58,20 @@ var chat = {
 
     received : {}, // used to filter out mistaken duplicate msgs
 
-    add_to_panel : function (msg) {
-        if (blacklist.on(msg)) {
-            return;
+    add_msg : function (msg, isNew, system) {
+        if (!system) {
+            if (blacklist.on(msg)) {
+                return;
+            }
+            if (this.received.hasOwnProperty(msg.id)) {
+                return;
+            }
         }
-        if (this.received.hasOwnProperty(msg.id)) {
-            return;
+        if (isNew) {
+            chat_history.add(msg);
         }
-        chat_history.add(msg);
         $('#messages').append($('<div></div>').attr($.extend({'class': 'message'}, msg)).html('<span class="name">'+msg.name +'<span>: <span class="content">'+msg.content+'</span>'));
     },
-    
 }
 
 var chat_history = {
@@ -100,6 +79,12 @@ var chat_history = {
     _history : (function () {
         localStorage.history = localStorage.history || JSON.stringify([]);
         return $.parseJSON(localStorage.history);
+    }()),
+
+    last_save : (function () {
+        var ht = localStorage.history_timestamp;
+        if (ht === undefined) return new Date();
+        return ht;
     }()),
     
     _max : 200,
@@ -120,10 +105,29 @@ var chat_history = {
 
     save : function () {
         localStorage.history = JSON.stringify(this._history);
+        localStorage.history_timestamp = new Date().toString();
     },
 
     del : function () {
         delete localStorage.history;
+    },
+
+    load : function () {
+        var hist = this._history,
+            len = hist.length,
+            i,
+            item;
+
+        for (i=0; i < len; i++) {
+            item = hist[i];
+            chat.add_msg(item, false);
+        }
+        if (localStorage.history_timestamp !== undefined) {
+            chat.add_msg({
+                'name'    : 'system',
+                'content' : 'Chat history loaded from '+ localStorage.history_timestamp
+            }, false, true);
+        }
     },
 };
 
@@ -165,5 +169,7 @@ var blacklist = {
 var route = {};
 route.chat = function (msg) {
     console.log('received msg');
-    chat.add_to_panel(msg);
+    chat.add_msg(msg, true);
 };
+
+chat_history.load();
