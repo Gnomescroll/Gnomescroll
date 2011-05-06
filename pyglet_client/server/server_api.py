@@ -177,7 +177,7 @@ class MessageHandler:
             print "Json message need cmd parameter: " + str(msg)
             return
 
-        print "MessageHandler.process_json: " + str(msg)
+        #print "MessageHandler.process_json: " + str(msg)
         if msg['cmd'] == 'create_agent':
             self.gameState.create_agent(**msg)
         elif msg['cmd'] == 'agent_control_state':
@@ -203,7 +203,7 @@ class DatagramDecoder:
         if msg_type == 0:
             print "test message received"
         if msg_type == 1:
-            print "DatagramDecoder: JSON message"
+            #print "DatagramDecoder: JSON message"
             try:
                 msg = json.loads(datagram)
             except:
@@ -242,7 +242,7 @@ class TcpPacketDecoder:
 
         if buff_len >= self.message_length:
             assert self.message_length > 0
-            print "process message in buffer"
+            #print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
             self.process_datagram(message)
@@ -257,7 +257,7 @@ class TcpPacketDecoder:
 
     def process_datagram(self, message):
         self.count += 1
-        print "processed message count: " +str(self.count)
+        #print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
 import atexit
@@ -360,7 +360,7 @@ class TcpClient:
             if self.ec > 3:
                 self.pool.tearDownClient(self.fileno)
         else:
-            print "get_tcp: data received, %i bytes" % len(data)
+            #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
             self.TcpPacketDecoder.add_to_buffer(data)
 

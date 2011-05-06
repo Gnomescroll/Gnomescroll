@@ -19,6 +19,8 @@ from pyglet.window import key
 
 import math
 
+from math import sin, cos, pi
+
 class Keyboard(object):
 
     def __init__(self, main):
@@ -69,14 +71,19 @@ class Keyboard(object):
         # d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
         v = 1
         [d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
+
         if keyboard[key.W]:
-            d_x = v
+                d_x += v*cos( self.player.x_angle * pi)
+                d_y += v*sin( self.player.x_angle * pi)
         if keyboard[key.S]:
-            d_x = -v
+                d_x += -v*cos( self.player.x_angle * pi)
+                d_y += -v*sin( self.player.x_angle * pi)
         if keyboard[key.A]:
-            d_y = v
+                d_x += -v*cos( self.player.x_angle * pi + pi/2)
+                d_y += -v*sin( self.player.x_angle * pi + pi/2)
         if keyboard[key.D]:
-            d_y = -v
+                d_x += v*cos( self.player.x_angle * pi + pi/2)
+                d_y += v*sin( self.player.x_angle * pi + pi/2)
         if keyboard[key.E]:
             brake = 1
         if keyboard[key.SPACE]:
