@@ -17,6 +17,9 @@ $('#name').attr({
     localStorage.name = $(this).val();
 });
 
+var $messages = $('#messages');
+$messages.scrollTop($messages.height());
+
 $(window).unload(function () {
     blacklist.save();
     chat_history.save();
@@ -128,6 +131,7 @@ var chat_history = {
                 'content' : 'Chat history loaded from '+ localStorage.history_timestamp
             }, false, true);
         }
+        $messages.scrollTop(100000);
     },
 };
 
