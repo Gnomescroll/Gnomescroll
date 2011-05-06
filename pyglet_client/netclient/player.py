@@ -2,41 +2,90 @@ from math import sin, cos, pi
 from math import floor, ceil, fabs
 from pyglet.gl import *
 
+import math
 class Player:
 
     def __init__(self, main=None):
         self.main = main
 
-        self.height = 1.7
-        self.radius = 0.4
-        self.speed = .8 #meters per second
-        self.onGround = True
-
-        self.jump_power = 0.5
-        self.vx = 0.
-        self.vy = 0.
-        self.vz = 0.
-
+        self.id = 1
+        #[d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
+        self.control_state = [0,0,0,0,0,0]
         self.x = -.5
         self.y = -.5
         self.z = -.5
         self.x_angle = 0
         self.y_angle = 0
 
-    def tick(self, gravity, v_drag, jump):
-        drag_v = v_drag * -fabs(self.vz)
-        if jump == True:
-            jump_v = self.jump_power
-        else:
-            jump_v = 0
-        self.vz += gravity + jump_v + drag_v
+        self.vx = 0
+        self.vy = 0
+        self.vz = 0
+        self.ax = 0
+        self.ay = 0
+        self.az = 0
+
+    def tick(self):
+        pass
 
 
     def draw(self):
         self.draw_aiming_direction()
-        #self.draw_selected_cube()
-        self.draw_player_bounding_box()
-        self.draw_selected_cube2()
+        ##self.draw_selected_cube()
+        #self.draw_player_bounding_box()
+        #self.draw_selected_cube2()
+        self.draw_position(points=10, seperation = 0.10)
+        self.draw_velocity(point_density=15, units=200)
+        self.draw_acceleration(point_density=15, units=100000)
+
+    def draw_position(self, points, seperation):
+        v_num = 0
+        v_list = []
+        c_list = []
+        for n in range(-points, points):
+            temp = float(n)*float(seperation)
+            v_list += [self.x+temp, self.y, self.z]
+            v_list += [self.x,self.y+temp, self.z]
+            v_list += [self.x,self.y, self.z+temp]
+            c_list += [255,255,255] + [255,255,255] + [255,255,255]
+            v_num +=3
+        pyglet.graphics.draw(v_num, GL_POINTS,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+
+    def draw_velocity(self, point_density, units):
+        v_num = 0
+        v_list = []
+        c_list = []
+        vlen = units*math.sqrt(self.vx*self.vx + self.vy*self.vy + self.vz*self.vz)
+        #print "vlen= " + str(vlen)
+        num_points = int(math.floor(point_density*vlen))
+        c = 1.0 / float(point_density)
+        for n in range(0, num_points):
+            v_list += [self.x+units*n*c*self.vx, self.y+units*n*c*self.vy, self.z+units*n*c*self.vz]
+            c_list += [0,0,255]
+            v_num +=1
+        pyglet.graphics.draw(v_num, GL_POINTS,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+
+    def draw_acceleration(self, point_density, units):
+        v_num = 0
+        v_list = []
+        c_list = []
+        vlen = units*math.sqrt(self.ax*self.ax + self.ay*self.ay + self.az*self.az)
+        #print "alen= " + str(vlen)
+        num_points = int(math.floor(point_density*vlen))
+        c = 1.0 / float(point_density)
+        for n in range(0, num_points):
+            v_list += [self.x+units*n*c*self.ax, self.y+units*n*c*self.ay, self.z+units*n*c*self.az]
+            c_list += [0,255,0]
+            v_num +=1
+        pyglet.graphics.draw(v_num, GL_POINTS,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
 
     def draw_player_bounding_box(self):
         v_sets = [
