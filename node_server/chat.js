@@ -4,6 +4,8 @@
  * 
  *  History
  *  PMs
+ *  anti-spam (ratelimit)
+ *  sanitize msgs (no html tags)
  *
  *  client:
  *      Message history buffer
@@ -22,6 +24,8 @@ var redis = require("redis"),
     redis_host = '127.0.0.1',
     r_api = redis.createClient(redis_port, redis_host);
 
+
+var message_counter = 1;
 function tell_redis(json, msg, channel) {    // publish json or a js object to redis
     // json can be either encoded or decoded json.
     // if encoded, msg can be the decoded object.
@@ -41,7 +45,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     if (!validate_chat_message(msg)) {
         return;
     }
-    
+    json = JSON.stringify(msg);
     channel = channel || 'chat_' + msg.world_id;
     console.log('tell redis');
     console.log(json);
@@ -52,6 +56,7 @@ function validate_chat_message (msg) {
     if (msg.world_id === undefined) return false;
     if (msg.content === undefined || msg.content === '') return false;
     if (msg.name === undefined || msg.name === '') return false;
+    msg.id = message_counter++;
     return true;
 }
 
