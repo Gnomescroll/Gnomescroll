@@ -8,7 +8,8 @@
  *  sanitize msgs (no html tags)
  *
  *  client:
- *      Message history buffer
+ *      blacklist/ignore (done)
+ *      Message history buffer (done)
  *      Fixed size windows
  *      CSS
  *      message div attributes
@@ -24,8 +25,6 @@ var redis = require("redis"),
     redis_host = '127.0.0.1',
     r_api = redis.createClient(redis_port, redis_host);
 
-
-var message_counter = 1;
 function tell_redis(json, msg, channel) {    // publish json or a js object to redis
     // json can be either encoded or decoded json.
     // if encoded, msg can be the decoded object.
@@ -52,6 +51,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     r_api.publish(channel, json);
 }
 
+var message_counter = 1;
 function validate_chat_message (msg) {
     if (msg.world_id === undefined) return false;
     if (msg.content === undefined || msg.content === '') return false;

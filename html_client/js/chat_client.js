@@ -7,7 +7,15 @@ $('#submit').click(function (event) {
     input.val('');
 });
 
-$('#input').attr('maxlength', chat.max_msg_length);
+$('#input').attr({
+    'maxlength': chat.max_msg_length
+});
+
+$('#name').attr({
+    value : localStorage.name || ''
+}).blur(function (event) {
+    localStorage.name = $(this).val();
+});
 
 var globals = {
 
