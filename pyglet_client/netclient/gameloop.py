@@ -83,14 +83,12 @@ class App(object):
 
             self.win.dispatch_events()
             self.keyboard.stateHandler(keyboard)
-
+            [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
+            self.out.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
             #network events
             self.connection.attempt_recv()
 
             self.world.tick()
-
-            [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
-            self.out.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
 
             self.win.clear() #?
 
