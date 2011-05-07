@@ -2,23 +2,22 @@
  *
  * server:
  * 
- *  History
+ *  History (ignoring)
  *  PMs
  *  anti-spam (ratelimit)
- *  sanitize msgs (no html tags)
+ *  sanitize msgs (no html tags) DONE
  *
  *  client:
- *      blacklist/ignore (done)
- *      Message history buffer (done)
- *      Fixed size windows
+ *      blacklist/ignore DONE
+ *      Message history buffer DONE
+ *      Fixed size windows  DONE
  *      CSS
- *      message div attributes
+ *      message div attributes DONE
  *      Error notifications
  *      PM interface
  *
  *
  */
-
 
 var redis = require("redis"),
     redis_port = 6379,
@@ -44,8 +43,9 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     if (!validate_chat_message(msg)) {
         return;
     }
+    clean(msg);
     json = JSON.stringify(msg);
-    channel = channel || 'chat_' + msg.world_id;
+    channel = channel || (msg.pm) ? 'chat_user_'+msg.pm : 'chat_' + msg.world_id;
     console.log('tell redis');
     console.log(json);
     r_api.publish(channel, json);
@@ -58,6 +58,14 @@ function validate_chat_message (msg) {
     if (msg.name === undefined || msg.name === '') return false;
     msg.id = message_counter++;
     return true;
+}
+
+function clean(msg) {
+    msg.content = stripHTML(msg.content);
+}
+
+function stripHTML (str)  {
+    return str.replace(/<\/?[a-z][a-z0-9]*[^<>]*>/ig, "");
 }
 
 var http_port = 8082,
@@ -276,6 +284,7 @@ var update_redis = function (data) {
         bind_message();
         that.redis_client.subscribe('chat_'+data.world_id);
         that.redis_client.subscribe('client_global');
+        that.redis_client.subscribe('chat_user_'+data.client_id);
     } else {    // update client object in redis_client.on('message');
         bind_message();
     }

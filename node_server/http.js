@@ -73,7 +73,11 @@ var http_port = 8080,
             if (_static_cache[cache_key] !== undefined) {
                 body = _static_cache[cache_key];
             } else {
-                body = fs.readFileSync(fp, encoding);
+                try {
+                    body = fs.readFileSync(fp, encoding);
+                } catch (e) {
+                    return false;
+                }
                 _static_cache[cache_key] = body;
             }
             return body;
@@ -128,7 +132,11 @@ var http_port = 8080,
                 if (CACHE) {
                     body = _access_cache(cache_key, fp, encoding);
                 } else {
-                    body = fs.readFileSync(fp, encoding);
+                    try {
+                        body = fs.readFileSync(fp, encoding);
+                    } catch (e) {
+                        body = false;
+                    }
                 }
                 return body;
             },
@@ -190,8 +198,12 @@ var http_port = 8080,
                     }
                 }
 
-                response.statusCode = status;
                 body = (body) ? body.call(that, request, response) : views.hello();
+                if (!body) {
+                    status = 404;
+                    body = '';
+                }
+                response.statusCode = status;
                 response.write(body);
                 response.end();
             });
