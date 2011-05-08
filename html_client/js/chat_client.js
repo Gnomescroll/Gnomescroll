@@ -65,7 +65,9 @@ var chat = {
             name_class = 'you';
         }
         if (msg.name === 'system') {
-            name_container = '<span class="name"><strong>'+ msg.name +'</strong></span>';
+            name_container = '<span class="name system"><strong>'+ msg.name +'</strong></span>';
+        } else if (name_class === 'you') {
+            name_container = '<span class="name you">'+ msg.name +'</span>'
         } else {
             name_container = '<a class="'+name_class+'" client_id="'+msg.client_id+'" href="">'+msg.name +'</a>';
         }
@@ -191,6 +193,7 @@ $('#submit').click(function (event) {
         client_id : ''
     });
     input.val('');
+    $('#cancel_pm').remove();
 });
 
 $('#input').attr({
@@ -212,6 +215,13 @@ $('a.name').live('click', function (event) {
         value : 'Send PM to '+name,
         client_id : client_id
     });
+    $('#controls').append($('<a id="cancel_pm"></a>').html('Cancel PM'));
+    return false;
+});
+
+$('#cancel_pm').live('click', function (event) {
+    event.preventDefault();
+    $('#submit').triggerHandler('click');
     return false;
 });
 

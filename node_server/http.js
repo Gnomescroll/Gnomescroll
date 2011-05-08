@@ -204,6 +204,7 @@ var http_port = 8080,
                     body = '';
                 }
                 response.statusCode = status;
+                response.setHeader('Content-Type', response.getHeader('Content-Type') + '; charset=utf-8');
                 response.write(body);
                 response.end();
             });
