@@ -1,30 +1,3 @@
-$('#submit').click(function (event) {
-    event.preventDefault();
-    var input = $('#input');
-    if (input.val()) {
-        chat.send(input.val());
-    }
-    input.val('');
-});
-
-$('#input').attr({
-    'maxlength': chat.max_msg_length
-});
-
-$('#name').attr({
-    value : localStorage.name || ''
-}).blur(function() {
-    localStorage.name = $(this).val();
-});
-
-var $messages = $('#messages');
-$messages.scrollTop($messages.height());
-
-$(window).unload(function () {
-    blacklist.save();
-    chat_history.save();
-});
-
 $.extend(globals, {
     world_id   : 0,
     new_client : !!localStorage.client_id,
@@ -37,14 +10,18 @@ $.extend(globals, {
 
 var chat = {
     send : function (msg) {
-        if (typeof msg !== 'string') {
+        var pm;
+        if (typeof msg === 'object') {
+            pm = msg.pm;
+            msg = msg.msg;
+        } else if (typeof msg !== 'string') {
             return;
         }
         if (msg.length > this.max_msg_length) {
             console.log('message too long');
             return;
         }
-        data = JSON.stringify({
+        data = {
             cmd: 'chat',
             msg: 'chat',
             content: msg,
@@ -52,9 +29,18 @@ var chat = {
             player_id: globals.player_id,
             world_id: globals.world_id,
             name: $('#name').val(),
-        });
-        $.post(globals.server_out + globals.api_path, { json: data });
+        };
+        if (pm) {
+            data.pm = pm;
+        }
+        $.post(globals.server_out + globals.api_path, { json: JSON.stringify(data) });
         return true;
+    },
+
+    pm : function (msg, client_id) {
+        msg = { msg: msg };
+        msg.pm = client_id;
+        this.send(msg);
     },
 
     max_msg_length : 500,
@@ -73,7 +59,17 @@ var chat = {
         if (isNew) {
             chat_history.add(msg);
         }
-        $('#messages').append($('<div></div>').attr($.extend({'class': 'message'}, msg)).html('<span class="name">'+msg.name +'<span>: <span class="content">'+msg.content+'</span>'));
+        var name_class = 'name',
+            name_container;
+        if (msg.client_id === localStorage.client_id) {
+            name_class = 'you';
+        }
+        if (msg.name === 'system') {
+            name_container = '<span class="name"><strong>'+ msg.name +'</strong></span>';
+        } else {
+            name_container = '<a class="'+name_class+'" client_id="'+msg.client_id+'" href="">'+msg.name +'</a>';
+        }
+        $('#messages').append($('<div></div>').attr($.extend({'class': 'message'}, msg)).html(name_container+': <span class="content">'+msg.content+'</span>'));
     },
 }
 
@@ -121,7 +117,7 @@ var chat_history = {
             i,
             item;
 
-        for (i=0; i < len; i++) {
+        for (i=len-1; i >= 0; i--) {
             item = hist[i];
             chat.add_msg(item, false);
         }
@@ -131,7 +127,7 @@ var chat_history = {
                 'content' : 'Chat history loaded from '+ localStorage.history_timestamp
             }, false, true);
         }
-        $messages.scrollTop(100000);
+        $('#messages').scrollTop(100000);
     },
 };
 
@@ -177,3 +173,49 @@ route.chat = function (msg) {
 };
 
 chat_history.load();
+
+$('#submit').click(function (event) {
+    event.preventDefault();
+    var s = $(this),
+        client_id = s.attr('client_id'),
+        input = $('#input');
+    if (input.val()) {
+        if (client_id !== '') {
+            chat.pm(input.val(), client_id);
+        } else {
+            chat.send(input.val());
+        }
+    }
+    s.attr({
+        value : 'Send',
+        client_id : ''
+    });
+    input.val('');
+});
+
+$('#input').attr({
+    'maxlength': chat.max_msg_length
+});
+
+$('#name').attr({
+    value : localStorage.name || ''
+}).blur(function() {
+    localStorage.name = $(this).val();
+});
+
+$('a.name').live('click', function (event) {
+    event.preventDefault();
+    var s = $(this),
+        client_id = s.attr('client_id'),
+        name = s.text();
+    $('#submit').attr({
+        value : 'Send PM to '+name,
+        client_id : client_id
+    });
+    return false;
+});
+
+$(window).unload(function () {
+    blacklist.save();
+    chat_history.save();
+});

@@ -3,7 +3,7 @@
  * server:
  * 
  *  History (ignoring)
- *  PMs
+ *  PMs DONE
  *  anti-spam (ratelimit)
  *  sanitize msgs (no html tags) DONE
  *
@@ -46,6 +46,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     clean(msg);
     json = JSON.stringify(msg);
     channel = channel || (msg.pm) ? 'chat_user_'+msg.pm : 'chat_' + msg.world_id;
+    console.log('channel '+ channel);
     console.log('tell redis');
     console.log(json);
     r_api.publish(channel, json);
