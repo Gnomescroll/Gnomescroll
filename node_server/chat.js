@@ -187,6 +187,11 @@ var io = require('socket.io'),
         if (msg.msg === 'new' && client_id_to_session.hasOwnProperty(msg.client_id)) {
             msg.session_id = 'taken';
         } else {
+            if (msg.client_id !== msg.client_id.replace(/^[^\w]{16}$/)) {   // validate client_id (16 alphanumeric chars)
+                msg = {};
+                this.disconnect();
+                return this;
+            }
             this.client_id = msg.client_id;
             msg.session_id = this.sessionId;
             if (msg.update) {
