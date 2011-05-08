@@ -5,7 +5,8 @@
  *  History (ignoring)
  *  PMs DONE
  *  anti-spam (ratelimit)
- *  sanitize msgs (no html tags) DONE
+ *  strip html tags DONE
+ *  validate msg object (no unexpected attrs, valid values)
  *
  *  client:
  *      blacklist/ignore DONE
@@ -63,10 +64,15 @@ function validate_chat_message (msg) {
 
 function clean(msg) {
     msg.content = stripHTML(msg.content);
+    msg.content = encodeHTML(msg.content);
 }
 
 function stripHTML (str)  {
     return str.replace(/<\/?[a-z][a-z0-9]*[^<>]*>/ig, "");
+}
+
+function encodeHTML (str) {
+    return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#x27;').replace('/', '&#x2F;');
 }
 
 var http_port = 8082,
