@@ -6,7 +6,7 @@
  *  PMs DONE
  *  anti-spam (ratelimit)
  *  strip html tags DONE
- *  validate msg object (no unexpected attrs, valid values)
+ *  validate msg object (no unexpected attrs DONE, valid values)
  *
  *  client:
  *      blacklist/ignore DONE
@@ -74,17 +74,18 @@ function clean(msg) {
         new_msg = {};
     for (i=0; i < len; i++) {
         prop = props[i];
-        new_msg[prop] = msg[prop];
+        new_msg[prop] = stripHTML(encodeHTML(msg[prop]));
     }
     return new_msg;
 }
 
 function stripHTML (str)  {
-    return str.replace(/<\/?[a-z][a-z0-9]*[^<>]*>/ig, "");
+    return str.toString().replace(/<\/?[a-z][a-z0-9]*[^<>]*>/ig, "");
 }
 
 function encodeHTML (str) {
-    return str.replace('&', '&amp;')
+    return str.toString()
+              .replace('&', '&amp;')
               .replace('<', '&lt;')
               .replace('>', '&gt;')
               .replace('"', '&quot;')
