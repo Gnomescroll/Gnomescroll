@@ -44,7 +44,7 @@ function tell_redis(json, msg, channel) {    // publish json or a js object to r
     if (!validate_chat_message(msg)) {
         return;
     }
-    clean(msg);
+    msg = clean(msg);
     json = JSON.stringify(msg);
     channel = channel || (msg.pm) ? 'chat_user_'+msg.pm : 'chat_' + msg.world_id;
     console.log('channel '+ channel);
@@ -58,13 +58,25 @@ function validate_chat_message (msg) {
     if (msg.world_id === undefined) return false;
     if (msg.content === undefined || msg.content === '') return false;
     if (msg.name === undefined || msg.name === '') return false;
-    msg.id = message_counter++;
+    msg.msg_id = message_counter++;
     return true;
 }
 
 function clean(msg) {
     msg.content = stripHTML(msg.content);
     msg.content = encodeHTML(msg.content);
+
+    // copy over valid properties
+    var props = ['msg', 'cmd', 'content', 'client_id', 'player_id', 'world_id', 'name', 'msg_id'],
+        prop,
+        len = props.length,
+        i,
+        new_msg = {};
+    for (i=0; i < len; i++) {
+        prop = props[i];
+        new_msg[prop] = msg[prop];
+    }
+    return new_msg;
 }
 
 function stripHTML (str)  {
@@ -72,7 +84,12 @@ function stripHTML (str)  {
 }
 
 function encodeHTML (str) {
-    return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#x27;').replace('/', '&#x2F;');
+    return str.replace('&', '&amp;')
+              .replace('<', '&lt;')
+              .replace('>', '&gt;')
+              .replace('"', '&quot;')
+              .replace("'", '&#x27;')
+              .replace('/', '&#x2F;');
 }
 
 var http_port = 8082,

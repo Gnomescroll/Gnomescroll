@@ -60,7 +60,8 @@ var chat = {
             chat_history.add(msg);
         }
         var name_class = 'name',
-            name_container;
+            name_container,
+            props;
         if (msg.client_id === localStorage.client_id) {
             name_class = 'you';
         }
@@ -69,9 +70,16 @@ var chat = {
         } else if (name_class === 'you') {
             name_container = '<span class="name you">'+ msg.name +'</span>'
         } else {
-            name_container = '<a class="'+name_class+'" client_id="'+msg.client_id+'" href="">'+msg.name +'</a>';
+            name_container = '<a class="'+name_class+'" href="">'+msg.name +'</a>';
         }
-        $('#messages').append($('<div></div>').attr($.extend({'class': 'message'}, msg)).html(name_container+': <span class="content">'+msg.content+'</span>'));
+        props = {
+            'class' : 'message',
+            msg_id  : msg.msg_id,
+            client_id : msg.client_id,
+            player_id : msg.player_id,
+            world_id  : msg.world_id
+        };
+        $('#messages').append($('<div></div>').attr(props).html(name_container+': <span class="content">'+msg.content+'</span>'));
     },
 }
 
@@ -209,8 +217,11 @@ $('#name').attr({
 $('a.name').live('click', function (event) {
     event.preventDefault();
     var s = $(this),
-        client_id = s.attr('client_id'),
+        client_id = s.parent().attr('client_id'),
         name = s.text();
+    if (client_id === localStorage.client_id) {
+        return false;
+    }
     $('#submit').attr({
         value : 'Send PM to '+name,
         client_id : client_id
