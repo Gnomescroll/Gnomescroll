@@ -1,11 +1,13 @@
 import socket
 import struct
 import binascii
+import select
 
 from collections import namedtuple
 
 import simplejson as json
 
+# sends message to specific client
 class SendMessage:
 
     def __init__(self, client):
@@ -28,11 +30,10 @@ class SendMessage:
             'id' : id,
             'tick' : 0,
             'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
-           }
+        }
         self.send_json(d)
-
-import binascii
-
+        
+# decodes various datagram encodings
 class ClientDatagramDecoder:
 
     def __init__(self, connection):
@@ -40,8 +41,8 @@ class ClientDatagramDecoder:
 
     def process_datagram(self, message):
         #print "decoding datagram"
-        (prefix, datagram) = (message[0:6],message[6:])
-        (length, msg_type) = struct.unpack('I H', prefix)
+        prefix, datagram = (message[0:6], message[6:])
+        length, msg_type = struct.unpack('I H', prefix)
 
         if msg_type == 0:
             print "test message received"
@@ -50,12 +51,13 @@ class ClientDatagramDecoder:
                 print "json message"
                 msg = json.loads(datagram)
             except:
-                print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
+                print "error decoding: len = %i, message_length= %i" % (len(datagram), length,)
                 print str(datagram)
                 print binascii.b2a_hex(datagram)
             print str(msg)
         else:
-            print "unknown message type: %i" % msg_type
+            print "unknown message type: %i" % (msg_type,)
+
 
 class PacketDecoder:
     def __init__(self,connection):
@@ -79,7 +81,7 @@ class PacketDecoder:
         elif self.message_length == 0 and buff_len > 6:
             #print "decode: get message prefix"
             self.message_length = self.read_prefix()
-            print "prefix length: " + str(self.message_length)
+            print "prefix length: %s" % (str(self.message_length),)
         elif buff_len < self.message_length:
             return
         elif self.message_length == 0:
@@ -88,7 +90,7 @@ class PacketDecoder:
         if buff_len >= self.message_length:
             assert self.message_length > 0
             print "process message in buffer"
-            (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
+            message, self.buffer = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
             self.datagramDecoder.process_datagram(message)
             self.message_length = 0
@@ -97,15 +99,15 @@ class PacketDecoder:
     def read_prefix(self):
         data = self.buffer
         prefix = data[0:4]
-        (length,) = struct.unpack('I', data[0:4])
+        length = struct.unpack('I', data[0:4])
         return length
 
     def process_msg(self, message):
         self.count += 1
-        print "processed message count: " +str(self.count)
+        print "processed message count: %s" % (str(self.count),)
         self.datagramDecoder.decode(message)
 
-import select
+
 class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
@@ -142,8 +144,8 @@ class TcpConnection:
             print "Connection: tcp connected"
             self.fileno = self.tcp.fileno()
             self.connected = True
-        except socket.error, (value,message):
-            print "Connection failed: socket error " + str(value) + ", " + message
+        except socket.error, (value, message):
+            print "Connection failed: socket error %i, %s" % (value, message,)
             self.connected = False
 
     def disconnect(self):
@@ -153,12 +155,12 @@ class TcpConnection:
         self.tcp.close()
 
     def send(self, MESSAGE):
-        print "send len: " + str(len(MESSAGE))
+        print "send len: %i" % (len(MESSAGE),)
         if self.connected == True:
             try:
                 self.tcp.sendall(MESSAGE)
-            except socket.error, (value,message):
-                print "Connection failed: socket error " + str(value) + ", " + message
+            except socket.error, (value, message):
+                print "Connection failed: socket error %i, %s" % (value, message,)
                 if value == 32:  #connection reset by peer
                     self.close()
         else:
@@ -174,14 +176,14 @@ class TcpConnection:
             elif event & select.EPOLLOUT:
                 pass #ready to write
             else:
-                print "Strange Epoll Event: %i" % eventOut
+                print "Strange Epoll Event: %i" % (eventOut,)
 
     def recv(self):
         BUFFER_SIZE = 4096
         try:
             data = self.tcp.recv(BUFFER_SIZE)
-        except socket.error, (value,message):
-            print "TcpClient.get: socket error %i, %s" % (value, message)
+        except socket.error, (value, message):
+            print "TcpClient.get: socket error %i, %s" % (value, message,)
             data = ''
         if len(data) == 0: #if we read three times and get no data, close socket
             #print "tcp data: empty read"
@@ -189,7 +191,7 @@ class TcpConnection:
             if self.ec > 3:
                 self.disconnect()
         else:
-            print "get_tcp: data received, %i bytes" % len(data)
+            print "get_tcp: data received, %i bytes" % (len(data),)
             self.ec = 0
             self.decoder.add_to_buffer(data)
 
@@ -200,7 +202,7 @@ class TcpConnection:
             print "get_tcp: data received"
             self.decoder.add_to_buffer(data)
         except socket.error, (value,message):
-            print "get_tcp: socket error " + str(value) + ", " + message
+            print "get_tcp: socket error %i, %s" % (value, message,)
             return #in non-blocking, will fail when no data
 
 class ClientMain:
@@ -209,7 +211,7 @@ class ClientMain:
         self.connection =  TcpConnection()
         self.out = self.connection.out
     def main(self):
-        self.connection.out.send_json({'cmd' : 'test' })
+        self.connection.out.send_json({'cmd': 'test'})
         self.out.send_agent_control_state(id=1., d_x=1., d_y=0., d_xa=0., d_za=0., jetpack=0., brake=0.)
         n = 0
         while True:
@@ -218,7 +220,7 @@ class ClientMain:
             time.sleep(0.02)
             n += 1
             if n %100 == 0:
-                print "tick= %i" % n
+                print "tick= %i" % (n,)
 
 
 import time
@@ -232,6 +234,6 @@ if __name__ == "__main__":
         x= TcpConnection()
         #x.connect()
 
-        x.out.send_json({'cmd' : 'test' })
+        x.out.send_json({'cmd': 'test'})
         time.sleep(3)
         x.disconnect()

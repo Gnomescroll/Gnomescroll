@@ -51,7 +51,7 @@ class PlayerAgent:
 
     # apply physics to agent
     def tick(self):
-        [x,y,z, vx,vy,vz, ax,ay,az] = self.state
+        x,y,z, vx,vy,vz, ax,ay,az = self.state
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
         if z <= 0.:
@@ -137,7 +137,7 @@ class EventOut:
             print 'Packet length too small. Packet len: %i' % (len(packet),)
             return False
         prefix = packet[:4]
-        (length,) = struct.unpack('I', prefix)
+        length = struct.unpack('I', prefix)
         if length != len(packet):
             print "len1= %i, len2= %i" % (length, len(packet),)
             return False
@@ -225,8 +225,8 @@ class DatagramDecoder:
 
     def decode(self, message):
 
-        (prefix, datagram) = (message[0:6], message[6:])
-        (length, msg_type) = struct.unpack('I H', prefix)
+        prefix, datagram = (message[0:6], message[6:])
+        length, msg_type = struct.unpack('I H', prefix)
 
         if msg_type == 0:
             print "test message received"
@@ -272,7 +272,7 @@ class TcpPacketDecoder:
         if buff_len >= self.message_length:
             assert self.message_length > 0
             #print "process message in buffer"
-            (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
+            message, self.buffer = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
             self.process_datagram(message)
             self.message_length = 0
@@ -281,7 +281,7 @@ class TcpPacketDecoder:
     def read_prefix(self):
         data = self.buffer
         prefix = data[0:4]
-        (length,) = struct.unpack('I', data[0:4])
+        length = struct.unpack('I', data[0:4])
         return length
 
     def process_datagram(self, message):
