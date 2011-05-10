@@ -9,7 +9,7 @@ class TerrainMap:
     def __init__(self):
         self.chunks = {}
 
-    def set(int x,inr y, int z,int value):
+    def set(int x,int y, int z,int value):
 
         pass
 
