@@ -1,23 +1,19 @@
 import socket
 import struct
 
-import time
+#import time
+#import math
+
 import simplejson as json
 
 import binascii
-#import math
 
 import atexit
 import socket
 import select
 
-def pm(id, msg):
-    return struct.pack('H', id) + msg
-
-#0 is test message
-#1 is json
-
-# agent class
+#def pm(id, msg):
+#    return struct.pack('H', id) + msg
 
 from game_state import PlayerAgent, AgentList, GameState
 
@@ -30,26 +26,9 @@ class EventOut:
         self.event_packets = []
         self.sendMessage = SendMessage(None)
 
-    def validate_packet(self, packet):
-        try:
-            assert len(packet) >= 4
-        except:
-            print 'Packet length too small. Packet len: %i' % (len(packet),)
-            return False
-        prefix = packet[:4]
-        (length,) = struct.unpack('I', prefix)
-        if length != len(packet):
-            print "len1= %i, len2= %i" % (length, len(packet),)
-            return False
-            #x5
-        #print binascii.b2a_hex(prefix)
-        return True
-
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
-            if not self.validate_packet(event_packet):
-                continue
             for client in self.pool._client_pool.values():
                 client.send(event_packet)
         self.event_packets = []
@@ -74,7 +53,6 @@ class SendMessage:
 
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix not included in length?
-#        return struct.pack('I H', 4+2+len(msg), id) + msg
 
     def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))
@@ -101,20 +79,23 @@ class MessageHandler:
         if cmd == 'create_agent':
             self.gameState.create_agent(**msg)
         elif cmd == 'agent_control_state':
-            try:
-                id = int(msg.get('id', None))
-            except TypeError:
-                print 'msg.cmd == agent_control_state, but msg.id missing. MSG: %s' % (str(msg),)
-                return
-            except ValueError:
-                print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
-                return
-            agent = self.gameState.agentList.get_agent(id)
-            tick = msg.get('tick', None)
-            d_x, d_y, d_xa, d_za, jetpack, brake = msg.get('state', [None for i in range(6)])
-            agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
+            self.agent_control_state(msg)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
+
+    def agent_control_state(self, msg):
+        try:
+            id = int(msg.get('id', None))
+        except TypeError:
+            print 'msg.cmd == agent_control_state, but msg.id missing. MSG: %s' % (str(msg),)
+            return
+        except ValueError:
+            print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
+            return
+        agent = self.gameState.agentList.get_agent(id)
+        tick = msg.get('tick', None)
+        d_x, d_y, d_xa, d_za, jetpack, brake = msg.get('state', [None for i in range(6)])
+        agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
 
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:
