@@ -4,22 +4,28 @@ import struct
 import time
 import simplejson as json
 
+import binascii
+import math
+
+import atexit
+import socket
+import select
+
 def pm(id, msg):
-    return struct.pack('H',id) +msg
+    return struct.pack('H', id) + msg
 
 #0 is test message
 #1 is json
 
-import math
-
+# agent class
 class PlayerAgent:
     eventOut = None
-    GameState = None
+    gameState = None
 
-    def __init__(self, id, x,y,z,xa, ya):
+    def __init__(self, id, x, y, z, xa, ya):
         assert self.eventOut != None
-        assert GameState != None
-        [x,y,z] = [float(x),float(y),float(z)]
+        assert self.gameState != None
+        [x, y, z] = [float(x), float(y), float(z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
         self.ya = ya
@@ -33,6 +39,7 @@ class PlayerAgent:
         self.jetpack = 0
         self.brake = 0
 
+    # set agent state explicitly
     def set_agent_control_state(self, tick, d_x, d_y, d_xa, d_za, jetpack, brake):
         self.last_control_tick = tick
         self.d_x = d_x #a byte
@@ -42,10 +49,11 @@ class PlayerAgent:
         self.jetpack = jetpack
         self.brake = brake
 
+    # apply physics to agent
     def tick(self):
         [x,y,z, vx,vy,vz, ax,ay,az] = self.state
         tr = 100. #tick rate
-        tr2 = tr*tr #tick rate squared
+        tr2 = tr**2 #tick rate squared
         if z <= 0.:
             az = .10 / tr2
         else:
@@ -73,6 +81,7 @@ class PlayerAgent:
         self.state = [x,y,z, vx,vx,vz, ax,ay,az]
         self.eventOut.agent_state_change(self.id, self.gameState.time, self.state)
 
+# datastore for agents
 class AgentList:
     def __init__(self, gameState):
         self.gameState = gameState
@@ -82,16 +91,17 @@ class AgentList:
     def create_agent(self, x,y,z,xa,ya):
         #(x,y,z,xa,ya) = position
         id = self.gameState.new_id()
-        agent = PlayerAgent(id, x,y,z,xa,ya)
+        agent = PlayerAgent(id, x,y,z, xa,ya)
         self.agents[id] = agent
-        print "AgentList: Agent Created, id= %i" %id
+        print "AgentList: Agent Created, id= %i" % (id,)
 
     def get_agent(self,id):
         if not self.agents.has_key(id):
-            print "Agentlist.set_agent_control_state: Agent does not exist: %i" % id
+            print "Agentlist.set_agent_control_state: Agent does not exist: %i" % (id,)
             return None
         return self.agents[id]
 
+# main game state wrapper
 class GameState:
 
     def __init__(self):
@@ -103,15 +113,15 @@ class GameState:
         self.id += 1
         return self.id
 
+    # tick all agents
     def tick(self):
-        for agent in  self.agentList.agents.values():
+        for agent in self.agentList.agents.values():
             agent.tick()
         self.time += 1
         if self.time % 100 == 0:
-            print "time= %i" % (self.time)
-
-import binascii
-
+            print "time= %i" % (self.time,)
+            
+# sends event packets to all clients
 class EventOut:
     gameState = None
 
@@ -121,18 +131,25 @@ class EventOut:
         self.sendMessage = SendMessage(None)
 
     def validate_packet(self, packet):
-        assert len(packet) >= 4
+        try:
+            assert len(packet) >= 4
+        except:
+            print 'Packet length too small. Packet len: %i' % (len(packet),)
+            return False
         prefix = packet[:4]
         (length,) = struct.unpack('I', prefix)
         if length != len(packet):
-            print "len1= %i, len2= %i" % (length, len(packet))
-            x5
+            print "len1= %i, len2= %i" % (length, len(packet),)
+            return False
+            #x5
         #print binascii.b2a_hex(prefix)
+        return True
 
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
-            self.validate_packet(event_packet)
+            if not self.validate_packet(event_packet):
+                continue
             for client in self.pool._client_pool.values():
                 client.send(event_packet)
         self.event_packets = []
@@ -142,13 +159,14 @@ class EventOut:
 
     def agent_state_change(self, id, tick, state):
         d = {
-            'cmd' : 'agent_position',
-            'id' : id,
+            'cmd'  : 'agent_position',
+            'id'   : id,
             'tick' : tick,
             'state': state #is a 9 tuple
-           }
+        }
         self.add_json_event(d)
 
+# instances are bound to a client, and used to send a formatted message to that client
 class SendMessage:
 
     def __init__(self, client):
@@ -164,8 +182,8 @@ class SendMessage:
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
 
+# routes messages by msg.cmd
 class MessageHandler:
-
     gameState = None
 
     def __init__(self, main):
@@ -174,21 +192,31 @@ class MessageHandler:
 
     def process_json(self, msg):
         if not msg.has_key('cmd'):
-            print "Json message need cmd parameter: " + str(msg)
+            print "Json message need cmd parameter: %s" % (str(msg),)
             return
+        else:
+            cmd = msg['cmd']
 
         #print "MessageHandler.process_json: " + str(msg)
-        if msg['cmd'] == 'create_agent':
+        if cmd == 'create_agent':
             self.gameState.create_agent(**msg)
-        elif msg['cmd'] == 'agent_control_state':
-            id = int(msg['id'])
+        elif cmd == 'agent_control_state':
+            try:
+                id = int(msg.get('id', None))
+            except TypeError:
+                print 'msg.cmd == agent_control_state, but msg.id missing. MSG: %s' % (str(msg),)
+                return
+            except ValueError:
+                print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
+                return
             agent = self.gameState.agentList.get_agent(id)
-            tick = msg['tick']
-            [d_x, d_y, d_xa, d_za, jetpack, brake] = msg['state']
+            tick = msg.get('tick', None)
+            d_x, d_y, d_xa, d_za, jetpack, brake = msg.get('state', [None for i in range(6)])
             agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
         else:
-            print "MessageHandler.process_json: cmd unknown = " + str(msg)
+            print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
+# decodes datagram, passes to messageHandler
 class DatagramDecoder:
     messageHandler = None
 
@@ -197,20 +225,21 @@ class DatagramDecoder:
 
     def decode(self, message):
 
-        (prefix, datagram) = (message[0:6],message[6:])
+        (prefix, datagram) = (message[0:6], message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
 
         if msg_type == 0:
             print "test message received"
-        if msg_type == 1:
+        elif msg_type == 1:
             #print "DatagramDecoder: JSON message"
             try:
                 msg = json.loads(datagram)
             except:
-                print "JSON DECODING ERROR: " +str(msg)
+                print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
             self.messageHandler.process_json(msg)
 
+# decodes tcp packets
 class TcpPacketDecoder:
 
     def __init__(self):
@@ -260,10 +289,7 @@ class TcpPacketDecoder:
         #print "processed message count: " +str(self.count)
         self.datagramDecoder.decode(message)
 
-import atexit
-import socket
-import select
-
+# listens for packets on ports
 class ServerListener:
 
     IP = '127.0.0.1'
@@ -288,16 +314,16 @@ class ServerListener:
         print "Setting up TCP socket"
         try:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.tcp.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
+            self.tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.tcp.bind((self.IP, self.TCP_PORT))
             self.tcp.listen(1)
             self.tcp.setblocking(0)
             self.tcp.listen(1)
             self.tcp_fileno = self.tcp.fileno()
             self.epoll.register(self.tcp.fileno(), select.EPOLLIN)
-            print "TCP socket listening on port %i" % self.TCP_PORT
-        except socket.error, (value,message):
-            print "TCP socket setup failed: " + str(value) + ", " + message
+            print "TCP socket listening on port %i" % (self.TCP_PORT,)
+        except socket.error, (value, message):
+            print "TCP socket setup failed: %s, %s" % (str(value), message,)
 
     def accept(self):
         events = self.epoll.poll(0) #wait upto 0 seconds
@@ -313,6 +339,7 @@ class ServerListener:
             if fileno == self.udp_fileno:
                 print "UDP event"
 
+# manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
 class TcpClient:
     pool = None
 
@@ -338,7 +365,7 @@ class TcpClient:
                     print "ALL DATA NOT SENT!"
             else:
                 self.connection.sendall(MESSAGE)
-        except socket.error, (value,message):
+        except socket.error, (value, message):
             print "TcpClient.send error: " + str(value) + ", " + message
             if value == 32:  #connection reset by peer
                 self.pool.tearDownClient(self.fileno)
@@ -351,7 +378,7 @@ class TcpClient:
         BUFFER_SIZE = 4096
         try:
             data = self.connection.recv(BUFFER_SIZE)
-        except socket.error, (value,message):
+        except socket.error, (value, message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
             data = ''
         if len(data) == 0: #if we read three times and get no data, close socket
@@ -364,6 +391,7 @@ class TcpClient:
             self.ec = 0
             self.TcpPacketDecoder.add_to_buffer(data)
 
+# manages client connections
 class ConnectionPool:
 
     def __init__(self, main, messageHandler):
@@ -386,11 +414,11 @@ class ConnectionPool:
         for client in self._client_pool.values():
             client.close()
 
-    def addClient(self, connection, address, type = 'tcp'):
+    def addClient(self, connection, address, type='tcp'):
         self._client_count += 1
         if type == 'tcp':
             client =  TcpClient(connection, address)
-            self._epoll.register(client.fileno, select.EPOLLIN | select.EPOLLHUP ) #register client
+            self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
             self._client_pool[client.fileno] = client #save client
 
     def tearDownClient(self, fileno):
@@ -402,17 +430,17 @@ class ConnectionPool:
         events = self._epoll.poll(0)
         for fileno, event in events:
             print "(event, fileno) = %i, %i" % (event, fileno)
-            if event & select.EPOLLIN:
+            if event and select.EPOLLIN:
                 assert self._client_pool.has_key(fileno)
                 self._client_pool[fileno].receive()
-            elif event & select.EPOLLOUT:
+            elif event and select.EPOLLOUT:
                 pass
                 print "EPOLLOUT event?"
-            elif event & select.EPOLLHUP:
+            elif event and select.EPOLLHUP:
                 print "EPOLLHUP: teardown socket"
                 self.tearDownClient(fileno)
             else:
-                print "EPOLLOUT weird event: %i" % event
+                print "EPOLLOUT weird event: %i" % (event,)
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
 
 class Main:
@@ -433,7 +461,7 @@ class Main:
     def run(self):
         print "Server Started"
         print "Create Agent"
-        self.gameState.agentList.create_agent(-10,0,-3,0,0)
+        self.gameState.agentList.create_agent(-10, 0, -3, 0, 0)
         while True:
             self.serverListener.accept() #accept incoming connections
             self.connectionPool.process_events() #check for new data
@@ -442,6 +470,5 @@ class Main:
             time.sleep(.01)
 
 if __name__ == "__main__":
-
     main = Main()
     main.run()
