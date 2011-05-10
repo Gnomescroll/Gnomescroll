@@ -41,6 +41,8 @@ class MessageHandler:
         self.player.ay = ay
         self.player.az = az
 
+import terrain_map
+
 class App(object):
 
     def __init__(self):
@@ -54,7 +56,7 @@ class App(object):
         self.out = self.connection.out
         #other
         self.world = world.World()
-        self.win = window.Window(fullscreen=False, vsync=False)
+        self.win = window.Window(fullscreen=True, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)

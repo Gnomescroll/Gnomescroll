@@ -120,7 +120,7 @@ class GameState:
         self.time += 1
         if self.time % 100 == 0:
             print "time= %i" % (self.time,)
-            
+
 # sends event packets to all clients
 class EventOut:
     gameState = None
@@ -137,7 +137,7 @@ class EventOut:
             print 'Packet length too small. Packet len: %i' % (len(packet),)
             return False
         prefix = packet[:4]
-        length = struct.unpack('I', prefix)
+        (length,) = struct.unpack('I', prefix)
         if length != len(packet):
             print "len1= %i, len2= %i" % (length, len(packet),)
             return False
@@ -226,7 +226,7 @@ class DatagramDecoder:
     def decode(self, message):
 
         prefix, datagram = (message[0:6], message[6:])
-        length, msg_type = struct.unpack('I H', prefix)
+        (length, msg_type) = struct.unpack('I H', prefix)
 
         if msg_type == 0:
             print "test message received"
@@ -281,7 +281,7 @@ class TcpPacketDecoder:
     def read_prefix(self):
         data = self.buffer
         prefix = data[0:4]
-        length = struct.unpack('I', data[0:4])
+        (length,) = struct.unpack('I', data[0:4])
         return length
 
     def process_datagram(self, message):
