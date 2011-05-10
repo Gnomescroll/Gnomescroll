@@ -1,9 +1,6 @@
 import socket
 import struct
 
-#import time
-#import math
-
 import simplejson as json
 
 import binascii
@@ -11,9 +8,6 @@ import binascii
 import atexit
 import socket
 import select
-
-#def pm(id, msg):
-#    return struct.pack('H', id) + msg
 
 from game_state import PlayerAgent, AgentList, GameState
 

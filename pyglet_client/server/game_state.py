@@ -1,5 +1,7 @@
 import math
 
+from terrain_map import TerrainMap
+
 class PlayerAgent:
     eventOut = None
     gameState = None
@@ -90,7 +92,7 @@ class GameState:
         self.time = 0
         self.id = 0
         self.agentList = AgentList(self)
-
+        self.terrainMap = TerrainMap()
     def new_id(self):
         self.id += 1
         return self.id
