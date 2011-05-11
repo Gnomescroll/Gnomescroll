@@ -30,7 +30,6 @@ class EventOut:
     def __init__(self, pool):
         self.pool = pool
         self.event_packets = []
-        self.sendMessage = SendMessage(None)
         ServerGlobal.eventOut = self
 
     def process_events(self):
@@ -41,7 +40,7 @@ class EventOut:
         self.event_packets = []
 
     def add_json_event(self, dict):
-        self.event_packets.append(self.sendMessage.get_json(dict))
+        self.event_packets.append(SendMessage.get_json(dict))
 
     def agent_state_change(self, id, tick, state):
         d = {
