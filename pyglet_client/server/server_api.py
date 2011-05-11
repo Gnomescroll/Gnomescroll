@@ -12,8 +12,12 @@ import select
 from game_state import PlayerAgent, AgentList, GameState
 
 class ServerGlobal:
-    client_id = 0
+    connectionPool = None
+    eventOut = None
+    messageOut = None
+    messageHandler = None
 
+    client_id = 0
     @classmethod
     def generate_client_id(self):
         self.client_id += 1
@@ -27,6 +31,7 @@ class EventOut:
         self.pool = pool
         self.event_packets = []
         self.sendMessage = SendMessage(None)
+        ServerGlobal.eventOut = self
 
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
@@ -47,21 +52,23 @@ class EventOut:
         }
         self.add_json_event(d)
 
-# instances are bound to a client, and used to send a formatted message to that client
-class SendMessage:
+#this is global message out across the connection pool
+class MessageOut:
+    def __init__(self):
+        ServerGlobal.messageOut = self
 
-    def __init__(self, client):
-        self.client = client
-
+class SendMessage: #each connection has one of these
+    @classmethod
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix not included in length?
-
-    def send_json(self, dict):
-        self.client.send(self.add_prefix(1, json.dumps(dict)))
-
+    @classmethod
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
 
+    def __init__(self, client):
+        self.client = client
+    def send_json(self, dict):
+        self.client.send(self.add_prefix(1, json.dumps(dict)))
     ## messages go out immediately
     def send_client_id(self):
         print "Send client id"
@@ -80,6 +87,7 @@ class MessageHandler:
         assert self.gameState != None
         assert self.chat != None
         self.main = main
+        ServerGlobal.messageHandler = self
 
     def process_json(self, msg, connection):
         if not msg.has_key('cmd'):
@@ -319,6 +327,7 @@ class ConnectionPool:
         self._clients_by_id = {}
 
         atexit.register(self.on_exit)
+        ServerGlobal.connectionPool = self
 
     def on_exit(self):
         self._epoll.close()
