@@ -1,26 +1,29 @@
 
-import cython ##
-import pyximport ##
+#import cython ##
+#import pyximport ##
 
 from fast_map import *
 
-cdef inline set(map_array, int x, int y, int z, int value):
-        map_array[x + 8*y + 8*8*z] = value
+#cdef inline set(map_array, int x, int y, int z, int value):
+#        map_array[x + 8*y + 8*8*z] = value
 
-cdef inline int get(map_array, int x, int y, int z):
-        map_array[x + 8*y + 8*8*z]
+#cdef inline int get(map_array, int x, int y, int z):
+#        map_array[x + 8*y + 8*8*z]
 
 
 ##test
-cdef struct t_struct:
-    int value1
-    int value2
+#cdef struct t_struct:
+#    int value1
+#    int value2
 
 #cdef extern t_struct* getthem()
 
 ##
 
-class TerrainMap:
+cdef class TerrainMap:
+
+    chunks = {}
+    l = []
 
     def __init__(self):
         self.chunks = {}
@@ -34,22 +37,25 @@ class TerrainMap:
     def get_chunk(self, index):
         pass
 
-    def set(int x,int y, int z,int value):
+    cdef inline set(TerrainMap self, int x,int y, int z,int value):
+        cdef MapChunk c
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
         if not self.chunks.has_key(t):
             self.chunks[t] = MapChunk(t[0], t[1], t[2]) #new map chunk
         c = self.chunks[t]
-        #c.set(x,y,z)
-        set(c.map_array, x, y, z, value)
 
-    def get(int x,int y,int z):
+        c.set(x,y,z, value)
+        #set(c.map_array, x, y, z, value)
+
+    cdef inline int get(TerrainMap self, int x,int y,int z):
+        cdef MapChunk c
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
         if not self.chunks.has_key(t):
             return 0
-
         c = self.chunks[t]
-        #c.get(x,y,z)
-        get(c.map_array,x,y,z)
+        return c.get(x,y,z)
+
+        #get(c.map_array,x,y,z)
 
 cdef class MapChunk:
     cdef int index[3]
@@ -66,16 +72,11 @@ cdef class MapChunk:
         for i in range(0, 256):
             self.map_array[i] = 0
 
-#        self.x_off = x_off*8
-#        self.y_off = y_off*8
-#        self.z_off = z_off*8
-#        self.index = (x_off, y_off, z_off)
+    cdef inline void set(self, int x, int y, int z, int value):
+        self.map_array[x + 8*y + 8*8*z] = value
 
-#    def set(self, int x, int y, int z, int value):
-#        self.map_array[x + 8*y + 8*8*z] = value
-
-#    def get(self, int x, int y, int z):
-#        return self.map_array[x + 8*y + 8*8*z]
+    cdef inline int get(self, int x, int y, int z):
+        return self.map_array[x + 8*y + 8*8*z]
 
 #    def serialize(self):
 #        return (self.index, self.map_array)
