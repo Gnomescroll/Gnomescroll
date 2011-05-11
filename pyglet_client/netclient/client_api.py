@@ -8,11 +8,14 @@ import simplejson as json
 
 class ClientGlobal:
     connection = None
+    sendMessage = None
+    messageHandler = None
     client_id = 0
 
 class SendMessage:
     def __init__(self, client):
         self.client = client
+        ClientGlobal.sendMessage = self
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
     def send_json(self, dict):
@@ -44,6 +47,7 @@ class SendMessage:
 class MessageHandler:
     def __init__(self, player):
         self.player = player
+        ClientGlobal.messageHandler = self
 
     def process_json(self, msg):
         if msg['cmd'] == 'agent_position':
