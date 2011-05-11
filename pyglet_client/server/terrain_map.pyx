@@ -41,15 +41,17 @@ cdef class TerrainMap:
     def get_chunk(self, index):
         pass
 
+    def get_packed_chunk(self):
+        for x in self.chunks.values():
+            return pack(x)
+
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
         if not self.chunks.has_key(t):
             self.chunks[t] = MapChunk(8*t[0], 8*t[1], 8*t[2]) #new map chunk
         c = self.chunks[t]
-
         c.set(x,y,z, value)
-        #set(c.map_array, x, y, z, value)
 
     cpdef inline int get(TerrainMap self, int x,int y,int z):
         cdef MapChunk c
@@ -59,15 +61,11 @@ cdef class TerrainMap:
         c = self.chunks[t]
         return c.get(x,y,z)
 
-        #get(c.map_array,x,y,z)
-
 cdef class MapChunk:
     cdef int index[3]
     cdef int map_array[512]
 
     def __init__(self, int x_off, int y_off, int z_off):
-        #int_array_type = ctypes.c_int * 256 #map storage
-        #self.map_array = int_array_type()
 
         self.index[0] = x_off
         self.index[1] = y_off
@@ -80,15 +78,31 @@ cdef class MapChunk:
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
-        print str(x + 8*y + 8*8*z)
         self.map_array[x + 8*y + 8*8*z] = value
 
     cdef inline int get(self, int x, int y, int z):
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
-        print str(x + 8*y + 8*8*z)
         return self.map_array[x + 8*y + 8*8*z]
+
+#should used compiled form
+
+import struct
+
+fm = struct.Struct('B H 3i 512H')
+def pack(MapChunk mapChunk):
+    global fm
+    cdef int chunk_dim, chunk_offset, off_x, off_y, off_z
+    chunk_dim = 8 #short
+    chunk_offset = 0 #offset into chunk
+    off_x = mapChunk.index[0]
+    off_y = mapChunk.index[1]
+    off_z = mapChunk.index[2]
+    l = []
+    for i in range(0,512):
+        l.insert(i, mapChunk.map_array[i])
+    return fm.pack(chunk_dim, chunk_offset, off_x,off_y,off_z, *l)
 
 #    def serialize(self):
 #        return (self.index, self.map_array)
