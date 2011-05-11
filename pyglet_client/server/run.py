@@ -9,7 +9,9 @@ class Main:
 
     def __init__(self):
         self.gameState = GameState()
+        self.chat = Chat()
         MessageHandler.gameState = self.gameState
+        MessageHandler.chat = self.chat
         self.messageHandler = MessageHandler(self)
         DatagramDecoder.messageHandler = self.messageHandler #set global
         self.connectionPool = ConnectionPool(self, self.messageHandler)

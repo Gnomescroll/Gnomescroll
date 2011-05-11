@@ -57,9 +57,11 @@ class SendMessage:
 # routes messages by msg.cmd
 class MessageHandler:
     gameState = None
-
+	chat = None
+	
     def __init__(self, main):
         assert self.gameState != None
+        assert self.chat != None
         self.main = main
 
     def process_json(self, msg):
@@ -74,6 +76,8 @@ class MessageHandler:
             self.gameState.create_agent(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
+        elif cmd == 'chat':
+			self.chat.received(msg) 
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
