@@ -12,6 +12,6 @@ extern int hash_cord(int);
 
 inline int hash_cord(int input)
 {
-    return input >> 4;
+    return input >> 3;
 }
 
