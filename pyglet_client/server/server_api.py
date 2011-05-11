@@ -159,7 +159,7 @@ class TcpPacketDecoder:
         elif self.message_length == 0 and buff_len > 6:
             #print "decode: get message prefix"
             self.message_length = self.read_prefix()
-            print "prefix length: " + str(self.message_length)
+            #print "prefix length: " + str(self.message_length)
         elif buff_len < self.message_length:
             return
         elif self.message_length == 0:
@@ -327,7 +327,7 @@ class ConnectionPool:
     def process_events(self):
         events = self._epoll.poll(0)
         for fileno, event in events:
-            print "(event, fileno) = %i, %i" % (event, fileno)
+            #print "(event, fileno) = %i, %i" % (event, fileno)
             if event and select.EPOLLIN:
                 assert self._client_pool.has_key(fileno)
                 self._client_pool[fileno].receive()
