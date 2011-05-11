@@ -18,6 +18,7 @@ import world
 import client_api
 
 from client_api import MessageHandler
+from chat_client import Chat
 
 import terrain_map
 
@@ -31,6 +32,8 @@ class App(object):
         client_api.ClientDatagramDecoder.messageHandler = self.messageHandler #handles networking callbacks
 
         self.connection =  client_api.TcpConnection()
+        self.chat = Chat(self.connection.out)
+
         self.out = self.connection.out
         #other
         self.world = world.World()
@@ -58,6 +61,8 @@ class App(object):
         keyboard = key.KeyStateHandler()
         self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
+
+        self.chat.send_test('test')
         while not self.exit:
 
 

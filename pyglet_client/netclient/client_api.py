@@ -30,6 +30,10 @@ class SendMessage:
            }
         self.send_json(d)
 
+    def send_chat(self, d):
+        d['cmd'] = 'chat'
+        self.send_json(d)
+
     def send_client_id(self):
         d = {
             'cmd' : 'set_client_id',
