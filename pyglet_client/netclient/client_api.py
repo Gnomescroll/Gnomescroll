@@ -39,7 +39,7 @@ class SendMessage:
 
     def send_client_id(self):
         d = {
-            'cmd' : 'set_client_id',
+            'cmd' : 'send_client_id',
             'id' : ClientGlobal.client_id,
            }
         self.send_json(d)
@@ -75,6 +75,7 @@ class MessageHandler:
         print "Received Client Id: %i" % (id,)
         if ClientGlobal.client_id == 0:
             ClientGlobal.client_id = id
+            ClientGlobal.sendMessage.send_client_id()
 
 
 import binascii
@@ -204,7 +205,7 @@ class TcpConnection:
             self.connected = False
 
     def disconnect(self):
-        print "Connection: tcp disonnected by program"
+        print "Connection: tcp disconnected by program"
         self.connected = False
         self._epoll.unregister(self.fileno)
         self.tcp.close()

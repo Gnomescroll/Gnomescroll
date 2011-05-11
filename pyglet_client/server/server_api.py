@@ -81,7 +81,7 @@ class MessageHandler:
         assert self.chat != None
         self.main = main
 
-    def process_json(self, msg):
+    def process_json(self, msg, connection):
         if not msg.has_key('cmd'):
             print "Json message need cmd parameter: %s" % (str(msg),)
             return
@@ -95,6 +95,10 @@ class MessageHandler:
             self.agent_control_state(msg)
         elif cmd == 'chat':
             self.chat.received(msg)
+        elif cmd == 'send_client_id': #Setup client connection
+            if connection.client_id == 0:
+                connection.client_id = int(msg['id'])
+                print "Client Assigned id= %i" % (connection.client_id,)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
@@ -119,7 +123,7 @@ class DatagramDecoder:
     def __init__(self):
         assert self.messageHandler != None
 
-    def decode(self, message):
+    def decode(self, message, connection):
 
         prefix, datagram = (message[0:6], message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
@@ -133,12 +137,13 @@ class DatagramDecoder:
             except:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
-            self.messageHandler.process_json(msg)
+            self.messageHandler.process_json(msg, connection)
 
 # decodes tcp packets
 class TcpPacketDecoder:
 
-    def __init__(self):
+    def __init__(self, connection):
+        self.connection = connection
         self.datagramDecoder = DatagramDecoder()
         self.reset()
 
@@ -183,7 +188,7 @@ class TcpPacketDecoder:
     def process_datagram(self, message):
         self.count += 1
         #print "processed message count: " +str(self.count)
-        self.datagramDecoder.decode(message)
+        self.datagramDecoder.decode(message, self.connection)
 
 # listens for packets on ports
 class ServerListener:
@@ -245,11 +250,12 @@ class TcpClient:
         self.address = address
 
         self.fileno = connection.fileno()
-        self.TcpPacketDecoder = TcpPacketDecoder()
+        self.TcpPacketDecoder = TcpPacketDecoder(self)
         self.sendMessage = SendMessage(self)
 
         self.player_id = 0
         self.client_id = 0
+
         self.ec = 0
 
         self.sendMessage.send_client_id() #send client an id upon connection
