@@ -3,6 +3,8 @@ from server_api import *
 
 from game_state import PlayerAgent, AgentList, GameState
 
+from chat_server import Chat
+
 import time
 
 class Main:

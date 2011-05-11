@@ -1,6 +1,6 @@
 import math
 
-#from terrain_map import TerrainMap
+from terrain_map import TerrainMap
 
 class PlayerAgent:
     eventOut = None

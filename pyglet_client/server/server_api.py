@@ -11,6 +11,14 @@ import select
 
 from game_state import PlayerAgent, AgentList, GameState
 
+class ServerGlobal:
+    client_id = 0
+
+    @classmethod
+    def generate_client_id(self):
+        self.client_id += 1
+        return self.client_id
+
 # sends event packets to all clients
 class EventOut:
     gameState = None
@@ -54,11 +62,20 @@ class SendMessage:
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
 
+    ## messages go out immediately
+    def send_client_id(self):
+        print "Send client id"
+        d = {
+            'cmd'  : 'send_client_id',
+            'id'   : ServerGlobal.generate_client_id(),
+        }
+        self.send_json(d)
+
 # routes messages by msg.cmd
 class MessageHandler:
     gameState = None
-	chat = None
-	
+    chat = None
+
     def __init__(self, main):
         assert self.gameState != None
         assert self.chat != None
@@ -77,7 +94,7 @@ class MessageHandler:
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
         elif cmd == 'chat':
-			self.chat.received(msg) 
+            self.chat.received(msg)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
@@ -234,6 +251,8 @@ class TcpClient:
         self.player_id = 0
         self.client_id = 0
         self.ec = 0
+
+        self.sendMessage.send_client_id() #send client an id upon connection
 
     def send(self, MESSAGE):
         try:

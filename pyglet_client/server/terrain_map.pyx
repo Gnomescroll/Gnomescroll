@@ -10,9 +10,12 @@ class TerrainMap:
         self.chunks = {}
 
     def get_chunk_list(self):
-        for index in self.chunks.values()
-            pass
-            #index
+        l = []
+        for index in self.chunks.keys()
+            l.append(index)
+        return l
+
+    def get_chunk(self, index):
 
     def set(int x,int y, int z,int value):
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
@@ -46,4 +49,5 @@ class MapChunk:
     def get(self, int x, int y, int z):
         return self.map_array[x + 8*y + 8*8*z]
 
-    def serialize
+    def serialize(self):
+        return (self.index, self.map_array)

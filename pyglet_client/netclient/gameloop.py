@@ -17,29 +17,7 @@ import world
 
 import client_api
 
-class MessageHandler:
-    def __init__(self, player):
-        self.player = player
-
-    def process_json(self, msg):
-        if msg['cmd'] == 'agent_position':
-            self._agent_position(**msg)
-        else:
-            print "JSON message type unregonized"
-
-    def _agent_position(self, id, tick, state, **misc):
-        [x,y,z,vx, vy, vz,ax, ay, az] = state
-        [x,y,z] = [float(x),float(y),float(z)]
-
-        self.player.x = x
-        self.player.y = y
-        self.player.z = z
-        self.player.vx = vx
-        self.player.vy = vy
-        self.player.vz = vz
-        self.player.ax = ax
-        self.player.ay = ay
-        self.player.az = az
+from client_api import MessageHandler
 
 import terrain_map
 
@@ -56,7 +34,7 @@ class App(object):
         self.out = self.connection.out
         #other
         self.world = world.World()
-        self.win = window.Window(fullscreen=True, vsync=False)
+        self.win = window.Window(fullscreen=False, vsync=False)
         self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)

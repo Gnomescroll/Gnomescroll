@@ -6,20 +6,19 @@ from collections import namedtuple
 
 import simplejson as json
 
-class SendMessage:
+class ClientGlobal:
+    connection = None
+    client_id = 0
 
+class SendMessage:
     def __init__(self, client):
         self.client = client
-
     def add_prefix(self, id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-
     def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))
-
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
-
     ### agent messages
 
     def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
@@ -30,6 +29,45 @@ class SendMessage:
             'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
            }
         self.send_json(d)
+
+    def send_client_id(self):
+        d = {
+            'cmd' : 'set_client_id',
+            'id' : ClientGlobal.client_id,
+           }
+        self.send_json(d)
+
+class MessageHandler:
+    def __init__(self, player):
+        self.player = player
+
+    def process_json(self, msg):
+        if msg['cmd'] == 'agent_position':
+            self._agent_position(**msg)
+        elif msg['cmd'] == 'send_client_id':
+            self._set_client_id(**msg)
+        else:
+            print "JSON message type unregonized"
+
+    def _agent_position(self, id, tick, state, **misc):
+        [x,y,z,vx, vy, vz,ax, ay, az] = state
+        [x,y,z] = [float(x),float(y),float(z)]
+
+        self.player.x = x
+        self.player.y = y
+        self.player.z = z
+        self.player.vx = vx
+        self.player.vy = vy
+        self.player.vz = vz
+        self.player.ax = ax
+        self.player.ay = ay
+        self.player.az = az
+
+    def _set_client_id(self, id, **misc):
+        print "Received Client Id: %i" % (id,)
+        if ClientGlobal.client_id == 0:
+            ClientGlobal.client_id = id
+
 
 import binascii
 
@@ -110,13 +148,15 @@ class PacketDecoder:
         self.datagramDecoder.process_datagram(message)
 
 import select
+
 class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
-    udp_port = 5000
+    #udp_port = 5000
     #settings
     noDelay = True
 
+#    self.client_id = 0
 
     def __init__(self):
         self.tcp = None
@@ -129,6 +169,8 @@ class TcpConnection:
         self._epoll = select.epoll()
 
         self.ec = 0
+
+        ClientGlobal.connection = self
         self.connect()
 
     def connect(self):
@@ -146,6 +188,9 @@ class TcpConnection:
             print "Connection: tcp connected"
             self.fileno = self.tcp.fileno()
             self.connected = True
+
+            if ClientGlobal.client_id != 0: #reconnection case
+                self.out.send_client_id()
         except socket.error, (value,message):
             print "Connection failed: socket error " + str(value) + ", " + message
             self.connected = False
@@ -164,7 +209,7 @@ class TcpConnection:
             except socket.error, (value,message):
                 print "Connection failed: socket error " + str(value) + ", " + message
                 if value == 32:  #connection reset by peer
-                    self.close()
+                    self.disconnect()
         else:
             print "TcpConnection.send: Socket is not connected!"
 
