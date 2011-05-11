@@ -96,9 +96,8 @@ class MessageHandler:
         elif cmd == 'chat':
             self.chat.received(msg)
         elif cmd == 'send_client_id': #Setup client connection
-            if connection.client_id == 0:
-                connection.client_id = int(msg['id'])
-                print "Client Assigned id= %i" % (connection.client_id,)
+            connection.set_client_id(int(msg['id']))
+            #print "Client Assigned id= %i" % (connection.client_id,)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
@@ -260,6 +259,13 @@ class TcpClient:
 
         self.sendMessage.send_client_id() #send client an id upon connection
 
+    def set_client_id(self, id):
+        if self.client_id != 0:
+            print "ERROR: TcpClient.set_client_id, client_id already assigned"
+            return
+        self.client_id = id
+        self.pool.register_client_id(self)
+
     def send(self, MESSAGE):
         try:
             if False:
@@ -272,7 +278,7 @@ class TcpClient:
         except socket.error, (value, message):
             print "TcpClient.send error: " + str(value) + ", " + message
             if value == 32:  #connection reset by peer
-                self.pool.tearDownClient(self.fileno)
+                self.pool.tearDownClient(self)
 
     def close(self):
         print "TcpClient.close : connection closed gracefully"
@@ -309,7 +315,8 @@ class ConnectionPool:
         #local
         self._epoll = select.epoll()
         self._client_count = 0
-        self._client_pool = {}
+        self._client_pool = {} #clients by fileno
+        self._clients_by_id = {}
 
         atexit.register(self.on_exit)
 
@@ -325,10 +332,17 @@ class ConnectionPool:
             self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
             self._client_pool[client.fileno] = client #save client
 
-    def tearDownClient(self, fileno):
+    def tearDownClient(self, connection):
+        fileno = connection.fileno
         self._epoll.unregister(fileno)
         self._client_pool[fileno].close()
         del self._client_pool[fileno] #remove from client pool
+        if connection.client_id != 0:
+            del self._clients_by_id[connection.client_id]
+
+    def register_client_id(self, connection):
+        self._clients_by_id[connection.client_id] = connection
+        print "Connection associated with client_id= %i" % (connection.client_id,)
 
     def process_events(self):
         events = self._epoll.poll(0)
@@ -342,7 +356,7 @@ class ConnectionPool:
                 print "EPOLLOUT event?"
             elif event and select.EPOLLHUP:
                 print "EPOLLHUP: teardown socket"
-                self.tearDownClient(fileno)
+                self.tearDownClient(self._client_pool[fileno])
             else:
                 print "EPOLLOUT weird event: %i" % (event,)
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event

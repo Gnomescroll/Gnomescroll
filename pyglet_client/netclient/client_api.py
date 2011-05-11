@@ -204,7 +204,7 @@ class TcpConnection:
             print "Connection failed: socket error " + str(value) + ", " + message
             self.connected = False
 
-    def disconnect(self):
+    def close(self):
         print "Connection: tcp disconnected by program"
         self.connected = False
         self._epoll.unregister(self.fileno)
@@ -218,7 +218,7 @@ class TcpConnection:
             except socket.error, (value,message):
                 print "Connection failed: socket error " + str(value) + ", " + message
                 if value == 32:  #connection reset by peer
-                    self.disconnect()
+                    self.close()
         else:
             print "TcpConnection.send: Socket is not connected!"
 
