@@ -45,8 +45,9 @@ class World():
         pass
 
     def test_chunk(self):
-        self.test_chunk2()
-        return
+        if False:
+            self.test_chunk2()
+            return
 
         print "Start chunk generation"
         x_max = 64
