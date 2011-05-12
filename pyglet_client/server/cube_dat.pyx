@@ -63,6 +63,28 @@ cube_list = {
     },
  }
 
+#cdef class CubePhysical:
+    #cdef int id = 0
+    #cdef int active = 0
+    #cdef int occludes = 0
+
+    #def __init__(CubePhysical self, int id,int active,int occludes):
+        #self.id = id
+        #self.active = active
+        #self.occludes = occludes
+
+#physical cube properties
+cdef struct CubePhysical:
+    int id
+    int active
+    int occludes
+
+#used for initing the struct
+cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes):
+    x.id = id
+    x.active = active
+    x.occludes = occludes
+
 cdef enum:
     max_cubes = 4096
 
@@ -72,16 +94,21 @@ cdef class CubePhysicalProperties:
     def __init__(self):
         global cube_list
         for cube in cube_list.values():
-            self.add_cube(d)
+            self.add_cube(cube)
 
-    def add_cube(d):
+    def add_cube(self, d):
         id = int(d['id'])
         if id >= max_cubes: #max number of cubes
             print "Error: cube id is too high"
             return
         active = int(d['active'])
         occludes = int(d['occludes'])
-        self.cube_array[id] = CubePhysical(id, active, occludes)
+        init_CubePhysical(&self.cube_array[id], id, active, occludes)
+        #self.cube_array[id] = CubePhysical(id, active, occludes)
+        #init cube struct
+        #self.cube_array[id].id = id
+        #self.cube_array[id].active = active
+        #self.cube_array[id].active = occludes
 
     cdef inline int isActive(CubePhysicalProperties self, unsigned int id):
         if id >= max_cubes: #max number of cubes
@@ -92,16 +119,6 @@ cdef class CubePhysicalProperties:
         if id >= max_cubes: #max number of cubes
             return 0
         return self.cube_array[id].occludes
-
-cdef class CubePhysical:
-    cdef int id = 0
-    cdef int active = 0
-    cdef int occludes = 0
-
-    def __init__(CubePhysical self, int id,int active,int occludes):
-        self.id = id
-        self.active = active
-        self.occludes = occludes
 
 class CubeVisualProperties:
     def __init__(self):
@@ -141,6 +158,8 @@ cdef enum:
     x_chunk_size = 8
     y_chunk_size = 8
     z_chunk_size = 8
+
+import pyglet
 
 class MapChunk(object):
 
@@ -231,7 +250,8 @@ class MapChunk(object):
 
         self.update = False
 
-    cdef inline int _is_occluded(self,int x,int y,int z,int side_num):
+    #cdef inline int _is_occluded(self,int x,int y,int z,int side_num):
+    def _is_occluded(self,int x,int y,int z,int side_num):
         cdef int _x, _y, _z, tile_id
 
         s_array = [(0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (-1,0,0),(1,0,0)] #replace with if/then statement
