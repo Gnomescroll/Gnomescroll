@@ -168,8 +168,9 @@ class CubeGlobals:
         self.cubeRenderCache = CubeRenderCache()
 
 class MapChunkManager(object):
-
+    draw_batch = pyglet.graphics.Batch()
     terrainMap = None
+
     def __init__(self):
         self.mapChunks = []
         assert self.terrainMap != None
@@ -177,14 +178,17 @@ class MapChunkManager(object):
         self.cubeProperties = CubeProperties()
         MapChunk.cubeProperties = CubeProperties()
 
-    def set_map(x,y,z,tile_id):
+    def set_map(self, x,y,z,tile_id=0):
         pass
 
     def regiser_chunk(self, mapChunk):
         self.mapChunks.append(mapChunk)
 
     def update_chunk(self):
-        update_chunk()
+        for mapChunk in self.mapChunks: #update only one buffer per frame
+            if mapChunk.update == True:
+                mapChunk.update_vertex_buffer(self.draw_batch)
+                return
 
 class MapChunk(object):
 
@@ -259,6 +263,10 @@ class MapChunk(object):
             self.empty = True  #should do something!  Recycle chunk
             self.update = False
             return
+
+        ## May cause issues
+        if self.vertexList != None:
+            self.vertexList.delete() #clean out old vertexList
 
         if batch == None:
             self.vertexList = pyglet.graphics.vertex_list(v_num,

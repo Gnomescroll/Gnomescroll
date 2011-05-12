@@ -15,7 +15,7 @@ import random
 class World():
 
     def __init__(self):
-        self.batch = pyglet.graphics.Batch()
+        #self.draw_batch = pyglet.graphics.Batch()
         #texture loading
         tile_image = pyglet.image.load(base_dir + 'texture/textures_01.png')
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
@@ -121,7 +121,10 @@ class World():
         #for mct in self.mct_array.values():
         #    if mct.empty == False:
         #        mct.vertexList.draw(pyglet.gl.GL_QUADS)
-        self.batch.draw()
+
+        ##self.batch.draw()
+
+        self.mapChunkManager.draw_batch.draw()
 
         #glDisable(GL_SMOOTH)
         glDisable(GL_CULL_FACE)
