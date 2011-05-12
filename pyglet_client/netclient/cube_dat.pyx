@@ -147,6 +147,7 @@ class CubeVisualProperties:
 
 #import ctypes
 
+
 cdef enum:
     x_chunk_size = 8
     y_chunk_size = 8
