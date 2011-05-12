@@ -152,22 +152,7 @@ cdef enum:
     y_chunk_size = 8
     z_chunk_size = 8
 
-class CubeGlobals:
-    terrainMap = TerrainMap()
-    mapChunkManager = MapChunkManager()
-
-    cubePhysicalProperties = CubePhysicalProperties()
-    cubeProperties = cubeProperties() #deprecated for visual properties
-    textureGrid = None
-
-    cubeRenderCache = None
-
-    @classmethod
-    def setTextureGrid(self, textureGrid):
-        self.textureGrid = textureGrid
-        self.cubeRenderCache = CubeRenderCache()
-
-class MapChunkManager(object):
+class MapChunkManager:
     draw_batch = pyglet.graphics.Batch()
     terrainMap = None
 
@@ -385,3 +370,19 @@ class CubeRenderCache(object):
             if True:
                 self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
                 return list(tex_tuple)
+
+
+class CubeGlobals:
+    terrainMap = TerrainMap()
+    mapChunkManager = MapChunkManager()
+
+    cubePhysicalProperties = CubePhysicalProperties()
+    cubeProperties = cubeProperties() #deprecated for visual properties
+    textureGrid = None
+
+    cubeRenderCache = None
+
+    @classmethod
+    def setTextureGrid(self, textureGrid):
+        self.textureGrid = textureGrid
+        self.cubeRenderCache = CubeRenderCache()

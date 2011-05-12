@@ -30,8 +30,8 @@ class World():
         ##self.terrainMap = TerrainMap()
         #MapChunkManager(terrainMap, cubeProperties)
 
-        CubeGlobals.textureGrid = self.textureGrid #setup CubeGlobals
-
+        #CubeGlobals.texture_grid = self.texture_grid #setup CubeGlobals
+        CubeGlobals.setTextureGrid(self.texture_grid)
         self.terrainMap = CubeGlobals.terrainMap
         self.players = []
 
