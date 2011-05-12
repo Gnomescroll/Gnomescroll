@@ -52,7 +52,7 @@ class World():
         print "Start chunk generation"
         x_max = 64
         y_max = 64
-        z_max = 8
+        z_max = 64
         for xa in range(0, x_max):
             for ya in range(0, y_max):
                 for za in range(0, z_max):
