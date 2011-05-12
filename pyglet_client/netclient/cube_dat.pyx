@@ -220,8 +220,8 @@ class MapChunk(object):
         active_cube_number = 0
         culled_quads = 0
         for x in range(self.x_offset, self.x_offset+x_chunk_size):
-            for y in range(self.x_offset, self.x_offset +y_chunk_size):
-                for z in range(self.x_offset, self.x_offset+z_chunk_size):
+            for y in range(self.y_offset, self.y_offset +y_chunk_size):
+                for z in range(self.z_offset, self.z_offset+z_chunk_size):
                     tile_id = self.terrainMap.get(x,y,z)
                     ###
                     if self.cubePhysicalProperties.isActive(tile_id): #non-active tiles are not draw
