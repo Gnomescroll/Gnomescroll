@@ -173,13 +173,21 @@ class MapChunkManager(object):
 
     def __init__(self):
         self.mapChunks = []
+        self.mp = {}
         assert self.terrainMap != None
         MapChunk.terrainMap = self.terrainMap #assignment
         self.cubeProperties = CubeProperties()
         MapChunk.cubeProperties = CubeProperties()
 
-    def set_map(self, x,y,z,tile_id=0):
-        pass
+    def set_map(self, int x, int y, int z):
+        x = x - (x%x_chunk_size)
+        y = y - (y%y_chunk_size)
+        z = z - (z%z_chunk_size)
+        t = (x,y,z)
+        if self.mp.has_key(t):
+            mp[t].update = True
+        else:
+            mp[t] = MapChunk(x,y,z)
 
     def regiser_chunk(self, mapChunk):
         self.mapChunks.append(mapChunk)
