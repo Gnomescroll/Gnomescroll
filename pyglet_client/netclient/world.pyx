@@ -69,10 +69,10 @@ class World():
             for ya in range(0, y_max):
                 for za in range(0, z_max):
                     rnd = random.randint(0,64)
-                        if rnd < 16:
-                            rnd2 = random.randint(0,4)
-                                self.terrainMap.set(xa,ya,za, rnd2)
-                                self.mapChunkManager.set_map(xa,ya,za)
+                    if rnd < 16:
+                        rnd2 = random.randint(0,4)
+                        self.terrainMap.set(xa,ya,za, rnd2)
+                        self.mapChunkManager.set_map(xa,ya,za)
 
     def draw_chunk(self):
         self.MapChunkManager.update_chunk()
