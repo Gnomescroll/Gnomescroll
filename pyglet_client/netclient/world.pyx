@@ -1,8 +1,10 @@
 import pyglet
 from pyglet.gl import *
 
-from dat import CubeProperties, CubeRenderCache, TerrainMap, MapChunkManager, MapChunk
-from dat import convert_index
+#from dat import CubeProperties, CubeRenderCache, TerrainMap, MapChunkManager, MapChunk
+#from dat import convert_index
+
+from cube_dat import CubeGlobals, MapChunkManager
 
 from player import Player
 
@@ -22,14 +24,18 @@ class World():
 
         self.texture_grid_mipmap = tile_image.get_mipmapped_texture()
 
-        self.cubeProperties = CubeProperties()
-        self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
+        ##self.cubeProperties = CubeProperties()
+        ##self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
         #test
-        self.terrainMap = TerrainMap()
+        ##self.terrainMap = TerrainMap()
         #MapChunkManager(terrainMap, cubeProperties)
+
+        CubeGlobals.textureGrid = self.textureGrid #setup CubeGlobals
+
+        self.terrainMap = CubeGlobals.terrainMap
         self.players = []
 
-        self.mipmap = 0
+        self.mipmap = 6
 
     def toggle_mipmap(self):
         self.mipmap = (self.mipmap+1) % 7
@@ -37,11 +43,8 @@ class World():
     def tick(self):
         pass
 
-
-    def test_chunk(self):
-        MapChunk.cubeProperties = self.cubeProperties
-        MapChunk.cubeRenderCache = self.cubeRenderCache
-
+##DEPRECATED
+    def DEPRECATED_test_chunk(self):
         print "Start chunk generation"
         self.mct_array = {}
         for xa in range(0, 8):
@@ -55,12 +58,28 @@ class World():
                             if rnd < 16:
                                 rnd = rnd = random.randint(0,4)
                                 self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
+##DEPRECATED
+
+    def test_chunk(self):
+        print "Start chunk generation"
+        x_max = 1024
+        y_max = 1024
+        z_max = 32
+        for xa in range(0, x_max):
+            for ya in range(0, y_max):
+                for za in range(0, z_max):
+                    rnd = random.randint(0,64)
+                        if rnd < 16:
+                            rnd2 = random.randint(0,4)
+                                self.terrainMap.set(xa,ya,za, rnd2)
 
     def draw_chunk(self):
-        for mct in self.mct_array.values(): #update only one buffer per frame
-            if mct.update == True:
-                mct.update_vertex_buffer(self.batch)
-                break
+        self.MapChunkManager.update_chunk()
+
+#        for mct in self.mct_array.values(): #update only one buffer per frame
+#            if mct.update == True:
+#                mct.update_vertex_buffer(self.batch)
+#                break
 
 
         #gluBuild2DMipmaps(GL_TEXTURE_2D, depth, width, height, GL_RGB, GL_UNSIGNED_BYTE, imageData);

@@ -7,7 +7,6 @@ from pyglet.gl import *
 import cython
 import pyximport; pyximport.install()
 
-from dat import CubeProperties
 from player import Player
 from input import Mouse, Keyboard
 from camera import Camera, Hud
@@ -20,7 +19,7 @@ import client_api
 from client_api import MessageHandler
 from chat_client import Chat
 
-import terrain_map
+#import terrain_map
 
 class App(object):
 

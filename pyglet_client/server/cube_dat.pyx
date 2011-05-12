@@ -1,6 +1,9 @@
 import pyglet
 from pyglet.gl import *
 
+
+from terrain_map import TerrainMap
+
 cube_list = {
     0 : {
         'id' : 0,
@@ -110,7 +113,7 @@ cdef class CubePhysicalProperties:
         #init cube struct
         #self.cube_array[id].id = id
         #self.cube_array[id].active = active
-        #self.cube_array[id].active = occludes
+        #self.cube_array[id].occludes = occludes
 
     cdef inline int isActive(CubePhysicalProperties self, unsigned int id):
         if id >= max_cubes: #max number of cubes
@@ -122,6 +125,7 @@ cdef class CubePhysicalProperties:
             return 0
         return self.cube_array[id].occludes
 
+#the cache for cube visual properties
 class CubeVisualProperties:
     def __init__(self):
         pass
@@ -148,15 +152,26 @@ cdef enum:
     y_chunk_size = 8
     z_chunk_size = 8
 
-class TilesetGlobals:
+class CubeGlobals:
     terrainMap = TerrainMap()
     mapChunkManager = MapChunkManager()
 
+    cubePhysicalProperties = CubePhysicalProperties()
+    cubeProperties = cubeProperties() #deprecated for visual properties
+    textureGrid = None
+
+    cubeRenderCache = None
+
+    @classmethod
+    def setTextureGrid(self, textureGrid):
+        self.textureGrid = textureGrid
+        self.cubeRenderCache = CubeRenderCache()
 
 class MapChunkManager(object):
 
     terrainMap = None
     def __init__(self):
+        self.mapChunks = []
         assert self.terrainMap != None
         MapChunk.terrainMap = self.terrainMap #assignment
         self.cubeProperties = CubeProperties()
@@ -165,22 +180,28 @@ class MapChunkManager(object):
     def set_map(x,y,z,tile_id):
         pass
 
+    def regiser_chunk(self, mapChunk):
+        self.mapChunks.append(mapChunk)
+
+    def update_chunk(self):
+        update_chunk()
+
 class MapChunk(object):
 
-    terrainMap = None
-    cubePhysicalProperties = CubePhysicalProperties()
+    terrainMap = CubeGlobals.terrainMap
+    cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
 #    cubeProperties = None
-#    cubeRenderCache = None
+    cubeRenderCache = None
 
     def __init__(self, x_offset, y_offset, z_offset):
         assert self.terrainMap != None
-
         self.vertexList = None #an in describing batch number
         self.x_offset = x_offset
         self.y_offset = y_offset
         self.z_offset = z_offset
         self.update = True
         self.empty = True
+        self.CubeGlobals.mapChunkManager.register_chunk(self)
 
     def update_vertex_buffer(self, batch = None):
         cdef int tile_id, x, y, z
@@ -235,7 +256,7 @@ class MapChunk(object):
         #print str((len(v_list), len(c_list), len(tex_list)))
 
         if v_num == 0:
-            self.empty = True
+            self.empty = True  #should do something!  Recycle chunk
             self.update = False
             return
 
@@ -297,9 +318,10 @@ def convert_index(index, height, width):
 
 class CubeRenderCache(object):
 
-    def __init__(self, cubeProperties, textureGrid):
-        self.cubeProperties = cubeProperties
-        self.textureGrid = textureGrid
+    def __init__(self):
+        self.cubeProperties = CubeGlobals.cubeProperties
+        self.textureGrid = CubeGlobals.textureGrid
+        assert self.textureGrid != None
         self.c4b_cache = {}
         self.t4f_cache = {}
 
