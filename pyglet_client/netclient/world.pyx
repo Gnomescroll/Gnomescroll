@@ -44,37 +44,39 @@ class World():
     def tick(self):
         pass
 
-##DEPRECATED
-    def DEPRECATED_test_chunk(self):
-        print "Start chunk generation"
-        self.mct_array = {}
-        for xa in range(0, 8):
-            for ya in range(0, 8):
-                self.mct_array[(xa,ya)] = MapChunk(8*xa,8*ya)
-                for x in range(0, 8):
-                    for y in range(0, 8):
-                        for z in range(0, 8):
-                            rnd = random.randint(0,64)
-                            #rnd = 3
-                            if rnd < 16:
-                                rnd = rnd = random.randint(0,4)
-                                self.mct_array[(xa,ya)].set_tile(x,y,z,rnd)
-##DEPRECATED
-
     def test_chunk(self):
+        self.test_chunk2()
+        return
+
         print "Start chunk generation"
-        x_max = 256
-        y_max = 256
+        x_max = 64
+        y_max = 64
         z_max = 8
         for xa in range(0, x_max):
             for ya in range(0, y_max):
                 for za in range(0, z_max):
                     rnd = random.randint(0,64)
                     if rnd < 16:
-                        rnd2 = random.randint(0,4)
+                        rnd2 = random.randint(1,4)
                         self.terrainMap.set(xa,ya,za, rnd2)
                         self.mapChunkManager.set_map(xa,ya,za)
         print "Finished chunk generation"
+
+
+    def test_chunk2(self):
+        print "Start chunk generation"
+        x_max = 16
+        y = 5
+        z = 5
+        for xa in range(0, x_max):
+            rnd2 = random.randint(0,4)
+            self.terrainMap.set(xa, y, z, 1)
+            self.mapChunkManager.set_map(xa, y, z)
+        print "Finished chunk generation"
+
+        print "chunk list"
+        print str(self.terrainMap.get_chunk_list())
+        print str(self.mapChunkManager.get_chunk_list())
 
     def draw_chunk(self):
         self.mapChunkManager.update_chunk()

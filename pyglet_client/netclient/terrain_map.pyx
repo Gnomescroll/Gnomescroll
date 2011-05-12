@@ -1,27 +1,10 @@
-
-#import cython ##
-#import pyximport ##
-
-#from fast_map import *
-
-#cdef inline set(map_array, int x, int y, int z, int value):
-#        map_array[x + 8*y + 8*8*z] = value
-
-#cdef inline int get(map_array, int x, int y, int z):
-#        map_array[x + 8*y + 8*8*z]
-
-
-##test
-#cdef struct t_struct:
-#    int value1
-#    int value2
-
-#cdef extern t_struct* getthem()
-
-##
-
 cdef extern from "./clib/fast_map.c":
     int hash_cord(int)
+
+cdef enum:
+    x_chunk_size = 8
+    y_chunk_size = 8
+    z_chunk_size = 8
 
 cdef class TerrainMap:
 
@@ -47,15 +30,26 @@ cdef class TerrainMap:
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        cdef int _x, _y, _z
+        #t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        _x = x - (x%x_chunk_size)
+        _y = y - (y%y_chunk_size)
+        _z = z - (z%z_chunk_size)
+        t = (_x,_y,_z)
+
         if not self.chunks.has_key(t):
-            self.chunks[t] = MapChunk(8*t[0], 8*t[1], 8*t[2]) #new map chunk
+            self.chunks[t] = MapChunk(_x, _y, _z) #new map chunk
         c = self.chunks[t]
         c.set(x,y,z, value)
 
     cpdef inline int get(TerrainMap self, int x,int y,int z):
         cdef MapChunk c
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        cdef int _x, _y, _z
+        #t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        _x = x - (x%x_chunk_size)
+        _y = y - (y%y_chunk_size)
+        _z = z - (z%z_chunk_size)
+        t = (_x,_y,_z)
         if not self.chunks.has_key(t):
             return 0
         c = self.chunks[t]
@@ -103,6 +97,3 @@ def pack(MapChunk mapChunk):
     for i in range(0,512):
         l.insert(i, mapChunk.map_array[i])
     return fm.pack(chunk_dim, chunk_offset, off_x,off_y,off_z, *l)
-
-#    def serialize(self):
-#        return (self.index, self.map_array)

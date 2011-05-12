@@ -1,6 +1,17 @@
 import pyglet
 from pyglet.gl import *
 
+#import timeit
+#s = """\
+#try:
+#    str.__nonzero__
+#except AttributeError:
+#    pass
+#"""
+#t = timeit.Timer(stmt=s)
+
+#t = Timer("test()", "from __main__ import test")
+#    print t.timeit()
 
 from terrain_map import TerrainMap
 
@@ -176,6 +187,12 @@ class MapChunkManager(object):
         else:
             self.mp[t] = MapChunk(x,y,z)
 
+    def get_chunk_list(self):
+        l = []
+        for index in self.mp.keys():
+            l.append(index)
+        return l
+
     def register_chunk(self, mapChunk):
         self.mapChunks.append(mapChunk)
 
@@ -224,7 +241,7 @@ class MapChunk(object):
                 for z in range(self.z_offset, self.z_offset+z_chunk_size):
                     tile_id = self.terrainMap.get(x,y,z)
                     ###
-                    if self.cubePhysicalProperties.isActive(tile_id): #non-active tiles are not draw
+                    if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
                         active_cube_number += 1
                         for side_num in [0,1,2,3,4,5]:
                             if not self._is_occluded(x,y,z,side_num):
@@ -247,8 +264,8 @@ class MapChunk(object):
         tex_list = []
         v_num = 0
         for (x,y,z,tile_id, side_num) in draw_list:
-            rx = self.x_offset + x
-            ry = self.y_offset + y
+            rx = x #should be floats
+            ry = y
             rz = z
 
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
