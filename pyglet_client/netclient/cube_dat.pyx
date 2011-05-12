@@ -1,5 +1,3 @@
-import pyglet
-from pyglet.gl import *
 
 cube_list = {
     0 : {
@@ -126,6 +124,19 @@ class CubeVisualProperties:
     def __init__(self):
         pass
 
+class CubeProperties(object):
+
+    def __init__(self):
+        pass
+
+    def getTexture(self, tile_id, side_num):
+        global cube_list
+        if cube_list.has_key(tile_id):
+            tex_a = cube_list[tile_id]['texture']
+            return tex_a[side_num]
+        else:
+            return 0
+
     #def isActive(self, tile_id):
         #if self.cubes.has_key(tile_id):
             #return self.cubes[tile_id]['active']
@@ -148,22 +159,7 @@ cdef enum:
     y_chunk_size = 8
     z_chunk_size = 8
 
-class TilesetGlobals:
-    terrainMap = TerrainMap()
-    mapChunkManager = MapChunkManager()
-
-
-class MapChunkManager(object):
-
-    terrainMap = None
-    def __init__(self):
-        assert self.terrainMap != None
-        MapChunk.terrainMap = self.terrainMap #assignment
-        self.cubeProperties = CubeProperties()
-        MapChunk.cubeProperties = CubeProperties()
-
-    def set_map(x,y,z,tile_id):
-        pass
+import pyglet
 
 class MapChunk(object):
 
@@ -266,84 +262,3 @@ class MapChunk(object):
 
         tile_id = self.terrainMap.get(_x,_y,_z)
         return self.cubePhysicalProperties.isOcclude(tile_id)
-
-
-###
-
-#deprecated by CubeVisualProperties
-class CubeProperties(object):
-
-    def __init__(self):
-        pass
-
-    def getTexture(self, tile_id, side_num):
-        global cube_list
-        if cube_list.has_key(tile_id):
-            tex_a = cube_list[tile_id]['texture']
-            return tex_a[side_num]
-        else:
-            return 0
-
-def convert_index(index, height, width):
-    index = int(index)
-    height = int(height)
-    width = int(width)
-    x_ = index % width
-    y_ = int((index - x_) / width)
-    y = height - y_ -1
-    rvalue =  x_ + y*width
-    #print "rvalue= " + str(rvalue)
-    return rvalue
-
-class CubeRenderCache(object):
-
-    def __init__(self, cubeProperties, textureGrid):
-        self.cubeProperties = cubeProperties
-        self.textureGrid = textureGrid
-        self.c4b_cache = {}
-        self.t4f_cache = {}
-
-        self.v_index = [
-        [ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 ], #top
-        [ 1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 ], #bottom
-        [ 0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 ], #north
-        [ 0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 ], #south
-        [ 0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 ], #west
-        [ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 ], #east
-    ]
-
-        north_side = [ [0,1,1],[1,1,1],[1,1,0],[0,1,0] ]
-        south_side = [[0,0,1],[0,0,0],[1,0,0],[1,0,1]]
-        west_side = [[0,1,1],[0,1,0],[0,0,0],[0,0,1]]
-        east_side = [[1,0,1],[1,0,0],[1,1,0],[1,1,1]]
-        top_side = [[0,1,1],[0,0,1],[1,0,1],[1,1,1]]
-        bottom_side = [[1,0,0],[0,0,0],[0,1,0],[1,1,0]]
-
-    ## t, b, n, s, w, e
-    def get_side(self, x, y, z, tile_id, side_num):
-        ta = self.v_index[side_num]
-        #v_list = (GLfloat * 12) [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
-        v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ta[9]+x,ta[10]+y,ta[11]+z ]
-        c4B_list = self._get_c4B(tile_id, side_num)
-        t4f_list = self._get_t4f(tile_id, side_num)
-        return(v_list, c4B_list, t4f_list)
-
-    def _get_c4B(self, tile_id, side_num):
-        if self.c4b_cache.has_key((tile_id, side_num)):
-            return self.c4b_cache[(tile_id, side_num)]
-        else:
-            ##compute from dict!
-            #temp = (GLbyte * 4)[255, 255, 255, 255] * 4
-            temp = [255, 255, 255, 255] * 4
-            self.c4b_cache[(tile_id, side_num)] = temp
-            return temp
-
-    def _get_t4f(self, tile_id, side_num):
-        if self.t4f_cache.has_key((tile_id, side_num)):
-            return self.t4f_cache[(tile_id, side_num)]
-        else:
-            (texture_id, rotation) = self.cubeProperties.getTexture(tile_id, side_num)
-            tex_tuple = self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
-            if True:
-                self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
-                return list(tex_tuple)
