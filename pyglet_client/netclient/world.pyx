@@ -33,6 +33,7 @@ class World():
         #CubeGlobals.texture_grid = self.texture_grid #setup CubeGlobals
         CubeGlobals.setTextureGrid(self.texture_grid)
         self.terrainMap = CubeGlobals.terrainMap
+        self.mapChunkManager = CubeGlobals.mapChunkManager
         self.players = []
 
         self.mipmap = 6
@@ -62,9 +63,9 @@ class World():
 
     def test_chunk(self):
         print "Start chunk generation"
-        x_max = 1024
-        y_max = 1024
-        z_max = 32
+        x_max = 256
+        y_max = 256
+        z_max = 8
         for xa in range(0, x_max):
             for ya in range(0, y_max):
                 for za in range(0, z_max):
@@ -73,9 +74,10 @@ class World():
                         rnd2 = random.randint(0,4)
                         self.terrainMap.set(xa,ya,za, rnd2)
                         self.mapChunkManager.set_map(xa,ya,za)
+        print "Finished chunk generation"
 
     def draw_chunk(self):
-        self.MapChunkManager.update_chunk()
+        self.mapChunkManager.update_chunk()
 
 #        for mct in self.mct_array.values(): #update only one buffer per frame
 #            if mct.update == True:

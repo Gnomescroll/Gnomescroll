@@ -115,12 +115,13 @@ cdef class CubePhysicalProperties:
         #self.cube_array[id].active = active
         #self.cube_array[id].occludes = occludes
 
-    cdef inline int isActive(CubePhysicalProperties self, unsigned int id):
+    #!!!should not need to be cp
+    cpdef inline int isActive(CubePhysicalProperties self, unsigned int id):
         if id >= max_cubes: #max number of cubes
             return 0
         return self.cube_array[id].active
-
-    cdef inline int isOcclude(CubePhysicalProperties self, unsigned int id):
+    #!!!should not need to be cp
+    cpdef inline int isOcclude(CubePhysicalProperties self, unsigned int id):
         if id >= max_cubes: #max number of cubes
             return 0
         return self.cube_array[id].occludes
@@ -171,11 +172,11 @@ class MapChunkManager(object):
         z = z - (z%z_chunk_size)
         t = (x,y,z)
         if self.mp.has_key(t):
-            mp[t].update = True
+            self.mp[t].update = True
         else:
-            mp[t] = MapChunk(x,y,z)
+            self.mp[t] = MapChunk(x,y,z)
 
-    def regiser_chunk(self, mapChunk):
+    def register_chunk(self, mapChunk):
         self.mapChunks.append(mapChunk)
 
     def update_chunk(self):
@@ -199,13 +200,15 @@ class MapChunk(object):
 
     def __init__(self, x_offset, y_offset, z_offset):
         assert self.terrainMap != None
+        assert self.cubePhysicalProperties != None
+        assert self.cubeRenderCache != None
         self.vertexList = None #an in describing batch number
         self.x_offset = x_offset
         self.y_offset = y_offset
         self.z_offset = z_offset
         self.update = True
         self.empty = True
-        self.CubeGlobals.mapChunkManager.register_chunk(self)
+        CubeGlobals.mapChunkManager.register_chunk(self)
 
     def update_vertex_buffer(self, batch = None):
         cdef int tile_id, x, y, z
@@ -328,8 +331,8 @@ class CubeRenderCache(object):
 
     def __init__(self):
         self.cubeProperties = CubeGlobals.cubeProperties
-        self.textureGrid = CubeGlobals.texture_grid
-        assert self.texture_grid != None
+        self.textureGrid = CubeGlobals.textureGrid
+        assert self.textureGrid != None
         self.c4b_cache = {}
         self.t4f_cache = {}
 
@@ -390,11 +393,7 @@ class CubeGlobals:
 
     @classmethod
     def setTextureGrid(self, texture_grid):
-        self.texture_grid = texture_grid
+        print "init texture grid"
+        self.textureGrid = texture_grid
         self.cubeRenderCache = CubeRenderCache()
-
-    @classmethod
-    def init(self):
         MapChunk.init()
-
-CubeGlobals.init()
