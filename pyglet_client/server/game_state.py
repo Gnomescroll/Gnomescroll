@@ -1,7 +1,5 @@
 import math
 
-import pyximport; pyximport.install()
-
 from terrain_map import TerrainMap
 
 class PlayerAgent:

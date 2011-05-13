@@ -1,7 +1,7 @@
 
 
 #import cython
-import pyximport; pyximport.install()
+#import pyximport; pyximport.install()
 
 
 from server_api import *

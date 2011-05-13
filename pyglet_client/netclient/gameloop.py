@@ -7,7 +7,7 @@ from pyglet import clock, font, image, window
 from pyglet.gl import *
 
 #import cython
-import pyximport; pyximport.install()
+#import pyximport; pyximport.install()
 
 from player import Player
 from input import Mouse, Keyboard
