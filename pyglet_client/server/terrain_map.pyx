@@ -1,27 +1,9 @@
-
-#import cython ##
-#import pyximport ##
-
-#from fast_map import *
-
-#cdef inline set(map_array, int x, int y, int z, int value):
-#        map_array[x + 8*y + 8*8*z] = value
-
-#cdef inline int get(map_array, int x, int y, int z):
-#        map_array[x + 8*y + 8*8*z]
-
-
 ##test
 #cdef struct t_struct:
 #    int value1
 #    int value2
 
-#cdef extern t_struct* getthem()
 
-##
-
-
-##removed c dependencies
 cdef extern from "./clib/fast_map.c":
     int hash_cord(int)
 

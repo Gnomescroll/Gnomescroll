@@ -1,3 +1,12 @@
 to build run
 
 python setup.py build_ext --inplace
+
+#to compile and install libraries
+python setup.py install
+
+
+copying build/lib.linux-i686-2.6/terrain_map.so -> /usr/local/lib/python2.6/dist-packages
+copying build/lib.linux-i686-2.6/fast_map.so -> /usr/local/lib/python2.6/dist-packages
+copying build/lib.linux-i686-2.6/cube_dat.so -> /usr/local/lib/python2.6/dist-packages
+
