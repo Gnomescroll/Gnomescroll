@@ -18,31 +18,24 @@ class Main:
     gameStateGlobal = GameStateGlobal()
 
     def __init__(self):
-
+        #temp
         self.chat = Chat()
         self.serverGlobal.messageHandler.chat = self.chat
+        #setup
+        ServerGlobal.init()
+        GameStateGlobal.init()
 
-        self.serverGlobal.init()
-        self.gameStateGlobal.init()
-
-
-#        self.connectionPool = ConnectionPool(self, self.messageHandler)
-#        self.serverListener = ServerListener(self.connectionPool)
-#        self.eventOut = EventOut(self.connectionPool)
-
-        self.eventOut.gameState = self.gameState
-        PlayerAgent.eventOut = self.eventOut
-        #globals
 
     def run(self):
         print "Server Started"
         print "Create Agent"
         self.gameState.agentList.create_agent(-10, 0, -3, 0, 0)
+
         while True:
-            self.serverListener.accept() #accept incoming connections
-            self.connectionPool.process_events() #check for new data
-            self.gameState.tick()
-            self.eventOut.process_events()
+            ServerGlobal.serverListener.accept() #accept incoming connections
+            ServerGlobal.connectionPool.process_events() #check for new data
+            GameStateGlobal.gameState.tick()
+            ServerGlobal.eventOut.process_events()
             time.sleep(.01)
 
 if __name__ == "__main__":

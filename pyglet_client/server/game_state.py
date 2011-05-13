@@ -2,20 +2,39 @@ import math
 
 from terrain_map import TerrainMap
 
+from server_api.py import ServerGlobal
+
 class GameStateGlobal:
     gameState = None
-    terrainMap = None
+    terrainMap = TerrainMap()
     agentList = None
+    #state
+    id = 0
+
+    def __init__(self):
+        self.gameState = GameState()
+        self.agentList = AgentList()
+    @classmethod
+    def init(self):
+        GameState.init()
+        initPlayerAgent()
+
+    @classmethod
+    def new_id(self):
+        self.id += 1
+        return self.id
+
+def initPlayerAgent():
+       PlayerAgent.gameState = GameStateGlobal.gameState
+        assert self.gameState != None
+        PlayerAgent.eventOut = ServerGlobal.eventOut
+        assert self.eventOut != None
 
 class PlayerAgent:
     eventOut = None
     gameState = None
 
     def __init__(self, id, x, y, z, xa, ya):
-        self.gameState = GameStateGlobal.gameState
-        assert self.gameState != None
-        assert self.eventOut != None
-
         [x, y, z] = [float(x), float(y), float(z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
@@ -77,13 +96,11 @@ class AgentList:
 
     def __init__(self,gameState):
         GameStateGlobal.agentList = self
-        PlayerAgent.gameState = gameState
-
         self.agents = {}
 
     def create_agent(self, x,y,z,xa,ya):
         #(x,y,z,xa,ya) = position
-        id = GameStateGlobal.gameState.new_id()
+        id = GameStateGlobal.new_id()
         agent = PlayerAgent(id, x,y,z, xa,ya)
         self.agents[id] = agent
         print "AgentList: Agent Created, id= %i" % (id,)
@@ -100,19 +117,16 @@ class GameState:
     agentList = None
     terrainMap = None
 
-    def __init__(self):
-        GameStateGlobal.gameState = self
-        self.terrainMap = TerrainMap()
-        self.agentList = AgentList(self)
+    @classmethod
+    def init(self):
+        self.terrainMap = GameStateGlobal.terrainMap
+        self.agentList = GameStateGlobal.agentList
         assert self.agentList != None
         assert self.terrainMap != None
 
+    def __init__(self):
+        GameStateGlobal.gameState = self
         self.time = 0
-        self.id = 0
-
-    def new_id(self):
-        self.id += 1
-        return self.id
 
     # tick all agents
     def tick(self):
