@@ -7,7 +7,7 @@
 cdef extern from "./clib/fast_map.c":
     int hash_cord(int)
 
-from game_state import GameStateGlobal
+#from game_state import GameStateGlobal
 
 #import zlib
 #import array
@@ -18,7 +18,8 @@ cdef class TerrainMap:
     l = []
 
     def __init__(self):
-        GameStateGlobal.terrainMap = self
+        pass
+        #GameStateGlobal.terrainMap = self
 
     def get_chunk_list(self):
         l = []
@@ -26,15 +27,12 @@ cdef class TerrainMap:
             l.append(index)
         return l
 
-        #for mapChunk in self.chunks.values():
-        #    l.append(mapChunkSignature(mapChunk))
-        #return l
-
     def get_chunk(self, int x, int y, int z):
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
-        if not self.chunks.has_key(t):
-            return 0
-        return self.chunks[t]
+        pass
+        #t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        #if not self.chunks.has_key(t):
+            #return 0
+        #return self.chunks[t]
 
     def get_packed_chunk(self, x, y, z):
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
@@ -42,15 +40,6 @@ cdef class TerrainMap:
             return None
         t = self.chunks[t]
         return pack(t)
-
-    def unpack_chunk(self, str):
-        print 'unpacking chunk'
-        #global fm
-       # (off_x,off_y,off_z, version, k)= fm.unpack(str)
-        #print str((off_x,off_y,off_z, version, k))
-        #tmp = array.array('H')
-        #tmp.from_string(k)
-        #print str(tmp.tolist())
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
@@ -71,10 +60,10 @@ cdef class TerrainMap:
 cdef class MapChunk:
     cdef int index[3]
     cdef int map_array[512]
-    cdef unsigned int version
+    #cdef unsigned int version
 
-    def __init__(self, int x_off, int y_off, int z_off, int version = 0):
-        self.version = version
+    def __init__(self, int x_off, int y_off, int z_off):
+        #self.version = 0
         self.index[0] = x_off
         self.index[1] = y_off
         self.index[2] = z_off
@@ -83,7 +72,7 @@ cdef class MapChunk:
             self.map_array[i] = 0
 
     cdef inline void set(self, int x, int y, int z, int value):
-        self.version += 1
+        #self.version += 1
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
