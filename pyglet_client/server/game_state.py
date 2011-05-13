@@ -2,8 +2,6 @@ import math
 
 from terrain_map import TerrainMap
 
-from server_api.py import ServerGlobal
-
 class GameStateGlobal:
     gameState = None
     terrainMap = TerrainMap()
@@ -25,10 +23,12 @@ class GameStateGlobal:
         return self.id
 
 def initPlayerAgent():
-       PlayerAgent.gameState = GameStateGlobal.gameState
-        assert self.gameState != None
-        PlayerAgent.eventOut = ServerGlobal.eventOut
-        assert self.eventOut != None
+    PlayerAgent.gameState = GameStateGlobal.gameState
+    assert self.gameState != None
+    PlayerAgent.eventOut = ServerGlobal.eventOut
+    assert self.eventOut != None
+
+from server_api import ServerGlobal
 
 class PlayerAgent:
     eventOut = None
@@ -94,7 +94,7 @@ class PlayerAgent:
 # datastore for agents
 class AgentList:
 
-    def __init__(self,gameState):
+    def __init__(self):
         GameStateGlobal.agentList = self
         self.agents = {}
 

@@ -1,14 +1,13 @@
 
 #import cython
-#import pyximport; pyximport.install()
+import pyximport #; pyximport.install()
 
 #from server_api import *
 
-from game_state import PlayerAgent, AgentList, GameState
 from chat_server import Chat
 
 from server_api import ServerGlobal
-from game_state import GameState
+from game_state import GameStateGlobal
 
 import time
 

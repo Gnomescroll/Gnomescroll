@@ -9,8 +9,6 @@ import atexit
 import socket
 import select
 
-from game_state import PlayerAgent, AgentList, GameState
-
 class ServerGlobal:
     connectionPool = None
     eventOut = None
@@ -27,20 +25,26 @@ class ServerGlobal:
         return self._client_id
 
     def __init__(self):
+
         self.connectionPool = ConnectionPool()
         self.eventOut = EventOut()
         self.messageOut = MessageOut()
         self.messageHandler = MessageHandler()
         self.datagramDecoder = DatagramDecoder()
-        self.serverListener = serverListener()
+        assert self.datagramDecoder != None
+        self.serverListener = ServerListener()
+
     @classmethod
     def init(self):
+        assert self.datagramDecoder != None
         self.connectionPool.init()
         self.eventOut.init()
         self.messageOut.init()
         self.messageHandler.init()
         self.datagramDecoder.init()
         self.serverListener.init()
+
+from game_state import GameStateGlobal
 
 # sends event packets to all clients
 class EventOut:
@@ -165,12 +169,14 @@ class MessageHandler:
 
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:
+    messageHandler = None
 
     def init(self):
         self.messageHandler = ServerGlobal.messageHandler
         assert self.messageHandler != None
 
     def __init__(self):
+        print "dataqgram decoder init"
         pass
 
     def decode(self, message, connection):
@@ -192,7 +198,7 @@ class TcpPacketDecoder:
 
     def __init__(self, connection):
         self.connection = connection
-        self.datagramDecoder = DatagramDecoder()
+        self.datagramDecoder = ServerGlobal.DatagramDecoder()
         self.reset()
 
     def reset(self):
@@ -355,12 +361,12 @@ class TcpClient:
 
 # manages client connections
 class ConnectionPool:
-    self.messageHandler = None
-    self.datagramDecoder = None
+    messageHandler = None
+    datagramDecoder = None
 
-    def init(self)
+    def init(self):
         self.messageHandler = ServerGlobal.messageHandler
-        assert self.messageHander != None
+        assert self.messageHandler != None
         self.datagramDecoder = ServerGlobal.datagramDecoder
         assert self.datagramDecoder != None
 
