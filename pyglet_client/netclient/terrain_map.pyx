@@ -1,5 +1,6 @@
-cdef extern from "./clib/fast_map.c":
-    int hash_cord(int)
+#removed c dependencies
+#cdef extern from "./clib/fast_map.c":
+#    int hash_cord(int)
 
 cdef enum:
     x_chunk_size = 8

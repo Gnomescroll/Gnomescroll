@@ -63,7 +63,6 @@ class World():
                         self.mapChunkManager.set_map(xa,ya,za)
         print "Finished chunk generation"
 
-
     def test_chunk2(self):
         print "Start chunk generation"
         x_max = 16

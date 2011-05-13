@@ -105,6 +105,8 @@ class MessageHandler:
         elif cmd == 'send_client_id': #Setup client connection
             connection.set_client_id(int(msg['id']))
             #print "Client Assigned id= %i" % (connection.client_id,)
+        elif cmd == 'request_chunk_list':
+            self.send_chunk_list(msg, connection)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
@@ -121,6 +123,9 @@ class MessageHandler:
         tick = msg.get('tick', None)
         d_x, d_y, d_xa, d_za, jetpack, brake = msg.get('state', [None for i in range(6)])
         agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
+
+    def send_chunk_list(self, msg, connection):
+        pass
 
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:

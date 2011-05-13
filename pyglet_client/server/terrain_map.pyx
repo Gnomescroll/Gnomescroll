@@ -20,8 +20,10 @@
 
 ##
 
-cdef extern from "./clib/fast_map.c":
-    int hash_cord(int)
+
+##removed c dependencies
+#cdef extern from "./clib/fast_map.c":
+#    int hash_cord(int)
 
 cdef class TerrainMap:
 
