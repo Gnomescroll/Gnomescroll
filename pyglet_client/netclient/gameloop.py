@@ -6,7 +6,7 @@ from random import uniform
 from pyglet import clock, font, image, window
 from pyglet.gl import *
 
-import cython
+#import cython
 import pyximport; pyximport.install()
 
 from player import Player
