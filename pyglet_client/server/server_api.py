@@ -26,13 +26,12 @@ class ServerGlobal:
 
     def __init__(self):
 
-        self.connectionPool = ConnectionPool()
-        self.eventOut = EventOut()
-        self.messageOut = MessageOut()
-        self.messageHandler = MessageHandler()
-        self.datagramDecoder = DatagramDecoder()
-        assert self.datagramDecoder != None
-        self.serverListener = ServerListener()
+        ServerGlobal.connectionPool = ConnectionPool()
+        ServerGlobal.eventOut = EventOut()
+        ServerGlobal.messageOut = MessageOut()
+        ServerGlobal.messageHandler = MessageHandler()
+        ServerGlobal.datagramDecoder = DatagramDecoder()
+        ServerGlobal.serverListener = ServerListener()
 
     @classmethod
     def init(self):
@@ -52,7 +51,7 @@ class EventOut:
     pool = None
 
     def init(self):
-        self.pool = ServerGlobal.pool
+        self.pool = ServerGlobal.connectionPool
         self.gameState = GameStateGlobal.gameState
         assert self.pool != None
         assert self.gameState != None
@@ -198,7 +197,7 @@ class TcpPacketDecoder:
 
     def __init__(self, connection):
         self.connection = connection
-        self.datagramDecoder = ServerGlobal.DatagramDecoder()
+        self.datagramDecoder = ServerGlobal.datagramDecoder
         self.reset()
 
     def reset(self):

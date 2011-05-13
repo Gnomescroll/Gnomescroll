@@ -10,8 +10,8 @@ class GameStateGlobal:
     id = 0
 
     def __init__(self):
-        self.gameState = GameState()
-        self.agentList = AgentList()
+        GameStateGlobal.gameState = GameState()
+        GameStateGlobal.agentList = AgentList()
     @classmethod
     def init(self):
         GameState.init()
@@ -24,9 +24,9 @@ class GameStateGlobal:
 
 def initPlayerAgent():
     PlayerAgent.gameState = GameStateGlobal.gameState
-    assert self.gameState != None
+    assert PlayerAgent.gameState != None
     PlayerAgent.eventOut = ServerGlobal.eventOut
-    assert self.eventOut != None
+    assert PlayerAgent.eventOut != None
 
 from server_api import ServerGlobal
 

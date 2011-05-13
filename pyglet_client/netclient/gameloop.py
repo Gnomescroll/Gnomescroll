@@ -65,7 +65,7 @@ class App(object):
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
         self.chat.send_test('test')
-        self.ClientGlobal.sendMessage.request_chunks()
+        ClientGlobal.sendMessage.request_chunk_list()
         while not self.exit:
 
 

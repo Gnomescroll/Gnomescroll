@@ -1,8 +1,10 @@
 
 #import cython
-import pyximport #; pyximport.install()
+#import pyximport #; pyximport.install()
 
 #from server_api import *
+
+#from pudb import set_trace; set_trace()
 
 from chat_server import Chat
 
@@ -13,10 +15,12 @@ import time
 
 class Main:
 
-    serverGlobal = ServerGlobal()
-    gameStateGlobal = GameStateGlobal()
+    serverGlobal = None
+    gameStateGlobal = None
 
     def __init__(self):
+        self.serverGlobal = ServerGlobal()
+        self.gameStateGlobal = GameStateGlobal()
         #temp
         self.chat = Chat()
         self.serverGlobal.messageHandler.chat = self.chat
@@ -28,7 +32,7 @@ class Main:
     def run(self):
         print "Server Started"
         print "Create Agent"
-        self.gameState.agentList.create_agent(-10, 0, -3, 0, 0)
+        GameStateGlobal.gameState.agentList.create_agent(-10, 0, -3, 0, 0)
 
         while True:
             ServerGlobal.serverListener.accept() #accept incoming connections
