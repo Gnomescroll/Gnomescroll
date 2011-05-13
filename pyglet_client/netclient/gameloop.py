@@ -1,7 +1,7 @@
 
 #WTF?
-from __future__ import division
-from random import uniform
+#from __future__ import division
+#from random import uniform
 
 from pyglet import clock, font, image, window
 from pyglet.gl import *
@@ -20,8 +20,6 @@ import client_api
 
 from client_api import MessageHandler
 from chat_client import Chat
-
-#import terrain_map
 
 class App(object):
 
