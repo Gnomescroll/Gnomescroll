@@ -9,6 +9,7 @@ import simplejson as json
 class ClientGlobal:
     connection = None
     sendMessage = None
+    sendAdminMessage = None
     messageHandler = None
     client_id = 0
 
@@ -46,9 +47,29 @@ class SendMessage:
 
     def request_chunk_list(self):
         d = {
-            'cmd' : 'request_chunks',
+            'cmd' : 'request_chunk_list',
             }
         self.send_json(d)
+
+
+class SendAdminMessage:
+    def __init__(self, client):
+        self.client = client
+        ClientGlobal.sendAdminMessage = self
+    def add_prefix(self, id, msg):
+        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
+    def send_json(self, dict):
+        self.client.send(self.add_prefix(2, json.dumps(dict)))
+    def get_json(self, dict):
+        return self.add_prefix(1, json.dumps(dict))
+## Admin messages
+
+    def request_chunk_list(self):
+        d = {
+            'cmd' : 'request_chunk_list',
+            }
+        self.send_json(d)
+
 
 class MessageHandler:
     def __init__(self, player):
@@ -56,10 +77,14 @@ class MessageHandler:
         ClientGlobal.messageHandler = self
 
     def process_json(self, msg):
-        if msg['cmd'] == 'agent_position':
+        cmd = msg.get('cmd', None)
+        if cmd == 'agent_position':
             self._agent_position(**msg)
-        elif msg['cmd'] == 'send_client_id':
+        elif cmd == 'send_client_id':
             self._set_client_id(**msg)
+        elif cmd == 'chunk_list':
+            print "Chunk List Received"
+            print str(msg['list'])
         else:
             print "JSON message type unregonized"
 
@@ -170,13 +195,17 @@ class TcpConnection:
     #udp_port = 5000
     #settings
     noDelay = True
-
+    admin = True
 #    self.client_id = 0
 
     def __init__(self):
         self.tcp = None
         self.connected = False
         self.out = SendMessage(self)
+
+        if self.admin:
+            self.admin = SendAdminMessage(self)
+
         #self.encoder = ClientDatagramEncoder(self)
         self.decoder = PacketDecoder(self)
 

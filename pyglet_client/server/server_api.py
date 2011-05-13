@@ -14,6 +14,7 @@ class ServerGlobal:
     eventOut = None
     messageOut = None
     messageHandler = None
+    adminMessageHandler = None
     datagramDecoder = None
     serverListener = None
     #state
@@ -30,6 +31,7 @@ class ServerGlobal:
         ServerGlobal.eventOut = EventOut()
         ServerGlobal.messageOut = MessageOut()
         ServerGlobal.messageHandler = MessageHandler()
+        ServerGlobal.adminMessageHandler = AdminMessageHandler()
         ServerGlobal.datagramDecoder = DatagramDecoder()
         ServerGlobal.serverListener = ServerListener()
 
@@ -40,6 +42,7 @@ class ServerGlobal:
         self.eventOut.init()
         self.messageOut.init()
         self.messageHandler.init()
+        self.adminMessageHandler.init()
         self.datagramDecoder.init()
         self.serverListener.init()
 
@@ -98,6 +101,7 @@ class SendMessage: #each connection has one of these
         self.client = client
     def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))
+
     ## messages go out immediately
     def send_client_id(self):
         print "Send client id"
@@ -110,7 +114,7 @@ class SendMessage: #each connection has one of these
     def send_chunk_list(self):
         d = {
             'cmd'  : 'chunk_list',
-            'list': [],
+            'list': GameStateGlobal.terrainMap.get_chunk_list(),
         }
         self.send_json(d)
 
@@ -128,12 +132,7 @@ class MessageHandler:
         ServerGlobal.messageHandler = self
 
     def process_json(self, msg, connection):
-        if not msg.has_key('cmd'):
-            print "Json message need cmd parameter: %s" % (str(msg),)
-            return
-        else:
-            cmd = msg['cmd']
-
+        cmd = msg.get('cmd', None)
         #print "MessageHandler.process_json: " + str(msg)
         if cmd == 'create_agent':
             self.gameState.create_agent(**msg)
@@ -164,7 +163,27 @@ class MessageHandler:
         agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
 
     def send_chunk_list(self, msg, connection):
-        pass
+        connection.sendMessage.send_chunk_list()
+
+class AdminMessageHandler:
+    gameState = None
+
+    def init(self):
+        self.gameState = GameStateGlobal.gameState
+        assert self.gameState != None
+
+    def __init__(self):
+        ServerGlobal.AdminMessageHandler = self
+
+    def process_json(self, msg, connection):
+        cmd = msg.get('cmd', None)
+        if cmd == "set_map":
+            l = msg.get('list', [])
+            terrainMap = gameState.terrainMap
+            for (x,y,z,value) in  l:
+                terrainMap.set(x,y,z,value)
+        else:
+            print "Admin Message Handler, uncaught message"
 
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:
@@ -183,15 +202,20 @@ class DatagramDecoder:
         (length, msg_type) = struct.unpack('I H', prefix)
         if msg_type == 0:
             print "test message received"
-        elif msg_type == 1:
-            #print "DatagramDecoder: JSON message"
+        elif msg_type == 1: #client json messages
             try:
                 msg = json.loads(datagram)
             except:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
             self.messageHandler.process_json(msg, connection)
-
+        elif msg_type == 2: #client admin messages
+            try:
+                msg = json.loads(datagram)
+            except:
+                print "JSON DECODING ERROR: %s" % (str(msg),)
+                return
+            self.adminMessageHandler.process_json(msg, connection)
 # decodes tcp packets
 class TcpPacketDecoder:
 

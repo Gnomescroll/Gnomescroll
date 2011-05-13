@@ -19,8 +19,8 @@ cdef class TerrainMap:
 
     def get_chunk_list(self):
         l = []
-        for index in self.chunks.keys():
-            l.append(index)
+        for mapChunk in self.chunks.values():
+            l.append(mapChunkSignature(mapChunk))
         return l
 
     def get_chunk(self, index):
@@ -49,9 +49,10 @@ cdef class TerrainMap:
 cdef class MapChunk:
     cdef int index[3]
     cdef int map_array[512]
+    cdef unsigned int version
 
-    def __init__(self, int x_off, int y_off, int z_off):
-
+    def __init__(self, int x_off, int y_off, int z_off, int version = 0):
+        self.version = version
         self.index[0] = x_off
         self.index[1] = y_off
         self.index[2] = z_off
@@ -60,6 +61,7 @@ cdef class MapChunk:
             self.map_array[i] = 0
 
     cdef inline void set(self, int x, int y, int z, int value):
+        self.version += 1
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
@@ -71,6 +73,8 @@ cdef class MapChunk:
         z -= self.index[2]
         return self.map_array[x + 8*y + 8*8*z]
 
+def mapChunkSignature(mapChunk):
+    return (mapChunk.index[0], mapChunk.index[1], mapChunk.index[2], mapChunk.version)
 #should used compiled form
 
 import struct
