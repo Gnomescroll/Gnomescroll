@@ -3,6 +3,10 @@ syntax: glob
 *.pxd
 *.pyd
 
+terrain_map.c
+dat.c
+cube_dat.c
+
 *.o
 *.so
 
