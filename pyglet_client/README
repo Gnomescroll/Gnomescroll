@@ -1,0 +1,5 @@
+To run server:
+python ./server/run.py
+
+To run client:
+python ./netclient/gameloop.py
