@@ -76,7 +76,7 @@ class SendAdminMessage:
             }
         self.send_json(d)
 
-    def set_map_bulk(self, list) #takes a list of 4 tuples of (x,y,z,value)
+    def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
         d = {
             'set_map' : 'set_map',
             'list' : list,

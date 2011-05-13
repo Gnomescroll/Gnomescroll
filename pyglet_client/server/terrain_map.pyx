@@ -1,4 +1,4 @@
-##test
+
 #cdef struct t_struct:
 #    int value1
 #    int value2
@@ -17,9 +17,8 @@ cdef class TerrainMap:
     chunks = {}
     l = []
 
-    def __init__(self):
-        pass
-        #GameStateGlobal.terrainMap = self
+    #def __init__(self):
+    #    GameStateGlobal.terrainMap = self
 
     def get_chunk_list(self):
         l = []
@@ -28,11 +27,10 @@ cdef class TerrainMap:
         return l
 
     def get_chunk(self, int x, int y, int z):
-        pass
-        #t = (hash_cord(x), hash_cord(y), hash_cord(z))
-        #if not self.chunks.has_key(t):
-            #return 0
-        #return self.chunks[t]
+        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        if not self.chunks.has_key(t):
+            return 0
+        return self.chunks[t]
 
     def get_packed_chunk(self, x, y, z):
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
@@ -84,8 +82,8 @@ cdef class MapChunk:
         z -= self.index[2]
         return self.map_array[x + 8*y + 8*8*z]
 
-#def mapChunkSignature(mapChunk):
-#    return (mapChunk.index[0], mapChunk.index[1], mapChunk.index[2], mapChunk.version)
+def mapChunkSignature(mapChunk):
+    return (mapChunk.index[0], mapChunk.index[1], mapChunk.index[2], mapChunk.version)
 
 #should used compiled form
 

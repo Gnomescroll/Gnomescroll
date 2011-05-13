@@ -76,7 +76,7 @@ cdef class MapChunk:
             self.map_array[i] = 0
 
     cdef inline void set(self, int x, int y, int z, int value):
-        self.version += 1
+        self.local_version += 1
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
