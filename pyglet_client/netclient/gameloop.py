@@ -19,6 +19,9 @@ import world
 import client_api
 
 from client_api import MessageHandler
+
+from client_api import ClientGlobal
+
 from chat_client import Chat
 
 class App(object):
@@ -62,6 +65,7 @@ class App(object):
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
         self.chat.send_test('test')
+        self.ClientGlobal.sendMessage.request_chunks()
         while not self.exit:
 
 

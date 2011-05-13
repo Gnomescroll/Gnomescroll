@@ -44,6 +44,12 @@ class SendMessage:
            }
         self.send_json(d)
 
+    def request_chunk_list(self):
+        d = {
+            'cmd' : 'request_chunks',
+            }
+        self.send_json(d)
+
 class MessageHandler:
     def __init__(self, player):
         self.player = player

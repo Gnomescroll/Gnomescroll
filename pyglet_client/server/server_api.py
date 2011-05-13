@@ -16,21 +16,46 @@ class ServerGlobal:
     eventOut = None
     messageOut = None
     messageHandler = None
+    datagramDecoder = None
+    serverListener = None
+    #state
+    _client_id = 0
 
-    client_id = 0
     @classmethod
     def generate_client_id(self):
-        self.client_id += 1
-        return self.client_id
+        self._client_id += 1
+        return self._client_id
+
+    def __init__(self):
+        self.connectionPool = ConnectionPool()
+        self.eventOut = EventOut()
+        self.messageOut = MessageOut()
+        self.messageHandler = MessageHandler()
+        self.datagramDecoder = DatagramDecoder()
+        self.serverListener = serverListener()
+    @classmethod
+    def init(self):
+        self.connectionPool.init()
+        self.eventOut.init()
+        self.messageOut.init()
+        self.messageHandler.init()
+        self.datagramDecoder.init()
+        self.serverListener.init()
 
 # sends event packets to all clients
 class EventOut:
     gameState = None
+    pool = None
 
-    def __init__(self, pool):
-        self.pool = pool
-        self.event_packets = []
+    def init(self):
+        self.pool = ServerGlobal.pool
+        self.gameState = GameStateGlobal.gameState
+        assert self.pool != None
+        assert self.gameState != None
+
+    def __init__(self):
         ServerGlobal.eventOut = self
+        self.event_packets = []
 
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
@@ -53,6 +78,8 @@ class EventOut:
 
 #this is global message out across the connection pool
 class MessageOut:
+    def init(self):
+        pass
     def __init__(self):
         ServerGlobal.messageOut = self
 
@@ -77,15 +104,24 @@ class SendMessage: #each connection has one of these
         }
         self.send_json(d)
 
+    def send_chunk_list(self):
+        d = {
+            'cmd'  : 'chunk_list',
+            'list': [],
+        }
+        self.send_json(d)
+
 # routes messages by msg.cmd
 class MessageHandler:
     gameState = None
-    chat = None
+    chat = None #put this somewhere
 
-    def __init__(self, main):
+    def init(self):
+        self.gameState = GameStateGlobal.gameState
         assert self.gameState != None
-        assert self.chat != None
-        self.main = main
+        #assert self.chat != None
+
+    def __init__(self):
         ServerGlobal.messageHandler = self
 
     def process_json(self, msg, connection):
@@ -129,16 +165,17 @@ class MessageHandler:
 
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:
-    messageHandler = None
 
-    def __init__(self):
+    def init(self):
+        self.messageHandler = ServerGlobal.messageHandler
         assert self.messageHandler != None
 
-    def decode(self, message, connection):
+    def __init__(self):
+        pass
 
+    def decode(self, message, connection):
         prefix, datagram = (message[0:6], message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
-
         if msg_type == 0:
             print "test message received"
         elif msg_type == 1:
@@ -208,8 +245,12 @@ class ServerListener:
     TCP_PORT = 5055
     UDP_PORT = 5060
 
-    def __init__(self, connectionPool):
-        self.connectionPool = connectionPool
+    connectionPool = None
+
+    def init(self):
+        self.connectionPool = ServerGlobal.connectionPool
+        assert self.connectionPool != None
+    def __init__(self):
         self.tcp = None
         self.tcp_fileno = 0
         self.udp = None
@@ -266,7 +307,6 @@ class TcpClient:
 
         self.player_id = 0
         self.client_id = 0
-
         self.ec = 0
 
         self.sendMessage.send_client_id() #send client an id upon connection
@@ -315,23 +355,25 @@ class TcpClient:
 
 # manages client connections
 class ConnectionPool:
+    self.messageHandler = None
+    self.datagramDecoder = None
 
-    def __init__(self, main, messageHandler):
+    def init(self)
+        self.messageHandler = ServerGlobal.messageHandler
+        assert self.messageHander != None
+        self.datagramDecoder = ServerGlobal.datagramDecoder
+        assert self.datagramDecoder != None
+
+    def __init__(self):
+        ServerGlobal.connectionPool = self
         #parents
-        self.main = main
-        self.messageHandler = messageHandler
         TcpClient.pool = self
-
-        #children
-        self.datagramDecoder = DatagramDecoder()
         #local
         self._epoll = select.epoll()
         self._client_count = 0
         self._client_pool = {} #clients by fileno
         self._clients_by_id = {}
-
         atexit.register(self.on_exit)
-        ServerGlobal.connectionPool = self
 
     def on_exit(self):
         self._epoll.close()

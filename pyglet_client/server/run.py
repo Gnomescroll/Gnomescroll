@@ -2,28 +2,36 @@
 #import cython
 #import pyximport; pyximport.install()
 
-from server_api import *
+#from server_api import *
 
 from game_state import PlayerAgent, AgentList, GameState
 from chat_server import Chat
+
+from server_api import ServerGlobal
+from game_state import GameState
 
 import time
 
 class Main:
 
+    serverGlobal = ServerGlobal()
+    gameStateGlobal = GameStateGlobal()
+
     def __init__(self):
-        self.gameState = GameState()
+
         self.chat = Chat()
-        MessageHandler.gameState = self.gameState
-        MessageHandler.chat = self.chat
-        self.messageHandler = MessageHandler(self)
-        DatagramDecoder.messageHandler = self.messageHandler #set global
-        self.connectionPool = ConnectionPool(self, self.messageHandler)
-        self.serverListener = ServerListener(self.connectionPool)
-        self.eventOut = EventOut(self.connectionPool)
+        self.serverGlobal.messageHandler.chat = self.chat
+
+        self.serverGlobal.init()
+        self.gameStateGlobal.init()
+
+
+#        self.connectionPool = ConnectionPool(self, self.messageHandler)
+#        self.serverListener = ServerListener(self.connectionPool)
+#        self.eventOut = EventOut(self.connectionPool)
+
         self.eventOut.gameState = self.gameState
         PlayerAgent.eventOut = self.eventOut
-        PlayerAgent.gameState = self.gameState
         #globals
 
     def run(self):

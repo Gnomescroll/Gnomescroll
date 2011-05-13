@@ -7,14 +7,15 @@
 cdef extern from "./clib/fast_map.c":
     int hash_cord(int)
 
+from game_state import GameStateGlobal
+
 cdef class TerrainMap:
 
     chunks = {}
     l = []
 
     def __init__(self):
-        pass
-        #self.chunks = {}
+        GameStateGlobal.terrainMap = self
 
     def get_chunk_list(self):
         l = []

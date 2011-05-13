@@ -2,13 +2,20 @@ import math
 
 from terrain_map import TerrainMap
 
+class GameStateGlobal:
+    gameState = None
+    terrainMap = None
+    agentList = None
+
 class PlayerAgent:
     eventOut = None
     gameState = None
 
     def __init__(self, id, x, y, z, xa, ya):
-        assert self.eventOut != None
+        self.gameState = GameStateGlobal.gameState
         assert self.gameState != None
+        assert self.eventOut != None
+
         [x, y, z] = [float(x), float(y), float(z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
@@ -67,14 +74,16 @@ class PlayerAgent:
 
 # datastore for agents
 class AgentList:
-    def __init__(self, gameState):
-        self.gameState = gameState
-        AgentList.gameState = self.gameState
+
+    def __init__(self,gameState):
+        GameStateGlobal.agentList = self
+        PlayerAgent.gameState = gameState
+
         self.agents = {}
 
     def create_agent(self, x,y,z,xa,ya):
         #(x,y,z,xa,ya) = position
-        id = self.gameState.new_id()
+        id = GameStateGlobal.gameState.new_id()
         agent = PlayerAgent(id, x,y,z, xa,ya)
         self.agents[id] = agent
         print "AgentList: Agent Created, id= %i" % (id,)
@@ -88,11 +97,19 @@ class AgentList:
 # main game state wrapper
 class GameState:
 
+    agentList = None
+    terrainMap = None
+
     def __init__(self):
+        GameStateGlobal.gameState = self
+        self.terrainMap = TerrainMap()
+        self.agentList = AgentList(self)
+        assert self.agentList != None
+        assert self.terrainMap != None
+
         self.time = 0
         self.id = 0
-        self.agentList = AgentList(self)
-        self.terrainMap = TerrainMap()
+
     def new_id(self):
         self.id += 1
         return self.id
