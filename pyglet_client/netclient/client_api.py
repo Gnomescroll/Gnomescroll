@@ -51,6 +51,11 @@ class SendMessage:
             }
         self.send_json(d)
 
+    def request_chunk(x,y,z):
+        d = {
+            'cmd' : 'request_chunk',
+            'value' : (x,y,z)
+        }
 
 class SendAdminMessage:
     def __init__(self, client):
@@ -64,12 +69,19 @@ class SendAdminMessage:
         return self.add_prefix(1, json.dumps(dict))
 ## Admin messages
 
-    def request_chunk_list(self):
+    def set_map(self,x,y,z,value):
         d = {
-            'cmd' : 'request_chunk_list',
+            'set_map' : 'set_map',
+            'list' : [(x,y,z,value)],
             }
         self.send_json(d)
 
+    def set_map_bulk(self, list) #takes a list of 4 tuples of (x,y,z,value)
+        d = {
+            'set_map' : 'set_map',
+            'list' : list,
+            }
+        self.send_json(d)
 
 class MessageHandler:
     def __init__(self, player):

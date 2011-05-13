@@ -118,6 +118,13 @@ class SendMessage: #each connection has one of these
         }
         self.send_json(d)
 
+    def send_chunk(self):
+        d = {
+            'cmd'  : 'chunk',
+            'data': GameStateGlobal.terrainMap.get_chunk_list(),
+        }
+        self.send_json(d)
+
 # routes messages by msg.cmd
 class MessageHandler:
     gameState = None
@@ -145,6 +152,8 @@ class MessageHandler:
             #print "Client Assigned id= %i" % (connection.client_id,)
         elif cmd == 'request_chunk_list':
             self.send_chunk_list(msg, connection)
+        elif cmd == 'request_chunk':
+            self.request_chunk(msg, connection)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
@@ -164,6 +173,11 @@ class MessageHandler:
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
+
+    def request_chunk(self, msg, connection):
+        (x,y,z) = msg.get('value')
+        connection.sendMessage.send_chunk(x,y,z)
+
 
 class AdminMessageHandler:
     gameState = None

@@ -9,6 +9,9 @@ cdef extern from "./clib/fast_map.c":
 
 from game_state import GameStateGlobal
 
+#import zlib
+#import array
+
 cdef class TerrainMap:
 
     chunks = {}
@@ -19,16 +22,35 @@ cdef class TerrainMap:
 
     def get_chunk_list(self):
         l = []
-        for mapChunk in self.chunks.values():
-            l.append(mapChunkSignature(mapChunk))
+        for index in self.chunks.keys():
+            l.append(index)
         return l
 
-    def get_chunk(self, index):
-        pass
+        #for mapChunk in self.chunks.values():
+        #    l.append(mapChunkSignature(mapChunk))
+        #return l
 
-    def get_packed_chunk(self):
-        for x in self.chunks.values():
-            return pack(x)
+    def get_chunk(self, int x, int y, int z):
+        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        if not self.chunks.has_key(t):
+            return 0
+        return self.chunks[t]
+
+    def get_packed_chunk(self, x, y, z):
+        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        if not self.chunks.has_key(t):
+            return None
+        t = self.chunks[t]
+        return pack(t)
+
+    def unpack_chunk(self, str):
+        print 'unpacking chunk'
+        #global fm
+       # (off_x,off_y,off_z, version, k)= fm.unpack(str)
+        #print str((off_x,off_y,off_z, version, k))
+        #tmp = array.array('H')
+        #tmp.from_string(k)
+        #print str(tmp.tolist())
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
@@ -73,8 +95,9 @@ cdef class MapChunk:
         z -= self.index[2]
         return self.map_array[x + 8*y + 8*8*z]
 
-def mapChunkSignature(mapChunk):
-    return (mapChunk.index[0], mapChunk.index[1], mapChunk.index[2], mapChunk.version)
+#def mapChunkSignature(mapChunk):
+#    return (mapChunk.index[0], mapChunk.index[1], mapChunk.index[2], mapChunk.version)
+
 #should used compiled form
 
 import struct
@@ -92,6 +115,3 @@ def pack(MapChunk mapChunk):
     for i in range(0,512):
         l.insert(i, mapChunk.map_array[i])
     return fm.pack(chunk_dim, chunk_offset, off_x,off_y,off_z, *l)
-
-#    def serialize(self):
-#        return (self.index, self.map_array)
