@@ -34,10 +34,10 @@ cdef class TerrainMap:
         t = self.chunks[t]
         return zlib.compress(pack(t))
 
-    def set_packed_chunk(self, str):
-        str = zlib.decompress(str)
+    def set_packed_chunk(self, tmp):
+        tmp = zlib.decompress(tmp)
         global fm_inv1, fm_inv2
-        (off_x,off_y,off_z, version, array) = fm_inv1.unpack(str)
+        (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
         array = list(fm_inv2.unpack(array))
         print "unpacking"
         print str((off_x,off_y,off_z, version))

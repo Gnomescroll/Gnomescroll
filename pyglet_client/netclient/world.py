@@ -41,8 +41,20 @@ class World():
     def toggle_mipmap(self):
         self.mipmap = (self.mipmap+1) % 7
         print "mipmap= %i" % self.mipmap
+
     def tick(self):
+        self.mapChunkManager.update_chunk()
         pass
+
+    def draw(self):
+        if False:
+            for x in range(-20, 20):
+                self.draw_point(x, 0, 0, 255, 0)
+            for y in range(-20, 20):
+                self.draw_point(0, y, 0, 0, 255)
+
+        self.draw_chunk()
+        self.draw_players()
 
     def test_chunk(self):
         if False:
@@ -79,7 +91,6 @@ class World():
         print str(self.mapChunkManager.get_chunk_list())
 
     def draw_chunk(self):
-        self.mapChunkManager.update_chunk()
 
 #        for mct in self.mct_array.values(): #update only one buffer per frame
 #            if mct.update == True:
@@ -134,17 +145,6 @@ class World():
         #glDisable(GL_SMOOTH)
         glDisable(GL_CULL_FACE)
         glDisable(self.texture_grid.target)
-
-    def draw(self):
-        if False:
-            for x in range(-20, 20):
-                self.draw_point(x, 0, 0, 255, 0)
-            for y in range(-20, 20):
-                self.draw_point(0, y, 0, 0, 255)
-
-
-        self.draw_chunk()
-        self.draw_players()
         #self.draw_players()
 
     def draw_point(self, x, y, r, g, b):

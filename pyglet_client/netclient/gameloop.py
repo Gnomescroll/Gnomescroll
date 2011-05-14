@@ -24,10 +24,11 @@ from client_api import ClientGlobal
 
 from chat_client import Chat
 
+import hotshot
+
 class App(object):
 
     def __init__(self):
-
         #networking code
         self.player = Player() #for testing
         self.messageHandler = MessageHandler(self.player)
@@ -66,29 +67,26 @@ class App(object):
 
         self.chat.send_test('test')
         ClientGlobal.sendMessage.request_chunk_list()
+
+        #p = hotshot.Profile("../log/client.log")
+        #p.start()
         while not self.exit:
-
-
             self.win.dispatch_events()
             self.keyboard.stateHandler(keyboard)
             [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
             self.out.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
             #network events
             self.connection.attempt_recv()
-
             self.world.tick()
-
             self.win.clear() #?
-
             self.camera.worldProjection()
-
             self.world.draw()
             self.camera.hudProjection()
             self.hud.draw()
-
             clock.tick()
             self.win.flip()
             #return
+        #p.stop()
         self.win.close
 
 app = App()

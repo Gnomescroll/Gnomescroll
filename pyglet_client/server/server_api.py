@@ -26,7 +26,6 @@ class ServerGlobal:
         return self._client_id
 
     def __init__(self):
-
         ServerGlobal.connectionPool = ConnectionPool()
         ServerGlobal.eventOut = EventOut()
         ServerGlobal.messageOut = MessageOut()
