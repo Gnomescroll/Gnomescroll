@@ -428,7 +428,7 @@ class ConnectionPool:
             self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
             self._client_pool[client.fileno] = client #save client
 
-    def tearDownClient(self, connection):
+    def tearDownClient(self, connection, duplicate_id = False):
         fileno = connection.fileno
         self._epoll.unregister(fileno)
         self._client_pool[fileno].close()
@@ -442,6 +442,7 @@ class ConnectionPool:
             print "Connection associated with client_id= %i" % (connection.client_id,)
         else:
             print "Client id is already registered!"
+            self.tearDownClient(connection, duplicate_id = True)
 
     def process_events(self):
         events = self._epoll.poll(0)
