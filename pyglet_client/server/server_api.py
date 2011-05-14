@@ -95,7 +95,6 @@ class SendMessage: #each connection has one of these
     @classmethod
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
-
     def __init__(self, client):
         self.client = client
     def send_json(self, dict):
@@ -117,12 +116,12 @@ class SendMessage: #each connection has one of these
         }
         self.send_json(d)
 
-    def send_chunk(self):
-        d = {
-            'cmd'  : 'chunk',
-            'data': GameStateGlobal.terrainMap.get_chunk_list(),
-        }
-        self.send_json(d)
+    def send_chunk(self, x, y z):
+        chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
+        if chunk_str != '':
+            self.client.send(self.add_prefix(3, chunk_str))
+        else:
+            print "send chunk error: chunk id invalid"
 
 # routes messages by msg.cmd
 class MessageHandler:
@@ -438,8 +437,11 @@ class ConnectionPool:
             del self._clients_by_id[connection.client_id]
 
     def register_client_id(self, connection):
-        self._clients_by_id[connection.client_id] = connection
-        print "Connection associated with client_id= %i" % (connection.client_id,)
+        if self._clients_by_id.get(connection.client_id, None) == None:
+            self._clients_by_id[connection.client_id] = connection
+            print "Connection associated with client_id= %i" % (connection.client_id,)
+        else:
+            print "Client id is already registered!"
 
     def process_events(self):
         events = self._epoll.poll(0)

@@ -30,7 +30,7 @@ cdef class TerrainMap:
     def get_packed_chunk(self, x, y, z):
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
         if not self.chunks.has_key(t):
-            return None
+            return ''
         t = self.chunks[t]
         return zlib.compress(pack(t))
 
