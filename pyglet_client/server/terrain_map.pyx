@@ -7,18 +7,13 @@
 cdef extern from "./clib/fast_map.c":
     int hash_cord(int)
 
-#from game_state import GameStateGlobal
-
-#import zlib
+import zlib
 #import array
 
 cdef class TerrainMap:
 
     chunks = {}
     l = []
-
-    #def __init__(self):
-    #    GameStateGlobal.terrainMap = self
 
     def get_chunk_list(self):
         l = []
@@ -37,7 +32,16 @@ cdef class TerrainMap:
         if not self.chunks.has_key(t):
             return None
         t = self.chunks[t]
-        return pack(t)
+        return zlib.compress(pack(t))
+
+    def set_packed_chunk(self, str):
+        str = zlib.decompress(str)
+        global fm_inv1, fm_inv2
+        (off_x,off_y,off_z, version, array) = fm_inv1.unpack(str)
+        array = list(fm_inv2.unpack(array))
+        print "unpacking"
+        print str((off_x,off_y,off_z, version))
+        print str(array)
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
@@ -58,19 +62,19 @@ cdef class TerrainMap:
 cdef class MapChunk:
     cdef int index[3]
     cdef int map_array[512]
-    #cdef unsigned int version
+    cdef unsigned int version
 
     def __init__(self, int x_off, int y_off, int z_off):
-        #self.version = 0
+        self.version = 0
         self.index[0] = x_off
         self.index[1] = y_off
         self.index[2] = z_off
 
-        for i in range(0, 256):
+        for i in range(0, 512):
             self.map_array[i] = 0
 
     cdef inline void set(self, int x, int y, int z, int value):
-        #self.version += 1
+        self.version += 1
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
@@ -89,16 +93,21 @@ def mapChunkSignature(mapChunk):
 
 import struct
 
-fm = struct.Struct('B H 3i 512H')
+fm_inv1 = struct.Struct('< 4i 1024s')
+fm_inv2 = struct.Struct('< 512H')
+
+fm = struct.Struct('< 4i 512H')
 def pack(MapChunk mapChunk):
     global fm
-    cdef int chunk_dim, chunk_offset, off_x, off_y, off_z
-    chunk_dim = 8 #short
-    chunk_offset = 0 #offset into chunk
+    cdef int chunk_dim, chunk_offset, off_x, off_y, off_z, version
+
     off_x = mapChunk.index[0]
     off_y = mapChunk.index[1]
     off_z = mapChunk.index[2]
     l = []
     for i in range(0,512):
         l.insert(i, mapChunk.map_array[i])
-    return fm.pack(chunk_dim, chunk_offset, off_x,off_y,off_z, *l)
+
+    print str((off_x,off_y,off_z, version))
+    print str(l)
+    return fm.pack(off_x,off_y,off_z, version, *l)
