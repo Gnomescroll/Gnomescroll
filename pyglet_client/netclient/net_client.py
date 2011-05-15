@@ -4,6 +4,7 @@ import struct
 
 from world_state import WorldStateGlobal
 from net_event import NetEventGlobal
+from net_api import NetApiGlobal
 
 import simplejson as json
 
@@ -29,6 +30,17 @@ class NetClientGlobal:
 
 #import binascii
 
+class SendMessage:
+    def __init__(self, client):
+        self.client = client
+        NetClientGlobal.sendMessage = self
+    def add_prefix(self,id, msg):
+        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
+    def send_json(self, dict):
+        self.client.send(self.add_prefix(1, json.dumps(dict)))  #fix this
+    def send_binary(self,msg_id, bin_string):
+        self.client.send(self.add_prefix(msg_id, bin_string))
+
 class ClientDatagramDecoder:
 
     messageHandler = None
@@ -42,17 +54,6 @@ class ClientDatagramDecoder:
         (prefix, datagram) = (message[0:6],message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
         self.messageHandler.process_net_event(msg_type, datagram)
-
-class SendMessage:
-    def __init__(self, client):
-        self.client = client
-        NetClientGlobal.sendMessage = self
-    def add_prefix(id, msg):
-        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-    def send_json(connection,dict):
-        self.client.send(add_prefix(1, json.dumps(dict)))  #fix this
-    def send_binary(msg_id, bin_string):
-        self.client.send(add_prefix(msg_id, bin_string))
 
 class PacketDecoder:
     def __init__(self,connection):

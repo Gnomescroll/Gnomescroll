@@ -1,23 +1,43 @@
+
+from net_client import NetClientGlobal
+
 class NetApiGlobal:
     netOut = None
+    SendMessage = None
+    SendAdminMessage = None
 
     def __init__(self):
-        NetApiGlobal.netOut = NetOut()
+        #NetApiGlobal.netOut = NetOut()
+        NetApiGlobal.sendMessage = SendMessage()
+        NetApiGlobal.SendAdminMessage = SendAdminMessage()
+
     @classmethod
     def init(self):
-        NetApiGlobal.netOut = netOut().init()
-
+        NetApiGlobal.netOut = netOut.init()
+        NetApiGlobal.sendMessage.init()
+        NetApiGlobal.SendAdminMessage.init()
 
 class NetOut:
+    sendMessage = None
+    @classmethod
+    def init(self):
+        self.sendMessage = NetClientGlobal.sendMessage
+        assert self.sendMessage != None
+    @staticmethod
+    def send_json(dict):
+        self.sendMessage.send_json(dict)
+    @staticmethod
+    def send_binary(msg_id, bin_sting):
+        self.sendMessage.send_binary(msg_id, bin_string)
+
+
+class SendMessage:
+    client = None
 
     @classmethod
     def init(self):
-        pass
-    def __init(self):
-        pass
+        self.send =
 
-
-class MoveThisToNetApi:
     def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
         d = {
             'cmd' : 'agent_control_state',

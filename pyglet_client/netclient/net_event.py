@@ -3,6 +3,8 @@ import simplejson as json
 #import struct
 
 from world_state import WorldStateGlobal
+from net_client import NetClientGlobal
+from net_api import NetApiGlobal
 
 class NetEventGlobal:
     messageHandler = None
@@ -13,33 +15,6 @@ class NetEventGlobal:
     def init(self):
         netEventGlobal.sendMessage.init()
         netEventGlobal.messageHandler.init()
-
-### handling code for json/binary messages
-## DEPRECATE ###
-class DEPCREATE:
-    def deprecate(self):
-        if msg_type == 0:
-            print "test message received"
-        elif msg_type == 1: #json
-            self._1_json(datagram)
-        elif msg_type == 3:
-            self._3_map_chunk(datagram)
-        else:
-            print "unknown message type: %i" % msg_type
-
-    def _1_json(self, datagram):
-        try:
-            msg = json.loads(datagram)
-        except:
-            print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
-            msg = { 'cmd' : 'error' }
-        self.messageHandler.process_json(msg)
-
-    def _3_map_chunk(self, datagram):
-        print "Map Chunk Received"
-
-## DEPRECATE ##
-
 
 class MessageHandler:
 
@@ -54,17 +29,19 @@ class MessageHandler:
         ClientGlobal.messageHandler = self
 
     def process_net_event(self, msg_type, datagram):
-        if msg_type == 1: #json message
+        if msg_type == 1:       #json message
             self.process_json_event(datagram)
-        else:  #create a process json message
+        else:                   #create a process json message
             self.process_binary_event(msg_type, datagram)
 
     def process_binary_event(self, msg_type, datagram):
         if msg_type == 3:
             self._3_map_chunk(self, datagram)
             print "Map Chunk Received"
+        else:
+            print "MessageHandler.process_binary_event: message type unknown"
 
-    def _3_map_chunk(self, datagram):
+    def _3_map_chunk(self, datagram):  #move this somewhere
         print "Map Chunk Received"
 
     def process_json_event(datagram):
@@ -84,14 +61,13 @@ class MessageHandler:
         elif cmd == 'chunk_list':
             print "Chunk List Received"
             print str(msg['list'])
-
         elif cmd == 'chat':
             ClientGlobal.chat.receive(msg)
-
         else:
             print "JSON message type unregonized"
 
     def _agent_position(self, id, tick, state, **misc):
+        self.player = WorldStateGlobal.player
         [x,y,z,vx, vy, vz,ax, ay, az] = state
         [x,y,z] = [float(x),float(y),float(z)]
 
@@ -107,6 +83,6 @@ class MessageHandler:
 
     def _set_client_id(self, id, **misc):
         print "Received Client Id: %i" % (id,)
-        if ClientGlobal.client_id == 0:
-            ClientGlobal.client_id = id
-            ClientGlobal.sendMessage.send_client_id()
+        if NetClientGlobal.client_id == 0:
+            NetClientGlobal.client_id = id
+            NetApiGlobal.sendMessage.send_client_id()
