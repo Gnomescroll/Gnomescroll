@@ -1,10 +1,7 @@
 import pyglet
 from pyglet.gl import *
 
-#from dat import CubeProperties, CubeRenderCache, TerrainMap, MapChunkManager, MapChunk
-#from dat import convert_index
-
-from cube_dat import CubeGlobals, MapChunkManager
+from cube_dat import CubeGlobals
 
 from player import Player
 
@@ -14,29 +11,26 @@ import random
 
 class World():
 
+    terrainMap = None
+    mapChunkManager = None
+
+    def init(self):
+        CubeGlobals.setTextureGrid(self.texture_grid)
+        self.terrainMap = CubeGlobals.terrainMap
+        self.mapChunkManager = CubeGlobals.mapChunkManager
+        CubeGlobals.setTextureGrid(self.texture_grid)
+
     def __init__(self):
-        #self.draw_batch = pyglet.graphics.Batch()
-        #texture loading
         tile_image = pyglet.image.load(base_dir + 'texture/textures_01.png')
         tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
         tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
         self.texture_grid = tile_texture_grid
-
         self.texture_grid_mipmap = tile_image.get_mipmapped_texture()
 
-        ##self.cubeProperties = CubeProperties()
-        ##self.cubeRenderCache = CubeRenderCache(self.cubeProperties, self.texture_grid) #needs texture grid
-        #test
-        ##self.terrainMap = TerrainMap()
-        #MapChunkManager(terrainMap, cubeProperties)
-
-        #CubeGlobals.texture_grid = self.texture_grid #setup CubeGlobals
-        CubeGlobals.setTextureGrid(self.texture_grid)
-        self.terrainMap = CubeGlobals.terrainMap
-        self.mapChunkManager = CubeGlobals.mapChunkManager
         self.players = []
-
         self.mipmap = 6
+
+        self.init()
 
     def toggle_mipmap(self):
         self.mipmap = (self.mipmap+1) % 7
@@ -85,10 +79,6 @@ class World():
             self.terrainMap.set(xa, y, z, 1)
             self.mapChunkManager.set_map(xa, y, z)
         print "Finished chunk generation"
-
-        print "chunk list"
-        print str(self.terrainMap.get_chunk_list())
-        print str(self.mapChunkManager.get_chunk_list())
 
     def draw_chunk(self):
 
