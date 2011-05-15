@@ -22,7 +22,7 @@ from client_api import MessageHandler
 
 from client_api import ClientGlobal
 from cube_dat import CubeGlobal
-from game_state import GameStateGlobal
+from world_state import WorldStateGlobal
 
 from chat_client import Chat
 
@@ -32,7 +32,7 @@ class App(object):
 
     clientGlobal = ClientGlobal()
     cubeGlobal = CubeGlobal()
-    worldStateGlobal = worldStateGlobal()
+    worldStateGlobal = WorldStateGlobal()
 
     def __init__(self):
         self.clientGlobal.init()

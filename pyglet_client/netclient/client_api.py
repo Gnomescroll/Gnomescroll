@@ -13,6 +13,13 @@ class ClientGlobal:
     messageHandler = None
     client_id = 0
 
+    def __init__(self):
+        pass
+
+    @classmethod
+    def init(self):
+        pass
+
 class SendMessage:
     def __init__(self, client):
         self.client = client

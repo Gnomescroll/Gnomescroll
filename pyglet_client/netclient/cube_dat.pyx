@@ -1,12 +1,10 @@
 import pyglet
 from pyglet.gl import *
 
-from game_state import GameStateGlobal
-
-from terrain_map import TerrainMap #deprecate
+from world_state import WorldStateGlobal
 
 class CubeGlobal:
-    terrainMap = TerrainMap()
+    #terrainMap = TerrainMap()
     mapChunkManager = None
     cubePhysicalProperties = None
     cubeRenderCache = None
@@ -15,18 +13,16 @@ class CubeGlobal:
 
     @classmethod
     def init(self):
-        __class__.mapChunkManager = MapChunkManager()
-        __class__.cubePhysicalProperties = CubePhysicalProperties()
-        __class__.mapChunkManager.init()
+        CubeGlobal.mapChunkManager = MapChunkManager()
+        CubeGlobal.cubePhysicalProperties = CubePhysicalProperties()
+        CubeGlobal.mapChunkManager.init()
+        CubeGlobal.cubeRenderCache = CubeRenderCache()
 
     @classmethod
     def setTextureGrid(self, texture_grid):
         print "set texture grid"
         self.textureGrid = texture_grid
-        if self.cubeRenderCache == None:
-            self.cubeRenderCache = CubeRenderCache(texture_grid)
-        else:
-            self.cubeRenderCache.set_texture(texture_grid)
+        self.cubeRenderCache.set_texture(texture_grid)
 
 cube_list = {
     0 : {
@@ -154,17 +150,13 @@ class MapChunkManager(object):
     terrainMap = None
 
     def init(self):
-        self.terrainMap = GameStateGlobal.terrainMap
+        self.terrainMap = WorldStateGlobal.terrainMap
         assert self.terrainMap != None
 
-    def __init__(self, terrainMap):
+    def __init__(self):
         self.draw_batch = pyglet.graphics.Batch()
         self.mapChunks = []
         self.mp = {}
-        self.terrainMap = terrainMap #assignment
-
-        self.cubeProperties = CubeProperties()
-        MapChunk.cubeProperties = CubeProperties()
 
     def set_map(self, int x, int y, int z):
         x = x - (x%x_chunk_size)
