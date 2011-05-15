@@ -34,6 +34,7 @@ class ServerGlobal:
         ServerGlobal.adminMessageHandler = AdminMessageHandler()
         ServerGlobal.datagramDecoder = DatagramDecoder()
         ServerGlobal.serverListener = ServerListener()
+        ServerGlobal.chat = Chat()
 
     @classmethod
     def init(self):
@@ -45,6 +46,7 @@ class ServerGlobal:
         self.adminMessageHandler.init()
         self.datagramDecoder.init()
         self.serverListener.init()
+        self.chat.init()
 
 from game_state import GameStateGlobal
 
@@ -441,6 +443,7 @@ class ConnectionPool:
     def register_client_id(self, connection):
         self._clients_by_id[connection.client_id] = connection
         print "Connection associated with client_id= %i" % (connection.client_id,)
+        ServerGlobal.chat.connect(self._clients_by_id[connection.client_id])
 
     def process_events(self):
         events = self._epoll.poll(0)

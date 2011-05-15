@@ -1,8 +1,42 @@
 Server
 
+Store all connected clients
+	Reqs:
+	-- Client object (or custom dict)
+	-- uniq_id (client_id or player_id)
+	-- (maybe) session_id
 
+Messaging:
+Channels:
+	-- Client broadcasts to channels
+	-- Clients must be listening on channels
+	-- If client temporarily disconnects, queue messages
+	-- Need to replace Redis' functionality
+		-- Channels
+		-- Simple message pop callbacks
 
+	-- Special commands, prefixed with / or .
 
+NEEDS EVENT THING
+-- for culling
+-- for managing disconnects from connectionPool only
 
 
 Client
+
+Out:
+	-- Controls to initiate chat
+	-- Controls to specify channel
+	-- Submit message
+
+In:
+	-- Filter out ignored users
+	-- Store message (content, channel, user_id, name)
+	-- Add timestamp to msg
+
+Rendering:
+	-- Rendering dict or array
+	-- Keyed or checked by timestamp
+	-- While timestamp + render_duration < now; display()
+	-- Color coded based on channel/user/system
+
