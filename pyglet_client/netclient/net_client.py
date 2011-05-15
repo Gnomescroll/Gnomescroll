@@ -10,19 +10,18 @@ import simplejson as json
 class NetClientGlobal:
     connection = None
     sendMessage = None
-#    sendAdminMessage = None
-#    messageHandler = None
-    #chat = None
+
     client_id = 0
     VERSION = '0.0.1'
 
     def __init__(self):
-        pass
+        self.connection = TcpConnection()
 
     @classmethod
     def init(self):
         self.clientDatagramDecoder.init()
-
+        assert self.connection != None:
+        assert self.sendMessage != None:
     @classmethod
     def connect(self):
         self.connection.connect()
@@ -41,28 +40,7 @@ class ClientDatagramDecoder:
     def process_datagram(self, message):
         (prefix, datagram) = (message[0:6],message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
-
         self.messageHandler.process_net_event(msg_type, datagram)
-        if msg_type == 0:
-            print "test message received"
-        elif msg_type == 1: #json
-            self._1_json(datagram)
-        elif msg_type == 3:
-            self._3_map_chunk(datagram)
-        else:
-            print "unknown message type: %i" % msg_type
-
-    def _1_json(self, datagram):
-        try:
-            #print "json message"
-            msg = json.loads(datagram)
-        except:
-            print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
-            msg = { 'cmd' : 'error' }
-        self.messageHandler.process_json(msg)
-
-    def _3_map_chunk(self, datagram):
-        print "Map Chunk Received"
 
 class SendMessage:
     def __init__(self, client):

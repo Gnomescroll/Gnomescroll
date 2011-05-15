@@ -14,13 +14,6 @@ class NetEventGlobal:
         netEventGlobal.sendMessage.init()
         netEventGlobal.messageHandler.init()
 
-def add_prefix(id, msg):
-    return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-def send_json(connection,dict):
-    self.client.send(add_prefix(1, json.dumps(dict)))  #fix this
-def send_binary(msg_type, bin_string):
-    self.client.send(add_prefix(msg_type, bin_string))
-
 class MoveThisToNetApi:
     def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
         d = {
@@ -53,6 +46,34 @@ class MoveThisToNetApi:
             'cmd' : 'request_chunk',
             'value' : (x,y,z)
         }
+
+
+### handling code for json/binary messages
+## DEPRECATE ###
+class DEPCREATE:
+    def deprecate(self):
+        if msg_type == 0:
+            print "test message received"
+        elif msg_type == 1: #json
+            self._1_json(datagram)
+        elif msg_type == 3:
+            self._3_map_chunk(datagram)
+        else:
+            print "unknown message type: %i" % msg_type
+
+    def _1_json(self, datagram):
+        try:
+            #print "json message"
+            msg = json.loads(datagram)
+        except:
+            print "error decoding: len = %i, message_length= %i" % (len(datagram), length)
+            msg = { 'cmd' : 'error' }
+        self.messageHandler.process_json(msg)
+
+    def _3_map_chunk(self, datagram):
+        print "Map Chunk Received"
+
+## DEPRECATE ##
 
 class SendAdminMessage:
 
