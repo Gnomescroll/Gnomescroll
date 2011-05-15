@@ -5,6 +5,16 @@ from collections import deque
 
 from client_api import ClientGlobal
 
+
+class ChatServerGlobal:
+    chatServer = None
+
+    def __init__(self): #first pass is declaring
+        ChatServerGlobal.chat = ChatServer()
+    @classmethod
+    def init(self): #calls import methods if needed
+        pass
+
 '''
 Chat client
 '''
@@ -16,7 +26,7 @@ class Chat:
     subscriptions = {}
 
     def __init__(self, channel=None):
-        ClientGlobal.chat = self
+        #NetClientGlobal.chat = self
         channel is not None or self.set_CURRENT_CHANNEL(channel)
         self.subscribe('system')
 
@@ -45,7 +55,7 @@ class Chat:
         client_id in self.ignored and self.ignored.remove(client_id)
 
     def send(self, text):
-        if not ClientGlobal.client_id:
+        if not NetClientGlobal.client_id:
             print 'Client_id is not set; cannot send chat msg'
             return
 
@@ -111,8 +121,8 @@ class ChatCommand():
 
         elif command == 'version':
             def _send():
-                ClientGlobal.chat.receive(Payload({
-                    'content' : 'DCMMO Client version: ' + ClientGlobal.VERSION,
+                NetClientGlobal.chat.receive(Payload({
+                    'content' : 'DCMMO Client version: ' + NetClientGlobal.VERSION,
                     'channel' : 'system'
                 }).serialize())
 
@@ -130,7 +140,7 @@ class ChatCommand():
             self._send()
         else:
             if self.payload is not None:
-                ClientGlobal.sendMessage.send_chat(self.payload.serialize())
+                NetClientGlobal.sendMessage.send_chat(self.payload.serialize())
 
 # msg to be sent
 class ChatMessageOut():
@@ -144,7 +154,7 @@ class ChatMessageOut():
         self.valid = self.payload.valid()
 
     def send(self):
-        ClientGlobal.sendMessage.send_chat(self.payload.serialize()) # fix this reference
+        NetClientGlobal.sendMessage.send_chat(self.payload.serialize()) # fix this reference
         print 'Sent chat message'
 
 # msg received

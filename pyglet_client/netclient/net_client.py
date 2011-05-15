@@ -7,7 +7,7 @@ from network_event import NetEventGlobal
 
 import simplejson as json
 
-class ClientGlobal:
+class NetClientGlobal:
     connection = None
 #    sendMessage = None
 #    sendAdminMessage = None
@@ -39,6 +39,7 @@ class ClientDatagramDecoder:
         (prefix, datagram) = (message[0:6],message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
 
+        self.messageHandler.process_net_event(msg_type, datagram)
         if msg_type == 0:
             print "test message received"
         elif msg_type == 1: #json
@@ -132,7 +133,7 @@ class TcpConnection:
 
         self.ec = 0
 
-        ClientGlobal.connection = self
+        NetClientGlobal.connection = self
         self.connect()
 
     def connect(self):
@@ -150,7 +151,7 @@ class TcpConnection:
             self.fileno = self.tcp.fileno()
             self.connected = True
             #on connect
-            if ClientGlobal.client_id != 0: #reconnection case
+            if NetClientGlobal.client_id != 0: #reconnection case
                 self.out.send_client_id()
         except socket.error, (value,message):
             print "Connection failed: socket error " + str(value) + ", " + message

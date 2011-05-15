@@ -1,6 +1,6 @@
 
 import simple_json as json
-import struct
+#import struct
 
 class NetEventGlobal:
     sendMessage = None
@@ -14,15 +14,15 @@ class NetEventGlobal:
         netEventGlobal.sendMessage.init()
         netEventGlobal.messageHandler.init()
 
-def add_prefix(self, id, msg):
+def add_prefix(id, msg):
     return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-def send_json(self, dict):
-    self.client.send(self.add_prefix(1, json.dumps(dict)))  #fix this
-def get_json(self, dict):
-    return add_prefix(1, json.dumps(dict))
+def send_json(client, connection,dict):
+    client.send(add_prefix(1, json.dumps(dict)))  #fix this
+def send_binary(client, msg_type, bin_string):
+    client.send(add_prefix(msg_type, bin_string))
 
 class SendMessage:
-
+    client = None
     @classmethod
     def init(self):
         pass
@@ -91,6 +91,17 @@ class MessageHandler:
     def __init__(self, player):
         self.player = player
         ClientGlobal.messageHandler = self
+
+    def process_net_event(self, msg_type, datagram):
+        if msg_type == 1: #json message
+            self.process_json_event(datagram)
+
+    def process_json_event(datagram):
+        try:
+            msg = json.loads(datagram)
+            self.messageHandler.process_json(msg)
+        except:
+            print "json decoding error"
 
     def process_json(self, msg):
         cmd = msg.get('cmd', None)

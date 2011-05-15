@@ -16,35 +16,38 @@ from pyglet.window import key
 
 #deprecate
 import world #deprecate
-import client_api
+import net_client
 
 from client_api import MessageHandler
 
-from client_api import ClientGlobal
+from net_client import NetClientGlobal
+from net_api import NetApiGlobal
+from net_event import NetEventGlobal
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
-from net_event import NetEventGlobal
 
 from chat_client import Chat
 
-import hotshot
+#import hotshot
 
 class App(object):
 
-    clientGlobal = ClientGlobal()
     cubeGlobal = CubeGlobal()
     worldStateGlobal = WorldStateGlobal()
-    netEventGlobal = NetEventGlobal()
+    netClientGlobal = NetClientGlobal()     #connection
+    netApiGlobal = NetApiGlobal()           #message out
+    netEventGlobal = NetEventGlobal()       #message event
 
     def __init__(self):
         self.clientGlobal.init()
         self.cubeGlobal.init()
         self.worldStateGlobal.init()
         self.netEventGlobal.init()
+        self.netApiGlobal.init()
         #networking code
         self.player = Player() #for testing
-        self.messageHandler = MessageHandler(self.player)
-        client_api.ClientDatagramDecoder.messageHandler = self.messageHandler #handles networking callbacks
+        #self.messageHandler = MessageHandler(self.player)
+        #client_api.ClientDatagramDecoder.messageHandler = self.messageHandler #handles networking callbacks
 
         self.connection =  client_api.TcpConnection()
         self.chat = Chat(self.connection.out)
