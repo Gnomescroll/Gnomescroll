@@ -1,7 +1,4 @@
 
-#WTF?
-#from __future__ import division
-#from random import uniform
 
 from pyglet import clock, font, image, window
 from pyglet.gl import *
@@ -17,13 +14,12 @@ from pyglet.window import key
 #deprecate
 import world #deprecate
 
-#import net_client
-
 from net_client import NetClientGlobal
 from net_api import NetApiGlobal
 from net_event import NetEventGlobal
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
+from client_event import ClientEventGlobal
 
 from chat_client import Chat
 
@@ -33,6 +29,7 @@ class App(object):
 
     cubeGlobal = CubeGlobal()
     worldStateGlobal = WorldStateGlobal()
+    clientEventGlobal = ClientEventGlobal()
     netClientGlobal = NetClientGlobal()     #connection
     netApiGlobal = NetApiGlobal()           #message out
     netEventGlobal = NetEventGlobal()       #message event
@@ -55,7 +52,6 @@ class App(object):
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
         self.hud = Hud(self.win)
-        #clock.set_fps_limit(60)
         #setup events
         self.keyboard.key_handlers[key.ESCAPE] = self.exit
         self.win.on_mouse_drag = self.mouse.on_mouse_drag
@@ -94,7 +90,6 @@ class App(object):
             self.hud.draw()
             clock.tick()
             self.win.flip()
-            #return
         #p.stop()
         self.win.close
 

@@ -49,15 +49,24 @@ class MessageHandler:
     def process_net_event(self, msg_type, datagram):
         if msg_type == 1: #json message
             self.process_json_event(datagram)
+        else:  #create a process json message
+            self.process_binary_event(msg_type, datagram)
+
+    def process_binary_event(self, msg_type, datagram):
+        if msg_type == 3:
+            self._3_map_chunk(self, datagram):
+            print "Map Chunk Received"
+
+    def _3_map_chunk(self, datagram):
+        print "Map Chunk Received"
 
     def process_json_event(datagram):
         try:
             msg = json.loads(datagram)
             self.messageHandler.process_json(msg)
         except:
-            print "json decoding error"
-
-    def process_json(self, msg):
+            print "MessageHandler.process_json_event"
+            return
         cmd = msg.get('cmd', None)
         if cmd is None:
             return

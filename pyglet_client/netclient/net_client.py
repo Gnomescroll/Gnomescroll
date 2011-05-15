@@ -50,8 +50,8 @@ class SendMessage:
         return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
     def send_json(connection,dict):
         self.client.send(add_prefix(1, json.dumps(dict)))  #fix this
-    def send_binary(msg_type, bin_string):
-        self.client.send(add_prefix(msg_type, bin_string))
+    def send_binary(msg_id, bin_string):
+        self.client.send(add_prefix(msg_id, bin_string))
 
 class PacketDecoder:
     def __init__(self,connection):
