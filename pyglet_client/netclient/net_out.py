@@ -17,7 +17,7 @@
         #NetApiGlobal.netOut = netOut.init()
 
 class NetOut:
-    sendMessage = None
+    sendPacket = None
 
     sendMessage = None
     adminMessage = None
@@ -25,18 +25,18 @@ class NetOut:
 
     @classmethod
     def init_0(self):
-        NetOut.sendMessage = NetClientGlobal.sendMessage
+        NetOut.sendPacket = NetClientGlobal.sendPacket
         NetOut.sendMessage = SendMessage()
         NetOut.adminMessage = AdminMessage()
         NetOut.chatMessage = ChatMessage()
     @classmethod
     def init_1(self):
         pass
-    @staticmethod
-    def send_json(dict):
+    @classmethod
+    def send_json(self, dict):
         self.sendMessage.send_json(dict)
-    @staticmethod
-    def send_binary(msg_id, bin_sting):
+    @classmethod
+    def send_binary(self, msg_id, bin_sting):
         self.sendMessage.send_binary(msg_id, bin_string)
 
 from net_client import NetClientGlobal

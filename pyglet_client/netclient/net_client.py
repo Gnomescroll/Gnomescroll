@@ -7,7 +7,7 @@ import simplejson as json
 
 class NetClientGlobal:
     connection = None
-    sendMessage = None
+    sendPacket = None
 
     client_id = 0
     VERSION = '0.0.1'
@@ -28,10 +28,10 @@ class NetClientGlobal:
 
 from net_event import NetEventGlobal
 
-class SendMessage:
+class SendPacket:
     def __init__(self, client):
         self.client = client
-        NetClientGlobal.sendMessage = self
+        NetClientGlobal.sendPacket = self
     def add_prefix(self,id, msg):
         return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
     def send_json(self, dict):
@@ -110,7 +110,7 @@ class TcpConnection:
     def __init__(self):
         self.tcp = None
         self.connected = False
-        self.out = SendMessage(self)
+        self.out = SendPacket(self)
         self.decoder = PacketDecoder(self)
 
         self.fileno = 0
