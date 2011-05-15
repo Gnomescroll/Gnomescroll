@@ -31,7 +31,7 @@ class App(object):
     worldStateGlobal = WorldStateGlobal()
     clientEventGlobal = ClientEventGlobal()
     netClientGlobal = NetClientGlobal()     #connection
-    netOut = NetOut()           #message out
+    #netOut = NetOut()                       #message out
     netEventGlobal = NetEventGlobal()       #message event
 
     def __init__(self):
