@@ -34,10 +34,10 @@ class NetOut:
         pass
     @classmethod
     def send_json(self, dict):
-        self.sendMessage.send_json(dict)
+        self.sendPacket.send_json(dict)
     @classmethod
     def send_binary(self, msg_id, bin_sting):
-        self.sendMessage.send_binary(msg_id, bin_string)
+        self.sendPacket.send_binary(msg_id, bin_string)
 
 from net_client import NetClientGlobal
 

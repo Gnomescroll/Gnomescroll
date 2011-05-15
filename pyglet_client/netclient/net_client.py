@@ -20,7 +20,7 @@ class NetClientGlobal:
     def init_1(self):
         ClientDatagramDecoder.init()
         assert self.connection != None
-        assert self.sendMessage != None
+        assert self.sendPacket != None
 
     @classmethod
     def connect(self):
