@@ -15,8 +15,8 @@ class Chat:
     ignored = []
     subscriptions = {}
     
-    def __init__(self, sendMessage, channel=None):
-        self.sendMessage = sendMessage
+    def __init__(self, channel=None):
+        ClientGlobal.chat = self
         channel is not None or self.set_CURRENT_CHANNEL(channel)
         self.subscribe('system')
         
@@ -28,9 +28,14 @@ class Chat:
         self.subscribe(self.CURRENT_CHANNEL)
 
     def subscribe(self, channel):
-        self.subscriptions.setdefault(channel, Channel(channel))
+        if channel == 'system':
+            self.subscriptions.setdefault(channel, SystemChannel(channel))
+        else:
+            self.subscriptions.setdefault(channel, Channel(channel))
 
     def unsubscribe(self, channel):
+        if channel == 'system':
+            return
         del self.subscriptions[channel]
 
     def ignore(self, client_id):
@@ -50,10 +55,10 @@ class Chat:
             msg = ChatMessageOut(text).send()
 
     def receive(self, msg):
-        if msg.client_id in self.ignored:
-            return
         if channel in subscriptions:
             msg = ChatMessageIn(msg)
+            if msg.payload.client_id in self.ignored:
+                return
             subscriptions[channel].receive(msg)
 
 # channel wrapper
@@ -63,9 +68,25 @@ class Channel:
         self.name = name
         self.history = deque([], 200)
 
-    def receive(self, msg)
+    def receive(self, msg):
         if msg.valid:
             self.history.appendleft(msg)
+
+# special channel for system msgs (has extra processing specific to /commands)
+class SystemChannel(Channel):
+
+    def receive(self, msg):
+        log = None
+        if msg.content == 'ping':
+            log = Payload({
+                'content'  : 'Chat ping round-trip time: ' + (int(now()) - int(msg.time)),
+                'channel'  : 'system',
+                'client_id': 'system',
+                'cmd'      : 'chat',
+            })
+            
+        if log is not None:
+            self.history.appendleft(log)
 
 # command message (e.g. /channel highlands i am messaging the highlands channel)
 class ChatCommand():
@@ -75,27 +96,37 @@ class ChatCommand():
         command = text_pts[0][1:]
         args = text_pts[1:]
         self.route(command, args)
+        self._send = None
+        self.payload = None
 
     # create a special payload and/or a special _send command
     def route(self, command, args):
+        _send = None
+        payload = None
         if command == 'channel':
-            self.payload = Payload({
+            payload = Payload({
                 'content'  : str(' '.join(args[1:])),
                 'channel'  : args[0]
             })
+            
         elif command == 'version':
             def _send():
                 ClientGlobal.chat.receive(Payload({
                     'content' : 'DCMMO Client version: ' + ClientGlobal.VERSION,
                     'channel' : 'system'
                 }).serialize())
-            self._send = _send
-        else:
-            self.payload = None
-            
+                
+        elif command == 'ping':
+            payload = Payload({
+                'channel' : 'system'
+                'content' : 'ping'
+            })
+
+        self.payload = payload
+        self._send = _send
 
     def send(self):
-        if getattr(self, '_send', None) is not None:
+        if self._send is not None:
             self._send()
         else:
             if self.payload is not None:
@@ -123,6 +154,7 @@ class ChatMessageIn():
         self.payload = Payload(msg)
         self.payload.clean()
         self.valid = self.payload.valid()
+        self.timestamp = int(now())
 
 # msg payload, attached to a ChatMessageIn/Out or (optionally) ChatCommand
 class Payload:

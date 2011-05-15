@@ -32,7 +32,7 @@ Out:
 In:
 	-- Filter out ignored users
 	-- Store message (content, channel, user_id, name)
-	-- Add timestamp to msg
+	-- Add timestamp to msg (its done on out or in server, not here)
 
 Rendering:
 	-- Rendering dict or array

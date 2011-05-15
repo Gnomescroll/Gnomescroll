@@ -99,6 +99,8 @@ class MessageHandler:
 
     def process_json(self, msg):
         cmd = msg.get('cmd', None)
+        if cmd is None:
+            return
         if cmd == 'agent_position':
             self._agent_position(**msg)
         elif cmd == 'send_client_id':
@@ -106,6 +108,10 @@ class MessageHandler:
         elif cmd == 'chunk_list':
             print "Chunk List Received"
             print str(msg['list'])
+            
+        elif cmd == 'chat':
+            ClientGlobal.chat.receive(msg)
+            
         else:
             print "JSON message type unregonized"
 
