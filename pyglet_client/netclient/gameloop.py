@@ -14,13 +14,15 @@ from input import Mouse, Keyboard
 from camera import Camera, Hud
 from pyglet.window import key
 
-import world
-
+#deprecate
+import world #deprecate
 import client_api
 
 from client_api import MessageHandler
 
 from client_api import ClientGlobal
+from cube_dat import CubeGlobal
+from game_state import GameStateGlobal
 
 from chat_client import Chat
 
@@ -28,7 +30,15 @@ import hotshot
 
 class App(object):
 
+    clientGlobal = ClientGlobal()
+    cubeGlobal = CubeGlobal()
+    worldStateGlobal = worldStateGlobal()
+
     def __init__(self):
+        self.clientGlobal.init()
+        self.cubeGlobal.init()
+        self.worldStateGlobal.init()
+
         #networking code
         self.player = Player() #for testing
         self.messageHandler = MessageHandler(self.player)
