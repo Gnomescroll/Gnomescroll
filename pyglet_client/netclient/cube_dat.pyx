@@ -7,16 +7,17 @@ from terrain_map import TerrainMap #deprecate
 
 class CubeGlobal:
     terrainMap = TerrainMap()
-    mapChunkManager = MapChunkManager()
-    cubePhysicalProperties = CubePhysicalProperties()
-    cubeProperties = CubeProperties() #deprecated for visual properties
-    textureGrid = None
-
+    mapChunkManager = None
+    cubePhysicalProperties = None
     cubeRenderCache = None
+
+    textureGrid = None
 
     @classmethod
     def init(self):
-        MapChunkManager.init()
+        __class__.mapChunkManager = MapChunkManager()
+        __class__.cubePhysicalProperties = CubePhysicalProperties()
+        __class__.mapChunkManager.init()
 
     @classmethod
     def setTextureGrid(self, texture_grid):
@@ -26,10 +27,6 @@ class CubeGlobal:
             self.cubeRenderCache = CubeRenderCache(texture_grid)
         else:
             self.cubeRenderCache.set_texture(texture_grid)
-
-        #MapChunk.init()
-
-#from terrain_map import TerrainMap
 
 cube_list = {
     0 : {

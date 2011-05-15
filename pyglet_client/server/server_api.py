@@ -116,7 +116,7 @@ class SendMessage: #each connection has one of these
         }
         self.send_json(d)
 
-    def send_chunk(self, x, y z):
+    def send_chunk(self, x, y, z):
         chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
         if chunk_str != '':
             self.client.send(self.add_prefix(3, chunk_str))

@@ -1,7 +1,7 @@
 import pyglet
 from pyglet.gl import *
 
-from cube_dat import CubeGlobals
+from cube_dat import CubeGlobal
 
 from player import Player
 
