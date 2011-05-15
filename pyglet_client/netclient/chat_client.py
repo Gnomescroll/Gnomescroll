@@ -21,6 +21,17 @@ from net_event import NetEventGlobal
 Chat client
 '''
 
+
+'''
+To send messages, use
+NetOut.chatMessage.send_chat(d)
+
+Modify chatMessage classs in net_out.py for additional message types
+client_id is NetClientGlobal.client_id
+
+Incoming json message handler is in net_event.py
+'''
+
 class Chat:
 
     CURRENT_CHANNEL = 'global'
