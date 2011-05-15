@@ -2,13 +2,13 @@
 import simplejson as json
 #import struct
 
+from world_state import WorldStateGlobal
+
 class NetEventGlobal:
-    sendMessage = None
     messageHandler = None
 
     def __init__(self):
-        netEventGlobal.sendMessage = SendMessage()
-        netEventGlobal.messageHandler = messageHandler()
+        netEventGlobal.messageHandler = MessageHandler()
     @classmethod
     def init(self):
         netEventGlobal.sendMessage.init()
@@ -42,8 +42,15 @@ class DEPCREATE:
 
 
 class MessageHandler:
-    def __init__(self, player):
-        self.player = player
+
+    def init(self):
+        self.player
+
+        assert self.play != None
+
+    def __init__(self):
+        #get a player oject in here!
+        self.player = None #: player
         ClientGlobal.messageHandler = self
 
     def process_net_event(self, msg_type, datagram):
@@ -54,7 +61,7 @@ class MessageHandler:
 
     def process_binary_event(self, msg_type, datagram):
         if msg_type == 3:
-            self._3_map_chunk(self, datagram):
+            self._3_map_chunk(self, datagram)
             print "Map Chunk Received"
 
     def _3_map_chunk(self, datagram):

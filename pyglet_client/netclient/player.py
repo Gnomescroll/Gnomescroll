@@ -5,8 +5,7 @@ from pyglet.gl import *
 import math
 class Player:
 
-    def __init__(self, main=None):
-        self.main = main
+    def __init__(self):
 
         self.id = 1
         #[d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
