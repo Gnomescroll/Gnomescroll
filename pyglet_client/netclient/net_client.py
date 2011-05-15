@@ -3,9 +3,6 @@ import struct
 #import binascii
 
 from world_state import WorldStateGlobal
-from net_event import NetEventGlobal
-from net_api import NetApiGlobal
-
 import simplejson as json
 
 class NetClientGlobal:
@@ -27,6 +24,9 @@ class NetClientGlobal:
     @classmethod
     def connect(self):
         self.connection.connect()
+
+from net_event import NetEventGlobal
+from net_out import NetOut
 
 #import binascii
 

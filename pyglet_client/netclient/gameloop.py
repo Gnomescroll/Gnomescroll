@@ -15,7 +15,7 @@ from pyglet.window import key
 import world #deprecate
 
 from net_client import NetClientGlobal
-from net_api import NetApiGlobal
+from net_out import NetOut
 from net_event import NetEventGlobal
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
@@ -31,7 +31,7 @@ class App(object):
     worldStateGlobal = WorldStateGlobal()
     clientEventGlobal = ClientEventGlobal()
     netClientGlobal = NetClientGlobal()     #connection
-    netApiGlobal = NetApiGlobal()           #message out
+    netOut = NetOut()           #message out
     netEventGlobal = NetEventGlobal()       #message event
 
     def __init__(self):
@@ -39,7 +39,7 @@ class App(object):
         self.cubeGlobal.init()
         self.worldStateGlobal.init()
         self.netEventGlobal.init()
-        self.netApiGlobal.init()
+        self.netOut.init()
         #networking code
         self.player = Player() #for testing
         #self.messageHandler = MessageHandler(self.player)

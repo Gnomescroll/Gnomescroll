@@ -2,10 +2,6 @@
 import simplejson as json
 #import struct
 
-from world_state import WorldStateGlobal
-from net_client import NetClientGlobal
-from net_api import NetApiGlobal
-
 class NetEventGlobal:
     messageHandler = None
 
@@ -15,6 +11,10 @@ class NetEventGlobal:
     def init(self):
         netEventGlobal.sendMessage.init()
         netEventGlobal.messageHandler.init()
+
+from world_state import WorldStateGlobal
+from net_client import NetClientGlobal
+from net_out import NetOut
 
 class MessageHandler:
 

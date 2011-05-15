@@ -3,10 +3,6 @@
 from time import time as now
 from collections import deque
 
-from net_client import NetClientGlobal
-from net_api import NetApiGlobal
-from net_event import NetEventGlobal
-
 class ChatServerGlobal:
     chatServer = None
 
@@ -15,6 +11,10 @@ class ChatServerGlobal:
     @classmethod
     def init(self): #calls import methods if needed
         pass
+
+from net_client import NetClientGlobal
+from net_out import NetOut
+from net_event import NetEventGlobal
 
 '''
 Chat client

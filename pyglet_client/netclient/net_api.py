@@ -1,28 +1,34 @@
 
-from net_client import NetClientGlobal
+#deprecate
+#class NetApiGlobal:
+    #netOut = None
+    #sendMessage = None
+    #adminMessage = None
+    #chatMessage = None
 
-class NetApiGlobal:
-    netOut = None
-    SendMessage = None
-    SendAdminMessage = None
-    SendChatMessage = None
+    #def __init__(self):
+        ##NetApiGlobal.netOut = NetOut()
+        #NetApiGlobal.sendMessage = SendMessage()
+        #NetApiGlobal.sendAdminMessage = SendAdminMessage()
+        #NetApiGlobal.sendChatMessage = SendChatMessage()
 
-    def __init__(self):
-        #NetApiGlobal.netOut = NetOut()
-        NetApiGlobal.sendMessage = SendMessage()
-        NetApiGlobal.SendAdminMessage = SendAdminMessage()
-        NetApiGloba.SendChatMessage = SendChatMessage()
-
-    @classmethod
-    def init(self):
-        NetApiGlobal.netOut = netOut.init()
+    #@classmethod
+    #def init(self):
+        #NetApiGlobal.netOut = netOut.init()
 
 class NetOut:
     sendMessage = None
+
+    sendMessage = None
+    adminMessage = None
+    chatMessage = None
+
     @classmethod
     def init(self):
-        self.sendMessage = NetClientGlobal.sendMessage
-        assert self.sendMessage != None
+        NetOut.sendMessage = NetClientGlobal.sendMessage
+        NetOut.sendMessage = SendMessage()
+        NetOut.adminMessage = AdminMessage()
+        NetOut.chatMessage = ChatMessage()
     @staticmethod
     def send_json(dict):
         self.sendMessage.send_json(dict)
@@ -30,6 +36,7 @@ class NetOut:
     def send_binary(msg_id, bin_sting):
         self.sendMessage.send_binary(msg_id, bin_string)
 
+from net_client import NetClientGlobal
 
 class SendMessage:
 
@@ -47,13 +54,13 @@ class SendMessage:
             'cmd' : 'send_client_id',
             'id' : ClientGlobal.client_id,
            }
-         NetOut.send_json(d)
+        NetOut.send_json(d)
 
     def request_chunk_list(self):
         d = {
             'cmd' : 'request_chunk_list',
             }
-         NetOut.send_json(d)
+        NetOut.send_json(d)
 
     def request_chunk(x,y,z):
         d = {
@@ -67,18 +74,18 @@ class ChatMessage:
         d['cmd'] = 'chat'
         NetOut.send_json(d)
 
-class SendAdminMessage:
+class AdminMessage:
 
     def set_map(self,x,y,z,value):
         d = {
             'set_map' : 'set_map',
             'list' : [(x,y,z,value)],
             }
-         NetOut.send_json(d)
+        NetOut.send_json(d)
 
     def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
         d = {
             'set_map' : 'set_map',
             'list' : list,
             }
-         NetOut.send_json(d)
+        NetOut.send_json(d)
