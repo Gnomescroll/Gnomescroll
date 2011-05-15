@@ -16,7 +16,6 @@ class World():
     mapChunkManager = None
 
     def init(self):
-        CubeGlobal.setTextureGrid(self.texture_grid)
         self.terrainMap = WorldStateGlobal.terrainMap
         self.mapChunkManager = CubeGlobal.mapChunkManager
         CubeGlobal.setTextureGrid(self.texture_grid)

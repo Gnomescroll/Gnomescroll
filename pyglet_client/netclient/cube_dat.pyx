@@ -17,6 +17,7 @@ class CubeGlobal:
         CubeGlobal.cubePhysicalProperties = CubePhysicalProperties()
         CubeGlobal.mapChunkManager.init()
         CubeGlobal.cubeRenderCache = CubeRenderCache()
+        MapChunk.init()
 
     @classmethod
     def setTextureGrid(self, texture_grid):
@@ -191,14 +192,14 @@ class MapChunk(object):
 
     @classmethod
     def init(self):
-        self.terrainMap = CubeGlobal.terrainMap   #use world_state global
+        self.terrainMap = WorldStateGlobal.terrainMap   #use world_state global
         self.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
         self.cubeRenderCache = CubeGlobal.cubeRenderCache
-
-    def __init__(self, x_offset, y_offset, z_offset):
         assert self.terrainMap != None
         assert self.cubePhysicalProperties != None
         assert self.cubeRenderCache != None
+
+    def __init__(self, x_offset, y_offset, z_offset):
         self.vertexList = None #an in describing batch number
         self.x_offset = x_offset
         self.y_offset = y_offset
@@ -313,7 +314,7 @@ def convert_index(index, height, width):
 class CubeRenderCache(object):
 
     def set_texture(self, textureGrid):
-        self.textureGrid = None
+        self.textureGrid = textureGrid
         self.reset_cache()
 
     def reset_cache(self):
@@ -370,6 +371,6 @@ class CubeRenderCache(object):
             else:
                 print "CubeRenderCache error, cube does not exist"
             tex_tuple = self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
-            if True:
-                self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
-                return list(tex_tuple)
+
+            self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
+            return list(tex_tuple)
