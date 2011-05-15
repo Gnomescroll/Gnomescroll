@@ -1,9 +1,12 @@
+
+from world_state import WorldStateGlobal
+
 class Mouse(object):
 
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
-        self.player = main.player
+        self.player = WorldStateGlobal.player
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         #print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
@@ -28,7 +31,7 @@ class Keyboard(object):
         self.camera = main.camera
         self.key_handlers = {}
 
-        self.player = main.player
+        self.player = WorldStateGlobal.player
         self.mode = 'camera'
 
     def on_key_press(self, symbol, modifiers):

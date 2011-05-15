@@ -10,8 +10,7 @@ class NetEventGlobal:
         self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
     @classmethod
     def init_1(self):
-        netEventGlobal.sendMessage.init()
-        netEventGlobal.messageHandler.init()
+        MessageHandler.init()
 
 from world_state import WorldStateGlobal
 from net_client import NetClientGlobal
@@ -19,6 +18,7 @@ from net_out import NetOut
 
 class MessageHandler:
     player = None #move this somewhere else
+    @classmethod
     def init(self):
         self.player = WorldStateGlobal.player
         assert self.player != None

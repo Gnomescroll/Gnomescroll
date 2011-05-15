@@ -42,6 +42,7 @@ class SendMessage:
 class ClientDatagramDecoder:
 
     messageHandler = None
+    @classmethod
     def init(self):
         self.messageHandler = NetEventGlobal.messageHandler
         assert self.messageHandler != None

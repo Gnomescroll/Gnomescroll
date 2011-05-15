@@ -5,11 +5,11 @@ from player import Player
 class WorldStateGlobal:
 
     terrainMap = None
-
+    player = None #need player list
     @classmethod
     def init_0(self):
-        WorldStateGlobal.terrainMap = TerrainMap()
-        WorldStateGlobal.Player = Player()
+        self.terrainMap = TerrainMap()
+        self.player = Player()
     @classmethod
     def init_1(self):
         pass

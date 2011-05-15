@@ -63,14 +63,14 @@ class App(object):
 
     def mainLoop(self):
         self.world.test_chunk()
-        self.world.add_player(self.player)
+        self.world.add_player(WorldStateGlobal.player)
         clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
         NetClientGlobal.connect() #starts connection
-        ClientGlobal.sendMessage.request_chunk_list()
+        NetOut.sendMessage.request_chunk_list()
 
         #p = hotshot.Profile("../log/client.log")
         #p.start()
