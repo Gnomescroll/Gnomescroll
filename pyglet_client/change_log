@@ -1,6 +1,9 @@
+May 15th -	refactored client network code
+
 May 14th - 	added change log
 		client loads map chunks from server
 		fixed bug where two clients connect with same client_id
+		chat client and server
 
 May 13th - 	admin commands from client to server
 		map chunk compression
