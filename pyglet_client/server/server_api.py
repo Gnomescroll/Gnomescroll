@@ -147,7 +147,7 @@ class MessageHandler:
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
         elif cmd == 'chat':
-            self.chat.received(msg)
+            self.chat.received(msg, connection)
         elif cmd == 'send_client_id': #Setup client connection
             connection.set_client_id(int(msg['id']))
             #print "Client Assigned id= %i" % (connection.client_id,)
