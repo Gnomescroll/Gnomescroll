@@ -1,6 +1,6 @@
 import socket
 import struct
-import binascii
+#import binascii
 
 from world_state import WorldStateGlobal
 from net_event import NetEventGlobal
@@ -26,7 +26,7 @@ class NetClientGlobal:
     def connect(self):
         self.connection.connect()
 
-import binascii
+#import binascii
 
 class ClientDatagramDecoder:
 
