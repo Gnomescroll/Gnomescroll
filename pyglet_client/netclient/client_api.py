@@ -146,13 +146,13 @@ class ClientDatagramDecoder:
         if msg_type == 0:
             print "test message received"
         elif msg_type == 1: #json
-            self._1_json(msg)
+            self._1_json(datagram)
         elif msg_type == 3:
-            self._3_map_chunk(msg)
+            self._3_map_chunk(datagram)
         else:
             print "unknown message type: %i" % msg_type
 
-    def _1_json(self, msg):
+    def _1_json(self, datagram):
         try:
             #print "json message"
             msg = json.loads(datagram)
@@ -161,7 +161,7 @@ class ClientDatagramDecoder:
             msg = { 'cmd' : 'error' }
         self.messageHandler.process_json(msg)
 
-    def _3_map_chunk(self, msg):
+    def _3_map_chunk(self, datagram):
         print "Map Chunk Received"
 
 class PacketDecoder:
