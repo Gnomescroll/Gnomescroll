@@ -1,6 +1,7 @@
 from terrain_map import TerrainMap
 
 from player import Player
+
 class WorldStateGlobal:
 
     terrainMap = None

@@ -18,7 +18,7 @@ class NetClientGlobal:
 
     @classmethod
     def init_1(self):
-        self.clientDatagramDecoder.init()
+        ClientDatagramDecoder.init()
         assert self.connection != None
         assert self.sendMessage != None
 
@@ -27,9 +27,6 @@ class NetClientGlobal:
         self.connection.connect()
 
 from net_event import NetEventGlobal
-#from net_out import NetOut
-
-#import binascii
 
 class SendMessage:
     def __init__(self, client):

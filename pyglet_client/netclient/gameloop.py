@@ -29,13 +29,13 @@ class App(object):
 
     def init_globals(self):
         #stage 1
-        ClientGlobal.init_0()
+        NetClientGlobal.init_0()
         CubeGlobal.init_0()
         WorldStateGlobal.init_0()
         NetEventGlobal.init_0()
         NetOut.init_0()
         #stage 2
-        ClientGlobal.init_1()
+        NetClientGlobal.init_1()
         CubeGlobal.init_1()
         WorldStateGlobal.init_1()
         NetEventGlobal.init_1()
@@ -43,14 +43,13 @@ class App(object):
 
     def __init__(self):
         self.init_globals()
-        #networking code
 
         #other
-        self.world = world.World()
+        self.world = world.World()  #deprecate?
         self.win = window.Window(fullscreen=False, vsync=False)
         self.camera = Camera(self.win)
-        self.keyboard = Keyboard(self)
-        self.mouse = Mouse(self)
+        self.keyboard = Keyboard(self) #move to inputs global
+        self.mouse = Mouse(self)       #move to inputs global
         self.hud = Hud(self.win)
         #setup events
         self.keyboard.key_handlers[key.ESCAPE] = self.exit

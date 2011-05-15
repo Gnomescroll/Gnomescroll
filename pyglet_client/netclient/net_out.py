@@ -29,7 +29,7 @@ class NetOut:
         NetOut.sendMessage = SendMessage()
         NetOut.adminMessage = AdminMessage()
         NetOut.chatMessage = ChatMessage()
-    @clasmethod
+    @classmethod
     def init_1(self):
         pass
     @staticmethod

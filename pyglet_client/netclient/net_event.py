@@ -7,7 +7,7 @@ class NetEventGlobal:
 
     @classmethod
     def init_0(self):
-        netEventGlobal.messageHandler = MessageHandler()
+        self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
     @classmethod
     def init_1(self):
         netEventGlobal.sendMessage.init()
@@ -18,15 +18,12 @@ from net_client import NetClientGlobal
 from net_out import NetOut
 
 class MessageHandler:
-
+    player = None #move this somewhere else
     def init(self):
-        self.player
-        assert self.play != None
-
+        self.player = WorldStateGlobal.player
+        assert self.player != None
     def __init__(self):
-        #get a player oject in here!
-        self.player = None #: player
-        ClientGlobal.messageHandler = self
+        pass
 
     def process_net_event(self, msg_type, datagram):
         if msg_type == 1:       #json message
