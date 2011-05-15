@@ -29,6 +29,7 @@ class World():
 
         self.players = []
         self.mipmap = 6
+        self.gl_smooth = 0
 
         self.init()
 
@@ -36,25 +37,18 @@ class World():
         self.mipmap = (self.mipmap+1) % 7
         print "mipmap= %i" % self.mipmap
 
+    def toggle_gl_smooth(self):
+        self.gl_smooth = (self.gl_smooth+1) % 2
+
     def tick(self):
         self.mapChunkManager.update_chunk()
         pass
 
     def draw(self):
-        if False:
-            for x in range(-20, 20):
-                self.draw_point(x, 0, 0, 255, 0)
-            for y in range(-20, 20):
-                self.draw_point(0, y, 0, 0, 255)
-
         self.draw_chunk()
         self.draw_players()
 
     def test_chunk(self):
-        if False:
-            self.test_chunk2()
-            return
-
         print "Start chunk generation"
         x_max = 64
         y_max = 64
@@ -69,30 +63,12 @@ class World():
                         self.mapChunkManager.set_map(xa,ya,za)
         print "Finished chunk generation"
 
-    def test_chunk2(self):
-        print "Start chunk generation"
-        x_max = 16
-        y = 5
-        z = 5
-        for xa in range(0, x_max):
-            rnd2 = random.randint(0,4)
-            self.terrainMap.set(xa, y, z, 1)
-            self.mapChunkManager.set_map(xa, y, z)
-        print "Finished chunk generation"
-
     def draw_chunk(self):
+        if self.gl_smooth == 0:
+            glShadeModel(GL_FLAT)
+        else:
+            glShadeModel(GL_SMOOTH);
 
-#        for mct in self.mct_array.values(): #update only one buffer per frame
-#            if mct.update == True:
-#                mct.update_vertex_buffer(self.batch)
-#                break
-
-
-        #gluBuild2DMipmaps(GL_TEXTURE_2D, depth, width, height, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-        #err = gluBuild2DMipmaps(GL_TEXTURE_2D,GLU_RGBA,  2048, 2048, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-        #print "err= " + str(err)
-
-        #glShadeModel(GL_FLAT);glShadeModel(GL_SMOOTH);
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target)
 
@@ -118,21 +94,13 @@ class World():
             glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-        #if _mipmap:
-            #glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        #else:
-            #glBindTexture(self.texture_grid.target, self.texture_grid.id)
-
         #for mct in self.mct_array.values():
         #    if mct.empty == False:
         #        mct.vertexList.draw(pyglet.gl.GL_QUADS)
 
-        ##self.batch.draw()
-
         self.mapChunkManager.draw_batch.draw()
 
-        #glDisable(GL_SMOOTH)
+        glShadeModel(GL_SMOOTH); #the default
         glDisable(GL_CULL_FACE)
         glDisable(self.texture_grid.target)
         #self.draw_players()

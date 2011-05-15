@@ -16,7 +16,6 @@ class CubeGlobal:
 
     @classmethod
     def init(self):
-        CubeRenderCache.init()
         MapChunkManager.init()
 
     @classmethod
@@ -96,17 +95,6 @@ cube_list = {
     },
  }
 
-#cdef class CubePhysical:
-    #cdef int id = 0
-    #cdef int active = 0
-    #cdef int occludes = 0
-
-    #def __init__(CubePhysical self, int id,int active,int occludes):
-        #self.id = id
-        #self.active = active
-        #self.occludes = occludes
-
-#physical cube properties
 cdef struct CubePhysical:
     int id
     int active
@@ -335,8 +323,6 @@ def convert_index(index, height, width):
 
 class CubeRenderCache(object):
 
-    cubeProperties = None
-
     def set_texture(self, textureGrid):
         self.textureGrid = None
         self.reset_cache()
@@ -345,11 +331,7 @@ class CubeRenderCache(object):
         self.c4b_cache = {}
         self.t4f_cache = {}
 
-    def init(self):
-        self.cubeProperties = CubeGlobal.cubeProperties
-
     def __init__(self):
-        self.cubeProperties = CubeGlobal.cubeProperties
         self.textureGrid = None
         self.reset_cache()
 
