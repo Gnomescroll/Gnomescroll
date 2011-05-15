@@ -36,7 +36,7 @@ class Keyboard(object):
         #print "key press"
         if symbol == key.E:
             self.main.world.toggle_mipmap()
-        if symbol == key.R:
+        if symbol == key.T:
             self.main.world.toggle_gl_smooth()
         #elif symbol == key.W:
             #self.camera.move_camera(v,0,0)

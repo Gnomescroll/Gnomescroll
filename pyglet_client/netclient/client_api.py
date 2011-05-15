@@ -2,7 +2,7 @@ import socket
 import struct
 import binascii
 
-from collections import namedtuple
+from world_state import WorldStateGlobal
 
 import simplejson as json
 

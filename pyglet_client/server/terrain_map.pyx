@@ -43,7 +43,7 @@ cdef class TerrainMap:
         print str((off_x,off_y,off_z, version))
         print str(array)
 
-    cpdef inline set(TerrainMap self, int x,int y, int z,int value):
+    cpdef inline set(self, int x,int y, int z,int value):
         cdef MapChunk c
         t = (hash_cord(x), hash_cord(y), hash_cord(z))
         if not self.chunks.has_key(t):

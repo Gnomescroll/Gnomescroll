@@ -3,6 +3,7 @@
 from time import time as now
 from copy import copy
 
+from server_api import ServerGlobal
 '''
 Chat server
 '''
@@ -59,7 +60,7 @@ class Chat:
         client = self.clients.get(client_id, None)
         if client is None:
             return
-        
+
         if channel is None:
             for channel in client.channels:
                 _add_client_to_channel(client_id, channel)

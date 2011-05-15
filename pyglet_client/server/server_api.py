@@ -9,6 +9,7 @@ import atexit
 import socket
 import select
 
+
 class ServerGlobal:
     connectionPool = None
     eventOut = None
@@ -33,7 +34,7 @@ class ServerGlobal:
         ServerGlobal.adminMessageHandler = AdminMessageHandler()
         ServerGlobal.datagramDecoder = DatagramDecoder()
         ServerGlobal.serverListener = ServerListener()
-        ServerGlobal.chat = Chat()
+        ServerGlobal.chat = None
 
     @classmethod
     def init(self):
@@ -45,7 +46,7 @@ class ServerGlobal:
         self.adminMessageHandler.init()
         self.datagramDecoder.init()
         self.serverListener.init()
-        self.chat.init()
+        #self.chat.init()
 
 from game_state import GameStateGlobal
 
