@@ -11,7 +11,9 @@ class ClientGlobal:
     sendMessage = None
     sendAdminMessage = None
     messageHandler = None
+    chat = None
     client_id = 0
+    VERSION = 0.0.1
 
     def __init__(self):
         pass

@@ -80,7 +80,7 @@ class ChatMessage:
         connection = connection or {}
         self.payload = copy(msg)
         self.payload['cmd'] = 'chat'
-        self.payload['time'] = int(now())
+        self.payload['time'] = self.payload.get('time', None) or int(now())
         self.payload['client_id'] = connection.get('client_id', '')
         self.clean()
         self.validate()
@@ -90,6 +90,7 @@ class ChatMessage:
         for key in self.payload.keys():
             if key not in self.properties:
                 del self.payload[key]
+        self.payload['content'] = str(self.payload.get('content', ''))
 
     # checks if all properties are in payload
     def validate(self):
