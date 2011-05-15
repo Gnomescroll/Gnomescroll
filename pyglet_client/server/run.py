@@ -6,11 +6,11 @@ import pyximport #; pyximport.install()
 
 #from pudb import set_trace; set_trace()
 
-from chat_server import Chat
+#from chat_server import Chat
 
 from server_api import ServerGlobal
 from game_state import GameStateGlobal
-from chat_server import ChatServer
+from chat_server import ChatServerGlobal
 
 import time
 
@@ -18,14 +18,13 @@ class Main:
 
     serverGlobal = ServerGlobal()
     gameStateGlobal = GameStateGlobal()
-    chatServer = ChatServer()
+    chatServer = ChatServerGlobal()
 
     def __init__(self):
-        self.serverGlobal.messageHandler.chat = self.chat
         #setup
         ServerGlobal.init()
         GameStateGlobal.init()
-        ChatServer.init()
+        ChatServerGlobal.init()
 
     def run(self):
         print "Server Started"

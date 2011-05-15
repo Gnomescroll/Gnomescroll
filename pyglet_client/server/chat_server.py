@@ -9,7 +9,7 @@ class ChatServerGlobal:
     chatServer = None
 
     def __init__(self): #first pass is declaring
-        ChatServerGlobal.chat = ChatServer()
+        ChatServerGlobal.chatServer = ChatServer()
     @classmethod
     def init(self): #calls import methods if needed
         pass
@@ -18,7 +18,7 @@ class ChatServerGlobal:
 Chat server
 '''
 
-class Chat:
+class ChatServer:
 
     channels = {}
     clients = {}
