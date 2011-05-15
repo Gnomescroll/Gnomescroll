@@ -4,6 +4,16 @@ from time import time as now
 from copy import copy
 
 from server_api import ServerGlobal
+
+class ChatServerGlobal:
+    chatServer = None
+
+    def __init__(self): #first pass is declaring
+        ChatServerGlobal.chat = ChatServer()
+    @classmethod
+    def init(self): #calls import methods if needed
+        pass
+
 '''
 Chat server
 '''
@@ -14,7 +24,8 @@ class Chat:
     clients = {}
 
     def __init__(self):
-        ServerGlobal.chat = self
+        pass
+#        ServerGlobal.chat = self
 
     # message received
     def received(self, msg, connection):

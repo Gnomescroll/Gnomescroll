@@ -10,24 +10,22 @@ from chat_server import Chat
 
 from server_api import ServerGlobal
 from game_state import GameStateGlobal
+from chat_server import ChatServer
 
 import time
 
 class Main:
 
-    serverGlobal = None
-    gameStateGlobal = None
+    serverGlobal = ServerGlobal()
+    gameStateGlobal = GameStateGlobal()
+    chatServer = ChatServer()
 
     def __init__(self):
-        self.serverGlobal = ServerGlobal()
-        self.gameStateGlobal = GameStateGlobal()
-        #temp
-        self.chat = Chat()
         self.serverGlobal.messageHandler.chat = self.chat
         #setup
         ServerGlobal.init()
         GameStateGlobal.init()
-
+        ChatServer.init()
 
     def run(self):
         print "Server Started"

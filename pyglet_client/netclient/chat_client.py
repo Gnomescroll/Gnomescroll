@@ -14,12 +14,12 @@ class Chat:
     CURRENT_CHANNEL = 'global'
     ignored = []
     subscriptions = {}
-    
+
     def __init__(self, channel=None):
         ClientGlobal.chat = self
         channel is not None or self.set_CURRENT_CHANNEL(channel)
         self.subscribe('system')
-        
+
     def set_current_channel(self, channel):
         channel = str(channel)
         if self.CURRENT_CHANNEL != channel:
@@ -84,7 +84,7 @@ class SystemChannel(Channel):
                 'client_id': 'system',
                 'cmd'      : 'chat',
             })
-            
+
         if log is not None:
             self.history.appendleft(log)
 
@@ -108,17 +108,17 @@ class ChatCommand():
                 'content'  : str(' '.join(args[1:])),
                 'channel'  : args[0]
             })
-            
+
         elif command == 'version':
             def _send():
                 ClientGlobal.chat.receive(Payload({
                     'content' : 'DCMMO Client version: ' + ClientGlobal.VERSION,
                     'channel' : 'system'
                 }).serialize())
-                
+
         elif command == 'ping':
             payload = Payload({
-                'channel' : 'system'
+                'channel' : 'system',
                 'content' : 'ping'
             })
 

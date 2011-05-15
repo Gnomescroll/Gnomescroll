@@ -23,6 +23,7 @@ from client_api import MessageHandler
 from client_api import ClientGlobal
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
+from net_event import NetEventGlobal
 
 from chat_client import Chat
 
@@ -33,12 +34,13 @@ class App(object):
     clientGlobal = ClientGlobal()
     cubeGlobal = CubeGlobal()
     worldStateGlobal = WorldStateGlobal()
+    netEventGlobal = NetEventGlobal()
 
     def __init__(self):
         self.clientGlobal.init()
         self.cubeGlobal.init()
         self.worldStateGlobal.init()
-
+        self.netEventGlobal.init()
         #networking code
         self.player = Player() #for testing
         self.messageHandler = MessageHandler(self.player)
@@ -75,7 +77,7 @@ class App(object):
         self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
-        self.chat.send_test('test')
+        #self.chat.send_test('test')
         ClientGlobal.sendMessage.request_chunk_list()
 
         #p = hotshot.Profile("../log/client.log")

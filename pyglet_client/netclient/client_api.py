@@ -3,137 +3,25 @@ import struct
 import binascii
 
 from world_state import WorldStateGlobal
+from network_event import NetEventGlobal
 
 import simplejson as json
 
 class ClientGlobal:
     connection = None
-    sendMessage = None
-    sendAdminMessage = None
-    messageHandler = None
-    chat = None
+#    sendMessage = None
+#    sendAdminMessage = None
+#    messageHandler = None
+    #chat = None
     client_id = 0
-    VERSION = 0.0.1
+    VERSION = '0.0.1'
 
     def __init__(self):
         pass
 
     @classmethod
     def init(self):
-        pass
-
-class SendMessage:
-    def __init__(self, client):
-        self.client = client
-        ClientGlobal.sendMessage = self
-    def add_prefix(self, id, msg):
-        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-    def send_json(self, dict):
-        self.client.send(self.add_prefix(1, json.dumps(dict)))
-    def get_json(self, dict):
-        return self.add_prefix(1, json.dumps(dict))
-    ### agent messages
-
-    def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
-        d = {
-            'cmd' : 'agent_control_state',
-            'id' : id,
-            'tick' : 0,
-            'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
-           }
-        self.send_json(d)
-
-    def send_chat(self, d):
-        d['cmd'] = 'chat'
-        self.send_json(d)
-
-    def send_client_id(self):
-        d = {
-            'cmd' : 'send_client_id',
-            'id' : ClientGlobal.client_id,
-           }
-        self.send_json(d)
-
-    def request_chunk_list(self):
-        d = {
-            'cmd' : 'request_chunk_list',
-            }
-        self.send_json(d)
-
-    def request_chunk(x,y,z):
-        d = {
-            'cmd' : 'request_chunk',
-            'value' : (x,y,z)
-        }
-
-class SendAdminMessage:
-    def __init__(self, client):
-        self.client = client
-        ClientGlobal.sendAdminMessage = self
-    def add_prefix(self, id, msg):
-        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-    def send_json(self, dict):
-        self.client.send(self.add_prefix(2, json.dumps(dict)))
-    def get_json(self, dict):
-        return self.add_prefix(1, json.dumps(dict))
-## Admin messages
-
-    def set_map(self,x,y,z,value):
-        d = {
-            'set_map' : 'set_map',
-            'list' : [(x,y,z,value)],
-            }
-        self.send_json(d)
-
-    def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
-        d = {
-            'set_map' : 'set_map',
-            'list' : list,
-            }
-        self.send_json(d)
-
-class MessageHandler:
-    def __init__(self, player):
-        self.player = player
-        ClientGlobal.messageHandler = self
-
-    def process_json(self, msg):
-        cmd = msg.get('cmd', None)
-        if cmd is None:
-            return
-        if cmd == 'agent_position':
-            self._agent_position(**msg)
-        elif cmd == 'send_client_id':
-            self._set_client_id(**msg)
-        elif cmd == 'chunk_list':
-            print "Chunk List Received"
-            print str(msg['list'])
-            
-        elif cmd == 'chat':
-            ClientGlobal.chat.receive(msg)
-            
-        else:
-            print "JSON message type unregonized"
-
-    def _agent_position(self, id, tick, state, **misc):
-        [x,y,z,vx, vy, vz,ax, ay, az] = state
-        [x,y,z] = [float(x),float(y),float(z)]
-
-        self.player.x = x
-        self.player.y = y
-        self.player.z = z
-        self.player.vx = vx
-        self.player.vy = vy
-        self.player.vz = vz
-        self.player.ax = ax
-        self.player.ay = ay
-        self.player.az = az
-
-    def _set_client_id(self, id, **misc):
-        print "Received Client Id: %i" % (id,)
-        if ClientGlobal.client_id == 0:
-            ClientGlobal.client_id = id
-            ClientGlobal.sendMessage.send_client_id()
+        self.clientDatagramDecoder.init()
 
 
 import binascii
@@ -141,13 +29,13 @@ import binascii
 class ClientDatagramDecoder:
 
     messageHandler = None
-
-    def __init__(self, connection):
+    def init(self):
+        self.messageHandler = NetEventGlobal.messageHandler
         assert self.messageHandler != None
+    def __init__(self, connection):
         self.connection = connection
 
     def process_datagram(self, message):
-        #print "decoding datagram"
         (prefix, datagram) = (message[0:6],message[6:])
         (length, msg_type) = struct.unpack('I H', prefix)
 
@@ -189,12 +77,9 @@ class PacketDecoder:
     def attempt_decode(self):
         buff_len = len(self.buffer)
         if buff_len == 0:
-            #print "decode: buffer empty"
             return
         elif self.message_length == 0 and buff_len > 6:
-            #print "decode: get message prefix"
             self.message_length = self.read_prefix()
-            #print "prefix length: " + str(self.message_length)
         elif buff_len < self.message_length:
             return
         elif self.message_length == 0:
@@ -202,10 +87,8 @@ class PacketDecoder:
 
         if buff_len >= self.message_length:
             assert self.message_length > 0
-            #print "process message in buffer"
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
             length = self.message_length
-            #self.datagramDecoder.process_datagram(message)
             self.process_msg(message)
             self.message_length = 0
             self.attempt_decode()
@@ -259,7 +142,6 @@ class TcpConnection:
             self.decoder.reset()
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.connect((TCP_IP, TCP_PORT))
-
             if self.noDelay == True:
                 self.tcp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.tcp.setblocking(0) #should be blocking?
@@ -267,7 +149,7 @@ class TcpConnection:
             print "Connection: tcp connected"
             self.fileno = self.tcp.fileno()
             self.connected = True
-
+            #on connect
             if ClientGlobal.client_id != 0: #reconnection case
                 self.out.send_client_id()
         except socket.error, (value,message):
@@ -320,21 +202,3 @@ class TcpConnection:
             #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
             self.decoder.add_to_buffer(data)
-
-## Not Needed
-class ClientMain:
-
-    def __init__(self):
-        self.connection =  TcpConnection()
-        self.out = self.connection.out
-    def main(self):
-        self.connection.out.send_json({'cmd' : 'test' })
-        self.out.send_agent_control_state(id=1., d_x=1., d_y=0., d_xa=0., d_za=0., jetpack=0., brake=0.)
-        n = 0
-        while True:
-            self.connection.attempt_recv()
-            #can tick
-            time.sleep(0.02)
-            n += 1
-            if n %100 == 0:
-                print "tick= %i" % n
