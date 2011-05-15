@@ -1,7 +1,13 @@
+1> multiple player agents 17:09
+2> player agent models (visualization of agents) 17:09
+3> collision detection on server 17:09
+4> steaming map from server to client (working on right now) 17:10
+5> creation of projectiles 17:10
+6> add/remove blocks in FPS mode by client
+
+
+Optimization (LATER):
 -fulstrum culling for map chunks
--storing tile properties in structs
 -storing pointers to map tile structs, instead of tile_ids
-
 -computation of vertex buffers in C?
-
 -openGL C rendering

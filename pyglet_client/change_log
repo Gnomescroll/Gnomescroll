@@ -1,0 +1,21 @@
+May 14th - 	added change log
+		client loads map chunks from server
+		fixed bug where two clients connect with same client_id
+
+May 13th - 	admin commands from client to server
+		map chunk compression
+
+May 12th -	storing cube properties in Cython structs
+		storing map 
+
+May 11th - 	map chunks operations in Cython structs
+
+May 10th -	GUI integrated with network client
+
+May 7th - 	networked client/server
+
+May 5th - 	added networking to client/server
+
+March 29th  - 	added mipmapping option
+
+http://www.minecraftwiki.net/wiki/Version_history

@@ -61,12 +61,12 @@ cdef class TerrainMap:
 cdef class MapChunk:
     cdef int index[3]
     cdef int map_array[512]
-    cdef unsigned int local_version
-    cdef unsigned int last_server_version
+    cdef unsigned int version
+    cdef unsigned int server_version
 
-    def __init__(self, int x_off, int y_off, int z_off, int local_version = 0, int last_server_version = 0):
-        self.local_version = local_version
-        self.last_server_version = 0
+    def __init__(self, int x_off, int y_off, int z_off, int version = 0, int server_version = 0):
+        self.version = version
+        self.server_version = 0
 
         self.index[0] = x_off
         self.index[1] = y_off
@@ -76,7 +76,7 @@ cdef class MapChunk:
             self.map_array[i] = 0
 
     cdef inline void set(self, int x, int y, int z, int value):
-        self.local_version += 1
+        self.version += 1
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
@@ -88,8 +88,8 @@ cdef class MapChunk:
         z -= self.index[2]
         return self.map_array[x + 8*y + 8*8*z]
 
-    cdef inline int set_last_server_version(self, int version):
-        self.last_server_version = version
+    cdef inline int set_server_version(self, int version):
+        self.server_version = version
 
 #should used compiled form
 

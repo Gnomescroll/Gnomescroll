@@ -26,7 +26,6 @@ class ServerGlobal:
         return self._client_id
 
     def __init__(self):
-
         ServerGlobal.connectionPool = ConnectionPool()
         ServerGlobal.eventOut = EventOut()
         ServerGlobal.messageOut = MessageOut()
@@ -98,7 +97,6 @@ class SendMessage: #each connection has one of these
     @classmethod
     def get_json(self, dict):
         return self.add_prefix(1, json.dumps(dict))
-
     def __init__(self, client):
         self.client = client
     def send_json(self, dict):
@@ -120,12 +118,12 @@ class SendMessage: #each connection has one of these
         }
         self.send_json(d)
 
-    def send_chunk(self):
-        d = {
-            'cmd'  : 'chunk',
-            'data': GameStateGlobal.terrainMap.get_chunk_list(),
-        }
-        self.send_json(d)
+    def send_chunk(self, x, y, z):
+        chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
+        if chunk_str != '':
+            self.client.send(self.add_prefix(3, chunk_str))
+        else:
+            print "send chunk error: chunk id invalid"
 
 # routes messages by msg.cmd
 class MessageHandler:
@@ -432,7 +430,7 @@ class ConnectionPool:
             self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
             self._client_pool[client.fileno] = client #save client
 
-    def tearDownClient(self, connection):
+    def tearDownClient(self, connection, duplicate_id = False):
         fileno = connection.fileno
         self._epoll.unregister(fileno)
         self._client_pool[fileno].close()
@@ -441,9 +439,13 @@ class ConnectionPool:
             del self._clients_by_id[connection.client_id]
 
     def register_client_id(self, connection):
-        self._clients_by_id[connection.client_id] = connection
-        print "Connection associated with client_id= %i" % (connection.client_id,)
-        ServerGlobal.chat.connect(self._clients_by_id[connection.client_id])
+        if self._clients_by_id.get(connection.client_id, None) == None:
+            self._clients_by_id[connection.client_id] = connection
+            print "Connection associated with client_id= %i" % (connection.client_id,)
+            ServerGlobal.chat.connect(self._clients_by_id[connection.client_id])
+        else:
+            print "Client id is already registered!"
+            self.tearDownClient(connection, duplicate_id = True)
 
     def process_events(self):
         events = self._epoll.poll(0)

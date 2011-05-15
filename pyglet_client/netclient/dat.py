@@ -1,3 +1,6 @@
+
+print "Importing dat.py !!  DEPRECATED!!!!"
+
 import pyglet
 from pyglet.gl import *
 

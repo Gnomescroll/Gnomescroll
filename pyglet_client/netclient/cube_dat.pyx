@@ -1,19 +1,29 @@
 import pyglet
 from pyglet.gl import *
 
-#import timeit
-#s = """\
-#try:
-#    str.__nonzero__
-#except AttributeError:
-#    pass
-#"""
-#t = timeit.Timer(stmt=s)
+from world_state import WorldStateGlobal
 
-#t = Timer("test()", "from __main__ import test")
-#    print t.timeit()
+class CubeGlobal:
+    #terrainMap = TerrainMap()
+    mapChunkManager = None
+    cubePhysicalProperties = None
+    cubeRenderCache = None
 
-from terrain_map import TerrainMap
+    textureGrid = None
+
+    @classmethod
+    def init(self):
+        CubeGlobal.mapChunkManager = MapChunkManager()
+        CubeGlobal.cubePhysicalProperties = CubePhysicalProperties()
+        CubeGlobal.mapChunkManager.init()
+        CubeGlobal.cubeRenderCache = CubeRenderCache()
+        MapChunk.init()
+
+    @classmethod
+    def setTextureGrid(self, texture_grid):
+        print "set texture grid"
+        self.textureGrid = texture_grid
+        self.cubeRenderCache.set_texture(texture_grid)
 
 cube_list = {
     0 : {
@@ -79,17 +89,6 @@ cube_list = {
     },
  }
 
-#cdef class CubePhysical:
-    #cdef int id = 0
-    #cdef int active = 0
-    #cdef int occludes = 0
-
-    #def __init__(CubePhysical self, int id,int active,int occludes):
-        #self.id = id
-        #self.active = active
-        #self.occludes = occludes
-
-#physical cube properties
 cdef struct CubePhysical:
     int id
     int active
@@ -138,27 +137,10 @@ cdef class CubePhysicalProperties:
         return self.cube_array[id].occludes
 
 #the cache for cube visual properties
+#deprecates CubeRenderCache
 class CubeVisualProperties:
     def __init__(self):
         pass
-
-    #def isActive(self, tile_id):
-        #if self.cubes.has_key(tile_id):
-            #return self.cubes[tile_id]['active']
-        #else:
-            #print "Error, cube type does not exist"
-            #return False
-
-    #def isOcclude(self, tile_id):
-        #if self.cubes.has_key(tile_id):
-            #return self.cubes[tile_id]['occludes']
-        #else:
-            #print "Error, cube type does not exist"
-            #return False
-
-
-#import ctypes
-
 
 cdef enum:
     x_chunk_size = 8
@@ -166,16 +148,16 @@ cdef enum:
     z_chunk_size = 8
 
 class MapChunkManager(object):
-    draw_batch = pyglet.graphics.Batch()
     terrainMap = None
 
-    def __init__(self, terrainMap):
+    def init(self):
+        self.terrainMap = WorldStateGlobal.terrainMap
+        assert self.terrainMap != None
+
+    def __init__(self):
+        self.draw_batch = pyglet.graphics.Batch()
         self.mapChunks = []
         self.mp = {}
-        self.terrainMap = terrainMap #assignment
-        assert self.terrainMap != None
-        self.cubeProperties = CubeProperties()
-        MapChunk.cubeProperties = CubeProperties()
 
     def set_map(self, int x, int y, int z):
         x = x - (x%x_chunk_size)
@@ -207,25 +189,24 @@ class MapChunk(object):
     terrainMap = None
     cubePhysicalProperties = None
     cubeRenderCache = None
-#   cubeProperties = None
 
     @classmethod
     def init(self):
-        self.terrainMap = CubeGlobals.terrainMap
-        self.cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
-        self.cubeRenderCache = CubeGlobals.cubeRenderCache
-
-    def __init__(self, x_offset, y_offset, z_offset):
+        self.terrainMap = WorldStateGlobal.terrainMap   #use world_state global
+        self.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
+        self.cubeRenderCache = CubeGlobal.cubeRenderCache
         assert self.terrainMap != None
         assert self.cubePhysicalProperties != None
         assert self.cubeRenderCache != None
+
+    def __init__(self, x_offset, y_offset, z_offset):
         self.vertexList = None #an in describing batch number
         self.x_offset = x_offset
         self.y_offset = y_offset
         self.z_offset = z_offset
         self.update = True
         self.empty = True
-        CubeGlobals.mapChunkManager.register_chunk(self)
+        CubeGlobal.mapChunkManager.register_chunk(self)
 
     def update_vertex_buffer(self, batch = None):
         cdef int tile_id, x, y, z
@@ -319,20 +300,6 @@ class MapChunk(object):
 
 ###
 
-#deprecated by CubeVisualProperties
-class CubeProperties(object):
-
-    def __init__(self):
-        pass
-
-    def getTexture(self, tile_id, side_num):
-        global cube_list
-        if cube_list.has_key(tile_id):
-            tex_a = cube_list[tile_id]['texture']
-            return tex_a[side_num]
-        else:
-            return 0
-
 def convert_index(index, height, width):
     index = int(index)
     height = int(height)
@@ -346,12 +313,17 @@ def convert_index(index, height, width):
 
 class CubeRenderCache(object):
 
-    def __init__(self):
-        self.cubeProperties = CubeGlobals.cubeProperties
-        self.textureGrid = CubeGlobals.textureGrid
-        assert self.textureGrid != None
+    def set_texture(self, textureGrid):
+        self.textureGrid = textureGrid
+        self.reset_cache()
+
+    def reset_cache(self):
         self.c4b_cache = {}
         self.t4f_cache = {}
+
+    def __init__(self):
+        self.textureGrid = None
+        self.reset_cache()
 
         self.v_index = [
         [ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 ], #top
@@ -392,25 +364,13 @@ class CubeRenderCache(object):
         if self.t4f_cache.has_key((tile_id, side_num)):
             return self.t4f_cache[(tile_id, side_num)]
         else:
-            (texture_id, rotation) = self.cubeProperties.getTexture(tile_id, side_num)
+            global cube_list  #need to put this somewhere
+            if cube_list.has_key(tile_id):
+                tex_a = cube_list[tile_id]['texture']
+                (texture_id, rotation) = tex_a[side_num]
+            else:
+                print "CubeRenderCache error, cube does not exist"
             tex_tuple = self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
-            if True:
-                self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
-                return list(tex_tuple)
 
-class CubeGlobals:
-    terrainMap = TerrainMap()
-    mapChunkManager = MapChunkManager(terrainMap)
-
-    cubePhysicalProperties = CubePhysicalProperties()
-    cubeProperties = CubeProperties() #deprecated for visual properties
-    textureGrid = None
-
-    cubeRenderCache = None
-
-    @classmethod
-    def setTextureGrid(self, texture_grid):
-        print "init texture grid"
-        self.textureGrid = texture_grid
-        self.cubeRenderCache = CubeRenderCache()
-        MapChunk.init()
+            self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
+            return list(tex_tuple)
