@@ -1,5 +1,5 @@
 
-import simple_json as json
+import simplejson as json
 #import struct
 
 class NetEventGlobal:
@@ -16,21 +16,12 @@ class NetEventGlobal:
 
 def add_prefix(id, msg):
     return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
-def send_json(client, connection,dict):
-    client.send(add_prefix(1, json.dumps(dict)))  #fix this
-def send_binary(client, msg_type, bin_string):
-    client.send(add_prefix(msg_type, bin_string))
+def send_json(connection,dict):
+    self.client.send(add_prefix(1, json.dumps(dict)))  #fix this
+def send_binary(msg_type, bin_string):
+    self.client.send(add_prefix(msg_type, bin_string))
 
-class SendMessage:
-    client = None
-    @classmethod
-    def init(self):
-        pass
-    def __init__(self):
-        self.client = client
-
-    ### agent messages
-
+class MoveThisToNetApi:
     def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
         d = {
             'cmd' : 'agent_control_state',

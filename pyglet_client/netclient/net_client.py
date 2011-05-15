@@ -3,13 +3,13 @@ import struct
 import binascii
 
 from world_state import WorldStateGlobal
-from network_event import NetEventGlobal
+from net_event import NetEventGlobal
 
 import simplejson as json
 
 class NetClientGlobal:
     connection = None
-#    sendMessage = None
+    sendMessage = None
 #    sendAdminMessage = None
 #    messageHandler = None
     #chat = None
@@ -23,6 +23,9 @@ class NetClientGlobal:
     def init(self):
         self.clientDatagramDecoder.init()
 
+    @classmethod
+    def connect(self):
+        self.connection.connect()
 
 import binascii
 
@@ -60,6 +63,17 @@ class ClientDatagramDecoder:
 
     def _3_map_chunk(self, datagram):
         print "Map Chunk Received"
+
+class SendMessage:
+    def __init__(self, client):
+        self.client = client
+        NetClientGlobal.sendMessage = self
+    def add_prefix(id, msg):
+        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
+    def send_json(connection,dict):
+        self.client.send(add_prefix(1, json.dumps(dict)))  #fix this
+    def send_binary(msg_type, bin_string):
+        self.client.send(add_prefix(msg_type, bin_string))
 
 class PacketDecoder:
     def __init__(self,connection):
@@ -111,21 +125,13 @@ import select
 class TcpConnection:
     server = '127.0.0.1'
     tcp_port = 5055
-    #udp_port = 5000
     #settings
     noDelay = True
-    admin = True
-#    self.client_id = 0
 
     def __init__(self):
         self.tcp = None
         self.connected = False
         self.out = SendMessage(self)
-
-        if self.admin:
-            self.admin = SendAdminMessage(self)
-
-        #self.encoder = ClientDatagramEncoder(self)
         self.decoder = PacketDecoder(self)
 
         self.fileno = 0
@@ -134,7 +140,7 @@ class TcpConnection:
         self.ec = 0
 
         NetClientGlobal.connection = self
-        self.connect()
+        #self.connect()
 
     def connect(self):
         TCP_IP = self.server

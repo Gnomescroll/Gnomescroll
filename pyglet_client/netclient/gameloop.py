@@ -16,9 +16,8 @@ from pyglet.window import key
 
 #deprecate
 import world #deprecate
-import net_client
 
-from client_api import MessageHandler
+#import net_client
 
 from net_client import NetClientGlobal
 from net_api import NetApiGlobal
@@ -49,14 +48,9 @@ class App(object):
         #self.messageHandler = MessageHandler(self.player)
         #client_api.ClientDatagramDecoder.messageHandler = self.messageHandler #handles networking callbacks
 
-        self.connection =  client_api.TcpConnection()
-        self.chat = Chat(self.connection.out)
-
-        self.out = self.connection.out
         #other
         self.world = world.World()
         self.win = window.Window(fullscreen=False, vsync=False)
-        self.camera = Camera(self.win)
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self)
         self.mouse = Mouse(self)
@@ -80,7 +74,7 @@ class App(object):
         self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
-        #self.chat.send_test('test')
+        NetClientGlobal.connect() #starts connection
         ClientGlobal.sendMessage.request_chunk_list()
 
         #p = hotshot.Profile("../log/client.log")
@@ -93,7 +87,7 @@ class App(object):
             #network events
             self.connection.attempt_recv()
             self.world.tick()
-            self.win.clear() #?
+            self.win.clear() #clear window and start drawing
             self.camera.worldProjection()
             self.world.draw()
             self.camera.hudProjection()

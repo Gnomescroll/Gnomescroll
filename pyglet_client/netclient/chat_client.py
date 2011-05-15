@@ -3,8 +3,9 @@
 from time import time as now
 from collections import deque
 
-from client_api import ClientGlobal
-
+from net_client import NetClientGlobal
+from net_api import NetApiGlobal
+from net_event import NetEventGlobal
 
 class ChatServerGlobal:
     chatServer = None
