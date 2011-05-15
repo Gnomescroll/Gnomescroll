@@ -41,7 +41,7 @@ class ChatServer:
 
     # connect client
     def connect(self, connection):
-        client = self.clients.setDefault(connection.client_id, ChatClient(connection)).reconnect()
+        self.clients[connection.client_id] =  connection
 
     # disconnect client (removes client if disconnected for N seconds)
     def disconnect(self, connection):

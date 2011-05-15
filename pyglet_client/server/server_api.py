@@ -49,6 +49,7 @@ class ServerGlobal:
         #self.chat.init()
 
 from game_state import GameStateGlobal
+from chat_server import ChatServerGlobal
 
 # sends event packets to all clients
 class EventOut:
@@ -443,7 +444,7 @@ class ConnectionPool:
         if self._clients_by_id.get(connection.client_id, None) == None:
             self._clients_by_id[connection.client_id] = connection
             print "Connection associated with client_id= %i" % (connection.client_id,)
-            ServerGlobal.chat.connect(self._clients_by_id[connection.client_id])
+            ChatServerGlobal.chatServer.connect(self._clients_by_id[connection.client_id])
         else:
             print "Client id is already registered!"
             self.tearDownClient(connection, duplicate_id = True)
