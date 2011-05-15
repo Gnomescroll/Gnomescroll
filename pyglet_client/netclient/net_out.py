@@ -1,20 +1,4 @@
 
-#deprecate
-#class NetApiGlobal:
-    #netOut = None
-    #sendMessage = None
-    #adminMessage = None
-    #chatMessage = None
-
-    #def __init__(self):
-        ##NetApiGlobal.netOut = NetOut()
-        #NetApiGlobal.sendMessage = SendMessage()
-        #NetApiGlobal.sendAdminMessage = SendAdminMessage()
-        #NetApiGlobal.sendChatMessage = SendChatMessage()
-
-    #@classmethod
-    #def init(self):
-        #NetApiGlobal.netOut = netOut.init()
 
 class NetOut:
     sendPacket = None
@@ -55,7 +39,7 @@ class SendMessage:
     def send_client_id(self):
         d = {
             'cmd' : 'send_client_id',
-            'id' : ClientGlobal.client_id,
+            'id' : NetClientGlobal.client_id,
            }
         NetOut.send_json(d)
 

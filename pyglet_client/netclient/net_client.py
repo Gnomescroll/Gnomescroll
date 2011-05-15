@@ -15,7 +15,6 @@ class NetClientGlobal:
     @classmethod
     def init_0(self):
         NetClientGlobal.connection = TcpConnection()
-
     @classmethod
     def init_1(self):
         ClientDatagramDecoder.init()

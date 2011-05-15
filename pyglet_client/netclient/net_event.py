@@ -27,26 +27,27 @@ class MessageHandler:
 
     def process_net_event(self, msg_type, datagram):
         if msg_type == 1:       #json message
-            self.process_json_event(datagram)
+            self.process_json_event(msg_type, datagram)
         else:                   #create a process json message
             self.process_binary_event(msg_type, datagram)
 
+#binary events
     def process_binary_event(self, msg_type, datagram):
         if msg_type == 3:
             self._3_map_chunk(self, datagram)
             print "Map Chunk Received"
         else:
             print "MessageHandler.process_binary_event: message type unknown"
-
+#message events
     def _3_map_chunk(self, datagram):  #move this somewhere
         print "Map Chunk Received"
 
-    def process_json_event(datagram):
+    def process_json_event(self, msg_type, datagram):
         try:
             msg = json.loads(datagram)
-            self.messageHandler.process_json(msg)
         except:
-            print "MessageHandler.process_json_event"
+            print "MessageHandler.process_json_event error"
+            print str(msg)
             return
         cmd = msg.get('cmd', None)
         if cmd is None:
@@ -59,7 +60,8 @@ class MessageHandler:
             print "Chunk List Received"
             print str(msg['list'])
         elif cmd == 'chat':
-            ClientGlobal.chat.receive(msg)
+            print "process_json_event: Fix chat message callback!"
+            #chat.receive(msg)
         else:
             print "JSON message type unregonized"
 
@@ -82,4 +84,4 @@ class MessageHandler:
         print "Received Client Id: %i" % (id,)
         if NetClientGlobal.client_id == 0:
             NetClientGlobal.client_id = id
-            NetApiGlobal.sendMessage.send_client_id()
+            NetOut.sendMessage.send_client_id()
