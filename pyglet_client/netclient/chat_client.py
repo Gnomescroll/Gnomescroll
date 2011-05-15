@@ -6,10 +6,11 @@ from collections import deque
 class ChatServerGlobal:
     chatServer = None
 
-    def __init__(self): #first pass is declaring
+    @classmethod
+    def init_0(self): #first pass is declaring
         ChatServerGlobal.chat = ChatServer()
     @classmethod
-    def init(self): #calls import methods if needed
+    def init_1(self): #calls import methods if needed
         pass
 
 from net_client import NetClientGlobal

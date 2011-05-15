@@ -5,9 +5,10 @@ class WorldStateGlobal:
 
     terrainMap = None
 
-    def __init__(self):
+    @classmethod
+    def init_0(self):
         WorldStateGlobal.terrainMap = TerrainMap()
         WorldStateGlobal.Player = Player()
     @classmethod
-    def init(self):
+    def init_1(self):
         pass

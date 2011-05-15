@@ -24,11 +24,14 @@ class NetOut:
     chatMessage = None
 
     @classmethod
-    def init(self):
+    def init_0(self):
         NetOut.sendMessage = NetClientGlobal.sendMessage
         NetOut.sendMessage = SendMessage()
         NetOut.adminMessage = AdminMessage()
         NetOut.chatMessage = ChatMessage()
+    @clasmethod
+    def init_1(self):
+        pass
     @staticmethod
     def send_json(dict):
         self.sendMessage.send_json(dict)

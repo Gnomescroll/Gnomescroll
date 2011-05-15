@@ -27,23 +27,23 @@ from chat_client import Chat
 
 class App(object):
 
-    cubeGlobal = CubeGlobal()
-    worldStateGlobal = WorldStateGlobal()
-    clientEventGlobal = ClientEventGlobal()
-    netClientGlobal = NetClientGlobal()     #connection
-    #netOut = NetOut()                       #message out
-    netEventGlobal = NetEventGlobal()       #message event
+    def init_globals(self):
+        #stage 1
+        ClientGlobal.init_0()
+        CubeGlobal.init_0()
+        WorldStateGlobal.init_0()
+        NetEventGlobal.init_0()
+        NetOut.init_0()
+        #stage 2
+        ClientGlobal.init_1()
+        CubeGlobal.init_1()
+        WorldStateGlobal.init_1()
+        NetEventGlobal.init_1()
+        NetOut.init_1()
 
     def __init__(self):
-        self.clientGlobal.init()
-        self.cubeGlobal.init()
-        self.worldStateGlobal.init()
-        self.netEventGlobal.init()
-        self.netOut.init()
+        self.init_globals()
         #networking code
-        self.player = Player() #for testing
-        #self.messageHandler = MessageHandler(self.player)
-        #client_api.ClientDatagramDecoder.messageHandler = self.messageHandler #handles networking callbacks
 
         #other
         self.world = world.World()

@@ -8,9 +8,10 @@ class ClientEventGlobal:
 class ClientEvent:
 
     @classmethod
-    def init(): #do instantiations here
+    def init_0(self): #do instantiations here
         pass
-    def __init__(): #do imports heres
+    @classmethod
+    def init_1(self): #do imports heres
         pass
 
     ## event callbacks

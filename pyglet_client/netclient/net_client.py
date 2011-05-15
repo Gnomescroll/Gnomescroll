@@ -12,11 +12,12 @@ class NetClientGlobal:
     client_id = 0
     VERSION = '0.0.1'
 
-    def __init__(self):
+    @classmethod
+    def init_0(self):
         NetClientGlobal.connection = TcpConnection()
 
     @classmethod
-    def init(self):
+    def init_1(self):
         self.clientDatagramDecoder.init()
         assert self.connection != None
         assert self.sendMessage != None
@@ -26,7 +27,7 @@ class NetClientGlobal:
         self.connection.connect()
 
 from net_event import NetEventGlobal
-from net_out import NetOut
+#from net_out import NetOut
 
 #import binascii
 

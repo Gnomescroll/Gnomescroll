@@ -5,10 +5,11 @@ import simplejson as json
 class NetEventGlobal:
     messageHandler = None
 
-    def __init__(self):
+    @classmethod
+    def init_0(self):
         netEventGlobal.messageHandler = MessageHandler()
     @classmethod
-    def init(self):
+    def init_1(self):
         netEventGlobal.sendMessage.init()
         netEventGlobal.messageHandler.init()
 
@@ -20,7 +21,6 @@ class MessageHandler:
 
     def init(self):
         self.player
-
         assert self.play != None
 
     def __init__(self):
