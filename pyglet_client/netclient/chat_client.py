@@ -44,6 +44,7 @@ class ChatClient:
     def __init__(self, channel=None):
         channel is not None or self.set_current_channel(channel)
         self.subscribe('system')
+        self.load()
 
     def set_current_channel(self, channel):
         if self.CURRENT_CHANNEL != channel:
@@ -120,9 +121,11 @@ class ChatClient:
 # channel wrapper
 class Channel:
 
+    HISTORY_MAX = 200
+
     def __init__(self, name):
         self.name = name
-        self.history = deque([], 200)
+        self.history = deque([], self.HISTORY_MAX)
 
     def receive(self, msg):
         if msg.valid:
@@ -159,6 +162,7 @@ class ChatCommand():
     def route(self, command, args):
         _send = None
         payload = None
+        
         if command == 'channel':
             payload = Payload({
                 'content'  : str(' '.join(args[1:])),
@@ -166,11 +170,10 @@ class ChatCommand():
             })
 
         elif command == 'version':
-            def _send():
-                ChatClientGlobal.chatClient.receive(Payload({
-                    'content' : 'DCMMO Client version: ' + NetClientGlobal.VERSION,
-                    'channel' : 'system'
-                }).serialize())
+            _send = self._send_local({
+                'content' : 'DCMMO Client version: ' + NetClientGlobal.VERSION,
+                'channel' : 'system'
+            })
 
         elif command == 'ping':
             payload = Payload({
@@ -178,9 +181,23 @@ class ChatCommand():
                 'content' : 'ping'
             })
 
+        elif command == 'save':
+            _send = lambda: ChatClientGlobal.chatClient.save()
+
+        else:
+            _send = self._send_local({
+                'content' : command + ' command is not implemented.',
+                'channel' : 'system'
+            })
+
         self.payload = payload
         self._send = _send
 
+    def _send_local(self, data):
+        def _send():
+            ChatClientGlobal.chatClient.receive(Payload(data).serialize())
+        return _send
+        
     def send(self):
         if self._send is not None:
             self._send()
