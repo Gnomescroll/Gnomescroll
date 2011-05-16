@@ -81,11 +81,13 @@ class ChatServer:
 
 class ChatMessage:
 
-    properties = ['cmd',
-                  'client_id',
-                  'content',
-                  'time',
-                  'channel']
+    properties = [
+        'cmd',
+        'client_id',
+        'content',
+        'time',
+        'channel',
+    ]
 
     def __init__(self, msg, connection=None): # need support for system messages
         connection = connection or {}

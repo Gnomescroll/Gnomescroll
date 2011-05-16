@@ -1,14 +1,18 @@
 #!/usr/bin/python
 
+'''
+Chat client
+'''
+
 from time import time as now
 from collections import deque
 
-class ChatServerGlobal:
-    chatServer = None
+class ChatClientGlobal:
+    chatClient = None
 
     @classmethod
     def init_0(self): #first pass is declaring
-        ChatServerGlobal.chat = ChatServer()
+        ChatClientGlobal.chatClient = ChatClient()
     @classmethod
     def init_1(self): #calls import methods if needed
         pass
@@ -16,11 +20,6 @@ class ChatServerGlobal:
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-
-'''
-Chat client
-'''
-
 
 '''
 To send messages, use
@@ -32,38 +31,44 @@ client_id is NetClientGlobal.client_id
 Incoming json message handler is in net_event.py
 '''
 
-class Chat:
+CONFIG_PATH = './conf'
+
+class ChatClient:
 
     CURRENT_CHANNEL = 'global'
     ignored = []
     subscriptions = {}
 
+    _conf = 'chat.conf'
+
     def __init__(self, channel=None):
-        #NetClientGlobal.chat = self
-        channel is not None or self.set_CURRENT_CHANNEL(channel)
+        channel is not None or self.set_current_channel(channel)
         self.subscribe('system')
 
     def set_current_channel(self, channel):
-        channel = str(channel)
         if self.CURRENT_CHANNEL != channel:
             self.unsubscribe(self.CURRENT_CHANNEL)
         self.CURRENT_CHANNEL = channel
         self.subscribe(self.CURRENT_CHANNEL)
 
     def subscribe(self, channel):
+        assert type(channel) == str
         if channel == 'system':
             self.subscriptions.setdefault(channel, SystemChannel(channel))
         else:
             self.subscriptions.setdefault(channel, Channel(channel))
+        print 'Chat client subscribed to %s' % (channel,)
 
     def unsubscribe(self, channel):
         if channel == 'system':
             return
         del self.subscriptions[channel]
 
+    # add client_id to ignore list
     def ignore(self, client_id):
         client_id in self.ignored or self.ignored.append(client_id)
 
+    # remove client_id from ignore list
     def unignore(self, client_id):
         client_id in self.ignored and self.ignored.remove(client_id)
 
@@ -77,12 +82,40 @@ class Chat:
         else:
             msg = ChatMessageOut(text).send()
 
+    # receive incoming message
     def receive(self, msg):
         if channel in subscriptions:
             msg = ChatMessageIn(msg)
             if msg.payload.client_id in self.ignored:
                 return
             subscriptions[channel].receive(msg)
+
+    # saves ignored list + subscription channel names
+    def save(self):
+        from simplejson import dumps as encode_json
+        from os import mkdir
+        from os.path import exists as path_exists
+
+        path_exists(CONFIG_PATH) or mkdir(CONFIG_PATH)
+        with open(CONFIG_PATH + '/' + self._conf, 'w') as f:
+            f.write(encode_json({
+                'ignored': self.ignored,
+                'subscriptions' : self.subscriptions.keys(),
+            }))
+
+    # loads saved ignore list & subscription channels
+    def load(self):
+        from simplejson import loads as decode_json
+        from os.path import exists as path_exists
+        
+        conf = CONFIG_PATH + '/' + self._conf
+        if path_exists(conf):
+            with open(conf, 'r') as f:
+                settings = decode_json(f.read())
+                self.ignored = settings.get('ignored', None) or self.ignored
+                for channel in settings.get('subscriptions', []):
+                    self.subscribe(channel)
+            
 
 # channel wrapper
 class Channel:
@@ -134,7 +167,7 @@ class ChatCommand():
 
         elif command == 'version':
             def _send():
-                NetClientGlobal.chat.receive(Payload({
+                ChatClientGlobal.chatClient.receive(Payload({
                     'content' : 'DCMMO Client version: ' + NetClientGlobal.VERSION,
                     'channel' : 'system'
                 }).serialize())
@@ -153,7 +186,7 @@ class ChatCommand():
             self._send()
         else:
             if self.payload is not None:
-                NetClientGlobal.sendMessage.send_chat(self.payload.serialize())
+                NetOut.chatMessage.send_chat(self.payload.serialize())
 
 # msg to be sent
 class ChatMessageOut():
@@ -161,13 +194,13 @@ class ChatMessageOut():
     def __init__(self, text):
         self.payload = Payload({
             'content' : str(text),
-            'channel' : Chat.CURRENT_CHANNEL
+            'channel' : ChatClient.CURRENT_CHANNEL,
         })
         self.payload.clean()
         self.valid = self.payload.valid()
 
     def send(self):
-        NetClientGlobal.sendMessage.send_chat(self.payload.serialize()) # fix this reference
+        NetOut.chatMessage.send_chat(self.payload.serialize()) # fix this reference
         print 'Sent chat message'
 
 # msg received
@@ -186,7 +219,7 @@ class Payload:
         'cmd',
         'content',
         'time',
-        'channel'
+        'channel',
     ]
 
     def __init__(self, **kwargs):
@@ -211,3 +244,8 @@ class Payload:
         for p in self.properties:
             d[p] = getattr(self, p, None)
         return d
+        
+
+if __name__ == '__main__':
+    ChatClientGlobal.init_0()
+    ChatClientGlobal.init_1()

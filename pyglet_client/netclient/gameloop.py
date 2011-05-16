@@ -21,7 +21,7 @@ from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
 from client_event import ClientEventGlobal
 
-from chat_client import Chat
+from chat_client import ChatClientGlobal
 
 #import hotshot
 
@@ -34,12 +34,14 @@ class App(object):
         WorldStateGlobal.init_0()
         NetEventGlobal.init_0()
         NetOut.init_0()
+        ChatClientGlobal.init_0()
         #stage 2
         NetClientGlobal.init_1()
         CubeGlobal.init_1()
         WorldStateGlobal.init_1()
         NetEventGlobal.init_1()
         NetOut.init_1()
+        ChatClientGlobal.init_1()
 
     def __init__(self):
         self.init_globals()
