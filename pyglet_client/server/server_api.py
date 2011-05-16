@@ -438,13 +438,14 @@ class ConnectionPool:
         self._client_pool[fileno].close()
         del self._client_pool[fileno] #remove from client pool
         if connection.client_id != 0:
+            ChatServerGlobal.chatServer.disconnect(connection)
             del self._clients_by_id[connection.client_id]
 
     def register_client_id(self, connection):
         if self._clients_by_id.get(connection.client_id, None) == None:
             self._clients_by_id[connection.client_id] = connection
             print "Connection associated with client_id= %i" % (connection.client_id,)
-            ChatServerGlobal.chatServer.connect(self._clients_by_id[connection.client_id])
+            ChatServerGlobal.chatServer.connect(connection)
         else:
             print "Client id is already registered!"
             self.tearDownClient(connection, duplicate_id = True)

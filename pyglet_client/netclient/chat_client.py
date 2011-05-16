@@ -13,6 +13,7 @@ class ChatClientGlobal:
     @classmethod
     def init_0(self): #first pass is declaring
         ChatClientGlobal.chatClient = ChatClient()
+        ChatClientGlobal.chatRender = ChatRender()
     @classmethod
     def init_1(self): #calls import methods if needed
         pass
@@ -54,6 +55,8 @@ class ChatClient:
 
     def subscribe(self, channel):
         assert type(channel) == str
+        if not channel:
+            return
         if channel == 'system':
             self.subscriptions.setdefault(channel, SystemChannel(channel))
         else:
@@ -184,6 +187,9 @@ class ChatCommand():
         elif command == 'save':
             _send = lambda: ChatClientGlobal.chatClient.save()
 
+        elif command == 'join':
+            _send = lambda: ChatClientGlobal.chatClient.set_current_channel(args[0])
+
         else:
             _send = self._send_local({
                 'content' : command + ' command is not implemented.',
@@ -229,6 +235,12 @@ class ChatMessageIn():
         self.valid = self.payload.valid()
         self.timestamp = int(now())
 
+    # returns specific render formatting for the message (color, font etc)
+    def render(self):
+        return {
+            'color' : 'blue'
+        }
+
 # msg payload, attached to a ChatMessageIn/Out or (optionally) ChatCommand
 class Payload:
 
@@ -242,9 +254,12 @@ class Payload:
     def __init__(self, **kwargs):
         self.cmd = kwargs.get('cmd', 'chat')
         self.content = kwargs.get('content', '')
-        self.time = kwargs.get('time', int(now()))
+        self.time = int(kwargs.get('time', now()))
         self.channel = kwargs.get('channel', '')
         self.valid()
+
+    def clean(self):
+        pass
 
     # checks if all properties are in payload
     def valid(self, properties=None):
@@ -262,7 +277,34 @@ class Payload:
             d[p] = getattr(self, p, None)
         return d
         
+# returns data for rendering
+class ChatRender:
 
+    MESSAGE_RENDER_TIMEOUT = 2500 # 2.5 seconds display time
+    MESSAGE_RENDER_COUNT_MAX = 10 # max msgs to display at once
+
+    def __init__(self):
+        pass
+
+    # return subscribed channel names
+    def channel_names(self):
+        return ChatClientGlobal.chatClient.subscriptions.keys()
+
+    # returns messages to be rendered for the current active channel
+    def messages(self, channel=None):
+        client = ChatClientGlobal.chatClient
+        channel = channel or client.CURRENT_CHANNEL
+        msgs = client.subscriptions[channel]
+        to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
+        i = 0
+        for msg in msgs:
+            if msg.timestamp - int(now()) > self.MESSAGE_RENDER_TIMEOUT or
+               i == self.MESSAGE_RENDER_COUNT_MAX:
+                break
+            to_render.appendleft(msg)
+            i += 1
+        return to_render
+        
 if __name__ == '__main__':
     ChatClientGlobal.init_0()
     ChatClientGlobal.init_1()
