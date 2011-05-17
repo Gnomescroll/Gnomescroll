@@ -8,7 +8,7 @@ class ChatServerGlobal:
 
     @classmethod
     def init_0(self): #first pass is declaring
-        ChatServerGlobal.chat = ChatServer()
+        ChatServerGlobal.chat = ChatClient()
     @classmethod
     def init_1(self): #calls import methods if needed
         pass
@@ -32,7 +32,7 @@ client_id is NetClientGlobal.client_id
 Incoming json message handler is in net_event.py
 '''
 
-class Chat:
+class ChatClient:
 
     CURRENT_CHANNEL = 'global'
     ignored = []
