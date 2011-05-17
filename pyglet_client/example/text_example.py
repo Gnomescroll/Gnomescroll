@@ -1,5 +1,8 @@
 import pyglet
 
+
+pyglet.clock.set_fps_limit(60) #set the frame limit
+
 win = pyglet.window.Window(fullscreen= False)
 text = pyglet.font.Text(pyglet.font.load ('Arial', 16), 'Hello, World!')
 
@@ -28,6 +31,19 @@ while not win.has_exit:
 
 # from pyglet.gl import *
 
+## Keyboard Input ##
+
+'''
+keyboard = pyglet.window.key.KeyStateHandler() #setup
+
+while not win.has_exit:
+    win.dispatch_events()
+    win.push_handlers(keyboard)  #pushes key presses to the handler
+    if keyboard[key.W]:
+        Print "W key!"
+'''
+
+## Graphics ###
 '''
 draw points in 3d space with OpenGl
 
