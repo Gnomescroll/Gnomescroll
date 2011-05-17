@@ -35,9 +35,10 @@ while not win.has_exit:
 
 '''
 keyboard = pyglet.window.key.KeyStateHandler() #setup
+
 while not win.has_exit:
     win.dispatch_events()
-    win.push_handlers(keyboard)  #do this every cycle
+    win.push_handlers(keyboard)  #pushes key presses to the handler
     if keyboard[key.W]:
         Print "W key!"
 '''
