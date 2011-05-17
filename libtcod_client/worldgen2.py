@@ -1,5 +1,5 @@
 from __future__ import division
-#import windows_libtcodpy as libtcod	#WINDOWS
+#	import windows_libtcodpy as libtcod	#WINDOWS
 import linux_libtcodpy as libtcod	#LINUX
 import random
 
