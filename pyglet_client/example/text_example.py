@@ -28,6 +28,18 @@ while not win.has_exit:
 
 # from pyglet.gl import *
 
+## Keyboard Input ##
+
+'''
+keyboard = pyglet.window.key.KeyStateHandler() #setup
+while not win.has_exit:
+    win.dispatch_events()
+    win.push_handlers(keyboard)  #do this every cycle
+    if keyboard[key.W]:
+        Print "W key!"
+'''
+
+## Graphics ###
 '''
 draw points in 3d space with OpenGl
 
