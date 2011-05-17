@@ -81,14 +81,14 @@ class PacketDecoder:
         if buff_len >= self.message_length:
             assert self.message_length > 0
             (message, self.buffer) = (self.buffer[:self.message_length], self.buffer[self.message_length:])
-            length = self.message_length
+            #length = self.message_length
             self.process_msg(message)
             self.message_length = 0
             self.attempt_decode()
 
     def read_prefix(self):
         data = self.buffer
-        prefix = data[0:4]
+        #prefix = data[0:4]
         (length,) = struct.unpack('I', data[0:4])
         return length
 
@@ -169,7 +169,7 @@ class TcpConnection:
             elif event & select.EPOLLOUT:
                 pass #ready to write
             else:
-                print "Strange Epoll Event: %i" % eventOut
+                print "Strange Epoll Event: %i" % event
 
     def recv(self):
         BUFFER_SIZE = 4096
