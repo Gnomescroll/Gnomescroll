@@ -1,5 +1,8 @@
 import pyglet
 
+
+pyglet.clock.set_fps_limit(60) #set the frame limit
+
 win = pyglet.window.Window(fullscreen= False)
 text = pyglet.font.Text(pyglet.font.load ('Arial', 16), 'Hello, World!')
 
