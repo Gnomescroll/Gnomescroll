@@ -47,6 +47,7 @@ class ChatClient:
         self.input = ChatInput()
         if channel is not None:
             self.set_current_channel(channel)
+        self.subscribe(self.CURRENT_CHANNEL)
         self.subscribe('system')
         self.load()
 
@@ -142,6 +143,17 @@ class Channel:
     def __init__(self, name):
         self.name = name
         self.history = deque([], self.HISTORY_MAX)
+        self._curr_iter = 0
+    
+    def next(self):
+        if self._curr_iter == len(self.history):
+            raise StopIteration
+        else:
+            self._curr_iter += 1
+            return self.history[self._curr_iter-1]
+        
+    def __iter__(self):
+        return self
 
     def receive(self, msg):
         if msg.valid:
@@ -228,8 +240,7 @@ class ChatCommand():
 class ChatMessageOut():
 
     def __init__(self, text):
-        print str(text)
-        print ChatClientGlobal.chatClient.CURRENT_CHANNEL
+        print 'Sending msg: "%s" to: %s' % (str(text), ChatClientGlobal.chatClient.CURRENT_CHANNEL,)
         self.payload = Payload(
             content = str(text),
             channel = ChatClientGlobal.chatClient.CURRENT_CHANNEL,
@@ -324,7 +335,6 @@ class ChatInput:
         else:
             self.buffer.insert(self.cursor, char)
         self.cursor += 1
-        print str(self)
 
     def remove(self, index=None):
         try:
@@ -407,7 +417,7 @@ class ChatInputProcessor:
             elif c in lower_punctuation: # punctuation
                 c = upper_punctuation[lower_punctuation.index(c)]
 
-        return (lambda c: lambda input: input.add(c))(c)
+        return lambda input: input.add(c)
         
 # history of submitted messages
 class ChatInputHistory:
@@ -460,11 +470,13 @@ class ChatRender:
     # returns messages to be rendered for the current active channel
     def messages(self, channel=None):
         client = ChatClientGlobal.chatClient
-        channel = channel or client.CURRENT_CHANNEL
+        if channel is None:
+            channel = client.CURRENT_CHANNEL
         msgs = client.subscriptions[channel]
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
+            print msg
             if msg.timestamp - int(now()) > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
                 break

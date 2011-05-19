@@ -75,18 +75,40 @@ class Hud(object):
         self.reticleVertexList.draw(gl.GL_QUADS)
         gl.glDisable(gl.GL_BLEND)
 
+    def _draw_box(self):
+        #draw a 180x180 red box
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 20, 20, 200)), ('c3B\static', (215,0,0) *2))
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 200, 200, 200)), ('c3B\static', (215,0,0) *2))
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 200, 200, 20)), ('c3B\static', (215,0,0) *2))
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
+        
     def draw_chat(self):
-        #draw a box
-        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 20, 20, 200)), ('c3B\static', (215,0,0) *2))
-        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 200, 200, 200)), ('c3B\static', (215,0,0) *2))
-        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 200, 200, 20)), ('c3B\static', (215,0,0) *2))
-        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
-		txt = font.Text(
-			self.font,
-			text = str(ChatClientGlobal.chatClient.input),
-			x = 20,
-			y = self.win.height - 20,
-			z = 0,
-			color = (255,40,0,1)
-		)
-		txt.draw()
+        self._draw_chat_messages()
+        self._draw_chat_input()
+        
+    def _to_draw_text(self, text='', offset=120):
+        txt = font.Text(
+            self.font,
+            text = ChatClientGlobal.chatRender.user_input(),
+            x = 20,
+            y = self.win.height - offset,
+            z = 0,
+            color = (255,40,0,1)
+        )
+        return txt
+        
+    def _draw_chat_input(self):
+        txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
+        txt.draw()
+    
+    def _draw_chat_messages(self):
+        offset = 20
+        msg_height = 0
+        line_height = 5
+        i = 0
+        for msg in ChatClientGlobal.chatRender.messages():
+            txt = self._to_draw_text(msg.content, offset + (line_height * i) + msg_height)
+            msg_height += txt.height
+            txt.draw()
+            i += 1
+            i += 1
