@@ -82,7 +82,7 @@ class App(object):
         self.player = WorldStateGlobal.player
         while not self.exit:
             self.win.dispatch_events()
-            self.keyboard.stateHandler(keyboard)
+            #self.keyboard.stateHandler(keyboard)
             [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
             NetOut.sendMessage.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
             #network events

@@ -45,7 +45,8 @@ class ChatClient:
 
     def __init__(self, channel=None):
         self.input = ChatInput()
-        channel is not None or self.set_current_channel(channel)
+        if channel is not None:
+            self.set_current_channel(channel)
         self.subscribe('system')
         self.load()
 
@@ -68,15 +69,18 @@ class ChatClient:
     def unsubscribe(self, channel):
         if channel == 'system':
             return
-        del self.subscriptions[channel]
+        if channel in self.subscriptions:
+            del self.subscriptions[channel]
 
     # add client_id to ignore list
     def ignore(self, client_id):
-        client_id in self.ignored or self.ignored.append(client_id)
+        if client_id not in self.ignored:
+            self.ignored.append(client_id)
 
     # remove client_id from ignore list
     def unignore(self, client_id):
-        client_id in self.ignored and self.ignored.remove(client_id)
+        if client_id in self.ignored:
+            self.ignored.remove(client_id)
 
     def send(self, text=None):
         if not NetClientGlobal.client_id:
@@ -93,6 +97,8 @@ class ChatClient:
 
     # receive incoming message
     def receive(self, msg):
+        print 'Received msg:'
+        print msg
         if channel in subscriptions:
             msg = ChatMessageIn(msg)
             if msg.payload.client_id in self.ignored:
@@ -121,7 +127,9 @@ class ChatClient:
         if path_exists(conf):
             with open(conf, 'r') as f:
                 settings = decode_json(f.read())
-                self.ignored = settings.get('ignored', None) or self.ignored
+                ignored = settings.get('ignored', None)
+                if ignored is not None:
+                    self.ignored = ignored
                 for channel in settings.get('subscriptions', []):
                     self.subscribe(channel)
             
@@ -145,12 +153,12 @@ class SystemChannel(Channel):
     def receive(self, msg):
         log = None
         if msg.content == 'ping':
-            log = Payload({
-                'content'  : 'Chat ping round-trip time: ' + (int(now()) - int(msg.time)),
-                'channel'  : 'system',
-                'client_id': 'system',
-                'cmd'      : 'chat',
-            })
+            log = Payload(
+                content   = 'Chat ping round-trip time = ' + (int(now()) - int(msg.time)),
+                channel   = 'system',
+                client_id = 'system',
+                cmd       = 'chat',
+            )
 
         if log is not None:
             self.history.appendleft(log)
@@ -172,10 +180,10 @@ class ChatCommand():
         payload = None
         
         if command == 'channel':
-            payload = Payload({
-                'content'  : str(' '.join(args[1:])),
-                'channel'  : args[0]
-            })
+            payload = Payload(
+                content = str(' '.join(args[1:])),
+                channel = args[0]
+            )
 
         elif command == 'version':
             _send = self._send_local({
@@ -184,10 +192,10 @@ class ChatCommand():
             })
 
         elif command == 'ping':
-            payload = Payload({
-                'channel' : 'system',
-                'content' : 'ping'
-            })
+            payload = Payload(
+                channel = 'system',
+                content = 'ping'
+            )
 
         elif command == 'save':
             _send = lambda: ChatClientGlobal.chatClient.save()
@@ -220,10 +228,12 @@ class ChatCommand():
 class ChatMessageOut():
 
     def __init__(self, text):
-        self.payload = Payload({
-            'content' : str(text),
-            'channel' : ChatClient.CURRENT_CHANNEL,
-        })
+        print str(text)
+        print ChatClientGlobal.chatClient.CURRENT_CHANNEL
+        self.payload = Payload(
+            content = str(text),
+            channel = ChatClientGlobal.chatClient.CURRENT_CHANNEL,
+        )
         self.payload.clean()
         self.valid = self.payload.valid()
 
@@ -276,13 +286,14 @@ class Payload:
 
     # checks if all properties are in payload
     def valid(self, properties=None):
-        properties = properties or self.properties
+        if properties is None:
+            properties = self.properties
         valid = True
-        for prop in properties:
+        for p in properties:
             if getattr(self, p, None) is None:
                 valid = False
-        self.valid = valid
-        return self.valid
+        self.is_valid = valid
+        return self.is_valid
 
     def serialize(self):
         d = {}
@@ -314,6 +325,7 @@ class ChatInput:
         else:
             self.buffer.insert(self.cursor, char)
         self.cursor += 1
+        print str(self)
 
     def remove(self, index=None):
         if index is not None:
@@ -368,7 +380,7 @@ class ChatInputProcessor:
         elif symbol == key.RIGHT:       # move cursor
             callback = lambda input: input.cursor_right()
         else:                           # add character
-            callback = _add_char(key, symbol, modifiers) or callback
+            callback = self._add_char(key, symbol, modifiers) or callback
         return callback
 
     def _add_char(self, key, symbol, modifiers):
