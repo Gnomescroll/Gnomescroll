@@ -6,6 +6,8 @@ from pyglet import gl
 from pyglet import graphics
 from pyglet import image
 
+from chat_client import ChatClientGlobal
+
 '''
 HUD overlay
 '''
@@ -16,9 +18,9 @@ class Hud(object):
 
     def __init__(self, win):
         self.win = win
-        helv = font.load('Helvetica', win.width / 15.0)
+        self.font = font.load('Helvetica', 14, bold=True)
         self.text = font.Text(
-            helv,
+            self.font,
             'Hello, World!',
             x=win.width / 2,
             y=win.height / 2,
@@ -60,7 +62,6 @@ class Hud(object):
         )
 
     def draw(self):
-        #self.text.draw()
         self.draw_reticle()
         self.draw_chat()
         self.fps.draw()
@@ -76,7 +77,16 @@ class Hud(object):
 
     def draw_chat(self):
         #draw a box
-        graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 20, 20, 200)), ('c3B\static', (255,255,255) *2))
-        graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 200, 200, 200)), ('c3B\static', (255,255,255) *2))
-        graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 200, 200, 20)), ('c3B\static', (255,255,255) *2))
-        graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (255,255,255) *2))
+        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 20, 20, 200)), ('c3B\static', (215,0,0) *2))
+        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 200, 200, 200)), ('c3B\static', (215,0,0) *2))
+        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 200, 200, 20)), ('c3B\static', (215,0,0) *2))
+        #graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
+		txt = font.Text(
+			self.font,
+			text = str(ChatClientGlobal.chatClient.input),
+			x = 20,
+			y = self.win.height - 20,
+			z = 0,
+			color = (255,40,0,1)
+		)
+		txt.draw()

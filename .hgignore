@@ -17,3 +17,4 @@ startall.sh
 node_modules/
 
 lastserverpid*
+*.tmp
