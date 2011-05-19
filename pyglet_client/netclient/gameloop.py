@@ -21,7 +21,7 @@ from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
 from client_event import ClientEventGlobal
 
-from chat_client import Chat
+#from chat_client import Chat
 
 #import hotshot
 
