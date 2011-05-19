@@ -6,6 +6,8 @@ Chat client
 
 from time import time as now
 from collections import deque
+from math import max, min
+from string import lowercase, uppercase, letters, digits
 
 class ChatClientGlobal:
     chatClient = None
@@ -32,7 +34,7 @@ client_id is NetClientGlobal.client_id
 Incoming json message handler is in net_event.py
 '''
 
-CONFIG_PATH = './conf'
+CONFIG_PATH = './conf' # move to a client global class
 
 class ChatClient:
 
@@ -43,6 +45,7 @@ class ChatClient:
     _conf = 'chat.conf'
 
     def __init__(self, channel=None):
+        self.input = ChatInput()
         channel is not None or self.set_current_channel(channel)
         self.subscribe('system')
         self.load()
@@ -76,15 +79,16 @@ class ChatClient:
     def unignore(self, client_id):
         client_id in self.ignored and self.ignored.remove(client_id)
 
-    def send(self, text):
+    def send(self, text = str(self.input)):
         if not NetClientGlobal.client_id:
             print 'Client_id is not set; cannot send chat msg'
             return
 
         if text[0] == '/':
-            msg = ChatCommand(text).send()
+            msg = ChatCommand(text)
         else:
-            msg = ChatMessageOut(text).send()
+            msg = ChatMessageOut(text)
+        msg.send()
 
     # receive incoming message
     def receive(self, msg):
@@ -223,8 +227,16 @@ class ChatMessageOut():
         self.valid = self.payload.valid()
 
     def send(self):
+        if self.payload is None or not self.payload.content:
+            return False
         NetOut.chatMessage.send_chat(self.payload.serialize()) # fix this reference
+        ChatClientGlobal.chatClient.input.history.add(self.payload.content)
         print 'Sent chat message'
+
+    def render(self):
+        return {
+            'color' : 'blue'
+        }
 
 # msg received
 class ChatMessageIn():
@@ -276,6 +288,142 @@ class Payload:
         for p in self.properties:
             d[p] = getattr(self, p, None)
         return d
+
+
+# text entry manager
+class ChatInput:
+
+    MAX_MESSAGE_LENGTH = 140
+
+    def __init__(self):
+        self.clear()
+        self.history = ChatInputHistory()
+        self.processor = ChatInputProcessor()
+
+    def clear(self):
+        self.buffer = []
+        self.cursor = 0
+        
+    def __str__(self):
+        return ''.join(self.buffer)
+
+    def add(self, char, index=None):
+        if index is not None:
+            self.buffer.insert(index, char)
+        else:
+            self.buffer.insert(self.cursor, char)
+        self.cursor += 1
+
+    def remove(self, index=None):
+        if index is not None:
+            self.buffer.pop(index)
+        else:
+            self.buffer.pop()
+        self.cursor += -1
+
+    def cursor_left(self):
+        self.cursor = max(0, self.cursor - 1)
+
+    def cursor_right(self):
+        self.cursor = min(len(self.buffer), self.cursor + 1)
+
+    def history_newer(self):
+        self.buffer = list(self.history.newer())
+
+    def history_older(self):
+        self.buffer = list(self.history.older(self.buffer))
+
+    def submit(self):
+        text = str(self)
+        self.clear()
+        self.history.reset_index()
+        return text
+
+    def process(self, key, symbol, modifiers):
+        callback = self.processor.process(key, symbol, modifiers)
+        if callable(callback):
+            return callback(self)
+        
+# key input is routed to here
+class ChatInputProcessor:
+
+    def __init__(self):
+        pass
+
+    def process(self, key, symbol, modifiers):
+        callback = None
+        if symbol == key.ENTER:         # submit
+            def callback(input):
+                ChatClientGlobal.chatClient.send()
+                return lambda keyboard: keyboard.toggle_input_mode(0)
+        elif symbol == key.BACKSPACE:   # delete
+            callback = lambda input: input.remove()
+        elif symbol == key.UP:          # up history
+            callback = lambda input: input.history_older()
+        elif symbol == key.DOWN:        # down history
+            callback = lambda input: input.history_newer()
+        elif symbol == key.LEFT:        # move cursor
+            callback = lambda input: input.cursor_left()
+        elif symbol == key.RIGHT:       # move cursor
+            callback = lambda input: input.cursor_right()
+        else:                           # add character
+            callback = _add_char(key, symbol, modifiers) or callback
+        return callback
+
+    def _add_char(self, key, symbol, modifiers):
+        try:
+            c = chr(symbol)
+        except ValueError:
+            return None
+        
+        digit_punctuation_map = '!@#$%^&*()'
+        lower_punctuation = '`-=[]\\;\',./'
+        upper_punctuation = '~_+{}|:"<>?'
+        
+        if 'MOD_SHIFT' in key.modifiers_string(modifiers):
+            if c in lowercase:
+                c = c.upper()
+            elif c in digits:
+                c = digits_punctuation_map[digits.index(c)]
+            elif c in lower_punctuation: # punctuation
+                c = upper_punctuation[lower_punctuation.index(c)]
+
+        return (lambda c: lambda input: input.add(c))(c)
+        
+# history of submitted messages
+class ChatInputHistory:
+
+    MAX_HISTORY = 50
+
+    def __init__(self):
+        self.clear()
+        self.active_buffer = ''
+
+    def clear(self):
+        self.buffer = deque([], self.MAX_HISTORY)
+        self.reset_index()
+
+    def reset_index(self):
+        self.current_index = -1
+
+    def newer(self):
+        self.current_index = max(-1, self.current_index - 1)
+        return self.selected()
+
+    def older(self, active_buffer=''):
+        if self.current_index == -1:    # save active typed-in message that has not been sent yet
+            self.active_buffer = str(active_buffer)
+        self.current_index = min(len(self.buffer) - 1, self.current_index + 1)
+        return self.selected()
+
+    def selected(self):
+        if self.current_index == -1:
+            return self.active_buffer
+        else:
+            return self.buffer[self.current_index]
+
+    def add(self, text):
+        self.buffer.appendleft(text)
         
 # returns data for rendering
 class ChatRender:
@@ -304,7 +452,12 @@ class ChatRender:
             to_render.appendleft(msg)
             i += 1
         return to_render
+
+    def user_input(self):
+        return str(ChatClientGlobal.chatClient.input)
         
 if __name__ == '__main__':
     ChatClientGlobal.init_0()
     ChatClientGlobal.init_1()
+
+    

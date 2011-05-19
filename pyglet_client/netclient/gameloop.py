@@ -49,19 +49,21 @@ class App(object):
         #other
         self.world = world.World()  #deprecate?
         self.win = window.Window(fullscreen=False, vsync=False)
+        self.win.on_close = self._on_close
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self) #move to inputs global
         self.mouse = Mouse(self)       #move to inputs global
         self.hud = Hud(self.win)
         #setup events
-        self.keyboard.key_handlers[key.ESCAPE] = self.exit
-        self.win.on_mouse_drag = self.mouse.on_mouse_drag
-        self.win.on_key_press = self.keyboard.on_key_press
+        self.keyboard.bind_key_handlers(key.ESCAPE, self.exit)
         self.exit = False
         print "App init finished"
 
     def exit(self):
         self.exit = True
+
+    def _on_close(self):
+        ChatClientGlobal.chatClient.save()
 
     def mainLoop(self):
         self.world.test_chunk()

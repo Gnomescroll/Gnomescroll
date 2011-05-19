@@ -1,3 +1,8 @@
+#!/usr/bin/python
+
+'''
+Client input
+'''
 
 from world_state import WorldStateGlobal
 
@@ -5,6 +10,7 @@ class Mouse(object):
 
     def __init__(self, main):
         self.main = main
+        self.main.win.on_mouse_drag = self.on_mouse_drag
         self.camera = main.camera
         self.player = WorldStateGlobal.player
 
@@ -20,55 +26,68 @@ class Mouse(object):
 from pyglet.window.key import symbol_string
 from pyglet.window import key
 
-import math
+from chat_client import ChatClientGlobal
 
+import math
 from math import sin, cos, pi
 
 class Keyboard(object):
 
     def __init__(self, main):
         self.main = main
+        self.main.win.on_key_press = self.on_key_press
         self.camera = main.camera
         self.key_handlers = {}
 
         self.player = WorldStateGlobal.player
-        self.mode = 'camera'
+        self.toggle_input_mode()
+        self._init_key_handlers()
 
+    def _init_key_handlers(self):
+        self.bind_key_handlers({
+            key.E : self.main.world.toggle_mipmap,
+            key.T : self.main.world.toggle_gl_smooth,
+        })
+
+    # accept key,handler or a dict of key,handlers
+    def bind_key_handlers(self, key, handler=None):
+        if value is None:
+            assert type(key) == dict
+            for k, h in key.values():
+                self.key_handlers[k] = h
+        else:
+            self.key_handlers[key] = handler
+
+    # pyglet.window.on_key_press
     def on_key_press(self, symbol, modifiers):
-        v = 0.2
-        #print "key press"
-        if symbol == key.E:
-            self.main.world.toggle_mipmap()
-        if symbol == key.T:
-            self.main.world.toggle_gl_smooth()
-        #elif symbol == key.W:
-            #self.camera.move_camera(v,0,0)
-        #elif symbol == key.S:
-            #self.camera.move_camera(-v,0,0)
-        #elif symbol == key.A:
-            #self.camera.move_camera(0,v,0)
-        #elif symbol == key.D:
-            #self.camera.move_camera(0,-v,0)
-        #elif symbol == key.R:
-        #    self.camera.move_camera(0,0,v)
-        #elif symbol == key.F:
-        #    self.camera.move_camera(0,0,-v)
-        if False:
-            pass
-        elif symbol in self.key_handlers:
-            self.key_handlers[symbol]()
+        if self.mode == 'chat':
+            callback = ChatClientGlobal.chatClient.input.process(key, symbol, modifiers)
+            if callable(callback):
+                callback(self)
+        else:
+            self.key_handlers.get(symbol, lambda: None)()
 
+    # toggles through modes.
+    def toggle_input_mode(self, change=1 ,current_mode = [0]):
+        modes = ('camera', 'agent')
+        if getattr(self, mode, None) is not None:
+            current_mode[0] = (current_mode[0] + change) % len(modes)
+        self.mode = modes[current_mode[0]]
+
+    # called in main game loop
     def stateHandler(self, keyboard):
         #mode switch
         if keyboard[key.Q]:
-            if self.mode == 'camera':
-                self.mode = 'agent'
-            elif self.mode == 'agent':
-                self.mode = 'camera'
-
+            self.toggle_input_mode()
+        elif keyboard[key.Y]:
+            if self.mode == 'chat':
+                self.toggle_input_mode(0)
+            else:
+                self.mode = 'chat'
+        
         if self.mode == 'camera':
             self.camera_input_mode(keyboard)
-        if self.mode == 'agent':
+        elif self.mode == 'agent':
             self.agent_input_mode(keyboard)
 
     def agent_input_mode(self, keyboard):
@@ -110,3 +129,4 @@ class Keyboard(object):
             self.camera.move_camera(0,0,-v)
         if keyboard[key.SPACE]:
             print "Event A.1"
+            
