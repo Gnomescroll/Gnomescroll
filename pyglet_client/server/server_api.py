@@ -34,7 +34,8 @@ class ServerGlobal:
         ServerGlobal.adminMessageHandler = AdminMessageHandler()
         ServerGlobal.datagramDecoder = DatagramDecoder()
         ServerGlobal.serverListener = ServerListener()
-        ServerGlobal.chat = None
+        csg = ChatServerGlobal()
+        ServerGlobal.chat = csg.chatServer
 
     @classmethod
     def init(self):
@@ -130,7 +131,6 @@ class SendMessage: #each connection has one of these
 # routes messages by msg.cmd
 class MessageHandler:
     gameState = None
-    chat = None #put this somewhere
 
     def init(self):
         self.gameState = GameStateGlobal.gameState
@@ -148,7 +148,7 @@ class MessageHandler:
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
         elif cmd == 'chat':
-            self.chat.received(msg, connection)
+            ServerGlobal.chat.received(msg, connection)
         elif cmd == 'send_client_id': #Setup client connection
             connection.set_client_id(int(msg['id']))
             #print "Client Assigned id= %i" % (connection.client_id,)

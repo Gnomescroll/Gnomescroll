@@ -30,14 +30,14 @@ class ChatServer:
 
     # message received
     def received(self, msg, connection):
-        msg = ChatMessage(msg, connection)
+        msg = ChatMessage(msg, connection).validate()
         self.broadcast(msg)
 
     # sends message to all clients subscribed to channel
     def broadcast(self, msg):
-        if 'channel' not in msg:
+        if msg.payload is None:
             return
-        for client_id in self.channels.get(msg['channel'], []):
+        for client_id in self.channels[msg.payload['channel']]:
             self.clients[client_id].send(msg)
 
     # connect client
@@ -95,7 +95,7 @@ class ChatMessage:
         self.payload = copy(msg)
         self.payload['cmd'] = 'chat'
         self.payload['time'] = self.payload.get('time', None) or int(now())
-        self.payload['client_id'] = connection.get('client_id', '')
+        self.payload['client_id'] = getattr(connection, 'client_id', '')
         self.clean()
         self.validate()
 
@@ -114,6 +114,7 @@ class ChatMessage:
                 valid = False
         if not valid:
             self.payload = None
+        return self
 
 
 # an instance of a connected client
