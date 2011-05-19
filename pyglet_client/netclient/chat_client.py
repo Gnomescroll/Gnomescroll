@@ -88,7 +88,7 @@ class ChatClient:
             return
 
         if text is None:
-            text = str(self.input)
+            text = self.input.submit()
         if text[0] == '/':
             msg = ChatCommand(text)
         else:
@@ -240,8 +240,7 @@ class ChatMessageOut():
     def send(self):
         if self.payload is None or not self.payload.content:
             return False
-        NetOut.chatMessage.send_chat(self.payload.serialize()) # fix this reference
-        ChatClientGlobal.chatClient.input.history.add(self.payload.content)
+        NetOut.chatMessage.send_chat(self.payload.serialize())
         print 'Sent chat message'
 
     def render(self):
@@ -328,11 +327,14 @@ class ChatInput:
         print str(self)
 
     def remove(self, index=None):
-        if index is not None:
-            self.buffer.pop(index)
-        else:
-            self.buffer.pop()
-        self.cursor += -1
+        try:
+            if index is not None:
+                self.buffer.pop(index)
+            else:
+                self.buffer.pop()
+            self.cursor += -1
+        except IndexError:
+            pass
 
     def cursor_left(self):
         self.cursor = max(0, self.cursor - 1)
@@ -342,14 +344,18 @@ class ChatInput:
 
     def history_newer(self):
         self.buffer = list(self.history.newer())
+        self.cursor = len(self.buffer)
 
     def history_older(self):
         self.buffer = list(self.history.older(self.buffer))
+        self.cursor = len(self.buffer)
 
     def submit(self):
         text = str(self)
         self.clear()
         self.history.reset_index()
+        self.history.add(text)
+        print 'submitting ', text
         return text
 
     def process(self, key, symbol, modifiers):
