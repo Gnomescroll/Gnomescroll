@@ -15,3 +15,5 @@ dump.rdb
 steve.py
 startall.sh
 node_modules/
+
+lastserverpid*
