@@ -1,3 +1,9 @@
+#!/usr/bin/python
+
+'''
+Client network interface
+'''
+
 import socket
 import struct
 #import binascii

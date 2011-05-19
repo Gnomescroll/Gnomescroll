@@ -8,7 +8,8 @@ from pyglet.gl import *
 
 from player import Player
 from input import Mouse, Keyboard
-from camera import Camera, Hud
+from camera import Camera
+from hud import Hud
 from pyglet.window import key
 
 #deprecate
@@ -21,7 +22,7 @@ from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
 from client_event import ClientEventGlobal
 
-#from chat_client import Chat
+from chat_client import ChatClientGlobal
 
 #import hotshot
 
@@ -34,12 +35,14 @@ class App(object):
         WorldStateGlobal.init_0()
         NetEventGlobal.init_0()
         NetOut.init_0()
+        ChatClientGlobal.init_0()
         #stage 2
         NetClientGlobal.init_1()
         CubeGlobal.init_1()
         WorldStateGlobal.init_1()
         NetEventGlobal.init_1()
         NetOut.init_1()
+        ChatClientGlobal.init_1()
 
     def __init__(self):
         self.init_globals()
@@ -47,19 +50,21 @@ class App(object):
         #other
         self.world = world.World()  #deprecate?
         self.win = window.Window(fullscreen=False, vsync=False)
+        self.win.on_close = self._on_close
         self.camera = Camera(self.win)
         self.keyboard = Keyboard(self) #move to inputs global
         self.mouse = Mouse(self)       #move to inputs global
         self.hud = Hud(self.win)
         #setup events
-        self.keyboard.key_handlers[key.ESCAPE] = self.exit
-        self.win.on_mouse_drag = self.mouse.on_mouse_drag
-        self.win.on_key_press = self.keyboard.on_key_press
+        self.keyboard.bind_key_handlers(key.ESCAPE, self.exit)
         self.exit = False
         print "App init finished"
 
     def exit(self):
         self.exit = True
+
+    def _on_close(self):
+        ChatClientGlobal.chatClient.save()
 
     def mainLoop(self):
         self.world.test_chunk()

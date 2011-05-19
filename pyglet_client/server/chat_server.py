@@ -2,6 +2,7 @@
 
 from time import time as now
 from copy import copy
+from collections import defaultdict
 
 from server_api import ServerGlobal
 
@@ -20,7 +21,7 @@ Chat server
 
 class ChatServer:
 
-    channels = {}
+    channels = defaultdict(list)
     clients = {}
 
     def __init__(self):
@@ -64,7 +65,7 @@ class ChatServer:
             if channel_parts[0] == 'pm' and channel_parts[1] != client_id:
                 print 'Client attempted to listen to another\'s private client channel'
                 return
-            listeners = self.channels.setdefault(channel, [])
+            listeners = self.channels[channel]
             if client_id not in listeners:
                 listeners.append(client_id)
 
@@ -81,11 +82,13 @@ class ChatServer:
 
 class ChatMessage:
 
-    properties = ['cmd',
-                  'client_id',
-                  'content',
-                  'time',
-                  'channel']
+    properties = [
+        'cmd',
+        'client_id',
+        'content',
+        'time',
+        'channel',
+    ]
 
     def __init__(self, msg, connection=None): # need support for system messages
         connection = connection or {}
