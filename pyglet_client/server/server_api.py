@@ -149,6 +149,10 @@ class MessageHandler:
             self.agent_control_state(msg)
         elif cmd == 'chat':
             ServerGlobal.chat.received(msg, connection)
+        elif cmd == 'subscribe':
+            ServerGlobal.chat.client_subscribe(msg, connection)
+        elif cmd == 'unsubscribe':
+            ServerGlobal.chat.client_unsubscribe(msg, connection)
         elif cmd == 'send_client_id': #Setup client connection
             connection.set_client_id(int(msg['id']))
             #print "Client Assigned id= %i" % (connection.client_id,)

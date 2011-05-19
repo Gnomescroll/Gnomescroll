@@ -65,6 +65,7 @@ class ChatClient:
             self.subscriptions.setdefault(channel, SystemChannel(channel))
         else:
             self.subscriptions.setdefault(channel, Channel(channel))
+        NetOut.chatMessage.subscribe(channel)
         print 'Chat client subscribed to %s' % (channel,)
 
     def unsubscribe(self, channel):
@@ -72,6 +73,7 @@ class ChatClient:
             return
         if channel in self.subscriptions:
             del self.subscriptions[channel]
+            NetOut.chatMessage.unsubscribe(channel)
 
     # add client_id to ignore list
     def ignore(self, client_id):
