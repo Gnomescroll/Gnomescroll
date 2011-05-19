@@ -6,7 +6,6 @@ Chat client
 
 from time import time as now
 from collections import deque
-from math import max, min
 from string import lowercase, uppercase, letters, digits
 
 class ChatClientGlobal:
@@ -79,11 +78,13 @@ class ChatClient:
     def unignore(self, client_id):
         client_id in self.ignored and self.ignored.remove(client_id)
 
-    def send(self, text = str(self.input)):
+    def send(self, text=None):
         if not NetClientGlobal.client_id:
             print 'Client_id is not set; cannot send chat msg'
             return
 
+        if text is None:
+            text = str(self.input)
         if text[0] == '/':
             msg = ChatCommand(text)
         else:
@@ -446,7 +447,7 @@ class ChatRender:
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
-            if msg.timestamp - int(now()) > self.MESSAGE_RENDER_TIMEOUT or
+            if msg.timestamp - int(now()) > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
                 break
             to_render.appendleft(msg)
@@ -459,5 +460,3 @@ class ChatRender:
 if __name__ == '__main__':
     ChatClientGlobal.init_0()
     ChatClientGlobal.init_1()
-
-    

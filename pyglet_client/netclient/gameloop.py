@@ -8,7 +8,8 @@ from pyglet.gl import *
 
 from player import Player
 from input import Mouse, Keyboard
-from camera import Camera, Hud
+from camera import Camera
+from hud import Hud
 from pyglet.window import key
 
 #deprecate
