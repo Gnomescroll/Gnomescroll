@@ -67,7 +67,7 @@ class Keyboard(object):
                 callback(self)
         else:
             self.key_handlers.get(symbol, lambda: None)()
-            self.stateHandler(symbol, modifiers)
+            #self.stateHandler(symbol, modifiers)
 
 
     def toggle_chat(self):
@@ -84,36 +84,38 @@ class Keyboard(object):
         self.mode = modes[current_mode[0]]
 
     # called in main game loop
-    def stateHandler(self, symbol, modifiers):
+    def stateHandler(self, keyboard):
+        if self.mode == 'chat':
+            return
         #mode switch
-        if symbol == key.Q:
+        if keyboard[key.Q]:
             self.toggle_input_mode()
         
         if self.mode == 'camera':
-            self.camera_input_mode(symbol, modifiers)
+            self.camera_input_mode(keyboard)
         elif self.mode == 'agent':
-            self.agent_input_mode(symbol, modifiers)
+            self.agent_input_mode(keyboard)
 
-    def agent_input_mode(self, symbol, modifiers):
+    def agent_input_mode(self, keyboard):
         # d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
         v = 1
         [d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
 
-        if symbol == key.W:
+        if keyboard[key.W]:
                 d_x += v*cos( self.player.x_angle * pi)
                 d_y += v*sin( self.player.x_angle * pi)
-        if symbol == key.S:
+        if keyboard[key.S]:
                 d_x += -v*cos( self.player.x_angle * pi)
                 d_y += -v*sin( self.player.x_angle * pi)
-        if symbol == key.A:
+        if keyboard[key.A]:
                 d_x += -v*cos( self.player.x_angle * pi + pi/2)
                 d_y += -v*sin( self.player.x_angle * pi + pi/2)
-        if symbol == key.D:
+        if keyboard[key.D]:
                 d_x += v*cos( self.player.x_angle * pi + pi/2)
                 d_y += v*sin( self.player.x_angle * pi + pi/2)
-        if symbol == key.E:
+        if keyboard[key.E]:
             brake = 1
-        if symbol == key.SPACE:
+        if keyboard[key.SPACE]:
             jetpack = 1
         self.player.control_state = [
             d_x,
@@ -124,20 +126,20 @@ class Keyboard(object):
             brake
         ]
 
-    def camera_input_mode(self, symbol, modifiers):
+    def camera_input_mode(self, keyboard):
         v = 0.1
-        if symbol == key.W:
+        if keyboard[key.W]:
             self.camera.move_camera(v,0,0)
-        if symbol == key.S:
+        if keyboard[key.S]:
             self.camera.move_camera(-v,0,0)
-        if symbol == key.A:
+        if keyboard[key.A]:
             self.camera.move_camera(0,v,0)
-        if symbol == key.D:
+        if keyboard[key.D]:
             self.camera.move_camera(0,-v,0)
-        if symbol == key.R:
+        if keyboard[key.R]:
             self.camera.move_camera(0,0,v)
-        if symbol == key.F:
+        if keyboard[key.F]:
             self.camera.move_camera(0,0,-v)
-        if symbol == key.SPACE:
+        if keyboard[key.SPACE]:
             print "Event A.1"
             

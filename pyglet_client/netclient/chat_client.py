@@ -368,7 +368,7 @@ class ChatInputProcessor:
         if symbol == key.ENTER:         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
-                return lambda keyboard: keyboard.toggle_input_mode(0)
+                return lambda keyboard: keyboard.toggle_chat()
         elif symbol == key.BACKSPACE:   # delete
             callback = lambda input: input.remove()
         elif symbol == key.UP:          # up history
