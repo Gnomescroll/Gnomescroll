@@ -1,3 +1,8 @@
+#!/usr/bin/python
+
+'''
+Client network incoming
+'''
 
 import simplejson as json
 #import struct
@@ -15,6 +20,7 @@ class NetEventGlobal:
 from world_state import WorldStateGlobal
 from net_client import NetClientGlobal
 from net_out import NetOut
+from chat_client import ChatClientGlobal
 
 class MessageHandler:
     player = None #move this somewhere else
@@ -60,8 +66,7 @@ class MessageHandler:
             print "Chunk List Received"
             print str(msg['list'])
         elif cmd == 'chat':
-            print "process_json_event: Fix chat message callback!"
-            #chat.receive(msg)
+            ChatClientGlobal.chatClient.receive(msg)
         else:
             print "JSON message type unregonized"
 

@@ -1,4 +1,8 @@
+#!/usr/bin/python
 
+'''
+Client network outgoing
+'''
 
 class NetOut:
     sendPacket = None
