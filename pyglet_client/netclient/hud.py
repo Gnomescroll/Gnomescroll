@@ -18,7 +18,7 @@ class Hud(object):
 
     def __init__(self, win):
 
-        self.txt = None #delete this
+        self.tex_dict = {} #delete this
 
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
@@ -109,18 +109,31 @@ class Hud(object):
         return txt
 
     def _draw_chat_messages(self):
+
         offset = 20
         msg_height = 0
         line_height = 5
         i = 0
-        txt = self._draw_chat_input()
+        #txt = self._draw_chat_input()
         for msg in ChatClientGlobal.chatRender.messages():
-            print 'drawing "%s"' % (msg.payload.content,)
-            if txt is None:
-                txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
-            else:
-                txt.text = msg.payload.content
-                txt.y = self.win.height - (offset + (line_height * i) + msg_height)
-            msg_height += txt.height
-            txt.draw()
+            if not self.tex_dict.has_key(i):
+                self.tex_dict[i] = font.Text(
+                    self.font,
+                    text = msg.payload.content,
+                    x = 20,
+                    y = self.win.height - (offset + (line_height * i) + msg_height),
+                    z = 0,
+                    color = (255,40,0,1)
+                )
             i += 1
+
+        for t in self.tex_dict.values():
+            t.draw()
+            #print 'drawing "%s"' % (msg.payload.content,)
+            #if self.txt is None:
+            #    self.txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
+            #else:
+            #    self.txt.text = msg.payload.content
+            #    self.txt.y = self.win.height - (offset + (line_height * i) + msg_height)
+            #msg_height += self.txt.height
+            #self.txt.draw()
