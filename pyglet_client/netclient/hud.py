@@ -17,6 +17,9 @@ base_dir = "./"
 class Hud(object):
 
     def __init__(self, win):
+
+        self.txt = None #delete this
+
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
         self.text = font.Text(
@@ -107,11 +110,19 @@ class Hud(object):
         msg_height = 0
         line_height = 5
         i = 0
+        if self.txt == None:
+            self.txt = self._to_draw_text(text="Needs a message", offset=150)
         for msg in ChatClientGlobal.chatRender.messages():
+            print "message= " + str(msg.payload.content)
+            self.txt.text = msg.payload.content
+            self.txt.draw()
+            break
             #print 'drawing text at y-offset %i' % (offset + (line_height * i) + msg_height,)
-            print "message= " + str(msg.content)
+            #print "message= " + str(msg.payload)
             #txt = self._to_draw_text(msg.content, 120) #testing
-            txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
+            #txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
+            print "message= " + str(msg.payload)
+            txt = self._to_draw_text(text=msg.payload.content, offset=150)
             msg_height += txt.height
             txt.draw()
             i += 1
