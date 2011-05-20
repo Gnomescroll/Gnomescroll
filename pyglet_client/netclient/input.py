@@ -43,10 +43,17 @@ class Keyboard(object):
         self.toggle_input_mode()
         self._init_key_handlers()
 
+####
+    #key input
     def on_text(self, text):
         if not self.mode == 'chat':
             return
         print "Key= " + str(text)
+
+    #back space, cursor movement
+    def on_text_motion(self, motion):
+        pass
+###
 
     def _init_key_handlers(self):
         self.bind_key_handlers({
