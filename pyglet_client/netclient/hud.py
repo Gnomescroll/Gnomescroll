@@ -83,7 +83,7 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
 
     def draw_chat(self):
-        self._draw_chat_input()
+        #self._draw_chat_input()
         self._draw_chat_messages()
 
     def _to_draw_text(self, text='', offset=120):
@@ -97,9 +97,14 @@ class Hud(object):
         )
         return txt
 
-    def _draw_chat_input(self):
-        txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
+    def _draw_chat_input(self, txt=None):
+        if txt is None:
+            txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
+        else:
+            txt.text = ChatClientGlobal.chatRender.user_input()
+            txt.y = self.win.height - 120
         txt.draw()
+        return txt
 
     #does not work?
     def _draw_chat_messages(self):
@@ -107,11 +112,17 @@ class Hud(object):
         msg_height = 0
         line_height = 5
         i = 0
+        txt = self._draw_chat_input()
         for msg in ChatClientGlobal.chatRender.messages():
             #print 'drawing text at y-offset %i' % (offset + (line_height * i) + msg_height,)
             #txt = self._to_draw_text(msg.content, 120) #testing
             #txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
-            txt = self._to_draw_text(text=msg.payload.content)#, offset=offset + (line_height * i) + msg_height)
+            if txt is None:
+                txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
+            else:
+                txt.text = msg.payload.content
+                txt.y = self.win.height - (offset + (line_height * i) + msg_height)
             msg_height += txt.height
             txt.draw()
             i += 1
+        #self._draw_chat_input(txt)
