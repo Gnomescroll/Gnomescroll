@@ -499,21 +499,9 @@ class ChatRender:
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
-            #print msg
-            #print msg.timestamp - int(now())
-            #print msg.timestamp - int(now()) - self.MESSAGE_RENDER_TIMEOUT
-            #print msg.timestamp
-            #print int(now() * 1000)
-            #print msg.timestamp - int(now()*1000)
             if int(now()*1000) - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
-                print 'not rendering this msg'
-                print '%i/%i' % (i, self.MESSAGE_RENDER_COUNT_MAX,)
-                print 'timestamp %i' % (msg.timestamp)
-                print 'now %i' % (int(now()),)
-                print 'Diff: %i; timeout: %i' % (msg.timestamp - int(now()), self.MESSAGE_RENDER_TIMEOUT,)
                 break
-            #print 'adding msg to_render'
             to_render.appendleft(msg)
             i += 1
         return to_render

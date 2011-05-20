@@ -109,7 +109,7 @@ class Hud(object):
         for msg in ChatClientGlobal.chatRender.messages():
             #print 'drawing text at y-offset %i' % (offset + (line_height * i) + msg_height,)
             #print msg.payload.content
-            txt = self._to_draw_text(msg.payload.content, offset + (line_height * i) + msg_height)
+            txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
             msg_height += txt.height
             txt.draw()
             i += 1
