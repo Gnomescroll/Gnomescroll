@@ -18,19 +18,10 @@ class Hud(object):
 
     def __init__(self, win):
 
-        self.tex_dict = {} #delete this
-
+        self.text_dict = {} #delete this
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
-        self.text = font.Text(
-            self.font,
-            'Hello, World!',
-            x=win.width / 2,
-            y=win.height / 2,
-            halign=font.Text.CENTER,
-            valign=font.Text.CENTER,
-            color=(1, 1, 1, 0.5),
-        )
+        self.text = self._to_draw_text()
         self.fps = clock.ClockDisplay()
         self._init_reticle()
 
@@ -86,12 +77,15 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
 
     def draw_chat(self):
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND)
+
         self._draw_chat_messages()
 
     def _to_draw_text(self, text='', offset=120):
         txt = font.Text(
             self.font,
-            text = ChatClientGlobal.chatRender.user_input(),
+            text = text,
             x = 20,
             y = self.win.height - offset,
             z = 0,
@@ -99,25 +93,25 @@ class Hud(object):
         )
         return txt
 
-    def _draw_chat_input(self, txt=None):
+    def _draw_chat_input(self, draw=False, txt=None):
         if txt is None:
             txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
         else:
             txt.text = ChatClientGlobal.chatRender.user_input()
             txt.y = self.win.height - 120
-        txt.draw()
+        if draw:
+            txt.draw()
         return txt
 
     def _draw_chat_messages(self):
 
         offset = 20
         msg_height = 0
-        line_height = 5
+        line_height = 20
         i = 0
-        #txt = self._draw_chat_input()
         for msg in ChatClientGlobal.chatRender.messages():
-            if not self.tex_dict.has_key(i):
-                self.tex_dict[i] = font.Text(
+            if i not in self.text_dict:
+                self.text_dict[i] = font.Text(
                     self.font,
                     text = msg.payload.content,
                     x = 20,
@@ -125,9 +119,17 @@ class Hud(object):
                     z = 0,
                     color = (255,40,0,1)
                 )
+            else:
+                self.text_dict[i].text = msg.payload.content
             i += 1
 
-        for t in self.tex_dict.values():
+        input = self.text_dict.get('input', None)
+        if input is None:
+            self.text_dict['input'] = self._draw_chat_input()
+        else:
+            input.text = ChatClientGlobal.chatRender.user_input()
+
+        for t in self.text_dict.values():
             t.draw()
             #print 'drawing "%s"' % (msg.payload.content,)
             #if self.txt is None:

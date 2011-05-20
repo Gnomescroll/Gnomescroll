@@ -54,7 +54,7 @@ class Camera(object):
 
         glDisable(GL_DEPTH_TEST);
         #glDisable(GL_CULL_FACE);
-
+        glEnable(gl.GL_TEXTURE_2D) 
 
     def move_camera(self, dx, dy, dz):
 
