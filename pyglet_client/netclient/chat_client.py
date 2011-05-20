@@ -429,11 +429,16 @@ class ChatInputProcessor:
         return callback
 
     def _add_char(self, key, symbol, modifiers):
+        #print symbol
         try:
             c = chr(symbol)
-        except ValueError:
-            return None
-        except OverflowError:
+        except (ValueError, OverflowError):
+            #print symbol
+            #print key.symbol_string(symbol)
+            #print modifiers
+            #print key.modifiers_string(modifiers)
+            #if symbol == key.A:
+                #print 'pressing a though'
             return None
         
         digit_punctuation_map = '!@#$%^&*()'
