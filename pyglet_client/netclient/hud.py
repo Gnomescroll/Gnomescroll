@@ -18,13 +18,17 @@ class Hud(object):
 
     def __init__(self, win):
 
-        self.text_dict = {} #delete this
-        self.txt = None
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
         self.text = self._to_draw_text()
         self.fps = clock.ClockDisplay()
         self._init_reticle()
+
+        offset = 20
+        msg_height = 0
+        line_height = 20
+        msg_count = ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX
+        self.text_dict = dict(zip([i for i in range(msg_count)], [self._to_draw_text('', (offset + (line_height * i) + msg_height)) for i in range(msg_count)]))
 
     def _init_reticle(self):
         self.reticle = image.load(base_dir + 'texture/target.png')
@@ -111,21 +115,17 @@ class Hud(object):
         msg_height = 0
         line_height = 20
         i = 0
-        for msg in ChatClientGlobal.chatRender.messages():
-            if i not in self.text_dict:
-                self.text_dict[i] = font.Text(
-                    self.font,
-                    text = msg.payload.content,
-                    x = 20,
-                    y = self.win.height - (offset + (line_height * i) + msg_height),
-                    z = 0,
-                    color = (255,40,0,1)
-                )
-            else:
-                self.text_dict[i].text = msg.payload.content
+        msgs = ChatClientGlobal.chatRender.messages()
+        for msg in msgs:
+            content = msg.payload.content
+            txt = self.text_dict[i]
+            if txt.text != content:
+                print 'different "%s" "%s"' % (txt.text, content,)
+                print [m.payload.content for m in msgs]
+                txt.text = content
             i += 1
 
-        self._draw_chat_input
+        self._draw_chat_input()
 
         for t in self.text_dict.values():
             t.draw()
