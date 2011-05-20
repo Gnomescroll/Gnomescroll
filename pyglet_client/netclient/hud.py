@@ -18,7 +18,8 @@ class Hud(object):
 
     def __init__(self, win):
 
-        self.tex_dict = {} #delete this
+        self.text_dict = {} #delete this
+        self.txt = None
 
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
@@ -100,24 +101,25 @@ class Hud(object):
         return txt
 
     def _draw_chat_input(self, txt=None):
-        if txt is None:
-            txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
+        if self.txt is None:
+            self.txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
         else:
-            txt.text = ChatClientGlobal.chatRender.user_input()
-            txt.y = self.win.height - 120
-        txt.draw()
-        return txt
+            self.txt.text = ChatClientGlobal.chatRender.user_input()
+            self.txt.y = self.win.height - 120
+        self.txt.draw()
+        return self.txt
+
 
     def _draw_chat_messages(self):
 
         offset = 20
         msg_height = 0
-        line_height = 5
+        line_height = 20
         i = 0
         #txt = self._draw_chat_input()
         for msg in ChatClientGlobal.chatRender.messages():
-            if not self.tex_dict.has_key(i):
-                self.tex_dict[i] = font.Text(
+            if i not in self.text_dict:
+                self.text_dict[i] = font.Text(
                     self.font,
                     text = msg.payload.content,
                     x = 20,
@@ -125,15 +127,14 @@ class Hud(object):
                     z = 0,
                     color = (255,40,0,1)
                 )
+            else:
+                self.text_dict[i].text = msg.payload.content
             i += 1
 
-        for t in self.tex_dict.values():
+        if 'input' not in self.text_dict:
+            self.text_dict['input'] = self._draw_chat_input()
+        else:
+            self.text_dict['input'].text = ChatClientGlobal.chatRender.user_input()
+
+        for t in self.text_dict.values():
             t.draw()
-            #print 'drawing "%s"' % (msg.payload.content,)
-            #if self.txt is None:
-            #    self.txt = self._to_draw_text(text=msg.payload.content, offset=offset + (line_height * i) + msg_height)
-            #else:
-            #    self.txt.text = msg.payload.content
-            #    self.txt.y = self.win.height - (offset + (line_height * i) + msg_height)
-            #msg_height += self.txt.height
-            #self.txt.draw()
