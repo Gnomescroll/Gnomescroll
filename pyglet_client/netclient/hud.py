@@ -17,6 +17,9 @@ base_dir = "./"
 class Hud(object):
 
     def __init__(self, win):
+
+        self.txt = None #delete this
+
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
         self.text = font.Text(
