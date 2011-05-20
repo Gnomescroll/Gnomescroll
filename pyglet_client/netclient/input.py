@@ -47,9 +47,6 @@ class Keyboard(object):
         if not self.mode == 'chat':
             return
         print "Key= " + str(text)
-        callback = ChatClientGlobal.chatClient.input.process_key(text)
-        if callable(callback):
-            callback(self)
 
     def _init_key_handlers(self):
         self.bind_key_handlers({
@@ -70,10 +67,9 @@ class Keyboard(object):
     # pyglet.window.on_key_press
     def on_key_press(self, symbol, modifiers):
         if self.mode == 'chat':
-            pass
-#            callback = ChatClientGlobal.chatClient.input.process(key, symbol, modifiers)
-#            if callable(callback):
-#                callback(self)
+            callback = ChatClientGlobal.chatClient.input.process(key, symbol, modifiers)
+            if callable(callback):
+                callback(self)
         else:
             self.key_handlers.get(symbol, lambda: None)()
             #self.stateHandler(symbol, modifiers)

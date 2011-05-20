@@ -19,11 +19,11 @@ class ChatClientGlobal:
     @classmethod
     def init_1(self): #calls import methods if needed
         pass
-        
+
     @classmethod
     def on_register(self): # called after client connects
         ChatClientGlobal.chatClient.on_register()
-        
+
 
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -141,7 +141,7 @@ class ChatClient:
     def load(self):
         from simplejson import loads as decode_json
         from os.path import exists as path_exists
-        
+
         conf = CONFIG_PATH + '/' + self._conf
         if path_exists(conf):
             with open(conf, 'r') as f:
@@ -151,7 +151,7 @@ class ChatClient:
                     self.ignored = ignored
                 for channel in settings.get('subscriptions', []):
                     self.subscribe(channel)
-            
+
 
 # channel wrapper
 class Channel:
@@ -162,7 +162,7 @@ class Channel:
         self.name = name
         self.history = deque([], self.HISTORY_MAX)
         self._curr_iter = 0
-    
+
     def next(self):
         if self._curr_iter == len(self.history):
             self._curr_iter = 0
@@ -170,7 +170,7 @@ class Channel:
         else:
             self._curr_iter += 1
             return self.history[self._curr_iter-1]
-        
+
     def __iter__(self):
         return self
 
@@ -209,7 +209,7 @@ class ChatCommand():
     def route(self, command, args):
         _send = None
         payload = None
-        
+
         if command == 'channel':
             payload = Payload(
                 content = str(' '.join(args[1:])),
@@ -247,7 +247,7 @@ class ChatCommand():
         def _send():
             ChatClientGlobal.chatClient.receive(Payload(**data).serialize())
         return _send
-        
+
     def send(self):
         if self._send is not None:
             self._send()
@@ -347,7 +347,7 @@ class ChatInput:
     def clear(self):
         self.buffer = []
         self.cursor = 0
-        
+
     def __str__(self):
         return ''.join(self.buffer)
 
@@ -390,11 +390,12 @@ class ChatInput:
         print 'submitting ', text
         return text
 
+    #DEPRECATE
     def process(self, key, symbol, modifiers):
         callback = self.processor.process(key, symbol, modifiers)
         if callable(callback):
             return callback(self)
-        
+
 # key input is routed to here
 class ChatInputProcessor:
 
@@ -426,11 +427,11 @@ class ChatInputProcessor:
             c = chr(symbol)
         except ValueError:
             return None
-        
+
         digit_punctuation_map = '!@#$%^&*()'
         lower_punctuation = '`-=[]\\;\',./'
         upper_punctuation = '~_+{}|:"<>?'
-        
+
         if 'MOD_SHIFT' in key.modifiers_string(modifiers):
             if c in lowercase:
                 c = c.upper()
@@ -440,7 +441,7 @@ class ChatInputProcessor:
                 c = upper_punctuation[lower_punctuation.index(c)]
 
         return lambda input: input.add(c)
-        
+
 # history of submitted messages
 class ChatInputHistory:
 
@@ -475,7 +476,7 @@ class ChatInputHistory:
 
     def add(self, text):
         self.buffer.appendleft(text)
-        
+
 # returns data for rendering
 class ChatRender:
 
@@ -510,7 +511,7 @@ class ChatRender:
 
     def user_input(self):
         return str(ChatClientGlobal.chatClient.input)
-        
+
 if __name__ == '__main__':
     ChatClientGlobal.init_0()
     ChatClientGlobal.init_1()
