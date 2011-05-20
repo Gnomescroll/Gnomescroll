@@ -15,9 +15,15 @@ class ChatClientGlobal:
     def init_0(self): #first pass is declaring
         ChatClientGlobal.chatClient = ChatClient()
         ChatClientGlobal.chatRender = ChatRender()
+
     @classmethod
     def init_1(self): #calls import methods if needed
         pass
+        
+    @classmethod
+    def on_register(self): # called after client connects
+        ChatClientGlobal.chatClient.on_register()
+        
 
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -43,8 +49,13 @@ class ChatClient:
 
     _conf = 'chat.conf'
 
-    def __init__(self, channel=None):
+    def __init__(self):
         self.input = ChatInput()
+
+    def on_register(self, channel=None):
+        self._initial_subscribe(channel)
+
+    def _initial_subscribe(self, channel=None):
         if channel is not None:
             self.set_current_channel(channel)
         self.subscribe(self.CURRENT_CHANNEL)
@@ -102,11 +113,14 @@ class ChatClient:
     def receive(self, msg):
         print 'Received msg:'
         print msg
-        if channel in subscriptions:
+        channel = msg.get('channel', None)
+        if channel is None:
+            return
+        if channel in self.subscriptions:
             msg = ChatMessageIn(msg)
             if msg.payload.client_id in self.ignored:
                 return
-            subscriptions[channel].receive(msg)
+            self.subscriptions[channel].receive(msg)
 
     # saves ignored list + subscription channel names
     def save(self):
@@ -149,6 +163,7 @@ class Channel:
     
     def next(self):
         if self._curr_iter == len(self.history):
+            self._curr_iter = 0
             raise StopIteration
         else:
             self._curr_iter += 1
@@ -228,7 +243,7 @@ class ChatCommand():
 
     def _send_local(self, data):
         def _send():
-            ChatClientGlobal.chatClient.receive(Payload(data).serialize())
+            ChatClientGlobal.chatClient.receive(Payload(**data).serialize())
         return _send
         
     def send(self):
@@ -265,10 +280,11 @@ class ChatMessageOut():
 class ChatMessageIn():
 
     def __init__(self, msg):
-        self.payload = Payload(msg)
+        self.payload = Payload(**msg)
         self.payload.clean()
         self.valid = self.payload.valid()
         self.timestamp = int(now())
+        print 'chatmessageIN timestamp %i' % (self.timestamp,)
 
     # returns specific render formatting for the message (color, font etc)
     def render(self):
@@ -284,13 +300,15 @@ class Payload:
         'content',
         'time',
         'channel',
+        'client_id',
     ]
 
-    def __init__(self, **kwargs):
-        self.cmd = kwargs.get('cmd', 'chat')
-        self.content = kwargs.get('content', '')
-        self.time = int(kwargs.get('time', now()))
-        self.channel = kwargs.get('channel', '')
+    def __init__(self, **msg):
+        self.cmd = msg.get('cmd', 'chat')
+        self.content = msg.get('content', '')
+        self.time = int(msg.get('time', now()))
+        self.channel = msg.get('channel', '')
+        self.client_id = msg.get('client_id', '')
         self.valid()
 
     def clean(self):
@@ -474,14 +492,25 @@ class ChatRender:
         client = ChatClientGlobal.chatClient
         if channel is None:
             channel = client.CURRENT_CHANNEL
-        msgs = client.subscriptions[channel]
+        msgs = client.subscriptions.get(channel, None)
+        if msgs is None:
+            print 'Attempted to retrieve messages for channel: %s, but does not exist' % (channel,)
+            return []
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
-            print msg
+            #print msg
+            #print msg.timestamp - int(now())
+            #print msg.timestamp - int(now()) - self.MESSAGE_RENDER_TIMEOUT
             if msg.timestamp - int(now()) > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
+                print 'not rendering this msg'
+                print '%i/%i' % (i, self.MESSAGE_RENDER_COUNT_MAX,)
+                print 'timestamp %i' % (msg.timestamp)
+                print 'now %i' % (int(now()),)
+                print 'Diff: %i; timeout: %i' % (msg.timestamp - int(now()), self.MESSAGE_RENDER_TIMEOUT,)
                 break
+            #print 'adding msg to_render'
             to_render.appendleft(msg)
             i += 1
         return to_render

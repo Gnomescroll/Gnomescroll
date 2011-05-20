@@ -48,8 +48,9 @@ class ChatServer:
 
     # connect client
     def connect(self, connection):
-        self.clients[connection.client_id] =  connection
-        self.add_channel(connection.client_id)
+        client = ChatClient(connection)
+        self.clients[connection.client_id] = client
+        self.add_channel('pm_'+str(client.client_id))
 
     # disconnect client (removes client if disconnected for N seconds)
     def disconnect(self, connection):
@@ -64,9 +65,13 @@ class ChatServer:
 
     # remove client
     def remove(self, connection):
+        client = self.clients[connection.client_id]
+        for channel in client.channels:
+            if channel in self.channels and client.client_id in self.channels[channel]:
+                self.channels[channel].remove(client.client_id)
         del self.clients[connection.client_id]
 
-    def client_listen(self, client, channel=None):
+    def client_listen(self, connection, channel=None):
 
         def _add_client_to_channel(client, channel):
             channel_parts = channel.split('_')
@@ -75,11 +80,13 @@ class ChatServer:
                 return
             listeners = self.channels[channel]
             if client.client_id not in listeners:
+                print 'client %s now listening to %s' %(str(client.client_id), channel,)
                 listeners.append(client.client_id)
 
             if channel not in client.channels:
                 client.channels.append(channel)
 
+        client_id = connection.client_id
         client = self.clients.get(client_id, None)
         if client is None:
             print 'client_listen: client unknown'
@@ -91,7 +98,7 @@ class ChatServer:
         else:
             _add_client_to_channel(client, channel)
 
-    def client_unlisten(self, client_id, channel=None):
+    def client_unlisten(self, connection, channel=None):
 
         def _remove_client_from_channel(client, channel):
             if client.cliend_id in self.channels[channel]:
@@ -99,6 +106,7 @@ class ChatServer:
             if channel in client.channels:
                 client.channels.remove(channel)
 
+        client_id = connection.client_id
         client = self.clients.get(client_id, None)
         if client is None:
             print 'client_unlisten: client unknown'
@@ -119,10 +127,12 @@ class ChatServer:
             del self.channels[channel]
 
     def client_subscribe(self, msg, connection):
-        self.client_listen(connection.client_id, msg['channel'])
+        print 'client subscribing to: %s' % (msg['channel'],)
+        self.client_listen(connection, msg['channel'])
         
     def client_unsubscribe(self, msg, connection):
-        self.client_unlisten(connection.client_id, msg['channel'])
+        print 'client unsubscribing to: %s' % (msg['channel'],)
+        self.client_unlisten(connection, msg['channel'])
         
 
 
@@ -170,7 +180,7 @@ class ChatClient:
         self.connection = connection
         self.client_id = self.connection.client_id
         self.queue = []
-        self.channels = ['global', 'pm_'+self.client_id]
+        self.channels = ['global', 'pm_'+str(self.client_id)]
         self.connected = True
 
     def flush_queue(self):

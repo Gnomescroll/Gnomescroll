@@ -7,6 +7,8 @@ Client network incoming
 import simplejson as json
 #import struct
 
+from chat_client import ChatClientGlobal
+
 class NetEventGlobal:
     messageHandler = None
 
@@ -90,3 +92,6 @@ class MessageHandler:
         if NetClientGlobal.client_id == 0:
             NetClientGlobal.client_id = id
             NetOut.sendMessage.send_client_id()
+            #app.mainLoop()
+            ChatClientGlobal.on_register()
+    

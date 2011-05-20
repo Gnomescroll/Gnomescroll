@@ -67,17 +67,19 @@ class ChatMessage:
         NetOut.send_json(d)
 
     def subscribe(self, channel):
-        d = {}
-        d['channel'] = channel
-        d['cmd'] = 'subscribe'
-        d['client_id'] = str(NetClientGlobal.client_id)
+        d = {
+            'channel'   : channel,
+            'cmd'       : 'subscribe',
+            'client_id' : str(NetClientGlobal.client_id),
+        }
         NetOut.send_json(d)
 
     def unsubscribe(self, channel):
-        d = {}
-        d['channel'] = channel
-        d['cmd'] = 'unsubscribe'
-        d['client_id'] = str(NetClientGlobal.client_id)
+        d = {
+            'channel'   : channel,
+            'cmd'       : 'unsubscribe',
+            'client_id' : str(NetClientGlobal.client_id),
+        }
         NetOut.send_json(d)
         
 class AdminMessage:
