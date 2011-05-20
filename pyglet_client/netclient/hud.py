@@ -18,13 +18,17 @@ class Hud(object):
 
     def __init__(self, win):
 
-        self.text_dict = {} #delete this
-        self.txt = None
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
         self.text = self._to_draw_text()
         self.fps = clock.ClockDisplay()
         self._init_reticle()
+
+        offset = 20
+        msg_height = 0
+        line_height = 20
+        msg_count = ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX
+        self.text_dict = dict(zip([i for i in range(msg_count)], [self._to_draw_text('', (offset + (line_height * i) + msg_height)) for i in range(msg_count)]))
 
     def _init_reticle(self):
         self.reticle = image.load(base_dir + 'texture/target.png')
@@ -78,6 +82,9 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
 
     def draw_chat(self):
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND)
+
         self._draw_chat_messages()
 
     def _to_draw_text(self, text='', offset=120):
@@ -91,14 +98,15 @@ class Hud(object):
         )
         return txt
 
-    def _draw_chat_input(self, txt=None):
-        if self.txt is None:
-            self.txt = self._to_draw_text(ChatClientGlobal.chatRender.user_input(), 120)
+    def _draw_chat_input(self, draw=False, txt=None):
+        input = self.text_dict.get('input', None)
+        txt = txt or ChatClientGlobal.chatRender.user_input()
+        if input is None:
+            self.text_dict['input'] = self._to_draw_text(txt, 120)
         else:
-            self.txt.text = ChatClientGlobal.chatRender.user_input()
-            self.txt.y = self.win.height - 120
-        self.txt.draw()
-        return self.txt
+            input.text = txt            
+        if draw:
+            input.draw()
 
 
     def _draw_chat_messages(self):
@@ -107,29 +115,15 @@ class Hud(object):
         msg_height = 0
         line_height = 20
         i = 0
-        txt = self._draw_chat_input(self.text)
-        for msg in ChatClientGlobal.chatRender.messages():
-            if i not in self.text_dict:
-                self.text_dict[i] = font.Text(
-                    self.font,
-                    text = msg.payload.content,
-                    x = 20,
-                    y = self.win.height - (offset + (line_height * i) + msg_height),
-                    z = 0,
-                    color = (255,40,0,1)
-                )
-            else:
-                self.text_dict[i].text = msg.payload.content
-                txt.text = msg.payload.content
-                txt.y = self.win.height - (offset + (line_height * i) + msg_height)
-            msg_height += txt.height
-            txt.draw()
+        msgs = ChatClientGlobal.chatRender.messages()
+        for msg in msgs:
+            content = msg.payload.content
+            txt = self.text_dict[i]
+            if txt.text != content:
+                txt.text = content
             i += 1
 
-        if 'input' not in self.text_dict:
-            self.text_dict['input'] = self._draw_chat_input()
-        else:
-            self.text_dict['input'].text = ChatClientGlobal.chatRender.user_input()
+        self._draw_chat_input()
 
         for t in self.text_dict.values():
             t.draw()

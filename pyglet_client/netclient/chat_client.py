@@ -105,6 +105,8 @@ class ChatClient:
 
         if text is None:
             text = self.input.submit()
+        if text == '':
+            return
         if text[0] == '/':
             msg = ChatCommand(text)
         else:
@@ -173,6 +175,9 @@ class Channel:
 
     def __iter__(self):
         return self
+
+    def reset_iter(self):
+        self._curr_iter = 0
 
     def receive(self, msg):
         if msg.valid:
@@ -281,7 +286,9 @@ class ChatMessageOut():
 # msg received
 class ChatMessageIn():
 
-    def __init__(self, msg):
+    def __init__(self, msg=None):
+        if msg is None:
+            msg = {}
         self.payload = Payload(**msg)
         self.payload.clean()
         self.valid = self.payload.valid()
@@ -423,9 +430,16 @@ class ChatInputProcessor:
         return callback
 
     def _add_char(self, key, symbol, modifiers):
+        #print symbol
         try:
             c = chr(symbol)
-        except ValueError:
+        except (ValueError, OverflowError):
+            #print symbol
+            #print key.symbol_string(symbol)
+            #print modifiers
+            #print key.modifiers_string(modifiers)
+            #if symbol == key.A:
+                #print 'pressing a though'
             return None
 
         digit_punctuation_map = '!@#$%^&*()'
@@ -481,10 +495,10 @@ class ChatInputHistory:
 class ChatRender:
 
     MESSAGE_RENDER_TIMEOUT = 3500 # 2.5 seconds display time
-    MESSAGE_RENDER_COUNT_MAX = 10 # max msgs to display at once
+    MESSAGE_RENDER_COUNT_MAX = 8 # max msgs to display at once
 
     def __init__(self):
-        pass
+        self.empty_message = ChatMessageIn({ 'content': ''})
 
     # return subscribed channel names
     def channel_names(self):
@@ -495,10 +509,12 @@ class ChatRender:
         client = ChatClientGlobal.chatClient
         if channel is None:
             channel = client.CURRENT_CHANNEL
+        to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         msgs = client.subscriptions.get(channel, None)
         if msgs is None:
             print 'Attempted to retrieve messages for channel: %s, but does not exist' % (channel,)
-            return []
+            to_render.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX)])
+            return to_render
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
@@ -507,6 +523,8 @@ class ChatRender:
                 break
             to_render.appendleft(msg)
             i += 1
+        msgs.reset_iter()
+        to_render.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX - i)])
         return to_render
 
     def user_input(self):
