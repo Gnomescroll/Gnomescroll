@@ -18,19 +18,9 @@ class Hud(object):
 
     def __init__(self, win):
 
-        self.txt = None #delete this
-
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
-        self.text = font.Text(
-            self.font,
-            'Hello, World!',
-            x=win.width / 2,
-            y=win.height / 2,
-            halign=font.Text.CENTER,
-            valign=font.Text.CENTER,
-            color=(1, 1, 1, 0.5),
-        )
+        self.text = self._to_draw_text()
         self.fps = clock.ClockDisplay()
         self._init_reticle()
 
@@ -91,7 +81,7 @@ class Hud(object):
     def _to_draw_text(self, text='', offset=120):
         txt = font.Text(
             self.font,
-            text = ChatClientGlobal.chatRender.user_input(),
+            text = text,
             x = 20,
             y = self.win.height - offset,
             z = 0,
@@ -113,7 +103,7 @@ class Hud(object):
         msg_height = 0
         line_height = 5
         i = 0
-        txt = self._draw_chat_input()
+        txt = self._draw_chat_input(self.text)
         for msg in ChatClientGlobal.chatRender.messages():
             print 'drawing "%s"' % (msg.payload.content,)
             if txt is None:
