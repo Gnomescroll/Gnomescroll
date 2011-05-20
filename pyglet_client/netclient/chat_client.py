@@ -434,8 +434,7 @@ class ChatInputProcessor:
         except ValueError:
             return None
         except OverflowError:
-            print symbol, modifiers
-            raise OverflowError
+            return None
         
         digit_punctuation_map = '!@#$%^&*()'
         lower_punctuation = '`-=[]\\;\',./'
