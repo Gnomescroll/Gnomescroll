@@ -120,8 +120,6 @@ class Hud(object):
             content = msg.payload.content
             txt = self.text_dict[i]
             if txt.text != content:
-                print 'different "%s" "%s"' % (txt.text, content,)
-                print [m.payload.content for m in msgs]
                 txt.text = content
             i += 1
 
