@@ -57,6 +57,9 @@ class App(object):
         self.hud = Hud(self.win)
         #setup events
         self.keyboard.bind_key_handlers(key.ESCAPE, self.exit)
+        ##
+        self.win.on_text = self.keyboard.on_text #key input
+
         self.exit = False
         print "App init finished"
 

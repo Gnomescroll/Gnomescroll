@@ -43,6 +43,14 @@ class Keyboard(object):
         self.toggle_input_mode()
         self._init_key_handlers()
 
+    def on_text(self, text):
+        if not self.mode == 'chat':
+            return
+        print "Key= " + str(text)
+        callback = ChatClientGlobal.chatClient.input.process_key(text)
+        if callable(callback):
+            callback(self)
+
     def _init_key_handlers(self):
         self.bind_key_handlers({
             key.E : self.main.world.toggle_mipmap,
@@ -62,9 +70,10 @@ class Keyboard(object):
     # pyglet.window.on_key_press
     def on_key_press(self, symbol, modifiers):
         if self.mode == 'chat':
-            callback = ChatClientGlobal.chatClient.input.process(key, symbol, modifiers)
-            if callable(callback):
-                callback(self)
+            pass
+#            callback = ChatClientGlobal.chatClient.input.process(key, symbol, modifiers)
+#            if callable(callback):
+#                callback(self)
         else:
             self.key_handlers.get(symbol, lambda: None)()
             #self.stateHandler(symbol, modifiers)
@@ -90,7 +99,7 @@ class Keyboard(object):
         #mode switch
         if keyboard[key.Q]:
             self.toggle_input_mode()
-        
+
         if self.mode == 'camera':
             self.camera_input_mode(keyboard)
         elif self.mode == 'agent':
@@ -142,4 +151,4 @@ class Keyboard(object):
             self.camera.move_camera(0,0,-v)
         if keyboard[key.SPACE]:
             print "Event A.1"
-            
+
