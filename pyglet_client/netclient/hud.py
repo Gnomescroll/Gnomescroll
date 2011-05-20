@@ -83,8 +83,8 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
         
     def draw_chat(self):
-        self._draw_chat_messages()
         self._draw_chat_input()
+        self._draw_chat_messages()
         
     def _to_draw_text(self, text='', offset=120):
         txt = font.Text(
@@ -107,8 +107,8 @@ class Hud(object):
         line_height = 5
         i = 0
         for msg in ChatClientGlobal.chatRender.messages():
-            print 'drawing text at y-offset %i' % (offset + (line_height * i) + msg_height,)
-            print msg.payload.content
+            #print 'drawing text at y-offset %i' % (offset + (line_height * i) + msg_height,)
+            #print msg.payload.content
             txt = self._to_draw_text(msg.payload.content, offset + (line_height * i) + msg_height)
             msg_height += txt.height
             txt.draw()

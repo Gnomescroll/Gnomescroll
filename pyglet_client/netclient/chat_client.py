@@ -283,7 +283,7 @@ class ChatMessageIn():
         self.payload = Payload(**msg)
         self.payload.clean()
         self.valid = self.payload.valid()
-        self.timestamp = int(now())
+        self.timestamp = int(now() * 1000)
         print 'chatmessageIN timestamp %i' % (self.timestamp,)
 
     # returns specific render formatting for the message (color, font etc)
@@ -477,7 +477,7 @@ class ChatInputHistory:
 # returns data for rendering
 class ChatRender:
 
-    MESSAGE_RENDER_TIMEOUT = 2500 # 2.5 seconds display time
+    MESSAGE_RENDER_TIMEOUT = 3500 # 2.5 seconds display time
     MESSAGE_RENDER_COUNT_MAX = 10 # max msgs to display at once
 
     def __init__(self):
@@ -502,7 +502,10 @@ class ChatRender:
             #print msg
             #print msg.timestamp - int(now())
             #print msg.timestamp - int(now()) - self.MESSAGE_RENDER_TIMEOUT
-            if msg.timestamp - int(now()) > self.MESSAGE_RENDER_TIMEOUT or \
+            #print msg.timestamp
+            #print int(now() * 1000)
+            #print msg.timestamp - int(now()*1000)
+            if int(now()*1000) - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
                 print 'not rendering this msg'
                 print '%i/%i' % (i, self.MESSAGE_RENDER_COUNT_MAX,)
