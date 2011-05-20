@@ -58,8 +58,8 @@ class App(object):
         #setup events
         self.keyboard.bind_key_handlers(key.ESCAPE, self.exit)
         ##
-        self.win.on_text = self.keyboard.on_text #key input
-        self.win.on_text_motion = self.keyboard.on_text_motion #text movement
+#        self.win.on_text = self.keyboard.on_text #key input
+#        self.win.on_text_motion = self.keyboard.on_text_motion #text movement
         self.exit = False
         print "App init finished"
 
