@@ -72,6 +72,8 @@ class ChatClient:
         assert type(channel) == str
         if not channel:
             return
+        if channel in self.subscriptions:
+            return
         if channel == 'system':
             self.subscriptions.setdefault(channel, SystemChannel(channel))
         else:
