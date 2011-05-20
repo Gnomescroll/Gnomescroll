@@ -105,6 +105,8 @@ class ChatClient:
 
         if text is None:
             text = self.input.submit()
+        if text == '':
+            return
         if text[0] == '/':
             msg = ChatCommand(text)
         else:

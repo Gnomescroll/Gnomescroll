@@ -76,6 +76,9 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
 
     def draw_chat(self):
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND)
+
         self._draw_chat_messages()
 
     def _to_draw_text(self, text='', offset=120):
