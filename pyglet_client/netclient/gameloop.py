@@ -66,6 +66,9 @@ class App(object):
     def _on_close(self):
         ChatClientGlobal.chatClient.save()
 
+    def connect(self):
+        NetClientGlobal.connect() #starts connection
+
     def mainLoop(self):
         self.world.test_chunk()
         self.world.add_player(WorldStateGlobal.player) #do something about this
@@ -74,7 +77,8 @@ class App(object):
         self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
-        NetClientGlobal.connect() #starts connection
+        self.connect()
+        #ChatClientGlobal.on_connect()
         NetOut.sendMessage.request_chunk_list()
 
         #p = hotshot.Profile("../log/client.log")
@@ -98,5 +102,7 @@ class App(object):
         #p.stop()
         self.win.close
 
-app = App()
-app.mainLoop()
+if __name__ == '__main__':
+    app = App()
+    app.mainLoop()
+#app.mainLoop()

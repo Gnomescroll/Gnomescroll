@@ -5,7 +5,7 @@ echo
 cd server/
 tmpfile_prefix="lastserverpid"
 function runserver {
-    tmpfile_ext="XXXXXXXX.tmp"
+    tmpfile_ext="XXXXXXXX"
     tmpfile_prefix=$1
     python run.py &> /dev/null &
     rm ${tmpfile_prefix}*

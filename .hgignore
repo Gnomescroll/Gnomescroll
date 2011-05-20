@@ -16,5 +16,6 @@ steve.py
 startall.sh
 node_modules/
 
+lastserverpid*
 *.tmp
 conf/*.conf

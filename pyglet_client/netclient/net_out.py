@@ -63,8 +63,25 @@ class ChatMessage:
 
     def send_chat(self, d):
         d['cmd'] = 'chat'
+        d['client_id'] = str(NetClientGlobal.client_id)
         NetOut.send_json(d)
 
+    def subscribe(self, channel):
+        d = {
+            'channel'   : channel,
+            'cmd'       : 'subscribe',
+            'client_id' : str(NetClientGlobal.client_id),
+        }
+        NetOut.send_json(d)
+
+    def unsubscribe(self, channel):
+        d = {
+            'channel'   : channel,
+            'cmd'       : 'unsubscribe',
+            'client_id' : str(NetClientGlobal.client_id),
+        }
+        NetOut.send_json(d)
+        
 class AdminMessage:
 
     def set_map(self,x,y,z,value):
