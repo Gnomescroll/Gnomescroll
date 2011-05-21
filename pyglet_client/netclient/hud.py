@@ -180,5 +180,4 @@ class Hud(object):
                 dummy = self.text_dict['cursor_position']
                 dummy.text = input.text[0:cursor]
                 x += dummy.width
-        print x, y, length
         self._draw_vertical_line(x, y, length)
