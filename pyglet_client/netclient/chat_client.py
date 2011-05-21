@@ -6,7 +6,7 @@ Chat client
 
 from time import time as now
 from collections import deque
-from string import lowercase, uppercase, letters, digits
+from pyglet.window import key
 
 class ChatClientGlobal:
     chatClient = None
@@ -397,11 +397,21 @@ class ChatInput:
         print 'submitting ', text
         return text
 
-    #DEPRECATE
-    def process(self, key, symbol, modifiers):
-        callback = self.processor.process(key, symbol, modifiers)
+    def _input_callback(self, callback):
         if callable(callback):
             return callback(self)
+            
+    def on_key_press(self, symbol, modifiers):
+        callback = self.processor.on_key_press(symbol, modifiers)
+        return self._input_callback(callback)
+
+    def on_text(self, text):
+        callback = self.processor.on_text(text)
+        return self._input_callback(callback)
+        
+    def on_text_motion(self, motion):
+        callback = self.processor.on_text_motion(motion)
+        return self._input_callback(callback)
 
 # key input is routed to here
 class ChatInputProcessor:
@@ -409,52 +419,35 @@ class ChatInputProcessor:
     def __init__(self):
         pass
 
-    def process(self, key, symbol, modifiers):
+    def on_key_press(self, symbol, modifiers):
         callback = None
         if symbol == key.ENTER:         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
                 return lambda keyboard: keyboard.toggle_chat()
-        elif symbol == key.BACKSPACE:   # delete
-            callback = lambda input: input.remove()
-        elif symbol == key.UP:          # up history
-            callback = lambda input: input.history_older()
-        elif symbol == key.DOWN:        # down history
-            callback = lambda input: input.history_newer()
-        elif symbol == key.LEFT:        # move cursor
-            callback = lambda input: input.cursor_left()
-        elif symbol == key.RIGHT:       # move cursor
-            callback = lambda input: input.cursor_right()
-        else:                           # add character
-            callback = self._add_char(key, symbol, modifiers) or callback
+        elif symbol == key.ESCAPE:
+            def callback(input):
+                input.clear()
+                return lambda keyboard: keyboard.toggle_chat()
         return callback
 
-    def _add_char(self, key, symbol, modifiers):
-        #print symbol
-        try:
-            c = chr(symbol)
-        except (ValueError, OverflowError):
-            #print symbol
-            #print key.symbol_string(symbol)
-            #print modifiers
-            #print key.modifiers_string(modifiers)
-            #if symbol == key.A:
-                #print 'pressing a though'
-            return None
+    def on_text(self, text):
+        return lambda input: input.add(text)
 
-        digit_punctuation_map = '!@#$%^&*()'
-        lower_punctuation = '`-=[]\\;\',./'
-        upper_punctuation = '~_+{}|:"<>?'
-
-        if 'MOD_SHIFT' in key.modifiers_string(modifiers):
-            if c in lowercase:
-                c = c.upper()
-            elif c in digits:
-                c = digits_punctuation_map[digits.index(c)]
-            elif c in lower_punctuation: # punctuation
-                c = upper_punctuation[lower_punctuation.index(c)]
-
-        return lambda input: input.add(c)
+    def on_text_motion(self, motion):
+        motion = key.motion_string(motion)
+        callback = None
+        if motion == 'MOTION_UP':          # up history
+            callback = lambda input: input.history_older()
+        elif motion == 'MOTION_DOWN':        # down history
+            callback = lambda input: input.history_newer()
+        elif motion == 'MOTION_LEFT':        # move cursor
+            callback = lambda input: input.cursor_left()
+        elif motion == 'MOTION_RIGHT':       # move cursor
+            callback = lambda input: input.cursor_right()
+        elif motion == 'MOTION_BACKSPACE':   # delete
+            callback = lambda input: input.remove()
+        return callback
 
 # history of submitted messages
 class ChatInputHistory:

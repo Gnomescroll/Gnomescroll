@@ -46,20 +46,38 @@ class Keyboard(object):
         self.toggle_input_mode()
         self._init_key_handlers()
 
-####
+    def _input_callback(self, callback):
+        if callable(callback):
+            callback(self)
+
     #key input
     def on_text(self, text):
-        if not self.mode == 'chat':
-            return
+        if self.mode == 'chat':
+            callback = ChatClientGlobal.chatClient.input.on_text(text)
+            self._input_callback(callback)
+        else:
+            if text == 'y':
+                self.toggle_chat()
         print "Key= " + str(text)
+        print self.mode
 
-    #back space, cursor movement
+    # continuous non-character key detection
+    #e.g. back space, cursor movement
     def on_text_motion(self, motion):
-        if not self.mode == 'chat':
-            return
-        print "Motion= " + key.motion_string(motion) # str(motion)
-        pass
-###
+        if self.mode == 'chat':
+            callback = ChatClientGlobal.input.on_text_motion(motion)
+            self._input_callback(callback)
+        print "Motion= " + key.motion_string(motion)
+
+    # one-time non character key detection
+    # e.g. enter
+    def on_key_press(self, symbol, modifiers):
+        if self.mode == 'chat':
+            callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
+            self._input_callback(callback)
+        else:
+            self.key_handlers.get(symbol, lambda: None)()
+            #self.stateHandler(symbol, modifiers)
 
     def _init_key_handlers(self):
         self.bind_key_handlers({
@@ -77,17 +95,6 @@ class Keyboard(object):
         else:
             self.key_handlers[key] = handler
 
-    # pyglet.window.on_key_press
-    def on_key_press(self, symbol, modifiers):
-        if self.mode == 'chat':
-            callback = ChatClientGlobal.chatClient.input.process(key, symbol, modifiers)
-            if callable(callback):
-                callback(self)
-        else:
-            self.key_handlers.get(symbol, lambda: None)()
-            #self.stateHandler(symbol, modifiers)
-
-
     def toggle_chat(self):
         if self.mode == 'chat':
             self.toggle_input_mode(0)
@@ -95,7 +102,7 @@ class Keyboard(object):
             self.mode = 'chat'
 
     # toggles through modes.
-    def toggle_input_mode(self, change=1 ,current_mode = [0]):
+    def toggle_input_mode(self, change=1, current_mode=[0]):
         modes = ('camera', 'agent')
         if getattr(self, 'mode', None) is not None:
             current_mode[0] = (current_mode[0] + change) % len(modes)
