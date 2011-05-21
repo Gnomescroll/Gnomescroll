@@ -30,6 +30,8 @@ class Hud(object):
         line_height = 20
         msg_count = ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX
         self.text_dict = dict(zip([i for i in range(msg_count)], [self._to_draw_text('', (offset + (line_height * i) + msg_height)) for i in range(msg_count)]))
+        self.text_dict['input'] = self._to_draw_text('', 120)
+        self.text_dict['cursor_position'] = self._to_draw_text(text='')
 
     def _init_reticle(self):
         self.reticle = image.load(base_dir + 'texture/target.png')
@@ -87,10 +89,14 @@ class Hud(object):
         y1 = y
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y, x1, y1)), ('c3B\static', (255, 255, 0) *2))
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y+1, x1, y1+1)), ('c3B\static', (255, 255, 0) *2))
+        
+    def _draw_vertical_line(self, x, y, length=10):
+        x1 = x
+        y1 = y + length
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y, x1, y1)), ('c3B\static', (255, 255, 0) *2))
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (x+1, y, x1+1, y1)), ('c3B\static', (255, 255, 0) *2))
 
     def draw_chat(self):
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-        gl.glEnable(gl.GL_BLEND)
         self._draw_chat_messages()
         if InputGlobal.keyboard.mode == 'chat':
             self._draw_chat_input(draw=True)
@@ -108,13 +114,9 @@ class Hud(object):
         return txt
 
     def _draw_chat_input(self, draw=False, txt=None):
-        input = self.text_dict.get('input', None)
+        input = self.text_dict['input']
         txt = txt or ChatClientGlobal.chatRender.user_input()
-        if input is None:
-            input = self._to_draw_text(txt, 120)
-            self.text_dict['input'] = input
-        else:
-            input.text = txt            
+        input.text = txt            
         if draw:
             input.draw()
 
@@ -143,7 +145,13 @@ class Hud(object):
         for t in to_draw:
             t.draw()
 
-    def _draw_cursor(self):
+    def _draw_cursor(self, direction='vertical'):
+        if direction == 'vertical':
+            self._draw_vertical_cursor()
+        else:
+            self._draw_horizontal_cursor()
+
+    def _draw_horizontal_cursor(self):
         cursor = ChatClientGlobal.chatRender.cursor_position()
         input = self.text_dict['input']
         input_length = len(input.text)
@@ -155,3 +163,17 @@ class Hud(object):
         x = input.x + (length * (cursor))
         self._draw_horizontal_line(x, y, length)
         
+    def _draw_vertical_cursor(self):
+        cursor = ChatClientGlobal.chatRender.cursor_position()
+        input = self.text_dict['input']
+        input_length = len(input.text)
+        length = input.height / 2
+        y = input.y
+        x = input.x
+        if cursor == input_length:
+            x += input.width
+        elif cursor != 0:
+            dummy = self.text_dict['cursor_position']
+            dummy.text = input.text[0:cursor]
+            x += dummy.width
+        self._draw_vertical_line(x, y, length)

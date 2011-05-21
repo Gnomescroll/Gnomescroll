@@ -55,8 +55,6 @@ class App(object):
         self.win = window.Window(fullscreen=False, vsync=False)
         self.win.on_close = self._on_close
         self.camera = Camera(self.win)
-        #self.keyboard = Keyboard(self) #move to inputs global
-        #self.mouse = Mouse(self)       #move to inputs global
         self.hud = Hud(self.win)
         #setup events
         self.exit = False
