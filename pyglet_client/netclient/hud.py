@@ -117,9 +117,16 @@ class Hud(object):
         msgs = ChatClientGlobal.chatRender.messages()
         for msg in msgs:
             content = msg.payload.content
+            channel = msg.payload.channel
+            if channel == 'system':
+                color = (40, 255, 0, 1)
+            else:
+                color = (255, 40, 0, 1)
             txt = self.text_dict[i]
             if txt.text != content:
                 txt.text = content
+            if txt.color != color:
+                txt.color = color
             i += 1
 
         self._draw_chat_input()
