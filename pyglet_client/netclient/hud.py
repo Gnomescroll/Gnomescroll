@@ -18,20 +18,21 @@ base_dir = "./"
 class Hud(object):
 
     def __init__(self, win):
-
         self.win = win
         self.font = font.load('Helvetica', 14, bold=True)
         self.text = self._to_draw_text()
         self.fps = clock.ClockDisplay()
         self._init_reticle()
+        self._init_text_dict()
+        
 
+    def _init_text_dict(self):
         offset = 20
         msg_height = 0
         line_height = 20
         msg_count = ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX
         self.text_dict = dict(zip([i for i in range(msg_count)], [self._to_draw_text('', (offset + (line_height * i) + msg_height)) for i in range(msg_count)]))
-        self.text_dict['input'] = self._to_draw_text('', 120)
-        self.text_dict['input'].text = 'j'
+        self.text_dict['input'] = self._to_draw_text('j', 120) # 'j' to force text height to be cached so cursor will appear properly on first load
         self.text_dict['input'].text = ''
         self.text_dict['cursor_position'] = self._to_draw_text(text='')
 
@@ -170,9 +171,6 @@ class Hud(object):
         input = self.text_dict['input']
         input_length = len(input.text)
         length = input.height / 2
-        if length == 0:
-            #input.text = 'j'
-            length = input.height / 2
         y = input.y
         x = input.x
         if cursor != 0:
