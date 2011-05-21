@@ -403,7 +403,7 @@ class ChatInput:
         self.cursor = len(self.buffer)
 
     def history_older(self):
-        self.buffer = list(self.history.older(self.buffer))
+        self.buffer = list(self.history.older(str(self)))
         self.cursor = len(self.buffer)
 
     def submit(self):
@@ -525,13 +525,13 @@ class ChatRender:
         self._pad_queue(to_render)
         return to_render
 
+    # filter channel to recent messages, maximum self.MESSAGE_RENDER_COUNT_MAX
     def _filter_channel(self, channel):
         client = ChatClientGlobal.chatClient
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         msgs = client.subscriptions.get(channel, None)
         if msgs is None:
             print 'Attempted to retrieve messages for channel: %s, but does not exist' % (channel,)
-            to_render.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX)])
             return to_render
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
@@ -542,9 +542,9 @@ class ChatRender:
             to_render.appendleft(msg)
             i += 1
         msgs.reset_iter()
-        #self._pad_queue(to_render)
         return to_render
 
+    # merge two channel queues, sorted by time
     def _merge_channels(self, deque1, deque2):
         merged = list(deque1)
         merged.extend(list(deque2))
@@ -553,9 +553,9 @@ class ChatRender:
         merged = deque(merged, self.MESSAGE_RENDER_COUNT_MAX)
         return merged
 
+    # pads queue with empty messages
     def _pad_queue(self, queue):
         queue.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX - len(queue))])
-        return queue
         
     def user_input(self):
         return str(ChatClientGlobal.chatClient.input)
