@@ -121,8 +121,6 @@ class ChatClient:
         if text == '':
             return
         if text[0] == '/':
-            print text
-            print 'text[0] is /'
             msg = ChatCommand(text)
         else:
             msg = ChatMessageOut(text)
@@ -237,34 +235,26 @@ class ChatCommand():
                 channel = args[0],
                 content = str(' '.join(args[1:])),
             )
-
         elif command == 'version':
-            print 'command is version'
             _send = self._send_local({
                 'content' : 'DCMMO Client version: ' + NetClientGlobal.VERSION,
                 'channel' : 'system'
             })
-            print _send
-
         elif command == 'ping':
             payload = Payload(
                 channel = 'system',
                 content = 'ping'
             )
-
         elif command == 'save':
             _send = lambda: ChatClientGlobal.chatClient.save()
-
         elif command == 'join':
             _send = lambda: ChatClientGlobal.chatClient.set_current_channel(args[0])
-
         elif command == 'leave':
             if len(args) == 0:
                 channel = None
             else:
                 channel = args[0]
             _send = lambda: ChatClientGlobal.chatClient.unsubscribe(channel)
-
         else:
             _send = self._send_local({
                 'content' : command + ' command is not implemented.',
@@ -272,9 +262,7 @@ class ChatCommand():
             })
 
         self.payload = payload
-        print _send
         self._send = _send
-        print self._send
 
     def _send_local(self, data):
         def _send():
@@ -283,15 +271,10 @@ class ChatCommand():
         return _send
 
     def send(self):
-        print 'sending system command'
-        print self._send
         if self._send is not None:
-            print 'using custom _send'
             self._send()
         else:
-            print 'using default send'
             if self.payload is not None:
-                print 'payload is not none, should send'
                 NetOut.chatMessage.send_chat(self.payload.serialize())
 
 # msg to be sent

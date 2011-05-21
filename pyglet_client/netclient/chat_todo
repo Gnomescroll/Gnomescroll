@@ -1,0 +1,9 @@
+insert system messages into current channel as red msgs
+
+client_id -> username display
+
+maybe use htmllabel for msg display?
+
+enforce character limit
+
+arrow keys insert absurd text problem
