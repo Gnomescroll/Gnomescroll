@@ -4,9 +4,12 @@
 Chat client
 '''
 
-from time import time as now
+from time import time
 from collections import deque
 from pyglet.window import key
+
+def now():
+    return int(time() * 1000)
 
 class ChatClientGlobal:
     chatClient = None
@@ -200,8 +203,9 @@ class SystemChannel(Channel):
 
     def receive(self, msg):
         if msg.payload.content == 'ping':
+            content = 'Chat ping round-trip time = %ims' % (now()-int(msg.payload.time),)
             log = ChatMessageIn({
-                'content'   : 'Chat ping round-trip time = ' + str(int(now()) - int(msg.payload.time)),
+                'content'   : content,
                 'channel'   : 'system',
                 'client_id' : 'system',
                 'cmd'       : 'chat',
@@ -322,7 +326,7 @@ class ChatMessageIn():
         self.payload = Payload(**msg)
         self.payload.clean()
         self.valid = self.payload.valid()
-        self.timestamp = int(now() * 1000)
+        self.timestamp = now()
         print 'chatmessageIN timestamp %i' % (self.timestamp,)
 
     # returns specific render formatting for the message (color, font etc)
@@ -541,7 +545,7 @@ class ChatRender:
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
-            if int(now()*1000) - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
+            if now() - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
                 break
             to_render.appendleft(msg)

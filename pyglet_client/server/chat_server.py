@@ -1,10 +1,13 @@
 #!/usr/bin/python
 
-from time import time as now
+from time import time
 from copy import copy
 from collections import defaultdict
 
 from server_api import ServerGlobal
+
+def now():
+    return int(time() * 1000)
 
 class ChatServerGlobal:
     chatServer = None
@@ -150,7 +153,7 @@ class ChatMessage:
         connection = connection or {}
         self.payload = copy(msg)
         self.payload['cmd'] = 'chat'
-        self.payload['time'] = self.payload.get('time', None) or int(now())
+        self.payload['time'] = self.payload.get('time', None) or now()
         self.payload['client_id'] = getattr(connection, 'client_id', '')
         self.clean()
         self.validate()
