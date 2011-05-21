@@ -6,6 +6,22 @@ Client input
 
 from world_state import WorldStateGlobal
 
+from pyglet.window import key
+from pyglet.window.key import symbol_string
+
+class InputGlobal:
+    keyboard = None
+    mouse = None
+
+    @classmethod
+    def init_0(self, main):
+        InputGlobal.mouse = Mouse(main)
+        InputGlobal.keyboard = Keyboard(main)
+
+    @classmethod
+    def init_1(self, main):
+        InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
+
 class Mouse(object):
 
     def __init__(self, main):
@@ -22,9 +38,6 @@ class Mouse(object):
         else:
             self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
-
-from pyglet.window.key import symbol_string
-from pyglet.window import key
 
 from chat_client import ChatClientGlobal
 

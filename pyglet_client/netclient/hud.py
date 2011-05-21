@@ -7,6 +7,7 @@ from pyglet import graphics
 from pyglet import image
 
 from chat_client import ChatClientGlobal
+from input import InputGlobal
 
 '''
 HUD overlay
@@ -81,11 +82,19 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 200, 200, 20)), ('c3B\static', (215,0,0) *2))
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (200, 20, 20, 20)), ('c3B\static', (215,0,0) *2))
 
+    def _draw_horizontal_line(self, x, y, length=10):
+        x1 = x + length
+        y1 = y
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y, x1, y1)), ('c3B\static', (255, 255, 0) *2))
+        graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y+1, x1, y1+1)), ('c3B\static', (255, 255, 0) *2))
+
     def draw_chat(self):
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_BLEND)
-
         self._draw_chat_messages()
+        if InputGlobal.keyboard.mode == 'chat':
+            self._draw_chat_input(draw=True)
+            self._draw_cursor()
 
     def _to_draw_text(self, text='', offset=120):
         txt = font.Text(
@@ -102,14 +111,15 @@ class Hud(object):
         input = self.text_dict.get('input', None)
         txt = txt or ChatClientGlobal.chatRender.user_input()
         if input is None:
-            self.text_dict['input'] = self._to_draw_text(txt, 120)
+            input = self._to_draw_text(txt, 120)
+            self.text_dict['input'] = input
         else:
             input.text = txt            
         if draw:
             input.draw()
 
     def _draw_chat_messages(self):
-
+        to_draw = []
         offset = 20
         msg_height = 0
         line_height = 20
@@ -127,9 +137,21 @@ class Hud(object):
                 txt.text = content
             if txt.color != color:
                 txt.color = color
+            to_draw.append(txt)
             i += 1
 
-        self._draw_chat_input()
-
-        for t in self.text_dict.values():
+        for t in to_draw:
             t.draw()
+
+    def _draw_cursor(self):
+        cursor = ChatClientGlobal.chatRender.cursor_position()
+        input = self.text_dict['input']
+        input_length = len(input.text)
+        if input_length == 0:
+            length = 10
+        else:
+            length = input.width / input_length
+        y = input.y - 5
+        x = input.x + (length * (cursor))
+        self._draw_horizontal_line(x, y, length)
+        

@@ -21,7 +21,7 @@ from net_event import NetEventGlobal
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
 from client_event import ClientEventGlobal
-
+from input import InputGlobal
 from chat_client import ChatClientGlobal
 
 #import hotshot
@@ -44,26 +44,27 @@ class App(object):
         NetOut.init_1()
         ChatClientGlobal.init_1()
 
+    def init_inputs(self):
+        InputGlobal.init_0(self)
+        InputGlobal.init_1(self)
+
     def __init__(self):
         self.init_globals()
-
         #other
         self.world = world.World()  #deprecate?
         self.win = window.Window(fullscreen=False, vsync=False)
         self.win.on_close = self._on_close
         self.camera = Camera(self.win)
-        self.keyboard = Keyboard(self) #move to inputs global
-        self.mouse = Mouse(self)       #move to inputs global
+        #self.keyboard = Keyboard(self) #move to inputs global
+        #self.mouse = Mouse(self)       #move to inputs global
         self.hud = Hud(self.win)
         #setup events
-        self.keyboard.bind_key_handlers(key.ESCAPE, self.exit)
-        ##
-#        self.win.on_text = self.keyboard.on_text #key input
-#        self.win.on_text_motion = self.keyboard.on_text_motion #text movement
         self.exit = False
+
+        self.init_inputs()
         print "App init finished"
 
-    def exit(self):
+    def _exit(self):
         self.exit = True
 
     def _on_close(self):
@@ -89,7 +90,7 @@ class App(object):
         self.player = WorldStateGlobal.player
         while not self.exit:
             self.win.dispatch_events()
-            self.keyboard.stateHandler(keyboard)
+            InputGlobal.keyboard.stateHandler(keyboard)
             [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
             NetOut.sendMessage.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
             #network events
@@ -103,7 +104,7 @@ class App(object):
             clock.tick()
             self.win.flip()
         #p.stop()
-        self.win.close
+        self.win.close()
 
 if __name__ == '__main__':
     app = App()
