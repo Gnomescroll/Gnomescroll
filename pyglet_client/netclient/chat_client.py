@@ -199,16 +199,17 @@ class Channel:
 class SystemChannel(Channel):
 
     def receive(self, msg):
-        log = None
         if msg.payload.content == 'ping':
-            log = Payload(
-                content   = 'Chat ping round-trip time = ' + (int(now()) - int(msg.time)),
-                channel   = 'system',
-                client_id = 'system',
-                cmd       = 'chat',
-            )
-
-        if log is not None:
+            log = ChatMessageIn({
+                'content'   : 'Chat ping round-trip time = ' + str(int(now()) - int(msg.payload.time)),
+                'channel'   : 'system',
+                'client_id' : 'system',
+                'cmd'       : 'chat',
+            })
+        else:
+            log = msg
+            
+        if log.valid:
             self.history.appendleft(log)
 
 # command message (e.g. /channel highlands i am messaging the highlands channel)
