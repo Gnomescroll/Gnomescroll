@@ -99,7 +99,11 @@ class ChatClient:
             del self.subscriptions[channel]
             NetOut.chatMessage.unsubscribe(channel)
         if switch:
-            self.set_current_channel(self.subscriptions.keys()[-1])
+            channel_names = self.subscriptions.keys()
+            next = channel_names[-1]
+            if next == 'system' and len(channel_names) > 1:
+                next = channel_names[-2]
+            self.set_current_channel(next)
 
     # add client_id to ignore list
     def ignore(self, client_id):
