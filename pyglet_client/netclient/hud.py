@@ -91,6 +91,7 @@ class Hud(object):
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y+1, x1, y1+1)), ('c3B\static', (255, 255, 0) *2))
         
     def _draw_vertical_line(self, x, y, length=10):
+        print x
         x1 = x
         y1 = y + length
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y, x1, y1)), ('c3B\static', (255, 255, 0) *2))
@@ -170,10 +171,14 @@ class Hud(object):
         length = input.height / 2
         y = input.y
         x = input.x
-        if cursor == input_length:
-            x += input.width
-        elif cursor != 0:
-            dummy = self.text_dict['cursor_position']
-            dummy.text = input.text[0:cursor]
-            x += dummy.width
+        print x
+        if cursor != 0:
+            if cursor == input_length:
+                print 'cursor == input length'
+                print input.width
+                x += input.width
+            else:
+                dummy = self.text_dict['cursor_position']
+                dummy.text = input.text[0:cursor]
+                x += dummy.width
         self._draw_vertical_line(x, y, length)

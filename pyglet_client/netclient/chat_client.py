@@ -371,9 +371,14 @@ class ChatInput:
     def clear(self):
         self.buffer = []
         self.cursor = 0
+        self.text = ''
 
     def __str__(self):
-        return ''.join(self.buffer)
+        #return ''.join(self.buffer)
+        return self.text
+
+    def stringify(self):
+        self.text = ''.join(self.buffer)
 
     def add(self, char, index=None):
         if index is not None:
@@ -381,6 +386,7 @@ class ChatInput:
         else:
             self.buffer.insert(self.cursor, char)
         self.cursor += 1
+        self.stringify()
 
     def remove(self, index=None):
         try:
@@ -389,6 +395,7 @@ class ChatInput:
             else:
                 self.buffer.pop()
             self.cursor += -1
+            self.stringify()
         except IndexError:
             pass
 
@@ -400,10 +407,12 @@ class ChatInput:
 
     def history_newer(self):
         self.buffer = list(self.history.newer())
+        self.stringify()
         self.cursor = len(self.buffer)
 
     def history_older(self):
         self.buffer = list(self.history.older(str(self)))
+        self.stringify()
         self.cursor = len(self.buffer)
 
     def submit(self):
