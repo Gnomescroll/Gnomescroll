@@ -94,7 +94,7 @@ class Hud(object):
             x = 20,
             y = self.win.height - offset,
             z = 0,
-            color = (255,40,0,1)
+            color = (255, 40, 0, 1)
         )
         return txt
 
