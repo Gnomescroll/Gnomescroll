@@ -31,6 +31,8 @@ class Hud(object):
         msg_count = ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX
         self.text_dict = dict(zip([i for i in range(msg_count)], [self._to_draw_text('', (offset + (line_height * i) + msg_height)) for i in range(msg_count)]))
         self.text_dict['input'] = self._to_draw_text('', 120)
+        self.text_dict['input'].text = 'j'
+        self.text_dict['input'].text = ''
         self.text_dict['cursor_position'] = self._to_draw_text(text='')
 
     def _init_reticle(self):
@@ -168,9 +170,11 @@ class Hud(object):
         input = self.text_dict['input']
         input_length = len(input.text)
         length = input.height / 2
+        if length == 0:
+            #input.text = 'j'
+            length = input.height / 2
         y = input.y
         x = input.x
-        print x, y
         if cursor != 0:
             if cursor == input_length:
                 x += input.width
@@ -178,4 +182,5 @@ class Hud(object):
                 dummy = self.text_dict['cursor_position']
                 dummy.text = input.text[0:cursor]
                 x += dummy.width
+        print x, y, length
         self._draw_vertical_line(x, y, length)
