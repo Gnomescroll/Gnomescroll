@@ -104,6 +104,7 @@ class Hud(object):
         if InputGlobal.keyboard.mode == 'chat':
             self._draw_chat_input(draw=True)
             self._draw_cursor()
+        gl.glDisable(gl.GL_BLEND)
 
     def _to_draw_text(self, text='', offset=120):
         txt = font.Text(
@@ -165,7 +166,7 @@ class Hud(object):
         y = input.y - 5
         x = input.x + (length * (cursor))
         self._draw_horizontal_line(x, y, length)
-        
+
     def _draw_vertical_cursor(self):
         cursor = ChatClientGlobal.chatRender.cursor_position()
         input = self.text_dict['input']
