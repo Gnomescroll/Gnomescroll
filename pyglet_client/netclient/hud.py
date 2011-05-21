@@ -108,7 +108,6 @@ class Hud(object):
         if draw:
             input.draw()
 
-
     def _draw_chat_messages(self):
 
         offset = 20

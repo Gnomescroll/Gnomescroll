@@ -101,7 +101,7 @@ class ChatServer:
     def client_unlisten(self, connection, channel=None):
 
         def _remove_client_from_channel(client, channel):
-            if client.cliend_id in self.channels[channel]:
+            if client.client_id in self.channels[channel]:
                 self.channels[channel].remove(client.client_id)
             if channel in client.channels:
                 client.channels.remove(channel)

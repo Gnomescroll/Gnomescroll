@@ -63,8 +63,6 @@ class ChatClient:
         self.load()
 
     def set_current_channel(self, channel):
-        if self.CURRENT_CHANNEL != channel:
-            self.unsubscribe(self.CURRENT_CHANNEL)
         self.CURRENT_CHANNEL = channel
         self.subscribe(self.CURRENT_CHANNEL)
 
@@ -81,12 +79,24 @@ class ChatClient:
         NetOut.chatMessage.subscribe(channel)
         print 'Chat client subscribed to %s' % (channel,)
 
-    def unsubscribe(self, channel):
+    def unsubscribe(self, channel=None):
+        switch = False
+        if channel == self.CURRENT_CHANNEL:
+            switch = True
+            if len(self.subscriptions) <= 1:
+                return
+        elif channel is None:
+            channel = self.CURRENT_CHANNEL
+            switch = True
+            if len(self.subscriptions) <= 1:
+                return
         if channel == 'system':
             return
         if channel in self.subscriptions:
             del self.subscriptions[channel]
             NetOut.chatMessage.unsubscribe(channel)
+        if switch:
+            self.set_current_channel(self.subscriptions.keys()[-1])
 
     # add client_id to ignore list
     def ignore(self, client_id):
@@ -108,6 +118,8 @@ class ChatClient:
         if text == '':
             return
         if text[0] == '/':
+            print text
+            print 'text[0] is /'
             msg = ChatCommand(text)
         else:
             msg = ChatMessageOut(text)
@@ -188,7 +200,7 @@ class SystemChannel(Channel):
 
     def receive(self, msg):
         log = None
-        if msg.content == 'ping':
+        if msg.payload.content == 'ping':
             log = Payload(
                 content   = 'Chat ping round-trip time = ' + (int(now()) - int(msg.time)),
                 channel   = 'system',
@@ -206,9 +218,9 @@ class ChatCommand():
         text_pts = text.split(' ')
         command = text_pts[0][1:]
         args = text_pts[1:]
-        self.route(command, args)
         self._send = None
         self.payload = None
+        self.route(command, args)
 
     # create a special payload and/or a special _send command
     def route(self, command, args):
@@ -217,15 +229,17 @@ class ChatCommand():
 
         if command == 'channel':
             payload = Payload(
+                channel = args[0],
                 content = str(' '.join(args[1:])),
-                channel = args[0]
             )
 
         elif command == 'version':
+            print 'command is version'
             _send = self._send_local({
                 'content' : 'DCMMO Client version: ' + NetClientGlobal.VERSION,
                 'channel' : 'system'
             })
+            print _send
 
         elif command == 'ping':
             payload = Payload(
@@ -239,6 +253,13 @@ class ChatCommand():
         elif command == 'join':
             _send = lambda: ChatClientGlobal.chatClient.set_current_channel(args[0])
 
+        elif command == 'leave':
+            if len(args) == 0:
+                channel = None
+            else:
+                channel = args[0]
+            _send = lambda: ChatClientGlobal.chatClient.unsubscribe(channel)
+
         else:
             _send = self._send_local({
                 'content' : command + ' command is not implemented.',
@@ -246,18 +267,26 @@ class ChatCommand():
             })
 
         self.payload = payload
+        print _send
         self._send = _send
+        print self._send
 
     def _send_local(self, data):
         def _send():
+            print 'sending local'
             ChatClientGlobal.chatClient.receive(Payload(**data).serialize())
         return _send
 
     def send(self):
+        print 'sending system command'
+        print self._send
         if self._send is not None:
+            print 'using custom _send'
             self._send()
         else:
+            print 'using default send'
             if self.payload is not None:
+                print 'payload is not none, should send'
                 NetOut.chatMessage.send_chat(self.payload.serialize())
 
 # msg to be sent
@@ -425,7 +454,7 @@ class ChatInputProcessor:
             def callback(input):
                 ChatClientGlobal.chatClient.send()
                 return lambda keyboard: keyboard.toggle_chat()
-        elif symbol == key.ESCAPE:
+        elif symbol == key.ESCAPE:      # clear, cancel chat
             def callback(input):
                 input.clear()
                 return lambda keyboard: keyboard.toggle_chat()
@@ -437,7 +466,7 @@ class ChatInputProcessor:
     def on_text_motion(self, motion):
         motion = key.motion_string(motion)
         callback = None
-        if motion == 'MOTION_UP':          # up history
+        if motion == 'MOTION_UP':            # up history
             callback = lambda input: input.history_older()
         elif motion == 'MOTION_DOWN':        # down history
             callback = lambda input: input.history_newer()

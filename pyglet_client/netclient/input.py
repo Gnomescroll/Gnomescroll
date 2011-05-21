@@ -58,16 +58,13 @@ class Keyboard(object):
         else:
             if text == 'y':
                 self.toggle_chat()
-        print "Key= " + str(text)
-        print self.mode
 
     # continuous non-character key detection
     #e.g. back space, cursor movement
     def on_text_motion(self, motion):
         if self.mode == 'chat':
-            callback = ChatClientGlobal.input.on_text_motion(motion)
+            callback = ChatClientGlobal.chatClient.input.on_text_motion(motion)
             self._input_callback(callback)
-        print "Motion= " + key.motion_string(motion)
 
     # one-time non character key detection
     # e.g. enter
@@ -77,13 +74,11 @@ class Keyboard(object):
             self._input_callback(callback)
         else:
             self.key_handlers.get(symbol, lambda: None)()
-            #self.stateHandler(symbol, modifiers)
 
     def _init_key_handlers(self):
         self.bind_key_handlers({
             key.E : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
-            key.Y : self.toggle_chat
         })
 
     # accept key,handler or a dict of key,handlers
