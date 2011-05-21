@@ -516,9 +516,17 @@ class ChatRender:
 
     # returns messages to be rendered for the current active channel
     def messages(self, channel=None):
-        client = ChatClientGlobal.chatClient
         if channel is None:
-            channel = client.CURRENT_CHANNEL
+            channel = ChatClientGlobal.chatClient.CURRENT_CHANNEL
+        to_render = self._filter_channel(channel)
+        if channel != 'system':
+            to_merge = self._filter_channel('system')
+            to_render = self._merge_channels(to_render, to_merge)
+        self._pad_queue(to_render)
+        return to_render
+
+    def _filter_channel(self, channel):
+        client = ChatClientGlobal.chatClient
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         msgs = client.subscriptions.get(channel, None)
         if msgs is None:
@@ -534,9 +542,21 @@ class ChatRender:
             to_render.appendleft(msg)
             i += 1
         msgs.reset_iter()
-        to_render.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX - i)])
+        #self._pad_queue(to_render)
         return to_render
 
+    def _merge_channels(self, deque1, deque2):
+        merged = list(deque1)
+        merged.extend(list(deque2))
+        merged = sorted(merged, key=lambda msg: msg.timestamp)
+        merged = merged[0:self.MESSAGE_RENDER_COUNT_MAX]
+        merged = deque(merged, self.MESSAGE_RENDER_COUNT_MAX)
+        return merged
+
+    def _pad_queue(self, queue):
+        queue.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX - len(queue))])
+        return queue
+        
     def user_input(self):
         return str(ChatClientGlobal.chatClient.input)
 
