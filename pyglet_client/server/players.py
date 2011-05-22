@@ -9,13 +9,17 @@ class PlayerList(GenericObjectList):
         self._metaname = 'PlayerList'
         self._itemname = 'Player'
         self._object_type = Player
+        self.client_ids = {}
 
     def join(self, client_id, name):
-        self._add(client_id, name)
+        player = self._add(client_id, name)
+        self.client_ids[client_id] = player.id
         
-    def leave(self, id):
-        self._remove(id)
-
+    def leave(self, player):
+        client_id = player.client_id
+        if self._remove(player) and client_id in self.client_ids:
+            del self.client_ids[client_id]
+        
                 
 # represents a "Player" (player score, agents they control etc)
 class Player:
