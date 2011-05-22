@@ -57,7 +57,7 @@ class MapMessage:
             }
         NetOut.send_json(d)
 
-    def request_chunk(x,y,z):
+    def request_chunk(self, x,y,z):
         d = {
             'cmd' : 'request_chunk',
             'value' : (x,y,z)
