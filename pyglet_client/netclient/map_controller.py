@@ -20,7 +20,7 @@ class MapController:
     @classmethod
     def init(self):
         self.terrainMap = WorldStateGlobal.terrainMap
-    def __init(self):
+    def __init__(self):
         self.requests = {}
         self.max_requests = 5
         self.time_out = 4.0 #needs to be adjusted
@@ -35,14 +35,15 @@ class MapController:
             if t + self.time_out < ctime:
                 self.send_request(x,y,z)
 
-        if len(self.requests.keys()) < self.max_requests:
-            self.new_request(self)
+        if len(self.requests.keys()) <= self.max_requests:
+            self.new_request()
 
     def new_request(self):
+        #print "Start Map Chunk Request"
         _x = 0
         _y = 0
         _z = 0
-        list = terrainMap.get_chunk_version_list()
+        list = self.terrainMap.get_chunk_version_list()
 
         min_score = 1000
         min_chunk = None
