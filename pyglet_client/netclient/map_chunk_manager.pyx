@@ -98,7 +98,7 @@ class MapChunk(object):
                     if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
                         active_cube_number += 1
                         for side_num in [0,1,2,3,4,5]:
-                            if not self._is_occluded(x,y,z,side_num):
+                            if not _is_occluded(self,x,y,z,side_num):
                                 draw_list.append((x,y,z,tile_id, side_num))
                             else:
                                 culled_quads += 1
@@ -158,7 +158,7 @@ class MapChunk(object):
         self.update = False
 
     #cdef inline int _is_occluded(self,int x,int y,int z,int side_num):
-    cdef _is_occluded(self,int x,int y,int z,int side_num):
+cdef inline _is_occluded(self,int x,int y,int z,int side_num):
         cdef int _x, _y, _z, tile_id
 
         s_array = [(0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (-1,0,0),(1,0,0)] #replace with if/then statement
