@@ -48,7 +48,7 @@ class Main:
             NetServer.connectionPool.process_events() #check for new data
             GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
-            sleep(.01)
+            sleep(GameStateGlobal.TICK)
 
 if __name__ == "__main__":
     print "starting server"

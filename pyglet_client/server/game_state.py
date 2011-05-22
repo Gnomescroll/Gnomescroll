@@ -1,6 +1,9 @@
 import math
 
 class GameStateGlobal:
+
+    TICK = 0.01 # seconds
+    
     gameState = None
     terrainMap = None
     agentList = None
@@ -74,13 +77,16 @@ class GenericObjectList:
         object = self._object_type(*args)
         self.objects[object.id] = object
         print '%s: %s created; id= %i' % (self._metaname, self._itemname, object.id,)
+        return object
         
     def _remove(self, id):
         if type(id) != int:
             id = id.id
         if id in self.objects:
             del self.objects[id]
-        print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,)
+            print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,)
+            return True
+        return False
 
 from terrain_map import TerrainMap
 from agents import AgentList

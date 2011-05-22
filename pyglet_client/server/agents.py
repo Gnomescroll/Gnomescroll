@@ -21,13 +21,15 @@ class AgentList(GenericObjectList):
     def create(self, x, y, z, xa, ya):
         self._add(x, y, z, xa, ya)
 
-    def destroy(self, id):
-        self._remove(id)
+    def destroy(self, agent):
+        self._remove(agent)
 
 # represents an agent under control of a player
 class Agent:
 
     HEALTH_MAX = 100
+    _RESPAWN_TIME = 1. # seconds
+    RESPAWN_TICKS = int(Agent._RESPAWN_TIME / GameStateGlobal.TICK) 
 
     def __init__(self, x, y, z, xa, ya, id=None):
         x,y,z = [float(i) for i in (x,y,z)]
@@ -65,6 +67,13 @@ class Agent:
 
     # apply physics to agent
     def tick(self):
+        if not self.dead:
+            self._tick_physics()
+        else:
+            self._tick_respawn()
+        
+
+    def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
@@ -80,7 +89,6 @@ class Agent:
         ay = xy_speed * self.d_y
 
         vz += az
-
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         vx += ax
         vy += ay
@@ -95,6 +103,12 @@ class Agent:
         self.state = [x,y,z, vx,vx,vz, ax,ay,az]
         NetOut.event.agent_state_change(self)
 
+    def _tick_respawn(self):
+        if self.dead:
+            self.respawn_countdown -= 1
+        if self.respawn_countdown <= 0:
+            self.respawn()
+        
     def take_damage(self, damage):
         self.health -= damage
         if self.health <= 0:
@@ -110,9 +124,19 @@ class Agent:
     def revive(self):
         self.health = self.HEALTH_MAX
         self.dead = False
+        self.respawn_countdown = self.RESPAWN_TICKS
+
+    def _spawn_point(self):
+        # later, add spawn zones/ boundaries to spawn in
+        return [10, 10, 100]
+
+    def _set_position(self, pos=None):
+        if pos is None:
+            pos = self._spawn_point()
+        else:
+            assert len(pos) <= 3
+            self.state[0:len(pos)] = pos
 
     def respawn(self): # or can destroy / recreate Agent
-        if self.dead:
-            # wait
-            # revive
-            pass
+        self.revive()
+        self.set_position()
