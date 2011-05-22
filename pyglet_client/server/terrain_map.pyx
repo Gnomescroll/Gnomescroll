@@ -111,7 +111,6 @@ def pack(MapChunk mapChunk):
     l = []
     for i in range(0,512):
         l.insert(i, mapChunk.map_array[i])
-
-    print str((off_x,off_y,off_z, version))
-    print str(l)
+    #print str((off_x,off_y,off_z, version))
+    #print str(l)
     return fm.pack(off_x,off_y,off_z, version, *l)
