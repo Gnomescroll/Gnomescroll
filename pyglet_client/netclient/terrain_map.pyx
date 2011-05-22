@@ -38,7 +38,7 @@ cdef class TerrainMap:
         return self.chunks[t]
 
     def get_packed_chunk(self, x, y, z):
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
             return ''
         t = self.chunks[t]

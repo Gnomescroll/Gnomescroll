@@ -17,9 +17,13 @@ cdef class TerrainMap:
 
     def get_chunk_list(self):
         l = []
-        #for index in self.chunks.keys():
-        #    l.append(index)
         cdef MapChunk c
+
+#        for (x,y,z),c in self.chunks.items():
+#            assert x*8 == c.index[0]
+#            assert y*8 == c.index[1]
+#            assert z*8 == c.index[2]
+
         for c in self.chunks.values():
             l.append([c.index[0], c.index[1], c.index[1], c.version])
         return l

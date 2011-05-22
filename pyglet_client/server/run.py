@@ -15,12 +15,16 @@ import random
 def load_map():
     m = GameStateGlobal.terrainMap
     print "Start map generation"
-    x_max = 64
-    y_max = 64
-    z_max = 16
-    for xa in range(0, x_max):
-        for ya in range(0, y_max):
-            for za in range(0, z_max):
+    x_min = 0
+    y_min = 0
+    z_min = 0
+
+    x_max = 8
+    y_max = 8
+    z_max = 8
+    for xa in range(x_min, x_max):
+        for ya in range(y_min, y_max):
+            for za in range(z_min, z_max):
                 rnd = random.randint(0,64)
                 if rnd < 16:
                     rnd2 = random.randint(1,4)

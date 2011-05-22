@@ -72,11 +72,13 @@ class MapChunk(object):
         assert self.cubePhysicalProperties != None
         assert self.cubeRenderCache != None
 
-    def __init__(self, x_offset, y_offset, z_offset):
+    def __init__(self, x_off, y_off, z_off):
         self.vertexList = None #an in describing batch number
-        self.x_offset = x_offset
-        self.y_offset = y_offset
-        self.z_offset = z_offset
+
+        self.x_off = x_off - (x_off % 8)
+        self.y_off = y_off - (y_off % 8)
+        self.z_off = z_off - (z_off % 8)
+
         self.update = True
         self.empty = True
         MapChunkManagerGlobal.mapChunkManager.register_chunk(self)
@@ -90,9 +92,9 @@ class MapChunk(object):
         draw_list = []
         active_cube_number = 0
         culled_quads = 0
-        for x in range(self.x_offset, self.x_offset+x_chunk_size):
-            for y in range(self.y_offset, self.y_offset +y_chunk_size):
-                for z in range(self.z_offset, self.z_offset+z_chunk_size):
+        for x in range(self.x_off, self.x_off+x_chunk_size):
+            for y in range(self.y_off, self.y_off +y_chunk_size):
+                for z in range(self.z_off, self.z_off+z_chunk_size):
                     tile_id = self.terrainMap.get(x,y,z)
                     ###
                     if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
