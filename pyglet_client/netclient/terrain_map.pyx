@@ -58,6 +58,7 @@ cdef class TerrainMap:
         assert len(array) == 512
         for n in range(0,512):
             chunk.map_array[n] = array[n]
+        return (off_x, off_y, off_z)
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c

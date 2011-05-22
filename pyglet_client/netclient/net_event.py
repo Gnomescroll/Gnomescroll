@@ -101,10 +101,11 @@ class MessageHandler:
 
 class MapMessageHandler:
     terrainMap = None
-
+    mapChunkManager = None
     @classmethod
     def init(self):
-        terrainMap = WorldStateGlobal.terrainMap
+        self.terrainMap = WorldStateGlobal.terrainMap
+        self.cubeGlobal = CubeGlobal.mapChunkManager
     def __init__(self):
         pass
 
@@ -114,8 +115,10 @@ class MapMessageHandler:
 
     def _map_chunk(self, datagram):
         print "Map Chunk Received"
-        self.terrainMap.set_packed_chunk(datagram)
+        (x,y,z) = self.terrainMap.set_packed_chunk(datagram)
+        self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
 
     def _set_map(self, value, **msg):
         (x,y,z,value) = value
         self.terrainMap.set(x,y,z,value)
+        self.mapChunkManager.set_map(x,y,z) #redraw chunk
