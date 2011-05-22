@@ -61,7 +61,7 @@ class MapController:
                 elif self.requests.has_key((x,y,z)):
                     continue
                 else:
-                    print str((x,y,z, v0, v1))
+                    #print str((x,y,z, v0, v1))
                     min_score = score
                     min_chunk = (x,y,z)
                     min_v = (v0, v1)

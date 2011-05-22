@@ -104,6 +104,7 @@ def pack(MapChunk mapChunk):
     global fm
     cdef int chunk_dim, chunk_offset, off_x, off_y, off_z, version
 
+    version = mapChunk.version
     off_x = mapChunk.index[0]
     off_y = mapChunk.index[1]
     off_z = mapChunk.index[2]
