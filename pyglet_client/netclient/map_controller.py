@@ -28,12 +28,18 @@ class MapController:
         self.requests = {}
         self.max_requests = 5
         self.time_out = 4.0 #needs to be adjusted
+        self.delay = 50
+        self.n = 0
 
     def process_chunk_list(self, list):
         for (x,y,z,version) in list:
             self.terrainMap.set_server_version(x,y,z,version)
 
     def tick(self):
+        self.n += 1
+        if not self.n % self.delay == 0:
+            return
+
         ctime = time.time()
         for (x,y,z),t in self.requests.items():
             if t + self.time_out < ctime:

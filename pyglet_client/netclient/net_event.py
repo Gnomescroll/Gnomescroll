@@ -116,6 +116,7 @@ class MapMessageHandler:
         pass
 
     def _chunk_list(self, list, **msg):
+        print str(list)
         self.mapController.process_chunk_list(list)
         #for chunk in list:
         #    (x,y,z,version ) = chunk

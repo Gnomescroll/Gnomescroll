@@ -4,8 +4,8 @@
 #    int value2
 
 
-cdef extern from "./clib/fast_map.c":
-    int hash_cord(int)
+#cdef extern from "./clib/fast_map.c":
+#    int hash_cord(int)
 
 import zlib
 #import array
@@ -25,13 +25,13 @@ cdef class TerrainMap:
         return l
 
     def get_chunk(self, int x, int y, int z):
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
             return 0
         return self.chunks[t]
 
     def get_packed_chunk(self, x, y, z):
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
             return ''
         t = self.chunks[t]
@@ -48,15 +48,15 @@ cdef class TerrainMap:
 
     cpdef inline set(self, int x,int y, int z,int value):
         cdef MapChunk c
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
-            self.chunks[t] = MapChunk(8*t[0], 8*t[1], 8*t[2]) #new map chunk
+            self.chunks[t] = MapChunk(x,y,z) #new map chunk
         c = self.chunks[t]
         c.set(x,y,z, value)
 
     cpdef inline int get(TerrainMap self, int x,int y,int z):
         cdef MapChunk c
-        t = (hash_cord(x), hash_cord(y), hash_cord(z))
+        t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
             return 0
         c = self.chunks[t]
@@ -69,9 +69,10 @@ cdef class MapChunk:
 
     def __init__(self, int x_off, int y_off, int z_off):
         self.version = 0
-        self.index[0] = x_off
-        self.index[1] = y_off
-        self.index[2] = z_off
+
+        self.index[0] = x_off - (x_off % 8)
+        self.index[1] = y_off - (y_off % 8)
+        self.index[2] = z_off - (z_off % 8)
 
         for i in range(0, 512):
             self.map_array[i] = 0
