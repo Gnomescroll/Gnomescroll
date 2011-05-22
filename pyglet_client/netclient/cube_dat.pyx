@@ -1,7 +1,7 @@
-import pyglet
-from pyglet.gl import *
 
-from world_state import WorldStateGlobal
+#from world_state import WorldStateGlobal
+
+#from map_chunk_manager import MapChunkManagerGlobal
 
 class CubeGlobal:
     #terrainMap = TerrainMap()

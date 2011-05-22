@@ -39,6 +39,7 @@ class App(object):
         NetEventGlobal.init_0()
         NetOut.init_0()
         ChatClientGlobal.init_0()
+        MapChunkManagerGlobal.init_0()
         #stage 2
         NetClientGlobal.init_1()
         CubeGlobal.init_1()
@@ -46,6 +47,7 @@ class App(object):
         NetEventGlobal.init_1()
         NetOut.init_1()
         ChatClientGlobal.init_1()
+        MapChunkManagerGlobal.init_1()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
