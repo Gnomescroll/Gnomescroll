@@ -6,11 +6,11 @@ class MapChunkManagerGlobal:
     mapChunkManager = None
     @classmethod
     def init_0(self):
-        CubeGlobal.mapChunkManager = MapChunkManager()
+        MapChunkManagerGlobal.mapChunkManager = MapChunkManager()
     @classmethod
     def init_1(self):
         MapChunk.init()
-        CubeGlobal.mapChunkManager.init()
+        MapChunkManagerGlobal.mapChunkManager.init()
 
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
@@ -79,7 +79,7 @@ class MapChunk(object):
         self.z_offset = z_offset
         self.update = True
         self.empty = True
-        CubeGlobal.mapChunkManager.register_chunk(self)
+        MapChunkManagerGlobal.mapChunkManager.register_chunk(self)
 
     def update_vertex_buffer(self, batch = None):
         cdef int tile_id, x, y, z
