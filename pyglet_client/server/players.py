@@ -32,6 +32,7 @@ class Player:
         if id is None:
             id = GameStateGlobal.new_player_id()
         self.id = id
+        self.agent = GameStateGlobal.agentList.create()
 
     def killed(self):
         self.kills += 1

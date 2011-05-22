@@ -32,7 +32,7 @@ class MessageHandler:
         cmd = msg.get('cmd', None)
         #print "MessageHandler.process_json: " + str(msg)
         if cmd == 'create_agent':
-            GameStateGlobal.gameState.create_agent(**msg)
+            GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
         elif cmd == 'chat':

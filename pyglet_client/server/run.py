@@ -40,8 +40,8 @@ class Main:
     def run(self):
         print "Server Started"
         load_map()
-        print "Create Agent"
-        GameStateGlobal.agentList.create(-10, 0, -3, 0, 0)
+        #print "Create Agent"
+        #GameStateGlobal.agentList.create(-10, 0, -3, 0, 0)
 
         while True:
             NetServer.serverListener.accept() #accept incoming connections

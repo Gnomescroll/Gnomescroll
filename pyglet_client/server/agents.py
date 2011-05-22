@@ -31,7 +31,7 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(Agent._RESPAWN_TIME / GameStateGlobal.TICK) 
 
-    def __init__(self, x, y, z, xa, ya, id=None):
+    def __init__(self, x, y, z, xa, ya, player_id, id=None):
         x,y,z = [float(i) for i in (x,y,z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
@@ -53,6 +53,8 @@ class Agent:
         self.dead = False
 
         self.weapons = []
+
+        self.owner = player_id
 
     # set agent state explicitly
     def set_agent_control_state(self, *args):
