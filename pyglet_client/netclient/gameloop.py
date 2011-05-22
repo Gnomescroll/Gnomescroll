@@ -80,7 +80,7 @@ class App(object):
         NetClientGlobal.connect() #starts connection
 
     def mainLoop(self):
-        self.world.test_chunk()
+        #self.world.test_chunk()
         self.world.add_player(WorldStateGlobal.player) #do something about this
         clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
@@ -101,6 +101,7 @@ class App(object):
             NetOut.sendMessage.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
             #network events
             NetClientGlobal.connection.attempt_recv()
+            MapControllerGlobal.mapController.tick() #testing
             self.world.tick()
             self.win.clear() #clear window and start drawing
             self.camera.worldProjection()
