@@ -1,7 +1,7 @@
 
 #from world_state import WorldStateGlobal
 
-#from map_chunk_manager import MapChunkManagerGlobal
+
 
 class CubeGlobal:
     #terrainMap = TerrainMap()
@@ -22,6 +22,8 @@ class CubeGlobal:
         print "set texture grid"
         self.textureGrid = texture_grid
         self.cubeRenderCache.set_texture(texture_grid)
+
+from map_chunk_manager import MapChunkManagerGlobal
 
 cube_list = {
     0 : {

@@ -60,6 +60,24 @@ cdef class TerrainMap:
             chunk.map_array[n] = array[n]
         return (off_x, off_y, off_z)
 
+    cpdef int inline get_version(self, x,y,z):
+        cdef MapChunk c
+        t = (x >> 3, y >> 3, z >> 3)
+        if not self.chunks.has_key(t):
+            return -1 #chunk does not exist
+        else:
+            c = self.chunks[t]
+            return c.version
+
+    cpdef inline set_server_version(self, int x, int y, int z, int version):
+        cdef MapChunk c
+        t = (x >> 3, y >> 3, z >> 3)
+        if not self.chunks.has_key(t):
+            pass
+        else:
+            c = self.chunks[t]
+            c.server_version = version
+
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
         t = (x >> 3, y >> 3, z >> 3)
