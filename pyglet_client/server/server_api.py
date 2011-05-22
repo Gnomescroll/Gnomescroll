@@ -1,14 +1,12 @@
+import atexit
+import binascii
+import select
+import simplejson as json
 import socket
 import struct
 
-import simplejson as json
-
-import binascii
-
-import atexit
-import socket
-import select
-
+from game_state import GameStateGlobal
+from chat_server import ChatServerGlobal
 
 class ServerGlobal:
     connectionPool = None
@@ -47,42 +45,32 @@ class ServerGlobal:
         self.adminMessageHandler.init()
         self.datagramDecoder.init()
         self.serverListener.init()
-        #self.chat.init()
-
-from game_state import GameStateGlobal
-from chat_server import ChatServerGlobal
 
 # sends event packets to all clients
 class EventOut:
-    gameState = None
-    pool = None
 
     def init(self):
-        self.pool = ServerGlobal.connectionPool
-        self.gameState = GameStateGlobal.gameState
-        assert self.pool != None
-        assert self.gameState != None
-
+        pass
+        
     def __init__(self):
-        ServerGlobal.eventOut = self
         self.event_packets = []
 
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
-            for client in self.pool._client_pool.values():
+            for client in ServerGlobal.connectionPool._client_pool.values():
                 client.send(event_packet)
         self.event_packets = []
 
     def add_json_event(self, dict):
         self.event_packets.append(SendMessage.get_json(dict))
 
-    def agent_state_change(self, id, tick, state):
+    def agent_state_change(self, agent):
         d = {
             'cmd'  : 'agent_position',
-            'id'   : id,
-            'tick' : tick,
-            'state': state #is a 9 tuple
+            'id'   : agent.id,
+            'tick' : GameStateGlobal.gameState.time,
+            'state': agent.state #is a 9 tuple
         }
         self.add_json_event(d)
 
@@ -91,8 +79,9 @@ class MessageOut:
     def init(self):
         pass
     def __init__(self):
-        ServerGlobal.messageOut = self
+        pass
 
+        
 class SendMessage: #each connection has one of these
     @classmethod
     def add_prefix(self, id, msg):
@@ -130,21 +119,17 @@ class SendMessage: #each connection has one of these
 
 # routes messages by msg.cmd
 class MessageHandler:
-    gameState = None
 
     def init(self):
-        self.gameState = GameStateGlobal.gameState
-        assert self.gameState != None
-        #assert self.chat != None
-
+        pass
     def __init__(self):
-        ServerGlobal.messageHandler = self
+        pass
 
     def process_json(self, msg, connection):
         cmd = msg.get('cmd', None)
         #print "MessageHandler.process_json: " + str(msg)
         if cmd == 'create_agent':
-            self.gameState.create_agent(**msg)
+            GameStateGlobal.gameState.create_agent(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
         elif cmd == 'chat':
@@ -172,54 +157,65 @@ class MessageHandler:
         except ValueError:
             print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
             return
-        agent = self.gameState.agentList.get_agent(id)
+        try:
+            agent = GameStateGlobal.gameState.agentList[id]
+        except KeyError:
+            print 'msg.cmd == agent_control_state, msg.id is not a known agent'
+            return
         tick = msg.get('tick', None)
-        d_x, d_y, d_xa, d_za, jetpack, brake = msg.get('state', [None for i in range(6)])
-        agent.set_agent_control_state(tick, d_x, d_y, d_xa, d_za, jetpack, brake)
+        if tick is None:
+            print 'msg agent_control_state missing "tick"'
+            return
+        state = msg.get('state', [None for i in range(6)])
+        if state is None:
+            print 'msg agent_control_state missing "state"'
+            return
+        state = list(state)
+        state.append(tick)
+        agent.set_agent_control_state(*state)
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
 
     def request_chunk(self, msg, connection):
-        (x,y,z) = msg.get('value')
+        try:
+            x,y,z = msg['value']
+        except KeyError:
+            print 'msg request_chunk, "value" missing'
+            return
+        except ValueError:
+            print 'msg request_chunk, "value" must be a 3 tuple'
+            return
         connection.sendMessage.send_chunk(x,y,z)
 
 
 class AdminMessageHandler:
-    gameState = None
 
     def init(self):
-        self.gameState = GameStateGlobal.gameState
-        assert self.gameState != None
-
+        pass
     def __init__(self):
-        ServerGlobal.AdminMessageHandler = self
-
+        pass
     def process_json(self, msg, connection):
         cmd = msg.get('cmd', None)
         if cmd == "set_map":
             l = msg.get('list', [])
-            terrainMap = gameState.terrainMap
-            for (x,y,z,value) in  l:
+            terrainMap = GameState.gameState.terrainMap
+            for x,y,z,value in l:
                 terrainMap.set(x,y,z,value)
         else:
             print "Admin Message Handler, uncaught message"
 
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:
-    messageHandler = None
 
     def init(self):
-        self.messageHandler = ServerGlobal.messageHandler
-        assert self.messageHandler != None
-
+        pass
     def __init__(self):
-        print "dataqgram decoder init"
         pass
 
     def decode(self, message, connection):
         prefix, datagram = (message[0:6], message[6:])
-        (length, msg_type) = struct.unpack('I H', prefix)
+        length, msg_type = struct.unpack('I H', prefix)
         if msg_type == 0:
             print "test message received"
         elif msg_type == 1: #client json messages
@@ -228,20 +224,20 @@ class DatagramDecoder:
             except:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
-            self.messageHandler.process_json(msg, connection)
+            ServerGlobal.messageHandler.process_json(msg, connection)
         elif msg_type == 2: #client admin messages
             try:
                 msg = json.loads(datagram)
             except:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
-            self.adminMessageHandler.process_json(msg, connection)
+            ServerGlobal.adminMessageHandler.process_json(msg, connection)
+            
 # decodes tcp packets
 class TcpPacketDecoder:
 
     def __init__(self, connection):
         self.connection = connection
-        self.datagramDecoder = ServerGlobal.datagramDecoder
         self.reset()
 
     def reset(self):
@@ -285,7 +281,7 @@ class TcpPacketDecoder:
     def process_datagram(self, message):
         self.count += 1
         #print "processed message count: " +str(self.count)
-        self.datagramDecoder.decode(message, self.connection)
+        ServerGlobal.datagramDecoder.decode(message, self.connection)
 
 # listens for packets on ports
 class ServerListener:
@@ -294,11 +290,8 @@ class ServerListener:
     TCP_PORT = 5055
     UDP_PORT = 5060
 
-    connectionPool = None
-
     def init(self):
-        self.connectionPool = ServerGlobal.connectionPool
-        assert self.connectionPool != None
+        pass
     def __init__(self):
         self.tcp = None
         self.tcp_fileno = 0
@@ -335,7 +328,7 @@ class ServerListener:
                     connection, address = self.tcp.accept()
                     print 'TCP connection established with:', address
                     connection.setblocking(0)
-                    self.connectionPool.addClient(connection, address) #hand off connection to connection pool
+                    ServerGlobal.connectionPool.addClient(connection, address) #hand off connection to connection pool
                 except socket.error, (value,message):
                     print "ServerListener.accept error: " + str(value) + ", " + message
             if fileno == self.udp_fileno:
@@ -343,10 +336,8 @@ class ServerListener:
 
 # manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
 class TcpClient:
-    pool = None
 
     def __init__(self, connection, address):
-        assert self.pool != None
         self.connection = connection
         self.address = address
 
@@ -365,7 +356,7 @@ class TcpClient:
             print "ERROR: TcpClient.set_client_id, client_id already assigned"
             return
         self.client_id = id
-        self.pool.register_client_id(self)
+        ServerGlobal.connectionPool.register_client_id(self)
 
     def send(self, MESSAGE):
         try:
@@ -379,7 +370,7 @@ class TcpClient:
         except socket.error, (value, message):
             print "TcpClient.send error: " + str(value) + ", " + message
             if value == 32:  #connection reset by peer
-                self.pool.tearDownClient(self)
+                ServerGlobal.connectionPool.tearDownClient(self)
 
     def close(self):
         print "TcpClient.close : connection closed gracefully"
@@ -396,7 +387,7 @@ class TcpClient:
             #print "tcp data: empty read"
             self.ec += 1
             if self.ec > 3:
-                self.pool.tearDownClient(self.fileno)
+                ServerGlobal.connectionPool.tearDownClient(self.fileno)
         else:
             #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
@@ -404,17 +395,10 @@ class TcpClient:
 
 # manages client connections
 class ConnectionPool:
-    messageHandler = None
-    datagramDecoder = None
 
     def init(self):
-        self.messageHandler = ServerGlobal.messageHandler
-        assert self.messageHandler != None
-        self.datagramDecoder = ServerGlobal.datagramDecoder
-        assert self.datagramDecoder != None
-
+        pass
     def __init__(self):
-        ServerGlobal.connectionPool = self
         #parents
         TcpClient.pool = self
         #local
@@ -441,7 +425,7 @@ class ConnectionPool:
         self._epoll.unregister(fileno)
         self._client_pool[fileno].close()
         del self._client_pool[fileno] #remove from client pool
-        if connection.client_id != 0:
+        if connection.client_id != 0: # remove from chat
             ChatServerGlobal.chatServer.disconnect(connection)
             del self._clients_by_id[connection.client_id]
 

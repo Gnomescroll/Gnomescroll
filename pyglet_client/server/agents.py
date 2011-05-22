@@ -1,5 +1,6 @@
 from game_state import GenericObjectList
 from game_state import GameStateGlobal
+from server_api import ServerGlobal
 
 
 # datastore for agents
@@ -22,7 +23,7 @@ class Agent:
     HEALTH_MAX = 100
 
     def __init__(self, x, y, z, xa, ya, id=None):
-        [x, y, z] = [float(x), float(y), float(z)]
+        x,y,z = [float(i) for i in (x,y,z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
         self.xa = xa
         self.ya = ya
@@ -45,7 +46,8 @@ class Agent:
         self.weapons = []
 
     # set agent state explicitly
-    def set_agent_control_state(self, tick, d_x, d_y, d_xa, d_za, jetpack, brake):
+    def set_agent_control_state(self, *args):
+        d_x, d_y, d_xa, d_za, jetpack, brake, tick = args
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
@@ -84,7 +86,7 @@ class Agent:
         z += vz
 
         self.state = [x,y,z, vx,vx,vz, ax,ay,az]
-        GameStateGlobal.eventOut.agent_state_change(self.id, GameStateGlobal.gameState.time, self.state)
+        ServerGlobal.eventOut.agent_state_change(self)
 
     def take_damage(self, damage):
         self.health -= damage
@@ -102,7 +104,7 @@ class Agent:
         self.health = self.HEALTH_MAX
         self.dead = False
 
-    def respawn(self):
+    def respawn(self): # or can destroy / recreate Agent
         if self.dead:
             # wait
             # revive

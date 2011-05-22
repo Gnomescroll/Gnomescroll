@@ -27,13 +27,13 @@ class GameStateGlobal:
         
     @classmethod
     def new_agent_id(self):
-        GameStateGlobal.agent_id += 1
-        return GameStateGlobal.agent_id
+        self.agent_id += 1
+        return self.agent_id
 
     @classmethod
     def new_player_id(self):
-        GameStateGlobal.player_id += 1
-        return GameStateGlobal.player_id
+        self.player_id += 1
+        return self.player_id
 
 
 # main game state wrapper
