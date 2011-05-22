@@ -34,7 +34,7 @@ cdef class TerrainMap:
         t = (x >> 3, y >> 3, z >> 3)
         cdef MapChunk mc
         if not self.chunks.has_key(t):
-            self.chunks[t] = MapChunk(x >> 3, y >> 3, z >> 3) #new map chunk
+            self.chunks[t] = MapChunk(x, y, z) #new map chunk
         return self.chunks[t]
 
     def get_packed_chunk(self, x, y, z):
@@ -51,10 +51,6 @@ cdef class TerrainMap:
         tmp = zlib.decompress(tmp)
         (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
         array = list(fm_inv2.unpack(array))
-        #print "unpacking, array length="
-        #print str(len(array))
-        #print str((off_x,off_y,off_z, version))
-        #print str(array)
         chunk = self.get_or_create_chunk(off_x, off_y, off_z)
         chunk.version = version
         assert len(array) == 512
@@ -73,12 +69,8 @@ cdef class TerrainMap:
 
     cpdef inline set_server_version(self, int x, int y, int z, int version):
         cdef MapChunk c
-        t = (x >> 3, y >> 3, z >> 3)
-        if not self.chunks.has_key(t):
-            pass
-        else:
-            c = self.chunks[t]
-            c.server_version = version
+        c = self.get_or_create_chunk(x,y,z)
+        c.server_version = version
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c
@@ -88,7 +80,7 @@ cdef class TerrainMap:
         c = self.chunks[t]
         c.set(x,y,z, value)
 
-    cpdef inline int get(TerrainMap self, int x,int y,int z):
+    cpdef inline int get(TerrainMap self, int x, int y,int z):
         cdef MapChunk c
         t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
@@ -106,9 +98,9 @@ cdef class MapChunk:
         self.version = version
         self.server_version = 0
 
-        self.index[0] = x_off
-        self.index[1] = y_off
-        self.index[2] = z_off
+        self.index[0] = x_off - (x_off % 8)
+        self.index[1] = y_off - (y_off % 8)
+        self.index[2] = z_off - (z_off % 8)
 
         for i in range(0, 512):
             self.map_array[i] = 0

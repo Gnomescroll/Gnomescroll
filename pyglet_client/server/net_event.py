@@ -6,7 +6,7 @@ class NetEvent:
 
     messageHandler = None
     adminMessageHandler = None
-    
+
     def __init__(self):
         NetEvent.messageHandler = MessageHandler()
         NetEvent.adminMessageHandler = AdminMessageHandler()
@@ -47,6 +47,7 @@ class MessageHandler:
         elif cmd == 'request_chunk_list':
             self.send_chunk_list(msg, connection)
         elif cmd == 'request_chunk':
+            print "chunk_request"
             self.request_chunk(msg, connection)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
@@ -98,7 +99,7 @@ class AdminMessageHandler:
         pass
     def __init__(self):
         pass
-        
+
     def process_json(self, msg, connection):
         cmd = msg.get('cmd', None)
         if cmd == "set_map":
