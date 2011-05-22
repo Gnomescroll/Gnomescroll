@@ -28,7 +28,7 @@ class EventOut:
 
     def init(self):
         pass
-        
+
     def __init__(self):
         self.event_packets = []
 
@@ -92,4 +92,4 @@ class SendMessage: #each connection has one of these
         if chunk_str != '':
             self.client.send(self.add_prefix(3, chunk_str))
         else:
-            print "send chunk error: chunk id invalid"
+            print "send chunk error: chunk id invalid, " + str((x,y,z))

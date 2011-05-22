@@ -22,7 +22,7 @@ cdef class TerrainMap:
         l = []
         cdef MapChunk c
         for c in self.chunks.values():
-            l.append([c.index[0], c.index[1], c.index[1], c.version, c.server_version])
+            l.append([c.index[0], c.index[1], c.index[2], c.version, c.server_version])
         return l
 
 
@@ -76,7 +76,7 @@ cdef class TerrainMap:
         cdef MapChunk c
         t = (x >> 3, y >> 3, z >> 3)
         if not self.chunks.has_key(t):
-            self.chunks[t] = MapChunk(8*t[0], 8*t[1], 8*t[2]) #new map chunk
+            self.chunks[t] = MapChunk(x,y,z) #new map chunk
         c = self.chunks[t]
         c.set(x,y,z, value)
 

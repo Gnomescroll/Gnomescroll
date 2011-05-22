@@ -19,8 +19,8 @@ def load_map():
     y_min = 0
     z_min = 0
 
-    x_max = 8
-    y_max = 8
+    x_max = 32
+    y_max = 32
     z_max = 8
     for xa in range(x_min, x_max):
         for ya in range(y_min, y_max):
