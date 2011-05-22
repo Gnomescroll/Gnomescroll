@@ -31,6 +31,8 @@ class NetServer:
         self.serverListener.init()
 
 from chat_server import ChatServer
+from net_out import SendMessage
+from net_event import NetEvent
 
 # listens for packets on ports
 class ServerListener:
@@ -228,14 +230,14 @@ class DatagramDecoder:
             except:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
-            NetServer.messageHandler.process_json(msg, connection)
+            NetEvent.messageHandler.process_json(msg, connection)
         elif msg_type == 2: #client admin messages
             try:
                 msg = json.loads(datagram)
             except:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
-            NetServer.adminMessageHandler.process_json(msg, connection)
+            NetEvent.adminMessageHandler.process_json(msg, connection)
             
 # decodes tcp packets
 class TcpPacketDecoder:
