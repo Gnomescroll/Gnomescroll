@@ -8,6 +8,7 @@ class NetOut:
     sendPacket = None
 
     sendMessage = None
+    mapMessage = None
     adminMessage = None
     chatMessage = None
 

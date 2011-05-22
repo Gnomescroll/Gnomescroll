@@ -18,11 +18,14 @@ import world #deprecate
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from cube_dat import CubeGlobal
+
 from world_state import WorldStateGlobal
 from client_event import ClientEventGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
+
+from cube_dat import CubeGlobal
+from map_chunk_manager import MapChunkManagerGlobal
 
 #import hotshot
 
@@ -81,7 +84,7 @@ class App(object):
 
         self.connect()
         #ChatClientGlobal.on_connect()
-        NetOut.sendMessage.request_chunk_list()
+        NetOut.mapMessage.request_chunk_list()
 
         #p = hotshot.Profile("../log/client.log")
         #p.start()

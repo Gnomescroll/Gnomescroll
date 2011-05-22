@@ -109,7 +109,7 @@ class MapMessageHandler:
     def __init__(self):
         pass
 
-    def _chunk_list(self, chunk_list, **msg):
+    def _chunk_list(self, list, **msg):
         for chunk in list:
             (x,y,z,version ) = chunk
 
