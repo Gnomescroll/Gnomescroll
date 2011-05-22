@@ -25,7 +25,7 @@ class MapController:
         self.max_requests = 5
         self.time_out = 4.0 #needs to be adjusted
 
-    def proces_chunk_list(self, list)
+    def process_chunk_list(self, list):
         for (x,y,z,version) in list:
             self.terrainMap.set_server_version(x,y,z,version)
 
@@ -57,11 +57,11 @@ class MapController:
                     min_score = score
                     min_chunk = (x,y,z)
         if min_chunk != None:
-            self.requests(x,y,z) = time.time()
+            self.requests[(x,y,z)] = time.time()
             self.send_request(x,y,z)
 
     def incoming_map_chunk(self, x,y,z):
-        if self.requests.has_key((x,y,z))
+        if self.requests.has_key((x,y,z)):
             del self.requests[(x,y,z)]
         else:
             print "MapController.incoming_map_chunk map chunk key does not exist"

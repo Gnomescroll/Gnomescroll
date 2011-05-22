@@ -19,12 +19,14 @@ class NetEventGlobal:
     @classmethod
     def init_1(self):
         MessageHandler.init()
+        MapMessageHandler.init()
 
 from world_state import WorldStateGlobal
 from net_client import NetClientGlobal
 from net_out import NetOut
 from chat_client import ChatClientGlobal
 from map_chunk_manager import MapChunkManagerGlobal
+from map_controller import MapControllerGlobal
 
 class MessageHandler:
     player = None #move this somewhere else
@@ -107,13 +109,14 @@ class MapMessageHandler:
     @classmethod
     def init(self):
         self.terrainMap = WorldStateGlobal.terrainMap
-        self.cubeGlobal = CubeGlobal.mapChunkManager
+        self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         self.mapController = MapControllerGlobal.mapController
+        assert self.mapController != None
     def __init__(self):
         pass
 
     def _chunk_list(self, list, **msg):
-        self.mapController.proces_chunk_list(list)
+        self.mapController.process_chunk_list(list)
         #for chunk in list:
         #    (x,y,z,version ) = chunk
 
