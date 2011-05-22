@@ -52,6 +52,7 @@ class MapController:
         #print len(list)
         min_score = 100000
         min_chunk = None
+        min_v = None
         for (x,y,z,v0,v1) in list:
             score = (x -_x+ 4)**2 + (y-_y+4)**2 + (z-_z+4)**2
             if score < min_score:
@@ -63,8 +64,9 @@ class MapController:
                     print str((x,y,z, v0, v1))
                     min_score = score
                     min_chunk = (x,y,z)
+                    min_v = (v0, v1)
         if min_chunk != None:
-            print "w: " + str(min_chunk)
+            print "w: " + str(min_chunk) + " " + str(min_v)
             assert not self.requests.has_key(min_chunk)
             self.requests[(min_chunk)] = time.time()
             self.send_request(*min_chunk)
