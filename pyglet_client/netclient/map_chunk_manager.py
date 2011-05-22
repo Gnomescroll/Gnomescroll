@@ -10,6 +10,7 @@ class MapChunkManagerGlobal:
     @classmethod
     def init_1(self):
         MapChunk.init()
+        CubeGlobal.mapChunkManager.init()
 
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal

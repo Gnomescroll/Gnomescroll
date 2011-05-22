@@ -12,13 +12,11 @@ class CubeGlobal:
 
     @classmethod
     def init_0(self):
-        CubeGlobal.mapChunkManager = MapChunkManager()
         CubeGlobal.cubePhysicalProperties = CubePhysicalProperties()
         CubeGlobal.cubeRenderCache = CubeRenderCache()
     @classmethod
     def init_1(self):
-        MapChunk.init()
-        CubeGlobal.mapChunkManager.init()
+        pass
     @classmethod
     def setTextureGrid(self, texture_grid):
         print "set texture grid"
