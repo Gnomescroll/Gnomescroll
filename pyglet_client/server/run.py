@@ -29,7 +29,7 @@ class Main:
     def run(self):
         print "Server Started"
         print "Create Agent"
-        GameStateGlobal.gameState.agentList.create_agent(-10, 0, -3, 0, 0)
+        GameStateGlobal.agentList.create(-10, 0, -3, 0, 0)
 
         while True:
             ServerGlobal.serverListener.accept() #accept incoming connections

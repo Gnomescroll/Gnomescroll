@@ -1,137 +1,103 @@
 import math
 
 from terrain_map import TerrainMap
-
-class GameStateGlobal:
-    gameState = None
-    terrainMap = TerrainMap()
-    agentList = None
-    #state
-    id = 0
-
-    def __init__(self):
-        GameStateGlobal.gameState = GameState()
-        GameStateGlobal.agentList = AgentList()
-    @classmethod
-    def init(self):
-        GameState.init()
-        initPlayerAgent()
-
-    @classmethod
-    def new_id(self):
-        self.id += 1
-        return self.id
-
-def initPlayerAgent():
-    PlayerAgent.gameState = GameStateGlobal.gameState
-    assert PlayerAgent.gameState != None
-    PlayerAgent.eventOut = ServerGlobal.eventOut
-    assert PlayerAgent.eventOut != None
+from agents import AgentList
+from players import PlayerList
 
 from server_api import ServerGlobal
 
-class PlayerAgent:
-    eventOut = None
+class GameStateGlobal:
     gameState = None
-
-    def __init__(self, id, x, y, z, xa, ya):
-        [x, y, z] = [float(x), float(y), float(z)]
-        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-        self.xa = xa
-        self.ya = ya
-        self.id = id
-
-        self.last_control_tick = 0
-        self.d_x = 0
-        self.d_y = 0
-        self.d_xa = 0
-        self.d_za = 0
-        self.jetpack = 0
-        self.brake = 0
-
-    # set agent state explicitly
-    def set_agent_control_state(self, tick, d_x, d_y, d_xa, d_za, jetpack, brake):
-        self.last_control_tick = tick
-        self.d_x = d_x #a byte
-        self.d_y = d_y #a byte
-        self.d_xa = d_xa
-        self.d_za = d_za
-        self.jetpack = jetpack
-        self.brake = brake
-
-    # apply physics to agent
-    def tick(self):
-        x,y,z, vx,vy,vz, ax,ay,az = self.state
-        tr = 100. #tick rate
-        tr2 = tr**2 #tick rate squared
-        if z <= 0.:
-            az = .10 / tr2
-        else:
-            az = -0.10 / tr2
-        if self.jetpack:
-            az += 0.15 / tr2
-
-        xy_speed = 0.1 / tr2
-        ax = xy_speed * self.d_x
-        ay = xy_speed * self.d_y
-
-        vz += az
-
-        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
-        vx += ax
-        vy += ay
-        if self.brake != 0:
-            vx *= xy_brake
-            vz *= xy_brake
-
-        x += vx
-        y += vy
-        z += vz
-
-        self.state = [x,y,z, vx,vx,vz, ax,ay,az]
-        self.eventOut.agent_state_change(self.id, self.gameState.time, self.state)
-
-# datastore for agents
-class AgentList:
+    terrainMap = None
+    agentList = None
+    playerList = None
+    #state
+    agent_id = 0
+    player_id = 0
 
     def __init__(self):
-        GameStateGlobal.agentList = self
-        self.agents = {}
-
-    def create_agent(self, x,y,z,xa,ya):
-        #(x,y,z,xa,ya) = position
-        id = GameStateGlobal.new_id()
-        agent = PlayerAgent(id, x,y,z, xa,ya)
-        self.agents[id] = agent
-        print "AgentList: Agent Created, id= %i" % (id,)
-
-    def get_agent(self,id):
-        if not self.agents.has_key(id):
-            print "Agentlist.set_agent_control_state: Agent does not exist: %i" % (id,)
-            return None
-        return self.agents[id]
-
-# main game state wrapper
-class GameState:
-
-    agentList = None
-    terrainMap = None
+        GameStateGlobal.terrainMap = TerrainMap()
+        GameStateGlobal.gameState = GameState()
+        GameStateGlobal.agentList = AgentList()
+        GameStateGlobal.playerList = PlayerList()
 
     @classmethod
     def init(self):
-        self.terrainMap = GameStateGlobal.terrainMap
-        self.agentList = GameStateGlobal.agentList
-        assert self.agentList != None
-        assert self.terrainMap != None
+        pass
+        
+    @classmethod
+    def new_agent_id(self):
+        GameStateGlobal.agent_id += 1
+        return GameStateGlobal.agent_id
 
+    @classmethod
+    def new_player_id(self):
+        GameStateGlobal.player_id += 1
+        return GameStateGlobal.player_id
+
+
+# main game state wrapper
+class GameState:
+        
     def __init__(self):
-        GameStateGlobal.gameState = self
         self.time = 0
 
     # tick all agents
     def tick(self):
-        for agent in self.agentList.agents.values():
+        for agent in GameStateGlobal.agentList.values():
             agent.tick()
         self.time += 1
         if self.time % 100 == 0:
             print "time= %i" % (self.time,)
+
+
+# generic game object datastore
+# has dictionary interface for retrieving items
+class GenericObjectList:
+
+    def __init__(self):
+        self.objects = {}
+        self._metaname = 'GenericStateList'
+        self._itemname = 'GenericObject'
+        self._object_type = None
+
+    def __getitem__(self, key):
+        if not key in self.objects:
+            print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
+        return self.objects[key]
+        
+    def __setitem__(self, key, value):
+        self.objects[key] = value
+        
+    def __delitem__(self, key):
+        del self.objects[key]
+        
+    def __len__(self):
+        return len(self.objects)
+
+    def __contains__(self, key):
+        return key in self.objects
+
+    def __iter__(self):
+        return iter(self.objects)
+
+    def keys(self):
+        return self.objects.keys()
+
+    def values(self):
+        return self.objects.values()
+
+    def items(self):
+        return self.objects.items()
+
+    def _add(self, *args):
+        object = self._object_type(*args)
+        self.objects[object.id] = object
+        print '%s: %s created; id= %i' % (self._metaname, self._itemname, object.id,)
+        
+    def _remove(self, id):
+        if type(id) != int:
+            id = id.id
+        if id in self.objects:
+            del self.objects[id]
+        print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,) 

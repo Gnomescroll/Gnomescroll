@@ -138,7 +138,6 @@ class ChatServer:
         self.client_unlisten(connection, msg['channel'])
         
 
-
 class ChatMessage:
 
     properties = [
@@ -174,7 +173,6 @@ class ChatMessage:
         if not valid:
             self.payload = None
         return self
-
 
 # an instance of a connected client
 class ChatClient:
