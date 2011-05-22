@@ -47,10 +47,10 @@ class MessageHandler:
     def process_binary_event(self, msg_type, datagram):
         if msg_type == 3:
             NetEventGlobal.mapMessageHandler._map_chunk(datagram)
-        if msg_type == 4:
+        elif msg_type == 4:
             self._4_
         else:
-            print "MessageHandler.process_binary_event: message type unknown"
+            print "MessageHandler.process_binary_event: message type unknown, " + str(msg_type)
 #message events
 
     def process_json_event(self, msg_type, datagram):
