@@ -62,6 +62,7 @@ class MapMessage:
             'cmd' : 'request_chunk',
             'value' : (x,y,z)
         }
+        NetOut.send_json(d)
 
 class ChatMessage:
 
