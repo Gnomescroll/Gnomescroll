@@ -1,18 +1,15 @@
+from time import sleep
 
 #import cython
 import pyximport #; pyximport.install()
 
-#from server_api import *
-
 #from pudb import set_trace; set_trace()
 
-#from chat_server import Chat
-
-from server_api import ServerGlobal
+from net_server import NetServer
+from net_out import NetOut
+from net_event import NetEvent
 from game_state import GameStateGlobal
-from chat_server import ChatServerGlobal
-
-import time
+from chat_server import ChatServer
 
 import random
 def load_map():
@@ -32,15 +29,13 @@ def load_map():
 
 class Main:
 
-    serverGlobal = ServerGlobal()
-    gameStateGlobal = GameStateGlobal()
-    chatServer = ChatServerGlobal()
-
     def __init__(self):
         #setup
-        ServerGlobal.init()
-        GameStateGlobal.init()
-        ChatServerGlobal.init()
+        NetServer().init()
+        NetOut().init()
+        NetEvent().init()
+        GameStateGlobal().init()
+        ChatServer().init()
 
     def run(self):
         print "Server Started"
@@ -49,11 +44,11 @@ class Main:
         GameStateGlobal.agentList.create(-10, 0, -3, 0, 0)
 
         while True:
-            ServerGlobal.serverListener.accept() #accept incoming connections
-            ServerGlobal.connectionPool.process_events() #check for new data
+            NetServer.serverListener.accept() #accept incoming connections
+            NetServer.connectionPool.process_events() #check for new data
             GameStateGlobal.gameState.tick()
-            ServerGlobal.eventOut.process_events()
-            time.sleep(.01)
+            NetOut.event.process_events()
+            sleep(.01)
 
 if __name__ == "__main__":
     print "starting server"

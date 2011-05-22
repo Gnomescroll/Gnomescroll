@@ -1,9 +1,13 @@
-from game_state import GameStateGlobal
-from game_state import GenericObjectList
-
-from server_api import ServerGlobal
+'''
+Agents:
+    Objects through which a Player experiences the game world
+'''
 
 import math
+
+from game_state import GameStateGlobal
+from game_state import GenericObjectList
+from net_out import NetOut
 
 # datastore for agents
 class AgentList(GenericObjectList):
@@ -89,7 +93,7 @@ class Agent:
         z += vz
 
         self.state = [x,y,z, vx,vx,vz, ax,ay,az]
-        ServerGlobal.eventOut.agent_state_change(self)
+        NetOut.event.agent_state_change(self)
 
     def take_damage(self, damage):
         self.health -= damage

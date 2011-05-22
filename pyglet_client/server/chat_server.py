@@ -4,16 +4,16 @@ from time import time
 from copy import copy
 from collections import defaultdict
 
-from server_api import ServerGlobal
+from net_server import NetServer
 
 def now():
     return int(time() * 1000)
 
-class ChatServerGlobal:
-    chatServer = None
+class ChatServer:
+    chat = None
 
     def __init__(self): #first pass is declaring
-        ChatServerGlobal.chatServer = ChatServer()
+        ChatServer.chat = Chat()
     @classmethod
     def init(self): #calls import methods if needed
         pass
@@ -22,7 +22,7 @@ class ChatServerGlobal:
 Chat server
 '''
 
-class ChatServer:
+class Chat:
 
     channels = defaultdict(list)
     clients = {}

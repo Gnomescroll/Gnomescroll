@@ -29,6 +29,7 @@ class GameStateGlobal:
         self.player_id += 1
         return self.player_id
 
+from net_server import NetServer
 
 # generic game object datastore
 # has dictionary interface for retrieving items
@@ -84,7 +85,6 @@ class GenericObjectList:
 from terrain_map import TerrainMap
 from agents import AgentList
 from players import PlayerList
-from server_api import ServerGlobal
 
 # main game state wrapper
 class GameState:
