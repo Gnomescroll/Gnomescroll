@@ -45,16 +45,20 @@ cdef class TerrainMap:
     def set_packed_chunk(self, tmp):
         global fm_inv1, fm_inv2
         cdef int off_x, off_y, off_z, version
+        cdef MapChunk chunk
         tmp = zlib.decompress(tmp)
         (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
         array = list(fm_inv2.unpack(array))
-        print "unpacking, array length="
-        print str(len(array))
+        #print "unpacking, array length="
+        #print str(len(array))
         #print str((off_x,off_y,off_z, version))
         #print str(array)
-        chunk = self.get_chunk(off_x, off_y, off_z)
-        if chunk == 0:
-            pass
+        chunk = self.get_or_create_chunk(off_x, off_y, off_z)
+        chunk.version = version
+        assert len(array) == 512
+        for n in range(0,512):
+            chunk.map_array[n] = array[n]
+        return (off_x, off_y, off_z)
 
     cpdef inline set(TerrainMap self, int x,int y, int z,int value):
         cdef MapChunk c

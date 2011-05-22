@@ -8,6 +8,7 @@ class NetOut:
     sendPacket = None
 
     sendMessage = None
+    mapMessage = None
     adminMessage = None
     chatMessage = None
 
@@ -15,6 +16,7 @@ class NetOut:
     def init_0(self):
         NetOut.sendPacket = NetClientGlobal.sendPacket
         NetOut.sendMessage = SendMessage()
+        NetOut.mapMessage = MapMessage()
         NetOut.adminMessage = AdminMessage()
         NetOut.chatMessage = ChatMessage()
     @classmethod
@@ -46,6 +48,8 @@ class SendMessage:
             'id' : NetClientGlobal.client_id,
            }
         NetOut.send_json(d)
+
+class MapMessage:
 
     def request_chunk_list(self):
         d = {
@@ -81,7 +85,7 @@ class ChatMessage:
             'client_id' : str(NetClientGlobal.client_id),
         }
         NetOut.send_json(d)
-        
+
 class AdminMessage:
 
     def set_map(self,x,y,z,value):

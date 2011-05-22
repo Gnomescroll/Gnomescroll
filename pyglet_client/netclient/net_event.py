@@ -11,10 +11,11 @@ from chat_client import ChatClientGlobal
 
 class NetEventGlobal:
     messageHandler = None
-
+    mapMessageHandler = None
     @classmethod
     def init_0(self):
         self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
+        self.mapMessageHandler = MapMessageHandler()
     @classmethod
     def init_1(self):
         MessageHandler.init()
@@ -42,13 +43,12 @@ class MessageHandler:
 #binary events
     def process_binary_event(self, msg_type, datagram):
         if msg_type == 3:
-            self._3_map_chunk(self, datagram)
-            print "Map Chunk Received"
+            NetEventGlobal.mapMessageHandler._map_chunk(datagram)
+        if msg_type == 4:
+            self._4_
         else:
             print "MessageHandler.process_binary_event: message type unknown"
 #message events
-    def _3_map_chunk(self, datagram):  #move this somewhere
-        print "Map Chunk Received"
 
     def process_json_event(self, msg_type, datagram):
         try:
@@ -64,9 +64,13 @@ class MessageHandler:
             self._agent_position(**msg)
         elif cmd == 'send_client_id':
             self._set_client_id(**msg)
+        #map events
         elif cmd == 'chunk_list':
+            NetEventGlobal.mapMessageHandler._chunk_list(**msg)
             print "Chunk List Received"
             print str(msg['list'])
+        elif cmd == 'set_map':
+            NetEventGlobal.mapMessageHandler._set_map(**msg)
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)
         else:
@@ -94,4 +98,27 @@ class MessageHandler:
             NetOut.sendMessage.send_client_id()
             #app.mainLoop()
             ChatClientGlobal.on_register()
-    
+
+class MapMessageHandler:
+    terrainMap = None
+    mapChunkManager = None
+    @classmethod
+    def init(self):
+        self.terrainMap = WorldStateGlobal.terrainMap
+        self.cubeGlobal = CubeGlobal.mapChunkManager
+    def __init__(self):
+        pass
+
+    def _chunk_list(self, list, **msg):
+        for chunk in list:
+            (x,y,z,version ) = chunk
+
+    def _map_chunk(self, datagram):
+        print "Map Chunk Received"
+        (x,y,z) = self.terrainMap.set_packed_chunk(datagram)
+        self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
+
+    def _set_map(self, value, **msg):
+        (x,y,z,value) = value
+        self.terrainMap.set(x,y,z,value)
+        self.mapChunkManager.set_map(x,y,z) #redraw chunk
