@@ -5,9 +5,6 @@ import simplejson as json
 import socket
 import struct
 
-from game_state import GameStateGlobal
-from chat_server import ChatServerGlobal
-
 class ServerGlobal:
     connectionPool = None
     eventOut = None
@@ -45,6 +42,9 @@ class ServerGlobal:
         self.adminMessageHandler.init()
         self.datagramDecoder.init()
         self.serverListener.init()
+
+from game_state import GameStateGlobal
+from chat_server import ChatServerGlobal
 
 # sends event packets to all clients
 class EventOut:
@@ -158,7 +158,7 @@ class MessageHandler:
             print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
             return
         try:
-            agent = GameStateGlobal.gameState.agentList[id]
+            agent = GameStateGlobal.agentList[id]
         except KeyError:
             print 'msg.cmd == agent_control_state, msg.id is not a known agent'
             return

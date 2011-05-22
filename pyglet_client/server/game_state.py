@@ -1,11 +1,5 @@
 import math
 
-from terrain_map import TerrainMap
-from agents import AgentList
-from players import PlayerList
-
-from server_api import ServerGlobal
-
 class GameStateGlobal:
     gameState = None
     terrainMap = None
@@ -34,21 +28,6 @@ class GameStateGlobal:
     def new_player_id(self):
         self.player_id += 1
         return self.player_id
-
-
-# main game state wrapper
-class GameState:
-        
-    def __init__(self):
-        self.time = 0
-
-    # tick all agents
-    def tick(self):
-        for agent in GameStateGlobal.agentList.values():
-            agent.tick()
-        self.time += 1
-        if self.time % 100 == 0:
-            print "time= %i" % (self.time,)
 
 
 # generic game object datastore
@@ -100,4 +79,23 @@ class GenericObjectList:
             id = id.id
         if id in self.objects:
             del self.objects[id]
-        print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,) 
+        print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,)
+
+from terrain_map import TerrainMap
+from agents import AgentList
+from players import PlayerList
+from server_api import ServerGlobal
+
+# main game state wrapper
+class GameState:
+        
+    def __init__(self):
+        self.time = 0
+
+    # tick all agents
+    def tick(self):
+        for agent in GameStateGlobal.agentList.values():
+            agent.tick()
+        self.time += 1
+        if self.time % 100 == 0:
+            print "time= %i" % (self.time,)

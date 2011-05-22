@@ -5,6 +5,7 @@ from game_state import GameStateGlobal
 class PlayerList(GenericObjectList):
 
     def __init__(self):
+        GenericObjectList.__init__(self)
         self._metaname = 'PlayerList'
         self._itemname = 'Player'
         self._object_type = Player

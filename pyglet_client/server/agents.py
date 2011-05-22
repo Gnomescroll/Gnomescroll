@@ -1,18 +1,21 @@
-from game_state import GenericObjectList
 from game_state import GameStateGlobal
+from game_state import GenericObjectList
+
 from server_api import ServerGlobal
 
+import math
 
 # datastore for agents
 class AgentList(GenericObjectList):
 
     def __init__(self):
+        GenericObjectList.__init__(self)
         self._metaname = 'AgentList'
         self._itemname = 'Agent'
         self._object_type = Agent
 
     def create(self, x, y, z, xa, ya):
-        self._add(x, y, z, xa, yz)
+        self._add(x, y, z, xa, ya)
 
     def destroy(self, id):
         self._remove(id)
