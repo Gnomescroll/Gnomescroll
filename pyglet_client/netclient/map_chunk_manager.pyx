@@ -79,7 +79,7 @@ class MapChunk(object):
         self.z_offset = z_offset
         self.update = True
         self.empty = True
-        MapChunkManagerGlobal.mapChunkManager.register_chunk(self)
+        MapChunkManagerGlobala.mapChunkManager.register_chunk(self)
 
     def update_vertex_buffer(self, batch = None):
         cdef int tile_id, x, y, z
