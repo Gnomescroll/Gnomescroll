@@ -29,7 +29,7 @@ class Agent:
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 1. # seconds
-    RESPAWN_TICKS = int(Agent._RESPAWN_TIME / GameStateGlobal.TICK) 
+    RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
     def __init__(self, x, y, z, xa, ya, player_id, id=None):
         x,y,z = [float(i) for i in (x,y,z)]
@@ -39,7 +39,7 @@ class Agent:
 
         if id is None:
             id = GameStateGlobal.new_agent_id()
-        self.id = id 
+        self.id = id
 
         self.last_control_tick = 0
         self.d_x = 0
@@ -73,7 +73,7 @@ class Agent:
             self._tick_physics()
         else:
             self._tick_respawn()
-        
+
 
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
@@ -110,7 +110,7 @@ class Agent:
             self.respawn_countdown -= 1
         if self.respawn_countdown <= 0:
             self.respawn()
-        
+
     def take_damage(self, damage):
         self.health -= damage
         if self.health <= 0:
@@ -119,7 +119,7 @@ class Agent:
     def heal(self, amount):
         if not self.dead:
             self.health = min(self.health + amount, self.HEALTH_MAX)
-            
+
     def die(self):
         self.dead = True
 

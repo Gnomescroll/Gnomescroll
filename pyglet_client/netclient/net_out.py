@@ -21,7 +21,7 @@ class NetOut:
         NetOut.chatMessage = ChatMessage()
     @classmethod
     def init_1(self):
-        pass
+        assert NetOut.mapMessage != None
     @classmethod
     def send_json(self, dict):
         self.sendPacket.send_json(dict)
@@ -62,6 +62,7 @@ class MapMessage:
             'cmd' : 'request_chunk',
             'value' : (x,y,z)
         }
+        NetOut.send_json(d)
 
 class ChatMessage:
 

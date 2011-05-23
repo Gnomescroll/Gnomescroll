@@ -3,6 +3,7 @@ from pyglet.gl import *
 
 from cube_dat import CubeGlobal
 from world_state import WorldStateGlobal
+from map_chunk_manager import MapChunkManagerGlobal
 
 from player import Player
 
@@ -17,7 +18,7 @@ class World():
 
     def init(self):
         self.terrainMap = WorldStateGlobal.terrainMap
-        self.mapChunkManager = CubeGlobal.mapChunkManager
+        self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         CubeGlobal.setTextureGrid(self.texture_grid)
 
     def __init__(self):
