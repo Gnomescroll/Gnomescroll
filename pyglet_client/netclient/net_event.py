@@ -65,8 +65,8 @@ class MessageHandler:
             return
         if cmd == 'agent_position':
             self._agent_position(**msg)
-        elif cmd == 'send_client_id':
-            self._set_client_id(**msg)
+        elif cmd == 'identified':
+            self._on_identify(**msg)
         #map events
         elif cmd == 'chunk_list':
             NetEventGlobal.mapMessageHandler._chunk_list(**msg)
@@ -94,13 +94,15 @@ class MessageHandler:
         self.player.ay = ay
         self.player.az = az
 
-    def _set_client_id(self, id, **misc):
+    def _on_identify(self, **msg):
+        id = msg.get('id', None)
+        if id is None:
+            print '_register msg missing id'
+            return
         print "Received Client Id: %i" % (id,)
-        if NetClientGlobal.client_id == 0:
-            NetClientGlobal.client_id = id
-            NetOut.sendMessage.send_client_id()
-            #app.mainLoop()
-            ChatClientGlobal.on_register()
+        NetClientGlobal.client_id = id
+        #NetOut.sendMessage.send_client_id()
+        ChatClientGlobal.on_identify()
 
 class MapMessageHandler:
     terrainMap = None

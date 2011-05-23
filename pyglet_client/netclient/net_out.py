@@ -42,11 +42,11 @@ class SendMessage:
            }
         NetOut.send_json(d)
 
-    def send_client_id(self):
+    def identify(self):
         d = {
-            'cmd' : 'send_client_id',
-            'id' : NetClientGlobal.client_id,
-           }
+            'cmd': 'identify',
+            'name': NetClientGlobal.username,
+        }
         NetOut.send_json(d)
 
 class MapMessage:

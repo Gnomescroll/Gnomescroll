@@ -72,11 +72,11 @@ class SendMessage: #each connection has one of these
         self.client.send(self.add_prefix(1, json.dumps(dict)))
 
     ## messages go out immediately
-    def send_client_id(self):
+    def send_client_id(self, connection):
         print "Send client id"
         d = {
-            'cmd'  : 'send_client_id',
-            'id'   : NetServer.generate_client_id(),
+            'cmd'  : 'identified',
+            'id'   : connection.client_id,
         }
         self.send_json(d)
 

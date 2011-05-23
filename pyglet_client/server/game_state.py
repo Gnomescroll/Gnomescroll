@@ -74,6 +74,7 @@ class GenericObjectList:
         return self.objects.items()
 
     def _add(self, *args):
+        print args
         object = self._object_type(*args)
         self.objects[object.id] = object
         print '%s: %s created; id= %i' % (self._metaname, self._itemname, object.id,)

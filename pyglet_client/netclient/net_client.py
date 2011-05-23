@@ -16,6 +16,7 @@ class NetClientGlobal:
     sendPacket = None
 
     client_id = 0
+    username = 'Steve'
     VERSION = '0.0.1'
 
     @classmethod
@@ -32,6 +33,7 @@ class NetClientGlobal:
         self.connection.connect()
 
 from net_event import NetEventGlobal
+from net_out import NetOut
 
 class SendPacket:
     def __init__(self, client):
@@ -141,8 +143,7 @@ class TcpConnection:
             self.fileno = self.tcp.fileno()
             self.connected = True
             #on connect
-            if NetClientGlobal.client_id != 0: #reconnection case
-                self.out.send_client_id()
+            NetOut.sendMessage.identify()
         except socket.error, (value,message):
             print "Connection failed: socket error " + str(value) + ", " + message
             self.connected = False

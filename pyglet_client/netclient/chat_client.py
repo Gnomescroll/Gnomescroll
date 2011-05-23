@@ -24,8 +24,8 @@ class ChatClientGlobal:
         pass
 
     @classmethod
-    def on_register(self): # called after client connects
-        ChatClientGlobal.chatClient.on_register()
+    def on_identify(self): # called after client connects
+        ChatClientGlobal.chatClient.on_identify()
 
 
 from net_client import NetClientGlobal
@@ -55,15 +55,17 @@ class ChatClient:
     def __init__(self):
         self.input = ChatInput()
 
-    def on_register(self, channel=None):
+    def on_identify(self, channel=None):
         self._initial_subscribe(channel)
 
-    def _initial_subscribe(self, channel=None):
-        if channel is not None:
-            self.set_current_channel(channel)
-        self.subscribe(self.CURRENT_CHANNEL)
-        self.subscribe('system')
-        self.load()
+    def _initial_subscribe(self, channel=None, _subscribed=[False]):
+        if not _subscribed[0]:
+            if channel is not None:
+                self.set_current_channel(channel)
+            self.subscribe(self.CURRENT_CHANNEL)
+            self.subscribe('system')
+            self.load()
+            _subscribed[0] = True
 
     def set_current_channel(self, channel):
         self.CURRENT_CHANNEL = channel

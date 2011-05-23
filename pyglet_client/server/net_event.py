@@ -31,19 +31,30 @@ class MessageHandler:
     def process_json(self, msg, connection):
         cmd = msg.get('cmd', None)
         #print "MessageHandler.process_json: " + str(msg)
+
+        # game state
         if cmd == 'create_agent':
             GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(msg)
+
+        #chat
         elif cmd == 'chat':
             ChatServer.chat.received(msg, connection)
         elif cmd == 'subscribe':
             ChatServer.chat.client_subscribe(msg, connection)
         elif cmd == 'unsubscribe':
             ChatServer.chat.client_unsubscribe(msg, connection)
-        elif cmd == 'send_client_id': #Setup client connection
-            connection.set_client_id(int(msg['id']))
-            #print "Client Assigned id= %i" % (connection.client_id,)
+
+        # setup
+        elif cmd == 'identify': #Setup client connection
+            name = msg.get('name', None)
+            if name is None:
+                print 'msg identify - name is missing'
+                return
+            connection.identify(name)
+
+        # map
         elif cmd == 'request_chunk_list':
             self.send_chunk_list(msg, connection)
         elif cmd == 'request_chunk':

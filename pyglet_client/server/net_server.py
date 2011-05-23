@@ -33,6 +33,7 @@ class NetServer:
 from chat_server import ChatServer
 from net_out import SendMessage
 from net_event import NetEvent
+from game_state import GameStateGlobal
 
 # listens for packets on ports
 class ServerListener:
@@ -96,18 +97,38 @@ class TcpClient:
         self.TcpPacketDecoder = TcpPacketDecoder(self)
         self.sendMessage = SendMessage(self)
 
-        self.player_id = 0
+        self.player = None
         self.client_id = 0
         self.ec = 0
 
-        self.sendMessage.send_client_id() #send client an id upon connection
+        #self.sendMessage.send_client_id() #send client an id upon connection
 
-    def set_client_id(self, id):
+    def identify(self, name):
+        if self._set_player_name(name):
+            self._set_client_id()
+            self.sendMessage.send_client_id(self)
+            self._register()
+
+    def _register(self):
+        if NetServer.connectionPool.register(self):
+            ChatServer.chat.connect(self) # join chat server
+            self.player = GameStateGlobal.playerList.join(self.client_id, self.name)  # create player
+            print 'Joined chat and created new Player'
+
+    def _set_client_id(self):
         if self.client_id != 0:
             print "ERROR: TcpClient.set_client_id, client_id already assigned"
-            return
-        self.client_id = id
-        NetServer.connectionPool.register_client_id(self)
+            return False
+        self.client_id = NetServer.generate_client_id()
+        return True
+
+    def _set_player_name(self, name):
+        try:
+            self.name = str(name)
+        except ValueError:
+            print 'Invalid client name'
+            return False
+        return True
 
     def send(self, MESSAGE):
         try:
@@ -138,7 +159,7 @@ class TcpClient:
             #print "tcp data: empty read"
             self.ec += 1
             if self.ec > 3:
-                NetServer.connectionPool.tearDownClient(self.fileno)
+                NetServer.connectionPool.tearDownClient(self)
         else:
             #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
@@ -180,14 +201,15 @@ class ConnectionPool:
             ChatServer.chat.disconnect(connection)
             del self._clients_by_id[connection.client_id]
 
-    def register_client_id(self, connection):
+    def register(self, connection):
         if self._clients_by_id.get(connection.client_id, None) == None:
             self._clients_by_id[connection.client_id] = connection
             print "Connection associated with client_id= %i" % (connection.client_id,)
-            ChatServer.chat.connect(connection)
+            return True
         else:
             print "Client id is already registered!"
             self.tearDownClient(connection, duplicate_id = True)
+            return False
 
     def process_events(self):
         events = self._epoll.poll(0)

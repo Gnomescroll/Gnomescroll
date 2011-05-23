@@ -14,11 +14,13 @@ class PlayerList(GenericObjectList):
     def join(self, client_id, name):
         player = self._add(client_id, name)
         self.client_ids[client_id] = player.id
+        return player
         
     def leave(self, player):
         client_id = player.client_id
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
+        return player
         
                 
 # represents a "Player" (player score, agents they control etc)
@@ -32,7 +34,7 @@ class Player:
         if id is None:
             id = GameStateGlobal.new_player_id()
         self.id = id
-        self.agent = GameStateGlobal.agentList.create()
+        self.agent = GameStateGlobal.agentList.create(self.id)
 
     def killed(self):
         self.kills += 1
