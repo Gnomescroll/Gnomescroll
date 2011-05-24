@@ -67,9 +67,9 @@ cdef class TerrainMap:
         return c.get(x,y,z)
 
 cdef class MapChunk:
-    cdef int index[3]
-    cdef int map_array[512]
-    cdef unsigned int version
+    #cdef int index[3]
+    #cdef int map_array[512]
+    #cdef unsigned int version
 
     def __init__(self, int x_off, int y_off, int z_off):
         self.version = 0
@@ -81,14 +81,14 @@ cdef class MapChunk:
         for i in range(0, 512):
             self.map_array[i] = 0
 
-    cdef inline void set(self, int x, int y, int z, int value):
+    cdef inline void set(MapChunk self, int x, int y, int z, int value):
         self.version += 1
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]
         self.map_array[x + 8*y + 8*8*z] = value
 
-    cdef inline int get(self, int x, int y, int z):
+    cdef inline int get(MapChunk self, int x, int y, int z):
         x -= self.index[0]
         y -= self.index[1]
         z -= self.index[2]

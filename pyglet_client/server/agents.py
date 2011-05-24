@@ -37,17 +37,27 @@ class Agent:
         self.xa = xa
         self.ya = ya
 
+        self.terrainMap = GameStateGlobal.terrainMap
+        self.collisionDetection = CubeGlobals.collisionDetection
+        assert self.collisionDetection != None
+
         if id is None:
             id = GameStateGlobal.new_agent_id()
         self.id = id
 
+        #deprecated for state
+        #self.d_x = 0
+        #self.d_y = 0
+        #self.d_xa = 0
+        #self.d_za = 0
+
         self.last_control_tick = 0
-        self.d_x = 0
-        self.d_y = 0
-        self.d_xa = 0
-        self.d_za = 0
         self.jetpack = 0
         self.brake = 0
+
+        self.x_int = int(x)
+        self.y_int = int(y)
+        self.z_int = int(z)
 
         self.health = self.HEALTH_MAX
         self.dead = False
@@ -101,6 +111,14 @@ class Agent:
         x += vx
         y += vy
         z += vz
+    ###collision detection code
+        ## xy collision detection
+        radius
+        xy_margin = 0.15
+
+
+        ## z collision detection
+        z_margin = 0.1
 
         self.state = [x,y,z, vx,vx,vz, ax,ay,az]
         NetOut.event.agent_state_change(self)

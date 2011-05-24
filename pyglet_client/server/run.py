@@ -40,7 +40,7 @@ class Main:
         NetEvent().init()
         GameStateGlobal().init()
         ChatServer().init()
-
+        CubeGlobals.init()
     def run(self):
         print "Server Started"
         load_map()

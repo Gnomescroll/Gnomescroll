@@ -1,19 +1,41 @@
 import pyglet
 from pyglet.gl import *
 
+class CubeGlobals:
+    cubePhysicalProperties = None
+    CollisionDetection = None
 
-from terrain_map import TerrainMap
+    @classmethod
+    def init(self):
+        CubeGlobals.cubePhysicalProperties = CubePhysicalProperties()
+        CubeGlobals.collisionDetection = CollisionDetection()
+    @classmethod
+    def init_1(self):
+        self.collisionDetection.init()
+    @classmethod
+    def setTextureGrid(self, textureGrid):
+        self.textureGrid = textureGrid
+        self.cubeRenderCache = CubeRenderCache()
+
+cimport terrain_map
+from terrain_map cimport TerrainMap
+
+#from terrain_map import TerrainMap
+
+from game_state import GameStateGlobal
 
 cube_list = {
     0 : {
         'id' : 0,
         'occludes' : False,
         'active' : False,
+        'solid' : False,
         },
     1 : {
         'id' : 1,
         'occludes' : True,
         'active' : True,
+        'solid' : True,
 
         'texture' : [ #t, b, w, e, n, s
         (0, []),  #top
@@ -28,6 +50,7 @@ cube_list = {
         'id' : 2,
         'occludes' : True,
         'active' : True,
+        'solid' : True,
 
         'texture' : [ #t, b, w, e, n, s
         (0, [0,1,2,3]),  #top
@@ -42,6 +65,7 @@ cube_list = {
         'id' : 3,
         'occludes' : True,
         'active' : True,
+        'solid' : True,
 
         'texture' : [ #t, b, w, e, n, s
         (1, [0,1,2,3]),  #top
@@ -73,12 +97,14 @@ cdef struct CubePhysical:
     int id
     int active
     int occludes
+    int solid
 
 #used for initing the struct
-cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes):
+cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid):
     x.id = id
     x.active = active
     x.occludes = occludes
+    x.solid = solid
 
 cdef enum:
     max_cubes = 4096
@@ -96,9 +122,11 @@ cdef class CubePhysicalProperties:
         if id >= max_cubes: #max number of cubes
             print "Error: cube id is too high"
             return
-        active = int(d['active'])
-        occludes = int(d['occludes'])
-        init_CubePhysical(&self.cube_array[id], id, active, occludes)
+        active = int(d.get_key('active',1))
+        occludes = int(d.get_key('occludes', 0))
+        solid = int(d.get_key('solid', 1))
+
+        init_CubePhysical(&self.cube_array[id], id, active, occludes, solid)
 
     cdef inline int isActive(CubePhysicalProperties self, unsigned int id):
         if id >= max_cubes: #max number of cubes
@@ -110,15 +138,28 @@ cdef class CubePhysicalProperties:
             return 0
         return self.cube_array[id].occludes
 
+    cdef inline int isSolid(CubePhysicalProperties self, unsigned int id):
+        if id >= max_cubes: #max number of cubes
+            return 0
+        return self.cube_array[id].solid
+
+cdef class CollisionDetection:
+    cdef TerrainMap terrainMap
+    cdef CubePhysicalProperties cubePhysicalProperties
+
+    def init(self):
+        self.terrainMap = gameStateGlobal.terrainMap
+        self.cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
+
+    def __init__(self):
+        pass
+
+    cpdef inline int collision(CollisionDetection self, int x, int y, int z):
+        cdef int tile
+        tile = terrainMap.get(x,y,z)
+        return self.cubePhysicalProperties.isSolid(tile)
+
 cdef enum:
     x_chunk_size = 8
     y_chunk_size = 8
     z_chunk_size = 8
-
-class CubeGlobals:
-    cubePhysicalProperties = CubePhysicalProperties()
-
-    @classmethod
-    def setTextureGrid(self, textureGrid):
-        self.textureGrid = textureGrid
-        self.cubeRenderCache = CubeRenderCache()
