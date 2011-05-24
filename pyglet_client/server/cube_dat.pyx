@@ -148,7 +148,7 @@ cdef class CollisionDetection:
     cdef CubePhysicalProperties cubePhysicalProperties
 
     def init(self):
-        self.terrainMap = gameStateGlobal.terrainMap
+        self.terrainMap = GameStateGlobal.terrainMap
         self.cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
 
     def __init__(self):
@@ -156,7 +156,7 @@ cdef class CollisionDetection:
 
     cpdef inline int collision(CollisionDetection self, int x, int y, int z):
         cdef int tile
-        tile = terrainMap.get(x,y,z)
+        tile = self.terrainMap.get(x,y,z)
         return self.cubePhysicalProperties.isSolid(tile)
 
 cdef enum:

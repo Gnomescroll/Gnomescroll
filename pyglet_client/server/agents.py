@@ -121,7 +121,7 @@ class Agent:
         xc_neg = 0 #number of collisions with south blocks
 
         bz = floor(z)
-        for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)):
+        for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)+1):
         #x+
             by = floor(y+vy+box_r)
             if self.collisionDetection.collision(bx,by,bz):
@@ -137,7 +137,7 @@ class Agent:
         yc_neg = 0 #number of collisions with south blocks
 
         bz = floor(z)
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)):
+        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
         #x+
             bx = floor(x+vx+box_r)
             if self.collisionDetection.collision(bx,by,bz):
@@ -149,18 +149,22 @@ class Agent:
 
 ### Collision on Z axis
         zc_neg = 0
+        z_margin = .01
+        z_bounce = .90
 
-        bz = floor(z+vz)
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)):
-            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)):
+        bz = floor(z-z_margin)
+        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
+            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
                 if self.collisionDetection.collision(bx,by,bz):
                     zc_neg +=1
 
         if zc_neg >0:
             z += 0.01
+            if vz < 0:
+                vz *= -1 *z_bounce
         else:
             z += vz
-
+        #print str(z)
         x += vx
         y += vy
         #z += vz

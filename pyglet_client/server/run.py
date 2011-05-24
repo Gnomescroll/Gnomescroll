@@ -17,19 +17,20 @@ import random
 def load_map():
     m = GameStateGlobal.terrainMap
     print "Start map generation"
-    x_min = 0
-    y_min = 0
+    x_min = -1
+    y_min = -1
     z_min = 0
 
-    x_max = 64
-    y_max = 64
-    z_max = 16
+    x_max = 8
+    y_max = 8
+    z_max = 1
     for xa in range(x_min, x_max):
         for ya in range(y_min, y_max):
             for za in range(z_min, z_max):
                 rnd = random.randint(0,64)
-                if rnd < 16:
+                if True or rnd < 16:
                     rnd2 = random.randint(1,4)
+                    rnd2 = 3
                     m.set(xa,ya,za, rnd2)
     print "Finished map generation"
 
@@ -43,6 +44,8 @@ class Main:
         GameStateGlobal().init()
         ChatServer().init()
         CubeGlobals.init()
+        #phase 2 inits
+        CubeGlobals.init_1()
     def run(self):
         print "Server Started"
         load_map()
