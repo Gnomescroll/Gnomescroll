@@ -70,8 +70,8 @@ class MessageHandler:
         #map events
         elif cmd == 'chunk_list':
             NetEventGlobal.mapMessageHandler._chunk_list(**msg)
-            print "Chunk List Received"
-            print str(msg['list'])
+            #print "Chunk List Received"
+            #print str(msg['list'])
         elif cmd == 'set_map':
             NetEventGlobal.mapMessageHandler._set_map(**msg)
         elif cmd == 'chat':
