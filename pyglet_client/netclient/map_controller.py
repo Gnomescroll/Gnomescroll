@@ -28,7 +28,7 @@ class MapController:
         self.requests = {}
         self.max_requests = 5
         self.time_out = 4.0 #needs to be adjusted
-        self.delay = 50
+        self.delay = 10
         self.n = 0
 
     def process_chunk_list(self, list):
@@ -72,19 +72,19 @@ class MapController:
                     min_chunk = (x,y,z)
                     min_v = (v0, v1)
         if min_chunk != None:
-            print "w: " + str(min_chunk) + " " + str(min_v)
+            #print "w: " + str(min_chunk) + " " + str(min_v)
             assert not self.requests.has_key(min_chunk)
             self.requests[(min_chunk)] = time.time()
             self.send_request(*min_chunk)
 
     def incoming_map_chunk(self, x,y,z):
-        print "incoming map chunk: " + str((x,y,z))
+        #print "incoming map chunk: " + str((x,y,z))
         if self.requests.has_key((x,y,z)):
             del self.requests[(x,y,z)]
         else:
             print "MapController.incoming_map_chunk map chunk key does not exist"
 
     def send_request(self, x,y,z):
-        print "map chunk request: " + str((x,y,z))
+        #print "map chunk request: " + str((x,y,z))
         self.mapMessage.request_chunk(x,y,z)
 

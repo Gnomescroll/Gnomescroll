@@ -11,6 +11,8 @@ from net_event import NetEvent
 from game_state import GameStateGlobal
 from chat_server import ChatServer
 
+from cube_dat import CubeGlobals
+
 import random
 def load_map():
     m = GameStateGlobal.terrainMap

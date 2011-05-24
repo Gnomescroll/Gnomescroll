@@ -118,13 +118,13 @@ class MapMessageHandler:
         pass
 
     def _chunk_list(self, list, **msg):
-        print str(list)
+        #print str(list)
         self.mapController.process_chunk_list(list)
         #for chunk in list:
         #    (x,y,z,version ) = chunk
 
     def _map_chunk(self, datagram):
-        print "Map Chunk Received"
+        #print "Map Chunk Received"
         (x,y,z) = self.terrainMap.set_packed_chunk(datagram)
         self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
         self.mapController.incoming_map_chunk(x,y,z)

@@ -122,9 +122,9 @@ cdef class CubePhysicalProperties:
         if id >= max_cubes: #max number of cubes
             print "Error: cube id is too high"
             return
-        active = int(d.get_key('active',1))
-        occludes = int(d.get_key('occludes', 0))
-        solid = int(d.get_key('solid', 1))
+        active = int(d.get('active',1))
+        occludes = int(d.get('occludes', 0))
+        solid = int(d.get('solid', 1))
 
         init_CubePhysical(&self.cube_array[id], id, active, occludes, solid)
 

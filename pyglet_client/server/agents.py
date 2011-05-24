@@ -9,6 +9,8 @@ from game_state import GameStateGlobal
 from game_state import GenericObjectList
 from net_out import NetOut
 
+from cube_dat import CubeGlobals
+
 # datastore for agents
 class AgentList(GenericObjectList):
 
@@ -39,17 +41,17 @@ class Agent:
 
         self.terrainMap = GameStateGlobal.terrainMap
         self.collisionDetection = CubeGlobals.collisionDetection
+
         assert self.collisionDetection != None
 
         if id is None:
             id = GameStateGlobal.new_agent_id()
         self.id = id
 
-        #deprecated for state
-        #self.d_x = 0
-        #self.d_y = 0
-        #self.d_xa = 0
-        #self.d_za = 0
+        self.d_x = 0
+        self.d_y = 0
+        self.d_xa = 0
+        self.d_za = 0
 
         self.last_control_tick = 0
         self.jetpack = 0
@@ -113,7 +115,7 @@ class Agent:
         z += vz
     ###collision detection code
         ## xy collision detection
-        radius
+        radius = 0.5
         xy_margin = 0.15
 
 
