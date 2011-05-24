@@ -5,6 +5,8 @@ Agents:
 
 import math
 
+from math import floor
+
 from game_state import GameStateGlobal
 from game_state import GenericObjectList
 from net_out import NetOut
@@ -110,9 +112,59 @@ class Agent:
             vx *= xy_brake
             vz *= xy_brake
 
+### Parameters for collision box ###
+        box_height = 1.5
+        box_r = .30
+
+### Collisions on X axis ###
+        xc_pos = 0 #number of collisions with north blocks
+        xc_neg = 0 #number of collisions with south blocks
+
+        bz = floor(z)
+        for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)):
+        #x+
+            by = floor(y+vy+box_r)
+            if self.collisionDetection.collision(bx,by,bz):
+                xc_pos +=1
+        #x-
+            by = floor(y+vy-box_r)
+            if self.collisionDetection.collision(bx,by,bz):
+                xc_neg +=1
+
+### Collisions on Y axis ###
+
+        yc_pos = 0 #number of collisions with north blocks
+        yc_neg = 0 #number of collisions with south blocks
+
+        bz = floor(z)
+        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)):
+        #x+
+            bx = floor(x+vx+box_r)
+            if self.collisionDetection.collision(bx,by,bz):
+                yc_pos +=1
+        #x-
+            bx = floor(x+vx-box_r)
+            if self.collisionDetection.collision(bx,by,bz):
+                yc_neg +=1
+
+### Collision on Z axis
+        zc_neg = 0
+
+        bz = floor(z+vz)
+        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)):
+            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)):
+                if self.collisionDetection.collision(bx,by,bz):
+                    zc_neg +=1
+
+        if zc_neg >0:
+            z += 0.01
+        else:
+            z += vz
+
         x += vx
         y += vy
-        z += vz
+        #z += vz
+
     ###collision detection code
         ## xy collision detection
         radius = 0.5
