@@ -95,7 +95,7 @@ class Agent:
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
-        z_gravity = .10/tr2
+        z_gravity = -.10/tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
         az += (z_gravity) if x<=0 else (-z_gravity) #[value_false, value_true][<test>]
