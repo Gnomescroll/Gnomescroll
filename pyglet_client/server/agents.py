@@ -91,6 +91,9 @@ class Agent:
 
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
+
+        ax,ay,az = (0,0,0)
+
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
 
@@ -152,14 +155,18 @@ class Agent:
         z_bounce = .65
 
         bz_floor = floor(z - z_margin)
-        bz0 = floor(z)
-        bz1 = floor(z+box_height)
+        bz0 = floor(z) #lowest level
+        bz1 = floor(z+box_height) #highest level
+        #over multiple z
         for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
             for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
                 if self.collisionDetection.collision(bx,by,bz0):
                     zc_neg +=1
                 if self.collisionDetection.collision(bx,by,bz1):
                     zc_pos +=1
+        #over lowest z
+        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
+            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
                 if self.collisionDetection.collision(bx,by,bz_floor):
                     zc_floor +=1
 
@@ -169,21 +176,23 @@ class Agent:
                 az = .10 / tr2
             else:
                 az = -0.10 / tr2
+        else:
+            pass
         #jetpack effect on gravity
         if self.jetpack:
             az += 0.15 / tr2
         #velocity update
         vz += az
         #collision detection
-        if zc_neg >0:
-            z += 0.01
+        if zc_neg != 0:
+            z = floor(z+1)+ 0.099
             if vz < 0:
                 vz *= -1 *z_bounce
         else:
             z += vz
         #print str(z)
 
-        xy_bounce = 0.90
+        xy_bounce = 0.30
 ## handle y collisions
         if xc_pos != 0  or xc_neg !=0:
             if xc_pos != 0 and xc_neg !=0:
