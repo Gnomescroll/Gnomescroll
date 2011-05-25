@@ -22,8 +22,8 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, player_id, x=0, y=0, z=0, xa=0, ya=0):
-        self._add(x, y, z, xa, ya, player_id)
+    def create(self, player_id, x=0, y=0, z=0):
+        self._add(x, y, z, player_id)
 
     def destroy(self, agent):
         self._remove(agent)
@@ -35,11 +35,9 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, x, y, z, xa, ya, player_id, id=None):
+    def __init__(self, x, y, z, player_id, id=None):
         x,y,z = [float(i) for i in (x,y,z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-        self.xa = xa
-        self.ya = ya
 
         self.terrainMap = GameStateGlobal.terrainMap
         self.collisionDetection = CubeGlobals.collisionDetection
@@ -50,21 +48,15 @@ class Agent:
             id = GameStateGlobal.new_agent_id()
         self.id = id
 
-        self.d_x = 0
-        self.d_y = 0
+        self.d_x = 0 #yaw?
+        self.d_y = 0 #pitch?
         self.v_x = 0
-        self.v_x = 0
-#        self.a_x = 0 #used for vehocals
-#        self.a_y = 0 #used for vehicals
+        self.v_y = 0
 
         self.last_control_tick = 0
         self.jump = 0 #also need to record last jump
         self.jetpack = 0
         self.brake = 0
-
-       # self.x_int = int(x)
-       # self.y_int = int(y)
-       # self.z_int = int(z)
 
         self.health = self.HEALTH_MAX
         self.dead = False
@@ -74,8 +66,8 @@ class Agent:
         self.owner = player_id
 
     # set agent state explicitly
-    def set_agent_control_state(self, *args):
-        d_x, d_y, v_y, v_y, jetpack, jump, brake, tick = args
+    def set_agent_control_state(self, tick, *args):
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = args
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
@@ -102,7 +94,7 @@ class Agent:
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
-        xy_speed = 1.
+        xy_speed = 1. / tr
         z_gravity = .10/tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
@@ -110,13 +102,17 @@ class Agent:
 
         #jetpack adjustment to gravity
         #velocity from acceleration and inputs
-        vx += ax + self.v_x*xy_speed
-        vy += ay + self.v_y*xy_speed
+        vx += ax
+        vy += ay
         vz += az
         if self.brake != 0:
             vx *= xy_brake
             vz *= xy_brake
             vz *= xy_brake
+
+        x += vx + self.v_x*xy_speed
+        y += vy + self.v_y*xy_speed
+        z += vz
 
         self.state = [x,y,z, vx,vx,vz, ax,ay,az]
         NetOut.event.agent_state_change(self)

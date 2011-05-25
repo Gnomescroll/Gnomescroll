@@ -97,8 +97,8 @@ class App(object):
         while not self.exit:
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
-            [d_x, d_y, d_xa, d_za, jetpack, brake] = self.player.control_state
-            NetOut.sendMessage.send_agent_control_state(self.player.id, d_x, d_y, d_xa, d_za, jetpack, brake)
+            [d_x, d_y, d_v, d_y, jetpack, jump, brake] = self.player.control_state
+            NetOut.sendMessage.send_agent_control_state(self.player.id, d_x, d_y, d_v, d_y, jetpack, jump, brake)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing
