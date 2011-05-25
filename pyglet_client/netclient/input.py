@@ -92,6 +92,8 @@ class Keyboard(object):
         self.bind_key_handlers({
             key.E : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
+            key.Q : self.toggle_input_mode,
+
         })
 
     # accept key,handler or a dict of key,handlers
@@ -115,15 +117,12 @@ class Keyboard(object):
         if getattr(self, 'mode', None) is not None:
             current_mode[0] = (current_mode[0] + change) % len(modes)
         self.mode = modes[current_mode[0]]
+        print "mode= " + str(self.mode)
 
     # called in main game loop
     def stateHandler(self, keyboard):
         if self.mode == 'chat':
             return
-        #mode switch
-        if keyboard[key.Q]:
-            self.toggle_input_mode()
-
         if self.mode == 'camera':
             self.camera_input_mode(keyboard)
         elif self.mode == 'agent':

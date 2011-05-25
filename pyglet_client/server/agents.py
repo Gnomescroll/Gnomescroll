@@ -149,14 +149,19 @@ class Agent:
 
 ### Collision on Z axis
         zc_neg = 0
+        zc_pos = 0
         z_margin = .01
         z_bounce = .90
 
-        bz = floor(z-z_margin)
+        bz0 = floor(z - z_margin)
+        bz1 = floor(z+box_height)
         for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
             for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-                if self.collisionDetection.collision(bx,by,bz):
+                if self.collisionDetection.collision(bx,by,bz0):
                     zc_neg +=1
+                if self.collisionDetection.collision(bx,by,bz1):
+                    zc_pos +=1
+
 
         if zc_neg >0:
             z += 0.01
@@ -165,15 +170,32 @@ class Agent:
         else:
             z += vz
         #print str(z)
-        x += vx
-        y += vy
-        #z += vz
 
-    ###collision detection code
-        ## xy collision detection
-        radius = 0.5
-        xy_margin = 0.15
-
+        xy_bounce = 0.90
+## handle y collisions
+        if xc_pos != 0  or xc_neg !=0:
+            if xc_pos != 0 and xc_neg !=0:
+                x += vx
+            elif xc_pos != 0:
+                if vx > 1:
+                    vx *= -1 * xy_bounce
+            elif xc_neg != 0:
+                if vx < 1:
+                    vx *= -1 * xy_bounce
+        else:
+            x += vx
+## handle x collisions
+        if yc_pos != 0  or yc_neg !=0:
+            if yc_pos != 0 and yc_neg !=0:
+                y += vy
+            elif yc_pos != 0:
+                if vy > 1:
+                    vy *= -1 * xy_bounce
+            elif yc_neg != 0:
+                if vy < 1:
+                    vy *= -1 * xy_bounce
+        else:
+            y += vy
 
         ## z collision detection
         z_margin = 0.1
