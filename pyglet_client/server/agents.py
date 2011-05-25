@@ -93,18 +93,11 @@ class Agent:
         x,y,z, vx,vy,vz, ax,ay,az = self.state
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
-        if z <= 0.:
-            az = .10 / tr2
-        else:
-            az = -0.10 / tr2
-        if self.jetpack:
-            az += 0.15 / tr2
 
         xy_speed = 0.1 / tr2
         ax = xy_speed * self.d_x
         ay = xy_speed * self.d_y
 
-        vz += az
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         vx += ax
         vy += ay
@@ -147,13 +140,19 @@ class Agent:
             if self.collisionDetection.collision(bx,by,bz):
                 yc_neg +=1
 
+###
+
+
 ### Collision on Z axis
         zc_neg = 0
         zc_pos = 0
-        z_margin = .01
-        z_bounce = .90
+        zc_floor = 0
 
-        bz0 = floor(z - z_margin)
+        z_margin = .01
+        z_bounce = .65
+
+        bz_floor = floor(z - z_margin)
+        bz0 = floor(z)
         bz1 = floor(z+box_height)
         for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
             for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
@@ -161,8 +160,21 @@ class Agent:
                     zc_neg +=1
                 if self.collisionDetection.collision(bx,by,bz1):
                     zc_pos +=1
+                if self.collisionDetect.collision(bx,by,bz_floor):
+                    zc_floor +=1
 
-
+        #gravity, conditional upon being in contact with floor
+        if zc_floor != 0: #is in contract with floor, no gravity
+            if z <= 0.:
+                az = .10 / tr2
+            else:
+                az = -0.10 / tr2
+        #jetpack effect on gravity
+        if self.jetpack:
+            az += 0.15 / tr2
+        #velocity update
+        vz += az
+        #collision detection
         if zc_neg >0:
             z += 0.01
             if vz < 0:
