@@ -103,12 +103,11 @@ class Agent:
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 1.
+        z_gravity = .10/tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
-        if z <= 0.:
-            az += .10 / tr2
-        else:
-            az += -0.10 / tr2
+        ax += (z_gravity) if x<=0 else (-z_gravity) #[value_false, value_true][<test>]
+
         #jetpack adjustment to gravity
         #velocity from acceleration and inputs
         vx += ax + self.v_x*xy_speed
