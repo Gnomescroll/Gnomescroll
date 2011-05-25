@@ -171,7 +171,7 @@ class Agent:
                     zc_floor +=1
 
         #gravity, conditional upon being in contact with floor
-        if zc_floor != 0: #is in contract with floor, no gravity
+        if zc_floor == 0: #is in contract with floor, no gravity
             if z <= 0.:
                 az = .10 / tr2
             else:
