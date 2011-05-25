@@ -98,7 +98,7 @@ class Agent:
         z_gravity = -.10/tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
-        az += (z_gravity) if x<=0 else (-z_gravity) #[value_false, value_true][<test>]
+        az += (z_gravity) if z<=0 else (-z_gravity) #[value_false, value_true][<test>]
 
         #jetpack adjustment to gravity
         #velocity from acceleration and inputs
