@@ -24,6 +24,8 @@ def load_map():
     x_max = 8
     y_max = 8
     z_max = 1
+
+    #plane for testing z collision
     for xa in range(x_min, x_max):
         for ya in range(y_min, y_max):
             for za in range(z_min, z_max):
@@ -32,6 +34,14 @@ def load_map():
                     rnd2 = random.randint(1,4)
                     rnd2 = 3
                     m.set(xa,ya,za, rnd2)
+    #protrusions for testing collision detection
+    for xa in range(x_min, x_max):
+        for ya in range(y_min, y_max):
+            for za in range(z_min, z_max):
+                rnd = random.randint(0,64)
+                if rnd < 16:
+                    m.set(xa,ya,za+1, 3)
+
     print "Finished map generation"
 
 class Main:
