@@ -160,7 +160,7 @@ class Agent:
                     zc_neg +=1
                 if self.collisionDetection.collision(bx,by,bz1):
                     zc_pos +=1
-                if self.collisionDetect.collision(bx,by,bz_floor):
+                if self.collisionDetection.collision(bx,by,bz_floor):
                     zc_floor +=1
 
         #gravity, conditional upon being in contact with floor
