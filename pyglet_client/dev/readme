@@ -1,0 +1,10 @@
+To install dependencies:
+
+pip install -r requirements.txt
+
+If you don't want to use pip, just install the packages listed in requirements.txt your preferred way.
+
+
+==========
+If you get import errors when attempting to run the pyglet client, run setup.sh.
+If you are not using bash, look at setup.sh for explicit instructions.
