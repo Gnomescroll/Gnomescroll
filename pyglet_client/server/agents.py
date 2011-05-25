@@ -68,6 +68,7 @@ class Agent:
     # set agent state explicitly
     def set_agent_control_state(self, tick, *args):
         d_x, d_y, v_x, v_y, jetpack, jump, brake = args
+        #print str(args)
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
@@ -95,12 +96,14 @@ class Agent:
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
-        z_gravity = -.10/tr2
+        z_gravity = -.40 / tr2
+        z_jetpack = 0.80 / tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
-        az += (z_gravity) if z<=0 else (-z_gravity) #[value_false, value_true][<test>]
+        az += (z_gravity) if z>0 else (-z_gravity) #[value_false, value_true][<test>]
 
         #jetpack adjustment to gravity
+        if self.jetpack !=0: az += z_jetpack
         #velocity from acceleration and inputs
         vx += ax
         vy += ay
@@ -114,7 +117,7 @@ class Agent:
         y += vy + self.v_y*xy_speed
         z += vz
 
-        self.state = [x,y,z, vx,vx,vz, ax,ay,az]
+        self.state = [x,y,z, vx , vy ,vz, ax,ay,az]
         NetOut.event.agent_state_change(self)
         return
 
@@ -207,7 +210,8 @@ class Agent:
         else:
             pass
         #jetpack effect on gravity
-        if self.jetpack:
+        if self.jetpack != 0:
+            print "jetpack"
             az += 0.15 / tr2
         #velocity update
         vz += az
