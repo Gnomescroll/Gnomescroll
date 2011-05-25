@@ -52,16 +52,19 @@ class Agent:
 
         self.d_x = 0
         self.d_y = 0
-        self.d_xa = 0
-        self.d_za = 0
+        self.v_x = 0
+        self.v_x = 0
+#        self.a_x = 0 #used for vehocals
+#        self.a_y = 0 #used for vehicals
 
         self.last_control_tick = 0
+        self.jump = 0 #also need to record last jump
         self.jetpack = 0
         self.brake = 0
 
-        self.x_int = int(x)
-        self.y_int = int(y)
-        self.z_int = int(z)
+       # self.x_int = int(x)
+       # self.y_int = int(y)
+       # self.z_int = int(z)
 
         self.health = self.HEALTH_MAX
         self.dead = False
@@ -72,12 +75,14 @@ class Agent:
 
     # set agent state explicitly
     def set_agent_control_state(self, *args):
-        d_x, d_y, d_xa, d_za, jetpack, brake, tick = args
+        d_x, d_y, v_y, v_y, jetpack, jump, brake, tick = args
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
-        self.d_xa = d_xa
-        self.d_za = d_za
+        #self.d_xa = d_xa
+        #self.d_za = d_za
+        self.v_x = v_x
+        self.v_y = v_y
         self.jetpack = jetpack
         self.brake = brake
 
@@ -91,7 +96,35 @@ class Agent:
 
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
+        ax,ay,az = (0,0,0)
 
+        #constants
+        tr = 100. #tick rate
+        tr2 = tr**2 #tick rate squared
+        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
+        xy_speed = 1.
+        #gravity
+    #TODO: should turn gravity off if agent is in contact with ground
+        if z <= 0.:
+            az += .10 / tr2
+        else:
+            az += -0.10 / tr2
+        #jetpack adjustment to gravity
+        #velocity from acceleration and inputs
+        vx += ax + self.v_x*xy_speed
+        vy += ay + self.v_y*xy_speed
+        vz += az
+        if self.brake != 0:
+            vx *= xy_brake
+            vz *= xy_brake
+            vz *= xy_brake
+
+        self.state = [x,y,z, vx,vx,vz, ax,ay,az]
+        NetOut.event.agent_state_change(self)
+        return
+
+
+    ## DEPRECATE BELOW LINE ##
         ax,ay,az = (0,0,0)
 
         tr = 100. #tick rate

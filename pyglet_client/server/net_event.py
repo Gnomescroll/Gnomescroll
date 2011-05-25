@@ -80,7 +80,7 @@ class MessageHandler:
         if tick is None:
             print 'msg agent_control_state missing "tick"'
             return
-        state = msg.get('state', [None for i in range(6)])
+        state = msg.get('state', [None for i in range(7)])
         if state is None:
             print 'msg agent_control_state missing "state"'
             return

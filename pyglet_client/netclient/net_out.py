@@ -33,12 +33,22 @@ from net_client import NetClientGlobal
 
 class SendMessage:
 
-    def send_agent_control_state(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
+    #deprecrate
+    #def send_agent_control_state_DEPREACATED(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
+        #d = {
+            #'cmd' : 'agent_control_state',
+            #'id' : id,
+            #'tick' : 0,
+            #'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
+           #}
+        #NetOut.send_json(d)
+
+    def send_agent_control_state(self, id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
         d = {
             'cmd' : 'agent_control_state',
             'id' : id,
             'tick' : 0,
-            'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
+            'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake]
            }
         NetOut.send_json(d)
 

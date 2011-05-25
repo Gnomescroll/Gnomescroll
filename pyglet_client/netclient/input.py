@@ -134,17 +134,17 @@ class Keyboard(object):
         [d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
 
         if keyboard[key.W]:
-                d_x += v*cos( self.player.x_angle * pi)
-                d_y += v*sin( self.player.x_angle * pi)
+                v_x += v*cos( self.player.x_angle * pi)
+                v_y += v*sin( self.player.x_angle * pi)
         if keyboard[key.S]:
-                d_x += -v*cos( self.player.x_angle * pi)
-                d_y += -v*sin( self.player.x_angle * pi)
+                v_x += -v*cos( self.player.x_angle * pi)
+                v_y += -v*sin( self.player.x_angle * pi)
         if keyboard[key.A]:
-                d_x += -v*cos( self.player.x_angle * pi + pi/2)
-                d_y += -v*sin( self.player.x_angle * pi + pi/2)
+                v_x += -v*cos( self.player.x_angle * pi + pi/2)
+                v_y += -v*sin( self.player.x_angle * pi + pi/2)
         if keyboard[key.D]:
-                d_x += v*cos( self.player.x_angle * pi + pi/2)
-                d_y += v*sin( self.player.x_angle * pi + pi/2)
+                v_x += v*cos( self.player.x_angle * pi + pi/2)
+                v_y += v*sin( self.player.x_angle * pi + pi/2)
         if keyboard[key.E]:
             brake = 1
         if keyboard[key.SPACE]:
@@ -152,9 +152,10 @@ class Keyboard(object):
         self.player.control_state = [
             d_x,
             d_y,
-            d_xa,
-            d_za,
+            v_x,
+            v_y,
             jetpack,
+            jump,
             brake
         ]
 

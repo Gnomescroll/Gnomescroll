@@ -8,8 +8,8 @@ class Player:
     def __init__(self):
 
         self.id = 1
-        #[d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
-        self.control_state = [0,0,0,0,0,0]
+        #[d_x, d_y, v_x, v_y, jetpack, jump, brake] = [0,0,0,0,0,0,0]
+        self.control_state = [0,0,0,0,0,0,0]
         self.x = -.5
         self.y = -.5
         self.z = -.5
