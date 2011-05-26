@@ -13,6 +13,8 @@ class InputGlobal:
     keyboard = None
     mouse = None
 
+    mode = 'camera'
+
     @classmethod
     def init_0(self, main):
         InputGlobal.mouse = Mouse(main)
@@ -21,6 +23,14 @@ class InputGlobal:
     @classmethod
     def init_1(self, main):
         InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
+
+    @classmethod
+    # toggles through modes.
+    def toggle_input_mode(self, change=1, current_mode=[0]):
+        modes = ('camera', 'agent')
+        current_mode[0] = (current_mode[0] + change) % len(modes)
+        InputGlobal.mode = modes[current_mode[0]]
+        print "mode= " + str(InputGlobal.mode)
 
 class Mouse(object):
 
@@ -32,9 +42,9 @@ class Mouse(object):
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         #print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
         sen = 50
-        if buttons == 4:
+        if InputGlobal.mode == 'agent':
             GameStateGlobal.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
-        else:
+        elif InputGlobal.mode == 'camera':
             self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
 import math
@@ -51,7 +61,6 @@ class Keyboard(object):
         self.camera = main.camera
         self.key_handlers = {}
 
-        self.toggle_input_mode()
         self._init_key_handlers()
 
     def _input_callback(self, callback):
@@ -60,7 +69,7 @@ class Keyboard(object):
 
     #key input
     def on_text(self, text):
-        if self.mode == 'chat':
+        if InputGlobal.mode == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_text(text)
             self._input_callback(callback)
         else:
@@ -70,14 +79,14 @@ class Keyboard(object):
     # continuous non-character key detection
     #e.g. back space, cursor movement
     def on_text_motion(self, motion):
-        if self.mode == 'chat':
+        if InputGlobal.mode == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_text_motion(motion)
             self._input_callback(callback)
 
     # one-time non character key detection
     # e.g. enter
     def on_key_press(self, symbol, modifiers):
-        if self.mode == 'chat':
+        if InputGlobal.mode == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
             self._input_callback(callback)
         else:
@@ -87,7 +96,7 @@ class Keyboard(object):
         self.bind_key_handlers({
             key.E : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
-            key.Q : self.toggle_input_mode,
+            key.Q : InputGlobal.toggle_input_mode,
 
         })
 
@@ -101,26 +110,18 @@ class Keyboard(object):
             self.key_handlers[key] = handler
 
     def toggle_chat(self):
-        if self.mode == 'chat':
-            self.toggle_input_mode(0)
+        if InputGlobal.mode == 'chat':
+            InputGlobal.toggle_input_mode(0)
         else:
-            self.mode = 'chat'
-
-    # toggles through modes.
-    def toggle_input_mode(self, change=1, current_mode=[0]):
-        modes = ('camera', 'agent')
-        if getattr(self, 'mode', None) is not None:
-            current_mode[0] = (current_mode[0] + change) % len(modes)
-        self.mode = modes[current_mode[0]]
-        print "mode= " + str(self.mode)
+            InputGlobal.mode = 'chat'
 
     # called in main game loop
     def stateHandler(self, keyboard):
-        if self.mode == 'chat':
+        if InputGlobal.mode == 'chat':
             return
-        if self.mode == 'camera':
+        if InputGlobal.mode == 'camera':
             self.camera_input_mode(keyboard)
-        elif self.mode == 'agent':
+        elif InputGlobal.mode == 'agent':
             self.agent_input_mode(keyboard)
 
     def agent_input_mode(self, keyboard):

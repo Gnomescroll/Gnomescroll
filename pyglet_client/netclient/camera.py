@@ -86,3 +86,10 @@ class Camera(object):
         glViewport(0, 0, width, height)
         self.worldProjection()
         return pyglet.event.EVENT_HANDLED
+
+    def agent_view(self, agent):
+        self.x = agent.x
+        self.y = agent.y
+        self.z = agent.z
+        self.x_angle = agent.x_angle
+        self.y_angle = agent.y_angle
