@@ -23,7 +23,7 @@ class AgentList(GenericObjectList):
         self._object_type = Agent
 
     def create(self, player_id, x=0, y=0, z=0):
-        self._add(x, y, z, player_id)
+        return self._add(x, y, z, player_id)
 
     def destroy(self, agent):
         self._remove(agent)
@@ -95,8 +95,8 @@ class Agent:
 
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
-        ax,ay,az = (0,0,0)
-        vx,vy = (0,0)
+        #ax,ay,az = (0,0,0)
+        #vx,vy = (0,0)
         #constants
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
@@ -107,6 +107,8 @@ class Agent:
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
         #velocity from acceleration and inputs
+
+        '''BUG: vx and vy stay constant at 0'''
         vx += ax + self.v_x*xy_speed
         vy += ay + self.v_y*xy_speed
 
@@ -241,6 +243,8 @@ class Agent:
         y += vy
 
         self.state = [x,y,z, vx,vy,vz, ax,ay,az]
+        print 'agent state:'
+        print self.state
         NetOut.event.agent_state_change(self)
         return
 

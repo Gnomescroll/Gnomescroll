@@ -41,7 +41,6 @@ class Mouse(object):
         self.camera = main.camera
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        print InputGlobal.mode
         if InputGlobal.mode == 'agent':
             self._pan_agent(x, y, dx, dy)
         elif InputGlobal.mode == 'camera':

@@ -73,6 +73,9 @@ class GenericObjectList:
     def items(self):
         return self.objects.items()
 
+    def __str__(self):
+        return str(self.objects)
+
     def _add(self, *args):
         print args
         object = self._object_type(*args)

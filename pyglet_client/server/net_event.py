@@ -72,7 +72,7 @@ class MessageHandler:
         except ValueError:
             print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
             return
-            
+
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
         except KeyError:
@@ -86,9 +86,7 @@ class MessageHandler:
         if tick is None:
             print 'msg agent_control_state missing "tick"'
             return
-        if state is None:
-            print 'msg agent_control_state missing "state"'
-            return
+            
         try:
             state = msg['state']
             state = list(state)

@@ -44,6 +44,8 @@ class SendMessage:
         #NetOut.send_json(d)
 
     def send_agent_control_state(self, id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
+        if NetClientGlobal.client_id == 0: # not identified
+            return
         d = {
             'cmd' : 'agent_control_state',
             'id' : NetClientGlobal.client_id,
