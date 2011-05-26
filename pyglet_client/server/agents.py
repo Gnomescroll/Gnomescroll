@@ -108,11 +108,10 @@ class Agent:
     #TODO: should turn gravity off if agent is in contact with ground
         #velocity from acceleration and inputs
 
-        '''BUG: vx and vy stay constant at 0'''
         vx += ax + self.v_x*xy_speed
         vy += ay + self.v_y*xy_speed
 
-        print str((vx,vy))
+        #print str((vx,vy))
         if self.brake != 0:
             vx *= xy_brake
             vy *= xy_brake
