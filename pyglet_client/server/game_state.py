@@ -3,7 +3,7 @@ import math
 class GameStateGlobal:
 
     TICK = 0.01 # seconds
-    
+
     gameState = None
     terrainMap = None
     agentList = None
@@ -19,16 +19,16 @@ class GameStateGlobal:
         GameStateGlobal.playerList = PlayerList()
 
     @classmethod
-    def init(self):
+    def init(cls):
         pass
-        
+
     @classmethod
-    def new_agent_id(self):
+    def new_agent_id(cls):
         self.agent_id += 1
         return self.agent_id
 
     @classmethod
-    def new_player_id(self):
+    def new_player_id(cls):
         self.player_id += 1
         return self.player_id
 
@@ -48,13 +48,13 @@ class GenericObjectList:
         if not key in self.objects:
             print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
         return self.objects[key]
-        
+
     def __setitem__(self, key, value):
         self.objects[key] = value
-        
+
     def __delitem__(self, key):
         del self.objects[key]
-        
+
     def __len__(self):
         return len(self.objects)
 
@@ -82,7 +82,7 @@ class GenericObjectList:
         self.objects[object.id] = object
         print '%s: %s created; id= %i' % (self._metaname, self._itemname, object.id,)
         return object
-        
+
     def _remove(self, id):
         if type(id) != int:
             id = id.id
@@ -98,7 +98,7 @@ from players import PlayerList
 
 # main game state wrapper
 class GameState:
-        
+
     def __init__(self):
         self.time = 0
 

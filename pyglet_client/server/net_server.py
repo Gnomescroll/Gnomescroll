@@ -15,7 +15,7 @@ class NetServer:
     _client_id = 0
 
     @classmethod
-    def generate_client_id(self):
+    def generate_client_id(cls):
         self._client_id += 1
         return self._client_id
 
@@ -25,7 +25,7 @@ class NetServer:
         NetServer.serverListener = ServerListener()
 
     @classmethod
-    def init(self):
+    def init(cls):
         self.connectionPool.init()
         self.datagramDecoder.init()
         self.serverListener.init()
@@ -260,7 +260,7 @@ class DatagramDecoder:
                 print "JSON DECODING ERROR: %s" % (str(msg),)
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
-            
+
 # decodes tcp packets
 class TcpPacketDecoder:
 

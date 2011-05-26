@@ -16,7 +16,7 @@ class NetOut:
         NetOut.message = MessageOut()
 
     @classmethod
-    def init(self):
+    def init(cls):
         self.event.init()
         self.message.init()
 

@@ -12,11 +12,11 @@ def now():
 class ChatServer:
     chat = None
 
+    @classmethod
+    def init(cls): #calls import methods if needed
+        pass
     def __init__(self): #first pass is declaring
         ChatServer.chat = Chat()
-    @classmethod
-    def init(self): #calls import methods if needed
-        pass
 
 '''
 Chat server
@@ -132,11 +132,11 @@ class Chat:
     def client_subscribe(self, msg, connection):
         print 'client subscribing to: %s' % (msg['channel'],)
         self.client_listen(connection, msg['channel'])
-        
+
     def client_unsubscribe(self, msg, connection):
         print 'client unsubscribing to: %s' % (msg['channel'],)
         self.client_unlisten(connection, msg['channel'])
-        
+
 
 class ChatMessage:
 

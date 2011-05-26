@@ -12,7 +12,7 @@ class NetEvent:
         NetEvent.adminMessageHandler = AdminMessageHandler()
 
     @classmethod
-    def init(self):
+    def init(cls):
         self.messageHandler.init()
         self.adminMessageHandler.init()
 
@@ -63,7 +63,7 @@ class MessageHandler:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
     def agent_control_state(self, msg):
-        
+
         try:
             client_id = int(msg.get('id', None))
         except TypeError:
@@ -81,12 +81,12 @@ class MessageHandler:
         except AttributeError:
             print 'msg.cmd == agent_control_state, player has no agent'
             return
-        
+
         tick = msg.get('tick', None)
         if tick is None:
             print 'msg agent_control_state missing "tick"'
             return
-            
+
         try:
             state = msg['state']
             state = list(state)
@@ -100,7 +100,7 @@ class MessageHandler:
         except AssertionError:
             print 'msg agent_control_state :: state has wrong number of elements'
             return
-            
+
         agent.set_agent_control_state(tick ,*state)
 
     def send_chunk_list(self, msg, connection):
