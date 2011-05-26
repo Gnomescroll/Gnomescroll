@@ -73,7 +73,7 @@ class Agent:
 
     # set agent state explicitly
     def set_agent_control_state(self, tick, *args):
-        d_x, d_y, v_x, v_y, jetpack, jump, brake = args
+        v_x, v_y, d_x, d_y, jetpack, jump, brake = args
         #print str(args)
         self.last_control_tick = tick
         self.d_x = d_x #a byte
@@ -112,6 +112,7 @@ class Agent:
         vx += ax + self.v_x*xy_speed
         vy += ay + self.v_y*xy_speed
 
+        print str((vx,vy))
         if self.brake != 0:
             vx *= xy_brake
             vy *= xy_brake
@@ -245,7 +246,7 @@ class Agent:
 
         self.state = [x,y,z, vx,vy,vz, ax,ay,az]
         #print 'agent state:'
-        print self.state
+        #print self.state
         NetOut.event.agent_state_change(self)
         return
 
