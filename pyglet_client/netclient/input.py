@@ -145,11 +145,11 @@ class Keyboard(object):
                 v_x += -v*cos( GameStateGlobal.player.x_angle * pi)
                 v_y += -v*sin( GameStateGlobal.player.x_angle * pi)
         if keyboard[key.A]:
-                v_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
-                v_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
-        if keyboard[key.D]:
                 v_x += v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
                 v_y += v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
+        if keyboard[key.D]:
+                v_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
         if keyboard[key.E]:
             brake = 1
         if keyboard[key.SPACE]:
