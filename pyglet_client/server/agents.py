@@ -48,6 +48,11 @@ class Agent:
             id = GameStateGlobal.new_agent_id()
         self.id = id
 
+        #b_height
+        #t_height
+        self.b_height = 1.5
+        self.t_height = .75
+
         self.d_x = 0 #yaw?
         self.d_y = 0 #pitch?
         self.v_x = 0
@@ -90,7 +95,7 @@ class Agent:
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
         ax,ay,az = (0,0,0)
-
+        vx,vy = (0,0)
         #constants
         tr = 100. #tick rate
         tr2 = tr**2 #tick rate squared
@@ -100,24 +105,68 @@ class Agent:
         z_jetpack = 0.80 / tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
-        az += (z_gravity) if z>0 else (-z_gravity) #[value_false, value_true][<test>]
-
-        #jetpack adjustment to gravity
-        if self.jetpack !=0: az += z_jetpack
         #velocity from acceleration and inputs
-        vx += ax
-        vy += ay
-        vz += az
+        vx += ax + self.v_x*xy_speed
+        vy += ay + self.v_y*xy_speed
+
         if self.brake != 0:
             vx *= xy_brake
             vy *= xy_brake
             vz *= xy_brake
 
-        x += vx + self.v_x*xy_speed
-        y += vy + self.v_y*xy_speed
-        z += vz
+        b_height = self.b_height
+        t_height = self.t_height
+        box_r = .30
+    #Z-collision
 
-        self.state = [x,y,z, vx , vy ,vz, ax,ay,az]
+        z_margin = .01
+        z_bounce = .65
+
+        zc_neg_soft = 0
+        zc_neg_hard = 0
+        zc_current = 0
+
+        bz_current = float(z - b_height)
+        bz_soft_floor = floor(z - b_height - z_margin)
+        bz_hard_floor = floor(z+vz-b_height)
+
+        #for z, use current position
+        #over lowest z level z
+        for bx in range(floor(x-box_r), floor(x+box_r)+1):
+            for by in range(floor(y-box_r), floor(y+box_r)+1):
+                if self.collisionDetection.collision(bx,by,bz_soft_floor):
+                     zc_neg_soft += 1
+                if self.collisionDetection.collision(bx,by,bz_hard_floor):
+                    zc_neg_hard +=1
+                if self.collisionDetection.collision(bx,by,bz_current):
+                    zc_current +=1
+
+        if zc_neg_soft == 0: #agent on ground
+            pass
+            az += (z_gravity) if z>0 else (-z_gravity) #[value_false, value_true][<test>]
+        else:
+            #z = floor(z) + z_margin/2
+            if vz < 0:
+                vz *= -1 *z_bounce
+        #az += (z_gravity) if z>0 else (-z_gravity)
+
+        if zc_neg_soft != 0:
+            print "On ground!"
+        if zc_neg_hard != 0:
+            print "Hard Predicted Collision!"
+        if zc_current != 0:
+            print "Hard current Collision!"
+
+        #jetpack adjustment to gravity
+        if self.jetpack != 0: az += z_jetpack
+
+        vz += az
+        z += vz
+## Position Change ##
+        x += vx
+        y += vy
+
+        self.state = [x,y,z, vx,vy,vz, ax,ay,az]
         NetOut.event.agent_state_change(self)
         return
 
