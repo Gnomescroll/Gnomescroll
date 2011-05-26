@@ -24,13 +24,13 @@ class GameStateGlobal:
 
     @classmethod
     def new_agent_id(cls):
-        self.agent_id += 1
-        return self.agent_id
+        cls.agent_id += 1
+        return cls.agent_id
 
     @classmethod
     def new_player_id(cls):
-        self.player_id += 1
-        return self.player_id
+        cls.player_id += 1
+        return cls.player_id
 
 from net_server import NetServer
 

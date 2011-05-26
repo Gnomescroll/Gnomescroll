@@ -13,8 +13,8 @@ class NetEvent:
 
     @classmethod
     def init(cls):
-        self.messageHandler.init()
-        self.adminMessageHandler.init()
+        cls.messageHandler.init()
+        cls.adminMessageHandler.init()
 
 from net_server import NetServer
 from game_state import GameStateGlobal

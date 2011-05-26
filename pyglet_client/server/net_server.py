@@ -16,8 +16,8 @@ class NetServer:
 
     @classmethod
     def generate_client_id(cls):
-        self._client_id += 1
-        return self._client_id
+        cls._client_id += 1
+        return cls._client_id
 
     def __init__(self):
         NetServer.connectionPool = ConnectionPool()
@@ -26,9 +26,9 @@ class NetServer:
 
     @classmethod
     def init(cls):
-        self.connectionPool.init()
-        self.datagramDecoder.init()
-        self.serverListener.init()
+        cls.connectionPool.init()
+        cls.datagramDecoder.init()
+        cls.serverListener.init()
 
 from chat_server import ChatServer
 from net_out import SendMessage

@@ -17,8 +17,8 @@ class NetOut:
 
     @classmethod
     def init(cls):
-        self.event.init()
-        self.message.init()
+        cls.event.init()
+        cls.message.init()
 
 from game_state import GameStateGlobal
 from net_server import NetServer
