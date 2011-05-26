@@ -140,7 +140,6 @@ class Agent:
 
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y-box_r+vy), floor(y+box_r+vy)+1):
-                for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
             #x+
                 if self.collisionDetection.collision(bx_pos_current,by,bz):
                     xc_pos_current +=1
@@ -164,7 +163,7 @@ class Agent:
             for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
                 for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
                     if self.collisionDetection.collision(bx,by,bz):
-                        self.xyc_projected += 1
+                        xyc_projected += 1
 
         xyc_current = 0
 
@@ -172,30 +171,12 @@ class Agent:
             for by in range(floor(y-box_r), floor(y+box_r)+1):
                 for bx in range(floor(x-box_r+vx), floor(x+box_r)+1):
                     if self.collisionDetection.collision(bx,by,bz):
-                        self.xyc_current += 1
+                        xyc_current += 1
 
         if xyc_projected != 0:
             print "Projected XY collision!"
             vx =0
             vy =0
-
-### Collisions on Y axis ###
-
-        yc_pos_projected = 0
-        yc_neg_projected = 0
-        yc_pos_current = 0
-        yc_neg_current = 0
-
-        for bz in range(floor(z - b_height), floor(z +t_height)+1):
-            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-            #y+
-                bx = floor(x+vx+box_r)
-                if self.collisionDetection.collision(bx,by,bz):
-                    yc_pos +=1
-            #y-
-                bx = floor(x+vx-box_r)
-                if self.collisionDetection.collision(bx,by,bz):
-                    yc_neg +=1
 
     #Z-collision
 
