@@ -147,15 +147,18 @@ class Agent:
         else:
             #z = floor(z) + z_margin/2
             if vz < 0:
-                vz *= -1 *z_bounce
+                if vz < -0.01: #vertical velocity bounce treshold
+                    vz *= -1 *z_bounce
+                else:
+                    vz = 0
         #az += (z_gravity) if z>0 else (-z_gravity)
 
         if zc_neg_soft != 0:
             print "On ground!"
         if zc_neg_hard != 0:
-            print "Hard Predicted Collision!"
+            print "Hard Predicted Z-Collision!"
         if zc_current != 0:
-            print "Hard current Collision!"
+            print "Hard current Z-Collision!"
 
         #jetpack adjustment to gravity
         if self.jetpack != 0: az += z_jetpack
