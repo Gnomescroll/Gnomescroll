@@ -182,7 +182,7 @@ class Agent:
 
         z_margin = .01
         z_bounce = .65
-        z_bounce_v_threshold = -1. / tr
+        z_bounce_v_threshold = -0.35 / tr
 
         zc_neg_soft = 0
         zc_neg_hard = 0
@@ -206,7 +206,7 @@ class Agent:
         #Hard collision predicted and not inside of something already
         if zc_neg_hard != 0 and zc_current == 0:
             if vz < 0:
-                if vz < -0.01: #vertical velocity bounce treshold
+                if vz < z_bounce_v_threshold: #vertical velocity bounce treshold
                     vz *= -1 *z_bounce
                 else:
                     vz = 0
