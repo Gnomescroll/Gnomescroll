@@ -37,15 +37,26 @@ class Mouse(object):
     def __init__(self, main):
         self.main = main
         self.main.win.on_mouse_drag = self.on_mouse_drag
+        self.main.win.on_mouse_motion = self.on_mouse_motion
         self.camera = main.camera
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        #print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
-        sen = 50
+        print InputGlobal.mode
         if InputGlobal.mode == 'agent':
-            GameStateGlobal.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
+            self._pan_agent(x, y, dx, dy)
         elif InputGlobal.mode == 'camera':
-            self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
+            self._pan_camera(x, y, dx, dy)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        if InputGlobal.mode == 'agent':
+            self._pan_agent(x, y, dx, dy, sen=300)
+            
+    def _pan_agent(self, x, y, dx, dy, sen=50):
+        GameStateGlobal.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
+
+    def _pan_camera(self, x, y, dx, dy, sen=50):
+        self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
+        
 
 import math
 from math import sin, cos, pi
