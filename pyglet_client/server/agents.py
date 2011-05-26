@@ -124,27 +124,65 @@ class Agent:
 
         box_r = self.box_r
 
-### Collisions on X axis ###
-        xc_pos_projected = 0 #number of collisions with north blocks
-        xc_neg_projected = 0 #number of collisions with south blocks
+### Collisions on X axis collision ###
+
         xc_pos_current = 0
+        xc_pos_projected = 0
+
         xc_neg_current = 0
+        xc_neg_projected = 0
+
+        bx_pos_current = floor(x+box_r)
+        bx_pos_projected = floor(x+vx+box_r)
+
+        bx_neg_current = floor(x-box_r)
+        bx_neg_projected = floor(x+vx-box_r)
 
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
-            for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)+1):
+            for by in range(floor(y-box_r+vy), floor(y+box_r+vy)+1):
+                for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
             #x+
-                by = floor(y+vy+box_r)
-                if self.collisionDetection.collision(bx,by,bz):
-                    xc_pos +=1
+                if self.collisionDetection.collision(bx_pos_current,by,bz):
+                    xc_pos_current +=1
+                if self.collisionDetection.collision(bx_pos_projected,by,bz):
+                    xc_pos_projected +=1
             #x-
-                by = floor(y+vy-box_r)
-                if self.collisionDetection.collision(bx,by,bz):
-                    xc_neg +=1
+                if self.collisionDetection.collision(bx_neg_current,by,bz):
+                    xc_neg_current +=1
+                if self.collisionDetection.collision(bx_neg_projected,by,bz):
+                    xc_neg_projected +=1
+
+### Collision on Y axis ###
+
+
+
+### XY Collision ###
+
+        xyc_projected = 0
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
+                for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
+                    if self.collisionDetection.collision(bx,by,bz):
+                        self.xyc_projected += 1
+
+        xyc_current = 0
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for by in range(floor(y-box_r), floor(y+box_r)+1):
+                for bx in range(floor(x-box_r+vx), floor(x+box_r)+1):
+                    if self.collisionDetection.collision(bx,by,bz):
+                        self.xyc_current += 1
+
+        if xyc_projected != 0:
+            print "Projected XY collision!"
+            vx =0
+            vy =0
 
 ### Collisions on Y axis ###
 
-        yc_pos = 0
-        yc_neg = 0
+        yc_pos_projected = 0
+        yc_neg_projected = 0
         yc_pos_current = 0
         yc_neg_current = 0
 
@@ -163,6 +201,7 @@ class Agent:
 
         z_margin = .01
         z_bounce = .65
+        z_bounce_v_threshold = -1. / tr
 
         zc_neg_soft = 0
         zc_neg_hard = 0
@@ -197,7 +236,7 @@ class Agent:
         else:
             #z = floor(z) + z_margin/2
             if vz < 0:
-                if vz < -0.01: #vertical velocity bounce treshold
+                if vz < z_bounce_v_threshold: #vertical velocity bounce treshold
                     vz *= -1 *z_bounce
                 else:
                     vz = 0
