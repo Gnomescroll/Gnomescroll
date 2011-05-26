@@ -22,8 +22,8 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, player_id, x=0, y=0, z=0, xa=0, ya=0):
-        self._add(x, y, z, xa, ya, player_id)
+    def create(self, player_id, x=0, y=0, z=0):
+        self._add(x, y, z, player_id)
 
     def destroy(self, agent):
         self._remove(agent)
@@ -35,11 +35,9 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, x, y, z, xa, ya, player_id, id=None):
+    def __init__(self, x, y, z, player_id, id=None):
         x,y,z = [float(i) for i in (x,y,z)]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-        self.xa = xa
-        self.ya = ya
 
         self.terrainMap = GameStateGlobal.terrainMap
         self.collisionDetection = CubeGlobals.collisionDetection
@@ -50,18 +48,21 @@ class Agent:
             id = GameStateGlobal.new_agent_id()
         self.id = id
 
-        self.d_x = 0
-        self.d_y = 0
-        self.d_xa = 0
-        self.d_za = 0
+        #b_height
+        #t_height
+        self.b_height = 1.5
+        self.t_height = .75
+        self.box_r = .30
+
+        self.d_x = 0 #yaw?
+        self.d_y = 0 #pitch?
+        self.v_x = 0
+        self.v_y = 0
 
         self.last_control_tick = 0
+        self.jump = 0 #also need to record last jump
         self.jetpack = 0
         self.brake = 0
-
-        self.x_int = int(x)
-        self.y_int = int(y)
-        self.z_int = int(z)
 
         self.health = self.HEALTH_MAX
         self.dead = False
@@ -71,13 +72,16 @@ class Agent:
         self.owner = player_id
 
     # set agent state explicitly
-    def set_agent_control_state(self, *args):
-        d_x, d_y, d_xa, d_za, jetpack, brake, tick = args
+    def set_agent_control_state(self, tick, *args):
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = args
+        #print str(args)
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
-        self.d_xa = d_xa
-        self.d_za = d_za
+        #self.d_xa = d_xa
+        #self.d_za = d_za
+        self.v_x = v_x
+        self.v_y = v_y
         self.jetpack = jetpack
         self.brake = brake
 
@@ -91,7 +95,157 @@ class Agent:
 
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
+        ax,ay,az = (0,0,0)
+        vx,vy = (0,0)
+        #constants
+        tr = 100. #tick rate
+        tr2 = tr**2 #tick rate squared
+        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
+        xy_speed = 2. / tr
+        z_gravity = -.40 / tr2
+        z_jetpack = 0.80 / tr2
+        #gravity
+    #TODO: should turn gravity off if agent is in contact with ground
+        #velocity from acceleration and inputs
+        vx += ax + self.v_x*xy_speed
+        vy += ay + self.v_y*xy_speed
 
+        if self.brake != 0:
+            vx *= xy_brake
+            vy *= xy_brake
+            vz *= xy_brake
+
+    #constants for collision box
+        b_height = self.b_height
+        t_height = self.t_height
+        box_r = .30
+
+    #XY-collision
+
+        box_r = self.box_r
+
+### Collisions on X axis collision ###
+
+        xc_pos_current = 0
+        xc_pos_projected = 0
+
+        xc_neg_current = 0
+        xc_neg_projected = 0
+
+        bx_pos_current = floor(x+box_r)
+        bx_pos_projected = floor(x+vx+box_r)
+
+        bx_neg_current = floor(x-box_r)
+        bx_neg_projected = floor(x+vx-box_r)
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for by in range(floor(y-box_r+vy), floor(y+box_r+vy)+1):
+            #x+
+                if self.collisionDetection.collision(bx_pos_current,by,bz):
+                    xc_pos_current +=1
+                if self.collisionDetection.collision(bx_pos_projected,by,bz):
+                    xc_pos_projected +=1
+            #x-
+                if self.collisionDetection.collision(bx_neg_current,by,bz):
+                    xc_neg_current +=1
+                if self.collisionDetection.collision(bx_neg_projected,by,bz):
+                    xc_neg_projected +=1
+
+### Collision on Y axis ###
+
+
+
+### XY Collision ###
+
+        xyc_projected = 0
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
+                for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
+                    if self.collisionDetection.collision(bx,by,bz):
+                        xyc_projected += 1
+
+        xyc_current = 0
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for by in range(floor(y-box_r), floor(y+box_r)+1):
+                for bx in range(floor(x-box_r+vx), floor(x+box_r)+1):
+                    if self.collisionDetection.collision(bx,by,bz):
+                        xyc_current += 1
+
+        if xyc_projected != 0:
+            print "Projected XY collision!"
+            vx =0
+            vy =0
+
+    #Z-collision
+
+        z_margin = .01
+        z_bounce = .65
+        z_bounce_v_threshold = -0.35 / tr
+
+        zc_neg_soft = 0
+        zc_neg_hard = 0
+        zc_current = 0
+
+        bz_current = float(z - b_height)
+        bz_soft_floor = floor(z - b_height - z_margin)
+        bz_hard_floor = floor(z+vz-b_height)
+
+        #for z, use current position
+        #over lowest z level z
+        for bx in range(floor(x-box_r), floor(x+box_r)+1):
+            for by in range(floor(y-box_r), floor(y+box_r)+1):
+                if self.collisionDetection.collision(bx,by,bz_soft_floor):
+                     zc_neg_soft += 1
+                if self.collisionDetection.collision(bx,by,bz_hard_floor):
+                    zc_neg_hard +=1
+                if self.collisionDetection.collision(bx,by,bz_current):
+                    zc_current +=1
+
+        #Hard collision predicted and not inside of something already
+        if zc_neg_hard != 0 and zc_current == 0:
+            if vz < 0:
+                if vz < z_bounce_v_threshold: #vertical velocity bounce treshold
+                    vz *= -1 *z_bounce
+                else:
+                    vz = 0
+
+        if zc_neg_soft == 0: #agent on ground
+            pass
+            az += (z_gravity) if z>0 else (-z_gravity) #[value_false, value_true][<test>]
+        else:
+            #z = floor(z) + z_margin/2
+            if vz < 0:
+                if vz < z_bounce_v_threshold: #vertical velocity bounce treshold
+                    vz *= -1 *z_bounce
+                else:
+                    vz = 0
+        if zc_current != 0:
+            z += .50 / tr
+
+        if zc_neg_soft != 0:
+            print "On ground!"
+        if zc_neg_hard != 0:
+            print "Hard Predicted Z-Collision!"
+        if zc_current != 0:
+            print "Hard current Z-Collision!"
+
+        #jetpack adjustment to gravity
+        if self.jetpack != 0: az += z_jetpack
+
+        vz += az
+        z += vz
+## Position Change ##
+        x += vx
+        y += vy
+
+        self.state = [x,y,z, vx,vy,vz, ax,ay,az]
+        NetOut.event.agent_state_change(self)
+        return
+
+
+    ## DEPRECATE BELOW LINE ##
         ax,ay,az = (0,0,0)
 
         tr = 100. #tick rate
@@ -107,43 +261,6 @@ class Agent:
         if self.brake != 0:
             vx *= xy_brake
             vz *= xy_brake
-
-### Parameters for collision box ###
-        box_height = 1.5
-        box_r = .30
-
-### Collisions on X axis ###
-        xc_pos = 0 #number of collisions with north blocks
-        xc_neg = 0 #number of collisions with south blocks
-
-        bz = floor(z)
-        for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)+1):
-        #x+
-            by = floor(y+vy+box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                xc_pos +=1
-        #x-
-            by = floor(y+vy-box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                xc_neg +=1
-
-### Collisions on Y axis ###
-
-        yc_pos = 0 #number of collisions with north blocks
-        yc_neg = 0 #number of collisions with south blocks
-
-        bz = floor(z)
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-        #x+
-            bx = floor(x+vx+box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                yc_pos +=1
-        #x-
-            bx = floor(x+vx-box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                yc_neg +=1
-
-###
 
 
 ### Collision on Z axis
@@ -179,7 +296,8 @@ class Agent:
         else:
             pass
         #jetpack effect on gravity
-        if self.jetpack:
+        if self.jetpack != 0:
+            print "jetpack"
             az += 0.15 / tr2
         #velocity update
         vz += az

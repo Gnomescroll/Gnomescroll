@@ -126,7 +126,7 @@ class Keyboard(object):
     def agent_input_mode(self, keyboard):
         # d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
         v = 1
-        [d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
+        [d_x, d_y, v_x, v_y, jetpack, jump, brake] = [0,0,0,0,0,0,0]
 
         if keyboard[key.W]:
                 d_x += v*cos( GameStateGlobal.player.x_angle * pi)
@@ -147,9 +147,10 @@ class Keyboard(object):
         GameStateGlobal.player.control_state = [
             d_x,
             d_y,
-            d_xa,
-            d_za,
+            v_x,
+            v_y,
             jetpack,
+            jump,
             brake
         ]
 

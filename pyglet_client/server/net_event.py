@@ -80,13 +80,12 @@ class MessageHandler:
         if tick is None:
             print 'msg agent_control_state missing "tick"'
             return
-        state = msg.get('state', [None for i in range(6)])
+        state = msg.get('state', [0 for i in range(7)])
         if state is None:
             print 'msg agent_control_state missing "state"'
             return
         state = list(state)
-        state.append(tick)
-        agent.set_agent_control_state(*state)
+        agent.set_agent_control_state(tick ,*state)
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
