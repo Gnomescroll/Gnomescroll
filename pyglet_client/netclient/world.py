@@ -1,12 +1,6 @@
 import pyglet
 from pyglet.gl import *
 
-from cube_dat import CubeGlobal
-from world_state import WorldStateGlobal
-from map_chunk_manager import MapChunkManagerGlobal
-
-from player import Player
-
 base_dir = "./"
 
 import random
@@ -17,7 +11,7 @@ class World():
     mapChunkManager = None
 
     def init(self):
-        self.terrainMap = WorldStateGlobal.terrainMap
+        self.terrainMap = GameStateGlobal.terrainMap
         self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         CubeGlobal.setTextureGrid(self.texture_grid)
 
@@ -121,3 +115,9 @@ class World():
     def draw_players(self):
         for p in self.players:
             p.draw()
+
+from cube_dat import CubeGlobal
+from game_state import GameStateGlobal
+from map_chunk_manager import MapChunkManagerGlobal
+
+from player import Player

@@ -1,8 +1,9 @@
 from math import sin, cos, pi
 from math import floor, ceil, fabs
 from pyglet.gl import *
-
 import math
+
+
 class Player:
 
     def __init__(self):
@@ -340,3 +341,5 @@ class Player:
         if not cube_dict.has_key((x,y,z)):
             cube_dict[(x,y,z)] = []
         cube_dict[(x,y,z)].append(side)
+
+from game_state import GameStateGlobal

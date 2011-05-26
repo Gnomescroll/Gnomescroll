@@ -6,9 +6,6 @@ Client network interface
 
 import socket
 import struct
-#import binascii
-
-from world_state import WorldStateGlobal
 import simplejson as json
 
 class NetClientGlobal:
@@ -32,8 +29,7 @@ class NetClientGlobal:
     def connect(self):
         self.connection.connect()
 
-from net_event import NetEventGlobal
-from net_out import NetOut
+
 
 class SendPacket:
     def __init__(self, client):
@@ -194,3 +190,7 @@ class TcpConnection:
             #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0
             self.decoder.add_to_buffer(data)
+
+from game_state import GameStateGlobal
+from net_event import NetEventGlobal
+from net_out import NetOut

@@ -7,8 +7,6 @@ Client network incoming
 import simplejson as json
 #import struct
 
-from chat_client import ChatClientGlobal
-
 class NetEventGlobal:
     messageHandler = None
     mapMessageHandler = None
@@ -18,21 +16,15 @@ class NetEventGlobal:
         self.mapMessageHandler = MapMessageHandler()
     @classmethod
     def init_1(self):
+        pass
         MessageHandler.init()
         MapMessageHandler.init()
-
-from world_state import WorldStateGlobal
-from net_client import NetClientGlobal
-from net_out import NetOut
-from chat_client import ChatClientGlobal
-from map_chunk_manager import MapChunkManagerGlobal
-from map_controller import MapControllerGlobal
 
 class MessageHandler:
     player = None #move this somewhere else
     @classmethod
     def init(self):
-        self.player = WorldStateGlobal.player
+        self.player = GameStateGlobal.player
         assert self.player != None
     def __init__(self):
         pass
@@ -80,7 +72,7 @@ class MessageHandler:
             print "JSON message type unregonized"
 
     def _agent_position(self, id, tick, state, **misc):
-        self.player = WorldStateGlobal.player
+        self.player = GameStateGlobal.player
         [x,y,z,vx, vy, vz,ax, ay, az] = state
         [x,y,z] = [float(x),float(y),float(z)]
 
@@ -110,7 +102,7 @@ class MapMessageHandler:
     mapController = None
     @classmethod
     def init(self):
-        self.terrainMap = WorldStateGlobal.terrainMap
+        self.terrainMap = GameStateGlobal.terrainMap
         self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         self.mapController = MapControllerGlobal.mapController
         assert self.mapController != None
@@ -133,3 +125,11 @@ class MapMessageHandler:
         (x,y,z,value) = value
         self.terrainMap.set(x,y,z,value)
         self.mapChunkManager.set_map(x,y,z) #redraw chunk
+
+
+from game_state import GameStateGlobal
+from net_client import NetClientGlobal
+from net_out import NetOut
+from chat_client import ChatClientGlobal
+from map_chunk_manager import MapChunkManagerGlobal
+from map_controller import MapControllerGlobal

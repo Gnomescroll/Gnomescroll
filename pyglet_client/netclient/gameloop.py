@@ -6,20 +6,14 @@ from pyglet.gl import *
 #import cython
 #import pyximport; pyximport.install()
 
-from player import Player
-from input import Mouse, Keyboard
-from camera import Camera
-from hud import Hud
 from pyglet.window import key
 
-#deprecate
-import world #deprecate
 
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
 
-from world_state import WorldStateGlobal
+from game_state import GameStateGlobal
 from client_event import ClientEventGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
@@ -27,6 +21,15 @@ from chat_client import ChatClientGlobal
 from cube_dat import CubeGlobal
 from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
+
+
+from player import Player
+from input import Mouse, Keyboard
+from camera import Camera
+from hud import Hud
+
+import world #deprecate
+
 
 #import hotshot
 
@@ -36,7 +39,7 @@ class App(object):
         #stage 1
         NetClientGlobal.init_0()
         CubeGlobal.init_0()
-        WorldStateGlobal.init_0()
+        GameStateGlobal.init_0()
         NetEventGlobal.init_0()
         NetOut.init_0()
         ChatClientGlobal.init_0()
@@ -45,7 +48,7 @@ class App(object):
         #stage 2
         NetClientGlobal.init_1()
         CubeGlobal.init_1()
-        WorldStateGlobal.init_1()
+        GameStateGlobal.init_1()
         NetEventGlobal.init_1()
         NetOut.init_1()
         ChatClientGlobal.init_1()
@@ -81,7 +84,7 @@ class App(object):
 
     def mainLoop(self):
         #self.world.test_chunk()
-        self.world.add_player(WorldStateGlobal.player) #do something about this
+        self.world.add_player(GameStateGlobal.player) #do something about this
         clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         self.win.push_handlers(keyboard)
@@ -93,7 +96,7 @@ class App(object):
 
         #p = hotshot.Profile("../log/client.log")
         #p.start()
-        self.player = WorldStateGlobal.player
+        self.player = GameStateGlobal.player
         while not self.exit:
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)

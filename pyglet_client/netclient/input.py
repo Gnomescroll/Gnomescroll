@@ -4,7 +4,7 @@
 Client input
 '''
 
-from world_state import WorldStateGlobal
+
 
 from pyglet.window import key
 from pyglet.window.key import symbol_string
@@ -28,18 +28,14 @@ class Mouse(object):
         self.main = main
         self.main.win.on_mouse_drag = self.on_mouse_drag
         self.camera = main.camera
-        self.player = WorldStateGlobal.player
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         #print 'dy, dy = ' +  str(dx) + ' ' + str(dy)
         sen = 50
         if buttons == 4:
-            self.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
+            GameStateGlobal.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
         else:
             self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
-
-
-from chat_client import ChatClientGlobal
 
 import math
 from math import sin, cos, pi
@@ -55,7 +51,6 @@ class Keyboard(object):
         self.camera = main.camera
         self.key_handlers = {}
 
-        self.player = WorldStateGlobal.player
         self.toggle_input_mode()
         self._init_key_handlers()
 
@@ -134,22 +129,22 @@ class Keyboard(object):
         [d_x, d_y, d_xa, d_za, jetpack, brake] = [0,0,0,0,0,0]
 
         if keyboard[key.W]:
-                d_x += v*cos( self.player.x_angle * pi)
-                d_y += v*sin( self.player.x_angle * pi)
+                d_x += v*cos( GameStateGlobal.player.x_angle * pi)
+                d_y += v*sin( GameStateGlobal.player.x_angle * pi)
         if keyboard[key.S]:
-                d_x += -v*cos( self.player.x_angle * pi)
-                d_y += -v*sin( self.player.x_angle * pi)
+                d_x += -v*cos( GameStateGlobal.player.x_angle * pi)
+                d_y += -v*sin( GameStateGlobal.player.x_angle * pi)
         if keyboard[key.A]:
-                d_x += -v*cos( self.player.x_angle * pi + pi/2)
-                d_y += -v*sin( self.player.x_angle * pi + pi/2)
+                d_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
+                d_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
         if keyboard[key.D]:
-                d_x += v*cos( self.player.x_angle * pi + pi/2)
-                d_y += v*sin( self.player.x_angle * pi + pi/2)
+                d_x += v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
+                d_y += v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
         if keyboard[key.E]:
             brake = 1
         if keyboard[key.SPACE]:
             jetpack = 1
-        self.player.control_state = [
+        GameStateGlobal.player.control_state = [
             d_x,
             d_y,
             d_xa,
@@ -175,3 +170,6 @@ class Keyboard(object):
         if keyboard[key.SPACE]:
             print "Event A.1"
 
+
+from game_state import GameStateGlobal
+from chat_client import ChatClientGlobal

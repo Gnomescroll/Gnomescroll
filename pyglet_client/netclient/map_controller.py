@@ -8,7 +8,7 @@ class MapControllerGlobal:
     def init_1(self):
         MapControllerGlobal.mapController.init()
 
-from world_state import WorldStateGlobal
+from game_state import GameStateGlobal
 from net_out import NetOut
 
 import time
@@ -20,7 +20,7 @@ class MapController:
     mapMessage = None
     @classmethod
     def init(self):
-        self.terrainMap = WorldStateGlobal.terrainMap
+        self.terrainMap = GameStateGlobal.terrainMap
         assert NetOut.mapMessage != None
         self.mapMessage = NetOut.mapMessage
         assert self.mapMessage != None

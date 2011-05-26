@@ -13,7 +13,7 @@ class MapChunkManagerGlobal:
         MapChunkManagerGlobal.mapChunkManager.init()
 
 from cube_dat import CubeGlobal
-from world_state import WorldStateGlobal
+from game_state import GameStateGlobal
 
 cdef enum:
     x_chunk_size = 8
@@ -24,7 +24,7 @@ class MapChunkManager(object):
     terrainMap = None
 
     def init(self):
-        self.terrainMap = WorldStateGlobal.terrainMap
+        self.terrainMap = GameStateGlobal.terrainMap
         assert self.terrainMap != None
 
     def __init__(self):
@@ -65,7 +65,7 @@ class MapChunk(object):
 
     @classmethod
     def init(self):
-        self.terrainMap = WorldStateGlobal.terrainMap   #use world_state global
+        self.terrainMap = GameStateGlobal.terrainMap   #use world_state global
         self.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
         self.cubeRenderCache = CubeGlobal.cubeRenderCache
         assert self.terrainMap != None
