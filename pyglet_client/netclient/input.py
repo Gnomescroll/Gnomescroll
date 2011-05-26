@@ -49,13 +49,13 @@ class Mouse(object):
     def on_mouse_motion(self, x, y, dx, dy):
         if InputGlobal.mode == 'agent':
             self._pan_agent(x, y, dx, dy, sen=300)
-            
+
     def _pan_agent(self, x, y, dx, dy, sen=50):
         GameStateGlobal.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
     def _pan_camera(self, x, y, dx, dy, sen=50):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
-        
+
 
 import math
 from math import sin, cos, pi
@@ -139,17 +139,17 @@ class Keyboard(object):
         d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
 
         if keyboard[key.W]:
-                d_x += v*cos( GameStateGlobal.player.x_angle * pi)
-                d_y += v*sin( GameStateGlobal.player.x_angle * pi)
+                v_x += v*cos( GameStateGlobal.player.x_angle * pi)
+                v_y += v*sin( GameStateGlobal.player.x_angle * pi)
         if keyboard[key.S]:
-                d_x += -v*cos( GameStateGlobal.player.x_angle * pi)
-                d_y += -v*sin( GameStateGlobal.player.x_angle * pi)
+                v_x += -v*cos( GameStateGlobal.player.x_angle * pi)
+                v_y += -v*sin( GameStateGlobal.player.x_angle * pi)
         if keyboard[key.A]:
-                d_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
-                d_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
         if keyboard[key.D]:
-                d_x += v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
-                d_y += v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_x += v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_y += v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
         if keyboard[key.E]:
             brake = 1
         if keyboard[key.SPACE]:

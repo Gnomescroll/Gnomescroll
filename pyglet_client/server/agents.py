@@ -73,7 +73,7 @@ class Agent:
 
     # set agent state explicitly
     def set_agent_control_state(self, tick, *args):
-        v_x, v_y, d_x, d_y, jetpack, jump, brake = args
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = args
         #print str(args)
         self.last_control_tick = tick
         self.d_x = d_x #a byte
