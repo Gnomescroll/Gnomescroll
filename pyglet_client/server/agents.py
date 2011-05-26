@@ -52,6 +52,7 @@ class Agent:
         #t_height
         self.b_height = 1.5
         self.t_height = .75
+        self.box_r = .30
 
         self.d_x = 0 #yaw?
         self.d_y = 0 #pitch?
@@ -114,9 +115,50 @@ class Agent:
             vy *= xy_brake
             vz *= xy_brake
 
+    #constants for collision box
         b_height = self.b_height
         t_height = self.t_height
         box_r = .30
+
+    #XY-collision
+
+        box_r = self.box_r
+
+### Collisions on X axis ###
+        xc_pos_projected = 0 #number of collisions with north blocks
+        xc_neg_projected = 0 #number of collisions with south blocks
+        xc_pos_current = 0
+        xc_neg_current = 0
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)+1):
+            #x+
+                by = floor(y+vy+box_r)
+                if self.collisionDetection.collision(bx,by,bz):
+                    xc_pos +=1
+            #x-
+                by = floor(y+vy-box_r)
+                if self.collisionDetection.collision(bx,by,bz):
+                    xc_neg +=1
+
+### Collisions on Y axis ###
+
+        yc_pos = 0
+        yc_neg = 0
+        yc_pos_current = 0
+        yc_neg_current = 0
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
+            #y+
+                bx = floor(x+vx+box_r)
+                if self.collisionDetection.collision(bx,by,bz):
+                    yc_pos +=1
+            #y-
+                bx = floor(x+vx-box_r)
+                if self.collisionDetection.collision(bx,by,bz):
+                    yc_neg +=1
+
     #Z-collision
 
         z_margin = .01
@@ -141,6 +183,14 @@ class Agent:
                 if self.collisionDetection.collision(bx,by,bz_current):
                     zc_current +=1
 
+        #Hard collision predicted and not inside of something already
+        if zc_neg_hard != 0 and zc_current == 0:
+            if vz < 0:
+                if vz < -0.01: #vertical velocity bounce treshold
+                    vz *= -1 *z_bounce
+                else:
+                    vz = 0
+
         if zc_neg_soft == 0: #agent on ground
             pass
             az += (z_gravity) if z>0 else (-z_gravity) #[value_false, value_true][<test>]
@@ -151,7 +201,8 @@ class Agent:
                     vz *= -1 *z_bounce
                 else:
                     vz = 0
-        #az += (z_gravity) if z>0 else (-z_gravity)
+        if zc_current != 0:
+            z += .50 / tr
 
         if zc_neg_soft != 0:
             print "On ground!"
@@ -190,43 +241,6 @@ class Agent:
         if self.brake != 0:
             vx *= xy_brake
             vz *= xy_brake
-
-### Parameters for collision box ###
-        box_height = 1.5
-        box_r = .30
-
-### Collisions on X axis ###
-        xc_pos = 0 #number of collisions with north blocks
-        xc_neg = 0 #number of collisions with south blocks
-
-        bz = floor(z)
-        for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)+1):
-        #x+
-            by = floor(y+vy+box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                xc_pos +=1
-        #x-
-            by = floor(y+vy-box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                xc_neg +=1
-
-### Collisions on Y axis ###
-
-        yc_pos = 0 #number of collisions with north blocks
-        yc_neg = 0 #number of collisions with south blocks
-
-        bz = floor(z)
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-        #x+
-            bx = floor(x+vx+box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                yc_pos +=1
-        #x-
-            bx = floor(x+vx-box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                yc_neg +=1
-
-###
 
 
 ### Collision on Z axis
