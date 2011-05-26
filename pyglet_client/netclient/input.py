@@ -136,9 +136,8 @@ class Keyboard(object):
             self.agent_input_mode(keyboard)
 
     def agent_input_mode(self, keyboard):
-        # d_x=1, d_y=0, d_xa=0, d_za=0, jetpack=0, brake=0)
         v = 1
-        [d_x, d_y, v_x, v_y, jetpack, jump, brake] = [0,0,0,0,0,0,0]
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
 
         if keyboard[key.W]:
                 d_x += v*cos( GameStateGlobal.player.x_angle * pi)
@@ -165,6 +164,8 @@ class Keyboard(object):
             jump,
             brake
         ]
+        print GameStateGlobal.player.control_state
+        NetOut.sendMessage.send_agent_control_state(GameStateGlobal.player.id, *GameStateGlobal.player.control_state)
 
     def camera_input_mode(self, keyboard):
         v = 0.1
@@ -186,3 +187,4 @@ class Keyboard(object):
 
 from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal
+from net_out import NetOut

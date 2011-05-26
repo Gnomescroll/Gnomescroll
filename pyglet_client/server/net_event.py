@@ -63,28 +63,46 @@ class MessageHandler:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
     def agent_control_state(self, msg):
+        
         try:
-            id = int(msg.get('id', None))
+            client_id = int(msg.get('id', None))
         except TypeError:
             print 'msg.cmd == agent_control_state, but msg.id missing. MSG: %s' % (str(msg),)
             return
         except ValueError:
             print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
             return
+            
         try:
-            agent = GameStateGlobal.agentList[id]
+            agent = GameStateGlobal.playerList.client(client_id).agent
         except KeyError:
-            print 'msg.cmd == agent_control_state, msg.id is not a known agent'
+            print 'msg.cmd == agent_control_state, msg.id is not a known client'
             return
+        except AttributeError:
+            print 'msg.cmd == agent_control_state, player has no agent'
+            return
+        
         tick = msg.get('tick', None)
         if tick is None:
             print 'msg agent_control_state missing "tick"'
             return
-        state = msg.get('state', [0 for i in range(7)])
         if state is None:
             print 'msg agent_control_state missing "state"'
             return
-        state = list(state)
+        try:
+            state = msg['state']
+            state = list(state)
+            assert len(state) == 7
+        except KeyError:
+            print 'msg agent_control_state missing "state"'
+            return
+        except TypeError:
+            print 'msg agent_control_state :: state is not iterable'
+            return
+        except AssertionError:
+            print 'msg agent_control_state :: state has wrong number of elements'
+            return
+            
         agent.set_agent_control_state(tick ,*state)
 
     def send_chunk_list(self, msg, connection):

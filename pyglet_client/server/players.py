@@ -21,6 +21,9 @@ class PlayerList(GenericObjectList):
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player
+
+    def client(self, client_id):
+        return self[self.client_ids[client_id]]
         
                 
 # represents a "Player" (player score, agents they control etc)

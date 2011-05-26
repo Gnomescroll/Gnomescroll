@@ -73,8 +73,8 @@ class MessageHandler:
 
     def _agent_position(self, id, tick, state, **misc):
         self.player = GameStateGlobal.player
-        [x,y,z,vx, vy, vz,ax, ay, az] = state
-        [x,y,z] = [float(x),float(y),float(z)]
+        [x,y,z, vx,vy,vz, ax,ay,az] = state
+        [x,y,z] = map(lambda k: float(k), [x,y,z])
 
         self.player.x = x
         self.player.y = y
