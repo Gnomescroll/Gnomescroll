@@ -13,7 +13,7 @@ class NetClientGlobal:
     sendPacket = None
 
     client_id = 0
-    name = ''
+    name = 'steve'
     VERSION = '0.0.1'
 
     @classmethod
