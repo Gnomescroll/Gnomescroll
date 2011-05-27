@@ -12,10 +12,14 @@
 <v t="atomos.20110527075046.1281" a="E"><vh>Gnomescroll</vh>
 <v t="atomos.20110527075046.1288" a="E"><vh>Todo</vh>
 <v t="atomos.20110527075046.1282"><vh>projectiles</vh></v>
-<v t="atomos.20110527075046.1283"><vh>bounding box</vh></v>
+<v t="atomos.20110527075046.1283"><vh>agent bounding box</vh></v>
 <v t="atomos.20110527075046.1284"><vh>select block</vh></v>
 </v>
-<v t="atomos.20110527075046.1285"><vh>Todo later</vh>
+<v t="atomos.20110527075046.1285" a="E"><vh>Todo later</vh>
+<v t="atomos.20110527075046.1293" a="E"><vh>agent physics</vh>
+<v t="atomos.20110527075046.1294"><vh>dynamic friction coefficient</vh></v>
+<v t="atomos.20110527075046.1292"><vh>improved collision handling</vh></v>
+</v>
 <v t="atomos.20110527075046.1290"><vh>agent settings over network</vh></v>
 <v t="atomos.20110527075046.1286"><vh>graphical settings</vh></v>
 <v t="atomos.20110527075046.1287"><vh>keybinding settings</vh></v>
@@ -27,8 +31,18 @@
 <t tx="atomos.20110527075046.1281"></t>
 <t tx="atomos.20110527075046.1282">@language plain
 
+-spawn projectile network command
+-projectile list class on client/server
+-projectile class
+    -physics
+        -collision detection with blocks
+        -collision detection with players
+    -timeout
 </t>
-<t tx="atomos.20110527075046.1283">@language plain</t>
+<t tx="atomos.20110527075046.1283">@language plain
+
+draw agent collision box on client
+helpfull for debugging collision detection</t>
 <t tx="atomos.20110527075046.1284">@language plain</t>
 <t tx="atomos.20110527075046.1285"></t>
 <t tx="atomos.20110527075046.1286">@language plain
@@ -56,6 +70,25 @@ Agents:
 Abstract agent data and send over network to client
 -height
 -speed
--drawing properties</t>
+-drawing properties
+
+Block Data:
+
+abstract block data and send to clients over network
+sub/pub? incremental versioning?
+
+</t>
+<t tx="atomos.20110527075046.1292">@language plain
+
+handle collisions on each side of box independently
+-agent shoud be able to run against wall
+
+currently, if a velocity would move agent inside of a block, both x and y is disallowed
+check collisions in x,y indepedently
+apply bouncing if velocity is high enough</t>
+<t tx="atomos.20110527075046.1293"></t>
+<t tx="atomos.20110527075046.1294">@language plain
+
+</t>
 </tnodes>
 </leo_file>
