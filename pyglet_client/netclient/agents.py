@@ -525,7 +525,7 @@ class PlayerAgent(Agent):
         ("c3B", c_list)
         )
 
-    def draw_bounding_bound(self):
+    def draw_bounding_box(self):
         b_height = self.b_height
         t_height = self.t_height
         box_r = self.box_r
@@ -587,8 +587,8 @@ class PlayerAgent(Agent):
             v_t0[2] = z_neg if v_t1[2]==0 else z_pos
 
             v_list += v_t0
-            c_list += [255,00,00]*3
-            v_num += 3
+            c_list += [255,0,0]
+            v_num += 1
 
         pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
