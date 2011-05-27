@@ -13,7 +13,10 @@ class InputGlobal:
     keyboard = None
     mouse = None
 
-    mode = 'camera'
+    input = 'camera'
+    _inputs = ('camera', 'agent')
+    camera = 'camera'
+    _cameras = ('camera', 'agent')
 
     @classmethod
     def init_0(self, main):
@@ -25,12 +28,21 @@ class InputGlobal:
         InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
 
     @classmethod
+    def _toggle_mode(self, change, current_mode, type):
+        modes = getattr(InputGlobal, '_'+type+'s')
+        current_mode = (current_mode + change) % len(modes)
+        setattr(InputGlobal, type, modes[current_mode])
+        print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
+        return current_mode
+
+    @classmethod
     # toggles through modes.
     def toggle_input_mode(self, change=1, current_mode=[0]):
-        modes = ('camera', 'agent')
-        current_mode[0] = (current_mode[0] + change) % len(modes)
-        InputGlobal.mode = modes[current_mode[0]]
-        print "mode= " + str(InputGlobal.mode)
+        current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+
+    @classmethod
+    def toggle_camera_mode(self, change=1, current_mode=[0]):
+        current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
 
 class Mouse(object):
 
@@ -41,13 +53,13 @@ class Mouse(object):
         self.camera = main.camera
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if InputGlobal.mode == 'agent':
+        if InputGlobal.input == 'agent':
             self._pan_agent(x, y, dx, dy)
-        elif InputGlobal.mode == 'camera':
+        elif InputGlobal.input == 'camera':
             self._pan_camera(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if InputGlobal.mode == 'agent':
+        if InputGlobal.input == 'agent':
             self._pan_agent(x, y, dx, dy, sen=300)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
@@ -79,7 +91,7 @@ class Keyboard(object):
 
     #key input
     def on_text(self, text):
-        if InputGlobal.mode == 'chat':
+        if InputGlobal.input == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_text(text)
             self._input_callback(callback)
         else:
@@ -89,14 +101,14 @@ class Keyboard(object):
     # continuous non-character key detection
     #e.g. back space, cursor movement
     def on_text_motion(self, motion):
-        if InputGlobal.mode == 'chat':
+        if InputGlobal.input == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_text_motion(motion)
             self._input_callback(callback)
 
     # one-time non character key detection
     # e.g. enter
     def on_key_press(self, symbol, modifiers):
-        if InputGlobal.mode == 'chat':
+        if InputGlobal.input == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
             self._input_callback(callback)
         else:
@@ -104,10 +116,10 @@ class Keyboard(object):
 
     def _init_key_handlers(self):
         self.bind_key_handlers({
-            key.E : self.main.world.toggle_mipmap,
+            key.G : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
             key.Q : InputGlobal.toggle_input_mode,
-
+            key.E : InputGlobal.toggle_camera_mode,
         })
 
     # accept key,handler or a dict of key,handlers
@@ -120,18 +132,18 @@ class Keyboard(object):
             self.key_handlers[key] = handler
 
     def toggle_chat(self):
-        if InputGlobal.mode == 'chat':
+        if InputGlobal.input == 'chat':
             InputGlobal.toggle_input_mode(0)
         else:
-            InputGlobal.mode = 'chat'
+            InputGlobal.input = 'chat'
 
     # called in main game loop
     def stateHandler(self, keyboard):
-        if InputGlobal.mode == 'chat':
+        if InputGlobal.input == 'chat':
             return
-        if InputGlobal.mode == 'camera':
+        if InputGlobal.input == 'camera':
             self.camera_input_mode(keyboard)
-        elif InputGlobal.mode == 'agent':
+        elif InputGlobal.input == 'agent':
             self.agent_input_mode(keyboard)
 
     def agent_input_mode(self, keyboard):
