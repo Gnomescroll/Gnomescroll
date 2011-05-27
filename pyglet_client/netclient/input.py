@@ -180,6 +180,7 @@ class Keyboard(object):
             brake
         ]
         print GameStateGlobal.agent.control_state
+        ## send control state to server
         NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 
     def camera_input_mode(self, keyboard):
