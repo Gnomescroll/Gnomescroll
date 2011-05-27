@@ -31,6 +31,8 @@ class ChatClientGlobal:
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
+from game_state import GameStateGlobal
+
 
 '''
 To send messages, use
@@ -288,6 +290,20 @@ class ChatCommand():
             if len(args) < 1:
                 return
             _send = lambda: NetOut.sendMessage.identify(args[0])
+        elif command == 'pm':
+            if len(args) < 1:
+                return
+            client_id = GameStateGlobal.playerList.by_name(args[0])
+            if not client_id:
+                _send = self._send_local({
+                    'content'   :   'Cannot msg unknown player: %s' % (args[0],),
+                    'channel'   :   'system',
+                })
+            else:
+                payload = Payload(
+                    channel = 'pm_' + client_id,
+                    content = ' '.join(args[1:]),
+                )
                 
         else:
             _send = self._unimplemented(command)

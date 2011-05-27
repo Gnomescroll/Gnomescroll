@@ -79,10 +79,12 @@ class PlayerList(GenericObjectList):
         self._itemname = 'Player'
         self._object_type = Player
         self.client_ids = {}
+        self.names = {}
 
     def join(self, client_id, name):
         player = self._add(client_id, name)
         self.client_ids[client_id] = player.id
+        self.names[name] = client_id
         return player
         
     def leave(self, player):
@@ -90,3 +92,9 @@ class PlayerList(GenericObjectList):
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player
+
+    def by_name(self, name):
+        if name in self.names:
+            return self.names[name]
+        else:
+            return 0
