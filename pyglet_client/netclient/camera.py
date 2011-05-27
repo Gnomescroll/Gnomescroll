@@ -17,6 +17,7 @@ class Camera(object):
         self.rot = rot
         self.zoom = zoom
         self.rts = True
+        self.mode = 'camera'
 
     def worldProjection(self):
         glMatrixMode(GL_PROJECTION)
@@ -88,8 +89,31 @@ class Camera(object):
         return pyglet.event.EVENT_HANDLED
 
     def agent_view(self, agent):
+        if self.mode != 'agent':
+            self._save_position()
+            self.mode = 'agent'
         self.x = agent.x
         self.y = agent.y
         self.z = agent.z
         self.x_angle = agent.x_angle
         self.y_angle = agent.y_angle
+        
+
+    def camera_view(self):
+        if self.mode != 'camera':
+            self._load_position()
+            self.mode = 'camera'
+
+    def _save_position(self):
+        self._x = self.x
+        self._y = self.y
+        self._z = self.z
+        self._x_angle = self.x_angle
+        self._y_angle = self.y_angle
+
+    def _load_position(self):
+        self.x = self._x
+        self.y = self._y
+        self.z = self._z
+        self.x_angle = self._x_angle
+        self.y_angle = self._y_angle

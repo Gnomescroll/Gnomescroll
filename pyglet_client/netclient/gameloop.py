@@ -107,8 +107,10 @@ class App(object):
             MapControllerGlobal.mapController.tick() #testing
             self.world.tick()
             self.win.clear() #clear window and start drawing
-            if InputGlobal.mode == 'agent':
+            if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.player)
+            elif InputGlobal.camera == 'camera':
+                self.camera.camera_view()
             self.camera.worldProjection()
             self.world.draw()
             self.camera.hudProjection()

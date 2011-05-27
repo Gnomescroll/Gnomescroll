@@ -101,7 +101,7 @@ class Hud(object):
 
     def draw_chat(self):
         self._draw_chat_messages()
-        if InputGlobal.mode == 'chat':
+        if InputGlobal.input == 'chat':
             self._draw_chat_input(draw=True)
             self._draw_cursor()
         gl.glDisable(gl.GL_BLEND)
