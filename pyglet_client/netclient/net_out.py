@@ -50,7 +50,7 @@ class SendMessage:
             return
         d = {
             'cmd' : 'agent_control_state',
-            'id' : NetClientGlobal.client_id,
+            'cid' : NetClientGlobal.client_id,
             'tick' : 0,
             'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake],
             'pid'  : id,
@@ -93,7 +93,7 @@ class ChatMessage:
         if NetClientGlobal.client_id == 0:
             return
         d['cmd'] = 'chat'
-        d['client_id'] = str(NetClientGlobal.client_id)
+        d['cid'] = str(NetClientGlobal.client_id)
         NetOut.send_json(d)
 
     def subscribe(self, channel):
@@ -103,7 +103,7 @@ class ChatMessage:
         d = {
             'channel'   : channel,
             'cmd'       : 'subscribe',
-            'client_id' : str(NetClientGlobal.client_id),
+            'cid' : str(NetClientGlobal.client_id),
         }
         NetOut.send_json(d)
 
@@ -113,7 +113,7 @@ class ChatMessage:
         d = {
             'channel'   : channel,
             'cmd'       : 'unsubscribe',
-            'client_id' : str(NetClientGlobal.client_id),
+            'cid' : str(NetClientGlobal.client_id),
         }
         NetOut.send_json(d)
 

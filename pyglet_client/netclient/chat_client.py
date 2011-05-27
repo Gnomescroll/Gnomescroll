@@ -234,7 +234,7 @@ class SystemChannel(Channel):
             log = ChatMessageIn({
                 'content'   : content,
                 'channel'   : 'system',
-                'client_id' : 'system',
+                'cid'       : 'system',
                 'cmd'       : 'chat',
             })
         else:
@@ -403,30 +403,35 @@ class Payload:
         'content',
         'time',
         'channel',
-        'client_id',
+        'cid',
+        'id',
     ]
-
+    
     def __init__(self, **msg):
+        #required
         self.cmd = msg.get('cmd', 'chat')
         self.content = msg.get('content', '')
         self.time = int(msg.get('time', now()))
         self.channel = msg.get('channel', '')
-        self.client_id = msg.get('client_id', '')
+        self.client_id = msg.get('cid', NetClientGlobal.client_id)
         self.valid()
-
+        #optional
+        self.id = msg.get('id', '')
     def clean(self):
         pass
 
     # checks if all properties are in payload
     def valid(self, properties=None):
-        if properties is None:
-            properties = self.properties
-        valid = True
-        for p in properties:
-            if getattr(self, p, None) is None:
-                valid = False
-        self.is_valid = valid
+        self.is_valid = True
         return self.is_valid
+        #if properties is None:
+            #properties = self.properties
+        #valid = True
+        #for p in properties:
+            #if hasattr(self, p):
+                #valid = False
+        #self.is_valid = valid
+        #return self.is_valid
 
     def serialize(self):
         d = {}

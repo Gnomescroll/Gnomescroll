@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from time import time
-from copy import copy
 from collections import defaultdict
 
 from net_server import NetServer
@@ -11,12 +10,18 @@ def now():
 
 class ChatServer:
     chat = None
-
+    _msg_id = 0
+    
     @classmethod
     def init(cls): #calls import methods if needed
         pass
     def __init__(self): #first pass is declaring
         ChatServer.chat = Chat()
+
+    @classmethod
+    def generate_message_id(self):
+        ChatServer._msg_id += 1
+        return self._msg_id
 
 '''
 Chat server
@@ -148,37 +153,45 @@ class ChatMessage:
 
     properties = [
         'cmd',
-        'client_id',
+        'cid',
         'content',
         'time',
         'channel',
+        'id',
     ]
 
     def __init__(self, msg, connection=None): # need support for system messages
         connection = connection or {}
-        self.payload = copy(msg)
+        self.payload = {}
         self.payload['cmd'] = 'chat'
-        self.payload['time'] = self.payload.get('time', None) or now()
-        self.payload['client_id'] = str(getattr(connection, 'id', ''))
+        self.payload['time'] = msg.get('time', None) or now()
+        self.payload['cid'] = getattr(connection, 'id', '')
+        self.payload['content'] = msg.get('content', '')
+        self.payload['id'] = ChatServer.generate_message_id()
         self.clean()
         self.validate()
 
     # removes erroneous properties
     def clean(self):
-        for key in self.payload.keys():
-            if key not in self.properties:
-                del self.payload[key]
-        self.payload['content'] = str(self.payload.get('content', ''))
-
+        return
+        #for key in self.payload.keys():
+            #if key not in self.properties:
+                #del self.payload[key]
+        #try:
+            #self.payload['content'] = str(self.payload.get('content', ''))
+        #except ValueError:
+            #del self.payload['content']
+            
     # checks if all properties are in payload
     def validate(self):
-        valid = True
-        for prop in self.properties:
-            if prop not in self.payload:
-                valid = False
-        if not valid:
-            self.payload = None
         return self
+        #valid = True
+        #for prop in self.properties:
+            #if prop not in self.payload:
+                #valid = False
+        #if not valid:
+            #self.payload = None
+        #return self
 
 # an instance of a connected client
 class ChatClient:
