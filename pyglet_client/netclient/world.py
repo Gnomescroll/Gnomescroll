@@ -23,6 +23,7 @@ class World():
         self.texture_grid_mipmap = tile_image.get_mipmapped_texture()
 
         self.players = []
+        self.agents = []
         self.mipmap = 6
         self.gl_smooth = 0
 
@@ -41,7 +42,7 @@ class World():
 
     def draw(self):
         self.draw_chunk()
-        self.draw_players()
+        self.draw_agents()
 
     def test_chunk(self):
         print "Start chunk generation"
@@ -106,15 +107,15 @@ class World():
             ('v3f', (x, y, z)),
             ('c3B', (r, g, b)) )
 
-    def add_player(self, player =None):
-        if Player == None:
-            self.players.append(Player())
-        else:
-            self.players.append(player)
+    def add_player(self, player):
+        self.players.append(player)
 
-    def draw_players(self):
-        for p in self.players:
-            p.draw()
+    def add_agent(self, agent=None):
+        self.agents.append(agent)
+        
+    def draw_agents(self):
+        for agent in self.agents:
+            agent.draw()
 
 from cube_dat import CubeGlobal
 from game_state import GameStateGlobal

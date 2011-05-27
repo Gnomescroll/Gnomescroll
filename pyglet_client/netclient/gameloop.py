@@ -85,6 +85,7 @@ class App(object):
     def mainLoop(self):
         #self.world.test_chunk()
         self.world.add_player(GameStateGlobal.player) #do something about this
+        self.world.add_agent(GameStateGlobal.agent)
         clock.set_fps_limit(60)
         keyboard = key.KeyStateHandler()
         self.win.push_handlers(keyboard)
@@ -97,18 +98,19 @@ class App(object):
         #p = hotshot.Profile("../log/client.log")
         #p.start()
         self.player = GameStateGlobal.player
+        self.agent = GameStateGlobal.agent
         while not self.exit:
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
-            [d_x, d_y, d_v, d_y, jetpack, jump, brake] = self.player.control_state
-            NetOut.sendMessage.send_agent_control_state(self.player.id, d_x, d_y, d_v, d_y, jetpack, jump, brake)
+            [d_x, d_y, d_v, d_y, jetpack, jump, brake] = self.agent.control_state
+            NetOut.sendMessage.send_agent_control_state(self.agent.id, d_x, d_y, d_v, d_y, jetpack, jump, brake)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing
             self.world.tick()
             self.win.clear() #clear window and start drawing
             if InputGlobal.camera == 'agent':
-                self.camera.agent_view(GameStateGlobal.player)
+                self.camera.agent_view(GameStateGlobal.agent)
             elif InputGlobal.camera == 'camera':
                 self.camera.camera_view()
             self.camera.worldProjection()

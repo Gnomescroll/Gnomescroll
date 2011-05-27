@@ -75,11 +75,30 @@ class SendMessage: #each connection has one of these
     def send_client_id(self, connection):
         print "Send client id"
         d = {
-            'cmd'  : 'identified',
+            'cmd'  : 'client_id',
             'id'   : connection.client_id,
         }
         self.send_json(d)
 
+    def register_fail(self, connection, notes=''):
+        if notes:
+            notes = ' ' + notes
+        notes = 'Registration failed.' + notes
+        print notes
+        d = {
+            'cmd'   : 'register_fail',
+            'msg'   : notes,
+        }
+        self.send_json(d)
+
+    def identified(self, connection):
+        print 'Identified'
+        d = {
+            'cmd'   : 'identified',
+            'player': connection.player.json(),
+        }
+        self.send_json(d)
+        
     def send_chunk_list(self):
         d = {
             'cmd'  : 'chunk_list',

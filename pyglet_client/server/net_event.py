@@ -53,6 +53,8 @@ class MessageHandler:
                 print 'msg identify - name is missing'
                 return
             connection.identify(name)
+        elif cmd == 'request_client_id':
+            connection.send_client_id()
 
         # map
         elif cmd == 'request_chunk_list':

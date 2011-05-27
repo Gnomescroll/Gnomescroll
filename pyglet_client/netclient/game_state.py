@@ -21,10 +21,19 @@ class GameStateGlobal:
     @classmethod
     def init_1(self):
         GameStateGlobal.player = Player()
+        GameStateGlobal.agent = PlayerAgent(0, 0, 3, 0, 0, GameStateGlobal.player.id)
+        GameStateGlobal.player.agent = GameStateGlobal.agent
         GameStateGlobal.terrainMap = TerrainMap()
         GameStateGlobal.gameState = GameState()
         GameStateGlobal.agentList = AgentList()
         GameStateGlobal.playerList = PlayerList()
+
+    @classmethod
+    def update_info(self, player):
+        self.player.update_info(player)
+        agent = player.get('agent', None)
+        if agent is not None: # agent as a property of player is currently optional for server to send
+            self.agent.update_info(agent)
         
 # main game state wrapper
 class GameState:
@@ -42,6 +51,6 @@ class GameState:
 
 from terrain_map import TerrainMap
 from object_lists import AgentList
-from agents import Agent
+from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from players import Player

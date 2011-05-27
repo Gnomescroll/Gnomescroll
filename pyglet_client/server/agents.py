@@ -71,6 +71,16 @@ class Agent:
 
         self.owner = player_id
 
+    def json(self): # json encodable string representation
+        d = {
+            'id'    : self.id,
+            'health': self.health,
+            'dead'  : int(self.dead),
+            'owner' : self.owner,
+            'weapons': self.weapons,
+        }
+        return d
+
     # set agent state explicitly
     def set_agent_control_state(self, tick, *args):
         d_x, d_y, v_x, v_y, jetpack, jump, brake = args

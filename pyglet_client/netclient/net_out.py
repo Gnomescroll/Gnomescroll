@@ -46,6 +46,8 @@ class SendMessage:
     def send_agent_control_state(self, id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
         if NetClientGlobal.client_id == 0: # not identified
             return
+        if id is None:  # agent not identified
+            return
         d = {
             'cmd' : 'agent_control_state',
             'id' : NetClientGlobal.client_id,
@@ -59,6 +61,12 @@ class SendMessage:
         d = {
             'cmd': 'identify',
             'name': NetClientGlobal.username,
+        }
+        NetOut.send_json(d)
+
+    def request_client_id(self):
+        d = {
+            'cmd'   : 'request_client_id',
         }
         NetOut.send_json(d)
 
@@ -80,11 +88,15 @@ class MapMessage:
 class ChatMessage:
 
     def send_chat(self, d):
+        if NetClientGlobal.client_id == 0:
+            return
         d['cmd'] = 'chat'
         d['client_id'] = str(NetClientGlobal.client_id)
         NetOut.send_json(d)
 
     def subscribe(self, channel):
+        if NetClientGlobal.client_id == 0:
+            return
         d = {
             'channel'   : channel,
             'cmd'       : 'subscribe',
@@ -93,6 +105,8 @@ class ChatMessage:
         NetOut.send_json(d)
 
     def unsubscribe(self, channel):
+        if NetClientGlobal.client_id == 0:
+            return
         d = {
             'channel'   : channel,
             'cmd'       : 'unsubscribe',

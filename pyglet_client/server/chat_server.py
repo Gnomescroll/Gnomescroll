@@ -68,6 +68,8 @@ class Chat:
 
     # remove client
     def remove(self, connection):
+        if connection.client_id not in self.clients:
+            return
         client = self.clients[connection.client_id]
         for channel in client.channels:
             if channel in self.channels and client.client_id in self.channels[channel]:

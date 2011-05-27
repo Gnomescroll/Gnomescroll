@@ -63,7 +63,7 @@ class Mouse(object):
             self._pan_agent(x, y, dx, dy, sen=300)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
-        GameStateGlobal.player.pan(dx*-1.0 / sen, dy*1.0 / sen)
+        GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
     def _pan_camera(self, x, y, dx, dy, sen=50):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
@@ -151,22 +151,22 @@ class Keyboard(object):
         d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
 
         if keyboard[key.W]:
-                v_x += v*cos( GameStateGlobal.player.x_angle * pi)
-                v_y += v*sin( GameStateGlobal.player.x_angle * pi)
+                v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
+                v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
         if keyboard[key.S]:
-                v_x += -v*cos( GameStateGlobal.player.x_angle * pi)
-                v_y += -v*sin( GameStateGlobal.player.x_angle * pi)
+                v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
+                v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
         if keyboard[key.A]:
-                v_x += v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
-                v_y += v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
         if keyboard[key.D]:
-                v_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
-                v_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
+                v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
         if keyboard[key.LSHIFT]:
             brake = 1
         if keyboard[key.SPACE]:
             jetpack = 1
-        GameStateGlobal.player.control_state = [
+        GameStateGlobal.agent.control_state = [
             d_x,
             d_y,
             v_x,
@@ -175,8 +175,8 @@ class Keyboard(object):
             jump,
             brake
         ]
-        print GameStateGlobal.player.control_state
-        NetOut.sendMessage.send_agent_control_state(GameStateGlobal.player.id, *GameStateGlobal.player.control_state)
+        print GameStateGlobal.agent.control_state
+        NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 
     def camera_input_mode(self, keyboard):
         v = 0.1

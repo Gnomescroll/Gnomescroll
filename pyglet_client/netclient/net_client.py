@@ -139,7 +139,7 @@ class TcpConnection:
             self.fileno = self.tcp.fileno()
             self.connected = True
             #on connect
-            NetOut.sendMessage.identify()
+            #NetOut.sendMessage.identify()
         except socket.error, (value,message):
             print "Connection failed: socket error " + str(value) + ", " + message
             self.connected = False
@@ -185,7 +185,7 @@ class TcpConnection:
             #print "tcp data: empty read"
             self.ec += 1
             if self.ec > 3:
-                self.disconnect()
+                self.close()
         else:
             #print "get_tcp: data received, %i bytes" % len(data)
             self.ec = 0

@@ -89,6 +89,8 @@ class ServerListener:
 # manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
 class TcpClient:
 
+    MAX_NAME_LENGTH = 15
+
     def __init__(self, connection, address):
         self.connection = connection
         self.address = address
@@ -98,16 +100,23 @@ class TcpClient:
         self.sendMessage = SendMessage(self)
 
         self.player = None
-        self.client_id = 0
         self.ec = 0
-
-        #self.sendMessage.send_client_id() #send client an id upon connection
+        self.id = 0
+        
+        self._set_client_id()
+        self.sendMessage.send_client_id(self) #send client an id upon connection
 
     def identify(self, name):
-        if self._set_player_name(name):
-            self._set_client_id()
-            self.sendMessage.send_client_id(self)
+        name = self._valid_player_name(name)
+        if name:
+            self.name = name
             self._register()
+            self.sendMessage.identified(self)
+        else:
+            self.sendMessage.register_fail(self, 'Invalid username')
+
+    def send_client_id(self):
+        self.sendMessage.send_client_id(self)
 
     def _register(self):
         if NetServer.connectionPool.register(self):
@@ -116,19 +125,23 @@ class TcpClient:
             print 'Joined chat and created new Player'
 
     def _set_client_id(self):
-        if self.client_id != 0:
+        if hasattr(self, 'client_id'):
             print "ERROR: TcpClient.set_client_id, client_id already assigned"
             return False
         self.client_id = NetServer.generate_client_id()
         return True
 
-    def _set_player_name(self, name):
-        try:
+    def _valid_player_name(self, name):
+        try:                                    # must be string
             self.name = str(name)
         except ValueError:
             print 'Invalid client name'
             return False
-        return True
+        if not name:                           # must not be empty
+            return False
+        if len(name) > self.MAX_NAME_LENGTH:    # truncate if longer than self.MAX_NAME_LENGTH
+            name = name[0:self.MAX_NAME_LENGTH]
+        return name
 
     def send(self, MESSAGE):
         try:

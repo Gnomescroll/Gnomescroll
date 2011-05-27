@@ -25,7 +25,9 @@ class MessageHandler:
     @classmethod
     def init(self):
         self.player = GameStateGlobal.player
+        self.agent = GameStateGlobal.agent
         assert self.player != None
+        assert self.agent != None
     def __init__(self):
         pass
 
@@ -57,8 +59,20 @@ class MessageHandler:
             return
         if cmd == 'agent_position':
             self._agent_position(**msg)
+
+        # initial settings
+        elif cmd == 'client_id':
+            if self._set_client_id(**msg):
+                NetOut.sendMessage.identify()
+            else:
+                NetOut.sendMessage.request_client_id()
+        elif cmd == 'register_fail':
+            msg = msg.get('msg', '')
+            print 'Registration failed. %s' % (msg,)
+            # prompt for new name
         elif cmd == 'identified':
             self._on_identify(**msg)
+            
         #map events
         elif cmd == 'chunk_list':
             NetEventGlobal.mapMessageHandler._chunk_list(**msg)
@@ -72,29 +86,54 @@ class MessageHandler:
             print "JSON message type unregonized"
 
     def _agent_position(self, id, tick, state, **misc):
-        self.player = GameStateGlobal.player
         [x,y,z, vx,vy,vz, ax,ay,az] = state
         [x,y,z] = map(lambda k: float(k), [x,y,z])
 
-        self.player.x = x
-        self.player.y = y
-        self.player.z = z
-        self.player.vx = vx
-        self.player.vy = vy
-        self.player.vz = vz
-        self.player.ax = ax
-        self.player.ay = ay
-        self.player.az = az
+        self.agent.x = x
+        self.agent.y = y
+        self.agent.z = z
+        self.agent.vx = vx
+        self.agent.vy = vy
+        self.agent.vz = vz
+        self.agent.ax = ax
+        self.agent.ay = ay
+        self.agent.az = az
 
-    def _on_identify(self, **msg):
+    def _set_client_id(self, **msg):
         id = msg.get('id', None)
         if id is None:
             print '_register msg missing id'
-            return
+            return False
         print "Received Client Id: %i" % (id,)
         NetClientGlobal.client_id = id
         #NetOut.sendMessage.send_client_id()
         ChatClientGlobal.on_identify()
+        return True
+
+    def _on_identify(self, **msg):
+        player = msg.get('player', None)
+        if player is None:
+            print 'msg::identified - missing player'
+            return False
+
+        name = player.get('name', None)
+        if name is None:
+            print 'msg::identified - player missing name'
+            return False
+        if type(name) != str:
+            print 'msg::identified - name is not str'
+            return False
+
+        client_id = player.get('cid', None) # client_id is currently optional for server to send
+        if client_id is not None:
+            NetClientGlobal.client_id = client_id
+
+        NetClientGlobal.username = name
+        print 'Identified: name is %s' % (name,)
+        ChatClientGlobal.on_identify()
+
+        GameStateGlobal.update_info(player)
+        return True
 
 class MapMessageHandler:
     terrainMap = None
