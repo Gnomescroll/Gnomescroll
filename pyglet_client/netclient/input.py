@@ -162,7 +162,7 @@ class Keyboard(object):
         if keyboard[key.D]:
                 v_x += -v*cos( GameStateGlobal.player.x_angle * pi + pi/2)
                 v_y += -v*sin( GameStateGlobal.player.x_angle * pi + pi/2)
-        if keyboard[key.E]:
+        if keyboard[key.LSHIFT]:
             brake = 1
         if keyboard[key.SPACE]:
             jetpack = 1
@@ -190,10 +190,10 @@ class Keyboard(object):
             self.camera.move_camera(0,-v,0)
         if keyboard[key.R]:
             self.camera.move_camera(0,0,v)
-        if keyboard[key.F]:
+        if keyboard[key.LSHIFT] or keyboard[key.F]:
             self.camera.move_camera(0,0,-v)
         if keyboard[key.SPACE]:
-            print "Event A.1"
+            pass
 
 
 from game_state import GameStateGlobal
