@@ -25,8 +25,16 @@
 <t tx="atomos.20110527075046.1283"></t>
 <t tx="atomos.20110527075046.1284"></t>
 <t tx="atomos.20110527075046.1285"></t>
-<t tx="atomos.20110527075046.1286">world.py
-move mipmapping settings into graphical setting class</t>
+<t tx="atomos.20110527075046.1286">@language plain
+
+Create GraphicsSettings.py
+
+world.py:World
+move mipmapping settings into GraphicSettings
+self.mipmap (line 26,)
+
+move World.toggle_mipmap into GraphicSettings
+change keybinding in input.py</t>
 <t tx="atomos.20110527075046.1287">move key bindings into key binding class</t>
 </tnodes>
 </leo_file>
