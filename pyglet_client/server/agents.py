@@ -155,7 +155,30 @@ class Agent:
 
 ### Collision on Y axis ###
 
+        yc_pos_current = 0
+        yc_pos_projected = 0
 
+        yc_neg_current = 0
+        yc_neg_projected = 0
+
+        by_pos_current = floor(y+box_r)
+        by_pos_projected = floor(y+vy+box_r)
+
+        by_neg_current = floor(y-box_r)
+        by_neg_projected = floor(y+vy-box_r)
+
+        for bz in range(floor(z - b_height), floor(z +t_height)+1):
+            for bx in range(floor(x-box_r+vx), floor(x+box_r+vx)+1):
+            #x+
+                if self.collisionDetection.collision(bx,by_pos_current,bz):
+                    yc_pos_current +=1
+                if self.collisionDetection.collision(bx,by_pos_projected,bz):
+                    yc_pos_projected +=1
+            #x-
+                if self.collisionDetection.collision(bx,by_neg_current,bz):
+                    yc_neg_current +=1
+                if self.collisionDetection.collision(bx,by_neg_projected,bz):
+                    yc_neg_projected +=1
 
 ### XY Collision ###
 
