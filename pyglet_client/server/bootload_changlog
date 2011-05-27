@@ -1,0 +1,15 @@
+Client starts; player & playeragent object created
+Client connects
+Server Registers connection object
+Server sends client_id
+Client receives client_id
+Client identifies name
+Server validates name
+    - creates player, agent 
+    - sends back player and agent info
+If validate fails, send 'register_fail' msg
+Client collects client_id 
+    - collects player/agent info
+    - updates player and playerAgent objects with info
+    - players/agents had None as id until identified
+    - play and chat messages will now work
