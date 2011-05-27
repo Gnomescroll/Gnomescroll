@@ -116,10 +116,10 @@ class Keyboard(object):
 
     def _init_key_handlers(self):
         self.bind_key_handlers({
-            key.E : self.main.world.toggle_mipmap,
+            key.G : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
             key.Q : InputGlobal.toggle_input_mode,
-            key.G : InputGlobal.toggle_camera_mode,
+            key.E : InputGlobal.toggle_camera_mode,
         })
 
     # accept key,handler or a dict of key,handlers
