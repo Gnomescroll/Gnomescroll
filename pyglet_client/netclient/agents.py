@@ -540,12 +540,12 @@ class PlayerAgent(Agent):
         y_neg = y-box_r
         y_pos = y+box_r
 
-        z0_neg = z-b_height
+        z0 = z-b_height
         z1 = z
         z2 = z+t_height
 
-        self.draw_box.(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
-        self.draw_box.(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
+        self.draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
+        self.draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
 
     #axis aligned
     def draw_box(self, x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
