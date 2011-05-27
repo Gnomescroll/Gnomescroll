@@ -92,6 +92,7 @@ class Camera(object):
         if self.mode != 'agent':
             self._save_position()
             self.mode = 'agent'
+        self._load_position(agent)
         self.x = agent.x
         self.y = agent.y
         self.z = agent.z
@@ -111,9 +112,12 @@ class Camera(object):
         self._x_angle = self.x_angle
         self._y_angle = self.y_angle
 
-    def _load_position(self):
-        self.x = self._x
-        self.y = self._y
-        self.z = self._z
-        self.x_angle = self._x_angle
-        self.y_angle = self._y_angle
+    def _load_position(self, obj=None, prefix=''):
+        if obj is None:
+            obj = self
+            prefix = '_'
+        self.x = getattr(obj, prefix + 'x')
+        self.y = getattr(obj, prefix + 'y')
+        self.z = getattr(obj, prefix + 'z')
+        self.x_angle = getattr(obj, prefix + 'x_angle')
+        self.y_angle = getattr(obj, prefix + 'y_angle')
