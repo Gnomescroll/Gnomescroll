@@ -64,6 +64,9 @@ class Agent:
         self.jetpack = 0
         self.brake = 0
 
+        #misc state
+        self.on_ground = 0
+
         self.health = self.HEALTH_MAX
         self.dead = False
 
@@ -261,7 +264,14 @@ class Agent:
             z += .50 / tr
 
         if zc_neg_soft != 0:
-            print "On ground!"
+            if self.on_ground != 1:
+                self.on_ground = 1
+                print "On ground!"
+        else:
+            if self.on_ground == 1:
+                print "Off ground!"
+                self.on_ground = 0
+
         if zc_neg_hard != 0:
             print "Hard Predicted Z-Collision!"
         if zc_current != 0:

@@ -68,6 +68,7 @@ class World():
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target)
 
+        ##choose mipmapping option
         _mipmap = self.mipmap
         if _mipmap == 0:
             glBindTexture(self.texture_grid.target, self.texture_grid.id)
@@ -90,22 +91,18 @@ class World():
             glBindTexture(self.texture_grid_mipmap.target, self.texture_grid_mipmap.id)
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-        #for mct in self.mct_array.values():
-        #    if mct.empty == False:
-        #        mct.vertexList.draw(pyglet.gl.GL_QUADS)
-
         self.mapChunkManager.draw_batch.draw()
 
         glShadeModel(GL_SMOOTH); #the default
         glDisable(GL_CULL_FACE)
         glDisable(self.texture_grid.target)
-        #self.draw_players()
 
-    def draw_point(self, x, y, r, g, b):
-        z=0
-        pyglet.graphics.draw(1, pyglet.gl.GL_POINTS,
-            ('v3f', (x, y, z)),
-            ('c3B', (r, g, b)) )
+        #deprecate
+#    def draw_point(self, x, y, r, g, b):
+#        z=0
+#        pyglet.graphics.draw(1, pyglet.gl.GL_POINTS,
+#            ('v3f', (x, y, z)),
+#            ('c3B', (r, g, b)) )
 
     def add_player(self, player):
         self.players.append(player)
