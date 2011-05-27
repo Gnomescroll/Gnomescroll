@@ -9,21 +9,26 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="atomos.20110527075046.1281"><vh>Gnomescroll</vh>
+<v t="atomos.20110527075046.1281" a="E"><vh>Gnomescroll</vh>
+<v t="atomos.20110527075046.1288" a="E"><vh>Todo</vh>
 <v t="atomos.20110527075046.1282"><vh>projectiles</vh></v>
 <v t="atomos.20110527075046.1283"><vh>bounding box</vh></v>
 <v t="atomos.20110527075046.1284"><vh>select block</vh></v>
 </v>
-<v t="atomos.20110527075046.1285" a="E"><vh>later</vh>
+<v t="atomos.20110527075046.1285" a="E"><vh>Todo later</vh>
+<v t="atomos.20110527075046.1290"><vh>agent settings over network</vh></v>
 <v t="atomos.20110527075046.1286"><vh>graphical settings</vh></v>
 <v t="atomos.20110527075046.1287"><vh>keybinding settings</vh></v>
+</v>
 </v>
 </vnodes>
 <tnodes>
 <t tx="atomos.20110527075046.1281"></t>
-<t tx="atomos.20110527075046.1282"></t>
-<t tx="atomos.20110527075046.1283"></t>
-<t tx="atomos.20110527075046.1284"></t>
+<t tx="atomos.20110527075046.1282">@language plain
+
+</t>
+<t tx="atomos.20110527075046.1283">@language plain</t>
+<t tx="atomos.20110527075046.1284">@language plain</t>
 <t tx="atomos.20110527075046.1285"></t>
 <t tx="atomos.20110527075046.1286">@language plain
 
@@ -35,6 +40,13 @@ self.mipmap (line 26,)
 
 move World.toggle_mipmap into GraphicSettings
 change keybinding in input.py</t>
-<t tx="atomos.20110527075046.1287">move key bindings into key binding class</t>
+<t tx="atomos.20110527075046.1287">@language plain
+
+Create class for keybinding settings
+move key bindings into key binding class</t>
+<t tx="atomos.20110527075046.1288"></t>
+<t tx="atomos.20110527075046.1290">@language plain
+
+</t>
 </tnodes>
 </leo_file>
