@@ -13,7 +13,7 @@ class NetClientGlobal:
     sendPacket = None
 
     client_id = 0
-    username = 'Steve'
+    name = ''
     VERSION = '0.0.1'
 
     @classmethod
@@ -122,7 +122,6 @@ class TcpConnection:
         self.ec = 0
 
         NetClientGlobal.connection = self
-        #self.connect()
 
     def connect(self):
         TCP_IP = self.server

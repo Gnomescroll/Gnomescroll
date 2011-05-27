@@ -44,6 +44,10 @@ class InputGlobal:
     def toggle_camera_mode(self, change=1, current_mode=[0]):
         current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
 
+    @classmethod
+    def enable_chat(self):
+        InputGlobal.input = 'chat'
+
 class Mouse(object):
 
     def __init__(self, main):

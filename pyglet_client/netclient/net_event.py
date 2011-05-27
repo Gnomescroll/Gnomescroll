@@ -66,10 +66,17 @@ class MessageHandler:
                 NetOut.sendMessage.identify()
             else:
                 NetOut.sendMessage.request_client_id()
-        elif cmd == 'register_fail':
+        elif cmd == 'identify_fail':
             msg = msg.get('msg', '')
-            print 'Registration failed. %s' % (msg,)
-            # prompt for new name
+            msg = 'Identification failed. %s' % (msg,)
+            print msg
+            # send system notification
+            ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
+            ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
+            # activate chat, insert /nick
+            InputGlobal.enable_chat()
+            ChatClientGlobal.chatClient.insert_string('/nick ')
+
         elif cmd == 'identified':
             self._on_identify(**msg)
             
@@ -106,8 +113,6 @@ class MessageHandler:
             return False
         print "Received Client Id: %i" % (id,)
         NetClientGlobal.client_id = id
-        #NetOut.sendMessage.send_client_id()
-        ChatClientGlobal.on_identify()
         return True
 
     def _on_identify(self, **msg):
@@ -172,3 +177,4 @@ from net_out import NetOut
 from chat_client import ChatClientGlobal
 from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
+from input import InputGlobal

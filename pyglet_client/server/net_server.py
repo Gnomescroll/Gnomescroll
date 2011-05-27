@@ -100,8 +100,9 @@ class TcpClient:
         self.sendMessage = SendMessage(self)
 
         self.player = None
+        self.name = None
         self.ec = 0
-        self.id = 0
+#        self.id = 0
         
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
@@ -113,22 +114,21 @@ class TcpClient:
             self._register()
             self.sendMessage.identified(self)
         else:
-            self.sendMessage.register_fail(self, 'Invalid username')
+            self.sendMessage.identify_fail(self, 'Invalid username')
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
 
     def _register(self):
-        if NetServer.connectionPool.register(self):
-            ChatServer.chat.connect(self) # join chat server
-            self.player = GameStateGlobal.playerList.join(self.client_id, self.name)  # create player
-            print 'Joined chat and created new Player'
+        ChatServer.chat.connect(self) # join chat server
+        self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
+        print 'Joined chat and created new Player'
 
     def _set_client_id(self):
-        if hasattr(self, 'client_id'):
+        if hasattr(self, 'id'):
             print "ERROR: TcpClient.set_client_id, client_id already assigned"
             return False
-        self.client_id = NetServer.generate_client_id()
+        self.id = NetServer.generate_client_id()
         return True
 
     def _valid_player_name(self, name):
@@ -184,8 +184,6 @@ class ConnectionPool:
     def init(self):
         pass
     def __init__(self):
-        #parents
-        TcpClient.pool = self
         #local
         self._epoll = select.epoll()
         self._client_count = 0
@@ -204,25 +202,18 @@ class ConnectionPool:
             client =  TcpClient(connection, address)
             self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
             self._client_pool[client.fileno] = client #save client
+            if client.id not in self._clients_by_id:
+                self._clients_by_id[client.id] = client
+                print "Connection associated with client_id= %i" % (client.id,)
 
     def tearDownClient(self, connection, duplicate_id = False):
         fileno = connection.fileno
         self._epoll.unregister(fileno)
         self._client_pool[fileno].close()
         del self._client_pool[fileno] #remove from client pool
-        if connection.client_id != 0: # remove from chat
+        if connection.id != 0: # remove from chat
             ChatServer.chat.disconnect(connection)
-            del self._clients_by_id[connection.client_id]
-
-    def register(self, connection):
-        if self._clients_by_id.get(connection.client_id, None) == None:
-            self._clients_by_id[connection.client_id] = connection
-            print "Connection associated with client_id= %i" % (connection.client_id,)
-            return True
-        else:
-            print "Client id is already registered!"
-            self.tearDownClient(connection, duplicate_id = True)
-            return False
+            del self._clients_by_id[connection.id]
 
     def process_events(self):
         events = self._epoll.poll(0)

@@ -54,18 +54,28 @@ class ChatClient:
 
     def __init__(self):
         self.input = ChatInput()
+        print '__init__ subscribe'
+        self.subscribe('system')
+        print 'done'
 
     def on_identify(self, channel=None):
-        self._initial_subscribe(channel)
+        print 'post identify subscribe'
+        self._initial_subscribe(self.CURRENT_CHANNEL)
+        print 'done'
 
     def _initial_subscribe(self, channel=None, _subscribed=[False]):
+        loaded_channels = []
         if not _subscribed[0]:
-            if channel is not None:
+            loaded_channels = self.load()
+            if channel is not None and channel not in loaded_channels:
                 self.set_current_channel(channel)
-            self.subscribe(self.CURRENT_CHANNEL)
-            self.subscribe('system')
-            self.load()
+            elif self.CURRENT_CHANNEL not in loaded_channels:
+                self.subscribe(self.CURRENT_CHANNEL)
+            loaded_channels.append(self.CURRENT_CHANNEL)
             _subscribed[0] = True
+            if 'system' not in loaded_channels:
+                self.subscribe('system')
+        return loaded_channels
 
     def set_current_channel(self, channel):
         self.CURRENT_CHANNEL = channel
@@ -74,8 +84,6 @@ class ChatClient:
     def subscribe(self, channel):
         assert type(channel) == str
         if not channel:
-            return
-        if channel in self.subscriptions:
             return
         if channel == 'system':
             self.subscriptions.setdefault(channel, SystemChannel(channel))
@@ -162,16 +170,29 @@ class ChatClient:
     def load(self):
         from simplejson import loads as decode_json
         from os.path import exists as path_exists
-
+        print 'loading channels from file'
         conf = CONFIG_PATH + '/' + self._conf
+        channels = []
         if path_exists(conf):
             with open(conf, 'r') as f:
                 settings = decode_json(f.read())
+                print settings
                 ignored = settings.get('ignored', None)
                 if ignored is not None:
                     self.ignored = ignored
-                for channel in settings.get('subscriptions', []):
+                channels = settings.get('subscriptions', channels)
+                print channels
+                for channel in channels:
+                    print channel
                     self.subscribe(channel)
+        print 'done'
+        return channels
+
+    def system_notify(self, txt):
+        SystemChatCommand(txt).send()
+
+    def insert_string(self, txt):
+        self.input.insert_string(txt)
 
 
 # channel wrapper
@@ -254,6 +275,8 @@ class ChatCommand():
         elif command == 'save':
             _send = lambda: ChatClientGlobal.chatClient.save()
         elif command == 'join':
+            if len(args) < 1:
+                return
             _send = lambda: ChatClientGlobal.chatClient.set_current_channel(args[0])
         elif command == 'leave':
             if len(args) == 0:
@@ -261,14 +284,22 @@ class ChatCommand():
             else:
                 channel = args[0]
             _send = lambda: ChatClientGlobal.chatClient.unsubscribe(channel)
+        elif command == 'nick':
+            if len(args) < 1:
+                return
+            _send = lambda: NetOut.sendMessage.identify(args[0])
+                
         else:
-            _send = self._send_local({
-                'content' : command + ' command is not implemented.',
-                'channel' : 'system'
-            })
+            _send = self._unimplemented(command)
 
         self.payload = payload
         self._send = _send
+
+    def _unimplemented(self, command):
+        return self._send_local({
+            'content' : command + ' command is not implemented.',
+            'channel' : 'system'
+        })
 
     def _send_local(self, data):
         def _send():
@@ -282,6 +313,30 @@ class ChatCommand():
         else:
             if self.payload is not None:
                 NetOut.chatMessage.send_chat(self.payload.serialize())
+
+# automatic messages sent by the program without user prompt
+class SystemChatCommand(ChatCommand):
+
+    def route(self, command, args):
+        _send = None
+        payload = None
+
+        if command == 'identify_fail':
+            _send = self._send_local(' '.join(args))
+        else:
+            _send = self._unimplemented(command)
+
+        self.payload = payload
+        self._send = _send
+
+    def _send_local(self, data):
+        if type(data) == str:
+            data = {
+                'content' : data,
+            }
+        if 'channel' not in data:
+            data['channel'] = 'system'
+        return ChatCommand._send_local(self, data)
 
 # msg to be sent
 class ChatMessageOut():
@@ -385,6 +440,10 @@ class ChatInput:
 
     def stringify(self):
         self.text = ''.join(self.buffer)
+
+    def insert_string(self, txt):
+        for c in txt:
+            self.add(c)
 
     def add(self, char, index=None):
         if index is not None:

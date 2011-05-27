@@ -76,17 +76,14 @@ class SendMessage: #each connection has one of these
         print "Send client id"
         d = {
             'cmd'  : 'client_id',
-            'id'   : connection.client_id,
+            'id'   : connection.id,
         }
         self.send_json(d)
 
-    def register_fail(self, connection, notes=''):
-        if notes:
-            notes = ' ' + notes
-        notes = 'Registration failed.' + notes
+    def identify_fail(self, connection, notes=''):
         print notes
         d = {
-            'cmd'   : 'register_fail',
+            'cmd'   : 'identify_fail',
             'msg'   : notes,
         }
         self.send_json(d)

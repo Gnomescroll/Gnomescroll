@@ -35,16 +35,19 @@ class Chat:
     def received(self, msg, connection):
         print 'chatServer received msg:'
         print msg
+        if connection.name is None:
+            print 'Client %i unidentified, discarding msg' % (connection.id,)
+            return
         msg = ChatMessage(msg, connection)
-        print 'ChatMessage'
-        print msg.payload
         self.broadcast(msg)
 
     # sends message to all clients subscribed to channel
-    def broadcast(self, msg):
+    def broadcast(self, msg, private=None):
         print msg.payload
         if msg.payload is None:
             return
+        print 'ChatMessage broadcast'
+        print msg.payload
         for client_id in self.channels[msg.payload['channel']]:
             print "Broadcasting %s on channel %s to client %s" % (msg.payload['content'], msg.payload['channel'], client_id,)
             self.clients[client_id].send(msg)
@@ -52,46 +55,47 @@ class Chat:
     # connect client
     def connect(self, connection):
         client = ChatClient(connection)
-        self.clients[connection.client_id] = client
-        self.add_channel('pm_'+str(client.client_id))
+        self.clients[connection.id] = client
+        self.add_channel('pm_'+str(connection.id))
 
     # disconnect client (removes client if disconnected for N seconds)
     def disconnect(self, connection):
         self.remove(connection) #TEMPORARY
-        self.remove_channel(connection.client_id)
+        self.remove_channel(connection.id)
         return
 
         # use this once we have culling
-        client = self.clients.get(connection.client_id, None)
+        client = self.clients.get(connection.id, None)
         if client is not None:
             client.disconnect()
 
     # remove client
     def remove(self, connection):
-        if connection.client_id not in self.clients:
+        if connection.id not in self.clients:
             return
-        client = self.clients[connection.client_id]
+        client = self.clients[connection.id]
         for channel in client.channels:
-            if channel in self.channels and client.client_id in self.channels[channel]:
-                self.channels[channel].remove(client.client_id)
-        del self.clients[connection.client_id]
+            if channel in self.channels and client.id in self.channels[channel]:
+                self.channels[channel].remove(client.id)
+        del self.clients[connection.id]
 
     def client_listen(self, connection, channel=None):
 
         def _add_client_to_channel(client, channel):
+            client_id = client.id
             channel_parts = channel.split('_')
-            if channel_parts[0] == 'pm' and channel_parts[1] != client.client_id:
+            if channel_parts[0] == 'pm' and channel_parts[1] != client_id:
                 print 'Client attempted to listen to another\'s private client channel'
                 return
             listeners = self.channels[channel]
-            if client.client_id not in listeners:
-                print 'client %s now listening to %s' %(str(client.client_id), channel,)
-                listeners.append(client.client_id)
+            if client_id not in listeners:
+                print 'client %s now listening to %s' %(str(client_id), channel,)
+                listeners.append(client_id)
 
             if channel not in client.channels:
                 client.channels.append(channel)
 
-        client_id = connection.client_id
+        client_id = connection.id
         client = self.clients.get(client_id, None)
         if client is None:
             print 'client_listen: client unknown'
@@ -106,12 +110,12 @@ class Chat:
     def client_unlisten(self, connection, channel=None):
 
         def _remove_client_from_channel(client, channel):
-            if client.client_id in self.channels[channel]:
-                self.channels[channel].remove(client.client_id)
+            if connection.id in self.channels[channel]:
+                self.channels[channel].remove(connection.id)
             if channel in client.channels:
                 client.channels.remove(channel)
 
-        client_id = connection.client_id
+        client_id = connection.id
         client = self.clients.get(client_id, None)
         if client is None:
             print 'client_unlisten: client unknown'
@@ -155,7 +159,7 @@ class ChatMessage:
         self.payload = copy(msg)
         self.payload['cmd'] = 'chat'
         self.payload['time'] = self.payload.get('time', None) or now()
-        self.payload['client_id'] = getattr(connection, 'client_id', '')
+        self.payload['client_id'] = str(getattr(connection, 'id', ''))
         self.clean()
         self.validate()
 
@@ -181,9 +185,9 @@ class ChatClient:
 
     def __init__(self, connection):
         self.connection = connection
-        self.client_id = self.connection.client_id
+        self.id = self.connection.id
         self.queue = []
-        self.channels = ['global', 'pm_'+str(self.client_id)]
+        self.channels = ['global', 'pm_'+str(self.id)]
         self.connected = True
 
     def flush_queue(self):

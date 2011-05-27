@@ -212,7 +212,7 @@ class Agent:
                         xyc_current += 1
 
         if xyc_projected != 0:
-            print "Projected XY collision!"
+           # print "Projected XY collision!"
             vx =0
             vy =0
 

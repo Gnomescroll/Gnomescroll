@@ -57,10 +57,12 @@ class SendMessage:
            }
         NetOut.send_json(d)
 
-    def identify(self):
+    def identify(self, name=None):
+        if name is None:
+            name = NetClientGlobal.name
         d = {
             'cmd': 'identify',
-            'name': NetClientGlobal.username,
+            'name': name,
         }
         NetOut.send_json(d)
 
@@ -96,6 +98,7 @@ class ChatMessage:
 
     def subscribe(self, channel):
         if NetClientGlobal.client_id == 0:
+            print 'client_id is 0, abort'
             return
         d = {
             'channel'   : channel,
