@@ -15,11 +15,12 @@
 <v t="atomos.20110527075046.1283"><vh>bounding box</vh></v>
 <v t="atomos.20110527075046.1284"><vh>select block</vh></v>
 </v>
-<v t="atomos.20110527075046.1285" a="E"><vh>Todo later</vh>
+<v t="atomos.20110527075046.1285"><vh>Todo later</vh>
 <v t="atomos.20110527075046.1290"><vh>agent settings over network</vh></v>
 <v t="atomos.20110527075046.1286"><vh>graphical settings</vh></v>
 <v t="atomos.20110527075046.1287"><vh>keybinding settings</vh></v>
 </v>
+<v t="atomos.20110527075046.1291"><vh>software abstraction</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -48,5 +49,13 @@ move key bindings into key binding class</t>
 <t tx="atomos.20110527075046.1290">@language plain
 
 </t>
+<t tx="atomos.20110527075046.1291">@language plain
+
+Agents:
+
+Abstract agent data and send over network to client
+-height
+-speed
+-drawing properties</t>
 </tnodes>
 </leo_file>
