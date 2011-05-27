@@ -526,6 +526,7 @@ class PlayerAgent(Agent):
         )
 
     def draw_bounding_box(self):
+        #agent parameters
         b_height = self.b_height
         t_height = self.t_height
         box_r = self.box_r
@@ -533,61 +534,44 @@ class PlayerAgent(Agent):
         x = self.x
         y = self.y
         z = self.z
-
-        v_set = [
-            [0,0,0],
-            [1,0,0],
-            [1,1,0],
-            [0,1,0],
-            [0,0,1],
-            [1,0,1],
-            [1,1,1],
-            [0,1,1]
-        ]
-
-        vertex_index = [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,0],
-
-            [4,5],
-            [5,6],
-            [6,7],
-            [7,4],
-
-            [0,4],
-            [1,5],
-            [2,6],
-            [3,7],
-        ]
-
-        v_list = []
-        c_list = []
-        v_num = 0
-
+        #cordinates for corners
         x_neg = x-box_r
         x_pos = x+box_r
         y_neg = y-box_r
         y_pos = y+box_r
 
-        z_neg = z-b_height
-        z_pos = z
-        #z1 = z+t_height
+        z0_neg = z-b_height
+        z1 = z
+        z2 = z+t_height
 
-        vi_list = []
-        for (v0, v1) in vertex_index:
-            vi_list += [v0,v1]
-        for n in vi_list:
-            v_t0 = [None, None, None]
-            v_t1 = v_set[n]
+        self.draw_box.(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
+        self.draw_box.(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
+
+    #axis aligned
+    def draw_box(self, x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
+
+        v_list = []
+        c_list = []
+        v_num = 0
+
+        vi_list = [
+        [0, 0, 0], [1, 0, 0], [1, 0, 0], [1, 1, 0],
+        [1, 1, 0], [0, 1, 0], [0, 1, 0], [0, 0, 0],
+        [0, 0, 1], [1, 0, 1], [1, 0, 1], [1, 1, 1],
+        [1, 1, 1], [0, 1, 1], [0, 1, 1], [0, 0, 1],
+        [0, 0, 0], [0, 0, 1], [1, 0, 0], [1, 0, 1],
+        [1, 1, 0], [1, 1, 1], [0, 1, 0], [0, 1, 1]
+        ]
+
+        v_t0 = [None, None, None]
+        for v_t1 in vi_list:
 
             v_t0[0] = x_neg if v_t1[0]==0 else x_pos
             v_t0[1] = y_neg if v_t1[1]==0 else y_pos
             v_t0[2] = z_neg if v_t1[2]==0 else z_pos
 
             v_list += v_t0
-            c_list += [255,0,0]
+            c_list += color
             v_num += 1
 
         pyglet.graphics.draw(v_num, GL_LINES,
