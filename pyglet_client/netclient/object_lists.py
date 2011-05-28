@@ -72,9 +72,27 @@ class AgentList(GenericObjectList):
         agent = self._add(**agent)
         return agent
 
+    def create_player_agent(self, owner, id):
+        from agents import Agent, PlayerAgent
+        self._object_type = PlayerAgent
+        player_agent = self._add(owner=owner, id=id)
+        self._object_type = Agent
+        return player_agent
+
     def destroy(self, agent):
         self._remove(agent)
         return agent
+
+    def update(self, agent, id=None):
+        if id is not None:
+            if agent.you and id not in self:
+                id = 0
+            old = self[id]
+        else:
+            old = agent
+        if old.id != agent.id and old.id in self.objects:
+            del self.objects[old.id]
+        self.objects[agent.id] = agent
 
 # datastore for Players
 class PlayerList(GenericObjectList):
@@ -148,5 +166,8 @@ class PlayerList(GenericObjectList):
             del self.client_ids[old.cid]
         if old.name in self.names:
             del self.names[old.name]
+        if old.id != player.id and old.id in self.objects:
+            del self.objects[old.id]
+        self.objects[player.id] = player
         self.client_ids[player.cid] = player.id
         self.names[player.name] = player.cid

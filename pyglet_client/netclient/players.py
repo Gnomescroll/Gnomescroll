@@ -49,7 +49,7 @@ class YouPlayer(Player):
         self.id = 0
         self.kills = 0
         self.deaths = 0
-        self.agent = PlayerAgent(self.id, 0)
+        self.agent = GameStateGlobal.agentList.create_player_agent(self.id, 0)
         self.you = True
         
 

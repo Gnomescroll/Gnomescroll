@@ -55,9 +55,12 @@ class Agent:
         self.dead = bool(dead)
         self.weapons = weapons
         self.owner = owner
+        self.you = False
 
     def update_info(self, **agent):
+        args = []
         if 'id' in agent:
+            args.append(agent['id'])
             self.id = agent['id']
         if 'health' in agent:
             self.health = agent['health']
@@ -72,6 +75,8 @@ class Agent:
             state = agent['state']
             if type(state) == list and len(state) == len(self.state):
                 self.state = state
+
+        GameStateGlobal.agentList.update(self, *args)
 
     # set agent state explicitly
     def set_agent_control_state(self, *args):
@@ -139,6 +144,7 @@ class PlayerAgent(Agent):
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
         Agent.__init__(self, owner, id, state, weapons, health, dead)
 
+        self.you = True
         self.control_state = [0,0,0,0,0,0,0]
         self.x = -.5
         self.y = -.5
