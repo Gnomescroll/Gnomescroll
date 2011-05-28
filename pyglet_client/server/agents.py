@@ -227,7 +227,6 @@ class Agent:
             if xc_neg_projected != 0:
                 vx = 0
         else:
-            pass #stuck in x axis
             print "X collision error!!"
 
     ## handle y collisions
