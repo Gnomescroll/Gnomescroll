@@ -93,139 +93,7 @@ class Agent:
 
 
     def _tick_physics(self):
-        x,y,z, vx,vy,vz, ax,ay,az = self.state
-
-        ax,ay,az = (0,0,0)
-
-        tr = 100. #tick rate
-        tr2 = tr**2 #tick rate squared
-
-        xy_speed = 0.1 / tr2
-        ax = xy_speed * self.d_x
-        ay = xy_speed * self.d_y
-
-        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
-        vx += ax
-        vy += ay
-        if self.brake != 0:
-            vx *= xy_brake
-            vz *= xy_brake
-
-### Parameters for collision box ###
-        box_height = 1.5
-        box_r = .30
-
-### Collisions on X axis ###
-        xc_pos = 0 #number of collisions with north blocks
-        xc_neg = 0 #number of collisions with south blocks
-
-        bz = floor(z)
-        for bx in range(floor(x+vx-box_r), floor(x+vx+box_r)+1):
-        #x+
-            by = floor(y+vy+box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                xc_pos +=1
-        #x-
-            by = floor(y+vy-box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                xc_neg +=1
-
-### Collisions on Y axis ###
-
-        yc_pos = 0 #number of collisions with north blocks
-        yc_neg = 0 #number of collisions with south blocks
-
-        bz = floor(z)
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-        #x+
-            bx = floor(x+vx+box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                yc_pos +=1
-        #x-
-            bx = floor(x+vx-box_r)
-            if self.collisionDetection.collision(bx,by,bz):
-                yc_neg +=1
-
-###
-
-
-### Collision on Z axis
-        zc_neg = 0
-        zc_pos = 0
-        zc_floor = 0
-
-        z_margin = .01
-        z_bounce = .65
-
-        bz_floor = floor(z - z_margin)
-        bz0 = floor(z) #lowest level
-        bz1 = floor(z+box_height) #highest level
-        #over multiple z
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-                if self.collisionDetection.collision(bx,by,bz0):
-                    zc_neg +=1
-                if self.collisionDetection.collision(bx,by,bz1):
-                    zc_pos +=1
-        #over lowest z
-        for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-                if self.collisionDetection.collision(bx,by,bz_floor):
-                    zc_floor +=1
-
-        #gravity, conditional upon being in contact with floor
-        if zc_floor == 0: #is in contract with floor, no gravity
-            if z <= 0.:
-                az = .10 / tr2
-            else:
-                az = -0.10 / tr2
-        else:
-            pass
-        #jetpack effect on gravity
-        if self.jetpack:
-            az += 0.15 / tr2
-        #velocity update
-        vz += az
-        #collision detection
-        if zc_neg != 0:
-            z = floor(z+1)+ 0.099
-            if vz < 0:
-                vz *= -1 *z_bounce
-        else:
-            z += vz
-        #print str(z)
-
-        xy_bounce = 0.30
-## handle y collisions
-        if xc_pos != 0  or xc_neg !=0:
-            if xc_pos != 0 and xc_neg !=0:
-                x += vx
-            elif xc_pos != 0:
-                if vx > 1:
-                    vx *= -1 * xy_bounce
-            elif xc_neg != 0:
-                if vx < 1:
-                    vx *= -1 * xy_bounce
-        else:
-            x += vx
-## handle x collisions
-        if yc_pos != 0  or yc_neg !=0:
-            if yc_pos != 0 and yc_neg !=0:
-                y += vy
-            elif yc_pos != 0:
-                if vy > 1:
-                    vy *= -1 * xy_bounce
-            elif yc_neg != 0:
-                if vy < 1:
-                    vy *= -1 * xy_bounce
-        else:
-            y += vy
-
-        ## z collision detection
-        z_margin = 0.1
-
-        self.state = [x,y,z, vx,vx,vz, ax,ay,az]
-        NetOut.event.agent_state_change(self)
+        assert False  #needs to do interopolation
 
     def _tick_respawn(self):
         if self.dead:
@@ -405,121 +273,7 @@ class PlayerAgent(Agent):
         if self.y_angle > 0.499:
             self.y_angle = 0.499
 
-    def draw_sides(self, p_list):
 
-        v_set = [
-            [0,0,0],
-            [1,0,0],
-            [1,1,0],
-            [0,1,0],
-            [0,0,1],
-            [1,0,1],
-            [1,1,1],
-            [0,1,1]
-        ]
-
-        vertex_index = [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,0],
-
-            [4,5],
-            [5,6],
-            [6,7],
-            [7,4],
-
-            [0,4],
-            [1,5],
-            [2,6],
-            [3,7],
-        ]
-
-        side_v = [
-        [4,5,6,7],   #top (z=1)
-        [0,1,2,3],   #bottom (z=0)
-        [1,5,9,10],  #north (y=1)
-        [7,3,11,8],  #south (y=0)
-        [6,2,10,11], #west (x=0)
-        [4,0,9,8],   #east (x=1)
-        ]
-
-
-        v_list = []
-        c_list = []
-        v_num = 0
-
-        for (x,y,z,side) in p_list:
-            for k in side_v[side]:
-                [i,j] = vertex_index[k]
-                v_num += 2
-                v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
-                v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
-                c_list += [150,0,0]*2
-
-        pyglet.graphics.draw(v_num, GL_LINES,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
-
-    def draw_cube(self, x,y,z, side = None):
-
-        v_set = [
-            [0,0,0],
-            [1,0,0],
-            [1,1,0],
-            [0,1,0],
-            [0,0,1],
-            [1,0,1],
-            [1,1,1],
-            [0,1,1]
-        ]
-
-        vertex_index = [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,0],
-
-            [4,5],
-            [5,6],
-            [6,7],
-            [7,4],
-
-            [0,4],
-            [1,5],
-            [2,6],
-            [3,7],
-        ]
-
-        side_v = [
-        [4,5,6,7],   #top (z=1)
-        [0,1,2,3],   #bottom (z=0)
-        [1,5,9,10],  #north (y=1)
-        [7,3,11,8],  #south (y=0)
-        [6,2,10,11], #west (x=0)
-        [4,0,9,8],   #east (x=1)
-        ]
-
-        #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
-        v_list = []
-        c_list = []
-        v_num = 0
-        for index,[i,j] in enumerate(vertex_index):
-            v_num += 2
-            v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
-            v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
-
-            if side != None and index in side_v[side]:
-                c_list += [155,0,0]*2
-                #print str(j)
-            else:
-                c_list += [0,155,155]*2
-
-        pyglet.graphics.draw(v_num, GL_LINES,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
 
     def draw_bounding_box(self):
         #agent parameters
@@ -540,40 +294,8 @@ class PlayerAgent(Agent):
         z1 = z
         z2 = z+t_height
 
-        self.draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
-        self.draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
-
-    #axis aligned
-    def draw_box(self, x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
-
-        v_list = []
-        c_list = []
-        v_num = 0
-
-        vi_list = [
-        [0, 0, 0], [1, 0, 0], [1, 0, 0], [1, 1, 0],
-        [1, 1, 0], [0, 1, 0], [0, 1, 0], [0, 0, 0],
-        [0, 0, 1], [1, 0, 1], [1, 0, 1], [1, 1, 1],
-        [1, 1, 1], [0, 1, 1], [0, 1, 1], [0, 0, 1],
-        [0, 0, 0], [0, 0, 1], [1, 0, 0], [1, 0, 1],
-        [1, 1, 0], [1, 1, 1], [0, 1, 0], [0, 1, 1]
-        ]
-
-        v_t0 = [None, None, None]
-        for v_t1 in vi_list:
-
-            v_t0[0] = x_neg if v_t1[0]==0 else x_pos
-            v_t0[1] = y_neg if v_t1[1]==0 else y_pos
-            v_t0[2] = z_neg if v_t1[2]==0 else z_pos
-
-            v_list += v_t0
-            c_list += color
-            v_num += 1
-
-        pyglet.graphics.draw(v_num, GL_LINES,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
+        draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
+        draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
 
     def draw_selected_cube(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
@@ -587,9 +309,9 @@ class PlayerAgent(Agent):
             l = (ix-self.x)/fabs(dx)
             (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
             if dx < 0:
-                self.draw_cube(x_-1, floor(y_), floor(z_), 2) #north
+                draw_cube(x_-1, floor(y_), floor(z_), 2) #north
             elif dx >= 0:
-                self.draw_cube(x_, floor(y_), floor(z_), 3) #south
+                draw_cube(x_, floor(y_), floor(z_), 3) #south
 
         for iy in range(0,5):
             if dy*dy < 0.00000001: #prevent division by zero errors
@@ -597,9 +319,9 @@ class PlayerAgent(Agent):
             l = (iy-self.x)/fabs(dy)
             (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
             if dy < 0:
-                self.draw_cube(floor(x_), y_-1, floor(z_), 4) #west
+                draw_cube(floor(x_), y_-1, floor(z_), 4) #west
             elif dy >= 0:
-                self.draw_cube(floor(x_), y_, floor(z_), 5) #east
+                draw_cube(floor(x_), y_, floor(z_), 5) #east
 
         if dx < 0:
             pass #north side
@@ -650,12 +372,165 @@ class PlayerAgent(Agent):
                 cube_sides.append((floor(x_), floor(y_), z_, 1)) #bottom
             iz += 1
 
-        self.draw_sides(cube_sides)
+        draw_sides(cube_sides)
 
-    def _append_side(self, cube_dict, x,y,z,side):
-        (x,y,z) = (int(round(x)),int(round(y)), int(round(z)))
-        if not cube_dict.has_key((x,y,z)):
-            cube_dict[(x,y,z)] = []
-        cube_dict[(x,y,z)].append(side)
+    #Deprecate?
+#    def _append_side(self, cube_dict, x,y,z,side):
+#        (x,y,z) = (int(round(x)),int(round(y)), int(round(z)))
+#        if not cube_dict.has_key((x,y,z)):
+#            cube_dict[(x,y,z)] = []
+#        cube_dict[(x,y,z)].append(side)
+
+
+
+### DRAWING STUFF ####
+
+    #axis aligned
+def draw_box(x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
+
+    v_list = []
+    c_list = []
+    v_num = 0
+
+    vi_list = [
+    [0, 0, 0], [1, 0, 0], [1, 0, 0], [1, 1, 0],
+    [1, 1, 0], [0, 1, 0], [0, 1, 0], [0, 0, 0],
+    [0, 0, 1], [1, 0, 1], [1, 0, 1], [1, 1, 1],
+    [1, 1, 1], [0, 1, 1], [0, 1, 1], [0, 0, 1],
+    [0, 0, 0], [0, 0, 1], [1, 0, 0], [1, 0, 1],
+    [1, 1, 0], [1, 1, 1], [0, 1, 0], [0, 1, 1]
+    ]
+
+    v_t0 = [None, None, None]
+    for v_t1 in vi_list:
+
+        v_t0[0] = x_neg if v_t1[0]==0 else x_pos
+        v_t0[1] = y_neg if v_t1[1]==0 else y_pos
+        v_t0[2] = z_neg if v_t1[2]==0 else z_pos
+
+        v_list += v_t0
+        c_list += color
+        v_num += 1
+
+    pyglet.graphics.draw(v_num, GL_LINES,
+    ("v3f", v_list),
+    ("c3B", c_list)
+    )
+
+def draw_sides(self, p_list):
+
+    v_set = [
+        [0,0,0],
+        [1,0,0],
+        [1,1,0],
+        [0,1,0],
+        [0,0,1],
+        [1,0,1],
+        [1,1,1],
+        [0,1,1]
+    ]
+
+    vertex_index = [
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,0],
+
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,4],
+
+        [0,4],
+        [1,5],
+        [2,6],
+        [3,7],
+    ]
+
+    side_v = [
+    [4,5,6,7],   #top (z=1)
+    [0,1,2,3],   #bottom (z=0)
+    [1,5,9,10],  #north (y=1)
+    [7,3,11,8],  #south (y=0)
+    [6,2,10,11], #west (x=0)
+    [4,0,9,8],   #east (x=1)
+    ]
+
+
+    v_list = []
+    c_list = []
+    v_num = 0
+
+    for (x,y,z,side) in p_list:
+        for k in side_v[side]:
+            [i,j] = vertex_index[k]
+            v_num += 2
+            v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
+            v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
+            c_list += [150,0,0]*2
+
+    pyglet.graphics.draw(v_num, GL_LINES,
+    ("v3f", v_list),
+    ("c3B", c_list)
+    )
+
+def draw_cube(self, x,y,z, side = None):
+
+    v_set = [
+        [0,0,0],
+        [1,0,0],
+        [1,1,0],
+        [0,1,0],
+        [0,0,1],
+        [1,0,1],
+        [1,1,1],
+        [0,1,1]
+    ]
+
+    vertex_index = [
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,0],
+
+        [4,5],
+        [5,6],
+        [6,7],
+        [7,4],
+
+        [0,4],
+        [1,5],
+        [2,6],
+        [3,7],
+    ]
+
+    side_v = [
+    [4,5,6,7],   #top (z=1)
+    [0,1,2,3],   #bottom (z=0)
+    [1,5,9,10],  #north (y=1)
+    [7,3,11,8],  #south (y=0)
+    [6,2,10,11], #west (x=0)
+    [4,0,9,8],   #east (x=1)
+    ]
+
+    #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
+    v_list = []
+    c_list = []
+    v_num = 0
+    for index,[i,j] in enumerate(vertex_index):
+        v_num += 2
+        v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
+        v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
+
+        if side != None and index in side_v[side]:
+            c_list += [155,0,0]*2
+            #print str(j)
+        else:
+            c_list += [0,155,155]*2
+
+    pyglet.graphics.draw(v_num, GL_LINES,
+    ("v3f", v_list),
+    ("c3B", c_list)
+    )
 
 from net_out import NetOut
