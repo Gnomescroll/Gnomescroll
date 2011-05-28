@@ -53,18 +53,24 @@ class GameStateGlobal:
 
     @classmethod
     def remove_player(self, id):
+        print 'gsg remove_player'
         player = GameStateGlobal.playerList.get(id, None)
         if player is None:
+            print 'player is none'
             return
         agent = getattr(player, 'agent', None)
         if agent is not None:
+            print 'removing agent'
             GameStateGlobal.remove_agent(agent.id)
+        print agent
         GameStateGlobal.playerList.leave(player)
         
     @classmethod
     def remove_agent(self, id):
+        print 'gsg remove_agent'
         agent = GameStateGlobal.agentList.get(id, None)
         if agent is None:
+            print 'agent is none'
             return
         GameStateGlobal.agentList.destroy(agent)
         owner = GameStateGlobal.playerList.get(agent.owner, None)
