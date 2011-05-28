@@ -24,8 +24,8 @@ class Player:
     def update_info(self, **player):
         args = []
         if 'id' in player:
-            self.id = player['id']
             args.append(self.id)
+            self.id = player['id']
         if 'cid' in player:
             self.cid = player['cid']
         if 'name' in player:

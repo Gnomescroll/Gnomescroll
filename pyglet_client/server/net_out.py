@@ -51,6 +51,13 @@ class EventOut:
         }
         self.add_json_event(d)
 
+    def player_update(self, player):
+        d = {
+            'cmd'   : 'player_update',
+            'player': player.json(),
+        }
+        self.add_json_event(d)
+
     def player_join(self, player):
         d = {
             'cmd'   : 'player_info',

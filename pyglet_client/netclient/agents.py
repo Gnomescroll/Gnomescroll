@@ -60,7 +60,7 @@ class Agent:
     def update_info(self, **agent):
         args = []
         if 'id' in agent:
-            args.append(agent['id'])
+            args.append(self.id)
             self.id = agent['id']
         if 'health' in agent:
             self.health = agent['health']

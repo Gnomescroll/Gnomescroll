@@ -106,16 +106,11 @@ class MessageHandler:
                 return
             GameStateGlobal.load_player_list(players)
         elif cmd == 'player_info':
-            try:
-                player = msg['player']
-                assert type(player) == dict
-            except KeyError:
-                print 'msg player_info :: player key missing'
+            if not self._update_player(**msg):
                 return
-            except AssertionError:
-                print 'msg player_info :: player is not a dict'
+        elif cmd == 'player_update':
+            if not self._update_player(**msg):
                 return
-            GameStateGlobal.load_player_info(**player)
         elif cmd == 'remove_player':
             id = msg.get('id', None)
             if id is None:
@@ -131,6 +126,19 @@ class MessageHandler:
             ChatClientGlobal.chatClient.receive(msg)
         else:
             print "JSON message type unrecognized"
+
+    def _update_player(self, **msg):
+        try:
+            player = msg['player']
+            assert type(player) == dict
+        except KeyError:
+            print 'msg player_info :: player key missing'
+            return False
+        except AssertionError:
+            print 'msg player_info :: player is not a dict'
+            return False
+        GameStateGlobal.load_player_info(**player)
+        return True
 
     def _agent_position(self, **args):
         state = args.get('state', None)
