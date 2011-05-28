@@ -106,6 +106,7 @@ class TcpClient:
         
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
+        self.sendMessage.send_players() # send all players to client
 
     def identify(self, name):
         valid, name, you = self._valid_player_name(name)
@@ -250,6 +251,7 @@ class ConnectionPool:
             del self._clients_by_id[connection.id]
         if connection.name in self.names:
             del self.names[connection.name]
+        GameStateGlobal.disconnect(connection)
 
     def process_events(self):
         events = self._epoll.poll(0)

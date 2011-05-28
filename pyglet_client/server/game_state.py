@@ -32,6 +32,12 @@ class GameStateGlobal:
         cls.player_id += 1
         return cls.player_id
 
+    @classmethod
+    def disconnect(self, connection):
+        GameStateGlobal.playerList.leave(connection.player)
+        GameStateGlobal.agentList.destroy(connection.player.agent)
+    
+
 from net_server import NetServer
 
 # generic game object datastore
@@ -80,15 +86,14 @@ class GenericObjectList:
         print args
         object = self._object_type(*args)
         self.objects[object.id] = object
-        print '%s: %s created; id= %i' % (self._metaname, self._itemname, object.id,)
+        print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
 
-    def _remove(self, id):
-        if type(id) != int:
-            id = id.id
+    def _remove(self, obj):
+        id = obj.id
         if id in self.objects:
             del self.objects[id]
-            print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,)
+            print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
             return True
         return False
 

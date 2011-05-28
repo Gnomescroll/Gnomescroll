@@ -17,7 +17,7 @@ class PlayerList(GenericObjectList):
         return player
         
     def leave(self, player):
-        client_id = player.client_id
+        client_id = player.cid
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player
@@ -28,6 +28,12 @@ class PlayerList(GenericObjectList):
         print self.client_ids
         print self
         return self[self.client_ids[client_id]]
+
+    def json(self):
+        players = []
+        for player in self.objects.values():
+            players.append(player.json())
+        return players
         
                 
 # represents a "Player" (player score, agents they control etc)
@@ -37,7 +43,7 @@ class Player:
         self.kills = 0
         self.deaths = 0
         self.name = name
-        self.client_id = client_id
+        self.cid = client_id
         if id is None:
             id = GameStateGlobal.new_player_id()
         self.id = id
@@ -48,8 +54,8 @@ class Player:
             'kills' : self.kills,
             'deaths': self.deaths,
             'name'  : self.name,
-            'cid'    : self.client_id,
-            'id'   : self.id,
+            'cid'   : self.cid,
+            'id'    : self.id,
             'agent' : self.agent.json()
         }
         return d    

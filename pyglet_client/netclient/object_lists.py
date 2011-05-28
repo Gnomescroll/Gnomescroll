@@ -41,15 +41,14 @@ class GenericObjectList:
         print args
         object = self._object_type(*args)
         self.objects[object.id] = object
-        print '%s: %s created; id= %i' % (self._metaname, self._itemname, object.id,)
+        print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
         
-    def _remove(self, id):
-        if type(id) != int:
-            id = id.id
+    def _remove(self, obj):
+        id = obj.id
         if id in self.objects:
             del self.objects[id]
-            print '%s: %s removed; id= %i' % (self._metaname, self._itemname, object.id,)
+            print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
             return True
         return False
 
@@ -63,11 +62,13 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, player_id, x=0, y=0, z=0, xa=0, ya=0):
-        self._add(x, y, z, xa, ya, player_id)
+    def create(self, player_id, **agent):
+        agent = self._add(player_id, **agent)
+        return agent
 
     def destroy(self, agent):
         self._remove(agent)
+        return agent
 
 # datastore for Players
 class PlayerList(GenericObjectList):
@@ -81,14 +82,29 @@ class PlayerList(GenericObjectList):
         self.client_ids = {}
         self.names = {}
 
-    def join(self, client_id, name):
-        player = self._add(client_id, name)
+    def join(self, **player):
+        client_id = player.get('cid', None)
+        name = player.get('name', None)
+        if client_id is None or name is None:
+            print 'player cannot join: player missing client_id or name'
+            print player
+            return
+        player = self._add(client_id, name, player)
         self.client_ids[client_id] = player.id
         self.names[name] = client_id
         return player
+
+    def join_yourself(self):
+        from players import Player, YouPlayer
+        self._object_type = YouPlayer
+        player = self._add()
+        self._object_type = Player
+        self.client_ids[player.cid] = player.id
+        self.names[player.name] = player.cid
+        return player
         
     def leave(self, player):
-        client_id = player.client_id
+        client_id = player.cid
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player
@@ -98,3 +114,17 @@ class PlayerList(GenericObjectList):
             return self.names[name]
         else:
             return 0
+
+    def update(self, player, id=None):
+        if id is not None:
+            if player.you and id not in self:
+                id = 0
+            old = self[id]
+        else:
+            old = player
+        if old.cid in self.client_ids:
+            del self.client_ids[old.cid]
+        if old.name in self.names:
+            del self.names[old.name]
+        self.client_ids[player.cid] = player.id
+        self.names[player.name] = player.cid

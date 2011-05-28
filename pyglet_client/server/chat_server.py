@@ -48,10 +48,6 @@ class Chat:
 
     # sends message to all clients subscribed to channel
     def broadcast(self, msg, private=None):
-        print 'Broadcasting'
-        print self.channels
-        print self.channels[msg.payload['channel']]
-        print msg.payload
         if msg.payload is None:
             return
         print 'ChatMessage broadcast'

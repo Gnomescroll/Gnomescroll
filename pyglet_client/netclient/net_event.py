@@ -87,6 +87,30 @@ class MessageHandler:
             #print str(msg['list'])
         elif cmd == 'set_map':
             NetEventGlobal.mapMessageHandler._set_map(**msg)
+
+        elif cmd == 'player_list':
+            try:
+                players = msg['players']
+                assert type(players) == list
+            except KeyError:
+                print 'msg player_list :: players key missing'
+                return
+            except AssertionError:
+                print 'msg player_list :: players is not a list'
+                return
+            GameStateGlobal.load_player_list(players)
+        elif cmd == 'player_info':
+            try:
+                player = msg['player']
+                assert type(player) == dict
+            except KeyError:
+                print 'msg player_info :: player key missing'
+                return
+            except AssertionError:
+                print 'msg player_info :: player is not a dict'
+                return
+            GameStateGlobal.load_player_info(player)
+            
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)
         else:
