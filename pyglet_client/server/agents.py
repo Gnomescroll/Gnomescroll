@@ -26,6 +26,8 @@ class AgentList(GenericObjectList):
         return self._add(x, y, z, player_id)
 
     def destroy(self, agent):
+        if agent is None:
+            return
         self._remove(agent)
 
 # represents an agent under control of a player

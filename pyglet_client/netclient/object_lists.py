@@ -37,9 +37,15 @@ class GenericObjectList:
     def items(self):
         return self.objects.items()
 
-    def _add(self, *args):
+    def get(self, key, default=None):
+        if key in self.objects:
+            return self.objects[key]
+        else:
+            return default
+
+    def _add(self, *args, **kwargs):
         print args
-        object = self._object_type(*args)
+        object = self._object_type(*args, **kwargs)
         self.objects[object.id] = object
         print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
@@ -62,8 +68,8 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, player_id, **agent):
-        agent = self._add(player_id, **agent)
+    def create(self, **agent):
+        agent = self._add(**agent)
         return agent
 
     def destroy(self, agent):
@@ -89,7 +95,7 @@ class PlayerList(GenericObjectList):
             print 'player cannot join: player missing client_id or name'
             print player
             return
-        player = self._add(client_id, name, player)
+        player = self._add(**player)
         self.client_ids[client_id] = player.id
         self.names[name] = client_id
         return player
@@ -104,9 +110,17 @@ class PlayerList(GenericObjectList):
         return player
         
     def leave(self, player):
+        print 'playerlist leave'
+        print player
         client_id = player.cid
-        if self._remove(player) and client_id in self.client_ids:
-            del self.client_ids[client_id]
+        name = player.name
+        if self._remove(player):
+            if client_id in self.client_ids:
+                del self.client_ids[client_id]
+            print name
+            print self.names
+            if name in self.names:
+                del self.names[name]
         return player
 
     def by_name(self, name):    # returns a client_id
@@ -114,6 +128,14 @@ class PlayerList(GenericObjectList):
             return self.names[name]
         else:
             return 0
+
+    def by_client(self, id):    # returns a player
+        if id in self.client_ids:
+            pid = self.client_ids[id]
+            if pid in self.objects:
+                return self.objects[pid]
+            else:
+                return
 
     def update(self, player, id=None):
         if id is not None:

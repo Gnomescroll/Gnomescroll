@@ -17,7 +17,10 @@ class PlayerList(GenericObjectList):
         return player
         
     def leave(self, player):
-        client_id = player.cid
+        try:
+            client_id = player.cid
+        except AttributeError:
+            return
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player
