@@ -106,6 +106,7 @@ class TcpClient:
         
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
+        self.sendMessage.send_players() # send all players to client
 
     def identify(self, name):
         valid, name, you = self._valid_player_name(name)

@@ -20,20 +20,36 @@ class GameStateGlobal:
         
     @classmethod
     def init_1(self):
-        GameStateGlobal.player = Player()
-        GameStateGlobal.agent = PlayerAgent(0, 0, 3, 0, 0, GameStateGlobal.player.id)
+        GameStateGlobal.agentList = AgentList()
+        GameStateGlobal.playerList = PlayerList()
+        player = GameStateGlobal.playerList.join_yourself()
+        GameStateGlobal.player = player
+        GameStateGlobal.agent = PlayerAgent(player.id, id=0)
         GameStateGlobal.player.agent = GameStateGlobal.agent
         GameStateGlobal.terrainMap = TerrainMap()
         GameStateGlobal.gameState = GameState()
-        GameStateGlobal.agentList = AgentList()
-        GameStateGlobal.playerList = PlayerList()
 
+    # for your player
     @classmethod
     def update_info(self, player):
-        self.player.update_info(player)
+        self.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
             self.agent.update_info(agent)
+
+    # for other players
+    @classmethod
+    def load_player_info(self, **player):
+        if player['id'] in GameStateGlobal.playerList:
+            p = GameStateGlobal.playerList[player['id']]
+        else:
+            p = GameStateGlobal.playerList.join(**player)
+        p.update_info(**player)
+
+    @classmethod
+    def load_player_list(self, players):
+        for player in players:
+            GameStateGlobal.load_player_info(**player)
         
 # main game state wrapper
 class GameState:
@@ -54,3 +70,4 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from players import Player
+from net_client import NetClientGlobal

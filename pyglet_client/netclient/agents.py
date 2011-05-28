@@ -18,16 +18,21 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, x, y, z, xa, ya, player_id, id=None):
-        x,y,z = [float(i) for i in (x,y,z)]
-        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-        self.xa = xa
-        self.ya = ya
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
+        if owner is None or id is None:
+            return
+        if weapons is None:
+            weapons = []
+        if state is None:
+            state = [0,0,0,0,0,0,0,0,0]
+        state = map(lambda k: float(k), state)
+        
+        self.state = state #position, velocity, acceleration
+        self.xa = state[3]
+        self.ya = state[4]
 
         self.terrainMap = GameStateGlobal.terrainMap
 
-        #if id is None:
-            #id = GameStateGlobal.new_agent_id()
         self.id = id
 
         self.d_x = 0
@@ -39,30 +44,17 @@ class Agent:
         self.jetpack = 0
         self.brake = 0
 
-        self.x_int = int(x)
-        self.y_int = int(y)
-        self.z_int = int(z)
+        self.x_int = int(state[0])
+        self.y_int = int(state[1])
+        self.z_int = int(state[2])
 
-        self.health = self.HEALTH_MAX
-        self.dead = False
-
-        self.weapons = []
-
-        self.owner = player_id
-
-        self.control_state = [0,0,0,0,0,0,0]
-        self.x = -.5
-        self.y = -.5
-        self.z = -.5
-        self.x_angle = 0
-        self.y_angle = 0
-
-        self.vx = 0
-        self.vy = 0
-        self.vz = 0
-        self.ax = 0
-        self.ay = 0
-        self.az = 0
+        if health is None:
+            self.health = self.HEALTH_MAX
+        else:
+            self.health = health
+        self.dead = bool(dead)
+        self.weapons = weapons
+        self.owner = owner
 
     def update_info(self, agent):
         if 'id' in agent:
@@ -76,6 +68,10 @@ class Agent:
             weapons = agent['weapons']
         if 'owner' in agent:
             self.owner = agent['owner']
+        if 'state' in agent:
+            state = agent['state']
+            if type(state) == list and len(state) == len(self.state):
+                self.state = state
 
     # set agent state explicitly
     def set_agent_control_state(self, *args):
@@ -272,8 +268,8 @@ class Agent:
 
 class PlayerAgent(Agent):
 
-    def __init__(self, x, y, z, xa, ya, player_id, id=None):
-        Agent.__init__(self, x, y, z, xa, ya, player_id, id=None)
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
+        Agent.__init__(self, owner, id, state, weapons, health, dead)
 
         self.control_state = [0,0,0,0,0,0,0]
         self.x = -.5

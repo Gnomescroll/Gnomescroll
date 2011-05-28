@@ -81,6 +81,7 @@ class Agent:
             'dead'  : int(self.dead),
             'owner' : self.owner,
             'weapons': self.weapons,
+            'state' : self.state,
         }
         return d
 

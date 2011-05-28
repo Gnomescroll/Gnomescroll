@@ -28,6 +28,12 @@ class PlayerList(GenericObjectList):
         print self.client_ids
         print self
         return self[self.client_ids[client_id]]
+
+    def json(self):
+        players = []
+        for player in self.objects.values():
+            players.append(player.json())
+        return players
         
                 
 # represents a "Player" (player score, agents they control etc)

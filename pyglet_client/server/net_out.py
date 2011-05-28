@@ -110,3 +110,17 @@ class SendMessage: #each connection has one of these
             self.client.send(self.add_prefix(3, chunk_str))
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
+
+    def send_players(self):
+        d = {
+            'cmd'    :  'player_list',
+            'players':  GameStateGlobal.playerList.json()
+        }
+        self.send_json(d)
+
+    def send_player(self, player):
+        d = {
+            'cmd'   : 'player_info',
+            'player': player.json(),
+        }
+        self.send_json(d)
