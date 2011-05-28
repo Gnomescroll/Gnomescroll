@@ -167,31 +167,20 @@ class ChatMessage:
         self.payload['time'] = msg.get('time', None) or now()
         self.payload['cid'] = getattr(connection, 'id', '')
         self.payload['content'] = msg.get('content', '')
+        self.payload['channel'] = msg.get('channel', '')
         self.payload['id'] = ChatServer.generate_message_id()
-        self.clean()
         self.validate()
-
-    # removes erroneous properties
-    def clean(self):
-        return
-        #for key in self.payload.keys():
-            #if key not in self.properties:
-                #del self.payload[key]
-        #try:
-            #self.payload['content'] = str(self.payload.get('content', ''))
-        #except ValueError:
-            #del self.payload['content']
             
     # checks if all properties are in payload
     def validate(self):
+        valid = True
+        if not self.payload['content']:
+            valid = False
+        if not self.payload['channel']:
+            valid = False
+        if not valid:
+            self.payload = None
         return self
-        #valid = True
-        #for prop in self.properties:
-            #if prop not in self.payload:
-                #valid = False
-        #if not valid:
-            #self.payload = None
-        #return self
 
 # an instance of a connected client
 class ChatClient:

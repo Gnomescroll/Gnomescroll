@@ -151,7 +151,7 @@ class ChatClient:
             return
         if channel in self.subscriptions:
             msg = ChatMessageIn(msg)
-            if msg.payload.client_id in self.ignored:
+            if msg.payload.cid in self.ignored:
                 return
             self.subscriptions[channel].receive(msg)
 
@@ -413,7 +413,10 @@ class Payload:
         self.content = msg.get('content', '')
         self.time = int(msg.get('time', now()))
         self.channel = msg.get('channel', '')
-        self.client_id = msg.get('cid', NetClientGlobal.client_id)
+        self.cid = msg.get('cid', NetClientGlobal.client_id)
+        print msg.get('cid')
+        print msg
+        print NetClientGlobal.client_id
         self.valid()
         #optional
         self.id = msg.get('id', '')

@@ -93,7 +93,7 @@ class PlayerList(GenericObjectList):
             del self.client_ids[client_id]
         return player
 
-    def by_name(self, name):
+    def by_name(self, name):    # returns a client_id
         if name in self.names:
             return self.names[name]
         else:
