@@ -17,7 +17,7 @@ class PlayerList(GenericObjectList):
         return player
         
     def leave(self, player):
-        client_id = player.client_id
+        client_id = player.cid
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player

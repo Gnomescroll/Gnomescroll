@@ -14,20 +14,27 @@ class Player:
                 agent = GameStateGlobal.agentList.create(**agent)
         else:
             self.agent = agent
+        self.you = False
 
 
     def tick(self):
         pass
 
     def update_info(self, **player):
+        args = []
         if 'id' in player:
             self.id = player['id']
+            args.append(self.id)
         if 'cid' in player:
-            self.id = player['cid']
+            self.cid = player['cid']
+        if 'name' in player:
+            self.name = player['name']
         if 'kills' in player:
             self.kills = player['kills']
         if 'deaths' in player:
             self.deaths = player['deaths']
+
+        GameStateGlobal.playerList.update(self, *args)
 
 class YouPlayer(Player):
 
@@ -38,6 +45,7 @@ class YouPlayer(Player):
         self.kills = 0
         self.deaths = 0
         self.agent = PlayerAgent(self.id, 0)
+        self.you = True
         
 
 from game_state import GameStateGlobal

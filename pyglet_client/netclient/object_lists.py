@@ -104,7 +104,7 @@ class PlayerList(GenericObjectList):
         return player
         
     def leave(self, player):
-        client_id = player.client_id
+        client_id = player.cid
         if self._remove(player) and client_id in self.client_ids:
             del self.client_ids[client_id]
         return player
@@ -114,3 +114,17 @@ class PlayerList(GenericObjectList):
             return self.names[name]
         else:
             return 0
+
+    def update(self, player, id=None):
+        if id is not None:
+            if player.you and id not in self:
+                id = 0
+            old = self[id]
+        else:
+            old = player
+        if old.cid in self.client_ids:
+            del self.client_ids[old.cid]
+        if old.name in self.names:
+            del self.names[old.name]
+        self.client_ids[player.cid] = player.id
+        self.names[player.name] = player.cid

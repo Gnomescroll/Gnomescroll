@@ -42,9 +42,9 @@ class GameStateGlobal:
     def load_player_info(self, **player):
         if player['id'] in GameStateGlobal.playerList:
             p = GameStateGlobal.playerList[player['id']]
+            p.update_info(**player)
         else:
             p = GameStateGlobal.playerList.join(**player)
-        p.update_info(**player)
 
     @classmethod
     def load_player_list(self, players):
