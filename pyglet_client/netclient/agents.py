@@ -139,6 +139,32 @@ class Agent:
         self.set_position()
 
 
+    def draw(self):
+        #self.draw_aiming_direction()
+        #self.draw_bounding_box()
+        ##self.draw_selected_cube()
+        ##self.draw_selected_cube2()
+        self.draw_position(points=10, seperation = 0.10)
+        #self.draw_velocity(point_density=15, units=200)
+        #self.draw_acceleration(point_density=15, units=100000)
+
+    def draw_position(self, points, seperation):
+        v_num = 0
+        v_list = []
+        c_list = []
+        for n in range(-points, points):
+            temp = float(n)*float(seperation)
+            v_list += [self.x+temp, self.y, self.z]
+            v_list += [self.x,self.y+temp, self.z]
+            v_list += [self.x,self.y, self.z+temp]
+            c_list += [255,255,255] + [255,255,255] + [255,255,255]
+            v_num +=3
+        pyglet.graphics.draw(v_num, GL_POINTS,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+
+
 class PlayerAgent(Agent):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
