@@ -111,7 +111,7 @@ class World():
         self.agents.append(agent)
         
     def draw_agents(self):
-        for agent in GameStateGlobal.agentList:
+        for agent in GameStateGlobal.agentList.values():
             agent.draw()
 
 from cube_dat import CubeGlobal
