@@ -88,6 +88,12 @@ class MessageHandler:
         elif cmd == 'set_map':
             NetEventGlobal.mapMessageHandler._set_map(**msg)
 
+        elif cmd == 'client_quit':
+            id = msg.get('id', None)
+            if id is None:
+                return
+            GameStateGlobal.client_quit(id)
+
         elif cmd == 'player_list':
             try:
                 players = msg['players']
@@ -109,26 +115,45 @@ class MessageHandler:
             except AssertionError:
                 print 'msg player_info :: player is not a dict'
                 return
-            GameStateGlobal.load_player_info(player)
+            GameStateGlobal.load_player_info(**player)
+        elif cmd == 'remove_player':
+            id = msg.get('id', None)
+            if id is None:
+                return
+            GameStateGlobal.remove_player(id)
+        elif cmd == 'remove_agent':
+            id = msg.get('id', None)
+            if id is None:
+                return
+            GameStateGlobal.remove_agent(id)
             
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)
         else:
             print "JSON message type unrecognized"
 
-    def _agent_position(self, id, tick, state, **misc):
-        [x,y,z, vx,vy,vz, ax,ay,az] = state
-        [x,y,z] = map(lambda k: float(k), [x,y,z])
+    def _agent_position(self, **args):
+        state = args.get('state', None)
+        id = args.get('id', None)
+        tick = args.get('tick', None)
+        if None in (state, id, tick,):
+            print 'agent_position, missing keys'
+            print args
+            return
+        x,y,z, vx,vy,vz, ax,ay,az = state
+        x,y,z = map(lambda k: float(k), [x,y,z])
 
-        self.agent.x = x
-        self.agent.y = y
-        self.agent.z = z
-        self.agent.vx = vx
-        self.agent.vy = vy
-        self.agent.vz = vz
-        self.agent.ax = ax
-        self.agent.ay = ay
-        self.agent.az = az
+        agent = GameStateGlobal.agentList[id]
+        agent.tick = tick
+        agent.x = x
+        agent.y = y
+        agent.z = z
+        agent.vx = vx
+        agent.vy = vy
+        agent.vz = vz
+        agent.ax = ax
+        agent.ay = ay
+        agent.az = az
 
     def _set_client_id(self, **msg):
         id = msg.get('id', None)

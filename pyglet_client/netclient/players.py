@@ -1,10 +1,14 @@
 class Player:
 
-    def __init__(self, client_id, id=None, name='', kills=0, deaths=0, agent=None, **args):
-
-        self.cid = client_id
+    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, agent=None):
+        if cid is None or id is None:
+            print 'Client_id or pid missing; abort creating player'
+            raise ValueError
+            return
+        self.cid = cid
         self.id = id
         self.name = name
+        print 'New player assigned name: %s' % (name,)
         self.kills = kills
         self.deaths = deaths
         if type(agent) == dict:
@@ -28,6 +32,7 @@ class Player:
         if 'cid' in player:
             self.cid = player['cid']
         if 'name' in player:
+            print 'updating player name: %s  -> %s' % (self.name, player['name'],)
             self.name = player['name']
         if 'kills' in player:
             self.kills = player['kills']
@@ -44,7 +49,7 @@ class YouPlayer(Player):
         self.id = 0
         self.kills = 0
         self.deaths = 0
-        self.agent = PlayerAgent(self.id, 0)
+        self.agent = GameStateGlobal.agentList.create_player_agent(self.id, 0)
         self.you = True
         
 

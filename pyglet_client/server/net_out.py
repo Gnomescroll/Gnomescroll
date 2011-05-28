@@ -51,6 +51,21 @@ class EventOut:
         }
         self.add_json_event(d)
 
+    def player_join(self, player):
+        d = {
+            'cmd'   : 'player_info',
+            'player': player.json(),
+        }
+        self.add_json_event(d)
+
+    def client_quit(self, client_id):
+        d = {
+            'cmd'   : 'client_quit',
+            'id'    : client_id,
+        }
+        self.add_json_event(d)
+        
+
 #this is global message out across the connection pool
 class MessageOut:
     def init(self):
@@ -77,6 +92,13 @@ class SendMessage: #each connection has one of these
         d = {
             'cmd'  : 'client_id',
             'id'   : connection.id,
+        }
+        self.send_json(d)
+
+    def client_quit(self, client_id):
+        d = {
+            'cmd'   : 'client_quit',
+            'id'    : client_id,
         }
         self.send_json(d)
 
@@ -122,5 +144,19 @@ class SendMessage: #each connection has one of these
         d = {
             'cmd'   : 'player_info',
             'player': player.json(),
+        }
+        self.send_json(d)
+
+    def remove_player(self, player):
+        d = {
+            'cmd'   : 'remove_player',
+            'id'    : player.id,
+        }
+        self.send_json(d)
+
+    def remove_agent(self, agent):
+        d = {
+            'cmd'   : 'remove_agent',
+            'id'    : agent.id,
         }
         self.send_json(d)

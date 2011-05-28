@@ -102,7 +102,6 @@ class TcpClient:
         self.player = None
         self.name = None
         self.ec = 0
-#        self.id = 0
         
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
@@ -114,13 +113,13 @@ class TcpClient:
             self.name = name
             self._register()
             self.sendMessage.identified(self, 'Identified name: ' + name)
+            NetOut.event.player_join(self.player)
         else:
             if you:
                 self.sendMessage.identified(self, 'You were already identified as ' + name)
             else:
                 self.sendMessage.identify_fail(self, 'Invalid username. ' + name)
                 
-
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
 
@@ -140,7 +139,8 @@ class TcpClient:
     def _valid_player_name(self, name):
         valid = True
         try:                                    # must be string
-            self.name = str(name)
+            name = str(name)
+            self.name = name
         except ValueError:
             name = 'Invalid client name'
             valid = False
@@ -151,7 +151,8 @@ class TcpClient:
             name = name[0:self.MAX_NAME_LENGTH]
         avail, you = NetServer.connectionPool.name_available(name, self)
         if not avail:
-            name = 'Name is in use.'
+            if not you:
+                name = 'Name is in use.'
             valid = False
         return (valid, name, you,)
 
@@ -252,6 +253,7 @@ class ConnectionPool:
         if connection.name in self.names:
             del self.names[connection.name]
         GameStateGlobal.disconnect(connection)
+        NetOut.event.client_quit(connection.id)
 
     def process_events(self):
         events = self._epoll.poll(0)
@@ -352,6 +354,8 @@ class TcpPacketDecoder:
         self.count += 1
         #print "processed message count: " +str(self.count)
         NetServer.datagramDecoder.decode(message, self.connection)
+
+from net_out import NetOut
 
 if __name__ == "__main__":
     print "Run run.py to start server"
