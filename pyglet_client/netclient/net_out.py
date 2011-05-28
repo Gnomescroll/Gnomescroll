@@ -33,18 +33,8 @@ from net_client import NetClientGlobal
 
 class SendMessage:
 
-    #deprecrate
-    #def send_agent_control_state_DEPREACATED(self, id, d_x, d_y, d_xa, d_za, jetpack, brake):
-        #d = {
-            #'cmd' : 'agent_control_state',
-            #'id' : id,
-            #'tick' : 0,
-            #'state': [d_x, d_y, d_xa, d_za, jetpack, brake]
-           #}
-        #NetOut.send_json(d)
-
     def send_agent_control_state(self, id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
-        if NetClientGlobal.client_id == 0: # not identified
+        if NetClientGlobal.client_id in ['0', 0]: # not identified
             return
         if id is None:  # agent not identified
             return

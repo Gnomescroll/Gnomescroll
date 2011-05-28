@@ -67,12 +67,9 @@ class MessageHandler:
     def agent_control_state(self, msg):
 
         try:
-            client_id = int(msg.get('cid', None))
+            client_id = msg.get('cid', None)
         except TypeError:
             print 'msg.cmd == agent_control_state, but msg.id missing. MSG: %s' % (str(msg),)
-            return
-        except ValueError:
-            print 'msg.cmd == agent_control_state, but msg.id is not an int. MSG: %s' % (str(msg),)
             return
 
         try:
