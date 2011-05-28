@@ -77,6 +77,11 @@ class ChatClient:
             _subscribed[0] = True
             if 'system' not in loaded_channels:
                 self.subscribe('system')
+                loaded_channels.append('system')
+            pm_channel = 'pm_' + str(NetClientGlobal.client_id)
+            if pm_channel not in loaded_channels:
+                self.subscribe(pm_channel)
+                loaded_channels.append(pm_channel)
         return loaded_channels
 
     def set_current_channel(self, channel):
@@ -339,6 +344,8 @@ class SystemChatCommand(ChatCommand):
 
         if command == 'identify_fail':
             _send = self._send_local(' '.join(args))
+        elif command == 'identify_note':
+            _send = self._send_local(' '.join(args))
         else:
             _send = self._unimplemented(command)
 
@@ -414,32 +421,25 @@ class Payload:
         self.time = int(msg.get('time', now()))
         self.channel = msg.get('channel', '')
         self.cid = msg.get('cid', NetClientGlobal.client_id)
-        print msg.get('cid')
-        print msg
-        print NetClientGlobal.client_id
-        self.valid()
-        #optional
         self.id = msg.get('id', '')
+        self.valid()
     def clean(self):
         pass
 
-    # checks if all properties are in payload
+    # checks values of some properties
     def valid(self, properties=None):
         self.is_valid = True
+        if not self.content:
+            self.is_valid = False
+        if not self.channel:
+            self.is_valid = False
         return self.is_valid
-        #if properties is None:
-            #properties = self.properties
-        #valid = True
-        #for p in properties:
-            #if hasattr(self, p):
-                #valid = False
-        #self.is_valid = valid
-        #return self.is_valid
 
     def serialize(self):
         d = {}
         for p in self.properties:
-            d[p] = getattr(self, p, None)
+            if hasattr(self, p):
+                d[p] = getattr(self, p)
         return d
 
 

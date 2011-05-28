@@ -23,6 +23,10 @@ class PlayerList(GenericObjectList):
         return player
 
     def client(self, client_id):
+        print 'plyaerlist.client'
+        print client_id
+        print self.client_ids
+        print self
         return self[self.client_ids[client_id]]
         
                 
