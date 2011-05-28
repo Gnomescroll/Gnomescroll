@@ -52,7 +52,7 @@ class MessageHandler:
             msg = json.loads(datagram)
         except:
             print "MessageHandler.process_json_event error"
-            print str(msg)
+            print datagram
             return
         cmd = msg.get('cmd', None)
         if cmd is None:
