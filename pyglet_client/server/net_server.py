@@ -251,6 +251,7 @@ class ConnectionPool:
             del self._clients_by_id[connection.id]
         if connection.name in self.names:
             del self.names[connection.name]
+        GameStateGlobal.disconnect(connection)
 
     def process_events(self):
         events = self._epoll.poll(0)

@@ -32,6 +32,12 @@ class GameStateGlobal:
         cls.player_id += 1
         return cls.player_id
 
+    @classmethod
+    def disconnect(self, connection):
+        GameStateGlobal.playerList.leave(connection.player)
+        GameStateGlobal.agentList.leave(connection.player.agent)
+    
+
 from net_server import NetServer
 
 # generic game object datastore
