@@ -41,7 +41,8 @@ def load_map():
                 rnd = random.randint(0,64)
                 if rnd < 16:
                     m.set(xa,ya,za+1, 3)
-
+                    m.set(xa,ya,za+2, 3)
+                    m.set(xa,ya,za+3, 3)
     print "Finished map generation"
 
 class Main:
