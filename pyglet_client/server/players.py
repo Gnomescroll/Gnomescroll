@@ -43,7 +43,7 @@ class Player:
         self.kills = 0
         self.deaths = 0
         self.name = name
-        self.client_id = client_id
+        self.cid = client_id
         if id is None:
             id = GameStateGlobal.new_player_id()
         self.id = id
@@ -54,8 +54,8 @@ class Player:
             'kills' : self.kills,
             'deaths': self.deaths,
             'name'  : self.name,
-            'cid'    : self.client_id,
-            'id'   : self.id,
+            'cid'   : self.cid,
+            'id'    : self.id,
             'agent' : self.agent.json()
         }
         return d    
