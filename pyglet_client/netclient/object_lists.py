@@ -44,12 +44,11 @@ class GenericObjectList:
         print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
         
-    def _remove(self, id):
-        if type(id) != int:
-            id = id.id
+    def _remove(self, obj):
+        id = obj.id
         if id in self.objects:
             del self.objects[id]
-            print '%s: %s removed; id= %s' % (self._metaname, self._itemname, object.id,)
+            print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
             return True
         return False
 

@@ -629,7 +629,6 @@ class ChatRender:
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         msgs = client.subscriptions.get(channel, None)
         if msgs is None:
-            print 'Attempted to retrieve messages for channel: %s, but does not exist' % (channel,)
             return to_render
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
