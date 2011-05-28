@@ -44,7 +44,7 @@ class GenericObjectList:
             return default
 
     def _add(self, *args, **kwargs):
-        print args
+        print args, kwargs
         object = self._object_type(*args, **kwargs)
         self.objects[object.id] = object
         print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
@@ -68,8 +68,8 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, **agent):
-        agent = self._add(**agent)
+    def create(self, *args, **agent):
+        agent = self._add(*args, **agent)
         return agent
 
     def create_player_agent(self, owner, id):

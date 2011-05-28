@@ -12,12 +12,9 @@ class Player:
         self.kills = kills
         self.deaths = deaths
         if type(agent) == dict:
-            if self.cid == NetClientGlobal.client_id:
-                self.agent = None
-            else:
-                agent = GameStateGlobal.agentList.create(**agent)
-        else:
-            self.agent = agent
+            print 'new Player: agent dict, creating agent'
+            agent = GameStateGlobal.agentList.create(**agent)
+        self.agent = agent
         self.you = False
 
 
