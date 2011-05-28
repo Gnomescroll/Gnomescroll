@@ -57,6 +57,17 @@ class EventOut:
             'player': player.json(),
         }
         self.add_json_event(d)
+        
+    def player_rename(self, player):
+        d = {
+            'cmd'   : 'player_update',
+            'player': {
+                'name'  : player.name,
+                'id'    : player.id,
+            },
+        }
+        self.add_json_event(d)
+            
 
     def player_join(self, player):
         d = {
