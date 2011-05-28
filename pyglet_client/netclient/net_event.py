@@ -90,7 +90,7 @@ class MessageHandler:
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)
         else:
-            print "JSON message type unregonized"
+            print "JSON message type unrecognized"
 
     def _agent_position(self, id, tick, state, **misc):
         [x,y,z, vx,vy,vz, ax,ay,az] = state
@@ -116,6 +116,9 @@ class MessageHandler:
         return True
 
     def _on_identify(self, **msg):
+        note = msg.get('msg', '')
+        ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
+        
         player = msg.get('player', None)
         if player is None:
             print 'msg::identified - missing player'

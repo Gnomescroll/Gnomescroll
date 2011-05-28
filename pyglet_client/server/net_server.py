@@ -108,13 +108,17 @@ class TcpClient:
         self.sendMessage.send_client_id(self) #send client an id upon connection
 
     def identify(self, name):
-        name = self._valid_player_name(name)
-        if name:
+        valid, name, you = self._valid_player_name(name)
+        if valid:
             self.name = name
             self._register()
-            self.sendMessage.identified(self)
+            self.sendMessage.identified(self, 'Identified name: ' + name)
         else:
-            self.sendMessage.identify_fail(self, 'Invalid username')
+            if you:
+                self.sendMessage.identified(self, 'You were already identified as ' + name)
+            else:
+                self.sendMessage.identify_fail(self, 'Invalid username. ' + name)
+                
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
@@ -122,6 +126,7 @@ class TcpClient:
     def _register(self):
         ChatServer.chat.connect(self) # join chat server
         self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
+        NetServer.connectionPool.name_client(self, self.name)
         print 'Joined chat and created new Player'
 
     def _set_client_id(self):
@@ -132,16 +137,22 @@ class TcpClient:
         return True
 
     def _valid_player_name(self, name):
+        valid = True
         try:                                    # must be string
             self.name = str(name)
         except ValueError:
-            print 'Invalid client name'
-            return False
+            name = 'Invalid client name'
+            valid = False
         if not name:                           # must not be empty
-            return False
+            name = 'Name was empty.'
+            valid = False
         if len(name) > self.MAX_NAME_LENGTH:    # truncate if longer than self.MAX_NAME_LENGTH
             name = name[0:self.MAX_NAME_LENGTH]
-        return name
+        avail, you = NetServer.connectionPool.name_available(name, self)
+        if not avail:
+            name = 'Name is in use.'
+            valid = False
+        return (valid, name, you,)
 
     def send(self, MESSAGE):
         try:
@@ -189,6 +200,7 @@ class ConnectionPool:
         self._client_count = 0
         self._client_pool = {} #clients by fileno
         self._clients_by_id = {}
+        self.names = {}
         atexit.register(self.on_exit)
 
     def on_exit(self):
@@ -206,6 +218,23 @@ class ConnectionPool:
                 self._clients_by_id[client.id] = client
                 print "Connection associated with client_id= %s" % (client.id,)
 
+    def name_client(self, connection, name):
+        if connection.name in self.names:
+            del self.names[connection.name]
+        self.names[name] = connection.id
+        return name
+
+    def name_available(self, name, connection=None):
+        you = False
+        if connection is not None:
+            if self.names.get(name, None) == connection.id:
+                you = True
+        if name in self.names:
+            avail = False
+        else:
+            avail = True
+        return (avail, you,)
+
     def tearDownClient(self, connection, duplicate_id = False):
         fileno = connection.fileno
         self._epoll.unregister(fileno)
@@ -214,6 +243,8 @@ class ConnectionPool:
         if connection.id != 0: # remove from chat
             ChatServer.chat.disconnect(connection)
             del self._clients_by_id[connection.id]
+        if connection.name in self.names:
+            del self.names[connection.name]
 
     def process_events(self):
         events = self._epoll.poll(0)

@@ -344,6 +344,8 @@ class SystemChatCommand(ChatCommand):
 
         if command == 'identify_fail':
             _send = self._send_local(' '.join(args))
+        elif command == 'identify_note':
+            _send = self._send_local(' '.join(args))
         else:
             _send = self._unimplemented(command)
 

@@ -88,10 +88,11 @@ class SendMessage: #each connection has one of these
         }
         self.send_json(d)
 
-    def identified(self, connection):
+    def identified(self, connection, msg=''):
         print 'Identified'
         d = {
             'cmd'   : 'identified',
+            'msg'   : msg,
             'player': connection.player.json(),
         }
         self.send_json(d)
