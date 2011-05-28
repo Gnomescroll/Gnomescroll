@@ -88,6 +88,12 @@ class MessageHandler:
         elif cmd == 'set_map':
             NetEventGlobal.mapMessageHandler._set_map(**msg)
 
+        elif cmd == 'client_quit':
+            id = msg.get('id', None)
+            if id is None:
+                return
+            GameStateGlobal.client_quit(id)
+
         elif cmd == 'player_list':
             try:
                 players = msg['players']
@@ -109,7 +115,17 @@ class MessageHandler:
             except AssertionError:
                 print 'msg player_info :: player is not a dict'
                 return
-            GameStateGlobal.load_player_info(player)
+            GameStateGlobal.load_player_info(**player)
+        elif cmd == 'remove_player':
+            id = msg.get('id', None)
+            if id is None:
+                return
+            GameStateGlobal.remove_player(id)
+        elif cmd == 'remove_agent':
+            id = msg.get('id', None)
+            if id is None:
+                return
+            GameStateGlobal.remove_agent(id)
             
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)

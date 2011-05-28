@@ -56,7 +56,7 @@ class Agent:
         self.weapons = weapons
         self.owner = owner
 
-    def update_info(self, agent):
+    def update_info(self, **agent):
         if 'id' in agent:
             self.id = agent['id']
         if 'health' in agent:

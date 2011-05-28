@@ -35,7 +35,7 @@ class GameStateGlobal:
         self.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
-            self.agent.update_info(agent)
+            self.agent.update_info(**agent)
 
     # for other players
     @classmethod
@@ -50,6 +50,34 @@ class GameStateGlobal:
     def load_player_list(self, players):
         for player in players:
             GameStateGlobal.load_player_info(**player)
+
+    @classmethod
+    def remove_player(self, id):
+        player = GameStateGlobal.playerList.get(id, None)
+        if player is None:
+            return
+        agent = getattr(player, 'agent', None)
+        if agent is not None:
+            GameStateGlobal.remove_agent(agent.id)
+        GameStateGlobal.playerList.leave(player)
+        
+    @classmethod
+    def remove_agent(self, id):
+        agent = GameStateGlobal.agentList.get(id, None)
+        if agent is None:
+            return
+        GameStateGlobal.agentList.destroy(agent)
+        owner = GameStateGlobal.playerList.get(agent.owner, None)
+        if owner is not None:
+            owner.agent = None
+
+    @classmethod
+    def client_quit(self, id):
+        player = GameStateGlobal.playerList.by_client(id)
+        if player is None:
+            return
+        GameStateGlobal.remove_player(player.id)
+
         
 # main game state wrapper
 class GameState:
