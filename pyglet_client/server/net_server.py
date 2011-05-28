@@ -128,7 +128,7 @@ class TcpClient:
         if hasattr(self, 'id'):
             print "ERROR: TcpClient.set_client_id, client_id already assigned"
             return False
-        self.id = NetServer.generate_client_id()
+        self.id = str(NetServer.generate_client_id())
         return True
 
     def _valid_player_name(self, name):
@@ -204,7 +204,7 @@ class ConnectionPool:
             self._client_pool[client.fileno] = client #save client
             if client.id not in self._clients_by_id:
                 self._clients_by_id[client.id] = client
-                print "Connection associated with client_id= %i" % (client.id,)
+                print "Connection associated with client_id= %s" % (client.id,)
 
     def tearDownClient(self, connection, duplicate_id = False):
         fileno = connection.fileno

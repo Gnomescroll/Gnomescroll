@@ -48,11 +48,16 @@ class Chat:
 
     # sends message to all clients subscribed to channel
     def broadcast(self, msg, private=None):
+        print 'Broadcasting'
+        print self.channels
+        print self.channels[msg.payload['channel']]
         print msg.payload
         if msg.payload is None:
             return
         print 'ChatMessage broadcast'
         print msg.payload
+        if 'channel' not in msg.payload:
+            return
         for client_id in self.channels[msg.payload['channel']]:
             print "Broadcasting %s on channel %s to client %s" % (msg.payload['content'], msg.payload['channel'], client_id,)
             self.clients[client_id].send(msg)
@@ -60,8 +65,9 @@ class Chat:
     # connect client
     def connect(self, connection):
         client = ChatClient(connection)
-        self.clients[connection.id] = client
-        self.add_channel('pm_'+str(connection.id))
+        cid = connection.id
+        self.clients[cid] = client
+        self.add_channel('pm_'+cid)
 
     # disconnect client (removes client if disconnected for N seconds)
     def disconnect(self, connection):
@@ -87,14 +93,14 @@ class Chat:
     def client_listen(self, connection, channel=None):
 
         def _add_client_to_channel(client, channel):
-            client_id = client.id
+            client_id = str(client.id)
             channel_parts = channel.split('_')
             if channel_parts[0] == 'pm' and channel_parts[1] != client_id:
                 print 'Client attempted to listen to another\'s private client channel'
                 return
             listeners = self.channels[channel]
             if client_id not in listeners:
-                print 'client %s now listening to %s' %(str(client_id), channel,)
+                print 'client %s now listening to %s' %(client_id, channel,)
                 listeners.append(client_id)
 
             if channel not in client.channels:
@@ -115,8 +121,10 @@ class Chat:
     def client_unlisten(self, connection, channel=None):
 
         def _remove_client_from_channel(client, channel):
-            if connection.id in self.channels[channel]:
-                self.channels[channel].remove(connection.id)
+            client_id = str(client.id)
+            listeners = self.channels[channel]
+            if client_id in listeners:
+                listeners.remove(client_id)
             if channel in client.channels:
                 client.channels.remove(channel)
 

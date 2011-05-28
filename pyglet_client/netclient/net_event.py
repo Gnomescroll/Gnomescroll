@@ -111,7 +111,7 @@ class MessageHandler:
         if id is None:
             print '_register msg missing id'
             return False
-        print "Received Client Id: %i" % (id,)
+        print "Received Client Id: %s" % (id,)
         NetClientGlobal.client_id = id
         return True
 
