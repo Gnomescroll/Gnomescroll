@@ -219,8 +219,13 @@ class ConnectionPool:
                 print "Connection associated with client_id= %s" % (client.id,)
 
     def name_client(self, connection, name):
-        if connection.name in self.names:
-            del self.names[connection.name]
+        avail, you = self.name_available(name, connection)
+        if not you:
+            if avail:
+                if connection.name in self.names:
+                    del self.names[connection.name]
+            else:
+                return
         self.names[name] = connection.id
         return name
 
