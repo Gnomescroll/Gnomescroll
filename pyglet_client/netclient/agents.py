@@ -165,8 +165,7 @@ class PlayerAgent(Agent):
     def draw(self):
         self.draw_aiming_direction()
         self.draw_bounding_box()
-        ##self.draw_selected_cube()
-        #self.draw_player_bounding_box()
+        #self.draw_selected_cube()
         #self.draw_selected_cube2()
         self.draw_position(points=10, seperation = 0.10)
         self.draw_velocity(point_density=15, units=200)
@@ -220,30 +219,6 @@ class PlayerAgent(Agent):
         pyglet.graphics.draw(v_num, GL_POINTS,
         ("v3f", v_list),
         ("c3B", c_list)
-        )
-
-    def draw_player_bounding_box(self):
-        v_sets = [
-        [ [0,1,1] , [0,0,1] , [1,0,1] , [1,1,1] ], #top
-        [ [1,0,0] , [0,0,0] , [0,1,0] , [1,1,0] ], #bottom
-        [ [0,1,1] , [1,1,1] , [1,1,0] , [0,1,0] ], #north
-        [ [0,0,1] , [0,0,0] , [1,0,0] , [1,0,1] ], #south
-        [ [0,1,1] , [0,1,0] , [0,0,0] , [0,0,1] ], #west
-        [ [1,0,1] , [1,0,0] , [1,1,0] , [1,1,1] ], #east
-    ]
-
-        (x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
-        v_list = []
-        v_num = 0
-        for v_set in v_sets:
-            for i in [0,1,2,3]:
-                v_num += 2
-                v_list += [v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z]
-                v_list += [v_set[(i+1)%4][0]+x, v_set[(i+1)%4][1]+y, v_set[(i+1)%4][2]+z]
-
-        pyglet.graphics.draw(v_num, GL_LINES,
-        ("v3f", v_list),
-        ("c3B", [255, 255, 0] *v_num)
         )
 
     def draw_aiming_direction(self, distance=50):
@@ -421,7 +396,7 @@ def draw_box(x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
     ("c3B", c_list)
     )
 
-def draw_sides(self, p_list):
+def draw_sides( p_list):
 
     v_set = [
         [0,0,0],
@@ -478,7 +453,7 @@ def draw_sides(self, p_list):
     ("c3B", c_list)
     )
 
-def draw_cube(self, x,y,z, side = None):
+def draw_cube( x,y,z, side = None):
 
     v_set = [
         [0,0,0],
