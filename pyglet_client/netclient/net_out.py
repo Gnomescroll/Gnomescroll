@@ -31,94 +31,104 @@ class NetOut:
 
 from net_client import NetClientGlobal
 
+
+# calls send_json
+def sendJSON(f):
+    def wrapped(*args):
+        package = f(*args)
+        if package is not None:
+            NetOut.send_json(package)
+    return wrapped
+
 class SendMessage:
 
+    @sendJSON
     def send_agent_control_state(self, id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
         if NetClientGlobal.client_id in ['0', 0]: # not identified
             return
         if id is None:  # agent not identified
             return
-        d = {
+        return {
             'cmd' : 'agent_control_state',
             'cid' : NetClientGlobal.client_id,
             'tick' : 0,
             'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake],
             'pid'  : id,
            }
-        NetOut.send_json(d)
 
+    @sendJSON
     def identify(self, name=None):
         if name is None:
             name = NetClientGlobal.name
-        d = {
+        return {
             'cmd': 'identify',
             'name': name,
         }
-        NetOut.send_json(d)
 
+    @sendJSON
     def request_client_id(self):
-        d = {
+        return {
             'cmd'   : 'request_client_id',
         }
-        NetOut.send_json(d)
 
 class MapMessage:
 
+    @sendJSON
     def request_chunk_list(self):
-        d = {
+        return {
             'cmd' : 'request_chunk_list',
-            }
-        NetOut.send_json(d)
+        }
 
+    @sendJSON
     def request_chunk(self, x,y,z):
-        d = {
+        return {
             'cmd' : 'request_chunk',
             'value' : (x,y,z)
         }
-        NetOut.send_json(d)
 
 class ChatMessage:
 
+    @sendJSON
     def send_chat(self, d):
         if NetClientGlobal.client_id == 0:
             return
         d['cmd'] = 'chat'
         d['cid'] = str(NetClientGlobal.client_id)
-        NetOut.send_json(d)
+        return d
 
+    @sendJSON
     def subscribe(self, channel):
         if NetClientGlobal.client_id == 0:
             print 'client_id is 0, abort'
             return
-        d = {
+        return {
             'channel'   : channel,
             'cmd'       : 'subscribe',
             'cid' : str(NetClientGlobal.client_id),
         }
-        NetOut.send_json(d)
 
+    @sendJSON
     def unsubscribe(self, channel):
         if NetClientGlobal.client_id == 0:
             return
-        d = {
+        return {
             'channel'   : channel,
             'cmd'       : 'unsubscribe',
             'cid' : str(NetClientGlobal.client_id),
         }
-        NetOut.send_json(d)
 
 class AdminMessage:
 
+    @sendJSON
     def set_map(self,x,y,z,value):
-        d = {
+        return {
             'set_map' : 'set_map',
             'list' : [(x,y,z,value)],
             }
-        NetOut.send_json(d)
 
+    @sendJSON
     def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
-        d = {
+        return {
             'set_map' : 'set_map',
             'list' : list,
             }
-        NetOut.send_json(d)
