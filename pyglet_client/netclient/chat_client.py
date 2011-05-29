@@ -393,8 +393,16 @@ class ChatMessageIn():
         self.payload = Payload(**msg)
         self.payload.clean()
         self.valid = self.payload.valid()
+        self.filter()
         self.timestamp = now()
         print 'chatmessageIN timestamp %i' % (self.timestamp,)
+
+    def filter(self):
+        if self.payload.content == 'ping' and \
+           self.payload.cid != NetClientGlobal.client_id and \
+           self.payload.channel == 'system':
+               self.payload = None
+               self.valid = False
 
     # returns specific render formatting for the message (color, font etc)
     def render(self):

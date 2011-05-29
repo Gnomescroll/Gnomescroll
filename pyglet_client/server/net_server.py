@@ -254,6 +254,7 @@ class ConnectionPool:
             del self.names[connection.name]
         GameStateGlobal.disconnect(connection)
         NetOut.event.client_quit(connection.id)
+        ChatServer.chat.disconnect(connection)
 
     def process_events(self):
         events = self._epoll.poll(0)

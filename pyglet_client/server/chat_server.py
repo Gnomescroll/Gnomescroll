@@ -61,30 +61,24 @@ class Chat:
     # connect client
     def connect(self, connection):
         client = ChatClient(connection)
-        cid = connection.id
+        cid = client.id
         self.clients[cid] = client
         self.add_channel('pm_'+cid)
 
-    # disconnect client (removes client if disconnected for N seconds)
+    # disconnect client
     def disconnect(self, connection):
-        self.remove(connection) #TEMPORARY
-        self.remove_channel(connection.id)
-        return
-
-        # use this once we have culling
-        client = self.clients.get(connection.id, None)
-        if client is not None:
-            client.disconnect()
-
-    # remove client
-    def remove(self, connection):
         if connection.id not in self.clients:
             return
         client = self.clients[connection.id]
+        self.remove(client) 
+        self.remove_channel('pm_' + client.id)
+
+    # remove client
+    def remove(self, client):
         for channel in client.channels:
             if channel in self.channels and client.id in self.channels[channel]:
                 self.channels[channel].remove(client.id)
-        del self.clients[connection.id]
+        del self.clients[client.id]
 
     def client_listen(self, connection, channel=None):
 
