@@ -148,6 +148,26 @@ class Agent:
         #self.draw_velocity(point_density=15, units=200)
         #self.draw_acceleration(point_density=15, units=100000)
 
+    def __getattr__(self, attr):
+        if attr == 'x':
+            return self.__dict__['state'][0]
+        elif attr == 'y':
+            return self.__dict__['state'][1]
+        elif attr == 'z':
+            return self.__dict__['state'][2]
+        else:
+            raise AttributeError
+
+    def __setattr__(self, attr, val):
+        if attr == 'x':
+            self.__dict__['state'][0] = val
+        elif attr == 'y':
+            self.__dict__['state'][1] = val
+        elif attr == 'z':
+            self.__dict__['state'][2] = val
+        else:
+            self.__dict__[attr] = val
+
     def draw_position(self, points, seperation):
         v_num = 0
         v_list = []

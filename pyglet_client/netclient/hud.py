@@ -142,7 +142,7 @@ class Hud(object):
             if channel == 'system':
                 color = (40, 255, 0, 1)
             elif channel == pm_channel:
-                color = (40, 0, 255, 1)
+                color = (120, 200, 200, 1)
             else:
                 color = (255, 40, 0, 1)
             txt = self.text_dict[i]

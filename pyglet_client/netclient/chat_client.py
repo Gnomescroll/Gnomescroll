@@ -156,7 +156,7 @@ class ChatClient:
             return
         if channel in self.subscriptions:
             msg = ChatMessageIn(msg)
-            if msg.payload.cid in self.ignored:
+            if msg.payload is None or msg.payload.cid in self.ignored:
                 return
             self.subscriptions[channel].receive(msg)
 
@@ -414,7 +414,9 @@ class ChatMessageIn():
         if 'name' in msg:
             self.name = msg['name']
         else:
-            sender = GameStateGlobal.playerList.by_client(self.payload.cid)
+            sender = None
+            if self.payload is not None:
+                sender = GameStateGlobal.playerList.by_client(self.payload.cid)
             if sender is None:
                 self.name = 'System'
             else:
@@ -658,6 +660,8 @@ class ChatRender:
         if channel != 'system':
             to_merge = self._filter_channel('system')
             to_render = self._merge_channels(to_render, to_merge)
+        to_merge = self._filter_channel('pm_' + NetClientGlobal.client_id)
+        to_render = self._merge_channels(to_render, to_merge)
         self._pad_queue(to_render)
         return to_render
 
