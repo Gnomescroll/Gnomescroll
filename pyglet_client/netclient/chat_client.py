@@ -166,11 +166,12 @@ class ChatClient:
         from os import mkdir
         from os.path import exists as path_exists
 
+        channels = [channel for channel in self.subscriptions.keys() if channel[0:3] != 'pm_']
         path_exists(CONFIG_PATH) or mkdir(CONFIG_PATH)
         with open(CONFIG_PATH + '/' + self._conf, 'w') as f:
             f.write(encode_json({
                 'ignored': self.ignored,
-                'subscriptions' : self.subscriptions.keys(),
+                'subscriptions' : channels,
             }))
 
     # loads saved ignore list & subscription channels
@@ -190,7 +191,10 @@ class ChatClient:
                 channels = settings.get('subscriptions', channels)
                 print channels
                 for channel in channels:
+                    if channel[0:3] == 'pm_':
+                        continue
                     print channel
+                    
                     self.subscribe(channel)
         print 'done'
         return channels

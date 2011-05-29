@@ -165,7 +165,7 @@ class PlayerList(GenericObjectList):
             print 'cid= %s' % (old_cid,)
             del self.client_ids[old_cid]
         if old_id != player.id and old_id in self.objects:
-            print 'id= %s' % (id,)
+            print 'id= %s' % (old_id,)
             del self.objects[old_id]
         if old_name is not None and old_name in self.names:
             if player.cid == old_cid:
