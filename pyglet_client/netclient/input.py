@@ -10,6 +10,8 @@ from pyglet.window import key
 from pyglet.window import mouse
 from pyglet.window.key import symbol_string
 
+from sounds import playSound
+
 class InputGlobal:
     keyboard = None
     mouse = None
@@ -75,7 +77,6 @@ class Mouse(object):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        print buttons, modifiers
         if buttons == 1:
             print 'playing build'
             playSound.build()
@@ -214,4 +215,3 @@ class Keyboard(object):
 from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal
 from net_out import NetOut
-from sounds import playSound

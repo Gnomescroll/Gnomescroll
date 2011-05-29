@@ -1,0 +1,5 @@
+'''
+Settings module
+'''
+
+AUDIO = False
