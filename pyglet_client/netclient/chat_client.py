@@ -284,21 +284,27 @@ class ChatCommand():
                 content = 'ping'
             )
         elif command == 'save':
-            _send = lambda: ChatClientGlobal.chatClient.save()
+            ChatClientGlobal.chatClient.save()
         elif command == 'join':
             if len(args) < 1:
                 return
-            _send = lambda: ChatClientGlobal.chatClient.set_current_channel(args[0])
+            if args[0][0:3] == 'pm_' and args[3:-1] != NetClientGlobal.client_id:
+                _send = self._send_local({
+                    'content'   :   'Cannot join this private channel. Your channel is pm_%s' % (NetClientGlobal.client_id,),
+                    'channel'   :   'system',
+                })
+            else:
+                ChatClientGlobal.chatClient.set_current_channel(args[0])
         elif command == 'leave':
             if len(args) == 0:
                 channel = None
             else:
                 channel = args[0]
-            _send = lambda: ChatClientGlobal.chatClient.unsubscribe(channel)
+            ChatClientGlobal.chatClient.unsubscribe(channel)
         elif command == 'nick':
             if len(args) < 1:
                 return
-            _send = lambda: NetOut.sendMessage.identify(args[0])
+            NetOut.sendMessage.identify(args[0])
         elif command == 'pm':
             if len(args) < 1:
                 return
@@ -313,6 +319,11 @@ class ChatCommand():
                     channel = 'pm_' + client_id,
                     content = ' '.join(args[1:]),
                 )
+        elif command == 'where':
+            _send = self._send_local({
+                'content'   : 'Listening to channel: %s' % (ChatClient.chatClient.CURRENT_CHANNEL,),
+                'channel'   : 'system',
+            })
                 
         else:
             _send = self._unimplemented(command)
