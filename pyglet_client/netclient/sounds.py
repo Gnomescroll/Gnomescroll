@@ -31,9 +31,11 @@ def audioSwitch(f):
         return args
     return wrapped
 
+# decorator for sound effect. accepts a cached source (see _sfx for example)
 def soundEffect(source):
     def outer(f):
         def wrapped(*args):
+            f(*args)
             self = args[0]
             player = media.ManagedSoundPlayer()
             player.volume = self.sfx_vol
@@ -41,10 +43,13 @@ def soundEffect(source):
             player.play()
         return wrapped
     return outer
-    
+
+# decorator for long/infrequent audio file (not cached)
+# use for playback that isnt latency critical
 def musicStream(source_path):
     def outer(f):
         def wrapped(*args):
+            f(*args)
             self = args[0]
             player = media.ManagedSoundPlayer()
             player.volume = self.music_vol
@@ -54,14 +59,21 @@ def musicStream(source_path):
         return wrapped
     return outer
 
+
+# static sound effect sources; these are cached
 _sfx = {
     'build' : media.load('media/build.wav', streaming=False), # little sound byte
 }
 
+# music streams (won't be cached, arent latency critical). just supply pathname
 _music = {
     'red_clouds'    :   'media/red_clouds.mp3',
 }
 
+# Add @audioSwitch for on/off ability;
+# add @soundEffect for sfx, @musicStream for music
+# function can just pass
+# function will be called before player begins
 class Sounds:
 
     def __init__(self, settings):
