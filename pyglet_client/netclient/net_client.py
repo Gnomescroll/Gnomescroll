@@ -12,7 +12,7 @@ class NetClientGlobal:
     connection = None
     sendPacket = None
 
-    client_id = 0
+    client_id = '0'
     name = 'steve'
     VERSION = '0.0.1'
 

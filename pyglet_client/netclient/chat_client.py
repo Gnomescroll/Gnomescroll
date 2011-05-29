@@ -396,6 +396,15 @@ class ChatMessageIn():
         self.filter()
         self.timestamp = now()
         print 'chatmessageIN timestamp %i' % (self.timestamp,)
+        if 'name' in msg:
+            self.name = msg['name']
+        else:
+            sender = GameStateGlobal.playerList.by_client(self.payload.cid)
+            if sender is None:
+                self.name = 'System'
+            else:
+                self.name = sender.name
+            
 
     def filter(self):
         if self.payload.content == 'ping' and \
@@ -409,6 +418,9 @@ class ChatMessageIn():
         return {
             'color' : 'blue'
         }
+
+    def format_html(self):
+        return ''
 
 # msg payload, attached to a ChatMessageIn/Out or (optionally) ChatCommand
 class Payload:
@@ -614,7 +626,10 @@ class ChatRender:
     MESSAGE_RENDER_COUNT_MAX = 8 # max msgs to display at once
 
     def __init__(self):
-        self.empty_message = ChatMessageIn({ 'content': ''})
+        self.empty_message = ChatMessageIn({
+            'content': '',
+            'name'   : '',
+        })
 
     # return subscribed channel names
     def channel_names(self):

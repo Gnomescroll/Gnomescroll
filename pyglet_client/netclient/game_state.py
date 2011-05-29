@@ -16,10 +16,6 @@ class GameStateGlobal:
         
     @classmethod
     def init_0(self):
-        pass
-        
-    @classmethod
-    def init_1(self):
         GameStateGlobal.agentList = AgentList()
         GameStateGlobal.playerList = PlayerList()
         player = GameStateGlobal.playerList.join_yourself()
@@ -28,6 +24,10 @@ class GameStateGlobal:
         GameStateGlobal.player.agent = GameStateGlobal.agent
         GameStateGlobal.terrainMap = TerrainMap()
         GameStateGlobal.gameState = GameState()
+        
+    @classmethod
+    def init_1(self):
+        pass
 
     # for your player
     @classmethod

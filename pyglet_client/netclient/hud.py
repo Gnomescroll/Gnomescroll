@@ -8,6 +8,7 @@ from pyglet import image
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
+from net_client import NetClientGlobal
 
 '''
 HUD overlay
@@ -131,11 +132,17 @@ class Hud(object):
         line_height = 20
         i = 0
         msgs = ChatClientGlobal.chatRender.messages()
+        pm_channel = 'pm_' + NetClientGlobal.client_id
         for msg in msgs:
-            content = msg.payload.content
+            content = msg.name
+            if content:
+                content +=': '
+            content += msg.payload.content
             channel = msg.payload.channel
             if channel == 'system':
                 color = (40, 255, 0, 1)
+            elif channel == pm_channel:
+                color = (40, 0, 255, 1)
             else:
                 color = (255, 40, 0, 1)
             txt = self.text_dict[i]
