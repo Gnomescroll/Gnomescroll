@@ -40,6 +40,8 @@ class GameStateGlobal:
     # for other players
     @classmethod
     def load_player_info(self, **player):
+        print 'load_player_info'
+        print player
         if 'id' not in player:
             return
         if player['id'] in GameStateGlobal.playerList:

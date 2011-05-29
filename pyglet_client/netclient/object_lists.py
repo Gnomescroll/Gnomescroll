@@ -155,19 +155,17 @@ class PlayerList(GenericObjectList):
             else:
                 return
 
-    def update(self, player, id=None):
-        if id is not None:
-            if player.you and id not in self:
-                id = 0
-            old = self[id]
-        else:
-            old = player
-        if old.cid in self.client_ids:
-            del self.client_ids[old.cid]
-        if old.name in self.names:
-            del self.names[old.name]
-        if old.id != player.id and old.id in self.objects:
-            del self.objects[old.id]
+    def update(self, player, old_id=None, old_cid=None, old_name=None):
+        print 'removing old player'
+        if old_name is not None and old_name in self.names:
+            print 'name= %s' % (old_name,)
+            del self.names[old_name]
+        if old_cid is not None and old_cid in self.client_ids:
+            print 'cid= %s' % (old_cid,)
+            del self.client_ids[old_cid]
+        if old_id != player.id and old_id in self.objects:
+            print 'id= %s' % (id,)
+            del self.objects[old_id]
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id
         self.names[player.name] = player.cid

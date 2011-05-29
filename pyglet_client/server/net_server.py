@@ -125,9 +125,14 @@ class TcpClient:
 
     def _register(self):
         ChatServer.chat.connect(self) # join chat server
-        self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
+        print 'Joined chat'
+        if self.player is not None and self.player.id in GameStateGlobal.playerList:
+            self.player.update_info(name=self.name)
+            print 'Updating existing player'
+        else:
+            self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
+            print 'Created new player'
         NetServer.connectionPool.name_client(self, self.name)
-        print 'Joined chat and created new Player'
 
     def _set_client_id(self):
         if hasattr(self, 'id'):

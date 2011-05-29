@@ -22,21 +22,23 @@ class Player:
         pass
 
     def update_info(self, **player):
-        args = []
+        args = {}
         if 'id' in player:
-            args.append(self.id)
+            args['old_id'] = self.id
             self.id = player['id']
         if 'cid' in player:
+            args['old_cid'] = self.cid
             self.cid = player['cid']
         if 'name' in player:
             print 'updating player name: %s  -> %s' % (self.name, player['name'],)
+            args['old_name'] = self.name
             self.name = player['name']
         if 'kills' in player:
             self.kills = player['kills']
         if 'deaths' in player:
             self.deaths = player['deaths']
 
-        GameStateGlobal.playerList.update(self, *args)
+        GameStateGlobal.playerList.update(self, **args)
 
 class YouPlayer(Player):
 
