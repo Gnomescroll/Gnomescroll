@@ -7,6 +7,7 @@ Client input
 
 
 from pyglet.window import key
+from pyglet.window import mouse
 from pyglet.window.key import symbol_string
 
 class InputGlobal:
@@ -54,6 +55,7 @@ class Mouse(object):
         self.main = main
         self.main.win.on_mouse_drag = self.on_mouse_drag
         self.main.win.on_mouse_motion = self.on_mouse_motion
+        self.main.win.on_mouse_press = self.on_mouse_press
         self.camera = main.camera
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
@@ -72,6 +74,14 @@ class Mouse(object):
     def _pan_camera(self, x, y, dx, dy, sen=50):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
+    def on_mouse_press(self, x, y, buttons, modifiers):
+        print buttons, modifiers
+        if buttons == 1:
+            print 'playing build'
+            playSound.build()
+        elif buttons == 2:
+            print 'player music'
+            playSound.music()
 
 import math
 from math import sin, cos, pi
@@ -204,3 +214,4 @@ class Keyboard(object):
 from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal
 from net_out import NetOut
+from sounds import playSound

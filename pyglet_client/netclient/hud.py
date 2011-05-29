@@ -136,7 +136,7 @@ class Hud(object):
         for msg in msgs:
             content = msg.name
             if content:
-                content +=': '
+                content += ': '
             content += msg.payload.content
             channel = msg.payload.channel
             if channel == 'system':

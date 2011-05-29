@@ -28,6 +28,8 @@ from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud
 
+import sounds
+
 import world #deprecate
 
 
