@@ -193,11 +193,13 @@ class MessageHandler:
         if client_id is not None:
             NetClientGlobal.client_id = client_id
 
-        NetClientGlobal.username = name
+        NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
         ChatClientGlobal.on_identify()
 
-        GameStateGlobal.update_info(player)
+        player = GameStateGlobal.update_info(player)
+        if player.you:
+            GameStateGlobal.playerList.identify(player)
         return True
 
 class MapMessageHandler:

@@ -41,7 +41,7 @@ class Chat:
         print 'chatServer received msg:'
         print msg
         if connection.name is None:
-            print 'Client %i unidentified, discarding msg' % (connection.id,)
+            print 'Client %s unidentified, discarding msg' % (connection.id,)
             return
         msg = ChatMessage(msg, connection)
         self.broadcast(msg)

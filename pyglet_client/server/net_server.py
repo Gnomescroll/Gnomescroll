@@ -110,6 +110,7 @@ class TcpClient:
     def identify(self, name):
         valid, name, you = self._valid_player_name(name)
         if valid:
+            NetServer.connectionPool.name_client(self, name)
             self.name = name
             self._register()
             self.sendMessage.identified(self, 'Identified name: ' + name)
@@ -132,7 +133,6 @@ class TcpClient:
         else:
             self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
             print 'Created new player'
-        NetServer.connectionPool.name_client(self, self.name)
 
     def _set_client_id(self):
         if hasattr(self, 'id'):
@@ -145,7 +145,6 @@ class TcpClient:
         valid = True
         try:                                    # must be string
             name = str(name)
-            self.name = name
         except ValueError:
             name = 'Invalid client name'
             valid = False

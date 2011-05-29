@@ -27,7 +27,7 @@ class PlayerList(GenericObjectList):
         if self._remove(player):
             if client_id in self.client_ids:
                 del self.client_ids[client_id]
-            if names in self.names:
+            if name in self.names:
                 del self.names[name]
         return player
 
@@ -52,15 +52,15 @@ class PlayerList(GenericObjectList):
 
     def update(self, player, old_id=None, old_cid=None, old_name=None):
         print 'removing old player'
-        if old_name is not None and old_name in self.names:
-            print 'name= %s' % (old_name,)
-            del self.names[old_name]
+        if old_id != player.id and old_id in self:
+            print 'id= %s' % (id,)
+            del self.objects[old_id]
         if old_cid is not None and old_cid in self.client_ids:
             print 'cid= %s' % (old_cid,)
             del self.client_ids[old_cid]
-        if old_id != player.id and old_id in self.objects:
-            print 'id= %s' % (id,)
-            del self.objects[old_id]
+        if old_name is not None and old_name in self.names:
+            print 'name= %s' % (old_name,)
+            del self.names[old_name]
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id
         self.names[player.name] = player.cid

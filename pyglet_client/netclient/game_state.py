@@ -24,7 +24,7 @@ class GameStateGlobal:
         GameStateGlobal.playerList = PlayerList()
         player = GameStateGlobal.playerList.join_yourself()
         GameStateGlobal.player = player
-        GameStateGlobal.agent = PlayerAgent(player.id, id=0)
+        GameStateGlobal.agent = player.agent
         GameStateGlobal.player.agent = GameStateGlobal.agent
         GameStateGlobal.terrainMap = TerrainMap()
         GameStateGlobal.gameState = GameState()
@@ -36,6 +36,7 @@ class GameStateGlobal:
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
             self.agent.update_info(**agent)
+        return self.player
 
     # for other players
     @classmethod

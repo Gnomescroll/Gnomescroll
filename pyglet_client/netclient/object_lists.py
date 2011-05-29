@@ -124,6 +124,9 @@ class PlayerList(GenericObjectList):
         player = self._add()
         self._object_type = Player
         self.client_ids[player.cid] = player.id
+        return player
+
+    def identify(self, player):
         self.names[player.name] = player.cid
         return player
         
@@ -143,6 +146,7 @@ class PlayerList(GenericObjectList):
 
     def by_name(self, name):    # returns a client_id
         if name in self.names:
+            print 'NAME %s ID %s' % (name, self.names[name],)
             return self.names[name]
         else:
             return 0
@@ -157,15 +161,16 @@ class PlayerList(GenericObjectList):
 
     def update(self, player, old_id=None, old_cid=None, old_name=None):
         print 'removing old player'
-        if old_name is not None and old_name in self.names:
-            print 'name= %s' % (old_name,)
-            del self.names[old_name]
         if old_cid is not None and old_cid in self.client_ids:
             print 'cid= %s' % (old_cid,)
             del self.client_ids[old_cid]
         if old_id != player.id and old_id in self.objects:
             print 'id= %s' % (id,)
             del self.objects[old_id]
+        if old_name is not None and old_name in self.names:
+            if player.cid == old_cid:
+                print 'name= %s' % (old_name,)
+                del self.names[old_name]
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id
         self.names[player.name] = player.cid
