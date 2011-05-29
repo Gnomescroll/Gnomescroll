@@ -23,6 +23,13 @@ class NetOut:
 from game_state import GameStateGlobal
 from net_server import NetServer
 
+
+def eventOutDecorator(f):
+    def wrapped(*args):
+        self = args[0]
+        self.add_json_event(f(*args))
+    return wrapped
+
 # sends event packets to all clients
 class EventOut:
 
@@ -42,46 +49,45 @@ class EventOut:
     def add_json_event(self, dict):
         self.event_packets.append(SendMessage.get_json(dict))
 
+    @eventOutDecorator
     def agent_state_change(self, agent):
-        d = {
+        return {
             'cmd'  : 'agent_position',
             'id'   : agent.id,
             'tick' : GameStateGlobal.gameState.time,
             'state': agent.state #is a 9 tuple
         }
-        self.add_json_event(d)
 
+    @eventOutDecorator
     def player_update(self, player):
-        d = {
+        return {
             'cmd'   : 'player_update',
             'player': player.json(),
         }
-        self.add_json_event(d)
-        
+
+    @eventOutDecorator
     def player_rename(self, player):
-        d = {
+        return {
             'cmd'   : 'player_update',
             'player': {
                 'name'  : player.name,
                 'id'    : player.id,
             },
         }
-        self.add_json_event(d)
             
-
+    @eventOutDecorator
     def player_join(self, player):
-        d = {
+        return {
             'cmd'   : 'player_info',
             'player': player.json(),
         }
-        self.add_json_event(d)
 
+    @eventOutDecorator
     def client_quit(self, client_id):
-        d = {
+        return {
             'cmd'   : 'client_quit',
             'id'    : client_id,
         }
-        self.add_json_event(d)
         
 
 #this is global message out across the connection pool
@@ -90,7 +96,13 @@ class MessageOut:
         pass
     def __init__(self):
         pass
+        
 
+def sendMessageDecorator(f):
+    def wrapped(*args):
+        self = args[0]
+        self.send_json(f(*args))
+    return wrapped
 
 class SendMessage: #each connection has one of these
     @classmethod
@@ -105,45 +117,46 @@ class SendMessage: #each connection has one of these
         self.client.send(self.add_prefix(1, json.dumps(dict)))
 
     ## messages go out immediately
+    @sendMessageDecorator
     def send_client_id(self, connection):
         print "Send client id"
-        d = {
+        return {
             'cmd'  : 'client_id',
             'id'   : connection.id,
         }
-        self.send_json(d)
 
+    @sendMessageDecorator
     def client_quit(self, client_id):
-        d = {
+        return {
             'cmd'   : 'client_quit',
             'id'    : client_id,
         }
-        self.send_json(d)
 
+    @sendMessageDecorator
     def identify_fail(self, connection, notes=''):
         print notes
-        d = {
+        return {
             'cmd'   : 'identify_fail',
             'msg'   : notes,
         }
-        self.send_json(d)
 
+    @sendMessageDecorator
     def identified(self, connection, msg=''):
         print 'Identified'
-        d = {
+        return {
             'cmd'   : 'identified',
             'msg'   : msg,
             'player': connection.player.json(),
         }
-        self.send_json(d)
-        
+
+    @sendMessageDecorator
     def send_chunk_list(self):
-        d = {
+        return {
             'cmd'  : 'chunk_list',
             'list' : GameStateGlobal.terrainMap.get_chunk_list(),
         }
-        self.send_json(d)
 
+    #@sendMessageDecorator
     def send_chunk(self, x, y, z):
         chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
         if chunk_str != '':
@@ -151,30 +164,30 @@ class SendMessage: #each connection has one of these
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
 
+    @sendMessageDecorator
     def send_players(self):
-        d = {
+        return {
             'cmd'    :  'player_list',
             'players':  GameStateGlobal.playerList.json()
         }
-        self.send_json(d)
 
+    @sendMessageDecorator
     def send_player(self, player):
-        d = {
+        return {
             'cmd'   : 'player_info',
             'player': player.json(),
         }
-        self.send_json(d)
 
+    @sendMessageDecorator
     def remove_player(self, player):
-        d = {
+        return {
             'cmd'   : 'remove_player',
             'id'    : player.id,
         }
-        self.send_json(d)
 
+    @sendMessageDecorator
     def remove_agent(self, agent):
-        d = {
+        return {
             'cmd'   : 'remove_agent',
             'id'    : agent.id,
         }
-        self.send_json(d)
