@@ -368,13 +368,17 @@ class Agent:
 
     def fire_projectile(self):
         print 'Agent.fire_projectile'
-        p_data = [self.x, self.y, self.z,
-        cos( self.x_angle * pi) * cos( self.y_angle * pi),
-        sin( self.x_angle * pi) * cos( self.y_angle * pi),
-        sin( self.y_angle),
-        ]
-        projectile = GameStateGlobal.projectileList.create(*p_data)
+        state = self.state_vector()
+        projectile = GameStateGlobal.projectileList.create(state=state, type=1)
         NetOut.event.projectile_create(projectile)
+
+    def state_vector(self):
+        return [
+            self.x, self.y, self.z,
+            cos( self.x_angle * pi) * cos( self.y_angle * pi),
+            sin( self.x_angle * pi) * cos( self.y_angle * pi),
+            sin( self.y_angle),
+        ]
 
     def take_damage(self, damage):
         if not self.dead:

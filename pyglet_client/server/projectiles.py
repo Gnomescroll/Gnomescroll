@@ -2,6 +2,33 @@
 Projectiles
 '''
 
+'''
+Projectile data (will be moved to configurable external format)
+'''
+projectile_dat = {
+
+    1 : {
+        'speed' : 15,
+        'damage' : 20,
+        'ttl_max' : 400 #time to live in ticks
+    #    'splash' : {
+    #    'radius' : 3,
+    #    'damage' : 15,
+    #    'force' : 150,
+    },
+
+    2 : {
+        'speed' : 15,
+        'damage' : 20,
+        'ttl_max' : 400
+    },
+
+}
+
+
+'''
+Projectile Controller
+'''
 from game_state import GenericObjectList
 from game_state import GameStateGlobal
 
@@ -22,14 +49,34 @@ class ProjectileList(GenericObjectList):
         self._remove(projectile)
         return projectile
 
+
+'''
+Projectile class
+'''
 from game_objects import GameObject
+from math import sin, cos, pi
 
 class Projectile(GameObject):
 
-    def __init__(self, x, y, z, vx, vy, vz): #more args
+    def __init__(self, state=None, type=None): #more args
+        if None in (state, type,):
+            print 'Projectile __init__ missing args'
+            raise TypeError
+
+        global projectile_dat
+        assert projectile_dat.has_key(type)
+        p = projectile_dat[type]
+        #load projectile settings
+        
+        self.state = map(lambda k: float(k), state)
+        x, y, z, vx, vy, vz = state
+
         self.id = GameStateGlobal.new_projectile_id()
-        self.state = [x, y, z, vx, vy, vz]
-        self.type = 1
+        self.type = type
+        self.speed = p['speed']
+        self.damage = p['damage']
+        self.ttl = 0
+        self.ttl_max = p['ttl_max']
 
     def update(self, **args):
         try:
@@ -45,6 +92,27 @@ class Projectile(GameObject):
         except AssertionError:
             print 'projectile update :: state is wrong length'
             return
+
+    #run this once per frame for each projectile
+    def tick(self):
+        [x,y,z,vx,vy,vz] = self.state
+
+        fps = 60. # frame per second
+        speed = self.speed / fps
+
+        self.ttl += 1
+        if self.ttl > self.ttl_max:
+            self.delete()
+            return
+
+        x += vx / fps
+        y += vy / fps
+        z += vz / fps
+
+        self.state = [x,y,z,vx,vy,vz]
+
+    def delete(self):
+        GameStateGlobal.projectileList.destroy(self)
 
     def json(self, properties=None): # json encodable string representation
         d = GameObject.json(self)

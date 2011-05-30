@@ -46,9 +46,9 @@ class MessageHandler:
             GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(connection.id, **msg)
+            
         elif cmd == 'fire_projectile':
-            self.fire_projectile(**msg)
-
+            self.fire_projectile(connection.id, **msg)
         elif cmd == 'reload_weapon':
             self.reload_weapon(connection.id, **msg)
 
@@ -260,19 +260,24 @@ class MessageHandler:
 
         agent.set_agent_control_state(tick, state, angle)
 
-    def fire_projectile(self, **msg):
+    def fire_projectile(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg fire_projectile :: Could not find player for client'
+            return
         try:
             agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.owner != player.id:
+                print 'msg fire_projectile :: player does not own this agent'
+                return
         except TypeError:
             print 'msg fire_projectile :: agent_id is missing or not an int'
             return
-
-        try:
-            agent = GameStateGlobal.agentList[agent_id]
         except KeyError:
             print 'msg fire_projectile :: agent %i unknown' % (agent_id,)
             return
-
         agent.fire_projectile()
 
     def send_chunk_list(self, msg, connection):

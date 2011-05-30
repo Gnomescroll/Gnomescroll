@@ -63,8 +63,7 @@ class Projectile(GameObject):
             print 'projectile update :: state is wrong length'
 
     def delete(self):
-        del GameStateGlobal.projectileList[self.id]
-        #print "implement projectiles.py delete function"
+        GameStateGlobal.projectileList.destroy(self)
 
     #run this once per frame for each projectile
     def tick(self):

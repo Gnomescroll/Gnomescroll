@@ -70,7 +70,7 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         if InputGlobal.input == 'agent':
-            self._pan_agent(x, y, dx, dy, sen=300)
+            self._pan_agent(x, y, dx, dy, sen=90)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
         GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
