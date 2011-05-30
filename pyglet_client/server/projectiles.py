@@ -110,8 +110,10 @@ class Projectile(GameObject):
         z += vz / fps
 
         self.state = [x,y,z,vx,vy,vz]
+        print self.state
 
     def delete(self):
+        print 'deleting bullet'
         GameStateGlobal.projectileList.destroy(self)
 
     def json(self, properties=None): # json encodable string representation

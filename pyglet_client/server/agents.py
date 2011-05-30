@@ -7,6 +7,7 @@ import math
 
 from math import floor
 from math import pi, cos, sin
+from random import randrange
 
 from game_state import GameStateGlobal
 from game_state import GenericObjectList
@@ -25,8 +26,8 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, player_id, x=0, y=0, z=4):
-        return self._add(x, y, z, player_id)
+    def create(self, player_id, position=None, id=None):
+        return self._add(player_id, position=position, id=id)
 
     def destroy(self, agent):
         if agent is None:
@@ -40,8 +41,11 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, x, y, z, player_id, id=None):
-        x,y,z = [float(i) for i in (x,y,z)]
+    def __init__(self, player_id, position=None, id=None):
+        if position is None:
+            position = self._spawn_point()
+            
+        x,y,z = [float(i) for i in position]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
 
         self.terrainMap = GameStateGlobal.terrainMap
@@ -408,7 +412,10 @@ class Agent:
 
     def _spawn_point(self):
         # later, add spawn zones/ boundaries to spawn in
-        return [10, 10, 100]
+        x = randrange(0,11)
+        y = randrange(0,11)
+        z = 5
+        return [x, y, z]
 
     def _set_position(self, pos=None):
         if pos is None:

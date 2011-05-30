@@ -90,9 +90,9 @@ class GenericObjectList:
     def __str__(self):
         return str(self.objects)
 
-    def _add(self, *args):
+    def _add(self, *args, **kwargs):
         print args
-        object = self._object_type(*args)
+        object = self._object_type(*args, **kwargs)
         self.objects[object.id] = object
         print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
@@ -120,6 +120,8 @@ class GameState:
     def tick(self):
         for agent in GameStateGlobal.agentList.values():
             agent.tick()
+        for projectile in GameStateGlobal.projectileList.values():
+            projectile.tick()
         self.time += 1
         if self.time % 100 == 0:
             print "time= %i" % (self.time,)
