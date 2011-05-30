@@ -18,7 +18,7 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=-1):
         if owner is None or id is None:
             return
         if weapons is None:
@@ -56,6 +56,24 @@ class Agent:
         self.weapons = weapons
         self.owner = owner
         self.you = False
+
+        self.active_block = active_block   # which block to create
+        self.active_weapon = active_weapon #    which weapon is held
+
+    def set_active_block(self, block_type):
+        self.active_block = block_type
+
+    def switch_weapon(self, weapon_index):
+        num_weapons = len(self.weapons)
+        if num_weapons == 0:
+            self.active_weapon = -1
+            return
+        if weapon_index == 'up':
+            self.active_weapon = (self.active_weapon + 1) % num_weapons
+        elif weapon_index == 'down':
+            self.active_weapons = (self.active_weapon -1) % num_weapons
+        elif weapon_index < num_weapons:
+                self.active_weapon = weapon_index
 
     def update_info(self, **agent):
         args = []
