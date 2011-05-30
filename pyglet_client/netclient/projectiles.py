@@ -69,7 +69,7 @@ class Projectile(GameObject):
     def destroy(self):
         pass #do something
 
-def draw_projectiles(self):
+def draw_projectiles():
 
     v_num = 0
     v_list = []
