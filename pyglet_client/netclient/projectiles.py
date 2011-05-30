@@ -16,6 +16,7 @@ projectile_dat = {
     2 : {
         'speed' : 15,
         'damage' : 20,
+        'ttl_max' : 400
     },
 
 }
@@ -37,10 +38,11 @@ class Projectile(GameObject):
         
         vx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         vy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        vz = sin( self.y_angle)
+        self.state = [float(x),float(y),float(z),vx,vy,vz]
 
         self.id = id
         self.type = type
-        self.state = [x,y,z,vx,vy,vz]
         self.speed = p.speed
         self.damage = p.damage
         self.ttl = 0
@@ -58,10 +60,10 @@ class Projectile(GameObject):
             print 'projectile update :: state is not iterable'
         except AssertionError:
             print 'projectile update :: state is wrong length'
-            
+
     #run this once per frame for each projectile
     def tick(self):
-        self.state = [x,y,z,vx,vy,vz]
+        [x,y,z,vx,vy,vz] = self.state
 
         fps = 60. # frame per second
         speed = self.speed / fps
@@ -70,8 +72,33 @@ class Projectile(GameObject):
         if self.ttl > self.ttl_max:
             self.delete()
 
-    def delete(self):
-        pass
 
-def draw_projectile(self):
-    pass
+        self.state = [x,y,z,vx,vy,vz]
+
+    def destroy(self):
+        pass #do something
+
+
+import pyglet
+from pyglet.gl import *
+
+def draw_projectiles():
+
+    v_num = 0
+    v_list = []
+    c_list = []
+
+    l= 1
+
+    for p in GameStateGlobal.projectileList:
+        x,y,z,vx,vy,vz = p.state
+
+        v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
+        c_list = [0,0,255]*2
+
+    pyglet.graphics.draw(v_num, GL_LINES,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+
+from game_state import GameStateGlobal

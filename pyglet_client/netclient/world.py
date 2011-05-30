@@ -43,6 +43,10 @@ class World():
     def draw(self):
         self.draw_chunk()
         self.draw_agents()
+        self.draw_projectiles()
+
+    def draw_projectiles(self):
+        projectiles.draw_projectiles()
 
     def test_chunk(self):
         print "Start chunk generation"
@@ -109,10 +113,12 @@ class World():
 
     def add_agent(self, agent=None):
         self.agents.append(agent)
-        
+
     def draw_agents(self):
         for agent in GameStateGlobal.agentList.values():
             agent.draw()
+
+import projectiles
 
 from cube_dat import CubeGlobal
 from game_state import GameStateGlobal

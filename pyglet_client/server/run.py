@@ -40,9 +40,9 @@ def load_map():
             for za in range(z_min, z_max):
                 rnd = random.randint(0,64)
                 if rnd < 16:
-                    m.set(xa,ya,za+1, 3)
-                    m.set(xa,ya,za+2, 3)
-                    m.set(xa,ya,za+3, 3)
+                    m.set(xa,ya,za+1, 4)
+                    m.set(xa,ya,za+2, 4)
+                    #m.set(xa,ya,za+3, 4)
     print "Finished map generation"
 
 class Main:
