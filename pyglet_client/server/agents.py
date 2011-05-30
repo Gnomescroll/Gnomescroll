@@ -6,6 +6,7 @@ Agents:
 import math
 
 from math import floor
+from math import pi, cos, sin
 
 from game_state import GameStateGlobal
 from game_state import GenericObjectList
@@ -103,7 +104,7 @@ class Agent:
     def json(self, properties=None): # json encodable string representation
         d = {
             'id'    :   self.id,
-        }            
+        }
         if properties is None:
             d.update({
                 'health': self.health,
@@ -120,7 +121,7 @@ class Agent:
                 if prop == 'dead':
                     d[prop] = int(d[prop])
         return d
-        
+
 
     # set agent state explicitly
     def set_agent_control_state(self, tick, state, angle):
@@ -250,7 +251,7 @@ class Agent:
                         xyc_current += 1
 
         #dont do this right now
-           
+
         if False and xyc_projected != 0:
             # print "Projected XY collision!"
             vx =0
@@ -367,7 +368,11 @@ class Agent:
 
     def fire_projectile(self):
         print 'Agent.fire_projectile'
-        p_data = [self.x, self.y, self.z, 1, 1, 1]
+        p_data = [self.x, self.y, self.z,
+        cos( self.x_angle * pi) * cos( self.y_angle * pi),
+        sin( self.x_angle * pi) * cos( self.y_angle * pi),
+        sin( self.y_angle),
+        ]
         projectile = GameStateGlobal.projectileList.create(*p_data)
         NetOut.event.projectile_create(projectile)
 
