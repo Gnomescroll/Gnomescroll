@@ -36,7 +36,9 @@ class MessageHandler:
         if cmd == 'create_agent':
             GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
-            self.agent_control_state(msg)
+            self.agent_control_state(connection.id, **msg)
+        elif cmd == 'fire_projectile':
+            self.fire_projectile(**msg)
 
         #chat
         elif cmd == 'chat':
@@ -64,13 +66,7 @@ class MessageHandler:
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
-    def agent_control_state(self, msg):
-
-        try:
-            client_id = msg.get('cid', None)
-        except TypeError:
-            print 'msg.cmd == agent_control_state, but msg.id missing. MSG: %s' % (str(msg),)
-            return
+    def agent_control_state(self, client_id, **msg):
 
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
@@ -101,6 +97,21 @@ class MessageHandler:
             return
 
         agent.set_agent_control_state(tick ,*state)
+
+    def fire_projectile(self, **msg):
+        try:
+            agent_id = int(msg.get('aid', None))
+        except TypeError:
+            print 'msg fire_projectile :: agent_id is missing or not an int'
+            return
+
+        try:
+            agent = GameStateGlobal.agentList[agent_id]
+        except KeyError:
+            print 'msg fire_projectile :: agent %i unknown' % (agent_id,)
+            return
+            
+        agent.fire_projectile(tick)
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()

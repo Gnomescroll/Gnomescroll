@@ -40,21 +40,38 @@ def sendJSON(f):
             NetOut.send_json(package)
     return wrapped
 
+# if client_id is required
+def idRequired(f):
+    def wrapped(*args):
+        if NetClientGlobal.client_id != '0':
+            f(*args)
+    return wrapped
+    
 class SendMessage:
 
+    @idRequired
     @sendJSON
-    def send_agent_control_state(self, id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
-        if NetClientGlobal.client_id in ['0', 0]: # not identified
-            return
-        if id is None:  # agent not identified
+    def send_agent_control_state(self, agent_id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
+        if agent_id is None:  # agent not identified
             return
         return {
             'cmd' : 'agent_control_state',
             'cid' : NetClientGlobal.client_id,
             'tick' : 0,
             'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake],
-            'pid'  : id,
+            'aid'  : agent_id,
            }
+
+    @idRequired
+    @sendJSON
+    def fire_projectile(self, agent_id):
+        if agent_id is None:
+            return
+        return {
+            'cmd'   : 'fire_projectile',
+            'tick'  : 0,
+            'aid'   : agent_id,
+        }
 
     @sendJSON
     def identify(self, name=None):
