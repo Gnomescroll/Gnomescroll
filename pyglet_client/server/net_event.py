@@ -22,6 +22,7 @@ class NetEvent:
             cls.messageHandler.json_events[string] = function
 
 from net_server import NetServer
+from net_out import NetOut
 from game_state import GameStateGlobal
 from chat_server import ChatServer
 
@@ -166,3 +167,4 @@ class AdminMessageHandler:
         terrainMap = GameStateGlobal.terrainMap
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
+        NetOut.event.set_map(list)

@@ -124,9 +124,9 @@ class EventOut:
         }
 
     @sendJSONevent('set_map', tick=False)
-    def client_quit(self, list):
+    def set_map(self, list):
         return {
-            'list'    : list,
+            'list' : list,
         }
 
 #this is global message out across the connection pool
