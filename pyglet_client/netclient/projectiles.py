@@ -80,7 +80,7 @@ def draw_projectiles(self):
     for p in GameStateGlobal.projectileList:
         x,y,z,vx,vy,vz = p.state
 
-        v_list += [x,y,z, (x+vx)/l, (y+vy)l, (z+vz)/l]
+        v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
         c_list = [0,0,255]*2
 
     pyglet.graphics.draw(v_num, GL_LINES,
