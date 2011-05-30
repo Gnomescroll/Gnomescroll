@@ -51,7 +51,7 @@ class AgentList(GenericObjectList):
 class Agent:
 
     HEALTH_MAX = 100
-    _RESPAWN_TIME = 1. # seconds
+    _RESPAWN_TIME = 0.1 # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
     def __init__(self, player_id, position=None, id=None):
@@ -163,10 +163,10 @@ class Agent:
 
     # apply physics to agent
     def tick(self):
-        if not self.dead:
-            self._tick_physics()
-        else:
+        if self.dead:
             self._tick_respawn()
+        else:
+            self._tick_physics()
 
 
     def _tick_physics(self):
@@ -382,7 +382,7 @@ class Agent:
 
     def _tick_respawn(self):
         if self.dead:
-            self.respawn_countdown -= 1
+            self.respawn_countdown += -1
         if self.respawn_countdown <= 0:
             self.respawn()
 
