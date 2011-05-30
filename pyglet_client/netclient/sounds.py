@@ -15,7 +15,7 @@ if not hasattr(settings, 'music'):
     settings.sfx = 10
 
 if settings.audio:
-    options['audio'] = ('openal', 'directsound', 'alsa', 'silent',)
+    options['audio'] = ('alsa', 'openal', 'directsound', 'silent',)
 else:
     options['audio'] = ('silent',)
 
