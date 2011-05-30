@@ -10,15 +10,18 @@ import simplejson as json
 class NetEventGlobal:
     messageHandler = None
     mapMessageHandler = None
+    projectileMessageHandler = None
     @classmethod
     def init_0(self):
         self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
         self.mapMessageHandler = MapMessageHandler()
+        self.projectileMessageHandler = projectileMessageHandler()
     @classmethod
     def init_1(self):
         pass
         MessageHandler.init()
         MapMessageHandler.init()
+        ProjectileMessageHandler.init()
 
 class MessageHandler:
     player = None #move this somewhere else
@@ -62,13 +65,14 @@ class MessageHandler:
         elif cmd == 'agent_update':
             self._agent_update(**msg)
 
-
+    #projectile events
         elif cmd == ' projectile_create':
-            self._create_projectile(**msg)
+           NetEventGlobal.projectileMessageHandler._create_projectile(**msg)
         elif cmd == 'projectile_update':
-            self._update_projectile(**msg)
+            NetEventGlobal.projectileMessageHandler._update_projectile(**msg)
         elif cmd == 'projectile_destroy':
-            self._destroy_projectile(**msg)
+            NetEventGlobal.projectileMessageHandler._destroy_projectile(**msg)
+    #end projectile events
 
         # initial settings
         elif cmd == 'client_id':
@@ -95,9 +99,11 @@ class MessageHandler:
             NetEventGlobal.mapMessageHandler._chunk_list(**msg)
             #print "Chunk List Received"
             #print str(msg['list'])
+
         elif cmd == 'set_map':
             NetEventGlobal.mapMessageHandler._set_map(**msg)
 
+        #end map events
         elif cmd == 'client_quit':
             id = msg.get('id', None)
             if id is None:
