@@ -35,14 +35,14 @@ class AgentList(GenericObjectList):
         self._remove(agent)
 
     def at(self, position):
-        _x, _y, _z = position
+        _x, _y, _z = [int(k) for k in position]
         for agent in self.values():
-            x, y, z = agent.pos()
+            x, y, z = [int(k) for k in agent.pos()]
             #if agent.pos() == position:
-            if x < _x < x+1 and \
-               y < _y < y+1 and \
-               z < _z < z+1 and \
-               not agent.dead:
+            if x == _x and \
+                y == _y and \
+                z == _z and \
+                not agent.dead:
                 'at agent'
                 return agent
         return False
@@ -401,6 +401,7 @@ class Agent:
         ]
 
     def take_damage(self, damage):
+        print self.health
         if not self.dead:
             old = self.health
             self.health -= damage
@@ -408,6 +409,7 @@ class Agent:
                 self.die()
             elif self.health != old:
                 NetOut.event.agent_update(self)
+        print damage
 
     def heal(self, amount):
         if not self.dead:

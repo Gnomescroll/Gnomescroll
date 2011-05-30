@@ -116,8 +116,6 @@ class Projectile(GameObject):
 
         agent_hit = GameStateGlobal.agentList.at((x, y, z,))
         if agent_hit != False:
-            print 'DIEEEE'
-            print agent_hit
             agent_hit.take_damage(self.damage)
 
         self.state = [x,y,z,vx,vy,vz]
