@@ -11,6 +11,7 @@ class GameStateGlobal:
     #state
     agent_id = 0
     player_id = 0
+    projectile_id = 0
 
     def __init__(self):
         GameStateGlobal.terrainMap = TerrainMap()
@@ -32,6 +33,11 @@ class GameStateGlobal:
     def new_player_id(cls):
         cls.player_id += 1
         return cls.player_id
+        
+    @classmethod
+    def new_projectile_id(cls):
+        cls.projectile_id += 1
+        return cls.projectile_id
 
     @classmethod
     def disconnect(self, connection):

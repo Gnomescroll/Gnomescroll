@@ -3,8 +3,9 @@ from game_objects import GameObject
 
 class Projectile(GameObject):
 
-    def __init__(self, x, y, z): #more args
-        pass
+    def __init__(self, id, x, y, z, vx, vy, vz): #more args
+        self.id = id
+        self.state = [x, y, z, vx, vy, vz]
 
     def update(self, **args):
         try:
@@ -16,7 +17,5 @@ class Projectile(GameObject):
             pass
         except TypeError:
             print 'projectile update :: state is not iterable'
-            pass
         except AssertionError:
             print 'projectile update :: state is wrong length'
-            return

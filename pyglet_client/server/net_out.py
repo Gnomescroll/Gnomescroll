@@ -23,11 +23,25 @@ class NetOut:
 from game_state import GameStateGlobal
 from net_server import NetServer
 
+    
+def sendJSONevent(cmd=None):
+    def outer(f, *args):
+        def wrapped(*args):
+            self = args[0]
+            json_data = f(*args)
+            if cmd is None and 'cmd' not in json_data:
+                json_data['cmd'] = ''
+            self.add_json_event(json_data)
+        return wrapped
+    return outer
 
-def sendJSONevent(f):
+# adds tick value to json
+def addTick(f):
     def wrapped(*args):
         self = args[0]
-        self.add_json_event(f(*args))
+        json_data = f(*args)
+        json_data['tick'] = GameStateGlobal.gameState.time
+        return json_data
     return wrapped
 
 # sends event packets to all clients
@@ -49,10 +63,9 @@ class EventOut:
     def add_json_event(self, dict):
         self.event_packets.append(SendMessage.get_json(dict))
 
-    @sendJSONevent
+    @sendJSONevent('agent_position')
     def agent_state_change(self, agent):
         return {
-            'cmd'  : 'agent_position',
             'id'   : agent.id,
             'tick' : GameStateGlobal.gameState.time,
             'state': agent.state #is a 9 tuple
@@ -65,6 +78,20 @@ class EventOut:
             'tick'  :   GameStateGlobal.gameState.time,
             'agent' :   agent.json(properties),
         }
+
+    @sendJSONevent('projectile_create')
+    def projectile_create(self, projectile):
+        return {
+            'cmd'   :   'projectile_create',
+            'tick'  :   GameStateGlobal.game,
+        }
+        
+    @sendJSONevent
+    def projectile_destroy(self, projectile):
+        pass
+    @sendJSONevent
+    def projectile_update(self, projectile):
+        pass
             
     @sendJSONevent
     def player_update(self, player):

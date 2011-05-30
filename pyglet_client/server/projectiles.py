@@ -3,6 +3,7 @@ Projectiles
 '''
 
 from game_state import GenericObjectList
+from game_state import GameStateGlobal
 
 class ProjectileList(GenericObjectList):
 
@@ -26,6 +27,7 @@ from game_objects import GameObject
 class Projectile(GameObject):
 
     def __init__(self, x, y, z, vx, vy, vz): #more args
+        self.id = GameStateGlobal.new_projectile_id()
         self.state = [x, y, z, vx, vy, vz]
 
     def update(self, **args):
