@@ -28,7 +28,11 @@ from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud
 
-import sounds
+
+import settings  ## put this somewhere!!! so it only has to be in one place
+if settings.audio: ##is also in inport.py
+    print "audo enabled"
+    from sounds import playSound
 
 import world #deprecate
 

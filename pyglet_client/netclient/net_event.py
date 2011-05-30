@@ -78,7 +78,8 @@ class MessageHandler:
             self._agent_update(**msg)
 
 #        # projectiles
-        elif cmd == 'projectile_create':
+#       elif cmd == 'projectile_create':
+#            pass
 #            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
 #        elif cmd == 'projectile_update':
 #            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
