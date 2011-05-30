@@ -77,7 +77,7 @@ def draw_projectiles(self):
 
     l= 1
 
-    for p in GameStateGlobal.projectileList
+    for p in GameStateGlobal.projectileList:
         x,y,z,vx,vy,vz = p.state
 
         v_list += [x,y,z, (x+vx)/l, (y+vy)l, (z+vz)/l]
