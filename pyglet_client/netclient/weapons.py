@@ -54,9 +54,6 @@ class LaserGun(Weapon):
     def __str__(self):
         return 'Laser Gun'
 
-    def key(self):
-        return _weapons[str(self)]
-
 
 class BlockApplier(Weapon):
 

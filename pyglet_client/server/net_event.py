@@ -86,9 +86,14 @@ class MessageHandler:
 
     def set_block(self, client_id, **msg):
         try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg set_block :: Could not find player for client'
+            return
+        try:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
-            if agent.owner != client_id:
+            if agent.owner != player.id:
                 print 'msg set_block :: client does not own this agent'
                 return
         except TypeError:
@@ -113,9 +118,14 @@ class MessageHandler:
 
     def hit_block(self, client_id, **msg):
         try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg hit_block :: Could not find player for client'
+            return
+        try:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
-            if agent.owner != client_id:
+            if agent.owner != player.id:
                 print 'msg hit_block :: client does not own this agent'
                 return
         except TypeError:
@@ -131,9 +141,14 @@ class MessageHandler:
 
     def reload_weapon(self, client_id, **msg):
         try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg reload_weapon :: Could not find player for client'
+            return
+        try:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
-            if agent.owner != client_id:
+            if agent.owner != player.id:
                 print 'msg reload_weapon :: client does not own this agent'
                 return
         except TypeError:
@@ -155,7 +170,7 @@ class MessageHandler:
             print 'msg reload_weapon :: weapon invalid'
             return
         try:
-            weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
+            weapon_index = [weapon.key() for weapon in agent.weapons].index(weapon_type)
         except ValueError:
             print 'msg reload_weapon :: weapon unknown to agent'
             return
