@@ -361,20 +361,27 @@ class Agent:
         projectile = GameStateGlobal.projectileList.create(*p_data)
 
     def take_damage(self, damage):
-        self.health -= damage
-        if self.health <= 0:
-            self.die()
+        if not self.dead:
+            old = self.health
+            self.health -= damage
+            if self.health <= 0:
+                self.die()
+            elif self.health != old:
+                NetOut.event.agent_update(self)
 
     def heal(self, amount):
         if not self.dead:
+            old = self.health
             self.health = min(self.health + amount, self.HEALTH_MAX)
+            if self.health != old:
+                NetOut.event.agent_update(self)
 
     def die(self):
         if not self.dead:
             NetOut.event.agent_update(self)
             self.dead = True
 
-    def revive(self):
+    def _revive(self):
         self.health = self.HEALTH_MAX
         self.dead = False
         self.respawn_countdown = self.RESPAWN_TICKS
@@ -391,5 +398,6 @@ class Agent:
             self.state[0:len(pos)] = pos
 
     def respawn(self): # or can destroy / recreate Agent
-        self.revive()
-        self.set_position()
+        self._revive()
+        self._set_position()
+        NetOut.event.agent_update(self)
