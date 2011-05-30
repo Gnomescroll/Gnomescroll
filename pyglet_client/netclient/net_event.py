@@ -186,16 +186,6 @@ class MessageHandler:
 
         GameStateGlobal.agentList[agent_id].update_info(**agent_data)
 
-
-    def _create_projectile(**args):
-        pass
-
-    def _update_projectile(**args):
-        pass
-
-    def _destroy_projectile(**args):
-        pass
-
     def _set_client_id(self, **msg):
         id = msg.get('id', None)
         if id is None:
@@ -234,6 +224,23 @@ class MessageHandler:
         if player.you:
             GameStateGlobal.playerList.identify(player)
         return True
+
+class ProjectileMessageHandler:
+
+    @classmethod
+    def init(self):
+        pass
+    def __init__(self):
+        pass
+
+    def _create_projectile(**args):
+        pass
+
+    def _update_projectile(**args):
+        pass
+
+    def _destroy_projectile(**args):
+        pass
 
 class MapMessageHandler:
     terrainMap = None

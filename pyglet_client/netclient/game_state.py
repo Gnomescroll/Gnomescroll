@@ -3,17 +3,19 @@ import math
 class GameStateGlobal:
 
     TICK = 0.01 # seconds
-    
+
     gameState = None
     terrainMap = None
     agentList = None
     playerList = None
+    projectileList = None
+
     player = None
     agent = None
 
     def __init__(self):
         pass
-        
+
     @classmethod
     def init_0(self):
         GameStateGlobal.agentList = AgentList()
@@ -25,7 +27,7 @@ class GameStateGlobal:
         GameStateGlobal.player.agent = GameStateGlobal.agent
         GameStateGlobal.terrainMap = TerrainMap()
         GameStateGlobal.gameState = GameState()
-        
+
     @classmethod
     def init_1(self):
         pass
@@ -70,7 +72,7 @@ class GameStateGlobal:
             GameStateGlobal.remove_agent(agent.id)
         print agent
         GameStateGlobal.playerList.leave(player)
-        
+
     @classmethod
     def remove_agent(self, id):
         print 'gsg remove_agent'
@@ -90,10 +92,10 @@ class GameStateGlobal:
             return
         GameStateGlobal.remove_player(player.id)
 
-        
+
 # main game state wrapper
 class GameState:
-        
+
     def __init__(self):
         self.time = 0
 
