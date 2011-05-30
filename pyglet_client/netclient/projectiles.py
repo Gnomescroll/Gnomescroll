@@ -25,11 +25,15 @@ projectile_dat = {
 
 class Projectile(GameObject):
 
-    def __init__(self, x, y, z, vx, vy, vz, id): #more args
+    def __init__(self, x, y, z, x_angle, y_angle, id): #more args
         global projectile_dat
         assert projectile_dat.has_key(id)
         p = projectile_dat[id]
         #load projectile settings
+
+        vx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        vy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+
         self.state = [x,y,z,vx,vy,vz]
         self.speed = p.speed
         self.damage = p.damage
@@ -53,6 +57,17 @@ class Projectile(GameObject):
             return
     #run this once per frame for each projectile
     def tick(self):
-        fps = 60. # frame per second
-        self.ttl += 1
+        self.state = [x,y,z,vx,vy,vz]
 
+        fps = 60. # frame per second
+        speed = self.speed / fps
+
+        self.ttl += 1
+        if self.ttl > self.ttl_max:
+            self.delete()
+
+    def delete(self):
+        pass
+
+def draw_projectile(self):
+    pass
