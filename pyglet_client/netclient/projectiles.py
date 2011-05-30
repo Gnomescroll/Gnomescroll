@@ -5,6 +5,7 @@ projectile_dat = {
     1: {
     'speed' : 15,
     'damage' : 20,
+    'ttl_max' : 400 #time to live in ticks
 #    'splash' : {
 #    'radius' : 3,
 #    'damage' : 15,
@@ -29,8 +30,11 @@ class Projectile(GameObject):
         assert projectile_dat.has_key(id)
         p = projectile_dat[id]
         #load projectile settings
+        self.state = [x,y,z,vx,vy,vz]
         self.speed = p.speed
         self.damage = p.damage
+        self.ttl = 0
+        self.ttl_max = p.ttl_max
         pass
 
     def update(self, **args):
@@ -47,3 +51,8 @@ class Projectile(GameObject):
         except AssertionError:
             print 'projectile update :: state is wrong length'
             return
+    #run this once per frame for each projectile
+    def tick(self):
+        fps = 60. # frame per second
+        self.ttl += 1
+
