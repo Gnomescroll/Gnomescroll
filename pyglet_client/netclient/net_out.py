@@ -40,7 +40,7 @@ def sendJSON(cmd=None, tick=False):
             json_data = f(*args)
             if json_data is None:
                 json_data = {}
-                
+
             cmd_final = cmd # must do this reassignment due to function scoping
             if cmd_final is None:
                 cmd_final = ''
@@ -60,7 +60,7 @@ def idRequired(f):
         if NetClientGlobal.client_id != '0':
             f(*args)
     return wrapped
-    
+
 class SendMessage:
 
     @idRequired
@@ -85,7 +85,7 @@ class SendMessage:
             'aid'   : agent_id,
         }
 
-    
+
     @sendJSON('identify')
     def identify(self, name=None):
         if name is None:
@@ -97,13 +97,13 @@ class SendMessage:
     @sendJSON('request_client_id')
     def request_client_id(self):
         pass
-        
+
 class MapMessage:
 
     @sendJSON('request_chunk_list')
     def request_chunk_list(self):
         pass
-        
+
     @sendJSON('request_chunk')
     def request_chunk(self, x,y,z):
         return {
@@ -138,6 +138,7 @@ class AdminMessage:
 
     @sendJSON('set_map')
     def set_map(self,x,y,z,value):
+        print "set map"
         return {
             'list' : [(x,y,z,value)],
         }

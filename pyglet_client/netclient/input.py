@@ -81,7 +81,8 @@ class Mouse(object):
             playSound.build()
             NetOut.sendMessage.fire_projectile()
         elif buttons == 2:
-            playSound.music()
+            GameStateGlobal.agent.action_place_block()
+            #playSound.music()
 
 import math
 from math import sin, cos, pi

@@ -227,6 +227,18 @@ class PlayerAgent(Agent):
         #collides at (dx*n,dy*n,dz*n)
         #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
 
+    def action_place_block(self, block_id = 1):
+        pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        if pos != None:
+            x,y,z = pos
+            NetOut.adminMessage.set_map(x,y,z,block_id)
+
+    def action_remove_block(self):
+        pos = ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        if pos != None:
+            x,y,z = pos
+            NetOut.adminMessage.set_map(x,y,z, 0)
+
     def draw_position(self, points, seperation):
         v_num = 0
         v_list = []
@@ -459,29 +471,34 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
                     #print "out of range:" + str((x_, y_, z_))
                     return None
 
-def ray_nearest_block(x,y,z, x_angle, y_angle):
+def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
+    sampling_density = 100.00
 
-    sampling_density = 32
-    scale = 256
+    dx = cos( x_angle * pi) * cos( y_angle * pi)
+    dy = sin( x_angle * pi) * cos( y_angle * pi)
+    dz = sin( y_angle)
 
-    x = int(x*scale)
-    y = int(y*scale)
-    z = int(z*scale)
-    dx = int(scale*cos( x_angle * pi) * cos( y_angle * pi) / sampling_density)
-    dy = int(scale*sin( x_angle * pi) * cos( y_angle * pi) / sampling_density)
-    dz = int(scale*sin( y_angle) / sampling_density)
+    n = 0.
+    inc = 1. / sampling_density
+    xy_inc = math.sqrt(dx**2 + dy**2)
+    #md2 = max_distance**2
+    while True:
+        n += inc
+        if n*xy_inc > max_distance:
+            return None
 
-    n = 0
-    output = None
-    for n in range(0, max_distance*sampling_density):
-        if collision((x+dx*n)/scale, (y+dy*n)/scale, (z+dz*n)/scale):
-            output = (x+dx*(n))/scale, (y+dy*(n))/scale, (z+dz*(n))/scale
-            break
+        x_ = int(x+dx*n)
+        y_ = int(y+dy*n)
+        z_ = int(z+dz*n)
 
-    if output == None:
-        return None
-    else:
-        return output
+        x__ = int(x+ dx*(n+inc))
+        y__ = int(y+ dy*(n+inc))
+        z__ = int(z+ dz*(n+inc))
+
+        if x_ != x__ or y_ != y__ or z_ != z__:
+            if collision(x__, y__, z__):
+                return (x__, y__, z__)
+
 ### DRAWING STUFF ####
 
     #axis aligned

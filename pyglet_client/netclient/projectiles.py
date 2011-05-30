@@ -62,6 +62,10 @@ class Projectile(GameObject):
         except AssertionError:
             print 'projectile update :: state is wrong length'
 
+    def delete(self):
+        del GameStateGlobal.projectileList[self.id]
+        #print "implement projectiles.py delete function"
+
     #run this once per frame for each projectile
     def tick(self):
         [x,y,z,vx,vy,vz] = self.state
