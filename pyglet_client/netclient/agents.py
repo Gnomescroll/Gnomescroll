@@ -248,19 +248,22 @@ class PlayerAgent(Agent):
         return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
 
     def switch_weapon(self, weapon_index):
-        weapon_index += -1
-        print 'weapon was ', self.weapons[self.active_weapon]
         num_weapons = len(self.weapons)
         if num_weapons == 0:
             self.active_weapon = -1
             return
+            
+        if type(weapon_index) == int:
+            weapon_index += -1
+            
         if weapon_index == 'up':
             self.active_weapon = (self.active_weapon + 1) % num_weapons
         elif weapon_index == 'down':
-            self.active_weapons = (self.active_weapon -1) % num_weapons
+            self.active_weapon = (self.active_weapon - 1) % num_weapons
         elif weapon_index < num_weapons:
                 self.active_weapon = weapon_index
-        print 'now weapon is ', self.weapons[self.active_weapon]
+
+        print 'weapon is: ' , self.weapons[self.active_weapon]
 
     def draw(self):
         self.draw_aiming_direction()

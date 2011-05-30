@@ -59,6 +59,7 @@ class Mouse(object):
         self.main.win.on_mouse_drag = self.on_mouse_drag
         self.main.win.on_mouse_motion = self.on_mouse_motion
         self.main.win.on_mouse_press = self.on_mouse_press
+        self.main.win.on_mouse_scroll = self.on_mouse_scroll
         self.camera = main.camera
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
@@ -86,6 +87,12 @@ class Mouse(object):
             pass
         elif buttons == 4:
             GameStateGlobal.agent.set_active_block()
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        if scroll_y > 0:
+            GameStateGlobal.agent.switch_weapon('up')
+        elif scroll_y < 0:
+            GameStateGlobal.agent.switch_weapon('down')
 
 import math
 from math import sin, cos, pi
