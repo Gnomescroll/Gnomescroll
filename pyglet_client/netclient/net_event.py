@@ -63,11 +63,11 @@ class MessageHandler:
             self._agent_update(**msg)
 
             
-        elif cmd == ' create_projectile':
+        elif cmd == ' projectile_create':
             self._create_projectile(**msg)
-        elif cmd == 'update_projectile':
+        elif cmd == 'projectile_update':
             self._update_projectile(**msg)
-        elif cmd == 'destroy_projectile':
+        elif cmd == 'projectile_destroy':
             self._destroy_projectile(**msg)
 
         # initial settings

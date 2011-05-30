@@ -39,7 +39,6 @@ class Projectile(GameObject):
         self.damage = p.damage
         self.ttl = 0
         self.ttl_max = p.ttl_max
-        pass
 
     def update(self, **args):
         try:
@@ -51,10 +50,8 @@ class Projectile(GameObject):
             pass
         except TypeError:
             print 'projectile update :: state is not iterable'
-            pass
         except AssertionError:
             print 'projectile update :: state is wrong length'
-            return
     #run this once per frame for each projectile
     def tick(self):
         self.state = [x,y,z,vx,vy,vz]
