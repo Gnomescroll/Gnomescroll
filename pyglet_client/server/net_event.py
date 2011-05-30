@@ -155,7 +155,25 @@ class MessageHandler:
         except KeyError:
             print 'msg hit_block :: agent unknown'
             return
-        # do block damage here
+
+        try:
+            block_position = msg['pos']
+            block_position = list(block_position)
+            assert len(block_position) == 3
+        except KeyError:
+            print 'msg hit_block :: pos missing'
+            return
+        except ValueError:
+            print 'msg hit_block :: pos not iterable'
+            return
+        except AssertionError:
+            print 'msg hit_block :: block pos length is not 3'
+            return
+        x, y, z = block_position
+        block = (x, y, z, 0,)
+        print 'hit_block', block
+        GameStateGlobal.terrainMap.set(*block)
+        NetOut.event.set_map([block])
 
     def reload_weapon(self, client_id, **msg):
         try:

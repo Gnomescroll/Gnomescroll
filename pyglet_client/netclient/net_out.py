@@ -108,8 +108,12 @@ class SendMessage(GenericMessage):
     def hit_block(self, agent=None):
         if agent is None or agent.id is None:
             return
+        block_position = agent.nearest_block_position()
+        if block_position is None:
+            return    
         return {
             'aid'   :   agent.id,
+            'pos'   :   block_position,
         }
 
     @idRequired

@@ -244,6 +244,9 @@ class PlayerAgent(Agent):
     def facing_block_position(self):
         return ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
 
+    def nearest_block_position(self):
+        return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+
     def switch_weapon(self, weapon_index):
         weapon_index += -1
         print 'weapon was ', self.weapons[self.active_weapon]
@@ -275,18 +278,6 @@ class PlayerAgent(Agent):
             draw_cube(x,y,z,[0,155,0])
         #collides at (dx*n,dy*n,dz*n)
         #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
-
-    def action_place_block(self, block_id = 1):
-        pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
-        if pos != None:
-            x,y,z = pos
-            NetOut.adminMessage.set_map(x,y,z,block_id)
-
-    def action_remove_block(self):
-        pos = ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
-        if pos != None:
-            x,y,z = pos
-            NetOut.adminMessage.set_map(x,y,z, 0)
 
     def draw_position(self, points, seperation):
         v_num = 0
