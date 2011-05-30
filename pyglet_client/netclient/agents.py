@@ -436,8 +436,7 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
     n = 0.
     inc = 1. / sampling_density
     xy_inc = math.sqrt(dx**2 + dy**2)
-    md2 = max_distance**2
-    #md = max_distance**2
+    #md2 = max_distance**2
     while True:
         n += inc
         if n*xy_inc > max_distance:
@@ -456,8 +455,6 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
                 #z = int(z)
                 if z_ >= z-z_low and z_ <= z+z_high:
                     return (x_, y_, z_)
-                elif n == 0:
-                    return None
                 else:
                     #print "out of range:" + str((x_, y_, z_))
                     return None
