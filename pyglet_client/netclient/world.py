@@ -38,6 +38,8 @@ class World():
 
     def tick(self):
         self.mapChunkManager.update_chunk()
+        for p in GameStateGlobal.projectileList.values():
+            p.tick()
         pass
 
     def draw(self):

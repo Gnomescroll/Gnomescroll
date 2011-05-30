@@ -39,7 +39,7 @@ class Projectile(GameObject):
         #vx = cos( x_angle * pi) * cos( y_angle * pi)
         #vy = sin( x_angle * pi) * cos( y_angle * pi)
         #vz = sin( y_angle)
-        self.state = [float(x),float(y),float(z),vx,vy,vz]
+        self.state = [float(x),float(y),float(z),float(vx),float(vy),float(vz)]
 
         self.id = id
         self.type = type
@@ -72,11 +72,11 @@ class Projectile(GameObject):
         if self.ttl > self.ttl_max:
             self.delete()
 
+        x += vx / fps
+        y += vy / fps
+        z += vz / fps
 
         self.state = [x,y,z,vx,vy,vz]
-
-    def destroy(self):
-        pass #do something
 
 
 import pyglet
