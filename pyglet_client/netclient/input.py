@@ -25,6 +25,7 @@ class InputGlobal:
     def init_0(self, main):
         InputGlobal.mouse = Mouse(main)
         InputGlobal.keyboard = Keyboard(main)
+        InputGlobal.agentInput = AgentInput()
 
     @classmethod
     def init_1(self, main):
@@ -79,7 +80,7 @@ class Mouse(object):
     def on_mouse_press(self, x, y, buttons, modifiers):
         if buttons == 1:
             playSound.build()
-            NetOut.sendMessage.fire_projectile()
+            GameStateGlobal.agent.fire()
         elif buttons == 2:
             playSound.music()
 
@@ -126,6 +127,8 @@ class Keyboard(object):
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
             self._input_callback(callback)
         else:
+            if InputGlobal.input == 'agent':
+                InputGlobal.agentInput.on_key_press(symbol, modifiers)
             self.key_handlers.get(symbol, lambda: None)()
 
     def _init_key_handlers(self):
@@ -208,6 +211,54 @@ class Keyboard(object):
             self.camera.move_camera(0,0,-v)
         if keyboard[key.SPACE]:
             pass
+
+class AgentInput:
+
+    def __init__(self):
+        self.key_handlers = {}
+        self._init_key_handlers()
+
+    def _init_key_handlers(self):
+        self._bind_key_handlers({
+            key.R : self.reload,
+            key._1: self.switch_weapon,
+            key._2: self.switch_weapon,
+            key._3: self.switch_weapon,
+            key._4: self.switch_weapon,
+            key._5: self.switch_weapon,
+            key._6: self.switch_weapon,
+            key._7: self.switch_weapon,
+            key._8: self.switch_weapon,
+            key._9: self.switch_weapon,
+            key._0: self.switch_weapon,
+        })
+
+    # accept key,handler or a dict of key,handlers
+    def _bind_key_handlers(self, key, handler=None):
+        if handler is None:
+            assert type(key) == dict
+            for k, h in key.items():
+                self.key_handlers[k] = h
+        else:
+            self.key_handlers[key] = handle
+
+    def on_key_press(self, symbol, modifiers):
+        self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
+
+    def reload(self, symbol, modifiers):
+        print 'reloading'
+        GameStateGlobal.agent.reload()
+
+    def switch_weapon(self, symbol, modifiers):
+        print 'switch weapon'
+        print symbol, modifiers
+        print key.symbol_string(symbol)
+        try:
+            weapon_index = int(key.symbol_string(symbol)[1:])
+        except (ValueError, TypeError):
+            return
+        print 'attempting to switch weapon to ', weapon_index
+        GameStateGlobal.agent.switch_weapon(weapon_index)
 
 
 from game_state import GameStateGlobal

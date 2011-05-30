@@ -10,6 +10,7 @@ from math import floor, ceil, fabs
 from pyglet.gl import *
 
 from game_state import GameStateGlobal
+from weapons import LaserGun, Pick
 
 # represents an agent under control of a player
 class Agent:
@@ -22,7 +23,7 @@ class Agent:
         if owner is None or id is None:
             return
         if weapons is None:
-            weapons = []
+            weapons = [LaserGun(), Pick()]
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(lambda k: float(k), state)
@@ -190,8 +191,8 @@ class Agent:
 
 class PlayerAgent(Agent):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
-        Agent.__init__(self, owner, id, state, weapons, health, dead)
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=-1):
+        Agent.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
         self.you = True
         self.control_state = [0,0,0,0,0,0,0]
@@ -213,10 +214,24 @@ class PlayerAgent(Agent):
         self.t_height = .75
         self.box_r = .30
 
+    def fire(self):
+        weapon = self.weapons[self.active_weapon]
+        fire_command = weapon.fire()
+        if fire_command:
+            NetOut.sendMessage.__dict__[fire_command]()
+
+    def reload(self):
+        weapon = self.weapons[self.active_weapon]
+        reload_command = weapon.reload()
+        if reload_command:
+            NetOut.sendMessage.__dict__[reload_command]()
+
     def set_active_block(self, block_type):
         self.active_block = block_type
 
     def switch_weapon(self, weapon_index):
+        weapon_index += -1
+        print 'weapon was ', self.weapons[self.active_weapon]
         num_weapons = len(self.weapons)
         if num_weapons == 0:
             self.active_weapon = -1
@@ -227,6 +242,7 @@ class PlayerAgent(Agent):
             self.active_weapons = (self.active_weapon -1) % num_weapons
         elif weapon_index < num_weapons:
                 self.active_weapon = weapon_index
+        print 'now weapon is ', self.weapons[self.active_weapon]
 
     def draw(self):
         self.draw_aiming_direction()
