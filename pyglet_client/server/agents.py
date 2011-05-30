@@ -76,6 +76,26 @@ class Agent:
 
         self.owner = player_id
 
+    def __getattr__(self, attr):
+        if attr == 'x':
+            return self.__dict__['state'][0]
+        elif attr == 'y':
+            return self.__dict__['state'][1]
+        elif attr == 'z':
+            return self.__dict__['state'][2]
+        else:
+            raise AttributeError
+
+    def __setattr__(self, attr, val):
+        if attr == 'x':
+            self.__dict__['state'][0] = val
+        elif attr == 'y':
+            self.__dict__['state'][1] = val
+        elif attr == 'z':
+            self.__dict__['state'][2] = val
+        else:
+            self.__dict__[attr] = val
+
     def json(self, properties=None): # json encodable string representation
         d = {
             'id'    :   self.id,
@@ -337,7 +357,8 @@ class Agent:
 
     def fire_projectile(self):
         print 'Agent.fire_projectile'
-        pass
+        p_data = [self.x, self.y, self.z, 1, 1, 1]
+        projectile = GameStateGlobal.projectileList.create(*p_data)
 
     def take_damage(self, damage):
         self.health -= damage

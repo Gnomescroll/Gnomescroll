@@ -11,6 +11,7 @@ class Projectile(GameObject):
             state = args['state']
             state = list(state)
             assert len(state) == 6
+            self.state = state
         except KeyError:
             pass
         except TypeError:

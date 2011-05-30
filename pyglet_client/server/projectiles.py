@@ -25,14 +25,15 @@ from game_objects import GameObject
 
 class Projectile(GameObject):
 
-    def __init__(self, x, y, z): #more args
-        pass
+    def __init__(self, x, y, z, vx, vy, vz): #more args
+        self.state = [x, y, z, vx, vy, vz]
 
     def update(self, **args):
         try:
             state = args['state']
             state = list(state)
             assert len(state) == 6
+            self.state = state
         except KeyError:
             pass
         except TypeError:
