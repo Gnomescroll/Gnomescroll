@@ -24,7 +24,7 @@ class AgentList(GenericObjectList):
         self._itemname = 'Agent'
         self._object_type = Agent
 
-    def create(self, player_id, x=0, y=0, z=0):
+    def create(self, player_id, x=0, y=0, z=4):
         return self._add(x, y, z, player_id)
 
     def destroy(self, agent):
