@@ -41,7 +41,8 @@ class AgentList(GenericObjectList):
             #if agent.pos() == position:
             if x < _x < x+1 and \
                y < _y < y+1 and \
-               z < _z < z+1:
+               z < _z < z+1 and \
+               not agent.dead:
                 'at agent'
                 return agent
         return False
