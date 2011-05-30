@@ -85,7 +85,11 @@ class Sounds:
             self.enabled = False
 
         if self.enabled:
-            self._load_sounds()
+            try:
+                self._load_sounds()
+            except:
+                settings.audio = False
+                self.enabled = False
             
         self.sfx_vol = settings.sfx / 100.
         self.music_vol = settings.music / 100.

@@ -20,3 +20,5 @@ node_modules/
 lastserverpid*
 *.tmp
 conf/*.conf
+
+settings.py
