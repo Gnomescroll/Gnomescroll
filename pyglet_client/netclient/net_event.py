@@ -15,7 +15,7 @@ class NetEventGlobal:
     def init_0(self):
         self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
         self.mapMessageHandler = MapMessageHandler()
-        self.projectileMessageHandler = projectileMessageHandler()
+        self.projectileMessageHandler = ProjectileMessageHandler()
     @classmethod
     def init_1(self):
         pass
@@ -69,11 +69,11 @@ class MessageHandler:
 
         # projectiles
         elif cmd == ' projectile_create':
-            self._create_projectile(**msg)
+            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
         elif cmd == 'projectile_update':
-            self._update_projectile(**msg)
+            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
         elif cmd == 'projectile_destroy':
-            self._destroy_projectile(**msg)
+            GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
 
         # initial settings
         elif cmd == 'client_id':
@@ -193,41 +193,6 @@ class MessageHandler:
 
         GameStateGlobal.agentList[agent_id].update_info(**agent_data)
         
-
-    def _create_projectile(**args):
-        projectile = args.get('projectile', None)
-        if projectile is None:
-            print 'msg create_projectile :: missing projectile'
-            return
-        GameStateGlobal.projectileList.create(**projectile)
-
-    def _update_projectile(**args):
-        projectile_data = args.get('projectile', None)
-        if projectile is None:
-            print 'msg update_projectile :: missing projectile'
-            return
-        try:
-            projectile_id = int(projectile_data.get('id', None))
-            projectile = GameStateGlobal.projectileList[projectile_id]
-            projectile.update(**projectile_data)
-        except TypeError:
-            print 'msg update_projectile :: Projectile id missing'
-        except ValueError:
-            print 'msg projectile_update :: projectile id invalid'
-        except KeyError:
-            print 'msg update_projectile :: projectile not found'
-
-    def _destroy_projectile(**args):
-        try:
-            id = int(args.get('id', None))
-            projectile = GameStateGlobal.projectileList[id]
-            GameStateGlobal.projectileList.destroy(projectile)
-        except TypeError:
-            print 'msg projectile_destroy :: projectile id missing'
-        except ValueError:
-            print 'msg projectile_destroy :: projectile id invalid'
-        except KeyError:
-            print 'msg projectile_destroy :: projectile not found'
     def _set_client_id(self, **msg):
         id = msg.get('id', None)
         if id is None:
@@ -276,13 +241,39 @@ class ProjectileMessageHandler:
         pass
 
     def _create_projectile(**args):
-        pass
+        projectile = args.get('projectile', None)
+        if projectile is None:
+            print 'msg create_projectile :: missing projectile'
+            return
+        GameStateGlobal.projectileList.create(**projectile)
 
     def _update_projectile(**args):
-        pass
+        projectile_data = args.get('projectile', None)
+        if projectile is None:
+            print 'msg update_projectile :: missing projectile'
+            return
+        try:
+            projectile_id = int(projectile_data.get('id', None))
+            projectile = GameStateGlobal.projectileList[projectile_id]
+            projectile.update(**projectile_data)
+        except TypeError:
+            print 'msg update_projectile :: Projectile id missing'
+        except ValueError:
+            print 'msg projectile_update :: projectile id invalid'
+        except KeyError:
+            print 'msg update_projectile :: projectile not found'
 
     def _destroy_projectile(**args):
-        pass
+        try:
+            id = int(args.get('id', None))
+            projectile = GameStateGlobal.projectileList[id]
+            GameStateGlobal.projectileList.destroy(projectile)
+        except TypeError:
+            print 'msg projectile_destroy :: projectile id missing'
+        except ValueError:
+            print 'msg projectile_destroy :: projectile id invalid'
+        except KeyError:
+            print 'msg projectile_destroy :: projectile not found'
 
 class MapMessageHandler:
     terrainMap = None
