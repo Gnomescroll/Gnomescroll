@@ -28,17 +28,17 @@ class Projectile(GameObject):
         if None in (state, id, type,):
             print 'Projectile __init__ missing args'
             return
-    
+
         global projectile_dat
         assert projectile_dat.has_key(type)
         p = projectile_dat[type]
         #load projectile settings
 
         x, y, z, vx, vy, vz = state
-        
-        vx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
-        vy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
-        vz = sin( self.y_angle)
+
+        vx = cos( x_angle * pi) * cos( y_angle * pi)
+        vy = sin( x_angle * pi) * cos( y_angle * pi)
+        vz = sin( y_angle)
         self.state = [float(x),float(y),float(z),vx,vy,vz]
 
         self.id = id
