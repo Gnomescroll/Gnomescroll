@@ -31,8 +31,12 @@ from hud import Hud
 
 import settings  ## put this somewhere!!! so it only has to be in one place
 if settings.audio: ##is also in inport.py
-    print "audo enabled"
-    from sounds import playSound
+    try:
+        from sounds import playSound
+        print "audio enabled"
+    except:
+        print "audio disabled"
+        setting.audio = False
 
 import world #deprecate
 
