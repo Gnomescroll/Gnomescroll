@@ -25,10 +25,10 @@ projectile_dat = {
 
 class Projectile(GameObject):
 
-    def __init__(self, x, y, z, x_angle, y_angle, id): #more args
+    def __init__(self, x, y, z, x_angle, y_angle, ,type_id, id=0): #more args
         global projectile_dat
-        assert projectile_dat.has_key(id)
-        p = projectile_dat[id]
+        assert projectile_dat.has_key(type_id)
+        p = projectile_dat[type_id]
         #load projectile settings
 
         vx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
