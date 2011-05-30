@@ -21,6 +21,7 @@ class GameStateGlobal:
         player = GameStateGlobal.playerList.join_yourself()
         GameStateGlobal.player = player
         GameStateGlobal.agent = player.agent
+        GameStateGlobal.projectileList = ProjectileList()
         GameStateGlobal.player.agent = GameStateGlobal.agent
         GameStateGlobal.terrainMap = TerrainMap()
         GameStateGlobal.gameState = GameState()
@@ -105,6 +106,7 @@ class GameState:
             #print "time= %i" % (self.time,)
 
 from terrain_map import TerrainMap
+from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList

@@ -17,6 +17,7 @@ class GameStateGlobal:
         GameStateGlobal.gameState = GameState()
         GameStateGlobal.agentList = AgentList()
         GameStateGlobal.playerList = PlayerList()
+        GameStateGlobal.projectileList = ProjectileList()
 
     @classmethod
     def init(cls):
@@ -101,6 +102,7 @@ class GenericObjectList:
 from terrain_map import TerrainMap
 from agents import AgentList
 from players import PlayerList
+from projectiles import ProjectileList
 
 # main game state wrapper
 class GameState:

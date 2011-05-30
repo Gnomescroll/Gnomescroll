@@ -175,6 +175,7 @@ class PlayerList(GenericObjectList):
         self.client_ids[player.cid] = player.id
         self.names[player.name] = player.cid
 
+
 class ProjectileList(GenericObjectList):
 
     def __init__(self):
