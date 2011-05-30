@@ -15,6 +15,7 @@ projectile_dat = {
     2 : {
         'speed' : 15,
         'damage' : 20,
+        'ttl_max' : 400
     },
 
 }
