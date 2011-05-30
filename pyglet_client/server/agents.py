@@ -35,8 +35,14 @@ class AgentList(GenericObjectList):
         self._remove(agent)
 
     def at(self, position):
-        for agent in self:
-            if agent.pos() == position:
+        _x, _y, _z = position
+        for agent in self.values():
+            x, y, z = agent.pos()
+            #if agent.pos() == position:
+            if x < _x < x+1 and \
+               y < _y < y+1 and \
+               z < _z < z+1:
+                'at agent'
                 return agent
         return False
 
@@ -83,12 +89,12 @@ class Agent:
 
         #misc state
         self.on_ground = 0
-
+        self.respawn_countdown = self.RESPAWN_TICKS
         self.health = self.HEALTH_MAX
         self.dead = False
 
         self.weapons = [LaserGun(), Pick(), BlockApplier()]
-
+    
         self.owner = player_id
 
     def pos(self):

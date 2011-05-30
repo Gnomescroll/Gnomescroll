@@ -111,13 +111,14 @@ class Projectile(GameObject):
         z += vz / fps
 
         if CubeGlobals.collisionDetection.collision(x, y, z):
-            agent_hit = GameStateGlobal.agentList.at(*pos)
-            if agent_hit != False:
-                print 'DIEEEE'
-                print agent_hit
-                agent_hit.take_damage(self.damage)
             self.delete()
             return
+
+        agent_hit = GameStateGlobal.agentList.at((x, y, z,))
+        if agent_hit != False:
+            print 'DIEEEE'
+            print agent_hit
+            agent_hit.take_damage(self.damage)
 
         self.state = [x,y,z,vx,vy,vz]
 

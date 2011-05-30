@@ -118,7 +118,8 @@ class World():
 
     def draw_agents(self):
         for agent in GameStateGlobal.agentList.values():
-            agent.draw()
+            if not agent.dead:
+                agent.draw()
 
 import projectiles
 

@@ -188,7 +188,7 @@ class MessageHandler:
 
     def _agent_update(self, **args):
         agent_data = args.get('agent', None)
-        if agent is None:
+        if agent_data is None:
             print 'msg agent_update :: agent key is missing'
 
         try:
