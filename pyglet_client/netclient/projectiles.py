@@ -25,6 +25,12 @@ projectile_dat = {
 class Projectile(GameObject):
 
     def __init__(self, x, y, z, vx, vy, vz, id): #more args
+        global projectile_dat
+        assert projectile_dat.has_key(id)
+        p = projectile_dat[id]
+        #load projectile settings
+        self.speed = p.speed
+        self.damage = p.damage
         pass
 
     def update(self, **args):
