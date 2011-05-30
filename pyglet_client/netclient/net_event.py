@@ -245,14 +245,16 @@ class MessageHandler:
 class ProjectileMessageHandler:
 
     @classmethod
-    def init(self):
+    def register_events(cls):
         events = {
             'projectile_create' : self._create_projectile,
             'projectile_update' : self._update_projectile,
             'projectile_destroy' : self._destroy_projectile,
         }
         GameStateGlobal.register_json_events(events)
-
+    @classmethod
+    def init(cls):
+        cls.register_events()
     def __init__(self):
         pass
 
