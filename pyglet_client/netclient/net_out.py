@@ -117,9 +117,13 @@ class SendMessage(GenericMessage):
     def set_block(self, agent=None):
         if agent is None or agent.id is None:
             return
+        block_position = agent.facing_block_position()
+        if block_position is None:
+            return
         return {
             'aid'   :   agent.id,
             'type'  :   agent.active_block,
+            'loc'   :   block_position,
         }
 
     @sendJSON('identify')
