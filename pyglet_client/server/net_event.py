@@ -49,6 +49,15 @@ class MessageHandler:
         elif cmd == 'fire_projectile':
             self.fire_projectile(**msg)
 
+        elif cmd == 'reload_weapon':
+            self.reload_weapon(connection.id, **msg)
+
+        elif cmd == 'set_block':
+            self.set_block(connection.id, **msg)
+        elif cmd == 'hit_block':
+            self.hit_block(connection.id, **msg)
+        
+
         #chat
         elif cmd == 'chat':
             ChatServer.chat.received(msg, connection)
@@ -74,6 +83,85 @@ class MessageHandler:
             self.request_chunk(msg, connection)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
+
+    def set_block(self, client_id, **msg):
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.owner != client_id:
+                print 'msg set_block :: client does not own this agent'
+                return
+        except TypeError:
+            print 'msg set_block :: aid missing'
+            return
+        except ValueError:
+            print 'msg set_block :: aid invalid'
+            return
+        except KeyError:
+            print 'msg set_block :: agent unknown'
+            return
+            
+        try:
+            block_type = int(msg.get('type', None))
+        except TypeError:
+            print 'msg set_block :: type missing'
+            return
+        except ValueError:
+            print 'msg set_block :: type invalid'
+            return
+        # set block here
+
+    def hit_block(self, client_id, **msg):
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.owner != client_id:
+                print 'msg hit_block :: client does not own this agent'
+                return
+        except TypeError:
+            print 'msg hit_block :: aid missing'
+            return
+        except ValueError:
+            print 'msg hit_block :: aid invalid'
+            return
+        except KeyError:
+            print 'msg hit_block :: agent unknown'
+            return
+        # do block damage here
+
+    def reload_weapon(self, client_id, **msg):
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.owner != client_id:
+                print 'msg reload_weapon :: client does not own this agent'
+                return
+        except TypeError:
+            print 'msg reload_weapon :: aid missing'
+            return
+        except ValueError:
+            print 'msg reload_weapon :: aid invalid'
+            return
+        except KeyError:
+            print 'msg reload_weapon :: agent unknown'
+            return
+            
+        try:
+            weapon_type = int(msg.get('weapon', None))
+        except TypeError:
+            print 'msg reload_weapon :: weapon missing'
+            return
+        except ValueError:
+            print 'msg reload_weapon :: weapon invalid'
+            return
+        try:
+            weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
+        except ValueError:
+            print 'msg reload_weapon :: weapon unknown to agent'
+            return
+        weapon = agent.weapons[weapon_index]
+        if weapon.reload():
+            NetOut.event.agent_update(agent, 'weapons')
 
     def agent_control_state(self, client_id, **msg):
 

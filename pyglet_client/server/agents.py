@@ -111,6 +111,8 @@ class Agent:
                 'state' : self.state,
             })
         else:
+            if type(properties) == str:
+                properties = [properties]
             for prop in properties:
                 d[prop] = getattr(self, prop)
                 if prop == 'dead':
