@@ -82,11 +82,12 @@ class Mouse(object):
             playSound.build()
             GameStateGlobal.agent.fire()
         elif buttons == 2:
-            GameStateGlobal.agent.set_active_block()
-            #GameStateGlobal.agent.action_place_block()
-        elif buttons == 4:
-            playSound.music()
             #GameStateGlobal.agent.set_active_block()
+            GameStateGlobal.agent.action_place_block()
+        elif buttons == 4:
+            GameStateGlobal.agent.action_remove_block()
+            #GameStateGlobal.agent.action_place_block()
+            #playSound.music()
 
 import math
 from math import sin, cos, pi
