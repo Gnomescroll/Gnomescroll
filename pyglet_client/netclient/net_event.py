@@ -62,7 +62,7 @@ class MessageHandler:
         elif cmd == 'agent_update':
             self._agent_update(**msg)
 
-            
+
         elif cmd == ' projectile_create':
             self._create_projectile(**msg)
         elif cmd == 'projectile_update':
@@ -89,7 +89,7 @@ class MessageHandler:
 
         elif cmd == 'identified':
             self._on_identify(**msg)
-            
+
         #map events
         elif cmd == 'chunk_list':
             NetEventGlobal.mapMessageHandler._chunk_list(**msg)
@@ -131,7 +131,7 @@ class MessageHandler:
             if id is None:
                 return
             GameStateGlobal.remove_agent(id)
-            
+
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)
         else:
@@ -185,7 +185,7 @@ class MessageHandler:
             return
 
         GameStateGlobal.agentList[agent_id].update_info(**agent_data)
-        
+
 
     def _create_projectile(**args):
         pass
@@ -208,7 +208,7 @@ class MessageHandler:
     def _on_identify(self, **msg):
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
-        
+
         player = msg.get('player', None)
         if player is None:
             print 'msg::identified - missing player'
