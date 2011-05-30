@@ -25,7 +25,7 @@ class NetEventGlobal:
 
     @classmethod
     def register_json_events(cls, events):
-        for string, function in events.values():
+        for string, function in events.items():
             MessageHandler.json_events[string] = function
 
 class MessageHandler:
