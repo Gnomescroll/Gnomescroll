@@ -69,6 +69,10 @@ class Projectile(GameObject):
     def destroy(self):
         pass #do something
 
+
+import pyglet
+from pyglet.gl import *
+
 def draw_projectiles():
 
     v_num = 0
