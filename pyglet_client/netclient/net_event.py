@@ -296,11 +296,22 @@ class MapMessageHandler:
     mapChunkManager = None
     mapController = None
     @classmethod
-    def init(self):
-        self.terrainMap = GameStateGlobal.terrainMap
-        self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
-        self.mapController = MapControllerGlobal.mapController
-        assert self.mapController != None
+    def register_events(cls):
+        events = {
+            'chunk_list' : self._chunk_list,
+            'map_chunk' : self._map_chunk,
+            'set_map' : self._set_map,
+        }
+        GameStateGlobal.register_json_events(events)
+    @classmethod
+    def init(cls):
+        cls.terrainMap = GameStateGlobal.terrainMap
+        cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
+        cls.mapController = MapControllerGlobal.mapController
+        cls.register()
+        assert cls.mapController != None
+        cls.register_events()
+
     def __init__(self):
         pass
 
