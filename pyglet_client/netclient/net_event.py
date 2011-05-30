@@ -243,8 +243,7 @@ class MessageHandler:
 
 class ProjectileMessageHandler:
 
-    @classmethod
-    def register_events(cls):
+    def register_events(self):
         events = {
             'projectile_create' : self._create_projectile,
             'projectile_update' : self._update_projectile,
@@ -253,9 +252,9 @@ class ProjectileMessageHandler:
         GameStateGlobal.register_json_events(events)
     @classmethod
     def init(cls):
-        cls.register_events()
-    def __init__(self):
         pass
+    def __init__(self):
+        self.register_events()
 
     def _create_projectile(**args):
         projectile = args.get('projectile', None)
@@ -296,8 +295,8 @@ class MapMessageHandler:
     terrainMap = None
     mapChunkManager = None
     mapController = None
-    @classmethod
-    def register_events(cls):
+
+    def register_events(self):
         events = {
             'chunk_list' : self._chunk_list,
             'map_chunk' : self._map_chunk,
@@ -309,11 +308,12 @@ class MapMessageHandler:
         cls.terrainMap = GameStateGlobal.terrainMap
         cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         cls.mapController = MapControllerGlobal.mapController
-        cls.register()
+        cls.register_events()
         assert cls.mapController != None
         cls.register_events()
 
     def __init__(self):
+        self.register_events()
         pass
 
     def _chunk_list(self, list, **msg):
