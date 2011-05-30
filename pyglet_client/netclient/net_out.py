@@ -32,13 +32,27 @@ class NetOut:
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
 
-# calls send_json
-def sendJSON(f):
-    def wrapped(*args):
-        package = f(*args)
-        if package is not None:
-            NetOut.send_json(package)
-    return wrapped
+
+def sendJSON(cmd=None, tick=False):
+    def outer(f, *args):
+        def wrapped(*args):
+            self = args[0]
+            json_data = f(*args)
+            if json_data is None:
+                json_data = {}
+                
+            cmd_final = cmd # must do this reassignment due to function scoping
+            if cmd_final is None:
+                cmd_final = ''
+            if cmd_final != '' or 'cmd' not in json_data:
+                json_data['cmd'] = cmd_final
+
+            if tick:
+                json_data['tick'] = GameStateGlobal.gameState.time
+
+            NetOut.send_json(json_data)
+        return wrapped
+    return outer
 
 # if client_id is required
 def idRequired(f):
@@ -50,103 +64,85 @@ def idRequired(f):
 class SendMessage:
 
     @idRequired
-    @sendJSON
+    @sendJSON('agent_control_state', tick=True)
     def send_agent_control_state(self, agent_id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
         if agent_id is None:  # agent not identified
             return
         return {
-            'cmd' : 'agent_control_state',
-            'tick' : 0,
             'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake],
             'aid'  : agent_id,
            }
 
     @idRequired
-    @sendJSON
+    @sendJSON('fire_projectile', tick=True)
     def fire_projectile(self, agent_id=None):
         if agent_id is None:
             agent_id = GameStateGlobal.agent.id
         if agent_id is None:
             return
         return {
-            'cmd'   : 'fire_projectile',
-            'tick'  : 0,
             'aid'   : agent_id,
         }
 
-    @sendJSON
+    
+    @sendJSON('identify')
     def identify(self, name=None):
         if name is None:
             name = NetClientGlobal.name
         return {
-            'cmd': 'identify',
             'name': name,
         }
 
-    @sendJSON
+    @sendJSON('request_client_id')
     def request_client_id(self):
-        return {
-            'cmd'   : 'request_client_id',
-        }
-
+        pass
+        
 class MapMessage:
 
-    @sendJSON
+    @sendJSON('request_chunk_list')
     def request_chunk_list(self):
-        return {
-            'cmd' : 'request_chunk_list',
-        }
-
-    @sendJSON
+        pass
+        
+    @sendJSON('request_chunk')
     def request_chunk(self, x,y,z):
         return {
-            'cmd' : 'request_chunk',
-            'value' : (x,y,z)
+            'value' : (x,y,z),
         }
 
 class ChatMessage:
 
-    @sendJSON
+    @idRequired
+    @sendJSON('chat')
     def send_chat(self, d):
-        if NetClientGlobal.client_id == 0:
-            return
-        d['cmd'] = 'chat'
         d['cid'] = str(NetClientGlobal.client_id)
         return d
 
-    @sendJSON
+    @idRequired
+    @sendJSON('subscribe')
     def subscribe(self, channel):
-        if NetClientGlobal.client_id == 0:
-            print 'client_id is 0, abort'
-            return
         return {
             'channel'   : channel,
-            'cmd'       : 'subscribe',
             'cid' : str(NetClientGlobal.client_id),
         }
 
-    @sendJSON
+    @idRequired
+    @sendJSON('unsubscribe')
     def unsubscribe(self, channel):
-        if NetClientGlobal.client_id == 0:
-            return
         return {
             'channel'   : channel,
-            'cmd'       : 'unsubscribe',
             'cid' : str(NetClientGlobal.client_id),
         }
 
 class AdminMessage:
 
-    @sendJSON
+    @sendJSON('set_map')
     def set_map(self,x,y,z,value):
         return {
-            'set_map' : 'set_map',
             'list' : [(x,y,z,value)],
-            }
+        }
 
-    @sendJSON
+    @sendJSON('set_map_bulk')
     def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
         return {
-            'set_map' : 'set_map',
             'list' : list,
-            }
+        }
