@@ -78,11 +78,9 @@ class Mouse(object):
 
     def on_mouse_press(self, x, y, buttons, modifiers):
         if buttons == 1:
-            print 'playing build'
             playSound.build()
             NetOut.sendMessage.fire_projectile()
         elif buttons == 2:
-            print 'player music'
             playSound.music()
 
 import math
