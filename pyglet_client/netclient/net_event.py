@@ -78,7 +78,7 @@ class MessageHandler:
             self._agent_update(**msg)
 
 #        # projectiles
-#        elif cmd == 'projectile_create':
+        elif cmd == 'projectile_create':
 #            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
 #        elif cmd == 'projectile_update':
 #            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
@@ -93,8 +93,6 @@ class MessageHandler:
                 NetOut.sendMessage.request_client_id()
         elif cmd == 'identify_fail':
             msg = msg.get('msg', '')
-            msg = 'Identification failed. %s' % (msg,)
-            print msg
             # send system notification
             ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
             ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
