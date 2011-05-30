@@ -61,7 +61,17 @@ def idRequired(f):
             f(*args)
     return wrapped
 
-class SendMessage:
+
+class GenericMessage:
+
+    def __init__(self):
+        pass
+
+    def __call__(self, cmd, *args, **kwargs):
+        self.__class__.__dict__[cmd](self, *args, **kwargs)
+
+    
+class SendMessage(GenericMessage):
 
     @idRequired
     @sendJSON('agent_control_state', tick=True)
@@ -76,15 +86,40 @@ class SendMessage:
 
     @idRequired
     @sendJSON('fire_projectile', tick=True)
-    def fire_projectile(self, agent_id=None):
-        if agent_id is None:
-            agent_id = GameStateGlobal.agent.id
-        if agent_id is None:
+    def fire_projectile(self, agent=None):
+        if agent is None or agent.id is None:
             return
         return {
-            'aid'   : agent_id,
+            'aid'   : agent.id,
         }
 
+    @idRequired
+    @sendJSON('reload_laser_gun', tick=True)
+    def reload_laser_gun(self, agent=None):
+        if agent is None or agent.id is None:
+            return
+        return {
+            'aid'   :   agent.id,
+        }
+
+    @idRequired
+    @sendJSON('hit_block', tick=True)
+    def hit_block(self, agent=None):
+        if agent is None or agent.id is None:
+            return
+        return {
+            'aid'   :   agent.id,
+        }
+
+    @idRequired
+    @sendJSON('place_block', tick=True)
+    def place_block(self, agent=None):
+        if agent is None or agent.id is None:
+            return
+        return {
+            'aid'   :   agent.id,
+            'type'  :   agent.active_block,
+        }
 
     @sendJSON('identify')
     def identify(self, name=None):

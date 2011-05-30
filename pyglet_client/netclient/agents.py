@@ -10,6 +10,7 @@ from math import floor, ceil, fabs
 from pyglet.gl import *
 
 from game_state import GameStateGlobal
+from weapons import LaserGun, Pick, BlockApplier
 
 # represents an agent under control of a player
 class Agent:
@@ -18,11 +19,11 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
         if owner is None or id is None:
             return
         if weapons is None:
-            weapons = []
+            weapons = [LaserGun(), Pick(), BlockApplier()]
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(lambda k: float(k), state)
@@ -56,6 +57,9 @@ class Agent:
         self.weapons = weapons
         self.owner = owner
         self.you = False
+
+        self.active_block = active_block   # which block to create
+        self.active_weapon = active_weapon #    which weapon is held
 
     def update_info(self, **agent):
         args = []
@@ -187,8 +191,8 @@ class Agent:
 
 class PlayerAgent(Agent):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False):
-        Agent.__init__(self, owner, id, state, weapons, health, dead)
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
+        Agent.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
         self.you = True
         self.control_state = [0,0,0,0,0,0,0]
@@ -209,6 +213,48 @@ class PlayerAgent(Agent):
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+
+    def fire(self):
+        weapon = self.weapons[self.active_weapon]
+        fire_command = weapon.fire()
+        if fire_command:
+            NetOut.sendMessage(fire_command, self)
+
+    def reload(self):
+        weapon = self.weapons[self.active_weapon]
+        reload_command = weapon.reload()
+        if reload_command:
+            NetOut.sendMessage(reload_command, self)
+
+    def set_active_block(self, block_type=None):
+        if block_type is None:
+            block_type = self.facing_block()
+        if not block_type:
+            return
+        self.active_block = block_type
+        print 'set active block to ', self.active_block
+
+    def facing_block(self):
+        block = ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+        if block is None:
+            return 
+        block = GameStateGlobal.terrainMap.get(*block)
+        return self.active_block
+
+    def switch_weapon(self, weapon_index):
+        weapon_index += -1
+        print 'weapon was ', self.weapons[self.active_weapon]
+        num_weapons = len(self.weapons)
+        if num_weapons == 0:
+            self.active_weapon = -1
+            return
+        if weapon_index == 'up':
+            self.active_weapon = (self.active_weapon + 1) % num_weapons
+        elif weapon_index == 'down':
+            self.active_weapons = (self.active_weapon -1) % num_weapons
+        elif weapon_index < num_weapons:
+                self.active_weapon = weapon_index
+        print 'now weapon is ', self.weapons[self.active_weapon]
 
     def draw(self):
         self.draw_aiming_direction()
