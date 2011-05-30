@@ -114,7 +114,25 @@ class MessageHandler:
         except ValueError:
             print 'msg set_block :: type invalid'
             return
-        # set block here
+
+        try:
+            block_position = msg['pos']
+            block_position = list(block_position)
+            assert len(block_position) == 3
+        except KeyError:
+            print 'msg set_block :: pos missing'
+            return
+        except ValueError:
+            print 'msg set_block :: pos not iterable'
+            return
+        except AssertionError:
+            print 'msg set_block :: block pos length is not 3'
+            return
+        x, y, z = block_position
+        block = (x, y, z, block_type,)
+        GameStateGlobal.terrainMap.set(*block)
+        NetOut.event.set_map([block])
+
 
     def hit_block(self, client_id, **msg):
         try:

@@ -123,7 +123,7 @@ class SendMessage(GenericMessage):
         return {
             'aid'   :   agent.id,
             'type'  :   agent.active_block,
-            'loc'   :   block_position,
+            'pos'   :   block_position,
         }
 
     @sendJSON('identify')
