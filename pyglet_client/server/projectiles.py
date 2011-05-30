@@ -29,6 +29,7 @@ class Projectile(GameObject):
     def __init__(self, x, y, z, vx, vy, vz): #more args
         self.id = GameStateGlobal.new_projectile_id()
         self.state = [x, y, z, vx, vy, vz]
+        self.type = 1
 
     def update(self, **args):
         try:
@@ -51,6 +52,7 @@ class Projectile(GameObject):
         if properties is None:
             d.update({
                 'state' : self.state,
+                'type'  : self.type,
             })
         else:
             for prop in properties:

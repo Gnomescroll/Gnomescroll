@@ -1,4 +1,5 @@
 from game_objects import GameObject
+from math import sin, cos, pi
 
 projectile_dat = {
 
@@ -22,15 +23,23 @@ projectile_dat = {
 
 class Projectile(GameObject):
 
-    def __init__(self, x, y, z, x_angle, y_angle, type_id, id=0): #more args
+    def __init__(self, state=None, id=None, type=None): #more args
+        if None in (state, id, type,):
+            print 'Projectile __init__ missing args'
+            return
+    
         global projectile_dat
-        assert projectile_dat.has_key(type_id)
-        p = projectile_dat[type_id]
+        assert projectile_dat.has_key(type)
+        p = projectile_dat[type]
         #load projectile settings
 
+        x, y, z, vx, vy, vz = state
+        
         vx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         vy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
 
+        self.id = id
+        self.type = type
         self.state = [x,y,z,vx,vy,vz]
         self.speed = p.speed
         self.damage = p.damage
