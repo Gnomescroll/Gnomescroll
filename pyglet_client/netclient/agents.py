@@ -229,11 +229,17 @@ class PlayerAgent(Agent):
     def set_active_block(self, block_type=None):
         if block_type is None:
             block_type = self.facing_block()
+        if not block_type:
+            return
         self.active_block = block_type
+        print 'set active block to ', self.active_block
 
     def facing_block(self):
-        # retrieve block type value here
-        return 1
+        block = ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+        if block is None:
+            return 
+        block = GameStateGlobal.terrainMap.get(*block)
+        return self.active_block
 
     def switch_weapon(self, weapon_index):
         weapon_index += -1

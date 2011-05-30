@@ -118,7 +118,7 @@ class SendMessage(GenericMessage):
             return
         return {
             'aid'   :   agent.id,
-            'type'  :   agent.block_type,
+            'type'  :   agent.active_block,
         }
     
     @sendJSON('identify')

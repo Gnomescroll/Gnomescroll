@@ -83,7 +83,7 @@ class Mouse(object):
             GameStateGlobal.agent.fire()
         elif buttons == 2:
             playSound.music()
-        elif buttons = 4:
+        elif buttons == 4:
             GameStateGlobal.agent.set_active_block()
 
 import math
