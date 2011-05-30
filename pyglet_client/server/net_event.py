@@ -111,7 +111,7 @@ class MessageHandler:
             print 'msg fire_projectile :: agent %i unknown' % (agent_id,)
             return
             
-        agent.fire_projectile(tick)
+        agent.fire_projectile()
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()

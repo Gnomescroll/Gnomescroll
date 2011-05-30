@@ -322,6 +322,10 @@ class Agent:
         if self.respawn_countdown <= 0:
             self.respawn()
 
+    def fire_projectile(self):
+        print 'Agent.fire_projectile'
+        pass
+
     def take_damage(self, damage):
         self.health -= damage
         if self.health <= 0:

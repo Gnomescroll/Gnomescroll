@@ -30,7 +30,7 @@ class NetOut:
         self.sendPacket.send_binary(msg_id, bin_string)
 
 from net_client import NetClientGlobal
-
+from game_state import GameStateGlobal
 
 # calls send_json
 def sendJSON(f):
@@ -56,7 +56,6 @@ class SendMessage:
             return
         return {
             'cmd' : 'agent_control_state',
-            'cid' : NetClientGlobal.client_id,
             'tick' : 0,
             'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake],
             'aid'  : agent_id,
@@ -64,7 +63,9 @@ class SendMessage:
 
     @idRequired
     @sendJSON
-    def fire_projectile(self, agent_id):
+    def fire_projectile(self, agent_id=None):
+        if agent_id is None:
+            agent_id = GameStateGlobal.agent.id
         if agent_id is None:
             return
         return {
