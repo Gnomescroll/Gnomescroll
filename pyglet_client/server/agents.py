@@ -13,6 +13,8 @@ from net_out import NetOut
 
 from cube_dat import CubeGlobals
 
+from weapons import LaserGun, Pick, BlockApplier
+
 # datastore for agents
 class AgentList(GenericObjectList):
 
@@ -74,7 +76,7 @@ class Agent:
         self.health = self.HEALTH_MAX
         self.dead = False
 
-        self.weapons = []
+        self.weapons = [LaserGun(), Pick(), BlockApplier()]
 
         self.owner = player_id
 
@@ -107,7 +109,7 @@ class Agent:
                 'health': self.health,
                 'dead'  : int(self.dead),
                 'owner' : self.owner,
-                'weapons': self.weapons,
+                'weapons': [weapon.json() for weapon in self.weapons],
                 'state' : self.state,
             })
         else:

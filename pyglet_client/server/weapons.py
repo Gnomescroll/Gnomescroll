@@ -25,6 +25,11 @@ class Weapon(EquippableObject):
     def key(self):
         return self._weapons[str(self)]
 
+    def json(self):
+        return {
+            'type'  :   self.key(),
+        }
+
 class LaserGun(Weapon):
 
     def __init__(self):
@@ -59,9 +64,12 @@ class LaserGun(Weapon):
     def __str__(self):
         return 'Laser Gun'
 
-    def key(self):
-        return _weapons[str(self)]
-
+    def json(self):
+        return {
+            'type'  :   self.key(),
+            'clip'  :   self.clip,
+            'ammo'  :   self.ammo,
+        }
 
 class BlockApplier(Weapon):
 
@@ -75,6 +83,12 @@ class BlockApplier(Weapon):
 
     def __str__(self):
         return 'Block'
+
+    def json(self):
+        return {
+            'type'  :   self.key(),
+            'clip'  :   self.clip,
+        }
 
 class Pick(Weapon):
 
