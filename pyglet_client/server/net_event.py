@@ -163,8 +163,6 @@ class AdminMessageHandler:
         NetEvent.register_json_events(events)
 
     def _set_map(self, list, **msg):
-        l = msg.get('list', [])
-        terrainMap = GameStateGlobal.gameState.terrainMap
-        print "terrain map set"
-        for x,y,z,value in l:
+        terrainMap = GameStateGlobal.terrainMap
+        for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
