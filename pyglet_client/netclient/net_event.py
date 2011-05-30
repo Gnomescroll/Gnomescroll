@@ -249,7 +249,7 @@ class ProjectileMessageHandler:
             'projectile_update' : self._update_projectile,
             'projectile_destroy' : self._destroy_projectile,
         }
-        GameStateGlobal.register_json_events(events)
+        NetEventGlobal.register_json_events(events)
     @classmethod
     def init(cls):
         pass
@@ -302,7 +302,7 @@ class MapMessageHandler:
             'map_chunk' : self._map_chunk,
             'set_map' : self._set_map,
         }
-        GameStateGlobal.register_json_events(events)
+        NetEventGlobal.register_json_events(events)
     @classmethod
     def init(cls):
         cls.terrainMap = GameStateGlobal.terrainMap
