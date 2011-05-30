@@ -24,28 +24,26 @@ from game_state import GameStateGlobal
 from net_server import NetServer
 
     
-def sendJSONevent(cmd=None):
+def sendJSONevent(cmd=None, tick=True):
     def outer(f, *args):
         def wrapped(*args):
             self = args[0]
             json_data = f(*args)
-            cmd_final = cmd
+            if json_data is None:
+                json_data = {}
+                
+            cmd_final = cmd # must do this reassignment due to function scoping
             if cmd_final is None:
                 cmd_final = ''
             if cmd_final or 'cmd' not in json_data:
                 json_data['cmd'] = cmd_final
+
+            if tick:
+                json_data['tick'] = GameStateGlobal.gameState.time
+                
             self.add_json_event(json_data)
         return wrapped
     return outer
-
-# adds tick value to json
-def addTick(f):
-    def wrapped(*args):
-        self = args[0]
-        json_data = f(*args)
-        json_data['tick'] = GameStateGlobal.gameState.time
-        return json_data
-    return wrapped
 
 # sends event packets to all clients
 class EventOut:
@@ -70,40 +68,34 @@ class EventOut:
     def agent_state_change(self, agent):
         return {
             'id'   : agent.id,
-            'tick' : GameStateGlobal.gameState.time,
-            'state': agent.state #is a 9 tuple
+            'state': agent.state, #is a 9 tuple
         }
 
     @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
         return {
-            'cmd'   :   'agent_update',
-            'tick'  :   GameStateGlobal.gameState.time,
             'agent' :   agent.json(properties),
         }
 
     @sendJSONevent('projectile_create')
     def projectile_create(self, projectile):
-        return {
-            'cmd'   :   'projectile_create',
-            'tick'  :   GameStateGlobal.game,
-        }
+        return {}
         
-    @sendJSONevent
+    @sendJSONevent('projectile_destroy')
     def projectile_destroy(self, projectile):
         pass
-    @sendJSONevent
+        
+    @sendJSONevent('projectile_update')
     def projectile_update(self, projectile):
         pass
             
-    @sendJSONevent
+    @sendJSONevent('player_update', tick=False)
     def player_update(self, player):
         return {
-            'cmd'   : 'player_update',
             'player': player.json(),
         }
 
-    @sendJSONevent
+    @sendJSONevent('player_update', tick=False)
     def player_rename(self, player):
         return {
             'cmd'   : 'player_update',
@@ -113,17 +105,15 @@ class EventOut:
             },
         }
             
-    @sendJSONevent
+    @sendJSONevent('player_info', tick=False)
     def player_join(self, player):
         return {
-            'cmd'   : 'player_info',
             'player': player.json(),
         }
 
-    @sendJSONevent
+    @sendJSONevent('client_quit', tick=False)
     def client_quit(self, client_id):
         return {
-            'cmd'   : 'client_quit',
             'id'    : client_id,
         }
         
@@ -136,11 +126,29 @@ class MessageOut:
         pass
         
 # calls send_json
-def sendJSON(f):
+def sendJSON2(f):
     def wrapped(*args):
         self = args[0]
         self.send_json(f(*args))
     return wrapped
+
+def sendJSON(cmd=None):
+    def outer(f, *args):
+        def wrapped(*args):
+            self = args[0]
+            json_data = f(*args)
+            if json_data is None:
+                json_data = {}
+                
+            cmd_final = cmd # must do this reassignment due to function scoping
+            if cmd_final is None:
+                cmd_final = ''
+            if cmd_final != '' or 'cmd' not in json_data:
+                json_data['cmd'] = cmd_final
+
+            self.send_json(json_data)
+        return wrapped
+    return outer
 
 class SendMessage: #each connection has one of these
     @classmethod
@@ -155,42 +163,36 @@ class SendMessage: #each connection has one of these
         self.client.send(self.add_prefix(1, json.dumps(dict)))
 
     ## messages go out immediately
-    @sendJSON
+    @sendJSON('client_id')
     def send_client_id(self, connection):
         print "Send client id"
         return {
-            'cmd'  : 'client_id',
             'id'   : connection.id,
         }
 
-    @sendJSON
+    @sendJSON('client_quit')
     def client_quit(self, client_id):
         return {
-            'cmd'   : 'client_quit',
             'id'    : client_id,
         }
 
-    @sendJSON
+    @sendJSON('identify_fail')
     def identify_fail(self, connection, notes=''):
-        print notes
         return {
-            'cmd'   : 'identify_fail',
             'msg'   : notes,
         }
 
-    @sendJSON
+    @sendJSON('identified')
     def identified(self, connection, msg=''):
         print 'Identified'
         return {
-            'cmd'   : 'identified',
             'msg'   : msg,
             'player': connection.player.json(),
         }
 
-    @sendJSON
+    @sendJSON('chunk_list')
     def send_chunk_list(self):
         return {
-            'cmd'  : 'chunk_list',
             'list' : GameStateGlobal.terrainMap.get_chunk_list(),
         }
 
@@ -201,30 +203,26 @@ class SendMessage: #each connection has one of these
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
 
-    @sendJSON
+    @sendJSON('player_list')
     def send_players(self):
         return {
-            'cmd'    :  'player_list',
             'players':  GameStateGlobal.playerList.json()
         }
 
-    @sendJSON
+    @sendJSON('player_info')
     def send_player(self, player):
         return {
-            'cmd'   : 'player_info',
             'player': player.json(),
         }
 
-    @sendJSON
+    @sendJSON('remove_player')
     def remove_player(self, player):
         return {
-            'cmd'   : 'remove_player',
             'id'    : player.id,
         }
 
-    @sendJSON
+    @sendJSON('remove_agent')
     def remove_agent(self, agent):
         return {
-            'cmd'   : 'remove_agent',
             'id'    : agent.id,
         }
