@@ -61,13 +61,15 @@ def musicStream(source_path):
 
 
 # static sound effect sources; these are cached
-_sfx = {
-    'build' : media.load('media/build.wav', streaming=False), # little sound byte
-}
+_sounds = {
+    '_sfx' : {
+        'build' : media.load('media/build.wav', streaming=False), # little sound byte
+    },
 
-# music streams (won't be cached, arent latency critical). just supply pathname
-_music = {
-    'red_clouds'    :   'media/red_clouds.mp3',
+    # music streams (won't be cached, arent latency critical). just supply pathname
+    '_music' : {
+        'red_clouds'    :   'media/red_clouds.mp3',
+    }
 }
 
 # Add @audioSwitch for on/off ability;
@@ -81,8 +83,18 @@ class Sounds:
             self.enabled = bool(settings.audio)
         except ValueError:
             self.enabled = False
+
+        if self.enabled:
+            self._load_sounds()
+            
         self.sfx_vol = settings.sfx / 100.
         self.music_vol = settings.music / 100.
+
+    def _load_sounds(self):
+        _sfx = _sounds['_sfx']
+        for name, fp in _sfx.items():
+            _sfx[name] = media.load(fp, streaming=False)
+            
 
     @audioSwitch
     @soundEffect(_sfx['build'])
