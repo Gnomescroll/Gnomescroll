@@ -46,7 +46,6 @@ class Projectile(GameObject):
             print 'projectile update :: state is wrong length'
             return
 
-
     def json(self, properties=None): # json encodable string representation
         d = GameObject.json(self)
         if properties is None:

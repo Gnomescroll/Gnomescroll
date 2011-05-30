@@ -94,12 +94,13 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
-    @sendJSON('reload_laser_gun', tick=True)
-    def reload_laser_gun(self, agent=None):
+    @sendJSON('reload_weapon', tick=True)
+    def reload_weapon(self, agent=None):
         if agent is None or agent.id is None:
             return
         return {
             'aid'   :   agent.id,
+            'weapon':   GameStateGlobal.agent.active_weapon.key()
         }
 
     @idRequired
@@ -112,8 +113,8 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
-    @sendJSON('place_block', tick=True)
-    def place_block(self, agent=None):
+    @sendJSON('set_block', tick=True)
+    def set_block(self, agent=None):
         if agent is None or agent.id is None:
             return
         return {

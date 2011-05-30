@@ -3,6 +3,12 @@ from game_objects import EquippableObject
 
 class Weapon(EquippableObject):
 
+    _weapons = {
+        'Laser Gun' :   1,
+        'Pick'      :   2,
+        'Block'     :   3,
+    }
+
     def __init__(self):
         pass
 
@@ -14,6 +20,9 @@ class Weapon(EquippableObject):
 
     def __str__(self):
         return 'Weapon Base Class'
+
+    def key(self):
+        return self._weapons[str(self)]
 
 class LaserGun(Weapon):
 
@@ -40,10 +49,13 @@ class LaserGun(Weapon):
         amt = min(self.clip_size - self.clip, self.ammo) # lesser of: filling the clip, or remaining ammo
         self.ammo -= amt
         self.clip += amt
-        return 'reload_laser_gun'
+        return 'reload_weapon'
 
     def __str__(self):
         return 'Laser Gun'
+
+    def key(self):
+        return _weapons[str(self)]
 
 
 class BlockApplier(Weapon):
@@ -54,7 +66,7 @@ class BlockApplier(Weapon):
         self.clip = self.clip_size
 
     def fire(self):
-        return 'place_block'
+        return 'set_block'
 
     def __str__(self):
         return 'Block'
