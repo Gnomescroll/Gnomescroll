@@ -57,12 +57,14 @@ class MessageHandler:
         cmd = msg.get('cmd', None)
         if cmd is None:
             return
+
+        # agents
         if cmd == 'agent_position':
             self._agent_position(**msg)
         elif cmd == 'agent_update':
             self._agent_update(**msg)
 
-            
+        # projectiles
         elif cmd == ' projectile_create':
             self._create_projectile(**msg)
         elif cmd == 'projectile_update':
@@ -188,13 +190,39 @@ class MessageHandler:
         
 
     def _create_projectile(**args):
-        pass
+        projectile = args.get('projectile', None)
+        if projectile is None:
+            print 'msg create_projectile :: missing projectile'
+            return
+        GameStateGlobal.projectileList.create(**projectile)
 
     def _update_projectile(**args):
-        pass
+        projectile_data = args.get('projectile', None)
+        if projectile is None:
+            print 'msg update_projectile :: missing projectile'
+            return
+        try:
+            projectile_id = int(projectile_data.get('id', None))
+            projectile = GameStateGlobal.projectileList[projectile_id]
+            projectile.update(**projectile_data)
+        except TypeError:
+            print 'msg update_projectile :: Projectile id missing'
+        except ValueError:
+            print 'msg projectile_update :: projectile id invalid'
+        except KeyError:
+            print 'msg update_projectile :: projectile not found'
 
     def _destroy_projectile(**args):
-        pass
+        try:
+            id = int(args.get('id', None))
+            projectile = GameStateGlobal.projectileList[id]
+            GameStateGlobal.projectileList.destroy(projectile)
+        except TypeError:
+            print 'msg projectile_destroy :: projectile id missing'
+        except ValueError:
+            print 'msg projectile_destroy :: projectile id invalid'
+        except KeyError:
+            print 'msg projectile_destroy :: projectile not found'
 
     def _set_client_id(self, **msg):
         id = msg.get('id', None)

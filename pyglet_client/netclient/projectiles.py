@@ -49,6 +49,7 @@ class Projectile(GameObject):
             print 'projectile update :: state is not iterable'
         except AssertionError:
             print 'projectile update :: state is wrong length'
+            
     #run this once per frame for each projectile
     def tick(self):
         self.state = [x,y,z,vx,vy,vz]
