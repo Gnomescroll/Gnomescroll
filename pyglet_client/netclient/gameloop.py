@@ -30,13 +30,6 @@ from hud import Hud
 
 
 import settings  ## put this somewhere!!! so it only has to be in one place
-if settings.audio: ##is also in inport.py
-    try:
-        from sounds import playSound
-        print "audio enabled"
-    except:
-        print "audio disabled"
-        setting.audio = False
 
 import world #deprecate
 
@@ -112,7 +105,7 @@ class App(object):
         while not self.exit:
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
-
+            NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing

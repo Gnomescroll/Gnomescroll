@@ -96,7 +96,21 @@ class MessageHandler:
             print 'msg agent_control_state :: state has wrong number of elements'
             return
 
-        agent.set_agent_control_state(tick ,*state)
+        try:
+            angle = msg['angle']
+            angle = list(angle)
+            assert len(angle) == 2
+        except KeyError:
+            print 'msg agent_control_state :: missing "angle"'
+            return
+        except TypeError:
+            print 'msg agent_control_state :: angle is not iterable'
+            return
+        except AssertionError:
+            print 'msg agent_control_state :: angle has wrong number of elements'
+            return
+
+        agent.set_agent_control_state(tick, state, angle)
 
     def fire_projectile(self, **msg):
         try:

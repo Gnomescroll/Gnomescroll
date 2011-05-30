@@ -190,7 +190,7 @@ class Keyboard(object):
             brake
         ]
         ## send control state to server
-        NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
+        #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 
     def camera_input_mode(self, keyboard):
         v = 0.1

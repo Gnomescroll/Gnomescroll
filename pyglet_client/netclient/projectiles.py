@@ -27,7 +27,7 @@ class Projectile(GameObject):
     def __init__(self, state=None, id=None, type=None): #more args
         if None in (state, id, type,):
             print 'Projectile __init__ missing args'
-            return
+            raise TypeError
 
         global projectile_dat
         assert projectile_dat.has_key(type)
