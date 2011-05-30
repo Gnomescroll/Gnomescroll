@@ -253,14 +253,15 @@ class ProjectileMessageHandler:
     def __init__(self):
         self.register_events()
 
-    def _create_projectile(**args):
+    def _create_projectile(self, **args):
+        print 'received create projectile'
         projectile = args.get('projectile', None)
         if projectile is None:
             print 'msg create_projectile :: missing projectile'
             return
         GameStateGlobal.projectileList.create(**projectile)
 
-    def _update_projectile(**args):
+    def _update_projectile(self, **args):
         projectile_data = args.get('projectile', None)
         if projectile is None:
             print 'msg update_projectile :: missing projectile'
@@ -276,7 +277,7 @@ class ProjectileMessageHandler:
         except KeyError:
             print 'msg update_projectile :: projectile not found'
 
-    def _destroy_projectile(**args):
+    def _destroy_projectile(self, **args):
         try:
             id = int(args.get('id', None))
             projectile = GameStateGlobal.projectileList[id]

@@ -359,6 +359,7 @@ class Agent:
         print 'Agent.fire_projectile'
         p_data = [self.x, self.y, self.z, 1, 1, 1]
         projectile = GameStateGlobal.projectileList.create(*p_data)
+        NetOut.event.projectile_create(projectile)
 
     def take_damage(self, damage):
         if not self.dead:
