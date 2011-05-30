@@ -76,16 +76,25 @@ class Agent:
 
         self.owner = player_id
 
-    def json(self): # json encodable string representation
+    def json(self, properties=None): # json encodable string representation
         d = {
-            'id'    : self.id,
-            'health': self.health,
-            'dead'  : int(self.dead),
-            'owner' : self.owner,
-            'weapons': self.weapons,
-            'state' : self.state,
-        }
+            'id'    :   self.id,
+        }            
+        if properties is None:
+            d.update({
+                'health': self.health,
+                'dead'  : int(self.dead),
+                'owner' : self.owner,
+                'weapons': self.weapons,
+                'state' : self.state,
+            })
+        else:
+            for prop in properties:
+                d[prop] = getattr(self, prop)
+                if prop == 'dead':
+                    d[prop] = int(d[prop])
         return d
+        
 
     # set agent state explicitly
     def set_agent_control_state(self, tick, *args):
@@ -340,7 +349,9 @@ class Agent:
             self.health = min(self.health + amount, self.HEALTH_MAX)
 
     def die(self):
-        self.dead = True
+        if not self.dead:
+            NetOut.event.agent_update(self)
+            self.dead = True
 
     def revive(self):
         self.health = self.HEALTH_MAX

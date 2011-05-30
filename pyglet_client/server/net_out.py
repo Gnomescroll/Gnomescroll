@@ -59,6 +59,14 @@ class EventOut:
         }
 
     @sendJSONevent
+    def agent_update(self, agent, properties=None):
+        return {
+            'cmd'   :   'agent_update',
+            'tick'  :   GameStateGlobal.gameState.time,
+            'agent' :   agent.json(properties),
+        }
+            
+    @sendJSONevent
     def player_update(self, player):
         return {
             'cmd'   : 'player_update',

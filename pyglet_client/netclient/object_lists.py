@@ -174,3 +174,22 @@ class PlayerList(GenericObjectList):
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id
         self.names[player.name] = player.cid
+
+class ProjectileList(GenericObjectList):
+
+    def __init__(self):
+        from projectiles import Projectile
+        GenericObjectList.__init__(self)
+        self._metaname = 'ProjectileList'
+        self._itemname = 'Projectile'
+        self._object_type = Projectile
+
+    def create(self, *args, **projectile):
+        projectile = self._add(*args, **projectile)
+        return projectile
+
+    def destroy(self, projectile):
+        self._remove(projectile)
+        return projectile
+        
+    

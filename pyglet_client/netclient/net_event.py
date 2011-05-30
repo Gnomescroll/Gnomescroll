@@ -59,6 +59,16 @@ class MessageHandler:
             return
         if cmd == 'agent_position':
             self._agent_position(**msg)
+        elif cmd == 'agent_update':
+            self._agent_update(**msg)
+
+            
+        elif cmd == ' create_projectile':
+            self._create_projectile(**msg)
+        elif cmd == 'update_projectile':
+            self._update_projectile(**msg)
+        elif cmd == 'destroy_projectile':
+            self._destroy_projectile(**msg)
 
         # initial settings
         elif cmd == 'client_id':
@@ -162,6 +172,29 @@ class MessageHandler:
         agent.ax = ax
         agent.ay = ay
         agent.az = az
+
+    def _agent_update(self, **args):
+        agent_data = args.get('agent', None)
+        if agent is None:
+            print 'msg agent_update :: agent key is missing'
+
+        try:
+            agent_id = int(agent_data.get('id', None))
+        except ValueError:
+            print 'msg agent_update :: agent dict id is missing or invalid'
+            return
+
+        GameStateGlobal.agentList[agent_id].update_info(**agent_data)
+        
+
+    def _create_projectile(**args):
+        pass
+
+    def _update_projectile(**args):
+        pass
+
+    def _destroy_projectile(**args):
+        pass
 
     def _set_client_id(self, **msg):
         id = msg.get('id', None)
