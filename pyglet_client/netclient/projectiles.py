@@ -34,12 +34,13 @@ class Projectile(GameObject):
         p = projectile_dat[type]
         #load projectile settings
 
-        x, y, z, vx, vy, vz = state
-
+        
         #vx = cos( x_angle * pi) * cos( y_angle * pi)
         #vy = sin( x_angle * pi) * cos( y_angle * pi)
         #vz = sin( y_angle)
-        self.state = [float(x),float(y),float(z),float(vx),float(vy),float(vz)]
+        self.state = map(lambda k: float(k), state)
+
+        x, y, z, vx, vy, vz = state
 
         self.id = id
         self.type = type
@@ -71,12 +72,16 @@ class Projectile(GameObject):
         self.ttl += 1
         if self.ttl > self.ttl_max:
             self.delete()
+            return
 
         x += vx / fps
         y += vy / fps
         z += vz / fps
 
         self.state = [x,y,z,vx,vy,vz]
+
+    def delete(self):
+        GameStateGlobal.projectileList.destroy(self)
 
 
 import pyglet
