@@ -29,8 +29,11 @@ def sendJSONevent(cmd=None):
         def wrapped(*args):
             self = args[0]
             json_data = f(*args)
-            if cmd is None and 'cmd' not in json_data:
-                json_data['cmd'] = ''
+            cmd_final = cmd
+            if cmd_final is None:
+                cmd_final = ''
+            if cmd_final or 'cmd' not in json_data:
+                json_data['cmd'] = cmd_final
             self.add_json_event(json_data)
         return wrapped
     return outer
@@ -71,7 +74,7 @@ class EventOut:
             'state': agent.state #is a 9 tuple
         }
 
-    @sendJSONevent
+    @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
         return {
             'cmd'   :   'agent_update',
