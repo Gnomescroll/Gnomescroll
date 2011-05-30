@@ -226,8 +226,14 @@ class PlayerAgent(Agent):
         if reload_command:
             NetOut.sendMessage(reload_command, self)
 
-    def set_active_block(self, block_type):
+    def set_active_block(self, block_type=None):
+        if block_type is None:
+            block_type = self.facing_block()
         self.active_block = block_type
+
+    def facing_block(self):
+        # retrieve block type value here
+        return 1
 
     def switch_weapon(self, weapon_index):
         weapon_index += -1
