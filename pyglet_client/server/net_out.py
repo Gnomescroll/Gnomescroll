@@ -79,15 +79,21 @@ class EventOut:
 
     @sendJSONevent('projectile_create')
     def projectile_create(self, projectile):
-        return {}
+        return {
+            'projectile'    :   projectile.json(),
+        }
         
     @sendJSONevent('projectile_destroy')
     def projectile_destroy(self, projectile):
-        pass
+        return {
+            'id'    :   projectile.id,
+        }
         
     @sendJSONevent('projectile_update')
     def projectile_update(self, projectile):
-        pass
+        return {
+            'projectile'    :   projectile.json(),
+        }
             
     @sendJSONevent('player_update', tick=False)
     def player_update(self, player):

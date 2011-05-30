@@ -44,3 +44,15 @@ class Projectile(GameObject):
         except AssertionError:
             print 'projectile update :: state is wrong length'
             return
+
+
+    def json(self, properties=None): # json encodable string representation
+        d = GameObject.json(self)
+        if properties is None:
+            d.update({
+                'state' : self.state,
+            })
+        else:
+            for prop in properties:
+                d[prop] = getattr(self, prop)
+        return d
