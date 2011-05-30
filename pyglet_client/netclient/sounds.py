@@ -32,28 +32,28 @@ def audioSwitch(f):
     return wrapped
 
 # decorator for sound effect. accepts a cached source (see _sfx for example)
-def soundEffect(source):
+def soundEffect(sfx_name):
     def outer(f):
         def wrapped(*args):
             f(*args)
             self = args[0]
             player = media.ManagedSoundPlayer()
             player.volume = self.sfx_vol
-            player.queue(source)
+            player.queue(_sounds['sfx'][sfx_name])
             player.play()
         return wrapped
     return outer
 
 # decorator for long/infrequent audio file (not cached)
 # use for playback that isnt latency critical
-def musicStream(source_path):
+def musicStream(audio_name):
     def outer(f):
         def wrapped(*args):
             f(*args)
             self = args[0]
             player = media.ManagedSoundPlayer()
             player.volume = self.music_vol
-            source = media.load(source_path)
+            source = media.load(_sounds['music'][audio_name])
             player.queue(source)
             player.play()
         return wrapped
@@ -62,12 +62,12 @@ def musicStream(source_path):
 
 # static sound effect sources; these are cached
 _sounds = {
-    '_sfx' : {
-        'build' : media.load('media/build.wav', streaming=False), # little sound byte
+    'sfx' : {
+        'build' : 'media/build.wav', # little sound byte
     },
 
     # music streams (won't be cached, arent latency critical). just supply pathname
-    '_music' : {
+    'music' : {
         'red_clouds'    :   'media/red_clouds.mp3',
     }
 }
@@ -91,18 +91,18 @@ class Sounds:
         self.music_vol = settings.music / 100.
 
     def _load_sounds(self):
-        _sfx = _sounds['_sfx']
-        for name, fp in _sfx.items():
-            _sfx[name] = media.load(fp, streaming=False)
+        sfx = _sounds['sfx']
+        for name, fp in sfx.items():
+            sfx[name] = media.load(fp, streaming=False)
             
 
     @audioSwitch
-    @soundEffect(_sfx['build'])
+    @soundEffect('build')
     def build(self):
         pass
 
     @audioSwitch
-    @musicStream(_music['red_clouds'])
+    @musicStream('red_clouds')
     def music(self):
         pass
         
