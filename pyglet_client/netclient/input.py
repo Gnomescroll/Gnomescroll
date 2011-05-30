@@ -10,10 +10,7 @@ from pyglet.window import key
 from pyglet.window import mouse
 from pyglet.window.key import symbol_string
 
-import settings
-if settings.audio:
-    print "audo enabled"
-    from sounds import playSound
+from sounds import playSound
 
 class InputGlobal:
     keyboard = None

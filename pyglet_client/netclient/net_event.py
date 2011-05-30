@@ -77,14 +77,14 @@ class MessageHandler:
         elif cmd == 'agent_update':
             self._agent_update(**msg)
 
-#        # projectiles
-#       elif cmd == 'projectile_create':
-#            pass
-#            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
-#        elif cmd == 'projectile_update':
-#            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
-#        elif cmd == 'projectile_destroy':
-#            GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
+        # projectiles
+       elif cmd == 'projectile_create':
+            pass
+            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
+        elif cmd == 'projectile_update':
+            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
+        elif cmd == 'projectile_destroy':
+            GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
 
         # initial settings
         elif cmd == 'client_id':

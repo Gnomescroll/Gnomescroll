@@ -2,7 +2,7 @@
 Settings module
 '''
 
-audio = False
+audio = True
 
 sfx = 10
 music = 10
