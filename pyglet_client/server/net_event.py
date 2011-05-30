@@ -16,6 +16,11 @@ class NetEvent:
         cls.messageHandler.init()
         cls.adminMessageHandler.init()
 
+    @classmethod
+    def register_json_events(cls, events):
+        for string, function in events.items():
+            cls.messageHandler.json_events[string] = function
+
 from net_server import NetServer
 from game_state import GameStateGlobal
 from chat_server import ChatServer
@@ -26,14 +31,17 @@ class MessageHandler:
     def init(self):
         pass
     def __init__(self):
-        pass
+        self.json_events = {} #map strings to functions
 
     def process_json(self, msg, connection):
         cmd = msg.get('cmd', None)
         #print "MessageHandler.process_json: " + str(msg)
 
+        #use json_events when possible
+        if self.json_events.has_key(cmd):
+            self.json_events[cmd](**msg)
         # game state
-        if cmd == 'create_agent':
+        elif cmd == 'create_agent':
             GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(connection.id, **msg)
@@ -124,7 +132,7 @@ class MessageHandler:
         except KeyError:
             print 'msg fire_projectile :: agent %i unknown' % (agent_id,)
             return
-            
+
         agent.fire_projectile()
 
     def send_chunk_list(self, msg, connection):
@@ -147,14 +155,16 @@ class AdminMessageHandler:
     def init(self):
         pass
     def __init__(self):
-        pass
+        self.register_events()
+    def register_events(self):
+        events = {
+            'set_map' : self._set_map,
+        }
+        NetEvent.register_json_events(events)
 
-    def process_json(self, msg, connection):
-        cmd = msg.get('cmd', None)
-        if cmd == "set_map":
-            l = msg.get('list', [])
-            terrainMap = GameStateGlobal.gameState.terrainMap
-            for x,y,z,value in l:
-                terrainMap.set(x,y,z,value)
-        else:
-            print "Admin Message Handler, uncaught message"
+    def _set_map(self, list, **msg):
+        l = msg.get('list', [])
+        terrainMap = GameStateGlobal.gameState.terrainMap
+        print "terrain map set"
+        for x,y,z,value in l:
+            terrainMap.set(x,y,z,value)
