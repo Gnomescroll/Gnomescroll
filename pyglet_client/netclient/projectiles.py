@@ -2,23 +2,20 @@ from game_objects import GameObject
 
 projectile_dat = {
 
-    1: {
-    'speed' : 15,
-    'damage' : 20,
-    'ttl_max' : 400 #time to live in ticks
-#    'splash' : {
-#    'radius' : 3,
-#    'damage' : 15,
-#    'force' : 150,
+    1 : {
+        'speed' : 15,
+        'damage' : 20,
+        'ttl_max' : 400 #time to live in ticks
+    #    'splash' : {
+    #    'radius' : 3,
+    #    'damage' : 15,
+    #    'force' : 150,
     },
 
     2 : {
-    'speed' : 15,
-    'damage' : 20,
+        'speed' : 15,
+        'damage' : 20,
     },
-
-
-    }
 
 }
 
