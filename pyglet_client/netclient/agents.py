@@ -10,7 +10,7 @@ from math import floor, ceil, fabs
 from pyglet.gl import *
 
 from game_state import GameStateGlobal
-from weapons import LaserGun, Pick
+from weapons import LaserGun, Pick, BlockApplier
 
 # represents an agent under control of a player
 class Agent:
@@ -19,11 +19,11 @@ class Agent:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=-1):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
         if owner is None or id is None:
             return
         if weapons is None:
-            weapons = [LaserGun(), Pick()]
+            weapons = [LaserGun(), Pick(), BlockApplier()]
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(lambda k: float(k), state)
@@ -191,7 +191,7 @@ class Agent:
 
 class PlayerAgent(Agent):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=-1):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
         Agent.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
         self.you = True
@@ -218,13 +218,13 @@ class PlayerAgent(Agent):
         weapon = self.weapons[self.active_weapon]
         fire_command = weapon.fire()
         if fire_command:
-            NetOut.sendMessage.__dict__[fire_command]()
+            NetOut.sendMessage(fire_command, self)
 
     def reload(self):
         weapon = self.weapons[self.active_weapon]
         reload_command = weapon.reload()
         if reload_command:
-            NetOut.sendMessage.__dict__[reload_command]()
+            NetOut.sendMessage(reload_command, self)
 
     def set_active_block(self, block_type):
         self.active_block = block_type

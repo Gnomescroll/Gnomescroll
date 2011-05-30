@@ -29,9 +29,9 @@ class LaserGun(Weapon):
         self.ammo = self.max_ammo
 
     def fire(self):
-        if self.current_clip == 0:
+        if self.clip == 0:
             return False
-        self.current_clip -= 1
+        self.clip -= 1
         return 'fire_projectile'
 
     def reload(self):
@@ -45,6 +45,19 @@ class LaserGun(Weapon):
     def __str__(self):
         return 'Laser Gun'
 
+
+class BlockApplier(Weapon):
+
+    def __init__(self):
+        self.max_ammo = 100
+        self.clip_size = 100
+        self.clip = self.clip_size
+
+    def fire(self):
+        return 'place_block'
+
+    def __str__(self):
+        return 'Block'
 
 class Pick(Weapon):
 
