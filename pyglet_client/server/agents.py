@@ -60,6 +60,8 @@ class Agent:
         self.d_y = 0 #pitch?
         self.v_x = 0
         self.v_y = 0
+        self.x_angle = 0
+        self.y_angle = 0
 
         self.last_control_tick = 0
         self.jump = 0 #also need to record last jump
@@ -117,8 +119,9 @@ class Agent:
         
 
     # set agent state explicitly
-    def set_agent_control_state(self, tick, *args):
-        d_x, d_y, v_x, v_y, jetpack, jump, brake = args
+    def set_agent_control_state(self, tick, state, angle):
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = state
+        x_angle, y_angle = angle
         #print str(args)
         self.last_control_tick = tick
         self.d_x = d_x #a byte
@@ -129,6 +132,9 @@ class Agent:
         self.v_y = v_y
         self.jetpack = jetpack
         self.brake = brake
+
+        self.x_angle = x_angle
+        self.y_angle = y_angle
 
     # apply physics to agent
     def tick(self):

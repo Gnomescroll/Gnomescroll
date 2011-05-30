@@ -65,13 +65,14 @@ class SendMessage:
 
     @idRequired
     @sendJSON('agent_control_state', tick=True)
-    def send_agent_control_state(self, agent_id, d_x, d_y, v_x, v_y, jetpack, jump, brake):
-        if agent_id is None:  # agent not identified
+    def send_agent_control_state(self, agent):
+        if not agent.id :  # agent not identified
             return
         return {
-            'state': [d_x, d_y, v_x, v_y, jetpack, jump, brake],
-            'aid'  : agent_id,
-           }
+            'state': agent.control_state,
+            'angle': [agent.x_angle, agent.y_angle],
+            'aid'  : agent.id,
+        }
 
     @idRequired
     @sendJSON('fire_projectile', tick=True)
