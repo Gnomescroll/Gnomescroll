@@ -306,9 +306,7 @@ class MapMessageHandler:
         cls.terrainMap = GameStateGlobal.terrainMap
         cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         cls.mapController = MapControllerGlobal.mapController
-        cls.register_events()
         assert cls.mapController != None
-        cls.register_events()
 
     def __init__(self):
         self.register_events()
