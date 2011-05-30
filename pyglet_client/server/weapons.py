@@ -1,10 +1,34 @@
 from game_objects import GameObject
 from game_objects import EquippableObject
 
+        
 class Weapon(EquippableObject):
+
+    _weapons = {
+        'Laser Gun' :   1,
+        'Pick'      :   2,
+        'Block'     :   3,
+    }
 
     def __init__(self):
         pass
+
+    def fire(self):
+        return False
+
+    def reload(self):
+        return False
+
+    def __str__(self):
+        return 'Weapon Base Class'
+
+    def key(self):
+        return self._weapons[str(self)]
+
+    def json(self):
+        return {
+            'type'  :   self.key(),
+        }
 
 class LaserGun(Weapon):
 
@@ -20,16 +44,62 @@ class LaserGun(Weapon):
         self.ammo = self.max_ammo
 
     def fire(self):
-        if self.current_clip == 0:
+        if self.clip == 0:
             return False
-        self.current_clip -= 1
-        return True
+        self.clip -= 1
+        return 'fire_projectile'
 
     def reload(self):
         if self.ammo == 0:
             return False
         amt = min(self.clip_size - self.clip, self.ammo) # lesser of: filling the clip, or remaining ammo
+        old_ammo = self.ammo
+        old_clip = self.clip
         self.ammo -= amt
         self.clip += amt
-        return True
-        
+        if old_ammo == self.ammo and old_clip == self.clip:
+            return False
+        return 'reload_weapon'
+
+    def __str__(self):
+        return 'Laser Gun'
+
+    def json(self):
+        return {
+            'type'  :   self.key(),
+            'clip'  :   self.clip,
+            'ammo'  :   self.ammo,
+        }
+
+class BlockApplier(Weapon):
+
+    def __init__(self):
+        self.max_ammo = 100
+        self.clip_size = 100
+        self.clip = self.clip_size
+
+    def fire(self):
+        return 'place_block'
+
+    def __str__(self):
+        return 'Block'
+
+    def json(self):
+        return {
+            'type'  :   self.key(),
+            'clip'  :   self.clip,
+        }
+
+class Pick(Weapon):
+
+    def __init__(self):
+        pass
+
+    def fire(self):
+        return 'hit_block'
+
+    def reload(self):
+        return False
+
+    def __str__(self):
+        return 'Pick'
