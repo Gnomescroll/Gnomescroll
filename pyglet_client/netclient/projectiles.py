@@ -36,17 +36,17 @@ class Projectile(GameObject):
 
         x, y, z, vx, vy, vz = state
 
-        vx = cos( x_angle * pi) * cos( y_angle * pi)
-        vy = sin( x_angle * pi) * cos( y_angle * pi)
-        vz = sin( y_angle)
+        #vx = cos( x_angle * pi) * cos( y_angle * pi)
+        #vy = sin( x_angle * pi) * cos( y_angle * pi)
+        #vz = sin( y_angle)
         self.state = [float(x),float(y),float(z),vx,vy,vz]
 
         self.id = id
         self.type = type
-        self.speed = p.speed
-        self.damage = p.damage
+        self.speed = p['speed']
+        self.damage = p['damage']
         self.ttl = 0
-        self.ttl_max = p.ttl_max
+        self.ttl_max = p['ttl_max']
 
     def update(self, **args):
         try:
@@ -89,12 +89,15 @@ def draw_projectiles():
     c_list = []
 
     l= 1
+#    for p in GameStateGlobal.projectileList:
+#        print str(p)
 
-    for p in GameStateGlobal.projectileList:
+    for p in GameStateGlobal.projectileList.values():
         x,y,z,vx,vy,vz = p.state
 
+        v_num += 2
         v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
-        c_list = [0,0,255]*2
+        c_list += [0,0,255]*2
 
     pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
