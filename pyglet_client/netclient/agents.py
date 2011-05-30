@@ -60,21 +60,6 @@ class Agent:
         self.active_block = active_block   # which block to create
         self.active_weapon = active_weapon #    which weapon is held
 
-    def set_active_block(self, block_type):
-        self.active_block = block_type
-
-    def switch_weapon(self, weapon_index):
-        num_weapons = len(self.weapons)
-        if num_weapons == 0:
-            self.active_weapon = -1
-            return
-        if weapon_index == 'up':
-            self.active_weapon = (self.active_weapon + 1) % num_weapons
-        elif weapon_index == 'down':
-            self.active_weapons = (self.active_weapon -1) % num_weapons
-        elif weapon_index < num_weapons:
-                self.active_weapon = weapon_index
-
     def update_info(self, **agent):
         args = []
         if 'id' in agent:
@@ -227,6 +212,21 @@ class PlayerAgent(Agent):
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+
+    def set_active_block(self, block_type):
+        self.active_block = block_type
+
+    def switch_weapon(self, weapon_index):
+        num_weapons = len(self.weapons)
+        if num_weapons == 0:
+            self.active_weapon = -1
+            return
+        if weapon_index == 'up':
+            self.active_weapon = (self.active_weapon + 1) % num_weapons
+        elif weapon_index == 'down':
+            self.active_weapons = (self.active_weapon -1) % num_weapons
+        elif weapon_index < num_weapons:
+                self.active_weapon = weapon_index
 
     def draw(self):
         self.draw_aiming_direction()
