@@ -25,21 +25,19 @@ class NetEventGlobal:
 
     @classmethod
     def register_json_events(cls, events):
-        for string, function in events.values():
-            MessageHandler.json_events[string] = function
+        for string, function in events.items():
+            cls.messageHandler.json_events[string] = function
 
 class MessageHandler:
     player = None #move this somewhere else
     @classmethod
     def init(self):
-        self.json_events = {} #map strings to functions
-
         self.player = GameStateGlobal.player
         self.agent = GameStateGlobal.agent
         assert self.player != None
         assert self.agent != None
     def __init__(self):
-        pass
+        self.json_events = {} #map strings to functions
 
     def process_net_event(self, msg_type, datagram):
         if msg_type == 1:       #json message
