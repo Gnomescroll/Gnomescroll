@@ -32,10 +32,6 @@ class PlayerList(GenericObjectList):
         return player
 
     def client(self, client_id):
-        print 'plyaerlist.client'
-        print client_id
-        print self.client_ids
-        print self
         return self[self.client_ids[client_id]]
 
     def json(self):
@@ -51,15 +47,11 @@ class PlayerList(GenericObjectList):
             return 0
 
     def update(self, player, old_id=None, old_cid=None, old_name=None):
-        print 'removing old player'
         if old_id != player.id and old_id in self:
-            print 'id= %s' % (id,)
             del self.objects[old_id]
         if old_cid is not None and old_cid in self.client_ids:
-            print 'cid= %s' % (old_cid,)
             del self.client_ids[old_cid]
         if old_name is not None and old_name in self.names:
-            print 'name= %s' % (old_name,)
             del self.names[old_name]
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id

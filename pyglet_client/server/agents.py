@@ -230,7 +230,8 @@ class Agent:
             if xc_neg_projected != 0:
                 vx = 0
         else:
-            print "X collision error!!"
+            pass
+            #print "X collision error!!"
 
     ## handle y collisions
         #yc_pos_current, yc_pos_projected , yc_neg_current, yc_neg_projected
@@ -241,7 +242,8 @@ class Agent:
             if yc_neg_projected != 0:
                 vy = 0
         else:
-            print "Y collision error!!"
+            pass
+            #print "Y collision error!!"
 
 
         #environmental and input controls
@@ -300,9 +302,11 @@ class Agent:
             z += .50 / tr
 
         if zc_neg_projected != 0:
-            print "Predicted neg Z-Collision!"
+            #print "Predicted neg Z-Collision!"
+            pass
         if zc_current != 0:
-            print "Hard current neg Z-Collision!"
+            pass
+            #print "Hard current neg Z-Collision!"
 
 ## Position Change ##
         z += vz
