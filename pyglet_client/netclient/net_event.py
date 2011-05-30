@@ -101,14 +101,14 @@ class MessageHandler:
         elif cmd == 'identified':
             self._on_identify(**msg)
 
-        #map events
-        elif cmd == 'chunk_list':
-            NetEventGlobal.mapMessageHandler._chunk_list(**msg)
-            #print "Chunk List Received"
-            #print str(msg['list'])
+#        #map events
+#        elif cmd == 'chunk_list':
+#            NetEventGlobal.mapMessageHandler._chunk_list(**msg)
+#            #print "Chunk List Received"
+#            #print str(msg['list'])
 
-        elif cmd == 'set_map':
-            NetEventGlobal.mapMessageHandler._set_map(**msg)
+#        elif cmd == 'set_map':
+#            NetEventGlobal.mapMessageHandler._set_map(**msg)
 
         #end map events
         elif cmd == 'client_quit':
@@ -305,9 +305,7 @@ class MapMessageHandler:
         cls.terrainMap = GameStateGlobal.terrainMap
         cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         cls.mapController = MapControllerGlobal.mapController
-        cls.register_events()
         assert cls.mapController != None
-        cls.register_events()
 
     def __init__(self):
         self.register_events()
