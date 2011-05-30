@@ -324,10 +324,10 @@ class MapMessageHandler:
         self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
         self.mapController.incoming_map_chunk(x,y,z)
 
-    def _set_map(self, value, **msg):
-        (x,y,z,value) = value
-        self.terrainMap.set(x,y,z,value)
-        self.mapChunkManager.set_map(x,y,z) #redraw chunk
+    def _set_map(self, list, **msg):
+        for x,y,z,value in list:
+            self.terrainMap.set(x,y,z,value)
+            self.mapChunkManager.set_map(x,y,z) #redraw chunk
 
 
 from game_state import GameStateGlobal

@@ -23,7 +23,7 @@ class NetOut:
 from game_state import GameStateGlobal
 from net_server import NetServer
 
-    
+
 def sendJSONevent(cmd=None, tick=True):
     def outer(f, *args):
         def wrapped(*args):
@@ -31,7 +31,7 @@ def sendJSONevent(cmd=None, tick=True):
             json_data = f(*args)
             if json_data is None:
                 json_data = {}
-                
+
             cmd_final = cmd # must do this reassignment due to function scoping
             if cmd_final is None:
                 cmd_final = ''
@@ -40,7 +40,7 @@ def sendJSONevent(cmd=None, tick=True):
 
             if tick:
                 json_data['tick'] = GameStateGlobal.gameState.time
-                
+
             self.add_json_event(json_data)
         return wrapped
     return outer
@@ -82,19 +82,19 @@ class EventOut:
         return {
             'projectile'    :   projectile.json(),
         }
-        
+
     @sendJSONevent('projectile_destroy')
     def projectile_destroy(self, projectile):
         return {
             'id'    :   projectile.id,
         }
-        
+
     @sendJSONevent('projectile_update')
     def projectile_update(self, projectile):
         return {
             'projectile'    :   projectile.json(),
         }
-            
+
     @sendJSONevent('player_update', tick=False)
     def player_update(self, player):
         return {
@@ -110,7 +110,7 @@ class EventOut:
                 'id'    : player.id,
             },
         }
-            
+
     @sendJSONevent('player_info', tick=False)
     def player_join(self, player):
         return {
@@ -122,7 +122,12 @@ class EventOut:
         return {
             'id'    : client_id,
         }
-        
+
+    @sendJSONevent('set_map', tick=False)
+    def client_quit(self, list):
+        return {
+            'list'    : list,
+        }
 
 #this is global message out across the connection pool
 class MessageOut:
@@ -130,7 +135,7 @@ class MessageOut:
         pass
     def __init__(self):
         pass
-        
+
 # calls send_json
 def sendJSON2(f):
     def wrapped(*args):
@@ -145,7 +150,7 @@ def sendJSON(cmd=None):
             json_data = f(*args)
             if json_data is None:
                 json_data = {}
-                
+
             cmd_final = cmd # must do this reassignment due to function scoping
             if cmd_final is None:
                 cmd_final = ''
