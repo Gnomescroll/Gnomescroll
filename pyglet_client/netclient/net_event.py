@@ -23,10 +23,17 @@ class NetEventGlobal:
         MapMessageHandler.init()
         ProjectileMessageHandler.init()
 
+    @classmethod
+    def register_json_events(cls, events):
+        for string, function in events.values():
+            MessageHandler.json_events[string] = function
+
 class MessageHandler:
     player = None #move this somewhere else
     @classmethod
     def init(self):
+        self.json_events = {} #map strings to functions
+
         self.player = GameStateGlobal.player
         self.agent = GameStateGlobal.agent
         assert self.player != None
@@ -60,20 +67,23 @@ class MessageHandler:
         cmd = msg.get('cmd', None)
         if cmd is None:
             return
+        #use json_events when possible
+        if self.json_events.has_key(cmd):
+            self.json_events[cmd](**msg)
 
         # agents
-        if cmd == 'agent_position':
+        elif cmd == 'agent_position':
             self._agent_position(**msg)
         elif cmd == 'agent_update':
             self._agent_update(**msg)
 
-        # projectiles
-        elif cmd == ' projectile_create':
-            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
-        elif cmd == 'projectile_update':
-            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
-        elif cmd == 'projectile_destroy':
-            GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
+#        # projectiles
+#        elif cmd == 'projectile_create':
+#            GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
+#        elif cmd == 'projectile_update':
+#            GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
+#        elif cmd == 'projectile_destroy':
+#            GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
 
         # initial settings
         elif cmd == 'client_id':
@@ -192,7 +202,7 @@ class MessageHandler:
             return
 
         GameStateGlobal.agentList[agent_id].update_info(**agent_data)
-        
+
     def _set_client_id(self, **msg):
         id = msg.get('id', None)
         if id is None:
@@ -236,7 +246,13 @@ class ProjectileMessageHandler:
 
     @classmethod
     def init(self):
-        pass
+        events = {
+            'projectile_create' : self._create_projectile,
+            'projectile_update' : self._update_projectile,
+            'projectile_destroy' : self._destroy_projectile,
+        }
+        GameStateGlobal.register_json_events(events)
+
     def __init__(self):
         pass
 
