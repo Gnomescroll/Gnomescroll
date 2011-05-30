@@ -53,8 +53,9 @@ class ProjectileList(GenericObjectList):
 '''
 Projectile class
 '''
-from game_objects import GameObject
 from math import sin, cos, pi
+from game_objects import GameObject
+from cube_dat import CubeGlobals
 
 class Projectile(GameObject):
 
@@ -95,7 +96,7 @@ class Projectile(GameObject):
 
     #run this once per frame for each projectile
     def tick(self):
-        [x,y,z,vx,vy,vz] = self.state
+        x,y,z,vx,vy,vz = self.state
 
         fps = 60. # frame per second
         speed = self.speed / fps
@@ -109,11 +110,19 @@ class Projectile(GameObject):
         y += vy / fps
         z += vz / fps
 
+        if CubeGlobals.collisionDetection.collision(x, y, z):
+            agent_hit = GameStateGlobal.agentList.at(*pos)
+            if agent_hit != False:
+                print 'DIEEEE'
+                print agent_hit
+                agent_hit.take_damage(self.damage)
+            self.delete()
+            return
+
         self.state = [x,y,z,vx,vy,vz]
-        print self.state
+
 
     def delete(self):
-        print 'deleting bullet'
         GameStateGlobal.projectileList.destroy(self)
 
     def json(self, properties=None): # json encodable string representation

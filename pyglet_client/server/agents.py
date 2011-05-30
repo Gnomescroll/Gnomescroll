@@ -34,6 +34,12 @@ class AgentList(GenericObjectList):
             return
         self._remove(agent)
 
+    def at(self, position):
+        for agent in self:
+            if agent.pos() == position:
+                return agent
+        return False
+
 # represents an agent under control of a player
 class Agent:
 
@@ -84,6 +90,9 @@ class Agent:
         self.weapons = [LaserGun(), Pick(), BlockApplier()]
 
         self.owner = player_id
+
+    def pos(self):
+        return self.state[0:3]
 
     def __getattr__(self, attr):
         if attr == 'x':
@@ -412,8 +421,8 @@ class Agent:
 
     def _spawn_point(self):
         # later, add spawn zones/ boundaries to spawn in
-        x = randrange(0,11)
-        y = randrange(0,11)
+        x = randrange(0,7)
+        y = randrange(0,7)
         z = 5
         return [x, y, z]
 
