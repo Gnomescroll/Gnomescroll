@@ -421,7 +421,7 @@ class Agent:
 
     def die(self, projectile_owner=None):
         if not self.dead:
-            NetOut.event.agent_update(self)
+            
             try:
                 you_player = GameStateGlobal.playerList[self.owner]
                 you = NetServer.connectionPool.by_client_id(you_player.cid)
@@ -451,6 +451,7 @@ class Agent:
                     you.sendMessage.you_died('You were killed by a ghost.')
             
             self.dead = True
+            NetOut.event.agent_update(self)
 
     def _revive(self):
         self.health = self.HEALTH_MAX

@@ -175,6 +175,8 @@ class Keyboard(object):
             self.agent_input_mode(keyboard)
 
     def agent_input_mode(self, keyboard):
+        if GameStateGlobal.agent.dead:
+            return
         v = 1
         d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
 

@@ -160,7 +160,6 @@ class PlayerList(GenericObjectList):
                 return
 
     def update(self, player, old_id=None, old_cid=None, old_name=None):
-        print 'removing old player'
         if old_cid is not None and old_cid in self.client_ids:
             print 'cid= %s' % (old_cid,)
             del self.client_ids[old_cid]
