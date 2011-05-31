@@ -70,15 +70,25 @@ class Player:
         self.id = id
         self.agent = GameStateGlobal.agentList.create(self.id)
 
-    def json(self): # json encodable string representation
+    def json(self, properties=None, agent_properties=None): # json encodable string representation
         d = {
+            'id'    : self.id,
+        }
+        if properties is None:
+            d.update({
             'kills' : self.kills,
             'deaths': self.deaths,
             'name'  : self.name,
             'cid'   : self.cid,
-            'id'    : self.id,
-            'agent' : self.agent.json()
-        }
+            'agent' : '',
+        })
+        else:
+            if type(properties) == str:
+                properties = [properties]
+            for prop in properties:
+                d[prop] = getattr(self, prop)
+        if 'agent' in d:
+            d['agent'] = self.agent.json(agent_properties)
         return d    
 
     def killed(self):

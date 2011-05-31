@@ -95,10 +95,10 @@ class EventOut:
             'projectile'    :   projectile.json(),
         }
 
-    @sendJSONevent('player_update', tick=False)
+    @sendJSONevent('player_update', tick=False, properties=None)
     def player_update(self, player):
         return {
-            'player': player.json(),
+            'player': player.json(properties),
         }
 
     @sendJSONevent('player_update', tick=False)
@@ -236,4 +236,16 @@ class SendMessage: #each connection has one of these
     def remove_agent(self, agent):
         return {
             'id'    : agent.id,
+        }
+
+    @sendJSON('you_died')
+    def you_died(self, msg):
+        return {
+            'msg'   :   msg,
+        }
+
+    @sendJSON('you_killed')
+    def you_killed(self, msg):
+        return {
+            'msg'   :   msg,
         }

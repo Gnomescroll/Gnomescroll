@@ -59,7 +59,7 @@ from cube_dat import CubeGlobals
 
 class Projectile(GameObject):
 
-    def __init__(self, state=None, type=None): #more args
+    def __init__(self, state=None, type=None, owner=None): #more args
         if None in (state, type,):
             print 'Projectile __init__ missing args'
             raise TypeError
@@ -78,6 +78,8 @@ class Projectile(GameObject):
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
+
+        self.owner = None
 
     def update(self, **args):
         try:
@@ -116,7 +118,7 @@ class Projectile(GameObject):
 
         agent_hit = GameStateGlobal.agentList.at((x, y, z,))
         if agent_hit != False:
-            agent_hit.take_damage(self.damage)
+            agent_hit.take_damage(self.damage, self.owner)
 
         self.state = [x,y,z,vx,vy,vz]
 
@@ -130,6 +132,7 @@ class Projectile(GameObject):
             d.update({
                 'state' : self.state,
                 'type'  : self.type,
+                #'owner' : self.owner,
             })
         else:
             for prop in properties:
