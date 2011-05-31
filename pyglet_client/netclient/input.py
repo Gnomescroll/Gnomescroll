@@ -79,14 +79,15 @@ class Mouse(object):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        if buttons == 1:
-            playSound.build()
-            GameStateGlobal.agent.fire()
-        elif buttons == 2:
-            #playSound.music()
-            pass
-        elif buttons == 4:
-            GameStateGlobal.agent.set_active_block()
+        if InputGlobal.input == 'agent':
+            if buttons == 1:
+                #playSound.build()
+                GameStateGlobal.agent.fire()
+            elif buttons == 2:
+                #playSound.music()
+                pass
+            elif buttons == 4:
+                GameStateGlobal.agent.set_active_block()
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if scroll_y > 0:

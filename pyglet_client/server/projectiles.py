@@ -10,8 +10,8 @@ projectile_dat = {
     1 : {
         'speed' : 15,
         'damage' : 20,
-        'ttl_max' : 400 #time to live in ticks
-        'penetrates': False
+        'ttl_max' : 400, #time to live in ticks
+        'penetrates': False,
     #    'splash' : {
     #    'radius' : 3,
     #    'damage' : 15,
@@ -79,9 +79,9 @@ class Projectile(GameObject):
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
-        self.penetratis = p['penetrates']
+        self.penetrates = p['penetrates']
 
-        self.owner = None
+        self.owner = owner
 
     def update(self, **args):
         try:
@@ -125,7 +125,6 @@ class Projectile(GameObject):
                 self.delete()
 
         self.state = [x,y,z,vx,vy,vz]
-
 
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
