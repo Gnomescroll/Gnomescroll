@@ -11,6 +11,7 @@ projectile_dat = {
         'speed' : 15,
         'damage' : 20,
         'ttl_max' : 400 #time to live in ticks
+        'penetrates': False
     #    'splash' : {
     #    'radius' : 3,
     #    'damage' : 15,
@@ -78,6 +79,7 @@ class Projectile(GameObject):
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
+        self.penetratis = p['penetrates']
 
         self.owner = None
 
@@ -119,6 +121,8 @@ class Projectile(GameObject):
         agent_hit = GameStateGlobal.agentList.at((x, y, z,))
         if agent_hit != False:
             agent_hit.take_damage(self.damage, self.owner)
+            if not self.penetrates:
+                self.delete()
 
         self.state = [x,y,z,vx,vy,vz]
 
