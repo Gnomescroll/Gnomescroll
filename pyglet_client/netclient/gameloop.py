@@ -1,5 +1,3 @@
-
-
 from pyglet import clock, font, image, window
 from pyglet.gl import *
 

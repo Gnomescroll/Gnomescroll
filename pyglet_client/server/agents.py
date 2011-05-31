@@ -34,6 +34,15 @@ class AgentList(GenericObjectList):
             return
         self._remove(agent)
 
+    def agents_near_point(self, x,y,z, radius):
+        for agent in self.values():
+            x_, y_, z_ = agent.pos()
+            r2 = float(radius)**2
+            l = []
+            if r2 < (x_-x)**2+(y_-y)**2+(z_-z)**2
+                l.append(agent)
+            return agent
+
     def at(self, position):
         _x, _y, _z = [int(k) for k in position]
         for agent in self.values():
@@ -57,7 +66,7 @@ class Agent:
     def __init__(self, player_id, position=None, id=None):
         if position is None:
             position = self._spawn_point()
-            
+
         x,y,z = [float(i) for i in position]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
 
@@ -95,11 +104,35 @@ class Agent:
         self.dead = False
 
         self.weapons = [LaserGun(), Pick(), BlockApplier()]
-    
+
         self.owner = player_id
 
     def pos(self):
         return self.state[0:3]
+
+    #collision tests
+    def point_collision_test(self, x_,y_,z_):
+        x,y,z = self.pos()
+        b_height = self.b_height
+        t_height = self.t_height
+        box_r = self.box_r
+
+        z_min = z_ - self.b_height
+        z_max = z_ + self.t_height
+        x_max = x + box_r
+        x_min = x - box_r
+        y_max = y + box_r
+        y_min = y + box_r
+
+        if x_min < x_ < x_max and y_min < y_ < y_max and z_min < z_ < z_max:
+            return True
+        else:
+            return False
+
+    def sphere_collision_test(self, x,y,z,r):
+        pass
+
+    #end collision test
 
     def __getattr__(self, attr):
         if attr == 'x':
