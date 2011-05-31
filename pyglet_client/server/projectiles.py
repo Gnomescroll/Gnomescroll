@@ -68,7 +68,7 @@ class Projectile(GameObject):
         assert projectile_dat.has_key(type)
         p = projectile_dat[type]
         #load projectile settings
-        
+
         self.state = map(lambda k: float(k), state)
         x, y, z, vx, vy, vz = state
 
@@ -110,13 +110,16 @@ class Projectile(GameObject):
         y += vy / fps
         z += vz / fps
 
-        if CubeGlobals.collisionDetection.collision(x, y, z):
+        if CubeGlobals.collisionDetection.collision(int(x), int(y), int(z)):
             self.delete()
             return
 
-        agent_hit = GameStateGlobal.agentList.at((x, y, z,))
-        if agent_hit != False:
-            agent_hit.take_damage(self.damage)
+        agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
+        for a in agent_list:
+            pass
+        #agent_hit = GameStateGlobal.agentList.at((x, y, z,))
+        #if agent_hit != False:
+        #    agent_hit.take_damage(self.damage)
 
         self.state = [x,y,z,vx,vy,vz]
 

@@ -35,13 +35,13 @@ class AgentList(GenericObjectList):
         self._remove(agent)
 
     def agents_near_point(self, x,y,z, radius):
+        l=[]
         for agent in self.values():
             x_, y_, z_ = agent.pos()
             r2 = float(radius)**2
-            l = []
-            if r2 < (x_-x)**2+(y_-y)**2+(z_-z)**2
+            if r2 < (x_-x)**2+(y_-y)**2+(z_-z)**2:
                 l.append(agent)
-            return agent
+        return l
 
     def at(self, position):
         _x, _y, _z = [int(k) for k in position]
