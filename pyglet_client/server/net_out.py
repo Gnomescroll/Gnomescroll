@@ -95,8 +95,8 @@ class EventOut:
             'projectile'    :   projectile.json(),
         }
 
-    @sendJSONevent('player_update', tick=False, properties=None)
-    def player_update(self, player):
+    @sendJSONevent('player_update', tick=False)
+    def player_update(self, player, properties=None):
         return {
             'player': player.json(properties),
         }

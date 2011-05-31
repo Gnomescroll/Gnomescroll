@@ -1,5 +1,6 @@
 from game_state import GenericObjectList
 from game_state import GameStateGlobal
+from net_out import NetOut
 
 # datastore for Players
 class PlayerList(GenericObjectList):
@@ -93,9 +94,11 @@ class Player:
 
     def killed(self):
         self.kills += 1
+        NetOut.event.player_update(self, 'kills')
 
     def died(self):
         self.deaths += 1
+        NetOut.event.player_update(self, 'deaths')
 
     def quit(self):
         GameStateGlobal.playerList.leave(self)

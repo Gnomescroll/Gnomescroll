@@ -423,7 +423,9 @@ class Agent:
         if not self.dead:
             NetOut.event.agent_update(self)
             try:
-                you = NetServer.connectionPool.by_client_id(GameStateGlobal.playerList[self.owner].cid)
+                you_player = GameStateGlobal.playerList[self.owner]
+                you = NetServer.connectionPool.by_client_id(you_player.cid)
+                you_player.died()
             except e:
                 print 'Error obtaining client object that owns dying agent.'
                 print e
@@ -435,7 +437,7 @@ class Agent:
             else:
                 try:
                     killer = GameStateGlobal.playerList[projectile_owner]
-                    name = killer.name
+                    killer.killed()
                     msg = 'You were killed by %s' % (killer.name,)
                     you.sendMessage.you_died(msg)
                     try:
