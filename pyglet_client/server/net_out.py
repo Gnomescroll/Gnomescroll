@@ -101,15 +101,12 @@ class EventOut:
             'player': player.json(properties),
         }
 
-    @sendJSONevent('player_update', tick=False)
-    def player_rename(self, player):
-        return {
-            'cmd'   : 'player_update',
-            'player': {
-                'name'  : player.name,
-                'id'    : player.id,
-            },
-        }
+    #@sendJSONevent('player_update', tick=False)
+    #def player_rename(self, player, properties):
+        #return {
+            #'cmd'   : 'player_update',
+            #'player': player.json(properties)
+        #}
 
     @sendJSONevent('player_info', tick=False)
     def player_join(self, player):
