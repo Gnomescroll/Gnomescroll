@@ -76,9 +76,11 @@ class Agent:
             self.health = agent['health']
         if 'dead' in agent:
             self.dead = bool(agent['dead'])
-        if 'weapons' in agent:
-            # update weapons accordingly
-            weapons = agent['weapons']
+            if self.dead:
+                print 'you are now dead'
+        #if 'weapons' in agent:
+            ## update weapons accordingly
+            #weapons = agent['weapons']
         if 'owner' in agent:
             self.owner = agent['owner']
         if 'state' in agent:
@@ -101,53 +103,14 @@ class Agent:
 
     # apply physics to agent
     def tick(self):
-        if not self.dead:
-            self._tick_physics()
-        else:
-            self._tick_respawn()
+        pass
+        #if not self.dead:
+            #self._tick_physics()
+        #else:
+            #self._tick_respawn()
 
-
-    def _tick_physics(self):
-        assert False  #needs to do interopolation
-
-    def _tick_respawn(self):
-        if self.dead:
-            self.respawn_countdown -= 1
-        if self.respawn_countdown <= 0:
-            self.respawn()
-
-    def take_damage(self, damage):
-        self.health -= damage
-        if self.health <= 0:
-            self.die()
-
-    def heal(self, amount):
-        if not self.dead:
-            self.health = min(self.health + amount, self.HEALTH_MAX)
-
-    def die(self):
-        self.dead = True
-
-    def revive(self):
-        self.health = self.HEALTH_MAX
-        self.dead = False
-        self.respawn_countdown = self.RESPAWN_TICKS
-
-    def _spawn_point(self):
-        # later, add spawn zones/ boundaries to spawn in
-        return [10, 10, 100]
-
-    def _set_position(self, pos=None):
-        if pos is None:
-            pos = self._spawn_point()
-        else:
-            assert len(pos) <= 3
-            self.state[0:len(pos)] = pos
-
-    def respawn(self): # or can destroy / recreate Agent
-        self.revive()
-        self.set_position()
-
+    #def _tick_physics(self):
+        #assert False  #needs to do interopolation
 
     def draw(self):
         #self.draw_aiming_direction()

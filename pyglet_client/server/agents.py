@@ -63,7 +63,7 @@ class AgentList(GenericObjectList):
 class Agent:
 
     HEALTH_MAX = 100
-    _RESPAWN_TIME = 0.1 # seconds
+    _RESPAWN_TIME = 2. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
     def __init__(self, player_id, position=None, id=None):
@@ -447,7 +447,7 @@ class Agent:
             if self.health <= 0:
                 self.die(projectile_owner)
             elif self.health != old:
-                NetOut.event.agent_update(self)
+                NetOut.event.agent_update(self, 'health')
         print damage
 
     def heal(self, amount):
@@ -455,7 +455,7 @@ class Agent:
             old = self.health
             self.health = min(self.health + amount, self.HEALTH_MAX)
             if self.health != old:
-                NetOut.event.agent_update(self)
+                NetOut.event.agent_update(self, 'health')
 
     def die(self, projectile_owner=None):
         if not self.dead:
@@ -494,7 +494,7 @@ class Agent:
                     you.sendMessage.you_died('You were killed by a ghost.')
             
             self.dead = True
-            NetOut.event.agent_update(self)
+            NetOut.event.agent_update(self, ['dead', 'health'])
 
     def _revive(self):
         self.health = self.HEALTH_MAX
@@ -517,4 +517,4 @@ class Agent:
     def respawn(self): # or can destroy / recreate Agent
         self._revive()
         self._set_position()
-        NetOut.event.agent_update(self)
+        NetOut.event.agent_update(self, ['health', 'dead', 'state'])
