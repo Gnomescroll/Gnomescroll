@@ -103,18 +103,6 @@ class MessageHandler:
             InputGlobal.enable_chat()
             ChatClientGlobal.chatClient.insert_string('/nick ')
 
-        elif cmd == 'identified':
-            self._on_identify(**msg)
-
-#        #map events
-#        elif cmd == 'chunk_list':
-#            NetEventGlobal.mapMessageHandler._chunk_list(**msg)
-#            #print "Chunk List Received"
-#            #print str(msg['list'])
-
-#        elif cmd == 'set_map':
-#            NetEventGlobal.mapMessageHandler._set_map(**msg)
-
         #end map events
         elif cmd == 'client_quit':
             id = msg.get('id', None)
@@ -136,29 +124,25 @@ class MessageHandler:
         else:
             print "JSON message type unrecognized"
 
-    def _update_player(self, **msg):
-        try:
-            player = msg['player']
-            assert type(player) == dict
-        except KeyError:
-            print 'msg player_info :: player key missing'
-            return False
-        except AssertionError:
-            print 'msg player_info :: player is not a dict'
-            return False
-        GameStateGlobal.load_player_info(**player)
-        return True
 
-    def _set_client_id(self, **msg):
-        id = msg.get('id', None)
-        if id is None:
-            print '_register msg missing id'
-            return False
+class ClientMessageHandler:
+    def register_events(self):
+        NetEventGlobal.register_json_events({
+            'set_client_id' : self._set_client_id,
+            'identified' : self._identified,
+        })
+    @classmethod
+    def init(cls):
+        pass
+    def __init__(self):
+        self.register_events()
+
+    def _set_client_id(self, id, **arg):
         print "Received Client Id: %s" % (id,)
         NetClientGlobal.client_id = id
         return True
 
-    def _on_identify(self, **msg):
+    def _identified(self, **msg):
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
 
@@ -194,8 +178,10 @@ class PlayerMessageHandler:
             'player_player' : self._player_player,
             'player_info' : self._player_info,
             'remove_player' : self._remove_player,
+            'player_update' : self._player_update,
+            'update_player' : self._update_player,
+            'identify_fail' : self._identify_fail,
         })
-
     @classmethod
     def init(cls):
         pass
@@ -219,10 +205,24 @@ class PlayerMessageHandler:
             return
 
     def _remove_player(self, id, **arg):
-        #id = msg.get('id', None)
-        #if id is None:
-        #    return
         GameStateGlobal.remove_player(id)
+
+    def _update_player(self, player, **msg):
+        try:
+            assert type(player) == dict
+        except AssertionError:
+            print 'msg player_info :: player is not a dict'
+            return False
+        GameStateGlobal.load_player_info(**player)
+        return True
+
+    def _identify_fail(self, msg, **arg):
+        # send system notification
+        ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
+        ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
+        # activate chat, insert /nick
+        InputGlobal.enable_chat()
+        ChatClientGlobal.chatClient.insert_string('/nick ')
 
 class AgentMessageHandler:
     def register_events(self):
