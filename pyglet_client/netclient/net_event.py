@@ -89,12 +89,6 @@ class MessageHandler:
             #GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
 
         # initial settings
-        elif cmd == 'client_id':
-            if self._set_client_id(**msg):
-                NetOut.sendMessage.identify()
-            else:
-                NetOut.sendMessage.request_client_id()
-
 
         elif cmd == 'you_died':
             if 'msg' not in msg:
@@ -114,6 +108,7 @@ class MessageHandler:
 class ClientMessageHandler:
     def register_events(self):
         NetEventGlobal.register_json_events({
+            'client_id' : self._client_id,
             'set_client_id' : self._set_client_id,
             'client_quit' : self._client_quit,
             'identified' : self._identified,
@@ -124,6 +119,13 @@ class ClientMessageHandler:
     def __init__(self):
         self.register_events()
 
+    def _client_id(self, *msg):
+        elif cmd == 'client_id':
+            if self._set_client_id(**msg):
+                NetOut.sendMessage.identify()
+            else:
+                NetOut.sendMessage.request_client_id()
+
     def _set_client_id(self, id, **arg):
         print "Received Client Id: %s" % (id,)
         NetClientGlobal.client_id = id
@@ -133,14 +135,12 @@ class ClientMessageHandler:
         GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
-        note = msg.get('msg', '')
+        note = arg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
-
         player = msg.get('player', None)
         if player is None:
             print 'msg::identified - missing player'
             return False
-
         name = player.get('name', None)
         if name is None:
             print 'msg::identified - player missing name'
@@ -148,15 +148,12 @@ class ClientMessageHandler:
         if type(name) != str:
             print 'msg::identified - name is not str'
             return False
-
         client_id = player.get('cid', None) # client_id is currently optional for server to send
         if client_id is not None:
             NetClientGlobal.client_id = client_id
-
         NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
         ChatClientGlobal.on_identify()
-
         player = GameStateGlobal.update_info(player)
         if player.you:
             GameStateGlobal.playerList.identify(player)
