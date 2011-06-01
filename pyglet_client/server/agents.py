@@ -39,7 +39,9 @@ class AgentList(GenericObjectList):
         for agent in self.values():
             x_, y_, z_ = agent.pos()
             r2 = float(radius)**2
-            if r2 < (x_-x)**2+(y_-y)**2+(z_-z)**2:
+            #print str(((x_-x)**2 + (y_-y)**2 + (z_-z)**2, r2))
+            if r2 > (x_-x)**2 + (y_-y)**2 + (z_-z)**2:
+                #print str(((x_-x)**2 + (y_-y)**2 + (z_-z)**2, r2))
                 l.append(agent)
         return l
 
@@ -117,14 +119,17 @@ class Agent:
         t_height = self.t_height
         box_r = self.box_r
 
-        z_min = z_ - self.b_height
-        z_max = z_ + self.t_height
+        z_max = z + self.t_height
+        z_min = z - self.b_height
         x_max = x + box_r
         x_min = x - box_r
         y_max = y + box_r
-        y_min = y + box_r
+        y_min = y - box_r
 
-        if x_min < x_ < x_max and y_min < y_ < y_max and z_min < z_ < z_max:
+        #print str((x_min, x_max, y_min, y_max, z_min, z_max))
+        #print str((x_,y_,z_))
+
+        if x_min < x_ and x_ < x_max and y_min < y_ and y_ < y_max and z_min < z_ and z_ < z_max:
             return True
         else:
             return False

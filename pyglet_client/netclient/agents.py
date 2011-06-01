@@ -61,6 +61,12 @@ class Agent:
         self.active_block = active_block   # which block to create
         self.active_weapon = active_weapon #    which weapon is held
 
+        #settings
+        self.b_height = 1.5
+        self.t_height = .75
+        self.box_r = .30
+
+
     def update_info(self, **agent):
         args = []
         if 'id' in agent:
@@ -145,7 +151,7 @@ class Agent:
 
     def draw(self):
         #self.draw_aiming_direction()
-        #self.draw_bounding_box()
+        self.draw_bounding_box()
         ##self.draw_selected_cube()
         ##self.draw_selected_cube2()
         self.draw_position(points=10, seperation = 0.10)
@@ -160,6 +166,7 @@ class Agent:
         elif attr == 'z':
             return self.__dict__['state'][2]
         else:
+            print "Agent attribute does not exist: " + str(attr)
             raise AttributeError
 
     def __setattr__(self, attr, val):
@@ -188,6 +195,27 @@ class Agent:
         ("c3B", c_list)
         )
 
+    def draw_bounding_box(self):
+        #agent parameters
+        b_height = self.b_height
+        t_height = self.t_height
+        box_r = self.box_r
+
+        x = self.x
+        y = self.y
+        z = self.z
+        #cordinates for corners
+        x_neg = x-box_r
+        x_pos = x+box_r
+        y_neg = y-box_r
+        y_pos = y+box_r
+
+        z0 = z-b_height
+        z1 = z
+        z2 = z+t_height
+
+        draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
+        draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
 
 class PlayerAgent(Agent):
 
@@ -214,6 +242,7 @@ class PlayerAgent(Agent):
         self.t_height = .75
         self.box_r = .30
 
+
     def fire(self):
         weapon = self.weapons[self.active_weapon]
         fire_command = weapon.fire()
@@ -237,7 +266,7 @@ class PlayerAgent(Agent):
     def facing_block(self):
         block = self.facing_block_position()
         if block is None:
-            return 
+            return
         block = GameStateGlobal.terrainMap.get(*block)
         return block
 
@@ -252,10 +281,10 @@ class PlayerAgent(Agent):
         if num_weapons == 0:
             self.active_weapon = -1
             return
-            
+
         if type(weapon_index) == int:
             weapon_index += -1
-            
+
         if weapon_index == 'up':
             self.active_weapon = (self.active_weapon + 1) % num_weapons
         elif weapon_index == 'down':
@@ -362,30 +391,6 @@ class PlayerAgent(Agent):
             self.y_angle = -0.499
         if self.y_angle > 0.499:
             self.y_angle = 0.499
-
-
-
-    def draw_bounding_box(self):
-        #agent parameters
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
-
-        x = self.x
-        y = self.y
-        z = self.z
-        #cordinates for corners
-        x_neg = x-box_r
-        x_pos = x+box_r
-        y_neg = y-box_r
-        y_pos = y+box_r
-
-        z0 = z-b_height
-        z1 = z
-        z2 = z+t_height
-
-        draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
-        draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
 
     def draw_selected_cube(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)

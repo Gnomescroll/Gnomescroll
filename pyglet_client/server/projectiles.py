@@ -111,12 +111,22 @@ class Projectile(GameObject):
         z += vz / fps
 
         if CubeGlobals.collisionDetection.collision(int(x), int(y), int(z)):
+            print "collision with wall"
             self.delete()
             return
 
+        #slow way, will be bottle neck later
+#        for agent in GameStateGlobal.agentList.values():
+#            if agent.point_collision_test(x,y,z):
+#                print "projectile collision"
+#                agent.take_damage(self.damage)
+
+        #faster way; needs to choose a large radius and only update every n-frames
         agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
-        for a in agent_list:
-            pass
+        for agent in agent_list:
+            if agent.point_collision_test(x,y,z):
+                print "projectile collision"
+                agent.take_damage(self.damage)
         #agent_hit = GameStateGlobal.agentList.at((x, y, z,))
         #if agent_hit != False:
         #    agent_hit.take_damage(self.damage)
