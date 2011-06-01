@@ -46,18 +46,18 @@ class AgentList(GenericObjectList):
                 l.append(agent)
         return l
 
-    def at(self, position):
-        _x, _y, _z = [int(k) for k in position]
-        for agent in self.values():
-            x, y, z = [int(k) for k in agent.pos()]
-            #if agent.pos() == position:
-            if x == _x and \
-                y == _y and \
-                z == _z and \
-                not agent.dead:
-                'at agent'
-                return agent
-        return False
+#    def at(self, position):
+#        _x, _y, _z = [int(k) for k in position]
+#        for agent in self.values():
+#            x, y, z = [int(k) for k in agent.pos()]
+#            #if agent.pos() == position:
+#            if x == _x and \
+#                y == _y and \
+#                z == _z and \
+#                not agent.dead:
+#                'at agent'
+#                return agent
+#        return False
 
 # represents an agent under control of a player
 class Agent:
@@ -459,7 +459,7 @@ class Agent:
 
     def die(self, projectile_owner=None):
         if not self.dead:
-            
+
             try:
                 you_player = GameStateGlobal.playerList[self.owner]
                 you = NetServer.connectionPool.by_client_id(you_player.cid)
@@ -487,7 +487,7 @@ class Agent:
                         print e
                 except KeyError:    # race condition, where client quits before his bullet kills
                     you.sendMessage.you_died('You were killed by a ghost.')
-            
+
             self.dead = True
             NetOut.event.agent_update(self)
 
