@@ -131,6 +131,9 @@ class Projectile(GameObject):
             if agent.point_collision_test(x,y,z):
                 print "projectile collision"
                 agent.take_damage(self.damage)
+                if not self.penetrates:
+                    self.delete()
+                    return
         #agent_hit = GameStateGlobal.agentList.at((x, y, z,))
         #if agent_hit != False:
         #    agent_hit.take_damage(self.damage)
