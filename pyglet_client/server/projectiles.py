@@ -12,6 +12,7 @@ projectile_dat = {
         'damage' : 20,
         'ttl_max' : 400, #time to live in ticks
         'penetrates': False,
+        'suicidal'  : False, # True for grenades
     #    'splash' : {
     #    'radius' : 3,
     #    'damage' : 15,
@@ -80,6 +81,7 @@ class Projectile(GameObject):
         self.ttl = 0
         self.ttl_max = p['ttl_max']
         self.penetrates = p['penetrates']
+        self.suicidal = p['suicidal']
 
         self.owner = owner
 
@@ -128,6 +130,8 @@ class Projectile(GameObject):
         #faster way; needs to choose a large radius and only update every n-frames
         agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
         for agent in agent_list:
+            if not self.suicidal and agent.owner == self.owner: # bullet is hitting yourself, and bullet doesnt kill yourself
+                continue
             if agent.point_collision_test(x,y,z):
                 print "projectile collision"
                 agent.take_damage(self.damage, self.owner)
