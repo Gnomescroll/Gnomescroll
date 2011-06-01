@@ -130,9 +130,9 @@ class Projectile(GameObject):
         #faster way; needs to choose a large radius and only update every n-frames
         agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
         for agent in agent_list:
-            if not self.suicidal and agent.owner == self.owner: # bullet is hitting yourself, and bullet doesnt kill yourself
-                continue
             if agent.point_collision_test(x,y,z):
+                if not self.suicidal and agent.owner == self.owner: # bullet is hitting yourself, and bullet doesnt kill yourself
+                    continue
                 print "projectile collision"
                 agent.take_damage(self.damage, self.owner)
                 if not self.penetrates:
