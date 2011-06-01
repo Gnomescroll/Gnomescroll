@@ -119,7 +119,7 @@ class ClientMessageHandler:
     def __init__(self):
         self.register_events()
 
-    def _client_id(self, *msg):
+    def _client_id(self, **msg):
         if self._set_client_id(**msg):
             NetOut.sendMessage.identify()
         else:
@@ -130,11 +130,11 @@ class ClientMessageHandler:
         NetClientGlobal.client_id = id
         return True
 
-    def _client_quit(self, id, **arg):
+    def _client_quit(self, id, **msg):
         GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
-        note = arg.get('msg', '')
+        note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
         player = msg.get('player', None)
         if player is None:
