@@ -190,12 +190,12 @@ class MessageHandler:
 
 class PlayerMessageHandler:
     def register_events(self):
-        events = {
+        NetEventGlobal.register_json_events({
             'player_player' : self._player_player,
             'player_info' : self._player_info,
             'remove_player' : self._remove_player,
-        }
-        NetEventGlobal.register_json_events(events)
+        })
+
     @classmethod
     def init(cls):
         pass
