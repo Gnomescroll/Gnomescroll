@@ -13,21 +13,21 @@ class NetOut:
     chatMessage = None
 
     @classmethod
-    def init_0(self):
-        NetOut.sendPacket = NetClientGlobal.sendPacket
-        NetOut.sendMessage = SendMessage()
-        NetOut.mapMessage = MapMessage()
-        NetOut.adminMessage = AdminMessage()
-        NetOut.chatMessage = ChatMessage()
+    def init_0(cls):
+        cls.sendPacket = NetClientGlobal.sendPacket
+        cls.sendMessage = SendMessage()
+        cls.mapMessage = MapMessage()
+        cls.adminMessage = AdminMessage()
+        cls.chatMessage = ChatMessage()
     @classmethod
-    def init_1(self):
-        assert NetOut.mapMessage != None
+    def init_1(cls):
+        assert cls.mapMessage != None
     @classmethod
-    def send_json(self, dict):
-        self.sendPacket.send_json(dict)
+    def send_json(cls, dict):
+        cls.sendPacket.send_json(dict)
     @classmethod
-    def send_binary(self, msg_id, bin_sting):
-        self.sendPacket.send_binary(msg_id, bin_string)
+    def send_binary(cls, msg_id, bin_sting):
+        cls.sendPacket.send_binary(msg_id, bin_string)
 
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
@@ -70,7 +70,7 @@ class GenericMessage:
     def __call__(self, cmd, *args, **kwargs):
         self.__class__.__dict__[cmd](self, *args, **kwargs)
 
-    
+
 class SendMessage(GenericMessage):
 
     @idRequired
@@ -110,7 +110,7 @@ class SendMessage(GenericMessage):
             return
         block_position = agent.nearest_block_position()
         if block_position is None:
-            return    
+            return
         return {
             'aid'   :   agent.id,
             'pos'   :   block_position,
