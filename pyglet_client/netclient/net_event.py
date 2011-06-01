@@ -12,12 +12,14 @@ class NetEventGlobal:
     mapMessageHandler = None
     projectileMessageHandler = None
     agentMessageHandler = None
+    playerMessageHandler = None
     @classmethod
     def init_0(self):
         self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
         self.mapMessageHandler = MapMessageHandler()
         self.projectileMessageHandler = ProjectileMessageHandler()
         self.agentMessageHandler = AgentMessageHandler()
+        self.playerMessageHandler = PlayerMessageHandler()
     @classmethod
     def init_1(self):
         pass
@@ -25,6 +27,7 @@ class NetEventGlobal:
         MapMessageHandler.init()
         ProjectileMessageHandler.init()
         AgentMessageHandler.init()
+        PlayerMessageHandler.init()
     @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
@@ -119,34 +122,6 @@ class MessageHandler:
                 return
             GameStateGlobal.client_quit(id)
 
-        elif cmd == 'player_list':
-            try:
-                players = msg['players']
-                assert type(players) == list
-            except KeyError:
-                print 'msg player_list :: players key missing'
-                return
-            except AssertionError:
-                print 'msg player_list :: players is not a list'
-                return
-            GameStateGlobal.load_player_list(players)
-        elif cmd == 'player_info':
-            if not self._update_player(**msg):
-                return
-        elif cmd == 'player_update':
-            if not self._update_player(**msg):
-                return
-        elif cmd == 'remove_player':
-            id = msg.get('id', None)
-            if id is None:
-                return
-            GameStateGlobal.remove_player(id)
-        elif cmd == 'remove_agent':
-            id = msg.get('id', None)
-            if id is None:
-                return
-            GameStateGlobal.remove_agent(id)
-
         elif cmd == 'you_died':
             if 'msg' not in msg:
                 return
@@ -214,13 +189,47 @@ class MessageHandler:
         return True
 
 class PlayerMessageHandler:
-    pass
+    def register_events(self):
+        events = {
+            'player_player' : self._player_player,
+            'player_info' : self._player_info,
+            'remove_player' : self._remove_player,
+        }
+        NetEventGlobal.register_json_events(events)
+    @classmethod
+    def init(cls):
+        pass
+    def __init__(self):
+        self.register_events()
+
+    def _player_player(self, players, **arg):
+        try:
+            assert type(players) == list
+        except AssertionError:
+            print 'msg player_list :: players is not a list'
+            return
+        GameStateGlobal.load_player_list(players)
+
+    def _player_info(self, **arg):
+        if not self._update_player(**arg):
+            return
+
+    def _player_update(self,**arg):
+        if not self._update_player(**arg):
+            return
+
+    def _remove_player(self, id, **arg):
+        #id = msg.get('id', None)
+        #if id is None:
+        #    return
+        GameStateGlobal.remove_player(id)
 
 class AgentMessageHandler:
     def register_events(self):
         events = {
             'agent_position' : self._agent_position,
             'agent_update' : self._agent_update,
+            'remove_agent' : self._remove_agent,
         }
         NetEventGlobal.register_json_events(events)
     @classmethod
@@ -264,6 +273,12 @@ class AgentMessageHandler:
             return
 
         GameStateGlobal.agentList[agent_id].update_info(**agent_data)
+
+    def _remove_agent(self, **args):
+        id = args.get('id', None)
+        if id is None:
+            return
+        GameStateGlobal.remove_agent(id)
 
 class ProjectileMessageHandler:
 
