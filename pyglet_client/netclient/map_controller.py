@@ -2,11 +2,11 @@
 class MapControllerGlobal:
     mapController = None
     @classmethod
-    def init_0(self):
+    def init_0(cls):
         MapControllerGlobal.mapController = MapController()
     @classmethod
-    def init_1(self):
-        MapControllerGlobal.mapController.init()
+    def init_1(cls):
+        cls.mapControllerGlobal.mapController.init()
 
 from game_state import GameStateGlobal
 from net_out import NetOut

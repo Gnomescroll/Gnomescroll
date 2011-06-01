@@ -19,7 +19,7 @@ class NetEventGlobal:
         cls.messageHandler = MessageHandler()
         cls.clientMessageHandler = ClientMessageHandler()
         cls.playerMessageHandler = PlayerMessageHandler()
-        cls.chatMessageHandler = chatMessageHandler()
+        cls.chatMessageHandler = ChatMessageHandler()
 
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()

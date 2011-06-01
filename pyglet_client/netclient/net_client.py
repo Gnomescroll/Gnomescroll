@@ -22,12 +22,12 @@ class NetClientGlobal:
     @classmethod
     def init_1(cls):
         ClientDatagramDecoder.init()
-        assert self.connection != None
-        assert self.sendPacket != None
+        assert cls.connection != None
+        assert cls.sendPacket != None
 
     @classmethod
-    def connect(self):
-        self.connection.connect()
+    def connect(cls):
+        cls.connection.connect()
 
 
 
@@ -46,9 +46,9 @@ class ClientDatagramDecoder:
 
     messageHandler = None
     @classmethod
-    def init(self):
-        self.messageHandler = NetEventGlobal.messageHandler
-        assert self.messageHandler != None
+    def init(cls):
+        cls.messageHandler = NetEventGlobal.messageHandler
+        assert cls.messageHandler != None
     def __init__(self, connection):
         self.connection = connection
 
