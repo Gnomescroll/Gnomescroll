@@ -9,25 +9,34 @@ import simplejson as json
 
 class NetEventGlobal:
     messageHandler = None
+    clientMessageHandler = None
     mapMessageHandler = None
     projectileMessageHandler = None
     agentMessageHandler = None
     playerMessageHandler = None
     @classmethod
     def init_0(self):
-        self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
+        self.messageHandler = MessageHandler()
+        self.clientMessageHandler = ClientMessageHandler()
+        self.playerMessageHandler = PlayerMessageHandler()
+        self.chatMessageHandler = chatMessageHandler()
+
+        self.agentMessageHandler = AgentMessageHandler()
         self.mapMessageHandler = MapMessageHandler()
         self.projectileMessageHandler = ProjectileMessageHandler()
-        self.agentMessageHandler = AgentMessageHandler()
-        self.playerMessageHandler = PlayerMessageHandler()
+
     @classmethod
     def init_1(self):
         pass
         MessageHandler.init()
+        ClientMessageHandler.init()
+        PlayerMessageHandler.init()
+        self.chatMessageHandler.init()
+
+        AgentMessageHandler.init()
         MapMessageHandler.init()
         ProjectileMessageHandler.init()
-        AgentMessageHandler.init()
-        PlayerMessageHandler.init()
+
     @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
@@ -74,36 +83,27 @@ class MessageHandler:
         if self.json_events.has_key(cmd):
             self.json_events[cmd](**msg)
 
-#        # agents
-#        elif cmd == 'agent_position':
-#            self._agent_position(**msg)
-#        elif cmd == 'agent_update':
-#            self._agent_update(**msg)
+class ChatMessageHandler:
+    def register_events(self):
+        NetEventGlobal.register_json_events({
+            'chat' : self._chat,
+            'you_died' : self._you_died,
+            'you_killed' : self._you_killed,
+        })
+    @classmethod
+    def init(cls):
+        pass
+    def __init__(self):
+        self.register_events()
 
-        # projectiles
-        #elif cmd == 'projectile_create':
-            #GameStateGlobal.projectileMessageHandler._create_projectile(**msg)
-        #elif cmd == 'projectile_update':
-            #GameStateGlobal.projectileMessageHandler._update_projectile(**msg)
-        #elif cmd == 'projectile_destroy':
-            #GameStateGlobal.projectileMessageHandler._destroy_projectile(**msg)
+    def _chat(self, **msg):
+        ChatClientGlobal.chatClient.receive(msg)
 
-        # initial settings
+    def _you_died(self, **msg):
+        ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
-        elif cmd == 'you_died':
-            if 'msg' not in msg:
-                return
-            ChatClientGlobal.chatClient.system_notify(msg['msg'])
-        elif cmd == 'you_killed':
-            if 'msg' not in msg:
-                return
-            ChatClientGlobal.chatClient.system_notify(msg['msg'])
-
-        elif cmd == 'chat':
-            ChatClientGlobal.chatClient.receive(msg)
-        else:
-            print "JSON message type unrecognized"
-
+    def _you_killed(self, **msg):
+        ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
 class ClientMessageHandler:
     def register_events(self):
