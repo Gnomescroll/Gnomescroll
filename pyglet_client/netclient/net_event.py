@@ -94,21 +94,7 @@ class MessageHandler:
                 NetOut.sendMessage.identify()
             else:
                 NetOut.sendMessage.request_client_id()
-        elif cmd == 'identify_fail':
-            msg = msg.get('msg', '')
-            # send system notification
-            ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
-            ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
-            # activate chat, insert /nick
-            InputGlobal.enable_chat()
-            ChatClientGlobal.chatClient.insert_string('/nick ')
 
-        #end map events
-        elif cmd == 'client_quit':
-            id = msg.get('id', None)
-            if id is None:
-                return
-            GameStateGlobal.client_quit(id)
 
         elif cmd == 'you_died':
             if 'msg' not in msg:
@@ -129,6 +115,7 @@ class ClientMessageHandler:
     def register_events(self):
         NetEventGlobal.register_json_events({
             'set_client_id' : self._set_client_id,
+            'client_quit' : self._client_quit,
             'identified' : self._identified,
         })
     @classmethod
@@ -141,6 +128,9 @@ class ClientMessageHandler:
         print "Received Client Id: %s" % (id,)
         NetClientGlobal.client_id = id
         return True
+
+    def _client_quit(self, id, **arg):
+        GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
         note = msg.get('msg', '')
