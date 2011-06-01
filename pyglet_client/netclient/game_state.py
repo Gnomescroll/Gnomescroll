@@ -17,33 +17,33 @@ class GameStateGlobal:
         pass
 
     @classmethod
-    def init_0(self):
-        GameStateGlobal.agentList = AgentList()
-        GameStateGlobal.playerList = PlayerList()
+    def init_0(cls):
+        cls.agentList = AgentList()
+        cls.playerList = PlayerList()
         player = GameStateGlobal.playerList.join_yourself()
-        GameStateGlobal.player = player
-        GameStateGlobal.agent = player.agent
-        GameStateGlobal.projectileList = ProjectileList()
-        GameStateGlobal.player.agent = GameStateGlobal.agent
-        GameStateGlobal.terrainMap = TerrainMap()
-        GameStateGlobal.gameState = GameState()
+        cls.player = player
+        cls.agent = player.agent
+        cls.projectileList = ProjectileList()
+        cls.player.agent = GameStateGlobal.agent
+        cls.terrainMap = TerrainMap()
+        cls.gameState = GameState()
 
     @classmethod
-    def init_1(self):
+    def init_1(cls):
         pass
 
     # for your player
     @classmethod
-    def update_info(self, player):
-        self.player.update_info(**player)
+    def update_info(cls, player):
+        cls.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
-            self.agent.update_info(**agent)
-        return self.player
+            cls.agent.update_info(**agent)
+        return cls.player
 
     # for other players
     @classmethod
-    def load_player_info(self, **player):
+    def load_player_info(cls, **player):
         print 'load_player_info'
         print player
         if 'id' not in player:
@@ -55,12 +55,12 @@ class GameStateGlobal:
             p = GameStateGlobal.playerList.join(**player)
 
     @classmethod
-    def load_player_list(self, players):
+    def load_player_list(cls, players):
         for player in players:
             GameStateGlobal.load_player_info(**player)
 
     @classmethod
-    def remove_player(self, id):
+    def remove_player(cls, id):
         print 'gsg remove_player'
         player = GameStateGlobal.playerList.get(id, None)
         if player is None:
@@ -74,7 +74,7 @@ class GameStateGlobal:
         GameStateGlobal.playerList.leave(player)
 
     @classmethod
-    def remove_agent(self, id):
+    def remove_agent(cls, id):
         print 'gsg remove_agent'
         agent = GameStateGlobal.agentList.get(id, None)
         if agent is None:
@@ -86,7 +86,7 @@ class GameStateGlobal:
             owner.agent = None
 
     @classmethod
-    def client_quit(self, id):
+    def client_quit(cls, id):
         player = GameStateGlobal.playerList.by_client(id)
         if player is None:
             return
