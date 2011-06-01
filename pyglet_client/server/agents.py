@@ -511,9 +511,8 @@ class Agent:
     def _set_position(self, pos=None):
         if pos is None:
             pos = self._spawn_point()
-        else:
-            assert len(pos) <= 3
-            self.state[0:len(pos)] = pos
+        assert len(pos) <= 3
+        self.state[0:3] = pos
 
     def respawn(self): # or can destroy / recreate Agent
         self._revive()
