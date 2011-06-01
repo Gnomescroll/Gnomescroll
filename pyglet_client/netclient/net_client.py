@@ -17,10 +17,10 @@ class NetClientGlobal:
     VERSION = '0.0.1'
 
     @classmethod
-    def init_0(self):
+    def init_0(cls):
         NetClientGlobal.connection = TcpConnection()
     @classmethod
-    def init_1(self):
+    def init_1(cls):
         ClientDatagramDecoder.init()
         assert self.connection != None
         assert self.sendPacket != None

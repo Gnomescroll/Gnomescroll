@@ -15,23 +15,23 @@ class NetEventGlobal:
     agentMessageHandler = None
     playerMessageHandler = None
     @classmethod
-    def init_0(self):
-        self.messageHandler = MessageHandler()
-        self.clientMessageHandler = ClientMessageHandler()
-        self.playerMessageHandler = PlayerMessageHandler()
-        self.chatMessageHandler = chatMessageHandler()
+    def init_0(cls):
+        cls.messageHandler = MessageHandler()
+        cls.clientMessageHandler = ClientMessageHandler()
+        cls.playerMessageHandler = PlayerMessageHandler()
+        cls.chatMessageHandler = chatMessageHandler()
 
-        self.agentMessageHandler = AgentMessageHandler()
-        self.mapMessageHandler = MapMessageHandler()
-        self.projectileMessageHandler = ProjectileMessageHandler()
+        cls.agentMessageHandler = AgentMessageHandler()
+        cls.mapMessageHandler = MapMessageHandler()
+        cls.projectileMessageHandler = ProjectileMessageHandler()
 
     @classmethod
-    def init_1(self):
+    def init_1(cls):
         pass
         MessageHandler.init()
         ClientMessageHandler.init()
         PlayerMessageHandler.init()
-        self.chatMessageHandler.init()
+        ChatMessageHandler.init()
 
         AgentMessageHandler.init()
         MapMessageHandler.init()
@@ -120,11 +120,10 @@ class ClientMessageHandler:
         self.register_events()
 
     def _client_id(self, *msg):
-        elif cmd == 'client_id':
-            if self._set_client_id(**msg):
-                NetOut.sendMessage.identify()
-            else:
-                NetOut.sendMessage.request_client_id()
+        if self._set_client_id(**msg):
+            NetOut.sendMessage.identify()
+        else:
+            NetOut.sendMessage.request_client_id()
 
     def _set_client_id(self, id, **arg):
         print "Received Client Id: %s" % (id,)
