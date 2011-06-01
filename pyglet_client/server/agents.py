@@ -63,7 +63,7 @@ class AgentList(GenericObjectList):
 class Agent:
 
     HEALTH_MAX = 100
-    _RESPAWN_TIME = 0.1 # seconds
+    _RESPAWN_TIME = 2. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
     def __init__(self, player_id, position=None, id=None):
@@ -447,7 +447,7 @@ class Agent:
             if self.health <= 0:
                 self.die(projectile_owner)
             elif self.health != old:
-                NetOut.event.agent_update(self)
+                NetOut.event.agent_update(self, 'health')
         print damage
 
     def heal(self, amount):
@@ -455,11 +455,11 @@ class Agent:
             old = self.health
             self.health = min(self.health + amount, self.HEALTH_MAX)
             if self.health != old:
-                NetOut.event.agent_update(self)
+                NetOut.event.agent_update(self, 'health')
 
     def die(self, projectile_owner=None):
         if not self.dead:
-
+            suicide = False
             try:
                 you_player = GameStateGlobal.playerList[self.owner]
                 you = NetServer.connectionPool.by_client_id(you_player.cid)
@@ -475,21 +475,26 @@ class Agent:
             else:
                 try:
                     killer = GameStateGlobal.playerList[projectile_owner]
-                    killer.killed()
-                    msg = 'You were killed by %s' % (killer.name,)
+                    if killer.cid == you_player.cid:
+                        msg = 'You killed yourself.'
+                        suicide = True
+                    else:
+                        killer.killed()
+                        msg = 'You were killed by %s' % (killer.name,)
                     you.sendMessage.you_died(msg)
-                    try:
-                        killer_client = NetServer.connectionPool.by_client_id(killer.cid)
-                        msg = 'You killed %s' % you.name
-                        killer_client.sendMessage.you_killed(msg)
-                    except e:
-                        print 'Killer\'s client was not found'
-                        print e
+                    if not suicide:
+                        try:
+                            killer_client = NetServer.connectionPool.by_client_id(killer.cid)
+                            msg = 'You killed %s' % you.name
+                            killer_client.sendMessage.you_killed(msg)
+                        except e:
+                            print 'Killer\'s client was not found'
+                            print e
                 except KeyError:    # race condition, where client quits before his bullet kills
                     you.sendMessage.you_died('You were killed by a ghost.')
 
             self.dead = True
-            NetOut.event.agent_update(self)
+            NetOut.event.agent_update(self, ['dead', 'health'])
 
     def _revive(self):
         self.health = self.HEALTH_MAX
@@ -506,11 +511,10 @@ class Agent:
     def _set_position(self, pos=None):
         if pos is None:
             pos = self._spawn_point()
-        else:
-            assert len(pos) <= 3
-            self.state[0:len(pos)] = pos
+        assert len(pos) <= 3
+        self.state[0:3] = pos
 
     def respawn(self): # or can destroy / recreate Agent
         self._revive()
         self._set_position()
-        NetOut.event.agent_update(self)
+        NetOut.event.agent_update(self, ['health', 'dead', 'state'])
