@@ -130,7 +130,7 @@ class Projectile(GameObject):
         for agent in agent_list:
             if agent.point_collision_test(x,y,z):
                 print "projectile collision"
-                agent.take_damage(self.damage)
+                agent.take_damage(self.damage, self.owner)
                 if not self.penetrates:
                     self.delete()
                     return

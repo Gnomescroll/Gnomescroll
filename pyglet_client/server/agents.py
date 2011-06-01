@@ -459,7 +459,7 @@ class Agent:
 
     def die(self, projectile_owner=None):
         if not self.dead:
-            
+            suicide = False
             try:
                 you_player = GameStateGlobal.playerList[self.owner]
                 you = NetServer.connectionPool.by_client_id(you_player.cid)
@@ -475,16 +475,21 @@ class Agent:
             else:
                 try:
                     killer = GameStateGlobal.playerList[projectile_owner]
-                    killer.killed()
-                    msg = 'You were killed by %s' % (killer.name,)
+                    if killer.cid == you_player.cid:
+                        msg = 'You killed yourself.'
+                        suicide = True
+                    else:
+                        killer.killed()
+                        msg = 'You were killed by %s' % (killer.name,)
                     you.sendMessage.you_died(msg)
-                    try:
-                        killer_client = NetServer.connectionPool.by_client_id(killer.cid)
-                        msg = 'You killed %s' % you.name
-                        killer_client.sendMessage.you_killed(msg)
-                    except e:
-                        print 'Killer\'s client was not found'
-                        print e
+                    if not suicide:
+                        try:
+                            killer_client = NetServer.connectionPool.by_client_id(killer.cid)
+                            msg = 'You killed %s' % you.name
+                            killer_client.sendMessage.you_killed(msg)
+                        except e:
+                            print 'Killer\'s client was not found'
+                            print e
                 except KeyError:    # race condition, where client quits before his bullet kills
                     you.sendMessage.you_died('You were killed by a ghost.')
             
