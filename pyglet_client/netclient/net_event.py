@@ -145,6 +145,15 @@ class MessageHandler:
                 return
             GameStateGlobal.remove_agent(id)
 
+        elif cmd == 'you_died':
+            if 'msg' not in msg:
+                return
+            ChatClientGlobal.chatClient.system_notify(msg['msg'])
+        elif cmd == 'you_killed':
+            if 'msg' not in msg:
+                return
+            ChatClientGlobal.chatClient.system_notify(msg['msg'])
+
         elif cmd == 'chat':
             ChatClientGlobal.chatClient.receive(msg)
         else:

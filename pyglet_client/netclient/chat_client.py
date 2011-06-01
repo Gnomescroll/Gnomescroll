@@ -200,6 +200,8 @@ class ChatClient:
         return channels
 
     def system_notify(self, txt):
+        if txt[0] != '/':
+            txt = '/generic %s' % (str(txt),)
         SystemChatCommand(txt).send()
 
     def insert_string(self, txt):
@@ -357,7 +359,9 @@ class SystemChatCommand(ChatCommand):
         _send = None
         payload = None
 
-        if command == 'identify_fail':
+        if command == 'generic':
+            _send = self._send_local(' '.join(args))
+        elif command == 'identify_fail':
             _send = self._send_local(' '.join(args))
         elif command == 'identify_note':
             _send = self._send_local(' '.join(args))

@@ -12,6 +12,7 @@ from random import randrange
 from game_state import GameStateGlobal
 from game_state import GenericObjectList
 from net_out import NetOut
+from net_server import NetServer
 
 from cube_dat import CubeGlobals
 
@@ -427,7 +428,7 @@ class Agent:
     def fire_projectile(self):
         print 'Agent.fire_projectile'
         state = self.state_vector()
-        projectile = GameStateGlobal.projectileList.create(state=state, type=1)
+        projectile = GameStateGlobal.projectileList.create(state=state, type=1, owner=self.owner)
         NetOut.event.projectile_create(projectile)
 
     def state_vector(self):
@@ -438,13 +439,13 @@ class Agent:
             sin( self.y_angle),
         ]
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, projectile_owner=None):
         print self.health
         if not self.dead:
             old = self.health
             self.health -= damage
             if self.health <= 0:
-                self.die()
+                self.die(projectile_owner)
             elif self.health != old:
                 NetOut.event.agent_update(self)
         print damage
@@ -456,10 +457,39 @@ class Agent:
             if self.health != old:
                 NetOut.event.agent_update(self)
 
-    def die(self):
+    def die(self, projectile_owner=None):
         if not self.dead:
-            NetOut.event.agent_update(self)
+            
+            try:
+                you_player = GameStateGlobal.playerList[self.owner]
+                you = NetServer.connectionPool.by_client_id(you_player.cid)
+                you_player.died()
+            except e:
+                print 'Error obtaining client object that owns dying agent.'
+                print e
+                self.dead = True
+                return
+            if projectile_owner is None:
+                you.sendMessage.you_died('You died mysteriously.')
+                pass
+            else:
+                try:
+                    killer = GameStateGlobal.playerList[projectile_owner]
+                    killer.killed()
+                    msg = 'You were killed by %s' % (killer.name,)
+                    you.sendMessage.you_died(msg)
+                    try:
+                        killer_client = NetServer.connectionPool.by_client_id(killer.cid)
+                        msg = 'You killed %s' % you.name
+                        killer_client.sendMessage.you_killed(msg)
+                    except e:
+                        print 'Killer\'s client was not found'
+                        print e
+                except KeyError:    # race condition, where client quits before his bullet kills
+                    you.sendMessage.you_died('You were killed by a ghost.')
+            
             self.dead = True
+            NetOut.event.agent_update(self)
 
     def _revive(self):
         self.health = self.HEALTH_MAX

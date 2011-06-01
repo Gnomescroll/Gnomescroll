@@ -224,6 +224,10 @@ class ConnectionPool:
                 self._clients_by_id[client.id] = client
                 print "Connection associated with client_id= %s" % (client.id,)
 
+    def by_client_id(self, client_id):
+        if client_id in self._clients_by_id:
+            return self._clients_by_id[client_id]
+
     def name_client(self, connection, name):
         avail, you = self.name_available(name, connection)
         if not you:

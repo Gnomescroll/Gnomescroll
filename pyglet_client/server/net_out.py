@@ -96,20 +96,17 @@ class EventOut:
         }
 
     @sendJSONevent('player_update', tick=False)
-    def player_update(self, player):
+    def player_update(self, player, properties=None):
         return {
-            'player': player.json(),
+            'player': player.json(properties),
         }
 
-    @sendJSONevent('player_update', tick=False)
-    def player_rename(self, player):
-        return {
-            'cmd'   : 'player_update',
-            'player': {
-                'name'  : player.name,
-                'id'    : player.id,
-            },
-        }
+    #@sendJSONevent('player_update', tick=False)
+    #def player_rename(self, player, properties):
+        #return {
+            #'cmd'   : 'player_update',
+            #'player': player.json(properties)
+        #}
 
     @sendJSONevent('player_info', tick=False)
     def player_join(self, player):
@@ -236,4 +233,16 @@ class SendMessage: #each connection has one of these
     def remove_agent(self, agent):
         return {
             'id'    : agent.id,
+        }
+
+    @sendJSON('you_died')
+    def you_died(self, msg):
+        return {
+            'msg'   :   msg,
+        }
+
+    @sendJSON('you_killed')
+    def you_killed(self, msg):
+        return {
+            'msg'   :   msg,
         }

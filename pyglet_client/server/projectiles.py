@@ -10,7 +10,8 @@ projectile_dat = {
     1 : {
         'speed' : 15,
         'damage' : 20,
-        'ttl_max' : 400 #time to live in ticks
+        'ttl_max' : 400, #time to live in ticks
+        'penetrates': False,
     #    'splash' : {
     #    'radius' : 3,
     #    'damage' : 15,
@@ -59,7 +60,7 @@ from cube_dat import CubeGlobals
 
 class Projectile(GameObject):
 
-    def __init__(self, state=None, type=None): #more args
+    def __init__(self, state=None, type=None, owner=None): #more args
         if None in (state, type,):
             print 'Projectile __init__ missing args'
             raise TypeError
@@ -78,6 +79,9 @@ class Projectile(GameObject):
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
+        self.penetrates = p['penetrates']
+
+        self.owner = owner
 
     def update(self, **args):
         try:
@@ -133,7 +137,6 @@ class Projectile(GameObject):
 
         self.state = [x,y,z,vx,vy,vz]
 
-
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
 
@@ -143,6 +146,7 @@ class Projectile(GameObject):
             d.update({
                 'state' : self.state,
                 'type'  : self.type,
+                #'owner' : self.owner,
             })
         else:
             for prop in properties:
