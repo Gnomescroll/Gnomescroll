@@ -11,18 +11,20 @@ class NetEventGlobal:
     messageHandler = None
     mapMessageHandler = None
     projectileMessageHandler = None
+    agentMessageHandler = None
     @classmethod
     def init_0(self):
         self.messageHandler = MessageHandler()  ##MAY CAUSE ERRORS?
         self.mapMessageHandler = MapMessageHandler()
         self.projectileMessageHandler = ProjectileMessageHandler()
+        self.agentMessageHandler = AgentMessageHandler()
     @classmethod
     def init_1(self):
         pass
         MessageHandler.init()
         MapMessageHandler.init()
         ProjectileMessageHandler.init()
-
+        AgentMessageHandler.init()
     @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
@@ -69,11 +71,11 @@ class MessageHandler:
         if self.json_events.has_key(cmd):
             self.json_events[cmd](**msg)
 
-        # agents
-        elif cmd == 'agent_position':
-            self._agent_position(**msg)
-        elif cmd == 'agent_update':
-            self._agent_update(**msg)
+#        # agents
+#        elif cmd == 'agent_position':
+#            self._agent_position(**msg)
+#        elif cmd == 'agent_update':
+#            self._agent_update(**msg)
 
         # projectiles
         #elif cmd == 'projectile_create':
@@ -172,42 +174,6 @@ class MessageHandler:
         GameStateGlobal.load_player_info(**player)
         return True
 
-    def _agent_position(self, **args):
-        state = args.get('state', None)
-        id = args.get('id', None)
-        tick = args.get('tick', None)
-        if None in (state, id, tick,):
-            print 'agent_position, missing keys'
-            print args
-            return
-        x,y,z, vx,vy,vz, ax,ay,az = state
-        x,y,z = map(lambda k: float(k), [x,y,z])
-
-        agent = GameStateGlobal.agentList[id]
-        agent.tick = tick
-        agent.x = x
-        agent.y = y
-        agent.z = z
-        agent.vx = vx
-        agent.vy = vy
-        agent.vz = vz
-        agent.ax = ax
-        agent.ay = ay
-        agent.az = az
-
-    def _agent_update(self, **args):
-        agent_data = args.get('agent', None)
-        if agent_data is None:
-            print 'msg agent_update :: agent key is missing'
-
-        try:
-            agent_id = int(agent_data.get('id', None))
-        except ValueError:
-            print 'msg agent_update :: agent dict id is missing or invalid'
-            return
-
-        GameStateGlobal.agentList[agent_id].update_info(**agent_data)
-
     def _set_client_id(self, **msg):
         id = msg.get('id', None)
         if id is None:
@@ -246,6 +212,58 @@ class MessageHandler:
         if player.you:
             GameStateGlobal.playerList.identify(player)
         return True
+
+class PlayerMessageHandler:
+    pass
+
+class AgentMessageHandler:
+    def register_events(self):
+        events = {
+            'agent_position' : self._agent_position,
+            'agent_update' : self._agent_update,
+        }
+        NetEventGlobal.register_json_events(events)
+    @classmethod
+    def init(cls):
+        pass
+    def __init__(self):
+        self.register_events()
+
+    def _agent_position(self, **args):
+        state = args.get('state', None)
+        id = args.get('id', None)
+        tick = args.get('tick', None)
+        if None in (state, id, tick,):
+            print 'agent_position, missing keys'
+            print args
+            return
+        x,y,z, vx,vy,vz, ax,ay,az = state
+        x,y,z = map(lambda k: float(k), [x,y,z])
+
+        agent = GameStateGlobal.agentList[id]
+        agent.tick = tick
+        agent.x = x
+        agent.y = y
+        agent.z = z
+        agent.vx = vx
+        agent.vy = vy
+        agent.vz = vz
+        agent.ax = ax
+        agent.ay = ay
+        agent.az = az
+
+    def _agent_update(self, **args):
+        agent_data = args.get('agent', None)
+        if agent_data is None:
+            print 'msg agent_update :: agent key is missing'
+
+        try:
+            agent_id = int(agent_data.get('id', None))
+        except ValueError:
+            print 'msg agent_update :: agent dict id is missing or invalid'
+            return
+
+        GameStateGlobal.agentList[agent_id].update_info(**agent_data)
 
 class ProjectileMessageHandler:
 
