@@ -7,13 +7,79 @@ import math
 from math import sin, cos, pi
 from math import floor, ceil, fabs
 
-from pyglet.gl import *
-
 from game_state import GameStateGlobal
 from weapons import LaserGun, Pick, BlockApplier
 
-# represents an agent under control of a player
-class Agent:
+'''
+Physics for agents
+'''
+class AgentPhysics:
+
+    # apply physics to agent
+    def tick(self):
+        pass
+        #if not self.dead:
+            #self._tick_physics()
+
+    def _tick_physics(self):
+        assert False  #needs to do interopolation
+
+'''
+Render/Draw methods for agents
+'''
+class AgentRender:
+
+    def draw(self):
+        #self.draw_aiming_direction()
+        self.draw_bounding_box()
+        ##self.draw_selected_cube()
+        ##self.draw_selected_cube2()
+        self.draw_position(points=10, seperation = 0.10)
+        #self.draw_velocity(point_density=15, units=200)
+        #self.draw_acceleration(point_density=15, units=100000)
+
+    def draw_position(self, points, seperation):
+        v_num = 0
+        v_list = []
+        c_list = []
+        for n in range(-points, points):
+            temp = float(n)*float(seperation)
+            v_list += [self.x+temp, self.y, self.z]
+            v_list += [self.x,self.y+temp, self.z]
+            v_list += [self.x,self.y, self.z+temp]
+            c_list += [255,255,255] + [255,255,255] + [255,255,255]
+            v_num +=3
+        pyglet.graphics.draw(v_num, GL_POINTS,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+
+    def draw_bounding_box(self):
+        #agent parameters
+        b_height = self.b_height
+        t_height = self.t_height
+        box_r = self.box_r
+
+        x = self.x
+        y = self.y
+        z = self.z
+        #cordinates for corners
+        x_neg = x-box_r
+        x_pos = x+box_r
+        y_neg = y-box_r
+        y_pos = y+box_r
+
+        z0 = z-b_height
+        z1 = z
+        z2 = z+t_height
+
+        draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
+        draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
+
+'''
+Data model for agent
+'''
+class AgentModel:
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 1. # seconds
@@ -66,7 +132,6 @@ class Agent:
         self.t_height = .75
         self.box_r = .30
 
-
     def update_info(self, **agent):
         args = []
         if 'id' in agent:
@@ -101,26 +166,6 @@ class Agent:
         self.jetpack = jetpack
         self.brake = brake
 
-    # apply physics to agent
-    def tick(self):
-        pass
-        #if not self.dead:
-            #self._tick_physics()
-        #else:
-            #self._tick_respawn()
-
-    #def _tick_physics(self):
-        #assert False  #needs to do interopolation
-
-    def draw(self):
-        #self.draw_aiming_direction()
-        self.draw_bounding_box()
-        ##self.draw_selected_cube()
-        ##self.draw_selected_cube2()
-        self.draw_position(points=10, seperation = 0.10)
-        #self.draw_velocity(point_density=15, units=200)
-        #self.draw_acceleration(point_density=15, units=100000)
-
     def __getattr__(self, attr):
         if attr == 'x':
             return self.__dict__['state'][0]
@@ -133,130 +178,29 @@ class Agent:
             raise AttributeError
 
     def __setattr__(self, attr, val):
-        if attr == 'x':
-            self.__dict__['state'][0] = val
-        elif attr == 'y':
-            self.__dict__['state'][1] = val
-        elif attr == 'z':
-            self.__dict__['state'][2] = val
-        else:
-            self.__dict__[attr] = val
+       if attr == 'x':
+           self.__dict__['state'][0] = val
+       elif attr == 'y':
+           self.__dict__['state'][1] = val
+       elif attr == 'z':
+           self.__dict__['state'][2] = val
+       else:
+           self.__dict__[attr] = val
 
-    def draw_position(self, points, seperation):
-        v_num = 0
-        v_list = []
-        c_list = []
-        for n in range(-points, points):
-            temp = float(n)*float(seperation)
-            v_list += [self.x+temp, self.y, self.z]
-            v_list += [self.x,self.y+temp, self.z]
-            v_list += [self.x,self.y, self.z+temp]
-            c_list += [255,255,255] + [255,255,255] + [255,255,255]
-            v_num +=3
-        pyglet.graphics.draw(v_num, GL_POINTS,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
-
-    def draw_bounding_box(self):
-        #agent parameters
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
-
-        x = self.x
-        y = self.y
-        z = self.z
-        #cordinates for corners
-        x_neg = x-box_r
-        x_pos = x+box_r
-        y_neg = y-box_r
-        y_pos = y+box_r
-
-        z0 = z-b_height
-        z1 = z
-        z2 = z+t_height
-
-        draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
-        draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
-
-class PlayerAgent(Agent):
+# represents an agent under control of a player
+class Agent(AgentModel, AgentPhysics, AgentRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
-        Agent.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
-
-        self.you = True
-        self.control_state = [0,0,0,0,0,0,0]
-        self.x = -.5
-        self.y = -.5
-        self.z = -.5
-        self.x_angle = 0
-        self.y_angle = 0
-
-        self.vx = 0
-        self.vy = 0
-        self.vz = 0
-        self.ax = 0
-        self.ay = 0
-        self.az = 0
-
-        #settings
-        self.b_height = 1.5
-        self.t_height = .75
-        self.box_r = .30
+        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
 
-    def fire(self):
-        weapon = self.weapons[self.active_weapon]
-        fire_command = weapon.fire()
-        if fire_command:
-            NetOut.sendMessage(fire_command, self)
 
-    def reload(self):
-        weapon = self.weapons[self.active_weapon]
-        reload_command = weapon.reload()
-        if reload_command:
-            NetOut.sendMessage(reload_command, self)
+'''
+Client's player's agent draw methods
+'''
+class PlayerAgentRender(AgentRender):
 
-    def set_active_block(self, block_type=None):
-        if block_type is None:
-            block_type = self.facing_block()
-        if not block_type:
-            return
-        self.active_block = block_type
-        print 'set active block to ', self.active_block
-
-    def facing_block(self):
-        block = self.facing_block_position()
-        if block is None:
-            return
-        block = GameStateGlobal.terrainMap.get(*block)
-        return block
-
-    def facing_block_position(self):
-        return ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
-
-    def nearest_block_position(self):
-        return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
-
-    def switch_weapon(self, weapon_index):
-        num_weapons = len(self.weapons)
-        if num_weapons == 0:
-            self.active_weapon = -1
-            return
-
-        if type(weapon_index) == int:
-            weapon_index += -1
-
-        if weapon_index == 'up':
-            self.active_weapon = (self.active_weapon + 1) % num_weapons
-        elif weapon_index == 'down':
-            self.active_weapon = (self.active_weapon - 1) % num_weapons
-        elif weapon_index < num_weapons:
-                self.active_weapon = weapon_index
-
-        print 'weapon is: ' , self.weapons[self.active_weapon]
-
+    
     def draw(self):
         self.draw_aiming_direction()
         self.draw_bounding_box()
@@ -347,14 +291,6 @@ class PlayerAgent(Agent):
         ("c3B", [255, 0, 0]*v_num)
         )
 
-    def pan(self, dx_angle, dy_angle):
-        self.x_angle += dx_angle
-        self.y_angle += dy_angle
-        if self.y_angle < -0.499:
-            self.y_angle = -0.499
-        if self.y_angle > 0.499:
-            self.y_angle = 0.499
-
     def draw_selected_cube(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
@@ -432,234 +368,95 @@ class PlayerAgent(Agent):
 
         draw_sides(cube_sides)
 
-    #Deprecate?
-#    def _append_side(self, cube_dict, x,y,z,side):
-#        (x,y,z) = (int(round(x)),int(round(y)), int(round(z)))
-#        if not cube_dict.has_key((x,y,z)):
-#            cube_dict[(x,y,z)] = []
-#        cube_dict[(x,y,z)].append(side)
+'''
+Client's player's agent
+'''
+class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
-### Ray casting utilities
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
+        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
-def collision(x,y,z):
-    tile = GameStateGlobal.terrainMap.get(x,y,z)
-    if tile == 0:
-        return 0
-    else:
-        return 1
+        self.you = True
+        self.control_state = [0,0,0,0,0,0,0]
+        self.x = -.5
+        self.y = -.5
+        self.z = -.5
+        self.x_angle = 0
+        self.y_angle = 0
 
-def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
+        self.vx = 0
+        self.vy = 0
+        self.vz = 0
+        self.ax = 0
+        self.ay = 0
+        self.az = 0
 
-    sampling_density = 100.00
-
-    dx = cos( x_angle * pi) * cos( y_angle * pi)
-    dy = sin( x_angle * pi) * cos( y_angle * pi)
-    dz = sin( y_angle)
-
-    n = 0.
-    inc = 1. / sampling_density
-    xy_inc = math.sqrt(dx**2 + dy**2)
-    #md2 = max_distance**2
-    while True:
-        n += inc
-        if n*xy_inc > max_distance:
-            return None
-
-        x_ = int(x+dx*n)
-        y_ = int(y+dy*n)
-        z_ = int(z+dz*n)
-
-        x__ = int(x+ dx*(n+inc))
-        y__ = int(y+ dy*(n+inc))
-        z__ = int(z+ dz*(n+inc))
-
-        if x_ != x__ or y_ != y__ or z_ != z__:
-            if collision(x__, y__, z__):
-                #z = int(z)
-                if z_ >= z-z_low and z_ <= z+z_high:
-                    return (x_, y_, z_)
-                else:
-                    #print "out of range:" + str((x_, y_, z_))
-                    return None
-
-def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
-    sampling_density = 100.00
-
-    dx = cos( x_angle * pi) * cos( y_angle * pi)
-    dy = sin( x_angle * pi) * cos( y_angle * pi)
-    dz = sin( y_angle)
-
-    n = 0.
-    inc = 1. / sampling_density
-    xy_inc = math.sqrt(dx**2 + dy**2)
-    #md2 = max_distance**2
-    while True:
-        n += inc
-        if n*xy_inc > max_distance:
-            return None
-
-        x_ = int(x+dx*n)
-        y_ = int(y+dy*n)
-        z_ = int(z+dz*n)
-
-        x__ = int(x+ dx*(n+inc))
-        y__ = int(y+ dy*(n+inc))
-        z__ = int(z+ dz*(n+inc))
-
-        if x_ != x__ or y_ != y__ or z_ != z__:
-            if collision(x__, y__, z__):
-                return (x__, y__, z__)
-
-### DRAWING STUFF ####
-
-    #axis aligned
-def draw_box(x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
-
-    v_list = []
-    c_list = []
-    v_num = 0
-
-    vi_list = [
-    [0, 0, 0], [1, 0, 0], [1, 0, 0], [1, 1, 0],
-    [1, 1, 0], [0, 1, 0], [0, 1, 0], [0, 0, 0],
-    [0, 0, 1], [1, 0, 1], [1, 0, 1], [1, 1, 1],
-    [1, 1, 1], [0, 1, 1], [0, 1, 1], [0, 0, 1],
-    [0, 0, 0], [0, 0, 1], [1, 0, 0], [1, 0, 1],
-    [1, 1, 0], [1, 1, 1], [0, 1, 0], [0, 1, 1]
-    ]
-
-    v_t0 = [None, None, None]
-    for v_t1 in vi_list:
-
-        v_t0[0] = x_neg if v_t1[0]==0 else x_pos
-        v_t0[1] = y_neg if v_t1[1]==0 else y_pos
-        v_t0[2] = z_neg if v_t1[2]==0 else z_pos
-
-        v_list += v_t0
-        c_list += color
-        v_num += 1
-
-    pyglet.graphics.draw(v_num, GL_LINES,
-    ("v3f", v_list),
-    ("c3B", c_list)
-    )
-
-def draw_sides( p_list):
-
-    v_set = [
-        [0,0,0],
-        [1,0,0],
-        [1,1,0],
-        [0,1,0],
-        [0,0,1],
-        [1,0,1],
-        [1,1,1],
-        [0,1,1]
-    ]
-
-    vertex_index = [
-        [0,1],
-        [1,2],
-        [2,3],
-        [3,0],
-
-        [4,5],
-        [5,6],
-        [6,7],
-        [7,4],
-
-        [0,4],
-        [1,5],
-        [2,6],
-        [3,7],
-    ]
-
-    side_v = [
-    [4,5,6,7],   #top (z=1)
-    [0,1,2,3],   #bottom (z=0)
-    [1,5,9,10],  #north (y=1)
-    [7,3,11,8],  #south (y=0)
-    [6,2,10,11], #west (x=0)
-    [4,0,9,8],   #east (x=1)
-    ]
+        #settings
+        self.b_height = 1.5
+        self.t_height = .75
+        self.box_r = .30
 
 
-    v_list = []
-    c_list = []
-    v_num = 0
+    def fire(self):
+        weapon = self.weapons[self.active_weapon]
+        fire_command = weapon.fire()
+        if fire_command:
+            NetOut.sendMessage(fire_command, self)
 
-    for (x,y,z,side) in p_list:
-        for k in side_v[side]:
-            [i,j] = vertex_index[k]
-            v_num += 2
-            v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
-            v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
-            c_list += [150,0,0]*2
+    def reload(self):
+        weapon = self.weapons[self.active_weapon]
+        reload_command = weapon.reload()
+        if reload_command:
+            NetOut.sendMessage(reload_command, self)
 
-    pyglet.graphics.draw(v_num, GL_LINES,
-    ("v3f", v_list),
-    ("c3B", c_list)
-    )
+    def set_active_block(self, block_type=None):
+        if block_type is None:
+            block_type = self.facing_block()
+        if not block_type:
+            return
+        self.active_block = block_type
+        print 'set active block to ', self.active_block
 
-def draw_cube( x,y,z, color = None):
+    def facing_block(self):
+        block = self.facing_block_position()
+        if block is None:
+            return
+        block = GameStateGlobal.terrainMap.get(*block)
+        return block
 
-    v_set = [
-        [0,0,0],
-        [1,0,0],
-        [1,1,0],
-        [0,1,0],
-        [0,0,1],
-        [1,0,1],
-        [1,1,1],
-        [0,1,1]
-    ]
+    def facing_block_position(self):
+        return ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
 
-    vertex_index = [
-        [0,1],
-        [1,2],
-        [2,3],
-        [3,0],
+    def nearest_block_position(self):
+        return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
 
-        [4,5],
-        [5,6],
-        [6,7],
-        [7,4],
+    def switch_weapon(self, weapon_index):
+        num_weapons = len(self.weapons)
+        if num_weapons == 0:
+            self.active_weapon = -1
+            return
 
-        [0,4],
-        [1,5],
-        [2,6],
-        [3,7],
-    ]
+        if type(weapon_index) == int:
+            weapon_index += -1
 
-    side_v = [
-    [4,5,6,7],   #top (z=1)
-    [0,1,2,3],   #bottom (z=0)
-    [1,5,9,10],  #north (y=1)
-    [7,3,11,8],  #south (y=0)
-    [6,2,10,11], #west (x=0)
-    [4,0,9,8],   #east (x=1)
-    ]
+        if weapon_index == 'up':
+            self.active_weapon = (self.active_weapon + 1) % num_weapons
+        elif weapon_index == 'down':
+            self.active_weapon = (self.active_weapon - 1) % num_weapons
+        elif weapon_index < num_weapons:
+                self.active_weapon = weapon_index
 
-    #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
-    v_list = []
-    c_list = []
-    v_num = 0
-    for index,[i,j] in enumerate(vertex_index):
-        v_num += 2
-        v_list += [ v_set[i][0]+x, v_set[i][1]+y, v_set[i][2]+z ]
-        v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
+        print 'weapon is: ' , self.weapons[self.active_weapon]
 
-        if color == None:
-            c_list += [155,0,0]*2
-        else:
-            c_list += color*2
+    def pan(self, dx_angle, dy_angle):
+        self.x_angle += dx_angle
+        self.y_angle += dy_angle
+        if self.y_angle < -0.499:
+            self.y_angle = -0.499
+        if self.y_angle > 0.499:
+            self.y_angle = 0.499
 
-    pyglet.graphics.draw(v_num, GL_LINES,
-    ("v3f", v_list),
-    ("c3B", c_list)
-    )
-
-
-##imports
 
 from net_out import NetOut
+from raycast_utils import *
+from draw_utils import *

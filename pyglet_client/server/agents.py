@@ -18,7 +18,7 @@ from cube_dat import CubeGlobals
 
 from weapons import LaserGun, Pick, BlockApplier
 
-# datastore for agents
+# datastore controller for agents
 class AgentList(GenericObjectList):
 
     def __init__(self):
@@ -59,59 +59,7 @@ class AgentList(GenericObjectList):
 #                return agent
 #        return False
 
-# represents an agent under control of a player
-class Agent:
-
-    HEALTH_MAX = 100
-    _RESPAWN_TIME = 2. # seconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
-
-    def __init__(self, player_id, position=None, id=None):
-        if position is None:
-            position = self._spawn_point()
-
-        x,y,z = [float(i) for i in position]
-        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-
-        self.terrainMap = GameStateGlobal.terrainMap
-        self.collisionDetection = CubeGlobals.collisionDetection
-
-        assert self.collisionDetection != None
-
-        if id is None:
-            id = GameStateGlobal.new_agent_id()
-        self.id = id
-
-        #b_height
-        #t_height
-        self.b_height = 1.5
-        self.t_height = .75
-        self.box_r = .30
-
-        self.d_x = 0 #yaw?
-        self.d_y = 0 #pitch?
-        self.v_x = 0
-        self.v_y = 0
-        self.x_angle = 0
-        self.y_angle = 0
-
-        self.last_control_tick = 0
-        self.jump = 0 #also need to record last jump
-        self.jetpack = 0
-        self.brake = 0
-
-        #misc state
-        self.on_ground = 0
-        self.respawn_countdown = self.RESPAWN_TICKS
-        self.health = self.HEALTH_MAX
-        self.dead = False
-
-        self.weapons = [LaserGun(), Pick(), BlockApplier()]
-
-        self.owner = player_id
-
-    def pos(self):
-        return self.state[0:3]
+class AgentPhysics:
 
     #collision tests
     def point_collision_test(self, x_,y_,z_):
@@ -137,76 +85,6 @@ class Agent:
 
     def sphere_collision_test(self, x,y,z,r):
         pass
-
-    #end collision test
-
-    def __getattr__(self, attr):
-        if attr == 'x':
-            return self.__dict__['state'][0]
-        elif attr == 'y':
-            return self.__dict__['state'][1]
-        elif attr == 'z':
-            return self.__dict__['state'][2]
-        else:
-            raise AttributeError
-
-    def __setattr__(self, attr, val):
-        if attr == 'x':
-            self.__dict__['state'][0] = val
-        elif attr == 'y':
-            self.__dict__['state'][1] = val
-        elif attr == 'z':
-            self.__dict__['state'][2] = val
-        else:
-            self.__dict__[attr] = val
-
-    def json(self, properties=None): # json encodable string representation
-        d = {
-            'id'    :   self.id,
-        }
-        if properties is None:
-            d.update({
-                'health': self.health,
-                'dead'  : int(self.dead),
-                'owner' : self.owner,
-                'weapons': [weapon.json() for weapon in self.weapons],
-                'state' : self.state,
-            })
-        else:
-            if type(properties) == str:
-                properties = [properties]
-            for prop in properties:
-                d[prop] = getattr(self, prop)
-                if prop == 'dead':
-                    d[prop] = int(d[prop])
-        return d
-
-
-    # set agent state explicitly
-    def set_agent_control_state(self, tick, state, angle):
-        d_x, d_y, v_x, v_y, jetpack, jump, brake = state
-        x_angle, y_angle = angle
-        #print str(args)
-        self.last_control_tick = tick
-        self.d_x = d_x #a byte
-        self.d_y = d_y #a byte
-        #self.d_xa = d_xa
-        #self.d_za = d_za
-        self.v_x = v_x
-        self.v_y = v_y
-        self.jetpack = jetpack
-        self.brake = brake
-
-        self.x_angle = x_angle
-        self.y_angle = y_angle
-
-    # apply physics to agent
-    def tick(self):
-        if self.dead:
-            self._tick_respawn()
-        else:
-            self._tick_physics()
-
 
     def _tick_physics(self):
         x,y,z, vx,vy,vz, ax,ay,az = self.state
@@ -417,6 +295,131 @@ class Agent:
         #print self.state
         NetOut.event.agent_state_change(self)
         return
+    
+
+# represents an agent under control of a player
+class Agent(AgentPhysics):
+
+    HEALTH_MAX = 100
+    _RESPAWN_TIME = 2. # seconds
+    RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
+
+    def __init__(self, player_id, position=None, id=None):
+        if position is None:
+            position = self._spawn_point()
+
+        x,y,z = [float(i) for i in position]
+        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
+
+        self.terrainMap = GameStateGlobal.terrainMap
+        self.collisionDetection = CubeGlobals.collisionDetection
+
+        assert self.collisionDetection != None
+
+        if id is None:
+            id = GameStateGlobal.new_agent_id()
+        self.id = id
+
+        #b_height
+        #t_height
+        self.b_height = 1.5
+        self.t_height = .75
+        self.box_r = .30
+
+        self.d_x = 0 #yaw?
+        self.d_y = 0 #pitch?
+        self.v_x = 0
+        self.v_y = 0
+        self.x_angle = 0
+        self.y_angle = 0
+
+        self.last_control_tick = 0
+        self.jump = 0 #also need to record last jump
+        self.jetpack = 0
+        self.brake = 0
+
+        #misc state
+        self.on_ground = 0
+        self.respawn_countdown = self.RESPAWN_TICKS
+        self.health = self.HEALTH_MAX
+        self.dead = False
+
+        self.weapons = [LaserGun(), Pick(), BlockApplier()]
+
+        self.owner = player_id
+
+    def pos(self):
+        return self.state[0:3]
+
+    def __getattr__(self, attr):
+        if attr == 'x':
+            return self.__dict__['state'][0]
+        elif attr == 'y':
+            return self.__dict__['state'][1]
+        elif attr == 'z':
+            return self.__dict__['state'][2]
+        else:
+            raise AttributeError
+
+    def __setattr__(self, attr, val):
+        if attr == 'x':
+            self.__dict__['state'][0] = val
+        elif attr == 'y':
+            self.__dict__['state'][1] = val
+        elif attr == 'z':
+            self.__dict__['state'][2] = val
+        else:
+            self.__dict__[attr] = val
+
+    def json(self, properties=None): # json encodable string representation
+        d = {
+            'id'    :   self.id,
+        }
+        if properties is None:
+            d.update({
+                'health': self.health,
+                'dead'  : int(self.dead),
+                'owner' : self.owner,
+                'weapons': [weapon.json() for weapon in self.weapons],
+                'state' : self.state,
+            })
+        else:
+            if type(properties) == str:
+                properties = [properties]
+            for prop in properties:
+                d[prop] = getattr(self, prop)
+                if prop == 'dead':
+                    d[prop] = int(d[prop])
+        return d
+
+
+    # set agent state explicitly
+    def set_agent_control_state(self, tick, state, angle):
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = state
+        x_angle, y_angle = angle
+        #print str(args)
+        self.last_control_tick = tick
+        self.d_x = d_x #a byte
+        self.d_y = d_y #a byte
+        #self.d_xa = d_xa
+        #self.d_za = d_za
+        self.v_x = v_x
+        self.v_y = v_y
+        self.jetpack = jetpack
+        self.brake = brake
+
+        self.x_angle = x_angle
+        self.y_angle = y_angle
+
+    # apply physics to agent
+    def tick(self):
+        if self.dead:
+            self._tick_respawn()
+        else:
+            self._tick_physics()
+
+
+
 
 
     def _tick_respawn(self):
