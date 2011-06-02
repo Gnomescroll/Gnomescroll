@@ -23,10 +23,18 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
     n = 0.
     inc = 1. / sampling_density
     xy_inc = sqrt(dx**2 + dy**2)
+
+    if dz >= 0:
+        z_max = z_high
+        z_inc = dz
+    elif
+        z_max = z_low
+        z_inc = -1*dz
+
     #md2 = max_distance**2
     while True:
         n += inc
-        if n*xy_inc > max_distance or n*dz < z_low or n*dz > z_high:
+        if n*xy_inc > max_distance or n*z_inc > z_max:
             return None
 
         x_ = int(x+dx*n)
@@ -56,10 +64,17 @@ def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high
     n = 0.
     inc = 1. / sampling_density
     xy_inc = sqrt(dx**2 + dy**2)
+
+    if dz > 0:
+        z_max = z_high
+        z_inc = dz
+    else:
+        z_max = z_low
+        z_inc = -1*dz
     #md2 = max_distance**2
     while True:
         n += inc
-        if n*xy_inc > max_distance or n*dz < z_low or n*dz > z_high:
+        if n*xy_inc > max_distance or n*z_inc > z_max:
             return None
 
         x_ = int(x+dx*n)
