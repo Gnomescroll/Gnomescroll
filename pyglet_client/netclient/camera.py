@@ -55,7 +55,7 @@ class Camera(object):
 
         glDisable(GL_DEPTH_TEST);
         #glDisable(GL_CULL_FACE);
-        glEnable(gl.GL_TEXTURE_2D) 
+        glEnable(gl.GL_TEXTURE_2D)
 
     def move_camera(self, dx, dy, dz):
 
@@ -73,8 +73,6 @@ class Camera(object):
         self.z += dz
 
     def pan(self, dx_angle, dy_angle):
-        #print "dx_angle= " + str(dx_angle)
-        #print "dy_angle= " + str(dy_angle)
         self.x_angle += dx_angle
         self.y_angle += dy_angle
         if self.y_angle < -0.499:
@@ -98,7 +96,7 @@ class Camera(object):
         self.z = agent.z
         self.x_angle = agent.x_angle
         self.y_angle = agent.y_angle
-        
+
 
     def camera_view(self):
         if self.mode != 'camera':

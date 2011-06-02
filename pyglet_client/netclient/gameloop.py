@@ -32,7 +32,7 @@ import settings  ## put this somewhere!!! so it only has to be in one place
 import world #deprecate
 
 
-#import hotshot
+import hotshot
 
 class App(object):
 
@@ -96,10 +96,10 @@ class App(object):
         #ChatClientGlobal.on_connect()
         NetOut.mapMessage.request_chunk_list()
 
-        #p = hotshot.Profile("../log/client.log")
-        #p.start()
         self.player = GameStateGlobal.player
         self.agent = GameStateGlobal.agent
+        p = hotshot.Profile("../log/client.log")
+        p.start()
         while not self.exit:
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
@@ -119,7 +119,7 @@ class App(object):
             self.hud.draw()
             clock.tick()
             self.win.flip()
-        #p.stop()
+        p.stop()
         self.win.close()
 
 if __name__ == '__main__':

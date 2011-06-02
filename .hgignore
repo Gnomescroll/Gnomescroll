@@ -8,6 +8,8 @@ dat.c
 cube_dat.c
 map_chunk_manager.c
 
+pyglet_client/log/
+
 *.o
 *.so
 
