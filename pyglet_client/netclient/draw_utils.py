@@ -126,14 +126,14 @@ def draw_cube( x,y,z, color = None):
         [3,7],
     ]
 
-    side_v = [
-    [4,5,6,7],   #top (z=1)
-    [0,1,2,3],   #bottom (z=0)
-    [1,5,9,10],  #north (y=1)
-    [7,3,11,8],  #south (y=0)
-    [6,2,10,11], #west (x=0)
-    [4,0,9,8],   #east (x=1)
-    ]
+    #side_v = [
+    #[4,5,6,7],   #top (z=1)
+    #[0,1,2,3],   #bottom (z=0)
+    #[1,5,9,10],  #north (y=1)
+    #[7,3,11,8],  #south (y=0)
+    #[6,2,10,11], #west (x=0)
+    #[4,0,9,8],   #east (x=1)
+    #]
 
     #(x,y,z) = (floor(self.x), floor(self.y), floor(self.z))
     v_list = []

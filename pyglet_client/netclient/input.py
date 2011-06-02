@@ -15,6 +15,7 @@ from sounds import playSound
 class InputGlobal:
     keyboard = None
     mouse = None
+    agentInput = None
 
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -22,17 +23,17 @@ class InputGlobal:
     _cameras = ('camera', 'agent')
 
     @classmethod
-    def init_0(self, main):
+    def init_0(cls, main):
         InputGlobal.mouse = Mouse(main)
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
 
     @classmethod
-    def init_1(self, main):
+    def init_1(cls, main):
         InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
 
     @classmethod
-    def _toggle_mode(self, change, current_mode, type):
+    def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')
         current_mode = (current_mode + change) % len(modes)
         setattr(InputGlobal, type, modes[current_mode])
@@ -41,15 +42,15 @@ class InputGlobal:
 
     @classmethod
     # toggles through modes.
-    def toggle_input_mode(self, change=1, current_mode=[0]):
+    def toggle_input_mode(cls, change=1, current_mode=[0]):
         current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'input')
 
     @classmethod
-    def toggle_camera_mode(self, change=1, current_mode=[0]):
+    def toggle_camera_mode(cls, change=1, current_mode=[0]):
         current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
 
     @classmethod
-    def enable_chat(self):
+    def enable_chat(cls):
         InputGlobal.input = 'chat'
 
 class Mouse(object):
@@ -95,7 +96,6 @@ class Mouse(object):
         elif scroll_y < 0:
             GameStateGlobal.agent.switch_weapon('down')
 
-import math
 from math import sin, cos, pi
 
 class Keyboard(object):
@@ -253,7 +253,7 @@ class AgentInput:
             for k, h in key.items():
                 self.key_handlers[k] = h
         else:
-            self.key_handlers[key] = handle
+            self.key_handlers[key] = handler
 
     def on_key_press(self, symbol, modifiers):
         self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)

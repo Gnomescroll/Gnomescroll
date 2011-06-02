@@ -59,7 +59,7 @@ class Camera(object):
 
     def move_camera(self, dx, dy, dz):
 
-        if self.rts == True:
+        if self.rts:
             #dx delta
             self.x += dx*cos(self.x_angle * pi)
             self.y += dx*sin(self.x_angle * pi)

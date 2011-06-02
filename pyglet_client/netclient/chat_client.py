@@ -15,16 +15,16 @@ class ChatClientGlobal:
     chatClient = None
 
     @classmethod
-    def init_0(self): #first pass is declaring
+    def init_0(cls): #first pass is declaring
         ChatClientGlobal.chatClient = ChatClient()
         ChatClientGlobal.chatRender = ChatRender()
 
     @classmethod
-    def init_1(self): #calls import methods if needed
+    def init_1(cls): #calls import methods if needed
         pass
 
     @classmethod
-    def on_identify(self): # called after client connects
+    def on_identify(cls): # called after client connects
         ChatClientGlobal.chatClient.on_identify()
 
 
@@ -117,10 +117,10 @@ class ChatClient:
             NetOut.chatMessage.unsubscribe(channel)
         if switch:
             channel_names = self.subscriptions.keys()
-            next = channel_names[-1]
-            if next == 'system' and len(channel_names) > 1:
-                next = channel_names[-2]
-            self.set_current_channel(next)
+            nxt = channel_names[-1]
+            if nxt == 'system' and len(channel_names) > 1:
+                nxt = channel_names[-2]
+            self.set_current_channel(nxt)
 
     # add client_id to ignore list
     def ignore(self, client_id):
