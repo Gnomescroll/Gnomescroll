@@ -200,7 +200,7 @@ Client's player's agent draw methods
 '''
 class PlayerAgentRender(AgentRender):
 
-    
+
     def draw(self):
         self.draw_aiming_direction()
         self.draw_bounding_box()
