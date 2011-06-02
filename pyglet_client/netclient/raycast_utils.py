@@ -55,7 +55,7 @@ def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high
 
     n = 0.
     inc = 1. / sampling_density
-    xy_inc = math.sqrt(dx**2 + dy**2)
+    xy_inc = sqrt(dx**2 + dy**2)
     #md2 = max_distance**2
     while True:
         n += inc

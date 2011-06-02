@@ -26,7 +26,7 @@ class NetOut:
     def send_json(cls, dict):
         cls.sendPacket.send_json(dict)
     @classmethod
-    def send_binary(cls, msg_id, bin_sting):
+    def send_binary(cls, msg_id, bin_string):
         cls.sendPacket.send_binary(msg_id, bin_string)
 
 from net_client import NetClientGlobal
