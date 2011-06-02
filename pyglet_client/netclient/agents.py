@@ -373,6 +373,9 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
+        if n*xy_inc > max_distance or n*dz < z_low or n*dz > z_high:
+        if n*xy_inc > max_distance or n*dz < z_low or n*dz > z_high:
+
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
