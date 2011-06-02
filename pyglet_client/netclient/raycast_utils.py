@@ -27,7 +27,7 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
     if dz >= 0:
         z_max = z_high
         z_inc = dz
-    elif
+    else:
         z_max = z_low
         z_inc = -1*dz
 
