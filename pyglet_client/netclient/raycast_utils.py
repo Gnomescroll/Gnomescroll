@@ -26,7 +26,7 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
     #md2 = max_distance**2
     while True:
         n += inc
-        if n*xy_inc > max_distance:
+        if n*xy_inc > max_distance or n*dz < z_low or n*dz < z_high:
             return None
 
         x_ = int(x+dx*n)
@@ -59,7 +59,7 @@ def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high
     #md2 = max_distance**2
     while True:
         n += inc
-        if n*xy_inc > max_distance:
+        if n*xy_inc > max_distance or n*dz < z_low or n*dz < z_high:
             return None
 
         x_ = int(x+dx*n)
