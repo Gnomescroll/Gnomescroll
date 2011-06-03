@@ -26,6 +26,11 @@ class CubeGlobal:
 
 from map_chunk_manager import MapChunkManagerGlobal
 
+cimport terrain_map
+from terrain_map cimport TerrainMap
+
+from game_state import GameStateGlobal
+
 cube_list = {
     0 : {
         'id' : 0,
@@ -143,7 +148,7 @@ cdef class CollisionDetection:
 
     def init(self):
         self.terrainMap = GameStateGlobal.terrainMap
-        self.cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
+        self.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
 
     def __init__(self):
         pass
