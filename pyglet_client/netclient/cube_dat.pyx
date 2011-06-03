@@ -6,8 +6,9 @@
 class CubeGlobal:
     #terrainMap = TerrainMap()
     cubePhysicalProperties = None
+    CubeGlobals.collisionDetection = CollisionDetection()
+    #client specific
     cubeRenderCache = None
-
     textureGrid = None
 
     @classmethod
@@ -16,7 +17,7 @@ class CubeGlobal:
         CubeGlobal.cubeRenderCache = CubeRenderCache()
     @classmethod
     def init_1(self):
-        pass
+        self.collisionDetection.init()
     @classmethod
     def setTextureGrid(self, texture_grid):
         print "set texture grid"
@@ -135,6 +136,22 @@ cdef class CubePhysicalProperties:
         if id >= max_cubes: #max number of cubes
             return 0
         return self.cube_array[id].occludes
+
+cdef class CollisionDetection:
+    cdef TerrainMap terrainMap
+    cdef CubePhysicalProperties cubePhysicalProperties
+
+    def init(self):
+        self.terrainMap = GameStateGlobal.terrainMap
+        self.cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
+
+    def __init__(self):
+        pass
+
+    cpdef inline int collision(CollisionDetection self, int x, int y, int z):
+        cdef int tile
+        tile = self.terrainMap.get(x,y,z)
+        return self.cubePhysicalProperties.isSolid(tile)
 
 #the cache for cube visual properties
 #deprecates CubeRenderCache
