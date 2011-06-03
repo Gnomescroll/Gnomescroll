@@ -411,6 +411,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
     def set_active_block(self, block_type=None):
         if block_type is None:
+            pos = ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
             block_type = self.facing_block()
         if not block_type:
             return
@@ -418,9 +419,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         print 'set active block to ', self.active_block
 
     def facing_block(self):
-        block = self.facing_block_position()
+        block = self.nearest_block_position()
         if block is None:
-            return
+            return None
         block = GameStateGlobal.terrainMap.get(*block)
         return block
 

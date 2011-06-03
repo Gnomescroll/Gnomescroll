@@ -80,6 +80,24 @@ cube_list = {
         'id' : 4,
         'occludes' : True,
         'active' : True,
+        'solid' : True,
+
+        'texture' : [ #t, b, w, e, n, s
+        (16, [0,1,2,3]),  #top
+        (16, [0,1,2,3]),  #bottom
+        (16, [0,1,2,3]), #west
+        (16, [0,1,2,3]), #east
+        (16, [0,1,2,3]), #north
+        (16, [0,1,2,3]), #south
+        ],
+    },
+    5 : {
+        'id' : 5,
+        'occludes' : False, #translucent
+        'active' : True, #should be drawn
+        'solid' : False,
+
+        'gravity' : 5, #for anti-grav
 
         'texture' : [ #t, b, w, e, n, s
         (16, [0,1,2,3]),  #top
@@ -98,13 +116,15 @@ cdef struct CubePhysical:
     int active
     int occludes
     int solid
+    int gravity
 
 #used for initing the struct
-cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid):
+cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid, int gravity):
     x.id = id
     x.active = active
     x.occludes = occludes
     x.solid = solid
+    x.gravity = gravity
 
 cdef enum:
     max_cubes = 4096
@@ -125,8 +145,8 @@ cdef class CubePhysicalProperties:
         active = int(d.get('active',1))
         occludes = int(d.get('occludes', 0))
         solid = int(d.get('solid', 1))
-
-        init_CubePhysical(&self.cube_array[id], id, active, occludes, solid)
+        gravity = int(d.get('gravity', 0))
+        init_CubePhysical(&self.cube_array[id], id, active, occludes, solid, gravity)
 
     cdef inline int isActive(CubePhysicalProperties self, unsigned int id):
         if id >= max_cubes: #max number of cubes
