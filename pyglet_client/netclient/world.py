@@ -50,6 +50,7 @@ class World():
 
     def draw_transparent_blocks(self):
         #glEnable(GL_CULL_FACE)
+        glDepthMask(GL_FALSE)
         glEnable(GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -57,6 +58,7 @@ class World():
         MapChunkManagerGlobal.transparentBlockManager.update_vbo()
 
         glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE)
         #glDisable(GL_CULL_FACE)
 
         return
