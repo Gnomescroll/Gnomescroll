@@ -161,7 +161,7 @@ class ClientMessageHandler:
 class PlayerMessageHandler:
     def register_events(self):
         NetEventGlobal.register_json_events({
-            'player_player' : self._player_player,
+            'player_list' : self._player_list,
             'player_info' : self._player_info,
             'remove_player' : self._remove_player,
             'player_update' : self._player_update,
@@ -174,7 +174,7 @@ class PlayerMessageHandler:
     def __init__(self):
         self.register_events()
 
-    def _player_player(self, players, **arg):
+    def _player_list(self, players, **arg):
         try:
             assert type(players) == list
         except AssertionError:
