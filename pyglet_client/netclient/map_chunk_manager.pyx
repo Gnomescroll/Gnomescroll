@@ -51,7 +51,7 @@ class TransparentBlockManager(object):
 
     def update_all_blocks(self):
         self.blocks = {}
-        self.block_sides = {}
+        self.draw_list = []
         #cdef c MapChunk
         #cdef int i
         #cdef int tile_id
@@ -70,7 +70,7 @@ class TransparentBlockManager(object):
                     self.draw_list.append((x,y,z,tile_id, side_num))
 
     def update_vbo(self):
-        cdef int tile_id, side_num x, y, z
+        cdef int tile_id, side_num, x, y, z
         cdef int v_num
         cdef float rx, ry, rz
 
@@ -269,5 +269,5 @@ cdef inline int _is_occluded2(self,int x,int y,int z,int side_num, int tile_id_i
 
         tile_id = self.terrainMap.get(_x,_y,_z)
         if tile_id == tile_id_in:
-            return 0
+            return 1
         return self.cubePhysicalProperties.isOcclude(tile_id)
