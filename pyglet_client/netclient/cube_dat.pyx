@@ -99,22 +99,22 @@ cube_list = {
         ],
     },
     5 : {
-        'id' : 11,
-        'occludes' : False, #translucent
+        'id' : 5,
+        'occludes' : True, #translucent
         'active' : True, #should be drawn
         'solid' : False,
 
         'gravity' : 5, #for anti-grav
 
         'texture' : [ #t, b, w, e, n, s
-        (16, [0,1,2,3]),  #top
-        (16, [0,1,2,3]),  #bottom
-        (16, [0,1,2,3]), #west
-        (16, [0,1,2,3]), #east
-        (16, [0,1,2,3]), #north
-        (16, [0,1,2,3]), #south
+        (11, [0,1,2,3]),  #top
+        (11, [0,1,2,3]),  #bottom
+        (11, [0,1,2,3]), #west
+        (11, [0,1,2,3]), #east
+        (11, [0,1,2,3]), #north
+        (11, [0,1,2,3]), #south
         ],
-        'color' : [0,0,50,50], #alpha
+        'color' : [0,0,150,50], #alpha
     },
  }
 
@@ -252,7 +252,7 @@ class CubeRenderCache(object):
         else:
             ##compute from dict!
             #temp = (GLbyte * 4)[255, 255, 255, 255] * 4
-            rbga = cube_list[tile_id].get('color', [255, 255, 255, 255])
+            rgba = cube_list[tile_id].get('color', [255, 255, 255, 255])
             temp = rgba * 4
 
             self.c4b_cache[(tile_id, side_num)] = temp
