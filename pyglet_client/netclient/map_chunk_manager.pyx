@@ -42,8 +42,8 @@ class TransparentBlockManager(object):
 
     def reset(self):
         self.blocks = {}
-        self.v_list = []
-        self.c_list = []
+        #self.v_list = []
+        #self.c_list = []
         self.vertexList = None
 
     def update_block(self,x,y,z):
@@ -97,9 +97,9 @@ class TransparentBlockManager(object):
             return
         else:
 
-            pyglet.graphics.draw(v_num, GL_POINTS,
+            pyglet.graphics.draw(v_num, GL_QUADS,
         ("v3f", v_list),
-        ("c3B", c_list)
+        ("c4B", c_list)
         )
             return
             self.vertexList = pyglet.graphics.vertex_list(v_num, pyglet.gl.GL_QUADS,

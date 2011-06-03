@@ -49,6 +49,8 @@ class World():
 
         MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
         MapChunkManagerGlobal.transparentBlockManager.update_vbo()
+        #print str(len(MapChunkManagerGlobal.transparentBlockManager.blocks.keys()))
+        return
         tmp = MapChunkManagerGlobal.transparentBlockManager.vertexList
         if tmp != None:
             tmp.draw()
