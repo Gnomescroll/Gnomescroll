@@ -14,7 +14,7 @@ from game_state import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
 
-from cube_dat import CubeGlobals
+from cube_dat import CubeGlobal
 
 from weapons import LaserGun, Pick, BlockApplier
 
@@ -295,7 +295,7 @@ class AgentPhysics:
         #print self.state
         NetOut.event.agent_state_change(self)
         return
-    
+
 
 # represents an agent under control of a player
 class Agent(AgentPhysics):

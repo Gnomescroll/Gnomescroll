@@ -6,23 +6,23 @@
 class CubeGlobal:
     #terrainMap = TerrainMap()
     cubePhysicalProperties = None
-    CubeGlobals.collisionDetection = CollisionDetection()
+    collisionDetection = CollisionDetection()
     #client specific
     cubeRenderCache = None
     textureGrid = None
 
     @classmethod
-    def init_0(self):
-        CubeGlobal.cubePhysicalProperties = CubePhysicalProperties()
-        CubeGlobal.cubeRenderCache = CubeRenderCache()
+    def init_0(cls):
+        cls.cubePhysicalProperties = CubePhysicalProperties()
+        cls.cubeRenderCache = CubeRenderCache()
     @classmethod
-    def init_1(self):
-        self.collisionDetection.init()
+    def init_1(cls):
+        cls.collisionDetection.init()
     @classmethod
-    def setTextureGrid(self, texture_grid):
+    def setTextureGrid(cls, texture_grid):
         print "set texture grid"
-        self.textureGrid = texture_grid
-        self.cubeRenderCache.set_texture(texture_grid)
+        cls.textureGrid = texture_grid
+        cls.cubeRenderCache.set_texture(texture_grid)
 
 from map_chunk_manager import MapChunkManagerGlobal
 

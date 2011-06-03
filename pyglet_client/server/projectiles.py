@@ -57,7 +57,7 @@ Projectile class
 '''
 from math import sin, cos, pi
 from game_objects import GameObject
-from cube_dat import CubeGlobals
+from cube_dat import CubeGlobal
 
 class Projectile(GameObject):
 
