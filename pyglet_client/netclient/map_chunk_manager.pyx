@@ -11,9 +11,10 @@ class MapChunkManagerGlobal:
         cls.mapChunkManager = MapChunkManager()
         cls.transparentBlockManager = TransparentBlockManager()
     @classmethod
-    def init_1(self):
+    def init_1(cls):
         MapChunk.init()
-        MapChunkManagerGlobal.mapChunkManager.init()
+        cls.mapChunkManager.init()
+        TransparentBlockManager.init()
 
 from cube_dat import CubeGlobal
 from game_state import GameStateGlobal
@@ -27,9 +28,17 @@ cdef enum:
     z_chunk_size = 8
 
 class TransparentBlockManager(object):
+    cubePhysicalProperties = None
+    terrainMap = None
+    cubeRenderCache = None
 
     def __init__(self):
         self.reset()
+    @classmethod
+    def init(cls):
+        cls.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
+        cls.terrainMap = GameStateGlobal.terrainMap
+        cls.cubeRenderCache = CubeGlobal.cubeRenderCache
 
     def reset(self):
         self.blocks = {}
@@ -52,14 +61,14 @@ class TransparentBlockManager(object):
                     for z in range(0,8):
                         tile_id = c.get(x_off+x,y_off+y, z_off+z)
                         if cubePhysicalProperties.isTransparent(tile_id):
-                            self.blocks[(x_off+x, y_off+y, z_off+z, tile_id)] = True
+                            self.blocks[(x_off+x, y_off+y, z_off+z)] =  tile_id
 
     def update_vbo(self):
         cdef int tile_id, x, y, z
         cdef int side_num
 
         draw_list = []
-        for (x,y,z, tile_id) in self.blocks.values():
+        for (x,y,z), tile_id in self.blocks.items():
             for side_num in [0,1,2,3,4,5]:
                 if not _is_occluded(self,x,y,z,side_num):
                     draw_list.append((x,y,z,tile_id, side_num))
@@ -79,6 +88,7 @@ class TransparentBlockManager(object):
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
             v_list += tv_list
             c_list += tc_list
+            tex_list += ttex_list
             v_num += 4
 
         if self.vertexList != None:
@@ -86,9 +96,16 @@ class TransparentBlockManager(object):
         if v_num == 0:
             return
         else:
+
+            pyglet.graphics.draw(v_num, GL_POINTS,
+        ("v3f", v_list),
+        ("c3B", c_list)
+        )
+            return
             self.vertexList = pyglet.graphics.vertex_list(v_num, pyglet.gl.GL_QUADS,
         ('v3f\static', v_list),
         ('c4B\static', c_list),
+        ("t3f\static", tex_list),
         )
 
 class MapChunkManager(object):

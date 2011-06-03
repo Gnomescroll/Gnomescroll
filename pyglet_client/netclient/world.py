@@ -49,7 +49,9 @@ class World():
 
         MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
         MapChunkManagerGlobal.transparentBlockManager.update_vbo()
-        MapChunkManagerGlobal.transparentBlockManager.vertexList.draw()
+        tmp = MapChunkManagerGlobal.transparentBlockManager.vertexList
+        if tmp != None:
+            tmp.draw()
 
     def draw_projectiles(self):
         projectiles.draw_projectiles()
