@@ -214,6 +214,7 @@ class AgentMessageHandler:
     def register_events(self):
         events = {
             'agent_position' : self._agent_position,
+            'agent_info'    :   self._agent_info,
             'agent_update' : self._agent_update,
             'remove_agent' : self._remove_agent,
         }
@@ -236,6 +237,9 @@ class AgentMessageHandler:
         x,y,z = map(lambda k: float(k), [x,y,z])
 
         agent = GameStateGlobal.agentList[id]
+        if agent is None: # agent not found, request agent
+            NetOut.sendMessage.request_agent(id)
+            return
         agent.tick = tick
         agent.x = x
         agent.y = y
@@ -247,10 +251,19 @@ class AgentMessageHandler:
         agent.ay = ay
         agent.az = az
 
+    def _agent_info(self, **args):
+        agent_data = args.get('agent', None)
+        if agent_data is None:
+            print 'msg agent_info :: agent key missing'
+            return
+
+        GameStateGlobal.agentList.create(**agent_data)
+
     def _agent_update(self, **args):
         agent_data = args.get('agent', None)
         if agent_data is None:
             print 'msg agent_update :: agent key is missing'
+            return
 
         try:
             agent_id = int(agent_data.get('id', None))

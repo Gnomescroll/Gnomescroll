@@ -73,6 +73,12 @@ class GenericMessage:
 
 class SendMessage(GenericMessage):
 
+    @sendJSON('request_agent')
+    def request_agent(self, agent_id):
+        return {
+            'aid'   :   agent_id,
+        }
+
     @idRequired
     @sendJSON('agent_control_state', tick=True)
     def send_agent_control_state(self, agent):

@@ -9,8 +9,9 @@ class GenericObjectList:
         self._object_type = None
 
     def __getitem__(self, key):
-        if not key in self.objects:
+        if key not in self.objects:
             print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
+            return
         return self.objects[key]
         
     def __setitem__(self, key, value):

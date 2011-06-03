@@ -46,6 +46,8 @@ class MessageHandler:
             GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(connection.id, **msg)
+        elif cmd == 'request_agent':
+            self.request_agent(connection, **msg)
             
         elif cmd == 'fire_projectile':
             self.fire_projectile(connection.id, **msg)
@@ -293,6 +295,13 @@ class MessageHandler:
             print 'msg request_chunk, "value" must be a 3 tuple'
             return
         connection.sendMessage.send_chunk(x,y,z)
+
+    def request_agent(self, connection, **msg):
+        if 'aid' not in msg:
+            return
+        agent_id = msg['aid']
+        connection.sendMessage.send_agent(agent_id)
+        
 
 # handler for admin msgs
 class AdminMessageHandler:

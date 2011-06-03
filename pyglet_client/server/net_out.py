@@ -223,6 +223,14 @@ class SendMessage: #each connection has one of these
             'player': player.json(),
         }
 
+    @sendJSON('agent_info')
+    def send_agent(self, agent):
+        if type(agent) == int:
+            agent = GameStateGlobal.agentList[agent]
+        return {
+            'agent' :   agent.json(),
+        }
+
     @sendJSON('remove_player')
     def remove_player(self, player):
         return {
