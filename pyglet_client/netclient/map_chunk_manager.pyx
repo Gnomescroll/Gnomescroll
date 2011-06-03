@@ -44,22 +44,22 @@ class TransparentBlockManager(object):
         self.blocks = {}
         #cdef c MapChunk
         #cdef int i
-        #cdef int tile
+        #cdef int tile_id
         cubePhysicalProperties =  CubeGlobal.cubePhysicalProperties
-        for c in GameStateGlobal.terrainMap.chunks.values():
+        for c, x_off, y_off, z_off in GameStateGlobal.terrainMap.get_chunk_list():
             for x in range(0,8):
                 for y in range(0,8):
                     for z in range(0,8):
-                        tile = c.get(c.index[0]+x, c.index[1]+y, x.index[2]+z)
-                        if cubePhysicalProperties.isTransparent(tile):
-                            self.blocks[(c.index[0]+x, c.index[1]+y, x.index[2]+z)] = True
+                        tile_id = c.get(x_off+x,y_off+y, z_off+z)
+                        if cubePhysicalProperties.isTransparent(tile_id):
+                            self.blocks[(x_off+x, y_off+y, z_off+z, tile_id)] = True
 
     def update_vbo(self):
         cdef int tile_id, x, y, z
         cdef int side_num
 
         draw_list = []
-        for (x,y,z) in self.blocks.values():
+        for (x,y,z, tile_id) in self.blocks.values():
             for side_num in [0,1,2,3,4,5]:
                 if not _is_occluded(self,x,y,z,side_num):
                     draw_list.append((x,y,z,tile_id, side_num))
@@ -83,8 +83,10 @@ class TransparentBlockManager(object):
 
         if self.vertexList != None:
             self.vertexList.delete()
-
-        self.vertexList = batch.add(v_num, pyglet.gl.GL_QUADS, None,
+        if v_num == 0:
+            return
+        else:
+            self.vertexList = pyglet.graphics.vertex_list(v_num, pyglet.gl.GL_QUADS,
         ('v3f\static', v_list),
         ('c4B\static', c_list),
         )

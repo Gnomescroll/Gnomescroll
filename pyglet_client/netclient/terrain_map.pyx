@@ -25,6 +25,12 @@ cdef class TerrainMap:
             l.append([c.index[0], c.index[1], c.index[2], c.version, c.server_version])
         return l
 
+    def get_chunk_list(self):
+        l = []
+        cdef MapChunk c
+        for c in self.chunks.values():
+            l.append([c, c.index[0], c.index[1], c.index[2]])
+        return l
 
 #    def get_chunk(TerrainMap self, int x, int y, int z):
 #        t = (x >> 3, y >> 3, z >> 3)
