@@ -46,19 +46,6 @@ class AgentList(GenericObjectList):
                 l.append(agent)
         return l
 
-#    def at(self, position):
-#        _x, _y, _z = [int(k) for k in position]
-#        for agent in self.values():
-#            x, y, z = [int(k) for k in agent.pos()]
-#            #if agent.pos() == position:
-#            if x == _x and \
-#                y == _y and \
-#                z == _z and \
-#                not agent.dead:
-#                'at agent'
-#                return agent
-#        return False
-
 class AgentPhysics:
 
     #collision tests
@@ -311,35 +298,40 @@ class Agent(AgentPhysics):
         x,y,z = [float(i) for i in position]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
 
+        ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
         self.collisionDetection = CubeGlobal.collisionDetection
-
         assert self.collisionDetection != None
+        ### End Global imports ###
 
         if id is None:
             id = GameStateGlobal.new_agent_id()
         self.id = id
 
-        #b_height
-        #t_height
+        ### Agent Parameters ###
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+        ### End Agent Paramters ###
 
+        ### Agent State
         self.d_x = 0 #yaw?
         self.d_y = 0 #pitch?
         self.v_x = 0
         self.v_y = 0
         self.x_angle = 0
         self.y_angle = 0
+        ### End Agent State ###
 
+        #control state variables
         self.last_control_tick = 0
         self.jump = 0 #also need to record last jump
         self.jetpack = 0
         self.brake = 0
+        #environmental state variables
+        self.on_ground = 0
 
         #misc state
-        self.on_ground = 0
         self.respawn_countdown = self.RESPAWN_TICKS
         self.health = self.HEALTH_MAX
         self.dead = False
