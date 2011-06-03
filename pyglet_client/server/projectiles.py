@@ -116,7 +116,7 @@ class Projectile(GameObject):
         y += vy / fps
         z += vz / fps
 
-        if CubeGlobals.collisionDetection.collision(int(x), int(y), int(z)):
+        if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
             print "collision with wall"
             self.delete()
             return

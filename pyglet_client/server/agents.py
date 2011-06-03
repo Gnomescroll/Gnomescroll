@@ -312,7 +312,7 @@ class Agent(AgentPhysics):
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
 
         self.terrainMap = GameStateGlobal.terrainMap
-        self.collisionDetection = CubeGlobals.collisionDetection
+        self.collisionDetection = CubeGlobal.collisionDetection
 
         assert self.collisionDetection != None
 
