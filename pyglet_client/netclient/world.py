@@ -71,6 +71,11 @@ class World():
         else:
             glShadeModel(GL_SMOOTH);
 
+        #transparency
+        glEnable (GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        #end transparency
+
         glEnable(GL_CULL_FACE);
         glEnable(self.texture_grid.target)
 
@@ -99,16 +104,12 @@ class World():
 
         self.mapChunkManager.draw_batch.draw()
 
+        #transparency
+        glDisable(GL_BLEND);
+
         glShadeModel(GL_SMOOTH); #the default
         glDisable(GL_CULL_FACE)
         glDisable(self.texture_grid.target)
-
-        #deprecate
-#    def draw_point(self, x, y, r, g, b):
-#        z=0
-#        pyglet.graphics.draw(1, pyglet.gl.GL_POINTS,
-#            ('v3f', (x, y, z)),
-#            ('c3B', (r, g, b)) )
 
     def add_player(self, player):
         self.players.append(player)

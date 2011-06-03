@@ -100,7 +100,7 @@ cube_list = {
     },
     5 : {
         'id' : 5,
-        'occludes' : True, #translucent
+        'occludes' : False, #translucent
         'active' : True, #should be drawn
         'solid' : False,
 
@@ -114,7 +114,7 @@ cube_list = {
         (11, [0,1,2,3]), #north
         (11, [0,1,2,3]), #south
         ],
-        'color' : [0,0,150,50], #alpha
+        'color' : [0,0,50,150], #alpha
     },
  }
 
