@@ -11,7 +11,7 @@ from net_event import NetEvent
 from game_state import GameStateGlobal
 from chat_server import ChatServer
 
-from cube_dat import CubeGlobals
+from cube_dat import CubeGlobal
 
 import random
 def load_map():
@@ -54,9 +54,9 @@ class Main:
         NetEvent().init()
         GameStateGlobal().init()
         ChatServer().init()
-        CubeGlobals.init()
+        CubeGlobal.init_0()
         #phase 2 inits
-        CubeGlobals.init_1()
+        CubeGlobal.init_1()
     def run(self):
         print "Server Started"
         load_map()

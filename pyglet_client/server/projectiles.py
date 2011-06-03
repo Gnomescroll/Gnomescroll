@@ -57,7 +57,7 @@ Projectile class
 '''
 from math import sin, cos, pi
 from game_objects import GameObject
-from cube_dat import CubeGlobals
+from cube_dat import CubeGlobal
 
 class Projectile(GameObject):
 
@@ -116,7 +116,7 @@ class Projectile(GameObject):
         y += vy / fps
         z += vz / fps
 
-        if CubeGlobals.collisionDetection.collision(int(x), int(y), int(z)):
+        if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
             print "collision with wall"
             self.delete()
             return

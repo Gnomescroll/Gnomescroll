@@ -6,24 +6,30 @@
 class CubeGlobal:
     #terrainMap = TerrainMap()
     cubePhysicalProperties = None
+    collisionDetection = CollisionDetection()
+    #client specific
     cubeRenderCache = None
-
     textureGrid = None
 
     @classmethod
-    def init_0(self):
-        CubeGlobal.cubePhysicalProperties = CubePhysicalProperties()
-        CubeGlobal.cubeRenderCache = CubeRenderCache()
+    def init_0(cls):
+        cls.cubePhysicalProperties = CubePhysicalProperties()
+        cls.cubeRenderCache = CubeRenderCache()
     @classmethod
-    def init_1(self):
-        pass
+    def init_1(cls):
+        cls.collisionDetection.init()
     @classmethod
-    def setTextureGrid(self, texture_grid):
+    def setTextureGrid(cls, texture_grid):
         print "set texture grid"
-        self.textureGrid = texture_grid
-        self.cubeRenderCache.set_texture(texture_grid)
+        cls.textureGrid = texture_grid
+        cls.cubeRenderCache.set_texture(texture_grid)
 
 from map_chunk_manager import MapChunkManagerGlobal
+
+cimport terrain_map
+from terrain_map cimport TerrainMap
+
+from game_state import GameStateGlobal
 
 cube_list = {
     0 : {
@@ -135,6 +141,22 @@ cdef class CubePhysicalProperties:
         if id >= max_cubes: #max number of cubes
             return 0
         return self.cube_array[id].occludes
+
+cdef class CollisionDetection:
+    cdef TerrainMap terrainMap
+    cdef CubePhysicalProperties cubePhysicalProperties
+
+    def init(self):
+        self.terrainMap = GameStateGlobal.terrainMap
+        self.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
+
+    def __init__(self):
+        pass
+
+    cpdef inline int collision(CollisionDetection self, int x, int y, int z):
+        cdef int tile
+        tile = self.terrainMap.get(x,y,z)
+        return self.cubePhysicalProperties.isSolid(tile)
 
 #the cache for cube visual properties
 #deprecates CubeRenderCache

@@ -1,21 +1,21 @@
 import pyglet
 from pyglet.gl import *
 
-class CubeGlobals:
+class CubeGlobal:
     cubePhysicalProperties = None
     CollisionDetection = None
 
     @classmethod
-    def init(self):
-        CubeGlobals.cubePhysicalProperties = CubePhysicalProperties()
-        CubeGlobals.collisionDetection = CollisionDetection()
+    def init_0(cls):
+        cls.cubePhysicalProperties = CubePhysicalProperties()
+        cls.collisionDetection = CollisionDetection()
     @classmethod
-    def init_1(self):
-        self.collisionDetection.init()
+    def init_1(cls):
+        cls.collisionDetection.init()
     @classmethod
-    def setTextureGrid(self, textureGrid):
-        self.textureGrid = textureGrid
-        self.cubeRenderCache = CubeRenderCache()
+    def setTextureGrid(cls, textureGrid):
+        cls.textureGrid = textureGrid
+        cls.cubeRenderCache = CubeRenderCache()
 
 cimport terrain_map
 from terrain_map cimport TerrainMap
@@ -149,7 +149,7 @@ cdef class CollisionDetection:
 
     def init(self):
         self.terrainMap = GameStateGlobal.terrainMap
-        self.cubePhysicalProperties = CubeGlobals.cubePhysicalProperties
+        self.cubePhysicalProperties = CubeGlobal.cubePhysicalProperties
 
     def __init__(self):
         pass
