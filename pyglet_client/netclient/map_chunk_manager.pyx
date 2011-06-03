@@ -4,9 +4,12 @@ from pyglet.gl import *
 class MapChunkManagerGlobal:
 
     mapChunkManager = None
+    transparentBlockManager = None
+
     @classmethod
-    def init_0(self):
-        MapChunkManagerGlobal.mapChunkManager = MapChunkManager()
+    def init_0(cls):
+        cls.mapChunkManager = MapChunkManager()
+        cls.transparentBlockManager = TransparentBlockManager()
     @classmethod
     def init_1(self):
         MapChunk.init()
@@ -15,10 +18,76 @@ class MapChunkManagerGlobal:
 from cube_dat import CubeGlobal
 from game_state import GameStateGlobal
 
+cimport terrain_map
+from terrain_map cimport TerrainMap
+
 cdef enum:
     x_chunk_size = 8
     y_chunk_size = 8
     z_chunk_size = 8
+
+class TransparentBlockManager(object):
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.blocks = {}
+        self.v_list = []
+        self.c_list = []
+        self.vertexList = None
+
+    def update_block(self,x,y,z):
+        pass
+
+    def update_all_blocks(self):
+        self.blocks = {}
+        #cdef c MapChunk
+        #cdef int i
+        #cdef int tile
+        cubePhysicalProperties =  CubeGlobal.cubePhysicalProperties
+        for c in GameStateGlobal.terrainMap.chunks.values():
+            for x in range(0,8):
+                for y in range(0,8):
+                    for z in range(0,8):
+                        tile = c.get(c.index[0]+x, c.index[1]+y, x.index[2]+z)
+                        if cubePhysicalProperties.isTransparent(tile):
+                            self.blocks[(c.index[0]+x, c.index[1]+y, x.index[2]+z)] = True
+
+    def update_vbo(self):
+        cdef int tile_id, x, y, z
+        cdef int side_num
+
+        draw_list = []
+        for (x,y,z) in self.blocks.values():
+            for side_num in [0,1,2,3,4,5]:
+                if not _is_occluded(self,x,y,z,side_num):
+                    draw_list.append((x,y,z,tile_id, side_num))
+
+        cdef int v_num
+        cdef float rx, ry, rz
+
+        v_list = []
+        c_list = []
+        tex_list = []
+        v_num = 0
+        for (x,y,z,tile_id, side_num) in draw_list:
+            rx = x #should be floats
+            ry = y
+            rz = z
+
+            (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
+            v_list += tv_list
+            c_list += tc_list
+            v_num += 4
+
+        if self.vertexList != None:
+            self.vertexList.delete()
+
+        self.vertexList = batch.add(v_num, pyglet.gl.GL_QUADS, None,
+        ('v3f\static', v_list),
+        ('c4B\static', c_list),
+        )
 
 class MapChunkManager(object):
     terrainMap = None

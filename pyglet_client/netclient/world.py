@@ -47,6 +47,10 @@ class World():
         self.draw_agents()
         self.draw_projectiles()
 
+        MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
+        MapChunkManagerGlobal.transparentBlockManager.update_vbo()
+        MapChunkManagerGlobal.transparentBlockManager.vertexList.draw()
+
     def draw_projectiles(self):
         projectiles.draw_projectiles()
 
@@ -72,8 +76,8 @@ class World():
             glShadeModel(GL_SMOOTH);
 
         #transparency
-        glEnable (GL_BLEND);
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        #glEnable (GL_BLEND);
+        #glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         #end transparency
 
         glEnable(GL_CULL_FACE);
@@ -105,7 +109,7 @@ class World():
         self.mapChunkManager.draw_batch.draw()
 
         #transparency
-        glDisable(GL_BLEND);
+        #glDisable(GL_BLEND);
 
         glShadeModel(GL_SMOOTH); #the default
         glDisable(GL_CULL_FACE)

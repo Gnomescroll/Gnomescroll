@@ -101,20 +101,20 @@ cube_list = {
     5 : {
         'id' : 5,
         'occludes' : False, #translucent
-        'active' : True, #should be drawn
+        'active' : False, #should be drawn
         'solid' : False,
-
+        'transparent' : True,
         'gravity' : 5, #for anti-grav
 
         'texture' : [ #t, b, w, e, n, s
-        (11, [0,1,2,3]),  #top
-        (11, [0,1,2,3]),  #bottom
-        (11, [0,1,2,3]), #west
-        (11, [0,1,2,3]), #east
-        (11, [0,1,2,3]), #north
-        (11, [0,1,2,3]), #south
+        (1, [0,1,2,3]),  #top
+        (1, [0,1,2,3]),  #bottom
+        (1, [0,1,2,3]), #west
+        (1, [0,1,2,3]), #east
+        (1, [0,1,2,3]), #north
+        (1, [0,1,2,3]), #south
         ],
-        'color' : [0,0,50,150], #alpha
+        'color' : [0,0,155,150], #alpha
     },
  }
 
@@ -125,14 +125,16 @@ cdef struct CubePhysical:
     int occludes
     int solid
     int gravity
+    int transparent
 
 #used for initing the struct
-cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid, int gravity):
+cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid, int gravity, int transparent):
     x.id = id
     x.active = active
     x.occludes = occludes
     x.solid = solid
     x.gravity = gravity
+    x.transparent = transparent
 
 cdef enum:
     max_cubes = 4096
@@ -154,7 +156,8 @@ cdef class CubePhysicalProperties:
         occludes = int(d.get('occludes', 0))
         solid = int(d.get('solid', 1))
         gravity = int(d.get('gravity', 0))
-        init_CubePhysical(&self.cube_array[id], id, active, occludes, solid, gravity)
+        transparent = int(d.get('transparent', 0))
+        init_CubePhysical(&self.cube_array[id], id, active, occludes, solid, gravity, transparent)
 
     #!!!should not need to be cp
     cpdef inline int isActive(CubePhysicalProperties self, unsigned int id):
@@ -166,6 +169,11 @@ cdef class CubePhysicalProperties:
         if id >= max_cubes: #max number of cubes
             return 0
         return self.cube_array[id].occludes
+
+    cpdef inline int isTransparent(CubePhysicalProperties self, unsigned int id):
+        if id >= max_cubes: #max number of cubes
+            return 0
+        return self.cube_array[id].transparent
 
 cdef class CollisionDetection:
     cdef TerrainMap terrainMap
