@@ -46,14 +46,24 @@ class World():
         self.draw_chunk()
         self.draw_agents()
         self.draw_projectiles()
+        self.draw_transparent_blocks()
+
+    def draw_transparent_blocks(self):
+
+        glEnable(GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
         MapChunkManagerGlobal.transparentBlockManager.update_vbo()
-        #print str(len(MapChunkManagerGlobal.transparentBlockManager.blocks.keys()))
+
+        glDisable(GL_BLEND);
+
+
         return
         tmp = MapChunkManagerGlobal.transparentBlockManager.vertexList
         if tmp != None:
             tmp.draw()
+
 
     def draw_projectiles(self):
         projectiles.draw_projectiles()
