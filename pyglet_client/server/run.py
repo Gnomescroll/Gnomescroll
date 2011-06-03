@@ -42,7 +42,7 @@ def load_map():
                 if rnd < 16:
                     m.set(xa,ya,za+1, 4)
                     m.set(xa,ya,za+2, 4)
-                    #m.set(xa,ya,za+3, 4)
+                    m.set(xa,ya,za+3, 5)
     print "Finished map generation"
 
 class Main:
