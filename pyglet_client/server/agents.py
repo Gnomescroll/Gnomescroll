@@ -40,9 +40,7 @@ class AgentList(GenericObjectList):
         for agent in self.values():
             x_, y_, z_ = agent.pos()
             r2 = float(radius)**2
-            #print str(((x_-x)**2 + (y_-y)**2 + (z_-z)**2, r2))
             if r2 > (x_-x)**2 + (y_-y)**2 + (z_-z)**2:
-                #print str(((x_-x)**2 + (y_-y)**2 + (z_-z)**2, r2))
                 l.append(agent)
         return l
 
@@ -283,9 +281,17 @@ class AgentPhysics:
         NetOut.event.agent_state_change(self)
         return
 
+class AgentAction:
+
+    def fire_projectile(self):
+        print 'Agent.fire_projectile'
+        state = self.state_vector()
+        projectile = GameStateGlobal.projectileList.create(state=state, type=1, owner=self.owner)
+        NetOut.event.projectile_create(projectile)
+
 
 # represents an agent under control of a player
-class Agent(AgentPhysics):
+class Agent(AgentPhysics, AgentAction):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 2. # seconds
@@ -391,10 +397,9 @@ class Agent(AgentPhysics):
         x_angle, y_angle = angle
         #print str(args)
         self.last_control_tick = tick
-        self.d_x = d_x #a byte
-        self.d_y = d_y #a byte
-        #self.d_xa = d_xa
-        #self.d_za = d_za
+        self.d_x = d_x
+        self.d_y = d_y
+
         self.v_x = v_x
         self.v_y = v_y
         self.jetpack = jetpack
@@ -410,21 +415,11 @@ class Agent(AgentPhysics):
         else:
             self._tick_physics()
 
-
-
-
-
     def _tick_respawn(self):
         if self.dead:
             self.respawn_countdown += -1
         if self.respawn_countdown <= 0:
             self.respawn()
-
-    def fire_projectile(self):
-        print 'Agent.fire_projectile'
-        state = self.state_vector()
-        projectile = GameStateGlobal.projectileList.create(state=state, type=1, owner=self.owner)
-        NetOut.event.projectile_create(projectile)
 
     def state_vector(self):
         return [

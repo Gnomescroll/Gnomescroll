@@ -11,12 +11,13 @@ class NetOut:
     event = None
     message = None
 
-    def __init__(self):
-        NetOut.event = EventOut()
-        NetOut.message = MessageOut()
+    @classmethod
+    def init_0(cls):
+        cls.event = EventOut()
+        cls.message = MessageOut()
 
     @classmethod
-    def init(cls):
+    def init_1(cls):
         cls.event.init()
         cls.message.init()
 

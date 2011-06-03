@@ -7,12 +7,13 @@ class NetEvent:
     messageHandler = None
     adminMessageHandler = None
 
-    def __init__(self):
-        NetEvent.messageHandler = MessageHandler()
-        NetEvent.adminMessageHandler = AdminMessageHandler()
+    @classmethod
+    def init_0(cls):
+        cls.messageHandler = MessageHandler()
+        cls.adminMessageHandler = AdminMessageHandler()
 
     @classmethod
-    def init(cls):
+    def init_1(cls):
         cls.messageHandler.init()
         cls.adminMessageHandler.init()
 
@@ -25,6 +26,13 @@ from net_server import NetServer
 from net_out import NetOut
 from game_state import GameStateGlobal
 from chat_server import ChatServer
+
+
+class AgentMessageHandler:
+    pass
+
+class PlayerMessageHandler:
+    pass
 
 # routes messages by msg.cmd
 class MessageHandler:
@@ -48,7 +56,7 @@ class MessageHandler:
             self.agent_control_state(connection.id, **msg)
         elif cmd == 'request_agent':
             self.request_agent(connection, **msg)
-            
+
         elif cmd == 'fire_projectile':
             self.fire_projectile(connection.id, **msg)
         elif cmd == 'reload_weapon':
@@ -58,7 +66,7 @@ class MessageHandler:
             self.set_block(connection.id, **msg)
         elif cmd == 'hit_block':
             self.hit_block(connection.id, **msg)
-        
+
 
         #chat
         elif cmd == 'chat':
@@ -107,7 +115,7 @@ class MessageHandler:
         except KeyError:
             print 'msg set_block :: agent unknown'
             return
-            
+
         try:
             block_type = int(msg.get('type', None))
         except TypeError:
@@ -198,7 +206,7 @@ class MessageHandler:
         except KeyError:
             print 'msg reload_weapon :: agent unknown'
             return
-            
+
         try:
             weapon_type = int(msg.get('weapon', None))
         except TypeError:
@@ -301,7 +309,7 @@ class MessageHandler:
             return
         agent_id = msg['aid']
         connection.sendMessage.send_agent(agent_id)
-        
+
 
 # handler for admin msgs
 class AdminMessageHandler:

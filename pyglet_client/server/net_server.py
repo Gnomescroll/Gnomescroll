@@ -19,13 +19,14 @@ class NetServer:
         cls._client_id += 1
         return cls._client_id
 
-    def __init__(self):
-        NetServer.connectionPool = ConnectionPool()
-        NetServer.datagramDecoder = DatagramDecoder()
-        NetServer.serverListener = ServerListener()
+    @classmethod
+    def init_0(cls):
+        cls.connectionPool = ConnectionPool()
+        cls.datagramDecoder = DatagramDecoder()
+        cls.serverListener = ServerListener()
 
     @classmethod
-    def init(cls):
+    def init_1(cls):
         cls.connectionPool.init()
         cls.datagramDecoder.init()
         cls.serverListener.init()
@@ -102,7 +103,7 @@ class TcpClient:
         self.player = None
         self.name = None
         self.ec = 0
-        
+
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_players() # send all players to client
@@ -120,7 +121,7 @@ class TcpClient:
                 self.sendMessage.identified(self, 'You were already identified as ' + name)
             else:
                 self.sendMessage.identify_fail(self, 'Invalid username. ' + name)
-                
+
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
 

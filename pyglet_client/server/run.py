@@ -49,13 +49,16 @@ class Main:
 
     def __init__(self):
         #setup
-        NetServer().init()
-        NetOut().init()
-        NetEvent().init()
-        GameStateGlobal().init()
-        ChatServer().init()
+        NetServer.init_0()
+        NetOut.init_0()
+        NetEvent.init_0()
+        GameStateGlobal().init() #conventions
+        ChatServer().init() #conventions
         CubeGlobal.init_0()
         #phase 2 inits
+        NetServer.init_1()
+        NetOut.init_1()
+        NetEvent.init_1()
         CubeGlobal.init_1()
     def run(self):
         print "Server Started"
