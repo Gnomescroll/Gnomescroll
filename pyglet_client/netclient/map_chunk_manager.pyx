@@ -51,6 +51,7 @@ class TransparentBlockManager(object):
 
     def update_all_blocks(self):
         self.blocks = {}
+        self.block_sides = {}
         #cdef c MapChunk
         #cdef int i
         #cdef int tile_id
@@ -62,17 +63,14 @@ class TransparentBlockManager(object):
                         tile_id = c.get(x_off+x,y_off+y, z_off+z)
                         if cubePhysicalProperties.isTransparent(tile_id):
                             self.blocks[(x_off+x, y_off+y, z_off+z)] =  tile_id
-
-    def update_vbo(self):
-        cdef int tile_id, x, y, z
-        cdef int side_num
-
-        draw_list = []
+        #update draw list
         for (x,y,z), tile_id in self.blocks.items():
             for side_num in [0,1,2,3,4,5]:
-                if not _is_occluded(self,x,y,z,side_num):
-                    draw_list.append((x,y,z,tile_id, side_num))
+                if not _is_occluded2(self,x,y,z,side_num, tile_id):
+                    self.draw_list.append((x,y,z,tile_id, side_num))
 
+    def update_vbo(self):
+        cdef int tile_id, side_num x, y, z
         cdef int v_num
         cdef float rx, ry, rz
 
@@ -80,7 +78,7 @@ class TransparentBlockManager(object):
         c_list = []
         tex_list = []
         v_num = 0
-        for (x,y,z,tile_id, side_num) in draw_list:
+        for (x,y,z,tile_id, side_num) in self.draw_list:
             rx = x #should be floats
             ry = y
             rz = z
@@ -258,4 +256,18 @@ cdef inline _is_occluded(self,int x,int y,int z,int side_num):
         _z = temp[2] + z
 
         tile_id = self.terrainMap.get(_x,_y,_z)
+        return self.cubePhysicalProperties.isOcclude(tile_id)
+
+cdef inline int _is_occluded2(self,int x,int y,int z,int side_num, int tile_id_in):
+        cdef int _x, _y, _z, tile_id
+
+        s_array = [(0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (-1,0,0),(1,0,0)] #replace with if/then statement
+        temp = s_array[side_num]
+        _x = temp[0] + x
+        _y = temp[1] + y
+        _z = temp[2] + z
+
+        tile_id = self.terrainMap.get(_x,_y,_z)
+        if tile_id == tile_id_in:
+            return 0
         return self.cubePhysicalProperties.isOcclude(tile_id)
