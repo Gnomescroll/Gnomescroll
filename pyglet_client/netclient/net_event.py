@@ -112,6 +112,7 @@ class ClientMessageHandler:
             'set_client_id' : self._set_client_id,
             'client_quit' : self._client_quit,
             'identified' : self._identified,
+            'identify_fail' : self._identify_fail,            
         })
     @classmethod
     def init(cls):
@@ -158,6 +159,14 @@ class ClientMessageHandler:
             GameStateGlobal.playerList.identify(player)
         return True
 
+    def _identify_fail(self, msg, **arg):
+        # send system notification
+        ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
+        ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
+        # activate chat, insert /nick
+        InputGlobal.enable_chat()
+        ChatClientGlobal.chatClient.insert_string('/nick ')
+
 class PlayerMessageHandler:
     def register_events(self):
         NetEventGlobal.register_json_events({
@@ -166,7 +175,6 @@ class PlayerMessageHandler:
             'remove_player' : self._remove_player,
             'player_update' : self._player_update,
             'update_player' : self._update_player,
-            'identify_fail' : self._identify_fail,
         })
     @classmethod
     def init(cls):
@@ -202,13 +210,6 @@ class PlayerMessageHandler:
         GameStateGlobal.load_player_info(**player)
         return True
 
-    def _identify_fail(self, msg, **arg):
-        # send system notification
-        ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
-        ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
-        # activate chat, insert /nick
-        InputGlobal.enable_chat()
-        ChatClientGlobal.chatClient.insert_string('/nick ')
 
 class AgentMessageHandler:
     def register_events(self):

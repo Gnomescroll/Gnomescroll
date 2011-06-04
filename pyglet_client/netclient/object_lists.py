@@ -44,6 +44,12 @@ class GenericObjectList:
         else:
             return default
 
+    def __str__(self):
+        return str(self.objects)
+
+    def __repr__(self):
+        return repr(self.objects)
+
     def _add(self, *args, **kwargs):
         print args, kwargs
         object = self._object_type(*args, **kwargs)

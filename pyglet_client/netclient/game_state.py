@@ -55,9 +55,27 @@ class GameStateGlobal:
             p = GameStateGlobal.playerList.join(**player)
 
     @classmethod
+    def load_agent_info(cls, **agent):
+        print 'load_agent_info'
+        print agent
+        if 'id' not in agent:
+            return
+        aid = agent['id']
+        if aid in GameStateGlobal.agentList:
+            a = GameStateGlobal.agentList[aid]
+            a.update_info(**agent)
+        else:
+            a = GameStateGlobal.agentList.create(**agent)
+
+    @classmethod
     def load_player_list(cls, players):
         for player in players:
             GameStateGlobal.load_player_info(**player)
+
+    @classmethod
+    def load_agent_list(cls, agents):
+        for agent in agents:
+            GameStateGlobal.load_agent_info(**agent)
 
     @classmethod
     def remove_player(cls, id):
