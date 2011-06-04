@@ -17,6 +17,10 @@ class Player:
         self.agent = agent
         self.you = False
 
+        self.suicides = 0 # use this later
+
+    def score(self):
+        return self.kills - self.suicides
 
     def tick(self):
         pass

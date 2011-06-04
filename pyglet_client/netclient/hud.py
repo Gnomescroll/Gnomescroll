@@ -5,10 +5,12 @@ from pyglet import font
 from pyglet import gl
 from pyglet import graphics
 from pyglet import image
+from pyglet import text
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
 from net_client import NetClientGlobal
+from game_state import GameStateGlobal
 
 '''
 HUD overlay
@@ -25,7 +27,7 @@ class Hud(object):
         self.fps = clock.ClockDisplay()
         self._init_reticle()
         self._init_text_dict()
-        
+        self._init_scoreboard()
 
     def _init_text_dict(self):
         offset = 20
@@ -36,6 +38,46 @@ class Hud(object):
         self.text_dict['input'] = self._to_draw_text('j', 120) # 'j' to force text height to be cached so cursor will appear properly on first load
         self.text_dict['input'].text = ''
         self.text_dict['cursor_position'] = self._to_draw_text(text='')
+
+    def _init_scoreboard(self):
+        self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
+        self.scoreboard = {}
+        #text.HTMLLabel(
+            #text = '',
+            #x = self.win.width // 2,
+            #y = (self.win.height // 4) * 3,
+            #anchor_x = 'center',
+            #anchor_y = 'center',
+            ##multiline = True,
+            ##width = self.win.width // 2,
+        #)
+        col_width = (self.win.width * 0.75) // len(self._scoreboard_properties)
+        start_x = self.win.width // 8
+        i = 0
+        for col_name in self._scoreboard_properties:
+            self.scoreboard[col_name.lower()] = text.HTMLLabel(
+                text = '',
+                x = start_x + (i * col_width),
+                y = (self.win.height // 8) * 7,
+                anchor_x = 'center',
+                anchor_y = 'center',
+                multiline = True,
+                width = col_width
+            )
+            i += 1
+
+    def _format_scoreboard_html(self, stats):
+        for prop in self._scoreboard_properties:
+            lprop = prop.lower()
+            lines = []
+            lines.append(prop + '<br>')
+
+            vals = stats[lprop]
+            for val in vals:
+                lines.append(str(val))
+            stats[lprop] = '<font face="Times New Roman" size="15" color="red">%s</font>' % ('<br>'.join(lines),)
+            
+        return stats
 
     def _init_reticle(self):
         self.reticle = image.load(base_dir + 'texture/target.png')
@@ -70,6 +112,8 @@ class Hud(object):
     def draw(self):
         self.draw_reticle()
         self.draw_chat()
+        if InputGlobal.scoreboard:
+            self.draw_scoreboard()
         self.fps.draw()
 
     def draw_reticle(self):
@@ -81,6 +125,17 @@ class Hud(object):
         self.reticleVertexList.draw(gl.GL_QUADS)
         gl.glDisable(gl.GL_BLEND)
 
+    def draw_scoreboard(self):
+        stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard2())
+        for key, txt in stats_txt.items():
+            curr_sb = self.scoreboard[key]
+            old = curr_sb.text
+            if old != txt:
+                curr_sb.begin_update()
+                curr_sb.text = txt
+                curr_sb.end_update()
+            curr_sb.draw()
+                
     def _draw_box(self):
         #draw a 180x180 red box
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 20, 20, 200)), ('c3B\static', (215,0,0) *2))

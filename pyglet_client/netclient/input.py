@@ -22,6 +22,8 @@ class InputGlobal:
     camera = 'camera'
     _cameras = ('camera', 'agent')
 
+    scoreboard = False
+
     @classmethod
     def init_0(cls, main):
         InputGlobal.mouse = Mouse(main)
@@ -103,6 +105,7 @@ class Keyboard(object):
     def __init__(self, main):
         self.main = main
         self.main.win.on_key_press = self.on_key_press
+        self.main.win.on_key_release = self.on_key_release
         self.main.win.on_text = self.on_text #key input
         self.main.win.on_text_motion = self.on_text_motion #text movement
 
@@ -141,6 +144,13 @@ class Keyboard(object):
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol, modifiers)
             self.key_handlers.get(symbol, lambda: None)()
+
+            if symbol == key.TAB:
+                InputGlobal.scoreboard = True
+
+    def on_key_release(self, symbol, modifiers):
+        if symbol == key.TAB:
+            InputGlobal.scoreboard = False
 
     def _init_key_handlers(self):
         self.bind_key_handlers({

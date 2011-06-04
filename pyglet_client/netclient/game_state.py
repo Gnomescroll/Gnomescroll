@@ -110,6 +110,33 @@ class GameStateGlobal:
             return
         GameStateGlobal.remove_player(player.id)
 
+    @classmethod
+    def scoreboard(cls):
+        players = []
+        for player in GameStateGlobal.playerList.values():
+            players.append({
+                'name'  :   player.name,
+                'kills' :   player.kills,
+                'deaths':   player.deaths,
+                'score' :   player.score(),
+                'id'    :   player.id,
+            })
+        return players
+
+    @classmethod
+    def scoreboard2(cls):
+        props = ['name', 'kills', 'deaths', 'score', 'id']
+        defs =  [[] for i in range(len(props))]
+        stats = dict(zip(props, defs))
+
+        for player in GameStateGlobal.playerList.values():
+            stats['name'].append(player.name)
+            stats['kills'].append(player.kills)
+            stats['deaths'].append(player.deaths)
+            stats['score'].append(player.score())
+            stats['id'].append(player.id)
+
+        return stats
 
 # main game state wrapper
 class GameState:
