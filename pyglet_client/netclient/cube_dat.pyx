@@ -175,6 +175,11 @@ cdef class CubePhysicalProperties:
             return 0
         return self.cube_array[id].transparent
 
+    cpdef inline int isSolid(CubePhysicalProperties self, unsigned int id):
+        if id >= max_cubes: #max number of cubes
+            return 0
+        return self.cube_array[id].solid
+
 cdef class CollisionDetection:
     cdef TerrainMap terrainMap
     cdef CubePhysicalProperties cubePhysicalProperties
