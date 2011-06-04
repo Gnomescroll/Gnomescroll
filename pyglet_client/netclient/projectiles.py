@@ -34,7 +34,7 @@ class Projectile(GameObject):
         p = projectile_dat[type]
         #load projectile settings
 
-        
+
         #vx = cos( x_angle * pi) * cos( y_angle * pi)
         #vy = sin( x_angle * pi) * cos( y_angle * pi)
         #vz = sin( y_angle)
@@ -81,6 +81,9 @@ class Projectile(GameObject):
         y += vy / fps
         z += vz / fps
 
+        if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
+            self.delete()
+
         self.state = [x,y,z,vx,vy,vz]
 
     def delete(self):
@@ -113,3 +116,4 @@ def draw_projectiles():
         )
 
 from game_state import GameStateGlobal
+from cube_dat import CubeGlobal
