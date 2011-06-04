@@ -106,7 +106,7 @@ class SendMessage(GenericMessage):
             return
         return {
             'aid'   :   agent.id,
-            'weapon':   GameStateGlobal.agent.weapons[GameStateGlobal.agent.active_weapon].key()
+            'weapon':   GameStateGlobal.agent.active_weapon().key()
         }
 
     @idRequired

@@ -125,12 +125,15 @@ class AgentModel:
         self.you = False
 
         self.active_block = active_block   # which block to create
-        self.active_weapon = active_weapon #    which weapon is held
+        self._active_weapon = active_weapon #    which weapon is held
 
         #settings
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+
+    def active_weapon(self):
+        return self.weapons[self._active_weapon]
 
     def update_info(self, **agent):
         args = []
@@ -398,13 +401,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
 
     def fire(self):
-        weapon = self.weapons[self.active_weapon]
+        weapon = self.active_weapon()
         fire_command = weapon.fire()
         if fire_command:
             NetOut.sendMessage(fire_command, self)
 
     def reload(self):
-        weapon = self.weapons[self.active_weapon]
+        weapon = self.active_weapon()
         reload_command = weapon.reload()
         if reload_command:
             NetOut.sendMessage(reload_command, self)
@@ -434,20 +437,20 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
     def switch_weapon(self, weapon_index):
         num_weapons = len(self.weapons)
         if num_weapons == 0:
-            self.active_weapon = -1
+            self._active_weapon = -1
             return
 
         if type(weapon_index) == int:
             weapon_index += -1
 
         if weapon_index == 'up':
-            self.active_weapon = (self.active_weapon + 1) % num_weapons
+            self._active_weapon = (self.active_weapon + 1) % num_weapons
         elif weapon_index == 'down':
-            self.active_weapon = (self.active_weapon - 1) % num_weapons
+            self._active_weapon = (self.active_weapon - 1) % num_weapons
         elif weapon_index < num_weapons:
-                self.active_weapon = weapon_index
+                self._active_weapon = weapon_index
 
-        print 'weapon is: ' , self.weapons[self.active_weapon]
+        print 'weapon is: ' , self.active_weapon()
 
     def pan(self, dx_angle, dy_angle):
         self.x_angle += dx_angle

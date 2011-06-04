@@ -24,6 +24,16 @@ class Weapon(EquippableObject):
     def key(self):
         return self._weapons[str(self)]
 
+    def hud_display(self):
+        undef = '--'
+        ammo = getattr(self, 'ammo', undef)
+        max_ammo = getattr(self, 'max_ammo', undef)
+        clip = getattr(self, 'clip', undef)
+        clip_size = getattr(self, 'clip_size', undef)
+        strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
+        return '%s/%s  ::  %s/%s' % strfs
+        
+
 class LaserGun(Weapon):
 
     def __init__(self):

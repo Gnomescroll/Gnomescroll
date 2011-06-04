@@ -28,6 +28,7 @@ class Hud(object):
         self._init_reticle()
         self._init_text_dict()
         self._init_scoreboard()
+        self._init_player_stats()
 
     def _init_text_dict(self):
         offset = 20
@@ -38,6 +39,15 @@ class Hud(object):
         self.text_dict['input'] = self._to_draw_text('j', 120) # 'j' to force text height to be cached so cursor will appear properly on first load
         self.text_dict['input'].text = ''
         self.text_dict['cursor_position'] = self._to_draw_text(text='')
+
+    def _init_player_stats(self):
+        self.player_stats = text.HTMLLabel(
+            text = '',
+            x = self.win.width - 100,
+            y = self.win.height - 20,
+            anchor_x = 'right',
+            anchor_y = 'center',
+        )
 
     def _init_scoreboard(self):
         self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -103,9 +113,28 @@ class Hud(object):
     def draw(self):
         self.draw_reticle()
         self.draw_chat()
+        self.draw_player_stats()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
         self.fps.draw()
+
+    def _format_player_stats_html(self):
+        agent = GameStateGlobal.player.agent
+        health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
+        weapon = agent.active_weapon().hud_display()
+        s = '%s\t%s' % (health, weapon,)
+        s = '<font face="Monospace" size="15" color="blue">%s</font>' % (s,)
+        return s
+
+    def draw_player_stats(self):
+        # draw label in top
+        stats = self._format_player_stats_html()
+        old = self.player_stats.text
+        if old != stats:
+            self.player_stats.begin_update()
+            self.player_stats.text = stats
+            self.player_stats.end_update()
+        self.player_stats.draw()
 
     def draw_reticle(self):
         gl.glEnable(gl.GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
