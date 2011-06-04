@@ -182,7 +182,7 @@ class PlayerMessageHandler:
     def __init__(self):
         self.register_events()
 
-    def _player_list(self, players, **arg):
+    def _player_list(self, players, **args):
         try:
             assert type(players) == list
         except AssertionError:
@@ -215,6 +215,7 @@ class AgentMessageHandler:
     def register_events(self):
         events = {
             'agent_position' : self._agent_position,
+            'agent_list'    :   self._agent_list,
             'agent_info'    :   self._agent_info,
             'agent_update' : self._agent_update,
             'remove_agent' : self._remove_agent,
@@ -251,6 +252,14 @@ class AgentMessageHandler:
         agent.ax = ax
         agent.ay = ay
         agent.az = az
+
+    def _agent_list(self, agents, **args):
+        try:
+            assert type(agents) == list
+        except AssertionError:
+            print 'msg agent_list :: agents is not a list'
+            return
+        GameStateGlobal.load_agent_list(agents)
 
     def _agent_info(self, **args):
         agent_data = args.get('agent', None)

@@ -35,6 +35,12 @@ class AgentList(GenericObjectList):
             return
         self._remove(agent)
 
+    def json(self):
+        agents = []
+        for agent in self.objects.values():
+            agents.append(agent.json())
+        return agents
+
     def agents_near_point(self, x,y,z, radius):
         l=[]
         for agent in self.values():

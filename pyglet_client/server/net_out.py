@@ -224,6 +224,12 @@ class SendMessage: #each connection has one of these
             'player': player.json(),
         }
 
+    @sendJSON('agent_list')
+    def send_agents(self):
+        return {
+            'agents'    :   GameStateGlobal.agentList.json(),
+        }
+
     @sendJSON('agent_info')
     def send_agent(self, agent):
         if type(agent) == int:
