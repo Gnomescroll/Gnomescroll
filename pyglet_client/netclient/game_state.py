@@ -112,19 +112,6 @@ class GameStateGlobal:
 
     @classmethod
     def scoreboard(cls):
-        players = []
-        for player in GameStateGlobal.playerList.values():
-            players.append({
-                'name'  :   player.name,
-                'kills' :   player.kills,
-                'deaths':   player.deaths,
-                'score' :   player.score(),
-                'id'    :   player.id,
-            })
-        return players
-
-    @classmethod
-    def scoreboard2(cls):
         props = ['name', 'kills', 'deaths', 'score', 'id']
         defs =  [[] for i in range(len(props))]
         stats = dict(zip(props, defs))

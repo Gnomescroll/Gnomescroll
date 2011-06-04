@@ -42,15 +42,6 @@ class Hud(object):
     def _init_scoreboard(self):
         self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
         self.scoreboard = {}
-        #text.HTMLLabel(
-            #text = '',
-            #x = self.win.width // 2,
-            #y = (self.win.height // 4) * 3,
-            #anchor_x = 'center',
-            #anchor_y = 'center',
-            ##multiline = True,
-            ##width = self.win.width // 2,
-        #)
         col_width = (self.win.width * 0.75) // len(self._scoreboard_properties)
         start_x = self.win.width // 8
         i = 0
@@ -126,7 +117,7 @@ class Hud(object):
         gl.glDisable(gl.GL_BLEND)
 
     def draw_scoreboard(self):
-        stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard2())
+        stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())
         for key, txt in stats_txt.items():
             curr_sb = self.scoreboard[key]
             old = curr_sb.text
