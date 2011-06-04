@@ -54,6 +54,7 @@ class YouPlayer(Player):
         self.deaths = 0
         self.agent = GameStateGlobal.agentList.create_player_agent(self.id, 0)
         self.you = True
+        self.suicides = 0
         
 
 from game_state import GameStateGlobal
