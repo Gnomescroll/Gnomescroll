@@ -49,23 +49,22 @@ class World():
         self.draw_transparent_blocks()
 
     def draw_transparent_blocks(self):
+
+        MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
+        MapChunkManagerGlobal.transparentBlockManager.update_vbo()
+
         #glEnable(GL_CULL_FACE)
         glDepthMask(GL_FALSE)
         glEnable(GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
-        MapChunkManagerGlobal.transparentBlockManager.update_vbo()
+        vertexlist = MapChunkManagerGlobal.transparentBlockManager.vertexList
+        if vertexlist != None:
+            vertexlist.draw(GL_QUADS)
 
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE)
         #glDisable(GL_CULL_FACE)
-
-        return
-        tmp = MapChunkManagerGlobal.transparentBlockManager.vertexList
-        if tmp != None:
-            tmp.draw()
-
 
     def draw_projectiles(self):
         projectiles.draw_projectiles()
@@ -86,17 +85,19 @@ class World():
         print "Finished chunk generation"
 
     def draw_chunk(self):
-        if self.gl_smooth == 0:
-            glShadeModel(GL_FLAT)
-        else:
-            glShadeModel(GL_SMOOTH);
+        #if self.gl_smooth == 0:
+        ##    glShadeModel(GL_FLAT)
+        #else:
+        #    glShadeModel(GL_SMOOTH);
 
         #transparency
         #glEnable (GL_BLEND);
         #glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         #end transparency
+        glShadeModel(GL_FLAT)
 
         glEnable(GL_CULL_FACE);
+        glEnable(GL_TEXTURE_2D);
         glEnable(self.texture_grid.target)
 
         ##choose mipmapping option
@@ -127,8 +128,9 @@ class World():
         #transparency
         #glDisable(GL_BLEND);
 
-        glShadeModel(GL_SMOOTH); #the default
+        #glShadeModel(GL_SMOOTH); #the default
         glDisable(GL_CULL_FACE)
+        glDisable(GL_TEXTURE_2D);
         glDisable(self.texture_grid.target)
 
     def add_player(self, player):

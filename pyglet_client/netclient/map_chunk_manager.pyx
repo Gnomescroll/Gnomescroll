@@ -86,24 +86,24 @@ class TransparentBlockManager(object):
             (tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
             v_list += tv_list
             c_list += tc_list
-            tex_list += ttex_list
+            #tex_list += ttex_list
             v_num += 4
 
         if self.vertexList != None:
             self.vertexList.delete()
         if v_num == 0:
-            return
+            self.vertexList = None
         else:
 
-            pyglet.graphics.draw(v_num, GL_QUADS,
-        ("v3f", v_list),
-        ("c4B", c_list)
-        )
-            return
-            self.vertexList = pyglet.graphics.vertex_list(v_num, pyglet.gl.GL_QUADS,
+        #    pyglet.graphics.draw(v_num, GL_QUADS,
+        #("v3f", v_list),
+        #("c4B", c_list)
+        #)
+
+            self.vertexList = pyglet.graphics.vertex_list(v_num,
         ('v3f\static', v_list),
         ('c4B\static', c_list),
-        ("t3f\static", tex_list),
+        #("t3f\static", tex_list),
         )
 
 class MapChunkManager(object):
