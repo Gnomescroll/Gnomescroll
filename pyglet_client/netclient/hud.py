@@ -43,11 +43,13 @@ class Hud(object):
     def _init_player_stats(self):
         self.player_stats = text.HTMLLabel(
             text = '',
-            x = self.win.width - 100,
-            y = self.win.height - 20,
+            x = self.win.width - 10,
+            y = 10,
             anchor_x = 'right',
             anchor_y = 'center',
         )
+        self.player_stats.font_size = 8
+
 
     def _init_scoreboard(self):
         self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -122,8 +124,8 @@ class Hud(object):
         agent = GameStateGlobal.player.agent
         health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
         weapon = agent.active_weapon().hud_display()
-        s = '%s\t%s' % (health, weapon,)
-        s = '<font face="Monospace" size="15" color="blue">%s</font>' % (s,)
+        s = 'HP %s :: Ammo %s' % (health, weapon,)
+        s = '<font face="Monospace" color="green"><b>%s</b></font>' % (s,)
         return s
 
     def draw_player_stats(self):
