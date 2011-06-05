@@ -69,11 +69,18 @@ class BlockApplier(Weapon):
 
     def __init__(self):
         self.max_ammo = 100
+        self.ammo = self.max_ammo
         self.clip_size = 100
         self.clip = self.clip_size
 
     def fire(self):
+        self.ammo -= 1
         return 'set_block'
+
+    def restock(self, amt):
+        self.ammo = min(self.max_ammo, self.ammo + amt)
+        self.ammo = max(0, self.ammo)
+        return 'restock_blocks'
 
     def __str__(self):
         return 'Block'

@@ -7,8 +7,6 @@ class PlayerList(GenericObjectList):
 
     def __init__(self):
         GenericObjectList.__init__(self)
-        self._metaname = 'PlayerList'
-        self._itemname = 'Player'
         self._object_type = Player
         self.client_ids = {}
         self.names = {}
@@ -34,12 +32,6 @@ class PlayerList(GenericObjectList):
 
     def client(self, client_id):
         return self[self.client_ids[client_id]]
-
-    def json(self):
-        players = []
-        for player in self.objects.values():
-            players.append(player.json())
-        return players
 
     def by_name(self, name):    # returns a client_id
         if name in self.names:

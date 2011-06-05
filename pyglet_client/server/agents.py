@@ -23,8 +23,6 @@ class AgentList(GenericObjectList):
 
     def __init__(self):
         GenericObjectList.__init__(self)
-        self._metaname = 'AgentList'
-        self._itemname = 'Agent'
         self._object_type = Agent
 
     def create(self, player_id, position=None, id=None):
@@ -33,13 +31,7 @@ class AgentList(GenericObjectList):
     def destroy(self, agent):
         if agent is None:
             return
-        self._remove(agent)
-
-    def json(self):
-        agents = []
-        for agent in self.objects.values():
-            agents.append(agent.json())
-        return agents
+        return self._remove(agent)
 
     def agents_near_point(self, x,y,z, radius):
         l=[]
@@ -348,7 +340,12 @@ class Agent(AgentPhysics, AgentAction):
         self.health = self.HEALTH_MAX
         self.dead = False
 
-        self.weapons = [LaserGun(), Pick(), BlockApplier()]
+        wl = GameStateGlobal.weaponList
+        self.weapons = [    \
+            wl.create('LaserGun'),
+            wl.create('Pick'),
+            wl.create('BlockApplier'),
+        ]
 
         self.owner = player_id
 

@@ -1,6 +1,22 @@
 from game_objects import GameObject
 from game_objects import EquippableObject
+from game_state import GenericMultiObjectList
 
+class WeaponList(GenericMultiObjectList):
+
+    def __init__(self):
+        GenericMultiObjectList.__init__(self)
+        self._allow_klasses(self, [ \
+            LaserGun,
+            Pick,
+            Block,
+        })
+
+    def create(self, klass_name, *args, **kwargs):
+        return self._add(klass_name, *args, **kwargs)
+
+    def destroy(self, obj):
+        return self._remove(self, obj)
         
 class Weapon(EquippableObject):
 
@@ -10,8 +26,8 @@ class Weapon(EquippableObject):
         'Block'     :   3,
     }
 
-    def __init__(self):
-        pass
+    def __init__(self, id):
+        self.id = id
 
     def fire(self):
         return False
@@ -32,7 +48,8 @@ class Weapon(EquippableObject):
 
 class LaserGun(Weapon):
 
-    def __init__(self):
+    def __init__(self, id):
+        Weapon.__init__(self, id)
         self.base_damage = 35
         self.clip_size = 20
         self.max_ammo = 100
@@ -73,7 +90,8 @@ class LaserGun(Weapon):
 
 class BlockApplier(Weapon):
 
-    def __init__(self):
+    def __init__(self, id):
+        Weapon.__init___(self, id)
         self.max_ammo = 100
         self.clip_size = 100
         self.clip = self.clip_size
@@ -92,8 +110,8 @@ class BlockApplier(Weapon):
 
 class Pick(Weapon):
 
-    def __init__(self):
-        pass
+    def __init__(self, id):
+        Weapon.__init___(self, id)
 
     def fire(self):
         return 'hit_block'

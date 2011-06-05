@@ -399,12 +399,16 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         self.t_height = .75
         self.box_r = .30
 
-
     def fire(self):
         weapon = self.active_weapon()
         fire_command = weapon.fire()
         if fire_command:
             NetOut.sendMessage(fire_command, self)
+
+    def add_ammo(self, amt, weapon_key):
+        for weapon in weapons:
+            if weapon.key() == weapon_key:
+                weapon.restock(amt)
 
     def reload(self):
         weapon = self.active_weapon()
