@@ -85,6 +85,8 @@ class MessageHandler:
 
 class GenericMessageHandler:
 
+    events = {}
+
     def register_events(self):
         NetEventGlobal.register_json_events(self.events)
     @classmethod
@@ -272,65 +274,96 @@ class AgentMessageHandler(GenericMessageHandler):
             return
         GameStateGlobal.remove_agent(id)
 
-class ProjectileMessageHandler(GenericMessageHandler):
 
-    events = {
-        'projectile_create' :   self._create_projectile,
-        'projectile_update' :   self._update_projectile,
-        'projectile_destroy':   self._destroy_projectile,
-        'projectile_info'   :   self._projectile_info,
-        'projectile_list'   :   self._projectile_list,
-    }
+class DatastoreMessageInterface(GenericMessageHandler):
 
-    def _create_projectile(self, **args):
-        print 'received create projectile'
-        projectile = args.get('projectile', None)
-        if projectile is None:
-            print 'msg create_projectile :: missing projectile'
+    event_extensions = ['info', 'list', 'update', 'destroy', 'create'] # deprecate info for update
+    name = ''
+    store = None
+
+    def __init__(self):
+        self._load_default_events()
+            
+    def _load_default_events(self)
+        for evex in self.event_extensions:
+            event_name = '%s_%s' % (self.name, evex,)
+            method_name = '_' + event_name
+            klass_dict = self.__class__.__dict__
+            if method_name not in klass_dict:
+                method_name = '_default_%s' % (evex,)
+                method = klass_dict[method_name]
+            else:
+                method = klass_dict[method_name]
+            self.events[event_name] = method
+
+    def _error_message(self, info_string, **msg):
+        return 'msg %s :: %s' % (msg['cmd'], info_string,)
+
+    def _default_info(self, **args):  # deprecate
+        self._default_update(**args)
+
+    def _default_update(self, **args):
+        err_msg = None
+        data = args.get(self.name, None)
+        if data is None:
+            err_msg = '%s key missing' % (self.name,)
+        if err_msg is not None:
+            print self._error_message(err_msg, **args)
             return
-        GameStateGlobal.projectileList.create(**projectile)
+        self.store.load_info(**data)
 
-    def _update_projectile(self, **args):
-        projectile_data = args.get('projectile', None)
-        if projectile is None:
-            print 'msg update_projectile :: missing projectile'
-            return
-        GameStateGlobal.projectileList.load_info(**projectile_data)
-
-    def _destroy_projectile(self, **args):
+    def _default_list(self, **args):
+        err_msg = None
+        list_key = '%s_list' % (self.name,)
         try:
-            prid = int(args.get('id', None))
-            GameStateGlobal.projectileList.destroy(prid)
-        except TypeError:
-            print 'msg projectile_destroy :: projectile id missing'
-        except ValueError:
-            print 'msg projectile_destroy :: projectile id invalid'
+            a_list = args[list_key]
+            assert type(a_list) == list
         except KeyError:
-            print 'msg projectile_destroy :: projectile not found'
+            err_msg = '%s key missing' % (list_key,)
+        except AssertionError:
+            err_msg = '%s is not a list' % (list_key,)
+        if err_msg is not None:
+            print self._error_message(err_msg, **args)
+            return
+        self.store.load_list(a_list)
 
-    def _projectile_info(self, **args):
-        pass
+    def _default_create(self, **args):
+        err_msg = None
+        data = args.get(self.name, None)
+        if data is None:
+            err_msg =  '%s key missing' % (self.name,)
+        if err_msg is not None:
+            print self._error_message(err_msg, **args)
+            return
+        self.store.create(**data)
 
-    def _projectile_list(self, **args):
-        pass
+    def _default_destroy(self, **args):
+        err_msg = None
+        try:
+            id = int(args.get('id', None))
+            self.store.destroy(id)
+        except TypeError:
+            err_msg = '%s id missing' % (self.name,)
+        except ValueError:
+            err_msg = '%s id invalid' % (self.name,)
+        except KeyError:
+            err_msg = '%s not found' % (self.name,)
+        if err_msg is not None:
+            print self._error_message(err_msg, **args)
 
+class WeaponMessageHandler(DatastoreMessageInterface):
 
-class WeaponMessageHandler(GenericMessageHandler):
+    def __init__(self):
+        self.name = 'weapon'
+        self.store = GameStateGlobal.weaponList
+        DatastoreMessageInterface.__init__(self)
 
-    events = {
-        'weapon_info'   :   self._weapon_info,
-        'weapon_list'   :   self._weapon_list,
-        'weapon_update' :   self._weapon_update,
-    }
+class ProjectileMessageHandler(DatastoreMessageInterface):
 
-    def _weapon_info(self, **args):
-        pass
-        
-    def _weapon_list(self, **args):
-        pass
-        
-    def _weapon_update(self, **args):
-        pass
+    def __init__(self):
+        self.name = 'projectile'
+        self.store = GameStateGlobal.projectileList
+        DatastoreMessageInterface.__init__(self)
 
         
 class MapMessageHandler(GenericMessageHandler):
