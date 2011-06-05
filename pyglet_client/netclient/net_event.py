@@ -83,18 +83,23 @@ class MessageHandler:
         if self.json_events.has_key(cmd):
             self.json_events[cmd](**msg)
 
-class ChatMessageHandler:
+class GenericMessageHandler:
+
     def register_events(self):
-        NetEventGlobal.register_json_events({
-            'chat' : self._chat,
-            'you_died' : self._you_died,
-            'you_killed' : self._you_killed,
-        })
+        NetEventGlobal.register_json_events(self.events)
     @classmethod
     def init(cls):
         pass
     def __init__(self):
         self.register_events()
+
+class ChatMessageHandler(GenericMessageHandler):
+
+    events = {
+        'chat' : self._chat,
+        'you_died' : self._you_died,
+        'you_killed' : self._you_killed,
+    }
 
     def _chat(self, **msg):
         ChatClientGlobal.chatClient.receive(msg)
@@ -105,20 +110,15 @@ class ChatMessageHandler:
     def _you_killed(self, **msg):
         ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
-class ClientMessageHandler:
-    def register_events(self):
-        NetEventGlobal.register_json_events({
-            'client_id' : self._client_id,
-            'set_client_id' : self._set_client_id,
-            'client_quit' : self._client_quit,
-            'identified' : self._identified,
-            'identify_fail' : self._identify_fail,            
-        })
-    @classmethod
-    def init(cls):
-        pass
-    def __init__(self):
-        self.register_events()
+class ClientMessageHandler(GenericMessageHandler):
+
+    events = {
+        'client_id' : self._client_id,
+        'set_client_id' : self._set_client_id,
+        'client_quit' : self._client_quit,
+        'identified' : self._identified,
+        'identify_fail' : self._identify_fail,            
+    }
 
     def _client_id(self, **msg):
         if self._set_client_id(**msg):
@@ -167,20 +167,15 @@ class ClientMessageHandler:
         InputGlobal.enable_chat()
         ChatClientGlobal.chatClient.insert_string('/nick ')
 
-class PlayerMessageHandler:
-    def register_events(self):
-        NetEventGlobal.register_json_events({
-            'player_list' : self._player_list,
-            'player_info' : self._player_info,
-            'remove_player' : self._remove_player,
-            'player_update' : self._player_update,
-            'update_player' : self._update_player,
-        })
-    @classmethod
-    def init(cls):
-        pass
-    def __init__(self):
-        self.register_events()
+class PlayerMessageHandler(GenericMessageHandler):
+
+    events = {
+        'player_list' : self._player_list,
+        'player_info' : self._player_info,
+        'remove_player' : self._remove_player,
+        'player_update' : self._player_update,
+        'update_player' : self._update_player,
+    }
 
     def _player_list(self, players, **args):
         try:
@@ -211,21 +206,15 @@ class PlayerMessageHandler:
         return True
 
 
-class AgentMessageHandler:
-    def register_events(self):
-        events = {
-            'agent_position' : self._agent_position,
-            'agent_list'    :   self._agent_list,
-            'agent_info'    :   self._agent_info,
-            'agent_update' : self._agent_update,
-            'remove_agent' : self._remove_agent,
-        }
-        NetEventGlobal.register_json_events(events)
-    @classmethod
-    def init(cls):
-        pass
-    def __init__(self):
-        self.register_events()
+class AgentMessageHandler(GenericMessageHandler):
+
+    events = {
+        'agent_position' : self._agent_position,
+        'agent_list'    :   self._agent_list,
+        'agent_info'    :   self._agent_info,
+        'agent_update' : self._agent_update,
+        'remove_agent' : self._remove_agent,
+    }
 
     def _agent_position(self, **args):
         state = args.get('state', None)
@@ -283,20 +272,15 @@ class AgentMessageHandler:
             return
         GameStateGlobal.remove_agent(id)
 
-class ProjectileMessageHandler:
+class ProjectileMessageHandler(GenericMessageHandler):
 
-    def register_events(self):
-        events = {
-            'projectile_create' : self._create_projectile,
-            'projectile_update' : self._update_projectile,
-            'projectile_destroy' : self._destroy_projectile,
-        }
-        NetEventGlobal.register_json_events(events)
-    @classmethod
-    def init(cls):
-        pass
-    def __init__(self):
-        self.register_events()
+    events = {
+        'projectile_create' :   self._create_projectile,
+        'projectile_update' :   self._update_projectile,
+        'projectile_destroy':   self._destroy_projectile,
+        'projectile_info'   :   self._projectile_info,
+        'projectile_list'   :   self._projectile_list,
+    }
 
     def _create_projectile(self, **args):
         print 'received create projectile'
@@ -324,28 +308,48 @@ class ProjectileMessageHandler:
         except KeyError:
             print 'msg projectile_destroy :: projectile not found'
 
-class MapMessageHandler:
+    def _projectile_info(self, **args):
+        pass
+
+    def _projectile_list(self, **args):
+        pass
+
+
+class WeaponMessageHandler(GenericMessageHandler):
+
+    events = {
+        'weapon_info'   :   self._weapon_info,
+        'weapon_list'   :   self._weapon_list,
+        'weapon_update' :   self._weapon_update,
+    }
+
+    def _weapon_info(self, **args):
+        pass
+        
+    def _weapon_list(self, **args):
+        pass
+        
+    def _weapon_update(self, **args):
+        pass
+
+        
+class MapMessageHandler(GenericMessageHandler):
     terrainMap = None
     mapChunkManager = None
     mapController = None
 
-    def register_events(self):
-        events = {
-            'chunk_list' : self._chunk_list,
-            'map_chunk' : self._map_chunk,
-            'set_map' : self._set_map,
-        }
-        NetEventGlobal.register_json_events(events)
+    events = {
+        'chunk_list' : self._chunk_list,
+        'map_chunk' : self._map_chunk,
+        'set_map' : self._set_map,
+    }
+
     @classmethod
     def init(cls):
         cls.terrainMap = GameStateGlobal.terrainMap
         cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         cls.mapController = MapControllerGlobal.mapController
         assert cls.mapController != None
-
-    def __init__(self):
-        self.register_events()
-        pass
 
     def _chunk_list(self, list, **msg):
         #print str(list)

@@ -21,13 +21,15 @@ class WeaponList(GenericMultiObjectList):
 class Weapon(EquippableObject):
 
     _weapons = {
-        'Laser Gun' :   1,
+        'Weapon'    :   0,
+        'LaserGun'  :   1,
         'Pick'      :   2,
         'Block'     :   3,
     }
 
     def __init__(self, id):
         self.id = id
+        self.type = self._weapons[self.__class__.__name__]
 
     def fire(self):
         return False
@@ -36,10 +38,7 @@ class Weapon(EquippableObject):
         return False
 
     def __str__(self):
-        return 'Weapon Base Class'
-
-    def key(self):
-        return self._weapons[str(self)]
+        return self.__class__.__name__
 
     def json(self):
         return {
@@ -78,9 +77,6 @@ class LaserGun(Weapon):
             return False
         return 'reload_weapon'
 
-    def __str__(self):
-        return 'Laser Gun'
-
     def json(self):
         return {
             'type'  :   self.key(),
@@ -99,9 +95,6 @@ class BlockApplier(Weapon):
     def fire(self):
         return 'place_block'
 
-    def __str__(self):
-        return 'Block'
-
     def json(self):
         return {
             'type'  :   self.key(),
@@ -118,6 +111,3 @@ class Pick(Weapon):
 
     def reload(self):
         return False
-
-    def __str__(self):
-        return 'Pick'

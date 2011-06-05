@@ -238,6 +238,30 @@ class SendMessage: #each connection has one of these
             'agent' :   agent.json(),
         }
 
+    @sendJSON('projectile_list')
+    def send_projectiles(self):
+        return {
+            'projectiles'   :   GameStateGlobal.projectileList.json(),
+        }
+
+    @sendJSON('projectile_info')
+    def send_projectile(self, projectile):
+        return {
+            'projectile'    :   projectile.json(),
+        }
+
+    @sendJSON('weapon_list')
+    def send_weapons(self):
+        return {
+            'weapons'   :   GameStateGlobal.weaponList.json(),
+        }
+
+    @sendJSON('weapon_info')
+    def send_weapon(self, weapon):
+        return {
+            'weapon'    :   weapon.json(),
+        }
+
     @sendJSON('remove_player')
     def remove_player(self, player):
         return {

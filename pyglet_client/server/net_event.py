@@ -216,7 +216,7 @@ class MessageHandler:
             print 'msg reload_weapon :: weapon invalid'
             return
         try:
-            weapon_index = [weapon.key() for weapon in agent.weapons].index(weapon_type)
+            weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
         except ValueError:
             print 'msg reload_weapon :: weapon unknown to agent'
             return

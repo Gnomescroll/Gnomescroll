@@ -4,7 +4,8 @@ from game_objects import EquippableObject
 class Weapon(EquippableObject):
 
     _weapons = {
-        'Laser Gun' :   1,
+        'Weapon'    :   0,
+        'LaserGun'  :   1,
         'Pick'      :   2,
         'Block'     :   3,
     }
@@ -19,7 +20,7 @@ class Weapon(EquippableObject):
         return False
 
     def __str__(self):
-        return 'Weapon Base Class'
+        return self.__class__.__name__
 
     def key(self):
         return self._weapons[str(self)]
@@ -61,9 +62,6 @@ class LaserGun(Weapon):
         self.clip += amt
         return 'reload_weapon'
 
-    def __str__(self):
-        return 'Laser Gun'
-
 
 class BlockApplier(Weapon):
 
@@ -82,9 +80,6 @@ class BlockApplier(Weapon):
         self.ammo = max(0, self.ammo)
         return 'restock_blocks'
 
-    def __str__(self):
-        return 'Block'
-
 class Pick(Weapon):
 
     def __init__(self):
@@ -95,6 +90,3 @@ class Pick(Weapon):
 
     def reload(self):
         return False
-
-    def __str__(self):
-        return 'Pick'

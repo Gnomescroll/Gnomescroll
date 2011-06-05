@@ -460,7 +460,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         elif weapon_index < num_weapons:
                 self._active_weapon = weapon_index
 
-        print 'weapon is: ' , self.active_weapon()
+        print 'weapon is: %s' % (self.active_weapon(),)
 
     def pan(self, dx_angle, dy_angle):
         self.x_angle += dx_angle
