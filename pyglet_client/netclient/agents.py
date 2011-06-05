@@ -147,8 +147,14 @@ class AgentModel:
             if self.dead:
                 print 'you are now dead'
         #if 'weapons' in agent:
-            ## update weapons accordingly
-            #weapons = agent['weapons']
+            ### update weapons accordingly
+            #for weapon in agent['weapons']:
+                #wid = weapon['id']
+                #if wid in self.weapons:
+                    #self.weapons[wid].update_info(**weapon)
+                #elif wid in GameStateGlobal.weaponList:
+                    #new_weapon = GameStateGlobal.weaponList.create(**weapon)
+                    
         if 'owner' in agent:
             self.owner = agent['owner']
         if 'state' in agent:
