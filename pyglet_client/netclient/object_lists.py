@@ -58,12 +58,30 @@ class GenericObjectList:
         return object
         
     def _remove(self, obj):
-        id = obj.id
+        if type(obj) == int:
+            id = obj
+        else:
+            id = obj.id
         if id in self.objects:
             del self.objects[id]
             print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
             return True
         return False
+
+    def load_list(self, objs):
+        for obj in objs:
+            self.load_info(**obj)
+
+    def load_info(self, **obj):
+        if 'id' not in obj:
+            return
+        obj_id = obj['id']
+        if obj_id in self:
+            o = self[obj_id]
+            o.update_info(**obj)
+        else:
+            o = self.create(**obj)
+        return o
 
 # datastore for agents
 class AgentList(GenericObjectList):
@@ -198,5 +216,71 @@ class ProjectileList(GenericObjectList):
     def destroy(self, projectile):
         self._remove(projectile)
         return projectile
-        
+
+
+# for tracking multiple objects sharing the same unique identifier counts
+## Differences from GenericObjectList:
+##  Multiple types of objects can be tracked.
+##  They must all share the same unique id counter.
+##  Objects used in GenericObjectList make their own ID increment calls in instantiation
+##  Objects used in this class do not make their own ID. They are assigned an id by the controller list.
+class GenericMultiObjectList(GenericObjectList):
+
+    def __init__(self):
+        GenericObjectList.__init__(self)
+        self.klass_index = {}               # __name__ -> Klass
+        self.klass_registers = {}           # __name__ -> [id, ...]
+        self._id = 0
+
+    def _generate_id(self):
+        self._id += 1
+        return self._id
+
+    def _allow_klass(self, klass):          # use in inheriting class's __init__ to configure objects to be tracked
+        self.klass_index[klass.__name__] = klass
+        self.klass_registers[klass.__name__] = []
+
+    def _allow_klasses(self, klasses):
+        for klass in klasses:
+            self._allow_klass(klass)
+
+    def _add(self, klass_name, *args, **kwargs):
+        self._object_type = self.klass_index[klass_name]
+        id = self._generate_id()
+        obj = GenericObjectList._add(id, *args, **kwargs)
+        self.klass_registers[klass_name].append(obj.id)
+        self._object_type = None
+        return obj
+
+    def _remove(self, obj):
+        if type(obj) == int:
+            id = obj
+            obj = self[id]
+        else:
+            id = obj.id
+        klass_name = obj.__class__.__name__
+        self.klass_registers[klass_name].remove(id)
+        return GenericObjectList._remove(self, obj)
+
+    def _filter_klass(self, klass_name):
+        klass_ids = self.klass_registers[klass_name]
+        objs = [self[kid] for kid in klass_ids]
+        return dict(zip(klass_ids, objs))
+
     
+class WeaponList(GenericMultiObjectList):
+
+    def __init__(self):
+        from weapons import LaserGun, Pick, BlockApplier
+        GenericMultiObjectList.__init__(self)
+        self._allow_klasses(self, [ \
+            LaserGun,
+            Pick,
+            BlockApplier,
+        ])
+
+    def create(self, klass_name, *args, **kwargs):
+        return self._add(klass_name, *args, **kwargs)
+
+    def destroy(self, obj):
+        return self._remove(self, obj)

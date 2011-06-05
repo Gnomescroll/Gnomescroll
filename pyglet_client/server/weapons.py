@@ -9,8 +9,8 @@ class WeaponList(GenericMultiObjectList):
         self._allow_klasses(self, [ \
             LaserGun,
             Pick,
-            Block,
-        })
+            BlockApplier,
+        ])
 
     def create(self, klass_name, *args, **kwargs):
         return self._add(klass_name, *args, **kwargs)

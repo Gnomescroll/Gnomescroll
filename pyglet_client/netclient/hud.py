@@ -121,7 +121,7 @@ class Hud(object):
         self.fps.draw()
 
     def _format_player_stats_html(self):
-        agent = GameStateGlobal.player.agent
+        agent = GameStateGlobal.agent
         health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
         weapon = agent.active_weapon().hud_display()
         s = 'HP %s :: Ammo %s' % (health, weapon,)

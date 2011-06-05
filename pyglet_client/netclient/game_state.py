@@ -20,11 +20,11 @@ class GameStateGlobal:
     def init_0(cls):
         cls.agentList = AgentList()
         cls.playerList = PlayerList()
-        player = GameStateGlobal.playerList.join_yourself()
+        player = cls.playerList.join_yourself()
         cls.player = player
         cls.agent = player.agent
         cls.projectileList = ProjectileList()
-        cls.player.agent = GameStateGlobal.agent
+        cls.weaponList = WeaponList()
         cls.terrainMap = TerrainMap()
         cls.gameState = GameState()
 
@@ -34,81 +34,42 @@ class GameStateGlobal:
 
     # for your player
     @classmethod
-    def update_info(cls, player):
+    def update_your_info(cls, player):
         cls.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
             cls.agent.update_info(**agent)
         return cls.player
 
-    # for other players
-    @classmethod
-    def load_player_info(cls, **player):
-        print 'load_player_info'
-        print player
-        if 'id' not in player:
-            return
-        if player['id'] in GameStateGlobal.playerList:
-            p = GameStateGlobal.playerList[player['id']]
-            p.update_info(**player)
-        else:
-            p = GameStateGlobal.playerList.join(**player)
-
-    @classmethod
-    def load_agent_info(cls, **agent):
-        print 'load_agent_info'
-        print agent
-        if 'id' not in agent:
-            return
-        aid = agent['id']
-        if aid in GameStateGlobal.agentList:
-            a = GameStateGlobal.agentList[aid]
-            a.update_info(**agent)
-        else:
-            a = GameStateGlobal.agentList.create(**agent)
-
-    @classmethod
-    def load_player_list(cls, players):
-        for player in players:
-            GameStateGlobal.load_player_info(**player)
-
-    @classmethod
-    def load_agent_list(cls, agents):
-        for agent in agents:
-            GameStateGlobal.load_agent_info(**agent)
-
     @classmethod
     def remove_player(cls, id):
-        print 'gsg remove_player'
-        player = GameStateGlobal.playerList.get(id, None)
+        player = cls.playerList.get(id, None)
         if player is None:
-            print 'player is none'
             return
         agent = getattr(player, 'agent', None)
         if agent is not None:
-            print 'removing agent'
-            GameStateGlobal.remove_agent(agent.id)
+            cls.remove_agent(agent.id)
         print agent
-        GameStateGlobal.playerList.leave(player)
+        cls.playerList.leave(player)
 
     @classmethod
     def remove_agent(cls, id):
         print 'gsg remove_agent'
-        agent = GameStateGlobal.agentList.get(id, None)
+        agent = cls.agentList.get(id, None)
         if agent is None:
             print 'agent is none'
             return
-        GameStateGlobal.agentList.destroy(agent)
-        owner = GameStateGlobal.playerList.get(agent.owner, None)
+        cls.agentList.destroy(agent)
+        owner = cls.playerList.get(agent.owner, None)
         if owner is not None:
             owner.agent = None
 
     @classmethod
     def client_quit(cls, id):
-        player = GameStateGlobal.playerList.by_client(id)
+        player = cls.playerList.by_client(id)
         if player is None:
             return
-        GameStateGlobal.remove_player(player.id)
+        cls.remove_player(player.id)
 
     @classmethod
     def scoreboard(cls):
@@ -116,7 +77,7 @@ class GameStateGlobal:
         defs =  [[] for i in range(len(props))]
         stats = dict(zip(props, defs))
 
-        for player in GameStateGlobal.playerList.values():
+        for player in cls.playerList.values():
             stats['name'].append(player.name)
             stats['kills'].append(player.kills)
             stats['deaths'].append(player.deaths)
@@ -144,5 +105,6 @@ from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
+from object_lists import WeaponList
 from players import Player
 from net_client import NetClientGlobal

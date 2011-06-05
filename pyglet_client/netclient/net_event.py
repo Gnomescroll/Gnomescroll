@@ -154,7 +154,7 @@ class ClientMessageHandler:
         NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
         ChatClientGlobal.on_identify()
-        player = GameStateGlobal.update_info(player)
+        player = GameStateGlobal.update_your_info(player)
         if player.you:
             GameStateGlobal.playerList.identify(player)
         return True
@@ -188,7 +188,7 @@ class PlayerMessageHandler:
         except AssertionError:
             print 'msg player_list :: players is not a list'
             return
-        GameStateGlobal.load_player_list(players)
+        GameStateGlobal.playerList.load_list(players)
 
     def _player_info(self, **arg):
         if not self._update_player(**arg):
@@ -207,7 +207,7 @@ class PlayerMessageHandler:
         except AssertionError:
             print 'msg player_info :: player is not a dict'
             return False
-        GameStateGlobal.load_player_info(**player)
+        GameStateGlobal.playerList.load_info(**player)
         return True
 
 
@@ -259,7 +259,7 @@ class AgentMessageHandler:
         except AssertionError:
             print 'msg agent_list :: agents is not a list'
             return
-        GameStateGlobal.load_agent_list(agents)
+        GameStateGlobal.agentList.load_list(agents)
 
     def _agent_info(self, **args):
         agent_data = args.get('agent', None)
@@ -275,13 +275,7 @@ class AgentMessageHandler:
             print 'msg agent_update :: agent key is missing'
             return
 
-        try:
-            agent_id = int(agent_data.get('id', None))
-        except ValueError:
-            print 'msg agent_update :: agent dict id is missing or invalid'
-            return
-
-        GameStateGlobal.agentList[agent_id].update_info(**agent_data)
+        GameStateGlobal.agentList.load_info(**agent_data)
 
     def _remove_agent(self, **args):
         id = args.get('id', None)
@@ -317,22 +311,12 @@ class ProjectileMessageHandler:
         if projectile is None:
             print 'msg update_projectile :: missing projectile'
             return
-        try:
-            projectile_id = int(projectile_data.get('id', None))
-            projectile = GameStateGlobal.projectileList[projectile_id]
-            projectile.update(**projectile_data)
-        except TypeError:
-            print 'msg update_projectile :: Projectile id missing'
-        except ValueError:
-            print 'msg projectile_update :: projectile id invalid'
-        except KeyError:
-            print 'msg update_projectile :: projectile not found'
+        GameStateGlobal.projectileList.load_info(**projectile_data)
 
     def _destroy_projectile(self, **args):
         try:
-            id = int(args.get('id', None))
-            projectile = GameStateGlobal.projectileList[id]
-            GameStateGlobal.projectileList.destroy(projectile)
+            prid = int(args.get('id', None))
+            GameStateGlobal.projectileList.destroy(prid)
         except TypeError:
             print 'msg projectile_destroy :: projectile id missing'
         except ValueError:
