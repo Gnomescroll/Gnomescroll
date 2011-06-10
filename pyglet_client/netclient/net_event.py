@@ -89,19 +89,25 @@ class GenericMessageHandler:
 
     def register_events(self):
         NetEventGlobal.register_json_events(self.events)
+
+    def _assign_events_to_methods(self):
+        for event, name in self.events.items():
+            self.events[event] = getattr(self, name)
+            
     @classmethod
     def init(cls):
         pass
     def __init__(self):
+        self._assign_events_to_methods()
         self.register_events()
 
 
 class ChatMessageHandler(GenericMessageHandler):
 
     events = {
-        'chat' : self._chat,
-        'you_died' : self._you_died,
-        'you_killed' : self._you_killed,
+        'chat' : '_chat',
+        'you_died' : '_you_died',
+        'you_killed' : '_you_killed',
     }
 
     def _chat(self, **msg):
@@ -120,9 +126,9 @@ class MapMessageHandler(GenericMessageHandler):
     mapController = None
 
     events = {
-        'chunk_list' : self._chunk_list,
-        'map_chunk' : self._map_chunk,
-        'set_map' : self._set_map,
+        'chunk_list' : '_chunk_list',
+        'map_chunk' : '_map_chunk',
+        'set_map' : '_set_map',
     }
 
     @classmethod
@@ -153,11 +159,11 @@ class MapMessageHandler(GenericMessageHandler):
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        'client_id' : self._client_id,
-        'set_client_id' : self._set_client_id,
-        'client_quit' : self._client_quit,
-        'identified' : self._identified,
-        'identify_fail' : self._identify_fail,            
+        'client_id' : '_client_id',
+        'set_client_id' : '_set_client_id',
+        'client_quit' : '_client_quit',
+        'identified' : '_identified',
+        'identify_fail' : '_identify_fail',            
     }
 
     def _client_id(self, **msg):
@@ -211,23 +217,21 @@ class ClientMessageHandler(GenericMessageHandler):
 # base class for datastore (*Lists) network interface
 class DatastoreMessageInterface(GenericMessageHandler):
 
-    event_extensions = ['info', 'list', 'update', 'destroy', 'create'] # deprecate info for update
+    event_extensions = ['list', 'update', 'destroy', 'create']
     name = ''
     store = None
 
     def __init__(self):
         self._load_default_events()
             
-    def _load_default_events(self)
+    def _load_default_events(self):
         for evex in self.event_extensions:
             event_name = '%s_%s' % (self.name, evex,)
             method_name = '_' + event_name
-            klass_dict = self.__class__.__dict__
-            if method_name not in klass_dict:
+            method = getattr(self, method_name, None)
+            if method is None:
                 method_name = '_default_%s' % (evex,)
-                method = klass_dict[method_name]
-            else:
-                method = klass_dict[method_name]
+                method = getattr(self, method_name)
             self._bind_event(event_name, method)
 
     def _bind_event(self, event_name, method):
@@ -235,9 +239,6 @@ class DatastoreMessageInterface(GenericMessageHandler):
 
     def _error_message(self, info_string, **msg):
         return 'msg %s :: %s' % (msg['cmd'], info_string,)
-
-    def _default_info(self, **args):  # deprecate
-        self._default_update(**args)
 
     def _default_update(self, **args):
         err_msg = None
@@ -327,6 +328,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self._bind_event('agent_position', self._agent_position)
 
     def _agent_position(self, **args):  # deprecate
+        print 'agent_position received'
+        print args
         state = args.get('state', None)
         id = args.get('id', None)
         tick = args.get('tick', None)

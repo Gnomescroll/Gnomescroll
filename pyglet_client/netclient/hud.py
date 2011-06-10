@@ -123,8 +123,11 @@ class Hud(object):
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
         health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
-        weapon = agent.active_weapon().hud_display()
-        s = 'HP %s :: Ammo %s' % (health, weapon,)
+        weapon = agent.active_weapon()
+        if weapon is not None:
+            s = 'HP %s :: Ammo %s' % (health, weapon.hud_display(),)
+        else:
+            s = 'HP %s :: No weapon equipped' % (health,)
         s = '<font face="Monospace" color="green"><b>%s</b></font>' % (s,)
         return s
 

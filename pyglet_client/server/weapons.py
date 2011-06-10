@@ -6,7 +6,7 @@ class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
         GenericMultiObjectList.__init__(self)
-        self._allow_klasses(self, [ \
+        self._allow_klasses([ \
             LaserGun,
             Pick,
             BlockApplier,

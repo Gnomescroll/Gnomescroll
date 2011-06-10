@@ -85,11 +85,12 @@ class AgentModel:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
         if owner is None or id is None:
             return
         if weapons is None:
-            weapons = [LaserGun(), Pick(), BlockApplier()]
+            #weapons = [LaserGun(), Pick(), BlockApplier()]
+            weapons = []
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(lambda k: float(k), state)
@@ -133,6 +134,8 @@ class AgentModel:
         self.box_r = .30
 
     def active_weapon(self):
+        if self._active_weapon is None:
+            return None
         return self.weapons[self._active_weapon]
 
     def update_info(self, **agent):
@@ -382,7 +385,7 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
         self.you = True
@@ -407,6 +410,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
     def fire(self):
         weapon = self.active_weapon()
+        if weapon is None:
+            return
         fire_command = weapon.fire()
         if fire_command:
             NetOut.sendMessage(fire_command, self)
@@ -419,6 +424,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
     def reload(self):
         weapon = self.active_weapon()
+        if weapon is None:
+            return
         reload_command = weapon.reload()
         if reload_command:
             NetOut.sendMessage(reload_command, self)
@@ -448,7 +455,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
     def switch_weapon(self, weapon_index):
         num_weapons = len(self.weapons)
         if num_weapons == 0:
-            self._active_weapon = -1
+            self._active_weapon = None
             return
 
         if type(weapon_index) == int:

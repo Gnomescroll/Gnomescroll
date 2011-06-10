@@ -393,7 +393,6 @@ class Agent(AgentPhysics, AgentAction):
                     d[prop] = int(d[prop])
         return d
 
-
     # set agent state explicitly
     def set_agent_control_state(self, tick, state, angle):
         d_x, d_y, v_x, v_y, jetpack, jump, brake = state

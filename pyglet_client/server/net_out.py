@@ -74,6 +74,7 @@ class EventOut:
 
     @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
+        print 'sending agent update'
         return {
             'agent' :   agent.json(properties),
         }
@@ -102,17 +103,10 @@ class EventOut:
             'player': player.json(properties),
         }
 
-    #@sendJSONevent('player_update', tick=False)
-    #def player_rename(self, player, properties):
-        #return {
-            #'cmd'   : 'player_update',
-            #'player': player.json(properties)
-        #}
-
-    @sendJSONevent('player_info', tick=False)
-    def player_join(self, player):
+    @sendJSONevent('player_create', tick=False)
+    def player_create(self, player):
         return {
-            'player': player.json(),
+            'player'    :   player.json(),
         }
 
     @sendJSONevent('client_quit', tick=False)
@@ -217,11 +211,11 @@ class SendMessage: #each connection has one of these
         return {
             'players':  GameStateGlobal.playerList.json()
         }
-
-    @sendJSON('player_info')
-    def send_player(self, player):
+        
+    @sendJSON('player_update')
+    def send_player(self, player, properties=None):
         return {
-            'player': player.json(),
+            'player': player.json(properties),
         }
 
     @sendJSON('agent_list')
@@ -230,12 +224,12 @@ class SendMessage: #each connection has one of these
             'agents'    :   GameStateGlobal.agentList.json(),
         }
 
-    @sendJSON('agent_info')
-    def send_agent(self, agent):
+    @sendJSON('agent_update')
+    def send_agent(self, agent, properties=None):
         if type(agent) == int:
             agent = GameStateGlobal.agentList[agent]
         return {
-            'agent' :   agent.json(),
+            'agent' :   agent.json(properties),
         }
 
     @sendJSON('projectile_list')
@@ -243,11 +237,11 @@ class SendMessage: #each connection has one of these
         return {
             'projectiles'   :   GameStateGlobal.projectileList.json(),
         }
-
-    @sendJSON('projectile_info')
-    def send_projectile(self, projectile):
+        
+    @sendJSON('projectile_update')
+    def send_projectile(self, projectile, properties=None):
         return {
-            'projectile'    :   projectile.json(),
+            'projectile'    :   projectile.json(properties),
         }
 
     @sendJSON('weapon_list')
@@ -256,10 +250,10 @@ class SendMessage: #each connection has one of these
             'weapons'   :   GameStateGlobal.weaponList.json(),
         }
 
-    @sendJSON('weapon_info')
-    def send_weapon(self, weapon):
+    @sendJSON('weapon_update')
+    def send_weapon(self, weapon, properties=None):
         return {
-            'weapon'    :   weapon.json(),
+            'weapon'    :   weapon.json(properties),
         }
 
     @sendJSON('player_destroy')

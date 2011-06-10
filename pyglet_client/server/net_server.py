@@ -115,7 +115,7 @@ class TcpClient:
             self.name = name
             self._register()
             self.sendMessage.identified(self, 'Identified name: ' + name)
-            NetOut.event.player_join(self.player)
+            NetOut.event.player_create(self.player)
         else:
             if you:
                 self.sendMessage.identified(self, 'You were already identified as ' + name)

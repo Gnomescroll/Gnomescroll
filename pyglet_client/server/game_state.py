@@ -142,7 +142,7 @@ class GenericMultiObjectList(GenericObjectList):
     def _add(self, klass_name, *args, **kwargs):
         self._object_type = self.klass_index[klass_name]
         id = self._generate_id()
-        obj = GenericObjectList._add(id, *args, **kwargs)
+        obj = GenericObjectList._add(self, id, *args, **kwargs)
         self.klass_registers[klass_name].append(obj.id)
         self._object_type = None
         return obj
