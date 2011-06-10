@@ -1,5 +1,10 @@
+
+
+### DEPRECATE
 from pyglet import clock, font, image, window
 from pyglet.gl import *
+### DEPRECATE
+
 
 #import cython
 #import pyximport; pyximport.install()
@@ -26,8 +31,9 @@ from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud
 
-
 import settings  ## put this somewhere!!! so it only has to be in one place
+
+import SDL
 
 import world #deprecate
 
@@ -55,6 +61,9 @@ class App(object):
         ChatClientGlobal.init_1()
         MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
+
+        self.SDL_global = SDL.SDL_global #drawing stuff
+        self.SDL_global.init()
 
     def init_inputs(self):
         InputGlobal.init_0(self)

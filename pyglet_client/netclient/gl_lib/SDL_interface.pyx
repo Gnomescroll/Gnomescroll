@@ -36,7 +36,7 @@ cdef class Global:
 #    cdef Window window
 
     #make field of view adjustable!
-    def __init__(self):
+    def init(self):
         print "Creating SDL OpenGL Window"
         self.set_aspect(85 ,800, 600, 0.1, 1000)
         self.set_projection(0,0,0,0,0)
@@ -72,3 +72,7 @@ cdef class Global:
 
 cpdef int init_video():
     return _init_video()
+
+### init
+
+SDL_global = Global()
