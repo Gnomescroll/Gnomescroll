@@ -26,13 +26,8 @@ class Camera(object):
         #gluPerspective( 45.0 / self.scale, aspect, 0.1, 100.0);
         gluPerspective(65, aspect, .1, 1000)
 
-
         glMatrixMode( GL_MODELVIEW )
         glLoadIdentity()
-
-        #camera_focus_x = self.x + cos( self.x_angle * pi)
-        #camera_focus_y = self.y + sin( self.x_angle * pi)
-        #camera_focus_z = self.z + sin( self.y_angle)
 
         camera_focus_x = self.x + cos( self.x_angle * pi) * cos( self.y_angle * pi)
         camera_focus_y = self.y + sin( self.x_angle * pi) * cos( self.y_angle * pi)
