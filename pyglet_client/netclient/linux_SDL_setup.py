@@ -19,6 +19,7 @@ module1 = Extension('SDL',
                     #extra_link_args = '',
                     sources = ['gl_lib/SDL_functions.c',
                                 'gl_lib/camera.c',
+                                'gl_lib/draw.c',
                                 'gl_lib/SDL_interface.pyx'])
 
 setup(

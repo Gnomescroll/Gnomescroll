@@ -4,41 +4,10 @@
 // #include <SDL_ttf.h>
 
 /*
-void opengl_test2(void) {
-
-SDL_Init( SDL_INIT_VIDEO );
-
-float XSize = 640, YSize = 480;
-glMatrixMode (GL_PROJECTION);
-glLoadIdentity ();
-glOrtho (0, XSize, YSize, 0, 0, 1);
-glMatrixMode (GL_MODELVIEW);
-
-float z = -0.5;
-float x = 50;
-float y = 50;
-
-glColor3f(0,0.5,1);
-
-glBegin(GL_POLYGON);
-glVertex3f(1+x,1+y,0+z);
-glVertex3f(1+x,0+y,0+z);
-glVertex3f(0+x,0+y,0+z);
-glVertex3f(0+x,1+y,0+z);
-glEnd();
-
-glBegin(GL_TRIANGLES);
-
-glVertex3f(-1.0f, -0.5f, -4.0f);    // lower left vertex
-glVertex3f( 1.0f, -0.5f, -4.0f);    // lower right vertex
-glVertex3f( 0.0f,  0.5f, -4.0f);    // upper vertex
-
-glEnd();
 
 SDL_GL_SwapBuffers();
 //SwapBuffers();
-return 3;
-}
+
 */
 
 int _init_video() {
@@ -87,3 +56,6 @@ int _del_video() {
     return 0;
 }
 
+int _swap_buffers() {
+    SDL_GL_SwapBuffers();
+}
