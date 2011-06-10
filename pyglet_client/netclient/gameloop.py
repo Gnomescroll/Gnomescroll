@@ -5,12 +5,12 @@ from pyglet import clock, font, image, window
 from pyglet.gl import *
 ### DEPRECATE
 
+## DEPRECATE
+from pyglet.window import key
+### DEPRECATE
 
 #import cython
 #import pyximport; pyximport.install()
-
-from pyglet.window import key
-
 
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -33,7 +33,11 @@ from hud import Hud
 
 import settings  ## put this somewhere!!! so it only has to be in one place
 
-import SDL
+
+if settings.pyglet:
+    pass
+else:
+    import SDL
 
 import world #deprecate
 
@@ -61,9 +65,9 @@ class App(object):
         ChatClientGlobal.init_1()
         MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
-
-        self.SDL_global = SDL.SDL_global #drawing stuff
-        self.SDL_global.init()
+        if settings.pyglet == False:
+            self.SDL_global = SDL.SDL_global #drawing stuff
+            self.SDL_global.init()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
