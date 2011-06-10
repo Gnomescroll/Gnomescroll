@@ -8,7 +8,7 @@ cdef extern from "camera.c":
 
 
 ## Camera.c ##
-cpdef struct Camera:
+cdef struct Camera:
     float fov, x_size, y_size, z_near, z_far
     float x,y,z, x_angle,y_angle
 
