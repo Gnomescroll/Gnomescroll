@@ -10,12 +10,17 @@ SDL_GL_SwapBuffers();
 
 */
 
+SDL_Surface *pSDLSurface;
+SDL_VideoInfo *pSDLVideoInfo;
+
 int _init_video() {
 
     SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
     SDL_WM_SetCaption( "SDL + OpenGL", NULL );
-    const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
+    ///const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
+    pSDLVideoInfo = SDL_GetVideoInfo();
+
     if( !pSDLVideoInfo )
     {
         printf("SDL_GetVideoInfo() failed. SDL Error: %s\n", SDL_GetError());
@@ -40,7 +45,8 @@ int _init_video() {
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
 
     // Create our rendering surface
-    SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
+    ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
+    pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
 
     if( !pSDLSurface )
     {
@@ -51,13 +57,15 @@ int _init_video() {
     //glEnable(GL_TEXTURE_2D);
 
     //whaa
-    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    //aglClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    /*
     glEnable( GL_TEXTURE_2D );
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
     //end whaa
+    */
     return 0;
 
 }

@@ -29,7 +29,7 @@ void _camera_projection( Camera c) {
 int _world_projection(struct Camera c) {
     float aspect = c.x_size / c.y_size;
 
-    //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 
     glMatrixMode(GL_PROJECTION);

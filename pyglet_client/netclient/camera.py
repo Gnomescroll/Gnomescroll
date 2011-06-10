@@ -26,6 +26,8 @@ class Camera(object):
     def worldProjection(self):
 
         ## SDL prep
+        self.SDL_global.swap_buffers()
+        ## swap buffers from last frame
         self.SDL_global.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
         self.SDL_global.world_projection()
 

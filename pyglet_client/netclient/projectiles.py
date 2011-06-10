@@ -114,6 +114,8 @@ def draw_projectiles():
         v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
         c_list += [0,0,255]*2
 
+        SDL.draw_line(0,0,255, x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l)
+
     pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
         ("c3B", c_list)
