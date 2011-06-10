@@ -10,9 +10,7 @@ float y_size;
 float z_near;
 float z_far;
 
-float x;
-float y;
-float z;
+float x,y,z;
 float x_angle;
 float y_angle;
 };
@@ -28,13 +26,12 @@ void _camera_projection( Camera c) {
 }
 */
 
-int _world_projection(struct Camera cvb) {
-    return;
-    //float aspect = c.x_size / c.y_size;
+int _world_projection(struct Camera c) {
+    float aspect = c.x_size / c.y_size;
 
     //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-/*
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective( c.fov, aspect, c.z_near, c.z_far);
@@ -44,12 +41,11 @@ int _world_projection(struct Camera cvb) {
     camera_focus_x = c.x + cos( c.x_angle * PI) * cos( c.y_angle * PI);
     camera_focus_y = c.y + sin( c.x_angle * PI) * cos( c.y_angle * PI);
     camera_focus_z = c.z + sin( c.y_angle);
-*/
-/*
+
     gluLookAt(c.x,c.y,c.z,
                camera_focus_x, camera_focus_y,  camera_focus_z,
                0, 0, 1);
-*/
+
 
     //glEnable(GL_TEXTURE_2D);
 
