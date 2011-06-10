@@ -48,7 +48,9 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
+    //glEnable(GL_TEXTURE_2D);
     return 0;
+
 }
 
 int _del_video() {

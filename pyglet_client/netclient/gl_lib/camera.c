@@ -36,6 +36,7 @@ void _world_projection( Camera c) {
     gluLookAt(c.x,c.y,c.z,
                camera_focus_x, camera_focus_y,  camera_focus_z,
                0, 0, 1);
+    //glEnable(GL_TEXTURE_2D);
 
     //glEnable (GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
@@ -58,7 +59,7 @@ glMatrixMode( GL_MODELVIEW );
 glLoadIdentity();
 
 glDisable(GL_DEPTH_TEST);
-glEnable(GL_TEXTURE_2D);
+//glEnable(GL_TEXTURE_2D);
 
 /*
          glMatrixMode(GL_PROJECTION)

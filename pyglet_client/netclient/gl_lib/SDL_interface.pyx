@@ -6,9 +6,10 @@ cdef extern from "camera.c":
     _camera_projection(Camera c)
 '''
 
+#cdef extern from "SDL.h":
 
 ## Camera.c ##
-cdef struct Camera:
+cdef struct Camera: #maybe public?
     float fov, x_size, y_size, z_near, z_far
     float x,y,z, x_angle,y_angle
 
@@ -24,12 +25,17 @@ cdef extern int _init_video()
 cdef extern int _del_video()
 cdef extern int _swap_buffers()
 
+## Draw functions ##
+
+
+## Window Properties ##
 '''
 #window properties
-cdef class Window:
+cdef public class Window:
     cdef int x_size
     cdef int y_size
 '''
+
 
 cdef class Global:
     cdef Camera camera

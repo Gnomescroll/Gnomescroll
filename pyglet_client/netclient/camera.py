@@ -3,11 +3,15 @@ from math import sin, cos, pi
 from pyglet.gl import *
 from pyglet import clock, font, image, window
 
+import SDL
+
 base_dir = "./"
 
 class Camera(object):
 
     def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0):
+        self.SDL_global = SDL.SDL_global
+
         self.win = win
         self.x = x
         self.y = y
@@ -20,6 +24,10 @@ class Camera(object):
         self.mode = 'camera'
 
     def worldProjection(self):
+        ## SDL prep
+
+
+        ## End SDL prep
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         aspect = self.win.width / float(self.win.height)
