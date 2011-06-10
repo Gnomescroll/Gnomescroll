@@ -2,6 +2,7 @@ syntax: glob
 *.pyc
 *.pxd
 *.pyd
+*.pyo
 
 terrain_map.c
 dat.c
