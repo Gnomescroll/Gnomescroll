@@ -89,11 +89,15 @@ class Projectile(GameObject):
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
 
-
+##deprecate
 import pyglet
 from pyglet.gl import *
+## deprecate
+
+import SDL
 
 def draw_projectiles():
+    SDL_global = SDL.SDL_global
 
     v_num = 0
     v_list = []
