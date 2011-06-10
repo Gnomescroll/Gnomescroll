@@ -104,7 +104,8 @@ else:
     import SDL
 
 def draw_projectiles():
-    SDL_global = SDL.SDL_global
+    if settings.pyglet == False:
+        SDL_global = SDL.SDL_global
 
     v_num = 0
     v_list = []
