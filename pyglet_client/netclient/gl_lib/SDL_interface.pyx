@@ -13,8 +13,8 @@ cdef struct Camera: #maybe public?
     float fov, x_size, y_size, z_near, z_far
     float x,y,z, x_angle,y_angle
 
-cdef extern _world_projection(Camera camera)
-cdef extern _hud_projection(Camera camera)
+cdef extern int _world_projection(Camera camera)
+cdef extern int _hud_projection(Camera camera)
 
 ## End Camera.c ##
 
@@ -44,8 +44,8 @@ cdef class Global:
     #make field of view adjustable!
     def init(self):
         print "Creating SDL OpenGL Window"
-        self.set_aspect(85 ,800, 600, 0.1, 1000)
-        self.set_projection(0,0,0,0,0)
+        self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
+        self.set_projection(0.,0.,0.,0.,0.)
         _init_video()
 
     def close_window(self):

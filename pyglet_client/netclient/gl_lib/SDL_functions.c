@@ -49,6 +49,15 @@ int _init_video() {
         return 1;
     }
     //glEnable(GL_TEXTURE_2D);
+
+    //whaa
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glEnable( GL_TEXTURE_2D );
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
+    //end whaa
     return 0;
 
 }
