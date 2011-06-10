@@ -27,9 +27,9 @@ cdef extern int _swap_buffers()
 
 ## Draw functions ##
 
-cdef extern int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
+cdef extern int _draw_line(char r, char g,char b, float x0, float y0, float z0, float x1, float y1, float z1)
 
-def draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1):
+def draw_line(char r, char g,char b, float x0, float y0, float z0, float x1, float y1, float z1):
     return _draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 ## Window Properties ##
