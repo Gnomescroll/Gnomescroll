@@ -24,7 +24,7 @@ class Weapon(EquippableObject):
         'Weapon'    :   0,
         'LaserGun'  :   1,
         'Pick'      :   2,
-        'Block'     :   3,
+        'BlockApplier':   3,
     }
 
     def __init__(self, id, owner=None):
@@ -43,7 +43,7 @@ class Weapon(EquippableObject):
 
     def json(self):
         return {
-            'type'  :   self.key(),
+            'type'  :   self.type,
         }
 
 class LaserGun(Weapon):
@@ -80,7 +80,7 @@ class LaserGun(Weapon):
 
     def json(self):
         return {
-            'type'  :   self.key(),
+            'type'  :   self.type,
             'clip'  :   self.clip,
             'ammo'  :   self.ammo,
         }
@@ -98,7 +98,7 @@ class BlockApplier(Weapon):
 
     def json(self):
         return {
-            'type'  :   self.key(),
+            'type'  :   self.type,
             'clip'  :   self.clip,
         }
 

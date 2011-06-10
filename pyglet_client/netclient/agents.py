@@ -411,10 +411,11 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         if fire_command:
             NetOut.sendMessage(fire_command, self)
 
-    def add_ammo(self, amt, weapon_key):
+    def add_ammo(self, amt, weapon_type):
         for weapon in weapons:
-            if weapon.key() == weapon_key:
+            if weapon.type == weapon_type:
                 weapon.restock(amt)
+                break
 
     def reload(self):
         weapon = self.active_weapon()

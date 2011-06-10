@@ -7,7 +7,7 @@ class Weapon(EquippableObject):
         'Weapon'    :   0,
         'LaserGun'  :   1,
         'Pick'      :   2,
-        'Block'     :   3,
+        'BlockApplier':   3,
     }
 
     def __init__(self, id, owner=None):
@@ -23,9 +23,6 @@ class Weapon(EquippableObject):
 
     def __str__(self):
         return self.__class__.__name__
-
-    def key(self):
-        return self._weapons[str(self)]
 
     def hud_display(self):
         undef = '--'
