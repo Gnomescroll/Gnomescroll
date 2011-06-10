@@ -262,13 +262,13 @@ class SendMessage: #each connection has one of these
             'weapon'    :   weapon.json(),
         }
 
-    @sendJSON('remove_player')
+    @sendJSON('player_destroy')
     def remove_player(self, player):
         return {
             'id'    : player.id,
         }
 
-    @sendJSON('remove_agent')
+    @sendJSON('agent_destroy')
     def remove_agent(self, agent):
         return {
             'id'    : agent.id,

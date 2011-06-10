@@ -10,8 +10,10 @@ class Weapon(EquippableObject):
         'Block'     :   3,
     }
 
-    def __init__(self):
-        pass
+    def __init__(self, id, owner=None):
+        self.id = id
+        self.owner = owner
+        self.type = self._weapons[self.__class__.__name__]
 
     def fire(self):
         return False
@@ -37,7 +39,8 @@ class Weapon(EquippableObject):
 
 class LaserGun(Weapon):
 
-    def __init__(self):
+    def __init__(self, id, owner=None):
+        Weapon.__init__(self, id, owner)
         self.base_damage = 35
         self.clip_size = 20
         self.max_ammo = 100
@@ -65,7 +68,8 @@ class LaserGun(Weapon):
 
 class BlockApplier(Weapon):
 
-    def __init__(self):
+    def __init__(self, id, owner=None):
+        Weapon.__init__(self, id, owner)
         self.max_ammo = 100
         self.ammo = self.max_ammo
         self.clip_size = 100
@@ -82,8 +86,8 @@ class BlockApplier(Weapon):
 
 class Pick(Weapon):
 
-    def __init__(self):
-        pass
+    def __init__(self, id, owner=None):
+        Weapon.__init__(self, id, owner)
 
     def fire(self):
         return 'hit_block'
