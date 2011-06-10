@@ -2,6 +2,7 @@
 Settings module
 '''
 
+pyglet = True
 graphics = "SDL" # options, "SDL", "pyglet"
 
 audio = False

@@ -90,6 +90,9 @@ class Projectile(GameObject):
         GameStateGlobal.projectileList.destroy(self)
 
 ##deprecate
+
+import settings
+
 import pyglet
 from pyglet.gl import *
 ## deprecate

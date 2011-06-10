@@ -77,4 +77,5 @@ int _del_video() {
 
 int _swap_buffers() {
     SDL_GL_SwapBuffers();
+    return 0;
 }

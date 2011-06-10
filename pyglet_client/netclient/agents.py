@@ -10,6 +10,11 @@ from math import floor, ceil, fabs
 from game_state import GameStateGlobal
 from weapons import LaserGun, Pick, BlockApplier
 
+import settings
+
+if settings.pyglet == False:
+    import SDL
+
 '''
 Physics for agents
 '''
@@ -49,10 +54,17 @@ class AgentRender:
             v_list += [self.x,self.y, self.z+temp]
             c_list += [255,255,255] + [255,255,255] + [255,255,255]
             v_num +=3
-        pyglet.graphics.draw(v_num, GL_POINTS,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
+
+        if settings.pyglet:
+            pyglet.graphics.draw(v_num, GL_POINTS,
+            ("v3f", v_list),
+            ("c3B", c_list)
+            )
+        else:
+            for i in range(0,v_num):
+                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+                SDL.draw_point(r,g,b,x,y,z)
 
     def draw_bounding_box(self):
         #agent parameters
@@ -232,10 +244,18 @@ class PlayerAgentRender(AgentRender):
             v_list += [self.x,self.y, self.z+temp]
             c_list += [255,255,255] + [255,255,255] + [255,255,255]
             v_num +=3
-        pyglet.graphics.draw(v_num, GL_POINTS,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
+        #deprecate
+        if settings.pyglet:
+            pyglet.graphics.draw(v_num, GL_POINTS,
+            ("v3f", v_list),
+            ("c3B", c_list)
+            )
+        else:
+            for i in range(0,v_num):
+                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+                SDL.draw_point(r,g,b,x,y,z)
+
 
     def draw_velocity(self, point_density, units):
         v_num = 0
@@ -249,10 +269,18 @@ class PlayerAgentRender(AgentRender):
             v_list += [self.x+units*n*c*self.vx, self.y+units*n*c*self.vy, self.z+units*n*c*self.vz]
             c_list += [0,0,255]
             v_num +=1
-        pyglet.graphics.draw(v_num, GL_POINTS,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
+        #deprecate
+        if settings.pyglet:
+            pyglet.graphics.draw(v_num, GL_POINTS,
+            ("v3f", v_list),
+            ("c3B", c_list)
+            )
+        else:
+            for i in range(0,v_num):
+                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+                SDL.draw_point(r,g,b,x,y,z)
+
 
     def draw_acceleration(self, point_density, units):
         v_num = 0
@@ -266,10 +294,17 @@ class PlayerAgentRender(AgentRender):
             v_list += [self.x+units*n*c*self.ax, self.y+units*n*c*self.ay, self.z+units*n*c*self.az]
             c_list += [0,255,0]
             v_num +=1
-        pyglet.graphics.draw(v_num, GL_POINTS,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
+        #deprecate
+        if settings.pyglet:
+            pyglet.graphics.draw(v_num, GL_POINTS,
+            ("v3f", v_list),
+            ("c3B", c_list)
+            )
+        else:
+            for i in range(0,v_num):
+                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+                SDL.draw_point(r,g,b,x,y,z)
 
     def draw_aiming_direction(self, distance=50):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
@@ -289,10 +324,18 @@ class PlayerAgentRender(AgentRender):
             v_list += [x,y,z]
         #print str(v_list)
         #print str(v_num)
-        pyglet.graphics.draw(v_num, GL_POINTS,
-        ("v3f", v_list),
-        ("c3B", [255, 0, 0]*v_num)
-        )
+        c_list = [200,0,0]*v_num
+
+        if settings.pyglet:
+            pyglet.graphics.draw(v_num, GL_POINTS,
+            ("v3f", v_list),
+            ("c3B", c_list)
+            )
+        else:
+            for i in range(0,v_num):
+                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+                SDL.draw_point(r,g,b,x,y,z)
 
     def draw_selected_cube(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
