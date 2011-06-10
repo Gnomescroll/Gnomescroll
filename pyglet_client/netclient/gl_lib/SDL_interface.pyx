@@ -37,7 +37,7 @@ cdef class Global:
 
     def __init__(self):
         print "Creating SDL OpenGL Window"
-        self.set_aspect(0,640, 460, 0.1, 1000)
+        self.set_aspect(0,800, 600, 0.1, 1000)
         self.set_projection(0,0,0,0,0)
         _init_video()
 
