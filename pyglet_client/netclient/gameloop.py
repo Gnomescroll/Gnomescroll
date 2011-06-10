@@ -21,7 +21,7 @@ from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
 
 
-from player import Player
+from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud

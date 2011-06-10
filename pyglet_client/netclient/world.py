@@ -150,4 +150,4 @@ from cube_dat import CubeGlobal
 from game_state import GameStateGlobal
 from map_chunk_manager import MapChunkManagerGlobal
 
-from player import Player
+from players import Player
