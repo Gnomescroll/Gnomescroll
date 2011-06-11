@@ -76,6 +76,40 @@ class AgentRender:
         draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
         draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
 
+
+class AgentWeapons:
+
+    def __init__(self, weapons=None, active_weapon=None):
+        if weapons is None:
+            weapons = []
+        self.weapons = weapons
+        self._active_weapon = active_weapon #    which weapon is held
+    
+    def active(self):
+        if self._active_weapon is None:
+            return None
+        return self.weapons[self._active_weapon]
+
+    def update_info(self, weapons):
+        print 'agent weapons updating info'
+        new_weapons = []
+        for weapon in weapons:
+            try:
+                wid = weapon['id']
+            except KeyError:
+                print 'WARNING: Weapon updating via agent; weapon id missing'
+                continue
+            known_weapon = GameStateGlobal.weaponList.get(wid, None)
+            if known_weapon is None: # agent assigned unknown weapon
+                known_weapon = GameStateGlobal.weaponList.create(**weapon)
+            else:
+                known_weapon.update_info(**weapon)
+            new_weapons.append(known_weapon)
+        self.weapons = new_weapons
+
+    def __len__(self):
+        return len(self.weapons)
+
 '''
 Data model for agent
 '''
@@ -88,9 +122,6 @@ class AgentModel:
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
         if owner is None or id is None:
             return
-        if weapons is None:
-            #weapons = [LaserGun(), Pick(), BlockApplier()]
-            weapons = []
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(lambda k: float(k), state)
@@ -121,22 +152,16 @@ class AgentModel:
         else:
             self.health = health
         self.dead = bool(dead)
-        self.weapons = weapons
+        self.weapons = AgentWeapons(weapons, active_weapon)
         self.owner = owner
         self.you = False
 
         self.active_block = active_block   # which block to create
-        self._active_weapon = active_weapon #    which weapon is held
 
         #settings
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
-
-    def active_weapon(self):
-        if self._active_weapon is None:
-            return None
-        return self.weapons[self._active_weapon]
 
     def update_info(self, **agent):
         args = []
@@ -149,15 +174,10 @@ class AgentModel:
             self.dead = bool(agent['dead'])
             if self.dead:
                 print 'you are now dead'
-        #if 'weapons' in agent:
-            ### update weapons accordingly
-            #for weapon in agent['weapons']:
-                #wid = weapon['id']
-                #if wid in self.weapons:
-                    #self.weapons[wid].update_info(**weapon)
-                #elif wid in GameStateGlobal.weaponList:
-                    #new_weapon = GameStateGlobal.weaponList.create(**weapon)
-                    
+
+        if 'weapons' in agent:
+            self.weapons.update_info(**agent['weapons'])
+            
         if 'owner' in agent:
             self.owner = agent['owner']
         if 'state' in agent:
@@ -380,6 +400,28 @@ class PlayerAgentRender(AgentRender):
 
         draw_sides(cube_sides)
 
+
+class PlayerAgentWeapons(AgentWeapons):
+
+    def switch(self, weapon_index):
+        num_weapons = len(self.weapons)
+        if num_weapons == 0:
+            self._active_weapon = None
+            return
+
+        if type(weapon_index) == int:
+            weapon_index += -1
+
+        if weapon_index == 'up':
+            self._active_weapon = (self.active_weapon + 1) % num_weapons
+        elif weapon_index == 'down':
+            self._active_weapon = (self.active_weapon - 1) % num_weapons
+        elif weapon_index < num_weapons:
+                self._active_weapon = weapon_index
+
+        print 'weapon is: %s' % (self.active(),)
+
+
 '''
 Client's player's agent
 '''
@@ -387,6 +429,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
+
+        self.weapons = PlayerAgentWeapons(weapons, active_weapon)
 
         self.you = True
         self.control_state = [0,0,0,0,0,0,0]
@@ -409,7 +453,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         self.box_r = .30
 
     def fire(self):
-        weapon = self.active_weapon()
+        weapon = self.weapons.active()
         if weapon is None:
             return
         fire_command = weapon.fire()
@@ -423,7 +467,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
                 break
 
     def reload(self):
-        weapon = self.active_weapon()
+        weapon = self.weapons.active()
         if weapon is None:
             return
         reload_command = weapon.reload()
@@ -451,24 +495,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
     def nearest_block_position(self):
         return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
-
-    def switch_weapon(self, weapon_index):
-        num_weapons = len(self.weapons)
-        if num_weapons == 0:
-            self._active_weapon = None
-            return
-
-        if type(weapon_index) == int:
-            weapon_index += -1
-
-        if weapon_index == 'up':
-            self._active_weapon = (self.active_weapon + 1) % num_weapons
-        elif weapon_index == 'down':
-            self._active_weapon = (self.active_weapon - 1) % num_weapons
-        elif weapon_index < num_weapons:
-                self._active_weapon = weapon_index
-
-        print 'weapon is: %s' % (self.active_weapon(),)
 
     def pan(self, dx_angle, dy_angle):
         self.x_angle += dx_angle

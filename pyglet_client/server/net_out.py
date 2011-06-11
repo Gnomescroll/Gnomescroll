@@ -209,7 +209,7 @@ class SendMessage: #each connection has one of these
     @sendJSON('player_list')
     def send_players(self):
         return {
-            'players':  GameStateGlobal.playerList.json()
+            'player_list':  GameStateGlobal.playerList.json()
         }
         
     @sendJSON('player_update')
@@ -221,7 +221,7 @@ class SendMessage: #each connection has one of these
     @sendJSON('agent_list')
     def send_agents(self):
         return {
-            'agents'    :   GameStateGlobal.agentList.json(),
+            'agent_list'    :   GameStateGlobal.agentList.json(),
         }
 
     @sendJSON('agent_update')
@@ -235,7 +235,7 @@ class SendMessage: #each connection has one of these
     @sendJSON('projectile_list')
     def send_projectiles(self):
         return {
-            'projectiles'   :   GameStateGlobal.projectileList.json(),
+            'projectile_list'   :   GameStateGlobal.projectileList.json(),
         }
         
     @sendJSON('projectile_update')
@@ -247,7 +247,7 @@ class SendMessage: #each connection has one of these
     @sendJSON('weapon_list')
     def send_weapons(self):
         return {
-            'weapons'   :   GameStateGlobal.weaponList.json(),
+            'weapon_list'   :   GameStateGlobal.weaponList.json(),
         }
 
     @sendJSON('weapon_update')

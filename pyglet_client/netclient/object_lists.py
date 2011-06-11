@@ -246,8 +246,7 @@ class GenericMultiObjectList(GenericObjectList):
 
     def _add(self, klass_name, *args, **kwargs):
         self._object_type = self.klass_index[klass_name]
-        id = self._generate_id()
-        obj = GenericObjectList._add(self, id, *args, **kwargs)
+        obj = GenericObjectList._add(self, *args, **kwargs)
         self.klass_registers[klass_name].append(obj.id)
         self._object_type = None
         return obj
@@ -279,8 +278,19 @@ class WeaponList(GenericMultiObjectList):
             BlockApplier,
         ])
 
-    def create(self, klass_name, *args, **kwargs):
+    def create(self, klass_name=None, *args, **kwargs):
+        if klass_name is None:
+            if 'name' in kwargs:
+                klass_name = kwargs['name']
+            elif 'type' in kwargs:
+                klass_name = Weapon.name_from_type(kwargs['type'])
+        elif type(klass_name) == int:
+            klass_name = Weapon.name_from_type(klass_name)
+
+        print klass_name, args, kwargs
         return self._add(klass_name, *args, **kwargs)
 
     def destroy(self, obj):
         return self._remove(self, obj)
+
+from weapons import Weapon

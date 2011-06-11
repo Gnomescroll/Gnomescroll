@@ -11,6 +11,8 @@ class Weapon(EquippableObject):
     }
 
     def __init__(self, id, owner=None):
+        if id is None:
+            raise ValueError
         self.id = id
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
@@ -24,6 +26,12 @@ class Weapon(EquippableObject):
     def __str__(self):
         return self.__class__.__name__
 
+    @classmethod
+    def name_from_type(cls, type):
+        for name, type_id in cls._weapons.items():
+            if type_id == type:
+                return name
+
     def hud_display(self):
         undef = '--'
         ammo = getattr(self, 'ammo', undef)
@@ -36,7 +44,7 @@ class Weapon(EquippableObject):
 
 class LaserGun(Weapon):
 
-    def __init__(self, id, owner=None):
+    def __init__(self, id=None, owner=None, clip=None, **kwargs):
         Weapon.__init__(self, id, owner)
         self.base_damage = 35
         self.clip_size = 20
@@ -45,7 +53,9 @@ class LaserGun(Weapon):
         self.automatic = False
         self.firing_rate = 100 #ms
 
-        self.clip = self.clip_size
+        if clip is None:
+            clip = self.clip_size
+        self.clip = clip
         self.ammo = self.max_ammo
 
     def fire(self):
@@ -65,12 +75,14 @@ class LaserGun(Weapon):
 
 class BlockApplier(Weapon):
 
-    def __init__(self, id, owner=None):
+    def __init__(self, id=None, owner=None, clip=None, **kwargs):
         Weapon.__init__(self, id, owner)
         self.max_ammo = 100
         self.ammo = self.max_ammo
         self.clip_size = 100
-        self.clip = self.clip_size
+        if clip is None:
+            clip = self.clip_size
+        self.clip = clip
 
     def fire(self):
         self.ammo -= 1
@@ -83,7 +95,7 @@ class BlockApplier(Weapon):
 
 class Pick(Weapon):
 
-    def __init__(self, id, owner=None):
+    def __init__(self, id, owner=None, **kwargs):
         Weapon.__init__(self, id, owner)
 
     def fire(self):

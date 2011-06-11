@@ -43,6 +43,7 @@ class Weapon(EquippableObject):
 
     def json(self):
         return {
+            'id'    :   self.id,
             'type'  :   self.type,
         }
 
@@ -79,11 +80,13 @@ class LaserGun(Weapon):
         return 'reload_weapon'
 
     def json(self):
-        return {
-            'type'  :   self.type,
+        base = Weapon.json(self)
+        base.update({
+            #'type'  :   self.type,
             'clip'  :   self.clip,
             'ammo'  :   self.ammo,
-        }
+        })
+        return base
 
 class BlockApplier(Weapon):
 
@@ -97,10 +100,12 @@ class BlockApplier(Weapon):
         return 'place_block'
 
     def json(self):
-        return {
-            'type'  :   self.type,
+        base = Weapon.json(self)
+        base.update({
+            #'type'  :   self.type,
             'clip'  :   self.clip,
-        }
+        })
+        return base
 
 class Pick(Weapon):
 

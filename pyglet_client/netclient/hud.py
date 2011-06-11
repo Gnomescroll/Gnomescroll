@@ -126,7 +126,7 @@ class Hud(object):
             s = 'No agent yet'
         else:
             health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
-            weapon = agent.active_weapon()
+            weapon = agent.weapons.active()
             if weapon is not None:
                 s = 'HP %s :: Ammo %s' % (health, weapon.hud_display(),)
             else:

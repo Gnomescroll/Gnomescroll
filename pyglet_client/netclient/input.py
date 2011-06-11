@@ -38,7 +38,10 @@ class InputGlobal:
     def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')
         current_mode = (current_mode + change) % len(modes)
-        setattr(InputGlobal, type, modes[current_mode])
+        new_mode_name = modes[current_mode]
+        if new_mode_name == 'agent' and GameStateGlobal.agent is None:
+            return
+        setattr(InputGlobal, type, new_mode_name)
         print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
         return current_mode
 
@@ -281,7 +284,7 @@ class AgentInput:
         except (ValueError, TypeError):
             return
         print 'attempting to switch weapon to ', weapon_index
-        GameStateGlobal.agent.switch_weapon(weapon_index)
+        GameStateGlobal.agent.weapons.switch(weapon_index)
 
 
 from game_state import GameStateGlobal
