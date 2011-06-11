@@ -32,7 +32,7 @@ int _get_key_event();
 
 typedef void (*key_state_func)();
 typedef void (*key_event_func)(char key);
-typedef void (*key_state_func)(char *name, void *user_data);
+typedef void (*key_state_func)(MouseState ms);
 typedef void (*mouse_movement_func)(MouseEvent me);
 
 int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet

@@ -131,7 +131,7 @@ ctypedef struct MouseEvent:
 cdef extern from "input.h":
     ctypedef void (*key_state_func)()
     ctypedef void (*key_event_func)(char key)
-    ctypedef void (*mous_movement_func)(MouseState ms)
+    ctypedef void (*mous_state_func)(MouseState ms)
     ctypedef void (*mouse_event_func)(MouseEvent me)
 
 #int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
@@ -145,7 +145,7 @@ cdef void key_state_func():
 cdef void key_state_callback(char key):
     pass
 
-cdef void mouse_movement_func(MouseState ms):
+cdef void mouse_state_func(MouseState ms):
     pass
 
 cdef void mouse_event_func(MouseEvent me):
