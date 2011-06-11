@@ -37,10 +37,24 @@ def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
 ## input.c
-cdef extern int _get_key()
+cdef extern int _get_key_state()
+cdef extern int _get_key_event()
+cdef extern int _set_text_entry_mode(int n)
 
-def get_key():
-    temp = _get_key()
+def get_key_state():
+    temp = _get_key_state()
+
+def get_key_event():
+    temp = _get_key_event()
+
+def set_text_entry_mode(int n):
+    temp = _set_text_entry_mode(n)
+
+ctypedef struct MouseState:
+    int x
+    int y
+    int dx
+    int dy
 
 ## Window Properties ##
 '''
@@ -61,6 +75,8 @@ cdef class Global:
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
         self.set_projection(0.,0.,0.,0.,0.)
         _init_video()
+        #input init
+        set_text_entry_mode(0)
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"

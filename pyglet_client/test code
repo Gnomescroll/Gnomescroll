@@ -29,5 +29,15 @@ win.init()
 
 while True:
 	time.sleep(0.1)
+	SDL.get_key_event()
+	#SDL.get_key_state()
+#keyboard test
+import time
+import SDL
+win = SDL.Global()
+win.init()
+
+while True:
+	time.sleep(0.1)
 	SDL.get_key()
 
