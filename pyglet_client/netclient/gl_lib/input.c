@@ -107,14 +107,17 @@ int _key_state_callback(key_state_func user_func) {
 
 int _key_event_callback(key_event_func user_func, char key) {
     user_func(key);
+    return 0;
 }
 
 int _mouse_state_callback(mouse_state_func user_func, MouseState ms) {
-    user_func(ms)
+    user_func(ms);
+    return 0;
 }
 
 int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
-    user_func(me)
+    user_func(me);
+    return 0;
 }
 
 /// End Call Backs ///
