@@ -87,6 +87,7 @@ class Camera(object):
         return pyglet.event.EVENT_HANDLED
 
     def agent_view(self, agent):
+        print agent
         if self.mode != 'agent':
             self._save_position()
             self.mode = 'agent'
