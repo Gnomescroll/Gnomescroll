@@ -131,7 +131,7 @@ class PlayerList(GenericObjectList):
         self.client_ids = {}
         self.names = {}
 
-    def join(self, **player):
+    def create(self, **player):
         client_id = player.get('cid', None)
         name = player.get('name', None)
         if client_id is None or name is None:
@@ -155,7 +155,7 @@ class PlayerList(GenericObjectList):
         self.names[player.name] = player.cid
         return player
         
-    def leave(self, player):
+    def destroy(self, player):
         print 'playerlist leave'
         print player
         client_id = player.cid

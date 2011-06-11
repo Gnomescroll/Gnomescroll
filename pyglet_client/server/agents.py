@@ -279,6 +279,7 @@ class AgentPhysics:
         NetOut.event.agent_state_change(self)
         return
 
+
 class AgentAction:
 
     def fire_projectile(self):

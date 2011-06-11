@@ -92,7 +92,8 @@ class GenericMessageHandler:
 
     def _assign_events_to_methods(self):
         for event, name in self.events.items():
-            self.events[event] = getattr(self, name)
+            if type(name) == str:
+                self.events[event] = getattr(self, name)
             
     @classmethod
     def init(cls):
@@ -223,6 +224,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
 
     def __init__(self):
         self._load_default_events()
+        GenericMessageHandler.__init__(self)
             
     def _load_default_events(self):
         for evex in self.event_extensions:
@@ -307,15 +309,6 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             return
         GameStateGlobal.remove_player(id)    # this method manages FK relationships
 
-    #def _player_create(self, **args):
-        #err_msg = None
-        #player = args.get('player', None)
-        #if player is None:
-            #err_msg = 'player key is missing'
-        #if err_msg is not None:
-            #print self._error_message(err_msg, **args)
-            #return
-        ##GameStateGlobal.create_player(player)
 
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
@@ -324,12 +317,10 @@ class AgentMessageHandler(DatastoreMessageInterface):
     def __init__(self):
         self.name = 'agent'
         self.store = GameStateGlobal.agentList
-        DatastoreMessageInterface.__init__(self)
         self._bind_event('agent_position', self._agent_position)
+        DatastoreMessageInterface.__init__(self)
 
     def _agent_position(self, **args):  # deprecate
-        print 'agent_position received'
-        print args
         state = args.get('state', None)
         id = args.get('id', None)
         tick = args.get('tick', None)
@@ -364,16 +355,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
             print self._error_message(err_msg, **args)
             return
         GameStateGlobal.remove_agent(id)    # this method manages FK relationships
-
-    #def _agent_create(self, **args):
-        #err_msg = None
-        #agent = args.get('agent', None)
-        #if agent is None:
-            #err_msg = 'agent key is missing'
-        #if err_msg is not None:
-            #print self._error_message(err_msg, *args)
-            #return
-        ##GameStateGlobal.agent_create(agent)
+        
     
 class WeaponMessageHandler(DatastoreMessageInterface):
 
@@ -381,6 +363,7 @@ class WeaponMessageHandler(DatastoreMessageInterface):
         self.name = 'weapon'
         self.store = GameStateGlobal.weaponList
         DatastoreMessageInterface.__init__(self)
+
 
 class ProjectileMessageHandler(DatastoreMessageInterface):
 
