@@ -96,14 +96,13 @@ class App(object):
         #ChatClientGlobal.on_connect()
         NetOut.mapMessage.request_chunk_list()
 
-        self.player = GameStateGlobal.player
-        self.agent = GameStateGlobal.agent
         #p = hotshot.Profile("../log/client.log")
         #p.start()
         while not self.exit:
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
-            NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+            if GameStateGlobal.agent is not None:
+                NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing

@@ -20,9 +20,9 @@ class GameStateGlobal:
     def init_0(cls):
         cls.agentList = AgentList()
         cls.playerList = PlayerList()
-        player = cls.playerList.join_yourself()
-        cls.player = player
-        cls.agent = player.agent
+        #player = cls.playerList.join_yourself()
+        #cls.player = player
+        #cls.agent = player.agent
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
         cls.terrainMap = TerrainMap()
@@ -35,10 +35,17 @@ class GameStateGlobal:
     # for your player
     @classmethod
     def update_your_info(cls, player):
+        if cls.player is None:
+            cls.player = cls.playerList.join_yourself()
+            
         cls.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
-            cls.agent.update_info(**agent)
+            if cls.agent is None:
+                cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
+                cls.player.agent = cls.agent
+            else:
+                cls.agent.update_info(**agent)
         return cls.player
 
     @classmethod

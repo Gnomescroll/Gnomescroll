@@ -1,6 +1,6 @@
 class Player:
 
-    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, agent=None):
+    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None):
         if cid is None or id is None:
             print 'Client_id or pid missing; abort creating player'
             raise ValueError
@@ -17,7 +17,7 @@ class Player:
         self.agent = agent
         self.you = False
 
-        self.suicides = 0 # use this later
+        self.suicides = suicides # use this later
 
     def score(self):
         return self.kills - self.suicides
@@ -46,15 +46,15 @@ class Player:
 
 class YouPlayer(Player):
 
-    def __init__(self):
-        self.cid = NetClientGlobal.client_id
-        self.name = NetClientGlobal.name
-        self.id = 0
-        self.kills = 0
-        self.deaths = 0
-        self.agent = GameStateGlobal.agentList.create_player_agent(self.id, 0)
+    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None):
+        self.cid = cid
+        self.name = name
+        self.id = id
+        self.kills = kills
+        self.deaths = deaths
+        self.agent = agent
         self.you = True
-        self.suicides = 0
+        self.suicides = suicides
         
 
 from game_state import GameStateGlobal

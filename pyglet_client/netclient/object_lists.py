@@ -97,10 +97,10 @@ class AgentList(GenericObjectList):
         agent = self._add(*args, **agent)
         return agent
 
-    def create_player_agent(self, owner, id):
+    def create_player_agent(self, *args, **agent):
         from agents import Agent, PlayerAgent
         self._object_type = PlayerAgent
-        player_agent = self._add(owner=owner, id=id)
+        player_agent = self._add(*args, **agent)
         self._object_type = Agent
         return player_agent
 
@@ -143,10 +143,10 @@ class PlayerList(GenericObjectList):
         self.names[name] = client_id
         return player
 
-    def join_yourself(self):
+    def join_yourself(self, **player):
         from players import Player, YouPlayer
         self._object_type = YouPlayer
-        player = self._add()
+        player = self._add(**player)
         self._object_type = Player
         self.client_ids[player.cid] = player.id
         return player

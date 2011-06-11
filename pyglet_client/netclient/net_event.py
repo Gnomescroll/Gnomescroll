@@ -46,10 +46,7 @@ class MessageHandler:
     player = None #move this somewhere else
     @classmethod
     def init(self):
-        self.player = GameStateGlobal.player
-        self.agent = GameStateGlobal.agent
-        assert self.player != None
-        assert self.agent != None
+        pass
     def __init__(self):
         self.json_events = {} #map strings to functions
 
