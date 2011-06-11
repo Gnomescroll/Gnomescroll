@@ -56,21 +56,6 @@ def get_key_event():
 def set_text_entry_mode(int n):
     temp = _set_text_entry_mode(n)
 
-ctypedef struct MouseState:
-    int x
-    int y
-    int dx
-    int dy
-
-ctypedef struct MouseEvent:
-    int x
-    int y
-    int button1
-    int button2
-    int button3
-    int button4
-    int button5
-
 ## Window Properties ##
 '''
 #window propertiesSDL.
@@ -127,16 +112,43 @@ class MouseEventHandler:
         pass
 ### init
 
+ctypedef struct MouseState:
+    int x
+    int y
+    int dx
+    int dy
+
+ctypedef struct MouseEvent:
+    int x
+    int y
+    int button1
+    int button2
+    int button3
+    int button4
+    int button5
+
 ### call backs
 cdef extern from "input.h":
     ctypedef void (*key_state_func)()
     ctypedef void (*key_event_func)(char key)
-    ctypedef void (*key_movement_func)(char *name, void *user_data)
-    ctypedef void (*mouse_movement_func)(MouseEvent me)
+    ctypedef void (*mous_movement_func)(MouseState ms)
+    ctypedef void (*mouse_event_func)(MouseEvent me)
 
 #int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
 #int _key_event_callback(key_event_func user_func, char key);
 #int _mouse_movement_callback(key_movement_func user_func, MouseState ms);
 #int _mouse_event_callback(mouse_movement_func user_func, MouseEvent me);
+
+cdef void key_state_func():
+    pass
+
+cdef void key_state_callback(char key):
+    pass
+
+cdef void mouse_movement_func(MouseState ms):
+    pass
+
+cdef void mouse_event_func(MouseEvent me):
+    pass
 
 SDL_global = Global()

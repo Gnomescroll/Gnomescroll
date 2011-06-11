@@ -102,26 +102,25 @@ int poll_events() {
 /// Call Backs ///
 
 int _key_state_callback(key_state_func user_func) {
-
+    return 0;
 }
 
-int _key_event_callback(key_event_func user_func, char key) }
-
+int _key_event_callback(key_event_func user_func, char key) {
     user_func(key);
 }
 
-int _mouse_movement_callback(mouse_movement_func user_func, MouseState ms) {
-
+int _mouse_state_callback(mouse_state_func user_func, MouseState ms) {
+    user_func(ms)
 }
 
 int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
-
+    user_func(me)
 }
 
 /// End Call Backs ///
 
 
-char getUnicodeValue(SDL_keysym keysym ) {
+char getUnicodeValue(SDL_keysym &keysym ) {
     // magic numbers courtesy of SDL docs :)
     const int INTERNATIONAL_MASK = 0xFF80, UNICODE_MASK = 0x7F;
     int uni = keysym.unicode;
