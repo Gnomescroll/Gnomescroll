@@ -45,7 +45,7 @@ int _get_key_state() {
 }
 
 int _get_key_event() {
-    SDL_EnableUNICODE( SDL_ENABLE );
+    //SDL_EnableUNICODE( SDL_ENABLE );
 
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
@@ -98,9 +98,6 @@ int _get_key_event() {
             ms.y = Event.motion.y;
             ms.dx = Event.motion.xrel;
             ms.dy = Event.motion.yrel;
-            m_uiMouseDX = event.motion.xrel;
-            m_uiMouseDY = event.motion.yrel;
-            break;
             //printf("Current mouse position is: (%d, %d)\n", Event.motion.x, Event.motion.y);
             break;
         }
@@ -110,7 +107,7 @@ int _get_key_event() {
     }
 }
 
-SDL_EnableUNICODE( SDL_DISABLE );
+//SDL_EnableUNICODE( SDL_DISABLE );
 }
 
 int poll_events() {
