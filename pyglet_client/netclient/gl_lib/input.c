@@ -28,13 +28,13 @@ typedef struct {
 } MouseState;
 
 int _init_input() {
-_set_text_entry_mode(0);
+_set_text_entry_mode(1); ///change to 0 in production
 mouse_x_last = 0;
-mouse_y_last = 0
+mouse_y_last = 0;
 }
 
 int _set_text_entry_mode(int n) {
-    if(n != 0 | n != 1) { text_entry_mode = n; } else { printf("input.c, _set_text_entry_mode error: mode invalid \n"); }
+    if((n != 0) | (n != 1)) { text_entry_mode = n; } else { printf("input.c, _set_text_entry_mode error: mode invalid \n"); }
     return 0;
 }
 
@@ -45,7 +45,7 @@ int _get_key_state() {
 }
 
 int _get_key_event() {
-    //SDL_EnableUNICODE( SDL_ENABLE );
+    SDL_EnableUNICODE( SDL_ENABLE );
 
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
@@ -58,7 +58,7 @@ int _get_key_event() {
 
         case SDL_KEYDOWN:
             if(text_entry_mode == 1) {
-            printf("The %c \n", getUnicodeValue(Event.key.keysym)); //This is for typing
+            printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
             //printf("The %s key was pressed!\n", SDL_GetKeyName(Event.key.keysym.sym)); //This is for...
             } else {
             break;

@@ -37,10 +37,13 @@ def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
 ## input.c
+cdef extern int _init_input()
 cdef extern int _get_key_state()
 cdef extern int _get_key_event()
 cdef extern int _set_text_entry_mode(int n)
 
+def init_input():
+    _init_input()
 def get_key_state():
     temp = _get_key_state()
 
@@ -76,7 +79,7 @@ cdef class Global:
         self.set_projection(0.,0.,0.,0.,0.)
         _init_video()
         #input init
-        set_text_entry_mode(0)
+        init_input()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"
