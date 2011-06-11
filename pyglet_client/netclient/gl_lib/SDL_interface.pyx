@@ -16,6 +16,9 @@ cdef struct Camera: #maybe public?
 cdef extern int _world_projection(Camera camera)
 cdef extern int _hud_projection(Camera camera)
 
+cpdef int init_video():
+    return _init_video()
+
 ## End Camera.c ##
 
 
@@ -109,9 +112,16 @@ cdef class Global:
     def hud_projection(Global self):
         _hud_projection(self.camera)
 
-cpdef int init_video():
-    return _init_video()
 
+class MouseEventHandler:
+    def __init__(self):
+        pass
 ### init
+
+### call backs
+int _key_state_callback(callbackfunc user_func)
+int _key_event_callback(callbackfunc user_func, char key)
+int _mouse_movement_callback(callbackfunc user_func)
+int _mouse_event_callback(callbackfunc user_func)
 
 SDL_global = Global()

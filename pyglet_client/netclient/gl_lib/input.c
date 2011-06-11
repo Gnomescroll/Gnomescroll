@@ -1,14 +1,4 @@
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-#include <SDL_keyboard.h>
-
-//prototypes
-int _init_input();
-int _set_text_enty_mode(int n);
-char getUnicodeValue(SDL_keysym keysym );
-int _get_key_state();
-int _get_key_event();
+#include "input.h"
 
 //event globals
 SDL_Event Event;
@@ -19,13 +9,6 @@ int text_entry_mode;
 //mouse globals
 int mouse_x_last;
 int mouse_y_last;
-
-typedef struct {
-  int x;
-  int y;
-  int dx;
-  int dy;
-} MouseState;
 
 int _init_input() {
 _set_text_entry_mode(1); ///change to 0 in production
@@ -116,6 +99,27 @@ int poll_events() {
     //keyboard events
     return 0;
 }
+/// Call Backs ///
+
+int _key_state_callback(key_state_func user_func) {
+
+}
+
+int _key_event_callback(key_event_func user_func, char key) }
+
+    user_func(key);
+}
+
+int _mouse_movement_callback(mouse_movement_func user_func) {
+
+}
+
+int _mouse_event_callback(mouse_event_func user_func) {
+
+}
+
+/// End Call Backs ///
+
 
 char getUnicodeValue(SDL_keysym keysym ) {
     // magic numbers courtesy of SDL docs :)
