@@ -35,9 +35,16 @@ def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float
 
 def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
+
+## input.c
+cdef extern int _get_key()
+
+def get_key():
+    temp = _get_key()
+
 ## Window Properties ##
 '''
-#window properties
+#window propertiesSDL.
 cdef public class Window:
     cdef int x_size
     cdef int y_size
