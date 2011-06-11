@@ -62,6 +62,15 @@ ctypedef struct MouseState:
     int dx
     int dy
 
+ctypedef struct MouseEvent:
+    int x
+    int y
+    int button1
+    int button2
+    int button3
+    int button4
+    int button5
+
 ## Window Properties ##
 '''
 #window propertiesSDL.

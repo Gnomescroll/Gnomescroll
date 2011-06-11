@@ -110,11 +110,11 @@ int _key_event_callback(key_event_func user_func, char key) }
     user_func(key);
 }
 
-int _mouse_movement_callback(mouse_movement_func user_func) {
+int _mouse_movement_callback(mouse_movement_func user_func, MouseState ms) {
 
 }
 
-int _mouse_event_callback(mouse_event_func user_func) {
+int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
 
 }
 
