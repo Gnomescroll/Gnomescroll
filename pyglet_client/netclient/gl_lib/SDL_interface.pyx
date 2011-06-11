@@ -128,9 +128,15 @@ class MouseEventHandler:
 ### init
 
 ### call backs
-int _key_state_callback(callbackfunc user_func)
-int _key_event_callback(callbackfunc user_func, char key)
-int _mouse_movement_callback(callbackfunc user_func)
-int _mouse_event_callback(callbackfunc user_func)
+cdef extern from "input.h":
+    ctypedef void (*key_state_func)()
+    ctypedef void (*key_event_func)(char key)
+    ctypedef void (*key_movement_func)(char *name, void *user_data)
+    ctypedef void (*mouse_movement_func)(MouseEvent me)
+
+#int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
+#int _key_event_callback(key_event_func user_func, char key);
+#int _mouse_movement_callback(key_movement_func user_func, MouseState ms);
+#int _mouse_event_callback(mouse_movement_func user_func, MouseEvent me);
 
 SDL_global = Global()

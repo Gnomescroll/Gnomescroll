@@ -28,8 +28,14 @@ char getUnicodeValue(SDL_keysym keysym );
 int _get_key_state();
 int _get_key_event();
 
+//call backs
 
-int _key_state_callback(key_state_func user_func);
+typedef void (*key_state_func)()
+typedef void (*key_event_func)(char key)
+typedef void (*key_movement_func)(char *name, void *user_data)
+typedef void (*mouse_movement_func)(MouseEvent me)
+
+int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
 int _key_event_callback(key_event_func user_func, char key);
 int _mouse_movement_callback(key_movement_func user_func, MouseState ms);
 int _mouse_event_callback(mouse_movement_func user_func, MouseEvent me);
