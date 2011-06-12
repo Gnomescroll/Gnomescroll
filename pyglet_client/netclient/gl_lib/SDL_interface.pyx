@@ -129,26 +129,26 @@ ctypedef struct MouseEvent:
 
 ### call backs
 cdef extern from "input.h":
-    ctypedef void (*key_state_func)()
-    ctypedef void (*key_event_func)(char key)
-    ctypedef void (*mous_state_func)(MouseState ms)
-    ctypedef void (*mouse_event_func)(MouseEvent me)
+    ctypedef int (*key_state_func)(int test)
+    ctypedef int (*key_event_func)(char key)
+    ctypedef int (*mous_state_func)(MouseState ms)
+    ctypedef int (*mouse_event_func)(MouseEvent me)
 
-#int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
-#int _key_event_callback(key_event_func user_func, char key);
-#int _mouse_movement_callback(key_movement_func user_func, MouseState ms);
-#int _mouse_event_callback(mouse_movement_func user_func, MouseEvent me);
+#typedef int (*key_state_func)();
+#typedef int (*key_event_func)(char key);
+#typedef int (*mouse_state_func)(MouseState ms);
+#typedef int (*mouse_event_func)(MouseEvent me);
 
-cdef void key_state_func():
+cdef int key_state_callback(int test):
     pass
 
-cdef void key_state_callback(char key):
+cdef int key_event_callback(char key):
     pass
 
-cdef void mouse_state_func(MouseState ms):
+cdef int mouse_state_callback(MouseState ms):
     pass
 
-cdef void mouse_event_func(MouseEvent me):
+cdef int mouse_event_callback(MouseEvent me):
     pass
 
 SDL_global = Global()

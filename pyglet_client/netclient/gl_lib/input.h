@@ -30,10 +30,10 @@ int _get_key_event();
 
 //call backs
 
-typedef void (*key_state_func)();
-typedef void (*key_event_func)(char key);
-typedef void (*key_state_func)(MouseState ms);
-typedef void (*mouse_movement_func)(MouseEvent me);
+typedef int (*key_state_func)(int test);
+typedef int (*key_event_func)(char key);
+typedef int (*mouse_state_func)(MouseState ms);
+typedef int (*mouse_event_func)(MouseEvent me);
 
 int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
 int _key_event_callback(key_event_func user_func, char key);

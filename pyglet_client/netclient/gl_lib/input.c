@@ -123,7 +123,7 @@ int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
 /// End Call Backs ///
 
 
-char getUnicodeValue(SDL_keysym &keysym ) {
+char getUnicodeValue(SDL_keysym keysym ) {
     // magic numbers courtesy of SDL docs :)
     const int INTERNATIONAL_MASK = 0xFF80, UNICODE_MASK = 0x7F;
     int uni = keysym.unicode;
