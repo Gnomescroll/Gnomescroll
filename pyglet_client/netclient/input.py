@@ -4,31 +4,45 @@
 Client input
 '''
 
+import settings
 
-
-from pyglet.window import key
-from pyglet.window import mouse
-from pyglet.window.key import symbol_string
+if settings.pyglet:
+    from pyglet.window import key
+    from pyglet.window import mouse
+    from pyglet.window.key import symbol_string
 
 from sounds import playSound
 
 class InputEventGlobal:
+    mouse = None
+    keyboard = None
 
     def keyboard_event(self, key):
         print "key"
         print "test= " + str(key)
 
     def keyboard_state(self, pressed_keys):
-        pass
+        keyboard = []
+        for i in pressed keys:
+            keyboard.append(chr(i))
+         self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):
-        pass
+        self.keyboard.on_text(key_string)
         #print "text= " + key_string
 
     def mouse_event(self, button,state,x,y,):
-        pass
+        #handle scroll events
+        if state == 1: #mouse click?
+            on_mouse_press(x,y,button)
+        elif state == 0: #mouse button release
+            pass
 
-    def mouse_motion(self, x,y,dx,dy):
+    def mouse_motion(self, x,y,dx,dy,button):
+        if button != 0:
+            self.mouse.on_mouse_drag(x,y,dx,dy,button)
+        else:
+            self.mouse.on_mouse_motion(x,y,dx,dy)
         pass
 
 class InputGlobal:
@@ -45,13 +59,19 @@ class InputGlobal:
 
     @classmethod
     def init_0(cls, main):
+        #InputEventGlobal.inputGlobal = cls
+
         InputGlobal.mouse = Mouse(main)
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
 
+        InputEventGlobal.mouse = cls.mouse
+        InputEventGlobal.keyboard = cls.keyboard
+
     @classmethod
     def init_1(cls, main):
-        InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
+        if settings.pyglet: #deprecate!!
+            InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
 
     @classmethod
     def _toggle_mode(cls, change, current_mode, type):
@@ -84,15 +104,17 @@ class Mouse(object):
         self.main.win.on_mouse_scroll = self.on_mouse_scroll
         self.camera = main.camera
 
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+    #inplement draw detection...
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
+        pass
         #if InputGlobal.input == 'agent':
         #    self._pan_agent(x, y, dx, dy)
-        if InputGlobal.input == 'camera':
-            self._pan_camera(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
         if InputGlobal.input == 'agent':
             self._pan_agent(x, y, dx, dy, sen=90)
+        if InputGlobal.input == 'camera':
+            self._pan_camera(x, y, dx, dy)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
         GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
@@ -100,7 +122,7 @@ class Mouse(object):
     def _pan_camera(self, x, y, dx, dy, sen=50):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
-    def on_mouse_press(self, x, y, buttons, modifiers):
+    def on_mouse_press(self, x, y, buttons, modifiers=None):
         if InputGlobal.input == 'agent':
             if buttons == 1:
                 #playSound.build()
@@ -111,6 +133,7 @@ class Mouse(object):
             elif buttons == 4:
                 GameStateGlobal.agent.set_active_block()
 
+    #migrate over
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if scroll_y > 0:
             GameStateGlobal.agent.switch_weapon('up')
@@ -123,10 +146,11 @@ class Keyboard(object):
 
     def __init__(self, main):
         self.main = main
-        self.main.win.on_key_press = self.on_key_press
-        self.main.win.on_key_release = self.on_key_release
-        self.main.win.on_text = self.on_text #key input
-        self.main.win.on_text_motion = self.on_text_motion #text movement
+        if settings.pyglet:
+            self.main.win.on_key_press = self.on_key_press
+            self.main.win.on_key_release = self.on_key_release
+            self.main.win.on_text = self.on_text #key input
+            self.main.win.on_text_motion = self.on_text_motion #text movement
 
         self.camera = main.camera
         self.key_handlers = {}
@@ -209,22 +233,41 @@ class Keyboard(object):
         v = 1
         d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
 
-        if keyboard[key.W]:
-                v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
-                v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
-        if keyboard[key.S]:
-                v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
-                v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
-        if keyboard[key.A]:
-                v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
-        if keyboard[key.D]:
-                v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
-        if keyboard[key.C]:
-            brake = 1
-        if keyboard[key.SPACE]:
-            jetpack = 1
+        if settings.pyglet:
+            if keyboard[key.W]:
+                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
+                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
+            if keyboard[key.S]:
+                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
+                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
+            if keyboard[key.A]:
+                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+            if keyboard[key.D]:
+                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+            if keyboard[key.C]:
+                brake = 1
+            if keyboard[key.SPACE]:
+                jetpack = 1
+        else:
+            if 'w' in keyboard:
+                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
+                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
+            if 's' in keyboard:
+                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
+                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
+            if 'a' in keyboard:
+                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+            if 'd' in keyboard:
+                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+            if 'c' in keyboard:
+                brake = 1
+            #fix
+            #if keyboard[key.SPACE]:
+            #    jetpack = 1
         GameStateGlobal.agent.control_state = [
             d_x,
             d_y,
@@ -239,20 +282,37 @@ class Keyboard(object):
 
     def camera_input_mode(self, keyboard):
         v = 0.1
-        if keyboard[key.W]:
-            self.camera.move_camera(v,0,0)
-        if keyboard[key.S]:
-            self.camera.move_camera(-v,0,0)
-        if keyboard[key.A]:
-            self.camera.move_camera(0,v,0)
-        if keyboard[key.D]:
-            self.camera.move_camera(0,-v,0)
-        if keyboard[key.R]:
-            self.camera.move_camera(0,0,v)
-        if keyboard[key.F]:
-            self.camera.move_camera(0,0,-v)
-        if keyboard[key.SPACE]:
-            pass
+
+        if settings.pyglet:
+            if keyboard[key.W]:
+                self.camera.move_camera(v,0,0)
+            if keyboard[key.S]:
+                self.camera.move_camera(-v,0,0)
+            if keyboard[key.A]:
+                self.camera.move_camera(0,v,0)
+            if keyboard[key.D]:
+                self.camera.move_camera(0,-v,0)
+            if keyboard[key.R]:
+                self.camera.move_camera(0,0,v)
+            if keyboard[key.F]:
+                self.camera.move_camera(0,0,-v)
+            if keyboard[key.SPACE]:
+                pass
+        else:
+            if 'w' in keyboard:
+                self.camera.move_camera(v,0,0)
+            if 's' in keyboard:
+                self.camera.move_camera(-v,0,0)
+            if 'a' in keyboard:
+                self.camera.move_camera(0,v,0)
+            if 'd' in keyboard:
+                self.camera.move_camera(0,-v,0)
+            if 'r' in keyboard:
+                self.camera.move_camera(0,0,v)
+            if 'f' in keyboard:
+                self.camera.move_camera(0,0,-v)
+            #if keyboard[key.SPACE]:
+            #    pass
 
 class AgentInput:
 

@@ -96,6 +96,7 @@ ctypedef struct MouseMotion:
     int y
     int dx
     int dy
+    int button
 
 ctypedef struct MouseEvent:
     int x
@@ -169,12 +170,12 @@ cdef int key_text_event_callback(char key, char* key_name):
     pass
 
 cdef int mouse_motion_callback(MouseMotion ms):
-    input.inputEventGlobal.mouse_motion(ms.x,ms.y,ms.dx,ms.dy)
+    input.inputEventGlobal.mouse_motion(ms.x,ms.y,ms.dx,ms.dy, ms.button)
     #print "(dx,dy)= %i, %i" % (ms.dx, ms.dy)
     pass
 
 cdef int mouse_event_callback(MouseEvent me):
-    input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
+    input.inputEventGlobal.mouse_event(me.button, me.state, me.state, me.x, me.y)
     #print str(me.state)
     pass
 

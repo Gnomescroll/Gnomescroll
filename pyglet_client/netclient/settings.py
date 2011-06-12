@@ -2,8 +2,8 @@
 Settings module
 '''
 
-pyglet = True
-graphics = "SDL" # options, "SDL", "pyglet"
+pyglet = False
+#graphics = "SDL" # options, "SDL", "pyglet"
 
 audio = False
 

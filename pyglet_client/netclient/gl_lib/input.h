@@ -8,6 +8,7 @@ typedef struct {
   int y;
   int dx;
   int dy;
+  int button;
 } MouseMotion;
 
 typedef struct {

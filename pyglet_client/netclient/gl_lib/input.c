@@ -46,6 +46,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         me.y = Event.motion.y;
         me.button = Event.button.button;
         me.state = Event.button.state; //up or down
+        printf("button: %i\n", Event.button.button);
         _mouse_event_callback(mouse_event_cb, me);
     }
 
@@ -75,6 +76,8 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             ms.y = Event.motion.y;
             ms.dx = Event.motion.xrel;
             ms.dy = Event.motion.yrel;
+            ms.button = Event.motion.state;
+            //printf("button: %i\n", Event.motion.state);
             _mouse_motion_callback(mouse_motion_cb, ms);
             //printf("Current mouse position is: (%d, %d)\n", Event.motion.x, Event.motion.y);
             break;
