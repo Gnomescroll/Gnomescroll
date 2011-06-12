@@ -149,9 +149,11 @@ cdef int key_event_callback(char key):
     pass
 
 cdef int mouse_motion_callback(MouseMotion ms):
+    print str(ms.dx)
     pass
 
 cdef int mouse_event_callback(MouseEvent me):
+    print str(me.state)
     pass
 
 SDL_global = Global()

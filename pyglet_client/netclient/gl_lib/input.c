@@ -33,7 +33,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
 
-    if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONDOWN)) {
+    if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONUP)) {
          MouseEvent me;
         me.x = Event.motion.x;
         me.y = Event.motion.y;
