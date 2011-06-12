@@ -145,10 +145,10 @@ cpdef int call_back_test():
     _key_event_callback(&key_event_callback, 42)
 
 cdef int key_state_callback(int test):
-    print "callback success!"
     pass
 
 cdef int key_event_callback(char key):
+    print "callback success!"
     pass
 
 cdef int mouse_state_callback(MouseState ms):
