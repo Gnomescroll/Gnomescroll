@@ -42,7 +42,7 @@ def draw_point(int r, int g, int b, float x0, float y0, float z0):
 ## input.c
 cdef extern int _init_input()
 cdef extern int _get_key_state()
-cdef extern int _get_key_event()
+cdef extern int _process_events()
 cdef extern int _set_text_entry_mode(int n)
 
 def init_input():
@@ -50,8 +50,8 @@ def init_input():
 def get_key_state():
     temp = _get_key_state()
 
-def get_key_event():
-    temp = _get_key_event()
+def process_events():
+    temp = _process_events()
 
 def set_text_entry_mode(int n):
     temp = _set_text_entry_mode(n)
@@ -121,11 +121,8 @@ ctypedef struct MouseState:
 ctypedef struct MouseEvent:
     int x
     int y
-    int button1
-    int button2
-    int button3
-    int button4
-    int button5
+    int button
+    int state
 
 ### call backs
 cdef extern from "input.h":
@@ -135,8 +132,8 @@ cdef extern from "input.h":
     ctypedef int (*key_event_func)(char key)
     int _key_event_callback(key_event_func user_func, char key)
 
-    ctypedef int (*mouse_state_func)(MouseState ms)
-    int _mouse_state_callback(mouse_state_func user_func, MouseState)
+    ctypedef int (*mouse_motion_func)(MouseMotion ms)
+    int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion)
 
     ctypedef int (*mouse_event_func)(MouseEvent me)
     int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
@@ -150,7 +147,7 @@ cdef int key_state_callback(int test):
 cdef int key_event_callback(char key):
     pass
 
-cdef int mouse_state_callback(MouseState ms):
+cdef int mouse_motion_callback(MouseMotion ms):
     pass
 
 cdef int mouse_event_callback(MouseEvent me):

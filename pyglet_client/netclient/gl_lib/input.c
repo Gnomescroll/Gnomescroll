@@ -27,11 +27,20 @@ int _get_key_state() {
     return 0;
 }
 
-int _get_key_event() {
+int _process_events(mouse_event_func mouse_event_cb, key_event_func keyboard_event_cb, ) {
     SDL_EnableUNICODE( SDL_ENABLE );
 
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
+
+    if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONDOWN)) {
+         MouseEvent me;
+        me.x = Event.motion.x;
+        me.y = Event.motion.y;
+        me.button = Event.button.button;
+        me.state = Event.button.state; //up or down
+        _mouse_event_callback(mouse_event_cb, me);
+    }
 
     switch( Event.type )
     {
@@ -48,17 +57,28 @@ int _get_key_event() {
             }
 
             break;
-
+        /*
         case SDL_MOUSEBUTTONDOWN:
         {
+            MouseEvent me;
+            me.x = Event.motion.x;
+            me.y = Event.motion.y;
+            me.button = Event.button.button;
+            me.state = Event.button.state; //up or down
+            _mouse_event_callback(mouse_event_cb, me)
+            break;
+        /*
             switch( Event.button.button )
             {
+
+
                 case SDL_BUTTON_LEFT:
                     printf( "left mouse" );
                     break;
                     //g_nLastMousePositX = Event.motion.x;
                     //g_nLastMousePositY = Event.motion.y;
                     //g_bMousing = true;
+
             }
         }
         break;
@@ -73,10 +93,10 @@ int _get_key_event() {
             }
         }
         break;
-
+        */
         case SDL_MOUSEMOTION:
         {
-            MouseState ms;
+            MouseMotion ms;
             ms.x = Event.motion.x;
             ms.y = Event.motion.y;
             ms.dx = Event.motion.xrel;
@@ -110,7 +130,7 @@ int _key_event_callback(key_event_func user_func, char key) {
     return 0;
 }
 
-int _mouse_state_callback(mouse_state_func user_func, MouseState ms) {
+int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion ms) {
     user_func(ms);
     return 0;
 }
