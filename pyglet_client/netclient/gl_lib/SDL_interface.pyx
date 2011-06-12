@@ -130,16 +130,22 @@ ctypedef struct MouseEvent:
 ### call backs
 cdef extern from "input.h":
     ctypedef int (*key_state_func)(int test)
-    ctypedef int (*key_event_func)(char key)
-    ctypedef int (*mous_state_func)(MouseState ms)
-    ctypedef int (*mouse_event_func)(MouseEvent me)
+    int _key_state_callback(key_state_func user_func)
 
-#typedef int (*key_state_func)();
-#typedef int (*key_event_func)(char key);
-#typedef int (*mouse_state_func)(MouseState ms);
-#typedef int (*mouse_event_func)(MouseEvent me);
+    ctypedef int (*key_event_func)(char key)
+    int _key_event_callback(key_event_func user_func, char key)
+
+    ctypedef int (*mouse_state_func)(MouseState ms)
+    int _mouse_state_callback(mouse_state_func user_func, MouseState)
+
+    ctypedef int (*mouse_event_func)(MouseEvent me)
+    int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
+
+cpdef int call_back_test():
+    _key_event_callback(&key_event_callback, 42)
 
 cdef int key_state_callback(int test):
+    print "callback success!"
     pass
 
 cdef int key_event_callback(char key):

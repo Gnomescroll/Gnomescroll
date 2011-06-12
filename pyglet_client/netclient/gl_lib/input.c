@@ -1,4 +1,4 @@
-#include "input.h"
+#include "./input.h"
 
 //event globals
 SDL_Event Event;

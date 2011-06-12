@@ -37,5 +37,5 @@ typedef int (*mouse_event_func)(MouseEvent me);
 
 int _key_state_callback(key_state_func user_func);  ///no idea how to do this yet
 int _key_event_callback(key_event_func user_func, char key);
-int _mouse_movement_callback(mouse_state_func user_func, MouseState ms);
+int _mouse_state_callback(mouse_state_func user_func, MouseState ms);
 int _mouse_event_callback(mouse_event_func user_func, MouseEvent me);
