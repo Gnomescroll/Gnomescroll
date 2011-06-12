@@ -12,6 +12,21 @@ from pyglet.window.key import symbol_string
 
 from sounds import playSound
 
+class InputEventGlobal:
+
+    def keyboard_event(self, key):
+        print "key"
+        print "test= " + str(key)
+
+    def keyboard_state(self):
+        pass
+
+    def mouse_event(self, button,state,x,y,):
+        pass
+
+    def mouse_motion(self, x,y,dx,dy):
+        pass
+
 class InputGlobal:
     keyboard = None
     mouse = None
@@ -287,3 +302,5 @@ class AgentInput:
 from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal
 from net_out import NetOut
+
+inputEventGlobal = InputEventGlobal()

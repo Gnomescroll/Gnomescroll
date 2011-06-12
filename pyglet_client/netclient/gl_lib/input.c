@@ -11,9 +11,10 @@ int mouse_x_last;
 int mouse_y_last;
 
 int _init_input() {
-_set_text_entry_mode(1); ///change to 0 in production
-mouse_x_last = 0;
-mouse_y_last = 0;
+//_set_text_entry_mode(0); ///change to 0 in production
+//mouse_x_last = 0;
+//mouse_y_last = 0;
+return 0;
 }
 
 int _set_text_entry_mode(int n) {
@@ -23,7 +24,9 @@ int _set_text_entry_mode(int n) {
 
 int _get_key_state() {
     keystate = SDL_GetKeyState(NULL);
-    if ( keystate[SDLK_UP] ) { printf( "Up Key" );}
+    if ( keystate[SDLK_UP] ) {
+        printf( "Up Key" );
+        }
     return 0;
 }
 
@@ -49,12 +52,10 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             break;
 
         case SDL_KEYDOWN:
-            if(text_entry_mode == 1) {
-            printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
-            //printf("The %s key was pressed!\n", SDL_GetKeyName(Event.key.keysym.sym)); //This is for...
-            } else {
-            break;
-            }
+            ///text event
+            //printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
+
+            _key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
 
             break;
         /*
@@ -67,7 +68,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             me.state = Event.button.state; //up or down
             _mouse_event_callback(mouse_event_cb, me)
             break;
-        /*
+
             switch( Event.button.button )
             {
 
@@ -101,6 +102,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             ms.y = Event.motion.y;
             ms.dx = Event.motion.xrel;
             ms.dy = Event.motion.yrel;
+            _mouse_motion_callback(mouse_motion_cb, ms);
             //printf("Current mouse position is: (%d, %d)\n", Event.motion.x, Event.motion.y);
             break;
         }
@@ -113,7 +115,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 //SDL_EnableUNICODE( SDL_DISABLE );
 }
 
-int poll_events() {
+int poll_events(void) {
     //mouse events
     //system events
     //keyboard events
@@ -127,6 +129,11 @@ int _key_state_callback(key_state_func user_func) {
 
 int _key_event_callback(key_event_func user_func, char key) {
     user_func(key);
+    return 0;
+}
+
+int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name) {
+    user_func(key, key_name);
     return 0;
 }
 

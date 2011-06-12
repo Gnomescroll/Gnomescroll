@@ -89,10 +89,6 @@ cdef class Global:
     def hud_projection(Global self):
         _hud_projection(self.camera)
 
-
-class MouseEventHandler:
-    def __init__(self):
-        pass
 ### init
 
 ctypedef struct MouseMotion:
@@ -121,6 +117,9 @@ cdef extern from "input.h":
     ctypedef int (*mouse_event_func)(MouseEvent me)
     int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
 
+    ctypedef int (*key_text_event_func)(char key, char* key_name)
+    int _key_text_event(key_text_event_func user_func, char key, char* key_name)
+
 ## input.c
 cdef extern int _init_input()
 cdef extern int _get_key_state()
@@ -142,18 +141,33 @@ def set_text_entry_mode(int n):
 #cpdef int call_back_test():
 #    _key_event_callback(&key_event_callback, 42)
 
+import input
+cimport stdlib
+
 cdef int key_state_callback(int test):
     pass
 
 cdef int key_event_callback(char key):
+    input.inputEventGlobal.keyboard_event(key)
+    print "event"
+    pass
+
+cdef int key_text_event_callback(char key, char* key_name):
+    cdef bytes py_string
+    py_string = key_name
+    key_string = key_name.decode('ascii')
+    input.inputEventGlobal.keyboard_event(key, key_string)
+    print key_string
     pass
 
 cdef int mouse_motion_callback(MouseMotion ms):
-    print str(ms.dx)
+    input.inputEventGlobal.mouse_motion(ms.x,ms.y,ms.dx,ms.dy)
+    #print "(dx,dy)= %i, %i" % (ms.dx, ms.dy)
     pass
 
 cdef int mouse_event_callback(MouseEvent me):
-    print str(me.state)
+    input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
+    #print str(me.state)
     pass
 
 SDL_global = Global()
