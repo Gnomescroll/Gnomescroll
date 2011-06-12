@@ -205,19 +205,43 @@ class AgentModel:
             return self.__dict__['state'][1]
         elif attr == 'z':
             return self.__dict__['state'][2]
+        elif attr == 'vx':
+            return self.__dict__['state'][3]
+        elif attr == 'vy':
+            return self.__dict__['state'][4]
+        elif attr == 'vz':
+            return self.__dict__['state'][5]
+        elif attr == 'ax':
+            return self.__dict__['state'][6]
+        elif attr == 'ay':
+            return self.__dict__['state'][7]
+        elif attr == 'az':
+            return self.__dict__['state'][8]
         else:
             print "Agent attribute does not exist: " + str(attr)
             raise AttributeError
 
     def __setattr__(self, attr, val):
-       if attr == 'x':
-           self.__dict__['state'][0] = val
-       elif attr == 'y':
-           self.__dict__['state'][1] = val
-       elif attr == 'z':
-           self.__dict__['state'][2] = val
-       else:
-           self.__dict__[attr] = val
+        if attr == 'x':
+            self.__dict__['state'][0] = val
+        elif attr == 'y':
+            self.__dict__['state'][1] = val
+        elif attr == 'z':
+            self.__dict__['state'][2] = val
+        elif attr == 'vx':
+            self.__dict__['state'][3]
+        elif attr == 'vy':
+            self.__dict__['state'][4]
+        elif attr == 'vz':
+            self.__dict__['state'][5]
+        elif attr == 'ax':
+            self.__dict__['state'][6]
+        elif attr == 'ay':
+            self.__dict__['state'][7]
+        elif attr == 'az':
+            self.__dict__['state'][8]
+        else:
+            self.__dict__[attr] = val
 
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender):
@@ -434,9 +458,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
         self.you = True
         self.control_state = [0,0,0,0,0,0,0]
-        self.x = -.5
-        self.y = -.5
-        self.z = -.5
         self.x_angle = 0
         self.y_angle = 0
 

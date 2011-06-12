@@ -318,6 +318,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
         DatastoreMessageInterface.__init__(self)
 
     def _agent_position(self, **args):  # deprecate
+        print 'agent position msg'
+        print args
         state = args.get('state', None)
         id = args.get('id', None)
         tick = args.get('tick', None)
@@ -325,23 +327,14 @@ class AgentMessageHandler(DatastoreMessageInterface):
             print 'agent_position, missing keys'
             print args
             return
-        x,y,z, vx,vy,vz, ax,ay,az = state
-        x,y,z = map(lambda k: float(k), [x,y,z])
 
         agent = GameStateGlobal.agentList[id]
+        print agent
         if agent is None: # agent not found, request agent
             NetOut.sendMessage.request_agent(id)
             return
         agent.tick = tick
-        agent.x = x
-        agent.y = y
-        agent.z = z
-        agent.vx = vx
-        agent.vy = vy
-        agent.vz = vz
-        agent.ax = ax
-        agent.ay = ay
-        agent.az = az
+        agent.state = state
 
     def _agent_destroy(self, **args):
         err_msg = None
