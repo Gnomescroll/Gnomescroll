@@ -39,23 +39,6 @@ def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float
 def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
-## input.c
-cdef extern int _init_input()
-cdef extern int _get_key_state()
-cdef extern int _process_events()
-cdef extern int _set_text_entry_mode(int n)
-
-def init_input():
-    _init_input()
-def get_key_state():
-    temp = _get_key_state()
-
-def process_events():
-    temp = _process_events()
-
-def set_text_entry_mode(int n):
-    temp = _set_text_entry_mode(n)
-
 ## Window Properties ##
 '''
 #window propertiesSDL.
@@ -112,7 +95,7 @@ class MouseEventHandler:
         pass
 ### init
 
-ctypedef struct MouseState:
+ctypedef struct MouseMotion:
     int x
     int y
     int dx
@@ -137,6 +120,24 @@ cdef extern from "input.h":
 
     ctypedef int (*mouse_event_func)(MouseEvent me)
     int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
+
+## input.c
+cdef extern int _init_input()
+cdef extern int _get_key_state()
+cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
+cdef extern int _set_text_entry_mode(int n)
+
+def init_input():
+    _init_input()
+
+def get_key_state():
+    temp = _get_key_state()
+
+def process_events():
+    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback)
+    #mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
+def set_text_entry_mode(int n):
+    temp = _set_text_entry_mode(n)
 
 #cpdef int call_back_test():
 #    _key_event_callback(&key_event_callback, 42)

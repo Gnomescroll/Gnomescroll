@@ -27,7 +27,7 @@ int _get_key_state() {
     return 0;
 }
 
-int _process_events(mouse_event_func mouse_event_cb, key_event_func keyboard_event_cb, ) {
+int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb) {
     SDL_EnableUNICODE( SDL_ENABLE );
 
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
