@@ -32,3 +32,6 @@ while True:
 	SDL.get_key_event()
 	#SDL.get_key_state()
 
+### SDL callback test
+import SDL
+SDL.call_back_test()

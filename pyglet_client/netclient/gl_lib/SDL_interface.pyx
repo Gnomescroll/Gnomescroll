@@ -141,14 +141,13 @@ cdef extern from "input.h":
     ctypedef int (*mouse_event_func)(MouseEvent me)
     int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
 
-cpdef int call_back_test():
-    _key_event_callback(&key_event_callback, 42)
+#cpdef int call_back_test():
+#    _key_event_callback(&key_event_callback, 42)
 
 cdef int key_state_callback(int test):
     pass
 
 cdef int key_event_callback(char key):
-    print "callback success!"
     pass
 
 cdef int mouse_state_callback(MouseState ms):
