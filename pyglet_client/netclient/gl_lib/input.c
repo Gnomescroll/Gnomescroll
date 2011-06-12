@@ -25,16 +25,13 @@ int _get_key_state(key_state_func key_state_cb) {
     //keystate = SDL_GetKeyState(numkeys);
 
     _key_state_callback(key_state_cb, keystate, numkeys);
-
-    int x,y;
-    y=0;
+    if(keystate[96] != 0){
+    int x;
     for(x=0; x<numkeys; x++) {
-        if(keystate[x] != 0) {
-            printf("%i ", x);
-            y=1;
+        if(keystate[x] != 0) { printf("%i='%c' ", x, (char)x);}
         }
-        }
-    if(y==1) { printf("\n", x); }
+    printf("\n", x);
+    }
     //if ( keystate[SDLK_UP] ) {printf( "Up Key" );}
     return 0;
 }

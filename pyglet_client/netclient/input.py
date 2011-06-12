@@ -18,7 +18,7 @@ class InputEventGlobal:
         print "key"
         print "test= " + str(key)
 
-    def keyboard_state(self):
+    def keyboard_state(self, pressed_keys):
         pass
 
     def keyboard_text_event(self, key, key_string):

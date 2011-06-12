@@ -149,7 +149,11 @@ import input
 cimport libc.stdlib
 
 cdef int key_state_callback(Uint8* keystate, int numkeys):
-    pass
+    pressed_keys = []
+    for i in range(0, numkeys):
+        if keystate[i] != 0:
+            pressed_keys.append(i)
+    input.inputEventGlobal.keyboard_state(pressed_keys)
 
 cdef int key_event_callback(char key):
     input.inputEventGlobal.keyboard_event(key)
