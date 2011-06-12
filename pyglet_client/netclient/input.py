@@ -22,6 +22,7 @@ class InputEventGlobal:
         pass
 
     def keyboard_text_event(self, key, key_string):
+        pass
         #print "text= " + key_string
 
     def mouse_event(self, button,state,x,y,):

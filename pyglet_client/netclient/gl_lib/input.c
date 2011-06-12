@@ -2,22 +2,18 @@
 
 //event globals
 SDL_Event Event;
-Uint8 *keystate;
 
 //input modes
 int text_entry_mode;
-//mouse globals
-int mouse_x_last;
-int mouse_y_last;
-
-int _init_input() {
-//_set_text_entry_mode(0); ///change to 0 in production
-keystate = SDL_GetKeyState(numkeys); ///returns pointer; only needs to be done once
-return 0;
-}
 
 int numkeys;
-int* keystate;
+Uint8* keystate;
+
+int _init_input() {
+_set_text_entry_mode(0); //not used right now
+keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
+return 0;
+}
 
 int _set_text_entry_mode(int n) {
     if((n != 0) | (n != 1)) { text_entry_mode = n; } else { printf("input.c, _set_text_entry_mode error: mode invalid \n"); }
@@ -25,10 +21,20 @@ int _set_text_entry_mode(int n) {
 }
 
 int _get_key_state(key_state_func key_state_cb) {
-    //SDL_PumpEvents();
-    keystate = SDL_GetKeyState(numkeys);
+    SDL_PumpEvents();
+    //keystate = SDL_GetKeyState(numkeys);
 
-    _key_state_callback(key_state, numkeys);
+    _key_state_callback(key_state_cb, keystate, numkeys);
+
+    int x,y;
+    y=0;
+    for(x=0; x<numkeys; x++) {
+        if(keystate[x] != 0) {
+            printf("%i ", x);
+            y=1;
+        }
+        }
+    if(y==1) { printf("\n", x); }
     //if ( keystate[SDLK_UP] ) {printf( "Up Key" );}
     return 0;
 }
@@ -93,8 +99,8 @@ int poll_events(void) {
 }
 /// Call Backs ///
 
-int _key_state_callback(key_state_func user_func, int* keystate, int numkeys) {
-    user_func(key_state, numkeys);
+int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys) {
+    user_func(keystate, numkeys);
     return 0;
 }
 

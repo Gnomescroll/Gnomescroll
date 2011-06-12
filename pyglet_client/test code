@@ -35,3 +35,24 @@ while True:
 ### SDL callback test
 import SDL
 SDL.call_back_test()
+
+## callback test
+
+#keyboard test
+import time
+import SDL
+win = SDL.Global()
+win.init()
+while True:
+	time.sleep(0.1)
+	SDL.process_events()
+
+## keystate test
+
+import time
+import SDL
+win = SDL.Global()
+win.init()
+while True:
+	time.sleep(0.1)
+	SDL.get_key_state()

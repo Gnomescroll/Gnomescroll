@@ -103,10 +103,13 @@ ctypedef struct MouseEvent:
     int button
     int state
 
+
+ctypedef unsigned char Uint8
+
 ### call backs
 cdef extern from "input.h":
-    ctypedef int (*key_state_func)(int* keystate, int numkeys)
-    int _key_state_callback(key_state_func user_func, int* keystate, int numkeys)
+    ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
+    int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys)
 
     ctypedef int (*key_event_func)(char key)
     int _key_event_callback(key_event_func user_func, char key)
@@ -122,7 +125,7 @@ cdef extern from "input.h":
 
 ## input.c
 cdef extern int _init_input()
-cdef extern int _get_key_state()
+cdef extern int _get_key_state(key_state_func key_state_cb)
 cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
 cdef extern int _set_text_entry_mode(int n)
 
@@ -130,7 +133,7 @@ def init_input():
     _init_input()
 
 def get_key_state():
-    temp = _get_key_state()
+    _get_key_state(&key_state_callback)
 
 def process_events():
     temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback)
@@ -142,9 +145,10 @@ def set_text_entry_mode(int n):
 #    _key_event_callback(&key_event_callback, 42)
 
 import input
-cimport stdlib
+#cimport stdlib
+cimport libc.stdlib
 
-cdef int key_state_callback(int* keystate, int numkeys):
+cdef int key_state_callback(Uint8* keystate, int numkeys):
     pass
 
 cdef int key_event_callback(char key):
