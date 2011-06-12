@@ -65,7 +65,7 @@ cdef class Global:
         print "Deconstructing SDL OpenGL Window"
         _del_video()
 
-    def swap_buffers(self):
+    def flip(self):
         _swap_buffers()
 
     #camera

@@ -1,13 +1,13 @@
 
+import settings
+### DEPRECATE
+if settings.pyglet:
+    from pyglet import clock, font, image, window
+    from pyglet.gl import *
 
-### DEPRECATE
-from pyglet import clock, font, image, window
-from pyglet.gl import *
-### DEPRECATE
-
-## DEPRECATE
-from pyglet.window import key
-### DEPRECATE
+    from pyglet.window import key
+else:
+    import SDL
 
 #import cython
 #import pyximport; pyximport.install()
@@ -30,14 +30,6 @@ from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud
-
-import settings  ## put this somewhere!!! so it only has to be in one place
-
-
-if settings.pyglet:
-    pass
-else:
-    import SDL
 
 import world #deprecate
 
@@ -77,10 +69,16 @@ class App(object):
         self.init_globals()
         #other
         self.world = world.World()  #deprecate?
-        self.win = window.Window(fullscreen=False, vsync=False)
-        self.win.on_close = self._on_close
-        self.camera = Camera(self.win)
-        self.hud = Hud(self.win)
+
+        #deprecate
+        if settings.pyglet:
+            self.win = window.Window(fullscreen=False, vsync=False)
+            self.win.on_close = self._on_close
+            self.camera = Camera(self.win)
+            self.hud = Hud(self.win)
+        else:
+            self.camera = Camera(None)
+            #self.hud = Hud(None)
         #setup events
         self.exit = False
 
@@ -100,9 +98,11 @@ class App(object):
         #self.world.test_chunk()
         self.world.add_player(GameStateGlobal.player) #do something about this
         self.world.add_agent(GameStateGlobal.agent)
-        clock.set_fps_limit(60)
-        keyboard = key.KeyStateHandler()
-        self.win.push_handlers(keyboard)
+
+        if settings.pyglet:
+            clock.set_fps_limit(60)
+            keyboard = key.KeyStateHandler()
+            self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
         self.connect()
@@ -114,24 +114,36 @@ class App(object):
         #p = hotshot.Profile("../log/client.log")
         #p.start()
         while not self.exit:
-            self.win.dispatch_events()
-            InputGlobal.keyboard.stateHandler(keyboard)
+            if settings.pyglet:
+                self.win.dispatch_events()
+                InputGlobal.keyboard.stateHandler(keyboard)
+            else:
+                SDL.process_events()
+                SDL.get_key_state()
             NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing
             self.world.tick()
-            self.win.clear() #clear window and start drawing
+
+            if settings.pyglet:
+                self.win.clear() #clear window and start drawing
+
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
             elif InputGlobal.camera == 'camera':
                 self.camera.camera_view()
+
             self.camera.worldProjection()
             self.world.draw()
-            self.camera.hudProjection()
-            self.hud.draw()
-            clock.tick()
-            self.win.flip()
+
+            if settings.pyglet:
+                self.camera.hudProjection()
+                self.hud.draw()
+                clock.tick()
+                self.win.flip()
+            else:
+                SDL.flip()
         #p.stop()
         self.win.close()
 

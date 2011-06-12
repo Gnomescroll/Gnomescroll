@@ -23,9 +23,9 @@ class InputEventGlobal:
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
-        for i in pressed keys:
+        for i in pressed_keys:
             keyboard.append(chr(i))
-         self.keyboard.stateHandler(keyboard)
+        self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):
         self.keyboard.on_text(key_string)
@@ -195,7 +195,10 @@ class Keyboard(object):
         if symbol == key.TAB:
             InputGlobal.scoreboard = False
 
+    #deprecate for non-pyglet input
     def _init_key_handlers(self):
+        if not settings.pyglet:
+            return
         self.bind_key_handlers({
             key.G : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
@@ -321,6 +324,8 @@ class AgentInput:
         self._init_key_handlers()
 
     def _init_key_handlers(self):
+        if not settings.pyglet:
+            return
         self._bind_key_handlers({
             key.R : self.reload,
             key._1: self.switch_weapon,

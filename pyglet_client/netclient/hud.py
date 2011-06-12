@@ -1,11 +1,14 @@
 #!/usr/bin/python
 
-from pyglet import clock
-from pyglet import font
-from pyglet import gl
-from pyglet import graphics
-from pyglet import image
-from pyglet import text
+import settings
+
+if settings.pyglet:
+    from pyglet import clock
+    from pyglet import font
+    from pyglet import gl
+    from pyglet import graphics
+    from pyglet import image
+    from pyglet import text
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
@@ -79,7 +82,7 @@ class Hud(object):
             for val in vals:
                 lines.append(str(val))
             stats[lprop] = '<font face="Times New Roman" size="15" color="red">%s</font>' % ('<br>'.join(lines),)
-            
+
         return stats
 
     def _init_reticle(self):
@@ -157,7 +160,7 @@ class Hud(object):
                 curr_sb.text = txt
                 curr_sb.end_update()
             curr_sb.draw()
-                
+
     def _draw_box(self):
         #draw a 180x180 red box
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (20, 20, 20, 200)), ('c3B\static', (215,0,0) *2))
@@ -170,7 +173,7 @@ class Hud(object):
         y1 = y
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y, x1, y1)), ('c3B\static', (255, 255, 0) *2))
         graphics.draw(2, gl.GL_LINES, ('v2f\static', (x, y+1, x1, y1+1)), ('c3B\static', (255, 255, 0) *2))
-        
+
     def _draw_vertical_line(self, x, y, length=10):
         x1 = x
         y1 = y + length
@@ -198,7 +201,7 @@ class Hud(object):
     def _draw_chat_input(self, draw=False, txt=None):
         input = self.text_dict['input']
         txt = txt or ChatClientGlobal.chatRender.user_input()
-        input.text = txt            
+        input.text = txt
         if draw:
             input.draw()
 

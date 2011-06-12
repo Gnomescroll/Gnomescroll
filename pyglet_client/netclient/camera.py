@@ -15,8 +15,8 @@ class Camera(object):
     def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0):
         if settings.pyglet == False:
             self.SDL_global = SDL.SDL_global
-
-        self.win = win
+        if settings.pyglet:
+            self.win = win
         self.x = x
         self.y = y
         self.z = z
@@ -50,7 +50,7 @@ class Camera(object):
             #glEnable(GL_CULL_FACE);
         else:
             ## SDL prep
-            self.SDL_global.swap_buffers()  ##move to end of drawing frame ??
+            #self.SDL_global.swap_buffers()  ##move to end of drawing frame ??
             ## swap buffers from last frame
             self.SDL_global.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
             self.SDL_global.world_projection()

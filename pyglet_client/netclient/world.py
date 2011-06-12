@@ -18,14 +18,16 @@ class World():
     def init(self):
         self.terrainMap = GameStateGlobal.terrainMap
         self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
-        CubeGlobal.setTextureGrid(self.texture_grid)
+        if settings.pyglet:
+            CubeGlobal.setTextureGrid(self.texture_grid)
 
     def __init__(self):
-        tile_image = pyglet.image.load(base_dir + 'texture/textures_01.png')
-        tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
-        tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
-        self.texture_grid = tile_texture_grid
-        self.texture_grid_mipmap = tile_image.get_mipmapped_texture()
+        if settings.pyglet:
+            tile_image = pyglet.image.load(base_dir + 'texture/textures_01.png')
+            tile_image_grid = pyglet.image.ImageGrid(tile_image, 16, 16)
+            tile_texture_grid = pyglet.image.TextureGrid(tile_image_grid)
+            self.texture_grid = tile_texture_grid
+            self.texture_grid_mipmap = tile_image.get_mipmapped_texture()
 
         self.players = []
         self.agents = []
@@ -42,21 +44,24 @@ class World():
         self.gl_smooth = (self.gl_smooth+1) % 2
 
     def tick(self):
-        self.mapChunkManager.update_chunk()
+        if settings.pyglet:
+            self.mapChunkManager.update_chunk()
         for p in GameStateGlobal.projectileList.values():
             p.tick()
         pass
 
     def draw(self):
-        self.draw_chunk()
+        if settings.pyglet:
+            self.draw_chunk()
         self.draw_agents()
         self.draw_projectiles()
-        self.draw_transparent_blocks()
+        if settings.pyglet:
+            self.draw_transparent_blocks()
 
     def draw_transparent_blocks(self):
-
-        MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
-        MapChunkManagerGlobal.transparentBlockManager.update_vbo()
+        if settings.pyglet:
+            MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
+            MapChunkManagerGlobal.transparentBlockManager.update_vbo()
         if settings.pyglet:
             #glEnable(GL_CULL_FACE)
             glDepthMask(GL_FALSE)
