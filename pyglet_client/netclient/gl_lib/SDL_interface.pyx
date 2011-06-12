@@ -105,8 +105,8 @@ ctypedef struct MouseEvent:
 
 ### call backs
 cdef extern from "input.h":
-    ctypedef int (*key_state_func)(int test)
-    int _key_state_callback(key_state_func user_func)
+    ctypedef int (*key_state_func)(int* keystate, int numkeys)
+    int _key_state_callback(key_state_func user_func, int* keystate, int numkeys)
 
     ctypedef int (*key_event_func)(char key)
     int _key_event_callback(key_event_func user_func, char key)
@@ -144,7 +144,7 @@ def set_text_entry_mode(int n):
 import input
 cimport stdlib
 
-cdef int key_state_callback(int test):
+cdef int key_state_callback(int* keystate, int numkeys):
     pass
 
 cdef int key_event_callback(char key):

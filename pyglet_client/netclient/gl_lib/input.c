@@ -12,27 +12,28 @@ int mouse_y_last;
 
 int _init_input() {
 //_set_text_entry_mode(0); ///change to 0 in production
-//mouse_x_last = 0;
-//mouse_y_last = 0;
+keystate = SDL_GetKeyState(numkeys); ///returns pointer; only needs to be done once
 return 0;
 }
+
+int numkeys;
+int* keystate;
 
 int _set_text_entry_mode(int n) {
     if((n != 0) | (n != 1)) { text_entry_mode = n; } else { printf("input.c, _set_text_entry_mode error: mode invalid \n"); }
     return 0;
 }
 
-int _get_key_state() {
-    keystate = SDL_GetKeyState(NULL);
-    if ( keystate[SDLK_UP] ) {
-        printf( "Up Key" );
-        }
+int _get_key_state(key_state_func key_state_cb) {
+    //SDL_PumpEvents();
+    keystate = SDL_GetKeyState(numkeys);
+
+    _key_state_callback(key_state, numkeys);
+    //if ( keystate[SDLK_UP] ) {printf( "Up Key" );}
     return 0;
 }
 
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb) {
-    SDL_EnableUNICODE( SDL_ENABLE );
-
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
 
@@ -54,48 +55,16 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         case SDL_KEYDOWN:
             ///text event
             //printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
-
+            SDL_EnableUNICODE( SDL_ENABLE );
+            if(Event.key.keysym.unicode != 0) {
+            _key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
+            }
             _key_text_event_callback(keyboard_text_event_cb, getUnicodeValue(Event.key.keysym), SDL_GetKeyName(Event.key.keysym.sym));
+            SDL_EnableUNICODE( SDL_DISABLE );
             //SDL_GetKeyName(Event.key));
 
             break;
-        /*
-        case SDL_MOUSEBUTTONDOWN:
-        {
-            MouseEvent me;
-            me.x = Event.motion.x;
-            me.y = Event.motion.y;
-            me.button = Event.button.button;
-            me.state = Event.button.state; //up or down
-            _mouse_event_callback(mouse_event_cb, me)
-            break;
 
-            switch( Event.button.button )
-            {
-
-
-                case SDL_BUTTON_LEFT:
-                    printf( "left mouse" );
-                    break;
-                    //g_nLastMousePositX = Event.motion.x;
-                    //g_nLastMousePositY = Event.motion.y;
-                    //g_bMousing = true;
-
-            }
-        }
-        break;
-
-        case SDL_MOUSEBUTTONUP:
-        {
-            switch( Event.button.button )
-            {
-              case SDL_BUTTON_LEFT:
-                    //g_bMousing = false;
-                    break;
-            }
-        }
-        break;
-        */
         case SDL_MOUSEMOTION:
         {
             MouseMotion ms;
@@ -124,7 +93,8 @@ int poll_events(void) {
 }
 /// Call Backs ///
 
-int _key_state_callback(key_state_func user_func) {
+int _key_state_callback(key_state_func user_func, int* keystate, int numkeys) {
+    user_func(key_state, numkeys);
     return 0;
 }
 
