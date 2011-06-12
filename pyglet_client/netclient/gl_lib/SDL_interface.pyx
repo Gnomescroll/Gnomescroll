@@ -123,7 +123,7 @@ cdef extern from "input.h":
 ## input.c
 cdef extern int _init_input()
 cdef extern int _get_key_state()
-cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
+cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
 cdef extern int _set_text_entry_mode(int n)
 
 def init_input():
@@ -133,7 +133,7 @@ def get_key_state():
     temp = _get_key_state()
 
 def process_events():
-    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback)
+    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback)
     #mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
 def set_text_entry_mode(int n):
     temp = _set_text_entry_mode(n)
@@ -156,8 +156,8 @@ cdef int key_text_event_callback(char key, char* key_name):
     cdef bytes py_string
     py_string = key_name
     key_string = key_name.decode('ascii')
-    input.inputEventGlobal.keyboard_event(key, key_string)
-    print key_string
+    #print "keystring= " + key_string
+    input.inputEventGlobal.keyboard_text_event(key, key_string)
     pass
 
 cdef int mouse_motion_callback(MouseMotion ms):
