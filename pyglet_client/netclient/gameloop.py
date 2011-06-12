@@ -109,6 +109,8 @@ class App(object):
             self.world.tick()
             self.win.clear() #clear window and start drawing
             if InputGlobal.camera == 'agent':
+                print 'agentList'
+                print GameStateGlobal.agentList
                 self.camera.agent_view(GameStateGlobal.agent)
             elif InputGlobal.camera == 'camera':
                 self.camera.camera_view()

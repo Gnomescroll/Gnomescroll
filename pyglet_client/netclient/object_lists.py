@@ -46,6 +46,9 @@ class GenericObjectList:
 
     def __str__(self):
         return str(self.objects)
+        
+    def __repr__(self):
+        return repr(self.objects)
 
     def __repr__(self):
         return repr(self.objects)
