@@ -143,7 +143,7 @@ class App(object):
                 clock.tick()
                 self.win.flip()
             else:
-                SDL.flip()
+                SDL.SDL_global.flip()
         #p.stop()
         self.win.close()
 

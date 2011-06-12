@@ -48,6 +48,7 @@ cdef public class Window:
 '''
 
 
+
 cdef class Global:
     cdef Camera camera
 #    cdef Window window
@@ -175,7 +176,7 @@ cdef int mouse_motion_callback(MouseMotion ms):
     pass
 
 cdef int mouse_event_callback(MouseEvent me):
-    input.inputEventGlobal.mouse_event(me.button, me.state, me.state, me.x, me.y)
+    input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
     #print str(me.state)
     pass
 

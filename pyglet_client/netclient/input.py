@@ -24,7 +24,8 @@ class InputEventGlobal:
     def keyboard_state(self, pressed_keys):
         keyboard = []
         for i in pressed_keys:
-            keyboard.append(chr(i))
+            if i < 256 and i > 0:
+                keyboard.append(chr(i))
         self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):
@@ -34,7 +35,7 @@ class InputEventGlobal:
     def mouse_event(self, button,state,x,y,):
         #handle scroll events
         if state == 1: #mouse click?
-            on_mouse_press(x,y,button)
+            self.mouse.on_mouse_press(x,y,button)
         elif state == 0: #mouse button release
             pass
 
@@ -98,11 +99,13 @@ class Mouse(object):
 
     def __init__(self, main):
         self.main = main
-        self.main.win.on_mouse_drag = self.on_mouse_drag
-        self.main.win.on_mouse_motion = self.on_mouse_motion
-        self.main.win.on_mouse_press = self.on_mouse_press
-        self.main.win.on_mouse_scroll = self.on_mouse_scroll
         self.camera = main.camera
+
+        if settings.pyglet:
+            self.main.win.on_mouse_drag = self.on_mouse_drag
+            self.main.win.on_mouse_motion = self.on_mouse_motion
+            self.main.win.on_mouse_press = self.on_mouse_press
+            self.main.win.on_mouse_scroll = self.on_mouse_scroll
 
     #inplement draw detection...
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):

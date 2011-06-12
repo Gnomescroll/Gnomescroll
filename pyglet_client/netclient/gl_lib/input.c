@@ -12,6 +12,7 @@ Uint8* keystate;
 int _init_input() {
 _set_text_entry_mode(0); //not used right now
 keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
+SDL_EnableUNICODE( SDL_ENABLE );
 return 0;
 }
 
@@ -46,7 +47,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         me.y = Event.motion.y;
         me.button = Event.button.button;
         me.state = Event.button.state; //up or down
-        printf("button: %i\n", Event.button.button);
+        //printf("button: %i\n", Event.button.button);
         _mouse_event_callback(mouse_event_cb, me);
     }
 
@@ -59,12 +60,12 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         case SDL_KEYDOWN:
             ///text event
             //printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
-            SDL_EnableUNICODE( SDL_ENABLE );
+            ///SDL_EnableUNICODE( SDL_ENABLE );
             if(Event.key.keysym.unicode != 0) {
             _key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
             }
             _key_text_event_callback(keyboard_text_event_cb, getUnicodeValue(Event.key.keysym), SDL_GetKeyName(Event.key.keysym.sym));
-            SDL_EnableUNICODE( SDL_DISABLE );
+            ///SDL_EnableUNICODE( SDL_DISABLE );
             //SDL_GetKeyName(Event.key));
 
             break;
