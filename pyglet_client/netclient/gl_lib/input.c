@@ -55,7 +55,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             ///text event
             //printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
 
-            _key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
+            _key_text_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym), SDL_GetKeyName(Event.key));
 
             break;
         /*
