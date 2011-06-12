@@ -18,14 +18,16 @@ class InputEventGlobal:
     keyboard = None
 
     def keyboard_event(self, key):
-        print "key"
-        print "test= " + str(key)
+        pass
+        #print "key"
+        #print "test= " + str(key)
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
         for i in pressed_keys:
             if i < 256 and i > 0:
                 keyboard.append(chr(i))
+        print str(keyboard)
         self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):
@@ -44,6 +46,7 @@ class InputEventGlobal:
             self.mouse.on_mouse_drag(x,y,dx,dy,button)
         else:
             self.mouse.on_mouse_motion(x,y,dx,dy)
+            #print "motion"
         pass
 
 class InputGlobal:

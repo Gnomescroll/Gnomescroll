@@ -159,7 +159,7 @@ cdef int key_state_callback(Uint8* keystate, int numkeys):
 
 cdef int key_event_callback(char key):
     input.inputEventGlobal.keyboard_event(key)
-    print "event"
+    #print "event"
     pass
 
 cdef int key_text_event_callback(char key, char* key_name):
