@@ -4,7 +4,7 @@ cimport libc.stdlib
 #cdef extern from "SDL.h":
 
 ## Camera.c ##
-cdef struct Camera: #maybe public?
+cdef class Camera: #maybe public?
     float fov, x_size, y_size, z_near, z_far
     float x,y,z, x_angle,y_angle
 
@@ -14,14 +14,27 @@ cdef extern int _hud_projection(Camera camera)
 ## End Camera.c ##
 
 ## Texture Loader ##
+
+cdef extern from "SDL.h":
+    struct SDL_Surface:
+        int w
+        int h
+
 cdef extern from "texture_loader.h":
     int _init_image_loader()
-    SDL_Surface* _load_image(char *file);
+    SDL_Surface* _load_image(char *file)
+    int _create_hud_texture(char *file)
+    int _create_block_texture(char *file)
+    int _create_texture(SDL_Surface* surface)
 
-cpdef SDL_Surface* load_image(char* file):
+cdef SDL_Surface* load_image(char* file):
     cdef SDL_Surface* surface
-    surface = _load_image(char file)
+    surface = _load_image(file)
+    return surface
 
+cdef create_texture(SDL_Surface* surface, type =None):
+    if type == None:
+        _create_texture(surface)
 
 ## SDL functions ##
 
@@ -37,6 +50,7 @@ def get_ticks():
 cdef extern from "draw.h":
     int _draw_point(int r, int g,int b, float x0, float y0, float z0)
     int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
+    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
 def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float y1, float z1):
     return _draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
@@ -45,17 +59,40 @@ def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
 ## Window Properties ##
-'''
-#window propertiesSDL.
-cdef public class Window:
-    cdef int x_size
-    cdef int y_size
-'''
 
+cdef class Window:
+    cdef int w
+    cdef int h
 
+cdef class Texture:
+    cdef int id
+    cdef int w
+    cdef int h
+    cdef SDL_Surface* surface
+
+    def __init__(self, file, texture_type =None):
+        if texture_type == None:
+            self.surface = load_image(file)
+        elif texture_type == "mipmapped":
+            self.surface = _create_block_texture("./texture/textures_01.png")
+        if self.surface == 0:
+            print "Error Loading Texture: " + str(file)
+        self.w = self.surface.w
+        self.h = self.surface.h
+        self.id = create_texture(self.surfaces, texture_type)
+
+cdef class Textures:
+    cdef Texture hud_tex
+    cdef Texture tile_tex
+
+    def __init__(self):
+        self.hud_tex = Texture("./texture/target.png", "mipmapped")
+        self.tile_tex = Texture("./texture/textures_01.png")
 
 cdef class Global:
     cdef Camera camera
+    cdef Window window
+    cdef Textures textures
 #    cdef Window window
 
     #make field of view adjustable!

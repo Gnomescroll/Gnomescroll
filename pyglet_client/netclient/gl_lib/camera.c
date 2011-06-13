@@ -69,12 +69,14 @@ glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0, c.x_size, 0, c.y_size);
 
-printf( "(%f, %f) \n", c.x_size, c.y_size);
+//printf( "(%f, %f) \n", c.x_size, c.y_size);
 
 glMatrixMode( GL_MODELVIEW );
 glLoadIdentity();
 
 glDisable(GL_DEPTH_TEST);
+
+glEnable(GL_TEXTURE_2D);
 //glEnable(GL_TEXTURE_2D);
 
 /*
