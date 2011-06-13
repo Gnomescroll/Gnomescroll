@@ -2,11 +2,14 @@ syntax: glob
 *.pyc
 *.pxd
 *.pyd
+*.pyo
 
 terrain_map.c
 dat.c
 cube_dat.c
 map_chunk_manager.c
+
+SDL_interface.c
 
 pyglet_client/log/
 

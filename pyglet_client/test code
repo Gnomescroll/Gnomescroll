@@ -1,0 +1,87 @@
+python
+
+import SDL
+x = SDL.Global()
+
+
+import SDL
+SDL.SDL_global.init()
+SDL.SDL_global.set_projection(-1,0,0,0,0)
+SDL.SDL_global.world_projection()
+SDL.SDL_global.flip()
+
+import random
+def ran(n):
+	n= float(n)
+	for i in range(0,256):
+		x = n*random.random()	
+		y = n*random.random()
+		z = n*random.random()
+		temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+
+ran(5)
+SDL.SDL_global.flip()
+
+#draw
+import SDL
+import random
+w = SDL.Global()
+w.init()
+
+w.set_projection(-1,0,0,0,0)
+w.world_projection()
+
+for i in range(0,256):
+	x = random.random()	
+	y = random.random()
+	z = random.random()
+	temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+	#temp = SDL.draw_point(0,100,0, random.random(),random.random(),random.random())
+
+w.flip()
+
+#keyboard test
+import time
+import SDL
+win = SDL.Global()
+win.init()
+
+while True:
+	time.sleep(0.1)
+	SDL.get_key_event()
+	#SDL.get_key_state()
+
+### SDL callback test
+import SDL
+SDL.call_back_test()
+
+## callback test
+
+#keyboard test
+import time
+import SDL
+win = SDL.Global()
+win.init()
+while True:
+	time.sleep(0.1)
+	SDL.process_events()
+
+## keystate test
+
+import time
+import SDL
+win = SDL.Global()
+win.init()
+while True:
+	time.sleep(0.1)
+	SDL.get_key_state()
+
+## cursor texture loading test
+
+import SDL
+w = SDL.Global()
+w.init()
+w.world_projection()
+w.hud_projection()
+
+w.flip()

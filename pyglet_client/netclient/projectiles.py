@@ -89,11 +89,23 @@ class Projectile(GameObject):
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
 
+##deprecate
+
+import settings
 
 import pyglet
 from pyglet.gl import *
+## deprecate
+
+if settings.pyglet:
+    import pyglet
+    from pyglet.gl import *
+else:
+    import SDL
 
 def draw_projectiles():
+    if settings.pyglet == False:
+        SDL_global = SDL.SDL_global
 
     v_num = 0
     v_list = []
@@ -110,10 +122,17 @@ def draw_projectiles():
         v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
         c_list += [0,0,255]*2
 
-    pyglet.graphics.draw(v_num, GL_LINES,
+    if settings.pyglet:
+        pyglet.graphics.draw(v_num, GL_LINES,
         ("v3f", v_list),
         ("c3B", c_list)
         )
+    else:
+        for i in range(0,v_num/2):
+            x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
+            x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
+            r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
+            SDL.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 from game_state import GameStateGlobal
 from cube_dat import CubeGlobal

@@ -1,11 +1,16 @@
-from pyglet import clock, font, image, window
-from pyglet.gl import *
+
+import settings
+### DEPRECATE
+if settings.pyglet:
+    from pyglet import clock, font, image, window
+    from pyglet.gl import *
+
+    from pyglet.window import key
+else:
+    import SDL
 
 #import cython
 #import pyximport; pyximport.install()
-
-from pyglet.window import key
-
 
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -21,16 +26,15 @@ from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
 
 
-from player import Player
+from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud
 
-
-import settings  ## put this somewhere!!! so it only has to be in one place
-
 import world #deprecate
 
+
+import random #remove
 
 #import hotshot
 
@@ -55,6 +59,9 @@ class App(object):
         ChatClientGlobal.init_1()
         MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
+        if settings.pyglet == False:
+            self.SDL_global = SDL.SDL_global #drawing stuff
+            self.SDL_global.init()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -64,10 +71,16 @@ class App(object):
         self.init_globals()
         #other
         self.world = world.World()  #deprecate?
-        self.win = window.Window(fullscreen=False, vsync=False)
-        self.win.on_close = self._on_close
-        self.camera = Camera(self.win)
-        self.hud = Hud(self.win)
+
+        #deprecate
+        if settings.pyglet:
+            self.win = window.Window(fullscreen=False, vsync=False)
+            self.win.on_close = self._on_close
+            self.camera = Camera(self.win)
+            self.hud = Hud(self.win)
+        else:
+            self.camera = Camera(None)
+            #self.hud = Hud(None)
         #setup events
         self.exit = False
 
@@ -87,9 +100,11 @@ class App(object):
         #self.world.test_chunk()
         self.world.add_player(GameStateGlobal.player) #do something about this
         self.world.add_agent(GameStateGlobal.agent)
-        clock.set_fps_limit(60)
-        keyboard = key.KeyStateHandler()
-        self.win.push_handlers(keyboard)
+
+        if settings.pyglet:
+            clock.set_fps_limit(60)
+            keyboard = key.KeyStateHandler()
+            self.win.push_handlers(keyboard)
         #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
         self.connect()
@@ -98,26 +113,51 @@ class App(object):
 
         #p = hotshot.Profile("../log/client.log")
         #p.start()
+        ltick, ctick = 0,0
         while not self.exit:
-            self.win.dispatch_events()
-            InputGlobal.keyboard.stateHandler(keyboard)
+            if settings.pyglet:
+                self.win.dispatch_events()
+                InputGlobal.keyboard.stateHandler(keyboard)
+            else:
+                SDL.process_events()
+                SDL.get_key_state()
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing
             self.world.tick()
-            self.win.clear() #clear window and start drawing
+
+            if settings.pyglet:
+                self.win.clear() #clear window and start drawing
+
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
             elif InputGlobal.camera == 'camera':
                 self.camera.camera_view()
+
             self.camera.worldProjection()
             self.world.draw()
-            self.camera.hudProjection()
-            self.hud.draw()
-            clock.tick()
-            self.win.flip()
+
+            SDL.SDL_global.set_projection(-1,0,0,0,0)
+
+            if False:
+                for i in range(0,256):
+                    x = random.random()
+                    y = random.random()
+                    z = random.random()
+                    temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+
+            if settings.pyglet:
+                self.camera.hudProjection()
+                self.hud.draw()
+                clock.tick()
+                self.win.flip()
+            else:
+                SDL.SDL_global.flip()
+                ctick = SDL.get_ticks()
+                #print str(ctick - ltick)
+                ltick = ctick
         #p.stop()
         self.win.close()
 

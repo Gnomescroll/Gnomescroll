@@ -1,7 +1,7 @@
 
 #from world_state import WorldStateGlobal
 
-
+import settings
 
 class CubeGlobal:
     #terrainMap = TerrainMap()
