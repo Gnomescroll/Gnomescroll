@@ -83,3 +83,7 @@ int _swap_buffers() {
     //printf( "swap buffers\n");
     return 0;
 }
+
+int _get_ticks() {
+return SDL_GetTicks();
+}

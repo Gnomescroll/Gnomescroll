@@ -27,6 +27,10 @@ cpdef int init_video():
 cdef extern int _init_video()
 cdef extern int _del_video()
 cdef extern int _swap_buffers()
+cdef extern int _get_ticks()
+
+def get_ticks():
+    return _get_ticks()
 
 ## Draw functions ##
 cdef extern from "draw.h":

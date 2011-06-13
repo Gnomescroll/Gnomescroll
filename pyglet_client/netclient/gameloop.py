@@ -153,7 +153,7 @@ class App(object):
                 self.win.flip()
             else:
                 SDL.SDL_global.flip()
-
+                print str(SDL.get_ticks())
         #p.stop()
         self.win.close()
 
