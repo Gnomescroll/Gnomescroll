@@ -69,7 +69,8 @@ cdef class Texture:
     cdef int h
     cdef SDL_Surface* surface
 
-    cdef init_46545(Texture self, char * file, int texture_type):
+    def __init__(Texture self, char * file, int texture_type):
+        #print "init runs"
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
@@ -79,26 +80,27 @@ cdef class Texture:
             pass #add mippmapped textures later
 
 cdef class Textures:
-    cdef public Texture hud_tex
-    cdef public Texture tile_tex
+    cdef Texture hud_tex
+    cdef Texture tile_tex
 
-    cdef int init(self):
+    def __init__(self):
         print "Initing Textures"
         #self.hud_tex = Texture("./texture/target.png", "mipmapped")
         #self.tile_tex = Texture("./texture/textures_01.png")
 
 cdef class Global:
     cdef Camera camera
-    cdef Textures textures
+    cdef public Textures textures
 #    cdef Window window
 
     #make field of view adjustable!
-    cdef int init(self):
+    def init(self):
         _init_video()
         _init_input()
         _init_image_loader()
-        self.textures.init()
 
+        self.textures.hud_tex = Texture("./texture/target.png", 0)
+        self.textures.tile_tex = Texture("./texture/textures_01.png",0)
 #        self.camera = Camera()
         print "Creating SDL OpenGL Window"
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
