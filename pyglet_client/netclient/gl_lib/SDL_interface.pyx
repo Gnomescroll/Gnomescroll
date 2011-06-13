@@ -69,11 +69,11 @@ cdef class Texture:
     cdef int h
     cdef SDL_Surface* surface
 
-    def __init__(Texture self, char * file, texture_type =None):
+    cdef init_46545(Texture self, char * file, int texture_type):
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        if type == None:
+        if texture_type == 0:
             self.id = _create_texture(self.surface)
         else:
             pass #add mippmapped textures later
@@ -82,18 +82,18 @@ cdef class Textures:
     cdef public Texture hud_tex
     cdef public Texture tile_tex
 
-    cdef init(self):
+    cdef int init(self):
         print "Initing Textures"
         #self.hud_tex = Texture("./texture/target.png", "mipmapped")
         #self.tile_tex = Texture("./texture/textures_01.png")
 
 cdef class Global:
     cdef Camera camera
-    cdef public Textures textures
+    cdef Textures textures
 #    cdef Window window
 
     #make field of view adjustable!
-    def init(Global self):
+    cdef int init(self):
         _init_video()
         _init_input()
         _init_image_loader()
