@@ -5,8 +5,8 @@ cimport libc.stdlib
 
 ## Camera.c ##
 cdef class Camera: #maybe public?
-    float fov, x_size, y_size, z_near, z_far
-    float x,y,z, x_angle,y_angle
+    cdef float fov, x_size, y_size, z_near, z_far
+    cdef float x,y,z, x_angle,y_angle
 
 cdef extern int _world_projection(Camera camera)
 cdef extern int _hud_projection(Camera camera)
@@ -23,8 +23,8 @@ cdef extern from "SDL.h":
 cdef extern from "texture_loader.h":
     int _init_image_loader()
     SDL_Surface* _load_image(char *file)
-    int _create_hud_texture(char *file)
-    int _create_block_texture(char *file)
+    int _create_hud_texture(char *file) #deprecate
+    int _create_block_texture(char *file) #deprecate
     int _create_texture(SDL_Surface* surface)
 
 cdef SDL_Surface* load_image(char* file):
@@ -32,9 +32,8 @@ cdef SDL_Surface* load_image(char* file):
     surface = _load_image(file)
     return surface
 
-cdef create_texture(SDL_Surface* surface, type =None):
-    if type == None:
-        _create_texture(surface)
+cdef create_texture(SDL_Surface* surface, type =None): #eventually support mippapped textures
+    _create_texture(surface)
 
 ## SDL functions ##
 
@@ -70,16 +69,11 @@ cdef class Texture:
     cdef int h
     cdef SDL_Surface* surface
 
-    def __init__(self, file, texture_type =None):
-        if texture_type == None:
-            self.surface = load_image(file)
-        elif texture_type == "mipmapped":
-            self.surface = _create_block_texture("./texture/textures_01.png")
-        if self.surface == 0:
-            print "Error Loading Texture: " + str(file)
+    def __init__(Texture self, char * file, texture_type =None):
+        self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        self.id = create_texture(self.surfaces, texture_type)
+        self.id = create_texture(self.surface, texture_type)
 
 cdef class Textures:
     cdef Texture hud_tex
