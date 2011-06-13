@@ -11,25 +11,49 @@ if settings.pyglet:
     from pyglet.window import mouse
     from pyglet.window.key import symbol_string
 
+#handles special characters
+Keystring = {}
+def setup_keystring():
+    global Keystring
+
+    special_keys = {
+    'TAB': 9,
+    'SPACE': 32,
+    'LEFT': 276,
+    'RIGHT': 275,
+    'UP' : 273,
+    'DOWN' : 274,
+    'LSHIFT' : 304,
+    'RSHIT' : 303,
+    'LCTRL' : 306,
+    'RCTRL' : 305,
+    }
+    for i in range(1,255):
+        Keystring[i] = chr(i)
+    for key,value in special_keys.items():
+        Keystring[value] = key
+setup_keystring()
+
 from sounds import playSound
 
 class InputEventGlobal:
     mouse = None
     keyboard = None
 
-    def keyboard_event(self, key):
-        if key < 256 and key > 0:
-            key =  chr(key)  ### !! need a custom function that will handle tabs/special characters
+    def keyboard_event(self, keycode):
+        key = Keystring.get(keycode, None)
         print str(key)
         self.keyboard.on_key_press(key)
-        #print "test= " + str(key)
+        if key == None:
+            print "keycode unhandled= " + str(keycode)
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
-        for i in pressed_keys:
-            if i < 256 and i > 0:
-                keyboard.append(chr(i))  ### !! need a custom function that will handle tabs/special characters
-        #print str(keyboard)
+        for keycode in pressed_keys:
+            temp = Keystring.get(keycode, None)
+            if temp != None:
+                keyboard.append(temp)
+        print str(keyboard)
         self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):

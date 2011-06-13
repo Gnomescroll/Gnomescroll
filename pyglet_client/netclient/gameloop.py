@@ -115,6 +115,7 @@ class App(object):
         self.agent = GameStateGlobal.agent
         #p = hotshot.Profile("../log/client.log")
         #p.start()
+        ltick, ctick = 0,0
         while not self.exit:
             if settings.pyglet:
                 self.win.dispatch_events()
@@ -140,11 +141,13 @@ class App(object):
             self.world.draw()
 
             SDL.SDL_global.set_projection(-1,0,0,0,0)
-            for i in range(0,256):
-                x = random.random()
-                y = random.random()
-                z = random.random()
-                temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+
+            if False:
+                for i in range(0,256):
+                    x = random.random()
+                    y = random.random()
+                    z = random.random()
+                    temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
 
             if settings.pyglet:
                 self.camera.hudProjection()
@@ -152,8 +155,13 @@ class App(object):
                 clock.tick()
                 self.win.flip()
             else:
+                a= SDL.get_ticks()
                 SDL.SDL_global.flip()
-                print str(SDL.get_ticks())
+                b= SDL.get_ticks()
+                #print "t=" + str(b-a)
+                ctick = SDL.get_ticks()
+                #print str(ctick - ltick)
+                ltick = ctick
         #p.stop()
         self.win.close()
 
