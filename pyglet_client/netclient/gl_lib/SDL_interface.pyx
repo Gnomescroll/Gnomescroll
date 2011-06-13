@@ -84,9 +84,9 @@ cdef class Textures:
         self.tile_tex = Texture("./texture/textures_01.png")
 
 cdef class Global:
-    cdef Camera camera
-    cdef Window window
-    cdef Textures textures
+    cpdef Camera camera
+#    cdef Window window
+    cpdef Textures textures
 #    cdef Window window
 
     #make field of view adjustable!
