@@ -437,10 +437,19 @@ class PlayerAgentWeapons(AgentWeapons):
         if type(weapon_index) == int:
             weapon_index += -1
 
+        if self._active_weapon is None:
+            active = 0
+
         if weapon_index == 'up':
-            self._active_weapon = (self.active_weapon + 1) % num_weapons
+            if self._active_weapon is None:
+                self._active_weapon = 0
+            else:
+                self._active_weapon = (self._active_weapon + 1) % num_weapons
         elif weapon_index == 'down':
-            self._active_weapon = (self.active_weapon - 1) % num_weapons
+            if self._active_weapon is None:
+                self._active_weapon = num_weapons - 1
+            else:
+                self._active_weapon = (self._active_weapon - 1) % num_weapons
         elif weapon_index < num_weapons:
                 self._active_weapon = weapon_index
 

@@ -97,9 +97,10 @@ class Mouse(object):
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if scroll_y > 0:
-            GameStateGlobal.agent.switch_weapon('up')
+            direction = 'up'
         elif scroll_y < 0:
-            GameStateGlobal.agent.switch_weapon('down')
+            direction = 'down'
+        GameStateGlobal.agent.weapons.switch(direction)
 
 from math import sin, cos, pi
 
