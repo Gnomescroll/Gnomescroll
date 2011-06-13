@@ -53,8 +53,11 @@ class GenericObjectList:
     def _add(self, *args, **kwargs):
         print args, kwargs
         object = self._object_type(*args, **kwargs)
-        self.objects[object.id] = object
-        print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
+        if object.id in self.objects:
+            print 'Create %s failed; id %s already exists' % (self._itemname, object.id,)
+        else:
+            self.objects[object.id] = object
+            print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
         
     def _remove(self, obj):

@@ -77,7 +77,8 @@ class MessageHandler:
         if cmd is None:
             return
         #use json_events when possible
-        if self.json_events.has_key(cmd):
+        print cmd
+        if cmd in self.json_events:
             self.json_events[cmd](**msg)
 
 class GenericMessageHandler:
@@ -306,6 +307,12 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             return
         GameStateGlobal.remove_player(id)    # this method manages FK relationships
 
+    #def _player_list(self, **args):
+        #print 'player list msg'
+        #print args
+        #if args['player_list'] != []:
+            #raise ValueError
+
 
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
@@ -318,8 +325,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
         DatastoreMessageInterface.__init__(self)
 
     def _agent_position(self, **args):  # deprecate
-        print 'agent position msg'
-        print args
+        #print 'agent position msg'
+        #print args
         state = args.get('state', None)
         id = args.get('id', None)
         tick = args.get('tick', None)

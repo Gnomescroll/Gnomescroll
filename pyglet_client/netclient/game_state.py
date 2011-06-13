@@ -59,8 +59,9 @@ class GameStateGlobal:
                 cls.agent.update_info(**agent)
         print 'update your info:: DONE:: final state:'
         print cls.player, cls.agent
-        import sys
-        sys.exit()
+        print cls.playerList, cls.agentList, cls.weaponList, cls.projectileList
+        #import sys
+        #sys.exit()
         return cls.player
 
     @classmethod

@@ -87,11 +87,11 @@ class Camera(object):
         return pyglet.event.EVENT_HANDLED
 
     def agent_view(self, agent):
-        print 'agent_view'
+        #print 'agent_view'
         if self.mode != 'agent':
             self._save_position()
             self.mode = 'agent'
-        print agent.state
+        #print agent.state
         self._load_position(agent)
 
     def camera_view(self):
@@ -111,7 +111,6 @@ class Camera(object):
             obj = self
             prefix = '_'
         self.x = getattr(obj, prefix + 'x')
-        print self.x
         self.y = getattr(obj, prefix + 'y')
         self.z = getattr(obj, prefix + 'z')
         self.x_angle = getattr(obj, prefix + 'x_angle')

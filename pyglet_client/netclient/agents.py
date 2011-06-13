@@ -218,7 +218,8 @@ class AgentModel:
         elif attr == 'az':
             return self.__dict__['state'][8]
         else:
-            print "Agent attribute does not exist: " + str(attr)
+            if not attr.startswith('__'):
+                print "Agent attribute does not exist: " + str(attr)
             raise AttributeError
 
     def __setattr__(self, attr, val):

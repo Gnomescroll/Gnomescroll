@@ -99,6 +99,8 @@ class App(object):
         #p = hotshot.Profile("../log/client.log")
         #p.start()
         while not self.exit:
+            print GameStateGlobal.playerList
+            print GameStateGlobal.agentList
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
             if GameStateGlobal.agent is not None:
