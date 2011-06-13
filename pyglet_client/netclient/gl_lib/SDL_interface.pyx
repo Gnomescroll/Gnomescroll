@@ -18,8 +18,9 @@ cdef extern from "texture_loader.h":
     int _init_image_loader()
     SDL_Surface* _load_image(char *file);
 
-cpdef SDL_Surface* load_image(file):
-    file
+cpdef SDL_Surface* load_image(char* file):
+    cdef SDL_Surface* surface
+    surface = _load_image(char file)
 
 
 ## SDL functions ##
