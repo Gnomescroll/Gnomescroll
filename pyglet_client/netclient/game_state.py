@@ -57,7 +57,7 @@ class GameStateGlobal:
         if agent is not None:
             cls.remove_agent(agent.id)
         print agent
-        cls.playerList.leave(player)
+        cls.playerList.destroy(player)
 
     @classmethod
     def remove_agent(cls, id):
