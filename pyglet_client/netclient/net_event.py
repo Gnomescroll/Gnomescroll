@@ -77,7 +77,6 @@ class MessageHandler:
         if cmd is None:
             return
         #use json_events when possible
-        print cmd
         if cmd in self.json_events:
             self.json_events[cmd](**msg)
 
@@ -307,13 +306,6 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             return
         GameStateGlobal.remove_player(id)    # this method manages FK relationships
 
-    #def _player_list(self, **args):
-        #print 'player list msg'
-        #print args
-        #if args['player_list'] != []:
-            #raise ValueError
-
-
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
 class AgentMessageHandler(DatastoreMessageInterface):
@@ -325,8 +317,6 @@ class AgentMessageHandler(DatastoreMessageInterface):
         DatastoreMessageInterface.__init__(self)
 
     def _agent_position(self, **args):  # deprecate
-        #print 'agent position msg'
-        #print args
         state = args.get('state', None)
         id = args.get('id', None)
         tick = args.get('tick', None)
@@ -336,7 +326,6 @@ class AgentMessageHandler(DatastoreMessageInterface):
             return
 
         agent = GameStateGlobal.agentList[id]
-        print agent
         if agent is None: # agent not found, request agent
             NetOut.sendMessage.request_agent(id)
             return
@@ -376,110 +365,3 @@ from chat_client import ChatClientGlobal
 from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
 from input import InputGlobal
-
-'''
-Deprecated
-'''
-#class PlayerMessageHandler(GenericMessageHandler):
-
-    #events = {
-        #'player_list' : self._player_list,
-        #'player_info' : self._player_info,
-        #'remove_player' : self._remove_player,
-        #'player_update' : self._player_update,
-        #'update_player' : self._update_player,
-    #}
-
-    #def _player_list(self, players, **args):
-        #try:
-            #assert type(players) == list
-        #except AssertionError:
-            #print 'msg player_list :: players is not a list'
-            #return
-        #GameStateGlobal.playerList.load_list(players)
-
-    #def _player_info(self, **arg):
-        #if not self._update_player(**arg):
-            #return
-
-    #def _player_update(self,**arg):
-        #if not self._update_player(**arg):
-            #return
-
-    #def _remove_player(self, id, **arg):
-        #GameStateGlobal.remove_player(id)
-
-    #def _update_player(self, player, **msg):
-        #try:
-            #assert type(player) == dict
-        #except AssertionError:
-            #print 'msg player_info :: player is not a dict'
-            #return False
-        #GameStateGlobal.playerList.load_info(**player)
-        #return True
-
-#class AgentMessageHandler(GenericMessageHandler):
-
-    #events = {
-        #'agent_position' : self._agent_position,
-        #'agent_list'    :   self._agent_list,
-        #'agent_info'    :   self._agent_info,
-        #'agent_update' : self._agent_update,
-        #'remove_agent' : self._remove_agent,    # change this message to agent_destroy
-    #}
-
-    #def _agent_position(self, **args):
-        #state = args.get('state', None)
-        #id = args.get('id', None)
-        #tick = args.get('tick', None)
-        #if None in (state, id, tick,):
-            #print 'agent_position, missing keys'
-            #print args
-            #return
-        #x,y,z, vx,vy,vz, ax,ay,az = state
-        #x,y,z = map(lambda k: float(k), [x,y,z])
-
-        #agent = GameStateGlobal.agentList[id]
-        #if agent is None: # agent not found, request agent
-            #NetOut.sendMessage.request_agent(id)
-            #return
-        #agent.tick = tick
-        #agent.x = x
-        #agent.y = y
-        #agent.z = z
-        #agent.vx = vx
-        #agent.vy = vy
-        #agent.vz = vz
-        #agent.ax = ax
-        #agent.ay = ay
-        #agent.az = az
-
-    #def _agent_list(self, agents, **args):
-        #try:
-            #assert type(agents) == list
-        #except AssertionError:
-            #print 'msg agent_list :: agents is not a list'
-            #return
-        #GameStateGlobal.agentList.load_list(agents)
-
-    #def _agent_info(self, **args):
-        #agent_data = args.get('agent', None)
-        #if agent_data is None:
-            #print 'msg agent_info :: agent key missing'
-            #return
-
-        #GameStateGlobal.agentList.create(**agent_data)
-
-    #def _agent_update(self, **args):
-        #agent_data = args.get('agent', None)
-        #if agent_data is None:
-            #print 'msg agent_update :: agent key is missing'
-            #return
-
-        #GameStateGlobal.agentList.load_info(**agent_data)
-
-    #def _remove_agent(self, **args):
-        #id = args.get('id', None)
-        #if id is None:
-            #return
-        #GameStateGlobal.remove_agent(id)

@@ -14,7 +14,6 @@ class Player:
         if type(agent) == dict:
             print 'new Player: agent dict, creating agent'
             agent = GameStateGlobal.agentList.create(**agent)
-            #raise ValueError
         self.agent = agent
         self.you = False
 

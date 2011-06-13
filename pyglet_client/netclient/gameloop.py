@@ -99,8 +99,6 @@ class App(object):
         #p = hotshot.Profile("../log/client.log")
         #p.start()
         while not self.exit:
-            print GameStateGlobal.playerList
-            print GameStateGlobal.agentList
             self.win.dispatch_events()
             InputGlobal.keyboard.stateHandler(keyboard)
             if GameStateGlobal.agent is not None:
@@ -111,8 +109,6 @@ class App(object):
             self.world.tick()
             self.win.clear() #clear window and start drawing
             if InputGlobal.camera == 'agent':
-                print 'agentList'
-                print GameStateGlobal.agentList
                 self.camera.agent_view(GameStateGlobal.agent)
             elif InputGlobal.camera == 'camera':
                 self.camera.camera_view()

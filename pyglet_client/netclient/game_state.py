@@ -32,36 +32,20 @@ class GameStateGlobal:
     # for your player
     @classmethod
     def update_your_info(cls, player):
-        print 'update_your_info'
         if cls.player is None:
-            print 'creating player'
             cls.player = cls.playerList.join_yourself(**player)
         
-        print 'updating player'    
         cls.player.update_info(**player)
-        print cls.player
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
-            print 'agent info provided'
-            print agent
             if cls.agent is None:
-                'gsg agent missing; creating new player agent'
                 cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
-                print cls.agent
                 weapons = agent.get('weapons', None)
                 if weapons is not None:
-                    print 'updating weapons too'
                     cls.agent.weapons.update_info(weapons)
-                    print cls.agent.weapons
                 cls.player.agent = cls.agent
             else:
-                print 'just updating agent'
                 cls.agent.update_info(**agent)
-        print 'update your info:: DONE:: final state:'
-        print cls.player, cls.agent
-        print cls.playerList, cls.agentList, cls.weaponList, cls.projectileList
-        #import sys
-        #sys.exit()
         return cls.player
 
     @classmethod
