@@ -60,7 +60,7 @@ cdef class Global:
         self.set_projection(0.,0.,0.,0.,0.)
         _init_video()
         #input init
-        init_input()
+        #init_input()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"

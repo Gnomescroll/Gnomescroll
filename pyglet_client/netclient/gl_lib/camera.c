@@ -29,12 +29,14 @@ void _camera_projection( Camera c) {
 int _world_projection(struct Camera c) {
     float aspect = c.x_size / c.y_size;
 
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+    //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective( c.fov, aspect, c.z_near, c.z_far);
+
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
 
     float camera_focus_x,  camera_focus_y,  camera_focus_z;
 
@@ -46,6 +48,7 @@ int _world_projection(struct Camera c) {
                camera_focus_x, camera_focus_y,  camera_focus_z,
                0, 0, 1);
 
+    printf( "(%f, %f, %f), (%f, %f, %f) \n",c.x,c.y,c.z,camera_focus_x, camera_focus_y,  camera_focus_z );
 
     //glEnable(GL_TEXTURE_2D);
 
@@ -57,7 +60,7 @@ int _world_projection(struct Camera c) {
         #glEnable(GL_CULL_FACE);
 */
 
-
+    return 0;
 }
 
 int _hud_projection(struct Camera c) {
@@ -65,6 +68,8 @@ int _hud_projection(struct Camera c) {
 glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0, c.x_size, 0, c.y_size);
+
+printf( "(%f, %f) \n", c.x_size, c.y_size);
 
 glMatrixMode( GL_MODELVIEW );
 glLoadIdentity();

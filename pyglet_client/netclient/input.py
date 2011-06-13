@@ -18,16 +18,18 @@ class InputEventGlobal:
     keyboard = None
 
     def keyboard_event(self, key):
-        pass
-        #print "key"
+        if key < 256 and key > 0:
+            key =  chr(key)  ### !! need a custom function that will handle tabs/special characters
+        #print str(key)
+        self.keyboard.on_key_press(key)
         #print "test= " + str(key)
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
         for i in pressed_keys:
             if i < 256 and i > 0:
-                keyboard.append(chr(i))
-        print str(keyboard)
+                keyboard.append(chr(i))  ### !! need a custom function that will handle tabs/special characters
+        #print str(keyboard)
         self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):
@@ -185,17 +187,24 @@ class Keyboard(object):
 
     # one-time non character key detection
     # e.g. enter
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol, modifiers=None):
         if InputGlobal.input == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
             self._input_callback(callback)
         else:
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol, modifiers)
-            self.key_handlers.get(symbol, lambda: None)()
-
-            if symbol == key.TAB:
-                InputGlobal.scoreboard = True
+            if settings.pyglet:
+                self.key_handlers.get(symbol, lambda: None)()
+                if symbol == key.TAB:
+                    InputGlobal.scoreboard = True
+            else:
+                if symbol == "Q":
+                    InputGlobal.toggle_input_mode
+                    #print "toggle input mode"
+                if symbol == "E":
+                    InputGlobal.toggle_camera_mode
+                    #print "toggle camera mode"
 
     def on_key_release(self, symbol, modifiers):
         if symbol == key.TAB:
@@ -205,6 +214,7 @@ class Keyboard(object):
     def _init_key_handlers(self):
         if not settings.pyglet:
             return
+        #neaten this up and make SDL compatable
         self.bind_key_handlers({
             key.G : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,

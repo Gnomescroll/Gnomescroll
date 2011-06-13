@@ -5,20 +5,23 @@ x = SDL.Global()
 
 
 import SDL
-win = SDL.Global()
-win.init()
-win.set_projection(-1,0,0,0,0)
-SDL.draw_line(255,0,0, 0,0,-1, 0,0,1)
-win.swap_buffers()
+#SDL.SDL_global
+SDL.SDL_global.init()
+SDL.SDL_global.set_projection(-1,0,0,0,0)
+SDL.SDL_global.world_projection()
+#SDL.SDL_global.flip()
 
 import random
-for i in range(0,256):
-	x = random.random()
-	y = random.random()
-	z = random.random()
-	temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+def ran(n):
+	n= float(n)
+	for i in range(0,256):
+		x = n*random.random()	
+		y = n*random.random()
+		z = n*random.random()
+		temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
 
-win.swap_buffers()
+ran(5)
+SDL.SDL_global.flip()
 
 
 #keyboard test

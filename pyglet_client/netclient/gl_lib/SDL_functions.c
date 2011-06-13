@@ -57,15 +57,18 @@ int _init_video() {
     //glEnable(GL_TEXTURE_2D);
 
     //whaa
-    //aglClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-    /*
+
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+
+/*
     glEnable( GL_TEXTURE_2D );
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
+*/
     //end whaa
-    */
+
     return 0;
 
 }
@@ -77,5 +80,6 @@ int _del_video() {
 
 int _swap_buffers() {
     SDL_GL_SwapBuffers();
+    //printf( "swap buffers\n");
     return 0;
 }

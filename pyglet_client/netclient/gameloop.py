@@ -34,6 +34,8 @@ from hud import Hud
 import world #deprecate
 
 
+import random #remove
+
 #import hotshot
 
 class App(object):
@@ -137,6 +139,13 @@ class App(object):
             self.camera.worldProjection()
             self.world.draw()
 
+            SDL.SDL_global.set_projection(-1,0,0,0,0)
+            for i in range(0,256):
+                x = random.random()
+                y = random.random()
+                z = random.random()
+                temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+
             if settings.pyglet:
                 self.camera.hudProjection()
                 self.hud.draw()
@@ -144,6 +153,7 @@ class App(object):
                 self.win.flip()
             else:
                 SDL.SDL_global.flip()
+
         #p.stop()
         self.win.close()
 
