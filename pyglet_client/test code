@@ -75,3 +75,13 @@ win.init()
 while True:
 	time.sleep(0.1)
 	SDL.get_key_state()
+
+## cursor texture loading test
+
+import SDL
+w = SDL.Global()
+w.init()
+w.world_projection()
+w.hud_projection()
+
+w.flip()

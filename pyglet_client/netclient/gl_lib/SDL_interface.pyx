@@ -33,7 +33,7 @@ cdef SDL_Surface* load_image(char* file):
     return surface
 
 cdef create_texture(SDL_Surface* surface, type =None): #eventually support mippapped textures
-    _create_texture(surface)
+    return _create_texture(surface)
 
 ## SDL functions ##
 
@@ -73,31 +73,36 @@ cdef class Texture:
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        self.id = create_texture(self.surface, texture_type)
+        if type == None:
+            self.id = _create_texture(self.surface)
+        else:
+            pass #add mippmapped textures later
 
 cdef class Textures:
-    cdef Texture hud_tex
-    cdef Texture tile_tex
+    cdef public Texture hud_tex
+    cdef public Texture tile_tex
 
-    def __init__(self):
-        self.hud_tex = Texture("./texture/target.png", "mipmapped")
-        self.tile_tex = Texture("./texture/textures_01.png")
+    cdef init(self):
+        print "Initing Textures"
+        #self.hud_tex = Texture("./texture/target.png", "mipmapped")
+        #self.tile_tex = Texture("./texture/textures_01.png")
 
 cdef class Global:
-    cpdef Camera camera
-#    cdef Window window
-    cpdef Textures textures
+    cdef Camera camera
+    cdef public Textures textures
 #    cdef Window window
 
     #make field of view adjustable!
-    def init(self):
+    def init(Global self):
+        _init_video()
+        _init_input()
+        _init_image_loader()
+        self.textures.init()
+
+#        self.camera = Camera()
         print "Creating SDL OpenGL Window"
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
         self.set_projection(0.,0.,0.,0.,0.)
-        _init_video()
-        #input init
-        _init_input()
-        _init_image_loader()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"
