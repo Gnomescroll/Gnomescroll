@@ -48,7 +48,7 @@ int _world_projection(struct Camera c) {
                camera_focus_x, camera_focus_y,  camera_focus_z,
                0, 0, 1);
 
-    printf( "(%f, %f, %f), (%f, %f, %f) \n",c.x,c.y,c.z,camera_focus_x, camera_focus_y,  camera_focus_z );
+    //printf( "(%f, %f, %f), (%f, %f, %f) \n",c.x,c.y,c.z,camera_focus_x, camera_focus_y,  camera_focus_z );
 
     //glEnable(GL_TEXTURE_2D);
 

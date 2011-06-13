@@ -35,7 +35,7 @@ for i in range(0,256):
 	x = random.random()	
 	y = random.random()
 	z = random.random()
-	temp = SDL.draw_line(0,0,100, x,y,z, random.random(),random.random(),random.random())
+	temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
 	#temp = SDL.draw_point(0,100,0, random.random(),random.random(),random.random())
 
 w.flip()
