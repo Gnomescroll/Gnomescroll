@@ -64,9 +64,9 @@ cdef class Window:
     cdef int h
 
 cdef class Texture:
-    cdef public int id
-    cpdef public int w
-    cpdef public int h
+    cdef int id
+    cdef int w
+    cdef int h
     cdef SDL_Surface* surface
 
     def __init__(Texture self, char * file, int texture_type):
