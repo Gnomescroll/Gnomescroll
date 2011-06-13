@@ -155,10 +155,7 @@ class App(object):
                 clock.tick()
                 self.win.flip()
             else:
-                a= SDL.get_ticks()
                 SDL.SDL_global.flip()
-                b= SDL.get_ticks()
-                #print "t=" + str(b-a)
                 ctick = SDL.get_ticks()
                 #print str(ctick - ltick)
                 ltick = ctick

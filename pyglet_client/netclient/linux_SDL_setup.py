@@ -12,7 +12,7 @@ module1 = Extension('SDL',
                                     ' /usr/include/X11/extensions/',
                                     '/usr/include/SDL',
                                     '/usr/lib',     ],
-                    libraries = ['SDL','GL','SDL','GLU'],
+                    libraries = ['SDL','GL','SDL','GLU'], #SDL_image ?
 
                     library_dirs = ['/usr/X11R6/lib','usr/lib'],
                     extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT'], # $(shell sdl-config --cflags)
@@ -21,6 +21,8 @@ module1 = Extension('SDL',
                                 'gl_lib/camera.c',
                                 'gl_lib/draw.c',
                                 'gl_lib/input.c',
+                                'gl_lib/vbo_manager.c',
+                                'gl_lib/texture_loader.c',
                                 'gl_lib/SDL_interface.pyx'])
 
 setup(

@@ -1,10 +1,5 @@
-'''
-cdef extern from "camera.c":
-    struct Camera:
-        float x_size, y_size, z_near, z_far
-        float x,y,z, x_angle,y_angle
-    _camera_projection(Camera c)
-'''
+
+cimport libc.stdlib
 
 #cdef extern from "SDL.h":
 
@@ -16,10 +11,15 @@ cdef struct Camera: #maybe public?
 cdef extern int _world_projection(Camera camera)
 cdef extern int _hud_projection(Camera camera)
 
-cpdef int init_video():
-    return _init_video()
-
 ## End Camera.c ##
+
+## Texture Loader ##
+cdef extern from "texture_loader.h":
+    int _init_image_loader()
+    SDL_Surface* _load_image(char *file);
+
+cpdef SDL_Surface* load_image(file):
+    file
 
 
 ## SDL functions ##
@@ -64,7 +64,8 @@ cdef class Global:
         self.set_projection(0.,0.,0.,0.,0.)
         _init_video()
         #input init
-        init_input()
+        _init_input()
+        _init_image_loader()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"
@@ -135,9 +136,6 @@ cdef extern int _get_key_state(key_state_func key_state_cb)
 cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
 cdef extern int _set_text_entry_mode(int n)
 
-def init_input():
-    _init_input()
-
 def get_key_state():
     _get_key_state(&key_state_callback)
 
@@ -151,8 +149,6 @@ def set_text_entry_mode(int n):
 #    _key_event_callback(&key_event_callback, 42)
 
 import input
-#cimport stdlib
-cimport libc.stdlib
 
 cdef int key_state_callback(Uint8* keystate, int numkeys):
     pressed_keys = []
