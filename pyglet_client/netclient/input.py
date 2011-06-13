@@ -20,7 +20,7 @@ class InputEventGlobal:
     def keyboard_event(self, key):
         if key < 256 and key > 0:
             key =  chr(key)  ### !! need a custom function that will handle tabs/special characters
-        #print str(key)
+        print str(key)
         self.keyboard.on_key_press(key)
         #print "test= " + str(key)
 
@@ -189,22 +189,21 @@ class Keyboard(object):
     # e.g. enter
     def on_key_press(self, symbol, modifiers=None):
         if InputGlobal.input == 'chat':
+            print "chat"
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
             self._input_callback(callback)
         else:
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol, modifiers)
+
+            self.key_handlers.get(symbol, lambda: None)()
             if settings.pyglet:
-                self.key_handlers.get(symbol, lambda: None)()
                 if symbol == key.TAB:
                     InputGlobal.scoreboard = True
             else:
-                if symbol == "Q":
-                    InputGlobal.toggle_input_mode
-                    #print "toggle input mode"
-                if symbol == "E":
-                    InputGlobal.toggle_camera_mode
-                    #print "toggle camera mode"
+                if symbol == 'TAB':
+                    InputGlobal.scoreboard = True
+
 
     def on_key_release(self, symbol, modifiers):
         if symbol == key.TAB:
@@ -212,16 +211,20 @@ class Keyboard(object):
 
     #deprecate for non-pyglet input
     def _init_key_handlers(self):
-        if not settings.pyglet:
-            return
-        #neaten this up and make SDL compatable
-        self.bind_key_handlers({
+        if settings.pyglet:
+            self.bind_key_handlers({
             key.G : self.main.world.toggle_mipmap,
             key.T : self.main.world.toggle_gl_smooth,
             key.Q : InputGlobal.toggle_input_mode,
             key.E : InputGlobal.toggle_camera_mode,
         })
-
+        else: #pyglet versions
+            self.bind_key_handlers({
+            "G" : self.main.world.toggle_mipmap,
+            "T" : self.main.world.toggle_gl_smooth,
+            "Q" : InputGlobal.toggle_input_mode,
+            "E" : InputGlobal.toggle_camera_mode,
+        })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
         if handler is None:
