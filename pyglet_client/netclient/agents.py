@@ -52,7 +52,7 @@ class AgentRender:
             v_list += [self.x+temp, self.y, self.z]
             v_list += [self.x,self.y+temp, self.z]
             v_list += [self.x,self.y, self.z+temp]
-            c_list += [255,255,255] + [255,255,255] + [255,255,255]
+            c_list += [140,0,0]*3
             v_num +=3
 
         if settings.pyglet:
@@ -242,7 +242,7 @@ class PlayerAgentRender(AgentRender):
             v_list += [self.x+temp, self.y, self.z]
             v_list += [self.x,self.y+temp, self.z]
             v_list += [self.x,self.y, self.z+temp]
-            c_list += [255,255,255] + [255,255,255] + [255,255,255]
+            c_list += [150,0,0]*3
             v_num +=3
         #deprecate
         if settings.pyglet:
