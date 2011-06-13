@@ -5,11 +5,10 @@ x = SDL.Global()
 
 
 import SDL
-#SDL.SDL_global
 SDL.SDL_global.init()
 SDL.SDL_global.set_projection(-1,0,0,0,0)
 SDL.SDL_global.world_projection()
-#SDL.SDL_global.flip()
+SDL.SDL_global.flip()
 
 import random
 def ran(n):
@@ -23,6 +22,23 @@ def ran(n):
 ran(5)
 SDL.SDL_global.flip()
 
+#draw
+import SDL
+import random
+w = SDL.Global()
+w.init()
+
+w.set_projection(-1,0,0,0,0)
+w.world_projection()
+
+for i in range(0,256):
+	x = random.random()	
+	y = random.random()
+	z = random.random()
+	temp = SDL.draw_line(100,0,0, x,y,z, random.random(),random.random(),random.random())
+	temp = SDL.draw_point(0,100,0, random.random(),random.random(),random.random())
+
+w.flip()
 
 #keyboard test
 import time

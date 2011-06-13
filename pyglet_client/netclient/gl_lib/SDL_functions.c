@@ -54,12 +54,12 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    //glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 
     //whaa
 
-    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-
+    //glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
 /*
     glEnable( GL_TEXTURE_2D );
 

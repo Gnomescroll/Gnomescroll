@@ -29,7 +29,7 @@ void _camera_projection( Camera c) {
 int _world_projection(struct Camera c) {
     float aspect = c.x_size / c.y_size;
 
-    //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -59,7 +59,7 @@ int _world_projection(struct Camera c) {
         glEnable (GL_DEPTH_TEST)
         #glEnable(GL_CULL_FACE);
 */
-
+    //printf( "gl error: %s\n", SDL_GetError() );
     return 0;
 }
 
@@ -89,5 +89,5 @@ glDisable(GL_DEPTH_TEST);
         #glDisable(GL_CULL_FACE);
         glEnable(gl.GL_TEXTURE_2D)
 */
-
+return 0;
 }

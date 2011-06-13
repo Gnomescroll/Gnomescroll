@@ -29,9 +29,9 @@ cdef extern int _del_video()
 cdef extern int _swap_buffers()
 
 ## Draw functions ##
-
-cdef extern int _draw_point(int r, int g,int b, float x0, float y0, float z0)
-cdef extern int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
+cdef extern from "draw.h":
+    int _draw_point(int r, int g,int b, float x0, float y0, float z0)
+    int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
 
 def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float y1, float z1):
     return _draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
@@ -60,7 +60,7 @@ cdef class Global:
         self.set_projection(0.,0.,0.,0.,0.)
         _init_video()
         #input init
-        #init_input()
+        init_input()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"
