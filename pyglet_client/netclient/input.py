@@ -42,7 +42,7 @@ class InputEventGlobal:
 
     def keyboard_event(self, keycode):
         key = Keystring.get(keycode, None)
-        print str(key)
+        #print str(key)
         self.keyboard.on_key_press(key)
         if key == None:
             print "keycode unhandled= " + str(keycode)
@@ -53,7 +53,7 @@ class InputEventGlobal:
             temp = Keystring.get(keycode, None)
             if temp != None:
                 keyboard.append(temp)
-        print str(keyboard)
+        #print str(keyboard)
         self.keyboard.stateHandler(keyboard)
 
     def keyboard_text_event(self, key, key_string):

@@ -83,28 +83,32 @@ class Textures:
     hud_tex = None
     tile_tex = None
 
-    def __init__(self):
+    def init(self):
         print "Initing Textures"
         self.hud_tex = Texture("./texture/target.png", 0)
         self.tile_tex = Texture("./texture/textures_01.png", 0)
 
-cdef class Global:
+class Global:
     cdef Camera camera
-    textures = Textures()
+    #textures = Textures()
 #    cdef Window window
 
     #make field of view adjustable!
+    def __init__(self):
+        #self.camera = Camera()
+
+        self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
+        self.set_projection(0.,0.,0.,0.,0.)
+
     def init(self):
+        print "Creating SDL OpenGL Window"
         _init_video()
         _init_input()
-        _init_image_loader()
+        #_init_image_loader()
 
         #self.textures.hud_tex = Texture("./texture/target.png", 0)
         #self.textures.tile_tex = Texture("./texture/textures_01.png",0)
-#        self.camera = Camera()
-        print "Creating SDL OpenGL Window"
-        self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
-        self.set_projection(0.,0.,0.,0.,0.)
+        #self.camera = Camera()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"
@@ -115,23 +119,29 @@ cdef class Global:
 
     #camera
     def set_aspect(self, float fov, float x_size, float y_size, float z_near, float z_far):
-        self.camera.fov = fov
-        self.camera.x_size = x_size
-        self.camera.y_size = y_size
-        self.camera.z_near = z_near
-        self.camera.z_far = z_far
+        cdef Camera camera
+        camera = self.camera
+
+        camera.fov = fov
+        camera.x_size = x_size
+        camera.y_size = y_size
+        camera.z_near = z_near
+        camera.z_far = z_far
 
     def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
-        self.camera.x = x
-        self.camera.y = y
-        self.camera.z = z
-        self.camera.x_angle = x_angle
-        self.camera.y_angle = y_angle
+        cdef Camera camera
+        camera = self.camera
 
-    def world_projection(Global self):
+        camera.x = x
+        camera.y = y
+        camera.z = z
+        camera.x_angle = x_angle
+        camera.y_angle = y_angle
+
+    def world_projection(self):
         _world_projection(self.camera)
 
-    def hud_projection(Global self):
+    def hud_projection(self):
         _hud_projection(self.camera)
 
 ### init
