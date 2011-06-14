@@ -64,7 +64,7 @@ class InputEventGlobal:
         #handle scroll events
         if state == 1: #mouse click?
             self.mouse.on_mouse_press(x,y,button)
-            print "click"
+            #print "click"
         elif state == 0: #mouse button release
             pass
 
@@ -162,6 +162,7 @@ class Mouse(object):
         if InputGlobal.input == 'agent':
             if buttons == 1:
                 #playSound.build()
+                #print "fire"
                 GameStateGlobal.agent.fire()
             elif buttons == 2:
                 #playSound.music()
