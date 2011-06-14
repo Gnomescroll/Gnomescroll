@@ -64,6 +64,7 @@ class InputEventGlobal:
         #handle scroll events
         if state == 1: #mouse click?
             self.mouse.on_mouse_press(x,y,button)
+            print "click"
         elif state == 0: #mouse button release
             pass
 
@@ -246,7 +247,7 @@ class Keyboard(object):
             key.Q : InputGlobal.toggle_input_mode,
             key.E : InputGlobal.toggle_camera_mode,
         })
-        else: #pyglet versions
+        else:
             self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
@@ -315,9 +316,9 @@ class Keyboard(object):
                     v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
             if 'c' in keyboard:
                 brake = 1
-            #fix
-            #if keyboard[key.SPACE]:
-            #    jetpack = 1
+            if 'SPACE' in keyboard:
+                jetpack = 1
+
         GameStateGlobal.agent.control_state = [
             d_x,
             d_y,
@@ -371,22 +372,34 @@ class AgentInput:
         self._init_key_handlers()
 
     def _init_key_handlers(self):
-        if not settings.pyglet:
-            return
-        self._bind_key_handlers({
-            key.R : self.reload,
-            key._1: self.switch_weapon,
-            key._2: self.switch_weapon,
-            key._3: self.switch_weapon,
-            key._4: self.switch_weapon,
-            key._5: self.switch_weapon,
-            key._6: self.switch_weapon,
-            key._7: self.switch_weapon,
-            key._8: self.switch_weapon,
-            key._9: self.switch_weapon,
-            key._0: self.switch_weapon,
-        })
-
+        if settings.pyglet:
+            self._bind_key_handlers({
+                key.R : self.reload,
+                key._1: self.switch_weapon,
+                key._2: self.switch_weapon,
+                key._3: self.switch_weapon,
+                key._4: self.switch_weapon,
+                key._5: self.switch_weapon,
+                key._6: self.switch_weapon,
+                key._7: self.switch_weapon,
+                key._8: self.switch_weapon,
+                key._9: self.switch_weapon,
+                key._0: self.switch_weapon,
+            })
+        else:
+            self._bind_key_handlers({
+                "r" : self.reload,
+                "1": self.switch_weapon,
+                "2": self.switch_weapon,
+                "3": self.switch_weapon,
+                "4": self.switch_weapon,
+                "5": self.switch_weapon,
+                "6": self.switch_weapon,
+                "7": self.switch_weapon,
+                "8": self.switch_weapon,
+                "9": self.switch_weapon,
+                "0": self.switch_weapon,
+            })
     # accept key,handler or a dict of key,handlers
     def _bind_key_handlers(self, key, handler=None):
         if handler is None:
