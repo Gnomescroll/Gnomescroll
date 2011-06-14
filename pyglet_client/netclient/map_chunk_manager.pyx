@@ -27,6 +27,25 @@ cdef enum:
     y_chunk_size = 8
     z_chunk_size = 8
 
+cdef struct Vertex:
+    float x,y,z
+    float tx, ty
+    unsigned char r,g,b,a #for packing
+
+cdef struct Quad:
+    Vertex vertex[4]
+
+cdef struct Chunk_scratch:
+    Quad quad[x_chunk_size*y_chunk_size*z_chunk_size]
+    int v_num
+#    int x_off,y_off,z_off
+
+from libc.stdlib cimport malloc, free
+
+cdef Chunk_scratch * chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
+
+#cdef Camera *camera = <Camera *>malloc(sizeof(Camera))
+
 class TransparentBlockManager(object):
     cubePhysicalProperties = None
     terrainMap = None
