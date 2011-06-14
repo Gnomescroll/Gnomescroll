@@ -250,7 +250,7 @@ class Keyboard(object):
             self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
-            "Q" : InputGlobal.toggle_input_mode,
+            "q" : InputGlobal.toggle_input_mode,
             "E" : InputGlobal.toggle_camera_mode,
         })
     # accept key,handler or a dict of key,handlers
