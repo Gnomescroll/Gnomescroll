@@ -4,12 +4,20 @@ cimport libc.stdlib
 #cdef extern from "SDL.h":
 
 ## Camera.c ##
-cdef class Camera: #maybe public?
-    cdef float fov, x_size, y_size, z_near, z_far
-    cdef float x,y,z, x_angle,y_angle
+cdef extern struct Camera: #maybe public?
+    float fov
+    float x_size
+    float y_size
+    float z_near
+    float z_far
+    float x
+    float y
+    float z
+    float x_angle
+    float y_angle
 
-cdef extern int _world_projection(Camera camera)
-cdef extern int _hud_projection(Camera camera)
+cdef extern int _world_projection(Camera* camera)
+cdef extern int _hud_projection(Camera* camera)
 
 ## End Camera.c ##
 
@@ -88,14 +96,17 @@ class Textures:
         self.hud_tex = Texture("./texture/target.png", 0)
         self.tile_tex = Texture("./texture/textures_01.png", 0)
 
-class Global:
-    cdef Camera camera
+from libc.stdlib cimport malloc, free
+
+cdef class Global:
+    cdef Camera* camera
     #textures = Textures()
 #    cdef Window window
 
     #make field of view adjustable!
     def __init__(self):
-        #self.camera = Camera()
+        cdef Camera *camera = <Camera *>malloc(sizeof(Camera))
+        self.camera = camera
 
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
         self.set_projection(0.,0.,0.,0.,0.)
@@ -119,7 +130,7 @@ class Global:
 
     #camera
     def set_aspect(self, float fov, float x_size, float y_size, float z_near, float z_far):
-        cdef Camera camera
+        cdef Camera* camera
         camera = self.camera
 
         camera.fov = fov
@@ -129,7 +140,7 @@ class Global:
         camera.z_far = z_far
 
     def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
-        cdef Camera camera
+        cdef Camera* camera
         camera = self.camera
 
         camera.x = x
