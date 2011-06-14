@@ -1,5 +1,8 @@
-import pyglet
-from pyglet.gl import *
+import settings
+
+if settings.pyglet:
+    import pyglet
+    from pyglet.gl import *
 
 class MapChunkManagerGlobal:
 
@@ -234,6 +237,7 @@ class MapChunk(object):
             c_list += tc_list
             tex_list += ttex_list
             v_num += 4
+
 
         #print str(v_list)
         #print str(c_list)
