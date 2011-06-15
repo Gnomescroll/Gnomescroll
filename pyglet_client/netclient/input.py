@@ -428,9 +428,9 @@ class AgentInput:
         GameStateGlobal.agent.reload()
 
     def switch_weapon(self, symbol, modifiers):
-        print 'switch weapon'
-        print symbol, modifiers
-        print str(symbol)
+        #print 'switch weapon'
+        #print symbol, modifiers
+        #print str(symbol)
         try:
             weapon_index = int(symbol)
         except (ValueError, TypeError):
