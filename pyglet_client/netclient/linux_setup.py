@@ -25,8 +25,16 @@ module1 = Extension('SDL',
                                 'gl_lib/texture_loader.c',
                                 'gl_lib/SDL_interface.pyx'])
 
+cube_lib = Extension('cube_lib',
+                    include_dirs = ['/usr/local/include',],
+                    libraries = [],
+                    library_dirs = [],
+                    extra_compile_args = [],
+                    extra_link_args = [],
+                    sources = ['cube_lib/cube_lib.pyx'])
+
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [module1]
+    ext_modules = [module1, cube_lib] + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
