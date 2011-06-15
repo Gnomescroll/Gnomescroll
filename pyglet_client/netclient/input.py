@@ -63,17 +63,9 @@ class InputEventGlobal:
     def mouse_event(self, button,state,x,y,):
         #handle scroll events
         print str (button) + " " + str(state)
-        if state == 1: #mouse click?
-            self.mouse.on_mouse_press(x,y,button)
-            #print "click"
-        elif state == 0: #mouse button release
-            pass
-        elif button == 4 and state == 0:
-            pass #scroll up
-            print "Scroll up"
-        elif button == 5 and state == 0:
-            pass
-            print "Scroll down"
+
+        self.mouse.on_mouse_press(x,y,button, state)
+        print "click"
 
     def mouse_motion(self, x,y,dx,dy,button):
         if button != 0:
@@ -165,7 +157,7 @@ class Mouse(object):
     def _pan_camera(self, x, y, dx, dy, sen=50):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
-    def on_mouse_press(self, x, y, buttons, modifiers=None):
+    def on_mouse_press(self, x, y, buttons, state= None):
         if InputGlobal.input == 'agent':
             if buttons == 1:
                 #playSound.build()
@@ -178,6 +170,7 @@ class Mouse(object):
                 GameStateGlobal.agent.set_active_block()
 
     #migrate over
+    ## Deprecate
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if scroll_y > 0:
             direction = 'up'
