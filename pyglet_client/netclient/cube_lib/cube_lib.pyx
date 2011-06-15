@@ -123,15 +123,24 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 ## control state
 
 def test_check():
-    pass
+    cdef int i
+
+    for i in range(0,150)
+        add_quad(5,5,i,3,0)
+
+
+
 
 
 def init():
     init_quad_cache()
     clear_buffer()
 
+
 def clear_buffer():
     chunk_scratch.v_num = 0
 
-def add_quad(x,y,z,side,tile):
+def add_quad(float x,float y,float z,int side,int tile):
+    Quad* quad = chunk_scratch[chunk_scratch.v_num]
     chunk_scratch.v_num += 1
+    set_side(x,y,z, tile, side, quad)

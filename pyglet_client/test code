@@ -91,3 +91,4 @@ w.flip()
 import cube_lib
 #cube_lib.init_quad_cache()
 cube_lib.init()
+cube_lib.test_chunk()
