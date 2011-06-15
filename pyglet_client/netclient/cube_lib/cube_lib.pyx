@@ -36,7 +36,7 @@ quad_cache = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
 
 cdef float v_index[72]
 
-v_index = [
+l = [
          0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
          1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
          0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #north
@@ -44,6 +44,8 @@ v_index = [
          0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #west
          1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #east
     ]
+for i in range(0, 72):
+    v_index[i] = float(l[i])
 
 cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
     vertex.tx = x * (1/8)
