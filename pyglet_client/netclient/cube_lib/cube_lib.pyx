@@ -102,7 +102,7 @@ def init_quad_cache():
 
 cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
     cdef int i
-    cdef vertex* vertex
+    cdef Vertex* vertex
     quad = &quad_cache.quad[6*tile_id + side_num]
     for i in range(0,4):
         vertex = &quad.vertex[i]
