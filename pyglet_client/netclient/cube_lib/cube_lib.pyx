@@ -5,7 +5,7 @@ from libc.stdlib cimport malloc, free
 
 #constants
 cdef enum:
-    max_cubes = 4096
+    max_cubes = 1024
 
 cdef enum:
     x_chunk_size = 8
@@ -26,11 +26,11 @@ cdef struct Cube:
     Quad quad[6]
 
 cdef struct Chunk_scratch:
-    Quad quad[chunk_size*6]
+    Quad quad[chunk_size*6] #6 quad per cube
     int v_num
 
-cdef struct Quad_cache:
-    Quad quad[max_cubes*6]
+#cdef struct Quad_cache:
+#    Quad quad[max_cubes*6]  #6 quad per cube
 
 #globals
 
@@ -38,8 +38,8 @@ cdef struct Quad_cache:
 cdef Chunk_scratch* chunk_scratch
 chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
 
-cdef Quad_cache* quad_cache
-quad_cache = <Quad_cache *>malloc(sizeof(Quad_cache))
+cdef Quad* quad_cache
+quad_cache = <Quad *>malloc(max_cubes*6*sizeof(Quad))
 
 cdef float v_index[72]
 
@@ -83,9 +83,9 @@ def init_quad_cache():
     cdef Quad* quad
     cdef Vertex* vertex
     cdef int i,j,k,index
-    for k in range(0, chunk_size):
+    for k in range(0, max_cubes):
         for i in range(0,5):
-            quad = &quad_cache.quad[6*k+i]
+            quad = &quad_cache[6*k+i]
             for j in range(0,4):
                 index = 12*i + 4*j
                 vertex = &quad.vertex[j]
@@ -99,11 +99,13 @@ def init_quad_cache():
                 vertex.b = 255
                 vertex.a = 255
                 set_tex(j, vertex, 0, 3)
+                #print "(%i,%i,%i)" % (k,i,j)
+    #print "done"
 
 cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
     cdef int i
     cdef Vertex* vertex
-    quad = &quad_cache.quad[6*tile_id + side_num]
+    quad = &quad_cache[6*tile_id + side_num]
     for i in range(0,4):
         vertex = &quad.vertex[i]
         vertex.x +=x
@@ -119,6 +121,10 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 #cdef Chunk_scratch * chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
 
 ## control state
+
+def init():
+    init_quad_cache()
+    clear_buffer()
 
 def clear_buffer():
     chunk_scratch.v_num = 0

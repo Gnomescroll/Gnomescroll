@@ -85,3 +85,9 @@ w.world_projection()
 w.hud_projection()
 
 w.flip()
+
+## cube_lib test##
+
+import cube_lib
+#cube_lib.init_quad_cache()
+cube_lib.init()
