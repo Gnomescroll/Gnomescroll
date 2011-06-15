@@ -1,3 +1,4 @@
+from libc.stdlib cimport malloc, free
 
 #core functionality
 
@@ -30,9 +31,12 @@ cdef struct Chunk_scratch:
 
 #globals
 
-cdef quad_cache quad[max_cubes]
+cdef Chunk_scratch* quad_cache
+quad_cache = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
 
-cdef float v_index[72] = [
+cdef float v_index[72]
+
+v_index = [
          0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
          1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
          0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #north
@@ -41,27 +45,21 @@ cdef float v_index[72] = [
          1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #east
     ]
 
-cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
-    (*quad) = quad_cache[6*tile_id + side_num]
-    quad->x +=x
-    quad->y +=y
-    quad->z +=z
-
-cdef inline set_tex(int vert_num, Quad* quad, float x, float y):
-    quad.tx = x * (1/8)
-    quad.ty = x * (1/8)
+cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
+    vertex.tx = x * (1/8)
+    vertex.ty = x * (1/8)
     if vert_num == 0:
-        quad.tx += 0
-        quad.ty += 0
+        vertex.tx += 0
+        vertex.ty += 0
     if vert_num == 1:
-        quad.tx += 1/8
-        quad.ty += 0
+        vertex.tx += 1/8
+        vertex.ty += 0
     if vert_num == 2:
-        quad.tx += 1/8
-        quad.ty += 1/8
+        vertex.tx += 1/8
+        vertex.ty += 1/8
     if vert_num == 3:
-        quad.tx += 0
-        quad.ty += 1/8
+        vertex.tx += 0
+        vertex.ty += 1/8
 
 def convert_index(index, height, width):
     index = int(index)
@@ -74,22 +72,34 @@ def convert_index(index, height, width):
 #init
 def init_quad_cache():
     cdef Quad* quad
+    cdef Vertex* vertex
     cdef int i,j,k,index
     for k in range(0, chunk_size):
         for i in range(0,5):
-            quad = &quad_cache[6*k+i]
-            for j in range(0,4)
+            (*quad) = quad_cache[6*k+i]
+            for j in range(0,4):
                 index = 12*i + 4*j
+                vertex = quad.vertex[j]
                 #vertices
-                quad.x = v_index[index + 0]
-                quad.y = v_index[index + 1]
-                quad.z = v_index[index + 2]
+                vertex.x = v_index[index + 0]
+                vertex.y = v_index[index + 1]
+                vertex.z = v_index[index + 2]
                 #colors
-                quad.r = 255
-                quad.g = 255
-                quad.b = 255
-                quad.a = 255
-                set_tex(j, quad, 0, 3)
+                vertex.r = 255
+                vertex.g = 255
+                vertex.b = 255
+                vertex.a = 255
+                set_tex(j, vertex, 0, 3)
+
+cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
+    cdef int i
+    cdef vertex* vertex
+    quad = &quad_cache.quad[6*tile_id + side_num]
+    for i in range(0,4):
+        vertex = &quad.vertex[i]
+        vertex.x +=x
+        vertex.y +=y
+        vertex.z +=z
 
 #(tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
 
