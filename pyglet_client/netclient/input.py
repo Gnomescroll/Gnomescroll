@@ -159,24 +159,29 @@ class Mouse(object):
 
     def on_mouse_press(self, x, y, buttons, state= None):
         if InputGlobal.input == 'agent':
-            if buttons == 1:
-                #playSound.build()
-                #print "fire"
-                GameStateGlobal.agent.fire()
-            elif buttons == 2:
-                #playSound.music()
+            if state == 1: #pressed down
+                if buttons == 1:
+                    #playSound.build()
+                    #print "fire"
+                    GameStateGlobal.agent.fire()
+                elif buttons == 3: #right click
+                    GameStateGlobal.agent.set_active_block()
+                elif buttons == 4: #scroll up
+                    direction = 'up'
+                    GameStateGlobal.agent.weapons.switch(direction)
+                elif buttons == 5: #scroll down
+                    direction = 'down'
+                    GameStateGlobal.agent.weapons.switch(direction)
+            elif state == 0: #mouse button released
                 pass
-            elif buttons == 4:
-                GameStateGlobal.agent.set_active_block()
-
     #migrate over
     ## Deprecate
-    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        if scroll_y > 0:
-            direction = 'up'
-        elif scroll_y < 0:
-            direction = 'down'
-        GameStateGlobal.agent.weapons.switch(direction)
+#    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+#        if scroll_y > 0:
+#            direction = 'up'
+#        elif scroll_y < 0:
+#            direction = 'down'
+#        GameStateGlobal.agent.weapons.switch(direction)
 
 from math import sin, cos, pi
 
