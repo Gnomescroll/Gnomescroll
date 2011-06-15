@@ -29,10 +29,17 @@ cdef struct Chunk_scratch:
     Quad quad[chunk_size*6]
     int v_num
 
+cdef struct Quad_cache:
+    Quad quad[max_cubes*6]
+
 #globals
 
-cdef Chunk_scratch* quad_cache
-quad_cache = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
+
+cdef Chunk_scratch* chunk_scratch
+chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
+
+cdef Quad_cache* quad_cache
+quad_cache = <Quad_cache *>malloc(sizeof(Quad_cache))
 
 cdef float v_index[72]
 
@@ -78,10 +85,10 @@ def init_quad_cache():
     cdef int i,j,k,index
     for k in range(0, chunk_size):
         for i in range(0,5):
-            (*quad) = quad_cache[6*k+i]
+            quad = &quad_cache.quad[6*k+i]
             for j in range(0,4):
                 index = 12*i + 4*j
-                vertex = quad.vertex[j]
+                vertex = &quad.vertex[j]
                 #vertices
                 vertex.x = v_index[index + 0]
                 vertex.y = v_index[index + 1]
@@ -114,7 +121,7 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 ## control state
 
 def clear_buffer():
-    quad_cache.v_num = 0
+    chunk_scratch.v_num = 0
 
 def add_quad(x,y,z,side,tile):
-    quad_cache.v_num += 1
+    chunk_scratch.v_num += 1
