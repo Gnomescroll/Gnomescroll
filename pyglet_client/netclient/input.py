@@ -62,10 +62,10 @@ class InputEventGlobal:
 
     def mouse_event(self, button,state,x,y,):
         #handle scroll events
-        print str (button) + " " + str(state)
+        #print str (button) + " " + str(state)
 
         self.mouse.on_mouse_press(x,y,button, state)
-        print "click"
+        #print "click"
 
     def mouse_motion(self, x,y,dx,dy,button):
         if button != 0:
