@@ -8,4 +8,4 @@ python setup.py build_ext --inplace
 
 cd ../netclient
 echo 'building netclient/linux_setup.py'
-python linux_SDL_setup.py build_ext --inplace
+python linux_setup.py build_ext --inplace
