@@ -62,11 +62,18 @@ class InputEventGlobal:
 
     def mouse_event(self, button,state,x,y,):
         #handle scroll events
+        print str (button) + " " + str(state)
         if state == 1: #mouse click?
             self.mouse.on_mouse_press(x,y,button)
             #print "click"
         elif state == 0: #mouse button release
             pass
+        elif button == 4 and state == 0:
+            pass #scroll up
+            print "Scroll up"
+        elif button == 5 and state == 0:
+            pass
+            print "Scroll down"
 
     def mouse_motion(self, x,y,dx,dy,button):
         if button != 0:
@@ -228,8 +235,9 @@ class Keyboard(object):
 
             self.key_handlers.get(symbol, lambda: None)()
             if settings.pyglet:
-                if symbol == key.TAB:
-                    InputGlobal.scoreboard = True
+                pass
+                #if symbol == key.TAB:
+                #    InputGlobal.scoreboard = True
             else:
                 if symbol == 'TAB':
                     InputGlobal.scoreboard = True
