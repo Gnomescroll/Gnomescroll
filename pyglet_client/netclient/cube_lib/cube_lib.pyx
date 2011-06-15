@@ -122,6 +122,10 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 
 ## control state
 
+def test_check():
+    pass
+
+
 def init():
     init_quad_cache()
     clear_buffer()

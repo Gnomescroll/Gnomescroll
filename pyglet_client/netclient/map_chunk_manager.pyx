@@ -1,8 +1,8 @@
 import settings
 
-if settings.pyglet:
-    import pyglet
-    from pyglet.gl import *
+#if settings.pyglet:
+import pyglet
+from pyglet.gl import *
 
 class MapChunkManagerGlobal:
 
@@ -136,7 +136,8 @@ class MapChunkManager(object):
         assert self.terrainMap != None
 
     def __init__(self):
-        self.draw_batch = pyglet.graphics.Batch()
+        if settings.pyglet:
+            self.draw_batch = pyglet.graphics.Batch()
         self.mapChunks = []
         self.mp = {}
 
