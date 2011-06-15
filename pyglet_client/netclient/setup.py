@@ -16,7 +16,7 @@ cube_lib = Extension('cube_lib',
                     include_dirs = ['/usr/local/include',],
                     libraries = [],
                     library_dirs = [],
-                    extra_compile_args = [], # $(shell sdl-config --cflags)
+                    extra_compile_args = [],
                     extra_link_args = [],
                     sources = ['cube_lib/cube_lib.pyx'])
 
