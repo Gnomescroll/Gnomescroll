@@ -157,23 +157,27 @@ class Mouse(object):
     def _pan_camera(self, x, y, dx, dy, sen=50):
         self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
-    def on_mouse_press(self, x, y, buttons, state= None):
+    #buttonss:
+    #1 left, 2 right, 4 scroll up, 5 scroll down
+    #state is 0 or 1, 1 if mouse was click, 0 if it was released
+    def on_mouse_press(self, x, y, button, state= None):
         if InputGlobal.input == 'agent':
             if state == 1: #pressed down
-                if buttons == 1:
+                if button == 1:
                     #playSound.build()
                     #print "fire"
                     GameStateGlobal.agent.fire()
-                elif buttons == 3: #right click
+                elif button == 3: #right click
                     GameStateGlobal.agent.set_active_block()
-                elif buttons == 4: #scroll up
+                elif button == 4: #scroll up
                     direction = 'up'
                     GameStateGlobal.agent.weapons.switch(direction)
-                elif buttons == 5: #scroll down
+                elif button == 5: #scroll down
                     direction = 'down'
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
+
     #migrate over
     ## Deprecate
 #    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
