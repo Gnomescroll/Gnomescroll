@@ -430,9 +430,9 @@ class AgentInput:
     def switch_weapon(self, symbol, modifiers):
         print 'switch weapon'
         print symbol, modifiers
-        print key.symbol_string(symbol)
+        print str(symbol)
         try:
-            weapon_index = int(key.symbol_string(symbol)[1:])
+            weapon_index = int(symbol)
         except (ValueError, TypeError):
             return
         print 'attempting to switch weapon to ', weapon_index
