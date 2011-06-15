@@ -95,7 +95,11 @@ class AgentWeapons:
         if weapons is None:
             weapons = []
         self.weapons = weapons
-        self._active_weapon = active_weapon #    which weapon is held
+        if active_weapon is None:
+            self._active_weapon = None
+            self._adjust_active_weapon()
+        else:
+            self._active_weapon = active_weapon #    which weapon is held
     
     def active(self):
         if self._active_weapon is None:
@@ -118,7 +122,25 @@ class AgentWeapons:
                 known_weapon.update_info(**weapon)
             new_weapons.append(known_weapon)
         self.weapons = new_weapons
+        self._adjust_active_weapon()
 
+    def _adjust_active_weapon(self):
+        n = len(self)                   # number of weapons
+        aw = self._active_weapon        # active list index in weapons
+        
+        if aw is None:                 # no weapon equipped (default init state)
+            if n > 0:                   # if there are weapons now
+                aw = 0                  # set it to the first weapon
+                
+        else:                               # weapon is currently equipped
+            last_weapon = n - 1 
+            if aw > last_weapon:                  # num weapons shrunk below active index
+                aw = last_weapon                  # set active to last weapon
+                if aw < 0:                  # if there are no weapons
+                    aw = None               # active is None
+
+        self._active_weapon = aw
+            
     def __len__(self):
         return len(self.weapons)
 
