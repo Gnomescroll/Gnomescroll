@@ -41,13 +41,19 @@ SDL_input = Extension('SDL.input',
                                 )
 
 cube_lib_VBO = Extension('cube_lib.VBO',
+                    #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
-                    'gl_lib'],
-                    libraries = [],
-                    library_dirs = [],
-                    extra_compile_args = [],
-                    extra_link_args = [],
-                    sources = ['cube_lib/VBO.pyx'])
+                                    'gl_lib',
+                                    '/usr/local/include',
+                                    ' /usr/include/X11/extensions/',
+                                    '/usr/include/SDL',
+                                    '/usr/lib',     ],
+                    libraries = ['SDL','GL','SDL','GLU', 'SDL_image'], #SDL_image ?
+
+                    library_dirs = ['/usr/X11R6/lib','usr/lib'],
+                    extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT'],
+                    sources = ['cube_lib/VBO.pyx',
+                    'SDL/draw_functions.c'])
 
 setup(
     cmdclass = {'build_ext': build_ext},

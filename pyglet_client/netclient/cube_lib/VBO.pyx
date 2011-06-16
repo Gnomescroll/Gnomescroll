@@ -165,12 +165,15 @@ def test_chunk():
 
 cimport SDL.gl
 #import SDL.gl
-from SDL.gl cimport _bind_VBO
+from SDL.gl cimport bind_VBO
 
 #cdef exern _bind_VBO(Quad* quad_list, int v_num)
+
+#extern from 'draw_functions.h':
+#    cdef exern _bind_VBO(Quad* quad_list, int v_num)
 
 def draw_test_chunk():
     cdef Quad* quad_list = chunk_scratch.quad
     cdef int v_num = chunk_scratch.v_num
     #SGL.gl._bind_VBO(quad_list, v_num)
-    _bind_VBO(quad_list, v_num)
+    bind_VBO(quad_list, v_num)

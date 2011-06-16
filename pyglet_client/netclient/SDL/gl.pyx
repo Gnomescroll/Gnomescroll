@@ -1,6 +1,10 @@
 
 cimport libc.stdlib
 
+#type imports
+cimport cube_lib.types
+from cube_lib.types cimport Quad, Vertex
+
 #cdef extern from "SDL.h":
 
 ## Camera.c ##
@@ -58,14 +62,6 @@ def get_ticks():
 #cdef extern struct Quad
 #cdef extern struct Vertex
 
-cdef struct Vertex:
-    float x,y,z
-    float tx,ty
-    unsigned char r,g,b,a #for packing
-
-cdef struct Quad:
-    Vertex vertex[4]
-
 cdef extern from "draw_functions.h":
     int _draw_point(int r, int g,int b, float x0, float y0, float z0)
     int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
@@ -78,7 +74,7 @@ def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float
 def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
-cdef inline bind_VBO(Quad* quad_list, int v_num):
+cdef bind_VBO(Quad* quad_list, int v_num):
     _bind_VBO(quad_list, v_num)
 
 
