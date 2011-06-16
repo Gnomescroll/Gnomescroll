@@ -1,6 +1,8 @@
 
 
-__all__ = ["gl", "input"]
+__all__ = ["VBO"]
 
-import VBO
+#import VBO
 #from cube_lib import *
+
+#from VBO import *
