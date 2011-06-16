@@ -1,4 +1,4 @@
-#include "./draw.h"
+#include "./draw_functions.h"
 
 //struct line_vertices
 int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1) {
@@ -42,4 +42,9 @@ glBegin( GL_QUADS );
 glEnd();
 
     glDisable(GL_BLEND);
+}
+
+int _bind_VBO(struct Quad* quad_list, int v_num) {
+    printf("test");
+    return 0;
 }

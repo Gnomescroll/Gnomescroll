@@ -6,7 +6,7 @@ from Cython.Distutils import build_ext
 #will compile a module called SDL in netclient directory
 #python linux_SDL_setup.py build_ext --inplace
 
-module1 = Extension('SDL',
+SDL_gl = Extension('SDL.gl',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
                                     ' /usr/include/X11/extensions/',
@@ -17,24 +17,40 @@ module1 = Extension('SDL',
                     library_dirs = ['/usr/X11R6/lib','usr/lib'],
                     extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT'], # $(shell sdl-config --cflags)
                     #extra_link_args = '',
-                    sources = ['gl_lib/SDL_functions.c',
-                                'gl_lib/camera.c',
-                                'gl_lib/draw.c',
-                                'gl_lib/input.c',
-                                'gl_lib/vbo_manager.c',
-                                'gl_lib/texture_loader.c',
-                                'gl_lib/SDL_interface.pyx'])
+                    sources = ['SDL/SDL_functions.c',
+                                'SDL/camera.c',
+                                'SDL/draw_functions.c',
+                                'SDL/vbo_manager.c',
+                                'SDL/texture_loader.c',
+                                'SDL/gl.pyx'])
 
-cube_lib = Extension('cube_lib',
-                    include_dirs = ['/usr/local/include',],
+SDL_input = Extension('SDL.input',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = ['/usr/local/include',
+                                    ' /usr/include/X11/extensions/',
+                                    '/usr/include/SDL',
+                                    '/usr/lib',     ],
+                    libraries = ['SDL','GL','SDL','GLU', 'SDL_image'], #SDL_image ?
+
+                    library_dirs = ['/usr/X11R6/lib','usr/lib'],
+                    extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT'], # $(shell sdl-config --cflags)
+                    #extra_link_args = '',
+                    sources = [ 'SDL/input.pyx',
+                                'SDL/input_functions.c',
+                                'SDL/SDL_functions.c',]
+                                )
+
+cube_lib_VBO = Extension('cube_lib.VBO',
+                    include_dirs = ['/usr/local/include',
+                    'gl_lib'],
                     libraries = [],
                     library_dirs = [],
                     extra_compile_args = [],
                     extra_link_args = [],
-                    sources = ['cube_lib/cube_lib.pyx'])
+                    sources = ['cube_lib/VBO.pyx'])
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [module1, cube_lib] + cythonize("*.pyx")
+    ext_modules = [SDL_gl, SDL_input, cube_lib_VBO] + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )

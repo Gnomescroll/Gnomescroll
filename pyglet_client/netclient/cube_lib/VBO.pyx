@@ -39,7 +39,11 @@ cdef Chunk_scratch* chunk_scratch
 chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
 
 cdef Quad* quad_cache
-quad_cache = <Quad *>malloc(max_cubes*6*sizeof(Quad))
+#quad_cache = <Quad *>malloc(max_cubes*6 * sizeof(Quad))
+quad_cache = <Quad *>malloc(1024*6 * sizeof(Quad))
+
+print "size = " + str(sizeof(max_cubes*6))
+#quad_cache = <Quad *>malloc(max_cubes*6*sizeof(Quad))
 
 cdef float v_index[72]
 
@@ -79,27 +83,44 @@ def convert_index(index, height, width):
     y = height - y_ -1
     rvalue =  x_ + y*width
 #init
+
+import time
+
+
+def test():
+    print str(max_cubes)
+    for i in range(0, max_cubes):
+        print str(i)
+        print str(quad_cache[i].vertex.x)
+
 def init_quad_cache():
     cdef Quad* quad
     cdef Vertex* vertex
     cdef int i,j,k,index
     for k in range(0, max_cubes):
-        for i in range(0,5):
+        for i in range(0,6):
             quad = &quad_cache[6*k+i]
+            #print "i=" + str(i)
+            #print "(6*k+i)="+str(6*k+i)
+            #print "x=" +str(quad.vertex[0].x)
             for j in range(0,4):
-                index = 12*i + 4*j
+                print "(%i,%i,%i)" % (k,i,j)
+                #print "j=" + str(j)
+                index = 12*i + 3*j
                 vertex = &quad.vertex[j]
                 #vertices
+                print "index=" +str(index)
+                #print "(%f,%f,%f)" % (v_index[index + 0],v_index[index + 1],v_index[index + 2])
                 vertex.x = v_index[index + 0]
                 vertex.y = v_index[index + 1]
                 vertex.z = v_index[index + 2]
                 #colors
-                vertex.r = 255
-                vertex.g = 255
-                vertex.b = 255
-                vertex.a = 255
-                set_tex(j, vertex, 0, 3)
-                #print "(%i,%i,%i)" % (k,i,j)
+                #vertex.r = 255
+                #vertex.g = 255
+                #vertex.b = 255
+                #vertex.a = 255
+                #set_tex(j, vertex, 0, 3)
+                #time.sleep(0.1)
     #print "done"
 
 cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
@@ -129,14 +150,9 @@ def test_chunk():
         add_quad(5,5,i,3,0)
 
 
-def draw_test_chunk():
-    cdef Quad* quad_list = chunk_scratch.quad
-    cdef int v_num = chunk_scratch.v_num
-
 def init():
     init_quad_cache()
     clear_buffer()
-
 
 def clear_buffer():
     chunk_scratch.v_num = 0
@@ -145,3 +161,14 @@ def add_quad(float x,float y,float z,int side,int tile):
     cdef Quad* quad = &chunk_scratch.quad[chunk_scratch.v_num]
     chunk_scratch.v_num += 1
     set_side(x,y,z, tile, side, quad)
+
+cimport SDL.gl
+#import SDL.gl
+from SDL.gl cimport _bind_VBO
+
+#cdef exern _bind_VBO(Quad* quad_list, int v_num)
+
+def draw_test_chunk():
+    cdef Quad* quad_list = chunk_scratch.quad
+    cdef int v_num = chunk_scratch.v_num
+    _bind_VBO(quad_list, v_num)

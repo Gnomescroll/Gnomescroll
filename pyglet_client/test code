@@ -90,4 +90,8 @@ w.flip()
 
 import cube_lib
 cube_lib.init()
+
+
+cube_lib.init()
 cube_lib.test_chunk()
+cube_lib.draw_test_chunk

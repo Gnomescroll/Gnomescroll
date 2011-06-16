@@ -8,7 +8,10 @@ terrain_map.c
 dat.c
 cube_dat.c
 map_chunk_manager.c
-cube_lib.c
+
+VBO.c
+input.c
+gl.c
 
 SDL_interface.c
 

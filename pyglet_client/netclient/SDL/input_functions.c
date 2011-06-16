@@ -1,4 +1,4 @@
-#include "./input.h"
+#include "./input_functions.h"
 
 //event globals
 SDL_Event Event;
@@ -153,4 +153,3 @@ char getUnicodeValue(SDL_keysym keysym ) {
             return '?';
             }
 }
-
