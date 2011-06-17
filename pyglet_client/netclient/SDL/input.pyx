@@ -69,12 +69,17 @@ def set_text_entry_mode(int n):
 #        pass
 
 #input_callback = Callback_dummy()
-input_callback = None
+def error(**x):
+    print("SDL.input.pyx error: input callback not set")
+class Object(object):
+    pass
+input_callback = Object()
+input_callback.key_state = error
 
 def set_input_callback(callback):
     global input_callback
     input_callback = callback
-    print "Input Callback Set"
+    #print "Input Callback Set"
 
 cdef int key_state_callback(Uint8* keystate, int numkeys):
     global input_callback
@@ -107,5 +112,4 @@ cdef int mouse_event_callback(MouseEvent me):
     input_callback.mouse_event(me.button, me.state, me.x, me.y)
     #input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
 
-def init():
-    _init_input()
+_init_input()

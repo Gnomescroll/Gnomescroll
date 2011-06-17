@@ -24,19 +24,19 @@ SDL.SDL_global.flip()
 
 #draw
 import SDL
-import random
 w = SDL.Global()
 w.init()
 
 w.set_projection(-1,0,0,0,0)
 w.world_projection()
 
+import random
 for i in range(0,256):
 	x = random.random()	
 	y = random.random()
 	z = random.random()
-	temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
-	#temp = SDL.draw_point(0,100,0, random.random(),random.random(),random.random())
+	temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+	#temp = SDL.gh.draw_point(0,100,0, random.random(),random.random(),random.random())
 
 w.flip()
 
@@ -69,12 +69,12 @@ while True:
 ## keystate test
 
 import time
-import SDL
-win = SDL.Global()
-win.init()
+import SDL.input
+w = SDL.gl.Global()
+w.init()
 while True:
 	time.sleep(0.1)
-	SDL.get_key_state()
+	SDL.input.get_key_state()
 
 ## cursor texture loading test
 
