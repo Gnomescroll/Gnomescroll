@@ -59,16 +59,15 @@ class InputEventGlobal:
                 keyboard.append(temp)
         self.keyboard.stateHandler(keyboard)
 
-    #has issues with special characters
+    #add support for key pressed/key released
     def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
         key = Keystring.get(keycode, None)
-        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
-        #self.keyboard.on_text(key_string)
+        #uncomment to see key inputs
+        #print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
             self.keyboard.on_key_press(key)
         else:
             self.keyboard.on_key_release(key)
-        #print "text= " + key_string
 
     def mouse_event(self, button,state,x,y,):
         #handle scroll events
@@ -249,7 +248,7 @@ class Keyboard(object):
                 #self.key_handlers.get(symbol, lambda: None)()
             if symbol == 'TAB':
                 InputGlobal.scoreboard = True
-            self.key_handlers.get(symbol, lambda x: None)(symbol)
+            self.key_handlers.get(symbol, lambda: None)()
 
     def on_key_release(self, symbol):
         if symbol == 'TAB':
@@ -427,13 +426,14 @@ class AgentInput:
             self.key_handlers[key] = handler
 
     def on_key_press(self, symbol, modifiers=None):
-        self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
+        self.key_handlers.get(symbol, lambda : None)()
+        #self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
 
-    def reload(self, symbol, modifiers=None):
+    def reload(self, symbol=None, modifiers=None):
         print 'reloading'
         GameStateGlobal.agent.reload()
 
-    def switch_weapon(self, symbol, modifiers=None):
+    def switch_weapon(self, symbol=None, modifiers=None):
         #print 'switch weapon'
         #print symbol, modifiers
         #print str(symbol)
