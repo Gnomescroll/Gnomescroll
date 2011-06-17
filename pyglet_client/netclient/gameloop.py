@@ -120,8 +120,9 @@ class App(object):
                 self.win.dispatch_events()
                 InputGlobal.keyboard.stateHandler(keyboard)
             else:
+                pass
                 SDL.input.process_events()
-                SDL.input.get_key_state()
+                #SDL.input.get_key_state()
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events

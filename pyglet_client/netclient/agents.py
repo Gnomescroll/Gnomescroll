@@ -13,7 +13,7 @@ from weapons import LaserGun, Pick, BlockApplier
 import settings
 
 if settings.pyglet == False:
-    import SDL
+    import SDL.gl
 
 '''
 Physics for agents
@@ -64,7 +64,7 @@ class AgentRender:
             for i in range(0,v_num):
                 x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
                 r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.draw_point(r,g,b,x,y,z)
+                SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_bounding_box(self):
         #agent parameters
@@ -100,7 +100,7 @@ class AgentWeapons:
             self._adjust_active_weapon()
         else:
             self._active_weapon = active_weapon #    which weapon is held
-    
+
     def active(self):
         if self._active_weapon is None:
             return None
@@ -127,20 +127,20 @@ class AgentWeapons:
     def _adjust_active_weapon(self):
         n = len(self)                   # number of weapons
         aw = self._active_weapon        # active list index in weapons
-        
+
         if aw is None:                 # no weapon equipped (default init state)
             if n > 0:                   # if there are weapons now
                 aw = 0                  # set it to the first weapon
-                
+
         else:                               # weapon is currently equipped
-            last_weapon = n - 1 
+            last_weapon = n - 1
             if aw > last_weapon:                  # num weapons shrunk below active index
                 aw = last_weapon                  # set active to last weapon
                 if aw < 0:                  # if there are no weapons
                     aw = None               # active is None
 
         self._active_weapon = aw
-            
+
     def __len__(self):
         return len(self.weapons)
 
@@ -211,7 +211,7 @@ class AgentModel:
 
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
-            
+
         if 'owner' in agent:
             self.owner = agent['owner']
         if 'state' in agent:
@@ -330,7 +330,7 @@ class PlayerAgentRender(AgentRender):
             for i in range(0,v_num):
                 x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
                 r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.draw_point(r,g,b,x,y,z)
+                SDL.gl.draw_point(r,g,b,x,y,z)
 
 
     def draw_velocity(self, point_density, units):
@@ -355,7 +355,7 @@ class PlayerAgentRender(AgentRender):
             for i in range(0,v_num):
                 x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
                 r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.draw_point(r,g,b,x,y,z)
+                SDL.gl.draw_point(r,g,b,x,y,z)
 
 
     def draw_acceleration(self, point_density, units):
@@ -380,7 +380,7 @@ class PlayerAgentRender(AgentRender):
             for i in range(0,v_num):
                 x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
                 r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.draw_point(r,g,b,x,y,z)
+                SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_aiming_direction(self, distance=50):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
@@ -411,7 +411,7 @@ class PlayerAgentRender(AgentRender):
             for i in range(0,v_num):
                 x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
                 r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.draw_point(r,g,b,x,y,z)
+                SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_selected_cube(self):
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
