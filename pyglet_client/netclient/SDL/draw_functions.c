@@ -48,6 +48,8 @@ glEnd();
 GLuint texture = 0;
 SDL_Surface *surface;
 
+GLuint VBOid = 0;
+
 int _bind_VBO(struct Quad* quad_list, int v_num) {
     printf("test\n");
 ///test
@@ -60,7 +62,26 @@ if(texture == 0) { //load texture if texture is not set
 }
     glBindTexture( GL_TEXTURE_2D, texture );
 
-    printf("test finished\n");
+    printf("binding\n");
+
+    glGenBuffers(1, VBOid);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOid);
+    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(Quad), quad_list, GL_STATIC_DRAW); // size, pointer to array, usecase
+//interleaved
+
+glEnableClientState(GL_VERTEX_ARRAY);
+glEnableClientState(GL_COLOR_ARRAY);
+glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+glClientActiveTexture(texture); //bind texture
+
+glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
+glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), 12); //12 bytes in
+glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), 20);
+
+glDisableClientState(GL_VERTEX_ARRAY);
+glDisableClientState(GL_COLOR_ARRAY);
+glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 ///test
     return 0;
