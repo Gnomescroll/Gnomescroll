@@ -66,7 +66,7 @@ cdef extern from "draw_functions.h":
     int _draw_point(int r, int g,int b, float x0, float y0, float z0)
     int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
-    int _bind_VBO(Quad* quad_list,int v_num)
+    #int _bind_VBO(Quad* quad_list,int v_num)
 
 def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float y1, float z1):
     return _draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
@@ -74,8 +74,10 @@ def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float
 def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
+#deprecate
 cdef bind_VBO(Quad* quad_list, int v_num):
-    _bind_VBO(quad_list, v_num)
+    pass
+    #_bind_VBO(quad_list, v_num)
 
 
 ## Window Properties ##

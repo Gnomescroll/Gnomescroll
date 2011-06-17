@@ -166,7 +166,7 @@ class App(object):
                 #print str(ctick - ltick)
                 ltick = ctick
         #p.stop()
-        self.win.close()
+        #self.win.close()
 
 if __name__ == '__main__':
     app = App()

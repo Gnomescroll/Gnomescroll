@@ -103,12 +103,12 @@ cdef int key_text_event_callback(char key, char* key_name):
 
 cdef int mouse_motion_callback(MouseMotion ms):
     global input_callback
-    input_callback.mouse_motion(ms.x,ms.y,ms.dx,ms.dy, ms.button)
+    input_callback.mouse_motion(ms.x,ms.y,-1*ms.dx,-1*ms.dy, ms.button)
     #input.inputEventGlobal.mouse_motion(ms.x,ms.y,ms.dx,ms.dy, ms.button)
 
 cdef int mouse_event_callback(MouseEvent me):
     global input_callback
-    input_callback.mouse_event(me.button, me.state, me.x, me.y)
+    input_callback.mouse_event(me.button, me.state, -1*me.x, -1*me.y)
     #input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
 
 def init():

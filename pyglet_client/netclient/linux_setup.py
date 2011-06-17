@@ -30,7 +30,6 @@ SDL_gl = Extension('SDL.gl',
                     sources = ['SDL/SDL_functions.c',
                                 'SDL/camera.c',
                                 'SDL/draw_functions.c',
-                                'SDL/vbo_manager.c',
                                 'SDL/texture_loader.c',
                                 'SDL/gl.pyx'],
                     )
@@ -65,7 +64,8 @@ cube_lib_VBO = Extension('cube_lib.VBO',
                     extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/VBO.pyx',
-                    'SDL/draw_functions.c']
+                    'SDL/draw_functions.c',
+                    'cube_lib/draw_terrain.c']
                     )
 
 setup(

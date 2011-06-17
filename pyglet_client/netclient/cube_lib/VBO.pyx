@@ -63,20 +63,20 @@ for i in range(0, 72):
     v_index[i] = float(l[i])
 
 cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
-    vertex.tx = x * (float(1)/8)
-    vertex.ty = x * (float(1)/8)
+    vertex.tx = x * (float(1)/16)
+    vertex.ty = x * (float(1)/16)
     if vert_num == 0:
         vertex.tx += 0
         vertex.ty += 0
     elif vert_num == 1:
-        vertex.tx += float(1)/8
+        vertex.tx += float(1)/16
         vertex.ty += 0
     elif vert_num == 2:
-        vertex.tx += float(1)/8
-        vertex.ty += float(1)/8
+        vertex.tx += float(1)/16
+        vertex.ty += float(1)/16
     elif vert_num == 3:
         vertex.tx += 0
-        vertex.ty += float(1)/8
+        vertex.ty += float(1)/16
     else:
         print "Error!!!! set_tex invalid input"
     #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
@@ -122,7 +122,7 @@ def init_quad_cache():
                 vertex.b = 255
                 vertex.a = 255
                 #tex
-                set_tex(j, vertex, 1, 1)
+                set_tex(j, vertex, 0, 0)
                 #print "(%i,%i,%i)" % (k,i,j)
                 #print "(tx= %f,ty= %f)" %(quad_cache[6*k+i].vertex[j].tx,quad_cache[6*k+i].vertex[j].ty)
     print "done"
@@ -137,8 +137,7 @@ import time
 cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
     global quad_cache
     cdef int i
-    cdef Vertex* vertex
-    cdef Vertex* vertex2
+    #cdef Vertex* vertex
     #cdef Quad* quad2 = &quad_cache[6*tile_id + side_num]
     memcpy(quad, &quad_cache[6*tile_id + side_num], sizeof(Quad))
     for i in range(0,4):
@@ -162,10 +161,10 @@ def init():
     init_quad_cache()
     clear_buffer()
 
-def clear_buffer():
+cdef clear_buffer():
     chunk_scratch.v_num = 0
 
-def add_quad(float x,float y,float z,int side,int tile):
+cdef add_quad(float x,float y,float z,int side,int tile):
     global chunk_scratch
     cdef Quad* quad = &chunk_scratch.quad[chunk_scratch.v_num]
     chunk_scratch.v_num += 1 #quads have 4 vertex
@@ -176,38 +175,45 @@ def test_chunk():
     global quad_cache,chunk_scratch
     chunk_scratch.v_num =0
     cdef int i
-    for i in range(0,50):
-        for j in range(0,2):
+    for i in range(0,15):
+        for j in range(0,6):
             add_quad(1,1,i-4,j,3)
-    #time.sleep(3)
-    if False:
-        for k in range(0,10):
-            for i in range(0,6):
-                for j in range(0,4):
-                    print("v:%f,%f,%f= " % (quad_cache[6*k+i].vertex[j].x, quad_cache[6*k+i].vertex[j].y, quad_cache[6*k+i].vertex[j].z))
-                    #colors
-                    print ("c:%i,%i,%i,%i" % (quad_cache[6*k+i].vertex[j].r,quad_cache[6*k+i].vertex[j].g,quad_cache[6*k+i].vertex[j].b,quad_cache[6*k+i].vertex[j].a))
-    #time.sleep(3)
-    pass
 
-    for i in range(0,10):
-        print "tex"
-        for j in range(0,4):
-            print "tx,ty= %f, %f" % (chunk_scratch.quad[i].vertex[j].tx, chunk_scratch.quad[i].vertex[j].ty)
-        time.sleep(1)
-
-cimport SDL.gl
+#cimport SDL.gl
 #import SDL.gl
-from SDL.gl cimport bind_VBO
+#from SDL.gl cimport bind_VBO
 
 #cdef exern _bind_VBO(Quad* quad_list, int v_num)
 
 #extern from 'draw_functions.h':
 #    cdef exern _bind_VBO(Quad* quad_list, int v_num)
 
+
+cdef extern from 'draw_terrain.h':
+    int _init_draw_terrain()
+    int _create_vbo(Quad* quad_list, int v_num)
+    int _delete_vbo(unsigned int VBO_id)
+    int _draw_vbo(unsigned int VBO_id, int v_num)
+
+test_var = 0
+cdef int v_num = 0
+cdef int vbo_id = 0
+
 def draw_test_chunk():
     global chunk_scratch
-    cdef Quad* quad_list = chunk_scratch.quad
-    cdef int v_num = chunk_scratch.v_num
+    global test_var,v_num,vbo_id
+    cdef Quad* quad_list
+    if test_var == 0:
+        #init
+        _init_draw_terrain()
+        #create VBO
+        quad_list = chunk_scratch.quad
+        v_num = chunk_scratch.v_num
+        vbo_id = _create_vbo(quad_list, v_num)
+
+    _draw_vbo(vbo_id, v_num)
+
+    #cdef Quad* quad_list = chunk_scratch.quad
+    #cdef int v_num = chunk_scratch.v_num
     #SGL.gl._bind_VBO(quad_list, v_num)
-    bind_VBO(quad_list, v_num)
+    #bind_VBO(quad_list, v_num)
