@@ -10,16 +10,18 @@ int numkeys;
 Uint8* keystate;
 
 int _init_input() {
-_set_text_entry_mode(0); //not used right now
+//_set_text_entry_mode(1); //not used right now
 keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
 SDL_EnableUNICODE( SDL_ENABLE );
 return 0;
 }
 
+//deprecate
 int _set_text_entry_mode(int n) {
-    if((n != 0) | (n != 1)) { text_entry_mode = n; } else { printf("input.c, _set_text_entry_mode error: mode invalid \n"); }
+    if((n != 0) || (n != 1)) { text_entry_mode = n; } else { printf("input.c, _set_text_entry_mode error: mode invalid \n"); }
     return 0;
 }
+
 
 int _get_key_state(key_state_func key_state_cb) {
     SDL_PumpEvents();
@@ -38,6 +40,7 @@ int _get_key_state(key_state_func key_state_cb) {
 }
 
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb) {
+
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
 
@@ -61,9 +64,9 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             ///text event
             //printf("%c\n", getUnicodeValue(Event.key.keysym)); //This is for typing
             ///SDL_EnableUNICODE( SDL_ENABLE );
-            if(Event.key.keysym.unicode != 0) {
-            _key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
-            }
+            //if(Event.key.keysym.unicode != 0) {}
+            //_key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
+            //printf("_%i\n", getUnicodeValue(Event.key.keysym));
             _key_text_event_callback(keyboard_text_event_cb, getUnicodeValue(Event.key.keysym), SDL_GetKeyName(Event.key.keysym.sym));
             ///SDL_EnableUNICODE( SDL_DISABLE );
             //SDL_GetKeyName(Event.key));

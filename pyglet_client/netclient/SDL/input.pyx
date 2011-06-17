@@ -19,6 +19,7 @@ cdef extern from "input_functions.h":
     ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
     int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys)
 
+    #deprecate
     ctypedef int (*key_event_func)(char key)
     int _key_event_callback(key_event_func user_func, char key)
 
@@ -69,17 +70,13 @@ def set_text_entry_mode(int n):
 #        pass
 
 #input_callback = Callback_dummy()
-def error(**x):
-    print("SDL.input.pyx error: input callback not set")
-class Object(object):
-    pass
-input_callback = Object()
-input_callback.key_state = error
+
+input_callback = None
 
 def set_input_callback(callback):
     global input_callback
     input_callback = callback
-    #print "Input Callback Set"
+    print "Input Callback Set"
 
 cdef int key_state_callback(Uint8* keystate, int numkeys):
     global input_callback
@@ -91,11 +88,13 @@ cdef int key_state_callback(Uint8* keystate, int numkeys):
     input_callback.keyboard_state(pressed_keys)
 
 cdef int key_event_callback(char key):
+    #print "key event___"
     global input_callback
     input_callback.keyboard_event(key)
 
 cdef int key_text_event_callback(char key, char* key_name):
     global input_callback
+    #print "keycode_="+ str(key)
     cdef bytes py_string
     py_string = key_name
     key_string = key_name.decode('ascii')
@@ -112,4 +111,5 @@ cdef int mouse_event_callback(MouseEvent me):
     input_callback.mouse_event(me.button, me.state, me.x, me.y)
     #input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
 
-_init_input()
+def init():
+    _init_input()

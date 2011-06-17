@@ -42,9 +42,11 @@ class InputEventGlobal:
     mouse = None
     keyboard = None
 
+    #deprecate
     def keyboard_event(self, keycode):
+        print str(keycode)
         key = Keystring.get(keycode, None)
-        #print str(key)
+        print 'keyboard event:'+ str(key)
         self.keyboard.on_key_press(key)
         if key == None:
             print "keycode unhandled= " + str(keycode)
@@ -55,11 +57,17 @@ class InputEventGlobal:
             temp = Keystring.get(keycode, None)
             if temp != None:
                 keyboard.append(temp)
-        #print str(keyboard)
         self.keyboard.stateHandler(keyboard)
 
-    def keyboard_text_event(self, key, key_string):
-        self.keyboard.on_text(key_string)
+    #has issues with special characters
+    def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
+        key = Keystring.get(keycode, None)
+        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
+        #self.keyboard.on_text(key_string)
+        if state == 0:
+            self.keyboard.on_key_press(key)
+        else:
+            self.keyboard.on_key_release(key)
         #print "text= " + key_string
 
     def mouse_event(self, button,state,x,y,):
@@ -210,7 +218,7 @@ class Keyboard(object):
         if callable(callback):
             callback(self)
 
-    #key input
+    #deprecate
     def on_text(self, text):
         if InputGlobal.input == 'chat':
             callback = ChatClientGlobal.chatClient.input.on_text(text)
@@ -228,27 +236,23 @@ class Keyboard(object):
 
     # one-time non character key detection
     # e.g. enter
-    def on_key_press(self, symbol, modifiers=None):
+    def on_key_press(self, symbol):
         if InputGlobal.input == 'chat':
-            print "chat"
-            callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
+            callback = ChatClientGlobal.chatClient.input.on_text(symbol)
+            #callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
             self._input_callback(callback)
         else:
+            if symbol == 'y':
+                self.toggle_chat()
             if InputGlobal.input == 'agent':
-                InputGlobal.agentInput.on_key_press(symbol, modifiers)
+                InputGlobal.agentInput.on_key_press(symbol)
+                #self.key_handlers.get(symbol, lambda: None)()
+            if symbol == 'TAB':
+                InputGlobal.scoreboard = True
+            self.key_handlers.get(symbol, lambda x: None)(symbol)
 
-            self.key_handlers.get(symbol, lambda: None)()
-            if settings.pyglet:
-                pass
-                #if symbol == key.TAB:
-                #    InputGlobal.scoreboard = True
-            else:
-                if symbol == 'TAB':
-                    InputGlobal.scoreboard = True
-
-
-    def on_key_release(self, symbol, modifiers):
-        if symbol == key.TAB:
+    def on_key_release(self, symbol):
+        if symbol == 'TAB':
             InputGlobal.scoreboard = False
 
     #deprecate for non-pyglet input
@@ -422,14 +426,14 @@ class AgentInput:
         else:
             self.key_handlers[key] = handler
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol, modifiers=None):
         self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
 
-    def reload(self, symbol, modifiers):
+    def reload(self, symbol, modifiers=None):
         print 'reloading'
         GameStateGlobal.agent.reload()
 
-    def switch_weapon(self, symbol, modifiers):
+    def switch_weapon(self, symbol, modifiers=None):
         #print 'switch weapon'
         #print symbol, modifiers
         #print str(symbol)

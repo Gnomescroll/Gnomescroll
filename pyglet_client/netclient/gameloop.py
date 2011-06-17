@@ -63,6 +63,7 @@ class App(object):
         if settings.pyglet == False:
             self.SDL_global = SDL.gl.SDL_global #drawing stuff
             self.SDL_global.init()
+            SDL.input.init()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -120,7 +121,6 @@ class App(object):
                 self.win.dispatch_events()
                 InputGlobal.keyboard.stateHandler(keyboard)
             else:
-                pass
                 SDL.input.process_events()
                 SDL.input.get_key_state()
             if GameStateGlobal.agent is not None:
