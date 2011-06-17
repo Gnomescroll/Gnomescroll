@@ -7,20 +7,19 @@ from pyglet.gl import *
 class MapChunkManagerGlobal:
 
     mapChunkManager = None
-    transparentBlockManager = None
+    #transparentBlockManager = None
 
     @classmethod
     def init_0(cls):
         cls.mapChunkManager = MapChunkManager()
-        cls.transparentBlockManager = TransparentBlockManager()
+        #cls.transparentBlockManager = TransparentBlockManager()
     @classmethod
     def init_1(cls):
         MapChunk.init()
         cls.mapChunkManager.init()
-        TransparentBlockManager.init()
+        #TransparentBlockManager.init()
 
 from cube_dat import CubeGlobal
-from game_state import GameStateGlobal
 
 cimport terrain_map
 from terrain_map cimport TerrainMap
@@ -29,25 +28,6 @@ cdef enum:
     x_chunk_size = 8
     y_chunk_size = 8
     z_chunk_size = 8
-
-cdef struct Vertex:
-    float x,y,z
-    float tx, ty
-    unsigned char r,g,b,a #for packing
-
-cdef struct Quad:
-    Vertex vertex[4]
-
-cdef struct Chunk_scratch:
-    Quad quad[x_chunk_size*y_chunk_size*z_chunk_size]
-    int v_num
-#    int x_off,y_off,z_off
-
-from libc.stdlib cimport malloc, free
-
-cdef Chunk_scratch * chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
-
-#cdef Camera *camera = <Camera *>malloc(sizeof(Camera))
 
 class TransparentBlockManager(object):
     cubePhysicalProperties = None

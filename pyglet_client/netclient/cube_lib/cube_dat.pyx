@@ -137,10 +137,10 @@ cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, in
     x.transparent = transparent
 
 cdef enum:
-    max_cubes = 4096
+    max_cubes = 1024
 
 cdef class CubePhysicalProperties:
-    cdef CubePhysical cube_array[4096]
+    cdef CubePhysical cube_array[max_cubes]
 
     def __init__(self):
         global cube_list
@@ -196,92 +196,92 @@ cdef class CollisionDetection:
         tile = self.terrainMap.get(x,y,z)
         return self.cubePhysicalProperties.isSolid(tile)
 
-#the cache for cube visual properties
-#deprecates CubeRenderCache
-class CubeVisualProperties:
-    def __init__(self):
-        pass
+##the cache for cube visual properties
+##deprecates CubeRenderCache
+#class CubeVisualProperties:
+    #def __init__(self):
+        #pass
 
-cdef enum:
-    x_chunk_size = 8
-    y_chunk_size = 8
-    z_chunk_size = 8
+#cdef enum:
+    #x_chunk_size = 8
+    #y_chunk_size = 8
+    #z_chunk_size = 8
 
-###
+####
 
-def convert_index(index, height, width):
-    index = int(index)
-    height = int(height)
-    width = int(width)
-    x_ = index % width
-    y_ = int((index - x_) / width)
-    y = height - y_ -1
-    rvalue =  x_ + y*width
-    #print "rvalue= " + str(rvalue)
-    return rvalue
+#def convert_index(index, height, width):
+    #index = int(index)
+    #height = int(height)
+    #width = int(width)
+    #x_ = index % width
+    #y_ = int((index - x_) / width)
+    #y = height - y_ -1
+    #rvalue =  x_ + y*width
+    ##print "rvalue= " + str(rvalue)
+    #return rvalue
 
-class CubeRenderCache(object):
+#class CubeRenderCache(object):
 
-    def set_texture(self, textureGrid):
-        self.textureGrid = textureGrid
-        self.reset_cache()
+    #def set_texture(self, textureGrid):
+        #self.textureGrid = textureGrid
+        #self.reset_cache()
 
-    def reset_cache(self):
-        self.c4b_cache = {}
-        self.t4f_cache = {}
+    #def reset_cache(self):
+        #self.c4b_cache = {}
+        #self.t4f_cache = {}
 
-    def __init__(self):
-        self.textureGrid = None
-        self.reset_cache()
+    #def __init__(self):
+        #self.textureGrid = None
+        #self.reset_cache()
 
-        self.v_index = [
-        [ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 ], #top
-        [ 1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 ], #bottom
-        [ 0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 ], #north
-        [ 0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 ], #south
-        [ 0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 ], #west
-        [ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 ], #east
-    ]
+        #self.v_index = [
+        #[ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 ], #top
+        #[ 1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 ], #bottom
+        #[ 0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 ], #north
+        #[ 0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 ], #south
+        #[ 0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 ], #west
+        #[ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 ], #east
+    #]
 
-        north_side = [ [0,1,1],[1,1,1],[1,1,0],[0,1,0] ]
-        south_side = [[0,0,1],[0,0,0],[1,0,0],[1,0,1]]
-        west_side = [[0,1,1],[0,1,0],[0,0,0],[0,0,1]]
-        east_side = [[1,0,1],[1,0,0],[1,1,0],[1,1,1]]
-        top_side = [[0,1,1],[0,0,1],[1,0,1],[1,1,1]]
-        bottom_side = [[1,0,0],[0,0,0],[0,1,0],[1,1,0]]
+        #north_side = [ [0,1,1],[1,1,1],[1,1,0],[0,1,0] ]
+        #south_side = [[0,0,1],[0,0,0],[1,0,0],[1,0,1]]
+        #west_side = [[0,1,1],[0,1,0],[0,0,0],[0,0,1]]
+        #east_side = [[1,0,1],[1,0,0],[1,1,0],[1,1,1]]
+        #top_side = [[0,1,1],[0,0,1],[1,0,1],[1,1,1]]
+        #bottom_side = [[1,0,0],[0,0,0],[0,1,0],[1,1,0]]
 
-    ## t, b, n, s, w, e
-    def get_side(self, x, y, z, tile_id, side_num):
-        ta = self.v_index[side_num]
-        #v_list = (GLfloat * 12) [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
-        v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ta[9]+x,ta[10]+y,ta[11]+z ]
-        c4B_list = self._get_c4B(tile_id, side_num)
-        t4f_list = self._get_t4f(tile_id, side_num)
-        return(v_list, c4B_list, t4f_list)
+    ### t, b, n, s, w, e
+    #def get_side(self, x, y, z, tile_id, side_num):
+        #ta = self.v_index[side_num]
+        ##v_list = (GLfloat * 12) [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ya[9]+x,ta[10]+y,ta[11]+z ]
+        #v_list = [ta[0]+x,ta[1]+y,ta[2]+z , ta[3]+x,ta[4]+y,ta[5]+z , ta[6]+x,ta[7]+y,ta[8]+z , ta[9]+x,ta[10]+y,ta[11]+z ]
+        #c4B_list = self._get_c4B(tile_id, side_num)
+        #t4f_list = self._get_t4f(tile_id, side_num)
+        #return(v_list, c4B_list, t4f_list)
 
-    def _get_c4B(self, tile_id, side_num):
-        if self.c4b_cache.has_key((tile_id, side_num)):
-            return self.c4b_cache[(tile_id, side_num)]
-        else:
-            ##compute from dict!
-            #temp = (GLbyte * 4)[255, 255, 255, 255] * 4
-            rgba = cube_list[tile_id].get('color', [255, 255, 255, 255])
-            temp = rgba * 4
+    #def _get_c4B(self, tile_id, side_num):
+        #if self.c4b_cache.has_key((tile_id, side_num)):
+            #return self.c4b_cache[(tile_id, side_num)]
+        #else:
+            ###compute from dict!
+            ##temp = (GLbyte * 4)[255, 255, 255, 255] * 4
+            #rgba = cube_list[tile_id].get('color', [255, 255, 255, 255])
+            #temp = rgba * 4
 
-            self.c4b_cache[(tile_id, side_num)] = temp
-            return temp
+            #self.c4b_cache[(tile_id, side_num)] = temp
+            #return temp
 
-    def _get_t4f(self, tile_id, side_num):
-        if self.t4f_cache.has_key((tile_id, side_num)):
-            return self.t4f_cache[(tile_id, side_num)]
-        else:
-            global cube_list  #need to put this somewhere
-            if cube_list.has_key(tile_id):
-                tex_a = cube_list[tile_id]['texture']
-                (texture_id, rotation) = tex_a[side_num]
-            else:
-                print "CubeRenderCache error, cube does not exist"
-            tex_tuple = self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
+    #def _get_t4f(self, tile_id, side_num):
+        #if self.t4f_cache.has_key((tile_id, side_num)):
+            #return self.t4f_cache[(tile_id, side_num)]
+        #else:
+            #global cube_list  #need to put this somewhere
+            #if cube_list.has_key(tile_id):
+                #tex_a = cube_list[tile_id]['texture']
+                #(texture_id, rotation) = tex_a[side_num]
+            #else:
+                #print "CubeRenderCache error, cube does not exist"
+            #tex_tuple = self.textureGrid[convert_index(texture_id, 16, 16)].tex_coords
 
-            self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
-            return list(tex_tuple)
+            #self.t4f_cache[(tile_id, side_num)] = list(tex_tuple)
+            #return list(tex_tuple)
