@@ -9,6 +9,7 @@ if settings.pyglet:
 else:
     import SDL.gl
     import SDL.input
+    import cube_lib.VBO
 
 #import cython
 #import pyximport; pyximport.install()
@@ -64,6 +65,9 @@ class App(object):
             self.SDL_global = SDL.gl.SDL_global #drawing stuff
             self.SDL_global.init()
             SDL.input.init()
+            ## VBO TEST
+            cube_lib.VBO.init()
+            cube_lib.VBO.test_chunk()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -140,8 +144,9 @@ class App(object):
 
             self.camera.worldProjection()
             self.world.draw()
-
-            self.SDL_global.set_projection(-1,0,0,0,0)
+            #VBO test
+            cube_lib.VBO.draw_test_chunk()
+            #self.SDL_global.set_projection(-1,0,0,0,0)
 
             if False:
                 for i in range(0,256):

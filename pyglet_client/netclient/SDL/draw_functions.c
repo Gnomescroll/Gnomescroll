@@ -50,9 +50,32 @@ SDL_Surface *surface;
 
 GLuint VBOid = 0;
 
+int vertex_num = 0;
+
+int print_vertex(struct Vertex* v) {
+
+printf("v_num: %i \n", vertex_num);
+printf("x,y,z= %f, %f, %f\n", v->x,v->y,v->z);
+printf("tx,ty= %f, %f\n", v->tx, v->ty);
+printf("r,g,b,a= %i, %i, %i, %i\n", v->r,v->g,v->b,v->a);
+printf("\n", v->r,v->g,v->b,v->a);
+vertex_num +=1;
+return 0;
+}
+
 int _bind_VBO(struct Quad* quad_list, int v_num) {
-    //printf("test\n");
+
 ///test
+if(0) {
+    printf("v_num= %i \n", v_num);
+    vertex_num = 0;
+    int i,j;
+    for(i=0; i<v_num; i++){
+        for(j=0; j<4; j++){
+        print_vertex(&quad_list[0].vertex[i]);
+        }
+    }
+}
 if(texture == 0) { //load texture if texture is not set
     surface=IMG_Load("texture/textures_01.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
@@ -82,13 +105,13 @@ glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
 glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12); //12 bytes in
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-glDrawArrays(GL_QUADS,0, v_num);
+glDrawArrays(GL_QUADS,0, v_num*4);
 
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-printf("SDL_error: %s\n", SDL_GetError());
+//printf("SDL_error: %s\n", SDL_GetError());
 //    printf("finished\n");
 ///test
     return 0;

@@ -63,20 +63,21 @@ for i in range(0, 72):
     v_index[i] = float(l[i])
 
 cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
-    vertex.tx = x * (1/8)
+    vertex.tx = x * (float(1)/8)
     vertex.ty = x * (1/8)
     if vert_num == 0:
         vertex.tx += 0
         vertex.ty += 0
     if vert_num == 1:
-        vertex.tx += 1/8
+        vertex.tx += float(1)/8
         vertex.ty += 0
     if vert_num == 2:
-        vertex.tx += 1/8
-        vertex.ty += 1/8
+        vertex.tx += float(1)/8
+        vertex.ty += float(1)/8
     if vert_num == 3:
         vertex.tx += 0
-        vertex.ty += 1/8
+        vertex.ty += float(1)/8
+    #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
 
 def convert_index(index, height, width):
     index = int(index)
@@ -110,30 +111,39 @@ def init_quad_cache():
                 vi = 6*k+i
                 vertex = &quad.vertex[j]
                 #vertices
-                vertex.x = v_index[index + 0]
-                vertex.y = v_index[index + 1]
-                vertex.z = v_index[index + 2]
+                quad_cache[6*k+i].vertex[j].x = v_index[index + 0]
+                quad_cache[6*k+i].vertex[j].y = v_index[index + 1]
+                quad_cache[6*k+i].vertex[j].z = v_index[index + 2]
                 #colors
-                vertex.r = 255
-                vertex.g = 255
-                vertex.b = 255
-                vertex.a = 255
+                quad_cache[6*k+i].vertex[j].r = 255
+                quad_cache[6*k+i].vertex[j].g = 255
+                quad_cache[6*k+i].vertex[j].b = 255
+                quad_cache[6*k+i].vertex[j].a = 255
                 #tex
-                set_tex(j, vertex, 0, 3)
+                set_tex(j, vertex, 1, 1)
                 #print "(%i,%i,%i)" % (k,i,j)
+                #print "(tx= %f,ty= %f)" %(quad_cache[6*k+i].vertex[j].tx,quad_cache[6*k+i].vertex[j].ty)
     print "done"
+
+#from libc.stdlib cimport memcpy
+
+cdef extern from "stdlib.h":
+    void* memcpy(void* source, void* dest, int size)
+
+import time
 
 cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
     global quad_cache
     cdef int i
     cdef Vertex* vertex
-    quad = &quad_cache[6*tile_id + side_num]
+    cdef Vertex* vertex2
+    cdef Quad* quad2 = &quad_cache[6*tile_id + side_num]
+    memcpy(quad, &quad_cache[6*tile_id + side_num], sizeof(Quad))
     for i in range(0,4):
-        vertex = &quad.vertex[i]
-        vertex.x +=x
-        vertex.y +=y
-        vertex.z +=z
-
+        print "(tx= %f,ty= %f)" %(quad_cache[6*tile_id + side_num].vertex[i].tx,quad_cache[6*tile_id + side_num].vertex[i].ty)
+        quad.vertex[i].x += x
+        quad.vertex[i].y += y
+        quad.vertex[i].z += z
 #(tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
 
 #    int x_off,y_off,z_off
@@ -152,16 +162,27 @@ def clear_buffer():
     chunk_scratch.v_num = 0
 
 def add_quad(float x,float y,float z,int side,int tile):
+    global chunk_scratch
     cdef Quad* quad = &chunk_scratch.quad[chunk_scratch.v_num]
-    chunk_scratch.v_num += 1
+    chunk_scratch.v_num += 1 #quads have 4 vertex
     set_side(x,y,z, tile, side, quad)
 
 #testing
 def test_chunk():
+    global quad_cache,chunk_scratch
+    chunk_scratch.v_num =0
     cdef int i
-    for i in range(0,150):
-        add_quad(5,5,i,3,0)
-
+    for i in range(0,50):
+        add_quad(1,1,i-4,1,3)
+    #time.sleep(3)
+    if False:
+        for k in range(0,10):
+            for i in range(0,6):
+                for j in range(0,4):
+                    print("v:%f,%f,%f= " % (quad_cache[6*k+i].vertex[j].x, quad_cache[6*k+i].vertex[j].y, quad_cache[6*k+i].vertex[j].z))
+                    #colors
+                    print ("c:%i,%i,%i,%i" % (quad_cache[6*k+i].vertex[j].r,quad_cache[6*k+i].vertex[j].g,quad_cache[6*k+i].vertex[j].b,quad_cache[6*k+i].vertex[j].a))
+    #time.sleep(3)
 
 cimport SDL.gl
 #import SDL.gl
@@ -173,6 +194,7 @@ from SDL.gl cimport bind_VBO
 #    cdef exern _bind_VBO(Quad* quad_list, int v_num)
 
 def draw_test_chunk():
+    global chunk_scratch
     cdef Quad* quad_list = chunk_scratch.quad
     cdef int v_num = chunk_scratch.v_num
     #SGL.gl._bind_VBO(quad_list, v_num)
