@@ -1,8 +1,8 @@
 import zlib
 import struct
 
-cdef extern from "./clib/fast_map.c":
-    int hash_cord(int)
+#cdef extern from "./clib/fast_map.c":
+#    int hash_cord(int)
 
 cdef enum:
     x_chunk_size = 8
@@ -99,10 +99,14 @@ cdef class MapChunk:
     #cdef int map_array[512]
     #cdef unsigned int version
     #cdef unsigned int server_version
+    ##
+    #cdef int update_VBO
+    #cdef Quad_VBO VBO
 
     def __init__(self, int x_off, int y_off, int z_off, int version = 0, int server_version = 0):
         self.version = version
         self.server_version = 0
+        self.update_VBO = 1
 
         self.index[0] = x_off - (x_off % 8)
         self.index[1] = y_off - (y_off % 8)
