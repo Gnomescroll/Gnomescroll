@@ -51,7 +51,7 @@ SDL_Surface *surface;
 GLuint VBOid = 0;
 
 int _bind_VBO(struct Quad* quad_list, int v_num) {
-    printf("test\n");
+    //printf("test\n");
 ///test
 if(texture == 0) { //load texture if texture is not set
     surface=IMG_Load("texture/textures_01.png");
@@ -59,16 +59,18 @@ if(texture == 0) { //load texture if texture is not set
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
-}
 
 
-    printf("binding\n");
+
+   // printf("binding\n");
     glBindTexture( GL_TEXTURE_2D, texture );
 
     glGenBuffers(1, &VBOid);
     glBindBuffer(GL_ARRAY_BUFFER, VBOid);
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), quad_list, GL_STATIC_DRAW); // size, pointer to array, usecase
-//interleaved
+}
+
+glBindBuffer(GL_ARRAY_BUFFER, VBOid);
 
 glEnableClientState(GL_VERTEX_ARRAY);
 glEnableClientState(GL_COLOR_ARRAY);
@@ -86,7 +88,8 @@ glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    printf("finished\n");
+printf("SDL_error: %s\n", SDL_GetError());
+//    printf("finished\n");
 ///test
     return 0;
 }

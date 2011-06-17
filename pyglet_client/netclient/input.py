@@ -10,6 +10,8 @@ if settings.pyglet:
     from pyglet.window import key
     from pyglet.window import mouse
     from pyglet.window.key import symbol_string
+else:
+    import SDL.input
 
 #handles special characters
 Keystring = {}
@@ -444,3 +446,4 @@ from chat_client import ChatClientGlobal
 from net_out import NetOut
 
 inputEventGlobal = InputEventGlobal()
+SDL.input.set_input_callback(inputEventGlobal)

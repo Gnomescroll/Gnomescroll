@@ -6,7 +6,7 @@ if settings.pyglet:
     from pyglet.gl import *
     from pyglet import clock, font, image, window
 else:
-    import SDL
+    import SDL.gl
 
 base_dir = "./"
 
@@ -14,7 +14,7 @@ class Camera(object):
 
     def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0):
         if settings.pyglet == False:
-            self.SDL_global = SDL.SDL_global
+            self.SDL_global = SDL.gl.SDL_global
         if settings.pyglet:
             self.win = win
         self.x = x

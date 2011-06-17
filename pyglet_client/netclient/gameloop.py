@@ -7,7 +7,8 @@ if settings.pyglet:
 
     from pyglet.window import key
 else:
-    import SDL
+    import SDL.gl
+    import SDL.input
 
 #import cython
 #import pyximport; pyximport.install()
@@ -60,7 +61,7 @@ class App(object):
         MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
         if settings.pyglet == False:
-            self.SDL_global = SDL.SDL_global #drawing stuff
+            self.SDL_global = SDL.gl.SDL_global #drawing stuff
             self.SDL_global.init()
 
     def init_inputs(self):
@@ -119,8 +120,8 @@ class App(object):
                 self.win.dispatch_events()
                 InputGlobal.keyboard.stateHandler(keyboard)
             else:
-                SDL.process_events()
-                SDL.get_key_state()
+                SDL.input.process_events()
+                SDL.input.get_key_state()
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
@@ -139,14 +140,14 @@ class App(object):
             self.camera.worldProjection()
             self.world.draw()
 
-            SDL.SDL_global.set_projection(-1,0,0,0,0)
+            self.SDL_global.set_projection(-1,0,0,0,0)
 
             if False:
                 for i in range(0,256):
                     x = random.random()
                     y = random.random()
                     z = random.random()
-                    temp = SDL.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+                    temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
 
             if settings.pyglet:
                 self.camera.hudProjection()
@@ -154,8 +155,8 @@ class App(object):
                 clock.tick()
                 self.win.flip()
             else:
-                SDL.SDL_global.flip()
-                ctick = SDL.get_ticks()
+                self.SDL_global.flip()
+                ctick = SDL.gl.get_ticks()
                 #print str(ctick - ltick)
                 ltick = ctick
         #p.stop()

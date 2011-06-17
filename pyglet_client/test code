@@ -104,4 +104,4 @@ w.world_projection()
 #bind texture
 
 cube_lib.VBO.draw_test_chunk()
-
+w.flip()
