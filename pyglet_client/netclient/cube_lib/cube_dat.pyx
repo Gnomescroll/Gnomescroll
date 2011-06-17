@@ -14,7 +14,7 @@ class CubeGlobal:
     @classmethod
     def init_0(cls):
         cls.cubePhysicalProperties = CubePhysicalProperties()
-        cls.cubeRenderCache = CubeRenderCache()
+        #cls.cubeRenderCache = CubeRenderCache()
     @classmethod
     def init_1(cls):
         cls.collisionDetection.init()
