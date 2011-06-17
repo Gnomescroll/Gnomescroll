@@ -11,7 +11,8 @@ SDL_gl = Extension('SDL.gl',
                     include_dirs = ['/usr/local/include',
                                     ' /usr/include/X11/extensions/',
                                     '/usr/include/SDL',
-                                    '/usr/lib',     ],
+                                    '/usr/lib',
+                                        ],
                     libraries = ['SDL','GL','SDL','GLU', 'SDL_image'], #SDL_image ?
 
                     library_dirs = ['/usr/X11R6/lib','usr/lib'],
@@ -22,7 +23,8 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/draw_functions.c',
                                 'SDL/vbo_manager.c',
                                 'SDL/texture_loader.c',
-                                'SDL/gl.pyx'])
+                                'SDL/gl.pyx'],
+                    )
 
 SDL_input = Extension('SDL.input',
                     #define_macros =  [('PLATFORM', 'linux')]

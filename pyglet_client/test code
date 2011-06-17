@@ -86,12 +86,22 @@ w.hud_projection()
 
 w.flip()
 
+
 ## cube_lib test##
 
-import cube_lib
-cube_lib.init()
+import cube_lib.VBO
+import SDL.gl
 
+cube_lib.VBO.init()
+cube_lib.VBO.test_chunk()
 
-cube_lib.init()
-cube_lib.test_chunk()
-cube_lib.draw_test_chunk
+w = SDL.gl.Global()
+w.init()
+w.set_projection(-15,0,0,0,0)
+w.world_projection()
+
+#load texture
+#bind texture
+
+cube_lib.VBO.draw_test_chunk()
+

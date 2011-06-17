@@ -44,9 +44,24 @@ glEnd();
     glDisable(GL_BLEND);
 }
 
+///global
+GLuint texture = 0;
+SDL_Surface *surface;
+
 int _bind_VBO(struct Quad* quad_list, int v_num) {
-    printf("test");
+    printf("test\n");
+///test
+if(texture == 0) { //load texture if texture is not set
+    surface=IMG_Load("texture/textures_01.png");
+    if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
+}
+    glBindTexture( GL_TEXTURE_2D, texture );
 
+    printf("test finished\n");
 
+///test
     return 0;
 }

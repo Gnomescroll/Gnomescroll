@@ -170,5 +170,4 @@ cdef class Global:
 
 ### init
 
-
 SDL_global = Global()
