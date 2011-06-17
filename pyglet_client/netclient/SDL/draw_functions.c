@@ -46,5 +46,7 @@ glEnd();
 
 int _bind_VBO(struct Quad* quad_list, int v_num) {
     printf("test");
+
+
     return 0;
 }
