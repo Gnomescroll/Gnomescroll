@@ -79,6 +79,8 @@ glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
 glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), 12); //12 bytes in
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), 20);
 
+glDrawArrays(GL_QUADS,0, v_num);
+
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
