@@ -64,19 +64,21 @@ for i in range(0, 72):
 
 cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
     vertex.tx = x * (float(1)/8)
-    vertex.ty = x * (1/8)
+    vertex.ty = x * (float(1)/8)
     if vert_num == 0:
         vertex.tx += 0
         vertex.ty += 0
-    if vert_num == 1:
+    elif vert_num == 1:
         vertex.tx += float(1)/8
         vertex.ty += 0
-    if vert_num == 2:
+    elif vert_num == 2:
         vertex.tx += float(1)/8
         vertex.ty += float(1)/8
-    if vert_num == 3:
+    elif vert_num == 3:
         vertex.tx += 0
         vertex.ty += float(1)/8
+    else:
+        print "Error!!!! set_tex invalid input"
     #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
 
 def convert_index(index, height, width):
@@ -111,14 +113,14 @@ def init_quad_cache():
                 vi = 6*k+i
                 vertex = &quad.vertex[j]
                 #vertices
-                quad_cache[6*k+i].vertex[j].x = v_index[index + 0]
-                quad_cache[6*k+i].vertex[j].y = v_index[index + 1]
-                quad_cache[6*k+i].vertex[j].z = v_index[index + 2]
+                vertex.x = v_index[index + 0]
+                vertex.y = v_index[index + 1]
+                vertex.z = v_index[index + 2]
                 #colors
-                quad_cache[6*k+i].vertex[j].r = 255
-                quad_cache[6*k+i].vertex[j].g = 255
-                quad_cache[6*k+i].vertex[j].b = 255
-                quad_cache[6*k+i].vertex[j].a = 255
+                vertex.r = 255
+                vertex.g = 255
+                vertex.b = 255
+                vertex.a = 255
                 #tex
                 set_tex(j, vertex, 1, 1)
                 #print "(%i,%i,%i)" % (k,i,j)
@@ -137,13 +139,15 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
     cdef int i
     cdef Vertex* vertex
     cdef Vertex* vertex2
-    cdef Quad* quad2 = &quad_cache[6*tile_id + side_num]
+    #cdef Quad* quad2 = &quad_cache[6*tile_id + side_num]
     memcpy(quad, &quad_cache[6*tile_id + side_num], sizeof(Quad))
     for i in range(0,4):
-        print "(tx= %f,ty= %f)" %(quad_cache[6*tile_id + side_num].vertex[i].tx,quad_cache[6*tile_id + side_num].vertex[i].ty)
+        #print "(tx= %f,ty= %f)" %(quad_cache[6*tile_id + side_num].vertex[i].tx,quad_cache[6*tile_id + side_num].vertex[i].ty) + " tx,ty= %f, %f" %(quad.vertex[i].tx, quad.vertex[i].ty)
         quad.vertex[i].x += x
         quad.vertex[i].y += y
         quad.vertex[i].z += z
+        #time.sleep(1.)
+
 #(tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
 
 #    int x_off,y_off,z_off
@@ -173,7 +177,8 @@ def test_chunk():
     chunk_scratch.v_num =0
     cdef int i
     for i in range(0,50):
-        add_quad(1,1,i-4,1,3)
+        for j in range(0,2):
+            add_quad(1,1,i-4,j,3)
     #time.sleep(3)
     if False:
         for k in range(0,10):
@@ -183,6 +188,13 @@ def test_chunk():
                     #colors
                     print ("c:%i,%i,%i,%i" % (quad_cache[6*k+i].vertex[j].r,quad_cache[6*k+i].vertex[j].g,quad_cache[6*k+i].vertex[j].b,quad_cache[6*k+i].vertex[j].a))
     #time.sleep(3)
+    pass
+
+    for i in range(0,10):
+        print "tex"
+        for j in range(0,4):
+            print "tx,ty= %f, %f" % (chunk_scratch.quad[i].vertex[j].tx, chunk_scratch.quad[i].vertex[j].ty)
+        time.sleep(1)
 
 cimport SDL.gl
 #import SDL.gl

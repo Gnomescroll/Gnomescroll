@@ -66,11 +66,11 @@ return 0;
 int _bind_VBO(struct Quad* quad_list, int v_num) {
 
 ///test
-if(0) {
+if(1) {
     printf("v_num= %i \n", v_num);
     vertex_num = 0;
     int i,j;
-    for(i=0; i<v_num; i++){
+    for(i=0; i<1; i++){
         for(j=0; j<4; j++){
         print_vertex(&quad_list[0].vertex[i]);
         }
@@ -93,17 +93,24 @@ if(texture == 0) { //load texture if texture is not set
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), quad_list, GL_STATIC_DRAW); // size, pointer to array, usecase
 }
 
+glEnable(GL_TEXTURE_2D);
+
 glBindBuffer(GL_ARRAY_BUFFER, VBOid);
 
 glEnableClientState(GL_VERTEX_ARRAY);
-glEnableClientState(GL_COLOR_ARRAY);
-glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
 
 glClientActiveTexture(texture); //bind texture
+glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
 
-glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
-glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12); //12 bytes in
+glEnableClientState(GL_COLOR_ARRAY);
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
+
+
+//glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+//glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12); //12 bytes in
+//glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
 glDrawArrays(GL_QUADS,0, v_num*4);
 
