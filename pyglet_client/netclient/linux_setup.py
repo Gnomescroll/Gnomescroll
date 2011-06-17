@@ -53,7 +53,8 @@ cube_lib_VBO = Extension('cube_lib.VBO',
                     library_dirs = ['/usr/X11R6/lib','usr/lib'],
                     extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT'],
                     sources = ['cube_lib/VBO.pyx',
-                    'SDL/draw_functions.c'])
+                    'SDL/draw_functions.c']
+                    )
 
 setup(
     cmdclass = {'build_ext': build_ext},
