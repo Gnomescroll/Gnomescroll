@@ -5,6 +5,16 @@
 
 #include <stdio.h>
 
+struct Vertex {
+    float x,y,z;
+    float tx,ty;
+    unsigned char r,g,b,a;
+};
+
+struct Quad {
+  struct Vertex vertex[4];
+};
+
 /*
 cdef struct Vertex:
     float x,y,z
@@ -15,15 +25,7 @@ cdef struct Quad:
     Vertex vertex[4]
 */
 
-struct Vertex {
-    float x,y,z;
-    float tx,ty;
-    unsigned char r,g,b,a;
-};
 
-struct Quad {
-  struct Vertex vertex[4];
-};
 
 int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1);
 int _draw_point(int r, int g,int b, float x0, float y0, float z0);

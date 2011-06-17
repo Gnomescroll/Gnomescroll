@@ -1,4 +1,4 @@
-#include "./draw_functions.h"
+#include "draw_functions.h"
 
 //struct line_vertices
 int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1) {
@@ -60,13 +60,14 @@ if(texture == 0) { //load texture if texture is not set
     glBindTexture( GL_TEXTURE_2D, texture );
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
 }
-    glBindTexture( GL_TEXTURE_2D, texture );
+
 
     printf("binding\n");
+    glBindTexture( GL_TEXTURE_2D, texture );
 
-    glGenBuffers(1, VBOid);
+    glGenBuffers(1, &VBOid);
     glBindBuffer(GL_ARRAY_BUFFER, VBOid);
-    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(Quad), quad_list, GL_STATIC_DRAW); // size, pointer to array, usecase
+    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), quad_list, GL_STATIC_DRAW); // size, pointer to array, usecase
 //interleaved
 
 glEnableClientState(GL_VERTEX_ARRAY);
@@ -75,9 +76,9 @@ glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 glClientActiveTexture(texture); //bind texture
 
-glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
-glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), 12); //12 bytes in
-glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), 20);
+glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12); //12 bytes in
+glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
 glDrawArrays(GL_QUADS,0, v_num);
 
@@ -85,6 +86,7 @@ glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    printf("finished\n");
 ///test
     return 0;
 }
