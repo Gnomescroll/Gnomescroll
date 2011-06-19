@@ -19,29 +19,43 @@ int _init_draw_terrain() {
     }
 }
 
-int _create_vbo(struct Quad* quad_list, int v_num) {
-    struct Quad* quad_list2 = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
-    memcpy(quad_list2, quad_list, v_num*sizeof(struct Quad));
+    int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num);
+    int _delete_vbo(struct Quad_VBO* q_VBO);
+    int _draw_vbo(struct Quad_VBO* q_VBO);
+
+//int _create_vbo(struct Quad* quad_list, int v_num) {
+int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
+
+    q_VBO->quad_list = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
+    q_VBO->v_num = v_num;
+    memcpy(q_VBO->quad_list, quad_list, v_num*sizeof(struct Quad));
 
     GLuint VBO_id;
     glGenBuffers(1, &VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
 
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), quad_list2, GL_STATIC_DRAW); // size, pointer to array, usecase
+
+    q_VBO->VBO_id = VBO_id;
     return VBO_id;
 }
 
-int _delete_vbo(unsigned int VBO_id) {
-    glDeleteBuffers(VBO_id);
+
+//int _delete_vbo(unsigned int VBO_id)
+int _delete_vbo(struct Quad_VBO* q_VBO) {
+    glDeleteBuffers(q_VBO->VBO_id);
     ///free the system memory copy of the vertex buffer
+    free(q_VBO->quad_array);
+    q_VBO->v_num = 0;
 }
 
-int _draw_vbo(unsigned int VBO_id, int v_num) {
+//int _draw_vbo(unsigned int VBO_id, int v_num) {
+int _draw_vbo(struct Quad_VBO* q_VBO) {
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);
 
-glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
+glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
 glEnableClientState(GL_VERTEX_ARRAY);
 glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
@@ -53,7 +67,7 @@ glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
 glEnableClientState(GL_COLOR_ARRAY);
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-glDrawArrays(GL_QUADS,0, v_num*4);
+glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
 
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
