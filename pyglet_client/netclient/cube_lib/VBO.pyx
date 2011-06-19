@@ -3,6 +3,7 @@ from libc.stdlib cimport malloc, free
 #core functionality
 
 from cube_lib.types cimport Quad_VBO, Vertex, Quad
+from terrain_map cimport MapChunk
 
 #constants
 cdef enum:
@@ -184,9 +185,9 @@ cdef extern from 'draw_terrain.h':
     #int _delete_vbo(unsigned int VBO_id)
     #int _draw_vbo(unsigned int VBO_id, int v_num)
 
-    int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num);
-    int _delete_vbo(struct Quad_VBO* q_VBO);
-    int _draw_vbo(struct Quad_VBO* q_VBO);
+    int _create_vbo(Quad_VBO* q_VBO, Quad* quad_list, int v_num)
+    int _delete_vbo(Quad_VBO* q_VBO)
+    int _draw_vbo(Quad_VBO* q_VBO)
 
 
 test_var = 0
@@ -247,11 +248,11 @@ cdef update_VBO(MapChunk* mc):
                 if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
                     active_cube_number += 1
                     for side_num in [0,1,2,3,4,5]:
-                        if not _is_occluded(self,x,y,z,side_num):
+                        if not _is_occluded(x,y,z,side_num):
                             add_quad(x+x_off,y_off,z_off,side_num,tile_id)
 
     mc.VBO.v_num = chunk_scratch.v_num
-    mc.VBO.VBO_id = _create_vbo(chunk_scratch.quad, chunk_scratch.v_num)
+    mc.VBO.VBO_id = _create_vbo(mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
 
 cdef delete_VBO(MapChunk* mc):
     #free(mc.VBO.quad_array)
@@ -263,8 +264,9 @@ cdef int s_array[3*6]
 for i in range(0, 3*6):
     s_array[i] = l[i]
 
+from cube_dat cimport cubePhysicalProperties
 cdef inline _is_occluded(self,int x,int y,int z, int side_num):
-        global s_array
+        global s_array, cubePhysicalProperties
         cdef int _x, _y, _z, tile_id,i
 
         i = s_array[3*side_num]
@@ -273,5 +275,5 @@ cdef inline _is_occluded(self,int x,int y,int z, int side_num):
         _z = s_array[i+2] + z
 
         tile_id = self.terrainMap.get(_x,_y,_z)
-        return self.cubePhysicalProperties.isOcclude(tile_id)
+        cubePhysicalProperties.isOcclude(tile_id)
 
