@@ -2,6 +2,7 @@ from libc.stdlib cimport malloc, free
 
 #core functionality
 
+from cube_lib.types cimport Quad_VBO, Vertex, Quad
 
 #constants
 cdef enum:
@@ -12,18 +13,6 @@ cdef enum:
     y_chunk_size = 8
     z_chunk_size = 8
     chunk_size = 512
-
-#structs
-cdef struct Vertex:
-    float x,y,z
-    float tx,ty
-    unsigned char r,g,b,a #for packing
-
-cdef struct Quad:
-    Vertex vertex[4]
-
-#cdef struct Cube:
-#    Quad quad[6]
 
 cdef struct Chunk_scratch:
     Quad quad[chunk_size*6] #6 quad per cube
@@ -191,9 +180,14 @@ def test_chunk():
 
 cdef extern from 'draw_terrain.h':
     int _init_draw_terrain()
-    int _create_vbo(Quad* quad_list, int v_num)
-    int _delete_vbo(unsigned int VBO_id)
-    int _draw_vbo(unsigned int VBO_id, int v_num)
+    #int _create_vbo(Quad* quad_list, int v_num)
+    #int _delete_vbo(unsigned int VBO_id)
+    #int _draw_vbo(unsigned int VBO_id, int v_num)
+
+    int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num);
+    int _delete_vbo(struct Quad_VBO* q_VBO);
+    int _draw_vbo(struct Quad_VBO* q_VBO);
+
 
 test_var = 0
 cdef int v_num = 0
@@ -232,6 +226,7 @@ from terrain_map cimport MapChunk
 from cube_lib.types cimport Quad_VBO
 
 cdef update_VBO(MapChunk* mc):
+    global chunk_scratch
     cdef int tile_id, x, y, z, side_num
     cdef float x_off, y_off, z_off
 
@@ -244,7 +239,6 @@ cdef update_VBO(MapChunk* mc):
     if mc.VBO.v_num != 0:
         delete_VBO(mc)
 
-
     for x in range(0, x_chunk_size):
         for y in range(0, y_chunk_size):
             for z in range(0, z_chunk_size):
@@ -255,6 +249,9 @@ cdef update_VBO(MapChunk* mc):
                     for side_num in [0,1,2,3,4,5]:
                         if not _is_occluded(self,x,y,z,side_num):
                             add_quad(x+x_off,y_off,z_off,side_num,tile_id)
+
+    mc.VBO.v_num = chunk_scratch.v_num
+    mc.VBO.VBO_id = _create_vbo(chunk_scratch.quad, chunk_scratch.v_num)
 
 cdef delete_VBO(MapChunk* mc):
     #free(mc.VBO.quad_array)
