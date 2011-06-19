@@ -1,5 +1,44 @@
 import settings
 
+from libc.stdlib cimport malloc, free
+
+from terrain_map cimport MapChunk
+from cube_lib.types cimport Quad_VBO
+
+
+#cdef int update_VBO
+#cdef Quad_VBO VBO
+
+#    int v_num
+#    Quad* quad_array
+#    int VBO_id
+
+cdef update_VBO(MapChunk* mc):
+    mc.update_VBO = 0
+    if mc.VBO.v_num != 0:
+        delete_VBO(mc)
+
+
+    for x in range(self.x_off, self.x_off+x_chunk_size):
+        for y in range(self.y_off, self.y_off +y_chunk_size):
+            for z in range(self.z_off, self.z_off+z_chunk_size):
+                tile_id = self.terrainMap.get(x,y,z)
+                ###
+                if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
+                    active_cube_number += 1
+                    for side_num in [0,1,2,3,4,5]:
+                        if not _is_occluded(self,x,y,z,side_num):
+                            draw_list.append((x,y,z,tile_id, side_num))
+
+
+
+cdef delete_VBO(MapChunk* mc):
+    free(mc.VBO.quad_array)
+    mc.VBO.VBO_id = 0
+    mc.VBO.v_num = 0
+
+### DEPRECATE BELOW LINE ###
+'''
 #if settings.pyglet:
 import pyglet
 from pyglet.gl import *
@@ -275,3 +314,4 @@ cdef inline int _is_occluded2(self,int x,int y,int z,int side_num, int tile_id_i
         if tile_id == tile_id_in:
             return 1
         return self.cubePhysicalProperties.isOcclude(tile_id)
+'''

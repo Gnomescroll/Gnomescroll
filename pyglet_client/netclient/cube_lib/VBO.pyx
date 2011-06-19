@@ -161,7 +161,7 @@ def init():
     init_quad_cache()
     clear_buffer()
 
-cdef clear_buffer():
+cdef inline clear_chunk_scratch():
     chunk_scratch.v_num = 0
 
 cdef add_quad(float x,float y,float z,int side,int tile):
@@ -217,3 +217,64 @@ def draw_test_chunk():
     #cdef int v_num = chunk_scratch.v_num
     #SGL.gl._bind_VBO(quad_list, v_num)
     #bind_VBO(quad_list, v_num)
+
+
+### TEST ###
+
+#cdef int update_VBO
+#cdef Quad_VBO VBO
+
+#    int v_num
+#    Quad* quad_array
+#    int VBO_id
+
+from terrain_map cimport MapChunk
+from cube_lib.types cimport Quad_VBO
+
+cdef update_VBO(MapChunk* mc):
+    cdef int tile_id, x, y, z, side_num
+    cdef float x_off, y_off, z_off
+
+    x_off = mc.index[0]
+    y_off = mc.index[1]
+    z_off = mc.index[2]
+
+    clear_chunk_scratch()
+    mc.update_VBO = 0
+    if mc.VBO.v_num != 0:
+        delete_VBO(mc)
+
+
+    for x in range(0, x_chunk_size):
+        for y in range(0, y_chunk_size):
+            for z in range(0, z_chunk_size):
+                tile_id = self.terrainMap.get(x,y,z)
+                ###
+                if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
+                    active_cube_number += 1
+                    for side_num in [0,1,2,3,4,5]:
+                        if not _is_occluded(self,x,y,z,side_num):
+                            add_quad(x+x_off,y_off,z_off,side_num,tile_id)
+
+cdef delete_VBO(MapChunk* mc):
+    #free(mc.VBO.quad_array)
+    mc.VBO.VBO_id = 0
+    mc.VBO.v_num = 0
+
+l = [0,0,1, 0,0,-1, 0,1,0, 0,-1,0, -1,0,0, 1,0,0]
+cdef int s_array[3*6]
+for i in range(0, 3*6):
+    s_array[i] = l[i]
+
+cdef inline _is_occluded(self,int x,int y,int z, int side_num):
+        global s_array
+        cdef int _x, _y, _z, tile_id,i
+
+        i = s_array[3*side_num]
+        _x = s_array[i+0] + x
+        _y = s_array[i+1] + y
+        _z = s_array[i+2] + z
+
+        tile_id = self.terrainMap.get(_x,_y,_z)
+        return self.cubePhysicalProperties.isOcclude(tile_id)
+
