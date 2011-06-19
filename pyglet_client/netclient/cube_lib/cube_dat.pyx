@@ -13,7 +13,10 @@ class CubeGlobal:
 
     @classmethod
     def init_0(cls):
-        cls.cubePhysicalProperties = CubePhysicalProperties()
+        #cls.cubePhysicalProperties = CubePhysicalProperties()
+        global cubePhysicalProperties
+        cubePhysicalProperties.init()
+        cls.cubePhysicalProperties = cubePhysicalProperties
         #cls.cubeRenderCache = CubeRenderCache()
     @classmethod
     def init_1(cls):
@@ -139,10 +142,13 @@ cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, in
 cdef enum:
     max_cubes = 1024
 
+
+cdef CubePhysicalProperties cubePhysicalProperties
+
 cdef class CubePhysicalProperties:
     cdef CubePhysical cube_array[max_cubes]
 
-    def __init__(self):
+    def init(self):
         global cube_list
         for cube in cube_list.values():
             self.add_cube(cube)
