@@ -84,6 +84,25 @@ cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
         print "Error!!!! set_tex invalid input"
     #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
 
+cdef inline set_tex(int vert_num, Vertex* vertex, int tile_id):
+    vertex.tx = x * (float(1)/16)
+    vertex.ty = x * (float(1)/16)
+    if vert_num == 0:
+        vertex.tx += 0
+        vertex.ty += 0
+    elif vert_num == 1:
+        vertex.tx += float(1)/16
+        vertex.ty += 0
+    elif vert_num == 2:
+        vertex.tx += float(1)/16
+        vertex.ty += float(1)/16
+    elif vert_num == 3:
+        vertex.tx += 0
+        vertex.ty += float(1)/16
+    else:
+        print "Error!!!! set_tex invalid input"
+    #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
+
 def convert_index(index, height, width):
     index = int(index)
     height = int(height)
@@ -296,8 +315,13 @@ cdef inline _is_occluded(int x,int y,int z, int side_num):
 
 ## cube physical
 
+cdef struct CubeTexture:
+    int texture_id
+    int texture_order[4]
+
 cdef struct CubePhysical:
     int id
+    CubeTexture cubeTexture
     int active
     int occludes
     int solid
@@ -305,7 +329,8 @@ cdef struct CubePhysical:
     int transparent
 
 #used for initing the struct
-cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid, int gravity, int transparent):
+cdef void init_CubePhysical(CubePhysical*x, int id,CubeTexture cubeTexture, int active, int occludes, int solid, int gravity, int transparent):
+    x.cubeTexture = cubeTexture
     x.id = id
     x.active = active
     x.occludes = occludes
@@ -324,16 +349,25 @@ def init_cubes():
 cdef CubePhysical cube_array[max_cubes] #cube state
 
 def add_cube(d):
+    cdef CubeTexture cubeTexture
     id = int(d['id'])
     if id >= max_cubes: #max number of cubes
         print "Error: cube id is too high"
         return
+    #texture id and order
+    cubeTexture.texture_id = d.get('texture_id', 1)
+    texture_order = d.get('texture_order', [0,1,2,3])
+    assert len(texture_order) == 4:
+    for i in range(0,4):
+        assert texture_order[i] <4 and texture_order[i] > 0
+        cubeTexture.texture_order[i] = texture_order[i]
+    #properties
     active = int(d.get('active',1))
     occludes = int(d.get('occludes', 0))
     solid = int(d.get('solid', 1))
     gravity = int(d.get('gravity', 0))
     transparent = int(d.get('transparent', 0))
-    init_CubePhysical(&cube_array[id], id, active, occludes, solid, gravity, transparent)
+    init_CubePhysical(&cube_array[id], id, cubeTexture, active, occludes, solid, gravity, transparent)
 
 #!!!should not need to be cp
 cpdef inline int isActive(unsigned int id):
