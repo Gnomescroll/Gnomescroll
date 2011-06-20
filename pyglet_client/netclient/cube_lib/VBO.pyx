@@ -7,6 +7,8 @@ from cube_lib.types cimport *
 #cimport cube_lib.cube_dat
 cimport cube_lib.terrain_map as terrain_map
 
+#import cube_lib.terrain_map
+
 from cube_lib.terrain_map cimport MapChunk
 
 from cube_dat import cube_list
@@ -169,6 +171,17 @@ def init():
     init_cubes()
     init_quad_cache()
     clear_chunk_scratch()
+
+## Update VBO ##
+def update_chunks():
+    cdef MapChunk mc
+    ll = terrain_map.get_chunk_list()
+    for l in ll:
+        mc = <MapChunk>l
+        if mc.update_VBO != 0:
+            print "Needs update!"
+## Draw VBO ##
+
 
 cdef inline clear_chunk_scratch():
     global chunk_scratch

@@ -20,7 +20,7 @@ def get_chunk_version_list():
         ll.append([c.index[0], c.index[1], c.index[2], c.version, c.server_version])
     return l
 
-def get_chunk_list():
+cpdef get_chunk_list():
     global chunks
     ll = []
     cdef MapChunk c

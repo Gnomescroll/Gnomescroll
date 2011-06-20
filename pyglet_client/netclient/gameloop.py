@@ -145,6 +145,7 @@ class App(object):
 
             self.camera.worldProjection()
             #cube_lib.VBO.draw_test_chunk()
+            cube_lib.VBO.update_chunks()
             self.world.draw()
             #VBO test
             ##cube_lib.VBO.draw_test_chunk()
@@ -167,6 +168,7 @@ class App(object):
                 ctick = SDL.gl.get_ticks()
                 #print str(ctick - ltick)
                 ltick = ctick
+            #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
 

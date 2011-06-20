@@ -102,7 +102,8 @@ if settings.pyglet:
     import pyglet
     from pyglet.gl import *
 else:
-    import SDL
+    pass
+    import SDL.gl
 
 def draw_projectiles():
     #if settings.pyglet == False:
@@ -136,5 +137,4 @@ def draw_projectiles():
             SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 from game_state import GameStateGlobal
-#from cube_dat import CubeGlobal
 from cube_lib.VBO import collisionDetection
