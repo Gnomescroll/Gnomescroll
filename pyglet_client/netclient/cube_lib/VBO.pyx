@@ -217,10 +217,6 @@ def draw_test_chunk():
 def update_chunks():
     cdef MapChunk mc
     ll = terrain_map.get_raw_chunk_list()
-    if len(ll) == 0:
-        return
-    else:
-        print str(l)
     for l in ll:
         mc = <MapChunk>l
         if mc.update_VBO != 0:
@@ -235,8 +231,6 @@ def update_chunks():
 def draw_chunks():
     cdef MapChunk mc
     ll = terrain_map.get_raw_chunk_list()
-    if len(ll) == 0:
-        return
     for l in ll:
         mc = <MapChunk>l
         if mc.VBO.VBO_id != 0:
