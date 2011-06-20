@@ -45,8 +45,11 @@ int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
 int _delete_vbo(struct Quad_VBO* q_VBO) {
     glDeleteBuffers(q_VBO->VBO_id);
     ///free the system memory copy of the vertex buffer
-    free(q_VBO->quad_array);
+    printf("WTF! \n");
+
+    //free(q_VBO->quad_array);
     q_VBO->v_num = 0;
+    return 0;
 }
 
 //int _draw_vbo(unsigned int VBO_id, int v_num) {
@@ -72,6 +75,8 @@ glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+return 0;
 }
 
 int print_vertex(struct Vertex* v) {

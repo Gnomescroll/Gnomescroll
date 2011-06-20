@@ -28,6 +28,14 @@ cpdef get_chunk_list():
         ll.append([c, c.index[0], c.index[1], c.index[2]])
     return ll
 
+cdef get_raw_chunk_list():
+    global chunks
+    ll = []
+    cdef MapChunk c
+    for c in chunks.values():
+        ll.append(c)
+    return ll
+
 cdef get_or_create_chunk(int x, int y, int z):
     global chunks
     t = (x >> 3, y >> 3, z >> 3)

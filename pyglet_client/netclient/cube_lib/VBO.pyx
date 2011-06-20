@@ -216,19 +216,27 @@ def draw_test_chunk():
 ## Update VBO ##
 def update_chunks():
     cdef MapChunk mc
-    ll = terrain_map.get_chunk_list()
+    ll = terrain_map.get_raw_chunk_list()
+    if len(ll) == 0:
+        return
+    else:
+        print str(l)
     for l in ll:
         mc = <MapChunk>l
         if mc.update_VBO != 0:
-            if mc.VBO.v_num != 0:
-                delete_VBO(mc)
-            update_VBO(mc)
+            #if mc.VBO.v_num != 0:
+            #    delete_VBO(mc)
             print "updating VBO"
+            update_VBO(mc)
+            #print "updating VBO"
+            break
             #load VBO
 
 def draw_chunks():
     cdef MapChunk mc
-    ll = terrain_map.get_chunk_list()
+    ll = terrain_map.get_raw_chunk_list()
+    if len(ll) == 0:
+        return
     for l in ll:
         mc = <MapChunk>l
         if mc.VBO.VBO_id != 0:
@@ -245,7 +253,9 @@ cdef update_VBO(MapChunk mc):
     y_off = mc.index[1]
     z_off = mc.index[2]
 
+    print "1"
     clear_chunk_scratch()
+    print "2"
     mc.update_VBO = 0
     #if mc.VBO.v_num != 0:
     #    delete_VBO(mc)
@@ -260,15 +270,18 @@ cdef update_VBO(MapChunk mc):
                     for side_num in [0,1,2,3,4,5]:
                         if not _is_occluded(x,y,z,side_num):
                             add_quad(x+x_off,y_off,z_off,side_num,tile_id)
-
-    mc.VBO.v_num = chunk_scratch.v_num
+    print "3"
+    #mc.VBO.v_num = chunk_scratch.v_num
+    print "4"
     mc.VBO.VBO_id = _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
+    print "VBO_id= %i" % (mc.VBO.VBO_id)
+    print "5"
 
 cdef delete_VBO(MapChunk mc):
     #free(mc.VBO.quad_array)
     mc.VBO.VBO_id = 0
     mc.VBO.v_num = 0
-    _delete_vbo(&mc.VBO)
+    #_delete_vbo(&mc.VBO)
 
 l = [0,0,1, 0,0,-1, 0,1,0, 0,-1,0, -1,0,0, 1,0,0]
 cdef int s_array[3*6]
