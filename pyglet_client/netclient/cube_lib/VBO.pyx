@@ -172,17 +172,6 @@ def init():
     init_quad_cache()
     clear_chunk_scratch()
 
-## Update VBO ##
-def update_chunks():
-    cdef MapChunk mc
-    ll = terrain_map.get_chunk_list()
-    for l in ll:
-        mc = <MapChunk>l
-        if mc.update_VBO != 0:
-            print "Needs update!"
-## Draw VBO ##
-
-
 cdef inline clear_chunk_scratch():
     global chunk_scratch
     chunk_scratch.v_num = 0
@@ -202,8 +191,6 @@ def test_chunk():
         for j in range(0,6):
             add_quad(1,1,i-4,j,3)
 
-
-
 cdef extern from 'draw_terrain.h':
     int _init_draw_terrain()
 
@@ -222,31 +209,32 @@ def draw_test_chunk():
     global test_var,v_num,vbo_id
     cdef Quad* quad_list
     if test_var == 0:
-        #init
+
         _init_draw_terrain()
-        #create VBO
-       # quad_list = chunk_scratch.quad
-        #v_num = chunk_scratch.v_num
-        #vbo_id = _create_vbo(quad_list, v_num)
-
-    #_draw_vbo(vbo_id, v_num)
-
-    #cdef Quad* quad_list = chunk_scratch.quad
-    #cdef int v_num = chunk_scratch.v_num
-    #SGL.gl._bind_VBO(quad_list, v_num)
-    #bind_VBO(quad_list, v_num)
 
 
-### TEST ###
+## Update VBO ##
+def update_chunks():
+    cdef MapChunk mc
+    ll = terrain_map.get_chunk_list()
+    for l in ll:
+        mc = <MapChunk>l
+        if mc.update_VBO != 0:
+            if mc.VBO.v_num != 0:
+                delete_VBO(mc)
+            update_VBO(mc)
+            print "updating VBO"
+            #load VBO
 
-#cdef int update_VBO
-#cdef Quad_VBO VBO
-
-#    int v_num
-#    Quad* quad_array
-#    int VBO_id
-
-#from cube_dat cimport cubePhysicalProperties
+def draw_chunks():
+    cdef MapChunk mc
+    ll = terrain_map.get_chunk_list()
+    for l in ll:
+        mc = <MapChunk>l
+        if mc.VBO.VBO_id != 0:
+            pass
+            print "draw!"
+## Draw VBO ##
 
 cdef update_VBO(MapChunk mc):
     global chunk_scratch
@@ -259,8 +247,8 @@ cdef update_VBO(MapChunk mc):
 
     clear_chunk_scratch()
     mc.update_VBO = 0
-    if mc.VBO.v_num != 0:
-        delete_VBO(mc)
+    #if mc.VBO.v_num != 0:
+    #    delete_VBO(mc)
 
     for x in range(0, x_chunk_size):
         for y in range(0, y_chunk_size):
