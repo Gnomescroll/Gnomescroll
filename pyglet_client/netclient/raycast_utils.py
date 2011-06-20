@@ -3,10 +3,12 @@ Rendering utilities
 '''
 ### Ray casting utilities
 
+from cube_lib import terrain_map as terrainMap
+
 from math import sin, cos, sqrt, pi
 
 def collision(x,y,z):
-    tile = GameStateGlobal.terrainMap.get(x,y,z)
+    tile = terrainMap.get(x,y,z)
     if tile == 0:
         return 0
     else:

@@ -12,7 +12,7 @@ cdef enum:
 chunks = {}
 l = [] #what is this used for?
 
-def get_chunk_version_list(self):
+def get_chunk_version_list():
     global chunks
     ll = []
     cdef MapChunk c
