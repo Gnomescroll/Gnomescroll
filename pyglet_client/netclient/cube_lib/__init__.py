@@ -1,8 +1,3 @@
 
 
-__all__ = ["VBO"]
-
-#import VBO
-#from cube_lib import *
-
-#from VBO import *
+__all__ = ["VBO", 'terrain_map', 'cube_dat']

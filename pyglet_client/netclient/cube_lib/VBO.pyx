@@ -2,25 +2,33 @@ from libc.stdlib cimport malloc, free
 
 #core functionality
 
-from cube_lib.types cimport Quad_VBO, Vertex, Quad
+from cube_lib.types cimport *
 
-cimport cube_lib.cube_dat as cube_dat
+#cimport cube_lib.cube_dat
 cimport cube_lib.terrain_map as terrain_map
 
-from terrain_map cimport MapChunk
 
-#cimport cube_lib.types
-from cube_lib.types cimport Vertex, Quad
+from cube_lib.cube_dat cimport *
+cdef CubePhysicalProperties* cubePhysicalProperties
+
+#from cube_dat cimport cubePhysicalProperties
+#from cube_lib.cube_dat cimport cubePhysicalProperties
+
+#import cube_lib.cube_dat.cubePhysicalProperties as cubePhysicalProperties
+
+
+
+from cube_lib.terrain_map cimport MapChunk
 
 #constants
-cdef enum:
-    max_cubes = 1024
+#cdef enum:
+#    max_cubes = 1024
 
-cdef enum:
-    x_chunk_size = 8
-    y_chunk_size = 8
-    z_chunk_size = 8
-    chunk_size = 512
+#cdef enum:
+#    x_chunk_size = 8
+#    y_chunk_size = 8
+#    z_chunk_size = 8
+#    chunk_size = 512
 
 cdef struct Chunk_scratch:
     Quad quad[chunk_size*6] #6 quad per cube
@@ -238,9 +246,6 @@ def draw_test_chunk():
 #    Quad* quad_array
 #    int VBO_id
 
-from terrain_map cimport MapChunk
-from cube_lib.types cimport Quad_VBO
-
 #from cube_dat cimport cubePhysicalProperties
 
 cdef update_VBO(MapChunk mc):
@@ -262,7 +267,7 @@ cdef update_VBO(MapChunk mc):
             for z in range(0, z_chunk_size):
                 tile_id = terrain_map.get(x,y,z)
                 ###
-                if cube_dat.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
+                if cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
                     active_cube_number += 1
                     for side_num in [0,1,2,3,4,5]:
                         if not _is_occluded(x,y,z,side_num):
@@ -283,7 +288,7 @@ for i in range(0, 3*6):
     s_array[i] = l[i]
 
 cdef inline _is_occluded(int x,int y,int z, int side_num):
-        global s_array, cubePhysicalProperties
+        global s_array
         cdef int _x, _y, _z, tile_id,i
 
         i = s_array[3*side_num]
@@ -292,5 +297,5 @@ cdef inline _is_occluded(int x,int y,int z, int side_num):
         _z = s_array[i+2] + z
 
         tile_id = terrain_map.get(_x,_y,_z)
-        cube_dat.cubePhysicalProperties.isOcclude(tile_id)
+        return cubePhysicalProperties.isOcclude(tile_id)
 

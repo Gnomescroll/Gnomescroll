@@ -1,12 +1,14 @@
 
 #from world_state import WorldStateGlobal
 
+from cube_lib.types cimport *
+
 import settings
 
 class CubeGlobal:
     #terrainMap = TerrainMap()
     cubePhysicalProperties = None
-    collisionDetection = None
+    #collisionDetection = None
     #client specific
     cubeRenderCache = None
     textureGrid = None
@@ -15,16 +17,18 @@ class CubeGlobal:
     def init_0(cls):
         #cls.cubePhysicalProperties = CubePhysicalProperties()
         global cubePhysicalProperties
+        cubePhysicalProperties.CubePhysicalProperties
         cubePhysicalProperties.init()
         cls.cubePhysicalProperties = cubePhysicalProperties
-        global collisionDetection
-        cls.collisionDetection = collisionDetection
+        #global collisionDetection
+        #cls.collisionDetection = collisionDetection
         #cls.cubeRenderCache = CubeRenderCache()
     @classmethod
     def init_1(cls):
-        global collisionDetection
-        collisionDetection.init()
-        cls.collisionDetection.init()
+        pass
+        #global collisionDetection
+        #collisionDetection.init()
+        #cls.collisionDetection.init()
 #    @classmethod
 #    def setTextureGrid(cls, texture_grid):
         #print "set texture grid"
@@ -146,58 +150,59 @@ cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, in
 #cdef enum:
 #    max_cubes = 1024
 
+def init():
+    global cube_list
+    for cube in cube_list.values():
+        add_cube(cube)
 
-cdef CubePhysicalProperties cubePhysicalProperties
+cdef CubePhysical cube_array[max_cubes] #cube state
+
+def add_cube(self, d):
+    id = int(d['id'])
+    if id >= max_cubes: #max number of cubes
+        print "Error: cube id is too high"
+        return
+    active = int(d.get('active',1))
+    occludes = int(d.get('occludes', 0))
+    solid = int(d.get('solid', 1))
+    gravity = int(d.get('gravity', 0))
+    transparent = int(d.get('transparent', 0))
+    init_CubePhysical(&cube_array[id], id, active, occludes, solid, gravity, transparent)
+
+#!!!should not need to be cp
+cpdef inline int isActive(CubePhysicalProperties self, unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return self.cube_array[id].active
+#!!!should not need to be cp
+cpdef inline int isOcclude(CubePhysicalProperties self, unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return self.cube_array[id].occludes
+
+cpdef inline int isTransparent(CubePhysicalProperties self, unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return self.cube_array[id].transparent
+
+cpdef inline int isSolid(CubePhysicalProperties self, unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return self.cube_array[id].solid
+
+
+cdef CubePhysicalProperties* cubePhysicalProperties
 #cdef CollisionDetection collisionDetection
-
-cdef class CubePhysicalProperties:
-    #cdef CubePhysical cube_array[max_cubes]
-
-    def init(self):
-        global cube_list
-        for cube in cube_list.values():
-            self.add_cube(cube)
-
-    def add_cube(self, d):
-        id = int(d['id'])
-        if id >= max_cubes: #max number of cubes
-            print "Error: cube id is too high"
-            return
-        active = int(d.get('active',1))
-        occludes = int(d.get('occludes', 0))
-        solid = int(d.get('solid', 1))
-        gravity = int(d.get('gravity', 0))
-        transparent = int(d.get('transparent', 0))
-        init_CubePhysical(&self.cube_array[id], id, active, occludes, solid, gravity, transparent)
-
-    #!!!should not need to be cp
-    cpdef inline int isActive(CubePhysicalProperties self, unsigned int id):
-        if id >= max_cubes: #max number of cubes
-            return 0
-        return self.cube_array[id].active
-    #!!!should not need to be cp
-    cpdef inline int isOcclude(CubePhysicalProperties self, unsigned int id):
-        if id >= max_cubes: #max number of cubes
-            return 0
-        return self.cube_array[id].occludes
-
-    cpdef inline int isTransparent(CubePhysicalProperties self, unsigned int id):
-        if id >= max_cubes: #max number of cubes
-            return 0
-        return self.cube_array[id].transparent
-
-    cpdef inline int isSolid(CubePhysicalProperties self, unsigned int id):
-        if id >= max_cubes: #max number of cubes
-            return 0
-        return self.cube_array[id].solid
-
 
 ### Cube Utilities ###
 
 cpdef inline int collisionDetection(int x, int y, int z):
     cdef int tile
-    tile = terrainap.get(x,y,z)
+    tile = terrain_map.get(x,y,z)
     return cubePhysicalProperties.isSolid(tile)
+
+#cdef class CollisionDetection:
+#    pass
 
 ##the cache for cube visual properties
 ##deprecates CubeRenderCache
