@@ -31,7 +31,7 @@ class CubeGlobal:
         #cls.textureGrid = texture_grid
         #cls.cubeRenderCache.set_texture(texture_grid)
 
-from map_chunk_manager import MapChunkManagerGlobal
+#from map_chunk_manager import MapChunkManagerGlobal
 
 cimport terrain_map
 #from terrain_map cimport TerrainMap

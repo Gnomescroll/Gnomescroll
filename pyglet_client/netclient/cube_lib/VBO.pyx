@@ -4,10 +4,13 @@ from libc.stdlib cimport malloc, free
 
 from cube_lib.types cimport Quad_VBO, Vertex, Quad
 
-cimport cube_dat
-cimport terrain_map
+cimport cube_lib.cube_dat as cube_dat
+cimport cube_lib.terrain_map as terrain_map
 
 from terrain_map cimport MapChunk
+
+#cimport cube_lib.types
+from cube_lib.types cimport Vertex, Quad
 
 #constants
 cdef enum:
@@ -96,6 +99,9 @@ cpdef test():
 
 def init_quad_cache():
     global v_index, quad_cache
+    #quad_cache = <Quad *>malloc(max_cubes*6 * sizeof(Quad))
+    #print "max cubes= " + str(max_cubes)
+    #print "Size of Quad=" + str(sizeof(Quad))
     cdef Quad* quad
     cdef Vertex* vertex
     cdef int i,j,k,index
@@ -103,13 +109,17 @@ def init_quad_cache():
         for i in range(0,6):
             quad = &quad_cache[6*k+i]
             for j in range(0,4):
+                #print "(%i,%i,%i)" % (k,i,j)
                 index = 12*i + 3*j
                 vi = 6*k+i
                 vertex = &quad.vertex[j]
                 #vertices
-                vertex.x = v_index[index + 0]
-                vertex.y = v_index[index + 1]
-                vertex.z = v_index[index + 2]
+                quad_cache[6*k+i].vertex[j].x = v_index[index + 0]
+                quad_cache[6*k+i].vertex[j].y = v_index[index + 1]
+                quad_cache[6*k+i].vertex[j].z = v_index[index + 2]
+                ##vertex.x = v_index[index + 0]
+                ##vertex.y = v_index[index + 1]
+                ##vertex.z = v_index[index + 2]
                 #colors
                 vertex.r = 255
                 vertex.g = 255
@@ -152,10 +162,13 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 ## control state
 
 def init():
+    print "1"
     init_quad_cache()
+    print "2"
     clear_chunk_scratch()
 
 cdef inline clear_chunk_scratch():
+    global chunk_scratch
     chunk_scratch.v_num = 0
 
 cdef add_quad(float x,float y,float z,int side,int tile):
@@ -185,9 +198,6 @@ def test_chunk():
 
 cdef extern from 'draw_terrain.h':
     int _init_draw_terrain()
-    #int _create_vbo(Quad* quad_list, int v_num)
-    #int _delete_vbo(unsigned int VBO_id)
-    #int _draw_vbo(unsigned int VBO_id, int v_num)
 
     int _create_vbo(Quad_VBO* q_VBO, Quad* quad_list, int v_num)
     int _delete_vbo(Quad_VBO* q_VBO)
@@ -199,6 +209,7 @@ cdef int v_num = 0
 cdef int vbo_id = 0
 
 def draw_test_chunk():
+    return
     global chunk_scratch
     global test_var,v_num,vbo_id
     cdef Quad* quad_list

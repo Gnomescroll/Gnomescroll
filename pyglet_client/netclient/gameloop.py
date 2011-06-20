@@ -24,7 +24,7 @@ from input import InputGlobal
 from chat_client import ChatClientGlobal
 
 from cube_dat import CubeGlobal
-from map_chunk_manager import MapChunkManagerGlobal
+#from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
 
 
@@ -50,7 +50,7 @@ class App(object):
         NetEventGlobal.init_0()
         NetOut.init_0()
         ChatClientGlobal.init_0()
-        MapChunkManagerGlobal.init_0()
+        #MapChunkManagerGlobal.init_0()
         MapControllerGlobal.init_0()
         #stage 2
         NetClientGlobal.init_1()
@@ -59,7 +59,7 @@ class App(object):
         NetEventGlobal.init_1()
         NetOut.init_1()
         ChatClientGlobal.init_1()
-        MapChunkManagerGlobal.init_1()
+        #MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
         if settings.pyglet == False:
             self.SDL_global = SDL.gl.SDL_global #drawing stuff
