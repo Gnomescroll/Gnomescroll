@@ -10,10 +10,10 @@ cdef enum:
     z_chunk_size = 8
 
 chunks = {}
-l = []
+l = [] #what is this used for?
 
 def get_chunk_version_list(self):
-    global chunks, l
+    global chunks
     ll = []
     cdef MapChunk c
     for c in chunks.values():
@@ -21,7 +21,7 @@ def get_chunk_version_list(self):
     return l
 
 def get_chunk_list():
-    global chunks, l
+    global chunks
     ll = []
     cdef MapChunk c
     for c in chunks.values():
@@ -29,30 +29,30 @@ def get_chunk_list():
     return ll
 
 cdef get_or_create_chunk(int x, int y, int z):
-    global chunks, l
+    global chunks
     t = (x >> 3, y >> 3, z >> 3)
     cdef MapChunk mc
-    if not self.chunks.has_key(t):
-        self.chunks[t] = MapChunk(x, y, z) #new map chunk
-    return self.chunks[t]
+    if not chunks.has_key(t):
+        chunks[t] = MapChunk(x, y, z) #new map chunk
+    return chunks[t]
 
 def get_packed_chunk(x, y, z):
-    global chunks, l
+    global chunks
     t = (x >> 3, y >> 3, z >> 3)
     if not chunks.has_key(t):
         return ''
-    t = self.chunks[t]
+    t = chunks[t]
     return zlib.compress(pack(t))
 
 def set_packed_chunk(tmp):
-    global chunks, l
+    global chunks
     global fm_inv1, fm_inv2
     cdef int off_x, off_y, off_z, version
     cdef MapChunk chunk
     tmp = zlib.decompress(tmp)
     (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
     array = list(fm_inv2.unpack(array))
-    chunk = self.get_or_create_chunk(off_x, off_y, off_z)
+    chunk = get_or_create_chunk(off_x, off_y, off_z)
     chunk.version = version
     assert len(array) == 512
     for n in range(0,512):
@@ -78,17 +78,17 @@ cpdef inline set(int x,int y, int z,int value):
     cdef MapChunk c
     t = (x >> 3, y >> 3, z >> 3)
     if not chunks.has_key(t):
-        self.chunks[t] = MapChunk(x,y,z) #new map chunk
-    c = self.chunks[t]
+        chunks[t] = MapChunk(x,y,z) #new map chunk
+    c = chunks[t]
     c.set(x,y,z, value)
 
 cpdef inline int get(int x, int y,int z):
     global chunks
     cdef MapChunk c
     t = (x >> 3, y >> 3, z >> 3)
-    if not self.chunks.has_key(t):
+    if not chunks.has_key(t):
         return 0
-    c = self.chunks[t]
+    c = chunks[t]
     return c.get(x,y,z)
 
 '''

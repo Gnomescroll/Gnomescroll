@@ -18,7 +18,7 @@ struct Quad {
 
 struct Quad_VBO {
     int v_num;
-    Quad* quad_array;
+    struct Quad* quad_array;
     int VBO_id;
 };
 

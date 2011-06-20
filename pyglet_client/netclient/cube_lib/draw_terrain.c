@@ -26,15 +26,15 @@ int _init_draw_terrain() {
 //int _create_vbo(struct Quad* quad_list, int v_num) {
 int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
 
-    q_VBO->quad_list = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
+    q_VBO->quad_array = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
     q_VBO->v_num = v_num;
-    memcpy(q_VBO->quad_list, quad_list, v_num*sizeof(struct Quad));
+    memcpy(q_VBO->quad_array, quad_list, v_num*sizeof(struct Quad));
 
     GLuint VBO_id;
     glGenBuffers(1, &VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
 
-    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), quad_list2, GL_STATIC_DRAW); // size, pointer to array, usecase
+    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), q_VBO->quad_array, GL_STATIC_DRAW); // size, pointer to array, usecase
 
     q_VBO->VBO_id = VBO_id;
     return VBO_id;

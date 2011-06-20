@@ -3,6 +3,10 @@ from libc.stdlib cimport malloc, free
 #core functionality
 
 from cube_lib.types cimport Quad_VBO, Vertex, Quad
+
+cimport cube_dat
+cimport terrain_map
+
 from terrain_map cimport MapChunk
 
 #constants
@@ -149,7 +153,7 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 
 def init():
     init_quad_cache()
-    clear_buffer()
+    clear_chunk_scratch()
 
 cdef inline clear_chunk_scratch():
     chunk_scratch.v_num = 0
@@ -202,11 +206,11 @@ def draw_test_chunk():
         #init
         _init_draw_terrain()
         #create VBO
-        quad_list = chunk_scratch.quad
-        v_num = chunk_scratch.v_num
-        vbo_id = _create_vbo(quad_list, v_num)
+       # quad_list = chunk_scratch.quad
+        #v_num = chunk_scratch.v_num
+        #vbo_id = _create_vbo(quad_list, v_num)
 
-    _draw_vbo(vbo_id, v_num)
+    #_draw_vbo(vbo_id, v_num)
 
     #cdef Quad* quad_list = chunk_scratch.quad
     #cdef int v_num = chunk_scratch.v_num
@@ -228,12 +232,8 @@ from cube_lib.types cimport Quad_VBO
 
 #from cube_dat cimport cubePhysicalProperties
 
-cimport cube_dat
-cimport terrain_map
-
-cdef update_VBO(MapChunk* mc):
+cdef update_VBO(MapChunk mc):
     global chunk_scratch
-    global cubePhysicalProperties
     cdef int tile_id, x, y, z, side_num
     cdef float x_off, y_off, z_off
 
@@ -249,7 +249,7 @@ cdef update_VBO(MapChunk* mc):
     for x in range(0, x_chunk_size):
         for y in range(0, y_chunk_size):
             for z in range(0, z_chunk_size):
-                tile_id = self.terrainMap.get(x,y,z)
+                tile_id = terrain_map.get(x,y,z)
                 ###
                 if cube_dat.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
                     active_cube_number += 1
@@ -260,10 +260,11 @@ cdef update_VBO(MapChunk* mc):
     mc.VBO.v_num = chunk_scratch.v_num
     mc.VBO.VBO_id = _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
 
-cdef delete_VBO(MapChunk* mc):
+cdef delete_VBO(MapChunk mc):
     #free(mc.VBO.quad_array)
     mc.VBO.VBO_id = 0
     mc.VBO.v_num = 0
+    _delete_vbo(&mc.VBO)
 
 l = [0,0,1, 0,0,-1, 0,1,0, 0,-1,0, -1,0,0, 1,0,0]
 cdef int s_array[3*6]
@@ -279,6 +280,6 @@ cdef inline _is_occluded(int x,int y,int z, int side_num):
         _y = s_array[i+1] + y
         _z = s_array[i+2] + z
 
-        tile_id = self.terrainMap.get(_x,_y,_z)
+        tile_id = terrain_map.get(_x,_y,_z)
         cube_dat.cubePhysicalProperties.isOcclude(tile_id)
 
