@@ -91,7 +91,7 @@ class GenericMessageHandler:
         for event, name in self.events.items():
             if type(name) == str:
                 self.events[event] = getattr(self, name)
-            
+
     @classmethod
     def init(cls):
         pass
@@ -131,8 +131,8 @@ class MapMessageHandler(GenericMessageHandler):
 
     @classmethod
     def init(cls):
-        cls.terrainMap = GameStateGlobal.terrainMap
-        cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
+        #cls.terrainMap = GameStateGlobal.terrainMap
+        #cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
         cls.mapController = MapControllerGlobal.mapController
         assert cls.mapController != None
 
@@ -144,9 +144,9 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _map_chunk(self, datagram):
         #print "Map Chunk Received"
-        (x,y,z) = self.terrainMap.set_packed_chunk(datagram)
-        self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
-        self.mapController.incoming_map_chunk(x,y,z)
+        (x,y,z) = terrainMap.set_packed_chunk(datagram)
+        #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
+        #self.mapController.incoming_map_chunk(x,y,z)
 
     def _set_map(self, list, **msg):
         for x,y,z,value in list:
@@ -161,7 +161,7 @@ class ClientMessageHandler(GenericMessageHandler):
         'set_client_id' : '_set_client_id',
         'client_quit' : '_client_quit',
         'identified' : '_identified',
-        'identify_fail' : '_identify_fail',            
+        'identify_fail' : '_identify_fail',
     }
 
     def _client_id(self, **msg):
@@ -222,7 +222,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
     def __init__(self):
         self._load_default_events()
         GenericMessageHandler.__init__(self)
-            
+
     def _load_default_events(self):
         for evex in self.event_extensions:
             event_name = '%s_%s' % (self.name, evex,)
@@ -341,8 +341,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
             print self._error_message(err_msg, **args)
             return
         GameStateGlobal.remove_agent(id)    # this method manages FK relationships
-        
-    
+
+
 class WeaponMessageHandler(DatastoreMessageInterface):
 
     def __init__(self):
@@ -362,6 +362,8 @@ from game_state import GameStateGlobal
 from net_client import NetClientGlobal
 from net_out import NetOut
 from chat_client import ChatClientGlobal
-from map_chunk_manager import MapChunkManagerGlobal
+#from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
 from input import InputGlobal
+
+import cube_lib.terrain_map as terrainMap

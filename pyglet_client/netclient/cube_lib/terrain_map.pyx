@@ -54,6 +54,7 @@ def set_packed_chunk(tmp):
     array = list(fm_inv2.unpack(array))
     chunk = get_or_create_chunk(off_x, off_y, off_z)
     chunk.version = version
+    chunk.update_VBO = 1
     assert len(array) == 512
     for n in range(0,512):
         chunk.map_array[n] = array[n]
@@ -81,6 +82,7 @@ cpdef inline set(int x,int y, int z,int value):
         chunks[t] = MapChunk(x,y,z) #new map chunk
     c = chunks[t]
     c.set(x,y,z, value)
+    c.update_VBO = 1 #may have to update neighbors as well
 
 cpdef inline int get(int x, int y,int z):
     global chunks
