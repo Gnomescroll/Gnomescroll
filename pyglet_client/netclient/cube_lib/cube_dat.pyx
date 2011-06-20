@@ -143,8 +143,8 @@ cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, in
     x.gravity = gravity
     x.transparent = transparent
 
-cdef enum:
-    max_cubes = 1024
+#cdef enum:
+#    max_cubes = 1024
 
 
 cdef CubePhysicalProperties cubePhysicalProperties

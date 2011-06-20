@@ -1,10 +1,11 @@
 import settings
 
+'''
 from libc.stdlib cimport malloc, free
 
 from terrain_map cimport MapChunk
 from cube_lib.types cimport Quad_VBO
-
+'''
 
 #cdef int update_VBO
 #cdef Quad_VBO VBO
@@ -13,6 +14,7 @@ from cube_lib.types cimport Quad_VBO
 #    Quad* quad_array
 #    int VBO_id
 
+'''
 cdef update_VBO(MapChunk* mc):
     mc.update_VBO = 0
     if mc.VBO.v_num != 0:
@@ -36,6 +38,7 @@ cdef delete_VBO(MapChunk* mc):
     free(mc.VBO.quad_array)
     mc.VBO.VBO_id = 0
     mc.VBO.v_num = 0
+'''
 
 ### DEPRECATE BELOW LINE ###
 '''
