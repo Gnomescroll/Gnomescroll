@@ -345,7 +345,9 @@ def add_cube(d):
 def get_cube_texture(tile_id, side, vert_num):
     global cube_list
     d = cube_list.get(tile_id, {})
-    texture_id = d.get('texture_id', [1,2,3,4,5])[side]
+    assert vert_num < 4 and side < 6
+    #print "side, vert_num = %i, %i" % (side, vert_num)
+    texture_id = d.get('texture_id', [0,1,2,3,4,5])[side]
     texture_order = d.get('texture_order', [[0,1,2,3],
                             [0,1,2,3],
                             [0,1,2,3],
