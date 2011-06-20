@@ -148,7 +148,7 @@ cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, in
 
 
 cdef CubePhysicalProperties cubePhysicalProperties
-cdef CollisionDetection collisionDetection
+#cdef CollisionDetection collisionDetection
 
 cdef class CubePhysicalProperties:
     #cdef CubePhysical cube_array[max_cubes]
@@ -191,22 +191,13 @@ cdef class CubePhysicalProperties:
             return 0
         return self.cube_array[id].solid
 
-cdef class CollisionDetection:
-    #cdef TerrainMap terrainMap
-    #cdef CubePhysicalProperties cubePhysicalProperties
 
-    def init(self):
-        self.terrainMap = GameStateGlobal.terrainMap #fix terrain map imports
-        global cubePhysicalProperties
-        self.cubePhysicalProperties = cubePhysicalProperties
+### Cube Utilities ###
 
-    def __init__(self):
-        pass
-
-    cpdef inline int collision(CollisionDetection self, int x, int y, int z):
-        cdef int tile
-        tile = self.terrainMap.get(x,y,z)
-        return self.cubePhysicalProperties.isSolid(tile)
+cpdef inline int collisionDetection(int x, int y, int z):
+    cdef int tile
+    tile = terrainap.get(x,y,z)
+    return cubePhysicalProperties.isSolid(tile)
 
 ##the cache for cube visual properties
 ##deprecates CubeRenderCache

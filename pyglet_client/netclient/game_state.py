@@ -116,4 +116,5 @@ from object_lists import WeaponList
 from players import Player
 from net_client import NetClientGlobal
 
-from cube_lib import terrain_map as TerrainMap
+#import cube_lib.terrain_map
+import cube_lib.terrain_map as TerrainMap
