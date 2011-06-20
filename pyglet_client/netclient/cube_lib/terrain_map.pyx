@@ -9,6 +9,89 @@ cdef enum:
     y_chunk_size = 8
     z_chunk_size = 8
 
+chunks = {}
+l = []
+
+def get_chunk_version_list(self):
+    global chunks, l
+    ll = []
+    cdef MapChunk c
+    for c in chunks.values():
+        ll.append([c.index[0], c.index[1], c.index[2], c.version, c.server_version])
+    return l
+
+def get_chunk_list():
+    global chunks, l
+    ll = []
+    cdef MapChunk c
+    for c in chunks.values():
+        ll.append([c, c.index[0], c.index[1], c.index[2]])
+    return ll
+
+cdef get_or_create_chunk(int x, int y, int z):
+    global chunks, l
+    t = (x >> 3, y >> 3, z >> 3)
+    cdef MapChunk mc
+    if not self.chunks.has_key(t):
+        self.chunks[t] = MapChunk(x, y, z) #new map chunk
+    return self.chunks[t]
+
+def get_packed_chunk(x, y, z):
+    global chunks, l
+    t = (x >> 3, y >> 3, z >> 3)
+    if not chunks.has_key(t):
+        return ''
+    t = self.chunks[t]
+    return zlib.compress(pack(t))
+
+def set_packed_chunk(tmp):
+    global chunks, l
+    global fm_inv1, fm_inv2
+    cdef int off_x, off_y, off_z, version
+    cdef MapChunk chunk
+    tmp = zlib.decompress(tmp)
+    (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
+    array = list(fm_inv2.unpack(array))
+    chunk = self.get_or_create_chunk(off_x, off_y, off_z)
+    chunk.version = version
+    assert len(array) == 512
+    for n in range(0,512):
+        chunk.map_array[n] = array[n]
+    return (off_x, off_y, off_z)
+
+#    cpdef inline int get_version(self, x,y,z):
+#        cdef MapChunk c
+#        t = (x >> 3, y >> 3, z >> 3)
+#        if not self.chunks.has_key(t):
+#            return -1 #chunk does not exist
+#        else:
+#            c = self.chunks[t]
+#            return c.version
+
+cpdef inline set_server_version(int x, int y, int z, int version):
+    cdef MapChunk c
+    c = get_or_create_chunk(x,y,z)
+    c.server_version = version
+
+cpdef inline set(int x,int y, int z,int value):
+    global chunks
+    cdef MapChunk c
+    t = (x >> 3, y >> 3, z >> 3)
+    if not chunks.has_key(t):
+        self.chunks[t] = MapChunk(x,y,z) #new map chunk
+    c = self.chunks[t]
+    c.set(x,y,z, value)
+
+cpdef inline int get(int x, int y,int z):
+    global chunks
+    cdef MapChunk c
+    t = (x >> 3, y >> 3, z >> 3)
+    if not self.chunks.has_key(t):
+        return 0
+    c = self.chunks[t]
+    return c.get(x,y,z)
+
+'''
 cdef class TerrainMap:
 
     chunks = {}
@@ -93,6 +176,7 @@ cdef class TerrainMap:
             return 0
         c = self.chunks[t]
         return c.get(x,y,z)
+'''
 
 cdef class MapChunk:
     #cdef int index[3]

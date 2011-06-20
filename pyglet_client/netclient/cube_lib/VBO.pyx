@@ -226,8 +226,14 @@ def draw_test_chunk():
 from terrain_map cimport MapChunk
 from cube_lib.types cimport Quad_VBO
 
+#from cube_dat cimport cubePhysicalProperties
+
+cimport cube_dat
+cimport terrain_map
+
 cdef update_VBO(MapChunk* mc):
     global chunk_scratch
+    global cubePhysicalProperties
     cdef int tile_id, x, y, z, side_num
     cdef float x_off, y_off, z_off
 
@@ -245,14 +251,14 @@ cdef update_VBO(MapChunk* mc):
             for z in range(0, z_chunk_size):
                 tile_id = self.terrainMap.get(x,y,z)
                 ###
-                if self.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
+                if cube_dat.cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
                     active_cube_number += 1
                     for side_num in [0,1,2,3,4,5]:
                         if not _is_occluded(x,y,z,side_num):
                             add_quad(x+x_off,y_off,z_off,side_num,tile_id)
 
     mc.VBO.v_num = chunk_scratch.v_num
-    mc.VBO.VBO_id = _create_vbo(mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
+    mc.VBO.VBO_id = _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
 
 cdef delete_VBO(MapChunk* mc):
     #free(mc.VBO.quad_array)
@@ -264,8 +270,7 @@ cdef int s_array[3*6]
 for i in range(0, 3*6):
     s_array[i] = l[i]
 
-from cube_dat cimport cubePhysicalProperties
-cdef inline _is_occluded(self,int x,int y,int z, int side_num):
+cdef inline _is_occluded(int x,int y,int z, int side_num):
         global s_array, cubePhysicalProperties
         cdef int _x, _y, _z, tile_id,i
 
@@ -275,5 +280,5 @@ cdef inline _is_occluded(self,int x,int y,int z, int side_num):
         _z = s_array[i+2] + z
 
         tile_id = self.terrainMap.get(_x,_y,_z)
-        cubePhysicalProperties.isOcclude(tile_id)
+        cube_dat.cubePhysicalProperties.isOcclude(tile_id)
 
