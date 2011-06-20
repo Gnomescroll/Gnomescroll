@@ -17,7 +17,7 @@ import time
 
 #time.clock()
 class MapController:
-    terrainMap = None
+    #terrainMap = None
     mapMessage = None
     @classmethod
     def init(self):

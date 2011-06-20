@@ -5,6 +5,7 @@ from libc.stdlib cimport malloc, free
 from cube_lib.types cimport *
 
 #cimport cube_lib.cube_dat
+cimport cube_lib.terrain_map
 cimport cube_lib.terrain_map as terrain_map
 
 #import cube_lib.terrain_map
@@ -237,43 +238,54 @@ def update_chunks():
 def draw_chunks():
     cdef MapChunk mc
     ll = terrain_map.get_raw_chunk_list()
+    #print "Draw"
+    cube_lib.terrain_map.set(5,5,0,1)
+    for z in range (-16, 16):
+        if cube_lib.terrain_map.get(5,5,z) != 0:
+            print "non zero!"
+
     for l in ll:
         mc = <MapChunk>l
         if mc.VBO.VBO_id != 0:
-            pass
-            print "draw!"
+            _draw_vbo(&mc.VBO)
+            #print "VBO_id, v_num= %i, %i" % (mc.VBO.VBO_id, mc.VBO.v_num)
 ## Draw VBO ##
 
 cdef update_VBO(MapChunk mc):
     global chunk_scratch
     cdef int tile_id, x, y, z, side_num
     cdef float x_off, y_off, z_off
+    cdef int x_, y_, z_
 
     x_off = mc.index[0]
     y_off = mc.index[1]
     z_off = mc.index[2]
 
-    print "1"
+    print "1,2,3 = %f, %f, %f" % (x_off, y_off, z_off)
     clear_chunk_scratch()
-    print "2"
     mc.update_VBO = 0
-    #if mc.VBO.v_num != 0:
-    #    delete_VBO(mc)
-
-    for x in range(0, x_chunk_size):
-        for y in range(0, y_chunk_size):
-            for z in range(0, z_chunk_size):
-                tile_id = terrain_map.get(x,y,z)
-                ###
+    if mc.VBO.v_num != 0:
+        delete_VBO(mc)
+    active_cube_num = 0
+    #print "ysa= %i" % (x_chunk_size)
+    for x_ in range(0, x_chunk_size):
+        for y_ in range(0, y_chunk_size):
+            for z_ in range(0, z_chunk_size):
+                tile_id = cube_lib.terrain_map.get(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2])
+                if tile_id != 0:
+                    print "tile, active= %i, %i" %(tile_id, isActive(tile_id))
                 if isActive(tile_id) != 0: #non-active tiles are not draw
-                    active_cube_number += 1
+                    active_cube_num += 1
                     for side_num in [0,1,2,3,4,5]:
-                        if not _is_occluded(x,y,z,side_num):
-                            add_quad(x+x_off,y_off,z_off,side_num,tile_id)
+                        if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
+                            add_quad(x_off,y_off,z_off,side_num,tile_id) #floats
+
+    print "v_num for chunk scratch = %i" % (chunk_scratch.v_num)
+    print "active cubes= %i" % (active_cube_num)
     print "3"
     #mc.VBO.v_num = chunk_scratch.v_num
     print "4"
-    mc.VBO.VBO_id = _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
+    _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
     print "VBO_id= %i" % (mc.VBO.VBO_id)
     print "5"
 
@@ -281,7 +293,7 @@ cdef delete_VBO(MapChunk mc):
     #free(mc.VBO.quad_array)
     mc.VBO.VBO_id = 0
     mc.VBO.v_num = 0
-    #_delete_vbo(&mc.VBO)
+    _delete_vbo(&mc.VBO)
 
 l = [0,0,1, 0,0,-1, 0,1,0, 0,-1,0, -1,0,0, 1,0,0]
 cdef int s_array[3*6]
@@ -311,7 +323,7 @@ cdef struct CubePhysical:
     int transparent
 
 #used for initing the struct
-cdef void init_CubePhysical(CubePhysical*x, int id,int active, int occludes, int solid, int gravity, int transparent):
+cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid, int gravity, int transparent):
     x.id = id
     x.active = active
     x.occludes = occludes
@@ -379,20 +391,11 @@ def get_cube_texture(tile_id, side, vert_num):
 
     return (tx,ty)
 
-def convert_index(index, height, width):
-    index = int(index)
-    height = int(height)
-    width = int(width)
-    x_ = index % width
-    y_ = int((index - x_) / width)
-    y = height - y_ -1
-    rvalue =  x_ + y*width
-#init
-
 #!!!should not need to be cp
 cpdef inline int isActive(unsigned int id):
     if id >= max_cubes: #max number of cubes
         return 0
+        print "max cubes exceeded!"
     return cube_array[id].active
 #!!!should not need to be cp
 cpdef inline int isOcclude(unsigned int id):

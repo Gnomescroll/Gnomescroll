@@ -26,6 +26,7 @@ int _init_draw_terrain() {
 //int _create_vbo(struct Quad* quad_list, int v_num) {
 int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
 
+    if (v_num == 0) { return 0; }
     q_VBO->quad_array = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
     q_VBO->v_num = v_num;
     memcpy(q_VBO->quad_array, quad_list, v_num*sizeof(struct Quad));
@@ -45,9 +46,7 @@ int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
 int _delete_vbo(struct Quad_VBO* q_VBO) {
     glDeleteBuffers(q_VBO->VBO_id);
     ///free the system memory copy of the vertex buffer
-    printf("WTF! \n");
-
-    //free(q_VBO->quad_array);
+    free(q_VBO->quad_array);
     q_VBO->v_num = 0;
     return 0;
 }

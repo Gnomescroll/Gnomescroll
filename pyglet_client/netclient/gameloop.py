@@ -147,6 +147,7 @@ class App(object):
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
             self.world.draw()
+            cube_lib.VBO.draw_chunks()
             #VBO test
             ##cube_lib.VBO.draw_test_chunk()
             #self.SDL_global.set_projection(-1,0,0,0,0)

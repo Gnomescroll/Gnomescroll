@@ -55,7 +55,7 @@ def get_packed_chunk(x, y, z):
 def set_packed_chunk(tmp):
     global chunks
     global fm_inv1, fm_inv2
-    cdef int off_x, off_y, off_z, version
+    cdef int off_x, off_y, off_z, version, n
     cdef MapChunk chunk
     tmp = zlib.decompress(tmp)
     (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
