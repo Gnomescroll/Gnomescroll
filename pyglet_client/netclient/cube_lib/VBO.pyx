@@ -85,26 +85,6 @@ cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
     #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
 
 #deprecated
-cdef inline set_tex(int vert_num, Vertex* vertex, int tile_id):
-    vertex.tx = x * (float(1)/16)
-    vertex.ty = x * (float(1)/16)
-    if vert_num == 0:
-        vertex.tx += 0
-        vertex.ty += 0
-    elif vert_num == 1:
-        vertex.tx += float(1)/16
-        vertex.ty += 0
-    elif vert_num == 2:
-        vertex.tx += float(1)/16
-        vertex.ty += float(1)/16
-    elif vert_num == 3:
-        vertex.tx += 0
-        vertex.ty += float(1)/16
-    else:
-        print "Error!!!! set_tex invalid input"
-    #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
-
-#deprecated
 def convert_index(index, height, width):
     index = int(index)
     height = int(height)
@@ -331,8 +311,7 @@ cdef struct CubePhysical:
     int transparent
 
 #used for initing the struct
-cdef void init_CubePhysical(CubePhysical*x, int id,CubeTexture cubeTexture, int active, int occludes, int solid, int gravity, int transparent):
-    x.cubeTexture = cubeTexture
+cdef void init_CubePhysical(CubePhysical*x, int id,int active, int occludes, int solid, int gravity, int transparent):
     x.id = id
     x.active = active
     x.occludes = occludes
@@ -351,7 +330,6 @@ def init_cubes():
 cdef CubePhysical cube_array[max_cubes] #cube state
 
 def add_cube(d):
-    cdef CubeTexture cubeTexture
     id = int(d['id'])
     if id >= max_cubes: #max number of cubes
         print "Error: cube id is too high"
@@ -382,17 +360,17 @@ def get_cube_texture(tile_id, side, vert_num):
     ty = float(y) * 1./16.
 
     if vert_num == 0:
-        vertex.tx += 0
-        vertex.ty += 0
+        tx += 0
+        ty += 0
     elif vert_num == 1:
-        vertex.tx += 1./16.
-        vertex.ty += 0
+        tx += 1./16.
+        ty += 0
     elif vert_num == 2:
-        vertex.tx += 1./16.
-        vertex.ty += 1./16.
+        tx += 1./16.
+        ty += 1./16.
     elif vert_num == 3:
-        vertex.tx += 0
-        vertex.ty += 1./16.
+        tx += 0
+        ty += 1./16.
     else:
         print "Error!!!! set_tex invalid input"
         assert False
