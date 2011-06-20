@@ -34,7 +34,7 @@ class CubeGlobal:
 from map_chunk_manager import MapChunkManagerGlobal
 
 cimport terrain_map
-from terrain_map cimport TerrainMap
+#from terrain_map cimport TerrainMap
 
 from game_state import GameStateGlobal
 
