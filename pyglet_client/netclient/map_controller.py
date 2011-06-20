@@ -11,6 +11,7 @@ class MapControllerGlobal:
 from game_state import GameStateGlobal
 from net_out import NetOut
 
+import cube_lib.terrain_map as terrainMap
 import time
 
 
@@ -20,7 +21,7 @@ class MapController:
     mapMessage = None
     @classmethod
     def init(self):
-        self.terrainMap = GameStateGlobal.terrainMap
+        #self.terrainMap = GameStateGlobal.terrainMap
         assert NetOut.mapMessage != None
         self.mapMessage = NetOut.mapMessage
         assert self.mapMessage != None
@@ -33,7 +34,7 @@ class MapController:
 
     def process_chunk_list(self, list):
         for (x,y,z,version) in list:
-            self.terrainMap.set_server_version(x,y,z,version)
+            terrainMap.set_server_version(x,y,z,version)
 
     def tick(self):
         self.n += 1
