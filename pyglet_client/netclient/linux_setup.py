@@ -78,6 +78,7 @@ terrain_map = Extension('cube_lib.terrain_map',
                     sources = ['cube_lib/terrain_map.pyx']
                     )
 
+'''
 cube_dat = Extension('cube_lib.cube_dat',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/lib'],
@@ -87,6 +88,7 @@ cube_dat = Extension('cube_lib.cube_dat',
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/cube_dat.pyx']
                     )
+'''
 
 map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     #define_macros =  [('PLATFORM', 'linux')]
@@ -101,6 +103,6 @@ map_chunk_manager = Extension('cube_lib.map_chunk_manager',
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [SDL_gl, SDL_input, cube_lib_VBO, terrain_map, cube_dat, map_chunk_manager] + cythonize("*.pyx")
+    ext_modules = [SDL_gl, SDL_input, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )

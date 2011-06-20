@@ -82,7 +82,7 @@ class Projectile(GameObject):
         z += vz / fps
 
         #if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
-        CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
+        if collisionDetection.collision(int(x), int(y), int(z)):
             self.delete()
 
         self.state = [x,y,z,vx,vy,vz]
@@ -137,4 +137,4 @@ def draw_projectiles():
 
 from game_state import GameStateGlobal
 #from cube_dat import CubeGlobal
-from cube_lib.cube_dat import collisionDetection
+from cube_lib.VBO import collisionDetection

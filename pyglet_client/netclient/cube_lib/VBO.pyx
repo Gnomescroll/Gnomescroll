@@ -7,18 +7,12 @@ from cube_lib.types cimport *
 #cimport cube_lib.cube_dat
 cimport cube_lib.terrain_map as terrain_map
 
-
-from cube_lib.cube_dat cimport *
-cdef CubePhysicalProperties* cubePhysicalProperties
+from cube_lib.terrain_map cimport MapChunk
 
 #from cube_dat cimport cubePhysicalProperties
 #from cube_lib.cube_dat cimport cubePhysicalProperties
 
 #import cube_lib.cube_dat.cubePhysicalProperties as cubePhysicalProperties
-
-
-
-from cube_lib.terrain_map cimport MapChunk
 
 #constants
 #cdef enum:
@@ -170,9 +164,8 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 ## control state
 
 def init():
-    print "1"
+    init_cubes()
     init_quad_cache()
-    print "2"
     clear_chunk_scratch()
 
 cdef inline clear_chunk_scratch():
@@ -194,14 +187,6 @@ def test_chunk():
         for j in range(0,6):
             add_quad(1,1,i-4,j,3)
 
-#cimport SDL.gl
-#import SDL.gl
-#from SDL.gl cimport bind_VBO
-
-#cdef exern _bind_VBO(Quad* quad_list, int v_num)
-
-#extern from 'draw_functions.h':
-#    cdef exern _bind_VBO(Quad* quad_list, int v_num)
 
 
 cdef extern from 'draw_terrain.h':
@@ -267,7 +252,7 @@ cdef update_VBO(MapChunk mc):
             for z in range(0, z_chunk_size):
                 tile_id = terrain_map.get(x,y,z)
                 ###
-                if cubePhysicalProperties.isActive(tile_id) != 0: #non-active tiles are not draw
+                if isActive(tile_id) != 0: #non-active tiles are not draw
                     active_cube_number += 1
                     for side_num in [0,1,2,3,4,5]:
                         if not _is_occluded(x,y,z,side_num):
@@ -297,5 +282,77 @@ cdef inline _is_occluded(int x,int y,int z, int side_num):
         _z = s_array[i+2] + z
 
         tile_id = terrain_map.get(_x,_y,_z)
-        return cubePhysicalProperties.isOcclude(tile_id)
+        return isOcclude(tile_id)
 
+## cube physical
+
+cdef struct CubePhysical:
+    int id
+    int active
+    int occludes
+    int solid
+    int gravity
+    int transparent
+
+#used for initing the struct
+cdef void init_CubePhysical(CubePhysical*x, int id, int active, int occludes, int solid, int gravity, int transparent):
+    x.id = id
+    x.active = active
+    x.occludes = occludes
+    x.solid = solid
+    x.gravity = gravity
+    x.transparent = transparent
+
+#cdef enum:
+#    max_cubes = 1024
+
+def init_cubes():
+    global cube_list
+    for cube in cube_list.values():
+        add_cube(cube)
+
+cdef CubePhysical cube_array[max_cubes] #cube state
+
+def add_cube(self, d):
+    id = int(d['id'])
+    if id >= max_cubes: #max number of cubes
+        print "Error: cube id is too high"
+        return
+    active = int(d.get('active',1))
+    occludes = int(d.get('occludes', 0))
+    solid = int(d.get('solid', 1))
+    gravity = int(d.get('gravity', 0))
+    transparent = int(d.get('transparent', 0))
+    init_CubePhysical(&cube_array[id], id, active, occludes, solid, gravity, transparent)
+
+#!!!should not need to be cp
+cpdef inline int isActive(unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return cube_array[id].active
+#!!!should not need to be cp
+cpdef inline int isOcclude(unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return cube_array[id].occludes
+
+cpdef inline int isTransparent(unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return cube_array[id].transparent
+
+cpdef inline int isSolid(unsigned int id):
+    if id >= max_cubes: #max number of cubes
+        return 0
+    return cube_array[id].solid
+
+
+#cdef CubePhysicalProperties* cubePhysicalProperties
+#cdef CollisionDetection collisionDetection
+
+### Cube Utilities ###
+
+cpdef inline int collisionDetection(int x, int y, int z):
+    cdef int tile
+    tile = terrain_map.get(x,y,z)
+    return isSolid(tile)

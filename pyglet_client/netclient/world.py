@@ -17,9 +17,7 @@ class World():
 
     def init(self):
         self.terrainMap = GameStateGlobal.terrainMap
-        self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
-        if settings.pyglet:
-            CubeGlobal.setTextureGrid(self.texture_grid)
+        #self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
 
     def __init__(self):
         if settings.pyglet:
@@ -59,6 +57,7 @@ class World():
             self.draw_transparent_blocks()
 
     def draw_transparent_blocks(self):
+
         if settings.pyglet:
             MapChunkManagerGlobal.transparentBlockManager.update_all_blocks()
             MapChunkManagerGlobal.transparentBlockManager.update_vbo()
@@ -163,8 +162,8 @@ class World():
 
 import projectiles
 
-from cube_dat import CubeGlobal
+#from cube_dat import CubeGlobal
 from game_state import GameStateGlobal
-from map_chunk_manager import MapChunkManagerGlobal
+#from map_chunk_manager import MapChunkManagerGlobal
 
 from players import Player
