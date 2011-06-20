@@ -84,6 +84,7 @@ cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
         print "Error!!!! set_tex invalid input"
     #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
 
+#deprecated
 cdef inline set_tex(int vert_num, Vertex* vertex, int tile_id):
     vertex.tx = x * (float(1)/16)
     vertex.ty = x * (float(1)/16)
@@ -103,6 +104,7 @@ cdef inline set_tex(int vert_num, Vertex* vertex, int tile_id):
         print "Error!!!! set_tex invalid input"
     #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
 
+#deprecated
 def convert_index(index, height, width):
     index = int(index)
     height = int(height)
@@ -151,7 +153,12 @@ def init_quad_cache():
                 vertex.b = 255
                 vertex.a = 255
                 #tex
-                set_tex(j, vertex, 0, 0)
+                #set_tex(j, vertex, 0, 0)
+
+                tx,ty = get_cube_texture(k, i, j) #tile_id, side, vert_num
+
+                vertex.tx = tx
+                vertex.ty = ty
                 #print "(%i,%i,%i)" % (k,i,j)
                 #print "(tx= %f,ty= %f)" %(quad_cache[6*k+i].vertex[j].tx,quad_cache[6*k+i].vertex[j].ty)
     print "done"
@@ -315,13 +322,8 @@ cdef inline _is_occluded(int x,int y,int z, int side_num):
 
 ## cube physical
 
-cdef struct CubeTexture:
-    int texture_id
-    int texture_order[4]
-
 cdef struct CubePhysical:
     int id
-    CubeTexture cubeTexture
     int active
     int occludes
     int solid
@@ -354,20 +356,58 @@ def add_cube(d):
     if id >= max_cubes: #max number of cubes
         print "Error: cube id is too high"
         return
-    #texture id and order
-    cubeTexture.texture_id = d.get('texture_id', 1)
-    texture_order = d.get('texture_order', [0,1,2,3])
-    assert len(texture_order) == 4:
-    for i in range(0,4):
-        assert texture_order[i] <4 and texture_order[i] > 0
-        cubeTexture.texture_order[i] = texture_order[i]
     #properties
     active = int(d.get('active',1))
     occludes = int(d.get('occludes', 0))
     solid = int(d.get('solid', 1))
     gravity = int(d.get('gravity', 0))
     transparent = int(d.get('transparent', 0))
-    init_CubePhysical(&cube_array[id], id, cubeTexture, active, occludes, solid, gravity, transparent)
+    init_CubePhysical(&cube_array[id], id, active, occludes, solid, gravity, transparent)
+
+def get_cube_texture(tile_id, side, vert_num):
+    global cube_list
+    d = cube_list.get(tile_id, {})
+    texture_id = d.get('texture_id', [1,2,3,4,5])[side]
+    texture_order = d.get('texture_order', [[0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],])[side][vert_num]
+
+    x = texture_id % 16
+    y = (texture_id - (texture_id % 16)) / 16
+
+    tx = float(x) * 1./16.
+    ty = float(y) * 1./16.
+
+    if vert_num == 0:
+        vertex.tx += 0
+        vertex.ty += 0
+    elif vert_num == 1:
+        vertex.tx += 1./16.
+        vertex.ty += 0
+    elif vert_num == 2:
+        vertex.tx += 1./16.
+        vertex.ty += 1./16.
+    elif vert_num == 3:
+        vertex.tx += 0
+        vertex.ty += 1./16.
+    else:
+        print "Error!!!! set_tex invalid input"
+        assert False
+
+    return (tx,ty)
+
+def convert_index(index, height, width):
+    index = int(index)
+    height = int(height)
+    width = int(width)
+    x_ = index % width
+    y_ = int((index - x_) / width)
+    y = height - y_ -1
+    rvalue =  x_ + y*width
+#init
 
 #!!!should not need to be cp
 cpdef inline int isActive(unsigned int id):

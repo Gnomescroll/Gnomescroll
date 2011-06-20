@@ -11,14 +11,13 @@ cube_list = {
         'active' : True,
         'solid' : True,
 
-        'texture' : [ #t, b, w, e, n, s
-        (0, []),  #top
-        (0, []),  #bottom
-        (0, []), #west
-        (0, []), #east
-        (0, []), #north
-        (0, []), #south
-        ],
+        'texture_id' : [1,1,1,1,1,1],
+        'texture_order' : [[0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],]
         },
     2 : {
         'id' : 2,
