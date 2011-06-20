@@ -9,6 +9,8 @@ cimport cube_lib.terrain_map as terrain_map
 
 from cube_lib.terrain_map cimport MapChunk
 
+from cube_dat import cube_list
+
 #from cube_dat cimport cubePhysicalProperties
 #from cube_lib.cube_dat cimport cubePhysicalProperties
 
