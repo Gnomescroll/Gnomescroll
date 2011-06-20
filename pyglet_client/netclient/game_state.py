@@ -5,7 +5,7 @@ class GameStateGlobal:
     TICK = 0.01 # seconds
 
     gameState = None
-    terrainMap = None
+    #terrainMap = None
     agentList = None
     playerList = None
     projectileList = None
@@ -22,7 +22,7 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
-        cls.terrainMap = TerrainMap()
+        #cls.terrainMap = TerrainMap()
         cls.gameState = GameState()
 
     @classmethod
@@ -34,7 +34,7 @@ class GameStateGlobal:
     def update_your_info(cls, player):
         if cls.player is None:
             cls.player = cls.playerList.join_yourself(**player)
-        
+
         cls.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
@@ -107,7 +107,7 @@ class GameState:
         #if self.time % 100 == 0:
             #print "time= %i" % (self.time,)
 
-from terrain_map import TerrainMap
+#from terrain_map import TerrainMap
 from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
@@ -115,3 +115,5 @@ from object_lists import PlayerList
 from object_lists import WeaponList
 from players import Player
 from net_client import NetClientGlobal
+
+from cube_lib import terrain_map as TerrainMap
