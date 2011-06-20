@@ -164,7 +164,7 @@ class AgentModel:
         self.xa = state[3]
         self.ya = state[4]
 
-        self.terrainMap = GameStateGlobal.terrainMap
+        #self.terrainMap = GameStateGlobal.terrainMap
 
         self.id = id
 

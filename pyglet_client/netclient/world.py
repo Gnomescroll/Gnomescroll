@@ -16,7 +16,8 @@ class World():
     mapChunkManager = None
 
     def init(self):
-        self.terrainMap = GameStateGlobal.terrainMap
+        pass
+        #self.terrainMap = GameStateGlobal.terrainMap
         #self.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
 
     def __init__(self):

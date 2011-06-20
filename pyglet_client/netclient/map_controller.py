@@ -55,7 +55,7 @@ class MapController:
         _x = 0
         _y = 0
         _z = 0
-        list = self.terrainMap.get_chunk_version_list()
+        list = terrainMap.get_chunk_version_list()
         #print len(list)
         min_score = 100000
         min_chunk = None

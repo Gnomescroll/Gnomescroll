@@ -315,7 +315,7 @@ def init_cubes():
 
 cdef CubePhysical cube_array[max_cubes] #cube state
 
-def add_cube(self, d):
+def add_cube(d):
     id = int(d['id'])
     if id >= max_cubes: #max number of cubes
         print "Error: cube id is too high"
