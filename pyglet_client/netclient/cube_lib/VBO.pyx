@@ -66,36 +66,6 @@ l = [
 for i in range(0, 72):
     v_index[i] = float(l[i])
 
-cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
-    vertex.tx = x * (float(1)/16)
-    vertex.ty = x * (float(1)/16)
-    if vert_num == 0:
-        vertex.tx += 0
-        vertex.ty += 0
-    elif vert_num == 1:
-        vertex.tx += float(1)/16
-        vertex.ty += 0
-    elif vert_num == 2:
-        vertex.tx += float(1)/16
-        vertex.ty += float(1)/16
-    elif vert_num == 3:
-        vertex.tx += 0
-        vertex.ty += float(1)/16
-    else:
-        print "Error!!!! set_tex invalid input"
-    #print "!!! (tx= %f,ty= %f)" %(vertex.tx, vertex.ty)
-
-#deprecated
-def convert_index(index, height, width):
-    index = int(index)
-    height = int(height)
-    width = int(width)
-    x_ = index % width
-    y_ = int((index - x_) / width)
-    y = height - y_ -1
-    rvalue =  x_ + y*width
-#init
-
 cpdef test():
     global v_index, quad_cache
     cdef int i
@@ -151,7 +121,7 @@ cdef extern from "stdlib.h":
 
 import time
 
-cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):
+cdef inline set_side(float x, float y, float z, int side_num, int tile_id, Quad* quad):
     global quad_cache
     cdef int i
     #cdef Vertex* vertex
@@ -164,15 +134,12 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
         quad.vertex[i].z += z
         #time.sleep(1.)
 
-#(tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
 
-#    int x_off,y_off,z_off
-
-#from libc.stdlib cimport malloc, free
-
-#cdef Chunk_scratch * chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))
-
-## control state
+cdef inline add_quad(float x,float y,float z,int side,int tile):
+    global chunk_scratch
+    cdef Quad* quad = &chunk_scratch.quad[chunk_scratch.v_num]
+    chunk_scratch.v_num += 1 #quads have 4 vertex
+    set_side(x,y,z, side, tile, quad)
 
 def init():
     _init_draw_terrain()
@@ -183,12 +150,6 @@ def init():
 cdef inline clear_chunk_scratch():
     global chunk_scratch
     chunk_scratch.v_num = 0
-
-cdef add_quad(float x,float y,float z,int side,int tile):
-    global chunk_scratch
-    cdef Quad* quad = &chunk_scratch.quad[chunk_scratch.v_num]
-    chunk_scratch.v_num += 1 #quads have 4 vertex
-    set_side(x,y,z, tile, side, quad)
 
 #testing
 def test_chunk():
@@ -257,6 +218,7 @@ cdef update_VBO(MapChunk mc):
     cdef int tile_id, x, y, z, side_num
     cdef float x_off, y_off, z_off
     cdef int x_, y_, z_
+    cdef int active_cube_num
 
     x_off = mc.index[0]
     y_off = mc.index[1]
@@ -276,9 +238,10 @@ cdef update_VBO(MapChunk mc):
                 if tile_id != 0:
                     print "tile, active= %i, %i" %(tile_id, isActive(tile_id))
                 if isActive(tile_id) != 0: #non-active tiles are not draw
-                    active_cube_num += 1
+                    active_cube_num += 1 #comment out
                     for side_num in [0,1,2,3,4,5]:
-                        if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
+                        #if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
+                        if True:
                             add_quad(x_+x_off,y_+y_off,z_+z_off,side_num,tile_id) #floats
 
     print "v_num for chunk scratch = %i" % (chunk_scratch.v_num)
@@ -302,16 +265,16 @@ for i in range(0, 3*6):
     s_array[i] = l[i]
 
 cdef inline _is_occluded(int x,int y,int z, int side_num):
-        global s_array
-        cdef int _x, _y, _z, tile_id,i
+    global s_array
+    cdef int _x, _y, _z, tile_id,i
 
-        i = s_array[3*side_num]
-        _x = s_array[i+0] + x
-        _y = s_array[i+1] + y
-        _z = s_array[i+2] + z
+    i = s_array[3*side_num]
+    _x = s_array[i+0] + x
+    _y = s_array[i+1] + y
+    _z = s_array[i+2] + z
 
-        tile_id = terrain_map.get(_x,_y,_z)
-        return isOcclude(tile_id)
+    tile_id = terrain_map.get(_x,_y,_z)
+    return isOcclude(tile_id)
 
 ## cube physical
 

@@ -55,7 +55,7 @@ int _delete_vbo(struct Quad_VBO* q_VBO) {
 int _draw_vbo(struct Quad_VBO* q_VBO) {
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
-glEnable(GL_CULL_FACE);
+//glEnable(GL_CULL_FACE);
 
 //glBindTexture( GL_TEXTURE_2D, texture ); //needed?
 
