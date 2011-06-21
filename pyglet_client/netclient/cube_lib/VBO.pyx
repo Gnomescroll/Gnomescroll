@@ -175,6 +175,7 @@ cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad*
 ## control state
 
 def init():
+    _init_draw_terrain()
     init_cubes()
     init_quad_cache()
     clear_chunk_scratch()
@@ -239,10 +240,10 @@ def draw_chunks():
     cdef MapChunk mc
     ll = terrain_map.get_raw_chunk_list()
     #print "Draw"
-    cube_lib.terrain_map.set(5,5,0,1)
-    for z in range (-16, 16):
-        if cube_lib.terrain_map.get(5,5,z) != 0:
-            print "non zero!"
+    #cube_lib.terrain_map.set(5,5,0,1)
+    #for z in range (-16, 16):
+    #    if cube_lib.terrain_map.get(5,5,z) != 0:
+    #        print "non zero!"
 
     for l in ll:
         mc = <MapChunk>l
@@ -278,16 +279,16 @@ cdef update_VBO(MapChunk mc):
                     active_cube_num += 1
                     for side_num in [0,1,2,3,4,5]:
                         if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
-                            add_quad(x_off,y_off,z_off,side_num,tile_id) #floats
+                            add_quad(x_+x_off,y_+y_off,z_+z_off,side_num,tile_id) #floats
 
     print "v_num for chunk scratch = %i" % (chunk_scratch.v_num)
     print "active cubes= %i" % (active_cube_num)
-    print "3"
+    #print "3"
     #mc.VBO.v_num = chunk_scratch.v_num
-    print "4"
+    #print "4"
     _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
     print "VBO_id= %i" % (mc.VBO.VBO_id)
-    print "5"
+    #print "5"
 
 cdef delete_VBO(MapChunk mc):
     #free(mc.VBO.quad_array)

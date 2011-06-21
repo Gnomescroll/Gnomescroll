@@ -37,6 +37,7 @@ class MapController:
             terrainMap.set_server_version(x,y,z,version)
 
     def tick(self):
+        #print "TICK"
         self.n += 1
         if not self.n % self.delay == 0:
             return
@@ -79,7 +80,6 @@ class MapController:
             self.send_request(*min_chunk)
 
     def incoming_map_chunk(self, x,y,z):
-        #print "incoming map chunk: " + str((x,y,z))
         if self.requests.has_key((x,y,z)):
             del self.requests[(x,y,z)]
         else:

@@ -57,6 +57,8 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);
 
+//glBindTexture( GL_TEXTURE_2D, texture ); //needed?
+
 glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
 glEnableClientState(GL_VERTEX_ARRAY);

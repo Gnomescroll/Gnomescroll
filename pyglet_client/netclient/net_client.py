@@ -29,8 +29,6 @@ class NetClientGlobal:
     def connect(cls):
         cls.connection.connect()
 
-
-
 class SendPacket:
     def __init__(self, client):
         self.client = client

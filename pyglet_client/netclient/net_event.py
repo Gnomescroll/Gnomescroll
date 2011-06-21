@@ -79,6 +79,9 @@ class MessageHandler:
         #use json_events when possible
         if cmd in self.json_events:
             self.json_events[cmd](**msg)
+        else:
+            print "Error, received command that client cannot handle"
+            assert False
 
 class GenericMessageHandler:
 
@@ -119,8 +122,8 @@ class ChatMessageHandler(GenericMessageHandler):
 
 
 class MapMessageHandler(GenericMessageHandler):
-    terrainMap = None
-    mapChunkManager = None
+    #terrainMap = None
+    #mapChunkManager = None
     mapController = None
 
     events = {
@@ -138,6 +141,7 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _chunk_list(self, list, **msg):
         #print str(list)
+        print "chunk list"
         self.mapController.process_chunk_list(list)
         #for chunk in list:
         #    (x,y,z,version ) = chunk
@@ -150,8 +154,8 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _set_map(self, list, **msg):
         for x,y,z,value in list:
-            self.terrainMap.set(x,y,z,value)
-            self.mapChunkManager.set_map(x,y,z) #redraw chunk
+            terrainMap.set(x,y,z,value)
+            #self.mapChunkManager.set_map(x,y,z) #redraw chunk
 
 
 class ClientMessageHandler(GenericMessageHandler):
