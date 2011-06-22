@@ -167,7 +167,7 @@ class App(object):
             else:
                 self.SDL_global.flip()
                 ctick = SDL.gl.get_ticks()
-                #print str(ctick - ltick)
+                print str(ctick - ltick)
                 ltick = ctick
             #import pdb; pdb.set_trace()
         #p.stop()

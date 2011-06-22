@@ -51,15 +51,14 @@ int _delete_vbo(struct Quad_VBO* q_VBO) {
     return 0;
 }
 
-//int _draw_vbo(unsigned int VBO_id, int v_num) {
-int _draw_vbo(struct Quad_VBO* q_VBO) {
+
+
+int _start_vbo_draw() {
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 //glEnable(GL_CULL_FACE);
 
 //glBindTexture( GL_TEXTURE_2D, texture ); //needed?
-
-glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
 glEnableClientState(GL_VERTEX_ARRAY);
 glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
@@ -71,11 +70,43 @@ glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
 glEnableClientState(GL_COLOR_ARRAY);
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
+return 0;
+}
 
+int _end_vbo_draw() {
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+return 0;
+}
+
+
+
+//int _draw_vbo(unsigned int VBO_id, int v_num) {
+int _draw_vbo(struct Quad_VBO* q_VBO) {
+
+/*
+glEnable(GL_TEXTURE_2D);
+glEnable (GL_DEPTH_TEST);
+//glEnable(GL_CULL_FACE);
+
+//glBindTexture( GL_TEXTURE_2D, texture ); //needed?
+
+//glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
+
+glEnableClientState(GL_VERTEX_ARRAY);
+glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+
+glClientActiveTexture(texture); //bind texture
+glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
+
+glEnableClientState(GL_COLOR_ARRAY);
+glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
+*/
+
+glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
+glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
 
 return 0;
 }
