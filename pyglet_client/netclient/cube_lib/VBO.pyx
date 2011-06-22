@@ -165,7 +165,6 @@ cdef extern from 'draw_terrain.h':
 
     int _create_vbo(Quad_VBO* q_VBO, Quad* quad_list, int v_num)
     int _delete_vbo(Quad_VBO* q_VBO)
-
     int _start_vbo_draw()
     int _draw_vbo(Quad_VBO* q_VBO)
     int _end_vbo_draw()
