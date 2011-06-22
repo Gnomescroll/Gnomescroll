@@ -5,6 +5,19 @@ SDL_Surface *surface;
 
 //GLuint VBOid = 0;
 
+///advice
+/*
+It turns out that if you disable depth testing (glDisable(GL_DEPTH_TEST)),
+GL also disables writes to the depth buffer. The correct solution is to tell GL to ignore the depth test
+results with glDepthFunc (glDepthFunc(GL_ALWAYS)). Be careful because in this state, if you render a far away
+object last, the depth buffer will contain the values of that far object.
+ ---
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+RenderScene();
+SwapBuffers(hdc);  //For Windows
+ *
+ */
+
 int _init_draw_terrain() {
     if(texture == 0) { //load texture if texture is not set
     surface=IMG_Load("texture/textures_01.png");
@@ -19,9 +32,11 @@ int _init_draw_terrain() {
     }
 }
 
+/*
     int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num);
     int _delete_vbo(struct Quad_VBO* q_VBO);
     int _draw_vbo(struct Quad_VBO* q_VBO);
+*/
 
 //int _create_vbo(struct Quad* quad_list, int v_num) {
 int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
@@ -52,28 +67,33 @@ int _delete_vbo(struct Quad_VBO* q_VBO) {
 }
 
 
+int draw_mode_enabled = 0;
 
 int _start_vbo_draw() {
+draw_mode_enabled = 1;
+
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 //glEnable(GL_CULL_FACE);
 
 //glBindTexture( GL_TEXTURE_2D, texture ); //needed?
 
-glEnableClientState(GL_VERTEX_ARRAY);
-glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+glClientActiveTexture(texture);
 
+glEnableClientState(GL_VERTEX_ARRAY);
 glClientActiveTexture(texture); //bind texture
 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
-
 glEnableClientState(GL_COLOR_ARRAY);
+/*
+glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
-
+*/
 return 0;
 }
 
 int _end_vbo_draw() {
+draw_mode_enabled = 0;
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -85,6 +105,28 @@ return 0;
 //int _draw_vbo(unsigned int VBO_id, int v_num) {
 int _draw_vbo(struct Quad_VBO* q_VBO) {
 
+glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
+
+if(draw_mode_enabled == 0) {
+    glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
+    _start_vbo_draw();
+
+    glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
+
+    glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
+    return 0;
+} else {
+    glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
+
+    glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
+
+    glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
+}
+
 /*
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
@@ -94,7 +136,7 @@ glEnable (GL_DEPTH_TEST);
 
 //glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
-glEnableClientState(GL_VERTEX_ARRAY);
+glEnableClientState (GL_VERTEX_ARRAY);
 glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
 
 glClientActiveTexture(texture); //bind texture
@@ -104,10 +146,6 @@ glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
 glEnableClientState(GL_COLOR_ARRAY);
 glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 */
-
-glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
-glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
-
 return 0;
 }
 

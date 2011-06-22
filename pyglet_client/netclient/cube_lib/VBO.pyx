@@ -175,6 +175,7 @@ test_var = 0
 cdef int v_num = 0
 cdef int vbo_id = 0
 
+#deprecate
 def draw_test_chunk():
     return
     global chunk_scratch
@@ -209,11 +210,14 @@ def draw_chunks():
     #    if cube_lib.terrain_map.get(5,5,z) != 0:
     #        print "non zero!"
 
+    #_start_vbo_draw()
     for l in ll:
         mc = <MapChunk>l
         if mc.VBO.VBO_id != 0:
+            #_start_vbo_draw()
             _draw_vbo(&mc.VBO)
             #print "VBO_id, v_num= %i, %i" % (mc.VBO.VBO_id, mc.VBO.v_num)
+    _end_vbo_draw()
 ## Draw VBO ##
 
 cdef update_VBO(MapChunk mc):

@@ -27,7 +27,8 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    int nFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE;
+    //int nFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE;
+    int nFlags = SDL_OPENGL | SDL_HWPALETTE;
     if( pSDLVideoInfo->hw_available ) // Hardware surfaces enabled?
         nFlags |= SDL_HWSURFACE;
     else {
@@ -41,8 +42,11 @@ int _init_video() {
 
     if(0) //When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         nFlags |= SDL_RESIZABLE;
+    if(0)
+        nFlags |= SDL_FULLSCREEN;
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 ); //or use 32 bit
 
     // Create our rendering surface
     ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
@@ -77,5 +81,7 @@ int _del_video() {
 
 int _swap_buffers() {
     SDL_GL_SwapBuffers();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    //after each scene
     return 0;
 }
