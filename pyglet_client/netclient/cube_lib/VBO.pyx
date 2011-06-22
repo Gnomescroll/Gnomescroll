@@ -235,13 +235,12 @@ cdef update_VBO(MapChunk mc):
         for y_ in range(0, y_chunk_size):
             for z_ in range(0, z_chunk_size):
                 tile_id = cube_lib.terrain_map.get(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2])
-                if tile_id != 0:
-                    print "tile, active= %i, %i" %(tile_id, isActive(tile_id))
+                #if tile_id != 0:
+                #    print "tile, active= %i, %i" %(tile_id, isActive(tile_id))
                 if isActive(tile_id) != 0: #non-active tiles are not draw
                     active_cube_num += 1 #comment out
-                    for side_num in [0,1,2,3,4,5]:
-                        #if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
-                        if True:
+                    for side_num in [1]:#[0,1,2,3,4,5]:
+                        if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
                             add_quad(x_+x_off,y_+y_off,z_+z_off,side_num,tile_id) #floats
 
     print "v_num for chunk scratch = %i" % (chunk_scratch.v_num)
