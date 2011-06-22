@@ -29,6 +29,6 @@ int _init_draw_terrain();
 int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num);
 int _delete_vbo(struct Quad_VBO* q_VBO);
 
-int _start_vbo_draw()
+int _start_vbo_draw();
 int _draw_vbo(struct Quad_VBO* q_VBO);
-int _end_vbo_draw()
+int _end_vbo_draw();
