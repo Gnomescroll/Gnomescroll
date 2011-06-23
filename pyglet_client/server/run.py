@@ -16,7 +16,7 @@ from cube_dat import CubeGlobal
 import random
 def load_map():
     m = GameStateGlobal.terrainMap
-    map_type =2
+    map_type =1
 
 
     print "Start map generation"

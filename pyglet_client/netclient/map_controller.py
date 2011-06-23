@@ -29,7 +29,7 @@ class MapController:
         self.requests = {}
         self.max_requests = 5
         self.time_out = 4.0 #needs to be adjusted
-        self.delay = 10
+        self.delay = 1 #set higher?
         self.n = 0
 
     def process_chunk_list(self, list):

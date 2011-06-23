@@ -120,6 +120,7 @@ class App(object):
 
         #p = hotshot.Profile("../log/client.log")
         #p.start()
+        average = []
         ltick, ctick = 0,0
         while not self.exit:
             if settings.pyglet:
@@ -167,8 +168,16 @@ class App(object):
             else:
                 self.SDL_global.flip()
                 ctick = SDL.gl.get_ticks()
-                print str(ctick - ltick)
+                #print str(ctick - ltick)
+                average.append(ctick-ltick)
                 ltick = ctick
+                if len(average) > 30:
+                    sum = 0.
+                    for x in average:
+                        sum += float(x)
+                    sum = sum / float(len(average))
+                    average = []
+                    print "mean render time= %f" % (sum)
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
