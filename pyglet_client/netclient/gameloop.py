@@ -167,17 +167,18 @@ class App(object):
                 self.win.flip()
             else:
                 self.SDL_global.flip()
-                ctick = SDL.gl.get_ticks()
-                #print str(ctick - ltick)
-                average.append(ctick-ltick)
-                ltick = ctick
-                if len(average) > 30:
-                    sum = 0.
-                    for x in average:
-                        sum += float(x)
-                    sum = sum / float(len(average))
-                    average = []
-                    print "mean render time= %f" % (sum)
+                if False:
+                    ctick = SDL.gl.get_ticks()
+                    #print str(ctick - ltick)
+                    average.append(ctick-ltick)
+                    ltick = ctick
+                    if len(average) > 30:
+                        sum = 0.
+                        for x in average:
+                            sum += float(x)
+                        sum = sum / float(len(average))
+                        average = []
+                        print "mean render time= %f" % (sum)
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
