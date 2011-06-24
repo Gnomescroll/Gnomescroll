@@ -8,6 +8,7 @@ terrain_map.c
 dat.c
 cube_dat.c
 map_chunk_manager.c
+hud.c
 
 VBO.c
 input.c
