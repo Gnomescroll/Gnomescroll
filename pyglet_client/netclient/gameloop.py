@@ -9,6 +9,7 @@ if settings.pyglet:
 else:
     import SDL.gl
     import SDL.input
+    import SDL.hud
     import cube_lib.VBO
 
 #import cython
@@ -66,6 +67,7 @@ class App(object):
             self.SDL_global = SDL.gl.SDL_global #drawing stuff
             self.SDL_global.init()
             SDL.input.init()
+            SDL.hud.init()
             ## VBO TEST
             cube_lib.VBO.init()
             cube_lib.VBO.test_chunk()

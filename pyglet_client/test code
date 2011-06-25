@@ -105,3 +105,17 @@ w.world_projection()
 
 cube_lib.VBO.draw_test_chunk()
 w.flip()
+
+### image loader testing ###
+import SDL.gl
+import SDL.hud
+
+w = SDL.gl.Global()
+w.init()
+SDL.hud.init()
+
+w.flip()
+w.world_projection()
+w.hud_projection()
+SDL.hud.draw_text('test', 50,50)
+w.flip()
