@@ -159,7 +159,7 @@ class PlayerList(GenericObjectList):
         return player
         
     def destroy(self, player):
-        print 'playerlist leave'
+        print 'playerlist destroy'
         print player
         client_id = player.cid
         name = player.name
@@ -170,7 +170,24 @@ class PlayerList(GenericObjectList):
             print self.names
             if name in self.names:
                 del self.names[name]
+
+            self.relationships.destroy(player)
+                    
         return player
+
+    def destroy_related(self, player):
+        for prop, link in player.relationships.items():
+            val = getattr(player, prop)
+            store = listDirectory[link[0]]
+            foreign_prop = link[1]
+            if val is not None:
+                if foreign_prop is None:
+                    # delete the object
+                    store.destroy(val)
+                else:
+                    store[val].relationships.related_destroyed('Player')
+                    # set their property to None
+        
 
     def by_name(self, name):    # returns a client_id
         if name in self.names:

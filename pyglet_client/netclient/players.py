@@ -59,4 +59,3 @@ class YouPlayer(Player):
 
 from game_state import GameStateGlobal
 from net_client import NetClientGlobal
-from agents import PlayerAgent

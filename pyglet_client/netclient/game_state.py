@@ -24,7 +24,7 @@ class GameStateGlobal:
         cls.weaponList = WeaponList()
         #cls.terrainMap = TerrainMap()
         cls.gameState = GameState()
-
+        
     @classmethod
     def init_1(cls):
         pass
@@ -53,23 +53,38 @@ class GameStateGlobal:
         player = cls.playerList.get(id, None)
         if player is None:
             return
-        agent = getattr(player, 'agent', None)
-        if agent is not None:
-            cls.remove_agent(agent.id)
-        print agent
         cls.playerList.destroy(player)
 
+        agent = player.agent
+        if agent is not None:
+            cls.remove_agent(agent.id, seek=False)
+
     @classmethod
-    def remove_agent(cls, id):
-        print 'gsg remove_agent'
+    def remove_agent(cls, id, seek=True):
         agent = cls.agentList.get(id, None)
         if agent is None:
-            print 'agent is none'
             return
         cls.agentList.destroy(agent)
-        owner = cls.playerList.get(agent.owner, None)
-        if owner is not None:
-            owner.agent = None
+
+        for weapon in agent.weapons:
+            cls.remove_weapon(weapon, seek=False)
+
+        if seek:
+            owner = cls.playerList.get(agent.owner, None)
+            if owner is not None:
+                owner.agent = None
+
+    @classmethod
+    def remove_weapon(cls, id, seek=True):
+        weapon = cls.weaponList.get(id, None)
+        if weapon is None:
+            return
+        cls.weaponList.destroy(weapon)
+
+        if seek:
+            owner = cls.agentList.get(weapon.owner, None)
+            if owner is not None:
+                owner.weapons.drop(weapon)
 
     @classmethod
     def client_quit(cls, id):
@@ -113,8 +128,11 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
+from object_lists import listDirectory
 from players import Player
 from net_client import NetClientGlobal
+
+from object_lists_manager import ListManager
 
 #import cube_lib.terrain_map
 import cube_lib.terrain_map as TerrainMap
