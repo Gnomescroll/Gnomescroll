@@ -7,7 +7,9 @@ import math
 from math import sin, cos, pi
 from math import floor, ceil, fabs
 
-from game_state import GameStateGlobal
+
+from game_state import GameStateGlobal #Deprecate?
+
 from weapons import LaserGun, Pick, BlockApplier
 
 import settings
@@ -583,7 +585,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         block = self.nearest_block_position()
         if block is None:
             return None
-        block = GameStateGlobal.terrainMap.get(*block)
+        #block = GameStateGlobal.terrainMap.get(*block)
+        block = terrainMap.get(*block)
         return block
 
     def facing_block_position(self):
@@ -600,6 +603,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         if self.y_angle > 0.499:
             self.y_angle = 0.499
 
+import cube_lib.terrain_map as terrainMap
 
 from net_out import NetOut
 from raycast_utils import *

@@ -63,7 +63,7 @@ class InputEventGlobal:
     def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
         key = Keystring.get(keycode, None)
         #uncomment to see key inputs
-        #print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
+        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
             self.keyboard.on_key_press(key)
         else:
@@ -426,7 +426,7 @@ class AgentInput:
             self.key_handlers[key] = handler
 
     def on_key_press(self, symbol, modifiers=None):
-        self.key_handlers.get(symbol, lambda : None)()
+        self.key_handlers.get(symbol, lambda : None)(symbol)
         #self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
 
     def reload(self, symbol=None, modifiers=None):
