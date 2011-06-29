@@ -68,10 +68,10 @@ int _init_text() {
 const float dx = 1.0/16.0;
 const float dy = 1.0/16.0;
 
-int _draw_text(char* text, float x, float y) {
-float width = 40.0;
-float height = 40.0;
-float depth = -0.5;
+int _draw_text(char* text, float x, float y, float height, float width, float depth) {
+//float width = 40.0;
+//float height = 40.0;
+//float depth = -0.5;
 
 int c_num = 0;
 while(text[c_num] != 0) { c_num++; }
@@ -105,12 +105,13 @@ float xmin,xmax, ymin,ymax;
         glEnable(GL_TEXTURE_2D);
         glBindTexture( GL_TEXTURE_2D, fontTextureId);
 
+/*
         glColor3ub(255,255,255);
         glBegin(GL_LINES);
         glVertex3f(xmin,ymin,-0.6); // origin of the line
         glVertex3f(xmax, ymax,-0.6); // ending point of the line
         glEnd();
-
+*/
         glBegin( GL_QUADS );
             glTexCoord2f(x_min,y_max);
             glVertex3f(xmin, ymax, depth);
