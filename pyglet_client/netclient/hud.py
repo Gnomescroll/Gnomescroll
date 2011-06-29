@@ -9,6 +9,8 @@ if settings.pyglet:
     from pyglet import graphics
     from pyglet import image
     from pyglet import text
+else:
+    import SDL.hud
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
@@ -25,9 +27,10 @@ class Hud(object):
 
     def __init__(self, win):
         self.win = win
-        self.font = font.load('Helvetica', 14, bold=True)
-        self.text = self._to_draw_text()
-        self.fps = clock.ClockDisplay()
+        if settings.pyglet:
+            self.font = font.load('Helvetica', 14, bold=True)
+            self.text = self._to_draw_text()
+            self.fps = clock.ClockDisplay()
         self._init_reticle()
         self._init_text_dict()
         self._init_scoreboard()
@@ -86,34 +89,37 @@ class Hud(object):
         return stats
 
     def _init_reticle(self):
-        self.reticle = image.load(base_dir + 'texture/target.png')
-        self.reticle_texture = self.reticle.get_texture()
+        if settings.pyglet:
+            self.reticle = image.load(base_dir + 'texture/target.png')
+            self.reticle_texture = self.reticle.get_texture()
 
-        rh = 16.
-        rw = 16.
+            rh = 16.
+            rw = 16.
 
-        w = float(self.win.width)/2
-        h = float(self.win.height)/2
-        print str((h,w))
-        x_min = w - rw/2
-        x_max = w + rw/2
-        y_min = h - rh/2
-        y_max = h + rh/2
+            w = float(self.win.width)/2
+            h = float(self.win.height)/2
+            print str((h,w))
+            x_min = w - rw/2
+            x_max = w + rw/2
+            y_min = h - rh/2
+            y_max = h + rh/2
 
-        v_list = [
-            x_min, y_max,
-            x_max, y_max,
-            x_max, y_min,
-            x_min, y_min
-        ]
-        print str(v_list)
+            v_list = [
+                x_min, y_max,
+                x_max, y_max,
+                x_max, y_min,
+                x_min, y_min
+            ]
+            print str(v_list)
 
-        self.reticleVertexList = graphics.vertex_list(
-            4,
-            ('v2f\static', v_list),
-            ('c3B\static', (255,255,255) *4),
-            ("t3f\static", self.reticle_texture.tex_coords)
-        )
+            self.reticleVertexList = graphics.vertex_list(
+                4,
+                ('v2f\static', v_list),
+                ('c3B\static', (255,255,255) *4),
+                ("t3f\static", self.reticle_texture.tex_coords)
+            )
+        else:
+            return
 
     def draw(self):
         self.draw_reticle()

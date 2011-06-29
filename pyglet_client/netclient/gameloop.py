@@ -89,7 +89,7 @@ class App(object):
             self.hud = Hud(self.win)
         else:
             self.camera = Camera(None)
-            #self.hud = Hud(None)
+            self.hud = Hud(None)
         #setup events
         self.exit = False
 
@@ -168,6 +168,9 @@ class App(object):
                 clock.tick()
                 self.win.flip()
             else:
+                self.camera.hudProjection()
+                self.hud.draw()
+
                 self.SDL_global.flip()
                 if False:
                     ctick = SDL.gl.get_ticks()

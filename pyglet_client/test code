@@ -118,4 +118,6 @@ w.flip()
 w.world_projection()
 w.hud_projection()
 SDL.hud.draw_text('test', 50,50)
+
+x = SDL.hud.text('test', 150, 150)
 w.flip()

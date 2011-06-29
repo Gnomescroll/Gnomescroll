@@ -68,6 +68,60 @@ int _init_text() {
 const float dx = 1.0/16.0;
 const float dy = 1.0/16.0;
 
+int _draw_text2(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
+
+glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
+
+int c_num = 0;
+while(text[c_num] != 0) { c_num++; }
+
+int i;
+float offset = x;
+int index,xi,yi;
+float x_min, x_max, y_min, y_max;
+
+float xmin,xmax, ymin,ymax;
+    for(i=0; i<c_num; i++){
+        index = text[i];
+        xi = index % 16;
+        yi = index >> 4;
+        //texture cordinates
+        x_min = (float)(xi)*dx;
+        x_max = (float)(xi+1)*dx;
+        y_max = (float)(yi)*dy;
+        y_min = (float)(yi+1)*dy;
+        //vertex cordinates
+        xmin = i*width+x;
+        xmax = (i+1)*width+x;
+        ymin = y;
+        ymax = y+height;
+/*
+        printf("xi, yi= %i, %i \n", xi, yi);
+        printf("dx, dy: %f, %f \n", dx, dy);
+        printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
+        printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
+*/
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, fontTextureId);
+
+        glBegin( GL_QUADS );
+            glTexCoord2f(x_min,y_max);
+            glVertex3f(xmin, ymax, depth);
+            glTexCoord2f(x_min, y_min);
+            glVertex3f(xmin, ymin, depth);
+            glTexCoord2f(x_max, y_min);
+            glVertex3f(xmax, ymin, depth);
+            glTexCoord2f(x_max, y_max);
+            glVertex3f(xmax, ymax, depth);
+        glEnd();
+
+        offset += width;
+    }
+
+}
+
+
+
 int _draw_text(char* text, float x, float y, float height, float width, float depth) {
 //float width = 40.0;
 //float height = 40.0;
