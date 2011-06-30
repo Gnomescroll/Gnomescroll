@@ -50,6 +50,21 @@ SDL_input = Extension('SDL.input',
                                 'SDL/SDL_functions.c',]
                                 )
 
+SDL_hud = Extension('SDL.hud',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = ['/usr/local/include',
+                                    ' /usr/include/X11/extensions/',
+                                    '/usr/include/SDL',
+                                    '/usr/lib',     ],
+                    libraries = ['SDL','GL','SDL','GLU', 'SDL_image', 'SDL_ttf'], #SDL_image ?
+
+                    library_dirs = ['/usr/X11R6/lib','usr/lib'],
+                    extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
+                    extra_link_args = extra_link_args,
+                    sources = [ 'SDL/hud.pyx',
+                                'SDL/SDL_text.c',]
+                                )
+
 cube_lib_VBO = Extension('cube_lib.VBO',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
@@ -103,6 +118,6 @@ map_chunk_manager = Extension('cube_lib.map_chunk_manager',
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [SDL_gl, SDL_input, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
+    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )

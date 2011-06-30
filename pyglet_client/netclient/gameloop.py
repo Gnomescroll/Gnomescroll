@@ -9,6 +9,7 @@ if settings.pyglet:
 else:
     import SDL.gl
     import SDL.input
+    import SDL.hud
     import cube_lib.VBO
 
 #import cython
@@ -66,6 +67,7 @@ class App(object):
             self.SDL_global = SDL.gl.SDL_global #drawing stuff
             self.SDL_global.init()
             SDL.input.init()
+            SDL.hud.init()
             ## VBO TEST
             cube_lib.VBO.init()
             cube_lib.VBO.test_chunk()
@@ -87,7 +89,7 @@ class App(object):
             self.hud = Hud(self.win)
         else:
             self.camera = Camera(None)
-            #self.hud = Hud(None)
+            self.hud = Hud(None)
         #setup events
         self.exit = False
 
@@ -166,6 +168,9 @@ class App(object):
                 clock.tick()
                 self.win.flip()
             else:
+                self.camera.hudProjection()
+                self.hud.draw()
+
                 self.SDL_global.flip()
                 if False:
                     ctick = SDL.gl.get_ticks()
