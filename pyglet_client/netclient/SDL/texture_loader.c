@@ -18,16 +18,19 @@ if(!image) {
     printf("IMG_Load: %s \n", IMG_GetError());
     // handle error
     return 0;
-} else {
-    if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
-    return image;
-    }
+}
+if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
+
+return image;
+
 }
 
 int _create_texture(SDL_Surface* surface) {
     GLuint texture;
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
     return texture;
 }
