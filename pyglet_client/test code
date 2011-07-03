@@ -36,7 +36,7 @@ for i in range(0,256):
 	y = random.random()
 	z = random.random()
 	temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
-	#temp = SDL.gl.draw_point(0,100,0, random.random(),random.random(),random.random())
+	#temp = SDL.glr.draw_point(0,100,0, random.random(),random.random(),random.random())
 
 w.flip()
 
@@ -106,7 +106,7 @@ w.world_projection()
 cube_lib.VBO.draw_test_chunk()
 w.flip()
 
-### image loader testing ###
+### text drawing testing ###
 import SDL.gl
 import SDL.hud
 
@@ -121,3 +121,27 @@ SDL.hud.draw_text('test', 50,50)
 
 x = SDL.hud.text('test', 150, 150)
 w.flip()
+
+### image loader testing ###
+
+import SDL.gl
+import SDL.hud
+
+w = SDL.gl.Global()
+w.init()
+SDL.hud.init()
+
+w.flip()
+w.world_projection()
+w.hud_projection()
+
+tex = SDL.gl.Texture("./texture/target.png")
+tex.draw(50,50,150,150)
+
+#SDL.hud.draw_text('test', 200,200)
+x = SDL.hud.text('test', 250, 250)
+x.draw()
+
+
+w.flip()
+

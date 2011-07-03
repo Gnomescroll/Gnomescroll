@@ -100,6 +100,7 @@ cdef class Texture:
         self.id = _create_texture(self.surface)
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
+        print "id == " + str(self.id)
         _blit_sprite(self.id, x0, y0, x1, y1, z)
 
 class Textures:
@@ -108,8 +109,8 @@ class Textures:
 
     def init(self):
         print "Initing Textures"
-        self.hud_tex = Texture("./texture/target.png", 0)
-        self.tile_tex = Texture("./texture/textures_01.png", 0)
+        self.hud_tex = Texture("./texture/target.png")
+        self.tile_tex = Texture("./texture/textures_01.png")
 
 from libc.stdlib cimport malloc, free
 
