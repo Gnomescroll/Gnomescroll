@@ -25,6 +25,7 @@ projectile_dat = {
 class Projectile(GameObject):
 
     def __init__(self, state=None, id=None, type=None): #more args
+        GameObject.__init__(self)
         if None in (state, id, type,):
             print 'Projectile __init__ missing args'
             raise TypeError

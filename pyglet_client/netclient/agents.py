@@ -126,6 +126,10 @@ class AgentWeapons:
         self.weapons = new_weapons
         self._adjust_active_weapon()
 
+    def drop(self, weapon):
+        self.weapons = [w for w in self.weapons if w != weapon]
+        self._adjust_active_weapon()
+
     def _adjust_active_weapon(self):
         n = len(self)                   # number of weapons
         aw = self._active_weapon        # active list index in weapons
@@ -145,6 +149,9 @@ class AgentWeapons:
 
     def __len__(self):
         return len(self.weapons)
+
+    def __iter__(self):
+        return iter(self.weapons)
 
 '''
 Data model for agent
@@ -188,8 +195,10 @@ class AgentModel:
         else:
             self.health = health
         self.dead = bool(dead)
+
         self.weapons = AgentWeapons(weapons, active_weapon)
         self.owner = owner
+        
         self.you = False
 
         self.active_block = active_block   # which block to create
@@ -604,7 +613,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
             self.y_angle = 0.499
 
 import cube_lib.terrain_map as terrainMap
-
 from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *

@@ -251,7 +251,8 @@ class DatastoreMessageInterface(GenericMessageHandler):
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
-        self.store.load_info(**data)
+        obj = self.store.load_info(**data)
+        return obj
 
     def _default_list(self, **args):
         err_msg = None
@@ -266,7 +267,8 @@ class DatastoreMessageInterface(GenericMessageHandler):
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
-        self.store.load_list(a_list)
+        objs = self.store.load_list(a_list)
+        return objs
 
     def _default_create(self, **args):
         err_msg = None
@@ -276,7 +278,8 @@ class DatastoreMessageInterface(GenericMessageHandler):
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
-        self.store.create(**data)
+        obj = self.store.create(**data)
+        return obj
 
     def _default_destroy(self, **args):
         err_msg = None
@@ -291,6 +294,8 @@ class DatastoreMessageInterface(GenericMessageHandler):
             err_msg = '%s not found' % (self.name,)
         if err_msg is not None:
             print self._error_message(err_msg, **args)
+            return
+        return id
 
 
 class PlayerMessageHandler(DatastoreMessageInterface):
@@ -301,14 +306,9 @@ class PlayerMessageHandler(DatastoreMessageInterface):
         DatastoreMessageInterface.__init__(self)
 
     def _player_destroy(self, **args):
-        err_msg = None
-        id = args.get('id', None)
-        if id is None:
-            err_msg = 'id is missing'
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
-        GameStateGlobal.remove_player(id)    # this method manages FK relationships
+        id = self._default_destroy(**args)
+        if id is not None:
+            GameStateGlobal.remove_player(id)    # this method manages FK relationships
 
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
@@ -337,14 +337,9 @@ class AgentMessageHandler(DatastoreMessageInterface):
         agent.state = state
 
     def _agent_destroy(self, **args):
-        err_msg = None
-        id = args.get('id', None)
-        if id is None:
-            err_msg = 'id is missing'
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
-        GameStateGlobal.remove_agent(id)    # this method manages FK relationships
+        id = self._default_destroy(**args)
+        if id is not None:
+            GameStateGlobal.remove_agent(id)    # this method manages FK relationships
 
 
 class WeaponMessageHandler(DatastoreMessageInterface):
@@ -354,6 +349,10 @@ class WeaponMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.weaponList
         DatastoreMessageInterface.__init__(self)
 
+    def _weapon_destroy(self, **args):
+        id = self._default_destroy(**args)
+        if id is not None:
+            GameStateGlobal.remove_weapon(id)
 
 class ProjectileMessageHandler(DatastoreMessageInterface):
 

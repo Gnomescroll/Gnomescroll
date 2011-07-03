@@ -3,8 +3,7 @@ class GameObject:
     def __init__(self):
         pass
 
-
 class EquippableObject(GameObject):
 
     def __init__(self):
-        pass
+        GameObject.__init__(self)

@@ -72,8 +72,10 @@ class GenericObjectList:
         return False
 
     def load_list(self, objs):
+        objs = []
         for obj in objs:
-            self.load_info(**obj)
+            objs.append(self.load_info(**obj))
+        return objs
 
     def load_info(self, **obj):
         if 'id' not in obj:
@@ -159,7 +161,7 @@ class PlayerList(GenericObjectList):
         return player
         
     def destroy(self, player):
-        print 'playerlist leave'
+        print 'playerlist destroy'
         print player
         client_id = player.cid
         name = player.name
@@ -170,6 +172,7 @@ class PlayerList(GenericObjectList):
             print self.names
             if name in self.names:
                 del self.names[name]
+
         return player
 
     def by_name(self, name):    # returns a client_id

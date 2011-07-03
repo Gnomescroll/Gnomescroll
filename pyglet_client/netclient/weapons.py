@@ -11,6 +11,7 @@ class Weapon(EquippableObject):
     }
 
     def __init__(self, id, owner=None):
+        EquippableObject.__init__(self)
         if id is None:
             raise ValueError
         self.id = id
