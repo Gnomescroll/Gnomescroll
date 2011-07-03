@@ -6,6 +6,7 @@ syntax: glob
 
 terrain_map.c
 dat.c
+cube_lib.c
 cube_dat.c
 map_chunk_manager.c
 hud.c

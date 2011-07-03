@@ -92,15 +92,15 @@ cdef class Texture:
     cdef int h
     cdef SDL_Surface* surface
 
-    def __init__(Texture self, char * file, int texture_type):
+    def __init__(Texture self, char * file):
         #print "init runs"
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        if texture_type == 0:
-            self.id = _create_texture(self.surface)
-        else:
-            pass #add mippmapped textures later
+        self.id = _create_texture(self.surface)
+
+    def draw(self, x0, y0, x1, y1, z=-0.5):
+        _blit_sprite(self.id, x0, y0, x1, y1, z)
 
 class Textures:
     hud_tex = None
