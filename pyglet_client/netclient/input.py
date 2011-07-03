@@ -273,7 +273,7 @@ class Keyboard(object):
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
             "q" : InputGlobal.toggle_input_mode,
-            "E" : InputGlobal.toggle_camera_mode,
+            "e" : InputGlobal.toggle_camera_mode,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
@@ -431,7 +431,7 @@ class AgentInput:
             self.key_handlers[key] = handler
 
     def on_key_press(self, symbol, modifiers=None):
-        self.key_handlers.get(symbol, lambda : None)(symbol)
+        self.key_handlers.get(symbol, lambda s: None)(symbol)
         #self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
 
     def reload(self, symbol=None, modifiers=None):
