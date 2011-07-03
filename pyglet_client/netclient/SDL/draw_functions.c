@@ -23,6 +23,7 @@ return 0;
 
 int _blit_sprite(int texture, float x0, float y0, float x1, float y1, float z) {
 
+    glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
