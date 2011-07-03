@@ -4,6 +4,8 @@
 Client input
 '''
 
+from math import sin, cos, pi
+
 import settings
 
 if settings.pyglet:
@@ -198,8 +200,6 @@ class Mouse(object):
 #            direction = 'down'
 #        GameStateGlobal.agent.weapons.switch(direction)
 
-from math import sin, cos, pi
-
 class Keyboard(object):
 
     def __init__(self, main):
@@ -253,7 +253,8 @@ class Keyboard(object):
                 #self.key_handlers.get(symbol, lambda: None)()
             if symbol == 'TAB':
                 InputGlobal.scoreboard = True
-            self.key_handlers.get(symbol, lambda: None)()
+            ### FIX
+            self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
         if symbol == 'TAB':
@@ -284,7 +285,7 @@ class Keyboard(object):
         else:
             self.key_handlers[key] = handler
 
-    def toggle_chat(self):
+    def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
             InputGlobal.toggle_input_mode(0)
         else:
@@ -432,7 +433,6 @@ class AgentInput:
 
     def on_key_press(self, symbol, modifiers=None):
         self.key_handlers.get(symbol, lambda s: None)(symbol)
-        #self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
 
     def reload(self, symbol=None, modifiers=None):
         print 'reloading'

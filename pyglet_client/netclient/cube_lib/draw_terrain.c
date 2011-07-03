@@ -3,6 +3,8 @@
 GLuint texture = 0;
 SDL_Surface *surface;
 
+int draw_mode_enabled = 0;
+
 //GLuint VBOid = 0;
 
 ///advice
@@ -67,8 +69,6 @@ int _delete_vbo(struct Quad_VBO* q_VBO) {
 }
 
 
-int draw_mode_enabled = 0;
-
 int _start_vbo_draw() {
 draw_mode_enabled = 1;
 
@@ -76,12 +76,12 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 //glEnable(GL_CULL_FACE);
 
-//glBindTexture( GL_TEXTURE_2D, texture ); //needed?
+glBindTexture( GL_TEXTURE_2D, texture ); //needed?
 
-glClientActiveTexture(texture);
+//glClientActiveTexture(texture);
 
 glEnableClientState(GL_VERTEX_ARRAY);
-glClientActiveTexture(texture); //bind texture
+//glClientActiveTexture(texture); //bind texture
 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 glEnableClientState(GL_COLOR_ARRAY);
 /*
