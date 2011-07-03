@@ -139,7 +139,7 @@ x2 = SDL.hud.text('test', 400, 400)
 x2.draw()
 
 #tex = SDL.gl.Texture("./texture/target.png")
-tex = SDL.gl.Texture("./texture/textures_01.png"
+tex = SDL.gl.Texture("./texture/textures_01.png")
 tex.draw(50,50,150,150)
 
 #SDL.hud.draw_text('test', 200,200)
