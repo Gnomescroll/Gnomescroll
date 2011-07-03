@@ -65,6 +65,7 @@ def load_map():
                         m.set(xa,ya,za+1, 4)
                         m.set(xa,ya,za+2, 4)
                         m.set(xa,ya,za+3, 5)
+                        m.set(xa,ya,za+4, 6)
     print "Finished map generation"
 
 class Main:

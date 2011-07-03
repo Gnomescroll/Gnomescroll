@@ -79,6 +79,21 @@ cube_list = {
 
         'color' : [0,0,155,150], #alpha
     },
+    6 : {
+        'id' : 6,
+        'name' : 'black rune',
+        'occludes' : True,
+        'active' : True,
+        'solid' : True,
+
+        'texture_id' : [144,144,144,144,144,144],
+        'texture_order' : [[0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],],
+    },
  }
 
 
