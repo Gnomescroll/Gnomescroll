@@ -109,6 +109,21 @@ cube_list = {
         ],
         'color' : [0,0,50,50], #alpha
     },
+    6 : {
+        'id' : 6,
+        'occludes' : True,
+        'active' : True,
+        'solid' : True,
+
+        'texture' : [ #t, b, w, e, n, s
+        (0, []),  #top
+        (0, []),  #bottom
+        (0, []), #west
+        (0, []), #east
+        (0, []), #north
+        (0, []), #south
+        ],
+        },
  }
 
 #physical cube properties

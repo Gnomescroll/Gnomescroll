@@ -172,7 +172,7 @@ class App(object):
                 self.win.flip()
             else:
                 self.camera.hudProjection()
-                #self.hud.draw()
+                self.hud.draw()
 
                 self.SDL_global.flip()
                 if False:
