@@ -33,7 +33,10 @@ from map_controller import MapControllerGlobal
 from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
-from hud import Hud
+if settings.pyglet:
+    from hud import Hud
+else:
+    from hud_sdl import Hud
 
 import world #deprecate
 
@@ -89,7 +92,7 @@ class App(object):
             self.hud = Hud(self.win)
         else:
             self.camera = Camera(None)
-            self.hud = Hud(None)
+            self.hud = Hud()
         #setup events
         self.exit = False
 

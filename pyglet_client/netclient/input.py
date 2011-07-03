@@ -17,9 +17,11 @@ else:
 Keystring = {}
 def setup_keystring():
     global Keystring
-
+    global special_keys
     special_keys = {
     'TAB': 9,
+    'ENTER': 13,
+    'ESC': 27,
     'SPACE': 32,
     'LEFT': 276,
     'RIGHT': 275,
@@ -236,9 +238,12 @@ class Keyboard(object):
     # one-time non character key detection
     # e.g. enter
     def on_key_press(self, symbol):
+        print 'ON_KEY_PRESS :: ', symbol
         if InputGlobal.input == 'chat':
-            callback = ChatClientGlobal.chatClient.input.on_text(symbol)
-            #callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
+            if symbol in special_keys:
+                callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
+            else:
+                callback = ChatClientGlobal.chatClient.input.on_text(symbol)
             self._input_callback(callback)
         else:
             if symbol == 'y':
