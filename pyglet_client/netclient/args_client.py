@@ -21,7 +21,7 @@ DEFAULTS = {
     'name'      :   settings.name,
 }
 
-def parse():
+def parse(cl_args=None):
     parser = argparse.ArgumentParser(description="DC_MMO Netclient", prog="Dwarf Control (in Space)")
 
     vs = '%(prog)s ' + DC_VERSION
@@ -44,12 +44,30 @@ def parse():
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'])
 
-    args = parser.parse_args()
+    if cl_args is not None:
+        args = parser.parse_args(cl_args)
+    else:
+        args = parser.parse_args()
     setattr(args, 'version', DC_VERSION)
     return args
 
 def get_args():
-    return parse()
+    try:
+        args = parse()
+    except:             # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
+        from sys import argv
+
+        server = argv[1]
+        if ':' in server:
+            server, port = server.split(':')
+            cl_args = '--server %s --port %s' % (server, port,)
+        else:
+            cl_args = '--server %s' % (server,)
+            
+        args = parse(cl_args.split())
+        
+    return args
+        
 
 def main():
     import gameloop
