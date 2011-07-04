@@ -100,8 +100,8 @@ cdef class Texture:
         self.id = _create_texture(self.surface)
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
-        print "id == " + str(self.id)
-        print "w,h = %i, %i" % (self.w, self.h)
+        #print "id == " + str(self.id)
+        #print "w,h = %i, %i" % (self.w, self.h)
         _blit_sprite(self.id, x0, y0, x1, y1, z)
         #_blit_sprite(1, x0, y0, x1, y1, z)
 

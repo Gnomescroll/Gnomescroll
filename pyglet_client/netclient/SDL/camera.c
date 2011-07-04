@@ -52,7 +52,7 @@ int _world_projection(struct Camera* c) {
 
     //glEnable(GL_TEXTURE_2D);
 
-    //glEnable (GL_DEPTH_TEST);
+    glEnable (GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
 
 /*
@@ -64,6 +64,8 @@ int _world_projection(struct Camera* c) {
 }
 
 int _hud_projection(struct Camera * c) {
+
+glDisable (GL_DEPTH_TEST);
 
 glMatrixMode(GL_PROJECTION);
 glLoadIdentity();

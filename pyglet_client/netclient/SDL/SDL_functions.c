@@ -54,7 +54,7 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    glEnable(GL_TEXTURE_2D);
+    ///glEnable(GL_TEXTURE_2D); // ??? Needed?
 
     //whaa
 
