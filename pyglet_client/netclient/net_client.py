@@ -8,13 +8,16 @@ import socket
 import struct
 import simplejson as json
 
+from opts import opts
+import settings
+
 class NetClientGlobal:
     connection = None
     sendPacket = None
 
     client_id = '0'
-    name = 'steve'
-    VERSION = '0.0.1'
+    name = opts.name
+    VERSION = opts.version
 
     @classmethod
     def init_0(cls):
@@ -103,8 +106,8 @@ class PacketDecoder:
 import select
 
 class TcpConnection:
-    server = '127.0.0.1'
-    tcp_port = 5055
+    server = opts.server
+    tcp_port = opts.port
     #settings
     noDelay = True
 

@@ -2,8 +2,6 @@ import math
 
 class GameStateGlobal:
 
-    TICK = 0.01 # seconds
-
     gameState = None
     #terrainMap = None
     agentList = None
