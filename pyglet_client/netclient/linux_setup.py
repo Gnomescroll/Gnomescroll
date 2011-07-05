@@ -126,7 +126,7 @@ ChromeEmbedded = Extension('ChromeEmbedded',
                                     './include/',
                                     './',
                                         ],
-                    libraries = ['SDL','GL','SDL','GLU', 'SDL_image','ChromeEmbedded'], #, 'Awesomium'], #SDL_image ?
+                    libraries = ['SDL','GL','SDopengl L','GLU', 'SDL_image','ChromeEmbedded'], #, 'Awesomium'], #SDL_image ?
 
                     library_dirs = ['/home/atomos/dc_mmo/pyglet_client/netclient/','/usr/X11R6/lib','usr/lib'],
                     extra_compile_args = ['-Wl,-rpath,/home/atomos/test/aw2/netclient/aw/']+['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
