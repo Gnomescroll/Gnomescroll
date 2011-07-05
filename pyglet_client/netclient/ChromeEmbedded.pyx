@@ -5,7 +5,7 @@ cdef extern from 'libChrome.h':
         int y
         int width
         int height
-        int tex_id
+        unsigned int tex_id
 
 cdef extern from 'libChrome.h':
     int start()
