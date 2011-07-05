@@ -1,10 +1,11 @@
 
-cdef extern struct chromeDisplay:
-    int x
-    int y
-    int width
-    int height
-    int tex_id
+cdef extern from 'libChrome.h':
+    struct chromeDisplay:
+        int x
+        int y
+        int width
+        int height
+        int tex_id
 
 cdef extern from 'libChrome.h':
     int start()

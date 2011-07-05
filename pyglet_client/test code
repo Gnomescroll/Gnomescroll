@@ -144,10 +144,12 @@ w.flip()
 
 import SDL.gl
 import ChromeEmbedded
+w = SDL.gl.Global()
 w.init()
 ChromeEmbedded.init()
+
 w.world_projection()
 w.hud_projection()
-
 ChromeEmbedded.update()
+w.flip()
 
