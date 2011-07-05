@@ -10,6 +10,10 @@ cube_lib.c
 cube_dat.c
 map_chunk_manager.c
 hud.c
+ChromeEmbedded.c
+
+result.jpg
+awesomium.log
 
 VBO.c
 input.c
