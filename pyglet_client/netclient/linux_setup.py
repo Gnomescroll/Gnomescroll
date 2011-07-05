@@ -115,7 +115,7 @@ map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     sources = ['cube_lib/map_chunk_manager.pyx']
                     )
 
-
+'''
 ChromeEmbedded = Extension('ChromeEmbedded',
                     #define_macros =  [('PLATFORM', 'linux')]
                     #language="C++",
@@ -134,9 +134,9 @@ ChromeEmbedded = Extension('ChromeEmbedded',
                     sources = ['ChromeEmbedded.pyx',]
                            #    './aw/test2.c'],
                     )
-
+'''
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [ChromeEmbedded, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
+    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
