@@ -8,27 +8,17 @@ cdef extern from 'libChrome.h':
         unsigned int tex_id
 
 cdef extern from 'libChrome.h':
-    int start()
     int _init2()
     int _update()
-    int _draw()
     chromeDisplay* _create_webview(int x,int y, int width, int height)
     int _update_webview(chromeDisplay* webview)
     int _draw_webview(chromeDisplay* webview)
-
-def test():
-    print "test started"
-    start()
-    print "test finished"
 
 def init():
     _init2()
 
 def update():
     _update()
-
-def draw():
-    _draw()
 
 cdef class cWindow:
     cdef chromeDisplay* display
