@@ -3,7 +3,6 @@ g++ -Wall -fPIC -c libChrome.c -I/usr/local/include -I /usr/include/X11/extensio
 g++ -shared -o libChrome.so libChrome.o -I./include/ -L. -lAwesomium -Wl,-rpath=./ 
 
 gcc main.c -I/usr/include/python2.6/ -L/usr/include/python2.6 -lpython2.6 -o main
-gcc run.c -I/usr/include/python2.6/ -L/usr/include/python2.6 -lpython2.6 -o run
 
 cython ChromeEmbedded.pyx
 
