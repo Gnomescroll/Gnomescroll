@@ -1,4 +1,4 @@
-import pyglet
+#import pyglet
 from pyglet.gl import *
 
 class CubeGlobal:
