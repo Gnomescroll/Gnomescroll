@@ -25,6 +25,8 @@ name            Set player name (overrides settings.py name)
 
 '''
 
+#from sys import argv
+import sys
 
 import argparse
 import settings
@@ -72,19 +74,19 @@ def get_args():
     try:
         args = parse()
     except:             # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
-        from sys import argv
 
-        server = argv[1]
+        #server = sys.argv[1]
+        server = "127.0.0.1:5055"
         if ':' in server:
             server, port = server.split(':')
             cl_args = '--server %s --port %s' % (server, port,)
         else:
             cl_args = '--server %s' % (server,)
-            
+
         args = parse(cl_args.split())
-        
+
     return args
-        
+
 
 def main():
     import gameloop
