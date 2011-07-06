@@ -7,9 +7,9 @@
 
 void exec_pycode(const char* code)
 {
-  Py_Initialize();
+  //Py_Initialize();
   PyRun_SimpleString(code);
-  Py_Finalize();
+  //Py_Finalize();
 }
 
 void exec_interactive_interpreter(int argc, char** argv)
@@ -32,8 +32,10 @@ PyObject* main_dict = PyModule_GetDict(main_module);
 
 // Execute two different files of
 // Python code in separate environments
+exec_pycode("import os; import sys; print os.getcwd(); sys.path.append(os.getcwd());");
 FILE* file_1 = fopen("gameloop.py", "r");
-PyRun_File(file_1, "gameloop.py", Py_file_input, main_dict, main_dict);
+//PyRun_File(file_1, "gameloop.py", Py_file_input, main_dict, main_dict);
+PyRun_SimpleFile(file_1, "gameloop.py");
 
 /*
 FILE* file_2 = fopen("file2.py", "r");
@@ -49,8 +51,8 @@ int main() {
     args[0] = "test";
 
     printf("Start\n");
-    exec_pycode("import os; import sys; print os.getcwd(); sys.path.append(os.getcwd());import gameloop;");
-    //exec_file();
+    //exec_pycode("import os; import sys; print os.getcwd(); sys.path.append(os.getcwd());import args_client;args_client.main()");
+    exec_file();
     //runniPyImport_Import("gameloop")
     //exec_pycode("import gameloop");
     //exec_interactive_interpreter(0, args);
