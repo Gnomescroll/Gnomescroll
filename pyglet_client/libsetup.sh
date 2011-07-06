@@ -1,5 +1,4 @@
 cd ./netclient
-echo 'Compiling Libs'
 
 echo "Compiling Binaries"
 
