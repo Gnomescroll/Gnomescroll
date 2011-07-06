@@ -32,7 +32,7 @@ PyObject* main_dict = PyModule_GetDict(main_module);
 
 // Execute two different files of
 // Python code in separate environments
-exec_pycode("import os; import sys; print os.getcwd(); sys.path.append(os.getcwd());");
+exec_pycode("import os; import sys; print os.getcwd(); sys.path.insert(0, os.getcwd());");
 FILE* file_1 = fopen("gameloop.py", "r");
 //PyRun_File(file_1, "gameloop.py", Py_file_input, main_dict, main_dict);
 PyRun_SimpleFile(file_1, "gameloop.py");
