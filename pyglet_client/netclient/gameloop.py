@@ -203,4 +203,6 @@ class App(object):
 if __name__ == '__main__':
     app = App()
     app.mainLoop()
+else:
+    print "Not Run as Main!"
 #app.mainLoop()
