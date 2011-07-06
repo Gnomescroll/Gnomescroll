@@ -9,6 +9,23 @@ from this_module import get_args
 args = get_args()
 
 '''
+
+'''
+Available options:
+
+version         Prints client version to STDOUT
+server          Server IP Address
+port            Server Port
+quiet           Suppress STDOUT
+cli             Command-line mode (no viewer)
+no_player       Free-camera only. Will not create player / join game
+admin           Enable admin commands
+tick            Set game clock tick
+name            Set player name (overrides settings.py name)
+
+'''
+
+
 import argparse
 import settings
 
