@@ -140,28 +140,18 @@ tex.draw(50,50,150,150)
 
 w.flip()
 
-## awesium draw  test ##
-## deprecated ##
-import SDL.gl
-import ChromeEmbedded
-w = SDL.gl.Global()
-w.init()
-ChromeEmbedded.init()
-
-w.world_projection()
-w.hud_projection()
-ChromeEmbedded.update()
-w.flip()
-
-##
+## awesium draw  test 
 
 import SDL.gl
 import ChromeEmbedded
 w = SDL.gl.Global()
 w.init()
 ChromeEmbedded.init()
+c = ChromeEmbedded.cWindow(50,50,512,512)
 
 w.world_projection()
 w.hud_projection()
 ChromeEmbedded.update()
+c.update()
+c.draw()
 w.flip()
