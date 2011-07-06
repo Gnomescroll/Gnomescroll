@@ -115,9 +115,28 @@ map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     sources = ['cube_lib/map_chunk_manager.pyx']
                     )
 
+'''
+ChromeEmbedded = Extension('ChromeEmbedded',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    #language="C++",
+                    include_dirs = ['/usr/local/include',
+                                    ' /usr/include/X11/extensions/',
+                                    '/usr/include/SDL',
+                                    '/usr/lib',
+                                    './include/',
+                                    './',
+                                        ],
+                    libraries = ['SDL','GL','SDopengl L','GLU', 'SDL_image','ChromeEmbedded'], #, 'Awesomium'], #SDL_image ?
 
+                    library_dirs = ['/home/atomos/dc_mmo/pyglet_client/netclient/','/usr/X11R6/lib','usr/lib'],
+                    extra_compile_args = ['-Wl,-rpath,/home/atomos/test/aw2/netclient/aw/']+['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
+                    extra_link_args = ['-Wl,-rpath,/home/atomos/test/aw2/netclient/aw/']+extra_link_args, #['./aw/libAwesomium.so','./aw/test2.o']+extra_link_args,
+                    sources = ['ChromeEmbedded.pyx',]
+                           #    './aw/test2.c'],
+                    )
+'''
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
+    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )

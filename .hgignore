@@ -10,6 +10,13 @@ cube_lib.c
 cube_dat.c
 map_chunk_manager.c
 hud.c
+ChromeEmbedded.c
+
+Safe Browsing Bloom
+Safe Browsing Bloom Filter 2
+
+result.jpg
+awesomium.log
 
 VBO.c
 input.c
