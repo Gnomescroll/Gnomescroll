@@ -137,6 +137,6 @@ ChromeEmbedded = Extension('ChromeEmbedded',
 '''
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] + cythonize("*.pyx")
+    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
