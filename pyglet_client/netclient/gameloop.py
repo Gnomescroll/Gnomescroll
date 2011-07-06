@@ -184,7 +184,7 @@ class App(object):
                 self.hud.draw()
 
                 self.SDL_global.flip()
-                if False:
+                if True:
                     ctick = SDL.gl.get_ticks()
                     #print str(ctick - ltick)
                     average.append(ctick-ltick)
