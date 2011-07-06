@@ -95,10 +95,6 @@ class Projectile(GameObject):
 
 import settings
 
-import pyglet
-from pyglet.gl import *
-## deprecate
-
 if settings.pyglet:
     import pyglet
     from pyglet.gl import *

@@ -75,7 +75,8 @@ def get_args():
         args = parse()
     except:             # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
 
-        server = sys.argv[1]
+        #server = sys.argv[1]
+        server = "127.0.0.1:5055"
         if ':' in server:
             server, port = server.split(':')
             cl_args = '--server %s --port %s' % (server, port,)
