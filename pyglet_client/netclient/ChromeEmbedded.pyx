@@ -15,6 +15,8 @@ cdef extern from 'libChrome.h':
     int _draw_webview(chromeDisplay* webview)
     int _set_window_focus(chromeDisplay* window)
     int _defocus()
+    int _setHTML(chromeDisplay* window, char* html)
+    int _setURL(chromeDisplay* window, char* url)
 
 def init():
     _init2()
@@ -37,6 +39,12 @@ cdef class cWindow:
 
     def draw(self):
         _draw_webview(self.display)
+
+    def setHTML(self, html):
+        _setHTML(self.display, html)
+
+    def setURL(self, url):
+        _setURL(self.display, url)
 
     def focus(self):
         _set_window_focus(self.display)

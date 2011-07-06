@@ -16,7 +16,7 @@ from cube_dat import CubeGlobal
 import random
 def load_map():
     m = GameStateGlobal.terrainMap
-    map_type = 2
+    map_type = 3
 
 
     print "Start map generation"
@@ -62,6 +62,36 @@ def load_map():
                 for za in range(z_min, z_max):
                     rnd = random.randint(0,64)
                     if rnd < 16:
+                        m.set(xa,ya,za+1, 4)
+                        m.set(xa,ya,za+2, 4)
+                        m.set(xa,ya,za+3, 5)
+                        m.set(xa,ya,za+4, 6)
+    print "Finished map generation"
+
+    if map_type == 3:
+        x_min = -256
+        y_min = -256
+        z_min = 0
+
+        x_max = 256
+        y_max = 256
+        z_max = 1
+
+        #plane for testing z collision
+        for xa in range(x_min, x_max):
+            for ya in range(y_min, y_max):
+                for za in range(z_min, z_max):
+                    rnd = random.randint(0,64)
+                    if True or rnd < 48:
+                        rnd2 = random.randint(1,4)
+                        rnd2 = 3
+                        m.set(xa,ya,za, rnd2)
+        #protrusions for testing collision detection
+        for xa in range(x_min, x_max):
+            for ya in range(y_min, y_max):
+                for za in range(z_min, z_max):
+                    rnd = random.randint(0,64)
+                    if rnd < 4:
                         m.set(xa,ya,za+1, 4)
                         m.set(xa,ya,za+2, 4)
                         m.set(xa,ya,za+3, 5)
