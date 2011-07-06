@@ -167,9 +167,6 @@ SDL.input.init()
 c = ChromeEmbedded.cWindow(50,50,512,512)
 c.focus()
 
-average = []
-ctick = 0
-ltick = 0
 while True:
 	SDL.input.process_events()
 	ChromeEmbedded.update()

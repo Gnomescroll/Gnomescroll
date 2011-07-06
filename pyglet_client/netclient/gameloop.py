@@ -5,7 +5,8 @@ opts.opts = args_client.get_args()
 
 import settings
 
-
+import ChromeEmbedded
+ChromeEmbedded.init()
 ### DEPRECATE
 if settings.pyglet:
     from pyglet import clock, font, image, window
@@ -86,7 +87,7 @@ class App(object):
         InputGlobal.init_1(self)
 
     def __init__(self):
-            
+
         self.init_globals()
 
         #other
