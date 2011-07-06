@@ -3,6 +3,8 @@
 
 #include <SDL_keyboard.h>
 
+#include "../libChrome.h"
+
 typedef struct {
   int x;
   int y;
@@ -20,7 +22,7 @@ typedef struct {
 
 
 //prototypes
-int _init_input();
+int _init_input(void);
 int _set_text_enty_mode(int n);
 char getUnicodeValue(SDL_keysym keysym );
 

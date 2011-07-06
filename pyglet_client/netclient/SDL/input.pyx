@@ -59,19 +59,21 @@ def set_text_entry_mode(int n):
 
 #import input
 
-#class Callback_dummy:
-#    def keyboard_state(self, pressed_keys):
-#        pass
-#    def keyboard_event(self, key):
-#        pass
-#    def keyboard_text_event(self, key, key_string):
-#        pass
-#    def mouse_motion(self, x,y,dx,dy,button):
-#        pass
+class Callback_dummy:
+    def keyboard_state(self, pressed_keys):
+        pass
+    def keyboard_event(self, key):
+        pass
+    def keyboard_text_event(self, key, key_string):
+        pass
+    def mouse_event(self, button, state, x, y):
+        pass
+    def mouse_motion(self, x,y,dx,dy,button):
+        pass
 
-#input_callback = Callback_dummy()
+input_callback = Callback_dummy()
 
-input_callback = None
+#input_callback = None
 
 def set_input_callback(callback):
     global input_callback
