@@ -1,5 +1,5 @@
 #import pyglet
-from pyglet.gl import *
+#from pyglet.gl import *
 
 class CubeGlobal:
     cubePhysicalProperties = None
@@ -15,7 +15,7 @@ class CubeGlobal:
     @classmethod
     def setTextureGrid(cls, textureGrid):
         cls.textureGrid = textureGrid
-        cls.cubeRenderCache = CubeRenderCache()
+ #       cls.cubeRenderCache = CubeRenderCache()
 
 cimport terrain_map
 from terrain_map cimport TerrainMap
