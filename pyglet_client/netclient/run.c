@@ -19,9 +19,9 @@ void exec_interactive_interpreter(int argc, char** argv)
   Py_Finalize();
 }
 
-void exec_file() {
+void exec_file(int argc, char** argv) {
   Py_Initialize();
-
+PySys_SetArgv(argc, argv);
 // Get a reference to the main module.
 PyObject* main_module = PyImport_AddModule("__main__");
 
@@ -46,13 +46,13 @@ PyRun_File(file_2, "file2.py",
     Py_Finalize();
 }
 
-int main() {
+int main(int argc, char** argv) {
     char* args[1];
     args[0] = "test";
 
     printf("Start\n");
     //exec_pycode("import os; import sys; print os.getcwd(); sys.path.append(os.getcwd());import args_client;args_client.main()");
-    exec_file();
+    exec_file(argc, argv);
     //runniPyImport_Import("gameloop")
     //exec_pycode("import gameloop");
     //exec_interactive_interpreter(0, args);
