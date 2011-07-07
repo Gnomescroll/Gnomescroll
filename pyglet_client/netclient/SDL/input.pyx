@@ -1,17 +1,17 @@
 ctypedef unsigned char Uint8
 
-ctypedef struct MouseMotion:
-    int x
-    int y
-    int dx
-    int dy
-    int button
-
-ctypedef struct MouseEvent:
-    int x
-    int y
-    int button
-    int state
+cdef extern from "input_functions.h":
+    ctypedef struct MouseMotion:
+        int x
+        int y
+        int dx
+        int dy
+        int button
+    ctypedef struct MouseEvent:
+        int x
+        int y
+        int button
+        int state
 
 ### call backs
 cdef extern from "input_functions.h":
