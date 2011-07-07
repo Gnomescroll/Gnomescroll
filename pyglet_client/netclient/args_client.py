@@ -87,6 +87,21 @@ def get_args():
 
     return args
 
+def print_args(args):
+    keys = [
+        'version',
+        'server',
+        'port',
+        'quiet',
+        'cli',
+        'no_player',
+        'admin',
+        'tick',
+        'name',
+    ]
+    print 'Options:'
+    for key in keys:
+        print getattr(args, key)
 
 def main():
     import gameloop
