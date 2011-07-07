@@ -47,8 +47,8 @@ def parse(cl_args=None):
 
     parser.add_argument('-ip', '--ip-address', default=DEFAULTS['ip_address'])
 
-    parser.add_argument('-tp', '--udp-port', default=DEFAULTS['tcp_port'], type=int)
-    parser.add_argument('-up', '--tcp-port', default=DEFAULTS['udp_port'], type=int)
+    parser.add_argument('-tp', '--tcp-port', default=DEFAULTS['tcp_port'], type=int)
+    parser.add_argument('-up', '--udp-port', default=DEFAULTS['udp_port'], type=int)
 
     #parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-q', '--quiet', action='store_true')
