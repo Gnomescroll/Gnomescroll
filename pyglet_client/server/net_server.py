@@ -6,6 +6,8 @@ import socket
 import simplejson as json
 import struct
 
+from opts import opts
+
 class NetServer:
     connectionPool = None
     datagramDecoder = None
