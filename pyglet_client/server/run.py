@@ -1,3 +1,7 @@
+import args_server
+import opts
+opts.opts = args_server.get_args()
+
 from time import sleep
 
 #import cython
@@ -124,7 +128,7 @@ class Main:
             NetServer.connectionPool.process_events() #check for new data
             GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
-            sleep(GameStateGlobal.TICK)
+            sleep(opts.tick)
 
 if __name__ == "__main__":
     print "starting server"

@@ -39,9 +39,9 @@ from game_state import GameStateGlobal
 # listens for packets on ports
 class ServerListener:
 
-    IP = '127.0.0.1'
-    TCP_PORT = 5055
-    UDP_PORT = 5060
+    IP = opts.ip_address
+    TCP_PORT = opts.tcp_port
+    UDP_PORT = opts.udp_port
 
     def init(self):
         pass

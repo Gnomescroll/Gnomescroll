@@ -18,6 +18,8 @@ from cube_dat import CubeGlobal
 
 from weapons import LaserGun, Pick, BlockApplier
 
+from opts import opts
+
 # datastore controller for agents
 class AgentList(GenericObjectList):
 
@@ -294,7 +296,7 @@ class Agent(AgentPhysics, AgentAction):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 2. # seconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
+    RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
     def __init__(self, player_id, position=None, id=None):
         if position is None:
