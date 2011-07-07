@@ -63,6 +63,8 @@ def parse(cl_args=None):
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'])
 
+    parser.add_argument('--print-args', action='store_true')
+
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:
@@ -84,6 +86,9 @@ def get_args():
             cl_args = '--server %s' % (server,)
 
         args = parse(cl_args.split())
+
+    if args.print_args:
+        print_args(args)
 
     return args
 
