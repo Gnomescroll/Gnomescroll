@@ -167,6 +167,14 @@ SDL.input.init()
 c = ChromeEmbedded.cWindow(50,50,512,512)
 c.focus()
 
+SDL.input.process_events()
+ChromeEmbedded.update()
+c.update()
+w.world_projection()
+w.hud_projection()
+c.draw()
+w.flip()
+
 while True:
 	SDL.input.process_events()
 	ChromeEmbedded.update()
