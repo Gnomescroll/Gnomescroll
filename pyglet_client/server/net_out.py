@@ -156,6 +156,7 @@ def sendJSON(cmd=None):
 class SendMessage: #each connection has one of these
     @classmethod
     def add_prefix(self, id, msg):
+        print  'Struct format size: ', struct.calcsize('=I H')
         return struct.pack('=I H', 4+2+len(msg), id) + msg #length prefix not included in length?
     @classmethod
     def get_json(self, dict):
