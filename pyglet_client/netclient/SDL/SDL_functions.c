@@ -13,6 +13,11 @@ SDL_GL_SwapBuffers();
 SDL_Surface *pSDLSurface;
 SDL_VideoInfo *pSDLVideoInfo;
 
+void _del_video() {
+    SDL_Quit();
+    return 0;
+}
+
 int _init_video() {
 
     SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
@@ -68,15 +73,11 @@ int _init_video() {
     gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
 */
     //end whaa
-
+    atexit(_del_video);
     return 0;
 
 }
 
-int _del_video() {
-    SDL_Quit();
-    return 0;
-}
 
 int _swap_buffers() {
     SDL_GL_SwapBuffers();
