@@ -8,20 +8,21 @@ from cube_lib.types cimport Quad, Vertex
 #cdef extern from "SDL.h":
 
 ## Camera.c ##
-cdef extern struct Camera: #maybe public?
-    float fov
-    float x_size
-    float y_size
-    float z_near
-    float z_far
-    float x
-    float y
-    float z
-    float x_angle
-    float y_angle
+cdef extern from "camera.h":
+    cdef struct Camera: #maybe public?
+        float fov
+        float x_size
+        float y_size
+        float z_near
+        float z_far
+        float x
+        float y
+        float z
+        float x_angle
+        float y_angle
 
-cdef extern int _world_projection(Camera* camera)
-cdef extern int _hud_projection(Camera* camera)
+    cdef int _world_projection(Camera* camera)
+    cdef int _hud_projection(Camera* camera)
 
 ## End Camera.c ##
 

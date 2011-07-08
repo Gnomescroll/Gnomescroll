@@ -11,6 +11,7 @@ cdef extern from 'libChrome.h':
     int _init2()
     int _update()
     chromeDisplay* _create_webview(int x,int y, int width, int height)
+    int _delete_webview(chromeDisplay* display)
     int _update_webview(chromeDisplay* webview)
     int _draw_webview(chromeDisplay* webview)
     int _set_window_focus(chromeDisplay* window)
@@ -34,6 +35,10 @@ cdef class cWindow:
     def __init__(self, x, y, width, height):
         self.display = _create_webview(x,y, width, height)
 
+    def __del__(self):
+        _delete_webview(self.display)
+        print "ChromeEmbedded.pyx: cWindow deallocated successful"
+
     def update(self):
         _update_webview(self.display)
 
@@ -51,9 +56,6 @@ cdef class cWindow:
 
     def defocus(self):
         _defocus()
-
-    def __del__(self):
-        pass
 
     def resize(self):
         pass

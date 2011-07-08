@@ -1,3 +1,4 @@
+/* moved to header
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -14,6 +15,9 @@ float x,y,z;
 float x_angle;
 float y_angle;
 };
+*/
+
+#include "./camera.h"
 
 #define PI 3.14159265
 
