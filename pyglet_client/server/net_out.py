@@ -163,9 +163,13 @@ class SendMessage: #each connection has one of these
     def __init__(self, client):
         self.client = client
     def send_json(self, dict):
-        msg = self.add_prefix(1, json.dumps(dict))
-        with open('output_msgs', 'a') as f:
+        jdump = json.dumps(dict)
+        msg = self.add_prefix(1, jdump)
+        with open('output_msgs', 'w') as f:
             f.write(msg)
+            f.write('\n')
+        with open('jdump', 'w') as f:
+            f.write(jdump)
             f.write('\n')
         self.client.send(msg)
 
