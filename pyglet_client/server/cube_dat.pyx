@@ -12,10 +12,10 @@ class CubeGlobal:
     @classmethod
     def init_1(cls):
         cls.collisionDetection.init()
-    @classmethod
-    def setTextureGrid(cls, textureGrid):
-        cls.textureGrid = textureGrid
- #       cls.cubeRenderCache = CubeRenderCache()
+#    @classmethod
+#    def setTextureGrid(cls, textureGrid):
+#        #cls.textureGrid = textureGrid
+#        #cls.cubeRenderCache = CubeRenderCache()
 
 cimport terrain_map
 from terrain_map cimport TerrainMap
