@@ -37,7 +37,7 @@ class SendPacket:
         self.client = client
         NetClientGlobal.sendPacket = self
     def add_prefix(self,id, msg):
-        return struct.pack('<I H', 4+2+len(msg), id) + msg #length prefix is included in length
+        return struct.pack('=I H', 4+2+len(msg), id) + msg #length prefix is included in length
     def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))  #fix this
     def send_binary(self,msg_id, bin_string):
@@ -55,7 +55,7 @@ class ClientDatagramDecoder:
 
     def process_datagram(self, message):
         (prefix, datagram) = (message[0:6],message[6:])
-        (length, msg_type) = struct.unpack('<I H', prefix)
+        (length, msg_type) = struct.unpack('=I H', prefix)
         self.messageHandler.process_net_event(msg_type, datagram)
 
 class PacketDecoder:
@@ -94,7 +94,7 @@ class PacketDecoder:
     def read_prefix(self):
         data = self.buffer
         #prefix = data[0:4]
-        (length,) = struct.unpack('<I', data[0:4])
+        (length,) = struct.unpack('=I', data[0:4])
         return length
 
     def process_msg(self, message):

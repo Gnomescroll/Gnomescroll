@@ -72,8 +72,8 @@ class MessageHandler:
         except Exception, e:
             print "MessageHandler.process_json_event error"
             print e
-            import sys
-            sys.exit()
+            #import sys
+            #sys.exit()
             print datagram
             return
         cmd = msg.get('cmd', None)
