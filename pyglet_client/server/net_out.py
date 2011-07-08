@@ -163,7 +163,11 @@ class SendMessage: #each connection has one of these
     def __init__(self, client):
         self.client = client
     def send_json(self, dict):
-        self.client.send(self.add_prefix(1, json.dumps(dict)))
+        msg = self.add_prefix(1, json.dumps(dict))
+        with open('output_msgs', 'a') as f:
+            f.write(msg)
+            f.write('\n')
+        self.client.send(msg)
 
     ## messages go out immediately
     @sendJSON('client_id')
