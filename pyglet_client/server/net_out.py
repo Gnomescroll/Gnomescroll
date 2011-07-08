@@ -154,24 +154,18 @@ def sendJSON(cmd=None):
     return outer
 
 class SendMessage: #each connection has one of these
+    fmt = '<I H'
     @classmethod
-    def add_prefix(self, id, msg):
-        print  'Struct format size: ', struct.calcsize('=I H')
-        return struct.pack('=I H', 4+2+len(msg), id) + msg #length prefix not included in length?
+    def add_prefix(cls, id, msg):
+        return struct.pack(cls.fmt, 4+2+len(msg), id) + msg #length prefix not included in length?
     @classmethod
-    def get_json(self, dict):
-        return self.add_prefix(1, json.dumps(dict))
+    def get_json(cls, dict):
+        return cls.add_prefix(1, json.dumps(dict))
     def __init__(self, client):
         self.client = client
     def send_json(self, dict):
         jdump = json.dumps(dict)
         msg = self.add_prefix(1, jdump)
-        with open('output_msgs', 'a') as f:
-            f.write(msg)
-            f.write('\n')
-        with open('jdump', 'a') as f:
-            f.write(jdump)
-            f.write('\n')
         self.client.send(msg)
 
     ## messages go out immediately
