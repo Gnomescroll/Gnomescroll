@@ -165,10 +165,10 @@ class SendMessage: #each connection has one of these
     def send_json(self, dict):
         jdump = json.dumps(dict)
         msg = self.add_prefix(1, jdump)
-        with open('output_msgs', 'w') as f:
+        with open('output_msgs', 'a') as f:
             f.write(msg)
             f.write('\n')
-        with open('jdump', 'w') as f:
+        with open('jdump', 'a') as f:
             f.write(jdump)
             f.write('\n')
         self.client.send(msg)
