@@ -40,3 +40,6 @@ lastserverpid*
 conf/*.conf
 
 settings.py
+
+jdump
+output_msgs

@@ -299,7 +299,7 @@ class DatagramDecoder:
 
     def decode(self, message, connection):
         prefix, datagram = (message[0:6], message[6:])
-        length, msg_type = struct.unpack('I H', prefix)
+        length, msg_type = struct.unpack('<I H', prefix)
         if msg_type == 0:
             print "test message received"
         elif msg_type == 1: #client json messages
@@ -359,7 +359,7 @@ class TcpPacketDecoder:
     def read_prefix(self):
         data = self.buffer
         prefix = data[0:4]
-        (length,) = struct.unpack('I', data[0:4])
+        (length,) = struct.unpack('<I', data[0:4])
         return length
 
     def process_datagram(self, message):
