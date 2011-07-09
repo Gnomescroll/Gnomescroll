@@ -2,8 +2,6 @@ import math
 
 class GameStateGlobal:
 
-    TICK = 0.01 # seconds
-
     gameState = None
     #terrainMap = None
     agentList = None
@@ -128,11 +126,8 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
-from object_lists import listDirectory
 from players import Player
 from net_client import NetClientGlobal
-
-from object_lists_manager import ListManager
 
 #import cube_lib.terrain_map
 import cube_lib.terrain_map as TerrainMap

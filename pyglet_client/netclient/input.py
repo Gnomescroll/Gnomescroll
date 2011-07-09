@@ -4,6 +4,8 @@
 Client input
 '''
 
+from math import sin, cos, pi
+
 import settings
 
 if settings.pyglet:
@@ -17,9 +19,11 @@ else:
 Keystring = {}
 def setup_keystring():
     global Keystring
-
+    global special_keys
     special_keys = {
     'TAB': 9,
+    'ENTER': 13,
+    'ESC': 27,
     'SPACE': 32,
     'LEFT': 276,
     'RIGHT': 275,
@@ -196,8 +200,6 @@ class Mouse(object):
 #            direction = 'down'
 #        GameStateGlobal.agent.weapons.switch(direction)
 
-from math import sin, cos, pi
-
 class Keyboard(object):
 
     def __init__(self, main):
@@ -236,9 +238,12 @@ class Keyboard(object):
     # one-time non character key detection
     # e.g. enter
     def on_key_press(self, symbol):
+        print 'ON_KEY_PRESS :: ', symbol
         if InputGlobal.input == 'chat':
-            callback = ChatClientGlobal.chatClient.input.on_text(symbol)
-            #callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, modifiers)
+            if symbol in special_keys:
+                callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
+            else:
+                callback = ChatClientGlobal.chatClient.input.on_text(symbol)
             self._input_callback(callback)
         else:
             if symbol == 'y':
@@ -248,7 +253,8 @@ class Keyboard(object):
                 #self.key_handlers.get(symbol, lambda: None)()
             if symbol == 'TAB':
                 InputGlobal.scoreboard = True
-            self.key_handlers.get(symbol, lambda: None)()
+            ### FIX
+            self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
         if symbol == 'TAB':
@@ -268,7 +274,7 @@ class Keyboard(object):
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
             "q" : InputGlobal.toggle_input_mode,
-            "E" : InputGlobal.toggle_camera_mode,
+            "e" : InputGlobal.toggle_camera_mode,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
@@ -279,7 +285,7 @@ class Keyboard(object):
         else:
             self.key_handlers[key] = handler
 
-    def toggle_chat(self):
+    def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
             InputGlobal.toggle_input_mode(0)
         else:
@@ -426,8 +432,7 @@ class AgentInput:
             self.key_handlers[key] = handler
 
     def on_key_press(self, symbol, modifiers=None):
-        self.key_handlers.get(symbol, lambda : None)(symbol)
-        #self.key_handlers.get(symbol, lambda x,y: None)(symbol, modifiers)
+        self.key_handlers.get(symbol, lambda s: None)(symbol)
 
     def reload(self, symbol=None, modifiers=None):
         print 'reloading'

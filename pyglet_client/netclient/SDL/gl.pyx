@@ -8,20 +8,21 @@ from cube_lib.types cimport Quad, Vertex
 #cdef extern from "SDL.h":
 
 ## Camera.c ##
-cdef extern struct Camera: #maybe public?
-    float fov
-    float x_size
-    float y_size
-    float z_near
-    float z_far
-    float x
-    float y
-    float z
-    float x_angle
-    float y_angle
+cdef extern from "camera.h":
+    cdef struct Camera: #maybe public?
+        float fov
+        float x_size
+        float y_size
+        float z_near
+        float z_far
+        float x
+        float y
+        float z
+        float x_angle
+        float y_angle
 
-cdef extern int _world_projection(Camera* camera)
-cdef extern int _hud_projection(Camera* camera)
+    cdef int _world_projection(Camera* camera)
+    cdef int _hud_projection(Camera* camera)
 
 ## End Camera.c ##
 
@@ -92,15 +93,18 @@ cdef class Texture:
     cdef int h
     cdef SDL_Surface* surface
 
-    def __init__(Texture self, char * file, int texture_type):
+    def __init__(Texture self, char * file):
         #print "init runs"
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        if texture_type == 0:
-            self.id = _create_texture(self.surface)
-        else:
-            pass #add mippmapped textures later
+        self.id = _create_texture(self.surface)
+
+    def draw(self, x0, y0, x1, y1, z=-0.5):
+        #print "id == " + str(self.id)
+        #print "w,h = %i, %i" % (self.w, self.h)
+        _blit_sprite(self.id, x0, y0, x1, y1, z)
+        #_blit_sprite(1, x0, y0, x1, y1, z)
 
 class Textures:
     hud_tex = None
@@ -108,8 +112,8 @@ class Textures:
 
     def init(self):
         print "Initing Textures"
-        self.hud_tex = Texture("./texture/target.png", 0)
-        self.tile_tex = Texture("./texture/textures_01.png", 0)
+        self.hud_tex = Texture("./texture/target.png")
+        self.tile_tex = Texture("./texture/textures_01.png")
 
 from libc.stdlib cimport malloc, free
 

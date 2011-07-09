@@ -1,5 +1,12 @@
 
+import args_client
+import opts
+opts.opts = args_client.get_args()
+
 import settings
+
+import ChromeEmbedded
+ChromeEmbedded.init()
 ### DEPRECATE
 if settings.pyglet:
     from pyglet import clock, font, image, window
@@ -33,7 +40,10 @@ from map_controller import MapControllerGlobal
 from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
-from hud import Hud
+if settings.pyglet:
+    from hud import Hud
+else:
+    from hud_sdl import Hud
 
 import world #deprecate
 
@@ -77,7 +87,9 @@ class App(object):
         InputGlobal.init_1(self)
 
     def __init__(self):
+
         self.init_globals()
+
         #other
         self.world = world.World()  #deprecate?
 
@@ -89,7 +101,7 @@ class App(object):
             self.hud = Hud(self.win)
         else:
             self.camera = Camera(None)
-            self.hud = Hud(None)
+            self.hud = Hud()
         #setup events
         self.exit = False
 
@@ -191,4 +203,6 @@ class App(object):
 if __name__ == '__main__':
     app = App()
     app.mainLoop()
+else:
+    print "Not Run as Main!"
 #app.mainLoop()

@@ -1,5 +1,5 @@
-import pyglet
-from pyglet.gl import *
+#import pyglet
+#from pyglet.gl import *
 
 class CubeGlobal:
     cubePhysicalProperties = None
@@ -12,10 +12,10 @@ class CubeGlobal:
     @classmethod
     def init_1(cls):
         cls.collisionDetection.init()
-    @classmethod
-    def setTextureGrid(cls, textureGrid):
-        cls.textureGrid = textureGrid
-        cls.cubeRenderCache = CubeRenderCache()
+#    @classmethod
+#    def setTextureGrid(cls, textureGrid):
+#        #cls.textureGrid = textureGrid
+#        #cls.cubeRenderCache = CubeRenderCache()
 
 cimport terrain_map
 from terrain_map cimport TerrainMap
@@ -109,6 +109,21 @@ cube_list = {
         ],
         'color' : [0,0,50,50], #alpha
     },
+    6 : {
+        'id' : 6,
+        'occludes' : True,
+        'active' : True,
+        'solid' : True,
+
+        'texture' : [ #t, b, w, e, n, s
+        (0, []),  #top
+        (0, []),  #bottom
+        (0, []), #west
+        (0, []), #east
+        (0, []), #north
+        (0, []), #south
+        ],
+        },
  }
 
 #physical cube properties

@@ -8,13 +8,16 @@ import socket
 import struct
 import simplejson as json
 
+from opts import opts
+import settings
+
 class NetClientGlobal:
     connection = None
     sendPacket = None
 
     client_id = '0'
-    name = 'steve'
-    VERSION = '0.0.1'
+    name = opts.name
+    VERSION = opts.version
 
     @classmethod
     def init_0(cls):
@@ -32,9 +35,10 @@ class NetClientGlobal:
 class SendPacket:
     def __init__(self, client):
         self.client = client
+        self.fmt = '<I H'
         NetClientGlobal.sendPacket = self
     def add_prefix(self,id, msg):
-        return struct.pack('I H', 4+2+len(msg), id) + msg #length prefix is included in length
+        return struct.pack(self.fmt, 4+2+len(msg), id) + msg #length prefix is included in length
     def send_json(self, dict):
         self.client.send(self.add_prefix(1, json.dumps(dict)))  #fix this
     def send_binary(self,msg_id, bin_string):
@@ -49,10 +53,12 @@ class ClientDatagramDecoder:
         assert cls.messageHandler != None
     def __init__(self, connection):
         self.connection = connection
-
+        self.fmt = '<I H'
+        self.fmtlen = struct.calcsize(self.fmt)
+        
     def process_datagram(self, message):
-        (prefix, datagram) = (message[0:6],message[6:])
-        (length, msg_type) = struct.unpack('I H', prefix)
+        prefix, datagram = message[:self.fmtlen], message[self.fmtlen:]
+        length, msg_type = struct.unpack(self.fmt, prefix)
         self.messageHandler.process_net_event(msg_type, datagram)
 
 class PacketDecoder:
@@ -91,7 +97,9 @@ class PacketDecoder:
     def read_prefix(self):
         data = self.buffer
         #prefix = data[0:4]
-        (length,) = struct.unpack('I', data[0:4])
+        fmt = '<I'
+        fmtlen = struct.calcsize(fmt)
+        (length,) = struct.unpack(fmt, data[0:fmtlen])
         return length
 
     def process_msg(self, message):
@@ -103,8 +111,8 @@ class PacketDecoder:
 import select
 
 class TcpConnection:
-    server = '127.0.0.1'
-    tcp_port = 5055
+    server = opts.server
+    tcp_port = opts.port
     #settings
     noDelay = True
 

@@ -63,14 +63,14 @@ int _init_text() {
 */
     SDL_FreeSurface(font);
 
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 const float dx = 1.0/16.0;
 const float dy = 1.0/16.0;
 
 int _draw_text2(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
-
-glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
 
 int c_num = 0;
 while(text[c_num] != 0) { c_num++; }
@@ -81,6 +81,11 @@ int index,xi,yi;
 float x_min, x_max, y_min, y_max;
 
 float xmin,xmax, ymin,ymax;
+
+    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, fontTextureId);
+
     for(i=0; i<c_num; i++){
         index = text[i];
         xi = index % 16;
@@ -101,8 +106,6 @@ float xmin,xmax, ymin,ymax;
         printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
         printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
 */
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, fontTextureId);
 
         glBegin( GL_QUADS );
             glTexCoord2f(x_min,y_max);
@@ -117,7 +120,7 @@ float xmin,xmax, ymin,ymax;
 
         offset += width;
     }
-
+    glDisable(GL_TEXTURE_2D);
 }
 
 
@@ -136,6 +139,10 @@ int index,xi,yi;
 float x_min, x_max, y_min, y_max;
 
 float xmin,xmax, ymin,ymax;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, fontTextureId);
+
     for(i=0; i<c_num; i++){
         index = text[i];
         xi = index % 16;
@@ -155,9 +162,6 @@ float xmin,xmax, ymin,ymax;
         printf("dx, dy: %f, %f \n", dx, dy);
         printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
         printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
-
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, fontTextureId);
 
 /*
         glColor3ub(255,255,255);
@@ -179,7 +183,7 @@ float xmin,xmax, ymin,ymax;
 
         offset += width;
     }
-
+    glDisable(GL_TEXTURE_2D);
 }
 
 /// DEPRECATE BELOW LINE

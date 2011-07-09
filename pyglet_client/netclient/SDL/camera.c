@@ -1,3 +1,4 @@
+/* moved to header
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -14,6 +15,9 @@ float x,y,z;
 float x_angle;
 float y_angle;
 };
+*/
+
+#include "./camera.h"
 
 #define PI 3.14159265
 
@@ -52,7 +56,7 @@ int _world_projection(struct Camera* c) {
 
     //glEnable(GL_TEXTURE_2D);
 
-    //glEnable (GL_DEPTH_TEST);
+    glEnable (GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
 
 /*
@@ -63,7 +67,13 @@ int _world_projection(struct Camera* c) {
     return 0;
 }
 
+void inline end_world_projection() {
+   glDisable (GL_DEPTH_TEST);
+}
+
 int _hud_projection(struct Camera * c) {
+
+end_world_projection();
 
 glMatrixMode(GL_PROJECTION);
 glLoadIdentity();

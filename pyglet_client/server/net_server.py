@@ -6,6 +6,8 @@ import socket
 import simplejson as json
 import struct
 
+from opts import opts
+
 class NetServer:
     connectionPool = None
     datagramDecoder = None
@@ -39,9 +41,9 @@ from game_state import GameStateGlobal
 # listens for packets on ports
 class ServerListener:
 
-    IP = '127.0.0.1'
-    TCP_PORT = 5055
-    UDP_PORT = 5060
+    IP = opts.ip_address
+    TCP_PORT = opts.tcp_port
+    UDP_PORT = opts.udp_port
 
     def init(self):
         pass
@@ -293,11 +295,12 @@ class DatagramDecoder:
     def init(self):
         pass
     def __init__(self):
-        pass
+        self.fmt = '<I H'
+        self.fmtlen = struct.calcsize(self.fmt)
 
     def decode(self, message, connection):
-        prefix, datagram = (message[0:6], message[6:])
-        length, msg_type = struct.unpack('I H', prefix)
+        prefix, datagram = message[0:self.fmtlen], message[self.fmtlen:]
+        length, msg_type = struct.unpack(self.fmt, prefix)
         if msg_type == 0:
             print "test message received"
         elif msg_type == 1: #client json messages
@@ -357,7 +360,9 @@ class TcpPacketDecoder:
     def read_prefix(self):
         data = self.buffer
         prefix = data[0:4]
-        (length,) = struct.unpack('I', data[0:4])
+        fmt = '<I'
+        fmtlen = struct.calcsize(fmt)
+        (length,) = struct.unpack(fmt, data[0:fmtlen])
         return length
 
     def process_datagram(self, message):

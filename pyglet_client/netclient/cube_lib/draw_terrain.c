@@ -3,6 +3,8 @@
 GLuint texture = 0;
 SDL_Surface *surface;
 
+int draw_mode_enabled = 0;
+
 //GLuint VBOid = 0;
 
 ///advice
@@ -22,6 +24,7 @@ int _init_draw_terrain() {
     if(texture == 0) { //load texture if texture is not set
     surface=IMG_Load("texture/textures_01.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
+    glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
 
@@ -29,6 +32,7 @@ int _init_draw_terrain() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
+    glDisable(GL_TEXTURE_2D);
     }
 }
 
@@ -42,6 +46,8 @@ int _init_draw_terrain() {
 int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
 
     if (v_num == 0) { return 0; }
+    glEnable(GL_TEXTURE_2D);
+
     q_VBO->quad_array = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
     q_VBO->v_num = v_num;
     memcpy(q_VBO->quad_array, quad_list, v_num*sizeof(struct Quad));
@@ -53,6 +59,8 @@ int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), q_VBO->quad_array, GL_STATIC_DRAW); // size, pointer to array, usecase
 
     q_VBO->VBO_id = VBO_id;
+
+    glDisable(GL_TEXTURE_2D);
     return VBO_id;
 }
 
@@ -67,8 +75,6 @@ int _delete_vbo(struct Quad_VBO* q_VBO) {
 }
 
 
-int draw_mode_enabled = 0;
-
 int _start_vbo_draw() {
 draw_mode_enabled = 1;
 
@@ -76,12 +82,12 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 //glEnable(GL_CULL_FACE);
 
-//glBindTexture( GL_TEXTURE_2D, texture ); //needed?
+glBindTexture( GL_TEXTURE_2D, texture ); //needed?
 
-glClientActiveTexture(texture);
+//glClientActiveTexture(texture);
 
 glEnableClientState(GL_VERTEX_ARRAY);
-glClientActiveTexture(texture); //bind texture
+//glClientActiveTexture(texture); //bind texture
 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 glEnableClientState(GL_COLOR_ARRAY);
 /*
@@ -97,6 +103,11 @@ draw_mode_enabled = 0;
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+glDisable(GL_TEXTURE_2D);
+glDisable (GL_DEPTH_TEST);
+//glDisable(GL_CULL_FACE);
+
 return 0;
 }
 

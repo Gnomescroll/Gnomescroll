@@ -18,27 +18,33 @@ if(!image) {
     printf("IMG_Load: %s \n", IMG_GetError());
     // handle error
     return 0;
-} else {
-    if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
-    return image;
-    }
+}
+if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
+
+return image;
+
 }
 
 int _create_texture(SDL_Surface* surface) {
+    glEnable(GL_TEXTURE_2D);
     GLuint texture;
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
+    glDisable(GL_TEXTURE_2D);
     return texture;
 }
 
+///Deprecate
 int _create_hud_texture(char *file) {
 
     SDL_Surface* surface;
     surface = _load_image("./texture/target.png");
 
     GLuint texture;
-
+    glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     // Bind the texture object
     glBindTexture( GL_TEXTURE_2D, texture );
@@ -47,6 +53,7 @@ int _create_hud_texture(char *file) {
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
     // Edit the texture object's image data using the information SDL_Surface gives us
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
+    glDisable(GL_TEXTURE_2D);
 
     return texture;
 }

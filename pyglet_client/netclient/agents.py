@@ -10,6 +10,8 @@ from math import floor, ceil, fabs
 
 from game_state import GameStateGlobal #Deprecate?
 
+from opts import opts
+
 from weapons import LaserGun, Pick, BlockApplier
 
 import settings
@@ -160,7 +162,7 @@ class AgentModel:
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 1. # seconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / GameStateGlobal.TICK)
+    RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
         if owner is None or id is None:

@@ -3,10 +3,12 @@
 '''
 Chat client
 '''
-
+import settings
 from time import time
 from collections import deque
-from pyglet.window import key
+
+if settings.pyglet:
+    from pyglet.window import key
 
 def now():
     return int(time() * 1000)
@@ -557,8 +559,8 @@ class ChatInput:
         if callable(callback):
             return callback(self)
             
-    def on_key_press(self, symbol, modifiers):
-        callback = self.processor.on_key_press(symbol, modifiers)
+    def on_key_press(self, symbol):
+        callback = self.processor.on_key_press(symbol)
         return self._input_callback(callback)
 
     def on_text(self, text):
@@ -575,13 +577,20 @@ class ChatInputProcessor:
     def __init__(self):
         pass
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol):
+        print 'CHAT ON_KEY_PRESS', symbol
         callback = None
-        if symbol == key.ENTER:         # submit
+        if settings.pyglet:
+            ENTER = key.ENTER
+            ESC = key.ESCAPE
+        else:
+            ENTER = 'ENTER'
+            ESC = 'ESC'
+        if symbol == ENTER:         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
                 return lambda keyboard: keyboard.toggle_chat()
-        elif symbol == key.ESCAPE:      # clear, cancel chat
+        elif symbol == ESC:      # clear, cancel chat
             def callback(input):
                 input.clear()
                 return lambda keyboard: keyboard.toggle_chat()

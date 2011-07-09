@@ -1,5 +1,6 @@
 #include "./input_functions.h"
 
+
 //event globals
 SDL_Event Event;
 
@@ -53,6 +54,9 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         //printf("button: %i\n", Event.button.button);
         _mouse_event_callback(mouse_event_cb, me);
     }
+    if (Event.type == SDL_KEYDOWN || Event.type == SDL_KEYUP) {
+        processKeyEvent(Event);
+    }
 
     switch( Event.type )
     {
@@ -93,6 +97,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 }
 
 //SDL_EnableUNICODE( SDL_DISABLE );
+return 0;
 }
 
 int poll_events(void) {
