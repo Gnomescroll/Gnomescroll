@@ -19,6 +19,8 @@ else:
     import SDL.hud
     import cube_lib.VBO
 
+    SDL.gl.set_resolution(1024,800, fullscreen=0)
+
 #import cython
 #import pyximport; pyximport.install()
 

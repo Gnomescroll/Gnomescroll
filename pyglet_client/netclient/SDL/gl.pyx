@@ -50,6 +50,8 @@ cdef create_texture(SDL_Surface* surface, type =None): #eventually support mippa
 
 ## SDL functions ##
 
+cdef extern int _set_resolution(int xres, int yres, int fullscreen)
+
 cdef extern int _init_video()
 cdef extern int _del_video()
 cdef extern int _swap_buffers()
@@ -58,6 +60,9 @@ cdef extern int _get_ticks()
 def get_ticks():
     return _get_ticks()
 
+## Settings ##
+def set_resolution(xres, yres, fullscreen = 0):
+    _set_resolution(xres, yres, fullscreen)
 ## Draw functions ##
 
 #cdef extern struct Quad

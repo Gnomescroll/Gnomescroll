@@ -10,11 +10,23 @@ SDL_GL_SwapBuffers();
 
 */
 
+int _xres = 800;
+int _yres = 600;
+int _fullscreen = 0;
+
 SDL_Surface *pSDLSurface;
 SDL_VideoInfo *pSDLVideoInfo;
 
 void _del_video() {
+    //printf("SDL_functions.c: _del_video, gracefull shutdown\n");
     SDL_Quit();
+    return 0;
+}
+
+int _set_resolution(int xres, int yres, int fullscreen) {
+    _xres = xres;
+    _yres = yres;
+    _fullscreen = fullscreen;
     return 0;
 }
 
@@ -32,7 +44,9 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    int nFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE;
+    int nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
+    if(_fullscreen != 0) {nFlags |= SDL_FULLSCREEN; }
+
     if( pSDLVideoInfo->hw_available ) // Hardware surfaces enabled?
         nFlags |= SDL_HWSURFACE;
     else {
@@ -47,11 +61,13 @@ int _init_video() {
     if(0) //When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         nFlags |= SDL_RESIZABLE;
 
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
 
     // Create our rendering surface
     ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
-    pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
+    //pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
+    pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
 
     if( !pSDLSurface )
     {
@@ -59,6 +75,21 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
+    int value;
+    SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
+    if(value) {
+        printf("Harware Acceleration Enabled \n");
+    } else {
+        printf("Warning: Hardware Acceleration Not Enabled!\n");
+    }
+
+    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
+    if(value) {
+        printf("Double Buffering Enabled \n");
+    } else {
+        printf("Warning: Double Buffering Not Enabled!\n");
+    }
+
     ///glEnable(GL_TEXTURE_2D); // ??? Needed?
 
     //whaa

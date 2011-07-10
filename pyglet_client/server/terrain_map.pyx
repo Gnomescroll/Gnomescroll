@@ -100,7 +100,7 @@ def mapChunkSignature(mapChunk):
 #should used compiled form
 
 import struct
-
+# < little-endian, standard size, no alignment
 fm_inv1 = struct.Struct('< 4i 1024s')
 fm_inv2 = struct.Struct('< 512H')
 
