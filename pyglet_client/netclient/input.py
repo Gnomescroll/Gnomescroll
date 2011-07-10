@@ -7,6 +7,7 @@ Client input
 from math import sin, cos, pi
 
 import settings
+from opts import opts
 
 if settings.pyglet:
     from pyglet.window import key
@@ -161,9 +162,9 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         if InputGlobal.input == 'agent':
-            self._pan_agent(x, y, dx, dy, sen=90)
+            self._pan_agent(x, y, dx, dy, sen=opts.mouse_sensitivity)
         if InputGlobal.input == 'camera':
-            self._pan_camera(x, y, dx, dy)
+            self._pan_camera(x, y, dx, dy, sen=opts.camera_sensitivity)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
         GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)

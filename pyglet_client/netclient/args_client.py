@@ -38,10 +38,27 @@ DEFAULTS = {
     'port'      :   5055,
     'tick'      :   0.01,
     'name'      :   settings.name or 'monkey',
-    'fullscreen':   settings.fullscreen or 0,
+    'fullscreen':   settings.fullscreen,
     'width'     :   settings.width,
     'height'    :   settings.height,
+    'sensitivity':  90,
+    'mouse_sensitivity':    None,
+    'camera_sensitivity':   None,
 }
+
+def load_defaults():
+    global DEFAULTS
+
+    if hasattr(settings, 'sensitivity'):
+        DEFAULTS['sensitivity'] = settings.sensitivity
+
+    for prop in ['mouse_sensitivity', 'camera_sensitivity']:
+        if hasattr(settings, prop):
+            DEFAULTS[prop] = getattr(settings, prop)
+        else:
+            DEFAULTS[prop] = DEFAULTS['sensitivity']
+        
+load_defaults()
 
 def parse(cl_args=None):
     parser = argparse.ArgumentParser(description="DC_MMO Netclient", prog="Dwarf Control (in Space)")
@@ -62,7 +79,7 @@ def parse(cl_args=None):
 
     parser.add_argument('-a', '--admin', action='store_true') # admin mode
 
-    parser.add_argument('-t', '--tick', default=DEFAULTS['tick'])
+    parser.add_argument('-t', '--tick', default=DEFAULTS['tick'], type=int)
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'])
 
@@ -70,15 +87,25 @@ def parse(cl_args=None):
 
     parser.add_argument('-fs', '--fullscreen', action='store_true')
 
-    parser.add_argument('-x', '--width', default=DEFAULTS['width'])
+    parser.add_argument('-x', '--width', default=DEFAULTS['width'], type=int)
 
-    parser.add_argument('-y', '--height', default=DEFAULTS['height'])
+    parser.add_argument('-y', '--height', default=DEFAULTS['height'], type=int)
+
+    parser.add_argument('-sen', '--sensitivity', default=argparse.SUPPRESS, type=int)
+
+    parser.add_argument('-csen', '--camera-sensitivity', default=argparse.SUPPRESS, type=int)
+
+    parser.add_argument('-msen', '--mouse-sensitivity', default=argparse.SUPPRESS, type=int)
+
+    parser.add_argument('-nl', '--no-load', action="store_true")
 
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:
         args = parser.parse_args()
+        
     setattr(args, 'version', DC_VERSION)
+    
     return args
 
 def get_args():
@@ -95,17 +122,32 @@ def get_args():
 
         args = parse(cl_args.split())
 
-    convert_arg_types(args)
-    
+    args.fullscreen = int(bool(args.fullscreen))
+
+    # if -sen --sensitivity is provided on the command line, override all sensitivity,
+    # except other cli sensitivities
+    # e.g. ./run -sen 500           --- mouse and camera sen 500
+    # e.g. ./run -sen 500 -csen 200 --- mouse 500, camera 200
+    # e.g. ./run -msen 200          --- mouse 200, camera is either settings.camera_sensitivity, settings.sensitivity, or DEFAULTS['sensitivity'] (in decreasing priority order)
+    sen_cli_defined = hasattr(args, 'sensitivity')
+    for prop in ['mouse_sensitivity', 'camera_sensitivity']:
+        if not hasattr(args, prop):
+            if sen_cli_defined:
+                sen_attr = args.sensitivity
+            else:
+                sen_attr = DEFAULTS[prop]
+            setattr(args, prop, sen_attr)
+    if not sen_cli_defined:
+        args.sensitivity = DEFAULTS['sensitivity']
+
     if args.print_args:
         print_args(args)
+
+    if args.no_load:
+        import sys
+        sys.exit()
     
     return args
-
-def convert_arg_types(args):
-    args.fullscreen = int(args.fullscreen)
-    args.width = int(args.width)
-    args.height = int(args.height)
 
 def print_args(args):
     keys = [
@@ -118,10 +160,16 @@ def print_args(args):
         'admin',
         'tick',
         'name',
+        'fullscreen',
+        'width',
+        'height',
+        'sensitivity',
+        'mouse_sensitivity',
+        'camera_sensitivity'
     ]
     print 'Options:'
     for key in keys:
-        print getattr(args, key)
+        print '%s :: %s' % (key, getattr(args, key),)
 
 def main():
     import gameloop
