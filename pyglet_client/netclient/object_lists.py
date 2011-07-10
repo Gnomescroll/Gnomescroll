@@ -299,4 +299,14 @@ class WeaponList(GenericMultiObjectList):
     def destroy(self, obj):
         return self._remove(self, obj)
 
+    def update(self, weapon, id=None):
+        if id is not None:
+            old = self[id]
+        else:
+            return
+
+        if old.id != weapon.id and old.id in self.objects:
+            del self.objects[old.id]
+        self.objects[weapon.id] = weapon
+
 from weapons import Weapon

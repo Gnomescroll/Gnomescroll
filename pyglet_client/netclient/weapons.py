@@ -41,6 +41,22 @@ class Weapon(EquippableObject):
         clip_size = getattr(self, 'clip_size', undef)
         strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
         return '%s/%s  ::  %s/%s' % strfs
+
+    def _update_info(self, **weapon):
+        args = []
+        if 'id' in weapon:
+            args.append(self.id)
+            self.id = weapon['id']
+        if 'owner' in weapon:
+            self.owner = weapon['owner']
+        if 'type' in weapon:
+            self.type = weapon['type']
+
+        return args
+
+    def update_info(self, **weapon):
+        args = self._update_info(**weapon)
+        GameStateGlobal.weaponList.update(self, *args)
         
 
 class LaserGun(Weapon):
@@ -73,6 +89,26 @@ class LaserGun(Weapon):
         self.clip += amt
         return 'reload_weapon'
 
+    def update_info(self, **weapon):
+        args = self._update_info(**weapon)
+        if 'clip' in weapon:
+            self.clip = weapon['clip']
+        if 'ammo' in weapon:
+            self.ammo = weapon['ammo']
+        if 'clip_size' in weapon:
+            self.clip_size = weapon['clip_size']
+        if 'max_ammo' in weapon:
+            self.max_ammo = weapon['max_ammo']
+        if 'base_damage' in weapon:
+            self.base_damage = weapon['base_damage']
+        if 'reload_speed' in weapon:
+            self.reload_speed = weapon['reload_speed']
+        if 'automatic' in weapon:
+            self.automatic = bool(weapon['automatic'])
+        if 'firing_rate' in weapon:
+            self.firing_rate = weapon['firing_rate']
+        GameStateGlobal.weaponList.update(*args)
+
 
 class BlockApplier(Weapon):
 
@@ -94,6 +130,18 @@ class BlockApplier(Weapon):
         self.ammo = max(0, self.ammo)
         return 'restock_blocks'
 
+    def update_info(self, **weapon):
+        args = self._update_info(**weapon)
+        if 'clip' in weapon:
+            self.clip = weapon['clip']
+        if 'ammo' in weapon:
+            self.ammo = weapon['ammo']
+        if 'clip_size' in weapon:
+            self.clip_size = weapon['clip_size']
+        if 'max_ammo' in weapon:
+            self.max_ammo = weapon['max_ammo']
+        GameStateGlobal.weaponList.update(*args)
+
 class Pick(Weapon):
 
     def __init__(self, id, owner=None, **kwargs):
@@ -104,3 +152,5 @@ class Pick(Weapon):
 
     def reload(self):
         return False
+
+from game_state import GameStateGlobal
