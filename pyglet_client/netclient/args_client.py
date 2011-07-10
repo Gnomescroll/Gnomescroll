@@ -37,7 +37,10 @@ DEFAULTS = {
     'server'    :   '127.0.0.1',
     'port'      :   5055,
     'tick'      :   0.01,
-    'name'      :   settings.name,
+    'name'      :   settings.name or 'monkey',
+    'fullscreen':   settings.fullscreen or 0,
+    'width'     :   settings.width,
+    'height'    :   settings.height,
 }
 
 def parse(cl_args=None):
@@ -65,6 +68,12 @@ def parse(cl_args=None):
 
     parser.add_argument('--print-args', action='store_true')
 
+    parser.add_argument('-fs', '--fullscreen', action='store_true')
+
+    parser.add_argument('-x', '--width', default=DEFAULTS['width'])
+
+    parser.add_argument('-y', '--height', default=DEFAULTS['height'])
+
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:
@@ -75,7 +84,8 @@ def parse(cl_args=None):
 def get_args():
     try:
         args = parse()
-    except:             # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
+    except Exception, e:             # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
+        print 'args exception', e
         server = sys.argv[1]
         if ':' in server:
             server, port = server.split(':')
@@ -85,10 +95,17 @@ def get_args():
 
         args = parse(cl_args.split())
 
+    convert_arg_types(args)
+    
     if args.print_args:
         print_args(args)
-
+    
     return args
+
+def convert_arg_types(args):
+    args.fullscreen = int(args.fullscreen)
+    args.width = int(args.width)
+    args.height = int(args.height)
 
 def print_args(args):
     keys = [

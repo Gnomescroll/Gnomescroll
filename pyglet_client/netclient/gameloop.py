@@ -19,7 +19,7 @@ else:
     import SDL.hud
     import cube_lib.VBO
 
-    SDL.gl.set_resolution(1024,800, fullscreen=0)
+    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
 
 #import cython
 #import pyximport; pyximport.install()
