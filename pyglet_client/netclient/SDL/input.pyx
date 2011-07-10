@@ -47,8 +47,14 @@ cdef extern int _set_text_entry_mode(int n)
 def get_key_state():
     _get_key_state(&key_state_callback)
 
+key_text_event_callback_stack = []
+
 def process_events():
+    global key_text_event_callback_stack
     temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback)
+    while len(key_text_event_callback_stack) != 0:
+        (key, key_string) = key_text_event_callback_stack.pop(0)
+        input_callback.keyboard_text_event(key, key_string)
     #mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
 
 def set_text_entry_mode(int n):
@@ -95,13 +101,14 @@ cdef int key_event_callback(char key):
     input_callback.keyboard_event(key)
 
 cdef int key_text_event_callback(char key, char* key_name):
-    global input_callback
+    global input_callback, key_text_event_callback_stack
     #print "keycode_="+ str(key)
     cdef bytes py_string
     py_string = key_name
     key_string = key_name.decode('ascii')
     #input.inputEventGlobal.keyboard_text_event(key, key_string)
-    input_callback.keyboard_text_event(key, key_string)
+    key_text_event_callback_stack.append((key, key_string))
+    #input_callback.keyboard_text_event(key, key_string)
 
 cdef int mouse_motion_callback(MouseMotion ms):
     global input_callback
