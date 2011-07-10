@@ -105,13 +105,13 @@ class App(object):
             self.camera = Camera(None)
             self.hud = Hud()
         #setup events
-        self.exit = False
+        #self.exit = False
 
         self.init_inputs()
         print "App init finished"
 
     def _exit(self):
-        self.exit = True
+        GameStateGlobal.exit = True
 
     def _on_close(self):
         ChatClientGlobal.chatClient.save()
@@ -138,7 +138,7 @@ class App(object):
         #p.start()
         average = []
         ltick, ctick = 0,0
-        while not self.exit:
+        while not GameStateGlobal.exit:
             if settings.pyglet:
                 self.win.dispatch_events()
                 InputGlobal.keyboard.stateHandler(keyboard)

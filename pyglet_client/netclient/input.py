@@ -253,6 +253,8 @@ class Keyboard(object):
                 #self.key_handlers.get(symbol, lambda: None)()
             if symbol == 'TAB':
                 InputGlobal.scoreboard = True
+            if symbol == 'ESC':
+                App._exit()
             ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 

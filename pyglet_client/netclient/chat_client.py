@@ -328,7 +328,11 @@ class ChatCommand():
                 'content'   : 'Listening to channel: %s' % (ChatClient.chatClient.CURRENT_CHANNEL,),
                 'channel'   : 'system',
             })
-                
+
+        elif command == 'exit' or command == 'quit':
+            print 'exiting'
+            GameStateGlobal.exit = True
+            
         else:
             _send = self._unimplemented(command)
 

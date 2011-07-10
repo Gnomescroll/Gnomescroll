@@ -22,6 +22,7 @@ class GameStateGlobal:
         cls.weaponList = WeaponList()
         #cls.terrainMap = TerrainMap()
         cls.gameState = GameState()
+        cls.exit = False
         
     @classmethod
     def init_1(cls):
