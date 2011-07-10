@@ -49,7 +49,6 @@ def get_key_state():
 
 key_text_event_callback_stack = []
 
-def process_events():
     global key_text_event_callback_stack
     temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback)
     while len(key_text_event_callback_stack) != 0:

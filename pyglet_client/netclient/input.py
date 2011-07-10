@@ -255,6 +255,9 @@ class Keyboard(object):
                 InputGlobal.scoreboard = True
             if symbol == 'ESC':
                 GameStateGlobal.exit = True
+            if symbol == 'j':
+                import sys
+                sys.exit()
             ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 
