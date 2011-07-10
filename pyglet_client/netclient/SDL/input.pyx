@@ -32,16 +32,19 @@ cdef extern from "input_functions.h":
     ctypedef int (*key_text_event_func)(char key, char* key_name)
     int _key_text_event(key_text_event_func user_func, char key, char* key_name)
 
+    ctypedef int (*quit_event_func)()
+    int _quit_event_callback(quit_event_func user_func)
+
     int _init_input()
 #    int _get_key_state(key_state_func key_state_cb)
-#    int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
+#    int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
 #    int _set_text_entry_mode(int n)
 
 ## input.c
 
 #cdef extern int _init_input()
 cdef extern int _get_key_state(key_state_func key_state_cb)
-cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
+cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
 cdef extern int _set_text_entry_mode(int n)
 
 def get_key_state():
@@ -49,8 +52,9 @@ def get_key_state():
 
 key_text_event_callback_stack = []
 
+def process_events():
     global key_text_event_callback_stack
-    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback)
+    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback, &quit_event_callback)
     while len(key_text_event_callback_stack) != 0:
         (key, key_string) = key_text_event_callback_stack.pop(0)
         input_callback.keyboard_text_event(key, key_string)
@@ -118,6 +122,10 @@ cdef int mouse_event_callback(MouseEvent me):
     global input_callback
     input_callback.mouse_event(me.button, me.state, me.x, -1*me.y)
     #input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
+
+cdef int quit_event_callback():
+    global input_callback, key_text_event_callback_stack
+    key_text_event_callback_stack.append((9999, 'QUIT',))
 
 def init():
     _init_input()

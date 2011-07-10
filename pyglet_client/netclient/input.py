@@ -33,6 +33,7 @@ def setup_keystring():
     'RSHIT' : 303,
     'LCTRL' : 306,
     'RCTRL' : 305,
+    'QUIT'  : 9999, # custom key
     }
     for i in range(1,255):
         Keystring[i] = chr(i)
@@ -239,6 +240,8 @@ class Keyboard(object):
     # e.g. enter
     def on_key_press(self, symbol):
         print 'ON_KEY_PRESS :: ', symbol
+        if symbol == 'QUIT':
+            GameStateGlobal.exit = True
         if InputGlobal.input == 'chat':
             if symbol in special_keys:
                 callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
@@ -255,9 +258,7 @@ class Keyboard(object):
                 InputGlobal.scoreboard = True
             if symbol == 'ESC':
                 GameStateGlobal.exit = True
-            if symbol == 'j':
-                import sys
-                sys.exit()
+
             ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 

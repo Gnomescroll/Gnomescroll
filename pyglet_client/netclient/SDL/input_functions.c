@@ -40,7 +40,7 @@ int _get_key_state(key_state_func key_state_cb) {
     return 0;
 }
 
-int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb) {
+int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
 
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
@@ -61,6 +61,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
     switch( Event.type )
     {
         case SDL_QUIT:
+            _quit_event_callback(quit_event_cb);
             printf( "quit" );
             break;
 
@@ -130,6 +131,11 @@ int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion ms) {
 
 int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
     user_func(me);
+    return 0;
+}
+
+int _quit_event_callback(quit_event_func user_func) {
+    user_func();
     return 0;
 }
 
