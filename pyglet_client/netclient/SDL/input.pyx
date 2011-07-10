@@ -47,7 +47,7 @@ cdef extern int _set_text_entry_mode(int n)
 def get_key_state():
     _get_key_state(&key_state_callback)
 
-def process_events():
+def process_events() except -1:
     temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback)
     #mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
 
