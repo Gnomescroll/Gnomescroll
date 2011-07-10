@@ -254,7 +254,7 @@ class Keyboard(object):
             if symbol == 'TAB':
                 InputGlobal.scoreboard = True
             if symbol == 'ESC':
-                App._exit()
+                GameStateGlobal.exit = True
             ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 
