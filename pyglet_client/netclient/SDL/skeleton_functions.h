@@ -32,3 +32,4 @@ struct Skeleton {
     //struct Vertex vertexList;
 }
 
+int init6() ;
