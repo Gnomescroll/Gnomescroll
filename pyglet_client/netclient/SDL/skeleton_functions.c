@@ -21,7 +21,7 @@ int init6() {
     s2= (struct SkeletonPart*) malloc(sizeof(struct SkeletonPart));
     s2->center.x = 0;
     s2->center.y = 0;
-    s2->center.z = 0;
+    s2->center.z = 3;
     s2->xsize = 1;
     s2->ysize = 1;
     s2->zsize = 1;
@@ -35,7 +35,7 @@ int init6() {
 
 int _draw_test() {
     //s2->theta += pi/150;
-    //s2->phi = pi/4;
+    s2->phi += pi/1024;
     draw_part(s2);
 }
 
@@ -109,11 +109,11 @@ int q_set[4*6]= {
 
 int q_set[4*6]= {
         4,5,6,7,
-        0,1,2,3,
-        2,3,6,7,
-        0,1,4,5,
-        0,3,4,7,
-        1,2,5,6 };
+        3,2,1,0,
+        2,3,7,6,
+        0,1,5,4,
+        0,4,7,3,
+        1,2,6,5 };
 
 struct Vertex {
     float x,y,z;
@@ -161,7 +161,7 @@ int draw_part(struct SkeletonPart* skel) {
         printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
-    glEnable (GL_DEPTH_TEST);
+    //glEnable (GL_DEPTH_TEST);
     //glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
     for(i=0; i<6;i++) {
@@ -192,13 +192,13 @@ int draw_part(struct SkeletonPart* skel) {
             //    glVertex3f(vt->x, vt->y, vt->z);
 
 
-                glTexCoord2i( 0, 0 );
+                //glTexCoord2i( 0, 0 );
                 glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
-                glTexCoord2i( 1, 0 );
+                //glTexCoord2i( 1, 0 );
                 glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
-                glTexCoord2i( 1, 1 );
+                //glTexCoord2i( 1, 1 );
                 glVertex3f(vlist[q_set[4*i+2]].x,vlist[q_set[4*i+2]].y,vlist[q_set[4*i+2]].z);
-                glTexCoord2i( 0, 1 );
+                //glTexCoord2i( 0, 1 );
                 glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
 
                 vt = &vlist[q_set[4*i+j]];
@@ -222,7 +222,7 @@ int draw_part(struct SkeletonPart* skel) {
 
     }
     glEnd();
-    glDisable (GL_DEPTH_TEST);
+    //glDisable (GL_DEPTH_TEST);
     //glDisable(GL_TEXTURE_2D);
     return 0;
 }
