@@ -211,7 +211,7 @@ int draw_part(struct SkeletonPart* skel) {
                 if(i==2)
                     glColor3ub(255,0,255);
                 if(i==3)
-                    glColor3ub(0,0,0);
+                    glColor3ub(255,255,255);
                 if(i==4)
                     glColor3ub(0,0,255);
                 if(i==5)
