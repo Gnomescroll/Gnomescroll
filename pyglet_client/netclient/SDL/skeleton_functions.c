@@ -133,9 +133,9 @@ int draw_part(struct SkeletonPart* skel) {
 
     int i,j;
     for(i=0; i<8; i++) {
-        vlist[i].x = 0;
-        vlist[i].y = 0;
-        vlist[i].z = 0;
+        vlist[i].x = skel->center.x;
+        vlist[i].y = skel->center.y;
+        vlist[i].z = skel->center.z;
         if(v_set[3*i+0] == 1) {
             vlist[i].x += skel->n[0].x;
             vlist[i].y += skel->n[0].y;
@@ -163,9 +163,6 @@ int draw_part(struct SkeletonPart* skel) {
             vlist[i].y -= skel->n[2].y;
             vlist[i].z -= skel->n[2].z;
         }
-        vlist[i].x += skel->center.x;
-        vlist[i].y += skel->center.y;
-        vlist[i].z += skel->center.z;
         printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
