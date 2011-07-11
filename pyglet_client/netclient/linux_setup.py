@@ -135,8 +135,24 @@ ChromeEmbedded = Extension('ChromeEmbedded',
                            #    './aw/test2.c'],
                     )
 '''
+
+SDL_skeleton = Extension('SDL_skeleton',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = ['/usr/local/include',
+                                    ' /usr/include/X11/extensions/',
+                                    '/usr/include/SDL',
+                                    '/usr/lib',     ],
+                    libraries = ['SDL','GL','SDL','GLU', 'SDL_image', 'SDL_ttf'], #SDL_image ?
+
+                    library_dirs = ['/usr/X11R6/lib','usr/lib'],
+                    extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
+                    extra_link_args = extra_link_args,
+                    sources = [ 'SDL/skeleton.pyx',
+                                'SDL/skeleton_functions.c',]
+                                )
+
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
+    ext_modules = [SDL_skeleton, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
