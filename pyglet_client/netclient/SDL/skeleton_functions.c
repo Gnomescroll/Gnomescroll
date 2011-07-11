@@ -39,6 +39,13 @@ int _draw_test() {
     draw_part(s2);
 }
 
+inline float vlength(struct Vector v) {
+    float length = 0;
+    length = v.x*v.x + v.y*v.y + v.z*v.z;
+    return length;
+
+}
+
 inline void compute_normals(struct SkeletonPart* skel) {
     //const struct Vector* center = &skel->center;
     const float theta = skel->theta;
@@ -49,8 +56,8 @@ inline void compute_normals(struct SkeletonPart* skel) {
     const float zsize = skel->zsize /2;
 
     n[0].x = xsize*cos(theta)*sin(phi+ pi/2);
-    n[0].y = ysize*sin(theta)*sin(phi+ pi/2);
-    n[0].z = zsize*cos(phi+ pi/2);
+    n[0].y = xsize*sin(theta)*sin(phi+ pi/2);
+    n[0].z = xsize*cos(phi+ pi/2);
 
     n[1].x = xsize*cos(theta+ pi/2)*sin(phi+ pi/2);
     n[1].y = ysize*sin(theta+ pi/2)*sin(phi+ pi/2);
@@ -60,9 +67,10 @@ inline void compute_normals(struct SkeletonPart* skel) {
     n[2].y = zsize*sin(theta)*sin(phi);
     n[2].z = zsize*cos(phi);
 
-    printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
-    printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z);
-    printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z);
+    printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z, vlength(n[0]));
+    printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z, vlength(n[1]));
+    printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z, vlength(n[2]));
+    printf("Normal Length: %f, %f, %f \n", vlength(n[0]), vlength(n[1]), vlength(n[2]));
 }
 
 /*
@@ -191,19 +199,6 @@ int draw_part(struct SkeletonPart* skel) {
             //    vt = &vlist[q_set[4*i+j]];
             //    glVertex3f(vt->x, vt->y, vt->z);
 
-
-                //glTexCoord2i( 0, 0 );
-                glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
-                //glTexCoord2i( 1, 0 );
-                glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
-                //glTexCoord2i( 1, 1 );
-                glVertex3f(vlist[q_set[4*i+2]].x,vlist[q_set[4*i+2]].y,vlist[q_set[4*i+2]].z);
-                //glTexCoord2i( 0, 1 );
-                glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
-
-                vt = &vlist[q_set[4*i+j]];
-                printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
-
                 if(i==0)
                     glColor3ub(255,0,0);
                 if(i==1)
@@ -217,11 +212,26 @@ int draw_part(struct SkeletonPart* skel) {
                 if(i==5)
                     glColor3ub(0,255,0);
 
+                //glTexCoord2i( 0, 0 );
+                glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
+                //glTexCoord2i( 1, 0 );
+                glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
+                //glTexCoord2i( 1, 1 );
+                glVertex3f(vlist[q_set[4*i+2]].x,vlist[q_set[4*i+2]].y,vlist[q_set[4*i+2]].z);
+                //glTexCoord2i( 0, 1 );
+                glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
+
+                vt = &vlist[q_set[4*i+j]];
+                printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
+
+
            // }
 
 
     }
     glEnd();
+    glColor3ub(255,255,255);
+    //glClear(GL_COLOR_BUFFER_BIT);
     //glDisable (GL_DEPTH_TEST);
     //glDisable(GL_TEXTURE_2D);
     return 0;
