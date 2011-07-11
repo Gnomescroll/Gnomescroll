@@ -17,9 +17,11 @@ else:
     import SDL.gl
     import SDL.input
     import SDL.hud
+    import SDL.skeleton
     import cube_lib.VBO
 
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
+    SDL.skeleton.test()
 
 #import cython
 #import pyximport; pyximport.install()
@@ -161,6 +163,8 @@ class App(object):
                 self.camera.camera_view()
 
             self.camera.worldProjection()
+            SDL.skeleton.draw() ###debugging
+
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
             self.world.draw()

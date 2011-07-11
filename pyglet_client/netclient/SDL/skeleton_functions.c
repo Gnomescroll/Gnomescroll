@@ -34,8 +34,8 @@ int init6() {
 #define pi 3.14159
 
 int _draw_test() {
-    s2->theta += pi/150;
-    //s2->phi += pi/300;
+    //s2->theta += pi/150;
+    //s2->phi = pi/4;
     draw_part(s2);
 }
 
@@ -109,7 +109,7 @@ int q_set[4*6]= {
 
 int q_set[4*6]= {
         4,5,6,7,
-        1,2,3,4,
+        0,1,2,3,
         2,3,6,7,
         0,1,4,5,
         0,3,4,7,
@@ -161,7 +161,9 @@ int draw_part(struct SkeletonPart* skel) {
         printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
-    glColor3ub(255,0,0);
+    glEnable (GL_DEPTH_TEST);
+    //glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
     for(i=0; i<6;i++) {
 /*
         q_set[4*i+0]
@@ -169,15 +171,58 @@ int draw_part(struct SkeletonPart* skel) {
         q_set[4*i+2]
         q_set[4*i+3]
 */
-        glBegin(GL_QUADS);
+/*
+        if(i==0)
+            glColor3ub(255,0,0);
+        if(i==1)
+            glColor3ub(255,255,0);
+        if(i==2)
+            glColor3ub(255,0,255);
+        if(i==3)
+            glColor3ub(0,0,0);
+        if(i==4)
+            glColor3ub(0,0,255);
+        if(i==5)
+            glColor3ub(0,255,0);
+*/
+        //glBegin(GL_QUADS);
             printf("Quad: \n");
-            for(j=0;j<=3;j++) {
+            //for(j=0;j<=3;j++) {
+            //    vt = &vlist[q_set[4*i+j]];
+            //    glVertex3f(vt->x, vt->y, vt->z);
+
+
+                glTexCoord2i( 0, 0 );
+                glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
+                glTexCoord2i( 1, 0 );
+                glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
+                glTexCoord2i( 1, 1 );
+                glVertex3f(vlist[q_set[4*i+2]].x,vlist[q_set[4*i+2]].y,vlist[q_set[4*i+2]].z);
+                glTexCoord2i( 0, 1 );
+                glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
+
                 vt = &vlist[q_set[4*i+j]];
-                glVertex3f(vt->x, vt->y, vt->z);
                 printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
-            }
-        glEnd();
+
+                if(i==0)
+                    glColor3ub(255,0,0);
+                if(i==1)
+                    glColor3ub(255,255,0);
+                if(i==2)
+                    glColor3ub(255,0,255);
+                if(i==3)
+                    glColor3ub(0,0,0);
+                if(i==4)
+                    glColor3ub(0,0,255);
+                if(i==5)
+                    glColor3ub(0,255,0);
+
+           // }
+
 
     }
+    glEnd();
+    glDisable (GL_DEPTH_TEST);
+    //glDisable(GL_TEXTURE_2D);
     return 0;
 }
