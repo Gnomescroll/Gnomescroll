@@ -184,3 +184,18 @@ while True:
 	c.draw()
 	w.flip()
 
+## player model draw test ##
+
+import SDL.gl
+import SDL.skeleton
+w = SDL.gl.Global()
+w.init()
+
+w.set_projection(-5,0,0,0,0)
+w.world_projection()
+
+SDL.skeleton.test()
+SDL.skeleton.draw()
+w.flip()
+
+

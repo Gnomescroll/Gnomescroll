@@ -136,19 +136,20 @@ ChromeEmbedded = Extension('ChromeEmbedded',
                     )
 '''
 
-SDL_skeleton = Extension('SDL_skeleton',
+SDL_skeleton = Extension('SDL.skeleton',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
                                     ' /usr/include/X11/extensions/',
                                     '/usr/include/SDL',
                                     '/usr/lib',     ],
-                    libraries = ['SDL','GL','SDL','GLU', 'SDL_image', 'SDL_ttf'], #SDL_image ?
+                    libraries = ['SDL','GL','SDL','GLU'], #SDL_image ?
 
                     library_dirs = ['/usr/X11R6/lib','usr/lib'],
                     extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
                     extra_link_args = extra_link_args,
-                    sources = [ 'SDL/skeleton.pyx',
-                                'SDL/skeleton_functions.c',]
+                    sources = [
+                    'SDL/skeleton_functions.c',
+                     'SDL/skeleton.pyx',]
                                 )
 
 setup(

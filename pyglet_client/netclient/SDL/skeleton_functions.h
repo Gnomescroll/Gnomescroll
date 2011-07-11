@@ -32,7 +32,7 @@ struct Skeleton {
     //struct Vertex vertexList;
 };
 
-int draw_part(struct SkeletonPart* skel)
+int draw_part(struct SkeletonPart* skel);
 
 int init6();
 int _draw_test();

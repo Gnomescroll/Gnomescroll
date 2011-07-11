@@ -22,16 +22,20 @@ int init6() {
     s2->center.x = 0;
     s2->center.y = 0;
     s2->center.z = 0;
-    s2->xsize = 2;
+    s2->xsize = 1;
     s2->ysize = 1;
-    s2->zsize = 3;
+    s2->zsize = 1;
     s2->theta = 0; //increment these and see if it rotates
     s2->phi = 0;
 
     return 0;
 }
 
+#define pi 3.14159
+
 int _draw_test() {
+    //s2->theta += pi/150;
+    //s2->phi += pi/300;
     draw_part(s2);
 }
 
@@ -44,18 +48,17 @@ inline void compute_normals(struct SkeletonPart* skel) {
     const float ysize = skel->ysize /2;
     const float zsize = skel->zsize /2;
 
-    n[0].x = xsize*cos(theta)*sin(phi);
-    n[0].y = ysize*sin(theta)*sin(phi);
-    n[0].z = zsize*cos(phi);
+    n[0].x = xsize*cos(theta)*sin(phi+ pi/2);
+    n[0].y = ysize*sin(theta)*sin(phi+ pi/2);
+    n[0].z = zsize*cos(phi+ pi/2);
 
-    n[1].x = xsize*cos(theta)*sin(phi);
-    n[1].y = ysize*sin(theta)*sin(phi);
-    n[1].z = ysize*cos(phi);
+    n[1].x = xsize*cos(theta+ pi/2)*sin(phi+ pi/2);
+    n[1].y = ysize*sin(theta+ pi/2)*sin(phi+ pi/2);
+    n[1].z = ysize*cos(phi+ pi/2);
 
     n[2].x = zsize*cos(theta)*sin(phi);
     n[2].y = zsize*sin(theta)*sin(phi);
     n[2].z = zsize*cos(phi);
-
 }
 
 /*
@@ -137,10 +140,11 @@ int draw_part(struct SkeletonPart* skel) {
         vlist[i].x += skel->center.x;
         vlist[i].y += skel->center.y;
         vlist[i].z += skel->center.z;
+        printf("Normal: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
     glColor3ub(255,0,0);
-    for(i=0; i++; i<6) {
+    for(i=0; i<6;i++) {
 /*
         q_set[4*i+0]
         q_set[4*i+1]
@@ -148,9 +152,11 @@ int draw_part(struct SkeletonPart* skel) {
         q_set[4*i+3]
 */
         glBegin(GL_QUADS);
+            printf("Quad: \n");
             for(j=0;j<=3;j++) {
                 vt = &vlist[q_set[4*i+j]];
                 glVertex3f(vt->x, vt->y, vt->z);
+                printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
             }
         glEnd();
 

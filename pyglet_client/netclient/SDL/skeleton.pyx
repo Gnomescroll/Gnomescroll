@@ -4,7 +4,7 @@ cdef extern from 'skeleton_functions.h':
     int init6()
     int _draw_test()
 
-def init():
+def test():
     print "Init"
     init6()
 
