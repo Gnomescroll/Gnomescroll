@@ -11,16 +11,16 @@ Then do collision detection
 
 struct Vector {
     float x,y,z;
-}
+};
 
 struct SkeletonPart {
     int nparts;
     struct SkeletonParts* parts;
     float theta, phi;
-    Vector center;
+    struct Vector center;
     float xsize, ysize, zsize;
-    Vector n[3] //the normals x,y,z
-}
+    struct Vector n[3]; //the normals x,y,z
+};
 
 struct Skeleton {
     int nparts;
@@ -30,6 +30,9 @@ struct Skeleton {
     float theta;
     int nvertex;
     //struct Vertex vertexList;
-}
+};
 
-int init6() ;
+int draw_part(struct SkeletonPart* skel)
+
+int init6();
+int _draw_test();
