@@ -48,27 +48,105 @@ inline void compute_normals(struct SkeletonPart* skel) {
     const float ysize = skel->ysize /2;
     const float zsize = skel->zsize /2;
 
-    n[0] = xsize*cos(theta)*sin(phi);
-    n[0] = ysize*sin(theta)*sin(phi);
-    n[0] = zsize*cos(phi);
+    n[0].x = xsize*cos(theta)*sin(phi);
+    n[0].y = ysize*sin(theta)*sin(phi);
+    n[0].z = zsize*cos(phi);
 
-    ny.x = xsize*cos(theta)*sin(phi);
-    ny.y = ysize*sin(theta)*sin(phi);
-    ny.z = ysize*cos(phi);
+    n[1].x = xsize*cos(theta)*sin(phi);
+    n[1].y = ysize*sin(theta)*sin(phi);
+    n[1].z = ysize*cos(phi);
 
-    nz.x = zsize*cos(theta)*sin(phi);
-    nz.y = zsize*sin(theta)*sin(phi);
-    nz.z = zsize*cos(phi);
-
-}
-
-inline void compute_normal_y(struct SkeletonPart* skel) {
+    n[2].x = zsize*cos(theta)*sin(phi);
+    n[2].y = zsize*sin(theta)*sin(phi);
+    n[2].z = zsize*cos(phi);
 
 }
 
-inline void compute_normal_z(struct SkeletonPart* skel) {
+/*
+    v_set = [
+        [0,0,0],
+        [1,0,0],
+        [1,1,0],
+        [0,1,0],
+        [0,0,1],
+        [1,0,1],
+        [1,1,1],
+        [0,1,1]
+    ]
 
-}
+    side_v = [
+    [4,5,6,7],   #top (z=1)
+    [0,1,2,3],   #bottom (z=0)
+    [1,5,9,10],  #north (y=1)
+    [7,3,11,8],  #south (y=0)
+    [6,2,10,11], #west (x=0)
+    [4,0,9,8],   #east (x=1)
+    ]
+*/
+int v_set = [0,0,0,
+        1,0,0,
+        1,1,0,
+        0,1,0,
+        0,0,1,
+        1,0,1,
+        1,1,1,
+        0,1,1];
+
+int q_set = [
+    4,5,6,7,   //top (z=1)
+    0,1,2,3,   //bottom (z=0)
+    1,5,9,10,  //north (y=1)
+    7,3,11,8,  //south (y=0)
+    6,2,10,11, //west (x=0)
+    4,0,9,8   //east (x=1)
+    ];
 
 int draw_part(struct SkeletonPart* skel) {
+    compute_normals(skel);
+    struct Vertex vlist[8];
+
+    int i,j;
+    for(i=0; i++; i<8) {
+        if(v_set[3*i+0] == 1) {
+            vlist[i].x += skel->n[0].x;
+            vlist[i].y += skel->n[0].y;
+            vlist[i].z += skel->n[0].z;
+        } else {
+            vlist[i].x += skel->n[0].x;
+            vlist[i].y += skel->n[0].y;
+            vlist[i].z += skel->n[0].z;
+        }
+        if(v_set[3*i+1] == 1) {
+            vlist[i].x += skel->n[1].x;
+            vlist[i].y += skel->n[1].y;
+            vlist[i].z += skel->n[1].z;
+        } else {
+            vlist[i].x += skel->n[1].x;
+            vlist[i].y += skel->n[1].y;
+            vlist[i].z += skel->n[1].z;
+        }
+        if(v_set[3*i+2] == 1) {
+            vlist[i].x += skel->n[2].x;
+            vlist[i].y += skel->n[2].y;
+            vlist[i].z += skel->n[2].z;
+        } else {
+            vlist[i].x += skel->n[2].x;
+            vlist[i].y += skel->n[2].y;
+            vlist[i].z += skel->n[2].z;
+        }
+    }
+
+    for(i=0; i++; i<6) {
+        q_set[4*i+0]
+        q_set[4*i+1]
+        q_set[4*i+2]
+        q_set[4*i+3]
+
+        glColor3ub(255,0,0);
+        glBegin(GL_QUADS);
+            for(j=0;j<=3;j++)
+
+        glEnd();
+
+    }
 }
