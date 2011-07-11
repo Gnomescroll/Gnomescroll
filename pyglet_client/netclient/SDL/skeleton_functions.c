@@ -1,9 +1,32 @@
 #include "./skeleton_functions.c"
 
+
+struct Skeleton* s1;
+
+int init5() {
+    s1 = (struct Skeleton*) malloc(sizeof(Skeleton));
+
+}
+
+
 struct Skeleton* _create_skeleton(int nparts, float x, float y, float z) {
     struct* skel = (struct Skeleton*) malloc(sizeof(Skeleton));
     skel->nparts;
 
+}
+
+struct SkeletonPart* s2;
+
+int init6() {
+    s2= (struct SkeletonParty*) malloc(sizeof(SkeletonPart));
+    s2->center.x = 0;
+    s2->center.y = 0;
+    s2->center.z = 0;
+    s2->xsize = 2;
+    s2->ysize = 1;
+    s2->zsize = 3;
+    s2->theta = 0; //increment these and see if it rotates
+    s2->phi = 0;
 }
 
 
