@@ -34,7 +34,7 @@ int init6() {
 #define pi 3.14159
 
 int _draw_test() {
-    //s2->theta += pi/150;
+    s2->theta += pi/150;
     //s2->phi += pi/300;
     draw_part(s2);
 }
@@ -59,6 +59,10 @@ inline void compute_normals(struct SkeletonPart* skel) {
     n[2].x = zsize*cos(theta)*sin(phi);
     n[2].y = zsize*sin(theta)*sin(phi);
     n[2].z = zsize*cos(phi);
+
+    printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
+    printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z);
+    printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z);
 }
 
 /*
@@ -82,15 +86,17 @@ inline void compute_normals(struct SkeletonPart* skel) {
     [4,0,9,8],   #east (x=1)
     ]
 */
-int v_set[3*8] = {0,0,0,
+int v_set[3*8] = {
+        0,0,0,
         1,0,0,
         1,1,0,
         0,1,0,
         0,0,1,
         1,0,1,
         1,1,1,
-        0,1,1};
+        0,1,1 };
 
+/*
 int q_set[4*6]= {
     4,5,6,7,   //top (z=1)
     0,1,2,3,   //bottom (z=0)
@@ -99,6 +105,15 @@ int q_set[4*6]= {
     6,2,10,11, //west (x=0)
     4,0,9,8   //east (x=1)
     };
+*/
+
+int q_set[4*6]= {
+        4,5,6,7,
+        1,2,3,4,
+        2,3,6,7,
+        0,1,4,5,
+        0,3,4,7,
+        1,2,5,6 };
 
 struct Vertex {
     float x,y,z;
@@ -110,37 +125,40 @@ int draw_part(struct SkeletonPart* skel) {
 
     int i,j;
     for(i=0; i<8; i++) {
+        vlist[i].x = 0;
+        vlist[i].y = 0;
+        vlist[i].z = 0;
         if(v_set[3*i+0] == 1) {
             vlist[i].x += skel->n[0].x;
             vlist[i].y += skel->n[0].y;
             vlist[i].z += skel->n[0].z;
         } else {
-            vlist[i].x += skel->n[0].x;
-            vlist[i].y += skel->n[0].y;
-            vlist[i].z += skel->n[0].z;
+            vlist[i].x -= skel->n[0].x;
+            vlist[i].y -= skel->n[0].y;
+            vlist[i].z -= skel->n[0].z;
         }
         if(v_set[3*i+1] == 1) {
             vlist[i].x += skel->n[1].x;
             vlist[i].y += skel->n[1].y;
             vlist[i].z += skel->n[1].z;
         } else {
-            vlist[i].x += skel->n[1].x;
-            vlist[i].y += skel->n[1].y;
-            vlist[i].z += skel->n[1].z;
+            vlist[i].x -= skel->n[1].x;
+            vlist[i].y -= skel->n[1].y;
+            vlist[i].z -= skel->n[1].z;
         }
         if(v_set[3*i+2] == 1) {
             vlist[i].x += skel->n[2].x;
             vlist[i].y += skel->n[2].y;
             vlist[i].z += skel->n[2].z;
         } else {
-            vlist[i].x += skel->n[2].x;
-            vlist[i].y += skel->n[2].y;
-            vlist[i].z += skel->n[2].z;
+            vlist[i].x -= skel->n[2].x;
+            vlist[i].y -= skel->n[2].y;
+            vlist[i].z -= skel->n[2].z;
         }
         vlist[i].x += skel->center.x;
         vlist[i].y += skel->center.y;
         vlist[i].z += skel->center.z;
-        printf("Normal: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
+        printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
     glColor3ub(255,0,0);
