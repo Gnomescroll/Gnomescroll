@@ -62,7 +62,6 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
     {
         case SDL_QUIT:
             _quit_event_callback(quit_event_cb);
-            printf( "quit" );
             break;
 
         case SDL_KEYDOWN:
