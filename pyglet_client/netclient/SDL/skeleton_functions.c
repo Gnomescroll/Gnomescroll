@@ -16,6 +16,42 @@ inline float iproduct(struct Vector v1, struct Vector v2) {
     ip = v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
     return ip;
 }
+
+struct Vertex {
+    float x,y,z;
+};
+
+
+int v_set[3*8] = {
+        0,0,0,
+        1,0,0,
+        1,1,0,
+        0,1,0,
+        0,0,1,
+        1,0,1,
+        1,1,1,
+        0,1,1 };
+
+/*
+int q_set[4*6]= {
+    4,5,6,7,   //top (z=1)
+    0,1,2,3,   //bottom (z=0)
+    1,5,9,10,  //north (y=1)
+    7,3,11,8,  //south (y=0)
+    6,2,10,11, //west (x=0)
+    4,0,9,8   //east (x=1)
+    };
+*/
+
+int q_set[4*6]= {
+        4,5,6,7,
+        3,2,1,0,
+        2,3,7,6,
+        0,1,5,4,
+        0,4,7,3,
+        1,2,6,5 };
+
+
 //end util
 
 inline void compute_vo_normals(struct VoxelList* volist) {
@@ -53,19 +89,100 @@ inline void compute_vo_normals(struct VoxelList* volist) {
 struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
     volist->vosize = 0.2;
+    vo->xdim = xdim;
+    vo->ydim = ydim;
+    vo->zdim = zdim;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
     return volist;
 }
 
+inline Voxel get(struct VoxelList* vl, int x, int y, int z) {
+    return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
+}
+
+inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) {
+    struct Voxel* t = &vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
+    t->r = r;
+    t->g = g;
+    t->b = b;
+}
 
 int init7() {
     vo = createVoxelList();
-    vo->xdim = 8;
-    vo->ydim = 8;
-    vo->zdim = 9;
+    set(vo, 0,0,0,255,0,0);
+    set(vo, 7,7,7,0,255,0);
+//    compute_vo_normals(vo);
 }
 
+int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
+    struct Vertex vlist[8];
+
+    int i,j;
+    for(i=0; i<8; i++) {
+        vlist[i].x = 0;
+        vlist[i].y = 0;
+        vlist[i].z = 0;
+        if(v_set[3*i+0] == 1) {
+            vlist[i].x += xi*vl->n[0].x;
+            vlist[i].y += xi*vl->n[0].y;
+            vlist[i].z += xi*vl->n[0].z;
+        }
+        if(v_set[3*i+1] == 1) {
+            vlist[i].x += yi*vl->n[1].x;
+            vlist[i].y += yi*vl->n[1].y;
+            vlist[i].z += yi*vl->n[1].z;
+        }
+        if(v_set[3*i+2] == 1) {
+            vlist[i].x += zi*vl->n[2].x;
+            vlist[i].y += zi*vl->n[2].y;
+            vlist[i].z += zi*vl->n[2].z;
+        }
+
+        vlist[i].x += vl->center.x;
+        vlist[i].y += vl->center.y;
+        vlist[i].z += vl->center.z;
+
+        printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
+    }
+    struct Vertex* vt;
+
+    glBegin(GL_QUADS);
+    for(i=0; i<6;i++) {
+            printf("Quad: \n");
+                if(i==0)
+                    glColor3ub(255,0,0);
+                //glTexCoord2i( 0, 0 );
+                glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
+                //glTexCoord2i( 1, 0 );
+                glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
+                //glTexCoord2i( 1, 1 );
+                glVertex3f(vlist[q_set[4*i+2]].x,vlist[q_set[4*i+2]].y,vlist[q_set[4*i+2]].z);
+                //glTexCoord2i( 0, 1 );
+                glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
+                vt = &vlist[q_set[4*i+j]];
+                printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
+
+    }
+    glEnd();
+    glColor3ub(255,255,255);
+
+    return 0;
+}
+
+
 int _draw_test2() {
+    int xi, yi, zi;
+    vo->theta += pi/1024;
+    compute_vo_normals(vo);
+    for(xi = -vo->xdim/2; xi++; xi < vo->xdim/2) {
+        for(yi = -vo->ydim/2; yi++; yi < vo->ydim/2) {
+            for(zi = -vo->zdim/2; zi++; zi < vo->zdim/2) {
+                draw_vol(vo,xi,yi,zi);
+
+            }
+        }
+
+    }
 
 }
 
@@ -145,6 +262,8 @@ inline void compute_normals(struct SkeletonPart* skel) {
     printf("<y,z>: %f \n",  iproduct(n[1], n[2]));
 }
 
+
+
 /*
     v_set = [
         [0,0,0],
@@ -166,38 +285,6 @@ inline void compute_normals(struct SkeletonPart* skel) {
     [4,0,9,8],   #east (x=1)
     ]
 */
-int v_set[3*8] = {
-        0,0,0,
-        1,0,0,
-        1,1,0,
-        0,1,0,
-        0,0,1,
-        1,0,1,
-        1,1,1,
-        0,1,1 };
-
-/*
-int q_set[4*6]= {
-    4,5,6,7,   //top (z=1)
-    0,1,2,3,   //bottom (z=0)
-    1,5,9,10,  //north (y=1)
-    7,3,11,8,  //south (y=0)
-    6,2,10,11, //west (x=0)
-    4,0,9,8   //east (x=1)
-    };
-*/
-
-int q_set[4*6]= {
-        4,5,6,7,
-        3,2,1,0,
-        2,3,7,6,
-        0,1,5,4,
-        0,4,7,3,
-        1,2,6,5 };
-
-struct Vertex {
-    float x,y,z;
-};
 
 int draw_part(struct SkeletonPart* skel) {
     compute_normals(skel);
