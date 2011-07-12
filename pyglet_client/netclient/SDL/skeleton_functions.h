@@ -25,9 +25,9 @@ struct VoxelList {
     float theta;
     struct Vector center;
     struct Vector n[3]; //the normals
-}
+};
 
-int init7()
+int init7();
 inline void compute_vo_normals(struct VoxelList* volist);
 struct VoxelList* createVoxelList();
 

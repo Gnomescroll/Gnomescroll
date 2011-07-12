@@ -60,19 +60,16 @@ inline void compute_vo_normals(struct VoxelList* volist) {
     //float phi = volist->phi;
     struct Vector* n = volist->n;
 
-    float theta_90 = skel->theta+ pi/2;
-    float phi_90 = skel->phi+ pi/2;
-
-    n[0].x = volist->vosize*cos(theta)
-    n[0].y = volist->vosize*sin(theta)
-    n[0].z = 0
+    n[0].x = volist->vosize*cos(theta);
+    n[0].y = volist->vosize*sin(theta);
+    n[0].z = 0;
 
     n[1].x = volist->vosize*cos(theta+ pi/2);
     n[1].y = volist->vosize*sin(theta+ pi/2);
-    n[1].z = 0
+    n[1].z = 0;
 
-    n[2].x = 0
-    n[2].y = 0
+    n[2].x = 0;
+    n[2].y = 0;
     n[2].z = volist->vosize*1;
 
     printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
@@ -96,7 +93,7 @@ struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     return volist;
 }
 
-inline Voxel get(struct VoxelList* vl, int x, int y, int z) {
+inline struct Voxel get(struct VoxelList* vl, int x, int y, int z) {
     return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
 }
 
@@ -108,7 +105,7 @@ inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) 
 }
 
 int init7() {
-    vo = createVoxelList();
+    vo = createVoxelList(8,8,8);
     set(vo, 0,0,0,255,0,0);
     set(vo, 7,7,7,0,255,0);
 //    compute_vo_normals(vo);
@@ -149,7 +146,7 @@ int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
     glBegin(GL_QUADS);
     for(i=0; i<6;i++) {
             printf("Quad: \n");
-                if(i==0)
+                //if(i==0)
                     glColor3ub(255,0,0);
                 //glTexCoord2i( 0, 0 );
                 glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
