@@ -1,6 +1,76 @@
 #include "./skeleton_functions.h"
 
 
+#define pi 3.14159
+struct VoxelList* vo;
+
+//util
+inline float vlength(struct Vector v) {
+    float length = 0;
+    length = v.x*v.x + v.y*v.y + v.z*v.z;
+    return length;
+}
+
+inline float iproduct(struct Vector v1, struct Vector v2) {
+    float ip = 0;
+    ip = v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+    return ip;
+}
+//end util
+
+inline void compute_vo_normals(struct VoxelList* volist) {
+    //const struct Vector* center = &skel->center;
+    float theta = volist->theta;
+    //float phi = volist->phi;
+    struct Vector* n = volist->n;
+
+    float theta_90 = skel->theta+ pi/2;
+    float phi_90 = skel->phi+ pi/2;
+
+    n[0].x = volist->vosize*cos(theta)
+    n[0].y = volist->vosize*sin(theta)
+    n[0].z = 0
+
+    n[1].x = volist->vosize*cos(theta+ pi/2);
+    n[1].y = volist->vosize*sin(theta+ pi/2);
+    n[1].z = 0
+
+    n[2].x = 0
+    n[2].y = 0
+    n[2].z = volist->vosize*1;
+
+    printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
+    printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z);
+    printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z);
+    printf("Normal Length: %f, %f, %f \n", vlength(n[0]), vlength(n[1]), vlength(n[2]));
+
+    printf("<x,y>: %f \n",  iproduct(n[0], n[1]));
+    printf("<x,z>: %f \n",  iproduct(n[0], n[2]));
+    printf("<y,z>: %f \n",  iproduct(n[1], n[2]));
+}
+
+
+struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
+    struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
+    volist->vosize = 0.2;
+    volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
+    return volist;
+}
+
+
+int init7() {
+    vo = createVoxelList();
+    vo->xdim = 8;
+    vo->ydim = 8;
+    vo->zdim = 9;
+}
+
+int _draw_test2() {
+
+}
+
+///deprecate below line
+
 struct Skeleton* s1;
 
 int init5() {
@@ -31,35 +101,33 @@ int init6() {
     return 0;
 }
 
-#define pi 3.14159
 
 int _draw_test() {
     //s2->theta += pi/150;
     s2->phi += pi/1024;
+    if(s2->phi >= pi) {
+        s2->phi -= pi;
+    }
     draw_part(s2);
-}
-
-inline float vlength(struct Vector v) {
-    float length = 0;
-    length = v.x*v.x + v.y*v.y + v.z*v.z;
-    return length;
-
 }
 
 inline void compute_normals(struct SkeletonPart* skel) {
     //const struct Vector* center = &skel->center;
-    const float theta = skel->theta;
-    const float phi = skel->phi;
+    float theta = skel->theta;
+    float phi = skel->phi;
     struct Vector* n = skel->n;
     const float xsize = skel->xsize /2;
     const float ysize = skel->ysize /2;
     const float zsize = skel->zsize /2;
 
+    float theta_90 = skel->theta+ pi/2;
+    float phi_90 = skel->phi+ pi/2;
+
     n[0].x = xsize*cos(theta)*sin(phi+ pi/2);
     n[0].y = xsize*sin(theta)*sin(phi+ pi/2);
     n[0].z = xsize*cos(phi+ pi/2);
 
-    n[1].x = xsize*cos(theta+ pi/2)*sin(phi+ pi/2);
+    n[1].x = ysize*cos(theta+ pi/2)*sin(phi+ pi/2);
     n[1].y = ysize*sin(theta+ pi/2)*sin(phi+ pi/2);
     n[1].z = ysize*cos(phi+ pi/2);
 
@@ -67,10 +135,14 @@ inline void compute_normals(struct SkeletonPart* skel) {
     n[2].y = zsize*sin(theta)*sin(phi);
     n[2].z = zsize*cos(phi);
 
-    printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z, vlength(n[0]));
-    printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z, vlength(n[1]));
-    printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z, vlength(n[2]));
+    printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
+    printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z);
+    printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z);
     printf("Normal Length: %f, %f, %f \n", vlength(n[0]), vlength(n[1]), vlength(n[2]));
+
+    printf("<x,y>: %f \n",  iproduct(n[0], n[1]));
+    printf("<x,z>: %f \n",  iproduct(n[0], n[2]));
+    printf("<y,z>: %f \n",  iproduct(n[1], n[2]));
 }
 
 /*
@@ -133,9 +205,9 @@ int draw_part(struct SkeletonPart* skel) {
 
     int i,j;
     for(i=0; i<8; i++) {
-        vlist[i].x = skel->center.x;
-        vlist[i].y = skel->center.y;
-        vlist[i].z = skel->center.z;
+        vlist[i].x = 0;
+        vlist[i].y = 0;
+        vlist[i].z = 0;
         if(v_set[3*i+0] == 1) {
             vlist[i].x += skel->n[0].x;
             vlist[i].y += skel->n[0].y;
@@ -163,6 +235,10 @@ int draw_part(struct SkeletonPart* skel) {
             vlist[i].y -= skel->n[2].y;
             vlist[i].z -= skel->n[2].z;
         }
+        vlist[i].x += skel->center.x;
+        vlist[i].y += skel->center.y;
+        vlist[i].z += skel->center.z;
+
         printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;

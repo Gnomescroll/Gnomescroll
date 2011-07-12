@@ -13,6 +13,26 @@ struct Vector {
     float x,y,z;
 };
 
+struct Voxel {
+    unsigned char r,g,b,a;
+};
+
+struct VoxelList {
+    int num;
+    struct Voxel* list;
+    int xdim, ydim, zdim;
+    float vosize;
+    float theta;
+    struct Vector center;
+    struct Vector n[3]; //the normals
+}
+
+int init7()
+inline void compute_vo_normals(struct VoxelList* volist);
+struct VoxelList* createVoxelList();
+
+// deprecate below line
+
 struct SkeletonPart {
     int nparts;
     struct SkeletonParts* parts;
@@ -36,3 +56,4 @@ int draw_part(struct SkeletonPart* skel);
 
 int init6();
 int _draw_test();
+int _draw_test2();

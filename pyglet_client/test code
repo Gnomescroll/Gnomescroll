@@ -190,12 +190,17 @@ import SDL.gl
 import SDL.skeleton
 w = SDL.gl.Global()
 w.init()
+SDL.skeleton.test()
 
 w.set_projection(-5,0,0,0,0)
 w.world_projection()
-
-SDL.skeleton.test()
 SDL.skeleton.draw()
 w.flip()
+
+while True:
+	w.set_projection(-5,0,0,0,0)
+	w.world_projection()
+	SDL.skeleton.draw()
+	w.flip()
 
 
