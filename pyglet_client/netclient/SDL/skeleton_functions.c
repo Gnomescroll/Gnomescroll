@@ -72,6 +72,7 @@ inline void compute_vo_normals(struct VoxelList* volist) {
     n[2].y = 0;
     n[2].z = volist->vosize*1;
 
+/*
     printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
     printf("Normal y: %f, %f, %f \n", n[1].x, n[1].y, n[1].z);
     printf("Normal z: %f, %f, %f \n", n[2].x, n[2].y, n[2].z);
@@ -80,6 +81,7 @@ inline void compute_vo_normals(struct VoxelList* volist) {
     printf("<x,y>: %f \n",  iproduct(n[0], n[1]));
     printf("<x,z>: %f \n",  iproduct(n[0], n[2]));
     printf("<y,z>: %f \n",  iproduct(n[1], n[2]));
+*/
 }
 
 
@@ -114,7 +116,7 @@ int init7() {
 
 int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
     struct Vertex vlist[8];
-
+    printf("t= %i \n", xi);
     int i,j;
     for(i=0; i<8; i++) {
         vlist[i].x = 0;
