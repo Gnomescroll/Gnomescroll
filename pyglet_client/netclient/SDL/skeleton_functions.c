@@ -86,9 +86,9 @@ inline void compute_vo_normals(struct VoxelList* volist) {
 struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
     volist->vosize = 0.2;
-    vo->xdim = xdim;
-    vo->ydim = ydim;
-    vo->zdim = zdim;
+    volist->xdim = xdim;
+    volist->ydim = ydim;
+    volist->zdim = zdim;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
     return volist;
 }
@@ -106,6 +106,7 @@ inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) 
 
 int init7() {
     vo = createVoxelList(8,8,8);
+    //printf("No seg fault yet \n");
     set(vo, 0,0,0,255,0,0);
     set(vo, 7,7,7,0,255,0);
 //    compute_vo_normals(vo);
@@ -139,13 +140,13 @@ int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
         vlist[i].y += vl->center.y;
         vlist[i].z += vl->center.z;
 
-        printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
+        //printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
 
     glBegin(GL_QUADS);
     for(i=0; i<6;i++) {
-            printf("Quad: \n");
+            //printf("Quad: \n");
                 //if(i==0)
                     glColor3ub(255,0,0);
                 //glTexCoord2i( 0, 0 );
@@ -157,7 +158,7 @@ int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
                 //glTexCoord2i( 0, 1 );
                 glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
                 vt = &vlist[q_set[4*i+j]];
-                printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
+                //printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
 
     }
     glEnd();
