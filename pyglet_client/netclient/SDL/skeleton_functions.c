@@ -114,6 +114,8 @@ int init7() {
     //printf("No seg fault yet \n");
     set(vo, 0,0,0,255,0,0);
     set(vo, 7,7,7,0,255,0);
+    set(vo, 5,5,5,255,0,255);
+    set(vo, 4,4,4,255,0,255);
 //    compute_vo_normals(vo);
 }
 
@@ -121,7 +123,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
     //printf("t= %i \n", xi);
 
-    if(voi.r == 0 & voi.g == 0 & voi.r == 0)
+    if(voi.r == 0 && voi.g == 0 && voi.r == 0)
         return 0;
     int i,j;
     for(i=0; i<8; i++) {
@@ -167,14 +169,17 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex* vt;
 
     for(i=0; i<6;i++) {
+                glColor3ub(voi.r, voi.g, voi.b);
             //printf("Quad: \n");
                 //if(i==0)
+                /*
                 if(xi%3 == 0)
                 glColor3ub(255,0,0);
                 if(xi%3 == 1)
                 glColor3ub(0,255,0);
                 if(xi%3 == 2)
                 glColor3ub(0,0,255);
+                */
                 //glTexCoord2i( 0, 0 );
                 glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
                 //glTexCoord2i( 1, 0 );
@@ -211,7 +216,7 @@ int _draw_test2() {
         }
     }
     glEnd();
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     glColor3ub(255,255,255);
 }
 
