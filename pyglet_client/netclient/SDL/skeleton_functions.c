@@ -114,9 +114,12 @@ int init7() {
 //    compute_vo_normals(vo);
 }
 
-int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
+int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
-    printf("t= %i \n", xi);
+    //printf("t= %i \n", xi);
+
+    if(voi.r == 0 & voi.g == 0 & voi.r == 0)
+        return 0;
     int i,j;
     for(i=0; i<8; i++) {
         vlist[i].x = 0;
@@ -126,16 +129,29 @@ int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
             vlist[i].x += xi*vl->n[0].x;
             vlist[i].y += xi*vl->n[0].y;
             vlist[i].z += xi*vl->n[0].z;
+        } else {
+            vlist[i].x += (xi+1)*vl->n[0].x;
+            vlist[i].y += (xi+1)*vl->n[0].y;
+            vlist[i].z += (xi+1)*vl->n[0].z;
+
         }
         if(v_set[3*i+1] == 1) {
             vlist[i].x += yi*vl->n[1].x;
             vlist[i].y += yi*vl->n[1].y;
             vlist[i].z += yi*vl->n[1].z;
+        } else {
+            vlist[i].x += (yi+1)*vl->n[1].x;
+            vlist[i].y += (yi+1)*vl->n[1].y;
+            vlist[i].z += (yi+1)*vl->n[1].z;
         }
         if(v_set[3*i+2] == 1) {
             vlist[i].x += zi*vl->n[2].x;
             vlist[i].y += zi*vl->n[2].y;
             vlist[i].z += zi*vl->n[2].z;
+        } else {
+            vlist[i].x += (zi+1)*vl->n[2].x;
+            vlist[i].y += (zi+1)*vl->n[2].y;
+            vlist[i].z += (zi+1)*vl->n[2].z;
         }
 
         vlist[i].x += vl->center.x;
@@ -146,11 +162,15 @@ int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
     }
     struct Vertex* vt;
 
-    glBegin(GL_QUADS);
     for(i=0; i<6;i++) {
             //printf("Quad: \n");
                 //if(i==0)
-                    glColor3ub(255,0,0);
+                if(xi%3 == 0)
+                glColor3ub(255,0,0);
+                if(xi%3 == 1)
+                glColor3ub(0,255,0);
+                if(xi%3 == 2)
+                glColor3ub(0,0,255);
                 //glTexCoord2i( 0, 0 );
                 glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
                 //glTexCoord2i( 1, 0 );
@@ -163,8 +183,6 @@ int draw_vol(struct VoxelList* vl, int xi, int yi, int zi) {
                 //printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
 
     }
-    glEnd();
-    glColor3ub(255,255,255);
 
     return 0;
 }
@@ -174,16 +192,23 @@ int _draw_test2() {
     int xi, yi, zi;
     vo->theta += pi/1024;
     compute_vo_normals(vo);
-    for(xi = -vo->xdim/2; xi++; xi < vo->xdim/2) {
-        for(yi = -vo->ydim/2; yi++; yi < vo->ydim/2) {
-            for(zi = -vo->zdim/2; zi++; zi < vo->zdim/2) {
-                draw_vol(vo,xi,yi,zi);
+
+    struct Voxel voi;
+    glEnable(GL_DEPTH_TEST);
+    glBegin(GL_QUADS);
+    for(xi = -vo->xdim/2; xi < vo->xdim/2;xi++ ) {
+        for(yi = -vo->ydim/2; yi < vo->ydim/2; yi++ ) {
+            for(zi = -vo->zdim/2; zi < vo->zdim/2; zi++) {
+                //aprintf("t= %i %i %i\n", xi,yi,zi);
+                voi = get(vo, xi+4, yi+4, zi+4);
+                draw_vol(vo, voi, xi,yi,zi);
 
             }
         }
-
     }
-
+    glEnd();
+    glDisable(GL_DEPTH_TEST);
+    glColor3ub(255,255,255);
 }
 
 ///deprecate below line
