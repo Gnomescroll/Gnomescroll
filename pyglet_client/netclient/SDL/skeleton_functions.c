@@ -91,6 +91,9 @@ struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     volist->xdim = xdim;
     volist->ydim = ydim;
     volist->zdim = zdim;
+    volist->center.x = 0;
+    volist->center.y = 0;
+    volist->center.z = 3;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
     return volist;
 }
@@ -158,6 +161,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
         vlist[i].y += vl->center.y;
         vlist[i].z += vl->center.z;
 
+        //printf("z= %f \n", vl->center.z);
         //printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
     struct Vertex* vt;
@@ -212,7 +216,9 @@ int _draw_test2() {
 }
 
 ///deprecate below line
-
+//
+// DEPRECATE
+//
 struct Skeleton* s1;
 
 int init5() {
@@ -233,7 +239,7 @@ int init6() {
     s2= (struct SkeletonPart*) malloc(sizeof(struct SkeletonPart));
     s2->center.x = 0;
     s2->center.y = 0;
-    s2->center.z = 3;
+    s2->center.z = 4;
     s2->xsize = 1;
     s2->ysize = 1;
     s2->zsize = 1;
