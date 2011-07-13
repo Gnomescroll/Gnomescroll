@@ -114,8 +114,8 @@ int init7() {
     //printf("No seg fault yet \n");
     set(vo, 0,0,0,255,0,0);
     set(vo, 7,7,7,0,255,0);
-    set(vo, 5,5,5,255,0,255);
     set(vo, 4,4,4,255,0,255);
+    set(vo, 3,3,3,255,0,255);
 //    compute_vo_normals(vo);
 }
 
