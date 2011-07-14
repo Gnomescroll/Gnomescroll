@@ -93,18 +93,6 @@ terrain_map = Extension('cube_lib.terrain_map',
                     sources = ['cube_lib/terrain_map.pyx']
                     )
 
-'''
-cube_dat = Extension('cube_lib.cube_dat',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [],
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args,
-                    extra_link_args = extra_link_args,
-                    sources = ['cube_lib/cube_dat.pyx']
-                    )
-'''
-
 map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/lib'],
@@ -115,44 +103,6 @@ map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     sources = ['cube_lib/map_chunk_manager.pyx']
                     )
 
-'''
-ChromeEmbedded = Extension('ChromeEmbedded',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    #language="C++",
-                    include_dirs = ['/usr/local/include',
-                                    ' /usr/include/X11/extensions/',
-                                    '/usr/include/SDL',
-                                    '/usr/lib',
-                                    './include/',
-                                    './',
-                                        ],
-                    libraries = ['SDL','GL','SDopengl L','GLU', 'SDL_image','ChromeEmbedded'], #, 'Awesomium'], #SDL_image ?
-
-                    library_dirs = ['/home/atomos/dc_mmo/pyglet_client/netclient/','/usr/X11R6/lib','usr/lib'],
-                    extra_compile_args = ['-Wl,-rpath,/home/atomos/test/aw2/netclient/aw/']+['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
-                    extra_link_args = ['-Wl,-rpath,/home/atomos/test/aw2/netclient/aw/']+extra_link_args, #['./aw/libAwesomium.so','./aw/test2.o']+extra_link_args,
-                    sources = ['ChromeEmbedded.pyx',]
-                           #    './aw/test2.c'],
-                    )
-'''
-
-'''
-SDL_skeleton = Extension('SDL.skeleton',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/local/include',
-                                    ' /usr/include/X11/extensions/',
-                                    '/usr/include/SDL',
-                                    '/usr/lib',     ],
-                    libraries = ['SDL','GL','SDL','GLU'], #SDL_image ?
-
-                    library_dirs = ['/usr/X11R6/lib','usr/lib'],
-                    extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
-                    extra_link_args = extra_link_args,
-                    sources = [
-                    'SDL/skeleton_functions.c',
-                     'SDL/skeleton.pyx',]
-                                )
-'''
 
 vox_lib = Extension('vox_lib',
                     #define_macros =  [('PLATFORM', 'linux')]

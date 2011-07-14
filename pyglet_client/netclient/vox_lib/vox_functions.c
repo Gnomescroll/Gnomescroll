@@ -138,7 +138,6 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
             vlist[i].x += (xi+1)*vl->n[0].x;
             vlist[i].y += (xi+1)*vl->n[0].y;
             vlist[i].z += (xi+1)*vl->n[0].z;
-
         }
         if(v_set[3*i+1] == 1) {
             vlist[i].x += yi*vl->n[1].x;
@@ -170,17 +169,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
 
     for(i=0; i<6;i++) {
                 glColor3ub(voi.r, voi.g, voi.b);
-            //printf("Quad: \n");
-                //if(i==0)
-                /*
-                if(xi%3 == 0)
-                glColor3ub(255,0,0);
-                if(xi%3 == 1)
-                glColor3ub(0,255,0);
-                if(xi%3 == 2)
-                glColor3ub(0,0,255);
-                */
-                //glTexCoord2i( 0, 0 );
+
                 glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
                 //glTexCoord2i( 1, 0 );
                 glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
@@ -189,8 +178,6 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
                 //glTexCoord2i( 0, 1 );
                 glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
                 vt = &vlist[q_set[4*i+j]];
-                //printf("%f, %f, %f \n",vt->x, vt->y, vt->z);
-
     }
 
     return 0;
@@ -218,4 +205,52 @@ int _draw_test2() {
     glEnd();
     //glDisable(GL_DEPTH_TEST);
     glColor3ub(255,255,255);
+    return 0;
 }
+
+//external interface functions
+int _draw(struct VoxelList* vo;) {
+    struct Voxel voi;
+    glEnable(GL_DEPTH_TEST);
+    glBegin(GL_QUADS);
+    for(xi = -vo->xdim/2; xi < vo->xdim/2;xi++ ) {
+        for(yi = -vo->ydim/2; yi < vo->ydim/2; yi++ ) {
+            for(zi = -vo->zdim/2; zi < vo->zdim/2; zi++) {
+                //aprintf("t= %i %i %i\n", xi,yi,zi);
+                voi = get(vo, xi+vo->xdim/2, yi+vo->ydim/2, zi+vo->zdim/2);
+                draw_vol(vo, voi, xi,yi,zi);
+
+            }
+        }
+    }
+    glEnd();
+    //glDisable(GL_DEPTH_TEST);
+    glColor3ub(255,255,255);
+    return 0;
+}
+
+inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z) {
+    return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
+}
+
+inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a) {
+    struct Voxel* t = &vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
+    t->r = r;
+    t->g = g;
+    t->b = b;
+    t->a = a;
+}
+
+struct VoxelList* _createVoxelList(int xdim, int ydim, int zdim, float x, float y, float z, float theta) {
+    struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
+    volist->vosize = 0.2;
+    volist->xdim = xdim;
+    volist->ydim = ydim;
+    volist->zdim = zdim;
+    volist->center.x = 0;
+    volist->center.y = 0;
+    volist->center.z = 3;
+    volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
+    return volist;
+}
+
