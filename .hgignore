@@ -12,6 +12,7 @@ map_chunk_manager.c
 hud.c
 ChromeEmbedded.c
 vox.c
+vox_lib.c
 
 Safe Browsing Bloom
 Safe Browsing Bloom Filter 2

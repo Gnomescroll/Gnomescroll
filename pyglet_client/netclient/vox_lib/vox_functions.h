@@ -27,9 +27,10 @@ struct VoxelList {
     struct Vector n[3]; //the normals
 };
 
-int init7();
 inline void compute_vo_normals(struct VoxelList* volist);
 struct VoxelList* createVoxelList();
+int init7();
+int _draw_test2();
 
 // deprecate below line
 
@@ -51,9 +52,3 @@ struct Skeleton {
     int nvertex;
     //struct Vertex vertexList;
 };
-
-int draw_part(struct SkeletonPart* skel);
-
-int init6();
-int _draw_test();
-int _draw_test2();

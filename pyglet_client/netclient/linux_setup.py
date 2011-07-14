@@ -154,7 +154,7 @@ SDL_skeleton = Extension('SDL.skeleton',
                                 )
 '''
 
-vox_lib_vox = Extension('vox_lib.vox',
+vox_lib = Extension('vox_lib',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
                                     ' /usr/include/X11/extensions/',
@@ -167,11 +167,11 @@ vox_lib_vox = Extension('vox_lib.vox',
                     extra_link_args = extra_link_args,
                     sources = [
                     'vox_lib/vox_functions.c',
-                     'vox_lib/vox.pyx',]
+                     'vox_lib/vox_lib.pyx',]
                                 )
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib_vox, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
