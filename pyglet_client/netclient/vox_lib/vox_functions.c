@@ -243,16 +243,20 @@ inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b,
     t->a = a;
 }
 
-struct VoxelList* _createVoxelList(int xdim, int ydim, int zdim, float x, float y, float z, float theta) {
+struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta) {
     struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
-    volist->vosize = 0.2;
+    volist->vosize = vo_size;
     volist->xdim = xdim;
     volist->ydim = ydim;
     volist->zdim = zdim;
-    volist->center.x = 0;
-    volist->center.y = 0;
-    volist->center.z = 3;
+    volist->center.x = x;
+    volist->center.y = y;
+    volist->center.z = z;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
     return volist;
 }
 
+int _deleteVoxelList(VoxelList* vo) {
+    free(vo);
+    return 0;
+}

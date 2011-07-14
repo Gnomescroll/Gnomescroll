@@ -57,4 +57,6 @@ struct Skeleton {
 int _draw(struct VoxelList* vo);
 inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z);
 inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a);
-struct VoxelList* _createVoxelList(int xdim, int ydim, int zdim, float x, float y, float z, float theta);
+struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta);
+//resize vorxel list?
+int _deleteVoxelList(VoxelList* vo);
