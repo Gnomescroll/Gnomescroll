@@ -136,6 +136,7 @@ ChromeEmbedded = Extension('ChromeEmbedded',
                     )
 '''
 
+'''
 SDL_skeleton = Extension('SDL.skeleton',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
@@ -151,9 +152,26 @@ SDL_skeleton = Extension('SDL.skeleton',
                     'SDL/skeleton_functions.c',
                      'SDL/skeleton.pyx',]
                                 )
+'''
+
+vox_lib_vox = Extension('vox_lib.vox',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = ['/usr/local/include',
+                                    ' /usr/include/X11/extensions/',
+                                    '/usr/include/SDL',
+                                    '/usr/lib',     ],
+                    libraries = ['SDL','GL','SDL','GLU'], #SDL_image ?
+
+                    library_dirs = ['/usr/X11R6/lib','usr/lib'],
+                    extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
+                    extra_link_args = extra_link_args,
+                    sources = [
+                    'vox_lib/vox_functions.c',
+                     'vox_lib/vox.pyx',]
+                                )
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [SDL_skeleton, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
+    ext_modules = [vox_lib_vox, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )

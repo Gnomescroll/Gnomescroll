@@ -1,4 +1,4 @@
-#include "./skeleton_functions.h"
+#include "./vox_functions.h"
 
 
 #define pi 3.14159
@@ -209,7 +209,7 @@ int _draw_test2() {
         for(yi = -vo->ydim/2; yi < vo->ydim/2; yi++ ) {
             for(zi = -vo->zdim/2; zi < vo->zdim/2; zi++) {
                 //aprintf("t= %i %i %i\n", xi,yi,zi);
-                voi = get(vo, xi+4, yi+4, zi+4);
+                voi = get(vo, xi+vo->xdim/2, yi+vo->ydim/2, zi+vo->zdim/2);
                 draw_vol(vo, voi, xi,yi,zi);
 
             }

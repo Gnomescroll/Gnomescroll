@@ -28,7 +28,7 @@ int _get_key_state(key_state_func key_state_cb) {
     SDL_PumpEvents();
     //keystate = SDL_GetKeyState(numkeys);
 
-    _key_state_callback(key_state_cb, keystate, numkeys);
+    _key_state_callback(key_state_cb, keystate, numkeys);  ///this is only line that does anything
     if(keystate[96] != 0){
     int x;
     for(x=0; x<numkeys; x++) {

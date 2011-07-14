@@ -1,6 +1,6 @@
-from skeleton_dat import *
+from vox_dat import *
 
-cdef extern from 'skeleton_functions.h':
+cdef extern from 'vox_functions.h':
     int init6()
     int init7()
     int _draw_test()
