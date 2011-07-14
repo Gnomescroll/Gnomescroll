@@ -585,36 +585,35 @@ class ChatInputProcessor:
         print 'CHAT ON_KEY_PRESS', symbol
         callback = None
         if settings.pyglet:
-            ENTER = key.ENTER
-            ESC = key.ESCAPE
+            if symbol == key.ENTER:         # submit
+                def callback(input):
+                    ChatClientGlobal.chatClient.send()
+                    return lambda keyboard: keyboard.toggle_chat()
+            elif symbol == key.ESC:      # clear, cancel chat
+                def callback(input):
+                    input.clear()
+                    return lambda keyboard: keyboard.toggle_chat()
         else:
-            ENTER = 'ENTER'
-            ESC = 'ESC'
-            BACKSPACE = 'BACKSPACE'
-            LEFT = 'LEFT'
-            RIGHT = 'RIGHT'
-            UP = 'UP'
-            DOWN = 'DOWN'
-        if symbol == ENTER:         # submit
-            def callback(input):
-                ChatClientGlobal.chatClient.send()
-                return lambda keyboard: keyboard.toggle_chat()
-        elif symbol == ESC:      # clear, cancel chat
-            def callback(input):
-                input.clear()
-                return lambda keyboard: keyboard.toggle_chat()
-        if symbol == 'UP':            # up history
-            callback = lambda input: input.history_older()
-        elif symbol == 'DOWN':        # down history
-            callback = lambda input: input.history_newer()
-        elif symbol == 'LEFT':        # move cursor
-            callback = lambda input: input.cursor_left()
-        elif symbol == 'RIGHT':       # move cursor
-            callback = lambda input: input.cursor_right()
-        elif symbol == 'BACKSPACE':   # delete
-            callback = lambda input: input.remove()
-        elif symbol == 'SPACE':
-            callback = self.on_text(' ')
+            if symbol == 'ENTER':         # submit
+                def callback(input):
+                    ChatClientGlobal.chatClient.send()
+                    return lambda keyboard: keyboard.toggle_chat()
+            elif symbol == 'ESC':      # clear, cancel chat
+                def callback(input):
+                    input.clear()
+                    return lambda keyboard: keyboard.toggle_chat()
+            if symbol == 'UP':            # up history
+                callback = lambda input: input.history_older()
+            elif symbol == 'DOWN':        # down history
+                callback = lambda input: input.history_newer()
+            elif symbol == 'LEFT':        # move cursor
+                callback = lambda input: input.cursor_left()
+            elif symbol == 'RIGHT':       # move cursor
+                callback = lambda input: input.cursor_right()
+            elif symbol == 'BACKSPACE':   # delete
+                callback = lambda input: input.remove()
+            elif symbol == 'SPACE':
+                callback = self.on_text(' ')
         return callback
 
     def on_text(self, text):
