@@ -22,10 +22,12 @@ def setup_keystring():
     global Keystring
     global special_keys
     special_keys = {
+    'BACKSPACE' : 8,
     'TAB': 9,
     'ENTER': 13,
     'ESC': 27,
     'SPACE': 32,
+    'DELETE': 127,
     'LEFT': 276,
     'RIGHT': 275,
     'UP' : 273,
@@ -67,7 +69,10 @@ class InputEventGlobal:
 
     #add support for key pressed/key released
     def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
-        key = Keystring.get(keycode, None)
+        if keycode == 0:
+            key = key_string.upper().replace(' ', '_')
+        else:
+            key = Keystring.get(keycode, None)
         #uncomment to see key inputs
         print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
@@ -298,7 +303,6 @@ class Keyboard(object):
         else:
             InputGlobal.input = 'chat'
 
-    # called in main game loop
     def stateHandler(self, keyboard):
         if InputGlobal.input == 'chat':
             return
