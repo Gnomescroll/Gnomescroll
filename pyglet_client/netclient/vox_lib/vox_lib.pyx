@@ -83,6 +83,7 @@ cdef class Vox:
         d['vosize'] = self.vo.vosize
         d['dim'] = [self.vo.xdim, self.vo.ydim, self.vo.zdim]
         d['list'] = self._dump_list()
+        return d
 
 import json
 
@@ -98,7 +99,6 @@ class Vox_loader:
             xdim, ydim, zdim = l['dim']
             vosize = l['vosize']
             list = l['list']
-            #json.dump(obj, FILE)
         except:
             print "Error Loading: error in media/vox/%s failed" % (file)
         try:

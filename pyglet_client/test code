@@ -187,20 +187,21 @@ while True:
 ## player model draw test ##
 
 import SDL.gl
-import SDL.skeleton
+import vox_lib
 w = SDL.gl.Global()
 w.init()
-SDL.skeleton.test()
+vox_lib.test()
 
 w.set_projection(-5,0,0,0,0)
 w.world_projection()
-SDL.skeleton.draw()
+vox_lib.draw()
 w.flip()
 
 while True:
-	w.set_projection(-5,0,0,0,0)
+	w.set_projection(-3,0,0,3,0)
 	w.world_projection()
-	SDL.skeleton.draw()
+	vox_lib.draw()
 	w.flip()
 
+## vox lib load/save test ##
 
