@@ -17,12 +17,10 @@ else:
     import SDL.gl
     import SDL.input
     import SDL.hud
-    #import SDL.skeleton
     import vox_lib
     import cube_lib.VBO
 
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
-    #SDL.skeleton.test()
     vox_lib.test()
 
 #import cython
@@ -165,7 +163,6 @@ class App(object):
                 self.camera.camera_view()
 
             self.camera.worldProjection()
-            #SDL.skeleton.draw() ###debugging
             vox_lib.draw()
 
             #cube_lib.VBO.draw_test_chunk()

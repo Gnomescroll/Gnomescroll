@@ -209,8 +209,10 @@ int _draw_test2() {
 }
 
 //external interface functions
-int _draw(struct VoxelList* vo;) {
+int _draw(struct VoxelList* vo) {
+    int xi, yi, zi;
     struct Voxel voi;
+    compute_vo_normals(vo);
     glEnable(GL_DEPTH_TEST);
     glBegin(GL_QUADS);
     for(xi = -vo->xdim/2; xi < vo->xdim/2;xi++ ) {

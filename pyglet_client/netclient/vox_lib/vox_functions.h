@@ -52,9 +52,6 @@ struct Skeleton {
     int nvertex;
     //struct Vertex vertexList;
 };
-
-int _draw(struct VoxelList* vo);
-
 //
 
 int _draw(struct VoxelList* vo);
