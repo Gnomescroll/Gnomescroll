@@ -586,15 +586,15 @@ class ChatInputProcessor:
         symbol = symbol.upper()
         print 'CHAT ON_KEY_PRESS', symbol
         callback = None
-        if symbol == 'ENTER':         # submit
+        if symbol == 'RETURN':         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
                 return lambda keyboard: keyboard.toggle_chat()
-        elif symbol == 'ESC':      # clear, cancel chat
+        elif symbol == 'ESCAPE':      # clear, cancel chat
             def callback(input):
                 input.clear()
                 return lambda keyboard: keyboard.toggle_chat()
-        if symbol == 'UP':            # up history
+        elif symbol == 'UP':            # up history
             callback = lambda input: input.history_older()
         elif symbol == 'DOWN':        # down history
             callback = lambda input: input.history_newer()

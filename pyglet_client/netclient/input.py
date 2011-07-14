@@ -261,9 +261,9 @@ class Keyboard(object):
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol)
                 #self.key_handlers.get(symbol, lambda: None)()
-            if symbol == 'TAB':
+            if symbol == 'tab':
                 InputGlobal.scoreboard = True
-            if symbol == 'ESC':
+            if symbol == 'escape':
                 GameStateGlobal.exit = True
 
             ### FIX
