@@ -41,7 +41,7 @@ int _get_key_state(key_state_func key_state_cb) {
 }
 
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
-
+    int t; //temp
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
 
@@ -71,7 +71,10 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
             //if(Event.key.keysym.unicode != 0) {}
             //_key_event_callback(keyboard_event_cb, getUnicodeValue(Event.key.keysym));
             //printf("_%i\n", getUnicodeValue(Event.key.keysym));
-            _key_text_event_callback(keyboard_text_event_cb, getUnicodeValue(Event.key.keysym), SDL_GetKeyName(Event.key.keysym.sym));
+
+            t = getUnicodeValue(Event.key.keysym);
+            if(t==0) t= Event.key.keysym.sym;
+            _key_text_event_callback(keyboard_text_event_cb, t, SDL_GetKeyName(Event.key.keysym.sym));
             ///SDL_EnableUNICODE( SDL_DISABLE );
             //SDL_GetKeyName(Event.key));
 
