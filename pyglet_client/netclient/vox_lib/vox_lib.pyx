@@ -37,7 +37,7 @@ def draw():
 cdef class Vox:
     cdef VoxelList* vo
 
-    def __init__(self,xdim,ydim,zdim,x,y,z,theta):
+    def __init__(self,x,y,z,theta, xdim, ydim, zdim):
         vosize = 0.2
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
 
@@ -69,4 +69,53 @@ cdef class Vox:
     cpdef collision_check(self, float x,float y,float z):
         pass
 
+    def dump_list(self): # serialize to (x,y,x,r,g,b,a) pairs
+        cdef Voxel v
+        l = []
+        for x in range(0,vo.xdim):
+            for y in range(0, vo.ydim):
+                for z in range(0, vo.zdim):
+                    v = _get(self.vo, x,y,z)
+                        l.append([x,y,z,v.r,v.g,v.b,v.a])
+    def serialize(self):
+        d= {}
+        d['vosize'] = self.vo.vosize
+        d['dim'] = [self.vo.xdim, self.vo.ydim, self.vo.zdim]
+        d['list'] = self._dump_list()
+
+import json
+
+class Vox_loader:
+
+    def __init__():
+        self.file = None
+        self.Vox = None
+
+    def load(self, file):
+        try:
+            FILE = open(".media/vox/"+file,"r")
+            l = json.load(FILE)
+            xdim, ydim, zdim = l['dim']
+            vosize = l['vosize']
+            list = l['list']
+            #json.dump(obj, FILE)
+        except:
+            print "Error Loading: error in media/vox/%s failed" % (file)
+        try:
+            x,y,z,theta = 0,0,0,0
+            self.vox = Vox(vosize, xdim, ydim, zdim, x,y,z,theta)
+            for (x,y,z,r,g,b,a) in list:
+                self.vox.set(x,y,z,r,g,b,a)
+        except:
+            print "Error Loading: Cannot Creating Model for:" % (file)
+
+    def save(self, file=None):
+        if file==None:
+            FILE = self.file
+        else:
+            file = file
+        try:
+            json.dump(self.Vox.serialize(), FILE)
+        except:
+            print "Error Saving: media/vox/%s" % (file)
 
