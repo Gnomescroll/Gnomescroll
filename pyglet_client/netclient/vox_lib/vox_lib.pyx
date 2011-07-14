@@ -72,11 +72,12 @@ cdef class Vox:
     def dump_list(self): # serialize to (x,y,x,r,g,b,a) pairs
         cdef Voxel v
         l = []
-        for x in range(0,vo.xdim):
-            for y in range(0, vo.ydim):
-                for z in range(0, vo.zdim):
+        for x in range(0,self.vo.xdim):
+            for y in range(0, self.vo.ydim):
+                for z in range(0, self.vo.zdim):
                     v = _get(self.vo, x,y,z)
-                        l.append([x,y,z,v.r,v.g,v.b,v.a])
+                    l.append([x,y,z, v.r, v.g, v.b, v.a])
+
     def serialize(self):
         d= {}
         d['vosize'] = self.vo.vosize
@@ -87,9 +88,8 @@ import json
 
 class Vox_loader:
 
-    def __init__():
-        self.file = None
-        self.Vox = None
+    def __init__(self):
+        pass
 
     def load(self, file):
         try:
@@ -103,19 +103,15 @@ class Vox_loader:
             print "Error Loading: error in media/vox/%s failed" % (file)
         try:
             x,y,z,theta = 0,0,0,0
-            self.vox = Vox(vosize, xdim, ydim, zdim, x,y,z,theta)
+            vox = Vox(vosize, xdim, ydim, zdim, x,y,z,theta)
             for (x,y,z,r,g,b,a) in list:
-                self.vox.set(x,y,z,r,g,b,a)
+                vox.set(x,y,z,r,g,b,a)
+            return vox
         except:
             print "Error Loading: Cannot Creating Model for:" % (file)
 
-    def save(self, file=None):
-        if file==None:
-            FILE = self.file
-        else:
-            file = file
-        try:
-            json.dump(self.Vox.serialize(), FILE)
-        except:
-            print "Error Saving: media/vox/%s" % (file)
+    def save(self, Vox, file):
+        FILE = open(".media/vox/"+file,"w")
+        s = Vox.serialize()
+        json.dump(s, file)
 
