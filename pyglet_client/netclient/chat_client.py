@@ -666,6 +666,8 @@ class ChatInputHistory:
             return self.buffer[self.current_index]
 
     def add(self, text):
+        if text.strip() == '':
+            return
         self.buffer.appendleft(text)
 
 # returns data for rendering
