@@ -256,7 +256,7 @@ struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, 
     return volist;
 }
 
-int _deleteVoxelList(VoxelList* vo) {
+int _deleteVoxelList(struct VoxelList* vo) {
     free(vo);
     return 0;
 }

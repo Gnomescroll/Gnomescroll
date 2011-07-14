@@ -38,7 +38,8 @@ cdef class Vox:
     cdef VoxelList* vo
 
     def __init__(self,xdim,ydim,zdim,x,y,z,theta):
-        self.vo = _createVoxelList(xdim, ydim, zdim, x, y, z, theta)
+        vosize = 0.2
+        self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
 
     def __del__(self):
         _deleteVoxelList(self.vo)
@@ -55,9 +56,6 @@ cdef class Vox:
     cpdef set(self, int x,int y,int z,int r,int g, int b, int a):
         _set(self.vo, x,y,z,r,g,b,a)
 
-    cpdef collision_check(self, float x,float y,float z):
-        pass
-
     ## utility for editing ##
     def set_raw(self, int i, int r, int g,int b,int a):
         self.vo.list[i].r = r
@@ -65,8 +63,8 @@ cdef class Vox:
         self.vo.list[i].b = b
         self.vo.list[i].b = a
 
-    cdef Voxel get_raw(self.vo, o):
-        return self.vo.i.list[i]
+    cdef Voxel get_raw(self, int i):
+        return self.vo.list[i]
 
     cpdef collision_check(self, float x,float y,float z):
         pass
