@@ -613,6 +613,8 @@ class ChatInputProcessor:
             callback = lambda input: input.cursor_right()
         elif symbol == 'BACKSPACE':   # delete
             callback = lambda input: input.remove()
+        elif symbol == 'SPACE':
+            callback = self.on_text(' ')
         return callback
 
     def on_text(self, text):
