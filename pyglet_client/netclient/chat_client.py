@@ -141,7 +141,7 @@ class ChatClient:
 
         if text is None:
             text = self.input.submit()
-        if text == '':
+        if text.strip() == '':
             return
         if text[0] == '/':
             msg = ChatCommand(text)
