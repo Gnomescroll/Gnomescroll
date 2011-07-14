@@ -253,6 +253,15 @@ struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, 
     volist->center.y = y;
     volist->center.z = z;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
+    int i;
+    struct Voxel* v;
+    for(i=0;i<xdim*ydim*zdim;i++) {
+        v = &volist->list[i];
+        v->r = 0;
+        v->g = 0;
+        v->b = 0;
+        v->a = 0;
+    }
     return volist;
 }
 

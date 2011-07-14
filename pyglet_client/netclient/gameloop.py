@@ -140,7 +140,17 @@ class App(object):
         #p.start()
         average = []
         ltick, ctick = 0,0
+
+        #TEST
+        theta = 0
+        v = vox_lib.Vox(0,0,6,0,8,8,8)
+        v.set(4,4,4,255,0,0,0)
+        v.set(5,5,5,255,0,0,0)
+        #v.move(0,0,5, theta)
+        #END TEST
+
         while not GameStateGlobal.exit:
+            theta += -.005 #test
             if settings.pyglet:
                 self.win.dispatch_events()
                 InputGlobal.keyboard.stateHandler(keyboard)
@@ -164,6 +174,8 @@ class App(object):
 
             self.camera.worldProjection()
             vox_lib.draw()
+            v.move(2,2,3, theta)
+            v.draw()
 
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()

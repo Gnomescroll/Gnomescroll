@@ -42,6 +42,7 @@ cdef class Vox:
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
 
     def __del__(self):
+        print "Vox deconstructor"
         _deleteVoxelList(self.vo)
 
     cpdef draw(self):

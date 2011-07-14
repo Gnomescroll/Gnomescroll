@@ -184,7 +184,7 @@ while True:
 	c.draw()
 	w.flip()
 
-## player model draw test ##
+## vox draw test ##
 
 import SDL.gl
 import vox_lib
@@ -192,16 +192,34 @@ w = SDL.gl.Global()
 w.init()
 vox_lib.test()
 
-w.set_projection(-5,0,0,0,0)
-w.world_projection()
-vox_lib.draw()
-w.flip()
-
 while True:
-	w.set_projection(-3,0,0,3,0)
+	w.set_projection(-3,0,3,0,0)
 	w.world_projection()
 	vox_lib.draw()
 	w.flip()
 
-## vox lib load/save test ##
+## vox_lib OOP test ##
+
+import SDL.gl
+import vox_lib
+w = SDL.gl.Global()
+w.init()
+
+v = vox_lib.Vox(0,0,3,0,8,8,8)
+v.set(4,4,4,255,0,0)
+v.set(5,5,5,255,0)
+
+w.set_projection(-3,0,3,0,0)
+w.world_projection()
+v.draw()
+w.flip()
+
+theta = 0
+while True:
+	theta += -.007
+	w.set_projection(-3,0,3,0,0)
+	w.world_projection()
+	v.draw()
+	v.move(0,0,3, theta)
+	w.flip()
 
