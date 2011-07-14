@@ -69,10 +69,11 @@ class InputEventGlobal:
 
     #add support for key pressed/key released
     def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
-        if keycode == 0:
-            key = key_string.upper().replace(' ', '_')
-        else:
-            key = Keystring.get(keycode, None)
+        #if keycode == 0:
+            #key = key_string.upper().replace(' ', '_')
+        #else:
+            #key = Keystring.get(keycode, None)
+        key = key_string
         #uncomment to see key inputs
         print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
@@ -249,10 +250,10 @@ class Keyboard(object):
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
         if InputGlobal.input == 'chat':
-            if symbol in special_keys:
-                callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
-            else:
-                callback = ChatClientGlobal.chatClient.input.on_text(symbol)
+            #if symbol in special_keys:
+            callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
+            #else:
+             #   callback = ChatClientGlobal.chatClient.input.on_text(symbol)
             self._input_callback(callback)
         else:
             if symbol == 'y':
