@@ -567,7 +567,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            NetOut.sendMessage(fire_command, self)
+            if weapon.hitscan:
+                # determine target w/ ray cast
+                #target = ray_cast_from(agent)
+                NetOut.sendMessage.hitscan(target)
+            else:
+                NetOut.sendMessage(fire_command, self)
 
     def add_ammo(self, amt, weapon_type):
         for weapon in weapons:
