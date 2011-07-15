@@ -314,9 +314,11 @@ int _point_collision(struct VoxelList* vo, float x, float y, float z) {
 
 int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle) {
     float x1,y1,z1;
+    printf("x-y angle = %f, %f \n", x_angle, y_angle);
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
+
     printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
 }
@@ -333,10 +335,11 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     z0 = vo->center.z - z1;
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
+    t = t/(_x2*_x2+_y2*_y2+_z2*_z2);
     float r, x,y,z;
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
-    y = t*z2 - z0; y*=y;
+    z = t*z2 - z0; y*=y;
     r = x+y+z;
 
     x = t*_x2 + x1;
@@ -346,7 +349,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     glBegin(GL_LINES);
         glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
         glVertex3f(x1,y1,z1); // origin of the line
-        glVertex3f(_x2,_y2,_z2); // ending point of the line
+        glVertex3f(_x2+x1,_y2+y1,_z2+z1); // ending point of the line
     glEnd();
     glColor3ub(255,255,255);
 
@@ -358,8 +361,9 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     } else {
         printf("Within Radius of Voxel Volume \n");
         printf("temp= %f, radius= %f \n", r, vo->radius2);
+        printf("cast vector length2: %f \n", x*x+y*y+z*z);
 
-        glBegin(GL_LINES);
+        glBegin(GL_POINTS);
             glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
             float u = 0.1;
             glVertex3f(x+u,y,z);
