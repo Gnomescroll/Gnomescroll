@@ -191,8 +191,8 @@ class App(object):
                 x = a.x
                 y = a.y
                 z = a.z
-                x_angle = a.d_xa
-                y_angle = a.d_ya
+                x_angle = a.x_angle
+                y_angle = a.y_angle
                 v.ray_cast2(x,y,z, x_angle, y_angle)
             #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
             #v.collision_test(0.1,0.0,2.0)
