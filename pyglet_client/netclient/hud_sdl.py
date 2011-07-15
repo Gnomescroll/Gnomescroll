@@ -169,18 +169,24 @@ class Hud(object):
                 curr_sb.text = txt
                 curr_sb.end_update()
             curr_sb.draw()
+
+    def _draw_line(self, x, y, x1, y1, color=None):
+        if color is None:
+            r, g, b = (255, 255, 0)
+        else:
+            r, g, b = color
+        SDL.gl.draw_line(r, g, b, x, y, 0, x1, y1, 0)
             
     def _draw_horizontal_line(self, x, y, length=10):
-        x1 = x + length
-        y1 = y
-        SDL.gl.draw_line(255, 255, 0, x, y, 0, x1, y1, 0)
-        SDL.gl.draw_line(255, 255, 0, x, y+1, 0, x1, y1+1, 0)
+        self._draw_line(x, y, x + length, y)
 
     def _draw_vertical_line(self, x, y, length=10):
-        x1 = x
-        y1 = y + length
-        SDL.gl.draw_line(255, 255, 0, x, y, 0, x1, y1, 0)
-        SDL.gl.draw_line(255, 255, 0, x+1, y, 0, x1+1, y1, 0)
+        self._draw_line(x, y, x, y + length)
+        
+    def _draw_vertical_lines(self, x, y, length=10, w=2):
+        for i in range(w):
+            _x = x + i
+            self._draw_vertical_line(_x, y, length)
 
     def draw_chat(self):
         self._draw_chat_messages()
@@ -257,14 +263,19 @@ class Hud(object):
         cursor = ChatClientGlobal.chatRender.cursor_position()
         input = self.text_dict['input']
         input_length = len(input.text)
-        length = input.height / 2
+        #length = input.height / 2
+        length = 3
         y = input.y
         x = input.x
         if cursor != 0:
-            if cursor == input_length:
-                x += input.width
-            else:
-                dummy = self.text_dict['cursor_position']
-                dummy.text = input.text[0:cursor]
-                x += dummy.width
-        self._draw_vertical_line(x, y, length)
+            # this is a guess
+            x += cursor * 10
+
+            # this is the right way, if the SDL.text object calculated it's width and after __setitem__('text')
+            #if cursor == input_length:
+                #x += input.width
+            #else:
+                #dummy = self.text_dict['cursor_position']
+                #dummy.text = input.text[0:cursor]
+                #x += dummy.width
+        self._draw_vertical_lines(x, y, length, 2)

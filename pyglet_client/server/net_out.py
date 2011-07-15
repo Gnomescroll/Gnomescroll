@@ -121,6 +121,14 @@ class EventOut:
             'list' : list,
         }
 
+    @sendJSONevent('hitscan')
+    def hitscan(self, target, agent_id, weapon_type): # use projectile_id if we want multiple projectiles per weapon
+        return {
+            'target'    :   target,
+            'aid'       :   agent_id,
+            'wtype'     :   weapon_type,
+        }
+
 #this is global message out across the connection pool
 class MessageOut:
     def init(self):

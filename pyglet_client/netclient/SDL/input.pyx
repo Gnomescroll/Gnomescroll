@@ -106,9 +106,11 @@ cdef int key_event_callback(char key):
 cdef int key_text_event_callback(char key, char* key_name):
     global input_callback, key_text_event_callback_stack
     #print "keycode_="+ str(key)
+    key_string = key_name
+    #print 'keystring_= %s' % (str(key_name),)
     cdef bytes py_string
     py_string = key_name
-    key_string = key_name.decode('ascii')
+    #key_string = key_name.decode('ascii')
     #input.inputEventGlobal.keyboard_text_event(key, key_string)
     key_text_event_callback_stack.append((key, key_string))
     #input_callback.keyboard_text_event(key, key_string)

@@ -348,12 +348,17 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('LaserGun'),
             wl.create('Pick'),
             wl.create('BlockApplier'),
+            wl.create('HitscanLaserGun'),
         ]
+        self._active_weapon = 0
 
         self.owner = player_id
 
     def pos(self):
         return self.state[0:3]
+
+    def active_weapon(self):
+        return self.weapons[self._active_weapon]
 
     def __getattr__(self, attr):
         if attr == 'x':
@@ -363,7 +368,7 @@ class Agent(AgentPhysics, AgentAction):
         elif attr == 'z':
             return self.__dict__['state'][2]
         else:
-            raise AttributeError
+            raise AttributeError, 'Agent instance has no property %s' % (attr,)
 
     def __setattr__(self, attr, val):
         if attr == 'x':
@@ -384,17 +389,45 @@ class Agent(AgentPhysics, AgentAction):
                 'health': self.health,
                 'dead'  : int(self.dead),
                 'owner' : self.owner,
-                'weapons': [weapon.json() for weapon in self.weapons],
+                'weapons': {
+                    'weapons': [weapon.json() for weapon in self.weapons],
+                    'active' : self._active_weapon,
+                },
                 'state' : self.state,
             })
         else:
             if type(properties) == str:
                 properties = [properties]
             for prop in properties:
-                d[prop] = getattr(self, prop)
+                if prop == 'weapons':
+                    d[prop] = {
+                        'weapons': [weapon.json() for weapon in self.weapons],
+                        'active' : self._active_weapon,
+                    }
+                elif prop == 'active_weapon':
+                    d['weapons'] = {
+                        'active'    :   self._active_weapon,
+                    }
+                else:
+                    d[prop] = getattr(self, prop)
                 if prop == 'dead':
                     d[prop] = int(d[prop])
         return d
+
+    def drop_weapon(self, weapon, by_id=False):
+        old_len = len(self.weapons)
+        if by_id:
+            self.weapons = [w for w in self.weapons if w.id != weapon]
+        else:
+            self.weapons = [w for w in self.weapons if w != weapon]
+        if old_len != len(self.weapons):
+            NetOut.event.agent_update(self, 'weapons')
+
+    def set_active_weapon(self, weapon_index):
+        old = self._active_weapon
+        self._active_weapon = weapon_index
+        if old != weapon_index:
+            NetOut.event.agent_update(self, 'active_weapon')
 
     # set agent state explicitly
     def set_agent_control_state(self, tick, state, angle):
