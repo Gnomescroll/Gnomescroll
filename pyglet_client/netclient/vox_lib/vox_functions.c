@@ -97,7 +97,7 @@ inline void compute_vo_normals(struct VoxelList* volist) {
 */
 }
 
-
+/*
 struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
     volist->vosize = 0.2;
@@ -108,10 +108,10 @@ struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     volist->center.y = 0;
     volist->center.z = 3;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
-    volist->radius2 = (volist->vosize)*(float)(xdim+ydim+zdim);volist->radius2 *= volist->radius2; //compute radius
+    volist->radius2 = (volist->vosize*volist->vosize)*(float)(xdim*xdim+ydim*ydim+zdim*zdim);
     return volist;
 }
-
+*/
 inline struct Voxel get(struct VoxelList* vl, int x, int y, int z) {
     return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
 }
@@ -270,6 +270,7 @@ struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, 
     volist->center.y = y;
     volist->center.z = z;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
+    volist->radius2 = (volist->vosize*volist->vosize)*(float)(xdim*xdim+ydim*ydim+zdim*zdim);
     int i;
     struct Voxel* v;
     for(i=0;i<xdim*ydim*zdim;i++) {
@@ -335,7 +336,9 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     z0 = vo->center.z - z1;
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
-    t = t/(_x2*_x2+_y2*_y2+_z2*_z2);
+    printf("t_0.= %f, %f \n", t);
+    t = t/(x2*x2+y2*y2+z2*z2);
+    printf("t= %f \n", t);
     float r, x,y,z;
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
@@ -356,11 +359,11 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     //float temp = t*t*(x2*x2 + y2*y2 + z2*z2); //radius of
     if(r > vo->radius2) {
         printf("Missed Voxel Volume \n");
-        printf("temp= %f, radius= %f \n", r, vo->radius2);
+        printf("r= %f, radius= %f \n", r, vo->radius2);
         return 0;
     } else {
         printf("Within Radius of Voxel Volume \n");
-        printf("temp= %f, radius= %f \n", r, vo->radius2);
+        printf("r= %f, radius= %f \n", r, vo->radius2);
         printf("cast vector length2: %f \n", x*x+y*y+z*z);
 
         glBegin(GL_POINTS);

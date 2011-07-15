@@ -30,7 +30,7 @@ struct VoxelList {
 };
 
 inline void compute_vo_normals(struct VoxelList* volist);
-struct VoxelList* createVoxelList();
+//struct VoxelList* createVoxelList();
 //int init7();
 //int _draw_test2();
 
