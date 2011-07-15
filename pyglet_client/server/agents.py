@@ -348,6 +348,7 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('LaserGun'),
             wl.create('Pick'),
             wl.create('BlockApplier'),
+            wl.create('HitscanLaserGun'),
         ]
 
         self.owner = player_id

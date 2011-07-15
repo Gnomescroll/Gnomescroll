@@ -276,12 +276,13 @@ class GenericMultiObjectList(GenericObjectList):
 class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
-        from weapons import LaserGun, Pick, BlockApplier
+        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun
         GenericMultiObjectList.__init__(self)
         self._allow_klasses([ \
             LaserGun,
             Pick,
             BlockApplier,
+            HitscanLaserGun,
         ])
 
     def create(self, klass_name=None, *args, **kwargs):

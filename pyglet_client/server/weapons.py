@@ -10,6 +10,7 @@ class WeaponList(GenericMultiObjectList):
             LaserGun,
             Pick,
             BlockApplier,
+            HitscanLaserGun,
         ])
 
     def create(self, klass_name, *args, **kwargs):
@@ -25,6 +26,7 @@ class Weapon(EquippableObject):
         'LaserGun'  :   1,
         'Pick'      :   2,
         'BlockApplier':   3,
+        'HitscanLaserGun': 4,
     }
 
     def __init__(self, id, owner=None):
@@ -87,6 +89,12 @@ class LaserGun(Weapon):
             'ammo'  :   self.ammo,
         })
         return base
+
+class HitscanLaserGun(LaserGun):
+
+    def __init__(self, id=None, owner=None, **kwargs):
+        LaserGun.__init__(self, id=id, owner=owner, **kwargs)
+        self.hitscan = True
 
 class BlockApplier(Weapon):
 

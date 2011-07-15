@@ -8,6 +8,7 @@ class Weapon(EquippableObject):
         'LaserGun'  :   1,
         'Pick'      :   2,
         'BlockApplier':   3,
+        'HitscanLaserGun': 4,
     }
 
     def __init__(self, id, owner=None):
@@ -17,6 +18,7 @@ class Weapon(EquippableObject):
         self.id = id
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
+        self.hitscan = False
 
     def fire(self):
         return False
@@ -109,6 +111,11 @@ class LaserGun(Weapon):
             self.firing_rate = weapon['firing_rate']
         GameStateGlobal.weaponList.update(*args)
 
+class HitscanLaserGun(LaserGun):
+
+    def __init__(self, id=None, owner=None, clip=None, **kwargs):
+        LaserGun.__init__(self, id=id, owner=owner, clip=clip, **kwargs)
+        self.hitscan = True
 
 class BlockApplier(Weapon):
 
