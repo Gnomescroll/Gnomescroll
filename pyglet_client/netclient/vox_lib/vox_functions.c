@@ -319,50 +319,48 @@ int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
-
+    float s = sqrt(x1*x1 + y1*y1 + z1*z1)/50;
+    x1 /= s; y1 /=s; z1 /=s;
     printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
 }
 
-int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, float _x2, float _y2, float _z2) {
+int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2) {
     float t;
-    float x2,y2,z2;
-    x2 = _x2-x1;
-    y2 = _y2-y1;
-    z2 = _z2-z1;
     float x0,y0,z0;
     x0 = vo->center.x - x1;
     y0 = vo->center.y - y1;
     z0 = vo->center.z - z1;
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
-    printf("t_0.= %f, %f \n", t);
     t = t/(x2*x2+y2*y2+z2*z2);
     printf("t= %f \n", t);
     float r, x,y,z;
-    x = t*x2 - x0; x*=x;
-    y = t*y2 - y0; y*=y;
-    z = t*z2 - z0; z*=z;
+    x = t*x2; x*=x;
+    y = t*y2; y*=y;
+    z = t*z2; z*=z;
     r = x+y+z;
 
-    x = t*_x2 + x1;
-    y = t*_y2 + y1;
-    y = t*_z2 + z1;
+    x = t*x2 + x1;
+    y = t*y2 + y1;
+    z = t*z2 + z1;
 
     glBegin(GL_LINES);
         glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
         glVertex3f(x1,y1,z1); // origin of the line
-        glVertex3f(_x2+x1,_y2+y1,_z2+z1); // ending point of the line
+        glVertex3f(x2+x1,y2+y1,z2+z1); // ending point of the line
     glEnd();
     glColor3ub(255,255,255);
 
     //float temp = t*t*(x2*x2 + y2*y2 + z2*z2); //radius of
+    /*
     if(r > vo->radius2) {
         printf("Missed Voxel Volume \n");
         printf("r= %f, radius= %f \n", r, vo->radius2);
         return 0;
-    } else {
-        printf("Within Radius of Voxel Volume \n");
+    } else { }
+    */
+        //printf("Within Radius of Voxel Volume \n");
         printf("r= %f, radius= %f \n", r, vo->radius2);
         printf("cast vector length2: %f \n", x*x+y*y+z*z);
 
@@ -379,7 +377,4 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
         glColor3ub(255,255,255);
 
         return 1;
-    }
-
-
 }
