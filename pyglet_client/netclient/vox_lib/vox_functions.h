@@ -31,8 +31,8 @@ struct VoxelList {
 
 inline void compute_vo_normals(struct VoxelList* volist);
 struct VoxelList* createVoxelList();
-int init7();
-int _draw_test2();
+//int init7();
+//int _draw_test2();
 
 int _draw(struct VoxelList* vo);
 inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z);

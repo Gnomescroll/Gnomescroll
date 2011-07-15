@@ -123,6 +123,7 @@ inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) 
     t->b = b;
 }
 
+/*
 int init7() {
     vo = createVoxelList(8,8,8);
     //printf("No seg fault yet \n");
@@ -132,6 +133,7 @@ int init7() {
     set(vo, 3,3,3,255,0,255);
 //    compute_vo_normals(vo);
 }
+*/
 
 int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
@@ -197,7 +199,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     return 0;
 }
 
-
+/*
 int _draw_test2() {
     int xi, yi, zi;
     vo->theta += pi/1024;
@@ -221,6 +223,7 @@ int _draw_test2() {
     glColor3ub(255,255,255);
     return 0;
 }
+*/
 
 //external interface functions
 int _draw(struct VoxelList* vo) {
@@ -318,11 +321,12 @@ int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
 }
 
-int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2) {
+int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, float _x2, float _y2, float _z2) {
     float t;
-    x2 -= x1;
-    y2 -= y1;
-    z2 -= z1;
+    float x2,y2,z2;
+    x2 = _x2-x1;
+    y2 = _y2-y1;
+    z2 = _z2-z1;
     float x0,y0,z0;
     x0 = vo->center.x - x1;
     y0 = vo->center.y - y1;
@@ -335,7 +339,18 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     y = t*z2 - z0; y*=y;
     r = x+y+z;
 
-    float temp = t*t*(x2*x2 + y2*y2 + z2*z2); //radius of
+    x = t*_x2 + x1;
+    y = t*_y2 + y1;
+    y = t*_z2 + z1;
+
+    glBegin(GL_LINES);
+        glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+        glVertex3f(x1,y1,z1); // origin of the line
+        glVertex3f(_x2,_y2,_z2); // ending point of the line
+    glEnd();
+    glColor3ub(255,255,255);
+
+    //float temp = t*t*(x2*x2 + y2*y2 + z2*z2); //radius of
     if(r > vo->radius2) {
         printf("Missed Voxel Volume \n");
         printf("temp= %f, radius= %f \n", r, vo->radius2);
@@ -343,6 +358,19 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     } else {
         printf("Within Radius of Voxel Volume \n");
         printf("temp= %f, radius= %f \n", r, vo->radius2);
+
+        glBegin(GL_LINES);
+            glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+            float u = 0.1;
+            glVertex3f(x+u,y,z);
+            glVertex3f(x-u,y,z);
+            glVertex3f(x,y+u,z);
+            glVertex3f(x,y-u,z);
+            glVertex3f(x,y,z+u);
+            glVertex3f(x,y,z-u);
+        glEnd();
+        glColor3ub(255,255,255);
+
         return 1;
     }
 

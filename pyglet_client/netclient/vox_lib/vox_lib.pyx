@@ -14,10 +14,6 @@ cdef extern from 'vox_functions.h':
         Vector center
         Vector n[3]
 
-cdef extern from 'vox_functions.h': #depcrecate
-    int init7()
-    int _draw_test2()
-
 cdef extern from 'vox_functions.h':
 
     int _draw(VoxelList* vo)
@@ -28,14 +24,6 @@ cdef extern from 'vox_functions.h':
     int _point_collision(VoxelList* vo, float x, float y, float z)
     int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
     int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
-
-def test():
-    print "Init"
-    init7()
-
-def draw():
-    _draw_test2()
-    #_draw_test()
 
 cdef class Vox:
     cdef VoxelList* vo

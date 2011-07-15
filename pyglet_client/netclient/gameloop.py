@@ -185,10 +185,17 @@ class App(object):
             #vox_lib.draw()
             v.move(0,0,2, theta)
             v.draw()
-
-            SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
+            #test
+            if GameStateGlobal.agent != None:
+                a = GameStateGlobal.agent
+                x = a.x
+                y = a.y
+                z = a.z
+                x_angle = a.d_xa
+                y_angle = a.d_ya
+                v.ray_cast2(x,y,z, x_angle, y_angle)
+            #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
             #v.collision_test(0.1,0.0,2.0)
-            v.ray_cast()
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
             self.world.draw()
