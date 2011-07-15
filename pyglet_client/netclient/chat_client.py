@@ -141,7 +141,7 @@ class ChatClient:
 
         if text is None:
             text = self.input.submit()
-        if text == '':
+        if text.strip() == '':
             return
         if text[0] == '/':
             msg = ChatCommand(text)
@@ -582,22 +582,32 @@ class ChatInputProcessor:
         pass
 
     def on_key_press(self, symbol):
+        _symbol = symbol
+        symbol = symbol.upper()
         print 'CHAT ON_KEY_PRESS', symbol
         callback = None
-        if settings.pyglet:
-            ENTER = key.ENTER
-            ESC = key.ESCAPE
-        else:
-            ENTER = 'ENTER'
-            ESC = 'ESC'
-        if symbol == ENTER:         # submit
+        if symbol == 'RETURN':         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
                 return lambda keyboard: keyboard.toggle_chat()
-        elif symbol == ESC:      # clear, cancel chat
+        elif symbol == 'ESCAPE':      # clear, cancel chat
             def callback(input):
                 input.clear()
                 return lambda keyboard: keyboard.toggle_chat()
+        elif symbol == 'UP':            # up history
+            callback = lambda input: input.history_older()
+        elif symbol == 'DOWN':        # down history
+            callback = lambda input: input.history_newer()
+        elif symbol == 'LEFT':        # move cursor
+            callback = lambda input: input.cursor_left()
+        elif symbol == 'RIGHT':       # move cursor
+            callback = lambda input: input.cursor_right()
+        elif symbol == 'BACKSPACE':   # delete
+            callback = lambda input: input.remove()
+        elif symbol == 'SPACE':
+            callback = self.on_text(' ')
+        else:
+            callback = self.on_text(_symbol)
         return callback
 
     def on_text(self, text):
@@ -651,6 +661,8 @@ class ChatInputHistory:
             return self.buffer[self.current_index]
 
     def add(self, text):
+        if text.strip() == '':
+            return
         self.buffer.appendleft(text)
 
 # returns data for rendering

@@ -22,10 +22,12 @@ def setup_keystring():
     global Keystring
     global special_keys
     special_keys = {
+    'BACKSPACE' : 8,
     'TAB': 9,
     'ENTER': 13,
     'ESC': 27,
     'SPACE': 32,
+    'DELETE': 127,
     'LEFT': 276,
     'RIGHT': 275,
     'UP' : 273,
@@ -67,7 +69,11 @@ class InputEventGlobal:
 
     #add support for key pressed/key released
     def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
-        key = Keystring.get(keycode, None)
+        #if keycode == 0:
+            #key = key_string.upper().replace(' ', '_')
+        #else:
+            #key = Keystring.get(keycode, None)
+        key = key_string
         #uncomment to see key inputs
         print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
@@ -244,10 +250,10 @@ class Keyboard(object):
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
         if InputGlobal.input == 'chat':
-            if symbol in special_keys:
-                callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
-            else:
-                callback = ChatClientGlobal.chatClient.input.on_text(symbol)
+            #if symbol in special_keys:
+            callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
+            #else:
+             #   callback = ChatClientGlobal.chatClient.input.on_text(symbol)
             self._input_callback(callback)
         else:
             if symbol == 'y':
@@ -255,9 +261,9 @@ class Keyboard(object):
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol)
                 #self.key_handlers.get(symbol, lambda: None)()
-            if symbol == 'TAB':
+            if symbol == 'tab':
                 InputGlobal.scoreboard = True
-            if symbol == 'ESC':
+            if symbol == 'escape':
                 GameStateGlobal.exit = True
 
             ### FIX
@@ -298,7 +304,6 @@ class Keyboard(object):
         else:
             InputGlobal.input = 'chat'
 
-    # called in main game loop
     def stateHandler(self, keyboard):
         if InputGlobal.input == 'chat':
             return

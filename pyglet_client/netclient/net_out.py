@@ -110,6 +110,24 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @sendJSON('change_weapon', tick=True)
+    def change_weapon(self, agent, active_weapon):
+        if active_weapon is None:
+            active_weapon = -1
+        return {
+            'aid'   :   agent.id,
+            'windex':   active_weapon,
+        }
+
+    @idRequired
+    @sendJSON('drop_weapon', tick=True)
+    def drop_weapon(self, agent, wid):
+        return {
+            'aid'   :   agent.id,
+            'wid'   :   wid,
+        }
+
+    @idRequired
     @sendJSON('hit_block', tick=True)
     def hit_block(self, agent=None):
         if agent is None or agent.id is None:
@@ -147,6 +165,13 @@ class SendMessage(GenericMessage):
     @sendJSON('request_client_id')
     def request_client_id(self):
         pass
+
+    @idRequired
+    @sendJSON('hitscan', tick=True)
+    def hitscan(self, target):
+        return {
+            'target'    :   target
+        }
 
 class MapMessage:
 

@@ -41,7 +41,7 @@ class GameStateGlobal:
                 cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
                 weapons = agent.get('weapons', None)
                 if weapons is not None:
-                    cls.agent.weapons.update_info(weapons)
+                    cls.agent.weapons.update_info(**weapons)
                 cls.player.agent = cls.agent
             else:
                 cls.agent.update_info(**agent)
