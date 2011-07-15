@@ -350,6 +350,7 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('BlockApplier'),
             wl.create('HitscanLaserGun'),
         ]
+        self.active_weapon = 0
 
         self.owner = player_id
 
@@ -385,17 +386,45 @@ class Agent(AgentPhysics, AgentAction):
                 'health': self.health,
                 'dead'  : int(self.dead),
                 'owner' : self.owner,
-                'weapons': [weapon.json() for weapon in self.weapons],
+                'weapons': {
+                    'weapons': [weapon.json() for weapon in self.weapons],
+                    'active' : self.active_weapon,
+                },
                 'state' : self.state,
             })
         else:
             if type(properties) == str:
                 properties = [properties]
             for prop in properties:
-                d[prop] = getattr(self, prop)
+                if prop == 'weapons':
+                    d[prop] = {
+                        'weapons': [weapon.json() for weapon in self.weapons],
+                        'active' : self.active_weapon,
+                    }
+                elif prop == 'active_weapon':
+                    d['weapons'] = {
+                        'active'    :   self.active_weapon,
+                    }
+                else:
+                    d[prop] = getattr(self, prop)
                 if prop == 'dead':
                     d[prop] = int(d[prop])
         return d
+
+    def drop_weapon(self, weapon, by_id=False):
+        old_len = len(self.weapons)
+        if by_id:
+            self.weapons = [w for w in self.weapons if w.id != weapon]
+        else:
+            self.weapons = [w for w in self.weapons if w != weapon]
+        if old_len != len(self.weapons):
+            NetOut.event.agent_update(self, 'weapons')
+
+    def set_active_weapon(self, weapon_index):
+        old = self.active_weapon
+        self.active_weapon = weapon_index
+        if old != weapon_index:
+            NetOut.event.agent_update(self, 'active_weapon')
 
     # set agent state explicitly
     def set_agent_control_state(self, tick, state, angle):

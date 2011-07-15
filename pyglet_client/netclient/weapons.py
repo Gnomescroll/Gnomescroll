@@ -3,8 +3,17 @@ from game_objects import EquippableObject
 
 
 weapon_dat = {
+    0:  {
+        'projectile_type'   :   0
+    },
     1:  {
         'projectile_type'   :   1
+    },
+    2:  {
+        'projectile_type'   :   0
+    },
+    3:  {
+        'projectile_type'   :   0
     },
     4:  {
         'projectile_type'   :   1

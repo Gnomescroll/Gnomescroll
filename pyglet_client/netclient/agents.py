@@ -95,7 +95,8 @@ class AgentRender:
 
 class AgentWeapons:
 
-    def __init__(self, weapons=None, active_weapon=None):
+    def __init__(self, agent, weapons=None, active_weapon=None):
+        self.agent = agent
         if weapons is None:
             weapons = []
         self.weapons = weapons
@@ -110,26 +111,34 @@ class AgentWeapons:
             return None
         return self.weapons[self._active_weapon]
 
-    def update_info(self, weapons):
+    def update_info(self, **weapons_data):
         print 'agent weapons updating info'
-        new_weapons = []
-        for weapon in weapons:
-            try:
-                wid = weapon['id']
-            except KeyError:
-                print 'WARNING: Weapon updating via agent; weapon id missing'
-                continue
-            known_weapon = GameStateGlobal.weaponList.get(wid, None)
-            if known_weapon is None: # agent assigned unknown weapon
-                known_weapon = GameStateGlobal.weaponList.create(**weapon)
-            else:
-                known_weapon.update_info(**weapon)
-            new_weapons.append(known_weapon)
-        self.weapons = new_weapons
-        self._adjust_active_weapon()
+        if 'weapons' in weapons_data:
+            weapons = weapons_data['weapons']
+            new_weapons = []
+            for weapon in weapons:
+                try:
+                    wid = weapon['id']
+                except KeyError:
+                    print 'WARNING: Weapon updating via agent; weapon id missing'
+                    continue
+                known_weapon = GameStateGlobal.weaponList.get(wid, None)
+                if known_weapon is None: # agent assigned unknown weapon
+                    known_weapon = GameStateGlobal.weaponList.create(**weapon)
+                else:
+                    known_weapon.update_info(**weapon)
+                new_weapons.append(known_weapon)
+            self.weapons = new_weapons
+            self._adjust_active_weapon()
+            
+        if 'active' in weapons_data:
+            self._active_weapon = weapons_data['active']
 
     def drop(self, weapon):
+        old_len = len(self.weapons)
         self.weapons = [w for w in self.weapons if w != weapon]
+        if old_len != len(self.weapons):
+            NetOut.sendMessage.drop_weapon(self.agent, weapon.id)
         self._adjust_active_weapon()
 
     def _adjust_active_weapon(self):
@@ -147,7 +156,9 @@ class AgentWeapons:
                 if aw < 0:                  # if there are no weapons
                     aw = None               # active is None
 
-        self._active_weapon = aw
+        if self._active_weapon != aw:
+            self._active_weapon = aw
+            NetOut.sendMessage.change_weapon(self.agent, aw)
 
     def __len__(self):
         return len(self.weapons)
@@ -198,7 +209,7 @@ class AgentModel:
             self.health = health
         self.dead = bool(dead)
 
-        self.weapons = AgentWeapons(weapons, active_weapon)
+        self.weapons = AgentWeapons(self, weapons, active_weapon)
         self.owner = owner
         
         self.you = False
@@ -265,9 +276,7 @@ class AgentModel:
         elif attr == 'az':
             return self.__dict__['state'][8]
         else:
-            if not attr.startswith('__'):
-                print "Agent attribute does not exist: " + str(attr)
-            raise AttributeError
+            raise AttributeError, 'Agent attribute does not exist: %s' % (attr,)
 
     def __setattr__(self, attr, val):
         if attr == 'x':
@@ -507,9 +516,12 @@ class PlayerAgentRender(AgentRender):
 class PlayerAgentWeapons(AgentWeapons):
 
     def switch(self, weapon_index):
+        old = self._active_weapon
         num_weapons = len(self.weapons)
         if num_weapons == 0:
             self._active_weapon = None
+            if old is not None:
+                NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
             return
 
         if type(weapon_index) == int:
@@ -531,6 +543,9 @@ class PlayerAgentWeapons(AgentWeapons):
         elif weapon_index < num_weapons:
                 self._active_weapon = weapon_index
 
+        if old != self._active_weapon:
+            NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
+
         print 'weapon is: %s' % (self.active(),)
 
 
@@ -542,7 +557,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
-        self.weapons = PlayerAgentWeapons(weapons, active_weapon)
+        self.weapons = PlayerAgentWeapons(self, weapons, active_weapon)
 
         self.you = True
         self.control_state = [0,0,0,0,0,0,0]
@@ -570,6 +585,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
             if weapon.hitscan:
                 # determine target w/ ray cast
                 #target = ray_cast_from(agent)
+                target = {
+                    'type'  :   'block',
+                    'loc'   :   (20, 20, 5)
+                }
                 NetOut.sendMessage.hitscan(target)
             else:
                 NetOut.sendMessage(fire_command, self)

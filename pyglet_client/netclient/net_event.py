@@ -370,7 +370,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
         err_msg = None
         try:
             agent_id = msg['aid']
-            if agent_id = GameStateGlobal.agent.id: # ignore, you fired this
+            if agent_id == GameStateGlobal.agent.id: # ignore, you fired this
                 return
         except KeyError:
             err_msg = 'msg hitscan :: aid missing'

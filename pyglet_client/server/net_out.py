@@ -121,7 +121,7 @@ class EventOut:
             'list' : list,
         }
 
-    @sendJSONEvent('hitscan')
+    @sendJSONevent('hitscan')
     def hitscan(self, target, agent_id, weapon_type): # use projectile_id if we want multiple projectiles per weapon
         return {
             'target'    :   target,

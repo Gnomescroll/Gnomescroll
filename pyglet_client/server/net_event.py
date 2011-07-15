@@ -61,6 +61,10 @@ class MessageHandler:
             self.fire_projectile(connection.id, **msg)
         elif cmd == 'reload_weapon':
             self.reload_weapon(connection.id, **msg)
+        elif cmd == 'change_weapon':
+            self.change_weapon(connection.id, **msg)
+        elif cmd == 'drop_weapon':
+            self.drop_weapon(connection.id, **msg)
 
         elif cmd == 'set_block':
             self.set_block(connection.id, **msg)
@@ -145,6 +149,69 @@ class MessageHandler:
         GameStateGlobal.terrainMap.set(*block)
         NetOut.event.set_map([block])
 
+    def change_weapon(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg change_weapon :: Could not find player for client'
+            return
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.owner != player.id:
+                print 'msg change_weapon :: client does not own this agent'
+                return
+        except TypeError:
+            print 'msg change_weapon :: aid missing'
+            return
+        except ValueError:
+            print 'msg change_weapon :: aid invalid'
+            return
+        except KeyError:
+            print 'msg change_weapon :: agent unknown'
+            return
+
+        try:
+            active_weapon = msg['windex']
+        except KeyError:
+            print 'msg change_weapon :: windex (active_weapon) missing'
+            return
+
+        if active_weapon == -1: # json doesnt have None, but None is a valid input; careful, -1 is a valid index.
+            active_weapon = None
+            
+        agent.set_active_weapon(active_weapon)
+
+    def drop_weapon(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg drop_weapon :: Could not find player for client'
+            return
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.owner != player.id:
+                print 'msg drop_weapon :: client does not own this agent'
+                return
+        except TypeError:
+            print 'msg drop_weapon :: aid missing'
+            return
+        except ValueError:
+            print 'msg drop_weapon :: aid invalid'
+            return
+        except KeyError:
+            print 'msg drop_weapon :: agent unknown'
+            return
+
+        try:
+            weapon_id = msg['wid']
+        except KeyError:
+            print 'msg drop_weapon :: wid missing'
+            return
+
+        agent.drop_weapon(weapon_id, by_id=True)
+
     def hitscan(self, client_id, **msg):
         try:
             player = GameStateGlobal.playerList.client(client_id)
@@ -152,7 +219,7 @@ class MessageHandler:
             print 'msg hitscan :: Could not find player for client'
             return
         firing_agent = player.agent
-        weapon = agent.weapon
+        weapon = firing_agent.weapon
         if not weapon.hitscan:
             print 'msg hitscan :: Client sent hitscan message for non-hitscan weapon'
             return
