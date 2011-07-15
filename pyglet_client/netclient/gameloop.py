@@ -183,7 +183,7 @@ class App(object):
 
             self.camera.worldProjection()
             #vox_lib.draw()
-            v.move(0,0,0, theta)
+            v.move(0,0,3, theta)
             v.draw()
             #test
             if GameStateGlobal.agent != None:
