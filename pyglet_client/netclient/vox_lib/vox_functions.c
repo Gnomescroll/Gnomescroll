@@ -104,6 +104,7 @@ struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     volist->xdim = xdim;
     volist->ydim = ydim;
     volist->zdim = zdim;
+    volist->radius2 = (volist->vosize*xdim*volist->vosize)*(float)(xdim*xdim+ydim*ydim+zdim*zdim);
     volist->center.x = 0;
     volist->center.y = 0;
     volist->center.z = 3;

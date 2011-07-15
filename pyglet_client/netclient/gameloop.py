@@ -186,8 +186,8 @@ class App(object):
             v.move(0,0,2, theta)
             v.draw()
 
-            #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,0.0)
-            #v.collision_test(0.1,0.0,0.0)
+            SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
+            v.collision_test(0.1,0.0,2.0)
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
             self.world.draw()

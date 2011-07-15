@@ -26,6 +26,7 @@ struct VoxelList {
     struct Vector center;
     struct Vector n[3]; //the normals; for internal cordinates
     struct Vector n2[3]; //normals for projection from cordinate system to internal
+    float radius2; //used for hitscan pruning
 };
 
 inline void compute_vo_normals(struct VoxelList* volist);
