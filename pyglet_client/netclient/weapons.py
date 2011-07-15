@@ -1,6 +1,16 @@
 from game_objects import GameObject
 from game_objects import EquippableObject
 
+
+weapon_dat = {
+    1:  {
+        'projectile_type'   :   1
+    },
+    4:  {
+        'projectile_type'   :   1
+    },
+}
+
 class Weapon(EquippableObject):
 
     _weapons = {
@@ -19,6 +29,7 @@ class Weapon(EquippableObject):
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
+        self.ptype = weapon_dat[self.type]['projectile_type']  # projectile type, implement fully later
 
     def fire(self):
         return False

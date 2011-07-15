@@ -67,6 +67,8 @@ class MessageHandler:
         elif cmd == 'hit_block':
             self.hit_block(connection.id, **msg)
 
+        elif cmd == 'hitscan':
+            self.hitscan(connection.id, **msg)
 
         #chat
         elif cmd == 'chat':
@@ -143,6 +145,61 @@ class MessageHandler:
         GameStateGlobal.terrainMap.set(*block)
         NetOut.event.set_map([block])
 
+    def hitscan(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg hitscan :: Could not find player for client'
+            return
+        firing_agent = player.agent
+        weapon = agent.weapon
+        if not weapon.hitscan:
+            print 'msg hitscan :: Client sent hitscan message for non-hitscan weapon'
+            return
+        
+        try:
+            target = msg['target']
+        except KeyError:
+            print 'msg hitscan :: target missing'
+            return
+
+        try:
+            type = target['type']
+        except KeyError:
+            print 'msg hitscan :: target type missing'
+            return
+
+        try:
+            loc = target['loc']
+            if type == 'block' or type == 'empty':
+                assert len(loc) == 3
+            elif type == 'agent':
+                assert len(loc) == 2
+        except KeyError:
+            print 'msg hitscan :: target location missing'
+            return
+        except TypeError:
+            print 'msg hitscan :: target location not iterable'
+            return
+        except AssertionError:
+            print 'msg hitscan :: target location wrong length'
+            return
+
+        # add agent/projectile information to packet and forward
+        NetOut.event.hitscan(target, firing_agent.id, weapon.type)
+
+        # apply damage
+        if type == 'block':
+            pass
+        elif type == 'agent':
+            target_aid, body_part_id = loc
+            try:
+                target_agent = GameStateGlobal.agentList[target_aid]
+            except KeyError:
+                print 'msg hitscan :: target agent does not exist'
+                return
+            # improve damage calculation later
+            target_agent.take_damage(weapon.base_damage, firing_agent)
 
     def hit_block(self, client_id, **msg):
         try:

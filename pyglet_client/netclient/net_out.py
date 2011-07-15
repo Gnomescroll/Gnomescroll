@@ -148,6 +148,13 @@ class SendMessage(GenericMessage):
     def request_client_id(self):
         pass
 
+    @idRequired
+    @sendJSON('hitscan', tick=True)
+    def hitscan(self, target):
+        return {
+            'target'    :   target
+        }
+
 class MapMessage:
 
     @sendJSON('request_chunk_list')
