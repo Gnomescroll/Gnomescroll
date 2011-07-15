@@ -234,7 +234,7 @@ class AgentModel:
                 print 'you are now dead'
 
         if 'weapons' in agent:
-            self.weapons.update_info(agent['weapons'])
+            self.weapons.update_info(**agent['weapons'])
 
         if 'owner' in agent:
             self.owner = agent['owner']

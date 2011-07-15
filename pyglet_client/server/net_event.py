@@ -219,7 +219,7 @@ class MessageHandler:
             print 'msg hitscan :: Could not find player for client'
             return
         firing_agent = player.agent
-        weapon = firing_agent.weapon
+        weapon = firing_agent.active_weapon()
         if not weapon.hitscan:
             print 'msg hitscan :: Client sent hitscan message for non-hitscan weapon'
             return

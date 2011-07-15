@@ -366,7 +366,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
         self._bind_event('hitscan', self._hitscan)
         DatastoreMessageInterface.__init__(self)
 
-    def _hitscan(self, **args):
+    def _hitscan(self, **msg):
         err_msg = None
         try:
             agent_id = msg['aid']

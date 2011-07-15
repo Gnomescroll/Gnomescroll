@@ -350,12 +350,15 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('BlockApplier'),
             wl.create('HitscanLaserGun'),
         ]
-        self.active_weapon = 0
+        self._active_weapon = 0
 
         self.owner = player_id
 
     def pos(self):
         return self.state[0:3]
+
+    def active_weapon(self):
+        return self.weapons[self._active_weapon]
 
     def __getattr__(self, attr):
         if attr == 'x':
@@ -365,7 +368,7 @@ class Agent(AgentPhysics, AgentAction):
         elif attr == 'z':
             return self.__dict__['state'][2]
         else:
-            raise AttributeError
+            raise AttributeError, 'Agent instance has no property %s' % (attr,)
 
     def __setattr__(self, attr, val):
         if attr == 'x':
@@ -388,7 +391,7 @@ class Agent(AgentPhysics, AgentAction):
                 'owner' : self.owner,
                 'weapons': {
                     'weapons': [weapon.json() for weapon in self.weapons],
-                    'active' : self.active_weapon,
+                    'active' : self._active_weapon,
                 },
                 'state' : self.state,
             })
@@ -399,11 +402,11 @@ class Agent(AgentPhysics, AgentAction):
                 if prop == 'weapons':
                     d[prop] = {
                         'weapons': [weapon.json() for weapon in self.weapons],
-                        'active' : self.active_weapon,
+                        'active' : self._active_weapon,
                     }
                 elif prop == 'active_weapon':
                     d['weapons'] = {
-                        'active'    :   self.active_weapon,
+                        'active'    :   self._active_weapon,
                     }
                 else:
                     d[prop] = getattr(self, prop)
@@ -421,8 +424,8 @@ class Agent(AgentPhysics, AgentAction):
             NetOut.event.agent_update(self, 'weapons')
 
     def set_active_weapon(self, weapon_index):
-        old = self.active_weapon
-        self.active_weapon = weapon_index
+        old = self._active_weapon
+        self._active_weapon = weapon_index
         if old != weapon_index:
             NetOut.event.agent_update(self, 'active_weapon')
 
