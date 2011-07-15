@@ -314,6 +314,7 @@ int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
+    printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
 }
 
