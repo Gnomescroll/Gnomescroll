@@ -270,7 +270,7 @@ struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, 
     volist->center.y = y;
     volist->center.z = z;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
-    volist->radius2 = (volist->vosize*volist->vosize)*(float)(xdim*xdim+ydim*ydim+zdim*zdim);
+    volist->radius2 = (volist->vosize*volist->vosize)*(float)(xdim*xdim+ydim*ydim+zdim*zdim)*(0.25);
     int i;
     struct Voxel* v;
     for(i=0;i<xdim*ydim*zdim;i++) {
