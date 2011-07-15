@@ -41,3 +41,5 @@ struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, 
 //resize vorxel list?
 int _deleteVoxelList(struct VoxelList* vo);
 int _point_collision(struct VoxelList* vo, float x, float y, float z);
+int _ray_cast_collision(struct VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1);
+int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle);

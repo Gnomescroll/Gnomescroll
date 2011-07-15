@@ -26,6 +26,8 @@ cdef extern from 'vox_functions.h':
     VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta)
     int _deleteVoxelList(VoxelList* vo)
     int _point_collision(VoxelList* vo, float x, float y, float z)
+    int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
+    int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
 
 def test():
     print "Init"
@@ -90,6 +92,12 @@ cdef class Vox:
     def collision_test(self, x,y,z):
         return _point_collision(self.vo,x,y,z)
 
+    #v0 is point to cast from, v1 must be unit vector
+    def ray_cast(self, x0,y0,z0, x1,y1,z1):
+        return _ray_cast_collision(self.vo,x0,y0,z0, x1,y1,z1)
+
+    def ray_cast2(self,x,y,z, x_angle, y_angle):
+        _raw_cast_collision(self.vo,x,y,z, x_angle, y_angle)
 
 import json
 

@@ -187,7 +187,8 @@ class App(object):
             v.draw()
 
             SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
-            v.collision_test(0.1,0.0,2.0)
+            #v.collision_test(0.1,0.0,2.0)
+            v.ray_cast()
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
             self.world.draw()
