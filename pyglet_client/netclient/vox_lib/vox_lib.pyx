@@ -89,6 +89,7 @@ cdef class Vox:
 
     def collisin_test(self, x,y,z):
         i = _point_collision(self.vo,x,y,z)
+        print str(i)
 
 
 import json

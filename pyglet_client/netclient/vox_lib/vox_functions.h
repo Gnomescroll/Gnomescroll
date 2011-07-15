@@ -24,7 +24,8 @@ struct VoxelList {
     float vosize;
     float theta;
     struct Vector center;
-    struct Vector n[3]; //the normals
+    struct Vector n[3]; //the normals; for internal cordinates
+    struct Vector n2[3]; //normals for projection from cordinate system to internal
 };
 
 inline void compute_vo_normals(struct VoxelList* volist);

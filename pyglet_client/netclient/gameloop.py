@@ -21,7 +21,7 @@ else:
     import cube_lib.VBO
 
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
-    vox_lib.test()
+    #vox_lib.test()
 
 #import cython
 #import pyximport; pyximport.install()
@@ -147,13 +147,13 @@ class App(object):
         v.set(5,5,5,255,0,0,0)
 
         v.set(4,4,0,255,0,255,0)
-        v.set(4,4,1,0,0,255,0)
+        v.set(4,4,1,0,255,255,0)
         v.set(4,4,2,0,0,255,0)
-        v.set(4,4,3,0,0,255,0)
+        v.set(4,4,3,0,255,255,0)
 
-        v.set(4,4,4,0,0,255,0)
+        v.set(4,4,4,0,255,255,0)
         v.set(4,4,5,0,0,255,0)
-        v.set(4,4,6,0,0,255,0)
+        v.set(4,4,6,0,255,255,0)
         v.set(4,4,7,255,0,255,0)
         #v.move(0,0,5, theta)
         #END TEST
@@ -182,10 +182,12 @@ class App(object):
                 self.camera.camera_view()
 
             self.camera.worldProjection()
-            vox_lib.draw()
-            v.move(2,2,3, theta)
+            #vox_lib.draw()
+            v.move(0,0,0, theta)
             v.draw()
 
+            SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,0.0)
+            v.collisin_test(0.1,0.0,0.0)
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
             self.world.draw()

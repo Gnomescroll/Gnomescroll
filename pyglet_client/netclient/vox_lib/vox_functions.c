@@ -59,6 +59,7 @@ inline void compute_vo_normals(struct VoxelList* volist) {
     float theta = volist->theta;
     //float phi = volist->phi;
     struct Vector* n = volist->n;
+    struct Vector* n2 = volist->n2;
 
     n[0].x = volist->vosize*cos(theta);
     n[0].y = volist->vosize*sin(theta);
@@ -71,6 +72,18 @@ inline void compute_vo_normals(struct VoxelList* volist) {
     n[2].x = 0;
     n[2].y = 0;
     n[2].z = volist->vosize*1;
+    //inverse normals
+    n2[0].x = cos(theta)/volist->vosize;
+    n2[0].y = sin(theta)/volist->vosize;
+    n2[0].z = 0;
+
+    n2[1].x = cos(theta+ pi/2)/volist->vosize;
+    n2[1].y = sin(theta+ pi/2)/volist->vosize;
+    n2[1].z = 0;
+
+    n2[2].x = 0;
+    n2[2].y = 0;
+    n2[2].z = 1/ volist->vosize;
 
 /*
     printf("Normal x: %f, %f, %f \n", n[0].x, n[0].y, n[0].z);
@@ -270,27 +283,27 @@ int _deleteVoxelList(struct VoxelList* vo) {
     return 0;
 }
 
+inline float ipd(float x, float y, float z, struct Vector v2) {
+    return x*v2.x + y*v2.y + z*v2.z;
+}
+
 int _point_collision(struct VoxelList* vo, float x, float y, float z) {
     x -= vo->center.x;
     y -= vo->center.y;
     z -= vo->center.z;
-    struct Vector v;
-    v.x = x;
-    v.y = y;
-    v.z = z;
-    float a,b,c;
-    a = iproduct(v, vo->n[0]);
-    if(a < -vo->xdim || a > vo->xdim) return 0;
-    b = iproduct(v, vo->n[1]);
-    if(b < -vo->ydim || b > vo->ydim) return 0;
-    c = iproduct(v, vo->n[2]);
-    if(c < -vo->zdim || c > vo->zdim) return 0;
 
+    float a,b,c;
+    a = ipd(x,y,z, vo->n2[0]); if(a < -vo->xdim || a > vo->xdim) return 0;
+    b = ipd(x,y,z, vo->n2[1]); if(b < -vo->ydim || b > vo->ydim) return 0;
+    c = ipd(x,y,z, vo->n2[2]); if(c < -vo->zdim || c > vo->zdim) return 0;
+    printf("a,b,c= %f, %f, %f \n", a,b,c);
     int _x, _y, _z;
-    _x = (int) a + vo->xdim/2;
-    _y = (int) b + vo->ydim/2;
-    _z = (int) c + vo->zdim/2;
-    struct Voxel voi = get(vo,x,y,z);
-    if(voi.r == 0 && voi.g == 0 && voi.r == 0) return 0;
+    _x = (int) floorf(a) + vo->xdim/2;
+    _y = (int) floorf(b) + vo->ydim/2;
+    _z = (int) floorf(c) + vo->zdim/2;
+    printf("_x, _y, _z= %i, %i, %i \n", _x, _y, _z);
+    struct Voxel voi = get(vo,_x,_y,_z);
+    if(voi.r == 0 && voi.g == 0 && voi.b == 0) return 0;
+    printf("3\n");
     return 1;
 }
