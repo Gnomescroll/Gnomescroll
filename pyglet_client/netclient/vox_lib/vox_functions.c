@@ -123,7 +123,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
     //printf("t= %i \n", xi);
 
-    if(voi.r == 0 && voi.g == 0 && voi.r == 0)
+    if(voi.r == 0 && voi.g == 0 && voi.b == 0)
         return 0;
     int i,j;
     for(i=0; i<8; i++) {

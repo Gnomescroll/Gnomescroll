@@ -87,7 +87,7 @@ cdef class Vox:
         d['list'] = self._dump_list()
         return d
 
-    def collisin_test(x,y,z):
+    def collisin_test(self, x,y,z):
         i = _point_collision(self.vo,x,y,z)
 
 
