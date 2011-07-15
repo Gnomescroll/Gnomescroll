@@ -216,7 +216,7 @@ w.flip()
 
 theta = 0
 while True:
-	theta += -.007
+	theta += -.005
 	w.set_projection(-3,0,3,0,0)
 	w.world_projection()
 	v.draw()

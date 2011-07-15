@@ -25,6 +25,7 @@ cdef extern from 'vox_functions.h':
     void _set(VoxelList* vl, int x, int y, int z, int r, int g, int b, int a)
     VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta)
     int _deleteVoxelList(VoxelList* vo)
+    int _point_collision(VoxelList* vo, float x, float y, float z)
 
 def test():
     print "Init"
@@ -85,6 +86,10 @@ cdef class Vox:
         d['dim'] = [self.vo.xdim, self.vo.ydim, self.vo.zdim]
         d['list'] = self._dump_list()
         return d
+
+    def collisin_test(x,y,z):
+        i = _point_collision(self.vo,x,y,z)
+
 
 import json
 
