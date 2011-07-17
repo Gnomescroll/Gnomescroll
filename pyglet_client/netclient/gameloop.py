@@ -143,7 +143,8 @@ class App(object):
 
         #TEST
         theta = 0
-        v = vox_lib.Vox(8,8,8,0,0,0,0)
+        #v = vox_lib.Vox(8,8,8,0,0,0,0)
+        v = vox_lib.Vox(0,0,0,0, 8,8,8)
         v.set(5,5,5,255,0,0,0)
 
         v.set(4,4,0,255,0,255,0)
@@ -165,7 +166,7 @@ class App(object):
         v.set(0,7,7, 0,255,0,0)
         v.set(7,0,7, 0,255,0,0)
         v.set(7,7,7, 0,255,0,0)
-        
+
         #v2 = vox_lib.Vox_loader().load('agent.vox')
         #v.move(0,0,5, theta)
         #END TEST
