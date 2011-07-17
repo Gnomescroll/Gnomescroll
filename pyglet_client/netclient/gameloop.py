@@ -143,7 +143,7 @@ class App(object):
 
         #TEST
         theta = 0
-        v = vox_lib.Vox(0,0,0,0,8,8,8)
+        v = vox_lib.Vox(8,8,8,0,0,0,0)
         v.set(5,5,5,255,0,0,0)
 
         v.set(4,4,0,255,0,255,0)
@@ -165,25 +165,32 @@ class App(object):
         v.set(0,7,7, 0,255,0,0)
         v.set(7,0,7, 0,255,0,0)
         v.set(7,7,7, 0,255,0,0)
-
+        
+        #v2 = vox_lib.Vox_loader().load('agent.vox')
         #v.move(0,0,5, theta)
         #END TEST
 
         while not GameStateGlobal.exit:
+            print 'hey'
             theta += -.005 #test
             if settings.pyglet:
                 self.win.dispatch_events()
                 InputGlobal.keyboard.stateHandler(keyboard)
             else:
+                print 'heya'
                 SDL.input.process_events()
                 SDL.input.get_key_state()
+                print 'heyb'
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
+            print 'hey1'
             NetClientGlobal.connection.attempt_recv()
+            print 'hey1aa'
             MapControllerGlobal.mapController.tick() #testing
+            print 'hey1a'
             self.world.tick()
-
+            print 'hey2'
             if settings.pyglet:
                 self.win.clear() #clear window and start drawing
 
@@ -193,10 +200,14 @@ class App(object):
                 self.camera.camera_view()
 
             self.camera.worldProjection()
+            print 'hey3'
             #vox_lib.draw()
             v.move(0,0,3, theta)
             v.draw()
+            #v2.move(10,0,10,theta)
+            #v2.draw()
             #test
+            print 'hey4'
             if GameStateGlobal.agent != None:
                 a = GameStateGlobal.agent
                 x = a.x
@@ -205,6 +216,7 @@ class App(object):
                 x_angle = a.x_angle
                 y_angle = a.y_angle
                 v.ray_cast2(x,y,z, x_angle, y_angle)
+                print 'hey4a'
             #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
             #v.collision_test(0.1,0.0,2.0)
             #cube_lib.VBO.draw_test_chunk()
@@ -214,7 +226,7 @@ class App(object):
             #VBO test
             ##cube_lib.VBO.draw_test_chunk()
             #self.SDL_global.set_projection(-1,0,0,0,0)
-
+            print 'hey5'
             if False:
                 for i in range(0,256):
                     x = random.random()

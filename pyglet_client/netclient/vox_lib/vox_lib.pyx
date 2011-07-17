@@ -28,8 +28,7 @@ cdef extern from 'vox_functions.h':
 cdef class Vox:
     cdef VoxelList* vo
 
-    def __init__(self,x,y,z,theta, xdim, ydim, zdim):
-        vosize = 0.2
+    def __init__(self,x,y,z,theta, xdim, ydim, zdim, vosize=0.2):
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
 
     def __del__(self):
@@ -74,7 +73,7 @@ cdef class Vox:
         d= {}
         d['vosize'] = self.vo.vosize
         d['dim'] = [self.vo.xdim, self.vo.ydim, self.vo.zdim]
-        d['list'] = self._dump_list()
+        d['voxels'] = self._dump_list()
         return d
 
     def collision_test(self, x,y,z):
@@ -94,26 +93,39 @@ class Vox_loader:
     def __init__(self):
         pass
 
+    def _get_path(self, file):
+        if '/' in file:
+            path = file
+        else:
+            path = './media/vox/' + file
+        return path
+        
     def load(self, file):
+        path = self._get_path(file)
         try:
-            FILE = open(".media/vox/"+file,"r")
-            l = json.load(FILE)
-            xdim, ydim, zdim = l['dim']
-            vosize = l['vosize']
-            list = l['list']
-        except:
-            print "Error Loading: error in media/vox/%s failed" % (file)
-        try:
-            x,y,z,theta = 0,0,0,0
-            vox = Vox(vosize, xdim, ydim, zdim, x,y,z,theta)
-            for (x,y,z,r,g,b,a) in list:
-                vox.set(x,y,z,r,g,b,a)
-            return vox
-        except:
-            print "Error Loading: Cannot Creating Model for:" % (file)
+            with open(path) as f:
+                j = json.load(f)
+                dim = j['dim']
+                vosize = j['vosize']
+                voxels = j['voxels']
+        except IOError:
+            print "Error Loading: error in media/vox/%s failed" % (path,)
+            return
+        except KeyError:
+            print 'Deserialized voxel data missing keys'
+            return
+             
+        #try:
+        x,y,z,theta = 0,0,0,0
+        vox = Vox(x,y,z,theta, dim[0], dim[1], dim[2], vosize)
+        for (x,y,z,r,g,b,a) in voxels:
+            vox.set(x,y,z,r,g,b,a)
+        return vox
+        #except:
+        #    print "Error Loading: Cannot Creating Model for: %s" % (path,)
 
     def save(self, Vox, file):
-        FILE = open(".media/vox/"+file,"w")
-        s = Vox.serialize()
-        json.dump(s, file)
-
+        path = self._get_path(file)
+        with open(path, 'w') as f:
+            s = Vox.serialize()
+            json.dump(s, f)
