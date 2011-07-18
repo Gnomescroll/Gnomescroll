@@ -28,8 +28,8 @@ class Hud(object):
         self._init_player_stats()
         self.fps = self._to_draw_text(
             text = '',
-            x = 20,
-            offset = self.win_height - 50
+            x = 0,
+            offset = self.win_height
         )
         
 
