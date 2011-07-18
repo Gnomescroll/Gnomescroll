@@ -144,6 +144,9 @@ def get_args():
     if not sen_cli_defined:
         args.sensitivity = DEFAULTS['sensitivity']
 
+    if not args.fps and settings.fps:
+        args.fps = settings.fps
+
     if args.print_args:
         print_args(args)
 
