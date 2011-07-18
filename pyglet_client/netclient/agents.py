@@ -41,7 +41,6 @@ Render/Draw methods for agents
 class AgentRender:
 
     def draw(self):
-        assert False
         #self.draw_aiming_direction()
         self.draw_bounding_box()
 
@@ -58,7 +57,6 @@ class AgentRender:
 
     def draw_vox(self):
         self.vox.draw()
-        print "Drawing Agent Vox"
 
     def draw_position(self, points, seperation):
         v_num = 0
@@ -335,6 +333,9 @@ class PlayerAgentRender(AgentRender):
         self.draw_position(points=10, seperation = 0.10)
         self.draw_velocity(point_density=15, units=200)
         self.draw_acceleration(point_density=15, units=100000)
+        #vox models
+        self.update_vox()
+        self.draw_vox()
 
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
         if pos != None:
