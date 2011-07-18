@@ -62,7 +62,7 @@ class Weapon(EquippableObject):
         clip = getattr(self, 'clip', undef)
         clip_size = getattr(self, 'clip_size', undef)
         strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
-        return '%s/%s  ::  %s/%s' % strfs
+        return '%s/%s::%s/%s' % strfs
 
     def _update_info(self, **weapon):
         args = []

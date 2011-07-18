@@ -134,6 +134,7 @@ class Hud(object):
         return s
 
     def draw_player_stats(self):
+        print 'player stats'
         # draw label in top
         stats = self._format_player_stats_html()
         old = self.player_stats.text

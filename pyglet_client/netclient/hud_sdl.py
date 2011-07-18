@@ -25,7 +25,7 @@ class Hud(object):
         self._init_reticle()
         self._init_text_dict()
         #self._init_scoreboard()
-        #self._init_player_stats()
+        self._init_player_stats()
 
     def _init_text_dict(self):
         offset = 20
@@ -39,17 +39,11 @@ class Hud(object):
         self.text_dict['cursor_position'] = self._to_draw_text(text='')
 
     def _init_player_stats(self):
-        if settings.pyglet:
-            self.player_stats = text.HTMLLabel(
-                text = '',
-                x = self.win_width - 10,
-                y = 10,
-                anchor_x = 'right',
-                anchor_y = 'center',
-            )
-            self.player_stats.font_size = 8
-        else:
-            self.player_stats = None
+        self.player_stats = self._to_draw_text(
+            text = '',
+            offset = self.win_height,
+            x = self.win_width - 330
+        )
 
     def _init_scoreboard(self):
         self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -121,7 +115,7 @@ class Hud(object):
     def draw(self):
         #self.draw_reticle()
         self.draw_chat()
-        #self.draw_player_stats()
+        self.draw_player_stats()
         #if InputGlobal.scoreboard:
             #self.draw_scoreboard()
         #self.fps.draw()
@@ -140,14 +134,29 @@ class Hud(object):
         s = '<font face="Monospace" color="green"><b>%s</b></font>' % (s,)
         return s
 
+    def _format_player_stats_plain(self):
+        agent = GameStateGlobal.agent
+        if agent is None:
+            s = 'No agent yet.'
+        else:
+            health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
+            weapon = agent.weapons.active()
+            if weapon is None:
+                w = 'No weapon equipped'
+            else:
+                w = 'Ammo %s' % (weapon.hud_display(),)
+            s = 'HP %s::%s' % (health, w,)
+        return s
+
     def draw_player_stats(self):
         # draw label in top
-        stats = self._format_player_stats_html()
+        #stats = self._format_player_stats_html()
+        stats = self._format_player_stats_plain()
         old = self.player_stats.text
         if old != stats:
-            self.player_stats.begin_update()
+            #self.player_stats.begin_update()
             self.player_stats.text = stats
-            self.player_stats.end_update()
+            #self.player_stats.end_update()
         self.player_stats.draw()
 
     def draw_reticle(self):
@@ -194,12 +203,12 @@ class Hud(object):
             self._draw_chat_input(draw=True)
             self._draw_cursor()
 
-    def _to_draw_text(self, text='', offset=120):
+    def _to_draw_text(self, text='', offset=120, x=20, color=(255,40,0,255)):
         txt = SDL.hud.text(
             text = text,
-            x = 20,
+            x = x,
             y = self.win_height - offset,
-            color = (255, 40, 0, 255)
+            color = color
         )
         return txt
 
