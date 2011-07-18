@@ -140,6 +140,7 @@ class App(object):
         #p.start()
         average = []
         fps_text = None
+        fps = opts.opts.fps
         ltick, ctick = 0,0
 
         #TEST
@@ -235,7 +236,7 @@ class App(object):
                 #self.hud.draw()
 
                 self.SDL_global.flip()
-                if opts.opts.fps:
+                if fps:
                     ctick = SDL.gl.get_ticks()
                     #print str(ctick - ltick)
                     average.append(ctick-ltick)
@@ -248,8 +249,8 @@ class App(object):
                         average = []
                         print "mean render time= %f" % (sum)
                         fps_text = str(int(sum))
-
-                self.hud.draw(fps=True, fps_text=fps_text)
+                        
+                self.hud.draw(fps=fps, fps_text=fps_text)
                     
             #import pdb; pdb.set_trace()
         #p.stop()
