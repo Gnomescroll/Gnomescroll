@@ -1,5 +1,8 @@
 #from vox_dat import *
 
+vox_id = 0
+vox_dict = {}
+
 cdef extern from 'vox_functions.h':
     cdef struct Vector:
         float x,y,z
@@ -25,15 +28,41 @@ cdef extern from 'vox_functions.h':
     int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
     int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
 
+def ray_cast(x,y,z, x_angle, y_angle):
+    global vox_dict
+    cdef int distance, t
+    cdef Vox vox, vox_temp
+    distance = 0
+    for vox in vox_dict.values():
+        t = vox.ray_cast2(x,y,z, x_angle, y_angle)
+        if t != 0 and t < distance:
+            vox_temp = vox
+    if distance != 0:
+        vox_dict[vox_temp.id]
+
+
 cdef class Vox:
     cdef VoxelList* vo
+    cdef int id
 
     def __init__(self,x,y,z,theta, xdim, ydim, zdim, vosize=0.2):
+        global vox_id
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
+        self.id = vox_id #contains object it is associated with
+        vox_id = 0
 
     def __del__(self):
         print "Vox deconstructor"
         _deleteVoxelList(self.vo)
+        if self.id != 0:
+            global vox_dict
+            del vox_dict[self.id]
+
+    def set_object(self, object): #use to set callback
+        global vox_id, vox_dict
+        self.id = vox_id #contains object it is associated with
+        vox_id += 1
+        vox_dict[self.id] = object
 
     cpdef draw(self):
         _draw(self.vo)
@@ -99,7 +128,7 @@ class Vox_loader:
         else:
             path = './media/vox/' + file
         return path
-        
+
     def load(self, file):
         path = self._get_path(file)
         try:
@@ -114,7 +143,7 @@ class Vox_loader:
         except KeyError:
             print 'Deserialized voxel data missing keys'
             return
-             
+
         #try:
         x,y,z,theta = 0,0,0,0
         vox = Vox(x,y,z,theta, dim[0], dim[1], dim[2], vosize)

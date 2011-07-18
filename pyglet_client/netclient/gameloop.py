@@ -143,7 +143,6 @@ class App(object):
 
         #TEST
         theta = 0
-        v = vox_lib.Vox(0,0,0,0,8,8,8)
         v = vox_lib.Vox(0,0,0,0, 8,8,8)
         v.set(5,5,5,255,0,0,0)
 

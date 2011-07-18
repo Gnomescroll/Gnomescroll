@@ -16,6 +16,8 @@ from weapons import LaserGun, Pick, BlockApplier
 
 import settings
 
+import vox_lib
+
 if settings.pyglet == False:
     import SDL.gl
 
@@ -41,11 +43,20 @@ class AgentRender:
     def draw(self):
         #self.draw_aiming_direction()
         self.draw_bounding_box()
+
+        self.update_vox()
+        self.draw_vox()
         ##self.draw_selected_cube()
         ##self.draw_selected_cube2()
         self.draw_position(points=10, seperation = 0.10)
         #self.draw_velocity(point_density=15, units=200)
         #self.draw_acceleration(point_density=15, units=100000)
+
+    def update_vox(self):
+        self.vox.move(self.x,self.y,self.z, self.x_angle)
+
+    def draw_vox(self):
+        self.vox.draw()
 
     def draw_position(self, points, seperation):
         v_num = 0
@@ -130,7 +141,7 @@ class AgentWeapons:
                 new_weapons.append(known_weapon)
             self.weapons = new_weapons
             self._adjust_active_weapon()
-            
+
         if 'active' in weapons_data:
             self._active_weapon = weapons_data['active']
 
@@ -211,7 +222,7 @@ class AgentModel:
 
         self.weapons = AgentWeapons(self, weapons, active_weapon)
         self.owner = owner
-        
+
         self.you = False
 
         self.active_block = active_block   # which block to create
@@ -322,6 +333,9 @@ class PlayerAgentRender(AgentRender):
         self.draw_position(points=10, seperation = 0.10)
         self.draw_velocity(point_density=15, units=200)
         self.draw_acceleration(point_density=15, units=100000)
+        #vox models
+        self.update_vox()
+        self.draw_vox()
 
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
         if pos != None:
@@ -555,6 +569,37 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
+        ##drawing properties
+        #
+        if False: ##FIX THIS; need vox file
+            assert False
+            vox_loader = vox_lib.Vox_loader()
+            self.vox = vox_loader.load()
+        else:
+            self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
+
+            self.vox.set(5,5,5,255,0,0,0)
+
+            self.vox.set(4,4,0,255,0,255,0)
+            self.vox.set(4,4,1,0,255,255,0)
+            self.vox.set(4,4,2,0,0,255,0)
+            self.vox.set(4,4,3,0,255,255,0)
+
+            self.vox.set(4,4,4,0,255,255,0)
+            self.vox.set(4,4,5,0,0,255,0)
+            self.vox.set(4,4,6,0,255,255,0)
+            self.vox.set(4,4,7,255,0,255,0)
+
+            self.vox.set(0,0,0, 0,255,0,0)
+            self.vox.set(0,7,0, 0,255,0,0)
+            self.vox.set(7,0,0, 0,255,0,0)
+            self.vox.set(7,7,0, 0,255,0,0)
+
+            self.vox.set(0,0,7, 0,255,0,0)
+            self.vox.set(0,7,7, 0,255,0,0)
+            self.vox.set(7,0,7, 0,255,0,0)
+            self.vox.set(7,7,7, 0,255,0,0)
+
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
 
         self.weapons = PlayerAgentWeapons(self, weapons, active_weapon)
