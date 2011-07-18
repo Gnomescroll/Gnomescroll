@@ -575,8 +575,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
             assert False
             vox_loader = vox_lib.Vox_loader()
             self.vox = vox_loader.load()
+            self.vox.set_object(self)
         else:
             self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
+            self.vox.set_object(self)
 
             self.vox.set(5,5,5,255,0,0,0)
 
