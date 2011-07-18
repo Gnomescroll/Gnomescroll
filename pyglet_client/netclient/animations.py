@@ -52,7 +52,7 @@ class HitscanLaserGunAnimation(Animation):
 
     def __init__(self, origin, vector, target=None):
         self.length = 15
-        self.speed = 0.1 # per tick!
+        self.speed = 2 # per tick!
         self.color = (30, 255, 100)
         
         self.origin = origin
@@ -61,17 +61,22 @@ class HitscanLaserGunAnimation(Animation):
         #self.end = vector_lib.move_point(self.loc, self.vector, self.length)
 
         if target is None: # "go forever" somewhere really far
-            life_ticks = 1000
+            life_ticks = 10000
         else:
             life_ticks = ceil(vector_lib.distance(self.origin, target) / self.speed)
 
         self.life = life_ticks
+        self.length = self.life
             
     def next(self):
         # move self.loc in direction of vector  by magnitude speed
         self.loc = vector_lib.move_point(self.loc, self.vector, self.speed)
         #self.end = vector_lib.move_point(self.loc, self.vector, self.length)
         self.life -= 1
+        self.length = min(self.life, 1000)
+        if self.length < 1000:
+            self.length -= 1
+        self.length = max(self.length, 0)
         #print 'animation life: %i' % self.life
 
     def draw(self):
