@@ -41,6 +41,8 @@ def ray_cast_hitscan(float x, float y,float z, float x_angle, float y_angle, int
             vox_temp = vox
     if distance != 0:
         obj = vox_dict[vox_temp.id]
+        if obj == None:
+            return
         #do something
 
 cdef class Vox:
@@ -48,10 +50,12 @@ cdef class Vox:
     cdef int id
 
     def __init__(self,x,y,z,theta, xdim, ydim, zdim, vosize=0.2):
-        global vox_id
+        global vox_id, vox_dict
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
         self.id = vox_id #contains object it is associated with
-        vox_id = 0
+        self.id = vox_id #contains object it is associated with
+        vox_id += 1
+        vox_dict[self.id] = None
 
     def __del__(self):
         print "Vox deconstructor"
@@ -61,9 +65,7 @@ cdef class Vox:
             del vox_dict[self.id]
 
     def set_object(self, ob): #use to set callback
-        global vox_id, vox_dict
-        self.id = vox_id #contains object it is associated with
-        vox_id += 1
+        global vox_dict
         vox_dict[self.id] = ob
 
     cpdef draw(self):
