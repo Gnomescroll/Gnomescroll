@@ -234,7 +234,7 @@ class App(object):
                 self.camera.hudProjection()
                 #self.hud.draw()
 
-                self.SDL_global.flip()
+                #self.SDL_global.flip()
                 if opts.opts.fps:
                     ctick = SDL.gl.get_ticks()
                     #print str(ctick - ltick)
@@ -250,7 +250,7 @@ class App(object):
                         fps_text = str(int(sum))
 
                 self.hud.draw(fps=True, fps_text=fps_text)
-                    
+                self.SDL_global.flip()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
