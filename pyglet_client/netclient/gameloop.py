@@ -252,7 +252,6 @@ class App(object):
                 self.hud.draw(fps=fps, fps_text=fps_text)
                 self.SDL_global.flip()
 
-                    
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
