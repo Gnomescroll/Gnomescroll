@@ -224,6 +224,11 @@ class App(object):
                     y = random.random()
                     z = random.random()
                     temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+            #camera prospective
+            self.camera.hudProjection()
+            self.hud.draw(fps=True, fps_text=fps_text)
+            self.SDL_global.flip()
+
             #FPS calculation
             if opts.opts.fps:
                 ctick = SDL.gl.get_ticks()
@@ -238,10 +243,6 @@ class App(object):
                     average = []
                     print "mean render time= %f" % (sum)
                     fps_text = str(int(sum))
-            #camera prospective
-            self.camera.hudProjection()
-            self.hud.draw(fps=True, fps_text=fps_text)
-            self.SDL_global.flip()
 
             #import pdb; pdb.set_trace()
         #p.stop()
