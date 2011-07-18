@@ -24,8 +24,14 @@ class Hud(object):
         
         self._init_reticle()
         self._init_text_dict()
-        #self._init_scoreboard()
+        self._init_scoreboard()
         self._init_player_stats()
+        self.fps = self._to_draw_text(
+            text = '',
+            x = 0,
+            offset = self.win_height
+        )
+        
 
     def _init_text_dict(self):
         offset = 20
@@ -52,18 +58,12 @@ class Hud(object):
         start_x = self.win_width // 8
         i = 0
         for col_name in self._scoreboard_properties:
-            if settings.pyglet:
-                self.scoreboard[col_name.lower()] = text.HTMLLabel(
-                    text = '',
-                    x = start_x + (i * col_width),
-                    y = (self.win_height // 8) * 7,
-                    anchor_x = 'center',
-                    anchor_y = 'center',
-                    multiline = True,
-                    width = col_width
-                )
-            else:
-                self.scoreboard[col_name.lower()] = None
+            self.scoreboard[col_name.lower()] = self._to_draw_text(
+                text = '',
+                x = start_x + (i * col_width),
+                offset = (self.win_height // 8),
+                color = (150, 150, 255, 255)
+            )
             i += 1
 
     def _format_scoreboard_html(self, stats):
@@ -77,6 +77,17 @@ class Hud(object):
                 lines.append(str(val))
             stats[lprop] = '<font face="Times New Roman" size="15" color="red">%s</font>' % ('<br>'.join(lines),)
 
+        return stats
+
+    def _format_scoreboard_plain(self, stats):
+        for prop in self._scoreboard_properties:
+            lprop = prop.lower()
+            lines = []
+            lines.append(prop + '\n')
+            vals = stats[lprop]
+            for val in vals:
+                lines.append(str(val))
+            stats[lprop] = '\n'.join(lines)
         return stats
 
     def _init_reticle(self):
@@ -112,13 +123,20 @@ class Hud(object):
         else:
             return
 
-    def draw(self):
+    def draw_fps(self, fps_text=None):
+        if fps_text is None:
+            return
+        self.fps.text = str(fps_text)
+        self.fps.draw()
+
+    def draw(self, fps=False, fps_text=None):
         #self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
-        #if InputGlobal.scoreboard:
-            #self.draw_scoreboard()
-        #self.fps.draw()
+        if InputGlobal.scoreboard:
+            self.draw_scoreboard()
+        if fps:
+            self.draw_fps(fps_text)
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
@@ -169,14 +187,15 @@ class Hud(object):
         gl.glDisable(gl.GL_BLEND)
 
     def draw_scoreboard(self):
-        stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())
+        #stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())
+        stats_txt = self._format_scoreboard_plain(GameStateGlobal.scoreboard())
         for key, txt in stats_txt.items():
             curr_sb = self.scoreboard[key]
             old = curr_sb.text
             if old != txt:
-                curr_sb.begin_update()
+                #curr_sb.begin_update()
                 curr_sb.text = txt
-                curr_sb.end_update()
+                #curr_sb.end_update()
             curr_sb.draw()
 
     def _draw_line(self, x, y, x1, y1, color=None):

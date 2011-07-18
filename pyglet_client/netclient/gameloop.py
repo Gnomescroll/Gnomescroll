@@ -231,7 +231,8 @@ class App(object):
                 self.win.flip()
             else:
                 self.camera.hudProjection()
-                self.hud.draw()
+                #self.hud.draw()
+                self.hud.draw(fps=True, fps_text='30')
 
                 self.SDL_global.flip()
                 if False:

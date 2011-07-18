@@ -89,7 +89,7 @@ float xmin,xmax, ymin,ymax;
     for(i=0; i<c_num; i++){
         index = text[i];
         xi = index % 16;
-        yi = index >> 4;
+        yi = index >> 4;    // divides by 16 (n>>m == n/(2**m))
         //texture cordinates
         x_min = (float)(xi)*dx;
         x_max = (float)(xi+1)*dx;
@@ -158,10 +158,10 @@ float xmin,xmax, ymin,ymax;
         ymin = y;
         ymax = y+height;
 
-        printf("xi, yi= %i, %i \n", xi, yi);
-        printf("dx, dy: %f, %f \n", dx, dy);
-        printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
-        printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
+        //printf("xi, yi= %i, %i \n", xi, yi);
+        //printf("dx, dy: %f, %f \n", dx, dy);
+        //printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
+        //printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
 
 /*
         glColor3ub(255,255,255);
