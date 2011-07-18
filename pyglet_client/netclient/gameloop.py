@@ -243,7 +243,7 @@ class App(object):
                     sum = sum / float(len(average))
                     average = []
                     print "mean render time= %f" % (sum)
-                    fps_text = str(int(sum))
+                    fps_text = '%.1f' % (sum,)
 
             #import pdb; pdb.set_trace()
         #p.stop()
