@@ -141,6 +141,7 @@ class App(object):
         average = []
         fps_text = None
         fps = opts.opts.fps
+        draw_hud = not opts.opts.no_hud
         ltick, ctick = 0,0
 
         #TEST
@@ -226,8 +227,9 @@ class App(object):
                     z = random.random()
                     temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
             #camera prospective
-            self.camera.hudProjection()
-            self.hud.draw(fps=fps, fps_text=fps_text)
+            if draw_hud:
+                self.camera.hudProjection()
+                self.hud.draw(fps=fps, fps_text=fps_text)
             self.SDL_global.flip()
 
             #FPS calculation
