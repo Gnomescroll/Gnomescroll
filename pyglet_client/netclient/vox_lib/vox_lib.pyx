@@ -34,35 +34,41 @@ def ray_cast_hitscan2(float x, float y,float z, float x_angle, float y_angle, in
     cdef Vox vox, vox_temp
     distance = 0
     for vox in vox_dict.values():
-        if vox.id == ignore_vox:
+        if vox._id == ignore_vox:
             continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
         if t != 0 and t < distance:
             vox_temp = vox
+            distance = t
     if distance != 0:
-        obj = vox_dict[vox_temp.id]
+        obj = vox_dict[vox_temp._id]
         if obj == None:
-            return
-        #do something
+            return object, distance
+        else:
+            return None, 0
+    else:
+        return None, 0
 
 cdef class Vox:
     cdef VoxelList* vo
-    cdef int id
+    cdef int _id
+    property id:
+        def __get__(self):
+            return self._id
 
     def __init__(self,x,y,z,theta, xdim, ydim, zdim, vosize=0.2):
         global vox_id, vox_dict
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
-        self.id = vox_id #contains object it is associated with
-        self.id = vox_id #contains object it is associated with
+        self._id = vox_id #contains object it is associated with
         vox_id += 1
-        vox_dict[self.id] = None
+        vox_dict[self._id] = None
 
     def __del__(self):
         print "Vox deconstructor"
         _deleteVoxelList(self.vo)
-        if self.id != 0:
+        if self._id != 0:
             global vox_dict
-            del vox_dict[self.id]
+            del vox_dict[self._id]
 
     def set_object(self, ob): #use to set callback
         global vox_dict
