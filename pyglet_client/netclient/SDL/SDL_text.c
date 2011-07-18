@@ -76,6 +76,7 @@ int c_num = 0;
 while(text[c_num] != 0) { c_num++; }
 
 int i;
+int j = 0;
 float offset = x;
 int index,xi,yi;
 float x_min, x_max, y_min, y_max;
@@ -88,6 +89,11 @@ float xmin,xmax, ymin,ymax;
 
     for(i=0; i<c_num; i++){
         index = text[i];
+        if (index == 10) {
+            y -= 15;
+            j = 0;
+            continue;
+        }
         xi = index % 16;
         yi = index >> 4;    // divides by 16 (n>>m == n/(2**m))
         //texture cordinates
@@ -96,8 +102,8 @@ float xmin,xmax, ymin,ymax;
         y_max = (float)(yi)*dy;
         y_min = (float)(yi+1)*dy;
         //vertex cordinates
-        xmin = i*width+x;
-        xmax = (i+1)*width+x;
+        xmin = j*width+x;
+        xmax = (j+1)*width+x;
         ymin = y;
         ymax = y+height;
 /*
@@ -119,6 +125,7 @@ float xmin,xmax, ymin,ymax;
         glEnd();
 
         offset += width;
+        j++;
     }
     glDisable(GL_TEXTURE_2D);
 }
@@ -158,10 +165,10 @@ float xmin,xmax, ymin,ymax;
         ymin = y;
         ymax = y+height;
 
-        //printf("xi, yi= %i, %i \n", xi, yi);
-        //printf("dx, dy: %f, %f \n", dx, dy);
-        //printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
-        //printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
+        printf("xi, yi= %i, %i \n", xi, yi);
+        printf("dx, dy: %f, %f \n", dx, dy);
+        printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
+        printf("xmin, xmax, ymin, ymax= %f, %f, %f, %f \n", xmin, xmax, ymin, ymax);
 
 /*
         glColor3ub(255,255,255);
