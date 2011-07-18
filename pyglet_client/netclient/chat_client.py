@@ -607,7 +607,8 @@ class ChatInputProcessor:
         elif symbol == 'SPACE':
             callback = self.on_text(' ')
         else:
-            callback = self.on_text(_symbol)
+            if len(_symbol) == 1:
+                callback = self.on_text(_symbol)
         return callback
 
     def on_text(self, text):
