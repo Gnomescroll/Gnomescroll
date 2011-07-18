@@ -26,6 +26,12 @@ class Hud(object):
         self._init_text_dict()
         self._init_scoreboard()
         self._init_player_stats()
+        self.fps = self._to_draw_text(
+            text = '',
+            x = 0,
+            offset = self.win_height
+        )
+        
 
     def _init_text_dict(self):
         offset = 20
@@ -117,13 +123,20 @@ class Hud(object):
         else:
             return
 
-    def draw(self):
+    def draw_fps(self, fps_text=None):
+        if fps_text is None:
+            return
+        self.fps.text = 
+        self.fps.draw()
+
+    def draw(self, fps=False, fps_text=None):
         #self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
-        #self.fps.draw()
+        if fps:
+            self.draw_fps(fps_text)
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
