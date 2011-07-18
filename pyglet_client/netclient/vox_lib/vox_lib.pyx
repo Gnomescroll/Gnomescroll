@@ -28,12 +28,14 @@ cdef extern from 'vox_functions.h':
     int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
     int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
 
-def ray_cast_hitscan(x,y,z, x_angle, y_angle):
+def ray_cast_hitscan(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
     global vox_dict
     cdef int distance, t
     cdef Vox vox, vox_temp
     distance = 0
     for vox in vox_dict.values():
+        if vox.id == ignore_vox:
+            continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
         if t != 0 and t < distance:
             vox_temp = vox
