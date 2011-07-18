@@ -51,13 +51,19 @@ def get_key_state():
     _get_key_state(&key_state_callback)
 
 key_text_event_callback_stack = []
+mouse_event_callback_stack = []
 
 def process_events():
-    global key_text_event_callback_stack
+    global key_text_event_callback_stack, mouse_event_callback_stack
     temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback, &quit_event_callback)
     while len(key_text_event_callback_stack) != 0:
         (key, key_string) = key_text_event_callback_stack.pop(0)
         input_callback.keyboard_text_event(key, key_string)
+
+    while len(mouse_event_callback_stack) != 0:
+        me = mouse_event_callback_stack.pop(0)
+        input_callback.mouse_event(*me)
+        
     #mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
 
 def set_text_entry_mode(int n):
@@ -121,8 +127,9 @@ cdef int mouse_motion_callback(MouseMotion ms):
     #input.inputEventGlobal.mouse_motion(ms.x,ms.y,ms.dx,ms.dy, ms.button)
 
 cdef int mouse_event_callback(MouseEvent me):
-    global input_callback
-    input_callback.mouse_event(me.button, me.state, me.x, -1*me.y)
+    global input_callback, mouse_event_callback_stack
+    mouse_event_callback_stack.append((me.button, me.state, me.x, -1*me.y))
+    #input_callback.mouse_event(me.button, me.state, me.x, -1*me.y)
     #input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
 
 cdef int quit_event_callback():

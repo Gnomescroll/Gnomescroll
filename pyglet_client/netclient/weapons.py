@@ -81,7 +81,7 @@ class Weapon(EquippableObject):
         args = self._update_info(**weapon)
         GameStateGlobal.weaponList.update(self, *args)
 
-    def animation(self):
+    def animation(self, target=None, agent=None):
         return self._animation()
 
 class LaserGun(Weapon):
