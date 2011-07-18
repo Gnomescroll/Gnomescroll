@@ -53,7 +53,7 @@ class AgentRender:
         #self.draw_acceleration(point_density=15, units=100000)
 
     def update_vox(self):
-        self.vox.move(self.x,self.y,self.z, self.x_angle)
+        self.vox.move(self.x,self.y,self.z, 3.14159*self.x_angle)
 
     def draw_vox(self):
         self.vox.draw()
