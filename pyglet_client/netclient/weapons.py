@@ -1,6 +1,6 @@
 from game_objects import GameObject
 from game_objects import EquippableObject
-
+import animations
 
 weapon_dat = {
     0:  {
@@ -39,6 +39,7 @@ class Weapon(EquippableObject):
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
         self.ptype = weapon_dat[self.type]['projectile_type']  # projectile type, implement fully later
+        self.animation = animations.Animation
 
     def fire(self):
         return False
@@ -79,7 +80,9 @@ class Weapon(EquippableObject):
     def update_info(self, **weapon):
         args = self._update_info(**weapon)
         GameStateGlobal.weaponList.update(self, *args)
-        
+
+    def animation(self):
+        return self._animation()
 
 class LaserGun(Weapon):
 
@@ -136,6 +139,17 @@ class HitscanLaserGun(LaserGun):
     def __init__(self, id=None, owner=None, clip=None, **kwargs):
         LaserGun.__init__(self, id=id, owner=owner, clip=clip, **kwargs)
         self.hitscan = True
+        self._animation = animations.HitscanLaserGunAnimation
+
+    def animation(self, target, agent=None):
+        print 'creating animation'
+        if agent is None:
+            agent = GameStateGlobal.agentList[self.owner]
+        origin = agent.pos()
+        vector = agent.direction()
+        anim = self._animation(origin, vector, target)
+        return anim
+    
 
 class BlockApplier(Weapon):
 

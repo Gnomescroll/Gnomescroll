@@ -17,6 +17,7 @@ from weapons import LaserGun, Pick, BlockApplier
 import settings
 
 import vox_lib
+import vector_lib
 
 if settings.pyglet == False:
     import SDL.gl
@@ -255,6 +256,15 @@ class AgentModel:
                 self.state = state
 
         GameStateGlobal.agentList.update(self, *args)
+
+    def pos(self):
+        return self.state[0:3]
+
+    def direction(self, normalize=True):
+        v = vector_lib.angle2vector(self.x_angle, self.y_angle)
+        if normalize:
+            v = vector_lib.normalize(v)
+        return v
 
     # set agent state explicitly
     def set_agent_control_state(self, *args):
@@ -630,9 +640,11 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         fire_command = weapon.fire()
         if fire_command:
             if weapon.hitscan:
+                weapon.animation().play()
                 ob, distance = vox_lib.ray_cast_hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
                 if ob == None:
                     print "Hit nothing"
+                    ttype = 'empty'
                 else:
                     print "Hit Something: distance %f" % distance
                 # determine target w/ ray cast
