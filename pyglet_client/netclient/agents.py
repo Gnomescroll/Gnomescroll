@@ -630,6 +630,11 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender):
         fire_command = weapon.fire()
         if fire_command:
             if weapon.hitscan:
+                ob, distance = vox_lib.ray_cast_hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
+                if ob == None:
+                    print "Hit nothing"
+                else:
+                    print "Hit Something: distance %f" % distance
                 # determine target w/ ray cast
                 #target = ray_cast_from(agent)
                 target = {
