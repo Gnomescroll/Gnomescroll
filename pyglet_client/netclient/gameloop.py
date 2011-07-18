@@ -233,7 +233,7 @@ class App(object):
             self.SDL_global.flip()
 
             #FPS calculation
-            if fps:
+            if fps or settings.fps:
                 ctick = SDL.gl.get_ticks()
                 #print str(ctick - ltick)
                 average.append(ctick-ltick)
@@ -245,7 +245,7 @@ class App(object):
                     sum = sum / float(len(average))
                     average = []
                     print "mean render time= %f" % (sum)
-                    fps_text = '%.1f' % (sum,)
+                    fps_text = "%.2f" % (sum)
 
             #import pdb; pdb.set_trace()
         #p.stop()
