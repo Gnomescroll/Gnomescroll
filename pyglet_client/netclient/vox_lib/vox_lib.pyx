@@ -1,7 +1,8 @@
 #from vox_dat import *
 
-vox_id = 0
+cdef int vox_id = 0
 vox_dict = {}
+ob_dict = {}
 
 cdef extern from 'vox_functions.h':
     cdef struct Vector:
@@ -28,8 +29,8 @@ cdef extern from 'vox_functions.h':
     int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
     int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
 
-def ray_cast_hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
-    global vox_dict
+def hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
+    global vox_dict, ob_dict
     cdef int distance, t
     cdef Vox vox, vox_temp
     distance = 0
@@ -37,11 +38,12 @@ def ray_cast_hitscan2(float x, float y,float z, float x_angle, float y_angle, in
         if vox._id == ignore_vox:
             continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
-        if t != 0 and t < distance:
+        print "Distance = %f " % ((float(t)*(1/256)))
+        if t != 0 and (t < distance or distance == 0):
             vox_temp = vox
             distance = t
     if distance != 0:
-        obj = vox_dict[vox_temp._id]
+        obj = ob_dict[vox_temp._id]
         if obj == None:
             return object, distance
         else:
@@ -57,22 +59,22 @@ cdef class Vox:
             return self._id
 
     def __init__(self,x,y,z,theta, xdim, ydim, zdim, vosize=0.2):
-        global vox_id, vox_dict
+        global vox_id, vox_dict, ob_dict
         self.vo = _createVoxelList(vosize, xdim, ydim, zdim, x, y, z, theta)
         self._id = vox_id #contains object it is associated with
         vox_id += 1
-        vox_dict[self._id] = None
+        vox_dict[self._id] = self
+        ob_dict[self._id] = None
 
     def __del__(self):
         print "Vox deconstructor"
         _deleteVoxelList(self.vo)
-        if self._id != 0:
-            global vox_dict
-            del vox_dict[self._id]
+        global vox_dict
+        del vox_dict[self._id]
+        del ob_dict[self._id]
 
     def set_object(self, ob): #use to set callback
-        global vox_dict
-        vox_dict[self.id] = ob
+        ob_dict[self._id] = ob
 
     cpdef draw(self):
         _draw(self.vo)
@@ -119,11 +121,11 @@ cdef class Vox:
         return _point_collision(self.vo,x,y,z)
 
     #v0 is point to cast from, v1 must be unit vector
-    def ray_cast(self, x0,y0,z0, x1,y1,z1):
+    cpdef int ray_cast(self, x0,y0,z0, x1,y1,z1):
         return _ray_cast_collision(self.vo,x0,y0,z0, x1,y1,z1)
 
-    def ray_cast2(self,x,y,z, x_angle, y_angle):
-        _raw_cast_collision(self.vo,x,y,z, x_angle, y_angle)
+    cpdef int ray_cast2(self,x,y,z, x_angle, y_angle):
+        return _raw_cast_collision(self.vo,x,y,z, x_angle, y_angle)
 
 import json
 
