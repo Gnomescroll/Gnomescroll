@@ -377,5 +377,5 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
         glColor3ub(255,255,255);
 
         if(r > vo->radius2) {return 0; }
-        return 1;
+        return (int)(t*256);
 }
