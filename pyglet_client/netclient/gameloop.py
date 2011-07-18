@@ -224,33 +224,25 @@ class App(object):
                     y = random.random()
                     z = random.random()
                     temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
+            #FPS calculation
+            if opts.opts.fps:
+                ctick = SDL.gl.get_ticks()
+                #print str(ctick - ltick)
+                average.append(ctick-ltick)
+                ltick = ctick
+                if len(average) > 30:
+                    sum = 0.
+                    for x in average:
+                        sum += float(x)
+                    sum = sum / float(len(average))
+                    average = []
+                    print "mean render time= %f" % (sum)
+                    fps_text = str(int(sum))
+            #camera prospective
+            self.camera.hudProjection()
+            self.hud.draw(fps=True, fps_text=fps_text)
+            self.SDL_global.flip()
 
-            if settings.pyglet:
-                self.camera.hudProjection()
-                self.hud.draw()
-                clock.tick()
-                self.win.flip()
-            else:
-                self.camera.hudProjection()
-                #self.hud.draw()
-
-                #self.SDL_global.flip()
-                if opts.opts.fps:
-                    ctick = SDL.gl.get_ticks()
-                    #print str(ctick - ltick)
-                    average.append(ctick-ltick)
-                    ltick = ctick
-                    if len(average) > 30:
-                        sum = 0.
-                        for x in average:
-                            sum += float(x)
-                        sum = sum / float(len(average))
-                        average = []
-                        print "mean render time= %f" % (sum)
-                        fps_text = str(int(sum))
-
-                self.hud.draw(fps=True, fps_text=fps_text)
-                self.SDL_global.flip()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
