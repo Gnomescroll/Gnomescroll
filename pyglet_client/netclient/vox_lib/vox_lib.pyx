@@ -28,18 +28,20 @@ cdef extern from 'vox_functions.h':
     int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
     int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
 
-def ray_cast(x,y,z, x_angle, y_angle):
+def ray_cast_hitscan(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
     global vox_dict
     cdef int distance, t
     cdef Vox vox, vox_temp
     distance = 0
     for vox in vox_dict.values():
+        if vox.id == ignore_vox:
+            continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
         if t != 0 and t < distance:
             vox_temp = vox
     if distance != 0:
-        vox_dict[vox_temp.id]
-
+        obj = vox_dict[vox_temp.id]
+        #do something
 
 cdef class Vox:
     cdef VoxelList* vo
@@ -58,11 +60,11 @@ cdef class Vox:
             global vox_dict
             del vox_dict[self.id]
 
-    def set_object(self, object): #use to set callback
+    def set_object(self, ob): #use to set callback
         global vox_id, vox_dict
         self.id = vox_id #contains object it is associated with
         vox_id += 1
-        vox_dict[self.id] = object
+        vox_dict[self.id] = ob
 
     cpdef draw(self):
         _draw(self.vo)

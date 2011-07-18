@@ -315,13 +315,13 @@ int _point_collision(struct VoxelList* vo, float x, float y, float z) {
 
 int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle) {
     float x1,y1,z1;
-    printf("x_angle, y_angle = %f, %f \n", x_angle, y_angle);
+    //printf("x_angle, y_angle = %f, %f \n", x_angle, y_angle);
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
     float s = sqrt(x1*x1 + y1*y1 + z1*z1);
     x1 /= s; y1 /=s; z1 /=s;
-    printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
+    //printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
 }
 
@@ -334,7 +334,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
     t = t/(x2*x2+y2*y2+z2*z2);
-    printf("t= %f \n", t);
+    //printf("t= %f \n", t);
     float r, x,y,z;
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
@@ -361,7 +361,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     } else { }
     */
         //printf("Within Radius of Voxel Volume \n");
-        printf("r= %f, radius= %f \n", r, vo->radius2);
+        //printf("r= %f, radius= %f \n", r, vo->radius2);
         //printf("nearest point vector length: %f \n", x*x+y*y+z*z);
 
         glBegin(GL_POINTS);
