@@ -126,7 +126,7 @@ class Hud(object):
     def draw_fps(self, fps_text=None):
         if fps_text is None:
             return
-        self.fps.text = 
+        self.fps.text = str(fps_text)
         self.fps.draw()
 
     def draw(self, fps=False, fps_text=None):
