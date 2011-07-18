@@ -90,7 +90,7 @@ float xmin,xmax, ymin,ymax;
     for(i=0; i<c_num; i++){
         index = text[i];
         if (index == 10) {
-            y -= 15;
+            y -= 10;
             j = 0;
             continue;
         }
