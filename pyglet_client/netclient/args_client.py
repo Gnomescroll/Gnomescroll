@@ -99,6 +99,8 @@ def parse(cl_args=None):
 
     parser.add_argument('-nl', '--no-load', action="store_true")
 
+    parser.add_argument('-fps', '--fps', action='store_true')
+
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:
@@ -165,7 +167,8 @@ def print_args(args):
         'height',
         'sensitivity',
         'mouse_sensitivity',
-        'camera_sensitivity'
+        'camera_sensitivity',
+        'fps'
     ]
     print 'Options:'
     for key in keys:

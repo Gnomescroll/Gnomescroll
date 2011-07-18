@@ -139,6 +139,7 @@ class App(object):
         #p = hotshot.Profile("../log/client.log")
         #p.start()
         average = []
+        fps_text = None
         ltick, ctick = 0,0
 
         #TEST
@@ -232,10 +233,9 @@ class App(object):
             else:
                 self.camera.hudProjection()
                 #self.hud.draw()
-                self.hud.draw(fps=True, fps_text='30')
 
                 self.SDL_global.flip()
-                if False:
+                if opts.opts.fps:
                     ctick = SDL.gl.get_ticks()
                     #print str(ctick - ltick)
                     average.append(ctick-ltick)
@@ -247,6 +247,10 @@ class App(object):
                         sum = sum / float(len(average))
                         average = []
                         print "mean render time= %f" % (sum)
+                        fps_text = str(int(sum))
+
+                self.hud.draw(fps=True, fps_text=fps_text)
+                    
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
