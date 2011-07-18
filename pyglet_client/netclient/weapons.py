@@ -39,7 +39,7 @@ class Weapon(EquippableObject):
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
         self.ptype = weapon_dat[self.type]['projectile_type']  # projectile type, implement fully later
-        self.animation = animations.Animation
+        self._animation = animations.Animation
 
     def fire(self):
         return False

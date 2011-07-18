@@ -2,19 +2,18 @@
 Vector math
 '''
 
-from math import pi, sqrt
+from math import pi, sqrt, cos, sin
 
 # adds n*vector to point
 # use for normalized vectors
 def move_point(pt, v, n):
-    v = [i*n for n in v]
+    v = [i*n for i in v]
     end = [a[0]+a[1] for a in zip(pt, v)]
     return end
 
 def normalize(v):
     scale = sqrt(sum([i**2 for i in v]))
-    x1 /= s; y1 /=s; z1 /=s;
-    v = [i/s for i in v]
+    v = [i/scale for i in v]
     return v
 
 def angle2vector(x_angle, y_angle):

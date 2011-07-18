@@ -198,8 +198,14 @@ def draw_cube( x,y,z, color = None):
             r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
             SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
-def draw_line(self, v1, v2, color):
+def draw_line(v1, v2, color):
     r,g,b = color
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     SDL.gl.draw_line(r,g,b,x1,y1,z1,x2,y2,z2)
+
+def draw_ray(pt, v, l, color):
+    pt1 = vector_lib.move_point(pt, v, l)
+    draw_line(pt, pt1, color)
+
+import vector_lib

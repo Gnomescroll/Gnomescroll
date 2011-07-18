@@ -199,6 +199,8 @@ class App(object):
                 first_person = False
 
             self.camera.worldProjection()
+            self.animations.draw()
+
             #vox_lib.draw()
             v.move(0,0,3, theta)
             v.draw()
@@ -233,7 +235,6 @@ class App(object):
             if draw_hud:
                 self.camera.hudProjection()
                 self.hud.draw(fps=fps, fps_text=fps_text)
-            self.animations.draw()
             self.SDL_global.flip()
 
             #FPS calculation
