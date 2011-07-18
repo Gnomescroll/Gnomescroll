@@ -192,8 +192,10 @@ class App(object):
 
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
+                first_person = True
             elif InputGlobal.camera == 'camera':
                 self.camera.camera_view()
+                first_person = False
 
             self.camera.worldProjection()
             #vox_lib.draw()
@@ -215,7 +217,7 @@ class App(object):
             #v.collision_test(0.1,0.0,2.0)
             #cube_lib.VBO.draw_test_chunk()
             cube_lib.VBO.update_chunks()
-            self.world.draw()
+            self.world.draw(first_person)
             cube_lib.VBO.draw_chunks()
             #VBO test
             ##cube_lib.VBO.draw_test_chunk()

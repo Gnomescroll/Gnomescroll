@@ -49,10 +49,10 @@ class World():
             p.tick()
         pass
 
-    def draw(self):
+    def draw(self, first_person=False):
         if settings.pyglet:
             self.draw_chunk()
-        self.draw_agents()
+        self.draw_agents(first_person)
         self.draw_projectiles()
         if settings.pyglet:
             self.draw_transparent_blocks()
@@ -156,9 +156,9 @@ class World():
     def add_agent(self, agent=None):
         self.agents.append(agent)
 
-    def draw_agents(self):
+    def draw_agents(self, first_person=False):
         for agent in GameStateGlobal.agentList.values():
-            if not agent.dead:
+            if not agent.dead and not (agent.you and first_person):
                 agent.draw()
 
 import projectiles
