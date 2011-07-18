@@ -51,6 +51,7 @@ else:
 
 import world #deprecate
 
+from animations import animations
 
 import random #remove
 
@@ -93,7 +94,7 @@ class App(object):
     def __init__(self):
 
         self.init_globals()
-
+        self.animations = animations
         #other
         self.world = world.World()  #deprecate?
 
@@ -232,6 +233,7 @@ class App(object):
             if draw_hud:
                 self.camera.hudProjection()
                 self.hud.draw(fps=fps, fps_text=fps_text)
+            self.animations.draw()
             self.SDL_global.flip()
 
             #FPS calculation
