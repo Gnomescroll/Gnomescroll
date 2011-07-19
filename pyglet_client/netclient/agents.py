@@ -296,6 +296,8 @@ class AgentModel:
             return self.__dict__['state'][7]
         elif attr == 'az':
             return self.__dict__['state'][8]
+        #elif attr == 'vox':
+        #    return self.__dict__['vox']
         else:
             raise AttributeError, 'Agent attribute does not exist: %s' % (attr,)
 
@@ -327,6 +329,39 @@ class Agent(AgentModel, AgentPhysics, AgentRender):
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
         self.init_vox()
+
+    def init_vox(self):
+        if False: ##FIX THIS; need vox file
+            assert False
+            vox_loader = vox_lib.Vox_loader()
+            self.vox = vox_loader.load()
+            self.vox.set_object(self)
+        else:
+            self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
+            self.vox.set_object(self)
+
+            self.vox.set(5,5,5,255,0,0,0)
+
+            self.vox.set(4,4,0,255,0,255,0)
+            self.vox.set(4,4,1,0,255,255,0)
+            self.vox.set(4,4,2,0,0,255,0)
+            self.vox.set(4,4,3,0,255,255,0)
+
+            self.vox.set(4,4,4,0,255,255,0)
+            self.vox.set(4,4,5,0,0,255,0)
+            self.vox.set(4,4,6,0,255,255,0)
+            self.vox.set(4,4,7,255,0,255,0)
+
+            self.vox.set(0,0,0, 0,255,0,0)
+            self.vox.set(0,7,0, 0,255,0,0)
+            self.vox.set(7,0,0, 0,255,0,0)
+            self.vox.set(7,7,0, 0,255,0,0)
+
+            self.vox.set(0,0,7, 0,255,0,0)
+            self.vox.set(0,7,7, 0,255,0,0)
+            self.vox.set(7,0,7, 0,255,0,0)
+            self.vox.set(7,7,7, 0,255,0,0)
+
 '''
 Client's player's agent draw methods
 '''
