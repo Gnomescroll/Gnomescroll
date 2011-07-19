@@ -14,12 +14,15 @@ class NetEventGlobal:
     projectileMessageHandler = None
     agentMessageHandler = None
     playerMessageHandler = None
+    miscMessageHandler = None
+
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
         cls.clientMessageHandler = ClientMessageHandler()
         cls.playerMessageHandler = PlayerMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
+        cls.miscMessageHandler = MiscMessageHandler()
 
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
@@ -136,6 +139,7 @@ class MiscMessageHandler(GenericMessageHandler):
 
     def _ping(self, timestamp):
         print "timestamp = %f" % timestamp
+        assert False
 
 class MapMessageHandler(GenericMessageHandler):
     #terrainMap = None
