@@ -45,7 +45,7 @@ def hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_
     if distance != 0:
         obj = ob_dict[vox_temp._id]
         if obj == None:
-            return object, distance
+            return obj, distance
         else:
             return None, 0
     else:
