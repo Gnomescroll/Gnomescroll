@@ -12,7 +12,7 @@ base_dir = "./"
 
 class Camera(object):
 
-    def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0):
+    def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0, x_angle=0.0, y_angle=0.0):
         if settings.pyglet == False:
             self.SDL_global = SDL.gl.SDL_global
         if settings.pyglet:
@@ -20,8 +20,8 @@ class Camera(object):
         self.x = x
         self.y = y
         self.z = z
-        self.x_angle = 0.0
-        self.y_angle = 0.0
+        self.x_angle = x_angle
+        self.y_angle = y_angle
         self.rot = rot
         self.zoom = zoom
         self.rts = True

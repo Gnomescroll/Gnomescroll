@@ -105,7 +105,7 @@ class App(object):
             self.camera = Camera(self.win)
             self.hud = Hud(self.win)
         else:
-            self.camera = Camera(None)
+            self.camera = Camera(None, x=-100, z=50, rot=-1.)
             self.hud = Hud()
         #setup events
         #self.exit = False
