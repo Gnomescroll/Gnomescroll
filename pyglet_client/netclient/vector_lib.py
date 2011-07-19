@@ -22,6 +22,6 @@ def angle2vector(x_angle, y_angle):
     z1 = sin( y_angle);
     return [x1, y1, z1]
 
-def distance(self, pt1, pt2):
+def distance(pt1, pt2):
     dist = sqrt(sum([(a[0] - a[1])**2 for a in zip(pt1, pt2)]))
     return dist

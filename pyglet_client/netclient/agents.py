@@ -144,11 +144,30 @@ class AgentRender:
 
 class AgentWeapons:
 
-    def __init__(self, agent, weapons=None, active_weapon=None):
+    def __init__(self, agent, weapons=None):
         self.agent = agent
+
         if weapons is None:
             weapons = []
-        self.weapons = weapons
+            active_weapon = None
+        else:
+            if 'active' in weapons:
+                active_weapon = weapons['active']
+            else:
+                active_weapon = None
+            if 'weapons' in weapons:
+                weapons = weapons['weapons']
+            else:
+                weapons = []
+
+        weapon_objs = []
+        for weapon in weapons:
+            known_weapon = GameStateGlobal.weaponList.get(weapon['id'], None)
+            if known_weapon is None:
+                known_weapon = GameStateGlobal.weaponList.create(**weapon)
+            weapon_objs.append(known_weapon)
+        self.weapons = weapon_objs
+        
         if active_weapon is None:
             self._active_weapon = None
             self._adjust_active_weapon()
@@ -161,7 +180,6 @@ class AgentWeapons:
         return self.weapons[self._active_weapon]
 
     def update_info(self, **weapons_data):
-        print 'agent weapons updating info'
         if 'weapons' in weapons_data:
             weapons = weapons_data['weapons']
             new_weapons = []
@@ -210,6 +228,7 @@ class AgentWeapons:
             NetOut.sendMessage.change_weapon(self.agent, aw)
 
     def has(self, weapon_type):
+        print self.weapons
         for weapon in self.weapons:
             if weapon.type == weapon_type:
                 return weapon
@@ -230,7 +249,7 @@ class AgentModel:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
         if owner is None or id is None:
             return
         if state is None:
@@ -267,7 +286,7 @@ class AgentModel:
             self.health = health
         self.dead = bool(dead)
 
-        self.weapons = AgentWeapons(self, weapons, active_weapon)
+        self.weapons = AgentWeapons(self, weapons)
         self.owner = owner
 
         self.you = False
@@ -384,9 +403,9 @@ class AgentModel:
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, VoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=0):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
         self.init_vox()
-        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
+        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
 
 '''
 Client's player's agent draw methods
@@ -637,11 +656,11 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, active_weapon=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
         self.init_vox()
-        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block, active_weapon)
+        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
 
-        self.weapons = PlayerAgentWeapons(self, weapons, active_weapon)
+        self.weapons = PlayerAgentWeapons(self, weapons)
 
         self.you = True
         self.control_state = [0,0,0,0,0,0,0]
