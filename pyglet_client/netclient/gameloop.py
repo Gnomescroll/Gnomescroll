@@ -259,6 +259,7 @@ class App(object):
                 ping_text = '50'
                 pass
 
+            NetOut.miscMessage.ping()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()

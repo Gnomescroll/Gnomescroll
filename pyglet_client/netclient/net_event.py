@@ -3,7 +3,7 @@
 '''
 Client network incoming
 '''
-
+import SDL.gl #for timer function
 import simplejson as json
 #import struct
 
@@ -14,12 +14,15 @@ class NetEventGlobal:
     projectileMessageHandler = None
     agentMessageHandler = None
     playerMessageHandler = None
+    miscMessageHandler = None
+
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
         cls.clientMessageHandler = ClientMessageHandler()
         cls.playerMessageHandler = PlayerMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
+        cls.miscMessageHandler = MiscMessageHandler()
 
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
@@ -124,6 +127,18 @@ class ChatMessageHandler(GenericMessageHandler):
     def _you_killed(self, **msg):
         ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
+
+class MiscMessageHandler(GenericMessageHandler):
+    events = {
+        'ping' : '_ping',
+    }
+
+    @classmethod
+    def init(cls):
+        pass
+
+    def _ping(self, timestamp, **msg):
+        print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
 
 class MapMessageHandler(GenericMessageHandler):
     #terrainMap = None
@@ -404,7 +419,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
 
         # look up projectile type
         ptype = weapon_dat[wtype]['projectile_type']
-        
+
         # look up spatial coordinates of target
         if type == 'block':
             # later, adjust this so that the end is at the corrent surface point of the block
@@ -415,11 +430,11 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             # special mode; in this case, loc is a unit vector
             # call different animation
             end = loc
-            
+
         # look up agent origin
         # animate
         print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
-        
+
 
 from game_state import GameStateGlobal
 from net_client import NetClientGlobal

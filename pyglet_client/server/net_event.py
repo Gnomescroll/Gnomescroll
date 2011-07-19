@@ -6,17 +6,18 @@ class NetEvent:
 
     messageHandler = None
     adminMessageHandler = None
+    miscMessageHandler = None
 
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
         cls.adminMessageHandler = AdminMessageHandler()
-
+        #cls.miscMessageHandler = MiscMessageHandler()
     @classmethod
     def init_1(cls):
         cls.messageHandler.init()
         cls.adminMessageHandler.init()
-
+        #cls.miscMessageHandler.init()
     @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
@@ -34,6 +35,9 @@ class AgentMessageHandler:
 class PlayerMessageHandler:
     pass
 
+def _ping(connection, timestamp, **msg):
+    connection.sendMessage.ping(timestamp)
+
 # routes messages by msg.cmd
 class MessageHandler:
 
@@ -49,6 +53,8 @@ class MessageHandler:
         #use json_events when possible
         if self.json_events.has_key(cmd):
             self.json_events[cmd](**msg)
+        elif cmd == 'ping':
+            _ping(connection, **msg)
         # game state
         elif cmd == 'create_agent':
             GameStateGlobal.agentList.create(**msg)
@@ -91,7 +97,9 @@ class MessageHandler:
             connection.identify(name)
         elif cmd == 'request_client_id':
             connection.send_client_id()
-
+        #misc
+        #elif cmd == 'ping'
+        #    self.ping(msg, connection)
         # map
         elif cmd == 'request_chunk_list':
             self.send_chunk_list(msg, connection)
@@ -179,7 +187,7 @@ class MessageHandler:
 
         if active_weapon == -1: # json doesnt have None, but None is a valid input; careful, -1 is a valid index.
             active_weapon = None
-            
+
         agent.set_active_weapon(active_weapon)
 
     def drop_weapon(self, client_id, **msg):
@@ -223,7 +231,7 @@ class MessageHandler:
         if not weapon.hitscan:
             print 'msg hitscan :: Client sent hitscan message for non-hitscan weapon'
             return
-        
+
         try:
             target = msg['target']
         except KeyError:
@@ -452,3 +460,17 @@ class AdminMessageHandler:
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
         NetOut.event.set_map(list)
+
+#class MiscMessageHandler:
+    #def init(self):
+        #pass
+    #def __init__(self):
+        #self.register_events()
+    #def register_events(self):
+        #events = {
+            #'ping' : self._ping,
+        #}
+        #NetEvent.register_json_events(events)
+
+    #def _ping(self, timestamp, **msg):
+        #NetOut.event.ping(timestamp)

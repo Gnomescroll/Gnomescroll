@@ -222,7 +222,7 @@ class SendMessage: #each connection has one of these
         return {
             'player_list':  GameStateGlobal.playerList.json()
         }
-        
+
     @sendJSON('player_update')
     def send_player(self, player, properties=None):
         return {
@@ -248,7 +248,7 @@ class SendMessage: #each connection has one of these
         return {
             'projectile_list'   :   GameStateGlobal.projectileList.json(),
         }
-        
+
     @sendJSON('projectile_update')
     def send_projectile(self, projectile, properties=None):
         return {
@@ -289,4 +289,10 @@ class SendMessage: #each connection has one of these
     def you_killed(self, msg):
         return {
             'msg'   :   msg,
+        }
+
+    @sendJSON('ping')
+    def ping(self, timestamp):
+        return {
+            'timestamp'   :   timestamp,
         }
