@@ -420,7 +420,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             return
 
         # look up projectile type
-        ptype = weapon_dat[wtype]['projectile_type']
+        ptype = weapon_dat[weapon_type]['projectile_type']
 
         # look up spatial coordinates of target
         if type == 'block':
