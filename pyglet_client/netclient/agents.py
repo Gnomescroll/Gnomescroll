@@ -18,6 +18,7 @@ import settings
 
 import vox_lib
 import vector_lib
+import raycast_utils
 
 if settings.pyglet == False:
     import SDL.gl
@@ -371,6 +372,9 @@ class AgentModel:
     def az(self, val):
         self.state[8] = val
 
+    def normalized_direction(self):
+        return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))
+
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, VoxRender):
 
@@ -657,22 +661,40 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
         fire_command = weapon.fire()
         if fire_command:
             if weapon.hitscan:
-                print 'HITSCAN!!'
                 weapon.animation(agent=self).play()
 
-                (ob, distance) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
-                if ob == None:
-                    print "Hit nothing, distance %f" % (distance/256.0)
-                    ttype = 'empty'
-                else:
-                    print "Hit Something, distance %f" % (distance/256.0)
+                # check agent
+                (ag, adistance) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
+                body_part_id = 1
+                block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+                bdistance = None
+                if block is not None:
+                    bdistance = vector_lib.distance(self.pos(), block)
+                #check block
+                # if both agent & block got hit, check which is closer
 
+                if ag is not None and block is not None:
+                    if bdistance < adistance:
+                        ttype = 'block'
+                        loc = block
+                    else:
+                        ttype = 'agent'
+                        loc = (ag.id, body_part_id)
+                elif ag is not None:
+                    ttype = 'agent'
+                    loc = (ag.id, body_part_id)
+                elif block is not None:
+                    ttype = 'block'
+                    loc = block
+                else:
+                    ttype = 'empty'
+                    loc = self.normalized_direction()
 
                 # determine target w/ ray cast
                 #target = ray_cast_from(agent)
                 target = {
-                    'type'  :   'block',
-                    'loc'   :   (20, 20, 5)
+                    'type'  :   ttype,
+                    'loc'   :   loc
                 }
                 NetOut.sendMessage.hitscan(target)
             else:

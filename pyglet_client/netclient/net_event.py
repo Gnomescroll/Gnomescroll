@@ -401,7 +401,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             err_msg = 'msg hitscan :: target type missing'
         try:
             loc = target['loc']
-            if type == 'block' or type == 'emtpy':
+            if type == 'block' or type == 'empty':
                 assert len(loc) == 3
             elif type == 'agent':
                 assert len(loc) == 2
