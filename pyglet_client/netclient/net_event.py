@@ -3,7 +3,7 @@
 '''
 Client network incoming
 '''
-
+import SDL.gl #for timer function
 import simplejson as json
 #import struct
 
@@ -137,9 +137,8 @@ class MiscMessageHandler(GenericMessageHandler):
     def init(cls):
         pass
 
-    def _ping(self, timestamp):
-        print "timestamp = %f" % timestamp
-        assert False
+    def _ping(self, timestamp, **msg):
+        print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
 
 class MapMessageHandler(GenericMessageHandler):
     #terrainMap = None

@@ -290,3 +290,9 @@ class SendMessage: #each connection has one of these
         return {
             'msg'   :   msg,
         }
+
+    @sendJSON('ping')
+    def ping(self, timestamp):
+        return {
+            'timestamp'   :   timestamp,
+        }

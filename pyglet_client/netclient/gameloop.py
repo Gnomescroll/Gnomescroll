@@ -252,6 +252,7 @@ class App(object):
                     #print "mean render time= %f" % (sum)
                     fps_text = "%.2f" % (sum)
 
+            NetOut.miscMessage.ping()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
