@@ -176,8 +176,8 @@ class App(object):
         v2 = vox_lib.Vox_loader().load('agent.vox')
         #v.move(0,0,5, theta)
         #END TEST
-        ping_n = SDL.gl.get_ticks()
-        ping_update_interval = 500 #milliseconds
+        if ping:
+            ping_n = SDL.gl.get_ticks()
         while not GameStateGlobal.exit:
             theta += -.005 #test
             if settings.pyglet:
@@ -257,7 +257,7 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if ping:
-                if SDL.gl.get_ticks() - ping_n > ping_update_interval:
+                if SDL.gl.get_ticks() - ping_n > settings.ping_update_interval:
                 # do ping stuff here
                     ping_n = SDL.gl.get_ticks()
                     NetOut.miscMessage.ping()
