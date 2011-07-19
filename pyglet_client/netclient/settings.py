@@ -22,3 +22,4 @@ sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefi
 
 fps = True
 ping = True
+ping_update_interval = 500

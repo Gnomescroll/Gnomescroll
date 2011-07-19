@@ -243,6 +243,9 @@ class AgentModel:
         self.d_xa = 0
         self.d_za = 0
 
+        self.x_angle = 0
+        self.y_angle = 0
+
         self.last_control_tick = 0
         self.jetpack = 0
         self.brake = 0
