@@ -209,6 +209,12 @@ class AgentWeapons:
             self._active_weapon = aw
             NetOut.sendMessage.change_weapon(self.agent, aw)
 
+    def has(self, weapon_type):
+        for weapon in self.weapons:
+            if weapon.type == weapon_type:
+                return weapon
+        return False
+
     def __len__(self):
         return len(self.weapons)
 

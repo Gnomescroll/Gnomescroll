@@ -141,12 +141,13 @@ class HitscanLaserGun(LaserGun):
         self.hitscan = True
         self._animation = animations.HitscanLaserGunAnimation
 
-    def animation(self, target=None, agent=None):
+    def animation(self, target=None, agent=None, vector=None):
         print 'creating animation'
         if agent is None:
             agent = GameStateGlobal.agentList[self.owner]
         origin = agent.pos()
-        vector = agent.direction()
+        if vector is None:
+            vector = agent.direction()
         anim = self._animation(origin, vector, target)
         return anim
     
