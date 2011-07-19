@@ -257,11 +257,10 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if ping:
-                if SDL.gl.get_ticks() - ping_n > ping_update_interval
-                # do ping stuff here
-                NetOut.miscMessage.ping()
-                ping_text = str(stats.last_ping)
-                pass
+                if SDL.gl.get_ticks() - ping_n > ping_update_interval:
+                    # do ping stuff here
+                    NetOut.miscMessage.ping()
+                    ping_text = stats.last_ping
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
