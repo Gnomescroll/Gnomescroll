@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import SDL.gl #for time stamp function
+
 '''
 Client network outgoing
 '''
@@ -11,6 +13,7 @@ class NetOut:
     mapMessage = None
     adminMessage = None
     chatMessage = None
+    miscMessage = None
 
     @classmethod
     def init_0(cls):
@@ -19,6 +22,7 @@ class NetOut:
         cls.mapMessage = MapMessage()
         cls.adminMessage = AdminMessage()
         cls.chatMessage = ChatMessage()
+        cls.miscMessage = MiscMessage()
     @classmethod
     def init_1(cls):
         assert cls.mapMessage != None
@@ -172,6 +176,11 @@ class SendMessage(GenericMessage):
         return {
             'target'    :   target
         }
+
+class MiscMessage:
+    @sendJSON('ping')
+    def ping(self):
+        return { 'timestamp' : SDL.gl.get_ticks() }
 
 class MapMessage:
 

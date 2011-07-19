@@ -125,6 +125,18 @@ class ChatMessageHandler(GenericMessageHandler):
         ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
 
+class MiscMessageHandler(GenericMessageHandler):
+    events = {
+        'ping' : '_ping',
+    }
+
+    @classmethod
+    def init(cls):
+        pass
+
+    def _ping(self, timestamp):
+        print "timestamp = %f" % timestamp
+
 class MapMessageHandler(GenericMessageHandler):
     #terrainMap = None
     #mapChunkManager = None
@@ -404,7 +416,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
 
         # look up projectile type
         ptype = weapon_dat[wtype]['projectile_type']
-        
+
         # look up spatial coordinates of target
         if type == 'block':
             # later, adjust this so that the end is at the corrent surface point of the block
@@ -415,11 +427,11 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             # special mode; in this case, loc is a unit vector
             # call different animation
             end = loc
-            
+
         # look up agent origin
         # animate
         print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
-        
+
 
 from game_state import GameStateGlobal
 from net_client import NetClientGlobal
