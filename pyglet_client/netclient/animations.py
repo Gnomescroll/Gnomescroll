@@ -81,7 +81,6 @@ class HitscanLaserGunAnimation(Animation):
 
     def draw(self):
         # draw a line of some length & color
-        print self.loc, self.vector
         draw_utils.draw_ray(self.loc, self.vector, self.length, self.color)
         #draw_utils.draw_line(self.loc, self.end, self.color)
 
