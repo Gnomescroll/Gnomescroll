@@ -97,9 +97,11 @@ def parse(cl_args=None):
 
     parser.add_argument('-msen', '--mouse-sensitivity', default=argparse.SUPPRESS, type=int)
 
-    parser.add_argument('-nl', '--no-load', action="store_true")
+    parser.add_argument('-nl', '--no-load', action='store_true')
 
     parser.add_argument('-fps', '--fps', action='store_true')
+
+    parser.add_argument('--ping', action='store_true')
 
     parser.add_argument('-nh', '--no-hud', action='store_true')
 
@@ -147,6 +149,9 @@ def get_args():
     if not args.fps and settings.fps:
         args.fps = settings.fps
 
+    if not args.ping and settings.ping:
+        args.ping = settings.ping
+
     if args.print_args:
         print_args(args)
 
@@ -174,6 +179,7 @@ def print_args(args):
         'mouse_sensitivity',
         'camera_sensitivity',
         'fps',
+        'ping',
         'no_hud',
     ]
     print 'Options:'

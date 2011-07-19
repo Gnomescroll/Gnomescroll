@@ -21,3 +21,4 @@ camera_sensitivity = 300
 sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefined
 
 fps = True
+ping = True

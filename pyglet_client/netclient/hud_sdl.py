@@ -31,6 +31,11 @@ class Hud(object):
             x = 0,
             offset = self.win_height
         )
+        self.ping = self._to_draw_text(
+            text = '',
+            x = 0,
+            offset = self.win_height - 10
+        )
         
 
     def _init_text_dict(self):
@@ -123,20 +128,24 @@ class Hud(object):
         else:
             return
 
-    def draw_fps(self, fps_text=None):
-        if fps_text is None:
-            return
+    def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
 
-    def draw(self, fps=False, fps_text=None):
+    def draw_ping(self, ping_text):
+        self.ping.text = '%sms' % (str(ping_text),)
+        self.ping.draw()
+
+    def draw(self, fps=None, ping=None):
         #self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
-        if fps:
-            self.draw_fps(fps_text)
+        if fps is not None:
+            self.draw_fps(fps)
+        if ping is not None:
+            self.draw_ping(ping)
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent

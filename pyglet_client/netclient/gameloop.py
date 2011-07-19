@@ -141,7 +141,9 @@ class App(object):
         #p.start()
         average = []
         fps_text = None
+        ping_text = None
         fps = opts.opts.fps
+        ping = opts.opts.fps
         draw_hud = not opts.opts.no_hud
         ltick, ctick = 0,0
 
@@ -234,11 +236,11 @@ class App(object):
             #camera prospective
             if draw_hud:
                 self.camera.hudProjection()
-                self.hud.draw(fps=fps, fps_text=fps_text)
+                self.hud.draw(fps=fps_text, ping=ping_text)
             self.SDL_global.flip()
 
             #FPS calculation
-            if fps or settings.fps:
+            if fps:
                 ctick = SDL.gl.get_ticks()
                 #print str(ctick - ltick)
                 average.append(ctick-ltick)
@@ -251,6 +253,11 @@ class App(object):
                     average = []
                     #print "mean render time= %f" % (sum)
                     fps_text = "%.2f" % (sum)
+
+            if ping:
+                # do ping stuff here
+                ping_text = '50'
+                pass
 
             #import pdb; pdb.set_trace()
         #p.stop()
