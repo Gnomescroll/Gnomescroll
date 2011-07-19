@@ -4,6 +4,7 @@ import opts
 opts.opts = args_client.get_args()
 
 import settings
+import stats
 
 import ChromeEmbedded
 ChromeEmbedded.init()
@@ -256,10 +257,9 @@ class App(object):
 
             if ping:
                 # do ping stuff here
-                ping_text = '50'
+                NetOut.miscMessage.ping()
+                ping_text = str(stats.last_ping)
                 pass
-
-            NetOut.miscMessage.ping()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()

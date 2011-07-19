@@ -5,6 +5,7 @@ Client network incoming
 '''
 import SDL.gl #for timer function
 import simplejson as json
+import stats
 #import struct
 
 class NetEventGlobal:
@@ -138,7 +139,8 @@ class MiscMessageHandler(GenericMessageHandler):
         pass
 
     def _ping(self, timestamp, **msg):
-        print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
+        stats.last_ping = SDL.gl.get_ticks() - timestamp
+        #print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
 
 class MapMessageHandler(GenericMessageHandler):
     #terrainMap = None
