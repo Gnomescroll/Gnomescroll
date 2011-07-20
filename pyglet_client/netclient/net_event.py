@@ -392,6 +392,10 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
         except KeyError:
             err_msg = 'msg hitscan :: aid missing'
         try:
+            agent = GameStateGlobal.agentList[agent_id]
+        except KeyError:
+            err_msg = 'msg hitscan :: agent %s does not exist' % (agent_id,)
+        try:
             target = msg['target']
         except KeyError:
             err_msg = 'msg hitscan :: target missing'
@@ -401,7 +405,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             err_msg = 'msg hitscan :: target type missing'
         try:
             loc = target['loc']
-            if type == 'block' or type == 'emtpy':
+            if type == 'block' or type == 'empty':
                 assert len(loc) == 3
             elif type == 'agent':
                 assert len(loc) == 2
@@ -415,24 +419,34 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             weapon_type = msg['wtype']
         except KeyError:
             err_msg = 'msg hitscan :: wtype missing'
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
 
         # look up projectile type
         ptype = weapon_dat[weapon_type]['projectile_type']
+        firing_weapon = agent.weapons.has(weapon_type)
 
         # look up spatial coordinates of target
         if type == 'block':
             # later, adjust this so that the end is at the corrent surface point of the block
-            end = loc
+            anim = lambda: firing_weapon.animation(agent=agent, target=loc).play()
         elif type == 'agent':
             target_agent_id, body_part_id = loc
+            try:
+                target = GameStateGlobal.agentList[target_agent_id]
+            except KeyError:
+                print 'msg hitscan :: target agent does not exist'
+            target = target.pos()
+            anim = lambda: firing_weapon.animation(agent=agent, target=target).play()
         elif type == 'empty':
             # special mode; in this case, loc is a unit vector
             # call different animation
-            end = loc
+            anim = lambda: firing_weapon.animation(agent=agent, vector=loc).play()
 
+        if err_msg is not None:
+            print self._error_message(err_msg, **args)
+            return
+
+        if firing_weapon:
+            anim()
         # look up agent origin
         # animate
         print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
@@ -448,3 +462,5 @@ from input import InputGlobal
 
 import cube_lib.terrain_map as terrainMap
 from weapons import weapon_dat
+
+import animations
