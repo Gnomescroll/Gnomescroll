@@ -698,17 +698,17 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
 
                 #(ob, distance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
                 if adistance > 0:
-                    if ob == None:
+                    if ag == None:
                         print "Hit None, distance %f" % (adistance/256.0)
                     else:
                         print "Hit Agent, distance %f" % (adistance/256.0)
                 else:
                     print "Hit nothing, distance %f" % (adistance/256.0)
 
-                if ob == None:
+                if ag == None:
                     body_part_id = 1
-                    block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
-                    bdistance = None
+                block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+                bdistance = None
                 if block is not None:
                     bdistance = vector_lib.distance(self.pos(), block)
                 #check block
