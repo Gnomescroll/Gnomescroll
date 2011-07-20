@@ -468,6 +468,7 @@ class Agent(AgentPhysics, AgentAction):
         ]
 
     def take_damage(self, damage, projectile_owner=None):
+        print 'agent %s taking damage %i' % (self.id, damage,)
         print self.health
         if not self.dead:
             old = self.health

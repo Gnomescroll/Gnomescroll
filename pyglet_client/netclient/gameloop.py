@@ -173,7 +173,7 @@ class App(object):
         v.set(7,0,7, 0,255,0,0)
         v.set(7,7,7, 0,255,0,0)
 
-        v2 = vox_lib.Vox_loader().load('agent.vox')
+        v2 = vox_lib.Vox_loader().load('auto.vox')
         #v.move(0,0,5, theta)
         #END TEST
         if ping:

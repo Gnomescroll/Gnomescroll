@@ -262,7 +262,7 @@ class MessageHandler:
 
         # add agent/projectile information to packet and forward
         NetOut.event.hitscan(target, firing_agent.id, weapon.type)
-
+        print 'Hitscan target type %s' % (type,)
         # apply damage
         if type == 'block':
             pass
@@ -274,6 +274,7 @@ class MessageHandler:
                 print 'msg hitscan :: target agent does not exist'
                 return
             # improve damage calculation later
+            print 'HITSCAN on Agent %s' % (str(target_agent.id))
             target_agent.take_damage(weapon.base_damage, firing_agent)
 
     def hit_block(self, client_id, **msg):
