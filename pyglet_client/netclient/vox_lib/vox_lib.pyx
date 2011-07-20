@@ -28,8 +28,10 @@ cdef extern from 'vox_functions.h':
     int _point_collision(VoxelList* vo, float x, float y, float z)
     int _ray_cast_collision(VoxelList* vo, float x0, float y0, float z0, float x1, float y1, float z1)
     int _raw_cast_collision(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
+    int _raw_ray_cast_tracer(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
+    int _ray_cast_tracer(VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2)
 
-def hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
+cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
     global vox_dict, ob_dict
     cdef int distance, t
     cdef Vox vox, vox_temp
@@ -38,18 +40,15 @@ def hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_
         if vox._id == ignore_vox:
             continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
-        #print "Distance = %f " % (float(t)/256.0)
+        print "Distance = %f, id= %i" % (float(t)/256.0, vox._id)
         if t != 0 and (t < distance or distance == 0):
             vox_temp = vox
             distance = t
     if distance != 0:
         obj = ob_dict[vox_temp._id]
-        if obj == None:
-            return obj, distance
-        else:
-            return None, 0
+        return obj, distance, vox_temp
     else:
-        return None, 0
+        return None, 0, None
 
 cdef class Vox:
     cdef VoxelList* vo
@@ -126,6 +125,9 @@ cdef class Vox:
 
     cpdef int ray_cast2(self,x,y,z, x_angle, y_angle):
         return _raw_cast_collision(self.vo,x,y,z, x_angle, y_angle)
+
+    cpdef int ray_cast_tracer(self,x,y,z, x_angle, y_angle):
+        _raw_ray_cast_tracer(self.vo,x,y,z, x_angle, y_angle)
 
 import json
 
