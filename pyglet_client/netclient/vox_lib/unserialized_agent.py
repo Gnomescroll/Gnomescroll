@@ -28,5 +28,29 @@ agent =\
 
 import json
 
-with open('../media/vox/agent.vox', 'w') as f:
-    json.dump(agent, f)
+def write_vox(fn, vox):
+    with open('../media/vox/' + fn, 'w') as f:
+        json.dump(vox, f)
+
+write_vox('agent.vox', agent)
+
+voxels = []
+dim = (8,8,8)
+x,y,z = dim
+
+for i in range(x):
+    for j in range(y):
+        for k in range(z):
+            loc = [i,j,k]
+            col = [255 * (1.* i/x), 255 * (1.* j/y), 255 * (1.* k/z), 255]
+            col = map(lambda x: int(x), col)
+            loc.extend(col)
+            voxels.append(loc)
+
+n = \
+{
+    'dim':  dim,
+    'vosize': 0.2,
+    'voxels': voxels,
+}
+write_vox('auto.vox', n)

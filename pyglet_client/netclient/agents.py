@@ -689,31 +689,31 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
                 #print 'HITSCAN!!'
                 #weapon.animation(agent=self).play()
 
+                #(ob, distance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
+                #if distance > 0:
+                    #if ob == None:
+                        #print "Hit None, distance %f" % (distance/256.0)
+                        #ttype = 'empty'
+                    #else:
+                        #print "Hit Object, distance %f" % (distance/256.0)
+                #else:
+                    #print "Hit nothing, distance %f" % (distance/256.0)
+                    #ttype = 'empty'
+
                 #return None ## DEBUG
+
                 print 'HITSCAN!!'
                 weapon.animation(agent=self).play()
 
                 # check agent
                 (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
-
-                #(ob, distance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
-                if adistance > 0:
-                    if ag == None:
-                        print "Hit None, distance %f" % (adistance/256.0)
-                    else:
-                        print "Hit Agent, distance %f" % (adistance/256.0)
-                else:
-                    print "Hit nothing, distance %f" % (adistance/256.0)
-
-                if ag == None:
-                    body_part_id = 1
+                body_part_id = 1
                 block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
                 bdistance = None
                 if block is not None:
                     bdistance = vector_lib.distance(self.pos(), block)
                 #check block
                 # if both agent & block got hit, check which is closer
-                    ttype = 'empty'
 
                 if ag is not None and block is not None:
                     if bdistance < adistance:
