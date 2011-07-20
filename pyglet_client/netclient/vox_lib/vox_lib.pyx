@@ -46,10 +46,7 @@ cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignor
             distance = t
     if distance != 0:
         obj = ob_dict[vox_temp._id]
-        if obj == None:
-            return obj, distance, vox_temp
-        else:
-            return None, 0, vox_temp
+        return obj, distance, vox_temp
     else:
         return None, 0, None
 

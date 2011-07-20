@@ -167,7 +167,7 @@ class AgentWeapons:
                 known_weapon = GameStateGlobal.weaponList.create(**weapon)
             weapon_objs.append(known_weapon)
         self.weapons = weapon_objs
-        
+
         if active_weapon is None:
             self._active_weapon = None
             self._adjust_active_weapon()
@@ -689,12 +689,28 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
                 print 'HITSCAN!!'
                 weapon.animation(agent=self).play()
 
+                (ob, distance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
+                if distance > 0:
+                    if ob == None:
+                        print "Hit None, distance %f" % (distance/256.0)
+                        ttype = 'empty'
+                    else:
+                        print "Hit Object, distance %f" % (distance/256.0)
+                else:
+                    print "Hit nothing, distance %f" % (distance/256.0)
+                    ttype = 'empty'
+
+                return None ## DEBUG
+
+                print 'HITSCAN!!'
+                weapon.animation(agent=self).play()
+
                 # check agent
                 (ag, adistance) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
-                    if ob == None:
-                body_part_id = 1
-                block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
-                bdistance = None
+                if ob == None:
+                    body_part_id = 1
+                    block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+                    bdistance = None
                 if block is not None:
                     bdistance = vector_lib.distance(self.pos(), block)
                 #check block
