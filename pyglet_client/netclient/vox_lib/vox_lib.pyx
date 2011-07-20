@@ -40,7 +40,7 @@ cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignor
         if vox._id == ignore_vox:
             continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
-        print "Distance = %f, id= %i" % (float(t)/256.0, vox._id)
+        #print "Distance = %f, id= %i" % (float(t)/256.0, vox._id)
         if t != 0 and (t < distance or distance == 0):
             vox_temp = vox
             distance = t

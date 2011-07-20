@@ -334,7 +334,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
     t = t/(x2*x2+y2*y2+z2*z2);
-    printf("t= %f \n", t);
+    //printf("t= %f \n", t);
     float r, x,y,z;
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
