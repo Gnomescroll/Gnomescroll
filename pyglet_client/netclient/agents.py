@@ -694,7 +694,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
                 weapon.animation(agent=self).play()
 
                 # check agent
-                (ag, adistance) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
+                (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
 
                 #(ob, distance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
                 if adistance > 0:
