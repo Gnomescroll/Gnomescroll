@@ -332,8 +332,8 @@ class AgentModel:
         return v
 
     # set agent state explicitly
-    def set_agent_control_state(self, *args):
-        d_x, d_y, d_xa, d_za, jetpack, brake, tick = args
+    def set_agent_control_state(self, control_state, tick):
+        d_x, d_y, d_xa, d_za, jetpack, brake = control_state
         self.last_control_tick = tick
         self.d_x = d_x #a byte
         self.d_y = d_y #a byte
@@ -663,7 +663,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
         self.weapons = PlayerAgentWeapons(self, weapons)
 
         self.you = True
-        self.control_state = [0,0,0,0,0,0,0]
+        self.control_state = [0,0,0,0,0,0]
         self.x_angle = 0
         self.y_angle = 0
 
