@@ -331,6 +331,9 @@ class AgentModel:
             v = vector_lib.normalize(v)
         return v
 
+    def angles(self):
+        return [self.x_angle, self.y_angle]
+
     # set agent state explicitly
     def set_agent_control_state(self, control_state, tick):
         d_x, d_y, d_xa, d_za, jetpack, brake = control_state

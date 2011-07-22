@@ -90,7 +90,7 @@ class SendMessage(GenericMessage):
             return
         return {
             'state': agent.control_state,
-            'angle': agent.direction(),
+            'angle': agent.angles(),
             'aid'  : agent.id,
         }
 
