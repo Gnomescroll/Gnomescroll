@@ -339,9 +339,10 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self.name = 'agent'
         self.store = GameStateGlobal.agentList
         self._bind_event('agent_position', self._agent_position)
-        #self._bind_event('agent_control_state', self._agent_control_state)
+        self._bind_event('agent_control_state', self._agent_control_state)
         DatastoreMessageInterface.__init__(self)
 
+# DEPRECATE
     def _agent_position(self, **args):  # deprecate
         state = args.get('state', None)
         id = args.get('id', None)
