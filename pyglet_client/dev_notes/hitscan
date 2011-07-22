@@ -1,0 +1,23 @@
+hitscan
+
+Client fires weapon
+Client calculates trajectory / intersection w/ another agent/block
+Send 'fire' message (requires server to know which direction players are facing)
+	: tick #
+	: hitting what if anything, and where
+
+Server gets message
+Relay fire message to all other clients, they will simulate the trajectory, do sound /animation
+If message hitting anything, Server calculates trajectory / intersection
+If the game state at this frame is not expired,
+	the trajectory calculation appears valid,
+	the agent's active weapon has ammo
+Calculate block/agent damage, send status update to clients (play blood/rock animation, sound; play kill sound if dead)
+Update should include:
+	agent id
+	tick #, or the frame state for the agent at the time (if clients are not keeping tick history)
+Clients should know which weapon that agent had, they can simulate the bullet/explosion
+
+::
+Requires server to know which direction players are facing (need for displaying agents properly in clients anyway)
+Requires server maintaining a list of past ticks, for some N ticks
