@@ -686,61 +686,49 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
         fire_command = weapon.fire()
         if fire_command:
             if weapon.hitscan:
-                #print 'HITSCAN!!'
-                #weapon.animation(agent=self).play()
-
-                #(ob, distance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
-                #if distance > 0:
-                    #if ob == None:
-                        #print "Hit None, distance %f" % (distance/256.0)
-                        #ttype = 'empty'
-                    #else:
-                        #print "Hit Object, distance %f" % (distance/256.0)
-                #else:
-                    #print "Hit nothing, distance %f" % (distance/256.0)
-                    #ttype = 'empty'
-
-                #return None ## DEBUG
-
-                print 'HITSCAN!!'
-                weapon.animation(agent=self).play()
-
-                # check agent
-                (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle)
-                body_part_id = 1
-                block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
-                bdistance = None
-                if block is not None:
-                    bdistance = vector_lib.distance(self.pos(), block)
-                #check block
-                # if both agent & block got hit, check which is closer
-
-                if ag is not None and block is not None:
-                    if bdistance < adistance:
-                        ttype = 'block'
-                        loc = block
-                    else:
-                        ttype = 'agent'
-                        loc = (ag.id, body_part_id)
-                elif ag is not None:
-                    ttype = 'agent'
-                    loc = (ag.id, body_part_id)
-                elif block is not None:
-                    ttype = 'block'
-                    loc = block
-                else:
-                    ttype = 'empty'
-                    loc = self.normalized_direction()
-
-                # determine target w/ ray cast
-                #target = ray_cast_from(agent)
-                target = {
-                    'type'  :   ttype,
-                    'loc'   :   loc
-                }
-                NetOut.sendMessage.hitscan(target)
+                self.hitscan(weapon)
             else:
                 NetOut.sendMessage(fire_command, self)
+
+    def hitscan(self, weapon=None):
+        print 'HITSCAN!!'
+        if weapon is not None:
+            weapon.animation(agent=self).play()
+
+        # check agent
+        (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=self.vox.id)
+        body_part_id = 1
+        block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+        bdistance = None
+        if block is not None:
+            bdistance = vector_lib.distance(self.pos(), block)
+        #check block
+        # if both agent & block got hit, check which is closer
+
+        if ag is not None and block is not None:
+            if bdistance < adistance:
+                ttype = 'block'
+                loc = block
+            else:
+                ttype = 'agent'
+                loc = (ag.id, body_part_id)
+        elif ag is not None:
+            ttype = 'agent'
+            loc = (ag.id, body_part_id)
+        elif block is not None:
+            ttype = 'block'
+            loc = block
+        else:
+            ttype = 'empty'
+            loc = self.normalized_direction()
+
+        # determine target w/ ray cast
+        #target = ray_cast_from(agent)
+        target = {
+            'type'  :   ttype,
+            'loc'   :   loc
+        }
+        NetOut.sendMessage.hitscan(target)
 
     def add_ammo(self, amt, weapon_type):
         for weapon in weapons:

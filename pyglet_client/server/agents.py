@@ -473,6 +473,7 @@ class Agent(AgentPhysics, AgentAction):
         if not self.dead:
             old = self.health
             self.health -= damage
+            self.health = max(self.health, 0)
             if self.health <= 0:
                 self.die(projectile_owner)
             elif self.health != old:
