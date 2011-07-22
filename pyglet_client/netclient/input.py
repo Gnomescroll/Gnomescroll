@@ -16,6 +16,9 @@ if settings.pyglet:
 else:
     import SDL.input
 
+if False:
+    from sounds import playSound
+
 #handles special characters
 Keystring = {}
 def setup_keystring():
@@ -43,8 +46,6 @@ def setup_keystring():
     for key,value in special_keys.items():
         Keystring[value] = key
 setup_keystring()
-
-from sounds import playSound
 
 class InputEventGlobal:
     mouse = None
