@@ -55,7 +55,7 @@ class ClientDatagramDecoder:
         self.connection = connection
         self.fmt = '<I H'
         self.fmtlen = struct.calcsize(self.fmt)
-        
+
     def process_datagram(self, message):
         prefix, datagram = message[:self.fmtlen], message[self.fmtlen:]
         length, msg_type = struct.unpack(self.fmt, prefix)
@@ -109,6 +109,7 @@ class PacketDecoder:
         self.datagramDecoder.process_datagram(message)
 
 import select
+_epoll = 0
 
 class TcpConnection:
     server = opts.server
@@ -117,19 +118,23 @@ class TcpConnection:
     noDelay = True
 
     def __init__(self):
+        global _epoll
         self.tcp = None
         self.connected = False
         self.out = SendPacket(self)
         self.decoder = PacketDecoder(self)
 
         self.fileno = 0
-        self._epoll = select.epoll()
-
+        if _epoll == 1:
+            self._epoll = select.epoll()
+        else:
+            self.socket = 0
         self.ec = 0
 
         NetClientGlobal.connection = self
 
     def connect(self):
+        global _epoll
         TCP_IP = self.server
         TCP_PORT = self.tcp_port
         try:
@@ -139,7 +144,10 @@ class TcpConnection:
             if self.noDelay == True:
                 self.tcp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.tcp.setblocking(0) #should be blocking?
-            self._epoll.register(self.tcp.fileno(), select.EPOLLIN | select.EPOLLHUP | select.EPOLLOUT )
+            if _epoll == 1:
+                self._epoll.register(self.tcp.fileno(), select.EPOLLIN | select.EPOLLHUP | select.EPOLLOUT )
+            else:
+                self.socket = self.tcp.fileno()
             print "Connection: tcp connected"
             self.fileno = self.tcp.fileno()
             self.connected = True
@@ -150,9 +158,13 @@ class TcpConnection:
             self.connected = False
 
     def close(self):
+        global _epoll
         print "Connection: tcp disconnected by program"
         self.connected = False
-        self._epoll.unregister(self.fileno)
+        if _epoll == 1:
+            self._epoll.unregister(self.fileno)
+        else:
+            self.socket = 0
         self.tcp.close()
 
     def send(self, MESSAGE):
@@ -168,17 +180,27 @@ class TcpConnection:
             print "TcpConnection.send: Socket is not connected!"
 
     def attempt_recv(self):
-        events = self._epoll.poll(0)
-        for fileno, event in events:
-            assert fileno == self.fileno
-            if event & select.EPOLLIN:
-                #print "Read Event"
+        global _epoll
+        if _epoll == 1:
+            events = self._epoll.poll(0)
+            for fileno, event in events:
+                assert fileno == self.fileno
+                if event & select.EPOLLIN:
+                    #print "Read Event"
+                    self.recv()
+                elif event & select.EPOLLOUT:
+                    pass #ready to write
+                else:
+                    print "Strange Epoll Event: %i" % event
+        else:
+            socket = self.socket
+            if socket == 0:
+                print "Socket not connected"
+                return
+            rlist, wlist, xlist = select.select([socket], [], [], 0.0)
+            #print "rlist= " + str(rlist)
+            if socket in rlist:
                 self.recv()
-            elif event & select.EPOLLOUT:
-                pass #ready to write
-            else:
-                print "Strange Epoll Event: %i" % event
-
     def recv(self):
         BUFFER_SIZE = 4096
         try:

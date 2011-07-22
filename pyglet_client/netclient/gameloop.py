@@ -6,9 +6,10 @@ opts.opts = args_client.get_args()
 import settings
 import stats
 
-if False:
-    import ChromeEmbedded
-    ChromeEmbedded.init()
+
+import ChromeEmbedded
+ChromeEmbedded.init()
+
 ### DEPRECATE
 if settings.pyglet:
     from pyglet import clock, font, image, window
