@@ -338,25 +338,25 @@ class AgentMessageHandler(DatastoreMessageInterface):
     def __init__(self):
         self.name = 'agent'
         self.store = GameStateGlobal.agentList
-        #self._bind_event('agent_position', self._agent_position)
-        self._bind_event('agent_control_state', self._agent_control_state)
+        self._bind_event('agent_position', self._agent_position)
+        #self._bind_event('agent_control_state', self._agent_control_state)
         DatastoreMessageInterface.__init__(self)
 
-    #def _agent_position(self, **args):  # deprecate
-        #state = args.get('state', None)
-        #id = args.get('id', None)
-        #tick = args.get('tick', None)
-        #if None in (state, id, tick,):
-            #print 'agent_position, missing keys'
-            #print args
-            #return
+    def _agent_position(self, **args):  # deprecate
+        state = args.get('state', None)
+        id = args.get('id', None)
+        tick = args.get('tick', None)
+        if None in (state, id, tick,):
+            print 'agent_position, missing keys'
+            print args
+            return
 
-        #agent = GameStateGlobal.agentList[id]
-        #if agent is None: # agent not found, request agent
-            #NetOut.sendMessage.request_agent(id)
-            #return
-        #agent.tick = tick
-        #agent.state = state
+        agent = GameStateGlobal.agentList[id]
+        if agent is None: # agent not found, request agent
+            NetOut.sendMessage.request_agent(id)
+            return
+        agent.tick = tick
+        agent.state = state
 
     def _agent_control_state(self, **msg):
         err_msg = None
