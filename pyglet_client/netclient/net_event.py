@@ -366,6 +366,10 @@ class AgentMessageHandler(DatastoreMessageInterface):
         except KeyError:
             err_msg = 'msg agent_control_state :: state missing'
         try:
+            angle = msg['angle']
+        except KeyError:
+            err_msg = 'msg agent_control_state :: angle missing'
+        try:
             agent_id = msg['id']
         except KeyError:
             err_msg = 'msg agent_control_state :: agent id missing'
@@ -383,8 +387,10 @@ class AgentMessageHandler(DatastoreMessageInterface):
             print err_msg
             return
 
-        agent.state = state
-            
+        if agent.you:
+            return
+
+        agent.set_control_state(state, angle, tick)
 
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)

@@ -85,18 +85,18 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @sendJSON('agent_control_state', tick=True)
-    def send_agent_control_state(self, agent):
+    def agent_control_state(self, agent):
         if not agent.id :  # agent not identified
             return
         return {
-            'state': agent.control_state,
+            'state': agent.control_state(),
             'angle': agent.angles(),
             'aid'  : agent.id,
         }
 
     @idRequired
     @sendJSON('fire_projectile', tick=True)
-    def fire_projectile(self, agent=None):
+    def fire_projectile(self, agent):
         if agent is None or agent.id is None:
             return
         return {
@@ -105,7 +105,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @sendJSON('reload_weapon', tick=True)
-    def reload_weapon(self, agent=None):
+    def reload_weapon(self, agent):
         if agent is None or agent.id is None:
             return
         return {
@@ -133,7 +133,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @sendJSON('hit_block', tick=True)
-    def hit_block(self, agent=None):
+    def hit_block(self, agent):
         if agent is None or agent.id is None:
             return
         block_position = agent.nearest_block_position()
@@ -146,7 +146,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @sendJSON('set_block', tick=True)
-    def set_block(self, agent=None):
+    def set_block(self, agent):
         if agent is None or agent.id is None:
             return
         block_position = agent.facing_block_position()

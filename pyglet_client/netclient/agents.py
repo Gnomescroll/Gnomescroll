@@ -264,15 +264,16 @@ class AgentModel:
 
         self.id = id
 
+        self.last_control_tick = 0
+
+        self.x_angle = 0
+        self.y_angle = 0
+
         self.d_x = 0
         self.d_y = 0
         self.d_xa = 0
         self.d_za = 0
 
-        self.x_angle = 0
-        self.y_angle = 0
-
-        self.last_control_tick = 0
         self.jetpack = 0
         self.brake = 0
 
@@ -335,15 +336,32 @@ class AgentModel:
         return [self.x_angle, self.y_angle]
 
     # set agent state explicitly
-    def set_agent_control_state(self, control_state, tick):
+    def set_control_state(self, control_state, angle=None, tick=None):
         d_x, d_y, d_xa, d_za, jetpack, brake = control_state
-        self.last_control_tick = tick
-        self.d_x = d_x #a byte
-        self.d_y = d_y #a byte
+        self.d_x = d_x
+        self.d_y = d_y
         self.d_xa = d_xa
         self.d_za = d_za
         self.jetpack = jetpack
         self.brake = brake
+
+        if tick is not None:
+            self.last_control_tick = tick
+        if angle is not None:
+            self.set_angle(angle)
+
+    def set_angle(self, angle):
+        self.x_angle, self.y_angle = angles
+
+    def control_state(self):
+        return [\
+            self.d_x,
+            self.d_y,
+            self.d_xa,
+            self.d_za,
+            self.jetpack,
+            self.brake
+        ]
 
     @property
     def x(self):
@@ -666,7 +684,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
         self.weapons = PlayerAgentWeapons(self, weapons)
 
         self.you = True
-        self.control_state = [0,0,0,0,0,0]
+        #self.control_state = [0,0,0,0,0,0]
         self.x_angle = 0
         self.y_angle = 0
 

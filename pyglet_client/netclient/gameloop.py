@@ -189,7 +189,7 @@ class App(object):
                 SDL.input.process_events()
                 SDL.input.get_key_state()
             if GameStateGlobal.agent is not None:
-                NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+                NetOut.sendMessage.agent_control_state(GameStateGlobal.agent)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing

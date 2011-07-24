@@ -358,6 +358,7 @@ class MessageHandler:
             NetOut.event.agent_update(agent, 'weapons')
 
     def agent_control_state(self, client_id, **msg):
+        print 'AGENT CONTROL STATE'
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
         except KeyError:
@@ -375,7 +376,7 @@ class MessageHandler:
         try:
             state = msg['state']
             state = list(state)
-            assert len(state) == 7
+            assert len(state) == 6
         except KeyError:
             print 'msg agent_control_state missing "state"'
             return
@@ -400,7 +401,7 @@ class MessageHandler:
             print 'msg agent_control_state :: angle has wrong number of elements'
             return
 
-        agent.set_agent_control_state(tick, state, angle)
+        agent.set_control_state(state, angle, tick)
 
     def fire_projectile(self, client_id, **msg):
         try:

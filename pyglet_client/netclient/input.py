@@ -317,7 +317,7 @@ class Keyboard(object):
         if GameStateGlobal.agent.dead:
             return
         v = 1
-        d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
+        d_x, d_y, v_x, v_y, jetpack, brake = [0 for i in range(6)]
 
         if settings.pyglet:
             if keyboard[key.W]:
@@ -354,17 +354,17 @@ class Keyboard(object):
             if 'SPACE' in keyboard:
                 jetpack = 1
 
-        GameStateGlobal.agent.control_state = [
+        control_state = [
             d_x,
             d_y,
             v_x,
             v_y,
             jetpack,
-            jump,
             brake
         ]
+        GameStateGlobal.agent.set_control_state(control_state)
         ## send control state to server
-        #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
+        #NetOut.sendMessage.agent_control_state(GameStateGlobal.agent)
 
     def camera_input_mode(self, keyboard):
         v = 0.1

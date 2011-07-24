@@ -430,21 +430,23 @@ class Agent(AgentPhysics, AgentAction):
             NetOut.event.agent_update(self, 'active_weapon')
 
     # set agent state explicitly
-    def set_agent_control_state(self, tick, state, angle):
-        d_x, d_y, v_x, v_y, jetpack, jump, brake = state
-        x_angle, y_angle = angle
-        #print str(args)
-        self.last_control_tick = tick
+    def set_control_state(self, state, angle=None, tick=None):
+        d_x, d_y, v_x, v_y, jetpack, brake = state
+
         self.d_x = d_x
         self.d_y = d_y
-
         self.v_x = v_x
         self.v_y = v_y
         self.jetpack = jetpack
         self.brake = brake
 
-        self.x_angle = x_angle
-        self.y_angle = y_angle
+        if tick is not None:
+            self.last_control_tick = tick
+        if angle is not None:
+            self.set_angle(angle)
+
+    def set_angle(self, angle):
+        self.x_angle, self.y_angle = angle
 
     # apply physics to agent
     def tick(self):
