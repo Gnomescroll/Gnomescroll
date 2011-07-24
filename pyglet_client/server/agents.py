@@ -431,8 +431,12 @@ class Agent(AgentPhysics, AgentAction):
 
     # set agent state explicitly
     def set_control_state(self, state, angle=None, tick=None):
-        d_x, d_y, v_x, v_y, jetpack, brake = state
+        old_tick = self.last_control_tick
+        if tick is not None:
+            self.last_control_tick = tick
 
+        old_state = self.control_state()
+        d_x, d_y, v_x, v_y, jetpack, brake = state
         self.d_x = d_x
         self.d_y = d_y
         self.v_x = v_x
@@ -440,13 +444,33 @@ class Agent(AgentPhysics, AgentAction):
         self.jetpack = jetpack
         self.brake = brake
 
-        if tick is not None:
-            self.last_control_tick = tick
         if angle is not None:
+            old_angle = self.angle()
             self.set_angle(angle)
+            
+        ''' Use this if/when tick is actually being used '''
+        #if self.last_control_tick > old_tick and \
+           #(old_state != self or old_angle != angle):
+               #NetOut.event.agent_control_state(self)
+
+        if old_state != state or old_angle != angle:
+            NetOut.event.agent_control_state(self)
 
     def set_angle(self, angle):
         self.x_angle, self.y_angle = angle
+
+    def angle(self):
+        return [self.x_angle, self.y_angle]
+
+    def control_state(self):
+        return [\
+            self.d_x,
+            self.d_y,
+            self.v_x,
+            self.v_y,
+            self.jetpack,
+            self.brake
+        ]
 
     # apply physics to agent
     def tick(self):

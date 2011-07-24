@@ -358,7 +358,6 @@ class MessageHandler:
             NetOut.event.agent_update(agent, 'weapons')
 
     def agent_control_state(self, client_id, **msg):
-        print 'AGENT CONTROL STATE'
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
         except KeyError:

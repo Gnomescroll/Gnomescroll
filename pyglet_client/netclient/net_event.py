@@ -342,7 +342,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self._bind_event('agent_control_state', self._agent_control_state)
         DatastoreMessageInterface.__init__(self)
 
-# DEPRECATE
+# DEPRECATE ?
     def _agent_position(self, **args):  # deprecate
         state = args.get('state', None)
         id = args.get('id', None)
