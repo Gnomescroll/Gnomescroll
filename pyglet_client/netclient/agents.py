@@ -85,7 +85,7 @@ Render/Draw methods for agents
 class AgentRender:
 
     def draw(self):
-        #self.draw_aiming_direction()
+        self.draw_aiming_direction()
         self.draw_bounding_box()
 
         self.update_vox()
@@ -140,6 +140,38 @@ class AgentRender:
 
         draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
         draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
+
+    def draw_aiming_direction(self, distance=50):
+        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        dz = sin( self.y_angle)
+
+        ep = 0.33
+        v_list = []
+        v_num = 0
+        cf = 0.
+        while cf < distance:
+            v_num += 1
+            x= self.x + cf*dx
+            y= self.y + cf*dy
+            z= self.z + cf*dz
+            cf += ep
+            v_list += [x,y,z]
+        #print str(v_list)
+        #print str(v_num)
+        c_list = [200,0,0]*v_num
+
+        if settings.pyglet:
+            pyglet.graphics.draw(v_num, GL_POINTS,
+            ("v3f", v_list),
+            ("c3B", c_list)
+            )
+        else:
+            for i in range(0,v_num):
+                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+                SDL.gl.draw_point(r,g,b,x,y,z)
+
 
 
 class AgentWeapons:
@@ -516,37 +548,6 @@ class PlayerAgentRender(AgentRender):
             c_list += [0,255,0]
             v_num +=1
         #deprecate
-        if settings.pyglet:
-            pyglet.graphics.draw(v_num, GL_POINTS,
-            ("v3f", v_list),
-            ("c3B", c_list)
-            )
-        else:
-            for i in range(0,v_num):
-                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.gl.draw_point(r,g,b,x,y,z)
-
-    def draw_aiming_direction(self, distance=50):
-        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
-        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
-        dz = sin( self.y_angle)
-
-        ep = 0.33
-        v_list = []
-        v_num = 0
-        cf = 0.
-        while cf < distance:
-            v_num += 1
-            x= self.x + cf*dx
-            y= self.y + cf*dy
-            z= self.z + cf*dz
-            cf += ep
-            v_list += [x,y,z]
-        #print str(v_list)
-        #print str(v_num)
-        c_list = [200,0,0]*v_num
-
         if settings.pyglet:
             pyglet.graphics.draw(v_num, GL_POINTS,
             ("v3f", v_list),
