@@ -10,7 +10,7 @@ int test(void)
 
 extern int hash_cord(int);
 
-inline int hash_cord(int input)
+__inline int hash_cord(int input)
 {
     return input >> 3;
 }

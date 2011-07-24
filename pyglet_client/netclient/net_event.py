@@ -384,7 +384,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
             return
 
         agent.state = state
-            
+
 
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)
