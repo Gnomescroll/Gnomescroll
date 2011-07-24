@@ -395,13 +395,16 @@ int _raw_ray_cast_tracer(struct VoxelList* vo, float x, float y, float z, float 
 int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2) {
     float t;
     float x0,y0,z0;
+    float r, x,y,z;
+    float u;
+
     x0 = vo->center.x - x1;
     y0 = vo->center.y - y1;
     z0 = vo->center.z - z1;
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
     t = t/(x2*x2+y2*y2+z2*z2);
-    float r, x,y,z;
+
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
     z = t*z2 - z0; z*=z;
@@ -420,7 +423,7 @@ int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x
 
         glBegin(GL_POINTS);
             glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            float u = 0.1;
+            u = 0.1;
             glVertex3f(x+u,y,z);
             glVertex3f(x-u,y,z);
             glVertex3f(x,y+u,z);
