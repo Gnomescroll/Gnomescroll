@@ -5,13 +5,13 @@
 struct VoxelList* vo;
 
 //util
-inline float vlength(struct Vector v) {
+__inline float vlength(struct Vector v) {
     float length = 0;
     length = v.x*v.x + v.y*v.y + v.z*v.z;
     return length;
 }
 
-inline float iproduct(struct Vector v1, struct Vector v2) {
+__inline float iproduct(struct Vector v1, struct Vector v2) {
     float ip = 0;
     ip = v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
     return ip;
@@ -54,7 +54,7 @@ int q_set[4*6]= {
 
 //end util
 
-inline void compute_vo_normals(struct VoxelList* volist) {
+__inline void compute_vo_normals(struct VoxelList* volist) {
     //const struct Vector* center = &skel->center;
     float theta = volist->theta;
     //float phi = volist->phi;
@@ -112,11 +112,11 @@ struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     return volist;
 }
 */
-inline struct Voxel get(struct VoxelList* vl, int x, int y, int z) {
+__inline struct Voxel get(struct VoxelList* vl, int x, int y, int z) {
     return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
 }
 
-inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) {
+__inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) {
     struct Voxel* t = &vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
     t->r = r;
     t->g = g;
@@ -248,11 +248,11 @@ int _draw(struct VoxelList* vo) {
     return 0;
 }
 
-inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z) {
+__inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z) {
     return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
 }
 
-inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a) {
+__inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a) {
     struct Voxel* t = &vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
     t->r = r;
     t->g = g;
@@ -288,7 +288,7 @@ int _deleteVoxelList(struct VoxelList* vo) {
     return 0;
 }
 
-inline float ipd(float x, float y, float z, struct Vector v2) {
+__inline float ipd(float x, float y, float z, struct Vector v2) {
     return x*v2.x + y*v2.y + z*v2.z;
 }
 

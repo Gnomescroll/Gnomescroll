@@ -67,7 +67,7 @@ int _world_projection(struct Camera* c) {
     return 0;
 }
 
-void inline end_world_projection() {
+void __inline end_world_projection() {
    glDisable (GL_DEPTH_TEST);
 }
 

@@ -227,14 +227,14 @@
 #endif
 
 
-/* inline attribute */
+/* __inline attribute */
 #ifndef CYTHON_INLINE
   #if defined(__GNUC__)
-    #define CYTHON_INLINE __inline__
+    #define CYTHON___inline __inline__
   #elif defined(_MSC_VER)
-    #define CYTHON_INLINE __inline
+    #define CYTHON___inline __inline
   #elif defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-    #define CYTHON_INLINE inline
+    #define CYTHON___inline inline
   #else
     #define CYTHON_INLINE
   #endif
@@ -264,12 +264,12 @@ typedef struct {PyObject **p; char *s; const long n; const char* encoding; const
 #define __Pyx_PyBytes_AsUString(s)   ((unsigned char*) PyBytes_AsString(s))
 
 #define __Pyx_PyBool_FromLong(b) ((b) ? (Py_INCREF(Py_True), Py_True) : (Py_INCREF(Py_False), Py_False))
-static CYTHON_INLINE int __Pyx_PyObject_IsTrue(PyObject*);
-static CYTHON_INLINE PyObject* __Pyx_PyNumber_Int(PyObject* x);
+static CYTHON___inline int __Pyx_PyObject_IsTrue(PyObject*);
+static CYTHON___inline PyObject* __Pyx_PyNumber_Int(PyObject* x);
 
-static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject*);
-static CYTHON_INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t);
-static CYTHON_INLINE size_t __Pyx_PyInt_AsSize_t(PyObject*);
+static CYTHON___inline Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject*);
+static CYTHON___inline PyObject * __Pyx_PyInt_FromSize_t(size_t);
+static CYTHON___inline size_t __Pyx_PyInt_AsSize_t(PyObject*);
 
 #define __pyx_PyFloat_AsDouble(x) (PyFloat_CheckExact(x) ? PyFloat_AS_DOUBLE(x) : PyFloat_AsDouble(x))
 
@@ -287,7 +287,7 @@ static CYTHON_INLINE size_t __Pyx_PyInt_AsSize_t(PyObject*);
 #define likely(x)   (x)
 #define unlikely(x) (x)
 #endif /* __GNUC__ */
-    
+
 static PyObject *__pyx_m;
 static PyObject *__pyx_b;
 static PyObject *__pyx_empty_tuple;
@@ -305,11 +305,11 @@ static const char *__pyx_f[] = {
 /* Type declarations */
 
 /* "cube_lib.pyx":7
- * 
+ *
  * #constants
  * cdef enum:             # <<<<<<<<<<<<<<
  *     max_cubes = 1024
- * 
+ *
  */
 
 enum  {
@@ -318,7 +318,7 @@ enum  {
 
 /* "cube_lib.pyx":10
  *     max_cubes = 1024
- * 
+ *
  * cdef enum:             # <<<<<<<<<<<<<<
  *     x_chunk_size = 8
  *     y_chunk_size = 8
@@ -332,7 +332,7 @@ enum  {
 };
 
 /* "cube_lib.pyx":17
- * 
+ *
  * #structs
  * cdef struct Vertex:             # <<<<<<<<<<<<<<
  *     float x,y,z
@@ -353,10 +353,10 @@ struct __pyx_t_8cube_lib_Vertex {
 
 /* "cube_lib.pyx":22
  *     unsigned char r,g,b,a #for packing
- * 
+ *
  * cdef struct Quad:             # <<<<<<<<<<<<<<
  *     Vertex vertex[4]
- * 
+ *
  */
 
 struct __pyx_t_8cube_lib_Quad {
@@ -365,10 +365,10 @@ struct __pyx_t_8cube_lib_Quad {
 
 /* "cube_lib.pyx":25
  *     Vertex vertex[4]
- * 
+ *
  * cdef struct Cube:             # <<<<<<<<<<<<<<
  *     Quad quad[6]
- * 
+ *
  */
 
 struct __pyx_t_8cube_lib_Cube {
@@ -377,7 +377,7 @@ struct __pyx_t_8cube_lib_Cube {
 
 /* "cube_lib.pyx":28
  *     Quad quad[6]
- * 
+ *
  * cdef struct Chunk_scratch:             # <<<<<<<<<<<<<<
  *     Quad quad[chunk_size*6] #6 quad per cube
  *     int v_num
@@ -450,37 +450,37 @@ static double __Pyx__PyObject_AsDouble(PyObject* obj); /* proto */
     ((likely(PyFloat_CheckExact(obj))) ? \
      PyFloat_AS_DOUBLE(obj) : __Pyx__PyObject_AsDouble(obj))
 
-static CYTHON_INLINE unsigned char __Pyx_PyInt_AsUnsignedChar(PyObject *);
+static CYTHON___inline unsigned char __Pyx_PyInt_AsUnsignedChar(PyObject *);
 
-static CYTHON_INLINE unsigned short __Pyx_PyInt_AsUnsignedShort(PyObject *);
+static CYTHON___inline unsigned short __Pyx_PyInt_AsUnsignedShort(PyObject *);
 
-static CYTHON_INLINE unsigned int __Pyx_PyInt_AsUnsignedInt(PyObject *);
+static CYTHON___inline unsigned int __Pyx_PyInt_AsUnsignedInt(PyObject *);
 
-static CYTHON_INLINE char __Pyx_PyInt_AsChar(PyObject *);
+static CYTHON___inline char __Pyx_PyInt_AsChar(PyObject *);
 
-static CYTHON_INLINE short __Pyx_PyInt_AsShort(PyObject *);
+static CYTHON___inline short __Pyx_PyInt_AsShort(PyObject *);
 
-static CYTHON_INLINE int __Pyx_PyInt_AsInt(PyObject *);
+static CYTHON___inline int __Pyx_PyInt_AsInt(PyObject *);
 
-static CYTHON_INLINE signed char __Pyx_PyInt_AsSignedChar(PyObject *);
+static CYTHON___inline signed char __Pyx_PyInt_AsSignedChar(PyObject *);
 
-static CYTHON_INLINE signed short __Pyx_PyInt_AsSignedShort(PyObject *);
+static CYTHON___inline signed short __Pyx_PyInt_AsSignedShort(PyObject *);
 
-static CYTHON_INLINE signed int __Pyx_PyInt_AsSignedInt(PyObject *);
+static CYTHON___inline signed int __Pyx_PyInt_AsSignedInt(PyObject *);
 
-static CYTHON_INLINE int __Pyx_PyInt_AsLongDouble(PyObject *);
+static CYTHON___inline int __Pyx_PyInt_AsLongDouble(PyObject *);
 
-static CYTHON_INLINE unsigned long __Pyx_PyInt_AsUnsignedLong(PyObject *);
+static CYTHON___inline unsigned long __Pyx_PyInt_AsUnsignedLong(PyObject *);
 
-static CYTHON_INLINE unsigned PY_LONG_LONG __Pyx_PyInt_AsUnsignedLongLong(PyObject *);
+static CYTHON___inline unsigned PY_LONG_LONG __Pyx_PyInt_AsUnsignedLongLong(PyObject *);
 
-static CYTHON_INLINE long __Pyx_PyInt_AsLong(PyObject *);
+static CYTHON___inline long __Pyx_PyInt_AsLong(PyObject *);
 
-static CYTHON_INLINE PY_LONG_LONG __Pyx_PyInt_AsLongLong(PyObject *);
+static CYTHON___inline PY_LONG_LONG __Pyx_PyInt_AsLongLong(PyObject *);
 
-static CYTHON_INLINE signed long __Pyx_PyInt_AsSignedLong(PyObject *);
+static CYTHON___inline signed long __Pyx_PyInt_AsSignedLong(PyObject *);
 
-static CYTHON_INLINE signed PY_LONG_LONG __Pyx_PyInt_AsSignedLongLong(PyObject *);
+static CYTHON___inline signed PY_LONG_LONG __Pyx_PyInt_AsSignedLongLong(PyObject *);
 
 static void __Pyx_AddTraceback(const char *funcname); /*proto*/
 
@@ -492,8 +492,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t); /*proto*/
 static struct __pyx_t_8cube_lib_Chunk_scratch *__pyx_v_8cube_lib_chunk_scratch;
 static struct __pyx_t_8cube_lib_Quad *__pyx_v_8cube_lib_quad_cache;
 static float __pyx_v_8cube_lib_v_index[72];
-static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_tex(int, struct __pyx_t_8cube_lib_Vertex *, float, float); /*proto*/
-static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_side(float, float, float, int, int, struct __pyx_t_8cube_lib_Quad *); /*proto*/
+static CYTHON___inline PyObject *__pyx_f_8cube_lib_set_tex(int, struct __pyx_t_8cube_lib_Vertex *, float, float); /*proto*/
+static CYTHON___inline PyObject *__pyx_f_8cube_lib_set_side(float, float, float, int, int, struct __pyx_t_8cube_lib_Quad *); /*proto*/
 #define __Pyx_MODULE_NAME "cube_lib"
 static int __pyx_module_is_main_cube_lib = 0;
 
@@ -562,20 +562,20 @@ static PyObject *__pyx_k_tuple_1;
 
 /* "cube_lib.pyx":57
  *     v_index[i] = float(l[i])
- * 
- * cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):             # <<<<<<<<<<<<<<
+ *
+ * cdef __inline set_tex(int vert_num, Vertex* vertex, float x, float y):             # <<<<<<<<<<<<<<
  *     vertex.tx = x * (1/8)
  *     vertex.ty = x * (1/8)
  */
 
-static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_tex(int __pyx_v_vert_num, struct __pyx_t_8cube_lib_Vertex *__pyx_v_vertex, float __pyx_v_x, float __pyx_v_y) {
+static CYTHON___inline PyObject *__pyx_f_8cube_lib_set_tex(int __pyx_v_vert_num, struct __pyx_t_8cube_lib_Vertex *__pyx_v_vertex, float __pyx_v_x, float __pyx_v_y) {
   PyObject *__pyx_r = NULL;
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("set_tex");
 
   /* "cube_lib.pyx":58
- * 
- * cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
+ *
+ * cdef __inline set_tex(int vert_num, Vertex* vertex, float x, float y):
  *     vertex.tx = x * (1/8)             # <<<<<<<<<<<<<<
  *     vertex.ty = x * (1/8)
  *     if vert_num == 0:
@@ -583,7 +583,7 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_tex(int __pyx_v_vert_num, s
   __pyx_v_vertex->tx = (__pyx_v_x * 0.0);
 
   /* "cube_lib.pyx":59
- * cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
+ * cdef __inline set_tex(int vert_num, Vertex* vertex, float x, float y):
  *     vertex.tx = x * (1/8)
  *     vertex.ty = x * (1/8)             # <<<<<<<<<<<<<<
  *     if vert_num == 0:
@@ -699,7 +699,7 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_tex(int __pyx_v_vert_num, s
  *     if vert_num == 3:
  *         vertex.tx += 0             # <<<<<<<<<<<<<<
  *         vertex.ty += 1/8
- * 
+ *
  */
     __pyx_v_vertex->tx = (__pyx_v_vertex->tx + 0.0);
 
@@ -707,7 +707,7 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_tex(int __pyx_v_vert_num, s
  *     if vert_num == 3:
  *         vertex.tx += 0
  *         vertex.ty += 1/8             # <<<<<<<<<<<<<<
- * 
+ *
  * def convert_index(index, height, width):
  */
     __pyx_v_vertex->ty = (__pyx_v_vertex->ty + 0.0);
@@ -723,7 +723,7 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_tex(int __pyx_v_vert_num, s
 
 /* "cube_lib.pyx":73
  *         vertex.ty += 1/8
- * 
+ *
  * def convert_index(index, height, width):             # <<<<<<<<<<<<<<
  *     index = int(index)
  *     height = int(height)
@@ -803,7 +803,7 @@ static PyObject *__pyx_pf_8cube_lib_convert_index(PyObject *__pyx_self, PyObject
   __pyx_v_rvalue = Py_None; __Pyx_INCREF(Py_None);
 
   /* "cube_lib.pyx":74
- * 
+ *
  * def convert_index(index, height, width):
  *     index = int(index)             # <<<<<<<<<<<<<<
  *     height = int(height)
@@ -1123,13 +1123,13 @@ static PyObject *__pyx_pf_8cube_lib_1init_quad_cache(PyObject *__pyx_self, CYTHO
 
 /* "cube_lib.pyx":105
  *     #print "done"
- * 
- * cdef inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):             # <<<<<<<<<<<<<<
+ *
+ * cdef __inline set_side(float x, float y, float z, int tile_id, int side_num, Quad* quad):             # <<<<<<<<<<<<<<
  *     cdef int i
  *     cdef Vertex* vertex
  */
 
-static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_side(float __pyx_v_x, float __pyx_v_y, float __pyx_v_z, int __pyx_v_tile_id, int __pyx_v_side_num, struct __pyx_t_8cube_lib_Quad *__pyx_v_quad) {
+static CYTHON___inline PyObject *__pyx_f_8cube_lib_set_side(float __pyx_v_x, float __pyx_v_y, float __pyx_v_z, int __pyx_v_tile_id, int __pyx_v_side_num, struct __pyx_t_8cube_lib_Quad *__pyx_v_quad) {
   int __pyx_v_i;
   struct __pyx_t_8cube_lib_Vertex *__pyx_v_vertex;
   PyObject *__pyx_r = NULL;
@@ -1178,7 +1178,7 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_side(float __pyx_v_x, float
  *         vertex.x +=x
  *         vertex.y +=y             # <<<<<<<<<<<<<<
  *         vertex.z +=z
- * 
+ *
  */
     __pyx_v_vertex->y = (__pyx_v_vertex->y + __pyx_v_y);
 
@@ -1186,7 +1186,7 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_side(float __pyx_v_x, float
  *         vertex.x +=x
  *         vertex.y +=y
  *         vertex.z +=z             # <<<<<<<<<<<<<<
- * 
+ *
  * #(tv_list, tc_list, ttex_list) = self.cubeRenderCache.get_side(rx, ry, rz, tile_id, side_num)
  */
     __pyx_v_vertex->z = (__pyx_v_vertex->z + __pyx_v_z);
@@ -1200,10 +1200,10 @@ static CYTHON_INLINE PyObject *__pyx_f_8cube_lib_set_side(float __pyx_v_x, float
 
 /* "cube_lib.pyx":125
  * ## control state
- * 
+ *
  * def test_check():             # <<<<<<<<<<<<<<
  *     pass
- * 
+ *
  */
 
 static PyObject *__pyx_pf_8cube_lib_2test_check(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -1220,8 +1220,8 @@ static PyObject *__pyx_pf_8cube_lib_2test_check(PyObject *__pyx_self, CYTHON_UNU
 }
 
 /* "cube_lib.pyx":129
- * 
- * 
+ *
+ *
  * def init():             # <<<<<<<<<<<<<<
  *     init_quad_cache()
  *     clear_buffer()
@@ -1237,11 +1237,11 @@ static PyObject *__pyx_pf_8cube_lib_3init(PyObject *__pyx_self, CYTHON_UNUSED Py
   __pyx_self = __pyx_self;
 
   /* "cube_lib.pyx":130
- * 
+ *
  * def init():
  *     init_quad_cache()             # <<<<<<<<<<<<<<
  *     clear_buffer()
- * 
+ *
  */
   __pyx_t_1 = __Pyx_GetName(__pyx_m, __pyx_n_s__init_quad_cache); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -1254,7 +1254,7 @@ static PyObject *__pyx_pf_8cube_lib_3init(PyObject *__pyx_self, CYTHON_UNUSED Py
  * def init():
  *     init_quad_cache()
  *     clear_buffer()             # <<<<<<<<<<<<<<
- * 
+ *
  * def clear_buffer():
  */
   __pyx_t_2 = __Pyx_GetName(__pyx_m, __pyx_n_s__clear_buffer); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -1279,10 +1279,10 @@ static PyObject *__pyx_pf_8cube_lib_3init(PyObject *__pyx_self, CYTHON_UNUSED Py
 
 /* "cube_lib.pyx":133
  *     clear_buffer()
- * 
+ *
  * def clear_buffer():             # <<<<<<<<<<<<<<
  *     chunk_scratch.v_num = 0
- * 
+ *
  */
 
 static PyObject *__pyx_pf_8cube_lib_4clear_buffer(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -1293,10 +1293,10 @@ static PyObject *__pyx_pf_8cube_lib_4clear_buffer(PyObject *__pyx_self, CYTHON_U
   __pyx_self = __pyx_self;
 
   /* "cube_lib.pyx":134
- * 
+ *
  * def clear_buffer():
  *     chunk_scratch.v_num = 0             # <<<<<<<<<<<<<<
- * 
+ *
  * def add_quad(x,y,z,side,tile):
  */
   __pyx_v_8cube_lib_chunk_scratch->v_num = 0;
@@ -1309,7 +1309,7 @@ static PyObject *__pyx_pf_8cube_lib_4clear_buffer(PyObject *__pyx_self, CYTHON_U
 
 /* "cube_lib.pyx":136
  *     chunk_scratch.v_num = 0
- * 
+ *
  * def add_quad(x,y,z,side,tile):             # <<<<<<<<<<<<<<
  *     chunk_scratch.v_num += 1
  */
@@ -1395,7 +1395,7 @@ static PyObject *__pyx_pf_8cube_lib_5add_quad(PyObject *__pyx_self, PyObject *__
   __pyx_L4_argument_unpacking_done:;
 
   /* "cube_lib.pyx":137
- * 
+ *
  * def add_quad(x,y,z,side,tile):
  *     chunk_scratch.v_num += 1             # <<<<<<<<<<<<<<
  */
@@ -1471,7 +1471,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     ]
  * for i in range(0, 72):             # <<<<<<<<<<<<<<
  *     v_index[i] = float(l[i])
- * 
+ *
  */
   __pyx_k_tuple_1 = PyTuple_New(2); if (unlikely(!__pyx_k_tuple_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(((PyObject *)__pyx_k_tuple_1));
@@ -1567,26 +1567,26 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
   /*--- Execution code ---*/
 
   /* "cube_lib.pyx":39
- * 
+ *
  * cdef Chunk_scratch* chunk_scratch
  * chunk_scratch = <Chunk_scratch *>malloc(sizeof(Chunk_scratch))             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef Quad* quad_cache
  */
   __pyx_v_8cube_lib_chunk_scratch = ((struct __pyx_t_8cube_lib_Chunk_scratch *)malloc((sizeof(struct __pyx_t_8cube_lib_Chunk_scratch))));
 
   /* "cube_lib.pyx":42
- * 
+ *
  * cdef Quad* quad_cache
  * quad_cache = <Quad *>malloc(max_cubes*6*sizeof(Quad))             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef float v_index[72]
  */
   __pyx_v_8cube_lib_quad_cache = ((struct __pyx_t_8cube_lib_Quad *)malloc(((__pyx_e_8cube_lib_max_cubes * 6) * (sizeof(struct __pyx_t_8cube_lib_Quad)))));
 
   /* "cube_lib.pyx":46
  * cdef float v_index[72]
- * 
+ *
  * l = [             # <<<<<<<<<<<<<<
  *          0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
  *          1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
@@ -1817,7 +1817,7 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
  *     ]
  * for i in range(0, 72):             # <<<<<<<<<<<<<<
  *     v_index[i] = float(l[i])
- * 
+ *
  */
   __pyx_t_1 = PyObject_Call(__pyx_builtin_range, ((PyObject *)__pyx_k_tuple_1), NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -1850,8 +1850,8 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
  *     ]
  * for i in range(0, 72):
  *     v_index[i] = float(l[i])             # <<<<<<<<<<<<<<
- * 
- * cdef inline set_tex(int vert_num, Vertex* vertex, float x, float y):
+ *
+ * cdef __inline set_tex(int vert_num, Vertex* vertex, float x, float y):
  */
     __pyx_t_1 = __Pyx_GetName(__pyx_m, __pyx_n_s__l); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
@@ -1873,7 +1873,7 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
 
   /* "cube_lib.pyx":73
  *         vertex.ty += 1/8
- * 
+ *
  * def convert_index(index, height, width):             # <<<<<<<<<<<<<<
  *     index = int(index)
  *     height = int(height)
@@ -1897,10 +1897,10 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
 
   /* "cube_lib.pyx":125
  * ## control state
- * 
+ *
  * def test_check():             # <<<<<<<<<<<<<<
  *     pass
- * 
+ *
  */
   __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_8cube_lib_2test_check, NULL, __pyx_n_s__cube_lib); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
@@ -1908,8 +1908,8 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "cube_lib.pyx":129
- * 
- * 
+ *
+ *
  * def init():             # <<<<<<<<<<<<<<
  *     init_quad_cache()
  *     clear_buffer()
@@ -1921,10 +1921,10 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
 
   /* "cube_lib.pyx":133
  *     clear_buffer()
- * 
+ *
  * def clear_buffer():             # <<<<<<<<<<<<<<
  *     chunk_scratch.v_num = 0
- * 
+ *
  */
   __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_8cube_lib_4clear_buffer, NULL, __pyx_n_s__cube_lib); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
@@ -1933,7 +1933,7 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
 
   /* "cube_lib.pyx":136
  *     chunk_scratch.v_num = 0
- * 
+ *
  * def add_quad(x,y,z,side,tile):             # <<<<<<<<<<<<<<
  *     chunk_scratch.v_num += 1
  */
@@ -1944,7 +1944,7 @@ PyMODINIT_FUNC PyInit_cube_lib(void)
 
   /* "cube_lib.pyx":1
  * from libc.stdlib cimport malloc, free             # <<<<<<<<<<<<<<
- * 
+ *
  * #core functionality
  */
   __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -2131,7 +2131,7 @@ bad:
     return (double)-1;
 }
 
-static CYTHON_INLINE unsigned char __Pyx_PyInt_AsUnsignedChar(PyObject* x) {
+static CYTHON___inline unsigned char __Pyx_PyInt_AsUnsignedChar(PyObject* x) {
     const unsigned char neg_one = (unsigned char)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(unsigned char) < sizeof(long)) {
@@ -2150,7 +2150,7 @@ static CYTHON_INLINE unsigned char __Pyx_PyInt_AsUnsignedChar(PyObject* x) {
     return (unsigned char)__Pyx_PyInt_AsUnsignedLong(x);
 }
 
-static CYTHON_INLINE unsigned short __Pyx_PyInt_AsUnsignedShort(PyObject* x) {
+static CYTHON___inline unsigned short __Pyx_PyInt_AsUnsignedShort(PyObject* x) {
     const unsigned short neg_one = (unsigned short)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(unsigned short) < sizeof(long)) {
@@ -2169,7 +2169,7 @@ static CYTHON_INLINE unsigned short __Pyx_PyInt_AsUnsignedShort(PyObject* x) {
     return (unsigned short)__Pyx_PyInt_AsUnsignedLong(x);
 }
 
-static CYTHON_INLINE unsigned int __Pyx_PyInt_AsUnsignedInt(PyObject* x) {
+static CYTHON___inline unsigned int __Pyx_PyInt_AsUnsignedInt(PyObject* x) {
     const unsigned int neg_one = (unsigned int)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(unsigned int) < sizeof(long)) {
@@ -2188,7 +2188,7 @@ static CYTHON_INLINE unsigned int __Pyx_PyInt_AsUnsignedInt(PyObject* x) {
     return (unsigned int)__Pyx_PyInt_AsUnsignedLong(x);
 }
 
-static CYTHON_INLINE char __Pyx_PyInt_AsChar(PyObject* x) {
+static CYTHON___inline char __Pyx_PyInt_AsChar(PyObject* x) {
     const char neg_one = (char)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(char) < sizeof(long)) {
@@ -2207,7 +2207,7 @@ static CYTHON_INLINE char __Pyx_PyInt_AsChar(PyObject* x) {
     return (char)__Pyx_PyInt_AsLong(x);
 }
 
-static CYTHON_INLINE short __Pyx_PyInt_AsShort(PyObject* x) {
+static CYTHON___inline short __Pyx_PyInt_AsShort(PyObject* x) {
     const short neg_one = (short)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(short) < sizeof(long)) {
@@ -2226,7 +2226,7 @@ static CYTHON_INLINE short __Pyx_PyInt_AsShort(PyObject* x) {
     return (short)__Pyx_PyInt_AsLong(x);
 }
 
-static CYTHON_INLINE int __Pyx_PyInt_AsInt(PyObject* x) {
+static CYTHON___inline int __Pyx_PyInt_AsInt(PyObject* x) {
     const int neg_one = (int)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(int) < sizeof(long)) {
@@ -2245,7 +2245,7 @@ static CYTHON_INLINE int __Pyx_PyInt_AsInt(PyObject* x) {
     return (int)__Pyx_PyInt_AsLong(x);
 }
 
-static CYTHON_INLINE signed char __Pyx_PyInt_AsSignedChar(PyObject* x) {
+static CYTHON___inline signed char __Pyx_PyInt_AsSignedChar(PyObject* x) {
     const signed char neg_one = (signed char)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(signed char) < sizeof(long)) {
@@ -2264,7 +2264,7 @@ static CYTHON_INLINE signed char __Pyx_PyInt_AsSignedChar(PyObject* x) {
     return (signed char)__Pyx_PyInt_AsSignedLong(x);
 }
 
-static CYTHON_INLINE signed short __Pyx_PyInt_AsSignedShort(PyObject* x) {
+static CYTHON___inline signed short __Pyx_PyInt_AsSignedShort(PyObject* x) {
     const signed short neg_one = (signed short)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(signed short) < sizeof(long)) {
@@ -2283,7 +2283,7 @@ static CYTHON_INLINE signed short __Pyx_PyInt_AsSignedShort(PyObject* x) {
     return (signed short)__Pyx_PyInt_AsSignedLong(x);
 }
 
-static CYTHON_INLINE signed int __Pyx_PyInt_AsSignedInt(PyObject* x) {
+static CYTHON___inline signed int __Pyx_PyInt_AsSignedInt(PyObject* x) {
     const signed int neg_one = (signed int)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(signed int) < sizeof(long)) {
@@ -2302,7 +2302,7 @@ static CYTHON_INLINE signed int __Pyx_PyInt_AsSignedInt(PyObject* x) {
     return (signed int)__Pyx_PyInt_AsSignedLong(x);
 }
 
-static CYTHON_INLINE int __Pyx_PyInt_AsLongDouble(PyObject* x) {
+static CYTHON___inline int __Pyx_PyInt_AsLongDouble(PyObject* x) {
     const int neg_one = (int)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
     if (sizeof(int) < sizeof(long)) {
@@ -2321,7 +2321,7 @@ static CYTHON_INLINE int __Pyx_PyInt_AsLongDouble(PyObject* x) {
     return (int)__Pyx_PyInt_AsLong(x);
 }
 
-static CYTHON_INLINE unsigned long __Pyx_PyInt_AsUnsignedLong(PyObject* x) {
+static CYTHON___inline unsigned long __Pyx_PyInt_AsUnsignedLong(PyObject* x) {
     const unsigned long neg_one = (unsigned long)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_VERSION_HEX < 0x03000000
@@ -2356,7 +2356,7 @@ static CYTHON_INLINE unsigned long __Pyx_PyInt_AsUnsignedLong(PyObject* x) {
     }
 }
 
-static CYTHON_INLINE unsigned PY_LONG_LONG __Pyx_PyInt_AsUnsignedLongLong(PyObject* x) {
+static CYTHON___inline unsigned PY_LONG_LONG __Pyx_PyInt_AsUnsignedLongLong(PyObject* x) {
     const unsigned PY_LONG_LONG neg_one = (unsigned PY_LONG_LONG)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_VERSION_HEX < 0x03000000
@@ -2391,7 +2391,7 @@ static CYTHON_INLINE unsigned PY_LONG_LONG __Pyx_PyInt_AsUnsignedLongLong(PyObje
     }
 }
 
-static CYTHON_INLINE long __Pyx_PyInt_AsLong(PyObject* x) {
+static CYTHON___inline long __Pyx_PyInt_AsLong(PyObject* x) {
     const long neg_one = (long)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_VERSION_HEX < 0x03000000
@@ -2426,7 +2426,7 @@ static CYTHON_INLINE long __Pyx_PyInt_AsLong(PyObject* x) {
     }
 }
 
-static CYTHON_INLINE PY_LONG_LONG __Pyx_PyInt_AsLongLong(PyObject* x) {
+static CYTHON___inline PY_LONG_LONG __Pyx_PyInt_AsLongLong(PyObject* x) {
     const PY_LONG_LONG neg_one = (PY_LONG_LONG)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_VERSION_HEX < 0x03000000
@@ -2461,7 +2461,7 @@ static CYTHON_INLINE PY_LONG_LONG __Pyx_PyInt_AsLongLong(PyObject* x) {
     }
 }
 
-static CYTHON_INLINE signed long __Pyx_PyInt_AsSignedLong(PyObject* x) {
+static CYTHON___inline signed long __Pyx_PyInt_AsSignedLong(PyObject* x) {
     const signed long neg_one = (signed long)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_VERSION_HEX < 0x03000000
@@ -2496,7 +2496,7 @@ static CYTHON_INLINE signed long __Pyx_PyInt_AsSignedLong(PyObject* x) {
     }
 }
 
-static CYTHON_INLINE signed PY_LONG_LONG __Pyx_PyInt_AsSignedLongLong(PyObject* x) {
+static CYTHON___inline signed PY_LONG_LONG __Pyx_PyInt_AsSignedLongLong(PyObject* x) {
     const signed PY_LONG_LONG neg_one = (signed PY_LONG_LONG)-1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_VERSION_HEX < 0x03000000
@@ -2633,13 +2633,13 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
 
 /* Type Conversion Functions */
 
-static CYTHON_INLINE int __Pyx_PyObject_IsTrue(PyObject* x) {
+static CYTHON___inline int __Pyx_PyObject_IsTrue(PyObject* x) {
    int is_true = x == Py_True;
    if (is_true | (x == Py_False) | (x == Py_None)) return is_true;
    else return PyObject_IsTrue(x);
 }
 
-static CYTHON_INLINE PyObject* __Pyx_PyNumber_Int(PyObject* x) {
+static CYTHON___inline PyObject* __Pyx_PyNumber_Int(PyObject* x) {
   PyNumberMethods *m;
   const char *name = NULL;
   PyObject *res = NULL;
@@ -2685,7 +2685,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyNumber_Int(PyObject* x) {
   return res;
 }
 
-static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject* b) {
+static CYTHON___inline Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject* b) {
   Py_ssize_t ival;
   PyObject* x = PyNumber_Index(b);
   if (!x) return -1;
@@ -2694,7 +2694,7 @@ static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject* b) {
   return ival;
 }
 
-static CYTHON_INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t ival) {
+static CYTHON___inline PyObject * __Pyx_PyInt_FromSize_t(size_t ival) {
 #if PY_VERSION_HEX < 0x02050000
    if (ival <= LONG_MAX)
        return PyInt_FromLong((long)ival);
@@ -2708,7 +2708,7 @@ static CYTHON_INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t ival) {
 #endif
 }
 
-static CYTHON_INLINE size_t __Pyx_PyInt_AsSize_t(PyObject* x) {
+static CYTHON___inline size_t __Pyx_PyInt_AsSize_t(PyObject* x) {
    unsigned PY_LONG_LONG val = __Pyx_PyInt_AsUnsignedLongLong(x);
    if (unlikely(val == (unsigned PY_LONG_LONG)-1 && PyErr_Occurred())) {
        return (size_t)-1;
