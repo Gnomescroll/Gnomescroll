@@ -294,6 +294,8 @@ class AgentModel:
 
         #self.terrainMap = GameStateGlobal.terrainMap
 
+        self.button_state = [0 for i in range(6)]
+
         self.id = id
 
         self.last_control_tick = 0
