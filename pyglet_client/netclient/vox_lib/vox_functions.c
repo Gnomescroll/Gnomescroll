@@ -5,13 +5,13 @@
 struct VoxelList* vo;
 
 //util
-inline float vlength(struct Vector v) {
+__inline float vlength(struct Vector v) {
     float length = 0;
     length = v.x*v.x + v.y*v.y + v.z*v.z;
     return length;
 }
 
-inline float iproduct(struct Vector v1, struct Vector v2) {
+__inline float iproduct(struct Vector v1, struct Vector v2) {
     float ip = 0;
     ip = v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
     return ip;
@@ -54,7 +54,7 @@ int q_set[4*6]= {
 
 //end util
 
-inline void compute_vo_normals(struct VoxelList* volist) {
+__inline void compute_vo_normals(struct VoxelList* volist) {
     //const struct Vector* center = &skel->center;
     float theta = volist->theta;
     //float phi = volist->phi;
@@ -112,11 +112,11 @@ struct VoxelList* createVoxelList(int xdim, int ydim, int zdim) {
     return volist;
 }
 */
-inline struct Voxel get(struct VoxelList* vl, int x, int y, int z) {
+__inline struct Voxel get(struct VoxelList* vl, int x, int y, int z) {
     return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
 }
 
-inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) {
+__inline void set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b) {
     struct Voxel* t = &vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
     t->r = r;
     t->g = g;
@@ -248,11 +248,11 @@ int _draw(struct VoxelList* vo) {
     return 0;
 }
 
-inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z) {
+__inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z) {
     return vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
 }
 
-inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a) {
+__inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a) {
     struct Voxel* t = &vl->list[x+ y*vl->ydim + z*vl->xdim*vl->ydim];
     t->r = r;
     t->g = g;
@@ -288,7 +288,7 @@ int _deleteVoxelList(struct VoxelList* vo) {
     return 0;
 }
 
-inline float ipd(float x, float y, float z, struct Vector v2) {
+__inline float ipd(float x, float y, float z, struct Vector v2) {
     return x*v2.x + y*v2.y + z*v2.z;
 }
 
@@ -395,13 +395,16 @@ int _raw_ray_cast_tracer(struct VoxelList* vo, float x, float y, float z, float 
 int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2) {
     float t;
     float x0,y0,z0;
+    float r, x,y,z;
+    float u;
+
     x0 = vo->center.x - x1;
     y0 = vo->center.y - y1;
     z0 = vo->center.z - z1;
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
     t = t/(x2*x2+y2*y2+z2*z2);
-    float r, x,y,z;
+
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
     z = t*z2 - z0; z*=z;
@@ -420,7 +423,7 @@ int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x
 
         glBegin(GL_POINTS);
             glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            float u = 0.1;
+            u = 0.1;
             glVertex3f(x+u,y,z);
             glVertex3f(x-u,y,z);
             glVertex3f(x,y+u,z);

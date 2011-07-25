@@ -73,15 +73,15 @@ const float dy = 1.0/16.0;
 int _draw_text2(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
 
 int c_num = 0;
-while(text[c_num] != 0) { c_num++; }
 
 int i;
 int j = 0;
 float offset = x;
 int index,xi,yi;
 float x_min, x_max, y_min, y_max;
-
 float xmin,xmax, ymin,ymax;
+
+while(text[c_num] != 0) { c_num++; }
 
     glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
     glEnable(GL_TEXTURE_2D);

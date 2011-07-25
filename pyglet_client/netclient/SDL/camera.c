@@ -32,6 +32,7 @@ void _camera_projection( Camera c) {
 
 int _world_projection(struct Camera* c) {
     float aspect = c->x_size / c->y_size;
+    float camera_focus_x,  camera_focus_y,  camera_focus_z;
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -41,8 +42,6 @@ int _world_projection(struct Camera* c) {
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-
-    float camera_focus_x,  camera_focus_y,  camera_focus_z;
 
     camera_focus_x = c->x + cos( c->x_angle * PI) * cos( c->y_angle * PI);
     camera_focus_y = c->y + sin( c->x_angle * PI) * cos( c->y_angle * PI);
@@ -67,7 +66,7 @@ int _world_projection(struct Camera* c) {
     return 0;
 }
 
-void inline end_world_projection() {
+void __inline end_world_projection() {
    glDisable (GL_DEPTH_TEST);
 }
 

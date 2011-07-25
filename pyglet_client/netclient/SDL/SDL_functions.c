@@ -75,21 +75,22 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    int value;
-    SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
-    if(value) {
-        printf("Harware Acceleration Enabled \n");
-    } else {
-        printf("Warning: Hardware Acceleration Not Enabled!\n");
-    }
+    {
+        int value;
+        SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
+        if(value) {
+            printf("Harware Acceleration Enabled \n");
+        } else {
+            printf("Warning: Hardware Acceleration Not Enabled!\n");
+        }
 
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
-    if(value) {
-        printf("Double Buffering Enabled \n");
-    } else {
-        printf("Warning: Double Buffering Not Enabled!\n");
+        SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
+        if(value) {
+            printf("Double Buffering Enabled \n");
+        } else {
+            printf("Warning: Double Buffering Not Enabled!\n");
+        }
     }
-
     ///glEnable(GL_TEXTURE_2D); // ??? Needed?
 
     //whaa

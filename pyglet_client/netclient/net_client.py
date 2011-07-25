@@ -195,7 +195,7 @@ class TcpConnection:
         else:
             socket = self.socket
             if socket == 0:
-                print "Socket not connected"
+                #print "Socket not connected"
                 return
             rlist, wlist, xlist = select.select([socket], [], [], 0.0)
             #print "rlist= " + str(rlist)
@@ -205,6 +205,7 @@ class TcpConnection:
         BUFFER_SIZE = 4096
         try:
             data = self.tcp.recv(BUFFER_SIZE)
+            print "data= " + str(data)
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
             data = ''
