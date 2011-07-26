@@ -137,11 +137,13 @@ int init7() {
 
 int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
+    int i,j;
+    struct Vertex* vt;
     //printf("t= %i \n", xi);
 
     if(voi.r == 0 && voi.g == 0 && voi.b == 0)
         return 0;
-    int i,j;
+
     for(i=0; i<8; i++) {
         vlist[i].x = 0;
         vlist[i].y = 0;
@@ -181,7 +183,6 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
         //printf("z= %f \n", vl->center.z);
         //printf("Vertex: %f, %f, %f \n", vlist[i].x, vlist[i].y, vlist[i].z);
     }
-    struct Vertex* vt;
 
     for(i=0; i<6;i++) {
                 glColor3ub(voi.r, voi.g, voi.b);
@@ -262,6 +263,9 @@ __inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int 
 
 struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta) {
     struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
+    int i;
+    struct Voxel* v;
+
     volist->vosize = vo_size;
     volist->xdim = xdim;
     volist->ydim = ydim;
@@ -271,8 +275,7 @@ struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, 
     volist->center.z = z;
     volist->list = (struct Voxel*) malloc(xdim*ydim*zdim*sizeof(struct Voxel));
     volist->radius2 = (volist->vosize*volist->vosize)*(float)(xdim*xdim+ydim*ydim+zdim*zdim)*(0.25);
-    int i;
-    struct Voxel* v;
+
     for(i=0;i<xdim*ydim*zdim;i++) {
         v = &volist->list[i];
         v->r = 0;
@@ -293,21 +296,26 @@ __inline float ipd(float x, float y, float z, struct Vector v2) {
 }
 
 int _point_collision(struct VoxelList* vo, float x, float y, float z) {
+    float a,b,c;
+    int _x, _y, _z;
+    struct Voxel voi;
+
     x -= vo->center.x;
     y -= vo->center.y;
     z -= vo->center.z;
 
-    float a,b,c;
     a = ipd(x,y,z, vo->n2[0]); if(a < -vo->xdim || a > vo->xdim) return 0;
     b = ipd(x,y,z, vo->n2[1]); if(b < -vo->ydim || b > vo->ydim) return 0;
     c = ipd(x,y,z, vo->n2[2]); if(c < -vo->zdim || c > vo->zdim) return 0;
     //printf("a,b,c= %f, %f, %f \n", a,b,c);
-    int _x, _y, _z;
+
     _x = (int) floorf(a) + vo->xdim/2;
     _y = (int) floorf(b) + vo->ydim/2;
     _z = (int) floorf(c) + vo->zdim/2;
     //printf("_x, _y, _z= %i, %i, %i \n", _x, _y, _z);
-    struct Voxel voi = get(vo,_x,_y,_z);
+
+    voi = get(vo,_x,_y,_z);
+
     if(voi.r == 0 && voi.g == 0 && voi.b == 0) return 0;
     //printf("3\n");
     return 1;
@@ -315,11 +323,12 @@ int _point_collision(struct VoxelList* vo, float x, float y, float z) {
 
 int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle) {
     float x1,y1,z1;
+    float s;
     //printf("x_angle, y_angle = %f, %f \n", x_angle, y_angle);
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
-    float s = sqrt(x1*x1 + y1*y1 + z1*z1);
+    s = sqrt(x1*x1 + y1*y1 + z1*z1);
     x1 /= s; y1 /=s; z1 /=s;
     //printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
@@ -328,6 +337,9 @@ int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x
 int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2) {
     float t;
     float x0,y0,z0;
+    float r, x,y,z;
+    float u;
+
     x0 = vo->center.x - x1;
     y0 = vo->center.y - y1;
     z0 = vo->center.z - z1;
@@ -335,7 +347,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
     t = t/(x2*x2+y2*y2+z2*z2);
     //printf("t= %f \n", t);
-    float r, x,y,z;
+
     x = t*x2 - x0; x*=x;
     y = t*y2 - y0; y*=y;
     z = t*z2 - z0; z*=z;
@@ -366,7 +378,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
 
         glBegin(GL_POINTS);
             glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            float u = 0.1;
+            u = 0.1;
             glVertex3f(x+u,y,z);
             glVertex3f(x-u,y,z);
             glVertex3f(x,y+u,z);
@@ -382,11 +394,12 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
 
 int _raw_ray_cast_tracer(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle) {
     float x1,y1,z1;
+    float s;
     //printf("x_angle, y_angle = %f, %f \n", x_angle, y_angle);
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
-    float s = sqrt(x1*x1 + y1*y1 + z1*z1);
+    s = sqrt(x1*x1 + y1*y1 + z1*z1);
     x1 /= s; y1 /=s; z1 /=s;
     //printf("cast vector length2: %f \n", x1*x1 + y1*y1 + z1*z1);
     return _ray_cast_tracer(vo, x,y,z,x1,y1,z1);
