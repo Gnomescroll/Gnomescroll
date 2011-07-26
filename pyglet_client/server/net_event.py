@@ -60,6 +60,8 @@ class MessageHandler:
             GameStateGlobal.agentList.create(**msg)
         elif cmd == 'agent_control_state':
             self.agent_control_state(connection.id, **msg)
+        elif cmd == 'agent_button_state':
+            self.agent_button_state(connection.id, **msg)
         elif cmd == 'request_agent':
             self.request_agent(connection, **msg)
 
@@ -358,7 +360,6 @@ class MessageHandler:
             NetOut.event.agent_update(agent, 'weapons')
 
     def agent_control_state(self, client_id, **msg):
-        print 'AGENT CONTROL STATE'
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
         except KeyError:
@@ -402,6 +403,45 @@ class MessageHandler:
             return
 
         agent.set_control_state(state, angle, tick)
+
+    def agent_button_state(self, client_id, **msg):
+        try:
+            agent = GameStateGlobal.playerList.client(client_id).agent
+        except KeyError:
+            print 'msg.cmd == agent_button_state, msg.id is not a known client'
+            return
+        except AttributeError:
+            print 'msg.cmd == agent_button_state, player has no agent'
+            return
+
+        try:
+            agent_id = msg['id']
+        except KeyError:
+            print 'msg agent_button_state :: aid is missing'
+            return
+
+        if agent_id != agent.id:
+            print 'msg agent_button_state :: aid %s does not match player\'s agent id %s' % (agent_id, agent.id,)
+            return
+
+        try:
+            buttons = msg['buttons']
+        except KeyError:
+            print 'msg agent_button_state :: buttons missing'
+            return
+
+        btn_len = len(buttons)
+        btn_size = 6
+        if btn_len != btn_size:
+            print 'msg agent_button_state :: buttons of wrong size (is %s should be %s)' % (btn_len, btn_size,)
+            return
+
+        old_buttons = agent.button_state
+        agent.button_state = buttons
+
+        #forward msg
+        if old_buttons != buttons:
+            NetOut.event.agent_button_state(agent)
 
     def fire_projectile(self, client_id, **msg):
         try:

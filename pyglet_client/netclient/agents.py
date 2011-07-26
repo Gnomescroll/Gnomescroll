@@ -294,6 +294,8 @@ class AgentModel:
 
         #self.terrainMap = GameStateGlobal.terrainMap
 
+        self.button_state = [0 for i in range(6)]
+
         self.id = id
 
         self.last_control_tick = 0
@@ -383,7 +385,7 @@ class AgentModel:
             self.set_angle(angle)
 
     def set_angle(self, angle):
-        self.x_angle, self.y_angle = angles
+        self.x_angle, self.y_angle = angle
 
     def control_state(self):
         return [\

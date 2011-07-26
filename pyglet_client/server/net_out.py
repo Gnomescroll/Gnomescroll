@@ -72,6 +72,21 @@ class EventOut:
             'state': agent.state, #is a 9 tuple
         }
 
+    @sendJSONevent('agent_control_state')
+    def agent_control_state(self, agent):
+        return {
+            'id'    :   agent.id,
+            'state' :   agent.control_state(),
+            'angle' :   agent.angle(),
+        }
+
+    @sendJSONevent('agent_button_state')
+    def agent_button_state(self, agent):
+        return {
+            'id'        :   agent.id,
+            'buttons'   :   agent.button_state,
+        }
+
     @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
         print 'sending agent update'

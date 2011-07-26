@@ -210,6 +210,7 @@ class TcpConnection:
         BUFFER_SIZE = 4096
         try:
             data = self.tcp.recv(BUFFER_SIZE)
+            #print "data= " + str(data)
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
             data = ''

@@ -95,6 +95,14 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @sendJSON('agent_button_state', tick=True)
+    def agent_button_state(self, agent):
+        return {
+            'id'     : agent.id,
+            'buttons' : agent.button_state,
+        }
+        
+    @idRequired
     @sendJSON('fire_projectile', tick=True)
     def fire_projectile(self, agent=None):
         if agent is None or agent.id is None:
