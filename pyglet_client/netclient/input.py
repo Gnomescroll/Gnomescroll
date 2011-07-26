@@ -130,7 +130,7 @@ class InputGlobal:
     @classmethod
     def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')
-
+        current_mode = (current_mode + change) % len(modes)
         new_mode_name = modes[current_mode]
         if new_mode_name == 'agent' and GameStateGlobal.agent is None:
             return
