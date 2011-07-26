@@ -31,7 +31,8 @@ int _set_resolution(int xres, int yres, int fullscreen) {
 }
 
 int _init_video() {
-
+	int nFlags;
+	int value;
     SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
     SDL_WM_SetCaption( "SDL + OpenGL", NULL );
@@ -44,7 +45,7 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    int nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
+    nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
     if(_fullscreen != 0) {nFlags |= SDL_FULLSCREEN; }
 
     if( pSDLVideoInfo->hw_available ) // Hardware surfaces enabled?
@@ -75,22 +76,20 @@ int _init_video() {
         SDL_Quit();
         return 1;
     }
-    {
-        int value;
-        SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
-        if(value) {
-            printf("Harware Acceleration Enabled \n");
-        } else {
-            printf("Warning: Hardware Acceleration Not Enabled!\n");
-        }
-
-        SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
-        if(value) {
-            printf("Double Buffering Enabled \n");
-        } else {
-            printf("Warning: Double Buffering Not Enabled!\n");
-        }
+    SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
+    if(value) {
+        printf("Harware Acceleration Enabled \n");
+    } else {
+        printf("Warning: Hardware Acceleration Not Enabled!\n");
     }
+
+    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
+    if(value) {
+        printf("Double Buffering Enabled \n");
+    } else {
+        printf("Warning: Double Buffering Not Enabled!\n");
+    }
+
     ///glEnable(GL_TEXTURE_2D); // ??? Needed?
 
     //whaa

@@ -26,8 +26,9 @@ return image;
 }
 
 int _create_texture(SDL_Surface* surface) {
-    glEnable(GL_TEXTURE_2D);
     GLuint texture;
+	
+    glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
@@ -41,9 +42,10 @@ int _create_texture(SDL_Surface* surface) {
 int _create_hud_texture(char *file) {
 
     SDL_Surface* surface;
+    GLuint texture;
+	
     surface = _load_image("./texture/target.png");
 
-    GLuint texture;
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     // Bind the texture object

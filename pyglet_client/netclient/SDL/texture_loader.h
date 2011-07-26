@@ -1,8 +1,7 @@
-#include <SDL_image.h>
 
 #include <SDL.h>
 #include <SDL_opengl.h>
-
+#include <SDL_image.h>
 //extern int x;'
 
 int _init_image_loader();

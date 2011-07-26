@@ -46,7 +46,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
     //SDL_PumpEvents();
 
     if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONUP)) {
-        MouseEvent me;
+         MouseEvent me;
         me.x = Event.motion.x;
         me.y = Event.motion.y;
         me.button = Event.button.button;
@@ -55,7 +55,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         _mouse_event_callback(mouse_event_cb, me);
     }
     if (Event.type == SDL_KEYDOWN || Event.type == SDL_KEYUP) {
-        processKeyEvent(Event);
+        //processKeyEvent(Event);
     }
 
     switch( Event.type )

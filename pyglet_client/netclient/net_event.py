@@ -4,8 +4,14 @@
 Client network incoming
 '''
 import SDL.gl #for timer function
-import simplejson as json
-import stats
+
+if False: #windows compatability
+    pass
+    #import simplejson as json
+else:
+    import json
+    
+    import stats
 #import struct
 
 class NetEventGlobal:
@@ -339,10 +345,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self.name = 'agent'
         self.store = GameStateGlobal.agentList
         self._bind_event('agent_position', self._agent_position)
-        self._bind_event('agent_control_state', self._agent_control_state)
         DatastoreMessageInterface.__init__(self)
 
-# DEPRECATE
     def _agent_position(self, **args):  # deprecate
         state = args.get('state', None)
         id = args.get('id', None)
@@ -358,39 +362,6 @@ class AgentMessageHandler(DatastoreMessageInterface):
             return
         agent.tick = tick
         agent.state = state
-
-    def _agent_control_state(self, **msg):
-        err_msg = None
-        try:
-            state = msg['state']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: state missing'
-        try:
-            angle = msg['angle']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: angle missing'
-        try:
-            agent_id = msg['id']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: agent id missing'
-        try:
-            tick = msg['tick']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: tick missing'
-
-        try:
-            agent = GameStateGlobal.agentList[agent_id]
-        except KeyError:
-            err_msg = 'msg agent_control_state :: agent %s does not exist' % (str(agent_id),)
-
-        if err_msg is not None:
-            print err_msg
-            return
-
-        if agent.you:
-            return
-
-        agent.set_control_state(state, angle, tick)
 
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)

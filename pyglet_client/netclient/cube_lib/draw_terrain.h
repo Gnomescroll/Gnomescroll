@@ -1,3 +1,15 @@
+#ifdef linux
+    //do nothing
+#elif _WIN32
+    //glew
+	#include <windows.h> 
+	//#include "../clib/GLee.h"
+	#include <GL/GLee.h>
+	//#include "GL\gl.h"
+#else
+    //mac
+#endif
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 

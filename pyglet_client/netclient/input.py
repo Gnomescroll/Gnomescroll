@@ -16,9 +16,6 @@ if settings.pyglet:
 else:
     import SDL.input
 
-if False:
-    from sounds import playSound
-
 #handles special characters
 Keystring = {}
 def setup_keystring():
@@ -46,6 +43,9 @@ def setup_keystring():
     for key,value in special_keys.items():
         Keystring[value] = key
 setup_keystring()
+
+if False:
+    from sounds import playSound
 
 class InputEventGlobal:
     mouse = None
@@ -128,7 +128,7 @@ class InputGlobal:
     @classmethod
     def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')
-        current_mode = (current_mode + change) % len(modes)
+
         new_mode_name = modes[current_mode]
         if new_mode_name == 'agent' and GameStateGlobal.agent is None:
             return
@@ -139,12 +139,18 @@ class InputGlobal:
     @classmethod
     # toggles through modes.
     def toggle_input_mode(cls, change=1, current_mode=[0]):
-        current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+        #current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+        curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+        if curr is not None:
+            current_mode[0] = curr
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
-        current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
-
+        #current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
+        curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
+        if curr is not None:
+            current_mode[0] = curr
+    
     @classmethod
     def enable_chat(cls):
         InputGlobal.input = 'chat'
@@ -317,7 +323,7 @@ class Keyboard(object):
         if GameStateGlobal.agent.dead:
             return
         v = 1
-        d_x, d_y, v_x, v_y, jetpack, brake = [0 for i in range(6)]
+        d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
 
         if settings.pyglet:
             if keyboard[key.W]:
@@ -354,17 +360,17 @@ class Keyboard(object):
             if 'SPACE' in keyboard:
                 jetpack = 1
 
-        control_state = [
+        GameStateGlobal.agent.control_state = [
             d_x,
             d_y,
             v_x,
             v_y,
             jetpack,
+            jump,
             brake
         ]
-        GameStateGlobal.agent.set_control_state(control_state)
         ## send control state to server
-        #NetOut.sendMessage.agent_control_state(GameStateGlobal.agent)
+        #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 
     def camera_input_mode(self, keyboard):
         v = 0.1

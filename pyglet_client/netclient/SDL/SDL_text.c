@@ -1,14 +1,14 @@
 #include "SDL_text.h"
 
 
-TTF_Font *font;
+//TTF_Font *font;
 
 GLuint fontTextureId;
 
-char* fontpath = "media/fonts/freesansbold.ttf";
+//char* fontpath = "media/fonts/freesansbold.ttf";
 
 int _init_text() {
-    TTF_Init();
+    //TTF_Init();
     //atexit(TTF_Quit);
 
 /*
@@ -138,7 +138,6 @@ int _draw_text(char* text, float x, float y, float height, float width, float de
 //float depth = -0.5;
 
 int c_num = 0;
-while(text[c_num] != 0) { c_num++; }
 
 int i;
 float offset = x;
@@ -146,6 +145,8 @@ int index,xi,yi;
 float x_min, x_max, y_min, y_max;
 
 float xmin,xmax, ymin,ymax;
+
+while(text[c_num] != 0) { c_num++; }
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, fontTextureId);
@@ -192,7 +193,7 @@ float xmin,xmax, ymin,ymax;
     }
     glDisable(GL_TEXTURE_2D);
 }
-
+/*
 /// DEPRECATE BELOW LINE
 //SDL_FreeSurface
 enum textquality {solid, shaded, blended};
@@ -224,3 +225,4 @@ int _draw_text_surface(SDL_Surface* surface, int x, int y){
 
 int _free_text_surface(SDL_Surface* surface) { SDL_FreeSurface(surface); return 0;}
 
+*/

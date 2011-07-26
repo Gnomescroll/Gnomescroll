@@ -35,8 +35,8 @@ __inline void compute_vo_normals(struct VoxelList* volist);
 //int _draw_test2();
 
 int _draw(struct VoxelList* vo);
-__inline struct Voxel _get(struct VoxelList* vl, int x, int y, int z);
-__inline void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a);
+struct Voxel _get(struct VoxelList* vl, int x, int y, int z);
+void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a);
 struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta);
 //resize vorxel list?
 int _deleteVoxelList(struct VoxelList* vo);

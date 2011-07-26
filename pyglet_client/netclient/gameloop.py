@@ -1,3 +1,12 @@
+print "test"
+import sys
+sys.path += ['./imports/lib/python2.6/site-packages/', './']
+sys.path += ['python26.zip']
+print "Path="
+print sys.path
+print ""
+
+import site
 
 import args_client
 import opts
@@ -6,17 +15,28 @@ opts.opts = args_client.get_args()
 import settings
 import stats
 
+#need to get this working on all platforms
+if False:
+    pass
+    #import ChromeEmbedded
+    ChromeEmbedded.init()
 
-import ChromeEmbedded
-ChromeEmbedded.init()
+#from loader2 import test
+#test()
 
-### DEPRECATE
+#from ctypes import cdll
+#SDL.gl = cdll.LoadLibrary('./SDL.gl.dll')
+
+    ### DEPRECATE
 if settings.pyglet:
     from pyglet import clock, font, image, window
     from pyglet.gl import *
 
     from pyglet.window import key
 else:
+    #import SDL
+    #import SDL.test
+  
     import SDL.gl
     import SDL.input
     import SDL.hud
@@ -95,7 +115,8 @@ class App(object):
         InputGlobal.init_1(self)
 
     def __init__(self):
-
+        pass
+        #return
         self.init_globals()
         self.animations = animations
         #other
@@ -126,6 +147,8 @@ class App(object):
         NetClientGlobal.connect() #starts connection
 
     def mainLoop(self):
+        pass
+        #return
         #self.world.test_chunk()
         self.world.add_player(GameStateGlobal.player) #do something about this
         self.world.add_agent(GameStateGlobal.agent)
@@ -189,7 +212,7 @@ class App(object):
                 SDL.input.process_events()
                 SDL.input.get_key_state()
             if GameStateGlobal.agent is not None:
-                NetOut.sendMessage.agent_control_state(GameStateGlobal.agent)
+                NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
             NetClientGlobal.connection.attempt_recv()
             MapControllerGlobal.mapController.tick() #testing

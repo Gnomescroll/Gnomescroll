@@ -6,8 +6,13 @@ Client network interface
 
 import socket
 import struct
-import simplejson as json
 
+if False: #windows compatability
+    pass
+    #import simplejson as json
+else:
+    import json
+    
 from opts import opts
 import settings
 
@@ -205,7 +210,6 @@ class TcpConnection:
         BUFFER_SIZE = 4096
         try:
             data = self.tcp.recv(BUFFER_SIZE)
-            print "data= " + str(data)
         except socket.error, (value,message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
             data = ''

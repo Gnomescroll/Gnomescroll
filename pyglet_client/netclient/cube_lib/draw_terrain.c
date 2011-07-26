@@ -44,7 +44,7 @@ int _init_draw_terrain() {
 
 //int _create_vbo(struct Quad* quad_list, int v_num) {
 int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
-
+    GLuint VBO_id;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
 
@@ -52,7 +52,6 @@ int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
     q_VBO->v_num = v_num;
     memcpy(q_VBO->quad_array, quad_list, v_num*sizeof(struct Quad));
 
-    GLuint VBO_id;
     glGenBuffers(1, &VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
 
@@ -67,8 +66,12 @@ int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
 
 //int _delete_vbo(unsigned int VBO_id)
 int _delete_vbo(struct Quad_VBO* q_VBO) {
+	#ifdef _WIN32
+	glDeleteBuffers(1, &q_VBO->VBO_id);
+	#else
     glDeleteBuffers(q_VBO->VBO_id);
-    ///free the system memory copy of the vertex buffer
+    #endif
+	///free the system memory copy of the vertex buffer
     free(q_VBO->quad_array);
     q_VBO->v_num = 0;
     return 0;
