@@ -305,6 +305,8 @@ class Agent(AgentPhysics, AgentAction):
         x,y,z = [float(i) for i in position]
         self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
 
+        self.button_state = [0 for i in range(6)]
+
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
         self.collisionDetection = CubeGlobal.collisionDetection

@@ -340,6 +340,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.agentList
         self._bind_event('agent_position', self._agent_position)
         self._bind_event('agent_control_state', self._agent_control_state)
+        self._bind_event('agent_button_state', self._agent_button_state)
         DatastoreMessageInterface.__init__(self)
 
 # DEPRECATE ?
@@ -392,6 +393,39 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
         agent.set_control_state(state, angle, tick)
 
+    def _agent_button_state(self, **msg):
+        err_msg = None
+        try:
+            buttons = msg['buttons']
+        except KeyError:
+            err_msg = 'msg agent_button_state :: buttons key is missing'
+        btn_size = 6
+        btn_len = len(buttons)
+        if btn_size != btn_len:
+            err_msg = 'msg agent_button_state :: buttons array is wrong size (is %d should be %d)' % (btn_len, btn_size)
+        try:
+            tick = msg['tick']
+        except KeyError:
+            err_msg = 'msg agent_button_state :: tick is missing'
+        try:
+            agent_id = msg['id']
+        except KeyError:
+            err_msg = 'msg agent_button_state :: aid is missing'
+        try:
+            agent = GameStateGlobal.agentList[agent_id]
+        except KeyError:
+            err_msg = 'msg agent_button state :: agent %s not found' % (agent_id,)
+        if err_msg is not None:
+            print err_msg
+            return
+
+        if agent.you:
+            return
+
+        if tick > agent.last_button_tick:
+            agent.last_button_tick = tick
+            agent.button_state = buttons
+        
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:

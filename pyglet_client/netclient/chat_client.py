@@ -377,14 +377,26 @@ class SystemChatCommand(ChatCommand):
         self.payload = payload
         self._send = _send
 
+    #def _send_local(self, data):
+        #if type(data) == str:
+            #data = {
+                #'content' : data,
+            #}
+        #if 'channel' not in data:
+            #data['channel'] = 'system'
+        #return ChatCommand._send_local(self, data)
+
     def _send_local(self, data):
-        if type(data) == str:
+        if data is None:
+            return
+        if type(data) != dict:
             data = {
                 'content' : data,
             }
         if 'channel' not in data:
             data['channel'] = 'system'
         return ChatCommand._send_local(self, data)
+            
 
 # msg to be sent
 class ChatMessageOut():

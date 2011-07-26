@@ -109,6 +109,8 @@ class InputGlobal:
 
     scoreboard = False
 
+    
+
     @classmethod
     def init_0(cls, main):
         #InputEventGlobal.inputGlobal = cls
@@ -139,11 +141,15 @@ class InputGlobal:
     @classmethod
     # toggles through modes.
     def toggle_input_mode(cls, change=1, current_mode=[0]):
-        current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+        curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+        if curr is not None:
+            current_mode[0] = curr
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
-        current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
+        curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
+        if curr is not None:
+            current_mode[0] = curr
 
     @classmethod
     def enable_chat(cls):
@@ -319,7 +325,8 @@ class Keyboard(object):
         v = 1
         d_x, d_y, v_x, v_y, jetpack, brake = [0 for i in range(6)]
 
-        u,d,l,r = [0 for i in range(4)]
+        u,d,l,r, jetpack, brake = [0 for i in range(6)]
+        old_buttons = GameStateGlobal.agent.button_state
 
         if settings.pyglet:
             if keyboard[key.W]:
@@ -372,6 +379,8 @@ class Keyboard(object):
 
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
+        if old_buttons != button_state:
+            NetOut.sendMessage.agent_button_state(GameStateGlobal.agent)
         ## send control state to server
         #NetOut.sendMessage.agent_control_state(GameStateGlobal.agent)
 
