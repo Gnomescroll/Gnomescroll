@@ -369,7 +369,7 @@ class Keyboard(object):
             if 'SPACE' in keyboard:
                 jetpack = 1
 
-        GameStateGlobal.agent.set_control_state = ([\
+        GameStateGlobal.agent.set_control_state([\
             d_x,
             d_y,
             v_x,
