@@ -10,6 +10,8 @@ int init_t_map() {
     return 0;
 }
 
+struct vm_map* _get_map() { return &map; }
+
 // terrain map tile set/get
 int _set(int x, int y, int z, int value){
     int xoff, yoff, zoff, xrel, yrel, zrel;
