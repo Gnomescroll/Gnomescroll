@@ -1,12 +1,14 @@
-print "test"
-import sys
-sys.path += ['./imports/lib/python2.6/site-packages/', './']
-sys.path += ['python26.zip']
-print "Path="
-print sys.path
-print ""
 
-import site
+if False:
+    print "test"
+    import sys
+    sys.path += ['./imports/lib/python2.6/site-packages/', './']
+    sys.path += ['python26.zip']
+    print "Path="
+    print sys.path
+    print ""
+
+    import site
 
 import args_client
 import opts
@@ -36,7 +38,7 @@ if settings.pyglet:
 else:
     #import SDL
     #import SDL.test
-  
+
     import SDL.gl
     import SDL.input
     import SDL.hud
@@ -57,7 +59,8 @@ from game_state import GameStateGlobal
 from client_event import ClientEventGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
-from cube_dat import CubeGlobal
+
+#from cube_dat import CubeGlobal
 #from cube_dat import CubeGlobal
 
 #from map_chunk_manager import MapChunkManagerGlobal
@@ -90,12 +93,10 @@ class App(object):
         NetEventGlobal.init_0()
         NetOut.init_0()
         ChatClientGlobal.init_0()
-        CubeGlobal.init_0()
         #MapChunkManagerGlobal.init_0()
         MapControllerGlobal.init_0()
         #stage 2
         NetClientGlobal.init_1()
-        CubeGlobal.init_1()
         GameStateGlobal.init_1()
         NetEventGlobal.init_1()
         NetOut.init_1()

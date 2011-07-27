@@ -101,14 +101,14 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
             #x+
-                if self.collisionDetection.collision(bx_pos_current,by,bz):
+                if self.collisionDetection(bx_pos_current,by,bz):
                     xc_pos_current +=1
-                if self.collisionDetection.collision(bx_pos_projected,by,bz):
+                if self.collisionDetection(bx_pos_projected,by,bz):
                     xc_pos_projected +=1
             #x-
-                if self.collisionDetection.collision(bx_neg_current,by,bz):
+                if self.collisionDetection(bx_neg_current,by,bz):
                     xc_neg_current +=1
-                if self.collisionDetection.collision(bx_neg_projected,by,bz):
+                if self.collisionDetection(bx_neg_projected,by,bz):
                     xc_neg_projected +=1
 
 ### Collision on Y axis ###
@@ -128,14 +128,14 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for bx in range(floor(x-box_r), floor(x+box_r)+1):
             #x+
-                if self.collisionDetection.collision(bx,by_pos_current,bz):
+                if self.collisionDetection(bx,by_pos_current,bz):
                     yc_pos_current +=1
-                if self.collisionDetection.collision(bx,by_pos_projected,bz):
+                if self.collisionDetection(bx,by_pos_projected,bz):
                     yc_pos_projected +=1
             #x-
-                if self.collisionDetection.collision(bx,by_neg_current,bz):
+                if self.collisionDetection(bx,by_neg_current,bz):
                     yc_neg_current +=1
-                if self.collisionDetection.collision(bx,by_neg_projected,bz):
+                if self.collisionDetection(bx,by_neg_projected,bz):
                     yc_neg_projected +=1
 
 ### XY Collision ###
@@ -145,7 +145,7 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
                 for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
-                    if self.collisionDetection.collision(bx,by,bz):
+                    if self.collisionDetection(bx,by,bz):
                         xyc_projected += 1
 
         xyc_current = 0
@@ -153,7 +153,7 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
                 for bx in range(floor(x-box_r+vx), floor(x+box_r)+1):
-                    if self.collisionDetection.collision(bx,by,bz):
+                    if self.collisionDetection(bx,by,bz):
                         xyc_current += 1
 
         #dont do this right now
@@ -218,11 +218,11 @@ class AgentPhysics:
 
         for bx in range(floor(x-box_r), floor(x+box_r)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
-                if self.collisionDetection.collision(bx,by,bz_current):
+                if self.collisionDetection(bx,by,bz_current):
                     zc_current +=1
-                if self.collisionDetection.collision(bx,by,bz_ground):
+                if self.collisionDetection(bx,by,bz_ground):
                      zc_ground += 1
-                if self.collisionDetection.collision(bx,by,bz_neg_projected):
+                if self.collisionDetection(bx,by,bz_neg_projected):
                     zc_neg_projected +=1
     ##  calculate environmental state
         #agent ground state
@@ -517,7 +517,7 @@ class AgentModel:
 
         #self.collisionDetection = CubeGlobal.collisionDetection
         #assert False #fix
-        self.collision = cube_lib.collisionDetection
+        self.collisionDetection = cube_lib.VBO.collisionDetection
 
         self.state = state #position, velocity, acceleration
         self.xa = state[3]
@@ -1042,4 +1042,4 @@ from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *
 #from cube_dat import CubeGlobal
-from cube_lib import VBO
+import cube_lib.VBO
