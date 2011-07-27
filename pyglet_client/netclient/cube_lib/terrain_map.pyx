@@ -28,8 +28,7 @@ cpdef get_chunk_list():
         ll.append([c, c.index[0], c.index[1], c.index[2]])
     return ll
 
-cdef get_raw_chunk_list(): #DEPRECATE?
-    assert False
+cdef get_raw_chunk_list(): #USED by VBO?
     global chunks
     ll = []
     cdef MapChunk c
