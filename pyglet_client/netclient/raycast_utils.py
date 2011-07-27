@@ -21,6 +21,10 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
     dx = cos( x_angle * pi) * cos( y_angle * pi)
     dy = sin( x_angle * pi) * cos( y_angle * pi)
     dz = sin( y_angle)
+    le = sqrt(dx**2+dy**2+dz**2)
+    dx /= le
+    dy /= le
+    dz /= le
 
     n = 0.
     inc = 1. / sampling_density
@@ -62,6 +66,10 @@ def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high
     dx = cos( x_angle * pi) * cos( y_angle * pi)
     dy = sin( x_angle * pi) * cos( y_angle * pi)
     dz = sin( y_angle)
+    le = sqrt(dx**2+dy**2+dz**2)
+    dx /= le
+    dy /= le
+    dz /= le
 
     n = 0.
     inc = 1. / sampling_density
