@@ -224,6 +224,7 @@ cdef class MapChunk:
 
     cdef inline int set_server_version(MapChunk self, int version):
         self.server_version = version
+        assert False
 
 #should used compiled form
 
