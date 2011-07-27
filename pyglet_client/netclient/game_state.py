@@ -3,7 +3,7 @@ import math
 class GameStateGlobal:
 
     gameState = None
-    #terrainMap = None
+    #terrainMap = None # use cube_libs.terrainMap module
     agentList = None
     playerList = None
     projectileList = None
@@ -20,7 +20,6 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
-        #cls.terrainMap = TerrainMap()
         cls.gameState = GameState()
         cls.exit = False
 
