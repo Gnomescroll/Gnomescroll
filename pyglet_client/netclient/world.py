@@ -47,7 +47,8 @@ class World():
             self.mapChunkManager.update_chunk()
         for p in GameStateGlobal.projectileList.values():
             p.tick()
-        pass
+        for a in GameStateGlobal.agentList.values():
+            a.tick()
 
     def draw(self, first_person=False):
         if settings.pyglet:

@@ -44,6 +44,7 @@ class AgentList(GenericObjectList):
                 l.append(agent)
         return l
 
+
 class AgentPhysics:
 
     #collision tests
@@ -279,7 +280,6 @@ class AgentPhysics:
         #print 'agent state:'
         #print self.state
         NetOut.event.agent_state_change(self)
-        return
 
 
 class AgentAction:

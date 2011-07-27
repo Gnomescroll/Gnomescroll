@@ -365,7 +365,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         if agent is None: # agent not found, request agent
             NetOut.sendMessage.request_agent(id)
             return
-        agent.tick = tick
+        #agent.tick = tick
         agent.state = state
 
     def _agent_control_state(self, **msg):
