@@ -3,7 +3,7 @@ import math
 class GameStateGlobal:
 
     gameState = None
-    terrainMap = None
+    #terrainMap = None
     agentList = None
     playerList = None
     projectileList = None
@@ -20,10 +20,10 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
-        cls.terrainMap = TerrainMap()
+        #cls.terrainMap = TerrainMap()
         cls.gameState = GameState()
         cls.exit = False
-        
+
     @classmethod
     def init_1(cls):
         pass
@@ -124,7 +124,7 @@ class GameState:
         #if self.time % 100 == 0:
             #print "time= %i" % (self.time,)
 
-from terrain_map import TerrainMap
+#from terrain_map import TerrainMap
 from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
@@ -134,4 +134,4 @@ from players import Player
 from net_client import NetClientGlobal
 
 #import cube_lib.terrain_map
-#import cube_lib.terrain_map as TerrainMap
+import cube_lib.terrain_map as TerrainMap
