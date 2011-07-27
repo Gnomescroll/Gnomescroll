@@ -513,7 +513,7 @@ class AgentModel:
             return
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
-        state = map(lambda k: float(k), state)
+        state = map(float, state)
 
         self.collisionDetection = CubeGlobal.collisionDetection
 
@@ -1039,4 +1039,4 @@ import cube_lib.terrain_map as terrainMap
 from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *
-from cube_dat import CubeGlobal
+from cube_lib.cube_dat import CubeGlobal

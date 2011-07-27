@@ -124,7 +124,7 @@ class GameState:
         #if self.time % 100 == 0:
             #print "time= %i" % (self.time,)
 
-from terrain_map import TerrainMap
+from cube_lib.cube_dat_terrain_map import TerrainMap
 from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
@@ -133,5 +133,4 @@ from object_lists import WeaponList
 from players import Player
 from net_client import NetClientGlobal
 
-#import cube_lib.terrain_map
 #import cube_lib.terrain_map as TerrainMap

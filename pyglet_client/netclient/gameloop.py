@@ -57,7 +57,7 @@ from game_state import GameStateGlobal
 from client_event import ClientEventGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
-from cube_dat import CubeGlobal
+from cube_lib.cube_dat import CubeGlobal
 #from cube_dat import CubeGlobal
 
 #from map_chunk_manager import MapChunkManagerGlobal
