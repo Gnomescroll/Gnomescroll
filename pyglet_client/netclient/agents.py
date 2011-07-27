@@ -544,6 +544,8 @@ class AgentModel:
         self.y_int = int(state[1])
         self.z_int = int(state[2])
 
+        self.on_ground = 0
+
         if health is None:
             self.health = self.HEALTH_MAX
         else:

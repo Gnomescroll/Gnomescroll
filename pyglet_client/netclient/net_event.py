@@ -366,7 +366,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
             NetOut.sendMessage.request_agent(id)
             return
         #agent.tick = tick
-        agent.state = state
+        #agent.state = state
 
     def _agent_control_state(self, **msg):
         err_msg = None
