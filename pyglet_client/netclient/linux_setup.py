@@ -119,32 +119,36 @@ vox_lib = Extension('vox_lib',
                     'vox_lib/vox_functions.c',
                      'vox_lib/vox_lib.pyx',]
                                 )
+
+
 '''
 Added by Steve,
 used by agent physics via cube_dat.collisionDetection which import TerrainMap
 may not be necessary, but am copying from /server/
 '''
-cube_dat = Extension('cube_dat',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [], #SDL_image ?
 
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args, # $(shell sdl-config --cflags)
-                    extra_link_args = extra_link_args,
-                    sources = ['cube_dat.pyx']
-                    )
+if False:
+    cube_dat = Extension('cube_dat',
+                        #define_macros =  [('PLATFORM', 'linux')]
+                        include_dirs = ['/usr/lib'],
+                        libraries = [], #SDL_image ?
 
-terrain_map = Extension('terrain_map',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [], #SDL_image ?
+                        library_dirs = ['usr/lib'],
+                        extra_compile_args = []+extra_compile_args, # $(shell sdl-config --cflags)
+                        extra_link_args = extra_link_args,
+                        sources = ['cube_dat.pyx']
+                        )
 
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args, # $(shell sdl-config --cflags)
-                    extra_link_args = extra_link_args,
-                    sources = ['terrain_map.pyx']
-                    )
+    terrain_map = Extension('terrain_map',
+                        #define_macros =  [('PLATFORM', 'linux')]
+                        include_dirs = ['/usr/lib'],
+                        libraries = [], #SDL_image ?
+
+                        library_dirs = ['usr/lib'],
+                        extra_compile_args = []+extra_compile_args, # $(shell sdl-config --cflags)
+                        extra_link_args = extra_link_args,
+                        sources = ['terrain_map.pyx']
+                        )
 
 
 
