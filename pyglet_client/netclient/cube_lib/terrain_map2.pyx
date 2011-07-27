@@ -36,8 +36,9 @@ cdef extern from "./t_map.h":
     int init_t_map()
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
-    vm_map* _get_map()
 
+    vm_map* _get_map()
+    vm_chunk* _get_chunk(int xoff, int yoff, int zoff)
 #done
 
 cpdef inline set(int x,int y, int z,int value):
@@ -79,7 +80,7 @@ cpdef get_chunk_list():
     print "end chunk list"
     return ll
 
-cdef get_raw_chunk_list(): #DEPRECATE?
+cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
     cdef vm_map m
     cdef vm_chunk c
     cdef int i,j

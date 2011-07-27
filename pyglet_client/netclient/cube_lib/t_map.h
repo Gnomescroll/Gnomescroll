@@ -27,3 +27,4 @@ int init_t_map();
 int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
 struct vm_map* _get_map();
+struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
