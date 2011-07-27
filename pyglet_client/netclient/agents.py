@@ -528,6 +528,7 @@ class AgentModel:
         self.id = id
 
         self.last_control_tick = 0
+        self.last_button_tick = 0
 
         self.x_angle = 0
         self.y_angle = 0
