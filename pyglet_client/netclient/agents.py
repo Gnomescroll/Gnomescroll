@@ -515,7 +515,9 @@ class AgentModel:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(lambda k: float(k), state)
 
-        self.collisionDetection = CubeGlobal.collisionDetection
+        #self.collisionDetection = CubeGlobal.collisionDetection
+        #assert False #fix
+        self.collision = cube_lib.collisionDetection
 
         self.state = state #position, velocity, acceleration
         self.xa = state[3]
@@ -1039,4 +1041,5 @@ import cube_lib.terrain_map as terrainMap
 from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *
-from cube_dat import CubeGlobal
+#from cube_dat import CubeGlobal
+from cube_lib import VBO
