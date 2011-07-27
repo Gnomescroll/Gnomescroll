@@ -325,7 +325,7 @@ class Keyboard(object):
         if GameStateGlobal.agent.dead:
             return
         v = 1
-        d_x, d_y, v_x, v_y, jetpack, jump, brake = [0 for i in range(7)]
+        d_x, d_y, v_x, v_y, jetpack, brake = [0 for i in range(6)]
 
         u,d,l,r, jetpack, brake = [0 for i in range(6)]
         old_buttons = GameStateGlobal.agent.button_state
@@ -369,15 +369,14 @@ class Keyboard(object):
             if 'SPACE' in keyboard:
                 jetpack = 1
 
-        GameStateGlobal.agent.control_state = [
+        GameStateGlobal.agent.set_control_state = ([\
             d_x,
             d_y,
             v_x,
             v_y,
             jetpack,
-            jump,
             brake
-        ]
+        ])
 
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state

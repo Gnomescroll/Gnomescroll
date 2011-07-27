@@ -89,7 +89,7 @@ class SendMessage(GenericMessage):
         if not agent.id :  # agent not identified
             return
         return {
-            'state': agent.control_state,
+            'state': agent.control_state(),
             'angle': [agent.x_angle, agent.y_angle],
             'aid'  : agent.id,
         }

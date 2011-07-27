@@ -115,7 +115,7 @@ class App(object):
         InputGlobal.init_1(self)
 
     def __init__(self):
-        pass
+        #pass
         #return
         self.init_globals()
         self.animations = animations
@@ -147,7 +147,7 @@ class App(object):
         NetClientGlobal.connect() #starts connection
 
     def mainLoop(self):
-        pass
+        #pass
         #return
         #self.world.test_chunk()
         self.world.add_player(GameStateGlobal.player) #do something about this

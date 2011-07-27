@@ -90,10 +90,11 @@ class MessageHandler:
         if cmd is None:
             return
         #use json_events when possible
+        cmd = str(cmd)
         if cmd in self.json_events:
             self.json_events[cmd](**msg)
         else:
-            print "Error, received command that client cannot handle"
+            print "Error, received command %s that client cannot handle" % (cmd,)
             assert False
 
 
@@ -106,8 +107,9 @@ class GenericMessageHandler:
 
     def _assign_events_to_methods(self):
         for event, name in self.events.items():
-            if type(name) == str:
-                self.events[event] = getattr(self, name)
+            ev = getattr(self, str(name), None)
+            if ev is not None:
+                self.events[event] = ev
 
     @classmethod
     def init(cls):
@@ -220,8 +222,9 @@ class ClientMessageHandler(GenericMessageHandler):
         if name is None:
             print 'msg::identified - player missing name'
             return False
-        if type(name) != str:
-            print 'msg::identified - name is not str'
+        name = str(name)
+        if not name:
+            print 'msg identified :: name is empty'
             return False
         client_id = player.get('cid', None) # client_id is currently optional for server to send
         if client_id is not None:
@@ -346,6 +349,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.agentList
         self._bind_event('agent_position', self._agent_position)
         self._bind_event('agent_button_state', self._agent_button_state)
+        self._bind_event('agent_control_state', self._agent_control_state)
         DatastoreMessageInterface.__init__(self)
 
     def _agent_position(self, **args):  # deprecate
@@ -363,6 +367,40 @@ class AgentMessageHandler(DatastoreMessageInterface):
             return
         agent.tick = tick
         agent.state = state
+
+    def _agent_control_state(self, **msg):
+        err_msg = None
+        try:
+            state = msg['state']
+        except KeyError:
+            err_msg = 'msg agent_control_state :: state missing'
+        try:
+            angle = msg['angle']
+        except KeyError:
+            err_msg = 'msg agent_control_state :: angle missing'
+        try:
+            agent_id = msg['id']
+        except KeyError:
+            err_msg = 'msg agent_control_state :: agent id missing'
+        try:
+            tick = msg['tick']
+        except KeyError:
+            err_msg = 'msg agent_control_state :: tick missing'
+
+        try:
+            agent = GameStateGlobal.agentList[agent_id]
+        except KeyError:
+            err_msg = 'msg agent_control_state :: agent %s does not exist' % (str(agent_id),)
+
+        if err_msg is not None:
+            print err_msg
+            return
+
+        if agent.you:
+            return
+
+        agent.set_control_state(state, angle, tick)
+
 
     def _agent_button_state(self, **msg):
         err_msg = None

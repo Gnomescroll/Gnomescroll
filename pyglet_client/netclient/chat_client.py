@@ -91,7 +91,7 @@ class ChatClient:
         self.subscribe(self.CURRENT_CHANNEL)
 
     def subscribe(self, channel):
-        assert type(channel) == str
+        #assert type(channel) == str
         if not channel:
             return
         if channel == 'system':
