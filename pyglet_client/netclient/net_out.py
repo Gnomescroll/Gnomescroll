@@ -90,7 +90,8 @@ class SendMessage(GenericMessage):
             return
         return {
             'id'    :   agent.id,
-            'pos'   :   agent.pos(),
+            #'pos'   :   agent.pos(),
+            'pos'   :   agent.state,
         }
 
     @idRequired

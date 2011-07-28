@@ -99,7 +99,8 @@ class EventOut:
     def agent_position(self, agent):
         return {
             'id'    :   agent.id,
-            'pos'   :   agent.pos(),
+            #'pos'   :   agent.pos(),
+            'pos'   :   agent.state,
         }
 
     @sendJSONevent('projectile_create')

@@ -517,7 +517,8 @@ class MessageHandler:
             print msg
             return
 
-        agent.pos(pos)
+        #agent.pos(pos)
+        agent.state = pos
         NetOut.event.agent_position(agent)
         
 # handler for admin msgs

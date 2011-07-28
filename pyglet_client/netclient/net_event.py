@@ -38,7 +38,6 @@ class NetEventGlobal:
 
     @classmethod
     def init_1(cls):
-        pass
         MessageHandler.init()
         ClientMessageHandler.init()
         PlayerMessageHandler.init()
@@ -369,7 +368,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
         if agent.you:
             return
-        agent.pos(pos)
+        #agent.pos(pos)
+        agent.state = pos
         print agent.state
 
     def _agent_control_state(self, **msg):
