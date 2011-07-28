@@ -149,11 +149,38 @@ cdef pack(vm_chunk *c):
 PART 2: Properties
 
 '''
+cdef extern from "./t_map_draw.h":
+    struct cubeProperties:
+        int active
+        int occludes
+        int solid
+        int gravity
+        int transparent
 
-def load_cubes():
-    from cube_dat import cube_list
+cdef extern from "./t_map_draw.h":
+    int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
+    cubeProperties* _get_cube_list()
 
+## Setup ##
+from cube_dat import cube_list
 
+def init_cubes():
+    cdef cubeProperties* cp
+    assert False #check to see if this gets run on import
+    global cube_list
+    for d in cube_list.values():
+        id = int(d['id'])
+        if id >= 1024 or id < 0:
+            print "Error: cube id invalid"
+            return
+        cp = &_get_cube_list[id]
+        cp.active = int(d.get('active',1))
+        cp.occludes = int(d.get('occludes', 0))
+        cp.solid = int(d.get('solid', 1))
+        cp.gravity = int(d.get('gravity', 0))
+        cp.transparent = int(d.get('transparent', 0))
+
+## functions ##
 '''
 PART 3: Drawing Functions
 
@@ -164,3 +191,18 @@ PART 3: Drawing Functions
 PART 4: Utility Functions
 
 '''
+
+
+''' PART 5: Init '''
+
+
+cdef extern from "./t_map_draw.h":
+    int _init_t_map()
+cdef extern from "./t_map_draw()":
+    int _init_t_map_draw()
+
+def init()
+    print "Init Terrain Map"
+    init_cubes()
+    _init_t_map();
+    _init_t_map_draw()

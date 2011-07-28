@@ -4,5 +4,5 @@
 struct vm_map* map;
 
 int _init_t_map_draw() {
-    map =  _get_map();
-}
+    map = _get_map();
+     }
