@@ -87,7 +87,6 @@ cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
     m = _get_map()
     ll = []
     for i in range(0, vm_map_dim**2):
-        m.column[i]
         for j in range(0, vm_column_max):
             if m.column[i].chunk[j] != NULL:
                 c = m.column[i].chunk[j]
@@ -110,7 +109,6 @@ def set_packed_chunk(tmp):
     _set(8*x_off, 8*y_off, 8*z_off, 0)
     c = _get_chunk(x_off, y_off, z_off)
     for n in range(0,512):
-        index
         c.voxel[n] = array[n]
     c.local_version = server_version
     c.server_version = server_version
@@ -139,16 +137,10 @@ fm_inv2 = struct.Struct('< 512H')
 fm = struct.Struct('< 4i 512H')
 cdef pack(vm_chunk *c):
     global fm
-    cdef int chunk_dim, chunk_offset, x_off, y_off, z_off, version
-
-    version = c.local_version
-    x_off = c.x_off
-    y_off = c.y_off
-    z_off = c.z_off
+    cdef int i
     l = []
     for i in range(0,512):
         l.insert(i, c.voxel[i])
-
-    print str((x_off,y_off,z_off, version))
-    print str(l)
-    return fm.pack(x_off,y_off,z_off, version, *l)
+    print str((c.x_off,c.y_off,c.z_off, c.local_version))
+    #print str(l)
+    return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
