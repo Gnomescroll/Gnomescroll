@@ -101,21 +101,24 @@ def get_packed_chunk(xoff, yoff, zoff):
 
 def set_packed_chunk(tmp):
     global fm_inv1, fm_inv2
-    cdef int off_x, off_y, off_z, version, n, index
+    cdef int x_off, y_off, z_off, version, n, index
     cdef vm_chunk *c
-    _set(8*off_x, 8*off_y, 8*off_z, 0)
-    c = _get_chunk(off_x, off_y, off_z)
     tmp = zlib.decompress(tmp)
-    (off_x,off_y,off_z, server_version, array) = fm_inv1.unpack(tmp)
+    (x_off,y_off,z_off, server_version, array) = fm_inv1.unpack(tmp)
     array = list(fm_inv2.unpack(array))
     assert len(array) == 512
+    _set(8*x_off, 8*y_off, 8*z_off, 0)
+    c = _get_chunk(x_off, y_off, z_off)
     for n in range(0,512):
         index
         c.voxel[n] = array[n]
     c.local_version = server_version
     c.server_version = server_version
+    c.x_off = x_off
+    c.y_off = y_off
+    c.z_off = z_off
     #chunk.update_VBO = 1
-    return (off_x, off_y, off_z)
+    return (c.x_off, c.y_off, c.z_off)
 
 '''
 cpdef inline set_server_version(int x, int y, int z, int version):
@@ -136,16 +139,16 @@ fm_inv2 = struct.Struct('< 512H')
 fm = struct.Struct('< 4i 512H')
 cdef pack(vm_chunk *c):
     global fm
-    cdef int chunk_dim, chunk_offset, off_x, off_y, off_z, version
+    cdef int chunk_dim, chunk_offset, x_off, y_off, z_off, version
 
     version = c.local_version
-    off_x = c.x_off
-    off_y = c.y_off
-    off_z = c.z_off
+    x_off = c.x_off
+    y_off = c.y_off
+    z_off = c.z_off
     l = []
     for i in range(0,512):
         l.insert(i, c.voxel[i])
 
-    print str((off_x,off_y,off_z, version))
+    print str((x_off,y_off,z_off, version))
     print str(l)
-    return fm.pack(off_x,off_y,off_z, version, *l)
+    return fm.pack(x_off,y_off,z_off, version, *l)
