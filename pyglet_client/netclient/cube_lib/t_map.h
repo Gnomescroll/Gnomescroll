@@ -1,8 +1,8 @@
 
 
-#define vm_map_dim 64 //number of map chunks in x/y
-#define vm_chunk_size 8
-#define vm_column_max 16
+#DEFINE vm_map_dim 64 //number of map chunks in x/y
+#DEFINE vm_chunk_size 8
+#DEFINE vm_column_max 16
 
 struct vm_chunk {
     ushort voxel[512];
@@ -17,11 +17,11 @@ struct vm_column {
     uint local_version;
     uint server_version;
     //vm_column_history history;
-}
+};
 
 struct vm_map {
-    struct vm_column* column[ma_dim*ma_dim]
-}
+    struct vm_column column[ma_dim*ma_dim];
+};
 
 int init_t_map();
 int _set(int x, int y, int z, int value);

@@ -1,5 +1,6 @@
-echo "Running ./libsetup.sh"
-./libsetup.sh
+
+#echo "Running ./libsetup.sh"
+#./libsetup.sh
 
 cd server/
 echo 'building server/*.py'

@@ -93,6 +93,17 @@ cube_lib_terrain_map = Extension('cube_lib.terrain_map',
                     sources = ['cube_lib/terrain_map.pyx']
                     )
 
+cube_lib_terrain_map2 = Extension('cube_lib.terrain_map2',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = ['/usr/lib'],
+                    libraries = [],
+                    library_dirs = ['usr/lib'],
+                    extra_compile_args = []+extra_compile_args,
+                    extra_link_args = extra_link_args,
+                    sources = ['cube_lib/terrain_map2.pyx',
+                            'cube_lib/t_map.c']
+                    )
+
 '''
 cube_lib_map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     #define_macros =  [('PLATFORM', 'linux')]
@@ -124,6 +135,6 @@ vox_lib = Extension('vox_lib',
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, cube_lib_terrain_map,] # cube_lib_map_chunk_manager,]#+ cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, cube_lib_terrain_map, cube_lib_terrain_map2] # cube_lib_map_chunk_manager,]#+ cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
