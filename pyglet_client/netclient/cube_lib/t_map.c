@@ -1,7 +1,7 @@
 
-#import "t_map.h"
-#include <stdio.h>
+#include "t_map.h"
 
+#include <stdio.h>
 //globals
 
 struct vm_map map;

@@ -25,11 +25,11 @@ cdef extern from "./t_map.h":
     struct vm_column:
         int x_off, y_off
         vm_chunk* chunk[vm_column_max]
-        uint local_version
-        uint server_version
+        unsigned int local_version
+        unsigned int server_version
 
     struct vm_map:
-        vm_column column[ma_dim*ma_dim]
+        vm_column column[vm_map_dim*vm_map_dim]
 
 cdef extern from "./t_map.h":
     int init_t_map()
