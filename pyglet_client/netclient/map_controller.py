@@ -12,6 +12,7 @@ from game_state import GameStateGlobal
 from net_out import NetOut
 
 import cube_lib.terrain_map as terrainMap
+from cube_lib.cube_dat_terrain_map import TerrainMap as cdTerrainMap
 import time
 
 
@@ -35,6 +36,7 @@ class MapController:
     def process_chunk_list(self, list):
         for (x,y,z,version) in list:
             terrainMap.set_server_version(x,y,z,version)
+            cdTerrainMap.set(cdTerrainMap, x,y,z,version)
 
     def tick(self):
         #print "TICK"
