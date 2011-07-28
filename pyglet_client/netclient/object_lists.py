@@ -72,10 +72,10 @@ class GenericObjectList:
         return False
 
     def load_list(self, objs):
-        objs = []
+        _objs = []
         for obj in objs:
-            objs.append(self.load_info(**obj))
-        return objs
+            _objs.append(self.load_info(**obj))
+        return _objs
 
     def load_info(self, **obj):
         if 'id' not in obj:
