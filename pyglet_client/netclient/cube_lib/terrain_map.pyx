@@ -180,20 +180,20 @@ def init_cube_properties():
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
 
-def init_cube_textures():
-    #cdef cubeProperties* cp
-    global cube_list
-    for d in cube_list.values():
-        id = int(d['id'])
-        for side in range(0,6): #sides
-            for vert_num in range(0,4):
+cpdef inline int isActive(unsigned int id):
+    return cube_array[id].active
+cpdef inline int isOcclude(int id):
+    return _get_cube(id).occludes
+cpdef inline int isTransparent(int id):
+    return _get_cube(id).transparent
+cpdef inline int isSolid(int id):
+    return _get_cube(id).solid
 
 '''
 Part 3: Quad Cache
 '''
 
 cdef extern from 'types.h':
-
     struct Vertex:
         float x,y,z;
         float tx,ty;
@@ -202,6 +202,9 @@ cdef extern from 'types.h':
         int v_num
         Vertex* vlist
         int VBO_id
+
+cdef extern from 'quad_cache.h'
+    Vertex* _get_quad_cache()
 
 cdef float * v_index
 v_index = <float*> malloc(72*sizeof(float))
@@ -219,7 +222,7 @@ cdef enum:
     max_cubes = 1024
 
 def init_quad_cache():
-    global v_index, quad_cache
+    global v_index
     cdef Vertex* quad_cache
     cdef Vertex* v
     cdef int id,side,vnum,index
@@ -269,17 +272,7 @@ def get_cube_texture(tile_id, side, vert_num):
     else:
         print "Error!!!! set_tex invalid input"
         assert False
-
     return (tx,ty)
-
-cpdef inline int isActive(unsigned int id):
-    return cube_array[id].active
-cpdef inline int isOcclude(int id):
-    return _get_cube(id).occludes
-cpdef inline int isTransparent(int id):
-    return _get_cube(id).transparent
-cpdef inline int isSolid(int id):
-    return _get_cube(id).solid
 
 ## functions ##
 '''
