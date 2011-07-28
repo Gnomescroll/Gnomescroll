@@ -94,7 +94,7 @@ cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
                 ll.append(c)
     return c
 
-def get_packed_chunk(x, y, z):
+def get_packed_chunk(xoff, yoff, zoff):
     global chunks
     t = (x >> 3, y >> 3, z >> 3)
     if not chunks.has_key(t):

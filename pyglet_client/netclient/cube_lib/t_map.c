@@ -28,6 +28,7 @@ int _set(int x, int y, int z, int value){
     if(chunk == NULL) {
         column[zoff] = (struct vm_chunk*)malloc(sizeof(struct vm_chunk));
         chunk = column[zoff];
+        chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
     }
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
     column->local_version++;
