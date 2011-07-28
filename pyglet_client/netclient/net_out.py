@@ -84,6 +84,16 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @sendJSON('agent_position', tick=True)
+    def agent_position(self, agent):
+        if agent is None or not agent.id:
+            return
+        return {
+            'id'    :   agent.id,
+            'pos'   :   agent.pos(),
+        }
+
+    @idRequired
     @sendJSON('agent_control_state', tick=True)
     def send_agent_control_state(self, agent):
         if not agent.id :  # agent not identified

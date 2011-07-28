@@ -17,6 +17,8 @@ opts.opts = args_client.get_args()
 import settings
 import stats
 
+import intervals
+
 #need to get this working on all platforms
 if False:
     pass
@@ -136,6 +138,10 @@ class App(object):
         #setup events
         #self.exit = False
 
+        self.intervals = intervals.Intervals()
+        send_agent_pos = lambda: NetOut.sendMessage.agent_position(GameStateGlobal.agent)
+        self.intervals.register(send_agent_pos, 1000)
+
         self.init_inputs()
         print "App init finished"
 
@@ -205,6 +211,8 @@ class App(object):
         #END TEST
         if ping:
             ping_n = SDL.gl.get_ticks()
+
+        self.intervals.set()
         while not GameStateGlobal.exit:
             theta += -.005 #test
             if settings.pyglet:
@@ -292,6 +300,8 @@ class App(object):
                     ping_n = SDL.gl.get_ticks()
                     NetOut.miscMessage.ping()
                     ping_text = stats.last_ping
+
+            self.intervals.process()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()
