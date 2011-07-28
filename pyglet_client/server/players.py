@@ -95,6 +95,9 @@ class Player:
     def quit(self):
         GameStateGlobal.playerList.leave(self)
 
+    def owns(self, agent):
+        return (player.agent == agent)
+
     def update_info(self, **player):
         args = {}
         if 'id' in player:

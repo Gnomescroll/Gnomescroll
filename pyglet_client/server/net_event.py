@@ -483,7 +483,35 @@ class MessageHandler:
         agent_id = msg['aid']
         connection.sendMessage.send_agent(agent_id)
 
+    def agent_position(self, connection, **msg):
+        err_msg = None
+        try:
+            player = GameStateGlobal.playerList.client(connection.client_id)
+        except KeyError:
+            err_msg = 'could not find player for client %s' % (client_id,)
+        try:
+            agent_id = msg['id']
+        except KeyError:
+            err_msg = 'agent id missing'
+        try:
+            pos = msg['pos']
+        except KeyError:
+            err_msg = 'agent pos missing'
+        try:
+            agent = GameStateGlobal.agentList[agent_id]
+        except KeyError:
+            err_msg = 'agent %s unknown' % (agent_id,)
 
+        if not player.owns(agent):
+            err_msg = 'player %s does not own agent %s' % (player.id, agent.id,)
+
+        if err_msg is not None:
+            print 'msg agent_position :: ' + err_msg
+            return
+
+        agent.pos(pos)
+        NetOut.event.agent_update(agent, 'state')
+        
 # handler for admin msgs
 class AdminMessageHandler:
 

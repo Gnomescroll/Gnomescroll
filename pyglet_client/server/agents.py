@@ -279,7 +279,7 @@ class AgentPhysics:
         self.state = [x,y,z, vx,vy,vz, ax,ay,az]
         #print 'agent state:'
         #print self.state
-        NetOut.event.agent_state_change(self)
+        #NetOut.event.agent_state_change(self)
 
 
 class AgentAction:
@@ -356,31 +356,70 @@ class Agent(AgentPhysics, AgentAction):
 
         self.owner = player_id
 
-    def pos(self):
-        return self.state[0:3]
+    # gets or sets
+    def pos(self, xyz=None):
+        if xyz is None:
+            return self.state[0:3]
+        else:
+            self.x, self.y, self.z = xyz
 
     def active_weapon(self):
         return self.weapons[self._active_weapon]
 
-    def __getattr__(self, attr):
-        if attr == 'x':
-            return self.__dict__['state'][0]
-        elif attr == 'y':
-            return self.__dict__['state'][1]
-        elif attr == 'z':
-            return self.__dict__['state'][2]
-        else:
-            raise AttributeError, 'Agent instance has no property %s' % (attr,)
-
-    def __setattr__(self, attr, val):
-        if attr == 'x':
-            self.__dict__['state'][0] = val
-        elif attr == 'y':
-            self.__dict__['state'][1] = val
-        elif attr == 'z':
-            self.__dict__['state'][2] = val
-        else:
-            self.__dict__[attr] = val
+    @property
+    def x(self):
+        return self.state[0]
+    @x.setter
+    def x(self, val):
+        self.state[0] = val
+    @property
+    def y(self):
+        return self.state[1]
+    @y.setter
+    def y(self, val):
+        self.state[1] = val
+    @property
+    def z(self):
+        return self.state[2]
+    @z.setter
+    def z(self, val):
+        self.state[2] = val
+    @property
+    def vx(self):
+        return self.state[3]
+    @vx.setter
+    def vx(self, val):
+        self.state[3] = val
+    @property
+    def vy(self):
+        return self.state[4]
+    @vy.setter
+    def vy(self, val):
+        self.state[4] = val
+    @property
+    def vz(self):
+        return self.state[5]
+    @vz.setter
+    def vz(self, val):
+        self.state[5] = val
+    @property
+    def ax(self):
+        return self.state[6]
+    @ax.setter
+    def ax(self, val):
+        self.state[6] = val
+    @property
+    def ay(self):
+        return self.state[7]
+    @ay.setter
+    def ay(self, val):
+        self.state[7] = val
+    @property
+    def az(self):
+        return self.state[8]
+    @az.setter
+    def az(self, val):
+        self.state[8] = val
 
     def json(self, properties=None): # json encodable string representation
         d = {
