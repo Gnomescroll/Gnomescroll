@@ -44,7 +44,7 @@ cpdef inline set(int x,int y, int z,int value):
     _set(x,y,z,value)
 
 cpdef inline int get(int x, int y,int z):
-    _get(x,y,z)
+    return _get(x,y,z)
 
 #implement
 
