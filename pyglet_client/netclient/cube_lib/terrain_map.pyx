@@ -28,7 +28,7 @@ cpdef get_chunk_list():
         ll.append([c, c.index[0], c.index[1], c.index[2]])
     return ll
 
-cdef get_raw_chunk_list():
+cdef get_raw_chunk_list(): #USED by VBO?
     global chunks
     ll = []
     cdef MapChunk c
@@ -224,6 +224,7 @@ cdef class MapChunk:
 
     cdef inline int set_server_version(MapChunk self, int version):
         self.server_version = version
+        assert False
 
 #should used compiled form
 
