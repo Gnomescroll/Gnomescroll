@@ -165,9 +165,8 @@ cdef extern from "./t_map_draw.h":
 ## Setup ##
 from cube_dat import cube_list
 
-def init_cubes():
+def init_cube_properties():
     cdef cubeProperties* cp
-    assert False #check to see if this gets run on import
     global cube_list
     for d in cube_list.values():
         id = int(d['id'])
@@ -180,6 +179,98 @@ def init_cubes():
         cp.solid = int(d.get('solid', 1))
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
+
+def init_cube_textures():
+    #cdef cubeProperties* cp
+    global cube_list
+    for d in cube_list.values():
+        id = int(d['id'])
+        for side in range(0,6): #sides
+            for vert_num in range(0,4):
+
+'''
+Part 3: Quad Cache
+'''
+
+cdef extern from 'types.h':
+
+    struct Vertex:
+        float x,y,z;
+        float tx,ty;
+        unsigned char r,g,b,a;
+    struct VBO:
+        int v_num
+        Vertex* vlist
+        int VBO_id
+
+cdef float * v_index
+v_index = <float*> malloc(72*sizeof(float))
+
+l = [
+         0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
+         1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
+         0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #north
+         0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #south
+         0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #west
+         1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #east
+    ]
+
+cdef enum:
+    max_cubes = 1024
+
+def init_quad_cache():
+    global v_index, quad_cache
+    cdef Vertex* quad_cache
+    cdef Vertex* v
+    cdef int id,side,vnum,index
+    for id in range(0, max_cubes):
+        for side in range(0,6):
+            for vnum in range(0,4):
+                index = id*6*4+4*side+vnum
+                index2 = 12*side+4*vnum
+                v = &quad.vertex[index]
+                v.x = v_index[index2 + 0]
+                v.y = v_index[index2 + 1]
+                v.z = v_index[index2 + 2]
+                v.r = 255
+                v.g = 255
+                v.b = 255
+                v.a = 255
+                tx,ty = get_cube_texture(k, i, j) #tile_id, side, vert_num
+                v.tx = tx
+                v.ty = ty
+
+def get_cube_texture(tile_id, side, vert_num):
+    global cube_list
+    d = cube_list.get(tile_id, {})
+    texture_id = d.get('texture_id', [0,1,2,3,4,5])[side]
+    texture_order = d.get('texture_order', [[0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],
+                            [0,1,2,3],])[side][vert_num]
+    x = texture_id % 16
+    y = (texture_id - (texture_id % 16)) / 16
+    tx = float(x) * 1./16.
+    ty = float(y) * 1./16.
+    if vert_num == 0:
+        tx += 0
+        ty += 0
+    elif vert_num == 1:
+        tx += 1./16.
+        ty += 0
+    elif vert_num == 2:
+        tx += 1./16.
+        ty += 1./16.
+    elif vert_num == 3:
+        tx += 0
+        ty += 1./16.
+    else:
+        print "Error!!!! set_tex invalid input"
+        assert False
+
+    return (tx,ty)
 
 cpdef inline int isActive(unsigned int id):
     return cube_array[id].active
@@ -195,7 +286,33 @@ cpdef inline int isSolid(int id):
 PART 3: Drawing Functions
 
 '''
+cdef extern from 't_vbo.h':
+    int _init_draw_terrain()
 
+    int _create_vbo(Quad_VBO* q_VBO, Quad* quad_list, int v_num)
+    int _delete_vbo(Quad_VBO* q_VBO)
+    int _start_vbo_draw()
+    int _draw_vbo(Quad_VBO* q_VBO)
+    int _end_vbo_draw()
+
+### CLEANUP
+l = [0,0,1, 0,0,-1, 0,1,0, 0,-1,0, -1,0,0, 1,0,0]
+cdef int s_array[3*6]
+for i in range(0, 3*6):
+    s_array[i] = l[i]
+
+cdef inline _is_occluded(int x,int y,int z, int side_num):
+    global s_array
+    cdef int _x, _y, _z, tile_id,i
+
+    i = s_array[3*side_num]
+    _x = s_array[i+0] + x
+    _y = s_array[i+1] + y
+    _z = s_array[i+2] + z
+
+    tile_id = terrain_map.get(_x,_y,_z)
+    return isOcclude(tile_id)
+## CLEANUP
 
 '''
 PART 4: Utility Functions
@@ -217,6 +334,7 @@ cdef extern from "./t_map_draw()":
 
 def init()
     print "Init Terrain Map"
-    init_cubes()
+    init_cube_properties()
+    init_quad_cache()
     _init_t_map();
     _init_t_map_draw()
