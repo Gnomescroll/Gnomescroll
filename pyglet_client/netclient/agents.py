@@ -101,14 +101,14 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
             #x+
-                if self.collisionDetection.collision(bx_pos_current,by,bz):
+                if self.collisionDetection(bx_pos_current,by,bz):
                     xc_pos_current +=1
-                if self.collisionDetection.collision(bx_pos_projected,by,bz):
+                if self.collisionDetection(bx_pos_projected,by,bz):
                     xc_pos_projected +=1
             #x-
-                if self.collisionDetection.collision(bx_neg_current,by,bz):
+                if self.collisionDetection(bx_neg_current,by,bz):
                     xc_neg_current +=1
-                if self.collisionDetection.collision(bx_neg_projected,by,bz):
+                if self.collisionDetection(bx_neg_projected,by,bz):
                     xc_neg_projected +=1
 
 ### Collision on Y axis ###

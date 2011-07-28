@@ -83,7 +83,7 @@ cube_lib_VBO = Extension('cube_lib.VBO',
                     'cube_lib/draw_terrain.c']
                     )
 
-terrain_map = Extension('cube_lib.terrain_map',
+cube_lib_terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/lib'],
                     libraries = [],
@@ -93,7 +93,8 @@ terrain_map = Extension('cube_lib.terrain_map',
                     sources = ['cube_lib/terrain_map.pyx']
                     )
 
-map_chunk_manager = Extension('cube_lib.map_chunk_manager',
+'''
+cube_lib_map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/lib'],
                     libraries = [],
@@ -102,7 +103,7 @@ map_chunk_manager = Extension('cube_lib.map_chunk_manager',
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/map_chunk_manager.pyx']
                     )
-
+'''
 
 vox_lib = Extension('vox_lib',
                     #define_macros =  [('PLATFORM', 'linux')]
