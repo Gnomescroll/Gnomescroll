@@ -94,6 +94,14 @@ class EventOut:
             'agent' :   agent.json(properties),
         }
 
+    # special case method for agent xyz. the client processes this differently than normal agent_update
+    @sendJSONevent('agent_position')
+    def agent_position(self, agent):
+        return {
+            'id'    :   agent.id,
+            'pos'   :   agent.pos(),
+        }
+
     @sendJSONevent('projectile_create')
     def projectile_create(self, projectile):
         return {

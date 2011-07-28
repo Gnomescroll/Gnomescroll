@@ -9,7 +9,8 @@ if False: #windows compatability
     pass
     #import simplejson as json
 else:
-    import json
+    #import json
+    import simplejson as json
     
     import stats
 #import struct
@@ -352,11 +353,11 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self._bind_event('agent_control_state', self._agent_control_state)
         DatastoreMessageInterface.__init__(self)
 
-    def _agent_position(self, **args):  # deprecate
-        state = args.get('state', None)
+    def _agent_position(self, **args):
+        pos = args.get('pos', None)
         id = args.get('id', None)
         tick = args.get('tick', None)
-        if None in (state, id, tick,):
+        if None in (pos, id, tick,):
             print 'agent_position, missing keys'
             print args
             return
@@ -365,11 +366,11 @@ class AgentMessageHandler(DatastoreMessageInterface):
         if agent is None: # agent not found, request agent
             NetOut.sendMessage.request_agent(id)
             return
-        #agent.tick = tick
+
         if agent.you:
             return
-            
-        agent.state = state
+        agent.pos(pos)
+        print agent.state
 
     def _agent_control_state(self, **msg):
         err_msg = None
@@ -394,6 +395,10 @@ class AgentMessageHandler(DatastoreMessageInterface):
             agent = GameStateGlobal.agentList[agent_id]
         except KeyError:
             err_msg = 'msg agent_control_state :: agent %s does not exist' % (str(agent_id),)
+
+        if agent is None:
+            print 'Agent_control_state msg :: agent %s is None' % (agent_id,)
+            print 'AgentList: %s' % (str(GameStateGlobal.agentList,))
 
         if err_msg is not None:
             print err_msg

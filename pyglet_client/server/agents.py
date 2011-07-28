@@ -518,7 +518,8 @@ class Agent(AgentPhysics, AgentAction):
         if self.dead:
             self._tick_respawn()
         else:
-            self._tick_physics()
+            pass
+            #self._tick_physics()
 
     def _tick_respawn(self):
         if self.dead:

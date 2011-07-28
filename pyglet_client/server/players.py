@@ -96,7 +96,7 @@ class Player:
         GameStateGlobal.playerList.leave(self)
 
     def owns(self, agent):
-        return (player.agent == agent)
+        return (self.agent == agent)
 
     def update_info(self, **player):
         args = {}

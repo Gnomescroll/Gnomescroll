@@ -11,7 +11,7 @@ if False: #windows compatability
     pass
     #import simplejson as json
 else:
-    import json
+    import simplejson as json
     
 from opts import opts
 import settings

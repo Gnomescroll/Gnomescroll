@@ -229,10 +229,10 @@ class AgentPhysics:
         if zc_ground != 0:
             if self.on_ground != 1:
                 self.on_ground = 1
-                print "On ground!"
+                #print "On ground!"
         else:
             if self.on_ground == 1:
-                print "Off ground!"
+                #print "Off ground!"
                 self.on_ground = 0
 
     ## apply velocity
@@ -261,9 +261,8 @@ class AgentPhysics:
 
         self.state = [x,y,z, vx,vy,vz, ax,ay,az]
         #print 'agent state:'
-        #print self.state
-        #NetOut.event.agent_state_change(self)
-        return
+        #if not self.you:
+            #print self.state
 
 
 class VoxRender:
@@ -595,8 +594,12 @@ class AgentModel:
 
         GameStateGlobal.agentList.update(self, *args)
 
-    def pos(self):
-        return self.state[0:3]
+    def pos(self, xyz=None):
+        if xyz is None:
+            return self.state[0:3]
+        else:
+            self.state[0:3] = xyz
+            #self.x, self.y, self.z = xyz
 
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
