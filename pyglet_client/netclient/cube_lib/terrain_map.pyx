@@ -160,6 +160,7 @@ cdef extern from "./t_map_draw.h":
 cdef extern from "./t_map_draw.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
+    cubeProperties* _get_cube(int id)
 
 ## Setup ##
 from cube_dat import cube_list
@@ -180,6 +181,15 @@ def init_cubes():
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
 
+cpdef inline int isActive(unsigned int id):
+    return cube_array[id].active
+cpdef inline int isOcclude(int id):
+    return _get_cube(id).occludes
+cpdef inline int isTransparent(int id):
+    return _get_cube(id).transparent
+cpdef inline int isSolid(int id):
+    return _get_cube(id).solid
+
 ## functions ##
 '''
 PART 3: Drawing Functions
@@ -189,11 +199,15 @@ PART 3: Drawing Functions
 
 '''
 PART 4: Utility Functions
+'''
+cpdef inline int collisionDetection(int x, int y, int z):
+    cdef int tile
+    tile = get(x,y,z)
+    return isSolid(tile)
 
 '''
-
-
-''' PART 5: Init '''
+PART 5: Init
+'''
 
 
 cdef extern from "./t_map_draw.h":
