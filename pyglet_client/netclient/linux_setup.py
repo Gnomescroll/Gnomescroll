@@ -120,36 +120,10 @@ vox_lib = Extension('vox_lib',
                     'vox_lib/vox_functions.c',
                      'vox_lib/vox_lib.pyx',]
                                 )
-'''
-Added by Steve,
-used by agent physics via cube_dat.collisionDetection which import TerrainMap
-may not be necessary, but am copying from /server/
-'''
-cube_dat = Extension('cube_lib.cube_dat',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [], #SDL_image ?
-
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args, # $(shell sdl-config --cflags)
-                    extra_link_args = extra_link_args,
-                    sources = ['cube_lib/cube_dat.pyx']
-                    )
-
-cube_dat_terrain_map = Extension('cube_lib.cube_dat_terrain_map',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [],
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args,
-                    extra_link_args = extra_link_args,
-                    sources = ['cube_lib/cube_dat_terrain_map.pyx']
-                    )
-
 
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager, cube_dat, cube_dat_terrain_map] # + cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, cube_lib_terrain_map,] # cube_lib_map_chunk_manager,]#+ cythonize("*.pyx")
     #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
 )
