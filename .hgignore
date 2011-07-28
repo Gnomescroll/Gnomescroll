@@ -5,6 +5,7 @@ syntax: glob
 *.pyo
 
 terrain_map.c
+terrain_map2.c
 dat.c
 cube_lib.c
 cube_dat.c

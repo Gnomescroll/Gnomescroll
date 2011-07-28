@@ -55,7 +55,6 @@ def get_chunk_version_list():
     m = _get_map()
     ll = []
     for i in range(0, vm_map_dim**2):
-        m.column[i]
         for j in range(0, vm_column_max):
             if m.column[i].chunk[j] != NULL:
                 c = m.column[i].chunk[j]
@@ -70,7 +69,6 @@ cpdef get_chunk_list():
     ll = []
     print "get chunk list:"
     for i in range(0, vm_map_dim**2):
-        m.column[i]
         for j in range(0, vm_column_max):
             if m.column[i].chunk[j] != NULL:
                 c = m.column[i].chunk[j]
