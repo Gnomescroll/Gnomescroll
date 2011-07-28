@@ -1,231 +1,133 @@
+'''
+Part 1: State
+
+'''
+
+
 import zlib
 import struct
 
-#cdef extern from "./clib/fast_map.c":
-#    int hash_cord(int)
+#define vm_map_dim 64 //number of map chunks in x/y
+#define vm_chunk_size = 8
+#define vm_column_max = 16
 
 cdef enum:
-    x_chunk_size = 8
-    y_chunk_size = 8
-    z_chunk_size = 8
+    vm_map_dim = 64
+    vm_chunk_size = 8
+    vm_column_max = 16
 
-chunks = {}
-l = [] #what is this used for?
+cdef extern from "./t_map.h":
+
+    struct vm_chunk:
+        unsigned short voxel[512]
+        int x_off, y_off, z_off
+        unsigned int local_version
+        unsigned int server_version
+
+    struct vm_column:
+        int x_off, y_off
+        vm_chunk* chunk[vm_column_max]
+        unsigned int local_version
+        unsigned int server_version
+
+    struct vm_map:
+        vm_column column[vm_map_dim*vm_map_dim]
+
+cdef extern from "./t_map.h":
+    int init_t_map()
+    int _set(int x, int y, int z, int value)
+    int _get(int x, int y, int z)
+
+    vm_map* _get_map()
+    vm_chunk* _get_chunk(int xoff, int yoff, int zoff)
+#done
+
+cpdef inline set(int x,int y, int z,int value):
+    _set(x,y,z,value)
+
+cpdef inline int get(int x, int y,int z):
+    return _get(x,y,z)
+
+#implement
 
 def get_chunk_version_list():
-    global chunks
+    cdef vm_map* m
+    cdef vm_chunk* c
+    cdef int i,j
+    m = _get_map()
     ll = []
-    cdef MapChunk c
-    for c in chunks.values():
-        ll.append([c.index[0], c.index[1], c.index[2], c.version, c.server_version])
+    for i in range(0, vm_map_dim**2):
+        for j in range(0, vm_column_max):
+            if m.column[i].chunk[j] != NULL:
+                c = m.column[i].chunk[j]
+                ll.append([c.x_off, c.y_off, c.z_off, c.local_version, c.server_version])
     return ll
 
 cpdef get_chunk_list():
-    global chunks
+    cdef vm_map* m
+    cdef vm_chunk* c
+    cdef int i,j
+    m = _get_map()
     ll = []
-    cdef MapChunk c
-    for c in chunks.values():
-        ll.append([c, c.index[0], c.index[1], c.index[2]])
+    print "get chunk list:"
+    for i in range(0, vm_map_dim**2):
+        for j in range(0, vm_column_max):
+            if m.column[i].chunk[j] != NULL:
+                c = m.column[i].chunk[j]
+                print "Not empty: %i, %i, %i" % (c.x_off, c.y_off, c.z_off)
+                ll.append([c.x_off, c.y_off, c.z_off])
+    print "end chunk list"
     return ll
 
-cdef get_raw_chunk_list(): #USED by VBO?
-    global chunks
+cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
+    assert False
+    cdef vm_map *m
+    cdef vm_chunk *c
+    cdef int i,j
+    m = _get_map()
     ll = []
-    cdef MapChunk c
-    for c in chunks.values():
-        ll.append(c)
+    for i in range(0, vm_map_dim**2):
+        for j in range(0, vm_column_max):
+            if m.column[i].chunk[j] != NULL:
+                c = m.column[i].chunk[j]
+                #ll.append(c)
     return ll
 
-cdef get_or_create_chunk(int x, int y, int z):
-    global chunks
-    t = (x >> 3, y >> 3, z >> 3)
-    cdef MapChunk mc
-    if not chunks.has_key(t):
-        chunks[t] = MapChunk(x, y, z) #new map chunk
-    return chunks[t]
-
-def get_packed_chunk(x, y, z):
-    global chunks
-    t = (x >> 3, y >> 3, z >> 3)
-    if not chunks.has_key(t):
-        return ''
-    t = chunks[t]
-    return zlib.compress(pack(t))
+def get_packed_chunk(xoff, yoff, zoff):
+    cdef vm_chunk *c
+    c = _get_chunk(xoff, yoff, zoff)
+    return zlib.compress(pack(c))
 
 def set_packed_chunk(tmp):
-    global chunks
     global fm_inv1, fm_inv2
-    cdef int off_x, off_y, off_z, version, n
-    cdef MapChunk chunk
+    cdef int x_off, y_off, z_off, version, n, index
+    cdef vm_chunk *c
     tmp = zlib.decompress(tmp)
-    (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
+    (x_off,y_off,z_off, server_version, array) = fm_inv1.unpack(tmp)
     array = list(fm_inv2.unpack(array))
-    chunk = get_or_create_chunk(off_x, off_y, off_z)
-    chunk.version = version
-    chunk.update_VBO = 1
     assert len(array) == 512
+    _set(8*x_off, 8*y_off, 8*z_off, 0)
+    c = _get_chunk(x_off, y_off, z_off)
     for n in range(0,512):
-        chunk.map_array[n] = array[n]
-    return (off_x, off_y, off_z)
+        c.voxel[n] = array[n]
+    c.local_version = server_version
+    c.server_version = server_version
+    c.x_off = x_off
+    c.y_off = y_off
+    c.z_off = z_off
+    #chunk.update_VBO = 1
+    return (c.x_off, c.y_off, c.z_off)
 
-#    cpdef inline int get_version(self, x,y,z):
-#        cdef MapChunk c
-#        t = (x >> 3, y >> 3, z >> 3)
-#        if not self.chunks.has_key(t):
-#            return -1 #chunk does not exist
-#        else:
-#            c = self.chunks[t]
-#            return c.version
-
+'''
 cpdef inline set_server_version(int x, int y, int z, int version):
     cdef MapChunk c
     c = get_or_create_chunk(x,y,z)
     c.server_version = version
-
-cpdef inline set(int x,int y, int z,int value):
-    global chunks
-    cdef MapChunk c
-    t = (x >> 3, y >> 3, z >> 3)
-    if not chunks.has_key(t):
-        chunks[t] = MapChunk(x,y,z) #new map chunk
-    c = chunks[t]
-    c.set(x,y,z, value)
-    c.update_VBO = 1 #may have to update neighbors as well
-
-cpdef inline int get(int x, int y,int z):
-    global chunks
-    cdef MapChunk c
-    t = (x >> 3, y >> 3, z >> 3)
-    if not chunks.has_key(t):
-        return 0
-    c = chunks[t]
-    return c.get(x,y,z)
-
-'''
-cdef class TerrainMap:
-
-    chunks = {}
-    l = []
-
-    def __init__(self):
-        pass
-        #self.chunks = {}
-
-    def get_chunk_version_list(self):
-        l = []
-        cdef MapChunk c
-        for c in self.chunks.values():
-            l.append([c.index[0], c.index[1], c.index[2], c.version, c.server_version])
-        return l
-
-    def get_chunk_list(self):
-        l = []
-        cdef MapChunk c
-        for c in self.chunks.values():
-            l.append([c, c.index[0], c.index[1], c.index[2]])
-        return l
-
-#    def get_chunk(TerrainMap self, int x, int y, int z):
-#        t = (x >> 3, y >> 3, z >> 3)
-#        return self.chunks.get(t, 0)
-
-    def get_or_create_chunk(TerrainMap self, int x, int y, int z):
-        t = (x >> 3, y >> 3, z >> 3)
-        cdef MapChunk mc
-        if not self.chunks.has_key(t):
-            self.chunks[t] = MapChunk(x, y, z) #new map chunk
-        return self.chunks[t]
-
-    def get_packed_chunk(self, x, y, z):
-        t = (x >> 3, y >> 3, z >> 3)
-        if not self.chunks.has_key(t):
-            return ''
-        t = self.chunks[t]
-        return zlib.compress(pack(t))
-
-    def set_packed_chunk(self, tmp):
-        global fm_inv1, fm_inv2
-        cdef int off_x, off_y, off_z, version
-        cdef MapChunk chunk
-        tmp = zlib.decompress(tmp)
-        (off_x,off_y,off_z, version, array) = fm_inv1.unpack(tmp)
-        array = list(fm_inv2.unpack(array))
-        chunk = self.get_or_create_chunk(off_x, off_y, off_z)
-        chunk.version = version
-        assert len(array) == 512
-        for n in range(0,512):
-            chunk.map_array[n] = array[n]
-        return (off_x, off_y, off_z)
-
-#    cpdef inline int get_version(self, x,y,z):
-#        cdef MapChunk c
-#        t = (x >> 3, y >> 3, z >> 3)
-#        if not self.chunks.has_key(t):
-#            return -1 #chunk does not exist
-#        else:
-#            c = self.chunks[t]
-#            return c.version
-
-    cpdef inline set_server_version(TerrainMap self, int x, int y, int z, int version):
-        cdef MapChunk c
-        c = self.get_or_create_chunk(x,y,z)
-        c.server_version = version
-
-    cpdef inline set(TerrainMap self, int x,int y, int z,int value):
-        cdef MapChunk c
-        t = (x >> 3, y >> 3, z >> 3)
-        if not self.chunks.has_key(t):
-            self.chunks[t] = MapChunk(x,y,z) #new map chunk
-        c = self.chunks[t]
-        c.set(x,y,z, value)
-
-    cpdef inline int get(TerrainMap self, int x, int y,int z):
-        cdef MapChunk c
-        t = (x >> 3, y >> 3, z >> 3)
-        if not self.chunks.has_key(t):
-            return 0
-        c = self.chunks[t]
-        return c.get(x,y,z)
 '''
 
-cdef class MapChunk:
-    #cdef int index[3]
-    #cdef int map_array[512]
-    #cdef unsigned int version
-    #cdef unsigned int server_version
-    ##
-    #cdef int update_VBO
-    #cdef Quad_VBO VBO
-
-    def __init__(self, int x_off, int y_off, int z_off, int version = 0, int server_version = 0):
-        self.version = version
-        self.server_version = 0
-        self.update_VBO = 1
-
-        self.index[0] = x_off - (x_off % 8)
-        self.index[1] = y_off - (y_off % 8)
-        self.index[2] = z_off - (z_off % 8)
-
-        for i in range(0, 512):
-            self.map_array[i] = 0
-
-    cpdef inline set(MapChunk self, int x, int y, int z, int value):
-        self.version += 1
-        x -= self.index[0]
-        y -= self.index[1]
-        z -= self.index[2]
-        self.map_array[x + 8*y + 8*8*z] = value
-
-    cpdef inline int get(MapChunk self, int x, int y, int z):
-        x -= self.index[0]
-        y -= self.index[1]
-        z -= self.index[2]
-        return self.map_array[x + 8*y + 8*8*z]
-
-    cdef inline int set_server_version(MapChunk self, int version):
-        self.server_version = version
-        assert False
-
+cpdef inline set_server_version(int x, int y, int z, int version):
+    print "set_server_version used?"
+    assert False
 #should used compiled form
 
 import struct
@@ -233,18 +135,32 @@ import struct
 fm_inv1 = struct.Struct('< 4i 1024s')
 fm_inv2 = struct.Struct('< 512H')
 fm = struct.Struct('< 4i 512H')
-def pack(MapChunk mapChunk):
+cdef pack(vm_chunk *c):
     global fm
-    cdef int chunk_dim, chunk_offset, off_x, off_y, off_z, version
-
-    version = mapChunk.version
-    off_x = mapChunk.index[0]
-    off_y = mapChunk.index[1]
-    off_z = mapChunk.index[2]
+    cdef int i
     l = []
     for i in range(0,512):
-        l.insert(i, mapChunk.map_array[i])
+        l.insert(i, c.voxel[i])
+    print str((c.x_off,c.y_off,c.z_off, c.local_version))
+    #print str(l)
+    return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
 
-    print str((off_x,off_y,off_z, version))
-    print str(l)
-    return fm.pack(off_x,off_y,off_z, version, *l)
+'''
+PART 2: Properties
+
+'''
+
+def load_cubes():
+    from cube_dat import cube_list
+
+
+'''
+PART 3: Drawing Functions
+
+'''
+
+
+'''
+PART 4: Utility Functions
+
+'''

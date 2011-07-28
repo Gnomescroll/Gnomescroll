@@ -25,6 +25,9 @@ struct vm_map {
     struct vm_column column[vm_map_dim*vm_map_dim];
 };
 
+//functions
+extern struct vm_map map;
+
 int init_t_map();
 int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
