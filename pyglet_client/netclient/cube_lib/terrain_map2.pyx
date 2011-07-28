@@ -15,7 +15,6 @@ cdef enum:
     vm_column_max 16
 
 cdef extern from "./t_map.h":
-    struct
 
     struct vm_chunk
         ushort voxel[512]
@@ -95,12 +94,9 @@ cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
     return c
 
 def get_packed_chunk(xoff, yoff, zoff):
-    global chunks
-    t = (x >> 3, y >> 3, z >> 3)
-    if not chunks.has_key(t):
-        return ''
-    t = chunks[t]
-    return zlib.compress(pack(t))
+    cdef vm_chunk c
+    c = _get_chunk(xoff, yoff, zoff)
+    return zlib.compress(pack(c))
 
 def set_packed_chunk(tmp):
     global chunks
@@ -127,6 +123,7 @@ cpdef inline set_server_version(int x, int y, int z, int version):
 
 cpdef inline set_server_version(int x, int y, int z, int version):
     print "set_server_version used?"
+    assert False
 #should used compiled form
 
 import struct
@@ -134,17 +131,17 @@ import struct
 fm_inv1 = struct.Struct('< 4i 1024s')
 fm_inv2 = struct.Struct('< 512H')
 fm = struct.Struct('< 4i 512H')
-def pack(MapChunk mapChunk):
+def pack(MapChunk c):
     global fm
     cdef int chunk_dim, chunk_offset, off_x, off_y, off_z, version
 
-    version = mapChunk.version
-    off_x = mapChunk.index[0]
-    off_y = mapChunk.index[1]
-    off_z = mapChunk.index[2]
+    version = c.local_version
+    off_x = c.x_off
+    off_y = c.y_off
+    off_z = c.z_off
     l = []
     for i in range(0,512):
-        l.insert(i, mapChunk.map_array[i])
+        l.insert(i, c.voxel[i])
 
     print str((off_x,off_y,off_z, version))
     print str(l)
