@@ -370,7 +370,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
             return
         #agent.pos(pos)
         agent.state = pos
-        print agent.state
+        #print agent.state
 
     def _agent_control_state(self, **msg):
         err_msg = None
@@ -535,7 +535,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             anim()
         # look up agent origin
         # animate
-        print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
+        #print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
 
 
 from game_state import GameStateGlobal

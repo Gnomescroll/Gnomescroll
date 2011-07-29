@@ -51,13 +51,14 @@ class GenericObjectList:
         return repr(self.objects)
 
     def _add(self, *args, **kwargs):
-        print args, kwargs
+        #print args, kwargs
         object = self._object_type(*args, **kwargs)
         if object.id in self.objects:
             print 'Create %s failed; id %s already exists' % (self._itemname, object.id,)
+            pass
         else:
             self.objects[object.id] = object
-            print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
+            #print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return object
         
     def _remove(self, obj):
@@ -67,7 +68,7 @@ class GenericObjectList:
             id = obj.id
         if id in self.objects:
             del self.objects[id]
-            print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
+            #print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
             return True
         return False
 
@@ -294,7 +295,7 @@ class WeaponList(GenericMultiObjectList):
         elif type(klass_name) == int:
             klass_name = Weapon.name_from_type(klass_name)
 
-        print klass_name, args, kwargs
+        #print klass_name, args, kwargs
         return self._add(klass_name, *args, **kwargs)
 
     def destroy(self, obj):

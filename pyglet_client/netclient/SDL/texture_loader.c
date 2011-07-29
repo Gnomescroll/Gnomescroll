@@ -103,12 +103,11 @@ void _draw_loaded_hud_texture(int x, int y) {
 }
 
 int _blit_sprite2(int texture, float x0, float y0, float x1, float y1, float z) {
-
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+glColor3ub(255,255,255);
 glBegin( GL_QUADS );
     glTexCoord2i( 0, 0 );
     glVertex3f( x0, y0, z );

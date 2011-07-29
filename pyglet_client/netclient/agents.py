@@ -956,7 +956,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
                 NetOut.sendMessage(fire_command, self)
 
     def hitscan(self, weapon=None):
-        print 'HITSCAN!!'
+        #print 'HITSCAN!!'
         if weapon is not None:
             weapon.animation(agent=self).play()
 
@@ -1016,7 +1016,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
         if not block_type:
             return
         self.active_block = block_type
-        print 'set active block to ', self.active_block
+        #print 'set active block to ', self.active_block
 
     def facing_block(self):
         block = self.nearest_block_position()

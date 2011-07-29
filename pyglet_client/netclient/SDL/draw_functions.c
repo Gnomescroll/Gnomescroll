@@ -22,7 +22,7 @@ return 0;
 }
 
 int _blit_sprite(int texture, float x0, float y0, float x1, float y1, float z) {
-
+glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
