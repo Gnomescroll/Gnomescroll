@@ -10,6 +10,10 @@
     #include "t_properties.h"
 #endif
 
+#ifndef  t_vbo
+    #include "t_vbo.h"
+#endif
+
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
@@ -19,6 +23,7 @@ struct vm_chunk {
     int x_off, y_off, z_off; //lower corner of chunk
     unsigned int local_version;
     unsigned int server_version;
+    unsigned int vbo_needs_update;
 };
 
 struct vm_column {
@@ -27,6 +32,9 @@ struct vm_column {
     unsigned int local_version;
     unsigned int server_version;
     //vm_column_history history;
+    unsigned int vbo_needs_update;
+    unsigned int vbo_loaded;
+    struct VBO;
 };
 
 struct vm_map {

@@ -22,8 +22,8 @@ int _set(int x, int y, int z, int value) {
         return 0;
     }
     xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
-    printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
-    printf("xrel,yrel,zrel= %i, %i, %i \n", xrel, yrel, zrel);
+    //printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
+    //printf("xrel,yrel,zrel= %i, %i, %i \n", xrel, yrel, zrel);
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
@@ -35,6 +35,8 @@ int _set(int x, int y, int z, int value) {
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
     column->local_version++;
     chunk->local_version++;
+    column->vbo_needs_update = 1;
+    chunk->vbo_needs_update =1
     return 0;
 }
 
@@ -47,8 +49,8 @@ int _get(int x, int y, int z) {
     xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
-    printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
-    printf("xrel,yrel,zrel= %i, %i, %i \n", xrel, yrel, zrel);
+    //printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
+    //printf("xrel,yrel,zrel= %i, %i, %i \n", xrel, yrel, zrel);
     if(chunk == NULL) {return 0; printf("t_map _get: chunk null\n");}
     return chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
 }
