@@ -15,7 +15,11 @@
 #include <stdio.h>
 
 
-#import "types.h"
+#include "types.h"
+
+#include "t_map.h"
+
+int _test3(int x, int y, int z);
 
 /*
 struct Vertex {
@@ -30,8 +34,6 @@ struct VBO {
     int VBO_id;
 }
 */
-
-//int _bind_VBO(struct Quad* quad_list, int v_num);
 
 int _init_draw_terrain();
 

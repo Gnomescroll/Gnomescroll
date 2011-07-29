@@ -125,4 +125,9 @@ printf("r,g,b,a= %i, %i, %i, %i\n", v->r,v->g,v->b,v->a);
 printf("\n");
 return 0;
 }
+///test
 
+int _test3(int x, int y, int z) {
+    return  _get(x,y,z);
+}
+///test

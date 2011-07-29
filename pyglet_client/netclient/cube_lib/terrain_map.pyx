@@ -3,6 +3,11 @@ Part 1: State
 
 '''
 
+cdef extern from './t_map.h':
+    int _test3(int x, int y, int z)
+
+cpdef test3(int x,int y,int z):
+    return _test3(x,y,z)
 
 import zlib
 import struct
