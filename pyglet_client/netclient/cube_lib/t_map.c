@@ -63,3 +63,4 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
     chunk = column->chunk[zoff];
     return chunk;
 }
+///rendering of chunk
