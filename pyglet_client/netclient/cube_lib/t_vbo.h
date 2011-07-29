@@ -1,3 +1,7 @@
+#ifndef t_vbo
+#define t_vbo
+
+
 #ifdef linux
     //do nothing
 #elif _WIN32
@@ -14,26 +18,24 @@
 
 #include <stdio.h>
 
-
-#include "types.h"
-
-#include "t_map.h"
+#ifndef t_map
+    #include "t_map.h"
+#endif
 
 int _test3(int x, int y, int z);
 
-/*
-struct Vertex {
-    float x,y,z;
-    float tx,ty;
-    unsigned char r,g,b,a;
-}
 
-struct VBO {
-    int v_num;
-    Vertex* vlist;
-    int VBO_id;
-}
-*/
+    struct Vertex {
+        float x,y,z;
+        float tx,ty;
+        unsigned char r,g,b,a;
+    };
+
+    struct VBO {
+        int v_num;
+        struct Vertex* v_list;
+        int VBO_id;
+    };
 
 int _init_draw_terrain();
 
@@ -43,3 +45,5 @@ int _delete_vbo(struct VBO* q_VBO);
 int _start_vbo_draw();
 int _draw_quad_vbo(struct VBO* q_VBO);
 int _end_vbo_draw();
+
+#endif

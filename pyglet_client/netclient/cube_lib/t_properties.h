@@ -1,7 +1,15 @@
+#ifndef t_properties
+#define t_properties
+
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#include "t_vbo.h"
+
 // cube properties
+
+#define max_cubes 1024
 
 struct cubeProperties {
     int active;
@@ -11,9 +19,12 @@ struct cubeProperties {
     int transparent;
 };
 
+
 struct cubeProperties* _get_cube_list();
 struct cubeProperties* _get_cube(int id);
 
 //buffer
 
 struct Vertex* _get_quad_cache();
+
+#endif

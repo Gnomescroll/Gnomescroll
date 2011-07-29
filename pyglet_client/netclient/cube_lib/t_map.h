@@ -1,13 +1,14 @@
+#ifndef t_map
+#define t_map
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "types.h"
-#include "t_properties.h"
+//#include "types.h"
 
-
-#ifndef t_map
-#define t_map
+#ifndef  t_properties
+    #include "t_properties.h"
+#endif
 
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
@@ -32,13 +33,13 @@ struct vm_map {
     struct vm_column column[vm_map_dim*vm_map_dim];
 };
 
-#endif
-
 //functions
 extern struct vm_map map;
 
-int init_t_map();
+int _init_t_map();
 int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
 struct vm_map* _get_map();
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
+
+#endif

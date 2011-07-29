@@ -39,7 +39,6 @@ cdef extern from "./t_map.h":
         vm_column column[vm_map_dim*vm_map_dim]
 
 cdef extern from "./t_map.h":
-    int init_t_map()
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
@@ -183,6 +182,7 @@ cdef extern from "./t_properties.h":
 
 ## Setup ##
 from cube_dat import cube_list
+
 
 def init_cube_properties():
     cdef cubeProperties* cp

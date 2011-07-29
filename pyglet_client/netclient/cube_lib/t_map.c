@@ -5,7 +5,7 @@
 
 struct vm_map map;
 
-int init_t_map() {
+int _init_t_map() {
     return 0;
 }
 
