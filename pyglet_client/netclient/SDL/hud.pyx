@@ -1,5 +1,9 @@
 cimport stdlib
 
+cdef extern from 'texture_loader.h':
+    void _draw_loaded_hud_texture(int x, int y)
+    void _load_hud_texture(char *file)
+
 cdef extern from 'SDL_text.h':
     ctypedef struct SDL_Surface
     int _init_text()
@@ -9,6 +13,9 @@ cdef extern from 'SDL_text.h':
     int _draw_text(char* text, float x, float y, float height, float width, float depth)
     int _draw_text2(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
 
+cdef extern from 'draw_functions.h':
+    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
+
 def init():
     _init_text()
 
@@ -17,6 +24,12 @@ def draw_text(text, x, y, height = 10., width = 10., depth = -.5):
 
 def create_text_surface(string):
     pass
+
+def draw_loaded_hud_texture(x, y):
+    _draw_loaded_hud_texture(x, y)
+
+def load_hud_texture(file):
+    _load_hud_texture(file)
 
 class text:
 #    cdef float x, y
@@ -54,6 +67,12 @@ class text:
 
     color = property(_get_color, _set_color, _del_color, "text color")
     
+class reticle:
+
+    def __init__(self, file, x=0, y=0):
+        self.x = x
+        self.y = y
+        load_hud_texture(file)
         
-    
-        
+    def draw(self):
+        draw_loaded_hud_texture(self.x, self.y)

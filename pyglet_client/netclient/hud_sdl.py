@@ -36,7 +36,45 @@ class Hud(object):
             x = 0,
             offset = self.win_height - 10
         )
-        
+
+
+    def _init_reticle(self):
+        if settings.pyglet:
+            self.reticle = image.load(base_dir + 'texture/target.png')
+            self.reticle_texture = self.reticle.get_texture()
+
+            rh = 16.
+            rw = 16.
+
+            w = float(self.win_width)/2
+            h = float(self.win_height)/2
+            print str((h,w))
+            x_min = w - rw/2
+            x_max = w + rw/2
+            y_min = h - rh/2
+            y_max = h + rh/2
+
+            v_list = [
+                x_min, y_max,
+                x_max, y_max,
+                x_max, y_min,
+                x_min, y_min
+            ]
+            print str(v_list)
+
+            self.reticleVertexList = graphics.vertex_list(
+                4,
+                ('v2f\static', v_list),
+                ('c3B\static', (255,255,255) *4),
+                ("t3f\static", self.reticle_texture.tex_coords)
+            )
+        else:
+            # load texture
+            # center it
+            # draw_functions._blit_sprite
+            tex_file = '%stexture/target.png' % (base_dir,)
+            self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
+
 
     def _init_text_dict(self):
         offset = 20
@@ -95,39 +133,6 @@ class Hud(object):
             stats[lprop] = '\n'.join(lines)
         return stats
 
-    def _init_reticle(self):
-        if settings.pyglet:
-            self.reticle = image.load(base_dir + 'texture/target.png')
-            self.reticle_texture = self.reticle.get_texture()
-
-            rh = 16.
-            rw = 16.
-
-            w = float(self.win_width)/2
-            h = float(self.win_height)/2
-            print str((h,w))
-            x_min = w - rw/2
-            x_max = w + rw/2
-            y_min = h - rh/2
-            y_max = h + rh/2
-
-            v_list = [
-                x_min, y_max,
-                x_max, y_max,
-                x_max, y_min,
-                x_min, y_min
-            ]
-            print str(v_list)
-
-            self.reticleVertexList = graphics.vertex_list(
-                4,
-                ('v2f\static', v_list),
-                ('c3B\static', (255,255,255) *4),
-                ("t3f\static", self.reticle_texture.tex_coords)
-            )
-        else:
-            return
-
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
@@ -137,7 +142,7 @@ class Hud(object):
         self.ping.draw()
 
     def draw(self, fps=None, ping=None):
-        #self.draw_reticle()
+        self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
         if InputGlobal.scoreboard:
@@ -186,14 +191,17 @@ class Hud(object):
             #self.player_stats.end_update()
         self.player_stats.draw()
 
-    def draw_reticle(self):
-        gl.glEnable(gl.GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
-        gl.glBindTexture(self.reticle_texture.target, self.reticle_texture.id)
+    #def draw_reticle(self):
+        #gl.glEnable(gl.GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
+        #gl.glBindTexture(self.reticle_texture.target, self.reticle_texture.id)
 
-        gl.glEnable(gl.GL_BLEND)
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-        self.reticleVertexList.draw(gl.GL_QUADS)
-        gl.glDisable(gl.GL_BLEND)
+        #gl.glEnable(gl.GL_BLEND)
+        #gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        #self.reticleVertexList.draw(gl.GL_QUADS)
+        #gl.glDisable(gl.GL_BLEND)
+
+    def draw_reticle(self):
+        self.reticle.draw()
 
     def draw_scoreboard(self):
         #stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())

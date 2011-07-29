@@ -62,7 +62,9 @@ SDL_hud = Extension('SDL.hud',
                     extra_compile_args = ['-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT']+extra_compile_args, # $(shell sdl-config --cflags)
                     extra_link_args = extra_link_args,
                     sources = [ 'SDL/hud.pyx',
-                                'SDL/SDL_text.c',]
+                                'SDL/SDL_text.c',
+                                'SDL/draw_functions.c',
+                                'SDL/texture_loader.c',]
                                 )
 
 cube_lib_VBO = Extension('cube_lib.VBO',
