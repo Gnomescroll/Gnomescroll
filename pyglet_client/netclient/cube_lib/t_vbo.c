@@ -34,13 +34,13 @@ int _init_draw_terrain() {
     }
 }
 
-int _create_vbo(struct VBO* q_VBO, struct Vertex* vlist, int v_num) {
+int _create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     GLuint VBO_id;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
-    q_VBO->vlist = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
+    q_VBO->v_list = malloc(v_num*sizeof(struct Vertex)); ///dont forget to free this!!!
     q_VBO->v_num = v_num;
-    memcpy(q_VBO->vlist, v_list, v_num*sizeof(struct Vertex));
+    memcpy(q_VBO->v_list, v_list, v_num*sizeof(struct Vertex));
     glGenBuffers(1, &VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), q_VBO->vlist, GL_STATIC_DRAW); // size, pointer to array, usecase
