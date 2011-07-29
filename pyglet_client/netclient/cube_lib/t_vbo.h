@@ -1,5 +1,9 @@
-#ifndef t_vbo
-#define t_vbo
+#include <SDL.h>
+#include <SDL_opengl.h>
+
+#include <SDL_image.h> //temp?
+
+#include <stdio.h>
 
 
 #ifdef linux
@@ -11,16 +15,15 @@
     //mac
 #endif
 
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-#include <SDL_image.h> //temp?
-
-#include <stdio.h>
-
 #ifndef t_map
     #include "t_map.h"
 #endif
+
+
+
+#ifndef t_vbo
+#define t_vbo
+
 
 int _test3(int x, int y, int z);
 
