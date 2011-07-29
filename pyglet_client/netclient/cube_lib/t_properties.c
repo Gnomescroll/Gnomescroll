@@ -1,6 +1,9 @@
 #include "./t_properties.h"
 
-#define max_cubes 1024
+
+#ifndef t_properties
+#define t_properties
+
 struct cubeProperties cube_list[max_cubes];
 
 struct cubeProperties* _get_cube_list() {
@@ -10,6 +13,8 @@ struct cubeProperties* _get_cube_list() {
 struct cubeProperties* _get_cube(int id) {
     return &cube_list[id];
 }
+
+#endif
 
 //buffer
 #define max_cubes 1024

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// cube properties
+
 struct cubeProperties {
     int active;
     int occludes;

@@ -5,6 +5,10 @@
 #include "types.h"
 #include "t_properties.h"
 
+
+#ifndef t_map
+#define t_map
+
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
@@ -27,6 +31,8 @@ struct vm_column {
 struct vm_map {
     struct vm_column column[vm_map_dim*vm_map_dim];
 };
+
+#endif
 
 //functions
 extern struct vm_map map;

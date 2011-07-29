@@ -333,13 +333,13 @@ cdef extern from 't_vbo.h':
     int _init_draw_terrain()
 cdef extern from "./t_map.h":
     int _init_t_map()
-cdef extern from "./t_map_draw.h":
-    int _init_t_map_draw()
+#cdef extern from "./t_map_draw.h":
+#    int _init_t_map_draw()
 
 def init():
     print "Init Terrain Map"
     init_cube_properties()
     init_quad_cache()
     _init_t_map();
-    _init_t_map_draw()
+    #_init_t_map_draw()
     _init_draw_terrain()
