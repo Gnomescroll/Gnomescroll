@@ -34,29 +34,29 @@ int _init_draw_terrain() {
     }
 }
 
-int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num) {
+int _create_vbo(struct VBO* q_VBO, struct Vertex* vlist, int v_num); {
     GLuint VBO_id;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
-    q_VBO->quad_array = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
+    q_VBO->vlist = malloc(v_num*sizeof(struct Quad)); ///dont forget to free this!!!
     q_VBO->v_num = v_num;
-    memcpy(q_VBO->quad_array, quad_list, v_num*sizeof(struct Quad));
+    memcpy(q_VBO->vlist, v_list, v_num*sizeof(struct Vertex));
     glGenBuffers(1, &VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
-    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), q_VBO->quad_array, GL_STATIC_DRAW); // size, pointer to array, usecase
+    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), q_VBO->vlist, GL_STATIC_DRAW); // size, pointer to array, usecase
     q_VBO->VBO_id = VBO_id;
     glDisable(GL_TEXTURE_2D);
     return VBO_id;
 }
 
-int _delete_vbo(struct Quad_VBO* q_VBO) {
+int int _delete_vbo(struct VBO* q_VBO) {
     #ifdef _WIN32
     glDeleteBuffers(1, &q_VBO->VBO_id);
     #else
     glDeleteBuffers(q_VBO->VBO_id);
     #endif
     ///free the system memory copy of the vertex buffer
-    free(q_VBO->quad_array);
+    free(q_VBO->vlist);
     q_VBO->v_num = 0;
     return 0;
 }
@@ -90,7 +90,8 @@ glDisable (GL_DEPTH_TEST);
 return 0;
 }
 
-int _draw_vbo(struct Quad_VBO* q_VBO) {
+//assums vbo is type quad
+_draw_quad_vbo(struct VBO* q_VBO) {
 
 glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
@@ -111,7 +112,7 @@ if(draw_mode_enabled == 0) {
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-    glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
+    glDrawArrays(GL_QUADS,0, q_VBO->v_num);
 }
 
 return 0;

@@ -15,29 +15,29 @@
 #include <stdio.h>
 
 
+#import "types.h"
+
+/*
 struct Vertex {
     float x,y,z;
     float tx,ty;
     unsigned char r,g,b,a;
-};
+}
 
-struct Quad {
-  struct Vertex vertex[4];
-};
-
-struct Quad_VBO {
+struct VBO {
     int v_num;
-    struct Quad* quad_array;
+    Vertex* vlist;
     int VBO_id;
-};
+}
+*/
 
 //int _bind_VBO(struct Quad* quad_list, int v_num);
 
 int _init_draw_terrain();
 
-int _create_vbo(struct Quad_VBO* q_VBO, struct Quad* quad_list, int v_num);
-int _delete_vbo(struct Quad_VBO* q_VBO);
+int _create_vbo(struct VBO* q_VBO, struct Vertex* vlist, int v_num);
+int _delete_vbo(struct VBO* q_VBO);
 
 int _start_vbo_draw();
-int _draw_vbo(struct Quad_VBO* q_VBO);
+int _draw_quad_vbo(struct VBO* q_VBO);
 int _end_vbo_draw();

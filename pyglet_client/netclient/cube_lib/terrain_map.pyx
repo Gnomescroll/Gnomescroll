@@ -149,7 +149,7 @@ cdef pack(vm_chunk *c):
 PART 2: Properties
 
 '''
-cdef extern from "./t_map_draw.h":
+cdef extern from "./t_properties.h":
     struct cubeProperties:
         int active
         int occludes
@@ -157,7 +157,7 @@ cdef extern from "./t_map_draw.h":
         int gravity
         int transparent
 
-cdef extern from "./t_map_draw.h":
+cdef extern from "./t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
     cubeProperties* _get_cube(int id)
@@ -289,6 +289,7 @@ cdef extern from 't_vbo.h':
     int _end_vbo_draw()
 
 ### CLEANUP
+'''
 l = [0,0,1, 0,0,-1, 0,1,0, 0,-1,0, -1,0,0, 1,0,0]
 cdef int s_array[3*6]
 for i in range(0, 3*6):
@@ -305,6 +306,7 @@ cdef inline _is_occluded(int x,int y,int z, int side_num):
 
     tile_id = terrain_map.get(_x,_y,_z)
     return isOcclude(tile_id)
+'''
 ## CLEANUP
 
 '''
@@ -320,9 +322,9 @@ PART 5: Init
 '''
 
 
-cdef extern from "./t_map_draw.h":
+cdef extern from "./t_map.h":
     int _init_t_map()
-cdef extern from "./t_map_draw()":
+cdef extern from "./t_map_draw.h":
     int _init_t_map_draw()
 
 def init()

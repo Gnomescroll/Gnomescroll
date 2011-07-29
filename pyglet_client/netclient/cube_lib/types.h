@@ -6,6 +6,6 @@ struct Vertex {
 
 struct VBO {
     int v_num;
-    Vertex* vlist;
+    Vertex* v_list;
     int VBO_id;
 }
