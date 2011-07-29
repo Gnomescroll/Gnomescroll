@@ -11,3 +11,7 @@ struct cubeProperties {
 
 struct cubeProperties* _get_cube_list();
 struct cubeProperties* _get_cube(int id);
+
+//buffer
+
+struct Vertex* _get_quad_cache();

@@ -150,6 +150,20 @@ cdef pack(vm_chunk *c):
     #print str(l)
     return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
 
+
+''' imports '''
+from libc.stdlib cimport malloc, free
+
+cdef extern from 'types.h':
+    struct Vertex:
+        float x,y,z
+        float tx,ty
+        unsigned char r,g,b,a
+    struct VBO:
+        int v_num
+        Vertex* vlist
+        int VBO_id
+
 '''
 PART 2: Properties
 
@@ -178,7 +192,7 @@ def init_cube_properties():
         if id >= 1024 or id < 0:
             print "Error: cube id invalid"
             return
-        cp = &_get_cube_list[id]
+        cp = _get_cube(id)
         cp.active = int(d.get('active',1))
         cp.occludes = int(d.get('occludes', 0))
         cp.solid = int(d.get('solid', 1))
@@ -186,7 +200,7 @@ def init_cube_properties():
         cp.transparent = int(d.get('transparent', 0))
 
 cpdef inline int isActive(unsigned int id):
-    return cube_array[id].active
+    return _get_cube(id).active
 cpdef inline int isOcclude(int id):
     return _get_cube(id).occludes
 cpdef inline int isTransparent(int id):
@@ -198,17 +212,7 @@ cpdef inline int isSolid(int id):
 Part 3: Quad Cache
 '''
 
-cdef extern from 'types.h':
-    struct Vertex:
-        float x,y,z;
-        float tx,ty;
-        unsigned char r,g,b,a;
-    struct VBO:
-        int v_num
-        Vertex* vlist
-        int VBO_id
-
-cdef extern from 'quad_cache.h'
+cdef extern from 't_properties.h':
     Vertex* _get_quad_cache()
 
 cdef float * v_index
@@ -229,14 +233,15 @@ cdef enum:
 def init_quad_cache():
     global v_index
     cdef Vertex* quad_cache
+    quad_cache = _get_quad_cache()
     cdef Vertex* v
     cdef int id,side,vnum,index
     for id in range(0, max_cubes):
         for side in range(0,6):
-            for vnum in range(0,4):
-                index = id*6*4+4*side+vnum
-                index2 = 12*side+4*vnum
-                v = &quad.vertex[index]
+            for vert_num in range(0,4):
+                index = id*6*4+4*side+vert_num
+                index2 = 12*side+4*vert_num
+                v = &quad_cache[index]
                 v.x = v_index[index2 + 0]
                 v.y = v_index[index2 + 1]
                 v.z = v_index[index2 + 2]
@@ -244,7 +249,7 @@ def init_quad_cache():
                 v.g = 255
                 v.b = 255
                 v.a = 255
-                tx,ty = get_cube_texture(k, i, j) #tile_id, side, vert_num
+                tx,ty = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
 
@@ -285,12 +290,10 @@ PART 3: Drawing Functions
 
 '''
 cdef extern from 't_vbo.h':
-    int _init_draw_terrain()
-
-    int _create_vbo(Quad_VBO* q_VBO, Quad* quad_list, int v_num)
-    int _delete_vbo(Quad_VBO* q_VBO)
+    int _create_vbo(VBO* q_VBO, Vertex* v_list, int v_num)
+    int _delete_vbo(VBO* q_VBO)
     int _start_vbo_draw()
-    int _draw_vbo(Quad_VBO* q_VBO)
+    int _draw_quad_vbo(VBO* q_VBO)
     int _end_vbo_draw()
 
 ### CLEANUP
@@ -326,15 +329,17 @@ cpdef inline int collisionDetection(int x, int y, int z):
 PART 5: Init
 '''
 
-
+cdef extern from 't_vbo.h':
+    int _init_draw_terrain()
 cdef extern from "./t_map.h":
     int _init_t_map()
 cdef extern from "./t_map_draw.h":
     int _init_t_map_draw()
 
-def init()
+def init():
     print "Init Terrain Map"
     init_cube_properties()
     init_quad_cache()
     _init_t_map();
     _init_t_map_draw()
+    _init_draw_terrain()
