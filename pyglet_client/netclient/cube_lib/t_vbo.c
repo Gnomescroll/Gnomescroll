@@ -43,7 +43,7 @@ int _create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     memcpy(q_VBO->v_list, v_list, v_num*sizeof(struct Vertex));
     glGenBuffers(1, &VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
-    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Quad), q_VBO->vlist, GL_STATIC_DRAW); // size, pointer to array, usecase
+    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Vertex), q_VBO->v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
     q_VBO->VBO_id = VBO_id;
     glDisable(GL_TEXTURE_2D);
     return VBO_id;
