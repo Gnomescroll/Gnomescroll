@@ -204,24 +204,31 @@ void update_column_VBO(struct vm_column* column) {
 
     vm_chunk* chunk;
     VBO* vbo;
-    int i;
+    int i,j;
     vbo = column->VBO;
     column->vbo_needs_update = 0;
     column->vbo_loaded = 1;
-    clear_chunk_scratch();
+    cs_n = 0; //clear chunk scratch
     if(vbo->VBO_id != 0) {
         delete_VBO(vbo);
     }
+    active_cube_num = 0;
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
         chunk = column->chunk[i];
         chunk->vbo_needs_update = 0;
 
-    printf("1,2,3 = %f, %f, %f \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
-    clear_chunk_scratch()
-
-    active_cube_num = 0
-    //#print "ysa= %i" % (x_chunk_size)
+        printf("1,2,3 = %f, %f, %f \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
+        for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
+        for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
+        for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++)
+            tile_id = _get(_x,_y,_z);
+            if(isActive(tile_id) == 0) {continue;}
+            active_cube_num += 1;
+            for(j=0; j<6; j++) {
+                add_quad(_x,_y,_z,j,tile_id);
+            }
+        }}}
     for x_ in range(0, x_chunk_size):
         for y_ in range(0, y_chunk_size):
             for z_ in range(0, z_chunk_size):
