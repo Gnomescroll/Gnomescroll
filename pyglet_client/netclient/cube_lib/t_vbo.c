@@ -53,16 +53,16 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     return VBO_id;
 }
 
-int delete_vbo(struct VBO* q_VBO) {
+int delete_vbo(struct VBO* vbo) {
     #ifdef _WIN32
-    glDeleteBuffers(1, &q_VBO->VBO_id);
+    glDeleteBuffers(1, &vbo->VBO_id);
     #else
-    glDeleteBuffers(q_VBO->VBO_id);
+    glDeleteBuffers(vbo->VBO_id);
     #endif
     ///free the system memory copy of the vertex buffer
-    free(q_VBO->v_list);
-    q_vbo->VBO_id = 0;
-    q_VBO->v_num = 0;
+    free(vbo->v_list);
+    vbo->VBO_id = 0;
+    vbo->v_num = 0;
     return 0;
 }
 
