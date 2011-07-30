@@ -290,11 +290,12 @@ PART 3: Drawing Functions
 
 '''
 cdef extern from 't_vbo.h':
-    int _create_vbo(VBO* q_VBO, Vertex* v_list, int v_num)
-    int _delete_vbo(VBO* q_VBO)
-    int _start_vbo_draw()
-    int _draw_quad_vbo(VBO* q_VBO)
-    int _end_vbo_draw()
+    int _draw_terrain()
+    #int _create_vbo(VBO* q_VBO, Vertex* v_list, int v_num)
+    #int _delete_vbo(VBO* q_VBO)
+    #int _start_vbo_draw()
+    #int _draw_quad_vbo(VBO* q_VBO)
+    #int _end_vbo_draw()
 
 ### CLEANUP
 '''

@@ -34,7 +34,7 @@ struct vm_column {
     //vm_column_history history;
     unsigned int vbo_needs_update;
     unsigned int vbo_loaded;
-    struct VBO;
+    struct VBO vbo;
 };
 
 struct vm_map {

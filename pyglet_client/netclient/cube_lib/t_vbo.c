@@ -18,7 +18,11 @@ SwapBuffers(hdc);  //For Windows
  *
  */
 
+struct Vertex* quad_cache;
+
 int _init_draw_terrain() {
+    quad_cache = _get_quad_cache();
+
     if(texture == 0) { //load texture if texture is not set
     surface=IMG_Load("texture/textures_01.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
@@ -34,7 +38,7 @@ int _init_draw_terrain() {
     }
 }
 
-int _create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
+int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     GLuint VBO_id;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
@@ -49,7 +53,7 @@ int _create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     return VBO_id;
 }
 
-int _delete_vbo(struct VBO* q_VBO) {
+int delete_vbo(struct VBO* q_VBO) {
     #ifdef _WIN32
     glDeleteBuffers(1, &q_VBO->VBO_id);
     #else
@@ -62,7 +66,7 @@ int _delete_vbo(struct VBO* q_VBO) {
     return 0;
 }
 
-int _start_vbo_draw() {
+int start_vbo_draw() {
 draw_mode_enabled = 1;
 
 glEnable(GL_TEXTURE_2D);
@@ -78,7 +82,7 @@ glEnableClientState(GL_COLOR_ARRAY);
 return 0;
 }
 
-int _end_vbo_draw() {
+int end_vbo_draw() {
 draw_mode_enabled = 0;
 glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
@@ -92,7 +96,7 @@ return 0;
 }
 
 //assums vbo is type quad
-int _draw_quad_vbo(struct VBO* q_VBO) {
+int draw_quad_vbo(struct VBO* q_VBO) {
 
 glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
@@ -131,6 +135,10 @@ int _test3(int x, int y, int z) {
     return  _get(x,y,z);
 }
 
+int _draw_terrain() {
+    return 0;
+}
+
 /// start VBO
 
 //buffers for VBO stuff
@@ -139,8 +147,7 @@ unsigned int cs_n; //number of vertices in chunk scratch
 
 void inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
-    Vertex* vertex;
-    memcpy(&cs[cs_n], &quad_cache[tile+id*6*4+4*side_num], 4*sizeof(Vertex)); //id*6*4+4*side+vert_num
+    memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
     for(i=0; i<=4;i++) {
         cs[cs_n+i].x += x;
         cs[cs_n+i].y += y;
@@ -175,38 +182,37 @@ def draw_chunks():
 
 void update_column_VBO(struct vm_column* column) {
     int tile_id, x, y, z, side_num;
-    float x_off, y_off, z_off;
-    int x_, y_, z_;
+    int _x, _y, _z;
 
-    vm_chunk* chunk;
-    VBO* vbo;
+    struct vm_chunk* chunk;
+    struct VBO* vbo;
     int i,j;
     column->vbo_needs_update = 0;
     column->vbo_loaded = 1;
     cs_n = 0; //clear chunk scratch
-    if(column->vbo->VBO_id != 0) {
-        delete_VBO(&column->vbo);
+    if(column->vbo.VBO_id != 0) {
+        delete_vbo(&column->vbo);
     }
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
         chunk = column->chunk[i];
         chunk->vbo_needs_update = 0;
-        printf("1,2,3 = %f, %f, %f \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
+        printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
         for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
         for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
         for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++)
             tile_id = _get(_x,_y,_z);
-            if(isActive(tile_id) == 0) {continue;}
+            if(_isActive(tile_id) == 0) {continue;}
             for(j=0; j<6; j++) {
                 //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
                 add_quad(_x,_y,_z,j,tile_id);
             }
         }}}
 
-    printf("v_num for chunk scratch = %i \n", chunk_scratch.v_num);
-    printf("active cubes= %i \n", active_cube_num);
-    _create_vbo(column->vbo, &cs, cs_n)
-    printf("VBO_id= %i \n", vbo.VBO_id);
+    printf("v_num for chunk scratch = %i \n", cs_n);
+    //printf("active cubes= %i \n", active_cube_num);
+    create_vbo(&column->vbo, cs, cs_n);
+    printf("VBO_id= %i \n", column->vbo.VBO_id);
  }
 
 int s_array[18] = {
@@ -218,11 +224,13 @@ int s_array[18] = {
             1,0,0
             };
 
+/*
 int inline _is_occluded(int x,int y,int z, int side_num) {
     int i;
     i = s_array[3*side_num];
     x += s_array[i+0];
     y += s_array[i+1];
     z += s_array[i+2];
-    return isOcclude(_get(x,y,z));
+    return isOccluded(_get(x,y,z));
 }
+*/

@@ -36,7 +36,7 @@ int _set(int x, int y, int z, int value) {
     column->local_version++;
     chunk->local_version++;
     column->vbo_needs_update = 1;
-    chunk->vbo_needs_update =1
+    chunk->vbo_needs_update =1;
     return 0;
 }
 
