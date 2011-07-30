@@ -181,12 +181,11 @@ def draw_chunks():
 */
 
 void update_column_VBO(struct vm_column* column) {
-    int tile_id, x, y, z, side_num;
+    int tile_id, side_num;
     int _x, _y, _z;
 
     struct vm_chunk* chunk;
-    struct VBO* vbo;
-    int i,j;
+    int i;
     column->vbo_needs_update = 0;
     column->vbo_loaded = 1;
     cs_n = 0; //clear chunk scratch
@@ -203,9 +202,9 @@ void update_column_VBO(struct vm_column* column) {
         for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++)
             tile_id = _get(_x,_y,_z);
             if(_isActive(tile_id) == 0) {continue;}
-            for(j=0; j<6; j++) {
+            for(side_num=0; side_num<6; side_num++) {
                 //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
-                add_quad(_x,_y,_z,j,tile_id);
+                add_quad(_x,_y,_z,side_num,tile_id);
             }
         }}}
 

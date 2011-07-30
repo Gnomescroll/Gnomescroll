@@ -10,6 +10,10 @@ struct cubeProperties* _get_cube(int id) {
     return &cube_list[id];
 }
 
+int inline _isActive(int id) {
+    return cube_list[id].active;
+    }
+
 //buffer
 
 struct Vertex quad_cache[max_cubes*6*4];
