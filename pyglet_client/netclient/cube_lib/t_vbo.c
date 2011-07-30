@@ -57,7 +57,7 @@ int _delete_vbo(struct VBO* q_VBO) {
     #endif
     ///free the system memory copy of the vertex buffer
     free(q_VBO->v_list);
-    vbo->VBO_id = 0;
+    q_vbo->VBO_id = 0;
     q_VBO->v_num = 0;
     return 0;
 }
@@ -126,50 +126,27 @@ printf("r,g,b,a= %i, %i, %i, %i\n", v->r,v->g,v->b,v->a);
 printf("\n");
 return 0;
 }
-///test
 
 int _test3(int x, int y, int z) {
     return  _get(x,y,z);
 }
-///test
 
 /// start VBO
 
 //buffers for VBO stuff
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
-unsigned int n cs_n; //number of vertices in chunk scratch
+unsigned int cs_n; //number of vertices in chunk scratch
 
-float v_index[72] = {
-         0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
-         1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
-         0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #north
-         0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #south
-         0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #west
-         1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #east
+void inline add_quad(float x,float y,float z,int side, int tile_id) {
+    int i;
+    Vertex* vertex;
+    memcpy(&cs[cs_n], &quad_cache[tile+id*6*4+4*side_num], 4*sizeof(Vertex)); //id*6*4+4*side+vert_num
+    for(i=0; i<=4;i++) {
+        cs[cs_n+i].x += x;
+        cs[cs_n+i].y += y;
+        cs[cs_n+i].z += z;
     }
-
-void inline set_side(float x, float y, float z, int side_num, int tile_id, Quad* quad):
-    global quad_cache
-    cdef int i
-    #cdef Vertex* vertex
-    #cdef Quad* quad2 = &quad_cache[6*tile_id + side_num]
-    memcpy(quad, &quad_cache[6*tile_id + side_num], sizeof(Quad))
-    for i in range(0,4):
-        #print "(tx= %f,ty= %f)" %(quad_cache[6*tile_id + side_num].vertex[i].tx,quad_cache[6*tile_id + side_num].vertex[i].ty) + " tx,ty= %f, %f" %(quad.vertex[i].tx, quad.vertex[i].ty)
-        quad.vertex[i].x += x
-        quad.vertex[i].y += y
-        quad.vertex[i].z += z
-        #time.sleep(1.)
-
-
-void inline add_quad(float x,float y,float z,int side,int tile) {
-    cdef Quad* quad = &chunk_scratch.quad[chunk_scratch.v_num]
-    chunk_scratch.v_num += 1 #quads have 4 vertex
-    set_side(x,y,z, side, tile, quad)
-}
-
-void inline clear_chunk_scratch(){
-    cs_n = 0;
+    cs_n += 4;
 }
 
 void update_chunks() {
@@ -200,59 +177,37 @@ void update_column_VBO(struct vm_column* column) {
     int tile_id, x, y, z, side_num;
     float x_off, y_off, z_off;
     int x_, y_, z_;
-    int active_cube_num;
 
     vm_chunk* chunk;
     VBO* vbo;
     int i,j;
-    vbo = column->VBO;
     column->vbo_needs_update = 0;
     column->vbo_loaded = 1;
     cs_n = 0; //clear chunk scratch
-    if(vbo->VBO_id != 0) {
-        delete_VBO(vbo);
+    if(column->vbo->VBO_id != 0) {
+        delete_VBO(&column->vbo);
     }
-    active_cube_num = 0;
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
         chunk = column->chunk[i];
         chunk->vbo_needs_update = 0;
-
         printf("1,2,3 = %f, %f, %f \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
         for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
         for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
         for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++)
             tile_id = _get(_x,_y,_z);
             if(isActive(tile_id) == 0) {continue;}
-            active_cube_num += 1;
             for(j=0; j<6; j++) {
+                //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
                 add_quad(_x,_y,_z,j,tile_id);
             }
         }}}
-    for x_ in range(0, x_chunk_size):
-        for y_ in range(0, y_chunk_size):
-            for z_ in range(0, z_chunk_size):
-                tile_id = cube_lib.terrain_map.get(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2])
-                #if tile_id != 0:
-                #    print "tile, active= %i, %i" %(tile_id, isActive(tile_id))
-                if isActive(tile_id) != 0: #non-active tiles are not draw
-                    active_cube_num += 1 #comment out
-                    for side_num in [0,1,2,3,4,5]: #[1]:#
-                        #if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
-                        if True:
-                            add_quad(x_+x_off,y_+y_off,z_+z_off,side_num,tile_id) #floats
 
     printf("v_num for chunk scratch = %i \n", chunk_scratch.v_num);
     printf("active cubes= %i \n", active_cube_num);
-    _create_vbo(&mc.VBO, chunk_scratch.quad, chunk_scratch.v_num)
+    _create_vbo(column->vbo, &cs, cs_n)
     printf("VBO_id= %i \n", vbo.VBO_id);
  }
-}
-
-void delete_VBO(VBO* vbo) {
-
-    _delete_vbo(vbo);
-    }
 
 int s_array[18] = {
             0,0,1,
