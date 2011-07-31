@@ -5,6 +5,9 @@ Projectiles
 '''
 Projectile data (will be moved to configurable external format)
 '''
+
+from terrain_map import collisionDetection
+
 projectile_dat = {
 
     1 : {
@@ -57,7 +60,7 @@ Projectile class
 '''
 from math import sin, cos, pi
 from game_objects import GameObject
-from cube_dat import CubeGlobal
+#from cube_dat import CubeGlobal
 
 class Projectile(GameObject):
 
@@ -116,7 +119,7 @@ class Projectile(GameObject):
         y += vy / fps
         z += vz / fps
 
-        if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
+        if collisionDetection(int(x), int(y), int(z)):
             print "collision with wall"
             self.delete()
             return

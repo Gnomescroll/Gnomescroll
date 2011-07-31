@@ -1,9 +1,11 @@
 import math
 
+import terrain_map
+
 class GameStateGlobal:
 
     gameState = None
-    terrainMap = None
+    #terrainMap = None
     agentList = None
     playerList = None
     #state
@@ -12,7 +14,7 @@ class GameStateGlobal:
     projectile_id = 0
 
     def __init__(self):
-        GameStateGlobal.terrainMap = TerrainMap()
+        GameStateGlobal.terrainMap = terrain_map
         GameStateGlobal.gameState = GameState()
         GameStateGlobal.agentList = AgentList()
         GameStateGlobal.playerList = PlayerList()
@@ -32,7 +34,7 @@ class GameStateGlobal:
     def new_player_id(cls):
         cls.player_id += 1
         return cls.player_id
-        
+
     @classmethod
     def new_projectile_id(cls):
         cls.projectile_id += 1
@@ -43,7 +45,7 @@ class GameStateGlobal:
         GameStateGlobal.playerList.leave(connection.player)
         if connection.player is not None:
             GameStateGlobal.agentList.destroy(connection.player.agent)
-    
+
 
 from net_server import NetServer
 
@@ -154,9 +156,8 @@ class GenericMultiObjectList(GenericObjectList):
         klass_ids = self.klass_registers[klass_name]
         objs = [self[kid] for kid in klass_ids]
         return dict(zip(klass_ids, objs))
-        
 
-from terrain_map import TerrainMap
+#from terrain_map import TerrainMap
 from agents import AgentList
 from players import PlayerList
 from projectiles import ProjectileList

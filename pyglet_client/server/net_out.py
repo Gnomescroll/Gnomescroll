@@ -231,7 +231,7 @@ class SendMessage: #each connection has one of these
     @sendJSON('chunk_list')
     def send_chunk_list(self):
         return {
-            'list' : GameStateGlobal.terrainMap.get_chunk_list(),
+            'list' : GameStateGlobal.terrainMap.get_server_chunk_list(),
         }
 
     def send_chunk(self, x, y, z):

@@ -33,8 +33,10 @@ class MapController:
         self.n = 0
 
     def process_chunk_list(self, list):
+        #print str(list)
         for (x,y,z,version) in list:
             terrainMap.set_server_version(x,y,z,version)
+            print "Chunks: %i, %i, %i" % (x,y,z)
 
     def tick(self):
         #print "TICK"
@@ -66,10 +68,7 @@ class MapController:
             if score < min_score:
                 if v0 == v1: #current
                     continue
-                elif v0 > v1: #if local version is newer than server version?
-                    continue
-                    #print "v0, v1= %i, %i" % (v0, v1)
-                elif v0 < v1: #needs map chunk update
+                else: #needs map chunk update
                     if self.requests.has_key((x,y,z)):
                         continue
                     else:
@@ -87,7 +86,7 @@ class MapController:
         if self.requests.has_key((x,y,z)):
             del self.requests[(x,y,z)]
         else:
-            print "MapController.incoming_map_chunk map chunk key does not exist"
+            print "MapController.incoming_map_chunk map chunk key does not exist, (%i, %i, %i)" % (x,y,z)
 
     def send_request(self, x,y,z):
         print "map chunk request: " + str((x,y,z))

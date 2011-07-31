@@ -11,7 +11,7 @@ if False: #windows compatability
 else:
     #import json
     import simplejson as json
-    
+
     import stats
 #import struct
 
@@ -176,7 +176,7 @@ class MapMessageHandler(GenericMessageHandler):
         #    (x,y,z,version ) = chunk
 
     def _map_chunk(self, datagram):
-        #print "Map Chunk Received"
+        print "Map Chunk Received"
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         self.mapController.incoming_map_chunk(x,y,z)
         #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
@@ -442,7 +442,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         if tick > agent.last_button_tick:
             agent.last_button_tick = tick
             agent.button_state = buttons
-        
+
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:

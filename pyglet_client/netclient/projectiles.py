@@ -135,5 +135,5 @@ def draw_projectiles():
             draw_utils.draw_line((x0,y0,z0), (x1,y1,z1), (r,g,b))
 
 from game_state import GameStateGlobal
-from cube_lib.VBO import collisionDetection
+from cube_lib.terrain_map import collisionDetection
 import draw_utils

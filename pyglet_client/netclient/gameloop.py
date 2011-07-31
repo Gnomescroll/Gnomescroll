@@ -45,10 +45,12 @@ else:
     import SDL.input
     import SDL.hud
     import vox_lib
-    import cube_lib.VBO
+    #import cube_lib.VBO
 
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
     #vox_lib.test()
+
+    import cube_lib.terrain_map
 
 #import cython
 #import pyximport; pyximport.install()
@@ -110,9 +112,10 @@ class App(object):
             self.SDL_global.init()
             SDL.input.init()
             SDL.hud.init()
+            cube_lib.terrain_map.init()
             ## VBO TEST
-            cube_lib.VBO.init()
-            cube_lib.VBO.test_chunk()
+            #cube_lib.VBO.init()
+            #cube_lib.VBO.test_chunk()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -261,9 +264,11 @@ class App(object):
             #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
             #v.collision_test(0.1,0.0,2.0)
             #cube_lib.VBO.draw_test_chunk()
-            cube_lib.VBO.update_chunks()
+            #cube_lib.VBO.update_chunks()
+            cube_lib.terrain_map.update_chunks()
             self.world.draw(first_person)
-            cube_lib.VBO.draw_chunks()
+            cube_lib.terrain_map.draw_terrain()
+            #cube_lib.VBO.draw_chunks()
             #VBO test
             ##cube_lib.VBO.draw_test_chunk()
             #self.SDL_global.set_projection(-1,0,0,0,0)

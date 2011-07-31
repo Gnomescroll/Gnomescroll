@@ -15,11 +15,12 @@ from net_event import NetEvent
 from game_state import GameStateGlobal
 from chat_server import ChatServer
 
-from cube_dat import CubeGlobal
+import terrain_map
+#from cube_dat import CubeGlobal
 
 import random
 def load_map():
-    m = GameStateGlobal.terrainMap
+    m = terrain_map
     map_type = 4
 
 
@@ -102,12 +103,12 @@ def load_map():
                         m.set(xa,ya,za+4, 6)
     print "Finished map generation"
     if map_type == 4:
-        x_min = -32
-        y_min = -32
+        x_min = 0
+        y_min = 0
         z_min = 0
 
-        x_max = 32
-        y_max = 32
+        x_max = 64
+        y_max = 64
         z_max = 1
 
         #plane for testing z collision
@@ -130,7 +131,9 @@ def load_map():
                         m.set(xa,ya,za+3, 5)
                         m.set(xa,ya,za+4, 6)
     print "Finished map generation"
-
+    if map_type == 5:
+        m.set(0,0,0,2)
+        #print "test= %i" % (m.get(1,1,5))
 class Main:
 
     def __init__(self):
@@ -140,12 +143,12 @@ class Main:
         NetEvent.init_0()
         GameStateGlobal().init() #conventions
         ChatServer().init() #conventions
-        CubeGlobal.init_0()
+        #CubeGlobal.init_0()
         #phase 2 inits
         NetServer.init_1()
         NetOut.init_1()
         NetEvent.init_1()
-        CubeGlobal.init_1()
+        #CubeGlobal.init_1()
     def run(self):
         print "Server Started"
         load_map()
