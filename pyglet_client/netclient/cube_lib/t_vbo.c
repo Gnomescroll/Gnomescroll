@@ -59,7 +59,6 @@ int delete_vbo(struct VBO* vbo) {
     #ifdef _WIN32
     glDeleteBuffers(1, &vbo->VBO_id);
     #else
-    //glDeleteBuffers(vbo->VBO_id);
     glDeleteBuffers(1, &vbo->VBO_id);
     #endif
     ///free the system memory copy of the vertex buffer
@@ -114,7 +113,7 @@ if(draw_mode_enabled == 0) {
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-    glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
+    glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     return 0;
 } else {
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
