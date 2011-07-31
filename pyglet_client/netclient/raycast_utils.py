@@ -90,7 +90,7 @@ def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high
         z__ = int(z+ dz*(n+inc))
 
         if x_ != x__ or y_ != y__ or z_ != z__:
-            if collision(x__, y__, z__):
+            if collisionDetection(x__, y__, z__):
                 return (x__, y__, z__)
 
 from game_state import GameStateGlobal

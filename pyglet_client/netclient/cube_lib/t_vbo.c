@@ -275,7 +275,7 @@ int _draw_terrain() {
         }
     }
     end_vbo_draw();
-    _draw_fog();
+    //_draw_fog();
 }
 
 int s_array[18] = {
