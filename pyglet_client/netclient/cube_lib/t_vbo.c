@@ -100,10 +100,10 @@ return 0;
 int draw_quad_vbo(struct VBO* q_VBO) {
 
 if(q_VBO == NULL) {
-    print "NULL\n";
+    printf("NULL\n");
 }
-
-printf('vnum= %i \n', q_VBO->v_num*4);
+//printf("wtf\n");
+//printf('vnum= %f \n', (float) (q_VBO->v_num));
 
 /*
 if(draw_mode_enabled == 0) {
@@ -182,7 +182,7 @@ def draw_chunks():
 /// ADDRESS
 */
 
-int update_column_VBO2(struct vm_column* column) {
+int update_column_VBO(struct vm_column* column) {
     printf("update_column_VBO \n");
     int tile_id, side_num;
     int _x, _y, _z;
@@ -207,6 +207,7 @@ int update_column_VBO2(struct vm_column* column) {
             if(_isActive(tile_id) == 0) {continue;}
             for(side_num=0; side_num<6; side_num++) {
                 //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
+                printf("add %i, %i, %i \n");
                 add_quad(_x,_y,_z,side_num,tile_id);
             }
         }}}
@@ -231,9 +232,9 @@ int _update_chunks() {
 }
 
 int _draw_terrain() {
-    start_vbo_draw();
     struct vm_map* m;
     int i,j;
+    start_vbo_draw();
     m = _get_map();
     printf("Start Map Draw\n");
     for(i=0; i<vm_map_dim; i++) {
