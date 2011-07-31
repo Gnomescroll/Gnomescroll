@@ -33,7 +33,7 @@ cdef extern from "./t_map.h":
         vm_column column[vm_map_dim*vm_map_dim]
 
 cdef extern from "./t_map.h":
-    _init_t_map()
+    int _init_t_map()
 
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
@@ -148,7 +148,62 @@ cdef pack(vm_chunk *c):
     #print str(l)
     return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
 
+'''
+PART 2: Properties
+
+'''
+cdef extern from "./t_properties.h":
+    struct cubeProperties:
+        int active
+        int occludes
+        int solid
+        int gravity
+        int transparent
+
+cdef extern from "./t_properties.h":
+    int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
+    cubeProperties* _get_cube_list()
+    cubeProperties* _get_cube(int id)
+
+## Setup ##
+from cube_dat import cube_list
+
+
+def init_cube_properties():
+    cdef cubeProperties* cp
+    global cube_list
+    for d in cube_list.values():
+        id = int(d['id'])
+        if id >= 1024 or id < 0:
+            print "Error: cube id invalid"
+            return
+        cp = _get_cube(id)
+        cp.active = int(d.get('active',1))
+        cp.occludes = int(d.get('occludes', 0))
+        cp.solid = int(d.get('solid', 1))
+        cp.gravity = int(d.get('gravity', 0))
+        cp.transparent = int(d.get('transparent', 0))
+
+cpdef inline int isActive(unsigned int id):
+    return _get_cube(id).active
+cpdef inline int isOcclude(int id):
+    return _get_cube(id).occludes
+cpdef inline int isTransparent(int id):
+    return _get_cube(id).transparent
+cpdef inline int isSolid(int id):
+    return _get_cube(id).solid
+
+'''
+PART 4: Utility Functions
+'''
+
+cpdef inline int collisionDetection(int x, int y, int z):
+    cdef int tile
+    tile = _get(x,y,z)
+    return isSolid(tile)
+
 def init():
     print "Init Terrain Map"
-    _init_t_map();
+    _init_t_map()
+    init_cube_properties()
 init()

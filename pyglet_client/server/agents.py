@@ -14,7 +14,8 @@ from game_state import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
 
-from cube_dat import CubeGlobal
+from terrain_map import collisionDetection
+#from cube_dat import CubeGlobal
 
 from weapons import LaserGun, Pick, BlockApplier
 
@@ -118,14 +119,14 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
             #x+
-                if self.collisionDetection.collision(bx_pos_current,by,bz):
+                if collisionDetection(bx_pos_current,by,bz):
                     xc_pos_current +=1
-                if self.collisionDetection.collision(bx_pos_projected,by,bz):
+                if collisionDetection(bx_pos_projected,by,bz):
                     xc_pos_projected +=1
             #x-
-                if self.collisionDetection.collision(bx_neg_current,by,bz):
+                if collisionDetection(bx_neg_current,by,bz):
                     xc_neg_current +=1
-                if self.collisionDetection.collision(bx_neg_projected,by,bz):
+                if collisionDetection(bx_neg_projected,by,bz):
                     xc_neg_projected +=1
 
 ### Collision on Y axis ###
@@ -145,14 +146,14 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for bx in range(floor(x-box_r), floor(x+box_r)+1):
             #x+
-                if self.collisionDetection.collision(bx,by_pos_current,bz):
+                if collisionDetection(bx,by_pos_current,bz):
                     yc_pos_current +=1
-                if self.collisionDetection.collision(bx,by_pos_projected,bz):
+                if collisionDetection(bx,by_pos_projected,bz):
                     yc_pos_projected +=1
             #x-
-                if self.collisionDetection.collision(bx,by_neg_current,bz):
+                if collisionDetection(bx,by_neg_current,bz):
                     yc_neg_current +=1
-                if self.collisionDetection.collision(bx,by_neg_projected,bz):
+                if collisionDetection(bx,by_neg_projected,bz):
                     yc_neg_projected +=1
 
 ### XY Collision ###
@@ -162,7 +163,7 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
                 for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
-                    if self.collisionDetection.collision(bx,by,bz):
+                    if collisionDetection(bx,by,bz):
                         xyc_projected += 1
 
         xyc_current = 0
@@ -170,7 +171,7 @@ class AgentPhysics:
         for bz in range(floor(z - b_height), floor(z +t_height)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
                 for bx in range(floor(x-box_r+vx), floor(x+box_r)+1):
-                    if self.collisionDetection.collision(bx,by,bz):
+                    if collisionDetection(bx,by,bz):
                         xyc_current += 1
 
         #dont do this right now
@@ -235,11 +236,11 @@ class AgentPhysics:
 
         for bx in range(floor(x-box_r), floor(x+box_r)+1):
             for by in range(floor(y-box_r), floor(y+box_r)+1):
-                if self.collisionDetection.collision(bx,by,bz_current):
+                if collisionDetection(bx,by,bz_current):
                     zc_current +=1
-                if self.collisionDetection.collision(bx,by,bz_ground):
+                if collisionDetection(bx,by,bz_ground):
                      zc_ground += 1
-                if self.collisionDetection.collision(bx,by,bz_neg_projected):
+                if collisionDetection(bx,by,bz_neg_projected):
                     zc_neg_projected +=1
     ##  calculate environmental state
         #agent ground state
@@ -488,7 +489,7 @@ class Agent(AgentPhysics, AgentAction):
         if angle is not None:
             old_angle = self.angle()
             self.set_angle(angle)
-            
+
         ''' Use this if/when tick is actually being used '''
         #if self.last_control_tick > old_tick and \
            #(old_state != self or old_angle != angle):

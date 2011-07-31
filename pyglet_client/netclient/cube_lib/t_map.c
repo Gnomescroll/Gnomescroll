@@ -68,7 +68,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
 ///rendering of chunk
 
 int _set_server_version(int x,int y,int z, int server_version) {
-    int xoff, yoff, zoff, xrel, yrel, zrel;
+    int xoff, yoff, zoff;
     struct vm_column* column;
     struct vm_chunk* chunk;
     xoff = x; yoff = y; zoff = z;

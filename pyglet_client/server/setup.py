@@ -15,7 +15,7 @@ from Cython.Distutils import build_ext
 extra_compile_args=["-g"]
 extra_link_args=["-g"]
 
-terrain_map = Extension('cube_lib.terrain_map',
+terrain_map = Extension('terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/local/include',
                                     '/usr/lib',     ],
@@ -24,7 +24,8 @@ terrain_map = Extension('cube_lib.terrain_map',
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/terrain_map.pyx',
-                            'cube_lib/t_map.c',]
+                            'cube_lib/t_map.c',
+                            'cube_lib/t_properties.c']
                     )
 
 '''

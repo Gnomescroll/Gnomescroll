@@ -15,11 +15,12 @@ from net_event import NetEvent
 from game_state import GameStateGlobal
 from chat_server import ChatServer
 
-from cube_dat import CubeGlobal
+import terrain_map
+#from cube_dat import CubeGlobal
 
 import random
 def load_map():
-    m = GameStateGlobal.terrainMap
+    m = terrain_map
     map_type = 4
 
 
@@ -140,12 +141,12 @@ class Main:
         NetEvent.init_0()
         GameStateGlobal().init() #conventions
         ChatServer().init() #conventions
-        CubeGlobal.init_0()
+        #CubeGlobal.init_0()
         #phase 2 inits
         NetServer.init_1()
         NetOut.init_1()
         NetEvent.init_1()
-        CubeGlobal.init_1()
+        #CubeGlobal.init_1()
     def run(self):
         print "Server Started"
         load_map()

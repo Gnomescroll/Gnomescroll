@@ -328,7 +328,7 @@ PART 4: Utility Functions
 '''
 cpdef inline int collisionDetection(int x, int y, int z):
     cdef int tile
-    tile = get(x,y,z)
+    tile = _get(x,y,z)
     return isSolid(tile)
 
 '''
@@ -349,6 +349,5 @@ def init():
     _init_t_map();
     #_init_t_map_draw()
     _init_draw_terrain()
-    assert False
 
 init()

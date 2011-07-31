@@ -6,6 +6,7 @@
 
 //#include "types.h"
 
+
 #ifndef  t_properties
     #include "t_properties.h"
 #endif
@@ -13,6 +14,7 @@
 #ifndef  t_vbo
     #include "t_vbo.h"
 #endif
+
 
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
