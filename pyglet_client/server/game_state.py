@@ -1,6 +1,6 @@
 import math
 
-import terrain_map
+import cube_lib.terrain_map as terrain_map
 
 class GameStateGlobal:
 

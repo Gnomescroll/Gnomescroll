@@ -15,7 +15,7 @@ from net_event import NetEvent
 from game_state import GameStateGlobal
 from chat_server import ChatServer
 
-import terrain_map
+import cube_lib.terrain_map as terrain_map
 #from cube_dat import CubeGlobal
 
 import random

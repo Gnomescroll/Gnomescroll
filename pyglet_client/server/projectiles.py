@@ -6,7 +6,7 @@ Projectiles
 Projectile data (will be moved to configurable external format)
 '''
 
-from terrain_map import collisionDetection
+from cube_lib.terrain_map import collisionDetection
 
 projectile_dat = {
 
