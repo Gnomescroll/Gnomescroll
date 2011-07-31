@@ -40,6 +40,7 @@ int _init_draw_terrain() {
 
 int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     GLuint VBO_id;
+    VBO_id = 0;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
     q_VBO->v_list = malloc(v_num*sizeof(struct Vertex)); ///dont forget to free this!!!
@@ -58,7 +59,8 @@ int delete_vbo(struct VBO* vbo) {
     #ifdef _WIN32
     glDeleteBuffers(1, &vbo->VBO_id);
     #else
-    glDeleteBuffers(vbo->VBO_id);
+    //glDeleteBuffers(vbo->VBO_id);
+    glDeleteBuffers(1, &vbo->VBO_id);
     #endif
     ///free the system memory copy of the vertex buffer
     free(vbo->v_list);
@@ -103,7 +105,7 @@ int draw_quad_vbo(struct VBO* q_VBO) {
 //printf("wtf\n");
 //printf('vnum= %f \n', (float) (q_VBO->v_num));
 
-/*
+
 if(draw_mode_enabled == 0) {
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
     start_vbo_draw();
@@ -115,10 +117,6 @@ if(draw_mode_enabled == 0) {
     glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
     return 0;
 } else {
-*/
-    if(draw_mode_enabled == 0) {
-        printf("Draw mode not enabled!!!\n");
-    }
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
@@ -126,8 +124,9 @@ if(draw_mode_enabled == 0) {
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
+    return 0;
+}
 
-return 0;
 }
 
 int print_vertex(struct Vertex* v) {
