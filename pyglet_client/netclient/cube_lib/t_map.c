@@ -6,6 +6,13 @@
 struct vm_map map;
 
 int _init_t_map() {
+
+    int i;
+    for(i=0; i<vm_map_dim*vm_map_dim; i++) {
+        map.column[i].vbo.v_list = NULL;
+        map.column[i].vbo.v_num = 0;
+        map.column[i].vbo.VBO_id = 0;
+    }
     return 0;
 }
 

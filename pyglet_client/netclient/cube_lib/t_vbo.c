@@ -50,6 +50,7 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Vertex), q_VBO->v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
     q_VBO->VBO_id = VBO_id;
     glDisable(GL_TEXTURE_2D);
+    printf("inside: VBO_id= %i \n", VBO_id);
     return VBO_id;
 }
 
@@ -99,9 +100,6 @@ return 0;
 //assums vbo is type quad
 int draw_quad_vbo(struct VBO* q_VBO) {
 
-if(q_VBO == NULL) {
-    printf("NULL\n");
-}
 //printf("wtf\n");
 //printf('vnum= %f \n', (float) (q_VBO->v_num));
 
@@ -127,7 +125,7 @@ if(draw_mode_enabled == 0) {
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-    glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
+    glDrawArrays(GL_QUADS,0, q_VBO->v_num);
 
 return 0;
 }
@@ -153,13 +151,13 @@ unsigned int cs_n; //number of vertices in chunk scratch
 
 void inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
-    struct Vertex* v;
+    //struct Vertex* v;
     memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
     for(i=0; i<=4;i++) {
         cs[cs_n+i].x += x;
         cs[cs_n+i].y += y;
         cs[cs_n+i].z += z;
-    v = &cs[cs_n+i];
+    //v = &cs[cs_n+i];
     }
     cs_n += 4;
 }
