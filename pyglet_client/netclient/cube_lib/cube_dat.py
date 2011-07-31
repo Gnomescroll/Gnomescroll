@@ -39,7 +39,7 @@ cube_list = {
         'active' : True,
         'solid' : True,
 
-        'texture_id' : [1,1,1,1,1,1],
+        'texture_id' : [25,25,25,25,25,25],
         'texture_order' : [[0,1,2,3],
                             [0,1,2,3],
                             [0,1,2,3],

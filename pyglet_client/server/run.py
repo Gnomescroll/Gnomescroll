@@ -115,11 +115,7 @@ def load_map():
         for xa in range(x_min, x_max):
             for ya in range(y_min, y_max):
                 for za in range(z_min, z_max):
-                    rnd = random.randint(0,64)
-                    if True or rnd < 48:
-                        rnd2 = random.randint(1,4)
-                        rnd2 = 3
-                        m.set(xa,ya,za, rnd2)
+                    m.set(xa,ya,za, 1)
         #protrusions for testing collision detection
         for xa in range(x_min, x_max):
             for ya in range(y_min, y_max):
@@ -128,8 +124,8 @@ def load_map():
                     if rnd < 4:
                         m.set(xa,ya,za+1, 4)
                         m.set(xa,ya,za+2, 4)
-                        #m.set(xa,ya,za+3, 5)
-                        m.set(xa,ya,za+4, 1)
+                        m.set(xa,ya,za+3, 4)
+                        #m.set(xa,ya,za+4, 3)
     print "Finished map generation"
     if map_type == 5:
         m.set(0,0,0,2)
