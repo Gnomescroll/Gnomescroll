@@ -24,7 +24,7 @@ int _init_draw_terrain() {
     quad_cache = _get_quad_cache();
 
     if(texture == 0) { //load texture if texture is not set
-    surface=IMG_Load("texture/textures_01.png");
+    surface=IMG_Load("texture/textures_02.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
@@ -74,7 +74,7 @@ draw_mode_enabled = 1;
 
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
-//glEnable(GL_CULL_FACE);
+glEnable(GL_CULL_FACE);  ///testing
 
 glBindTexture( GL_TEXTURE_2D, texture );
 
@@ -93,7 +93,7 @@ glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 glDisable(GL_TEXTURE_2D);
 glDisable (GL_DEPTH_TEST);
-//glDisable(GL_CULL_FACE);
+glDisable(GL_CULL_FACE);
 
 return 0;
 }

@@ -27,7 +27,7 @@ class MapController:
         assert self.mapMessage != None
     def __init__(self):
         self.requests = {}
-        self.max_requests = 5
+        self.max_requests = 10
         self.time_out = 4.0 #needs to be adjusted
         self.delay = 1 #set higher?
         self.n = 0

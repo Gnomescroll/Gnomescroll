@@ -107,8 +107,8 @@ def load_map():
         y_min = 0
         z_min = 0
 
-        x_max = 64
-        y_max = 64
+        x_max = 512#64
+        y_max = 512#64
         z_max = 1
 
         #plane for testing z collision
@@ -128,8 +128,8 @@ def load_map():
                     if rnd < 4:
                         m.set(xa,ya,za+1, 4)
                         m.set(xa,ya,za+2, 4)
-                        m.set(xa,ya,za+3, 5)
-                        m.set(xa,ya,za+4, 6)
+                        #m.set(xa,ya,za+3, 5)
+                        m.set(xa,ya,za+4, 1)
     print "Finished map generation"
     if map_type == 5:
         m.set(0,0,0,2)
