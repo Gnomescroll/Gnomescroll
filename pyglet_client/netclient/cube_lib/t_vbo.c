@@ -68,8 +68,6 @@ int delete_vbo(struct VBO* vbo) {
 
 int start_vbo_draw() {
 
-printf("texture= %i \n", texture);
-
 draw_mode_enabled = 1;
 
 glEnable(GL_TEXTURE_2D);
@@ -223,7 +221,7 @@ int update_column_VBO(struct vm_column* column) {
     }
 
     printf("v_num for chunk scratch = %i \n", cs_n);
-    printf("active cubes= %i \n", active_cube_num);
+    //printf("active cubes= %i \n", active_cube_num);
     create_vbo(&column->vbo, cs, cs_n);
     printf("VBO_id= %i \n", column->vbo.VBO_id);
  }
