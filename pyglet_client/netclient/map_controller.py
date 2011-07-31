@@ -33,6 +33,7 @@ class MapController:
         self.n = 0
 
     def process_chunk_list(self, list):
+        #print str(list)
         for (x,y,z,version) in list:
             terrainMap.set_server_version(x,y,z,version)
             print "Chunks: %i, %i, %i" % (x,y,z)
@@ -92,5 +93,5 @@ class MapController:
 
     def send_request(self, x,y,z):
         print "map chunk request: " + str((x,y,z))
-        self.mapMessage.request_chunk(8*x,8*y,8*z)
+        self.mapMessage.request_chunk(x,y,z)
 

@@ -51,6 +51,19 @@ cpdef inline int get(int x, int y,int z):
 
 #implement
 
+def get_server_chunk_list():
+    cdef vm_map* m
+    cdef vm_chunk* c
+    cdef int i,j
+    m = _get_map()
+    ll = []
+    for i in range(0, vm_map_dim**2):
+        for j in range(0, vm_column_max):
+            if m.column[i].chunk[j] != NULL:
+                c = m.column[i].chunk[j]
+                ll.append([c.x_off, c.y_off, c.z_off, c.local_version])
+    return ll
+
 def get_chunk_version_list():
     cdef vm_map* m
     cdef vm_chunk* c
@@ -65,6 +78,7 @@ def get_chunk_version_list():
     return ll
 
 cpdef get_chunk_list():
+    assert False
     cdef vm_map* m
     cdef vm_chunk* c
     cdef int i,j
@@ -97,6 +111,9 @@ cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
 def get_packed_chunk(xoff, yoff, zoff):
     cdef vm_chunk *c
     c = _get_chunk(xoff, yoff, zoff)
+    if c == NULL:
+        print "get_packed_chunk: chunk does not exist: %i, %i, %i" %(xoff, yoff, zoff)
+        return ''
     return zlib.compress(pack(c))
 
 def set_packed_chunk(tmp):

@@ -310,7 +310,7 @@ class Agent(AgentPhysics, AgentAction):
 
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
-        self.collisionDetection = CubeGlobal.collisionDetection
+        self.collisionDetection = collisionDetection
         assert self.collisionDetection != None
         ### End Global imports ###
 
