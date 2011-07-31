@@ -68,12 +68,12 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
 ///rendering of chunk
 
 int _set_server_version(int x,int y,int z, int server_version) {
-    int xoff, yoff, zoff, xrel, yrel, zrel;
+    int xoff, yoff, zoff;
     struct vm_column* column;
     struct vm_chunk* chunk;
     xoff = x; yoff = y; zoff = z;
     if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
-        printf("t_map _set_server_version: invalid chunk: (%i, %i, %i, %i)\n", x,y,z);
+        printf("t_map _set_server_version: invalid chunk: (%i, %i, %i)\n", x,y,z);
         return 0;
     }
     column = &map.column[vm_map_dim*yoff + xoff];

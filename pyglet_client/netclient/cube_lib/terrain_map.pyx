@@ -36,6 +36,7 @@ cdef extern from "./t_map.h":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
+    int _set_server_version(int x,int y,int z, int server_version)
     vm_map* _get_map()
     vm_chunk* _get_chunk(int xoff, int yoff, int zoff)
 #done
@@ -124,8 +125,10 @@ cpdef inline set_server_version(int x, int y, int z, int version):
 '''
 
 cpdef inline set_server_version(int x, int y, int z, int version):
-    print "set_server_version used?"
-    assert False
+    _set(8*x,8*y,8*z,0)
+    _set_server_version(x,y,z, version)
+    #print "set_server_version used?"
+    #assert False
 #should used compiled form
 
 import struct
@@ -286,11 +289,18 @@ PART 3: Drawing Functions
 cdef extern from 't_vbo.h':
     int _draw_terrain()
     int _update_chunks()
+    int _draw_terrain()
     #int _create_vbo(VBO* q_VBO, Vertex* v_list, int v_num)
     #int _delete_vbo(VBO* q_VBO)
     #int _start_vbo_draw()
     #int _draw_quad_vbo(VBO* q_VBO)
     #int _end_vbo_draw()
+
+cpdef update_chunks():
+    _update_chunks()
+
+cpdef draw_terrain():
+    _draw_terrain()
 
 ### CLEANUP
 '''
@@ -339,3 +349,6 @@ def init():
     _init_t_map();
     #_init_t_map_draw()
     _init_draw_terrain()
+    assert False
+
+init()

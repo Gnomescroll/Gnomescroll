@@ -102,12 +102,12 @@ def load_map():
                         m.set(xa,ya,za+4, 6)
     print "Finished map generation"
     if map_type == 4:
-        x_min = -32
-        y_min = -32
+        x_min = 0
+        y_min = 0
         z_min = 0
 
-        x_max = 32
-        y_max = 32
+        x_max = 16
+        y_max = 16
         z_max = 1
 
         #plane for testing z collision

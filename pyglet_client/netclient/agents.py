@@ -516,7 +516,7 @@ class AgentModel:
 
         #self.collisionDetection = CubeGlobal.collisionDetection
         #assert False #fix
-        self.collisionDetection = cube_lib.VBO.collisionDetection
+        self.collisionDetection = terrainMap.collisionDetection
 
         self.state = state #position, velocity, acceleration
         self.xa = state[3]
@@ -1045,4 +1045,4 @@ from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *
 #from cube_dat import CubeGlobal
-import cube_lib.VBO
+#import cube_lib.VBO

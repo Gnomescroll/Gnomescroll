@@ -4,16 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include "types.h"
-
-#ifndef  t_properties
-    #include "t_properties.h"
-#endif
-
-#ifndef  t_vbo
-    #include "t_vbo.h"
-#endif
-
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
@@ -33,8 +23,8 @@ struct vm_column {
     unsigned int server_version;
     //vm_column_history history;
     unsigned int vbo_needs_update;
-    unsigned int vbo_loaded;
-    struct VBO vbo;
+    //unsigned int vbo_loaded;
+    //struct VBO vbo;
 };
 
 struct vm_map {
