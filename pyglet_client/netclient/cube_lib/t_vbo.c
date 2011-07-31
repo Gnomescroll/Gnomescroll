@@ -35,12 +35,10 @@ int _init_draw_terrain() {
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
-    printf("!!! texture= %i\n\n", texture);
     }
 }
 
 int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
-    printf("create vbo\n");
     GLuint VBO_id;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
@@ -159,17 +157,12 @@ void inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
     struct Vertex* v;
     memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-    printf("vertex\n");
     for(i=0; i<=4;i++) {
         cs[cs_n+i].x += x;
         cs[cs_n+i].y += y;
         cs[cs_n+i].z += z;
     v = &cs[cs_n+i];
-    printf("x,y,z= %f, %f, %f\n", v->x,v->y,v->z);
-    printf("tx,ty= %f, %f\n", v->tx, v->ty);
-    printf("r,g,b,a= %i, %i, %i, %i\n", v->r,v->g,v->b,v->a);
     }
-    printf("\n");
     cs_n += 4;
 }
 
@@ -208,17 +201,17 @@ int update_column_VBO(struct vm_column* column) {
     }
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
-        printf("chunk= %i\n", i);
+        //printf("chunk= %i\n", i);
         chunk = column->chunk[i];
         chunk->vbo_needs_update = 0;
-        printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
+        //printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
         for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
             for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
                 for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
                     tile_id = _get(_x,_y,_z);
                     //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
                     if(_isActive(tile_id) == 0) {continue;} else {
-                        printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
+                        //printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
                     }
                     for(side_num=0; side_num<6; side_num++) {
                         //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
@@ -230,7 +223,7 @@ int update_column_VBO(struct vm_column* column) {
     }
 
     printf("v_num for chunk scratch = %i \n", cs_n);
-    //printf("active cubes= %i \n", active_cube_num);
+    printf("active cubes= %i \n", active_cube_num);
     create_vbo(&column->vbo, cs, cs_n);
     printf("VBO_id= %i \n", column->vbo.VBO_id);
  }
