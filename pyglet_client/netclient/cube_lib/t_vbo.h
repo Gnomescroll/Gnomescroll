@@ -55,5 +55,6 @@ int end_vbo_draw();
 //int update_column_VBO(struct vm_column* column);
 void inline add_quad(float x,float y,float z,int side, int tile_id);
 int _draw_terrain();
+int update_column_VBO2(struct vm_column* column);
 
 #endif

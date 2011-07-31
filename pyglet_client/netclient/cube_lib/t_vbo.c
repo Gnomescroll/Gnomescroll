@@ -39,6 +39,7 @@ int _init_draw_terrain() {
 }
 
 int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
+    printf("create vbo\n");
     GLuint VBO_id;
     if (v_num == 0) { return 0; }
     glEnable(GL_TEXTURE_2D);
@@ -98,8 +99,13 @@ return 0;
 //assums vbo is type quad
 int draw_quad_vbo(struct VBO* q_VBO) {
 
-glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
+if(q_VBO == NULL) {
+    print "NULL\n";
+}
 
+printf('vnum= %i \n', q_VBO->v_num*4);
+
+/*
 if(draw_mode_enabled == 0) {
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
     start_vbo_draw();
@@ -111,14 +117,17 @@ if(draw_mode_enabled == 0) {
     glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
     return 0;
 } else {
+*/
+    if(draw_mode_enabled == 0) {
+        printf("Draw mode not enabled!!!\n");
+    }
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
-    glDrawArrays(GL_QUADS,0, q_VBO->v_num);
-}
+    glDrawArrays(GL_QUADS,0, q_VBO->v_num*4);
 
 return 0;
 }
@@ -141,31 +150,6 @@ int _test3(int x, int y, int z) {
 //buffers for VBO stuff
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
-
-int _update_chunks() {
-    struct vm_map* m;
-    int i,j;
-    m = _get_map();
-    for(i=0; i<vm_map_dim; i++) {
-    for(j=0; j<vm_map_dim;j++) {
-        if(m->column[j*vm_map_dim+i].vbo.v_num > 0) {
-            update_column_VBO(&m->column[j*vm_map_dim+i]);
-        }
-    }}
-}
-
-int _draw_terrain() {
-    struct vm_map* m;
-    int i,j;
-    m = _get_map();
-    for(i=0; i<vm_map_dim; i++) {
-        for(j=0; j<vm_map_dim;j++) {
-            if( m->column[j*vm_map_dim+i].vbo.v_num > 0) {
-                draw_quad_vbo(&m->column[j*vm_map_dim+i].vbo);
-            }
-        }
-    }
-}
 
 void inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
@@ -198,7 +182,8 @@ def draw_chunks():
 /// ADDRESS
 */
 
-int update_column_VBO(struct vm_column* column) {
+int update_column_VBO2(struct vm_column* column) {
+    printf("update_column_VBO \n");
     int tile_id, side_num;
     int _x, _y, _z;
 
@@ -231,6 +216,36 @@ int update_column_VBO(struct vm_column* column) {
     create_vbo(&column->vbo, cs, cs_n);
     printf("VBO_id= %i \n", column->vbo.VBO_id);
  }
+
+int _update_chunks() {
+    //printf("_update_chunks \n");
+    struct vm_map* m;
+    int i,j;
+    m = _get_map();
+    for(i=0; i<vm_map_dim; i++) {
+    for(j=0; j<vm_map_dim;j++) {
+        if(m->column[j*vm_map_dim+i].vbo_needs_update) {
+            update_column_VBO(&m->column[j*vm_map_dim+i]);
+        }
+    }}
+}
+
+int _draw_terrain() {
+    start_vbo_draw();
+    struct vm_map* m;
+    int i,j;
+    m = _get_map();
+    printf("Start Map Draw\n");
+    for(i=0; i<vm_map_dim; i++) {
+        for(j=0; j<vm_map_dim;j++) {
+            if( m->column[j*vm_map_dim+i].vbo.v_num > 0) {
+                printf("Drawing chunk: %i, %i \n", i, j);
+                draw_quad_vbo(&m->column[j*vm_map_dim+i].vbo);
+            }
+        }
+    }
+    end_vbo_draw();
+}
 
 int s_array[18] = {
             0,0,1,

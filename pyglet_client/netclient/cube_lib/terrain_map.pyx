@@ -95,6 +95,8 @@ cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
 def get_packed_chunk(xoff, yoff, zoff):
     cdef vm_chunk *c
     c = _get_chunk(xoff, yoff, zoff)
+    if c == NULL:
+        return ''
     return zlib.compress(pack(c))
 
 def set_packed_chunk(tmp):

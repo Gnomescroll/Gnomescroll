@@ -21,7 +21,7 @@ import terrain_map
 import random
 def load_map():
     m = terrain_map
-    map_type = 4
+    map_type = 5
 
 
     print "Start map generation"
@@ -131,7 +131,8 @@ def load_map():
                         m.set(xa,ya,za+3, 5)
                         m.set(xa,ya,za+4, 6)
     print "Finished map generation"
-
+    if map_type == 5:
+        m.set(0,0,0,1)
 class Main:
 
     def __init__(self):
