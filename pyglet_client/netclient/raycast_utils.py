@@ -3,7 +3,7 @@ Rendering utilities
 '''
 ### Ray casting utilities
 
-from cube_lib import terrain_map as terrainMap
+from cube_lib.terrain_map as terrainMap
 
 from math import sin, cos, sqrt, pi
 
