@@ -98,8 +98,8 @@ class AgentPhysics:
         bx_neg_current = floor(x-box_r)
         bx_neg_projected = floor(x+vx-box_r)
 
-        for bz in range(floor(z - b_height), floor(z +t_height)+1):
-            for by in range(floor(y-box_r), floor(y+box_r)+1):
+        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
+            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
             #x+
                 if self.collisionDetection(bx_pos_current,by,bz):
                     xc_pos_current +=1
@@ -125,8 +125,8 @@ class AgentPhysics:
         by_neg_current = floor(y-box_r)
         by_neg_projected = floor(y+vy-box_r)
 
-        for bz in range(floor(z - b_height), floor(z +t_height)+1):
-            for bx in range(floor(x-box_r), floor(x+box_r)+1):
+        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
+            for bx in range(int(floor(x-box_r)), int(floor(x+box_r)+1)):
             #x+
                 if self.collisionDetection(bx,by_pos_current,bz):
                     yc_pos_current +=1
@@ -142,17 +142,17 @@ class AgentPhysics:
 
         xyc_projected = 0
 
-        for bz in range(floor(z - b_height), floor(z +t_height)+1):
-            for by in range(floor(y+vy-box_r), floor(y+vy+box_r)+1):
-                for bx in range(floor(x+vx-box_r+vx), floor(x+vx+box_r)+1):
+        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
+            for by in range(int(floor(y+vy-box_r)), int(floor(y+vy+box_r)+1)):
+                for bx in range(int(floor(x+vx-box_r+vx)), int(floor(x+vx+box_r)+1)):
                     if self.collisionDetection(bx,by,bz):
                         xyc_projected += 1
 
         xyc_current = 0
 
-        for bz in range(floor(z - b_height), floor(z +t_height)+1):
-            for by in range(floor(y-box_r), floor(y+box_r)+1):
-                for bx in range(floor(x-box_r+vx), floor(x+box_r)+1):
+        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
+            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
+                for bx in range(int(floor(x-box_r+vx)), int(floor(x+box_r)+1)):
                     if self.collisionDetection(bx,by,bz):
                         xyc_current += 1
 
@@ -216,8 +216,8 @@ class AgentPhysics:
         bz_ground = floor(z - b_height - z_margin)
         bz_neg_projected = floor(z+vz-b_height)
 
-        for bx in range(floor(x-box_r), floor(x+box_r)+1):
-            for by in range(floor(y-box_r), floor(y+box_r)+1):
+        for bx in range(int(floor(x-box_r)), int(floor(x+box_r)+1)):
+            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
                 if self.collisionDetection(bx,by,bz_current):
                     zc_current +=1
                 if self.collisionDetection(bx,by,bz_ground):
