@@ -50,7 +50,8 @@ else:
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
     #vox_lib.test()
 
-import cube_lib.terrain_map
+    import cube_lib.terrain_map
+
 #import cython
 #import pyximport; pyximport.install()
 
@@ -111,6 +112,7 @@ class App(object):
             self.SDL_global.init()
             SDL.input.init()
             SDL.hud.init()
+            cube_lib.terrain_map.init()
             ## VBO TEST
             #cube_lib.VBO.init()
             #cube_lib.VBO.test_chunk()

@@ -35,6 +35,7 @@ int _init_draw_terrain() {
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
+    printf("!!! texture= %i\n\n", texture);
     }
 }
 
@@ -68,13 +69,16 @@ int delete_vbo(struct VBO* vbo) {
 }
 
 int start_vbo_draw() {
+
+printf("texture= %i \n", texture);
+
 draw_mode_enabled = 1;
 
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 //glEnable(GL_CULL_FACE);
 
-glBindTexture( GL_TEXTURE_2D, texture ); //needed?
+glBindTexture( GL_TEXTURE_2D, texture );
 
 glEnableClientState(GL_VERTEX_ARRAY);
 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -212,7 +216,7 @@ int update_column_VBO(struct vm_column* column) {
             for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
                 for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
                     tile_id = _get(_x,_y,_z);
-                    printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
+                    //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
                     if(_isActive(tile_id) == 0) {continue;} else {
                         printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
                     }
@@ -250,11 +254,11 @@ int _draw_terrain() {
     int i,j;
     start_vbo_draw();
     m = _get_map();
-    printf("Start Map Draw\n");
+    //printf("Start Map Draw\n");
     for(i=0; i<vm_map_dim; i++) {
         for(j=0; j<vm_map_dim;j++) {
             if( m->column[j*vm_map_dim+i].vbo.v_num > 0) {
-                printf("Drawing chunk: %i, %i \n", i, j);
+                //printf("Drawing chunk: %i, %i \n", i, j);
                 draw_quad_vbo(&m->column[j*vm_map_dim+i].vbo);
             }
         }

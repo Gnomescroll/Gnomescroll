@@ -110,7 +110,7 @@ def set_packed_chunk(tmp):
     _set(8*x_off, 8*y_off, 8*z_off, 0)
     c = _get_chunk(x_off, y_off, z_off)
     for n in range(0,512):
-        print "%i = %i" % (n, array[n])
+        #print "%i = %i" % (n, array[n])
         c.voxel[n] = array[n]
     c.local_version = server_version
     c.server_version = server_version
@@ -348,12 +348,15 @@ cdef extern from "./t_map.h":
 #cdef extern from "./t_map_draw.h":
 #    int _init_t_map_draw()
 
+init = 0
 def init():
+    if init != 0:
+        assert False
+    else:
+        init =1
     print "Init Terrain Map"
     init_cube_properties()
     init_quad_cache()
     _init_t_map();
     #_init_t_map_draw()
     _init_draw_terrain()
-
-init()

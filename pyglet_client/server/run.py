@@ -132,7 +132,7 @@ def load_map():
                         m.set(xa,ya,za+4, 6)
     print "Finished map generation"
     if map_type == 5:
-        m.set(0,0,0,1)
+        m.set(0,0,0,2)
         #print "test= %i" % (m.get(1,1,5))
 class Main:
 
