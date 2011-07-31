@@ -42,11 +42,18 @@ int _test3(int x, int y, int z);
 
 int _init_draw_terrain();
 
+int _update_chunks();
+
 int create_vbo(struct VBO* q_VBO, struct Vertex* vlist, int v_num);
 int delete_vbo(struct VBO* q_VBO);
 
 int start_vbo_draw();
 int draw_quad_vbo(struct VBO* q_VBO);
 int end_vbo_draw();
+
+//internal
+//int update_column_VBO(struct vm_column* column);
+void inline add_quad(float x,float y,float z,int side, int tile_id);
+int _draw_terrain();
 
 #endif

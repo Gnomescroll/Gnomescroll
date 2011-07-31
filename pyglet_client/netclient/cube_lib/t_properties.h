@@ -19,7 +19,6 @@ struct cubeProperties {
     int transparent;
 };
 
-
 struct cubeProperties* _get_cube_list();
 struct cubeProperties* _get_cube(int id);
 

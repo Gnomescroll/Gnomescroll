@@ -102,7 +102,7 @@ glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
 if(draw_mode_enabled == 0) {
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
-    _start_vbo_draw();
+    start_vbo_draw();
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), 12);
@@ -135,15 +135,37 @@ int _test3(int x, int y, int z) {
     return  _get(x,y,z);
 }
 
-int _draw_terrain() {
-    return 0;
-}
 
 /// start VBO
 
 //buffers for VBO stuff
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
+
+int _update_chunks() {
+    struct vm_map* m;
+    int i,j;
+    m = _get_map();
+    for(i=0; i<vm_map_dim; i++) {
+    for(j=0; j<vm_map_dim;j++) {
+        if(m->column[j*vm_map_dim+i].vbo.v_num > 0) {
+            update_column_VBO(&m->column[j*vm_map_dim+i]);
+        }
+    }}
+}
+
+int _draw_terrain() {
+    struct vm_map* m;
+    int i,j;
+    m = _get_map();
+    for(i=0; i<vm_map_dim; i++) {
+        for(j=0; j<vm_map_dim;j++) {
+            if( m->column[j*vm_map_dim+i].vbo.v_num > 0) {
+                draw_quad_vbo(&m->column[j*vm_map_dim+i].vbo);
+            }
+        }
+    }
+}
 
 void inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
@@ -154,10 +176,6 @@ void inline add_quad(float x,float y,float z,int side, int tile_id) {
         cs[cs_n+i].z += z;
     }
     cs_n += 4;
-}
-
-void update_chunks() {
-    return; //do something
 }
 
 /*
@@ -180,7 +198,7 @@ def draw_chunks():
 /// ADDRESS
 */
 
-void update_column_VBO(struct vm_column* column) {
+int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
 

@@ -3,12 +3,6 @@ Part 1: State
 
 '''
 
-cdef extern from './t_map.h':
-    int _test3(int x, int y, int z)
-
-cpdef test3(int x,int y,int z):
-    return _test3(x,y,z)
-
 import zlib
 import struct
 
@@ -291,6 +285,7 @@ PART 3: Drawing Functions
 '''
 cdef extern from 't_vbo.h':
     int _draw_terrain()
+    int _update_chunks()
     #int _create_vbo(VBO* q_VBO, Vertex* v_list, int v_num)
     #int _delete_vbo(VBO* q_VBO)
     #int _start_vbo_draw()
