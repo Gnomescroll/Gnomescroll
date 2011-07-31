@@ -23,6 +23,9 @@ struct Vertex* quad_cache;
 int _init_draw_terrain() {
     quad_cache = _get_quad_cache();
 
+    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+    //glEnable(GL_POLYGON_SMOOTH);
+
     if(texture == 0) { //load texture if texture is not set
     surface=IMG_Load("texture/textures_02.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
@@ -238,6 +241,25 @@ int _update_chunks() {
     }}
 }
 
+GLuint filter = 0; ;                                // Which Filter To Use
+GLuint fogMode[]= { GL_EXP, GL_EXP2, GL_LINEAR };   // Storage For Three Types Of Fog
+GLuint fogfilter= 0;                    // Which Fog To Use
+GLfloat fogColor[4]= {0.5f, 0.5f, 0.5f, 1.0f};      // Fog Color
+
+int _draw_fog() {
+
+glClearColor(0.5f,0.5f,0.5f,1.0f);          // We'll Clear To The Color Of The Fog ( Modified )
+
+glFogi(GL_FOG_MODE, fogMode[fogfilter]);        // Fog Mode
+glFogfv(GL_FOG_COLOR, fogColor);            // Set Fog Color
+glFogf(GL_FOG_DENSITY, 0.35f);              // How Dense Will The Fog Be
+glHint(GL_FOG_HINT, GL_DONT_CARE);          // Fog Hint Value
+glFogf(GL_FOG_START, 1.0f);             // Fog Start Depth
+glFogf(GL_FOG_END, 5.0f);               // Fog End Depth
+glEnable(GL_FOG);                   // Enables GL_FOG
+
+
+}
 int _draw_terrain() {
     struct vm_map* m;
     int i,j;
@@ -253,6 +275,7 @@ int _draw_terrain() {
         }
     }
     end_vbo_draw();
+    _draw_fog();
 }
 
 int s_array[18] = {
