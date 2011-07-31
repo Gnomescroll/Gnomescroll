@@ -3,16 +3,10 @@ Rendering utilities
 '''
 ### Ray casting utilities
 
-import cube_lib.terrain_map as terrainMap
+#import cube_lib.terrain_map as terrain_map
+from cube_lib.terrain_map import collisionDetection
 
 from math import sin, cos, sqrt, pi
-
-def collision(x,y,z):
-    tile = terrainMap.get(x,y,z)
-    if tile == 0:
-        return 0
-    else:
-        return 1
 
 def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
 
@@ -52,7 +46,7 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
         z__ = int(z+ dz*(n+inc))
 
         if x_ != x__ or y_ != y__ or z_ != z__:
-            if collision(x__, y__, z__):
+            if collisionDetection(x__, y__, z__):
                 #z = int(z)
                 if z_ >= z-z_low and z_ <= z+z_high:
                     return (x_, y_, z_)
