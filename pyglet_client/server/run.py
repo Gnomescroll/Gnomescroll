@@ -121,11 +121,16 @@ def load_map():
             for ya in range(y_min, y_max):
                 for za in range(z_min, z_max):
                     rnd = random.randint(0,64)
-                    if rnd < 4:
-                        m.set(xa,ya,za+1, 4)
-                        m.set(xa,ya,za+2, 4)
-                        m.set(xa,ya,za+3, 4)
+                    if rnd < 8:
+                        height =random.randint(1,5)
+                        for th in range(1,height):
+                            m.set(xa,ya,za+th, 4)
+                    elif rnd <10:
+                        height =random.randint(1,15)
+                        for th in range(1,height):
+                            m.set(xa,ya,za+th, 4)
                         #m.set(xa,ya,za+4, 3)
+
     print "Finished map generation"
     if map_type == 5:
         m.set(0,0,0,2)
