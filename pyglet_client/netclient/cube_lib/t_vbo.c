@@ -243,7 +243,7 @@ int _update_chunks() {
 
 GLuint filter = 0; ;                                // Which Filter To Use
 GLuint fogMode[]= { GL_EXP, GL_EXP2, GL_LINEAR };   // Storage For Three Types Of Fog
-GLuint fogfilter= 0;                    // Which Fog To Use
+GLuint fogfilter= 1;                    // Which Fog To Use
 GLfloat fogColor[4]= {0.5f, 0.5f, 0.5f, 1.0f};      // Fog Color
 
 int _draw_fog() {
