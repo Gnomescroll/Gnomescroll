@@ -107,8 +107,8 @@ def load_map():
         y_min = 0
         z_min = 0
 
-        x_max = 512#64
-        y_max = 512#64
+        x_max = 128#64
+        y_max = 128#64
         z_max = 1
 
         #plane for testing z collision
