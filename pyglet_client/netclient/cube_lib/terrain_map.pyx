@@ -100,7 +100,6 @@ def get_packed_chunk(xoff, yoff, zoff):
     return zlib.compress(pack(c))
 
 def set_packed_chunk(tmp):
-    assert False
     global fm_inv1, fm_inv2
     cdef int x_off, y_off, z_off, version, n, index
     cdef vm_chunk *c
@@ -228,6 +227,9 @@ l = [
          1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #east
     ]
 
+for i in range(0,72):
+    v_index[i]=l[i]
+
 cdef enum:
     max_cubes = 1024
 
@@ -241,7 +243,7 @@ def init_quad_cache():
         for side in range(0,6):
             for vert_num in range(0,4):
                 index = id*6*4+4*side+vert_num
-                index2 = 12*side+4*vert_num
+                index2 = 12*side+3*vert_num
                 v = &quad_cache[index]
                 v.x = v_index[index2 + 0]
                 v.y = v_index[index2 + 1]

@@ -177,7 +177,6 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _map_chunk(self, datagram):
         print "Map Chunk Received"
-        assert False
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         self.mapController.incoming_map_chunk(x,y,z)
         #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk

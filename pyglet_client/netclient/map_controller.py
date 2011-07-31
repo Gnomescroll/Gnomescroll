@@ -89,7 +89,6 @@ class MapController:
             print "MapController.incoming_map_chunk map chunk key does not exist, (%i, %i, %i)" % (x,y,z)
 
     def send_request(self, x,y,z):
-        assert False
         print "map chunk request: " + str((x,y,z))
         self.mapMessage.request_chunk(x,y,z)
 

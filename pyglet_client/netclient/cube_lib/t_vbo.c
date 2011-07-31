@@ -153,12 +153,19 @@ unsigned int cs_n; //number of vertices in chunk scratch
 
 void inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
+    struct Vertex* v;
     memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    printf("vertex\n");
     for(i=0; i<=4;i++) {
         cs[cs_n+i].x += x;
         cs[cs_n+i].y += y;
         cs[cs_n+i].z += z;
+    v = &cs[cs_n+i];
+    printf("x,y,z= %f, %f, %f\n", v->x,v->y,v->z);
+    printf("tx,ty= %f, %f\n", v->tx, v->ty);
+    printf("r,g,b,a= %i, %i, %i, %i\n", v->r,v->g,v->b,v->a);
     }
+    printf("\n");
     cs_n += 4;
 }
 

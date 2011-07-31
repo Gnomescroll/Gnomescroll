@@ -16,8 +16,8 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     struct vm_chunk* chunk;
     chunk = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
     chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
-    chunk->local_version = 0;
-    chunk->server_version = 255;
+    chunk->local_version = 513;
+    chunk->server_version = 0;
     for(i=0; i<512;i++){
     chunk->voxel[i] = 0;
     }
