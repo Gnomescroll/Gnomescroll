@@ -2,8 +2,8 @@
 cimport libc.stdlib
 
 #type imports
-cimport cube_lib.types
-from cube_lib.types cimport Quad, Vertex
+#cimport cube_lib.types
+#from cube_lib.types cimport Quad, Vertex
 
 #cdef extern from "SDL.h":
 
@@ -81,8 +81,8 @@ def draw_point(int r, int g, int b, float x0, float y0, float z0):
     return _draw_point(r,g,b,x0,y0,z0)
 
 #deprecate
-cdef bind_VBO(Quad* quad_list, int v_num):
-    pass
+#cdef bind_VBO(Quad* quad_list, int v_num):
+ #   pass
     #_bind_VBO(quad_list, v_num)
 
 
