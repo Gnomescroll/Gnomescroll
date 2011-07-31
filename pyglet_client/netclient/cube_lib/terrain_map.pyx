@@ -100,6 +100,7 @@ def get_packed_chunk(xoff, yoff, zoff):
     return zlib.compress(pack(c))
 
 def set_packed_chunk(tmp):
+    assert False
     global fm_inv1, fm_inv2
     cdef int x_off, y_off, z_off, version, n, index
     cdef vm_chunk *c
@@ -110,6 +111,7 @@ def set_packed_chunk(tmp):
     _set(8*x_off, 8*y_off, 8*z_off, 0)
     c = _get_chunk(x_off, y_off, z_off)
     for n in range(0,512):
+        print "%i = %i" % (n, array[n])
         c.voxel[n] = array[n]
     c.local_version = server_version
     c.server_version = server_version

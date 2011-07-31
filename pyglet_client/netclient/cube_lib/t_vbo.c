@@ -197,26 +197,33 @@ int update_column_VBO(struct vm_column* column) {
     }
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
+        printf("chunk= %i\n", i);
         chunk = column->chunk[i];
         chunk->vbo_needs_update = 0;
         printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
         for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
-        for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
-        for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++)
-            tile_id = _get(_x,_y,_z);
-            if(_isActive(tile_id) == 0) {continue;}
-            for(side_num=0; side_num<6; side_num++) {
-                //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
-                printf("add %i, %i, %i \n");
-                add_quad(_x,_y,_z,side_num,tile_id);
+            for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
+                for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
+                    tile_id = _get(_x,_y,_z);
+                    printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
+                    if(_isActive(tile_id) == 0) {continue;} else {
+                        printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
+                    }
+                    for(side_num=0; side_num<6; side_num++) {
+                        //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
+                        add_quad(_x,_y,_z,side_num,tile_id);
+                    }
+        }
             }
-        }}}
+                }
+    }
 
     printf("v_num for chunk scratch = %i \n", cs_n);
     //printf("active cubes= %i \n", active_cube_num);
     create_vbo(&column->vbo, cs, cs_n);
     printf("VBO_id= %i \n", column->vbo.VBO_id);
  }
+
 
 int _update_chunks() {
     //printf("_update_chunks \n");

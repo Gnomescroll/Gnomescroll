@@ -11,6 +11,19 @@ int _init_t_map() {
 
 struct vm_map* _get_map() { return &map; }
 
+struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
+    int i;
+    struct vm_chunk* chunk;
+    chunk = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
+    chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
+    chunk->local_version = 0;
+    chunk->server_version = 0;
+    for(i=0; i<512;i++){
+    chunk->voxel[i] = 0;
+    }
+    return chunk;
+}
+
 // terrain map tile set/get
 int _set(int x, int y, int z, int value) {
     int xoff, yoff, zoff, xrel, yrel, zrel;
@@ -28,9 +41,9 @@ int _set(int x, int y, int z, int value) {
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
         printf("creating new chunk \n");
-        column->chunk[zoff] = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
-        chunk = column->chunk[zoff];
-        chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
+        printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
+        chunk = new_chunk(xoff, yoff, zoff);
+        column->chunk[zoff] = chunk;
     }
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
     column->local_version++;
@@ -73,7 +86,7 @@ int _set_server_version(int x,int y,int z, int server_version) {
     struct vm_chunk* chunk;
     xoff = x; yoff = y; zoff = z;
     if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
-        printf("t_map _set_server_version: invalid chunk: (%i, %i, %i, %i)\n", x,y,z);
+        printf("t_map _set_server_version: invalid chunk: (%i, %i, %i)\n", x,y,z);
         return 0;
     }
     column = &map.column[vm_map_dim*yoff + xoff];

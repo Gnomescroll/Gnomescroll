@@ -68,10 +68,7 @@ class MapController:
             if score < min_score:
                 if v0 == v1: #current
                     continue
-                elif v0 > v1: #if local version is newer than server version?
-                    continue
-                    #print "v0, v1= %i, %i" % (v0, v1)
-                elif v0 < v1: #needs map chunk update
+                else: #needs map chunk update
                     if self.requests.has_key((x,y,z)):
                         continue
                     else:
@@ -92,6 +89,7 @@ class MapController:
             print "MapController.incoming_map_chunk map chunk key does not exist, (%i, %i, %i)" % (x,y,z)
 
     def send_request(self, x,y,z):
+        assert False
         print "map chunk request: " + str((x,y,z))
         self.mapMessage.request_chunk(x,y,z)
 
