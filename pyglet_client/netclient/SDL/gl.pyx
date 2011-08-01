@@ -138,6 +138,7 @@ cdef class Global:
     def init(self):
         print "Creating SDL OpenGL Window"
         _init_video()
+        init_particles()
         #_init_input() ##fix
 
         #_init_image_loader()
@@ -182,3 +183,17 @@ cdef class Global:
 ### init
 
 SDL_global = Global()
+
+#particles
+
+cdef extern from "particle_functions.h":
+    int _init_particle_functions()
+    int _draw_particle(int id, float size, float x, float y, float z)
+    int _draw_particle2(int id, float size, float x, float y, float z)
+
+def init_particles():
+    _init_particle_functions()
+
+
+def draw_particle(id,size, x,y,z):
+    _draw_particle2(id, size, x, y, z)

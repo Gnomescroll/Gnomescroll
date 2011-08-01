@@ -31,6 +31,7 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/camera.c',
                                 'SDL/draw_functions.c',
                                 'SDL/texture_loader.c',
+                                'SDL/particle_functions.c',
                                 'SDL/gl.pyx'],
                     )
 
