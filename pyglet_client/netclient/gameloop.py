@@ -265,6 +265,7 @@ class App(object):
             #v.collision_test(0.1,0.0,2.0)
             #cube_lib.VBO.draw_test_chunk()
             #cube_lib.VBO.update_chunks()
+            SDL.gl.draw_particle(0, 1, 5,5,5)
             cube_lib.terrain_map.draw_terrain()
             self.world.draw(first_person)
             cube_lib.terrain_map.update_chunks()

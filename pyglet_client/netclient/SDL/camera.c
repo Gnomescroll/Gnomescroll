@@ -30,9 +30,19 @@ void _camera_projection( Camera c) {
 }
 */
 
+struct Camera* camera;
+
+float * model_view_matrix;
+
+void set_model_view_matrix(float *a){
+    model_view_matrix = a;
+}
+
 int _world_projection(struct Camera* c) {
     float aspect = c->x_size / c->y_size;
     float camera_focus_x,  camera_focus_y,  camera_focus_z;
+    float length;
+    //camera = c;
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -43,13 +53,28 @@ int _world_projection(struct Camera* c) {
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
-    camera_focus_x = c->x + cos( c->x_angle * PI) * cos( c->y_angle * PI);
-    camera_focus_y = c->y + sin( c->x_angle * PI) * cos( c->y_angle * PI);
-    camera_focus_z = c->z + sin( c->y_angle);
+    c->xl = c->x + cos( c->x_angle * PI) * cos( c->y_angle * PI);
+    c->yl = c->y + sin( c->x_angle * PI) * cos( c->y_angle * PI);
+    c->zl = c->z + sin( c->y_angle);
+
+    length = sqrt(c->xl*c->xl + c->yl*c->yl + c->zl*c->zl);
+    //c->xl /= length;
+    //c->yl /= length;
+    //c->zl /= length;
+
+    c->xu = 0;
+    c->yu = 0;
+    c->zu = 1;
 
     gluLookAt(c->x,c->y,c->z,
-               camera_focus_x, camera_focus_y,  camera_focus_z,
-               0, 0, 1);
+               c->xl, c->yl, c->zl,
+               c->xu, c->yu, c->zu);
+
+    if(model_view_matrix != NULL){
+        glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);
+    } else {
+        printf("!? null pointer \n");
+    }
 
     //printf( "(%f, %f, %f), (%f, %f, %f) \n",c.x,c.y,c.z,camera_focus_x, camera_focus_y,  camera_focus_z );
 
@@ -101,4 +126,8 @@ glEnable(GL_TEXTURE_2D);
         glEnable(gl.GL_TEXTURE_2D)
 */
 return 0;
+}
+
+struct Camera* _get_camera() {
+    return camera;
 }
