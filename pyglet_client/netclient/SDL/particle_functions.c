@@ -150,22 +150,35 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
-    int p = 3;
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc (GL_ONE, GL_ONE);
+
+    float tx_min, tx_max, ty_min, ty_max;
+    tx_min = (float)(id%16)* (1.0/16.0);
+    tx_max = tx_min + (1.0/16.0);
+
+    ty_min = (float)(id/16)* (1.0/16.0);
+    ty_max = ty_min + (1.0/16.0);
+
+    //printf("tmin, tmax= %f, %f \n", tx_min, tx_max);
+
 glBegin( GL_QUADS );
 
-    glTexCoord2f( 0.0, 0.0 );
+    glTexCoord2f(tx_min,ty_min );
     glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
 
-    glTexCoord2f( 0.0, 1.0/16.0 );
+    glTexCoord2f(tx_min,ty_max );
     glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
 
-    glTexCoord2f( 1.0/16.0, 1.0/16.0 );
+    glTexCoord2f(tx_max,ty_max );
     glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
 
-    glTexCoord2f( 1.0/16.0, 0.0 );
+    glTexCoord2f(tx_max,ty_min);
     glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
 
 glEnd();
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
