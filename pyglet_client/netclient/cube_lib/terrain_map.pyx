@@ -351,6 +351,18 @@ cpdef inline int collisionDetection(int x, int y, int z):
 PART 5: Network Interface
 '''
 
+cdef extern from 't_vbo.h':
+    int* _chunk_request()
+
+def chunk_request():
+    cdef int* req
+    req = _chunk_request()
+    if req == NULL:
+        return None
+    else:
+        return [req[0],req[1], req[2]]
+
+
 '''
 cdef extern from "net_lib.h":
     int _get_net_out(char* buffer, int* length)

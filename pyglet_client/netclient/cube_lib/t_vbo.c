@@ -342,6 +342,48 @@ int _set_fulstrum_culling(int value) {
     fulstrum_culling = value;
 }
 
+
+int crb[3]; //the request buffer
+int* _chunk_request() {
+    struct vm_map* m;
+    struct vm_chunk* ch;
+    struct vm_column* col;
+    int x; int y;
+    struct vm_chunk* ch_lowest;
+    int score, score_lowest;
+    score = -1;
+    int i,j,k;
+    m = _get_map();
+    for(i=0; i<vm_map_dim; i++) {
+    for(j=0; j<vm_map_dim;j++) {
+        col = &m->column[j*vm_map_dim+i];
+        for(k = 0; k < vm_column_max; k++) {
+            if(col->chunk[k] == NULL) { continue; }
+            ch = &col->chunk[k];
+            if(ch->server_version == ch->local_version) { continue; }
+            x = 8*col->x_off + 4;
+            y = 8*col->y_off + 4;
+            score = (c.x-x)*(c.x-x) + (c.y-y)*(c.y-y)
+
+            if(score == -1 || score < score_lowest) {
+                score_lowest = score;
+                ch_lowest =ch;
+            }
+        }
+    }}
+
+    if(score == -1) {
+         return NULL;
+    } else {
+
+        crb[0] = ch_lowest.x_off;
+        crb[1] = ch_lowest.y_off;
+        crb[2] = ch_lowest.z_off;
+        return &crb;
+    }
+}
+
+
 int s_array[18] = {
             0,0,1,
             0,0,-1,

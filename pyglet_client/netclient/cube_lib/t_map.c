@@ -111,19 +111,3 @@ int _set_server_version(int x,int y,int z, int server_version) {
     chunk->server_version = server_version;
     return 0;
 }
-
-int _chunk_request(int* r) {
-    struct vm_map* m;
-    struct vm_column* col;
-    int i,j,k;
-    m = _get_map();
-    for(i=0; i<vm_map_dim; i++) {
-    for(j=0; j<vm_map_dim;j++) {
-        col = &m->column[j*vm_map_dim+i];
-        for(k = 0; k < vm_column_max; k++) {
-            if(col->chunk[k] == NULL) { continue; }
-            if(col)
-        }
-    }}
-
-}

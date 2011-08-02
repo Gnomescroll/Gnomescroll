@@ -56,6 +56,8 @@ int _set_camera(float x, float y, float z, float vx, float vy, float vz, float u
 int _set_fulstrum_culling(int value);
 int _set_view_distance(int vd);
 
+int* _chunk_request();
+
 //internal
 //int update_column_VBO(struct vm_column* column);
 void inline add_quad(float x,float y,float z,int side, int tile_id);

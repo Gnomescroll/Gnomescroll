@@ -25,7 +25,8 @@ class MapController:
         self.mapMessage = NetOut.mapMessage
         assert self.mapMessage != None
     def __init__(self):
-        pass
+        self.requests = 0
+        self.requests_max = 15
 
     def process_chunk_list(self, list):
         print "Processing Chunk List: %i chunks" %(len(list))
@@ -34,16 +35,26 @@ class MapController:
             #print "Chunks: %i, %i, %i" % (x,y,z)
 
     def tick(self):
-        pass
+        while self.requests < self.requests_max:
+            tmp = terrain_map.chunk_request()
+            if tmp == None:
+                break
+            else:
+                x,y,z = tmp
+                self.send_request(x,y,z)
 
     def incoming_map_chunk(self, x,y,z):
+        self.requests -= 1
+
+'''
         if self.requests.has_key((x,y,z)):
             del self.requests[(x,y,z)]
         else:
             print "MapController.incoming_map_chunk map chunk key does not exist, (%i, %i, %i)" % (x,y,z)
             assert False
-
+'''
     def send_request(self, x,y,z):
         print "map chunk request: " + str((x,y,z))
+        self.requests += 1
         self.mapMessage.request_chunk(x,y,z)
 
