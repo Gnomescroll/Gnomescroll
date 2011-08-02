@@ -269,11 +269,11 @@ class AgentPhysics:
 Agent Voxel
 '''
 
-class AgentVoxRender(vox.VoxModel):
+class AgentVoxRender(vox.VoxRender):
 
     def __init__(self, model=None):
         if model is not None:
-            vox.VoxModel.__init__(self, model)
+            vox.VoxRender.__init__(self, model)
         else:
             self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
             self.vox.set_object(self)
@@ -596,6 +596,11 @@ class AgentModel:
             self.state[0:3] = xyz
             #self.x, self.y, self.z = xyz
 
+    def nearby_objects(self):
+        for obj in GameStateGlobal.objectList:
+            if vector_lib.distance() < obj.radius:
+                obj.agent_nearby(self)
+
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
         if normalize:
@@ -695,7 +700,8 @@ class AgentModel:
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
-        self.init_vox()
+        #self.init_vox()
+        AgentVoxRender.__init__(self)
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
 
 '''
@@ -917,7 +923,7 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
-        self.init_vox()
+        AgentVoxRender.__init__(self)
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
@@ -1040,7 +1046,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         obj.taken(self)
 
     def drop(self, obj):
-
         obj.drop()
 
 import cube_lib.terrain_map as terrainMap
