@@ -115,7 +115,7 @@ def draw_projectiles():
 #        print str(p)
     for p in GameStateGlobal.projectileList.values():
         x,y,z,vx,vy,vz = p.state
-        SDL.gl.draw_particle(0, 0.5, x,y,z)
+        SDL.gl.draw_particle(4, 0.5, x,y,z)
     return
     for p in GameStateGlobal.projectileList.values():
         x,y,z,vx,vy,vz = p.state
