@@ -51,6 +51,7 @@ else:
     #vox_lib.test()
 
     import cube_lib.terrain_map
+    SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
 
 #import cython
 #import pyximport; pyximport.install()

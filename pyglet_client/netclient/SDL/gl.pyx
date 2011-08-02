@@ -20,6 +20,9 @@ cdef extern from "camera.h":
         float z
         float x_angle
         float y_angle
+        float xl, yl, zl
+        float xu, yu, zu
+        float ratio
 
     cdef int _world_projection(Camera* camera)
     cdef int _hud_projection(Camera* camera)
@@ -122,6 +125,8 @@ class Textures:
 
 from libc.stdlib cimport malloc, free
 
+camera_callback = None
+
 cdef class Global:
     cdef Camera* camera
     #textures = Textures()
@@ -175,7 +180,12 @@ cdef class Global:
         camera.y_angle = y_angle
 
     def world_projection(self):
+        cdef Camera* c
         _world_projection(self.camera)
+        global camera_callback
+        if camera_callback != None:
+            c = self.camera
+            camera_callback(c.x, c.y, c.z, c.xl, c.yl, c.zl, c.xu,c.yu, c.zu, c.ratio, c.fov)
 
     def hud_projection(self):
         _hud_projection(self.camera)

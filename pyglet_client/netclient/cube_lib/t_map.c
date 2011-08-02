@@ -12,6 +12,8 @@ int _init_t_map() {
         map.column[i].vbo.v_list = NULL;
         map.column[i].vbo.v_num = 0;
         map.column[i].vbo.VBO_id = 0;
+        map.column[i].x_off = i % vm_map_dim;
+        map.column[i].y_off = i/vm_map_dim;
     }
     return 0;
 }

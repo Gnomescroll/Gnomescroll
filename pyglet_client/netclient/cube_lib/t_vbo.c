@@ -260,22 +260,74 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 
 
 }
+
+struct _Camera {
+float x,y,z;
+float vx,vy,vz;
+float ux,uy,uz; //up direction
+float ratio;
+float viewangle;
+};
+
+int fulstrum_culling;
+int view_distance = 40;
+struct _Camera c;
+
 int _draw_terrain() {
     struct vm_map* m;
+    struct vm_column* col;
     int i,j;
+    int c_drawn, c_pruned;
+    c_drawn=0; c_pruned=0;
     start_vbo_draw();
     m = _get_map();
     //printf("Start Map Draw\n");
     for(i=0; i<vm_map_dim; i++) {
-        for(j=0; j<vm_map_dim;j++) {
-            if( m->column[j*vm_map_dim+i].vbo.v_num > 0) {
-                //printf("Drawing chunk: %i, %i \n", i, j);
-                draw_quad_vbo(&m->column[j*vm_map_dim+i].vbo);
-            }
+    for(j=0; j<vm_map_dim; j++) {
+        col = &m->column[j*vm_map_dim+i];
+        if(chunk_render_check(col->x_off, col->y_off)) {
+            c_drawn++;
+            draw_quad_vbo(&col->vbo);
+        } else {
+            c_pruned++;
         }
-    }
+    }}
     end_vbo_draw();
+    printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
     //_draw_fog();
+}
+
+int inline chunk_render_check(int x_off, int y_off) {
+float x,y;
+x = 8*x_off + 4;
+y = 8*y_off + 4;
+
+//printf("c.x= %f, c.y= %f, x_off= %i, y_off= %i \n", c.x,c.y,x_off, y_off);
+if((c.x-x)*(c.x-x) + (c.y-y)*(c.y-y) < view_distance*view_distance)
+    {
+        return 1;
+    }
+else
+    {
+        return 0;
+    }
+}
+
+int _set_camera(float x, float y, float z, float vx, float vy, float vz, float ux, float uy, float uz, float ratio, float viewangle) {
+c.x = x; c.y = y; c.z = z;
+c.ux=ux; c.uy=uy; c.uz=uz;
+c.vx=vx; c.vy=vy; c.vz=vz;
+c.ratio = ratio;
+c.viewangle = viewangle;
+return 0;
+}
+
+int _set_view_distance(int vd) {
+    view_distance = vd;
+}
+
+int _set_fulstrum_culling(int value) {
+    fulstrum_culling = value;
 }
 
 int s_array[18] = {

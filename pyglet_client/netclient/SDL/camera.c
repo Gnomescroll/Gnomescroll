@@ -40,6 +40,7 @@ void set_model_view_matrix(float *a){
 
 int _world_projection(struct Camera* c) {
     float aspect = c->x_size / c->y_size;
+    c->ratio = c->x_size / c->y_size;
     float camera_focus_x,  camera_focus_y,  camera_focus_z;
     float length;
     //camera = c;

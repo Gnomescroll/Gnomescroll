@@ -296,6 +296,9 @@ cdef extern from 't_vbo.h':
     int _draw_terrain()
     int _update_chunks()
     int _draw_terrain()
+    int _set_camera(float x, float y, float z, float vx, float vy, float vz, float ux, float uy, float uz, float ratio, float viewangle)
+    int _set_fulstrum_culling(int value)
+    int _set_view_distance(int vd)
     #int _create_vbo(VBO* q_VBO, Vertex* v_list, int v_num)
     #int _delete_vbo(VBO* q_VBO)
     #int _start_vbo_draw()
@@ -307,6 +310,12 @@ cpdef update_chunks():
 
 cpdef draw_terrain():
     _draw_terrain()
+
+def camera_callback(float x, float y, float z, float vx, float vy, float ux, float uy, float uz, float vz, float ratio, float viewangle):
+    _set_camera(x, y, z, vx, vy, vz, ux,uy,uz, ratio, viewangle)
+
+def set_view_distance(int vd):
+    _set_view_distance(vd)
 
 ### CLEANUP
 '''
