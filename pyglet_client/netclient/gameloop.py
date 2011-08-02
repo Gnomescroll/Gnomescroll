@@ -19,38 +19,16 @@ import stats
 
 import intervals
 
-#need to get this working on all platforms
-if False:
-    pass
-    #import ChromeEmbedded
-    ChromeEmbedded.init()
-
-#from loader2 import test
-#test()
-
-#from ctypes import cdll
-#SDL.gl = cdll.LoadLibrary('./SDL.gl.dll')
-
-    ### DEPRECATE
-if settings.pyglet:
-    from pyglet import clock, font, image, window
-    from pyglet.gl import *
-
-    from pyglet.window import key
-else:
-    #import SDL
-    #import SDL.test
-
+if True:
     import SDL.gl
     import SDL.input
     import SDL.hud
     import vox_lib
-    #import cube_lib.VBO
 
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
-    #vox_lib.test()
 
     import cube_lib.terrain_map
+    cube_lib.terrain_map.set_view_distance(40) #set view distance for terrain map
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
 
 #import cython
