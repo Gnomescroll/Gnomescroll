@@ -255,7 +255,7 @@ int _update_chunks() {
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
         col = &m->column[j*vm_map_dim+i];
-        if(col->vbo_needs_update == 1) {
+        if(col->vbo_needs_update == 1  && chunk_render_check(col->x_off, col->y_off)) {
             update_column_VBO(col);
         }
     }}

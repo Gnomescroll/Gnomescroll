@@ -28,7 +28,7 @@ if True:
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
 
     import cube_lib.terrain_map
-    cube_lib.terrain_map.set_view_distance(4096) #set view distance for terrain map
+    cube_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
 ##profiler
 from profiler import P
@@ -248,8 +248,9 @@ class App(object):
             #cube_lib.VBO.update_chunks()
             P.event("Draw Terrain")
             cube_lib.terrain_map.draw_terrain()
-            P.event("Draw World")
+            P.event("Draw World_0")
             self.world.draw(first_person)
+            P.event("Draw World_1")
             SDL.gl.draw_particle(0, 1, 5,5,5)
             SDL.gl.draw_particle(1, 2, 5,5,7)
             SDL.gl.draw_particle(2, 2, 5,5,9)

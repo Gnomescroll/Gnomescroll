@@ -26,7 +26,7 @@ class MapController:
         assert self.mapMessage != None
     def __init__(self):
         self.requests = 0
-        self.requests_max = 15
+        self.requests_max = 3
 
     def process_chunk_list(self, list):
         print "Processing Chunk List: %i chunks" %(len(list))
@@ -38,13 +38,12 @@ class MapController:
         #print "requests= %i " % (self.requests)
         while self.requests < self.requests_max:
             tmp = terrain_map.chunk_request()
-            print str(tmp)
             if tmp == None:
                 break
             else:
                 x,y,z = tmp
                 self.send_request(x,y,z)
-                break #optional
+                #break #optional
 
     def incoming_map_chunk(self, x,y,z):
         print "map chunk received: " + str((x,y,z))
