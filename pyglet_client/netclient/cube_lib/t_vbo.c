@@ -283,7 +283,7 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 
 int _draw_terrain() {
     int s,f;
-    s= SDL_GetTicks();
+    //s= SDL_GetTicks();
     struct vm_map* m;
     struct vm_column* col;
     int i,j;
@@ -303,10 +303,10 @@ int _draw_terrain() {
         }
     }}
     end_vbo_draw();
-    printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
+    //printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
     //_draw_fog();
-    f = SDL_GetTicks();
-    printf("Terrain rendering time= %i \n", f-s);
+    //f = SDL_GetTicks();
+    //printf("Terrain rendering time= %i \n", f-s);
 }
 
 int inline chunk_render_check(int x_off, int y_off) {
@@ -351,34 +351,40 @@ int* _chunk_request() {
     int x; int y;
     struct vm_chunk* ch_lowest;
     int score, score_lowest;
-    score = -1;
+    score_lowest = -1;
     int i,j,k;
     m = _get_map();
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
         col = &m->column[j*vm_map_dim+i];
         for(k = 0; k < vm_column_max; k++) {
-            if(col->chunk[k] == NULL) { continue; }
-            ch = &col->chunk[k];
-            if(ch->server_version == ch->local_version) { continue; }
+            ch = col->chunk[k];
+            if(ch == NULL) { continue; }
+            if(ch->server_version == ch->local_version || ch->requested == 1) { continue; }
             x = 8*col->x_off + 4;
             y = 8*col->y_off + 4;
-            score = (c.x-x)*(c.x-x) + (c.y-y)*(c.y-y)
-
-            if(score == -1 || score < score_lowest) {
+            score = (c.x-x)*(c.x-x) + (c.y-y)*(c.y-y);
+            //printf("score= %i, x,y,z= %i, %i, %i \n", score, ch->x_off, ch->y_off, ch->z_off);
+            if(score_lowest == -1){
                 score_lowest = score;
-                ch_lowest =ch;
+                ch_lowest = ch;
+            }
+            if(score < score_lowest) {
+                score_lowest = score;
+                ch_lowest = ch;
             }
         }
     }}
 
-    if(score == -1) {
-         return NULL;
+    if(score_lowest == -1) {
+        return NULL;
     } else {
-
-        crb[0] = ch_lowest.x_off;
-        crb[1] = ch_lowest.y_off;
-        crb[2] = ch_lowest.z_off;
+        ch = ch_lowest;
+        //printf("score= %i, x,y,z= %i, %i, %i \n", score_lowest, ch->x_off, ch->y_off, ch->z_off);
+        ch_lowest->requested = 1;
+        crb[0] = ch_lowest->x_off;
+        crb[1] = ch_lowest->y_off;
+        crb[2] = ch_lowest->z_off;
         return &crb;
     }
 }

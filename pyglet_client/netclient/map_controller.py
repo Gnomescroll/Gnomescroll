@@ -35,24 +35,29 @@ class MapController:
             #print "Chunks: %i, %i, %i" % (x,y,z)
 
     def tick(self):
+        #print "requests= %i " % (self.requests)
         while self.requests < self.requests_max:
             tmp = terrain_map.chunk_request()
+            print str(tmp)
             if tmp == None:
                 break
             else:
                 x,y,z = tmp
                 self.send_request(x,y,z)
+                break #optional
 
     def incoming_map_chunk(self, x,y,z):
+        print "map chunk received: " + str((x,y,z))
         self.requests -= 1
 
-'''
+    '''
         if self.requests.has_key((x,y,z)):
             del self.requests[(x,y,z)]
         else:
             print "MapController.incoming_map_chunk map chunk key does not exist, (%i, %i, %i)" % (x,y,z)
             assert False
-'''
+    '''
+
     def send_request(self, x,y,z):
         print "map chunk request: " + str((x,y,z))
         self.requests += 1

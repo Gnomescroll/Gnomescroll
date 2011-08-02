@@ -88,6 +88,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
     }
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
+    chunk->requested = 0;
     return chunk;
 }
 ///rendering of chunk
