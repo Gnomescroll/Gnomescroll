@@ -16,7 +16,7 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     struct vm_chunk* chunk;
     chunk = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
     chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
-    chunk->local_version = 513;
+    chunk->local_version = 1;
     chunk->server_version = 0;
     for(i=0; i<512;i++){
     chunk->voxel[i] = 0;
@@ -40,8 +40,8 @@ int _set(int x, int y, int z, int value) {
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
-        printf("creating new chunk \n");
-        printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
+        //printf("creating new chunk \n");
+        //printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
         chunk = new_chunk(xoff, yoff, zoff);
         column->chunk[zoff] = chunk;
     }
@@ -69,7 +69,7 @@ int _get(int x, int y, int z) {
 }
 
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
-    printf("_get_chunk; xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
+    //printf("_get_chunk; xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
     struct vm_column* column;
     struct vm_chunk* chunk;
     if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
@@ -81,6 +81,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
 }
 ///rendering of chunk
 
+//deprecated for server?
 int _set_server_version(int x,int y,int z, int server_version) {
     int xoff, yoff, zoff;
     struct vm_column* column;
@@ -94,9 +95,7 @@ int _set_server_version(int x,int y,int z, int server_version) {
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
         //printf("creating new chunk \n");
-        column->chunk[zoff] = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
-        chunk = column->chunk[zoff];
-        chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
+        chunk = new_chunk(xoff, yoff, zoff);
     }
     //column->local_version++;
     chunk->server_version = server_version;

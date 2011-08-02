@@ -26,6 +26,7 @@ struct vm_chunk {
     unsigned int local_version;
     unsigned int server_version;
     unsigned int vbo_needs_update;
+    unsigned int requested;
 };
 
 struct vm_column {

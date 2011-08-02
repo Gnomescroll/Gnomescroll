@@ -28,11 +28,10 @@ if True:
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
 
     import cube_lib.terrain_map
-    cube_lib.terrain_map.set_view_distance(40) #set view distance for terrain map
+    cube_lib.terrain_map.set_view_distance(4096) #set view distance for terrain map
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
-
-#import cython
-#import pyximport; pyximport.install()
+##profiler
+from profiler import P
 
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -65,6 +64,7 @@ from animations import animations
 import random #remove
 
 #import hotshot
+import time
 
 class App(object):
 
@@ -137,6 +137,7 @@ class App(object):
         NetClientGlobal.connect() #starts connection
 
     def mainLoop(self):
+        global P
         #pass
         #return
         #self.world.test_chunk()
@@ -197,21 +198,21 @@ class App(object):
         self.intervals.set()
         while not GameStateGlobal.exit:
             theta += -.005 #test
-            if settings.pyglet:
-                self.win.dispatch_events()
-                InputGlobal.keyboard.stateHandler(keyboard)
-            else:
-                SDL.input.process_events()
-                SDL.input.get_key_state()
+            P.start_frame()
+            P.event("process_events")
+            SDL.input.process_events()
+            P.event("get_key_state")
+            SDL.input.get_key_state()
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
             #network events
+            P.event("process incoming packets")
             NetClientGlobal.connection.attempt_recv()
+            P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick() #testing
+            P.event("world.tick")
             self.world.tick()
-            if settings.pyglet:
-                self.win.clear() #clear window and start drawing
-
+            P.event("setup camera")
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
                 first_person = True
@@ -220,6 +221,7 @@ class App(object):
                 first_person = False
 
             self.camera.worldProjection()
+            P.event("animations.draw")
             self.animations.draw()
 
             #vox_lib.draw()
@@ -236,15 +238,17 @@ class App(object):
                 x_angle = a.x_angle
                 y_angle = a.y_angle
 
-                v.ray_cast_tracer(x,y,z, x_angle, y_angle)
-                v2.ray_cast_tracer(x,y,z, x_angle, y_angle)
+                #v.ray_cast_tracer(x,y,z, x_angle, y_angle)
+                #v2.ray_cast_tracer(x,y,z, x_angle, y_angle)
                 #v.ray_cast2(x,y,z, x_angle, y_angle)
                 #v2.ray_cast2(x,y,z,x_angle,y_angle)
             #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
             #v.collision_test(0.1,0.0,2.0)
             #cube_lib.VBO.draw_test_chunk()
             #cube_lib.VBO.update_chunks()
+            P.event("Draw Terrain")
             cube_lib.terrain_map.draw_terrain()
+            P.event("Draw World")
             self.world.draw(first_person)
             SDL.gl.draw_particle(0, 1, 5,5,5)
             SDL.gl.draw_particle(1, 2, 5,5,7)
@@ -252,6 +256,7 @@ class App(object):
             SDL.gl.draw_particle(3, 2, 5,5,11)
             SDL.gl.draw_particle(4, 2, 5,5,13)
             SDL.gl.draw_particle(5, 2, 5,5,15)
+            P.event("terrain_map.update_chunks")
             cube_lib.terrain_map.update_chunks()
             #cube_lib.VBO.draw_chunks()
             #VBO test
@@ -264,11 +269,13 @@ class App(object):
                     z = random.random()
                     temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
             #camera prospective
+            P.event("draw hud")
             if draw_hud:
                 self.camera.hudProjection()
                 self.hud.draw(fps=fps_text, ping=ping_text)
+            P.event("SDL flip")
             self.SDL_global.flip()
-
+            P.event("Misc")
             #FPS calculation
             if fps:
                 ctick = SDL.gl.get_ticks()
@@ -292,6 +299,7 @@ class App(object):
                     ping_text = stats.last_ping
 
             self.intervals.process()
+            P.finish_frame()
             #import pdb; pdb.set_trace()
         #p.stop()
         #self.win.close()

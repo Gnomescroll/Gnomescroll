@@ -84,14 +84,14 @@ cpdef get_chunk_list():
     cdef int i,j
     m = _get_map()
     ll = []
-    print "get chunk list:"
+    #print "get chunk list:"
     for i in range(0, vm_map_dim**2):
         for j in range(0, vm_column_max):
             if m.column[i].chunk[j] != NULL:
                 c = m.column[i].chunk[j]
-                print "Not empty: %i, %i, %i" % (c.x_off, c.y_off, c.z_off)
+                #print "Not empty: %i, %i, %i" % (c.x_off, c.y_off, c.z_off)
                 ll.append([c.x_off, c.y_off, c.z_off])
-    print "end chunk list"
+    #print "end chunk list"
     return ll
 
 cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
@@ -161,7 +161,7 @@ cdef pack(vm_chunk *c):
     l = []
     for i in range(0,512):
         l.insert(i, c.voxel[i])
-    print str((c.x_off,c.y_off,c.z_off, c.local_version))
+    #print str((c.x_off,c.y_off,c.z_off, c.local_version))
     #print str(l)
     return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
 

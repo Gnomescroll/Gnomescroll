@@ -153,7 +153,7 @@ cdef pack(vm_chunk *c):
 ''' imports '''
 from libc.stdlib cimport malloc, free
 
-cdef extern from 'types.h':
+cdef extern from 't_vbo.h':
     struct Vertex:
         float x,y,z
         float tx,ty
@@ -346,8 +346,47 @@ cpdef inline int collisionDetection(int x, int y, int z):
     tile = _get(x,y,z)
     return isSolid(tile)
 
+
 '''
-PART 5: Init
+PART 5: Network Interface
+'''
+
+'''
+cdef extern from "net_lib.h":
+    int _get_net_out(char* buffer, int* length)
+    int _net_in(char* buffer, int length)
+
+net_out = None
+
+def set_network_out(b_out):
+    global net_out
+    net_out = b_out
+
+def net_tick():
+    cdef int length
+    cdef char msg[2048]
+    cdef bytes py_string
+    global net_out
+    if net_out == None:
+        print "Must set terrain_map for net_out for binary messages out!"
+        assert False:
+    while True:
+        _get_net_out(&msg, &length)
+        if length = 0:
+            break
+        py_string = msg[:length]
+        net_out(msg,length)
+
+def net_in(str):
+    cdef char* buffer
+    cdef int length
+    length = len(str)
+    buffer = str
+    _net_in(str, length)
+'''
+
+'''
+PART 6: Init
 '''
 
 cdef extern from 't_vbo.h':

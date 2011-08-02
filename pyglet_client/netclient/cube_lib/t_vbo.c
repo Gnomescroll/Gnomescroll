@@ -5,6 +5,20 @@ SDL_Surface *surface;
 
 int draw_mode_enabled = 0;
 
+
+//fulstrum culling globals
+struct _Camera {
+float x,y,z;
+float vx,vy,vz;
+float ux,uy,uz; //up direction
+float ratio;
+float viewangle;
+};
+
+int fulstrum_culling;
+int view_distance = 40;
+struct _Camera c;
+
 ///advice
 /*
 It turns out that if you disable depth testing (glDisable(GL_DEPTH_TEST)),
@@ -186,7 +200,6 @@ def draw_chunks():
 */
 
 int update_column_VBO(struct vm_column* column) {
-    printf("update_column_VBO \n");
     int tile_id, side_num;
     int _x, _y, _z;
 
@@ -220,9 +233,14 @@ int update_column_VBO(struct vm_column* column) {
             }
                 }
     }
-
-    printf("v_num for chunk scratch = %i \n", cs_n);
-    //printf("active cubes= %i \n", active_cube_num);
+    if(cs_n == 0 ) {
+        column->vbo.VBO_id = 0;
+        column->vbo.v_num = 0;
+        column->vbo_loaded = 0;
+        column->vbo_needs_update = 0;
+        return 0;
+    }
+    printf("update_column_VBO: v_num for chunk scratch = %i \n", cs_n);
     create_vbo(&column->vbo, cs, cs_n);
     printf("VBO_id= %i \n", column->vbo.VBO_id);
  }
@@ -231,12 +249,14 @@ int update_column_VBO(struct vm_column* column) {
 int _update_chunks() {
     //printf("_update_chunks \n");
     struct vm_map* m;
+    struct vm_column* col;
     int i,j;
     m = _get_map();
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
-        if(m->column[j*vm_map_dim+i].vbo_needs_update) {
-            update_column_VBO(&m->column[j*vm_map_dim+i]);
+        col = &m->column[j*vm_map_dim+i];
+        if(col->vbo_needs_update == 1) {
+            update_column_VBO(col);
         }
     }}
 }
@@ -261,19 +281,9 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 
 }
 
-struct _Camera {
-float x,y,z;
-float vx,vy,vz;
-float ux,uy,uz; //up direction
-float ratio;
-float viewangle;
-};
-
-int fulstrum_culling;
-int view_distance = 40;
-struct _Camera c;
-
 int _draw_terrain() {
+    int s,f;
+    s= SDL_GetTicks();
     struct vm_map* m;
     struct vm_column* col;
     int i,j;
@@ -285,7 +295,7 @@ int _draw_terrain() {
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim; j++) {
         col = &m->column[j*vm_map_dim+i];
-        if(chunk_render_check(col->x_off, col->y_off)) {
+        if(chunk_render_check(col->x_off, col->y_off) && col->vbo.v_num >0) {
             c_drawn++;
             draw_quad_vbo(&col->vbo);
         } else {
@@ -295,6 +305,8 @@ int _draw_terrain() {
     end_vbo_draw();
     printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
     //_draw_fog();
+    f = SDL_GetTicks();
+    printf("Terrain rendering time= %i \n", f-s);
 }
 
 int inline chunk_render_check(int x_off, int y_off) {

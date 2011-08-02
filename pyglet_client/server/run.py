@@ -21,7 +21,7 @@ import cube_lib.terrain_map as terrain_map
 import random
 def load_map():
     m = terrain_map
-    map_type = 4
+    map_type = 5
 
 
     print "Start map generation"
@@ -133,8 +133,33 @@ def load_map():
 
     print "Finished map generation"
     if map_type == 5:
-        m.set(0,0,0,2)
-        #print "test= %i" % (m.get(1,1,5))
+        x_min = 0
+        y_min = 0
+        z_min = 0
+
+        x_max = 512#64
+        y_max = 512#64
+        z_max = 1
+
+        #plane for testing z collision
+        for xa in range(x_min, x_max):
+            for ya in range(y_min, y_max):
+                for za in range(z_min, z_max):
+                    m.set(xa,ya,za, 1)
+        #protrusions for testing collision detection
+        for xa in range(x_min, x_max):
+            for ya in range(y_min, y_max):
+                for za in range(z_min, z_max):
+                    rnd = random.randint(0,64)
+                    if rnd < 8:
+                        height =random.randint(1,5)
+                        for th in range(1,height):
+                            m.set(xa,ya,za+th, 4)
+                    elif rnd <10:
+                        height =random.randint(1,15)
+                        for th in range(1,height):
+                            m.set(xa,ya,za+th, 4)
+
 class Main:
 
     def __init__(self):

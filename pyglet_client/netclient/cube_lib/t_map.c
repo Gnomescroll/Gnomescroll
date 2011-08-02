@@ -14,6 +14,7 @@ int _init_t_map() {
         map.column[i].vbo.VBO_id = 0;
         map.column[i].x_off = i % vm_map_dim;
         map.column[i].y_off = i/vm_map_dim;
+        map.column[i].vbo_needs_update = 0;
     }
     return 0;
 }
@@ -49,14 +50,16 @@ int _set(int x, int y, int z, int value) {
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
-        printf("creating new chunk \n");
-        printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
+        //printf("creating new chunk \n");
+        //printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
         chunk = new_chunk(xoff, yoff, zoff);
         column->chunk[zoff] = chunk;
     }
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
     column->local_version++;
+    column->server_version++;
     chunk->local_version++;
+    chunk->server_version++;
     column->vbo_needs_update = 1;
     chunk->vbo_needs_update =1;
     return 0;
@@ -101,12 +104,26 @@ int _set_server_version(int x,int y,int z, int server_version) {
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
-        printf("creating new chunk \n");
-        column->chunk[zoff] = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
-        chunk = column->chunk[zoff];
-        chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
+        //printf("creating new chunk \n");
+        chunk = new_chunk(xoff, yoff, zoff);
     }
     //column->local_version++;
     chunk->server_version = server_version;
     return 0;
+}
+
+int _chunk_request(int* r) {
+    struct vm_map* m;
+    struct vm_column* col;
+    int i,j,k;
+    m = _get_map();
+    for(i=0; i<vm_map_dim; i++) {
+    for(j=0; j<vm_map_dim;j++) {
+        col = &m->column[j*vm_map_dim+i];
+        for(k = 0; k < vm_column_max; k++) {
+            if(col->chunk[k] == NULL) { continue; }
+            if(col)
+        }
+    }}
+
 }
