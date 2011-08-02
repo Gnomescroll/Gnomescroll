@@ -299,16 +299,42 @@ class WeaponList(GenericMultiObjectList):
         return self._add(klass_name, *args, **kwargs)
 
     def destroy(self, obj):
-        return self._remove(self, obj)
+        return self._remove(obj)
 
     def update(self, weapon, id=None):
-        if id is not None:
-            old = self[id]
-        else:
+        if id is None:
             return
+        old = self[id]
 
         if old.id != weapon.id and old.id in self.objects:
             del self.objects[old.id]
         self.objects[weapon.id] = weapon
 
 from weapons import Weapon
+
+
+class ObjectList(GenericMultiObjectList):
+
+    def __init__(self):
+        from toys import Flag, Base
+        GenericMultiObjectList.__init__(self)
+        self._allow_klasses([\
+            Flag,
+            Base,
+        ])
+
+    def destroy(self, obj):
+        return self._remove(self, obj)
+
+    def create(self):
+
+        return self._add()
+
+    def update(self, obj, id=None):
+        if id is None:
+            return
+        old = self[id]
+
+        if old.id != obj.id and old.id in self.objects:
+            del self.objects[old.id]
+        self.objects[obj.id] = obj

@@ -19,6 +19,7 @@ import settings
 import vox_lib
 import vector_lib
 import raycast_utils
+import vox
 
 if settings.pyglet == False:
     import SDL.gl
@@ -264,15 +265,15 @@ class AgentPhysics:
         #if not self.you:
             #print self.state
 
+'''
+Agent Voxel
+'''
 
-class VoxRender:
+class AgentVoxRender(vox.VoxRender):
 
-    def init_vox(self, model = None):
-        if False: ##FIX THIS; need vox file
-            assert False
-            vox_loader = vox_lib.Vox_loader()
-            self.vox = vox_loader.load()
-            self.vox.set_object(self)
+    def __init__(self, model=None):
+        if model is not None:
+            vox.VoxRender.__init__(self, model)
         else:
             self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
             self.vox.set_object(self)
@@ -298,12 +299,6 @@ class VoxRender:
             self.vox.set(0,7,7, 0,255,0,0)
             self.vox.set(7,0,7, 0,255,0,0)
             self.vox.set(7,7,7, 0,255,0,0)
-
-    def update_vox(self):
-        self.vox.move(self.x,self.y,self.z, 3.14159*self.x_angle)
-
-    def draw_vox(self):
-        self.vox.draw()
 
 '''
 Render/Draw methods for agents
@@ -601,6 +596,11 @@ class AgentModel:
             self.state[0:3] = xyz
             #self.x, self.y, self.z = xyz
 
+    def nearby_objects(self):
+        for obj in GameStateGlobal.objectList:
+            if vector_lib.distance() < obj.radius:
+                obj.agent_nearby(self)
+
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
         if normalize:
@@ -697,10 +697,11 @@ class AgentModel:
         return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))
 
 # represents an agent under control of a player
-class Agent(AgentModel, AgentPhysics, AgentRender, VoxRender):
+class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
-        self.init_vox()
+        #self.init_vox()
+        AgentVoxRender.__init__(self)
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
 
 '''
@@ -919,10 +920,10 @@ class PlayerAgentWeapons(AgentWeapons):
 '''
 Client's player's agent
 '''
-class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
+class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
-        self.init_vox()
+        AgentVoxRender.__init__(self)
         AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
@@ -1039,6 +1040,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, VoxRender):
             self.y_angle = -0.499
         if self.y_angle > 0.499:
             self.y_angle = 0.499
+
+    def pick_up(self, obj):
+        self.inventory.append(obj)
+        obj.taken(self)
+
+    def drop(self, obj):
+        obj.drop()
 
 import cube_lib.terrain_map as terrainMap
 from net_out import NetOut

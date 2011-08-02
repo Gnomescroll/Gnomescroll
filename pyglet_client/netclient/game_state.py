@@ -7,6 +7,7 @@ class GameStateGlobal:
     agentList = None
     playerList = None
     projectileList = None
+    objectList = None
 
     player = None
     agent = None
@@ -20,6 +21,7 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
+        cls.objectList = ObjectList()
         cls.gameState = GameState()
         cls.exit = False
 
@@ -129,6 +131,7 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
+from object_lists import ObjectList
 from players import Player
 from net_client import NetClientGlobal
 
