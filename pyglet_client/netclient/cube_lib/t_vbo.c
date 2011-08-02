@@ -70,7 +70,7 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Vertex), q_VBO->v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
     q_VBO->VBO_id = VBO_id;
     glDisable(GL_TEXTURE_2D);
-    printf("inside: VBO_id= %i \n", VBO_id);
+    //printf("inside: VBO_id= %i \n", VBO_id);
     return VBO_id;
 }
 
@@ -240,9 +240,8 @@ int update_column_VBO(struct vm_column* column) {
         column->vbo_needs_update = 0;
         return 0;
     }
-    printf("update_column_VBO: v_num for chunk scratch = %i \n", cs_n);
     create_vbo(&column->vbo, cs, cs_n);
-    printf("VBO_id= %i \n", column->vbo.VBO_id);
+    //printf("vbo_id= %i v_num= %i \n", column->vbo.VBO_id,column->vbo.v_num);
  }
 
 
@@ -255,9 +254,26 @@ int _update_chunks() {
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
         col = &m->column[j*vm_map_dim+i];
-        if(col->vbo_needs_update == 1  && chunk_render_check(col->x_off, col->y_off)) {
-            update_column_VBO(col);
+        //if VBO is farther than 10 viewing units, delete it
+        if (col->vbo_loaded == 1 && !chunk_render_check(col->x_off, col->y_off, 20)) {
+            printf("unloaded VBO: %i, %i \n", col->x_off, col->y_off);
+            delete_vbo(&col->vbo);
+            col->vbo_loaded = 0;
         }
+        //update or create VBO for chunks within 10 units of viewing distance
+        if(chunk_render_check(col->x_off, col->y_off, 10)) {
+            if(col->vbo_needs_update == 1 || col->vbo_loaded==0) {
+                if(col->vbo.VBO_id == 0) {
+                    printf("create VBO: %i, %i \n", col->x_off, col->y_off);
+                } else {
+                    printf("update VBO: %i, %i \n", col->x_off, col->y_off);
+                }
+                update_column_VBO(col);
+                return 0;
+            }
+        }
+
+
     }}
 }
 
@@ -295,7 +311,7 @@ int _draw_terrain() {
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim; j++) {
         col = &m->column[j*vm_map_dim+i];
-        if(chunk_render_check(col->x_off, col->y_off) && col->vbo.v_num >0) {
+        if(chunk_render_check(col->x_off, col->y_off, 0) && col->vbo.v_num >0) {
             c_drawn++;
             draw_quad_vbo(&col->vbo);
         } else {
@@ -309,13 +325,13 @@ int _draw_terrain() {
     //printf("Terrain rendering time= %i \n", f-s);
 }
 
-int inline chunk_render_check(int x_off, int y_off) {
+int inline chunk_render_check(int x_off, int y_off, int tolerance) {
 float x,y;
 x = 8*x_off + 4;
 y = 8*y_off + 4;
 
 //printf("c.x= %f, c.y= %f, x_off= %i, y_off= %i \n", c.x,c.y,x_off, y_off);
-if((c.x-x)*(c.x-x) + (c.y-y)*(c.y-y) < view_distance*view_distance)
+if((c.x-x)*(c.x-x) + (c.y-y)*(c.y-y) < (tolerance+view_distance)*(tolerance+view_distance))
     {
         return 1;
     }
@@ -349,7 +365,7 @@ int* _chunk_request() {
     struct vm_chunk* ch;
     struct vm_column* col;
     int x; int y;
-    struct vm_chunk* ch_lowest;
+    struct vm_chunk* ch_lowest = NULL;
     int score, score_lowest;
     score_lowest = -1;
     int i,j,k;

@@ -51,7 +51,7 @@ int start_vbo_draw();
 int draw_quad_vbo(struct VBO* q_VBO);
 int end_vbo_draw();
 
-int inline chunk_render_check(int x_off, int y_off);
+int inline chunk_render_check(int x_off, int y_off, int tolerance);
 int _set_camera(float x, float y, float z, float vx, float vy, float vz, float ux, float uy, float uz, float ratio, float viewangle);
 int _set_fulstrum_culling(int value);
 int _set_view_distance(int vd);
