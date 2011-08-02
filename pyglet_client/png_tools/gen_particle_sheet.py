@@ -5,6 +5,7 @@ sprites = [
 ('star3.png', 2),
 ('star4.png', 3),
 ('star5.png', 4),
+('star6.png', 5),
 ]
 
 def _offset(id):

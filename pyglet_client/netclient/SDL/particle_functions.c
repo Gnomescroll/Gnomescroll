@@ -162,8 +162,9 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc (GL_ONE, GL_ONE);
+    //glBlendFunc (GL_ONE, GL_ONE);
 
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(id%16)* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
