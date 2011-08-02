@@ -4,6 +4,7 @@ sprites = [
 ('star2.png', 1),
 ('star3.png', 2),
 ('star4.png', 3),
+('star5.png', 4),
 ]
 
 def _offset(id):
@@ -20,7 +21,7 @@ if True:
     i2=0
     for i in range(0,512):
         rows.insert(i,[])
-        rows[i] = [0] * 512*4
+        rows[i] = [0,0,0,0] * 512
 
     print "works"
 
@@ -62,6 +63,9 @@ for pngfile, id in sprites:
 #write out
 print "writing out"
 f = open('./particles_01.png', 'wb')      # binary mode is important
+png_out.write(f, rows)
+
+f = open('../netclient/texture/particles_01.png', 'wb')      # binary mode is important
 png_out.write(f, rows)
 
 if False:
