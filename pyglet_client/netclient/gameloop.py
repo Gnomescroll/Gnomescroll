@@ -267,7 +267,12 @@ class App(object):
             #cube_lib.VBO.update_chunks()
             cube_lib.terrain_map.draw_terrain()
             self.world.draw(first_person)
-            SDL.gl.draw_particle(4, 1, 5,5,5)
+            SDL.gl.draw_particle(0, 1, 5,5,5)
+            SDL.gl.draw_particle(1, 2, 5,5,7)
+            SDL.gl.draw_particle(2, 2, 5,5,9)
+            SDL.gl.draw_particle(3, 2, 5,5,11)
+            SDL.gl.draw_particle(4, 2, 5,5,13)
+            SDL.gl.draw_particle(5, 2, 5,5,15)
             cube_lib.terrain_map.update_chunks()
             #cube_lib.VBO.draw_chunks()
             #VBO test

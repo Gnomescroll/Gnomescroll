@@ -21,7 +21,7 @@ if True:
     i2=0
     for i in range(0,512):
         rows.insert(i,[])
-        rows[i] = [0] * 512*4
+        rows[i] = [0,0,0,0] * 512
 
     print "works"
 

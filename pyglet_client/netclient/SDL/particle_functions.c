@@ -149,10 +149,12 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
     float right[3] = {a[1], a[5], a[9]};
 
     glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc (GL_ONE, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc (GL_ONE, GL_ONE);
 
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(id%16)* (1.0/16.0);
@@ -180,5 +182,6 @@ glBegin( GL_QUADS );
 glEnd();
 
     glDisable(GL_TEXTURE_2D);
+    glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
