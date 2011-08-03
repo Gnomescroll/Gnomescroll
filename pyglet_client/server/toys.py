@@ -4,7 +4,7 @@ Toys, miscellaneous objects
 
 from game_objects import DetachableObject, StaticObject
 
-from math import randint as rand
+from random import randint as rand
 
 def rand_spot():
     return (rand(0, 100), rand(0, 100), 10)
