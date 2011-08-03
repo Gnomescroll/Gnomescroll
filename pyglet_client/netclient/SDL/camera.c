@@ -42,6 +42,7 @@ int _world_projection(struct Camera* c) {
     float aspect = c->x_size / c->y_size;
     float camera_focus_x,  camera_focus_y,  camera_focus_z;
     float length;
+    //camera = c;
     c->ratio = c->x_size / c->y_size;
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
