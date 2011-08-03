@@ -10,8 +10,8 @@ import os
 os.chdir(r"C:\cygwin\home\Administrator\test2\netclient\ ")
 print os.getcwd()
 
-compiler = VC6
-if compiler == VC6:
+compiler = 'VC6'
+if compiler == 'VC6':
     extra_compile_args=[]
     extra_link_args=["-L."]
 
