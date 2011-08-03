@@ -7,11 +7,7 @@ Client network interface
 import socket
 import struct
 
-if False: #windows compatability
-    pass
-    #import simplejson as json
-else:
-    import simplejson as json
+import json
     
 from opts import opts
 import settings
