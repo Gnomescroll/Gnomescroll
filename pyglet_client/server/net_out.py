@@ -151,6 +151,13 @@ class EventOut:
             'player'    :   player.json(),
         }
 
+    @sendJSONevent('player_team', tick=False)
+    def player_team(self, player):
+        return {
+            'id'    :   player.id,
+            'team'  :   player.team.id,
+        }
+
     @sendJSONevent('client_quit', tick=False)
     def client_quit(self, client_id):
         return {

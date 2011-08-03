@@ -30,6 +30,17 @@ class NoTeam:
         if player.agent is not None:
             player.agent.team = None
 
+    def __len__(self):
+        return len(self.players)
+    def __iter__(self):
+        return iter(self.players)
+    def items(self):
+        return self.players.items()
+    def values(self):
+        return self.players.values()
+    def keys(self):
+        return self.players.keys()
+
 class Team(NoTeam):
 
     def __init__(self):
@@ -59,6 +70,13 @@ class TeamGame(Game):
         self.teams = TeamList()
         for i in xrange(n_teams):
             TeamList.create('Team')
+
+    def player_join_team(self, player, team):
+        for t in self.teams:
+            if player.id in t and t != team:
+                t.remove_player(player)
+                break
+        self.team.add_player(player)
 
 
 class CTF(TeamGame):

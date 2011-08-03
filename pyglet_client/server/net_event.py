@@ -89,6 +89,9 @@ class MessageHandler:
         elif cmd == 'hitscan':
             self.hitscan(connection.id, **msg)
 
+        elif cmd == 'join_team':
+            self.join_team(connection.id, **msg)
+
         #chat
         elif cmd == 'chat':
             ChatServer.chat.received(msg, connection)
@@ -198,6 +201,27 @@ class MessageHandler:
 
         agent.drop_item(item)
 
+    def join_team(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg join_team :: Could not find player for client'
+            return
+        try:
+            team_id = int(msg.get('team', None))
+            team = GameStateGlobal.teamList[team_id]
+        except TypeError:
+            print 'msg join_team :: team key missing'
+            return
+        except ValueError:
+            print 'msg join_team :: team invalid'
+            return
+        except KeyError:
+            print 'msg join_team :: team does not exist'
+            return
+
+        GameStateGlobal.game.player_join_team(player, team)
+        
     def set_block(self, client_id, **msg):
         try:
             player = GameStateGlobal.playerList.client(client_id)

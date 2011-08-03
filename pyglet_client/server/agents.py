@@ -299,7 +299,7 @@ class Agent(AgentPhysics, AgentAction):
     _RESPAWN_TIME = 2. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, player_id, position=None, id=None):
+    def __init__(self, player_id, position=None, id=None, team=None):
         if position is None:
             position = self._spawn_point()
 
@@ -313,6 +313,8 @@ class Agent(AgentPhysics, AgentAction):
         self.collisionDetection = collisionDetection
         assert self.collisionDetection != None
         ### End Global imports ###
+
+        self.team = team
 
         if id is None:
             id = GameStateGlobal.new_agent_id()
@@ -436,6 +438,7 @@ class Agent(AgentPhysics, AgentAction):
                     'active' : self._active_weapon,
                 },
                 'state' : self.state,
+                'team'  : self.team.id,
             })
         else:
             if type(properties) == str:
@@ -450,9 +453,11 @@ class Agent(AgentPhysics, AgentAction):
                     d['weapons'] = {
                         'active'    :   self._active_weapon,
                     }
+                elif prop == 'team':
+                    d['team'] = self.team.id
                 else:
                     d[prop] = getattr(self, prop)
-                if prop == 'dead':
+                if type(d[prop]) == bool:
                     d[prop] = int(d[prop])
         return d
 

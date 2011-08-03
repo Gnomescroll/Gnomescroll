@@ -586,6 +586,34 @@ class GameModeMessageHandler(DatastoreMessageInterface):
     def _teams(self, **msg):
         self._default_list(**msg)
 
+    def _player_team(self, **msg):
+        err_msg = None
+        try:
+            pid = int(msg.get('id', None))
+            player = GameStateGlobal.playerList[pid]
+        except TypeError:
+            err_msg = 'player id missing'
+        except ValueError:
+            err_msg = 'player id invalid'
+        except KeyError:
+            err_msg = 'player %d unknown' % (pid,)
+
+        try:
+            tid = int(msg.get('team', None))
+            team = GameStateGlobal.teamList[tid]
+        except TypeError:
+            err_msg = 'team missing'
+        except ValueError:
+            err_msg = 'team invalid'
+        except KeyError:
+            err_msg = 'team %d unknown' % (pid,)
+
+        if err_msg is not None:
+            print 'msg player_team :: %s' % (err_msg,)
+            return
+
+        GameStateGlobal.game.player_join_team(player, team)
+
 
 from game_state import GameStateGlobal
 from net_client import NetClientGlobal

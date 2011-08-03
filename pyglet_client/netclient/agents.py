@@ -556,7 +556,7 @@ class AgentModel:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, owner=None, id=None, state=None, health=None, dead=False, active_block=1):
+    def __init__(self, owner=None, id=None, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
             return
         if state is None:
@@ -570,6 +570,8 @@ class AgentModel:
         self.state = state #position, velocity, acceleration
         self.xa = state[3]
         self.ya = state[4]
+
+        self.team = team
 
         #self.terrainMap = GameStateGlobal.terrainMap
 
@@ -642,6 +644,9 @@ class AgentModel:
             state = agent['state']
             if type(state) == list and len(state) == len(self.state):
                 self.state = state
+
+        if 'team' in agent:
+            self.team = GameStateGlobal.teamList[agent['team']]
 
         GameStateGlobal.agentList.update(self, *args)
 
@@ -755,10 +760,10 @@ class AgentModel:
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
         #self.init_vox()
         AgentVoxRender.__init__(self)
-        AgentModel.__init__(self, owner, id, state, health, dead, active_block)
+        AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
 
@@ -1006,9 +1011,9 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
         AgentVoxRender.__init__(self)
-        AgentModel.__init__(self, owner, id, state, health, dead, active_block)
+        AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
