@@ -514,9 +514,9 @@ class AgentInventory:
                 except KeyError:
                     print 'WARNING: Object update via agent inventory; object id missing [ object :: %s ]' % (item,)
                     continue
-                known_item = GameStateGlobal.objectList.get(iid, None)
+                known_item = GameStateGlobal.itemList.get(iid, None)
                 if known_item is None:
-                    known_item = GameStateGlobal.objectList.create(**item)
+                    known_item = GameStateGlobal.itemList.create(**item)
                 else:
                     known_item.update_info(**item)
                 new_inv.append(known_item)
@@ -653,7 +653,7 @@ class AgentModel:
             #self.x, self.y, self.z = xyz
 
     def nearby_objects(self):
-        for obj in GameStateGlobal.objectList:
+        for obj in GameStateGlobal.itemList:
             if vector_lib.distance() < obj.radius:
                 obj.agent_nearby(self)
 

@@ -5,11 +5,12 @@ Initialization specific to game modes
 import toys
 
 
-
 class Team:
 
     def __init__(self):
         self.players = {}
+        self.base = None
+        self.flag = None
         self.create_base()
 
     def create_base(self):
@@ -17,6 +18,17 @@ class Team:
 
     def create_flag(self):
         self.flag = toys.Flag(1, self.id)
+
+    def json(self):
+        d = {
+            'id'    :   self.id,
+            'players':  self.players,
+        }
+        if self.flag is not None:
+            d['flag'] = self.flag.id
+        if self.base is not None:
+            d['base'] = self.base.id
+        return d
 
 
 class TeamGame:

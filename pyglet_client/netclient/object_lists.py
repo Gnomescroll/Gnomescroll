@@ -313,7 +313,7 @@ class WeaponList(GenericMultiObjectList):
 from weapons import Weapon
 
 
-class ObjectList(GenericMultiObjectList):
+class ItemList(GenericMultiObjectList):
 
     def __init__(self):
         from toys import Flag, Base

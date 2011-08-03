@@ -136,7 +136,7 @@ class ChatMessageHandler(GenericMessageHandler):
     def _you_killed(self, **msg):
         ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
-
+            
 class MiscMessageHandler(GenericMessageHandler):
     events = {
         'ping' : '_ping',
@@ -466,7 +466,7 @@ class ObjectMessageHandler(DatastoreMessageInterface):
 
     def __init__(self):
         self.name = 'object'
-        self.store = GameStateGlobal.objectList
+        self.store = GameStateGlobal.itemList
         DatastoreMessageInterface.__init__(self)
 
     def _object_destroy(self, **args):
@@ -550,6 +550,41 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
         # look up agent origin
         # animate
         #print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
+
+
+class GameModeMessageHandler(DatastoreMessageInterface):
+
+    def __init__(self):
+        self.name = 'teams'
+        self.datastore = GameStateGlobal.teamList
+        self._bind_event('game_mode', '_game_mode')
+        self._bind_event('teams', '_teams')
+        DatastoreMessageInterface.__init__(self)
+
+    def _game_mode(self, **msg):
+        try:
+            mode = msg['game_mode']
+        except KeyError:
+            print 'msg game_mode :: game_mode missing'
+            return
+        teams = None
+        try:
+            teams = int(msg['teams'])
+        except ValueError:
+            print 'msg game_mode :: teams number invalid'
+            return
+        except KeyError:
+            pass
+        if teams is None:
+            GameStateGlobal.start_game_mode(mode)
+        else:
+            GameStateGlobal.start_game_mode(mode, teams=teams)
+            
+        if 'teams_list' in msg:
+            self._teams(**msg)
+
+    def _teams(self, **msg):
+        self._default_list(**msg)
 
 
 from game_state import GameStateGlobal

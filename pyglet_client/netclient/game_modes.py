@@ -4,12 +4,19 @@ Initialization specific to game modes
 
 import toys
 
+game_mode_names = {
+    'ctf'   :   CTF,
+    'dm'    :   Deathmatch,
+    'tdm'   :   TeamDeathmatch,
+}
 
 
 class Team:
 
     def __init__(self):
         self.players = {}
+        self.flag = None
+        self.base = None
         self.create_base()
 
     def create_base(self):
@@ -46,3 +53,14 @@ class TeamDeathmatch(TeamGame):
 
     def __init__(self, teams=2):
         TeamGame.__init__(self, teams)
+
+
+class TeamList(GenericObjectList):
+
+    def __init__(self):
+        GenericObjectList.__init__(self)
+        self._metaname = 'TeamList'
+        self._itemname = 'Team'
+        self._object_type = Team
+
+from object_lists import GenericObjectList

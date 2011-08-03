@@ -20,6 +20,8 @@ class GameStateGlobal:
         GameStateGlobal.playerList = PlayerList()
         GameStateGlobal.projectileList = ProjectileList()
         GameStateGlobal.weaponList = WeaponList()
+        GameStateGlobal.itemList = ItemList()
+        GameStateGlobal.teamList = TeamList()
 
     @classmethod
     def init(cls):
@@ -162,6 +164,8 @@ from agents import AgentList
 from players import PlayerList
 from projectiles import ProjectileList
 from weapons import WeaponList
+from game_objects import ItemList
+from game_modes import TeamList
 
 # main game state wrapper
 class GameState:

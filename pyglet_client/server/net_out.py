@@ -338,3 +338,20 @@ class SendMessage: #each connection has one of these
         return {
             'timestamp'   :   timestamp,
         }
+
+    @sendJSON('game_mode')
+    def game_mode(self, mode, teams=None):
+        d = {
+            'mode'  :   mode,
+        }
+        if teams is not None:
+            d['teams_list'] = [team.json() for team in teams]
+            d['teams'] = len(d['teams_list'])
+        return d
+
+    @sendJSON('teams')
+    def teams(self, teams):
+        return {
+            'teams_list' :   [team.json() for team in teams],
+        }
+        

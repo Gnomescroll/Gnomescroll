@@ -138,7 +138,7 @@ class MessageHandler:
 
         try:
             item_id = int(msg.get('iid', None))
-            item = GameStateGlobal.objectList[item_id]
+            item = GameStateGlobal.itemList[item_id]
         except TypeError:
             print 'msg pickup_item :: iid missing'
             return
@@ -185,7 +185,7 @@ class MessageHandler:
 
         try:
             item_id = int(msg.get('iid', None))
-            item = GameStateGlobal.objectList[item_id]
+            item = GameStateGlobal.itemList[item_id]
         except TypeError:
             print 'msg drop_item :: iid missing'
             return

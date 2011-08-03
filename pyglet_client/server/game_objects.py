@@ -86,7 +86,7 @@ class DetachableObject(GameObject):
         if properties is None:
             d = self.json()
             d.update({
-                'owner'     :   self.owner,
+                'owner'     :   self.owner.id,
                 'on_ground' :   int(self.on_ground)
             }
         else:
@@ -94,7 +94,7 @@ class DetachableObject(GameObject):
         return d
             
 
-class ObjectList(GenericMultiObjectList):
+class ItemList(GenericMultiObjectList):
 
     def __init__(self):
         from toys import Flag, Base
@@ -126,3 +126,5 @@ class ObjectList(GenericMultiObjectList):
         if old.id != obj.id and old.id in self.objects:
             del self.objects[old.id]
         self.objects[obj.id] = obj
+
+from game_state import GenericMultiObjectList
