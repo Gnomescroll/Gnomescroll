@@ -7,7 +7,7 @@ from Cython.Distutils import build_ext
 
 import os
 
-os.chdir(r"C:\cygwin\home\Administrator\test2\netclient\ ")
+os.chdir(r"C:\cygwin\home\Administrator\dc_mmo\pyglet_client\netclient\ ")
 print os.getcwd()
 
 compiler = 'VC6'
