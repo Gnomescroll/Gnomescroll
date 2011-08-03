@@ -49,6 +49,8 @@ class World():
             p.tick()
         for a in GameStateGlobal.agentList.values():
             a.tick()
+        if GameStateGlobal.agent is not None:
+            GameStateGlobal.agent.nearby_objects()
 
     def draw(self, first_person=False):
         if settings.pyglet:
