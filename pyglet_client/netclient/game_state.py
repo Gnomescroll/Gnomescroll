@@ -7,6 +7,7 @@ class GameStateGlobal:
     agentList = None
     playerList = None
     projectileList = None
+    objectList = None
 
     player = None
     agent = None
@@ -20,6 +21,7 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
+        cls.objectList = ObjectList()
         cls.gameState = GameState()
         cls.exit = False
 
@@ -88,6 +90,19 @@ class GameStateGlobal:
                 owner.weapons.drop(weapon)
 
     @classmethod
+    def remove_object(cls, id, seek=True):
+        obj = cls.objectList.get(id, None)
+        if obj is None:
+            return
+        cls.objectList.destroy(obj)
+
+        if seek:
+            if obj.owner is not None:
+                owner = cls.agentList.get(obj.owner, None)
+                if owner is not None:
+                    owner.inventory.drop(obj)
+                    
+    @classmethod
     def client_quit(cls, id):
         player = cls.playerList.by_client(id)
         if player is None:
@@ -129,6 +144,7 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
+from object_lists import ObjectList
 from players import Player
 from net_client import NetClientGlobal
 

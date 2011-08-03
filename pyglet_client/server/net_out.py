@@ -121,6 +121,24 @@ class EventOut:
             'projectile'    :   projectile.json(),
         }
 
+    @sendJSONevent('object_update')
+    def object_update(self, obj):
+        return {
+            'obj'   :   obj.json(),
+        }
+
+    @sendJSONevent('object_create')
+    def object_create(self, obj):
+        return {
+            'obj'   :   obj.json(),
+        }
+
+    @sendJSONevent('object_destroy')
+    def object_destroy(self, obj):
+        return {
+            'id'    :   obj.id,
+        }
+
     @sendJSONevent('player_update', tick=False)
     def player_update(self, player, properties=None):
         return {
