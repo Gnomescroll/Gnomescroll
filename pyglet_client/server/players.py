@@ -15,6 +15,7 @@ class PlayerList(GenericObjectList):
         player = self._add(client_id, name)
         self.client_ids[client_id] = player.id
         self.names[name] = player.cid
+        GameStateGlobal.game.player_join_team(player)
         return player
         
     def leave(self, player):

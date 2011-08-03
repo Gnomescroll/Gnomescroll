@@ -82,22 +82,26 @@ class Game:
     def __init__(self):
         self.viewers = GameStateGlobal.teamList.create('NoTeam')
 
+    def player_join_team(self, player, team=None):
+        pass
 
 class TeamGame(Game):
 
     def __init__(self, teams=2):
         Game.__init__(self)
         self.n_teams = teams
-        self.teams = TeamList()
+        self.teams = GameStateGlobal.teamList
         for i in xrange(n_teams):
-            TeamList.create('Team')
+            self.teams.create('Team')
 
-    def player_join_team(self, player, team):
-        for t in self.teams:
-            if player.id in t and t != team:
-                t.remove_player(player)
-                break
-        self.team.add_player(player)
+    def player_join_team(self, player, team=None):
+        if player.team is not None:
+            player.team.remove_player(player)
+            
+        if team is None:    # default to 'viewers'
+            team = self.viewers
+
+        team.add_player(player)
         NetOut.event.player_team(player)
 
 
@@ -109,10 +113,10 @@ class CTF(TeamGame):
             team.create_flag()
         
 
-class Deathmatch:
+class Deathmatch(Game):
 
     def __init__(self):
-        pass
+        Game.__init__(self)
 
 
 class TeamDeathmatch(TeamGame):
