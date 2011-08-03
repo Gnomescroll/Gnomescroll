@@ -394,7 +394,6 @@ class AgentRender:
                 SDL.gl.draw_point(r,g,b,x,y,z)
 
 
-
 class AgentWeapons:
 
     def __init__(self, agent, weapons=None):
@@ -455,10 +454,14 @@ class AgentWeapons:
             self._active_weapon = weapons_data['active']
 
     def drop(self, weapon):
-        old_len = len(self.weapons)
-        self.weapons = [w for w in self.weapons if w != weapon]
-        if old_len != len(self.weapons):
-            NetOut.sendMessage.drop_weapon(self.agent, weapon.id)
+        self.weapons.remove(weapon)
+        self._adjust_active_weapon()
+
+    def add(self, weapon, index=None):
+        if index is None:
+            self.weapons.append(weapon)
+        else:
+            self.weapons.insert(index, weapon)
         self._adjust_active_weapon()
 
     def _adjust_active_weapon(self):
@@ -476,9 +479,7 @@ class AgentWeapons:
                 if aw < 0:                  # if there are no weapons
                     aw = None               # active is None
 
-        if self._active_weapon != aw:
-            self._active_weapon = aw
-            NetOut.sendMessage.change_weapon(self.agent, aw)
+        self._active_weapon = aw
 
     def has(self, weapon_type):
         print self.weapons
@@ -493,6 +494,59 @@ class AgentWeapons:
     def __iter__(self):
         return iter(self.weapons)
 
+
+class AgentInventory:
+
+    def __init__(self, agent, items=None):
+        self.agent = agent
+        self.size = 100
+        self.inv = []
+        if items is not None:
+            self.update_info(**items)
+
+    def update_info(self, **inv_data):
+        if 'inventory' in inv_data:
+            inv = inv_data['inventory']
+            new_inv = []
+            for item in inv:
+                try:
+                    iid = item['id']
+                except KeyError:
+                    print 'WARNING: Object update via agent inventory; object id missing [ object :: %s ]' % (item,)
+                    continue
+                known_item = GameStateGlobal.objectList.get(iid, None)
+                if known_item is None:
+                    known_item = GameStateGlobal.objectList.create(**item)
+                else:
+                    known_item.update_info(**item)
+                new_inv.append(known_item)
+            self.inv = new_inv
+
+    def has(self, obj_type):
+        for obj in self.inv:
+            if obj.type == obj_type:
+                return obj
+        return False
+
+    def add(self, item, index=None):
+        if pos is None:
+            self.inv.append(item)
+        else:
+            self.inv.insert(index, item)
+        item.take(self)
+        return item
+
+    def drop(self, item):
+        self.inv.remove(item)
+        item.drop(self)
+        return item
+
+    def __len__(self):
+        return len(self.inv)
+
+    def __iter__(self):
+        return iter(self.inv)
+
 '''
 Data model for agent
 '''
@@ -502,7 +556,7 @@ class AgentModel:
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
+    def __init__(self, owner=None, id=None, state=None, health=None, dead=False, active_block=1):
         if owner is None or id is None:
             return
         if state is None:
@@ -549,7 +603,6 @@ class AgentModel:
             self.health = health
         self.dead = bool(dead)
 
-        self.weapons = AgentWeapons(self, weapons)
         self.owner = owner
 
         self.you = False
@@ -579,6 +632,9 @@ class AgentModel:
 
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
+
+        if 'inventory' in agent:
+            self.inventory.update_info(**agent['inventory'])
 
         if 'owner' in agent:
             self.owner = agent['owner']
@@ -699,10 +755,12 @@ class AgentModel:
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None):
         #self.init_vox()
         AgentVoxRender.__init__(self)
-        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
+        AgentModel.__init__(self, owner, id, state, health, dead, active_block)
+        self.inventory = AgentInventory(self, items)
+        self.weapons = AgentWeapons(self, weapons)
 
 '''
 Client's player's agent draw methods
@@ -916,27 +974,30 @@ class PlayerAgentWeapons(AgentWeapons):
 
         print 'weapon is: %s' % (self.active(),)
 
-class AgentInventory:
+    def drop(self, weapon):
+        old_len = len(self.weapons)
+        AgentWeapons.drop(self, weapon)
+        if old_len != len(self.weapons):
+            NetOut.sendMessage.drop_weapon(self.agent, weapon.id)
 
-    def __init__(self):
-        self.inv = []
+    def _adjust_active_weapon(self):
+        prev = self._active_weapon
+        AgentWeapons._adjust_active_weapon(self)
+        if self._active_weapon != prev:
+            NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
+
 
 class PlayerAgentInventory(AgentInventory):
 
-    def __init__(self):
-        AgentInventory.__init__(self)
+    def __init__(self, agent, items=None):
+        AgentInventory.__init__(self, agent, items)
 
-    def add(self, item, pos=None):
-        if pos is None:
-            self.inv.append(item)
-        else:
-            self.inv.insert(pos, item)
-        item.take(self)
+    def add(self, item, index=None):
+        item = AgentInventory.add(self, item, index)
         return item
 
     def drop(self, item):
-        self.inv.remove(item)
-        item.drop(self)
+        item = AgentInventory.drop(self, item)
         return item
 
 
@@ -945,11 +1006,12 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None):
         AgentVoxRender.__init__(self)
-        AgentModel.__init__(self, owner, id, state, weapons, health, dead, active_block)
+        AgentModel.__init__(self, owner, id, state, health, dead, active_block)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
+        self.inventory = PlayerAgentInventory(self, items)
 
         self.you = True
         #self.control_state = [0,0,0,0,0,0]
@@ -1064,12 +1126,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if self.y_angle > 0.499:
             self.y_angle = 0.499
 
-    def pick_up(self, obj):
-        self.inventory.append(obj)
-        obj.taken(self)
+    def pickup_item(self, item, index=None):
+        item = self.inventory.add(item, index)
+        NetOut.sendMessage.pickup_item(self, item, index)
 
-    def drop(self, obj):
-        obj.drop()
+    def drop_item(self, item):
+        item = self.inventory.drop(item)
+        NetOut.sendMessage.drop_item(self, item)
 
 
 import cube_lib.terrain_map as terrainMap

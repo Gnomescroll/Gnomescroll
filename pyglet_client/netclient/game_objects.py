@@ -71,8 +71,9 @@ class DetachableObject(GameObject, GameObjectRender):
 
     def take(self, new_owner):
         # ground -> owner
-        self.owner = new_owner.id
-        self.on_ground = False
+        self.owner = new_owner
+        if self.owner is not None:
+            self.on_ground = False
         
     def drop(self):
         self.pos(self.owner.pos())

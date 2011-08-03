@@ -471,6 +471,17 @@ class Agent(AgentPhysics, AgentAction):
         if old != weapon_index:
             NetOut.event.agent_update(self, 'active_weapon')
 
+    def pickup_item(self, item, index=None):
+        if index is None:
+            self.inventory.append(item)
+        else:
+            self.inventory.insert(index, item)
+        item.take(self)
+        
+    def drop_item(self, item):
+        self.inventory.remove(item)
+        item.drop(self)
+
     # set agent state explicitly
     def set_control_state(self, state, angle=None, tick=None):
         old_tick = self.last_control_tick

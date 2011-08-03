@@ -76,6 +76,11 @@ class MessageHandler:
         elif cmd == 'drop_weapon':
             self.drop_weapon(connection.id, **msg)
 
+        elif cmd == 'pickup_item':
+            self.pickup_item(connection.id, **msg)
+        elif cmd == 'drop_item':
+            self.drop_item(connection.id, **msg)
+
         elif cmd == 'set_block':
             self.set_block(connection.id, **msg)
         elif cmd == 'hit_block':
@@ -111,6 +116,87 @@ class MessageHandler:
             self.request_chunk(msg, connection)
         else:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
+
+    def pickup_item(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg pickup_item :: Could not find player for client'
+            return
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+        except TypeError:
+            print 'msg pickup_item :: aid missing'
+            return
+        except ValueError:
+            print 'msg pickup_item :: aid invalid'
+            return
+        except KeyError:
+            print 'msg pickup_item :: agent %s unknown' % (agent_id,)
+            return
+
+        try:
+            item_id = int(msg.get('iid', None))
+            item = GameStateGlobal.objectList[item_id]
+        except TypeError:
+            print 'msg pickup_item :: iid missing'
+            return
+        except ValueError:
+            print 'msg pickup_item :: iid invalid'
+            return
+        except KeyError:
+            print 'msg pickup_item :: object %s unknown' % (item_id,)
+            return
+
+        if not player.owns(agent):
+            print 'msg pickup_item :: player %s does not own agent %s' % (player.id, agent.id,)
+            return
+            
+        slot = None
+        try:
+            slot = int(msg['slot'])
+        except ValueError:
+            print 'msg drop_item :: slot invalid'
+            return
+        except KeyError:
+            pass
+
+        agent.pickup_item(item, slot)
+
+    def drop_item(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg drop_item :: Could not find player for client'
+            return
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+        except TypeError:
+            print 'msg drop_item :: aid missing'
+            return
+        except ValueError:
+            print 'msg drop_item :: aid invalid'
+            return
+        except KeyError:
+            print 'msg drop_item :: agent %s unknown' % (agent_id,)
+            return
+
+        try:
+            item_id = int(msg.get('iid', None))
+            item = GameStateGlobal.objectList[item_id]
+        except TypeError:
+            print 'msg drop_item :: iid missing'
+            return
+        except ValueError:
+            print 'msg drop_item :: iid invalid'
+            return
+        except KeyError:
+            print 'msg drop_item :: object %s unknown' % (item_id,)
+            return
+
+        agent.drop_item(item)
 
     def set_block(self, client_id, **msg):
         try:

@@ -122,9 +122,9 @@ class EventOut:
         }
 
     @sendJSONevent('object_update')
-    def object_update(self, obj):
+    def object_update(self, obj, properties=None):
         return {
-            'obj'   :   obj.json(),
+            'obj'   :   obj.json(properties),
         }
 
     @sendJSONevent('object_create')
