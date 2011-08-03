@@ -43,9 +43,10 @@ cdef extern from "input_functions.h":
 ## input.c
 
 #cdef extern int _init_input()
-cdef extern int _get_key_state(key_state_func key_state_cb)
-cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
-cdef extern int _set_text_entry_mode(int n)
+cdef extern from "input_functions.h":
+    cdef extern int _get_key_state(key_state_func key_state_cb)
+    cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
+    cdef extern int _set_text_entry_mode(int n)
 
 def get_key_state():
     _get_key_state(&key_state_callback)

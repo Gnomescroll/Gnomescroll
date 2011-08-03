@@ -88,9 +88,10 @@ int _create_hud_texture2(SDL_Surface *surface) {
 Texture texture;
 void _load_hud_texture(char *file) {
     SDL_Surface *surface;
+    int tex = _create_hud_texture2(surface);
+    
     surface = _load_image(file);
     
-    int tex = _create_hud_texture2(surface);
     texture.tex = tex;
     texture.w = surface->w;
     texture.h = surface->h;

@@ -7,7 +7,7 @@ from Cython.Distutils import build_ext
 
 import os
 
-os.chdir(r"C:\cygwin\home\Administrator\test2\netclient\ ")
+os.chdir(r"C:\cygwin\home\Administrator\dc_mmo\pyglet_client\netclient\ ")
 print os.getcwd()
 
 compiler = 'VC6'
@@ -28,7 +28,7 @@ if compiler == 'VC6':
     "C:\SDL_image-1.2.10\lib",
     "C:\glee5.4\lib",]
     #libraries = ['SDL', 'SDL_image'] #'glut',
-    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image'],
+    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image']
     extra_link_args=[]
 else:
     pass ## put your directory stuff heres
@@ -95,11 +95,11 @@ SDL_hud = Extension('SDL.hud',
                                 'SDL/draw_functions.c',
                                 'SDL/texture_loader.c',]
                                 )
-
+'''
 terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [],
+                    include_dirs = include_dirs,
+                    libraries = libraries,
                     library_dirs = library_dirs,
                     extra_compile_args = SDL_compile_args + extra_compile_args,
                     extra_link_args = extra_link_args,
@@ -108,8 +108,20 @@ terrain_map = Extension('cube_lib.terrain_map',
                             'cube_lib/t_properties.c',
                             'cube_lib/t_vbo.c',]
                     )
+'''
+terrain_map = Extension('cube_lib.terrain_map',
+                    include_dirs = include_dirs,
+                    libraries = libraries,
 
-
+                    library_dirs = library_dirs,
+                    extra_compile_args = SDL_compile_args + extra_compile_args, # $(shell sdl-config --cflags)
+                    extra_link_args = extra_link_args,
+                    sources = ['cube_lib/terrain_map.pyx',
+                            'cube_lib/t_map.c',
+                            'cube_lib/t_properties.c',
+                            'cube_lib/t_vbo.c',]
+                    )
+                    
 vox_lib = Extension('vox_lib',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = include_dirs,
@@ -124,12 +136,12 @@ vox_lib = Extension('vox_lib',
                                 )
 
 
-loader = Extension('loader2', sources = ['loader.pyx',])
+#loader = Extension('loader2', sources = ['loader.pyx',])
 
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [loader, vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map] # + cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map] # + cythonize("*.pyx")
 )
 
 print "Done"

@@ -1,4 +1,4 @@
-cimport stdlib
+cimport libc.stdlib
 
 cdef extern from 'texture_loader.h':
     void _draw_loaded_hud_texture(int x, int y)

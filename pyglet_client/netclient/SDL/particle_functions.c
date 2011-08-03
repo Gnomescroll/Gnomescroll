@@ -36,7 +36,7 @@ glDisable(GL_TEXTURE_2D);
 printf("particle_texture_id= %i \n", texture);
 }
 
-void inline bb_q(float x, float y, float z) {
+void __inline bb_q(float x, float y, float z) {
 
 float x_,y_,z_;
 
@@ -54,7 +54,7 @@ glVertex3f( x_, y_, z_ );
 
 int _draw_particle(int id, float size, float x, float y, float z) {
     int i, j;
-
+    int p = 3; //deprecate this
 /*
 position_camera();
 glGetDoublev(GL_MODELVIEW_MATRIX, &mv_matrix);
@@ -99,7 +99,6 @@ for( i=0; i<3; i++ )
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glColor3ub(255, 255, 255);
 
-    int p = 3;
 glBegin( GL_QUADS );
     if(p == 1) {
     glTexCoord2f( 0.0, 0.0 );
@@ -154,7 +153,8 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
 
     float up[3] = {a[0], a[4], a[8]};
     float right[3] = {a[1], a[5], a[9]};
-
+    float tx_min, tx_max, ty_min, ty_max;
+    
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -165,7 +165,7 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
     //glBlendFunc (GL_ONE, GL_ONE);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
-    float tx_min, tx_max, ty_min, ty_max;
+
     tx_min = (float)(id%16)* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
 

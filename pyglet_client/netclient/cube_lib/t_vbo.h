@@ -1,11 +1,3 @@
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-#include <SDL_image.h> //temp?
-
-#include <stdio.h>
-
-
 #ifdef linux
     //do nothing
 #elif _WIN32
@@ -14,6 +6,14 @@
 #else
     //mac
 #endif
+
+#include <SDL.h>
+#include <SDL_opengl.h>
+
+#include <SDL_image.h> //temp?
+
+#include <stdio.h>
+
 
 #ifndef t_map
     #include "t_map.h"
@@ -51,7 +51,7 @@ int start_vbo_draw();
 int draw_quad_vbo(struct VBO* q_VBO);
 int end_vbo_draw();
 
-int inline chunk_render_check(int x_off, int y_off, int tolerance);
+int __inline chunk_render_check(int x_off, int y_off, int tolerance);
 int _set_camera(float x, float y, float z, float vx, float vy, float vz, float ux, float uy, float uz, float ratio, float viewangle);
 int _set_fulstrum_culling(int value);
 int _set_view_distance(int vd);
@@ -60,7 +60,7 @@ int* _chunk_request();
 
 //internal
 //int update_column_VBO(struct vm_column* column);
-void inline add_quad(float x,float y,float z,int side, int tile_id);
+void __inline add_quad(float x,float y,float z,int side, int tile_id);
 int _draw_terrain();
 
 #endif

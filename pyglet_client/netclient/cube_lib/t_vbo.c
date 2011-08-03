@@ -166,7 +166,7 @@ int _test3(int x, int y, int z) {
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
 
-void inline add_quad(float x,float y,float z,int side, int tile_id) {
+void __inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
     //struct Vertex* v;
     memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
@@ -325,7 +325,7 @@ int _draw_terrain() {
     //printf("Terrain rendering time= %i \n", f-s);
 }
 
-int inline chunk_render_check(int x_off, int y_off, int tolerance) {
+int __inline chunk_render_check(int x_off, int y_off, int tolerance) {
 float x,y;
 x = 8*x_off + 4;
 y = 8*y_off + 4;
@@ -367,8 +367,10 @@ int* _chunk_request() {
     int x; int y;
     struct vm_chunk* ch_lowest = NULL;
     int score, score_lowest;
-    score_lowest = -1;
     int i,j,k;
+    
+    score_lowest = -1;
+
     m = _get_map();
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
