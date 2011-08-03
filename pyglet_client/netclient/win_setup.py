@@ -10,9 +10,10 @@ import os
 os.chdir(r"C:\cygwin\home\Administrator\test2\netclient\ ")
 print os.getcwd()
 
-extra_compile_args=[]
-extra_link_args=["-L."]
-
+compiler = VC6
+if compiler == VC6:
+    extra_compile_args=[]
+    extra_link_args=["-L."]
 
     SDL_compile_args = []
     include_dirs = ["C:\SDL-1.2.14\include",
@@ -20,16 +21,37 @@ extra_link_args=["-L."]
                     "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include",
                     "C:\SDL_image-1.2.10\include",]
                     #"C:\glee5.4\include",]
-    library_dirs = ['./',
-    './clib/',
+    library_dirs =  ['./',
     'C:\Program Files\Microsoft Visual Studio 9.0\VC\lib',
     "C:\Program Files\Microsoft SDKs\Windows\v6.0A\lib",
     "C:\SDL-1.2.14\lib",
     "C:\SDL_image-1.2.10\lib",
     "C:\glee5.4\lib",]
     #libraries = ['SDL', 'SDL_image'] #'glut',
-    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image'] #, 'GLee' #'glut',
+    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image'],
     extra_link_args=[]
+else:
+    pass ## put your directory stuff heres
+    extra_compile_args=[]
+    extra_link_args=["-L."]
+
+    SDL_compile_args = []
+
+    ##EDIT DIRECTORIES BELOW FOR MINGE
+    include_dirs = ["C:\SDL-1.2.14\include",
+                    "C:\Program Files\Microsoft Visual Studio 9.0\VC\include",
+                    "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include",
+                    "C:\SDL_image-1.2.10\include",]
+                    #"C:\glee5.4\include",]  #may need to do something with this
+
+    ##EDIT DIRECTORIES BELONG FOR MINGW
+    library_dirs =  ['./',
+    'C:\Program Files\Microsoft Visual Studio 9.0\VC\lib',
+    "C:\Program Files\Microsoft SDKs\Windows\v6.0A\lib",
+    "C:\SDL-1.2.14\lib",
+    "C:\SDL_image-1.2.10\lib",
+    "C:\glee5.4\lib",]
+    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image'],
 
 SDL_gl = Extension('SDL.gl',
                     #define_macros =  [('PLATFORM', 'linux')]
@@ -43,6 +65,7 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/camera.c',
                                 'SDL/draw_functions.c',
                                 'SDL/texture_loader.c',
+                                'SDL/particle_functions.c',
                                 'SDL/gl.pyx'],
                     )
 
@@ -68,40 +91,22 @@ SDL_hud = Extension('SDL.hud',
                     extra_compile_args = SDL_compile_args + extra_compile_args, # $(shell sdl-config --cflags)
                     extra_link_args = extra_link_args,
                     sources = [ 'SDL/hud.pyx',
-                                'SDL/SDL_text.c',]
+                                'SDL/SDL_text.c',
+                                'SDL/draw_functions.c',
+                                'SDL/texture_loader.c',]
                                 )
-
-cube_lib_VBO = Extension('cube_lib.VBO',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = include_dirs,
-                    libraries = libraries,
-
-                    library_dirs = library_dirs,
-                    extra_compile_args = SDL_compile_args+extra_compile_args,
-                    extra_link_args = extra_link_args,
-                    sources = ['cube_lib/VBO.pyx',
-                    'SDL/draw_functions.c',
-                    'cube_lib/draw_terrain.c']
-                    )
 
 terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = ['/usr/lib'],
                     libraries = [],
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args,
+                    library_dirs = library_dirs,
+                    extra_compile_args = SDL_compile_args + extra_compile_args,
                     extra_link_args = extra_link_args,
-                    sources = ['cube_lib/terrain_map.pyx']
-                    )
-
-map_chunk_manager = Extension('cube_lib.map_chunk_manager',
-                    #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/lib'],
-                    libraries = [],
-                    library_dirs = ['usr/lib'],
-                    extra_compile_args = []+extra_compile_args,
-                    extra_link_args = extra_link_args,
-                    sources = ['cube_lib/map_chunk_manager.pyx']
+                    sources = ['cube_lib/terrain_map.pyx',
+                            'cube_lib/t_map.c',
+                            'cube_lib/t_properties.c',
+                            'cube_lib/t_vbo.c',]
                     )
 
 
@@ -124,8 +129,7 @@ loader = Extension('loader2', sources = ['loader.pyx',])
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [loader, vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_VBO, terrain_map, map_chunk_manager] # + cythonize("*.pyx")
-    #ext_modules = [module1, Extension("test2", ["test2.pyx"]),]#+ cythonize("*.pyx")
+    ext_modules = [loader, vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map] # + cythonize("*.pyx")
 )
 
 print "Done"
