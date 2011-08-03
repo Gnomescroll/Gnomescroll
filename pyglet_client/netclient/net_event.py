@@ -5,14 +5,8 @@ Client network incoming
 '''
 import SDL.gl #for timer function
 
-if False: #windows compatability
-    pass
-    #import simplejson as json
-else:
-    #import json
-    import simplejson as json
-
-    import stats
+import json
+import stats
 #import struct
 
 class NetEventGlobal:
