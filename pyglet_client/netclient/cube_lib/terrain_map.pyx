@@ -199,13 +199,13 @@ def init_cube_properties():
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
 
-cpdef inline int isActive(unsigned int id):
+def isActive(unsigned int id):
     return _get_cube(id).active
-cpdef inline int isOcclude(int id):
+def isOcclude(int id):
     return _get_cube(id).occludes
-cpdef inline int isTransparent(int id):
+def isTransparent(int id):
     return _get_cube(id).transparent
-cpdef inline int isSolid(int id):
+def isSolid(int id):
     return _get_cube(id).solid
 
 '''

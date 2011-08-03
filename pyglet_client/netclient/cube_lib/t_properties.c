@@ -10,7 +10,7 @@ struct cubeProperties* _get_cube(int id) {
     return &cube_list[id];
 }
 
-int __inline _isActive(int id) {
+int _isActive(int id) {
     return cube_list[id].active;
     }
 

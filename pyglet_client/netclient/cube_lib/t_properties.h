@@ -22,7 +22,7 @@ struct cubeProperties {
 struct cubeProperties* _get_cube_list();
 struct cubeProperties* _get_cube(int id);
 
-int __inline _isActive(int id);
+int _isActive(int id);
 
 //buffer
 
