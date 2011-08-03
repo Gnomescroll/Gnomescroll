@@ -2,7 +2,8 @@
 Toys, miscellaneous objects
 '''
 
-from game_objects import DetachableObject, GameObjectRender, StaticObject
+from game_objects import DetachableObject, StaticObject
+
 from math import randint as rand
 
 def rand_spot():
@@ -11,12 +12,11 @@ def rand_spot():
 class Flag(DetachableObject):
 
     def __init__(self, radius, team):
-        DetachableObject.__init__(self, radius, model='flag.vox')
+        DetachableObject.__init__(self, radius)
         self.auto_grab = True
         self.drop_on_death = True
         self.team = team
         self.spawn()
-        self.type = 1
 
     def spawn(self):
         xyz = rand_spot()
@@ -25,14 +25,12 @@ class Flag(DetachableObject):
         self.owner = None
 
 
-class Base(StaticObject, GameObjectRender):
+class Base(StaticObject):
 
     def __init__(self, team):
         StaticObject.__init__(self)
-        GameObjectRender.__init__(self, 'auto.vox')
         self.spawned = False
         self.team = team
-        self.type = 2
         
     def spawn(self):
         if not self.spawned:

@@ -1,5 +1,11 @@
 import vox
 
+object_names = {
+    1   :   'Flag',
+    2   :   'Base',
+}
+    
+
 class GameObject:
 
     def __init__(self):
@@ -11,6 +17,10 @@ class GameObject:
             self.state[0:3] = xyz
         else:
             return self.state[0:3]
+
+    @classmethod
+    def name_from_type(self, type):
+        return object_names[type]
 
 
 class StaticObject(GameObject):
@@ -61,7 +71,7 @@ class DetachableObject(GameObject, GameObjectRender):
 
     def take(self, new_owner):
         # ground -> owner
-        self.owner = new_owner
+        self.owner = new_owner.id
         self.on_ground = False
         
     def drop(self):

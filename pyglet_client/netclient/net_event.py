@@ -461,6 +461,20 @@ class WeaponMessageHandler(DatastoreMessageInterface):
         if id is not None:
             GameStateGlobal.remove_weapon(id)
 
+
+class ObjectMessageHandler(DatastoreMessageInterface):
+
+    def __init__(self):
+        self.name = 'object'
+        self.store = GameStateGlobal.objectList
+        DatastoreMessageInterface.__init__(self)
+
+    def _object_destroy(self, **args):
+        id = self._default_destroy(**args)
+        if id is not None:
+            GameStateGlobal.remove_object(id)
+
+
 class ProjectileMessageHandler(DatastoreMessageInterface):
 
     def __init__(self):

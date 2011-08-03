@@ -916,6 +916,29 @@ class PlayerAgentWeapons(AgentWeapons):
 
         print 'weapon is: %s' % (self.active(),)
 
+class AgentInventory:
+
+    def __init__(self):
+        self.inv = []
+
+class PlayerAgentInventory(AgentInventory):
+
+    def __init__(self):
+        AgentInventory.__init__(self)
+
+    def add(self, item, pos=None):
+        if pos is None:
+            self.inv.append(item)
+        else:
+            self.inv.insert(pos, item)
+        item.take(self)
+        return item
+
+    def drop(self, item):
+        self.inv.remove(item)
+        item.drop(self)
+        return item
+
 
 '''
 Client's player's agent
@@ -1047,6 +1070,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def drop(self, obj):
         obj.drop()
+
 
 import cube_lib.terrain_map as terrainMap
 from net_out import NetOut

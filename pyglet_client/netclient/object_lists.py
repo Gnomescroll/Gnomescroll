@@ -292,7 +292,7 @@ class WeaponList(GenericMultiObjectList):
                 klass_name = kwargs['name']
             elif 'type' in kwargs:
                 klass_name = Weapon.name_from_type(kwargs['type'])
-        elif type(klass_name) == int:
+        else:
             klass_name = Weapon.name_from_type(klass_name)
 
         #print klass_name, args, kwargs
@@ -326,9 +326,16 @@ class ObjectList(GenericMultiObjectList):
     def destroy(self, obj):
         return self._remove(self, obj)
 
-    def create(self):
-
-        return self._add()
+    def create(self, klass_name=None, *args, **kwargs):
+        if klass_name is None:
+            if 'name' in kwargs:
+                klass_name = kwargs['name']
+            elif 'type' in kwargs:
+                klass_name = GameObject.name_from_type(kwargs['type'])
+        else:
+            klass_name = GameObject.name_from_type(klass_name)
+            
+        return self._add(klass_name, *args, **kwargs)
 
     def update(self, obj, id=None):
         if id is None:
@@ -338,3 +345,5 @@ class ObjectList(GenericMultiObjectList):
         if old.id != obj.id and old.id in self.objects:
             del self.objects[old.id]
         self.objects[obj.id] = obj
+
+from game_objects import GameObject

@@ -2,6 +2,8 @@
 Settings module
 '''
 
+from default_settings import *
+
 pyglet = False
 #graphics = "SDL" # options, "SDL", "pyglet"
 
