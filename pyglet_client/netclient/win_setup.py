@@ -124,12 +124,12 @@ vox_lib = Extension('vox_lib',
                                 )
 
 
-loader = Extension('loader2', sources = ['loader.pyx',])
+#loader = Extension('loader2', sources = ['loader.pyx',])
 
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [loader, vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map] # + cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map] #loader # + cythonize("*.pyx")
 )
 
 print "Done"
