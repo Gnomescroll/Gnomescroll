@@ -105,5 +105,5 @@ vox_lib = Extension('vox_lib',
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_terrain_map, ] #+ cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_terrain_map, ], #+ cythonize("*.pyx")
 )

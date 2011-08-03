@@ -28,7 +28,7 @@ if compiler == 'VC6':
     "C:\SDL_image-1.2.10\lib",
     "C:\glee5.4\lib",]
     #libraries = ['SDL', 'SDL_image'] #'glut',
-    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image'],
+    libraries = ['glu32','Opengl32', 'GLee'] + ['SDL', 'SDL_image']
     extra_link_args=[]
 else:
     pass ## put your directory stuff heres
@@ -129,7 +129,7 @@ vox_lib = Extension('vox_lib',
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map] #loader # + cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map], #loader # + cythonize("*.pyx")
 )
 
 print "Done"
