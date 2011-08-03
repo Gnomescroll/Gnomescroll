@@ -2,7 +2,7 @@
 Toys, miscellaneous objects
 '''
 
-from game_objects import DetachableObject, StaticObject
+from game_objects import DetachableObject, StaticObject, filter_props
 
 from random import randint as rand
 
@@ -23,6 +23,16 @@ class Flag(DetachableObject):
         self.pos(xyz)
         self.on_ground = True
         self.owner = None
+
+    def json(self, properties=None):
+        if properties is None:
+            d = DetachableObject.json(self)
+            d.update({
+                'team'     :   self.team.id,
+            }
+        else:
+            d = filter_props(obj, properties)
+        return d        
 
 
 class Base(StaticObject):

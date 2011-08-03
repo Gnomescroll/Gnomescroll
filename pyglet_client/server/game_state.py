@@ -1,6 +1,8 @@
 import math
 
 import cube_lib.terrain_map as terrain_map
+import opts
+
 
 class GameStateGlobal:
 
@@ -22,6 +24,8 @@ class GameStateGlobal:
         GameStateGlobal.weaponList = WeaponList()
         GameStateGlobal.itemList = ItemList()
         GameStateGlobal.teamList = TeamList()
+
+        GameStateGlobal.game = game_modes.names[opts.game_mode](teams=opts.n_teams)
 
     @classmethod
     def init(cls):

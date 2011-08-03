@@ -7,7 +7,7 @@ class GameStateGlobal:
     agentList = None
     playerList = None
     projectileList = None
-    objectList = None
+    itemList = None
     teamList = None
 
     player = None
@@ -33,8 +33,9 @@ class GameStateGlobal:
 
     @classmethod
     def start_game_mode(cls, mode, **kwargs):
+        mode = mode.lower()
         self.game_mode_name = mode
-        self.game_mode = game_modes.game_mode_names[mode](**kwargs)
+        self.game_mode = game_modes.names[mode](**kwargs)
 
     # for your player
     @classmethod

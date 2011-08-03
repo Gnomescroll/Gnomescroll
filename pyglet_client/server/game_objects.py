@@ -84,7 +84,7 @@ class DetachableObject(GameObject):
 
     def json(self, properties=None):
         if properties is None:
-            d = self.json()
+            d = GameObject.json(self)
             d.update({
                 'owner'     :   self.owner.id,
                 'on_ground' :   int(self.on_ground)
