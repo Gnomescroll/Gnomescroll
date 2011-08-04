@@ -46,6 +46,10 @@ int _create_hud_texture(char *file) {
 
     surface = _load_image(file);
 
+    if(surface == NULL) {
+        printf("Error: _SDL/texture_loader.c _create_hud_texture, surface is null!\n");
+    }
+
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     // Bind the texture object
@@ -63,7 +67,6 @@ int _create_hud_texture(char *file) {
 int _create_hud_texture2(SDL_Surface *surface) {
     if(surface == NULL) {
         printf("Error: _SDL/texture_loader.c create_hud_texture2, surface is null!\n");
-        return 0;
     }
     GLuint texture;
 
