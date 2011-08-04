@@ -9,6 +9,11 @@ class GameStateGlobal:
     #terrainMap = None
     agentList = None
     playerList = None
+    projectileList = None
+    weaponList = None
+    itemList = None
+    teamList = None
+    game = None
     #state
     agent_id = 0
     player_id = 0
@@ -24,6 +29,7 @@ class GameStateGlobal:
         GameStateGlobal.itemList = ItemList()
         GameStateGlobal.teamList = game_modes.TeamList()
 
+        GameStateGlobal.game_mode_name = opts.game_mode
         GameStateGlobal.game = game_modes.names[opts.game_mode](teams=opts.n_teams)
 
     @classmethod

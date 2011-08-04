@@ -5,11 +5,18 @@ Initialization specific to game modes
 import toys
 from object_lists import GenericMultiObjectList
 
+
+team_types = {
+    1   :   'NoTeam',
+    2   :   'Team',
+}
+
 class NoTeam:
 
     def __init__(self, id, *args, **kwargs):
         self.id = id
         self.players = {}
+        self.type = 1
 
     def add_player(self, player):
         self.players[player.id] = player
@@ -36,12 +43,20 @@ class NoTeam:
     def keys(self):
         return self.players.keys()
 
+    def json(self):
+        return {
+            'id'    :   self.id,
+            'players':  self.players.keys(),
+            'type'  :   self.type,
+        }
+
 class Team(NoTeam):
 
     def __init__(self, id, *args, **kwargs):
         NoTeam.__init__(self, id, *args, **kwargs)
         self.flag = None
         self.base = None
+        self.type = 2
         self.create_base()
 
     def create_base(self):
@@ -51,10 +66,7 @@ class Team(NoTeam):
         self.flag = GameStateGlobal.itemList.create('Flag', 1, self)
 
     def json(self):
-        d = {
-            'id'    :   self.id,
-            'players':  self.players,
-        }
+        d = NoTeam.json(self)
         if self.flag is not None:
             d['flag'] = self.flag.id
         if self.base is not None:
@@ -70,7 +82,6 @@ class TeamList(GenericMultiObjectList):
             NoTeam,
             Team,
         ])
-
 
 class Game:
 

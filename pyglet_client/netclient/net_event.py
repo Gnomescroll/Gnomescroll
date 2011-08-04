@@ -17,6 +17,7 @@ class NetEventGlobal:
     agentMessageHandler = None
     playerMessageHandler = None
     miscMessageHandler = None
+    gameModeMessageHandler = None
 
     @classmethod
     def init_0(cls):
@@ -30,6 +31,8 @@ class NetEventGlobal:
         cls.mapMessageHandler = MapMessageHandler()
         cls.projectileMessageHandler = ProjectileMessageHandler()
 
+        cls.gameModeMessageHandler = GameModeMessageHandler()
+
     @classmethod
     def init_1(cls):
         MessageHandler.init()
@@ -40,6 +43,7 @@ class NetEventGlobal:
         AgentMessageHandler.init()
         MapMessageHandler.init()
         ProjectileMessageHandler.init()
+        GameModeMessageHandler.init()
 
     @classmethod
     def register_json_events(cls, events):
@@ -327,12 +331,41 @@ class PlayerMessageHandler(DatastoreMessageInterface):
     def __init__(self):
         self.name = 'player'
         self.store = GameStateGlobal.playerList
+        self._bind_event('player_team', self._player_team)
         DatastoreMessageInterface.__init__(self)
 
     def _player_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:
             GameStateGlobal.remove_player(id)    # this method manages FK relationships
+
+    def _player_team(self, **msg):
+        err_msg = None
+        try:
+            pid = int(msg.get('id', None))
+            player = GameStateGlobal.playerList[pid]
+        except ValueError:
+            err_msg = 'player id invalid'
+        except TypeError:
+            err_msg = 'player id missing'
+        except (KeyError, IndexError):
+            err_msg = 'player %d unknown' % (pid,)
+
+        try:
+            team_id = int(msg.get('team', None))
+            team = GameStateGlobal.teamList[team_id]
+        except ValueError:
+            err_msg = 'team id invalid'
+        except TypeError:
+            err_msg = 'team id missing'
+        except (KeyError, IndexError):
+            err_msg = 'team %d sunknown' % (team_id,)
+
+        if err_msg is not None:
+            print 'msg player_team :: %s' % (err_msg,)
+            return
+
+        GameStateGlobal.game.player_join_team(player, team)
 
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
@@ -550,16 +583,16 @@ class GameModeMessageHandler(DatastoreMessageInterface):
 
     def __init__(self):
         self.name = 'teams'
-        self.datastore = GameStateGlobal.teamList
+        self.store = GameStateGlobal.teamList
         self._bind_event('game_mode', '_game_mode')
         self._bind_event('teams', '_teams')
         DatastoreMessageInterface.__init__(self)
 
     def _game_mode(self, **msg):
         try:
-            mode = msg['game_mode']
+            mode = msg['mode']
         except KeyError:
-            print 'msg game_mode :: game_mode missing'
+            print 'msg game_mode :: mode missing'
             return
         teams = None
         try:
@@ -569,14 +602,15 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             return
         except KeyError:
             pass
+
+        if 'teams_list' in msg:
+            self._teams(**msg)
+            
         if teams is None:
             GameStateGlobal.start_game_mode(mode)
         else:
             GameStateGlobal.start_game_mode(mode, teams=teams)
             
-        if 'teams_list' in msg:
-            self._teams(**msg)
-
     def _teams(self, **msg):
         self._default_list(**msg)
 

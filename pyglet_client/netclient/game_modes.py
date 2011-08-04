@@ -5,11 +5,24 @@ Initialization specific to game modes
 import toys
 from object_lists import GenericMultiObjectList
 
+team_types = {
+    1   :   'NoTeam',
+    2   :   'Team',
+}
 
 class NoTeam:
 
-    def __init__(self):
-        self.players = {}
+    @classmethod
+    def name_from_type(self, type):
+        return team_types[type]
+
+    def __init__(self, id, players=None, *args, **kwargs):
+        self.id = id
+        if players is None:
+            self.players = {}
+        else:
+            self.load_players_list(players)
+        self.type = 1
 
     def add_player(self, player):
         self.players[player.id] = player
@@ -25,6 +38,12 @@ class NoTeam:
         if player.agent is not None:
             player.agent.team = None
 
+    # players_list would be a list of player ids
+    def load_players_list(self, players):
+        player_objs = [GameStateGlobal.playerList[p] for p in players]
+        self.players = dict(zip(players, player_objs))
+        return self.players
+
     def __len__(self):
         return len(self.players)
     def __iter__(self):
@@ -36,50 +55,62 @@ class NoTeam:
     def keys(self):
         return self.players.keys()
 
+    def update_info(self, **team):
+        old_id = self.id
+        if 'id' in team:
+            self.id = id
+        if 'players' in team:
+            self.load_players_list(team['players'])
+        TeamList.update_info(self, old_id)
+
 class Team(NoTeam):
 
-    def __init__(self):
-        NoTeam.__init__(self)
+    def __init__(self, id, *args, **kwargs):
+        NoTeam.__init__(self, id)
         self.flag = None
         self.base = None
-        self.create_base()
+        self.type = 2
+        #self.create_base()
 
-    def create_base(self):
-        self.base = GameStateGlobal.itemList.create('Base', self.id)
+    #def create_base(self):
+        #self.base = GameStateGlobal.itemList.create('Base', self.id)
 
-    def create_flag(self):
-        self.flag = GameStateGlobal.itemList.create('Flag', 1, self.id)
+    #def create_flag(self):
+        #self.flag = GameStateGlobal.itemList.create('Flag', 1, self.id)
+
+    def update_info(self, **team):
+        NoTeam.update_info(self, **team)
+        if 'flag' in team:
+            self.flag = GameStateGlobal.itemList[team['flag']]
+        if 'base' in team:
+            self.base = GameStateGlobal.itemList[team['base']]
 
 
 class Game:
 
-    def __init__(self):
-        self.viewers = GameStateGlobal.teamList.create('NoTeam')
+    def __init__(self, *args, **kwargs):
+        self.viewers = GameStateGlobal.teamList.get_viewers()
 
 
 class TeamGame(Game):
 
-    def __init__(self, teams=2):
+    def __init__(self, teams=2, *args, **kwargs):
         Game.__init__(self)
         self.n_teams = teams
-        self.teams = TeamList()
-        for i in xrange(n_teams):
-            TeamList.create('Team')
+        self.teams = GameStateGlobal.teamList
 
     def player_join_team(self, player, team):
-        for t in self.teams:
+        for t in self.teams.values():
             if player.id in t and t != team:
                 t.remove_player(player)
                 break
-        self.team.add_player(player)
+        team.add_player(player)
 
 
 class CTF(TeamGame):
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         TeamGame.__init__(self, teams=2)
-        for team in self.teams.values():
-            team.create_flag()
         
 
 class Deathmatch:
@@ -90,7 +121,7 @@ class Deathmatch:
 
 class TeamDeathmatch(TeamGame):
 
-    def __init__(self, teams=2):
+    def __init__(self, teams=2, *args, **kwargs):
         TeamGame.__init__(self, teams)
 
 
@@ -103,6 +134,12 @@ class TeamList(GenericMultiObjectList):
             NoTeam,
             Team,
         ])
+        self.name_from_type = NoTeam.name_from_type
+
+    def get_viewers(self):
+        for team in self.values():
+            if team_types[team.type] == 'NoTeam':
+                return team
 
 names = {
     'ctf'   :   CTF,

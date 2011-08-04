@@ -31,10 +31,7 @@ class Weapon(EquippableObject):
     }
 
     def __init__(self, id, owner=None):
-        EquippableObject.__init__(self)
-        if id is None:
-            raise ValueError
-        self.id = id
+        EquippableObject.__init__(self, id)
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False

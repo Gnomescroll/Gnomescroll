@@ -238,6 +238,7 @@ class GenericMultiObjectList(GenericObjectList):
         self.klass_index = {}               # __name__ -> Klass
         self.klass_registers = {}           # __name__ -> [id, ...]
         self._id = 0
+        self.name_from_type = lambda type: ''
 
     def _generate_id(self):
         self._id += 1
@@ -258,7 +259,13 @@ class GenericMultiObjectList(GenericObjectList):
         self._object_type = None
         return obj
 
-    def create(self, klass_name, *args, **kwargs):
+    def create(self, klass_name=None, *args, **kwargs):
+        if klass_name is None:
+            if 'name' in kwargs:
+                klass_name = kwargs['name']
+            elif 'type' in kwargs:
+                klass_name = self.name_from_type(kwargs['type'])
+
         return self._add(klass_name, *args, **kwargs)
 
     def _remove(self, obj):
@@ -288,6 +295,23 @@ class GenericMultiObjectList(GenericObjectList):
             del self.objects[old.id]
         self.objects[obj.id] = obj
 
+    def load_list(self, objs):
+        _objs = []
+        for obj in objs:
+            klass_name = self.name_from_type(int(obj['type']))
+            _objs.append(self.load_info(klass_name, **obj))
+        return _objs
+
+    def load_info(self, klass_name, **obj):
+        if 'id' not in obj:
+            return
+        obj_id = obj['id']
+        if obj_id in self:
+            o = self[obj_id]
+            o.update_info(**obj)
+        else:
+            o = self.create(klass_name, **obj)
+        return o
     
 class WeaponList(GenericMultiObjectList):
 
@@ -300,18 +324,19 @@ class WeaponList(GenericMultiObjectList):
             BlockApplier,
             HitscanLaserGun,
         ])
+        self.name_from_type = Weapon.name_from_type
 
-    def create(self, klass_name=None, *args, **kwargs):
-        if klass_name is None:
-            if 'name' in kwargs:
-                klass_name = kwargs['name']
-            elif 'type' in kwargs:
-                klass_name = Weapon.name_from_type(kwargs['type'])
-        else:
-            klass_name = Weapon.name_from_type(klass_name)
+    #def create(self, klass_name=None, *args, **kwargs):
+        #if klass_name is None:
+            #if 'name' in kwargs:
+                #klass_name = kwargs['name']
+            #elif 'type' in kwargs:
+                #klass_name = self.name_from_type(kwargs['type'])
+        #else:
+            #klass_name = self.name_from_type(klass_name)
 
         #print klass_name, args, kwargs
-        return self._add(klass_name, *args, **kwargs)
+        #return self._add(klass_name, *args, **kwargs)
 
     def destroy(self, obj):
         return self._remove(obj)
@@ -328,19 +353,20 @@ class ItemList(GenericMultiObjectList):
             Flag,
             Base,
         ])
+        self.name_from_type = GameObject.name_from_type
 
     def destroy(self, obj):
         return self._remove(self, obj)
 
-    def create(self, klass_name=None, *args, **kwargs):
-        if klass_name is None:
-            if 'name' in kwargs:
-                klass_name = kwargs['name']
-            elif 'type' in kwargs:
-                klass_name = GameObject.name_from_type(kwargs['type'])
-        else:
-            klass_name = GameObject.name_from_type(klass_name)
+    #def create(self, klass_name=None, *args, **kwargs):
+        #if klass_name is None:
+            #if 'name' in kwargs:
+                #klass_name = kwargs['name']
+            #elif 'type' in kwargs:
+                #klass_name = GameObject.name_from_type(kwargs['type'])
+        #else:
+            #klass_name = GameObject.name_from_type(klass_name)
             
-        return self._add(klass_name, *args, **kwargs)
+        #return self._add(klass_name, *args, **kwargs)
 
 from game_objects import GameObject

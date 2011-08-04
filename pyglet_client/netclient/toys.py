@@ -10,8 +10,8 @@ def rand_spot():
 
 class Flag(DetachableObject):
 
-    def __init__(self, radius, team):
-        DetachableObject.__init__(self, radius, model='flag.vox')
+    def __init__(self, id, radius, team):
+        DetachableObject.__init__(self, id, radius, model='flag.vox')
         self.auto_grab = True
         self.drop_on_death = True
         self.team = team
@@ -27,8 +27,8 @@ class Flag(DetachableObject):
 
 class Base(StaticObject, GameObjectRender):
 
-    def __init__(self, team):
-        StaticObject.__init__(self)
+    def __init__(self, id, team):
+        StaticObject.__init__(self, id)
         GameObjectRender.__init__(self, 'auto.vox')
         self.spawned = False
         self.team = team
