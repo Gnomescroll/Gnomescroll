@@ -10,7 +10,7 @@ from math import pi, cos, sin
 from random import randrange
 
 from game_state import GameStateGlobal
-from game_state import GenericObjectList
+from object_lists import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
 
@@ -299,7 +299,7 @@ class Agent(AgentPhysics, AgentAction):
     _RESPAWN_TIME = 2. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, player_id, position=None, id=None):
+    def __init__(self, player_id, position=None, id=None, team=None):
         if position is None:
             position = self._spawn_point()
 
@@ -313,6 +313,8 @@ class Agent(AgentPhysics, AgentAction):
         self.collisionDetection = collisionDetection
         assert self.collisionDetection != None
         ### End Global imports ###
+
+        self.team = team
 
         if id is None:
             id = GameStateGlobal.new_agent_id()
@@ -436,6 +438,7 @@ class Agent(AgentPhysics, AgentAction):
                     'active' : self._active_weapon,
                 },
                 'state' : self.state,
+                'team'  : self.team.id,
             })
         else:
             if type(properties) == str:
@@ -450,9 +453,11 @@ class Agent(AgentPhysics, AgentAction):
                     d['weapons'] = {
                         'active'    :   self._active_weapon,
                     }
+                elif prop == 'team':
+                    d['team'] = self.team.id
                 else:
                     d[prop] = getattr(self, prop)
-                if prop == 'dead':
+                if type(d[prop]) == bool:
                     d[prop] = int(d[prop])
         return d
 
@@ -470,6 +475,17 @@ class Agent(AgentPhysics, AgentAction):
         self._active_weapon = weapon_index
         if old != weapon_index:
             NetOut.event.agent_update(self, 'active_weapon')
+
+    def pickup_item(self, item, index=None):
+        if index is None:
+            self.inventory.append(item)
+        else:
+            self.inventory.insert(index, item)
+        item.take(self)
+        
+    def drop_item(self, item):
+        self.inventory.remove(item)
+        item.drop(self)
 
     # set agent state explicitly
     def set_control_state(self, state, angle=None, tick=None):

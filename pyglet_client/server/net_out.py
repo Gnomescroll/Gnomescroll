@@ -122,9 +122,9 @@ class EventOut:
         }
 
     @sendJSONevent('object_update')
-    def object_update(self, obj):
+    def object_update(self, obj, properties=None):
         return {
-            'obj'   :   obj.json(),
+            'obj'   :   obj.json(properties),
         }
 
     @sendJSONevent('object_create')
@@ -149,6 +149,13 @@ class EventOut:
     def player_create(self, player):
         return {
             'player'    :   player.json(),
+        }
+
+    @sendJSONevent('player_team', tick=False)
+    def player_team(self, player):
+        return {
+            'id'    :   player.id,
+            'team'  :   player.team.id,
         }
 
     @sendJSONevent('client_quit', tick=False)
@@ -338,3 +345,20 @@ class SendMessage: #each connection has one of these
         return {
             'timestamp'   :   timestamp,
         }
+
+    @sendJSON('game_mode')
+    def game_mode(self, mode, teams=None):
+        d = {
+            'mode'  :   mode,
+        }
+        if teams is not None:
+            d['teams_list'] = [team.json() for team in teams]
+            d['teams'] = len(d['teams_list'])
+        return d
+
+    @sendJSON('teams')
+    def teams(self, teams):
+        return {
+            'teams_list' :   [team.json() for team in teams],
+        }
+        

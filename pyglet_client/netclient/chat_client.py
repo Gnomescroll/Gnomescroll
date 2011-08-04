@@ -328,6 +328,25 @@ class ChatCommand():
                 'content'   : 'Listening to channel: %s' % (ChatClient.chatClient.CURRENT_CHANNEL,),
                 'channel'   : 'system',
             })
+            
+        elif command == 'team':
+            try:
+                team_id = int(args[1])
+            except (ValueError, IndexError):
+                _send = self._send_local({
+                    'content'   :   'Team command usage: /team <team_id>',
+                    'channel'   :   'system',
+                })
+            else:
+                try:
+                    team = GameStateGlobal.teamList[team_id]
+                except KeyError:
+                    _send = self._send_local({
+                        'content'   :   'Team %d does not exist' % (team_id,),
+                        'channel'   :   'system',
+                    })
+                else:
+                    NetOut.sendMessage.join_team(team)
 
         elif command == 'exit' or command == 'quit':
             print 'exiting'

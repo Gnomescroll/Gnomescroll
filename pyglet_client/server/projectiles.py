@@ -34,7 +34,7 @@ projectile_dat = {
 '''
 Projectile Controller
 '''
-from game_state import GenericObjectList
+from object_lists import GenericObjectList
 from game_state import GameStateGlobal
 
 class ProjectileList(GenericObjectList):

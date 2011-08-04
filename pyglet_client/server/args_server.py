@@ -37,6 +37,8 @@ DEFAULTS = {
     'udp_port'  :   5060,
     'tick'      :   0.01,
     'name'      :   settings.server_name,
+    'game_mode' :   settings.game_mode,
+    'n_teams'   :   settings.n_teams,
 }
 
 def parse(cl_args=None):
@@ -60,6 +62,10 @@ def parse(cl_args=None):
     parser.add_argument('-t', '--tick', default=DEFAULTS['tick'])
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'], metavar='SERVER NAME', dest='server_name')
+
+    parser.add_argument('-g', '--game-mode', default=DEFAULTS['game_mode'])
+
+    parser.add_argument('-nt', '-n-teams', default=DEFAULTS['n_teams'], dest='n_teams')
 
     parser.add_argument('--print-args', action='store_true')
 
@@ -95,6 +101,8 @@ def print_args(args):
         'admin',
         'tick',
         'server_name',
+        'game_mode',
+        'n_teams',
     ]
     print 'Options:'
     for key in keys:

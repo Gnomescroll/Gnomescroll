@@ -151,6 +151,25 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @sendJSON('pickup_item', tick=True)
+    def pickup_item(self, agent, item, index=None):
+        msg = {
+            'aid'   :   agent.id,
+            'iid'   :   item.id,
+        }
+        if index is not None:
+            msg['slot'] = index
+        return msg
+
+    @idRequired
+    @sendJSON('drop_item', tick=True)
+    def drop_item(self, agent, item):
+        return {
+            'aid'   :   agent.id,
+            'iid'   :   item.id,
+        }
+
+    @idRequired
     @sendJSON('hit_block', tick=True)
     def hit_block(self, agent=None):
         if agent is None or agent.id is None:
@@ -194,6 +213,13 @@ class SendMessage(GenericMessage):
     def hitscan(self, target):
         return {
             'target'    :   target
+        }
+
+    @idRequired
+    @sendJSON('join_team')
+    def join_team(self, team):
+        return {
+            'team'  :   team.id,
         }
 
 class MiscMessage:

@@ -1,6 +1,6 @@
 from game_objects import GameObject
 from game_objects import EquippableObject
-from game_state import GenericMultiObjectList
+from object_lists import GenericMultiObjectList
 
 class WeaponList(GenericMultiObjectList):
 
@@ -12,12 +12,6 @@ class WeaponList(GenericMultiObjectList):
             BlockApplier,
             HitscanLaserGun,
         ])
-
-    def create(self, klass_name, *args, **kwargs):
-        return self._add(klass_name, *args, **kwargs)
-
-    def destroy(self, obj):
-        return self._remove(self, obj)
         
 class Weapon(EquippableObject):
 

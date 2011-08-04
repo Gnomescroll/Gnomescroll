@@ -7,7 +7,8 @@ class GameStateGlobal:
     agentList = None
     playerList = None
     projectileList = None
-    objectList = None
+    itemList = None
+    teamList = None
 
     player = None
     agent = None
@@ -21,13 +22,20 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
-        cls.objectList = ObjectList()
+        cls.itemList = ItemList()
+        cls.teamList = game_modes.TeamList()
         cls.gameState = GameState()
         cls.exit = False
 
     @classmethod
     def init_1(cls):
         pass
+
+    @classmethod
+    def start_game_mode(cls, mode, **kwargs):
+        mode = mode.lower()
+        self.game_mode_name = mode
+        self.game_mode = game_modes.names[mode](**kwargs)
 
     # for your player
     @classmethod
@@ -91,16 +99,13 @@ class GameStateGlobal:
 
     @classmethod
     def remove_object(cls, id, seek=True):
-        obj = cls.objectList.get(id, None)
+        obj = cls.itemList.get(id, None)
         if obj is None:
             return
-        cls.objectList.destroy(obj)
+        cls.itemList.destroy(obj)
 
-        if seek:
-            if obj.owner is not None:
-                owner = cls.agentList.get(obj.owner, None)
-                if owner is not None:
-                    owner.inventory.drop(obj)
+        if seek and obj.owner is not None:
+            obj.owner.inventory.drop(obj)
                     
     @classmethod
     def client_quit(cls, id):
@@ -144,7 +149,8 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
-from object_lists import ObjectList
+from object_lists import ItemList
+import game_modes
 from players import Player
 from net_client import NetClientGlobal
 

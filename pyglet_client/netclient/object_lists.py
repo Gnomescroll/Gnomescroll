@@ -258,6 +258,9 @@ class GenericMultiObjectList(GenericObjectList):
         self._object_type = None
         return obj
 
+    def create(self, klass_name, *args, **kwargs):
+        return self._add(klass_name, *args, **kwargs)
+
     def _remove(self, obj):
         if type(obj) == int:
             id = obj
@@ -268,10 +271,22 @@ class GenericMultiObjectList(GenericObjectList):
         self.klass_registers[klass_name].remove(id)
         return GenericObjectList._remove(self, obj)
 
+    def destroy(self, obj):
+        return self._remove(obj)
+
     def _filter_klass(self, klass_name):
         klass_ids = self.klass_registers[klass_name]
         objs = [self[kid] for kid in klass_ids]
         return dict(zip(klass_ids, objs))
+
+    def update(self, obj, id=None):
+        if id is None:
+            return
+        old = self[id]
+
+        if old.id != obj.id and old.id in self.objects:
+            del self.objects[old.id]
+        self.objects[obj.id] = obj
 
     
 class WeaponList(GenericMultiObjectList):
@@ -301,19 +316,10 @@ class WeaponList(GenericMultiObjectList):
     def destroy(self, obj):
         return self._remove(obj)
 
-    def update(self, weapon, id=None):
-        if id is None:
-            return
-        old = self[id]
-
-        if old.id != weapon.id and old.id in self.objects:
-            del self.objects[old.id]
-        self.objects[weapon.id] = weapon
-
 from weapons import Weapon
 
 
-class ObjectList(GenericMultiObjectList):
+class ItemList(GenericMultiObjectList):
 
     def __init__(self):
         from toys import Flag, Base
@@ -336,14 +342,5 @@ class ObjectList(GenericMultiObjectList):
             klass_name = GameObject.name_from_type(klass_name)
             
         return self._add(klass_name, *args, **kwargs)
-
-    def update(self, obj, id=None):
-        if id is None:
-            return
-        old = self[id]
-
-        if old.id != obj.id and old.id in self.objects:
-            del self.objects[old.id]
-        self.objects[obj.id] = obj
 
 from game_objects import GameObject
