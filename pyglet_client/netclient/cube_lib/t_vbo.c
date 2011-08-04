@@ -238,6 +238,7 @@ int update_column_VBO(struct vm_column* column) {
         column->vbo.v_num = 0;
         column->vbo_loaded = 0;
         column->vbo_needs_update = 0;
+        column->empty = 1;
         return 0;
     }
     create_vbo(&column->vbo, cs, cs_n);
@@ -262,7 +263,8 @@ int _update_chunks() {
         }
         //update or create VBO for chunks within 10 units of viewing distance
         if(chunk_render_check(col->x_off, col->y_off, 10)) {
-            if(col->vbo_needs_update == 1 || (col->vbo_loaded==0 && col->vbo_needs_update)) {
+            //if(col->vbo_needs_update == 1 || (col->vbo_loaded==0 && col->vbo_needs_update)) {
+            if(!col->empty && (col->vbo_needs_update == 1 || col->vbo_loaded==0)) {
                 if(col->vbo.VBO_id == 0) {
                     printf("create VBO: %i, %i \n", col->x_off, col->y_off);
                 } else {

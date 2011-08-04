@@ -108,17 +108,8 @@ class App(object):
         #other
         self.world = world.World()  #deprecate?
 
-        #deprecate
-        if settings.pyglet:
-            self.win = window.Window(fullscreen=False, vsync=False)
-            self.win.on_close = self._on_close
-            self.camera = Camera(self.win)
-            self.hud = Hud(self.win)
-        else:
-            self.camera = Camera(None, x=-100, z=50, rot=-1.)
-            self.hud = Hud()
-        #setup events
-        #self.exit = False
+        self.camera = Camera(None, x=-100, z=50, rot=-1.)
+        self.hud = Hud()
 
         self.intervals = intervals.Intervals()
         send_agent_pos = lambda: NetOut.sendMessage.agent_position(GameStateGlobal.agent)
@@ -274,6 +265,7 @@ class App(object):
             if draw_hud:
                 self.camera.hudProjection()
                 self.hud.draw(fps=fps_text, ping=ping_text)
+                cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
             P.event("SDL flip")
             self.SDL_global.flip()
             P.event("Misc")

@@ -58,6 +58,7 @@ int _set(int x, int y, int z, int value) {
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
     column->local_version++;
     column->server_version++;
+    column->empty = 0;
     chunk->local_version++;
     chunk->server_version++;
     column->vbo_needs_update = 1;

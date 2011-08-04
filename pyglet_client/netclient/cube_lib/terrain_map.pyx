@@ -397,6 +397,17 @@ def net_in(str):
     _net_in(str, length)
 '''
 
+
+'''
+PART 5.5 : visualization
+'''
+
+cdef extern from 't_viz.h':
+    int _draw_vbo_indicator(float x, float y, float z)
+
+def draw_vbo_indicator(float x, float y, float z):
+    _draw_vbo_indicator(x, y, z)
+
 '''
 PART 6: Init
 '''

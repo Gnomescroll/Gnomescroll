@@ -83,7 +83,8 @@ cube_lib_terrain_map = Extension('cube_lib.terrain_map',
                     sources = ['cube_lib/terrain_map.pyx',
                             'cube_lib/t_map.c',
                             'cube_lib/t_properties.c',
-                            'cube_lib/t_vbo.c',]
+                            'cube_lib/t_vbo.c',
+                            'cube_lib/t_viz.c']
                     )
 
 vox_lib = Extension('vox_lib',
