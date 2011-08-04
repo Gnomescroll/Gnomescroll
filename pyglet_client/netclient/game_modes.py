@@ -54,6 +54,10 @@ class NoTeam:
         return self.players.values()
     def keys(self):
         return self.players.keys()
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return repr(self.players.keys())
 
     def update_info(self, **team):
         old_id = self.id

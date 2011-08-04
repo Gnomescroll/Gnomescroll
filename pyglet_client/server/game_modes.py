@@ -91,6 +91,9 @@ class Game:
     def player_join_team(self, player, team=None):
         pass
 
+    def remove_player(self, player):
+        self.viewers.remove_player(player)
+        
 class TeamGame(Game):
 
     def __init__(self, teams=2, *args):
@@ -109,6 +112,10 @@ class TeamGame(Game):
 
         team.add_player(player)
         NetOut.event.player_team(player)
+
+    def remove_player(self, player):
+        for team in self.teams.values():
+            team.remove_player(player)
 
 
 class CTF(TeamGame):
