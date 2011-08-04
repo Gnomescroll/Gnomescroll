@@ -331,8 +331,9 @@ class ChatCommand():
             
         elif command == 'team':
             try:
-                team_id = int(args[1])
+                team_id = int(args[0])
             except (ValueError, IndexError):
+                print args
                 _send = self._send_local({
                     'content'   :   'Team command usage: /team <team_id>',
                     'channel'   :   'system',

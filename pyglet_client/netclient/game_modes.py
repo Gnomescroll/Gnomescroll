@@ -74,13 +74,6 @@ class Team(NoTeam):
         self.flag = None
         self.base = None
         self.type = 2
-        #self.create_base()
-
-    #def create_base(self):
-        #self.base = GameStateGlobal.itemList.create('Base', self.id)
-
-    #def create_flag(self):
-        #self.flag = GameStateGlobal.itemList.create('Flag', 1, self.id)
 
     def update_info(self, **team):
         NoTeam.update_info(self, **team)
