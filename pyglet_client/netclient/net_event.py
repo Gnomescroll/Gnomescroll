@@ -174,7 +174,7 @@ class MapMessageHandler(GenericMessageHandler):
         #    (x,y,z,version ) = chunk
 
     def _map_chunk(self, datagram):
-        print "Map Chunk Received"
+        #print "Map Chunk Received"
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         self.mapController.incoming_map_chunk(x,y,z)
         #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
