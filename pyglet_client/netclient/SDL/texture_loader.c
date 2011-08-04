@@ -27,7 +27,7 @@ return image;
 
 int _create_texture(SDL_Surface* surface) {
     GLuint texture;
-    
+
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
@@ -43,7 +43,7 @@ int _create_hud_texture(char *file) {
 
     SDL_Surface* surface;
     GLuint texture;
-    
+
     surface = _load_image(file);
 
     glEnable(GL_TEXTURE_2D);
@@ -61,9 +61,12 @@ int _create_hud_texture(char *file) {
 }
 
 int _create_hud_texture2(SDL_Surface *surface) {
-
+    if(surface == NULL) {
+        printf("Error: _SDL/texture_loader.c create_hud_texture2, surface is null!\n");
+        return 0;
+    }
     GLuint texture;
-    
+
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     // Bind the texture object
@@ -89,9 +92,9 @@ Texture texture;
 void _load_hud_texture(char *file) {
     SDL_Surface *surface;
     int tex = _create_hud_texture2(surface);
-    
+
     surface = _load_image(file);
-    
+
     texture.tex = tex;
     texture.w = surface->w;
     texture.h = surface->h;
@@ -127,7 +130,7 @@ glEnd();
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }
-    
+
 
 int _create_block_texture(char *file) {
     return 0;
