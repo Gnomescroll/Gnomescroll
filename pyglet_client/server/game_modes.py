@@ -128,3 +128,4 @@ names = {
 }
 
 from game_state import GameStateGlobal
+from net_out import NetOut

@@ -63,7 +63,7 @@ class Player:
             id = GameStateGlobal.new_player_id()
         self.id = id
         self.agent = GameStateGlobal.agentList.create(self.id)
-        self.team = 1
+        self.team = team
 
     def json(self, properties=None, agent_properties=None): # json encodable string representation
         d = {
