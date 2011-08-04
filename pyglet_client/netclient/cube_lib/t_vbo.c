@@ -262,7 +262,7 @@ int _update_chunks() {
         }
         //update or create VBO for chunks within 10 units of viewing distance
         if(chunk_render_check(col->x_off, col->y_off, 10)) {
-            if(col->vbo_needs_update == 1 || col->vbo_loaded==0) {
+            if(col->vbo_needs_update == 1 || (col->vbo_loaded==0 && col->vbo_needs_update)) {
                 if(col->vbo.VBO_id == 0) {
                     printf("create VBO: %i, %i \n", col->x_off, col->y_off);
                 } else {
@@ -368,7 +368,7 @@ int* _chunk_request() {
     struct vm_chunk* ch_lowest = NULL;
     int score, score_lowest;
     int i,j,k;
-    
+
     score_lowest = -1;
 
     m = _get_map();
