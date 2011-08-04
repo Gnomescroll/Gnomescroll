@@ -445,20 +445,23 @@ class Agent(AgentPhysics, AgentAction):
                 properties = [properties]
             for prop in properties:
                 if prop == 'weapons':
-                    d[prop] = {
+                    val = {
                         'weapons': [weapon.json() for weapon in self.weapons],
-                        'active' : self._active_weapon,
+                        'active' : int(self._active_weapon),
                     }
                 elif prop == 'active_weapon':
-                    d['weapons'] = {
-                        'active'    :   self._active_weapon,
+                    prop = 'weapons'
+                    val = {
+                        'active'    :   int(self._active_weapon),
                     }
                 elif prop == 'team':
-                    d['team'] = self.team.id
+                    val = self.team.id
                 else:
-                    d[prop] = getattr(self, prop)
-                if type(d[prop]) == bool:
-                    d[prop] = int(d[prop])
+                    val = getattr(self, prop)
+
+                if type(val) == bool:
+                    val = int(val)
+                d[prop] = val
         return d
 
     def drop_weapon(self, weapon, by_id=False):
