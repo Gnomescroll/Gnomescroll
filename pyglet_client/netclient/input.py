@@ -6,7 +6,7 @@ Client input
 
 from math import sin, cos, pi
 
-import settings
+import default_settings as settings
 from opts import opts
 
 if settings.pyglet:

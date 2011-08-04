@@ -10,7 +10,7 @@ import struct
 import json
     
 from opts import opts
-import settings
+import default_settings as settings
 
 class NetClientGlobal:
     connection = None

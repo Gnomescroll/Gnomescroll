@@ -27,7 +27,7 @@ name            Set player name (overrides settings.py name)
 
 import sys
 import argparse
-import settings
+import default_settings as settings
 
 DC_VERSION = '0.2'
 

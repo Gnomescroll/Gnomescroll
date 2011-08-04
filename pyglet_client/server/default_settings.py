@@ -16,3 +16,5 @@ ip_address = '127.0.0.1'
 ''' Game '''
 game_mode = 'ctf'
 n_teams = 2
+
+from settings import *

@@ -14,7 +14,7 @@ import args_client
 import opts
 opts.opts = args_client.get_args()
 
-import settings
+import default_settings as settings
 import stats
 
 import intervals

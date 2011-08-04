@@ -1,4 +1,4 @@
-import settings
+import default_settings as settings
 
 if settings.pyglet:
     import pyglet

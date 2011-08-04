@@ -1,6 +1,6 @@
 from math import sin, cos, pi
 
-import settings
+import default_settings as settings
 
 if settings.pyglet:
     from pyglet.gl import *

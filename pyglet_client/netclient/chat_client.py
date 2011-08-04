@@ -3,7 +3,7 @@
 '''
 Chat client
 '''
-import settings
+import default_settings as settings
 from time import time
 from collections import deque
 

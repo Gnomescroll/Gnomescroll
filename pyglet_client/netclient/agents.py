@@ -14,7 +14,7 @@ from opts import opts
 
 from weapons import LaserGun, Pick, BlockApplier
 
-import settings
+import default_settings as settings
 
 import vox_lib
 import vector_lib
