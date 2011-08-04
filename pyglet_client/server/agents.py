@@ -10,7 +10,7 @@ from math import pi, cos, sin
 from random import randrange
 
 from game_state import GameStateGlobal
-from game_state import GenericObjectList
+from object_lists import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
 

@@ -65,7 +65,7 @@ def parse(cl_args=None):
 
     parser.add_argument('-g', '--game-mode', default=DEFAULTS['game_mode'])
 
-    parser.add_argument('-nt', '-n-teams', default=DEFAULTS['n_teams'])
+    parser.add_argument('-nt', '-n-teams', default=DEFAULTS['n_teams'], dest='n_teams')
 
     parser.add_argument('--print-args', action='store_true')
 

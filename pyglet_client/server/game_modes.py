@@ -3,17 +3,12 @@ Initialization specific to game modes
 '''
 
 import toys
-from game_state import GenericMultiObjectList
-
-names = {
-    'ctf'   :   CTF,
-    'dm'    :   Deathmatch,
-    'tdm'   :   TeamDeathmatch,
-}
+from object_lists import GenericMultiObjectList
 
 class NoTeam:
 
-    def __init__(self):
+    def __init__(self, id, *args, **kwargs):
+        self.id = id
         self.players = {}
 
     def add_player(self, player):
@@ -43,8 +38,8 @@ class NoTeam:
 
 class Team(NoTeam):
 
-    def __init__(self):
-        NoTeam.__init__(self)
+    def __init__(self, id, *args, **kwargs):
+        NoTeam.__init__(self, id, *args, **kwargs)
         self.flag = None
         self.base = None
         self.create_base()
@@ -71,7 +66,7 @@ class TeamList(GenericMultiObjectList):
     def __init__(self):
         GenericMultiObjectList.__init__(self)
         self._metaname = 'TeamList'
-        self._allow_klasses = [\
+        self._allow_klasses([\
             NoTeam,
             Team,
         ])
@@ -87,11 +82,11 @@ class Game:
 
 class TeamGame(Game):
 
-    def __init__(self, teams=2):
+    def __init__(self, teams=2, *args):
         Game.__init__(self)
         self.n_teams = teams
         self.teams = GameStateGlobal.teamList
-        for i in xrange(n_teams):
+        for i in xrange(self.n_teams):
             self.teams.create('Team')
 
     def player_join_team(self, player, team=None):
@@ -107,9 +102,11 @@ class TeamGame(Game):
 
 class CTF(TeamGame):
 
-    def __init__(self):
+    def __init__(self, teams=2):
         TeamGame.__init__(self, teams=2)
         for team in self.teams.values():
+            if team == self.viewers:
+                continue
             team.create_flag()
         
 
@@ -123,3 +120,11 @@ class TeamDeathmatch(TeamGame):
 
     def __init__(self, teams=2):
         TeamGame.__init__(self, teams)
+
+names = {
+    'ctf'   :   CTF,
+    'dm'    :   Deathmatch,
+    'tdm'   :   TeamDeathmatch,
+}
+
+from game_state import GameStateGlobal

@@ -1,3 +1,6 @@
+from object_lists import GenericMultiObjectList
+
+
 object_names = {
     1   :   'Flag',
     2   :   'Base',
@@ -18,7 +21,8 @@ def filter_props(obj, properties):
 
 class GameObject:
 
-    def __init__(self):
+    def __init__(self, id):
+        self.id = id
         self.on_ground = True
         self.state = [0 for i in range(9)]
 
@@ -44,8 +48,8 @@ class GameObject:
 
 class StaticObject(GameObject):
 
-    def __init__(self):
-        GameObject.__init__(self)
+    def __init__(self, id):
+        GameObject.__init__(self, id)
         self.immobile = True
         
     def pos(self):
@@ -54,15 +58,15 @@ class StaticObject(GameObject):
 
 class EquippableObject(GameObject):
 
-    def __init__(self):
-        GameObject.__init__(self)
+    def __init__(self, id):
+        GameObject.__init__(self, id)
 
 
 # pick up / drop
 class DetachableObject(GameObject):
     
-    def __init__(self, radius=1):
-        GameObject.__init__(self)
+    def __init__(self, id, radius=1):
+        GameObject.__init__(self, id)
         self.radius = radius
         self.auto_grab = False
         self.drop_on_death = True
@@ -88,7 +92,7 @@ class DetachableObject(GameObject):
             d.update({
                 'owner'     :   self.owner.id,
                 'on_ground' :   int(self.on_ground)
-            }
+            })
         else:
             d = filter_props(obj, properties)
         return d
@@ -104,27 +108,3 @@ class ItemList(GenericMultiObjectList):
             Base,
         ])
 
-    def destroy(self, obj):
-        return self._remove(self, obj)
-
-    def create(self, klass_name=None, *args, **kwargs):
-        if klass_name is None:
-            if 'name' in kwargs:
-                klass_name = kwargs['name']
-            elif 'type' in kwargs:
-                klass_name = GameObject.name_from_type(kwargs['type'])
-        else:
-            klass_name = GameObject.name_from_type(klass_name)
-            
-        return self._add(klass_name, *args, **kwargs)
-
-    def update(self, obj, id=None):
-        if id is None:
-            return
-        old = self[id]
-
-        if old.id != obj.id and old.id in self.objects:
-            del self.objects[old.id]
-        self.objects[obj.id] = obj
-
-from game_state import GenericMultiObjectList

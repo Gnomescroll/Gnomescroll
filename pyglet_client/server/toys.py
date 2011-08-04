@@ -11,8 +11,8 @@ def rand_spot():
 
 class Flag(DetachableObject):
 
-    def __init__(self, radius, team):
-        DetachableObject.__init__(self, radius)
+    def __init__(self, id, radius, team, *args, **kwargs):
+        DetachableObject.__init__(self, id, radius)
         self.auto_grab = True
         self.drop_on_death = True
         self.team = team
@@ -29,7 +29,7 @@ class Flag(DetachableObject):
             d = DetachableObject.json(self)
             d.update({
                 'team'     :   self.team.id,
-            }
+            })
         else:
             d = filter_props(obj, properties)
         return d        
@@ -37,8 +37,8 @@ class Flag(DetachableObject):
 
 class Base(StaticObject):
 
-    def __init__(self, team):
-        StaticObject.__init__(self)
+    def __init__(self, id, team, *args, **kwargs):
+        StaticObject.__init__(self, id)
         self.spawned = False
         self.team = team
         
