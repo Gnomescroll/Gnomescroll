@@ -46,7 +46,7 @@ class MapController:
                 #break #optional
 
     def incoming_map_chunk(self, x,y,z):
-        print "map chunk received: %i, %i, %i" %(x,y,z)
+        #print "map chunk received: %i, %i, %i" %(x,y,z)
         self.requests -= 1
 
     '''
@@ -58,7 +58,7 @@ class MapController:
     '''
 
     def send_request(self, x,y,z):
-        print "map chunk request: " + str((x,y,z))
+        #print "map chunk request: " + str((x,y,z))
         self.requests += 1
         self.mapMessage.request_chunk(x,y,z)
 
