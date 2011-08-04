@@ -274,6 +274,8 @@ class SendMessage: #each connection has one of these
 
     @sendJSON('player_update')
     def send_player(self, player, properties=None):
+        if not hasattr(player, 'id'):
+            player = GameStateGlobal.playerList[player]
         return {
             'player': player.json(properties),
         }

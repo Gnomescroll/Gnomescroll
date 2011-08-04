@@ -66,6 +66,8 @@ class MessageHandler:
             self.agent_position(connection.id, **msg)
         elif cmd == 'request_agent':
             self.request_agent(connection, **msg)
+        elif cmd == 'request_player':
+            self.request_player(connection, **msg)
 
         elif cmd == 'fire_projectile':
             self.fire_projectile(connection.id, **msg)
@@ -595,6 +597,11 @@ class MessageHandler:
         agent_id = msg['aid']
         connection.sendMessage.send_agent(agent_id)
 
+    def request_player(self, connection, **msg):
+        if 'pid' not in msg:
+            return
+        connection.sendMessage.send_player(msg['pid'])
+        
     def agent_position(self, connection_id, **msg):
         err_msg = None
         try:

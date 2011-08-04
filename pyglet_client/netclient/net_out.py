@@ -83,6 +83,12 @@ class SendMessage(GenericMessage):
             'aid'   :   agent_id,
         }
 
+    @sendJSON('request_player')
+    def request_player(self, player_id):
+        return {
+            'pid'   :   player_id,
+        }
+
     @idRequired
     @sendJSON('agent_position', tick=True)
     def agent_position(self, agent):

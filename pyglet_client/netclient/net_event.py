@@ -348,8 +348,10 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             err_msg = 'player id invalid'
         except TypeError:
             err_msg = 'player id missing'
-        except (KeyError, IndexError):
+
+        if player is None:
             err_msg = 'player %d unknown' % (pid,)
+            NetOut.sendMessage.request_player(pid)
 
         try:
             team_id = int(msg.get('team', None))
