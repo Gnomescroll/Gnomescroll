@@ -3,12 +3,7 @@ Initialization specific to game modes
 '''
 
 import toys
-
-names = {
-    'ctf'   :   CTF,
-    'dm'    :   Deathmatch,
-    'tdm'   :   TeamDeathmatch,
-}
+from object_lists import GenericMultiObjectList
 
 
 class NoTeam:
@@ -104,11 +99,16 @@ class TeamList(GenericMultiObjectList):
     def __init__(self):
         GenericMultiObjectList.__init__(self)
         self._metaname = 'TeamList'
-        self._allow_klasses = [\
+        self._allow_klasses([\
             NoTeam,
             Team,
         ])
 
+names = {
+    'ctf'   :   CTF,
+    'dm'    :   Deathmatch,
+    'tdm'   :   TeamDeathmatch,
+}
 
-from object_lists import GenericMultiObjectList
+
 from game_state import GameStateGlobal
