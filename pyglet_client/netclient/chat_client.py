@@ -348,6 +348,12 @@ class ChatCommand():
                 else:
                     NetOut.sendMessage.join_team(team)
 
+        elif command == 'teams':
+            _send = self._send_local({
+                'content'   :   str(GameStateGlobal.teamList),
+                'channel'   :   'system',
+            })
+
         elif command == 'exit' or command == 'quit':
             print 'exiting'
             GameStateGlobal.exit = True
