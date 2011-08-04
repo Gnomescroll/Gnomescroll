@@ -71,6 +71,8 @@ class GameStateGlobal:
         if agent is not None:
             cls.remove_agent(agent.id, seek=False)
 
+        cls.game.remove_player(player)
+
     @classmethod
     def remove_agent(cls, id, seek=True):
         agent = cls.agentList.get(id, None)

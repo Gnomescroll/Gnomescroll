@@ -88,6 +88,8 @@ class Game:
     def __init__(self, *args, **kwargs):
         self.viewers = GameStateGlobal.teamList.get_viewers()
 
+    def remove_player(self, player):
+        self.viewers.remove_player(player)
 
 class TeamGame(Game):
 
@@ -102,6 +104,10 @@ class TeamGame(Game):
                 t.remove_player(player)
                 break
         team.add_player(player)
+
+    def remove_player(self, player):
+        for team in self.teams.values():
+            team.remove_player(player)
 
 
 class CTF(TeamGame):
