@@ -18,7 +18,8 @@ class NetEventGlobal:
     playerMessageHandler = None
     miscMessageHandler = None
     gameModeMessageHandler = None
-
+    itemMessageHandler = None
+    
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
@@ -32,6 +33,7 @@ class NetEventGlobal:
         cls.projectileMessageHandler = ProjectileMessageHandler()
 
         cls.gameModeMessageHandler = GameModeMessageHandler()
+        cls.itemMessageHandler = ItemMessageHandler()
 
     @classmethod
     def init_1(cls):
@@ -44,7 +46,8 @@ class NetEventGlobal:
         MapMessageHandler.init()
         ProjectileMessageHandler.init()
         GameModeMessageHandler.init()
-
+        ItemMessageHandler.init()
+        
     @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
@@ -491,17 +494,17 @@ class WeaponMessageHandler(DatastoreMessageInterface):
             GameStateGlobal.remove_weapon(id)
 
 
-class ObjectMessageHandler(DatastoreMessageInterface):
+class ItemMessageHandler(DatastoreMessageInterface):
 
     def __init__(self):
-        self.name = 'object'
+        self.name = 'item'
         self.store = GameStateGlobal.itemList
         DatastoreMessageInterface.__init__(self)
 
     def _object_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:
-            GameStateGlobal.remove_object(id)
+            GameStateGlobal.remove_item(id)
 
 
 class ProjectileMessageHandler(DatastoreMessageInterface):

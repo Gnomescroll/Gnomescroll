@@ -7,7 +7,7 @@ from game_objects import DetachableObject, StaticObject, filter_props
 from random import randint as rand
 
 def rand_spot():
-    return (rand(0, 100), rand(0, 100), 10)
+    return (rand(5, 15), rand(5, 15), 15)
 
 class Flag(DetachableObject):
 
@@ -16,6 +16,7 @@ class Flag(DetachableObject):
         self.auto_grab = True
         self.drop_on_death = True
         self.team = team
+        self.type = 1
         self.spawn()
 
     def spawn(self):
@@ -41,6 +42,7 @@ class Base(StaticObject):
         StaticObject.__init__(self, id)
         self.spawned = False
         self.team = team
+        self.type = 2
         
     def spawn(self):
         if not self.spawned:

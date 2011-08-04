@@ -529,7 +529,7 @@ class AgentInventory:
         return False
 
     def add(self, item, index=None):
-        if pos is None:
+        if index is None:
             self.inv.append(item)
         else:
             self.inv.insert(index, item)
@@ -561,7 +561,7 @@ class AgentModel:
             return
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
-        state = map(lambda k: float(k), state)
+        state = map(float, state)
 
         #self.collisionDetection = CubeGlobal.collisionDetection
         #assert False #fix
@@ -658,9 +658,12 @@ class AgentModel:
             #self.x, self.y, self.z = xyz
 
     def nearby_objects(self):
-        for obj in GameStateGlobal.itemList:
-            if vector_lib.distance() < obj.radius:
-                obj.agent_nearby(self)
+        for obj in GameStateGlobal.itemList.values():
+            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
+                self.near_object(obj)
+
+    def near_object(self, obj):
+        pass
 
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
@@ -1132,12 +1135,19 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.y_angle = 0.499
 
     def pickup_item(self, item, index=None):
-        item = self.inventory.add(item, index)
-        NetOut.sendMessage.pickup_item(self, item, index)
+        if item.take(self):
+            item = self.inventory.add(item, index)
+            NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
-        item = self.inventory.drop(item)
-        NetOut.sendMessage.drop_item(self, item)
+        if item.drop(self):
+            item = self.inventory.drop(item)
+            NetOut.sendMessage.drop_item(self, item)
+
+    def nearby_objects(self):
+        for obj in GameStateGlobal.itemList.values():
+            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
+                self.pickup_item(obj)
 
 
 import cube_lib.terrain_map as terrainMap

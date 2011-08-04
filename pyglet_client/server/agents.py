@@ -356,6 +356,7 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('HitscanLaserGun'),
         ]
         self._active_weapon = 0
+        self.inventory = []
 
         self.owner = player_id
 

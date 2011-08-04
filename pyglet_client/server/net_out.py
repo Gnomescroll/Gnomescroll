@@ -121,20 +121,20 @@ class EventOut:
             'projectile'    :   projectile.json(),
         }
 
-    @sendJSONevent('object_update')
-    def object_update(self, obj, properties=None):
+    @sendJSONevent('item_update')
+    def item_update(self, obj, properties=None):
         return {
             'obj'   :   obj.json(properties),
         }
 
-    @sendJSONevent('object_create')
-    def object_create(self, obj):
+    @sendJSONevent('item_create')
+    def item_create(self, obj):
         return {
             'obj'   :   obj.json(),
         }
 
-    @sendJSONevent('object_destroy')
-    def object_destroy(self, obj):
+    @sendJSONevent('item_destroy')
+    def item_destroy(self, obj):
         return {
             'id'    :   obj.id,
         }
@@ -316,6 +316,18 @@ class SendMessage: #each connection has one of these
     def send_weapon(self, weapon, properties=None):
         return {
             'weapon'    :   weapon.json(properties),
+        }
+
+    @sendJSON('item_list')
+    def send_items(self):
+        return {
+            'item_list' :   GameStateGlobal.itemList.json(),
+        }
+
+    @sendJSON('item_update')
+    def send_item(self, item, properties=None):
+        return {
+            'item'  :   item.json(properties),
         }
 
     @sendJSON('player_destroy')

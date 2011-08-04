@@ -101,7 +101,7 @@ class GameStateGlobal:
                 owner.weapons.drop(weapon)
 
     @classmethod
-    def remove_object(cls, id, seek=True):
+    def remove_item(cls, id, seek=True):
         obj = cls.itemList.get(id, None)
         if obj is None:
             return

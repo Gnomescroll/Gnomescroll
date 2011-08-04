@@ -1,4 +1,4 @@
-import vox
+from vox import GameObjectRender
 
 object_names = {
     1   :   'Flag',
@@ -8,10 +8,10 @@ object_names = {
 
 class GameObject:
 
-    def __init__(self, id):
+    def __init__(self, id, state=None):
         self.id = id
         self.on_ground = True
-        self.state = [0 for i in range(9)]
+        self.state = state
 
     def pos(self, xyz=None):
         if xyz is not None:
@@ -29,54 +29,47 @@ class GameObject:
             self.id = obj['id']
         if 'on_ground' in obj:
             self.on_ground = bool(obj['on_ground'])
+            if self.on_ground:
+                self.owner = None
         if 'state' in obj:
             self.state = obj['state']
         if 'pos' in obj:
             self.state[0:3] = obj['pos']
+        if 'owner' in obj:
+            owner_id = obj['owner']
+            owner = GameStateGlobal.agentList[owner_id]
+            if owner is None:
+                print 'Attempted to assign item to unknown agent owner %d' % (owner_id,)
+            self.owner = owner
 
         GameStateGlobal.itemList.update(self, old_id)
 
+    def take(self, new_owner):
+        return False
+    def drop(self):
+        return False
 
 class StaticObject(GameObject):
 
-    def __init__(self, id):
-        GameObject.__init__(self, id)
+    def __init__(self, id, state=None):
+        GameObject.__init__(self, id, state)
         self.immobile = True
         
     def pos(self):
         return GameObject.pos(self)
     
 
-class GameObjectRender(vox.VoxRender):
-
-    def __init__(self, model=None):
-        if model is not None:
-            vox.VoxRender.__init__(self, model)
-            self.draw = True
-        else:
-            self.vox = None
-            self.draw = False
-            
-    def draw(self):
-        if self.draw and self.vox is not None:
-            self.update_vox()
-            self.draw_vox()
-
-    def update(self):
-        self.update_vox()
-
-
 class EquippableObject(GameObject):
 
-    def __init__(self, id):
-        GameObject.__init__(self, id)
+    def __init__(self, id, state=None):
+        GameObject.__init__(self, id, state)
 
 
 # pick up / drop
 class DetachableObject(GameObject, GameObjectRender):
     
-    def __init__(self, id, radius=1, model=None):
-        GameObject.__init__(self, id)
+    def __init__(self, id, radius=1, state=None, model=None):
+        GameObject.__init__(self, id, state)
         GameObjectRender.__init__(self, model)
         self.radius = radius
 
@@ -88,8 +81,10 @@ class DetachableObject(GameObject, GameObjectRender):
         self.owner = new_owner
         if self.owner is not None:
             self.on_ground = False
+        return True
         
     def drop(self):
         self.pos(self.owner.pos())
         self.owner = None
         self.on_ground = True
+        return True
