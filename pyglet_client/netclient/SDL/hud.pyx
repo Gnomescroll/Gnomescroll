@@ -1,4 +1,4 @@
-cimport libc.stdlib
+#scimport libc.stdlib
 
 cdef extern from 'texture_loader.h':
     void _draw_loaded_hud_texture(int x, int y)
@@ -66,13 +66,13 @@ class text:
         del self.r, self.g, self.b, self.a
 
     color = property(_get_color, _set_color, _del_color, "text color")
-    
+
 class reticle:
 
     def __init__(self, file, x=0, y=0):
         self.x = x
         self.y = y
         load_hud_texture(file)
-        
+
     def draw(self):
         draw_loaded_hud_texture(self.x, self.y)
