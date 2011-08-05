@@ -186,7 +186,7 @@ class TcpClient:
                 while total_sent < msg_size:
                     try:
                         _msg = MESSAGE[total_sent:]
-                        sent = self.connection.send(MESSAGE, self.BUFFER_SIZE)
+                        sent = self.connection.send(_msg, self.BUFFER_SIZE)
                         total_sent += sent
                     except:
                         pass
