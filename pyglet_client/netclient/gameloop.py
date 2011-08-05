@@ -207,6 +207,7 @@ class App(object):
             MapControllerGlobal.mapController.tick() #testing
             P.event("world.tick")
             self.world.tick()
+            self.animations.tick()
             P.event("setup camera")
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
@@ -217,7 +218,6 @@ class App(object):
 
             self.camera.worldProjection()
             P.event("animations.draw")
-            self.animations.tick()
             self.animations.draw()
 
             #vox_lib.draw()
@@ -226,13 +226,13 @@ class App(object):
             v2.move(10,0,10,theta)
             v2.draw()
             #test
-            if GameStateGlobal.agent != None:
-                a = GameStateGlobal.agent
-                x = a.x
-                y = a.y
-                z = a.z
-                x_angle = a.x_angle
-                y_angle = a.y_angle
+            #if GameStateGlobal.agent != None:
+            #    a = GameStateGlobal.agent
+            #    x = a.x
+            #    y = a.y
+            #    z = a.z
+            #    x_angle = a.x_angle
+            #    y_angle = a.y_angle
 
                 #v.ray_cast_tracer(x,y,z, x_angle, y_angle)
                 #v2.ray_cast_tracer(x,y,z, x_angle, y_angle)
@@ -247,12 +247,13 @@ class App(object):
             P.event("Draw World_0")
             self.world.draw(first_person)
             P.event("Draw World_1")
-            SDL.gl.draw_particle(0, 1, 5,5,5)
-            SDL.gl.draw_particle(1, 2, 5,5,7)
-            SDL.gl.draw_particle(2, 2, 5,5,9)
-            SDL.gl.draw_particle(3, 2, 5,5,11)
-            SDL.gl.draw_particle(4, 2, 5,5,13)
-            SDL.gl.draw_particle(5, 2, 5,5,15)
+            if False:
+                SDL.gl.draw_particle(0, 1, 5,5,5)
+                SDL.gl.draw_particle(1, 2, 5,5,7)
+                SDL.gl.draw_particle(2, 2, 5,5,9)
+                SDL.gl.draw_particle(3, 2, 5,5,11)
+                SDL.gl.draw_particle(4, 2, 5,5,13)
+                SDL.gl.draw_particle(5, 2, 5,5,15)
             P.event("terrain_map.update_chunks")
             cube_lib.terrain_map.update_chunks()
             #cube_lib.VBO.draw_chunks()
@@ -273,6 +274,7 @@ class App(object):
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,500,-0.30)
             P.event("SDL flip")
+            time.sleep(0.01)
             self.SDL_global.flip()
             P.event("Misc")
             #FPS calculation
