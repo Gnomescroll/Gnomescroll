@@ -61,7 +61,7 @@ class AgentPhysics:
         ax,ay,az = (0,0,0)
         vx,vy = (0,0)
         #constants
-        tr = 100. #tick rate
+        tr = 10. #tick rate
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr

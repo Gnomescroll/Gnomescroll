@@ -266,7 +266,7 @@ int _update_chunks() {
             c = &m->column[j*vm_map_dim+i];
             //if VBO is farther than 10 viewing units, delete it
             if (flag_is_true(c, VBO_loaded) && !chunk_render_check(c->x_off, c->y_off, 15)) {
-                printf("unloaded VBO: %i, %i \n", c->x_off, c->y_off);
+                //printf("unloaded VBO: %i, %i \n", c->x_off, c->y_off);
                 delete_vbo(&c->vbo);
                 set_flag(c, VBO_loaded, 0);
             }
@@ -284,9 +284,9 @@ int _update_chunks() {
 
         if(flag_is_true(c, VBO_has_blocks) && ( flag_is_true(c, VBO_needs_update) || flag_is_false(c, VBO_loaded))) {
                 if(c->vbo.VBO_id == 0) {
-                    printf("create VBO: %i, %i \n", c->x_off, c->y_off);
+                    //printf("create VBO: %i, %i \n", c->x_off, c->y_off);
                 } else {
-                    printf("update VBO: %i, %i \n", c->x_off, c->y_off);
+                    //printf("update VBO: %i, %i \n", c->x_off, c->y_off);
                 }
                 update_column_VBO(c);
                 return 0;
