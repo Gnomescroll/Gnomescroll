@@ -165,8 +165,8 @@ cdef extern from 't_vbo.h':
 
 '''
 PART 2: Properties
-
 '''
+
 cdef extern from "./t_properties.h":
     struct cubeProperties:
         int active
@@ -396,6 +396,34 @@ def net_in(str):
     buffer = str
     _net_in(str, length)
 '''
+
+
+'''
+PART 5.5 : visualization
+'''
+
+cdef extern from 't_viz.h':
+    int _draw_vbo_indicator(float x, float y, float z)
+    int _start_frame()
+    int _event(int id)
+    int _end_frame()
+    int _draw_perf_graph(float x, float y, float z)
+
+def draw_vbo_indicator(float x, float y, float z):
+    _draw_vbo_indicator(x, y, z)
+
+class Profiler:
+    def start_frame(self):
+        _start_frame()
+
+    def event(self, int id):
+        _event(id)
+
+    def end_frame(self):
+        _end_frame()
+
+    def draw_perf_graph(self, float x, float y, float z):
+        _draw_perf_graph(x,y,z)
 
 '''
 PART 6: Init

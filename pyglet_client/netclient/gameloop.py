@@ -30,6 +30,9 @@ if True:
     import cube_lib.terrain_map
     cube_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
+
+    P2 = cube_lib.terrain_map.Profiler()
+
 ##profiler
 from profiler import P
 
@@ -108,17 +111,8 @@ class App(object):
         #other
         self.world = world.World()  #deprecate?
 
-        #deprecate
-        if settings.pyglet:
-            self.win = window.Window(fullscreen=False, vsync=False)
-            self.win.on_close = self._on_close
-            self.camera = Camera(self.win)
-            self.hud = Hud(self.win)
-        else:
-            self.camera = Camera(None, x=-100, z=50, rot=-1.)
-            self.hud = Hud()
-        #setup events
-        #self.exit = False
+        self.camera = Camera(None, x=-100, z=50, rot=-1.)
+        self.hud = Hud()
 
         self.intervals = intervals.Intervals()
         send_agent_pos = lambda: NetOut.sendMessage.agent_position(GameStateGlobal.agent)
@@ -197,6 +191,7 @@ class App(object):
 
         self.intervals.set()
         while not GameStateGlobal.exit:
+            P2.start_frame() #TEST
             theta += -.005 #test
             P.start_frame()
             P.event("process_events")
@@ -274,6 +269,8 @@ class App(object):
             if draw_hud:
                 self.camera.hudProjection()
                 self.hud.draw(fps=fps_text, ping=ping_text)
+                cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
+                P2.draw_perf_graph(50,500,-0.30)
             P.event("SDL flip")
             self.SDL_global.flip()
             P.event("Misc")
