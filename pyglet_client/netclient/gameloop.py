@@ -270,7 +270,7 @@ class App(object):
                 self.camera.hudProjection()
                 self.hud.draw(fps=fps_text, ping=ping_text)
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
-                P2.draw_perf_graph(650,500,-0.30)
+                P2.draw_perf_graph(50,500,-0.30)
             P.event("SDL flip")
             self.SDL_global.flip()
             P.event("Misc")
