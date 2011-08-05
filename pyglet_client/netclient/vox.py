@@ -16,3 +16,21 @@ class VoxRender:
     def draw_vox(self):
         self.update_vox()
         self.vox.draw()
+
+class GameObjectRender(VoxRender):
+
+    def __init__(self, model=None):
+        if model is not None:
+            VoxRender.__init__(self, model)
+            self._draw = True
+        else:
+            self.vox = None
+            self._draw = False
+            
+    def draw(self):
+        if self._draw and self.vox is not None:
+            self.update_vox()
+            self.draw_vox()
+
+    def update(self):
+        self.update_vox()

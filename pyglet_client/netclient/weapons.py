@@ -30,8 +30,8 @@ class Weapon(EquippableObject):
         'HitscanLaserGun': 4,
     }
 
-    def __init__(self, id, owner=None):
-        EquippableObject.__init__(self, id)
+    def __init__(self, id, owner=None, state=None):
+        EquippableObject.__init__(self, id, state)
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
@@ -83,8 +83,8 @@ class Weapon(EquippableObject):
 
 class LaserGun(Weapon):
 
-    def __init__(self, id=None, owner=None, clip=None, **kwargs):
-        Weapon.__init__(self, id, owner)
+    def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
+        Weapon.__init__(self, id, owner, state)
         self.base_damage = 35
         self.clip_size = 20
         self.max_ammo = 100
@@ -133,8 +133,8 @@ class LaserGun(Weapon):
 
 class HitscanLaserGun(LaserGun):
 
-    def __init__(self, id=None, owner=None, clip=None, **kwargs):
-        LaserGun.__init__(self, id=id, owner=owner, clip=clip, **kwargs)
+    def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
+        LaserGun.__init__(self, id=id, owner=owner, clip=clip, state=state, **kwargs)
         self.hitscan = True
         self._animation = animations.HitscanLaserGunAnimation
 
@@ -151,8 +151,8 @@ class HitscanLaserGun(LaserGun):
 
 class BlockApplier(Weapon):
 
-    def __init__(self, id=None, owner=None, clip=None, **kwargs):
-        Weapon.__init__(self, id, owner)
+    def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
+        Weapon.__init__(self, id, owner, state)
         self.max_ammo = 100
         self.ammo = self.max_ammo
         self.clip_size = 100
@@ -183,8 +183,8 @@ class BlockApplier(Weapon):
 
 class Pick(Weapon):
 
-    def __init__(self, id, owner=None, **kwargs):
-        Weapon.__init__(self, id, owner)
+    def __init__(self, id, owner=None, state=None, **kwargs):
+        Weapon.__init__(self, id, owner, state)
 
     def fire(self):
         return 'hit_block'

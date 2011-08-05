@@ -21,16 +21,21 @@ def filter_props(obj, properties):
 
 class GameObject:
 
-    def __init__(self, id):
+    def __init__(self, id, state=None):
         self.id = id
         self.on_ground = True
-        self.state = [0 for i in range(9)]
+        self.state = state
+        if state is None:
+            self.state = [0 for i in range(9)]
+        self.type = 0
+        self.owner = None
 
     def json(self, properties=None):
         if properties is None:
             return {
                 'id'    :   self.id,
                 'state' :   self.state,
+                'type'  :   self.type,
             }
         else:
             return filter_props(self, properties)
@@ -48,8 +53,8 @@ class GameObject:
 
 class StaticObject(GameObject):
 
-    def __init__(self, id):
-        GameObject.__init__(self, id)
+    def __init__(self, id, state=None):
+        GameObject.__init__(self, id, state)
         self.immobile = True
         
     def pos(self):
@@ -58,41 +63,41 @@ class StaticObject(GameObject):
 
 class EquippableObject(GameObject):
 
-    def __init__(self, id):
-        GameObject.__init__(self, id)
+    def __init__(self, id, state=None):
+        GameObject.__init__(self, id, state)
 
 
 # pick up / drop
 class DetachableObject(GameObject):
     
-    def __init__(self, id, radius=1):
-        GameObject.__init__(self, id)
+    def __init__(self, id, radius=1, state=None):
+        GameObject.__init__(self, id, state)
         self.radius = radius
         self.auto_grab = False
         self.drop_on_death = True
 
     def take(self, new_owner):
         # ground -> owner
+        print 'being taken by %s' % (new_owner,)
         old_owner = self.owner
         self.owner = new_owner
         if self.owner is not None:
             self.on_ground = False
         if old_owner != self.owner:
-            NetOut.event.object_update(self)
+            NetOut.event.item_update(self)
         
     def drop(self):
         self.pos(self.owner.pos())
         self.owner = None
         self.on_ground = True
-        NetOut.event.object_update(self)
+        NetOut.event.item_update(self)
 
     def json(self, properties=None):
         if properties is None:
             d = GameObject.json(self)
-            d.update({
-                'owner'     :   self.owner.id,
-                'on_ground' :   int(self.on_ground)
-            })
+            if self.owner is not None:
+                d['owner'] = self.owner.id
+            d['on_ground'] = int(self.on_ground)
         else:
             d = filter_props(obj, properties)
         return d
@@ -108,3 +113,4 @@ class ItemList(GenericMultiObjectList):
             Base,
         ])
 
+from net_out import NetOut

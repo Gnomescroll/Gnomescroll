@@ -356,6 +356,7 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('HitscanLaserGun'),
         ]
         self._active_weapon = 0
+        self.inventory = []
 
         self.owner = player_id
 
@@ -368,6 +369,18 @@ class Agent(AgentPhysics, AgentAction):
 
     def active_weapon(self):
         return self.weapons[self._active_weapon]
+
+    def quit(self):
+        self.dump_inventory()
+
+    def dump_inventory(self):
+        new_inv = []
+        for item in self.inventory:
+            if item.drop_on_death:
+                item.drop()
+            else:
+                new_inv.append(inv)
+        self.inventory = new_inv
 
     @property
     def x(self):
@@ -612,6 +625,7 @@ class Agent(AgentPhysics, AgentAction):
                     you.sendMessage.you_died('You were killed by a ghost.')
 
             self.dead = True
+            self.dump_inventory()
             NetOut.event.agent_update(self, ['dead', 'health'])
 
     def _revive(self):

@@ -529,23 +529,28 @@ class AgentInventory:
         return False
 
     def add(self, item, index=None):
-        if pos is None:
-            self.inv.append(item)
-        else:
-            self.inv.insert(index, item)
-        item.take(self)
-        return item
+        if item not in self.inv and item.take(self):
+            if index is None:
+                self.inv.append(item)
+            else:
+                self.inv.insert(index, item)
+            return item
+        return False
 
     def drop(self, item):
-        self.inv.remove(item)
-        item.drop(self)
-        return item
+        if item in self.inv and item.drop(self):
+            self.inv.remove(item)
+            return item
+        return False
 
     def __len__(self):
         return len(self.inv)
-
     def __iter__(self):
         return iter(self.inv)
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return repr(self.inv)
 
 '''
 Data model for agent
@@ -561,7 +566,7 @@ class AgentModel:
             return
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
-        state = map(lambda k: float(k), state)
+        state = map(float, state)
 
         #self.collisionDetection = CubeGlobal.collisionDetection
         #assert False #fix
@@ -658,9 +663,12 @@ class AgentModel:
             #self.x, self.y, self.z = xyz
 
     def nearby_objects(self):
-        for obj in GameStateGlobal.itemList:
-            if vector_lib.distance() < obj.radius:
-                obj.agent_nearby(self)
+        for obj in GameStateGlobal.itemList.values():
+            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
+                self.near_object(obj)
+
+    def near_object(self, obj):
+        pass
 
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
@@ -1133,11 +1141,18 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def pickup_item(self, item, index=None):
         item = self.inventory.add(item, index)
-        NetOut.sendMessage.pickup_item(self, item, index)
+        if item:
+            NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
         item = self.inventory.drop(item)
-        NetOut.sendMessage.drop_item(self, item)
+        if item:
+            NetOut.sendMessage.drop_item(self, item)
+
+    def nearby_objects(self):
+        for obj in GameStateGlobal.itemList.values():
+            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
+                self.pickup_item(obj)
 
 
 import cube_lib.terrain_map as terrainMap

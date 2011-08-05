@@ -55,6 +55,7 @@ class World():
     def draw(self, first_person=False):
         self.draw_agents(first_person)
         self.draw_projectiles()
+        self.draw_items()
         if settings.pyglet:
             self.draw_transparent_blocks()
 
@@ -97,6 +98,10 @@ class World():
 #                        self.terrainMap.set(xa,ya,za, rnd2)
 #                        self.mapChunkManager.set_map(xa,ya,za)
 #        print "Finished chunk generation"
+    def draw_items(self):
+        for item in GameStateGlobal.itemList.values():
+            if item.on_ground:
+                item.draw()
 
     def draw_chunk(self):
         #if self.gl_smooth == 0:

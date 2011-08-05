@@ -355,6 +355,12 @@ class ChatCommand():
                 'channel'   :   'system',
             })
 
+        elif command == 'inventory':
+            _send = self._send_local({
+                'content'   :   str(GameStateGlobal.agent.inventory),
+                'channel'   :   'system',
+            })
+
         elif command == 'exit' or command == 'quit':
             print 'exiting'
             GameStateGlobal.exit = True

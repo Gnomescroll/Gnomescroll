@@ -71,6 +71,8 @@ class GameStateGlobal:
         if agent is not None:
             cls.remove_agent(agent.id, seek=False)
 
+        cls.game.remove_player(player)
+
     @classmethod
     def remove_agent(cls, id, seek=True):
         agent = cls.agentList.get(id, None)
@@ -99,7 +101,7 @@ class GameStateGlobal:
                 owner.weapons.drop(weapon)
 
     @classmethod
-    def remove_object(cls, id, seek=True):
+    def remove_item(cls, id, seek=True):
         obj = cls.itemList.get(id, None)
         if obj is None:
             return
