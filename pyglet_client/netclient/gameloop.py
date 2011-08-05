@@ -217,6 +217,7 @@ class App(object):
 
             self.camera.worldProjection()
             P.event("animations.draw")
+            self.animations.tick()
             self.animations.draw()
 
             #vox_lib.draw()
