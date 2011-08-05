@@ -87,6 +87,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
 #define VBO_loaded 1
 #define VBO_needs_update 2
 #define VBO_has_blocks 4
+#define VBO_drawn 8
 
 //#define set_flag(c,flag,value) value ? c->flag | flag : c->flag & ~flag
 
@@ -94,7 +95,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
 //#define get_flag(c, f)  ({c -> flag & f})
 
 
-static inline void set_flag(struct vm_column* c, unsigned int flag, int value) {
+static inline void set_flag(struct vm_column* c, int flag, int value) {
     if(value) {
         c->flag = c->flag | flag;
     } else {
@@ -102,12 +103,16 @@ static inline void set_flag(struct vm_column* c, unsigned int flag, int value) {
     }
 }
 
-static inline int get_flag(struct vm_column* c, unsigned int flag) {
-    return c->flag & flag;
+static inline int flag_is_true(struct vm_column* c, int flag) {
+    if((c->flag & flag) == 0) { return 0; } else {return 1;}
 }
 
-void set_flag(struct vm_column* c, unsigned int flag, int value);
-int get_flag(struct vm_column* c, unsigned int flag);
+static inline int flag_is_false(struct vm_column* c, int flag) {
+    if((c->flag & flag) == 0) { return 1; } else {return 0;}
+}
+
+//void set_flag(struct vm_column* c, unsigned int flag, int value);
+//int get_flag(struct vm_column* c, unsigned int flag);
 
 //extern void set_flag(struct vm_column* c, unsigned int flag, int value);
 //extern int get_flag(struct vm_column* c, unsigned int flag);

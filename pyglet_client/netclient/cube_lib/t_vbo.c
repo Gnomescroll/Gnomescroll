@@ -7,6 +7,9 @@ SDL_Surface *surface;
 
 int draw_mode_enabled = 0;
 
+unsigned int _garbage_collection_counter = 0;
+#define garbage_collection_frequency 10
+
 //fulstrum culling globals
 struct _Camera {
 float x,y,z;
@@ -76,11 +79,8 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
 }
 
 int delete_vbo(struct VBO* vbo) {
-    #ifdef _WIN32
+
     glDeleteBuffers(1, &vbo->VBO_id);
-    #else
-    glDeleteBuffers(1, &vbo->VBO_id);
-    #endif
     ///free the system memory copy of the vertex buffer
     free(vbo->v_list);
     vbo->VBO_id = 0;
@@ -256,24 +256,33 @@ int _update_chunks() {
     struct vm_column* c;
     int i,j;
     m = _get_map();
+    //garbage collection
+
+    _garbage_collection_counter++;
+    if(_garbage_collection_counter >= garbage_collection_frequency) {
+        _garbage_collection_counter = 0;
+        for(i=0; i<vm_map_dim; i++) {
+        for(j=0; j<vm_map_dim;j++) {
+            c = &m->column[j*vm_map_dim+i];
+            //if VBO is farther than 10 viewing units, delete it
+            if (flag_is_true(c, VBO_loaded) && !chunk_render_check(c->x_off, c->y_off, 15)) {
+                printf("unloaded VBO: %i, %i \n", c->x_off, c->y_off);
+                delete_vbo(&c->vbo);
+                set_flag(c, VBO_loaded, 0);
+            }
+        }}
+    }
+
+    //VBO construction loop
+
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
         c = &m->column[j*vm_map_dim+i];
-        //if VBO is farther than 10 viewing units, delete it
-        if (get_flag(c, VBO_loaded)!=0 && !chunk_render_check(c->x_off, c->y_off, 15)) {
-            printf("unloaded VBO: %i, %i \n", c->x_off, c->y_off);
-            delete_vbo(&c->vbo);
-            set_flag(c, VBO_loaded, 0);
-        }
         //update or create VBO for chunks within 10 units of viewing distance
         if(chunk_render_check(c->x_off, c->y_off, 10)) {
             //if(c->vbo_needs_update == 1 || (c->vbo_loaded==0 && c->vbo_needs_update)) {
 
-        //set_flag(c, VBO_loaded, 0);
-        //set_flag(c, VBO_needs_update, 0);
-        //set_flag(c, VBO_has_blocks, 0);
-
-            if(get_flag(c, VBO_has_blocks)!=0 && (get_flag(c, VBO_needs_update)!=0 || get_flag(c, VBO_loaded)==0)) {
+        if(flag_is_true(c, VBO_has_blocks) && ( flag_is_true(c, VBO_needs_update) || flag_is_false(c, VBO_loaded))) {
                 if(c->vbo.VBO_id == 0) {
                     printf("create VBO: %i, %i \n", c->x_off, c->y_off);
                 } else {
@@ -322,10 +331,12 @@ int _draw_terrain() {
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim; j++) {
         col = &m->column[j*vm_map_dim+i];
-        if(chunk_render_check(col->x_off, col->y_off, 0) && col->vbo.v_num >0) {
+        if(flag_is_true(col, VBO_loaded) && chunk_render_check(col->x_off, col->y_off, 0)) {
             c_drawn++;
+            set_flag(col,VBO_drawn,1);
             draw_quad_vbo(&col->vbo);
         } else {
+            set_flag(col,VBO_drawn,0);
             c_pruned++;
         }
     }}
