@@ -7,7 +7,6 @@ if False:
     print "Path="
     print sys.path
     print ""
-
     import site
 
 import args_client
@@ -45,26 +44,18 @@ from client_event import ClientEventGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
 
-#from cube_dat import CubeGlobal
-#from cube_dat import CubeGlobal
-
-#from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
-
 
 from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
-if settings.pyglet:
-    from hud import Hud
-else:
-    from hud_sdl import Hud
+from hud_sdl import Hud
 
 import world #deprecate
 
 from animations import animations
 
-import random #remove
+import random #remove?
 
 #import hotshot
 import time
@@ -74,16 +65,31 @@ import time
 class Physics_loop_timer:
 
     def __init__(self):
-        self.start_t = SDL.gl.get_ticks()
+        self.last = 0
+        self.delta = 0
         self.tick = 0
         self.TPS = 30 #ticks per second
 
     def sync(self):
         ct = SDL.gl.get_ticks()
-        if(ct - self.start_t < self.tick*self.TPS):
-            self.tick += 1
+        self.delta += ct - self.last
+
+        #print "ct= %i, last= %i, delta= %i, acm_delta= %i" % (ct, self.last, ct - self.last, self.delta)
+        self.last = ct
+        if self.delta > 33:
+            self.delta -= 33
             return True
         else:
+            return False
+
+        print "t0= %i t1= %i" % (ct - self.start, self.tick*self.TPS)
+        if(ct - self.start > 1000*self.tick*self.TPS):
+            self.tick += 1
+            print "True"
+            self.last = ct
+            return True
+        else:
+            print "False"
             return False
 
 Phy = Physics_loop_timer()
@@ -192,8 +198,7 @@ class App(object):
         v.set(7,7,7, 0,255,0,0)
 
         v2 = vox_lib.Vox_loader().load('auto.vox')
-        #v.move(0,0,5, theta)
-        #END TEST
+
         if ping:
             ping_n = SDL.gl.get_ticks()
 
@@ -202,21 +207,24 @@ class App(object):
             P2.start_frame() #TEST
             theta += -.005 #test
             P.start_frame()
-            P.event("process_events")
-            SDL.input.process_events()
-            P.event("get_key_state")
-            SDL.input.get_key_state()
-            if GameStateGlobal.agent is not None:
-                NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
-            #network events
-            P.event("process incoming packets")
-            NetClientGlobal.connection.attempt_recv()
-            P.event("MapControllerGlobal.mapController.tick()")
-            MapControllerGlobal.mapController.tick() #testing
-            P.event("world.tick")
             tc = 0
-            while Phy.sync(): #check if another physics tick is needed
+            while Phy.sync():
+                print "tc= %i" % (tc)
                 tc += 1
+                P.event("process_events")
+                SDL.input.process_events()
+                P.event("get_key_state")
+                SDL.input.get_key_state()
+                #network events
+                P.event("process incoming packets")
+                NetClientGlobal.connection.attempt_recv()
+                P.event("MapControllerGlobal.mapController.tick()")
+                MapControllerGlobal.mapController.tick() #testing
+
+                if GameStateGlobal.agent is not None:
+                    NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+                P.event("world.tick")
+                #check if another physics tick is needed
                 self.world.tick()
                 self.animations.tick()
             if tc > 1:
