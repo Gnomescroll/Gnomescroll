@@ -102,7 +102,8 @@ class World():
 #        print "Finished chunk generation"
     def draw_items(self):
         for item in GameStateGlobal.itemList.values():
-            item.draw()
+            if item.on_ground:
+                item.draw()
 
     def draw_chunk(self):
         #if self.gl_smooth == 0:

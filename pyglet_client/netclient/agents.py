@@ -543,9 +543,12 @@ class AgentInventory:
 
     def __len__(self):
         return len(self.inv)
-
     def __iter__(self):
         return iter(self.inv)
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return repr(self.inv)
 
 '''
 Data model for agent
