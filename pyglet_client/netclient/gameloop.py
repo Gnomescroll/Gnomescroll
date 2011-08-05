@@ -105,22 +105,19 @@ class App(object):
         ChatClientGlobal.init_1()
         #MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
-        if settings.pyglet == False:
-            self.SDL_global = SDL.gl.SDL_global #drawing stuff
-            self.SDL_global.init()
-            SDL.input.init()
-            SDL.hud.init()
-            cube_lib.terrain_map.init()
-            ## VBO TEST
-            #cube_lib.VBO.init()
-            #cube_lib.VBO.test_chunk()
+
+        self.SDL_global = SDL.gl.SDL_global #drawing stuff
+        self.SDL_global.init()
+        SDL.input.init()
+        SDL.hud.init()
+        cube_lib.terrain_map.init()
+
 
     def init_inputs(self):
         InputGlobal.init_0(self)
         InputGlobal.init_1(self)
 
     def __init__(self):
-        #pass
         #return
         self.init_globals()
         self.animations = animations
@@ -207,13 +204,13 @@ class App(object):
                 P.event("get_key_state")
                 SDL.input.get_key_state()
                 #network events
+                if GameStateGlobal.agent is not None:
+                    NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+
                 P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
                 P.event("MapControllerGlobal.mapController.tick()")
                 MapControllerGlobal.mapController.tick() #testing
-
-                if GameStateGlobal.agent is not None:
-                    NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
                 P.event("world.tick")
                 #check if another physics tick is needed
                 self.world.tick()
