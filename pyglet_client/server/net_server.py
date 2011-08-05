@@ -66,7 +66,7 @@ class ServerListener:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.tcp.bind((self.IP, self.TCP_PORT))
-            self.tcp.listen(1)
+            #self.tcp.listen(1)
             self.tcp.setblocking(0)
             self.tcp.listen(1)
             self.tcp_fileno = self.tcp.fileno()
@@ -93,6 +93,7 @@ class ServerListener:
 class TcpClient:
 
     MAX_NAME_LENGTH = 15
+    BUFFER_SIZE = 4096
 
     def __init__(self, connection, address):
         self.connection = connection
@@ -105,6 +106,7 @@ class TcpClient:
         self.player = None
         self.name = None
         self.ec = 0
+
 
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
@@ -173,7 +175,7 @@ class TcpClient:
                 if length != sent:
                     print "ALL DATA NOT SENT!"
             else:
-                self.connection.sendall(MESSAGE)
+                self.connection.sendall(MESSAGE, self.BUFFER_SIZE)
         except socket.error, (value, message):
             print MESSAGE
             print len(MESSAGE)
@@ -186,9 +188,8 @@ class TcpClient:
         self.connection.close()
 
     def receive(self):
-        BUFFER_SIZE = 4096
         try:
-            data = self.connection.recv(BUFFER_SIZE)
+            data = self.connection.recv(self.BUFFER_SIZE)
         except socket.error, (value, message):
             print "TcpClient.get: socket error %i, %s" % (value, message)
             data = ''
