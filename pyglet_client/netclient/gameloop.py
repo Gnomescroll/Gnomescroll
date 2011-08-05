@@ -80,7 +80,7 @@ class Physics_loop_timer:
 
     def sync(self):
         ct = SDL.gl.get_ticks()
-        if(ct - self.start_t > self.tick*self.TPS):
+        if(ct - self.start_t < self.tick*self.TPS):
             self.tick += 1
             return True
         else:
