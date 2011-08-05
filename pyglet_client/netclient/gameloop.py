@@ -274,7 +274,6 @@ class App(object):
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,500,-0.30)
             P.event("SDL flip")
-            time.sleep(0.01)
             self.SDL_global.flip()
             P.event("Misc")
             #FPS calculation
