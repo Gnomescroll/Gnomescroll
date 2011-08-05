@@ -173,7 +173,7 @@ class TcpClient:
                 if length != sent:
                     print "ALL DATA NOT SENT!"
             else:
-                self.connection.sendall(MESSAGE, 4096)
+                self.connection.sendall(MESSAGE)
         except socket.error, (value, message):
             print "TcpClient.send error: " + str(value) + ", " + message
             if value == 32:  #connection reset by peer
