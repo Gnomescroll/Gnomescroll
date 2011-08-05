@@ -175,6 +175,8 @@ class TcpClient:
             else:
                 self.connection.sendall(MESSAGE)
         except socket.error, (value, message):
+            print MESSAGE
+            print len(MESSAGE)
             print "TcpClient.send error: " + str(value) + ", " + message
             if value == 32:  #connection reset by peer
                 NetServer.connectionPool.tearDownClient(self)
