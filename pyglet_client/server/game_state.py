@@ -54,7 +54,7 @@ class GameStateGlobal:
     @classmethod
     def disconnect(self, connection):
         connection.player.quit()
-        connection.agent.quit()
+        connection.player.agent.quit()
         #GameStateGlobal.playerList.leave(connection.player)
         if connection.player is not None:
             GameStateGlobal.agentList.destroy(connection.player.agent)

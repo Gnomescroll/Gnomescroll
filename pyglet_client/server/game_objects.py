@@ -28,6 +28,7 @@ class GameObject:
         if state is None:
             self.state = [0 for i in range(9)]
         self.type = 0
+        self.owner = None
 
     def json(self, properties=None):
         if properties is None:
@@ -77,6 +78,7 @@ class DetachableObject(GameObject):
 
     def take(self, new_owner):
         # ground -> owner
+        print 'being taken by %s' % (new_owner,)
         old_owner = self.owner
         self.owner = new_owner
         if self.owner is not None:

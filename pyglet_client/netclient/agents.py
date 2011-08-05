@@ -529,17 +529,19 @@ class AgentInventory:
         return False
 
     def add(self, item, index=None):
-        if index is None:
-            self.inv.append(item)
-        else:
-            self.inv.insert(index, item)
-        item.take(self)
-        return item
+        if item not in self.inv and item.take(self):
+            if index is None:
+                self.inv.append(item)
+            else:
+                self.inv.insert(index, item)
+            return item
+        return False
 
     def drop(self, item):
-        self.inv.remove(item)
-        item.drop(self)
-        return item
+        if item in self.inv and item.drop(self):
+            self.inv.remove(item)
+            return item
+        return False
 
     def __len__(self):
         return len(self.inv)
@@ -1138,13 +1140,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.y_angle = 0.499
 
     def pickup_item(self, item, index=None):
-        if item.take(self):
-            item = self.inventory.add(item, index)
+        item = self.inventory.add(item, index)
+        if item:
             NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
-        if item.drop(self):
-            item = self.inventory.drop(item)
+        item = self.inventory.drop(item)
+        if item:
             NetOut.sendMessage.drop_item(self, item)
 
     def nearby_objects(self):

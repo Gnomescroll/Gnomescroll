@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import args_server
 import opts
 opts.opts = args_server.get_args()
