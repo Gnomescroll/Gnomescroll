@@ -391,7 +391,7 @@ class MessageHandler:
                 return
             # improve damage calculation later
             print 'HITSCAN on Agent %s' % (str(target_agent.id))
-            target_agent.take_damage(weapon.base_damage, firing_agent)
+            target_agent.take_damage(weapon.base_damage, firing_agent.owner)
 
     def hit_block(self, client_id, **msg):
         try:

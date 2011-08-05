@@ -4,7 +4,7 @@ from math import sin, cos, pi
 projectile_dat = {
 
     1 : {
-        'speed' : 15,
+        'speed' : 100,
         'damage' : 20,
         'ttl_max' : 400 #time to live in ticks
     #    'splash' : {
@@ -14,7 +14,7 @@ projectile_dat = {
     },
 
     2 : {
-        'speed' : 15,
+        'speed' : 100,
         'damage' : 20,
         'ttl_max' : 400
     },
@@ -69,7 +69,7 @@ class Projectile(GameObject):
     def tick(self):
         [x,y,z,vx,vy,vz] = self.state
 
-        fps = 60. # frame per second
+        fps = 30. # frame per second
         speed = self.speed / fps
 
         self.ttl += 1
