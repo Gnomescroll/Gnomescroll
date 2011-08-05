@@ -15,12 +15,17 @@ class Animations:
         dead = []
         died = False
         for animation in self.animations:
+            animation.draw()
+
+    def tick(self):
+        dead = []
+        died = False
+        for animation in self.animations:
             if not animation.life:
                 dead.append(animation)
                 died = True
                 continue
             animation.next()
-            animation.draw()
         if died:
             self.animations = [a for a in self.animations if a not in dead]
 
@@ -54,7 +59,7 @@ class HitscanLaserGunAnimation(Animation):
         self.length = 15
         self.speed = 2 # per tick!
         self.color = (30, 255, 100)
-        
+
         self.origin = origin
         self.loc = self.origin
         self.vector = vector
@@ -67,7 +72,7 @@ class HitscanLaserGunAnimation(Animation):
 
         self.life = life_ticks
         self.length = self.life
-            
+
     def next(self):
         # move self.loc in direction of vector  by magnitude speed
         self.loc = vector_lib.move_point(self.loc, self.vector, self.speed)

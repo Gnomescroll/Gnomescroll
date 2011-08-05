@@ -53,8 +53,6 @@ class World():
             GameStateGlobal.agent.nearby_objects()
 
     def draw(self, first_person=False):
-        if settings.pyglet:
-            self.draw_chunk()
         self.draw_agents(first_person)
         self.draw_projectiles()
         self.draw_items()
