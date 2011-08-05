@@ -78,18 +78,9 @@ class Physics_loop_timer:
         self.last = ct
         if self.delta > 33:
             self.delta -= 33
-            return True
-        else:
-            return False
-
-        print "t0= %i t1= %i" % (ct - self.start, self.tick*self.TPS)
-        if(ct - self.start > 1000*self.tick*self.TPS):
             self.tick += 1
-            print "True"
-            self.last = ct
             return True
         else:
-            print "False"
             return False
 
 Phy = Physics_loop_timer()
