@@ -175,7 +175,21 @@ class TcpClient:
                 if length != sent:
                     print "ALL DATA NOT SENT!"
             else:
-                self.connection.sendall(MESSAGE, self.BUFFER_SIZE)
+                '''
+                http://stackoverflow.com/questions/6240737/python-socket-sendall-function
+                "The function sendall() should be used only with blocking sockets."
+                this is probably true
+                '''
+                #self.connection.sendall(MESSAGE, self.BUFFER_SIZE)
+                msg_size = len(MESSAGE)
+                total_sent = 0
+                while total_sent < msg_size:
+                    try:
+                        _msg = MESSAGE[total_sent:]
+                        sent = self.connection.send(MESSAGE, self.BUFFER_SIZE)
+                        total_sent += sent
+                    except:
+                        pass
         except socket.error, (value, message):
             print MESSAGE
             print len(MESSAGE)
