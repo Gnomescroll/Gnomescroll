@@ -197,7 +197,6 @@ class App(object):
             P.start_frame()
             tc = 0
             while Phy.sync():
-                print "tc= %i" % (tc)
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()
@@ -206,7 +205,6 @@ class App(object):
                 #network events
                 if GameStateGlobal.agent is not None:
                     NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
-
                 P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
                 P.event("MapControllerGlobal.mapController.tick()")
@@ -216,6 +214,7 @@ class App(object):
                 self.world.tick()
                 self.animations.tick()
             if tc > 1:
+                print "wtf"
                 print "tc= %i" % (tc)
 
             P.event("setup camera")
