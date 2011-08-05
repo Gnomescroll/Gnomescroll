@@ -1,24 +1,34 @@
+
+
 #ifndef t_map
 #define t_map
+
 
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include "types.h"
+#include "t_vbo.h"
+#include "t_properties.h"
 
-
+/*
 #ifndef  t_properties
-    #include "t_properties.h"
+#include "t_properties.h"
 #endif
 
 #ifndef  t_vbo
-    #include "t_vbo.h"
+#include "t_vbo.h"
 #endif
-
+*/
 
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
+
+struct VBO {
+        int v_num;
+        struct Vertex* v_list;
+        int VBO_id;
+};
 
 struct vm_chunk {
     unsigned short voxel[512];
@@ -35,15 +45,23 @@ struct vm_column {
     unsigned int local_version;
     unsigned int server_version;
     //vm_column_history history;
-    unsigned int vbo_needs_update;
-    unsigned int vbo_loaded;
-    unsigned int empty;
+    //unsigned int vbo_needs_update;
+    //unsigned int vbo_loaded;
+    //unsigned int empty; // has blocks
+    unsigned int flag;
     struct VBO vbo;
 };
 
 struct vm_map {
     struct vm_column column[vm_map_dim*vm_map_dim];
 };
+
+//state flags
+
+//flag setting
+
+//int __inline set_flag(vm_column* c, unsigned int flag);
+//int __inline get_flag(vm_column* c, unsigned int flag);
 
 //functions
 extern struct vm_map map;
@@ -56,5 +74,42 @@ int _set_server_version(int x,int y,int z, int server_version);
 
 struct vm_map* _get_map();
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
+
+/*
+#endif
+
+//inline functions
+#ifndef T_MAP_INLINE
+#define T_MAP_INLINE
+*/
+
+
+#define VBO_loaded 1
+#define VBO_needs_update 2
+#define VBO_has_blocks 4
+
+//#define set_flag(c,flag,value) value ? c->flag | flag : c->flag & ~flag
+
+//#define set_flag(c, f, value)  ({ (c) -> flag = (value) ? (c) -> flag | f : (c) -> flag & ~ (f); })
+//#define get_flag(c, f)  ({c -> flag & f})
+
+
+static inline void set_flag(struct vm_column* c, unsigned int flag, int value) {
+    if(value) {
+        c->flag = c->flag | flag;
+    } else {
+        c->flag = c->flag & ~flag;
+    }
+}
+
+static inline int get_flag(struct vm_column* c, unsigned int flag) {
+    return c->flag & flag;
+}
+
+void set_flag(struct vm_column* c, unsigned int flag, int value);
+int get_flag(struct vm_column* c, unsigned int flag);
+
+//extern void set_flag(struct vm_column* c, unsigned int flag, int value);
+//extern int get_flag(struct vm_column* c, unsigned int flag);
 
 #endif

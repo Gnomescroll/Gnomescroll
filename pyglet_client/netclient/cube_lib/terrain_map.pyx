@@ -165,8 +165,8 @@ cdef extern from 't_vbo.h':
 
 '''
 PART 2: Properties
-
 '''
+
 cdef extern from "./t_properties.h":
     struct cubeProperties:
         int active

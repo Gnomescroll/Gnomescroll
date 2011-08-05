@@ -70,6 +70,7 @@ SDL_hud = Extension('SDL.hud',
 
 cube_lib_terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
+                    optimize = 2,
                     include_dirs = ['/usr/local/include',
                                     'gl_lib',
                                     '/usr/local/include',

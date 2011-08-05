@@ -1,20 +1,42 @@
 
 #include "t_map.h"
 
+//#include "./t_inline.c"
 //globals
+
+/*
+void set_flag(struct vm_column* c, unsigned int flag, int value) {
+    if(value) {
+        c->flag = c->flag | flag;
+    } else {
+        c->flag = c->flag & ~flag;
+    }
+}
+
+int get_flag(struct vm_column* c, unsigned int flag) {
+    return c->flag & flag;
+}
+ //end
+*/
 
 struct vm_map map;
 
 int _init_t_map() {
 
     int i;
+    struct vm_column* c;
     for(i=0; i<vm_map_dim*vm_map_dim; i++) {
-        map.column[i].vbo.v_list = NULL;
-        map.column[i].vbo.v_num = 0;
-        map.column[i].vbo.VBO_id = 0;
-        map.column[i].x_off = i % vm_map_dim;
-        map.column[i].y_off = i/vm_map_dim;
-        map.column[i].vbo_needs_update = 0;
+        c = &map.column[i];
+        c->vbo.v_list = NULL;
+        c->vbo.v_num = 0;
+        c->vbo.VBO_id = 0;
+        c->x_off = i % vm_map_dim;
+        c->y_off = i/vm_map_dim;
+        c->flag = 0; //null it
+        //c->vbo_needs_update = 0;
+        set_flag(c, VBO_loaded, 0);
+        set_flag(c, VBO_needs_update, 0);
+        set_flag(c, VBO_has_blocks, 0);
     }
     return 0;
 }
@@ -58,10 +80,12 @@ int _set(int x, int y, int z, int value) {
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
     column->local_version++;
     column->server_version++;
-    column->empty = 0;
+    set_flag(column, VBO_has_blocks, 1);
     chunk->local_version++;
     chunk->server_version++;
-    column->vbo_needs_update = 1;
+    //column->vbo_needs_update = 1;
+    set_flag(column, VBO_needs_update, 1);
+    set_flag(column, VBO_has_blocks, 1);
     chunk->vbo_needs_update =1;
     return 0;
 }
