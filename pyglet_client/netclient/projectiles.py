@@ -39,7 +39,7 @@ class Projectile(GameObject):
         #vx = cos( x_angle * pi) * cos( y_angle * pi)
         #vy = sin( x_angle * pi) * cos( y_angle * pi)
         #vz = sin( y_angle)
-        self.state = map(lambda k: float(k), state)
+        self.state = map(float, state)
 
         x, y, z, vx, vy, vz = state
 

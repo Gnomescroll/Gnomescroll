@@ -48,3 +48,13 @@ class Base(StaticObject):
         if not self.spawned:
             self.state[0:3] = rand_spot()
             self.spawned = True
+
+    def json(self, properties=None):
+        if properties is None:
+            d = StaticObject.json(self)
+            d.update({
+                'team'  :   self.team.id,
+            })
+        else:
+            d = filter_props(obj, properties)
+        return d

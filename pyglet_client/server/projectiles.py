@@ -74,7 +74,7 @@ class Projectile(GameObject):
         p = projectile_dat[type]
         #load projectile settings
 
-        self.state = map(lambda k: float(k), state)
+        self.state = map(float, state)
         x, y, z, vx, vy, vz = state
 
         self.id = GameStateGlobal.new_projectile_id()
