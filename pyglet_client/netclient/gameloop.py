@@ -69,6 +69,25 @@ import random #remove
 #import hotshot
 import time
 
+
+#physics timer
+class Physics_loop_timer:
+
+    def __init__(self):
+        self.start_t = SDL.gl.get_ticks()
+        self.tick = 0
+        self.TPS = 30 #ticks per second
+
+    def sync(self):
+        ct = SDL.gl.get_ticks()
+        if(ct - self.start_t > self.tick*self.TPS):
+            self.tick += 1
+            return True
+        else:
+            return False
+
+Phy = Physics_loop_timer()
+
 class App(object):
 
     def init_globals(self):
@@ -131,25 +150,14 @@ class App(object):
         NetClientGlobal.connect() #starts connection
 
     def mainLoop(self):
-        global P
-        #pass
-        #return
-        #self.world.test_chunk()
+        global P, Phy
         self.world.add_player(GameStateGlobal.player) #do something about this
         self.world.add_agent(GameStateGlobal.agent)
-
-        if settings.pyglet:
-            clock.set_fps_limit(60)
-            keyboard = key.KeyStateHandler()
-            self.win.push_handlers(keyboard)
-        #self.win.push_handlers(pyglet.window.event.WindowEventLogger())
 
         self.connect()
         #ChatClientGlobal.on_connect()
         NetOut.mapMessage.request_chunk_list()
 
-        #p = hotshot.Profile("../log/client.log")
-        #p.start()
         average = []
         fps_text = None
         ping_text = None
@@ -206,8 +214,14 @@ class App(object):
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick() #testing
             P.event("world.tick")
-            self.world.tick()
-            self.animations.tick()
+            tc = 0
+            while Phy.sync(): #check if another physics tick is needed
+                tc += 1
+                self.world.tick()
+                self.animations.tick()
+            if tc > 1:
+                print "tc= %i" % (tc)
+
             P.event("setup camera")
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
