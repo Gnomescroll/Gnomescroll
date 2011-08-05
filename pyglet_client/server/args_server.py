@@ -32,9 +32,9 @@ import default_settings as settings
 DC_VERSION = '0.2'
 
 DEFAULTS = {
-    'ip_address'    :   '127.0.0.1',
-    'tcp_port'  :   5055,
-    'udp_port'  :   5060,
+    'ip_address': settings.ip_address,
+    'tcp_port'  : settings.tcp_port,
+    'udp_port'  : settings.udp_port,
     'tick'      :   0.01,
     'name'      :   settings.server_name,
     'game_mode' :   settings.game_mode,

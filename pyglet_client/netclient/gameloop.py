@@ -128,7 +128,9 @@ class App(object):
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
-        send_agent_pos = lambda: NetOut.sendMessage.agent_position(GameStateGlobal.agent)
+        def send_agent_pos():
+            if GameStateGlobal.agent is not None:
+                NetOut.sendMessage.agent_position(GameStateGlobal.agent)
         self.intervals.register(send_agent_pos, 1000)
 
         self.init_inputs()
