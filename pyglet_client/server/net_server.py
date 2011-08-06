@@ -189,7 +189,9 @@ class TcpClient:
                         sent = self.connection.send(_msg, self.BUFFER_SIZE)
                         total_sent += sent
                     except socket.error, (value, message):
-                        print socket.error, value, message
+                        if value == 32:
+                            NetServer.connectionPool.tearDownClient(self)
+                            break
         except socket.error, (value, message):
             print MESSAGE
             print len(MESSAGE)
