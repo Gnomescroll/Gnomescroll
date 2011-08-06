@@ -37,7 +37,7 @@ __inline void compute_vo_normals(struct VoxelList* volist);
 int _draw(struct VoxelList* vo);
 struct Voxel _get(struct VoxelList* vl, int x, int y, int z);
 void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a);
-void _set_voxel_color(struct Voxel* v, int r, int g, int b, int a);
+void _set_voxel_color(struct Voxel* v, int r, int g, int b);
 void _color(struct VoxelList* v1, int r, int g, int b, int base_r, int base_g, int base_b);
 struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta);
 //resize vorxel list?

@@ -261,22 +261,20 @@ void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a)
     t->a = a;
 }
 
-void _set_voxel_color(struct Voxel* v, int r, int g, int b, int a) {
+void _set_voxel_color(struct Voxel* v, int r, int g, int b) {
     v->r = r;
     v->g = g;
     v->b = b;
-    v->a = a;
 }
 
 void _color(struct VoxelList* v1, int r, int g, int b, int base_r, int base_g, int base_b) {
-    int a = 255;
     int size = v1->xdim * v1->ydim * v1->zdim;
     int i = 0;
     struct Voxel* vox;
     for (i=0; i < size; i++) {
         vox = &v1->list[i];
-        if (vox->r == base_r && vox->g == base_g && vox->b == base_b) {
-            _set_voxel_color(vox, r, g, b, a);
+        if (vox->r == base_r && vox->g == base_g && vox->b == base_b && vox->a) {
+            _set_voxel_color(vox, r, g, b);
         }
     }
 }

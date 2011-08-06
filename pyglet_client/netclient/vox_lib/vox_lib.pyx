@@ -31,7 +31,7 @@ cdef extern from 'vox_functions.h':
     int _raw_ray_cast_tracer(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
     int _ray_cast_tracer(VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2)
 
-    void _set_voxel_color(Voxel* v, int r, int g, int b, int a)
+    void _set_voxel_color(Voxel* v, int r, int g, int b)
     void _color(VoxelList* v1, int r, int g, int b, int base_r, int base_g, int base_b)
     
 
