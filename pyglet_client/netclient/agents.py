@@ -529,7 +529,7 @@ class AgentInventory:
         return False
 
     def add(self, item, index=None):
-        if item not in self.inv and item.take(self):
+        if item not in self.inv and item.take(self.agent):
             if index is None:
                 self.inv.append(item)
             else:
@@ -538,7 +538,7 @@ class AgentInventory:
         return False
 
     def drop(self, item):
-        if item in self.inv and item.drop(self):
+        if item in self.inv and item.drop(self.agent):
             self.inv.remove(item)
             return item
         return False

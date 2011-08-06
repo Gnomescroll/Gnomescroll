@@ -92,5 +92,5 @@ class TeamItem:
 
     def __init__(self, team, own=True, other=True):
         self.team = team
-        self.can_be_picked_up_by_own_team = own
-        self.can_be_picked_up_by_other_team = other
+        self.pickup_by_own_team = own
+        self.pickup_by_other_team = other
