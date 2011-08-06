@@ -2,21 +2,23 @@
 Toys, miscellaneous objects
 '''
 
-from game_objects import DetachableObject, StaticObject, filter_props
+from game_objects import DetachableObject, StaticObject, filter_props, TeamItem
 
 from random import randint as rand
 
 def rand_spot():
     return (rand(5, 15), rand(5, 15), 15)
 
-class Flag(DetachableObject):
+class Flag(DetachableObject, TeamItem):
 
     def __init__(self, id, radius, team, *args, **kwargs):
         DetachableObject.__init__(self, id, radius)
+        TeamItem.__init__(self, team, own=False, other=True)
         self.auto_grab = True
         self.drop_on_death = True
         self.team = team
         self.type = 1
+        self._set_name()
         self.spawn()
 
     def spawn(self):
@@ -36,13 +38,15 @@ class Flag(DetachableObject):
         return d        
 
 
-class Base(StaticObject):
+class Base(StaticObject, TeamItem):
 
     def __init__(self, id, team, *args, **kwargs):
         StaticObject.__init__(self, id)
+        TeamItem.__init__(self, team, False, False)
         self.spawned = False
         self.team = team
         self.type = 2
+        self._set_name()
         
     def spawn(self):
         if not self.spawned:

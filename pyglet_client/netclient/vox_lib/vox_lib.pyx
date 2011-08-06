@@ -31,6 +31,11 @@ cdef extern from 'vox_functions.h':
     int _raw_ray_cast_tracer(VoxelList* vo, float x, float y, float z, float x_angle, float y_angle)
     int _ray_cast_tracer(VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2)
 
+    void _set_voxel_color(Voxel* v, int r, int g, int b, int a)
+    void _color(VoxelList* v1, int r, int g, int b, int base_r, int base_g, int base_b)
+    
+
+
 cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
     global vox_dict, ob_dict
     cdef int distance, t
@@ -49,6 +54,13 @@ cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignor
         return obj, distance, vox_temp
     else:
         return None, 0, None
+
+color_map = {
+    'black' :   (0,0,0),
+    'red'   :   (255,0,0),
+    'green' :   (0,255,0),
+    'blue'  :   (0,0,255),
+}
 
 cdef class Vox:
     cdef VoxelList* vo
@@ -115,6 +127,15 @@ cdef class Vox:
         d['dim'] = [self.vo.xdim, self.vo.ydim, self.vo.zdim]
         d['voxels'] = self._dump_list()
         return d
+
+    def color(self, color, base_color='black'):
+        if base_color.lower() in color_map:
+            base_color = color_map[base_color]
+        if color.lower() in color_map:
+            color = color_map[color]
+        r,g,b = color
+        r1,g1,b1 = base_color
+        _color(self.vo, r,g,b, r1,g1,b1)
 
     def collision_test(self, x,y,z):
         return _point_collision(self.vo,x,y,z)

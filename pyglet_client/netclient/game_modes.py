@@ -69,11 +69,12 @@ class NoTeam:
 
 class Team(NoTeam):
 
-    def __init__(self, id, *args, **kwargs):
+    def __init__(self, id, color=None, *args, **kwargs):
         NoTeam.__init__(self, id)
         self.flag = None
         self.base = None
         self.type = 2
+        self.color = color
 
     def update_info(self, **team):
         NoTeam.update_info(self, **team)
@@ -81,6 +82,8 @@ class Team(NoTeam):
             self.flag = GameStateGlobal.itemList[team['flag']]
         if 'base' in team:
             self.base = GameStateGlobal.itemList[team['base']]
+        if 'color' in team:
+            self.color = team['color']
 
 
 class Game:

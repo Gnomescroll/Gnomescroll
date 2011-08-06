@@ -261,6 +261,26 @@ void _set(struct VoxelList* vl, int x, int y, int z, int r, int g, int b, int a)
     t->a = a;
 }
 
+void _set_voxel_color(struct Voxel* v, int r, int g, int b, int a) {
+    v->r = r;
+    v->g = g;
+    v->b = b;
+    v->a = a;
+}
+
+void _color(struct VoxelList* v1, int r, int g, int b, int base_r, int base_g, int base_b) {
+    int a = 255;
+    int size = v1->xdim * v1->ydim * v1->zdim;
+    int i = 0;
+    struct Voxel* vox;
+    for (i=0; i < size; i++) {
+        vox = &v1->list[i];
+        if (vox->r == base_r && vox->g == base_g && vox->b == base_b) {
+            _set_voxel_color(vox, r, g, b, a);
+        }
+    }
+}
+
 struct VoxelList* _createVoxelList(float vo_size, int xdim, int ydim, int zdim, float x, float y, float z, float theta) {
     struct VoxelList* volist = (struct VoxelList*) malloc(sizeof(struct VoxelList));
     int i;
@@ -395,7 +415,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
 int _raw_ray_cast_tracer(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle) {
     float x1,y1,z1;
     float s;
-	
+    
     //printf("x_angle, y_angle = %f, %f \n", x_angle, y_angle);
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);

@@ -66,11 +66,10 @@ class EquippableObject(GameObject):
 
 
 # pick up / drop
-class DetachableObject(GameObject, GameObjectRender):
+class DetachableObject(GameObject):
     
-    def __init__(self, id, radius=1, state=None, model=None):
+    def __init__(self, id, radius=1, state=None):
         GameObject.__init__(self, id, state)
-        GameObjectRender.__init__(self, model)
         self.radius = radius
 
         self.auto_grab = False
@@ -88,3 +87,10 @@ class DetachableObject(GameObject, GameObjectRender):
         self.owner = None
         self.on_ground = True
         return True
+
+class TeamItem:
+
+    def __init__(self, team, own=True, other=True):
+        self.team = team
+        self.can_be_picked_up_by_own_team = own
+        self.can_be_picked_up_by_other_team = other

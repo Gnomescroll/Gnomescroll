@@ -34,3 +34,10 @@ class GameObjectRender(VoxRender):
 
     def update(self):
         self.update_vox()
+
+class TeamItemRender(GameObjectRender):
+
+    def __init__(self, model=None):
+        GameObjectRender.__init__(self, model)
+        print self.team.color
+        self.vox.color(self.team.color, base_color='black')

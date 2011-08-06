@@ -2,6 +2,7 @@ from object_lists import GenericMultiObjectList
 
 
 object_names = {
+    0   :   'Generic',
     1   :   'Flag',
     2   :   'Base',
 }
@@ -29,6 +30,10 @@ class GameObject:
             self.state = [0 for i in range(9)]
         self.type = 0
         self.owner = None
+        self._set_name()
+
+    def _set_name(self):
+        self.name = object_names[self.type]
 
     def json(self, properties=None):
         if properties is None:
@@ -101,7 +106,15 @@ class DetachableObject(GameObject):
         else:
             d = filter_props(obj, properties)
         return d
-            
+
+
+class TeamItem:
+
+    def __init__(self, team, own=True, other=True):
+        self.team = team
+        self.can_be_picked_up_by_own_team = own
+        self.can_be_picked_up_by_other_team = other
+
 
 class ItemList(GenericMultiObjectList):
 
