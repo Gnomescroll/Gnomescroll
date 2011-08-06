@@ -39,10 +39,27 @@ class NoTeam:
             player.agent.team = None
 
     # players_list would be a list of player ids
+    # this is *not* playerList, this is a list of player id's sent in the teams' json
     def load_players_list(self, players):
-        player_objs = [GameStateGlobal.playerList[p] for p in players]
+        player_objs = []
+        for p in players:
+            _p = GameStateGlobal.playerList[p]
+            if _p is None:
+                player_objs.append(p)
+            else:
+                player_objs.append(_p)
         self.players = dict(zip(players, player_objs))
         return self.players
+
+    # assigns player_ids to player objects if available.
+    # need to call after receiving a playerList update
+    def update_players_list(self):
+        for pid in self:
+            _p = GameStateGlobal.playerList[pid]
+            if _p is None:
+                self[pid] = pid
+            else:
+                self[pid] = _p
 
     def __len__(self):
         return len(self.players)
@@ -94,6 +111,11 @@ class Game:
     def remove_player(self, player):
         self.viewers.remove_player(player)
 
+    def update_players(self):
+        for team in GameStateGlobal.teamList.values():
+            team.update_players_list()
+
+
 class TeamGame(Game):
 
     def __init__(self, teams=2, *args, **kwargs):
@@ -111,6 +133,17 @@ class TeamGame(Game):
     def remove_player(self, player):
         for team in self.teams.values():
             team.remove_player(player)
+
+    def auto_assign_team(self):
+        return self.smallest_team()
+
+    def smallest_team(self):
+        sorted_t = sorted(self.teams.values(), key=len)
+        smallest = sorted_t[0]
+        if smallest.type == 1: # viewers, skip this team
+            smallest = sorted_t[1]
+        return smallest
+
 
 
 class CTF(TeamGame):

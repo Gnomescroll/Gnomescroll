@@ -45,6 +45,7 @@ DEFAULTS = {
     'sensitivity':  90,
     'mouse_sensitivity':    None,
     'camera_sensitivity':   None,
+    'auto_assign_team': settings.auto_assign_team,
 }
 
 def load_defaults():
@@ -84,6 +85,8 @@ def parse(cl_args=None):
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'])
     parser.add_argument('-an', '--alt-name', default=DEFAULTS['alt_name'], dest='alt_name')
+
+    parser.add_argument('-aa', '--auto-assign', default=DEFAULTS['auto_assign_team'], dest='auto_assign_team')
 
     parser.add_argument('--print-args', action='store_true')
 

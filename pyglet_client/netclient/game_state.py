@@ -1,4 +1,5 @@
 import math
+from opts import opts
 
 class GameStateGlobal:
 
@@ -37,6 +38,9 @@ class GameStateGlobal:
         mode = mode.lower()
         cls.game_mode_name = mode
         cls.game = game_modes.names[mode](**kwargs)
+        if opts.auto_assign_team:
+            team = cls.game.auto_assign_team()
+            NetOut.sendMessage.join_team(team)
 
     # for your player
     @classmethod
@@ -156,6 +160,7 @@ from object_lists import ItemList
 import game_modes
 from players import Player
 from net_client import NetClientGlobal
+from net_out import NetOut
 
 #import cube_lib.terrain_map
 import cube_lib.terrain_map as TerrainMap

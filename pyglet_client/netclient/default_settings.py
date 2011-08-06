@@ -35,4 +35,8 @@ fps = True  # display FPS
 ping = True # calculate and display ping
 ping_update_interval = 500  # ms delay between ping updates
 
+
+''' Game '''
+auto_assign_team = True
+
 from settings import *

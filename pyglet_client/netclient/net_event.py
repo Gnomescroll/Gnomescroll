@@ -377,6 +377,11 @@ class PlayerMessageHandler(DatastoreMessageInterface):
 
         GameStateGlobal.game.player_join_team(player, team)
 
+    def _player_list(self, **args):
+        self._default_list(**args)
+        GameStateGlobal.game.update_players()
+        
+
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
 class AgentMessageHandler(DatastoreMessageInterface):

@@ -188,8 +188,8 @@ class TcpClient:
                         _msg = MESSAGE[total_sent:]
                         sent = self.connection.send(_msg, self.BUFFER_SIZE)
                         total_sent += sent
-                    except:
-                        pass
+                    except socket.error, (value, message):
+                        print socket.error, value, message
         except socket.error, (value, message):
             print MESSAGE
             print len(MESSAGE)
