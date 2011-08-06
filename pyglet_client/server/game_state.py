@@ -53,12 +53,12 @@ class GameStateGlobal:
 
     @classmethod
     def disconnect(self, connection):
-        connection.player.quit()
-        connection.player.agent.quit()
-        #GameStateGlobal.playerList.leave(connection.player)
         if connection.player is not None:
-            GameStateGlobal.agentList.destroy(connection.player.agent)
-        GameStateGlobal.game.remove_player(connection.player)
+            if connection.player.agent is not None:
+                connection.player.agent.quit()
+                GameStateGlobal.agentList.destroy(connection.player.agent)
+            connection.player.quit()
+            GameStateGlobal.game.remove_player(connection.player)
 
 from net_server import NetServer
 

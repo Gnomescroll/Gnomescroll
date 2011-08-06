@@ -7,6 +7,7 @@ pyglet = False
 
 audio = False
 name = 'steven'
+alt_name = 'ted'
 sfx = 10
 music = 10
 

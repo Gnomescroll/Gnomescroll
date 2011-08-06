@@ -94,3 +94,8 @@ class TeamItem:
         self.team = team
         self.pickup_by_own_team = own
         self.pickup_by_other_team = other
+
+    def can_take(self, new_owner):
+        print new_owner.team, self.team
+        return (new_owner.team == self.team and self.pickup_by_own_team) or \
+                (new_owner.team != self.team and self.pickup_by_other_team)

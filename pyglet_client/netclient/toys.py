@@ -19,9 +19,7 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
         self.radius = 1
 
     def take(self, new_owner):
-        print new_owner.team, self.team
-        if (new_owner.team == self.team and self.pickup_by_own_team) or \
-            (new_owner.team != self.team and self.pickup_by_other_team):
+        if TeamItem.can_take(self, new_owner):
             DetachableObject.take(self, new_owner)
 
 

@@ -37,7 +37,8 @@ DEFAULTS = {
     'server'    :   '127.0.0.1',
     'port'      :   5055,
     'tick'      :   0.01,
-    'name'      :   settings.name or 'monkey',
+    'name'      :   settings.name,
+    'alt_name'  :   settings.alt_name,
     'fullscreen':   settings.fullscreen,
     'width'     :   settings.width,
     'height'    :   settings.height,
@@ -82,6 +83,7 @@ def parse(cl_args=None):
     parser.add_argument('-t', '--tick', default=DEFAULTS['tick'], type=int)
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'])
+    parser.add_argument('-an', '--alt-name', default=DEFAULTS['alt_name'], dest='alt_name')
 
     parser.add_argument('--print-args', action='store_true')
 

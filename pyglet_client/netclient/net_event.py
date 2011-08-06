@@ -8,6 +8,7 @@ import SDL.gl #for timer function
 import json
 import stats
 #import struct
+from opts import opts
 
 class NetEventGlobal:
     messageHandler = None
@@ -238,14 +239,18 @@ class ClientMessageHandler(GenericMessageHandler):
             GameStateGlobal.playerList.identify(player)
         return True
 
+    used_alt = False
     def _identify_fail(self, msg, **arg):
         # send system notification
-        ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
-        ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
-        # activate chat, insert /nick
-        InputGlobal.enable_chat()
-        ChatClientGlobal.chatClient.insert_string('/nick ')
-
+        if self.used_alt:
+            ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
+            ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
+            # activate chat, insert /nick
+            InputGlobal.enable_chat()
+            ChatClientGlobal.chatClient.insert_string('/nick ')
+        else:
+            NetOut.sendMessage.identify(name=opts.alt_name)
+            self.used_alt = True
 
 # base class for datastore (*Lists) network interface
 class DatastoreMessageInterface(GenericMessageHandler):

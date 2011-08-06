@@ -39,9 +39,9 @@ from game_state import GameStateGlobal
 
 def sendJSON(cmd=None, tick=False):
     def outer(f, *args):
-        def wrapped(*args):
+        def wrapped(*args, **kwargs):
             self = args[0]
-            json_data = f(*args)
+            json_data = f(*args, **kwargs)
             if json_data is None:
                 json_data = {}
 
@@ -60,9 +60,9 @@ def sendJSON(cmd=None, tick=False):
 
 # if client_id is required
 def idRequired(f):
-    def wrapped(*args):
+    def wrapped(*args, **kwargs):
         if NetClientGlobal.client_id != '0':
-            f(*args)
+            f(*args, **kwargs)
     return wrapped
 
 

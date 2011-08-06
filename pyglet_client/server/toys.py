@@ -27,6 +27,10 @@ class Flag(DetachableObject, TeamItem):
         self.on_ground = True
         self.owner = None
 
+    def take(self, new_owner):
+        if TeamItem.can_take(self, new_owner):
+            DetachableObject.take(self, new_owner)
+
     def json(self, properties=None):
         if properties is None:
             d = DetachableObject.json(self)
