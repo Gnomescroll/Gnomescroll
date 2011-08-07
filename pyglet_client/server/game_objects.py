@@ -97,6 +97,14 @@ class DetachableObject(GameObject):
         self.on_ground = True
         NetOut.event.item_update(self)
 
+    def pos(self, xyz=None):
+        if self.owner is None:
+            return GameObject.pos(xyz)
+        else:
+            if xyz is not None:
+                print 'WARNING trying to set item position while item is possessed'
+            return self.owner.pos()
+
     def json(self, properties=None):
         if properties is None:
             d = GameObject.json(self)
