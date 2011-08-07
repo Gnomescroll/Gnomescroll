@@ -205,8 +205,8 @@ class App(object):
                 P.event("get_key_state")
                 SDL.input.get_key_state()
                 #network events
-                if GameStateGlobal.agent is not None:
-                    NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+                #if GameStateGlobal.agent is not None:
+                    #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
                 P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
                 P.event("MapControllerGlobal.mapController.tick()")

@@ -487,6 +487,9 @@ class AgentMessageHandler(DatastoreMessageInterface):
             agent.last_button_tick = tick
             agent.button_state = buttons
 
+        ctrl_state = agent.compute_state()
+        agent.set_control_state(ctrl_state)
+
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:
