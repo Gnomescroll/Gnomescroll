@@ -633,6 +633,7 @@ class GameModeMessageHandler(DatastoreMessageInterface):
         print 'teams'
         print msg
         self._default_list(**msg)
+        print GameStateGlobal.teamList
 
     def _player_team(self, **msg):
         err_msg = None

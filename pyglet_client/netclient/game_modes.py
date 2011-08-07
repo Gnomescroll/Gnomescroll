@@ -90,8 +90,8 @@ class NoTeam:
 
 class Team(NoTeam):
 
-    def __init__(self, id, color=None, *args, **kwargs):
-        NoTeam.__init__(self, id)
+    def __init__(self, id, color=None, players=None, *args, **kwargs):
+        NoTeam.__init__(self, id, players)
         self.flag = None
         self.base = None
         self.type = 2
