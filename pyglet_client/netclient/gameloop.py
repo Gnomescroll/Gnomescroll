@@ -258,6 +258,9 @@ class App(object):
             P.event("Draw World_0")
             self.world.draw(first_person)
             P.event("Draw World_1")
+            if True:
+                SDL.gl.planar_laser(2,2,1, 2,2,40)
+
             if False:
                 SDL.gl.draw_particle(0, 1, 5,5,5)
                 SDL.gl.draw_particle(1, 2, 5,5,7)

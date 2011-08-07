@@ -153,15 +153,16 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
 
     float up[3] = {a[0], a[4], a[8]};
     float right[3] = {a[1], a[5], a[9]};
+    //float pos[3] = {a[3], a[4], a[5]}
     float tx_min, tx_max, ty_min, ty_max;
-    
+
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc (GL_ONE, GL_ONE);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
@@ -194,4 +195,123 @@ glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+}
+
+
+struct Vec {
+float x,y,z;
+};
+
+inline struct Vec init_Vec(float x, float y, float z) {
+    struct Vec v; v.x=x;v.y=y;v.z=z; return v;
+}
+
+inline void normalize(struct Vec* v) {
+float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+v->x /= l; v->y /=l; v->z /=l;
+}
+
+struct Vec cross(struct Vec v1, struct Vec v2) {
+    struct Vec v0;
+    v0.x = v1.y*v2.z - v1.z*v2.y;
+    v0.y = v1.z*v2.x - v1.x*v2.z;
+    v0.z = v1.x*v2.y - v1.y*v2.x;
+    return v0;
+}
+
+void dot(struct Vec v1, struct Vec v2) {
+    float d;
+    d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
+    printf("dot= %f \n", d);
+}
+
+void calc_len(struct Vec *v) {
+    float l;
+    l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+    v->x /= l; v->y /=l; v->z /=l;
+    printf("l= %fs \n", l);
+    }
+
+void draw(struct Vec v0, struct Vec v1, int r, int g, int b) {
+
+glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
+glBegin(GL_LINES);
+glVertex3f(v0.x, v0.y, v0.z);
+glVertex3f(v0.x+v1.x, v0.y+v1.y, v0.z+v1.z);
+glEnd();
+
+}
+
+/*
+inline void draw2(float a, float b, struct v0, struct Vec v1, struct Vec v2) {
+
+    glVertex3f(v0.x+a*v1.x+b*v2.x, v0.y+a*v1.y+b*v2.y, v0.z+a*v1.z+b*v2.z);
+    glVertex3f(v0.x+a*v1.x+b*v2.x, v0.y+a*v1.y+b*v2.y, v0.z+a*v1.z+b*v2.z);
+    glVertex3f(v0.x+a*v1.x+b*v2.x, v0.y+a*v1.y+b*v2.y, v0.z+a*v1.z+b*v2.z);
+}
+*/
+
+int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
+
+#define pi 3.141519
+    struct Vec pos = init_Vec(5.0, 5.0, 2.0);
+    printf("pos= %f, %f, %f \n", 5.0, 5.0, 2.0);
+
+    struct Vec po;
+    po.x =  pos.x - (x0+y1)/2;
+    po.y =  pos.y - (y0+y1)/2;
+    po.z =  pos.z -(z0+z1)/2;
+    normalize(&po);
+
+    int i =0 ;
+    //normalize(&pos);
+    struct Vec up = init_Vec(x1-x0, y1-y0, z1-z0);
+    normalize(&up);
+    calc_len(&up);
+    struct Vec left = cross(po, up);
+    calc_len(&left);
+    struct Vec right = cross(left, up);
+    calc_len(&right);
+    printf("\n");
+
+    draw(pos, up, 255,0,0);
+    draw(pos, left, 0,255,0);
+    draw(pos, right, 0,0,255);
+
+    float a, b;
+    struct Vec bot, top;
+    bot = init_Vec(x0,y0,z0);
+    top = init_Vec(x1,y1,z1);
+    struct Vec v1 = left;
+    struct Vec v2 = right;
+
+    while(i< 8) {
+    a = sin(i*pi/8);
+    b = cos(i*pi/8);
+    i++;
+
+    v1.x = a*left.x + b*right.x;
+    v1.y = a*left.y + b*right.y;
+    v1.z = a*left.z + b*right.z;
+
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc (GL_ONE, GL_ONE);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)20);
+    glBegin( GL_QUADS );
+        glVertex3f(x1 -a*v1.x, y1 -a*v1.y, z1 -a*v1.z);
+        glVertex3f(x1 +a*v1.x, y1 +a*v1.y, z1 +a*v1.z);
+        glVertex3f(x0 +a*v1.x, y0 +a*v1.y, z0 +a*v1.z);
+        glVertex3f(x0 -a*v1.x, y0 -a*v1.y, z0 -a*v1.z);
+    glEnd();
+
+    }
+    //glDisable(GL_TEXTURE_2D);
+    //glDisable (GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    return 0;
 }
