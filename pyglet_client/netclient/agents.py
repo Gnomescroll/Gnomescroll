@@ -1078,7 +1078,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         # check agent
         ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
         ignore_vox.append(self.vox.id)
-        print 'ignoring %s' % (ignore_vox,)
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         body_part_id = 1
         block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
@@ -1111,8 +1110,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             'type'  :   ttype,
             'loc'   :   loc
         }
-        print 'hitscan'
-        print target
         NetOut.sendMessage.hitscan(target)
 
     def add_ammo(self, amt, weapon_type):

@@ -42,10 +42,7 @@ def hitscan2(float x, float y,float z, float x_angle, float y_angle, ignore_vox=
     cdef int distance, t
     cdef Vox vox, vox_temp
     distance = 0
-    print 'ignore list'
-    print ignore_vox
     for vox in vox_dict.values():
-        print vox._id
         if vox._id in ignore_vox:
             continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
