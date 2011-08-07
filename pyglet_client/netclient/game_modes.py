@@ -61,6 +61,9 @@ class NoTeam:
             else:
                 self[pid] = _p
 
+    def is_viewers(self):
+        return True
+
     def __len__(self):
         return len(self.players)
     def __iter__(self):
@@ -96,6 +99,9 @@ class Team(NoTeam):
         self.base = None
         self.type = 2
         self.color = color
+
+    def is_viewers(self):
+        return False
 
     def update_info(self, **team):
         NoTeam.update_info(self, **team)
