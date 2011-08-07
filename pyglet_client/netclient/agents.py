@@ -965,6 +965,8 @@ class PlayerAgentRender(AgentRender):
 class PlayerAgentWeapons(AgentWeapons):
 
     def switch(self, weapon_index):
+        if self.agent.team.is_viewers():
+            return
         old = self._active_weapon
         num_weapons = len(self.weapons)
         if num_weapons == 0:
@@ -1054,6 +1056,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.box_r = .30
 
     def fire(self):
+        if self.team.is_viewers():
+            return
         weapon = self.weapons.active()
         if weapon is None:
             return
@@ -1065,6 +1069,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
                 NetOut.sendMessage(fire_command, self)
 
     def hitscan(self, weapon=None):
+        if self.team.is_viewers():
+            return
         #print 'HITSCAN!!'
         if weapon is not None:
             weapon.animation(agent=self).play()
@@ -1105,12 +1111,16 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         NetOut.sendMessage.hitscan(target)
 
     def add_ammo(self, amt, weapon_type):
+        if self.team.is_viewers():
+            return
         for weapon in weapons:
             if weapon.type == weapon_type:
                 weapon.restock(amt)
                 break
 
     def reload(self):
+        if self.team.is_viewers():
+            return
         weapon = self.weapons.active()
         if weapon is None:
             return
@@ -1119,6 +1129,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             NetOut.sendMessage(reload_command, self)
 
     def set_active_block(self, block_type=None):
+        if self.team.is_viewers():
+            return
         if block_type is None:
             pos = ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
             block_type = self.facing_block()
@@ -1150,11 +1162,15 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.y_angle = 0.499
 
     def pickup_item(self, item, index=None):
+        if self.team.is_viewers():
+            return
         item = self.inventory.add(item, index)
         if item:
             NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
+        if self.team.is_viewers():
+            return
         item = self.inventory.drop(item)
         if item:
             NetOut.sendMessage.drop_item(self, item)

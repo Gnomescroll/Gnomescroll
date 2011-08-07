@@ -27,7 +27,8 @@ class Weapon(EquippableObject):
         self.id = id
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
-
+        self.hitscan = False
+        
     def fire(self):
         return False
 
