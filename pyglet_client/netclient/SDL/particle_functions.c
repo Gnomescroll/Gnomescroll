@@ -162,7 +162,7 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
 
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc (GL_ONE, GL_ONE);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
@@ -261,7 +261,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     po.x =  pos.x - (x0+y1)/2;
     po.y =  pos.y - (y0+y1)/2;
     po.z =  pos.z -(z0+z1)/2;
-    //normalize(&po);
+    normalize(&po);
 
     int i =0 ;
     //normalize(&pos);
@@ -285,26 +285,33 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     struct Vec v1 = left;
     struct Vec v2 = right;
 
-    while(i< 5) {
+    while(i< 8) {
+    a = sin(i*pi/8);
+    b = cos(i*pi/8);
     i++;
-    a = sin(i*pi/5);
-    b = cos(i*pi/5);
+
     v1.x = a*left.x + b*right.x;
     v1.y = a*left.y + b*right.y;
     v1.z = a*left.z + b*right.z;
 
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc (GL_ONE, GL_ONE);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)20);
     glBegin( GL_QUADS );
         glVertex3f(x1 -a*v1.x, y1 -a*v1.y, z1 -a*v1.z);
         glVertex3f(x1 +a*v1.x, y1 +a*v1.y, z1 +a*v1.z);
         glVertex3f(x0 +a*v1.x, y0 +a*v1.y, z0 +a*v1.z);
         glVertex3f(x0 -a*v1.x, y0 -a*v1.y, z0 -a*v1.z);
-        //draw2(a,b,bot,left,right);
-        //draw2(a,b,top,left,right);
-
     glEnd();
 
     }
+    //glDisable(GL_TEXTURE_2D);
+    //glDisable (GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
     return 0;
-
 }
