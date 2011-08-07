@@ -50,6 +50,9 @@ class NoTeam:
         self.players[key] = value
     def __getitem__(self, key):
         return self.players[key]
+
+    def is_viewers(self):
+        return True
         
     def json(self):
         return {
@@ -73,6 +76,9 @@ class Team(NoTeam):
 
     def create_flag(self):
         self.flag = GameStateGlobal.itemList.create('Flag', 1, self)
+
+    def is_viewers(self):
+        return False
 
     def json(self):
         d = NoTeam.json(self)
