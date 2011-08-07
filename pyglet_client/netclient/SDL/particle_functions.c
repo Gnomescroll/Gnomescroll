@@ -239,8 +239,8 @@ glEnd();
 int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 
 #define pi 3.141519
-    struct Vec pos = init_Vec(5.0, 0.0, 2.0);
-    printf("pos= %f, %f, %f \n", 5.0, 0.0, 2.0);
+    struct Vec pos = init_Vec(5.0, 5.0, 2.0);
+    printf("pos= %f, %f, %f \n", 5.0, 5.0, 2.0);
 
     struct Vec po;
     po.x =  pos.x - (x0+y1)/2;
