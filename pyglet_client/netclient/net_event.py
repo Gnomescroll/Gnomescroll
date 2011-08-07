@@ -630,6 +630,8 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             GameStateGlobal.start_game_mode(mode, teams=teams)
             
     def _teams(self, **msg):
+        print 'teams'
+        print msg
         self._default_list(**msg)
 
     def _player_team(self, **msg):
