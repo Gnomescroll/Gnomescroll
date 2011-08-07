@@ -216,8 +216,9 @@ class App(object):
                 self.world.tick()
                 self.animations.tick()
             if tc > 1:
-                print "wtf"
-                print "tc= %i" % (tc)
+                pass
+                #print "wtf"
+                #print "tc= %i" % (tc)
 
             P.event("setup camera")
             if InputGlobal.camera == 'agent':

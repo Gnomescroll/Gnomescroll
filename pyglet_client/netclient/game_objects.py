@@ -1,6 +1,7 @@
 from vox import GameObjectRender
 
 object_names = {
+    0   :   'Generic',
     1   :   'Flag',
     2   :   'Base',
 }
@@ -12,6 +13,8 @@ class GameObject:
         self.id = id
         self.on_ground = True
         self.state = state
+        self.type = 0
+        self.owner = None
 
     def pos(self, xyz=None):
         if xyz is not None:
@@ -87,6 +90,14 @@ class DetachableObject(GameObject):
         self.owner = None
         self.on_ground = True
         return True
+
+    def pos(self, xyz=None):
+        if self.owner is None:
+            return GameObject.pos(self, xyz)
+        else:
+            if xyz is not None:
+                print 'WARNING trying to set item position while item is possessed'
+            return self.owner.pos()
 
 class TeamItem:
 

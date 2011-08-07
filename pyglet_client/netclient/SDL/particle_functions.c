@@ -222,14 +222,14 @@ struct Vec cross(struct Vec v1, struct Vec v2) {
 void dot(struct Vec v1, struct Vec v2) {
     float d;
     d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
-    printf("dot= %f \n", d);
+    //printf("dot= %f \n", d);
 }
 
 void calc_len(struct Vec *v) {
     float l;
     l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
     v->x /= l; v->y /=l; v->z /=l;
-    printf("l= %fs \n", l);
+    //printf("l= %fs \n", l);
     }
 
 void draw(struct Vec v0, struct Vec v1, int r, int g, int b) {
@@ -255,7 +255,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 
 #define pi 3.141519
     struct Vec pos = init_Vec(5.0, 5.0, 2.0);
-    printf("pos= %f, %f, %f \n", 5.0, 5.0, 2.0);
+    //printf("pos= %f, %f, %f \n", 5.0, 5.0, 2.0);
 
     struct Vec po;
     po.x =  pos.x - (x0+y1)/2;
@@ -272,7 +272,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     calc_len(&left);
     struct Vec right = cross(left, up);
     calc_len(&right);
-    printf("\n");
+    //printf("\n");
 
     draw(pos, up, 255,0,0);
     draw(pos, left, 0,255,0);
