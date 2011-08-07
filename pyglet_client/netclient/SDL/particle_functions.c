@@ -153,8 +153,9 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
 
     float up[3] = {a[0], a[4], a[8]};
     float right[3] = {a[1], a[5], a[9]};
+    //float pos[3] = {a[3], a[4], a[5]}
     float tx_min, tx_max, ty_min, ty_max;
-    
+
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -194,4 +195,56 @@ glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+}
+
+
+struct Vec {
+float x,y,z;
+};
+
+inline struct Vec init_Vec(float x, float y, float z) {
+    struct Vec v; v.x=x;v.y=y;v.z=z; return v;
+}
+
+inline void normalize(struct* Vec v) {
+float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z)d;
+v->x /= l; v->y /=l; v->z /=l;
+}
+
+inline struct Vec cross(struct Vec v1, struct Vec v2) {
+    struct Vec v0;
+    v0.x = v1.y*v2.z - v1.z*v2.y;
+    v0.y = v1.z*v2.x - v1.x*v2.z;
+    v0.z = v1.x*v2.y - v1.y*v2.x;
+    return v0;
+}
+
+void calc_len(struct Vec v) {
+    float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z)d;
+    v->x /= l; v->y /=l; v->z /=l;
+    printf("l= %i \n", l);
+    }
+
+int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
+
+#define pi 3.141519
+struct Vec pos = init_Vec(a[3], a[4], a[5]);
+
+    pos.x = pos.x - (x0+y1)/2;
+    pos.y = pos.y - (y0+y1)/2;
+    pos.z = pos.z - (z0+z1)/2;
+
+    int i =0 ;
+    normalize(&pos);
+    Vec up = init_Vec(x1-x0, y1-y0, z1-z0);
+    normalize(&up);
+    calc_len(up);
+    Vec left = cross(pos, up);
+    calc_len(left);
+    Vec right = cros(pos, up);
+    calc_lenn(right);
+
+
+    return 0;
+
 }

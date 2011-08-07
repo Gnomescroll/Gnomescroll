@@ -200,6 +200,7 @@ cdef extern from "particle_functions.h":
     int _init_particle_functions()
     int _draw_particle(int id, float size, float x, float y, float z)
     int _draw_particle2(int id, float size, float x, float y, float z)
+    int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1)
 
 def init_particles():
     _init_particle_functions()
@@ -207,3 +208,7 @@ def init_particles():
 
 def draw_particle(id,size, x,y,z):
     _draw_particle2(id, size, x, y, z)
+
+
+def planar_laser(float x0, float y0, float z0, float x1, float y1, float z1):
+    _planar_laser(x0, y0, z0, x1, y1, z1)
