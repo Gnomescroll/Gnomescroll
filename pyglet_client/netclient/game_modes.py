@@ -187,7 +187,7 @@ class TeamList(GenericMultiObjectList):
 
     def get_viewers(self):
         for team in self.values():
-            if team_types[team.type] == 'NoTeam':
+            if team.is_viewers():
                 return team
 
 names = {

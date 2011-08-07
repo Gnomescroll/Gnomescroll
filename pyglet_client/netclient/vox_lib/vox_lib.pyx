@@ -36,13 +36,17 @@ cdef extern from 'vox_functions.h':
     
 
 
-cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
+#cpdef hitscan2(float x, float y,float z, float x_angle, float y_angle, int ignore_vox=-1):
+def hitscan2(float x, float y,float z, float x_angle, float y_angle, ignore_vox=[]):
     global vox_dict, ob_dict
     cdef int distance, t
     cdef Vox vox, vox_temp
     distance = 0
+    print 'ignore list'
+    print ignore_vox
     for vox in vox_dict.values():
-        if vox._id == ignore_vox:
+        print vox._id
+        if vox._id in ignore_vox:
             continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
         #print "Distance = %f, id= %i" % (float(t)/256.0, vox._id)
