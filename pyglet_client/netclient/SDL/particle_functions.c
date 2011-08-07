@@ -219,6 +219,12 @@ struct Vec cross(struct Vec v1, struct Vec v2) {
     return v0;
 }
 
+void dot(struct Vec v1, struct Vec v2) {
+    float d;
+    d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
+    printf("dot= %f \n", d);
+}
+
 void calc_len(struct Vec *v) {
     float l;
     l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
@@ -235,6 +241,15 @@ glVertex3f(v0.x+v1.x, v0.y+v1.y, v0.z+v1.z);
 glEnd();
 
 }
+
+/*
+inline void draw2(float a, float b, struct v0, struct Vec v1, struct Vec v2) {
+
+    glVertex3f(v0.x+a*v1.x+b*v2.x, v0.y+a*v1.y+b*v2.y, v0.z+a*v1.z+b*v2.z);
+    glVertex3f(v0.x+a*v1.x+b*v2.x, v0.y+a*v1.y+b*v2.y, v0.z+a*v1.z+b*v2.z);
+    glVertex3f(v0.x+a*v1.x+b*v2.x, v0.y+a*v1.y+b*v2.y, v0.z+a*v1.z+b*v2.z);
+}
+*/
 
 int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 
@@ -262,6 +277,34 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     draw(pos, up, 255,0,0);
     draw(pos, left, 0,255,0);
     draw(pos, right, 0,0,255);
+
+    float a, b;
+    struct Vec bot, top;
+    bot = init_Vec(x0,y0,z0);
+    top = init_Vec(x1,y1,z1);
+    struct Vec v1 = left;
+    struct Vec v2 = right;
+
+    while(i< 5) {
+    i++;
+    a = sin(i*pi/5);
+    b = cos(i*pi/5);
+    v1.x = a*left.x + b*right.x;
+    v1.y = a*left.y + b*right.y;
+    v1.z = a*left.z + b*right.z;
+
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glBegin( GL_QUADS );
+        glVertex3f(x1 -a*v1.x, y1 -a*v1.y, z1 -a*v1.z);
+        glVertex3f(x1 +a*v1.x, y1 +a*v1.y, z1 +a*v1.z);
+        glVertex3f(x0 +a*v1.x, y0 +a*v1.y, z0 +a*v1.z);
+        glVertex3f(x0 -a*v1.x, y0 -a*v1.y, z0 -a*v1.z);
+        //draw2(a,b,bot,left,right);
+        //draw2(a,b,top,left,right);
+
+    glEnd();
+
+    }
     return 0;
 
 }
