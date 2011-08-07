@@ -132,7 +132,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         except TypeError:
             print 'msg pickup_item :: aid missing'
@@ -182,7 +183,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         except TypeError:
             print 'msg drop_item :: aid missing'
@@ -241,7 +243,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
             if agent.owner != player.id:
                 print 'msg set_block :: client does not own this agent'
@@ -296,7 +299,8 @@ class MessageHandler:
                 print 'msg change_weapon :: client does not own this agent'
                 return
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         except TypeError:
             print 'msg change_weapon :: aid missing'
@@ -329,7 +333,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
             if agent.owner != player.id:
                 print 'msg drop_weapon :: client does not own this agent'
@@ -360,7 +365,8 @@ class MessageHandler:
             return
         firing_agent = player.agent
         if firing_agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         weapon = firing_agent.active_weapon()
         if not weapon.hitscan:
@@ -422,7 +428,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
             if agent.owner != player.id:
                 print 'msg hit_block :: client does not own this agent'
@@ -466,7 +473,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
             if agent.owner != player.id:
                 print 'msg reload_weapon :: client does not own this agent'
@@ -502,7 +510,8 @@ class MessageHandler:
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         except KeyError:
             print 'msg.cmd == agent_control_state, msg.id is not a known client'
@@ -550,7 +559,8 @@ class MessageHandler:
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         except KeyError:
             print 'msg.cmd == agent_button_state, msg.id is not a known client'
@@ -598,7 +608,8 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
             if agent.owner != player.id:
                 print 'msg fire_projectile :: player does not own this agent'
@@ -658,7 +669,8 @@ class MessageHandler:
         try:
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                #print 'ignoring agent, its a viewer'
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
                 return
         except KeyError:
             err_msg = 'agent %s unknown' % (agent_id,)

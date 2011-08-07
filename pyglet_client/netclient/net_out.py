@@ -65,6 +65,11 @@ def idRequired(f):
             f(*args, **kwargs)
     return wrapped
 
+def noViewer(f):
+    def wrapped(*args, **kwargs):
+        if not GameStateGlobal.agent.team.is_viewers():
+            f(*args, **kwargs)
+    return wrapped
 
 class GenericMessage:
 
@@ -90,6 +95,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('agent_position', tick=True)
     def agent_position(self, agent):
         if agent is None or not agent.id:
@@ -101,6 +107,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('agent_control_state', tick=True)
     def send_agent_control_state(self, agent):
         if not agent.id :  # agent not identified
@@ -112,6 +119,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('agent_button_state', tick=True)
     def agent_button_state(self, agent):
         return {
@@ -120,6 +128,7 @@ class SendMessage(GenericMessage):
         }
         
     @idRequired
+    @noViewer
     @sendJSON('fire_projectile', tick=True)
     def fire_projectile(self, agent=None):
         if agent is None or agent.id is None:
@@ -129,6 +138,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('reload_weapon', tick=True)
     def reload_weapon(self, agent=None):
         if agent is None or agent.id is None:
@@ -139,6 +149,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('change_weapon', tick=True)
     def change_weapon(self, agent, active_weapon):
         if active_weapon is None:
@@ -149,6 +160,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('drop_weapon', tick=True)
     def drop_weapon(self, agent, wid):
         return {
@@ -157,6 +169,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('pickup_item', tick=True)
     def pickup_item(self, agent, item, index=None):
         msg = {
@@ -168,6 +181,7 @@ class SendMessage(GenericMessage):
         return msg
 
     @idRequired
+    @noViewer
     @sendJSON('drop_item', tick=True)
     def drop_item(self, agent, item):
         return {
@@ -176,6 +190,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('hit_block', tick=True)
     def hit_block(self, agent=None):
         if agent is None or agent.id is None:
@@ -189,6 +204,7 @@ class SendMessage(GenericMessage):
         }
 
     @idRequired
+    @noViewer
     @sendJSON('set_block', tick=True)
     def set_block(self, agent=None):
         if agent is None or agent.id is None:
@@ -215,6 +231,7 @@ class SendMessage(GenericMessage):
         pass
 
     @idRequired
+    @noViewer
     @sendJSON('hitscan', tick=True)
     def hitscan(self, target):
         return {
