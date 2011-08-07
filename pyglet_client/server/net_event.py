@@ -223,6 +223,7 @@ class MessageHandler:
             return
 
         GameStateGlobal.game.player_join_team(player, team)
+        print GameStateGlobal.teamList
         
     def set_block(self, client_id, **msg):
         try:

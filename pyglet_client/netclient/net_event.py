@@ -379,7 +379,8 @@ class PlayerMessageHandler(DatastoreMessageInterface):
 
     def _player_list(self, **args):
         self._default_list(**args)
-        GameStateGlobal.game.update_players()
+        if GameStateGlobal.game is not None:
+            GameStateGlobal.game.update_players()
         
 
 # agent messages needs to be updated

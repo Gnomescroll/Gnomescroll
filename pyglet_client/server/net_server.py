@@ -110,8 +110,8 @@ class TcpClient:
 
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
-        self.sendMessage.game_mode()
-        self.sendMessage.send_items()
+        #self.sendMessage.game_mode()
+        #self.sendMessage.send_items()
         self.sendMessage.send_players() # send all players to client
 
     def identify(self, name):
@@ -140,6 +140,9 @@ class TcpClient:
         else:
             self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
             print 'Created new player'
+        self.sendMessage.game_mode()
+        self.sendMessage.send_items()
+        #self.sendMessage.send_players() # send all players to client
 
     def _set_client_id(self):
         if hasattr(self, 'id'):
