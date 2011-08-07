@@ -92,14 +92,15 @@ class DetachableObject(GameObject):
             NetOut.event.item_update(self)
         
     def drop(self):
-        self.pos(self.owner.pos())
+        pos = self.owner.pos()
         self.owner = None
+        self.pos(pos)
         self.on_ground = True
         NetOut.event.item_update(self)
 
     def pos(self, xyz=None):
         if self.owner is None:
-            return GameObject.pos(xyz)
+            return GameObject.pos(self, xyz)
         else:
             if xyz is not None:
                 print 'WARNING trying to set item position while item is possessed'

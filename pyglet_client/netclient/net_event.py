@@ -415,6 +415,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         agent.state = pos
         #print agent.state
 
+    #deprecated
     def _agent_control_state(self, **msg):
         err_msg = None
         try:

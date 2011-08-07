@@ -78,7 +78,7 @@ class AgentPhysics:
         ax,ay,az = (0,0,0)
         vx,vy = (0,0)
         #constants
-        tr = 100. #tick rate
+        tr = 10. #tick rate
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
@@ -247,10 +247,10 @@ class AgentPhysics:
         if zc_ground != 0:
             if self.on_ground != 1:
                 self.on_ground = 1
-                print "On ground!"
+                #print "On ground!"
         else:
             if self.on_ground == 1:
-                print "Off ground!"
+                #print "Off ground!"
                 self.on_ground = 0
 
     ## apply velocity
@@ -551,8 +551,7 @@ class Agent(AgentPhysics, AgentAction):
         if self.dead:
             self._tick_respawn()
         else:
-            pass
-            #self._tick_physics()
+            self._tick_physics()
 
     def _tick_respawn(self):
         if self.dead:
