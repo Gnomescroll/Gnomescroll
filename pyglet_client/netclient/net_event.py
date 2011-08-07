@@ -393,6 +393,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self._bind_event('agent_position', self._agent_position)
         self._bind_event('agent_button_state', self._agent_button_state)
         self._bind_event('agent_control_state', self._agent_control_state)
+        self._bind_event('agent_angle', self._agent_angle)
         DatastoreMessageInterface.__init__(self)
 
     def _agent_position(self, **args):
@@ -415,8 +416,43 @@ class AgentMessageHandler(DatastoreMessageInterface):
         agent.state = pos
         #print agent.state
 
+    def _agent_angle(self, **msg):
+        err_msg = None
+        try:
+            angle = msg['angle']
+        except KeyError:
+            err_msg = 'msg agent_angle :: angle missing'
+        try:
+            agent_id = msg['id']
+        except KeyError:
+            err_msg = 'msg agent_angle :: agent id missing'
+        try:
+            tick = msg['tick']
+        except KeyError:
+            err_msg = 'msg agent_angle :: tick missing'
+
+        try:
+            agent = GameStateGlobal.agentList[agent_id]
+        except KeyError:
+            err_msg = 'msg agent_angle :: agent %s does not exist' % (str(agent_id),)
+
+        if agent is None:
+            print 'agent_angle msg :: agent %s is None' % (agent_id,)
+            print 'AgentList: %s' % (str(GameStateGlobal.agentList,))
+
+        if err_msg is not None:
+            print err_msg
+            return
+
+        if agent.you:
+            return
+        print 'setting angle %s to agent %s' % (angle, agent.id,)
+        agent.set_angle(angle)
+
     #deprecated
     def _agent_control_state(self, **msg):
+        print 'received deprecated agent_control_state msg. ignoring'
+        return
         err_msg = None
         try:
             state = msg['state']

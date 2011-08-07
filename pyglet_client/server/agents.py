@@ -531,7 +531,10 @@ class Agent(AgentPhysics, AgentAction):
             NetOut.event.agent_control_state(self)
 
     def set_angle(self, angle):
+        old_angle = self.angle()
         self.x_angle, self.y_angle = angle
+        if old_angle != self.angle():
+            NetOut.event.agent_angle(self)
 
     def angle(self):
         return [self.x_angle, self.y_angle]
