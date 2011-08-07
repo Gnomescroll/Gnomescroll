@@ -164,7 +164,8 @@ class World():
 
     def draw_agents(self, first_person=False):
         for agent in GameStateGlobal.agentList.values():
-            if not agent.dead and not (agent.you and first_person):
+            if not agent.dead and not (agent.you and first_person) and \
+                not agent.team.is_viewers():
                 agent.draw()
 
 import projectiles
