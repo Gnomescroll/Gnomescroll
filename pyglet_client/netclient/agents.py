@@ -13,6 +13,7 @@ from game_state import GameStateGlobal #Deprecate?
 from opts import opts
 
 from weapons import LaserGun, Pick, BlockApplier
+from game_modes import NoTeam
 
 import default_settings as settings
 
@@ -555,7 +556,7 @@ class AgentInventory:
 '''
 Data model for agent
 '''
-class AgentModel:
+class AgentModel(object):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 1. # seconds
@@ -654,6 +655,15 @@ class AgentModel:
             self.team = GameStateGlobal.teamList[agent['team']]
 
         GameStateGlobal.agentList.update(self, *args)
+
+#experimental
+    def __getattribute__(self, name):
+        val = object.__getattribute__(self, name)
+        if name == 'team':
+            if not isinstance(val, NoTeam):
+                val = GameStateGlobal.teamList[val]
+                self.team = val
+        return val
 
     def pos(self, xyz=None):
         if xyz is None:
