@@ -448,7 +448,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
         if agent.you:
             return
-        print 'setting angle %s to agent %s' % (angle, agent.id,)
+
         agent.set_angle(angle)
 
     #deprecated
