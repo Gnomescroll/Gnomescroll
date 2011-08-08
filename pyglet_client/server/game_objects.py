@@ -110,6 +110,8 @@ class DetachableObject(GameObject):
             d = GameObject.json(self)
             if self.owner is not None:
                 d['owner'] = self.owner.id
+            else:
+                d['owner'] = 0
             d['on_ground'] = int(self.on_ground)
         else:
             d = filter_props(obj, properties)

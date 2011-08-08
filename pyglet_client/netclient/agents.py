@@ -550,14 +550,16 @@ class AgentInventory:
                 new_inv.append(known_item)
             self.inv = new_inv
 
+    # checks for object a specific type (e.g. Flag)
+    # rename to: has_object_type
     def has(self, obj_type):
         for obj in self.inv:
             if obj.type == obj_type:
                 return obj
         return False
 
-    def add(self, item, index=None):
-        if item not in self.inv and item.take(self.agent):
+    def _add(self, item, index=None):
+        if item not in self.inv:
             if index is None:
                 self.inv.append(item)
             else:
@@ -565,10 +567,20 @@ class AgentInventory:
             return item
         return False
 
-    def drop(self, item):
-        if item in self.inv and item.drop(self.agent):
+    def add(self, item, index=None):
+        if item.take(self.agent):
+            return self._add(item, index)
+        return False
+
+    def _drop(self, item):
+        if item in self.inv:
             self.inv.remove(item)
             return item
+        return False
+
+    def drop(self, item):
+        if item.drop(self.agent):
+            return self._drop(item)
         return False
 
     def __len__(self):

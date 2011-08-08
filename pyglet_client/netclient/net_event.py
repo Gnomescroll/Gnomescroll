@@ -554,10 +554,15 @@ class ItemMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.itemList
         DatastoreMessageInterface.__init__(self)
 
-    def _object_destroy(self, **args):
+    def _item_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:
             GameStateGlobal.remove_item(id)
+
+    def _item_update(self, **args):
+        print 'item_update'
+        print args
+        return self._default_update(**args)
 
 
 class ProjectileMessageHandler(DatastoreMessageInterface):
