@@ -206,8 +206,10 @@ class App(object):
                 P.event("get_key_state")
                 SDL.input.get_key_state()
                 #network events
+                #if GameStateGlobal.agent is not None:
+                    #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
                 if GameStateGlobal.agent is not None:
-                    NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+                    NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
                 P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
                 P.event("MapControllerGlobal.mapController.tick()")
@@ -217,8 +219,9 @@ class App(object):
                 self.world.tick()
                 self.animations.tick()
             if tc > 1:
-                print "wtf"
-                print "tc= %i" % (tc)
+                pass
+                #print "wtf"
+                #print "tc= %i" % (tc)
 
             P.event("setup camera")
             if InputGlobal.camera == 'agent':

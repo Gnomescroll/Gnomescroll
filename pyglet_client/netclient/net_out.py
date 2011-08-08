@@ -108,6 +108,17 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
+    @sendJSON('agent_angle', tick=True)
+    def agent_angle(self, agent):
+        if agent is None or not agent.id:
+            return
+        return {
+            'id'    :   agent.id,
+            'angle' :   agent.angles(),
+        }
+
+    @idRequired
+    @noViewer
     @sendJSON('agent_control_state', tick=True)
     def send_agent_control_state(self, agent):
         if not agent.id :  # agent not identified

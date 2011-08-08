@@ -128,6 +128,8 @@ class TeamGame(Game):
             team = self.viewers
 
         team.add_player(player)
+        if player.team.is_viewers():
+            player.agent.dump_inventory()
         NetOut.event.player_team(player)
 
     def remove_player(self, player):

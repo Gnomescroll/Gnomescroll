@@ -72,11 +72,19 @@ class EventOut:
             'state': agent.state, #is a 9 tuple
         }
 
+#deprecated
     @sendJSONevent('agent_control_state')
     def agent_control_state(self, agent):
         return {
             'id'    :   agent.id,
             'state' :   agent.control_state(),
+            'angle' :   agent.angle(),
+        }
+
+    @sendJSONevent('agent_angle')
+    def agent_angle(self, agent):
+        return {
+            'id'    :   agent.id,
             'angle' :   agent.angle(),
         }
 
