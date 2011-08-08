@@ -104,6 +104,16 @@ class DetachableObject(GameObject):
         if self.owner is not None:
             self.on_ground = False
         return True
+
+    def can_take(self, new_owner):
+        if self.on_ground and self.owner != new_owner:
+            return True
+        return False
+
+    def can_drop(self, owner):
+        if owner is not None and self.owner == owner:
+            return True
+        return False
         
     def drop(self):
         self.pos(self.owner.pos())

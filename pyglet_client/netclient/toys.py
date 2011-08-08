@@ -12,7 +12,7 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
             team = GameStateGlobal.teamList[team]
         DetachableObject.__init__(self, id, radius, state=state)
         TeamItem.__init__(self, team, own=False, other=True)
-        TeamItemRender.__init__(self, model='black_flag.vox')
+        TeamItemRender.__init__(self, self, model='black_flag.vox')
         self.auto_grab = True
         self.drop_on_death = True
         self.type = 1
@@ -30,7 +30,7 @@ class Base(StaticObject, GameObjectRender, TeamItem):
             team = GameStateGlobal.teamList[team]
         StaticObject.__init__(self, id, state)
         TeamItem.__init__(self, team, False, False)
-        GameObjectRender.__init__(self, 'auto.vox')
+        GameObjectRender.__init__(self, self, 'auto.vox')
         self.type = 2
         self.radius = 1
 

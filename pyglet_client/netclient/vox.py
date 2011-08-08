@@ -4,10 +4,11 @@ vox_loader = vox_lib.Vox_loader()
 
 class VoxRender:
 
-    def __init__(self, model):
+    def __init__(self, obj, model):
         self.vox_model_file = model
         self.vox = vox_loader.load(model)
-        self.vox.set_object(self)
+        self.obj = obj
+        self.vox.set_object(self.obj)
 
     def update_vox(self):
         x,y,z = self.pos()
@@ -19,11 +20,12 @@ class VoxRender:
 
 class GameObjectRender(VoxRender):
 
-    def __init__(self, model=None):
+    def __init__(self, obj, model=None):
         if model is not None:
-            VoxRender.__init__(self, model)
+            VoxRender.__init__(self, obj, model)
             self._draw = True
         else:
+            self.obj = obj
             self.vox = None
             self._draw = False
             
@@ -37,7 +39,7 @@ class GameObjectRender(VoxRender):
 
 class TeamItemRender(GameObjectRender):
 
-    def __init__(self, model=None):
-        GameObjectRender.__init__(self, model)
+    def __init__(self, obj, model=None):
+        GameObjectRender.__init__(self, obj, model)
         print self.team.color
         self.vox.color(self.team.color, base_color='black')

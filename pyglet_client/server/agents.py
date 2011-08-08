@@ -19,6 +19,8 @@ from cube_lib.terrain_map import collisionDetection
 
 from weapons import LaserGun, Pick, BlockApplier
 
+from vector_lib import distance
+
 from opts import opts
 
 # datastore controller for agents
@@ -521,6 +523,8 @@ class Agent(AgentPhysics, AgentAction):
             NetOut.event.agent_update(self, 'active_weapon')
 
     def pickup_item(self, item, index=None):
+        if self.dead:
+            return
         if index is None:
             self.inventory.append(item)
         else:
@@ -530,6 +534,11 @@ class Agent(AgentPhysics, AgentAction):
     def drop_item(self, item):
         self.inventory.remove(item)
         item.drop(self)
+
+    def near_item(self, item):
+        if distance(self.pos(), item.pos()) < item.radius:
+            return True
+        return False
 
     # set agent state explicitly
     def set_control_state(self, state, angle=None, tick=None):
