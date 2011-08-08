@@ -39,17 +39,17 @@ class AgentPhysics:
         u,d,l,r, jetpack, brake = self.button_state
         
         if u:
-                v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
-                v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
+                v_x += v*cos( self.x_angle * pi)
+                v_y += v*sin( self.x_angle * pi)
         if d:
-                v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
-                v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
+                v_x += -v*cos( self.x_angle * pi)
+                v_y += -v*sin( self.x_angle * pi)
         if l:
-                v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+                v_x += v*cos( self.x_angle * pi + pi/2)
+                v_y += v*sin( self.x_angle * pi + pi/2)
         if r:
-                v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+                v_x += -v*cos( self.x_angle * pi + pi/2)
+                v_y += -v*sin( self.x_angle * pi + pi/2)
                 
         return [\
             d_x,

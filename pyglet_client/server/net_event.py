@@ -593,7 +593,6 @@ class MessageHandler:
             print 'msg agent_angle :: angle has wrong number of elements'
             return
 
-        #print 'setting angle to %s' % (angle,)
         agent.set_angle(angle)
 
     def agent_button_state(self, client_id, **msg):
@@ -638,6 +637,8 @@ class MessageHandler:
         #forward msg
         if old_buttons != buttons:
             NetOut.event.agent_button_state(agent)
+            ctrl_state = agent.compute_state()
+            agent.set_control_state(ctrl_state)
 
     def fire_projectile(self, client_id, **msg):
         try:

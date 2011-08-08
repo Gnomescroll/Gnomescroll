@@ -48,6 +48,34 @@ class AgentList(GenericObjectList):
 
 class AgentPhysics:
 
+    def compute_state(self):
+        # only v_x and v_y are used
+        v = 1
+        d_x, d_y, v_x, v_y = 0,0,0,0
+        u,d,l,r, jetpack, brake = self.button_state
+        
+        if u:
+                v_x += v*cos( self.x_angle * pi)
+                v_y += v*sin( self.x_angle * pi)
+        if d:
+                v_x += -v*cos( self.x_angle * pi)
+                v_y += -v*sin( self.x_angle * pi)
+        if l:
+                v_x += v*cos( self.x_angle * pi + pi/2)
+                v_y += v*sin( self.x_angle * pi + pi/2)
+        if r:
+                v_x += -v*cos( self.x_angle * pi + pi/2)
+                v_y += -v*sin( self.x_angle * pi + pi/2)
+                
+        return [\
+            d_x,
+            d_y,
+            v_x,
+            v_y,
+            jetpack,
+            brake,
+        ]
+
     #collision tests
     def point_collision_test(self, x_,y_,z_):
         x,y,z = self.pos()
