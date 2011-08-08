@@ -5,10 +5,12 @@
 SDL_Surface *surface;
 GLuint texture;
 
+struct Camera* c;
+
 float a[16];
 
 _init_particle_functions() {
-
+c = _get_camera();
 set_model_view_matrix(&a);
 
 surface=IMG_Load("./texture/particles_01.png");
@@ -251,11 +253,17 @@ inline void draw2(float a, float b, struct v0, struct Vec v1, struct Vec v2) {
 }
 */
 
-int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
-
 #define pi 3.141519
-    struct Vec pos = init_Vec(5.0, 5.0, 2.0);
-    printf("pos= %f, %f, %f \n", 5.0, 5.0, 2.0);
+int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
+    //printf("Laser draw start \n");
+
+    if(c == NULL) {
+        printf("particle_functions _planar_laser camera is null \n");
+        return 0;
+    }
+    struct Vec pos = init_Vec(c->x, c->y, c->z);
+
+    printf("pos= %f, %f, %f \n", c->x, c->y, c->z);
 
     struct Vec po;
     po.x =  pos.x - (x0+y1)/2;
@@ -269,21 +277,31 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     normalize(&up);
     calc_len(&up);
     struct Vec left = cross(po, up);
+    normalize(&left);
     calc_len(&left);
     struct Vec right = cross(left, up);
     calc_len(&right);
     printf("\n");
 
-    draw(pos, up, 255,0,0);
-    draw(pos, left, 0,255,0);
-    draw(pos, right, 0,0,255);
+    struct Vec vu;
+    vu = init_Vec((x0+y1)/2, (y0+y1)/2, (z0+z1)/2);
+    draw(vu, up, 255,0,0);
+    draw(vu, left, 0,255,0);
+    draw(vu, right, 0,0,255);
 
     float a, b;
-    struct Vec bot, top;
-    bot = init_Vec(x0,y0,z0);
-    top = init_Vec(x1,y1,z1);
-    struct Vec v1 = left;
-    struct Vec v2 = right;
+    //struct Vec bot, top;
+    //bot = init_Vec(x0,y0,z0);
+    //top = init_Vec(x1,y1,z1);
+
+    //struct Vec v1 = left;
+    //struct Vec v2 = right;
+
+    dot(up, left);
+    dot(up, right);
+    dot(left, right);
+
+    struct Vec v1;
 
     while(i< 8) {
     a = sin(i*pi/8);

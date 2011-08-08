@@ -5,6 +5,7 @@
 
 #ifndef camera_h
 #define camera_h
+
 struct Camera {
 float fov;
 float x_size,y_size;
@@ -20,6 +21,7 @@ float x_angle, y_angle;
 int _world_projection(struct Camera* camera);
 int _hud_projection(struct Camera* camera);
 
+int _set_camera(struct Camera* c);
 struct Camera* _get_camera();
 
 void set_model_view_matrix(float *a);
