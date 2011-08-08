@@ -48,6 +48,34 @@ class AgentList(GenericObjectList):
 
 class AgentPhysics:
 
+    def compute_state(self):
+        # only v_x and v_y are used
+        v = 1
+        d_x, d_y, v_x, v_y = 0,0,0,0
+        u,d,l,r, jetpack, brake = self.button_state
+        
+        if u:
+                v_x += v*cos( self.x_angle * pi)
+                v_y += v*sin( self.x_angle * pi)
+        if d:
+                v_x += -v*cos( self.x_angle * pi)
+                v_y += -v*sin( self.x_angle * pi)
+        if l:
+                v_x += v*cos( self.x_angle * pi + pi/2)
+                v_y += v*sin( self.x_angle * pi + pi/2)
+        if r:
+                v_x += -v*cos( self.x_angle * pi + pi/2)
+                v_y += -v*sin( self.x_angle * pi + pi/2)
+                
+        return [\
+            d_x,
+            d_y,
+            v_x,
+            v_y,
+            jetpack,
+            brake,
+        ]
+
     #collision tests
     def point_collision_test(self, x_,y_,z_):
         x,y,z = self.pos()
@@ -78,7 +106,7 @@ class AgentPhysics:
         ax,ay,az = (0,0,0)
         vx,vy = (0,0)
         #constants
-        tr = 100. #tick rate
+        tr = 10. #tick rate
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
@@ -247,10 +275,10 @@ class AgentPhysics:
         if zc_ground != 0:
             if self.on_ground != 1:
                 self.on_ground = 1
-                print "On ground!"
+                #print "On ground!"
         else:
             if self.on_ground == 1:
-                print "Off ground!"
+                #print "Off ground!"
                 self.on_ground = 0
 
     ## apply velocity
@@ -527,11 +555,14 @@ class Agent(AgentPhysics, AgentAction):
            #(old_state != self or old_angle != angle):
                #NetOut.event.agent_control_state(self)
 
-        if old_state != state or old_angle != angle:
-            NetOut.event.agent_control_state(self)
+        #if old_state != state or old_angle != angle:
+            #NetOut.event.agent_control_state(self)
 
     def set_angle(self, angle):
+        old_angle = self.angle()
         self.x_angle, self.y_angle = angle
+        if old_angle != self.angle():
+            NetOut.event.agent_angle(self)
 
     def angle(self):
         return [self.x_angle, self.y_angle]
@@ -551,8 +582,7 @@ class Agent(AgentPhysics, AgentAction):
         if self.dead:
             self._tick_respawn()
         else:
-            pass
-            #self._tick_physics()
+            self._tick_physics()
 
     def _tick_respawn(self):
         if self.dead:

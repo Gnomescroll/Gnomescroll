@@ -349,39 +349,43 @@ class Keyboard(object):
                 jetpack = 1
         else:
             if 'w' in keyboard:
-                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
-                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
+                    #v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
+                    #v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
                     u=1
             if 's' in keyboard:
-                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
-                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
+                    #v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
+                    #v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
                     d=1
             if 'a' in keyboard:
-                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    #v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    #v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
                     l = 1
             if 'd' in keyboard:
-                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    #v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
+                    #v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
                     r=1
             if 'c' in keyboard:
                 brake = 1
             if 'SPACE' in keyboard:
                 jetpack = 1
 
-        GameStateGlobal.agent.set_control_state([\
-            d_x,
-            d_y,
-            v_x,
-            v_y,
-            jetpack,
-            brake
-        ])
-
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
         if old_buttons != button_state:
             NetOut.sendMessage.agent_button_state(GameStateGlobal.agent)
+
+        ctrl_state = GameStateGlobal.agent.compute_state()
+        GameStateGlobal.agent.set_control_state(ctrl_state)
+
+        #GameStateGlobal.agent.set_control_state([\
+            #d_x,
+            #d_y,
+            #v_x,
+            #v_y,
+            #jetpack,
+            #brake
+        #])
+
         ## send control state to server
         #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 

@@ -64,6 +64,8 @@ class MessageHandler:
             self.agent_button_state(connection.id, **msg)
         elif cmd == 'agent_position':
             self.agent_position(connection.id, **msg)
+        elif cmd == 'agent_angle':
+            self.agent_angle(connection.id, **msg)
         elif cmd == 'request_agent':
             self.request_agent(connection, **msg)
         elif cmd == 'request_player':
@@ -506,7 +508,10 @@ class MessageHandler:
         if weapon.reload():
             NetOut.event.agent_update(agent, 'weapons')
 
+# deprecated
     def agent_control_state(self, client_id, **msg):
+        print 'WARNING received deprecated agent_control_state msg. ignoring'
+        return
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
             if agent.team.is_viewers():
@@ -555,6 +560,41 @@ class MessageHandler:
 
         agent.set_control_state(state, angle, tick)
 
+    def agent_angle(self, client_id, **msg):
+        try:
+            agent = GameStateGlobal.playerList.client(client_id).agent
+            if agent.team.is_viewers():
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
+                return
+        except KeyError:
+            print 'msg.cmd == agent_angle, msg.id is not a known client'
+            return
+        except AttributeError:
+            print 'msg.cmd == agent_angle, player has no agent'
+            return
+
+        tick = msg.get('tick', None)
+        if tick is None:
+            print 'msg agent_angle missing "tick"'
+            return
+
+        try:
+            angle = msg['angle']
+            angle = list(angle)
+            assert len(angle) == 2
+        except KeyError:
+            print 'msg agent_angle :: missing "angle"'
+            return
+        except TypeError:
+            print 'msg agent_angle :: angle is not iterable'
+            return
+        except AssertionError:
+            print 'msg agent_angle :: angle has wrong number of elements'
+            return
+
+        agent.set_angle(angle)
+
     def agent_button_state(self, client_id, **msg):
         try:
             agent = GameStateGlobal.playerList.client(client_id).agent
@@ -597,6 +637,8 @@ class MessageHandler:
         #forward msg
         if old_buttons != buttons:
             NetOut.event.agent_button_state(agent)
+            ctrl_state = agent.compute_state()
+            agent.set_control_state(ctrl_state)
 
     def fire_projectile(self, client_id, **msg):
         try:
