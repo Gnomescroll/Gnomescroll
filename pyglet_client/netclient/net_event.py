@@ -280,7 +280,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
         return 'msg %s :: %s' % (msg['cmd'], info_string,)
 
     def _default_update(self, **args):
-        print args
+        #print args
         err_msg = None
         data = args.get(self.name, None)
         if data is None:
@@ -288,7 +288,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
-        print self.store
+        #print self.store
         obj = self.store.load_info(**data)
         return obj
 
@@ -672,10 +672,7 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             GameStateGlobal.start_game_mode(mode, teams=teams)
             
     def _teams(self, **msg):
-        print 'teams'
-        print msg
         self._default_list(**msg)
-        print GameStateGlobal.teamList
 
     def _player_team(self, **msg):
         err_msg = None

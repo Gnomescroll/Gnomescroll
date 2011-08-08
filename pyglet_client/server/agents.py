@@ -402,12 +402,9 @@ class Agent(AgentPhysics, AgentAction):
         self.dump_inventory()
 
     def dump_inventory(self):
-        print 'dumping inventory'
         new_inv = []
         for item in self.inventory:
-            print item
             if item.drop_on_death:
-                print 'dropping item'
                 item.drop()
             else:
                 new_inv.append(inv)

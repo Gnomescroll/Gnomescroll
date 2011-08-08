@@ -511,7 +511,6 @@ class AgentWeapons:
         self._active_weapon = aw
 
     def has(self, weapon_type):
-        print self.weapons
         for weapon in self.weapons:
             if weapon.type == weapon_type:
                 return weapon

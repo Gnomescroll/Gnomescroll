@@ -125,7 +125,6 @@ class MessageHandler:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
     def pickup_item(self, client_id, **msg):
-        print 'pickup_item msg'
         try:
             player = GameStateGlobal.playerList.client(client_id)
         except KeyError:
@@ -135,8 +134,6 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                print 'ignoring agent, its a viewer'
-                print msg['cmd']
                 return
         except TypeError:
             print 'msg pickup_item :: aid missing'

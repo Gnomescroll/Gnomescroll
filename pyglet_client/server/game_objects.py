@@ -83,7 +83,6 @@ class DetachableObject(GameObject):
 
     def take(self, new_owner):
         # ground -> owner
-        print 'being taken by %s' % (new_owner,)
         old_owner = self.owner
         self.owner = new_owner
         if self.owner is not None:
@@ -93,10 +92,8 @@ class DetachableObject(GameObject):
         
     def drop(self):
         pos = self.owner.pos()
-        print '%s dropping at %s' % (self, pos,)
         self.owner = None
         self.pos(pos)
-        print 'pos is now %s' % (self.pos(),)
         self.on_ground = True
         NetOut.event.item_update(self)
 
@@ -127,7 +124,7 @@ class TeamItem:
         self.pickup_by_other_team = other
 
     def can_take(self, new_owner):
-        print new_owner.team, self.team
+        #print new_owner.team, self.team
         return (new_owner.team == self.team and self.pickup_by_own_team) or \
                 (new_owner.team != self.team and self.pickup_by_other_team)
 
