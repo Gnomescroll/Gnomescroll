@@ -55,6 +55,7 @@ class GameObject:
 
     # updates agent inventories if ownership changes
     def notify_owners(self, old):
+        print 'notify owners %s %s' % (old, self.owner,)
         if old == self.owner:
             return
         if old is None: # ground -> agent
