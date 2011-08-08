@@ -280,6 +280,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
         return 'msg %s :: %s' % (msg['cmd'], info_string,)
 
     def _default_update(self, **args):
+        print args
         err_msg = None
         data = args.get(self.name, None)
         if data is None:
@@ -287,6 +288,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
+        print self.store
         obj = self.store.load_info(**data)
         return obj
 

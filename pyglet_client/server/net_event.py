@@ -125,6 +125,7 @@ class MessageHandler:
             print "MessageHandler.process_json: cmd unknown = %s" % (str(msg),)
 
     def pickup_item(self, client_id, **msg):
+        print 'pickup_item msg'
         try:
             player = GameStateGlobal.playerList.client(client_id)
         except KeyError:

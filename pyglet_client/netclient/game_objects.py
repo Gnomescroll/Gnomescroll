@@ -110,3 +110,5 @@ class TeamItem:
         print new_owner.team, self.team
         return (new_owner.team == self.team and self.pickup_by_own_team) or \
                 (new_owner.team != self.team and self.pickup_by_other_team)
+
+from game_state import GameStateGlobal

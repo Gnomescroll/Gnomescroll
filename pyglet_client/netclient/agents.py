@@ -700,13 +700,13 @@ class AgentModel(object):
             self.state[0:3] = xyz
             #self.x, self.y, self.z = xyz
 
-    def nearby_objects(self):
-        for obj in GameStateGlobal.itemList.values():
-            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
-                self.near_object(obj)
+    #def nearby_objects(self):
+        #for obj in GameStateGlobal.itemList.values():
+            #if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
+                #self.near_object(obj)
 
-    def near_object(self, obj):
-        pass
+    #def near_object(self, obj):
+        #pass
 
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)

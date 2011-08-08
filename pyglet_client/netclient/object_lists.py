@@ -261,12 +261,23 @@ class GenericMultiObjectList(GenericObjectList):
 
     def create(self, klass_name=None, *args, **kwargs):
         if klass_name is None:
-            if 'name' in kwargs:
-                klass_name = kwargs['name']
-            elif 'type' in kwargs:
-                klass_name = self.name_from_type(kwargs['type'])
+            #if 'name' in kwargs:
+                #klass_name = kwargs['name']
+            #elif 'type' in kwargs:
+                #klass_name = self.name_from_type(kwargs['type'])
+            klass_name = self._resolve_klass_name(**kwargs)
 
         return self._add(klass_name, *args, **kwargs)
+
+    def _resolve_klass_name(self, **kwargs):
+        klass_name = ''
+        if 'name' in kwargs:
+            klass_name = kwargs['name']
+        elif 'type' in kwargs:
+            klass_name = self.name_from_type(kwargs['type'])
+        else:
+            print 'Could not resolve klass_name :: kwargs -> %s' % (kwargs,)
+        return klass_name
 
     def _remove(self, obj):
         if type(obj) == int:
@@ -302,9 +313,11 @@ class GenericMultiObjectList(GenericObjectList):
             _objs.append(self.load_info(klass_name, **obj))
         return _objs
 
-    def load_info(self, klass_name, **obj):
+    def load_info(self, klass_name=None, **obj):
         if 'id' not in obj:
             return
+        if klass_name is None:
+            klass_name = self._resolve_klass_name(**obj)
         obj_id = obj['id']
         if obj_id in self:
             o = self[obj_id]

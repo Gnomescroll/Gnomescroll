@@ -20,7 +20,7 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
 
     def take(self, new_owner):
         if TeamItem.can_take(self, new_owner):
-            DetachableObject.take(self, new_owner)
+            return DetachableObject.take(self, new_owner)
 
 
 class Base(StaticObject, GameObjectRender, TeamItem):

@@ -93,8 +93,10 @@ class DetachableObject(GameObject):
         
     def drop(self):
         pos = self.owner.pos()
+        print '%s dropping at %s' % (self, pos,)
         self.owner = None
         self.pos(pos)
+        print 'pos is now %s' % (self.pos(),)
         self.on_ground = True
         NetOut.event.item_update(self)
 
