@@ -203,8 +203,8 @@ class TcpClient:
                 NetServer.connectionPool.tearDownClient(self)
 
     def close(self):
-        print "TcpClient.close : connection closed gracefully"
         self.connection.close()
+        print "TcpClient.close : connection closed gracefully"
 
     def receive(self):
         try:
@@ -279,7 +279,10 @@ class ConnectionPool:
 
     def tearDownClient(self, connection, duplicate_id = False):
         fileno = connection.fileno
-        self._epoll.unregister(fileno)
+        try:    # this was added after Ycros crashed the server by connecting http://paste.pocoo.org/show/455317/
+            self._epoll.unregister(fileno)
+        except IOError, dat:
+            print IOError, dat
         self._client_pool[fileno].close()
         del self._client_pool[fileno] #remove from client pool
         if connection.id != 0: # remove from chat

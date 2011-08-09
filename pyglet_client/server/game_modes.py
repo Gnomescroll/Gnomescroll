@@ -112,13 +112,14 @@ class Game:
         
 class TeamGame(Game):
 
-    def __init__(self, teams=2, *args):
+    def __init__(self, teams=2, team_kills=False, *args):
         Game.__init__(self)
         self.n_teams = teams
         self.teams = GameStateGlobal.teamList
         self.team_colors = ('red', 'blue', 'green', 'purple', 'orange', 'yellow')
         for i in xrange(self.n_teams):
             self.teams.create('Team', color=self.team_colors[i])
+        self.team_kills = team_kills
 
     def player_join_team(self, player, team=None):
         if player.team is not None:
@@ -131,6 +132,7 @@ class TeamGame(Game):
         if player.team.is_viewers():
             player.agent.dump_inventory()
         NetOut.event.player_team(player)
+        player.agent.die()
 
     def remove_player(self, player):
         for team in self.teams.values():
@@ -139,8 +141,8 @@ class TeamGame(Game):
 
 class CTF(TeamGame):
 
-    def __init__(self, teams=2):
-        TeamGame.__init__(self, teams=2)
+    def __init__(self, teams=2, team_kills=False):
+        TeamGame.__init__(self, teams, team_kills)
         for team in self.teams.values():
             if team == self.viewers:
                 continue
@@ -155,8 +157,8 @@ class Deathmatch(Game):
 
 class TeamDeathmatch(TeamGame):
 
-    def __init__(self, teams=2):
-        TeamGame.__init__(self, teams)
+    def __init__(self, teams=2, team_kills=False):
+        TeamGame.__init__(self, teams, team_kills)
 
 names = {
     'ctf'   :   CTF,

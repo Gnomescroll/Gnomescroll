@@ -83,7 +83,6 @@ class DetachableObject(GameObject):
 
     def take(self, new_owner):
         # ground -> owner
-        print 'being taken by %s' % (new_owner,)
         old_owner = self.owner
         self.owner = new_owner
         if self.owner is not None:
@@ -111,6 +110,8 @@ class DetachableObject(GameObject):
             d = GameObject.json(self)
             if self.owner is not None:
                 d['owner'] = self.owner.id
+            else:
+                d['owner'] = 0
             d['on_ground'] = int(self.on_ground)
         else:
             d = filter_props(obj, properties)
@@ -125,7 +126,7 @@ class TeamItem:
         self.pickup_by_other_team = other
 
     def can_take(self, new_owner):
-        print new_owner.team, self.team
+        #print new_owner.team, self.team
         return (new_owner.team == self.team and self.pickup_by_own_team) or \
                 (new_owner.team != self.team and self.pickup_by_other_team)
 

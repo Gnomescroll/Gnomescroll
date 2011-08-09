@@ -19,6 +19,8 @@ from cube_lib.terrain_map import collisionDetection
 
 from weapons import LaserGun, Pick, BlockApplier
 
+from vector_lib import distance
+
 from opts import opts
 
 # datastore controller for agents
@@ -521,6 +523,8 @@ class Agent(AgentPhysics, AgentAction):
             NetOut.event.agent_update(self, 'active_weapon')
 
     def pickup_item(self, item, index=None):
+        if self.dead:
+            return
         if index is None:
             self.inventory.append(item)
         else:
@@ -530,6 +534,11 @@ class Agent(AgentPhysics, AgentAction):
     def drop_item(self, item):
         self.inventory.remove(item)
         item.drop(self)
+
+    def near_item(self, item):
+        if distance(self.pos(), item.pos()) < item.radius:
+            return True
+        return False
 
     # set agent state explicitly
     def set_control_state(self, state, angle=None, tick=None):
@@ -601,14 +610,25 @@ class Agent(AgentPhysics, AgentAction):
     def take_damage(self, damage, projectile_owner=None):
         print 'agent %s taking damage %i' % (self.id, damage,)
         print self.health
-        if not self.dead:
-            old = self.health
-            self.health -= damage
-            self.health = max(self.health, 0)
-            if self.health <= 0:
-                self.die(projectile_owner)
-            elif self.health != old:
-                NetOut.event.agent_update(self, 'health')
+        if self.dead:
+            return
+        # check team kills
+        if not hasattr(projectile_owner, 'id'):
+            projectile_owner = GameStateGlobal.playerList[projectile_owner]
+            
+        if projectile_owner is not None and \
+            projectile_owner.team == self.team and \
+            not opts.team_kills:
+            print 'team_kill'
+            return
+            
+        old = self.health
+        self.health -= damage
+        self.health = max(self.health, 0)
+        if self.health <= 0:
+            self.die(projectile_owner)
+        elif self.health != old:
+            NetOut.event.agent_update(self, 'health')
         print damage
 
     def heal(self, amount):
@@ -635,7 +655,9 @@ class Agent(AgentPhysics, AgentAction):
                 pass
             else:
                 try:
-                    killer = GameStateGlobal.playerList[projectile_owner]
+                    killer = projectile_owner
+                    if not hasattr(killer, 'id'):
+                        killer = GameStateGlobal.playerList[projectile_owner]
                     if killer.cid == you_player.cid:
                         msg = 'You killed yourself.'
                         suicide = True

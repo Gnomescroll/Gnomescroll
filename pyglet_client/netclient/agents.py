@@ -300,12 +300,13 @@ Agent Voxel
 
 class AgentVoxRender(vox.VoxRender):
 
-    def __init__(self, model=None):
+    def __init__(self, obj, model=None):
         if model is not None:
-            vox.VoxRender.__init__(self, model)
+            vox.VoxRender.__init__(self, obj, model)
         else:
+            self.obj = obj
             self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
-            self.vox.set_object(self)
+            self.vox.set_object(self.obj)
 
             self.vox.set(5,5,5,255,0,0,0)
 
@@ -511,7 +512,6 @@ class AgentWeapons:
         self._active_weapon = aw
 
     def has(self, weapon_type):
-        print self.weapons
         for weapon in self.weapons:
             if weapon.type == weapon_type:
                 return weapon
@@ -551,14 +551,16 @@ class AgentInventory:
                 new_inv.append(known_item)
             self.inv = new_inv
 
+    # checks for object a specific type (e.g. Flag)
+    # rename to: has_object_type
     def has(self, obj_type):
         for obj in self.inv:
             if obj.type == obj_type:
                 return obj
         return False
 
-    def add(self, item, index=None):
-        if item not in self.inv and item.take(self.agent):
+    def _add(self, item, index=None):
+        if item not in self.inv:
             if index is None:
                 self.inv.append(item)
             else:
@@ -566,10 +568,26 @@ class AgentInventory:
             return item
         return False
 
-    def drop(self, item):
-        if item in self.inv and item.drop(self.agent):
+    def add(self, item, index=None):
+        if item.take(self.agent):
+            return self._add(item, index)
+        return False
+
+    def can_add(self, item):
+        return (item not in self.inv and item.can_take(self.agent))
+
+    def can_drop(self, item):
+        return (item in self.inv and item.can_drop(self.agent))
+
+    def _drop(self, item):
+        if item in self.inv:
             self.inv.remove(item)
             return item
+        return False
+
+    def drop(self, item):
+        if item.drop(self.agent):
+            return self._drop(item)
         return False
 
     def __len__(self):
@@ -590,9 +608,9 @@ class AgentModel(object):
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, owner=None, id=None, state=None, health=None, dead=False, active_block=1, team=None):
+    def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
-            return
+            print 'WARNING!! Creating agent with no owner or id'
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(float, state)
@@ -700,13 +718,13 @@ class AgentModel(object):
             self.state[0:3] = xyz
             #self.x, self.y, self.z = xyz
 
-    def nearby_objects(self):
-        for obj in GameStateGlobal.itemList.values():
-            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
-                self.near_object(obj)
+    #def nearby_objects(self):
+        #for obj in GameStateGlobal.itemList.values():
+            #if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
+                #self.near_object(obj)
 
-    def near_object(self, obj):
-        pass
+    #def near_object(self, obj):
+        #pass
 
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
@@ -812,8 +830,10 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
         #self.init_vox()
-        AgentVoxRender.__init__(self)
+        AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+        print 'id %s' % (self.id,)
+        print self
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
 
@@ -1064,7 +1084,7 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
-        AgentVoxRender.__init__(self)
+        AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
@@ -1111,6 +1131,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
         ignore_vox.append(self.vox.id)
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
+        print ag, adistance, vox
         body_part_id = 1
         block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
         bdistance = None
@@ -1133,6 +1154,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             ttype = 'block'
             loc = block
         else:
+            ttype = 'empty'
+            loc = self.normalized_direction()
+
+        # short circuit shooting voxel items
+        # can add 'item' ttype to API later
+        if ttype == 'agent' and not isinstance(ag, Agent):
             ttype = 'empty'
             loc = self.normalized_direction()
 
@@ -1195,18 +1222,30 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if self.y_angle > 0.499:
             self.y_angle = 0.499
 
+    #def pickup_item(self, item, index=None):
+        #if self.team.is_viewers():
+            #return
+        #item = self.inventory.add(item, index)
+        #if item:
+            #NetOut.sendMessage.pickup_item(self, item, index)
+            
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():
             return
-        item = self.inventory.add(item, index)
-        if item:
+        if self.inventory.can_add(item):
             NetOut.sendMessage.pickup_item(self, item, index)
 
+    #def drop_item(self, item):
+        #if self.team.is_viewers():
+            #return
+        #item = self.inventory.drop(item)
+        #if item:
+            #NetOut.sendMessage.drop_item(self, item)
+            
     def drop_item(self, item):
         if self.team.is_viewers():
             return
-        item = self.inventory.drop(item)
-        if item:
+        if self.inventory.can_drop(item):
             NetOut.sendMessage.drop_item(self, item)
 
     def nearby_objects(self):

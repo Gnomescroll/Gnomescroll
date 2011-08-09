@@ -94,6 +94,30 @@ class SendMessage(GenericMessage):
             'pid'   :   player_id,
         }
 
+    @sendJSON('request_team')
+    def request_team(self, team_id):
+        return {
+            'id'    :   team_id,
+        }
+
+    @sendJSON('request_item')
+    def request_item(self, item_id):
+        return {
+            'id'    :   item_id,
+        }
+
+    @sendJSON('request_projectile')
+    def request_projectile(self, pid):
+        return {
+            'id'    :   pid,
+        }
+
+    @sendJSON('request_weapon')
+    def request_weapon(self, wid):
+        return {
+            'id'    :   wid,
+        }
+
     @idRequired
     @noViewer
     @sendJSON('agent_position', tick=True)

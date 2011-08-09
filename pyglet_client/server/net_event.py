@@ -70,6 +70,15 @@ class MessageHandler:
             self.request_agent(connection, **msg)
         elif cmd == 'request_player':
             self.request_player(connection, **msg)
+            
+        elif cmd == 'request_team':
+            self.request_team(connection, **msg)
+        elif cmd == 'request_item':
+            self.request_item(connection, **msg)
+        elif cmd == 'request_weapon':
+            self.request_weapon(connection, **msg)
+        elif cmd == 'request_projectile':
+            self.request_projectile(connection, **msg)
 
         elif cmd == 'fire_projectile':
             self.fire_projectile(connection.id, **msg)
@@ -134,8 +143,6 @@ class MessageHandler:
             agent_id = int(msg.get('aid', None))
             agent = GameStateGlobal.agentList[agent_id]
             if agent.team.is_viewers():
-                print 'ignoring agent, its a viewer'
-                print msg['cmd']
                 return
         except TypeError:
             print 'msg pickup_item :: aid missing'
@@ -173,7 +180,10 @@ class MessageHandler:
         except KeyError:
             pass
 
-        agent.pickup_item(item, slot)
+        ''' Do this check after server physics is synced n all '''
+        if agent.near_item(item):
+            agent.pickup_item(item, slot)
+        #agent.pickup_item(item, slot)
 
     def drop_item(self, client_id, **msg):
         try:
@@ -688,6 +698,26 @@ class MessageHandler:
         if 'pid' not in msg:
             return
         connection.sendMessage.send_player(msg['pid'])
+
+    def request_team(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_team(msg['id'])
+        
+    def request_projectile(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_projectile(msg['id'])
+   
+    def request_weapon(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_weapon(msg['id'])
+        
+    def request_item(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_item(msg['id'])
         
     def agent_position(self, connection_id, **msg):
         err_msg = None

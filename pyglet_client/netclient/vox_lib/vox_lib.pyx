@@ -45,6 +45,8 @@ def hitscan2(float x, float y,float z, float x_angle, float y_angle, ignore_vox=
     for vox in vox_dict.values():
         if vox._id in ignore_vox:
             continue
+        if not vox.visible:
+            continue
         t = vox.ray_cast2(x,y,z, x_angle, y_angle)
         #print "Distance = %f, id= %i" % (float(t)/256.0, vox._id)
         if t != 0 and (t < distance or distance == 0):
@@ -77,6 +79,7 @@ cdef class Vox:
         vox_id += 1
         vox_dict[self._id] = self
         ob_dict[self._id] = None
+        self.visible = True
 
     def __del__(self):
         print "Vox deconstructor"
