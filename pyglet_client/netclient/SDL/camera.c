@@ -32,6 +32,10 @@ void _camera_projection( Camera c) {
 
 struct Camera* camera;
 
+int _set_camera(struct Camera* c) {
+    camera = c;
+}
+
 float * model_view_matrix;
 
 void set_model_view_matrix(float *a){

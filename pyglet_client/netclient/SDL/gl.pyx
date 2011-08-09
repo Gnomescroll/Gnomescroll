@@ -24,8 +24,10 @@ cdef extern from "camera.h":
         float xu, yu, zu
         float ratio
 
-    cdef int _world_projection(Camera* camera)
-    cdef int _hud_projection(Camera* camera)
+cdef extern from "camera.h":
+    int _world_projection(Camera* camera)
+    int _hud_projection(Camera* camera)
+    int _set_camera(Camera* c)
 
 ## End Camera.c ##
 
@@ -136,7 +138,7 @@ cdef class Global:
     def __init__(self):
         cdef Camera *camera = <Camera *>malloc(sizeof(Camera))
         self.camera = camera
-
+        _set_camera(camera)
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
         self.set_projection(0.,0.,0.,0.,0.)
 

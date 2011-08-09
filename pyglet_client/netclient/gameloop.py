@@ -29,6 +29,7 @@ if True:
     import cube_lib.terrain_map
     cube_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
+    #SDL.gl.init_particles()
 
     P2 = cube_lib.terrain_map.Profiler()
 
@@ -263,7 +264,7 @@ class App(object):
             P.event("Draw World_1")
             if True:
                 pass
-                #SDL.gl.planar_laser(2,2,1, 2,2,40)
+                SDL.gl.planar_laser(2,2,1, 2,2,6)
                 #SDL.gl.planar_laser(4,4,1, 4,4,6)
 
             if False:
