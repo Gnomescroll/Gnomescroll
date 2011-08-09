@@ -66,6 +66,7 @@ color_map = {
 }
 
 cdef class Vox:
+    cdef int visible
     cdef VoxelList* vo
     cdef int _id
     property id:

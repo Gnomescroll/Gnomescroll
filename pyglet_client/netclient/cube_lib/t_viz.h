@@ -4,13 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "t_vbo.h"
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 
 
 //    #include "t_properties.h"
 
-#include "t_vbo.h"
 #include "t_map.h"
 
 int _draw_vbo_indicator(float x, float y, float z);
