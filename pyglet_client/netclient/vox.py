@@ -18,6 +18,12 @@ class VoxRender:
         self.update_vox()
         self.vox.draw()
 
+    def hide(self):
+        self.vox.visible = False
+
+    def show(self):
+        self.vox.visible = True
+
 class GameObjectRender(VoxRender):
 
     def __init__(self, obj, model=None):

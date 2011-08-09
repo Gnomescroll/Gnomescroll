@@ -9,9 +9,11 @@ object_names = {
 
 class GameObject:
 
-    def __init__(self, id, state=None):
+    def __init__(self, id, state=None, **kwargs):
         self.id = id
         self.on_ground = True
+        if 'on_ground' in kwargs:
+            self.on_ground = bool(kwargs['on_ground'])
         self.state = state
         self.type = 0
         self.owner = None
@@ -74,8 +76,8 @@ class GameObject:
 
 class StaticObject(GameObject):
 
-    def __init__(self, id, state=None):
-        GameObject.__init__(self, id, state)
+    def __init__(self, id, state=None, **kwargs):
+        GameObject.__init__(self, id, state, **kwargs)
         self.immobile = True
         
     def pos(self):
@@ -91,8 +93,8 @@ class EquippableObject(GameObject):
 # pick up / drop
 class DetachableObject(GameObject):
     
-    def __init__(self, id, radius=1, state=None):
-        GameObject.__init__(self, id, state)
+    def __init__(self, id, radius=1, state=None, **kwargs):
+        GameObject.__init__(self, id, state, **kwargs)
         self.radius = radius
 
         self.auto_grab = False
@@ -131,7 +133,7 @@ class DetachableObject(GameObject):
 
 class TeamItem:
 
-    def __init__(self, team, own=True, other=True):
+    def __init__(self, team, own=True, other=True, **kwargs):
         self.team = team
         self.pickup_by_own_team = own
         self.pickup_by_other_team = other

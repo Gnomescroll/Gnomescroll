@@ -564,6 +564,10 @@ class ItemMessageHandler(DatastoreMessageInterface):
         print args
         return self._default_update(**args)
 
+    def _item_list(self, **args):
+        print args
+        return self._default_list(**args)
+
 
 class ProjectileMessageHandler(DatastoreMessageInterface):
 

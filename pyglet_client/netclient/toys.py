@@ -10,8 +10,8 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
     def __init__(self, id, radius=None, team=None, state=None, **kwargs):
         if team is not None:
             team = GameStateGlobal.teamList[team]
-        DetachableObject.__init__(self, id, radius, state=state)
-        TeamItem.__init__(self, team, own=False, other=True)
+        DetachableObject.__init__(self, id, radius, state=state, **kwargs)
+        TeamItem.__init__(self, team, own=False, other=True, **kwargs)
         TeamItemRender.__init__(self, self, model='black_flag.vox')
         self.auto_grab = True
         self.drop_on_death = True
@@ -20,16 +20,16 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
 
     def take(self, new_owner):
         if TeamItem.can_take(self, new_owner):
-            return DetachableObject.take(self, new_owner)
-
-
+            taken = DetachableObject.take(self, new_owner)
+        self.vox.visibile = self.on_ground
+        
 class Base(StaticObject, GameObjectRender, TeamItem):
 
     def __init__(self, id, radius=None, team=None, state=None, **kwargs):
         if team is not None:
             team = GameStateGlobal.teamList[team]
-        StaticObject.__init__(self, id, state)
-        TeamItem.__init__(self, team, False, False)
+        StaticObject.__init__(self, id, state, **kwargs)
+        TeamItem.__init__(self, team, False, False, **kwargs)
         GameObjectRender.__init__(self, self, 'auto.vox')
         self.type = 2
         self.radius = 1
