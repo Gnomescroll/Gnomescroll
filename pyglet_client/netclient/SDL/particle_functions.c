@@ -263,7 +263,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     }
     struct Vec pos = init_Vec(c->x, c->y, c->z);
 
-    printf("pos= %f, %f, %f \n", c->x, c->y, c->z);
+    //printf("pos= %f, %f, %f \n", c->x, c->y, c->z);
 
     struct Vec po;
     po.x =  pos.x - (x0+y1)/2;
