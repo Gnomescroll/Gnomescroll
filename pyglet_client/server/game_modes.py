@@ -131,6 +131,7 @@ class TeamGame(Game):
         if player.team.is_viewers():
             player.agent.dump_inventory()
         NetOut.event.player_team(player)
+        player.agent.die()
 
     def remove_player(self, player):
         for team in self.teams.values():
