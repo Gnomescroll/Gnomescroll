@@ -655,6 +655,7 @@ class Agent(AgentPhysics, AgentAction):
                 pass
             else:
                 try:
+                    killer = projectile_owner
                     if not hasattr(killer, 'id'):
                         killer = GameStateGlobal.playerList[projectile_owner]
                     if killer.cid == you_player.cid:
