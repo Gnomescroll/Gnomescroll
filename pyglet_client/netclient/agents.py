@@ -1129,6 +1129,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
         ignore_vox.append(self.vox.id)
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
+        print ag, adistance, vox
         body_part_id = 1
         block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
         bdistance = None
@@ -1151,6 +1152,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             ttype = 'block'
             loc = block
         else:
+            ttype = 'empty'
+            loc = self.normalized_direction()
+
+        # short circuit shooting voxel items
+        # can add 'item' ttype to API later
+        if ttype == 'agent' and not isinstance(ag, Agent):
             ttype = 'empty'
             loc = self.normalized_direction()
 
