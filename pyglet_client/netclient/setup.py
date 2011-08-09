@@ -27,11 +27,13 @@ extra_link_args=[SDL_LDFLAGS]
 
 libraries=['SDL']
 
-if SYSTEM != 'Windows':
-    libraries+=['GL','GLU']
-else:
+if SYSTEM == 'Windows':
     libraries+=['GLee','opengl32','glu32']
-    include_dirs +=['/usr/include/SDL']
+    include_dirs = ['/usr/include/SDL']
+else:
+    libraries+=['GL','GLU']
+    include_dirs = ['/usr/include/SDL']
+
 
 if debug == True:
     extra_compile_args+=["-g"]
@@ -74,7 +76,7 @@ terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = include_dirs,
                     optimize = 2,
-                    include_dirs = ['gl_lib'],
+                    #include_dirs = ['gl_lib'],  #this does nothing?
                     libraries = libraries+['SDL_image'], #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
