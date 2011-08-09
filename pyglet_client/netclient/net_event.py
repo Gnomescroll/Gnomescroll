@@ -259,6 +259,11 @@ class DatastoreMessageInterface(GenericMessageHandler):
     name = ''
     store = None
 
+    # provide the NetOut request method for relevant object type
+    # will call this on object update failure (attempt to update unknown object)
+    def request_data(self, **data):
+        pass
+
     def __init__(self):
         self._load_default_events()
         GenericMessageHandler.__init__(self)
@@ -283,13 +288,19 @@ class DatastoreMessageInterface(GenericMessageHandler):
         #print args
         err_msg = None
         data = args.get(self.name, None)
+        full = args.get('full', 0)
         if data is None:
             err_msg = '%s key missing' % (self.name,)
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
         #print self.store
-        obj = self.store.load_info(**data)
+        if full:
+            obj = self.store.update_or_create(**data)
+        else:
+            obj = self.store.load_info(**data)
+        #if obj is False:
+            #self.request_data(**data)
         return obj
 
     def _default_list(self, **args):
@@ -343,6 +354,10 @@ class PlayerMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.playerList
         self._bind_event('player_team', self._player_team)
         DatastoreMessageInterface.__init__(self)
+
+    def request_data(self, **data):
+        if 'id' in data:
+            NetOut.sendMessage.request_player(data['id'])
 
     def _player_destroy(self, **args):
         id = self._default_destroy(**args)
@@ -398,6 +413,10 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self._bind_event('agent_angle', self._agent_angle)
         DatastoreMessageInterface.__init__(self)
 
+    def request_data(self, **data):
+        if 'id' in data:
+            NetOut.sendMessage.request_agent(data['id'])
+
     def _agent_position(self, **args):
         pos = args.get('pos', None)
         id = args.get('id', None)
@@ -441,6 +460,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
         if agent is None:
             print 'agent_angle msg :: agent %s is None' % (agent_id,)
             print 'AgentList: %s' % (str(GameStateGlobal.agentList,))
+            err_msg = 'fail'
 
         if err_msg is not None:
             print err_msg
@@ -541,6 +561,10 @@ class WeaponMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.weaponList
         DatastoreMessageInterface.__init__(self)
 
+    def request_data(self, **data):
+        if 'id' in data:
+            NetOut.sendMessage.request_weapon(data['id'])
+
     def _weapon_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:
@@ -554,14 +578,16 @@ class ItemMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.itemList
         DatastoreMessageInterface.__init__(self)
 
+    def request_data(self, **data):
+        if 'id' in data:
+            NetOut.sendMessage.request_item(data['id'])
+
     def _item_destroy(self, **args):
         id = self._default_destroy(**args)
         if id is not None:
             GameStateGlobal.remove_item(id)
 
     def _item_update(self, **args):
-        print 'item_update'
-        print args
         return self._default_update(**args)
 
     def _item_list(self, **args):
@@ -576,6 +602,10 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
         self.store = GameStateGlobal.projectileList
         self._bind_event('hitscan', self._hitscan)
         DatastoreMessageInterface.__init__(self)
+
+    def request_data(self, **data):
+        if 'id' in data:
+            NetOut.sendMessage.request_projectile(data['id'])
 
     def _hitscan(self, **msg):
         err_msg = None
@@ -656,6 +686,10 @@ class GameModeMessageHandler(DatastoreMessageInterface):
         self._bind_event('game_mode', '_game_mode')
         self._bind_event('teams', '_teams')
         DatastoreMessageInterface.__init__(self)
+
+    def request_data(self, **data):
+        if 'id' in data:
+            NetOut.sendMessage.request_team(data['id'])
 
     def _game_mode(self, **msg):
         try:

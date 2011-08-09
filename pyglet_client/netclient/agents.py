@@ -608,9 +608,9 @@ class AgentModel(object):
     _RESPAWN_TIME = 1. # seconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
-    def __init__(self, owner=None, id=None, state=None, health=None, dead=False, active_block=1, team=None):
+    def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
-            return
+            print 'WARNING!! Creating agent with no owner or id'
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(float, state)
@@ -832,6 +832,8 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
         #self.init_vox()
         AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+        print 'id %s' % (self.id,)
+        print self
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
 

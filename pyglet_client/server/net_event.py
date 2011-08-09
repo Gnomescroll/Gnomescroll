@@ -70,6 +70,15 @@ class MessageHandler:
             self.request_agent(connection, **msg)
         elif cmd == 'request_player':
             self.request_player(connection, **msg)
+            
+        elif cmd == 'request_team':
+            self.request_team(connection, **msg)
+        elif cmd == 'request_item':
+            self.request_item(connection, **msg)
+        elif cmd == 'request_weapon':
+            self.request_weapon(connection, **msg)
+        elif cmd == 'request_projectile':
+            self.request_projectile(connection, **msg)
 
         elif cmd == 'fire_projectile':
             self.fire_projectile(connection.id, **msg)
@@ -689,6 +698,26 @@ class MessageHandler:
         if 'pid' not in msg:
             return
         connection.sendMessage.send_player(msg['pid'])
+
+    def request_team(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_team(msg['id'])
+        
+    def request_projectile(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_projectile(msg['id'])
+   
+    def request_weapon(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_weapon(msg['id'])
+        
+    def request_item(self, conn, **msg):
+        if 'id' not in msg:
+            return
+        conn.sendMessage.send_item(msg['id'])
         
     def agent_position(self, connection_id, **msg):
         err_msg = None

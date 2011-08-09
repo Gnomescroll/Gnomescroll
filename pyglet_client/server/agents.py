@@ -610,14 +610,22 @@ class Agent(AgentPhysics, AgentAction):
     def take_damage(self, damage, projectile_owner=None):
         print 'agent %s taking damage %i' % (self.id, damage,)
         print self.health
-        if not self.dead:
-            old = self.health
-            self.health -= damage
-            self.health = max(self.health, 0)
-            if self.health <= 0:
-                self.die(projectile_owner)
-            elif self.health != old:
-                NetOut.event.agent_update(self, 'health')
+        if self.dead:
+            return
+        # check team kills
+        if projectile_owner is not None and \
+            projectile_owner.team == self.team and \
+            not opts.team_kills:
+            print 'team_kill'
+            return
+            
+        old = self.health
+        self.health -= damage
+        self.health = max(self.health, 0)
+        if self.health <= 0:
+            self.die(projectile_owner)
+        elif self.health != old:
+            NetOut.event.agent_update(self, 'health')
         print damage
 
     def heal(self, amount):

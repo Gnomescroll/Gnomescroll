@@ -39,6 +39,7 @@ DEFAULTS = {
     'name'      :   settings.server_name,
     'game_mode' :   settings.game_mode,
     'n_teams'   :   settings.n_teams,
+    'team_kills':   settings.team_kills,
 }
 
 def parse(cl_args=None):
@@ -65,7 +66,9 @@ def parse(cl_args=None):
 
     parser.add_argument('-g', '--game-mode', default=DEFAULTS['game_mode'])
 
-    parser.add_argument('-nt', '-n-teams', default=DEFAULTS['n_teams'], dest='n_teams')
+    parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'])#, dest='n_teams')
+
+    parser.add_argument('-tk', '--team-kills', action='store_true')
 
     parser.add_argument('--print-args', action='store_true')
 
@@ -76,6 +79,13 @@ def parse(cl_args=None):
     setattr(args, 'version', DC_VERSION)
     return args
 
+def modify_args(args):
+
+    if not args.team_kills:
+        args.team_kills = DEFAULTS['team_kills']
+
+    return args
+
 def get_args():
     try:
         args = parse()
@@ -84,6 +94,8 @@ def get_args():
         cl_args = '--ip-address %s' % (server,)
 
         args = parse(cl_args.split())
+
+    args = modify_args(args)
 
     if args.print_args:
         print_args(args)
@@ -103,6 +115,7 @@ def print_args(args):
         'server_name',
         'game_mode',
         'n_teams',
+        'team_kills',
     ]
     print 'Options:'
     for key in keys:

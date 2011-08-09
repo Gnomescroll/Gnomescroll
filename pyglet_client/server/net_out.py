@@ -286,6 +286,7 @@ class SendMessage: #each connection has one of these
             player = GameStateGlobal.playerList[player]
         return {
             'player': player.json(properties),
+            'full'  :   int(not properties),
         }
 
     @sendJSON('agent_list')
@@ -300,6 +301,7 @@ class SendMessage: #each connection has one of these
             agent = GameStateGlobal.agentList[agent]
         return {
             'agent' :   agent.json(properties),
+            'full'  :   int(not properties),
         }
 
     @sendJSON('projectile_list')
@@ -310,8 +312,11 @@ class SendMessage: #each connection has one of these
 
     @sendJSON('projectile_update')
     def send_projectile(self, projectile, properties=None):
+        if not hasattr(projectile, 'id'):
+            projectile = GameStateGlobal.projectileList[projectile]
         return {
             'projectile'    :   projectile.json(properties),
+            'full'  :   int(not properties),
         }
 
     @sendJSON('weapon_list')
@@ -322,8 +327,11 @@ class SendMessage: #each connection has one of these
 
     @sendJSON('weapon_update')
     def send_weapon(self, weapon, properties=None):
+        if not hasattr(weapon, 'id'):
+            weapon = GameStateGlobal.weaponList[weapon]
         return {
             'weapon'    :   weapon.json(properties),
+            'full'  :   int(not properties),
         }
 
     @sendJSON('item_list')
@@ -334,8 +342,11 @@ class SendMessage: #each connection has one of these
 
     @sendJSON('item_update')
     def send_item(self, item, properties=None):
+        if not hasattr(item, 'id'):
+            item = GameStateGlobal.itemList[item]
         return {
             'item'  :   item.json(properties),
+            'full'  :   int(not properties),
         }
 
     @sendJSON('player_destroy')
@@ -382,5 +393,14 @@ class SendMessage: #each connection has one of these
     def teams(self, teams):
         return {
             'teams_list' :   [team.json() for team in teams],
+        }
+
+    @sendJSON('team_update')
+    def send_team(self, team, properties=None):
+        if not hasattr(team, 'id'):
+            team = GameStateGlobal.teamList[team]
+        d = {
+            'team'  :   team.json(properties),
+            'full'  :   int(not properties),
         }
         

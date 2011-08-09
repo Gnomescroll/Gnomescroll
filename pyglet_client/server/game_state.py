@@ -30,7 +30,12 @@ class GameStateGlobal:
         GameStateGlobal.teamList = game_modes.TeamList()
 
         GameStateGlobal.game_mode_name = opts.game_mode
-        GameStateGlobal.game = game_modes.names[opts.game_mode](teams=opts.n_teams)
+        game_args = {
+            'teams' :   opts.n_teams,
+            'team_kills':   opts.team_kills,
+        }
+        game = game_modes.names[opts.game_mode]
+        GameStateGlobal.game = game(**game_args)
 
     @classmethod
     def init(cls):
