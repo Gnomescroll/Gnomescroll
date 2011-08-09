@@ -31,12 +31,14 @@ if SYSTEM != 'Windows':
     libraries+=['GL','GLU']
 else:
     libraries+=['GLee','opengl32','glu32']
+    include_dirs +=['/usr/include/SDL']
 
 if debug == True:
     extra_compile_args+=["-g"]
     extra_link_args+=["-g"]
 
 SDL_gl = Extension('SDL.gl',
+                    include_dirs = include_dirs,
                     libraries = libraries+['SDL_image'], #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
@@ -58,6 +60,7 @@ SDL_input = Extension('SDL.input',
                                 )
 
 SDL_hud = Extension('SDL.hud',
+                    include_dirs = include_dirs,
                     libraries = libraries+['SDL_image', 'SDL_ttf'], #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
@@ -67,8 +70,9 @@ SDL_hud = Extension('SDL.hud',
                                 'SDL/texture_loader.c',]
                                 )
 
-cube_lib_terrain_map = Extension('cube_lib.terrain_map',
+terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = include_dirs,
                     optimize = 2,
                     include_dirs = ['gl_lib'],
                     libraries = libraries+['SDL_image'], #SDL_image ?
@@ -82,6 +86,7 @@ cube_lib_terrain_map = Extension('cube_lib.terrain_map',
                     )
 
 vox_lib = Extension('vox_lib',
+                    include_dirs = include_dirs,
                     libraries = libraries, #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
@@ -93,5 +98,5 @@ vox_lib = Extension('vox_lib',
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, cube_lib_terrain_map, ], #+ cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map, ], #+ cythonize("*.pyx")
 )
