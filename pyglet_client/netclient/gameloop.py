@@ -199,6 +199,7 @@ class App(object):
             theta += -.005 #test
             P.start_frame()
             tc = 0
+            P.event("Physics Tick")
             while Phy.sync():
                 tc += 1
                 P.event("process_events")
@@ -212,18 +213,15 @@ class App(object):
                     NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
                 P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
-                P.event("MapControllerGlobal.mapController.tick()")
-                MapControllerGlobal.mapController.tick() #testing
-                P.event("world.tick")
                 #check if another physics tick is needed
                 self.world.tick()
                 self.animations.tick()
             if tc > 1:
                 pass
+            P.event("MapControllerGlobal.mapController.tick()")
+            MapControllerGlobal.mapController.tick() #testing
                 #print "wtf"
                 #print "tc= %i" % (tc)
-
-            P.event("setup camera")
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
                 first_person = True
@@ -261,10 +259,10 @@ class App(object):
             cube_lib.terrain_map.draw_terrain()
             P.event("Draw World_0")
             self.world.draw(first_person)
-            P.event("Draw World_1")
+            P.event("Draw World_1 - laser")
             if True:
                 pass
-                SDL.gl.planar_laser(2,2,1, 2,2,6)
+                #SDL.gl.planar_laser(2,2,1, 2,2,6)
                 #SDL.gl.planar_laser(4,4,1, 4,4,6)
 
             if False:

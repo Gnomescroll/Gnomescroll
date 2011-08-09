@@ -27,6 +27,7 @@ class MapController:
     def __init__(self):
         self.requests = 0
         self.requests_max = 3
+        self.r_total = 0 #total requests
 
     def process_chunk_list(self, list):
         print "Processing Chunk List: %i chunks" %(len(list))
@@ -58,6 +59,8 @@ class MapController:
     '''
 
     def send_request(self, x,y,z):
+        self.r_total += 1
+        #print "rt= %i" % (self.r_total)
         #print "map chunk request: " + str((x,y,z))
         self.requests += 1
         self.mapMessage.request_chunk(x,y,z)

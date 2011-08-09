@@ -28,6 +28,7 @@ class Profiler:
         for i in range(0, self.id):
             pass
             #print "%s: %i ms" % (self.label[i], self.times[i])
+        #print ""
 
     def flush_to_disc(self):
         pass

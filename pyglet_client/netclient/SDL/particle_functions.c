@@ -327,7 +327,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     glEnd();
 
     }
-    //glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
     //glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);

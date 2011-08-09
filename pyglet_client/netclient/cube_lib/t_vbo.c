@@ -382,6 +382,7 @@ int _set_fulstrum_culling(int value) {
 
 
 int crb[3]; //the request buffer
+
 int* _chunk_request() {
     struct vm_map* m;
     struct vm_chunk* ch;
