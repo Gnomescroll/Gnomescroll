@@ -172,9 +172,7 @@ class MessageHandler:
             pass
 
         ''' Do this check after server physics is synced n all '''
-        #print 'trying to pick up item'
         if agent.near_item(item):
-            print 'picking up item'
             agent.pickup_item(item, slot)
         #agent.pickup_item(item, slot)
 
