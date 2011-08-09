@@ -613,6 +613,9 @@ class Agent(AgentPhysics, AgentAction):
         if self.dead:
             return
         # check team kills
+        if not hasattr(projectile_owner, 'id'):
+            projectile_owner = GameStateGlobal.playerList[projectile_owner]
+            
         if projectile_owner is not None and \
             projectile_owner.team == self.team and \
             not opts.team_kills:
@@ -652,7 +655,8 @@ class Agent(AgentPhysics, AgentAction):
                 pass
             else:
                 try:
-                    killer = GameStateGlobal.playerList[projectile_owner]
+                    if not hasattr(killer, 'id'):
+                        killer = GameStateGlobal.playerList[projectile_owner]
                     if killer.cid == you_player.cid:
                         msg = 'You killed yourself.'
                         suicide = True
