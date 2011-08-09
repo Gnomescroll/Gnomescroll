@@ -173,10 +173,10 @@ class MessageHandler:
 
         ''' Do this check after server physics is synced n all '''
         #print 'trying to pick up item'
-        #if agent.near_item(item):
-            #print 'picking up item'
-            #agent.pickup_item(item, slot)
-        agent.pickup_item(item, slot)
+        if agent.near_item(item):
+            print 'picking up item'
+            agent.pickup_item(item, slot)
+        #agent.pickup_item(item, slot)
 
     def drop_item(self, client_id, **msg):
         try:

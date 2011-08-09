@@ -131,7 +131,7 @@ class App(object):
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
-        self.intervals.register(send_agent_pos, 1000)
+        self.intervals.register(send_agent_pos, 500)
 
         self.init_inputs()
         print "App init finished"
