@@ -53,6 +53,7 @@ SDL_gl = Extension('SDL.gl',
                     )
 
 SDL_input = Extension('SDL.input',
+                    include_dirs = include_dirs,
                     libraries = libraries+['SDL_image'], # "Chrome"], #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
