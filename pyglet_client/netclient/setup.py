@@ -38,6 +38,8 @@ if debug == True:
 
 SDL_gl = Extension('SDL.gl',
                     libraries = libraries+['SDL_image'], #SDL_image ?
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
                     sources = ['SDL/SDL_functions.c',
                                 'SDL/camera.c',
                                 'SDL/draw_functions.c',
@@ -48,6 +50,8 @@ SDL_gl = Extension('SDL.gl',
 
 SDL_input = Extension('SDL.input',
                     libraries = libraries+['SDL_image'], # "Chrome"], #SDL_image ?
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
                     sources = [ 'SDL/input.pyx',
                                 'SDL/input_functions.c',
                                 'SDL/SDL_functions.c',]
@@ -55,6 +59,8 @@ SDL_input = Extension('SDL.input',
 
 SDL_hud = Extension('SDL.hud',
                     libraries = libraries+['SDL_image', 'SDL_ttf'], #SDL_image ?
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
                     sources = [ 'SDL/hud.pyx',
                                 'SDL/SDL_text.c',
                                 'SDL/draw_functions.c',
@@ -66,6 +72,8 @@ cube_lib_terrain_map = Extension('cube_lib.terrain_map',
                     optimize = 2,
                     include_dirs = ['gl_lib'],
                     libraries = libraries+['SDL_image'], #SDL_image ?
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
                     sources = ['cube_lib/terrain_map.pyx',
                             'cube_lib/t_map.c',
                             'cube_lib/t_properties.c',
@@ -75,6 +83,8 @@ cube_lib_terrain_map = Extension('cube_lib.terrain_map',
 
 vox_lib = Extension('vox_lib',
                     libraries = libraries, #SDL_image ?
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
                     sources = [
                     'vox_lib/vox_functions.c',
                      'vox_lib/vox_lib.pyx',]
