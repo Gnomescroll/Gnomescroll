@@ -39,8 +39,8 @@ int _start(int frequency) {
 int _tick_check() {
     long cur_t = get_time();
 
-    printf("Time since last tick= %ld \n", last_tick - cur_t);
-    if( cur_t - last_tick >= f*1000*1000 ) {
+    printf("Time since last tick= %ld \n", cur_t - last_tick);
+    if( cur_t - last_tick >= f) {
         printf("Tick!\n");
         tick_n++;
         last_tick = cur_t;
