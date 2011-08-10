@@ -32,6 +32,7 @@ class Base(StaticObject, TeamItemRender, TeamItem):
         TeamItem.__init__(self, team, False, False, **kwargs)
         TeamItemRender.__init__(self, self, 'base.vox')
         self.type = 2
-        self.radius = 1
+        self.radius = 2
+        self.proximity_effect = True
 
 from game_state import GameStateGlobal

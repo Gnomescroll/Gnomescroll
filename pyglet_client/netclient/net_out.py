@@ -42,7 +42,9 @@ def sendJSON(cmd=None, tick=False):
         def wrapped(*args, **kwargs):
             self = args[0]
             json_data = f(*args, **kwargs)
-            if json_data is None:
+            if not json_data:
+                return
+            if json_data is True:
                 json_data = {}
 
             cmd_final = cmd # must do this reassignment due to function scoping
@@ -226,6 +228,15 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
+    @sendJSON('near_item', tick=True)
+    def near_item(self, agent, item):
+        return {
+            'aid'   :   agent.id,
+            'iid'   :   item.id,
+        }
+
+    @idRequired
+    @noViewer
     @sendJSON('hit_block', tick=True)
     def hit_block(self, agent=None):
         if agent is None or agent.id is None:
@@ -252,7 +263,7 @@ class SendMessage(GenericMessage):
             'type'  :   agent.active_block,
             'pos'   :   block_position,
         }
-
+        
     @sendJSON('identify')
     def identify(self, name=None):
         if name is None:
@@ -263,7 +274,7 @@ class SendMessage(GenericMessage):
 
     @sendJSON('request_client_id')
     def request_client_id(self):
-        pass
+        return True
 
     @idRequired
     @noViewer
@@ -289,7 +300,7 @@ class MapMessage:
 
     @sendJSON('request_chunk_list')
     def request_chunk_list(self):
-        pass
+        return True
 
     @sendJSON('request_chunk')
     def request_chunk(self, x,y,z):

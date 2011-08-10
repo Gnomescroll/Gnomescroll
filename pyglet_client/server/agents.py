@@ -380,10 +380,10 @@ class Agent(AgentPhysics, AgentAction):
 
         wl = GameStateGlobal.weaponList
         self.weapons = [    \
-            wl.create('LaserGun'),
-            wl.create('Pick'),
-            wl.create('BlockApplier'),
-            wl.create('HitscanLaserGun'),
+            wl.create('LaserGun', owner=self),
+            wl.create('Pick', owner=self),
+            wl.create('BlockApplier', owner=self),
+            wl.create('HitscanLaserGun', owner=self),
         ]
         self._active_weapon = 0
         self.inventory = []
@@ -607,6 +607,11 @@ class Agent(AgentPhysics, AgentAction):
             sin( self.y_angle),
         ]
 
+    def has_flag(self):
+        if self.team.flag in self.inventory:
+            return self.team.flag
+        return False
+
     def take_damage(self, damage, projectile_owner=None):
         print 'agent %s taking damage %i' % (self.id, damage,)
         print self.health
@@ -630,6 +635,18 @@ class Agent(AgentPhysics, AgentAction):
         elif self.health != old:
             NetOut.event.agent_update(self, 'health')
         print damage
+
+    def heal_all(self):
+        self.heal(self.HEALTH_MAX)
+
+    def restore_ammo(self):
+        for weapon in self.weapons:
+            print weapon
+            weapon.refill()
+
+    def restore_health_and_ammo(self):
+        self.heal_all()
+        self.restore_ammo()
 
     def heal(self, amount):
         if not self.dead:

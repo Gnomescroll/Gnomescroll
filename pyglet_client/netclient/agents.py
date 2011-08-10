@@ -708,7 +708,8 @@ class AgentModel(object):
         if name == 'team':
             if not isinstance(val, NoTeam):
                 val = GameStateGlobal.teamList[val]
-                self.team = val
+                if val is not None:
+                    self.team = val
         return val
 
     def pos(self, xyz=None):
@@ -1256,6 +1257,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         for obj in GameStateGlobal.itemList.values():
             if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
                 self.pickup_item(obj)
+                if obj.proximity_effect:
+                    NetOut.sendMessage.near_item(self, obj)
 
 
 import cube_lib.terrain_map as terrainMap

@@ -20,6 +20,7 @@ class NetEventGlobal:
     miscMessageHandler = None
     gameModeMessageHandler = None
     itemMessageHandler = None
+    weaponMessageHandler = None
     
     @classmethod
     def init_0(cls):
@@ -32,6 +33,7 @@ class NetEventGlobal:
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
         cls.projectileMessageHandler = ProjectileMessageHandler()
+        cls.weaponMessageHandler = WeaponMessageHandler()
 
         cls.gameModeMessageHandler = GameModeMessageHandler()
         cls.itemMessageHandler = ItemMessageHandler()
@@ -48,6 +50,7 @@ class NetEventGlobal:
         ProjectileMessageHandler.init()
         GameModeMessageHandler.init()
         ItemMessageHandler.init()
+        WeaponMessageHandler.init()
         
     @classmethod
     def register_json_events(cls, events):
@@ -97,6 +100,8 @@ class MessageHandler:
             self.json_events[cmd](**msg)
         else:
             print "Error, received command %s that client cannot handle" % (cmd,)
+            print 'msg %s' % (msg,)
+            print self.json_events.keys()
             assert False
 
 
@@ -569,6 +574,11 @@ class WeaponMessageHandler(DatastoreMessageInterface):
         id = self._default_destroy(**args)
         if id is not None:
             GameStateGlobal.remove_weapon(id)
+
+    def _weapon_update(self, **args):
+        print 'weapon update'
+        print args
+        return self._default_update(**args)
 
 
 class ItemMessageHandler(DatastoreMessageInterface):

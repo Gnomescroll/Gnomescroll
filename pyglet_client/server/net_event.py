@@ -93,9 +93,11 @@ class MessageHandler:
             self.pickup_item(connection.id, **msg)
         elif cmd == 'drop_item':
             self.drop_item(connection.id, **msg)
+        elif cmd == 'near_item':
+            self.near_item(connection.id, **msg)
 
         elif cmd == 'set_block':
-            self.set_block(connection.id, **msg)
+            self.set_block(connection, **msg)
         elif cmd == 'hit_block':
             self.hit_block(connection.id, **msg)
 
@@ -180,7 +182,6 @@ class MessageHandler:
         except KeyError:
             pass
 
-        ''' Do this check after server physics is synced n all '''
         if agent.near_item(item):
             agent.pickup_item(item, slot)
         #agent.pickup_item(item, slot)
@@ -245,7 +246,8 @@ class MessageHandler:
         GameStateGlobal.game.player_join_team(player, team)
         print GameStateGlobal.teamList
         
-    def set_block(self, client_id, **msg):
+    def set_block(self, conn, **msg):
+        client_id = conn.id
         try:
             player = GameStateGlobal.playerList.client(client_id)
         except KeyError:
@@ -295,8 +297,12 @@ class MessageHandler:
             return
         x, y, z = block_position
         block = (x, y, z, block_type,)
-        GameStateGlobal.terrainMap.set(*block)
-        NetOut.event.set_map([block])
+        weapon = agent.active_weapon()
+        if weapon.fire_command == 'set_block' and weapon.fire():
+            print 'setting block'
+            GameStateGlobal.terrainMap.set(*block)
+            NetOut.event.set_map([block])
+            conn.sendMessage.send_weapon(weapon, properties='clip')
 
     def change_weapon(self, client_id, **msg):
         try:
@@ -414,6 +420,8 @@ class MessageHandler:
             return
 
         # add agent/projectile information to packet and forward
+        if not weapon.fire():
+            return
         NetOut.event.hitscan(target, firing_agent.id, weapon.type)
         print 'Hitscan target type %s' % (type,)
         # apply damage
@@ -672,7 +680,10 @@ class MessageHandler:
         except KeyError:
             print 'msg fire_projectile :: agent %i unknown' % (agent_id,)
             return
-        agent.fire_projectile()
+
+        weapon = agent.active_weapon()
+        if weapon.fire_command == 'fire_projectile' and weapon.fire():
+            agent.fire_projectile()
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
@@ -718,6 +729,46 @@ class MessageHandler:
         if 'id' not in msg:
             return
         conn.sendMessage.send_item(msg['id'])
+
+    def near_item(self, conn_id, **msg):
+        err_msg = None
+        try:
+            player = GameStateGlobal.playerList.client(conn_id)
+        except KeyError:
+            err_msg = 'could not find player for client %s' % (conn_id,)
+        try:
+            aid = msg['aid']
+        except KeyError:
+            err_msg = 'agent id missing'
+        try:
+            iid = msg['iid']
+        except KeyError:
+            err_msg = 'item id missing'
+        if err_msg is not None:
+            print 'msg near_item :: %s' % (err_msg,)
+            return
+
+        try:
+            agent = GameStateGlobal.agentList[aid]
+            if agent.team.is_viewers():
+                print 'ignoring viewer agent, attempted to send msg %s' % (msg,)
+        except KeyError:
+            err_msg = 'agent %s unknown' % (aid,)
+
+        if not player.owns(agent):
+            err_msg = 'player %s does not own agent %s' % (player.id, agent.id,)
+
+        try:
+            item = GameStateGlobal.itemList[iid]
+        except KeyError:
+            err_msg = 'item %s unknown' % (iid,)
+
+        if err_msg is not None:
+            print 'msg near_item :: %s' % (err_msg,)
+            return
+
+        if agent.near_item(item) and hasattr(item, 'agent_nearby'):
+            item.agent_nearby(agent)
         
     def agent_position(self, connection_id, **msg):
         err_msg = None

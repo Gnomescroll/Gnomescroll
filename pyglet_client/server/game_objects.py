@@ -1,24 +1,12 @@
 from object_lists import GenericMultiObjectList
-
+from utils import filter_props
 
 object_names = {
     0   :   'Generic',
     1   :   'Flag',
     2   :   'Base',
 }
-    
 
-def filter_props(obj, properties):
-    d = {}
-    for prop in properties:
-        val = getattr(obj, prop, None)
-        if val is None:
-            continue
-        if type(val) == bool:
-            val = int(val)
-        d[prop] = val
-    return d
-    
 
 class GameObject:
 
@@ -114,7 +102,7 @@ class DetachableObject(GameObject):
                 d['owner'] = 0
             d['on_ground'] = int(self.on_ground)
         else:
-            d = filter_props(obj, properties)
+            d = filter_props(self, properties)
         return d
 
 

@@ -26,10 +26,10 @@ from net_server import NetServer
 
 
 def sendJSONevent(cmd=None, tick=True):
-    def outer(f, *args):
-        def wrapped(*args):
+    def outer(f, *args, **kwargs):
+        def wrapped(*args, **kwargs):
             self = args[0]
-            json_data = f(*args)
+            json_data = f(*args, **kwargs)
             if json_data is None:
                 json_data = {}
 
@@ -153,6 +153,19 @@ class EventOut:
             'player': player.json(properties),
         }
 
+    @sendJSONevent('weapon_update')
+    def weapon_update(self, weapon, properties=None):
+        print 'weapon update'
+        return {
+            'weapon'    :   weapon.json(properties)
+        }
+
+    @sendJSONevent('weapon_destroy')
+    def weapon_destroy(self, weapon):
+        return {
+            'id'    :   weapon.id,
+        }
+
     @sendJSONevent('player_create', tick=False)
     def player_create(self, player):
         return {
@@ -194,17 +207,17 @@ class MessageOut:
         pass
 
 # calls send_json
-def sendJSON2(f):
-    def wrapped(*args):
-        self = args[0]
-        self.send_json(f(*args))
-    return wrapped
+#def sendJSON2(f):
+    #def wrapped(*args):
+        #self = args[0]
+        #self.send_json(f(*args))
+    #return wrapped
 
 def sendJSON(cmd=None):
-    def outer(f, *args):
-        def wrapped(*args):
+    def outer(f, *args, **kwargs):
+        def wrapped(*args, **kwargs):
             self = args[0]
-            json_data = f(*args)
+            json_data = f(*args, **kwargs)
             if json_data is None:
                 json_data = {}
 

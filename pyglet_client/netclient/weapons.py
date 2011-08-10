@@ -112,6 +112,7 @@ class LaserGun(Weapon):
         return 'reload_weapon'
 
     def update_info(self, **weapon):
+        print 'updating weapon %s' % (weapon,)
         args = self._update_info(**weapon)
         if 'clip' in weapon:
             self.clip = weapon['clip']
@@ -152,32 +153,36 @@ class BlockApplier(Weapon):
 
     def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        self.max_ammo = 100
-        self.ammo = self.max_ammo
+        self.max_ammo = 0
+        self.ammo = 0
         self.clip_size = 100
         if clip is None:
             clip = self.clip_size
         self.clip = clip
 
     def fire(self):
-        self.ammo -= 1
+        if self.clip == 0:
+            return False
+        #self.clip -= 1
         return 'set_block'
 
-    def restock(self, amt):
-        self.ammo = min(self.max_ammo, self.ammo + amt)
-        self.ammo = max(0, self.ammo)
-        return 'restock_blocks'
+# BAD DONT USE THIS
+    #def restock(self, amt):
+        #print 'WARNING BlockApplier.restock called, its bad'
+        #self.ammo = min(self.max_ammo, self.ammo + amt)
+        #self.ammo = max(0, self.ammo)
+        #return 'restock_blocks'
 
     def update_info(self, **weapon):
         args = self._update_info(**weapon)
         if 'clip' in weapon:
             self.clip = weapon['clip']
-        if 'ammo' in weapon:
-            self.ammo = weapon['ammo']
+        #if 'ammo' in weapon:
+            #self.ammo = weapon['ammo']
         if 'clip_size' in weapon:
             self.clip_size = weapon['clip_size']
-        if 'max_ammo' in weapon:
-            self.max_ammo = weapon['max_ammo']
+        #if 'max_ammo' in weapon:
+            #self.max_ammo = weapon['max_ammo']
         GameStateGlobal.weaponList.update(*args)
 
 class Pick(Weapon):

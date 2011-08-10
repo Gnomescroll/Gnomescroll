@@ -159,6 +159,25 @@ class CTF(TeamGame):
             if team == self.viewers:
                 continue
             team.create_flag()
+            team.flag_captures = 0
+        self.flag_points = 10
+        self.victory_points = 3
+
+    def score_flag(self, agent):
+        player = agent.owner
+        print 'player scored flag'
+        player.score += self.flag_points
+        player.team.flag_captures += 1
+        self.check_victory()
+
+    def check_victory(self):
+        for team in self.teams.values():
+            if team == self.viewers:
+                continue
+            if team.flag_captures == self.victory_points:
+                print 'Team %s wins!' % (team,)
+                break
+        #self.reset()
         
 
 class Deathmatch(Game):

@@ -17,6 +17,7 @@ class GameObject:
         self.state = state
         self.type = 0
         self.owner = None
+        self.proximity_effect = False   # if True, item causes effect on agent when nearby (except pickup) i.e. base healing
 
     def pos(self, xyz=None):
         if xyz is not None:

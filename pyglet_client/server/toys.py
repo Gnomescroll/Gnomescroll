@@ -2,7 +2,8 @@
 Toys, miscellaneous objects
 '''
 
-from game_objects import DetachableObject, StaticObject, filter_props, TeamItem
+from game_objects import DetachableObject, StaticObject, TeamItem
+from utils import filter_props
 
 from random import randint as rand
 
@@ -38,7 +39,7 @@ class Flag(DetachableObject, TeamItem):
                 'team'     :   self.team.id,
             })
         else:
-            d = filter_props(obj, properties)
+            d = filter_props(self, properties)
         return d        
 
 
@@ -52,11 +53,22 @@ class Base(StaticObject, TeamItem):
         self.type = 2
         self._set_name()
         self.spawn()
+        self.radius = 2
         
     def spawn(self):
         if not self.spawned:
             self.state[0:3] = rand_spot(z=2)
             self.spawned = True
+
+    def agent_nearby(self, agent):
+        if agent.team != self.team:
+            return
+        agent.restore_health_and_ammo()
+        flag = agent.has_flag()
+        if flag:
+            print 'agent returned flag'
+            agent.drop_item(flag)
+            flag.spawn()
 
     def json(self, properties=None):
         if properties is None:
@@ -65,5 +77,5 @@ class Base(StaticObject, TeamItem):
                 'team'  :   self.team.id,
             })
         else:
-            d = filter_props(obj, properties)
+            d = filter_props(self, properties)
         return d
