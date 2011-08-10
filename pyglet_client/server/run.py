@@ -188,13 +188,15 @@ class Main:
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
-            tick = c_lib.get_tick() #get number of ticks server is behind
-            if tick > 1:
+            tc = c_lib.tick_check() #get number of ticks server is behind
+            #print "tick= %i" %(tick)
+            if tc > 1:
                 print "Server is %i ticks behind" % (tick)
-            if tick != 0:
+            if tc > 0:
+                print "tick"
                 GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
-            sleep(0.001)
+            #sleep(0.001)
 
 if __name__ == "__main__":
     print "starting server"

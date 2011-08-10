@@ -45,10 +45,10 @@ int _tick_check() {
 
     //printf("Time since last tick= %ld \n", cur_t - last_tick);
     delta += cur_t - last_tick;
-    printf("Delta= %ld \n", delta);
+    //printf("Delta= %ld \n", delta);
     if( delta >= f) {
         delta -= f;
-        printf("Tick!\n");
+        //printf("Tick!\n");
         tick_n++;
         last_tick = cur_t;
         return delta/f; //number of ticks the server is behind
