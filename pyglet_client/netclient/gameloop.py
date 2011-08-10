@@ -189,6 +189,9 @@ class App(object):
         v.set(7,7,7, 0,255,0,0)
 
         v2 = vox_lib.Vox_loader().load('auto.vox')
+        v3 = vox_lib.Vox_loader().load('base.vox')
+        v3.color('blue', base_color='black')
+        v3.move(10,10,15, 0)
 
         if ping:
             ping_n = SDL.gl.get_ticks()
@@ -238,6 +241,7 @@ class App(object):
             v.draw()
             v2.move(10,0,10,theta)
             v2.draw()
+            v3.draw()
             #test
             #if GameStateGlobal.agent != None:
             #    a = GameStateGlobal.agent

@@ -67,8 +67,8 @@ def write_vox(fn, voxels, dim=(8,8,8), vosize=0.2):
     }
     _write_vox(fn, n)
 
-_write_vox('flag.vox', flag)
-_write_vox('black_flag.vox', black_flag)
+#_write_vox('flag.vox', flag)
+#_write_vox('black_flag.vox', black_flag)
 
 voxels = []
 dim = (8,8,8)
@@ -84,6 +84,44 @@ for i in range(x):
             voxels.append(loc)
 
 #write_vox('auto.vox', voxels)
+
+base = []
+dim = (10,10,10)
+_x, _y, _z = dim
+x,y,z = [range(u) for u in dim]
+corner_ct = 0
+panel_edge = 0
+for i in x:
+    for j in y:
+        for k in z:
+            loc = [i,j,k]
+            if i == 0 or i == _x-1:   # edge
+                col = [0,0,0]
+                alpha = 0
+                if j == 0 or j == _y-1 or k == 0 or k == _z-1:
+                    panel_edge += 1
+                    alpha = 255
+            else:
+                alpha = 255
+                if j == 0 or j == _y-1 or k == 0 or k == _z-1:
+                    col = [0,0,0]
+                    alpha = 0
+                    if (j,k) in ((0,_y-1), (_y-1,0), (0,_z-1), (_z-1,0)):   # corner
+                        corner_ct += 1
+                        alpha = 255
+                else:   # inner cube
+                    col = [255 * (1.* i/_x), 255 * (1.* j/_y), 255 * (1.* k/_z)]
+            col.append(alpha)
+
+            col = map(int, col)
+            loc.extend(col)
+            base.append(loc)
+
+print 'CORNERS %d' % (corner_ct,)
+print 'PANEL EDGE %d' % (panel_edge,)
+            
+
+write_vox('base.vox', base, dim)
 
 
 voxels = []
