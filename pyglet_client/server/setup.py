@@ -28,6 +28,17 @@ terrain_map = Extension('cube_lib.terrain_map',
                             'cube_lib/t_properties.c']
                     )
 
+c_lib = Extension('c_lib',
+                    #define_macros =  [('PLATFORM', 'linux')]
+                    include_dirs = ['/usr/local/include',
+                                    '/usr/lib',     ],
+                    libraries = ['rt'],
+                    library_dirs = ['usr/lib'],
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
+                    sources = ['c_lib/c_lib.pyx',
+                            'c_lib/physics_timer.c']
+                    )
 '''
 setup(
     name = "test app",
@@ -38,7 +49,7 @@ setup(
 setup(
     name = "dc_mmo server",
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [terrain_map, ]+ cythonize("*.pyx")
+    ext_modules = [terrain_map, c_lib]+ cythonize("*.pyx")
 )
 
 
