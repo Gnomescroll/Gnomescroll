@@ -51,7 +51,7 @@ int _tick_check() {
         printf("Tick!\n");
         tick_n++;
         last_tick = cur_t;
-        return 1;
+        return delta/f; //number of ticks the server is behind
     } else {
         return 0;
     }
