@@ -147,6 +147,12 @@ class EventOut:
             'id'    :   item.id,
         }
 
+    @sendJSONevent('team_update')
+    def team_update(self, team, properties=None):
+        return {
+            'team'  :   team.json(properties),
+        }
+
     @sendJSONevent('player_update', tick=False)
     def player_update(self, player, properties=None):
         return {
@@ -398,14 +404,14 @@ class SendMessage: #each connection has one of these
             'game'  :   GameStateGlobal.game.json(),
         }
         if send_teams:
-            d['teams_list'] = GameStateGlobal.teamList.json()
-            d['teams'] = len(d['teams_list'])
+            d['team_list'] = GameStateGlobal.teamList.json()
+            d['teams'] = len(d['team_list'])
         return d
 
     @sendJSON('teams')
     def teams(self, teams):
         return {
-            'teams_list' :   [team.json() for team in teams],
+            'team_list' :   [team.json() for team in teams],
         }
 
     @sendJSON('team_update')

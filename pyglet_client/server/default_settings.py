@@ -17,5 +17,6 @@ ip_address = '127.0.0.1'
 game_mode = 'ctf'
 n_teams = 2
 team_kills = False
+victory_points = 3
 
 from settings import *

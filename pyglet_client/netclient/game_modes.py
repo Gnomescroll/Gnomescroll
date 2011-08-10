@@ -89,7 +89,7 @@ class NoTeam:
             self.id = id
         if 'players' in team:
             self.load_players_list(team['players'])
-        TeamList.update_info(self, old_id)
+        GameStateGlobal.teamList.update(self, old_id)
 
 class Team(NoTeam):
 
@@ -99,6 +99,8 @@ class Team(NoTeam):
         self.base = None
         self.type = 2
         self.color = color
+        if 'flag_captures' in kwargs:
+            self.flag_captures = kwargs['flag_captures']
 
     def is_viewers(self):
         return False
@@ -111,6 +113,8 @@ class Team(NoTeam):
             self.base = GameStateGlobal.itemList[team['base']]
         if 'color' in team:
             self.color = team['color']
+        if 'flag_captures' in team:
+            self.flag_captures = team['flag_captures']
 
 
 class Game:
@@ -128,13 +132,14 @@ class Game:
 
 class TeamGame(Game):
 
-    def __init__(self, teams=2, team_kills=False, *args, **kwargs):
+    def __init__(self, teams=2, team_kills=False, victory_points=None, *args, **kwargs):
         Game.__init__(self)
         self.n_teams = teams
         self.teams = GameStateGlobal.teamList
         if team_kills is None:
             print 'WARNING: TeamGame created without team_kills=None'
         self.team_kills = bool(team_kills)
+        self.victory_points = victory_points
 
     def player_join_team(self, player, team):
         for t in self.teams.values():
@@ -192,6 +197,7 @@ class TeamList(GenericMultiObjectList):
         for team in self.values():
             if team.is_viewers():
                 return team
+
 
 names = {
     'ctf'   :   CTF,

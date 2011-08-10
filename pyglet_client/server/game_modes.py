@@ -4,7 +4,8 @@ Initialization specific to game modes
 
 import toys
 from object_lists import GenericMultiObjectList
-
+from opts import opts
+from utils import filter_props
 
 team_types = {
     1   :   'NoTeam',
@@ -54,12 +55,19 @@ class NoTeam:
     def is_viewers(self):
         return True
         
-    def json(self):
-        return {
+    def json(self, properties=None):
+        d = {
             'id'    :   self.id,
-            'players':  self.players.keys(),
             'type'  :   self.type,
         }
+        if properties is None:
+            d.update({
+                'players':  self.players.keys(),
+            })
+        else:
+            d.update(filter_props(self, properties))
+        return d
+        
 
 class Team(NoTeam):
 
@@ -80,13 +88,19 @@ class Team(NoTeam):
     def is_viewers(self):
         return False
 
-    def json(self):
-        d = NoTeam.json(self)
-        if self.flag is not None:
-            d['flag'] = self.flag.id
-        if self.base is not None:
-            d['base'] = self.base.id
-        d['color'] = self.color
+    def json(self, properties=None):
+        d = NoTeam.json(self, properties)
+        if properties is None:
+            if self.flag is not None:
+                d['flag'] = self.flag.id
+            if self.base is not None:
+                d['base'] = self.base.id
+            d['color'] = self.color
+        else:
+            d.update(filter_props(self, properties))
+        for k,v in d.items():
+            if v is None:
+                del d[k]
         return d
 
 class TeamList(GenericMultiObjectList):
@@ -162,13 +176,19 @@ class CTF(TeamGame):
                 team.create_flag()
                 team.flag_captures = 0
         self.flag_points = 10
-        self.victory_points = 3
+        self.victory_points = opts.victory_points
 
     def score_flag(self, agent):
         player = agent.owner
+        if not hasattr(player, 'id'):
+            player = GameStateGlobal.playerList[player]
+        if player is None:
+            print 'WARNING:: agent with unknown owner scored flag'
         print 'player scored flag'
         player.score += self.flag_points
         player.team.flag_captures += 1
+        NetOut.event.player_update(player, properties='score')
+        NetOut.event.team_update(player.team, properties='flag_captures')
         self.check_victory()
 
     def check_victory(self):
@@ -179,7 +199,11 @@ class CTF(TeamGame):
                 print 'Team %s wins!' % (team,)
                 break
         #self.reset()
-        
+
+    def json(self):
+        d = TeamGame.json(self)
+        d['victory_points'] = self.victory_points
+        return d
 
 class Deathmatch(Game):
 

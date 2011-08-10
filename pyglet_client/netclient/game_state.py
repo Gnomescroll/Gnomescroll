@@ -131,7 +131,7 @@ class GameStateGlobal:
             stats['name'].append(player.name)
             stats['kills'].append(player.kills)
             stats['deaths'].append(player.deaths)
-            stats['score'].append(player.score())
+            stats['score'].append(player.score)
             stats['id'].append(player.id)
 
         return stats

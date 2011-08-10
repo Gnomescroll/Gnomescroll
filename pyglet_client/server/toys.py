@@ -64,12 +64,15 @@ class Base(StaticObject, TeamItem):
         if agent.team != self.team:
             return
         agent.restore_health_and_ammo()
-        flags = agent.has_flags()
-        for flag in flags:
-            print 'agent returning flag'
-            agent.drop_item(flag)
-            flag.spawn()
-            NetOut.event.item_update(flag, properties='state')
+
+        if GameStateGlobal.game.mode == 'ctf':
+            flags = agent.has_flags()
+            for flag in flags:
+                print 'agent returning flag'
+                GameStateGlobal.game.score_flag(agent)
+                agent.drop_item(flag)
+                flag.spawn()
+                NetOut.event.item_update(flag, properties='state')
 
     def json(self, properties=None):
         if properties is None:
@@ -82,3 +85,4 @@ class Base(StaticObject, TeamItem):
         return d
 
 from net_out import NetOut
+from game_state import GameStateGlobal

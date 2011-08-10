@@ -691,7 +691,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
 class GameModeMessageHandler(DatastoreMessageInterface):
 
     def __init__(self):
-        self.name = 'teams'
+        self.name = 'team'
         self.store = GameStateGlobal.teamList
         self._bind_event('game_mode', '_game_mode')
         self._bind_event('teams', '_teams')
@@ -719,6 +719,11 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             tk = bool(tk)
         except KeyError:
             pass
+        victory_points = None
+        try:
+            vp = game['victory_points']
+        except KeyError:
+            pass
             
         teams = None
         try:
@@ -729,13 +734,13 @@ class GameModeMessageHandler(DatastoreMessageInterface):
         except KeyError:
             pass
 
-        if 'teams_list' in msg:
+        if 'team_list' in msg:
             self._teams(**msg)
             
         if teams is None:
-            GameStateGlobal.start_game_mode(mode, team_kills=tk)
+            GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp)
         else:
-            GameStateGlobal.start_game_mode(mode, team_kills=tk, teams=teams)
+            GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp, teams=teams)
             
     def _teams(self, **msg):
         self._default_list(**msg)

@@ -40,6 +40,7 @@ DEFAULTS = {
     'game_mode' :   settings.game_mode,
     'n_teams'   :   settings.n_teams,
     'team_kills':   settings.team_kills,
+    'victory_points':   settings.victory_points,
 }
 
 def parse(cl_args=None):
@@ -66,9 +67,11 @@ def parse(cl_args=None):
 
     parser.add_argument('-g', '--game-mode', default=DEFAULTS['game_mode'])
 
-    parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'])#, dest='n_teams')
+    parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'])
 
     parser.add_argument('-tk', '--team-kills', action='store_true')
+
+    parser.add_argument('-vp', '--victory-points', default=DEFAULTS['victory_points'])
 
     parser.add_argument('--print-args', action='store_true')
 
@@ -116,6 +119,7 @@ def print_args(args):
         'game_mode',
         'n_teams',
         'team_kills',
+        'victory_points',
     ]
     print 'Options:'
     for key in keys:

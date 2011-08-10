@@ -57,6 +57,7 @@ class Player:
     def __init__(self, client_id, name, id=None, team=None):
         self.kills = 0
         self.deaths = 0
+        self.score = 0
         self.name = name
         self.cid = client_id
         if id is None:
@@ -92,7 +93,8 @@ class Player:
 
     def killed(self):
         self.kills += 1
-        NetOut.event.player_update(self, 'kills')
+        self.score += 1
+        NetOut.event.player_update(self, ['kills', 'score'])
 
     def died(self):
         self.deaths += 1

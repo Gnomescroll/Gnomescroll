@@ -1,6 +1,6 @@
 class Player:
 
-    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None):
+    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None, score=0):
         if cid is None or id is None:
             print 'Client_id or pid missing; abort creating player'
             raise ValueError
@@ -17,11 +17,8 @@ class Player:
             agent = GameStateGlobal.agentList.create(**agent)
         self.agent = agent
         self.you = False
-
+        self.score = score
         self.suicides = suicides # use this later
-
-    def score(self):
-        return self.kills - self.suicides
 
     def tick(self):
         pass
@@ -44,12 +41,14 @@ class Player:
             self.deaths = player['deaths']
         if 'team' in player:
             self.team = GameStateGlobal.teamList[player['team']]
+        if 'score' in player:
+            self.score = player['score']
 
         GameStateGlobal.playerList.update(self, **args)
 
 class YouPlayer(Player):
 
-    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None):
+    def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None, score=0):
         self.cid = cid
         self.name = name
         self.id = id
@@ -59,6 +58,7 @@ class YouPlayer(Player):
         self.you = True
         self.suicides = suicides
         self.team = team
+        self.score = score
         
 
 from game_state import GameStateGlobal
