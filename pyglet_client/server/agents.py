@@ -533,7 +533,10 @@ class Agent(AgentPhysics, AgentAction):
         item.take(self)
         
     def drop_item(self, item):
+        print 'dropping'
+        print self.inventory
         self.inventory.remove(item)
+        print self.inventory
         item.drop()
 
     def near_item(self, item):

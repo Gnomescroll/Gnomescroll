@@ -197,8 +197,21 @@ class CTF(TeamGame):
                 continue
             if team.flag_captures == self.victory_points:
                 print 'Team %s wins!' % (team,)
+                self.reset()
                 break
-        #self.reset()
+
+    def reset(self):
+        for team in self.teams.values():
+            if team.is_viewers():
+                continue
+            team.flag_captures = 0
+            team.flag.spawn()
+            for player in team.values():
+                player.agent.respawn()
+        NetOut.event.send_players()
+        NetOut.event.send_teams()
+                
+                
 
     def json(self):
         d = TeamGame.json(self)

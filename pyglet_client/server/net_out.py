@@ -205,6 +205,18 @@ class EventOut:
             'wtype'     :   weapon_type,
         }
 
+    @sendJSONevent('team_list')
+    def send_teams(self):
+        return {
+            'team_list' :   GameStateGlobal.teamList.json()
+        }
+
+    @sendJSONevent('player_list')
+    def send_players(self):
+        return {
+            'player_list'   :   GameStateGlobal.playerList.json()
+        }
+
 #this is global message out across the connection pool
 class MessageOut:
     def init(self):

@@ -69,10 +69,10 @@ class Base(StaticObject, TeamItem):
             flags = agent.has_flags()
             for flag in flags:
                 print 'agent returning flag'
-                GameStateGlobal.game.score_flag(agent)
                 agent.drop_item(flag)
                 flag.spawn()
                 NetOut.event.item_update(flag, properties='state')
+                GameStateGlobal.game.score_flag(agent)
 
     def json(self, properties=None):
         if properties is None:

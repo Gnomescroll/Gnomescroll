@@ -93,9 +93,8 @@ class DetachableObject(GameObject):
             NetOut.event.item_update(self)
 
     # give it a position to override default drop position behavior (drop where owner was)
-    def drop(self, pos=None):
-        if pos is None:
-            pos = self.owner.pos()
+    def drop(self):
+        pos = self.owner.pos()
         self.owner = None
         self.pos(pos)
         self.on_ground = True
