@@ -130,21 +130,21 @@ class EventOut:
         }
 
     @sendJSONevent('item_update')
-    def item_update(self, obj, properties=None):
+    def item_update(self, item, properties=None):
         return {
-            'item'   :   obj.json(properties),
+            'item'   :   item.json(properties),
         }
 
     @sendJSONevent('item_create')
-    def item_create(self, obj):
+    def item_create(self, item):
         return {
-            'item'   :   obj.json(),
+            'item'   :   item.json(),
         }
 
     @sendJSONevent('item_destroy')
-    def item_destroy(self, obj):
+    def item_destroy(self, item):
         return {
-            'id'    :   obj.id,
+            'id'    :   item.id,
         }
 
     @sendJSONevent('player_update', tick=False)

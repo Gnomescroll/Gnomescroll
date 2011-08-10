@@ -157,9 +157,10 @@ class CTF(TeamGame):
         self.mode = 'ctf'
         for team in self.teams.values():
             if team == self.viewers:
-                continue
-            team.create_flag()
-            team.flag_captures = 0
+                team.flag = None
+            else:
+                team.create_flag()
+                team.flag_captures = 0
         self.flag_points = 10
         self.victory_points = 3
 

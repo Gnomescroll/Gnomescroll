@@ -183,6 +183,7 @@ class MessageHandler:
             pass
 
         if agent.near_item(item):
+            print 'agent picking up %s' % (item,)
             agent.pickup_item(item, slot)
         #agent.pickup_item(item, slot)
 

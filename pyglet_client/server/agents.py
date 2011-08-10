@@ -526,6 +526,7 @@ class Agent(AgentPhysics, AgentAction):
         if self.dead:
             return
         if index is None:
+            print 'adding %s to inv' % (item,)
             self.inventory.append(item)
         else:
             self.inventory.insert(index, item)
@@ -533,7 +534,7 @@ class Agent(AgentPhysics, AgentAction):
         
     def drop_item(self, item):
         self.inventory.remove(item)
-        item.drop(self)
+        item.drop()
 
     def near_item(self, item):
         if distance(self.pos(), item.pos()) < item.radius:
@@ -607,10 +608,11 @@ class Agent(AgentPhysics, AgentAction):
             sin( self.y_angle),
         ]
 
-    def has_flag(self):
-        if self.team.flag in self.inventory:
-            return self.team.flag
-        return False
+    def has_flags(self):
+        flags = [team.flag for team in GameStateGlobal.teamList.values() if team.flag is not None]
+        flags = [flag for flag in flags if flag != self.team.flag]
+        held_flags = [flag for flag in self.inventory if flag in flags]
+        return held_flags
 
     def take_damage(self, damage, projectile_owner=None):
         print 'agent %s taking damage %i' % (self.id, damage,)
@@ -641,7 +643,6 @@ class Agent(AgentPhysics, AgentAction):
 
     def restore_ammo(self):
         for weapon in self.weapons:
-            print weapon
             weapon.refill()
 
     def restore_health_and_ammo(self):

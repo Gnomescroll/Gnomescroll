@@ -24,14 +24,28 @@ class GameObject:
         self.name = object_names[self.type]
 
     def json(self, properties=None):
+        d = {
+            'id'    :   self.id,
+            'type'  :   self.type,
+        }
         if properties is None:
-            return {
-                'id'    :   self.id,
+            d.update({
                 'state' :   self.state,
-                'type'  :   self.type,
-            }
+                'owner' :   self.owner,
+                'on_ground':int(self.on_ground),
+            })
         else:
-            return filter_props(self, properties)
+            d.update(filter_props(self, properties))
+
+        if 'owner' in d:
+            d_own = d['owner']
+            if d_own is None:
+                d_own = 0
+            else:
+                d_own = d_own.id
+            d['owner'] = d_own
+            
+        return d
 
     def pos(self, xyz=None):
         if xyz is not None:
@@ -77,9 +91,11 @@ class DetachableObject(GameObject):
             self.on_ground = False
         if old_owner != self.owner:
             NetOut.event.item_update(self)
-        
-    def drop(self):
-        pos = self.owner.pos()
+
+    # give it a position to override default drop position behavior (drop where owner was)
+    def drop(self, pos=None):
+        if pos is None:
+            pos = self.owner.pos()
         self.owner = None
         self.pos(pos)
         self.on_ground = True
@@ -93,18 +109,6 @@ class DetachableObject(GameObject):
                 print 'WARNING trying to set item position while item is possessed'
             return self.owner.pos()
 
-    def json(self, properties=None):
-        if properties is None:
-            d = GameObject.json(self)
-            if self.owner is not None:
-                d['owner'] = self.owner.id
-            else:
-                d['owner'] = 0
-            d['on_ground'] = int(self.on_ground)
-        else:
-            d = filter_props(self, properties)
-        return d
-
 
 class TeamItem:
 
@@ -117,6 +121,17 @@ class TeamItem:
         #print new_owner.team, self.team
         return (new_owner.team == self.team and self.pickup_by_own_team) or \
                 (new_owner.team != self.team and self.pickup_by_other_team)
+
+    def json(self, properties=None):
+        if properties is None:
+            d = {
+                'team'  :   self.team
+            }
+        else:
+            d = filter_props(self, properties)
+        if 'team' in d:
+            d['team'] = self.team.id
+        return d
 
 
 class ItemList(GenericMultiObjectList):

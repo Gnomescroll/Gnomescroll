@@ -22,8 +22,11 @@ class Flag(DetachableObject, TeamItem):
         self._set_name()
         self.spawn()
 
+    def _spawn_point(self):
+        return rand_spot()
+
     def spawn(self):
-        xyz = rand_spot()
+        xyz = self._spawn_point()
         self.pos(xyz)
         self.on_ground = True
         self.owner = None
@@ -33,13 +36,10 @@ class Flag(DetachableObject, TeamItem):
             DetachableObject.take(self, new_owner)
 
     def json(self, properties=None):
-        if properties is None:
-            d = DetachableObject.json(self)
-            d.update({
-                'team'     :   self.team.id,
-            })
-        else:
-            d = filter_props(self, properties)
+        d = DetachableObject.json(self, properties)
+        d.update(TeamItem.json(self, properties))
+        if properties is not None:
+            d.update(filter_props(self, properties))
         return d        
 
 
@@ -64,11 +64,12 @@ class Base(StaticObject, TeamItem):
         if agent.team != self.team:
             return
         agent.restore_health_and_ammo()
-        flag = agent.has_flag()
-        if flag:
-            print 'agent returned flag'
+        flags = agent.has_flags()
+        for flag in flags:
+            print 'agent returning flag'
             agent.drop_item(flag)
             flag.spawn()
+            NetOut.event.item_update(flag, properties='state')
 
     def json(self, properties=None):
         if properties is None:
@@ -79,3 +80,5 @@ class Base(StaticObject, TeamItem):
         else:
             d = filter_props(self, properties)
         return d
+
+from net_out import NetOut

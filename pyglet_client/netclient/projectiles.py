@@ -24,7 +24,7 @@ projectile_dat = {
 
 class Projectile(GameObject):
 
-    def __init__(self, state=None, id=None, type=None): #more args
+    def __init__(self, state=None, id=None, type=None, owner=None): #more args
         GameObject.__init__(self, id)
         if None in (state, id, type,):
             print 'Projectile __init__ missing args'
@@ -42,6 +42,7 @@ class Projectile(GameObject):
         self.state = map(float, state)
 
         x, y, z, vx, vy, vz = state
+        self.owner = owner
 
         self.type = type
         self.speed = p['speed']

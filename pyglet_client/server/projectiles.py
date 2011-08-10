@@ -59,10 +59,11 @@ class ProjectileList(GenericObjectList):
 Projectile class
 '''
 from math import sin, cos, pi
-from game_objects import GameObject
+#from game_objects import GameObject
+from utils import filter_props
 #from cube_dat import CubeGlobal
 
-class Projectile(GameObject):
+class Projectile:
 
     def __init__(self, state=None, type=None, owner=None): #more args
         if None in (state, type,):
@@ -151,14 +152,15 @@ class Projectile(GameObject):
         GameStateGlobal.projectileList.destroy(self)
 
     def json(self, properties=None): # json encodable string representation
-        d = GameObject.json(self)
+        d = {
+            'id'    :   self.id,
+            'type'  :   self.type,
+        }
         if properties is None:
             d.update({
                 'state' : self.state,
-                'type'  : self.type,
-                #'owner' : self.owner,
+                'owner' : self.owner,
             })
         else:
-            for prop in properties:
-                d[prop] = getattr(self, prop)
+            d.update(filter_props(self, properties))
         return d
