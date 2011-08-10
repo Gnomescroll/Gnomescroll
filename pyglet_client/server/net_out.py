@@ -382,7 +382,7 @@ class SendMessage: #each connection has one of these
     @sendJSON('game_mode')
     def game_mode(self, send_teams=True):
         d = {
-            'mode'  :   GameStateGlobal.game_mode_name,
+            'game'  :   GameStateGlobal.game.json(),
         }
         if send_teams:
             d['teams_list'] = GameStateGlobal.teamList.json()

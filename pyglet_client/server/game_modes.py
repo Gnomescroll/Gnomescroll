@@ -103,17 +103,24 @@ class Game:
 
     def __init__(self):
         self.viewers = GameStateGlobal.teamList.create('NoTeam')
+        self.mode = 'game'
 
     def player_join_team(self, player, team=None):
         pass
 
     def remove_player(self, player):
         self.viewers.remove_player(player)
+
+    def json(self):
+        return {
+            'mode'  :    self.mode,
+        }
         
 class TeamGame(Game):
 
     def __init__(self, teams=2, team_kills=False, *args):
         Game.__init__(self)
+        self.mode = 'team_game'
         self.n_teams = teams
         self.teams = GameStateGlobal.teamList
         self.team_colors = ('red', 'blue', 'green', 'purple', 'orange', 'yellow')
@@ -138,11 +145,16 @@ class TeamGame(Game):
         for team in self.teams.values():
             team.remove_player(player)
 
+    def json(self):
+        d = Game.json(self)
+        d['team_kills'] = int(self.team_kills)
+        return d
 
 class CTF(TeamGame):
 
     def __init__(self, teams=2, team_kills=False):
         TeamGame.__init__(self, teams, team_kills)
+        self.mode = 'ctf'
         for team in self.teams.values():
             if team == self.viewers:
                 continue
@@ -153,12 +165,14 @@ class Deathmatch(Game):
 
     def __init__(self):
         Game.__init__(self)
+        self.mode = 'dm'
 
 
 class TeamDeathmatch(TeamGame):
 
     def __init__(self, teams=2, team_kills=False):
         TeamGame.__init__(self, teams, team_kills)
+        self.mode = 'tdm'
 
 names = {
     'ctf'   :   CTF,
