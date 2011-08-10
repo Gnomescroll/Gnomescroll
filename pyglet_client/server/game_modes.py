@@ -197,7 +197,6 @@ class CTF(TeamGame):
                 continue
             if team.flag_captures == self.victory_points:
                 print 'Team %s wins!' % (team,)
-                raise Exception
                 break
         #self.reset()
 
