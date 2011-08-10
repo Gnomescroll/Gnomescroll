@@ -30,6 +30,8 @@ class Weapon(EquippableObject):
         'HitscanLaserGun': 4,
     }
 
+    _hud_undef = '--'
+
     def __init__(self, id, owner=None, state=None):
         EquippableObject.__init__(self, id, state)
         self.owner = owner
@@ -54,13 +56,17 @@ class Weapon(EquippableObject):
                 return name
 
     def hud_display(self):
-        undef = '--'
+        undef = self._hud_undef
         ammo = getattr(self, 'ammo', undef)
         max_ammo = getattr(self, 'max_ammo', undef)
         clip = getattr(self, 'clip', undef)
         clip_size = getattr(self, 'clip_size', undef)
-        strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
-        return '%s/%s::%s/%s' % strfs
+        #strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
+        strfs = (clip, clip_size, ammo, max_ammo,)
+        return self.hud_display_format_string() % strfs
+
+    def hud_display_format_string(self):
+        return '%s/%s::%s/%s'
 
     def _update_info(self, **weapon):
         args = []
@@ -166,12 +172,10 @@ class BlockApplier(Weapon):
         #self.clip -= 1
         return 'set_block'
 
-# BAD DONT USE THIS
-    #def restock(self, amt):
-        #print 'WARNING BlockApplier.restock called, its bad'
-        #self.ammo = min(self.max_ammo, self.ammo + amt)
-        #self.ammo = max(0, self.ammo)
-        #return 'restock_blocks'
+    def hud_display(self):
+        fmt = self.hud_display_format_string()
+        strfs = (self.clip, self.clip_size, self._hud_undef, self._hud_undef,)
+        return fmt % strfs
 
     def update_info(self, **weapon):
         args = self._update_info(**weapon)
