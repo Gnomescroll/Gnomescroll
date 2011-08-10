@@ -1163,6 +1163,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             ttype = 'empty'
             loc = self.normalized_direction()
 
+        if ttype == 'agent' and ag.team == self.team and \
+            not GameStateGlobal.game.team_kills:
+            return
+
         # determine target w/ ray cast
         #target = ray_cast_from(agent)
         target = {

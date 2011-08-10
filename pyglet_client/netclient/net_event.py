@@ -693,10 +693,23 @@ class GameModeMessageHandler(DatastoreMessageInterface):
 
     def _game_mode(self, **msg):
         try:
-            mode = msg['mode']
+            game = msg['game']
         except KeyError:
-            print 'msg game_mode :: mode missing'
+            print 'msg game_mode :: game missing'
             return
+
+        try:
+            mode = game['mode']
+        except KeyError:
+            print 'msg game_mode :: game.mode missing'
+            return
+        tk = None
+        try:
+            tk = game['team_kills']
+            tk = bool(tk)
+        except KeyError:
+            pass
+            
         teams = None
         try:
             teams = int(msg['teams'])
@@ -710,9 +723,9 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             self._teams(**msg)
             
         if teams is None:
-            GameStateGlobal.start_game_mode(mode)
+            GameStateGlobal.start_game_mode(mode, team_kills=tk)
         else:
-            GameStateGlobal.start_game_mode(mode, teams=teams)
+            GameStateGlobal.start_game_mode(mode, team_kills=tk, teams=teams)
             
     def _teams(self, **msg):
         self._default_list(**msg)

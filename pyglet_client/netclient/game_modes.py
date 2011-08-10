@@ -128,10 +128,13 @@ class Game:
 
 class TeamGame(Game):
 
-    def __init__(self, teams=2, *args, **kwargs):
+    def __init__(self, teams=2, team_kills=False, *args, **kwargs):
         Game.__init__(self)
         self.n_teams = teams
         self.teams = GameStateGlobal.teamList
+        if team_kills is None:
+            print 'WARNING: TeamGame created without team_kills=None'
+        self.team_kills = bool(team_kills)
 
     def player_join_team(self, player, team):
         for t in self.teams.values():
@@ -159,7 +162,7 @@ class TeamGame(Game):
 class CTF(TeamGame):
 
     def __init__(self, *args, **kwargs):
-        TeamGame.__init__(self, teams=2)
+        TeamGame.__init__(self, *args, **kwargs)
         
 
 class Deathmatch:
