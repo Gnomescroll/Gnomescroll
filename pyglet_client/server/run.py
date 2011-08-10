@@ -194,7 +194,7 @@ class Main:
             if tick != 0:
                 GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
-            sleep(.001)
+            sleep(0.001)
 
 if __name__ == "__main__":
     print "starting server"
