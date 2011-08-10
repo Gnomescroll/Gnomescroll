@@ -12,7 +12,6 @@ def rand_spot(z=15):
 class Flag(DetachableObject, TeamItem):
 
     def __init__(self, id, radius, team, *args, **kwargs):
-        print "CREATE FLAG"
         DetachableObject.__init__(self, id, radius)
         TeamItem.__init__(self, team, own=False, other=True)
         self.auto_grab = True
@@ -46,7 +45,6 @@ class Flag(DetachableObject, TeamItem):
 class Base(StaticObject, TeamItem):
 
     def __init__(self, id, team, *args, **kwargs):
-        print 'CREATING BASE'
         StaticObject.__init__(self, id)
         TeamItem.__init__(self, team, False, False)
         self.spawned = False
@@ -58,7 +56,6 @@ class Base(StaticObject, TeamItem):
     def spawn(self):
         if not self.spawned:
             self.state[0:3] = rand_spot(z=2)
-            print 'SPAWNING BASE at %s' % (self.state,)
             self.spawned = True
 
     def json(self, properties=None):
