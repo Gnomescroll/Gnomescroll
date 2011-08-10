@@ -6,8 +6,7 @@ long start_time;
 long last_tick;
 long tick_n;
 
-struct timespec s_time;
-struct timespec s_last_tick;
+long delta;
 
 //long get_time() ;
 
@@ -28,9 +27,14 @@ long _get_time() {
     return get_time();
 }
 
+long _get_tick() {
+    return tick_n;
+}
+
 int _start(int frequency) {
-    printf("Physics timer started: one tick is %ld ms \n", frequency);
+    printf("Physics timer started: one tick is %i ms \n", frequency);
     tick_n = 0;
+    delta = 0;
     f = frequency;
     start_time = get_time();
     last_tick = start_time;
@@ -39,8 +43,11 @@ int _start(int frequency) {
 int _tick_check() {
     long cur_t = get_time();
 
-    printf("Time since last tick= %ld \n", cur_t - last_tick);
-    if( cur_t - last_tick >= f) {
+    //printf("Time since last tick= %ld \n", cur_t - last_tick);
+    delta += cur_t - last_tick;
+    printf("Delta= %ld \n", delta);
+    if( delta >= f) {
+        delta -= f;
         printf("Tick!\n");
         tick_n++;
         last_tick = cur_t;
