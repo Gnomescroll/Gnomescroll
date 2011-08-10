@@ -23,14 +23,14 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
             taken = DetachableObject.take(self, new_owner)
         self.vox.visibile = self.on_ground
         
-class Base(StaticObject, GameObjectRender, TeamItem):
+class Base(StaticObject, TeamItemRender, TeamItem):
 
     def __init__(self, id, radius=None, team=None, state=None, **kwargs):
         if team is not None:
             team = GameStateGlobal.teamList[team]
         StaticObject.__init__(self, id, state, **kwargs)
         TeamItem.__init__(self, team, False, False, **kwargs)
-        GameObjectRender.__init__(self, self, 'auto.vox')
+        TeamItemRender.__init__(self, self, 'base.vox')
         self.type = 2
         self.radius = 1
 

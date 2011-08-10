@@ -6,8 +6,8 @@ from game_objects import DetachableObject, StaticObject, filter_props, TeamItem
 
 from random import randint as rand
 
-def rand_spot():
-    return (rand(5, 15), rand(5, 15), 15)
+def rand_spot(z=15):
+    return (rand(5, 15), rand(5, 15), z)
 
 class Flag(DetachableObject, TeamItem):
 
@@ -51,10 +51,11 @@ class Base(StaticObject, TeamItem):
         self.team = team
         self.type = 2
         self._set_name()
+        self.spawn()
         
     def spawn(self):
         if not self.spawned:
-            self.state[0:3] = rand_spot()
+            self.state[0:3] = rand_spot(z=2)
             self.spawned = True
 
     def json(self, properties=None):
