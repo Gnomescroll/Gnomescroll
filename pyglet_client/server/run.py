@@ -11,6 +11,7 @@ import pyximport #; pyximport.install()
 #from pudb import set_trace; set_trace()
 
 import c_lib #physics timer
+#c_lib.test()
 
 from net_server import NetServer
 from net_out import NetOut
@@ -189,14 +190,13 @@ class Main:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
             tc = c_lib.tick_check() #get number of ticks server is behind
-            #print "tick= %i" %(tick)
+            #print "tc= %i" %(tc)
             if tc > 1:
-                print "Server is %i ticks behind" % (tick)
+                print "Server is %i ticks behind" % (tc)
             if tc > 0:
-                print "tick"
                 GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
-            #sleep(0.001)
+            sleep(0.001)
 
 if __name__ == "__main__":
     print "starting server"

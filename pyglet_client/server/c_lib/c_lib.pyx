@@ -5,6 +5,10 @@ cdef extern from "./physics_timer.h":
     long _get_time()
     long _get_tick()
 
+def test():
+    print "Test works"
+    assert False
+
 def start_physics_timer(int frequency):
     _start(frequency)
 
