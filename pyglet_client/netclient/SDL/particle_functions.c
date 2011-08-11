@@ -333,3 +333,110 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     glDepthMask(GL_TRUE);
     return 0;
 }
+
+struct Vec ta[1024]; //temp array
+
+int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1, float z1) {
+    float width = 1.0;
+
+    float dx,dy,dz;
+    dx = (x1-x0)/density;
+    dy = (y1-y0)/density;
+    dz = (z1-z0)/density;
+    //sprite
+    int id =16;
+    tx_min = (float)(id%16)* (1.0/16.0);
+    tx_max = tx_min + (1.0/16.0);
+    ty_min = (float)(id/16)* (1.0/16.0);
+    ty_max = ty_min + (1.0/16.0);
+
+    int i;
+    float bx,by,bz;
+    //struct Vec* vl, vr;
+    struct Vec pos = init_Vec(c->x, c->y, c->z); //camera position
+    struct Vec up = init_Vec(x1-x0, y1-y0, z1-z0); //up position
+    normalize(&up);
+    struct Vec po; //camera to point vector
+
+    struct Vec left;
+    //struct Vec up2;
+    struct Vec last;
+
+    bx = i*dx + x0;
+    by = i*dy + y0;
+    bz = i*dz + z0;
+
+    po.x =  pos.x - bx;
+    po.y =  pos.y - by;
+    po.z =  pos.z - bz;
+    normalize(&po);
+
+    left = cross(po, up);
+
+    last.x =
+    last.y =
+    last.z =
+
+    for(i=0; i<=density; i++( {
+        bx = i*dx + x0;
+        by = i*dy + y0;
+        bz = i*dz + z0;
+
+        po.x =  pos.x - bx;
+        po.y =  pos.y - by;
+        po.z =  pos.z - bz;
+        normalize(&po);
+
+        left = cross(po, up);
+        //up2 = cross(left, up);
+
+        bx - width*left.x
+        by - width*left.y
+        bz - width*left.z
+
+        bx + width*left.x
+        by + width*left.y
+        bz + width*left.z
+
+        ta[2*i+0] = init_Vec(bx - width*left.x, by - width*left.y, bz - width*left.z);
+        ta[2*i+1] = init_Vec(bx + width*left.x, by + width*left.y, bz + width*left.z);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc (GL_ONE, GL_ONE);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
+    int bl, tl, tr, br;
+
+    glBegin( GL_QUADS );
+    for(i=0; i < density; i++) {
+        bl = 2*i+0;
+        tl = 2*(i+1)+0;
+        tr = 2*(i+1)+1;
+        br = 2*i+1;
+
+        glTexCoord2f(tx_min,ty_max );
+        glVertex3f(ta[bl].x,ta[bl].y,ta[bl].z);  // Bottom left
+        glTexCoord2f(tx_min,ty_min );
+        glVertex3f(ta[tl].x,ta[tl].y,ta[tl].z);  // Top left
+        glTexCoord2f(tx_max,ty_min);
+        glVertex3f(ta[tr].x,ta[tr].y,ta[tr].z);  // Top right
+        glTexCoord2f(tx_max,ty_max );
+        glVertex3f(ta[br].x,ta[br].y,ta[br].z);  // Bottom right
+        }
+    }
+
+    glEnd();
+
+    glDepthMask(GL_TRUE);
+    glDisable(GL_TEXTURE_2D);
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+}

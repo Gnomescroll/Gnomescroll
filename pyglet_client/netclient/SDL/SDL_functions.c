@@ -31,8 +31,8 @@ int _set_resolution(int xres, int yres, int fullscreen) {
 }
 
 int _init_video() {
-	int nFlags;
-	int value;
+    int nFlags;
+    int value;
     SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
     SDL_WM_SetCaption( "SDL + OpenGL", NULL );
@@ -64,6 +64,15 @@ int _init_video() {
 
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
+
+    /// vsync
+    //SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+    //may only work in full screen mode
+    //deprecated
+
+    /// anti-aliasing
+    //SDL_GL_MULTISAMPLEBUFFERS
+    //SDL_GL_MULTISAMPLESAMPLES
 
     // Create our rendering surface
     ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );

@@ -6,6 +6,9 @@ sprites = [
 ('star4.png', 3),
 ('star5.png', 4),
 ('star6.png', 5),
+
+#laser effects
+('laser1.png', 16),
 ]
 
 def _offset(id):
