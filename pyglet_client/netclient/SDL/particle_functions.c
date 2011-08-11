@@ -406,8 +406,8 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc (GL_ONE, GL_ONE);
-    //glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    //glBlendFunc (GL_ONE, GL_ONE);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     int bl, tl, tr, br;
 
