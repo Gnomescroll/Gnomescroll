@@ -12,7 +12,7 @@ sprites = [
 ]
 
 def _offset(id):
-    x = id % 15
+    x = id % 16
     y = (id - x) / 16
     return (x,y)
 
