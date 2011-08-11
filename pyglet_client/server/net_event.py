@@ -88,6 +88,8 @@ class MessageHandler:
             self.change_weapon(connection.id, **msg)
         elif cmd == 'drop_weapon':
             self.drop_weapon(connection.id, **msg)
+        elif cmd == 'throw_grenade':
+            self.throw_grenade(connection.id, **msg)
 
         elif cmd == 'pickup_item':
             self.pickup_item(connection.id, **msg)
@@ -186,6 +188,47 @@ class MessageHandler:
             print 'agent picking up %s' % (item,)
             agent.pickup_item(item, slot)
         #agent.pickup_item(item, slot)
+
+    def throw_grenade(self, client_id, **msg):
+        try:
+            player = GameStateGlobal.playerList.client(client_id)
+        except KeyError:
+            print 'msg throw_grenade :: Could not find player for client'
+            return
+        try:
+            agent_id = int(msg.get('aid', None))
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.team.is_viewers():
+                print 'ignoring agent, its a viewer'
+                print msg['cmd']
+                return
+        except TypeError:
+            print 'msg throw_grenade :: aid missing'
+            return
+        except ValueError:
+            print 'msg throw_grenade :: aid invalid'
+            return
+        except KeyError:
+            print 'msg throw_grenade :: agent %s unknown' % (agent_id,)
+            return
+
+        if not player.owns(agent):
+            print 'msg throw_grenade :; player %s does not own agent %s' % (player.id, agent.id,)
+            return
+
+        try:
+            vector = msg['vector']
+            assert len(vector) == 3
+        except KeyError:
+            print 'msg throw_grenade :: vector missing'
+            return
+        except AssertionError:
+            print 'msg throw_grenade :: vector of wrong size'
+            return
+
+        weapon = agent.active_weapon()
+        if weapon.fire_command == 'throw_grenade' and weapon.fire():
+            agent.throw_grenade(vector)
 
     def drop_item(self, client_id, **msg):
         try:

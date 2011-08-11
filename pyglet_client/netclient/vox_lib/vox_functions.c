@@ -236,7 +236,7 @@ int _draw(struct VoxelList* vo) {
     for(xi = -vo->xdim/2; xi < vo->xdim/2;xi++ ) {
         for(yi = -vo->ydim/2; yi < vo->ydim/2; yi++ ) {
             for(zi = -vo->zdim/2; zi < vo->zdim/2; zi++) {
-                //aprintf("t= %i %i %i\n", xi,yi,zi);
+                //printf("t= %i %i %i\n", xi,yi,zi);
                 voi = get(vo, xi+vo->xdim/2, yi+vo->ydim/2, zi+vo->zdim/2);
                 draw_vol(vo, voi, xi,yi,zi);
 

@@ -655,7 +655,6 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             err_msg = 'msg hitscan :: wtype missing'
 
         # look up projectile type
-        ptype = weapon_dat[weapon_type]['projectile_type']
         firing_weapon = agent.weapons.has(weapon_type)
 
         # look up spatial coordinates of target
@@ -685,7 +684,7 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             anim()
         # look up agent origin
         # animate
-        #print 'animating projectile_type %d to wherever target %s %s is' % (ptype, type, loc,)
+        #print 'animating a projectile to wherever target %s %s is' % (type, loc,)
 
 
 class GameModeMessageHandler(DatastoreMessageInterface):
@@ -783,6 +782,5 @@ from map_controller import MapControllerGlobal
 from input import InputGlobal
 
 import cube_lib.terrain_map as terrainMap
-from weapons import weapon_dat
 
 import animations

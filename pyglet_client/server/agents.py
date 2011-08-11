@@ -318,9 +318,14 @@ class AgentAction:
     def fire_projectile(self):
         print 'Agent.fire_projectile'
         state = self.state_vector()
-        projectile = GameStateGlobal.projectileList.create(state=state, type=1, owner=self.owner)
+        projectile = GameStateGlobal.projectileList.create('Laser', state, owner=self.owner)
         NetOut.event.projectile_create(projectile)
 
+    def throw_grenade(self, direction):
+        print 'Agent.throw_grenade'
+        state = self.pos() + direction
+        grenade = GameStateGlobal.projectileList.create('Grenade', state, owner=self.owner)
+        NetOut.event.projectile_create(grenade)
 
 # represents an agent under control of a player
 class Agent(AgentPhysics, AgentAction):
@@ -384,6 +389,7 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('Pick', owner=self),
             wl.create('BlockApplier', owner=self),
             wl.create('HitscanLaserGun', owner=self),
+            wl.create('GrenadePouch', owner=self),
         ]
         self._active_weapon = 0
         self.inventory = []

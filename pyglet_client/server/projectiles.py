@@ -10,7 +10,13 @@ from cube_lib.terrain_map import collisionDetection
 
 projectile_dat = {
 
-    1 : {
+    0   :   {   # generic projectile
+        'speed' :   0,
+        'damage':   0,
+        'ttl_max':  0,
+    },
+
+    1 : {   # laser
         'speed' : 100,
         'damage' : 20,
         'ttl_max' : 400, #time to live in ticks
@@ -22,10 +28,11 @@ projectile_dat = {
     #    'force' : 150,
     },
 
-    2 : {
-        'speed' : 100,
-        'damage' : 20,
-        'ttl_max' : 400
+    2 : {   #   grenade
+        'speed' : 50,
+        'damage' : 50,
+        'ttl_max' : 300,
+        'suicidal': True
     },
 
 }
@@ -34,25 +41,19 @@ projectile_dat = {
 '''
 Projectile Controller
 '''
-from object_lists import GenericObjectList
+from object_lists import GenericMultiObjectList
 from game_state import GameStateGlobal
 
-class ProjectileList(GenericObjectList):
+class ProjectileList(GenericMultiObjectList):
 
     def __init__(self):
-        from projectiles import Projectile
-        GenericObjectList.__init__(self)
+        GenericMultiObjectList.__init__(self)
+        self._allow_klasses([\
+            Laser,
+            Grenade,
+        ])
         self._metaname = 'ProjectileList'
         self._itemname = 'Projectile'
-        self._object_type = Projectile
-
-    def create(self, *args, **projectile):
-        projectile = self._add(*args, **projectile)
-        return projectile
-
-    def destroy(self, projectile):
-        self._remove(projectile)
-        return projectile
 
 
 '''
@@ -65,29 +66,30 @@ from utils import filter_props
 
 class Projectile:
 
-    def __init__(self, state=None, type=None, owner=None): #more args
-        if None in (state, type,):
-            print 'Projectile __init__ missing args'
-            raise TypeError
+    projectile_types = {
+        'Projectile'    :   0,
+        'Laser'         :   1,
+        'Grenade'       :   2,
+    }
 
-        global projectile_dat
-        assert projectile_dat.has_key(type)
-        p = projectile_dat[type]
-        #load projectile settings
-
+    def __init__(self, id, state, owner=None):
+        self.id = id
         self.state = map(float, state)
-        x, y, z, vx, vy, vz = state
 
-        self.id = GameStateGlobal.new_projectile_id()
-        self.type = type
+        self._set_type()
+        p = projectile_dat[self.type]
+
         self.speed = p['speed']
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
-        self.penetrates = p['penetrates']
-        self.suicidal = p['suicidal']
+        self.penetrates = p.get('penetrates', False)
+        self.suicidal = p.get('suicidal', False)
 
         self.owner = owner
+
+    def _set_type(self):
+        self.type = self.projectile_types[self.__class__.__name__]
 
     def update(self, **args):
         try:
@@ -164,3 +166,15 @@ class Projectile:
         else:
             d.update(filter_props(self, properties))
         return d
+
+
+class Laser(Projectile):
+
+    def __init__(self, id, state, owner=None):
+        Projectile.__init__(self, id, state, owner)
+
+
+class Grenade(Projectile):
+
+    def __init__(self, id, state, owner=None):
+        Projectile.__init__(self, id, state, owner)

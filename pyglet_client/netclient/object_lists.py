@@ -222,22 +222,6 @@ class PlayerList(GenericObjectList):
         self.names[player.name] = player.cid
 
 
-class ProjectileList(GenericObjectList):
-
-    def __init__(self):
-        from projectiles import Projectile
-        GenericObjectList.__init__(self)
-        self._metaname = 'ProjectileList'
-        self._itemname = 'Projectile'
-        self._object_type = Projectile
-
-    def create(self, *args, **projectile):
-        projectile = self._add(*args, **projectile)
-        return projectile
-
-    def destroy(self, projectile):
-        self._remove(projectile)
-        return projectile
 
 
 # for tracking multiple objects sharing the same unique identifier counts
@@ -356,33 +340,35 @@ class GenericMultiObjectList(GenericObjectList):
 class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
-        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun
+        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun, GrenadePouch
         GenericMultiObjectList.__init__(self)
         self._allow_klasses([ \
             LaserGun,
             Pick,
             BlockApplier,
             HitscanLaserGun,
+            GrenadePouch,
         ])
         self.name_from_type = Weapon.name_from_type
-
-    #def create(self, klass_name=None, *args, **kwargs):
-        #if klass_name is None:
-            #if 'name' in kwargs:
-                #klass_name = kwargs['name']
-            #elif 'type' in kwargs:
-                #klass_name = self.name_from_type(kwargs['type'])
-        #else:
-            #klass_name = self.name_from_type(klass_name)
-
-        #print klass_name, args, kwargs
-        #return self._add(klass_name, *args, **kwargs)
-
-    def destroy(self, obj):
-        return self._remove(obj)
+        self._metaname = 'WeaponList'
+        self._itemname = 'Weapon'
 
 from weapons import Weapon
 
+class ProjectileList(GenericMultiObjectList):
+
+    def __init__(self):
+        from projectiles import Laser, Grenade
+        GenericMultiObjectList.__init__(self)
+        self._allow_klasses([\
+            Laser,
+            Grenade,
+        ])
+        self._metaname = 'ProjectileList'
+        self._itemname = 'Projectile'
+        self.name_from_type = Projectile.name_from_type
+
+from projectiles import Projectile
 
 class ItemList(GenericMultiObjectList):
 
@@ -394,21 +380,7 @@ class ItemList(GenericMultiObjectList):
             Base,
         ])
         self.name_from_type = GameObject.name_from_type
-        self._metaname = 'TeamList'
-        self._itemname = 'Team'
-
-    def destroy(self, obj):
-        return self._remove(self, obj)
-
-    #def create(self, klass_name=None, *args, **kwargs):
-        #if klass_name is None:
-            #if 'name' in kwargs:
-                #klass_name = kwargs['name']
-            #elif 'type' in kwargs:
-                #klass_name = GameObject.name_from_type(kwargs['type'])
-        #else:
-            #klass_name = GameObject.name_from_type(klass_name)
-            
-        #return self._add(klass_name, *args, **kwargs)
+        self._metaname = 'ItemList'
+        self._itemname = 'Item'
 
 from game_objects import GameObject

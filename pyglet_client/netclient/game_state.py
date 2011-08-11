@@ -15,6 +15,8 @@ class GameStateGlobal:
     player = None
     agent = None
 
+    fps = 30.
+
     def __init__(self):
         pass
 

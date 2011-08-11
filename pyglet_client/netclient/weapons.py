@@ -2,24 +2,6 @@ from game_objects import GameObject
 from game_objects import EquippableObject
 import animations
 
-weapon_dat = {
-    0:  {
-        'projectile_type'   :   0
-    },
-    1:  {
-        'projectile_type'   :   1
-    },
-    2:  {
-        'projectile_type'   :   0
-    },
-    3:  {
-        'projectile_type'   :   0
-    },
-    4:  {
-        'projectile_type'   :   1
-    },
-}
-
 class Weapon(EquippableObject):
 
     _weapons = {
@@ -28,6 +10,7 @@ class Weapon(EquippableObject):
         'Pick'      :   2,
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
+        'GrenadePouch'  :   5,
     }
 
     _hud_undef = '--'
@@ -37,7 +20,6 @@ class Weapon(EquippableObject):
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
-        self.ptype = weapon_dat[self.type]['projectile_type']  # projectile type, implement fully later
         self._animation = animations.Animation
 
     def fire(self):
@@ -199,5 +181,37 @@ class Pick(Weapon):
 
     def reload(self):
         return False
+
+
+class GrenadePouch(Weapon):
+
+    def __init__(self, id, owner=None, state=None, **kwargs):
+        Weapon.__init__(self, id, owner, state)
+        self.max_ammo = 3
+        self.ammo = 0
+        self.clip_size = 3
+        self.clip = self.clip_size
+
+    def fire(self):
+        if self.clip == 0:
+            return
+        self.clip -= 1
+        return 'throw_grenade'
+
+    def hud_display(self):
+        fmt = self.hud_display_format_string()
+        strfs = (self.clip, self.clip_size, self._hud_undef, self._hud_undef,)
+        return fmt % strfs
+
+    def reload(self):
+        return False
+
+    def update_info(self, **weapon):
+        args = self._update_info(**weapon)
+        if 'clip' in weapon:
+            self.clip = weapon['clip']
+        if 'clip_size' in weapon:
+            self.clip_size = weapon['clip_size']
+        GameStateGlobal.weaponList.update(*args)
 
 from game_state import GameStateGlobal

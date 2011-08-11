@@ -142,5 +142,7 @@ class ItemList(GenericMultiObjectList):
             Flag,
             Base,
         ])
+        self._metaname = 'ItemList'
+        self._itemname = 'Item'
 
 from net_out import NetOut

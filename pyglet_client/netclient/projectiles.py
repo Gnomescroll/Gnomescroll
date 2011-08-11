@@ -1,54 +1,67 @@
-from game_objects import GameObject
 from math import sin, cos, pi
 
 projectile_dat = {
 
-    1 : {
-        'speed' : 100,
+    0   :   {   # generic projectile
+        'speed' :   0,
+        'damage':   0,
+        'ttl_max':  0,
+    },
+
+    1 : {   # laser
+        'speed' : 110,
         'damage' : 20,
-        'ttl_max' : 400 #time to live in ticks
+        'ttl_max' : 400, #time to live in ticks
+        'penetrates': False,
+        'suicidal'  : False, # True for grenades
     #    'splash' : {
     #    'radius' : 3,
     #    'damage' : 15,
     #    'force' : 150,
     },
 
-    2 : {
-        'speed' : 100,
-        'damage' : 20,
-        'ttl_max' : 400
+    2 : {   #   grenade
+        'speed' : 30,
+        'damage' : 50,
+        'ttl_max' : 300,
+        'suicidal': True
     },
 
 }
 
 
-class Projectile(GameObject):
+class Projectile:
+    
+    projectile_types = {
+        'Projectile'    :   0,
+        'Laser'         :   1,
+        'Grenade'       :   2,
+    }
 
-    def __init__(self, state=None, id=None, type=None, owner=None): #more args
-        GameObject.__init__(self, id)
-        if None in (state, id, type,):
-            print 'Projectile __init__ missing args'
-            raise TypeError
+    @classmethod
+    def name_from_type(cls, type):
+        if not hasattr(cls, 'projectile_names'):
+            rev = [(b,a) for a,b in cls.projectile_types.items()]
+            cls.projectile_names = dict(rev)
+        return cls.projectile_names[type]
 
-        global projectile_dat
-        assert projectile_dat.has_key(type)
-        p = projectile_dat[type]
-        #load projectile settings
+    def __init__(self, id, state=None, owner=None, *args, **kwargs): #more args
+        self.id = id
+        self._set_type()
+        p = projectile_dat[self.type]
 
-
-        #vx = cos( x_angle * pi) * cos( y_angle * pi)
-        #vy = sin( x_angle * pi) * cos( y_angle * pi)
-        #vz = sin( y_angle)
         self.state = map(float, state)
-
-        x, y, z, vx, vy, vz = state
         self.owner = owner
 
-        self.type = type
-        self.speed = p['speed']
+        self.speed = p['speed'] / GameStateGlobal.fps
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
+        self.penetrates = p.get('penetrates', False)
+        self.suicidal = p.get('suicidal', False)
+
+    def _set_type(self):
+        self.type = self.projectile_types[self.__class__.__name__]
 
     def update(self, **args):
         try:
@@ -62,34 +75,25 @@ class Projectile(GameObject):
             print 'projectile update :: state is not iterable'
         except AssertionError:
             print 'projectile update :: state is wrong length'
+        if 'owner' in args:
+            self.owner = args['owner']
 
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
 
-    #run this once per frame for each projectile
-    def tick(self):
-        [x,y,z,vx,vy,vz] = self.state
-
-        fps = 30. # frame per second
-        speed = self.speed / fps
-
+    def check_life(self):
         self.ttl += 1
         if self.ttl > self.ttl_max:
             self.delete()
-            return
+            return False
+        return True
 
-        x += vx / fps
-        y += vy / fps
-        z += vz / fps
+    def pos(self):
+        return self.state[0:3]
 
-        #if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
-        if collisionDetection(int(x), int(y), int(z)):
-            self.delete()
-
-        self.state = [x,y,z,vx,vy,vz]
-
-    def delete(self):
-        GameStateGlobal.projectileList.destroy(self)
+    #run this once per frame for each projectile
+    def tick(self):
+        return
 
 ##deprecate
 
@@ -99,7 +103,6 @@ if settings.pyglet:
     import pyglet
     from pyglet.gl import *
 else:
-    pass
     import SDL.gl
 
 def draw_projectiles():
@@ -131,6 +134,58 @@ def draw_projectiles():
         r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
         #SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
         draw_utils.draw_line((x0,y0,z0), (x1,y1,z1), (r,g,b))
+
+class Laser(Projectile):
+
+    def __init__(self, id, state=None, owner=None, *args, **kwargs):
+        Projectile.__init__(self, id, state=state, owner=owner, *args, **kwargs)
+
+    def tick(self):
+        if not self.check_life():
+            return
+
+        [x,y,z,vx,vy,vz] = self.state
+
+        x += vx * self.speed
+        y += vy * self.speed
+        z += vz * self.speed
+
+        #if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
+        if collisionDetection(int(x), int(y), int(z)):
+            self.delete()
+
+        self.state = [x,y,z,vx,vy,vz]
+
+    def draw(self):
+        x,y,z = self.pos()
+        SDL.gl.draw_particle(5, 0.5, x,y,z)
+
+class Grenade(Projectile):
+
+    def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
+        Projectile.__init__(self, id, state=state, owner=owner, *args, **kwargs)
+        self.ttl = ttl
+
+    def tick(self):
+        if not self.check_life():
+            return
+
+        x,y,z, vx, vy, vz = self.state
+
+        # move grenade along trajectory here
+        x += vx * self.speed
+        y += vy * self.speed
+        z += vz * self.speed
+
+        if collisionDetection(*map(int, [x,y,z])):
+            #bounce
+            pass
+
+        self.state = [x,y,z,vx,vy,vz]
+
+    def draw(self):
+        x,y,z = self.pos()
+        SDL.gl.draw_particle(5, 0.5, x,y,z)
 
 from game_state import GameStateGlobal
 from cube_lib.terrain_map import collisionDetection

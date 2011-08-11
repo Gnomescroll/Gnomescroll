@@ -13,6 +13,7 @@ class WeaponList(GenericMultiObjectList):
             Pick,
             BlockApplier,
             HitscanLaserGun,
+            GrenadePouch,
         ])
         
 class Weapon(EquippableObject):
@@ -23,6 +24,7 @@ class Weapon(EquippableObject):
         'Pick'      :   2,
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
+        'GrenadePouch'  :   5,
     }
 
     def __init__(self, id, owner=None):
@@ -43,7 +45,10 @@ class Weapon(EquippableObject):
         self.fire_command = ''
         
     def fire(self):
-        return False
+        if self.clip == 0:
+            return False
+        self.clip -= 1
+        return self.fire_command
 
     def reload(self):
         return False
@@ -93,12 +98,6 @@ class LaserGun(Weapon):
 
         self.fire_command = 'fire_projectile'
 
-    def fire(self):
-        if self.clip == 0:
-            return False
-        self.clip -= 1
-        return self.fire_command
-
     def reload(self):
         if self.ammo == 0:
             return False
@@ -143,12 +142,6 @@ class BlockApplier(Weapon):
         self.clip = self.clip_size
         self.fire_command = 'set_block'
 
-    def fire(self):
-        if self.clip == 0:
-            return False
-        self.clip -= 1
-        return self.fire_command
-
     def json(self, properties=None):
         d = Weapon.json(self, properties)
         if properties is None:
@@ -171,5 +164,35 @@ class Pick(Weapon):
 
     def reload(self):
         return False
+
+
+class GrenadePouch(Weapon):
+
+    def __init__(self, id, owner=None, **kwargs):
+        Weapon.__init__(self, id, owner, **kwargs)
+        self.max_ammo = 3
+        self.ammo = 0
+        self.clip_size = 3
+        self.clip = self.clip_size
+        self.fire_command = 'throw_grenade'
+
+    def hud_display(self):
+        fmt = self.hud_display_format_string()
+        strfs = (self.clip, self.clip_size, self._hud_undef, self._hud_undef,)
+        return fmt % strfs
+
+    def reload(self):
+        return False
+
+    def json(self, properties=None):
+        d = Weapon.json(self, properties)
+        if properties is None:
+            d.update({
+                'clip'  :   self.clip,
+            })
+        else:
+            d.update(filter_props(self, properties))
+        return d
+
 
 from net_out import NetOut
