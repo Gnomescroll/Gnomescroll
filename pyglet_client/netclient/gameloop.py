@@ -266,8 +266,9 @@ class App(object):
             P.event("Draw World_1 - laser")
             if True:
                 pass
-                density = 1
-                SDL.gl.planar_laser2(density, 0,0,0, 0,0,6)
+                density = 2
+                width = 0.5
+                SDL.gl.planar_laser2(density, width, 0,0,1, 0,0,6)
                 #SDL.gl.planar_laser(2,2,1, 2,2,6)
                 #SDL.gl.planar_laser(4,4,1, 4,4,6)
 

@@ -336,8 +336,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 
 struct Vec ta[1024]; //temp array
 
-int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1, float z1) {
-    float width = 1.0;
+int _planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1) {
 
     float dx,dy,dz;
     dx = (x1-x0)/density;
