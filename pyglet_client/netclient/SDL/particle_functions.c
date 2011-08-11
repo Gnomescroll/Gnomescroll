@@ -345,6 +345,7 @@ int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1
     dz = (z1-z0)/density;
     //sprite
     int id =16;
+    float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(id%16)* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
     ty_min = (float)(id/16)* (1.0/16.0);
@@ -373,11 +374,7 @@ int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1
 
     left = cross(po, up);
 
-    last.x =
-    last.y =
-    last.z =
-
-    for(i=0; i<=density; i++( {
+    for(i=0; i<=density; i++) {
         bx = i*dx + x0;
         by = i*dy + y0;
         bz = i*dz + z0;
@@ -390,6 +387,7 @@ int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1
         left = cross(po, up);
         //up2 = cross(left, up);
 
+/*
         bx - width*left.x
         by - width*left.y
         bz - width*left.z
@@ -397,7 +395,7 @@ int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1
         bx + width*left.x
         by + width*left.y
         bz + width*left.z
-
+*/
         ta[2*i+0] = init_Vec(bx - width*left.x, by - width*left.y, bz - width*left.z);
         ta[2*i+1] = init_Vec(bx + width*left.x, by + width*left.y, bz + width*left.z);
     }
@@ -429,7 +427,7 @@ int _planar_laser2(int density, float x0, float y0, float z0, float x1, float y1
         glVertex3f(ta[tr].x,ta[tr].y,ta[tr].z);  // Top right
         glTexCoord2f(tx_max,ty_max );
         glVertex3f(ta[br].x,ta[br].y,ta[br].z);  // Bottom right
-        }
+
     }
 
     glEnd();
