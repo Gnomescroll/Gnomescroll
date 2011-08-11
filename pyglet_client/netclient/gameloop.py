@@ -237,8 +237,8 @@ class App(object):
             self.animations.draw()
 
             #vox_lib.draw()
-            v.move(0,0,3, theta)
-            v.draw()
+            #v.move(0,0,3, theta)
+            #v.draw()
             #v2.move(10,0,10,theta)
             #v2.draw()
             #v3.draw()
