@@ -208,4 +208,21 @@ def draw_ray(pt, v, l, color):
     pt1 = vector_lib.move_point(pt, v, l)
     draw_line(pt, pt1, color)
 
+def draw_ray(pt, v, l, color):
+    pt1 = vector_lib.move_point(pt, v, l)
+    draw_line(pt, pt1, color)
+
+def draw_laser_ray(v1, v2, l, radius, fade, png_id):
+    x1,y1,z1 = v1
+    x2,y2,z2 = v2
+    x2 *= l
+    y2 *= l
+    z2 *= l
+    density = int(l)
+    print "density= %i" % (density)
+    SDL.gl.planar_laser2(density, radius, x1,y1,z1, x2,y2,z2)
+    #draw_utils.draw_laser_ray(self.loc, self.vector, self.length, self.color, radius, fade)
+    #_planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1);
+
+
 import vector_lib

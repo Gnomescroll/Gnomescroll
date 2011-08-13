@@ -58,7 +58,9 @@ class HitscanLaserGunAnimation(Animation):
     def __init__(self, origin, vector, target=None):
         self.length = 15
         self.speed = 2 # per tick!
-        self.color = (30, 255, 100)
+        #self.color = (30, 255, 100)
+        self.png_id = 18
+        self.radius = 0.5
 
         self.origin = origin
         self.loc = self.origin
@@ -75,7 +77,7 @@ class HitscanLaserGunAnimation(Animation):
 
     def next(self):
         # move self.loc in direction of vector  by magnitude speed
-        self.loc = vector_lib.move_point(self.loc, self.vector, self.speed)
+        #self.loc = vector_lib.move_point(self.loc, self.vector, self.speed)
         #self.end = vector_lib.move_point(self.loc, self.vector, self.length)
         self.life -= 1
         self.length = min(self.life, 1000)
@@ -86,6 +88,8 @@ class HitscanLaserGunAnimation(Animation):
 
     def draw(self):
         # draw a line of some length & color
-        draw_utils.draw_ray(self.loc, self.vector, self.length, self.color)
+        fade = 1
+        draw_utils.draw_laser_ray(self.loc, self.vector, self.length, self.radius, fade, self.png_id)
+        #draw_utils.draw_ray(self.loc, self.vector, self.length, self.color)
         #draw_utils.draw_line(self.loc, self.end, self.color)
 

@@ -382,7 +382,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     return 0;
 }
 
-struct Vec ta[1024]; //temp array
+struct Vec ta[1024*2]; //temp array
 
 int _planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1) {
     if(density > 1023) { density = 1023; }
