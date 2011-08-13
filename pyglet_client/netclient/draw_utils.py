@@ -219,7 +219,7 @@ def draw_laser_ray(v1, v2, l, radius, fade, png_id):
     y2 *= l
     z2 *= l
     density = int(l)
-    print "density= %i" % (density)
+    #print "density= %i" % (density)
     SDL.gl.planar_laser2(density, radius, x1,y1,z1, x2,y2,z2)
     #draw_utils.draw_laser_ray(self.loc, self.vector, self.length, self.color, radius, fade)
     #_planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1);
