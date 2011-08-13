@@ -1,5 +1,14 @@
 from math import sin, cos, pi
 
+import default_settings as settings
+
+if settings.pyglet:
+    import pyglet
+    from pyglet.gl import *
+else:
+    import SDL.gl
+
+
 projectile_dat = {
 
     0   :   {   # generic projectile
@@ -81,13 +90,6 @@ class Projectile:
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
 
-    def check_life(self):
-        self.ttl += 1
-        if self.ttl > self.ttl_max:
-            self.delete()
-            return False
-        return True
-
     def pos(self):
         return self.state[0:3]
 
@@ -95,45 +97,40 @@ class Projectile:
     def tick(self):
         return
 
-##deprecate
+    def check_life(self):
+        self.ttl += 1
+        if self.ttl > self.ttl_max:
+            self.delete()
+            return False
+        return True
 
-import default_settings as settings
+    ''' This was copied from the server. The proximity check may be too much cpu. '''
+    def check_agent_collision(self):
+        x,y,z = self.pos()
+        agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
+        for agent in agent_list:
+            if agent.point_collision_test(x,y,z):
+                if not self.suicidal and agent.owner == self.owner: # bullet is hitting yourself, and bullet doesnt kill yourself
+                    continue
+                print "projectile collision"
+                return agent
+        return False
 
-if settings.pyglet:
-    import pyglet
-    from pyglet.gl import *
-else:
-    import SDL.gl
+    #def hit_agent(self, agent):
+        #agent.take_damage(self.damage, self.owner)
+        #if not self.penetrates:
+            #self.delete()
+            #return True
+        #return False
 
-def draw_projectiles():
-    #if settings.pyglet == False:
-    #    SDL_global = SDL.gl.SDL_global
+    def check_terrain_collision(self, delete=True):
+        if collisionDetection(*map(int, self.pos())):
+            print "collision with wall"
+            if delete:
+                self.delete()
+            return True
+        return False
 
-    v_num = 0
-    v_list = []
-    c_list = []
-
-    l= 1
-#    for p in GameStateGlobal.projectileList:
-#        print str(p)
-    for p in GameStateGlobal.projectileList.values():
-        x,y,z,vx,vy,vz = p.state
-        SDL.gl.draw_particle(5, 0.5, x,y,z)
-    return
-    for p in GameStateGlobal.projectileList.values():
-        x,y,z,vx,vy,vz = p.state
-
-        v_num += 2
-        v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
-        c_list += [0,0,255]*2
-
-
-    for i in range(0,v_num/2):
-        x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
-        x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
-        r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-        #SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
-        draw_utils.draw_line((x0,y0,z0), (x1,y1,z1), (r,g,b))
 
 class Laser(Projectile):
 
@@ -144,21 +141,20 @@ class Laser(Projectile):
         if not self.check_life():
             return
 
-        [x,y,z,vx,vy,vz] = self.state
+        x,y,z,vx,vy,vz = self.state
 
         x += vx * self.speed
         y += vy * self.speed
         z += vz * self.speed
 
-        #if CubeGlobal.collisionDetection.collision(int(x), int(y), int(z)):
-        if collisionDetection(int(x), int(y), int(z)):
-            self.delete()
-
         self.state = [x,y,z,vx,vy,vz]
+
+        self.check_terrain_collision() or self.check_agent_collision()
 
     def draw(self):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)
+        
 
 class Grenade(Projectile):
 
@@ -168,20 +164,31 @@ class Grenade(Projectile):
 
     def tick(self):
         if not self.check_life():
+            # explode
+            print 'boom'
             return
 
+        if self.check_terrain_collision(delete=False):
+            #bounce
+            self.state[3:] = 0,0,0
+            return
+
+
         x,y,z, vx, vy, vz = self.state
+        z_gravity = -.03
 
         # move grenade along trajectory here
         x += vx * self.speed
         y += vy * self.speed
-        z += vz * self.speed
-
-        if collisionDetection(*map(int, [x,y,z])):
-            #bounce
-            pass
+        z += (vz + (z_gravity * self.ttl)) * self.speed
 
         self.state = [x,y,z,vx,vy,vz]
+
+
+        if self.check_agent_collision():
+            #fall
+            self.state[5] = 0
+            return
 
     def draw(self):
         x,y,z = self.pos()
@@ -189,4 +196,4 @@ class Grenade(Projectile):
 
 from game_state import GameStateGlobal
 from cube_lib.terrain_map import collisionDetection
-import draw_utils
+#import draw_utils

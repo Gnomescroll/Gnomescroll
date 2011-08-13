@@ -82,8 +82,9 @@ class World():
             print "World.py: Need to render transparent blocks with SDL"
 
     def draw_projectiles(self):
-        projectiles.draw_projectiles()
-
+        for proj in GameStateGlobal.projectileList.values():
+            proj.draw()
+            
 #    def test_chunk(self):
 #        print "Start chunk generation"
 #        x_max = 64
