@@ -31,7 +31,7 @@ projectile_dat = {
 
 
 class Projectile:
-    
+
     projectile_types = {
         'Projectile'    :   0,
         'Laser'         :   1,
@@ -119,21 +119,7 @@ def draw_projectiles():
     for p in GameStateGlobal.projectileList.values():
         x,y,z,vx,vy,vz = p.state
         SDL.gl.draw_particle(5, 0.5, x,y,z)
-    return
-    for p in GameStateGlobal.projectileList.values():
-        x,y,z,vx,vy,vz = p.state
 
-        v_num += 2
-        v_list += [x,y,z, (x+vx)/l, (y+vy)/l, (z+vz)/l]
-        c_list += [0,0,255]*2
-
-
-    for i in range(0,v_num/2):
-        x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
-        x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
-        r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-        #SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
-        draw_utils.draw_line((x0,y0,z0), (x1,y1,z1), (r,g,b))
 
 class Laser(Projectile):
 
@@ -159,6 +145,7 @@ class Laser(Projectile):
     def draw(self):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)
+
 
 class Grenade(Projectile):
 

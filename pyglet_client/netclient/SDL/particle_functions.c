@@ -385,6 +385,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 struct Vec ta[1024]; //temp array
 
 int _planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1) {
+    if(density > 1023) { density = 1023; }
 
     float dx,dy,dz;
     dx = (x1-x0)/density;
@@ -392,7 +393,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     dz = (z1-z0)/density;
     //sprite
     //int id =255;
-    int id = 18;
+    int id = 19;
     int x,y;
     x = id %16;
     y = id /16;

@@ -11,6 +11,9 @@ sprites = [
 ('laser1.png', 16),
 ('laser2.png', 17),
 ('laser3.png', 18),
+('laser4.png', 19),
+('laser5.png', 20),
+
 #calibration
 ('test1.png', 255),
 ]
