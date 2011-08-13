@@ -9,6 +9,9 @@ sprites = [
 
 #laser effects
 ('laser1.png', 16),
+('laser2.png', 17),
+#calibration
+('test1.png', 255),
 ]
 
 def _offset(id):

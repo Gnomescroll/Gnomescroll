@@ -343,12 +343,18 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     dy = (y1-y0)/density;
     dz = (z1-z0)/density;
     //sprite
-    int id =16;
+    //int id =255;
+    int id = 16;
+    int x,y;
+    x = id %16;
+    y = id /16;
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(id%16)* (1.0/16.0);
+    float epi = 0.0625/8;//0.0625 / 16; //epilon border
+    tx_min = x* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(id/16)* (1.0/16.0);
+    ty_min = y* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
+    ty_min += epi; ty_max -= epi;
 
     int i;
     float bx,by,bz;
@@ -360,7 +366,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
 
     struct Vec left;
     //struct Vec up2;
-    struct Vec last;
+    //struct Vec last;
 
     bx = i*dx + x0;
     by = i*dy + y0;

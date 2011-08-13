@@ -28,10 +28,10 @@ extra_link_args=[SDL_LDFLAGS]
 libraries=['SDL']
 
 if SYSTEM == 'Windows':
-    libraries+=['GLee','opengl32','glu32']
+    libraries+=['GLee','opengl32','glu32', 'GLEW']
     include_dirs = ['/usr/include/SDL']
 else:
-    libraries+=['GL','GLU']
+    libraries+=['GL','GLU', 'GLEW']
     include_dirs = ['/usr/include/SDL']
 
 
