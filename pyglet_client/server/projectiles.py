@@ -79,7 +79,7 @@ class Projectile:
         self._set_type()
         p = projectile_dat[self.type]
 
-        self.speed = p['speed']
+        self.speed = p['speed'] / GameStateGlobal.fps
         self.damage = p['damage']
         self.ttl = 0
         self.ttl_max = p['ttl_max']
@@ -91,64 +91,44 @@ class Projectile:
     def _set_type(self):
         self.type = self.projectile_types[self.__class__.__name__]
 
-    def update(self, **args):
-        try:
-            state = args['state']
-            state = list(state)
-            assert len(state) == 6
-            self.state = state
-        except KeyError:
-            pass
-        except TypeError:
-            print 'projectile update :: state is not iterable'
-            pass
-        except AssertionError:
-            print 'projectile update :: state is wrong length'
-            return
+    def pos(self):
+        return self.state[0:3]
 
-    #run this once per frame for each projectile
     def tick(self):
-        x,y,z,vx,vy,vz = self.state
+        return
 
-        fps = 30. # frame per second
-        speed = self.speed / fps
-
+    def check_life(self):
         self.ttl += 1
         if self.ttl > self.ttl_max:
             self.delete()
-            return
+            return False
+        return True
 
-        x += vx / fps
-        y += vy / fps
-        z += vz / fps
-
-        if collisionDetection(int(x), int(y), int(z)):
-            print "collision with wall"
-            self.delete()
-            return
-
-        #slow way, will be bottle neck later
-#        for agent in GameStateGlobal.agentList.values():
-#            if agent.point_collision_test(x,y,z):
-#                print "projectile collision"
-#                agent.take_damage(self.damage)
-
-        #faster way; needs to choose a large radius and only update every n-frames
+    def check_agent_collision(self):
+        x,y,z = self.pos()
         agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
         for agent in agent_list:
             if agent.point_collision_test(x,y,z):
                 if not self.suicidal and agent.owner == self.owner: # bullet is hitting yourself, and bullet doesnt kill yourself
                     continue
                 print "projectile collision"
-                agent.take_damage(self.damage, self.owner)
-                if not self.penetrates:
-                    self.delete()
-                    return
-        #agent_hit = GameStateGlobal.agentList.at((x, y, z,))
-        #if agent_hit != False:
-        #    agent_hit.take_damage(self.damage)
+                return agent
+        return False
 
-        self.state = [x,y,z,vx,vy,vz]
+    def hit_agent(self, agent, delete=True):
+        agent.take_damage(self.damage, self.owner)
+        if not self.penetrates and delete:
+            self.delete()
+            return True
+        return False
+
+    def check_terrain_collision(self, delete=True):
+        if collisionDetection(*map(int, self.pos())):
+            print "collision with wall"
+            if delete:
+                self.delete()
+            return True
+        return False
 
     def delete(self):
         GameStateGlobal.projectileList.destroy(self)
@@ -173,8 +153,52 @@ class Laser(Projectile):
     def __init__(self, id, state, owner=None):
         Projectile.__init__(self, id, state, owner)
 
+    def tick(self):
+        if not self.check_life():
+            return
+
+        x,y,z,vx,vy,vz = self.state
+
+        x += vx * self.speed
+        y += vy * self.speed
+        z += vz * self.speed
+
+        self.state = [x,y,z,vx,vy,vz]
+
+        if not self.check_terrain_collision():
+            agent = self.check_agent_collision()
+            if agent:
+                self.hit_agent(agent)
+
 
 class Grenade(Projectile):
 
     def __init__(self, id, state, owner=None):
         Projectile.__init__(self, id, state, owner)
+
+    def tick(self):
+        if not self.check_life():
+            # explode
+            print 'boom'
+            return
+
+        x,y,z, vx, vy, vz = self.state
+        z_gravity = -.03
+
+        # move grenade along trajectory here
+        x += vx * self.speed
+        y += vy * self.speed
+        z += (vz + (z_gravity * self.ttl)) * self.speed
+
+        self.state = [x,y,z,vx,vy,vz]
+
+        if self.check_terrain_collision(delete=False):
+            #bounce
+            return
+
+        agent = self.check_agent_collision():
+        if agent:
+            #fall
+            self.state[5] = 0
+            return
+

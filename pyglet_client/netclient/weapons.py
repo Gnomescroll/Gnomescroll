@@ -187,9 +187,9 @@ class GrenadePouch(Weapon):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        self.max_ammo = 3
+        self.max_ammo = 100
         self.ammo = 0
-        self.clip_size = 3
+        self.clip_size = 100
         self.clip = self.clip_size
 
     def fire(self):
