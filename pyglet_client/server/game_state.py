@@ -19,6 +19,8 @@ class GameStateGlobal:
     player_id = 0
     projectile_id = 0
 
+    fps = 30.
+
     def __init__(self):
         GameStateGlobal.terrainMap = terrain_map
         GameStateGlobal.gameState = GameState()
