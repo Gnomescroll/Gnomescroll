@@ -1,3 +1,6 @@
+#define NO_SDL_GLEXT
+#include <GL/glew.h>
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -112,8 +115,15 @@ int _init_video() {
     glLoadIdentity();
     gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
 */
-    //end whaa
+
     atexit(_del_video);
+
+    glewInit();
+    if (glewIsSupported("GL_VERSION_2_0"))
+        printf("OpenGL 2.0 Supported \n");
+    else {
+        printf("OpenGL 2.0 not supported \n");
+    }
     return 0;
 
 }

@@ -9,7 +9,55 @@ struct Camera* c;
 
 float a[16];
 
+GLuint shader_program_1;
+
+int setShaders() {
+    char *vs,*gs,*fs;
+    GLuint v,g,f;
+
+    v = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    g = glCreateShaderObjectARB(GL_GEOMETRY_SHADER_ARB);
+    f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    vs = textFileRead("./media/shaders/test1.vert");
+    gs = textFileRead("./media/shaders/test1.geom");
+    fs = textFileRead("./media/shaders/test1.frag");
+
+    const char * vv = vs;
+    const char * ff = fs;
+    const char * gg = gs;
+
+    glShaderSourceARB(v, 1, &vv,NULL);
+    glShaderSourceARB(f, 1, &ff,NULL);
+    glShaderSourceARB(f, 1, &gg,NULL);
+
+    free(vs);
+    free(fs);
+    free(gs);
+
+    glCompileShaderARB(v); printShaderInfoLog(v); ///diag
+    glCompileShaderARB(f); printShaderInfoLog(f); ///diag
+    glCompileShaderARB(g); printShaderInfoLog(g); ///diag
+
+    GLuint p;
+    p = glCreateProgramObjectARB();
+
+    glAttachObjectARB(p,v);
+    glAttachObjectARB(p,f);
+    glAttachObjectARB(p,g);
+
+    glLinkProgramARB(p);
+    printProgramInfoLog(p); // print diagonostic information
+    shader_program_1 = p;
+
+    //glUseProgramObjectARB(p);
+}
+
 _init_particle_functions() {
+    printf("set shaders\n");
+    setShaders();
+    printf("shaders set\n");
+
 c = _get_camera();
 set_model_view_matrix(&a);
 
@@ -344,7 +392,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     dz = (z1-z0)/density;
     //sprite
     //int id =255;
-    int id = 16;
+    int id = 18;
     int x,y;
     x = id %16;
     y = id /16;

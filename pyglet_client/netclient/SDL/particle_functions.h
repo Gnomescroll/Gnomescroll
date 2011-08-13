@@ -31,6 +31,10 @@ static inline char *textFileRead(char *fn) {
 
     if (fn != NULL) {
         fp = fopen(fn,"rt");
+        if (fp == NULL) {
+            printf("Error: cannot open file %s \n", fn);
+            return NULL;
+        }
 
         if (fp != NULL) {
 

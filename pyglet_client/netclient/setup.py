@@ -20,8 +20,6 @@ except WindowsError:
     # sdl-config is a shell script, windows users will have to provide the path.
     pass
 
-debug = True
-
 extra_compile_args=[SDL_CFLAGS]
 extra_link_args=[SDL_LDFLAGS]
 
@@ -34,7 +32,7 @@ else:
     libraries+=['GL','GLU', 'GLEW']
     include_dirs = ['/usr/include/SDL']
 
-
+debug = True
 if debug == True:
     extra_compile_args+=["-g"]
     extra_link_args+=["-g"]

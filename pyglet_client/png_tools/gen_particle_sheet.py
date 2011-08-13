@@ -10,6 +10,7 @@ sprites = [
 #laser effects
 ('laser1.png', 16),
 ('laser2.png', 17),
+('laser3.png', 18),
 #calibration
 ('test1.png', 255),
 ]
