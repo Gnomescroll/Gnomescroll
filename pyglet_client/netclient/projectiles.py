@@ -110,14 +110,12 @@ class Projectile:
         agent_list = GameStateGlobal.agentList.agents_near_point(x, y, z, 4.0)
         for agent in agent_list:
             if agent.point_collision_test(x,y,z):
-    return
-    for p in GameStateGlobal.projectileList.values():
-        x,y,z,vx,vy,vz = p.state
                 if not self.suicidal and agent.owner == self.owner: # bullet is hitting yourself, and bullet doesnt kill yourself
                     continue
                 print "projectile collision"
                 return agent
         return False
+
     #def hit_agent(self, agent):
         #agent.take_damage(self.damage, self.owner)
         #if not self.penetrates:
@@ -132,6 +130,7 @@ class Projectile:
                 self.delete()
             return True
         return False
+
 
 class Laser(Projectile):
 
@@ -156,7 +155,6 @@ class Laser(Projectile):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)
 
-        
 
 class Grenade(Projectile):
 
