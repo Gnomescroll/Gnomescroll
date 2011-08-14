@@ -1,5 +1,6 @@
 from math import sin, cos, pi
-
+import math
+from vector_lib import distance, vector_between_points, normalize
 import default_settings as settings
 
 if settings.pyglet:
@@ -60,6 +61,7 @@ class Projectile:
         p = projectile_dat[self.type]
 
         self.state = map(float, state)
+        self.last_state = self.state
         self.owner = owner
 
         self.speed = p['speed'] / GameStateGlobal.fps
@@ -88,10 +90,14 @@ class Projectile:
             self.owner = args['owner']
 
     def delete(self):
+        print 'BULLET DEAD!!'
         GameStateGlobal.projectileList.destroy(self)
 
     def pos(self):
         return self.state[0:3]
+
+    def last_pos(self):
+        return self.last_state[0:3]
 
     #run this once per frame for each projectile
     def tick(self):
@@ -116,15 +122,10 @@ class Projectile:
                 return agent
         return False
 
-    #def hit_agent(self, agent):
-        #agent.take_damage(self.damage, self.owner)
-        #if not self.penetrates:
-            #self.delete()
-            #return True
-        #return False
-
-    def check_terrain_collision(self, delete=True):
-        if collisionDetection(*map(int, self.pos())):
+    def check_terrain_collision(self, delete=True, pos=None):
+        if pos is None:
+            pos = self.pos()
+        if collisionDetection(*map(int, pos)):
             #print "collision with wall"
             if delete:
                 self.delete()
@@ -136,11 +137,15 @@ class Laser(Projectile):
 
     def __init__(self, id, state=None, owner=None, *args, **kwargs):
         Projectile.__init__(self, id, state=state, owner=owner, *args, **kwargs)
+        self.sample_rate = 10.
+        self.sample_range = range(int(self.sample_rate))
+        self.sample_delta = 0.10
 
     def tick(self):
         if not self.check_life():
             return
 
+        self.last_state = self.state
         x,y,z,vx,vy,vz = self.state
 
         x += vx * self.speed
@@ -149,7 +154,59 @@ class Laser(Projectile):
 
         self.state = [x,y,z,vx,vy,vz]
 
-        self.check_terrain_collision() or self.check_agent_collision()
+        # Skip block protection:
+        # Calculate vector between last pos and curr pos
+        # Divide by sample rate (alternatively, could use fixed delta)
+        # Iteratively move last pos by divided vector
+        # If still at last block, continue
+        # If at curr block, break
+        # Else, found intermediate block, add to list of blocks passed thru
+
+        # Use this ordered list of blocks passed thru to check collision
+
+        pos = self.pos()
+        last_pos = self.last_pos()
+        last_block = map(int, last_pos)
+        curr_block = map(int, pos)
+        blocks = [last_block]
+        if curr_block != last_block:
+            vec = vector_between_points(last_pos, pos)
+            nor_vec = normalize(vec)
+            dx, dy, dz = [a*self.sample_delta for a in nor_vec]
+            #delta_vec = [a/self.sample_rate for a in vec]
+            #dx, dy, dz = delta_vec
+            #dx,dy,dz = [self.sample_delta] * 3
+            x,y,z = last_pos
+
+            d = distance(pos, last_pos)
+            pts = math.ceil(d/self.sample_delta)
+            r = range(int(pts))
+            #for i in self.sample_range:
+            for i in r:
+                #print x,y,z
+                x += dx
+                y += dy
+                z += dz
+                mid_block = map(int, [x,y,z])
+                #print mid_block
+                if mid_block == last_block:
+                    continue
+                elif mid_block == curr_block:
+                    break
+                else:
+                    if mid_block != blocks[-1]:
+                        blocks.append(mid_block)
+        blocks.append(curr_block)
+        print 'blocks: %s' % (blocks,)
+        for block in blocks:
+            print block, collisionDetection(*block)
+            if self.check_terrain_collision(pos=block):
+                print 'SHOULD FUCKING DIE!!'
+                return
+
+        self.check_agent_collision()
+            
+        #self.check_terrain_collision() or self.check_agent_collision()
 
     def draw(self):
         x,y,z = self.pos()
@@ -195,5 +252,5 @@ class Grenade(Projectile):
         SDL.gl.draw_particle(5, 0.5, x,y,z)
 
 from game_state import GameStateGlobal
-from cube_lib.terrain_map import collisionDetection
+from cube_lib.terrain_map import collisionDetection, isSolid
 #import draw_utils

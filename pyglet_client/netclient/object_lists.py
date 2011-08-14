@@ -65,10 +65,10 @@ class GenericObjectList:
         return self._add(*args, **kwargs)
         
     def _remove(self, obj):
-        if type(obj) == int:
-            id = obj
-        else:
+        if hasattr(obj, 'id'):
             id = obj.id
+        else:
+            id = obj
         if id in self.objects:
             del self.objects[id]
             #print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
@@ -288,11 +288,11 @@ class GenericMultiObjectList(GenericObjectList):
         return klass_name
 
     def _remove(self, obj):
-        if type(obj) == int:
+        if hasattr(obj, 'id'):
+            id = obj.id
+        else:
             id = obj
             obj = self[id]
-        else:
-            id = obj.id
         klass_name = obj.__class__.__name__
         self.klass_registers[klass_name].remove(id)
         return GenericObjectList._remove(self, obj)
@@ -376,6 +376,12 @@ class ProjectileList(GenericMultiObjectList):
         self._metaname = 'ProjectileList'
         self._itemname = 'Projectile'
         self.name_from_type = Projectile.name_from_type
+
+    #def create(self, klass_name=None, *args, **kwargs):
+        #pr = GenericMultiObjectList.create(self, klass_name=None, *args, **kwargs)
+        #from game_state import GameStateGlobal
+        #print 'projectile created'
+        #print pr.pos(), GameStateGlobal.agent.pos()
 
 from projectiles import Projectile
 

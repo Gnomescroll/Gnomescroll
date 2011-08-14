@@ -189,6 +189,8 @@ class MapMessageHandler(GenericMessageHandler):
         #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
 
     def _set_map(self, list, **msg):
+        if len(list) == 1:
+            print 'settings block %s' % list[0]
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
             #self.mapChunkManager.set_map(x,y,z) #redraw chunk

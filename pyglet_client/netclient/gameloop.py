@@ -125,7 +125,7 @@ class App(object):
         #other
         self.world = world.World()  #deprecate?
 
-        self.camera = Camera(None, x=-100, z=50, rot=-1.)
+        self.camera = Camera(None, x=0, z=50, rot=-1.)
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
