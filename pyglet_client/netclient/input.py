@@ -108,8 +108,7 @@ class InputGlobal:
     _cameras = ('camera', 'agent')
 
     scoreboard = False
-
-    
+    block_selector = None
 
     @classmethod
     def init_0(cls, main):
@@ -118,6 +117,8 @@ class InputGlobal:
         InputGlobal.mouse = Mouse(main)
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
+        cls.block_selector = BlockSelector(8,8,range(8*8))
+
 
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
@@ -207,15 +208,7 @@ class Mouse(object):
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
-
-    #migrate over
-    ## Deprecate
-#    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-#        if scroll_y > 0:
-#            direction = 'up'
-#        elif scroll_y < 0:
-#            direction = 'down'
-#        GameStateGlobal.agent.weapons.switch(direction)
+                
 
 class Keyboard(object):
 
@@ -457,6 +450,10 @@ class AgentInput:
                 "8": self.switch_weapon,
                 "9": self.switch_weapon,
                 "0": self.switch_weapon,
+                'left':self.adjust_block,
+                'right':self.adjust_block,
+                'up':self.adjust_block,
+                'down':self.adjust_block,
             })
     # accept key,handler or a dict of key,handlers
     def _bind_key_handlers(self, key, handler=None):
@@ -484,6 +481,74 @@ class AgentInput:
             return
         print 'attempting to switch weapon to ', weapon_index
         GameStateGlobal.agent.weapons.switch(weapon_index)
+
+    def adjust_block(self, symbol=None, modifiers=None):
+        print 'adjust_block %s %s' % (symbol, modifiers,)
+        aw = GameStateGlobal.agent.weapons.active()
+        if not aw or aw.type != 3:  # block applier
+            print 'block applier not active'
+            return
+        if symbol == 'left':
+            InputGlobal.block_selector.left()
+        elif symbol == 'right':
+            InputGlobal.block_selector.right()
+        elif symbol == 'up':
+            InputGlobal.block_selector.up()
+        elif symbol == 'down':
+            InputGlobal.block_selector.down()
+        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.active)
+        print InputGlobal.block_selector.active
+
+
+class BlockSelector:
+
+    def __init__(self, x, y, block_ids):
+        self.x = x
+        self.y = y
+        self.n = x*y
+        assert len(block_ids) == self.n
+        self.active = 0
+
+    def vertical(self, up=True):
+        shift = -1 if up else 1
+        row = self.active // self.x
+        col = self.active % self.x
+
+        row = (row + shift) % self.y
+        new = (row * self.x) + col
+
+        if new < 0 or new > self.n:
+            print 'warning, block selector attempted to select block out of range'
+            return
+        self.active = new
+        
+    def up(self):
+        self.vertical(up=True)
+        
+    def down(self):
+        self.vertical(up=False)
+
+    def horizontal(self, left=True):
+        shift = -1 if left else 1
+        row = self.active // self.x
+        col = self.active % self.x
+
+        new = (col + shift) % self.x
+        new += row * self.x
+
+        if new < 0 or new > self.n:
+            print 'warning, block selector attempted to select block out of range'
+            return
+        self.active = new
+
+    def left(self):
+        self.horizontal(left=True)
+
+    def right(self):
+        self.horizontal(left=False)
+
+    def draw(self):
+        pass
 
 
 from game_state import GameStateGlobal

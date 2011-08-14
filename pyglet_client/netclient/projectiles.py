@@ -125,7 +125,7 @@ class Projectile:
 
     def check_terrain_collision(self, delete=True):
         if collisionDetection(*map(int, self.pos())):
-            print "collision with wall"
+            #print "collision with wall"
             if delete:
                 self.delete()
             return True
