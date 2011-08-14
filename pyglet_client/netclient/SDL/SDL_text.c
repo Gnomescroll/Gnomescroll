@@ -18,7 +18,7 @@ int _init_text() {
     }
     return 0;
 */
-    SDL_Surface *font = IMG_Load("media/fonts/font.png");
+    SDL_Surface *font = IMG_Load("media/fonts/font-alpha.png");
 
     if(!font) { printf("SDL_text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}
     if(font->format->BytesPerPixel != 4) {printf("Font Image File: image is missing alpha channel \n");}
@@ -27,7 +27,7 @@ int _init_text() {
     glGenTextures(1,&fontTextureId);
     glBindTexture(GL_TEXTURE_2D,fontTextureId);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, font->w, font->h, 0, GL_RGB, //rgb
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, font->w, font->h, 0, GL_RGBA, //rgb
                  GL_UNSIGNED_BYTE, font->pixels);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -83,7 +83,10 @@ float xmin,xmax, ymin,ymax;
 
 while(text[c_num] != 0) { c_num++; }
 
-    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
+glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+glEnable(GL_BLEND);
+
+    glColor4ub((unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a); //replace with color cordinates on texture
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, fontTextureId);
 
@@ -128,6 +131,7 @@ while(text[c_num] != 0) { c_num++; }
         j++;
     }
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 
@@ -150,7 +154,6 @@ while(text[c_num] != 0) { c_num++; }
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, fontTextureId);
-
     for(i=0; i<c_num; i++){
         index = text[i];
         xi = index % 16;
@@ -192,6 +195,7 @@ while(text[c_num] != 0) { c_num++; }
         offset += width;
     }
     glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_BLEND);
 }
 /*
 /// DEPRECATE BELOW LINE
