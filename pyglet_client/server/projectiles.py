@@ -196,7 +196,7 @@ class Grenade(Projectile):
             #bounce
             return
 
-        agent = self.check_agent_collision():
+        agent = self.check_agent_collision()
         if agent:
             #fall
             self.state[5] = 0
