@@ -167,28 +167,25 @@ class Laser(Projectile):
         pos = self.pos()
         last_pos = self.last_pos()
         last_block = map(int, last_pos)
+        if self.check_terrain_collision(pos=last_block):
+            return
+
         curr_block = map(int, pos)
         blocks = [last_block]
         if curr_block != last_block:
             vec = vector_between_points(last_pos, pos)
             nor_vec = normalize(vec)
             dx, dy, dz = [a*self.sample_delta for a in nor_vec]
-            #delta_vec = [a/self.sample_rate for a in vec]
-            #dx, dy, dz = delta_vec
-            #dx,dy,dz = [self.sample_delta] * 3
             x,y,z = last_pos
 
             d = distance(pos, last_pos)
             pts = math.ceil(d/self.sample_delta)
             r = range(int(pts))
-            #for i in self.sample_range:
             for i in r:
-                #print x,y,z
                 x += dx
                 y += dy
                 z += dz
                 mid_block = map(int, [x,y,z])
-                #print mid_block
                 if mid_block == last_block:
                     continue
                 elif mid_block == curr_block:
@@ -196,13 +193,16 @@ class Laser(Projectile):
                 else:
                     if mid_block != blocks[-1]:
                         blocks.append(mid_block)
-        blocks.append(curr_block)
-        print 'blocks: %s' % (blocks,)
-        for block in blocks:
-            print block, collisionDetection(*block)
-            if self.check_terrain_collision(pos=block):
-                print 'SHOULD FUCKING DIE!!'
-                return
+                        if self.check_terrain_collision(pos=mid_block):
+                            return
+
+        if self.check_terrain_collision(pos=curr_block):
+            return
+
+        #for block in blocks:
+            #print block, collisionDetection(*block)
+            #if self.check_terrain_collision(pos=block):
+                #return
 
         self.check_agent_collision()
             
