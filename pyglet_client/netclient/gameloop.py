@@ -234,8 +234,6 @@ class App(object):
 
             self.camera.worldProjection()
             P.event("animations.draw")
-            self.animations.draw()
-
             #vox_lib.draw()
             #v.move(0,0,3, theta)
             #v.draw()
@@ -261,8 +259,9 @@ class App(object):
             #cube_lib.VBO.update_chunks()
             P.event("Draw Terrain")
             cube_lib.terrain_map.draw_terrain()
-            P.event("Draw World_0")
             self.world.draw(first_person)
+            self.animations.draw()
+            P.event("Draw World_0")
             P.event("Draw World_1 - laser")
             if True:
                 pass
