@@ -172,6 +172,8 @@ class SendMessage(GenericMessage):
             return
         return {
             'aid'   : agent.id,
+            'pos'   : agent.pos(),
+            'vec'   : agent.normalized_direction(),
         }
 
     @idRequired
