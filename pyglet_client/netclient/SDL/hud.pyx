@@ -4,7 +4,7 @@ cdef extern from 'texture_loader.h':
     void _draw_loaded_hud_texture(int x, int y)
     void _load_hud_texture(char *file)
     void _draw_block_selector(int x, int y)
-    void _load_block_selector_texture(char *file)
+    void _load_block_selector_texture(char *file, int scale)
 
 cdef extern from 'SDL_text.h':
     ctypedef struct SDL_Surface
@@ -36,8 +36,8 @@ def load_hud_texture(file):
 def draw_block_selector(x, y):
     _draw_block_selector(x, y)
 
-def load_block_selector_texture(file):
-    _load_block_selector_texture(file)
+def load_block_selector_texture(file, scale=1):
+    _load_block_selector_texture(file, scale)
 
 class text:
 #    cdef float x, y
@@ -88,10 +88,11 @@ class reticle:
 
 class block_selector:
 
-    def __init__(self, file, x=0, y=0):
+    def __init__(self, file, x=0, y=0, scale=1):
         self.x = x
         self.y = y
-        load_block_selector_texture(file)
+        self.scale = scale
+        load_block_selector_texture(file, scale)
 
     def draw(self):
         draw_block_selector(self.x, self.y)
