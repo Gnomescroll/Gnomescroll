@@ -125,7 +125,7 @@ void _draw_block_selector(int x, int y) {
     int x1, y1;
     x1 = block_selector_texture.h + x;
     y1 = block_selector_texture.w + y;
-    _blit_sprite2(block_selector_texture.tex, x, y, x1, y1, 0);
+    _blit_sprite2(block_selector_texture.tex, x, y1, x1, y, 0);
 }
 
 int _blit_sprite2(int texture, float x0, float y0, float x1, float y1, float z) {
