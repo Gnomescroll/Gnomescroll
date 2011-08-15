@@ -150,7 +150,7 @@ def load_map():
         for xa in range(x_min, x_max):
             for ya in range(y_min, y_max):
                 for za in range(z_min, z_max):
-                    m.set(xa,ya,za, 1)
+                    m.set(xa,ya,za, 2)
         #protrusions for testing collision detection
         for xa in range(x_min, x_max):
             for ya in range(y_min, y_max):
@@ -159,11 +159,11 @@ def load_map():
                     if rnd < 8:
                         height =random.randint(1,5)
                         for th in range(1,height):
-                            m.set(xa,ya,za+th, 4)
+                            m.set(xa,ya,za+th, 17)
                     elif rnd <10:
                         height =random.randint(1,15)
                         for th in range(1,height):
-                            m.set(xa,ya,za+th, 4)
+                            m.set(xa,ya,za+th, 17)
         print "Finished map generation"
 
 class Main:
