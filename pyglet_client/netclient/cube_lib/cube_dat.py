@@ -1,3 +1,11 @@
+'''COPIED FROM SERVER'''
+def_tex_order = [[0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],]
+
 cube_list = {
     0 : {
         'id' : 0,
@@ -39,7 +47,7 @@ cube_list = {
         'active' : True,
         'solid' : True,
 
-        'texture_id' : [25,25,25,25,25,25],
+        'texture_id' : [1,1,1,1,1,1],
         'texture_order' : [[0,1,2,3],
                             [0,1,2,3],
                             [0,1,2,3],
@@ -95,6 +103,125 @@ cube_list = {
                             [0,1,2,3],],
     },
  }
+
+def get_default_tile(i):
+
+    return {
+        'id'    :   i + 1,
+        'name'  :   'tile',
+        'occludes': True,
+        'active':   True,
+        'solid':    True,
+        'texture_id': [i]*6,
+        'texture_order': def_tex_order,
+    }
+
+def set_cube_list_defaults():
+    global cube_list
+
+    for i in range(256):
+        j = i+1
+        cube_list.setdefault(j, get_default_tile(i))
+
+set_cube_list_defaults()
+
+#cube_list = {
+    #0 : {
+        #'id' : 0,
+        #'occludes' : False,
+        #'active' : False,
+        #'solid' : False,
+        #},
+    #1 : {
+        #'id' : 1,
+        #'occludes' : True,
+        #'active' : True,
+        #'solid' : True,
+
+        #'texture_id' : [1,1,1,1,1,1],
+        #'texture_order' : [[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],]
+        #},
+    #2 : {
+        #'id' : 2,
+        #'occludes' : True,
+        #'active' : True,
+        #'solid' : True,
+
+        #'texture_id' : [0,6,7,3,4,5],
+        #'texture_order' : [[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],],
+    #},
+    #3 : {
+        #'id' : 3,
+        #'occludes' : True,
+        #'active' : True,
+        #'solid' : True,
+
+        #'texture_id' : [25,25,25,25,25,25],
+        #'texture_order' : [[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],],
+    #},
+    #4 : {
+        #'id' : 4,
+        #'occludes' : True,
+        #'active' : True,
+        #'solid' : True,
+
+        #'texture_id' : [16,16,16,16,16,16],
+        #'texture_order' : [[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],],
+    #},
+    #5 : {
+        #'id' : 5,
+        #'occludes' : False, #translucent
+        #'active' : False, #should be drawn
+        #'solid' : False,
+        #'transparent' : True,
+        #'gravity' : 5, #for anti-grav
+
+        #'texture_id' : [1,1,1,1,1,1],
+        #'texture_order' : [[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],],
+
+        #'color' : [0,0,155,150], #alpha
+    #},
+    #6 : {
+        #'id' : 6,
+        #'name' : 'black rune',
+        #'occludes' : True,
+        #'active' : True,
+        #'solid' : True,
+
+        #'texture_id' : [144,144,144,144,144,144],
+        #'texture_order' : [[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],
+                            #[0,1,2,3],],
+    #},
+ #}
 
 
 

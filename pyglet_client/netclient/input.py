@@ -496,7 +496,7 @@ class AgentInput:
             InputGlobal.block_selector.up()
         elif symbol == 'down':
             InputGlobal.block_selector.down()
-        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())
+        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id()+1)   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
         print InputGlobal.block_selector.active
 
 
