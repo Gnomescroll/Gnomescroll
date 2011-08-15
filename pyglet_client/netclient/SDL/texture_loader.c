@@ -84,6 +84,32 @@ int _create_hud_texture2(SDL_Surface *surface) {
     return texture;
 }
 
+int _blit_sprite2(int texture, float x0, float y0, float x1, float y1, float z) {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+glColor3ub(255, 255, 255);
+
+glBegin( GL_QUADS );
+    glTexCoord2i( 0, 0 );
+    glVertex3f( x0, y0, z );
+
+    glTexCoord2i( 1, 0 );
+    glVertex3f( x1, y0, z );
+
+    glTexCoord2i( 1, 1 );
+    glVertex3f( x1, y1, z );
+
+    glTexCoord2i( 0, 1 );
+    glVertex3f( x0, y1, z );
+glEnd();
+
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
+}
+
+
 //Texture _create_hud_texture_struct(char *file) {
     //int tex;
     //tex = _create_hud_texture(file);
@@ -111,7 +137,7 @@ void _draw_loaded_hud_texture(int x, int y) {
 
     x1 = x + texture.w;
     y1 = y + texture.h;
-    
+
     _blit_sprite2(texture.tex, x, y, x1, y1, 0);
 }
 /*

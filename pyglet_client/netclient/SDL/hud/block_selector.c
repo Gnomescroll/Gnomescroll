@@ -1,11 +1,13 @@
 
 #include "block_selector.h"
 
+/*
 typedef struct {
     int tex;
     int w;
     int h;
 } Texture;
+*/
 
 int _init_block_selector() {
     return 0;
@@ -15,7 +17,6 @@ Texture block_selector_texture;
 
 void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
-
     surface = _load_image(file);
     int tex = _create_hud_texture2(surface);
 
@@ -28,10 +29,10 @@ void _draw_block_selector(int x, int y) {
     int x1, y1;
     x1 = block_selector_texture.h + x;
     y1 = block_selector_texture.w + y;
-    _blit_sprite2(block_selector_texture.tex, x, y1, x1, y, 0);
+    _blit_block_selector(block_selector_texture.tex, x, y1, x1, y, 0);
 }
 
-int _blit_sprite2(int texture, float x0, float y0, float x1, float y1, float z) {
+int _blit_block_selector(int texture, float x0, float y0, float x1, float y1, float z) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
