@@ -225,6 +225,13 @@ class Hud(object):
 
     def draw_reticle(self):
         self.reticle.draw()
+        self._draw_reference_center()
+
+    def _draw_reference_center(self):
+        w = 2
+        x = (self.win_width/2) - w/2
+        y = (self.win_height/2) - w/2
+        self._draw_square(x, y, w, color=(255,10,10))
 
     def draw_scoreboard(self):
         #stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())

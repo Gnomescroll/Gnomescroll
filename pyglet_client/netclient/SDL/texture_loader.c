@@ -104,8 +104,14 @@ void _load_hud_texture(char *file) {
 }
 
 void _draw_loaded_hud_texture(int x, int y) {
-    int x1 = texture.w + x;
-    int y1 = texture.h + y;
+    int x1, y1;
+
+    x = x - texture.w/2;
+    y = y - texture.h/2;
+
+    x1 = x + texture.w;
+    y1 = y + texture.h;
+    
     _blit_sprite2(texture.tex, x, y, x1, y1, 0);
 }
 

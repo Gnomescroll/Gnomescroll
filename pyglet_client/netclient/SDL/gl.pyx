@@ -229,8 +229,8 @@ def planar_laser2(int density, float width, float x0, float y0, float z0, float 
 
 ### Hud
 
-cdef extern from "./hud/block_selector.h":
-    int _init_block_selector()
+#cdef extern from "./hud/block_selector.h":
+#    int _init_block_selector()
 
-def init_block_selector():
-    _init_block_selector()
+#def init_block_selector():
+#    _init_block_selector()

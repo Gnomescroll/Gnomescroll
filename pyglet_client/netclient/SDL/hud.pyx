@@ -81,6 +81,7 @@ class reticle:
         self.x = x
         self.y = y
         load_hud_texture(file)
+        
 
     def draw(self):
         draw_loaded_hud_texture(self.x, self.y)

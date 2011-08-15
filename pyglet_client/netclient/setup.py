@@ -47,7 +47,7 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/draw_functions.c',
                                 'SDL/texture_loader.c',
                                 'SDL/particle_functions.c',
-                                'SDL/hud/block_selector.c',
+                               # 'SDL/hud/block_selector.c',
                                 'SDL/gl.pyx'],
                     )
 
