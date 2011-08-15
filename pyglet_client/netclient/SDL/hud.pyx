@@ -3,8 +3,6 @@
 cdef extern from 'texture_loader.h':
     void _draw_loaded_hud_texture(int x, int y)
     void _load_hud_texture(char *file)
-    void _draw_block_selector(int x, int y)
-    void _load_block_selector_texture(char *file, int scale)
 
 cdef extern from 'SDL_text.h':
     ctypedef struct SDL_Surface
@@ -17,6 +15,10 @@ cdef extern from 'SDL_text.h':
 
 cdef extern from 'draw_functions.h':
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
+
+cdef extern from './hud/block_selector.h':
+    void _draw_block_selector(int x, int y)
+    void _load_block_selector_texture(char *file, int scale)
 
 def init():
     _init_text()
