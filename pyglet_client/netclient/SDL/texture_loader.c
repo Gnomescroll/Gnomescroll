@@ -110,15 +110,15 @@ void _draw_loaded_hud_texture(int x, int y) {
 }
 
 Texture block_selector_texture;
-void _load_block_selector_texture(char *file) {
+void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
 
     surface = _load_image(file);
     int tex = _create_hud_texture2(surface);
 
     block_selector_texture.tex = tex;
-    block_selector_texture.w = surface->w;
-    block_selector_texture.h = surface->h;
+    block_selector_texture.w = surface->w / scale;
+    block_selector_texture.h = surface->h / scale;
 }
 
 void _draw_block_selector(int x, int y) {
