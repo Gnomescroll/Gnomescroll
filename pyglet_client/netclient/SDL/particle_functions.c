@@ -54,9 +54,11 @@ int setShaders() {
 }
 
 _init_particle_functions() {
+/*
     printf("set shaders\n");
     setShaders();
     printf("shaders set\n");
+*/
 
 c = _get_camera();
 set_model_view_matrix(&a);
