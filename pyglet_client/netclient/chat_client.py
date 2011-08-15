@@ -339,9 +339,8 @@ class ChatCommand():
                     'channel'   :   'system',
                 })
             else:
-                try:
-                    team = GameStateGlobal.teamList[team_id]
-                except KeyError:
+                team = GameStateGlobal.teamList[team_id]
+                if team is None:
                     _send = self._send_local({
                         'content'   :   'Team %d does not exist' % (team_id,),
                         'channel'   :   'system',
