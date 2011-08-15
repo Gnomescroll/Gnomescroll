@@ -190,11 +190,10 @@ class Laser(Projectile):
                     continue
                 elif mid_block == curr_block:
                     break
-                else:
-                    if mid_block != blocks[-1]:
-                        blocks.append(mid_block)
-                        if self.check_terrain_collision(pos=mid_block):
-                            return
+                elif mid_block != blocks[-1]:
+                    blocks.append(mid_block)
+                    if self.check_terrain_collision(pos=mid_block):
+                        return
 
         if self.check_terrain_collision(pos=curr_block):
             return

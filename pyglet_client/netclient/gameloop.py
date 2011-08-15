@@ -294,7 +294,10 @@ class App(object):
             P.event("draw hud")
             if draw_hud:
                 self.camera.hudProjection()
-                self.hud.draw(fps=fps_text, ping=ping_text)
+                draw_bs = False
+                if GameStateGlobal.agent:
+                    draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
+                self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,500,-0.30)
             P.event("SDL flip")

@@ -133,6 +133,32 @@ class Hud(object):
             stats[lprop] = '\n'.join(lines)
         return stats
 
+    def draw_block_selector(self):
+        bs = InputGlobal.block_selector
+
+        w = 3
+        bx, by = w,w
+        space = 1
+
+        start_x = self.win_width - 40
+        start_y = 15 + (bs.y * (by + (2*space)))
+
+
+        y_range = range(bs.y)
+        y_range.reverse()
+        for i in range(bs.x):
+            x_off = start_x + (i * (bx + (2*space)))
+            for j in y_range:
+                y_off = start_y - (j * (by + (2*space)))
+                color = [255 * (1.* i/bs.x), 255 * (1.* j/bs.y), 255 * (1.* (i+j)/(bs.x+bs.y))]
+                color = map(int, color)
+                self._draw_square(x_off + 1, y_off + 1, w, color)
+                if (j*bs.y) + i == bs.active:
+                    active_x = x_off
+                    active_y = y_off
+
+        self._draw_border_square(active_x, active_y, w+2, color=(255,255,255))
+
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
@@ -141,7 +167,7 @@ class Hud(object):
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
-    def draw(self, fps=None, ping=None):
+    def draw(self, fps=None, ping=None, block_selector=False):
         self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
@@ -151,6 +177,8 @@ class Hud(object):
             self.draw_fps(fps)
         if ping is not None:
             self.draw_ping(ping)
+        if block_selector:
+            self.draw_block_selector()
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
@@ -221,10 +249,27 @@ class Hud(object):
 
     def _draw_line(self, x, y, x1, y1, color=None):
         if color is None:
-            r, g, b = (255, 255, 0)
-        else:
-            r, g, b = color
+            color = (255, 255, 0)
+        r, g, b = color
         SDL.gl.draw_line(r, g, b, x, y, 0, x1, y1, 0)
+
+    def _draw_square(self, x, y, w, color=None):
+        self._draw_rect(x, y, w, w, color)
+
+    def _draw_rect(self, x, y, w, h, color=None):
+        if color is None:
+            color = (255,255,255)
+        r,g,b = color
+        SDL.gl.draw_rect(r,g,b, x,y, w,h)
+
+    def _draw_border_square(self, x, y, w, color=None):
+        self._draw_border_rect(x, y, w, w, color)
+
+    def _draw_border_rect(self, x, y, w, h, color=None):
+        if color is None:
+            color = (255,255,255)
+        r,g,b = color
+        SDL.gl.draw_border_rect(r,g,b, x,y, w,h)
             
     def _draw_horizontal_line(self, x, y, length=10):
         self._draw_line(x, y, x + length, y)
