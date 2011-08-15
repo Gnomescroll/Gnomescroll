@@ -108,7 +108,7 @@ void _draw_loaded_hud_texture(int x, int y) {
     int y1 = texture.h + y;
     _blit_sprite2(texture.tex, x, y, x1, y1, 0);
 }
-
+/*
 Texture block_selector_texture;
 void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
@@ -152,7 +152,7 @@ glEnd();
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 }
-
+*/
 
 int _create_block_texture(char *file) {
     return 0;

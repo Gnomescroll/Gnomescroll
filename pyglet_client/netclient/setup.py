@@ -47,7 +47,6 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/draw_functions.c',
                                 'SDL/texture_loader.c',
                                 'SDL/particle_functions.c',
-                                'SDL/hud/block_selector.c',
                                 'SDL/gl.pyx'],
                     )
 
@@ -69,7 +68,8 @@ SDL_hud = Extension('SDL.hud',
                     sources = [ 'SDL/hud.pyx',
                                 'SDL/SDL_text.c',
                                 'SDL/draw_functions.c',
-                                'SDL/texture_loader.c',]
+                                'SDL/texture_loader.c',
+                                'SDL/hud/block_selector.c',]
                                 )
 
 terrain_map = Extension('cube_lib.terrain_map',
