@@ -7,11 +7,13 @@ class NetEvent:
     messageHandler = None
     adminMessageHandler = None
     miscMessageHandler = None
+    agentMessageHandler = None
 
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
         cls.adminMessageHandler = AdminMessageHandler()
+        agentMessageHandler = AgentMessageHandler()
         #cls.miscMessageHandler = MiscMessageHandler()
     @classmethod
     def init_1(cls):
@@ -19,24 +21,16 @@ class NetEvent:
         cls.adminMessageHandler.init()
         #cls.miscMessageHandler.init()
     @classmethod
-    def register_json_events(cls, events):
-        for string, function in events.items():
-            cls.messageHandler.json_events[string] = function
+    def register_json_events(cls, events, interface=None):
+        for name, function in events.items():
+            if function is None and interface is not None:
+                function = getattr(interface, name)
+            cls.messageHandler.json_events[name] = function
 
 from net_server import NetServer
 from net_out import NetOut
 from game_state import GameStateGlobal
 from chat_server import ChatServer
-
-
-class AgentMessageHandler:
-    pass
-
-class PlayerMessageHandler:
-    pass
-
-def _ping(connection, timestamp, **msg):
-    connection.sendMessage.ping(timestamp)
 
 # routes messages by msg.cmd
 class MessageHandler:
@@ -49,10 +43,12 @@ class MessageHandler:
     def process_json(self, msg, connection):
         cmd = msg.get('cmd', None)
         #print "MessageHandler.process_json: " + str(msg)
-
+        if cmd is None:
+            print 'Warning: message missing cmd. message: %s' % msg
+            return
         #use json_events when possible
         if self.json_events.has_key(cmd):
-            self.json_events[cmd](**msg)
+            self.json_events[cmd](connection, **msg)
         elif cmd == 'ping':
             _ping(connection, **msg)
         # game state
@@ -873,6 +869,26 @@ class MessageHandler:
         #agent.pos(pos)
         agent.state = pos
         NetOut.event.agent_position(agent)
+
+
+def extractPlayer(f):
+    def wrapped(self, conn, *args, **kwargs):
+        try:
+            player = GameStateGlobal.playerList.client(conn.id)
+        except KeyError:
+            err = 'could not find player for client %s' % (conn.id,)
+            return err
+        return f(self, player, *args, **kwargs)
+    return wrapped
+
+def logError(msg_name):
+    def outer(f):
+        def wrapped(self, conn, *args, **kwargs):
+            err = f(self, conn, *args, **kwargs)
+            if err is not None:
+                print '%s :: %s' % (msg_name, err,)
+        return wrapped
+    return outer
         
 # handler for admin msgs
 class AdminMessageHandler:
@@ -892,6 +908,84 @@ class AdminMessageHandler:
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
         NetOut.event.set_map(list)
+
+class GenericMessageHandler:
+
+    events = {}
+
+    def __init__(self):
+        self.register_events()
+
+    def register_events(self):
+        NetEvent.register_json_events(self.events, self)
+
+class AgentMessageHandler(GenericMessageHandler):
+
+    events = {
+        'agent_position'    :   None,
+    }
+
+    @logError('agent_position')
+    @extractPlayer
+    def agent_position(self, player, **msg):
+        err_msg = None
+        try:
+            agent_id = msg['id']
+        except KeyError:
+            err_msg = 'agent id missing'
+        try:
+            pos = msg['pos']
+        except KeyError:
+            err_msg = 'agent pos missing'
+        if err_msg is not None:
+            return err_msg
+
+        try:
+            agent = GameStateGlobal.agentList[agent_id]
+            if agent.team.is_viewers():
+                err_msg = 'ignoring agent, its a viewer, cmd: %s' % (msg['cmd'],)
+                return err_msg
+        except KeyError:
+            err_msg = 'agent %s unknown' % (agent_id,)
+
+        if not player.owns(agent):
+            err_msg = 'player %s does not own agent %s' % (player.id, agent.id,)
+
+        if err_msg is not None:
+            return err_msg
+
+        #agent.pos(pos)
+        agent.state = pos
+        NetOut.event.agent_position(agent)
+
+class PlayerMessageHandler:
+    pass
+
+class ProjectileMessageHandler:
+    pass
+    
+class WeaponMessageHandler:
+    pass
+
+class ItemMessageHandler:
+    pass
+
+class GameModeMessageHandler:
+    pass
+
+class MiscMessageHandler:
+    pass
+
+class ChatMessageHandler:
+    pass
+
+class MapMessageHandler:
+    pass
+
+def _ping(connection, timestamp, **msg):
+    connection.sendMessage.ping(timestamp)
+
+
 
 #class MiscMessageHandler:
     #def init(self):
