@@ -13,6 +13,8 @@ cube_list = {
         'active' : False,
         'solid' : False,
         },
+    }
+'''
     1 : {
         'id' : 1,
         'occludes' : True,
@@ -102,7 +104,8 @@ cube_list = {
                             [0,1,2,3],
                             [0,1,2,3],],
     },
- }
+    '''
+
 
 def get_default_tile(i):
 
