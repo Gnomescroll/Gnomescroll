@@ -102,7 +102,8 @@ cube_list = {
                             #[0,1,2,3],
                             #[0,1,2,3],],
     #},
- }
+}
+
 
 def get_default_tile(i):
 
