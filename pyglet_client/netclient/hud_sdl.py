@@ -36,7 +36,7 @@ class Hud(object):
             x = 0,
             offset = self.win_height - 10
         )
-
+        self._init_block_selector()
 
     def _init_reticle(self):
         if settings.pyglet:
@@ -75,6 +75,9 @@ class Hud(object):
             tex_file = '%stexture/target.png' % (base_dir,)
             self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
 
+    def _init_block_selector(self):
+        tex_file = '%stexture/block_selector_hud.png' % (base_dir,)
+        self.block_selector = SDL.hud.block_selector(tex_file, self.win_width/2, self.win_height/2)
 
     def _init_text_dict(self):
         offset = 20
@@ -136,28 +139,34 @@ class Hud(object):
     def draw_block_selector(self):
         bs = InputGlobal.block_selector
 
-        w = 3
+        w = 8
         bx, by = w,w
-        space = 1
+        space = 0
 
-        start_x = self.win_width - 40
-        start_y = 15 + (bs.y * (by + (2*space)))
+        #start_x = self.win_width - 40
+        #start_y = 15 + (bs.y * (by + (2*space)))
 
 
-        y_range = range(bs.y)
-        y_range.reverse()
-        for i in range(bs.x):
-            x_off = start_x + (i * (bx + (2*space)))
-            for j in y_range:
-                y_off = start_y - (j * (by + (2*space)))
-                color = [255 * (1.* i/bs.x), 255 * (1.* j/bs.y), 255 * (1.* (i+j)/(bs.x+bs.y))]
-                color = map(int, color)
-                self._draw_square(x_off + 1, y_off + 1, w, color)
-                if (j*bs.y) + i == bs.active:
-                    active_x = x_off
-                    active_y = y_off
+        #y_range = range(bs.y)
+        #y_range.reverse()
+        #for i in range(bs.x):
+            #x_off = start_x + (i * (bx + (2*space)))
+            #for j in y_range:
+                #y_off = start_y - (j * (by + (2*space)))
+                #color = [255 * (1.* i/bs.x), 255 * (1.* j/bs.y), 255 * (1.* (i+j)/(bs.x+bs.y))]
+                #color = map(int, color)
+                #self._draw_square(x_off + 1, y_off + 1, w, color)
+                #if (j*bs.y) + i == bs.active:
+                    #active_x = x_off
+                    #active_y = y_off
 
-        self._draw_border_square(active_x, active_y, w+2, color=(255,255,255))
+        start_x = 0
+        start_y = self.win_height
+        active_x = start_x + ((bs.active % bs.x) * (bx + (2*space)))
+        active_y = start_y - ((bs.active // bs.x) * (by + (2*space)))
+        self._draw_border_square(active_x, active_y, w+(2*space), color=(255,255,255))
+
+        self.block_selector.draw()
 
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)

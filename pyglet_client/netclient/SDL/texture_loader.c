@@ -109,6 +109,25 @@ void _draw_loaded_hud_texture(int x, int y) {
     _blit_sprite2(texture.tex, x, y, x1, y1, 0);
 }
 
+Texture block_selector_texture;
+void _load_block_selector_texture(char *file) {
+    SDL_Surface *surface;
+
+    surface = _load_image(file);
+    int tex = _create_hud_texture2(surface);
+
+    block_selector_texture.tex = tex;
+    block_selector_texture.w = surface->w;
+    block_selector_texture.h = surface->h;
+}
+
+void _draw_block_selector(int x, int y) {
+    int x1, y1;
+    x1 = block_selector_texture.h + x;
+    y1 = block_selector_texture.w + y;
+    _blit_sprite2(block_selector_texture.tex, x, y, x1, y1, 0);
+}
+
 int _blit_sprite2(int texture, float x0, float y0, float x1, float y1, float z) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
