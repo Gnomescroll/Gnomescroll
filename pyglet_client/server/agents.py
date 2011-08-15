@@ -315,9 +315,13 @@ class AgentPhysics:
 
 class AgentAction:
 
-    def fire_projectile(self):
+    def fire_projectile(self, pos=None, direction=None):
         print 'Agent.fire_projectile'
         state = self.state_vector()
+        if pos is not None:
+            state[0:3] = pos
+        if direction is not None:
+            state[3:6] = direction
         projectile = GameStateGlobal.projectileList.create('Laser', state, owner=self.owner)
         NetOut.event.projectile_create(projectile)
 

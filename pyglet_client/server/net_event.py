@@ -725,9 +725,29 @@ class MessageHandler:
             print 'msg fire_projectile :: agent %i unknown' % (agent_id,)
             return
 
+        try:
+            pos = msg['pos']
+            assert len(pos) == 3
+        except KeyError:
+            print 'msg fire_projectile :: pos missing'
+            return
+        except AssertionError:
+            print 'msg fire_projectile :: pos of wrong size'
+            return
+
+        try:
+            vec = msg['vec']
+            assert len(vec) == 3
+        except KeyError:
+            print 'msg fire_projectile :: vec (direction) missing'
+            return
+        except AssertionError:
+            print 'msg fire_projectile :: vec of wrong size'
+            return
+
         weapon = agent.active_weapon()
         if weapon.fire_command == 'fire_projectile' and weapon.fire():
-            agent.fire_projectile()
+            agent.fire_projectile(pos=pos, direction=vec)
 
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
