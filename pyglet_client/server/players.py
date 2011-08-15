@@ -96,9 +96,10 @@ class Player:
         self.score += 1
         NetOut.event.player_update(self, ['kills', 'score'])
 
-    def died(self):
-        self.deaths += 1
-        NetOut.event.player_update(self, 'deaths')
+    def died(self, no_score=False):
+        if not no_score:
+            self.deaths += 1
+            NetOut.event.player_update(self, 'deaths')
 
     def quit(self):
         GameStateGlobal.playerList.leave(self)

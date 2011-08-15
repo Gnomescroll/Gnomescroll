@@ -665,21 +665,20 @@ class Agent(AgentPhysics, AgentAction):
             if self.health != old:
                 NetOut.event.agent_update(self, 'health')
 
-    def die(self, projectile_owner=None):
+    def die(self, projectile_owner=None, no_score=False, custom_msg=None):
         if not self.dead:
             suicide = False
             try:
                 you_player = GameStateGlobal.playerList[self.owner]
                 you = NetServer.connectionPool.by_client_id(you_player.cid)
-                you_player.died()
+                you_player.died(no_score)
             except e:
                 print 'Error obtaining client object that owns dying agent.'
                 print e
                 self.dead = True
                 return
             if projectile_owner is None:
-                you.sendMessage.you_died('You died mysteriously.')
-                pass
+                msg = 'You died mysteriously.'
             else:
                 try:
                     killer = projectile_owner
@@ -691,17 +690,20 @@ class Agent(AgentPhysics, AgentAction):
                     else:
                         killer.killed()
                         msg = 'You were killed by %s' % (killer.name,)
-                    you.sendMessage.you_died(msg)
                     if not suicide:
                         try:
                             killer_client = NetServer.connectionPool.by_client_id(killer.cid)
-                            msg = 'You killed %s' % you.name
-                            killer_client.sendMessage.you_killed(msg)
+                            kmsg = 'You killed %s' % you.name
+                            killer_client.sendMessage.you_killed(kmsg)
                         except e:
                             print 'Killer\'s client was not found'
                             print e
                 except KeyError:    # race condition, where client quits before his bullet kills
-                    you.sendMessage.you_died('You were killed by a ghost.')
+                    msg = 'You were killed by a ghost.'
+
+            if custom_msg is not None:
+                msg = custom_msg
+            you.sendMessage.you_died(msg)
 
             self.dead = True
             self.dump_inventory()
