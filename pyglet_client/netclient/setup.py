@@ -69,7 +69,8 @@ SDL_hud = Extension('SDL.hud',
                                 'SDL/SDL_text.c',
                                 'SDL/draw_functions.c',
                                 'SDL/texture_loader.c',
-                                'SDL/hud/block_selector.c',]
+                                #'SDL/hud/block_selector.c',
+                                ]
                                 )
 
 terrain_map = Extension('cube_lib.terrain_map',

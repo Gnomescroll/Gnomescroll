@@ -30,9 +30,8 @@ void _load_hud_texture(char *file);
 
 int _blit_sprite2(int tex, float x0, float y0, float x1, float y1, float z);
 
-/*
 void _draw_block_selector(int x, int y);
 void _load_block_selector_texture(char *file, int scale);
-*/
+
 
 #endif
