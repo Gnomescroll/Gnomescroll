@@ -150,7 +150,6 @@ class Hud(object):
         active_y = start_y - ((bs.active // bs.x) * (by + (2*space)))
         self._draw_border_square(active_x, active_y, w+(2*space), color=(255,255,255))
 
-
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()

@@ -496,11 +496,79 @@ class AgentInput:
             InputGlobal.block_selector.up()
         elif symbol == 'down':
             InputGlobal.block_selector.down()
-        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.active)
+        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())
         print InputGlobal.block_selector.active
 
 
 class BlockSelector:
+
+    # DONT EDIT THIS it was very tedious to make
+    block_to_texture = {
+        0: 0,
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 81,
+        6: 82,
+        7: 146,
+        8: 16,
+        9: 17,
+        10: 18,
+        11: 19,
+        12: 20,
+        13: 97,
+        14: 98,
+        15: 162,
+        16: 32,
+        17: 33,
+        18: 34,
+        19: 35,
+        20: 36,
+        21: 83,
+        22: 21,
+        23: 178,
+        24: 64,
+        25: 65,
+        26: 66,
+        27: 67,
+        28: 68,
+        29: 43,
+        30: 37,
+        31: 194,
+        32: 80,
+        33: 81,
+        34: 82,
+        35: 83,
+        36: 84,
+        37: 44,
+        38: 69,
+        39: 210,
+        40: 240,
+        41: 241,
+        42: 242,
+        43: 243,
+        44: 244,
+        45: 245,
+        46: 246,
+        47: 247,
+        48: 31,
+        49: 237,
+        50: 205,
+        51: 22,
+        52: 23,
+        53: 24,
+        54: 248,
+        55: 249,
+        56: 14,
+        57: 46,
+        58: 62,
+        59: 71,
+        60: 72,
+        61: 73,
+        62: 74,
+        63: 75,
+    }
 
     def __init__(self, x, y, block_ids):
         self.x = x
@@ -517,7 +585,7 @@ class BlockSelector:
         row = (row + shift) % self.y
         new = (row * self.x) + col
 
-        if new < 0 or new > self.n:
+        if new < 0 or new > self.n - 1:
             print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
@@ -536,7 +604,7 @@ class BlockSelector:
         new = (col + shift) % self.x
         new += row * self.x
 
-        if new < 0 or new > self.n:
+        if new < 0 or new > self.n - 1:
             print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
@@ -547,8 +615,8 @@ class BlockSelector:
     def right(self):
         self.horizontal(left=False)
 
-    def draw(self):
-        pass
+    def get_texture_id(self):
+        return self.block_to_texture[self.active]
 
 
 from game_state import GameStateGlobal
