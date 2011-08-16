@@ -24,6 +24,7 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     return chunk;
 }
 
+//if apply damage returns 1, then handle block destruction
 int _apply_damage(int x, int y, int z, int value) {
     int xoff, yoff, zoff, xrel, yrel, zrel;
     int tile;
