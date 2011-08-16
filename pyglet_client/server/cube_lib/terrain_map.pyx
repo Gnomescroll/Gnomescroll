@@ -167,7 +167,7 @@ cdef pack(vm_chunk *c):
     #print str(l)
     return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
 
-def apply_damage(int x, int y, int z, int dmg):
+cpdef inline int apply_damage(int x, int y, int z, int dmg):
     cdef int dead = _apply_damage(x,y,z, dmg)
     if dead:
         set(x, y, z, 0)
