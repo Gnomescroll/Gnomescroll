@@ -10,6 +10,7 @@
 
 struct vm_chunk {
     unsigned short voxel[512];
+    unsigned char damage[512];
     int x_off, y_off, z_off; //lower corner of chunk
     unsigned int local_version;
     unsigned int server_version;
@@ -37,6 +38,8 @@ extern struct vm_map map;
 int _init_t_map();
 int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
+
+int _apply_damage(int x, int y, int z, int value);
 
 int _set_server_version(int x,int y,int z, int server_version);
 

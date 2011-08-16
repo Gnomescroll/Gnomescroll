@@ -14,6 +14,7 @@ struct cubeProperties {
     int solid;
     int gravity;
     int transparent;
+    int max_damage;
 };
 
 struct cubeProperties* _get_cube_list();
@@ -21,6 +22,7 @@ struct cubeProperties* _get_cube(int id);
 
 int inline _isActive(int id);
 
+int inline _maxDamage(int id);
 /*
 //buffer
 

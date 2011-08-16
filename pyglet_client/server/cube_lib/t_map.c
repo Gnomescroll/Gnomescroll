@@ -24,6 +24,26 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     return chunk;
 }
 
+//if apply damage returns 1, then handle block destruction
+int _apply_damage(int x, int y, int z, int value) {
+    int xoff, yoff, zoff, xrel, yrel, zrel;
+    int tile;
+    struct vm_column* column;
+    struct vm_chunk* chunk;
+    xoff = x >> 3; yoff = y >> 3; zoff = z >> 3;
+    xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
+    tile = chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
+    unsigned char* damage;
+    damage = &chunk->damage[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
+    *damage += value;
+    if(*damage >= _maxDamage(tile) ) {
+        return 1;
+    } else {
+        return 0;
+    }
+
+}
+
 // terrain map tile set/get
 int _set(int x, int y, int z, int value) {
     int xoff, yoff, zoff, xrel, yrel, zrel;
@@ -46,6 +66,7 @@ int _set(int x, int y, int z, int value) {
         column->chunk[zoff] = chunk;
     }
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
+    chunk->damage[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = 0;
     column->local_version++;
     chunk->local_version++;
     column->vbo_needs_update = 1;
