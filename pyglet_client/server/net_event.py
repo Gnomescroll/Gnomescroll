@@ -349,7 +349,8 @@ def processTeam(key='team', err_key=None):
             return f(self, msg, *args, **kwargs)
         return wrapped
     return outer
-        
+
+       
 '''
 Message Handlers
 '''
@@ -366,7 +367,6 @@ class GenericMessageHandler:
         NetEvent.register_json_events(self.events(), self)
 
         
-# handler for admin msgs
 class AdminMessageHandler(GenericMessageHandler):
 
     def events(self):
