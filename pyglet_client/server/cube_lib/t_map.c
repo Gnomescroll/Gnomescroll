@@ -41,7 +41,6 @@ int _apply_damage(int x, int y, int z, int value) {
     } else {
         return 0;
     }
-
 }
 
 // terrain map tile set/get

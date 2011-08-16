@@ -11,6 +11,7 @@ cube_list = {
         'occludes' : False,
         'active' : False,
         'solid' : False,
+        'max_damage' : 1,
         },
     #1 : {
         #'id' : 1,
@@ -113,6 +114,7 @@ def get_default_tile(i):
         'solid':    True,
         'texture_id': [i]*6,
         'texture_order': def_tex_order,
+        'max_damage' : 3,
     }
 
 def set_cube_list_defaults():

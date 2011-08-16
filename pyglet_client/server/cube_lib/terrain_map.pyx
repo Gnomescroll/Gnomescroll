@@ -176,6 +176,7 @@ cdef extern from "./t_properties.h":
         int solid
         int gravity
         int transparent
+        int max_damage
 
 cdef extern from "./t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
@@ -200,6 +201,7 @@ def init_cube_properties():
         cp.solid = int(d.get('solid', 1))
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
+        cp.max_damage = int(d.get('max_damage', 3))
 
 cpdef inline int isActive(unsigned int id):
     return _get_cube(id).active

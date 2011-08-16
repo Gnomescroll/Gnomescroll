@@ -23,9 +23,9 @@ struct cubeProperties* _get_cube(int id);
 int inline _isActive(int id);
 
 int inline _maxDamage(int id);
+
 /*
 //buffer
-
 struct Vertex* _get_quad_cache();
 */
 #endif
