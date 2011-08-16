@@ -484,7 +484,7 @@ class AgentMessageHandler(GenericMessageHandler):
         agent.set_angle(angle)
 
 
-class PlayerMessageHandler:
+class PlayerMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
@@ -495,8 +495,9 @@ class PlayerMessageHandler:
     @requireKey('id')
     def request_player(self, connection, pid, **msg):
         connection.sendMessage.send_player(pid)
+        
 
-class ProjectileMessageHandler:
+class ProjectileMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
@@ -550,7 +551,7 @@ class ProjectileMessageHandler:
             agent.fire_projectile(pos=pos, direction=vec)
 
     
-class WeaponMessageHandler:
+class WeaponMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
@@ -662,7 +663,7 @@ class WeaponMessageHandler:
         agent.drop_weapon(weapon_id, by_id=True)
 
 
-class ItemMessageHandler:
+class ItemMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
@@ -727,7 +728,7 @@ class ItemMessageHandler:
         agent.drop_item(item)
 
 
-class GameModeMessageHandler:
+class GameModeMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
@@ -751,7 +752,7 @@ class GameModeMessageHandler:
         conn.sendMessage.send_team(tid)
 
 
-class MiscMessageHandler:
+class MiscMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
@@ -774,7 +775,7 @@ class MiscMessageHandler:
         conn.send_client_id()
         
 
-class MapMessageHandler:
+class MapMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
