@@ -38,6 +38,8 @@ cdef extern from "./t_map.h":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
+    int _apply_damage(int x, int y, int z, int value)
+
     int _set_server_version(int x,int y,int z, int server_version)
     vm_map* _get_map()
     vm_chunk* _get_chunk(int xoff, int yoff, int zoff)
@@ -164,6 +166,12 @@ cdef pack(vm_chunk *c):
     #print str((c.x_off,c.y_off,c.z_off, c.local_version))
     #print str(l)
     return fm.pack(c.x_off,c.y_off,c.z_off, c.local_version, *l)
+
+def apply_damage(int x, int y, int z, int dmg):
+    cdef int dead = _apply_damage(x,y,z, dmg)
+    if dead:
+        set(x, y, z, 0)
+    return get(x,y,z)
 
 '''
 PART 2: Properties
