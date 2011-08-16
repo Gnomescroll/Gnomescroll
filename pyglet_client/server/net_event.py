@@ -682,12 +682,13 @@ class MapMessageHandler(GenericMessageHandler):
     @processIterable('pos', 3)
     def hit_block(self, msg, player, agent, pos):
         w = agent.active_weapon()
-        if not w.type == 2: # pick
+        if not (w.fire_command == 'hit_block' and w.fire()): # pick
             return
         x,y,z = pos
         print x,y,z, w.damage
-        block = GameStateGlobal.terrainMap.apply_damage(x, y, z, w.damage)
-        NetOut.event.set_map([block])
+        died = GameStateGlobal.terrainMap.apply_damage(x, y, z, w.damage)
+        if died:
+            NetOut.event.set_map([(x,y,z,0)])
 
     @logError('set_block')
     @extractPlayer

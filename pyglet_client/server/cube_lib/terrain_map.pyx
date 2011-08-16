@@ -171,7 +171,7 @@ cpdef inline int apply_damage(int x, int y, int z, int dmg):
     cdef int dead = _apply_damage(x,y,z, dmg)
     if dead:
         set(x, y, z, 0)
-    return get(x,y,z)
+    return dead
 
 '''
 PART 2: Properties
