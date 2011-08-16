@@ -11,9 +11,9 @@ class PlayerList(GenericObjectList):
         self.client_ids = {}
         self.names = {}
 
-    def join(self, client_id, name):
-        player = self._add(client_id, name)
-        self.client_ids[client_id] = player.id
+    def join(self, connection, name):
+        player = self._add(connection, name)
+        self.client_ids[player.cid] = player.id
         self.names[name] = player.cid
         GameStateGlobal.game.player_join_team(player)
         return player
@@ -54,12 +54,13 @@ class PlayerList(GenericObjectList):
 # represents a "Player" (player score, agents they control etc)
 class Player:
 
-    def __init__(self, client_id, name, id=None, team=None):
+    def __init__(self, connection, name, id=None, team=None):
         self.kills = 0
         self.deaths = 0
         self.score = 0
         self.name = name
-        self.cid = client_id
+        self.connection = connection
+        self.cid = connection.id
         if id is None:
             id = GameStateGlobal.new_player_id()
         self.id = id

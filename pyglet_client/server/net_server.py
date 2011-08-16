@@ -138,7 +138,7 @@ class TcpClient:
             self.player.update_info(name=self.name)
             print 'Updating existing player'
         else:
-            self.player = GameStateGlobal.playerList.join(self.id, self.name)  # create player
+            self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
             print 'Created new player'
         self.sendMessage.game_mode()
         self.sendMessage.send_items()
