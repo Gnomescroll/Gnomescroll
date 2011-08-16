@@ -296,6 +296,7 @@ processor = Processors()
 def logError(msg_name):
     def outer(f):
         def wrapped(self, conn, *args, **kwargs):
+            print kwargs
             err = f(self, conn, *args, **kwargs)
             if err is not None:
                 print '%s :: %s' % (msg_name, err,)
