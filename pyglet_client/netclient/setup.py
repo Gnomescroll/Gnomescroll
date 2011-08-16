@@ -23,7 +23,7 @@ except WindowsError:
 extra_compile_args=[SDL_CFLAGS]
 extra_link_args=[SDL_LDFLAGS]
 
-libraries=['SDL']
+libraries=['SDL', 'SDL_image']
 
 if SYSTEM == 'Windows':
     libraries+=['GLee','opengl32','glu32', 'GLEW']
@@ -39,7 +39,7 @@ if debug == True:
 
 SDL_gl = Extension('SDL.gl',
                     include_dirs = include_dirs,
-                    libraries = libraries+['SDL_image'], #SDL_image ?
+                    libraries = libraries, #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['SDL/SDL_functions.c',
@@ -52,7 +52,7 @@ SDL_gl = Extension('SDL.gl',
 
 SDL_input = Extension('SDL.input',
                     include_dirs = include_dirs,
-                    libraries = libraries+['SDL_image'], # "Chrome"], #SDL_image ?
+                    libraries = libraries, # "Chrome"], #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = [ 'SDL/input.pyx',
@@ -62,7 +62,7 @@ SDL_input = Extension('SDL.input',
 
 SDL_hud = Extension('SDL.hud',
                     include_dirs = include_dirs,
-                    libraries = libraries+['SDL_image', 'SDL_ttf'], #SDL_image ?
+                    libraries = libraries, #, 'SDL_ttf'], #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = [ 'SDL/hud.pyx',
@@ -78,7 +78,7 @@ terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = include_dirs,
                     #include_dirs = ['gl_lib'],  #this does nothing?
-                    libraries = libraries+['SDL_image'], #SDL_image ?
+                    libraries = libraries, #SDL_image ?
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/terrain_map.pyx',
@@ -98,11 +98,23 @@ vox_lib = Extension('vox_lib',
                      'vox_lib/vox_lib.pyx',]
                                 )
 
+'''
+import distutils
+
 #x = distutils.ccompiler.CCompiler()
-#sx.link
 
-#link(target_desc, objects, output_filename[, output_dir=None, libraries=None, library_dirs=None, runtime_library_dirs=None, export_symbols=None, debug=0, extra_preargs=None, extra_postargs=None, build_temp=None, target_lang=None])
-
+x = distutils.ccompiler.link("test", "vox_lib/vox_functions.c", "libTest",
+    output_dir="test2/",
+    libraries= libraries,
+    library_dirs=None,
+    runtime_library_dirs=None,
+    export_symbols=None,
+    debug=0,
+    extra_preargs=None,
+    extra_postargs=None,
+    build_temp=None,
+    target_lang=None)
+'''
 setup(
     cmdclass = {'build_ext': build_ext},
     ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map, ], #+ cythonize("*.pyx")
