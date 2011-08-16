@@ -87,13 +87,13 @@ class SendMessage(GenericMessage):
     @sendJSON('request_agent')
     def request_agent(self, agent_id):
         return {
-            'aid'   :   agent_id,
+            'id'   :   agent_id,
         }
 
     @sendJSON('request_player')
     def request_player(self, player_id):
         return {
-            'pid'   :   player_id,
+            'id'   :   player_id,
         }
 
     @sendJSON('request_team')
