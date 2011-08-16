@@ -72,6 +72,7 @@ SDL_hud = Extension('SDL.hud',
                                 'SDL/hud/block_selector.c',]
                                 )
 
+
 terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = include_dirs,
@@ -96,6 +97,10 @@ vox_lib = Extension('vox_lib',
                      'vox_lib/vox_lib.pyx',]
                                 )
 
+#x = distutils.ccompiler.CCompiler()
+#sx.link
+
+#link(target_desc, objects, output_filename[, output_dir=None, libraries=None, library_dirs=None, runtime_library_dirs=None, export_symbols=None, debug=0, extra_preargs=None, extra_postargs=None, build_temp=None, target_lang=None])
 
 setup(
     cmdclass = {'build_ext': build_ext},
