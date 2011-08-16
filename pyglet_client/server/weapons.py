@@ -158,6 +158,8 @@ class Pick(Weapon):
     def __init__(self, id, owner=None):
         Weapon.__init__(self, id, owner)
         self.fire_command = 'hit_block'
+        self.base_damage = 35
+        self.damage = 35
 
     def fire(self):
         return self.fire_command
