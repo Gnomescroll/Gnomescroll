@@ -329,6 +329,7 @@ def requireKey(key, err_key=None):
             args.append(thing)
             return f(self, *args, **msg)
         return wrapped
+    return outer
 
 # like requireKey, but also require key to have a certain type
 def requireKeyType(key, _type, err_key=None):
@@ -346,6 +347,7 @@ def requireKeyType(key, _type, err_key=None):
             args.append(thing)
             return f(self, *args, **kwargs)
         return wrapped
+    return outer
 
 # require a msg item to have a certain type, if key is present
 def requireTypeIfPresent(key, _type, err_key=None):
@@ -364,6 +366,7 @@ def requireTypeIfPresent(key, _type, err_key=None):
             args.append(thing)
             return f(self, *args, **kwargs)
         return wrapped
+    return outer
     
 '''
 Message Handlers
@@ -398,7 +401,7 @@ class AdminMessageHandler(GenericMessageHandler):
 
 class AgentMessageHandler(GenericMessageHandler):
 
-    def _events(self):
+    def events(self):
         return {
             'request_agent'     :   self.request_agent,
             'agent_position'    :   self.agent_position,
@@ -839,5 +842,5 @@ class ChatMessageHandler(GenericMessageHandler):
     def subscribe(self, conn, **msg):
         ChatServer.chat.client_subscribe(msg, conn)
 
-    def unsubscribe(self, conn, **msg)
+    def unsubscribe(self, conn, **msg):
         ChatServer.chat.client_unsubscribe(msg, conn)
