@@ -685,7 +685,6 @@ class MapMessageHandler(GenericMessageHandler):
         if not (w.fire_command == 'hit_block' and w.fire()): # pick
             return
         x,y,z = pos
-        print x,y,z, w.damage
         died = GameStateGlobal.terrainMap.apply_damage(x, y, z, w.damage)
         if died:
             NetOut.event.set_map([(x,y,z,0)])
