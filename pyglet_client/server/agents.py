@@ -720,9 +720,9 @@ class Agent(AgentPhysics, AgentAction):
 
     def _spawn_point(self):
         # later, add spawn zones/ boundaries to spawn in
-        x = randrange(0,7)
-        y = randrange(0,7)
-        z = 5
+        x = randrange(3,10)
+        y = randrange(3,10)
+        z = 6
         return [x, y, z]
 
     def _set_position(self, pos=None):

@@ -104,7 +104,6 @@ class MessageHandler:
             print self.json_events.keys()
             assert False
 
-
 class GenericMessageHandler:
 
     events = {}
