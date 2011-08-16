@@ -154,6 +154,9 @@ Common Errors
 
 class ErrorNames:
 
+    def no_player(client_id):
+        return 'could not find player for client %s' % (client_id,)
+        
     def agent_ownership(p, a):
         return 'player %d does not own agent %d' % (p.id, a.id,)
 
@@ -169,8 +172,11 @@ class ErrorNames:
     def key_invalid_or_missing(key):
         return '%s invalid or missing' % (key,)
 
-    def wrong_size(key):
-        return '%s of wrong size' % (key,)
+    def wrong_size(key, size=None, actual_size=None):
+        msg = '%s of wrong size' % (key,)
+        if size is not None and actual_size is not None:
+            msg = '%s; should be %d, but is %d' % (msg, size, actual_size,)
+        return msg
 
     def not_iterable(key):
         return '%s is not iterable' % (key,)
@@ -196,6 +202,18 @@ class ProcessedAgentMessage:
     def __init__(self, error=None, agent=None):
         self.error = error
         self.agent = agent
+
+class ProcessedIterableMessage:
+    __slots__ = ['error', 'iterable']
+    def __init__(self, error=None, iterable=None):
+        self.error = error
+        self.iterable = iterable
+
+class ProcessedItemMessage:
+    __slots__ = ['error', 'item']
+    def __init__(self, error=None, item=None):
+        self.error = error
+        self.item = item
 
 class Processors:
 
@@ -229,6 +247,57 @@ class Processors:
             err_msg = err.player_has_no_agent(player)
         return ProcessedAgentMessage(err_msg, agent)
 
+# for iterable items
+    def iterable(msg, key, size, err_key=None):
+        if err_key is None:
+            err_key = key
+        err_msg, obj = None, None
+
+        try:
+            obj = msg[key]
+            angle = list(obj)
+            actual_size = len(obj)
+            if actual_size != size:
+                err_msg = err.wrong_size(err_key, size, actual_size)
+        except KeyError:
+            err_msg = err.key_missing(err_key)
+        except TypeError:
+            err_msg = err.not_iterable(err_key)
+
+        return ProcessedIterableMessage(err_msg, obj)
+
+# for items
+    def item(msg, key='iid', err_key=None):
+        err_msg, item = None, None
+        if err_key is None:
+            err_key = key
+        try:
+            item_id = int(msg.get(key, None))
+            item = GameStateGlobal.itemList[item_id]
+        except TypeError:
+            err_msg = err.key_missing(err_key)
+        except ValueError:
+            err_msg = err.key_invalid(err_key)
+        except KeyError:
+            err_msg = err.thing_unknown('item', item_id)
+
+        return ProcessedItemMessage(err_msg, item)
+
+# teams
+    def team(msg, key='team', err_key=None):
+        if err_key is None:
+            err_key = key
+        try:
+            team_id = int(msg.get(key, None))
+            team = GameStateGlobal.teamList[team_id]
+        except TypeError:
+            err_msg = err.key_missing(err_key)
+        except ValueError:
+            err_msg = err.key_invalid(err_key)
+        except KeyError:
+            err_msg = err.thing_unknown('team', team_id)
+
+
 processor = Processors()
 
 
@@ -237,16 +306,7 @@ processor = Processors()
     Use @logError('msg_name') first
 '''
 
-def extractPlayer(f):
-    def wrapped(self, conn, *args, **kwargs):
-        try:
-            player = GameStateGlobal.playerList.client(conn.id)
-        except KeyError:
-            err = 'could not find player for client %s' % (conn.id,)
-            return err
-        return f(self, player, *args, **kwargs)
-    return wrapped
-
+# prints full error
 def logError(msg_name):
     def outer(f):
         def wrapped(self, conn, *args, **kwargs):
@@ -256,7 +316,69 @@ def logError(msg_name):
         return wrapped
     return outer
 
+# retrieves player object based on connection client id
+def extractPlayer(f):
+    def wrapped(self, conn, *args, **kwargs):
+        try:
+            player = GameStateGlobal.playerList.client(conn.id)
+        except KeyError:
+            err_msg = err.no_player(conn.id)
+            return err_msg
+        return f(self, player, *args, **kwargs)
+    return wrapped
 
+# simple require of msg key, use when no extra validation/processing beyond key existance
+# the decorated function must include matching arguments positionally,
+# in order of decoration, and after any other positional arguments (i.e. connection or player)
+def requireKey(key, err_key=None):
+    if err_key is None:
+        err_key = key
+    def outer(f):
+        def wrapped(self, *args, **msg):
+            try:
+                thing = msg[key]
+            except KeyError:
+                return err.key_missing(err_key)
+            args = list(args)
+            args.append(thing)
+            return f(self, *args, **msg)
+        return wrapped
+
+# like requireKey, but also require key to have a certain type
+def requireKeyType(key, _type, err_key=None):
+    if err_key is None:
+        err_key = key
+    def outer(f):
+        def wrapped(self, *args, **msg):
+            try:
+                thing = _type(msg.get(key, None))
+            except TypeError:
+                return err.key_missing(err_key)
+            except ValueError:
+                return err.key_invalid(err_key)
+            args = list(args)
+            args.append(thing)
+            return f(self, *args, **kwargs)
+        return wrapped
+
+# require a msg item to have a certain type, if key is present
+def requireTypeIfPresent(key, _type, err_key=None):
+    if err_key is None:
+        err_key = key
+    def outer(f):
+        def wrapped(self, *args, **msg):
+            thing = None
+            try:
+                thing = _type(msg[key])
+            except ValueError:
+                return err.key_invalid(err_key)
+            except KeyError:
+                pass
+            args = list(args)
+            args.append(thing)
+            return f(self, *args, **kwargs)
+        return wrapped
+    
 '''
 Message Handlers
 '''
@@ -300,11 +422,9 @@ class AgentMessageHandler(GenericMessageHandler):
         }
 
     @logError('request_agent')
-    def request_agent(self, connection, **msg):
-        if 'id' not in msg:
-            return err.key_missing('id')
-        agent_id = msg['id']
-        connection.sendMessage.send_agent(agent_id)
+    @requireKey('id')
+    def request_agent(self, connection, aid, **msg):
+        connection.sendMessage.send_agent(aid)
 
     @logError('create_agent')
     def create_agent(self, connection, **msg):
@@ -319,12 +439,10 @@ class AgentMessageHandler(GenericMessageHandler):
             return a.error
         agent = a.agent
 
-        err_msg = None
-        try:
-            pos = msg['pos']
-        except KeyError:
-            err_msg = err.key_missing('pos')
-        if err_msg: return err_msg
+        p = processor.iterable(msg, 'pos', 9)
+        if p.error:
+            return p.error
+        pos = p.iterable
 
         agent.state = pos
         NetOut.event.agent_position(agent)
@@ -337,54 +455,32 @@ class AgentMessageHandler(GenericMessageHandler):
             return a.error
         agent = a.agent
 
-        err_msg = None
-        try:
-            buttons = msg['buttons']
-        except KeyError:
-            err_msg = err.key_missing('buttons')
+        p = processor.iterable(msg, 'button', 6)
+        if p.error:
+            return p.error
+        buttons = p.iterable
 
-        btn_len = len(buttons)
-        btn_size = 6
-        if btn_len != btn_size:
-            err_msg = err.wrong_size('buttons')
-
-        if err_msg: return err_msg
-
-        old_buttons = agent.button_state
-        agent.button_state = buttons
-
-        #forward msg
-        if old_buttons != buttons:
+        if buttons != agent.button_state:
+            agent.button_state = buttons
             NetOut.event.agent_button_state(agent)
             ctrl_state = agent.compute_state()
             agent.set_control_state(ctrl_state)
 
     @logError('agent_angle')
     @extractPlayer
-    def agent_angle(self, player, **msg):
+    @requireKey('tick')
+    def agent_angle(self, player, tick, **msg):
         err_msg = None
         a = processor.agent_key(player, msg)
         if a.error:
             return a.error
         agent = a.agent
 
-        tick = msg.get('tick', None)
-        if tick is None:
-            err_msg = err.key_missing('tick')
+        p = processor.iterable(msg, 'angle', 2)
+        if p.error:
+            return p.error
+        angle = p.iterable
 
-        try:
-            angle = msg['angle']
-            angle = list(angle)
-            assert len(angle) == 2
-        except KeyError:
-            err_msg = err.key_missing('angle')
-        except TypeError:
-            err_msg = err.not_iterable('angle')
-        except AssertionError:
-            err_msg = err.wrong_size('angle')
-
-        if err_msg: return err_msg
-    
         agent.set_angle(angle)
 
 
@@ -396,11 +492,9 @@ class PlayerMessageHandler:
         }
 
     @logError('request_player')
-    def request_player(self, connection, **msg):
-        if 'id' not in msg:
-            return err.key_missing('id')
-        connection.sendMessage.send_player(msg['id'])
-
+    @requireKey('id')
+    def request_player(self, connection, pid, **msg):
+        connection.sendMessage.send_player(pid)
 
 class ProjectileMessageHandler:
 
@@ -412,10 +506,9 @@ class ProjectileMessageHandler:
         }
 
     @logError('request_projectile')
-    def request_projectile(self, conn, **msg):
-        if 'id' not in msg:
-            return err.key_missing('id')
-        conn.sendMessage.send_projectile(msg['id'])
+    @requireKey('id')
+    def request_projectile(self, conn, prid, **msg):
+        conn.sendMessage.send_projectile(prid)
 
     @logError('throw_grenade')
     @extractPlayer
@@ -425,17 +518,10 @@ class ProjectileMessageHandler:
             return a.error
         agent = a.agent
 
-        err_msg = None
-        try:
-            vector = msg['vector']
-            assert len(vector) == 3
-        except KeyError:
-            err_msg = 'msg throw_grenade :: vector missing'
-        except AssertionError:
-            err_msg = 'msg throw_grenade :: vector of wrong size'
-
-        if err_msg is not None:
-            return err_msg
+        p = processor.iterable(msg, 'vector', 3)
+        if p.error:
+            return p.error
+        vector = p.iterable
 
         weapon = agent.active_weapon()
         if weapon.fire_command == 'throw_grenade' and weapon.fire():
@@ -444,29 +530,20 @@ class ProjectileMessageHandler:
     @logError('fire_projectile')
     @extractPlayer
     def fire_projectile(self, player, **msg):
-        err_msg = None
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
 
-        try:
-            pos = msg['pos']
-            assert len(pos) == 3
-        except KeyError:
-            err_msg = err.key_missing('pos')
-        except AssertionError:
-            err_msg = err.wrong_size('pos')
+        p = processor.iterable(msg, 'pos', 3)
+        if p.error:
+            return p.error
+        pos = p.iterable
 
-        try:
-            vec = msg['vec']
-            assert len(vec) == 3
-        except KeyError:
-            err_msg = err.key_missing('vec (direction)')
-        except AssertionError:
-            err_msg = err.wrong_size('vec')
-
-        if err_msg: return err_msg
+        p = processor.iterable(msg, 'vec', 3, 'vec (direction)')
+        if p.error:
+            return p.error
+        vec = p.iterable
 
         weapon = agent.active_weapon()
         if weapon.fire_command == 'fire_projectile' and weapon.fire():
@@ -485,43 +562,32 @@ class WeaponMessageHandler:
         }
 
     @logError('request_weapon')
-    def request_weapon(self, conn, **msg):
-        if 'id' not in msg:
-            return 'id missing'
-        conn.sendMessage.send_weapon(msg['id'])
+    @requireKey('id')
+    def request_weapon(self, conn, wid, **msg):
+        conn.sendMessage.send_weapon(wid)
 
     @logError('reload_weapon')
     @extractPlayer
-    def reload_weapon(self, player, **msg):
-        err_msg = None
+    @requireKeyType('weapon', int)
+    def reload_weapon(self, player, weapon_type, **msg):
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
-
-        try:
-            weapon_type = int(msg.get('weapon', None))
-        except TypeError:
-            err_msg = 'weapon missing'
-        except ValueError:
-            err_msg = 'weapon invalid'
-
-        if err_msg: return err_msg
             
         try:
             weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
         except ValueError:
-            err_msg = 'weapon unknown to agent'
+            return 'weapon unknown to agent'
 
-        if err_msg: return err_msg
-            
         weapon = agent.weapons[weapon_index]
         if weapon.reload():
             NetOut.event.agent_update(agent, 'weapons')
 
     @logError('hitscan')
     @extractPlayer
-    def hitscan(self, player, **msg):
+    @requireKey('target')
+    def hitscan(self, player, target, **msg):
         err_msg = None
         
         a = processor.agent(player, msg)
@@ -531,14 +597,7 @@ class WeaponMessageHandler:
             
         weapon = firing_agent.active_weapon()
         if not weapon.hitscan:
-            err_msg = 'Client sent hitscan message for non-hitscan weapon'
-
-        try:
-            target = msg['target']
-        except KeyError:
-            err_msg = err.key_missing('target')
-
-        if err_msg: return err_msg
+            return 'Client sent hitscan message for non-hitscan weapon'
 
         try:
             type = target['type']
@@ -579,19 +638,12 @@ class WeaponMessageHandler:
 
     @logError('change_weapon')
     @extractPlayer
-    def change_weapon(self, player, **msg):
-        err_msg = None
+    @requireKey('windex', err_key='windex (active_weapon)')
+    def change_weapon(self, player, active_weapon, **msg):
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
-
-        try:
-            active_weapon = msg['windex']
-        except KeyError:
-            err_msg = err.key_missing('windex (active_weapon)')
-
-        if err_msg: return err_msg
 
         if active_weapon == -1: # json doesnt have None, but None is a valid input; careful, -1 is a valid index.
             active_weapon = None
@@ -600,19 +652,12 @@ class WeaponMessageHandler:
 
     @logError('drop_weapon')
     @extractPlayer
-    def drop_weapon(self, player, **msg):
-        err_msg = None
+    @requireKey('wid')
+    def drop_weapon(self, player, weapon_id, **msg):
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
-
-        try:
-            weapon_id = msg['wid']
-        except KeyError:
-            err_msg = err.key_missing('wid')
-
-        if err_msg: return err_msg
 
         agent.drop_weapon(weapon_id, by_id=True)
 
@@ -628,41 +673,24 @@ class ItemMessageHandler:
         }
 
     @logError('request_item')
-    def request_item(self, conn, **msg):
-        if 'id' not in msg:
-            return 'id missing'
-        conn.sendMessage.send_item(msg['id'])
+    @requireKey('id')
+    def request_item(self, conn, iid, **msg):
+        conn.sendMessage.send_item(iid)
 
     @logError('pickup_item')
     @extractPlayer
-    def pickup_item(self, player, **msg):
-        err_msg = None
+    @requireTypeIfPresent('slot', int)
+    def pickup_item(self, player, slot, **msg):
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
 
-        try:
-            item_id = int(msg.get('iid', None))
-            item = GameStateGlobal.itemList[item_id]
-        except TypeError:
-            err_msg = 'msg pickup_item :: iid missing'
-        except ValueError:
-            err_msg = 'msg pickup_item :: iid invalid'
-        except KeyError:
-            err_msg = 'msg pickup_item :: object %s unknown' % (item_id,)
-            
-        slot = None
-        try:
-            slot = int(msg['slot'])
-        except ValueError:
-            err_msg = 'msg drop_item :: slot invalid'
-        except KeyError:
-            pass
-
-        if err_msg is not None:
-            return err_msg
-
+        i = processor.item(msg)
+        if i.error:
+            return i.error
+        item = i.item
+        
         if agent.near_item(item):
             print 'agent picking up %s' % (item,)
             agent.pickup_item(item, slot)
@@ -670,25 +698,15 @@ class ItemMessageHandler:
     @logError('near_item')
     @extractPlayer
     def near_item(self, player, **msg):
-        err_msg = None
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
 
-        try:
-            iid = msg['iid']
-        except KeyError:
-            err_msg = 'item id missing'
-
-        if err_msg: return err_msg
-
-        try:
-            item = GameStateGlobal.itemList[iid]
-        except KeyError:
-            err_msg = 'item %s unknown' % (iid,)
-
-        if err_msg: return err_msg
+        i = processor.item(msg)
+        if i.error:
+            return i.error
+        item = i.item
 
         if agent.near_item(item) and hasattr(item, 'agent_nearby'):
             item.agent_nearby(agent)
@@ -696,23 +714,15 @@ class ItemMessageHandler:
     @logError('drop_item')
     @extractPlayer
     def drop_item(self, player, **msg):
-        err_msg = None
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
 
-        try:
-            item_id = int(msg.get('iid', None))
-            item = GameStateGlobal.itemList[item_id]
-        except TypeError:
-            err_msg = err.key_missing('iid')
-        except ValueError:
-            err_msg = err.key_invalid('iid')
-        except KeyError:
-            err_msg = err.thing_unknown('item', item_id)
-
-        if err_msg: return err_msg
+        i = processor.item(msg)
+        if i.error:
+            return i.error
+        item = i.item
 
         agent.drop_item(item)
 
@@ -728,28 +738,17 @@ class GameModeMessageHandler:
     @logError('join_team')
     @extractPlayer
     def join_team(self, player, **msg):
-        err_msg = None
-        try:
-            team_id = int(msg.get('team', None))
-            team = GameStateGlobal.teamList[team_id]
-        except TypeError:
-            err_msg = 'msg join_team :: team key missing'
-        except ValueError:
-            err_msg = 'msg join_team :: team invalid'
-        except KeyError:
-            err_msg = 'msg join_team :: team does not exist'
-
-        if err_msg is not None:
-            return err_msg
+        t = processor.team(msg)
+        if t.error:
+            return t.error
+        team = t.team
             
         GameStateGlobal.game.player_join_team(player, team)
 
     @logError('request_team')
-    def request_team(self, conn, **msg):
-        if 'id' not in msg:
-            return err.no_id
-        conn.sendMessage.send_team(msg['id'])
-
+    @requireKey('id')
+    def request_team(self, conn, tid, **msg):
+        conn.sendMessage.send_team(tid)
 
 
 class MiscMessageHandler:
@@ -762,18 +761,13 @@ class MiscMessageHandler:
         }
 
     @logError('ping')
-    def ping(self, connection, **msg):
-        try:
-            ts = msg['timestamp']
-        except KeyError:
-            return err.key_missing('timestamp')
+    @requireKey('timestamp')
+    def ping(self, connection, ts, **msg):
         connection.sendMessage.ping(ts)
 
     @logError('identify')
-    def identify(self, conn, **msg):
-        name = msg.get('name', None)
-        if name is None:
-            return err.key_missing('name')
+    @requireKey('name')
+    def identify(self, conn, name, **msg):
         conn.identify(name)
 
     def request_client_id(self, conn, **msg):
@@ -792,15 +786,11 @@ class MapMessageHandler:
 
     @logError('request_chunk')
     def request_chunk(self, connection, **msg):
-        err_msg = None
-        try:
-            x,y,z = msg['value']
-        except KeyError:
-            err_msg = '"value" missing'
-        except ValueError:
-            err_msg = '"value" must be a 3 tuple'
+        p = processor.iterable(msg, 'value', 3)
+        if p.error:
+            return p.error
+        x,y,z = p.iterable
 
-        if err_msg: return err_msg
         connection.sendMessage.send_chunk(x,y,z)
 
     @logError('send_chunk_list')
@@ -810,60 +800,34 @@ class MapMessageHandler:
     @logError('hit_block')
     @extractPlayer
     def hit_block(self, player, **msg):
-        err_msg = None
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
 
-        try:
-            block_position = msg['pos']
-            block_position = list(block_position)
-            assert len(block_position) == 3
-        except KeyError:
-            err_msg = err.key_missing('pos')
-        except ValueError:
-            err_msg = err.not_iterable('pos')
-        except AssertionError:
-            err_msg = err.wrong_size('pos')
+        p = processor.iterable('pos', 3)
+        if p.error:
+            return p.error
+        x,y,z = p.iterable
 
-        if err_msg: return err_msg
-
-        x, y, z = block_position
         block = (x, y, z, 0,)
         GameStateGlobal.terrainMap.set(*block)
         NetOut.event.set_map([block])
 
     @logError('set_block')
     @extractPlayer
-    def set_block(self, player, **msg):
-        err_msg = None
+    @requireKeyType('type', int, err_key='type (block)')
+    def set_block(self, player, block_type, **msg):
         a = processor.agent_key(player, msg, 'aid')
         if a.error:
             return a.error
         agent = a.agent
 
-        try:
-            block_type = int(msg.get('type', None))
-        except TypeError:
-            err_msg = err.key_missing('type (block)')
-        except ValueError:
-            err_msg = err.key_invalid('type (block)')
+        p = processor.iterable('pos', 3)
+        if p.error:
+            return p.error
+        x,y,z = p.iterable
 
-        try:
-            block_position = msg['pos']
-            block_position = list(block_position)
-            assert len(block_position) == 3
-        except KeyError:
-            err_msg = err.key_missing('pos')
-        except ValueError:
-            err_msg = err.not_iterable('pos')
-        except AssertionError:
-            err_msg = err.wrong_size('pos')
-
-        if err_msg: return err_msg
-        
-        x, y, z = block_position
         block = (x, y, z, block_type,)
         weapon = agent.active_weapon()
         if weapon.fire_command == 'set_block' and weapon.fire():
