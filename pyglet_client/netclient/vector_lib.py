@@ -30,3 +30,18 @@ def distance(pt1, pt2=None):
 
 def vector_between_points(pt1, pt2):
     return [a-b for a,b in zip(pt2, pt1)]
+
+def multvecscalar(scalar, vec):
+    return [scalar*i for i in vec]
+
+def subvec(vec1, vec2):
+    return [a-b for a,b in zip(vec1, vec2)]
+
+def dotvec(vec1, vec2):
+    return reduce(lambda a,b: a+b, [a*b for a,b in zip(vec1, vec2)])
+
+def reflect(incident, normal):
+    i, n = incident, normal
+    r = subvec(i, multvecscalar(2*(dotvec(n,i)), n))
+    # r = i - 2*(n.i)*n
+    return r
