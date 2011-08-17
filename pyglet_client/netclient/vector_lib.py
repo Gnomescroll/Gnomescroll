@@ -11,8 +11,12 @@ def move_point(pt, v, n):
     end = [a[0]+a[1] for a in zip(pt, v)]
     return end
 
+def length(v):
+    leng = sqrt(sum([i**2 for i in v]))
+    return leng
+
 def normalize(v):
-    scale = sqrt(sum([i**2 for i in v]))
+    scale = length(v)
     v = [i/scale for i in v]
     return v
 
@@ -45,3 +49,10 @@ def reflect(incident, normal):
     r = subvec(i, multvecscalar(2*(dotvec(n,i)), n))
     # r = i - 2*(n.i)*n
     return r
+
+# splits vector into a unit vector and a magnitude vector
+def vector_components(vec):
+    mag = length(vec)
+    norm = [i/mag for i in vec]
+    mag = [mag] * 3
+    return norm, mag

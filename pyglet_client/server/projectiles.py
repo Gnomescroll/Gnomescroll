@@ -175,30 +175,32 @@ class Grenade(Projectile):
 
     def __init__(self, id, state, owner=None):
         Projectile.__init__(self, id, state, owner)
+        self.initial_speed = [3,3,3]
+        self.state[3:6] = [a*b for a,b in zip(self.state[3:6], self.initial_speed)]
 
     def tick(self):
-        if not self.check_life():
-            # explode
-            print 'boom'
-            return
+        #if not self.check_life():
+            ## explode
+            #print 'boom'
+            #return
+        pass
+        #x,y,z, vx, vy, vz = self.state
+        #z_gravity = -.03
 
-        x,y,z, vx, vy, vz = self.state
-        z_gravity = -.03
+        ## move grenade along trajectory here
+        #x += vx * self.speed
+        #y += vy * self.speed
+        #z += (vz + (z_gravity * self.ttl)) * self.speed
 
-        # move grenade along trajectory here
-        x += vx * self.speed
-        y += vy * self.speed
-        z += (vz + (z_gravity * self.ttl)) * self.speed
+        #self.state = [x,y,z,vx,vy,vz]
 
-        self.state = [x,y,z,vx,vy,vz]
+        #if self.check_terrain_collision(delete=False):
+            ##bounce
+            #return
 
-        if self.check_terrain_collision(delete=False):
-            #bounce
-            return
-
-        agent = self.check_agent_collision()
-        if agent:
-            #fall
-            self.state[5] = 0
-            return
+        #agent = self.check_agent_collision()
+        #if agent:
+            ##fall
+            #self.state[5] = 0
+            #return
 

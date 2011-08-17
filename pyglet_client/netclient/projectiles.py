@@ -1,6 +1,6 @@
 from math import sin, cos, pi
 import math
-from vector_lib import distance, vector_between_points, normalize
+from vector_lib import distance, vector_between_points, normalize, vector_components, reflect
 import default_settings as settings
 
 if settings.pyglet:
@@ -217,6 +217,9 @@ class Grenade(Projectile):
     def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
         Projectile.__init__(self, id, state=state, owner=owner, *args, **kwargs)
         self.ttl = ttl
+        o, m = vector_components(self.state[3:6])
+        self.orientation = o
+        self.magnitude = m
 
     def tick(self):
         if not self.check_life():
@@ -225,25 +228,46 @@ class Grenade(Projectile):
             return
 
         if self.check_terrain_collision(delete=False):
-            #bounce
-            self.state[3:] = 0,0,0
-            return
+            self.orientation = reflect(self.orientation, [0,0,1])
+            #self.state[3:] = 0,0,0
+
+        x,y,z = self.state[0:3]
+        z_gravity = -.15
+        f_air = 0.05
+        f_ground = 0.20
 
 
-        x,y,z, vx, vy, vz = self.state
-        z_gravity = -.03
+        self.magnitude = [i*(1-f_air) for i in self.magnitude]
 
+        vel = [a*b for a,b in zip(self.orientation, self.magnitude)]
+        vx,vy,vz = vel
+
+        vz += z_gravity
+
+
+        x += vx
+        y += vy
+        z += vz
+
+        o,m = vector_components(vel)
+        self.orientation = o
+        self.magnitude = m
         # move grenade along trajectory here
-        x += vx * self.speed
-        y += vy * self.speed
-        z += (vz + (z_gravity * self.ttl)) * self.speed
+        #x += vx * self.speed
+        #y += vy * self.speed
+        #z += (vz + (z_gravity * self.ttl)) * self.speed
 
         self.state = [x,y,z,vx,vy,vz]
+
+        print self.state
+        print self.magnitude
+        print self.orientation
+        print '================'
 
 
         if self.check_agent_collision():
             #fall
-            self.state[5] = 0
+            #self.state[5] = 0
             return
 
     def draw(self):
