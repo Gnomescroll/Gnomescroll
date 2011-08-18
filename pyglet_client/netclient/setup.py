@@ -27,6 +27,8 @@ libraries=['SDL', 'SDL_image']
 import os
 
 OS = os.uname()[0]
+print "Platform: %s" %(OS)
+
 if SYSTEM == 'Windows':
     libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
@@ -34,7 +36,7 @@ if SYSTEM == 'Windows':
     library_dirs = ["./"]
 elif OS == "Darwin":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
-    include_dirs =  ["/usr/local/Cellar/sdl"] #['/usr/include/SDL']
+    include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Linux":
@@ -43,7 +45,7 @@ elif OS == "Linux":
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 else:
-    print "Platform unknown: %s" %(os.uname)
+    print "Platform unknown: %s" %(OS)
     print "Error!"
     exit()
 
