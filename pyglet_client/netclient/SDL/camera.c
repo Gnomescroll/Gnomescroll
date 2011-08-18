@@ -33,7 +33,22 @@ void _camera_projection( Camera c) {
 struct Camera* camera;
 
 int _set_camera(struct Camera* c) {
+    if(c != NULL) {
+        printf("Set Camera: Camera not null \n");
+    } else {
+        printf("Set Camera: Error: camera is null \n");
+    }
+    //while(1);
     camera = c;
+}
+
+struct Camera* _get_camera() {
+    if(camera != NULL) {
+        printf("Get Camera: Camera not null \n");
+    } else {
+        printf("Get Camera: Error: camera is null \n");
+    }
+    return camera;
 }
 
 float * model_view_matrix;
@@ -131,8 +146,4 @@ glEnable(GL_TEXTURE_2D);
         glEnable(gl.GL_TEXTURE_2D)
 */
 return 0;
-}
-
-struct Camera* _get_camera() {
-    return camera;
 }

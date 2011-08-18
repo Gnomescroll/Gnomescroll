@@ -144,7 +144,8 @@ cdef class Global:
 
     #make field of view adjustable!
     def __init__(self):
-        cdef Camera *camera = <Camera *>malloc(sizeof(Camera))
+        cdef Camera *camera
+        camera = <Camera *>malloc(sizeof(Camera))
         self.camera = camera
         _set_camera(camera)
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)

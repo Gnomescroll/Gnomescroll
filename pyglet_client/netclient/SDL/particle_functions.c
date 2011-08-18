@@ -59,8 +59,18 @@ _init_particle_functions() {
     setShaders();
     printf("shaders set\n");
 */
+//while(1) {
+//    printf("t\n");
+//}
 
 c = _get_camera();
+
+    if(c != NULL) {
+        printf("Particle Function Camera: Camera not null \n");
+    } else {
+        printf("Particle Function Camera: Error: camera is null \n");
+    }
+
 set_model_view_matrix(&a);
 
 surface=IMG_Load("./texture/particles_01.png");
@@ -387,6 +397,11 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 struct Vec ta[1024*2]; //temp array
 
 int _planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1) {
+    if(c == NULL) {
+    printf("C");
+    return 0;
+    }
+
     if(density > 1023) { density = 1023; }
 
     float dx,dy,dz;
