@@ -1,4 +1,6 @@
 
+#ifndef t_vbo
+#define t_vbo
 
 #ifdef linux
     //do nothing
@@ -13,9 +15,6 @@
 #include <SDL_opengl.h>
 #include <SDL_image.h> //temp?
 #include <stdio.h>
-
-#ifndef t_vbo
-#define t_vbo
 
 #include "t_map.h"
 
