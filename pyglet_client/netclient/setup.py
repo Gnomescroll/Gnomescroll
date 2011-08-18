@@ -45,14 +45,16 @@ if debug == True:
 from distutils.unixccompiler import UnixCCompiler
 
 comp = UnixCCompiler()
+s_lib=[]
 
+#_tmap: terrain map file
 comp.compile(
     sources = [ 'cube_lib/t_map.c',
                 'cube_lib/t_properties.c',
                 #'cube_lib/t_vbo.c',
                 #'cube_lib/t_viz.c'
                 ],
-    output_dir="build/tmp/",
+    #output_dir="build",
     include_dirs= include_dirs,
     debug=0,
     #extra_preargs= extra_compile_args,
@@ -63,10 +65,11 @@ comp.compile(
 comp.link_shared_lib(
     objects = [ 'cube_lib/t_map.o',
                 'cube_lib/t_properties.o',
-                'cube_lib/t_vbo.o',
-                'cube_lib/t_viz.o' ],
-    output_libname= "Mega",
-    output_dir="build/tmp/",
+                #'cube_lib/t_vbo.o',
+                #'cube_lib/t_viz.o'
+                ],
+    output_libname= "_tmap",
+    #output_dir="build",
     libraries=libraries,
     library_dirs=library_dirs,
     #runtime_library_dirs= runtime_library_dirs,
@@ -75,7 +78,7 @@ comp.link_shared_lib(
     #extra_postargs=None,
 )
 
-s_lib = ['t_map']
+s_lib += ['_tmap']
 
 #libraries+= ['Mega']
 
@@ -126,14 +129,14 @@ SDL_hud = Extension('SDL.hud',
 
 terrain_map = Extension('cube_lib.terrain_map',
                     include_dirs = include_dirs,
-                    libraries = libraries,
+                    libraries = libraries+s_lib ,
                     library_dirs = library_dirs,
                     runtime_library_dirs =  runtime_library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/terrain_map.pyx',
-                            'cube_lib/t_map.c',
-                            'cube_lib/t_properties.c',
+                            #'cube_lib/t_map.c',
+                            #'cube_lib/t_properties.c',
                             'cube_lib/t_vbo.c',
                             'cube_lib/t_viz.c'
                             ]
