@@ -43,6 +43,8 @@ elif os.uname == "Linux":
     library_dirs = ["./"]
 else:
     print "Platform unknown: %s" %(os.uname)
+    print "Error!"
+    exit()
 
 debug = True
 if debug == True:
