@@ -26,17 +26,18 @@ extra_link_args=[SDL_LDFLAGS]
 libraries=['SDL', 'SDL_image']
 import os
 
+OS = os.uname()[0]
 if SYSTEM == 'Windows':
     libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
-elif os.uname == "Darwin":
+elif OS == "Darwin":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
     include_dirs =  ["/usr/local/Cellar/sdl"] #['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
-elif os.uname == "Linux":
+elif OS == "Linux":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
     runtime_library_dirs = ["./"]
