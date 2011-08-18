@@ -41,7 +41,7 @@ if debug == True:
     extra_compile_args+=["-g"]
     extra_link_args+=["-g"]
 
-'''
+
 from distutils.unixccompiler import UnixCCompiler
 
 comp = UnixCCompiler()
@@ -49,9 +49,10 @@ comp = UnixCCompiler()
 comp.compile(
     sources = [ 'cube_lib/t_map.c',
                 'cube_lib/t_properties.c',
-                'cube_lib/t_vbo.c',
-                'cube_lib/t_viz.c' ],
-    output_dir="build/tmp",
+                #'cube_lib/t_vbo.c',
+                #'cube_lib/t_viz.c'
+                ],
+    output_dir="build/tmp/",
     include_dirs= include_dirs,
     debug=0,
     #extra_preargs= extra_compile_args,
@@ -65,7 +66,7 @@ comp.link_shared_lib(
                 'cube_lib/t_vbo.o',
                 'cube_lib/t_viz.o' ],
     output_libname= "Mega",
-    output_dir="build",
+    output_dir="build/tmp/",
     libraries=libraries,
     library_dirs=library_dirs,
     #runtime_library_dirs= runtime_library_dirs,
@@ -73,15 +74,12 @@ comp.link_shared_lib(
     extra_preargs= extra_link_args,
     #extra_postargs=None,
 )
-'''
+
+s_lib = ['t_map']
 
 #libraries+= ['Mega']
 
 #exit()
-#runtime_library_dirs
-#library_dirs
-
-libraries+= ['Mega']
 
 SDL_gl = Extension('SDL.gl',
                     include_dirs = include_dirs,
