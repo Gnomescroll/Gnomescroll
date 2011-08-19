@@ -120,6 +120,10 @@ inline int collision_check3(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
+inline float dist(float x0,float y0,float z0, float x1,float y1,float z1) {
+    return sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+}
+
 int ri3[4]; //return value
 
 int* ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* distance) {
@@ -151,6 +155,7 @@ int* ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* di
     dy = _dy*cdy;
     dz = _dz*cdz;
 
+    double xf, yf, zf;
     *distance =0;
     ri3[0]=0; ri3[1]=0; ri3[2]=0;
 
@@ -190,10 +195,14 @@ int* ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* di
                 }
             }
             if(end == 1) {
-
-            *distance =
-            return &ri3;
+                xf = (double) cx*cdx / bsize + x;
+                yf = (double) cy*cdy / bsize + y;
+                zf = (double) cz*cdz / bsize + z;
+                *distance = dist(x0,y0,z0,xf,yf,zf);
+                return &ri3;
             }
         }
     }
+    *distance = 0;
+    return &ri3;
 }
