@@ -32,7 +32,7 @@ int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
     _dy = (y1-y0)/len *bsize;
     _dz = (z1-z0)/len *bsize;
 
-    int cdx, cdy, xdz;
+    int cdx, cdy, cdz;
     cdx = _dx >= 0 ? 1 : -1;
     cdy = _dy >= 0 ? 1 : -1;
     cdz = _dz >= 0 ? 1 : -1;
@@ -91,7 +91,7 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
     _dy = (y1-y0)/len *bsize;
     _dz = (z1-z0)/len *bsize;
 
-    int cdx, cdy, xdz;
+    int cdx, cdy, cdz;
     cdx = _dx >= 0 ? 1 : -1;
     cdy = _dy >= 0 ? 1 : -1;
     cdz = _dz >= 0 ? 1 : -1;
@@ -112,8 +112,8 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
             if(cy >= bsize) { cy -= bsize; y += cdy;}
             if(cz >= bsize) { cz -= bsize; z += cdz;}
             collision_check(x,y,z); ///do collision stuff
-            }
         }
     }
 }
+
 
