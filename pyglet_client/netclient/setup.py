@@ -170,7 +170,20 @@ vox_lib = Extension('vox_lib',
                     'vox_lib/vox_lib.pyx',
                     ]
                                 )
+## c_lib
 
+ray_trace = Extension('c_lib.ray_trace',
+                    include_dirs = include_dirs,
+                    libraries = libraries,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
+                    sources = [
+                    'c_lib/ray_trace.pyx',
+                    'c_lib/ray_trace/ray_trace.c',
+                    ]
+                                )
 
 #x = distutils.ccompiler.CCompiler()
 
@@ -230,5 +243,5 @@ comp.link("test", ["vox_lib/vox_functions.o"], "libTest",
 
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map, ], #+ cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map, ray_trace ], #+ cythonize("*.pyx")
 )
