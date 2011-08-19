@@ -83,7 +83,7 @@ comp.compile(
 
 comp.link_shared_lib(
     objects = [ 'c_lib/t_map/t_map.o',
-                'c_lib/t_map/properties.o',
+                'c_lib/t_map/t_properties.o',
                 #'cube_lib/t_vbo.o',
                 #'cube_lib/t_viz.o'
                 ],

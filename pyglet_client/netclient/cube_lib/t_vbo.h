@@ -19,8 +19,8 @@
 //#include "t_map.h"
 //#include "t_properties.h"
 
-#include <tmap/t_map.h>
-#include <tmap/t_properties.h>
+#include <t_map/t_map.h>
+#include <t_map/t_properties.h>
 
     struct Vertex {
         float x,y,z;
