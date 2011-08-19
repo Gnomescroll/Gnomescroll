@@ -126,7 +126,7 @@ inline float dist(float x0,float y0,float z0, float x1,float y1,float z1) {
 
 int ri3[4]; //return value
 
-int* ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* distance) {
+int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* distance) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     //int lx,ly,lz; //may or may not be used
