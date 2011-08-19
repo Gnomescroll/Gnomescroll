@@ -45,31 +45,31 @@ int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     for(i =0; i <= max_i; i++) {
-            cx += dx;
-            cy += dy;
-            cz += dz;
-            if(cx >= bsize || cx >= bsize || cx >= bsize) {
-                if(cx >= bsize) {
-                    cx % bsize;
-                    x += cdx;
-                    //check
-                    collision_check(x,y,z);
-                }
-                if(cx >= bsize) {
-                    cx % bsize;
-                    y += cdy;
-                    //check
-                    collision_check(x,y,z);
-                }
-                if(cx >= bsize) {
-                    cx % bsize;
-                    z += cdz;
-                    //check
-                    collision_check(x,y,z);
-                }
+        cx += dx;
+        cy += dy;
+        cz += dz;
+        if(cx >= bsize || cx >= bsize || cx >= bsize) {
+            if(cx >= bsize) {
+                cx % bsize;
+                x += cdx;
+                 ///do collision stuff
+                collision_check(x,y,z);
+            }
+            if(cx >= bsize) {
+                cx % bsize;
+                y += cdy;
+                 ///do collision stuff
+                collision_check(x,y,z);
+            }
+            if(cx >= bsize) {
+                cx % bsize;
+                z += cdz;
+                 ///do collision stuff
+                collision_check(x,y,z);
             }
         }
     }
+}
 
 //laxer version
 int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
@@ -104,16 +104,16 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     for(i =0; i <= max_i; i++) {
-            cx += dx;
-            cy += dy;
-            cz += dz;
-            if(cx >= bsize || cx >= bsize || cx >= bsize) {
-                if(cx >= bsize) { cx % bsize; x += cdx;}
-                if(cx >= bsize) { cx % bsize; y += cdy;}
-                if(cx >= bsize) {cx % bsize;z += cdz;}
-                collision_check(x,y,z);
-                }
+        cx += dx;
+        cy += dy;
+        cz += dz;
+        if(cx >= bsize || cx >= bsize || cx >= bsize) {
+            if(cx >= bsize) { cx % bsize; x += cdx;}
+            if(cx >= bsize) { cx % bsize; y += cdy;}
+            if(cx >= bsize) { cx % bsize; z += cdz;}
+            collision_check(x,y,z); ///do collision stuff
             }
         }
     }
+}
 
