@@ -249,7 +249,6 @@ class Grenade(Projectile):
 
         vz += z_gravity
 
-
         x += vx
         y += vy
         z += vz

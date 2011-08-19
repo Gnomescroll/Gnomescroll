@@ -19,4 +19,8 @@ n_teams = 2
 team_kills = False
 victory_points = 3
 
-from settings import *
+try:
+    from settings import *
+except ImportError:
+    print 'settings.py not found; using all defaults'
+        
