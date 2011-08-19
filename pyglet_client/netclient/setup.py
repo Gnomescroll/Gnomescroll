@@ -37,7 +37,8 @@ if SYSTEM == 'Windows':
 elif OS == "Darwin":
     #libraries+=['GL','GLU', 'GLEW',] # 'mega']
     libraries = []
-    extra_link_args += ["-framework OpenGL", "-framework SDL"]
+    #extra_link_args += ["-framework OpenGL", "-framework SDL"]
+    extra_link_args = ["-framework SDL", "-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
     include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
