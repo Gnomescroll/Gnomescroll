@@ -18,11 +18,11 @@ int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
 
     //int lx,ly,lz; //may or may not be used
     int x,y,z;
-    x = x0; //truncating conversion
+    x = x0; //truncating conversion from float to int
     y = y0;
     z = z0;
 
-    int cx,cy,cz;
+    unsigned int cx,cy,cz;
     cx = modf(x0, &dummy)*bsize; //convert fractional part
     cy = modf(y0, &dummy)*bsize;
     cz = modf(z0, &dummy)*bsize;
@@ -50,19 +50,19 @@ int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
         cz += dz;
         if(cx >= bsize || cx >= bsize || cx >= bsize) {
             if(cx >= bsize) {
-                cx = cx % bsize;
+                cx -= bsize;
                 x += cdx;
                  ///do collision stuff
                 collision_check(x,y,z);
             }
             if(cy >= bsize) {
-                cy = cy % bsize;
+                cy -= bsize;
                 y += cdy;
                  ///do collision stuff
                 collision_check(x,y,z);
             }
             if(cz >= bsize) {
-                cz = cz % bsize;
+                cz -= bsize;
                 z += cdz;
                  ///do collision stuff
                 collision_check(x,y,z);
@@ -108,9 +108,9 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
         cy += dy;
         cz += dz;
         if(cx >= bsize || cx >= bsize || cx >= bsize) {
-            if(cx >= bsize) { cx = cx % bsize; x += cdx;}
-            if(cy >= bsize) { cy = cy % bsize; y += cdy;}
-            if(cz >= bsize) { cz = cz % bsize; z += cdz;}
+            if(cx >= bsize) { cx -= bsize; x += cdx;}
+            if(cy >= bsize) { cy -= bsize; y += cdy;}
+            if(cz >= bsize) { cz -= bsize; z += cdz;}
             collision_check(x,y,z); ///do collision stuff
             }
         }
