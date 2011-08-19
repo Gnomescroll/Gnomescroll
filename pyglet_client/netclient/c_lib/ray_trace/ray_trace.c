@@ -162,6 +162,9 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
+    //printf("length= %f \n", len);
+    //printf("max_i= %i \n", max_i);
+
     for(i =0; i <= max_i; i++) {
         cx += dx;
         cy += dy;
@@ -195,14 +198,15 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
                 }
             }
             if(end == 1) {
-                xf = (double) cx*cdx / bsize + x;
-                yf = (double) cy*cdy / bsize + y;
-                zf = (double) cz*cdz / bsize + z;
+                xf =  (double) (cdx == 1 ? cx-dx : bsize-cx-dx) / bsize + x;
+                yf =  (double) (cdy == 1 ? cy-dy : bsize-cy-dy) / bsize + y;
+                zf =  (double) (cdz == 1 ? cz-dz : bsize-cz-dz) / bsize + z;
                 *distance = dist(x0,y0,z0,xf,yf,zf);
-                return &ri3;
+                return ri3;
             }
         }
     }
+    //printf("No collision \n");
     *distance = 0;
     return &ri3;
 }
