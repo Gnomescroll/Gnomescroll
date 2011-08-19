@@ -220,6 +220,11 @@ class Grenade(Projectile):
         o, m = vector_components(self.state[3:6])
         self.orientation = o
         self.magnitude = m
+        self.bounce_damp = 0.25
+
+    def bounce(self, normal):
+        self.orientation = reflect(self.orientation, normal)
+        self.magnitude = [i*(1-self.bounce_damp) for i in self.magnitude]
 
     def tick(self):
         if not self.check_life():
@@ -228,11 +233,11 @@ class Grenade(Projectile):
             return
 
         if self.check_terrain_collision(delete=False):
-            self.orientation = reflect(self.orientation, [0,0,1])
+            self.bounce([0,0,1])
             #self.state[3:] = 0,0,0
 
         x,y,z = self.state[0:3]
-        z_gravity = -.15
+        z_gravity = -.25
         f_air = 0.05
         f_ground = 0.20
 

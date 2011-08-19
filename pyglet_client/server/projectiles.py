@@ -173,9 +173,15 @@ class Laser(Projectile):
 
 class Grenade(Projectile):
 
-    def __init__(self, id, state, owner=None):
+    def __init__(self, id, state, pos, dir, vec, owner=None):
         Projectile.__init__(self, id, state, owner)
-        self.initial_speed = [3,3,3]
+        # adjust initial throwing velocity with agent's velocity
+        #self.initial_speed = 3
+        #self.pos = pos
+        #self.dir = dir
+        #v0 = [i*self.initial_speed for i in self.dir]
+        #self.vec = [a+b for a,b in zip(self.dir, vec)]
+        self.initial_speed = [3]*3
         self.state[3:6] = [a*b for a,b in zip(self.state[3:6], self.initial_speed)]
 
     def tick(self):

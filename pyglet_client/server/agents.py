@@ -327,8 +327,10 @@ class AgentAction:
 
     def throw_grenade(self, direction):
         print 'Agent.throw_grenade'
-        state = self.pos() + direction
-        grenade = GameStateGlobal.projectileList.create('Grenade', state, owner=self.owner)
+        pl = GameStateGlobal.projectileList
+        pos = self.pos()
+        state = pos + direction
+        grenade = pl.create('Grenade', state, pos, direction, self.velocity(), owner=self.owner)
         NetOut.event.projectile_create(grenade)
 
 # represents an agent under control of a player
@@ -406,6 +408,9 @@ class Agent(AgentPhysics, AgentAction):
             return self.state[0:3]
         else:
             self.x, self.y, self.z = xyz
+
+    def velocity(self):
+        return self.state[3:6]
 
     def active_weapon(self):
         return self.weapons[self._active_weapon]
