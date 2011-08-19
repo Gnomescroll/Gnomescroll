@@ -70,6 +70,7 @@ s_lib=[]
 comp.compile(
     sources = [ 'c_lib/t_map/t_map.c',
                 'c_lib/t_map/t_properties.c',
+                'c_lib/ray_trace/ray_trace.c'
                 #'cube_lib/t_vbo.c',
                 #'cube_lib/t_viz.c'
                 ],
@@ -84,6 +85,7 @@ comp.compile(
 comp.link_shared_lib(
     objects = [ 'c_lib/t_map/t_map.o',
                 'c_lib/t_map/t_properties.o',
+                'c_lib/ray_trace/ray_trace.o'
                 #'cube_lib/t_vbo.o',
                 #'cube_lib/t_viz.o'
                 ],
@@ -181,7 +183,7 @@ ray_trace = Extension('c_lib.ray_trace',
                     extra_link_args = extra_link_args,
                     sources = [
                     'c_lib/ray_trace.pyx',
-                    'c_lib/ray_trace/ray_trace.c',
+                    #'c_lib/ray_trace/ray_trace.c',
                     ]
                                 )
 
