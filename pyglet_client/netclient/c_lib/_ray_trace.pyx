@@ -13,4 +13,5 @@ def ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1):
     x[1] = s[0]
     x[2] = s[1]
     x[3] = s[2]
+    print "distance= %f" % (distance)
     return x
