@@ -176,7 +176,7 @@ vox_lib = Extension('vox_lib',
 
 ray_trace = Extension('c_lib.ray_trace',
                     include_dirs = include_dirs,
-                    libraries = libraries,
+                    libraries = libraries+s_lib,
                     library_dirs = library_dirs,
                     runtime_library_dirs =  runtime_library_dirs,
                     extra_compile_args = extra_compile_args,
