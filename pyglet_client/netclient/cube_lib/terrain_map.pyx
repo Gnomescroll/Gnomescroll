@@ -436,9 +436,10 @@ cdef extern from "./t_map.h":
 #cdef extern from "./t_map_draw.h":
 #    int _init_t_map_draw()
 
-init = 0
+_init = 0
 def init():
-    if init != 0:
+    global _init
+    if _init != 0:
         assert False
     else:
         init =1
