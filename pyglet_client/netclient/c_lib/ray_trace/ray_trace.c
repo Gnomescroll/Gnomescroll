@@ -50,19 +50,19 @@ int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
         cz += dz;
         if(cx >= bsize || cx >= bsize || cx >= bsize) {
             if(cx >= bsize) {
-                cx % bsize;
+                cx = cx % bsize;
                 x += cdx;
                  ///do collision stuff
                 collision_check(x,y,z);
             }
-            if(cx >= bsize) {
-                cx % bsize;
+            if(cy >= bsize) {
+                cy = cy % bsize;
                 y += cdy;
                  ///do collision stuff
                 collision_check(x,y,z);
             }
-            if(cx >= bsize) {
-                cx % bsize;
+            if(cz >= bsize) {
+                cz = cz % bsize;
                 z += cdz;
                  ///do collision stuff
                 collision_check(x,y,z);
@@ -108,9 +108,9 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
         cy += dy;
         cz += dz;
         if(cx >= bsize || cx >= bsize || cx >= bsize) {
-            if(cx >= bsize) { cx % bsize; x += cdx;}
-            if(cx >= bsize) { cx % bsize; y += cdy;}
-            if(cx >= bsize) { cx % bsize; z += cdz;}
+            if(cx >= bsize) { cx = cx % bsize; x += cdx;}
+            if(cy >= bsize) { cy = cy % bsize; y += cdy;}
+            if(cz >= bsize) { cz = cz % bsize; z += cdz;}
             collision_check(x,y,z); ///do collision stuff
             }
         }
