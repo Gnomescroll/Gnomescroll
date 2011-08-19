@@ -182,7 +182,7 @@ ray_trace = Extension('c_lib.ray_trace',
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = [
-                    'c_lib/ray_trace.pyx',
+                    'c_lib/_ray_trace.pyx',
                     #'c_lib/ray_trace/ray_trace.c',
                     ]
                                 )

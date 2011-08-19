@@ -15,6 +15,7 @@ ChromeEmbedded.c
 vox.c
 vox_lib.c
 c_lib.c
+_ray_trace.c
 
 Safe Browsing Bloom
 Safe Browsing Bloom Filter 2
