@@ -36,10 +36,15 @@ SwapBuffers(hdc);  //For Windows
  *
  */
 
-struct Vertex* quad_cache;
+//struct Vertex* quad_cache;
+struct Vertex quad_cache[max_cubes*6*4];
+
+struct Vertex* _get_quad_cache() {
+    return &quad_cache;
+}
 
 int _init_draw_terrain() {
-    quad_cache = _get_quad_cache();
+    //quad_cache = _get_quad_cache();
 
     //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     //glEnable(GL_POLYGON_SMOOTH);
@@ -216,7 +221,7 @@ int update_column_VBO(struct vm_column* column) {
                 for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
                     tile_id = _get(_x,_y,_z);
                     //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
-                    if(_isActive(tile_id) == 0) {continue;} else {
+                    if(isActive(tile_id) == 0) {continue;} else {
                         //printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
                     }
                     for(side_num=0; side_num<6; side_num++) {

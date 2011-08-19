@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "t_map.h"
+#include "t_properties.h"
 
     struct Vertex {
         float x,y,z;
@@ -48,5 +49,7 @@ int* _chunk_request();
 //int update_column_VBO(struct vm_column* column);
 void __inline add_quad(float x,float y,float z,int side, int tile_id);
 int _draw_terrain();
+
+struct Vertex* _get_quad_cache();
 
 #endif

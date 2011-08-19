@@ -13,11 +13,3 @@ struct cubeProperties* _get_cube(int id) {
 int _isActive(int id) {
     return cube_list[id].active;
     }
-
-//buffer
-
-struct Vertex quad_cache[max_cubes*6*4];
-
-struct Vertex* _get_quad_cache() {
-    return quad_cache;
-}

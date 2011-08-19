@@ -212,7 +212,7 @@ def isSolid(int id):
 Part 3: Quad Cache
 '''
 
-cdef extern from 't_properties.h':
+cdef extern from 't_vbo.h':
     Vertex* _get_quad_cache()
 
 cdef float * v_index
