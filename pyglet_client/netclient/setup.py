@@ -110,7 +110,7 @@ SDL_gl = Extension('SDL.gl',
                     sources = ['SDL/SDL_functions.c',
                                 'SDL/camera.c',
                                 'SDL/draw_functions.c',
-                                'SDL/texture_loader.c',
+                                #'SDL/texture_loader.c',
                                 'SDL/particle_functions.c',
                                 'SDL/gl.pyx'],
                     )

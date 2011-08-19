@@ -3,7 +3,7 @@
 #include "particle_functions.h"
 
 SDL_Surface *surface;
-GLuint texture;
+GLuint particle_texture;
 
 struct Camera* c;
 
@@ -81,8 +81,8 @@ if(!surface) {
 if(surface->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
 
 glEnable(GL_TEXTURE_2D);
-glGenTextures( 1, &texture );
-glBindTexture( GL_TEXTURE_2D, texture );
+glGenTextures( 1, &particle_texture );
+glBindTexture( GL_TEXTURE_2D, particle_texture );
 glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
 glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
 
@@ -95,7 +95,7 @@ glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
 glDisable(GL_TEXTURE_2D);
 
-printf("particle_texture_id= %i \n", texture);
+printf("particle_texture_id= %i \n", particle_texture);
 }
 
 void __inline bb_q(float x, float y, float z) {
@@ -156,7 +156,7 @@ for( i=0; i<3; i++ )
     //c = _get_camera();
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, particle_texture );
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glColor3ub(255, 255, 255);
@@ -222,7 +222,7 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, particle_texture);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc (GL_ONE, GL_ONE);
@@ -475,7 +475,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, particle_texture );
     glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc (GL_ONE, GL_ONE);
