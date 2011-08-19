@@ -60,6 +60,7 @@ if debug == True:
 
 from distutils.unixccompiler import UnixCCompiler
 
+print "Compiling Shared Libraries"
 comp = UnixCCompiler()
 s_lib=[]
 
@@ -96,9 +97,7 @@ comp.link_shared_lib(
 
 s_lib += ['_tmap']
 
-#libraries+= ['Mega']
-
-#exit()
+print "Compiling Python Modules"
 
 SDL_gl = Extension('SDL.gl',
                     include_dirs = include_dirs,
@@ -115,18 +114,6 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/gl.pyx'],
                     )
 
-SDL_input = Extension('SDL.input',
-                    include_dirs = include_dirs,
-                    libraries = libraries,
-                    library_dirs = library_dirs,
-                    runtime_library_dirs =  runtime_library_dirs,
-                    extra_compile_args = extra_compile_args,
-                    extra_link_args = extra_link_args,
-                    sources = [ 'SDL/input.pyx',
-                                'SDL/input_functions.c',
-                                'SDL/SDL_functions.c',]
-                                )
-
 SDL_hud = Extension('SDL.hud',
                     include_dirs = include_dirs,
                     libraries = libraries,
@@ -142,6 +129,17 @@ SDL_hud = Extension('SDL.hud',
                                 ]
                                 )
 
+SDL_input = Extension('SDL.input',
+                    include_dirs = include_dirs,
+                    libraries = libraries,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
+                    sources = [ 'SDL/input.pyx',
+                                'SDL/input_functions.c',
+                                'SDL/SDL_functions.c',]
+                                )
 
 terrain_map = Extension('cube_lib.terrain_map',
                     include_dirs = include_dirs,

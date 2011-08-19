@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+/*
 #include "t_vbo.h"
+*/
 
 // cube properties
 

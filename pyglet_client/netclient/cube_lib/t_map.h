@@ -7,8 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
 #include "t_vbo.h"
 #include "t_properties.h"
+*/
 
 /*
 #ifndef  t_properties
