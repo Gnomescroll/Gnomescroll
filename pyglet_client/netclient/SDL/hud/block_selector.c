@@ -9,14 +9,34 @@ typedef struct {
 } Texture;
 */
 
-int _init_block_selector() {
-    return 0;
+Texture hud_texture;
+void _load_hud_texture(char *file) {
+    SDL_Surface *surface;
+
+    surface = _load_image(file);
+    int tex = _create_hud_texture2(surface);
+
+    hud_texture.tex = tex;
+    hud_texture.w = surface->w;
+    hud_texture.h = surface->h;
+}
+
+void _draw_loaded_hud_texture(int x, int y) {
+    int x1, y1;
+
+    x = x - hud_texture.w/2;
+    y = y - hud_texture.h/2;
+
+    x1 = x + hud_texture.w;
+    y1 = y + hud_texture.h;
+
+    _blit_sprite2(hud_texture.tex, x, y, x1, y1, 0);
 }
 
 Texture block_selector_texture;
-
 void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
+
     surface = _load_image(file);
     int tex = _create_hud_texture2(surface);
 
@@ -29,32 +49,11 @@ void _draw_block_selector(int x, int y) {
     int x1, y1;
     x1 = block_selector_texture.h + x;
     y1 = block_selector_texture.w + y;
-    _blit_block_selector(block_selector_texture.tex, x, y1, x1, y, 0);
+    _blit_sprite2(block_selector_texture.tex, x, y1, x1, y, 0);
 }
 
-int _blit_block_selector(int texture, float x0, float y0, float x1, float y1, float z) {
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-glColor3ub(255, 255, 255);
-
-glBegin( GL_QUADS );
-    glTexCoord2i( 0, 0 );
-    glVertex3f( x0, y0, z );
-
-    glTexCoord2i( 1, 0 );
-    glVertex3f( x1, y0, z );
-
-    glTexCoord2i( 1, 1 );
-    glVertex3f( x1, y1, z );
-
-    glTexCoord2i( 0, 1 );
-    glVertex3f( x0, y1, z );
-glEnd();
-
-    glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
+int _create_block_texture(char *file) {
+    return 0;
 }
 
 ///ray casting stuff

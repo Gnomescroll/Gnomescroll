@@ -110,7 +110,7 @@ glEnd();
 }
 
 
-
+/*
 Texture hud_texture;
 void _load_hud_texture(char *file) {
     SDL_Surface *surface;
@@ -136,6 +136,7 @@ void _draw_loaded_hud_texture(int x, int y) {
 }
 
 Texture block_selector_texture;
+*
 void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
 
@@ -157,3 +158,4 @@ void _draw_block_selector(int x, int y) {
 int _create_block_texture(char *file) {
     return 0;
 }
+*/
