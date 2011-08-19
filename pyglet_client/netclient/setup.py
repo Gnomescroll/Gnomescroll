@@ -24,22 +24,90 @@ extra_compile_args=[SDL_CFLAGS]
 extra_link_args=[SDL_LDFLAGS]
 
 libraries=['SDL', 'SDL_image']
+import os
+
+OS = os.uname()[0]
+print "Platform: %s" %(OS)
 
 if SYSTEM == 'Windows':
-    libraries+=['GLee','opengl32','glu32', 'GLEW']
+    libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
+    runtime_library_dirs = ["./"]
+    library_dirs = ["./"]
+elif OS == "Darwin":
+    #libraries+=['GL','GLU', 'GLEW',] # 'mega']
+    libraries = []
+    #extra_link_args += ["-framework OpenGL", "-framework SDL"]
+    extra_link_args = ["-framework SDL", "-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
+    include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
+    runtime_library_dirs = ["./"]
+    library_dirs = ["./"]
+elif OS == "Linux":
+    libraries+=['GL','GLU', 'GLEW',] # 'mega']
+    include_dirs = ['/usr/include/SDL']
+    runtime_library_dirs = ["./"]
+    library_dirs = ["./"]
 else:
-    libraries+=['GL','GLU', 'GLEW']
-    include_dirs = ['/usr/include/SDL']
+    print "Platform unknown: %s" %(OS)
+    print "Error!"
+    exit()
+
+include_dirs += ["c_lib"]
 
 debug = True
 if debug == True:
     extra_compile_args+=["-g"]
     extra_link_args+=["-g"]
 
+
+from distutils.unixccompiler import UnixCCompiler
+
+print "Compiling Shared Libraries"
+comp = UnixCCompiler()
+s_lib=[]
+
+#_tmap: terrain map file
+comp.compile(
+    sources = [ 'c_lib/t_map/t_map.c',
+                'c_lib/t_map/t_properties.c',
+                'c_lib/ray_trace/ray_trace.c'
+                #'cube_lib/t_vbo.c',
+                #'cube_lib/t_viz.c'
+                ],
+    #output_dir="build",
+    include_dirs= include_dirs,
+    debug=0,
+    #extra_preargs= extra_compile_args,
+    extra_postargs= extra_compile_args
+    )
+
+
+comp.link_shared_lib(
+    objects = [ 'c_lib/t_map/t_map.o',
+                'c_lib/t_map/t_properties.o',
+                'c_lib/ray_trace/ray_trace.o'
+                #'cube_lib/t_vbo.o',
+                #'cube_lib/t_viz.o'
+                ],
+    output_libname= "_tmap",
+    #output_dir="build",
+    libraries=libraries,
+    library_dirs=library_dirs,
+    #runtime_library_dirs= runtime_library_dirs,
+    debug=0,
+    extra_preargs= extra_link_args,
+    #extra_postargs=None,
+)
+
+s_lib += ['_tmap']
+
+print "Compiling Python Modules"
+
 SDL_gl = Extension('SDL.gl',
                     include_dirs = include_dirs,
-                    libraries = libraries, #SDL_image ?
+                    libraries = libraries,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['SDL/SDL_functions.c',
@@ -50,9 +118,26 @@ SDL_gl = Extension('SDL.gl',
                                 'SDL/gl.pyx'],
                     )
 
+SDL_hud = Extension('SDL.hud',
+                    include_dirs = include_dirs,
+                    libraries = libraries,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
+                    sources = [ 'SDL/hud.pyx',
+                                'SDL/SDL_text.c',
+                                'SDL/draw_functions.c',
+                                'SDL/texture_loader.c',
+                                'SDL/hud/block_selector.c',
+                                ]
+                                )
+
 SDL_input = Extension('SDL.input',
                     include_dirs = include_dirs,
-                    libraries = libraries, # "Chrome"], #SDL_image ?
+                    libraries = libraries,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = [ 'SDL/input.pyx',
@@ -60,53 +145,95 @@ SDL_input = Extension('SDL.input',
                                 'SDL/SDL_functions.c',]
                                 )
 
-SDL_hud = Extension('SDL.hud',
-                    include_dirs = include_dirs,
-                    libraries = libraries, #, 'SDL_ttf'], #SDL_image ?
-                    extra_compile_args = extra_compile_args,
-                    extra_link_args = extra_link_args,
-                    sources = [ 'SDL/hud.pyx',
-                                'SDL/SDL_text.c',
-                                'SDL/draw_functions.c',
-                                'SDL/texture_loader.c',
-                                #'SDL/hud/block_selector.c',
-                                ]
-                                )
-
-
 terrain_map = Extension('cube_lib.terrain_map',
-                    #define_macros =  [('PLATFORM', 'linux')]
                     include_dirs = include_dirs,
-                    #include_dirs = ['gl_lib'],  #this does nothing?
-                    libraries = libraries, #SDL_image ?
+                    libraries = libraries+s_lib ,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/terrain_map.pyx',
-                            'cube_lib/t_map.c',
-                            'cube_lib/t_properties.c',
+                            #'cube_lib/t_map.c',
+                            #'cube_lib/t_properties.c',
                             'cube_lib/t_vbo.c',
-                            'cube_lib/t_viz.c']
+                            'cube_lib/t_viz.c'
+                            ]
                     )
 
 vox_lib = Extension('vox_lib',
                     include_dirs = include_dirs,
-                    libraries = libraries, #SDL_image ?
+                    libraries = libraries,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = [
                     'vox_lib/vox_functions.c',
-                     'vox_lib/vox_lib.pyx',]
+                    'vox_lib/vox_lib.pyx',
+                    ]
                                 )
+## c_lib
 
-'''
-import distutils
+ray_trace = Extension('c_lib.ray_trace',
+                    include_dirs = include_dirs,
+                    libraries = libraries+s_lib,
+                    library_dirs = library_dirs,
+                    runtime_library_dirs =  runtime_library_dirs,
+                    extra_compile_args = extra_compile_args,
+                    extra_link_args = extra_link_args,
+                    sources = [
+                    'c_lib/_ray_trace.pyx',
+                    #'c_lib/ray_trace/ray_trace.c',
+                    ]
+                                )
 
 #x = distutils.ccompiler.CCompiler()
 
-x = distutils.ccompiler.link("test", "vox_lib/vox_functions.c", "libTest",
+#import distutils.unixcompiler
+
+'''
+from distutils.unixccompiler import UnixCCompiler
+
+comp = UnixCCompiler()
+
+for i in libraries:
+    comp.add_library(i)
+for i in include_dirs:
+    comp.add_include_dir(i)
+
+comp.compile(
+    sources = ["vox_lib/vox_functions.c"],
+    #output_dir="build",
+    include_dirs= include_dirs,
+    debug=0,
+    extra_preargs= extra_compile_args,
+    extra_postargs=None)
+
+
+comp.link_shared_lib(
+    ["vox_lib/vox_functions.o"],
+    output_libname= "test2",
+    #output_dir="build",
+    libraries=None,
+    library_dirs=None,
+    runtime_library_dirs= ["./",],
+    debug=0,
+    extra_preargs= extra_link_args,
+    extra_postargs=None,
+)
+'''
+
+'''
+comp.link("test", ["vox_lib/vox_functions.o"], "libTest",
+    #include_dirs = include_dirs,
+    #libraries = libraries, #SDL_image ?
+    #extra_compile_args = extra_compile_args,
+    #extra_link_args = extra_link_args,
+
     output_dir="test2/",
     libraries= libraries,
     library_dirs=None,
+
     runtime_library_dirs=None,
     export_symbols=None,
     debug=0,
@@ -115,7 +242,8 @@ x = distutils.ccompiler.link("test", "vox_lib/vox_functions.c", "libTest",
     build_temp=None,
     target_lang=None)
 '''
+
 setup(
     cmdclass = {'build_ext': build_ext},
-    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map, ], #+ cythonize("*.pyx")
+    ext_modules = [vox_lib, SDL_gl, SDL_input, SDL_hud, terrain_map, ray_trace ], #+ cythonize("*.pyx")
 )

@@ -5,6 +5,11 @@
 
 #include <unistd.h>
 
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 int _start(int frequency); //ms per frame
 
 int _tick_check();

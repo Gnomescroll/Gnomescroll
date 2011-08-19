@@ -1,3 +1,8 @@
+
+cdef extern from "../c_lib/t_map/t_map.h":
+    int _set(int x, int y, int z, int value)
+    int _get(int x, int y, int z)
+
 '''
 Part 1: State
 
@@ -15,8 +20,7 @@ cdef enum:
     vm_chunk_size = 8
     vm_column_max = 16
 
-cdef extern from "./t_map.h":
-
+cdef extern from "../c_lib/t_map/t_map.h":
     struct vm_chunk:
         unsigned short voxel[512]
         int x_off, y_off, z_off
@@ -32,7 +36,7 @@ cdef extern from "./t_map.h":
     struct vm_map:
         vm_column column[vm_map_dim*vm_map_dim]
 
-cdef extern from "./t_map.h":
+cdef extern from "../c_lib/t_map/t_map.h":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
@@ -153,7 +157,8 @@ cdef pack(vm_chunk *c):
 ''' imports '''
 from libc.stdlib cimport malloc, free
 
-cdef extern from 't_vbo.h':
+#cdef extern from 't_vbo.h':
+cdef extern from './t_vbo.h':
     struct Vertex:
         float x,y,z
         float tx,ty
@@ -167,7 +172,8 @@ cdef extern from 't_vbo.h':
 PART 2: Properties
 '''
 
-cdef extern from "./t_properties.h":
+#cdef extern from "./t_properties.h":
+cdef extern from "../c_lib/t_map/t_properties.h":
     struct cubeProperties:
         int active
         int occludes
@@ -175,7 +181,8 @@ cdef extern from "./t_properties.h":
         int gravity
         int transparent
 
-cdef extern from "./t_properties.h":
+#cdef extern from "./t_properties.h":
+cdef extern from "../c_lib/t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
     cubeProperties* _get_cube(int id)
@@ -212,7 +219,9 @@ def isSolid(int id):
 Part 3: Quad Cache
 '''
 
-cdef extern from 't_properties.h':
+
+#cdef extern from 't_vbo.h':
+cdef extern from './t_vbo.h':
     Vertex* _get_quad_cache()
 
 cdef float * v_index
@@ -292,7 +301,8 @@ def get_cube_texture(tile_id, side, vert_num):
 PART 3: Drawing Functions
 
 '''
-cdef extern from 't_vbo.h':
+#cdef extern from 't_vbo.h':
+cdef extern from "./t_vbo.h":
     int _draw_terrain()
     int _update_chunks()
     int _draw_terrain()
@@ -351,7 +361,8 @@ cpdef inline int collisionDetection(int x, int y, int z):
 PART 5: Network Interface
 '''
 
-cdef extern from 't_vbo.h':
+#cdef extern from 't_vbo.h':
+cdef extern from "./t_vbo.h":
     int* _chunk_request()
 
 def chunk_request():
@@ -429,16 +440,20 @@ class Profiler:
 PART 6: Init
 '''
 
-cdef extern from 't_vbo.h':
+#cdef extern from 't_vbo.h':
+cdef extern from "./t_vbo.h":
     int _init_draw_terrain()
-cdef extern from "./t_map.h":
+
+#cdef extern from "./t_map.h":
+cdef extern from "../c_lib/t_map/t_map.h":
     int _init_t_map()
 #cdef extern from "./t_map_draw.h":
 #    int _init_t_map_draw()
 
-init = 0
+_init = 0
 def init():
-    if init != 0:
+    global _init
+    if _init != 0:
         assert False
     else:
         init =1

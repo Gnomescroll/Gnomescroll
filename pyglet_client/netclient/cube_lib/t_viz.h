@@ -12,7 +12,10 @@
 
 //    #include "t_properties.h"
 
-#include "t_map.h"
+//#include "t_map.h"
+
+#include <t_map/t_map.h>
+#include <t_map/t_properties.h>
 
 int _draw_vbo_indicator(float x, float y, float z);
 

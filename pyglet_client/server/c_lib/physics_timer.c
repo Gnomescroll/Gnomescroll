@@ -11,15 +11,25 @@ long delta;
 //long get_time() ;
 
 long get_time() {
-    #ifdef _POSIX_TIMERS
-        struct timespec tp;
-        //clock_gettime(CLOCK_REALTIME, &tp);
-        clock_gettime(CLOCK_MONOTONIC, &tp);
-
-        //printf("current time is: %ld \n", tp.tv_nsec);
-        return tp.tv_sec*1000 + tp.tv_nsec/(1000*1000);
+    #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+        clock_serv_t cclock;
+        mach_timespec_t mts;
+        host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+        clock_get_time(cclock, &mts);
+        mach_port_deallocate(mach_task_self(), cclock);
+        //ts.tv_sec = mts.tv_sec;
+        //ts.tv_nsec = mts.tv_nsec;
+        return mts.tv_sec*1000 + mts.tv_nsec/(1000*1000);
     #else
-        printf("_POSIX_TIMERS not defined! \n");
+        #ifdef _POSIX_TIMERS
+            struct timespec tp;
+            //clock_gettime(CLOCK_REALTIME, &tp);
+            clock_gettime(CLOCK_MONOTONIC, &tp);
+            //printf("current time is: %ld \n", tp.tv_nsec);
+            return tp.tv_sec*1000 + tp.tv_nsec/(1000*1000);
+        #else
+            printf("_POSIX_TIMERS not defined! \n");
+        #endif
     #endif
 }
 
@@ -45,6 +55,15 @@ int _tick_check() {
 
     //printf("Time since last tick= %ld \n", cur_t - last_tick);
     delta += cur_t - last_tick;
+    if(delta < 0) {
+        printf("physics_timer: delta less than zero!\n");
+        delta =0;
+        ///may cause timing bug
+    }
+    if(delta > 10*1000) {
+        printf("physics_timer: delta is greater than 10 seconds!\n");
+        delta = 0;
+    }
     //printf("Delta= %ld \n", delta);
     if( delta >= f) {
         delta -= f;
