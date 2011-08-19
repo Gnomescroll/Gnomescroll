@@ -1,3 +1,5 @@
+#include "ray_trace.h"
+
 ///ray casting stuff
 
 

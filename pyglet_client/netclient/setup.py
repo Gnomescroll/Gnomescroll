@@ -52,6 +52,8 @@ else:
     print "Error!"
     exit()
 
+include_dirs += ["c_lib"]
+
 debug = True
 if debug == True:
     extra_compile_args+=["-g"]
@@ -66,8 +68,8 @@ s_lib=[]
 
 #_tmap: terrain map file
 comp.compile(
-    sources = [ 'cube_lib/t_map.c',
-                'cube_lib/t_properties.c',
+    sources = [ 'c_lib/t_map/t_map.c',
+                'c_lib/t_map/t_properties.c',
                 #'cube_lib/t_vbo.c',
                 #'cube_lib/t_viz.c'
                 ],
@@ -80,8 +82,8 @@ comp.compile(
 
 
 comp.link_shared_lib(
-    objects = [ 'cube_lib/t_map.o',
-                'cube_lib/t_properties.o',
+    objects = [ 'c_lib/t_map/t_map.o',
+                'c_lib/t_map/properties.o',
                 #'cube_lib/t_vbo.o',
                 #'cube_lib/t_viz.o'
                 ],
