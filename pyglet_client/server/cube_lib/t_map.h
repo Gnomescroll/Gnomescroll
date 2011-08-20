@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "t_properties.h
+
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
