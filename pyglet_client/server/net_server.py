@@ -3,7 +3,7 @@ import select
 import socket
 
 # For decoder utils:
-import simplejson as json
+import json
 import struct
 
 from opts import opts
