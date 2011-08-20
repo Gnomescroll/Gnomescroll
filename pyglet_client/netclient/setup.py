@@ -28,6 +28,7 @@ import os
 
 OS = os.uname()[0]
 print "Platform: %s" %(OS)
+elif OS == "Darwin":
 
 if SYSTEM == 'Windows':
     libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']

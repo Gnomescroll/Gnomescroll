@@ -20,4 +20,3 @@ def get_time():
 
 def get_tick():
     return _get_tick()
-
