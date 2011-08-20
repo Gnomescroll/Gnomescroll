@@ -15,12 +15,14 @@ from Cython.Distutils import build_ext
 extra_compile_args=["-g"]
 extra_link_args=["-g"]
 
+include_dirs =  [] #['/usr/local/include', '/usr/lib',     ]
+library_dirs = [] #'usr/lib']
+
 terrain_map = Extension('cube_lib.terrain_map',
                     #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/local/include',
-                                    '/usr/lib',     ],
+                    include_dirs = include_dirs ,
                     libraries = [], #SDL_image ?
-                    library_dirs = ['usr/lib'],
+                    library_dirs = library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['cube_lib/terrain_map.pyx',
@@ -30,10 +32,9 @@ terrain_map = Extension('cube_lib.terrain_map',
 
 c_lib = Extension('c_lib',
                     #define_macros =  [('PLATFORM', 'linux')]
-                    include_dirs = ['/usr/local/include',
-                                    '/usr/lib',     ],
+                    include_dirs = include_dirs,
                     libraries = ['rt'],
-                    library_dirs = ['usr/lib'],
+                    library_dirs = library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = ['c_lib/c_lib.pyx',
