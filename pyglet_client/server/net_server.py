@@ -23,7 +23,9 @@ class NetServer:
 
     @classmethod
     def init_0(cls):
-        cls.connectionPool = ConnectionPool()
+        #cls.connectionPool = ConnectionPool_EPOLL()
+        cls.connectionPool = ConnectionPool_SELECT()
+
         cls.datagramDecoder = DatagramDecoder()
         cls.serverListener = ServerListener()
 
@@ -223,7 +225,7 @@ class TcpClient:
             self.TcpPacketDecoder.add_to_buffer(data)
 
 # manages client connections
-class ConnectionPool:
+class ConnectionPool_EPOLL:
 
     def init(self):
         pass
@@ -310,7 +312,99 @@ class ConnectionPool:
             else:
                 print "EPOLLOUT weird event: %i" % (event,)
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
+class ConnectionPool_SELECT:
 
+    def init(self):
+        pass
+    def __init__(self):
+        #local
+        #self._epoll = select.epoll()
+        self.socket_list = []
+        self._client_count = 0
+        self._client_pool = {} #clients by fileno
+        self._clients_by_id = {}
+        self.names = {}
+        atexit.register(self.on_exit)
+
+    def on_exit(self):
+        #self._epoll.close()
+        for client in self._client_pool.values():
+            client.close()
+
+    def addClient(self, connection, address, type='tcp'):
+        self._client_count += 1
+        if type == 'tcp':
+            client =  TcpClient(connection, address)
+            #self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
+            self.socket_list.append(client)
+            self._client_pool[client.fileno] = client #save client
+            if client.id not in self._clients_by_id:
+                self._clients_by_id[client.id] = client
+                print "Connection associated with client_id= %s" % (client.id,)
+
+    def by_client_id(self, client_id):
+        if client_id in self._clients_by_id:
+            return self._clients_by_id[client_id]
+
+    def name_client(self, connection, name):
+        avail, you = self.name_available(name, connection)
+        if not you:
+            if avail:
+                if connection.name in self.names:
+                    del self.names[connection.name]
+            else:
+                return
+        self.names[name] = connection.id
+        return name
+
+    def name_available(self, name, connection=None):
+        you = False
+        if connection is not None:
+            if self.names.get(name, None) == connection.id:
+                you = True
+        if name in self.names:
+            avail = False
+        else:
+            avail = True
+        return (avail, you,)
+
+    def tearDownClient(self, connection, duplicate_id = False):
+        fileno = connection.fileno
+        try:    # this was added after Ycros crashed the server by connecting http://paste.pocoo.org/show/455317/
+            self._epoll.unregister(fileno)
+        except IOError, dat:
+            print IOError, dat
+        for sock in self.socket_list:
+            if sock.fileno() == fileno
+                self.socket_list.remove(sock)
+        self._client_pool[fileno].close()
+        del self._client_pool[fileno] #remove from client pool
+        if connection.id != 0: # remove from chat
+            ChatServer.chat.disconnect(connection)
+            del self._clients_by_id[connection.id]
+        if connection.name in self.names:
+            del self.names[connection.name]
+        GameStateGlobal.disconnect(connection)
+        NetOut.event.client_quit(connection.id)
+        ChatServer.chat.disconnect(connection)
+
+    def process_events(self):
+        if len(self.socket_list) == 0: ##fixes windows bug
+            return
+        rlist, wlist, xlist = select.select(self.socket_list, [], self.socket_list, 0)
+        for sock in rlist:
+            fileno = sock.fileno()
+            assert self._client_pool.has_key(fileno)
+            self._client_pool[fileno].receive()
+
+        for sock in wlist:
+            pass
+
+        for sock in xlist:
+            fileno = sock.fileno()
+            print "select.slect exception; weird event or socket teardown"
+            self.tearDownClient(self._client_pool[fileno])
+        #events = self._epoll.poll(0)
 
 '''
 Decoders
