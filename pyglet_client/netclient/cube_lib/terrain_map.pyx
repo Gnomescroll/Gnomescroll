@@ -4,6 +4,7 @@ cdef extern from "../c_lib/t_map/t_map.h":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
+
 '''
 Part 1: State
 

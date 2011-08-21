@@ -5,6 +5,7 @@ cdef extern from 'texture_loader.h':
     void _load_hud_texture(char *file)
 
 
+
 cdef extern from 'SDL_text.h':
     ctypedef struct SDL_Surface
     int _init_text()

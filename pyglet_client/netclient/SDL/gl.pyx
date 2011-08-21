@@ -3,7 +3,6 @@ cimport libc.stdlib
 
 #type imports
 #cimport cube_lib.types
-#from cube_lib.types cimport Quad, Vertex
 
 ## Camera.c ##
 cdef extern from "camera.h":
