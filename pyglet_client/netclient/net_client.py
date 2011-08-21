@@ -8,9 +8,23 @@ import socket
 import struct
 
 import json
-    
+
 from opts import opts
 import default_settings as settings
+
+import os
+OS = os.uname()[0]
+#OS = "Windows"
+
+if OS == "Linux":
+    pass
+elif OS == "Windows":
+    pass
+elif OS == "Darwin":
+    pass
+
+import select
+_epoll = 0
 
 class NetClientGlobal:
     connection = None
@@ -108,9 +122,6 @@ class PacketDecoder:
         if self.count % 500 == 0:
             print "processed message count: " +str(self.count)
         self.datagramDecoder.process_datagram(message)
-
-import select
-_epoll = 0
 
 class TcpConnection:
     server = opts.server
