@@ -333,6 +333,9 @@ class AgentAction:
         grenade = pl.create('Grenade', state, pos, direction, self.velocity(), owner=self.owner)
         NetOut.event.projectile_create(grenade)
 
+    def throw_grenade_c(self, direction, velocity):
+        pass
+
 # represents an agent under control of a player
 class Agent(AgentPhysics, AgentAction):
 
@@ -396,6 +399,7 @@ class Agent(AgentPhysics, AgentAction):
             wl.create('BlockApplier', owner=self),
             wl.create('HitscanLaserGun', owner=self),
             wl.create('GrenadePouch', owner=self),
+            wl.create('GrenadePouch_C', owner=self),
         ]
         self._active_weapon = 0
         self.inventory = []

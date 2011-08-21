@@ -301,6 +301,16 @@ class SendMessage(GenericMessage):
             'aid'       :   agent.id,
             'vector'    :   agent.normalized_direction(),
         }
+        
+    @idRequired
+    @noViewer
+    @sendJSON('throw_grenade_c')
+    def throw_grenade(self, agent):
+        return {
+            'aid'   :   agent.id,
+            'dir'   :   agent.normalized_direction(),
+            'vel'   :   agent.velocity(),
+        }
 
 class MiscMessage:
     @sendJSON('ping')
