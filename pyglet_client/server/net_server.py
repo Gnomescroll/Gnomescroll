@@ -69,7 +69,7 @@ class ServerListener:
         global OS
         if OS == "Linux":
             self.epoll = select.epoll(2) #2 sockets
-        elif OS == "Windows":
+        elif OS == "Windows" or OS == "Darwin":
             pass
         elif OS == "Darwin":
             pass
@@ -91,7 +91,7 @@ class ServerListener:
             global OS
             if OS == "Linux":
                 self.epoll.register(self.tcp.fileno(), select.EPOLLIN)
-            elif OS == "Windows":
+            elif OS == "Windows" or OS == "Darwin":
                 pass
             elif OS == "Darwin":
                 pass
@@ -114,8 +114,8 @@ class ServerListener:
                         print "ServerListener.accept error: " + str(value) + ", " + message
                 if fileno == self.udp_fileno:
                     print "UDP event"
-        elif OS == "Windows":
-            inputready,outputready,exceptready = select.select([self.tcp],[],[])
+        elif OS == "Windows" or OS == "Darwin":
+            inputready,outputready,exceptready = select.select([self.tcp],[],[],0)
             if len(inputready) != 0:
                 try:
                     connection, address = self.tcp.accept()
