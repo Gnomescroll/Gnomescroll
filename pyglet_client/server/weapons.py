@@ -14,6 +14,7 @@ class WeaponList(GenericMultiObjectList):
             BlockApplier,
             HitscanLaserGun,
             GrenadePouch,
+            GrenadePouch_C,
         ])
         
 class Weapon(EquippableObject):
@@ -25,6 +26,7 @@ class Weapon(EquippableObject):
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
         'GrenadePouch'  :   5,
+        'GrenadePouch_C':   6,
     }
 
     def __init__(self, id, owner=None):
@@ -196,5 +198,14 @@ class GrenadePouch(Weapon):
             d.update(filter_props(self, properties))
         return d
 
+
+class GrenadePouch_C(GrenadePouch):
+
+    def __init__(self, id, owner=None, state=None, **kwargs):
+        pass
+
+    def fire(self):
+        super(GrenadePouch_C, self).fire()
+        return 'throw_grenade_c'
 
 from net_out import NetOut

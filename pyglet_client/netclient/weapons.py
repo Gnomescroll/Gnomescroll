@@ -11,6 +11,7 @@ class Weapon(EquippableObject):
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
         'GrenadePouch'  :   5,
+        'GrenadePouch_C':   6,
     }
 
     _hud_undef = '--'
@@ -213,5 +214,14 @@ class GrenadePouch(Weapon):
         if 'clip_size' in weapon:
             self.clip_size = weapon['clip_size']
         GameStateGlobal.weaponList.update(*args)
+
+class GrenadePouch_C(GrenadePouch):
+
+    def __init__(self, id, owner=None, state=None, **kwargs):
+        pass
+
+    def fire(self):
+        super(GrenadePouch_C, self).fire()
+        return 'throw_grenade_c'
 
 from game_state import GameStateGlobal

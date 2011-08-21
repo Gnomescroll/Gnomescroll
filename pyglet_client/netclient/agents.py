@@ -719,6 +719,9 @@ class AgentModel(object):
             self.state[0:3] = xyz
             #self.x, self.y, self.z = xyz
 
+    def velocity(self):
+        return self.state[3:6]
+
     #def nearby_objects(self):
         #for obj in GameStateGlobal.itemList.values():
             #if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
