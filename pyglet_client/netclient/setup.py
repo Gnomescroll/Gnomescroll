@@ -30,12 +30,13 @@ OS = os.uname()[0]
 print "Platform: %s" %(OS)
 
 if SYSTEM == 'Windows':
-    libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']
+    #libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']
+    libraries+=['opengl32','glu32', 'GLEW',]
     include_dirs = ['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Darwin":
-    libraries =["GLEW"] # 'GL','GLU',
+    libraries =["GLEW", "SDL_image"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
     extra_link_args = ["-framework SDL", "-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
     include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
