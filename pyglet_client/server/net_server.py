@@ -3,10 +3,14 @@ import select
 import socket
 
 # For decoder utils:
-import simplejson as json
+import json
 import struct
 
 from opts import opts
+
+import os
+OS = os.uname()[0]
+OS = "Windows"
 
 class NetServer:
     connectionPool = None
@@ -23,7 +27,14 @@ class NetServer:
 
     @classmethod
     def init_0(cls):
-        cls.connectionPool = ConnectionPool()
+        global OS
+        if OS == "Linux":
+            cls.connectionPool = ConnectionPool_EPOLL()
+        elif OS == "Windows":
+            cls.connectionPool = ConnectionPool_SELECT()
+        elif OS == "Darwin":
+            cls.connectionPool = ConnectionPool_SELECT()
+
         cls.datagramDecoder = DatagramDecoder()
         cls.serverListener = ServerListener()
 
@@ -55,6 +66,13 @@ class ServerListener:
         self.epoll = select.epoll(2) #2 sockets
         self._setup_tcp_socket()
         atexit.register(self.on_exit)
+        global OS
+        if OS == "Linux":
+            self.epoll = select.epoll(2) #2 sockets
+        elif OS == "Windows" or OS == "Darwin":
+            pass
+        elif OS == "Darwin":
+            pass
 
     def on_exit(self):
         self.tcp.close()
@@ -70,15 +88,35 @@ class ServerListener:
             self.tcp.setblocking(0)
             self.tcp.listen(1)
             self.tcp_fileno = self.tcp.fileno()
-            self.epoll.register(self.tcp.fileno(), select.EPOLLIN)
+            global OS
+            if OS == "Linux":
+                self.epoll.register(self.tcp.fileno(), select.EPOLLIN)
+            elif OS == "Windows" or OS == "Darwin":
+                pass
+            elif OS == "Darwin":
+                pass
             print "TCP socket listening on port %i" % (self.TCP_PORT,)
         except socket.error, (value, message):
             print "TCP socket setup failed: %s, %s" % (str(value), message,)
 
     def accept(self):
-        events = self.epoll.poll(0) #wait upto 0 seconds
-        for fileno, event in events:
-            if fileno == self.tcp_fileno:
+        global OS
+        if OS == "Linux":
+            events = self.epoll.poll(0) #wait upto 0 seconds
+            for fileno, event in events:
+                if fileno == self.tcp_fileno:
+                    try:
+                        connection, address = self.tcp.accept()
+                        print 'TCP connection established with:', address
+                        connection.setblocking(0)
+                        NetServer.connectionPool.addClient(connection, address) #hand off connection to connection pool
+                    except socket.error, (value,message):
+                        print "ServerListener.accept error: " + str(value) + ", " + message
+                if fileno == self.udp_fileno:
+                    print "UDP event"
+        elif OS == "Windows" or OS == "Darwin":
+            inputready,outputready,exceptready = select.select([self.tcp],[],[],0)
+            if len(inputready) != 0:
                 try:
                     connection, address = self.tcp.accept()
                     print 'TCP connection established with:', address
@@ -86,8 +124,8 @@ class ServerListener:
                     NetServer.connectionPool.addClient(connection, address) #hand off connection to connection pool
                 except socket.error, (value,message):
                     print "ServerListener.accept error: " + str(value) + ", " + message
-            if fileno == self.udp_fileno:
-                print "UDP event"
+        elif OS == "Darwin":
+            pass
 
 # manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
 class TcpClient:
@@ -223,10 +261,10 @@ class TcpClient:
             self.TcpPacketDecoder.add_to_buffer(data)
 
 # manages client connections
-class ConnectionPool:
+class ConnectionPool_EPOLL:
 
     def init(self):
-        pass
+        print "Networking: Using ConnectionPool_EPOLL"
     def __init__(self):
         #local
         self._epoll = select.epoll()
@@ -310,7 +348,96 @@ class ConnectionPool:
             else:
                 print "EPOLLOUT weird event: %i" % (event,)
 #rlist, wlist, elist =select.select( [sock1, sock2], [], [], 5 ), await a read event
+class ConnectionPool_SELECT:
 
+    def init(self):
+        print "Networking: Using ConnectionPool_SELECT"
+        #select.select([],[],[],0)
+    def __init__(self):
+        #local
+        #self._epoll = select.epoll()
+        self.socket_list = []
+        self._client_count = 0
+        self._client_pool = {} #clients by fileno
+        self._clients_by_id = {}
+        self.names = {}
+        atexit.register(self.on_exit)
+
+    def on_exit(self):
+        #self._epoll.close()
+        for client in self._client_pool.values():
+            client.close()
+
+    def addClient(self, connection, address, type='tcp'):
+        self._client_count += 1
+        if type == 'tcp':
+            client =  TcpClient(connection, address)
+            #self._epoll.register(client.fileno, select.EPOLLIN or select.EPOLLHUP) #register client
+            self.socket_list.append(connection)
+            self._client_pool[client.fileno] = client #save client
+            if client.id not in self._clients_by_id:
+                self._clients_by_id[client.id] = client
+                print "Connection associated with client_id= %s" % (client.id,)
+
+    def by_client_id(self, client_id):
+        if client_id in self._clients_by_id:
+            return self._clients_by_id[client_id]
+
+    def name_client(self, connection, name):
+        avail, you = self.name_available(name, connection)
+        if not you:
+            if avail:
+                if connection.name in self.names:
+                    del self.names[connection.name]
+            else:
+                return
+        self.names[name] = connection.id
+        return name
+
+    def name_available(self, name, connection=None):
+        you = False
+        if connection is not None:
+            if self.names.get(name, None) == connection.id:
+                you = True
+        if name in self.names:
+            avail = False
+        else:
+            avail = True
+        return (avail, you,)
+
+    def tearDownClient(self, connection, duplicate_id = False):
+        fileno = connection.fileno
+        for sock in self.socket_list:
+            if sock.fileno() == fileno:
+                self.socket_list.remove(sock)
+        self._client_pool[fileno].close()
+        del self._client_pool[fileno] #remove from client pool
+        if connection.id != 0: # remove from chat
+            ChatServer.chat.disconnect(connection)
+            del self._clients_by_id[connection.id]
+        if connection.name in self.names:
+            del self.names[connection.name]
+        GameStateGlobal.disconnect(connection)
+        NetOut.event.client_quit(connection.id)
+        ChatServer.chat.disconnect(connection)
+
+    def process_events(self):
+        if len(self.socket_list) == 0: ##fixes windows bug
+            return
+        rlist, wlist, xlist = select.select(self.socket_list, [], self.socket_list, 0)
+        for sock in rlist:
+            fileno = sock.fileno()
+            assert self._client_pool.has_key(fileno)
+            self._client_pool[fileno].receive()
+
+        for sock in wlist:
+            pass
+
+        for sock in xlist:
+            fileno = sock.fileno()
+            print "select.slect exception; weird event or socket teardown"
+            self.tearDownClient(self._client_pool[fileno])
+        #events = self._epoll.poll(0)
 
 '''
 Decoders
