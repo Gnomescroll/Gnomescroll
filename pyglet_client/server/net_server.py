@@ -63,7 +63,6 @@ class ServerListener:
         self.tcp_fileno = 0
         self.udp = None
         self.udp_fileno = 0
-        self.epoll = select.epoll(2) #2 sockets
         self._setup_tcp_socket()
         atexit.register(self.on_exit)
         global OS
