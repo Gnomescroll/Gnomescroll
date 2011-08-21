@@ -2,7 +2,6 @@
 cimport libc.stdlib
 
 #type imports
-#cimport cube_lib.types
 
 ## Camera.c ##
 cdef extern from "camera.h":
