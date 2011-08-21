@@ -1122,6 +1122,11 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:
+                # short circuit the network
+                if fire_command == 'throw_grenade_c':
+                    pass
+                    #direction = agent.normalized_direction() # or agent.direction() to skip normalization
+                    #velocity = agent.velocity()
                 NetOut.sendMessage(fire_command, self)
 
     def hitscan(self, weapon=None):
