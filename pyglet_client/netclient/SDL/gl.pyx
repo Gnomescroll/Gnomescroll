@@ -5,8 +5,6 @@ cimport libc.stdlib
 #cimport cube_lib.types
 #from cube_lib.types cimport Quad, Vertex
 
-#cdef extern from "SDL.h":
-
 ## Camera.c ##
 cdef extern from "camera.h":
     cdef struct Camera: #maybe public?

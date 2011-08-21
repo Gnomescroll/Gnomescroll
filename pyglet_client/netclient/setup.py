@@ -35,13 +35,13 @@ if SYSTEM == 'Windows':
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Darwin":
-    #libraries+=['GL','GLU', 'GLEW',] # 'mega']
+    libraries+=["GLEW"] # 'GL','GLU',
     libraries = []
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
     extra_link_args = ["-framework SDL", "-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
     include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
     runtime_library_dirs = ["./"]
-    library_dirs = ["./"]
+    library_dirs = ["./"] #, "/usr/local/lib"]
 elif OS == "Linux":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
