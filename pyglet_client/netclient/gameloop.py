@@ -188,7 +188,7 @@ class App(object):
         v.set(7,0,7, 0,255,0,0)
         v.set(7,7,7, 0,255,0,0)
 
-        v2 = vox_lib.Vox_loader().load('v3atest.vox')
+        v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
         #v3 = vox_lib.Vox_loader().load('base.vox')
         #v3.color('blue', base_color='black')
         #v3.move(10,10,15, 0)
