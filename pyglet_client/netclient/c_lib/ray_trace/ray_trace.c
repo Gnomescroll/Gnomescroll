@@ -3,14 +3,13 @@
 ///ray casting stuff
 
 
-#define ssize 256
-#define bsize 65536
+//#define ssize 256
+//#define bsize 65536
 
 float dummy;
 
 inline int collision_check(int x, int y, int z) {
-    //do something
-    return 0;
+    return isActive(_get(x,y,z));
 }
 
 int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {

@@ -11,18 +11,18 @@ struct Grenade {
 
 struct Grenade* Grenade_list[1024];
 
+void inline grenade_Tick(struct Grenade* g);
+
 void init_objects_grenade() {
-    return;
     return;
 }
 
 void inline grenade_Tick(struct Grenade* g) {
     g->ttl++;
     float _x, _y, _z;
-    x_ = g->x + g->vx/30;
-    y_ = g->y + g->vy/30;
-    z_ = g->z + g->vz/30;
-
+    _x = g->x + g->vx/30;
+    _y = g->y + g->vy/30;
+    _z = g->z + g->vz/30;
 
 }
 
