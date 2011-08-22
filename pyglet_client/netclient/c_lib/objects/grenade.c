@@ -19,8 +19,6 @@ void init_objects_grenade() {
     return;
 }
 
-float dummy;
-
 void inline grenade_Tick(struct Grenade* g) {
     g->ttl++;
     float _x, _y, _z;
@@ -70,7 +68,11 @@ void grenade_tick() {
 
 }
 
+//GLint particle_sheet_id;
+
 void grenade_draw() {
+    //printf("particle sheet id= %i \n", get_particle_texture() );
+    if(g_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
     struct Grenade* g = NULL;
@@ -78,7 +80,7 @@ void grenade_draw() {
 
     float up[3] = {a[0], a[4], a[8]};
     float right[3] = {a[1], a[5], a[9]};
-    int id = 15;
+    int id = 5;
 
     float tx_min, tx_max, ty_min, ty_max;
 
@@ -87,7 +89,8 @@ void grenade_draw() {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, particle_sheet_id);
+    glBindTexture( GL_TEXTURE_2D, get_particle_texture() );
+    //printf("particle sheet= %i \n", particle_sheet_id);
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
@@ -97,7 +100,7 @@ void grenade_draw() {
     int _c = 0;
     for(i=0; i<1024; i++) {
     if(Grenade_list[i] != NULL) {
-        printf("drew gernade: %i \n", i);
+        //printf("drew gernade: %i \n", i);
         _c++;
         g = Grenade_list[i];
         //draw setup
@@ -135,13 +138,13 @@ void grenade_draw() {
 
 void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz) {
     printf("Create Gernade\n");
-    g_count++;
     struct Grenade* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
         if(Grenade_list[i] == NULL) {
             g = (struct Grenade *) malloc (sizeof(struct Grenade));
             Grenade_list[i] = g;
+            g_count++;
             break;
         }
     }

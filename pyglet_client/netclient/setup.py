@@ -73,6 +73,7 @@ comp.set_runtime_library_dirs(runtime_library_dirs)
 
 comp.compile(
     sources = [ 'c_lib/c_lib.c',
+                'c_lib/texture_loader.c',
                 ],
     #output_dir="build",
     include_dirs= include_dirs,
@@ -84,6 +85,7 @@ comp.compile(
 
 comp.link_shared_lib(
     objects = [ 'c_lib/c_lib.o',
+                'c_lib/texture_loader.o',
                 ],
     output_libname= "_c_lib",
     #output_dir="build",

@@ -11,7 +11,7 @@
 
 
 int init_c_lib();
-
-extern GLint particle_sheet_id;
+GLint get_particle_sheet_id();
+//extern GLint particle_sheet_id;
 
 #endif

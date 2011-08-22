@@ -12,4 +12,3 @@ def init():
         init_c_lib()
     _init = 1
 
-init()

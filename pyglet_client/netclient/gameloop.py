@@ -32,7 +32,7 @@ if True:
     #SDL.gl.init_particles()
     import init_c_lib
     import c_lib.c_lib_objects
-    init_c_lib.init()
+
     P2 = cube_lib.terrain_map.Profiler()
 
 ##profiler
@@ -115,6 +115,7 @@ class App(object):
         SDL.hud.init()
         cube_lib.terrain_map.init()
 
+        init_c_lib.init()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
