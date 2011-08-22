@@ -30,7 +30,7 @@ if True:
     cube_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
     #SDL.gl.init_particles()
-
+    import c_lib_init
     P2 = cube_lib.terrain_map.Profiler()
 
 ##profiler
