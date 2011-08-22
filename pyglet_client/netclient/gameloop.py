@@ -200,7 +200,7 @@ class App(object):
             ping_n = SDL.gl.get_ticks()
 
         self.intervals.set()
-        _i = 310
+        _i = 30
         while not GameStateGlobal.exit:
 
             P2.start_frame() #TEST
@@ -211,7 +211,7 @@ class App(object):
             while Phy.sync():
                 _i+=1
                 if _i % 350 == 0:
-                    c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 2)
+                    c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50)
 
                 tc += 1
                 P.event("process_events")

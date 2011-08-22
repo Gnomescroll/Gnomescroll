@@ -9,6 +9,7 @@
 float dummy;
 
 inline int collision_check(int x, int y, int z) {
+    printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
     return isActive(_get(x,y,z));
 }
 
@@ -225,11 +226,13 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     cx = modff(x0, &dummy)*bsize; //convert fractional part
     cy = modff(y0, &dummy)*bsize;
     cz = modff(z0, &dummy)*bsize;
+    //printf("x0,y0,z0= %f, %f, %f \n", x0, y0, z0);
+    //printf("cx,cy,cz= %i, %i, %i \n", cx, cy, cz);
 
     int _dx,_dy,_dz;
-    _dx = (x1-x0)/len *bsize;
-    _dy = (y1-y0)/len *bsize;
-    _dz = (z1-z0)/len *bsize;
+    _dx = ((x1-x0)/len) *ssize;
+    _dy = ((y1-y0)/len) *ssize;
+    _dz = ((z1-z0)/len) *ssize;
 
     int cdx, cdy, cdz;
     cdx = _dx >= 0 ? 1 : -1;
@@ -241,6 +244,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     dy = _dy*cdy;
     dz = _dz*cdz;
 
+    //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
     double xf, yf, zf;
 
     ri4[0]=0; ri4[1]=0; ri4[2]=0;
@@ -251,15 +255,16 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     //printf("length= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
+    //collision_check(0,0,0);
     for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
-        if(cx >= bsize || cx >= bsize || cx >= bsize) {
+        if(cx >= bsize || cy >= bsize || cz >= bsize) {
             if(cx >= bsize) {
                 cx -= bsize;
                 x += cdx;
-                if(collision_check3(x,y,z)) {
+                if(collision_check(x,y,z)) {
                     ri4[0] = cdx;
                     break;
                 }
@@ -267,21 +272,25 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
             if(cy >= bsize) {
                 cy -= bsize;
                 y += cdy;
-                if(collision_check3(x,y,z)) {
+                if(collision_check(x,y,z)) {
                     ri4[1] = cdy;
                     break;
                 }
             }
             if(cz >= bsize) {
+                printf("z decrease\n");
                 cz -= bsize;
                 z += cdz;
-                if(collision_check3(x,y,z)) {
+                if(collision_check(x,y,z)) {
                     ri4[2] = cdz;
                     break;
                 }
             }
         }
     }
+    //if( max_i - i != 0) {
+    printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
+    //}
     *interval = (float)(i) / max_i;
     return ri4;
 }
