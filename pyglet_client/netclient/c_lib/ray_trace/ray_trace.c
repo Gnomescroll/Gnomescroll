@@ -43,7 +43,7 @@ int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    for(i =0; i <= max_i; i++) {
+    for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
@@ -102,7 +102,7 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    for(i =0; i <= max_i; i++) {
+    for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
@@ -164,7 +164,7 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     //printf("length= %f \n", len);
     //printf("max_i= %i \n", max_i);
 
-    for(i =0; i <= max_i; i++) {
+    for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
@@ -251,7 +251,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     //printf("length= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
-    for(i =0; i <= max_i; i++) {
+    for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;

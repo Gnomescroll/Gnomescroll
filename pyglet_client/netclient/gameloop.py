@@ -200,11 +200,8 @@ class App(object):
             ping_n = SDL.gl.get_ticks()
 
         self.intervals.set()
-        _i = 0
+        _i = 310
         while not GameStateGlobal.exit:
-            _i+=1
-            if _i % 200 == 0:
-                c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 2)
 
             P2.start_frame() #TEST
             theta += -.005 #test
@@ -212,6 +209,10 @@ class App(object):
             tc = 0
             P.event("Physics Tick")
             while Phy.sync():
+                _i+=1
+                if _i % 350 == 0:
+                    c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 2)
+
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()
