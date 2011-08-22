@@ -12,6 +12,6 @@ def draw():
 def tick():
     grenade_tick()
 
-def create_grenade(float x, float y, float z, float vx, float vy, float vz):
+def _create_grenade(float x, float y, float z, float vx, float vy, float vz):
     create_grenade(1, x,y,z, vx,vy,vz)
 

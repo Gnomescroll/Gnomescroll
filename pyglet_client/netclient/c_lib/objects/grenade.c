@@ -11,6 +11,7 @@ struct Grenade {
 
 struct Grenade* Grenade_list[1024];
 float a[16];
+int g_count=0;
 
 void inline grenade_Tick(struct Grenade* g);
 
@@ -30,7 +31,7 @@ void inline grenade_Tick(struct Grenade* g) {
     float interval;
     int* s;
     s = _ray_cast4(g->x, g->y, g->z, _x,_y,_z, &interval);
-    printf("inverval= %f \n", interval);
+    //printf("inverval= %f \n", interval);
 
     if(s[0] != 0 ) {
         g->vx *= -1;
@@ -61,6 +62,7 @@ void grenade_tick() {
                 //boom!
                 Grenade_list[i] = NULL;
                 free(g);
+                g_count--;
             }
         }
     }
@@ -69,7 +71,8 @@ void grenade_tick() {
 }
 
 void grenade_draw() {
-    set_model_view_matrix(&a);
+    glGetFloatv(GL_MODELVIEW_MATRIX, a);
+
     struct Grenade* g = NULL;
     int i;
 
@@ -91,8 +94,11 @@ void grenade_draw() {
     glBegin( GL_QUADS );
     float x,y,z;
 
+    int _c = 0;
     for(i=0; i<1024; i++) {
     if(Grenade_list[i] != NULL) {
+        printf("drew gernade: %i \n", i);
+        _c++;
         g = Grenade_list[i];
         //draw setup
 
@@ -116,7 +122,7 @@ void grenade_draw() {
         glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
         }
     }
-
+    //printf("drew %i gernades\n", _c);
     glEnd();
 
     glDepthMask(GL_TRUE);
@@ -128,12 +134,15 @@ void grenade_draw() {
 
 
 void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz) {
+    printf("Create Gernade\n");
+    g_count++;
     struct Grenade* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
         if(Grenade_list[i] == NULL) {
             g = (struct Grenade *) malloc (sizeof(struct Grenade));
             Grenade_list[i] = g;
+            break;
         }
     }
     if(g== NULL) { printf("Bug: max grenade number reached!\n"); return;}

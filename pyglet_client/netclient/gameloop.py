@@ -199,7 +199,12 @@ class App(object):
             ping_n = SDL.gl.get_ticks()
 
         self.intervals.set()
+        _i = 0
         while not GameStateGlobal.exit:
+            _i+=1
+            if _i % 200 == 0:
+                c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 2)
+
             P2.start_frame() #TEST
             theta += -.005 #test
             P.start_frame()
