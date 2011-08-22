@@ -17,6 +17,8 @@ void init_objects_grenade() {
     return;
 }
 
+float dummy;
+
 void inline grenade_Tick(struct Grenade* g) {
     g->ttl++;
     float _x, _y, _z;
