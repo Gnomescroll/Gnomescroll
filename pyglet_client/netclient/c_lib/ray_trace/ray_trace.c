@@ -210,8 +210,9 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     return &ri3;
 }
 
+int ri4[3];
 
-int _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
+int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
         float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     //int lx,ly,lz; //may or may not be used
@@ -241,8 +242,8 @@ int _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* in
     dz = _dz*cdz;
 
     double xf, yf, zf;
-    *distance =0;
-    ri3[0]=0; ri3[1]=0; ri3[2]=0;
+
+    ri4[0]=0; ri4[1]=0; ri4[2]=0;
 
     int end = 0;
     int i;
@@ -259,7 +260,7 @@ int _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* in
                 cx -= bsize;
                 x += cdx;
                 if(collision_check3(x,y,z)) {
-                    side = cdx>0 ? 0 : 0;
+                    ri4[0] = cdx;
                     break;
                 }
             }
@@ -267,7 +268,7 @@ int _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* in
                 cy -= bsize;
                 y += cdy;
                 if(collision_check3(x,y,z)) {
-                    side = cdy>0 ? 0 : 0;
+                    ri4[1] = cdy;
                     break;
                 }
             }
@@ -275,12 +276,12 @@ int _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* in
                 cz -= bsize;
                 z += cdz;
                 if(collision_check3(x,y,z)) {
-                    side = cdz>0 ? 0 : 0;
+                    ri4[2] = cdz;
                     break;
                 }
             }
         }
     }
     *percentage = float(i) / max_i;
-    return -1;
+    return ri4;
 }
