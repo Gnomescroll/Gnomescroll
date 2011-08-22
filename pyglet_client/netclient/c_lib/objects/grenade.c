@@ -137,7 +137,7 @@ void grenade_draw() {
 
 
 void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz) {
-    printf("Create Gernade\n");
+    //printf("Create Gernade\n");
     struct Grenade* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
