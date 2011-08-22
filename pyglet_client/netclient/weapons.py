@@ -218,10 +218,10 @@ class GrenadePouch(Weapon):
 class GrenadePouch_C(GrenadePouch):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
-        pass
-
+        GrenadePouch.__init__(self, id, owner, state)
+        
     def fire(self):
-        super(GrenadePouch_C, self).fire()
+        GrenadePouch.fire(self)
         return 'throw_grenade_c'
 
 from game_state import GameStateGlobal
