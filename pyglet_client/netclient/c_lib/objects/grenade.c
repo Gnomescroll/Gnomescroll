@@ -29,7 +29,7 @@ void inline grenade_Tick(struct Grenade* g) {
     float interval;
     int* s;
     s = _ray_cast4(g->x, g->y, g->z, _x,_y,_z, &interval);
-    printf("inverval= %f \n", *interval);
+    printf("inverval= %f \n", interval);
 
     if(s[0] != 0 ) {
         g->vx *= -1;
@@ -39,7 +39,7 @@ void inline grenade_Tick(struct Grenade* g) {
         g->vy *= -1;
         printf("invert vy \n");
     }
-    if(s[2] != ) {
+    if(s[2] != 0) {
         g->vz *= -1;
         printf("invert vz \n");
     }
