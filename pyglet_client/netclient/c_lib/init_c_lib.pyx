@@ -3,9 +3,13 @@
 cdef extern from "c_lib.c":
     int init_c_lib()
 
-print "Initing c_lib"
+#print "Initing c_lib"
 
+_init = 0
 def init():
-    init_c_lib()
+    global _init
+    if _init == 0:
+        init_c_lib()
+    _init = 1
 
 init()
