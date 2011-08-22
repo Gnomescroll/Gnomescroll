@@ -67,6 +67,7 @@ comp = UnixCCompiler()
 s_lib=[]
 
 #_tmap: terrain map file
+'''
 comp.compile(
     sources = [ 'c_lib/t_map/t_map.c',
                 'c_lib/t_map/t_properties.c',
@@ -80,16 +81,23 @@ comp.compile(
     #extra_preargs= extra_compile_args,
     extra_postargs= extra_compile_args
     )
+'''
+
+comp.compile(
+    sources = [ 'c_lib/c_lib.c',
+                ],
+    #output_dir="build",
+    include_dirs= include_dirs,
+    debug=0,
+    #extra_preargs= extra_compile_args,
+    extra_postargs= extra_compile_args
+    )
 
 
 comp.link_shared_lib(
-    objects = [ 'c_lib/t_map/t_map.o',
-                'c_lib/t_map/t_properties.o',
-                'c_lib/ray_trace/ray_trace.o'
-                #'cube_lib/t_vbo.o',
-                #'cube_lib/t_viz.o'
+    objects = [ 'c_lib/c_lib.o',
                 ],
-    output_libname= "_tmap",
+    output_libname= "_c_lib",
     #output_dir="build",
     libraries=libraries,
     library_dirs=library_dirs,
@@ -99,7 +107,7 @@ comp.link_shared_lib(
     #extra_postargs=None,
 )
 
-s_lib += ['_tmap']
+s_lib += ['_c_lib']
 
 print "Compiling Python Modules"
 
