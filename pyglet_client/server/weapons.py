@@ -201,11 +201,8 @@ class GrenadePouch(Weapon):
 
 class GrenadePouch_C(GrenadePouch):
 
-    def __init__(self, id, owner=None, state=None, **kwargs):
-        pass
-
-    def fire(self):
-        super(GrenadePouch_C, self).fire()
-        return 'throw_grenade_c'
+    def __init__(self, id, owner=None, **kwargs):
+        GrenadePouch.__init__(self, id, owner)
+        self.fire_command = 'throw_grenade_c'
 
 from net_out import NetOut
