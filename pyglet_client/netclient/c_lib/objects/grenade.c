@@ -44,9 +44,9 @@ void inline grenade_Tick(struct Grenade* g) {
         printf("invert vz \n");
     }
 
-    g->x = _x;
-    g->y = _y;
-    g->z = _z;
+    g->x = g->x + interval*g->vx/30;
+    g->y = g->y + interval*g->vy/30;
+    g->z = g->z + interval*g->vz/30;
 }
 
 void grenade_tick() {

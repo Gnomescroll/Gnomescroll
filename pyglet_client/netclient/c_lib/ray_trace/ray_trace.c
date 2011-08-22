@@ -9,7 +9,7 @@
 float dummy;
 
 inline int collision_check(int x, int y, int z) {
-    printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
+    //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
     return isActive(_get(x,y,z));
 }
 
@@ -222,10 +222,6 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     y = y0;
     z = z0;
 
-    int cx,cy,cz;
-    cx = modff(x0, &dummy)*bsize; //convert fractional part
-    cy = modff(y0, &dummy)*bsize;
-    cz = modff(z0, &dummy)*bsize;
     //printf("x0,y0,z0= %f, %f, %f \n", x0, y0, z0);
     //printf("cx,cy,cz= %i, %i, %i \n", cx, cy, cz);
 
@@ -243,6 +239,11 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     dx = _dx*cdx;
     dy = _dy*cdy;
     dz = _dz*cdz;
+
+    int cx,cy,cz;
+    cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
+    cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
+    cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
     double xf, yf, zf;
@@ -278,7 +279,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 }
             }
             if(cz >= bsize) {
-                printf("z decrease\n");
+                //printf("z decrease\n");
                 cz -= bsize;
                 z += cdz;
                 if(collision_check(x,y,z)) {
@@ -289,7 +290,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
         }
     }
     //if( max_i - i != 0) {
-    printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
+    //printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
     //}
     *interval = (float)(i) / max_i;
     return ri4;
