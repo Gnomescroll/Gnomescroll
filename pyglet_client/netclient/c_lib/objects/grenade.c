@@ -10,6 +10,7 @@ struct Grenade {
 };
 
 struct Grenade* Grenade_list[1024];
+float a[16];
 
 void inline grenade_Tick(struct Grenade* g);
 
@@ -68,8 +69,63 @@ void grenade_tick() {
 }
 
 void grenade_draw() {
+    set_model_view_matrix(&a);
+    struct Grenade* g = NULL;
+    int i;
 
+    float up[3] = {a[0], a[4], a[8]};
+    float right[3] = {a[1], a[5], a[9]};
+    int id = 15;
+
+    float tx_min, tx_max, ty_min, ty_max;
+
+    //should not change state unless there is something to draw
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindTexture( GL_TEXTURE_2D, particle_sheet_id);
+    glEnable(GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
+    glBegin( GL_QUADS );
+    float x,y,z;
+
+    for(i=0; i<1024; i++) {
+    if(Grenade_list[i] != NULL) {
+        g = Grenade_list[i];
+        //draw setup
+
+        tx_min = (float)(id%16)* (1.0/16.0);
+        tx_max = tx_min + (1.0/16.0);
+        ty_min = (float)(id/16)* (1.0/16.0);
+        ty_max = ty_min + (1.0/16.0);
+
+        x=g->x; y=g->y; z=g->z;
+
+        glTexCoord2f(tx_min,ty_max );
+        glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
+
+        glTexCoord2f(tx_min,ty_min );
+        glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
+
+        glTexCoord2f(tx_max,ty_min);
+        glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
+
+        glTexCoord2f(tx_max,ty_max );
+        glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
+        }
+    }
+
+    glEnd();
+
+    glDepthMask(GL_TRUE);
+    glDisable(GL_TEXTURE_2D);
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
 }
+
+
 
 void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz) {
     struct Grenade* g = NULL;

@@ -31,6 +31,7 @@ if True:
     SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
     #SDL.gl.init_particles()
     import init_c_lib
+    import c_lib.c_lib_objects
     init_c_lib.init()
     P2 = cube_lib.terrain_map.Profiler()
 
@@ -220,12 +221,11 @@ class App(object):
                 #check if another physics tick is needed
                 self.world.tick()
                 self.animations.tick()
+                c_lib.c_lib_objects.tick() ## TESTING
             if tc > 1:
                 pass
             P.event("MapControllerGlobal.mapController.tick()")
-            MapControllerGlobal.mapController.tick() #testing
-                #print "wtf"
-                #print "tc= %i" % (tc)
+            MapControllerGlobal.mapController.tick()
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
                 first_person = True
@@ -235,33 +235,15 @@ class App(object):
 
             self.camera.worldProjection()
             P.event("animations.draw")
-            #vox_lib.draw()
-            #v.move(0,0,3, theta)
-            #v.draw()
+
             v2.move(10,0,10,theta)
             v2.draw()
-            #v3.draw()
-            #test
-            #if GameStateGlobal.agent != None:
-            #    a = GameStateGlobal.agent
-            #    x = a.x
-            #    y = a.y
-            #    z = a.z
-            #    x_angle = a.x_angle
-            #    y_angle = a.y_angle
 
-                #v.ray_cast_tracer(x,y,z, x_angle, y_angle)
-                #v2.ray_cast_tracer(x,y,z, x_angle, y_angle)
-                #v.ray_cast2(x,y,z, x_angle, y_angle)
-                #v2.ray_cast2(x,y,z,x_angle,y_angle)
-            #SDL.gl.draw_point(255*random.random(),255*random.random(),255*random.random(), 0.1,0.0,2.0)
-            #v.collision_test(0.1,0.0,2.0)
-            #cube_lib.VBO.draw_test_chunk()
-            #cube_lib.VBO.update_chunks()
             P.event("Draw Terrain")
             cube_lib.terrain_map.draw_terrain()
             self.world.draw(first_person)
             self.animations.draw()
+            c_lib.c_lib_objects.draw() ## TESTING
             P.event("Draw World_0")
             P.event("Draw World_1 - laser")
             if True:

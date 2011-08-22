@@ -17,6 +17,7 @@ vox_lib.c
 c_lib.c
 _ray_trace.c
 init_c_lib.c
+c_lib_objects.c
 
 Safe Browsing Bloom
 Safe Browsing Bloom Filter 2
