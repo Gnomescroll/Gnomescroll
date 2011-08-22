@@ -33,15 +33,15 @@ void inline grenade_Tick(struct Grenade* g) {
 
     if(s[0] != 0 ) {
         g->vx *= -1;
-        printf("invert vx \n");
+        //printf("invert vx \n");
     }
     if(s[1] != 0) {
         g->vy *= -1;
-        printf("invert vy \n");
+        //printf("invert vy \n");
     }
     if(s[2] != 0) {
         g->vz *= -1;
-        printf("invert vz \n");
+        //printf("invert vz \n");
     }
 
     g->x = g->x + interval*g->vx/30;
