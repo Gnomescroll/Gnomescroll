@@ -66,22 +66,10 @@ print "Compiling Shared Libraries"
 comp = UnixCCompiler()
 s_lib=[]
 
-#_tmap: terrain map file
-'''
-comp.compile(
-    sources = [ 'c_lib/t_map/t_map.c',
-                'c_lib/t_map/t_properties.c',
-                'c_lib/ray_trace/ray_trace.c'
-                #'cube_lib/t_vbo.c',
-                #'cube_lib/t_viz.c'
-                ],
-    #output_dir="build",
-    include_dirs= include_dirs,
-    debug=0,
-    #extra_preargs= extra_compile_args,
-    extra_postargs= extra_compile_args
-    )
-'''
+comp.set_include_dirs(include_dirs)
+comp.set_libraries(libraries)
+comp.set_library_dirs(library_dirs)
+comp.set_runtime_library_dirs(runtime_library_dirs)
 
 comp.compile(
     sources = [ 'c_lib/c_lib.c',
