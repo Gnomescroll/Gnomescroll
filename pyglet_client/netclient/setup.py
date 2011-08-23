@@ -17,6 +17,9 @@ try:
     SDL_CFLAGS=subprocess.Popen(['sdl-config', '--cflags'], stdout=subprocess.PIPE).communicate()[0]
     SDL_LDFLAGS=subprocess.Popen(['sdl-config', '--libs'], stdout=subprocess.PIPE).communicate()[0]
     SDLFLAGS = subprocess.Popen(['sdl-config', '--cflags', '--libs', ], stdout=subprocess.PIPE).communicate()[0]
+    print "SDL_CFLAGS= %s" % SDL_CFLAGS
+    print "SDL_LDFLAGS= %s" % SDL_LDFLAGS
+    print "SDLFLAGS= %s" % SDLFLAGS
 except WindowsError:
     # sdl-config is a shell script, windows users will have to provide the path.
     pass
@@ -37,9 +40,9 @@ if SYSTEM == 'Windows':
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Darwin":
-    libraries =["GLEW", 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
+    libraries =["GLEW"]#, 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
-    extra_link_args = ["-framework Cocoa",]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
+    extra_link_args = ["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
     include_dirs =  ["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
     runtime_library_dirs = ["./"]
     library_dirs = ["./"] #, "/usr/local/lib"]
