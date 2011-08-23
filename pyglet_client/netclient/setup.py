@@ -43,7 +43,7 @@ elif OS == "Darwin":
     runtime_library_dirs = ["./"]
     library_dirs = ["./"] #, "/usr/local/lib"]
     extra_compile_args += ["-arch i386 -arch ppc"]
-    extra_link_args += ["-arch i386","-arch ppc"]
+    extra_link_args += ["-arch i386 -arch ppc"]
 elif OS == "Linux":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
