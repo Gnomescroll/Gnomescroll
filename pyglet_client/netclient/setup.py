@@ -36,7 +36,7 @@ if SYSTEM == 'Windows':
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Darwin":
-    libraries =["GLEW"] #, "SDL_image"] # 'GL','GLU',
+    libraries =["GLEW", 'SDL_image', 'SDL'] #, "SDL_image"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
     extra_link_args = ["-framework SDL", "-framework SDL_image","-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
     include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
@@ -79,8 +79,8 @@ comp.compile(
     #output_dir="build",
     include_dirs= include_dirs,
     debug=0,
-    extra_preargs= extra_compile_args,
-    #extra_postargs= extra_compile_args
+    #extra_preargs= extra_compile_args,
+    extra_postargs= extra_compile_args
     )
 
 
