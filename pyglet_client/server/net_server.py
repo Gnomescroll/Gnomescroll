@@ -136,6 +136,9 @@ class TcpClient:
         self.connection = connection
         self.address = address
 
+        self.identified = False
+        self.dat_loaded = False
+
         self.fileno = connection.fileno()
         self.TcpPacketDecoder = TcpPacketDecoder(self)
         self.sendMessage = SendMessage(self)
@@ -144,29 +147,58 @@ class TcpClient:
         self.name = None
         self.ec = 0
 
-
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
         #self.sendMessage.game_mode()
         #self.sendMessage.send_items()
-        self.sendMessage.send_players() # send all players to client
+        self.sendMessage.send_dat()
+        #self.sendMessage.send_players() # send all players to client
 
     def identify(self, name):
         valid, name, you = self._valid_player_name(name)
         if valid:
+            self.identified = True
+            print 'IDENTIFIED'
             NetServer.connectionPool.name_client(self, name)
             self.name = name
-            self._register()
-            self.sendMessage.identified(self, 'Identified name: ' + name)
-            NetOut.event.player_create(self.player)
+            #self.start_player()
+            #self._register_name()
+            #self.sendMessage.identified(self, 'Identified name: ' + name)
+            self.check_ready()
+            #NetOut.event.player_create(self.player)
         else:
             if you:
-                self.sendMessage.identified(self, 'You were already identified as ' + name)
+                self.sendMessage.identified(self, 'You were already identified as %s' % (name,))
             else:
-                self.sendMessage.identify_fail(self, 'Invalid username. ' + name)
+                self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
+
+    def check_ready(self):
+        if self.dat_loaded and self.identified:
+            self.ready()
+            return True
+        return False
+
+    def ready(self):
+        print '%s ready' % (self.id,)
+        self._register()
+        self.start_player()
+        self.send_game_state()
+
+    def set_dat_loaded(self):
+        self.dat_loaded = True
+        print 'DAT LOADED'
+        self.check_ready()
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
+
+    def start_player(self):
+        NetOut.event.player_create(self.player)
+
+    def send_game_state(self):
+        self.sendMessage.send_players()
+        self.sendMessage.game_mode()
+        self.sendMessage.send_items()
 
     def _register(self):
         ChatServer.chat.connect(self) # join chat server
@@ -177,8 +209,9 @@ class TcpClient:
         else:
             self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
             print 'Created new player'
-        self.sendMessage.game_mode()
-        self.sendMessage.send_items()
+        self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
+        #self.sendMessage.game_mode()
+        #self.sendMessage.send_items()
         #self.sendMessage.send_players() # send all players to client
 
     def _set_client_id(self):

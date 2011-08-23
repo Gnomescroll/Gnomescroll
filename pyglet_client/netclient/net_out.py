@@ -14,7 +14,8 @@ class NetOut:
     adminMessage = None
     chatMessage = None
     miscMessage = None
-
+    datMessage = None
+    
     @classmethod
     def init_0(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
@@ -23,6 +24,7 @@ class NetOut:
         cls.adminMessage = AdminMessage()
         cls.chatMessage = ChatMessage()
         cls.miscMessage = MiscMessage()
+        cls.datMessage = DatMessage()
     @classmethod
     def init_1(cls):
         assert cls.mapMessage != None
@@ -316,6 +318,11 @@ class MiscMessage:
     @sendJSON('ping')
     def ping(self):
         return { 'timestamp' : SDL.gl.get_ticks() }
+
+class DatMessage:
+    @sendJSON('dat_loaded')
+    def loaded(self):
+        return True
 
 class MapMessage:
 

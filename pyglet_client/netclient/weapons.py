@@ -2,6 +2,8 @@ from game_objects import GameObject
 from game_objects import EquippableObject
 import animations
 
+from dat_loader import w_dat
+
 class Weapon(EquippableObject):
 
     _weapons = {
@@ -22,6 +24,9 @@ class Weapon(EquippableObject):
         self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
         self._animation = animations.Animation
+
+    def get_dat(self, prop):
+        return w_dat.get(self.type, prop)
 
     def fire(self):
         return False
@@ -188,10 +193,14 @@ class GrenadePouch(Weapon):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        self.max_ammo = 100
-        self.ammo = 0
-        self.clip_size = 100
-        self.clip = self.clip_size
+        #self.max_ammo = 100
+        #self.ammo = 0
+        #self.clip_size = 100
+        #self.clip = self.clip_size
+        self.max_ammo = self.get_dat('max_ammo')
+        self.ammo = self.get_dat('ammo')
+        self.clip_size = self.get_dat('clip_size')
+        self.clip = self.get_dat('clip')
 
     def fire(self):
         if self.clip == 0:
@@ -218,7 +227,11 @@ class GrenadePouch(Weapon):
 class GrenadePouch_C(GrenadePouch):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
-        GrenadePouch.__init__(self, id, owner, state)
+        Weapon.__init__(self, id, owner, state)
+        self.max_ammo = 100
+        self.ammo = 0
+        self.clip_size = 100
+        self.clip = self.clip_size
         
     def fire(self):
         GrenadePouch.fire(self)

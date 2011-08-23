@@ -4,6 +4,8 @@ from object_lists import GenericMultiObjectList
 
 from utils import filter_props
 
+from dat_loader import w_dat
+
 class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
@@ -32,9 +34,8 @@ class Weapon(EquippableObject):
     def __init__(self, id, owner=None):
         self.id = id
         self.owner = owner
-        self.type = self._weapons[self.__class__.__name__]
         self.hitscan = False
-
+        self._set_type()
         self.base_damage = 0
         self.clip_size = 0
         self.max_ammo = 0
@@ -45,12 +46,18 @@ class Weapon(EquippableObject):
         self.ammo = self.max_ammo
 
         self.fire_command = ''
+
+    def _set_type(self):
+        self.type = self._weapons[self.__class__.__name__]
         
     def fire(self):
         if self.clip == 0:
             return False
         self.clip -= 1
         return self.fire_command
+
+    def get_dat(self, prop):
+        return w_dat.get(self.type, prop)
 
     def reload(self):
         return False
@@ -174,11 +181,15 @@ class GrenadePouch(Weapon):
 
     def __init__(self, id, owner=None, **kwargs):
         Weapon.__init__(self, id, owner, **kwargs)
-        self.max_ammo = 100
-        self.ammo = 0
-        self.clip_size = 100
-        self.clip = self.clip_size
+        #self.max_ammo = 100
+        #self.ammo = 0
+        #self.clip_size = 100
+        #self.clip = self.clip_size
         self.fire_command = 'throw_grenade'
+        self.max_ammo = self.get_dat('max_ammo')
+        self.ammo = self.get_dat('ammo')
+        self.clip_size = self.get_dat('clip_size')
+        self.clip = self.get_dat('clip')
 
     def hud_display(self):
         fmt = self.hud_display_format_string()
@@ -202,7 +213,11 @@ class GrenadePouch(Weapon):
 class GrenadePouch_C(GrenadePouch):
 
     def __init__(self, id, owner=None, **kwargs):
-        GrenadePouch.__init__(self, id, owner)
+        Weapon.__init__(self, id, owner)
+        self.max_ammo = 100
+        self.ammo = 0
+        self.clip_size = 100
+        self.clip = self.clip_size
         self.fire_command = 'throw_grenade_c'
 
 from net_out import NetOut

@@ -9,6 +9,7 @@ import json
 import stats
 #import struct
 from opts import opts
+from dat_loader import dat_loader
 
 class NetEventGlobal:
     messageHandler = None
@@ -21,6 +22,7 @@ class NetEventGlobal:
     gameModeMessageHandler = None
     itemMessageHandler = None
     weaponMessageHandler = None
+    datMessageHandler = None
     
     @classmethod
     def init_0(cls):
@@ -37,6 +39,8 @@ class NetEventGlobal:
 
         cls.gameModeMessageHandler = GameModeMessageHandler()
         cls.itemMessageHandler = ItemMessageHandler()
+
+        cls.datMessageHandler = DatMessageHandler()
 
     @classmethod
     def init_1(cls):
@@ -398,7 +402,8 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             print 'msg player_team :: %s' % (err_msg,)
             return
 
-        GameStateGlobal.game.player_join_team(player, team)
+        if GameStateGlobal.game is not None:
+            GameStateGlobal.game.player_join_team(player, team)
 
     def _player_list(self, **args):
         self._default_list(**args)
@@ -771,8 +776,50 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             print 'msg player_team :: %s' % (err_msg,)
             return
 
-        GameStateGlobal.game.player_join_team(player, team)
+        if GameStateGlobal.game is not None:
+            GameStateGlobal.game.player_join_team(player, team)
 
+
+class DatMessageHandler(GenericMessageHandler):
+    events = {
+        'dat'   :   '_load_dat',
+    }
+
+    def _load_dat(self, **msg):
+        err_msg = None
+        try:
+            dat = msg['dat']
+        except KeyError:
+            err_msg = 'dat missing'
+
+        if err_msg is not None:
+            print 'msg dat :: %s' % (err_msg,)
+
+        name, type, key = None, None, None
+        if 'name' in msg:
+            name = msg['name']
+        if 'type' in msg:
+            name = msg['type']
+        if 'key' in msg:
+            key = msg['key']
+
+        if name is not None:
+            if type is not None and key is not None:
+                self._load_type_key(self, name, type, key, dat)
+            else:
+                self._load_name(self, name, dat)
+        else:
+            self._load_all(dat)
+
+    def _load_all(self, dat):
+        dat_loader.load_all(dat)
+        NetOut.datMessage.loaded()
+
+    def _load_name(self, name, dat):
+        dat_loader.load(name, dat)
+        
+    def _load_type_key(self, name, type, key, val):
+        dat_loader.set_property(name, type, key, val)
 
 from game_state import GameStateGlobal
 from net_client import NetClientGlobal

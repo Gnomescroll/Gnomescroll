@@ -5,6 +5,7 @@ Outgoing network messages
 import simplejson as json
 import struct
 
+from dat_loader import dat_loader
 
 class NetOut:
 
@@ -263,6 +264,23 @@ class SendMessage: #each connection has one of these
         jdump = json.dumps(dict)
         msg = self.add_prefix(1, jdump)
         self.client.send(msg)
+
+    @sendJSON('dat')
+    def send_dat(self, dat_name=None, type=None, key=None):
+        if dat_name is None:
+            d = dat_loader.json()
+        else:
+            d = dat_loader.get_json(dat_name, type, key)
+        fin = {
+            'dat'   :   d,
+        }
+        if dat_name is not None:
+            fin['name'] = dat_name
+            if type is not None:
+                fin['type'] = type
+                if key is not None:
+                    fin['key'] = key
+        return fin
 
     ## messages go out immediately
     @sendJSON('client_id')

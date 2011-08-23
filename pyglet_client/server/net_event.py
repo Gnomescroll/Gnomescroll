@@ -15,7 +15,8 @@ class NetEvent:
     gameModeMessageHandler = None
     projectileMessageHandler = None
     chatMessageHandler = None
-
+    datMessageHandler = None
+    
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
@@ -29,6 +30,7 @@ class NetEvent:
         cls.gameModeMessageHandler = GameModeMessageHandler()
         cls.projectileMessageHandler = ProjectileMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
+        cls.datMessageHandler = DatMessageHandler()
         
     @classmethod
     def init_1(cls):
@@ -732,3 +734,14 @@ class ChatMessageHandler(GenericMessageHandler):
 
     def unsubscribe(self, msg, conn):
         ChatServer.chat.client_unsubscribe(msg, conn)
+
+
+class DatMessageHandler(GenericMessageHandler):
+
+    def events(self):
+        return {
+            'dat_loaded'    :   self.loaded,
+        }
+
+    def loaded(self, msg, conn):
+        conn.set_dat_loaded()
