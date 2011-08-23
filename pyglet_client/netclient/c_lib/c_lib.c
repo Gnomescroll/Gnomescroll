@@ -8,6 +8,7 @@
 #include "./ray_trace/ray_trace.c"
 
 #include "./objects/grenade.c"
+#include "./objects/agent.c"
 
 //#include "./texture_loader.c"
 

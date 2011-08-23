@@ -3,7 +3,7 @@ cdef extern from "./objects/grenade.h":
     void grenade_draw()
     void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz)
 
-cdef extern from "./obects/agent.h":
+cdef extern from "./objects/agent.h":
     void agent_tick()
     void agent_draw()
     int create_agent(float x, float y, float z)

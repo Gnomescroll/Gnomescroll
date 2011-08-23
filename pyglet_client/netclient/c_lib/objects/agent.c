@@ -1,33 +1,50 @@
 #include "agent.h"
 
-#DEFINE NAGENTS 1024
-uint agent_id_counter=1;
+
 struct Agent_state* Agent_list[1024];
 
+int agent_id_counter = 0;
 int a_count = 0;
+
+void agent_Tick(struct Agent_state* g);
+void agent_Draw(struct Agent_state* g);
 
 struct Agent_state* get_agent(uint id) {
     struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
         if(Agent_list[i]->id == id) {
-            return Agent_list[i]
+            return Agent_list[i];
         }
     }
     return NULL;
+}
+
+void agent_Tick(struct Agent_state* g) {
+
 }
 
 void agent_tick() {
 
 }
 
-void agent_draw() {
+void agent_Draw(struct Agent_state* g) {
 
+}
+
+void agent_draw() {
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] == NULL) {
+            g = Agent_list[i];
+            agent_Draw(g);
+        }
+    }
 }
 
 
 int create_agent(float x, float y, float z) {
-
     struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
@@ -39,9 +56,9 @@ int create_agent(float x, float y, float z) {
         }
     }
     if(a== NULL) { printf("Bug: max grenade number reached!\n"); return;}
+    agent_id_counter +=1;
     g->id = agent_id_counter;
     printf("Agent Created: id= %i \n", g->id);
-    agent_id_counter++;
     g->x=x;
     g->y=y;
     g->z=z;
@@ -55,10 +72,15 @@ int create_agent(float x, float y, float z) {
     g->cbox_radius = 0.45;
 }
 
+void destroy_agent(int id) {
+
+
+}
+
 void set_agent_state(int id, float xangle, float yangle) {
-    Agent_state* g = get_agent(id)
+    struct Agent_state* g = get_agent(id);
     if(g==NULL) { printf("agent.set_agent_state: agent id does not exist: %i \n", id); return;}
 
     g->xangle = xangle;
-    y->yangle = yangle;
+    g->yangle = yangle;
 }
