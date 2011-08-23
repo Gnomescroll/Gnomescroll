@@ -45,7 +45,7 @@ elif OS == "Darwin":
     extra_link_args = [] #["-framework OpenGL"] #["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
     include_dirs =  []#["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
     runtime_library_dirs = ["./"]
-    library_dirs = [] #, "/usr/local/lib"]
+    library_dirs = ["./"] #, "/usr/local/lib"]
     #extra_compile_args += ["-arch i386 -arch ppc"]
     #extra_link_args += ["-arch i386 -arch ppc"]
 elif OS == "Linux":
@@ -123,7 +123,7 @@ else:
                     'c_lib/texture_loader.c',
                     ],
         #output_dir="build",
-        include_dirs= ["/usr/local/include/SDL"], #include_dirs,
+        include_dirs= ["/usr/local/include/SDL", "./"], #include_dirs,
         debug=0,
         extra_preargs= ["-D_GNU_SOURCE=1", "-D_THREAD_SAFE",],
         #extra_postargs= extra_compile_args
