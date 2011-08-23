@@ -136,7 +136,7 @@ else:
                     ],
         output_libname= "_c_lib",
         #output_dir="build",
-        libraries= ["SDLmain", "SDL", "GLEW"], #libraries,
+        libraries= ["OpenGL", "SDLmain", "SDL", "GLEW"], #libraries,
         library_dirs= ["/usr/local/lib"], #library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
         debug=0,
