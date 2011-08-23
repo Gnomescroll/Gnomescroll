@@ -140,7 +140,7 @@ else:
         library_dirs= ["/usr/local/lib"], #library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
         debug=0,
-        extra_preargs= [,"-Wl","-framework,Cocoa","-framework OpenGL"],
+        extra_preargs= ["-Wl","-framework,Cocoa","-framework OpenGL"],
         #extra_postargs= extra_link_args,
     )
 
