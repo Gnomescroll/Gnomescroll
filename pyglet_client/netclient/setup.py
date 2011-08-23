@@ -63,13 +63,14 @@ if debug == True:
 from distutils.unixccompiler import UnixCCompiler
 
 print "Compiling Shared Libraries"
-comp = UnixCCompiler(verbose=1)
+comp = UnixCCompiler(verbose=True, force=True)
 s_lib=[]
 
 comp.set_include_dirs(include_dirs)
 comp.set_libraries(libraries)
 comp.set_library_dirs(library_dirs)
 comp.set_runtime_library_dirs(runtime_library_dirs)
+#comp.add_runtime_library_dir("./")
 
 comp.compile(
     sources = [ 'c_lib/c_lib.c',
@@ -78,8 +79,8 @@ comp.compile(
     #output_dir="build",
     include_dirs= include_dirs,
     debug=0,
-    #extra_preargs= extra_compile_args,
-    extra_postargs= extra_compile_args
+    extra_preargs= extra_compile_args,
+    #extra_postargs= extra_compile_args
     )
 
 
