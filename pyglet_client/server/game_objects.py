@@ -102,6 +102,16 @@ class DetachableObject(GameObject):
         self.on_ground = True
         NetOut.event.item_update(self)
 
+    def can_take(self, new_owner):
+        if self.on_ground and self.owner != new_owner:
+            return True
+        return False
+
+    def can_drop(self, owner):
+        if owner is not None and self.owner == owner:
+            return True
+        return False
+
     def pos(self, xyz=None):
         if self.owner is None:
             return GameObject.pos(self, xyz)

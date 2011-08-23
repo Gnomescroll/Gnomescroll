@@ -541,8 +541,14 @@ class Agent(AgentPhysics, AgentAction):
         if old != weapon_index:
             NetOut.event.agent_update(self, 'active_weapon')
 
+    def can_take_item(self, item):
+        return (item not in self.inventory and item.can_take(self))
+
+    def can_drop_item(self, item):
+        return (item in self.inventory and item.can_drop(self))
+
     def pickup_item(self, item, index=None):
-        if self.dead or item in self.inventory:
+        if self.dead or not self.can_take_item(item):
             return
         if index is None:
             print 'adding %s to inv' % (item,)
@@ -552,7 +558,7 @@ class Agent(AgentPhysics, AgentAction):
         item.take(self)
         
     def drop_item(self, item):
-        if item in self.inventory:
+        if self.can_drop_item(item):
             print 'dropping'
             print self.inventory
             self.inventory.remove(item)
