@@ -33,7 +33,7 @@ class Dat(object):
     def _register(self):
         global dat_loader
         dat_loader._register_dat(self.name, self)
-        
+
     def get(self, type, prop=None):
         print self.dat
         if prop is None:
