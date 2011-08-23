@@ -81,7 +81,7 @@ if OS != "Darwin":
     comp.set_runtime_library_dirs(runtime_library_dirs)
     #comp.add_runtime_library_dir("./")
 
-    comp.compile(
+    obj = comp.compile(
         sources = [ 'c_lib/c_lib.c',
                     'c_lib/texture_loader.c',
                     ],
@@ -91,12 +91,10 @@ if OS != "Darwin":
         extra_preargs= extra_compile_args,
         #extra_postargs= extra_compile_args
         )
-
+    print str(x)
 
     comp.link_shared_lib(
-        objects = [ 'c_lib/c_lib.o',
-                    'c_lib/texture_loader.o',
-                    ],
+        objects = obj,
         output_libname= "_c_lib",
         #output_dir="build",
         libraries=libraries,
@@ -112,11 +110,11 @@ else:
     comp = UnixCCompiler(verbose=True, force=True)
     s_lib=[]
 
-    comp.set_include_dirs(include_dirs)
-    comp.set_libraries(libraries)
-    comp.set_library_dirs(library_dirs)
-    comp.set_runtime_library_dirs(runtime_library_dirs)
-    #comp.add_runtime_library_dir("./")
+    #comp.set_include_dirs(include_dirs)
+    #comp.set_libraries(libraries)
+    #comp.set_library_dirs(library_dirs)
+    #comp.set_runtime_library_dirs(runtime_library_dirs)
+    ##comp.add_runtime_library_dir("./")
 
     comp.compile(
         sources = [ 'c_lib/c_lib.c',
