@@ -136,11 +136,11 @@ else:
                     ],
         output_libname= "_c_lib",
         #output_dir="build",
-        libraries= ["OpenGL", "SDLmain", "SDL", "GLEW"], #libraries,
+        libraries= ["GL", "SDLmain", "SDL", "GLEW"], #libraries,
         library_dirs= ["/usr/local/lib"], #library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
         debug=0,
-        extra_preargs= ["-Wl","-framework,Cocoa"],#,"-framework OpenGL"],
+        extra_preargs= ["-Wl","-framework,Cocoa", "-framework OpenGL"],
         #extra_postargs= extra_link_args,
     )
 
