@@ -140,7 +140,7 @@ class BlockApplier(Weapon):
         Weapon.__init__(self, id, owner)
         self.max_ammo = 0
         self.ammo = 0
-        self.clip_size = 100
+        self.clip_size = 9999
         self.clip = self.clip_size
         self.fire_command = 'set_block'
 

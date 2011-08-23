@@ -144,7 +144,7 @@ class BlockApplier(Weapon):
         Weapon.__init__(self, id, owner, state)
         self.max_ammo = 0
         self.ammo = 0
-        self.clip_size = 100
+        self.clip_size = 9999
         if clip is None:
             clip = self.clip_size
         self.clip = clip
