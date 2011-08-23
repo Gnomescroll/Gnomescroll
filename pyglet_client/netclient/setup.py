@@ -93,8 +93,8 @@ comp.link_shared_lib(
     library_dirs=library_dirs,
     #runtime_library_dirs= runtime_library_dirs,
     debug=0,
-    extra_preargs= extra_link_args,
-    #extra_postargs=None,
+    #extra_preargs= extra_link_args,
+    extra_postargs= extra_link_args,
 )
 
 s_lib += ['_c_lib']
