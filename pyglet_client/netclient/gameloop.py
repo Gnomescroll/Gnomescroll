@@ -212,7 +212,7 @@ class App(object):
                 _i+=1
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50)
-                if _i % 15 == 0:
+                if True or _i % 15 == 0:
                     v = 8
                     x = v*random.random()
                     y = v*random.random()
