@@ -66,6 +66,7 @@ if debug == True:
     extra_link_args+=["-g"]
 
 
+import distutils.ccompiler
 from distutils.unixccompiler import UnixCCompiler
 
 debug = 1
@@ -107,7 +108,8 @@ if OS != "Darwin":
 else:
     print "Compiling Shared Libraries"
     print "Super OSX Build Process"
-    comp = UnixCCompiler(verbose=True, force=True)
+    #comp = UnixCCompiler(verbose=True, force=True)
+    comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
     s_lib=[]
 
     #comp.set_include_dirs(include_dirs)
