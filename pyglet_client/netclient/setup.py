@@ -63,7 +63,7 @@ if debug == True:
 from distutils.unixccompiler import UnixCCompiler
 
 print "Compiling Shared Libraries"
-comp = UnixCCompiler()
+comp = UnixCCompiler(verbose=1)
 s_lib=[]
 
 comp.set_include_dirs(include_dirs)
@@ -93,8 +93,8 @@ comp.link_shared_lib(
     library_dirs=library_dirs,
     #runtime_library_dirs= runtime_library_dirs,
     debug=0,
-    #extra_preargs= extra_link_args,
-    extra_postargs= extra_link_args,
+    extra_preargs= extra_link_args,
+    #extra_postargs= extra_link_args,
 )
 
 s_lib += ['_c_lib']
