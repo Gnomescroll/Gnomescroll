@@ -43,9 +43,9 @@ elif OS == "Darwin":
     libraries =["GLEW"]#, 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
     extra_link_args = [] #["-framework OpenGL"] #["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
-    include_dirs =  []#["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
+    include_dirs =  ["./"]#["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
     runtime_library_dirs = ["./"]
-    library_dirs = ["./"] #, "/usr/local/lib"]
+    library_dirs = [] #, "/usr/local/lib"]
     #extra_compile_args += ["-arch i386 -arch ppc"]
     #extra_link_args += ["-arch i386 -arch ppc"]
 elif OS == "Linux":
@@ -73,7 +73,8 @@ debug = 1
 
 if OS != "Darwin":
     print "Compiling Shared Libraries"
-    comp = UnixCCompiler(verbose=True, force=True)
+    #comp = UnixCCompiler(verbose=1, force=1)
+    comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
     s_lib=[]
 
     comp.set_include_dirs(include_dirs)
@@ -88,11 +89,11 @@ if OS != "Darwin":
                     ],
         #output_dir="build",
         include_dirs= include_dirs,
-        debug=0,
+        debug=debug,
         extra_preargs= extra_compile_args,
         #extra_postargs= extra_compile_args
         )
-    print str(x)
+    #print str(x)
 
     comp.link_shared_lib(
         objects = obj,
@@ -101,7 +102,7 @@ if OS != "Darwin":
         libraries=libraries,
         library_dirs=library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
-        debug=0,
+        debug=debug,
         extra_preargs= extra_link_args,
         #extra_postargs= extra_link_args,
     )
@@ -123,8 +124,8 @@ else:
                     'c_lib/texture_loader.c',
                     ],
         #output_dir="build",
-        include_dirs= ["/usr/local/include/SDL", "./"], #include_dirs,
-        debug=0,
+        include_dirs= ["/usr/local/include/SDL", "./", "c_lib"], #include_dirs,
+        debug=debug,
         extra_preargs= ["-D_GNU_SOURCE=1", "-D_THREAD_SAFE",],
         #extra_postargs= extra_compile_args
         )
@@ -139,7 +140,7 @@ else:
         libraries= ["SDLmain", "SDL", "GLEW"], #libraries,
         library_dirs= ["/usr/local/lib"], #library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
-        debug=0,
+        debug=debug,
         extra_preargs= ["-Wl","-framework,Cocoa", "-framework OpenGL"],
         extra_postargs= ["-framework,Cocoa", "-framework OpenGL"], #extra_link_args,
     )
