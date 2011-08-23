@@ -38,7 +38,7 @@ if SYSTEM == 'Windows':
 elif OS == "Darwin":
     libraries =["GLEW", 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
-    extra_link_args = ["-framework SDL", "-framework SDL_image","-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
+    extra_link_args = ["-framework Cocoa", "-framework OpenGL"] #"-framework Carbon", "-framework SDL", "-framework SDL_image",
     include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"] #, "/usr/local/lib"]
