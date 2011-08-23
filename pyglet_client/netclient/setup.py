@@ -36,12 +36,14 @@ if SYSTEM == 'Windows':
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Darwin":
-    libraries =["GLEW", 'SDL_image', 'SDL'] #, "SDL_image"] # 'GL','GLU',
+    libraries =["GLEW", 'SDL_image', 'SDL'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
     extra_link_args = ["-framework SDL", "-framework SDL_image","-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
     include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
     runtime_library_dirs = ["./"]
     library_dirs = ["./"] #, "/usr/local/lib"]
+    extra_compile_args += "-arch i386 -arch ppc"
+    extra_link_args += "-arch i386 -arch ppc"
 elif OS == "Linux":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
@@ -61,6 +63,8 @@ if debug == True:
 
 
 from distutils.unixccompiler import UnixCCompiler
+
+debug = 1
 
 print "Compiling Shared Libraries"
 comp = UnixCCompiler(verbose=True, force=True)

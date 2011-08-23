@@ -83,4 +83,11 @@ void set_agent_state(int id, float xangle, float yangle) {
 
     g->xangle = xangle;
     g->yangle = yangle;
+    /*
+    c->xl = c->x + cos( c->x_angle * PI) * cos( c->y_angle * PI);
+    c->yl = c->y + sin( c->x_angle * PI) * cos( c->y_angle * PI);
+    c->zl = c->z + sin( c->y_angle);
+
+    length = sqrt(c->xl*c->xl + c->yl*c->yl + c->zl*c->zl);
+    */
 }
