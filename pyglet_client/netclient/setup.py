@@ -42,10 +42,10 @@ if SYSTEM == 'Windows':
 elif OS == "Darwin":
     libraries =["GLEW"]#, 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
-    extra_link_args = ["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
-    include_dirs =  ["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
+    extra_link_args = [] #["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
+    include_dirs =  []#["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
     runtime_library_dirs = ["./"]
-    library_dirs = ["./"] #, "/usr/local/lib"]
+    library_dirs = [] #, "/usr/local/lib"]
     #extra_compile_args += ["-arch i386 -arch ppc"]
     #extra_link_args += ["-arch i386 -arch ppc"]
 elif OS == "Linux":
@@ -70,41 +70,79 @@ from distutils.unixccompiler import UnixCCompiler
 
 debug = 1
 
-print "Compiling Shared Libraries"
-comp = UnixCCompiler(verbose=True, force=True)
-s_lib=[]
+if OS != "Darwin":
+    print "Compiling Shared Libraries"
+    comp = UnixCCompiler(verbose=True, force=True)
+    s_lib=[]
 
-comp.set_include_dirs(include_dirs)
-comp.set_libraries(libraries)
-comp.set_library_dirs(library_dirs)
-comp.set_runtime_library_dirs(runtime_library_dirs)
-#comp.add_runtime_library_dir("./")
+    comp.set_include_dirs(include_dirs)
+    comp.set_libraries(libraries)
+    comp.set_library_dirs(library_dirs)
+    comp.set_runtime_library_dirs(runtime_library_dirs)
+    #comp.add_runtime_library_dir("./")
 
-comp.compile(
-    sources = [ 'c_lib/c_lib.c',
-                'c_lib/texture_loader.c',
-                ],
-    #output_dir="build",
-    include_dirs= include_dirs,
-    debug=0,
-    extra_preargs= extra_compile_args,
-    #extra_postargs= extra_compile_args
+    comp.compile(
+        sources = [ 'c_lib/c_lib.c',
+                    'c_lib/texture_loader.c',
+                    ],
+        #output_dir="build",
+        include_dirs= include_dirs,
+        debug=0,
+        extra_preargs= extra_compile_args,
+        #extra_postargs= extra_compile_args
+        )
+
+
+    comp.link_shared_lib(
+        objects = [ 'c_lib/c_lib.o',
+                    'c_lib/texture_loader.o',
+                    ],
+        output_libname= "_c_lib",
+        #output_dir="build",
+        libraries=libraries,
+        library_dirs=library_dirs,
+        #runtime_library_dirs= runtime_library_dirs,
+        debug=0,
+        extra_preargs= extra_link_args,
+        #extra_postargs= extra_link_args,
     )
+else:
+    print "Compiling Shared Libraries"
+    print "Super OSX Build Process"
+    comp = UnixCCompiler(verbose=True, force=True)
+    s_lib=[]
+
+    comp.set_include_dirs(include_dirs)
+    comp.set_libraries(libraries)
+    comp.set_library_dirs(library_dirs)
+    comp.set_runtime_library_dirs(runtime_library_dirs)
+    #comp.add_runtime_library_dir("./")
+
+    comp.compile(
+        sources = [ 'c_lib/c_lib.c',
+                    'c_lib/texture_loader.c',
+                    ],
+        #output_dir="build",
+        include_dirs= include_dirs,
+        debug=0,
+        extra_preargs= ["-I/usr/local/include/SDL", "-D_GNU_SOURCE=1", "-D_THREAD_SAFE",]
+        #extra_postargs= extra_compile_args
+        )
 
 
-comp.link_shared_lib(
-    objects = [ 'c_lib/c_lib.o',
-                'c_lib/texture_loader.o',
-                ],
-    output_libname= "_c_lib",
-    #output_dir="build",
-    libraries=libraries,
-    library_dirs=library_dirs,
-    #runtime_library_dirs= runtime_library_dirs,
-    debug=0,
-    extra_preargs= extra_link_args,
-    #extra_postargs= extra_link_args,
-)
+    comp.link_shared_lib(
+        objects = [ 'c_lib/c_lib.o',
+                    'c_lib/texture_loader.o',
+                    ],
+        output_libname= "_c_lib",
+        #output_dir="build",
+        libraries=libraries,
+        library_dirs=library_dirs,
+        #runtime_library_dirs= runtime_library_dirs,
+        debug=0,
+        extra_preargs= ["-L/usr/local/lib", "-lSDLmain", "-lSDL", "-Wl,-framework,Cocoa",]
+        #extra_postargs= extra_link_args,
+    )
 
 s_lib += ['_c_lib']
 
