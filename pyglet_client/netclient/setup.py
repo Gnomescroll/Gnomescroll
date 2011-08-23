@@ -42,7 +42,7 @@ if SYSTEM == 'Windows':
 elif OS == "Darwin":
     libraries =["GLEW"]#, 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
-    extra_link_args = ["-framework OpenGL"] #["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
+    extra_link_args = [] #["-framework OpenGL"] #["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
     include_dirs =  []#["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
     runtime_library_dirs = ["./"]
     library_dirs = [] #, "/usr/local/lib"]
@@ -140,7 +140,7 @@ else:
         library_dirs= ["/usr/local/lib"], #library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
         debug=0,
-        extra_preargs= ["-Wl,-framework,Cocoa",],
+        extra_preargs= ["-framework OpenGL","-Wl","-framework,Cocoa",],
         #extra_postargs= extra_link_args,
     )
 
