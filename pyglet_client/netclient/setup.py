@@ -123,9 +123,9 @@ else:
                     'c_lib/texture_loader.c',
                     ],
         #output_dir="build",
-        include_dirs= include_dirs,
+        include_dirs= ["/usr/local/include/SDL"], #include_dirs,
         debug=0,
-        extra_preargs= ["-I/usr/local/include/SDL", "-D_GNU_SOURCE=1", "-D_THREAD_SAFE",]
+        extra_preargs= ["-D_GNU_SOURCE=1", "-D_THREAD_SAFE",],
         #extra_postargs= extra_compile_args
         )
 
@@ -136,11 +136,11 @@ else:
                     ],
         output_libname= "_c_lib",
         #output_dir="build",
-        libraries=libraries,
-        library_dirs=library_dirs,
+        libraries= ["SDLmain", "SDL", "GLEW"], #libraries,
+        library_dirs= ["/usr/local/lib"], #library_dirs,
         #runtime_library_dirs= runtime_library_dirs,
         debug=0,
-        extra_preargs= ["-L/usr/local/lib", "-lSDLmain", "-lSDL", "-Wl,-framework,Cocoa",]
+        extra_preargs= ["-L/usr/local/lib", "-lSDLmain", "-lSDL", "-Wl,-framework,Cocoa",],
         #extra_postargs= extra_link_args,
     )
 
