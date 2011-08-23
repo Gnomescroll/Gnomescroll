@@ -542,7 +542,7 @@ class Agent(AgentPhysics, AgentAction):
             NetOut.event.agent_update(self, 'active_weapon')
 
     def pickup_item(self, item, index=None):
-        if self.dead:
+        if self.dead or item in self.inventory:
             return
         if index is None:
             print 'adding %s to inv' % (item,)
@@ -552,11 +552,12 @@ class Agent(AgentPhysics, AgentAction):
         item.take(self)
         
     def drop_item(self, item):
-        print 'dropping'
-        print self.inventory
-        self.inventory.remove(item)
-        print self.inventory
-        item.drop()
+        if item in self.inventory:
+            print 'dropping'
+            print self.inventory
+            self.inventory.remove(item)
+            print self.inventory
+            item.drop()
 
     def near_item(self, item):
         if distance(self.pos(), item.pos()) < item.radius:

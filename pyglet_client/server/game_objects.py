@@ -91,6 +91,8 @@ class DetachableObject(GameObject):
             self.on_ground = False
         if old_owner != self.owner:
             NetOut.event.item_update(self)
+        print 'taking %s' % (self,)
+        print '%s --> %s' % (old_owner, self.owner,)
 
     # give it a position to override default drop position behavior (drop where owner was)
     def drop(self):
