@@ -1,27 +1,34 @@
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
-object_names = {
-    0   :   'Generic',
-    1   :   'Flag',
-    2   :   'Base',
-}
+from dat_loader import i_dat
 
 
 class GameObject:
 
+    _types = {
+        'GameObject'    :   0,
+        'StaticObject'  :   1,
+        'EquippableObject': 2,
+        'DetachableObject': 3,
+        'Flag'          :   4,
+        'Base'          :   5,
+    }
+
+    dat = i_dat
+
     def __init__(self, id, state=None):
         self.id = id
         self.on_ground = True
-        self.state = state
-        if state is None:
-            self.state = [0 for i in range(9)]
-        self.type = 0
         self.owner = None
-        self._set_name()
+        if state is None:
+            state = [0 for i in range(9)]
+        self.state = state
+        self._set_type()
+        self.dat.apply(self)
 
-    def _set_name(self):
-        self.name = object_names[self.type]
+    def _set_type(self):
+        self.type = self._types[self.__class__.__name__]
 
     def json(self, properties=None):
         d = {
@@ -53,16 +60,11 @@ class GameObject:
         else:
             return self.state[0:3]
 
-    @classmethod
-    def name_from_type(self, type):
-        return object_names[type]
-
 
 class StaticObject(GameObject):
 
     def __init__(self, id, state=None):
         GameObject.__init__(self, id, state)
-        self.immobile = True
         
     def pos(self):
         return GameObject.pos(self)
@@ -77,11 +79,8 @@ class EquippableObject(GameObject):
 # pick up / drop
 class DetachableObject(GameObject):
     
-    def __init__(self, id, radius=1, state=None):
+    def __init__(self, id, state=None):
         GameObject.__init__(self, id, state)
-        self.radius = radius
-        self.auto_grab = False
-        self.drop_on_death = True
 
     def take(self, new_owner):
         # ground -> owner
@@ -123,10 +122,8 @@ class DetachableObject(GameObject):
 
 class TeamItem:
 
-    def __init__(self, team, own=True, other=True):
+    def __init__(self, team):
         self.team = team
-        self.pickup_by_own_team = own
-        self.pickup_by_other_team = other
 
     def can_take(self, new_owner):
         #print new_owner.team, self.team

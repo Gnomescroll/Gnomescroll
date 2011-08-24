@@ -9,70 +9,47 @@ if settings.pyglet:
 else:
     import SDL.gl
 
-
-projectile_dat = {
-
-    0   :   {   # generic projectile
-        'speed' :   0,
-        'damage':   0,
-        'ttl_max':  0,
-    },
-
-    1 : {   # laser
-        'speed' : 110,
-        'damage' : 20,
-        'ttl_max' : 400, #time to live in ticks
-        'penetrates': False,
-        'suicidal'  : False, # True for grenades
-    #    'splash' : {
-    #    'radius' : 3,
-    #    'damage' : 15,
-    #    'force' : 150,
-    },
-
-    2 : {   #   grenade
-        'speed' : 30,
-        'damage' : 50,
-        'ttl_max' : 300,
-        'suicidal': True
-    },
-
-}
-
+from dat_loader import p_dat
 
 class Projectile:
 
-    projectile_types = {
+    _types = {
         'Projectile'    :   0,
         'Laser'         :   1,
         'Grenade'       :   2,
     }
 
+    _names = None
+
+    dat = p_dat
+
     @classmethod
     def name_from_type(cls, type):
-        if not hasattr(cls, 'projectile_names'):
-            rev = [(b,a) for a,b in cls.projectile_types.items()]
-            cls.projectile_names = dict(rev)
-        return cls.projectile_names[type]
+        if cls._names is None:
+            rev = [(b,a) for a,b in cls._types.items()]
+            cls._names = dict(rev)
+        return cls._names[type]
 
     def __init__(self, id, state=None, owner=None, *args, **kwargs): #more args
         self.id = id
         self._set_type()
-        p = projectile_dat[self.type]
 
         self.state = map(float, state)
         self.last_state = self.state
         self.owner = owner
 
-        self.speed = p['speed'] / GameStateGlobal.fps
-        self.damage = p['damage']
-        self.ttl = 0
-        self.ttl_max = p['ttl_max']
-        self.penetrates = p.get('penetrates', False)
-        self.suicidal = p.get('suicidal', False)
+        self.dat.apply(self)
+        self.speed = self.speed / GameStateGlobal.fps
+
+        #self.speed = p['speed'] / GameStateGlobal.fps
+        #self.damage = p['damage']
+        #self.ttl = 0
+        #self.ttl_max = p['ttl_max']
+        #self.penetrates = p.get('penetrates', False)
+        #self.suicidal = p.get('suicidal', False)
 
     def _set_type(self):
-        self.type = self.projectile_types[self.__class__.__name__]
+        self.type = self._types[self.__class__.__name__]
 
     def update(self, **args):
         try:

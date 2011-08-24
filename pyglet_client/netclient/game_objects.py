@@ -1,13 +1,21 @@
 from vox import GameObjectRender
+from dat_loader import i_dat
 
-object_names = {
-    0   :   'Generic',
-    1   :   'Flag',
-    2   :   'Base',
-}
-    
 
 class GameObject:
+
+    _types = {
+        'GameObject'    :   0,
+        'StaticObject'  :   1,
+        'EquippableObject': 2,
+        'DetachableObject': 3,
+        'Flag'          :   4,
+        'Base'          :   5,
+    }
+
+    _names = None
+    
+    dat = i_dat
 
     def __init__(self, id, state=None, **kwargs):
         self.id = id
@@ -15,19 +23,25 @@ class GameObject:
         if 'on_ground' in kwargs:
             self.on_ground = bool(kwargs['on_ground'])
         self.state = state
-        self.type = 0
         self.owner = None
-        self.proximity_effect = False   # if True, item causes effect on agent when nearby (except pickup) i.e. base healing
+        self._set_type()
+        self.dat.apply(self)
 
+    def _set_type(self):
+        self.type = self._types[self.__class__.__name__]
+
+    @classmethod
+    def name_from_type(cls, type):
+        if cls._names is None:
+            rev = [(b,a) for a,b in cls._types.items()]
+            cls._names = dict(rev)
+        return cls._names[type]
+    
     def pos(self, xyz=None):
         if xyz is not None:
             self.state[0:3] = xyz
         else:
             return self.state[0:3]
-
-    @classmethod
-    def name_from_type(self, type):
-        return object_names[type]
 
     def update_info(self, **obj):
         old_id = self.id
@@ -79,7 +93,6 @@ class StaticObject(GameObject):
 
     def __init__(self, id, state=None, **kwargs):
         GameObject.__init__(self, id, state, **kwargs)
-        self.immobile = True
         
     def pos(self):
         return GameObject.pos(self)
@@ -94,12 +107,8 @@ class EquippableObject(GameObject):
 # pick up / drop
 class DetachableObject(GameObject):
     
-    def __init__(self, id, radius=1, state=None, **kwargs):
+    def __init__(self, id, state=None, **kwargs):
         GameObject.__init__(self, id, state, **kwargs)
-        self.radius = radius
-
-        self.auto_grab = False
-        self.drop_on_death = True
 
     def take(self, new_owner):
         # ground -> owner
@@ -134,10 +143,8 @@ class DetachableObject(GameObject):
 
 class TeamItem:
 
-    def __init__(self, team, own=True, other=True, **kwargs):
+    def __init__(self, team, **kwargs):
         self.team = team
-        self.pickup_by_own_team = own
-        self.pickup_by_other_team = other
 
     def can_take(self, new_owner):
         #print new_owner.team, self.team

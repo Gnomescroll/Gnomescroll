@@ -6,7 +6,7 @@ from dat_loader import w_dat
 
 class Weapon(EquippableObject):
 
-    _weapons = {
+    _types = {
         'Weapon'    :   0,
         'LaserGun'  :   1,
         'Pick'      :   2,
@@ -16,27 +16,30 @@ class Weapon(EquippableObject):
         'GrenadePouch_C':   6,
     }
 
+    _names = None
+
+    dat = w_dat
+
     _hud_undef = '--'
 
     def __init__(self, id, owner=None, state=None):
         EquippableObject.__init__(self, id, state)
         self.owner = owner
-        self.type = self._weapons[self.__class__.__name__]
-
-        self.max_ammo = self.get_dat('max_ammo')
-        self.ammo = self.get_dat('ammo')
-        self.clip_size = self.get_dat('clip_size')
-        self.clip = self.get_dat('clip')
-        self.base_damage = self.get_dat('base_damage')
-        self.automatic = self.get_dat('automatic')
-        self.hitscan = self.get_dat('hitscan')
-        self.reload_speed = self.get_dat('reload_speed')
-        self.firing_rate = self.get_dat('firing_rate')
-
+        self._set_type()
+        #self.max_ammo = self.get_dat('max_ammo')
+        #self.ammo = self.get_dat('ammo')
+        #self.clip_size = self.get_dat('clip_size')
+        #self.clip = self.get_dat('clip')
+        #self.base_damage = self.get_dat('base_damage')
+        #self.automatic = self.get_dat('automatic')
+        #self.hitscan = self.get_dat('hitscan')
+        #self.reload_speed = self.get_dat('reload_speed')
+        #self.firing_rate = self.get_dat('firing_rate')
+        self.dat.apply(self)
         self._animation = animations.Animation
 
-    def get_dat(self, prop):
-        return w_dat.get(self.type, prop)
+    #def get_dat(self, prop):
+        #return w_dat.get(self.type, prop)
 
     def fire(self):
         return False
@@ -47,11 +50,15 @@ class Weapon(EquippableObject):
     def __str__(self):
         return self.__class__.__name__
 
+    def _set_type(self):
+        self.type = self._types[self.__class__.__name__]
+
     @classmethod
     def name_from_type(cls, type):
-        for name, type_id in cls._weapons.items():
-            if type_id == type:
-                return name
+        if cls._names is None:
+            rev = [(b,a) for a,b in cls._types.items()]
+            cls._names = dict(rev)
+        return cls._names[type]
 
     def hud_display(self):
         undef = self._hud_undef
@@ -191,10 +198,6 @@ class GrenadePouch(Weapon):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        self.max_ammo = self.get_dat('max_ammo')
-        self.ammo = self.get_dat('ammo')
-        self.clip_size = self.get_dat('clip_size')
-        self.clip = self.get_dat('clip')
 
     def fire(self):
         if self.clip == 0:

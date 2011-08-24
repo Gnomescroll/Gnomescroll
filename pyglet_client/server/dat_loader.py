@@ -44,7 +44,9 @@ dat_loader = DatInterface()
 class Dat(object):
     def __init__(self, name, dat=None):
         if dat is None:
-            dat = {}
+            dat = {
+                0:  {}
+            }
         self.dat = dat
         self.name = name
         self._register()
@@ -68,9 +70,14 @@ class Dat(object):
     def set(self, type, prop, val):
         self.dat[type][prop] = val
 
+    def apply(self, obj):
+        for prop in self.dat[0].keys():
+            setattr(obj, prop, self.get(obj.type, prop))
+
     def json(self):
         return self.dat
 
 w_dat = Dat('weapons', dats.weapons)
 i_dat = Dat('items', dats.items)
 p_dat = Dat('projectiles', dats.projectiles)
+

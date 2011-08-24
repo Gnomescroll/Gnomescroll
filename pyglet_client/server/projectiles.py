@@ -37,6 +37,7 @@ projectile_dat = {
 
 }
 
+from dat_loader import p_dat
 
 '''
 Projectile Controller
@@ -72,21 +73,16 @@ class Projectile:
         'Grenade'       :   2,
     }
 
+    dat = p_dat
+
     def __init__(self, id, state, owner=None):
         self.id = id
-        self.state = map(float, state)
-
-        self._set_type()
-        p = projectile_dat[self.type]
-
-        self.speed = p['speed'] / GameStateGlobal.fps
-        self.damage = p['damage']
-        self.ttl = 0
-        self.ttl_max = p['ttl_max']
-        self.penetrates = p.get('penetrates', False)
-        self.suicidal = p.get('suicidal', False)
-
         self.owner = owner
+        self.state = map(float, state)
+        self._set_type()
+            
+        self.dat.apply(self)
+        self.speed = self.speed / GameStateGlobal.fps
 
     def _set_type(self):
         self.type = self.projectile_types[self.__class__.__name__]

@@ -12,14 +12,10 @@ def rand_spot(z=15):
 
 class Flag(DetachableObject, TeamItem):
 
-    def __init__(self, id, radius, team, *args, **kwargs):
-        DetachableObject.__init__(self, id, radius)
-        TeamItem.__init__(self, team, own=False, other=True)
-        self.auto_grab = True
-        self.drop_on_death = True
+    def __init__(self, id, team, *args, **kwargs):
+        DetachableObject.__init__(self, id)
+        TeamItem.__init__(self, team)
         self.team = team
-        self.type = 1
-        self._set_name()
         self.spawn()
 
     def _spawn_point(self):
@@ -47,13 +43,10 @@ class Base(StaticObject, TeamItem):
 
     def __init__(self, id, team, *args, **kwargs):
         StaticObject.__init__(self, id)
-        TeamItem.__init__(self, team, False, False)
+        TeamItem.__init__(self, team)
         self.spawned = False
         self.team = team
-        self.type = 2
-        self._set_name()
         self.spawn()
-        self.radius = 2
         
     def spawn(self):
         if not self.spawned:

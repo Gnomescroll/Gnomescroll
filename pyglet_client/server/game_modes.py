@@ -83,7 +83,7 @@ class Team(NoTeam):
         self.base = GameStateGlobal.itemList.create('Base', self)
 
     def create_flag(self):
-        self.flag = GameStateGlobal.itemList.create('Flag', 1, self)
+        self.flag = GameStateGlobal.itemList.create('Flag', self)
 
     def is_viewers(self):
         return False
