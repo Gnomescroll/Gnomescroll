@@ -214,7 +214,7 @@ class App(object):
                 _i+=1
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50)
-                if True or _i % 15 == 0:
+                if False or _i % 15 == 0:
                     v = 4
                     x = v*random.random() -0.5
                     y = v*random.random() -0.5
@@ -223,8 +223,8 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    c_lib.c_lib_objects._create_grenade(25,25,4, x,y,z)
-                if _i % 30 == 0:
+                    c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z)
+                if True or _i % 30 == 0:
                     v = 4
                     x = v*random.random() -0.5
                     y = v*random.random() -0.5
@@ -233,7 +233,8 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    c_lib.c_lib_objects._create_neutron(1,5,5,4, x,y,z)
+                    _type = random.randint(1,9)
+                    c_lib.c_lib_objects._create_neutron(_type,5,5,10, x,y,z)
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()

@@ -15,17 +15,17 @@ sprites = [
 ('laser5.png', 20),
 
 #neutron
-('neutron/b_e1_v00.png', 32),
-('neutron/b_e2_v00.png', 33),
-('neutron/b_e3_v00.png', 34),
+('neutron/b_e1_v00.png', 16+33),
+('neutron/b_e2_v00.png', 16+34),
+('neutron/b_e3_v00.png', 16+35),
 
-('neutron/bc_e1_v00.png', 35),
-('neutron/bc_e2_v00.png', 36),
-('neutron/bc_e3_v00.png', 37),
+('neutron/bc_e1_v00.png', 16+36),
+('neutron/bc_e2_v00.png', 16+37),
+('neutron/bc_e3_v00.png', 16+38),
 
-('neutron/p_e1_v00.png', 38),
-('neutron/p_e2_v00.png', 39),
-('neutron/p_e3_v00.png', 40),
+('neutron/p_e1_v00.png', 16+39),
+('neutron/p_e2_v00.png', 16+40),
+('neutron/p_e3_v00.png', 16+41),
 
 #calibration
 ('test1.png', 255),

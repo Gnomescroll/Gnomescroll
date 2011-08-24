@@ -80,8 +80,9 @@ void neutron_draw() {
     struct neutron* g = NULL;
     int i;
 
-    float up[3] = {a[0], a[4], a[8]};
-    float right[3] = {a[1], a[5], a[9]};
+    float size = 0.3;
+    float up[3] = {a[0]*size, a[4]*size, a[8]*size};
+    float right[3] = {a[1]*size, a[5]*size, a[9]*size};
     int id = 5;
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -102,11 +103,11 @@ void neutron_draw() {
     int _c = 0;
     for(i=0; i<1024; i++) {
     if(neutron_list[i] != NULL) {
-        //printf("drew gernade: %i \n", i);
+        //printf("draw neutron: %i \n", i);
         _c++;
         g = neutron_list[i];
         //draw setup
-        id = 32+g->type;
+        id = 48+g->type;
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
@@ -139,7 +140,7 @@ void neutron_draw() {
 
 
 void create_neutron(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create Gernade\n");
+    //printf("Create neutron\n");
     struct neutron* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
@@ -159,5 +160,5 @@ void create_neutron(int type, float x, float y, float z, float vx, float vy, flo
     g->vz=vz;
     g->ttl = 0;
     g->ttl_max = 3000;
-    g->type = 1;
+    g->type = type;
 }

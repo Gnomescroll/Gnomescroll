@@ -21,7 +21,7 @@ def tick():
 
 def draw():
     grenade_draw()
-    neutron_tick()
+    neutron_draw()
     agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz):
