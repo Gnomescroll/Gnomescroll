@@ -19,7 +19,7 @@
 
 void init_objects_neutron();
 void neutron_tick();
-void create_neutron(int type, float x, float y, float z, float vx, float vy, float vz);
+void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz);
 void neutron_draw();
 
 #endif

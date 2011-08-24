@@ -6,7 +6,7 @@ cdef extern from "./objects/grenade.h":
 cdef extern from "./objects/neutron.h":
     void neutron_tick()
     void neutron_draw()
-    void create_neutron(int type, float x, float y, float z, float vx, float vy, float vz)
+    void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
 
 cdef extern from "./objects/agent.h":
     void agent_tick()
@@ -27,8 +27,8 @@ def draw():
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz):
     create_grenade(1, x,y,z, vx,vy,vz)
 
-def _create_neutron(int energy, float x, float y, float z, float vx, float vy, float vz):
-    create_neutron(energy, x,y,z, vx,vy,vz)
+def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
+    create_neutron(type,energy, x,y,z, vx,vy,vz)
 
 def _create_agent(float x, float y, float z):
     id = create_agent(x,y,z)
