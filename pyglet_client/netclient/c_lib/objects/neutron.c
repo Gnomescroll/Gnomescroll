@@ -151,7 +151,9 @@ void create_neutron(int type, float x, float y, float z, float vx, float vy, flo
             break;
         }
     }
-    if(g== NULL) { printf("Bug: max neutron number reached!\n"); return;}
+    if(g== NULL) {
+        //printf("Bug: max neutron number reached!\n");
+        return;}
     g->x=x;
     g->y=y;
     g->z=z;
@@ -159,6 +161,6 @@ void create_neutron(int type, float x, float y, float z, float vx, float vy, flo
     g->vy=vy;
     g->vz=vz;
     g->ttl = 0;
-    g->ttl_max = 3000;
+    g->ttl_max = 300;
     g->type = type;
 }

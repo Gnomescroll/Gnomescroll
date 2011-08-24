@@ -233,8 +233,8 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    _type = random.randint(1,9)
-                    c_lib.c_lib_objects._create_neutron(_type,5,5,10, x,y,z)
+                    _type = random.randint(0,9*3)
+                    c_lib.c_lib_objects._create_neutron(_type,35,35,5, x,y,z)
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()
