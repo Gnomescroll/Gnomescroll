@@ -170,7 +170,7 @@ def load_map1():
     print 'Begin generating map'
     import noise
     octaves = 6
-    f = 16.0 / octaves
+    f = 200.0 / octaves
 
     x = 256
     y = 256
@@ -201,6 +201,36 @@ def load_map1():
                 terrain_map.set(i,j,k, p)
     print 'Done generating map'
 
+def load_map2():
+    print 'start map gen'
+    max_height = 15
+    from map_gen import Gen
+    from random import random
+    g = Gen()
+    h=0
+    M = []
+    for i in range(128):
+        #print i, h
+        T = []
+        print i
+        for j in range(128):
+            h = g.getHeight(i,j)
+            h = abs(h)
+            h *= 100
+            h %= max_height
+            h = int(h)
+            #print h
+            T.append(h)
+            for k in range(h+1):
+                terrain_map.set(i, j, k, 1)
+        if T not in M:
+            M.append(T)
+    print 'Num unique heightlanes'
+    print len(M)
+    
+    
+    print 'done map gen'
+
 class Main:
 
     def __init__(self):
@@ -217,8 +247,8 @@ class Main:
         #CubeGlobal.init_1()
     def run(self):
         print "Server Started"
-        #load_map()
-        load_map1()
+        load_map()
+        #load_map2()
         c_lib.start_physics_timer(33) #ms per tick
         tick = 0
 
