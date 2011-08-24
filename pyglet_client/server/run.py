@@ -166,6 +166,11 @@ def load_map():
                             m.set(xa,ya,za+th, 17)
         print "Finished map generation"
 
+    if map_type == 6:
+        m.set(1,1,3, 17)
+        m.set(2,2,3, 17)
+        #m.set(2,2,3, 17)
+
 def load_map1():
     print 'Begin generating map'
     import noise

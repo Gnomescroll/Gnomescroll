@@ -200,6 +200,28 @@ def draw_chunks():
 /// ADDRESS
 */
 
+
+int s_array[18] = {
+            0,0,1,
+            0,0,-1,
+            0,1,0,
+            0,-1,0,
+            -1,0,0,
+            1,0,0
+            };
+
+int inline _is_occluded(int x,int y,int z, int side_num) {
+    int i;
+    i = 3*side_num;
+    x += s_array[i+0];
+    y += s_array[i+1];
+    z += s_array[i+2];
+    //printf("%i, %i, %i \n", s_array[i+0], s_array[i+1], s_array[i+2]);
+    //return isOccluded(_get(x,y,z));
+    return isActive(_get(x,y,z));
+}
+
+
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
@@ -225,8 +247,9 @@ int update_column_VBO(struct vm_column* column) {
                         //printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
                     }
                     for(side_num=0; side_num<6; side_num++) {
-                        //#if not _is_occluded(x_+mc.index[0],y_+mc.index[1],z_+mc.index[2],side_num): #ints
-                        add_quad(_x,_y,_z,side_num,tile_id);
+                        if(! _is_occluded(_x,_y,_z,side_num)) {
+                            add_quad(_x,_y,_z,side_num,tile_id);
+                        }
                     }
         }
             }
@@ -434,24 +457,3 @@ int* _chunk_request() {
         return &crb;
     }
 }
-
-
-int s_array[18] = {
-            0,0,1,
-            0,0,-1,
-            0,1,0,
-            0,-1,0,
-            -1,0,0,
-            1,0,0
-            };
-
-/*
-int inline _is_occluded(int x,int y,int z, int side_num) {
-    int i;
-    i = s_array[3*side_num];
-    x += s_array[i+0];
-    y += s_array[i+1];
-    z += s_array[i+2];
-    return isOccluded(_get(x,y,z));
-}
-*/
