@@ -11,5 +11,5 @@ python setup.py build_ext --inplace $@
 #python setup.py build_ext --inplace $@
 
 cd ../netclient
-echo 'building netclient/setup.py'
+echo 'building netclient/setup.py -v'
 python setup.py build_ext --inplace $@

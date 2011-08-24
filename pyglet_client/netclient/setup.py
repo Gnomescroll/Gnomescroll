@@ -16,6 +16,10 @@ SDL_LDFLAGS=""
 try:
     SDL_CFLAGS=subprocess.Popen(['sdl-config', '--cflags'], stdout=subprocess.PIPE).communicate()[0]
     SDL_LDFLAGS=subprocess.Popen(['sdl-config', '--libs'], stdout=subprocess.PIPE).communicate()[0]
+    SDLFLAGS = subprocess.Popen(['sdl-config', '--cflags', '--libs', ], stdout=subprocess.PIPE).communicate()[0]
+    print "SDL_CFLAGS= %s" % SDL_CFLAGS
+    print "SDL_LDFLAGS= %s" % SDL_LDFLAGS
+    print "SDLFLAGS= %s" % SDLFLAGS
 except WindowsError:
     # sdl-config is a shell script, windows users will have to provide the path.
     pass
@@ -36,12 +40,14 @@ if SYSTEM == 'Windows':
     runtime_library_dirs = ["./"]
     library_dirs = ["./"]
 elif OS == "Darwin":
-    libraries =["GLEW"] #, "SDL_image"] # 'GL','GLU',
+    libraries =["GLEW"]#, 'SDL_image', 'SDL', 'SDLmain'] #, "SDLmain"] # 'GL','GLU',
     #extra_link_args += ["-framework OpenGL", "-framework SDL"]
-    extra_link_args = ["-framework SDL", "-framework SDL_image","-framework Cocoa", "-framework Carbon", "-framework OpenGL"]
-    include_dirs =  ["/usr/local/Cellar/sdl/include", "/usr/local/include/SDL"] #['/usr/include/SDL']
+    extra_link_args = [] #["-framework OpenGL"] #["-framework Cocoa","-framework SDL", "-framework SDL_image"]#  "-framework OpenGL" #"-framework Carbon", "-framework SDL", "-framework SDL_image",
+    include_dirs =  ["./"]#["/usr/local/include/SDL"] #['/usr/include/SDL'], #"/usr/local/Cellar/sdl/include",
     runtime_library_dirs = ["./"]
-    library_dirs = ["./"] #, "/usr/local/lib"]
+    library_dirs = [] #, "/usr/local/lib"]
+    #extra_compile_args += ["-arch i386 -arch ppc"]
+    #extra_link_args += ["-arch i386 -arch ppc"]
 elif OS == "Linux":
     libraries+=['GL','GLU', 'GLEW',] # 'mega']
     include_dirs = ['/usr/include/SDL']
@@ -60,42 +66,84 @@ if debug == True:
     extra_link_args+=["-g"]
 
 
+import distutils.ccompiler
 from distutils.unixccompiler import UnixCCompiler
 
-print "Compiling Shared Libraries"
-comp = UnixCCompiler()
-s_lib=[]
+debug = 1
 
-comp.set_include_dirs(include_dirs)
-comp.set_libraries(libraries)
-comp.set_library_dirs(library_dirs)
-comp.set_runtime_library_dirs(runtime_library_dirs)
+if OS != "Darwin":
+    print "Compiling Shared Libraries"
+    #comp = UnixCCompiler(verbose=1, force=1)
+    comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
+    s_lib=[]
 
-comp.compile(
-    sources = [ 'c_lib/c_lib.c',
-                'c_lib/texture_loader.c',
-                ],
-    #output_dir="build",
-    include_dirs= include_dirs,
-    debug=0,
-    #extra_preargs= extra_compile_args,
-    extra_postargs= extra_compile_args
+    comp.set_include_dirs(include_dirs)
+    comp.set_libraries(libraries)
+    comp.set_library_dirs(library_dirs)
+    comp.set_runtime_library_dirs(runtime_library_dirs)
+    #comp.add_runtime_library_dir("./")
+
+    obj = comp.compile(
+        sources = [ 'c_lib/c_lib.c',
+                    'c_lib/texture_loader.c',
+                    ],
+        #output_dir="build",
+        include_dirs= include_dirs,
+        debug=debug,
+        extra_preargs= extra_compile_args,
+        #extra_postargs= extra_compile_args
+        )
+    #print str(x)
+
+    comp.link_shared_lib(
+        objects = obj,
+        output_libname= "_c_lib",
+        #output_dir="build",
+        libraries=libraries,
+        library_dirs=library_dirs,
+        #runtime_library_dirs= runtime_library_dirs,
+        debug=debug,
+        extra_preargs= extra_link_args,
+        #extra_postargs= extra_link_args,
     )
+else:
+    print "Compiling Shared Libraries"
+    print "Super OSX Build Process"
+    #comp = UnixCCompiler(verbose=True, force=True)
+    comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
+    s_lib=[]
+
+    #comp.set_include_dirs(include_dirs)
+    #comp.set_libraries(libraries)
+    #comp.set_library_dirs(library_dirs)
+    #comp.set_runtime_library_dirs(runtime_library_dirs)
+    ##comp.add_runtime_library_dir("./")
+
+    comp.compile(
+        sources = [ 'c_lib/c_lib.c',
+                    'c_lib/texture_loader.c',
+                    ],
+        #output_dir="build",
+        include_dirs= ["/usr/local/include/SDL", "./", "c_lib"], #include_dirs,
+        debug=debug,
+        extra_preargs= ["-D_GNU_SOURCE=1", "-D_THREAD_SAFE",],
+        #extra_postargs= extra_compile_args
+        )
 
 
-comp.link_shared_lib(
-    objects = [ 'c_lib/c_lib.o',
-                'c_lib/texture_loader.o',
-                ],
-    output_libname= "_c_lib",
-    #output_dir="build",
-    libraries=libraries,
-    library_dirs=library_dirs,
-    #runtime_library_dirs= runtime_library_dirs,
-    debug=0,
-    extra_preargs= extra_link_args,
-    #extra_postargs=None,
-)
+    comp.link_shared_lib(
+        objects = [ 'c_lib/c_lib.o',
+                    'c_lib/texture_loader.o',
+                    ],
+        output_libname= "_c_lib",
+        #output_dir="build",
+        libraries= ["SDLmain", "SDL", "GLEW"], #libraries,
+        library_dirs= ["/usr/local/lib"], #library_dirs,
+        #runtime_library_dirs= runtime_library_dirs,
+        debug=debug,
+        extra_preargs= ["-Wl","-framework,Cocoa", "-framework OpenGL"],
+        extra_postargs= ["-framework,Cocoa", "-framework OpenGL"], #extra_link_args,
+    )
 
 s_lib += ['_c_lib']
 

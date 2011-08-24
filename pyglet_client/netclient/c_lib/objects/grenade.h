@@ -1,6 +1,13 @@
 #ifndef objects_grenade_h
 #define objects_grenade_h
 
+
+#define NO_SDL_GLEXT
+#include <GL/glew.h>
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "SDL_image.h"
+
 //#include <c_lib.h>
 #include <ray_trace/ray_trace.h>
 //#include <t_map/t_properties.h>
