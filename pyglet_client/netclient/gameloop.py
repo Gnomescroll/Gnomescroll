@@ -9,6 +9,8 @@ if False:
     print ""
     import site
 
+import math
+
 import args_client
 import opts
 opts.opts = args_client.get_args()
@@ -213,11 +215,25 @@ class App(object):
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50)
                 if True or _i % 15 == 0:
-                    v = 8
-                    x = v*random.random()
-                    y = v*random.random()
-                    z = 1*random.random()
+                    v = 4
+                    x = v*random.random() -0.5
+                    y = v*random.random() -0.5
+                    z = v*random.random() -0.5
+                    le = math.sqrt(x**2+y**2+z**2)
+                    x *= v / le
+                    y *= v / le
+                    z *= v / le
                     c_lib.c_lib_objects._create_grenade(25,25,4, x,y,z)
+                if _i % 30 == 0:
+                    v = 4
+                    x = v*random.random() -0.5
+                    y = v*random.random() -0.5
+                    z = v*random.random() -0.5
+                    le = math.sqrt(x**2+y**2+z**2)
+                    x *= v / le
+                    y *= v / le
+                    z *= v / le
+                    c_lib.c_lib_objects._create_neutron(1,5,5,4, x,y,z)
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()

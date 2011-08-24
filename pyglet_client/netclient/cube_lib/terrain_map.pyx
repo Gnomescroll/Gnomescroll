@@ -181,6 +181,9 @@ cdef extern from "../c_lib/t_map/t_properties.h":
         int solid
         int gravity
         int transparent
+        int max_damage
+        int neutron_tolerance
+        int nuclear
 
 #cdef extern from "./t_properties.h":
 cdef extern from "../c_lib/t_map/t_properties.h":
@@ -190,7 +193,6 @@ cdef extern from "../c_lib/t_map/t_properties.h":
 
 ## Setup ##
 from cube_dat import cube_list
-
 
 def init_cube_properties():
     cdef cubeProperties* cp
@@ -206,6 +208,9 @@ def init_cube_properties():
         cp.solid = int(d.get('solid', 1))
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
+        cp.max_damage = int(d.get('max_damage', 32))
+        cp.neutron_tolerance = int(d.get('neutron_tolerance', 2))
+        cp.nuclear = int(d.get('nuclear', 1))
 
 def isActive(unsigned int id):
     return _get_cube(id).active

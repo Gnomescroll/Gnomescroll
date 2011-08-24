@@ -14,6 +14,10 @@ struct cubeProperties {
     int solid;
     int gravity;
     int transparent;
+
+    int max_damage;
+    int neutron_tolerance;
+    int nuclear;
 };
 
 struct cubeProperties* _get_cube_list();
@@ -27,5 +31,8 @@ static inline int isActive(int id) {
     return cube_list[id].active;
     }
 
+static inline int isNuclear(int id) {
+    return cube_list[id].nuclear;
+    }
 
 #endif

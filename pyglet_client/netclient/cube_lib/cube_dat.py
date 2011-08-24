@@ -115,6 +115,9 @@ def get_default_tile(i):
         'occludes': True,
         'active':   True,
         'solid':    True,
+        'max_damage' : 32,
+        'neutron_tolerance' : 2,
+        'nuclear' : i%2,
         'texture_id': [i]*6,
         'texture_order': def_tex_order,
     }
