@@ -35,11 +35,16 @@ class Dat(object):
         dat_loader._register_dat(self.name, self)
         
     def get(self, type, prop=None):
-        print self.dat
-        if prop is None:
-            return self.dat[type]
-        else:
-            return self.dat[type][prop]
+        def _get(type, prop):
+            if prop is None:
+                return self.dat[type]
+            else:
+                return self.dat[type][prop]
+        try:
+            d = _get(type, prop)
+        except KeyError:
+            d = _get(0, prop)   # default
+        return d
 
     def update(self, dat):
         self.dat.update(dat)

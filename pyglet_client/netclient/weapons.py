@@ -22,7 +22,17 @@ class Weapon(EquippableObject):
         EquippableObject.__init__(self, id, state)
         self.owner = owner
         self.type = self._weapons[self.__class__.__name__]
-        self.hitscan = False
+
+        self.max_ammo = self.get_dat('max_ammo')
+        self.ammo = self.get_dat('ammo')
+        self.clip_size = self.get_dat('clip_size')
+        self.clip = self.get_dat('clip')
+        self.base_damage = self.get_dat('base_damage')
+        self.automatic = self.get_dat('automatic')
+        self.hitscan = self.get_dat('hitscan')
+        self.reload_speed = self.get_dat('reload_speed')
+        self.firing_rate = self.get_dat('firing_rate')
+
         self._animation = animations.Animation
 
     def get_dat(self, prop):
@@ -79,17 +89,9 @@ class LaserGun(Weapon):
 
     def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        self.base_damage = 35
-        self.clip_size = 20
-        self.max_ammo = 100
-        self.reload_speed = 750 #ms
-        self.automatic = False
-        self.firing_rate = 100 #ms
-
         if clip is None:
             clip = self.clip_size
         self.clip = clip
-        self.ammo = self.max_ammo
 
     def fire(self):
         if self.clip == 0:
@@ -130,7 +132,6 @@ class HitscanLaserGun(LaserGun):
 
     def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
         LaserGun.__init__(self, id=id, owner=owner, clip=clip, state=state, **kwargs)
-        self.hitscan = True
         self._animation = animations.HitscanLaserGunAnimation
 
     def animation(self, target=None, agent=None, vector=None):
@@ -147,9 +148,6 @@ class BlockApplier(Weapon):
 
     def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        self.max_ammo = 0
-        self.ammo = 0
-        self.clip_size = 9999
         if clip is None:
             clip = self.clip_size
         self.clip = clip
@@ -193,10 +191,6 @@ class GrenadePouch(Weapon):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
-        #self.max_ammo = 100
-        #self.ammo = 0
-        #self.clip_size = 100
-        #self.clip = self.clip_size
         self.max_ammo = self.get_dat('max_ammo')
         self.ammo = self.get_dat('ammo')
         self.clip_size = self.get_dat('clip_size')
@@ -227,11 +221,7 @@ class GrenadePouch(Weapon):
 class GrenadePouch_C(GrenadePouch):
 
     def __init__(self, id, owner=None, state=None, **kwargs):
-        Weapon.__init__(self, id, owner, state)
-        self.max_ammo = 100
-        self.ammo = 0
-        self.clip_size = 100
-        self.clip = self.clip_size
+        GrenadePouch.__init__(self, id, owner, state)
         
     def fire(self):
         GrenadePouch.fire(self)
