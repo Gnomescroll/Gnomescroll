@@ -40,13 +40,7 @@ class Projectile:
 
         self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps
-
-        #self.speed = p['speed'] / GameStateGlobal.fps
-        #self.damage = p['damage']
-        #self.ttl = 0
-        #self.ttl_max = p['ttl_max']
-        #self.penetrates = p.get('penetrates', False)
-        #self.suicidal = p.get('suicidal', False)
+        self.ttl = 0
 
     def _set_type(self):
         self.type = self._types[self.__class__.__name__]

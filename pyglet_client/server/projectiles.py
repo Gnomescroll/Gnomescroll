@@ -83,6 +83,7 @@ class Projectile:
             
         self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps
+        self.ttl = 0
 
     def _set_type(self):
         self.type = self.projectile_types[self.__class__.__name__]

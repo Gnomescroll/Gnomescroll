@@ -166,6 +166,41 @@ def load_map():
                             m.set(xa,ya,za+th, 17)
         print "Finished map generation"
 
+def load_map1():
+    print 'Begin generating map'
+    import noise
+    octaves = 6
+    f = 16.0 / octaves
+
+    x = 256
+    y = 256
+    z = 5
+
+    rx = range(x)
+    ry = range(y)
+    rz = range(z)
+
+    for i in rx:
+        for j in ry:
+            for k in rz:
+                v = noise.pnoise3(i/f, j/f, k/f, octaves=octaves, persistence=10, repeatx=32, base=7)
+                if v < 0:
+                    p = 0
+                else:
+                    v *= 100
+                    if 0 <= v < 5:
+                        p = 1
+                    elif 5 <= v < 10:
+                        p = 0
+                    elif 10 <= v < 15:
+                        p = 3
+                    elif 15 <= v < 20:
+                        p = 0
+                    else:
+                        p = 5
+                terrain_map.set(i,j,k, p)
+    print 'Done generating map'
+
 class Main:
 
     def __init__(self):
@@ -182,7 +217,8 @@ class Main:
         #CubeGlobal.init_1()
     def run(self):
         print "Server Started"
-        load_map()
+        #load_map()
+        load_map1()
         c_lib.start_physics_timer(33) #ms per tick
         tick = 0
 
