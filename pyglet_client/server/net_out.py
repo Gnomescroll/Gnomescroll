@@ -5,7 +5,7 @@ Outgoing network messages
 import simplejson as json
 import struct
 
-from dat_loader import dat_loader
+import dat_loader as dl
 
 class NetOut:
 
@@ -218,6 +218,24 @@ class EventOut:
             'player_list'   :   GameStateGlobal.playerList.json()
         }
 
+    @sendJSONevent('dat')
+    def send_dat(self, dat_name=None, type=None, key=None):
+        if dat_name is None:
+            d = dl.dat_loader.json()
+        else:
+            d = dl.dat_loader.get_json(dat_name, type, key)
+        fin = {
+            'dat'   :   d,
+        }
+        if dat_name is not None:
+            fin['name'] = dat_name
+            if type is not None:
+                fin['type'] = type
+                if key is not None:
+                    fin['key'] = key
+        return fin
+
+
 #this is global message out across the connection pool
 class MessageOut:
     def init(self):
@@ -268,9 +286,9 @@ class SendMessage: #each connection has one of these
     @sendJSON('dat')
     def send_dat(self, dat_name=None, type=None, key=None):
         if dat_name is None:
-            d = dat_loader.json()
+            d = dl.dat_loader.json()
         else:
-            d = dat_loader.get_json(dat_name, type, key)
+            d = dl.dat_loader.get_json(dat_name, type, key)
         fin = {
             'dat'   :   d,
         }

@@ -178,9 +178,9 @@ class TcpClient:
         self.send_game_state()
 
     def set_dat_loaded(self):
-        self.dat_loaded = True
-        print 'DAT LOADED'
-        self.check_ready()
+        if not self.dat_loaded:
+            self.dat_loaded = True
+            self.check_ready()
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)

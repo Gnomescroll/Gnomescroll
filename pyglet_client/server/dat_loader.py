@@ -1,5 +1,9 @@
 import dats
 
+def _reload():
+    global dats
+    reload(dats)
+
 class DatInterface(object):
 
     def __init__(self):

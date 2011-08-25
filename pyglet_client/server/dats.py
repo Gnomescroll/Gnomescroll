@@ -158,6 +158,19 @@ cubes = {
         'gravity'   :   0,
         'transparent': 0,
     },
+    
+    2 : {
+            'name'  :   'tile2',
+            'occludes': True,
+            'active':   True,
+            'solid':    True,
+            'max_damage' : 32,
+            'neutron_tolerance' : 2,
+            'nuclear' : 0,
+            'texture_id': [2]*6,
+            'gravity'   :   0,
+            'transparent': 0,
+    },
 }
 
 def _build_cubes():

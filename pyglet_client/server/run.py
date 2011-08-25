@@ -22,6 +22,10 @@ from chat_server import ChatServer
 import cube_lib.terrain_map as terrain_map
 #from cube_dat import CubeGlobal
 
+import intervals
+import file_monitor
+import dat_loader
+
 import random
 def load_map():
     m = terrain_map
@@ -240,13 +244,27 @@ class Main:
         NetOut.init_1()
         NetEvent.init_1()
         #CubeGlobal.init_1()
+
+        # detect file changes
+        #def _dat_change_reload(f):
+            #dat_loader._reload()
+            #NetOut.event.send_dat()
+
+        #files = ['dats.py']
+        #callbacks = [_dat_change_reload] 
+
+        #self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
+        #self.intervals = intervals.Intervals()
+        #self.intervals.register(self.file_monitor, self.file_monitor.interval)
+        
     def run(self):
         print "Server Started"
         #load_map()
         load_map2()
         c_lib.start_physics_timer(33) #ms per tick
         tick = 0
-
+        self.intervals.set()
+        
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
@@ -257,6 +275,7 @@ class Main:
             if tc > 0:
                 GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
+            self.intervals.process()
             sleep(0.001)
 
 if __name__ == "__main__":
