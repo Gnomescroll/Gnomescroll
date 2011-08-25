@@ -14,6 +14,9 @@ cdef extern from "./agent/agent.h":
     int create_agent(float x, float y, float z)
     void set_agent_state(int id, float xangle, float yangle)
 
+cdef extern from "./agent/agent_vox.h":
+    void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
+
 def tick():
     grenade_tick()
     neutron_tick()
@@ -30,9 +33,15 @@ def _create_grenade(float x, float y, float z, float vx, float vy, float vz):
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     create_neutron(type,energy, x,y,z, vx,vy,vz)
 
+#agent
+
+def _set_agent_vox(int id):
+    init_agent_vox_volume(id, part
+
 def _create_agent(float x, float y, float z):
     id = create_agent(x,y,z)
     return id
 
 def _set_agent_state(int id, float xangle, float yangle):
     set_agent_state(id, xangle, yangle)
+
