@@ -18,6 +18,10 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     unsigned int num_vox;
 */
     struct Vox* v = get_agent_vox_part(id, part);
+    if(v == NULL) {
+        printf("init_agent_vox_volume: Vox is Null!\n");
+        return;
+    }
     v->xdim = xdim;
     v->ydim = ydim;
     v->zdim = zdim;
@@ -29,6 +33,10 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
     struct Vox* v = get_agent_vox_part(id, part);
     struct Voxel* vo = &v->vox[x + y*v->ydim + z*v->zdim*v->ydim];
+    if(v == NULL || vo == NULL) {
+        printf("set_agent_vox_volume: null pointer \n");
+        return;
+    }
     vo->r =r;
     vo->g =g;
     vo->b =b;

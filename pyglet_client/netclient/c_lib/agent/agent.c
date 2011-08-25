@@ -13,7 +13,7 @@ struct Agent_state* get_agent(int id) {
     struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
-        if(Agent_list[i]->id == id) {
+        if(Agent_list[i] != NULL && Agent_list[i]->id == id) {
             return Agent_list[i];
         }
     }
@@ -70,6 +70,7 @@ int create_agent(float x, float y, float z) {
     g->camera_height= 2.5;
     g->cbox_height= 3.0;
     g->cbox_radius = 0.45;
+    return g->id;
 }
 
 void destroy_agent(int id) {

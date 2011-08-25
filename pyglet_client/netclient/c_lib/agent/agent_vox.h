@@ -10,6 +10,7 @@
 #include "agent.h"
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
+void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
 
 struct Voxel {
 unsigned char r,g,b,a;

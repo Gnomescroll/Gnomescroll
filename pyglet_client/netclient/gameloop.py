@@ -200,6 +200,8 @@ class App(object):
         if ping:
             ping_n = SDL.gl.get_ticks()
 
+        c_lib.c_lib_objects._create_agent(0,0,10)
+
         self.intervals.set()
         _i = 30
         while not GameStateGlobal.exit:
@@ -274,8 +276,7 @@ class App(object):
             self.animations.draw()
             c_lib.c_lib_objects.draw() ## TESTING
             P.event("Draw World_0")
-            P.event("Draw World_1 - laser")
-            if True:
+            if False:
                 pass
                 density = 5
                 width = 1.0
