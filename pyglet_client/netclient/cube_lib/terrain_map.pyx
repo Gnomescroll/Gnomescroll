@@ -192,25 +192,28 @@ cdef extern from "../c_lib/t_map/t_properties.h":
     cubeProperties* _get_cube(int id)
 
 ## Setup ##
-from cube_dat import cube_list
+from dat_loader import c_dat
 
-def init_cube_properties():
-    cdef cubeProperties* cp
-    global cube_list
-    for d in cube_list.values():
-        id = int(d['id'])
-        if id >= 1024 or id < 0:
-            print "Error: cube id invalid"
-            return
+def init_cube_properties(id=None):
+    global c_dat
+
+    def apply(id):
+        cdef cubeProperties* cp
         cp = _get_cube(id)
-        cp.active = int(d.get('active',1))
-        cp.occludes = int(d.get('occludes', 0))
-        cp.solid = int(d.get('solid', 1))
-        cp.gravity = int(d.get('gravity', 0))
-        cp.transparent = int(d.get('transparent', 0))
-        cp.max_damage = int(d.get('max_damage', 32))
-        cp.neutron_tolerance = int(d.get('neutron_tolerance', 2))
-        cp.nuclear = int(d.get('nuclear', 1))
+        cp.active = c_dat.get(id,'active')
+        cp.occludes = c_dat.get(id,'occludes')
+        cp.solid = c_dat.get(id,'solid')
+        cp.gravity = c_dat.get(id,'gravity')
+        cp.transparent = c_dat.get(id,'transparent')
+        cp.max_damage = c_dat.get(id,'max_damage')
+        cp.neutron_tolerance = c_dat.get(id,'neutron_tolerance')
+        cp.nuclear = c_dat.get(id,'nuclear')
+
+    if id is None:
+        for id in c_dat.dat:
+            apply(id)
+    else:
+        apply(id)
 
 def isActive(unsigned int id):
     return _get_cube(id).active
@@ -272,15 +275,9 @@ def init_quad_cache():
                 v.ty = ty
 
 def get_cube_texture(tile_id, side, vert_num):
-    global cube_list
-    d = cube_list.get(tile_id, {})
-    texture_id = d.get('texture_id', [0,1,2,3,4,5])[side]
-    texture_order = d.get('texture_order', [[0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],])[side][vert_num]
+    global c_dat
+    texture_id = c_dat.get(tile_id, 'texture_id')[side]
+    texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
     x = texture_id % 16
     y = (texture_id - (texture_id % 16)) / 16
     tx = float(x) * 1./16.
@@ -469,3 +466,14 @@ def init():
     _init_t_map();
     #_init_t_map_draw()
     _init_draw_terrain()
+
+
+'''
+Epilogue: Cube dat update callbacks
+'''
+def _cube_inits(id=None):
+    init_cube_properties(id)
+    init_quad_cache()
+
+c_dat.on_first_load = init
+c_dat.on_change = _cube_inits

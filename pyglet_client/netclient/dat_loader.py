@@ -31,6 +31,10 @@ class Dat(object):
         }
         self.name = name
         self._register()
+        #callbacks
+        self.on_change = lambda: None
+        self.on_first_load = lambda: None
+        self.loaded_once = False
 
     def _register(self):
         global dat_loader
@@ -53,9 +57,15 @@ class Dat(object):
         for type, props in self.dat.items():
             del self.dat[type]
             self.dat[int(type)] = props
+        # callbacks
+        if not self.loaded_once:
+            self.loaded_once = True
+            self.on_first_load()
+        self.on_change()
 
     def set(self, type, prop, val):
         self.dat[type][prop] = val
+        self.on_change(type)
 
     def apply(self, obj):
         for prop in self.dat[0].keys():
@@ -64,4 +74,4 @@ class Dat(object):
 w_dat = Dat('weapons')
 i_dat = Dat('items')
 p_dat = Dat('projectiles')
-
+c_dat = Dat('cubes')

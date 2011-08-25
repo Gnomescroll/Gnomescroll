@@ -140,3 +140,56 @@ projectiles = {
     },
 
 }
+
+'''
+'''
+
+cubes = {
+    0 : {
+        'name': 'tile0',
+        'occludes' : False,
+        'active' : False,
+        'solid' : False,
+        'max_damage': 32,
+        'neutron_tolerance' : 2,
+        'nuclear': 0,
+        'texture_id': [-1]*6,
+        'texture_order': [[0,1,2,3]] * 6,
+        'gravity'   :   0,
+        'transparent': 0,
+    },
+}
+
+def _build_cubes():
+    def_tex_order = [[0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],]
+                
+    def get_default_tile(i):
+
+        return {
+            'name'  :   'tile%d' % (i+1,),
+            'occludes': True,
+            'active':   True,
+            'solid':    True,
+            'max_damage' : 32,
+            'neutron_tolerance' : 2,
+            'nuclear' : i%2,
+            'texture_id': [i]*6,
+            'texture_order': def_tex_order,
+            'gravity'   :   0,
+            'transparent': 0,
+        }
+
+    def set_cube_list_defaults():
+        global cubes
+
+        for i in range(256):
+            j = i+1
+            cubes.setdefault(j, get_default_tile(i))
+
+    set_cube_list_defaults()
+_build_cubes()

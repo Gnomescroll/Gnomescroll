@@ -80,4 +80,4 @@ class Dat(object):
 w_dat = Dat('weapons', dats.weapons)
 i_dat = Dat('items', dats.items)
 p_dat = Dat('projectiles', dats.projectiles)
-
+c_dat = Dat('cubes', dats.cubes)
