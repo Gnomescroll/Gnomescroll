@@ -86,7 +86,7 @@ class NoTeam:
     def update_info(self, **team):
         old_id = self.id
         if 'id' in team:
-            self.id = id
+            self.id = team['id']
         if 'players' in team:
             self.load_players_list(team['players'])
         GameStateGlobal.teamList.update(self, old_id)
@@ -156,6 +156,7 @@ class TeamGame(Game):
         return self.smallest_team()
 
     def smallest_team(self):
+        print self.teams
         sorted_t = sorted(self.teams.values(), key=len)
         smallest = sorted_t[0]
         if smallest.type == 1: # viewers, skip this team

@@ -1,7 +1,8 @@
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
-from dat_loader import i_dat
+import dat_loader
+i_dat = dat_loader.i_dat
 
 
 class GameObject:

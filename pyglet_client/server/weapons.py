@@ -4,7 +4,8 @@ from object_lists import GenericMultiObjectList
 
 from utils import filter_props
 
-from dat_loader import w_dat
+import dat_loader
+w_dat = dat_loader.w_dat
 
 class WeaponList(GenericMultiObjectList):
 

@@ -37,7 +37,8 @@ projectile_dat = {
 
 }
 
-from dat_loader import p_dat
+import dat_loader
+p_dat = dat_loader.p_dat
 
 '''
 Projectile Controller
