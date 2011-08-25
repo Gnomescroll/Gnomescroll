@@ -146,23 +146,15 @@ projectiles = {
 
 cubes = {
     0 : {
-        #'id' : 0,
-        'name': 'tile',
+        'name': 'tile0',
         'occludes' : False,
         'active' : False,
         'solid' : False,
         'max_damage': 32,
         'neutron_tolerance' : 2,
         'nuclear': 0,
-        'texture_id': [0,0,0,0,0,0],
-        'texture_order': [\
-            [0,1,2,3],
-            [0,1,2,3],
-            [0,1,2,3],
-            [0,1,2,3],
-            [0,1,2,3],
-            [0,1,2,3],
-        ],
+        'texture_id': [-1]*6,
+        'texture_order': [[0,1,2,3]] * 6,
         'gravity'   :   0,
         'transparent': 0,
     },
@@ -179,8 +171,7 @@ def _build_cubes():
     def get_default_tile(i):
 
         return {
-            #'id'    :   i + 1,
-            'name'  :   'tile',
+            'name'  :   'tile%d' % (i+1,),
             'occludes': True,
             'active':   True,
             'solid':    True,
