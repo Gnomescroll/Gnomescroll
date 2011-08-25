@@ -224,7 +224,7 @@ class App(object):
                     y *= v / le
                     z *= v / le
                     c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z)
-                if _i % 4 == 0:
+                if _i % 150 == 0:
                     v = 2
                     x = v*(random.random() -0.5)
                     y = v*(random.random() -0.5)
@@ -233,7 +233,8 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    _type = random.randint(0,9*3)
+                    #_type = random.randint(0,9*3)
+                    _type=0
                     c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 tc += 1
                 P.event("process_events")

@@ -15,6 +15,8 @@
 
 int init_c_lib() {
     printf("init c_lib\n");
+    init_objects_grenade();
+    init_objects_neutron();
     init_texture_loader();
     return 0;
 }
