@@ -3,6 +3,7 @@
 cdef extern from "../c_lib/t_map/t_map.h":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
+    int _clear()
 
 '''
 Part 1: State
@@ -477,3 +478,10 @@ def _cube_inits(id=None):
 
 c_dat.on_first_load = init
 c_dat.on_change = _cube_inits
+
+
+'''
+Steve
+'''
+def clear():
+    _clear()

@@ -390,6 +390,7 @@ class AdminMessageHandler(GenericMessageHandler):
 
     def _clear_map(self, msg, conn):
         GameStateGlobal.terrainMap.clear()
+        NetOut.event.clear_map()
 
 
 class AgentMessageHandler(GenericMessageHandler):

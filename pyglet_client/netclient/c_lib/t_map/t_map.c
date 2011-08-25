@@ -137,3 +137,23 @@ int _set_server_version(int x,int y,int z, int server_version) {
     chunk->server_version = server_version;
     return 0;
 }
+
+
+int _clear() {
+    // iterate entire map
+    // set to 0
+    int xmax = vm_map_dim * vm_chunk_size;
+    int ymax = vm_map_dim * vm_chunk_size;
+    int zmax = vm_column_max * vm_chunk_size;
+    int i=0;
+    int j=0;
+    int k=0;
+    for (i=0; i<xmax; i++) {
+        for (j=0; j<ymax; j++) {
+            for (k=0; k<zmax; k++) {
+                _set(i,j,k, 0);
+            }
+        }
+    }
+    return 0;
+}

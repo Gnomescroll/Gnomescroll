@@ -71,6 +71,7 @@ extern struct vm_map map;
 int _init_t_map();
 int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
+int _clear();
 
 int _set_server_version(int x,int y,int z, int server_version);
 

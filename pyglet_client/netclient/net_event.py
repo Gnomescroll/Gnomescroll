@@ -169,6 +169,7 @@ class MapMessageHandler(GenericMessageHandler):
         'chunk_list' : '_chunk_list',
         'map_chunk' : '_map_chunk',
         'set_map' : '_set_map',
+        'clear_map': '_clear_map',
     }
 
     @classmethod
@@ -198,6 +199,8 @@ class MapMessageHandler(GenericMessageHandler):
             terrainMap.set(x,y,z,value)
             #self.mapChunkManager.set_map(x,y,z) #redraw chunk
 
+    def _clear_map(self, **msg):
+        terrainMap.clear()
 
 class ClientMessageHandler(GenericMessageHandler):
 

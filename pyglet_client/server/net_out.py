@@ -31,7 +31,9 @@ def sendJSONevent(cmd=None, tick=True):
         def wrapped(*args, **kwargs):
             self = args[0]
             json_data = f(*args, **kwargs)
-            if json_data is None:
+            if not json_data:
+                return
+            if json_data is True:
                 json_data = {}
 
             cmd_final = cmd # must do this reassignment due to function scoping
@@ -192,6 +194,10 @@ class EventOut:
         return {
             'id'    : client_id,
         }
+
+    @sendJSONevent('clear_map', tick=False)
+    def clear_map(self):
+        return True
 
     @sendJSONevent('set_map', tick=False)
     def set_map(self, list):
