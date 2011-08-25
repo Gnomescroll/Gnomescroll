@@ -215,7 +215,7 @@ def load_map2():
     max_height = 15
     from map_gen import Gen
     from random import random
-    g = Gen()
+    g = Gen(salt=random())
     h=0
     for i in range(128):
         for j in range(128):
