@@ -61,6 +61,7 @@ class Commands(object):
             'id'    :   cls.show_client_id,
             'clear' :   cls.clear_map,
             'set'   :   cls.set_map,
+            'perlin':   cls.perlin,
         }
         return cls
 
@@ -86,7 +87,55 @@ class Commands(object):
         x,y,z,val = map(int, [x,y,z,val])
         NetOut.adminMessage.set_map(x,y,z,val)
 
+    @classmethod
+    def perlin(cls, block_val=6):
+        block_val = int(block_val)
+        #NetOut.adminMessage.set_map_bulk(perlin_map())
+        perlin_map(block_val)
 
+def perlin_map(block_val):
+
+    import time
+    def check_setct(setct, map):
+        if setct == 64:
+            NetOut.adminMessage.set_map_bulk(map)
+            time.sleep(0.1)
+            return True
+        return False
+    
+    map = []
+    setct = 0
+    print 'start map gen'
+    max_height = 15
+    from map_gen import Gen
+    from random import random
+    g = Gen()
+    h=0
+    for i in range(128):
+        for j in range(128):
+            h = g.getHeight(i,j)
+            h = abs(h)
+            h *= 100
+            h %= max_height
+            h = int(h)
+            for k in range(h+1):
+                map.append([i,j,k, block_val])
+                setct += 1
+                if check_setct(setct, map):
+                    setct = 0
+                    map = []
+                #terrain_map.set(i, j, k, 2)
+            if h==0 or h==1:
+                #terrain_map.set(i,j, 2, 211)
+                map.append([i,j, 2, 211])
+                setct += 1
+                if check_setct(setct, map):
+                    setct = 0
+                    map = []
+
+    NetOut.adminMessage.set_map_bulk(map)
+    print 'done map gen'
+    
 if __name__ == '__main__':
     client = Client()
     client.run()

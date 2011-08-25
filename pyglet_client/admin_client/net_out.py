@@ -87,10 +87,11 @@ class AdminMessage:
             'list' : [(x,y,z,value)],
         }
 
-    @sendJSON('set_map_bulk')
-    def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
+    @sendJSON('set_map')
+    def set_map_bulk(self, l): #takes a list of 4 tuples of (x,y,z,value)
+        print 'sending bulk'
         return {
-            'list' : list,
+            'list' : l,
         }
 
     @sendJSON('clear_map')

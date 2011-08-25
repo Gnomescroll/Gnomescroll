@@ -493,15 +493,16 @@ class DatagramDecoder:
         elif msg_type == 1: #client json messages
             try:
                 msg = json.loads(datagram)
-            except:
-                print "JSON DECODING ERROR: %s" % (str(msg),)
+            except Exception, e:
+                print Exception, e
+                print "JSON DECODING ERROR: %s" % (str(datagram),)
                 return
             NetEvent.messageHandler.process_json(msg, connection)
         elif msg_type == 2: #client admin messages
             try:
                 msg = json.loads(datagram)
             except:
-                print "JSON DECODING ERROR: %s" % (str(msg),)
+                print "JSON DECODING ERROR: %s" % (str(datagram),)
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
 

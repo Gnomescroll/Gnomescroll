@@ -193,6 +193,7 @@ class MapMessageHandler(GenericMessageHandler):
         #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
 
     def _set_map(self, list, **msg):
+        print 'set_map'
         if len(list) == 1:
             print 'settings block %s' % list[0]
         for x,y,z,value in list:
