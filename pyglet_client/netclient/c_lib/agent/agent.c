@@ -55,7 +55,7 @@ int create_agent(float x, float y, float z) {
             break;
         }
     }
-    if(a== NULL) { printf("Bug: max grenade number reached!\n"); return;}
+    if(a== NULL) { printf("Bug: max agent number reached!\n"); return;}
     agent_id_counter +=1;
     g->id = agent_id_counter;
     printf("Agent Created: id= %i \n", g->id);
@@ -73,7 +73,21 @@ int create_agent(float x, float y, float z) {
 }
 
 void destroy_agent(int id) {
-
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i]->id == id) {
+            g = Agent_list[i];
+            break;
+        }
+    }
+    if( g != NULL) {
+        Agent_list[i] = NULL;
+        free(g);
+        g_count--;
+    } else {
+        printf("Destroy agent failed: agent does not exist, id=%i \n", id);
+    }
 
 }
 
@@ -90,4 +104,23 @@ void set_agent_state(int id, float xangle, float yangle) {
 
     length = sqrt(c->xl*c->xl + c->yl*c->yl + c->zl*c->zl);
     */
+}
+
+//
+struct Agent_state* get_agent(int id) {
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i]->id == id) {
+            g = Agent_list[i];
+            return g;
+        }
+    return NULL;
+}
+
+struct Vox* get_agent_vox_part(int id, int part) {
+    struct Agent_state* g = get_agent(id);
+    if(g==NULL) { printf("get_agent_vox_part: error \n"); return NULL; }
+    struct Vox* v = &g->vox_part[part];
+    return v;
 }

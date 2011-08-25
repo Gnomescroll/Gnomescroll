@@ -7,28 +7,28 @@
 //#include <t_map/t_map.h>
 //#include <t_map/t_properties.h>
 
-void agent_tick();
-void agent_draw();
-int create_agent(float x, float y, float z);
-void set_agent_state(int id, float xangle, float yangle);
+#include "agent.h"
+
+void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
 
 struct Voxel {
 unsigned char r,g,b,a;
 };
 
 struct Vox {
+    float cx,cy,cz;
+
+    float ux,uy,uz; //up, right, forward
+    float rx,ry,rz;
+    float fx,fy,fz;
+
     unsigned short xdim;
     unsigned short ydim;
     unsigned short zdim;
     float vox_size;
     float radius;
-    struct Voxel* vox
-};
-
-struct Agent_vox {
-struct Vox head,torso;
-struct Vox larm,rarm;
-struct Vox lleg,rleg,
+    struct Voxel* vox;
+    unsigned int num_vox;
 };
 
 #endif
