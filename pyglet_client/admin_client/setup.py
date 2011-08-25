@@ -20,7 +20,7 @@ import subprocess
 import platform
 
 SYSTEM=platform.system()
-libraries=['SDL', 'SDL_image']
+libraries=['SDL']
 
 SDL_CFLAGS=""
 SDL_LDFLAGS=""
