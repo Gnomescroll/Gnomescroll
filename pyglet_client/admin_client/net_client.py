@@ -13,6 +13,8 @@ import os
 OS = os.uname()[0]
 #OS = "Windows"
 
+import opts
+
 if OS == "Linux":
     pass
 elif OS == "Windows":
@@ -28,14 +30,13 @@ class NetClientGlobal:
     sendPacket = None
 
     client_id = '0'
-    name = opts.name
     VERSION = opts.version
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         NetClientGlobal.connection = TcpConnection()
     @classmethod
-    def init_1(cls):
+    def init1(cls):
         ClientDatagramDecoder.init()
         assert cls.connection != None
         assert cls.sendPacket != None

@@ -4,6 +4,8 @@
 Client network outgoing
 '''
 
+import SDL.gl
+
 class NetOut:
     sendPacket = None
 
@@ -12,15 +14,12 @@ class NetOut:
     miscMessage = None
     
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
         cls.sendMessage = SendMessage()
         cls.adminMessage = AdminMessage()
         cls.miscMessage = MiscMessage()
 
-    @classmethod
-    def init_1(cls):
-        assert cls.mapMessage != None
     @classmethod
     def send_json(cls, dict):
         cls.sendPacket.send_json(dict)

@@ -263,7 +263,7 @@ class Main:
         load_map2()
         c_lib.start_physics_timer(33) #ms per tick
         tick = 0
-        self.intervals.set()
+        #self.intervals.set()
         
         while True:
             NetServer.serverListener.accept() #accept incoming connections
@@ -275,7 +275,7 @@ class Main:
             if tc > 0:
                 GameStateGlobal.gameState.tick()
             NetOut.event.process_events()
-            self.intervals.process()
+            #self.intervals.process()
             sleep(0.001)
 
 if __name__ == "__main__":

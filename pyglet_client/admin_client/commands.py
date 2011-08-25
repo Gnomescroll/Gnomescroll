@@ -7,7 +7,7 @@ class Commands(object):
     def __init__(self):
         self.methods = {}
 
-    def add_action(self, cmd, action):
+    def add(self, cmd, action):
         self.methods[cmd] = action
         
     def process(self, cmd):
@@ -24,7 +24,9 @@ class Commands(object):
         if cmd in self.methods:
             self.methods[cmd](*args)
         else:
-            self.unknown_cmd()
+            self.unknown_cmd(cmd)
 
-    def unknown_cmd(self):
-        print 'Unknown command'
+    def unknown_cmd(self, cmd):
+        print cmd
+        print self.methods
+        print 'Unknown command %s' % (cmd,)

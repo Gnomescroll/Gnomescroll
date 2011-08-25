@@ -9,47 +9,13 @@ import json
 class NetEventGlobal:
     messageHandler = None
     clientMessageHandler = None
-    mapMessageHandler = None
-    projectileMessageHandler = None
-    agentMessageHandler = None
-    playerMessageHandler = None
     miscMessageHandler = None
-    gameModeMessageHandler = None
-    itemMessageHandler = None
-    weaponMessageHandler = None
-    datMessageHandler = None
     
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.messageHandler = MessageHandler()
         cls.clientMessageHandler = ClientMessageHandler()
-        cls.playerMessageHandler = PlayerMessageHandler()
-        cls.chatMessageHandler = ChatMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
-
-        cls.agentMessageHandler = AgentMessageHandler()
-        cls.mapMessageHandler = MapMessageHandler()
-        cls.projectileMessageHandler = ProjectileMessageHandler()
-        cls.weaponMessageHandler = WeaponMessageHandler()
-
-        cls.gameModeMessageHandler = GameModeMessageHandler()
-        cls.itemMessageHandler = ItemMessageHandler()
-
-        cls.datMessageHandler = DatMessageHandler()
-
-    @classmethod
-    def init_1(cls):
-        MessageHandler.init()
-        ClientMessageHandler.init()
-        PlayerMessageHandler.init()
-        ChatMessageHandler.init()
-
-        AgentMessageHandler.init()
-        MapMessageHandler.init()
-        ProjectileMessageHandler.init()
-        GameModeMessageHandler.init()
-        ItemMessageHandler.init()
-        WeaponMessageHandler.init()
         
     @classmethod
     def register_json_events(cls, events):
@@ -116,9 +82,6 @@ class GenericMessageHandler:
             if ev is not None:
                 self.events[event] = ev
 
-    @classmethod
-    def init(cls):
-        pass
     def __init__(self):
         self._assign_events_to_methods()
         self.register_events()
@@ -129,52 +92,8 @@ class MiscMessageHandler(GenericMessageHandler):
         'ping' : '_ping',
     }
 
-    @classmethod
-    def init(cls):
-        pass
-
-    def _ping(self, timestamp, **msg):
-        stats.last_ping = SDL.gl.get_ticks() - timestamp
-        #print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
-
-class MapMessageHandler(GenericMessageHandler):
-    #terrainMap = None
-    #mapChunkManager = None
-    mapController = None
-
-    events = {
-        'chunk_list' : '_chunk_list',
-        'map_chunk' : '_map_chunk',
-        'set_map' : '_set_map',
-    }
-
-    @classmethod
-    def init(cls):
-        #cls.terrainMap = GameStateGlobal.terrainMap
-        #cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
-        cls.mapController = MapControllerGlobal.mapController
-        assert cls.mapController != None
-
-    def _chunk_list(self, list, **msg):
-        #print str(list)
-        print "chunk list"
-        self.mapController.process_chunk_list(list)
-        #for chunk in list:
-        #    (x,y,z,version ) = chunk
-
-    def _map_chunk(self, datagram):
-        #print "Map Chunk Received"
-        (x,y,z) = terrainMap.set_packed_chunk(datagram)
-        self.mapController.incoming_map_chunk(x,y,z)
-        #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
-
-    def _set_map(self, list, **msg):
-        if len(list) == 1:
-            print 'settings block %s' % list[0]
-        for x,y,z,value in list:
-            terrainMap.set(x,y,z,value)
-            #self.mapChunkManager.set_map(x,y,z) #redraw chunk
-
+    def _ping(self, **msg):
+        print msg['timestamp']
 
 class ClientMessageHandler(GenericMessageHandler):
 
