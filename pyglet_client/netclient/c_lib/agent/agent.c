@@ -9,7 +9,7 @@ int a_count = 0;
 void agent_Tick(struct Agent_state* g);
 void agent_Draw(struct Agent_state* g);
 
-struct Agent_state* get_agent(uint id) {
+struct Agent_state* get_agent(int id) {
     struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
@@ -83,6 +83,11 @@ void destroy_agent(int id) {
     }
     if( g != NULL) {
         Agent_list[i] = NULL;
+        for(i=0; i < AGENT_PART_NUM; i++) {
+            destroy_vox(&g->vox_part[i]);
+            }
+
+
         free(g);
         g_count--;
     } else {
@@ -107,6 +112,7 @@ void set_agent_state(int id, float xangle, float yangle) {
 }
 
 //
+/*
 struct Agent_state* get_agent(int id) {
     struct Agent_state* g = NULL;
     int i;
@@ -117,6 +123,7 @@ struct Agent_state* get_agent(int id) {
         }
     return NULL;
 }
+*/
 
 struct Vox* get_agent_vox_part(int id, int part) {
     struct Agent_state* g = get_agent(id);

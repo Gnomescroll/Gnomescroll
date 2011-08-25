@@ -15,6 +15,7 @@ void agent_draw();
 int create_agent(float x, float y, float z);
 void set_agent_state(int id, float xangle, float yangle);
 
+#define AGENT_PART_NUM 6
 #define AGENT_PART_HEAD 0
 #define AGENT_PART_TORSO 1
 #define AGENT_PART_LARM 2

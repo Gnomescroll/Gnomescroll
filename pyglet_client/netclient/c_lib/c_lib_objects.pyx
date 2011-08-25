@@ -35,11 +35,18 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 
 #agent
 
-def _set_agent_vox(int id):
-    init_agent_vox_volume(id, part
+def _set_agent_model(int id):
+    cdef float vosize = 0.2
+    cdef int part
+    cdef int xdim, ydim, zdim
+    for part in range(0,6):
+        xdim=8;ydim=8;zdim=8;
+        init_agent_vox_volume(id, part, xdim, ydim, zdim, vosize)
 
 def _create_agent(float x, float y, float z):
+    cdef int id
     id = create_agent(x,y,z)
+    _set_agent_model(id)
     return id
 
 def _set_agent_state(int id, float xangle, float yangle):

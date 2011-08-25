@@ -31,4 +31,6 @@ struct Vox {
     unsigned int num_vox;
 };
 
+void destroy_vox(struct Vox* v);
+
 #endif
