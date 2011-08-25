@@ -192,7 +192,6 @@ cdef extern from "../c_lib/t_map/t_properties.h":
     cubeProperties* _get_cube(int id)
 
 ## Setup ##
-from cube_dat import cube_list
 from dat_loader import c_dat
 
 def init_cube_properties(id=None):
@@ -276,19 +275,9 @@ def init_quad_cache():
                 v.ty = ty
 
 def get_cube_texture(tile_id, side, vert_num):
-    #global cube_list
     global c_dat
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
     texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
-    '''
-    texture_id = d.get('texture_id', [0,1,2,3,4,5])[side]
-    texture_order = d.get('texture_order', [[0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],
-                            [0,1,2,3],])[side][vert_num]
-    '''
     x = texture_id % 16
     y = (texture_id - (texture_id % 16)) / 16
     tx = float(x) * 1./16.
