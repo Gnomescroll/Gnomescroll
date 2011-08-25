@@ -89,3 +89,7 @@ class AdminMessage:
         return {
             'list' : list,
         }
+
+    @sendJSON('clear_map')
+    def clear_map(self):
+        return True

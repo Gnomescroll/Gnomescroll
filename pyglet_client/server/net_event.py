@@ -374,13 +374,18 @@ class AdminMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'set_map' : self._set_map,
+            'clear_map': self._clear_map,
         }
 
-    def _set_map(self, list, msg):
+    @requireKey('list')
+    def _set_map(self, msg, conn, blocks):
         terrainMap = GameStateGlobal.terrainMap
-        for x,y,z,value in list:
+        for x,y,z,value in blocks:
             terrainMap.set(x,y,z,value)
-        NetOut.event.set_map(list)
+        NetOut.event.set_map(blocks)
+
+    def _clear_map(self, msg, conn):
+        GameStateGlobal.terrainMap.clear()
 
 
 class AgentMessageHandler(GenericMessageHandler):

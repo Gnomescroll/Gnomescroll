@@ -22,7 +22,10 @@ class CommandHandler(object):
 
     def take_action(self, cmd, args):
         if cmd in self.methods:
-            self.methods[cmd](*args)
+            try:
+                self.methods[cmd](*args)
+            except TypeError, e:
+                print e
         else:
             self.unknown_cmd(cmd)
 

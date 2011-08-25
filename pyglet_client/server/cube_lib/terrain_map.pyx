@@ -34,7 +34,8 @@ cdef extern from "./t_map.h":
 
 cdef extern from "./t_map.h":
     int _init_t_map()
-
+    int _clear()
+    
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
@@ -234,3 +235,6 @@ def init():
     _init_t_map()
     init_cube_properties()
 init()
+
+def clear():
+    _clear()

@@ -17,6 +17,7 @@ class Client:
     def __init__(self):
         self.init_globals()
         self.commands = Commands
+        Commands.init()
         self.commandHandler = commands.CommandHandler()
         self.add_commands()
 
@@ -52,24 +53,37 @@ class Client:
 
 class Commands(object):
 
-    methods = [
-        'ping',
-        'id',
-    ]
+    @classmethod
+    def init(cls):
+        cls.methods = {
+            'ping'  :   cls.ping,
+            'id'    :   cls.show_client_id,
+            'clear' :   cls.clear_map,
+            'set'   :   cls.set_map,
+        }
+        return cls
 
     @classmethod
     def _register(cls, handler):
-        for meth in cls.methods:
-            handler.add(meth, getattr(cls, meth))
+        for name, meth in cls.methods.items():
+            handler.add(name, meth)
 
     @classmethod
     def ping(cls):
         NetOut.miscMessage.ping()
 
     @classmethod
-    def id(cls):
+    def show_client_id(cls):
         print 'Client_id: %s' % (NetClientGlobal.client_id,)
 
+    @classmethod
+    def clear_map(cls):
+        NetOut.adminMessage.clear_map()
+
+    @classmethod
+    def set_map(cls, x,y,z, val):
+        x,y,z,val = map(int, [x,y,z,val])
+        NetOut.adminMessage.set_map(x,y,z,val)
 
 
 if __name__ == '__main__':

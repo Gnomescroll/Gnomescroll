@@ -6,7 +6,7 @@ from opts import opts
 class GameStateGlobal:
 
     gameState = None
-    #terrainMap = None
+    terrainMap = None
     agentList = None
     playerList = None
     projectileList = None
