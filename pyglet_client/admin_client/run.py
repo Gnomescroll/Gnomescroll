@@ -40,19 +40,21 @@ class Client:
         self.connect()
 
         while not self._exit:
+            NetClientGlobal.connection.attempt_recv()
             try:
-                cmd = raw_input('>')
+                cmd = raw_input('>').strip()
             except EOFError:
                 self._exit = True
                 print ''
                 continue
-            self.commandHandler.process(cmd)
+            if cmd:
+                self.commandHandler.process(cmd)
 
 class Commands(object):
 
     methods = [
         'ping',
-        'show_id',
+        'id',
     ]
 
     @classmethod
@@ -65,8 +67,8 @@ class Commands(object):
         NetOut.miscMessage.ping()
 
     @classmethod
-    def show_id(cls):
-        print 'Client_id: %s' (NetClientGlobal.client_id,)
+    def id(cls):
+        print 'Client_id: %s' % (NetClientGlobal.client_id,)
 
 
 

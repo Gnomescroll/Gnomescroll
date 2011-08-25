@@ -136,8 +136,10 @@ class TcpClient:
         self.connection = connection
         self.address = address
 
+        self.received_id = False
         self.identified = False
         self.dat_loaded = False
+        self.loaded_once = False
 
         self.fileno = connection.fileno()
         self.TcpPacketDecoder = TcpPacketDecoder(self)
@@ -149,7 +151,7 @@ class TcpClient:
 
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
-        self.sendMessage.send_dat()
+        #self.sendMessage.send_dat()
 
     def identify(self, name):
         valid, name, you = self._valid_player_name(name)
@@ -172,15 +174,22 @@ class TcpClient:
         return False
 
     def ready(self):
+        if self.loaded_once:
+            return
+        self.loaded_once = True
         print '%s ready' % (self.id,)
         self._register()
         self.start_player()
         self.send_game_state()
 
     def set_dat_loaded(self):
-        if not self.dat_loaded:
-            self.dat_loaded = True
-            self.check_ready()
+        self.dat_loaded = True
+        self.check_ready()
+
+    def set_id_received(self):
+        if not self.received_id:
+            self.received_id = True
+            self.sendMessage.send_dat()
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)

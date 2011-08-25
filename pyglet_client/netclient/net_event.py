@@ -211,6 +211,7 @@ class ClientMessageHandler(GenericMessageHandler):
 
     def _client_id(self, **msg):
         if self._set_client_id(**msg):
+            NetOut.sendMessage.received_client_id()
             NetOut.sendMessage.identify()
         else:
             NetOut.sendMessage.request_client_id()

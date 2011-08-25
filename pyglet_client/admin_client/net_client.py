@@ -221,6 +221,7 @@ class TcpConnection:
             #print "tcp data: empty read"
             self.ec += 1
             if self.ec > 3:
+                print 'closing socket'
                 self.close()
         else:
             #print "get_tcp: data received, %i bytes" % len(data)

@@ -86,6 +86,10 @@ class GenericMessage:
 
 class SendMessage(GenericMessage):
 
+    @sendJSON('received_client_id')
+    def received_client_id(self):
+        return True
+
     @sendJSON('request_agent')
     def request_agent(self, agent_id):
         return {

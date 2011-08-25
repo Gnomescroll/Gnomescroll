@@ -5,6 +5,7 @@ Admin Client network incoming
 '''
 
 import json
+import SDL.gl
 
 class NetEventGlobal:
     messageHandler = None
@@ -52,9 +53,6 @@ class MessageHandler:
         except Exception, e:
             print "MessageHandler.process_json_event error"
             print e
-            #import sys
-            #sys.exit()
-            print datagram
             return
         cmd = msg.get('cmd', None)
         if cmd is None:
@@ -65,9 +63,6 @@ class MessageHandler:
             self.json_events[cmd](**msg)
         else:
             print "Error, received command %s that client cannot handle" % (cmd,)
-            print 'msg %s' % (msg,)
-            print self.json_events.keys()
-            assert False
 
 class GenericMessageHandler:
 
@@ -93,7 +88,7 @@ class MiscMessageHandler(GenericMessageHandler):
     }
 
     def _ping(self, **msg):
-        print msg['timestamp']
+        print '%d ms' % (SDL.gl.get_ticks() - msg['timestamp'],)
 
 class ClientMessageHandler(GenericMessageHandler):
 
@@ -104,9 +99,7 @@ class ClientMessageHandler(GenericMessageHandler):
     }
 
     def _client_id(self, **msg):
-        if self._set_client_id(**msg):
-            NetOut.sendMessage.identify()
-        else:
+        if not self._set_client_id(**msg):
             NetOut.sendMessage.request_client_id()
 
     def _set_client_id(self, id, **arg):
