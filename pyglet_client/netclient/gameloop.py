@@ -45,7 +45,6 @@ from net_out import NetOut
 from net_event import NetEventGlobal
 
 from game_state import GameStateGlobal
-from client_event import ClientEventGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
 

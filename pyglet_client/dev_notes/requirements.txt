@@ -1,3 +1,4 @@
-pyglet
+#pyglet
 cython
 simplejson
+noise
