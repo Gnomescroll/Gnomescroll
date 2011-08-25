@@ -2,7 +2,7 @@
 Handles admin commands from terminal
 '''
 
-class Commands(object):
+class CommandHandler(object):
 
     def __init__(self):
         self.methods = {}
@@ -27,6 +27,4 @@ class Commands(object):
             self.unknown_cmd(cmd)
 
     def unknown_cmd(self, cmd):
-        print cmd
-        print self.methods
         print 'Unknown command %s' % (cmd,)

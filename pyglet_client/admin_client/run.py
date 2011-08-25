@@ -16,7 +16,8 @@ class Client:
 
     def __init__(self):
         self.init_globals()
-        self.commands = commands.Commands()
+        self.commands = Commands
+        self.commandHandler = commands.CommandHandler()
         self.add_commands()
 
     def init_globals(self):
@@ -26,18 +27,17 @@ class Client:
         NetClientGlobal.init1()
 
     def add_commands(self):
-        c = self.commands
-
-        def ping():
-            NetOut.miscMessage.ping()
-
-        c.add('ping', ping)
-        c.add('exit', self.exit)
+        self.commands._register(self.commandHandler)
+        self.commandHandler.add('exit', self.exit)
 
     def exit(self):
         self._exit = True
 
+    def connect(self):
+        NetClientGlobal.connect()
+
     def run(self):
+        self.connect()
 
         while not self._exit:
             try:
@@ -46,7 +46,28 @@ class Client:
                 self._exit = True
                 print ''
                 continue
-            self.commands.process(cmd)
+            self.commandHandler.process(cmd)
+
+class Commands(object):
+
+    methods = [
+        'ping',
+        'show_id',
+    ]
+
+    @classmethod
+    def _register(cls, handler):
+        for meth in cls.methods:
+            handler.add(meth, getattr(cls, meth))
+
+    @classmethod
+    def ping(cls):
+        NetOut.miscMessage.ping()
+
+    @classmethod
+    def show_id(cls):
+        print 'Client_id: %s' (NetClientGlobal.client_id,)
+
 
 
 if __name__ == '__main__':
