@@ -3,6 +3,7 @@ print "Importing dat.py !!  DEPRECATED!!!!"
 
 import pyglet
 from pyglet.gl import *
+from dat_loader import c_dat
 
 def convert_index(index, height, width):
     index = int(index)
@@ -17,71 +18,9 @@ def convert_index(index, height, width):
 
 
 class CubeProperties(object):
-
+    dat = c_dat
     def __init__(self):
-        self.cubes = {
-        0 : {
-            'id' : 0,
-            'occludes' : False,
-            'active' : False,
-            },
-        1 : {
-            'id' : 1,
-            'occludes' : True,
-            'active' : True,
-
-            'texture' : [ #t, b, w, e, n, s
-            (0, []),  #top
-            (0, []),  #bottom
-            (0, []), #west
-            (0, []), #east
-            (0, []), #north
-            (0, []), #south
-            ],
-            },
-        2 : {
-            'id' : 2,
-            'occludes' : True,
-            'active' : True,
-
-            'texture' : [ #t, b, w, e, n, s
-            (0, [0,1,2,3]),  #top
-            (6, [0,1,2,3]),  #bottom
-            (7, [0,1,2,3]), #west
-            (3, [0,1,2,3]), #east
-            (4, [0,1,2,3]), #north
-            (5, [0,1,2,3]), #south
-            ],
-        },
-        3 : {
-            'id' : 3,
-            'occludes' : True,
-            'active' : True,
-
-            'texture' : [ #t, b, w, e, n, s
-            (1, [0,1,2,3]),  #top
-            (1, [0,1,2,3]),  #bottom
-            (1, [0,1,2,3]), #west
-            (1, [0,1,2,3]), #east
-            (1, [0,1,2,3]), #north
-            (1, [0,1,2,3]), #south
-            ],
-        },
-        4 : {
-            'id' : 4,
-            'occludes' : True,
-            'active' : True,
-
-            'texture' : [ #t, b, w, e, n, s
-            (16, [0,1,2,3]),  #top
-            (16, [0,1,2,3]),  #bottom
-            (16, [0,1,2,3]), #west
-            (16, [0,1,2,3]), #east
-            (16, [0,1,2,3]), #north
-            (16, [0,1,2,3]), #south
-            ],
-        },
-     }
+        self.cubes = self.dat.dat
 
     def getTexture(self, tile_id, side_num):
         if self.cubes.has_key(tile_id):
