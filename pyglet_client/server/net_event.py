@@ -383,7 +383,6 @@ class AdminMessageHandler(GenericMessageHandler):
 
     @requireKey('list')
     def _set_map(self, msg, conn, blocks):
-        print 'set_map'
         terrainMap = GameStateGlobal.terrainMap
         for x,y,z,value in blocks:
             terrainMap.set(x,y,z,value)

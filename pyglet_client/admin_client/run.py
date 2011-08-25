@@ -99,7 +99,7 @@ def perlin_map(block_val):
     def check_setct(setct, map):
         if setct == 64:
             NetOut.adminMessage.set_map_bulk(map)
-            time.sleep(0.1)
+            time.sleep(0.03)
             return True
         return False
     
@@ -109,7 +109,7 @@ def perlin_map(block_val):
     max_height = 15
     from map_gen import Gen
     from random import random
-    g = Gen()
+    g = Gen(salt=random())
     h=0
     for i in range(128):
         for j in range(128):
