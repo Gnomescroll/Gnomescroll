@@ -1,0 +1,14 @@
+Using admin client--
+
+./run.py
+
+Commands:
+id :: show client id
+ping :: show ping
+clear :: clears map (normal clients fail to load properly if started after map cleared)
+set x y z val :: sets map block
+perlin [val] :: generates perlin noise map, with base tile [val]. Val defaults to 6.
+
+
+For commands that require a response from the server (e.g. ping), hit enter to move the loop so events can be processed
+
