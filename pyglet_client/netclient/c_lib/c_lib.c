@@ -9,7 +9,7 @@
 
 #include "./objects/grenade.c"
 #include "./objects/neutron.c"
-#include "./objects/agent.c"
+#include "./agent/agent.c"
 
 //#include "./texture_loader.c"
 

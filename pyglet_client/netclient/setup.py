@@ -17,9 +17,9 @@ try:
     SDL_CFLAGS=subprocess.Popen(['sdl-config', '--cflags'], stdout=subprocess.PIPE).communicate()[0]
     SDL_LDFLAGS=subprocess.Popen(['sdl-config', '--libs'], stdout=subprocess.PIPE).communicate()[0]
     SDLFLAGS = subprocess.Popen(['sdl-config', '--cflags', '--libs', ], stdout=subprocess.PIPE).communicate()[0]
-    print "SDL_CFLAGS= %s" % SDL_CFLAGS
-    print "SDL_LDFLAGS= %s" % SDL_LDFLAGS
-    print "SDLFLAGS= %s" % SDLFLAGS
+    #print "SDL_CFLAGS= %s" % SDL_CFLAGS
+    #print "SDL_LDFLAGS= %s" % SDL_LDFLAGS
+    #print "SDLFLAGS= %s" % SDLFLAGS
 except WindowsError:
     # sdl-config is a shell script, windows users will have to provide the path.
     pass

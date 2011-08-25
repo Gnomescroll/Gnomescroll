@@ -8,7 +8,7 @@ cdef extern from "./objects/neutron.h":
     void neutron_draw()
     void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
 
-cdef extern from "./objects/agent.h":
+cdef extern from "./agent/agent.h":
     void agent_tick()
     void agent_draw()
     int create_agent(float x, float y, float z)

@@ -12,7 +12,7 @@ class NetOut:
     sendMessage = None
     adminMessage = None
     miscMessage = None
-    
+
     @classmethod
     def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
@@ -89,6 +89,7 @@ class AdminMessage:
 
     @sendJSON('set_map')
     def set_map_bulk(self, l): #takes a list of 4 tuples of (x,y,z,value)
+        print str(l)
         print 'sending bulk'
         return {
             'list' : l,
