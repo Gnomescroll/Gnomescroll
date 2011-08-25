@@ -213,27 +213,17 @@ def load_map2():
     from random import random
     g = Gen()
     h=0
-    M = []
     for i in range(128):
-        #print i, h
-        T = []
-        print i
         for j in range(128):
             h = g.getHeight(i,j)
             h = abs(h)
             h *= 100
             h %= max_height
             h = int(h)
-            #print h
-            T.append(h)
             for k in range(h+1):
-                terrain_map.set(i, j, k, 1)
-        if T not in M:
-            M.append(T)
-    print 'Num unique heightlanes'
-    print len(M)
-    
-    
+                terrain_map.set(i, j, k, 2)
+            if h==0 or h==1:
+                terrain_map.set(i,j, 2, 211)
     print 'done map gen'
 
 class Main:
@@ -252,8 +242,8 @@ class Main:
         #CubeGlobal.init_1()
     def run(self):
         print "Server Started"
-        load_map()
-        #load_map2()
+        #load_map()
+        load_map2()
         c_lib.start_physics_timer(33) #ms per tick
         tick = 0
 
