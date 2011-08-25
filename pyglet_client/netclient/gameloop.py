@@ -224,17 +224,17 @@ class App(object):
                     y *= v / le
                     z *= v / le
                     c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z)
-                if True or _i % 30 == 0:
-                    v = 4
-                    x = v*random.random() -0.5
-                    y = v*random.random() -0.5
-                    z = v*random.random() -0.5
+                if _i % 4 == 0:
+                    v = 2
+                    x = v*(random.random() -0.5)
+                    y = v*(random.random() -0.5)
+                    z = v*(random.random() -0.5)
                     le = math.sqrt(x**2+y**2+z**2)
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    _type = random.randint(1,9)
-                    c_lib.c_lib_objects._create_neutron(_type,5,5,10, x,y,z)
+                    _type = random.randint(0,9*3)
+                    c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()

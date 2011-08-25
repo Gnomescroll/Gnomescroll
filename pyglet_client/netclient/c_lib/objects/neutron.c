@@ -8,6 +8,8 @@ struct neutron {
     uint ttl;
     uint ttl_max;
     int type;
+    int energy;
+    uint event_ttl;
 };
 
 struct neutron* neutron_list[1024];
@@ -30,22 +32,31 @@ void inline neutron_Tick(struct neutron* g) {
 
     float interval;
     int* s;
-    s = _ray_cast4(g->x, g->y, g->z, _x,_y,_z, &interval);
+    int collision[3];
+    int tile;
+    s = _ray_cast5(g->x, g->y, g->z, _x,_y,_z, &interval, collision, &tile);
     //printf("interval= %f \n", interval);
+    //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
 
-    if(s[0] != 0 ) {
-        g->vx *= -1;
-        //printf("invert vx \n");
+    if(s[0] != 0 || s[1] != 0 || s[2] != 0)
+    {
+        if(s[0] != 0 ) {
+            g->vx *= -1;
+            //printf("invert vx \n");
+        }
+        if(s[1] != 0) {
+            g->vy *= -1;
+            //printf("invert vy \n");
+        }
+        if(s[2] != 0) {
+            g->vz *= -1;
+            //printf("invert vz \n");
+        }
+        if(isNuclear(tile)) {
+        g->energy++;
+        if(g->energy >3) g->energy=3;
+        }
     }
-    if(s[1] != 0) {
-        g->vy *= -1;
-        //printf("invert vy \n");
-    }
-    if(s[2] != 0) {
-        g->vz *= -1;
-        //printf("invert vz \n");
-    }
-
     g->x = g->x + interval*g->vx/30;
     g->y = g->y + interval*g->vy/30;
     g->z = g->z + interval*g->vz/30;
@@ -107,7 +118,7 @@ void neutron_draw() {
         _c++;
         g = neutron_list[i];
         //draw setup
-        id = 48+g->type;
+        id = 48+3*g->type+ (g->energy-1);
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
@@ -139,7 +150,7 @@ void neutron_draw() {
 
 
 
-void create_neutron(int type, float x, float y, float z, float vx, float vy, float vz) {
+void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz) {
     //printf("Create neutron\n");
     struct neutron* g = NULL;
     int i;
@@ -151,7 +162,9 @@ void create_neutron(int type, float x, float y, float z, float vx, float vy, flo
             break;
         }
     }
-    if(g== NULL) { printf("Bug: max neutron number reached!\n"); return;}
+    if(g== NULL) {
+        //printf("Bug: max neutron number reached!\n");
+        return;}
     g->x=x;
     g->y=y;
     g->z=z;
@@ -159,6 +172,12 @@ void create_neutron(int type, float x, float y, float z, float vx, float vy, flo
     g->vy=vy;
     g->vz=vz;
     g->ttl = 0;
-    g->ttl_max = 3000;
+    g->ttl_max = 300;
+    g->energy = energy;
     g->type = type;
+    if(energy == 3) {
+        g->event_ttl = 150;
+    } else {
+        g->event_ttl = 0;
+    }
 }
