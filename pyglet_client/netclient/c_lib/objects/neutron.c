@@ -38,6 +38,16 @@ void inline neutron_Tick(struct neutron* g) {
     //printf("interval= %f \n", interval);
     //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
 
+    If(g->energy=3) {
+        g->event_ttl--;
+        if(g->event_ttl == 0) {
+            g->ttl = g->max_ttl;
+            create_neutron(g->type, 1, g->x,g->y,g->z, g->vx,g->vy,g->vz);
+            create_neutron(g->type, 2, g->x,g->y,g->z, -g->vx,-g->vy,-g->vz);
+        }
+
+
+    }
     if(s[0] != 0 || s[1] != 0 || s[2] != 0)
     {
         if(s[0] != 0 ) {
@@ -53,8 +63,12 @@ void inline neutron_Tick(struct neutron* g) {
             //printf("invert vz \n");
         }
         if(isNuclear(tile)) {
+        g->ttl=0; //reset TTL
         g->energy++;
-        if(g->energy >3) g->energy=3;
+        if(g->energy >3) {
+            g->energy=3;
+                event_ttl= 150;
+            }
         }
     }
     g->x = g->x + interval*g->vx/30;
