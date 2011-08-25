@@ -17,11 +17,13 @@ unsigned char r,g,b,a;
 };
 
 struct Vox {
+    float ax,ay,az; //anchor
+    float length; //length from anchor to center
     float cx,cy,cz;
 
-    float ux,uy,uz; //up, right, forward
-    float rx,ry,rz;
     float fx,fy,fz;
+    float rx,ry,rz;
+    float ux,uy,uz; //up, right, forward
 
     unsigned short xdim;
     unsigned short ydim;
