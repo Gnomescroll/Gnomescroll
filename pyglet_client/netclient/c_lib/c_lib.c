@@ -9,7 +9,9 @@
 
 #include "./objects/grenade.c"
 #include "./objects/neutron.c"
+
 #include "./agent/agent.c"
+#include "./agent/agent_vox.c"
 
 //#include "./texture_loader.c"
 
