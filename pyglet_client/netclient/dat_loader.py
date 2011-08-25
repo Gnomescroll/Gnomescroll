@@ -31,6 +31,7 @@ class Dat(object):
         }
         self.name = name
         self._register()
+        self.on_change = lambda: None
 
     def _register(self):
         global dat_loader
@@ -53,9 +54,11 @@ class Dat(object):
         for type, props in self.dat.items():
             del self.dat[type]
             self.dat[int(type)] = props
+        self.on_change()
 
     def set(self, type, prop, val):
         self.dat[type][prop] = val
+        self.on_change(type)
 
     def apply(self, obj):
         for prop in self.dat[0].keys():

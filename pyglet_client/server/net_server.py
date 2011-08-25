@@ -149,10 +149,7 @@ class TcpClient:
 
         self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
-        #self.sendMessage.game_mode()
-        #self.sendMessage.send_items()
         self.sendMessage.send_dat()
-        #self.sendMessage.send_players() # send all players to client
 
     def identify(self, name):
         valid, name, you = self._valid_player_name(name)
@@ -161,11 +158,7 @@ class TcpClient:
             print 'IDENTIFIED'
             NetServer.connectionPool.name_client(self, name)
             self.name = name
-            #self.start_player()
-            #self._register_name()
-            #self.sendMessage.identified(self, 'Identified name: ' + name)
             self.check_ready()
-            #NetOut.event.player_create(self.player)
         else:
             if you:
                 self.sendMessage.identified(self, 'You were already identified as %s' % (name,))
@@ -210,9 +203,6 @@ class TcpClient:
             self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
             print 'Created new player'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
-        #self.sendMessage.game_mode()
-        #self.sendMessage.send_items()
-        #self.sendMessage.send_players() # send all players to client
 
     def _set_client_id(self):
         if hasattr(self, 'id'):

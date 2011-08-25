@@ -786,6 +786,7 @@ class DatMessageHandler(GenericMessageHandler):
     }
 
     def _load_dat(self, **msg):
+        print msg
         err_msg = None
         try:
             dat = msg['dat']

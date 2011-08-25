@@ -146,62 +146,52 @@ projectiles = {
 
 cubes = {
     0 : {
-        'id' : 0,
+        #'id' : 0,
+        'name': 'tile',
         'occludes' : False,
         'active' : False,
-        'texture': [ #t, b, w, e, n, s
-            (0, []),  #top
-            (0, []),  #bottom
-            (0, []), #west
-            (0, []), #east
-            (0, []), #north
-            (0, []), #south
-        ],
-    },
-    1 : {
-        'id' : 1,
-        'occludes' : True,
-        'active' : True,
-    },
-    2 : {
-        'id' : 2,
-        'occludes' : True,
-        'active' : True,
-        'texture' : [ #t, b, w, e, n, s
-            (0, [0,1,2,3]),  #top
-            (6, [0,1,2,3]),  #bottom
-            (7, [0,1,2,3]), #west
-            (3, [0,1,2,3]), #east
-            (4, [0,1,2,3]), #north
-            (5, [0,1,2,3]), #south
-        ],
-    },
-    3 : {
-        'id' : 3,
-        'occludes' : True,
-        'active' : True,
-
-        'texture' : [ #t, b, w, e, n, s
-            (1, [0,1,2,3]),  #top
-            (1, [0,1,2,3]),  #bottom
-            (1, [0,1,2,3]), #west
-            (1, [0,1,2,3]), #east
-            (1, [0,1,2,3]), #north
-            (1, [0,1,2,3]), #south
-        ],
-    },
-    4 : {
-        'id' : 4,
-        'occludes' : True,
-        'active' : True,
-
-        'texture' : [ #t, b, w, e, n, s
-            (16, [0,1,2,3]),  #top
-            (16, [0,1,2,3]),  #bottom
-            (16, [0,1,2,3]), #west
-            (16, [0,1,2,3]), #east
-            (16, [0,1,2,3]), #north
-            (16, [0,1,2,3]), #south
-        ],
+        'solid' : False,
+        'max_damage': 32,
+        'neutron_tolerance' : 2,
+        'nuclear': 0,
+        'texture_id': [],
+        'texture_order': [],
+        'gravity'   :   0,
+        'transparent': 0,
     },
 }
+
+def _build_cubes():
+    def_tex_order = [[0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],
+                [0,1,2,3],]
+                
+    def get_default_tile(i):
+
+        return {
+            #'id'    :   i + 1,
+            'name'  :   'tile',
+            'occludes': True,
+            'active':   True,
+            'solid':    True,
+            'max_damage' : 32,
+            'neutron_tolerance' : 2,
+            'nuclear' : i%2,
+            'texture_id': [i]*6,
+            'texture_order': def_tex_order,
+            'gravity'   :   0,
+            'transparent': 0,
+        }
+
+    def set_cube_list_defaults():
+        global cubes
+
+        for i in range(256):
+            j = i+1
+            cubes.setdefault(j, get_default_tile(i))
+
+    set_cube_list_defaults()
+_build_cubes()

@@ -193,9 +193,33 @@ cdef extern from "../c_lib/t_map/t_properties.h":
 
 ## Setup ##
 from cube_dat import cube_list
+from dat_loader import c_dat
 
-def init_cube_properties():
+def init_cube_properties(id=None):
     cdef cubeProperties* cp
+    global c_dat
+
+    def apply(id):
+        cdef cubeProperties* cp
+        cp = _get_cube(id)
+        cp.active = c_dat.get(id,'active')
+        cp.occludes = c_dat.get(id,'occludes')
+        cp.solid = c_dat.get(id,'solid')
+        cp.gravity = c_dat.get(id,'gravity')
+        cp.transparent = c_dat.get(id,'transparent')
+        cp.max_damage = c_dat.get(id,'max_damage')
+        cp.neutron_tolerance = c_dat.get(id,'neutron_tolerance')
+        cp.nuclear = c_dat.get(id,'nuclear')
+
+    if id is None:
+        for id in c_dat.dat:
+            #cp = _get_cube(id)
+            apply(id)
+    else:
+        #cp = _get_cube(id)
+        apply(id)
+
+    '''
     global cube_list
     for d in cube_list.values():
         id = int(d['id'])
@@ -211,6 +235,8 @@ def init_cube_properties():
         cp.max_damage = int(d.get('max_damage', 32))
         cp.neutron_tolerance = int(d.get('neutron_tolerance', 2))
         cp.nuclear = int(d.get('nuclear', 1))
+    '''
+c_dat.on_change = init_cube_properties
 
 def isActive(unsigned int id):
     return _get_cube(id).active
@@ -464,7 +490,7 @@ def init():
     else:
         init =1
     print "Init Terrain Map"
-    init_cube_properties()
+    #init_cube_properties()
     init_quad_cache()
     _init_t_map();
     #_init_t_map_draw()
