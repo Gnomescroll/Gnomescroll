@@ -39,6 +39,7 @@ class Client:
 
     def run(self):
         self.connect()
+        NetOut.sendMessage.is_admin()
 
         while not self._exit:
             NetClientGlobal.connection.attempt_recv()

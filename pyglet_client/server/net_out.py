@@ -60,7 +60,8 @@ class EventOut:
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
             for client in NetServer.connectionPool._client_pool.values():
-                client.send(event_packet)
+                if not client.admin:
+                    client.send(event_packet)
         self.event_packets = []
 
     def add_json_event(self, dict):

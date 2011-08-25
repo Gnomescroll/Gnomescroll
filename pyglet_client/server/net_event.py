@@ -373,9 +373,13 @@ class AdminMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
+            'admin'     : self.is_admin,
             'set_map' : self._set_map,
             'clear_map': self._clear_map,
         }
+
+    def is_admin(self, msg, conn):
+        conn.admin = True
 
     @requireKey('list')
     def _set_map(self, msg, conn, blocks):

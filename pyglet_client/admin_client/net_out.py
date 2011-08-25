@@ -66,7 +66,10 @@ class GenericMessage:
 
 
 class SendMessage(GenericMessage):
-    pass
+
+    @sendJSON('admin')
+    def is_admin(self):
+        return True
 
 
 class MiscMessage:

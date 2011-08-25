@@ -136,6 +136,8 @@ class TcpClient:
         self.connection = connection
         self.address = address
 
+        self.admin = False
+
         self.received_id = False
         self.identified = False
         self.dat_loaded = False
