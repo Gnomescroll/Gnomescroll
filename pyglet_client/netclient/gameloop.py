@@ -115,7 +115,7 @@ class App(object):
         self.SDL_global.init()
         SDL.input.init()
         SDL.hud.init()
-        cube_lib.terrain_map.init()
+        #cube_lib.terrain_map.init()
 
         init_c_lib.init()
 
