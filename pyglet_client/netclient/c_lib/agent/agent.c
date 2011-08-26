@@ -1,5 +1,5 @@
 #include "agent.h"
-
+#include "agent_vox.h"
 
 struct Agent_state* Agent_list[1024];
 
@@ -21,14 +21,63 @@ struct Agent_state* get_agent(int id) {
 }
 
 void agent_Tick(struct Agent_state* g) {
-
+    g->xangle += 0.01;
+    g->yangle = 0.35;
 }
 
 void agent_tick() {
-
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] != NULL) {
+            g = Agent_list[i];
+            agent_Tick(g);
+        }
+    }
 }
 
 void agent_Draw(struct Agent_state* g) {
+    //printf("agent draw \n");
+
+    float theta = g->xangle;
+    float phi = g->yangle;
+    struct Vector c,up,forward,right;
+    struct Vector look;
+    c = Vector_init(g->x, g->y, g->z);
+    up = Vector_init(0.0,0.0,1.0);
+    forward = Vector_init(cos(PI*theta), sin(PI*theta), 0);
+
+    //printf("phi=%f \n", phi);
+
+    //look = Vector_init()
+    look.x = cos( theta * PI) * cos( phi * PI);
+    look.y = sin( theta * PI) * cos( phi * PI);
+    look.z = sin( phi);
+    normalize_vector(&look);
+
+    right = Vector_init(cos(theta*PI+PI/2), sin(theta*PI+PI/2), 0);
+
+    glBegin(GL_LINES);
+
+    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+up.x, c.y+up.y, c.z+up.z);
+
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+right.x, c.y+right.y, c.z+right.z);
+
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+forward.x, c.y+forward.y, c.z+forward.z);
+
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)255);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+look.x, c.y+look.y, c.z+look.z);
+
+    glEnd();
+
+    agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
 
 }
 
@@ -36,7 +85,7 @@ void agent_draw() {
     struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
-        if(Agent_list[i] == NULL) {
+        if(Agent_list[i] != NULL) {
             g = Agent_list[i];
             agent_Draw(g);
         }
