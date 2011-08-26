@@ -29,14 +29,22 @@ void agent_tick() {
 }
 
 void agent_Draw(struct Agent_state* g) {
-    printf("agent draw \n");
+    //printf("agent draw \n");
 
     float theta = g->xangle;
-    struct Vector c,up,forward,right;
+    float phi = y->yangle
+    struct Vector c,up,forward,right, Vector look;
     c = Vector_init(g->x, g->y, g->z);
     up = Vector_init(0.0,0.0,1.0);
     forward = Vector_init(sin(theta), cos(theta), 0);
     right = Vector_init(sin(theta+PI/2), cos(theta+PI/2), 0);
+
+
+    look = Vector_init()
+    look.x = cos( theta * PI) * cos( phi * PI);
+    look.y = sin( theta * PI) * cos( phi * PI);
+    look.z = sin( phi);
+    normalize_vector(&look);
 
     glBegin(GL_LINES);
 
@@ -54,6 +62,7 @@ void agent_Draw(struct Agent_state* g) {
 
     glEnd();
 
+    agent_vox_draw_head(g->vox_part[AGENT_PART_HEAD], look, right, g);
 
 }
 
@@ -61,7 +70,7 @@ void agent_draw() {
     struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
-        if(Agent_list[i] == NULL) {
+        if(Agent_list[i] != NULL) {
             g = Agent_list[i];
             agent_Draw(g);
         }

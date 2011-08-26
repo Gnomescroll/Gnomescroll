@@ -65,3 +65,28 @@ void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, fl
 void destroy_vox(struct Vox* v) {
     if(v->vox != NULL) free(v->vox);
 }
+
+//
+
+agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state a) {
+    float ch = a->camera_height
+    //look is forward direction
+    //right is right
+
+    struct Vector c = Vector_init(a->x, a->y, ch*z);
+
+    struct Vector vx,vy,vz;
+
+    vx = look;
+    vz = vector_cross(vx, right)
+    vy = vector_cross(vx, vz)
+
+    int i,j,k;
+    for(i= -v->xdim/2; i < v->xdim/2; i++) {
+    for(j= -v->ydim/2; j < v->ydim/2; j++) {
+    for(k= -v->zdim/2; k < v->zdim/2; k++) {
+
+
+    }}}
+
+}
