@@ -22,6 +22,7 @@ try:
     #print "SDLFLAGS= %s" % SDLFLAGS
 except:
     # sdl-config is a shell script, windows users will have to provide the path.
+    print "sdl-config fail!!"
     pass
 
 extra_compile_args=[SDL_CFLAGS]
