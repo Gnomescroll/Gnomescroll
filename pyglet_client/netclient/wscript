@@ -46,7 +46,7 @@ def configure(conf):
     elif OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
-        pass
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
 
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
