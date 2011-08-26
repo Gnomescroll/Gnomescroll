@@ -41,5 +41,6 @@ struct Vox {
 
 void destroy_vox(struct Vox* v);
 
-agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector normal, struct Agent_state a);
+//void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a);
+
 #endif

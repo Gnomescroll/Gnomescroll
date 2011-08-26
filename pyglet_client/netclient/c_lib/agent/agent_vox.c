@@ -68,7 +68,10 @@ void destroy_vox(struct Vox* v) {
 
 //
 
-agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state a) {
+//agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state a);
+
+void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a) {
+/*
     float ch = a->camera_height
     //look is forward direction
     //right is right
@@ -94,4 +97,5 @@ agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, stru
 
     }}}
     glEnd();
+*/
 }
