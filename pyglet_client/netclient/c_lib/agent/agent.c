@@ -29,12 +29,14 @@ void agent_tick() {
 }
 
 void agent_Draw(struct Agent_state* g) {
+    printf("agent draw \n");
+
     float theta = g->xangle;
     struct Vector c,up,forward,right;
     c = Vector_init(g->x, g->y, g->z);
     up = Vector_init(0.0,0.0,1.0);
     forward = Vector_init(sin(theta), cos(theta), 0);
-    right = Vector_init(sin(theta+PI/2), cos(theta+PI/2), 0)
+    right = Vector_init(sin(theta+PI/2), cos(theta+PI/2), 0);
 
     glBegin(GL_LINES);
 
@@ -52,8 +54,6 @@ void agent_Draw(struct Agent_state* g) {
 
     glEnd();
 
-    return 0;
-}
 
 }
 

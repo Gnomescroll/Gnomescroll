@@ -53,6 +53,12 @@ def _set_agent_model(int id):
                 g = 16*y
                 b = 16*z
                 set_agent_vox_volume(id, 1, x,y,z, r,g,b,a)
+    ax = 0
+    ay = 0
+    az = 2.5
+    fx = 1.0
+    fy = 0
+    fz = 0
     set_agent_box_anchor_point(id, 1, ax,ay,az, fx,fy,fz)
 
 def _create_agent(float x, float y, float z):
