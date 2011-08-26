@@ -71,7 +71,7 @@ from distutils.unixccompiler import UnixCCompiler
 
 debug = 1
 
-if OS != "Darwin":
+if OS != "Darwin" or True:
     print "Compiling Shared Libraries"
     #comp = UnixCCompiler(verbose=1, force=1)
     comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
