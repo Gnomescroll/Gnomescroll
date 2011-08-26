@@ -101,7 +101,7 @@ int _init_video() {
     } else {
         printf("Warning: Double Buffering Not Enabled!\n");
     }
-
+    SDL_ShowCursor(SDL_DISABLE);
     ///glEnable(GL_TEXTURE_2D); // ??? Needed?
 
     //whaa
