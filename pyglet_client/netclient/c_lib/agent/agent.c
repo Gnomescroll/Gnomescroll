@@ -21,11 +21,19 @@ struct Agent_state* get_agent(int id) {
 }
 
 void agent_Tick(struct Agent_state* g) {
-
+    g->xangle += 0.01;
+    g->yangle = 0.35;
 }
 
 void agent_tick() {
-
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] != NULL) {
+            g = Agent_list[i];
+            agent_Tick(g);
+        }
+    }
 }
 
 void agent_Draw(struct Agent_state* g) {
@@ -37,9 +45,9 @@ void agent_Draw(struct Agent_state* g) {
     struct Vector look;
     c = Vector_init(g->x, g->y, g->z);
     up = Vector_init(0.0,0.0,1.0);
-    forward = Vector_init(sin(theta), cos(theta), 0);
+    forward = Vector_init(cos(PI*theta), sin(PI*theta), 0);
 
-
+    //printf("phi=%f \n", phi);
 
     //look = Vector_init()
     look.x = cos( theta * PI) * cos( phi * PI);
@@ -47,7 +55,7 @@ void agent_Draw(struct Agent_state* g) {
     look.z = sin( phi);
     normalize_vector(&look);
 
-    right = Vector_init(cos(theta+PI/2), sin(theta+PI/2), 0);
+    right = Vector_init(cos(theta*PI+PI/2), sin(theta*PI+PI/2), 0);
 
     glBegin(GL_LINES);
 
@@ -62,6 +70,10 @@ void agent_Draw(struct Agent_state* g) {
     glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
     glVertex3f(c.x,c.y,c.z);
     glVertex3f(c.x+forward.x, c.y+forward.y, c.z+forward.z);
+
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)255);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+look.x, c.y+look.y, c.z+look.z);
 
     glEnd();
 

@@ -79,9 +79,46 @@ void destroy_vox(struct Vox* v) {
 
 //agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state a);
 
+int v_set[3*8] = {
+        0,0,0,
+        1,0,0,
+        1,1,0,
+        0,1,0,
+        0,0,1,
+        1,0,1,
+        1,1,1,
+        0,1,1 };
+
+int q_set[4*6]= {
+        4,5,6,7,
+        3,2,1,0,
+        2,3,7,6,
+        0,1,5,4,
+        0,4,7,3,
+        1,2,6,5 };
+
+float v_buffer[3*8];
+float s_buffer[6*(4*3)];
+
 void print_vector(struct Vector * v) {
     printf("%f, %f, %f \n", v->x, v->y, v->z);
 }
+
+void t_draw_cube() {
+    glColor3ub(0,0,255);
+    int i;
+    int j;
+    float x,y,z;
+    x=2;y=2;z=8;
+    glBegin(GL_QUADS);
+    for(i=0; i<6; i++) {
+        for(j=0; j<4; j++){
+            glVertex3f(x+ s_buffer[12*i+3*j+0], y+ s_buffer[12*i+3*j+1], z+ s_buffer[12*i+3*j+2]);
+        }
+    }
+    glEnd();
+}
+
 void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a) {
     //printf("draw head\n");
 
@@ -98,15 +135,31 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
     vx = look;
     vz = vector_cross(vx, right);
     vy = vector_cross(vx, vz);
+    int i,j,k;
+    //print_vector_dot(look, right);
 
     //print_vector(&right);
     //print_vector(&vx); print_vector(&vy); print_vector(&vz);
     //print_vector_dot(vx, vz); print_vector_dot(vx, vy); print_vector_dot(vy, vz);
 
+    for(i=0; i<8; i++) {
+        v_buffer[3*i+0] = vos*(v_set[3*i+0]*vx.x + v_set[3*i+1]*vy.x + v_set[3*i+2]*vz.x );
+        v_buffer[3*i+1] = vos*(v_set[3*i+0]*vx.y + v_set[3*i+1]*vy.y + v_set[3*i+2]*vz.y );
+        v_buffer[3*i+2] = vos*(v_set[3*i+0]*vx.z + v_set[3*i+1]*vy.z + v_set[3*i+2]*vz.z );
+    }
+    for(i=0; i<6; i++) {
+        for(j=0; j<4; j++) {
+            s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
+            s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
+            s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
+        }
+    }
+    t_draw_cube();
+
     struct Voxel* vo;
 
     float x0, y0, z0;
-    int i,j,k;
+
     glBegin(GL_POINTS);
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
@@ -126,9 +179,7 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
     glVertex3f(x0,y0,z0); // point
     //printf("%i, %i, %i \n", i,j,k);
     //printf("%f, %f, %f \n", x0, y0, z0);
-    }
-    }
-    }
+    }}}
     glEnd();
 
 }
