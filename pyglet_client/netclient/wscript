@@ -140,10 +140,8 @@ def install_in_ext(ctx):
 
     # Hax to install files into ./ext/, after build
 
-    ensure_dir('./ext')
-
     c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-    shutil.copy2(os.path.join(out, c_lib_target), './ext/' + c_lib_target)
+    shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
 
     targets = ['SDL.gl',
                'SDL.hud',
