@@ -10,6 +10,8 @@
 
 #include "agent_vox.h"
 
+#include "vector.h"
+
 void agent_tick();
 void agent_draw();
 int create_agent(float x, float y, float z);

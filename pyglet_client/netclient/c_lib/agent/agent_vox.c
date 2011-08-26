@@ -42,7 +42,6 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
     vo->b =b;
     vo->a =a;
     //x+ y*vl->ydim + z*vl->xdim*vl->ydim
-
 }
 
 void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz) {

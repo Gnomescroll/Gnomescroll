@@ -30,10 +30,30 @@ void agent_tick() {
 
 void agent_Draw(struct Agent_state* g) {
     float theta = g->xangle;
-    struct Vec c;
-    c.x = g->x;
-    c.y = g->y;
-    c.z = g->z;
+    struct Vector c,up,forward,right;
+    c = Vector_init(g->x, g->y, g->z);
+    up = Vector_init(0.0,0.0,1.0);
+    forward = Vector_init(sin(theta), cos(theta), 0);
+    right = Vector_init(sin(theta+PI/2), cos(theta+PI/2), 0)
+
+    glBegin(GL_LINES);
+
+    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+up.x, c.y+up.y, c.z+up.z);
+
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+right.x, c.y+right.y, c.z+right.z);
+
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+    glVertex3f(c.x,c.y,c.z);
+    glVertex3f(c.x+forward.x, c.y+forward.y, c.z+forward.z);
+
+    glEnd();
+
+    return 0;
+}
 
 }
 
