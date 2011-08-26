@@ -12,11 +12,6 @@
 
 #include "vector.h"
 
-void agent_tick();
-void agent_draw();
-int create_agent(float x, float y, float z);
-void set_agent_state(int id, float xangle, float yangle);
-
 #define AGENT_PART_NUM 6
 #define AGENT_PART_HEAD 0
 #define AGENT_PART_TORSO 1
@@ -37,6 +32,11 @@ float cbox_radius; // collision box
 
 struct Vox vox_part[6]; //head,torso, larm,rarm, lleg, rleg
 };
+
+void agent_tick();
+void agent_draw();
+int create_agent(float x, float y, float z);
+void set_agent_state(int id, float xangle, float yangle);
 
 struct Agent_state* get_agent(int id);
 struct Vox* get_agent_vox_part(int id, int part);

@@ -1,5 +1,5 @@
 #include "agent.h"
-
+#include "agent_vox.h"
 
 struct Agent_state* Agent_list[1024];
 

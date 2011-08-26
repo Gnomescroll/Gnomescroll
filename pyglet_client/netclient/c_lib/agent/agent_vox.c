@@ -1,4 +1,5 @@
 #include "agent_vox.h"
+#include "agent.h"
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize) {
 
