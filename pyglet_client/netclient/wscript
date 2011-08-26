@@ -132,6 +132,11 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
+    bld(features='c cprogram pyembed',
+        use=common_libraries,
+        source='run.c',
+        target='run')
+
     bld.add_post_fun(install_in_ext)
 
 
@@ -139,6 +144,9 @@ def install_in_ext(ctx):
     global out
 
     # Hax to install files into ./ext/, after build
+
+    run_target = ctx.env.cprogram_PATTERN % 'run'
+    shutil.copy2(os.path.join(out, run_target), './' + run_target)
 
     c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
     shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
