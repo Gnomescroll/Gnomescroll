@@ -49,10 +49,11 @@ def _set_agent_model(int id):
         for y in range(0,8):
             for z in range(0,8):
                 a = 0
-                r = 16*x
-                g = 16*y
-                b = 16*z
-                set_agent_vox_volume(id, 1, x,y,z, r,g,b,a)
+                #r = 32*x
+                #g = 32*y
+                #b = 32*z
+                r,g,b = [0,255,0]
+                set_agent_vox_volume(id, 0, x,y,z, r,g,b,a)
     ax = 0
     ay = 0
     az = 2.5

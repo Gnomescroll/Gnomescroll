@@ -66,6 +66,7 @@ if debug == True:
     extra_compile_args+=["-g"]
     extra_link_args+=["-g"]
 
+s_lib=[]
 
 import distutils.ccompiler
 from distutils.unixccompiler import UnixCCompiler

@@ -38,7 +38,7 @@ void agent_Draw(struct Agent_state* g) {
     c = Vector_init(g->x, g->y, g->z);
     up = Vector_init(0.0,0.0,1.0);
     forward = Vector_init(sin(theta), cos(theta), 0);
-    right = Vector_init(sin(theta+PI/2), cos(theta+PI/2), 0);
+
 
 
     //look = Vector_init()
@@ -46,6 +46,8 @@ void agent_Draw(struct Agent_state* g) {
     look.y = sin( theta * PI) * cos( phi * PI);
     look.z = sin( phi);
     normalize_vector(&look);
+
+    right = Vector_init(cos(theta+PI/2), sin(theta+PI/2), 0);
 
     glBegin(GL_LINES);
 
@@ -63,7 +65,7 @@ void agent_Draw(struct Agent_state* g) {
 
     glEnd();
 
-    //agent_vox_draw_head(g->vox_part[AGENT_PART_HEAD], look, right, g);
+    agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
 
 }
 
