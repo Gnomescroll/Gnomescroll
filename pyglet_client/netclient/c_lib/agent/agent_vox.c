@@ -72,6 +72,7 @@ agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, stru
     float ch = a->camera_height
     //look is forward direction
     //right is right
+    float vos = v->vox_size;
 
     struct Vector c = Vector_init(a->x, a->y, ch*z);
 
@@ -81,12 +82,16 @@ agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, stru
     vz = vector_cross(vx, right)
     vy = vector_cross(vx, vz)
 
+    struct Voxel* vo;
     int i,j,k;
+    glBegin(GL_POINTS);
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
     for(k= -v->zdim/2; k < v->zdim/2; k++) {
+    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
 
+    glVertex3f(x0,y0,z0); // point
 
     }}}
-
+    glEnd();
 }
