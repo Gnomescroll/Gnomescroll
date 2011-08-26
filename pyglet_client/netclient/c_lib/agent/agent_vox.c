@@ -45,6 +45,24 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
 
 }
 
+void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz) {
+    struct Vox* v = get_agent_vox_part(id, part);
+    if(v == NULL) {
+        printf("set_agent_box_anchor_point: Vox is Null!\n");
+        return;
+    }
+    v->a.x = ax;
+    v->a.y = ay;
+    v->a.z = az;
+
+    float len = sqrt(fx*fx+fy*fy+fz*fz);
+    fx /= len; fy /= len; fz /= len;
+
+    v->f.x = fx;
+    v->f.y = fy;
+    v->f.z = fz;
+}
+
 void destroy_vox(struct Vox* v) {
     if(v->vox != NULL) free(v->vox);
 }

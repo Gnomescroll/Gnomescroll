@@ -8,22 +8,27 @@
 //#include <t_map/t_properties.h>
 
 #include "agent.h"
+#include "vector.h"
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
+void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz);
 
 struct Voxel {
 unsigned char r,g,b,a;
 };
 
+
 struct Vox {
-    float ax,ay,az; //anchor
+    //float ax,ay,az; //anchor
+    struct Vector a;
     float length; //length from anchor to center
     float cx,cy,cz;
 
-    float fx,fy,fz;
-    float rx,ry,rz;
-    float ux,uy,uz; //up, right, forward
+    struct Vector f,r,u;
+    //float fx,fy,fz;
+    //float rx,ry,rz;
+    //float ux,uy,uz; //up, right, forward
 
     unsigned short xdim;
     unsigned short ydim;

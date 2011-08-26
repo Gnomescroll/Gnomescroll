@@ -29,6 +29,11 @@ void agent_tick() {
 }
 
 void agent_Draw(struct Agent_state* g) {
+    float theta = g->xangle;
+    struct Vec c;
+    c.x = g->x;
+    c.y = g->y;
+    c.z = g->z;
 
 }
 

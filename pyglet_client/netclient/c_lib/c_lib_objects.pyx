@@ -17,6 +17,7 @@ cdef extern from "./agent/agent.h":
 cdef extern from "./agent/agent_vox.h":
     void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
+    void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz)
 
 def tick():
     grenade_tick()
@@ -52,6 +53,7 @@ def _set_agent_model(int id):
                 g = 16*y
                 b = 16*z
                 set_agent_vox_volume(id, 1, x,y,z, r,g,b,a)
+    set_agent_box_anchor_point(id, 1, ax,ay,az, fx,fy,fz)
 
 def _create_agent(float x, float y, float z):
     cdef int id
