@@ -51,3 +51,7 @@ settings.py
 jdump
 output_msgs
 .idea/
+
+pyglet_client/netclient/build
+pyglet_client/netclient/ext
+.lock-wafbuild
