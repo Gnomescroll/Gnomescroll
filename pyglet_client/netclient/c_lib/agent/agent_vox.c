@@ -30,6 +30,13 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     v->radius = sqrt((vosize*xdim)*(vosize*xdim) + (vosize*ydim)*(vosize*ydim) + (vosize*zdim)*(vosize*zdim));
     v->vox_size = vosize;
     v->vox = (struct Voxel *) malloc (v->num_vox*sizeof(struct Voxel));
+    int i;
+    for(i=0; i<v->num_vox; i++) {
+        v->vox[i].r = 0;
+        v->vox[i].g = 0;
+        v->vox[i].b = 255;
+        v->vox[i].a = 0; //if alpha is zero, dont draw
+    }
 }
 
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
@@ -99,16 +106,13 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
     struct Voxel* vo;
 
     float x0, y0, z0;
-    float _i, _j, _k;
     int i,j,k;
     glBegin(GL_POINTS);
-    _i = -v->xdim/2;
-    _j = -v->ydim/2;
-    _k = -v->zdim/2;
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
     for(k= -v->zdim/2; k < v->zdim/2; k++) {
     vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->zdim*v->ydim];
+    if(vo->a == 0) continue;
     glColor3ub((unsigned char)vo->r,(unsigned char)vo->g,(unsigned char)vo->b);
 /*
     x0 = c.x + vos*(_i*vx.x + _j*vy.x + _k*vz.x);
@@ -122,11 +126,8 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
     glVertex3f(x0,y0,z0); // point
     //printf("%i, %i, %i \n", i,j,k);
     //printf("%f, %f, %f \n", x0, y0, z0);
-    _k += 1.0;
     }
-    _j += 1.0;
     }
-    _i += 1.0;
     }
     glEnd();
 
