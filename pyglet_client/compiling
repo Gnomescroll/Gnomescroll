@@ -1,3 +1,6 @@
+Build system:
+./waf configure build
+
 g++ -Wall -fPIC -c libChrome.c -I/usr/local/include -I /usr/include/X11/extensions/ -I/usr/include/SDL -I/usr/lib -I./include/ -I./ -o libChrome.o 
 
 g++ -shared -o libChrome.so libChrome.o -I./include/ -L. -lAwesomium -Wl,-rpath=./ 
