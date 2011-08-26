@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+#include <compat.h>
+
 #include <ray_trace/ray_trace.h>
 
 #include <t_map/t_map.h>

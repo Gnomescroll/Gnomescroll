@@ -1,6 +1,8 @@
 #ifndef c_lib_h
 #define c_lib_h
 
+#include "compat.h"
+
 #define NO_SDL_GLEXT
 #include <GL/glew.h>
 

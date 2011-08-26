@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include <compat.h>
+
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 

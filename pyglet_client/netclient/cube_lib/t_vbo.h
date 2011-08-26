@@ -6,10 +6,12 @@
     //do nothing
 #elif _WIN32
     #include <windows.h>
-    #include <GL/GLee.h>
+    #include <GL/glew.h>
 #else
     //mac
 #endif
+
+#define NO_SDL_GLEXT
 
 #include <SDL.h>
 #include <SDL_opengl.h>

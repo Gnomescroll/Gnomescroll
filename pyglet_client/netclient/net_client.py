@@ -12,8 +12,8 @@ import json
 from opts import opts
 import default_settings as settings
 
-import os
-OS = os.uname()[0]
+import platform
+OS = platform.system()
 #OS = "Windows"
 
 if OS == "Linux":

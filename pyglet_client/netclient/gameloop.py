@@ -9,6 +9,9 @@ if False:
     print ""
     import site
 
+import sys
+sys.path.insert(0, './ext/')
+
 import math
 
 import args_client

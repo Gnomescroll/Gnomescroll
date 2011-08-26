@@ -1,0 +1,160 @@
+
+APPNAME = 'gnomescroll_client'
+VERSION = '0.1'
+
+top = '.'
+out = 'build'
+
+SDL_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
+
+def _grab_output(*cmd):
+    import subprocess
+    return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+
+
+def options(opt):
+    opt.load('compiler_c python cython')
+
+
+def configure(conf):
+    import platform
+
+    conf.load('compiler_c python cython')
+    conf.check_python_version((2,7,0))
+    conf.check_python_headers()
+
+    conf.cc_add_flags()
+    conf.link_add_flags()
+
+    OS = platform.system()
+    conf.env.os = OS
+
+    conf.check(header_name='GL/glew.h', mandatory=True)
+
+    if OS == 'Windows':
+        conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
+    elif OS == 'Linux':
+        conf.check(lib=['GL', 'GLU', 'GLEW'])
+    elif OS == 'Darwin':
+        pass
+
+    if OS != 'Windows':
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+
+    conf.check(header_name='SDL.h',
+               use='SDL',
+               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+
+    conf.check(header_name='SDL_image.h',
+               lib='SDL_image',
+               use='SDL',
+               uselib_store='SDL_image',
+               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+
+    conf.env.INCLUDES = ['c_lib']
+
+
+def build(bld):
+    common_libraries = ['GL', 'SDL', 'SDL_image']
+
+    bld.env.PREFIX = './ext/'
+
+    bld(features='c cshlib',
+        source=['c_lib/c_lib.c',
+                'c_lib/texture_loader.c'],
+        use=common_libraries,
+        target='c_lib')
+
+    bld(features='c cshlib pyext',
+        source=['SDL/SDL_functions.c',
+                'SDL/camera.c',
+                'SDL/draw_functions.c',
+                'SDL/texture_loader.c',
+                'SDL/particle_functions.c',
+                'SDL/gl.pyx'],
+        use=common_libraries,
+        target='SDL.gl')
+
+    bld(features='c cshlib pyext',
+        source=['SDL/SDL_text.c',
+                'SDL/draw_functions.c',
+                'SDL/texture_loader.c',
+                'SDL/hud/block_selector.c',
+                'SDL/hud.pyx'],
+        use=common_libraries,
+        target='SDL.hud')
+
+    bld(features='c cshlib pyext',
+        source=['SDL/input_functions.c',
+                'SDL/SDL_functions.c',
+                'SDL/input.pyx'],
+        use=common_libraries,
+        target='SDL.input')
+
+    bld(features='c cshlib pyext',
+        source=['cube_lib/t_vbo.c',
+                'cube_lib/t_viz.c',
+                'cube_lib/terrain_map.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='cube_lib.terrain_map')
+
+    bld(features='c cshlib pyext',
+        source=['vox_lib/vox_functions.c',
+                'vox_lib/vox_lib.pyx'],
+        use=common_libraries,
+        target='vox_lib')
+
+    # c_lib
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/_ray_trace.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.ray_trace')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/init_c_lib.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='init_c_lib')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_objects.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_objects')
+
+    bld.install_as('./c_lib.dll', 'c_lib.dll')
+
+    targets = ['SDL.gl.pyd',
+               'SDL.hud.pyd',
+               'SDL.input.pyd',
+               'cube_lib.terrain_map.pyd',
+               'vox_lib.pyd',
+               'c_lib.ray_trace.pyd',
+               'init_c_lib.pyd',
+               'c_lib.c_lib_objects.pyd']
+
+    for target in targets:
+        dest_target = target
+        dot_count = target.count('.')
+        if dot_count > 1:
+            dest_target = target.replace('.', '/', dot_count - 1)
+
+        bld.install_as('./ext/' + dest_target, target)
+
+    bld.add_post_fun(make_dest_modules)
+
+
+def make_dest_modules(ctx):
+    import os
+    import os.path
+
+    for root, dirs, files in os.walk('./ext/'):
+        with open(os.path.join(root, '__init__.py'), 'wb') as f:
+            f.close()
+    

@@ -8,7 +8,7 @@ import platform
 #will compile a module called SDL in netclient directory
 #python linux_SDL_setup.py build_ext --inplace
 
-SYSTEM=platform.system()
+OS=platform.system()
 
 SDL_CFLAGS=""
 SDL_LDFLAGS=""
@@ -28,12 +28,10 @@ extra_compile_args=[SDL_CFLAGS]
 extra_link_args=[SDL_LDFLAGS]
 
 libraries=['SDL', 'SDL_image']
-import os
 
-OS = os.uname()[0]
 print "Platform: %s" %(OS)
 
-if SYSTEM == 'Windows':
+if OS == 'Windows':
     #libraries+=['GLee','opengl32','glu32', 'GLEW',] # 'mega']
     libraries+=['opengl32','glu32', 'GLEW',]
     include_dirs = ['/usr/include/SDL']
@@ -73,8 +71,8 @@ debug = 1
 
 if OS != "Darwin":
     print "Compiling Shared Libraries"
-    #comp = UnixCCompiler(verbose=1, force=1)
-    comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
+    comp = UnixCCompiler(verbose=1, force=1)
+    #comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
     s_lib=[]
 
     comp.set_include_dirs(include_dirs)
@@ -109,8 +107,8 @@ if OS != "Darwin":
 else:
     print "Compiling Shared Libraries"
     print "Super OSX Build Process"
-    #comp = UnixCCompiler(verbose=True, force=True)
-    comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
+    comp = UnixCCompiler(verbose=True, force=True)
+    #comp = distutils.ccompiler.new_compiler(verbose=1, force=1)
     s_lib=[]
 
     #comp.set_include_dirs(include_dirs)

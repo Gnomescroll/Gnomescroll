@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <compat.h>
+
 // cube properties
 
 #define max_cubes 1024
