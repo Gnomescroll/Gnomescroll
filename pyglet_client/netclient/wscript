@@ -74,17 +74,24 @@ def configure(conf):
     #    conf.env.INCLUDES += ["/Library/Frameworks/SDL_image.framework/Headers", "/Library/Frameworks/SDL.framework/Headers"]
 
     conf.check(header_name='SDL.h',
-               includes=i2,
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=False)
 
-    conf.check(header_name='SDL_image.h',
+    if OS != 'Darwin':
+        conf.check(header_name='SDL_image.h',
                lib='SDL_image',
                use='SDL',
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=False)
+    else:
+        conf.check(header_name='SDL_image.h',
+               lib='SDL_image',
+               use='SDL',
+               uselib_store='SDL_image',
+               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
 
     conf.env.INCLUDES += ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
     conf.env.RPATH = ['.', '..', './ext/']
