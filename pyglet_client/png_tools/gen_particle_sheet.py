@@ -13,7 +13,7 @@ sprites = [
 ('laser3.png', 18),
 ('laser4.png', 19),
 ('laser5.png', 20),
-
+('fire1.png', 21),
 #neutron
 
 ('neutron/blue/1.png', 48),

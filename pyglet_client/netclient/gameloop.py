@@ -241,19 +241,23 @@ class App(object):
                     _type=0
                     c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 #if True or _i % 15 == 0:
-                for _j_ in range(0,4):
+                for _j_ in range(0,1):
                     v = 3
-                    x = v*(random.random() -0.5)
-                    y = v*(random.random() -0.5)
-                    z = -3.5 #v*(random.random() -0.5)
-                    le = math.sqrt(x**2+y**2+z**2)
-                    x *= v / le
-                    y *= v / le
-                    z *= v / le
+                    x = 32+ 16*random.random()
+                    y = 32+ 16*random.random()
+                    z = 40
+
+                    vx = v*(random.random() -0.5)
+                    vy = v*(random.random() -0.5)
+                    vz = -3.5 #v*(random.random() -0.5)
+                    le = math.sqrt(vx**2+vy**2+vz**2)
+                    #vx *= vx / le
+                    #vy *= vy / le
+                    #vz *= vz / le
                     #_type = random.randint(0,9*3)
                     _type=1
                     #c_lib.c_lib_objects._create_cspray( _type, 0,0,10, 0,0,2)
-                    c_lib.c_lib_objects._create_cspray( _type,40.5,40.5,40.0, x,y,4)
+                    c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
                 tc += 1
                 P.event("process_events")
                 SDL.input.process_events()

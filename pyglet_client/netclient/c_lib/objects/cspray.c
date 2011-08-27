@@ -114,7 +114,7 @@ void cspray_draw() {
     float size = 0.3;
     float up[3] = {a[0]*size, a[4]*size, a[8]*size};
     float right[3] = {a[1]*size, a[5]*size, a[9]*size};
-    int id = 5;
+    int id;
 
     float tx_min, tx_max, ty_min, ty_max;
 
@@ -138,7 +138,7 @@ void cspray_draw() {
         _c++;
         g = cspray_list[i];
         //draw setup
-        id = 0;
+        id = 21;
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
