@@ -296,10 +296,10 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     return ri4;
 }
 
-inline int collision_check2(int x, int y, int z, int* tile) {
+inline int collision_check2(int x, int y, int z) {
     //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
-    *tile = _get(x,y,z);
-    return isActive(*tile);
+    int tile = _get(x,y,z);
+    return isActive(tile);
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
@@ -354,7 +354,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
             if(cx >= bsize) {
                 cx -= bsize;
                 x += cdx;
-                if(collision_check2(x,y,z, tile)) {
+                if(collision_check2(x,y,z)) {
                     ri4[0] = cdx;
                     break;
                 }
@@ -362,7 +362,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
             if(cy >= bsize) {
                 cy -= bsize;
                 y += cdy;
-                if(collision_check2(x,y,z, tile)) {
+                if(collision_check2(x,y,z)) {
                     ri4[1] = cdy;
                     break;
                 }
@@ -371,7 +371,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 //printf("z decrease\n");
                 cz -= bsize;
                 z += cdz;
-                if(collision_check2(x,y,z, tile)) {
+                if(collision_check2(x,y,z)) {
                     ri4[2] = cdz;
                     break;
                 }
@@ -382,6 +382,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     //printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
     //}
     collision[0]=x;collision[1]=y;collision[2]=z;
+    *tile = _get(x,y,z);
     *interval = (float)(i) / max_i;
     return ri4;
 }
