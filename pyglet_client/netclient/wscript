@@ -75,7 +75,7 @@ def configure(conf):
     conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=False)
+               mandatory=True)
 
 
     conf.check(header_name='SDL_image.h',
