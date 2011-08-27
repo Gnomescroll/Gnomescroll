@@ -22,7 +22,7 @@ struct Vertex {
 };
 
 
-int v_set[3*8] = {
+int _v_set[3*8] = {
         0,0,0,
         1,0,0,
         1,1,0,
@@ -33,7 +33,7 @@ int v_set[3*8] = {
         0,1,1 };
 
 /*
-int q_set[4*6]= {
+int _q_set[4*6]= {
     4,5,6,7,   //top (z=1)
     0,1,2,3,   //bottom (z=0)
     1,5,9,10,  //north (y=1)
@@ -43,7 +43,7 @@ int q_set[4*6]= {
     };
 */
 
-int q_set[4*6]= {
+int _q_set[4*6]= {
         4,5,6,7,
         3,2,1,0,
         2,3,7,6,
@@ -148,7 +148,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
         vlist[i].x = 0;
         vlist[i].y = 0;
         vlist[i].z = 0;
-        if(v_set[3*i+0] == 1) {
+        if(_v_set[3*i+0] == 1) {
             vlist[i].x += xi*vl->n[0].x;
             vlist[i].y += xi*vl->n[0].y;
             vlist[i].z += xi*vl->n[0].z;
@@ -157,7 +157,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
             vlist[i].y += (xi+1)*vl->n[0].y;
             vlist[i].z += (xi+1)*vl->n[0].z;
         }
-        if(v_set[3*i+1] == 1) {
+        if(_v_set[3*i+1] == 1) {
             vlist[i].x += yi*vl->n[1].x;
             vlist[i].y += yi*vl->n[1].y;
             vlist[i].z += yi*vl->n[1].z;
@@ -166,7 +166,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
             vlist[i].y += (yi+1)*vl->n[1].y;
             vlist[i].z += (yi+1)*vl->n[1].z;
         }
-        if(v_set[3*i+2] == 1) {
+        if(_v_set[3*i+2] == 1) {
             vlist[i].x += zi*vl->n[2].x;
             vlist[i].y += zi*vl->n[2].y;
             vlist[i].z += zi*vl->n[2].z;
@@ -187,14 +187,14 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     for(i=0; i<6;i++) {
                 glColor3ub(voi.r, voi.g, voi.b);
 
-                glVertex3f(vlist[q_set[4*i+0]].x,vlist[q_set[4*i+0]].y,vlist[q_set[4*i+0]].z);
+                glVertex3f(vlist[_q_set[4*i+0]].x,vlist[_q_set[4*i+0]].y,vlist[_q_set[4*i+0]].z);
                 //glTexCoord2i( 1, 0 );
-                glVertex3f(vlist[q_set[4*i+1]].x,vlist[q_set[4*i+1]].y,vlist[q_set[4*i+1]].z);
+                glVertex3f(vlist[_q_set[4*i+1]].x,vlist[_q_set[4*i+1]].y,vlist[_q_set[4*i+1]].z);
                 //glTexCoord2i( 1, 1 );
-                glVertex3f(vlist[q_set[4*i+2]].x,vlist[q_set[4*i+2]].y,vlist[q_set[4*i+2]].z);
+                glVertex3f(vlist[_q_set[4*i+2]].x,vlist[_q_set[4*i+2]].y,vlist[_q_set[4*i+2]].z);
                 //glTexCoord2i( 0, 1 );
-                glVertex3f(vlist[q_set[4*i+3]].x,vlist[q_set[4*i+3]].y,vlist[q_set[4*i+3]].z);
-                vt = &vlist[q_set[4*i+j]];
+                glVertex3f(vlist[_q_set[4*i+3]].x,vlist[_q_set[4*i+3]].y,vlist[_q_set[4*i+3]].z);
+                vt = &vlist[_q_set[4*i+j]];
     }
 
     return 0;
@@ -413,7 +413,7 @@ int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, floa
 int _raw_ray_cast_tracer(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle) {
     float x1,y1,z1;
     float s;
-    
+
     //printf("x_angle, y_angle = %f, %f \n", x_angle, y_angle);
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
