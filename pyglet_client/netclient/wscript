@@ -55,6 +55,10 @@ def configure(conf):
         conf.check_cfg(path='echo', args="'-I/Library/Frameworks/SDL.framework/Headers'", package='', uselib_store='SDL')
         #hack to add -I/Library/Frameworks/SDL.framework/Headers to include
 
+    conf.env.INCLUDES = []
+    if OS == 'Darwin':
+        conf.env.INCLUDES += ["/Library/Frameworks/SDL_image.framework/Headers", "/Library/Frameworks/SDL.framework/Headers"]
+
     conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
@@ -67,8 +71,9 @@ def configure(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
 
-    conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
+    conf.env.INCLUDES += ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
     conf.env.RPATH = ['.', '..', './ext/']
+
 
 
 def build(bld):
