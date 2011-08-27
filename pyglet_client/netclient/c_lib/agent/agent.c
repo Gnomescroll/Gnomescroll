@@ -22,7 +22,7 @@ struct Agent_state* get_agent(int id) {
 
 void agent_Tick(struct Agent_state* g) {
     g->xangle += 0.01;
-    g->yangle = 0.0; //0.35;
+    g->yangle += 0.005; //0.35;
 }
 
 void agent_tick() {
@@ -84,12 +84,19 @@ void agent_Draw(struct Agent_state* g) {
 void agent_draw() {
     struct Agent_state* g = NULL;
     int i;
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
     for(i=0; i<1024; i++) {
         if(Agent_list[i] != NULL) {
             g = Agent_list[i];
             agent_Draw(g);
         }
     }
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
 }
 
 

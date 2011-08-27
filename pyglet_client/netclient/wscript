@@ -30,7 +30,7 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_c python cython')
-    conf.check_python_version((2,7,0))
+    conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
     conf.cc_add_flags()
@@ -166,11 +166,11 @@ def ensure_dir(path):
         os.makedirs(path)
     except OSError, e:
         if e.errno != errno.EEXIST:
-        	raise
+            raise
 
 
 def make_dest_modules(ctx):
     for root, dirs, files in os.walk('./ext/'):
         with open(os.path.join(root, '__init__.py'), 'wb') as f:
             f.close()
-    
+

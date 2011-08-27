@@ -148,8 +148,9 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 
     float x0, y0, z0;
 
-    glBegin(GL_QUADS);
+    int i1, j1;
     //glBegin(GL_POINTS);
+    glBegin(GL_QUADS);
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
     for(k= -v->zdim/2; k < v->zdim/2; k++) {
@@ -161,19 +162,40 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
     y0 = c.y + vos*(i*vx.y + j*vy.y + k*vz.y);
     z0 = c.z + vos*(i*vx.z + j*vy.z + k*vz.z);
 
-    for(i=0; i<6; i++) {
-        for(j=0; j<4; j++){
-            glVertex3f(x0 + s_buffer[12*i+3*j+0], y0+ s_buffer[12*i+3*j+1], z0+ s_buffer[12*i+3*j+2]);
+    //printf("%f, %f, %f \n", x0,y0,z0);
+    //printf("%i,%i,%i \n", i,j,k);
 
-            /*
-            glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
-            glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
-            glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
-            glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
-            */
+
+    //glBegin(GL_POINTS);
+    //    glVertex3f(x0,y0,z0);
+    //glEnd();
+
+    for(i1=0; i1<6; i1++) {
+        for(j1=0; j1<4; j1++){
+            //glVertex3f(x0+ s_buffer[12*i1+3*j1+0], y0+ s_buffer[12*i1+3*j1+1], z0+ s_buffer[12*i1+3*j1+2]);
         }
+            glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
+            glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
+            glVertex3f(x0 + s_buffer[12*i1+3*2+0], y0+ s_buffer[12*i1+3*2+1], z0+ s_buffer[12*i1+3*2+2]);
+            glVertex3f(x0 + s_buffer[12*i1+3*3+0], y0+ s_buffer[12*i1+3*3+1], z0+ s_buffer[12*i1+3*3+2]);
     }
 
+/*
+    for(_i=0; _i<6; _i++) {
+        for(_j=0; _j<4; _j++){
+
+        //glBegin(GL_QUADS);
+        //    glVertex3f(x0 + s_buffer[12*_i+3*_j+0], y0+ s_buffer[12*_i+3*_j+1], z0+ s_buffer[12*_i+3*_j+2]);
+        //glEnd();
+
+            glVertex3f(x0 + s_buffer[12*_i+3*0+0], y0+ s_buffer[12*_i+3*0+1], z0+ s_buffer[12*_i+3*0+2]);
+            glVertex3f(x0 + s_buffer[12*_i+3*1+0], y0+ s_buffer[12*_i+3*1+1], z0+ s_buffer[12*_i+3*1+2]);
+            glVertex3f(x0 + s_buffer[12*_i+3*2+0], y0+ s_buffer[12*_i+3*2+1], z0+ s_buffer[12*_i+3*2+2]);
+            glVertex3f(x0 + s_buffer[12*_i+3*3+0], y0+ s_buffer[12*_i+3*3+1], z0+ s_buffer[12*_di+3*3+2]);
+
+        }
+    }
+*/
     //glVertex3f(x0,y0,z0);
 
     }}}
