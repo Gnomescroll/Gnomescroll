@@ -131,6 +131,11 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_map_gen.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.map_gen')
+
     bld(features='c cprogram pyembed',
         use=common_libraries,
         source='run.c',
@@ -163,7 +168,9 @@ def install_in_ext(ctx):
                'vox_lib',
                'c_lib.ray_trace',
                'init_c_lib',
-               'c_lib.c_lib_objects']
+               'c_lib.c_lib_objects',
+               'c_lib.map_gen'
+               ]
 
     for target in targets:
         dest_path = target.replace('.', '/')

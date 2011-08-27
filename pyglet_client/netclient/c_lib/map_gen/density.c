@@ -1,26 +1,26 @@
 #include "density.h"
 
 struct Map_e {
-    float density = 0;
+    float density;
 
-}
+};
 
 struct Map_e* map_e;
 
-int me_xdim 64;
-int me_ydim 64;
-int me_zdim 32;
+int me_xdim = 64;
+int me_ydim = 64;
+int me_zdim = 32;
 int me_n;
 
 int map_gen_density_active = 1;
 
 void init_map_gen_density() {
     if(map_gen_density_active == 0) return;
-    map_e = (struct Map_e ) malloc(me_xdim*me_ydim*me_zdim*sizeof(struct Map_e));
+    map_e = (struct Map_e* ) malloc(me_xdim*me_ydim*me_zdim*sizeof(struct Map_e));
     me_n = me_xdim*me_ydim*me_zdim;
     int i;
-    for(i=0; i< me_t; i++ ) {
-        map_e[i].density = 0
+    for(i=0; i< me_n; i++ ) {
+        map_e[i].density = 0;
     }
     printf("map_gen_density init finished\n");
 }
@@ -30,9 +30,9 @@ srand(15); //seed
 _vx = (float)rand()/(float)RAND_MAX;
 */
 
-#dim kernel_dim 8
+#define kernel_dim 8
 
-inline float map_kernel_function(int x, int y, int z) {
+inline float map_kernel_function1(int x, int y, int z) {
     int i,j,k;
     int c= 0;
     int tile;
@@ -58,7 +58,7 @@ void compute_density_map() {
     for(i=0; i<me_xdim; i++) {
     for(j=0; j<me_ydim; j++) {
     for(k=0; k<me_zdim; k++) {
-        map_e[i+ j*me_xdim + k*me_xdim*me_ydim].density = map_kernel_function(i,j,k);
+        map_e[i+ j*me_xdim + k*me_xdim*me_ydim].density = map_kernel_function1(i,j,k);
     }}}
 
 }
@@ -72,7 +72,7 @@ void map_density_visualize(int density, float min, float max) {
     for(i=0; i<me_xdim; i+= density) {
     for(j=0; j<me_ydim; j+= density) {
     for(k=0; k<me_zdim; k+= density) {
-        d = map_e[i+ j*me_xdim + k*me_xdim*me_ydim].density
+        d = map_e[i+ j*me_xdim + k*me_xdim*me_ydim].density;
         if(d < max && d > min) {
             x = i + 0.5;
             y = j + 0.5;

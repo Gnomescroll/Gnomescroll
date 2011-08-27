@@ -19,6 +19,7 @@ _ray_trace.c
 init_c_lib.c
 c_lib_objects.c
 input.c
+c_lib_map_gen.c
 
 Safe Browsing Bloom
 Safe Browsing Bloom Filter 2

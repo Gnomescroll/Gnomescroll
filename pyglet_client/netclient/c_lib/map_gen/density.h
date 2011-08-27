@@ -17,4 +17,7 @@
 #include <t_map/t_properties.h>
 
 void init_map_gen_density();
+void compute_density_map();
+void map_density_visualize(int density, float min, float max);
+
 #endif
