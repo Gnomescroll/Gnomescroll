@@ -53,7 +53,7 @@ def configure(conf):
     if OS == 'Linux':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
     elif OS == 'Darwin':
-        f2 = ['/Library/Frameworks/SDL_image.framework',
+        f2 = ['/Library/Frameworks/SDL.framework',
             '/Library/Frameworks/SDL_image.framework',
             '/Library/Frameworks']
 
@@ -61,8 +61,6 @@ def configure(conf):
 
         #conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
         #conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
-        #conf.check_cfg(path='echo', args="'-I/Library/Frameworks/SDL.framework/Headers'", package='', uselib_store='SDL')
-        #hack to add -I/Library/Frameworks/SDL.framework/Headers to include
 
     #conf.env.INCLUDES = []
     #if OS == 'Darwin':
