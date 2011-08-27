@@ -46,14 +46,19 @@ def configure(conf):
     elif OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
-        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL', 'SDL', 'SDL_image'], uselib_store='GL')
+        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL',], uselib_store='GL')
 
     #if OS != 'Windows':
     if OS == 'Linux':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
     elif OS == 'Darwin':
-        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+        f2 = ['/Library/Frameworks/SDL_image.framework',
+            '/Library/Frameworks/SDL_image.framework',
+            '/Library/Frameworks']
+        conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, uselib_store='SDL')
+
+        #conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
         #conf.check_cfg(path='echo', args="'-I/Library/Frameworks/SDL.framework/Headers'", package='', uselib_store='SDL')
         #hack to add -I/Library/Frameworks/SDL.framework/Headers to include
 
