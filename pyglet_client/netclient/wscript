@@ -39,6 +39,12 @@ def configure(conf):
     OS = platform.system()
     conf.env.os = OS
 
+    #conf.env.ARCH = ['i386']
+    if OS == 'Darwin':
+        conf.env.ARCH = ['i386']
+        conf.env.FRAMEWORK = ['SDL', 'SDL_image',]
+        conf.env.FRAMEWORKPATH = ['/Library/Frameworks']
+
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':
