@@ -16,4 +16,5 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
+void init_map_gen_density();
 #endif
