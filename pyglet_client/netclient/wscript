@@ -56,8 +56,8 @@ def configure(conf):
         f2 = ['/Library/Frameworks/SDL_image.framework',
             '/Library/Frameworks/SDL_image.framework',
             '/Library/Frameworks']
-        conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
-
+        #conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
+        check.check(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
         #conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
         #conf.check_cfg(path='echo', args="'-I/Library/Frameworks/SDL.framework/Headers'", package='', uselib_store='SDL')
         #hack to add -I/Library/Frameworks/SDL.framework/Headers to include
