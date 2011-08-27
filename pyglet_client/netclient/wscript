@@ -77,15 +77,8 @@ def configure(conf):
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=False)
 
-    if OS != 'Darwin':
-        conf.check(header_name='SDL_image.h',
-               lib='SDL_image',
-               use='SDL',
-               uselib_store='SDL_image',
-               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
-    else:
-        conf.check(header_name='SDL_image.h',
+
+    conf.check(header_name='SDL_image.h',
                lib='SDL_image',
                use='SDL',
                uselib_store='SDL_image',
