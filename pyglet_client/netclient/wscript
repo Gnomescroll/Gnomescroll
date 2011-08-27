@@ -57,7 +57,8 @@ def configure(conf):
         f2 = ['/Library/Frameworks']
         i2 = ['/Library/Frameworks/SDL.framework/Headers/',
             '/Library/Frameworks/SDL_image.framework/Headers/',]
-        conf.check(lib=['GLEW'], framework=['SDL', 'SDL_image',], frameworkpath= f2, includes=i2, uselib_store='SDL')
+        i2 = []
+        conf.check(lib=['GLEW'], framework= ['SDL', 'SDL_image',], frameworkpath= f2, includes=i2, uselib_store='SDL')
 
         #conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
         #conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
