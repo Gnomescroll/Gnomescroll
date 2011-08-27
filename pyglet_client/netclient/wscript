@@ -71,14 +71,14 @@ def configure(conf):
                includes=i2,
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
+               mandatory=False)
 
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
                use='SDL',
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
+               mandatory=False)
 
     conf.env.INCLUDES += ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
     conf.env.RPATH = ['.', '..', './ext/']
