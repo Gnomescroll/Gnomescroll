@@ -68,12 +68,16 @@ def configure(conf):
 
 
 def build(bld):
+    ### AGR!?
+    OS = platform.system()
+    conf.env.os = OS
     if OS == 'Windows':
         common_libraries = ['GL', 'SDL', 'SDL_image']
     elif OS == 'Linux':
         common_libraries = ['GL', 'SDL', 'SDL_image']
     elif OS == 'Darwin':
         common_libraries = ['GL']
+    ###
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
