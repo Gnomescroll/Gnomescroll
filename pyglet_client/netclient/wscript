@@ -1,4 +1,3 @@
-
 APPNAME = 'gnomescroll_client'
 VERSION = '0.1'
 
@@ -33,21 +32,11 @@ def configure(conf):
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
-    conf.cc_add_flags() #cc_add_flags
+    conf.cc_add_flags()
     conf.link_add_flags()
 
     OS = platform.system()
     conf.env.os = OS
-
-    #conf.env.ARCH = ['i386']
-    '''
-    if OS == 'Darwin':
-        conf.env.ARCH = ['i386']
-        conf.env.FRAMEWORK = ['SDL', 'SDL_image',]
-        conf.env.FRAMEWORKPATH = ['/Library/Frameworks']
-    '''
-    #if OS == 'Darwin':
-    #    conf.env.ARCH = ['x86_64']
 
     conf.check(header_name='GL/glew.h', mandatory=True)
 
@@ -56,27 +45,15 @@ def configure(conf):
     elif OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
-        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL',], uselib_store='GL')
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
 
-    #if OS != 'Windows':
-    if OS == 'Linux':
-        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
-    elif OS == 'Darwin':
-        pass
-        #f2 = ['/Library/Frameworks']
-        #i2 = ['/Library/Frameworks/SDL.framework/Headers/','/Library/Frameworks/SDL_image.framework/Headers/',]
-        #i2 = []
-        #conf.check(lib=['GLEW'], framework= ['SDL', 'SDL_image',], frameworkpath= f2, includes=i2, uselib_store='SDL')
-        #conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
-
+    if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
 
     conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-
 
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
@@ -85,27 +62,12 @@ def configure(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
 
-    conf.env.INCLUDES += ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
+    conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
     conf.env.RPATH = ['.', '..', './ext/']
-
-    #if OS == 'Darwin':
-    #    conf.env.ARCH = ['x86_64']
 
 
 def build(bld):
-    ### AGR!?
-    '''
-    OS = platform.system()
-    if OS == 'Windows':
-        common_libraries = ['GL', 'SDL', 'SDL_image']
-    elif OS == 'Linux':
-        common_libraries = ['GL', 'SDL', 'SDL_image']
-    elif OS == 'Darwin':
-        common_libraries = ['GL']
-    '''
-    ### Was originally
     common_libraries = ['GL', 'SDL', 'SDL_image']
-    ###
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
@@ -221,4 +183,3 @@ def make_dest_modules(ctx):
     for root, dirs, files in os.walk('./ext/'):
         with open(os.path.join(root, '__init__.py'), 'wb') as f:
             f.close()
-
