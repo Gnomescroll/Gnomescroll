@@ -64,13 +64,13 @@ _init_particle_functions() {
 //}
 
 c = _get_camera();
-
+/*
     if(c != NULL) {
         printf("Particle Function Camera: Camera not null \n");
     } else {
         printf("Particle Function Camera: Error: camera is null \n");
     }
-
+*/
 set_model_view_matrix(&a);
 
 surface=IMG_Load("./texture/particles_01.png");

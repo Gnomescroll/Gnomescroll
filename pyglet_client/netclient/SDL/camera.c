@@ -33,11 +33,13 @@ void _camera_projection( Camera c) {
 struct Camera* camera;
 
 int _set_camera(struct Camera* c) {
+    /*
     if(c != NULL) {
         printf("Set Camera: Camera not null \n");
     } else {
         printf("Set Camera: Error: camera is null \n");
     }
+    */
     //while(1);
     camera = c;
 }

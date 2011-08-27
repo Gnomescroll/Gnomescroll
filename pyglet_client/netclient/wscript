@@ -33,8 +33,8 @@ def configure(conf):
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
-    conf.cc_add_flags("-m32") #cc_add_flags
-    conf.link_add_flags("-m32")
+    conf.cc_add_flags() #cc_add_flags
+    conf.link_add_flags()
 
     OS = platform.system()
     conf.env.os = OS
