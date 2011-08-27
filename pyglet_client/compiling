@@ -1,6 +1,17 @@
-g++ -Wall -fPIC -c libChrome.c -I/usr/local/include -I /usr/include/X11/extensions/ -I/usr/include/SDL -I/usr/lib -I./include/ -I./ -o libChrome.o 
+Build system:
+./waf configure build
 
-g++ -shared -o libChrome.so libChrome.o -I./include/ -L. -lAwesomium -Wl,-rpath=./ 
+./waf --help
+./waf -j 4 #use 4 jobs, twice as fast
+
+<Ycros> ./waf --help
+<Ycros> -j JOBS, --jobs=JOBS  amount of parallel jobs (4)
+
+Misc:
+
+g++ -Wall -fPIC -c libChrome.c -I/usr/local/include -I /usr/include/X11/extensions/ -I/usr/include/SDL -I/usr/lib -I./include/ -I./ -o libChrome.o
+
+g++ -shared -o libChrome.so libChrome.o -I./include/ -L. -lAwesomium -Wl,-rpath=./
 
 gcc main.c -I/usr/include/python2.6/ -L/usr/include/python2.6 -lpython2.6 -o main
 gcc run.c -I/usr/include/python2.6/ -L/usr/include/python2.6 -lpython2.6 -o run
