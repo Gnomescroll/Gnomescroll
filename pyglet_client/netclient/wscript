@@ -46,18 +46,20 @@ def configure(conf):
     elif OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL', 'SDL', 'SDL_image'], uselib_store='GL')
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL', 'SDL', 'SDL_image'], uselib_store='GL')
 
     #if OS != 'Windows':
     if OS == 'Linux':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
     elif OS == 'Darwin':
-        conf.check_cfg(path='echo', args="'-I/Library/Frameworks/SDL.framework/Headers'", package='', uselib_store='SDL')
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+        #conf.check_cfg(path='echo', args="'-I/Library/Frameworks/SDL.framework/Headers'", package='', uselib_store='SDL')
         #hack to add -I/Library/Frameworks/SDL.framework/Headers to include
 
-    conf.env.INCLUDES = []
-    if OS == 'Darwin':
-        conf.env.INCLUDES += ["/Library/Frameworks/SDL_image.framework/Headers", "/Library/Frameworks/SDL.framework/Headers"]
+    #conf.env.INCLUDES = []
+    #if OS == 'Darwin':
+    #    conf.env.INCLUDES += ["/Library/Frameworks/SDL_image.framework/Headers", "/Library/Frameworks/SDL.framework/Headers"]
 
     conf.check(header_name='SDL.h',
                use='SDL',
@@ -74,10 +76,13 @@ def configure(conf):
     conf.env.INCLUDES += ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 
+    if OS == 'Darwin':
+        conf.env.ARCH = ['x86_64']
 
 
 def build(bld):
     ### AGR!?
+    '''
     OS = platform.system()
     if OS == 'Windows':
         common_libraries = ['GL', 'SDL', 'SDL_image']
@@ -85,9 +90,9 @@ def build(bld):
         common_libraries = ['GL', 'SDL', 'SDL_image']
     elif OS == 'Darwin':
         common_libraries = ['GL']
-    ###
+    '''
     ### Was originally
-    #common_libraries = ['GL', 'SDL', 'SDL_image']
+    common_libraries = ['GL', 'SDL', 'SDL_image']
     ###
 
     bld(features='c cshlib',
