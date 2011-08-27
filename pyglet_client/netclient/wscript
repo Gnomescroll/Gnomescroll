@@ -49,6 +49,7 @@ def configure(conf):
         #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
         conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL',], uselib_store='GL')
 
+    i2 = []
     #if OS != 'Windows':
     if OS == 'Linux':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
@@ -57,8 +58,7 @@ def configure(conf):
             '/Library/Frameworks/SDL_image.framework',
             '/Library/Frameworks']
         i2 = ['/Library/Frameworks/SDL.framework/Headers',
-            '/Library/Frameworks/SDL_image.framework/Headers',
-            '/Library/Frameworks/Headers']
+            '/Library/Frameworks/SDL_image.framework/Headers',]
         conf.check(lib=['GLEW'], framework=['SDL', 'SDL_image',], frameworkpath= f2, includes=i2, uselib_store='SDL')
 
         #conf.check_cfg(framework=['SDL', 'SDL_image',], frameworkpath= f2, package='', uselib_store='SDL')
@@ -69,6 +69,7 @@ def configure(conf):
     #    conf.env.INCLUDES += ["/Library/Frameworks/SDL_image.framework/Headers", "/Library/Frameworks/SDL.framework/Headers"]
 
     conf.check(header_name='SDL.h',
+               includes=i2,
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
@@ -83,8 +84,8 @@ def configure(conf):
     conf.env.INCLUDES += ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 
-    #if OS == 'Darwin':
-    #    conf.env.ARCH = ['x86_64']
+    if OS == 'Darwin':
+        conf.env.ARCH = ['x86_64']
 
 
 def build(bld):
