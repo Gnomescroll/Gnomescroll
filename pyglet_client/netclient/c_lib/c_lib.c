@@ -14,7 +14,11 @@
 #include "./agent/agent.c"
 #include "./agent/agent_vox.c"
 
+#include "./map_gen/density.c"
+
 //#include "./texture_loader.c"
+
+#define map_gen_enabled 1
 
 int init_c_lib() {
     printf("init c_lib\n");
@@ -22,5 +26,10 @@ int init_c_lib() {
     init_objects_neutron();
     init_objects_cspray();
     init_texture_loader();
+
+    if(map_gen_enabled == 1) {
+        init_map_gen_density();
+
+    }
     return 0;
 }

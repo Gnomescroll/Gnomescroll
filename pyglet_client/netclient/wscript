@@ -150,8 +150,11 @@ def install_in_ext(ctx):
     except IOError:
         pass
 
-    c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-    shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+    try:
+        c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
+        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+    except:
+        pass
 
     targets = ['SDL.gl',
                'SDL.hud',
@@ -167,7 +170,6 @@ def install_in_ext(ctx):
         dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
         ensure_dir(os.path.dirname(dest_path))
         shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-
     make_dest_modules(ctx)
 
 
