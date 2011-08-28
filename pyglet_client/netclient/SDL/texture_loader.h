@@ -1,15 +1,7 @@
 #ifndef texture_loader_h
 #define texture_loader_h
 
-#define NO_SDL_GLEXT
-#include <GL/glew.h>
-
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <SDL_image.h>
-//extern int x;'
-
-//#include "draw_functions.h"
+#include <compat_gl.h>
 
 typedef struct {
     int tex;

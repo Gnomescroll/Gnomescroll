@@ -1,17 +1,5 @@
-#define NO_SDL_GLEXT
-#include <GL/glew.h>
 
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-// #include <SDL_ttf.h>
-
-/*
-
-SDL_GL_SwapBuffers();
-//SwapBuffers();
-
-*/
+#include <compat_gl.h>
 
 int _xres = 800;
 int _yres = 600;

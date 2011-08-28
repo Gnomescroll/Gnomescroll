@@ -1,18 +1,13 @@
 #ifndef t_viz
 #define t_viz
 
+#include <compat_gl.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "t_vbo.h"
 
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-
-//    #include "t_properties.h"
-
-//#include "t_map.h"
 
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>

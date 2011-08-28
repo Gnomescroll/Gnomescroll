@@ -2,20 +2,8 @@
 #ifndef t_vbo
 #define t_vbo
 
-#ifdef linux
-    //do nothing
-#elif _WIN32
-    #include <windows.h>
-    #include <GL/glew.h>
-#else
-    //mac
-#endif
+#include <compat_gl.h>
 
-#define NO_SDL_GLEXT
-
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <SDL_image.h> //temp?
 #include <stdio.h>
 
 //#include "t_map.h"

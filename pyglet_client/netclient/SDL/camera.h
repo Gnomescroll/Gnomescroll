@@ -1,13 +1,7 @@
-#define NO_SDL_GLEXT
-#include <GL/glew.h>
-
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-#include <math.h>
-
 #ifndef camera_h
 #define camera_h
+
+#include <compat_gl.h>
 
 struct Camera {
 float fov;
