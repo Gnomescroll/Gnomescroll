@@ -4,6 +4,8 @@ syntax: glob
 *.pyd
 *.pyo
 
+run 
+
 terrain_map.c
 terrain_map2.c
 dat.c
