@@ -146,8 +146,8 @@ class AgentPhysics:
         bx_neg_current = floor(x-box_r)
         bx_neg_projected = floor(x+vx-box_r)
 
-        for bz in range(int(floor(z - b_height)), int(floor((z +t_height)+1)):
-            for by in range(int(floor(y-box_r)), int(floor((y+box_r)+1)):
+        for bz in range(int(floor(z - b_height)), int(floor((z +t_height)+1))):
+            for by in range(int(floor(y-box_r)), int(floor((y+box_r)+1))):
             #x+
                 if collisionDetection(bx_pos_current,by,bz):
                     xc_pos_current +=1
