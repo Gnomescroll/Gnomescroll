@@ -11,7 +11,7 @@
         #include <windows.h>
         #include <SDL.h>
         #include <GL/glew.h>
-    #elof __APPLE__
+    #elif __APPLE__
         //#define NO_SDL_GLEXT
         #include <GL/glew.h>
         #include <SDL.h>
