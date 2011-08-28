@@ -2,15 +2,7 @@
 #define c_lib_h
 
 #include "compat.h"
-
-#define NO_SDL_GLEXT
-#include <GL/glew.h>
-
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-#include <SDL_image.h> //temp?
-
+#include "compat_gl.h"
 
 int init_c_lib();
 GLint get_particle_sheet_id();
