@@ -104,7 +104,7 @@ void map_density_visualize(int density, float min, float max) {
         return;
     }
     glBegin(GL_POINTS);
-    glColor3ub((unsigned char)150,(unsigned char)150,(unsigned char)0);
+
     for(i=0; i<me_xdim; i++) {
     for(j=0; j<me_ydim; j++) {
     for(k=0; k<me_zdim; k++) {
@@ -112,6 +112,8 @@ void map_density_visualize(int density, float min, float max) {
         //printf("%i, %i, %i\n",i,j,k);
         d = MAPE[i+ j*me_xdim + k*me_xdim*me_ydim].density;
         if(d < max && d > min) {
+            glColor3ub((unsigned char)0,(unsigned char)64+191*d,(unsigned char)0);
+            //printf("%i \n", 64+191*d);
             c++;
             x = i + 0.5;
             y = j + 0.5;

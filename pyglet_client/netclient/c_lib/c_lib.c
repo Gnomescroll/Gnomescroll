@@ -18,7 +18,7 @@
 
 //#include "./texture_loader.c"
 
-#define map_gen_enabled 1
+#define map_gen_enabled 0
 
 int init_c_lib() {
     printf("init c_lib\n");
@@ -29,7 +29,6 @@ int init_c_lib() {
 
     if(map_gen_enabled == 1) {
         init_map_gen_density();
-
     }
 
     return 0;
