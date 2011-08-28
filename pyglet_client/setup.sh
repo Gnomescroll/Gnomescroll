@@ -20,4 +20,4 @@ python setup.py build_ext --inplace $@
 
 cd ../netclient
 echo 'building netclient libs'
-./waf -j 4
+./waf -j 4 build

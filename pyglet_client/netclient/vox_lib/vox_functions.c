@@ -138,8 +138,7 @@ int init7() {
 int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
     int i,j;
-    struct Vertex* vt;
-    //printf("t= %i \n", xi);
+    //struct Vertex* vt;
 
     if(voi.r == 0 && voi.g == 0 && voi.b == 0)
         return 0;
@@ -194,7 +193,7 @@ int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
                 glVertex3f(vlist[_q_set[4*i+2]].x,vlist[_q_set[4*i+2]].y,vlist[_q_set[4*i+2]].z);
                 //glTexCoord2i( 0, 1 );
                 glVertex3f(vlist[_q_set[4*i+3]].x,vlist[_q_set[4*i+3]].y,vlist[_q_set[4*i+3]].z);
-                vt = &vlist[_q_set[4*i+j]];
+                //vt = &vlist[_q_set[4*i+j]];
     }
 
     return 0;
