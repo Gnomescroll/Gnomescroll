@@ -37,7 +37,7 @@ if True:
     #SDL.gl.init_particles()
     import init_c_lib
     import c_lib.c_lib_objects
-
+    import c_lib.c_lib_map_gen
     P2 = cube_lib.terrain_map.Profiler()
 
 ##profiler
@@ -214,8 +214,17 @@ class App(object):
             P.start_frame()
             tc = 0
             P.event("Physics Tick")
+
+            _density = 1
+            _min = 0.1
+            _max = 0.9
+            #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
+            c_lib.c_lib_map_gen._update_density_map(500)
             while Phy.sync():
                 _i+=1
+                #if _i % 2 == 0:
+                #    c_lib.c_lib_map_gen._update_density_map(1000)
+
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50)
                 if False or _i % 15 == 0:
@@ -292,6 +301,7 @@ class App(object):
             v2.draw()
 
             P.event("Draw Terrain")
+            c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             cube_lib.terrain_map.draw_terrain()
             self.world.draw(first_person)
             self.animations.draw()

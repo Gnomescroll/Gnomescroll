@@ -14,7 +14,7 @@
 #include "./agent/agent.c"
 #include "./agent/agent_vox.c"
 
-#include "./map_gen/density.c"
+#include "./map_gen/density.h"
 
 //#include "./texture_loader.c"
 
@@ -31,5 +31,6 @@ int init_c_lib() {
         init_map_gen_density();
 
     }
+
     return 0;
 }

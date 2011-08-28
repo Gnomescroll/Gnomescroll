@@ -81,3 +81,17 @@ def _create_agent(float x, float y, float z):
 def _set_agent_state(int id, float xangle, float yangle):
     set_agent_state(id, xangle, yangle)
 
+### map gen
+'''
+cdef extern from "./map_gen/density.h":
+    void init_map_gen_density()
+    void compute_density_map()
+    void map_density_visualize(int density, float min, float max)
+
+
+def _compute_density_map():
+    compute_density_map()
+
+def _map_density_visualize(int density, float min, float max):
+    map_density_visualize(density, min, max)
+'''

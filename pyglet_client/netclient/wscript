@@ -32,8 +32,8 @@ def configure(conf):
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
-    conf.cc_add_flags()
-    conf.link_add_flags()
+    conf.cc_add_flags()     #"-g"
+    conf.link_add_flags()   #"-g"
 
     OS = platform.system()
     conf.env.os = OS
@@ -71,7 +71,8 @@ def build(bld):
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
-                'c_lib/texture_loader.c'],
+                'c_lib/texture_loader.c',
+                'c_lib/map_gen/density.c'],
         use=common_libraries,
         target='c_lib')
 
@@ -134,7 +135,8 @@ def build(bld):
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_map_gen.pyx'],
         use=common_libraries + ['c_lib'],
-        target='c_lib.map_gen')
+        target='c_lib.c_lib_map_gen')
+
 
     bld(features='c cprogram pyembed',
         use=common_libraries,
@@ -153,13 +155,13 @@ def install_in_ext(ctx):
         run_target = ctx.env.cprogram_PATTERN % 'run'
         shutil.copy2(os.path.join(out, run_target), './' + run_target)
     except IOError:
-        pass
+        print "Error: cannot copy %s to %s" % (run_target, os.path.join(out, run_target))
 
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
-        pass
+        print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = ['SDL.gl',
                'SDL.hud',
@@ -169,7 +171,7 @@ def install_in_ext(ctx):
                'c_lib.ray_trace',
                'init_c_lib',
                'c_lib.c_lib_objects',
-               'c_lib.map_gen'
+               'c_lib.c_lib_map_gen',
                ]
 
     for target in targets:
