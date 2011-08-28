@@ -178,7 +178,10 @@ def install_in_ext(ctx):
         dest_path = target.replace('.', '/')
         dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
         ensure_dir(os.path.dirname(dest_path))
-        shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        try:
+            shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        except:
+            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
 
