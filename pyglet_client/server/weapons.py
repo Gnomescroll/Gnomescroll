@@ -17,7 +17,6 @@ class WeaponList(GenericMultiObjectList):
             BlockApplier,
             HitscanLaserGun,
             GrenadePouch,
-            GrenadePouch_C,
         ])
         
 class Weapon(EquippableObject):
@@ -38,17 +37,6 @@ class Weapon(EquippableObject):
         self.id = id
         self.owner = owner
         self._set_type()
-
-        #self.max_ammo = self.get_dat('max_ammo')
-        #self.ammo = self.get_dat('ammo')
-        #self.clip_size = self.get_dat('clip_size')
-        #self.clip = self.get_dat('clip')
-        #self.base_damage = self.get_dat('base_damage')
-        #self.automatic = self.get_dat('automatic')
-        #self.hitscan = self.get_dat('hitscan')
-        #self.reload_speed = self.get_dat('reload_speed')
-        #self.firing_rate = self.get_dat('firing_rate')
-
         self.dat.apply(self)
 
         self.fire_command = ''
@@ -188,12 +176,5 @@ class GrenadePouch(Weapon):
         else:
             d.update(filter_props(self, properties))
         return d
-
-
-class GrenadePouch_C(GrenadePouch):
-
-    def __init__(self, id, owner=None, **kwargs):
-        GrenadePouch.__init__(self, id, owner)
-        self.fire_command = 'throw_grenade_c'
 
 from net_out import NetOut
