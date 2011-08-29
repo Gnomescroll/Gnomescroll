@@ -1,4 +1,8 @@
 #!/usr/bin/python
+
+import sys
+sys.path.insert(0, './c_lib/')
+
 import args_server
 import opts
 opts.opts = args_server.get_args()

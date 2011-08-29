@@ -1,0 +1,207 @@
+APPNAME = 'gnomescroll_server'
+VERSION = '0.1'
+
+top = '.'
+out = 'build'
+
+import errno
+import os
+import os.path
+import platform
+import shutil
+import subprocess
+
+
+SDL_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
+
+def _grab_output(*cmd):
+    return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+
+
+def options(opt):
+    opt.load('compiler_c python cython')
+
+
+def configure(conf):
+    conf.load('compiler_c python cython')
+    conf.check_python_version((2,6,0))
+    conf.check_python_headers()
+
+    conf.cc_add_flags()     #"-g"
+    conf.link_add_flags()   #"-g"
+
+    conf.env.CFLAGS = ['-g'] # use '-O2' or '-O3' in distro build
+
+    OS = platform.system()
+    conf.env.os = OS
+
+    #conf.check(header_name='GL/glew.h', mandatory=True)
+
+    #if OS == 'Windows':
+        #conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
+    #elif OS == 'Linux':
+        #conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
+    #elif OS == 'Darwin':
+        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+
+    if OS != 'Windows':
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+
+    conf.check(header_name='SDL.h',
+               use='SDL',
+               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+
+    #conf.check(header_name='SDL_image.h',
+               #lib='SDL_image',
+               #use='SDL',
+               #uselib_store='SDL_image',
+               #fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               #mandatory=True)
+
+    #conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
+    conf.env.INCLUDES = ['c_lib', 'cube_lib']
+    conf.env.RPATH = ['.', '..', './ext/']
+
+    #if OS == 'Darwin':
+    #    conf.env.ARCH = ['x86_64']
+
+def build(bld):
+    #common_libraries = ['GL', 'SDL', 'SDL_image']
+    common_libraries = ['SDL']
+
+    bld(features='c cshlib',
+        source=['c_lib/c_lib.c',
+             #   'c_lib/texture_loader.c',
+            #    'c_lib/map_gen/density.c',
+            ],
+        use=common_libraries,
+        target='c_lib')
+
+    #bld(features='c cshlib pyext',
+        #source=['SDL/SDL_functions.c',
+                #'SDL/camera.c',
+                #'SDL/draw_functions.c',
+                #'SDL/texture_loader.c',
+                #'SDL/particle_functions.c',
+                #'SDL/gl.pyx'],
+        #use=common_libraries,
+        #target='SDL.gl')
+
+    #bld(features='c cshlib pyext',
+        #source=['SDL/SDL_text.c',
+                #'SDL/draw_functions.c',
+                #'SDL/texture_loader.c',
+                #'SDL/hud/block_selector.c',
+                #'SDL/hud.pyx'],
+        #use=common_libraries,
+        #target='SDL.hud')
+
+    #bld(features='c cshlib pyext',
+        #source=['SDL/input_functions.c',
+                #'SDL/SDL_functions.c',
+                #'SDL/input.pyx'],
+        #use=common_libraries,
+        #target='SDL.input')
+
+    #bld(features='c cshlib pyext',
+        #source=['cube_lib/t_vbo.c',
+                #'cube_lib/t_viz.c',
+                #'cube_lib/terrain_map.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='cube_lib.terrain_map')
+
+    #bld(features='c cshlib pyext',
+        #source=['vox_lib/vox_functions.c',
+                #'vox_lib/vox_lib.pyx'],
+        #use=common_libraries,
+        #target='vox_lib')
+
+    # c_lib
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/_ray_trace.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.ray_trace')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/init_c_lib.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='init_c_lib')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_objects.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_objects')
+
+    #bld(features='c cshlib pyext',
+        #source=['c_lib/c_lib_map_gen.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='c_lib.c_lib_map_gen')
+
+
+    #bld(features='c cprogram pyembed',
+        #use=common_libraries,
+        #source='run.c',
+        #target='run')
+
+    bld.add_post_fun(install_in_ext)
+
+
+def install_in_ext(ctx):
+    global out
+
+    # Hax to install files into ./ext/, after build
+
+    try:
+        run_target = ctx.env.cprogram_PATTERN % 'run'
+        shutil.copy2(os.path.join(out, run_target), './' + run_target)
+    except IOError:
+        print "Error: cannot copy %s to %s" % (run_target, os.path.join(out, run_target))
+
+    try:
+        c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
+        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+    except:
+        print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+
+    targets = [
+        #'SDL.gl',
+        #'SDL.hud',
+        #'SDL.input',
+        #'cube_lib.terrain_map',
+        #'vox_lib',
+        'c_lib.ray_trace',
+        'init_c_lib',
+        'c_lib.c_lib_objects',
+        #'c_lib.c_lib_map_gen',
+    ]
+
+    for target in targets:
+        dest_path = target.replace('.', '/')
+        dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
+        ensure_dir(os.path.dirname(dest_path))
+        try:
+            shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        except:
+            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+    make_dest_modules(ctx)
+
+
+def ensure_dir(path):
+    try:
+        os.makedirs(path)
+    except OSError, e:
+        if e.errno != errno.EEXIST:
+            raise
+
+
+def make_dest_modules(ctx):
+    for root, dirs, files in os.walk('./ext/'):
+        with open(os.path.join(root, '__init__.py'), 'wb') as f:
+            f.close()
