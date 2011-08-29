@@ -8,6 +8,8 @@ Projectile data (will be moved to configurable external format)
 
 from cube_lib.terrain_map import collisionDetection
 
+import c_lib.c_lib_objects as c_obj
+
 projectile_dat = {
 
     0   :   {   # generic projectile
@@ -171,40 +173,21 @@ class Laser(Projectile):
 
 class Grenade(Projectile):
 
-    def __init__(self, id, state, pos, dir, vec, owner=None):
-        Projectile.__init__(self, id, state, owner)
-        # adjust initial throwing velocity with agent's velocity
-        #self.initial_speed = 3
-        #self.pos = pos
-        #self.dir = dir
-        #v0 = [i*self.initial_speed for i in self.dir]
-        #self.vec = [a+b for a,b in zip(self.dir, vec)]
-        self.initial_speed = [3]*3
-        self.state[3:6] = [a*b for a,b in zip(self.state[3:6], self.initial_speed)]
+    def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
+        self.id = id
+        self.owner = owner
+        self._set_type()
+        self.dat.apply(self)
+        self.speed = self.speed / GameStateGlobal.fps
+
+        self.ttl = ttl
+        x,y,z, vx,vy,vz = state
+        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
 
     def tick(self):
-        #if not self.check_life():
-            ## explode
-            #print 'boom'
-            #return
-        pass
-        #x,y,z, vx, vy, vz = self.state
-        #z_gravity = -.03
+        self.check_life()
 
-        ## move grenade along trajectory here
-        #x += vx * self.speed
-        #y += vy * self.speed
-        #z += (vz + (z_gravity * self.ttl)) * self.speed
-
-        #self.state = [x,y,z,vx,vy,vz]
-
-        #if self.check_terrain_collision(delete=False):
-            ##bounce
-            #return
-
-        #agent = self.check_agent_collision()
-        #if agent:
-            ##fall
-            #self.state[5] = 0
-            #return
+    def delete(self):
+        Projectile.delete(self)
+        c_obj._destroy_grenade(self.g_index)
 

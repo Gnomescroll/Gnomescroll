@@ -174,90 +174,16 @@ class Laser(Projectile):
         if self.check_terrain_collision(pos=curr_block):
             return
 
-        #for block in blocks:
-            #print block, collisionDetection(*block)
-            #if self.check_terrain_collision(pos=block):
-                #return
-
         self.check_agent_collision()
-            
-        #self.check_terrain_collision() or self.check_agent_collision()
 
     def draw(self):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)
 
 
-#class Grenade(Projectile):
-
-    #def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
-        #Projectile.__init__(self, id, state=state, owner=owner, *args, **kwargs)
-        #self.ttl = ttl
-        #o, m = vector_components(self.state[3:6])
-        #self.orientation = o
-        #self.magnitude = m
-        #self.bounce_damp = 0.25
-
-    #def bounce(self, normal):
-        #self.orientation = reflect(self.orientation, normal)
-        #self.magnitude = [i*(1-self.bounce_damp) for i in self.magnitude]
-
-    #def tick(self):
-        #if not self.check_life():
-            ## explode
-            #print 'boom'
-            #return
-
-        #if self.check_terrain_collision(delete=False):
-            #self.bounce([0,0,1])
-            ##self.state[3:] = 0,0,0
-
-        #x,y,z = self.state[0:3]
-        #z_gravity = -.25
-        #f_air = 0.05
-        #f_ground = 0.20
-
-
-        #self.magnitude = [i*(1-f_air) for i in self.magnitude]
-
-        #vel = [a*b for a,b in zip(self.orientation, self.magnitude)]
-        #vx,vy,vz = vel
-
-        #vz += z_gravity
-
-        #x += vx
-        #y += vy
-        #z += vz
-
-        #o,m = vector_components(vel)
-        #self.orientation = o
-        #self.magnitude = m
-        ## move grenade along trajectory here
-        ##x += vx * self.speed
-        ##y += vy * self.speed
-        ##z += (vz + (z_gravity * self.ttl)) * self.speed
-
-        #self.state = [x,y,z,vx,vy,vz]
-
-        #print self.state
-        #print self.magnitude
-        #print self.orientation
-        #print '================'
-
-
-        #if self.check_agent_collision():
-            ##fall
-            ##self.state[5] = 0
-            #return
-
-    #def draw(self):
-        #x,y,z = self.pos()
-        #SDL.gl.draw_particle(5, 0.5, x,y,z)
-
 class Grenade(Projectile):
 
     def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
-        #Projectile.__init__(self, id, state=state, owner=owner, *args, **kwargs)
         self.id = id
         self.owner = owner
         self._set_type()
