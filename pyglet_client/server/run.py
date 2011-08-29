@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-sys.path.insert(0, './c_lib/')
+sys.path.insert(0, './ext/')
 
 import args_server
 import opts
