@@ -15,7 +15,7 @@ cdef enum:
     vm_chunk_size = 8
     vm_column_max = 16
 
-cdef extern from "./t_map.h":
+cdef extern from "../c_lib/t_map/t_map.h":
 
     struct vm_chunk:
         unsigned short voxel[512]
@@ -32,10 +32,10 @@ cdef extern from "./t_map.h":
     struct vm_map:
         vm_column column[vm_map_dim*vm_map_dim]
 
-cdef extern from "./t_map.h":
+cdef extern from "../c_lib/t_map/t_map.h":
     int _init_t_map()
     int _clear()
-    
+
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
@@ -178,7 +178,7 @@ cpdef inline int apply_damage(int x, int y, int z, int dmg):
 PART 2: Properties
 
 '''
-cdef extern from "./t_properties.h":
+cdef extern from "../c_lib/t_map/t_properties.h":
     struct cubeProperties:
         int active
         int occludes
@@ -187,7 +187,7 @@ cdef extern from "./t_properties.h":
         int transparent
         int max_damage
 
-cdef extern from "./t_properties.h":
+cdef extern from "../c_lib/t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
     cubeProperties* _get_cube(int id)

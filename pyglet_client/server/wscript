@@ -40,12 +40,27 @@ def configure(conf):
     OS = platform.system()
     conf.env.os = OS
 
-    #if OS == 'Windows':
-        #conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
-    #elif OS == 'Linux':
-        #conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
-    #elif OS == 'Darwin':
-        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+    ##TEST
+    conf.check(header_name='GL/glew.h', mandatory=True)
+
+    if OS == 'Linux':
+        conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
+    ##TEST
+
+    if OS != 'Windows':
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+
+    conf.check(header_name='SDL.h',
+               use='SDL',
+               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+
+    conf.check(header_name='SDL_image.h',
+               lib='SDL_image',
+               use='SDL',
+               uselib_store='SDL_image',
+               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
 
     conf.env.INCLUDES = ['c_lib',]
     conf.env.INCLUDES = ['c_lib', 'cube_lib']
@@ -55,54 +70,18 @@ def configure(conf):
         conf.env.ARCH = ['x86_64']
 
 def build(bld):
-    common_libraries = []
+    common_libraries = ['GL', 'SDL', 'SDL_image']
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
-             #   'c_lib/texture_loader.c',
-            #    'c_lib/map_gen/density.c',
             ],
         use=common_libraries,
         target='c_lib')
 
-    #bld(features='c cshlib pyext',
-        #source=['SDL/SDL_functions.c',
-                #'SDL/camera.c',
-                #'SDL/draw_functions.c',
-                #'SDL/texture_loader.c',
-                #'SDL/particle_functions.c',
-                #'SDL/gl.pyx'],
-        #use=common_libraries,
-        #target='SDL.gl')
-
-    #bld(features='c cshlib pyext',
-        #source=['SDL/SDL_text.c',
-                #'SDL/draw_functions.c',
-                #'SDL/texture_loader.c',
-                #'SDL/hud/block_selector.c',
-                #'SDL/hud.pyx'],
-        #use=common_libraries,
-        #target='SDL.hud')
-
-    #bld(features='c cshlib pyext',
-        #source=['SDL/input_functions.c',
-                #'SDL/SDL_functions.c',
-                #'SDL/input.pyx'],
-        #use=common_libraries,
-        #target='SDL.input')
-
-    #bld(features='c cshlib pyext',
-        #source=['cube_lib/t_vbo.c',
-                #'cube_lib/t_viz.c',
-                #'cube_lib/terrain_map.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='cube_lib.terrain_map')
-
-    #bld(features='c cshlib pyext',
-        #source=['vox_lib/vox_functions.c',
-                #'vox_lib/vox_lib.pyx'],
-        #use=common_libraries,
-        #target='vox_lib')
+    bld(features='c cshlib pyext',
+        source=['cube_lib/terrain_map.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='cube_lib.terrain_map')
 
     # c_lib
 
@@ -120,17 +99,6 @@ def build(bld):
         source=['c_lib/c_lib_objects.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
-
-    #bld(features='c cshlib pyext',
-        #source=['c_lib/c_lib_map_gen.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='c_lib.c_lib_map_gen')
-
-
-    #bld(features='c cprogram pyembed',
-        #use=common_libraries,
-        #source='run.c',
-        #target='run')
 
     bld.add_post_fun(install_in_ext)
 
@@ -153,11 +121,7 @@ def install_in_ext(ctx):
         print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = [
-        #'SDL.gl',
-        #'SDL.hud',
-        #'SDL.input',
-        #'cube_lib.terrain_map',
-        #'vox_lib',
+        'cube_lib.terrain_map',
         'c_lib.ray_trace',
         'init_c_lib',
         'c_lib.c_lib_objects',
