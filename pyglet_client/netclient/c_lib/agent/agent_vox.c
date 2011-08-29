@@ -242,15 +242,6 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 }
 
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a) {
-    if(x<0 || y <0 || z < 0) {
-        printf("WTF!!! Warning!\n");
-        return;
-    }
-    if(x >= v->xdim || y >= v->ydim || z >= v->zdim) {
-        printf("horrible error!\n");
-        return;
-    }
-
     //float ch = a->camera_height;
     //look is forward direction
     //right is right
@@ -304,7 +295,7 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
     for(k= -v->zdim/2; k < v->zdim/2; k++) {
-    vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->xdim*v->ydim];
+    vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->xdim*v->ydim]; //malloc problem?
     if(vo->a == 0) continue;
     glColor3ub((unsigned char)vo->r,(unsigned char)vo->g,(unsigned char)vo->b);
 
