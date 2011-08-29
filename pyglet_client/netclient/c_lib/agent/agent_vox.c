@@ -245,6 +245,11 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     //float ch = a->camera_height;
     //look is forward direction
     //right is right
+
+    int i,j,k;
+    int i1, j1;
+    int index;
+
     float vos = v->vox_size;
 
     struct Vector c;
@@ -270,12 +275,16 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     vx = f; //instead of look direction
     vz = vector_cross(vx, right);
     vy = vector_cross(vx, vz);
-    int i,j,k;
+
+    //save 3 multiplications per voxel by premultiplying in vox
+    vx.x *= vos; vx.y *= vos; vx.z *= vos;
+    vy.x *= vos; vy.y *= vos; vy.z *= vos;
+    vz.x *= vos; vz.y *= vos; vz.z *= vos;
 
     for(i=0; i<8; i++) {
-        v_buffer[3*i+0] = vos*(v_set[3*i+0]*vx.x + v_set[3*i+1]*vy.x + v_set[3*i+2]*vz.x );
-        v_buffer[3*i+1] = vos*(v_set[3*i+0]*vx.y + v_set[3*i+1]*vy.y + v_set[3*i+2]*vz.y );
-        v_buffer[3*i+2] = vos*(v_set[3*i+0]*vx.z + v_set[3*i+1]*vy.z + v_set[3*i+2]*vz.z );
+        v_buffer[3*i+0] = v_set[3*i+0]*vx.x + v_set[3*i+1]*vy.x + v_set[3*i+2]*vz.x ;
+        v_buffer[3*i+1] = v_set[3*i+0]*vx.y + v_set[3*i+1]*vy.y + v_set[3*i+2]*vz.y ;
+        v_buffer[3*i+2] = v_set[3*i+0]*vx.z + v_set[3*i+1]*vy.z + v_set[3*i+2]*vz.z ;
     }
     for(i=0; i<6; i++) {
         for(j=0; j<4; j++) {
@@ -288,19 +297,12 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
 
 
     float cx,cy,cz;
-    cx = c.x - vos*(v->xdim*vx.x + v->ydim*vy.x + v->zdim*vz.x)/2;
-    cy = c.y - vos*(v->xdim*vx.y + v->ydim*vy.y + v->zdim*vz.y)/2;
-    cz = c.z - vos*(v->xdim*vx.z + v->ydim*vy.z + v->zdim*vz.z)/2;
+    cx = c.x - (v->xdim*vx.x + v->ydim*vy.x + v->zdim*vz.x)/2;
+    cy = c.y - (v->xdim*vx.y + v->ydim*vy.y + v->zdim*vz.y)/2;
+    cz = c.z - (v->xdim*vx.z + v->ydim*vy.z + v->zdim*vz.z)/2;
 
-    //save 3 multiplications per voxel by premultiplying in vox
-    vx.x *= vos; vx.y *= vos; vx.z *= vos;
-    vy.x *= vos; vy.y *= vos; vy.z *= vos;
-    vz.x *= vos; vz.y *= vos; vz.z *= vos;
 
     float x0, y0, z0;
-
-    int i1, j1;
-    int index;
 
     glBegin(GL_QUADS);
 
@@ -309,10 +311,6 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     for(k= 0; k < v->zdim; k++) {
     index = i + j*v->xdim + k*v->xdim*v->ydim; //malloc problem?
 
-    if(index < 0 || index >= v->num_vox) {
-        printf("WTF ERROR!\n");
-        continue;
-    }
     if(v->vox[index].a == 0) continue;
     glColor3ub((unsigned char) v->vox[index].r,(unsigned char)v->vox[index].g,(unsigned char)v->vox[index].b);
 
@@ -320,22 +318,15 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     y0 = cy + (i*vx.y + j*vy.y + k*vz.y);
     z0 = cz + (i*vx.z + j*vy.z + k*vz.z);
 
-    //printf("%f, %f, %f \n", x0,y0,z0);
-    //printf("%i,%i,%i \n", i,j,k);
-
-
     //glBegin(GL_POINTS);
     //    glVertex3f(x0,y0,z0);
     //glEnd();
 
     for(i1=0; i1<6; i1++) {
-        //for(j1=0; j1<4; j1++){
-            //glVertex3f(x0+ s_buffer[12*i1+3*j1+0], y0+ s_buffer[12*i1+3*j1+1], z0+ s_buffer[12*i1+3*j1+2]);
-        //}
-            glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
-            glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
-            glVertex3f(x0 + s_buffer[12*i1+3*2+0], y0+ s_buffer[12*i1+3*2+1], z0+ s_buffer[12*i1+3*2+2]);
-            glVertex3f(x0 + s_buffer[12*i1+3*3+0], y0+ s_buffer[12*i1+3*3+1], z0+ s_buffer[12*i1+3*3+2]);
+        glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
+        glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
+        glVertex3f(x0 + s_buffer[12*i1+3*2+0], y0+ s_buffer[12*i1+3*2+1], z0+ s_buffer[12*i1+3*2+2]);
+        glVertex3f(x0 + s_buffer[12*i1+3*3+0], y0+ s_buffer[12*i1+3*3+1], z0+ s_buffer[12*i1+3*3+2]);
     }
 
     }}}
