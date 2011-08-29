@@ -349,7 +349,7 @@ class GenericMultiObjectList(GenericObjectList):
 class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
-        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun, GrenadePouch, GrenadePouch_C
+        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun, GrenadePouch
         GenericMultiObjectList.__init__(self)
         self._allow_klasses([ \
             LaserGun,
@@ -357,7 +357,6 @@ class WeaponList(GenericMultiObjectList):
             BlockApplier,
             HitscanLaserGun,
             GrenadePouch,
-            GrenadePouch_C,
         ])
         self.name_from_type = Weapon.name_from_type
         self._metaname = 'WeaponList'
@@ -377,12 +376,6 @@ class ProjectileList(GenericMultiObjectList):
         self._metaname = 'ProjectileList'
         self._itemname = 'Projectile'
         self.name_from_type = Projectile.name_from_type
-
-    #def create(self, klass_name=None, *args, **kwargs):
-        #pr = GenericMultiObjectList.create(self, klass_name=None, *args, **kwargs)
-        #from game_state import GameStateGlobal
-        #print 'projectile created'
-        #print pr.pos(), GameStateGlobal.agent.pos()
 
 from projectiles import Projectile
 

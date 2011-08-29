@@ -221,13 +221,4 @@ class GrenadePouch(Weapon):
             self.clip_size = weapon['clip_size']
         GameStateGlobal.weaponList.update(*args)
 
-class GrenadePouch_C(GrenadePouch):
-
-    def __init__(self, id, owner=None, state=None, **kwargs):
-        GrenadePouch.__init__(self, id, owner, state)
-        
-    def fire(self):
-        GrenadePouch.fire(self)
-        return 'throw_grenade_c'
-
 from game_state import GameStateGlobal

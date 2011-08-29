@@ -56,12 +56,12 @@ void grenade_tick() {
         if(Grenade_list[i] != NULL) {
             g = Grenade_list[i];
             grenade_Tick(g);
-            if(g->ttl >= g-> ttl_max) {
-                //boom!
-                Grenade_list[i] = NULL;
-                free(g);
-                g_count--;
-            }
+            //if(g->ttl >= g-> ttl_max) {
+                ////boom!
+                //Grenade_list[i] = NULL;
+                //free(g);
+                //g_count--;
+            //}
         }
     }
 
@@ -136,7 +136,7 @@ void grenade_draw() {
 
 
 
-void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz) {
+int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max) {
     //printf("Create Gernade\n");
     struct Grenade* g = NULL;
     int i;
@@ -155,7 +155,16 @@ void create_grenade(int type, float x, float y, float z, float vx, float vy, flo
     g->vx=vx;
     g->vy=vy;
     g->vz=vz;
-    g->ttl = 0;
-    g->ttl_max = 330;
+    g->ttl = ttl;
+    g->ttl_max = ttl_max;
     g->type = 1;
+    return i;
 }
+
+void destroy_grenade(int gid) {
+    struct Grenade *g = Grenade_list[gid];
+    Grenade_list[gid] = NULL;
+    free(g);
+    g_count--;
+}
+    

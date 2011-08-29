@@ -15,7 +15,8 @@
 
 void init_objects_grenade();
 void grenade_tick();
-void create_grenade(int type, float x, float y, float z, float vx, float vy, float vz);
+int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max);
+void destroy_grenade(int gid);
 void grenade_draw();
 
 #endif
