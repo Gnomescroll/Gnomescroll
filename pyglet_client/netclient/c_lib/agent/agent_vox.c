@@ -71,7 +71,7 @@ void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, floa
 
     struct Vector vx,vy,vz;
     vx = v->f;
-    vy = v->n
+    vy = v->n;
 
     vz = vector_cross(vx,vy);
     vy = vector_cross(vx, vz);
@@ -242,6 +242,15 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 }
 
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a) {
+    if(x<0 || y <0 || z < 0) {
+        printf("WTF!!! Warning!\n");
+        return;
+    }
+    if(x >= v->xdim || y >= v->ydim || z >= v->zdim) {
+        printf("horrible error!\n");
+        return;
+    }
+
     //float ch = a->camera_height;
     //look is forward direction
     //right is right

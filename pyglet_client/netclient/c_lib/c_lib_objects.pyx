@@ -24,7 +24,7 @@ cdef extern from "./agent/agent_vox.h":
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
 
     void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
-    void set_agent_box_anchor_point(int id, int part, float length, float ax,float ay,float az)
+    void set_agent_limb_anchor_point(int id, int part, float length, float ax,float ay,float az)
 
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
 agent_list = []
@@ -35,10 +35,10 @@ def agent_skeleton_update():
     skel_tick()
     for id in agent_list:
         for part in range(0,6):
-            length, ax,ay,az = lu2[part]
-            set_agent_box_anchor_point(id, part, length,ax,ay,az)
+            length, ax,ay,az= lu2[part]
+            set_agent_limb_anchor_point(id, part, length,ax,ay,az)
         for part in range(0,6):
-            fx,fy,fz = lu3[part]
+            fx,fy,fz,nx,ny,nz = lu3[part]
             set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
 
 def tick():
@@ -100,7 +100,7 @@ def _set_agent_model(int id):
     '''
 
     #fx = 1.0;fy = 0;fz = 0
-    #set_agent_box_anchor_point(id, 1, fx, fy, fz)
+    #set_agent_limb_anchor_point(id, 1, fx, fy, fz)
 
     global lu1, lu2, lu3, vosize
 
@@ -109,12 +109,11 @@ def _set_agent_model(int id):
         default_vox_model_init(id, part, xdim,ydim,zdim, vosize)
 
     for part in range(0,6):
-        length, ax,ay,az = lu2[part]
-        set_limb_properties(id, part, length,ax,ay,az)
-
+        length, ax,ay,az= lu2[part]
+        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
     for part in range(0,6):
-        fx,fy,fz = lu3[part]
-        set_agent_box_anchor_point(id, part, fx, fy, fz)
+        fx,fy,fz, nx,ny,nz = lu3[part]
+        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
 
     #length, anchor x,y,z
     '''
