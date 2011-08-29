@@ -22,7 +22,7 @@ struct Agent_state* get_agent(int id) {
 
 void agent_Tick(struct Agent_state* g) {
     g->xangle += 0.01;
-    g->yangle += 0.005; //0.35;
+    g->yangle += 0; //0.005; //0.35;
 }
 
 void agent_tick() {

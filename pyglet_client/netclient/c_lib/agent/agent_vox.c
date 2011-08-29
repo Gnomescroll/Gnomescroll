@@ -233,12 +233,13 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 }
 
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a) {
-    float ch = a->camera_height;
+    //float ch = a->camera_height;
     //look is forward direction
     //right is right
     float vos = v->vox_size;
-
-    struct Vector c = Vector_init(a->x, a->y, a->z + ch);
+    float ln = v->length;
+    struct Vector c = Vector_init(a->x+look.x*ln, a->y+look.y*ln, a->z+look.z*ln);
+    c = vector_rotate_origin(c,a->xangle*PI);
 
     struct Vector vx,vy,vz;
 
