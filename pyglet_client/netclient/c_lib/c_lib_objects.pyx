@@ -51,11 +51,14 @@ def _create_cspray(int type, float x, float y, float z, float vx, float vy, floa
 
 def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float vosize):
     init_agent_vox_volume(id, part, xdim,ydim,zdim, vosize)
-    for x in range(0,8):
-        for y in range(0,8):
-            for z in range(0,8):
-                a = 255;r = 32*x;g = 32*y;b = 32*z
-                set_agent_vox_volume(id, 0, x,y,z, r,g,b,a)
+    for x in range(0,xdim):
+        for y in range(0,ydim):
+            for z in range(0,zdim):
+                a = 255
+                r = 32*x
+                g = 32*y
+                b = 32*z
+                set_agent_vox_volume(id, part, x,y,z, r,g,b,a)
 
 def _set_agent_model(int id):
     cdef float vosize = 0.2
@@ -72,7 +75,7 @@ def _set_agent_model(int id):
     '''
 
     default_vox_model_init(id, 0, 8,8,8, vosize)
-    default_vox_model_init(id, 1, 16,16,24, vosize)
+    default_vox_model_init(id, 1, 12,12,16, vosize)
     default_vox_model_init(id, 2, 12,4,4, vosize)
     default_vox_model_init(id, 3, 12,4,4, vosize)
     default_vox_model_init(id, 4, 12, 4,4, vosize)
@@ -100,9 +103,10 @@ def _set_agent_model(int id):
     [2, 0,0,1.0],
     ]
     for part in range(0,6):
+        print "test= " + str(part)
         length, ax,ay,az = lu[part]
         set_limb_properties(id, part, length,ax,ay,az)
-
+    print "Finished"
     #length, anchor x,y,z
     '''
     set_limb_properties(id, 1, 0, float ax, float ay, float az) #torso

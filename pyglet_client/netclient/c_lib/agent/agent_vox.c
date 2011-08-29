@@ -27,9 +27,10 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     v->ydim = ydim;
     v->zdim = zdim;
     v->num_vox = xdim*ydim*zdim;
+    printf("num_vox= %i \n", v->num_vox);
     v->radius = sqrt((vosize*xdim)*(vosize*xdim) + (vosize*ydim)*(vosize*ydim) + (vosize*zdim)*(vosize*zdim));
     v->vox_size = vosize;
-    v->vox = (struct Voxel *) malloc (v->num_vox*sizeof(struct Voxel));
+    v->vox = malloc(v->num_vox*sizeof(struct Voxel));
     int i;
     for(i=0; i<v->num_vox; i++) {
         v->vox[i].r = 0;
@@ -73,7 +74,20 @@ void set_agent_box_anchor_point(int id, int part, float fx,float fy,float fz) {
 
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
     struct Vox* v = get_agent_vox_part(id, part);
-    struct Voxel* vo = &v->vox[x + y*v->ydim + z*v->zdim*v->ydim];
+    if(x + y*v->xdim + z*v->xdim*v->ydim >= v->num_vox) {
+        printf("Warning! %i, %i, %i, %i ; %i, %i, %i; %i \n", v->xdim, v->ydim, v->zdim, v->num_vox, x,y,z, x + y*v->xdim + z*v->xdim*v->ydim);
+        //return;
+    }
+    if(x<0 || y <0 || z < 0) {
+        printf("WTF!!! Warning!\n");
+        return;
+    }
+    if(x >= v->xdim || y >= v->ydim || z >= v->zdim) {
+        printf("horrible error!\n");
+        return;
+    }
+
+    struct Voxel* vo = &v->vox[x + y*v->xdim + z*v->xdim*v->ydim];
     if(v == NULL || vo == NULL) {
         printf("set_agent_vox_volume: null pointer \n");
         return;
@@ -169,7 +183,7 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
     for(k= -v->zdim/2; k < v->zdim/2; k++) {
-    vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->zdim*v->ydim];
+    vo = &v->vox[(i+v->xdim/2) + (j+v->xdim/2)*v->ydim + ((k+v->zdim/2))*v->xdim*v->ydim];
     if(vo->a == 0) continue;
     glColor3ub((unsigned char)vo->r,(unsigned char)vo->g,(unsigned char)vo->b);
 
@@ -256,7 +270,7 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector look, struct Vector 
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
     for(k= -v->zdim/2; k < v->zdim/2; k++) {
-    vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->zdim*v->ydim];
+    vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->xdim*v->ydim];
     if(vo->a == 0) continue;
     glColor3ub((unsigned char)vo->r,(unsigned char)vo->g,(unsigned char)vo->b);
 
