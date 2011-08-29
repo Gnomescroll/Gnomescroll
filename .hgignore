@@ -3,6 +3,9 @@ syntax: glob
 *.pxd
 *.pyd
 *.pyo
+*.dylib
+
+*/build/*
 
 run 
 
