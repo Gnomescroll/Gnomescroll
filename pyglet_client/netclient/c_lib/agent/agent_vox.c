@@ -285,23 +285,40 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
         }
     }
 
-    struct Voxel* vo;
+
+
+    float cx,cy,cz;
+    cx = c.x - vos*(v->xdim*vx.x + v->ydim*vy.x + v->zdim*vz.x)/2;
+    cy = c.y - vos*(v->xdim*vx.y + v->ydim*vy.y + v->zdim*vz.y)/2;
+    cz = c.z - vos*(v->xdim*vx.z + v->ydim*vy.z + v->zdim*vz.z)/2;
+
+    //save 3 multiplications per voxel by premultiplying in vox
+    vx.x *= vos; vx.y *= vos; vx.z *= vos;
+    vy.x *= vos; vy.y *= vos; vy.z *= vos;
+    vz.x *= vos; vz.y *= vos; vz.z *= vos;
 
     float x0, y0, z0;
 
     int i1, j1;
-    //glBegin(GL_POINTS);
-    glBegin(GL_QUADS);
-    for(i= -v->xdim/2; i < v->xdim/2; i++) {
-    for(j= -v->ydim/2; j < v->ydim/2; j++) {
-    for(k= -v->zdim/2; k < v->zdim/2; k++) {
-    vo = &v->vox[(i+v->xdim/2) + (j+v->ydim/2)*v->ydim + ((k+v->zdim/2))*v->xdim*v->ydim]; //malloc problem?
-    if(vo->a == 0) continue;
-    glColor3ub((unsigned char)vo->r,(unsigned char)vo->g,(unsigned char)vo->b);
+    int index;
 
-    x0 = c.x + vos*(i*vx.x + j*vy.x + k*vz.x);
-    y0 = c.y + vos*(i*vx.y + j*vy.y + k*vz.y);
-    z0 = c.z + vos*(i*vx.z + j*vy.z + k*vz.z);
+    glBegin(GL_QUADS);
+
+    for(i= 0; i < v->xdim; i++) {
+    for(j= 0; j < v->ydim; j++) {
+    for(k= 0; k < v->zdim; k++) {
+    index = i + j*v->xdim + k*v->xdim*v->ydim; //malloc problem?
+
+    if(index < 0 || index >= v->num_vox) {
+        printf("WTF ERROR!\n");
+        continue;
+    }
+    if(v->vox[index].a == 0) continue;
+    glColor3ub((unsigned char) v->vox[index].r,(unsigned char)v->vox[index].g,(unsigned char)v->vox[index].b);
+
+    x0 = cx + (i*vx.x + j*vy.x + k*vz.x);
+    y0 = cy + (i*vx.y + j*vy.y + k*vz.y);
+    z0 = cz + (i*vx.z + j*vy.z + k*vz.z);
 
     //printf("%f, %f, %f \n", x0,y0,z0);
     //printf("%i,%i,%i \n", i,j,k);
@@ -312,32 +329,14 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     //glEnd();
 
     for(i1=0; i1<6; i1++) {
-        for(j1=0; j1<4; j1++){
+        //for(j1=0; j1<4; j1++){
             //glVertex3f(x0+ s_buffer[12*i1+3*j1+0], y0+ s_buffer[12*i1+3*j1+1], z0+ s_buffer[12*i1+3*j1+2]);
-        }
+        //}
             glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
             glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
             glVertex3f(x0 + s_buffer[12*i1+3*2+0], y0+ s_buffer[12*i1+3*2+1], z0+ s_buffer[12*i1+3*2+2]);
             glVertex3f(x0 + s_buffer[12*i1+3*3+0], y0+ s_buffer[12*i1+3*3+1], z0+ s_buffer[12*i1+3*3+2]);
     }
-
-/*
-    for(_i=0; _i<6; _i++) {
-        for(_j=0; _j<4; _j++){
-
-        //glBegin(GL_QUADS);
-        //    glVertex3f(x0 + s_buffer[12*_i+3*_j+0], y0+ s_buffer[12*_i+3*_j+1], z0+ s_buffer[12*_i+3*_j+2]);
-        //glEnd();
-
-            glVertex3f(x0 + s_buffer[12*_i+3*0+0], y0+ s_buffer[12*_i+3*0+1], z0+ s_buffer[12*_i+3*0+2]);
-            glVertex3f(x0 + s_buffer[12*_i+3*1+0], y0+ s_buffer[12*_i+3*1+1], z0+ s_buffer[12*_i+3*1+2]);
-            glVertex3f(x0 + s_buffer[12*_i+3*2+0], y0+ s_buffer[12*_i+3*2+1], z0+ s_buffer[12*_i+3*2+2]);
-            glVertex3f(x0 + s_buffer[12*_i+3*3+0], y0+ s_buffer[12*_i+3*3+1], z0+ s_buffer[12*_di+3*3+2]);
-
-        }
-    }
-*/
-    //glVertex3f(x0,y0,z0);
 
     }}}
     glEnd();
