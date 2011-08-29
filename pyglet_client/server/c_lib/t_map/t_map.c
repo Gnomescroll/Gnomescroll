@@ -1,23 +1,5 @@
-
 #include "t_map.h"
 
-//#include "./t_inline.c"
-//globals
-
-/*
-void set_flag(struct vm_column* c, unsigned int flag, int value) {
-    if(value) {
-        c->flag = c->flag | flag;
-    } else {
-        c->flag = c->flag & ~flag;
-    }
-}
-
-int get_flag(struct vm_column* c, unsigned int flag) {
-    return c->flag & flag;
-}
- //end
-*/
 
 struct vm_map map;
 
@@ -34,9 +16,9 @@ int _init_t_map() {
         c->y_off = i/vm_map_dim;
         c->flag = 0; //null it
         //c->vbo_needs_update = 0;
-        set_flag(c, VBO_loaded, 0);
-        set_flag(c, VBO_needs_update, 0);
-        set_flag(c, VBO_has_blocks, 0);
+        //set_flag(c, VBO_loaded, 0);
+        //set_flag(c, VBO_needs_update, 0);
+        //set_flag(c, VBO_has_blocks, 0);
     }
     return 0;
 }
@@ -47,13 +29,35 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     int i;
     struct vm_chunk* chunk;
     chunk = (struct vm_chunk*) malloc(sizeof(struct vm_chunk));
-    chunk->x_off = xoff;chunk->y_off=yoff;chunk->z_off=zoff;
-    chunk->local_version = 0;
-    chunk->server_version = 0;
+    chunk->x_off = xoff;chunk->y_off=yoff;chunks->z_off=zoff;
+    chunk->local_version = 512;
+    chunk->server_version = 512; //not used on server
     for(i=0; i<512;i++){
     chunk->voxel[i] = 0;
     }
     return chunk;
+}
+
+//if apply damage returns 1, then handle block destruction
+int _apply_damage(int x, int y, int z, int value) {
+    int xoff, yoff, zoff, xrel, yrel, zrel;
+    int tile;
+    struct vm_column* column;
+    struct vm_chunk* chunk;
+    xoff = x >> 3; yoff = y >> 3; zoff = z >> 3;
+    xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
+    column = &map.column[vm_map_dim*yoff + xoff];
+    chunk = column->chunk[zoff];
+    if(chunk == NULL) { printf("!!! _apply_damage: THIS CANNOT OCCUR< EVER\n"); return 0; }
+    tile = chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
+    unsigned char* damage;
+    damage = &chunk->damage[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
+    *damage += value;
+    if(*damage >= _maxDamage(tile) ) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 // terrain map tile set/get
@@ -78,14 +82,12 @@ int _set(int x, int y, int z, int value) {
         column->chunk[zoff] = chunk;
     }
     chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = value;
+    chunk->damage[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel] = 0;
     column->local_version++;
     column->server_version++;
-    set_flag(column, VBO_has_blocks, 1);
+    //set_flag(column, VBO_has_blocks, 1);
     chunk->local_version++;
-    chunk->server_version++;
-    //column->vbo_needs_update = 1;
-    set_flag(column, VBO_needs_update, 1);
-    set_flag(column, VBO_has_blocks, 1);
+    column->vbo_needs_update = 1;
     chunk->vbo_needs_update =1;
     return 0;
 }
@@ -113,11 +115,11 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
     }
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
-    chunk->requested = 0;
     return chunk;
 }
 ///rendering of chunk
 
+//deprecated for server?
 int _set_server_version(int x,int y,int z, int server_version) {
     int xoff, yoff, zoff;
     struct vm_column* column;
@@ -138,7 +140,6 @@ int _set_server_version(int x,int y,int z, int server_version) {
     return 0;
 }
 
-
 int _clear() {
     // iterate entire map
     // set to 0
@@ -157,3 +158,4 @@ int _clear() {
     }
     return 0;
 }
+

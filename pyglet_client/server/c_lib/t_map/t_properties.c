@@ -10,6 +10,10 @@ struct cubeProperties* _get_cube(int id) {
     return &cube_list[id];
 }
 
-int _isActive(int id) {
+int inline _isActive(int id) {
     return cube_list[id].active;
+    }
+
+int inline _maxDamage(int id) {
+    return cube_list[id].max_damage;
     }
