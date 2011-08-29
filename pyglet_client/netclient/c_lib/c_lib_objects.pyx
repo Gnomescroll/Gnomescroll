@@ -91,12 +91,26 @@ def _set_agent_model(int id):
     fz = 0
     set_agent_box_anchor_point(id, 1, fx, fy, fz)
 
+    lu = [
+    [0, 0,0,3.0],
+    [0, 0,0,1.5],
+    [2, -1.0,0,1.5],
+    [2, 1,0,1.5],
+    [2, 0,0,1.0],
+    [2, 0,0,1.0],
+    ]
+    for part in range(0,6):
+        length, ax,ay,az = lu[part]
+        set_limb_properties(id, part, length,ax,ay,az)
+
     #length, anchor x,y,z
+    '''
     set_limb_properties(id, 1, 0, float ax, float ay, float az) #torso
-    set_limb_properties(id, 2, float length, float ax, float ay, float az) #larm
+    set_limb_properties(id, 2, 0.0, float ax, float ay, float az) #larm
     set_limb_properties(id, 3, float length, float ax, float ay, float az) #rarm
     set_limb_properties(id, 4, float length, float ax, float ay, float az) #lleg
     set_limb_properties(id, 5, float length, float ax, float ay, float az) #rleg
+    '''
 
 def _create_agent(float x, float y, float z):
     cdef int id
