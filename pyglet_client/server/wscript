@@ -70,6 +70,12 @@ def configure(conf):
         conf.env.ARCH = ['x86_64']
 
 def build(bld):
+
+    OS = platform.system()
+    time_lib = ['rt']
+    if OS == "Darwin":
+        time_lib = []
+
     common_libraries = ['GL', 'SDL', 'SDL_image']
 
     bld(features='c cshlib',
@@ -100,6 +106,12 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_timer.pyx',
+                'c_lib/timer/physics_timer.c',],
+        use=common_libraries + time_lib,
+        target='c_lib.c_lib_timer')
+
     bld.add_post_fun(install_in_ext)
 
 
@@ -108,11 +120,13 @@ def install_in_ext(ctx):
 
     # Hax to install files into ./ext/, after build
 
+    '''
     try:
         run_target = ctx.env.cprogram_PATTERN % 'run'
         shutil.copy2(os.path.join(out, run_target), './' + run_target)
     except IOError:
         print "Error: cannot copy %s to %s" % (run_target, os.path.join(out, run_target))
+    '''
 
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
