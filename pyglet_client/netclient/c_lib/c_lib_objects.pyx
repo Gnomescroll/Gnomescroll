@@ -60,7 +60,7 @@ def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float
                 b = 32*z
                 set_agent_vox_volume(id, part, x,y,z, r,g,b,a)
 
-from agent_dim import lu, lu2
+from dat.agent_dim import lu, lu2
 
 def _set_agent_model(int id):
     cdef float vosize = .0625
