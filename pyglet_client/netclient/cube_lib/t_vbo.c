@@ -124,6 +124,7 @@ return 0;
 }
 
 //assums vbo is type quad
+
 int draw_quad_vbo(struct VBO* q_VBO) {
 
 //printf("wtf\n");
@@ -345,7 +346,23 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 
 }
 
+int _t_ = 0;
+int _c_ = 0;
+
 int _draw_terrain() {
+
+    _c_++;
+    if(_c_ % 120 == 0) {
+        _t_ ++;
+        if(_t_ %2 == 0) {
+            printf("multisample enabled\n");
+            glEnable(GL_MULTISAMPLE);
+        } else {
+            printf("multisample disabled\n");
+            glDisable(GL_MULTISAMPLE);
+        }
+    }
+
     //int s,f;
     //s= SDL_GetTicks();
     struct vm_map* m;

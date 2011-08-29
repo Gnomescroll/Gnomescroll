@@ -20,10 +20,6 @@ unsigned char r,g,b,a;
 
 
 struct Vox {
-    //float ax,ay,az; //anchor
-    struct Vector a;
-    float length; //length from anchor to center
-    float cx,cy,cz;
 
     struct Vector f,r,u;
     //float fx,fy,fz;
@@ -37,9 +33,16 @@ struct Vox {
     float radius;
     struct Voxel* vox;
     unsigned int num_vox;
+
+
+    struct Vector a; //anchor
+    struct Vector c; //center
+    float length;
 };
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
+void set_limb_properties(int id, int part, float length, float ax, float ay, float az);
+
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
 void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz);
 

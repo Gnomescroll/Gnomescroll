@@ -21,6 +21,8 @@ int _set_resolution(int xres, int yres, int fullscreen) {
     return 0;
 }
 
+int _multisampling = 0;
+
 int _init_video() {
     int nFlags;
     int value;
@@ -53,8 +55,13 @@ int _init_video() {
     if(0) //When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         nFlags |= SDL_RESIZABLE;
 
-    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
-    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
+    if(_multisampling) {
+        SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
+        SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
+    }
+    ///multisampling: no effect
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); //multisampling?
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
     /// vsync
     //SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
@@ -89,6 +96,11 @@ int _init_video() {
     } else {
         printf("Warning: Double Buffering Not Enabled!\n");
     }
+
+    if(_multisampling) {
+        SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &value);
+        printf("Multisampling: number of samples per pixel %i \n", value);
+    }
     SDL_ShowCursor(SDL_DISABLE);
     ///glEnable(GL_TEXTURE_2D); // ??? Needed?
 
@@ -112,7 +124,15 @@ int _init_video() {
     else {
         printf("OpenGL 2.0 not supported \n");
     }
-    return 0;
+
+    //multisample_test();
+    //return 0;
+
+    if(GLEW_ARB_multisample) {
+        printf("ARB_MULTISAMPLE supported \n");
+    } else {
+        printf("ARB_MULTISAMPLE not supported \n");
+    }
 
 }
 
@@ -126,3 +146,4 @@ int _swap_buffers() {
 int _get_ticks() {
 return SDL_GetTicks();
 }
+

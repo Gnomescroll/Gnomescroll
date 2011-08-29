@@ -79,6 +79,14 @@ void agent_Draw(struct Agent_state* g) {
 
     agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
 
+    float length;
+    struct Vector anchor;
+
+    anchor
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_TORSO], look, right, g);
+
+    agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
+    agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
 }
 
 void agent_draw() {

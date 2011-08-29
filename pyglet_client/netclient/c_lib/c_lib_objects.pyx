@@ -21,6 +21,7 @@ cdef extern from "./agent/agent.h":
 
 cdef extern from "./agent/agent_vox.h":
     void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
+    void set_limb_properties(int id, int part, float length, float ax, float ay, float az)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
     void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz)
 
@@ -71,6 +72,13 @@ def _set_agent_model(int id):
     fy = 0
     fz = 0
     set_agent_box_anchor_point(id, 1, ax,ay,az, fx,fy,fz)
+
+    #length, anchor x,y,z
+    set_limb_properties(id, 1, float length, float ax, float ay, float az) #torso
+    set_limb_properties(id, 2, float length, float ax, float ay, float az) #larm
+    set_limb_properties(id, 3, float length, float ax, float ay, float az) #rarm
+    set_limb_properties(id, 4, float length, float ax, float ay, float az) #lleg
+    set_limb_properties(id, 5, float length, float ax, float ay, float az) #rleg
 
 def _create_agent(float x, float y, float z):
     cdef int id
