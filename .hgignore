@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+*/build/*
+
 run 
 
 terrain_map.c
