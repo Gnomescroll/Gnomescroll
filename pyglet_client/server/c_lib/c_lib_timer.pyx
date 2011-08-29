@@ -1,4 +1,4 @@
-cdef extern from "../c_lib/physics_timer.h":
+cdef extern from "../c_lib/timer/physics_timer.h":
     int _start(int frequency)
     int _tick_check()
     long _get_time()
