@@ -70,69 +70,69 @@ void grenade_tick() {
 
 //GLint particle_sheet_id;
 
-//void grenade_draw() {
-    ////printf("particle sheet id= %i \n", get_particle_texture() );
-    //if(g_count == 0) { return; }
-    //glGetFloatv(GL_MODELVIEW_MATRIX, a);
+void grenade_draw() {
+    //printf("particle sheet id= %i \n", get_particle_texture() );
+    if(g_count == 0) { return; }
+    glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    //struct Grenade* g = NULL;
-    //int i;
+    struct Grenade* g = NULL;
+    int i;
 
-    //float up[3] = {a[0], a[4], a[8]};
-    //float right[3] = {a[1], a[5], a[9]};
-    //int id = 5;
+    float up[3] = {a[0], a[4], a[8]};
+    float right[3] = {a[1], a[5], a[9]};
+    int id = 5;
 
-    //float tx_min, tx_max, ty_min, ty_max;
+    float tx_min, tx_max, ty_min, ty_max;
 
-    ////should not change state unless there is something to draw
-    //glEnable(GL_TEXTURE_2D);
-    //glEnable (GL_DEPTH_TEST);
-    //glDepthMask(GL_FALSE);
+    //should not change state unless there is something to draw
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
 
-    //glBindTexture( GL_TEXTURE_2D, get_particle_texture() );
-    ////printf("particle sheet= %i \n", particle_sheet_id);
-    //glEnable(GL_BLEND);
-    //glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    glBindTexture( GL_TEXTURE_2D, get_particle_texture() );
+    //printf("particle sheet= %i \n", particle_sheet_id);
+    glEnable(GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
-    //glBegin( GL_QUADS );
-    //float x,y,z;
+    glBegin( GL_QUADS );
+    float x,y,z;
 
-    //int _c = 0;
-    //for(i=0; i<1024; i++) {
-    //if(Grenade_list[i] != NULL) {
-        ////printf("drew gernade: %i \n", i);
-        //_c++;
-        //g = Grenade_list[i];
-        ////draw setup
+    int _c = 0;
+    for(i=0; i<1024; i++) {
+    if(Grenade_list[i] != NULL) {
+        //printf("drew gernade: %i \n", i);
+        _c++;
+        g = Grenade_list[i];
+        //draw setup
 
-        //tx_min = (float)(id%16)* (1.0/16.0);
-        //tx_max = tx_min + (1.0/16.0);
-        //ty_min = (float)(id/16)* (1.0/16.0);
-        //ty_max = ty_min + (1.0/16.0);
+        tx_min = (float)(id%16)* (1.0/16.0);
+        tx_max = tx_min + (1.0/16.0);
+        ty_min = (float)(id/16)* (1.0/16.0);
+        ty_max = ty_min + (1.0/16.0);
 
-        //x=g->x; y=g->y; z=g->z;
+        x=g->x; y=g->y; z=g->z;
 
-        //glTexCoord2f(tx_min,ty_max );
-        //glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
+        glTexCoord2f(tx_min,ty_max );
+        glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
 
-        //glTexCoord2f(tx_min,ty_min );
-        //glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
+        glTexCoord2f(tx_min,ty_min );
+        glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
 
-        //glTexCoord2f(tx_max,ty_min);
-        //glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
+        glTexCoord2f(tx_max,ty_min);
+        glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
 
-        //glTexCoord2f(tx_max,ty_max );
-        //glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
-        //}
-    //}
-    ////printf("drew %i gernades\n", _c);
-    //glEnd();
+        glTexCoord2f(tx_max,ty_max );
+        glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
+        }
+    }
+    //printf("drew %i gernades\n", _c);
+    glEnd();
 
-    //glDepthMask(GL_TRUE);
-    //glDisable(GL_TEXTURE_2D);
-    //glDisable (GL_DEPTH_TEST);
-    //glDisable(GL_BLEND);
-//}
+    glDepthMask(GL_TRUE);
+    glDisable(GL_TEXTURE_2D);
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+}
 
 
 

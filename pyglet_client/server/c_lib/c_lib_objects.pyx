@@ -23,12 +23,30 @@ cdef extern from "./agent/agent.h":
 cdef extern from "./agent/agent_vox.h":
     void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
-    void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz)
+
+    void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
+    void set_agent_limb_anchor_point(int id, int part, float length, float ax,float ay,float az)
+
+from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
+agent_list = []
+
+
+def agent_skeleton_update():
+    global agent_list,lu2,lu3
+    skel_tick()
+    for id in agent_list:
+        for part in range(0,6):
+            length, ax,ay,az= lu2[part]
+            set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+        for part in range(0,6):
+            fx,fy,fz,nx,ny,nz = lu3[part]
+            set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
 
 def tick():
     grenade_tick()
     neutron_tick()
     cspray_tick()
+    agent_skeleton_update()
     agent_tick()
 
 def draw():
@@ -53,35 +71,43 @@ def _create_cspray(int type, float x, float y, float z, float vx, float vy, floa
 
 #agent
 
-def _set_agent_model(int id):
-    cdef float vosize = 0.2
-    cdef int part
-    cdef int xdim, ydim, zdim
-    for part in range(0,6):
-        xdim=8;ydim=8;zdim=8;
-        init_agent_vox_volume(id, part, xdim, ydim, zdim, vosize)
 
-    for x in range(0,8):
-        for y in range(0,8):
-            for z in range(0,8):
+def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float vosize):
+    init_agent_vox_volume(id, part, xdim,ydim,zdim, vosize)
+    for x in range(0,xdim):
+        for y in range(0,ydim):
+            for z in range(0,zdim):
                 a = 255
                 r = 32*x
                 g = 32*y
                 b = 32*z
-                #r,g,b = [0,255,0]
-                set_agent_vox_volume(id, 0, x,y,z, r,g,b,a)
-    ax = 0
-    ay = 0
-    az = 2.5
-    fx = 1.0
-    fy = 0
-    fz = 0
-    set_agent_box_anchor_point(id, 1, ax,ay,az, fx,fy,fz)
+                set_agent_vox_volume(id, part, x,y,z, r,g,b,a)
+
+def _set_agent_model(int id):
+    #cdef float vosize = .0625
+    cdef int part
+    cdef int xdim, ydim, zdim
+
+    global lu1, lu2, lu3, vosize
+
+    for part in range(0,6):
+        xdim,ydim,zdim = lu1[part]
+        default_vox_model_init(id, part, xdim,ydim,zdim, vosize)
+
+    for part in range(0,6):
+        length, ax,ay,az= lu2[part]
+        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+    for part in range(0,6):
+        fx,fy,fz, nx,ny,nz = lu3[part]
+        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
 
 def _create_agent(float x, float y, float z):
     cdef int id
     id = create_agent(x,y,z)
     _set_agent_model(id)
+    ##
+    global agent_list
+    agent_list.append(id)
     return id
 
 def _set_agent_state(int id, float xangle, float yangle):
