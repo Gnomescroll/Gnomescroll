@@ -23,7 +23,7 @@ cdef extern from "./agent/agent_vox.h":
     void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
     void set_limb_properties(int id, int part, float length, float ax, float ay, float az)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
-    void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az, float fx,float fy,float fz)
+    void set_agent_box_anchor_point(int id, int part, float ax,float ay,float az)
 
 def tick():
     grenade_tick()
@@ -48,33 +48,51 @@ def _create_cspray(int type, float x, float y, float z, float vx, float vy, floa
 
 #agent
 
+
+def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float vosize):
+    init_agent_vox_volume(id, part, xdim,ydim,zdim, vosize)
+    for x in range(0,8):
+        for y in range(0,8):
+            for z in range(0,8):
+                a = 255;r = 32*x;g = 32*y;b = 32*z
+                set_agent_vox_volume(id, 0, x,y,z, r,g,b,a)
+
 def _set_agent_model(int id):
     cdef float vosize = 0.2
     cdef int part
     cdef int xdim, ydim, zdim
-    for part in range(0,6):
-        xdim=8;ydim=8;zdim=8;
-        init_agent_vox_volume(id, part, xdim, ydim, zdim, vosize)
 
+    '''
+    init_agent_vox_volume(id, 0, 8,8,8, vosize)
+    init_agent_vox_volume(id, 1, 16,16,24, vosize)
+    init_agent_vox_volume(id, 2, 12,4,4, vosize)
+    init_agent_vox_volume(id, 3, 12,4,4, vosize)
+    init_agent_vox_volume(id, 4, 12, 4,4, vosize)
+    init_agent_vox_volume(id, 5, 12, 4,4, vosize)
+    '''
+
+    default_vox_model_init(id, 0, 8,8,8, vosize)
+    default_vox_model_init(id, 1, 16,16,24, vosize)
+    default_vox_model_init(id, 2, 12,4,4, vosize)
+    default_vox_model_init(id, 3, 12,4,4, vosize)
+    default_vox_model_init(id, 4, 12, 4,4, vosize)
+    default_vox_model_init(id, 5, 12, 4,4, vosize)
+
+    '''
     for x in range(0,8):
         for y in range(0,8):
             for z in range(0,8):
-                a = 255
-                r = 32*x
-                g = 32*y
-                b = 32*z
-                #r,g,b = [0,255,0]
+                a = 255;r = 32*x;g = 32*y;b = 32*z
                 set_agent_vox_volume(id, 0, x,y,z, r,g,b,a)
-    ax = 0
-    ay = 0
-    az = 2.5
+    '''
+
     fx = 1.0
     fy = 0
     fz = 0
-    set_agent_box_anchor_point(id, 1, ax,ay,az, fx,fy,fz)
+    set_agent_box_anchor_point(id, 1, fx, fy, fz)
 
     #length, anchor x,y,z
-    set_limb_properties(id, 1, float length, float ax, float ay, float az) #torso
+    set_limb_properties(id, 1, 0, float ax, float ay, float az) #torso
     set_limb_properties(id, 2, float length, float ax, float ay, float az) #larm
     set_limb_properties(id, 3, float length, float ax, float ay, float az) #rarm
     set_limb_properties(id, 4, float length, float ax, float ay, float az) #lleg
