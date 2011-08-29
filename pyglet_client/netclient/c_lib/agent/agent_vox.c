@@ -242,9 +242,6 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 }
 
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a) {
-    //float ch = a->camera_height;
-    //look is forward direction
-    //right is right
 
     int i,j,k;
     int i1, j1;
@@ -264,9 +261,6 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
 
     struct Vector f = v->f;
     ///vector_rotate_origin(&f,&f,a->xangle*PI);
-
-
-
 
     //vector_rotate_origin(&c,&c,a->xangle*PI);
 
@@ -295,14 +289,11 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     }
 
 
-
+    float x0, y0, z0;
     float cx,cy,cz;
     cx = c.x - (v->xdim*vx.x + v->ydim*vy.x + v->zdim*vz.x)/2;
     cy = c.y - (v->xdim*vx.y + v->ydim*vy.y + v->zdim*vz.y)/2;
     cz = c.z - (v->xdim*vx.z + v->ydim*vy.z + v->zdim*vz.z)/2;
-
-
-    float x0, y0, z0;
 
     glBegin(GL_QUADS);
 
