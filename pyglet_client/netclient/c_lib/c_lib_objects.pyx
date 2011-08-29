@@ -82,26 +82,6 @@ def _set_agent_model(int id):
     cdef int part
     cdef int xdim, ydim, zdim
 
-    '''
-    init_agent_vox_volume(id, 0, 8,8,8, vosize)
-    init_agent_vox_volume(id, 1, 16,16,24, vosize)
-    init_agent_vox_volume(id, 2, 12,4,4, vosize)
-    init_agent_vox_volume(id, 3, 12,4,4, vosize)
-    init_agent_vox_volume(id, 4, 12, 4,4, vosize)
-    init_agent_vox_volume(id, 5, 12, 4,4, vosize)
-    '''
-
-    '''
-    for x in range(0,8):
-        for y in range(0,8):
-            for z in range(0,8):
-                a = 255;r = 32*x;g = 32*y;b = 32*z
-                set_agent_vox_volume(id, 0, x,y,z, r,g,b,a)
-    '''
-
-    #fx = 1.0;fy = 0;fz = 0
-    #set_agent_limb_anchor_point(id, 1, fx, fy, fz)
-
     global lu1, lu2, lu3, vosize
 
     for part in range(0,6):
@@ -114,15 +94,6 @@ def _set_agent_model(int id):
     for part in range(0,6):
         fx,fy,fz, nx,ny,nz = lu3[part]
         set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
-    #length, anchor x,y,z
-    '''
-    set_limb_properties(id, 1, 0, float ax, float ay, float az) #torso
-    set_limb_properties(id, 2, 0.0, float ax, float ay, float az) #larm
-    set_limb_properties(id, 3, float length, float ax, float ay, float az) #rarm
-    set_limb_properties(id, 4, float length, float ax, float ay, float az) #lleg
-    set_limb_properties(id, 5, float length, float ax, float ay, float az) #rleg
-    '''
 
 def _create_agent(float x, float y, float z):
     cdef int id

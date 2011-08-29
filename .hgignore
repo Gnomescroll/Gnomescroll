@@ -3,6 +3,7 @@ syntax: glob
 *.pxd
 *.pyd
 *.pyo
+*.dylib
 
 run 
 
