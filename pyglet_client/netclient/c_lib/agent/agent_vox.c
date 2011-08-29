@@ -63,13 +63,8 @@ void set_agent_box_anchor_point(int id, int part, float fx,float fy,float fz) {
         printf("set_agent_box_anchor_point: Vox is Null!\n");
         return;
     }
-
-    float len = sqrt(fx*fx+fy*fy+fz*fz);
-    fx /= len; fy /= len; fz /= len;
-
-    v->f.x = fx;
-    v->f.y = fy;
-    v->f.z = fz;
+    v->f = Vector_init(fx,fy,fz);
+    normalize_vector(&v->f);
 }
 
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
@@ -232,18 +227,33 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 
 }
 
-void agent_vox_draw_vox_volume(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a) {
+void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a) {
     //float ch = a->camera_height;
     //look is forward direction
     //right is right
     float vos = v->vox_size;
     float ln = v->length;
-    struct Vector c = Vector_init(a->x+look.x*ln, a->y+look.y*ln, a->z+look.z*ln);
-    c = vector_rotate_origin(c,a->xangle*PI);
+
+
+    struct Vector an = v->a;
+    struct Vector c = Vector_init(an.x+ln*v->f.x, an.y+ln*v->f.y, an.z+ln*v->f.z);
+    ///vector_rotate_origin(&c,&c,a->xangle*PI);
+
+    c.x += a->x;
+    c.y += a->y;
+    c.z += a->z;
+
+    struct Vector f = v->f;
+    ///vector_rotate_origin(&f,&f,a->xangle*PI);
+
+
+
+
+    //vector_rotate_origin(&c,&c,a->xangle*PI);
 
     struct Vector vx,vy,vz;
 
-    vx = look;
+    vx = f; //instead of look direction
     vz = vector_cross(vx, right);
     vy = vector_cross(vx, vz);
     int i,j,k;

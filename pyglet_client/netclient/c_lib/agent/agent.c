@@ -22,6 +22,7 @@ struct Agent_state* get_agent(int id) {
 
 void agent_Tick(struct Agent_state* g) {
     g->xangle += 0.01;
+    g->xangle = 0.0;
     g->yangle += 0; //0.005; //0.35;
 }
 
@@ -42,7 +43,7 @@ void agent_Draw(struct Agent_state* g) {
     float theta = g->xangle;
     float phi = g->yangle;
     struct Vector c,up,forward,right;
-    struct Vector look;
+    struct Vector look, look2;
     c = Vector_init(g->x, g->y, g->z);
     up = Vector_init(0.0,0.0,1.0);
     forward = Vector_init(cos(PI*theta), sin(PI*theta), 0);
@@ -54,6 +55,11 @@ void agent_Draw(struct Agent_state* g) {
     look.y = sin( theta * PI) * cos( phi * PI);
     look.z = sin( phi);
     normalize_vector(&look);
+
+    look2.x = cos( theta * PI);
+    look2.y = sin( theta * PI);
+    look2.z = 0;
+    normalize_vector(&look2);
 
     right = Vector_init(cos(theta*PI+PI/2), sin(theta*PI+PI/2), 0);
 
@@ -77,15 +83,17 @@ void agent_Draw(struct Agent_state* g) {
 
     glEnd();
 
-    agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
+    //agent_vox_draw_head(&g->vox_part[AGENT_PART_HEAD], look, right, g);
 
-    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_TORSO], look, right, g);
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_HEAD], right, g);
 
-    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_LARM], look, right, g);
-    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_RARM], look, right, g);
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_TORSO], right, g);
 
-    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_LLEG], look, right, g);
-    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_RLEG], look, right, g);
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_LARM], right, g);
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_RARM], right, g);
+
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_LLEG], right, g);
+    agent_vox_draw_vox_volume(&g->vox_part[AGENT_PART_RLEG], right, g);
 
 }
 

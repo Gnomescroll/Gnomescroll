@@ -30,14 +30,14 @@ inline static struct Vector vector_cross(struct Vector v1, struct Vector v2) {
     return v0;
 }
 
-inline static struct Vector vector_rotate_origin(struct Vector v, float theta) {
-    float x = v.x;
-    float y = v.y;
+//rotate vector in xy plane around origin
+inline static void vector_rotate_origin(struct Vector* in, struct Vector* out, float theta) {
     float cost = cos(theta);
     float sint = sin(theta);
-    v.x = x*cost - y*sint;
-    v.y = x*sint + y*cost;
-    return v;
+    float x = in->x;
+    float y = in->y;
+    out->x = x*cost - y*sint;
+    out->y = x*sint + y*cost;
 }
 
 void print_vector_dot(struct Vector v1, struct Vector v2) {

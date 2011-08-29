@@ -203,7 +203,7 @@ class App(object):
         if ping:
             ping_n = SDL.gl.get_ticks()
 
-        c_lib.c_lib_objects._create_agent(5,5,6)
+        c_lib.c_lib_objects._create_agent(0,0,8)
 
         self.intervals.set()
         _i = 30

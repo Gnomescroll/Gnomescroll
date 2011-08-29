@@ -60,8 +60,10 @@ def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float
                 b = 32*z
                 set_agent_vox_volume(id, part, x,y,z, r,g,b,a)
 
+from agent_dim import lu, lu2
+
 def _set_agent_model(int id):
-    cdef float vosize = 0.2
+    cdef float vosize = .0625
     cdef int part
     cdef int xdim, ydim, zdim
 
@@ -93,20 +95,15 @@ def _set_agent_model(int id):
     fy = 0
     fz = 0
     set_agent_box_anchor_point(id, 1, fx, fy, fz)
+    global lu, lu2
 
-    lu = [
-    [0, 0,0,3.0],
-    [0, 0,0,1.5],
-    [2, -1.0,0,1.5],
-    [2, 1,0,1.5],
-    [2, 0,0,1.0],
-    [2, 0,0,1.0],
-    ]
     for part in range(0,6):
-        print "test= " + str(part)
         length, ax,ay,az = lu[part]
         set_limb_properties(id, part, length,ax,ay,az)
-    print "Finished"
+
+    for part in range(1,6):
+        fx,fy,dz = lu2[part]
+        set_agent_box_anchor_point(id, part, fx, fy, fz)
     #length, anchor x,y,z
     '''
     set_limb_properties(id, 1, 0, float ax, float ay, float az) #torso

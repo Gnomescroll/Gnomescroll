@@ -21,7 +21,8 @@ unsigned char r,g,b,a;
 
 struct Vox {
 
-    struct Vector f,r,u;
+    struct Vector f;
+    struct Vector r,u;
     //float fx,fy,fz;
     //float rx,ry,rz;
     //float ux,uy,uz; //up, right, forward
@@ -49,5 +50,5 @@ void set_agent_box_anchor_point(int id, int part, float fx,float fy,float fz);
 
 void destroy_vox(struct Vox* v);
 void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a);
-void agent_vox_draw_vox_volume(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a);
+void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a);
 #endif
