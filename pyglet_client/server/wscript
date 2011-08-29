@@ -42,10 +42,13 @@ def configure(conf):
 
     ##TEST
     conf.check(header_name='GL/glew.h', mandatory=True)
-    elif OS == 'Linux':
+
+    if OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
     ##TEST
 
+    if OS != 'Windows':
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
 
     conf.check(header_name='SDL.h',
                use='SDL',
@@ -118,11 +121,7 @@ def install_in_ext(ctx):
         print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = [
-        #'SDL.gl',
-        #'SDL.hud',
-        #'SDL.input',
-        #'cube_lib.terrain_map',
-        #'vox_lib',
+        'cube_lib.terrain_map',
         'c_lib.ray_trace',
         'init_c_lib',
         'c_lib.c_lib_objects',
