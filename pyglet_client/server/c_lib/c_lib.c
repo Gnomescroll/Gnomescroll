@@ -16,7 +16,7 @@
 
 #include "./map_gen/density.h"
 
-//#include "./texture_loader.c"
+#include "./texture_loader.c"
 
 #define map_gen_enabled 0
 
@@ -25,7 +25,7 @@ int init_c_lib() {
     init_objects_grenade();
     init_objects_neutron();
     init_objects_cspray();
-    init_texture_loader();
+    //init_texture_loader();
 
     if(map_gen_enabled == 1) {
         init_map_gen_density();
