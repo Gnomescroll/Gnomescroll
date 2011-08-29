@@ -30,6 +30,7 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     printf("num_vox= %i \n", v->num_vox);
     v->radius = sqrt((vosize*xdim)*(vosize*xdim) + (vosize*ydim)*(vosize*ydim) + (vosize*zdim)*(vosize*zdim));
     v->vox_size = vosize;
+    if(v->vox != NULL) { free(v->vox);} //recycle
     v->vox = malloc(v->num_vox*sizeof(struct Voxel));
     int i;
     for(i=0; i<v->num_vox; i++) {
@@ -45,7 +46,7 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     v->a.z = 0.0;
 }
 
-void set_limb_properties(int id, int part, float length, float ax, float ay, float az) {
+void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
     struct Vox* v = get_agent_vox_part(id, part);
     if(v == NULL) {
         printf("init_agent_vox_volume: Vox is Null!\n");
@@ -57,7 +58,7 @@ void set_limb_properties(int id, int part, float length, float ax, float ay, flo
     v->a.z = az;
 }
 
-void set_agent_box_anchor_point(int id, int part, float fx,float fy,float fz) {
+void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz) {
     struct Vox* v = get_agent_vox_part(id, part);
     if(v == NULL) {
         printf("set_agent_box_anchor_point: Vox is Null!\n");
@@ -65,6 +66,19 @@ void set_agent_box_anchor_point(int id, int part, float fx,float fy,float fz) {
     }
     v->f = Vector_init(fx,fy,fz);
     normalize_vector(&v->f);
+    v->n = Vector_init(nx,ny,nz);
+    normalize_vector(&v->n);
+
+    struct Vector vx,vy,vz;
+    vx = v->f;
+    vy = v->n
+
+    vz = vector_cross(vx,vy);
+    vy = vector_cross(vx, vz);
+
+    v->f = vx;
+    v->n = vy;
+    v->u = vz;
 }
 
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
@@ -232,11 +246,11 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
     //look is forward direction
     //right is right
     float vos = v->vox_size;
-    float ln = v->length;
 
-
-    struct Vector an = v->a;
-    struct Vector c = Vector_init(an.x+ln*v->f.x, an.y+ln*v->f.y, an.z+ln*v->f.z);
+    struct Vector c;
+    c.x = v->a.x + v->length*v->f.x;
+    c.y = v->a.y + v->length*v->f.y;
+    c.z = v->a.z + v->length*v->f.z;
     ///vector_rotate_origin(&c,&c,a->xangle*PI);
 
     c.x += a->x;
