@@ -124,7 +124,7 @@ def build(bld):
     bld(features='c cshlib pyext',
         source=['c_lib/_ray_trace.pyx'],
         use=common_libraries + ['c_lib'],
-        target='c_lib.ray_trace')
+        target='c_lib._ray_trace')
 
     bld(features='c cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
@@ -172,7 +172,7 @@ def install_in_ext(ctx):
                'SDL.input',
                'cube_lib.terrain_map',
                'vox_lib',
-               'c_lib.ray_trace',
+               'c_lib._ray_trace',
                'init_c_lib',
                'c_lib.c_lib_objects',
                'c_lib.c_lib_map_gen',

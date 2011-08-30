@@ -402,7 +402,7 @@ class AgentRender:
 
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector
-            
+
 
 class AgentWeapons:
 
@@ -686,7 +686,7 @@ class AgentModel(object):
         # this is done in the hitscan net_event
         #if health < old_health:
          #   self.bleed()
-            
+
         GameStateGlobal.agentList.update(self, *args)
 
 #experimental
@@ -833,6 +833,7 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
 from profiler import P
 
+import c_lib._ray_trace
 
 '''
 Client's player's agent draw methods
@@ -857,6 +858,13 @@ class PlayerAgentRender(AgentRender):
         self.update_vox()
         self.draw_vox()
         P.event("ray cast")
+
+        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        dz = sin( self.y_angle)
+        max_l = 50
+        c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, 50)
+        return
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
         if pos != None:
             #print str(pos)
@@ -866,6 +874,7 @@ class PlayerAgentRender(AgentRender):
         #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
 
     def draw_position(self, points, seperation):
+        print "agents.py draw position deprecated"
         return
         v_num = 0
         v_list = []
@@ -885,6 +894,8 @@ class PlayerAgentRender(AgentRender):
 
 
     def draw_velocity(self, point_density, units):
+        print "agents.py draw velocity deprecated"
+        return
         v_num = 0
         v_list = []
         c_list = []
@@ -910,6 +921,8 @@ class PlayerAgentRender(AgentRender):
 
 
     def draw_acceleration(self, point_density, units):
+        print "agents.py draw acceleration deprecated"
+        return
         v_num = 0
         v_list = []
         c_list = []
@@ -934,6 +947,8 @@ class PlayerAgentRender(AgentRender):
                 SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_selected_cube(self):
+        print "agents.py draw_selected_cube deprecated"
+        return
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
         dz = sin( self.y_angle)
@@ -963,6 +978,8 @@ class PlayerAgentRender(AgentRender):
             pass #north side
 
     def draw_selected_cube2(self, distance = 20):
+        print "agents.py draw_selected_cube2 deprecated"
+        draw_selected_cube
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
         dz = sin( self.y_angle)
