@@ -142,6 +142,10 @@ int create_agent(float x, float y, float z) {
     g->camera_height= 2.5;
     g->cbox_height= 3.0;
     g->cbox_radius = 0.45;
+
+    for(i=0; i<6;i++) {
+        g->vox_part[i].vox = NULL;
+    }
     return g->id;
 }
 
