@@ -10,6 +10,7 @@
 #include "./objects/grenade.c"
 #include "./objects/neutron.c"
 #include "./objects/cspray.c"
+#include "./objects/blood.c"
 
 #include "./agent/agent.c"
 #include "./agent/agent_vox.c"
@@ -26,6 +27,7 @@ int init_c_lib() {
     init_objects_grenade();
     init_objects_neutron();
     init_objects_cspray();
+    init_objects_blood();
     init_texture_loader();
 
     if(map_gen_enabled == 1) {
