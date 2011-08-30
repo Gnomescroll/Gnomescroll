@@ -40,6 +40,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
         glVertex3f(_x,_y,_z);
     }
     glEnd();
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 }
 
 int v_set2[3*8] = {
@@ -113,7 +114,39 @@ void draw_agent_bounding_box(float x, float y, float z, float radius, float head
             glVertex3f(_x,_y,_z);
     }
     glEnd();
-
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 }
 
+void draw_agent_box_selection(float x, float y, float z, float radius, float head_height, float height) {
+
+    float zm = height+z;
+    float xmin,xmax,ymin,ymax;
+    xmin = x - radius;
+    xmax = x + radius;
+    ymin = x - radius;
+    ymax = x + radius;
+
+    int i,j;
+    int a,b;
+    float _x,_y,_z;
+
+    glBegin(GL_LINES);
+    glColor3ub((unsigned char)0,(unsigned char)150,(unsigned char)0);
+    for(i=0; i<12; i++) {
+            j = 3*vertex_index2[2*i+0];
+            _x = x + v_set2[j+0]*radius;
+            _y = y + v_set2[j+1]*radius;
+            _z = z+ head_height/2 + v_set2[j+2]*head_height/2;
+            glVertex3f(_x,_y,_z);
+            j = 3*vertex_index2[2*i+1];
+            _x = x + v_set2[j+0]*radius;
+            _y = y + v_set2[j+1]*radius;
+            _z = z+head_height/2 + v_set2[j+2]*head_height/2;
+            glVertex3f(_x,_y,_z);
+    }
+    glEnd();
+    glColor3ub((unsigned char)180,(unsigned char)0,(unsigned char)0);
+
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+}
 
