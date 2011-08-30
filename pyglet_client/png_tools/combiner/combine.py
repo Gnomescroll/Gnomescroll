@@ -4,7 +4,7 @@ png2 = "ore.png"
 out_png = "test5.png"
 
 #function combines the rgba values
-combine_type = 2
+combine_type = 1
 def kernel(r1,g1,b1,a1, r2,g2,b2,a2):
     if combine_type == 1: #average in together
         r = (r1+r2)/2
