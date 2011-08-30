@@ -432,17 +432,13 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
     //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
     double xf, yf, zf;
 
-    int ri[3];
-    ri[0]=0; ri[1]=0; ri[2]=0;
-
-    int col=0;
-
-    int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
-    side = -1;
+    side[0]=0; side[1]=0; side[2]=0;
+    int col=0;
+
     for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
@@ -453,7 +449,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
                 _x = x;
                 x += cdx;
                 if(collision_check2(x,y,z)) {
-                    ri[0] = cdx;
+                    side[0] = cdx;
                     col =1;
                     break;
                 }
@@ -463,7 +459,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
                 _y = y;
                 y += cdy;
                 if(collision_check2(x,y,z)) {
-                    ri[1] = cdy;
+                    side[1] = cdy;
                     col=1;
                     break;
                 }
@@ -474,7 +470,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
                 _z = z;
                 z += cdz;
                 if(collision_check2(x,y,z)) {
-                    ri[2] = cdz;
+                    side[2] = cdz;
                     col=1;
                     break;
                 }
@@ -485,12 +481,15 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
     //printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
     //}
     if(col == 1) {
-    side[0]=ri[0]; side[1]=ri[1]; side[2]=ri[2];
+    //side[0]=ri[0]; side[1]=ri[1]; side[2]=ri[2];
     collision[0]=x;collision[1]=y;collision[2]=z;
     pre_collision[0]=_x;pre_collision[1]=_y;pre_collision[2]=_z;
     *tile = _get(x,y,z);
     *distance = len*((float)(i) / max_i);
     return 1;
+    } else {
+        *tile = 0;
+        distance = 0;
+        return 0; //no collision
     }
-    return 0; //no collision
 }

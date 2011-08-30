@@ -805,6 +805,7 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
 from profiler import P
 
+import c_lib._ray_trace
 
 '''
 Client's player's agent draw methods
@@ -829,6 +830,13 @@ class PlayerAgentRender(AgentRender):
         self.update_vox()
         self.draw_vox()
         P.event("ray cast")
+
+        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
+        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
+        dz = sin( self.y_angle)
+        max_l = 50
+        c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, 50)
+        return
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
         if pos != None:
             #print str(pos)
