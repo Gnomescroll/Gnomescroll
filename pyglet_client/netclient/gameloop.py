@@ -218,6 +218,7 @@ class App(object):
             _max = 0.9
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             #c_lib.c_lib_map_gen._update_density_map(500)
+
             P.event("Physics Loop")
             while Phy.sync():
                 _i+=1
@@ -294,8 +295,9 @@ class App(object):
             self.camera.worldProjection()
             #P.event("animations.draw")
 
-            v2.move(10,0,10,theta)
-            v2.draw()
+            c_lib.c_lib_objects._draw_agent_bounding_box(5.5,5.5,6, 0.5, 2.0, 3.0)
+            #v2.move(10,0,10,theta)
+            #v2.draw()
 
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)

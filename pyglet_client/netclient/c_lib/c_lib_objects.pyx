@@ -29,7 +29,7 @@ cdef extern from "./agent/agent_vox.h":
 
 cdef extern from "./agent/agent_draw.h":
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
-    void draw_agent_bounding_box(float x, float y, float z, float radius, float height)
+    void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
 
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
 agent_list = []
@@ -121,8 +121,8 @@ def _set_agent_state(int id, float xangle, float yangle):
 def _draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle):
     draw_agent_aiming_direction(x, y, z, xangle, yangle)
 
-def _draw_agent_bounding_box(float x, float y, float z, float radius, float height):
-    draw_agent_bounding_box(x, y, z, radius, height)
+def _draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height):
+    draw_agent_bounding_box(x, y, z, radius, head_height, height)
 
 
 ### map gen

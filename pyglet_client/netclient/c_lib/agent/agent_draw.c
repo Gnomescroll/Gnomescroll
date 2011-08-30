@@ -17,10 +17,10 @@
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
     float distance = 15;
-    float density = 5;
+    float density = 3;
     float delta = 1/density;
 
-    float _x,_y_z;
+    float _x,_y,_z;
     float dx,dy,dz;
 
     dx = cos(xangle*PI)*cos(yangle*PI);
@@ -30,7 +30,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     normalize_vector(&dv);
 
     glBegin(GL_POINTS);
-    glColor3ub((unsigned char) v->vox[index].r,(unsigned char)v->vox[index].g,(unsigned char)v->vox[index].b);
+    glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
     float l =0;
     while(l < distance) {
         l += delta;
@@ -42,7 +42,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     glEnd();
 }
 
-int v_set[3*8] = [
+int v_set2[3*8] = {
         -1,-1,-1,
         1,-1,-1,
         1,1,-1,
@@ -51,9 +51,9 @@ int v_set[3*8] = [
         1,-1,1,
         1,1,1,
         -1,1,1,
-    ]
+    };
 
-int vertex_index[2*12] = [
+int vertex_index2[2*12] = {
         0,1,
         1,2,
         2,3,
@@ -68,11 +68,12 @@ int vertex_index[2*12] = [
         1,5,
         2,6,
         3,7,
-    ]
+    };
 
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height) {
 
     float zm = height+z;
+    float xmin,xmax,ymin,ymax;
     xmin = x - radius;
     xmax = x + radius;
     ymin = x - radius;
@@ -84,31 +85,31 @@ void draw_agent_bounding_box(float x, float y, float z, float radius, float head
 
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-    for(i=0; i<12) {
-            j = 3*v_set[2*i+0]
-            _x = x + v_set[j+0]*radius;
-            _y = y + v_set[j+1]*radius;
-            _z = head_height/2 + v_set[j+2]*head_height/2;
+    for(i=0; i<12; i++) {
+            j = 3*vertex_index2[2*i+0];
+            _x = x + v_set2[j+0]*radius;
+            _y = y + v_set2[j+1]*radius;
+            _z = z+ head_height/2 + v_set2[j+2]*head_height/2;
             glVertex3f(_x,_y,_z);
-            j = 3*v_set[2*i+1]
-            _x = x + v_set[j+0]*radius;
-            _y = y + v_set[j+1]*radius;
-            _z = head_height/2 + v_set[j+2]*head_height/2;
+            j = 3*vertex_index2[2*i+1];
+            _x = x + v_set2[j+0]*radius;
+            _y = y + v_set2[j+1]*radius;
+            _z = z+head_height/2 + v_set2[j+2]*head_height/2;
             glVertex3f(_x,_y,_z);
     }
 
     glColor3ub((unsigned char)180,(unsigned char)0,(unsigned char)0);
 
-    for(i=0; i<12) {
-            j = 3*v_set[2*i+0]
-            _x = x + v_set[j+0]*radius;
-            _y = y + v_set[j+1]*radius;
-            _z = head_height + height/2 + v_set[j+2]*height/2;
+    for(i=0; i<12; i++) {
+            j = 3*vertex_index2[2*i+0];
+            _x = x + v_set2[j+0]*radius;
+            _y = y + v_set2[j+1]*radius;
+            _z = z+head_height + 0.50 + v_set2[j+2]*0.50;
             glVertex3f(_x,_y,_z);
-            j = 3*v_set[2*i+1]
-            _x = x + v_set[j+0]*radius;
-            _y = y + v_set[j+1]*radius;
-            _z = head_height + height/2 + v_set[j+2]*height/2/2;
+            j = 3*vertex_index2[2*i+1];
+            _x = x + v_set2[j+0]*radius;
+            _y = y + v_set2[j+1]*radius;
+            _z = z+head_height + 0.50 + v_set2[j+2]*0.50;
             glVertex3f(_x,_y,_z);
     }
     glEnd();

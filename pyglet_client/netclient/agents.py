@@ -7,6 +7,7 @@ import math
 from math import sin, cos, pi
 from math import floor, ceil, fabs
 
+import c_lib.c_lib_objects
 
 from game_state import GameStateGlobal #Deprecate?
 
@@ -344,11 +345,13 @@ class AgentRender:
         self.draw_vox()
         ##self.draw_selected_cube()
         ##self.draw_selected_cube2()
-        self.draw_position(points=10, seperation = 0.10)
-        #self.draw_velocity(point_density=15, units=200)
-        #self.draw_acceleration(point_density=15, units=100000)
+        #self.draw_position(points=10, seperation = 0.10)
+        #self.draw_velocity(point_density=15, units=200)  #NOOO
+        #self.draw_acceleration(point_density=15, units=100000) #NOOO
 
     def draw_position(self, points, seperation):
+        print "Draw position Deprecated!"
+        return
         v_num = 0
         v_list = []
         c_list = []
@@ -360,71 +363,24 @@ class AgentRender:
             c_list += [140,0,0]*3
             v_num +=3
 
-        if settings.pyglet:
-            pyglet.graphics.draw(v_num, GL_POINTS,
-            ("v3f", v_list),
-            ("c3B", c_list)
-            )
-        else:
-            for i in range(0,v_num):
-                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.gl.draw_point(r,g,b,x,y,z)
+
+        for i in range(0,v_num):
+            x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+            r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+            SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_bounding_box(self):
-        print "draw_bounding_box DEPCRECATED!!!"
-        #agent parameters
         b_height = self.b_height
         t_height = self.t_height
         box_r = self.box_r
-
         x = self.x
         y = self.y
         z = self.z
-        #cordinates for corners
-        x_neg = x-box_r
-        x_pos = x+box_r
-        y_neg = y-box_r
-        y_pos = y+box_r
-
-        z0 = z-b_height
-        z1 = z
-        z2 = z+t_height
-
-        draw_box(x_neg, x_pos, y_neg, y_pos, z0, z1, [255,0,0])
-        draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
+        c_lib.c_lib_objects._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
+        #draw box 2 high and then 3 high
 
     def draw_aiming_direction(self, distance=50):
-        print "draw_aiming_direction DEPRECATED!"
-        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
-        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
-        dz = sin( self.y_angle)
-
-        ep = 0.33
-        v_list = []
-        v_num = 0
-        cf = 0.
-        while cf < distance:
-            v_num += 1
-            x= self.x + cf*dx
-            y= self.y + cf*dy
-            z= self.z + cf*dz
-            cf += ep
-            v_list += [x,y,z]
-        #print str(v_list)
-        #print str(v_num)
-        c_list = [200,0,0]*v_num
-
-        if settings.pyglet:
-            pyglet.graphics.draw(v_num, GL_POINTS,
-            ("v3f", v_list),
-            ("c3B", c_list)
-            )
-        else:
-            for i in range(0,v_num):
-                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.gl.draw_point(r,g,b,x,y,z)
+        c_lib.c_lib_objects._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
 
 class AgentWeapons:
@@ -863,11 +819,11 @@ class PlayerAgentRender(AgentRender):
         self.draw_bounding_box()
         #self.draw_selected_cube()
         #self.draw_selected_cube2()
-        P.event("draw position")
-        self.draw_position(points=10, seperation = 0.10)
-        P.event("draw velocity")
-        self.draw_velocity(point_density=15, units=200)
-        P.event("draw acceleration")
+        ##P.event("draw position")
+        ##self.draw_position(points=10, seperation = 0.10)
+        #P.event("draw velocity")
+        #self.draw_velocity(point_density=15, units=200)
+        #P.event("draw acceleration")
         #vox models
         P.event("update/draw_vox")
         self.update_vox()
@@ -882,6 +838,7 @@ class PlayerAgentRender(AgentRender):
         #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
 
     def draw_position(self, points, seperation):
+        return
         v_num = 0
         v_list = []
         c_list = []
@@ -893,16 +850,10 @@ class PlayerAgentRender(AgentRender):
             c_list += [150,0,0]*3
             v_num +=3
         #deprecate
-        if settings.pyglet:
-            pyglet.graphics.draw(v_num, GL_POINTS,
-            ("v3f", v_list),
-            ("c3B", c_list)
-            )
-        else:
-            for i in range(0,v_num):
-                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.gl.draw_point(r,g,b,x,y,z)
+        for i in range(0,v_num):
+            x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
+            r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
+            SDL.gl.draw_point(r,g,b,x,y,z)
 
 
     def draw_velocity(self, point_density, units):
