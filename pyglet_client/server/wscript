@@ -40,12 +40,15 @@ def configure(conf):
     OS = platform.system()
     conf.env.os = OS
 
-    ##TEST
+    ##TEST REMOVE LATER
     conf.check(header_name='GL/glew.h', mandatory=True)
 
-    if OS == 'Linux':
+    if OS == 'Windows':
+        conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
+    elif OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
-    ##TEST
+    elif OS == 'Darwin':
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
 
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
@@ -61,6 +64,7 @@ def configure(conf):
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
+    ##END TEST
 
     conf.env.INCLUDES = ['c_lib',]
     conf.env.INCLUDES = ['c_lib', 'cube_lib']
@@ -77,6 +81,7 @@ def build(bld):
         time_lib = []
 
     common_libraries = ['GL', 'SDL', 'SDL_image']
+    #common_libraries = []
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
