@@ -201,14 +201,14 @@ def init_cube_properties(id=None):
     def apply(id):
         cdef cubeProperties* cp
         cp = _get_cube(id)
-        cp.active = c_dat.get(id,'active')
-        cp.occludes = c_dat.get(id,'occludes')
-        cp.solid = c_dat.get(id,'solid')
-        cp.gravity = c_dat.get(id,'gravity')
-        cp.transparent = c_dat.get(id,'transparent')
-        cp.max_damage = c_dat.get(id,'max_damage')
-        cp.neutron_tolerance = c_dat.get(id,'neutron_tolerance')
-        cp.nuclear = c_dat.get(id,'nuclear')
+        cp.active = int(c_dat.get(id,'active'))
+        cp.occludes = int(c_dat.get(id,'occludes'))
+        cp.solid = int(c_dat.get(id,'solid'))
+        cp.gravity = int(c_dat.get(id,'gravity'))
+        cp.transparent = int(c_dat.get(id,'transparent'))
+        cp.max_damage = int(c_dat.get(id,'max_damage'))
+        cp.neutron_tolerance = int(c_dat.get(id,'neutron_tolerance'))
+        cp.nuclear = int(c_dat.get(id,'nuclear'))
 
     if id is None:
         for id in c_dat.dat:

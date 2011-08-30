@@ -10,7 +10,7 @@ from cube_lib.terrain_map import collisionDetection
 
 import c_lib.c_lib_objects as c_obj
 
-import dat_loader
+import dats.loader as dat_loader
 p_dat = dat_loader.p_dat
 
 '''

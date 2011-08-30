@@ -1,7 +1,7 @@
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
-import dat_loader
+import dats.loader as dat_loader
 i_dat = dat_loader.i_dat
 
 

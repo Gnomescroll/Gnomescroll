@@ -186,6 +186,8 @@ cdef extern from "../c_lib/t_map/t_properties.h":
         int gravity
         int transparent
         int max_damage
+        int neutron_tolerance
+        int nuclear
 
 cdef extern from "../c_lib/t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
@@ -193,9 +195,9 @@ cdef extern from "../c_lib/t_map/t_properties.h":
     cubeProperties* _get_cube(int id)
 
 ## Setup ##
+
+'''
 from dat.cube_dat import cube_list
-
-
 def init_cube_properties():
     cdef cubeProperties* cp
     global cube_list
@@ -211,6 +213,30 @@ def init_cube_properties():
         cp.gravity = int(d.get('gravity', 0))
         cp.transparent = int(d.get('transparent', 0))
         cp.max_damage = int(d.get('max_damage', 3))
+'''
+
+from dats.loader import c_dat
+
+def init_cube_properties(id=None):
+    global c_dat
+
+    def apply(id):
+        cdef cubeProperties* cp
+        cp = _get_cube(id)
+        cp.active = int(c_dat.get(id,'active'))
+        cp.occludes = int(c_dat.get(id,'occludes'))
+        cp.solid = int(c_dat.get(id,'solid'))
+        cp.gravity = int(c_dat.get(id,'gravity'))
+        cp.transparent = int(c_dat.get(id,'transparent'))
+        cp.max_damage = int(c_dat.get(id,'max_damage'))
+        cp.neutron_tolerance = int(c_dat.get(id,'neutron_tolerance'))
+        cp.nuclear = int(c_dat.get(id,'nuclear'))
+
+    if id is None:
+        for id in c_dat.dat:
+            apply(id)
+    else:
+        apply(id)
 
 cpdef inline int isActive(unsigned int id):
     return _get_cube(id).active

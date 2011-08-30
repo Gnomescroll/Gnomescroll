@@ -27,7 +27,7 @@ import cube_lib.terrain_map as terrain_map
 
 import intervals
 import file_monitor
-import dat_loader
+import dats.loader as dat_loader
 
 import random
 def load_map():

@@ -5,7 +5,7 @@ Outgoing network messages
 import simplejson as json
 import struct
 
-import dat_loader as dl
+import dats.loader as dl
 
 class NetOut:
 
