@@ -1,7 +1,7 @@
 
 import SDL.gl
 
-p_on = True
+p_on = False
 
 def get_ticks():
     return SDL.gl.get_ticks()

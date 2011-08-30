@@ -169,6 +169,7 @@ void draw_agent_bounding_box(float x, float y, float z, float radius, float head
 
 void draw_agent_box_selection(int x, int y, int z, int r, int g, int b) {
 
+    printf("Draw box at %i,%i,%i \n", x,y,z);
     const float radius = 0.49;
 
     int i,j;
