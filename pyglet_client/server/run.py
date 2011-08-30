@@ -14,8 +14,7 @@ import pyximport #; pyximport.install()
 
 #from pudb import set_trace; set_trace()
 
-import c_lib #physics timer
-#c_lib.test()
+import c_lib.c_lib_physics_timer as physics_timer
 
 from net_server import NetServer
 from net_out import NetOut
@@ -255,24 +254,24 @@ class Main:
             #NetOut.event.send_dat()
 
         #files = ['dats.py']
-        #callbacks = [_dat_change_reload] 
+        #callbacks = [_dat_change_reload]
 
         #self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
         #self.intervals = intervals.Intervals()
         #self.intervals.register(self.file_monitor, self.file_monitor.interval)
-        
+
     def run(self):
         print "Server Started"
         #load_map()
         load_map2()
-        c_lib.start_physics_timer(33) #ms per tick
+        physics_timer.start_physics_timer(33) #ms per tick
         tick = 0
         #self.intervals.set()
-        
+
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
-            tc = c_lib.tick_check() #get number of ticks server is behind
+            tc = physics_timer.tick_check() #get number of ticks server is behind
             #print "tc= %i" %(tc)
             if tc > 1:
                 print "Server is %i ticks behind" % (tc)

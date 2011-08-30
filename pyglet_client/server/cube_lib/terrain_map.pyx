@@ -193,7 +193,7 @@ cdef extern from "../c_lib/t_map/t_properties.h":
     cubeProperties* _get_cube(int id)
 
 ## Setup ##
-from cube_dat import cube_list
+from dat.cube_dat import cube_list
 
 
 def init_cube_properties():
