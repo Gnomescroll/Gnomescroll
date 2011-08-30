@@ -122,12 +122,10 @@ cdef class Texture:
 
 class Textures:
     hud_tex = None
-    tile_tex = None
 
     def init(self):
         print "Initing Textures"
-        self.hud_tex = Texture("./texture/target.png")
-        self.tile_tex = Texture("./texture/textures_01.png")
+        self.hud_tex = Texture("./media/texture/target.png")
 
 from libc.stdlib cimport malloc, free
 
@@ -151,12 +149,7 @@ cdef class Global:
         print "Creating SDL OpenGL Window"
         _init_video()
         init_particles()
-        #_init_input() ##fix
 
-        #_init_image_loader()
-        #self.textures.hud_tex = Texture("./texture/target.png", 0)
-        #self.textures.tile_tex = Texture("./texture/textures_01.png",0)
-        #self.camera = Camera()
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"

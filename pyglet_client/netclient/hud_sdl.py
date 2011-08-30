@@ -12,7 +12,7 @@ from game_state import GameStateGlobal
 HUD overlay
 '''
 
-base_dir = "./"
+base_dir = "./media/"
 
 class Hud(object):
 
@@ -21,7 +21,7 @@ class Hud(object):
         ## HARDCODED -- replace w/ SDL window object later
         self.win_width = 800
         self.win_height = 600
-        
+
         self._init_reticle()
         self._init_text_dict()
         self._init_scoreboard()
@@ -72,7 +72,7 @@ class Hud(object):
             # load texture
             # center it
             # draw_functions._blit_sprite
-            tex_file = '%stexture/target.png' % (base_dir,)
+            tex_file = '%texture/starget.png' % (base_dir,)
             self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
 
     def _init_block_selector(self):
@@ -143,7 +143,7 @@ class Hud(object):
         w = 8
         bx, by = w,w
         space = 0
-        
+
         start_x = self.win_width - 70
         start_y = ((bs.y - 1) * by) + 15
         active_x = start_x + ((bs.active % bs.x) * (bx + (2*space)))
@@ -268,13 +268,13 @@ class Hud(object):
             color = (255,255,255)
         r,g,b = color
         SDL.gl.draw_border_rect(r,g,b, x,y, w,h)
-            
+
     def _draw_horizontal_line(self, x, y, length=10):
         self._draw_line(x, y, x + length, y)
 
     def _draw_vertical_line(self, x, y, length=10):
         self._draw_line(x, y, x, y + length)
-        
+
     def _draw_vertical_lines(self, x, y, length=10, w=2):
         for i in range(w):
             _x = x + i
