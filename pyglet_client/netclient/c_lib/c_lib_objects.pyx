@@ -3,7 +3,7 @@ cdef extern from "./objects/grenade.h":
     void grenade_draw()
     int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max)
     void destroy_grenade(int gid)
-    
+
 cdef extern from "./objects/neutron.h":
     void neutron_tick()
     void neutron_draw()
@@ -56,11 +56,11 @@ def draw():
     agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
-    print "CYTHON CREATE GRENADE"
+    #print "CYTHON CREATE GRENADE"
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)
 
 def _destroy_grenade(int gid):
-    print "CYTHON DESTROY GRENADE"
+    #print "CYTHON DESTROY GRENADE"
     destroy_grenade(gid)
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):

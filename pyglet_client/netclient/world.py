@@ -10,6 +10,9 @@ base_dir = "./"
 
 import random
 
+#from profiler import P
+#P.event("E2")
+
 class World():
 
     terrainMap = None
@@ -69,9 +72,12 @@ class World():
 
     def draw_agents(self, first_person=False):
         for agent in GameStateGlobal.agentList.values():
+            x= (agent.team and not agent.team.is_viewers())
             if not agent.dead and not (agent.you and first_person) and \
                 (agent.team and not agent.team.is_viewers()):
+                #P.event("E2")
                 agent.draw()
+
 
 import projectiles
 

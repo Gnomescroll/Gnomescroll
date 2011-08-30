@@ -37,7 +37,7 @@ class AgentPhysics:
         v = 1
         d_x, d_y, v_x, v_y = 0,0,0,0
         u,d,l,r, jetpack, brake = self.button_state
-        
+
         if u:
                 v_x += v*cos( self.x_angle * pi)
                 v_y += v*sin( self.x_angle * pi)
@@ -50,7 +50,7 @@ class AgentPhysics:
         if r:
                 v_x += -v*cos( self.x_angle * pi + pi/2)
                 v_y += -v*sin( self.x_angle * pi + pi/2)
-                
+
         return [\
             d_x,
             d_y,
@@ -336,6 +336,7 @@ Render/Draw methods for agents
 class AgentRender:
 
     def draw(self):
+        P.event("Draw 2")
         self.draw_aiming_direction()
         self.draw_bounding_box()
 
@@ -841,6 +842,12 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
 
+
+
+
+from profiler import P
+
+
 '''
 Client's player's agent draw methods
 '''
@@ -848,15 +855,22 @@ class PlayerAgentRender(AgentRender):
 
 
     def draw(self):
+        P.event("aiming direction")
         self.draw_aiming_direction()
+        P.event("bounding box")
         self.draw_bounding_box()
         #self.draw_selected_cube()
         #self.draw_selected_cube2()
+        P.event("draw position")
         self.draw_position(points=10, seperation = 0.10)
+        P.event("draw velocity")
         self.draw_velocity(point_density=15, units=200)
+        P.event("draw acceleration")
         self.draw_acceleration(point_density=15, units=100000)
         #vox models
+        P.event("update_vox")
         self.update_vox()
+        P.event("draw_vox")
         self.draw_vox()
 
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
@@ -1236,7 +1250,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         #item = self.inventory.add(item, index)
         #if item:
             #NetOut.sendMessage.pickup_item(self, item, index)
-            
+
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():
             return
@@ -1249,7 +1263,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         #item = self.inventory.drop(item)
         #if item:
             #NetOut.sendMessage.drop_item(self, item)
-            
+
     def drop_item(self, item):
         if self.team.is_viewers():
             return

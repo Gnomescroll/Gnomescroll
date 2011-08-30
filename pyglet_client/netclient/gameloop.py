@@ -213,13 +213,12 @@ class App(object):
             theta += -.005 #test
             P.start_frame()
             tc = 0
-            P.event("Physics Tick")
-
             _density = 1
             _min = 0.025
             _max = 0.9
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             #c_lib.c_lib_map_gen._update_density_map(500)
+            P.event("Physics Loop")
             while Phy.sync():
                 _i+=1
 
@@ -266,16 +265,16 @@ class App(object):
                     #c_lib.c_lib_objects._create_cspray( _type, 0,0,10, 0,0,2)
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
                 tc += 1
-                P.event("process_events")
+                #P.event("process_events")
                 SDL.input.process_events()
-                P.event("get_key_state")
+                #P.event("get_key_state")
                 SDL.input.get_key_state()
                 #network events
                 #if GameStateGlobal.agent is not None:
                     #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
                 if GameStateGlobal.agent is not None:
                     NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
-                P.event("process incoming packets")
+                #P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
                 #check if another physics tick is needed
                 self.world.tick()
@@ -293,7 +292,7 @@ class App(object):
                 first_person = False
 
             self.camera.worldProjection()
-            P.event("animations.draw")
+            #P.event("animations.draw")
 
             v2.move(10,0,10,theta)
             v2.draw()
@@ -301,10 +300,13 @@ class App(object):
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             cube_lib.terrain_map.draw_terrain()
-            self.world.draw(first_person)
+            P.event("Draw Terrain 1")
+            self.world.draw(first_person) #upto 255 ms
+            P.event("Draw Terrain 2")
             self.animations.draw()
+            P.event("Draw Terrain 3") #up to 5 ms
             c_lib.c_lib_objects.draw() ## TESTING
-            P.event("Draw World_0")
+
             if False:
                 pass
                 density = 5
