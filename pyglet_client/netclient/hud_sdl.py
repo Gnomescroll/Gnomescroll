@@ -72,7 +72,7 @@ class Hud(object):
             # load texture
             # center it
             # draw_functions._blit_sprite
-            tex_file = '%texture/starget.png' % (base_dir,)
+            tex_file = '%stexture/target.png' % (base_dir,)
             self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
 
     def _init_block_selector(self):
