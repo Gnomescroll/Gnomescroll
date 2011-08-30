@@ -13,7 +13,7 @@ cdef extern from "./objects/cspray.h":
     void cspray_tick()
     void cspray_draw()
     void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
-    
+
 cdef extern from "./objects/blood.h":
     void blood_tick()
     void blood_draw()
@@ -36,6 +36,7 @@ cdef extern from "./agent/agent_vox.h":
 cdef extern from "./agent/agent_draw.h":
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
     void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
+    void draw_agent_box_selection(int x, int y, int z, int r, int g, int b)
 
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
 agent_list = []
@@ -133,6 +134,8 @@ def _draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
 def _draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height):
     draw_agent_bounding_box(x, y, z, radius, head_height, height)
 
+def _draw_agent_box_selection(int x, int y, int z, int r, int g, int b):
+    draw_agent_box_selection(x,y,z, r,g,b)
 
 ### map gen
 '''

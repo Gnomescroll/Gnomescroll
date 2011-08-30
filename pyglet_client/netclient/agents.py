@@ -8,6 +8,7 @@ from math import sin, cos, pi
 from math import floor, ceil, fabs
 
 import c_lib.c_lib_objects
+import c_lib.c_lib_objects
 
 from game_state import GameStateGlobal #Deprecate?
 
@@ -357,17 +358,6 @@ class AgentRender:
     def draw_position(self, points, seperation):
         print "Draw position Deprecated!"
         return
-        v_num = 0
-        v_list = []
-        c_list = []
-        for n in range(-points, points):
-            temp = float(n)*float(seperation)
-            v_list += [self.x+temp, self.y, self.z]
-            v_list += [self.x,self.y+temp, self.z]
-            v_list += [self.x,self.y, self.z+temp]
-            c_list += [140,0,0]*3
-            v_num +=3
-
 
         for i in range(0,v_num):
             x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
@@ -375,12 +365,8 @@ class AgentRender:
             SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_bounding_box(self):
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
-        x = self.x
-        y = self.y
-        z = self.z
+        b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
+        x = self.x;y = self.y;z = self.z
         c_lib.c_lib_objects._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
         #draw box 2 high and then 3 high
 
@@ -868,7 +854,9 @@ class PlayerAgentRender(AgentRender):
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
         if pos != None:
             #print str(pos)
-            (x,y,z) = pos
+            (x,y,z, px,py,pz, sx,sy,dz) = pos
+            _draw_agent_box_selection(int x, int y, int z, int r, int g, int b)
+            c_lib.c_lib_objects._draw_agent_box_selection(int x, int y, int z, int r, int g, int b)
             draw_cube(x,y,z,[0,155,0])
         #collides at (dx*n,dy*n,dz*n)
         #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
