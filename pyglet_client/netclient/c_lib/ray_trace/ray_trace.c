@@ -162,7 +162,7 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    //printf("length= %f \n", len);
+    //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
 
     for(i =0; i < max_i; i++) {
@@ -253,7 +253,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    //printf("length= %f \n", len);
+    //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
     //collision_check(0,0,0);
@@ -342,7 +342,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    //printf("length= %f \n", len);
+    //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
     //collision_check(0,0,0);
@@ -385,4 +385,112 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *tile = _get(x,y,z);
     *interval = (float)(i) / max_i;
     return ri4;
+}
+
+int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
+    float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
+    _dfx /= len2;
+    _dfy /= len2;
+    _dfz /= len2;
+    float x1,y1,z1;
+    x1 = x0 + _dfx*max_l;
+    y1 = y0 + _dfy*max_l;
+    z1 = z0 + _dfz*max_l;
+    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+
+    //int lx,ly,lz; //may or may not be used
+    int x,y,z;
+    x = x0; //truncating conversion
+    y = y0;
+    z = z0;
+
+    int _x,_y,_z;
+    _x=x;
+    _y=y;
+    _z=z;
+
+    int _dx,_dy,_dz;
+    _dx = ((x1-x0)/len) *ssize;
+    _dy = ((y1-y0)/len) *ssize;
+    _dz = ((z1-z0)/len) *ssize;
+
+    int cdx, cdy, cdz;
+    cdx = _dx >= 0 ? 1 : -1;
+    cdy = _dy >= 0 ? 1 : -1;
+    cdz = _dz >= 0 ? 1 : -1;
+
+    unsigned int dx,dy,dz;
+    dx = _dx*cdx;
+    dy = _dy*cdy;
+    dz = _dz*cdz;
+
+    int cx,cy,cz;
+    cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
+    cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
+    cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
+
+    //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
+    double xf, yf, zf;
+
+    int ri[3];
+    ri[0]=0; ri[1]=0; ri[2]=0;
+
+    int col=0;
+
+    int end = 0;
+    int i;
+    int max_i = (bsize / ssize)*len + 1; //over project
+    //printf("max_l= %f \n", len);
+    //printf("max_i= %i \n", max_i);
+    side = -1;
+    for(i =0; i < max_i; i++) {
+        cx += dx;
+        cy += dy;
+        cz += dz;
+        if(cx >= bsize || cy >= bsize || cz >= bsize) {
+            if(cx >= bsize) {
+                cx -= bsize;
+                _x = x;
+                x += cdx;
+                if(collision_check2(x,y,z)) {
+                    ri[0] = cdx;
+                    col =1;
+                    break;
+                }
+            }
+            if(cy >= bsize) {
+                cy -= bsize;
+                _y = y;
+                y += cdy;
+                if(collision_check2(x,y,z)) {
+                    ri[1] = cdy;
+                    col=1;
+                    break;
+                }
+            }
+            if(cz >= bsize) {
+                //printf("z decrease\n");
+                cz -= bsize;
+                _z = z;
+                z += cdz;
+                if(collision_check2(x,y,z)) {
+                    ri[2] = cdz;
+                    col=1;
+                    break;
+                }
+            }
+        }
+    }
+    //if( max_i - i != 0) {
+    //printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
+    //}
+    if(col == 1) {
+    side[0]=ri[0]; side[1]=ri[1]; side[2]=ri[2];
+    collision[0]=x;collision[1]=y;collision[2]=z;
+    pre_collision[0]=_x;pre_collision[1]=_y;pre_collision[2]=_z;
+    *tile = _get(x,y,z);
+    *distance = len*((float)(i) / max_i);
+    return 1;
+    }
+    return 0; //no collision
 }
