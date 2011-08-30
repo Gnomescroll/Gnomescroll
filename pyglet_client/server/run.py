@@ -14,7 +14,7 @@ import pyximport #; pyximport.install()
 
 #from pudb import set_trace; set_trace()
 
-import c_lib.c_lib_physics_timer as physics_timer
+import c_lib.c_lib_timer as physics_timer
 
 from net_server import NetServer
 from net_out import NetOut
