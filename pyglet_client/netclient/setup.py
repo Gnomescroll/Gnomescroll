@@ -1,3 +1,6 @@
+print "DEPRECATED: Server setup.py is deprecated, exiting"
+exit()
+
 from distutils.core import setup, Extension
 from Cython.Build import cythonize
 #from distutils.extension import Extension
