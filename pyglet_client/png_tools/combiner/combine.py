@@ -16,8 +16,8 @@ def kernel(r1,g1,b1,a1, r2,g2,b2,a2):
         r = ((1-a2)*r1+a2*r2)
         g = ((1-a2)*g1+a2*g2)
         b = ((1-a2)*b1+a2*b2)
+        a=0
         print "%i, %i, %i,%i" % (r,g,b,a)
-        a = 1
     return [r,g,b,a]
 
 import png
