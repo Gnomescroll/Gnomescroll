@@ -855,9 +855,11 @@ class PlayerAgentRender(AgentRender):
         if pos != None:
             #print str(pos)
             (x,y,z, px,py,pz, sx,sy,dz) = pos
-            _draw_agent_box_selection(int x, int y, int z, int r, int g, int b)
-            c_lib.c_lib_objects._draw_agent_box_selection(int x, int y, int z, int r, int g, int b)
-            draw_cube(x,y,z,[0,155,0])
+            r,g,b = 0,155,0
+            c_lib.c_lib_objects._draw_agent_cube_selection(x,y,z, r,g,b)
+            #draw_cube(x,y,z,[0,155,0])
+            r,g,b = 0,0,155
+            c_lib.c_lib_objects._draw_agent_cube_side_selection(x,y,z, cx,cy,cz r,g,b)
         #collides at (dx*n,dy*n,dz*n)
         #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
 
