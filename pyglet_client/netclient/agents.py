@@ -26,6 +26,11 @@ import vox
 if settings.pyglet == False:
     import SDL.gl
 
+
+#from c_lib.c_lib_objects import _create_blood as create_blood
+import c_lib.c_lib_objects
+import random
+
 '''
 Physics for agents
 
@@ -382,6 +387,22 @@ class AgentRender:
     def draw_aiming_direction(self, distance=50):
         c_lib.c_lib_objects._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
+    def bleed(self):
+        print 'BLEEDING'
+        create_blood = c_lib.c_lib_objects._create_blood
+        n = 100
+        for i in range(100):
+            v = 15
+            x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
+            _t = 2
+            vx = v*(random.random() -0.5)
+            vy = v*(random.random() -0.5)
+            vz = random.randrange(-4, 2) + random.random()
+            create_blood(_t, x, y,z, vx, vy, vz)
+
+            # need directional blood
+            # take vector from killer, put vel in random bounded cone around vector
+            
 
 class AgentWeapons:
 
@@ -632,16 +653,19 @@ class AgentModel(object):
             self._tick_physics()
 
     def update_info(self, **agent):
+        old_health = health = self.health
         args = []
         if 'id' in agent:
             args.append(self.id)
             self.id = agent['id']
         if 'health' in agent:
             self.health = agent['health']
+            health = self.health
         if 'dead' in agent:
+            was_alive = not self.dead
             self.dead = bool(agent['dead'])
-            if self.dead:
-                print 'you are now dead'
+            if was_alive and self.dead:
+                self.bleed()
 
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
@@ -659,6 +683,10 @@ class AgentModel(object):
         if 'team' in agent:
             self.team = GameStateGlobal.teamList[agent['team']]
 
+        # this is done in the hitscan net_event
+        #if health < old_health:
+         #   self.bleed()
+            
         GameStateGlobal.agentList.update(self, *args)
 
 #experimental
@@ -1140,9 +1168,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             ttype = 'empty'
             loc = self.normalized_direction()
 
-        if ttype == 'agent' and ag.team == self.team and \
-            not GameStateGlobal.game.team_kills:
-            return
+        if ttype == 'agent':
+            if ag.team == self.team and not GameStateGlobal.game.team_kills:
+                return
+            ag.bleed()
 
         # determine target w/ ray cast
         #target = ray_cast_from(agent)

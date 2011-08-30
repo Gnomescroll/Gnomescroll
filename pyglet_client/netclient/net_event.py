@@ -674,14 +674,14 @@ class ProjectileMessageHandler(DatastoreMessageInterface):
             anim = lambda: firing_weapon.animation(agent=agent, target=loc).play()
         elif type == 'agent':
             target_agent_id, body_part_id = loc
-            target = GameStateGlobal.agentList[target_agent_id]
-            if target is None:
+            target_agent = GameStateGlobal.agentList[target_agent_id]
+            if target_agent is None:
                 print 'msg hitscan :: target agent %s does not exist' % (target_agent_id,)
                 print 'msg :: %s' % (msg,)
                 return
-            else:
-                target = target.pos()
-                anim = lambda: firing_weapon.animation(agent=agent, target=target).play()
+            target = target_agent.pos()
+            anim = lambda: firing_weapon.animation(agent=agent, target=target).play()
+            target_agent.bleed()
         elif type == 'empty':
             # special mode; in this case, loc is a unit vector
             # call different animation

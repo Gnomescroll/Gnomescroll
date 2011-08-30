@@ -1,7 +1,7 @@
-#include "cspray.h"
+#include "blood.h"
 
 
-struct cspray {
+struct blood {
     unsigned int id;
     float x,y,z;
     float vx,vy,vz;
@@ -11,22 +11,22 @@ struct cspray {
     int active;
 };
 
-#define max_cspray 4096
+#define max_blood 4096
 
-struct cspray* cspray_list[max_cspray];
+struct blood* blood_list[max_blood];
 float a[16];
-int cspray_count=0;
-unsigned int cspray_id=0;
+int blood_count=0;
+unsigned int blood_id=0;
 
-void inline cspray_Tick(struct cspray* g);
+void inline blood_Tick(struct blood* g);
 
-void init_objects_cspray() {
+void init_objects_blood() {
     //printf("RANDMAX= %i \n", RAND_MAX);
     //srand(15); //seed
     return;
 }
 
-void inline cspray_Tick(struct cspray* g) {
+void inline blood_Tick(struct blood* g) {
     g->vz -= 0.025; //gravity
 
     g->ttl++;
@@ -47,15 +47,9 @@ void inline cspray_Tick(struct cspray* g) {
     //printf("interval= %f \n", interval);
     //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
 
-    // cement effect
-    if(g->active == 1) {
+    if(isActive(tile)) {
         g->ttl= g->ttl_max;
-        //tile = _get(collision,g->collision[1],g->collision[2]);
-        if(!isActive(tile)) {
-            _set(collision[0],collision[1],collision[2], 2);
-            g->ttl= g->ttl_max;
-            return;
-        }
+        return;
     }
 
     if(s[0] != 0 || s[1] != 0 || s[2] != 0)
@@ -83,18 +77,18 @@ void inline cspray_Tick(struct cspray* g) {
 
 }
 
-void cspray_tick() {
-    struct cspray* g = NULL;
+void blood_tick() {
+    struct blood* g = NULL;
     int i;
-    for(i=0; i<max_cspray; i++) {
-        if(cspray_list[i] != NULL) {
-            g = cspray_list[i];
-            cspray_Tick(g);
+    for(i=0; i<max_blood; i++) {
+        if(blood_list[i] != NULL) {
+            g = blood_list[i];
+            blood_Tick(g);
             if(g->ttl >= g-> ttl_max) {
                 //boom!
-                cspray_list[i] = NULL;
+                blood_list[i] = NULL;
                 free(g);
-                cspray_count--;
+                blood_count--;
             }
         }
     }
@@ -104,15 +98,15 @@ void cspray_tick() {
 
 //GLint particle_sheet_id;
 
-void cspray_draw() {
+void blood_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
-    if(cspray_count == 0) { return; }
+    if(blood_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    struct cspray* g = NULL;
+    struct blood* g = NULL;
     int i;
 
-    float size = 0.3;
+    float size = 0.1;
     float up[3] = {a[0]*size, a[4]*size, a[8]*size};
     float right[3] = {a[1]*size, a[5]*size, a[9]*size};
     int id;
@@ -133,13 +127,14 @@ void cspray_draw() {
     float x,y,z;
 
     int _c = 0;
-    for(i=0; i<max_cspray; i++) {
-    if(cspray_list[i] != NULL) {
-        //printf("draw cspray: %i \n", i);
+    for(i=0; i<max_blood; i++) {
+    if(blood_list[i] != NULL) {
+        //printf("draw blood: %i \n", i);
         _c++;
-        g = cspray_list[i];
+        g = blood_list[i];
         //draw setup
-        id = 21;
+
+        id = 54;    // location in spritesheet
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
@@ -171,20 +166,20 @@ void cspray_draw() {
 
 
 
-void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create cspray\n");
-    struct cspray* g = NULL;
+void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
+    //printf("Create blood\n");
+    struct blood* g = NULL;
     int i;
-    for(i=0; i<max_cspray; i++) {
-        if(cspray_list[i] == NULL) {
-            g = (struct cspray *) malloc (sizeof(struct cspray));
-            cspray_list[i] = g;
-            cspray_count++;
+    for(i=0; i<max_blood; i++) {
+        if(blood_list[i] == NULL) {
+            g = (struct blood *) malloc (sizeof(struct blood));
+            blood_list[i] = g;
+            blood_count++;
             break;
         }
     }
     if(g== NULL) {
-        //printf("Bug: max cspray number reached!\n");
+        //printf("Bug: max blood number reached!\n");
         return;}
     g->x=x;
     g->y=y;
