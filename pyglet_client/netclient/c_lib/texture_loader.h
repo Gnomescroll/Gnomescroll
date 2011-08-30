@@ -8,5 +8,4 @@ int init_texture_loader();
 
 int get_particle_texture();
 
-
 #endif

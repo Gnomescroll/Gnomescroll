@@ -13,6 +13,12 @@ cdef extern from "./objects/cspray.h":
     void cspray_tick()
     void cspray_draw()
     void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
+    
+cdef extern from "./objects/blood.h":
+    void blood_tick()
+    void blood_draw()
+    void create_blood(int type, float x, float y, float z, float vx, float vy, float vz)
+
 
 cdef extern from "./agent/agent.h":
     void agent_tick()
@@ -46,6 +52,7 @@ def tick():
     grenade_tick()
     neutron_tick()
     cspray_tick()
+    blood_tick()
     agent_skeleton_update()
     agent_tick()
 
@@ -53,14 +60,13 @@ def draw():
     grenade_draw()
     neutron_draw()
     cspray_draw()
+    blood_draw()
     agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
-    print "CYTHON CREATE GRENADE"
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)
 
 def _destroy_grenade(int gid):
-    print "CYTHON DESTROY GRENADE"
     destroy_grenade(gid)
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
@@ -69,8 +75,11 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 def _create_cspray(int type, float x, float y, float z, float vx, float vy, float vz):
     create_cspray(type, x,y,z, vx,vy,vz)
 
-#agent
+def _create_blood(int type, float x, float y, float z, float vx, float vy, float vz):
+    create_blood(type, x,y,z, vx,vy,vz)
 
+
+#agent
 
 def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float vosize):
     init_agent_vox_volume(id, part, xdim,ydim,zdim, vosize)

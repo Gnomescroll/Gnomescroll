@@ -25,6 +25,11 @@ import vox
 if settings.pyglet == False:
     import SDL.gl
 
+
+#from c_lib.c_lib_objects import _create_blood as create_blood
+import c_lib.c_lib_objects
+import random
+
 '''
 Physics for agents
 
@@ -423,6 +428,22 @@ class AgentRender:
                 r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
                 SDL.gl.draw_point(r,g,b,x,y,z)
 
+    def bleed(self):
+        print 'BLEEDING'
+        create_blood = c_lib.c_lib_objects._create_blood
+        n = 100
+        for i in range(100):
+            v = 15
+            x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
+            _t = 2
+            vx = v*(random.random() -0.5)
+            vy = v*(random.random() -0.5)
+            vz = -4
+            create_blood(_t, x, y,z, vx, vy, vz)
+
+            # need directional blood
+            # take vector from killer, put vel in random bounded cone around vector
+            
 
 class AgentWeapons:
 
@@ -673,15 +694,18 @@ class AgentModel(object):
             self._tick_physics()
 
     def update_info(self, **agent):
+        old_health = health = self.health
         args = []
         if 'id' in agent:
             args.append(self.id)
             self.id = agent['id']
         if 'health' in agent:
             self.health = agent['health']
+            health = self.health
         if 'dead' in agent:
             self.dead = bool(agent['dead'])
             if self.dead:
+                self.bleed()
                 print 'you are now dead'
 
         if 'weapons' in agent:
@@ -700,6 +724,9 @@ class AgentModel(object):
         if 'team' in agent:
             self.team = GameStateGlobal.teamList[agent['team']]
 
+        if health > old_health:
+            self.bleed()
+            
         GameStateGlobal.agentList.update(self, *args)
 
 #experimental

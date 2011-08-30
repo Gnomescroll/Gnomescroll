@@ -14,6 +14,11 @@ cdef extern from "./objects/cspray.h":
     void cspray_draw()
     void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
 
+cdef extern from "./objects/blood.h":
+    void blood_tick()
+    void blood_draw()
+    void create_blood(int type, float x, float y, float z, float vx, float vy, float vz)
+
 cdef extern from "./agent/agent.h":
     void agent_tick()
     void agent_draw()
@@ -52,6 +57,9 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 
 def _create_cspray(int type, float x, float y, float z, float vx, float vy, float vz):
     create_cspray(type, x,y,z, vx,vy,vz)
+    
+def _create_blood(int type, float x, float y, float z, float vx, float vy, float vz):
+    create_blood(type, x,y,z, vx,vy,vz)
 
 #agent
 
