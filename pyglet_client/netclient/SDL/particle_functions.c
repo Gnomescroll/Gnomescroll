@@ -73,7 +73,7 @@ c = _get_camera();
 */
 set_model_view_matrix(&a);
 
-surface=IMG_Load("./texture/particles_01.png");
+surface=IMG_Load("./media/texture/particles_01.png");
 if(!surface) {
     printf("_init_particle_functions, IMG_Load: %s \n", IMG_GetError());
     return 0;
