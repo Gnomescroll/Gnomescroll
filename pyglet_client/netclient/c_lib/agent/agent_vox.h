@@ -1,5 +1,5 @@
-#ifndef objects_agent_vox_h
-#define objects_agent_vox_h
+#ifndef agent_agent_vox_h
+#define agent_agent_vox_h
 
 #include <math.h>
 

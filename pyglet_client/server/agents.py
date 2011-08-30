@@ -330,7 +330,7 @@ class AgentAction:
         pl = GameStateGlobal.projectileList
         pos = self.pos()
         state = pos + direction
-        grenade = pl.create('Grenade', state, pos, direction, self.velocity(), owner=self.owner)
+        grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
         NetOut.event.projectile_create(grenade)
 
 

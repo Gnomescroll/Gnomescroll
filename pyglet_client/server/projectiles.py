@@ -10,35 +10,6 @@ from cube_lib.terrain_map import collisionDetection
 
 import c_lib.c_lib_objects as c_obj
 
-projectile_dat = {
-
-    0   :   {   # generic projectile
-        'speed' :   0,
-        'damage':   0,
-        'ttl_max':  0,
-    },
-
-    1 : {   # laser
-        'speed' : 100,
-        'damage' : 20,
-        'ttl_max' : 400, #time to live in ticks
-        'penetrates': False,
-        'suicidal'  : False, # True for grenades
-    #    'splash' : {
-    #    'radius' : 3,
-    #    'damage' : 15,
-    #    'force' : 150,
-    },
-
-    2 : {   #   grenade
-        'speed' : 50,
-        'damage' : 50,
-        'ttl_max' : 300,
-        'suicidal': True
-    },
-
-}
-
 import dat_loader
 p_dat = dat_loader.p_dat
 
@@ -173,9 +144,10 @@ class Laser(Projectile):
 
 class Grenade(Projectile):
 
-    def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
+    def __init__(self, id, state, owner=None, ttl=0, *args, **kwargs):
         self.id = id
         self.owner = owner
+        self.state = state  # this is static!
         self._set_type()
         self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps

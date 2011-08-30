@@ -372,6 +372,7 @@ class AgentRender:
                 SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_bounding_box(self):
+        print "draw_bounding_box DEPCRECATED!!!"
         #agent parameters
         b_height = self.b_height
         t_height = self.t_height
@@ -394,6 +395,7 @@ class AgentRender:
         draw_box(x_neg, x_pos, y_neg, y_pos, z1, z2, [180,0,0])
 
     def draw_aiming_direction(self, distance=50):
+        print "draw_aiming_direction DEPRECATED!"
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
         dz = sin( self.y_angle)
@@ -866,13 +868,11 @@ class PlayerAgentRender(AgentRender):
         P.event("draw velocity")
         self.draw_velocity(point_density=15, units=200)
         P.event("draw acceleration")
-        self.draw_acceleration(point_density=15, units=100000)
         #vox models
-        P.event("update_vox")
+        P.event("update/draw_vox")
         self.update_vox()
-        P.event("draw_vox")
         self.draw_vox()
-
+        P.event("ray cast")
         pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
         if pos != None:
             #print str(pos)

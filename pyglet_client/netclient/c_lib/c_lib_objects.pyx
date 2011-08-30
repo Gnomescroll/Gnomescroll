@@ -27,6 +27,10 @@ cdef extern from "./agent/agent_vox.h":
     void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
     void set_agent_limb_anchor_point(int id, int part, float length, float ax,float ay,float az)
 
+cdef extern from "./agent/agent_draw.h":
+    void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
+    void draw_agent_bounding_box(float x, float y, float z, float radius, float height)
+
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
 agent_list = []
 
@@ -112,6 +116,14 @@ def _create_agent(float x, float y, float z):
 
 def _set_agent_state(int id, float xangle, float yangle):
     set_agent_state(id, xangle, yangle)
+
+
+def _draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle):
+    draw_agent_aiming_direction(x, y, z, xangle, yangle)
+
+def _draw_agent_bounding_box(float x, float y, float z, float radius, float height):
+    draw_agent_bounding_box(x, y, z, radius, height)
+
 
 ### map gen
 '''

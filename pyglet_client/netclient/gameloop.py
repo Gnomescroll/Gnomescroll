@@ -302,38 +302,13 @@ class App(object):
             cube_lib.terrain_map.draw_terrain()
             P.event("Draw Terrain 1")
             self.world.draw(first_person) #upto 255 ms
-            P.event("Draw Terrain 2")
+            P.event("Animations Draw")
             self.animations.draw()
-            P.event("Draw Terrain 3") #up to 5 ms
+            P.event("c_lib_objects.draw()") #up to 5 ms
             c_lib.c_lib_objects.draw() ## TESTING
 
-            if False:
-                pass
-                density = 5
-                width = 1.0
-                SDL.gl.planar_laser2(density, width, 0,0,8, 0,0,3)
-                #SDL.gl.planar_laser(2,2,1, 2,2,6)
-                #SDL.gl.planar_laser(4,4,1, 4,4,6)
-
-            if False:
-                SDL.gl.draw_particle(0, 1, 5,5,5)
-                SDL.gl.draw_particle(1, 2, 5,5,7)
-                SDL.gl.draw_particle(2, 2, 5,5,9)
-                SDL.gl.draw_particle(3, 2, 5,5,11)
-                SDL.gl.draw_particle(4, 2, 5,5,13)
-                SDL.gl.draw_particle(5, 2, 5,5,15)
             P.event("terrain_map.update_chunks")
             cube_lib.terrain_map.update_chunks()
-            #cube_lib.VBO.draw_chunks()
-            #VBO test
-            ##cube_lib.VBO.draw_test_chunk()
-            #self.SDL_global.set_projection(-1,0,0,0,0)
-            if False:
-                for i in range(0,256):
-                    x = random.random()
-                    y = random.random()
-                    z = random.random()
-                    temp = SDL.gl.draw_line(255,0,0, x,y,z, random.random(),random.random(),random.random())
             #camera prospective
             P.event("draw hud")
             if draw_hud:

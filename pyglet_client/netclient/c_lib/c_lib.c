@@ -13,6 +13,7 @@
 
 #include "./agent/agent.c"
 #include "./agent/agent_vox.c"
+#include "./agent/agent_draw.c"
 
 #include "./map_gen/density.h"
 
