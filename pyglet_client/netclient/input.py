@@ -9,12 +9,7 @@ from math import sin, cos, pi
 import default_settings as settings
 from opts import opts
 
-if settings.pyglet:
-    from pyglet.window import key
-    from pyglet.window import mouse
-    from pyglet.window.key import symbol_string
-else:
-    import SDL.input
+import SDL.input
 
 #handles special characters
 Keystring = {}
@@ -153,7 +148,7 @@ class InputGlobal:
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
             current_mode[0] = curr
-    
+
     @classmethod
     def enable_chat(cls):
         InputGlobal.input = 'chat'
@@ -208,18 +203,12 @@ class Mouse(object):
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
-                
+
 
 class Keyboard(object):
 
     def __init__(self, main):
         self.main = main
-        if settings.pyglet:
-            self.main.win.on_key_press = self.on_key_press
-            self.main.win.on_key_release = self.on_key_release
-            self.main.win.on_text = self.on_text #key input
-            self.main.win.on_text_motion = self.on_text_motion #text movement
-
         self.camera = main.camera
         self.key_handlers = {}
 
@@ -589,10 +578,10 @@ class BlockSelector:
             print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
-        
+
     def up(self):
         self.vertical(up=True)
-        
+
     def down(self):
         self.vertical(up=False)
 
