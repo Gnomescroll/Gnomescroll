@@ -854,7 +854,7 @@ class PlayerAgentRender(AgentRender):
         #self.draw_selected_cube2()
         self.draw_position(points=10, seperation = 0.10)
         self.draw_velocity(point_density=15, units=200)
-        self.draw_acceleration(point_density=15, units=100000)
+        #self.draw_acceleration(point_density=15, units=100000)
         #vox models
         self.update_vox()
         self.draw_vox()
