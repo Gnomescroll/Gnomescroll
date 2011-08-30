@@ -47,6 +47,7 @@ void inline cspray_Tick(struct cspray* g) {
     //printf("interval= %f \n", interval);
     //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
 
+    // cement effect
     if(g->active == 1) {
         g->ttl= g->ttl_max;
         //tile = _get(collision,g->collision[1],g->collision[2]);

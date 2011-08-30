@@ -397,7 +397,7 @@ class AgentRender:
             _t = 2
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
-            vz = -4
+            vz = random.randrange(-4, 2) + random.random()
             create_blood(_t, x, y,z, vx, vy, vz)
 
             # need directional blood
@@ -662,10 +662,10 @@ class AgentModel(object):
             self.health = agent['health']
             health = self.health
         if 'dead' in agent:
+            was_alive = not self.dead
             self.dead = bool(agent['dead'])
-            if self.dead:
+            if was_alive and self.dead:
                 self.bleed()
-                print 'you are now dead'
 
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
@@ -683,8 +683,9 @@ class AgentModel(object):
         if 'team' in agent:
             self.team = GameStateGlobal.teamList[agent['team']]
 
-        if health > old_health:
-            self.bleed()
+        # this is done in the hitscan net_event
+        #if health < old_health:
+         #   self.bleed()
             
         GameStateGlobal.agentList.update(self, *args)
 
@@ -1159,9 +1160,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             ttype = 'empty'
             loc = self.normalized_direction()
 
-        if ttype == 'agent' and ag.team == self.team and \
-            not GameStateGlobal.game.team_kills:
-            return
+        if ttype == 'agent':
+            if ag.team == self.team and not GameStateGlobal.game.team_kills:
+                return
+            ag.bleed()
 
         # determine target w/ ray cast
         #target = ray_cast_from(agent)

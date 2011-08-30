@@ -47,14 +47,9 @@ void inline blood_Tick(struct blood* g) {
     //printf("interval= %f \n", interval);
     //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
 
-    if(g->active == 1) {
+    if(isActive(tile)) {
         g->ttl= g->ttl_max;
-        //tile = _get(collision,g->collision[1],g->collision[2]);
-        if(!isActive(tile)) {
-            _set(collision[0],collision[1],collision[2], 2);
-            g->ttl= g->ttl_max;
-            return;
-        }
+        return;
     }
 
     if(s[0] != 0 || s[1] != 0 || s[2] != 0)
