@@ -71,7 +71,7 @@ int vertex_index2[2*12] = {
         3,7,
     };
 
-int side_v2 =  {
+int side_v2[4*6] =  {
      4,5,6,7 ,   //top (z=1)
      0,1,2,3 ,   //bottom (z=0)
      1,5,9,10 ,  //north (y=1)
@@ -94,23 +94,23 @@ float v_set3[3*8] = {
 void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b) {
     int side;
     float _cx,_cy,_cz;
-    if(cx != 0) side = cx<0 : 4 ? 5;
-    if(cy != 0) side = cy<0 : 2 ? 3;
-    if(cz != 0) side = cz<0 : 0 ? 1;
+    if(cx != 0) side = cx<0 ? 4 : 5;
+    if(cy != 0) side = cy<0 ? 2 : 3;
+    if(cz != 0) side = cz<0 ? 0 : 1;
 
     glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
     int i,j,k;
     int index;
-    float _x,_y_z;
+    float _x,_y,_z;
 
     glBegin(GL_LINES);
     for(i=0; i<4;i++) {
-        index = side_v2[4*side+i]
+        index = side_v2[4*side+i];
         _x = x+v_set3[3*index+0];
         _y = y+v_set3[3*index+1];
         _z = z+v_set3[3*index+2];
         glVertex3f(_x,_y,_z);
-        index = side_v2[4*side+((i+1)%4)]
+        index = side_v2[4*side+((i+1)%4)];
         _x = x+v_set3[3*index+0];
         _y = y+v_set3[3*index+1];
         _z = z+v_set3[3*index+2];
@@ -172,7 +172,6 @@ void draw_agent_box_selection(int x, int y, int z, int r, int g, int b) {
     const float radius = 0.49;
 
     int i,j;
-    int a,b;
     float _x,_y,_z;
     float __x,__y,__z;
     __x = x + 0.5;
