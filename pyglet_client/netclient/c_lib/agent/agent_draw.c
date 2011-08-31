@@ -71,6 +71,27 @@ int vertex_index2[2*12] = {
         3,7,
     };
 
+int side_v2[4*6] =  {
+     4,5,6,7 ,   //top (z=1)
+     0,1,2,3 ,   //bottom (z=0)
+     1,5,9,10 ,  //north (y=1)
+     7,3,11,8 ,  //south (y=0)
+     6,2,10,11 , //west (x=0)
+     4,0,9,8 ,   //east (x=1)
+    };
+
+float v_set3[3*8] = {
+        0,0,0,
+        1,0,0,
+        1,1,0,
+        0,1,0,
+        0,0,1,
+        1,0,1,
+        1,1,1,
+        0,1,1,
+    };
+
+
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height) {
 
     float zm = height+z;
@@ -117,36 +138,108 @@ void draw_agent_bounding_box(float x, float y, float z, float radius, float head
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 }
 
-void draw_agent_box_selection(float x, float y, float z, float radius, float head_height, float height) {
+void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b) {
 
-    float zm = height+z;
-    float xmin,xmax,ymin,ymax;
-    xmin = x - radius;
-    xmax = x + radius;
-    ymin = x - radius;
-    ymax = x + radius;
+    //printf("Draw box at %i,%i,%i \n", x,y,z);
+    const float radius = 0.49;
 
     int i,j;
-    int a,b;
     float _x,_y,_z;
+    float __x,__y,__z;
+    __x = x + 0.5;
+    __y = y + 0.5;
+    __z = z + 0.5;
 
     glBegin(GL_LINES);
-    glColor3ub((unsigned char)0,(unsigned char)150,(unsigned char)0);
+    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
     for(i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
-            _x = x + v_set2[j+0]*radius;
-            _y = y + v_set2[j+1]*radius;
-            _z = z+ head_height/2 + v_set2[j+2]*head_height/2;
+            _x = __x + v_set2[j+0]*radius;
+            _y = __y + v_set2[j+1]*radius;
+            _z = __z + v_set2[j+2]*radius;
             glVertex3f(_x,_y,_z);
             j = 3*vertex_index2[2*i+1];
-            _x = x + v_set2[j+0]*radius;
-            _y = y + v_set2[j+1]*radius;
-            _z = z+head_height/2 + v_set2[j+2]*head_height/2;
+            _x = __x + v_set2[j+0]*radius;
+            _y = __y + v_set2[j+1]*radius;
+            _z = __z + v_set2[j+2]*radius;
             glVertex3f(_x,_y,_z);
     }
     glEnd();
-    glColor3ub((unsigned char)180,(unsigned char)0,(unsigned char)0);
 
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 }
 
+void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b) {
+    const float radius = 0.51;
+    int i,j;
+    float _x,_y,_z;
+    float __x,__y,__z;
+    __x = x + 0.5;
+    __y = y + 0.5;
+    __z = z + 0.5;
+
+    glBegin(GL_LINES);
+    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
+    for(i=0; i<12; i++) {
+            j = 3*vertex_index2[2*i+0];
+            _x = __x + v_set2[j+0]*radius;
+            _y = __y + v_set2[j+1]*radius;
+            _z = __z + v_set2[j+2]*radius;
+            glVertex3f(_x,_y,_z);
+            j = 3*vertex_index2[2*i+1];
+            _x = __x + v_set2[j+0]*radius;
+            _y = __y + v_set2[j+1]*radius;
+            _z = __z + v_set2[j+2]*radius;
+            glVertex3f(_x,_y,_z);
+    }
+    glEnd();
+
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+    /*
+    int side;
+    float _cx,_cy,_cz;
+    if(cx != 0) side = cx<0 ? 4 : 5;
+    if(cy != 0) side = cy<0 ? 2 : 3;
+    if(cz != 0) side = cz<0 ? 0 : 1;
+
+    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
+    int i,j,k;
+    int index;
+    float _x,_y,_z;
+
+    const float f1 = 1.10;
+    const float f2 = 0.90;
+    float xm,ym,zm;
+    if(cx != 0) {
+        xm = f1;
+        ym = f2;
+        zm = f2;
+    }
+    if(cy != 0) {
+        xm = f2;
+        ym = f1;
+        zm = f2;
+    }
+    if(cz != 0){
+        xm = f1;
+        ym = f1;
+        zm = f2;
+        }
+
+    glBegin(GL_LINES);
+    for(i=0; i<4;i++) {
+        index = side_v2[4*side+i];
+        _x = x+v_set3[3*index+0]*xm;
+        _y = y+v_set3[3*index+1]*ym;
+        _z = z+v_set3[3*index+2]*zm;
+        glVertex3f(_x,_y,_z);
+        index = side_v2[4*side+((i+1)%4)];
+        _x = x+v_set3[3*index+0]*xm;
+        _y = y+v_set3[3*index+1]*ym;
+        _z = z+v_set3[3*index+2]*zm;
+        glVertex3f(_x,_y,_z);
+    }
+    glEnd();
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+    */
+}

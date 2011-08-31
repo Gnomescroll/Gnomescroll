@@ -29,6 +29,6 @@ def ray_cast6(float x0,float y0,float z0, float dx,float dy,float dz, float max_
         print "No Collision with Block"
         return None
     else:
-        print "dist= %f, %i,%i,%i, %i,%i,%i" % (distance, collision[0],collision[1],collision[2], pre_collision[0],pre_collision[1],pre_collision[2])
-        print "tile=%i, side=%i,%i,%i" % (tile, side[0],side[1],side[2])
-        return [pre_collision[0],pre_collision[1],pre_collision[2]]
+        print "dist= %i,%i,%i, %i,%i,%i" % (collision[0],collision[1],collision[2], pre_collision[0],pre_collision[1],pre_collision[2])
+        print "distance= %f tile=%i, side=%i,%i,%i" % (distance, tile, side[0],side[1],side[2])
+        return [collision[0],collision[1],collision[2],pre_collision[0],pre_collision[1],pre_collision[2], side[0],side[1],side[2]]

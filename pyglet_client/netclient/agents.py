@@ -8,6 +8,7 @@ from math import sin, cos, pi
 from math import floor, ceil, fabs
 
 import c_lib.c_lib_objects
+import c_lib.c_lib_objects
 
 from game_state import GameStateGlobal #Deprecate?
 
@@ -29,6 +30,7 @@ if settings.pyglet == False:
 
 #from c_lib.c_lib_objects import _create_blood as create_blood
 import c_lib.c_lib_objects
+import c_lib._ray_trace
 import random
 
 '''
@@ -357,17 +359,6 @@ class AgentRender:
     def draw_position(self, points, seperation):
         print "Draw position Deprecated!"
         return
-        v_num = 0
-        v_list = []
-        c_list = []
-        for n in range(-points, points):
-            temp = float(n)*float(seperation)
-            v_list += [self.x+temp, self.y, self.z]
-            v_list += [self.x,self.y+temp, self.z]
-            v_list += [self.x,self.y, self.z+temp]
-            c_list += [140,0,0]*3
-            v_num +=3
-
 
         for i in range(0,v_num):
             x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
@@ -375,12 +366,8 @@ class AgentRender:
             SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_bounding_box(self):
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
-        x = self.x
-        y = self.y
-        z = self.z
+        b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
+        x = self.x;y = self.y;z = self.z
         c_lib.c_lib_objects._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
         #draw box 2 high and then 3 high
 
@@ -831,9 +818,8 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
 
 
-from profiler import P
+#from profiler import P
 
-import c_lib._ray_trace
 
 '''
 Client's player's agent draw methods
@@ -842,190 +828,46 @@ class PlayerAgentRender(AgentRender):
 
 
     def draw(self):
-        P.event("aiming direction")
         self.draw_aiming_direction()
-        P.event("bounding box")
         self.draw_bounding_box()
-        #self.draw_selected_cube()
-        #self.draw_selected_cube2()
-        ##P.event("draw position")
-        ##self.draw_position(points=10, seperation = 0.10)
-        #P.event("draw velocity")
-        #self.draw_velocity(point_density=15, units=200)
-        #P.event("draw acceleration")
-        #vox models
-        P.event("update/draw_vox")
         self.update_vox()
         self.draw_vox()
-        P.event("ray cast")
 
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
         dz = sin( self.y_angle)
-        max_l = 50
-        c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, 50)
-        return
-        pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        max_l = 20
+        pos = c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, max_l)
         if pos != None:
-            #print str(pos)
-            (x,y,z) = pos
-            draw_cube(x,y,z,[0,155,0])
-        #collides at (dx*n,dy*n,dz*n)
-        #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
+            print str(pos)
+            (x,y,z, px,py,pz, sx,sy,sz) = pos
+            #cube selected
+            r,g,b = 0,155,0
+            c_lib.c_lib_objects._draw_agent_cube_selection(px,py,pz, r,g,b)
+            #cube side selected
+            r,g,b = 0,0,150
+            c_lib.c_lib_objects._draw_agent_cube_side_selection(x,y,z, sx,sy,sz, r,g,b)
 
     def draw_position(self, points, seperation):
         print "agents.py draw position deprecated"
         return
-        v_num = 0
-        v_list = []
-        c_list = []
-        for n in range(-points, points):
-            temp = float(n)*float(seperation)
-            v_list += [self.x+temp, self.y, self.z]
-            v_list += [self.x,self.y+temp, self.z]
-            v_list += [self.x,self.y, self.z+temp]
-            c_list += [150,0,0]*3
-            v_num +=3
-        #deprecate
-        for i in range(0,v_num):
-            x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-            r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-            SDL.gl.draw_point(r,g,b,x,y,z)
-
 
     def draw_velocity(self, point_density, units):
         print "agents.py draw velocity deprecated"
         return
-        v_num = 0
-        v_list = []
-        c_list = []
-        vlen = units*math.sqrt(self.vx*self.vx + self.vy*self.vy + self.vz*self.vz)
-        #print "vlen= " + str(vlen)
-        num_points = int(math.floor(point_density*vlen))
-        c = 1.0 / float(point_density)
-        for n in range(0, num_points):
-            v_list += [self.x+units*n*c*self.vx, self.y+units*n*c*self.vy, self.z+units*n*c*self.vz]
-            c_list += [0,0,255]
-            v_num +=1
-        #deprecate
-        if settings.pyglet:
-            pyglet.graphics.draw(v_num, GL_POINTS,
-            ("v3f", v_list),
-            ("c3B", c_list)
-            )
-        else:
-            for i in range(0,v_num):
-                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.gl.draw_point(r,g,b,x,y,z)
-
 
     def draw_acceleration(self, point_density, units):
         print "agents.py draw acceleration deprecated"
         return
-        v_num = 0
-        v_list = []
-        c_list = []
-        vlen = units*math.sqrt(self.ax*self.ax + self.ay*self.ay + self.az*self.az)
-        #print "alen= " + str(vlen)
-        num_points = int(math.floor(point_density*vlen))
-        c = 1.0 / float(point_density)
-        for n in range(0, num_points):
-            v_list += [self.x+units*n*c*self.ax, self.y+units*n*c*self.ay, self.z+units*n*c*self.az]
-            c_list += [0,255,0]
-            v_num +=1
-        #deprecate
-        if settings.pyglet:
-            pyglet.graphics.draw(v_num, GL_POINTS,
-            ("v3f", v_list),
-            ("c3B", c_list)
-            )
-        else:
-            for i in range(0,v_num):
-                x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-                r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-                SDL.gl.draw_point(r,g,b,x,y,z)
 
     def draw_selected_cube(self):
         print "agents.py draw_selected_cube deprecated"
         return
-        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
-        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
-        dz = sin( self.y_angle)
 
-        l_list = []
-        for ix in range (0, 5):
-            if dx*dx < 0.00000001: #prevent division by zero errors
-                continue
-            l = (ix-self.x)/fabs(dx)
-            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
-            if dx < 0:
-                draw_cube(x_-1, floor(y_), floor(z_), 2) #north
-            elif dx >= 0:
-                draw_cube(x_, floor(y_), floor(z_), 3) #south
-
-        for iy in range(0,5):
-            if dy*dy < 0.00000001: #prevent division by zero errors
-                continue
-            l = (iy-self.x)/fabs(dy)
-            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
-            if dy < 0:
-                draw_cube(floor(x_), y_-1, floor(z_), 4) #west
-            elif dy >= 0:
-                draw_cube(floor(x_), y_, floor(z_), 5) #east
-
-        if dx < 0:
-            pass #north side
 
     def draw_selected_cube2(self, distance = 20):
         print "agents.py draw_selected_cube2 deprecated"
-        draw_selected_cube
-        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
-        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
-        dz = sin( self.y_angle)
-
-        cube_sides = []
-
-        l= 0.
-        ix = 0.
-        while l < distance:
-            if dx*dx < 0.00000001: #prevent division by zero errors
-                break
-            l = (ix-self.x)/fabs(dx)
-            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
-            if dx < 0:
-                cube_sides.append((x_-1, floor(y_), floor(z_), 2)) #north
-            elif dx >= 0:
-                cube_sides.append((x_, floor(y_), floor(z_), 3)) #south
-            ix += 1
-
-        l=0.
-        iy = 0.
-        while l < distance:
-            if dy*dy < 0.00000001: #prevent division by zero errors
-                break
-            l = (iy-self.x)/fabs(dy)
-            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
-            if dy < 0:
-                cube_sides.append((floor(x_), y_-1, floor(z_), 4)) #west
-            elif dy >= 0:
-                cube_sides.append((floor(x_), y_, floor(z_), 5)) #east
-            iy += 1
-
-        l=0.
-        iz = 0.
-        while l < distance:
-            if dz*dz < 0.00000001: #prevent division by zero errors
-                break
-            l = (iz-self.x)/fabs(dz)
-            (x_,y_,z_) = (dx*l+self.x, dy*l+self.y, dz*l+self.z)
-            if dz < 0:
-                cube_sides.append((floor(x_), floor(y_), z_-1, 0)) #top
-            elif dz >= 0:
-                cube_sides.append((floor(x_), floor(y_), z_, 1)) #bottom
-            iz += 1
-
-        draw_sides(cube_sides)
+        return
 
 
 class PlayerAgentWeapons(AgentWeapons):

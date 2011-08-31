@@ -294,21 +294,22 @@ class App(object):
 
             self.camera.worldProjection()
             #P.event("animations.draw")
-
-            c_lib.c_lib_objects._draw_agent_bounding_box(5.5,5.5,6, 0.5, 2.0, 3.0)
-            #v2.move(10,0,10,theta)
-            #v2.draw()
+            if False:
+                c_lib.c_lib_objects._draw_agent_bounding_box(5.5,5.5,6, 0.5, 2.0, 3.0)
+            if False:
+                v2.move(10,0,10,theta)
+                v2.draw()
 
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             cube_lib.terrain_map.draw_terrain()
-            P.event("Draw Terrain 1")
+            P.event("Draw World")
+            #import pdb; pdb.set_trace()
             self.world.draw(first_person) #upto 255 ms
             P.event("Animations Draw")
             self.animations.draw()
             P.event("c_lib_objects.draw()") #up to 5 ms
             c_lib.c_lib_objects.draw() ## TESTING
-
             P.event("terrain_map.update_chunks")
             cube_lib.terrain_map.update_chunks()
             #camera prospective
