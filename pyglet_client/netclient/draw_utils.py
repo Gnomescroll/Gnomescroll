@@ -13,7 +13,7 @@ else:
 
     #axis aligned
 def draw_box(x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
-
+    print "draw_utils: draw_box deprecated"
     v_list = []
     c_list = []
     v_num = 0
@@ -57,9 +57,10 @@ def draw_box(x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
 
 
 
-
+#deprecate
 def draw_sides( p_list):
-
+    print "draw_utils: draw sides deprecated"
+    return
     v_set = [
         [0,0,0], #0
         [1,0,0], #1
@@ -127,8 +128,10 @@ def draw_sides( p_list):
             r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
             SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
-
+#deprecate
 def draw_cube( x,y,z, color = None):
+    print "draw_utils: Draw cube deprecated"
+    return
 
     v_set = [
         [0,0,0],

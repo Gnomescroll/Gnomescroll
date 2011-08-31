@@ -36,7 +36,7 @@ cdef extern from "./agent/agent_vox.h":
 cdef extern from "./agent/agent_draw.h":
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
     void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
-    void draw_agent_box_selection(int x, int y, int z, int r, int g, int b)
+    void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
     void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b)
 
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
@@ -135,8 +135,8 @@ def _draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
 def _draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height):
     draw_agent_bounding_box(x, y, z, radius, head_height, height)
 
-def _draw_agent_box_selection(int x, int y, int z, int r, int g, int b):
-    draw_agent_box_selection(x,y,z, r,g,b)
+def _draw_agent_cube_selection(int x, int y, int z, int r, int g, int b):
+    draw_agent_cube_selection(x,y,z, r,g,b)
 
 def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b):
     draw_agent_cube_side_selection( x,  y,  z,  cx,  cy,  cz,  r,  g,  b)

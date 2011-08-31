@@ -30,6 +30,7 @@ if settings.pyglet == False:
 
 #from c_lib.c_lib_objects import _create_blood as create_blood
 import c_lib.c_lib_objects
+import c_lib._ray_trace
 import random
 
 '''
@@ -817,9 +818,8 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
 
 
-from profiler import P
+#from profiler import P
 
-import c_lib._ray_trace
 
 '''
 Client's player's agent draw methods
@@ -828,40 +828,25 @@ class PlayerAgentRender(AgentRender):
 
 
     def draw(self):
-        P.event("aiming direction")
         self.draw_aiming_direction()
-        P.event("bounding box")
         self.draw_bounding_box()
-        #self.draw_selected_cube()
-        #self.draw_selected_cube2()
-        ##P.event("draw position")
-        ##self.draw_position(points=10, seperation = 0.10)
-        #P.event("draw velocity")
-        #self.draw_velocity(point_density=15, units=200)
-        #P.event("draw acceleration")
-        #vox models
-        P.event("update/draw_vox")
         self.update_vox()
         self.draw_vox()
-        P.event("ray cast")
 
         dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
         dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
         dz = sin( self.y_angle)
-        max_l = 50
-        pos = c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, 50)
-        return
-        #pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        max_l = 20
+        pos = c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, max_l)
         if pos != None:
             print str(pos)
-            (x,y,z, px,py,pz, sx,sy,dz) = pos
+            (x,y,z, px,py,pz, sx,sy,sz) = pos
+            #cube selected
             r,g,b = 0,155,0
-            c_lib.c_lib_objects._draw_agent_cube_selection(x,y,z, r,g,b)
-            #draw_cube(x,y,z,[0,155,0])
-            r,g,b = 0,0,155
-            c_lib.c_lib_objects._draw_agent_cube_side_selection(x,y,z, cx,cy,cz, r,g,b)
-        #collides at (dx*n,dy*n,dz*n)
-        #free block at (dx*(n-1), dy*(n-1), dz*(n-1) )
+            c_lib.c_lib_objects._draw_agent_cube_selection(px,py,pz, r,g,b)
+            #cube side selected
+            r,g,b = 0,0,150
+            c_lib.c_lib_objects._draw_agent_cube_side_selection(x,y,z, sx,sy,sz, r,g,b)
 
     def draw_position(self, points, seperation):
         print "agents.py draw position deprecated"

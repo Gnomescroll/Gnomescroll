@@ -1,7 +1,8 @@
 
 import SDL.gl
 
-p_on = False
+p_on = True
+verbrose = True #only print states that take more than 1 ms
 
 def get_ticks():
     return SDL.gl.get_ticks()
@@ -25,7 +26,7 @@ class Profiler:
             self.id +=1
 
     def finish_frame(self):
-        global p_on
+        global p_on,verbose
         if p_on:
             self.times.insert(self.id, get_ticks())
             print "Frame number: %i, total time= %i" % (self.frame_id, self.times[self.id] - self.times[0])
@@ -33,7 +34,11 @@ class Profiler:
                 self.times[i] = self.times[i+1] -self.times[i]
             for i in range(0, self.id):
                 pass
-                print "%s: %i ms" % (self.label[i], self.times[i])
+                if verbrose == True:
+                    print "%s: %i ms" % (self.label[i], self.times[i])
+                else:
+                    if self.times[i] > 1:
+                        print "%s: %i ms" % (self.label[i], self.times[i])
             print ""
 
     def flush_to_disc(self):

@@ -10,8 +10,7 @@ base_dir = "./"
 
 import random
 
-#from profiler import P
-#P.event("E2")
+from profiler import P
 
 class World():
 
@@ -39,8 +38,11 @@ class World():
             GameStateGlobal.agent.nearby_objects()
 
     def draw(self, first_person=False):
+        P.event("World.draw(), draw agents")
         self.draw_agents(first_person)
+        P.event("World.draw(), draw projectiles")
         self.draw_projectiles()
+        P.event("World.draw(), draw items")
         self.draw_items()
 
     #deprecate
