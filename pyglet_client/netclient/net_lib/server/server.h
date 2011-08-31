@@ -62,7 +62,7 @@ struct ConnectionPool {
 };
 
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-struct NetPeer* raw_create_net_peer(struct sockaddr_in address);
+struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
 //port=0 to get any port
 struct Socket* create_socket(uint32_t IP, uint16_t  port);
 

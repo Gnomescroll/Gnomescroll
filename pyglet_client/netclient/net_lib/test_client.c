@@ -35,8 +35,11 @@ int main() {
     send_packet(s,p, data1, 4);
 
     printf("send2\n");
-    unsigned char data2[6] = {0,0,255,255,255,255}
-    send_packet(s,p, data2, 6);;
+    unsigned char data2[6] = "aaabbb";
+
+    //data2 = *((uint16_t *) packet_data)
+
+    send_packet(s,p, data2, 6);
 
     //receive_packets(s);
 

@@ -1,4 +1,4 @@
-#include "server./server.c"
+#include "server/server.c"
 
 
 /*
@@ -11,14 +11,18 @@ void receive_packets(struct* Socket socket);
 
 int main() {
 
-    struct Socket* s;
-    s = create_socket(0, 9090);
+    //struct Socket* s;
+    //s = create_socket(0, 9090);
 
-    unsigned short port = 9999
-    init_server(9999);
+    unsigned short port = 9999;
+    init_server(port);
+    //printf("t\n");
+    int i=0;
     while(1) {
-        process_packets()
+        printf("i=%i\n", i);
+        process_packets();
         sleep(1);
+        i++;
         }
     //receive_packets(s);
 

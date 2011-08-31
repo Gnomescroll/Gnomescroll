@@ -1,0 +1,20 @@
+*
+b byte
+n int
+un unsigned int
+s short
+us unsigned short
+
+---
+
+struct test1
+b testbyte
+---
+struct test2
+s  testshort
+n testint
+---
+struct test3
+us testushort
+un testuint
+---

@@ -170,23 +170,27 @@ void init_server(unsigned short port) {
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
     pool.n_connections = 0;
 
-    pool.socket =  create_socket(0, port);
+    struct Socket* s = create_socket(0, port);
+    pool.socket =  *s;
+    if(s != NULL) free(s);
+
     printf("Server Connection Pool Ready\n");
 }
 
 void accept_connection(struct sockaddr_in from) {
 
     struct NetPeer* p ;
-    p = raw_create_net_peer(from);
+    p = create_raw_net_peer(from);
 
     int i;
     for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
         if(pool.connection[i]==NULL) {
-            pool[i] = p;
+            pool.connection[i] = p;
             p->id = i;
             p->ttl = 100;
             //send client his id
-            printf("Accepting Connection From: %i:%i",htonl(p->ip), p->port );
+            printf("Accepting Connection From: %i:%i \n",htonl(p->ip), p->port );
+            return;
         }
     }
     if(p->id == 0) {
@@ -225,29 +229,36 @@ void process_packets() {
     struct sockaddr_in from;
     socklen_t fromLength = sizeof( from );
 
-    if(!select(1, fd_set *readfds, fd_set *writefds,
-fd_set *exceptfds, const struct timeval *timeout);
+    //if(!select(1, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
 
-    ///hack
-    struct fd_set fds;
-    FD_ZERO(&fds);
-    FD_SET(s->socket, &fds);
-    int rc;
-    //int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
-    rc = select(1, &fds, NULL, NULL, 0);
-    if (rc==-1) {
-        perror("select failed");
-        return -1;
-    }
-    printf("rc= %i \n", rc);
+    if(0) {
+        ///hack
+        fd_set fds;
+        FD_ZERO(&fds);
+        FD_SET(pool.socket.socket, &fds);
+        int rc;
+        //int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
 
-    if (FD_ISSET(s->socket, &fds)) {
-         printf("Packet ready!\n");
-    } else {
-        return;
+           struct timeval timeout;
+           timeout.tv_sec = 20;
+           timeout.tv_usec = 0;
+
+        rc = select(sizeof(fds)*8, &fds, NULL, NULL, &timeout);
+        if (rc==-1) {
+            perror("select failed");
+            return;// -1;
+        }
+        printf("rc= %i \n", rc);
+
+        if (FD_ISSET(pool.socket.socket, &fds)) {
+             printf("Packet ready!\n");
+        } else {
+            //printf("Packet ready!\n");
+            return;
+        }
     }
     ///hack
-    received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size,
+    received_bytes = recvfrom( pool.socket.socket, (char*)packet_data, maximum_packet_size,
                                0, (struct sockaddr*)&from, &fromLength );
 
 
@@ -263,20 +274,28 @@ fd_set *exceptfds, const struct timeval *timeout);
         //crc check
         if(error_check_packet(packet_data,received_bytes) == 0) {
             printf("Packet failed CRC check!\n");
-            continue;
+            return;
+            //continue;
         }
         //check to see that connection is valid
-        p = &pool[i];
-        if(from.sin_addr.s_addr == p->ip && *((uint16_t *) packet_data) == p->id {
+
+        int id = *((uint16_t *) packet_data);
+        printf("client id= %i\n", id);
+
+
+        p = pool.connection[id];
+        if(id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || id != p->id) {
+            printf("Received packet from connection with invalid IP, client_id pair\n");
+            //possibly send terminate packet
+            return;
+            //continue;
+        } else {
             printf("Packet received from client %i\n", p->id);
             packet_data[received_bytes] = 0;
             printf("Packet= %s \n", packet_data);
             //process packets
-            continue;
-        } else {
-            printf("Received packet from connection with invalid IP, client_id pair\n");
-            //possibly send terminate packet
-            continue;
+            return;
+            //continue;
         }
     }
 }
