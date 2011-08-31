@@ -134,7 +134,7 @@ void receive_packets(struct Socket* s) {
         }
 
         if(received_bytes > 0) {
-            packet_data[received_bytes] = NULL;
+            packet_data[received_bytes] = 0;
             printf("packet: %s \n", packet_data);
         }
 
