@@ -13,8 +13,14 @@ int main() {
 
     struct Socket* s;
     s = create_socket(0, 9090);
-    sleep(1);
-    receive_packets(s);
+
+    unsigned short port = 9999
+    init_server(9999);
+    while(1) {
+        process_packets()
+        sleep(1);
+        }
+    //receive_packets(s);
 
     return 0;
 }

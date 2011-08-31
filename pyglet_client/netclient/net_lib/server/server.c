@@ -8,7 +8,7 @@
 
 
 //pass in zero to get any port
-struct Socket* create_socket(uint32_t IP, uint16_t  port) {
+struct Socket* create_socket(uint32_t IP, uint16_t port) {
     //create socket
     struct Socket* s = malloc(sizeof(struct Socket));
     if(s==NULL) { printf("Malloc of socket failed.  Out of memory? \n"); return NULL;}
@@ -165,12 +165,12 @@ void receive_packets(struct Socket* s) {
 struct ConnectionPool pool;
 unsigned int id_counter=0;
 
-void init_server() {
+void init_server(unsigned short port) {
     int i;
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool[i]=NULL;
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
     pool.n_connections = 0;
 
-    pool.socket =  create_socket(0, 9999);
+    pool.socket =  create_socket(0, port);
     printf("Server Connection Pool Ready\n");
 }
 
@@ -181,7 +181,7 @@ void accept_connection(struct sockaddr_in from) {
 
     int i;
     for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool[i]==NULL) {
+        if(pool.connection[i]==NULL) {
             pool[i] = p;
             p->id = i;
             p->ttl = 100;
@@ -203,6 +203,7 @@ void accept_connection(struct sockaddr_in from) {
 inline int error_check_packet(unsigned char* data, int n) {
     return 1;
 }
+
 void process_packets() {
 
     unsigned char packet_data[maximum_packet_size];
@@ -211,33 +212,73 @@ void process_packets() {
     unsigned int to_port;
     int received_bytes;
 
-    int i;
+    //int i;
     //use select or epoll!!
-    for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
-        #if PLATFORM == PLATFORM_WINDOWS
-        typedef int socklen_t;
-        #endif
+    //for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
 
-        struct sockaddr_in from;
-        socklen_t fromLength = sizeof( from );
+    struct NetPeer* p;
 
-        received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size,
-                                   0, (struct sockaddr*)&from, &fromLength );
+    #if PLATFORM == PLATFORM_WINDOWS
+    typedef int socklen_t;
+    #endif
+
+    struct sockaddr_in from;
+    socklen_t fromLength = sizeof( from );
+
+    if(!select(1, fd_set *readfds, fd_set *writefds,
+fd_set *exceptfds, const struct timeval *timeout);
+
+    ///hack
+    struct fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(s->socket, &fds);
+    int rc;
+    //int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
+    rc = select(1, &fds, NULL, NULL, 0);
+    if (rc==-1) {
+        perror("select failed");
+        return -1;
+    }
+    printf("rc= %i \n", rc);
+
+    if (FD_ISSET(s->socket, &fds)) {
+         printf("Packet ready!\n");
+    } else {
+        return;
+    }
+    ///hack
+    received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size,
+                               0, (struct sockaddr*)&from, &fromLength );
 
 
-        if(received_bytes == 4) {
-            if(packet_data[0] == 0 && packet_data[1] == 255 && packet_data[2] == 0 && packet_data[3] == 0) {
-                //connection packet
-                accept_connection(from);
-            }  else {
-                printf("Invalid 4 byte packet!\n");
-            }
+    if(received_bytes == 4) {
+        if(packet_data[0] == 0 && packet_data[1] == 0 && packet_data[2] == 255 && packet_data[3] == 255) {
+            //connection packet
+            accept_connection(from);
+        }  else {
+            printf("Invalid 4 byte packet!\n");
         }
-        else if(received_bytes >0) {
-            error_check_packet()
-
-
+    }
+    else if(received_bytes > 4) {
+        //crc check
+        if(error_check_packet(packet_data,received_bytes) == 0) {
+            printf("Packet failed CRC check!\n");
+            continue;
+        }
+        //check to see that connection is valid
+        p = &pool[i];
+        if(from.sin_addr.s_addr == p->ip && *((uint16_t *) packet_data) == p->id {
+            printf("Packet received from client %i\n", p->id);
+            packet_data[received_bytes] = 0;
+            printf("Packet= %s \n", packet_data);
+            //process packets
+            continue;
+        } else {
+            printf("Received packet from connection with invalid IP, client_id pair\n");
+            //possibly send terminate packet
+            continue;
         }
     }
 }
+
 
