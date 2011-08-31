@@ -1,4 +1,4 @@
-#include "net_lib_common.h"
+
 #include "server.h"
 
 //uint32_t
@@ -66,6 +66,7 @@ struct Socket* create_socket(uint32_t IP, uint16_t  port) {
 
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
     struct NetPeer* s = malloc(sizeof(struct NetPeer));
+    s->id = 0;
 
     unsigned int destination_address = ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
 
@@ -75,6 +76,16 @@ struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port)
 
     s->ip = htonl( destination_address );
     s->port = htons( port );
+    return s;
+}
+
+struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
+    struct NetPeer* s = malloc(sizeof(struct NetPeer));
+    s->id = 0;
+    s->address = address;
+
+    s->ip = address.sin_addr.s_addr;
+    s->port = htons( address.sin_port );
     return s;
 }
 
@@ -98,6 +109,7 @@ void receive_packets(struct Socket* s) {
     unsigned char packet_data[maximum_packet_size];
     unsigned int from_address;
     unsigned int from_port;
+    unsigned int to_port;
     int received_bytes;
 
     while ( 1 )
@@ -134,16 +146,98 @@ void receive_packets(struct Socket* s) {
         }
 
         if(received_bytes > 0) {
+            //if packet... then  accept_connection(from)
             packet_data[received_bytes] = 0;
             printf("packet: %s \n", packet_data);
         }
 
         from_address = ntohl( from.sin_addr.s_addr );
         from_port = ntohs( from.sin_port );
-
+        //to_port = ntohs( from.sout_port );
 
         printf("received packet from: %i, %i\n", from_address, from_port);
 
         // process received packet
     }
 }
+
+// SERVER SPECIFIC CONNECTION POOL STUF
+struct ConnectionPool pool;
+unsigned int id_counter=0;
+
+void init_server() {
+    int i;
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool[i]=NULL;
+    pool.n_connections = 0;
+
+    pool.socket =  create_socket(0, 9999);
+    printf("Server Connection Pool Ready\n");
+}
+
+void accept_connection(struct sockaddr_in from) {
+
+    struct NetPeer* p ;
+    p = raw_create_net_peer(from);
+
+    int i;
+    for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
+        if(pool[i]==NULL) {
+            pool[i] = p;
+            p->id = i;
+            p->ttl = 100;
+            //send client his id
+            printf("Accepting Connection From: %i:%i",htonl(p->ip), p->port );
+        }
+    }
+    if(p->id == 0) {
+        printf("Could not open client connection: connection pool full!\n");
+        return;
+    }
+
+    //send client client id
+}
+
+//min/max MTU is 576
+//1500 is max MTU for ethernet
+
+inline int error_check_packet(unsigned char* data, int n) {
+    return 1;
+}
+void process_packets() {
+
+    unsigned char packet_data[maximum_packet_size];
+    unsigned int from_address;
+    unsigned int from_port;
+    unsigned int to_port;
+    int received_bytes;
+
+    int i;
+    //use select or epoll!!
+    for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
+        #if PLATFORM == PLATFORM_WINDOWS
+        typedef int socklen_t;
+        #endif
+
+        struct sockaddr_in from;
+        socklen_t fromLength = sizeof( from );
+
+        received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size,
+                                   0, (struct sockaddr*)&from, &fromLength );
+
+
+        if(received_bytes == 4) {
+            if(packet_data[0] == 0 && packet_data[1] == 255 && packet_data[2] == 0 && packet_data[3] == 0) {
+                //connection packet
+                accept_connection(from);
+            }  else {
+                printf("Invalid 4 byte packet!\n");
+            }
+        }
+        else if(received_bytes >0) {
+            error_check_packet()
+
+
+        }
+    }
+}
+

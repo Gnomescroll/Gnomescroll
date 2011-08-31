@@ -31,6 +31,9 @@
 
 #include <errno.h>
 
+
+#include "../net_lib_common.h"
+
 struct Socket {
     uint32_t ip;
     uint16_t port;
@@ -44,6 +47,11 @@ struct NetPeer {
     struct sockaddr_in address;
 };
 
+#define HARD_MAX_CONNECTIONS
+struct ConnectionPool {
+    int n_connections;
+    struct NetPeer* connection[HARD_MAX_CONNECTIONS];
+}
 
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
 //port=0 to get any port
