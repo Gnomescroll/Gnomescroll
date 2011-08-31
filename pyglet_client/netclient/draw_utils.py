@@ -111,22 +111,11 @@ def draw_sides( p_list):
             v_list += [ v_set[j][0]+x, v_set[j][1]+y, v_set[j][2]+z ]
             c_list += [150,0,0]*2
 
-#    pyglet.graphics.draw(v_num, GL_LINES,
-#    ("v3f", v_list),
-#    ("c3B", c_list)
-#    )
-
-    if settings.pyglet:
-        pyglet.graphics.draw(v_num, GL_LINES,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
-    else:
-        for i in range(0,v_num/2):
-            x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
-            x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
-            r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-            SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
+    for i in range(0,v_num/2):
+        x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
+        x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
+        r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
+        SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 #deprecate
 def draw_cube( x,y,z, color = None):
@@ -184,22 +173,11 @@ def draw_cube( x,y,z, color = None):
         else:
             c_list += color*2
 
-#    pyglet.graphics.draw(v_num, GL_LINES,
-#    ("v3f", v_list),
-#    ("c3B", c_list)
-#    )
-
-    if settings.pyglet:
-        pyglet.graphics.draw(v_num, GL_LINES,
-        ("v3f", v_list),
-        ("c3B", c_list)
-        )
-    else:
-        for i in range(0,v_num/2):
-            x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
-            x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
-            r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-            SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
+    for i in range(0,v_num/2):
+        x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
+        x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
+        r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
+        SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 def draw_line(v1, v2, color):
     r,g,b = color

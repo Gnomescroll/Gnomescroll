@@ -58,6 +58,7 @@ class World():
             proj.draw()
 
     def draw_items(self):
+        #print "num items= %i" % (len(GameStateGlobal.itemList.values()))
         for item in GameStateGlobal.itemList.values():
             if item.on_ground:
                 item.draw()

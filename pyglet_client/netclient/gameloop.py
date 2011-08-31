@@ -349,9 +349,6 @@ class App(object):
 
             self.intervals.process()
             P.finish_frame()
-            #import pdb; pdb.set_trace()
-        #p.stop()
-        #self.win.close()
 
 if __name__ == '__main__':
     app = App()
