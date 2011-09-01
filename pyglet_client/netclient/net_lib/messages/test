@@ -4,11 +4,13 @@ n int
 un unsigned int
 s short
 us unsigned short
+f float
 
 ---
 
 struct test1
 b testbyte
+f testfloat
 ---
 struct test2
 s  testshort
