@@ -20,3 +20,10 @@ struct test3
 us testushort
 un testuint
 ---
+struct uni
+b t1
+s t4
+us t5
+n t2
+un t3
+f t6
