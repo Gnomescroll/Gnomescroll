@@ -8,7 +8,6 @@ from math import sin, cos, pi
 from math import floor, ceil, fabs
 
 import c_lib.c_lib_objects
-import c_lib.c_lib_objects
 
 from game_state import GameStateGlobal #Deprecate?
 
