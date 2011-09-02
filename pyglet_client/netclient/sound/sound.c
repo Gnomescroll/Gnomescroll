@@ -79,16 +79,10 @@ int test() {
     init_sound_system(100);
     FMOD_SOUND* gun = load_2d_sound("./wav/semishoot.wav");
 
-    int i = 0;
-    do {
-        play_2d_sound(gun);
-        i = i + 1;
-        Sleep(150);
-        update_sound_system();
-    } while (i < 6);
+    play_2d_sound(gun);
+    Sleep(1500);
 
     release_sound(gun);
-    ERRCHECK(result);
     release_sound_system();
     return 0;
 }
