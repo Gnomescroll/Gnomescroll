@@ -192,26 +192,27 @@ class Struct:
     def packing_def(self):
         if self.name == None:
             return ''
-        s1 = "int pack_struct_%s" %(self.name) + "(void* buffer, struct %s* s) { \n" % (self.name)
+        s1 = "static inline int pack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
         s1 += "\tint n=0;\n"
         s2 = ''
         for i in self.members:
             s2 += pack_proc(i)
-        s3 = "\treturn n;\n}\n\n"
+        s3 = "\t*n+=sizeof(%s);\n}\n\n"
         return s1+s2+s3
 
     def unpacking_def(self):
         if self.name == None:
             return ''
-        s1 = "void unpack_struct_%s" %(self.name) + "(void* buffer, struct %s* s) { \n" % (self.name)
+        s1 = "static inline void unpack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
         s1 += "\tint n=0;\n"
         s2 = ''
         self.members.reverse()
         for i in self.members:
             s2 += unpack_proc(i)
         self.members.reverse()
-        s3 = "\treturn n;\n}\n\n"
-        return s1+s2+s3
+        s3 = "\t*n+=sizeof(%s)" % (type_to_name(i[1]))
+        s4 = "\n}\n\n"
+        return s1+s2+s3+s4
 
     def send_function(self):
         pass

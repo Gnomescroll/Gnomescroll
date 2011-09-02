@@ -1,5 +1,6 @@
 #include "server/server.c"
 
+#include "net_packets.h"
 
 /*
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
