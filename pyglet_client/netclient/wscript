@@ -170,7 +170,7 @@ def build(bld):
     bld(features='c cshlib',
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
-        lib=['fmodex'],                     #this turns into -lfmodex, which is at ./sound/api/lib/, but compiler cannot locate it.
+        #lib=['fmodex'],                     #this turns into -lfmodex, which is at ./sound/api/lib/, but compiler cannot locate it and aborts
         libpath=['./sound/api/lib/'],
         use=['fmod', 'fmod_errors', 'wincompat'],   # i'm not sure if this matters or if it is right
         target='sound')
