@@ -64,6 +64,30 @@ def configure(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
 
+    '''
+    This passes, but I'm not sure it does anything useful.
+
+    These are for the fmodex headers. The source is not available, we must use the shared library.
+    sound.c includes these headers.
+    '''
+    libfmodex = conf.environ['PWD'] + '/sound/api/lib/libfmodex.so' # full path to shared lib
+    
+    conf.check(header_name='../../sound/api/inc/fmod.h',
+               use='../../sound/api/lib/libfmodex.so',
+               fragment='#include "../../sound/api/inc/fmod.h"' + SDL_MAIN_TEST_CODE,   # have to specify fragment include with ""; default uses <> and fails.
+               uselib_store='fmod',
+               mandatory=True)
+               
+    conf.check(header_name='../../sound/api/inc/fmod_errors.h',
+               use=['../../sound/api/lib/libfmodex.so'],
+               fragment='#include "../../sound/api/inc/fmod_errors.h"' + SDL_MAIN_TEST_CODE,
+               uselib_store='fmod_errors',
+               mandatory=True)
+
+    conf.check(header_name='../../sound/wincompat.h', #may not be needed. useful
+               fragment='#include "../../sound/wincompat.h"' + SDL_MAIN_TEST_CODE,
+               uselib_store='wincompat')
+
     conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound']
     conf.env.RPATH = ['.', '..', './ext/']
 
@@ -142,13 +166,16 @@ def build(bld):
         target='c_lib.c_lib_map_gen')
 
     # sound
+        
     bld(features='c cshlib',
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
-        use=['sound/api/lib/libfmodex.so'],
+        #lib=['fmodex'],                     #this turns into -lfmodex, which is at ./sound/api/lib/, but compiler cannot locate it and aborts
+        libpath=['./sound/api/lib/'],
+        use=['fmod', 'fmod_errors', 'wincompat'],   # i'm not sure if this matters or if it is right
         target='sound')
         
-    bld(features='c cshlib pyext',
+    bld(features='c cshlib pyext',      #cython part
         source=['sound/sounds.pyx'],
         use=['sound'],
         target='sound.sounds')
@@ -188,6 +215,7 @@ def install_in_ext(ctx):
                'init_c_lib',
                'c_lib.c_lib_objects',
                'c_lib.c_lib_map_gen',
+               'sound',         # libsound.so fails to copy to ./ext/ (as with libvox_lib.so and libinit_c_lib.so)
                'sound.sounds',
                ]
 
