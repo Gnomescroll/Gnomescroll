@@ -64,7 +64,7 @@ def configure(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
 
-    conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib']
+    conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound']
     conf.env.RPATH = ['.', '..', './ext/']
 
     #if OS == 'Darwin':
@@ -141,6 +141,17 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_map_gen')
 
+    # sound
+    bld(features='c cshlib',
+        source=['sound/sound.c',
+                'sound/player_sounds.c'],
+        use=[],
+        target='sound')
+        
+    bld(features='c cshlib pyext',
+        source=['sound/sounds.pyx'],
+        use=['sound'],
+        target='sound.sounds')
 
     bld(features='c cprogram pyembed',
         use=common_libraries,
@@ -176,6 +187,7 @@ def install_in_ext(ctx):
                'init_c_lib',
                'c_lib.c_lib_objects',
                'c_lib.c_lib_map_gen',
+               'sound.sounds',
                ]
 
     for target in targets:
