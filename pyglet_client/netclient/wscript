@@ -201,10 +201,15 @@ def build(bld):
 
     # sound
 
+    incp='../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
+    libp='../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
+
     bld(features='c cshlib',
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
-        use=common_libraries + ['fmodex'], #+sound_libraries,
+        use= ['fmodex'], #+sound_libraries,
+        libpath=[libp],
+        includes=[incp],
         target='sound')
 
 
@@ -216,7 +221,7 @@ def build(bld):
 
     # final
     bld(features='c cprogram pyembed',
-        use=common_libraries,
+        use=common_libraries+['sound'],
         source='run.c',
         target='run')
 
