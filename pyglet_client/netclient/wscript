@@ -70,21 +70,25 @@ def configure(conf):
                mandatory=True)
 
     if OS == 'Windows':
-        incp='./libraries/win/fmod/inc/'
-        libp='./libraries/win/fmod/lib/'
+        incp='.libraries/win/fmod/inc/'
+        libp='libraries/win/fmod/lib/'
     elif OS == 'Linux':
-        incp='./libraries/lin/fmod/inc/'
+        incp='libraries/lin/fmod/inc/'
         libp='./libraries/lin/fmod/lib/'
     elif OS == 'Darwin':
         incp='./libraries/osx/fmod/inc/'
         libp='./libraries/osx/fmod/lib/'
+    #conf.env.INCLUDES += [incp]
+    print incp
+    #conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
+    #conf.check(lib=['fmodex'], libpath=[libp], uselib_store='FMOD')
 
-    conf.check(lib=['fmodex'], includes=[incp],libpath=[libp] uselib_store='FMOD')
-
+    '''
     conf.check(header_name='fmod.h',
                use='FMOD',
                fragment='#include <fmod.h>' + FMOD_MAIN_TEST_CODE,
                mandatory=True)
+    '''
 
     '''
     This passes, but I'm not sure it does anything useful.
@@ -111,13 +115,15 @@ def configure(conf):
                mandatory=True)
     '''
 
-    conf.env.INCLUDES =+ ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound']
+    conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound']
     conf.env.RPATH = ['.', '..', './ext/']
 
     #if OS == 'Darwin':
     #    conf.env.ARCH = ['x86_64']
 
 def build(bld):
+    OS = platform.system()
+
     common_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['FMOD']
 
@@ -191,9 +197,25 @@ def build(bld):
 
     # sound
 
+    if OS == 'Windows':
+        incp='.libraries/win/fmod/inc/'
+        libp='libraries/win/fmod/lib/'
+    elif OS == 'Linux':
+        incp='libraries/lin/fmod/inc/'
+        libp='./libraries/lin/fmod/lib/'
+    elif OS == 'Darwin':
+        incp='./libraries/osx/fmod/inc/'
+        libp='./libraries/osx/fmod/lib/'
+
+    #conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
+    #conf.check(lib=['fmodex'], libpath=[libp], uselib_store='FMOD')
+
     bld(features='c cshlib',
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
+        lib=['fmodex'],
+        includes=[incp],
+        libpath=[libp],
         use=common_libraries +sound_libraries,
         target='sound')
 
