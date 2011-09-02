@@ -1,3 +1,9 @@
+#ifndef net_lib_mgen_struct_def_h 
+#define net_lib_mgen_struct_def_h 
+
+#include <stdlib.h> 
+#include <stdint.h> 
+#include "../type_pack.h"
 
 struct test1 { 
 	uint8_t testbyte;
@@ -23,3 +29,4 @@ struct uni {
 	float t6;
 };
 
+#endif

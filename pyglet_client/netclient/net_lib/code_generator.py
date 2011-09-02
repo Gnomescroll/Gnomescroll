@@ -29,32 +29,43 @@ def run():
     output_packing_def(struct_list)
     output_size_def(struct_list)
 
+def header_include_guard(st, name):
+    s1 = "#ifndef %s_h \n#define %s_h \n\n" % (name, name)
+    s2 = "#endif\n"
+    return s1+st+s2
+
+#include "./type_pack.h"
 def output_struct_def(struct_list):
-    x="\n"
+    x= "#include <stdlib.h> \n#include <stdint.h> \n#include \"../type_pack.h\"\n\n"
     for s in struct_list:
         x+= s.struct_def()
     #x += "\n"
+    x = header_include_guard(x, "net_lib_mgen_struct_def")
     struct_def = open("./mgen/struct_def.h", "w")
     struct_def.write(x)
     print x
 
 def output_packing_def(struct_list):
-    x="\n"
+    x="#include <stdlib.h> \n#include <stdint.h> \n#include \"../type_pack.h\"\n\n"
+    x+= "#include \"./struct_def.h\" \n\n"
     for s in struct_list:
         x+=s.packing_def()
         x+=s.unpacking_def()
     #x += "\n"
+    x = header_include_guard(x, "net_lib_mgen_struct_packing")
     struck_packing = open("./mgen/struct_packing.h", "w")
     struck_packing.write(x)
     print x
 
 def output_size_def(struct_list):
-    x= "void DEBUG_net_message_size() { \n"
+    x="#include <stdlib.h> \n#include <stdint.h> \n#include \"../type_pack.h\"\n\n"
+    x+= "void DEBUG_net_message_size() { \n"
     x+="\tprintf("+'"'+ "ramsize, netsize" +"\\n\");\n"
     for s in struct_list:
         x+=s.struct_size()
     x += "}\n"
     #x += "\n"
+    x = header_include_guard(x, "net_lib_mgen_size")
     struck_size = open("./mgen/size.h", "w")
     struck_size.write(x)
     print x
@@ -113,7 +124,7 @@ def pack_proc(list):
     if n == "f":
         m = "float"
     if m != "":
-        return "\tPACK_%s(s->%s, buffer, &n);\n" % (m,nn)
+        return "\tPACK_%s(s->%s, buffer, n);\n" % (m,nn)
     print "ERROR: Type Missing: %s" % (n)
     assert False
 
@@ -134,7 +145,7 @@ def unpack_proc(list):
     if n == "f":
         m = "float"
     if m != "":
-        return "\tUNPACK_%s(s->%s, buffer, &n);\n" % (m,nn)
+        return "\tUNPACK_%s(s->%s, buffer, n);\n" % (m,nn)
     print "ERROR: Type Missing: %s" % (n)
     assert False
 
@@ -186,33 +197,43 @@ class Struct:
         for i in self.members:
             n += "sizeof(%s)+" % (type_to_name(i[1]))
         n += "0"
-        s1 ="\tprintf(" +'"'+ "sizeof(%s)="%(self.name)+'%i, %i' +'", ' +"sizeof(struct %s)),%s);\n" % (self.name,n)
+        s1 ="\tprintf(" +'"'+ "sizeof(%s)="%(self.name)+'%i, %i\\n' +'", ' +"sizeof(struct %s),%s);\n" % (self.name,n)
         return s1 #+s2+s3
 
     def packing_def(self):
         if self.name == None:
             return ''
         s1 = "static inline int pack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
-        s1 += "\tint n=0;\n"
+        #s1 += "\tint n=0;\n"
         s2 = ''
         for i in self.members:
             s2 += pack_proc(i)
-        s3 = "\t*n+=sizeof(%s);\n}\n\n"
+        n = ""
+        for i in self.members:
+            n += "sizeof(%s)+" % (type_to_name(i[1]))
+        n += "0;"
+        #s3 = "\t*n+=%s" % (n)
+        s3 = "\t*n += %s;\n}\n\n" %(n)
         return s1+s2+s3
 
     def unpacking_def(self):
         if self.name == None:
             return ''
         s1 = "static inline void unpack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
-        s1 += "\tint n=0;\n"
+        #s1 += "\tint n=0;\n"
         s2 = ''
         self.members.reverse()
         for i in self.members:
             s2 += unpack_proc(i)
         self.members.reverse()
-        s3 = "\t*n+=sizeof(%s)" % (type_to_name(i[1]))
-        s4 = "\n}\n\n"
-        return s1+s2+s3+s4
+        n = ""
+        for i in self.members:
+            n += "sizeof(%s)+" % (type_to_name(i[1]))
+        n += "0;"
+        s3 = "\t*n += %s;\n}\n\n" %(n)
+        #s3 = "\t*n += %s" % (n)
+        #s4 = "\n}\n\n"
+        return s1+s2+s3 #+s4
 
     def send_function(self):
         pass

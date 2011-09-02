@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 #include "./type_pack.h"
-#include "./mgen/struct_def.h"
 #include "./mgen/struct_packing.h"
+#include "./mgen/struct_def.h"
 #include "./mgen/size.h"
 
 #endif
