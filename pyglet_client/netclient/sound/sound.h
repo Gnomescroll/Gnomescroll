@@ -1,6 +1,6 @@
-#include "./api/inc/fmod.h"
-#include "./api/inc/fmod_errors.h"
-#include "wincompat.h"
+#include <fmod.h>
+#include <fmod_errors.h>
+#include <wincompat.h>
 #include <stdio.h>
 
 FMOD_SYSTEM* sound_sys;
