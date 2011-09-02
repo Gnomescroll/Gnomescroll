@@ -91,6 +91,11 @@ def configure(conf):
                use='FMOD',
                fragment='#include <fmod.h>' + FMOD_MAIN_TEST_CODE,
                mandatory=True)
+               
+    conf.check(header_name='fmod_errors.h',
+               use='FMOD',
+               fragment='#include <fmod_errors.h>' + FMOD_MAIN_TEST_CODE,
+               mandatory=True)
     '''
 
     '''
