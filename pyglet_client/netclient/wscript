@@ -186,7 +186,7 @@ def build(bld):
     bld(features='c cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
-        target='init_c_lib')
+        target='c_lib.init_c_lib')
 
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_objects.pyx'],
@@ -204,7 +204,7 @@ def build(bld):
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
         use=common_libraries + ['fmodex'], #+sound_libraries,
-        target='sound')
+        target='sound.sound')
 
 
     bld(features='c cshlib pyext',      #cython part
