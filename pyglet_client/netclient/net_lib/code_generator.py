@@ -33,7 +33,7 @@ def output_struct_def(struct_list):
     x="\n"
     for s in struct_list:
         x+= s.struct_def()
-    x += "\n"
+    #x += "\n"
     struct_def = open("./mgen/struct_def.h", "w")
     struct_def.write(x)
     print x
@@ -43,19 +43,18 @@ def output_packing_def(struct_list):
     for s in struct_list:
         x+=s.packing_def()
         x+=s.unpacking_def()
-    x += "\n"
+    #x += "\n"
     struck_packing = open("./mgen/struct_packing.h", "w")
     struck_packing.write(x)
     print x
 
 def output_size_def(struct_list):
-
     x= "void DEBUG_net_message_size() { \n"
     x+="\tprintf("+'"'+ "ramsize, netsize" +"\\n\");\n"
     for s in struct_list:
         x+=s.struct_size()
     x += "}\n"
-    x += "\n"
+    #x += "\n"
     struck_size = open("./mgen/size.h", "w")
     struck_size.write(x)
     print x
@@ -177,7 +176,7 @@ class Struct:
         p2 = ""
         for i in self.members:
             p2 += "\t%s;\n" % (struct_proc(i))
-        p3 = "};\n"
+        p3 = "};\n\n"
         return p1+p2+p3
 
     def struct_size(self):
