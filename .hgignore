@@ -5,6 +5,9 @@ syntax: glob
 *.pyo
 *.dylib
 
+*.so
+*.o
+
 */build/*
 
 run 
@@ -39,9 +42,6 @@ gl.c
 SDL_interface.c
 
 pyglet_client/log/
-
-*.o
-*.so
 
 dump.rdb
 

@@ -186,7 +186,7 @@ def build(bld):
     bld(features='c cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
-        target='c_lib.init_c_lib')
+        target='init_c_lib')
 
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_objects.pyx'],
@@ -204,7 +204,7 @@ def build(bld):
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
         use=common_libraries + ['fmodex'], #+sound_libraries,
-        target='sound.sound')
+        target='sound')
 
 
     bld(features='c cshlib pyext',      #cython part
@@ -227,17 +227,21 @@ def install_in_ext(ctx):
 
     # Hax to install files into ./ext/, after build
 
+    '''
     try:
         run_target = ctx.env.cprogram_PATTERN % 'run'
         shutil.copy2(os.path.join(out, run_target), './' + run_target)
     except IOError:
-        print "Error: cannot copy %s to %s" % (run_target, os.path.join(out, run_target))
+        print "Error0: cannot copy %s to %s" % (run_target, os.path.join(out, run_target))
+    '''
 
+    '''
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
-        print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+        print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+    '''
 
     targets = ['SDL.gl',
                'SDL.hud',
@@ -245,7 +249,7 @@ def install_in_ext(ctx):
                'cube_lib.terrain_map',
                'vox_lib',
                'c_lib._ray_trace',
-               'init_c_lib',
+               'c_lib.init_c_lib',
                'c_lib.c_lib_objects',
                'c_lib.c_lib_map_gen',
                'sound',         # libsound.so fails to copy to ./ext/ (as with libvox_lib.so and libinit_c_lib.so)
@@ -259,7 +263,7 @@ def install_in_ext(ctx):
         try:
             shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
         except:
-            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+            print "Error2: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
 
