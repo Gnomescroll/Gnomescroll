@@ -18,3 +18,5 @@ FMOD_CHANNEL* play_2d_sound(FMOD_SOUND* sound);
 FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, FMOD_VECTOR pos, FMOD_VECTOR vel);
 
 void release_sound(FMOD_SOUND* sound);
+
+int test();

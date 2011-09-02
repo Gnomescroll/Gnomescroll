@@ -25,7 +25,8 @@ void update_sound_system() {
 }
 
 void release_sound_system() {
-    FMOD_System_Release(sound_sys);
+    FMOD_RESULT result = FMOD_System_Release(sound_sys);
+    ERRCHECK(result);
 }
 
 FMOD_SOUND* load_2d_sound(char *soundfile) {
@@ -69,5 +70,25 @@ FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, FMOD_VECTOR pos, FMOD_VECTOR vel)
 }
 
 void release_sound(FMOD_SOUND* sound) {
-    FMOD_Sound_Release(sound);
+    FMOD_RESULT r = FMOD_Sound_Release(sound);
+    ERRCHECK(r);
+}
+
+int test() {
+    FMOD_RESULT result;
+    init_sound_system(100);
+    FMOD_SOUND* gun = load_2d_sound("./wav/semishoot.wav");
+
+    int i = 0;
+    do {
+        play_2d_sound(gun);
+        i = i + 1;
+        Sleep(150);
+        update_sound_system();
+    } while (i < 6);
+
+    release_sound(gun);
+    ERRCHECK(result);
+    release_sound_system();
+    return 0;
 }
