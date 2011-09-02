@@ -33,6 +33,9 @@ import c_lib.c_lib_objects
 import c_lib._ray_trace
 import random
 
+
+import sound.sounds as sounds
+
 '''
 Physics for agents
 
@@ -971,6 +974,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
+            sounds.play()
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:

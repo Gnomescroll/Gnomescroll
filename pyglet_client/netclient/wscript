@@ -145,7 +145,7 @@ def build(bld):
     bld(features='c cshlib',
         source=['sound/sound.c',
                 'sound/player_sounds.c'],
-        use=[],
+        use=['sound/api/lib/libfmodex.so'],
         target='sound')
         
     bld(features='c cshlib pyext',
@@ -153,6 +153,7 @@ def build(bld):
         use=['sound'],
         target='sound.sounds')
 
+    # final
     bld(features='c cprogram pyembed',
         use=common_libraries,
         source='run.c',

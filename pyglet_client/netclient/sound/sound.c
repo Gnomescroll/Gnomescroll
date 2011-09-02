@@ -24,7 +24,7 @@ void update_sound_system() {
     FMOD_System_Update(sound_sys);
 }
 
-void end_sound_system() {
+void release_sound_system() {
     FMOD_System_Release(sound_sys);
 }
 
@@ -68,8 +68,6 @@ FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, FMOD_VECTOR pos, FMOD_VECTOR vel)
     return channel;
 }
 
-void release_sound_system(FMOD_SOUND* sound) {
+void release_sound(FMOD_SOUND* sound) {
     FMOD_Sound_Release(sound);
 }
-
-int main(int argc, char *argv[]){return 0;}

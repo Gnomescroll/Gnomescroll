@@ -12,5 +12,3 @@ void end_player_gunshot() {
     release_sound(player_gunshot);
 }
 
-int main(int argc, char *argv[]){return 0;}
-
