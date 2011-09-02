@@ -2,3 +2,5 @@
 cython
 simplejson
 noise
+pypng
+pil
