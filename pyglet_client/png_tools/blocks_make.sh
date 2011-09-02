@@ -1,1 +1,1 @@
-./sheet_maker.py blocks ./block/ blocks_sprite_conf
+./sheet_maker.py blocks ./block/ blocks_sprite_conf $@
