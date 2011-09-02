@@ -121,6 +121,7 @@ def configure(conf):
     conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
 
+    #LD_LIBRARY_PATH=./libraries/lin/fmod/lib
     #if OS == 'Darwin':
     #    conf.env.ARCH = ['x86_64']
 
@@ -210,7 +211,7 @@ def build(bld):
     bld(features='c cshlib pyext',      #cython part
         source=['sound/sounds.pyx'],
         use=['sound'],
-        target='sound.sounds')
+        target='sound_lib')
 
 
     # final
@@ -249,11 +250,11 @@ def install_in_ext(ctx):
                'cube_lib.terrain_map',
                'vox_lib',
                'c_lib._ray_trace',
-               'c_lib.init_c_lib',
+               'init_c_lib',
                'c_lib.c_lib_objects',
                'c_lib.c_lib_map_gen',
                'sound',         # libsound.so fails to copy to ./ext/ (as with libvox_lib.so and libinit_c_lib.so)
-               'sound.sounds',
+               'sound_lib',
                ]
 
     for target in targets:
