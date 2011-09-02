@@ -11,6 +11,7 @@ void receive_packets(struct* Socket socket);
 
 #include "server/server.c"
 
+#include <unistd.h>
 
 /*
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);

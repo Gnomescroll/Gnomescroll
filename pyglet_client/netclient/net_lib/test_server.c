@@ -10,6 +10,8 @@ int send_packet(struct Socket* socket, struct NetPeer* p, char* packet_data, int
 void receive_packets(struct* Socket socket);
 */
 
+#include <unistd.h>
+
 int main() {
 
     //struct Socket* s;

@@ -89,7 +89,7 @@ struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
     return s;
 }
 
-int send_packet(struct Socket* socket, struct NetPeer* p, char* packet_data, int packet_size) {
+int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size) {
 
     int sent_bytes = sendto( socket->socket, (const char*)packet_data, packet_size,
                              0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );

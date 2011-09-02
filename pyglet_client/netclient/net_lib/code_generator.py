@@ -145,7 +145,7 @@ def unpack_proc(list):
     if n == "f":
         m = "float"
     if m != "":
-        return "\tUNPACK_%s(s->%s, buffer, n);\n" % (m,nn)
+        return "\tUNPACK_%s(&s->%s, buffer, n);\n" % (m,nn)
     print "ERROR: Type Missing: %s" % (n)
     assert False
 
@@ -203,34 +203,38 @@ class Struct:
     def packing_def(self):
         if self.name == None:
             return ''
-        s1 = "static inline int pack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
+        s1 = "static inline void pack_struct_%s" %(self.name) + "(unsigned char* buffer, struct %s* s, int* n) { \n" % (self.name)
         #s1 += "\tint n=0;\n"
         s2 = ''
         for i in self.members:
             s2 += pack_proc(i)
+        #s3 = ''
         n = ""
         for i in self.members:
             n += "sizeof(%s)+" % (type_to_name(i[1]))
         n += "0;"
         #s3 = "\t*n+=%s" % (n)
-        s3 = "\t*n += %s;\n}\n\n" %(n)
+        s3 = "\t//*n += %s;\n}\n\n" %(n)
+
         return s1+s2+s3
 
     def unpacking_def(self):
         if self.name == None:
             return ''
-        s1 = "static inline void unpack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
+        s1 = "static inline void unpack_struct_%s" %(self.name) + "(unsigned char* buffer, struct %s* s, int* n) { \n" % (self.name)
         #s1 += "\tint n=0;\n"
         s2 = ''
         self.members.reverse()
         for i in self.members:
             s2 += unpack_proc(i)
         self.members.reverse()
+        s3 = ''
         n = ""
         for i in self.members:
             n += "sizeof(%s)+" % (type_to_name(i[1]))
         n += "0;"
-        s3 = "\t*n += %s;\n}\n\n" %(n)
+        s3 = "\t//*n += %s;\n}\n\n" %(n)
+
         #s3 = "\t*n += %s" % (n)
         #s4 = "\n}\n\n"
         return s1+s2+s3 #+s4

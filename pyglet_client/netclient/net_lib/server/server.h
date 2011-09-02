@@ -66,7 +66,7 @@ struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
 //port=0 to get any port
 struct Socket* create_socket(uint32_t IP, uint16_t  port);
 
-int send_packet(struct Socket* socket, struct NetPeer* p, char* packet_data, int packet_size);
+int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size);
 void receive_packets(struct Socket* socket);
 
 void init_server(unsigned short port);
