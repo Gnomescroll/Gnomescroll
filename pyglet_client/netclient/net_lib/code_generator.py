@@ -33,7 +33,7 @@ def output_struct_def(struct_list):
     x="\n"
     for s in struct_list:
         x+= s.struct_def()
-    x += "\n"
+    #x += "\n"
     struct_def = open("./mgen/struct_def.h", "w")
     struct_def.write(x)
     print x
@@ -43,19 +43,18 @@ def output_packing_def(struct_list):
     for s in struct_list:
         x+=s.packing_def()
         x+=s.unpacking_def()
-    x += "\n"
+    #x += "\n"
     struck_packing = open("./mgen/struct_packing.h", "w")
     struck_packing.write(x)
     print x
 
 def output_size_def(struct_list):
-
     x= "void DEBUG_net_message_size() { \n"
     x+="\tprintf("+'"'+ "ramsize, netsize" +"\\n\");\n"
     for s in struct_list:
         x+=s.struct_size()
     x += "}\n"
-    x += "\n"
+    #x += "\n"
     struck_size = open("./mgen/size.h", "w")
     struck_size.write(x)
     print x
@@ -177,7 +176,7 @@ class Struct:
         p2 = ""
         for i in self.members:
             p2 += "\t%s;\n" % (struct_proc(i))
-        p3 = "};\n"
+        p3 = "};\n\n"
         return p1+p2+p3
 
     def struct_size(self):
@@ -193,26 +192,27 @@ class Struct:
     def packing_def(self):
         if self.name == None:
             return ''
-        s1 = "int pack_struct_%s" %(self.name) + "(void* buffer, struct %s* s) { \n" % (self.name)
+        s1 = "static inline int pack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
         s1 += "\tint n=0;\n"
         s2 = ''
         for i in self.members:
             s2 += pack_proc(i)
-        s3 = "\treturn n;\n}\n\n"
+        s3 = "\t*n+=sizeof(%s);\n}\n\n"
         return s1+s2+s3
 
     def unpacking_def(self):
         if self.name == None:
             return ''
-        s1 = "void unpack_struct_%s" %(self.name) + "(void* buffer, struct %s* s) { \n" % (self.name)
+        s1 = "static inline void unpack_struct_%s" %(self.name) + "(void* buffer, struct %s* s, int* n) { \n" % (self.name)
         s1 += "\tint n=0;\n"
         s2 = ''
         self.members.reverse()
         for i in self.members:
             s2 += unpack_proc(i)
         self.members.reverse()
-        s3 = "\treturn n;\n}\n\n"
-        return s1+s2+s3
+        s3 = "\t*n+=sizeof(%s)" % (type_to_name(i[1]))
+        s4 = "\n}\n\n"
+        return s1+s2+s3+s4
 
     def send_function(self):
         pass

@@ -10,7 +10,7 @@
 //pass in zero to get any port
 struct Socket* create_socket(uint32_t IP, uint16_t port) {
     //create socket
-    struct Socket* s = malloc(sizeof(struct Socket));
+    struct Socket* s = (struct Socket*) malloc(sizeof(struct Socket));
     if(s==NULL) { printf("Malloc of socket failed.  Out of memory? \n"); return NULL;}
 
     s->socket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
@@ -65,7 +65,7 @@ struct Socket* create_socket(uint32_t IP, uint16_t port) {
 }
 
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
-    struct NetPeer* s = malloc(sizeof(struct NetPeer));
+    struct NetPeer* s = (struct NetPeer*) malloc(sizeof(struct NetPeer));
     s->id = 0;
 
     unsigned int destination_address = ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
@@ -80,7 +80,7 @@ struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port)
 }
 
 struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
-    struct NetPeer* s = malloc(sizeof(struct NetPeer));
+    struct NetPeer* s = (struct NetPeer*) malloc(sizeof(struct NetPeer));
     s->id = 0;
     s->address = address;
 
