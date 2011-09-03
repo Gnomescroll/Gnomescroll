@@ -2,6 +2,10 @@
 #include "net_packets.h"
 #include <unistd.h>
 
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "client/client2.c"
 
 

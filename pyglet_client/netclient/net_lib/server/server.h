@@ -45,6 +45,9 @@ struct Socket {
     struct sockaddr_in address;
 };
 
+#TTL_MAX 150
+//5 seconds timeout?
+
 struct NetPeer {
     unsigned short id;
     uint32_t ip;
@@ -74,4 +77,6 @@ void receive_packets(struct Socket* socket);
 void init_server(unsigned short port);
 inline int error_check_packet(unsigned char* data, int n);
 void process_packets();
+
+void decrement_ttl();
 #endif

@@ -1,6 +1,12 @@
 #ifndef net_lib_client2_h
 #define net_lib_client2_h
 
+#include "../net_lib_common.h"
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 struct NetClient {
     uint16_t client_id;
     int ttl; //for connection
@@ -24,9 +30,9 @@ void send_packet(unsigned char* buffer, int n);
 void attempt_connection_with_server();
 
 void set_server(int a, int b, int c, int d, unsigned short port);
-int validate_packet(unsigned char* buffer, int* n, struct sockaddr*);
+int validate_packet(unsigned char* buffer, int n, struct sockaddr_in*);
 void process_incoming_packets();
-void process_packet(buffer, &n);
+void process_packet(unsigned char* buffer, int n);
 void process_outgoing_packets();
 
 #endif

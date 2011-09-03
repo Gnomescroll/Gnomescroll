@@ -311,6 +311,7 @@ void process_packets() {
 
         p = pool.connection[client_id];
         if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || client_id != p->id) {
+            p->ttl = TTY_MAX;
             printf("Received packet from connection with invalid IP, client_id pair\n");
             return;
         }
