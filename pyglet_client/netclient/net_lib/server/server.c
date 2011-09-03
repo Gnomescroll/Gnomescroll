@@ -239,69 +239,26 @@ void send_id(uint16_t client_id) {
     send_to_client(client_id, buffer, n);
 }
 
-fd_set read_flags;
-fd_set write_flags;
+process_packet(unsigned char* buff, int received_bytes, sockaddr_in* from) {
 
-unsigned char buffer[1500];
-
-void process_packets() {
     int n=0;
-    int received_bytes;
 
     uint16_t client_id;
     uint8_t channel_id;
 
-    struct NetPeer* p;
-
-    #if PLATFORM == PLATFORM_WINDOWS
-    typedef int socklen_t;
-    #endif
-
-    struct sockaddr_in from;
-    socklen_t fromLength = sizeof( from );
-
-    //if(!select(1, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
-
-    if(0) {
-        ///hack
-        fd_set fds;
-        FD_ZERO(&fds);
-        FD_SET(pool.socket.socket, &fds);
-        int rc;
-
-       struct timeval timeout;
-       timeout.tv_sec = 20;
-       timeout.tv_usec = 0;
-
-        rc = select(sizeof(fds)*8, &fds, NULL, NULL, &timeout);
-        if (rc==-1) {
-            perror("select failed");
-            return;// -1;
-        }
-        printf("rc= %i \n", rc);
-
-        if (FD_ISSET(pool.socket.socket, &fds)) {
-             printf("Packet ready!\n");
-        } else {
-            //printf("Packet ready!\n");
-            return;
-        }
-    }
-    ///hack
-    received_bytes = recvfrom( pool.socket.socket, (char*)buffer, maximum_packet_size, 0, (struct sockaddr*)&from, &fromLength );
-
     if(received_bytes == 6) {
-        n=0;
+
         UNPACK_uint16_t(&client_id, buffer, &n);
         UNPACK_uint8_t(&channel_id, buffer, &n);
 
         if(client_id==0 && channel_id == 255) {
-            client_id = accept_connection(from);
+            client_id = accept_connection(*from);
             if(client_id != -1) send_id(client_id);
         }  else {
-            printf("Invalid 6 byte packet!\n");
+            printf("validate_packet: Invalid 6 byte packet!\n");
         }
     }
+
     else if(received_bytes > 6) {
         //crc check
         if(error_check_packet(buffer,received_bytes) == 0) {
@@ -325,6 +282,50 @@ void process_packets() {
         buffer[received_bytes] = 0;
         printf("Packet= %s \n", buffer);
         return;
+        }
+
+}
+
+unsigned char buffer[1500];
+
+struct timeval timeout;
+fd_set read_flags;
+fd_set write_flags;
+
+void process_packets() {
+    int n=0;
+    int received_bytes;
+
+    struct NetPeer* p;
+    struct sockaddr_in from;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
+
+    #if PLATFORM == PLATFORM_WINDOWS
+    typedef int socklen_t;
+    #endif
+
+    socklen_t fromLength = sizeof( from );
+
+    FD_ZERO(&read_flags); // Zero the flags ready for using
+    FD_SET(pool.socket.socket, &read_flags);
+
+    while(1) {
+
+        select_return = select(pool.socket.socket+1, &read_flags,(fd_set*)0,(fd_set*)0,&timeout);
+        if (select_return < 0) {
+            printf("select returned %i\n", select_return);break;
+        }
+
+        if (FD_ISSET(pool.socket.socket, &read_flags)) {
+            printf("Incoming Packet\n");
+            FD_CLR(pool.socket.socket, &read_flags);
+            //get packets
+            n = recvfrom(pool.socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+            printf("Incoming Packet: Received %i bytes\n", n);
+            process_packet(buffer, n);
+        } else {
+            break;
         }
 }
 
