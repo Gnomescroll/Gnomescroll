@@ -91,7 +91,7 @@ struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
     s->id = 0;
     s->address = address;
 
-    s->ip = address.sin_addr.s_addr;
+    s->ip = htonl(address.sin_addr.s_addr);
     s->port = htons( address.sin_port );
     return s;
 }
@@ -128,8 +128,7 @@ void receive_packets(struct Socket* s) {
         struct sockaddr_in from;
         socklen_t fromLength = sizeof( from );
 
-        received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size,
-                                   0, (struct sockaddr*)&from, &fromLength );
+        received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size, 0, (struct sockaddr*)&from, &fromLength );
 
         if ( received_bytes < 0 ) {
 
@@ -173,6 +172,9 @@ void init_server(unsigned short port) {
     pool.n_connections = 0;
 
     struct Socket* s = create_socket(0, port);
+    if(s==NULL) {
+        printf("Socket is NULL: init_server failed\n"); return;
+    }
     pool.socket =  *s;
     if(s != NULL) free(s);
 
@@ -191,13 +193,14 @@ int accept_connection(struct sockaddr_in from) {
             p->id = i;
             p->ttl = 100;
             //send client his id
-            printf("Accepting Connection From: %i:%i \n",htonl(p->ip), p->port );
+            printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
             return i;
         }
     }
     if(p->id == 0) {
         printf("Could not open client connection: connection pool full!\n");
-        return;
+        free(p);
+        return -1;
     }
 
     //send client client id
@@ -214,6 +217,8 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
     struct NetPeer* p;
     p = pool.connection[client_id];
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
+
+    printf("Sending %i bytes to %i:%i\n",n, p->ip, p->port);
     int sent_bytes = sendto(pool.socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n)
     {
@@ -225,6 +230,7 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
 }
 
 void send_id(uint16_t client_id) {
+    printf("Sending Client Id\n");
     unsigned char buffer[6];
     int n=0;
     PACK_uint16_t(0, buffer, &n);
@@ -291,7 +297,7 @@ void process_packets() {
 
         if(client_id==0 && channel_id == 255) {
             client_id = accept_connection(from);
-            send_id(client_id);
+            if(client_id != -1) send_id(client_id);
         }  else {
             printf("Invalid 6 byte packet!\n");
         }
@@ -311,7 +317,7 @@ void process_packets() {
 
         p = pool.connection[client_id];
         if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || client_id != p->id) {
-            p->ttl = TTY_MAX;
+            p->ttl = TTL_MAX;
             printf("Received packet from connection with invalid IP, client_id pair\n");
             return;
         }

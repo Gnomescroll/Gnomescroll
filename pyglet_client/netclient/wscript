@@ -91,7 +91,7 @@ def configure(conf):
                use='FMOD',
                fragment='#include <fmod.h>' + FMOD_MAIN_TEST_CODE,
                mandatory=True)
-               
+
     conf.check(header_name='fmod_errors.h',
                use='FMOD',
                fragment='#include <fmod_errors.h>' + FMOD_MAIN_TEST_CODE,
@@ -208,13 +208,13 @@ def build(bld):
 
     incp='../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-
+    '''
         #use=common_libraries + ['FMOD'], #+sound_libraries,
         #target='sound')
         use= ['fmodex'], #+sound_libraries,
         libpath=[libp],
         includes=[incp],
-
+    '''
 
     bld(features='c cshlib pyext',      #cython part
         source=['sound/sounds.pyx'],

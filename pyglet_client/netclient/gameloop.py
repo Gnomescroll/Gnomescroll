@@ -67,7 +67,7 @@ import random #remove?
 #import hotshot
 import time
 
-import sound.sounds as sounds
+#import sound.sounds as sounds
 
 #physics timer
 class Physics_loop_timer:
@@ -143,7 +143,7 @@ class App(object):
         self.intervals.register(send_agent_pos, 500)
 
         self.init_inputs()
-        sounds.init()
+        #sounds.init()
         print "App init finished"
 
     def _exit(self):
@@ -351,11 +351,11 @@ class App(object):
 
             self.intervals.process()
 
-            sounds.update()
-            
+            #sounds.update()
+
             P.finish_frame()
 
-    sounds.done()
+    #sounds.done()
 
 if __name__ == '__main__':
     app = App()

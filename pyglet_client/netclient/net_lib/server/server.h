@@ -45,7 +45,7 @@ struct Socket {
     struct sockaddr_in address;
 };
 
-#TTL_MAX 150
+#define TTL_MAX 150
 //5 seconds timeout?
 
 struct NetPeer {

@@ -9,9 +9,38 @@
 #include "client/client2.c"
 
 
+/*
+
+void init_client();
+
+void send_packet(unsigned char* buffer, int n);
+
+void attempt_connection_with_server();
+
+void set_server(int a, int b, int c, int d, unsigned short port);
+int validate_packet(unsigned char* buffer, int n, struct sockaddr_in*);
+void process_incoming_packets();
+void process_packet(unsigned char* buffer, int n);
+void process_outgoing_packets();
+*/
+
+
 int main() {
 
+    init_client();
+    unsigned int port = 9999;
+    set_server(127,0,0,1, port);
+    attempt_connection_with_server();
 
+    int i=0;
+    while(1) {
+        printf("j=%i\n", i);
+        process_incoming_packets();
+        sleep(1);
+        i++;
+        }
+    return 0;
+}
 /*
     unsigned char* buffer[6];
     int n=0;
@@ -37,5 +66,3 @@ int main() {
 
     //receive_packets(s);
 */
-    return 0;
-}
