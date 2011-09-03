@@ -65,3 +65,5 @@ static inline void UNPACK_float(float* d, unsigned char* buffer, int*n) {
         *d = *((float*)(buffer+*n));
         *n += sizeof(float);
 }
+
+#endif

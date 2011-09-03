@@ -1,31 +1,14 @@
-//#include "server./server.c"
 
-
-/*
-struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-struct Socket create_socket(uint32_t IP, uint16_t  port); //port=0 to get any port
-int send_packet(struct Socket* socket, struct NetPeer* p, char* packet_data, int packet_size)
-
-void receive_packets(struct* Socket socket);
-*/
-
-#include "server/server.c"
-
+#include "net_packets.h"
 #include <unistd.h>
 
-/*
-struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-struct Socket create_socket(uint32_t IP, uint16_t  port); //port=0 to get any port
+#include "client/client2.c"
 
-
-int send_packet(struct Socket* socket, struct NetPeer* p, char* packet_data, int packet_size)
-*
-void receive_packets(struct* Socket socket);
-*/
 
 int main() {
 
 
+/*
     unsigned char* buffer[6];
     int n=0;
     PACK_uint16_t(0, buffer, &n)
@@ -49,6 +32,6 @@ int main() {
     send_packet(s,p, data2, 6);
 
     //receive_packets(s);
-
+*/
     return 0;
 }

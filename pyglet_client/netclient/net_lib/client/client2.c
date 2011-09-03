@@ -1,17 +1,4 @@
-struct NetClient {
-    uint16_t client_id;
-    int ttl; //for connection
-    int connected;
-
-    int socket;
-
-    struct sockaddr_in local_address;
-    uint16_t local_port;
-
-    struct sockaddr_in server_address;
-    uint32_t server_ip;
-    uint16_t server_port;
-};
+#include ".client2.h"
 
 struct NetClient server;
 
@@ -103,15 +90,17 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
 
 unsigned char* buffer[1500]; //1500 is max ethernet MTU
 
-validate_packet(unsigned char* buffer, int* n, struct sockaddr*) {
+int validate_packet(unsigned char* buffer, int* n, struct sockaddr*) {
     //check CRC
     if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
         printf("Received rogue packet from IP= %i  Server IP = %i\n", ntohl(from->sin_addr.s_addr), ntohl(server.server_address.sin_addr.s_addr));
+        return 0;
     }
     if(server.connected == 0 && n ==4) {
         UNPACK_uint16_t(0, buffer, &n);
         UNPACK_uint16_t(client_id, buffer, &n);
     }
+    return 1;
 }
 
 void process_incoming_packets() {
@@ -138,7 +127,7 @@ void process_incoming_packets() {
     }
 }
 
-process_packet(buffer, &n) {
+void process_packet(buffer, &n) {
     int n=0;
     if(n==6) {
         uint16_t = client_id;
