@@ -147,3 +147,90 @@ void receive_packets(struct Socket* s) {
         // process received packet
     }
 }
+
+void process_packets() {
+
+    unsigned char packet_data[maximum_packet_size];
+    int received_bytes;
+
+    //uint16_t client_id;
+    uint8_t channel_id;
+
+    struct NetPeer* p;
+
+    #if PLATFORM == PLATFORM_WINDOWS
+    typedef int socklen_t;
+    #endif
+
+    struct sockaddr_in from;
+    socklen_t fromLength = sizeof( from );
+
+    //if(!select(1, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
+
+    if(0) {
+        ///hack
+        fd_set fds;
+        FD_ZERO(&fds);
+        FD_SET(pool.socket.socket, &fds);
+        int rc;
+        //int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
+
+       struct timeval timeout;
+       timeout.tv_sec = 20;
+       timeout.tv_usec = 0;
+
+        rc = select(sizeof(fds)*8, &fds, NULL, NULL, &timeout);
+        if (rc==-1) {
+            perror("select failed");
+            return;// -1;
+        }
+        printf("rc= %i \n", rc);
+
+        if (FD_ISSET(pool.socket.socket, &fds)) {
+             printf("Packet ready!\n");
+        } else {
+            return;
+        }
+    }
+    ///hack
+    received_bytes = recvfrom( pool.socket.socket, (char*)packet_data, maximum_packet_size,
+                               0, (struct sockaddr*)&from, &fromLength );
+
+    if(received_bytes == 6) {
+        UNPACK_uint16_t(&client_id, buffer, &n);
+        UNPACK_uint8_t(&channel_id, buffer, &n);
+
+        if(client_id==0 && message_id == 255) {
+            client_id = accept_connection(from);
+            send_id(client_id);
+        }  else {
+            printf("Invalid 6 byte packet!\n");
+        }
+    }
+    else if(received_bytes > 6) {
+        //crc check
+        if(error_check_packet(packet_data,received_bytes) == 0) {
+            printf("Packet failed CRC check!\n");
+            return;
+            //continue;
+        }
+        //check to see that connection is valid
+
+        UNPACK_uint16_t(&client_id, buffer, &n)
+        UNPACK_uint8_t(&channel_id, buffer, &n)
+        printf("client id= %i\n", client_id);
+
+
+        p = pool.connection[client_id];
+        if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || id != p->id) {
+            printf("Received packet from connection with invalid IP, client_id pair\n");
+            return;
+        }
+        printf("Packet received from client %i\n", p->id);
+        packet_data[received_bytes] = 0;
+        printf("Packet= %s \n", packet_data);
+        return;
+        }
+    }
+}
+

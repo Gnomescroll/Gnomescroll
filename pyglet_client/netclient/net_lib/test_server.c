@@ -17,6 +17,18 @@ int main() {
     //struct Socket* s;
     //s = create_socket(0, 9090);
 
+    uint8_t d = 5;
+    int n= 0;
+    unsigned char buf[500];
+    printf("i= %i \n", d);
+    PACK_uint8_t(1, buf, &n);
+    PACK_uint8_t(2, buf, &n);
+    n=0;
+    UNPACK_uint8_t(&d, buf, &n);
+    printf("i= %i \n", d);
+    UNPACK_uint8_t(&d, buf, &n);
+    printf("i= %i \n", d);
+
     unsigned short port = 9999;
     init_server(port);
     //printf("t\n");

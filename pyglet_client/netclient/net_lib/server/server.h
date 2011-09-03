@@ -36,6 +36,8 @@
 
 #include "../net_lib_common.h"
 
+#include "../net_packets.h"
+
 struct Socket {
     uint32_t ip;
     uint16_t port;

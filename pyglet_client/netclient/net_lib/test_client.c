@@ -25,6 +25,12 @@ void receive_packets(struct* Socket socket);
 
 int main() {
 
+
+    unsigned char* buffer[6];
+    int n=0;
+    PACK_uint16_t(0, buffer, &n)
+    PACK_uint8_t(255, buffer, &n)
+
     struct Socket* s;
     s = create_socket(0, 9091);
     sleep(1);

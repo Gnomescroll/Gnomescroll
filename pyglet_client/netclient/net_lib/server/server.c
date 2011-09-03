@@ -109,7 +109,7 @@ void receive_packets(struct Socket* s) {
     unsigned char packet_data[maximum_packet_size];
     unsigned int from_address;
     unsigned int from_port;
-    unsigned int to_port;
+    //unsigned int to_port;
     int received_bytes;
 
     while ( 1 )
@@ -177,7 +177,7 @@ void init_server(unsigned short port) {
     printf("Server Connection Pool Ready\n");
 }
 
-void accept_connection(struct sockaddr_in from) {
+int accept_connection(struct sockaddr_in from) {
 
     struct NetPeer* p ;
     p = create_raw_net_peer(from);
@@ -190,7 +190,7 @@ void accept_connection(struct sockaddr_in from) {
             p->ttl = 100;
             //send client his id
             printf("Accepting Connection From: %i:%i \n",htonl(p->ip), p->port );
-            return;
+            return i;
         }
     }
     if(p->id == 0) {
@@ -208,14 +208,23 @@ inline int error_check_packet(unsigned char* data, int n) {
     return 1;
 }
 
+void send_id(uint16_t client_id) {
+    unsigned char buffer[4];
+    int n=0;
+    PACK_uint16_t(0, buffer, &n);
+    PACK_uint16_t(client_id, buffer, &n);
+}
+
 void process_packets() {
 
     unsigned char packet_data[maximum_packet_size];
-    unsigned int from_address;
-    unsigned int from_port;
-    unsigned int to_port;
+    //unsigned int from_address;
+    //unsigned int from_port;
+    //unsigned int to_port;
     int received_bytes;
 
+    uint16_t client_id;
+    uint8_t channel_id;
     //int i;
     //use select or epoll!!
     //for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
@@ -261,16 +270,18 @@ void process_packets() {
     received_bytes = recvfrom( pool.socket.socket, (char*)packet_data, maximum_packet_size,
                                0, (struct sockaddr*)&from, &fromLength );
 
+    if(received_bytes == 6) {
+        UNPACK_uint16_t(&client_id, buffer, &n);
+        UNPACK_uint8_t(&channel_id, buffer, &n);
 
-    if(received_bytes == 4) {
-        if(packet_data[0] == 0 && packet_data[1] == 0 && packet_data[2] == 255 && packet_data[3] == 255) {
-            //connection packet
-            accept_connection(from);
+        if(client_id==0 && message_id == 255) {
+            client_id = accept_connection(from);
+            send_id(client_id);
         }  else {
-            printf("Invalid 4 byte packet!\n");
+            printf("Invalid 6 byte packet!\n");
         }
     }
-    else if(received_bytes > 4) {
+    else if(received_bytes > 6) {
         //crc check
         if(error_check_packet(packet_data,received_bytes) == 0) {
             printf("Packet failed CRC check!\n");
@@ -279,23 +290,20 @@ void process_packets() {
         }
         //check to see that connection is valid
 
-        int id = *((uint16_t *) packet_data);
-        printf("client id= %i\n", id);
+        UNPACK_uint16_t(&client_id, buffer, &n)
+        UNPACK_uint8_t(&channel_id, buffer, &n)
+        printf("client id= %i\n", client_id);
 
 
-        p = pool.connection[id];
-        if(id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || id != p->id) {
+        p = pool.connection[client_id];
+        if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || id != p->id) {
             printf("Received packet from connection with invalid IP, client_id pair\n");
-            //possibly send terminate packet
             return;
-            //continue;
-        } else {
-            printf("Packet received from client %i\n", p->id);
-            packet_data[received_bytes] = 0;
-            printf("Packet= %s \n", packet_data);
-            //process packets
-            return;
-            //continue;
+        }
+        printf("Packet received from client %i\n", p->id);
+        packet_data[received_bytes] = 0;
+        printf("Packet= %s \n", packet_data);
+        return;
         }
     }
 }
