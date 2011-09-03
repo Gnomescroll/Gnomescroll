@@ -215,6 +215,8 @@ void send_id(uint16_t client_id) {
     PACK_uint16_t(client_id, buffer, &n);
 }
 
+fd_set read_flags,write_flags
+
 void process_packets() {
 
     unsigned char packet_data[maximum_packet_size];
