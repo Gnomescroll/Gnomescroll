@@ -84,7 +84,8 @@ void attempt_connection_with_server() {
     int n=0;
     PACK_uint16_t(0, buffer, &n);
     PACK_uint8_t(255, buffer, &n);
-    int sent_bytes = sendto( server->socket, (const char*)buffer, b,0, (const struct sockaddr*)&server->server_address, sizeof(struct sockaddr_in) );
+    n=6; //must be 6 bytes
+    int sent_bytes = sendto( server->socket, (const char*)buffer, n,0, (const struct sockaddr*)&server->server_address, sizeof(struct sockaddr_in) );
     printf("Client id requested\n");
 }
 
@@ -98,27 +99,63 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
     server->address.sin_addr.s_addr = htonl(server.server_ip);
     server->address.sin_port = htons(server.server_portd);
 
-
-
-    FD_ZERO(&read_flags); // Zero the flags ready for using
-    FD_ZERO(&write_flags);
-
-    FD_SET(thefd, &read_flags);
-    //FD_SET(thefd, &write_flags); //if need to send data, check
-    //if(strlen(outbuff)!=0) FD_SET(thefd, &write_flags);
-
-    select_return = select(s+1, &read_flags,&write_flags,(fd_set*)0,&timeout);
-    if (select_return < 0) {
-        printf("select returned %i\n", select_return);
-        return;
-    }
-
 }
 
-void process_packets() {
+unsigned char* buffer[1500]; //1500 is max ethernet MTU
 
+validate_packet(unsigned char* buffer, int* n, struct sockaddr*) {
+    //check CRC
+    if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
+        printf("Received rogue packet from IP= %i  Server IP = %i\n", ntohl(from->sin_addr.s_addr), ntohl(server.server_address.sin_addr.s_addr));
+    }
+    if(server.connected == 0 && n ==4) {
+        UNPACK_uint16_t(0, buffer, &n);
+        UNPACK_uint16_t(client_id, buffer, &n);
+    }
+}
 
-    if (FD_ISSET(thefd, &read_flags)) {
-    FD_CLR(server.socket, &read_flags);
+void process_incoming_packets() {
+    int n=0;
+    struct sockaddr from;
 
+    FD_ZERO(&read_flags); // Zero the flags ready for using
+    FD_SET(server.socket, &read_flags);
+
+    while(1) {
+        select_return = select(server.socket+1, &read_flags,(fd_set*)0,(fd_set*)0,&timeout);
+        if (select_return < 0) {
+            printf("select returned %i\n", select_return);return;
+        }
+
+        if (FD_ISSET(thefd, &read_flags)) {
+            FD_CLR(thefd, &read_flags);
+            //get packets
+            n = recvfrom(server.socket, (char*)buffer, 1500, 0, (struct sockaddr*)&from, &n);
+            if(!validate_packet(buffer, &n, &from);
+            printf("Received %i bytes\n");
+            process_packet(buffer, &n);
+        } else { break; }
+    }
+}
+
+process_packet(buffer, &n) {
+    int n=0;
+    if(n==6) {
+        uint16_t = client_id;
+        uint16_t = channel_id;
+        UNPACK_uint16_t(&client_id, buffer, &n);
+        UNPACK_uint8_t(&channel_id, buffer, &n);
+        printf("Received client id= %i\n",client_id);
+    }
+}
+
+void process_outgoing_packets() {
+    FD_ZERO(&write_flags);
+    //if(no data to send) { return }
+    FD_SET(server.socket, &write_flags); //if need to send data, check
+    select_return = select(server.socket+1, (fd_set*)0,&write_flags,(fd_set*)0,&timeout);
+    if (FD_ISSET(thefd, &write_flags)) {
+        FD_CLR(thefd, &write_flags);
+        printf("Socket ready to send packets\n");
+    }
 }

@@ -8,6 +8,13 @@
 
 
 //pass in zero to get any port
+
+
+#define maximum_packet_size 1024
+// SERVER SPECIFIC CONNECTION POOL STUF
+struct ConnectionPool pool;
+unsigned int id_counter=0;
+
 struct Socket* create_socket(uint32_t IP, uint16_t port) {
     //create socket
     struct Socket* s = (struct Socket*) malloc(sizeof(struct Socket));
@@ -91,8 +98,7 @@ struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
 
 int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size) {
 
-    int sent_bytes = sendto( socket->socket, (const char*)packet_data, packet_size,
-                             0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto(socket->socket,(const char*)packet_data, packet_size,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
 
     if ( sent_bytes != packet_size )
     {
@@ -102,7 +108,6 @@ int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_
     return sent_bytes;
 }
 
-#define maximum_packet_size 1024
 void receive_packets(struct Socket* s) {
     printf("Listening on port: %i\n", ntohl(s->port));
 
@@ -161,9 +166,6 @@ void receive_packets(struct Socket* s) {
     }
 }
 
-// SERVER SPECIFIC CONNECTION POOL STUF
-struct ConnectionPool pool;
-unsigned int id_counter=0;
 
 void init_server(unsigned short port) {
     int i;
@@ -208,11 +210,27 @@ inline int error_check_packet(unsigned char* data, int n) {
     return 1;
 }
 
+void send_to_client(int client_id, unsigned char* buffer, int n) {
+    struct NetPeer* p;
+    p = pool.connection[client_id];
+    if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
+    int sent_bytes = sendto(socket->socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != packet_size )
+    {
+        printf( "send_to_client: failed to send packet: return value = %d\n", sent_bytes );
+        return 0;
+    }
+
+
+}
+
 void send_id(uint16_t client_id) {
-    unsigned char buffer[4];
+    unsigned char buffer[6];
     int n=0;
     PACK_uint16_t(0, buffer, &n);
     PACK_uint16_t(client_id, buffer, &n);
+    n=6;
+    send_to_client(client_id, buffer, &n)
 }
 
 fd_set read_flags,write_flags
@@ -248,11 +266,10 @@ void process_packets() {
         FD_ZERO(&fds);
         FD_SET(pool.socket.socket, &fds);
         int rc;
-        //int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
 
-           struct timeval timeout;
-           timeout.tv_sec = 20;
-           timeout.tv_usec = 0;
+       struct timeval timeout;
+       timeout.tv_sec = 20;
+       timeout.tv_usec = 0;
 
         rc = select(sizeof(fds)*8, &fds, NULL, NULL, &timeout);
         if (rc==-1) {
@@ -269,16 +286,16 @@ void process_packets() {
         }
     }
     ///hack
-    received_bytes = recvfrom( pool.socket.socket, (char*)packet_data, maximum_packet_size,
-                               0, (struct sockaddr*)&from, &fromLength );
+    received_bytes = recvfrom( pool.socket.socket, (char*)packet_data, maximum_packet_size, 0, (struct sockaddr*)&from, &fromLength );
 
     if(received_bytes == 6) {
+        n=0;
         UNPACK_uint16_t(&client_id, buffer, &n);
         UNPACK_uint8_t(&channel_id, buffer, &n);
 
         if(client_id==0 && message_id == 255) {
             client_id = accept_connection(from);
-            send_id(client_id);
+            send_id(client_id,from);
         }  else {
             printf("Invalid 6 byte packet!\n");
         }
@@ -288,10 +305,9 @@ void process_packets() {
         if(error_check_packet(packet_data,received_bytes) == 0) {
             printf("Packet failed CRC check!\n");
             return;
-            //continue;
         }
-        //check to see that connection is valid
 
+        n=0;
         UNPACK_uint16_t(&client_id, buffer, &n)
         UNPACK_uint8_t(&channel_id, buffer, &n)
         printf("client id= %i\n", client_id);
@@ -310,4 +326,19 @@ void process_packets() {
     }
 }
 
+void decrement_ttl() {
+    int i;
+    struct NetPeer* p;
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
+    if(pool.connection[i] == NULL) continue;
+        p = pool.connection[i];
+        p.ttl -= 1;
+        if(p.ttl <= 0) {
+            printf("Connection %i ttl expire!\n", p.id);
+            pool.connection[i] = NULL;
+            free(p);
+        }
+    }
+
+}
 
