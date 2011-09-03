@@ -73,7 +73,16 @@ void send_packet(unsigned char* buffer, int n){
     if ( sent_bytes != packet_size) { printf( "failed to send packet: return value = %d\n", sent_bytes );return;}
 }
 
-void connect_to_server(int a, int b, int c, int d, unsigned short port) {
+void attempt_connection_with_server() {
+    unsigned char* buffer[6];
+    int n=0;
+    PACK_uint16_t(0, buffer, &n);
+    PACK_uint8_t(255, buffer, &n);
+    int sent_bytes = sendto( server->socket, (const char*)buffer, b,0, (const struct sockaddr*)&server->server_address, sizeof(struct sockaddr_in) );
+    printf("Client id requested\n");
+}
+
+void set_server(int a, int b, int c, int d, unsigned short port) {
     server.server_ip =  ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
     server.server_port = port;
 
@@ -81,11 +90,6 @@ void connect_to_server(int a, int b, int c, int d, unsigned short port) {
     server->address.sin_addr.s_addr = htonl(server.server_ip);
     server->address.sin_port = htons(server.server_portd);
 
-    unsigned char* buffer[6];
-    int n=0;
-    PACK_uint16_t(0, buffer, &n);
-    PACK_uint8_t(255, buffer, &n);
-    send_packet(buffer, n);
 }
 
 void process_packets() {
