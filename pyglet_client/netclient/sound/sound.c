@@ -1,5 +1,28 @@
 #include "sound.h"
 
+
+
+ #include <stdlib.h>
+     /* Obtain a backtrace and print it to stdout. */
+     void
+     print_trace (void)
+     {
+       void *array[10];
+       size_t size;
+       char **strings;
+       size_t i;
+     
+       size = backtrace (array, 10);
+       strings = backtrace_symbols (array, size);
+     
+       printf ("Obtained %zd stack frames.\n", size);
+     
+       for (i = 0; i < size; i++)
+          printf ("%s\n", strings[i]);
+     
+       free (strings);
+     }
+
 //FMOD_SYSTEM *sound_sys;
 
 void ERRCHECK(FMOD_RESULT result)
@@ -7,6 +30,7 @@ void ERRCHECK(FMOD_RESULT result)
     if (result != FMOD_OK)
     {
         printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+        print_trace();
     }
 }
 

@@ -1,7 +1,7 @@
 #include "player_sounds.h"
 
 void load_player_gunshot() {
-    player_gunshot = load_2d_sound("./wav/semishoot.wav");
+    player_gunshot = load_2d_sound("./media/sound/wav/semishoot.wav");
 }
 
 void play_player_gunshot() {
