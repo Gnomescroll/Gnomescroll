@@ -1,4 +1,5 @@
 #include "client2.h"
+#include "sequence_numbers.c"
 
 struct NetClient server;
 
@@ -156,8 +157,8 @@ unsigned char* out_buffer[1500];
 unsigned int out_buffer_n;
 
 void send_agent_state_packet() {
-    if(sever.client_id ==0 || server.connected == 0 ) {
-        printf("send_agent_state_packet: client not connected!"\n)
+    if(server.client_id ==0 || server.connected == 0 ) {
+        printf("send_agent_state_packet: client not connected!\n");
     }
     FD_ZERO(&write_flags);
     select(server.socket+1, (fd_set*)0, &write_flags, (fd_set*)0, &timeout);

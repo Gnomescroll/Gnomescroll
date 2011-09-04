@@ -28,6 +28,8 @@ void process_outgoing_packets();
 int main() {
 
     init_client();
+    init_sequence_numbers();
+
     unsigned int port = 9999;
     set_server(127,0,0,1, port);
     attempt_connection_with_server();

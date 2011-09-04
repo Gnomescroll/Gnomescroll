@@ -1,12 +1,12 @@
 
-
-unsigned int packet_sequence_number = 45;
+#include "sequence_numbers.h"
 
 struct packet_sequence {
     int seq;
     int ack;
     //int active;
-}
+    //int tick; //better than sequence for determining dropped packets
+};
 
 //unsigned int packet_buffer[32];
 
@@ -28,7 +28,7 @@ void process_acks(unsigned short seq, unsigned int flag) {
     unsigned int n = 1;
     int i,j,index;
     for(i=0;i<32;i++) {
-        index = (seq -i) % 2096; //seq is id of highest packet server has seen yet
+        index = (seq -i) % 2048; //seq is id of highest packet server has seen yet
         if(index < 0) { printf("warning! index is negative!\n"); }
 
         if(flag & n != 0) {
