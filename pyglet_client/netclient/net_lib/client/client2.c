@@ -151,6 +151,24 @@ void process_packet(unsigned char* buf, int n) {
     }
 }
 
+
+unsigned char* out_buffer[1500];
+unsigned int out_buffer_n;
+
+void send_agent_state_packet() {
+    if(sever.client_id ==0 || server.connected == 0 ) {
+        printf("send_agent_state_packet: client not connected!"\n)
+    }
+    FD_ZERO(&write_flags);
+    select(server.socket+1, (fd_set*)0, &write_flags, (fd_set*)0, &timeout);
+    if (FD_ISSET(server.socket, &write_flags)) {
+        FD_CLR(server.socket, &write_flags);
+        printf("Socket ready to send packets\n");
+    } else {
+        printf("send_agent_state_packet: FAILED!! socket not ready for writing! WTF\n");
+    }
+}
+
 void process_outgoing_packets() {
 
     FD_ZERO(&write_flags);
