@@ -69,10 +69,58 @@ void send_packet(unsigned char* buff, int n){
     if ( sent_bytes != n) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n );return;}
 }
 
+void send_packet2(){
+    unsigned char header[16];
+    int n1 = 0;
+    int seq = get_next_sequence_number();
+
+    PACK_uint16_t(server.client_id, header, &n1); //client id
+    PACK_uint8_t(1, header, &n1);  //channel 1
+    PACK_uint16_t(seq, header, &n1); //sequence number
+
+    //ack string
+    PACK_uint16_t(0, header, &n1); //max seq
+    PACK_uint32_t(0, header, &n1); //sequence number
+
+    unsigned int value = 5;
+    PACK_uint32_t(value, header, &n1);
+
+    printf("Sending packet %i\n", seq);
+/*
+
+uint8_t channel_id;
+uint16_t client_id;
+uint16_t sequence_number;
+
+uint16_5 max_seq;
+uint32_t acks;
+
+uint32_t value;
+
+int n1=0;
+
+UNPACK_uint16_t(&client_id, buff, &n1); //client id
+UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+UNPACK_uint16_t(&sequence_number, header, &n1); //sequence number
+//ack string
+UNPACK_uint16_t(&max_seq, header, &n1); //max seq
+UNPACK_uint32_t(&acks, header, &n1); //sequence number
+
+UNPACK_uint32_t(&value, header, &n1);
+*/
+
+    if(server.connected == 0) {
+        printf("Cannot send packet, disconnected!\n");
+        }
+    int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 );return;}
+}
+
+
 void attempt_connection_with_server() {
     unsigned char buff[6];
     int n=0;
-    PACK_uint16_t(0, buff, &n);
+    PACK_uint16_t(65535, buff, &n);
     PACK_uint8_t(255, buff, &n);
     n=6; //must be 6 bytes
     sendto( server.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
@@ -149,6 +197,7 @@ void process_packet(unsigned char* buf, int n) {
         UNPACK_uint16_t(&channel_id, buf, &n1);
         UNPACK_uint16_t(&client_id, buf, &n1);
         printf("Received client id= %i\n",client_id);
+        server.client_id = client_id;
     }
 }
 

@@ -34,10 +34,13 @@ int main() {
     set_server(127,0,0,1, port);
     attempt_connection_with_server();
 
+    sleep(1);
+
     int i=0;
     while(1) {
         printf("j=%i\n", i);
         process_incoming_packets();
+        send_packet2();
         sleep(1);
         i++;
         }

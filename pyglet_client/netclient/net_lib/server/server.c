@@ -247,44 +247,76 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     uint16_t client_id;
     uint8_t channel_id;
 
-    struct NetPeer* p;
+    uint16_t sequence_number;
+    uint16_t max_seq;
+    uint32_t acks;
 
+    struct NetPeer* p;
+    if(received_bytes < 6) { printf("Packet too small: %i bytes\n", received_bytes); return; }
     if(received_bytes == 6) {
 
         UNPACK_uint16_t(&client_id, buff, &n);
         UNPACK_uint8_t(&channel_id, buff, &n);
 
-        if(client_id==0 && channel_id == 255) {
+        if(client_id==65535 && channel_id == 255) {
             client_id = accept_connection(*from);
-            if(client_id != -1) send_id(client_id);
+            send_id(client_id);
         }  else {
             printf("validate_packet: Invalid 6 byte packet!\n");
         }
     }
 
-    else if(received_bytes > 6) {
-        //crc check
-        if(error_check_packet(buff,received_bytes) == 0) {
-            printf("Packet failed CRC check!\n");
-            return;
-        }
 
-        n=0;
-        UNPACK_uint16_t(&client_id, buff, &n);
-        UNPACK_uint8_t(&channel_id, buff, &n);
-        printf("client id= %i\n", client_id);
-
-        p = pool.connection[client_id];
-        if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from->sin_addr.s_addr != p->ip || client_id != p->id) {
-            p->ttl = TTL_MAX;
-            printf("Received packet from connection with invalid IP, client_id pair\n");
-            return;
-        }
-        printf("Packet received from client %i\n", p->id);
-        buff[received_bytes] = 0;
-        printf("Packet= %s \n", buff);
+    //crc check
+    if(error_check_packet(buff,received_bytes) == 0) {
+        printf("Packet failed CRC check!\n");
         return;
-        }
+    }
+
+    //uint8_t channel_id;
+    //uint16_t client_id;
+
+    uint32_t value;
+
+    int n1=0;
+
+    UNPACK_uint16_t(&client_id, buff, &n1); //client id
+    UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+
+    UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
+    //ack string
+    UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
+    UNPACK_uint32_t(&acks, buff, &n1); //sequence number
+
+    UNPACK_uint32_t(&value, buff, &n1);
+
+    n=0;
+    //UNPACK_uint16_t(&client_id, buff, &n);
+    //UNPACK_uint8_t(&channel_id, buff, &n);
+    printf("client id= %i\n", client_id);
+    printf("sequence number= %i\n", sequence_number);
+
+    if(client_id >= HARD_MAX_CONNECTIONS) {
+        printf("Client id %i exceeds HARD_MAX_CONNECTIONS\n", client_id);
+        return;
+    }
+    if(pool.connection[client_id] != NULL) {
+        p = pool.connection[client_id];
+    } else {
+        printf("Client id does not exist!\n");
+        return;
+    }
+    if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from->sin_addr.s_addr != p->ip || client_id != p->id) {
+        p->ttl = TTL_MAX;
+        printf("Received packet from connection with invalid IP, client_id pair: %i, expected %i\n", htonl(from->sin_addr.s_addr), htons(p->address.sin_addr.s_addr) );
+
+        return;
+    }
+    printf("Packet received from client %i\n", p->id);
+    buff[received_bytes] = 0;
+    printf("Packet= %s \n", buff);
+    return;
+
 
 }
 
