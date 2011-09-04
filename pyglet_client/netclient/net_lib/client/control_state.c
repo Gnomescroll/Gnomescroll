@@ -40,5 +40,5 @@ void set_control_state(int* state) {
     set_flag(&cs->state, 8, state[3]);
     set_flag(&cs->state, 16, state[4]);
     set_flag(&cs->state, 32, state[5]);
-    set_flag(&cs->state, 64, state[6]);
+    //set_flag(&cs->state, 64, state[6]);
 }

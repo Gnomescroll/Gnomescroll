@@ -24,7 +24,7 @@ void init_sequence_numbers() {
     }
 }
 
-void process_sequence(unsigned short seq, unsigned int flag) {
+void process_acks(unsigned short seq, unsigned int flag) {
     unsigned int n = 1;
     int i,j,index;
     for(i=0;i<32;i++) {
@@ -35,8 +35,11 @@ void process_sequence(unsigned short seq, unsigned int flag) {
             //ack that packet
             for(j=0;j<64;j++) { //could use offset
                 if(packet_sequence_buffer[j].seq == index) {
+                    if(packet_sequence_buffer[j].ack == 0) {
+                        printf("Packet Acked: %i\n", index);
+                    }
                     packet_sequence_buffer[j].ack = 1;
-                    printf("Packet Acked: %i\n", index);
+                    //printf("Packet Acked: %i\n", index);
                     if(j == seq%64) {
                         printf("j == seq%64 \n");
                     }
@@ -52,8 +55,19 @@ uint16_t get_next_sequence_number() {
     packet_sequence_number += 1;
     printf("get_next_sequence_number: seq=%i \n", packet_sequence_number);
     int index = packet_sequence_number%64;
+
     //packet_sequence_buffer[index].active = 1;
     packet_sequence_buffer[index].seq = packet_sequence_number;
     packet_sequence_buffer[index].ack = 0;
     return packet_sequence_number;
+}
+
+void check_for_dropped_packets() {
+    int i;
+    for(i=0;i<64;i++) {
+        if(packet_sequence_buffer[i].seq >=0 && packet_sequence_number - packet_sequence_buffer[i].seq > 32) {
+            printf("Packet %i assumed lost\n", packet_sequence_buffer[i].seq);
+            packet_sequence_buffer[i].seq = -1
+        }
+    }
 }
