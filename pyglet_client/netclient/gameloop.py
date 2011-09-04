@@ -67,7 +67,7 @@ import random #remove?
 #import hotshot
 import time
 
-#import sound.sounds as sounds
+import sound.sounds as sounds
 
 #physics timer
 class Physics_loop_timer:
@@ -127,8 +127,9 @@ class App(object):
         InputGlobal.init_1(self)
 
     def __init__(self):
+        print opts.opts.audio
+        sounds.init(enabled=opts.opts.audio, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
         #return
-        sounds.init()
         self.init_globals()
         self.animations = animations
         #other
@@ -351,7 +352,7 @@ class App(object):
 
             self.intervals.process()
 
-            #sounds.update()
+            sounds.update()
 
             P.finish_frame()
 

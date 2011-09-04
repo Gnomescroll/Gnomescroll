@@ -1,36 +1,10 @@
 #include "sound.h"
 
-
-
- #include <stdlib.h>
-     /* Obtain a backtrace and print it to stdout. */
-     void
-     print_trace (void)
-     {
-       void *array[10];
-       size_t size;
-       char **strings;
-       size_t i;
-     
-       size = backtrace (array, 10);
-       strings = backtrace_symbols (array, size);
-     
-       printf ("Obtained %zd stack frames.\n", size);
-     
-       for (i = 0; i < size; i++)
-          printf ("%s\n", strings[i]);
-     
-       free (strings);
-     }
-
-//FMOD_SYSTEM *sound_sys;
-
 void ERRCHECK(FMOD_RESULT result)
 {
     if (result != FMOD_OK)
     {
         printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
-        print_trace();
     }
 }
 
@@ -44,6 +18,21 @@ void init_sound_system(int virtual_voices) {
     ERRCHECK(result);
 }
 
+void init_channel_group(float vol) {
+    FMOD_RESULT r;
+    r = FMOD_System_CreateChannelGroup(sound_sys, "main", &chgroup);
+    ERRCHECK(r);
+    
+    // assign channel group
+    r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
+    ERRCHECK(r);
+}
+
+void C_init(int virtual_voices, float vol) {
+    init_sound_system(virtual_voices);
+    init_channel_group(vol);
+}
+
 void update_sound_system() {
     FMOD_System_Update(sound_sys);
 }
@@ -51,6 +40,16 @@ void update_sound_system() {
 void release_sound_system() {
     FMOD_RESULT result = FMOD_System_Release(sound_sys);
     ERRCHECK(result);
+}
+
+void release_channel_group() {
+    FMOD_RESULT result = FMOD_ChannelGroup_Release(chgroup);
+    ERRCHECK(result);
+}
+
+void release_globals() {
+    release_channel_group();
+    release_sound_system();
 }
 
 FMOD_SOUND* load_2d_sound(char *soundfile) {
@@ -78,18 +77,30 @@ FMOD_SOUND* load_3d_sound(char *soundfile, float mindistance) { // use lower min
 FMOD_CHANNEL* play_2d_sound(FMOD_SOUND* sound) {
     FMOD_CHANNEL* channel = 0;
     FMOD_RESULT result;
-    result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, FALSE, &channel);
+
+    result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, TRUE, &channel);
     ERRCHECK(result);
+    result = FMOD_Channel_SetChannelGroup(channel, chgroup);
+    ERRCHECK(result);
+    result = FMOD_Channel_SetPaused(channel, FALSE);
+    ERRCHECK(result);
+
     return channel;
 }
 
 FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, FMOD_VECTOR pos, FMOD_VECTOR vel) {
     FMOD_CHANNEL* channel = 0;
     FMOD_RESULT result;
-    result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, FALSE, &channel);
+
+    result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, TRUE, &channel);
+    ERRCHECK(result);
+    result = FMOD_Channel_SetChannelGroup(channel, chgroup);
     ERRCHECK(result);
     result = FMOD_Channel_Set3DAttributes(channel, &pos, &vel);
     ERRCHECK(result);
+    result = FMOD_Channel_SetPaused(channel, FALSE);
+    ERRCHECK(result);
+
     return channel;
 }
 

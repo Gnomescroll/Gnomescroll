@@ -973,7 +973,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            #sounds.play()
+            sounds.play()
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:

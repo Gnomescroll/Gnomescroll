@@ -16,8 +16,8 @@ pyglet = False
 
 ''' Sound '''
 audio = False
-sfx = 10
-music = 10
+sfx = 100
+music = 100
 
 ''' Window '''
 width = 1024

@@ -46,6 +46,9 @@ DEFAULTS = {
     'mouse_sensitivity':    None,
     'camera_sensitivity':   None,
     'auto_assign_team': settings.auto_assign_team,
+    'audio'     :   settings.audio,
+    'sfx'       :   settings.sfx,
+    'music'     :   settings.music,
 }
 
 def load_defaults():
@@ -88,7 +91,7 @@ def parse(cl_args=None):
 
     parser.add_argument('-aa', '--auto-assign', default=DEFAULTS['auto_assign_team'], dest='auto_assign_team')
 
-    parser.add_argument('--print-args', action='store_true')
+    parser.add_argument('-pa', '--print-args', action='store_true')
 
     parser.add_argument('-fs', '--fullscreen', action='store_true')
 
@@ -109,6 +112,10 @@ def parse(cl_args=None):
     parser.add_argument('--ping', action='store_true')
 
     parser.add_argument('-nh', '--no-hud', action='store_true')
+
+    parser.add_argument('--no-audio', action='store_false', dest='audio')
+    parser.add_argument('--sfx', default=DEFAULTS['sfx'])
+    parser.add_argument('--music', default=DEFAULTS['music'])
 
     if cl_args is not None:
         args = parser.parse_args(cl_args)
@@ -157,6 +164,11 @@ def get_args():
     if not args.ping and settings.ping:
         args.ping = settings.ping
 
+    args.sfx = max(min(args.sfx, 100), 0)
+    args.sfx /= 100.
+    args.music = max(min(args.music, 100), 0)
+    args.music /= 100.
+    
     if args.print_args:
         print_args(args)
 
@@ -186,17 +198,20 @@ def print_args(args):
         'fps',
         'ping',
         'no_hud',
+        'audio',
+        'sfx',
+        'music',
     ]
     print 'Options:'
     for key in keys:
         print '%s :: %s' % (key, getattr(args, key),)
 
-def main():
-    import gameloop
-    args = parse()
-    gameloop.App(args).mainLoop()
+#def main():
+    #import gameloop
+    #args = parse()
+    #gameloop.App(args).mainLoop()
 
 if __name__ == '__main__':
     #main()
-    args = parse()
+    args = get_args()
     print dir(args)

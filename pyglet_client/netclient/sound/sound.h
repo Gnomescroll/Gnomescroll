@@ -4,12 +4,13 @@
 #include <stdio.h>
 
 FMOD_SYSTEM* sound_sys;
+FMOD_CHANNELGROUP* chgroup;
 
 void ERRCHECK(FMOD_RESULT result);
 
-void init_sound_system(int virtual_voices);
+void C_init(int virtual_voices, float vol);
 void update_sound_system();
-void release_sound_system();
+void release_globals();
 
 FMOD_SOUND* load_2d_sound(char* soundfile);
 FMOD_SOUND* load_3d_sound(char* soundfile, float mindistance);

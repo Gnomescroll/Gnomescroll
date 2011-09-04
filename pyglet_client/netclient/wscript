@@ -211,9 +211,6 @@ def build(bld):
 
     # sound
 
-    incp='../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-    libp='../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-    '''
     bld(features='c cshlib',
         source=['sound/player_sounds.c',
                 'sound/sound.c'
@@ -223,17 +220,10 @@ def build(bld):
         lib=['fmodex'],
         libpath=['./sound/api/lib/'],
 
-        #linkflags=['-g'],
         includes=['./sound/api/inc/', './sound'],
         
         target='csound'
     )
-        #use=common_libraries + ['FMOD'], #+sound_libraries,
-        #target='sound')
-        #use= ['fmodex'], #+sound_libraries,
-        #libpath=[libp],
-        #includes=[incp],
-    '''
 
     bld(features='c cshlib pyext',      #cython part
         source=['sound/sounds.pyx'],
