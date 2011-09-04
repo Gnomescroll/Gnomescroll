@@ -294,7 +294,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     n=0;
     //UNPACK_uint16_t(&client_id, buff, &n);
     //UNPACK_uint8_t(&channel_id, buff, &n);
-    printf("cid= %i, seq= %i\n, bytes=%i \n", client_id, sequence_number, received_bytes);
+    printf("cid= %i, seq= %i, bytes=%i \n", client_id, sequence_number, received_bytes);
 
     if(client_id >= HARD_MAX_CONNECTIONS) {
         printf("Client id %i exceeds HARD_MAX_CONNECTIONS\n", client_id);

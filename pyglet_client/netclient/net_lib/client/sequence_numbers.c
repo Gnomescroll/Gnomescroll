@@ -21,7 +21,7 @@ struct packet_sequencer() {
 //int ps->packet_sequence_number = 0;
 
 void init_sequence_numbers(struct Pseq* ps) {
-    ps->ps->packet_sequence_number = 0;
+    ps->packet_sequence_number = 0;
     int i;
     for(i=0;i<64;i++) {
         //packet_buffer[i].active = 0;
@@ -64,16 +64,16 @@ uint16_t get_next_sequence_number(struct Pseq* ps) {
 
     //ps->packet_sequence_buffer[index].active = 1;
     ps->packet_sequence_buffer[index].seq = ps->packet_sequence_number;
-    packet_sequence_buffer[index].ack = 0;
+    ps->packet_sequence_buffer[index].ack = 0;
     return ps->packet_sequence_number;
 }
 
 void check_for_dropped_packets(struct Pseq* ps) {
     int i;
     for(i=0;i<64;i++) {
-        if(packet_sequence_buffer[i].seq >=0 && ps->packet_sequence_number - packet_sequence_buffer[i].seq > 32) {
-            printf("Packet %i assumed lost\n", packet_sequence_buffer[i].seq);
-            packet_sequence_buffer[i].seq = -1;
+        if(ps->packet_sequence_buffer[i].seq >=0 && ps->packet_sequence_number - ps->packet_sequence_buffer[i].seq > 32) {
+            printf("Packet %i assumed lost\n", ps->packet_sequence_buffer[i].seq);
+            ps->packet_sequence_buffer[i].seq = -1;
         }
     }
 }

@@ -28,7 +28,6 @@ void process_outgoing_packets();
 int main() {
 
     init_client();
-    init_sequence_numbers();
 
     unsigned int port = 9999;
     set_server(127,0,0,1, port);
@@ -38,7 +37,9 @@ int main() {
 
     int i=0;
     while(1) {
-        printf("j=%i\n", i);
+        if(i%5) {
+            printf("ltick=%i\n", i);
+        }
         process_incoming_packets();
         send_packet2();
         sleep(1);

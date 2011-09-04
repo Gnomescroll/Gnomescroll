@@ -7,9 +7,15 @@ struct timeval timeout;
 fd_set read_flags;
 fd_set write_flags;
 
+//sequence number handling
+struct Pseq sq;
+
 unsigned char buffer[1500]; //1500 is max ethernet MTU
 
 void init_client() {
+
+    init_sequence_numbers(&sq);
+
     server.client_id = 65535;
     server.connected =0;
     server.local_port = 6967;
@@ -72,7 +78,7 @@ void send_packet(unsigned char* buff, int n){
 void send_packet2(){
     unsigned char header[16];
     int n1 = 0;
-    int seq = get_next_sequence_number();
+    int seq = get_next_sequence_number(&sq);
 
     PACK_uint16_t(server.client_id, header, &n1); //client id
     PACK_uint8_t(1, header, &n1);  //channel 1

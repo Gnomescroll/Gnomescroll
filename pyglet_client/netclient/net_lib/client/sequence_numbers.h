@@ -13,15 +13,15 @@ struct packet_sequence {
 };
 
 
-struct Pseq() {
+struct Pseq {
     struct packet_sequence packet_sequence_buffer[64];
     //int packet_sequence_buffer_n = 0;
-    int packet_sequence_number =0 ;
-}
+    int packet_sequence_number;
+};
 
-void init_sequence_numbers();
-uint16_t get_next_sequence_number();
-void check_for_dropped_packets();
-void process_acks(unsigned short seq, unsigned int flag);
+void init_sequence_numbers(struct Pseq* sq);
+uint16_t get_next_sequence_number(struct Pseq* sq);
+void check_for_dropped_packets(struct Pseq* sq);
+void process_acks(struct Pseq* sq, unsigned short seq, unsigned int flag);
 
 #endif

@@ -1,4 +1,5 @@
 #include "server/server.c"
+#include "client/sequence_numbers.c"
 
 #include "net_packets.h"
 
