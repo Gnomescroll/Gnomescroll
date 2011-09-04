@@ -28,6 +28,7 @@ def run():
     output_struct_def(struct_list)
     output_packing_def(struct_list)
     output_size_def(struct_list)
+    output_transmission_template(struct_list)
 
 def header_include_guard(st, name):
     s1 = "#ifndef %s_h \n#define %s_h \n\n" % (name, name)
@@ -70,7 +71,7 @@ def output_size_def(struct_list):
     struck_size.write(x)
     print x
 
-def print_transmission_template(struct_list):
+def output_transmission_template(struct_list):
     x= "\n"
     for s in struct_list:
         x+=s.transmission_template()
@@ -144,19 +145,19 @@ def struct_template(list):
     nn = list[2];
     m = ""
     if n == "n":
-        m = "int32_t"
+        m = "s.%s = x; // int32_t \n" % (nn)
     if n == "un":
-        m = "uint32_t"
+        m = "s.%s = x; // uint32_t \n" % (nn)
     if n == "s":
-        m ="int16_t"
+        m = "s.%s = x; // int16_t \n" % (nn)
     if n == "us":
-        m = "uint16_t"
+        m = "s.%s = x; // uint16_t \n" % (nn)
     if n == "b":
-        m = "uint8_t"
+        m = "s.%s = x; // uint8_t \n" % (nn)
     if n == "f":
-        m = "float"
+        m = "s.%s = x; // float \n" % (nn)
     if m != "":
-        return "\tPACK_%s(s->%s, buffer, n);\n" % (m,nn)
+        return "\t%s" % (m)
     print "ERROR: Type Missing: %s" % (n)
     assert False
 
@@ -271,17 +272,17 @@ class Struct:
         #s4 = "\n}\n\n"
         return s1+s2+s3 #+s4
 
-    def trasmission_template(self):
+    def transmission_template(self):
         if self.name == None:
             return ''
         s1 = "{ \n"
-        s1 = "\tstruct %s s;\n" %(self.name) + "(unsigned char* buffer, struct %s* s, int* n) { \n" % (self.name)
+        s1 += "\tstruct %s s;\n" %(self.name)
         #s1 += "\tint n=0;\n"
         s2 = ''
         for i in self.members:
             s2 += struct_template(i)
 
-        s3 = "/tpack_struct_%s(buff, &s, &n); \n\n" %(self.name)
+        s3 = "\tpack_struct_%s(buff, &s, &n); \n } \n\n" %(self.name)
         #s3 = "\t*n+=%s" % (n)
         return s1 + s2 + s3
 
