@@ -70,6 +70,17 @@ def output_size_def(struct_list):
     struck_size.write(x)
     print x
 
+def print_transmission_template(struct_list):
+    x= "\n"
+    for s in struct_list:
+        x+=s.transmission_template()
+    x += "\n"
+    #x += "\n"
+    x = header_include_guard(x, "net_lib_mgen_size")
+    struck_size = open("./mgen/template.h", "w")
+    struck_size.write(x)
+    print x
+
 type_list = ["n","un","s","us","b","f"]
 
 def type_to_name(n): #take type notation and convert to name
@@ -108,6 +119,27 @@ def struct_proc(list):
     assert False
 
 def pack_proc(list):
+    n = list[1];
+    nn = list[2];
+    m = ""
+    if n == "n":
+        m = "int32_t"
+    if n == "un":
+        m = "uint32_t"
+    if n == "s":
+        m ="int16_t"
+    if n == "us":
+        m = "uint16_t"
+    if n == "b":
+        m = "uint8_t"
+    if n == "f":
+        m = "float"
+    if m != "":
+        return "\tPACK_%s(s->%s, buffer, n);\n" % (m,nn)
+    print "ERROR: Type Missing: %s" % (n)
+    assert False
+
+def struct_template(list):
     n = list[1];
     nn = list[2];
     m = ""
@@ -238,6 +270,20 @@ class Struct:
         #s3 = "\t*n += %s" % (n)
         #s4 = "\n}\n\n"
         return s1+s2+s3 #+s4
+
+    def trasmission_template(self):
+        if self.name == None:
+            return ''
+        s1 = "{ \n"
+        s1 = "\tstruct %s s;\n" %(self.name) + "(unsigned char* buffer, struct %s* s, int* n) { \n" % (self.name)
+        #s1 += "\tint n=0;\n"
+        s2 = ''
+        for i in self.members:
+            s2 += struct_template(i)
+
+        s3 = "/tpack_struct_%s(buff, &s, &n); \n\n" %(self.name)
+        #s3 = "\t*n+=%s" % (n)
+        return s1 + s2 + s3
 
     def send_function(self):
         pass
