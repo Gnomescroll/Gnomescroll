@@ -264,6 +264,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         }  else {
             printf("validate_packet: Invalid 6 byte packet!\n");
         }
+        return;
     }
 
 
@@ -293,8 +294,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     n=0;
     //UNPACK_uint16_t(&client_id, buff, &n);
     //UNPACK_uint8_t(&channel_id, buff, &n);
-    printf("client id= %i\n", client_id);
-    printf("sequence number= %i\n", sequence_number);
+    printf("cid= %i, seq= %i\n, bytes=%i \n", client_id, sequence_number, received_bytes);
 
     if(client_id >= HARD_MAX_CONNECTIONS) {
         printf("Client id %i exceeds HARD_MAX_CONNECTIONS\n", client_id);
@@ -303,18 +303,26 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     if(pool.connection[client_id] != NULL) {
         p = pool.connection[client_id];
     } else {
-        printf("Client id does not exist!\n");
+        printf("Client id NetClient is NULL\n");
         return;
     }
-    if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from->sin_addr.s_addr != p->ip || client_id != p->id) {
-        p->ttl = TTL_MAX;
-        printf("Received packet from connection with invalid IP, client_id pair: %i, expected %i\n", htonl(from->sin_addr.s_addr), htons(p->address.sin_addr.s_addr) );
+    if(from->sin_addr.s_addr != p->address.sin_addr.s_addr) {
+        printf("Sender IP does not match client IP: %i, expected %i\n", htonl(from->sin_addr.s_addr), htonl(p->address.sin_addr.s_addr) );
+        return;
+    }
+    if(client_id != p->id) {
+        printf("packet client_id is %i, expected %i\n", client_id, p->id);
+        return;
+    }
 
-        return;
-    }
-    printf("Packet received from client %i\n", p->id);
-    buff[received_bytes] = 0;
-    printf("Packet= %s \n", buff);
+    p->ttl = TTL_MAX;
+    //
+    //process_sequence_number(p, sequence_number);
+    //
+
+    //printf("Packet received from client %i\n", p->id);
+    //buff[received_bytes] = 0;
+    //printf("Packet= %s \n", buff);
     return;
 
 
@@ -372,7 +380,7 @@ void decrement_ttl() {
         p = pool.connection[i];
         p->ttl -= 1;
         if(p->ttl <= 0) {
-            printf("Connection %i ttl expire!\n", p->id);
+            printf("Connection %i ttl expire: timeout\n", p->id);
             pool.connection[i] = NULL;
             free(p);
         }

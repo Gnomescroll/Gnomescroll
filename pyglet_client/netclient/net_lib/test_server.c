@@ -35,8 +35,11 @@ int main() {
     //printf("t\n");
     int i=0;
     while(1) {
-        printf("i=%i\n", i);
+        if(i%5 ==0) {
+            printf("tick=%i\n", i);
+        }
         process_packets();
+        decrement_ttl();
         sleep(1);
         i++;
         }

@@ -198,7 +198,9 @@ void process_packet(unsigned char* buf, int n) {
         UNPACK_uint16_t(&client_id, buf, &n1);
         printf("Received client id= %i\n",client_id);
         server.client_id = client_id;
+        server.connected = 1;
     }
+    printf("process_packet: needs to accept ack messages \n");
 }
 
 
