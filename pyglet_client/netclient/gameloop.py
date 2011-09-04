@@ -358,6 +358,7 @@ class App(object):
             else:
                 sounds.update()
 
+            self.world.sound_updates()
             P.finish_frame()
 
         sounds.done()

@@ -98,7 +98,7 @@ FMOD_CHANNEL* play_2d_sound(FMOD_SOUND* sound) {
     return channel;
 }
 
-FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, FMOD_VECTOR pos, FMOD_VECTOR vel) {
+FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
     FMOD_CHANNEL* channel = 0;
     FMOD_RESULT result;
 

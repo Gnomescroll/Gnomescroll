@@ -81,6 +81,10 @@ class World():
                 #P.event("E2")
                 agent.draw()
 
+    def sound_updates(self):
+        for p in GameStateGlobal.projectileList.values():
+            p.update_sound()
+
 
 import projectiles
 

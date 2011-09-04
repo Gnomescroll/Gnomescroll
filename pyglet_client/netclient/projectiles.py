@@ -113,6 +113,8 @@ class Projectile:
     def draw(self):
         return
 
+    def update_sound(self):
+        return
 
 class Laser(Projectile):
 
@@ -183,13 +185,13 @@ class Laser(Projectile):
             return
 
         self.check_agent_collision()
-
-        sounds.update_projectile(self.snd_id, self.pos(), self.velocity())
-        #print 'Update sound with %s %s' % (self.pos(), self.velocity(),)
         
     def draw(self):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)
+
+    def update_sound(self):
+        sounds.update_projectile(self.snd_id, self.pos(), self.velocity())
 
 
 class Grenade(Projectile):
