@@ -3,6 +3,7 @@ Vector math
 '''
 
 from math import pi, sqrt, cos, sin
+tau = pi/2
 
 # adds n*vector to point
 # use for normalized vectors
@@ -25,6 +26,12 @@ def angle2vector(x_angle, y_angle):
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
     z1 = sin( y_angle);
     return [x1, y1, z1]
+
+def forward_vector(xangle):
+    return [cos(pi*xangle), sin(pi*xangle), 0]
+
+def right_vector(xangle):
+    return [cos(pi*xangle + tau), sin(pi*xangle + tau), 0]
 
 def distance(pt1, pt2=None):
     if pt2 is None:

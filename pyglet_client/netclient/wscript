@@ -225,8 +225,10 @@ def build(bld):
 
     # sound
     bld(features='c cshlib',
-        source=['sound/player_sounds.c',
-                'sound/sound.c'
+        source=[
+            'sound/player_sounds.c',
+            'sound/projectile_sounds.c',
+            'sound/sound.c'
         ],
         
         use=['fmodex'],

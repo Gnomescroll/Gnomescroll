@@ -5,6 +5,8 @@ import default_settings as settings
 
 import c_lib.c_lib_objects as c_obj
 
+import sound.sounds as sounds
+
 if settings.pyglet:
     import pyglet
     from pyglet.gl import *
@@ -72,6 +74,9 @@ class Projectile:
     def last_pos(self):
         return self.last_state[0:3]
 
+    def velocity(self):
+        return self.state[3:6]
+
     #run this once per frame for each projectile
     def tick(self):
         return
@@ -116,6 +121,9 @@ class Laser(Projectile):
         self.sample_rate = 10.
         self.sample_range = range(int(self.sample_rate))
         self.sample_delta = 0.10
+        snd_id  = sounds.play_projectile(self.pos(), self.velocity())
+        self.snd_id = snd_id
+        print 'Create projectile sound, id :: %s' % (self.snd_id,)
 
     def tick(self):
         if not self.check_life():
@@ -176,6 +184,9 @@ class Laser(Projectile):
 
         self.check_agent_collision()
 
+        sounds.update_projectile(self.snd_id, self.pos(), self.velocity())
+        #print 'Update sound with %s %s' % (self.pos(), self.velocity(),)
+        
     def draw(self):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)

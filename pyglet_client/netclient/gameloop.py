@@ -352,7 +352,11 @@ class App(object):
 
             self.intervals.process()
 
-            sounds.update()
+            agent = GameStateGlobal.agent
+            if agent:
+                sounds.update(agent.pos(), agent.velocity(), agent.forward(), agent.upward())
+            else:
+                sounds.update()
 
             P.finish_frame()
 

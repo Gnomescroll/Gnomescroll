@@ -706,6 +706,12 @@ class AgentModel(object):
     #def near_object(self, obj):
         #pass
 
+    def forward(self):
+        return vector_lib.forward_vector(self.x_angle)
+        
+    def upward(self):
+        return [0,0,1]
+
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
         if normalize:
@@ -973,7 +979,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            sounds.play()
+            #sounds.play_gunshot()
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:
