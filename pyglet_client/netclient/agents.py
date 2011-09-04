@@ -33,7 +33,7 @@ import c_lib._ray_trace
 import random
 
 
-import sound_lib as sounds
+import sound.sounds as sounds
 
 '''
 Physics for agents

@@ -24,6 +24,8 @@ int main(int argc, char *argv[]) {
 }
 """
 
+_OS = None
+
 def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
 
@@ -33,6 +35,8 @@ def options(opt):
 
 
 def configure(conf):
+    global _OS
+    
     conf.load('compiler_c python cython')
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
@@ -43,6 +47,7 @@ def configure(conf):
     conf.env.CFLAGS = ['-g'] # use '-O2' or '-O3' in distro build
 
     OS = platform.system()
+    _OS = OS
     conf.env.os = OS
 
     conf.check(header_name='GL/glew.h', mandatory=True)
@@ -209,17 +214,31 @@ def build(bld):
     incp='../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
 
+    bld(features='c cshlib',
+        source=['sound/player_sounds.c',
+                'sound/sound.c'
+        ],
+        
+        use=['fmodex'],
+        lib=['fmodex'],
+        libpath=['./sound/api/lib/'],
+
+        #linkflags=['-g'],
+        includes=['./sound/api/inc/', './sound'],
+        
+        target='csound'
+    )
         #use=common_libraries + ['FMOD'], #+sound_libraries,
         #target='sound')
-        use= ['fmodex'], #+sound_libraries,
-        libpath=[libp],
-        includes=[incp],
+        #use= ['fmodex'], #+sound_libraries,
+        #libpath=[libp],
+        #includes=[incp],
 
 
     bld(features='c cshlib pyext',      #cython part
         source=['sound/sounds.pyx'],
-        use=['sound'],
-        target='sound_lib')
+        use=['csound'],
+        target='sound.sounds')
 
 
     # final
@@ -232,7 +251,7 @@ def build(bld):
 
 
 def install_in_ext(ctx):
-    global out
+    global out, _OS
 
     # Hax to install files into ./ext/, after build
 
@@ -261,8 +280,8 @@ def install_in_ext(ctx):
                'init_c_lib',
                'c_lib.c_lib_objects',
                'c_lib.c_lib_map_gen',
-               'sound',         # libsound.so fails to copy to ./ext/ (as with libvox_lib.so and libinit_c_lib.so)
-               'sound_lib',
+               'csound',
+               'sound.sounds',  # cython .so's need to have same name as source
                ]
 
     for target in targets:
@@ -270,6 +289,9 @@ def install_in_ext(ctx):
         dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
         ensure_dir(os.path.dirname(dest_path))
         try:
+            if 'csound' in target:
+                target = target.replace('csound', 'libcsound')
+                dest_path = dest_path.replace('csound', 'libcsound')
             shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
         except:
             print "Error2: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)

@@ -128,6 +128,7 @@ class App(object):
 
     def __init__(self):
         #return
+        sounds.init()
         self.init_globals()
         self.animations = animations
         #other
@@ -143,7 +144,6 @@ class App(object):
         self.intervals.register(send_agent_pos, 500)
 
         self.init_inputs()
-        sounds.init()
         print "App init finished"
 
     def _exit(self):
@@ -355,7 +355,7 @@ class App(object):
             
             P.finish_frame()
 
-    sounds.done()
+        sounds.done()
 
 if __name__ == '__main__':
     app = App()

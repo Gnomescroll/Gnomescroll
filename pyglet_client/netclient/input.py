@@ -39,9 +39,6 @@ def setup_keystring():
         Keystring[value] = key
 setup_keystring()
 
-if False:
-    from sounds import playSound
-
 class InputEventGlobal:
     mouse = None
     keyboard = None
