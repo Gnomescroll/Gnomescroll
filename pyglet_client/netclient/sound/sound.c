@@ -112,7 +112,7 @@ void release_sound(FMOD_SOUND* sound) {
 int test() {
     FMOD_RESULT result;
     init_sound_system(100);
-    FMOD_SOUND* gun = load_2d_sound("./wav/semishoot.wav");
+    FMOD_SOUND* gun = load_2d_sound("../media/sound/wav/semishoot.wav");
 
     play_2d_sound(gun);
     Sleep(1500);

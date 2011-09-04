@@ -131,6 +131,20 @@ def configure(conf):
     conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
 
+    #hack
+    print os.path.abspath(os.curdir)
+    libpth = './sound/api/lib/'
+    despth = './build/sound/api/lib/'
+    if os.path.exists(despth):
+        for fn in os.listdir(libpth):
+            shutil.copy2(libpth + fn, despth + fn)
+    else:
+        try:
+            shutil.copytree(libpth, './build/sound/api/lib', symlinks=True)
+        except IOError, e:
+            pass
+        
+
     #LD_LIBRARY_PATH=./libraries/lin/fmod/lib
     #if OS == 'Darwin':
     #    conf.env.ARCH = ['x86_64']
@@ -226,7 +240,6 @@ def build(bld):
         target='c_lib.c_lib_map_gen')
 
     # sound
-
     bld(features='c cshlib',
         source=['sound/player_sounds.c',
                 'sound/sound.c'
