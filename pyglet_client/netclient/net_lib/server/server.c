@@ -202,7 +202,8 @@ int accept_connection(struct sockaddr_in from) {
         free(p);
         return -1;
     }
-
+    printf("Accept connection: error, should never reach this line!\n");
+    return -2;
     //send client client id
 }
 
@@ -239,17 +240,19 @@ void send_id(uint16_t client_id) {
     send_to_client(client_id, buffer, n);
 }
 
-process_packet(unsigned char* buff, int received_bytes, sockaddr_in* from) {
+void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in* from) {
 
     int n=0;
 
     uint16_t client_id;
     uint8_t channel_id;
 
+    struct NetPeer* p;
+
     if(received_bytes == 6) {
 
-        UNPACK_uint16_t(&client_id, buffer, &n);
-        UNPACK_uint8_t(&channel_id, buffer, &n);
+        UNPACK_uint16_t(&client_id, buff, &n);
+        UNPACK_uint8_t(&channel_id, buff, &n);
 
         if(client_id==0 && channel_id == 255) {
             client_id = accept_connection(*from);
@@ -261,26 +264,25 @@ process_packet(unsigned char* buff, int received_bytes, sockaddr_in* from) {
 
     else if(received_bytes > 6) {
         //crc check
-        if(error_check_packet(buffer,received_bytes) == 0) {
+        if(error_check_packet(buff,received_bytes) == 0) {
             printf("Packet failed CRC check!\n");
             return;
         }
 
         n=0;
-        UNPACK_uint16_t(&client_id, buffer, &n);
-        UNPACK_uint8_t(&channel_id, buffer, &n);
+        UNPACK_uint16_t(&client_id, buff, &n);
+        UNPACK_uint8_t(&channel_id, buff, &n);
         printf("client id= %i\n", client_id);
 
-
         p = pool.connection[client_id];
-        if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from.sin_addr.s_addr != p->ip || client_id != p->id) {
+        if(client_id >= HARD_MAX_CONNECTIONS || p==NULL || from->sin_addr.s_addr != p->ip || client_id != p->id) {
             p->ttl = TTL_MAX;
             printf("Received packet from connection with invalid IP, client_id pair\n");
             return;
         }
         printf("Packet received from client %i\n", p->id);
-        buffer[received_bytes] = 0;
-        printf("Packet= %s \n", buffer);
+        buff[received_bytes] = 0;
+        printf("Packet= %s \n", buff);
         return;
         }
 
@@ -294,9 +296,8 @@ fd_set write_flags;
 
 void process_packets() {
     int n=0;
-    int received_bytes;
+    //int received_bytes;
 
-    struct NetPeer* p;
     struct sockaddr_in from;
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
@@ -310,6 +311,7 @@ void process_packets() {
     FD_ZERO(&read_flags); // Zero the flags ready for using
     FD_SET(pool.socket.socket, &read_flags);
 
+    int select_return;
     while(1) {
 
         select_return = select(pool.socket.socket+1, &read_flags,(fd_set*)0,(fd_set*)0,&timeout);
@@ -323,12 +325,12 @@ void process_packets() {
             //get packets
             n = recvfrom(pool.socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
             printf("Incoming Packet: Received %i bytes\n", n);
-            process_packet(buffer, n);
+            process_packet(buffer, n, &from);
         } else {
             break;
         }
+    }
 }
-
 
 void decrement_ttl() {
     int i;
