@@ -124,7 +124,7 @@ void send_packet2(){
     unsigned int value = 5;
     PACK_uint32_t(value, header, &n1);
 
-    printf("Sending packet %i\n", seq);
+    //printf("Sending packet %i\n", seq);
 
     //Simulated packet lose
 /*

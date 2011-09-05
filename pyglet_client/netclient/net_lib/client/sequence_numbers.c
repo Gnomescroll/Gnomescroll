@@ -58,8 +58,9 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
 }
 
 uint16_t get_next_sequence_number(struct Pseq* ps) {
-    ps->packet_sequence_number += 1;
-    if(ps->packet_sequence_number >= 2048) ps->packet_sequence_number = 0;
+    ps->packet_sequence_number = (ps->packet_sequence_number+1)%2048;
+    //if(ps->packet_sequence_number >= 2048) ps->packet_sequence_number = 0;
+
     //printf("get_next_sequence_number: seq=%i \n", ps->packet_sequence_number);
     int index = ps->packet_sequence_number%64;
 
@@ -128,11 +129,14 @@ void init_sequence_numbers_out(struct Pseq2* pq2) {
 void set_ack_for_received_packet(struct Pseq2* pq2, int seq) {
     int index = seq % 64;
     pq2->seqbuff[index].received = 1;
+/*
     if(seq > pq2->highest_packet_sequence_number){
         pq2->highest_packet_sequence_number = seq;
         //printf("new high seq: %i\n",seq);
-    } else {
-        //printf("set_ack_for_received_packet\n");
+    }
+*/
+    if( (seq > pq2->highest_packet_sequence_number) || ((seq < 64) && (pq2->highest_packet_sequence_number > 1984))) {
+        pq2->highest_packet_sequence_number = seq;
     }
 }
 
