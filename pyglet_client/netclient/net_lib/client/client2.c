@@ -1,4 +1,5 @@
 #include "client2.h"
+#include "sequence_numbers.c"
 
 struct NetClient server;
 
@@ -6,9 +7,15 @@ struct timeval timeout;
 fd_set read_flags;
 fd_set write_flags;
 
+//sequence number handling
+struct Pseq sq;
+
 unsigned char buffer[1500]; //1500 is max ethernet MTU
 
 void init_client() {
+
+    init_sequence_numbers(&sq);
+
     server.client_id = 65535;
     server.connected =0;
     server.local_port = 6967;
@@ -68,10 +75,59 @@ void send_packet(unsigned char* buff, int n){
     if ( sent_bytes != n) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n );return;}
 }
 
+void send_packet2(){
+    unsigned char header[16];
+    int n1 = 0;
+    int seq = get_next_sequence_number(&sq);
+
+    PACK_uint16_t(server.client_id, header, &n1); //client id
+    PACK_uint8_t(1, header, &n1);  //channel 1
+    PACK_uint16_t(seq, header, &n1); //sequence number
+
+    //ack string
+    PACK_uint16_t(0, header, &n1); //max seq
+    PACK_uint32_t(0, header, &n1); //sequence number
+
+    unsigned int value = 5;
+    PACK_uint32_t(value, header, &n1);
+
+    printf("Sending packet %i\n", seq);
+/*
+
+uint8_t channel_id;
+uint16_t client_id;
+uint16_t sequence_number;
+
+uint16_5 max_seq;
+uint32_t acks;
+
+uint32_t value;
+
+int n1=0;
+
+UNPACK_uint16_t(&client_id, buff, &n1); //client id
+UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+UNPACK_uint16_t(&sequence_number, header, &n1); //sequence number
+//ack string
+UNPACK_uint16_t(&max_seq, header, &n1); //max seq
+UNPACK_uint32_t(&acks, header, &n1); //sequence number
+
+UNPACK_uint32_t(&value, header, &n1);
+*/
+
+    if(server.connected == 0) {
+        printf("Cannot send packet, disconnected!\n");
+        return;
+        }
+    int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 );return;}
+}
+
+
 void attempt_connection_with_server() {
     unsigned char buff[6];
     int n=0;
-    PACK_uint16_t(0, buff, &n);
+    PACK_uint16_t(65535, buff, &n);
     PACK_uint8_t(255, buff, &n);
     n=6; //must be 6 bytes
     sendto( server.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
@@ -93,19 +149,41 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     //check CRC
+    if(server.connected == 0 && n ==6) { //server connection packet
+        int n1=0;
+        uint16_t client_id;
+        uint16_t channel_id;
+        UNPACK_uint16_t(&channel_id, buff, &n1);
+        UNPACK_uint16_t(&client_id, buff, &n1);
+        printf("Received client id= %i\n",client_id);
+        server.client_id = client_id;
+        server.connected = 1;
+        //server.server_address.sin_addr.s_addr = from->sin_addr.s_addr;
+        //server.server_address.sin_port = from->sin_port;
+        printf("Client id assigned: %i server: %i:%i\n", client_id, htonl(from->sin_addr.s_addr), ntohs( from->sin_port ));
+        return 0;
+    }
+
+
+    /* BUG !!! SERVER IP/PORT is wrong*/
     if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
-        printf("Received rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n,from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
-        return 0;
+        printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
+        return 0; //validates
+        return 1; //use this line after fixing bug
     }
-    if(server.connected == 0 && n ==6) {
+    return 1;
+    /*
         int n1=0;
         unsigned short message_id, client_id;
         UNPACK_uint16_t(&message_id, buff, &n1);
         UNPACK_uint16_t(&client_id, buff, &n1);
-    }
-    return 1;
+        return 1; /validates
+        printf("WTF:validate_packet\n");
+    */
+
+    return 0; //does not validate
 }
 
 void process_incoming_packets() {
@@ -130,7 +208,7 @@ void process_incoming_packets() {
             FD_CLR(server.socket, &read_flags);
             //get packets
             n = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &n);
-            if(!validate_packet(buffer, n, &from)) {
+            if(validate_packet(buffer, n, &from)) {
             printf("Received %i bytes\n", n);
             process_packet(buffer, n);
         }} else {
@@ -140,14 +218,54 @@ void process_incoming_packets() {
 }
 }
 
-void process_packet(unsigned char* buf, int n) {
+void process_packet(unsigned char* buff, int n) {
+    if(n==6) return;
     int n1=0;
-    if(n==6) {
-        uint16_t client_id;
-        uint16_t channel_id;
-        UNPACK_uint16_t(&channel_id, buf, &n1);
-        UNPACK_uint16_t(&client_id, buf, &n1);
-        printf("Received client id= %i\n",client_id);
+
+
+
+    uint8_t channel_id;
+    uint16_t client_id;
+    uint16_t sequence_number;
+
+    uint16_t max_seq;
+    uint32_t acks;
+
+    uint32_t value;
+
+    n1=0;
+
+    UNPACK_uint16_t(&client_id, buff, &n1); //client id
+    UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+    UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
+//ack string
+    UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
+    UNPACK_uint32_t(&acks, buff, &n1); //sequence number
+
+    UNPACK_uint32_t(&value, buff, &n1);
+    printf("value= %i\n", value);
+
+    printf("---\n");
+    process_acks(&sq, max_seq, acks);
+    printf("---\n");
+    //printf("process_packet: needs to accept ack messages \n");
+}
+
+
+unsigned char* out_buffer[1500];
+unsigned int out_buffer_n;
+
+void send_agent_state_packet() {
+    if(server.client_id ==0 || server.connected == 0 ) {
+        printf("send_agent_state_packet: client not connected!\n");
+    }
+    FD_ZERO(&write_flags);
+    select(server.socket+1, (fd_set*)0, &write_flags, (fd_set*)0, &timeout);
+    if (FD_ISSET(server.socket, &write_flags)) {
+        FD_CLR(server.socket, &write_flags);
+        printf("Socket ready to send packets\n");
+    } else {
+        printf("send_agent_state_packet: FAILED!! socket not ready for writing! WTF\n");
     }
 }
 

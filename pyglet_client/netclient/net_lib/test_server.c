@@ -1,4 +1,5 @@
 #include "server/server.c"
+#include "client/sequence_numbers.c"
 
 #include "net_packets.h"
 
@@ -35,8 +36,13 @@ int main() {
     //printf("t\n");
     int i=0;
     while(1) {
-        printf("i=%i\n", i);
+        if(i%5 ==0) {
+            printf("tick=%i\n", i);
+        }
         process_packets();
+        broad_cast_packet();
+        broad_cast_packet();
+        decrement_ttl();
         sleep(1);
         i++;
         }

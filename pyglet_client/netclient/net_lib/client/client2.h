@@ -26,6 +26,7 @@ struct NetClient {
 void init_client();
 
 void send_packet(unsigned char* buffer, int n);
+void send_packet2(); //adding sequence number and acks
 
 void attempt_connection_with_server();
 

@@ -36,7 +36,7 @@ def options(opt):
 
 def configure(conf):
     global _OS
-    
+
     conf.load('compiler_c python cython')
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
@@ -149,6 +149,22 @@ def configure(conf):
     #if OS == 'Darwin':
     #    conf.env.ARCH = ['x86_64']
 
+
+'''
+t = bld(
+        features     = ['cc', 'cprogram'],
+        source       = 'main.c',
+        target       = 'appname',
+        install_path = '${SOME_PATH}/bin',
+        vnum         = '1.2.3',
+        includes     = ['.'],
+        defines      = ['LINUX=1', 'BIDULE'],
+        ccflags      = ['-O2', '-Wall'],
+        lib          = ['m'],
+        libpath      = ['/usr/lib'],
+        linkflags    = ['-g'],
+        )
+'''
 def build(bld):
     OS = platform.system()
 
@@ -230,13 +246,13 @@ def build(bld):
             'sound/projectile_sounds.c',
             'sound/sound.c'
         ],
-        
+
         use=['fmodex'],
         lib=['fmodex'],
         libpath=['./sound/api/lib/'],
 
         includes=['./sound/api/inc/', './sound'],
-        
+
         cflags=['-Wall'],#debug
         target='csound'
     )

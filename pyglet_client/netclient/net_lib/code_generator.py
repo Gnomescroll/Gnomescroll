@@ -28,6 +28,7 @@ def run():
     output_struct_def(struct_list)
     output_packing_def(struct_list)
     output_size_def(struct_list)
+    output_transmission_template(struct_list)
 
 def header_include_guard(st, name):
     s1 = "#ifndef %s_h \n#define %s_h \n\n" % (name, name)
@@ -67,6 +68,17 @@ def output_size_def(struct_list):
     #x += "\n"
     x = header_include_guard(x, "net_lib_mgen_size")
     struck_size = open("./mgen/size.h", "w")
+    struck_size.write(x)
+    print x
+
+def output_transmission_template(struct_list):
+    x= "\n"
+    for s in struct_list:
+        x+=s.transmission_template()
+    x += "\n"
+    #x += "\n"
+    x = header_include_guard(x, "net_lib_mgen_size")
+    struck_size = open("./mgen/template.h", "w")
     struck_size.write(x)
     print x
 
@@ -125,6 +137,27 @@ def pack_proc(list):
         m = "float"
     if m != "":
         return "\tPACK_%s(s->%s, buffer, n);\n" % (m,nn)
+    print "ERROR: Type Missing: %s" % (n)
+    assert False
+
+def struct_template(list):
+    n = list[1];
+    nn = list[2];
+    m = ""
+    if n == "n":
+        m = "s.%s = x; // int32_t \n" % (nn)
+    if n == "un":
+        m = "s.%s = x; // uint32_t \n" % (nn)
+    if n == "s":
+        m = "s.%s = x; // int16_t \n" % (nn)
+    if n == "us":
+        m = "s.%s = x; // uint16_t \n" % (nn)
+    if n == "b":
+        m = "s.%s = x; // uint8_t \n" % (nn)
+    if n == "f":
+        m = "s.%s = x; // float \n" % (nn)
+    if m != "":
+        return "\t%s" % (m)
     print "ERROR: Type Missing: %s" % (n)
     assert False
 
@@ -238,6 +271,20 @@ class Struct:
         #s3 = "\t*n += %s" % (n)
         #s4 = "\n}\n\n"
         return s1+s2+s3 #+s4
+
+    def transmission_template(self):
+        if self.name == None:
+            return ''
+        s1 = "{ \n"
+        s1 += "\tstruct %s s;\n" %(self.name)
+        #s1 += "\tint n=0;\n"
+        s2 = ''
+        for i in self.members:
+            s2 += struct_template(i)
+
+        s3 = "\tpack_struct_%s(buff, &s, &n); \n } \n\n" %(self.name)
+        #s3 = "\t*n+=%s" % (n)
+        return s1 + s2 + s3
 
     def send_function(self):
         pass
