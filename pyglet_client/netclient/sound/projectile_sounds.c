@@ -5,7 +5,7 @@ FMOD_CHANNEL* projectile_channels[MAX_SOUNDS];
 
 
 void load_projectile() {
-    projectile_sound = load_3d_sound("./media/sound/wav/warp2.wav", 1000.0f);
+    projectile_sound = load_3d_sound("./media/sound/wav/warp2.wav", 50.0f);
 }
 
 void end_projectile() {
