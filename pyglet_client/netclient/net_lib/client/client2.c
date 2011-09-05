@@ -178,13 +178,11 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     }
 
 
-    /* BUG !!! SERVER IP/PORT is wrong*/
     if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
         printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
-        //return 0; //validates
-        return 1; //use this line after fixing bug
+        return 1;
     }
     return 1;
     /*
@@ -240,16 +238,13 @@ void process_incoming_packets() {
 
         //sockaddr_in from;
 
-
-        bytes_received = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength); //&fromLength); //&n
-
-        //int received_bytes = recvfrom( socket, (char*)packet_data, maximum_packet_size,0, (sockaddr*)&from, &fromLength );
+        bytes_received = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
 
         if(bytes_received <= 0) {
             return;
             }
         if(validate_packet(buffer, bytes_received, &from)) {
-            printf("Received %i bytes\n", bytes_received);
+            //printf("Received %i bytes\n", bytes_received);
             //unsigned int from_address = ntohl( from.sin_addr.s_addr );
             //unsigned int from_port = ntohs( from.sin_port );
             process_packet(buffer, bytes_received);
@@ -261,9 +256,8 @@ void process_incoming_packets() {
 
 void process_packet(unsigned char* buff, int n) {
     if(n==6) return;
+
     int n1=0;
-
-
 
     uint8_t channel_id;
     uint16_t client_id;
@@ -284,8 +278,9 @@ void process_packet(unsigned char* buff, int n) {
     UNPACK_uint32_t(&acks, buff, &n1); //sequence number
 
     UNPACK_uint32_t(&value, buff, &n1);
-    printf("value= %i\n", value);
+    //printf("value= %i\n", value);
 
+    printf("received packet: sequence number %i from server\n", sequence_number);
     process_acks(&sq, max_seq, acks);
     printf("---\n");
     //printf("process_packet: needs to accept ack messages \n");

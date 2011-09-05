@@ -77,6 +77,7 @@ void check_for_dropped_packets(struct Pseq* ps) {
     index = (ps->packet_sequence_number %2048) -32;
     if(index < 0) index+= 2048;
     for(i=0;i<32;i++) {
+        printf("j=%i, index=%i, seq=%i, ack=%i\n",j,index,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
         if(ps->packet_sequence_buffer[i].seq == index) {
             printf("equals\n");
         }

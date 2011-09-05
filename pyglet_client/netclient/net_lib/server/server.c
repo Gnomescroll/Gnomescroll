@@ -376,7 +376,9 @@ void process_packets() {
     }
 }
 
+int SEQ = 500; //hack for sequence number
 void broad_cast_packet() {
+    SEQ +=1;
 
     int i,n1;
     struct NetPeer* p;
@@ -388,6 +390,7 @@ void broad_cast_packet() {
         n1=0;
 
         int seq = 0;// get_next_sequence_number(&sq);
+        seq = SEQ;
 
         PACK_uint16_t(0, header, &n1); //server id
         PACK_uint8_t(1, header, &n1);  //channel 1
