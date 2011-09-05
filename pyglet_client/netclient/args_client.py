@@ -45,8 +45,6 @@ DEFAULTS = {
     'sensitivity':  90,
     'mouse_sensitivity':    None,
     'camera_sensitivity':   None,
-    'auto_assign_team': settings.auto_assign_team,
-    'audio'     :   settings.audio,
     'sfx'       :   settings.sfx,
     'music'     :   settings.music,
 }
@@ -89,7 +87,7 @@ def parse(cl_args=None):
     parser.add_argument('-n', '--name', default=DEFAULTS['name'])
     parser.add_argument('-an', '--alt-name', default=DEFAULTS['alt_name'], dest='alt_name')
 
-    parser.add_argument('-aa', '--auto-assign', default=DEFAULTS['auto_assign_team'], dest='auto_assign_team')
+    parser.add_argument('-aa', '--auto-assign', action='store_true', dest='auto_assign_team')
 
     parser.add_argument('-pa', '--print-args', action='store_true')
 
@@ -164,6 +162,12 @@ def get_args():
     if not args.ping and settings.ping:
         args.ping = settings.ping
 
+    if not args.auto_assign_team:
+        args.auto_assign_team = settings.auto_assign_team
+
+    #sound
+    if args.audio:
+        args.audio = settings.audio
     args.sfx = max(min(args.sfx, 100), 0)
     args.sfx /= 100.
     args.music = max(min(args.music, 100), 0)
@@ -195,6 +199,7 @@ def print_args(args):
         'sensitivity',
         'mouse_sensitivity',
         'camera_sensitivity',
+        'auto_assign_team',
         'fps',
         'ping',
         'no_hud',

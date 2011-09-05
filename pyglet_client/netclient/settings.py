@@ -5,11 +5,11 @@ Settings module
 pyglet = False
 #graphics = "SDL" # options, "SDL", "pyglet"
 
-audio = False
+audio = True
 name = 'steven'
 alt_name = 'ted'
-sfx = 10
-music = 10
+sfx = 100
+music = 100
 
 # window
 width = 1024
@@ -24,3 +24,5 @@ sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefi
 fps = True
 ping = True
 ping_update_interval = 500
+
+auto_assign_team = True
