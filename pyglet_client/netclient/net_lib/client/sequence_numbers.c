@@ -38,7 +38,7 @@ void init_sequence_numbers(struct Pseq* ps) {
 void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
     printf("Process acks\n");
     unsigned int n = 1;
-    int i,j;
+    int i;
     int index;
 
     /*
@@ -71,7 +71,7 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
 
     for(i=0;i<32;i++) {
 
-        if(flag && n != 0) {
+        if((flag & n) != 0) {
             printf("+%i:%i ", index,ps->packet_sequence_buffer[index%64].seq);
         } else {
             printf("-%i:%i ", index, ps->packet_sequence_buffer[index%64].seq);
@@ -86,11 +86,24 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
 
 
     index = seq;
+    n = 1;
     for(i=0;i<32;i++) {
+
+        if((flag & n) != 0) {
+            if(ps->packet_sequence_buffer[index%64].seq != index) {printf("sequence number error 1!!!\n");}
+
+            if(ps->packet_sequence_buffer[index%64].ack == 0) { //dont ack same packet twice
+                printf("Packet Acked: %i\n", index);
+                ps->packet_sequence_buffer[index%64].ack = 1;
+            }
+
+        }
+    /*
         if(ps->packet_sequence_buffer[index%64].seq == index && ps->packet_sequence_buffer[index%64].ack == 0 ) {
             printf("Packet Acked: %i\n", index);
             ps->packet_sequence_buffer[index%64].ack = 1;
         }
+    */
         index--;
         index &= UPDATE_MASK;
         n*=2;

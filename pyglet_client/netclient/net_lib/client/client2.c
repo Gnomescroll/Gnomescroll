@@ -127,12 +127,12 @@ void send_packet2(){
     printf("Sent packet %i\n", seq);
 
     //Simulated packet lose
-/*
-    if(seq%6 == 0) {
+
+    if(seq%5 == 0) {
         printf("Intentially dropped packet: %i \n", seq);
         return;
     }
-*/
+
     int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
