@@ -125,7 +125,6 @@ class Laser(Projectile):
         self.sample_delta = 0.10
         snd_id  = sounds.play_projectile(self.pos(), self.velocity())
         self.snd_id = snd_id
-        print 'Create projectile sound, id :: %s' % (self.snd_id,)
 
     def tick(self):
         if not self.check_life():

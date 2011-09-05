@@ -57,7 +57,6 @@ def play_projectile(pos, vel):
     x,y,z = pos
     vx,vy,vz = vel
     p_snd_id = play_projectile_sound(x,y,z, vx,vy,vz)
-    print 'Received sound id %s' % (p_snd_id,)
     return p_snd_id
 
 @e

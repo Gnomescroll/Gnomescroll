@@ -43,7 +43,6 @@ int play_projectile_sound(float x, float y, float z, float vx, float vy, float v
     for(i=0; i<MAX_SOUNDS; i++) {
         pch = projectile_channels[i];
         if (pch == NULL) {
-            printf("Found NULL pointer at %d", i);
             play_set_channel(i, x,y,z, vx,vy,vz);
             set = 1;
             break;
