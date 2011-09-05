@@ -123,8 +123,7 @@ class Laser(Projectile):
         self.sample_rate = 10.
         self.sample_range = range(int(self.sample_rate))
         self.sample_delta = 0.10
-        snd_id  = sounds.play_projectile(self.pos(), self.velocity())
-        self.snd_id = snd_id
+        self.snd_id  = sounds.play_3d('warp2.wav', self.pos(), self.velocity())
 
     def tick(self):
         if not self.check_life():
@@ -190,7 +189,7 @@ class Laser(Projectile):
         SDL.gl.draw_particle(5, 0.5, x,y,z)
 
     def update_sound(self):
-        sounds.update_projectile(self.snd_id, self.pos(), self.velocity())
+        sounds.update_3d(self.snd_id, self.pos(), self.velocity())
 
 
 class Grenade(Projectile):

@@ -7,7 +7,7 @@ void init_sound_system() {
     result = FMOD_System_Create(&sound_sys);   // create system
     ERRCHECK(result);
 
-    result = FMOD_System_Init(sound_sys, MAX_SOUNDS, FMOD_INIT_NORMAL, NULL);
+    result = FMOD_System_Init(sound_sys, MAX_CHANNELS, FMOD_INIT_NORMAL, NULL);
     ERRCHECK(result);
 }
 
@@ -51,16 +51,61 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
     ERRCHECK(r);
 }
 
+
 /* Channels */
 
-int update_channel(FMOD_CHANNEL* ch, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
+int _add_channel(FMOD_CHANNEL* ch) {    // to channels array
+    int i;
+    for (i=0; i<MAX_CHANNELS; i++) {
+        if (channels[i] == NULL) {
+            channels[i] = ch;
+            break;
+        }
+    }
+    if (i == MAX_CHANNELS) {
+        i = -1;
+    }
+    return i;
+}
+
+int _update_channel(FMOD_CHANNEL* ch, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
     FMOD_RESULT r = FMOD_Channel_Set3DAttributes(ch, &pos, &vel);
     int i = ERRCHECK(r);
     return i;
 }
 
+int update_channel(int ch_id, float x, float y, float z, float vx, float vy, float vz) {
+    int i = -1;
+    if (ch_id < 0 || ch_id >= MAX_CHANNELS) {
+        return i;
+    }
+    FMOD_CHANNEL* ch = channels[ch_id];
+    if (ch != NULL) {
+        const FMOD_VECTOR pos = create_vector(x,y,z);
+        const FMOD_VECTOR vel = create_vector(vx,vy,vz);
+        i = _update_channel(ch, pos, vel);
+    }
+    return i;
+}
+
+
 /* Sounds */
-FMOD_SOUND* load_2d_sound(char *soundfile) {
+
+int _add_sound(FMOD_SOUND* snd) {   // to sounds array
+    int i;
+    for (i=0; i<MAX_SOUNDS; i++) {
+        if (sounds[i] != NULL) {
+            sounds[i] = snd;
+            break;
+        }
+    }
+    if (i == MAX_SOUNDS) {
+        i = -1;
+    }
+    return i;
+}
+
+FMOD_SOUND* _load_2d_sound(char *soundfile) {
     FMOD_SOUND* sound;
     FMOD_RESULT result;
 
@@ -70,7 +115,7 @@ FMOD_SOUND* load_2d_sound(char *soundfile) {
     return sound;
 }
 
-FMOD_SOUND* load_3d_sound(char *soundfile, float mindistance) { // use lower mindistance for quieter things. use 4.0f as default
+FMOD_SOUND* _load_3d_sound(char *soundfile, float mindistance) { // use lower mindistance for quieter things. use 4.0f as default
     FMOD_SOUND* sound;
     FMOD_RESULT result;
 
@@ -82,7 +127,7 @@ FMOD_SOUND* load_3d_sound(char *soundfile, float mindistance) { // use lower min
     return sound;
 }
 
-FMOD_CHANNEL* play_2d_sound(FMOD_SOUND* sound) {
+FMOD_CHANNEL* _play_2d_sound(FMOD_SOUND* sound) {
     FMOD_CHANNEL* channel = 0;
     FMOD_RESULT result;
 
@@ -96,7 +141,8 @@ FMOD_CHANNEL* play_2d_sound(FMOD_SOUND* sound) {
     return channel;
 }
 
-FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
+
+FMOD_CHANNEL* _play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
     FMOD_CHANNEL* channel = 0;
     FMOD_RESULT result;
 
@@ -113,10 +159,68 @@ FMOD_CHANNEL* play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD
 }
 
 
+//Public
+int load_2d_sound(char *soundfile) {
+    FMOD_SOUND* snd = _load_2d_sound(soundfile);
+    int i = _add_sound(snd);
+    return i;
+}
+
+//Public
+int load_3d_sound(char *soundfile, float mindistance) {
+    FMOD_SOUND* snd = _load_3d_sound(soundfile, mindistance);
+    int i = _add_sound(snd);
+    return i;
+}
+
+//Public
+int play_2d_sound(int snd_id) {
+    int i = -1;
+    if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
+        return i;
+    }
+    FMOD_CHANNEL* ch = NULL;
+    FMOD_SOUND* snd = sounds[snd_id];
+    if (snd != NULL) {
+        ch =_play_2d_sound(snd);
+        i = _add_channel(ch);
+    }
+    return i;
+}
+
+//Public
+int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, float vz) {
+    int i = -1;
+    if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
+        return i;
+    }
+    FMOD_SOUND* snd = sounds[snd_id];
+    FMOD_CHANNEL* ch = NULL;
+    if (snd != NULL) {
+        const FMOD_VECTOR pos = create_vector(x,y,z);
+        const FMOD_VECTOR vel = create_vector(vx,vy,vz);
+        ch = _play_3d_sound(snd, pos, vel);
+        i = _add_channel(ch);
+    }
+    return i;
+}
+
+
 /* Completion */
 void release_sound(FMOD_SOUND* sound) {
     FMOD_RESULT r = FMOD_Sound_Release(sound);
     ERRCHECK(r);
+}
+
+void end_sound(int snd_id) {
+    if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
+        return;
+    }
+    FMOD_SOUND* snd = sounds[snd_id];
+    if (snd != NULL) {
+        release_sound(snd);
+    }
+    sounds[snd_id] = NULL;
 }
 
 void release_sound_system() {
@@ -134,18 +238,38 @@ void release_globals() {
     release_sound_system();
 }
 
+void release_sounds() {
+    int i;
+    for (i=0; i<MAX_SOUNDS; i++) {
+        end_sound(i);
+    }
+}
+
+void release_all() {
+    release_sounds();
+    release_globals();
+}
+
 /*
     UTILITIES
                 */
 
 /* Vectors */
+const float _tick = 30.0f; // ticks per second
 void set_vector(FMOD_VECTOR* vec, float x, float y, float z) {
+    // convert velocity units to m/s (comes in at m/tick, tick=33ms)
+    x *= _tick;
+    y *= _tick;
+    z *= _tick;
     vec->x = x;
-    vec->y = z;
+    vec->y = z; // flip y and z for our coordinate system
     vec->z = y;
 }
 
 const FMOD_VECTOR create_vector(float x, float y, float z) {
+    x *= _tick;
+    y *= _tick;
+    z *= _tick;
     const FMOD_VECTOR vec = {x, z, y};  // y and z must be flipped to match our coordinate system
     return vec;
 }
@@ -167,9 +291,9 @@ int ERRCHECK(FMOD_RESULT result)
 
 int test() {
     init_sound_system(100);
-    FMOD_SOUND* gun = load_2d_sound("../media/sound/wav/semishoot.wav");
+    FMOD_SOUND* gun = _load_2d_sound("../media/sound/wav/semishoot.wav");
 
-    play_2d_sound(gun);
+    _play_2d_sound(gun);
     Sleep(1500);
 
     release_sound(gun);

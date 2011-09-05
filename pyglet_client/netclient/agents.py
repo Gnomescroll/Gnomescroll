@@ -712,6 +712,9 @@ class AgentModel(object):
     def upward(self):
         return [0,0,1]
 
+    def listener_state(self):
+        return [self.pos(), self.velocity(), self.forward(), self.upward()]
+
     def direction(self, normalize=True):
         v = vector_lib.angle2vector(self.x_angle, self.y_angle)
         if normalize:
@@ -980,6 +983,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         fire_command = weapon.fire()
         if fire_command:
             #sounds.play_gunshot()
+            sounds.play_2d('semishoot.wav')
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:

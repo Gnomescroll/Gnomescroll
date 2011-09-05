@@ -10,6 +10,7 @@ if False:
     import site
 
 import sys
+import os
 sys.path.insert(0, './ext/')
 
 import math
@@ -126,9 +127,15 @@ class App(object):
         InputGlobal.init_0(self)
         InputGlobal.init_1(self)
 
+    def init_audio(self):
+        audio = opts.opts.audio
+        soundfiles = None
+        if audio:
+            soundfiles = os.listdir('./media/sound/wav/')
+        sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+
     def __init__(self):
-        print opts.opts.audio
-        sounds.init(enabled=opts.opts.audio, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+        self.init_audio()
         #return
         self.init_globals()
         self.animations = animations
@@ -356,7 +363,7 @@ class App(object):
 
             agent = GameStateGlobal.agent
             if agent:
-                sounds.update(agent.pos(), agent.velocity(), agent.forward(), agent.upward())
+                sounds.update(agent.listener_state())
             else:
                 sounds.update()
 

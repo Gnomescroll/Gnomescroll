@@ -1,7 +1,7 @@
 #include "projectile_sounds.h"
 
 FMOD_SOUND* projectile_sound;
-FMOD_CHANNEL* projectile_channels[MAX_SOUNDS];
+FMOD_CHANNEL* projectile_channels[MAX_CHANNELS];
 
 
 void load_projectile() {
@@ -18,7 +18,7 @@ FMOD_RESULT F_CALLBACK channel_end_callback(FMOD_CHANNEL *channel, FMOD_CHANNEL_
         return FMOD_OK;
     }
     int i;
-    for(i=0; i<MAX_SOUNDS; i++) {
+    for(i=0; i<MAX_CHANNELS; i++) {
         if (projectile_channels[i] == channel) {
             projectile_channels[i] = NULL;
         }
@@ -40,7 +40,7 @@ int play_projectile_sound(float x, float y, float z, float vx, float vy, float v
     int set=0;
     FMOD_CHANNEL* pch;
 
-    for(i=0; i<MAX_SOUNDS; i++) {
+    for(i=0; i<MAX_CHANNELS; i++) {
         pch = projectile_channels[i];
         if (pch == NULL) {
             play_set_channel(i, x,y,z, vx,vy,vz);
