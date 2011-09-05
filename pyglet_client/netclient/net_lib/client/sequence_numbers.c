@@ -24,7 +24,7 @@ struct packet_sequencer() {
 #define INIT_V_2 0
 
 void init_sequence_numbers(struct Pseq* ps) {
-    ps->packet_sequence_number = 0;
+    ps->packet_sequence_number = INIT_V_1;
     int i;
     for(i=0;i<64;i++) {
         //packet_buffer[i].active = 0;
@@ -42,7 +42,7 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
         index = (seq -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
         if(index < 0) index+=2048;
 
-        if(flag & (n != 0)) {
+        if((flag & n) != 0) {
             //ack that packet
             j = seq%64;
                 if(ps->packet_sequence_buffer[j].seq == index) {
@@ -129,6 +129,7 @@ void init_sequence_numbers_out(struct Pseq2* pq2) {
 void set_ack_for_received_packet(struct Pseq2* pq2, int seq) {
     int index = seq % 64;
     pq2->seqbuff[index].received = 1;
+    pq2->seqbuff[index].seq = seq;
 /*
     if(seq > pq2->highest_packet_sequence_number){
         pq2->highest_packet_sequence_number = seq;
@@ -151,10 +152,12 @@ uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2) {
 
     uint32_t flag = 0;
     for(i=0;i<32;i++) { //should start at 1
-        index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
+        //index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
+        //if(index < 0) index+=2048;
+        index = (q2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
         if(index < 0) index+=2048;
 
-        if(pq2->seqbuff[index%64].received == 1) {
+        if((pq2->seqbuff[index%64].received == 1) && (pq2->seqbuff[index%64].seq == index) ) {
             flag |= n;
         }
         n*=2;
