@@ -152,15 +152,21 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
         printf("Received rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n,from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
-        return 0;
+        return 1; //validates
     }
+
     if(server.connected == 0 && n ==6) {
+        return 1;
+    /*
         int n1=0;
         unsigned short message_id, client_id;
         UNPACK_uint16_t(&message_id, buff, &n1);
         UNPACK_uint16_t(&client_id, buff, &n1);
+        return 1; /validates
+        printf("WTF:validate_packet\n");
+    */
     }
-    return 1;
+    return 0; //does not validate
 }
 
 void process_incoming_packets() {
@@ -185,7 +191,7 @@ void process_incoming_packets() {
             FD_CLR(server.socket, &read_flags);
             //get packets
             n = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &n);
-            if(!validate_packet(buffer, n, &from)) {
+            if(validate_packet(buffer, n, &from)) {
             printf("Received %i bytes\n", n);
             process_packet(buffer, n);
         }} else {
@@ -195,18 +201,45 @@ void process_incoming_packets() {
 }
 }
 
-void process_packet(unsigned char* buf, int n) {
+void process_packet(unsigned char* buff, int n) {
     int n1=0;
-    if(n==6) {
+    if(n==6 && server.connected == 0) { //server connection packet
         uint16_t client_id;
         uint16_t channel_id;
-        UNPACK_uint16_t(&channel_id, buf, &n1);
-        UNPACK_uint16_t(&client_id, buf, &n1);
+        UNPACK_uint16_t(&channel_id, buff, &n1);
+        UNPACK_uint16_t(&client_id, buff, &n1);
         printf("Received client id= %i\n",client_id);
         server.client_id = client_id;
         server.connected = 1;
+        return;
     }
-    printf("process_packet: needs to accept ack messages \n");
+
+
+    uint8_t channel_id;
+    uint16_t client_id;
+    uint16_t sequence_number;
+
+    uint16_t max_seq;
+    uint32_t acks;
+
+    uint32_t value;
+
+    n1=0;
+
+    UNPACK_uint16_t(&client_id, buff, &n1); //client id
+    UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+    UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
+//ack string
+    UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
+    UNPACK_uint32_t(&acks, buff, &n1); //sequence number
+
+    UNPACK_uint32_t(&value, buff, &n1);
+    printf("value= %i\n", value);
+
+    printf("---\n");
+    process_acks(&sq, max_seq, acks);
+    printf("---\n");
+    //printf("process_packet: needs to accept ack messages \n");
 }
 
 

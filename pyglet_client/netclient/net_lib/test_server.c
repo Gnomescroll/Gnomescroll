@@ -40,6 +40,7 @@ int main() {
             printf("tick=%i\n", i);
         }
         process_packets();
+        broad_cast_packet();
         decrement_ttl();
         sleep(1);
         i++;

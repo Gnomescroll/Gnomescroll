@@ -38,6 +38,8 @@
 
 #include "../net_packets.h"
 
+#include "../client/sequence_numbers.h"
+
 struct Socket {
     uint32_t ip;
     uint16_t port;
@@ -56,6 +58,8 @@ struct NetPeer {
     struct sockaddr_in address;
 
     unsigned int ttl;
+
+    struct Pseq2 sq2;
 };
 
 #define HARD_MAX_CONNECTIONS 1024
@@ -72,6 +76,8 @@ struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
 struct Socket* create_socket(uint32_t IP, uint16_t  port);
 
 int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size);
+void broad_cast_packet(); //every 30 ms
+
 void receive_packets(struct Socket* socket);
 
 void init_server(unsigned short port);
