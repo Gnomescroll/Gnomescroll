@@ -121,8 +121,8 @@ void init_sequence_numbers_out(struct Pseq2* pq2) {
     int i;
     pq2->highest_packet_sequence_number = INIT_V_2;
     for(i=0;i<64;i++) {
-    pq2->seqbuff[i].seq = -1;
-    pq2->seqbuff[i].received = 0;
+        pq2->seqbuff[i].seq = -1;
+        pq2->seqbuff[i].received = 0;
     }
 }
 

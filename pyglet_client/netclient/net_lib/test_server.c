@@ -41,7 +41,7 @@ int main() {
        // }
         process_packets();
         broad_cast_packet();
-        broad_cast_packet();
+        //broad_cast_packet();
         decrement_ttl();
         sleep(1);
         i++;

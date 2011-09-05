@@ -124,7 +124,7 @@ void send_packet2(){
     unsigned int value = 5;
     PACK_uint32_t(value, header, &n1);
 
-    //printf("Sending packet %i\n", seq);
+    printf("Sent packet %i\n", seq);
 
     //Simulated packet lose
 /*
@@ -133,8 +133,8 @@ void send_packet2(){
         return;
     }
 */
-        int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
-        if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
+    int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
 }
 

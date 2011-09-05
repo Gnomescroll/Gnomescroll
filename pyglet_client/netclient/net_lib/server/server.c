@@ -297,7 +297,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     n=0;
     //UNPACK_uint16_t(&client_id, buff, &n);
     //UNPACK_uint8_t(&channel_id, buff, &n);
-    printf("Packet: cid= %i, seq= %i, bytes=%i \n", client_id, sequence_number, received_bytes);
+    printf("Packet Received: cid= %i, seq= %i, bytes=%i \n", client_id, sequence_number, received_bytes);
 
     if(client_id >= HARD_MAX_CONNECTIONS) {
         printf("Client id %i exceeds HARD_MAX_CONNECTIONS\n", client_id);
@@ -339,12 +339,12 @@ fd_set read_flags;
 fd_set write_flags;
 
 void process_packets() {
-    int n=0;
+    //int n=0;
     //int received_bytes;
 
     struct sockaddr_in from;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
+    //timeout.tv_sec = 0;
+    //timeout.tv_usec = 0;
 
     #if PLATFORM == PLATFORM_WINDOWS
     typedef int socklen_t;
@@ -352,6 +352,7 @@ void process_packets() {
 
     socklen_t fromLength = sizeof( from );
 
+/*
     FD_ZERO(&read_flags); // Zero the flags ready for using
     FD_SET(pool.socket.socket, &read_flags);
 
@@ -374,9 +375,24 @@ void process_packets() {
             break;
         }
     }
+*/
+
+
+
+    int bytes_received;
+    while(1) {
+
+        //sockaddr_in from;
+
+        bytes_received = recvfrom(pool.socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+
+        if(bytes_received <= 0) return;
+        process_packet(buffer, bytes_received, &from);
+    }
 }
 
 int SEQ = 500; //hack for sequence number
+
 void broad_cast_packet() {
     SEQ +=1;
 
