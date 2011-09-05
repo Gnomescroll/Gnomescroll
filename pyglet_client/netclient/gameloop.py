@@ -212,6 +212,8 @@ class App(object):
         _i = 30
         while not GameStateGlobal.exit:
 
+            self.world.sound_updates()
+
             P2.start_frame() #TEST
             theta += -.005 #test
             P.start_frame()
@@ -358,7 +360,6 @@ class App(object):
             else:
                 sounds.update()
 
-            self.world.sound_updates()
             P.finish_frame()
 
         sounds.done()

@@ -237,6 +237,7 @@ def build(bld):
 
         includes=['./sound/api/inc/', './sound'],
         
+        cflags=['-Wall'],#debug
         target='csound'
     )
 

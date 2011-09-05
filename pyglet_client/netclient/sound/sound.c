@@ -55,8 +55,6 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 
 int update_channel(FMOD_CHANNEL* ch, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
     FMOD_RESULT r = FMOD_Channel_Set3DAttributes(ch, &pos, &vel);
-    //free(pos);
-    //free(vel);
     int i = ERRCHECK(r);
     return i;
 }
@@ -138,7 +136,7 @@ void release_globals() {
 
 /*
     UTILITIES
-                * /
+                */
 
 /* Vectors */
 void set_vector(FMOD_VECTOR* vec, float x, float y, float z) {
@@ -148,11 +146,7 @@ void set_vector(FMOD_VECTOR* vec, float x, float y, float z) {
 }
 
 const FMOD_VECTOR create_vector(float x, float y, float z) {
-    const FMOD_VECTOR vec = {x, z, y};
-    //vec->x = x;
-    //// y and z must be flipped to match our coordinate system
-    //vec->y = z;
-    //vec->z = y;
+    const FMOD_VECTOR vec = {x, z, y};  // y and z must be flipped to match our coordinate system
     return vec;
 }
 
@@ -164,15 +158,14 @@ int ERRCHECK(FMOD_RESULT result)
     if (result != FMOD_OK)
     {
         printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
-        print_trace();
-        exit(1);
+        //print_trace();
+        //exit(1);
         return 1;
     }
     return 0;
 }
 
 int test() {
-    FMOD_RESULT result;
     init_sound_system(100);
     FMOD_SOUND* gun = load_2d_sound("../media/sound/wav/semishoot.wav");
 
@@ -184,22 +177,22 @@ int test() {
     return 0;
 }
 
-void
- print_trace (void)
- {
-   void *array[10];
-   size_t size;
-   char **strings;
-   size_t i;
+//void
+ //print_trace (void)
+ //{
+   //void *array[10];
+   //size_t size;
+   //char **strings;
+   //size_t i;
  
-   size = backtrace (array, 10);
-   strings = backtrace_symbols (array, size);
+   //size = backtrace (array, 10);
+   //strings = backtrace_symbols (array, size);
  
-   printf ("Obtained %zd stack frames.\n", size);
+   //printf ("Obtained %zd stack frames.\n", size);
  
-   for (i = 0; i < size; i++)
-      printf ("%s\n", strings[i]);
+   //for (i = 0; i < size; i++)
+      //printf ("%s\n", strings[i]);
  
-   free (strings);
- }
+   //free (strings);
+ //}
      

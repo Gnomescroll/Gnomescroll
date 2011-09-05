@@ -25,6 +25,7 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 int update_channel(FMOD_CHANNEL* ch, const FMOD_VECTOR pos, const FMOD_VECTOR vel);
 
 const FMOD_VECTOR create_vector(float x, float y, float z);
+void set_vector(FMOD_VECTOR* vec, float x, float y, float z);
 
 int test();
 void print_trace();
