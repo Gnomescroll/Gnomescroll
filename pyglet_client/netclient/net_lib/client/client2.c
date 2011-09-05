@@ -169,7 +169,7 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
-        printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
+        printf("BUG: rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
         return 0; //validates
         return 1; //use this line after fixing bug
     }
@@ -193,11 +193,12 @@ void process_incoming_packets() {
     //FD_ZERO(&read_flags); // Zero the flags ready for using
     //FD_SET(server.socket, &read_flags);
 
-    FD_ZERO(&read_flags); // Zero the flags ready for using
-    FD_SET(server.socket, &read_flags);
+//    FD_ZERO(&read_flags); // Zero the flags ready for using
+//    FD_SET(server.socket, &read_flags);
 
     while(1) {
-
+        FD_ZERO(&read_flags); // Zero the flags ready for using
+        FD_SET(server.socket, &read_flags);
         select_return = select(server.socket+1, &read_flags,(fd_set*)0,(fd_set*)0,&timeout);
         if (select_return < 0) {
             printf("select returned %i\n", select_return);break;

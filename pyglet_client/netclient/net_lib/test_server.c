@@ -36,9 +36,9 @@ int main() {
     //printf("t\n");
     int i=0;
     while(1) {
-        if(i%5 ==0) {
-            printf("tick=%i\n", i);
-        }
+        //if(i%5 ==0) {
+            printf("* ------ tick=%i\n", i);
+       // }
         process_packets();
         broad_cast_packet();
         broad_cast_packet();
