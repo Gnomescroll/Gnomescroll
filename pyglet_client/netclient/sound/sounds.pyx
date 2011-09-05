@@ -49,6 +49,16 @@ def _init(vol, soundfiles):
 
 '''
 Load soundfiles, and save ID for playing later
+
+TODO:
+Config to specify which sounds should be loaded and if 2D and/or 3D
+e.g.
+# fx_name : [filename, 2d, 3d]
+{
+'projectile' : ['warp2.wav', 0, 1],
+'gunshot'    : ['semishoot.wav', 1, 0],
+}
+
 '''
 _snd_pth = './media/sound/wav/'
 _sounds_2d = {}
@@ -88,7 +98,6 @@ def play_2d(snd):
 
 @e
 def play_3d(snd, pos, vel):
-    print "Request to play 3d song %s" % (snd,)
     global _sounds_3d
     x,y,z = pos
     vx,vy,vz = vel
@@ -96,9 +105,7 @@ def play_3d(snd, pos, vel):
     ch_id = -1
     if snd in _sounds_3d:
         snd_id = _sounds_3d[snd]
-        print "snd_id :: %d" % (snd_id,)
         ch_id = play_3d_sound(snd_id, x, y, z, vx, vy, vz)
-        print "Request made, result %d" % (ch_id,)
     else:
         print 'Warning: %s sound file does not exist.' % (snd,)
     return ch_id
