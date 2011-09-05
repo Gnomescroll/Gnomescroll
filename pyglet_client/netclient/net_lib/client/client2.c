@@ -128,7 +128,7 @@ void send_packet2(){
 
     //Simulated packet lose
 /*
-    if(seq%5 == 0) {
+    if(seq%6 == 0) {
         printf("Intentially dropped packet: %i \n", seq);
         return;
     }

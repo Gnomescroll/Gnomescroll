@@ -33,14 +33,20 @@ void init_sequence_numbers(struct Pseq* ps) {
     }
 }
 
+#define UPDATE_MASK 2048-1
+
 void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
     printf("Process acks\n");
     unsigned int n = 1;
     int i,j;
     int index;
     for(i=0;i<32;i++) {
-        index = (seq -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
-        if(index < 0) index+=2048;
+        //index = (seq -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
+        //if(index < 0) index+=2048;
+        index = (seq - i);
+        index &= UPDATE_MASK;
+
+        if(index < 0) { printf("INDEX NEGATIVE\n");} //***
 
         if((flag & n) != 0) {
             //ack that packet
@@ -151,16 +157,38 @@ uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2) {
     int i,index;
 
     uint32_t flag = 0;
+    index = pq2->highest_packet_sequence_number;
+    //index &= UPDATE_MASK;
+
+
     for(i=0;i<32;i++) { //should start at 1
         //index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
         //if(index < 0) index+=2048;
-        index = (q2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
-        if(index < 0) index+=2048;
 
-        if((pq2->seqbuff[index%64].received == 1) && (pq2->seqbuff[index%64].seq == index) ) {
+        //index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
+        //if(index < 0) index+=2048;
+
+        if(pq2->seqbuff[index%64].seq == index) {
+            printf("+%i:%i ", pq2->seqbuff[index%64].seq, index);
             flag |= n;
+        } else {
+            printf("-%i:%i ", pq2->seqbuff[index%64].seq, index);
         }
+        if(i%8 == 0 && i!=0) { printf("\n"); }
+        index--;
+        index &= UPDATE_MASK;
         n*=2;
+    }
+        printf("\n");
+
+    for(i=0;i<64;i++) {
+        //index = (pq2->highest_packet_sequence_number -i) % 2048;
+        //if(index < 0) index+=2048;
+        if(i == pq2->highest_packet_sequence_number%64) {
+            printf("i=%i, seq=%i, rec=%i ***\n",i,pq2->seqbuff[i%64].seq,pq2->seqbuff[i%64].received);
+        } else {
+            printf("i=%i seq=%i, rec=%i \n",i,pq2->seqbuff[i%64].seq,pq2->seqbuff[i%64].received);
+        }
     }
     return flag;
 }
