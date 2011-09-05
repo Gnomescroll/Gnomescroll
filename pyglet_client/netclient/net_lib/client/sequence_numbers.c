@@ -76,24 +76,29 @@ void check_for_dropped_packets(struct Pseq* ps) {
     //if(j<0) j+=64;
     //index = (ps->packet_sequence_number % 2048);
     //if(index < 0) index+= 2048;
-    j = (ps->packet_sequence_number+1) % 64;
+    //j = (ps->packet_sequence_number+1) % 64;
+
 
     for(i=0;i<64;i++) {
         if(i == ps->packet_sequence_number%64){
-        printf("i=%i, seq=%i,ack=%i ***\n",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
+        printf("i=%i, seq=%i,ack=%i ***",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
         } else {
-        printf("i=%i, seq=%i,ack=%i\n",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
+        printf("i=%i, seq=%i,ack=%i",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
         }
+        printf("\n");
     }
+
+    j = (ps->packet_sequence_number+1) % 64;
     for(i=0;i<32;i++) {
 
 
-    if((ps->packet_sequence_buffer[i].seq != -1) && (ps->packet_sequence_buffer[i].ack == 0)) {
-        printf("***Packet Dropped: %i ***\n", ps->packet_sequence_buffer[i].seq);
+    if((ps->packet_sequence_buffer[j].seq != -1) && (ps->packet_sequence_buffer[j].ack == 0)) {
+        printf("***Packet Dropped: %i i=%i ***\n", ps->packet_sequence_buffer[j].seq,j);
         //ps->packet_sequence_buffer[i].ack = 0;
-        ps->packet_sequence_buffer[i].seq = -1;
+        ps->packet_sequence_buffer[j].seq = -1;
     }
     j= (j+1) %64;
+    }
         //if(ps->packet_sequence_buffer[i].seq == index) {
         //    printf("equals\n");
         //}
@@ -106,7 +111,8 @@ void check_for_dropped_packets(struct Pseq* ps) {
     */
         //j = (j+1) %64;
         //index = (index+1)%64;
-    }
+
+    printf("from %i to %i\n", (ps->packet_sequence_number+1) % 64, (ps->packet_sequence_number+1+32) % 64);
     //printf("*/n*/n*/n");
 }
 
