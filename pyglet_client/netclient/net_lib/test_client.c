@@ -37,9 +37,9 @@ int main() {
 
     int i=0;
     while(1) {
-        if(i%5) {
-            printf("ltick=%i\n", i);
-        }
+
+        printf("!!! tick=%i\n", i);
+
         process_incoming_packets();
         send_packet2();
         sleep(1);

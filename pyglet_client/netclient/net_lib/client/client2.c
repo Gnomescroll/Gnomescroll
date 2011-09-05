@@ -117,6 +117,7 @@ UNPACK_uint32_t(&value, header, &n1);
 
     if(server.connected == 0) {
         printf("Cannot send packet, disconnected!\n");
+        return;
         }
     int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 );return;}
@@ -148,15 +149,31 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     //check CRC
+    if(server.connected == 0 && n ==6) { //server connection packet
+        int n1=0;
+        uint16_t client_id;
+        uint16_t channel_id;
+        UNPACK_uint16_t(&channel_id, buff, &n1);
+        UNPACK_uint16_t(&client_id, buff, &n1);
+        printf("Received client id= %i\n",client_id);
+        server.client_id = client_id;
+        server.connected = 1;
+        //server.server_address.sin_addr.s_addr = from->sin_addr.s_addr;
+        //server.server_address.sin_port = from->sin_port;
+        printf("Client id assigned: %i server: %i:%i\n", client_id, htonl(from->sin_addr.s_addr), ntohs( from->sin_port ));
+        return 0;
+    }
+
+
+    /* BUG !!! SERVER IP/PORT is wrong*/
     if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
-        printf("Received rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n,from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
-        return 1; //validates
+        printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
+        return 0; //validates
+        return 1; //use this line after fixing bug
     }
-
-    if(server.connected == 0 && n ==6) {
-        return 1;
+    return 1;
     /*
         int n1=0;
         unsigned short message_id, client_id;
@@ -165,7 +182,7 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
         return 1; /validates
         printf("WTF:validate_packet\n");
     */
-    }
+
     return 0; //does not validate
 }
 
@@ -202,17 +219,9 @@ void process_incoming_packets() {
 }
 
 void process_packet(unsigned char* buff, int n) {
+    if(n==6) return;
     int n1=0;
-    if(n==6 && server.connected == 0) { //server connection packet
-        uint16_t client_id;
-        uint16_t channel_id;
-        UNPACK_uint16_t(&channel_id, buff, &n1);
-        UNPACK_uint16_t(&client_id, buff, &n1);
-        printf("Received client id= %i\n",client_id);
-        server.client_id = client_id;
-        server.connected = 1;
-        return;
-    }
+
 
 
     uint8_t channel_id;
