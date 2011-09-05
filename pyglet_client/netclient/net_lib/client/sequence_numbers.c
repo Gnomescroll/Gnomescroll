@@ -40,13 +40,15 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
     unsigned int n = 1;
     int i,j;
     int index;
+
+    /*
     for(i=0;i<32;i++) {
         //index = (seq -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
         //if(index < 0) index+=2048;
         index = (seq - i);
         index &= UPDATE_MASK;
 
-        if(index < 0) { printf("INDEX NEGATIVE\n");} //***
+        if(index < 0) { printf("INDEX NEGATIVE\n");}
 
         if((flag & n) != 0) {
             //ack that packet
@@ -61,6 +63,39 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
             }
         n*=2;
     }
+    */
+
+    index = seq;
+    //index &= UPDATE_MASK;
+
+
+    for(i=0;i<32;i++) {
+
+        if(flag && n != 0) {
+            printf("+%i:%i ", index,ps->packet_sequence_buffer[index%64].seq);
+        } else {
+            printf("-%i:%i ", index, ps->packet_sequence_buffer[index%64].seq);
+        }
+        if(i%8 == 0 && i!=0) { printf("\n"); }
+
+        index--;
+        index &= UPDATE_MASK;
+        n*=2;
+    }
+        printf("\n");
+
+
+    index = seq;
+    for(i=0;i<32;i++) {
+        if(ps->packet_sequence_buffer[index%64].seq == index && ps->packet_sequence_buffer[index%64].ack == 0 ) {
+            printf("Packet Acked: %i\n", index);
+            ps->packet_sequence_buffer[index%64].ack = 1;
+        }
+        index--;
+        index &= UPDATE_MASK;
+        n*=2;
+    }
+
 }
 
 uint16_t get_next_sequence_number(struct Pseq* ps) {
