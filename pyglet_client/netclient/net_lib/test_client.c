@@ -33,6 +33,8 @@ int main() {
     set_server(127,0,0,1, port);
     attempt_connection_with_server();
 
+    struct Pseq* ps = CLIENT_get_Pseq();
+
     sleep(1);
 
     int i=0;
@@ -42,6 +44,15 @@ int main() {
 
         process_incoming_packets();
         send_packet2();
+        send_packet2();
+    /*
+        send_packet2();
+        send_packet2();
+        send_packet2();
+        send_packet2();
+    */
+
+        check_for_dropped_packets(ps);
         sleep(1);
         i++;
         }

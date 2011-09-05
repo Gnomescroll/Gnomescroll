@@ -24,6 +24,7 @@ struct NetClient {
 
 
 void init_client();
+struct Pseq* CLIENT_get_Pseq();
 
 void send_packet(unsigned char* buffer, int n);
 void send_packet2(); //adding sequence number and acks

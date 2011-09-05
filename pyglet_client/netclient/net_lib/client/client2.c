@@ -10,6 +10,10 @@ fd_set write_flags;
 //sequence number handling
 struct Pseq sq;
 
+struct Pseq* CLIENT_get_Pseq() {
+    return &sq;
+}
+
 unsigned char buffer[1500]; //1500 is max ethernet MTU
 
 void init_client() {
@@ -75,23 +79,6 @@ void send_packet(unsigned char* buff, int n){
     if ( sent_bytes != n) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n );return;}
 }
 
-void send_packet2(){
-    unsigned char header[16];
-    int n1 = 0;
-    int seq = get_next_sequence_number(&sq);
-
-    PACK_uint16_t(server.client_id, header, &n1); //client id
-    PACK_uint8_t(1, header, &n1);  //channel 1
-    PACK_uint16_t(seq, header, &n1); //sequence number
-
-    //ack string
-    PACK_uint16_t(0, header, &n1); //max seq
-    PACK_uint32_t(0, header, &n1); //sequence number
-
-    unsigned int value = 5;
-    PACK_uint32_t(value, header, &n1);
-
-    printf("Sending packet %i\n", seq);
 /*
 
 uint8_t channel_id;
@@ -115,12 +102,40 @@ UNPACK_uint32_t(&acks, header, &n1); //sequence number
 UNPACK_uint32_t(&value, header, &n1);
 */
 
+void send_packet2(){
+
     if(server.connected == 0) {
         printf("Cannot send packet, disconnected!\n");
         return;
         }
+
+    unsigned char header[16];
+    int n1 = 0;
+    int seq = get_next_sequence_number(&sq);
+
+    PACK_uint16_t(server.client_id, header, &n1); //client id
+    PACK_uint8_t(1, header, &n1);  //channel 1
+    PACK_uint16_t(seq, header, &n1); //sequence number
+
+    //ack string
+    PACK_uint16_t(0, header, &n1); //max seq
+    PACK_uint32_t(0, header, &n1); //sequence number
+
+    unsigned int value = 5;
+    PACK_uint32_t(value, header, &n1);
+
+    printf("Sent packet %i\n", seq);
+
+    //Simulated packet lose
+/*
+    if(seq%5 == 0) {
+        printf("Intentially dropped packet: %i \n", seq);
+        return;
+    }
+*/
     int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
-    if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 );return;}
+    if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
+
 }
 
 
@@ -149,6 +164,7 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     //check CRC
+    if(n <= 0) return 1;
     if(server.connected == 0 && n ==6) { //server connection packet
         int n1=0;
         uint16_t client_id;
@@ -165,13 +181,11 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     }
 
 
-    /* BUG !!! SERVER IP/PORT is wrong*/
     if(from->sin_addr.s_addr != server.server_address.sin_addr.s_addr) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
-        printf("BUG: rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
-        return 0; //validates
-        return 1; //use this line after fixing bug
+        printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(server.server_address.sin_addr.s_addr), ntohs(server.server_address.sin_port));
+        return 1;
     }
     return 1;
     /*
@@ -187,15 +201,20 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
 }
 
 void process_incoming_packets() {
-    unsigned int n=0;
+    //unsigned int n=0;
     struct sockaddr_in from;
+    socklen_t fromLength = sizeof( from );
+
+    #if PLATFORM == PLATFORM_WINDOWS
+    typedef int socklen_t;
+    #endif
 
     //FD_ZERO(&read_flags); // Zero the flags ready for using
     //FD_SET(server.socket, &read_flags);
 
 //    FD_ZERO(&read_flags); // Zero the flags ready for using
 //    FD_SET(server.socket, &read_flags);
-
+/*
     while(1) {
         FD_ZERO(&read_flags); // Zero the flags ready for using
         FD_SET(server.socket, &read_flags);
@@ -215,15 +234,33 @@ void process_incoming_packets() {
         }} else {
             break;
         }
-
 }
+*/
+    int bytes_received;
+    while(1) {
+
+        //sockaddr_in from;
+
+        bytes_received = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+
+        if(bytes_received <= 0) {
+            return;
+            }
+        if(validate_packet(buffer, bytes_received, &from)) {
+            //printf("Received %i bytes\n", bytes_received);
+            //unsigned int from_address = ntohl( from.sin_addr.s_addr );
+            //unsigned int from_port = ntohs( from.sin_port );
+            process_packet(buffer, bytes_received);
+        // process received packet
+        }
+    }
+
 }
 
 void process_packet(unsigned char* buff, int n) {
     if(n==6) return;
+
     int n1=0;
-
-
 
     uint8_t channel_id;
     uint16_t client_id;
@@ -244,12 +281,11 @@ void process_packet(unsigned char* buff, int n) {
     UNPACK_uint32_t(&acks, buff, &n1); //sequence number
 
     UNPACK_uint32_t(&value, buff, &n1);
-    printf("value= %i\n", value);
+    //printf("value= %i\n", value);
 
-    printf("---\n");
+    //printf("received packet: sequence number %i from server\n", sequence_number);
     process_acks(&sq, max_seq, acks);
-    printf("---\n");
-    //printf("process_packet: needs to accept ack messages \n");
+    //printf("---\n");
 }
 
 
