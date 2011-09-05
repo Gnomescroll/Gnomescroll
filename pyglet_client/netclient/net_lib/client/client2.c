@@ -126,13 +126,16 @@ void send_packet2(){
 
     printf("Sending packet %i\n", seq);
 
+    //Simulated packet lose
+/*
     if(seq%5 == 0) {
         printf("Intentially dropped packet: %i \n", seq);
         return;
-    } else {
+    }
+*/
         int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
         if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
-    }
+
 }
 
 
@@ -280,10 +283,9 @@ void process_packet(unsigned char* buff, int n) {
     UNPACK_uint32_t(&value, buff, &n1);
     //printf("value= %i\n", value);
 
-    printf("received packet: sequence number %i from server\n", sequence_number);
+    //printf("received packet: sequence number %i from server\n", sequence_number);
     process_acks(&sq, max_seq, acks);
-    printf("---\n");
-    //printf("process_packet: needs to accept ack messages \n");
+    //printf("---\n");
 }
 
 

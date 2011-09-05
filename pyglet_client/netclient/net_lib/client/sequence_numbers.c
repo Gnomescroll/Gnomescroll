@@ -69,6 +69,12 @@ uint16_t get_next_sequence_number(struct Pseq* ps) {
     return ps->packet_sequence_number;
 }
 
+int DROPPED_PACKETS = 0;
+
+int check_dropped_packets() {
+    return DROPPED_PACKETS;
+}
+
 void check_for_dropped_packets(struct Pseq* ps) {
     int i,j;
 /*
@@ -87,6 +93,7 @@ void check_for_dropped_packets(struct Pseq* ps) {
 
     if((ps->packet_sequence_buffer[j].seq != -1) && (ps->packet_sequence_buffer[j].ack == 0)) {
         printf("***Packet Dropped: %i ***\n", ps->packet_sequence_buffer[j].seq);
+        DROPPED_PACKETS++;
         //ps->packet_sequence_buffer[i].ack = 0;
         ps->packet_sequence_buffer[j].seq = -1;
     }
