@@ -70,17 +70,33 @@ uint16_t get_next_sequence_number(struct Pseq* ps) {
 }
 
 void check_for_dropped_packets(struct Pseq* ps) {
-    int i,j;
-    int index;
-    j = (ps->packet_sequence_number%64) - 32;
-    if(j<0) j+=64;
-    index = (ps->packet_sequence_number %2048) -32;
-    if(index < 0) index+= 2048;
-    for(i=0;i<32;i++) {
-        printf("j=%i, index=%i, seq=%i, ack=%i\n",j,index,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
-        if(ps->packet_sequence_buffer[i].seq == index) {
-            printf("equals\n");
+    int i,j; //,j;
+    //int index;
+    //j = (ps->packet_sequence_number%64);
+    //if(j<0) j+=64;
+    //index = (ps->packet_sequence_number % 2048);
+    //if(index < 0) index+= 2048;
+    j = (ps->packet_sequence_number+1) % 64;
+
+    for(i=0;i<64;i++) {
+        if(i == ps->packet_sequence_number%64){
+        printf("i=%i, seq=%i,ack=%i ***\n",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
+        } else {
+        printf("i=%i, seq=%i,ack=%i\n",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
         }
+    }
+    for(i=0;i<32;i++) {
+
+
+    if((ps->packet_sequence_buffer[i].seq != -1) && (ps->packet_sequence_buffer[i].ack == 0)) {
+        printf("***Packet Dropped: %i ***\n", ps->packet_sequence_buffer[i].seq);
+        //ps->packet_sequence_buffer[i].ack = 0;
+        ps->packet_sequence_buffer[i].seq = -1;
+    }
+    j= (j+1) %64;
+        //if(ps->packet_sequence_buffer[i].seq == index) {
+        //    printf("equals\n");
+        //}
         //use tick based
     /*
         if(ps->packet_sequence_buffer[i].seq >=0 && ps->packet_sequence_number - ps->packet_sequence_buffer[i].seq > 32) {
@@ -88,10 +104,8 @@ void check_for_dropped_packets(struct Pseq* ps) {
             ps->packet_sequence_buffer[i].seq = -1;
         }
     */
-        j--;
-        if(j<0) j+=64;
-        index--;
-        if(index < 0) index+= 2048;
+        //j = (j+1) %64;
+        //index = (index+1)%64;
     }
     //printf("*/n*/n*/n");
 }

@@ -43,8 +43,8 @@ int main() {
         printf("* ------ tick=%i\n", i);
 
         process_incoming_packets();
-        check_for_dropped_packets(ps);
         send_packet2();
+        check_for_dropped_packets(ps);
         sleep(1);
         i++;
         }
