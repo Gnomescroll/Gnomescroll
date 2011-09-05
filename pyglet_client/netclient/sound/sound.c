@@ -59,10 +59,12 @@ int _add_channel(FMOD_CHANNEL* ch) {    // to channels array
     for (i=0; i<MAX_CHANNELS; i++) {
         if (channels[i] == NULL) {
             channels[i] = ch;
+            printf("_add_channel :: channel found :: %d\n", i);
             break;
         }
     }
     if (i == MAX_CHANNELS) {
+        printf("_add_channel :: No NULL channels found\n");
         i = -1;
     }
     return i;
@@ -80,7 +82,7 @@ int update_channel(int ch_id, float x, float y, float z, float vx, float vy, flo
         return i;
     }
     FMOD_CHANNEL* ch = channels[ch_id];
-    if (ch != NULL) {
+    if (ch == NULL) {
         const FMOD_VECTOR pos = create_vector(x,y,z);
         const FMOD_VECTOR vel = create_vector(vx,vy,vz);
         i = _update_channel(ch, pos, vel);
@@ -94,12 +96,14 @@ int update_channel(int ch_id, float x, float y, float z, float vx, float vy, flo
 int _add_sound(FMOD_SOUND* snd) {   // to sounds array
     int i;
     for (i=0; i<MAX_SOUNDS; i++) {
-        if (sounds[i] != NULL) {
+        if (sounds[i] == NULL) {
             sounds[i] = snd;
+            printf("_add_sound :: sound found :: %d\n", i);
             break;
         }
     }
     if (i == MAX_SOUNDS) {
+        printf("_add_sound :: No NULL sounds found, reached max :: %d\n", i);
         i = -1;
     }
     return i;
@@ -168,8 +172,10 @@ int load_2d_sound(char *soundfile) {
 
 //Public
 int load_3d_sound(char *soundfile, float mindistance) {
+    printf("load_3d_sound :: request :: %s %f\n", soundfile, mindistance);
     FMOD_SOUND* snd = _load_3d_sound(soundfile, mindistance);
     int i = _add_sound(snd);
+    printf("load_3d_sound :: loaded :: %d\n", i);
     return i;
 }
 
@@ -192,6 +198,7 @@ int play_2d_sound(int snd_id) {
 int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, float vz) {
     int i = -1;
     if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
+        printf("play_3d_sound :: snd_id out of range :: %d\n", snd_id);
         return i;
     }
     FMOD_SOUND* snd = sounds[snd_id];
@@ -201,6 +208,7 @@ int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, flo
         const FMOD_VECTOR vel = create_vector(vx,vy,vz);
         ch = _play_3d_sound(snd, pos, vel);
         i = _add_channel(ch);
+        printf("play_3d_sound :: channel added :: %d\n", i);
     }
     return i;
 }
