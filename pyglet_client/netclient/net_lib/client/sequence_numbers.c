@@ -20,8 +20,11 @@ struct packet_sequencer() {
 //struct packet_sequence packet_sequence_buffer[64];
 //int ps->packet_sequence_number = 0;
 
+#define INIT_V_1 0
+#define INIT_V_2 0
+
 void init_sequence_numbers(struct Pseq* ps) {
-    ps->packet_sequence_number = 33;
+    ps->packet_sequence_number = 0;
     int i;
     for(i=0;i<64;i++) {
         //packet_buffer[i].active = 0;
@@ -33,33 +36,30 @@ void init_sequence_numbers(struct Pseq* ps) {
 void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
     printf("Process acks\n");
     unsigned int n = 1;
-    int i,j,index;
+    int i,j;
+    int index;
     for(i=0;i<32;i++) {
-        index = (seq -i);// % 2048; //seq is id of highest packet server has seen yet
-        if(index < 0) { printf("generate_outgoing_ack_flag: warning! index is negative!\n"); }
+        index = (seq -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
+        if(index < 0) index+=2048;
 
         if(flag & (n != 0)) {
             //ack that packet
-            for(j=0;j<64;j++) { //could use offset
+            j = seq%64;
                 if(ps->packet_sequence_buffer[j].seq == index) {
                     if(ps->packet_sequence_buffer[j].ack == 0) {
                         printf("Packet Acked: %i\n", index);
                     }
                     ps->packet_sequence_buffer[j].ack = 1;
                     //printf("Packet Acked: %i\n", index);
-                    if(j == seq%64) {
-                        printf("j == seq mod 64 \n");
-                    }
-                    break;
                 }
             }
-        }
         n*=2;
     }
 }
 
 uint16_t get_next_sequence_number(struct Pseq* ps) {
     ps->packet_sequence_number += 1;
+    if(ps->packet_sequence_number >= 2048) ps->packet_sequence_number = 0;
     //printf("get_next_sequence_number: seq=%i \n", ps->packet_sequence_number);
     int index = ps->packet_sequence_number%64;
 
@@ -70,13 +70,29 @@ uint16_t get_next_sequence_number(struct Pseq* ps) {
 }
 
 void check_for_dropped_packets(struct Pseq* ps) {
-    int i;
-    for(i=0;i<64;i++) {
+    int i,j;
+    int index;
+    j = (ps->packet_sequence_number%64) - 32;
+    if(j<0) j+=64;
+    index = (ps->packet_sequence_number %2048) -32;
+    if(index < 0) index+= 2048;
+    for(i=0;i<32;i++) {
+        if(ps->packet_sequence_buffer[i].seq == index) {
+            printf("equals\n");
+        }
+        //use tick based
+    /*
         if(ps->packet_sequence_buffer[i].seq >=0 && ps->packet_sequence_number - ps->packet_sequence_buffer[i].seq > 32) {
             printf("Packet %i assumed lost\n", ps->packet_sequence_buffer[i].seq);
             ps->packet_sequence_buffer[i].seq = -1;
         }
+    */
+        j--;
+        if(j<0) j+=64;
+        index--;
+        if(index < 0) index+= 2048;
     }
+    //printf("*/n*/n*/n");
 }
 
 //
@@ -93,7 +109,7 @@ uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2);
 
 void init_sequence_numbers_out(struct Pseq2* pq2) {
     int i;
-    pq2->highest_packet_sequence_number = 33;
+    pq2->highest_packet_sequence_number = INIT_V_2;
     for(i=0;i<64;i++) {
     pq2->seqbuff[i].seq = -1;
     pq2->seqbuff[i].received = 0;
@@ -101,12 +117,13 @@ void init_sequence_numbers_out(struct Pseq2* pq2) {
 }
 
 void set_ack_for_received_packet(struct Pseq2* pq2, int seq) {
-    printf("set_ack_for_received_packet\n");
     int index = seq % 64;
     pq2->seqbuff[index].received = 1;
     if(seq > pq2->highest_packet_sequence_number){
         pq2->highest_packet_sequence_number = seq;
-        printf("new highest sequence number: %i\n",seq);
+        //printf("new high seq: %i\n",seq);
+    } else {
+        //printf("set_ack_for_received_packet\n");
     }
 }
 
@@ -121,8 +138,8 @@ uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2) {
 
     uint32_t flag = 0;
     for(i=0;i<32;i++) { //should start at 1
-        index = pq2->highest_packet_sequence_number -i;// % 2048; //seq is id of highest packet server has seen yet
-        if(index < 0) { printf("generate_outgoing_ack_flag: warning! index is negative!\n"); }
+        index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
+        if(index < 0) index+=2048;
 
         if(pq2->seqbuff[index%64].received == 1) {
             flag |= n;
