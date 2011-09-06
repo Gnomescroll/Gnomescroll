@@ -42,4 +42,5 @@ void process_incoming_packets();
 void process_packet(unsigned char* buffer, int n);
 void process_outgoing_packets();
 
+int decrement_ttl();
 #endif

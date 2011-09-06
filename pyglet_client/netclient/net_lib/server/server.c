@@ -5,6 +5,8 @@
 #define maximum_packet_size 1024
 // SERVER SPECIFIC CONNECTION POOL STUF
 struct ConnectionPool pool;
+struct Socket server_socket;
+
 unsigned int id_counter=0;
 
 
@@ -13,12 +15,9 @@ void init_server(unsigned short port) {
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
     pool.n_connections = 0;
 
-    struct Socket* s = create_socket(0, port);
-    if(s==NULL) {
-        printf("Socket is NULL: init_server failed\n"); return;
-    }
-    pool.socket =  *s;
-    if(s != NULL) free(s);
+    struct Socket*s = create_socket(local_port);
+    server_socket = *s;
+    free(s);
 
     printf("Server Connection Pool Ready\n");
 }
@@ -33,20 +32,15 @@ int accept_connection(struct sockaddr_in from) {
         if(pool.connection[i]==NULL) {
             pool.connection[i] = p;
             p->id = i;
-            p->ttl = 100;
+            p->ttl = p->ttl_max;
             //send client his id
             printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
             return i;
         }
     }
-    if(p->id == 0) {
-        printf("Could not open client connection: connection pool full!\n");
-        free(p);
-        return -1;
-    }
+    if(p->id == 0) {printf("Could not open client connection: connection pool full!\n");free(p);return -1;}
     printf("Accept connection: error, should never reach this line!\n");
-    return -2;
-    //send client client id
+    return -1;
 }
 
 //min/max MTU is 576
@@ -54,19 +48,6 @@ int accept_connection(struct sockaddr_in from) {
 
 inline int error_check_packet(unsigned char* data, int n) {
     return 1;
-}
-
-
-int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size) {
-
-    int sent_bytes = sendto(socket->socket,(const char*)packet_data, packet_size,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
-
-    if ( sent_bytes != packet_size )
-    {
-        printf( "failed to send packet: return value = %d\n", sent_bytes );
-        return 0;
-    }
-    return sent_bytes;
 }
 
 void send_to_client(int client_id, unsigned char* buffer, int n) {
@@ -218,8 +199,8 @@ void broad_cast_packet() {
         PACK_uint16_t(seq, header, &n1); //sequence number
 
         //ack string
-        PACK_uint16_t(get_sequence_number(&p->sq2), header, &n1); //max seq
-        PACK_uint32_t(generate_outgoing_ack_flag(&p->sq2), header, &n1); //sequence number
+        PACK_uint16_t(get_sequence_number(p), header, &n1); //max seq
+        PACK_uint32_t(generate_outgoing_ack_flag(p), header, &n1); //sequence number
 
         unsigned int value = 5;
         PACK_uint32_t(value, header, &n1);

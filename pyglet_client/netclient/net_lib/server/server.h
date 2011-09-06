@@ -40,20 +40,8 @@ struct NetPeer {
 struct ConnectionPool {
     int n_connections;
     struct NetPeer* connection[HARD_MAX_CONNECTIONS];
-
-    struct Socket socket;
-    struct NetPeer netPeer;
 };
 
-/*
-struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
-*/
-
-//port=0 to get any port
-struct Socket* create_socket(uint32_t IP, uint16_t  port);
-
-int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size);
 void broad_cast_packet(); //every 30 ms
 
 void receive_packets(struct Socket* socket);

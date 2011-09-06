@@ -189,3 +189,10 @@ void send_agent_state_packet() {
 void process_outgoing_packets() {
     return;
 }
+
+int decrement_ttl() {
+    NCserver.ttl -= 1;
+    if(NCserver.ttl <= 0) {
+
+    }
+}
