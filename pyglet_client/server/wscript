@@ -114,7 +114,8 @@ def build(bld):
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_timer.pyx',
                 'c_lib/time/physics_timer.c',],
-        use=common_libraries + time_lib + ['c_lib'],
+        use=common_libraries + time_lib,
+        lib=time_lib,
         target='c_lib.c_lib_timer')
 
     bld.add_post_fun(install_in_ext)

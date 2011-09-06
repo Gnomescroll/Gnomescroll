@@ -169,7 +169,7 @@ def build(bld):
     OS = platform.system()
 
     common_libraries = ['GL', 'SDL', 'SDL_image']
-    sound_libraries = ['FMOD']
+    sound_libraries = ['fmodex']
 
     time_lib = ['rt']
     if OS == "Darwin":
@@ -254,8 +254,8 @@ def build(bld):
     bld(features='c cshlib',
         source=['sound/sound.c'],
 
-        use=['fmodex'],
-        lib=['fmodex'],
+        use=sound_libraries,
+        lib=sound_libraries,
         libpath=['./sound/api/lib/'],
 
         includes=['./sound/api/inc/', './sound'],
