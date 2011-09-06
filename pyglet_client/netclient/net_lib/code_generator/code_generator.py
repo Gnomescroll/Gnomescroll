@@ -5,6 +5,10 @@ channels = [
 ]
 '''
 
+def prefix():
+    prefix = "./out/"
+    return prefix
+
 def run():
     struct_list = []
     f = open('./messages/test', 'r')
@@ -42,7 +46,7 @@ def output_struct_def(struct_list):
         x+= s.struct_def()
     #x += "\n"
     x = header_include_guard(x, "net_lib_mgen_struct_def")
-    struct_def = open("./mgen/struct_def.h", "w")
+    struct_def = open(prefix()+"struct_def.h", "w")
     struct_def.write(x)
     print x
 
@@ -54,7 +58,7 @@ def output_packing_def(struct_list):
         x+=s.unpacking_def()
     #x += "\n"
     x = header_include_guard(x, "net_lib_mgen_struct_packing")
-    struck_packing = open("./mgen/struct_packing.h", "w")
+    struck_packing = open(prefix()+"struct_packing.h", "w")
     struck_packing.write(x)
     print x
 
@@ -67,7 +71,7 @@ def output_size_def(struct_list):
     x += "}\n"
     #x += "\n"
     x = header_include_guard(x, "net_lib_mgen_size")
-    struck_size = open("./mgen/size.h", "w")
+    struck_size = open(prefix()+"size.h", "w")
     struck_size.write(x)
     print x
 
@@ -78,7 +82,7 @@ def output_transmission_template(struct_list):
     x += "\n"
     #x += "\n"
     x = header_include_guard(x, "net_lib_mgen_size")
-    struck_size = open("./mgen/template.h", "w")
+    struck_size = open(prefix()+"template.h", "w")
     struck_size.write(x)
     print x
 

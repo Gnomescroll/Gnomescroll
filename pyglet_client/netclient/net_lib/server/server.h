@@ -1,45 +1,18 @@
 #ifndef net_lib_server_h
 #define net_lib_server_h
 
-    #define PLATFORM_WINDOWS  1
-    #define PLATFORM_MAC      2
-    #define PLATFORM_UNIX     3
-
-    #if defined(_WIN32)
-    #define PLATFORM PLATFORM_WINDOWS
-    #elif defined(__APPLE__)
-    #define PLATFORM PLATFORM_MAC
-    #else
-    #define PLATFORM PLATFORM_UNIX
-    #endif
-
-    #if PLATFORM == PLATFORM_WINDOWS
-
-        #include <winsock2.h>
-
-    #elif PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
-
-        #include <sys/socket.h>
-        #include <netinet/in.h>
-        #include <fcntl.h>
-
-    #endif
-
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <errno.h>
 
 #include <sys/types.h> //?
 #include <sys/socket.h> //?
 
-#include "../net_lib_common.h"
+#include "../common/net_lib_common.h"
+#include "../common/net_packets.h"
+#include "../common/sequence_numbers.h"
 
-#include "../net_packets.h"
+#include "../common/net_peer.h"
 
-#include "../client/sequence_numbers.h"
-
+/*
 struct Socket {
     uint32_t ip;
     uint16_t port;
@@ -61,6 +34,7 @@ struct NetPeer {
 
     struct Pseq2 sq2;
 };
+*/
 
 #define HARD_MAX_CONNECTIONS 1024
 struct ConnectionPool {
@@ -68,10 +42,14 @@ struct ConnectionPool {
     struct NetPeer* connection[HARD_MAX_CONNECTIONS];
 
     struct Socket socket;
+    struct NetPeer netPeer;
 };
 
+/*
 struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
 struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
+*/
+
 //port=0 to get any port
 struct Socket* create_socket(uint32_t IP, uint16_t  port);
 

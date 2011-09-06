@@ -1,104 +1,61 @@
 
 #include "server.h"
 
-//uint32_t
-//uint16_t
-
-//ip in a.b.c.d format
-
-
-//pass in zero to get any port
-
 
 #define maximum_packet_size 1024
 // SERVER SPECIFIC CONNECTION POOL STUF
 struct ConnectionPool pool;
 unsigned int id_counter=0;
 
-struct Socket* create_socket(uint32_t IP, uint16_t port) {
-    //create socket
-    struct Socket* s = (struct Socket*) malloc(sizeof(struct Socket));
-    if(s==NULL) { printf("Malloc of socket failed.  Out of memory? \n"); return NULL;}
 
-    s->socket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
-    if ( s->socket <= 0 )
-    {
-        printf( "failed to create socket\n" );
-        free(s);
-        return NULL;
+void init_server(unsigned short port) {
+    int i;
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
+    pool.n_connections = 0;
+
+    struct Socket* s = create_socket(0, port);
+    if(s==NULL) {
+        printf("Socket is NULL: init_server failed\n"); return;
     }
-    //bind socket
+    pool.socket =  *s;
+    if(s != NULL) free(s);
 
-    //sockaddr_in address;
-    s->address.sin_family = AF_INET;
-    s->address.sin_addr.s_addr = INADDR_ANY;
-    s->address.sin_port = htons( (unsigned short) port ); //set port 0 for any port
+    printf("Server Connection Pool Ready\n");
+}
 
-    s->port = port;
-    //s->ip =  ?? do we know public IP?
+int accept_connection(struct sockaddr_in from) {
 
-    if ( bind( s->socket, (const struct sockaddr*) &s->address, sizeof(struct sockaddr_in) ) < 0 )
-    {
-        printf( "failed to bind socket\n" );
-        free(s);
-        return NULL;
+    struct NetPeer* p ;
+    p = create_raw_net_peer(from);
+
+    int i;
+    for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
+        if(pool.connection[i]==NULL) {
+            pool.connection[i] = p;
+            p->id = i;
+            p->ttl = 100;
+            //send client his id
+            printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
+            return i;
+        }
     }
-    printf("Socket bound to port %i\n", port);
-
-    //set socket to non-blocking
-
-    #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
-
-        int nonBlocking = 1;
-        if ( fcntl( s->socket, F_SETFL, O_NONBLOCK, nonBlocking ) == -1 )
-        {
-            printf( "failed to set non-blocking socket\n" );
-            free(s);
-            return NULL;
-        }
-
-    #elif PLATFORM == PLATFORM_WINDOWS
-
-        DWORD nonBlocking = 1;
-        if ( ioctlsocket( s->socket, FIONBIO, &nonBlocking ) != 0 )
-        {
-            printf( "failed to set non-blocking socket\n" );
-            free(s);
-            return NULL;
-        }
-
-    #endif
-    return s;
+    if(p->id == 0) {
+        printf("Could not open client connection: connection pool full!\n");
+        free(p);
+        return -1;
+    }
+    printf("Accept connection: error, should never reach this line!\n");
+    return -2;
+    //send client client id
 }
 
-struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
-    struct NetPeer* s = (struct NetPeer*) malloc(sizeof(struct NetPeer));
-    s->id = 0;
+//min/max MTU is 576
+//1500 is max MTU for ethernet
 
-    unsigned int destination_address = ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
-
-    s->address.sin_family = AF_INET;
-    s->address.sin_addr.s_addr = htonl( destination_address );
-    s->address.sin_port = htons( port );
-
-    s->ip = htonl( destination_address );
-    s->port = htons( port );
-
-    init_sequence_numbers_out(&s->sq2); //init
-    return s;
+inline int error_check_packet(unsigned char* data, int n) {
+    return 1;
 }
 
-struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
-    struct NetPeer* s = (struct NetPeer*) malloc(sizeof(struct NetPeer));
-    s->id = 0;
-    s->address = address;
-
-    s->ip = htonl(address.sin_addr.s_addr);
-    s->port = htons( address.sin_port );
-
-    init_sequence_numbers_out(&s->sq2); //init
-    return s;
-}
 
 int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_data, int packet_size) {
 
@@ -112,6 +69,7 @@ int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_
     return sent_bytes;
 }
 
+/*
 void receive_packets(struct Socket* s) {
     printf("Listening on port: %i\n", ntohl(s->port));
 
@@ -168,55 +126,7 @@ void receive_packets(struct Socket* s) {
         // process received packet
     }
 }
-
-
-void init_server(unsigned short port) {
-    int i;
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
-    pool.n_connections = 0;
-
-    struct Socket* s = create_socket(0, port);
-    if(s==NULL) {
-        printf("Socket is NULL: init_server failed\n"); return;
-    }
-    pool.socket =  *s;
-    if(s != NULL) free(s);
-
-    printf("Server Connection Pool Ready\n");
-}
-
-int accept_connection(struct sockaddr_in from) {
-
-    struct NetPeer* p ;
-    p = create_raw_net_peer(from);
-
-    int i;
-    for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool.connection[i]==NULL) {
-            pool.connection[i] = p;
-            p->id = i;
-            p->ttl = 100;
-            //send client his id
-            printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
-            return i;
-        }
-    }
-    if(p->id == 0) {
-        printf("Could not open client connection: connection pool full!\n");
-        free(p);
-        return -1;
-    }
-    printf("Accept connection: error, should never reach this line!\n");
-    return -2;
-    //send client client id
-}
-
-//min/max MTU is 576
-//1500 is max MTU for ethernet
-
-inline int error_check_packet(unsigned char* data, int n) {
-    return 1;
-}
+*/
 
 void send_to_client(int client_id, unsigned char* buffer, int n) {
     struct NetPeer* p;
@@ -351,32 +261,6 @@ void process_packets() {
     #endif
 
     socklen_t fromLength = sizeof( from );
-
-/*
-    FD_ZERO(&read_flags); // Zero the flags ready for using
-    FD_SET(pool.socket.socket, &read_flags);
-
-    int select_return;
-    while(1) {
-
-        select_return = select(pool.socket.socket+1, &read_flags,(fd_set*)0,(fd_set*)0,&timeout);
-        if (select_return < 0) {
-            printf("select returned %i\n", select_return);break;
-        }
-
-        if (FD_ISSET(pool.socket.socket, &read_flags)) {
-            //printf("Incoming Packet\n");
-            FD_CLR(pool.socket.socket, &read_flags);
-            //get packets
-            n = recvfrom(pool.socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
-            //printf("Incoming Packet: Received %i bytes\n", n);
-            process_packet(buffer, n, &from);
-        } else {
-            break;
-        }
-    }
-*/
-
 
 
     int bytes_received;

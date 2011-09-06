@@ -1,6 +1,8 @@
 #ifndef net_lib_common_h
 #define net_lib_common_h
 
+
+
 //if PLATFORM == PLATFORM_WINDOWS
 //pragma comment( lib, "wsock32.lib" )
 //endif
@@ -29,6 +31,9 @@
 
     #endif
 
+    #include <stdint.h>
+    #include <stdio.h>
+    #include <stdlib.h>
 
     inline void shutdown_net_lib()
     {

@@ -15,38 +15,23 @@ void receive_packets(struct* Socket socket);
 
 int main() {
 
-    //struct Socket* s;
-    //s = create_socket(0, 9090);
+    init_net_lib();
 
-/*
-    uint8_t d = 5;
-    int n= 0;
-    unsigned char buf[500];
-    printf("i= %i \n", d);
-    PACK_uint8_t(1, buf, &n);
-    PACK_uint8_t(2, buf, &n);
-    n=0;
-    UNPACK_uint8_t(&d, buf, &n);
-    printf("i= %i \n", d);
-    UNPACK_uint8_t(&d, buf, &n);
-    printf("i= %i \n", d);
-*/
     unsigned short port = 9999;
     init_server(port);
-    //printf("t\n");
+
     int i=0;
     while(1) {
-        //if(i%5 ==0) {
-            printf("* ------ tick=%i\n", i);
-       // }
+
+        printf("* ------ tick=%i\n", i);
+
         process_packets();
         broad_cast_packet();
         //broad_cast_packet();
         decrement_ttl();
         sleep(1);
         i++;
-        }
-    //receive_packets(s);
+    }
 
     return 0;
 }
