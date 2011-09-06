@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "net_peer.h"
 
 //outgoing
+/*
 struct packet_sequence {
     int seq;
     int ack;
@@ -14,28 +16,10 @@ struct packet_sequence {
     //int tick; //better than sequence for determining dropped packets
 };
 
-
-struct Pseq {
-    struct packet_sequence packet_sequence_buffer[64];
-    int packet_sequence_number;
-};
-
-//incoming/response to outgoing
-/*
 struct packet_sequence2 {
     int seq;
     int received;
 };
-
-struct Pseq2 {
-    struct packet_sequence2 seqbuff[64];
-    int highest_packet_sequence_number;
-};
-
-void init_sequence_numbers_out(struct Pseq2* pq2);
-uint16_t get_sequence_number(struct Pseq2* pq2);
-void set_ack_for_received_packet(struct Pseq2* pq2, int seq);
-uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2);
 */
 
 void init_sequencer(struct NetPeer* np);
@@ -53,3 +37,27 @@ uint16_t get_sequence_number(struct NetPeer* np);
 uint32_t generate_outgoing_ack_flag(struct NetPeer* np);
 
 #endif
+
+//incoming/response to outgoing
+/*
+ *
+struct Pseq {
+    struct packet_sequence packet_sequence_buffer[64];
+    int packet_sequence_number;
+};
+*
+struct packet_sequence2 {
+    int seq;
+    int received;
+};
+
+struct Pseq2 {
+    struct packet_sequence2 seqbuff[64];
+    int highest_packet_sequence_number;
+};
+
+void init_sequence_numbers_out(struct Pseq2* pq2);
+uint16_t get_sequence_number(struct Pseq2* pq2);
+void set_ack_for_received_packet(struct Pseq2* pq2, int seq);
+uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2);
+*/

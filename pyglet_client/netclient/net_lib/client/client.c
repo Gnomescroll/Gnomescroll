@@ -1,7 +1,7 @@
 #include "client.h"
 
 
-struct NetClient NPserver;
+struct NetPeer NPserver;
 struct Socket client_socket;
 
 //struct timeval timeout;
@@ -15,7 +15,7 @@ unsigned char buffer[1500]; //1500 is max ethernet MTU
 void init_client() {
 
     //init_sequence_numbers(&NPserver); /// FIX
-    init_sequencer(&NPserver)
+    init_sequencer(&NPserver);
     int local_port = 6967;
     struct Socket*s = create_socket(local_port);
     client_socket = *s;
@@ -29,18 +29,19 @@ struct NetPeer* CLIENT_get_NP() {
 }
 
 void set_server(int a, int b, int c, int d, unsigned short port) {
-    NPserver.server_ip =  ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
-    NPserver.server_port = port;
+    NPserver.ip =  ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
+    NPserver.port = port;
 
     struct NetPeer* p = create_net_peer_by_remote_IP(a,b,c,d,port);
     NPserver = *p;
     free(p);
+}
 
 void send_packet(unsigned char* buff, int n){
     if(NPserver.connected == 0) {
         printf("Cannot send packet, disconnected!\n");
         }
-    int sent_bytes = sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n );return;}
 }
 
@@ -76,7 +77,7 @@ void send_packet2(){
         return;
     }
 */
-    int sent_bytes = sendto( client_socket.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto( client_socket.socket, (const char*)header, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
 }
@@ -88,7 +89,7 @@ void attempt_connection_with_server() {
     PACK_uint16_t(65535, buff, &n);
     PACK_uint8_t(255, buff, &n);
     n=6; //must be 6 bytes
-    sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     printf("Client id requested\n");
 }
 
@@ -111,10 +112,10 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     }
 
 
-    if(from->sin_addr.s_addr != NPserver.server_address.sin_addr.s_addr) {
+    if(from->sin_addr.s_addr != NPserver.address.sin_addr.s_addr) {
         unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
-        printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(NPserver.server_address.sin_addr.s_addr), ntohs(NPserver.server_address.sin_port));
+        printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(NPserver.address.sin_addr.s_addr), ntohs(NPserver.address.sin_port));
         return 1;
     }
     return 1;

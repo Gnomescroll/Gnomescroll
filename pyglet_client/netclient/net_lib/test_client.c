@@ -5,10 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "client/client.h"
 #include "common/net_packets.h"
 #include "common/sequencer.h"
-#include "client/client.c"
 
+//c body includes
+#include "common/sequencer.c"
+#include "common/net_peer.c"
+#include "client/client.c"
 
 int main() {
 
@@ -18,7 +22,7 @@ int main() {
     set_server(127,0,0,1, port);
     attempt_connection_with_server();
 
-    struct NetPeer np = CLIENT_get_NP();
+    struct NetPeer* np= CLIENT_get_NP();
     sleep(1);
 
     int i=0;

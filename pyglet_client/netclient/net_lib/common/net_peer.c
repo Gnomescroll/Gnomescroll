@@ -19,8 +19,9 @@ struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigne
     s->port = htons( port );
 
     s->ttl_max = TTL_MAX_DEFAULT;
-    s->ttl = TTL_MAX_DEFALT;
+    s->ttl = TTL_MAX_DEFAULT;
 
+    init_sequencer(s);
 ///    init_sequence_numbers_out(&s->sq2); //init
 ///    init_sequence_numbers(&sq);
     return s;
@@ -29,17 +30,17 @@ struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigne
 //struct NetPeer* create_raw_net_peer(struct sockaddr_in address) {
 struct NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
     struct NetPeer* s = (struct NetPeer*) malloc(sizeof(struct NetPeer));
-    s->id = 0;
+    s->client_id = 65535;
     s->address = address;
 
     s->ip = htonl(address.sin_addr.s_addr);
     s->port = htons( address.sin_port );
 
     s->ttl_max = TTL_MAX_DEFAULT;
-    s->ttl = TTL_MAX_DEFALT;
+    s->ttl = TTL_MAX_DEFAULT;
 
-    init_sequence_numbers_out(&s->sq2); //init
-
+    //init_sequence_numbers_out(s); //init
+    init_sequencer(s);
     return s;
 }
 
