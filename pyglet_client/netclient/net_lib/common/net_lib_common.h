@@ -35,6 +35,8 @@
     #include <stdio.h>
     #include <stdlib.h>
 
+    #include "type_pack.h"
+
     inline void shutdown_net_lib()
     {
         #if PLATFORM == PLATFORM_WINDOWS

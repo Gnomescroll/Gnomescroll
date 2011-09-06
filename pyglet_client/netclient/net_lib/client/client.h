@@ -1,11 +1,16 @@
 #ifndef net_lib_client2_h
 #define net_lib_client2_h
 
-#include "../common/net_lib_common.h"
 
+/*
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+*/
+
+#include "../common/net_lib_common.h"
+#include "sequencer.h"
+#include "netpeer.h"
 
 struct NetClient {
     uint16_t client_id;
@@ -24,7 +29,7 @@ struct NetClient {
 
 
 void init_client();
-struct Pseq* CLIENT_get_Pseq();
+struct NetClient* CLIENT_get_NC();
 
 void send_packet(unsigned char* buffer, int n);
 void send_packet2(); //adding sequence number and acks
