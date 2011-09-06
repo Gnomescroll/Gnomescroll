@@ -1,11 +1,12 @@
 
-#include "net_packets.h"
 #include <unistd.h>
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "common/net_packets.h"
+#include "common/sequencer.h"
 #include "client/client.c"
 
 
@@ -17,8 +18,7 @@ int main() {
     set_server(127,0,0,1, port);
     attempt_connection_with_server();
 
-    struct Pseq* ps = CLIENT_get_Pseq();
-
+    struct NetPeer np = CLIENT_get_NP();
     sleep(1);
 
     int i=0;
@@ -29,7 +29,7 @@ int main() {
         process_incoming_packets();
         send_packet2();
 
-        check_for_dropped_packets(ps);
+        check_for_dropped_packets(np);
         sleep(1);
         i++;
         }

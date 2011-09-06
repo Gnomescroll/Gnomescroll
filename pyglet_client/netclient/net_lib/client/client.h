@@ -9,9 +9,10 @@
 */
 
 #include "../common/net_lib_common.h"
-#include "sequencer.h"
-#include "netpeer.h"
+#include "../common/sequencer.h"
+#include "../common/net_peer.h"
 
+/*
 struct NetClient {
     uint16_t client_id;
     int ttl; //for connection
@@ -26,10 +27,10 @@ struct NetClient {
     uint32_t server_ip;
     uint16_t server_port;
 };
-
+*/
 
 void init_client();
-struct NetClient* CLIENT_get_NC();
+struct NetPeer* CLIENT_get_NP();
 
 void send_packet(unsigned char* buffer, int n);
 void send_packet2(); //adding sequence number and acks

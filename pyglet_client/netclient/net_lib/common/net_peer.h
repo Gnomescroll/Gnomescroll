@@ -44,6 +44,7 @@ struct NetPeer {
 
 struct Socket* create_socket(uint16_t port);
 
-struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port,unsigned short local_port)
-struct NetPeer* create_net_peer_from_address(struct sockaddr_in address)
-#end
+struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port,unsigned short local_port);
+struct NetPeer* create_net_peer_from_address(struct sockaddr_in address);
+
+#endif
