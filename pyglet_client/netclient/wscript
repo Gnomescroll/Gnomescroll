@@ -252,11 +252,7 @@ def build(bld):
 
     # sound
     bld(features='c cshlib',
-        source=[
-            #'sound/player_sounds.c',
-            #'sound/projectile_sounds.c',
-            'sound/sound.c'
-        ],
+        source=['sound/sound.c'],
 
         use=['fmodex'],
         lib=['fmodex'],
@@ -268,7 +264,7 @@ def build(bld):
         target='csound'
     )
 
-    bld(features='c cshlib pyext',      #cython part
+    bld(features='c cshlib pyext',      #cython
         source=['sound/sounds.pyx'],
         use=['csound'],
         target='sound.sounds')
