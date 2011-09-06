@@ -138,6 +138,16 @@ float s_buffer[6*(4*3)];
 void print_vector(struct Vector * v) {
     printf("%f, %f, %f \n", v->x, v->y, v->z);
 }
+
+
+
+
+/*
+ *  Client only
+ */
+
+#ifdef DC_CLIENT
+
 /*
 void t_draw_cube() {
     glColor3ub(0,0,255);
@@ -325,5 +335,6 @@ void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_
 
 }
 
+#endif
 
 
