@@ -23,30 +23,6 @@ void process_acks(struct Pseq* ps, unsigned short seq, unsigned int flag) {
     int i;
     int index;
 
-    /*
-    for(i=0;i<32;i++) {
-        //index = (seq -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
-        //if(index < 0) index+=2048;
-        index = (seq - i);
-        index &= UPDATE_MASK;
-
-        if(index < 0) { printf("INDEX NEGATIVE\n");}
-
-        if((flag & n) != 0) {
-            //ack that packet
-            j = seq%64;
-                if(ps->packet_sequence_buffer[j].seq == index) {
-                    if(ps->packet_sequence_buffer[j].ack == 0) {
-                        printf("Packet Acked: %i\n", index);
-                    }
-                    ps->packet_sequence_buffer[j].ack = 1;
-                    //printf("Packet Acked: %i\n", index);
-                }
-            }
-        n*=2;
-    }
-    */
-
     index = seq;
     //index &= UPDATE_MASK;
 
@@ -114,7 +90,17 @@ int check_dropped_packets() {
 
 void check_for_dropped_packets(struct Pseq* ps) {
     int i,j;
-/*
+    j = (ps->packet_sequence_number+1) % 64;
+    for(i=0;i<32;i++) {
+        if((ps->packet_sequence_buffer[j].seq != -1) && (ps->packet_sequence_buffer[j].ack == 0)) {
+            printf("***Packet Dropped: %i ***\n", ps->packet_sequence_buffer[j].seq);
+            DROPPED_PACKETS++;
+            //ps->packet_sequence_buffer[i].ack = 0;
+            ps->packet_sequence_buffer[j].seq = -1;
+        }
+        j= (j+1) %64;
+    }
+    /*
     for(i=0;i<64;i++) {
         if(i == ps->packet_sequence_number%64){
         printf("i=%i, seq=%i,ack=%i ***",i,ps->packet_sequence_buffer[i].seq,ps->packet_sequence_buffer[i].ack);
@@ -123,35 +109,10 @@ void check_for_dropped_packets(struct Pseq* ps) {
         }
         printf("\n");
     }
-*/
-    j = (ps->packet_sequence_number+1) % 64;
-    for(i=0;i<32;i++) {
-
-
-    if((ps->packet_sequence_buffer[j].seq != -1) && (ps->packet_sequence_buffer[j].ack == 0)) {
-        printf("***Packet Dropped: %i ***\n", ps->packet_sequence_buffer[j].seq);
-        DROPPED_PACKETS++;
-        //ps->packet_sequence_buffer[i].ack = 0;
-        ps->packet_sequence_buffer[j].seq = -1;
-    }
-    j= (j+1) %64;
-    }
-
-    //printf("from %i to %i\n", (ps->packet_sequence_number+1) % 64, (ps->packet_sequence_number+1+32) % 64);
-
+    */
 }
 
 //
-
-/*
-struct Pseq2 {
-    struct packet_sequence2 packet_sequence_buffer[64];
-    int highest_packet_sequence_number;
-};
-
-void set_ack_for_received_packet(struct Pseq2* pq2);
-uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2);
-*/
 
 void init_sequence_numbers_out(struct Pseq2* pq2) {
     int i;
@@ -166,12 +127,12 @@ void set_ack_for_received_packet(struct Pseq2* pq2, int seq) {
     int index = seq % 64;
     pq2->seqbuff[index].received = 1;
     pq2->seqbuff[index].seq = seq;
-/*
+    /*
     if(seq > pq2->highest_packet_sequence_number){
         pq2->highest_packet_sequence_number = seq;
         //printf("new high seq: %i\n",seq);
     }
-*/
+    */
     if( (seq > pq2->highest_packet_sequence_number) || ((seq < 64) && (pq2->highest_packet_sequence_number > 1984))) {
         pq2->highest_packet_sequence_number = seq;
     }
@@ -190,14 +151,7 @@ uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2) {
     index = pq2->highest_packet_sequence_number;
     //index &= UPDATE_MASK;
 
-
-    for(i=0;i<32;i++) { //should start at 1
-        //index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
-        //if(index < 0) index+=2048;
-
-        //index = (pq2->highest_packet_sequence_number -i) % 2048;// % 2048; //seq is id of highest packet server has seen yet
-        //if(index < 0) index+=2048;
-
+    for(i=0;i<32;i++) {
         if(pq2->seqbuff[index%64].seq == index) {
             printf("+%i:%i ", pq2->seqbuff[index%64].seq, index);
             flag |= n;
@@ -209,16 +163,27 @@ uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2) {
         index &= UPDATE_MASK;
         n*=2;
     }
+
+    /*
+    for(i=0;i<32;i++) {
+        if(pq2->seqbuff[index%64].seq == index) {
+            printf("+%i:%i ", pq2->seqbuff[index%64].seq, index);
+        } else {
+            printf("-%i:%i ", pq2->seqbuff[index%64].seq, index);
+        }
+        if(i%8 == 0 && i!=0) { printf("\n"); }
+        index--;
+        index &= UPDATE_MASK;
+    }
         printf("\n");
 
     for(i=0;i<64;i++) {
-        //index = (pq2->highest_packet_sequence_number -i) % 2048;
-        //if(index < 0) index+=2048;
         if(i == pq2->highest_packet_sequence_number%64) {
             printf("i=%i, seq=%i, rec=%i ***\n",i,pq2->seqbuff[i%64].seq,pq2->seqbuff[i%64].received);
         } else {
             printf("i=%i seq=%i, rec=%i \n",i,pq2->seqbuff[i%64].seq,pq2->seqbuff[i%64].received);
         }
     }
+    */
     return flag;
 }
