@@ -32,9 +32,8 @@ int main() {
 
         process_incoming_packets();
         send_packet2();
-        send_packet2();
-
         check_for_dropped_packets(np);
+        decrement_ttl();
         sleep(1);
         i++;
         }

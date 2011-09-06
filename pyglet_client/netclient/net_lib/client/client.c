@@ -151,7 +151,7 @@ void process_incoming_packets() {
 
 void process_packet(unsigned char* buff, int n) {
     if(n==6) return;
-
+    NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
     int n1=0;
 
     uint8_t channel_id;
@@ -194,6 +194,9 @@ void process_outgoing_packets() {
 int decrement_ttl() {
     NPserver.ttl -= 1;
     if(NPserver.ttl <= 0) {
-
+        NPserver.connected = 0;
+        printf("Connection to server timed out!\n");
+        return 1;
     }
+    return 0;
 }

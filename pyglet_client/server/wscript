@@ -35,7 +35,7 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall','-D DFCLIENT'] # use '-O2' or '-O3' in distro build
 
     OS = platform.system()
     conf.env.os = OS
@@ -113,7 +113,7 @@ def build(bld):
 
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_timer.pyx',
-                'c_lib/timer/physics_timer.c',],
+                'c_lib/time/physics_timer.c',],
         use=common_libraries + time_lib,
         target='c_lib.c_lib_timer')
 
