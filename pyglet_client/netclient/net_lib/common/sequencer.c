@@ -29,26 +29,18 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
     int i;
     int index;
 
-    index = seq;
     //index &= UPDATE_MASK;
 
-
+    /*
+    n = 1;     index = seq;
     for(i=0;i<32;i++) {
-
-        if((flag & n) != 0) {
-            printf("+%i:%i ", index,np->packet_sequence_buffer[index%64].seq);
-        } else {
-            printf("-%i:%i ", index, np->packet_sequence_buffer[index%64].seq);
-        }
+        if((flag & n) != 0) {printf("+%i:%i ", index,np->packet_sequence_buffer[index%64].seq);}
+        else { printf("-%i:%i ", index, np->packet_sequence_buffer[index%64].seq);}
         if(i%8 == 0 && i!=0) { printf("\n"); }
-
-        index--;
-        index &= UPDATE_MASK;
-        n*=2;
+        index--;index &= UPDATE_MASK;n*=2;
     }
-        printf("\n");
-
-
+    printf("\n");
+    */
     index = seq;
     n = 1;
     for(i=0;i<32;i++) {
@@ -77,12 +69,8 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
 
 uint16_t get_next_sequence_number(struct NetPeer* np) {
     np->packet_sequence_number = (np->packet_sequence_number+1)%2048;
-    //if(np->packet_sequence_number >= 2048) np->packet_sequence_number = 0;
-
-    //printf("get_next_sequence_number: seq=%i \n", np->packet_sequence_number);
     int index = np->packet_sequence_number%64;
-
-    //np->packet_sequence_buffer[index].active = 1;
+    //np->packet_sequence_buffer[index].active = 1; //may set timer?
     np->packet_sequence_buffer[index].seq = np->packet_sequence_number;
     np->packet_sequence_buffer[index].ack = 0;
     return np->packet_sequence_number;
