@@ -39,6 +39,7 @@ if True:
     import init_c_lib
     import c_lib.c_lib_objects
     import c_lib.c_lib_map_gen
+    import c_lib.c_lib_timer as physics_timer
     P2 = cube_lib.terrain_map.Profiler()
 
 ##profiler
@@ -71,6 +72,7 @@ import time
 import sound.sounds as sounds
 
 #physics timer
+'''
 class Physics_loop_timer:
 
     def __init__(self):
@@ -91,8 +93,9 @@ class Physics_loop_timer:
             return True
         else:
             return False
-
 Phy = Physics_loop_timer()
+'''
+
 
 class App(object):
 
@@ -209,6 +212,7 @@ class App(object):
         #v3 = vox_lib.Vox_loader().load('base.vox')
         #v3.color('blue', base_color='black')
         #v3.move(10,10,15, 0)
+        physics_timer.start_physics_timer(33)
 
         if ping:
             ping_n = SDL.gl.get_ticks()
@@ -232,7 +236,13 @@ class App(object):
             #c_lib.c_lib_map_gen._update_density_map(500)
 
             P.event("Physics Loop")
-            while Phy.sync():
+            while True: #physics loop
+                tc = physics_timer.tick_check() #get number of ticks server is behind
+                if tc > 1:
+                    print "Server is %i ticks behind" % (tc)
+                if tc == 0:
+                    break
+
                 _i+=1
 
                 if _i % 350 == 0:
