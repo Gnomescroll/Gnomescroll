@@ -21,8 +21,8 @@ void init_objects_blood();
 void blood_tick();
 void create_blood(int type, float x, float y, float z, float vx, float vy, float vz);
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 void blood_draw();
-#endif
+//#endif
 
 #endif

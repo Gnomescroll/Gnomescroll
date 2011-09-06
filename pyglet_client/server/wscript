@@ -1,4 +1,4 @@
-APPNAME = 'gnomescroll_server'
+APPNAME = 'dc_server'
 VERSION = '0.1'
 
 top = '.'
@@ -35,35 +35,35 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall','-D DC_CLIENT'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall','-D DC_SERVER'] # use '-O2' or '-O3' in distro build
 
     OS = platform.system()
     conf.env.os = OS
 
     ##TEST REMOVE LATER
-    conf.check(header_name='GL/glew.h', mandatory=True)
+    #conf.check(header_name='GL/glew.h', mandatory=True)
 
-    if OS == 'Windows':
-        conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
-    elif OS == 'Linux':
-        conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
-    elif OS == 'Darwin':
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+    #if OS == 'Windows':
+        #conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
+    #elif OS == 'Linux':
+        #conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
+    #elif OS == 'Darwin':
+        #conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
 
-    if OS != 'Windows':
-        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+    #if OS != 'Windows':
+        #conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
 
-    conf.check(header_name='SDL.h',
-               use='SDL',
-               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
+    #conf.check(header_name='SDL.h',
+               #use='SDL',
+               #fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               #mandatory=True)
 
-    conf.check(header_name='SDL_image.h',
-               lib='SDL_image',
-               use='SDL',
-               uselib_store='SDL_image',
-               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
+    #conf.check(header_name='SDL_image.h',
+               #lib='SDL_image',
+               #use='SDL',
+               #uselib_store='SDL_image',
+               #fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               #mandatory=True)
     ##END TEST
 
     conf.env.INCLUDES = ['c_lib',]
@@ -80,8 +80,8 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    common_libraries = ['GL', 'SDL', 'SDL_image']
-    #common_libraries = []
+    #common_libraries = ['GL', 'SDL', 'SDL_image']
+    common_libraries = []
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',

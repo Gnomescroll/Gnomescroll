@@ -71,7 +71,7 @@ void grenade_tick() {
 int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max) {
     //printf("Create Gernade\n");
     struct Grenade* g = NULL;
-    int i;
+    int i=0;
     for(i=0; i<1024; i++) {
         if(Grenade_list[i] == NULL) {
             g = (struct Grenade *) malloc (sizeof(struct Grenade));

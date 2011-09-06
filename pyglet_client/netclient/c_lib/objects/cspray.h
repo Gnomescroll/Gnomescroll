@@ -24,8 +24,8 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
 /*
  *  Client only
  */
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 void cspray_draw();
-#endif
+//#endif
 
 #endif

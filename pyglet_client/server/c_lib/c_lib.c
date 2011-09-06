@@ -16,7 +16,9 @@
 
 #include "./map_gen/density.h"
 
+#ifdef DC_CLIENT
 #include "./texture_loader.c"
+#endif
 
 #define map_gen_enabled 0
 

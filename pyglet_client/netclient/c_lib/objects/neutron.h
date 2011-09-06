@@ -21,8 +21,8 @@ void init_objects_neutron();
 void neutron_tick();
 void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz);
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 void neutron_draw();
-#endif
+//#endif
 
 #endif
