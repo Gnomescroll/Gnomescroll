@@ -5,6 +5,12 @@
 #define INIT_V_1 0
 #define INIT_V_2 0
 
+
+void init_sequencer(struct NetPeer* np) {
+    init_sequence_numbers(np);
+    init_sequence_numbers_out(np);
+}
+
 void init_sequence_numbers(struct NetPeer* np) {
     np->packet_sequence_number = INIT_V_1;
     int i;

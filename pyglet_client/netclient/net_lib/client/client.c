@@ -10,15 +10,12 @@ struct Socket client_socket;
 
 //sequence number handling
 
-
-//struct Pseq sq;
-
-
 unsigned char buffer[1500]; //1500 is max ethernet MTU
 
 void init_client() {
 
-    init_sequence_numbers(&NCserver); /// FIX
+    //init_sequence_numbers(&NCserver); /// FIX
+    init_sequencer(&NCserver)
     int local_port = 6967;
     struct Socket*s = create_socket(local_port);
     client_socket = *s;
@@ -178,7 +175,7 @@ void process_packet(unsigned char* buff, int n) {
     //printf("value= %i\n", value);
 
     //printf("received packet: sequence number %i from server\n", sequence_number);
-    process_acks(&sq, max_seq, acks);
+    process_acks(&NCserver, max_seq, acks);
     //printf("---\n");
 }
 

@@ -38,6 +38,8 @@ void set_ack_for_received_packet(struct Pseq2* pq2, int seq);
 uint32_t generate_outgoing_ack_flag(struct Pseq2* pq2);
 */
 
+void init_sequencer(struct NetPeer* np);
+
 void init_sequence_numbers(struct NetPeer* np);
 void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag);
 uint16_t get_next_sequence_number(struct NetPeer* np);
