@@ -15,7 +15,7 @@ void init_server(unsigned short port) {
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
     pool.n_connections = 0;
 
-    struct Socket*s = create_socket(local_port);
+    struct Socket*s = create_socket(port);
     server_socket = *s;
     free(s);
 
@@ -25,20 +25,20 @@ void init_server(unsigned short port) {
 int accept_connection(struct sockaddr_in from) {
 
     struct NetPeer* p ;
-    p = create_raw_net_peer(from);
+    p = create_net_peer_from_address(from);
 
     int i;
     for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
         if(pool.connection[i]==NULL) {
             pool.connection[i] = p;
-            p->id = i;
+            p->client_id = i;
             p->ttl = p->ttl_max;
             //send client his id
             printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
             return i;
         }
     }
-    if(p->id == 0) {printf("Could not open client connection: connection pool full!\n");free(p);return -1;}
+    if(i >= HARD_MAX_CONNECTIONS) {printf("Could not open client connection: connection pool full!\n");free(p);return -1;}
     printf("Accept connection: error, should never reach this line!\n");
     return -1;
 }
@@ -56,7 +56,7 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
 
     printf("Sending %i bytes to %i:%i\n",n, p->ip, p->port);
-    int sent_bytes = sendto(pool.socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto(server_socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n)
     {
         printf( "send_to_client: failed to send packet: return value = %i, %i\n", sent_bytes, n );
@@ -137,41 +137,30 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         printf("Sender IP does not match client IP: %i, expected %i\n", htonl(from->sin_addr.s_addr), htonl(p->address.sin_addr.s_addr) );
         return;
     }
-    if(client_id != p->id) {
-        printf("packet client_id is %i, expected %i\n", client_id, p->id);
+    if(client_id != p->client_id) {
+        printf("packet client_id is %i, expected %i\n", client_id, p->client_id);
         return;
     }
 
-    set_ack_for_received_packet(&p->sq2 ,sequence_number);
-    p->ttl = TTL_MAX;
+    set_ack_for_received_packet(p ,sequence_number);
+    p->ttl = p->ttl_max;
 
     return;
 }
 
 unsigned char buffer[1500];
 
-struct timeval timeout;
-fd_set read_flags;
-fd_set write_flags;
-
 void process_packets() {
 
     struct sockaddr_in from;
-
     #if PLATFORM == PLATFORM_WINDOWS
     typedef int socklen_t;
     #endif
-
     socklen_t fromLength = sizeof( from );
-
 
     int bytes_received;
     while(1) {
-
-        //sockaddr_in from;
-
-        bytes_received = recvfrom(pool.socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
-
+        bytes_received = recvfrom(server_socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
         if(bytes_received <= 0) return;
         process_packet(buffer, bytes_received, &from);
     }
@@ -218,7 +207,7 @@ void decrement_ttl() {
         p = pool.connection[i];
         p->ttl -= 1;
         if(p->ttl <= 0) {
-            printf("Connection %i ttl expire: timeout\n", p->id);
+            printf("Connection %i ttl expire: timeout\n", p->client_id);
             pool.connection[i] = NULL;
             free(p);
         }

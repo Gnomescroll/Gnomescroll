@@ -1,17 +1,18 @@
-#include "server/server.c"
-#include "client/sequence_numbers.c"
-
-#include "net_packets.h"
-
-/*
-struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-struct Socket create_socket(uint32_t IP, uint16_t  port); //port=0 to get any port
-int send_packet(struct Socket* socket, struct NetPeer* p, char* packet_data, int packet_size)
-
-void receive_packets(struct* Socket socket);
-*/
-
 #include <unistd.h>
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "server/server.h"
+#include "common/net_packets.h"
+#include "common/sequencer.h"
+
+//c body includes
+#include "common/sequencer.c"
+#include "common/net_peer.c"
+#include "server/server.c"
+
 
 int main() {
 

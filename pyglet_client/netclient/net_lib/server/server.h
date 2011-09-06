@@ -8,7 +8,7 @@
 
 #include "../common/net_lib_common.h"
 #include "../common/net_packets.h"
-#include "../common/sequence_numbers.h"
+#include "../common/sequencer.h"
 
 #include "../common/net_peer.h"
 
