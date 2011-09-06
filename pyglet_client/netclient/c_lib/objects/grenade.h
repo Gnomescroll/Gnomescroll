@@ -19,7 +19,7 @@
 
 void init_objects_grenade();
 void grenade_tick();
-int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max);
+int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, unsigned int ttl, unsigned int ttl_max);
 void destroy_grenade(int gid);
 
 #ifdef DC_CLIENT

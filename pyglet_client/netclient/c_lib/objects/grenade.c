@@ -4,8 +4,8 @@
 struct Grenade {
     float x,y,z;
     float vx,vy,vz;
-    uint ttl;
-    uint ttl_max;
+    unsigned int ttl;
+    unsigned int ttl_max;
     int type;
 };
 
@@ -68,7 +68,7 @@ void grenade_tick() {
 
 }
 
-int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max) {
+int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, unsigned int ttl, unsigned int ttl_max) {
     //printf("Create Gernade\n");
     struct Grenade* g = NULL;
     int i=0;

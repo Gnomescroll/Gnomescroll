@@ -5,11 +5,11 @@ struct neutron {
     unsigned int id;
     float x,y,z;
     float vx,vy,vz;
-    uint ttl;
-    uint ttl_max;
+    unsigned int ttl;
+    unsigned int ttl_max;
     int type;
     int energy;
-    uint event_ttl;
+    unsigned int event_ttl;
 };
 
 struct neutron* neutron_list[1024];
