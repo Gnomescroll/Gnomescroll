@@ -42,9 +42,9 @@ void set_agent_state(int id, float xangle, float yangle);
 /*
  *  Client only
  */
-//#ifdef DC_CLIENT
+#ifdef DC_CLIENT
 void agent_draw();
-//#endif
+#endif
 
 struct Agent_state* get_agent(int id);
 struct Vox* get_agent_vox_part(int id, int part);

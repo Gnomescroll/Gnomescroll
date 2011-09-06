@@ -22,8 +22,8 @@ void grenade_tick();
 int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max);
 void destroy_grenade(int gid);
 
-//#ifdef DC_CLIENT
-void grenade_draw();
-//#endif
+#ifdef DC_CLIENT
+static inline void grenade_draw();
+#endif
 
 #endif
