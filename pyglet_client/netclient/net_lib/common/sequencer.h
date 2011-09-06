@@ -1,5 +1,5 @@
-#ifndef net_lib_client_sequence_number
-#define net_lib_client_sequence_number
+#ifndef net_lib_common_sequencer_h
+#define net_lib_common_sequencer_h
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,9 +17,10 @@ struct packet_sequence {
 
 struct Pseq {
     struct packet_sequence packet_sequence_buffer[64];
-    //int packet_sequence_buffer_n = 0;
     int packet_sequence_number;
 };
+
+void init_sequencer(struct NetPeer* sq);
 
 void init_sequence_numbers(struct Pseq* sq);
 uint16_t get_next_sequence_number(struct Pseq* sq);

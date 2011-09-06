@@ -1,24 +1,6 @@
 
 #include "sequence_numbers.h"
 
-/*
-struct packet_sequence {
-    int seq;
-    int ack;
-    //int active;
-    //int tick; //better than sequence for determining dropped packets
-};
-
-
-struct packet_sequencer() {
-    struct packet_sequence packet_sequence_buffer[64];
-    int packet_sequence_buffer_n = 0;
-}
-*/
-//unsigned int packet_buffer[32];
-
-//struct packet_sequence packet_sequence_buffer[64];
-//int ps->packet_sequence_number = 0;
 
 #define INIT_V_1 0
 #define INIT_V_2 0

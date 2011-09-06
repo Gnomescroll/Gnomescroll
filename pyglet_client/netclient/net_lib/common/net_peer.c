@@ -3,9 +3,8 @@
 
 
 //struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
-struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port, unsigned short local_port) {
+struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port) {
     struct NetPeer* s = (struct NetPeer*) malloc(sizeof(struct NetPeer));
-    s->id = 0;
 
     unsigned int destination_address = ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
 

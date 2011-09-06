@@ -3,6 +3,7 @@
 
 #include "net_lib_common.h"
 
+#include "sequencer.h"
 
 struct Socket {
     uint32_t ip;
@@ -26,7 +27,13 @@ struct NetPeer {
     unsigned int ttl;
     unsigned int ttl_max;
     ///packet sequencer
-    struct Pseq2 sq2;
+
+    //x to y: x state
+    struct packet_sequence packet_sequence_buffer[64];
+    int packet_sequence_number;
+    //x to y: y state
+    struct packet_sequence2 seqbuff[64];
+    int highest_packet_sequence_number;
 };
 
 #define TTL_MAX_DEFAULT 150

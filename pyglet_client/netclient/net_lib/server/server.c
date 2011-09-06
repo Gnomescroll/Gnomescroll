@@ -69,65 +69,6 @@ int send_packet(struct Socket* socket, struct NetPeer* p, unsigned char* packet_
     return sent_bytes;
 }
 
-/*
-void receive_packets(struct Socket* s) {
-    printf("Listening on port: %i\n", ntohl(s->port));
-
-    unsigned char packet_data[maximum_packet_size];
-    unsigned int from_address;
-    unsigned int from_port;
-    //unsigned int to_port;
-    int received_bytes;
-
-    while ( 1 )
-    {
-
-
-        #if PLATFORM == PLATFORM_WINDOWS
-        typedef int socklen_t;
-        #endif
-
-        struct sockaddr_in from;
-        socklen_t fromLength = sizeof( from );
-
-        received_bytes = recvfrom( s->socket, (char*)packet_data, maximum_packet_size, 0, (struct sockaddr*)&from, &fromLength );
-
-        if ( received_bytes < 0 ) {
-
-            if ( errno == EAGAIN ||  errno == EWOULDBLOCK) {
-                continue;
-            }
-            if(received_bytes==-1) {
-                perror("Socket Error:");
-               printf("Network: socket error!\n");
-               break;
-            }
-            perror("Socket Error:");
-            printf("Network: negative received bytes, %i\n", received_bytes);
-            break;
-        }
-        if ( received_bytes == 0) {
-            printf("No new packets: continue\n");
-            continue;
-        }
-
-        if(received_bytes > 0) {
-            //if packet... then  accept_connection(from)
-            packet_data[received_bytes] = 0;
-            printf("packet: %s \n", packet_data);
-        }
-
-        from_address = ntohl( from.sin_addr.s_addr );
-        from_port = ntohs( from.sin_port );
-        //to_port = ntohs( from.sout_port );
-
-        printf("received packet from: %i, %i\n", from_address, from_port);
-
-        // process received packet
-    }
-}
-*/
-
 void send_to_client(int client_id, unsigned char* buffer, int n) {
     struct NetPeer* p;
     p = pool.connection[client_id];
@@ -180,18 +121,10 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         return;
     }
 
-
     //crc check
-    if(error_check_packet(buff,received_bytes) == 0) {
-        printf("Packet failed CRC check!\n");
-        return;
-    }
-
-    //uint8_t channel_id;
-    //uint16_t client_id;
+    if(error_check_packet(buff,received_bytes) == 0) {printf("Packet failed CRC check!\n");return;}
 
     uint32_t value;
-
     int n1=0;
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
@@ -230,16 +163,8 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
 
     set_ack_for_received_packet(&p->sq2 ,sequence_number);
     p->ttl = TTL_MAX;
-    //
-    //process_sequence_number(p, sequence_number);
-    //
 
-    //printf("Packet received from client %i\n", p->id);
-    //buff[received_bytes] = 0;
-    //printf("Packet= %s \n", buff);
     return;
-
-
 }
 
 unsigned char buffer[1500];
@@ -249,12 +174,8 @@ fd_set read_flags;
 fd_set write_flags;
 
 void process_packets() {
-    //int n=0;
-    //int received_bytes;
 
     struct sockaddr_in from;
-    //timeout.tv_sec = 0;
-    //timeout.tv_usec = 0;
 
     #if PLATFORM == PLATFORM_WINDOWS
     typedef int socklen_t;

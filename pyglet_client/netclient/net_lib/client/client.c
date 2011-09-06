@@ -2,10 +2,11 @@
 #include "sequence_numbers.c"
 
 struct NetClient server;
+struct Socket client_socket;
 
-struct timeval timeout;
-fd_set read_flags;
-fd_set write_flags;
+//struct timeval timeout;
+//fd_set read_flags;
+//fd_set write_flags;
 
 //sequence number handling
 struct Pseq sq;
@@ -19,88 +20,29 @@ unsigned char buffer[1500]; //1500 is max ethernet MTU
 void init_client() {
 
     init_sequence_numbers(&sq);
+    int local_port = 6967;
+    struct Socket*s = create_socket(local_port);
+    client_socket = *s;
+    free(s);
 
-    server.client_id = 65535;
-    server.connected =0;
-    server.local_port = 6967;
-    server.ttl = 0;
-
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
-
-    server.socket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
-    if ( server.socket <= 0 )
-    {
-        printf( "failed to create socket\n" );
-        return;
-    }
-    //bind socket
-
-    //sockaddr_in address;
-    server.local_address.sin_family = AF_INET;
-    server.local_address.sin_addr.s_addr = INADDR_ANY;
-    server.local_address.sin_port = htons( (unsigned short) server.local_port ); //set port 0 for any port
-
-
-    if ( bind( server.socket, (const struct sockaddr*) &server.local_address, sizeof(struct sockaddr_in) ) < 0 )
-    {
-        printf( "failed to bind socket\n" );
-        return;
-    }
-    printf("Socket bound to port %i\n", server.local_port);
-
-    //set socket to non-blocking
-
-    #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
-
-        int nonBlocking = 1;
-        if ( fcntl( server.socket, F_SETFL, O_NONBLOCK, nonBlocking ) == -1 )
-        {
-            printf( "failed to set non-blocking socket\n" );
-            return;
-        }
-
-    #elif PLATFORM == PLATFORM_WINDOWS
-
-        DWORD nonBlocking = 1;
-        if ( ioctlsocket( server.socket, FIONBIO, &nonBlocking ) != 0 )
-        {
-            printf( "failed to set non-blocking socket\n" );
-            return;
-        }
-    #endif
+    init_sequencer(&server);
 }
+
+void set_server(int a, int b, int c, int d, unsigned short port) {
+    server.server_ip =  ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
+    server.server_port = port;
+
+    struct NetPeer* p = create_net_peer_by_remote_IP(a,b,c,d,port);
+    server = *p;
+    free(p);
 
 void send_packet(unsigned char* buff, int n){
     if(server.connected == 0) {
         printf("Cannot send packet, disconnected!\n");
         }
-    int sent_bytes = sendto( server.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n );return;}
 }
-
-/*
-
-uint8_t channel_id;
-uint16_t client_id;
-uint16_t sequence_number;
-
-uint16_5 max_seq;
-uint32_t acks;
-
-uint32_t value;
-
-int n1=0;
-
-UNPACK_uint16_t(&client_id, buff, &n1); //client id
-UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
-UNPACK_uint16_t(&sequence_number, header, &n1); //sequence number
-//ack string
-UNPACK_uint16_t(&max_seq, header, &n1); //max seq
-UNPACK_uint32_t(&acks, header, &n1); //sequence number
-
-UNPACK_uint32_t(&value, header, &n1);
-*/
 
 void send_packet2(){
 
@@ -134,7 +76,7 @@ void send_packet2(){
         return;
     }
 */
-    int sent_bytes = sendto( server.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto( client_socket.socket, (const char*)header, n1,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
 }
@@ -146,21 +88,12 @@ void attempt_connection_with_server() {
     PACK_uint16_t(65535, buff, &n);
     PACK_uint8_t(255, buff, &n);
     n=6; //must be 6 bytes
-    sendto( server.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
+    sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&server.server_address, sizeof(struct sockaddr_in) );
     printf("Client id requested\n");
 }
 
 int select_return;
 
-void set_server(int a, int b, int c, int d, unsigned short port) {
-    server.server_ip =  ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
-    server.server_port = port;
-
-    server.server_address.sin_family = AF_INET;
-    server.server_address.sin_addr.s_addr = htonl(server.server_ip);
-    server.server_address.sin_port = htons(server.server_port);
-
-}
 
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
@@ -202,60 +135,21 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
 }
 
 void process_incoming_packets() {
-    //unsigned int n=0;
     struct sockaddr_in from;
     socklen_t fromLength = sizeof( from );
+    int bytes_received;
 
     #if PLATFORM == PLATFORM_WINDOWS
     typedef int socklen_t;
     #endif
 
-    //FD_ZERO(&read_flags); // Zero the flags ready for using
-    //FD_SET(server.socket, &read_flags);
-
-//    FD_ZERO(&read_flags); // Zero the flags ready for using
-//    FD_SET(server.socket, &read_flags);
-/*
     while(1) {
-        FD_ZERO(&read_flags); // Zero the flags ready for using
-        FD_SET(server.socket, &read_flags);
-        select_return = select(server.socket+1, &read_flags,(fd_set*)0,(fd_set*)0,&timeout);
-        if (select_return < 0) {
-            printf("select returned %i\n", select_return);break;
-        }
-
-        if (FD_ISSET(server.socket, &read_flags)) {
-            printf("Incoming Packet\n");
-            FD_CLR(server.socket, &read_flags);
-            //get packets
-            n = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &n);
-            if(validate_packet(buffer, n, &from)) {
-            printf("Received %i bytes\n", n);
-            process_packet(buffer, n);
-        }} else {
-            break;
-        }
-}
-*/
-    int bytes_received;
-    while(1) {
-
-        //sockaddr_in from;
-
-        bytes_received = recvfrom(server.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
-
-        if(bytes_received <= 0) {
-            return;
-            }
+        bytes_received = recvfrom(client_socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+        if(bytes_received <= 0) {return;}
         if(validate_packet(buffer, bytes_received, &from)) {
-            //printf("Received %i bytes\n", bytes_received);
-            //unsigned int from_address = ntohl( from.sin_addr.s_addr );
-            //unsigned int from_port = ntohs( from.sin_port );
             process_packet(buffer, bytes_received);
-        // process received packet
         }
     }
-
 }
 
 void process_packet(unsigned char* buff, int n) {
@@ -277,7 +171,7 @@ void process_packet(unsigned char* buff, int n) {
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
     UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
     UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
-//ack string
+    //ack
     UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
     UNPACK_uint32_t(&acks, buff, &n1); //sequence number
 
@@ -289,34 +183,13 @@ void process_packet(unsigned char* buff, int n) {
     //printf("---\n");
 }
 
-
 unsigned char* out_buffer[1500];
 unsigned int out_buffer_n;
 
 void send_agent_state_packet() {
-    if(server.client_id ==0 || server.connected == 0 ) {
-        printf("send_agent_state_packet: client not connected!\n");
-    }
-    FD_ZERO(&write_flags);
-    select(server.socket+1, (fd_set*)0, &write_flags, (fd_set*)0, &timeout);
-    if (FD_ISSET(server.socket, &write_flags)) {
-        FD_CLR(server.socket, &write_flags);
-        printf("Socket ready to send packets\n");
-    } else {
-        printf("send_agent_state_packet: FAILED!! socket not ready for writing! WTF\n");
-    }
+    return;
 }
 
 void process_outgoing_packets() {
-
-    FD_ZERO(&write_flags);
-    //if(no data to send) { return }
-    FD_SET(server.socket, &write_flags); //if need to send data, check
-    select(server.socket+1, (fd_set*)0, &write_flags, (fd_set*)0, &timeout);
-    if (FD_ISSET(server.socket, &write_flags)) {
-        FD_CLR(server.socket, &write_flags);
-        printf("Socket ready to send packets\n");
-    }
     return;
-
 }
