@@ -146,13 +146,7 @@ uint32_t generate_outgoing_ack_flag(struct NetPeer* np) {
     //index &= UPDATE_MASK;
 
     for(i=0;i<32;i++) {
-        if(np->seqbuff[index%64].seq == index) {
-            printf("+%i:%i ", np->seqbuff[index%64].seq, index);
-            flag |= n;
-        } else {
-            printf("-%i:%i ", np->seqbuff[index%64].seq, index);
-        }
-        if(i%8 == 0 && i!=0) { printf("\n"); }
+        if(np->seqbuff[index%64].seq == index) flag |= n;
         index--;
         index &= UPDATE_MASK;
         n*=2;

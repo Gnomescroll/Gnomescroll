@@ -32,6 +32,7 @@ int main() {
 
         process_incoming_packets();
         send_packet2();
+        send_packet2();
 
         check_for_dropped_packets(np);
         sleep(1);
