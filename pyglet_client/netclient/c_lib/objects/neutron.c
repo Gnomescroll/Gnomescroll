@@ -117,8 +117,45 @@ void neutron_tick() {
 
 }
 
-//GLint particle_sheet_id;
+void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz) {
+    //printf("Create neutron\n");
+    struct neutron* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(neutron_list[i] == NULL) {
+            g = (struct neutron *) malloc (sizeof(struct neutron));
+            neutron_list[i] = g;
+            neutron_count++;
+            break;
+        }
+    }
+    if(g== NULL) {
+        //printf("Bug: max neutron number reached!\n");
+        return;}
+    g->x=x;
+    g->y=y;
+    g->z=z;
+    g->vx=vx;
+    g->vy=vy;
+    g->vz=vz;
+    g->ttl = 0;
+    g->ttl_max = 600;
+    g->energy = energy;
+    g->type = type;
+    if(energy == 3) {
+        g->event_ttl = 150;
+    } else {
+        g->event_ttl = 1;
+    }
+}
 
+
+/*
+ *  Client only
+ */
+#ifdef DC_CLIENT
+
+//GLint particle_sheet_id;
 void neutron_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(neutron_count == 0) { return; }
@@ -184,36 +221,4 @@ void neutron_draw() {
     glDisable(GL_BLEND);
 }
 
-
-
-void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create neutron\n");
-    struct neutron* g = NULL;
-    int i;
-    for(i=0; i<1024; i++) {
-        if(neutron_list[i] == NULL) {
-            g = (struct neutron *) malloc (sizeof(struct neutron));
-            neutron_list[i] = g;
-            neutron_count++;
-            break;
-        }
-    }
-    if(g== NULL) {
-        //printf("Bug: max neutron number reached!\n");
-        return;}
-    g->x=x;
-    g->y=y;
-    g->z=z;
-    g->vx=vx;
-    g->vy=vy;
-    g->vz=vz;
-    g->ttl = 0;
-    g->ttl_max = 600;
-    g->energy = energy;
-    g->type = type;
-    if(energy == 3) {
-        g->event_ttl = 150;
-    } else {
-        g->event_ttl = 1;
-    }
-}
+#endif

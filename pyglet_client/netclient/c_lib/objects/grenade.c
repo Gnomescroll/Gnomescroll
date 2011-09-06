@@ -68,8 +68,45 @@ void grenade_tick() {
 
 }
 
-//GLint particle_sheet_id;
+int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max) {
+    //printf("Create Gernade\n");
+    struct Grenade* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Grenade_list[i] == NULL) {
+            g = (struct Grenade *) malloc (sizeof(struct Grenade));
+            Grenade_list[i] = g;
+            g_count++;
+            break;
+        }
+    }
+    if(g== NULL) { printf("Bug: max grenade number reached!\n"); return;}
+    g->x=x;
+    g->y=y;
+    g->z=z;
+    g->vx=vx;
+    g->vy=vy;
+    g->vz=vz;
+    g->ttl = ttl;
+    g->ttl_max = ttl_max;
+    g->type = 1;
+    return i;
+}
 
+void destroy_grenade(int gid) {
+    struct Grenade *g = Grenade_list[gid];
+    Grenade_list[gid] = NULL;
+    free(g);
+    g_count--;
+}
+    
+
+/*
+ *  Client only
+ */
+#ifdef DC_CLIENT
+
+//GLint particle_sheet_id;
 void grenade_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(g_count == 0) { return; }
@@ -134,37 +171,4 @@ void grenade_draw() {
     glDisable(GL_BLEND);
 }
 
-
-
-int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, uint ttl, uint ttl_max) {
-    //printf("Create Gernade\n");
-    struct Grenade* g = NULL;
-    int i;
-    for(i=0; i<1024; i++) {
-        if(Grenade_list[i] == NULL) {
-            g = (struct Grenade *) malloc (sizeof(struct Grenade));
-            Grenade_list[i] = g;
-            g_count++;
-            break;
-        }
-    }
-    if(g== NULL) { printf("Bug: max grenade number reached!\n"); return;}
-    g->x=x;
-    g->y=y;
-    g->z=z;
-    g->vx=vx;
-    g->vy=vy;
-    g->vz=vz;
-    g->ttl = ttl;
-    g->ttl_max = ttl_max;
-    g->type = 1;
-    return i;
-}
-
-void destroy_grenade(int gid) {
-    struct Grenade *g = Grenade_list[gid];
-    Grenade_list[gid] = NULL;
-    free(g);
-    g_count--;
-}
-    
+#endif

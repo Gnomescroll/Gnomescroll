@@ -102,8 +102,42 @@ void cspray_tick() {
 
 }
 
-//GLint particle_sheet_id;
 
+void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
+    //printf("Create cspray\n");
+    struct cspray* g = NULL;
+    int i;
+    for(i=0; i<max_cspray; i++) {
+        if(cspray_list[i] == NULL) {
+            g = (struct cspray *) malloc (sizeof(struct cspray));
+            cspray_list[i] = g;
+            cspray_count++;
+            break;
+        }
+    }
+    if(g== NULL) {
+        //printf("Bug: max cspray number reached!\n");
+        return;}
+    g->x=x;
+    g->y=y;
+    g->z=z;
+    g->vx=vx;
+    g->vy=vy;
+    g->vz=vz;
+    g->ttl = 0;
+    g->ttl_max = 1200;
+    g->active = 0;
+    g->type = type;
+
+}
+
+
+/*
+ *  Client only
+ */
+#ifdef DC_CLIENT
+
+//GLint particle_sheet_id;
 void cspray_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(cspray_count == 0) { return; }
@@ -169,32 +203,4 @@ void cspray_draw() {
     glDisable(GL_BLEND);
 }
 
-
-
-void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create cspray\n");
-    struct cspray* g = NULL;
-    int i;
-    for(i=0; i<max_cspray; i++) {
-        if(cspray_list[i] == NULL) {
-            g = (struct cspray *) malloc (sizeof(struct cspray));
-            cspray_list[i] = g;
-            cspray_count++;
-            break;
-        }
-    }
-    if(g== NULL) {
-        //printf("Bug: max cspray number reached!\n");
-        return;}
-    g->x=x;
-    g->y=y;
-    g->z=z;
-    g->vx=vx;
-    g->vy=vy;
-    g->vz=vz;
-    g->ttl = 0;
-    g->ttl_max = 1200;
-    g->active = 0;
-    g->type = type;
-
-}
+#endif
