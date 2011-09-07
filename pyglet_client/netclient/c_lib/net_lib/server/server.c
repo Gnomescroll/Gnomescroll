@@ -229,19 +229,19 @@ void broad_cast_packet2(){
         unsigned int value = 5;
         PACK_uint32_t(value, header, &n1);
 
-        if(seq % 3 == 0) return;
+        //if(seq % 5 == 0) return; //simulate packet loss
         send_to_client(i, header, n1);
         printf("Sent packet %i to client %i\n", seq, p->client_id);
     }
 }
 
-void check_for_dropped_packets() {
+void check_pool_for_dropped_packets() {
     int i;
     struct NetPeer* p;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
     if(pool.connection[i] == NULL) continue;
         p = pool.connection[i];
-        check_for_dropped_packets(p)
+        check_for_dropped_packets(p);
     }
 }
 

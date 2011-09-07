@@ -32,7 +32,7 @@ int main() {
         broad_cast_packet2();
 
         //broad_cast_packet();
-        check_for_dropped_packets();
+        check_pool_for_dropped_packets();
         decrement_ttl();
         sleep(1);
         i++;
