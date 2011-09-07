@@ -8,4 +8,6 @@ int init_c_lib();
 GLint get_particle_sheet_id();
 //extern GLint particle_sheet_id;
 
+#define DC_CLIENT
+
 #endif

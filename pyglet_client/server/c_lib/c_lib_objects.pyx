@@ -1,22 +1,18 @@
 cdef extern from "./objects/grenade.h":
     void grenade_tick()
-    void grenade_draw()
     int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max)
     void destroy_grenade(int gid)
 
 cdef extern from "./objects/neutron.h":
     void neutron_tick()
-    void neutron_draw()
     void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
 
 cdef extern from "./objects/cspray.h":
     void cspray_tick()
-    void cspray_draw()
     void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
 
 cdef extern from "./agent/agent.h":
     void agent_tick()
-    void agent_draw()
     int create_agent(float x, float y, float z)
     void set_agent_state(int id, float xangle, float yangle)
 
@@ -32,12 +28,6 @@ def tick():
     neutron_tick()
     cspray_tick()
     agent_tick()
-
-def draw():
-    grenade_draw()
-    neutron_draw()
-    cspray_draw()
-    agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     print "CYTHON CREATE GRENADE"

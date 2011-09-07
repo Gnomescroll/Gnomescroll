@@ -1,4 +1,4 @@
-APPNAME = 'gnomescroll_client'
+APPNAME = 'dc_client'
 VERSION = '0.1'
 
 top = '.'
@@ -44,7 +44,8 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall', '-D DC_SERVER'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall'] # use '-O2' or '-O3' in distro build
+    # '-D DC_CLIENT'
 
     OS = platform.system()
     _OS = OS
@@ -169,7 +170,7 @@ def build(bld):
     OS = platform.system()
 
     common_libraries = ['GL', 'SDL', 'SDL_image']
-    sound_libraries = ['FMOD']
+    sound_libraries = ['fmodex']
 
     time_lib = ['rt']
     if OS == "Darwin":
@@ -252,14 +253,10 @@ def build(bld):
 
     # sound
     bld(features='c cshlib',
-        source=[
-            #'sound/player_sounds.c',
-            #'sound/projectile_sounds.c',
-            'sound/sound.c'
-        ],
+        source=['sound/sound.c'],
 
-        use=['fmodex'],
-        lib=['fmodex'],
+        use=sound_libraries,
+        lib=sound_libraries,
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
         includes=['./sound/api/inc/', './sound'],
@@ -268,7 +265,7 @@ def build(bld):
         target='csound'
     )
 
-    bld(features='c cshlib pyext',      #cython part
+    bld(features='c cshlib pyext',      #cython
         source=['sound/sounds.pyx'],
         use=['csound'],
         target='sound.sounds')

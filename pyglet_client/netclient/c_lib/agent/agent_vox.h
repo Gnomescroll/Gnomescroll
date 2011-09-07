@@ -4,7 +4,9 @@
 #include <math.h>
 
 #include <compat.h>
+#ifdef DC_CLIENT
 #include <compat_gl.h>
+#endif
 
 //#include <ray_trace/ray_trace.h>
 //#include <t_map/t_map.h>
@@ -46,6 +48,13 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
 
 
 void destroy_vox(struct Vox* v);
+
+/*
+ *  Client only
+ */
+#ifdef DC_CLIENT
 void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a);
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a);
+#endif
+
 #endif

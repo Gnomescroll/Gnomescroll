@@ -36,9 +36,15 @@ struct Vox vox_part[6]; //head,torso, larm,rarm, lleg, rleg
 };
 
 void agent_tick();
-void agent_draw();
 int create_agent(float x, float y, float z);
 void set_agent_state(int id, float xangle, float yangle);
+
+/*
+ *  Client only
+ */
+#ifdef DC_CLIENT
+void agent_draw();
+#endif
 
 struct Agent_state* get_agent(int id);
 struct Vox* get_agent_vox_part(int id, int part);

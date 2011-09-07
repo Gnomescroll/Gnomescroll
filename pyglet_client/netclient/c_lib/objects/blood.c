@@ -5,8 +5,8 @@ struct blood {
     unsigned int id;
     float x,y,z;
     float vx,vy,vz;
-    uint ttl;
-    uint ttl_max;
+    unsigned int ttl;
+    unsigned int ttl_max;
     int type;
     int active;
 };
@@ -96,8 +96,43 @@ void blood_tick() {
 
 }
 
-//GLint particle_sheet_id;
 
+void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
+    //printf("Create blood\n");
+    struct blood* g = NULL;
+    int i;
+    for(i=0; i<max_blood; i++) {
+        if(blood_list[i] == NULL) {
+            g = (struct blood *) malloc (sizeof(struct blood));
+            blood_list[i] = g;
+            blood_count++;
+            break;
+        }
+    }
+    if(g== NULL) {
+        //printf("Bug: max blood number reached!\n");
+        return;}
+    g->x=x;
+    g->y=y;
+    g->z=z;
+    g->vx=vx;
+    g->vy=vy;
+    g->vz=vz;
+    g->ttl = 0;
+    g->ttl_max = 1200;
+    g->active = 0;
+    g->type = type;
+
+}
+
+
+/*
+ *  Client only
+ */
+
+#ifdef DC_CLIENT
+
+//GLint particle_sheet_id;
 void blood_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(blood_count == 0) { return; }
@@ -164,32 +199,5 @@ void blood_draw() {
     glDisable(GL_BLEND);
 }
 
+#endif
 
-
-void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create blood\n");
-    struct blood* g = NULL;
-    int i;
-    for(i=0; i<max_blood; i++) {
-        if(blood_list[i] == NULL) {
-            g = (struct blood *) malloc (sizeof(struct blood));
-            blood_list[i] = g;
-            blood_count++;
-            break;
-        }
-    }
-    if(g== NULL) {
-        //printf("Bug: max blood number reached!\n");
-        return;}
-    g->x=x;
-    g->y=y;
-    g->z=z;
-    g->vx=vx;
-    g->vy=vy;
-    g->vz=vz;
-    g->ttl = 0;
-    g->ttl_max = 1200;
-    g->active = 0;
-    g->type = type;
-
-}
