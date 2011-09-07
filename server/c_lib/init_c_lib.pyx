@@ -12,3 +12,14 @@ def init():
         init_c_lib()
     _init = 1
 
+## net stuff
+
+cdef extern from "./net_lib/server.h":
+    void _NetServerInit()
+    void _NetServerTick()
+
+def NetServerInit():
+    _NetServerInit()
+
+def NetServerTick():
+    _NetServerTick

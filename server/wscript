@@ -86,6 +86,7 @@ def build(bld):
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
+                'c_lib/net_lib/server.c',
             ],
         use=common_libraries,
         target='c_lib')

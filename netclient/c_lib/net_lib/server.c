@@ -1,17 +1,12 @@
-#include <unistd.h>
-
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "server/server.h"
-#include "common/net_packets.h"
-#include "common/sequencer.h"
 
-//c body includes
-#include "common/sequencer.c"
+#include "server.h"
+
+#include "common/net_packets.h"
+
 #include "common/net_peer.c"
 #include "server/server.c"
+#include "common/sequencer.c"
 
 
 void _NetServerInit() {

@@ -6,9 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "client/client.h"
+#include "server/server.h"
 
-void _NetClientConnect(int a, int b,int c, int d, int _port);
-void _NetClientTick();
+void _NetServerInit();
+void _NetServerTick();
+
 
 #endif
