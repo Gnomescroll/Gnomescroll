@@ -1,0 +1,336 @@
+APPNAME = 'dc_client'
+VERSION = '0.1'
+
+top = '.'
+out = 'build'
+
+import errno
+import os
+import os.path
+import platform
+import shutil
+import subprocess
+
+
+SDL_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
+FMOD_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
+_OS = None
+
+def _grab_output(*cmd):
+    return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+
+
+def options(opt):
+    opt.load('compiler_c python cython')
+
+
+def configure(conf):
+    global _OS
+
+    conf.load('compiler_c python cython')
+    conf.check_python_version((2,6,0))
+    conf.check_python_headers()
+
+    conf.cc_add_flags()     #"-g"
+    conf.link_add_flags()   #"-g"
+
+    conf.env.CFLAGS = ['-g','-Wall'] # use '-O2' or '-O3' in distro build
+    # '-D DC_CLIENT'
+
+    OS = platform.system()
+    _OS = OS
+    conf.env.os = OS
+
+    conf.check(header_name='GL/glew.h', mandatory=True)
+
+    if OS == 'Windows':
+        conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
+    elif OS == 'Linux':
+        conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
+    elif OS == 'Darwin':
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+
+    if OS != 'Windows':
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+
+    conf.check(header_name='SDL.h',
+               use='SDL',
+               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+
+    conf.check(header_name='SDL_image.h',
+               lib='SDL_image',
+               use='SDL',
+               uselib_store='SDL_image',
+               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+
+    if OS == 'Windows':
+        incp='.libraries/win/fmod/inc/'
+        libp='libraries/win/fmod/lib/'
+    elif OS == 'Linux':
+        incp='../../libraries/lin/fmod/inc'
+        libp='../../../libraries/lin/fmod/lib'
+    elif OS == 'Darwin':
+        incp='./libraries/osx/fmod/inc/'
+        libp='./libraries/osx/fmod/lib/'
+    #conf.env.INCLUDES += [incp]
+    #print incp
+
+    incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
+    libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
+    conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
+    conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
+
+    '''
+    conf.check(header_name='fmod.h',
+               use='FMOD',
+               fragment='#include <fmod.h>' + FMOD_MAIN_TEST_CODE,
+               mandatory=True)
+
+    conf.check(header_name='fmod_errors.h',
+               use='FMOD',
+               fragment='#include <fmod_errors.h>' + FMOD_MAIN_TEST_CODE,
+               mandatory=True)
+    '''
+
+    '''
+    This passes, but I'm not sure it does anything useful.
+
+    These are for the fmodex headers. The source is not available, we must use the shared library.
+    sound.c includes these headers.
+    '''
+
+    '''
+
+
+    libfmodex = conf.environ['PWD'] + '/sound/api/lib/libfmodex.so' # full path to shared lib
+
+    conf.check(header_name='../../sound/api/inc/fmod.h',
+               use='../../sound/api/lib/libfmodex.so',
+               fragment='#include "../../sound/api/inc/fmod.h"' + SDL_MAIN_TEST_CODE,   # have to specify fragment include with ""; default uses <> and fails.
+               uselib_store='fmod',
+               mandatory=True)
+
+    conf.check(header_name='../../sound/api/inc/fmod_errors.h',
+               use=['../../sound/api/lib/libfmodex.so'],
+               fragment='#include "../../sound/api/inc/fmod_errors.h"' + SDL_MAIN_TEST_CODE,
+               uselib_store='fmod_errors',
+               mandatory=True)
+    '''
+
+    conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc']
+    conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
+
+    #hack
+    print os.path.abspath(os.curdir)
+    libpth = './sound/api/lib/'
+    despth = './build/sound/api/lib/'
+    if os.path.exists(despth):
+        for fn in os.listdir(libpth):
+            shutil.copy2(libpth + fn, despth + fn)
+    else:
+        try:
+            shutil.copytree(libpth, './build/sound/api/lib', symlinks=True)
+        except IOError, e:
+            pass
+
+
+    #LD_LIBRARY_PATH=./libraries/lin/fmod/lib
+    #if OS == 'Darwin':
+    #    conf.env.ARCH = ['x86_64']
+
+
+'''
+t = bld(
+        features     = ['cc', 'cprogram'],
+        source       = 'main.c',
+        target       = 'appname',
+        install_path = '${SOME_PATH}/bin',
+        vnum         = '1.2.3',
+        includes     = ['.'],
+        defines      = ['LINUX=1', 'BIDULE'],
+        ccflags      = ['-O2', '-Wall'],
+        lib          = ['m'],
+        libpath      = ['/usr/lib'],
+        linkflags    = ['-g'],
+        )
+'''
+def build(bld):
+    OS = platform.system()
+
+    common_libraries = ['GL', 'SDL', 'SDL_image']
+    sound_libraries = ['fmodex']
+
+    time_lib = ['rt']
+    if OS == "Darwin":
+        time_lib = []
+
+    bld(features='c cshlib',
+        source=['c_lib/c_lib.c',
+                'c_lib/texture_loader.c',
+                'c_lib/net_lib/client.c',
+                'c_lib/time/physics_timer.c'],
+        use=common_libraries+time_lib,
+        target='c_lib')
+
+    bld(features='c cshlib pyext',
+        source=['SDL/SDL_functions.c',
+                'SDL/camera.c',
+                'SDL/draw_functions.c',
+                'SDL/texture_loader.c',
+                'SDL/particle_functions.c',
+                'SDL/gl.pyx'],
+        use=common_libraries,
+        target='SDL.gl')
+
+    bld(features='c cshlib pyext',
+        source=['SDL/SDL_text.c',
+                'SDL/draw_functions.c',
+                'SDL/texture_loader.c',
+                'SDL/hud/block_selector.c',
+                'SDL/hud.pyx'],
+        use=common_libraries,
+        target='SDL.hud')
+
+    bld(features='c cshlib pyext',
+        source=['SDL/input_functions.c',
+                'SDL/SDL_functions.c',
+                'SDL/input.pyx'],
+        use=common_libraries,
+        target='SDL.input')
+
+    bld(features='c cshlib pyext',
+        source=['cube_lib/t_vbo.c',
+                'cube_lib/t_viz.c',
+                'cube_lib/terrain_map.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='cube_lib.terrain_map')
+
+    bld(features='c cshlib pyext',
+        source=['vox_lib/vox_functions.c',
+                'vox_lib/vox_lib.pyx'],
+        use=common_libraries,
+        target='vox_lib')
+
+    # c_lib
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/_ray_trace.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib._ray_trace')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/init_c_lib.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='init_c_lib')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_objects.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_objects')
+
+    #c_lib_timer
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_timer.pyx',],
+        use=common_libraries +['c_lib'],
+        target='c_lib.c_lib_timer')
+
+    # sound
+    bld(features='c cshlib',
+        source=['sound/sound.c'],
+
+        use=sound_libraries,
+        lib=sound_libraries,
+        libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
+
+        includes=['./sound/api/inc/', './sound'],
+
+        cflags=['-Wall'],#debug
+        target='csound'
+    )
+
+    bld(features='c cshlib pyext',      #cython
+        source=['sound/sounds.pyx'],
+        use=['csound'],
+        target='sound.sounds')
+
+
+    # final
+    bld(features='c cprogram pyembed',
+        use=common_libraries+['sound'],
+        source='run.c',
+        target='run')
+
+
+    bld.add_post_fun(install_in_ext)
+
+
+def install_in_ext(ctx):
+    global out, _OS
+
+    # Hax to install files into ./ext/, after build
+
+    try:
+        run_target = ctx.env.cprogram_PATTERN % 'run'
+        shutil.copy2(os.path.join(out, run_target), './' + run_target)
+    except:
+        pass
+
+
+    try:
+        c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
+        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+    except:
+        print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+
+
+    targets = ['SDL.gl',
+               'SDL.hud',
+               'SDL.input',
+               'cube_lib.terrain_map',
+               'vox_lib',
+               'c_lib._ray_trace',
+               'init_c_lib',
+               'c_lib.c_lib_objects',
+               'c_lib.c_lib_timer',
+               'csound',
+               'sound.sounds',  # cython .so's need to have same name as source
+               ]
+
+    for target in targets:
+        dest_path = target.replace('.', '/')
+        dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
+        ensure_dir(os.path.dirname(dest_path))
+        try:
+            if 'csound' in target:
+                target = target.replace('csound', 'libcsound')
+                dest_path = dest_path.replace('csound', 'libcsound')
+            shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        except:
+            print "Error2: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+    make_dest_modules(ctx)
+
+
+def ensure_dir(path):
+    try:
+        os.makedirs(path)
+    except OSError, e:
+        if e.errno != errno.EEXIST:
+            raise
+
+
+def make_dest_modules(ctx):
+    for root, dirs, files in os.walk('./ext/'):
+        with open(os.path.join(root, '__init__.py'), 'wb') as f:
+            f.close()

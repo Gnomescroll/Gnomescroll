@@ -1,0 +1,3 @@
+
+gcc -Wall -g test_server.c ../time/physics_timer.c -o test_server -lrt
+gcc -Wall -g test_client.c ../time/physics_timer.c -o test_client -lrt

@@ -29,6 +29,9 @@ input.c
 c_lib_map_gen.c
 c_lib_timer.c
 
+test_client
+test_server
+
 Safe Browsing Bloom
 Safe Browsing Bloom Filter 2
 
@@ -59,6 +62,10 @@ jdump
 output_msgs
 .idea/
 
-pyglet_client/netclient/build
-pyglet_client/netclient/ext
+netclient/build
+netclient/ext
+
+server/build
+server/ext
+
 .lock-wafbuild
