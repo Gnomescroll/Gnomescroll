@@ -35,7 +35,7 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall', '-D DC_SERVER'] # use '-O2' or '-O3' in distro build
     #,'-D DC_CLIENT'
 
     OS = platform.system()
@@ -90,6 +90,7 @@ def build(bld):
                 'c_lib/time/physics_timer.c',
             ],
         use=common_libraries+time_lib,
+        lib=time_lib,
         target='c_lib')
 
     bld(features='c cshlib pyext',
@@ -116,9 +117,15 @@ def build(bld):
 
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_timer.pyx',],
-        use=common_libraries,
+        use=common_libraries + time_lib + ['c_lib'],
         lib=time_lib,
         target='c_lib.c_lib_timer')
+
+    # final
+    bld(features='c cprogram pyembed',
+        use=common_libraries+time_lib,
+        source='run.c',
+        target='run')
 
     bld.add_post_fun(install_in_ext)
 
@@ -128,13 +135,11 @@ def install_in_ext(ctx):
 
     # Hax to install files into ./ext/, after build
 
-    '''
     try:
         run_target = ctx.env.cprogram_PATTERN % 'run'
         shutil.copy2(os.path.join(out, run_target), './' + run_target)
-    except IOError:
-        print "Error: cannot copy %s to %s" % (run_target, os.path.join(out, run_target))
-    '''
+    except:
+        pass
 
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
