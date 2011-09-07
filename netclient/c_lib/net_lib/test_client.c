@@ -30,6 +30,9 @@ int main() {
 
         printf("* ------ tick=%i\n", i);
 
+        update_current_netpeer_time();
+        NP_print_delta();
+
         process_incoming_packets();
         send_packet2();
         check_for_dropped_packets(np);

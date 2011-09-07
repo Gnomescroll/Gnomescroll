@@ -5,6 +5,8 @@
 
 #include "./sequencer.h"
 
+#include <time/physics_timer.h>
+
 struct Socket {
     uint32_t ip;
     uint16_t port;
@@ -56,5 +58,10 @@ struct Socket* create_socket(uint16_t port);
 
 struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port);
 struct NetPeer* create_net_peer_from_address(struct sockaddr_in address);
+
+void update_current_netpeer_time();
+void NP_print_delta();
+int NP_time_delta1(int time);
+int NP_time_delta2(int time1, int time2);
 
 #endif

@@ -69,3 +69,38 @@ struct Socket* create_socket(uint16_t port) {
     #endif
     return s;
 }
+
+int LAST_NETPEER_TIME = -1;
+int CURRENT_NETPEER_TIME = -1;
+
+void update_current_netpeer_time() {
+    long time = get_time()
+    LAST_NETPEER_TIME = CURRENT_NETPEER_TIME;
+    CURRENT_NETPEER_TIME = time % 16777216;
+}
+
+void NP_print_delta() {
+    printf("NP_print_delta: %i\n", CURRENT_NETPEER_TIME-LAST_NETPEER_TIME);
+}
+
+//delta between time in past and current time
+int NP_time_delta1(int time) {
+    int delta = CURRENT_NETPEER_TIME - time;
+    if( delta<0) {
+        printf("NP_time_delta1: delta negative. rollover? \n");
+        return 0;
+    }
+    return delta;
+}
+
+int NP_time_delta2(int time1, int time2) {
+    int delta = time2 - time1;
+    if( delta<0) {
+        printf("NP_time_delta2: delta negative. rollover? \n");
+        return 0;
+    }
+    return delta;
+}
+//    delta = (int)(LAST_NETPEER_TIME-time)
+//    if(abs((int)(time - LAST_NETPEER_TIME)))
+

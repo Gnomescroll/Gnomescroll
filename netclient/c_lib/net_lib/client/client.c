@@ -101,7 +101,7 @@ void ack_connection_with_server() {
     PACK_uint8_t(254, buff, &n);
     n=6; //must be 6 bytes
     sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
-    printf("ack_connection_with_server\n");
+    //printf("ack_connection_with_server\n");
 }
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
