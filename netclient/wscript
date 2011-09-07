@@ -178,8 +178,7 @@ def build(bld):
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
-                'c_lib/texture_loader.c',
-                'c_lib/map_gen/density.c'],
+                'c_lib/texture_loader.c'],
         use=common_libraries,
         target='c_lib')
 
@@ -238,11 +237,6 @@ def build(bld):
         source=['c_lib/c_lib_objects.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
-
-    bld(features='c cshlib pyext',
-        source=['c_lib/c_lib_map_gen.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_map_gen')
 
     #c_lib_timer
     bld(features='c cshlib pyext',
@@ -308,7 +302,6 @@ def install_in_ext(ctx):
                'c_lib._ray_trace',
                'init_c_lib',
                'c_lib.c_lib_objects',
-               'c_lib.c_lib_map_gen',
                'c_lib.c_lib_timer',
                'csound',
                'sound.sounds',  # cython .so's need to have same name as source

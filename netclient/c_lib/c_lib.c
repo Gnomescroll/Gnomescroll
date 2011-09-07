@@ -16,9 +16,11 @@
 #include "./agent/agent_vox.c"
 #include "./agent/agent_draw.c"
 
-#include "./map_gen/density.h"
 
-//#include "./texture_loader.c"
+//network
+
+#include "./net_lib/client.c"
+
 
 #define map_gen_enabled 0
 
@@ -29,10 +31,6 @@ int init_c_lib() {
     init_objects_cspray();
     init_objects_blood();
     init_texture_loader();
-
-    if(map_gen_enabled == 1) {
-        init_map_gen_density();
-    }
 
     return 0;
 }

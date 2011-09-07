@@ -62,6 +62,10 @@ jdump
 output_msgs
 .idea/
 
-pyglet_client/netclient/build
-pyglet_client/netclient/ext
+netclient/build
+netclient/ext
+
+server/build
+server/ext
+
 .lock-wafbuild

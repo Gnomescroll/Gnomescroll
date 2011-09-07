@@ -42,6 +42,7 @@ if True:
     import c_lib.c_lib_timer as physics_timer
     P2 = cube_lib.terrain_map.Profiler()
 
+    from init_c_lib import NetClientTick, NetClientConnect
 ##profiler
 from profiler import P
 
@@ -70,32 +71,6 @@ import random #remove?
 import time
 
 import sound.sounds as sounds
-
-#physics timer
-'''
-class Physics_loop_timer:
-
-    def __init__(self):
-        self.last = 0
-        self.delta = 0
-        self.tick = 0
-        self.TPS = 30 #ticks per second
-
-    def sync(self):
-        ct = SDL.gl.get_ticks()
-        self.delta += ct - self.last
-
-        #print "ct= %i, last= %i, delta= %i, acm_delta= %i" % (ct, self.last, ct - self.last, self.delta)
-        self.last = ct
-        if self.delta > 33:
-            self.delta -= 33
-            self.tick += 1
-            return True
-        else:
-            return False
-Phy = Physics_loop_timer()
-'''
-
 
 class App(object):
 
@@ -183,30 +158,9 @@ class App(object):
         draw_hud = not opts.opts.no_hud
         ltick, ctick = 0,0
 
+        NetClientConnect(127,0,0,1, 0)
         #TEST
         theta = 0
-        v = vox_lib.Vox(0,0,0,0, 8,8,8)
-        v.set(5,5,5,255,0,0,0)
-
-        v.set(4,4,0,255,0,255,0)
-        v.set(4,4,1,0,255,255,0)
-        v.set(4,4,2,0,0,255,0)
-        v.set(4,4,3,0,255,255,0)
-
-        v.set(4,4,4,0,255,255,0)
-        v.set(4,4,5,0,0,255,0)
-        v.set(4,4,6,0,255,255,0)
-        v.set(4,4,7,255,0,255,0)
-
-        v.set(0,0,0, 0,255,0,0)
-        v.set(0,7,0, 0,255,0,0)
-        v.set(7,0,0, 0,255,0,0)
-        v.set(7,7,0, 0,255,0,0)
-
-        v.set(0,0,7, 0,255,0,0)
-        v.set(0,7,7, 0,255,0,0)
-        v.set(7,0,7, 0,255,0,0)
-        v.set(7,7,7, 0,255,0,0)
 
         v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
         #v3 = vox_lib.Vox_loader().load('base.vox')
@@ -236,15 +190,15 @@ class App(object):
             #c_lib.c_lib_map_gen._update_density_map(500)
 
             P.event("Physics Loop")
+            sl_c = 0
             while True: #physics loop
                 tc = physics_timer.tick_check() #get number of ticks server is behind
                 if tc > 1:
-                    print "Server is %i ticks behind" % (tc)
+                    print "Server is %i ticks behind" % (tc) #only returns 1 right now
                 if tc == 0:
                     break
-
+                sl_c += 1
                 _i+=1
-
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
                 if False or _i % 15 == 0:
@@ -287,24 +241,22 @@ class App(object):
                     _type=1
                     #c_lib.c_lib_objects._create_cspray( _type, 0,0,10, 0,0,2)
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
-                tc += 1
-                #P.event("process_events")
-                SDL.input.process_events()
                 #P.event("get_key_state")
+                SDL.input.process_events()
                 SDL.input.get_key_state()
-                #network events
-                #if GameStateGlobal.agent is not None:
-                    #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent)
+                #P.event("NetClientTick")
+                NetClientTick()
+
                 if GameStateGlobal.agent is not None:
                     NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
-                #P.event("process incoming packets")
                 NetClientGlobal.connection.attempt_recv()
                 #check if another physics tick is needed
                 self.world.tick()
                 self.animations.tick()
                 c_lib.c_lib_objects.tick() ## TESTING
-            if tc > 1:
-                pass
+            if sl_c > 1:
+                print "Physics: %i ticks this frame" % (sl_c)
+
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick()
             if InputGlobal.camera == 'agent':
