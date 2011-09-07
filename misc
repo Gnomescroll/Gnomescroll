@@ -1,1 +1,0 @@
-pip install --install-option="--prefix=~/test/netclient/imports/" --ignore-installed simplejson argparse

@@ -1,3 +1,0 @@
-To run redis server
-
-./redis-server redis.conf
