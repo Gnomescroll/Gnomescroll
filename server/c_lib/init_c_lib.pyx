@@ -22,4 +22,4 @@ def NetServerInit():
     _NetServerInit()
 
 def NetServerTick():
-    _NetServerTick
+    _NetServerTick()

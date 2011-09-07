@@ -165,7 +165,7 @@ class App(object):
         #v3 = vox_lib.Vox_loader().load('base.vox')
         #v3.color('blue', base_color='black')
         #v3.move(10,10,15, 0)
-        physics_timer.start_physics_timer(33)
+
 
         if ping:
             ping_n = SDL.gl.get_ticks()
@@ -174,6 +174,8 @@ class App(object):
 
         self.intervals.set()
         _i = 30
+        physics_timer.start_physics_timer(33)
+
         while not GameStateGlobal.exit:
 
             self.world.sound_updates()
