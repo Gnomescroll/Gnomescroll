@@ -708,7 +708,7 @@ class AgentModel(object):
 
     def forward(self):
         return vector_lib.forward_vector(self.x_angle)
-        
+
     def upward(self):
         return [0,0,1]
 
@@ -850,7 +850,8 @@ class PlayerAgentRender(AgentRender):
         max_l = 20
         pos = c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, max_l)
         if pos != None:
-            print str(pos)
+            pass
+            #print str(pos)
             (x,y,z, px,py,pz, sx,sy,sz) = pos
             #cube selected
             r,g,b = 0,155,0
