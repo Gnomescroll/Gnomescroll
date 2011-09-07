@@ -60,9 +60,10 @@ int _tick_check() {
         delta =0;
         ///may cause timing bug
     }
-    if(delta > 10*1000) {
-        printf("physics_timer: delta is greater than 10 seconds!\n");
-        delta = 0;
+    if(delta > 1000) {
+        printf("physics_timer: delta is greater than 1 second!\n");
+        delta = delta % f;
+        return 1;
     }
     //printf("Delta= %ld \n", delta);
     if( delta >= f) {

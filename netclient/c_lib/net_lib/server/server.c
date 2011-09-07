@@ -177,39 +177,8 @@ void process_packets() {
     }
 }
 
-int SEQ = 500; //hack for sequence number
-
-
 void broad_cast_packet() {
-    printf("broad_cast_packet deprecated!\n");
-    SEQ +=1;
-
-    int i,n1;
-    struct NetPeer* p;
-    unsigned char header[1500];
-
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-    if(pool.connection[i] == NULL || pool.connection[i]->connected == 0) continue;
-        p = pool.connection[i];
-        n1=0;
-
-        int seq = 0;// get_next_sequence_number(&sq);
-        seq = SEQ;
-
-        PACK_uint16_t(p->client_id, header, &n1); //client id
-        PACK_uint8_t(1, header, &n1);  //channel 1
-        PACK_uint16_t(seq, header, &n1); //sequence number
-
-        //ack string
-        PACK_uint16_t(get_sequence_number(p), header, &n1); //max seq
-        PACK_uint32_t(generate_outgoing_ack_flag(p), header, &n1); //sequence number
-
-        unsigned int value = 5;
-        PACK_uint32_t(value, header, &n1);
-
-
-        send_to_client(i, header, n1);
-    }
+    printf("broad_cast_packet deprecated:use broadcast 2\n");
 }
 
 void broad_cast_packet2(){

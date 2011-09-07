@@ -20,6 +20,9 @@ void _NetServerInit() {
 
 void _NetServerTick() {
 
+        update_current_netpeer_time();
+        //NP_print_delta();
+
         process_packets();
         broad_cast_packet2();
 

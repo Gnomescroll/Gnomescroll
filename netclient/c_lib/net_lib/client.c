@@ -34,6 +34,9 @@ physics tick, control input sample ticks and netout ticks should be seperate loo
 
 int _N =0;
 void _NetClientTick() {
+
+    update_current_netpeer_time();
+    //NP_print_delta();
     _N++;
 
     process_incoming_packets();
