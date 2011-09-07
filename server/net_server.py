@@ -78,7 +78,7 @@ class ServerListener:
         #self.udp.close()
 
     def _setup_tcp_socket(self):
-        print "Setting up TCP socket"
+        print "Setting up TCP socket on port %d" % (self.TCP_PORT,)
         try:
             self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
