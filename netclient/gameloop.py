@@ -38,7 +38,6 @@ if True:
     #SDL.gl.init_particles()
     import init_c_lib
     import c_lib.c_lib_objects
-    import c_lib.c_lib_map_gen
     import c_lib.c_lib_timer as physics_timer
     P2 = cube_lib.terrain_map.Profiler()
 
