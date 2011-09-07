@@ -44,7 +44,7 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall', '-D DC_CLIENT'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall'] # use '-O2' or '-O3' in distro build
     # '-D DC_CLIENT'
 
     OS = platform.system()
@@ -169,7 +169,8 @@ t = bld(
 def build(bld):
     OS = platform.system()
 
-    common_libraries = ['GL', 'SDL', 'SDL_image']
+    common_libraries = []
+    SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
 
     time_lib = ['rt']
@@ -181,7 +182,7 @@ def build(bld):
                 'c_lib/texture_loader.c',
                 'c_lib/net_lib/client.c',
                 'c_lib/time/physics_timer.c'],
-        use=common_libraries+time_lib,
+        use=common_libraries+time_lib+SDL_libraries,
         target='c_lib')
 
     bld(features='c cshlib pyext',
@@ -191,7 +192,7 @@ def build(bld):
                 'SDL/texture_loader.c',
                 'SDL/particle_functions.c',
                 'SDL/gl.pyx'],
-        use=common_libraries,
+        use=common_libraries+SDL_libraries,
         target='SDL.gl')
 
     bld(features='c cshlib pyext',
@@ -200,27 +201,27 @@ def build(bld):
                 'SDL/texture_loader.c',
                 'SDL/hud/block_selector.c',
                 'SDL/hud.pyx'],
-        use=common_libraries,
+        use=common_libraries+SDL_libraries,
         target='SDL.hud')
 
     bld(features='c cshlib pyext',
         source=['SDL/input_functions.c',
                 'SDL/SDL_functions.c',
                 'SDL/input.pyx'],
-        use=common_libraries,
+        use=common_libraries+SDL_libraries,
         target='SDL.input')
 
     bld(features='c cshlib pyext',
         source=['cube_lib/t_vbo.c',
                 'cube_lib/t_viz.c',
                 'cube_lib/terrain_map.pyx'],
-        use=common_libraries + ['c_lib'],
+        use=common_libraries + SDL_libraries+['c_lib'],
         target='cube_lib.terrain_map')
 
     bld(features='c cshlib pyext',
         source=['vox_lib/vox_functions.c',
                 'vox_lib/vox_lib.pyx'],
-        use=common_libraries,
+        use=common_libraries+SDL_libraries,
         target='vox_lib')
 
     # c_lib
@@ -268,7 +269,7 @@ def build(bld):
 
     # final
     bld(features='c cprogram pyembed',
-        use=common_libraries+['sound'],
+        use=common_libraries+SDL_libraries+['sound'],
         source='run.c',
         target='run')
 
