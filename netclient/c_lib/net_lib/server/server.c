@@ -243,7 +243,7 @@ void broad_cast_packet2(){
 
         //if(seq % 5 == 0) return; //simulate packet loss
         send_to_client(i, header, n1);
-        printf("Sent packet %i to client %i\n", seq, p->client_id);
+        //printf("Sent packet %i to client %i\n", seq, p->client_id);
     }
 }
 

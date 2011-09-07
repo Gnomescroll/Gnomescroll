@@ -52,7 +52,7 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
                 }
 
             if(np->packet_sequence_buffer[index%256].ack == 0) { //dont ack same packet twice
-                printf("Packet Acked: %i:%i\n", np->client_id,index);
+                //printf("Packet Acked: %i:%i\n", np->client_id,index);
                 np->packet_sequence_buffer[index%256].ack = 1;
             }
 
