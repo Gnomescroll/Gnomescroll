@@ -8,6 +8,7 @@
 #include "server/server.c"
 #include "common/sequencer.c"
 
+#include <time/physics_timer.h>
 
 void _NetServerInit() {
 
@@ -18,10 +19,18 @@ void _NetServerInit() {
 
 }
 
+long t1 = 0;
+long t2 = 0;
+
 void _NetServerTick() {
 
+    if(0) {
+        t2 = t1;
+        t1 = _get_time();
+        printf("delta: %i\n",t1 - t2);
+    }
         update_current_netpeer_time();
-        NP_print_delta();
+       //NP_print_delta();
 
         process_packets();
         broad_cast_packet2();
@@ -29,4 +38,5 @@ void _NetServerTick() {
         check_pool_for_dropped_packets();
         //decrement_ttl();
         poll_connection_timeout();
+
     }
