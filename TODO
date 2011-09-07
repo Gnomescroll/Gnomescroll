@@ -1,119 +1,22 @@
-1> map scrolling on client
-2> ability to send messages to individual clients, instead of to every player connected to game world 
-you should add these to issue tracker actually
-3> object drawing on client
-4> client storage/display of job list
-5> (working on now) job creation/deletion API
-6> (working on now) agent multistep command API
-7> (working on now) interface between atomic agent actions, compound action controller and job manager 
-8> (possibly) an html interface for editing tiles/items/crafting stuff/agents (serialize in python dictionaries to disc for now, return dictionaries with get request)
+1> 
 
-As soon as babies are implemented, the first AI job I am implementing is "snatch baby" which requires an agent with "burlack sack". Each baby causes 1d4 goblin baby snatchers and/or a wolf pack of 1d3 wolves to spawn which target the baby with "snatch baby job".
+<HaltingState> Triplefox, what do you want in terms of game play, or why do you think AoS or minecraft is engaging?
+<Triplefox> for me it's the accessibility of the low-res voxel world that makes these games different
+<Triplefox> it's easy to create interesting things
 
-Dynamic World:
-!!! Cows Grazing on grass
-	-random walk
-	-eat grass, with probability of converting terrain
-	-have mechanism (etct timer) for grass regrowth
-	advanced
-	-cow hunger
-	-cow reproduction
+Add explosives/tripwires
+Add bots/mobs for building
 
-	Fires
-		self reproducing
-		random walk
-
-Infrastructure:
-
-	Player account creation
-		Spawning dwarfs functionality
-		Respawning functionality (init by client)
-
-	HTTP server for terrain_tile management
-		serialize to python dictionaries on disc
-		server loads tiles from json interface (eventually client loads from json interface)
-		add items, crafting, agents, tilesets
-
-	Server Improvements
-		logging of message failure, with messages sent back to client 
-		message validation
-		testing framework
-
-Social Interaction Features:
-
-	Player to Player Communication
-		Messaging System across world
-		Construct Signs / Engrave message on signs
-		Engrave messages on rock
-
-	!!! Notification feeds for each player (for game events)
-		"Player 435 stole your wheat"
-		"Dwarf 4 has died"
-
-	Stats server for player stats and analytics
-
-Graphical:
-
-	Get objects rendering/displayed on client
-	Refactor out cursor drawing /priority functionality so that it is modular
-	Add cursor support for trees/doors/objects
-	Send rendering meta-data for objects to client
-
-Gameplay:
-	
-	implement job manager
-		design job representation language
-		add job
-		delete job
-		pause/cancel job
-
-	implement autonomous dwarf actions/behaviors (getting food, sleeping)
-		stuff in /game_server/agent_controller/agent_controller.py
-		implement "controller.set_agent_behavior()" for testing
-
-	Dwarf Hunger
-		should decrement
-	
-	Furniture Placement Job
+1> multiple player agents 17:09
+2> player agent models (visualization of agents) 17:09
+3> collision detection on server 17:09
+4> steaming map from server to client (working on right now) 17:10
+5> creation of projectiles 17:10
+6> add/remove blocks in FPS mode by client
 
 
-Bonus:
-	http://en.wikipedia.org/wiki/ZZT-oop
-	Slides Tiles like ZZT
-	"Magic"/ZZT type tiles with scripting system
-	ZZT puzzle dungeons
-
-Social: 
-	Map Repository
-		Upload map
-		Annotate map
-		Discuss /comment on map
-
-	Movies/Playback
-		Similar to DF playback database
-
-	Save Macros/designs; upload to design database
-
-	User profiles
-		User photo-albums
-		Activity Feed
-		Player Stats
-		Post to Social Media
-
-	Forums
-		Cordinate/discuss feature development
-
-Mechanical:
-	Pistons
-		push fluids
-		act as valves
-		push upto 16 spaces of certain blocks
-
-Mandrake
-
-Elephants:
-	"Elephants are thought to be highly altruistic animals that will even aid other species, including humans, in distress."
-	Elephant_society http://en.wikipedia.org/wiki/Elephant_intelligence#Elephant_society
-
-User Challenges
-	when women have babies, the babies follow the mother around for the first 6 months. Babies attract wolves and goblin baby snatchers. Goblin baby snatchers put the baby into a bag and run back to their fort to use the babies for slave labor (mining and agriculture). Need child snatching job.
+Optimization (LATER):
+-fulstrum culling for map chunks
+-storing pointers to map tile structs, instead of tile_ids
+-computation of vertex buffers in C?
+-openGL C rendering
