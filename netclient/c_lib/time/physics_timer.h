@@ -1,3 +1,7 @@
+
+#ifndef time_physics_timer_h
+#define time_physics_timer_h
+
 #include <stdio.h>
 //#include <stdlib.h>
 
@@ -16,3 +20,5 @@ int _tick_check();
 
 long _get_time();
 long _get_tick();
+
+#endif

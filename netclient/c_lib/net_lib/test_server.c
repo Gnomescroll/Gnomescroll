@@ -28,8 +28,7 @@ int main() {
 
         process_packets();
 
-        broad_cast_packet2();
-        broad_cast_packet2();
+        broad_cast_packet();
 
         //broad_cast_packet();
         check_pool_for_dropped_packets();

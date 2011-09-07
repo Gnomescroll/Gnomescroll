@@ -70,11 +70,13 @@ struct Socket* create_socket(uint16_t port) {
     return s;
 }
 
+
 int LAST_NETPEER_TIME = -1;
 int CURRENT_NETPEER_TIME = -1;
 
 void update_current_netpeer_time() {
-    long time = get_time()
+    //long time = _get_time();
+    long time = 4;
     LAST_NETPEER_TIME = CURRENT_NETPEER_TIME;
     CURRENT_NETPEER_TIME = time % 16777216;
 }

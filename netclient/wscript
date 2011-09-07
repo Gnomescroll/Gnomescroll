@@ -179,8 +179,9 @@ def build(bld):
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
                 'c_lib/texture_loader.c',
-                'c_lib/net_lib/client.c'],
-        use=common_libraries,
+                'c_lib/net_lib/client.c',
+                'c_lib/time/physics_timer.c'],
+        use=common_libraries+time_lib,
         target='c_lib')
 
     bld(features='c cshlib pyext',
@@ -241,9 +242,8 @@ def build(bld):
 
     #c_lib_timer
     bld(features='c cshlib pyext',
-        source=['c_lib/c_lib_timer.pyx',
-                'c_lib/time/physics_timer.c',],
-        use=common_libraries + time_lib +['c_lib'],
+        source=['c_lib/c_lib_timer.pyx',],
+        use=common_libraries +['c_lib'],
         target='c_lib.c_lib_timer')
 
     # sound
