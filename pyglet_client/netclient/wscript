@@ -44,7 +44,8 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall', '-D DC_CLIENT'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall'] # use '-O2' or '-O3' in distro build
+    # '-D DC_CLIENT'
 
     OS = platform.system()
     _OS = OS
@@ -256,7 +257,7 @@ def build(bld):
 
         use=sound_libraries,
         lib=sound_libraries,
-        libpath=['./sound/api/lib/'],
+        libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
         includes=['./sound/api/inc/', './sound'],
 

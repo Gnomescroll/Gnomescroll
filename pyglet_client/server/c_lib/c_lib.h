@@ -12,4 +12,6 @@ GLint get_particle_sheet_id();
 #endif
 //extern GLint particle_sheet_id;
 
+#define DC_SERVER
+
 #endif

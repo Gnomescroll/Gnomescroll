@@ -99,7 +99,7 @@ void destroy_grenade(int gid) {
     free(g);
     g_count--;
 }
-    
+
 
 /*
  *  Client only

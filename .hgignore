@@ -29,6 +29,9 @@ input.c
 c_lib_map_gen.c
 c_lib_timer.c
 
+test_client
+test_server
+
 Safe Browsing Bloom
 Safe Browsing Bloom Filter 2
 

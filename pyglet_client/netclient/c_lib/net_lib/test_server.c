@@ -27,8 +27,12 @@ int main() {
         printf("* ------ tick=%i\n", i);
 
         process_packets();
-        broad_cast_packet();
+
+        broad_cast_packet2();
+        broad_cast_packet2();
+
         //broad_cast_packet();
+        check_pool_for_dropped_packets();
         decrement_ttl();
         sleep(1);
         i++;

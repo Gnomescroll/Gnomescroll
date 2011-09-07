@@ -49,7 +49,7 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
             if(np->packet_sequence_buffer[index%64].seq != index) {printf("sequence number error 1!!!\n");}
 
             if(np->packet_sequence_buffer[index%64].ack == 0) { //dont ack same packet twice
-                printf("Packet Acked: %i\n", index);
+                printf("Packet Acked: %i:%i\n", np->client_id,index);
                 np->packet_sequence_buffer[index%64].ack = 1;
             }
 
@@ -87,7 +87,7 @@ void check_for_dropped_packets(struct NetPeer* np) {
     j = (np->packet_sequence_number+1) % 64;
     for(i=0;i<32;i++) {
         if((np->packet_sequence_buffer[j].seq != -1) && (np->packet_sequence_buffer[j].ack == 0)) {
-            printf("***Packet Dropped: %i ***\n", np->packet_sequence_buffer[j].seq);
+            printf("***Packet Dropped: %i:%i ***\n", np->client_id, np->packet_sequence_buffer[j].seq);
             DROPPED_PACKETS++;
             //np->packet_sequence_buffer[i].ack = 0;
             np->packet_sequence_buffer[j].seq = -1;

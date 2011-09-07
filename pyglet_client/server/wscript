@@ -35,7 +35,8 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall','-D DC_SERVER'] # use '-O2' or '-O3' in distro build
+    conf.env.CFLAGS = ['-g','-Wall'] # use '-O2' or '-O3' in distro build
+    #,'-D DC_CLIENT'
 
     OS = platform.system()
     conf.env.os = OS
