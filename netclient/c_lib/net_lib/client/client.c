@@ -13,7 +13,7 @@ struct Socket client_socket;
 unsigned char buffer[1500]; //1500 is max ethernet MTU
 
 void init_client() {
-
+    update_current_netpeer_time();
     //init_sequence_numbers(&NPserver); /// FIX
     init_sequencer(&NPserver);
     int local_port = 6967;
@@ -198,6 +198,7 @@ void process_packet(unsigned char* buff, int n) {
 
     process_acks(&NPserver, max_seq, acks);
     set_ack_for_received_packet(&NPserver ,sequence_number);
+    NPserver.last_packet_time = get_current_netpeer_time();
     NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
 }
 
@@ -211,6 +212,21 @@ void send_agent_state_packet() {
 void process_outgoing_packets() {
     return;
 }
+
+
+int poll_connection_timeout() {
+    NPserver.ttl -= 1;
+    if(NP_time_delta1(NPserver.last_packet_time) > 4000) {
+        NPserver.connected = 0;
+        printf("=== \nConnection to server timed out!\n=== \n");
+        return 1;
+    }
+    return 0;
+}
+
+
+
+
 
 int decrement_ttl() {
     NPserver.ttl -= 1;

@@ -21,11 +21,12 @@ void _NetServerInit() {
 void _NetServerTick() {
 
         update_current_netpeer_time();
-        //NP_print_delta();
+        NP_print_delta();
 
         process_packets();
         broad_cast_packet2();
 
         check_pool_for_dropped_packets();
-        decrement_ttl();
+        //decrement_ttl();
+        poll_connection_timeout();
     }

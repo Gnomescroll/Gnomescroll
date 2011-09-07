@@ -196,9 +196,10 @@ class App(object):
                 tc = physics_timer.tick_check() #get number of ticks server is behind
                 if tc > 1:
                     print "Server is %i ticks behind" % (tc) #only returns 1 right now
-                if tc == 0:
+                if tc == 0 or sl_c > 3:
                     NetClientTick()
                     break
+
                 sl_c += 1
                 _i+=1
                 if _i % 350 == 0:
@@ -255,7 +256,10 @@ class App(object):
                 self.world.tick()
                 self.animations.tick()
                 c_lib.c_lib_objects.tick() ## TESTING
-            if sl_c > 1:
+            if sl_c == 1: #minor/ok
+                pass
+                #print "Physics: %i ticks this frame" % (sl_c)
+            if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
 
             P.event("MapControllerGlobal.mapController.tick()")

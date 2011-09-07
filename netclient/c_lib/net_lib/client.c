@@ -47,7 +47,8 @@ void _NetClientTick() {
     }
     send_packet2();
     check_for_dropped_packets(np);
-    decrement_ttl();
+    poll_connection_timeout();
+    //decrement_ttl();
 
     return;
 }

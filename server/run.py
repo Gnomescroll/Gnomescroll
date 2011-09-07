@@ -267,20 +267,24 @@ class Main:
         #load_map()
         load_map2()
         init_c_lib.init()
-        physics_timer.start_physics_timer(33) #ms per tick
         tick = 0
         #self.intervals.set()
         NetServerInit()
+        physics_timer.start_physics_timer(33) #ms per tick
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
-            tc = physics_timer.tick_check() #get number of ticks server is behind
-            #print "tc= %i" %(tc)
-            if tc > 1:
-                print "Server is %i ticks behind" % (tc)
-            if tc > 0:
+            sl_c =0
+            while True: #physics loop
+                tc = physics_timer.tick_check() #get number of ticks server is behind
+                if tc == 0 or sl_c > 3:
+                    NetServerTick() #net out
+                    break
                 GameStateGlobal.gameState.tick()
-                NetServerTick()
+                sl_c+=1
+                tick+=1
+            if sl_c > 1:
+                print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
             #self.intervals.process()
             sleep(0.001)

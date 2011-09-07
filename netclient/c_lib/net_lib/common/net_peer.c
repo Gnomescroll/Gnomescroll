@@ -20,6 +20,7 @@ struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigne
 
     s->ttl_max = TTL_MAX_DEFAULT;
     s->ttl = TTL_MAX_DEFAULT;
+    s->last_packet_time = get_current_netpeer_time();
 
     init_sequencer(s);
 ///    init_sequence_numbers_out(&s->sq2); //init
@@ -38,7 +39,7 @@ struct NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
 
     s->ttl_max = TTL_MAX_DEFAULT;
     s->ttl = TTL_MAX_DEFAULT;
-
+    s->last_packet_time = get_current_netpeer_time();
     //init_sequence_numbers_out(s); //init
     init_sequencer(s);
     return s;
@@ -80,10 +81,17 @@ void update_current_netpeer_time() {
     CURRENT_NETPEER_TIME = time % 16777216;
 }
 
+/*
+int get_current_netpeer_time() {
+    return CURRENT_NETPEER_TIME;
+}
+*/
+
 void NP_print_delta() {
     printf("NP_print_delta: %i\n", CURRENT_NETPEER_TIME-LAST_NETPEER_TIME); //, CURRENT_NETPEER_TIME, LAST_NETPEER_TIME);
 }
 
+/*
 //delta between time in past and current time
 int NP_time_delta1(int time) {
     int delta = CURRENT_NETPEER_TIME - time;
@@ -94,14 +102,15 @@ int NP_time_delta1(int time) {
     return delta;
 }
 
-int NP_time_delta2(int time1, int time2) {
-    int delta = time2 - time1;
-    if( delta<0) {
-        printf("NP_time_delta2: delta negative. rollover? \n");
-        return 0;
+int NP_time_delta2(int t1, int t2) {
+    int delta = t2 - t1;
+    if(delta < 0) {
+        delta = (16777216-t1) + t2
+        printf("NP_time_delta2: delta negative. rollover? t1=%i,t2=%i,delta=%i \n", t1,t2,delta );
+        return delta;
     }
     return delta;
 }
 //    delta = (int)(LAST_NETPEER_TIME-time)
 //    if(abs((int)(time - LAST_NETPEER_TIME)))
-
+*/

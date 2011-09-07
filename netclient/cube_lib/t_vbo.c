@@ -346,11 +346,11 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 
 }
 
-int _t_ = 0;
-int _c_ = 0;
+//int _t_ = 0;
+//int _c_ = 0;
 
 int _draw_terrain() {
-
+/*
     _c_++;
     if(_c_ % 120 == 0) {
         _t_ ++;
@@ -362,7 +362,7 @@ int _draw_terrain() {
             glDisable(GL_MULTISAMPLE);
         }
     }
-
+*/
     //int s,f;
     //s= SDL_GetTicks();
     struct vm_map* m;

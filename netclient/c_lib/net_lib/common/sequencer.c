@@ -76,6 +76,7 @@ uint16_t get_next_sequence_number(struct NetPeer* np) {
     //np->packet_sequence_buffer[index].active = 1; //may set timer?
     np->packet_sequence_buffer[index].seq = np->packet_sequence_number;
     np->packet_sequence_buffer[index].ack = 0;
+    np->packet_sequence_buffer[index].time = get_current_netpeer_time();
     return np->packet_sequence_number;
 }
 

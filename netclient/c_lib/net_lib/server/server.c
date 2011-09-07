@@ -11,6 +11,7 @@ unsigned int id_counter=0;
 
 
 void init_server(unsigned short port) {
+    update_current_netpeer_time();
     int i;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) pool.connection[i]=NULL;
     pool.n_connections = 0;
@@ -36,6 +37,7 @@ int accept_connection(struct sockaddr_in from) {
             pool.connection[j] = p;
             p->client_id = j;
             p->ttl = p->ttl_max;
+            p->last_packet_time = get_current_netpeer_time();
             p->connected = 0;
             //send client his id
             printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
@@ -155,7 +157,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     set_ack_for_received_packet(p ,sequence_number);
     process_acks(p, max_seq, acks);
     p->ttl = p->ttl_max;
-
+    p->last_packet_time = get_current_netpeer_time();
     return;
 }
 
@@ -226,7 +228,22 @@ void check_pool_for_dropped_packets() {
     }
 }
 
+void poll_connection_timeout() {
+    int i;
+    struct NetPeer* p;
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
+    if(pool.connection[i] == NULL) continue;
+        p = pool.connection[i];
+        if(NP_time_delta1(p->last_packet_time) > 4000) { //4000 ms timeout
+            printf("Connection %i timeout\n", p->client_id);
+            pool.connection[i] = NULL;
+            free(p);
+        }
+    }
+}
+
 void decrement_ttl() {
+    printf("decrement ttl deprecated\n");
     int i;
     struct NetPeer* p;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
