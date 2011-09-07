@@ -67,7 +67,7 @@ void send_packet2(){
     unsigned int value = 5;
     PACK_uint32_t(value, header, &n1);
 
-    printf("Sent packet %i\n", seq);
+    //printf("Sent packet %i\n", seq);
 
     //Simulated packet lose
 
@@ -84,6 +84,7 @@ void send_packet2(){
 
 
 void attempt_connection_with_server() {
+    init_sequencer(&NPserver); //virgin state on reconnect
     unsigned char buff[6];
     int n=0;
     PACK_uint16_t(65535, buff, &n);
@@ -91,6 +92,16 @@ void attempt_connection_with_server() {
     n=6; //must be 6 bytes
     sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     printf("Client id requested\n");
+}
+
+void ack_connection_with_server() {
+    unsigned char buff[6];
+    int n=0;
+    PACK_uint16_t(NPserver.client_id, buff, &n);
+    PACK_uint8_t(254, buff, &n);
+    n=6; //must be 6 bytes
+    sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+    printf("ack_connection_with_server\n");
 }
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
@@ -108,6 +119,7 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
         //server.server_address.sin_addr.s_addr = from->sin_addr.s_addr;
         //server.server_address.sin_port = from->sin_port;
         printf("Client id assigned: %i server: %i:%i\n", client_id, htonl(from->sin_addr.s_addr), ntohs( from->sin_port ));
+        ack_connection_with_server();
         return 0;
     }
 
@@ -166,6 +178,12 @@ void process_packet(unsigned char* buff, int n) {
     n1=0;
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
+
+    if(client_id != NPserver.client_id) {
+        printf("Client ID is wrong: %i, %i\n", client_id, NPserver.client_id);
+        return;
+    }
+
     UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
 
     UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number

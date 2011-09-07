@@ -39,10 +39,10 @@ struct NetPeer {
     ///packet sequencer
 
     //x to y: x state
-    struct packet_sequence packet_sequence_buffer[64];
+    struct packet_sequence packet_sequence_buffer[256];
     int packet_sequence_number;
     //x to y: y state
-    struct packet_sequence2 seqbuff[64];
+    struct packet_sequence2 seqbuff[256];
     int highest_packet_sequence_number;
 };
 

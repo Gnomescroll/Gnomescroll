@@ -22,20 +22,24 @@ void init_server(unsigned short port) {
     printf("Server Connection Pool Ready\n");
 }
 
-int accept_connection(struct sockaddr_in from) {
+int pool_n_offset = 1;
 
+int accept_connection(struct sockaddr_in from) {
+    pool_n_offset++;
     struct NetPeer* p ;
     p = create_net_peer_from_address(from);
 
-    int i;
+    int i,j;
     for(i=0;i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool.connection[i]==NULL) {
-            pool.connection[i] = p;
-            p->client_id = i;
+        j = (i+pool_n_offset)%HARD_MAX_CONNECTIONS;
+        if(pool.connection[j]==NULL) {
+            pool.connection[j] = p;
+            p->client_id = j;
             p->ttl = p->ttl_max;
+            p->connected = 0;
             //send client his id
             printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
-            return i;
+            return j;
         }
     }
     if(i >= HARD_MAX_CONNECTIONS) {printf("Could not open client connection: connection pool full!\n");free(p);return -1;}
@@ -55,7 +59,7 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
     p = pool.connection[client_id];
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
 
-    printf("Sending %i bytes to %i:%i\n",n, p->ip, p->port);
+    //printf("Sending %i bytes to %i:%i\n",n, p->ip, p->port);
     int sent_bytes = sendto(server_socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n)
     {
@@ -96,7 +100,13 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         if(client_id==65535 && channel_id == 255) {
             client_id = accept_connection(*from);
             send_id(client_id);
-        }  else {
+        }  else if ((client_id < HARD_MAX_CONNECTIONS) && (channel_id == 254) && (pool.connection[client_id] != NULL) ) {
+            printf("Connection with client %i acknoledged\n",  pool.connection[client_id]->client_id);
+            pool.connection[client_id]->connected = 1;
+            if( pool.connection[client_id]->client_id != client_id) printf("WTF ERROR: accept connection\n");
+        }
+
+        else {
             printf("validate_packet: Invalid 6 byte packet!\n");
         }
         return;
@@ -169,7 +179,9 @@ void process_packets() {
 
 int SEQ = 500; //hack for sequence number
 
+
 void broad_cast_packet() {
+    printf("broad_cast_packet deprecated!\n");
     SEQ +=1;
 
     int i,n1;
@@ -177,14 +189,14 @@ void broad_cast_packet() {
     unsigned char header[1500];
 
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-    if(pool.connection[i] == NULL) continue;
+    if(pool.connection[i] == NULL || pool.connection[i]->connected == 0) continue;
         p = pool.connection[i];
         n1=0;
 
         int seq = 0;// get_next_sequence_number(&sq);
         seq = SEQ;
 
-        PACK_uint16_t(0, header, &n1); //server id
+        PACK_uint16_t(p->client_id, header, &n1); //client id
         PACK_uint8_t(1, header, &n1);  //channel 1
         PACK_uint16_t(seq, header, &n1); //sequence number
 
@@ -209,9 +221,9 @@ void broad_cast_packet2(){
     unsigned char header[1500];
 
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool.connection[i] == NULL) continue;
+        if(pool.connection[i] == NULL || pool.connection[i]->connected == 0) continue;
         p = pool.connection[i];
-        if(p->connected == 0) { printf("Cannot send packet, disconnected!\n"); return;}
+        if(p->connected == 0) { printf("Cannot send packet, disconnected: client %i\n",p->client_id); return;}
 
         n1 = 0;
 
