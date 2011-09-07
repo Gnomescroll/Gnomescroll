@@ -19,7 +19,7 @@
 
 //network
 
-#include "./net_lib/client.c"
+//#include "./net_lib/client.h"
 
 
 #define map_gen_enabled 0

@@ -14,7 +14,7 @@ def init():
 
 #network stuff
 
-cdef extern from "./net_lib/client.c":
+cdef extern from "./net_lib/client.h":
     void _NetClientTick()
     void _NetClientConnect(int a, int b,int c, int d, int _port)
 

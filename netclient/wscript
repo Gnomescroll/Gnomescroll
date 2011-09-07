@@ -178,7 +178,8 @@ def build(bld):
 
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
-                'c_lib/texture_loader.c'],
+                'c_lib/texture_loader.c',
+                'c_lib/net_lib/client.c'],
         use=common_libraries,
         target='c_lib')
 
