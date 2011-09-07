@@ -21,7 +21,7 @@ void _NetServerInit() {
 void _NetServerTick() {
 
         process_packets();
-        broad_cast_packet();
+        broad_cast_packet2();
 
         check_pool_for_dropped_packets();
         decrement_ttl();
