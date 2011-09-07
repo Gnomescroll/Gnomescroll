@@ -197,6 +197,7 @@ class App(object):
                 if tc > 1:
                     print "Server is %i ticks behind" % (tc) #only returns 1 right now
                 if tc == 0:
+                    NetClientTick()
                     break
                 sl_c += 1
                 _i+=1
@@ -246,7 +247,6 @@ class App(object):
                 SDL.input.process_events()
                 SDL.input.get_key_state()
                 #P.event("NetClientTick")
-                NetClientTick()
 
                 if GameStateGlobal.agent is not None:
                     NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
