@@ -143,6 +143,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     }
 
     set_ack_for_received_packet(p ,sequence_number);
+    process_acks(p, max_seq, acks);
     p->ttl = p->ttl_max;
 
     return;
@@ -196,6 +197,51 @@ void broad_cast_packet() {
 
 
         send_to_client(i, header, n1);
+    }
+}
+
+void broad_cast_packet2(){
+
+    int i,n1;
+    struct NetPeer* p;
+    int seq;
+
+    unsigned char header[1500];
+
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
+        if(pool.connection[i] == NULL) continue;
+        p = pool.connection[i];
+        if(p->connected == 0) { printf("Cannot send packet, disconnected!\n"); return;}
+
+        n1 = 0;
+
+        PACK_uint16_t(p->client_id, header, &n1); //client id
+        PACK_uint8_t(1, header, &n1);  //channel 1
+
+        //sequence number
+        seq = get_next_sequence_number(p);
+        PACK_uint16_t(seq, header, &n1); //sequence number
+
+        //ack string
+        PACK_uint16_t(get_sequence_number(p), header, &n1); //max seq
+        PACK_uint32_t(generate_outgoing_ack_flag(p), header, &n1); //sequence number
+
+        unsigned int value = 5;
+        PACK_uint32_t(value, header, &n1);
+
+        if(seq % 3 == 0) return;
+        send_to_client(i, header, n1);
+        printf("Sent packet %i to client %i\n", seq, p->client_id);
+    }
+}
+
+void check_for_dropped_packets() {
+    int i;
+    struct NetPeer* p;
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
+    if(pool.connection[i] == NULL) continue;
+        p = pool.connection[i];
+        check_for_dropped_packets(p)
     }
 }
 

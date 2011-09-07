@@ -260,7 +260,7 @@ def build(bld):
 
         use=['fmodex'],
         lib=['fmodex'],
-        libpath=['./sound/api/lib/'],
+        libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
         includes=['./sound/api/inc/', './sound'],
 

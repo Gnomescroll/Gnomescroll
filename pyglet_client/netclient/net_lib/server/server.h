@@ -43,6 +43,7 @@ struct ConnectionPool {
 };
 
 void broad_cast_packet(); //every 30 ms
+void broad_cast_packet2();
 
 void receive_packets(struct Socket* socket);
 
@@ -51,4 +52,5 @@ inline int error_check_packet(unsigned char* data, int n);
 void process_packets();
 
 void decrement_ttl();
+void check_for_dropped_packets();
 #endif

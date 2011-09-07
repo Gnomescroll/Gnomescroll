@@ -61,8 +61,8 @@ void send_packet2(){
     PACK_uint16_t(seq, header, &n1); //sequence number
 
     //ack string
-    PACK_uint16_t(0, header, &n1); //max seq
-    PACK_uint32_t(0, header, &n1); //sequence number
+    PACK_uint16_t(get_sequence_number(&NPserver), header, &n1); //max seq
+    PACK_uint32_t(generate_outgoing_ack_flag(&NPserver), header, &n1); //sequence number
 
     unsigned int value = 5;
     PACK_uint32_t(value, header, &n1);
@@ -151,7 +151,7 @@ void process_incoming_packets() {
 
 void process_packet(unsigned char* buff, int n) {
     if(n==6) return;
-    NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
+
     int n1=0;
 
     uint8_t channel_id;
@@ -167,6 +167,7 @@ void process_packet(unsigned char* buff, int n) {
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
     UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+
     UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
     //ack
     UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
@@ -174,10 +175,12 @@ void process_packet(unsigned char* buff, int n) {
 
     UNPACK_uint32_t(&value, buff, &n1);
     //printf("value= %i\n", value);
-
     //printf("received packet: sequence number %i from server\n", sequence_number);
-    process_acks(&NPserver, max_seq, acks);
     //printf("---\n");
+
+    process_acks(&NPserver, max_seq, acks);
+    set_ack_for_received_packet(&NPserver ,sequence_number);
+    NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
 }
 
 unsigned char* out_buffer[1500];
