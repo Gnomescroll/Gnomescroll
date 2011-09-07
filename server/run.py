@@ -269,8 +269,8 @@ class Main:
         init_c_lib.init()
         tick = 0
         #self.intervals.set()
-        NetServerInit()
         physics_timer.start_physics_timer(33) #ms per tick
+        NetServerInit()
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
