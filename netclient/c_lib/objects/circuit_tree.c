@@ -51,7 +51,7 @@ void p_tree_recursive(struct p_tree_node* n) {
         a = rand() %2;
         a = (a==1 ? 1 : -1);
 
-        l = 3 + (rand() %3);
+        l = 1 + (rand() %2);
 
         b = rand() %3;
         if(b == 0) {
