@@ -8,9 +8,9 @@ long tick_n;
 
 long delta;
 
-//long get_time() ;
+//long Cget_time() ;
 
-long get_time() {
+long Cget_time() {
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
         clock_serv_t cclock;
         mach_timespec_t mts;
@@ -34,7 +34,7 @@ long get_time() {
 }
 
 long _get_time() {
-    return get_time();
+    return Cget_time();
 }
 
 long _get_tick() {
@@ -46,13 +46,13 @@ int _start(int frequency) {
     tick_n = 0;
     delta = 0;
     f = frequency;
-    start_time = get_time();
+    start_time = Cget_time();
     last_tick = start_time;
     return 0;
 }
 
 int _tick_check() {
-    long cur_t = get_time();
+    long cur_t = Cget_time();
 
     //printf("Time since last tick= %ld \n", cur_t - last_tick);
     delta += cur_t - last_tick;
