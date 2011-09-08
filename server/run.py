@@ -262,7 +262,7 @@ class Main:
         #self.intervals = intervals.Intervals()
         #self.intervals.register(self.file_monitor, self.file_monitor.interval)
 
-    def run(self):
+    def run2(self):
         #import pdb; pdb.set_trace()
         print "Server Started"
         #load_map()
@@ -295,4 +295,4 @@ class Main:
 if __name__ == "__main__":
     print "starting server"
     main = Main()
-    main.run()
+    main.run2()

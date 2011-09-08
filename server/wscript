@@ -117,7 +117,8 @@ def build(bld):
 
     # final
     bld(features='c cprogram pyembed',
-        use=common_libraries+time_lib + ['c_lib'],
+        #use=common_libraries+time_lib + ['c_lib'],
+        use=common_libraries,
         source='run.c',
         target='run')
 

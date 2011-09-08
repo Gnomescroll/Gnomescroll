@@ -263,7 +263,8 @@ def build(bld):
 
     # final
     bld(features='c cprogram pyembed',
-        use=common_libraries+SDL_libraries+['sound'],
+        #use=common_libraries+SDL_libraries+['sound'],
+        use=SDL_libraries,
         source='run.c',
         target='run')
 
