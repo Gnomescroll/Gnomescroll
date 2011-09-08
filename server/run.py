@@ -278,7 +278,7 @@ class Main:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
             sl_c =0
-            while True and sl_c==0: #physics loop
+            while sl_c==0: #physics loop
                 tc = PhysicsTimerTickCheck() #get number of ticks server is behind
                 if tc == 0 or sl_c > 3:
                     NetServerTick() #net out
