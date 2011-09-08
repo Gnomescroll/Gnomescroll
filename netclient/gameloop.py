@@ -40,6 +40,7 @@ if True:
     import c_lib.c_lib_objects
     #import c_lib.c_lib_timer as physics_timer
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
+    from init_c_lib import START_CLOCK, GET_TICK
     P2 = cube_lib.terrain_map.Profiler()
 
     from init_c_lib import NetClientTick, NetClientConnect
@@ -175,7 +176,8 @@ class App(object):
 
         self.intervals.set()
         _i = 30
-        StartPhysicsTimer(33)
+        #StartPhysicsTimer(33)
+        START_CLOCK()
         while not GameStateGlobal.exit:
 
             self.world.sound_updates()
@@ -193,9 +195,11 @@ class App(object):
             P.event("Physics Loop")
             sl_c = 0
             while True: #physics loop
-                tc = PhysicsTimerTickCheck() #get number of ticks server is behind
-                if tc > 1:
-                    print "Server is %i ticks behind" % (tc) #only returns 1 right now
+                #tc = PhysicsTimerTickCheck() #get number of ticks server is behind
+                tc = GET_TICK()
+                #print "tc= %i" % (tc)
+                #if tc > 1:
+                #    print "Server is %i ticks behind" % (tc) #only returns 1 right now
                 if tc == 0 or sl_c > 3:
                     NetClientTick()
                     break
@@ -245,10 +249,10 @@ class App(object):
                     #c_lib.c_lib_objects._create_cspray( _type, 0,0,10, 0,0,2)
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
                 #P.event("get_key_state")
-                SDL.input.process_events()
-                SDL.input.get_key_state()
                 #P.event("NetClientTick")
 
+                SDL.input.process_events()
+                SDL.input.get_key_state()
                 if GameStateGlobal.agent is not None:
                     NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
                 NetClientGlobal.connection.attempt_recv()
@@ -256,8 +260,9 @@ class App(object):
                 self.world.tick()
                 self.animations.tick()
                 c_lib.c_lib_objects.tick() ## TESTING
-            if sl_c == 1: #minor/ok
-                pass
+                #if sl_c > 3:
+                #    NetClientTick()
+                #    break
                 #print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)

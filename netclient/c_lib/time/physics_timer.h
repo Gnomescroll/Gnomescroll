@@ -21,4 +21,7 @@ int _tick_check();
 long _get_time();
 long _get_tick();
 
+void _START_CLOCK();
+int _GET_TICK();
+
 #endif

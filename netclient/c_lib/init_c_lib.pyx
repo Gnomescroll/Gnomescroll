@@ -32,6 +32,8 @@ cdef extern from "../c_lib/time/physics_timer.h":
     int _tick_check()
     long _get_time()
     long _get_tick()
+    void _START_CLOCK()
+    int _GET_TICK()
 
 def StartPhysicsTimer(frequency):
     _start(frequency)
@@ -44,3 +46,9 @@ def get_time():
 
 def get_tick():
     return _get_tick()
+
+def START_CLOCK():
+    _START_CLOCK()
+
+def GET_TICK():
+    return _GET_TICK()

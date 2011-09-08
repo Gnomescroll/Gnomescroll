@@ -17,6 +17,7 @@ import pyximport #; pyximport.install()
 import init_c_lib
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import NetServerInit, NetServerTick
+from init_c_lib import START_CLOCK, GET_TICK
 
 from net_server import NetServer
 from net_out import NetOut
@@ -271,15 +272,17 @@ class Main:
         init_c_lib.init()
         tick = 0
         #self.intervals.set()#ms per tick
-        StartPhysicsTimer(33)
+        #StartPhysicsTimer(33)
         NetServerInit()
 
+        START_CLOCK()
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
             sl_c =0
             while sl_c==0: #physics loop
-                tc = PhysicsTimerTickCheck() #get number of ticks server is behind
+                tc = GET_TICK()
+                #tc = PhysicsTimerTickCheck() #get number of ticks server is behind
                 if tc == 0 or sl_c > 3:
                     NetServerTick() #net out
                     break
@@ -290,7 +293,7 @@ class Main:
                 print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
             #self.intervals.process()
-            sleep(0.001)
+            sleep(0.005)
 
 if __name__ == "__main__":
     print "starting server"
