@@ -346,7 +346,7 @@ Render/Draw methods for agents
 class AgentRender:
 
     def draw(self):
-        P.event("Draw 2")
+        #P.event("Draw 2")
         self.draw_aiming_direction()
         self.draw_bounding_box()
 

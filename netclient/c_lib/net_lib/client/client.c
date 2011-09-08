@@ -17,10 +17,18 @@ void init_client() {
     //init_sequence_numbers(&NPserver); /// FIX
     init_sequencer(&NPserver);
     int local_port = 6967;
-    struct Socket*s = create_socket(local_port);
+    struct Socket* s = create_socket(local_port);
+
+    if(s != NULL) {
     client_socket = *s;
     free(s);
+    } else {
+        printf("Attempting alterntive socket\n");
+        s = create_socket(local_port+(rand()%32));
+        *s;
+        free(s);
 
+    }
     init_sequencer(&NPserver);
 }
 
