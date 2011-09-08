@@ -31,7 +31,7 @@ struct p_tree_node* new_branch(struct p_tree_node* n, int dx,int dy,int dz) {
 
 void p_tree_recursive(struct p_tree_node* n) {
     if(n==NULL) return;
-    if(n->depth > 5) return;
+    if(n->depth > 4) return;
 
     int dx,dy,dz;
 
@@ -41,17 +41,17 @@ void p_tree_recursive(struct p_tree_node* n) {
     int i, r;
     r = (rand() % 3)+2;
     r=2;
-    printf("Branch %i times\n", r);
+    //printf("Branch %i times\n", r);
     for(i=0;i<r;i++) {
         //printf("x\n");
         dx=0;
         dy=0;
-        dz=1;
+        dz=0;
 
         a = rand() %2;
         a = (a==1 ? 1 : -1);
 
-        l = 2 + (rand() %5);
+        l = 3 + (rand() %3);
 
         b = rand() %3;
         if(b == 0) {
@@ -96,7 +96,7 @@ void circuit_tree_generate(int type, int seed) {
 }
 
 void circuit_tree_draw() {
-    printf("Drawing Circuit Tree: %i nodes\n", pt_i);
+    //printf("Drawing Circuit Tree: %i nodes\n", pt_i);
     int i;
     //float x0,y0,z0;
     //float x1,y1,z1;
