@@ -177,6 +177,7 @@ class App(object):
         self.intervals.set()
         _i = 30
         #StartPhysicsTimer(33)
+        c_lib.c_lib_objects._generate_circuit_tree(0,0)
         START_CLOCK()
         while not GameStateGlobal.exit:
 
@@ -211,6 +212,8 @@ class App(object):
 
                 sl_c += 1
                 _i+=1
+                if _i % 300 == 0:
+                    c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
                 if False or _i % 15 == 0:
@@ -279,7 +282,7 @@ class App(object):
                 #    NetClientTick()
                 #    break
                 #print "Physics: %i ticks this frame" % (sl_c)
-            if sl_c > 1:
+            if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
                 NetClientTick()
@@ -304,6 +307,8 @@ class App(object):
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             cube_lib.terrain_map.draw_terrain()
+            if True:
+                c_lib.c_lib_objects._draw_circuit_tree()
             P.event("Draw World")
             #import pdb; pdb.set_trace()
             self.world.draw(first_person) #upto 255 ms

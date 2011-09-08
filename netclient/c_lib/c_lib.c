@@ -12,6 +12,8 @@
 #include "./objects/cspray.c"
 #include "./objects/blood.c"
 
+#include "./objects/circuit_tree.c"
+
 #include "./agent/agent.c"
 #include "./agent/agent_vox.c"
 #include "./agent/agent_draw.c"

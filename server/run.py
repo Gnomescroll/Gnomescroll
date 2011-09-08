@@ -291,7 +291,7 @@ class Main:
                 tick+=1
             if sl_c != 0:
                 NetServerTick()
-            if sl_c > 1:
+            if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
             #self.intervals.process()
