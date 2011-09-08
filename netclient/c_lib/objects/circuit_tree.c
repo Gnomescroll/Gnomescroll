@@ -14,10 +14,17 @@ struct p_tree_node {
 struct p_tree_node p_array[2048];
 int pt_i = 1;
 
-void new_branch(struct p_tree_node* n, int x0,y0,z0, int x1,y1,z1) {
-    if(pt_i >= 2048) return;
+struct p_tree_node* new_branch(struct p_tree_node* n, int dx,int dy,int dz) {
+    if(pt_i >= 2048) return NULL;
 
-     p_array[pt_i].depth = n->depth+1;
+    p_array[pt_i].depth = n->depth+1;
+    p_array[pt_i].s[0] = n->e[0];
+    p_array[pt_i].s[1] = n->e[1];
+    p_array[pt_i].s[2] = n->e[1];
+    p_array[pt_i].e[0] = n->e[0]+dx;
+    p_array[pt_i].e[1] = n->e[1]+dy;
+    p_array[pt_i].e[2] = n->e[1]+dz;
+
     pt_i++;
 }
 
@@ -26,10 +33,14 @@ void p_tree_recursive(struct p_tree_node* n) {
     if(pt_i >= 2048) return;
     if(n->depth > 3) return;
 
+    int x,y,z
+
+    p = struct p_tree_node* n;
     int i, r;
     r = (rand % 3)+1;
     for(i=0;i<r;i++) {
-
+        n = new_branch(n, x,y,z);
+        p_tree_recursive(p);
 
 
     }
