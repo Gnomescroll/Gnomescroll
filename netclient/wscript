@@ -241,12 +241,6 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
-    #c_lib_timer
-    bld(features='c cshlib pyext',
-        source=['c_lib/c_lib_timer.pyx',],
-        use=common_libraries +['c_lib'],
-        target='c_lib.c_lib_timer')
-
     # sound
     bld(features='c cshlib',
         source=['sound/sound.c'],
@@ -304,7 +298,6 @@ def install_in_ext(ctx):
                'c_lib._ray_trace',
                'init_c_lib',
                'c_lib.c_lib_objects',
-               'c_lib.c_lib_timer',
                'csound',
                'sound.sounds',  # cython .so's need to have same name as source
                ]

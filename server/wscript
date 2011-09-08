@@ -115,12 +115,6 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
-    bld(features='c cshlib pyext',
-        source=['c_lib/c_lib_timer.pyx',],
-        use=common_libraries + time_lib + ['c_lib'],
-        lib=time_lib,
-        target='c_lib.c_lib_timer')
-
     # final
     bld(features='c cprogram pyembed',
         use=common_libraries+time_lib + ['c_lib'],
@@ -152,8 +146,6 @@ def install_in_ext(ctx):
         'c_lib.ray_trace',
         'init_c_lib',
         'c_lib.c_lib_objects',
-        'c_lib.c_lib_timer',
-        #'c_lib.c_lib_map_gen',
     ]
 
     for target in targets:
