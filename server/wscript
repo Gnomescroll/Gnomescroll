@@ -117,13 +117,14 @@ def build(bld):
 
     bld(features='c cshlib pyext',
         source=['c_lib/c_lib_timer.pyx',],
-        use=common_libraries + time_lib + ['c_lib'],
-        lib=time_lib,
+        use=[],
+        #use=common_libraries+ ['c_lib'],# + time_lib ,
+        #lib=time_lib,
         target='c_lib.c_lib_timer')
 
     # final
     bld(features='c cprogram pyembed',
-        use=common_libraries+time_lib + ['c_lib'],
+        use=common_libraries+['c_lib'],#+time_lib,
         source='run.c',
         target='run')
 
