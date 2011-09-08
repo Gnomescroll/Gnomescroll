@@ -440,6 +440,7 @@ class AgentInput:
                 'right':self.adjust_block,
                 'up':self.adjust_block,
                 'down':self.adjust_block,
+                'b'   : self.bleed,
             })
     # accept key,handler or a dict of key,handlers
     def _bind_key_handlers(self, key, handler=None):
@@ -456,6 +457,11 @@ class AgentInput:
     def reload(self, symbol=None, modifiers=None):
         print 'reloading'
         GameStateGlobal.agent.reload()
+
+    @classmethod
+    def bleed(cls, *args, **kwargs):
+        if GameStateGlobal.agent is not None:
+            GameStateGlobal.agent.bleed()
 
     def switch_weapon(self, symbol=None, modifiers=None):
         #print 'switch weapon'
