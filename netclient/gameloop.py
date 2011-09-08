@@ -212,7 +212,7 @@ class App(object):
 
                 sl_c += 1
                 _i+=1
-                if _i % 300 == 0:
+                if _i % 100 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)

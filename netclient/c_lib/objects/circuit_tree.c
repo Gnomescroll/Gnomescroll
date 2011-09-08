@@ -12,42 +12,46 @@ struct p_tree_node {
 };
 
 struct p_tree_node p_array[2048];
-int pt_i = 1;
+int pt_i = 0;
 
 struct p_tree_node* new_branch(struct p_tree_node* n, int dx,int dy,int dz) {
+    if(n==NULL) return NULL;
     if(pt_i >= 2048) return NULL;
 
     p_array[pt_i].depth = n->depth+1;
     p_array[pt_i].s[0] = n->e[0];
     p_array[pt_i].s[1] = n->e[1];
-    p_array[pt_i].s[2] = n->e[1];
+    p_array[pt_i].s[2] = n->e[2];
     p_array[pt_i].e[0] = n->e[0]+dx;
     p_array[pt_i].e[1] = n->e[1]+dy;
-    p_array[pt_i].e[2] = n->e[1]+dz;
-
+    p_array[pt_i].e[2] = n->e[2]+dz;
     pt_i++;
+    return &p_array[pt_i-1];
 }
 
 void p_tree_recursive(struct p_tree_node* n) {
-    pt_i++;
-    if(pt_i >= 2048) return;
-    if(n->depth > 3) return;
+    if(n==NULL) return;
+    if(n->depth > 5) return;
 
-    int dx,dy,dz
+    int dx,dy,dz;
 
     struct p_tree_node* p;
     int a,b,l;
 
     int i, r;
-    r = (rand % 3)+1;
+    r = (rand() % 3)+2;
+    r=2;
+    printf("Branch %i times\n", r);
     for(i=0;i<r;i++) {
+        //printf("x\n");
         dx=0;
         dy=0;
-        dz=0;
-        a = rand() %2;
-        a = a==1 ? 1 : -1;
+        dz=1;
 
-        l = 1 + (rand() %4);
+        a = rand() %2;
+        a = (a==1 ? 1 : -1);
+
+        l = 2 + (rand() %5);
 
         b = rand() %3;
         if(b == 0) {
@@ -60,7 +64,12 @@ void p_tree_recursive(struct p_tree_node* n) {
             dz = l; //only grow up
         }
 
-        n = new_branch(n, dx,dy,dz);
+        /*
+        dx = -3+(rand() % 6);
+        dy = -3+(rand() % 6);
+        dz = -2+(rand() % 6);
+        */
+        p = new_branch(n, dx,dy,dz);
         p_tree_recursive(p);
 
 
@@ -70,19 +79,24 @@ void p_tree_recursive(struct p_tree_node* n) {
 void circuit_tree_generate(int type, int seed) {
     printf("Generated Circuit Tree\n");
     //printf("RANDMAX= %i \n", RAND_MAX);
-    srand(seed); //seed
+    //srand(seed); //seed
     //rand()
     pt_i = 1;
 
-    p_array.depth = 1;
-    p_array[0].s = {10,10,8};
-    p_array[0].s = {10,10,10};
+    p_array[0].depth = 0;
+    p_array[0].s[0] = 10;
+    p_array[0].s[1] = 10;
+    p_array[0].s[2] = 10;
+
+    p_array[0].e[0] = 10;
+    p_array[0].e[1] = 10;
+    p_array[0].e[2] = 15;
 
     p_tree_recursive(&p_array[0]);
 }
 
 void circuit_tree_draw() {
-    printf("Drawing Circuit Tree\n");
+    printf("Drawing Circuit Tree: %i nodes\n", pt_i);
     int i;
     //float x0,y0,z0;
     //float x1,y1,z1;
@@ -90,10 +104,22 @@ void circuit_tree_draw() {
     struct p_tree_node* p;
     glBegin(GL_LINES);
     glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
-    for(i=0;i<2048;i++) {
-        p = p_array[i]
-        glVertex3f(p->s[0],p->s[1],p->s[2]);
-        glVertex3f(p->e[0],p->e[1],p->e[2]);
+    for(i=0;i<pt_i;i++) {
+        p = &p_array[i];
+
+        /*
+        if(p->depth % 2 == 0) {
+            glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+        } else {
+            glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)255);
+        }
+        */
+        //glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+        glVertex3f(p->s[0]+0.5,p->s[1]+0.5,p->s[2]+0.5);
+        //glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+        glVertex3f(p->e[0]+0.5,p->e[1]+0.5,p->e[2]+0.5);
+        //glVertex3f(p->s[0],p->s[1],p->s[2]);
+        //glVertex3f(p->e[0],p->e[1],p->e[2]);
     }
     glEnd();
 }
