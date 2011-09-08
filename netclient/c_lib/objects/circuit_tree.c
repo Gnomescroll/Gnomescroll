@@ -33,13 +33,34 @@ void p_tree_recursive(struct p_tree_node* n) {
     if(pt_i >= 2048) return;
     if(n->depth > 3) return;
 
-    int x,y,z
+    int dx,dy,dz
 
-    p = struct p_tree_node* n;
+    struct p_tree_node* p;
+    int a,b,l;
+
     int i, r;
     r = (rand % 3)+1;
     for(i=0;i<r;i++) {
-        n = new_branch(n, x,y,z);
+        dx=0;
+        dy=0;
+        dz=0;
+        a = rand() %2;
+        a = a==1 ? 1 : -1;
+
+        l = 1 + (rand() %4);
+
+        b = rand() %3;
+        if(b == 0) {
+            dx = l*a;
+        }
+        if(b==1) {
+            dy = l*a;
+        }
+        if(b==2) {
+            dz = l; //only grow up
+        }
+
+        n = new_branch(n, dx,dy,dz);
         p_tree_recursive(p);
 
 
@@ -48,7 +69,7 @@ void p_tree_recursive(struct p_tree_node* n) {
 
 void circuit_tree_generate(int type, int seed) {
     printf("Generated Circuit Tree\n");
-    printf("RANDMAX= %i \n", RAND_MAX);
+    //printf("RANDMAX= %i \n", RAND_MAX);
     srand(seed); //seed
     //rand()
     pt_i = 1;
@@ -62,6 +83,19 @@ void circuit_tree_generate(int type, int seed) {
 
 void circuit_tree_draw() {
     printf("Drawing Circuit Tree\n");
+    int i;
+    //float x0,y0,z0;
+    //float x1,y1,z1;
+
+    struct p_tree_node* p;
+    glBegin(GL_LINES);
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+    for(i=0;i<2048;i++) {
+        p = p_array[i]
+        glVertex3f(p->s[0],p->s[1],p->s[2]);
+        glVertex3f(p->e[0],p->e[1],p->e[2]);
+    }
+    glEnd();
 }
 
 /*
