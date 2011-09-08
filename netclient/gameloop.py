@@ -200,8 +200,13 @@ class App(object):
                 #print "tc= %i" % (tc)
                 #if tc > 1:
                 #    print "Server is %i ticks behind" % (tc) #only returns 1 right now
-                if tc == 0 or sl_c > 3:
-                    NetClientTick()
+                #'''
+                #if tc == 0 or sl_c > 3:
+                #    NetClientTick()
+                #    break
+                #'''
+                if tc == 0 or sl_c > 2:
+                    #NetClientTick()
                     break
 
                 sl_c += 1
@@ -250,7 +255,17 @@ class App(object):
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
                 #P.event("get_key_state")
                 #P.event("NetClientTick")
-
+                '''
+                SDL.input.get_key_state()
+                SDL.input.process_events()
+                if GameStateGlobal.agent is not None:
+                    NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
+                #check if another physics tick is needed
+                self.world.tick()
+                self.animations.tick()
+                c_lib.c_lib_objects.tick() ## TESTING
+                NetClientGlobal.connection.attempt_recv()
+                '''
                 SDL.input.process_events()
                 SDL.input.get_key_state()
                 if GameStateGlobal.agent is not None:
@@ -264,8 +279,10 @@ class App(object):
                 #    NetClientTick()
                 #    break
                 #print "Physics: %i ticks this frame" % (sl_c)
-            if sl_c > 2:
+            if sl_c > 1:
                 print "Physics: %i ticks this frame" % (sl_c)
+            if sl_c > 0:
+                NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick()

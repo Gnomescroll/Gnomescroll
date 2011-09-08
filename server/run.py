@@ -280,20 +280,22 @@ class Main:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
             sl_c =0
-            while sl_c==0: #physics loop
+            while True: #physics loop
                 tc = GET_TICK()
+                #print "tc=%i" % (tc)
                 #tc = PhysicsTimerTickCheck() #get number of ticks server is behind
-                if tc == 0 or sl_c > 3:
-                    NetServerTick() #net out
+                if tc == 0 or sl_c > 3: #net out
                     break
                 GameStateGlobal.gameState.tick()
                 sl_c+=1
                 tick+=1
+            if sl_c != 0:
+                NetServerTick()
             if sl_c > 1:
                 print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
             #self.intervals.process()
-            sleep(0.005)
+            sleep(0.001)
 
 if __name__ == "__main__":
     print "starting server"
