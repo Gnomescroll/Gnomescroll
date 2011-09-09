@@ -57,7 +57,7 @@ inline int error_check_packet(unsigned char* data, int n) {
 }
 
 void send_to_client(int client_id, unsigned char* buffer, int n) {
-    printf("Sending %i bytes to client %i \n", n, client_id);
+    //printf("Sending %i bytes to client %i \n", n, client_id);
     struct NetPeer* p;
     p = pool.connection[client_id];
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
@@ -83,7 +83,7 @@ void send_id(uint16_t client_id) {
 }
 
 void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in* from) {
-    printf("Packet\n");
+    //printf("Packet\n");
     int n=0;
 
     uint16_t client_id;
