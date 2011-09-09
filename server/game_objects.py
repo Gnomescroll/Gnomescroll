@@ -58,6 +58,8 @@ class GameObject:
     def pos(self, xyz=None):
         if xyz is not None:
             self.state[0:3] = xyz
+            if self.on_ground:
+                self.last_ground_pos = xyz
         else:
             return self.state[0:3]
 
@@ -82,8 +84,11 @@ class DetachableObject(GameObject):
     
     def __init__(self, id, state=None):
         GameObject.__init__(self, id, state)
+        self.last_ground_pos = self.state[0:3]
 
     def take(self, new_owner):
+        if self.on_ground:
+            self.last_ground_pos = self.pos()
         # ground -> owner
         old_owner = self.owner
         self.owner = new_owner
@@ -96,7 +101,11 @@ class DetachableObject(GameObject):
 
     # give it a position to override default drop position behavior (drop where owner was)
     def drop(self):
-        pos = self.owner.pos()
+        if self.owner is not None:
+            pos = self.owner.pos()
+        else:
+            pos = self.last_ground_pos
+            print 'Error: attempting to drop item that has no owner'
         self.owner = None
         self.pos(pos)
         self.on_ground = True

@@ -256,7 +256,7 @@ def build(bld):
 
         use=sound_libraries,
         lib=sound_libraries,
-        #libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
+        libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
         includes=['./sound/api/inc/', './sound'],
 
