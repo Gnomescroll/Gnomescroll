@@ -167,7 +167,7 @@ void shrapnel_draw() {
         g = shrapnel_list[i];
         //draw setup
 
-        id = 54;    // location in spritesheet
+        id = 63;    // location in spritesheet
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
