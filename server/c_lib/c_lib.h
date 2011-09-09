@@ -1,4 +1,3 @@
-
 #ifndef c_lib_h
 #define c_lib_h
 
