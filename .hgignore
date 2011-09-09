@@ -10,6 +10,8 @@ syntax: glob
 
 */build/*
 
+*.old
+
 run 
 
 terrain_map.c
