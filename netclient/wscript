@@ -139,8 +139,10 @@ def configure(conf):
 
     #hack
     print os.path.abspath(os.curdir)
-    libpth = '%s/fmod/api/lib/' % (os_libpth,)
+    libpth = '%s/fmod/lib/' % (os_libpth,)
     despth = './build/sound/api/lib/'
+    print os.path.abspath(libpth)
+    print os.path.abspath(despth)
     if os.path.exists(despth):
         for fn in os.listdir(despth):
             os.remove(despth + fn)
