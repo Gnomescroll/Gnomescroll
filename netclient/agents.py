@@ -642,6 +642,7 @@ class AgentModel(object):
     def update_info(self, **agent):
         old_health = health = self.health
         args = []
+        was_alive = not self.dead
         if 'id' in agent:
             args.append(self.id)
             self.id = agent['id']
@@ -649,11 +650,9 @@ class AgentModel(object):
             self.health = agent['health']
             health = self.health
         if 'dead' in agent:
-            was_alive = not self.dead
             self.dead = bool(agent['dead'])
             if was_alive and self.dead:
                 self.bleed()
-
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
 
@@ -670,9 +669,9 @@ class AgentModel(object):
         if 'team' in agent:
             self.team = GameStateGlobal.teamList[agent['team']]
 
-        # this is done in the hitscan net_event
-        #if health < old_health:
-         #   self.bleed()
+        if not was_alive and not self.dead:
+            print "REVIVING"
+            print self.pos()
 
         GameStateGlobal.agentList.update(self, *args)
 

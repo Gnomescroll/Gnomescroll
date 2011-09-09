@@ -157,6 +157,10 @@ int _clear() {
 }
 
 int _get_highest_open_block(int x, int y, int n) {
+    if (n < 1) {
+        printf("WARNING _get_highest_open_block :: called with n < 1, abort");
+        return -1;
+    }
     int i=zmax;
     int open=0;
     int tid=0;
@@ -177,10 +181,15 @@ int _get_highest_open_block(int x, int y, int n) {
     if (open < n) {   // failure
         i = -1;
     }
+    printf("highest :: at %d\n", i);
     return i;
 }
 
 int _get_lowest_open_block(int x, int y, int n) {
+    if (n < 1) {
+        printf("WARNING _get_lowest_open_block :: called with n < 1, abort\n");
+        return -1;
+    }
     int i=0;
     int open=0;
     int tid=0;
@@ -193,9 +202,13 @@ int _get_lowest_open_block(int x, int y, int n) {
         }
         i++;
     }
+    i--;
     if (open < n) { // failure
         i = -1;
     }
+    printf("lowest :: at %d\n", i);
+    printf("(%d,%d) %d\n", x,y,n);
+    printf("open :: %d\n", open);
     return i;
 }
 

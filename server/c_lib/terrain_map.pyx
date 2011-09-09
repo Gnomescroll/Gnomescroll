@@ -15,6 +15,15 @@ cdef enum:
     vm_chunk_size = 8
     vm_column_max = 16
 
+cdef enum:
+    _xmax = vm_map_dim * vm_chunk_size
+    _ymax = vm_map_dim * vm_chunk_size
+    _zmax = vm_column_max * vm_chunk_size
+
+xmax = _xmax
+ymax = _ymax
+zmax = _zmax
+
 cdef extern from "./t_map/t_map.h":
 
     struct vm_chunk:

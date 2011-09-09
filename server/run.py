@@ -240,6 +240,8 @@ class Main:
 
     def __init__(self):
         #setup
+        load_map2()
+
         NetServer.init_0()
         NetOut.init_0()
         NetEvent.init_0()
@@ -267,7 +269,7 @@ class Main:
         #import pdb; pdb.set_trace()
         print "Server Started"
         #load_map()
-        load_map2()
+        #load_map2()
         #physics_timer.start_physics_timer(33)
         init_c_lib.init()
         tick = 0

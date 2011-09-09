@@ -5,10 +5,19 @@ Toys, miscellaneous objects
 from game_objects import DetachableObject, StaticObject, TeamItem
 from utils import filter_props
 
+import c_lib.terrain_map as terrain_map
+
 from random import randint as rand
 
-def rand_spot(z=15):
-    return (rand(5, 15), rand(5, 15), z)
+def rand_spot(n=1, lowest=True):
+    x,y = rand(5, 15), rand(5, 15)
+    if lowest:
+        z = terrain_map.get_lowest_open_block(x,y,n)
+    else:
+        z = terrain_map.get_highest_open_block(x,y,n)
+    if z < 0:
+        z = terrain_map.zmax
+    return x,y,z
 
 class Flag(DetachableObject, TeamItem):
 
@@ -19,7 +28,7 @@ class Flag(DetachableObject, TeamItem):
         self.spawn()
 
     def _spawn_point(self):
-        return rand_spot()
+        return rand_spot(n=self.block_height, lowest=False)
 
     def spawn(self):
         xyz = self._spawn_point()
@@ -47,10 +56,11 @@ class Base(StaticObject, TeamItem):
         self.spawned = False
         self.team = team
         self.spawn()
+        self.block_height = 2
         
     def spawn(self):
         if not self.spawned:
-            self.state[0:3] = rand_spot(z=2)
+            self.state[0:3] = rand_spot()
             self.spawned = True
 
     def agent_nearby(self, agent):
