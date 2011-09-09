@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
 """
 
 _OS = None
+os_libpth = ''
 
 def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
@@ -36,6 +37,7 @@ def options(opt):
 
 def configure(conf):
     global _OS
+    global os_libpth
 
     conf.load('compiler_c python cython')
     conf.check_python_version((2,6,0))
@@ -146,7 +148,7 @@ def configure(conf):
             shutil.copy2(libpth + fn, despth + fn)
     else:
         try:
-            shutil.copytree(libpth, './build/sound/api/lib', symlinks=True)
+            shutil.copytree(libpth, despth, symlinks=True)
         except IOError, e:
             pass
 
@@ -252,7 +254,7 @@ def build(bld):
 
         use=sound_libraries,
         lib=sound_libraries,
-        libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
+        #libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
         includes=['./sound/api/inc/', './sound'],
 
