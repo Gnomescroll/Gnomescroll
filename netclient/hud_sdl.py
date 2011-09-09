@@ -192,7 +192,7 @@ class Hud(object):
         if agent is None:
             s = 'No agent yet.'
         else:
-            if agent.team is not None and agent.team.is_viewers():
+            if agent.team is None or agent.team.is_viewers():
                 s = 'Viewer Mode'
             else:
                 health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
