@@ -5,12 +5,15 @@
 
 #include <c_lib.h>
 
+#include "common/net_time.c"
 #include "common/net_peer.c"
 #include "client/client.c"
 #include "common/sequencer.c"
 #include "common/message_handler.c"
 
 #include <agent/control_state.c>
+
+#include "client/pviz.c"
 
 struct NetPeer* np;
 

@@ -14,11 +14,11 @@ struct p_tree_node {
 struct p_tree_node p_array[2048];
 int pt_i = 0;
 
-struct p_tree_node* new_branch(struct p_tree_node* n, int dx,int dy,int dz) {
+struct p_tree_node* new_branch(struct p_tree_node* n, int depth, int dx,int dy,int dz) {
     if(n==NULL) return NULL;
     if(pt_i >= 2048) return NULL;
 
-    p_array[pt_i].depth = n->depth+1;
+    p_array[pt_i].depth = depth;
     p_array[pt_i].s[0] = n->e[0];
     p_array[pt_i].s[1] = n->e[1];
     p_array[pt_i].s[2] = n->e[2];
@@ -69,7 +69,54 @@ void p_tree_recursive(struct p_tree_node* n) {
         dy = -3+(rand() % 6);
         dz = -2+(rand() % 6);
         */
-        p = new_branch(n, dx,dy,dz);
+        p = new_branch(n, n->depth+1, dx,dy,dz);
+        p_tree_recursive(p);
+
+
+    }
+}
+
+void p_tree_recursive2(struct p_tree_node* n) {
+    if(n==NULL) return;
+    if(n->depth > 10) return;
+
+    int dx,dy,dz;
+
+    struct p_tree_node* p;
+    int a,b,l;
+
+    int i, r;
+    r = (rand() % 3)+2;
+    r=2;
+    //printf("Branch %i times\n", r);
+    for(i=0;i<r;i++) {
+        //printf("x\n");
+        dx=0;
+        dy=0;
+        dz=0;
+
+        a = rand() %2;
+        a = (a==1 ? 1 : -1);
+
+        l = 1 + (rand() %2);
+
+        b = rand() %3;
+        if(b == 0) {
+            dx = l*a;
+        }
+        if(b==1) {
+            dy = l*a;
+        }
+        if(b==2) {
+            dz = l; //only grow up
+        }
+
+        /*
+        dx = -3+(rand() % 6);
+        dy = -3+(rand() % 6);
+        dz = -2+(rand() % 6);
+        */
+        p = new_branch(n, n->depth+abs(dx)+abs(dy)+abs(dz), dx,dy,dz);
         p_tree_recursive(p);
 
 
@@ -102,8 +149,11 @@ void circuit_tree_draw() {
     //float x1,y1,z1;
 
     struct p_tree_node* p;
+    glLineWidth(15.0);
+    //glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_BLEND);
     glBegin(GL_LINES);
-    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+    glColor4ub((unsigned char)150,(unsigned char)0,(unsigned char)150, (unsigned char)100);
     for(i=0;i<pt_i;i++) {
         p = &p_array[i];
 
@@ -122,6 +172,9 @@ void circuit_tree_draw() {
         //glVertex3f(p->e[0],p->e[1],p->e[2]);
     }
     glEnd();
+    glLineWidth(1);
+    glDisable(GL_BLEND);
+    //glDisable(GL_LINE_SMOOTH);
 }
 
 /*

@@ -162,7 +162,7 @@ class App(object):
         #TEST
         theta = 0
 
-        v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
+        #v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
         #v3 = vox_lib.Vox_loader().load('base.vox')
         #v3.color('blue', base_color='black')
         #v3.move(10,10,15, 0)
@@ -213,7 +213,7 @@ class App(object):
 
                 sl_c += 1
                 _i+=1
-                if _i % 100 == 0:
+                if _i % 30 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
