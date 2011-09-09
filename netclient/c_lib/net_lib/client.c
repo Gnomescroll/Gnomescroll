@@ -40,7 +40,9 @@ void _NetClientTick() {
     //NP_print_delta();
     _N++;
 
+    //NP_time_delta1(np.last_packet_time) //time since last packet
     process_incoming_packets();
+    //NP_time_delta1(np.last_packet_time)
     poll_connection_timeout();
     if(np->connected == 0) {
         if(_N % 90 == 0) printf("UDP Socket not connected!\n");

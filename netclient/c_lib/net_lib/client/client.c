@@ -234,7 +234,7 @@ void process_outgoing_packets() {
 int poll_connection_timeout() {
     NPserver.ttl -= 1;
     //printf("np: %i %i\n",NPserver.last_packet_time,get_current_netpeer_time() );
-    printf("np_delta=%i\n", NP_time_delta1(NPserver.last_packet_time));
+    //printf("np_delta=%i\n", NP_time_delta1(NPserver.last_packet_time));
     if(NP_time_delta1(NPserver.last_packet_time) > 4000 && NPserver.connected == 1) {
         NPserver.connected = 0;
         printf("=== \nConnection to server timed out!\n=== \n");
