@@ -640,20 +640,21 @@ class Agent(AgentPhysics, AgentAction):
         held_flags = [flag for flag in self.inventory if flag in flags]
         return held_flags
 
-    def take_damage(self, damage, projectile_owner=None):
+    def take_damage(self, damage, projectile_owner=None, suicidal=False):
         print 'agent %s taking damage %i' % (self.id, damage,)
         print self.health
         if self.dead:
             return
         # check team kills
-        if not hasattr(projectile_owner, 'id'):
-            projectile_owner = GameStateGlobal.playerList[projectile_owner]
-            
-        if projectile_owner is not None and \
-            projectile_owner.team == self.team and \
-            not opts.team_kills:
-            print 'team_kill'
-            return
+        if projectile_owner is not None:
+            if not hasattr(projectile_owner, 'id'):
+                projectile_owner = GameStateGlobal.playerList[projectile_owner]
+
+            if suicidal and projectile_owner.agent == self:
+                pass
+            elif projectile_owner.team == self.team and not opts.team_kills:
+                print 'team_kill'
+                return
             
         old = self.health
         self.health -= damage

@@ -191,16 +191,17 @@ class Hud(object):
         agent = GameStateGlobal.agent
         if agent is None:
             s = 'No agent yet.'
-        elif agent.team.is_viewers():
-            s = 'Viewer Mode'
         else:
-            health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
-            weapon = agent.weapons.active()
-            if weapon is None:
-                w = 'No weapon equipped'
+            if agent.team is not None and agent.team.is_viewers():
+                s = 'Viewer Mode'
             else:
-                w = 'Ammo %s' % (weapon.hud_display(),)
-            s = 'HP %s::%s' % (health, w,)
+                health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
+                weapon = agent.weapons.active()
+                if weapon is None:
+                    w = 'No weapon equipped'
+                else:
+                    w = 'Ammo %s' % (weapon.hud_display(),)
+                s = 'HP %s::%s' % (health, w,)
         return s
 
     def draw_player_stats(self):

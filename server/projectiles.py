@@ -7,7 +7,7 @@ Projectile data (will be moved to configurable external format)
 '''
 
 from cube_lib.terrain_map import collisionDetection
-
+from vector_lib import distance
 import c_lib.c_lib_objects as c_obj
 
 import dats.loader as dat_loader
@@ -68,10 +68,11 @@ class Projectile:
     def tick(self):
         return
 
-    def check_life(self):
+    def check_life(self, delete=True):
         self.ttl += 1
         if self.ttl > self.ttl_max:
-            self.delete()
+            if delete:
+                self.delete()
             return False
         return True
 
@@ -156,9 +157,23 @@ class Grenade(Projectile):
         x,y,z, vx,vy,vz = state
         self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
 
-    def tick(self):
-        self.check_life()
+    def pos(self):
+        return c_obj.get_grenade_position(self.g_index)
 
+    def tick(self):
+        if not self.check_life(delete=False):
+            self.explode()
+            self.delete()
+
+    def explode(self):
+        pos = self.pos()
+        # calculate distance for all damageable objects
+        # if <self.blast_radius, apply self.blast_damage
+        [agent.take_damage(self.splash_damage, self.owner, self.suicidal) \
+         for agent in GameStateGlobal.agentList.values() \
+         if distance(pos, agent.pos()) < self.splash_radius]
+        
+    
     def delete(self):
         Projectile.delete(self)
         c_obj._destroy_grenade(self.g_index)

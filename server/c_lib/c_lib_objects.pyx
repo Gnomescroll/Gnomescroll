@@ -2,6 +2,11 @@ cdef extern from "./objects/grenade.h":
     void grenade_tick()
     int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max)
     void destroy_grenade(int gid)
+    struct GVector:
+        float x
+        float y
+        float z
+    GVector* _get_grenade_position(int gid)
 
 cdef extern from "./objects/neutron.h":
     void neutron_tick()
@@ -42,6 +47,12 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 
 def _create_cspray(int type, float x, float y, float z, float vx, float vy, float vz):
     create_cspray(type, x,y,z, vx,vy,vz)
+
+def get_grenade_position(int gid):
+    cdef GVector *pos
+    pos = _get_grenade_position(gid)
+    p = [pos.x, pos.y, pos.z]
+    return p
     
 #agent
 

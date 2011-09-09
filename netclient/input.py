@@ -50,6 +50,7 @@ class InputEventGlobal:
         #print 'keyboard event:'+ str(key)
         self.keyboard.on_key_press(key)
         if key == None:
+            pass
             #print "keycode unhandled= " + str(keycode)
 
     def keyboard_state(self, pressed_keys):
