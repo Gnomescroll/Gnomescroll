@@ -26,7 +26,9 @@ class GameObject:
             state = [0 for i in range(9)]
         self.state = state
         self._set_type()
+        self.block_height = 1
         self.dat.apply(self)
+
 
     def _set_type(self):
         self.type = self._types[self.__class__.__name__]

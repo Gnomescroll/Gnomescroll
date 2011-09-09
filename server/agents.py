@@ -5,7 +5,7 @@ Agents:
 
 import math
 
-from math import floor
+from math import floor, ceil
 from math import pi, cos, sin
 from random import randrange
 
@@ -14,7 +14,8 @@ from object_lists import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
 
-from c_lib.terrain_map import collisionDetection
+import c_lib.terrain_map as terrain_map
+collisionDetection = terrain_map.collisionDetection
 #from cube_dat import CubeGlobal
 
 from weapons import LaserGun, Pick, BlockApplier
@@ -342,13 +343,6 @@ class Agent(AgentPhysics, AgentAction):
     RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
 
     def __init__(self, player_id, position=None, id=None, team=None):
-        if position is None:
-            position = self._spawn_point()
-
-        x,y,z = [float(i) for i in position]
-        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-
-        self.button_state = [0 for i in range(6)]
 
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
@@ -364,6 +358,7 @@ class Agent(AgentPhysics, AgentAction):
 
         ### Agent Parameters ###
         self.b_height = 1.5
+        self.block_height = int(ceil(self.b_height))
         self.t_height = .75
         self.box_r = .30
         ### End Agent Paramters ###
@@ -389,6 +384,14 @@ class Agent(AgentPhysics, AgentAction):
         self.respawn_countdown = self.RESPAWN_TICKS
         self.health = self.HEALTH_MAX
         self.dead = False
+
+        if position is None:
+            position = self._spawn_point()
+
+        x,y,z = [float(i) for i in position]
+        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
+
+        self.button_state = [0 for i in range(6)]
 
         wl = GameStateGlobal.weaponList
         self.weapons = [    \
@@ -736,8 +739,10 @@ class Agent(AgentPhysics, AgentAction):
         # later, add spawn zones/ boundaries to spawn in
         x = randrange(3,10)
         y = randrange(3,10)
-        z = 6
-        return [x, y, z]
+        z = terrain_map.get_highest_open_block(x,y, self.block_height)
+        if z < 0:
+            z = terrain_map.zmax
+        return [x+0.5, y+0.5, z+self.b_height]
 
     def _set_position(self, pos=None):
         if pos is None:
