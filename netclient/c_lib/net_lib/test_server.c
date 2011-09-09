@@ -5,37 +5,50 @@
 #include <stdlib.h>
 
 #include "server/server.h"
-#include "common/net_packets.h"
 #include "common/sequencer.h"
 
 //c body includes
 #include "common/sequencer.c"
 #include "common/net_peer.c"
 #include "server/server.c"
+#include "common/message_handler.c"
+
+//#include "../time/physics_timer.c"
 
 
-int main() {
-
+void _NetServerInit() {
+    update_current_netpeer_time();
     init_net_lib();
+    init_message_handler();
 
     unsigned short port = 9999;
     init_server(port);
 
-    int i=0;
-    while(1) {
+}
 
-        printf("* ------ tick=%i\n", i);
+void _NetServerTick() {
+    //printf("tick\n");
+
+        update_current_netpeer_time();
+        //NP_print_delta();
 
         process_packets();
+        broad_cast_packet2();
 
-        broad_cast_packet();
-
-        //broad_cast_packet();
         check_pool_for_dropped_packets();
-        decrement_ttl();
-        sleep(1);
-        i++;
-    }
+        //decrement_ttl();
+        poll_connection_timeout();
+}
 
-    return 0;
+
+int main() {
+    _START_CLOCK();
+    _NetServerInit();
+    int i =0;
+    while(1) {
+        i++;
+        printf("tick=%i\n",i);
+        _NetServerTick();
+        sleep(1);
+    }
 }

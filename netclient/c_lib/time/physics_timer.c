@@ -1,4 +1,7 @@
 
+#ifndef WTF_12
+#define WTF_12
+
 #include "physics_timer.h"
 
 int f;
@@ -41,7 +44,7 @@ long _get_tick() {
     return tick_n;
 }
 
-int _start(int frequency) {
+int _start_physics_timer(int frequency) {
     printf("Physics timer started: one tick is %i ms \n", frequency);
     tick_n = 0;
     delta = 0;
@@ -145,6 +148,35 @@ int _GET_TICK() {
     } else {
         return 0;
     }
+}
 
+int _GET_MS_TIME() {
+    int s_sec, n_sec;
+    #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+        clock_serv_t cclock;
+        mach_timespec_t mts;
+        host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+        clock_get_time(cclock, &mts);
+        mach_port_deallocate(mach_task_self(), cclock);
+        s_sec = mts.tv_sec;
+        n_sec = mts.tv_nsec;
+    #else
+        #ifdef _POSIX_TIMERS
+            struct timespec tp;
+            //clock_gettime(CLOCK_REALTIME, &tp);
+            clock_gettime(CLOCK_MONOTONIC, &tp);
+            s_sec = tp.tv_sec;
+            n_sec = tp.tv_nsec;
+        #else
+            printf("_POSIX_TIMERS not defined! \n");
+        #endif
+    #endif
+    int cs_sec, cn_sec;
+    cs_sec = s_sec - start_sec;
+    cn_sec = n_sec - start_nsec;
+    //printf("ms_time= %i\n",cs_sec*1000+ (cn_sec/ 1000000));
+    return cs_sec*1000+ (cn_sec/ 1000000);
 
 }
+
+#endif

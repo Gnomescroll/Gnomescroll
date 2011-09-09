@@ -273,9 +273,8 @@ class Main:
         tick = 0
         #self.intervals.set()#ms per tick
         #StartPhysicsTimer(33)
-        NetServerInit()
-
         START_CLOCK()
+        NetServerInit()
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data

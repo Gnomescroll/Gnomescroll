@@ -11,7 +11,7 @@
   //should be in header?
 
 void _NetServerInit() {
-
+    update_current_netpeer_time();
     init_net_lib();
     init_message_handler();
 
@@ -24,14 +24,14 @@ long t1 = 0;
 long t2 = 0;
 
 void _NetServerTick() {
-
+    //printf("tick\n");
     if(0) {
         t2 = t1;
         t1 = _get_time();
         printf("delta: %i\n",t1 - t2);
     }
         update_current_netpeer_time();
-       //NP_print_delta();
+        //NP_print_delta();
 
         process_packets();
         broad_cast_packet2();
@@ -40,4 +40,4 @@ void _NetServerTick() {
         //decrement_ttl();
         poll_connection_timeout();
 
-    }
+}

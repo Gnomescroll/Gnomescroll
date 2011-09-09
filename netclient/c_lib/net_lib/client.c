@@ -11,7 +11,7 @@
 struct NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
-
+    update_current_netpeer_time();
     init_client();
     init_message_handler();
 
@@ -35,15 +35,16 @@ physics tick, control input sample ticks and netout ticks should be seperate loo
 
 int _N =0;
 void _NetClientTick() {
-
+    //printf("net client tick\n");
     update_current_netpeer_time();
     //NP_print_delta();
     _N++;
 
     process_incoming_packets();
+    poll_connection_timeout();
     if(np->connected == 0) {
-        if(_N % 90 == 0) attempt_connection_with_server();
         if(_N % 90 == 0) printf("UDP Socket not connected!\n");
+        if(_N % 90 == 0) attempt_connection_with_server();
         return;
     }
     send_packet2();

@@ -57,6 +57,7 @@ inline int error_check_packet(unsigned char* data, int n) {
 }
 
 void send_to_client(int client_id, unsigned char* buffer, int n) {
+    printf("Sending %i bytes to client %i \n", n, client_id);
     struct NetPeer* p;
     p = pool.connection[client_id];
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
@@ -82,7 +83,7 @@ void send_id(uint16_t client_id) {
 }
 
 void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in* from) {
-    //printf("Packet\n");
+    printf("Packet\n");
     int n=0;
 
     uint16_t client_id;
@@ -100,10 +101,11 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         UNPACK_uint8_t(&channel_id, buff, &n);
 
         if(client_id==65535 && channel_id == 255) {
+            printf("New Client: sending client id\n");
             client_id = accept_connection(*from);
             send_id(client_id);
         }  else if ((client_id < HARD_MAX_CONNECTIONS) && (channel_id == 254) && (pool.connection[client_id] != NULL) ) {
-            printf("Connection with client %i acknoledged\n",  pool.connection[client_id]->client_id);
+            printf("Connection with client %i acked\n",  pool.connection[client_id]->client_id);
             pool.connection[client_id]->connected = 1;
             if( pool.connection[client_id]->client_id != client_id) printf("WTF ERROR: accept connection\n");
         }

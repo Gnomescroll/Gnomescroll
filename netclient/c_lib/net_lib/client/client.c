@@ -16,10 +16,12 @@ void init_client() {
     update_current_netpeer_time();
     //init_sequence_numbers(&NPserver); /// FIX
     init_sequencer(&NPserver);
-    int local_port = 6967+(rand()%32);
+    //int local_port = 6967+(rand()%32);
+    int local_port = 6967+(rand()%32); ///should randomize!
     struct Socket* s = create_socket(local_port);
 
     if(s != NULL) free(s);
+    client_socket = *s;
     /*
     if(s != NULL) {
     client_socket = *s;
@@ -57,12 +59,10 @@ void send_packet(unsigned char* buff, int n){
 }
 
 void send_packet2(){
-
     if(NPserver.connected == 0) {
         printf("Cannot send packet, disconnected!\n");
         return;
         }
-
     unsigned char header[16];
     int n1 = 0;
     int seq = get_next_sequence_number(&NPserver);
@@ -89,20 +89,24 @@ void send_packet2(){
     }
 */
     int sent_bytes = sendto( client_socket.socket, (const char*)header, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
-    if ( sent_bytes != n1) { printf( "failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
+    if ( sent_bytes != n1) { printf( "send_packet2: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
 }
 
 
 void attempt_connection_with_server() {
+    if(NPserver.connected == 1) {
+        printf("attempt_connection_with_server: Error! client is already connected\n");
+    }
     init_sequencer(&NPserver); //virgin state on reconnect
     unsigned char buff[6];
     int n=0;
     PACK_uint16_t(65535, buff, &n);
     PACK_uint8_t(255, buff, &n);
     n=6; //must be 6 bytes
-    sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
-    printf("Client id requested\n");
+    int sent_bytes = sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes <= 0) { printf( "attempt_connection_with_server: failed to send packet: return value = %i\n", sent_bytes); return;}
+    else { printf("Client id requested\n");}
 }
 
 void ack_connection_with_server() {
@@ -111,8 +115,9 @@ void ack_connection_with_server() {
     PACK_uint16_t(NPserver.client_id, buff, &n);
     PACK_uint8_t(254, buff, &n);
     n=6; //must be 6 bytes
-    sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+    int sent_bytes = sendto( client_socket.socket, (const char*)buff, n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     //printf("ack_connection_with_server\n");
+    if ( sent_bytes <= 0) { printf( "ack_connection_with_server: failed to send packet: return value = %i\n", sent_bytes); return;}
 }
 
 int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
@@ -127,6 +132,7 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
         printf("Received client id= %i\n",client_id);
         NPserver.client_id = client_id;
         NPserver.connected = 1;
+        NPserver.last_packet_time = get_current_netpeer_time();
         //server.server_address.sin_addr.s_addr = from->sin_addr.s_addr;
         //server.server_address.sin_port = from->sin_port;
         printf("Client id assigned: %i server: %i:%i\n", client_id, htonl(from->sin_addr.s_addr), ntohs( from->sin_port ));
@@ -227,7 +233,9 @@ void process_outgoing_packets() {
 
 int poll_connection_timeout() {
     NPserver.ttl -= 1;
-    if(NP_time_delta1(NPserver.last_packet_time) > 4000) {
+    //printf("np: %i %i\n",NPserver.last_packet_time,get_current_netpeer_time() );
+    printf("np_delta=%i\n", NP_time_delta1(NPserver.last_packet_time));
+    if(NP_time_delta1(NPserver.last_packet_time) > 4000 && NPserver.connected == 1) {
         NPserver.connected = 0;
         printf("=== \nConnection to server timed out!\n=== \n");
         return 1;
@@ -243,7 +251,7 @@ int decrement_ttl() {
     NPserver.ttl -= 1;
     if(NPserver.ttl <= 0) {
         NPserver.connected = 0;
-        printf("Connection to server timed out!\n");
+        printf("===\nConnection to server timed out!\n====\n");
         return 1;
     }
     return 0;
