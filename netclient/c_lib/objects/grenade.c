@@ -56,16 +56,27 @@ void grenade_tick() {
         if(Grenade_list[i] != NULL) {
             g = Grenade_list[i];
             grenade_Tick(g);
-            //if(g->ttl >= g-> ttl_max) {
-                ////boom!
-                //Grenade_list[i] = NULL;
-                //free(g);
-                //g_count--;
+            // destruction handled at python level
+            //if(g->ttl >= g->ttl_max) {
+                //destroy_grenade(i);
             //}
         }
     }
+}
 
-
+struct GVector g_pos;
+struct GVector* _get_grenade_position(int gid) {
+    struct Grenade* g = Grenade_list[gid];
+    if (g != NULL) {
+        g_pos.x = g->x;
+        g_pos.y = g->y;
+        g_pos.z = g->z;
+    } else {
+        g_pos.x = 0.0f;
+        g_pos.y = 0.0f;
+        g_pos.z = 0.0f;
+    }
+    return &g_pos;
 }
 
 int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, unsigned int ttl, unsigned int ttl_max) {

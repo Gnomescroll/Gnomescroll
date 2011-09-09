@@ -11,6 +11,7 @@
 #include "./objects/neutron.c"
 #include "./objects/cspray.c"
 #include "./objects/blood.c"
+#include "./objects/shrapnel.c"
 
 #include "./objects/circuit_tree.c"
 

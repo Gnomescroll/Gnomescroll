@@ -21,7 +21,7 @@ dat = {
     2 : {   #   grenade
         'speed' : 50,
         'damage' : 50,
-        'ttl_max' : 300,
+        'ttl_max' : 100,
         'suicidal': True,
         'splash'    :   True,
         'splash_radius':    3,

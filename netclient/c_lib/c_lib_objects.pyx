@@ -1,4 +1,9 @@
 cdef extern from "./objects/grenade.h":
+    struct GVector:
+        float x
+        float y
+        float z
+    GVector* _get_grenade_position(int gid)
     void grenade_tick()
     void grenade_draw()
     int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max)
@@ -18,6 +23,11 @@ cdef extern from "./objects/blood.h":
     void blood_tick()
     void blood_draw()
     void create_blood(int type, float x, float y, float z, float vx, float vy, float vz)
+
+cdef extern from "./objects/shrapnel.h":
+    void shrapnel_tick()
+    void shrapnel_draw()
+    void create_shrapnel(int type, float x, float y, float z, float vx, float vy, float vz)
 
 cdef extern from "./objects/circuit_tree.h":
     void circuit_tree_generate(int type, int seed)
@@ -62,6 +72,7 @@ def tick():
     neutron_tick()
     cspray_tick()
     blood_tick()
+    shrapnel_tick()
     agent_skeleton_update()
     agent_tick()
 
@@ -70,6 +81,7 @@ def draw():
     neutron_draw()
     cspray_draw()
     blood_draw()
+    shrapnel_draw()
     agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
@@ -87,11 +99,20 @@ def _create_cspray(int type, float x, float y, float z, float vx, float vy, floa
 def _create_blood(int type, float x, float y, float z, float vx, float vy, float vz):
     create_blood(type, x,y,z, vx,vy,vz)
 
+def _create_shrapnel(int type, float x, float y, float z, float vx, float vy, float vz):
+    create_shrapnel(type, x,y,z, vx,vy,vz)
+
 def _generate_circuit_tree(int type, int seed):
     circuit_tree_generate(type, seed)
 
 def _draw_circuit_tree():
     circuit_tree_draw()
+
+def get_grenade_position(int gid):
+    cdef GVector* pos
+    pos = _get_grenade_position(gid)
+    p = [pos.x, pos.y, pos.z]
+    return p
 
 #agent
 

@@ -5,6 +5,8 @@ import default_settings as settings
 
 import c_lib.c_lib_objects as c_obj
 
+from animations import GrenadeExplodeAnimation
+
 import sound.sounds as sounds
 
 if settings.pyglet:
@@ -81,10 +83,11 @@ class Projectile:
     def tick(self):
         return
 
-    def check_life(self):
+    def check_life(self, delete=True):
         self.ttl += 1
         if self.ttl > self.ttl_max:
-            self.delete()
+            if delete:
+                self.delete()
             return False
         return True
 
@@ -205,8 +208,16 @@ class Grenade(Projectile):
         x,y,z, vx,vy,vz = state
         self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
 
+    def pos(self):
+        return c_obj.get_grenade_position(self.g_index)
+
     def tick(self):
-        self.check_life()
+        if not self.check_life(delete=False):
+            self.explode()
+            self.delete()
+
+    def explode(self):
+        GrenadeExplodeAnimation(self.pos()).play()
 
     def delete(self):
         Projectile.delete(self)

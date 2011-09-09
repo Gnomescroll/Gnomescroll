@@ -3,8 +3,10 @@ Animations
 '''
 import draw_utils
 import vector_lib
+import random
 from math import ceil
 
+import c_lib.c_lib_objects
 
 class Animations:
 
@@ -33,7 +35,6 @@ class Animations:
         self.animations.append(animation)
 
 animations = Animations()
-
 
 class Animation:
 
@@ -92,4 +93,38 @@ class HitscanLaserGunAnimation(Animation):
         draw_utils.draw_laser_ray(self.loc, self.vector, self.length, self.radius, fade, self.png_id)
         #draw_utils.draw_ray(self.loc, self.vector, self.length, self.color)
         #draw_utils.draw_line(self.loc, self.end, self.color)
+
+
+class C_Animation(Animation):
+
+    anim_type = 0
+    vel = [0]*3
+    anim = lambda _type, x,y,z, vx,vy,vz: None
+
+    def __init__(self):
+        Animation.__init__(self)
+
+    def create_particles(self):
+        _t = self.anim_type
+        _vx, _vy, _vz = self.vel
+        for i in self.n_range:
+            x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos]
+            vx = _vx*(random.random() -0.5)
+            vy = _vy*(random.random() -0.5)
+            vz = _vz*(random.random() -0.5)
+            self.anim(_t, x,y,z, vx, vy, vz)
+
+
+class GrenadeExplodeAnimation(C_Animation):
+
+    anim = c_lib.c_lib_objects._create_shrapnel
+    anim_type = 5
+    vel = [20]*3
+
+    def __init__(self, pos):
+        C_Animation.__init__(self)
+        self.pos = pos
+        self.n = random.randrange(8,13)
+        self.n_range = range(self.n)
+        self.create_particles()
 

@@ -1,7 +1,7 @@
-#include "blood.h"
+#include "shrapnel.h"
 
 
-struct blood {
+struct shrapnel {
     unsigned int id;
     float x,y,z;
     float vx,vy,vz;
@@ -11,22 +11,22 @@ struct blood {
     int active;
 };
 
-#define max_blood 4096
+#define max_shrapnel 4096
 
-struct blood* blood_list[max_blood];
+struct shrapnel* shrapnel_list[max_shrapnel];
 float a[16];
-int blood_count=0;
-unsigned int blood_id=0;
+int shrapnel_count=0;
+unsigned int shrapnel_id=0;
 
-void inline blood_Tick(struct blood* g);
+void inline shrapnel_Tick(struct shrapnel* g);
 
-void init_objects_blood() {
+void init_objects_shrapnel() {
     //printf("RANDMAX= %i \n", RAND_MAX);
     //srand(15); //seed
     return;
 }
 
-void inline blood_Tick(struct blood* g) {
+void inline shrapnel_Tick(struct shrapnel* g) {
     g->vz -= 0.025; //gravity
 
     g->ttl++;
@@ -77,38 +77,38 @@ void inline blood_Tick(struct blood* g) {
 
 }
 
-void blood_tick() {
-    struct blood* g = NULL;
+void shrapnel_tick() {
+    struct shrapnel* g = NULL;
     int i;
-    for(i=0; i<max_blood; i++) {
-        if(blood_list[i] != NULL) {
-            g = blood_list[i];
-            blood_Tick(g);
+    for(i=0; i<max_shrapnel; i++) {
+        if(shrapnel_list[i] != NULL) {
+            g = shrapnel_list[i];
+            shrapnel_Tick(g);
             if(g->ttl >= g-> ttl_max) {
                 //boom!
-                blood_list[i] = NULL;
+                shrapnel_list[i] = NULL;
                 free(g);
-                blood_count--;
+                shrapnel_count--;
             }
         }
     }
 }
 
 
-void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create blood\n");
-    struct blood* g = NULL;
+void create_shrapnel(int type, float x, float y, float z, float vx, float vy, float vz) {
+    //printf("Create shrapnel\n");
+    struct shrapnel* g = NULL;
     int i;
-    for(i=0; i<max_blood; i++) {
-        if(blood_list[i] == NULL) {
-            g = (struct blood *) malloc (sizeof(struct blood));
-            blood_list[i] = g;
-            blood_count++;
+    for(i=0; i<max_shrapnel; i++) {
+        if(shrapnel_list[i] == NULL) {
+            g = (struct shrapnel *) malloc (sizeof(struct shrapnel));
+            shrapnel_list[i] = g;
+            shrapnel_count++;
             break;
         }
     }
     if(g== NULL) {
-        //printf("Bug: max blood number reached!\n");
+        //printf("Bug: max shrapnel number reached!\n");
         return;}
     g->x=x;
     g->y=y;
@@ -131,12 +131,12 @@ void create_blood(int type, float x, float y, float z, float vx, float vy, float
 #ifdef DC_CLIENT
 
 //GLint particle_sheet_id;
-void blood_draw() {
+void shrapnel_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
-    if(blood_count == 0) { return; }
+    if(shrapnel_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    struct blood* g = NULL;
+    struct shrapnel* g = NULL;
     int i;
 
     float size = 0.1;
@@ -160,11 +160,11 @@ void blood_draw() {
     float x,y,z;
 
     int _c = 0;
-    for(i=0; i<max_blood; i++) {
-    if(blood_list[i] != NULL) {
-        //printf("draw blood: %i \n", i);
+    for(i=0; i<max_shrapnel; i++) {
+    if(shrapnel_list[i] != NULL) {
+        //printf("draw shrapnel: %i \n", i);
         _c++;
-        g = blood_list[i];
+        g = shrapnel_list[i];
         //draw setup
 
         id = 54;    // location in spritesheet

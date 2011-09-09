@@ -7,8 +7,6 @@ import math
 from math import sin, cos, pi
 from math import floor, ceil, fabs
 
-import c_lib.c_lib_objects
-
 from game_state import GameStateGlobal #Deprecate?
 
 from opts import opts
@@ -380,10 +378,10 @@ class AgentRender:
         print 'BLEEDING'
         create_blood = c_lib.c_lib_objects._create_blood
         n = 100
-        for i in range(100):
-            v = 15
+        v = 15
+        _t = 2
+        for i in range(n):
             x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
-            _t = 2
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
             vz = random.randrange(-4, 2) + random.random()
