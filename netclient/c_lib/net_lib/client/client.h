@@ -31,11 +31,14 @@ struct NetClient {
 };
 */
 
+int header_size1();
+
 void init_client();
 struct NetPeer* CLIENT_get_NP();
 
 void send_packet(unsigned char* buffer, int n);
 void send_packet2(); //adding sequence number and acks
+void send_packet3(unsigned char* buff, int n_size);
 
 void attempt_connection_with_server();
 

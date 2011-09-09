@@ -130,7 +130,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
     UNPACK_uint32_t(&acks, buff, &n1); //sequence number
 
-    UNPACK_uint32_t(&value, buff, &n1);
+    //UNPACK_uint32_t(&value, buff, &n1);
 
     n=0;
     //UNPACK_uint16_t(&client_id, buff, &n);
@@ -160,6 +160,9 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     process_acks(p, max_seq, acks);
     p->ttl = p->ttl_max;
     p->last_packet_time = get_current_netpeer_time();
+
+    //attempt to decode message in packet
+    process_packet_messages(buff, n1, received_bytes);
     return;
 }
 

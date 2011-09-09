@@ -76,49 +76,31 @@ def configure(conf):
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-
-    if OS == 'Windows':
+    '''
         os_libpth = './libraries/win'
-        incp='.libraries/win/fmod/inc/'
-        libp='libraries/win/fmod/lib/'
-    elif OS == 'Linux':
         os_libpth = './libraries/lin'
-        incp='../../libraries/lin/fmod/inc'
-        libp='../../../libraries/lin/fmod/lib'
-    elif OS == 'Darwin':
         os_libpth = './libraries/osx'
-        incp='./libraries/osx/fmod/inc/'
-        libp='./libraries/osx/fmod/lib/'
+    '''
     #conf.env.INCLUDES += [incp]
     #print incp
 
     incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
+
+    if OS == 'Windows':
+        incp='../../libraries/win/fmod/inc'  #its in ./libraries/win/fmod/inc
+        libp='../../../libraries/win/fmod/lib' #its in ./libraries/win/fmod/lib
+    elif OS == 'Linux':
+        incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
+        libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
+    elif OS == 'Darwin':
+        incp='../../libraries/osx/fmod/inc'  #its in ./libraries/osx/fmod/inc
+        libp='../../../libraries/osx/fmod/lib' #its in ./libraries/osx/fmod/lib
+
     conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
     conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
 
     '''
-    conf.check(header_name='fmod.h',
-               use='FMOD',
-               fragment='#include <fmod.h>' + FMOD_MAIN_TEST_CODE,
-               mandatory=True)
-
-    conf.check(header_name='fmod_errors.h',
-               use='FMOD',
-               fragment='#include <fmod_errors.h>' + FMOD_MAIN_TEST_CODE,
-               mandatory=True)
-    '''
-
-    '''
-    This passes, but I'm not sure it does anything useful.
-
-    These are for the fmodex headers. The source is not available, we must use the shared library.
-    sound.c includes these headers.
-    '''
-
-    '''
-
-
     libfmodex = conf.environ['PWD'] + '/sound/api/lib/libfmodex.so' # full path to shared lib
 
     conf.check(header_name='../../sound/api/inc/fmod.h',

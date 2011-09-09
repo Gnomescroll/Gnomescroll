@@ -3,14 +3,19 @@
 
 //#include "common/net_packets.h"
 
+#include <c_lib.h>
+
 #include "common/net_peer.c"
 #include "client/client.c"
 #include "common/sequencer.c"
 #include "common/message_handler.c"
 
+#include <agent/control_state.c>
+
 struct NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
+    init_message_handler();
     update_current_netpeer_time();
     init_client();
     init_message_handler();
@@ -21,6 +26,8 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     attempt_connection_with_server();
 
     np= CLIENT_get_NP();
+
+    init_agent_control_state();
 }
 
 /*
@@ -49,7 +56,12 @@ void _NetClientTick() {
         if(_N % 90 == 0) attempt_connection_with_server();
         return;
     }
-    send_packet2();
+
+    unsigned char buff[800];
+    int n = 0;
+    PACK_control_state(buff, &n);
+    send_packet3(buff, n);
+
     check_for_dropped_packets(np);
     poll_connection_timeout();
     //decrement_ttl();
