@@ -133,7 +133,7 @@ def configure(conf):
                uselib_store='fmod_errors',
                mandatory=True)
     '''
-ddd
+
     conf.env.INCLUDES = ['c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
 
