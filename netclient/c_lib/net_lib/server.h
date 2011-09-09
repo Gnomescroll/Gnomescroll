@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <time/physics_timer.h>
+
 #include "server/server.h"
 
 void _NetServerInit();

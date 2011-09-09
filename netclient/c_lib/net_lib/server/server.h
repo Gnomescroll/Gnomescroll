@@ -7,10 +7,10 @@
 #include <sys/socket.h> //?
 
 #include "../common/net_lib_common.h"
-#include "../common/net_packets.h"
 #include "../common/sequencer.h"
-
 #include "../common/net_peer.h"
+
+#include "../common/message_handler.h"
 
 /*
 struct Socket {

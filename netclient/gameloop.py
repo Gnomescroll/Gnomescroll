@@ -159,7 +159,6 @@ class App(object):
         draw_hud = not opts.opts.no_hud
         ltick, ctick = 0,0
 
-        NetClientConnect(127,0,0,1, 0)
         #TEST
         theta = 0
 
@@ -178,7 +177,9 @@ class App(object):
         _i = 30
         #StartPhysicsTimer(33)
         c_lib.c_lib_objects._generate_circuit_tree(0,0)
-        START_CLOCK()
+
+        START_CLOCK() #clock must be started before networking stuff
+        NetClientConnect(127,0,0,1, 0)
         while not GameStateGlobal.exit:
 
             self.world.sound_updates()

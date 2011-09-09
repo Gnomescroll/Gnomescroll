@@ -12,6 +12,8 @@
 #include "../common/sequencer.h"
 #include "../common/net_peer.h"
 
+#include "../common/message_handler.h"
+
 /*
 struct NetClient {
     uint16_t client_id;

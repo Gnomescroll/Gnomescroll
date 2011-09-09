@@ -8,6 +8,8 @@
 
 #include "client/client.h"
 
+#include <time/physics_timer.h>
+
 void _NetClientConnect(int a, int b,int c, int d, int _port);
 void _NetClientTick();
 

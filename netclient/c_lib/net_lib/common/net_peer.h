@@ -66,6 +66,8 @@ void NP_print_delta();
 //int NP_time_delta1(int time);
 //int NP_time_delta2(int time1, int time2);
 
+int _GET_MS_TIME();
+
 extern int LAST_NETPEER_TIME;
 extern int CURRENT_NETPEER_TIME;
 
