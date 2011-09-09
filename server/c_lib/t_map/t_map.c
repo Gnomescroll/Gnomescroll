@@ -157,20 +157,23 @@ int _clear() {
 }
 
 int _get_highest_open_block(int x, int y, int n) {
-    int i=0;
+    int i=z_max-1;
     int open=0;
     int tid=0;
-    int final=0;
-    for (i=zmax-1; i>=0; i--) {
+
+    while (i>=0) {
         tid = _get(x,y,i);
         if (isSolid(tid)) {
-            break;
+            if (open >= n) {
+                break;
+            }
+            open = 0;
         } else {
             open++;
         }
+        i--;
     }
-    while (i>=0 && open>=n) {
-        
+    return i;
 }
 
 int _get_lowest_open_block(int x, int y, int n) {

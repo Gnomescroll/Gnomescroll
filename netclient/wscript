@@ -76,12 +76,15 @@ def configure(conf):
                mandatory=True)
 
     if OS == 'Windows':
+        os_libpth = './libraries/win'
         incp='.libraries/win/fmod/inc/'
         libp='libraries/win/fmod/lib/'
     elif OS == 'Linux':
+        os_libpth = './libraries/lin'
         incp='../../libraries/lin/fmod/inc'
         libp='../../../libraries/lin/fmod/lib'
     elif OS == 'Darwin':
+        os_libpth = './libraries/osx'
         incp='./libraries/osx/fmod/inc/'
         libp='./libraries/osx/fmod/lib/'
     #conf.env.INCLUDES += [incp]
@@ -134,7 +137,7 @@ def configure(conf):
 
     #hack
     print os.path.abspath(os.curdir)
-    libpth = './sound/api/lib/'
+    libpth = '%s/fmod/api/lib/' % (os_libpth,)
     despth = './build/sound/api/lib/'
     if os.path.exists(despth):
         for fn in os.listdir(libpth):
