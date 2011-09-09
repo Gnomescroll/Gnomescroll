@@ -68,7 +68,7 @@ def configure(conf):
     ##END TEST
 
     conf.env.INCLUDES = ['c_lib',]
-    conf.env.INCLUDES = ['c_lib', 'cube_lib']
+    #conf.env.INCLUDES = ['c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 
     if OS == 'Darwin':
@@ -93,10 +93,15 @@ def build(bld):
         lib=time_lib,
         target='c_lib')
 
+    #bld(features='c cshlib pyext',
+        #source=['cube_lib/terrain_map.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='cube_lib.terrain_map')
+        
     bld(features='c cshlib pyext',
-        source=['cube_lib/terrain_map.pyx'],
+        source=['c_lib/terrain_map.pyx'],
         use=common_libraries + ['c_lib'],
-        target='cube_lib.terrain_map')
+        target='c_lib.terrain_map')
 
     # c_lib
 
@@ -148,6 +153,7 @@ def install_in_ext(ctx):
         'c_lib.ray_trace',
         'init_c_lib',
         'c_lib.c_lib_objects',
+        'c_lib.terrain_map',
     ]
 
     for target in targets:

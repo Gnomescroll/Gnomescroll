@@ -166,6 +166,7 @@ int _get_highest_open_block(int x, int y, int n) {
         tid = _get(x,y,i);
         if (isSolid(tid)) {
             if (open >= n) {
+                i++;
                 break;
             }
             open = 0;
@@ -173,8 +174,8 @@ int _get_highest_open_block(int x, int y, int n) {
             open++;
         }
     }
-    if (i==0 && open<n) {   // failure
-        i--;
+    if (open < n) {   // failure
+        i = -1;
     }
     return i;
 }

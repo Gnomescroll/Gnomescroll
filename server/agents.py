@@ -14,7 +14,7 @@ from object_lists import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
 
-from cube_lib.terrain_map import collisionDetection
+from c_lib.terrain_map import collisionDetection
 #from cube_dat import CubeGlobal
 
 from weapons import LaserGun, Pick, BlockApplier

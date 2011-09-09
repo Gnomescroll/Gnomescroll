@@ -15,7 +15,7 @@ cdef enum:
     vm_chunk_size = 8
     vm_column_max = 16
 
-cdef extern from "../c_lib/t_map/t_map.h":
+cdef extern from "./t_map/t_map.h":
 
     struct vm_chunk:
         unsigned short voxel[512]
@@ -32,7 +32,7 @@ cdef extern from "../c_lib/t_map/t_map.h":
     struct vm_map:
         vm_column column[vm_map_dim*vm_map_dim]
 
-cdef extern from "../c_lib/t_map/t_map.h":
+cdef extern from "./t_map/t_map.h":
     int _init_t_map()
     int _clear()
 
@@ -44,6 +44,10 @@ cdef extern from "../c_lib/t_map/t_map.h":
     int _set_server_version(int x,int y,int z, int server_version)
     vm_map* _get_map()
     vm_chunk* _get_chunk(int xoff, int yoff, int zoff)
+
+    int _get_highest_open_block(int x, int y, int n)
+    int _get_lowest_open_block(int x, int y, int n)
+    
 #done
 
 cpdef inline set(int x,int y, int z,int value):
@@ -178,7 +182,7 @@ cpdef inline int apply_damage(int x, int y, int z, int dmg):
 PART 2: Properties
 
 '''
-cdef extern from "../c_lib/t_map/t_properties.h":
+cdef extern from "./t_map/t_properties.h":
     struct cubeProperties:
         int active
         int occludes
@@ -189,7 +193,7 @@ cdef extern from "../c_lib/t_map/t_properties.h":
         int neutron_tolerance
         int nuclear
 
-cdef extern from "../c_lib/t_map/t_properties.h":
+cdef extern from "./t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
     cubeProperties* _get_cube(int id)
@@ -264,3 +268,10 @@ init()
 
 def clear():
     _clear()
+
+# n defines how many continuous open spaces must exist
+def get_highest_open_block(int x, int y, int n=1):
+    return _get_highest_open_block(x,y,n)
+
+def get_lowest_open_block(int x, int y, int n=1):
+    return _get_lowest_open_block(x,y,n)
