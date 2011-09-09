@@ -58,14 +58,14 @@ class ChatClient:
 
     def __init__(self):
         self.input = ChatInput()
-        print '__init__ subscribe'
+        #print '__init__ subscribe'
         self.subscribe('system')
-        print 'done'
+        #print 'done'
 
     def on_identify(self, channel=None):
-        print 'post identify subscribe'
+        #print 'post identify subscribe'
         self._initial_subscribe(self.CURRENT_CHANNEL)
-        print 'done'
+        #print 'done'
 
     def _initial_subscribe(self, channel=None, _subscribed=[False]):
         loaded_channels = []
@@ -99,7 +99,7 @@ class ChatClient:
         else:
             self.subscriptions.setdefault(channel, Channel(channel))
         NetOut.chatMessage.subscribe(channel)
-        print 'Chat client subscribed to %s' % (channel,)
+        #print 'Chat client subscribed to %s' % (channel,)
 
     def unsubscribe(self, channel=None):
         switch = False
@@ -136,7 +136,7 @@ class ChatClient:
 
     def send(self, text=None):
         if not NetClientGlobal.client_id:
-            print 'Client_id is not set; cannot send chat msg'
+            #print 'Client_id is not set; cannot send chat msg'
             return
 
         if text is None:
@@ -151,8 +151,8 @@ class ChatClient:
 
     # receive incoming message
     def receive(self, msg):
-        print 'Received msg:'
-        print msg
+        #print 'Received msg:'
+        #print msg
         channel = msg.get('channel', None)
         if channel is None:
             return
@@ -180,25 +180,25 @@ class ChatClient:
     def load(self):
         from simplejson import loads as decode_json
         from os.path import exists as path_exists
-        print 'loading channels from file'
+        #print 'loading channels from file'
         conf = CONFIG_PATH + '/' + self._conf
         channels = []
         if path_exists(conf):
             with open(conf, 'r') as f:
                 settings = decode_json(f.read())
-                print settings
+                #print settings
                 ignored = settings.get('ignored', None)
                 if ignored is not None:
                     self.ignored = ignored
                 channels = settings.get('subscriptions', channels)
-                print channels
+                #print channels
                 for channel in channels:
                     if channel[0:3] == 'pm_':
                         continue
-                    print channel
+                    #print channel
                     
                     self.subscribe(channel)
-        print 'done'
+        #print 'done'
         return channels
 
     def system_notify(self, txt):
@@ -333,7 +333,7 @@ class ChatCommand():
             try:
                 team_id = int(args[0])
             except (ValueError, IndexError):
-                print args
+                #print args
                 _send = self._send_local({
                     'content'   :   'Team command usage: /team <team_id>',
                     'channel'   :   'system',
@@ -361,7 +361,7 @@ class ChatCommand():
             })
 
         elif command == 'exit' or command == 'quit':
-            print 'exiting'
+            #print 'exiting'
             GameStateGlobal.exit = True
             
         else:
@@ -378,7 +378,7 @@ class ChatCommand():
 
     def _send_local(self, data):
         def _send():
-            print 'sending local'
+            #print 'sending local'
             ChatClientGlobal.chatClient.receive(Payload(**data).serialize())
         return _send
 
@@ -424,7 +424,7 @@ class SystemChatCommand(ChatCommand):
 class ChatMessageOut():
 
     def __init__(self, text):
-        print 'Sending msg: "%s" to: %s' % (str(text), ChatClientGlobal.chatClient.CURRENT_CHANNEL,)
+        #print 'Sending msg: "%s" to: %s' % (str(text), ChatClientGlobal.chatClient.CURRENT_CHANNEL,)
         self.payload = Payload(
             content = str(text),
             channel = ChatClientGlobal.chatClient.CURRENT_CHANNEL,
@@ -436,7 +436,7 @@ class ChatMessageOut():
         if self.payload is None or not self.payload.content:
             return False
         NetOut.chatMessage.send_chat(self.payload.serialize())
-        print 'Sent chat message'
+        #print 'Sent chat message'
 
     def render(self):
         return {
@@ -454,7 +454,7 @@ class ChatMessageIn():
         self.valid = self.payload.valid()
         self.filter()
         self.timestamp = now()
-        print 'chatmessageIN timestamp %i' % (self.timestamp,)
+        #print 'chatmessageIN timestamp %i' % (self.timestamp,)
         if 'name' in msg:
             self.name = msg['name']
         else:
@@ -590,7 +590,7 @@ class ChatInput:
         self.clear()
         self.history.reset_index()
         self.history.add(text)
-        print 'submitting ', text
+        #print 'submitting ', text
         return text
 
     def _input_callback(self, callback):
@@ -618,7 +618,7 @@ class ChatInputProcessor:
     def on_key_press(self, symbol):
         _symbol = symbol
         symbol = symbol.upper()
-        print 'CHAT ON_KEY_PRESS', symbol
+        #print 'CHAT ON_KEY_PRESS', symbol
         callback = None
         if symbol == 'RETURN':         # submit
             def callback(input):

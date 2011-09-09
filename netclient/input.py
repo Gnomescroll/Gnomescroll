@@ -45,12 +45,12 @@ class InputEventGlobal:
 
     #deprecate
     def keyboard_event(self, keycode):
-        print str(keycode)
+        #print str(keycode)
         key = Keystring.get(keycode, None)
-        print 'keyboard event:'+ str(key)
+        #print 'keyboard event:'+ str(key)
         self.keyboard.on_key_press(key)
         if key == None:
-            print "keycode unhandled= " + str(keycode)
+            #print "keycode unhandled= " + str(keycode)
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
@@ -68,7 +68,7 @@ class InputEventGlobal:
             #key = Keystring.get(keycode, None)
         key = key_string
         #uncomment to see key inputs
-        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
+        #print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
             self.keyboard.on_key_press(key)
         else:
@@ -76,17 +76,17 @@ class InputEventGlobal:
 
     def mouse_event(self, button,state,x,y,):
         #handle scroll events
-        #print str (button) + " " + str(state)
+        ##print str (button) + " " + str(state)
 
         self.mouse.on_mouse_press(x,y,button, state)
-        #print "click"
+        ##print "click"
 
     def mouse_motion(self, x,y,dx,dy,button):
         if button != 0:
             self.mouse.on_mouse_drag(x,y,dx,dy,button)
         else:
             self.mouse.on_mouse_motion(x,y,dx,dy)
-            #print "motion"
+            ##print "motion"
         pass
 
 class InputGlobal:
@@ -128,7 +128,7 @@ class InputGlobal:
         if new_mode_name == 'agent' and GameStateGlobal.agent is None:
             return
         setattr(InputGlobal, type, new_mode_name)
-        print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
+        #print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
         return current_mode
 
     @classmethod
@@ -188,7 +188,7 @@ class Mouse(object):
             if state == 1: #pressed down
                 if button == 1:
                     #playSound.build()
-                    #print "fire"
+                    ##print "fire"
                     GameStateGlobal.agent.fire()
                 elif button == 3: #right click
                     GameStateGlobal.agent.set_active_block()
@@ -234,7 +234,7 @@ class Keyboard(object):
     # one-time non character key detection
     # e.g. enter
     def on_key_press(self, symbol):
-        print 'ON_KEY_PRESS :: ', symbol
+        #print 'ON_KEY_PRESS :: ', symbol
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
         if InputGlobal.input == 'chat':
@@ -455,7 +455,7 @@ class AgentInput:
         self.key_handlers.get(symbol, lambda s: None)(symbol)
 
     def reload(self, symbol=None, modifiers=None):
-        print 'reloading'
+        #print 'reloading'
         GameStateGlobal.agent.reload()
 
     @classmethod
@@ -464,21 +464,21 @@ class AgentInput:
             GameStateGlobal.agent.bleed()
 
     def switch_weapon(self, symbol=None, modifiers=None):
-        #print 'switch weapon'
-        #print symbol, modifiers
-        #print str(symbol)
+        ##print 'switch weapon'
+        ##print symbol, modifiers
+        ##print str(symbol)
         try:
             weapon_index = int(symbol)
         except (ValueError, TypeError):
             return
-        print 'attempting to switch weapon to ', weapon_index
+        #print 'attempting to switch weapon to ', weapon_index
         GameStateGlobal.agent.weapons.switch(weapon_index)
 
     def adjust_block(self, symbol=None, modifiers=None):
-        print 'adjust_block %s %s' % (symbol, modifiers,)
+        #print 'adjust_block %s %s' % (symbol, modifiers,)
         aw = GameStateGlobal.agent.weapons.active()
         if not aw or aw.type != 3:  # block applier
-            print 'block applier not active'
+            #print 'block applier not active'
             return
         if symbol == 'left':
             InputGlobal.block_selector.left()
@@ -489,7 +489,7 @@ class AgentInput:
         elif symbol == 'down':
             InputGlobal.block_selector.down()
         GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id()+1)   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
-        print InputGlobal.block_selector.active
+        #print InputGlobal.block_selector.active
 
 
 class BlockSelector:
@@ -578,7 +578,7 @@ class BlockSelector:
         new = (row * self.x) + col
 
         if new < 0 or new > self.n - 1:
-            print 'warning, block selector attempted to select block out of range'
+            #print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
 
@@ -597,7 +597,7 @@ class BlockSelector:
         new += row * self.x
 
         if new < 0 or new > self.n - 1:
-            print 'warning, block selector attempted to select block out of range'
+            #print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
 
