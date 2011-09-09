@@ -16,9 +16,11 @@ void init_client() {
     update_current_netpeer_time();
     //init_sequence_numbers(&NPserver); /// FIX
     init_sequencer(&NPserver);
-    int local_port = 6967;
+    int local_port = 6967+(rand()%32);
     struct Socket* s = create_socket(local_port);
 
+    if(s != NULL) free(s);
+    /*
     if(s != NULL) {
     client_socket = *s;
     free(s);
@@ -29,6 +31,7 @@ void init_client() {
         free(s);
 
     }
+    */
     init_sequencer(&NPserver);
 }
 

@@ -1,18 +1,19 @@
 #include "client.h"
 
 
-#include "common/net_packets.h"
+//#include "common/net_packets.h"
 
 #include "common/net_peer.c"
 #include "client/client.c"
 #include "common/sequencer.c"
-
+#include "common/message_handler.c"
 
 struct NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
 
     init_client();
+    init_message_handler();
 
     unsigned int port = 9999;
     set_server(127,0,0,1, port);

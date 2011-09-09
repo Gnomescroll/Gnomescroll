@@ -2,17 +2,18 @@
 
 #include "server.h"
 
-#include "common/net_packets.h"
+//#include "common/net_packets.h"
 
 #include "common/net_peer.c"
 #include "server/server.c"
 #include "common/sequencer.c"
-
-#include <time/physics_timer.h>
+#include "common/message_handler.c"
+  //should be in header?
 
 void _NetServerInit() {
 
     init_net_lib();
+    init_message_handler();
 
     unsigned short port = 9999;
     init_server(port);
