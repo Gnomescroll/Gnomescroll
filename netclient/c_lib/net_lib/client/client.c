@@ -93,6 +93,50 @@ void send_packet2(){
 
 }
 
+void send_packet3(unsigned char* buff, int n_size) {
+    if(n_size+11 >= 800) {
+        printf("send_packet3 fail!  Packet would exceed 800 bytes. size=%i\n", n_size+11);
+        return;
+    }
+    if(NPserver.connected == 0) {
+        printf("Cannot send packet, disconnected!\n");
+        return;
+        }
+    unsigned char out_buff[800];
+    int n1 = 0;
+    int seq = get_next_sequence_number(&NPserver);
+
+    PACK_uint16_t(NPserver.client_id, out_buff, &n1); //client id
+    PACK_uint8_t(1, out_buff, &n1);  //channel 1
+    PACK_uint16_t(seq, out_buff, &n1); //sequence number
+
+    //ack string
+    PACK_uint16_t(get_sequence_number(&NPserver), out_buff, &n1); //max seq
+    PACK_uint32_t(generate_outgoing_ack_flag(&NPserver), out_buff, &n1); //sequence number
+
+    //unsigned int value = 5;
+    //PACK_uint32_t(value, out_buff, &n1);
+
+    if(n1 != 11) {
+        printf("send_packet3: header should be 11 bytes, is %i\n", n1);
+        return;
+    }
+    memcpy(out_buff+13, buff, n_size);
+    n1+=n_size;
+    //printf("Sent packet %i\n", seq);
+
+    //Simulated packet lose
+
+/*
+    if(seq%5 == 0) {
+        printf("Intentially dropped packet: %i \n", seq);
+        return;
+    }
+*/
+    int sent_bytes = sendto( client_socket.socket, (const char*)out_buff, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != n1) { printf( "send_packet3: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
+
+}
 
 void attempt_connection_with_server() {
     if(NPserver.connected == 1) {
