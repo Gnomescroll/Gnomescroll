@@ -32,7 +32,7 @@ struct Control_state {
 struct Control_state CS;
 int CS_SEQ = 0;
 
-void set_control_state(int* cs, float xangle, float yangle) {
+void set_agent_control_state(int* cs, float xangle, float yangle) {
     int i;
     for(i=0;i<6; i++) CS.s[i] = cs[i];
     CS.xangle = xangle;
@@ -42,6 +42,7 @@ void set_control_state(int* cs, float xangle, float yangle) {
 }
 
 void PACK_control_state(unsigned char *buff, int* n) {
+    PACK_uint8_t(1, buff, n);  //push message id on stack
     PACK_uint16_t(CS.id, buff, n);
     PACK_uint16_t(CS.seq, buff, n);
     PACK_uint16_t(CS.tick, buff, n);
@@ -68,6 +69,7 @@ void PACK_control_state(unsigned char *buff, int* n) {
 #ifdef DC_SERVER
 
 int handle_agent_control_state_message(unsigned char* buff, int n) {
+    int in = n;
     uint16_t id;
     uint16_t seq;
     uint16_t tick;
@@ -103,6 +105,8 @@ int handle_agent_control_state_message(unsigned char* buff, int n) {
         }
     }
     printf("\n");
+
+    return n -in;
 }
 
 

@@ -5,15 +5,16 @@
 //#include "common/net_packets.h"
 
 #include "common/net_peer.c"
+#include "common/message_handler.c"
 #include "server/server.c"
 #include "common/sequencer.c"
-#include "common/message_handler.c"
+
   //should be in header?
 
 #include <agent/control_state.c>
 
 void _NetServerInit() {
-
+    init_message_handler();
     update_current_netpeer_time();
     init_net_lib();
     init_message_handler();

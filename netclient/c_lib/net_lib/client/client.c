@@ -94,7 +94,7 @@ void send_packet2(){
 }
 
 void send_packet3(unsigned char* buff, int n_size) {
-    if(n_size+11 >= 800) {
+    if(n_size  >= 800) {
         printf("send_packet3 fail!  Packet would exceed 800 bytes. size=%i\n", n_size+11);
         return;
     }
@@ -121,7 +121,8 @@ void send_packet3(unsigned char* buff, int n_size) {
         printf("send_packet3: header should be 11 bytes, is %i\n", n1);
         return;
     }
-    memcpy(out_buff+13, buff, n_size);
+    //printf("writing messages at byte %i \n", n1);
+    memcpy(out_buff+n1, buff, n_size);
     n1+=n_size;
     //printf("Sent packet %i\n", seq);
 
@@ -220,6 +221,10 @@ void process_incoming_packets() {
             process_packet(buffer, bytes_received);
         }
     }
+}
+
+int header_size1() {
+    return sizeof(uint8_t)+3*sizeof(uint16_t)+ 2*sizeof(uint32_t);
 }
 
 void process_packet(unsigned char* buff, int n) {

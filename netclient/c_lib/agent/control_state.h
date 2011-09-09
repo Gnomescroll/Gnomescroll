@@ -10,7 +10,7 @@ void init_agent_control_state();
 
 #ifdef DC_CLIENT
 
-void set_control_state(int* cs, float xangle, float yangle);
+void set_agent_control_state(int* cs, float xangle, float yangle);
 void PACK_control_state(unsigned char *buff, int* n);
 
 #endif
