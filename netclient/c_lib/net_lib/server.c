@@ -33,7 +33,7 @@ void _NetServerTick() {
         update_current_netpeer_time();
         //NP_print_delta();
 
-        process_packets();
+        process_packets(); //should poll for packets very often; event triggered packet dump
         broad_cast_packet2();
 
         check_pool_for_dropped_packets();
