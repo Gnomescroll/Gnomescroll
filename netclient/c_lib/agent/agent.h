@@ -12,7 +12,7 @@
 
 #include "agent_vox.h"
 
-#include "vector.h"
+#include <physics/vector.h>
 
 #define AGENT_PART_NUM 6
 #define AGENT_PART_HEAD 0

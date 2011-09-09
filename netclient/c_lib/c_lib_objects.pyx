@@ -1,9 +1,11 @@
-cdef extern from "./objects/grenade.h":
-    struct GVector:
+cdef extern from "./physics/vector.h":
+    struct Vector:
         float x
         float y
         float z
-    GVector* _get_grenade_position(int gid)
+
+cdef extern from "./objects/grenade.h":
+    Vector* _get_grenade_position(int gid)
     void grenade_tick()
     void grenade_draw()
     int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max)
@@ -119,7 +121,7 @@ def _draw_circuit_tree():
     circuit_tree_draw()
 
 def get_grenade_position(int gid):
-    cdef GVector* pos
+    cdef Vector* pos
     pos = _get_grenade_position(gid)
     p = [pos.x, pos.y, pos.z]
     return p
