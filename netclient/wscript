@@ -76,10 +76,11 @@ def configure(conf):
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-
+    '''
         os_libpth = './libraries/win'
         os_libpth = './libraries/lin'
         os_libpth = './libraries/osx'
+    '''
     #conf.env.INCLUDES += [incp]
     #print incp
 

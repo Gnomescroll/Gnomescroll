@@ -2,16 +2,19 @@
 
 void init_agent_control_state() {
 
-#ifdef DC_CLIENT
+    printf("TEST\n");
 
-#endif
+    #ifdef DC_CLIENT
+
+    #endif
 
 
-#ifdef DC_SERVER
+    #ifdef DC_SERVER
 
- register_message_handler(1, 18, &handle_control_state_message) //id, size, function
+    printf("Message Registered: handle_agent_control_state_message\n");
+    register_message_handler(1, 18, &handle_agent_control_state_message); //id, size, function
 
-#endif
+    #endif
 
 }
 
@@ -24,10 +27,11 @@ struct Control_state {
     uint16_t tick;
     float xangle, yangle;
     int s[6];
-}
+};
 
 struct Control_state CS;
 int CS_SEQ = 0;
+
 void set_control_state(int* cs, float xangle, float yangle) {
     int i;
     for(i=0;i<6; i++) CS.s[i] = cs[i];
@@ -38,20 +42,20 @@ void set_control_state(int* cs, float xangle, float yangle) {
 }
 
 void PACK_control_state(unsigned char *buff, int* n) {
-    PACK_uint16_t(CS[i].id, buff, n);
-    PACK_uint16_t(CS[i].seq, buff, n);
-    PACK_uint16_t(CS[i].tick, buff, n);
+    PACK_uint16_t(CS.id, buff, n);
+    PACK_uint16_t(CS.seq, buff, n);
+    PACK_uint16_t(CS.tick, buff, n);
     PACK_float(CS.xangle, buff, n);
     PACK_float(CS.yangle, buff, n);
 
     int i;
-    uint32_t n = 1;
+    uint32_t _n = 1;
     uint32_t flag = 0;
     for(i=0;i<6;i++) {
-        if(cs.s[i] != 0) {
-            flag |= n;
+        if(CS.s[i] != 0) {
+            flag |= _n;
         }
-        n *= 2;
+        _n *= 2;
     }
     PACK_uint32_t(flag, buff, n);
 
@@ -63,7 +67,7 @@ void PACK_control_state(unsigned char *buff, int* n) {
 
 #ifdef DC_SERVER
 
-int handle_control_state_message(unsigned char* buff, int n) {
+int handle_agent_control_state_message(unsigned char* buff, int n) {
     uint16_t id;
     uint16_t seq;
     uint16_t tick;
@@ -77,17 +81,17 @@ int handle_control_state_message(unsigned char* buff, int n) {
     UNPACK_uint16_t(&tick, buff, &n);
     UNPACK_float(&xangle, buff, &n);
     UNPACK_float(&yangle, buff, &n);
-    UNPACK_float(&flag, buff, &n);
+    UNPACK_uint32_t(&flag, buff, &n);
 
     int i;
-    uint32_t n = 1;
+    uint32_t _n = 1;
     for(i=0;i<6;i++) {
-        if((float & n) != 0) {
+        if((flag & _n) != 0) {
             s[i] = 1;
         } else {
             s[i] = 0;
         }
-        n *= 2;
+        _n *= 2;
     }
     //printf("id=%i seq=%i tick=%i \n", id,seq,tick);
     printf("cs= ");

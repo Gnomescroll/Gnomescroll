@@ -10,14 +10,18 @@
 #include "common/message_handler.c"
   //should be in header?
 
+#include <agent/control_state.c>
+
 void _NetServerInit() {
+
     update_current_netpeer_time();
     init_net_lib();
     init_message_handler();
 
     unsigned short port = 9999;
     init_server(port);
-
+    //inits
+    init_agent_control_state();
 }
 
 long t1 = 0;
@@ -28,7 +32,7 @@ void _NetServerTick() {
     if(0) {
         t2 = t1;
         t1 = _get_time();
-        printf("delta: %i\n",t1 - t2);
+        printf("delta: %i\n",(int)(t1 - t2));
     }
         update_current_netpeer_time();
         //NP_print_delta();

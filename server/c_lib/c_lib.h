@@ -1,6 +1,6 @@
 
-//#ifndef c_lib_h
-//#define c_lib_h
+#ifndef c_lib_h
+#define c_lib_h
 
     #include "compat.h"
     #ifdef DC_CLIENT
@@ -13,4 +13,4 @@
 
 #define DC_SERVER
 
-//#endif
+#endif

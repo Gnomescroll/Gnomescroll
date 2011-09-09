@@ -3,10 +3,14 @@
 
 //#include "common/net_packets.h"
 
+#include <c_lib.h>
+
 #include "common/net_peer.c"
 #include "client/client.c"
 #include "common/sequencer.c"
 #include "common/message_handler.c"
+
+#include <agent/control_state.c>
 
 struct NetPeer* np;
 
@@ -21,6 +25,8 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     attempt_connection_with_server();
 
     np= CLIENT_get_NP();
+
+    init_agent_control_state();
 }
 
 /*
