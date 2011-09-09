@@ -140,6 +140,8 @@ def configure(conf):
     libpth = '%s/fmod/api/lib/' % (os_libpth,)
     despth = './build/sound/api/lib/'
     if os.path.exists(despth):
+        for fn in os.listdir(despth):
+            os.remove(despth + fn)
         for fn in os.listdir(libpth):
             shutil.copy2(libpth + fn, despth + fn)
     else:
