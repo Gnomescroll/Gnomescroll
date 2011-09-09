@@ -119,7 +119,7 @@ void create_blood(int type, float x, float y, float z, float vx, float vy, float
     g->vy=vy;
     g->vz=vz;
     g->ttl = 0;
-    g->ttl_max = 1200;
+    g->ttl_max = 30;
     g->active = 0;
     g->type = type;
 
