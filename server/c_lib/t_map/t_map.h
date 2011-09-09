@@ -10,6 +10,11 @@
 #define vm_chunk_size 8
 #define vm_column_max 16
 
+#define xmax (vm_map_dim    * vm_chunk_size)
+#define ymax (vm_map_dim    * vm_chunk_size)
+#define zmax (vm_column_max * vm_chunk_size)
+
+
 struct VBO {
         int v_num;
         struct Vertex* v_list;
@@ -42,6 +47,7 @@ struct vm_map {
     struct vm_column column[vm_map_dim*vm_map_dim];
 };
 
+
 //functions
 extern struct vm_map map;
 
@@ -57,6 +63,8 @@ int _set_server_version(int x,int y,int z, int server_version);
 struct vm_map* _get_map();
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
 
+int _get_highest_open_block(int x, int y, int n);
+int _get_lowest_open_block(int x, int y, int n);
 
 //these flags are not used on server for anything
 /*

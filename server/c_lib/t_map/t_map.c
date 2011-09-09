@@ -143,9 +143,6 @@ int _set_server_version(int x,int y,int z, int server_version) {
 int _clear() {
     // iterate entire map
     // set to 0
-    int xmax = vm_map_dim * vm_chunk_size;
-    int ymax = vm_map_dim * vm_chunk_size;
-    int zmax = vm_column_max * vm_chunk_size;
     int i=0;
     int j=0;
     int k=0;
@@ -157,5 +154,26 @@ int _clear() {
         }
     }
     return 0;
+}
+
+int _get_highest_open_block(int x, int y, int n) {
+    int i=0;
+    int open=0;
+    int tid=0;
+    int final=0;
+    for (i=zmax-1; i>=0; i--) {
+        tid = _get(x,y,i);
+        if (isSolid(tid)) {
+            break;
+        } else {
+            open++;
+        }
+    }
+    while (i>=0 && open>=n) {
+        
+}
+
+int _get_lowest_open_block(int x, int y, int n) {
+
 }
 
