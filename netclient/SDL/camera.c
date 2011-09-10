@@ -137,6 +137,10 @@ glLoadIdentity();
 glDisable(GL_DEPTH_TEST);
 
 glEnable(GL_TEXTURE_2D);
+
+//glClearColor(0, 0, 0, 0);
+//glClear(GL_COLOR_BUFFER_BIT); //causes terrain not to render
+
 //glEnable(GL_TEXTURE_2D);
 
 /*
