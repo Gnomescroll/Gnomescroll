@@ -2,6 +2,7 @@
 #define camera_h
 
 #include <compat_gl.h>
+#include <math.h>
 
 struct Camera {
 float fov;
@@ -22,5 +23,9 @@ int _set_camera(struct Camera* c);
 struct Camera* _get_camera();
 
 void set_model_view_matrix(float *a);
+
+
+//extern int _xres;
+//extern int _yres;
 
 #endif

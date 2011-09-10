@@ -17,6 +17,9 @@ float y_angle;
 
 #define PI 3.14159265
 
+extern int _xres;
+extern int _yres;
+
 /*
 void _camera_projection( Camera c) {
     float aspect = c.x_size / c.y_size;
@@ -56,6 +59,11 @@ void set_model_view_matrix(float *a){
 }
 
 int _world_projection(struct Camera* c) {
+    //float aspect = c->x_size / c->y_size;
+
+    c->x_size = (float) _xres;
+    c->y_size = (float) _yres;
+
     float aspect = c->x_size / c->y_size;
     float camera_focus_x,  camera_focus_y,  camera_focus_z;
     float length;
@@ -121,7 +129,7 @@ glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0, c->x_size, 0, c->y_size);
 
-//printf( "(%f, %f) \n", c.x_size, c.y_size);
+//printf( "(%f, %f) (%i,%i)\n", c->x_size, c->y_size, _xres, _yres);
 
 glMatrixMode( GL_MODELVIEW );
 glLoadIdentity();

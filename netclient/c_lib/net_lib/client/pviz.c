@@ -18,6 +18,7 @@ void pviz_start_frame() {
     frame_array[frame_n%128].end_time = get_current_netpeer_time();
     frame_n++;
     frame_array[frame_n%128].start_time = get_current_netpeer_time();
+    frame_array[frame_n%128].end_time = -1;
     frame_array[frame_n%128].total_acks = 0;
     frame_array[frame_n%128].packet_sent = 0;
     frame_array[frame_n%128].packet_received = 0;
@@ -38,16 +39,59 @@ void pviz_start_frame() {
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 */
 
-#define INC_C 0.1
+void pviz_draw_grid(float z) {
+    return;
+    //printf("X");'
+    z = -0.9;
+    float xstep = 10;
+    float ystep = 50;
+    int i,j;
+    //glEnable(GL_POINT_SMOOTH);
+    //glPointSize(1.00);
+    glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)255);
+    glBegin(GL_POINTS);
+    for(i=0; i<50;i++) {
+    for(j=0; j<50;j++) {
+        //printf("drew");
+       glVertex3f((float)i*xstep+0.5,(float)j*ystep+0.5,z);
+       //glVertex2i(i*xstep, j*ystep);
+    }
+    }
+    glEnd();
+    glDisable(GL_POINT_SMOOTH);
+}
+
+#define INC_C 0.5
 void pviz_draw(float x, float y, float z) {
+
+    if(x==0) {
+        pviz_draw_grid(z);
+        return;
+    }
+
     int ac = 0;
     int i=1;
     int index,len;
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
     glBegin(GL_POINTS);
-    while(ac < 2000 && i < 128) {
-        index = (frame_n - i) % 256;
-        if(index < 0) {index += 256;}
+
+
+    float d = 10;
+
+    glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)255);
+    glVertex3f(x,y,z);
+    glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
+    glVertex3f(x+d,y,z);
+    glVertex3f(x-d,y,z);
+    glVertex3f(x,y+d,z);
+    glVertex3f(x,y-d,z);
+    glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)255);
+    glVertex3f(x,y,z+d);
+    glVertex3f(x,y,z-d);
+
+    while(ac*INC_C < 800 && i < 32) {
+        index = (frame_n - i) % 128;
+        if(index < 0) {index += 128;}
         //if(frame_array[index].)
         glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
         glVertex3f(x,y-ac*INC_C,z);
@@ -55,10 +99,10 @@ void pviz_draw(float x, float y, float z) {
         glVertex3f(x+5,y-i*3,z);
         len = frame_array[index].end_time - frame_array[index].start_time;
         ac += len;
-        printf("ac= %i,i=%i len=%i\n",ac,i,len);
+        //printf("index=%i ac=%i i=%i len=%i\n",index, ac,i,len);
         i++;
     }
-    printf("i=%i\n", i);
+    //printf("i=%i\n", i);
     glEnd();
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 }
