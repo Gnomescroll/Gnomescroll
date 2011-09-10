@@ -11,8 +11,8 @@ int T_VIZ_STYLE  = 0;
 #define _D2 0.5
 
 //add alpha style?
-int _D2_ss = 4; //step size 2 or 4
-float _D2_ps = 2.0; //point size 1 or 2
+int _D2_ss = 1; //step size 2 or 4
+float _D2_ps = 1.0; //point size 1 or 2
 
 int _vbo_indicator_style = 3;
 

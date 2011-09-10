@@ -20,6 +20,8 @@ void _toggle_terrain_map_blend_mode() {
 int T_MAP_Z_BUFFER = 0;
 void _toggle_z_buffer() {
     T_MAP_Z_BUFFER = (T_MAP_Z_BUFFER +1) %2;
+    if(T_MAP_Z_BUFFER==0) printf("z_buffer on\n");
+
 }
 
 
@@ -265,7 +267,7 @@ int update_column_VBO(struct vm_column* column) {
         if(column->chunk[i] == NULL) { continue; }
         //printf("chunk= %i\n", i);
         chunk = column->chunk[i];
-        chunk->vbo_needs_update = 0;
+        //chunk->vbo_needs_update = 0;
         //printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
         for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
             for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
@@ -505,6 +507,23 @@ int* _chunk_request() {
 }
 
 void _refresh_map_vbo() {
+    printf("Refreshing map VBOs\n");
+    struct vm_map* m;
+    struct vm_column* c;
+    int i,j;
+    m = _get_map();
 
+    //VBO construction loop
 
+    for(i=0; i<vm_map_dim; i++) {
+    for(j=0; j<vm_map_dim;j++) {
+        c = &m->column[j*vm_map_dim+i];
+        if(flag_is_true(c, VBO_has_blocks)) {
+                //c->vbo.VBO_id == 0
+                set_flag(c, VBO_needs_update, 1);
+                set_flag(c, VBO_loaded, 0);
+                //flag_is_false(c, VBO_loaded)
+            }
+
+    }}
 }
