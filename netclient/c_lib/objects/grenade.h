@@ -13,6 +13,8 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
+#include <physics/vector.h>
+
 #ifdef DC_CLIENT
 #include <texture_loader.h>
 #endif
@@ -22,12 +24,7 @@ void grenade_tick();
 int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, unsigned int ttl, unsigned int ttl_max);
 void destroy_grenade(int gid);
 
-struct GVector {
-    float x;
-    float y;
-    float z;
-};
-struct GVector* _get_grenade_position(int gid);
+struct Vector* _get_grenade_position(int gid);
 
 #ifdef DC_CLIENT
 void grenade_draw();

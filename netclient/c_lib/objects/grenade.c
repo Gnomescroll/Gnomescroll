@@ -64,8 +64,8 @@ void grenade_tick() {
     }
 }
 
-struct GVector g_pos;
-struct GVector* _get_grenade_position(int gid) {
+struct Vector g_pos;
+struct Vector* _get_grenade_position(int gid) {
     struct Grenade* g = Grenade_list[gid];
     if (g != NULL) {
         g_pos.x = g->x;

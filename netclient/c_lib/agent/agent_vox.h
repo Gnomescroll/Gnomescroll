@@ -12,7 +12,7 @@
 //#include <t_map/t_map.h>
 //#include <t_map/t_properties.h>
 
-#include "vector.h"
+#include <physics/vector.h>
 //#include "agent.h"
 struct Agent_state;
 

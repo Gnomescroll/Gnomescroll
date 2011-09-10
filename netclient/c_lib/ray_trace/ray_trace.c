@@ -388,6 +388,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 }
 */
 
+// for bounce
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
     float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;

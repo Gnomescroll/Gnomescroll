@@ -6,7 +6,7 @@
 #include <compat.h>
 #include <compat_gl.h>
 
-#include "vector.h"
+#include <physics/vector.h>
 
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle);
