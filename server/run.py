@@ -253,17 +253,22 @@ class Main:
         NetEvent.init_1()
         #CubeGlobal.init_1()
 
-        # detect file changes
-        #def _dat_change_reload(f):
-            #dat_loader._reload()
-            #NetOut.event.send_dat()
+         #detect dat changes
+        def _dat_change_reload(f):
+            dat_loader._reload()
+            NetOut.event.send_dat()
 
-        #files = ['dats.py']
-        #callbacks = [_dat_change_reload]
+        files = [
+            'dats/projectile.py',
+            'dats/item.py',
+            'dats/cube.py',
+            'dats/weapon.py',
+        ]
+        callbacks = [_dat_change_reload]
 
-        #self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
-        #self.intervals = intervals.Intervals()
-        #self.intervals.register(self.file_monitor, self.file_monitor.interval)
+        self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
+        self.intervals = intervals.Intervals()
+        self.intervals.register(self.file_monitor, self.file_monitor.interval)
 
     def run2(self):
         #import pdb; pdb.set_trace()
@@ -273,7 +278,7 @@ class Main:
         #physics_timer.start_physics_timer(33)
         init_c_lib.init()
         tick = 0
-        #self.intervals.set()#ms per tick
+        self.intervals.set()#ms per tick
         #StartPhysicsTimer(33)
         START_CLOCK()
         NetServerInit()
@@ -295,7 +300,7 @@ class Main:
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
-            #self.intervals.process()
+            self.intervals.process()
             sleep(0.001)
 
 if __name__ == "__main__":

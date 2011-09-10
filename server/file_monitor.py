@@ -21,7 +21,6 @@ class FileMonitor(object):
 
 
     def __call__(self):
-        print 'calling file monitor'
         self.check()
 
     def build_hashes(self, files):
@@ -50,14 +49,12 @@ class FileMonitor(object):
         del self.callbacks[f]
 
     def check(self):
-        print 'Checking f changes'
         for f, h in self.hash_map.items():
             if not exists(f):
                 self.teardown(f)
                 continue
             hash = self.get_hash(f)
             if h != hash:
-                print 'CHANGE DETECTED!'
                 self.hash_map[f] = hash
                 if f in self.callbacks:
                     self.callbacks[f](f)

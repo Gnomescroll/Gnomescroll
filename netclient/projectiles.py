@@ -17,6 +17,7 @@ else:
 
 from dat_loader import p_dat
 
+
 class Projectile:
 
     _types = {
@@ -36,20 +37,19 @@ class Projectile:
             cls._names = dict(rev)
         return cls._names[type]
 
+    @classmethod
+    def init(cls):
+        cls.type = cls._types[cls.__name__]
+
     def __init__(self, id, state=None, owner=None, *args, **kwargs): #more args
         self.id = id
-        self._set_type()
 
         self.state = map(float, state)
         self.last_state = self.state
         self.owner = owner
 
-        self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps
         self.ttl = 0
-
-    def _set_type(self):
-        self.type = self._types[self.__class__.__name__]
 
     def update(self, **args):
         try:
@@ -118,6 +118,9 @@ class Projectile:
 
     def update_sound(self):
         return
+
+Projectile.init()
+
 
 class Laser(Projectile):
 
@@ -194,16 +197,15 @@ class Laser(Projectile):
     def update_sound(self):
         sounds.update_3d(self.snd_id, self.pos(), self.velocity())
 
+Laser.init()
+
 
 class Grenade(Projectile):
 
     def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
         self.id = id
         self.owner = owner
-        self._set_type()
-        self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps
-
         self.ttl = ttl
         x,y,z, vx,vy,vz = state
         self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
@@ -222,7 +224,18 @@ class Grenade(Projectile):
     def delete(self):
         Projectile.delete(self)
         c_obj._destroy_grenade(self.g_index)
-        
+
+Grenade.init()
+
+
+def _dat_callback(*args, **kwargs):
+    Projectile.dat.apply(Projectile)
+    Projectile.dat.apply(Laser)
+    Projectile.dat.apply(Grenade)
+
+Projectile.dat.on_change = _dat_callback
+
+
 from game_state import GameStateGlobal
 from cube_lib.terrain_map import collisionDetection, isSolid
 #import draw_utils
