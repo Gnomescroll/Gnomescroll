@@ -421,6 +421,8 @@ cdef extern from 't_viz.h':
     int _draw_vbo_indicator(float x, float y, float z)
     void _toggle_t_viz_vbo_indicator_style()
     void _toggle_terrain_map_blend_mode()
+    void _refresh_map_vbo()
+    void _toggle_z_buffer()
     int _start_frame()
     int _event(int id)
     int _end_frame()
@@ -434,6 +436,13 @@ def toggle_t_viz_vbo_indicator_style(**m):
 
 def toggle_terrain_map_blend_mode(**m):
     _toggle_terrain_map_blend_mode()
+
+def refresh_map_vbo(**m):
+    _refresh_map_vbo()
+
+def toggle_z_buffer(**m):
+    _toggle_z_buffer()
+
 
 class Profiler:
     def start_frame(self):

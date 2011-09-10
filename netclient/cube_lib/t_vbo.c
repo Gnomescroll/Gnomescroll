@@ -17,6 +17,12 @@ void _toggle_terrain_map_blend_mode() {
     printf("toggle_terrain_map_blend_mode: blend mode= %i\n", T_MAP_BLEND_MODE);
 }
 
+int T_MAP_Z_BUFFER = 0;
+void _toggle_z_buffer() {
+    T_MAP_Z_BUFFER = (T_MAP_Z_BUFFER +1) %2;
+}
+
+
 //fulstrum culling globals
 struct _Camera {
 float x,y,z;
@@ -107,6 +113,12 @@ draw_mode_enabled = 1;
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);  ///testing
+
+if(T_MAP_Z_BUFFER == 0) {
+    glEnable (GL_DEPTH_TEST);
+} else {
+    glDisable (GL_DEPTH_TEST);
+}
 
 if(T_MAP_BLEND_MODE != 0) {
     glEnable(GL_BLEND);
@@ -490,4 +502,9 @@ int* _chunk_request() {
         crb[2] = ch_lowest->z_off;
         return &crb;
     }
+}
+
+void _refresh_map_vbo() {
+
+
 }

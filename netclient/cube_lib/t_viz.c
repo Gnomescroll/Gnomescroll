@@ -14,7 +14,7 @@ int T_VIZ_STYLE  = 0;
 int _D2_ss = 4; //step size 2 or 4
 float _D2_ps = 2.0; //point size 1 or 2
 
-int _vbo_indicator_style = 0;
+int _vbo_indicator_style = 3;
 
 void _toggle_t_viz_vbo_indicator_style() {
     _vbo_indicator_style = (_vbo_indicator_style+1)%4;
