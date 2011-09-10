@@ -50,12 +50,14 @@ int _draw_vbo_indicator(float x, float y, float z) {
 
     m = _get_map();
     glPointSize(_D2_ps);
+    int blend_enabled = 0;
 
     unsigned char alpha = 0;
     if(_vbo_indicator_style == 3 || _vbo_indicator_style == 2) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         alpha = 50;
+        blend_enabled = 1;
     }
 
     glBegin(GL_POINTS);
@@ -95,7 +97,7 @@ int _draw_vbo_indicator(float x, float y, float z) {
     }}
     glEnd();
 
-    if(_vbo_indicator_style == 4) {
+    if(blend_enabled != 0) {
         glDisable(GL_BLEND);
     }
     glPointSize(1.00);

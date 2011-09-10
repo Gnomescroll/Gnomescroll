@@ -10,6 +10,13 @@ int draw_mode_enabled = 0;
 unsigned int _garbage_collection_counter = 0;
 #define garbage_collection_frequency 10
 
+int T_MAP_BLEND_MODE = 0;
+
+void _toggle_terrain_map_blend_mode() {
+    T_MAP_BLEND_MODE = (T_MAP_BLEND_MODE+1)%5;
+    printf("toggle_terrain_map_blend_mode: blend mode= %i\n", T_MAP_BLEND_MODE);
+}
+
 //fulstrum culling globals
 struct _Camera {
 float x,y,z;
@@ -101,6 +108,14 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);  ///testing
 
+if(T_MAP_BLEND_MODE != 0) {
+    glEnable(GL_BLEND);
+    if(T_MAP_BLEND_MODE ==1 ) glBlendFunc(GL_ONE, GL_ONE);
+    if(T_MAP_BLEND_MODE ==2 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    if(T_MAP_BLEND_MODE ==3 ) glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_DST_COLOR);
+    if(T_MAP_BLEND_MODE ==4 ) glBlendFunc(GL_ONE, GL_ALPHA);
+}
+
 glBindTexture( GL_TEXTURE_2D, texture );
 
 glEnableClientState(GL_VERTEX_ARRAY);
@@ -120,6 +135,7 @@ glDisable(GL_TEXTURE_2D);
 glDisable (GL_DEPTH_TEST);
 glDisable(GL_CULL_FACE);
 
+if(T_MAP_BLEND_MODE != 0) glDisable(GL_BLEND);
 return 0;
 }
 
@@ -349,6 +365,7 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 int _t_ = 0;
 int _c_ = 0;
 */
+
 int _draw_terrain() {
 /*
     _c_++;
