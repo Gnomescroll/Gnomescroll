@@ -16,4 +16,8 @@ sprites = [
 ('bluemoon.png', 6),
 
 ('lavablock.png',7),
+
+#test
+('test/png-8.png',254),
+('test/png-24.png',255),
 ]
