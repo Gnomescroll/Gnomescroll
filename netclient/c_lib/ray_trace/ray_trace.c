@@ -346,6 +346,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
+    int _c = 0;
     //collision_check(0,0,0);
     for(i =0; i < max_i; i++) {
         cx += dx;
@@ -357,26 +358,30 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 x += cdx;
                 if(collision_check2(x,y,z)) {
                     ri4[0] = cdx;
-                    break;
+                    //break;
+                    _c = 1;
                 }
             }
             if(cy >= bsize) {
                 cy -= bsize;
                 y += cdy;
-                if(collision_check2(x,y,z)) {
+                if(_c || collision_check2(x,y,z)) {
                     ri4[1] = cdy;
-                    break;
+                    //break;
+                    _c = 1;
                 }
             }
             if(cz >= bsize) {
                 //printf("z decrease\n");
                 cz -= bsize;
                 z += cdz;
-                if(collision_check2(x,y,z)) {
+                if(_c || collision_check2(x,y,z)) {
                     ri4[2] = cdz;
-                    break;
+                    //break;
+                    _c = 1;
                 }
             }
+            if (_c) break;
         }
     }
     //if( max_i - i != 0) {
