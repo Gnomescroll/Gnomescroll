@@ -31,6 +31,7 @@ dat = {
 #from cube_dat import dat
 
 import cube_dat
+
 dat = cube_dat.dat
 
 def _build_cubes():
@@ -66,3 +67,13 @@ def _build_cubes():
 
     set_cube_list_defaults()
 _build_cubes()
+
+# module reload behavior
+try:
+    _init
+except NameError:
+    _init = None
+else:
+    reload(cube_dat)
+    dat.update(cube_dat.dat)
+

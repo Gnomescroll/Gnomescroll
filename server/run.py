@@ -263,6 +263,7 @@ class Main:
             'dats/item.py',
             'dats/cube.py',
             'dats/weapon.py',
+            'dats/cube_dat.py',
         ]
         callbacks = [_dat_change_reload]
 
