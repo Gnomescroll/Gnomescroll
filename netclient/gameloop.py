@@ -43,6 +43,7 @@ if True:
     from init_c_lib import START_CLOCK, GET_TICK
     from init_c_lib import _pviz_draw
     P2 = cube_lib.terrain_map.Profiler()
+    #from cube_lib.terrain_map import toggle_t_viz_vbo_indicator_style
 
     from init_c_lib import NetClientTick, NetClientConnect
 ##profiler
@@ -192,7 +193,7 @@ class App(object):
             y *= v / le
             z *= v / le
             c_lib.c_lib_objects._create_neutron(1,1,35.5,35.5,5.5, x,y,z)
-        
+
         while not GameStateGlobal.exit:
             neutron_fountain()
             self.world.sound_updates()

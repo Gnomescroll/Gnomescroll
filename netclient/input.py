@@ -11,6 +11,8 @@ from opts import opts
 
 import SDL.input
 
+from cube_lib.terrain_map import toggle_t_viz_vbo_indicator_style
+
 #handles special characters
 Keystring = {}
 def setup_keystring():
@@ -277,6 +279,7 @@ class Keyboard(object):
             "T" : self.main.world.toggle_gl_smooth,
             "q" : InputGlobal.toggle_input_mode,
             "e" : InputGlobal.toggle_camera_mode,
+            "n" : toggle_t_viz_vbo_indicator_style,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):

@@ -419,6 +419,7 @@ PART 5.5 : visualization
 
 cdef extern from 't_viz.h':
     int _draw_vbo_indicator(float x, float y, float z)
+    void _toggle_t_viz_vbo_indicator_style()
     int _start_frame()
     int _event(int id)
     int _end_frame()
@@ -426,6 +427,9 @@ cdef extern from 't_viz.h':
 
 def draw_vbo_indicator(float x, float y, float z):
     _draw_vbo_indicator(x, y, z)
+
+def toggle_t_viz_vbo_indicator_style(**m):
+    _toggle_t_viz_vbo_indicator_style()
 
 class Profiler:
     def start_frame(self):
