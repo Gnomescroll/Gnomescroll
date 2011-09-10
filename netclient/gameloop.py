@@ -181,8 +181,20 @@ class App(object):
 
         START_CLOCK() #clock must be started before networking stuff
         NetClientConnect(127,0,0,1, 0)
-        while not GameStateGlobal.exit:
 
+        def neutron_fountain():
+            v = 2
+            x = v*(random.random() -0.5)
+            y = v*(random.random() -0.5)
+            z = v*(random.random() -0.5)
+            le = math.sqrt(x**2+y**2+z**2)
+            x *= v / le
+            y *= v / le
+            z *= v / le
+            c_lib.c_lib_objects._create_neutron(1,1,35.5,35.5,5.5, x,y,z)
+        
+        while not GameStateGlobal.exit:
+            neutron_fountain()
             self.world.sound_updates()
 
             P2.start_frame() #TEST

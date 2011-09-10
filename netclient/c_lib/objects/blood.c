@@ -1,16 +1,5 @@
 #include "blood.h"
 
-
-//struct Particle {
-    //unsigned int id;
-    //float x,y,z;
-    //float vx,vy,vz;
-    //unsigned int ttl;
-    //unsigned int ttl_max;
-    //int type;
-    //int active;
-//};
-
 #define max_blood 4096
 
 struct Particle* blood_list[max_blood];
@@ -107,15 +96,16 @@ void create_blood(int type, float x, float y, float z, float vx, float vy, float
     if(g== NULL) {
         //printf("Bug: max Particle number reached!\n");
         return;}
-    g->x=x;
-    g->y=y;
-    g->z=z;
-    g->vx=vx;
-    g->vy=vy;
-    g->vz=vz;
-    g->ttl = 0;
-    g->ttl_max = 30;
-    g->type = type;
+    create_particle(g, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 30);
+    //g->x=x;
+    //g->y=y;
+    //g->z=z;
+    //g->vx=vx;
+    //g->vy=vy;
+    //g->vz=vz;
+    //g->ttl = 0;
+    //g->ttl_max = 30;
+    //g->type = type;
 
 }
 

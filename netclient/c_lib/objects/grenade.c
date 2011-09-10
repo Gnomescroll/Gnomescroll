@@ -1,14 +1,6 @@
 #include "grenade.h"
 
 
-//struct Particle {
-    //float x,y,z;
-    //float vx,vy,vz;
-    //unsigned int ttl;
-    //unsigned int ttl_max;
-    //int type;
-//};
-
 struct Particle* Grenade_list[1024];
 float a[16];
 int g_count=0;
@@ -21,66 +13,8 @@ void init_objects_grenade() {
 
 void inline grenade_Tick(struct Particle* g) {
     g->ttl++;
-    //float _x, _y, _z;
-    //_x = g->x + g->vx/30;
-    //_y = g->y + g->vy/30;
-    //_z = g->z + g->vz/30;
-
-    //float interval;
-    //int* s;
-    //s = _ray_cast4(g->x, g->y, g->z, _x,_y,_z, &interval);
-    ////printf("interval= %f \n", interval);
-
-    //if(s[0] != 0 ) {
-        //g->vx *= -1;
-        ////printf("invert vx \n");
-    //}
-    //if(s[1] != 0) {
-        //g->vy *= -1;
-        ////printf("invert vy \n");
-    //}
-    //if(s[2] != 0) {
-        //g->vz *= -1;
-        ////printf("invert vz \n");
-    //}
-
-    //g->x = g->x + interval*g->vx/30;
-    //g->y = g->y + interval*g->vy/30;
-    //g->z = g->z + interval*g->vz/30;
     bounce_simple(g);
 }
-
-//#define FPS 30
-
-//void bounce_simple(struct Particle* p) {
-
-    //float _x, _y, _z;
-    //_x = p->x + p->vx/FPS;
-    //_y = p->y + p->vy/FPS;
-    //_z = p->z + p->vz/FPS;
-
-    //float interval;
-    //int* s;
-    //s = _ray_cast4(p->x, p->y, p->z, _x,_y,_z, &interval);
-    ////printf("interval= %f \n", interval);
-
-    //if(s[0] != 0 ) {
-        //p->vx *= -1;
-        ////printf("invert vx \n");
-    //}
-    //if(s[1] != 0) {
-        //p->vy *= -1;
-        ////printf("invert vy \n");
-    //}
-    //if(s[2] != 0) {
-        //p->vz *= -1;
-        ////printf("invert vz \n");
-    //}
-
-    //p->x = p->x + interval*p->vx/FPS;
-    //p->y = p->y + interval*p->vy/FPS;
-    //p->z = p->z + interval*p->vz/FPS;
-//}
 
 void grenade_tick() {
     struct Particle* g = NULL;

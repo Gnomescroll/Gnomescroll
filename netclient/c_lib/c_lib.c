@@ -11,6 +11,7 @@
 
 #include "./physics/common.c"
 
+#include "./objects/particles.c"
 #include "./objects/grenade.c"
 #include "./objects/neutron.c"
 #include "./objects/cspray.c"

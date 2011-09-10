@@ -8,6 +8,8 @@
 
 #define FPS 30
 
-void bounce_simple(struct Particle* p);
+int* bounce_simple(struct Particle* p);
+
+int* bounce_collide_tile(struct Particle* p, int* collision, int* tile);
 
 #endif
