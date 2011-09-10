@@ -1,24 +1,19 @@
 #include "cspray.h"
 
 
-struct cspray {
-    unsigned int id;
-    float x,y,z;
-    float vx,vy,vz;
-    unsigned int ttl;
-    unsigned int ttl_max;
-    int type;
+struct Cspray {
+    struct Particle* particle;
     int active;
 };
 
 #define max_cspray 4096
 
-struct cspray* cspray_list[max_cspray];
+struct Cspray* cspray_list[max_cspray];
 float a[16];
 int cspray_count=0;
 unsigned int cspray_id=0;
 
-void inline cspray_Tick(struct cspray* g);
+void inline cspray_Tick(struct Cspray* g);
 
 void init_objects_cspray() {
     //printf("RANDMAX= %i \n", RAND_MAX);
@@ -26,74 +21,52 @@ void init_objects_cspray() {
     return;
 }
 
-void inline cspray_Tick(struct cspray* g) {
-    g->vz -= 0.025; //gravity
+void inline cspray_Tick(struct Cspray* g) {
+    g->particle->vz -= 0.025; //gravity
 
-    g->ttl++;
-    float _x, _y, _z;
-    _x = g->x + g->vx/30;
-    _y = g->y + g->vy/30;
-    _z = g->z + g->vz/30;
+    g->particle->ttl++;
 
-    float interval;
     int* s;
     int collision[3];
     int tile;
 
-    float _vx,_vy,_vz;
-    float len;
-    float vel = 2;
-    s = _ray_cast5(g->x, g->y, g->z, _x,_y,_z, &interval, collision, &tile);
-    //printf("interval= %f \n", interval);
-    //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
+    s = bounce_collide_tile(g->particle, collision, &tile);
 
     // cement effect
     if(g->active == 1) {
-        g->ttl= g->ttl_max;
-        //tile = _get(collision,g->collision[1],g->collision[2]);
+        g->particle->ttl= g->particle->ttl_max;
+        //tile = _get(collision,g->particle->collision[1],g->particle->collision[2]);
         if(!isActive(tile)) {
             _set(collision[0],collision[1],collision[2], 2);
-            g->ttl= g->ttl_max;
+            g->particle->ttl= g->particle->ttl_max;
             return;
         }
     }
 
     if(s[0] != 0 || s[1] != 0 || s[2] != 0)
     {
-        if(s[0] != 0 ) {
-            g->vx *= -1;
-            //printf("invert vx \n");
-        }
-        if(s[1] != 0) {
-            g->vy *= -1;
-            //printf("invert vy \n");
-        }
-        if(s[2] != 0) {
-            g->vz *= -1;
-            //printf("invert vz \n");
-        }
         if(isActive(tile)) {
             g->active=1;
         }
     }
+}
 
-    g->x = g->x + interval*g->vx/30;
-    g->y = g->y + interval*g->vy/30;
-    g->z = g->z + interval*g->vz/30;
-
+static inline cspray_Free(struct Cspray* g) {
+    free(g->particle);
+    free(g);
 }
 
 void cspray_tick() {
-    struct cspray* g = NULL;
+    struct Cspray* g = NULL;
     int i;
     for(i=0; i<max_cspray; i++) {
         if(cspray_list[i] != NULL) {
             g = cspray_list[i];
             cspray_Tick(g);
-            if(g->ttl >= g-> ttl_max) {
+            if(g->particle->ttl >= g->particle-> ttl_max) {
                 //boom!
                 cspray_list[i] = NULL;
-                free(g);
+                cspray_Free(g);
                 cspray_count--;
             }
         }
@@ -105,11 +78,11 @@ void cspray_tick() {
 
 void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
     //printf("Create cspray\n");
-    struct cspray* g = NULL;
+    struct Cspray* g = NULL;
     int i;
     for(i=0; i<max_cspray; i++) {
         if(cspray_list[i] == NULL) {
-            g = (struct cspray *) malloc (sizeof(struct cspray));
+            g = (struct Cspray *) malloc (sizeof(struct Cspray));
             cspray_list[i] = g;
             cspray_count++;
             break;
@@ -118,17 +91,11 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
     if(g== NULL) {
         //printf("Bug: max cspray number reached!\n");
         return;}
-    g->x=x;
-    g->y=y;
-    g->z=z;
-    g->vx=vx;
-    g->vy=vy;
-    g->vz=vz;
-    g->ttl = 0;
-    g->ttl_max = 1200;
-    g->active = 0;
-    g->type = type;
 
+    struct Particle* p = (struct Particle*) malloc (sizeof(struct Particle));
+    create_particle(p, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
+    g->particle = p;
+    g->active = 0;
 }
 
 
@@ -143,7 +110,7 @@ void cspray_draw() {
     if(cspray_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    struct cspray* g = NULL;
+    struct Cspray* g = NULL;
     int i;
 
     float size = 0.3;
@@ -179,7 +146,7 @@ void cspray_draw() {
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
 
-        x=g->x; y=g->y; z=g->z;
+        x=g->particle->x; y=g->particle->y; z=g->particle->z;
 
         glTexCoord2f(tx_min,ty_max );
         glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left

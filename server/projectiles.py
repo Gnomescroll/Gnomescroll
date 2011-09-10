@@ -41,7 +41,7 @@ from utils import filter_props
 
 class Projectile:
 
-    projectile_types = {
+    _types = {
         'Projectile'    :   0,
         'Laser'         :   1,
         'Grenade'       :   2,
@@ -49,18 +49,18 @@ class Projectile:
 
     dat = p_dat
 
+    @classmethod
+    def init(cls):
+        cls.type = cls._types[cls.__name__]
+        cls.dat.apply(cls)
+
     def __init__(self, id, state, owner=None):
         self.id = id
         self.owner = owner
         self.state = map(float, state)
-        self._set_type()
             
-        self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps
         self.ttl = 0
-
-    def _set_type(self):
-        self.type = self.projectile_types[self.__class__.__name__]
 
     def pos(self):
         return self.state[0:3]
@@ -119,6 +119,7 @@ class Projectile:
             d.update(filter_props(self, properties))
         return d
 
+Projectile.init()
 
 class Laser(Projectile):
 
@@ -142,19 +143,25 @@ class Laser(Projectile):
             if agent:
                 self.hit_agent(agent)
 
+Laser.init()
+
 
 class Grenade(Projectile):
 
     def __init__(self, id, state, owner=None, ttl=0, *args, **kwargs):
         self.id = id
         self.owner = owner
-        self.state = state  # this is static!
-        self._set_type()
-        self.dat.apply(self)
         self.speed = self.speed / GameStateGlobal.fps
 
         self.ttl = ttl
         x,y,z, vx,vy,vz = state
+        print "GRENADE"
+        print state
+        vx,vy,vz = [i*self.speed for i in [vx,vy,vz]]   # state is loaded as [x,y,z, dx,dy,dz], need to apply velocity
+        print x,y,z,vx,vy,vz
+
+        self.state = x,y,z, vx,vy,vz  # this is static!
+
         self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
 
     def pos(self):
@@ -178,3 +185,12 @@ class Grenade(Projectile):
         Projectile.delete(self)
         c_obj._destroy_grenade(self.g_index)
 
+Grenade.init()
+
+
+def _dat_reload():
+    Projectile.dat.apply(Projectile)
+    Projectile.dat.apply(Laser)
+    Projectile.dat.apply(Grenade)
+    
+Projectile.dat.on_reload = _dat_reload

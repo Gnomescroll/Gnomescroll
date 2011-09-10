@@ -2,6 +2,7 @@
 #define vector_h
 
 #include <math.h>
+#include <stdio.h>
 
 #define PI 3.14159265
 

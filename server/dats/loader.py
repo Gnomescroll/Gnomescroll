@@ -1,9 +1,10 @@
 import dats
 
 def _reload():
-    global dats
+    global dats, dat_loader
     reload(dats)
-
+    dat_loader.reload()
+    
 class DatInterface(object):
 
     def __init__(self):
@@ -37,6 +38,9 @@ class DatInterface(object):
         klass = self.index[name]
         klass.set(type, key, val)
 
+    def reload(self):
+        [n.reload() for n in self.index.values()]
+
     def json(self):
         d = {}
         for i, n in self.index.items():
@@ -46,14 +50,23 @@ class DatInterface(object):
 dat_loader = DatInterface()
 
 class Dat(object):
-    def __init__(self, name, dat=None):
-        if dat is None:
-            dat = {
-                0:  {}
-            }
-        self.dat = dat
+    def __init__(self, name, dat_name=''):
         self.name = name
+        if not dat_name:
+            dat_name = name
+        self.dat_name = dat_name
+        self._set_dat()
         self._register()
+        self.on_reload = lambda: None
+
+    def _set_dat(self):
+        global dats
+        self.dat = dats.__dict__[self.dat_name]
+
+    def reload(self):
+        global dats
+        self._set_dat()
+        self.on_reload()
 
     def _register(self):
         global dat_loader
@@ -81,7 +94,7 @@ class Dat(object):
     def json(self):
         return self.dat
 
-w_dat = Dat('weapons', dats.weapons)
-i_dat = Dat('items', dats.items)
-p_dat = Dat('projectiles', dats.projectiles)
-c_dat = Dat('cubes', dats.cubes)
+w_dat = Dat('weapons')
+i_dat = Dat('items')
+p_dat = Dat('projectiles')
+c_dat = Dat('cubes')

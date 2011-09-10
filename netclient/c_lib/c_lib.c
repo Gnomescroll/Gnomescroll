@@ -5,8 +5,13 @@
 #include "./t_map/t_map.c"
 #include "./t_map/t_properties.c"
 
+#include "./physics/vector.h"
+
 #include "./ray_trace/ray_trace.c"
 
+#include "./physics/common.c"
+
+#include "./objects/particles.c"
 #include "./objects/grenade.c"
 #include "./objects/neutron.c"
 #include "./objects/cspray.c"
