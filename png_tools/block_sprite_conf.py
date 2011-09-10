@@ -18,6 +18,9 @@ sprites = [
 ('lavablock.png',7),
 
 #test
-('test/png-8.png',254),
-('test/png-24.png',255),
+#('test/png-8.png',254),
+#('test/png-24.png',255),
+('test/8.png',254),
+('test/24.png',255),
+
 ]
