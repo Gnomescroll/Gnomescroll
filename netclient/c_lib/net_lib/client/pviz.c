@@ -39,6 +39,7 @@ void pviz_start_frame() {
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 */
 
+//1028x800
 void pviz_draw_grid(float z) {
     return;
     //printf("X");'

@@ -1,8 +1,21 @@
 #include "t_viz.h"
 
-
 #define xw 5
 #define yh 5
+
+const float _D = 0.5;
+
+int T_VIZ_STYLE  = 0;
+
+#define T_VIZ_STYLE2 0
+#define _D2 0.5
+
+float _D2_ss = 4; //step size 2 or 4
+float _D2_ps = 2; //point size 1 or 2
+
+void _toggle_t_viz_style() { //toggle drawing style
+    T_VIZ_STYLE = (T_VIZ_STYLE +1) % 2;
+}
 
 int _draw_vbo_indicator(float x, float y, float z) {
     int i,j;
@@ -11,6 +24,7 @@ int _draw_vbo_indicator(float x, float y, float z) {
     float step = 1.0;
 
     m = _get_map();
+    glPointSize(_D2_ps);
     glBegin(GL_POINTS);
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
@@ -18,19 +32,36 @@ int _draw_vbo_indicator(float x, float y, float z) {
 
         if(flag_is_true(c, VBO_drawn)) {
             glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            glVertex3f(x+step*i, y+step*j, z);
+            if(T_VIZ_STYLE2 == 1) {
+                glVertex3f(_D2 +x+step*i, _D2 +y+step*j, z);
+            } else {
+                glVertex2f(_D2 +x+4*step*i, _D2 +y+4*step*j);
+            }
         }
 
         else if(flag_is_true(c, VBO_loaded)) {
             glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)255);
-            glVertex3f(x+step*i, y+step*j, z);
+
+            if(T_VIZ_STYLE2 == 1) {
+                glVertex3f(_D2 +x+step*i, _D2 +y+step*j, z);
+            } else {
+                glVertex2f(_D2 +x+4*step*i, _D2 +y+4*step*j);
+            }
+
+            ///glVertex3f(x+step*i, y+step*j, z);
         } else {
             glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
-            glVertex3f(x+step*i, y+step*j, z);
+            if(T_VIZ_STYLE2 == 1) {
+                glVertex3f(_D2 +x+step*i, _D2 +y+step*j, z);
+            } else {
+                glVertex2f(_D2 +x+4*step*i, _D2 +y+4*step*j);
+            }
+            //glVertex3f(x+step*i, y+step*j, z);
         }
 
     }}
     glEnd();
+    glPointSize(1.00);
 }
 
 #define f_count 350
@@ -62,8 +93,6 @@ int _end_frame() {
 return 0;
 }
 
-const float _D = 0.5;
-
 int _draw_perf_graph(float x, float y, float z) {
     int i,j;
     int t0, t1;
@@ -77,7 +106,11 @@ int _draw_perf_graph(float x, float y, float z) {
         i++;
         if(j==fn) break;
         glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
-        glVertex3f(x+xstep*i, y+ystep*fa[j], z);
+        if(T_VIZ_STYLE == 0) {
+            glVertex3f(x+xstep*i+_D, y+ystep*fa[j]+_D, z);
+        } else {
+            glVertex2i(x+xstep*i, y+ystep*fa[j]);
+        }
         if(fa[j] > 20) {
             t1=fa[j]; t0=0;
             glColor3ub((unsigned char)00,(unsigned char)255,(unsigned char)0);
@@ -89,13 +122,23 @@ int _draw_perf_graph(float x, float y, float z) {
         }}
         if(intva[j] == 1) {
             glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-            glVertex3f(_D+x+xstep*i, _D+y, z);
-            glVertex3f(_D+x+xstep*i, _D+y+ystep*5, z);
-            glVertex3f(_D+x+xstep*i, _D+y+ystep*10, z);
-            glVertex3f(_D+x+xstep*i, _D+y+ystep*15, z);
-            glVertex3f(_D+x+xstep*i, _D+y+ystep*20, z);
-            glVertex3f(_D+x+xstep*i, _D+y+ystep*25, z);
-            //glVertex3f(x+xstep*i, y+ystep*30, z);
+
+            if(T_VIZ_STYLE == 0){
+                glVertex3f(_D+x+xstep*i, _D+y, z);
+                glVertex3f(_D+x+xstep*i, _D+y+ystep*5, z);
+                glVertex3f(_D+x+xstep*i, _D+y+ystep*10, z);
+                glVertex3f(_D+x+xstep*i, _D+y+ystep*15, z);
+                glVertex3f(_D+x+xstep*i, _D+y+ystep*20, z);
+                glVertex3f(_D+x+xstep*i, _D+y+ystep*25, z);
+            } else {
+                glVertex2i(x+xstep*i, y);
+                glVertex2i(x+xstep*i, y+ystep*5);
+                glVertex2i(x+xstep*i, y+ystep*10);
+                glVertex2i(x+xstep*i, y+ystep*15);
+                glVertex2i(x+xstep*i, y+ystep*20);
+                glVertex2i(x+xstep*i, y+ystep*25);
+                //glVertex3f(x+xstep*i, y+ystep*30, z);
+            }
         }
     }
     glEnd();
