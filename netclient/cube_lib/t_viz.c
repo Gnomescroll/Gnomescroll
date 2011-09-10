@@ -11,6 +11,7 @@ int T_VIZ_STYLE  = 0;
 #define _D2 0.5
 
 float _D2_ss = 4; //step size 2 or 4
+float _D2_ps = 2; //point size 1 or 2
 
 void _toggle_t_viz_style() { //toggle drawing style
     T_VIZ_STYLE = (T_VIZ_STYLE +1) % 2;
@@ -23,7 +24,7 @@ int _draw_vbo_indicator(float x, float y, float z) {
     float step = 1.0;
 
     m = _get_map();
-    glPointSize(2.00);
+    glPointSize(_D2_ps);
     glBegin(GL_POINTS);
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
@@ -31,7 +32,7 @@ int _draw_vbo_indicator(float x, float y, float z) {
 
         if(flag_is_true(c, VBO_drawn)) {
             glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            if(T_VIZ_STYLE == 1) {
+            if(T_VIZ_STYLE2 == 1) {
                 glVertex3f(_D2 +x+step*i, _D2 +y+step*j, z);
             } else {
                 glVertex2f(_D2 +x+4*step*i, _D2 +y+4*step*j);
@@ -41,7 +42,7 @@ int _draw_vbo_indicator(float x, float y, float z) {
         else if(flag_is_true(c, VBO_loaded)) {
             glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)255);
 
-            if(T_VIZ_STYLE == 1) {
+            if(T_VIZ_STYLE2 == 1) {
                 glVertex3f(_D2 +x+step*i, _D2 +y+step*j, z);
             } else {
                 glVertex2f(_D2 +x+4*step*i, _D2 +y+4*step*j);
@@ -50,7 +51,7 @@ int _draw_vbo_indicator(float x, float y, float z) {
             ///glVertex3f(x+step*i, y+step*j, z);
         } else {
             glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
-            if(T_VIZ_STYLE == 1) {
+            if(T_VIZ_STYLE2 == 1) {
                 glVertex3f(_D2 +x+step*i, _D2 +y+step*j, z);
             } else {
                 glVertex2f(_D2 +x+4*step*i, _D2 +y+4*step*j);
