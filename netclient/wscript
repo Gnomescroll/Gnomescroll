@@ -105,7 +105,6 @@ def configure(conf):
 
     '''
     libfmodex = conf.environ['PWD'] + '/sound/api/lib/libfmodex.so' # full path to shared lib
-
     conf.check(header_name='../../sound/api/inc/fmod.h',
                use='../../sound/api/lib/libfmodex.so',
                fragment='#include "../../sound/api/inc/fmod.h"' + SDL_MAIN_TEST_CODE,   # have to specify fragment include with ""; default uses <> and fails.
@@ -128,6 +127,9 @@ def configure(conf):
     despth = './build/sound/api/lib/'
     print os.path.abspath(libpth)
     print os.path.abspath(despth)
+
+
+    #WTF crashes
     if os.path.exists(despth):
         for fn in os.listdir(despth):
             os.remove(despth + fn)
@@ -139,6 +141,11 @@ def configure(conf):
         except IOError, e:
             pass
 
+    '''
+    conf.env.INCLUDES = ['c_lib',]
+    conf.env.INCLUDES = ['c_lib', 'cube_lib']
+    conf.env.RPATH = ['.', '..', './ext/']
+    '''
 
     #LD_LIBRARY_PATH=./libraries/lin/fmod/lib
     #if OS == 'Darwin':
