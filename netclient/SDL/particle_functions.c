@@ -206,6 +206,7 @@ glEnd();
     glPopMatrix();
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
+    glColor3ub(255,255,255);
 }
 
 
@@ -255,8 +256,9 @@ glEnd();
 
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
-    glDisable (GL_DEPTH_TEST);
+    //glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+    glColor3ub(255,255,255);
 }
 
 
@@ -301,7 +303,7 @@ glBegin(GL_LINES);
 glVertex3f(v0.x, v0.y, v0.z);
 glVertex3f(v0.x+v1.x, v0.y+v1.y, v0.z+v1.z);
 glEnd();
-
+glColor3ub(255,255,255);
 }
 
 /*
@@ -507,5 +509,5 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-
+    glColor3ub(255,255,255);
 }
