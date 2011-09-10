@@ -62,6 +62,8 @@ int _end_frame() {
 return 0;
 }
 
+const float _D = 0.5;
+
 int _draw_perf_graph(float x, float y, float z) {
     int i,j;
     int t0, t1;
@@ -87,12 +89,12 @@ int _draw_perf_graph(float x, float y, float z) {
         }}
         if(intva[j] == 1) {
             glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-            glVertex3f(x+xstep*i, y, z);
-            glVertex3f(x+xstep*i, y+ystep*5, z);
-            glVertex3f(x+xstep*i, y+ystep*10, z);
-            glVertex3f(x+xstep*i, y+ystep*15, z);
-            glVertex3f(x+xstep*i, y+ystep*20, z);
-            glVertex3f(x+xstep*i, y+ystep*25, z);
+            glVertex3f(_D+x+xstep*i, _D+y, z);
+            glVertex3f(_D+x+xstep*i, _D+y+ystep*5, z);
+            glVertex3f(_D+x+xstep*i, _D+y+ystep*10, z);
+            glVertex3f(_D+x+xstep*i, _D+y+ystep*15, z);
+            glVertex3f(_D+x+xstep*i, _D+y+ystep*20, z);
+            glVertex3f(_D+x+xstep*i, _D+y+ystep*25, z);
             //glVertex3f(x+xstep*i, y+ystep*30, z);
         }
     }
