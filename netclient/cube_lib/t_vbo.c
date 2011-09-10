@@ -111,7 +111,8 @@ int delete_vbo(struct VBO* vbo) {
 
 int start_vbo_draw() {
 
-glColor4b(255,255,255,255);
+//glColor4bu(255,255,255,255);
+glColor3b(255,255,255);
 
 draw_mode_enabled = 1;
 
