@@ -303,7 +303,7 @@ glBegin(GL_LINES);
 glVertex3f(v0.x, v0.y, v0.z);
 glVertex3f(v0.x+v1.x, v0.y+v1.y, v0.z+v1.z);
 glEnd();
-glColor3ub(255,255,255);
+//glColor3ub(255,255,255);
 }
 
 /*
@@ -374,6 +374,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     v1.y = a*left.y + b*right.y;
     v1.z = a*left.z + b*right.z;
 
+    glColor3ub(255,255,255);
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -390,7 +391,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
 
     }
     glDisable(GL_TEXTURE_2D);
-    //glDisable (GL_DEPTH_TEST);
+    glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
     return 0;
@@ -476,6 +477,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
+    glColor3ub(255,255,255);
 
     glBindTexture( GL_TEXTURE_2D, particle_texture );
     glEnable(GL_BLEND);
@@ -509,5 +511,5 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-    glColor3ub(255,255,255);
+    //glColor3ub(255,255,255);
 }

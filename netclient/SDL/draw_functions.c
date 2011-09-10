@@ -11,7 +11,7 @@ glVertex3f(x0,y0,z0); // origin of the line
 glVertex3f(x1,y1,z1); // ending point of the line
 glEnd();
 
-glColor3ub(255,255,255);
+//glColor3ub(255,255,255);
 return 0;
 }
 
@@ -20,7 +20,7 @@ glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
 glBegin(GL_POINTS);
 glVertex3f(x0,y0,z0); // point
 glEnd();
-glColor3ub(255,255,255);
+//glColor3ub(255,255,255);
 return 0;
 }
 
@@ -39,7 +39,7 @@ glBegin(GL_QUADS);
  glVertex2f(x2, y2);
  glVertex2f(x1, y2);
  glEnd();
- glColor3ub(255,255,255);
+ //glColor3ub(255,255,255);
 return 0;
 }
 
@@ -58,11 +58,11 @@ glBegin(GL_LINE_LOOP);
  glVertex2f(x2, y2);
  glVertex2f(x1, y2);
 glEnd();
-glColor3ub(255,255,255);
 return 0;
 }
 
 int _blit_sprite(int texture, float x0, float y0, float x1, float y1, float z) {
+glColor3ub(255,255,255);
 glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
