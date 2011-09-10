@@ -19,47 +19,10 @@ void inline blood_Tick(struct Particle* g) {
     g->vz -= 0.025; //gravity
 
     g->ttl++;
-    float _x, _y, _z;
-    _x = g->x + g->vx/30;
-    _y = g->y + g->vy/30;
-    _z = g->z + g->vz/30;
-
-    float interval;
     int* s;
     int collision[3];
     int tile;
-
-    float _vx,_vy,_vz;
-    float len;
-    float vel = 2;
-    s = _ray_cast5(g->x, g->y, g->z, _x,_y,_z, &interval, collision, &tile);
-    //printf("interval= %f \n", interval);
-    //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
-
-    if(isActive(tile)) {
-        g->ttl= g->ttl_max;
-        return;
-    }
-
-    if(s[0] != 0 || s[1] != 0 || s[2] != 0)
-    {
-        if(s[0] != 0 ) {
-            g->vx *= -1;
-            //printf("invert vx \n");
-        }
-        if(s[1] != 0) {
-            g->vy *= -1;
-            //printf("invert vy \n");
-        }
-        if(s[2] != 0) {
-            g->vz *= -1;
-            //printf("invert vz \n");
-        }
-    }
-
-    g->x = g->x + interval*g->vx/30;
-    g->y = g->y + interval*g->vy/30;
-    g->z = g->z + interval*g->vz/30;
+    s = move_collide_tile(g, collision, &tile);
 
 }
 
@@ -97,16 +60,6 @@ void create_blood(int type, float x, float y, float z, float vx, float vy, float
         //printf("Bug: max Particle number reached!\n");
         return;}
     create_particle(g, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 30);
-    //g->x=x;
-    //g->y=y;
-    //g->z=z;
-    //g->vx=vx;
-    //g->vy=vy;
-    //g->vz=vz;
-    //g->ttl = 0;
-    //g->ttl_max = 30;
-    //g->type = type;
-
 }
 
 
