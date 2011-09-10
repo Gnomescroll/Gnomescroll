@@ -1,24 +1,24 @@
 #include "blood.h"
 
 
-struct blood {
-    unsigned int id;
-    float x,y,z;
-    float vx,vy,vz;
-    unsigned int ttl;
-    unsigned int ttl_max;
-    int type;
-    int active;
-};
+//struct Particle {
+    //unsigned int id;
+    //float x,y,z;
+    //float vx,vy,vz;
+    //unsigned int ttl;
+    //unsigned int ttl_max;
+    //int type;
+    //int active;
+//};
 
 #define max_blood 4096
 
-struct blood* blood_list[max_blood];
+struct Particle* blood_list[max_blood];
 float a[16];
 int blood_count=0;
 unsigned int blood_id=0;
 
-void inline blood_Tick(struct blood* g);
+void inline blood_Tick(struct Particle* g);
 
 void init_objects_blood() {
     //printf("RANDMAX= %i \n", RAND_MAX);
@@ -26,7 +26,7 @@ void init_objects_blood() {
     return;
 }
 
-void inline blood_Tick(struct blood* g) {
+void inline blood_Tick(struct Particle* g) {
     g->vz -= 0.025; //gravity
 
     g->ttl++;
@@ -66,9 +66,6 @@ void inline blood_Tick(struct blood* g) {
             g->vz *= -1;
             //printf("invert vz \n");
         }
-        if(isActive(tile)) {
-            g->active=1;
-        }
     }
 
     g->x = g->x + interval*g->vx/30;
@@ -78,7 +75,7 @@ void inline blood_Tick(struct blood* g) {
 }
 
 void blood_tick() {
-    struct blood* g = NULL;
+    struct Particle* g = NULL;
     int i;
     for(i=0; i<max_blood; i++) {
         if(blood_list[i] != NULL) {
@@ -96,19 +93,19 @@ void blood_tick() {
 
 
 void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create blood\n");
-    struct blood* g = NULL;
+    //printf("Create Particle\n");
+    struct Particle* g = NULL;
     int i;
     for(i=0; i<max_blood; i++) {
         if(blood_list[i] == NULL) {
-            g = (struct blood *) malloc (sizeof(struct blood));
+            g = (struct Particle *) malloc (sizeof(struct Particle));
             blood_list[i] = g;
             blood_count++;
             break;
         }
     }
     if(g== NULL) {
-        //printf("Bug: max blood number reached!\n");
+        //printf("Bug: max Particle number reached!\n");
         return;}
     g->x=x;
     g->y=y;
@@ -118,7 +115,6 @@ void create_blood(int type, float x, float y, float z, float vx, float vy, float
     g->vz=vz;
     g->ttl = 0;
     g->ttl_max = 30;
-    g->active = 0;
     g->type = type;
 
 }
@@ -136,7 +132,7 @@ void blood_draw() {
     if(blood_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    struct blood* g = NULL;
+    struct Particle* g = NULL;
     int i;
 
     float size = 0.1;
@@ -162,7 +158,7 @@ void blood_draw() {
     int _c = 0;
     for(i=0; i<max_blood; i++) {
     if(blood_list[i] != NULL) {
-        //printf("draw blood: %i \n", i);
+        //printf("draw Particle: %i \n", i);
         _c++;
         g = blood_list[i];
         //draw setup

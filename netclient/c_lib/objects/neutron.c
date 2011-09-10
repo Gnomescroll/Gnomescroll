@@ -12,6 +12,18 @@ struct neutron {
     unsigned int event_ttl;
 };
 
+//struct EventParticle {
+    //struct Particle *particle;
+    //unsigned int id;
+    //int type;
+    //unsigned int event_ttl;
+//};
+
+//struct neutron {
+    //struct EventParticle *particle;
+    //int energy;
+//}
+
 struct neutron* neutron_list[1024];
 float a[16];
 int neutron_count=0;
