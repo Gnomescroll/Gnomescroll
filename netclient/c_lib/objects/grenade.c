@@ -1,56 +1,89 @@
 #include "grenade.h"
 
 
-struct Grenade {
-    float x,y,z;
-    float vx,vy,vz;
-    unsigned int ttl;
-    unsigned int ttl_max;
-    int type;
-};
+//struct Particle {
+    //float x,y,z;
+    //float vx,vy,vz;
+    //unsigned int ttl;
+    //unsigned int ttl_max;
+    //int type;
+//};
 
-struct Grenade* Grenade_list[1024];
+struct Particle* Grenade_list[1024];
 float a[16];
 int g_count=0;
 
-void inline grenade_Tick(struct Grenade* g);
+void inline grenade_Tick(struct Particle* g);
 
 void init_objects_grenade() {
     return;
 }
 
-void inline grenade_Tick(struct Grenade* g) {
+void inline grenade_Tick(struct Particle* g) {
     g->ttl++;
-    float _x, _y, _z;
-    _x = g->x + g->vx/30;
-    _y = g->y + g->vy/30;
-    _z = g->z + g->vz/30;
+    //float _x, _y, _z;
+    //_x = g->x + g->vx/30;
+    //_y = g->y + g->vy/30;
+    //_z = g->z + g->vz/30;
 
-    float interval;
-    int* s;
-    s = _ray_cast4(g->x, g->y, g->z, _x,_y,_z, &interval);
-    //printf("interval= %f \n", interval);
+    //float interval;
+    //int* s;
+    //s = _ray_cast4(g->x, g->y, g->z, _x,_y,_z, &interval);
+    ////printf("interval= %f \n", interval);
 
-    if(s[0] != 0 ) {
-        g->vx *= -1;
-        //printf("invert vx \n");
-    }
-    if(s[1] != 0) {
-        g->vy *= -1;
-        //printf("invert vy \n");
-    }
-    if(s[2] != 0) {
-        g->vz *= -1;
-        //printf("invert vz \n");
-    }
+    //if(s[0] != 0 ) {
+        //g->vx *= -1;
+        ////printf("invert vx \n");
+    //}
+    //if(s[1] != 0) {
+        //g->vy *= -1;
+        ////printf("invert vy \n");
+    //}
+    //if(s[2] != 0) {
+        //g->vz *= -1;
+        ////printf("invert vz \n");
+    //}
 
-    g->x = g->x + interval*g->vx/30;
-    g->y = g->y + interval*g->vy/30;
-    g->z = g->z + interval*g->vz/30;
+    //g->x = g->x + interval*g->vx/30;
+    //g->y = g->y + interval*g->vy/30;
+    //g->z = g->z + interval*g->vz/30;
+    bounce_simple(g);
 }
 
+//#define FPS 30
+
+//void bounce_simple(struct Particle* p) {
+
+    //float _x, _y, _z;
+    //_x = p->x + p->vx/FPS;
+    //_y = p->y + p->vy/FPS;
+    //_z = p->z + p->vz/FPS;
+
+    //float interval;
+    //int* s;
+    //s = _ray_cast4(p->x, p->y, p->z, _x,_y,_z, &interval);
+    ////printf("interval= %f \n", interval);
+
+    //if(s[0] != 0 ) {
+        //p->vx *= -1;
+        ////printf("invert vx \n");
+    //}
+    //if(s[1] != 0) {
+        //p->vy *= -1;
+        ////printf("invert vy \n");
+    //}
+    //if(s[2] != 0) {
+        //p->vz *= -1;
+        ////printf("invert vz \n");
+    //}
+
+    //p->x = p->x + interval*p->vx/FPS;
+    //p->y = p->y + interval*p->vy/FPS;
+    //p->z = p->z + interval*p->vz/FPS;
+//}
+
 void grenade_tick() {
-    struct Grenade* g = NULL;
+    struct Particle* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
         if(Grenade_list[i] != NULL) {
@@ -66,7 +99,7 @@ void grenade_tick() {
 
 struct Vector g_pos;
 struct Vector* _get_grenade_position(int gid) {
-    struct Grenade* g = Grenade_list[gid];
+    struct Particle* g = Grenade_list[gid];
     if (g != NULL) {
         g_pos.x = g->x;
         g_pos.y = g->y;
@@ -81,17 +114,17 @@ struct Vector* _get_grenade_position(int gid) {
 
 int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, unsigned int ttl, unsigned int ttl_max) {
     //printf("Create Gernade\n");
-    struct Grenade* g = NULL;
+    struct Particle* g = NULL;
     int i=0;
     for(i=0; i<1024; i++) {
         if(Grenade_list[i] == NULL) {
-            g = (struct Grenade *) malloc (sizeof(struct Grenade));
+            g = (struct Particle *) malloc (sizeof(struct Particle));
             Grenade_list[i] = g;
             g_count++;
             break;
         }
     }
-    if(g== NULL) { printf("Bug: max grenade number reached!\n"); return;}
+    if(g== NULL) { printf("Bug: max grenade number reached!\n"); return -1;}
     g->x=x;
     g->y=y;
     g->z=z;
@@ -105,7 +138,7 @@ int create_grenade(int type, float x, float y, float z, float vx, float vy, floa
 }
 
 void destroy_grenade(int gid) {
-    struct Grenade *g = Grenade_list[gid];
+    struct Particle *g = Grenade_list[gid];
     Grenade_list[gid] = NULL;
     free(g);
     g_count--;
@@ -123,7 +156,7 @@ void grenade_draw() {
     if(g_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    struct Grenade* g = NULL;
+    struct Particle* g = NULL;
     int i;
 
     float up[3] = {a[0], a[4], a[8]};
