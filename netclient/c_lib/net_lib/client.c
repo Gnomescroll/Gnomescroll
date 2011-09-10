@@ -5,12 +5,15 @@
 
 #include <c_lib.h>
 
+#include "common/net_time.c"
 #include "common/net_peer.c"
 #include "client/client.c"
 #include "common/sequencer.c"
 #include "common/message_handler.c"
 
 #include <agent/control_state.c>
+
+#include "client/pviz.c"
 
 struct NetPeer* np;
 
@@ -44,6 +47,7 @@ int _N =0;
 void _NetClientTick() {
     //printf("net client tick\n");
     update_current_netpeer_time();
+    pviz_start_frame();
     //NP_print_delta();
     _N++;
 

@@ -18,6 +18,7 @@ void init_sequence_numbers(struct NetPeer* np) {
         //packet_buffer[i].active = 0;
         np->packet_sequence_buffer[i].ack = 0;
         np->packet_sequence_buffer[i].seq = -1;
+        np->packet_sequence_buffer[i].time = 0;
     }
 }
 
@@ -46,13 +47,13 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
 
         if((flag & n) != 0) {
             if(np->packet_sequence_buffer[index%256].seq != index) {
-                printf("sequence number error: expected %i, received %i\n", np->packet_sequence_buffer[index%256].seq, index);
-                printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
+                //printf("sequence number error: expected %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
+                //printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
 
                 }
 
             if(np->packet_sequence_buffer[index%256].ack == 0) { //dont ack same packet twice
-                //printf("Packet Acked: %i:%i\n", np->client_id,index);
+                //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, NP_time_delta1(np->packet_sequence_buffer[index%256].time));
                 np->packet_sequence_buffer[index%256].ack = 1;
             }
 
@@ -87,9 +88,13 @@ int check_dropped_packets() {
 }
 
 void check_for_dropped_packets(struct NetPeer* np) {
+
+//ttl based
+
     int i,j;
     j = (np->packet_sequence_number+1) % 256;
     for(i=0;i<32;i++) {
+        //printf("i=%i, t=%i\n", j, NP_time_delta1(np->packet_sequence_buffer[j].time));
         if((np->packet_sequence_buffer[j].seq != -1) && (np->packet_sequence_buffer[j].ack == 0)) {
             printf("***Packet Dropped: %i:%i ***\n", np->client_id, np->packet_sequence_buffer[j].seq);
             DROPPED_PACKETS++;
@@ -98,6 +103,25 @@ void check_for_dropped_packets(struct NetPeer* np) {
         }
         j= (j+1) %256;
     }
+
+//time based
+/*
+    int i,j;
+    j = (np->packet_sequence_number+1) % 256;
+    for(i=0;i<256;i++) {
+        if((np->packet_sequence_buffer[j].seq != -1) && (np->packet_sequence_buffer[j].ack == 0)) {
+            //NP_time_delta1(np->packet_sequence_buffer[j])
+            printf("i=%i, t=%i\n", j, NP_time_delta1(np->packet_sequence_buffer[j].time));
+            if(NP_time_delta1(np->packet_sequence_buffer[j].time > 1000)) {
+                printf("***Packet Dropped: %i:%i ***\n", np->client_id, np->packet_sequence_buffer[j].seq);
+                DROPPED_PACKETS++;
+                //np->packet_sequence_buffer[i].ack = 0;
+                np->packet_sequence_buffer[j].seq = -1;
+            }
+        }
+        j= (j+1) %256;
+    }
+*/
     /*
     for(i=0;i<256;i++) {
         if(i == np->packet_sequence_number%256){

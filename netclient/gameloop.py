@@ -41,6 +41,7 @@ if True:
     #import c_lib.c_lib_timer as physics_timer
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
     from init_c_lib import START_CLOCK, GET_TICK
+    from init_c_lib import _pviz_draw
     P2 = cube_lib.terrain_map.Profiler()
 
     from init_c_lib import NetClientTick, NetClientConnect
@@ -162,7 +163,7 @@ class App(object):
         #TEST
         theta = 0
 
-        v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
+        #v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
         #v3 = vox_lib.Vox_loader().load('base.vox')
         #v3.color('blue', base_color='black')
         #v3.move(10,10,15, 0)
@@ -213,7 +214,7 @@ class App(object):
 
                 sl_c += 1
                 _i+=1
-                if _i % 100 == 0:
+                if _i % 30 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
                     c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
@@ -330,6 +331,7 @@ class App(object):
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,500,-0.30)
+                _pviz_draw(500,500, -.30)
             P.event("SDL flip")
             self.SDL_global.flip()
             P.event("Misc")

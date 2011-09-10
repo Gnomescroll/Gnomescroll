@@ -1,0 +1,10 @@
+-early event/control state change detection (200-500 hz polling rate)
+
+-event driven server updates (process moves/firing as they come in)
+-only adjust xangle 5-10 times per second
+-use flags instead of message ids for common messages
+
+-test delaying firing by 1-2 ticks to compensate for latency
+-jitter buffer
+
+Reddit on networking: http://www.reddit.com/r/programming/comments/k4m3q/the_quake_3_networking_model/

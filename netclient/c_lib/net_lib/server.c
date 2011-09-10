@@ -4,6 +4,7 @@
 
 //#include "common/net_packets.h"
 
+#include "common/net_time.c"
 #include "common/net_peer.c"
 #include "common/message_handler.c"
 #include "server/server.c"
