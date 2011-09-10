@@ -47,6 +47,7 @@ int _N =0;
 void _NetClientTick() {
     //printf("net client tick\n");
     update_current_netpeer_time();
+    pviz_start_frame();
     //NP_print_delta();
     _N++;
 

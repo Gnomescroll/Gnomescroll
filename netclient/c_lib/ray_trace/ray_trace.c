@@ -13,6 +13,24 @@ inline int collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
+inline int collision_check2(int x, int y, int z) {
+    //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
+    int tile = _get(x,y,z);
+    return isActive(tile);
+}
+
+inline int collision_check3(int x, int y, int z) {
+    return isActive(_get(x,y,z));
+}
+
+inline float dist(float x0,float y0,float z0, float x1,float y1,float z1) {
+    return sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+}
+
+int ri3[4]; //return value
+int ri4[3];
+
+/*
 int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -116,16 +134,6 @@ int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1) {
     }
 }
 
-inline int collision_check3(int x, int y, int z) {
-    return isActive(_get(x,y,z));
-}
-
-inline float dist(float x0,float y0,float z0, float x1,float y1,float z1) {
-    return sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
-}
-
-int ri3[4]; //return value
-
 int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* distance) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -211,8 +219,6 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     return &ri3;
 }
 
-int ri4[3];
-
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
         float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -294,12 +300,6 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     //}
     *interval = (float)(i) / max_i;
     return ri4;
-}
-
-inline int collision_check2(int x, int y, int z) {
-    //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
-    int tile = _get(x,y,z);
-    return isActive(tile);
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
@@ -386,6 +386,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *interval = (float)(i) / max_i;
     return ri4;
 }
+*/
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
     float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );

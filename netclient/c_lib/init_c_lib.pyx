@@ -56,3 +56,11 @@ def START_CLOCK():
 
 def GET_TICK():
     return _GET_TICK()
+
+### pviz
+
+cdef extern from "./net_lib/client/pviz.h":
+    void pviz_draw(float x, float y, float z)
+
+def _pviz_draw(float x, float y, float z):
+    pviz_draw(x,y,z)
