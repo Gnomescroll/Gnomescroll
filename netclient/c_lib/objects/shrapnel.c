@@ -1,24 +1,14 @@
 #include "shrapnel.h"
 
 
-struct shrapnel {
-    unsigned int id;
-    float x,y,z;
-    float vx,vy,vz;
-    unsigned int ttl;
-    unsigned int ttl_max;
-    int type;
-    int active;
-};
-
 #define max_shrapnel 4096
 
-struct shrapnel* shrapnel_list[max_shrapnel];
+struct Particle* shrapnel_list[max_shrapnel];
 float a[16];
 int shrapnel_count=0;
 unsigned int shrapnel_id=0;
 
-void inline shrapnel_Tick(struct shrapnel* g);
+void inline shrapnel_Tick(struct Particle* g);
 
 void init_objects_shrapnel() {
     //printf("RANDMAX= %i \n", RAND_MAX);
@@ -26,7 +16,7 @@ void init_objects_shrapnel() {
     return;
 }
 
-void inline shrapnel_Tick(struct shrapnel* g) {
+void inline shrapnel_Tick(struct Particle* g) {
     g->vz -= 0.025; //gravity
 
     g->ttl++;
@@ -66,9 +56,6 @@ void inline shrapnel_Tick(struct shrapnel* g) {
             g->vz *= -1;
             //printf("invert vz \n");
         }
-        if(isActive(tile)) {
-            g->active=1;
-        }
     }
 
     g->x = g->x + interval*g->vx/30;
@@ -78,7 +65,7 @@ void inline shrapnel_Tick(struct shrapnel* g) {
 }
 
 void shrapnel_tick() {
-    struct shrapnel* g = NULL;
+    struct Particle* g = NULL;
     int i;
     for(i=0; i<max_shrapnel; i++) {
         if(shrapnel_list[i] != NULL) {
@@ -97,11 +84,11 @@ void shrapnel_tick() {
 
 void create_shrapnel(int type, float x, float y, float z, float vx, float vy, float vz) {
     //printf("Create shrapnel\n");
-    struct shrapnel* g = NULL;
+    struct Particle* g = NULL;
     int i;
     for(i=0; i<max_shrapnel; i++) {
         if(shrapnel_list[i] == NULL) {
-            g = (struct shrapnel *) malloc (sizeof(struct shrapnel));
+            g = (struct Particle *) malloc (sizeof(struct Particle));
             shrapnel_list[i] = g;
             shrapnel_count++;
             break;
@@ -118,7 +105,6 @@ void create_shrapnel(int type, float x, float y, float z, float vx, float vy, fl
     g->vz=vz;
     g->ttl = 0;
     g->ttl_max = 30;
-    g->active = 0;
     g->type = type;
 
 }
@@ -136,7 +122,7 @@ void shrapnel_draw() {
     if(shrapnel_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
-    struct shrapnel* g = NULL;
+    struct Particle* g = NULL;
     int i;
 
     float size = 0.1;
