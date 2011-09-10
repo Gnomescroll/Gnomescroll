@@ -228,10 +228,10 @@ def init_cube_properties():
         cp.max_damage = int(d.get('max_damage', 3))
 '''
 
-from dats.loader import c_dat
+import dats.loader as dat_loader
+c_dat = dat_loader.c_dat
 
-def init_cube_properties(id=None):
-    global c_dat
+def init_cube_properties(c_dat):
 
     def apply(id):
         cdef cubeProperties* cp
@@ -245,11 +245,10 @@ def init_cube_properties(id=None):
         cp.neutron_tolerance = int(c_dat.get(id,'neutron_tolerance'))
         cp.nuclear = int(c_dat.get(id,'nuclear'))
 
-    if id is None:
-        for id in c_dat.dat:
-            apply(id)
-    else:
+    for id in c_dat.dat:
         apply(id)
+
+c_dat.on_reload = init_cube_properties
 
 cpdef inline int isActive(unsigned int id):
     return _get_cube(id).active
@@ -270,9 +269,10 @@ cpdef inline int collisionDetection(int x, int y, int z):
     return isSolid(tile)
 
 def init():
+    global c_dat
     print "Init Terrain Map"
     _init_t_map()
-    init_cube_properties()
+    init_cube_properties(c_dat)
 init()
 
 def clear():

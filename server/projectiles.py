@@ -188,7 +188,7 @@ class Grenade(Projectile):
 Grenade.init()
 
 
-def _dat_reload():
+def _dat_reload(dat):
     Projectile.dat.apply(Projectile)
     Projectile.dat.apply(Laser)
     Projectile.dat.apply(Grenade)

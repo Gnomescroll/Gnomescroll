@@ -265,7 +265,7 @@ class Main:
             'dats/weapon.py',
             'dats/cube_dat.py',
         ]
-        callbacks = [_dat_change_reload]
+        callbacks = [_dat_change_reload] * len(files)
 
         self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
         self.intervals = intervals.Intervals()

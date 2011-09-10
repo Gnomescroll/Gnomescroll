@@ -63,4 +63,5 @@ dat = {   0: {   'active': False,
              'occludes': True,
              'solid': True,
              'texture_id': [7, 7, 7, 7, 7, 7],
+             #'texture_id': [8, 8, 8, 8, 8, 8],
              'transparent': 0}}

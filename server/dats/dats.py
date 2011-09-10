@@ -21,6 +21,7 @@ def _set():
     cubes = cube.dat
 
 def _reload():
+    print "RELOADING"
     global weapon, item, projectile, cube
     reload(weapon)
     reload(item)

@@ -57,7 +57,7 @@ class Dat(object):
         self.dat_name = dat_name
         self._set_dat()
         self._register()
-        self.on_reload = lambda: None
+        self.on_reload = lambda i: None
 
     def _set_dat(self):
         global dats
@@ -66,7 +66,7 @@ class Dat(object):
     def reload(self):
         global dats
         self._set_dat()
-        self.on_reload()
+        self.on_reload(self)
 
     def _register(self):
         global dat_loader
