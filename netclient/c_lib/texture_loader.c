@@ -16,6 +16,7 @@ int init_tex_particle_sheet() {
 SDL_Surface *surface;
 
 surface=IMG_Load("./media/texture/particles_01.png"); ///does this need to be freed?
+
 if(!surface) {
     printf("_init_particle_functions, IMG_Load: %s \n", IMG_GetError());
     return 0;

@@ -65,7 +65,8 @@ int _init_draw_terrain() {
     //glEnable(GL_POLYGON_SMOOTH);
 
     if(texture == 0) { //load texture if texture is not set
-    surface=IMG_Load("media/texture/textures_03.png");
+    //surface=IMG_Load("media/texture/textures_03.png");  //should this be freed?
+    surface=IMG_Load("media/texture/blocks_01.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );

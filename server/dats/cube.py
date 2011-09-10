@@ -1,3 +1,4 @@
+'''
 dat = {
     0 : {
         'name': 'tile0',
@@ -12,7 +13,7 @@ dat = {
         'gravity'   :   0,
         'transparent': 0,
     },
-    
+
     2 : {
             'name'  :   'tile2',
             'occludes': True,
@@ -26,6 +27,8 @@ dat = {
             'transparent': 0,
     },
 }
+'''
+from cube_dat import dat
 
 def _build_cubes():
     def_tex_order = [[0,1,2,3],
@@ -34,7 +37,7 @@ def _build_cubes():
                 [0,1,2,3],
                 [0,1,2,3],
                 [0,1,2,3],]
-                
+
     def get_default_tile(i):
 
         return {
