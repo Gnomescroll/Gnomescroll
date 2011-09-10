@@ -1,4 +1,4 @@
-{   0: {   'active': False,
+dat = {   0: {   'active': False,
            'gravity': 0,
            'max_damage': 32,
            'name': 'tile0',
@@ -53,4 +53,14 @@
            'occludes': True,
            'solid': True,
            'texture_id': [4, 4, 4, 4, 4, 4],
-           'transparent': 0}}
+           'transparent': 0},
+    82: {   'active': True,
+            'gravity': 0,
+            'max_damage': 32,
+            'name': 'tile2',
+            'neutron_tolerance': 2,
+            'nuclear': 0,
+            'occludes': True,
+            'solid': True,
+            'texture_id': [4, 4, 4, 4, 4, 4],
+            'transparent': 0}}

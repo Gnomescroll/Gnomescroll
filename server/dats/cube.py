@@ -28,7 +28,10 @@ dat = {
     },
 }
 '''
-from cube_dat import dat
+#from cube_dat import dat
+
+import cube_dat
+dat = cube_dat.dat
 
 def _build_cubes():
     def_tex_order = [[0,1,2,3],

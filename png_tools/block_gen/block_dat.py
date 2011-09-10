@@ -65,4 +65,18 @@ dat = {
             'transparent': 0,
     },
 
+    82 : {
+            'name'  :   'tile2',
+            'occludes': True,
+            'active':   True,
+            'solid':    True,
+            'max_damage' : 32,
+            'neutron_tolerance' : 2,
+            'nuclear' : 0,
+            'texture_id': [4]*6,
+            'gravity'   :   0,
+            'transparent': 0,
+    },
+
+
 }
