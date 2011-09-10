@@ -345,10 +345,10 @@ glEnable(GL_FOG);                   // Enables GL_FOG
 
 
 }
-
-//int _t_ = 0;
-//int _c_ = 0;
-
+/*
+int _t_ = 0;
+int _c_ = 0;
+*/
 int _draw_terrain() {
 /*
     _c_++;

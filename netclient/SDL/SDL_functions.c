@@ -100,6 +100,8 @@ int _init_video() {
     if(_multisampling) {
         SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &value);
         printf("Multisampling: number of samples per pixel %i \n", value);
+    } else {
+        glDisable(GL_MULTISAMPLE);
     }
     SDL_ShowCursor(SDL_DISABLE);
     ///glEnable(GL_TEXTURE_2D); // ??? Needed?
