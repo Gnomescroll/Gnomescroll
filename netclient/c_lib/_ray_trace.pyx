@@ -1,9 +1,11 @@
 
 cdef extern from "ray_trace/ray_trace.h":
+    int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side)
+
+'''
     int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1)
     int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1)
     int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* distance)
-    int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side)
 
 def ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1):
     cdef float distance
@@ -16,6 +18,7 @@ def ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1):
     x[3] = s[2]
     print "distance= %f" % (distance)
     return x
+'''
 
 def ray_cast6(float x0,float y0,float z0, float dx,float dy,float dz, float max_l):
     cdef float distance

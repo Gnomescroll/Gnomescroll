@@ -218,7 +218,7 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     *distance = 0;
     return &ri3;
 }
-
+*/
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
         float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -301,6 +301,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *interval = (float)(i) / max_i;
     return ri4;
 }
+
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
         float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
@@ -386,7 +387,6 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *interval = (float)(i) / max_i;
     return ri4;
 }
-*/
 
 // for bounce
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
