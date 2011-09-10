@@ -21,7 +21,7 @@ dat = {
             'max_damage' : 32,
             'neutron_tolerance' : 2,
             'nuclear' : 0,
-            'texture_id': [5]*6,
+            'texture_id': [4]*6,
             'gravity'   :   0,
             'transparent': 0,
     },
