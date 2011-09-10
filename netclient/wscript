@@ -88,12 +88,15 @@ def configure(conf):
     libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
 
     if OS == 'Windows':
+        os_libpth = '../../libraries/win'
         incp='../../libraries/win/fmod/inc'  #its in ./libraries/win/fmod/inc
         libp='../../../libraries/win/fmod/lib' #its in ./libraries/win/fmod/lib
     elif OS == 'Linux':
+        os_libpth = '../../libraries/lin'
         incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
         libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
     elif OS == 'Darwin':
+        os_libpth = '../../libraries/osx'
         incp='../../libraries/osx/fmod/inc'  #its in ./libraries/osx/fmod/inc
         libp='../../../libraries/osx/fmod/lib' #its in ./libraries/osx/fmod/lib
 
