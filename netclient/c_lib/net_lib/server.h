@@ -1,7 +1,7 @@
 #ifndef net_lib_client_h
 #define net_lib_client_h
 
-#include <c_lib.h>
+//#include <c_lib.h>
 
 #include <unistd.h>
 #include <stdint.h>
