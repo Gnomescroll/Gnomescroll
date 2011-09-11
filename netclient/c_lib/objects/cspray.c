@@ -2,7 +2,7 @@
 
 
 struct Cspray {
-    struct Particle* particle;
+    struct Particle particle;
     int active;
 };
 
@@ -22,23 +22,23 @@ void init_objects_cspray() {
 }
 
 void inline cspray_Tick(struct Cspray* g) {
-    g->particle->vz -= 0.025; //gravity
+    g->particle.vz -= 0.025; //gravity
 
-    g->particle->ttl++;
+    g->particle.ttl++;
 
     int* s;
     int collision[3];
     int tile;
 
-    s = bounce_collide_tile(g->particle, collision, &tile);
+    s = bounce_collide_tile(&(g->particle), collision, &tile);
 
     // cement effect
     if(g->active == 1) {
-        g->particle->ttl= g->particle->ttl_max;
-        //tile = _get(collision,g->particle->collision[1],g->particle->collision[2]);
+        g->particle.ttl= g->particle.ttl_max;
+        //tile = _get(collision,g->particle.collision[1],g->particle.collision[2]);
         if(!isActive(tile)) {
             _set(collision[0],collision[1],collision[2], 2);
-            g->particle->ttl= g->particle->ttl_max;
+            g->particle.ttl= g->particle.ttl_max;
             return;
         }
     }
@@ -51,8 +51,8 @@ void inline cspray_Tick(struct Cspray* g) {
     }
 }
 
-static inline cspray_Free(struct Cspray* g) {
-    free(g->particle);
+static inline void cspray_Free(struct Cspray* g) {
+    //free(g->particle);
     free(g);
 }
 
@@ -63,7 +63,7 @@ void cspray_tick() {
         if(cspray_list[i] != NULL) {
             g = cspray_list[i];
             cspray_Tick(g);
-            if(g->particle->ttl >= g->particle-> ttl_max) {
+            if(g->particle.ttl >= g->particle. ttl_max) {
                 //boom!
                 cspray_list[i] = NULL;
                 cspray_Free(g);
@@ -92,9 +92,9 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
         //printf("Bug: max cspray number reached!\n");
         return;}
 
-    struct Particle* p = (struct Particle*) malloc (sizeof(struct Particle));
-    create_particle(p, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
-    g->particle = p;
+    //struct Particle* p = (struct Particle*) malloc (sizeof(struct Particle));
+    create_particle(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
+    //g->particle = p;
     g->active = 0;
 }
 
@@ -146,7 +146,7 @@ void cspray_draw() {
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
 
-        x=g->particle->x; y=g->particle->y; z=g->particle->z;
+        x=g->particle.x; y=g->particle.y; z=g->particle.z;
 
         glTexCoord2f(tx_min,ty_max );
         glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left

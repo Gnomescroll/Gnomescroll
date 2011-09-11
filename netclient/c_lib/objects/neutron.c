@@ -14,7 +14,8 @@
 
 
 struct Neutron {
-    struct EventParticle* particle;
+    //struct EventParticle* particle;
+    struct EventParticle particle;
     int energy;
 };
 
@@ -32,11 +33,14 @@ void init_objects_neutron() {
 }
 
 void inline neutron_Tick(struct Neutron* g) {
-    g->particle->particle->ttl++;
+    struct EventParticle ep = g->particle;
+    struct Particle p = g->particle.particle;
+    
+    p.ttl++;
     float _x, _y, _z;
-    _x = g->particle->particle->x + g->particle->particle->vx/30;
-    _y = g->particle->particle->y + g->particle->particle->vy/30;
-    _z = g->particle->particle->z + g->particle->particle->vz/30;
+    _x = p.x + p.vx/30;
+    _y = p.y + p.vy/30;
+    _z = p.z + p.vz/30;
 
     float interval;
     int* s;
@@ -46,15 +50,15 @@ void inline neutron_Tick(struct Neutron* g) {
     float _vx,_vy,_vz;
     float len;
     float vel = 2;
-    s = _ray_cast5(g->particle->particle->x, g->particle->particle->y, g->particle->particle->z, _x,_y,_z, &interval, collision, &tile);
+    s = _ray_cast5(p.x, p.y, p.z, _x,_y,_z, &interval, collision, &tile);
     //printf("interval= %f \n", interval);
     //printf("collides %i, %i, %i \n", collision[0],collision[1],collision[2]);
 
     if(g->energy==3) {
-        g->particle->event_ttl--;
-        if(g->particle->event_ttl == 0) {
-            create_neutron(g->particle->particle->type, 1, g->particle->particle->x,g->particle->particle->y,g->particle->particle->z, g->particle->particle->vx,g->particle->particle->vy,g->particle->particle->vz);
-            create_neutron(g->particle->particle->type, 1, g->particle->particle->x,g->particle->particle->y,g->particle->particle->z, -g->particle->particle->vx,-g->particle->particle->vy,-g->particle->particle->vz);
+        ep.event_ttl--;
+        if(ep.event_ttl == 0) {
+            create_neutron(p.type, 1, p.x,p.y,p.z, p.vx,p.vy,p.vz);
+            create_neutron(p.type, 1, p.x,p.y,p.z, -p.vx,-p.vy,-p.vz);
         }
 
     }
@@ -62,21 +66,21 @@ void inline neutron_Tick(struct Neutron* g) {
     if(s[0] != 0 || s[1] != 0 || s[2] != 0)
     {
         if(s[0] != 0 ) {
-            g->particle->particle->vx *= -1;
+            p.vx *= -1;
             //printf("invert vx \n");
         }
         if(s[1] != 0) {
-            g->particle->particle->vy *= -1;
+            p.vy *= -1;
             //printf("invert vy \n");
         }
         if(s[2] != 0) {
-            g->particle->particle->vz *= -1;
+            p.vz *= -1;
             //printf("invert vz \n");
         }
         if(isNuclear(tile)) {
-            g->particle->particle->ttl=0; //reset TTL
+            p.ttl=0; //reset TTL
             if(g->energy ==3) {
-                g->particle->event_ttl = 0;
+                ep.event_ttl = 0;
 
 
                 _vx = (float)rand()/(float)RAND_MAX;
@@ -87,25 +91,25 @@ void inline neutron_Tick(struct Neutron* g) {
                 _vy *= vel/len;
                 _vz *= vel/len;
 
-                create_neutron(g->particle->particle->type, 1, g->particle->particle->x,g->particle->particle->y,g->particle->particle->z, _vx,_vy,_vz);
-                create_neutron(g->particle->particle->type, 1, g->particle->particle->x,g->particle->particle->y,g->particle->particle->z, -_vx,-_vy,-_vz);
+                create_neutron(p.type, 1, p.x,p.y,p.z, _vx,_vy,_vz);
+                create_neutron(p.type, 1, p.x,p.y,p.z, -_vx,-_vy,-_vz);
             }
             if(g->energy < 3) {
                 g->energy++;
 
                 if(g->energy==3) {
-                    g->particle->event_ttl= 60;
+                    ep.event_ttl= 60;
                 }
             }
         }
     }
-    g->particle->particle->x = g->particle->particle->x + interval*g->particle->particle->vx/30;
-    g->particle->particle->y = g->particle->particle->y + interval*g->particle->particle->vy/30;
-    g->particle->particle->z = g->particle->particle->z + interval*g->particle->particle->vz/30;
+    p.x = p.x + interval*p.vx/30;
+    p.y = p.y + interval*p.vy/30;
+    p.z = p.z + interval*p.vz/30;
 }
 
 void inline neutron_Free(struct Neutron* g) {
-    free_event_particle(g->particle);
+    //free_event_particle(g->particle);
     free(g);
 }
 
@@ -116,7 +120,7 @@ void neutron_tick() {
         if(neutron_list[i] != NULL) {
             g = neutron_list[i];
             neutron_Tick(g);
-            if(g->particle->particle->ttl >= g->particle->particle->ttl_max || g->particle->event_ttl == 0) {
+            if(g->particle.particle.ttl >= g->particle.particle.ttl_max || g->particle.event_ttl == 0) {
                 //boom!
                 neutron_list[i] = NULL;
                 neutron_Free(g);
@@ -144,13 +148,14 @@ void create_neutron(int type, int energy, float x, float y, float z, float vx, f
         //printf("Bug: max neutron number reached!\n");
         return;}
 
-    struct EventParticle* p = (struct EventParticle *) malloc (sizeof(struct EventParticle));
+    //struct EventParticle* p = (struct EventParticle *) malloc (sizeof(struct EventParticle));
     int event_ttl = 1;
     if (energy == 3) {
         event_ttl = 150;
     }
-    create_event_particle(p, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 600, event_ttl);
-    g->particle = p;
+    create_event_particle(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 600, event_ttl);
+    
+    //g->particle = p;
     g->energy = energy;
 }
 
@@ -196,13 +201,13 @@ void neutron_draw() {
         _c++;
         g = neutron_list[i];
         //draw setup
-        id = 48+3*g->particle->particle->type+ (g->energy-1);
+        id = 48+3*g->particle.particle.type+ (g->energy-1);
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
 
-        x=g->particle->particle->x; y=g->particle->particle->y; z=g->particle->particle->z;
+        x=g->particle.particle.x; y=g->particle.particle.y; z=g->particle.particle.z;
 
         glTexCoord2f(tx_min,ty_max );
         glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left

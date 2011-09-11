@@ -11,7 +11,7 @@ struct Particle {
 };
 
 struct EventParticle {
-    struct Particle *particle;
+    struct Particle particle;
     unsigned int event_ttl;
 };
 
@@ -19,6 +19,6 @@ struct EventParticle {
 void create_particle(struct Particle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max);
 void create_event_particle(struct EventParticle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
 
-void free_event_particle(struct EventParticle* p);
+//void free_event_particle(struct EventParticle* p);
 
 #endif
