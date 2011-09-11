@@ -550,6 +550,8 @@ class AgentMessageHandler(DatastoreMessageInterface):
             agent = GameStateGlobal.agentList[agent_id]
         except KeyError:
             err_msg = 'msg agent_button state :: agent %s not found' % (agent_id,)
+        if agent is None:
+            err_msg = 'msg agent_button state :: agent %s not found' % (agent_id,)
         if err_msg is not None:
             print err_msg
             return

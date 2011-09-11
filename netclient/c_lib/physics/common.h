@@ -21,8 +21,8 @@ int* move_simple(struct Particle* p);
 int* move_collide_tile(struct Particle* p, int* collision, int* tile);
 
 /* integrator */
-void accelerate(struct State* state, float t, float dt);
-void rk4_step(struct State* state, struct State* i, struct State* d, float t, float dt);
+//void accelerate(struct State* state, float t, float dt);
+//void rk4_step(struct State* state, struct State* i, struct State* d, float t, float dt);
 void rk4(struct State* state, int t, int dt);
 
 

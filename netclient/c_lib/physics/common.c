@@ -170,7 +170,7 @@ int* move_collide_tile(struct Particle* p, int* collision, int* tile) {
 struct State derivatives[4];
 struct State _derivative = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}};
 
-void accelerate(struct State* state, float t, float dt) {
+static inline void accelerate(struct State* state, float t, float dt) {
     //const float k = 10;
     //const float b = 1;
     state->v.z -= 1.25 * dt;
