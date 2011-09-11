@@ -344,7 +344,7 @@ class App(object):
                     draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
-                P2.draw_perf_graph(50,500,-0.30)
+                P2.draw_perf_graph(50,700,-0.30)
                 #_pviz_draw(500,500, -.30)
                 _pviz_draw(0,0, -.30)
 

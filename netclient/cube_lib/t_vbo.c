@@ -20,7 +20,8 @@ void _toggle_terrain_map_blend_mode() {
 int T_MAP_Z_BUFFER = 0;
 void _toggle_z_buffer() {
     T_MAP_Z_BUFFER = (T_MAP_Z_BUFFER +1) %2;
-    if(T_MAP_Z_BUFFER==0) printf("z_buffer on\n");
+    if(T_MAP_Z_BUFFER==0) printf("z_buffer off\n");
+    if(T_MAP_Z_BUFFER==1) printf("z_buffer on\n");
 
 }
 

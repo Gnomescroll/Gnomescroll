@@ -2,6 +2,10 @@
 Spritesheet generator class
 '''
 
+import sys
+import os
+sys.path.insert(0, './../conf/')
+
 import png
 import sys
 import os.path
@@ -44,7 +48,7 @@ class Spritesheet(object):
         if not passed:
             print 'Spritesheet generation failed. Please fix errors in sprites configuration'
             sys.exit()
-        
+
         return passed
 
     def _set_empty_pixels(self):
@@ -54,7 +58,7 @@ class Spritesheet(object):
             rows.insert(i,[])
             rows[i] = [0,0,0,0] * 512
         self.pixels = rows
-        
+
     def generate(self):
 
         def _offset(id):
@@ -89,15 +93,15 @@ class Spritesheet(object):
                     self.pixels[i+32*yi][4*(j+32*xi)+3] = a
                 i += 1
         return self.pixels
-        
+
     def write_png(self, pixels=None):
         if pixels is None:
             pixels = self.pixels
-            
+
         png_out = png.Writer(width=512, height=512, alpha=True, bitdepth=8, transparent=None)
 
         print "writing out"
-        with open('./%s_01.png' % (self.name,), 'wb') as f:      # binary mode is important
+        with open('../%s_01.png' % (self.name,), 'wb') as f:      # binary mode is important
             png_out.write(f, pixels)
 
         with open('../netclient/media/texture/%s_01.png' % (self.name,), 'wb') as f:      # binary mode is important
