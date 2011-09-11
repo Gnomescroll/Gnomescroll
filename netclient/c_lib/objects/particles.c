@@ -13,6 +13,20 @@ void create_particle(struct Particle* p, unsigned int id, int type, float x, flo
     p->type = type;
 }
 
+void create_particle2(struct Particle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max) {
+    p->state.p.x=x;
+    p->state.p.y=y;
+    p->state.p.z=z;
+    p->state.v.x=vx;
+    p->state.v.y=vy;
+    p->state.v.z=vz;
+    p->ttl = ttl;
+    p->ttl_max = ttl_max;
+    p->id = id;
+    p->type = type;
+}
+
+
 //void free_event_particle(struct EventParticle* p) {
     //free(p->particle);
     //free(p);

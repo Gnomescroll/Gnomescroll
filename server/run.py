@@ -32,6 +32,8 @@ import intervals
 import file_monitor
 import dats.loader as dat_loader
 
+import c_lib.c_lib_objects
+
 import random
 def load_map():
     m = terrain_map
@@ -294,6 +296,7 @@ class Main:
                 if tc == 0 or sl_c > 3: #net out
                     break
                 GameStateGlobal.gameState.tick()
+                c_lib.c_lib_objects.tick()
                 sl_c+=1
                 tick+=1
             if sl_c != 0:

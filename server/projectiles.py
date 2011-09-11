@@ -155,10 +155,7 @@ class Grenade(Projectile):
 
         self.ttl = ttl
         x,y,z, vx,vy,vz = state
-        print "GRENADE"
-        print state
         vx,vy,vz = [i*self.speed for i in [vx,vy,vz]]   # state is loaded as [x,y,z, dx,dy,dz], need to apply velocity
-        print x,y,z,vx,vy,vz
 
         self.state = x,y,z, vx,vy,vz  # this is static!
 
