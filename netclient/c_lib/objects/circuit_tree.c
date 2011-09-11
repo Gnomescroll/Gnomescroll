@@ -124,7 +124,7 @@ void p_tree_recursive2(struct p_tree_node* n) {
 }
 
 void circuit_tree_generate(int type, int seed) {
-    printf("Generated Circuit Tree\n");
+    //printf("Generated Circuit Tree\n");
     //printf("RANDMAX= %i \n", RAND_MAX);
     //srand(seed); //seed
     //rand()
@@ -174,6 +174,7 @@ void circuit_tree_draw() {
     glEnd();
     glLineWidth(1);
     glDisable(GL_BLEND);
+    glColor3ub((unsigned char)255,(unsigned char)255,(unsigned char)255);
     //glDisable(GL_LINE_SMOOTH);
 }
 
