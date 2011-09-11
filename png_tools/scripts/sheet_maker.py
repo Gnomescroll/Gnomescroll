@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+import sys
+import os
+sys.path.insert(0, './conf/')
+
 import argparse
 import spritesheet
 import sys
@@ -33,7 +37,7 @@ def zip_sprite_confs(s1, s2):
 
     if args.reverse_map:
         d = dict(zip(d.values(), d.keys()))
-    
+
     return d, fail
 
 def run():
@@ -57,7 +61,7 @@ def run():
                 if fail_msg:
                     f.write('"""Generation of this file failed with message:\n%s"""\n\n' % (fail_msg,))
                 f.write('_map=%s'% (mapping,))
-            
+
 
 if __name__ == '__main__':
     run()

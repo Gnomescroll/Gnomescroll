@@ -15,8 +15,9 @@ inline int collision_check(int x, int y, int z) {
 
 inline int collision_check2(int x, int y, int z) {
     //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
-    int tile = _get(x,y,z);
-    return isActive(tile);
+    //int tile = _get(x,y,z);
+    //return isActive(tile);
+    return isActive(_get(x,y,z));
 }
 
 inline int collision_check3(int x, int y, int z) {
