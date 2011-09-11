@@ -8,6 +8,8 @@ from input import InputGlobal
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
 
+from opts import opts
+
 '''
 HUD overlay
 '''
@@ -18,9 +20,8 @@ class Hud(object):
 
     def __init__(self):
 
-        ## HARDCODED -- replace w/ SDL window object later
-        self.win_width = 800
-        self.win_height = 600
+        self.win_width = opts.width
+        self.win_height = opts.height
 
         self._init_reticle()
         self._init_text_dict()
@@ -39,41 +40,11 @@ class Hud(object):
         self._init_block_selector()
 
     def _init_reticle(self):
-        if settings.pyglet:
-            self.reticle = image.load(base_dir + 'texture/target.png')
-            self.reticle_texture = self.reticle.get_texture()
-
-            rh = 16.
-            rw = 16.
-
-            w = float(self.win_width)/2
-            h = float(self.win_height)/2
-            print str((h,w))
-            x_min = w - rw/2
-            x_max = w + rw/2
-            y_min = h - rh/2
-            y_max = h + rh/2
-
-            v_list = [
-                x_min, y_max,
-                x_max, y_max,
-                x_max, y_min,
-                x_min, y_min
-            ]
-            print str(v_list)
-
-            self.reticleVertexList = graphics.vertex_list(
-                4,
-                ('v2f\static', v_list),
-                ('c3B\static', (255,255,255) *4),
-                ("t3f\static", self.reticle_texture.tex_coords)
-            )
-        else:
-            # load texture
-            # center it
-            # draw_functions._blit_sprite
-            tex_file = '%stexture/target.png' % (base_dir,)
-            self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
+        # load texture
+        # center it
+        # draw_functions._blit_sprite
+        tex_file = '%stexture/target.png' % (base_dir,)
+        self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
 
     def _init_block_selector(self):
         tex_file = '%stexture/block_selector_hud.png' % (base_dir,)
