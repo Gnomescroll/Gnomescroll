@@ -12,12 +12,12 @@ void init_objects_grenade() {
 }
 
 void inline grenade_Tick(struct Particle2* g) {
-    printf("%d grenade is ticking\n", g->id);
-    int n = _GET_MS_TIME();
+    //printf("%d grenade is ticking\n", g->id);
+    //int n = _GET_MS_TIME();
     bounce_simple_rk4(g, 0.75);
     g->ttl++;
-    int n2 = _GET_MS_TIME();
-    printf("RK4 took %d\n", n2-n);
+    //int n2 = _GET_MS_TIME();
+    //printf("RK4 took %d\n", n2-n);
 }
 
 void grenade_tick() {
