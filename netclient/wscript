@@ -319,6 +319,7 @@ def install_in_ext(ctx):
             print "Error2: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
+    install_libs()
 
 def ensure_dir(path):
     try:
@@ -327,6 +328,19 @@ def ensure_dir(path):
         if e.errno != errno.EEXIST:
             raise
 
+def install_libs():
+    global _OS
+    if _OS == 'Darwin':
+        libfmodex_name = "libfmodex.dylib"
+        libfmodex_pth = "./libraries/osx/fmod/lib/%s" % (libfmodex_name,)
+        if not os.path.exists(libfmodex_name):
+            if not os.path.exists(libfmodex_pth):
+                print "WARNING: OSX Build problem -- Missing %s" % (libfmodex_pth,)
+            else:
+                try:
+                    shutil.copy2(libfmdex_pth, libfmodex_name)
+                except:
+                    print "Failed to copy %s to %s" % (libfmodex_pth, libfmodex_name,)
 
 def make_dest_modules(ctx):
     for root, dirs, files in os.walk('./ext/'):
