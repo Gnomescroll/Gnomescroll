@@ -230,7 +230,8 @@ class App(object):
                 if _i % 30 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
-                    c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+                    #c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+                    pass
                 if False or _i % 15 == 0:
                     v = 4
                     x = v*random.random() -0.5
@@ -240,7 +241,7 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z, 0, 350)
+                    #c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z, 0, 350)
                 if _i % 150 == 0:
                     v = 2
                     x = v*(random.random() -0.5)

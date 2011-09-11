@@ -37,11 +37,9 @@ def tick():
     agent_tick()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
-    print "CYTHON CREATE GRENADE"
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)
 
 def _destroy_grenade(int gid):
-    print "CYTHON DESTROY GRENADE"
     destroy_grenade(gid)
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
