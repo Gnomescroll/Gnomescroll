@@ -47,7 +47,7 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
 
         if((flag & n) != 0) {
             if(np->packet_sequence_buffer[index%256].seq != index) {
-                //printf("sequence number error: expected %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
+                printf("sequence number error: expected %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
                 //printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
 
                 }
@@ -55,6 +55,10 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
             if(np->packet_sequence_buffer[index%256].ack == 0) { //dont ack same packet twice
                 //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, NP_time_delta1(np->packet_sequence_buffer[index%256].time));
                 np->packet_sequence_buffer[index%256].ack = 1;
+                #ifdef DC_CLIENT
+                pviz_packet_ack(index);
+                #endif
+
             }
 
         }

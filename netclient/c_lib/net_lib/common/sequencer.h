@@ -7,6 +7,10 @@
 
 #include "net_peer.h"
 
+#ifdef DC_CLIENT
+#include "../client/pviz.h"
+#endif
+
 //outgoing
 /*
 struct packet_sequence {

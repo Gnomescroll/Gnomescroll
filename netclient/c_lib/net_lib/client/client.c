@@ -66,7 +66,6 @@ void send_packet2(){
     unsigned char header[16];
     int n1 = 0;
     int seq = get_next_sequence_number(&NPserver);
-
     PACK_uint16_t(NPserver.client_id, header, &n1); //client id
     PACK_uint8_t(1, header, &n1);  //channel 1
     PACK_uint16_t(seq, header, &n1); //sequence number
@@ -88,6 +87,7 @@ void send_packet2(){
         return;
     }
 */
+    pviz_packet_sent(seq,n1);
     int sent_bytes = sendto( client_socket.socket, (const char*)header, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "send_packet2: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
@@ -105,7 +105,6 @@ void send_packet3(unsigned char* buff, int n_size) {
     unsigned char out_buff[800];
     int n1 = 0;
     int seq = get_next_sequence_number(&NPserver);
-
     PACK_uint16_t(NPserver.client_id, out_buff, &n1); //client id
     PACK_uint8_t(1, out_buff, &n1);  //channel 1
     PACK_uint16_t(seq, out_buff, &n1); //sequence number
@@ -134,6 +133,7 @@ void send_packet3(unsigned char* buff, int n_size) {
         return;
     }
 */
+    pviz_packet_sent(seq, n1);
     int sent_bytes = sendto( client_socket.socket, (const char*)out_buff, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "send_packet3: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
@@ -266,6 +266,7 @@ void process_packet(unsigned char* buff, int n) {
     set_ack_for_received_packet(&NPserver ,sequence_number);
     NPserver.last_packet_time = get_current_netpeer_time();
     NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
+
 }
 
 unsigned char* out_buffer[1500];

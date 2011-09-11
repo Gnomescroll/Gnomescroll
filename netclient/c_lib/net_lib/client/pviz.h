@@ -10,6 +10,10 @@
 void pviz_start_frame();
 
 void pviz_draw(float x, float y, float z);
+void pviz_packet_histrogram_draw(float x, float y, float z);
+
+void pviz_packet_sent(int seq, int size);
+void pviz_packet_ack(int seq);
 #endif
 
 #endif

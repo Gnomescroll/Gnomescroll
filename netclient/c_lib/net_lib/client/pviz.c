@@ -16,12 +16,13 @@ int frame_n = 0;
 void pviz_start_frame() {
     int time = get_current_netpeer_time();
     frame_array[frame_n%128].end_time = get_current_netpeer_time();
-    frame_n++;
+    frame_n = frame_n +1;
     frame_array[frame_n%128].start_time = get_current_netpeer_time();
     frame_array[frame_n%128].end_time = -1;
     frame_array[frame_n%128].total_acks = 0;
     frame_array[frame_n%128].packet_sent = 0;
     frame_array[frame_n%128].packet_received = 0;
+    //printf("frame=%i\n", frame_n);
 }
 
 /*
@@ -64,7 +65,7 @@ void pviz_draw_grid(float z) {
 
 #define INC_C 0.5
 void pviz_draw(float x, float y, float z) {
-
+    pviz_packet_histrogram_draw(x,y,z);
     if(x==0) {
         pviz_draw_grid(z);
         return;
@@ -78,18 +79,17 @@ void pviz_draw(float x, float y, float z) {
 
 
     float d = 10;
-
+    float _d = 0.5;
     glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)255);
-    glVertex3f(x,y,z);
+    glVertex3f(_d+x,_d+y,z);
     glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
-    glVertex3f(x+d,y,z);
-    glVertex3f(x-d,y,z);
-    glVertex3f(x,y+d,z);
-    glVertex3f(x,y-d,z);
+    glVertex3f(_d+x+d,_d+y,z);
+    glVertex3f(_d+x-d,_d+y,z);
+    glVertex3f(_d+x,_d+y+d,z);
+    glVertex3f(_d+x,_d+y-d,z);
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)255);
-    glVertex3f(x,y,z+d);
-    glVertex3f(x,y,z-d);
-
+    glVertex3f(_d+x,_d+y,z);
+    /*
     while(ac*INC_C < 800 && i < 32) {
         index = (frame_n - i) % 128;
         if(index < 0) {index += 128;}
@@ -103,6 +103,7 @@ void pviz_draw(float x, float y, float z) {
         //printf("index=%i ac=%i i=%i len=%i\n",index, ac,i,len);
         i++;
     }
+    */
     //printf("i=%i\n", i);
     glEnd();
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
@@ -119,21 +120,118 @@ struct pviz_packet {
     int total_packets;
 };
 
-struct pviz_packet packet_out_array[256];
+#define PO_L 256  //number of packets to keep
+
+struct pviz_packet packet_out_array[PO_L];
 //int frame_n = 0;
 
-void pviz_packet_sent(int seq) {
+void pviz_packet_sent(int seq, int size) {
 
-    packet_out_array[seq%256].send_time = get_current_netpeer_time();
-    packet_out_array[seq%256].ack_time = -1;
-    packet_out_array[seq%256].send_frame = frame_n;
-    packet_out_array[seq%256].ack_frame = -1;
+    packet_out_array[seq%PO_L].send_time = get_current_netpeer_time();
+    packet_out_array[seq%PO_L].ack_time = -1;
+    packet_out_array[seq%PO_L].send_frame = frame_n;
+    packet_out_array[seq%PO_L].ack_frame = -1;
+    packet_out_array[seq%PO_L].size = size;
     frame_array[frame_n%128].packet_sent++;
 }
 
-void pviz_packet_ack(int seq, int size) {
-    packet_out_array[seq%256].ack_time = get_current_netpeer_time();
-    packet_out_array[seq%256].ack_frame = frame_n;
-    packet_out_array[seq%256].size = size;
+void pviz_packet_ack(int seq) {
+    packet_out_array[seq%PO_L].ack_time = get_current_netpeer_time();
+    packet_out_array[seq%PO_L].ack_frame = frame_n;
     frame_array[frame_n%128].packet_received++;
+}
+
+#define _C 0.5
+//yellow, sent but un acked
+//red send but presumed dropped; unpacked, send more than 1000ms ago
+//green acked
+
+#define PO_L2 64 // number to display on screen
+void pviz_packet_histrogram_draw(float x, float y, float z) {
+    //printf("Test\n");
+    x -= 10.0;
+    y -= 10.0;
+    int time = get_current_netpeer_time();
+    int i,j,k;
+    int ft;
+    int ac = 2.0;
+
+    glPointSize(2.0);
+    glBegin(GL_POINTS);
+
+    i = frame_n % PO_L;
+    for(k=0; k<PO_L2; k++) {
+        if(packet_out_array[i].ack_frame == -1) {
+            if(time - packet_out_array[i].send_time > 500) {
+                glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
+            } else {
+                glColor3ub((unsigned char) 153,(unsigned char)50,(unsigned char)204);
+            }
+            glVertex3f(_C+x,_C+y-2*ac*k,z);
+        } else {
+            glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
+            ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
+            //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
+            for(j=0; j<ft; j++) {
+                glVertex3f(_C+x+3*j,_C+y-2*ac*k,z);
+            }
+        }
+        i--;
+        if(i<0) i = PO_L2;
+    }
+    glEnd();
+    glPointSize(1.0);
+    /*
+     glBegin(GL_POINTS);
+
+    for(i=0; i<PO_L; i++) {
+        if(packet_out_array[i].ack_frame == -1) {
+            if(time - packet_out_array[i].send_time > 500) {
+                glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
+            } else {
+                glColor3ub((unsigned char) 153,(unsigned char)50,(unsigned char)204);
+            }
+            glVertex3f(_C+x,_C+y-ac*i,z);
+        } else {
+            glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
+            ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
+            //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
+            for(j=0; j<ft; j++) {
+                glVertex3f(_C+x+j,_C+y-ac*i,z);
+            }
+        }
+    }
+    glEnd();
+    */
+    /*
+    glPointSize(2.0);
+    glBegin(GL_POINTS);
+    for(i=0; i<PO_L; i++) {
+        if(packet_out_array[i].ack_frame == -1) {
+            if(time - packet_out_array[i].send_time > 500) {
+                glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
+            } else {
+                glColor3ub((unsigned char) 153,(unsigned char)50,(unsigned char)204);
+            }
+            glVertex3f(_C+x,_C+y-2*ac*i,z);
+        } else {
+            glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
+            ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
+            //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
+            for(j=0; j<ft; j++) {
+                glVertex3f(_C+x+3*j,_C+y-2*ac*i,z);
+            }
+        }
+    }
+    glEnd();
+    */
+}
+
+#define bin_size 8
+void pviz_packet_histrogram2_draw(float x, float y, float z) {
+    //int bin_size;
+
+
+
+
 }

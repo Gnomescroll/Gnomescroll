@@ -14,6 +14,8 @@
 
 #include "../common/message_handler.h"
 
+#include "../client/pviz.h"
+
 /*
 struct NetClient {
     uint16_t client_id;

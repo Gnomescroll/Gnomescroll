@@ -1,14 +1,4 @@
 
-if False:
-    print "test"
-    import sys
-    sys.path += ['./imports/lib/python2.6/site-packages/', './']
-    sys.path += ['python26.zip']
-    print "Path="
-    print sys.path
-    print ""
-    import site
-
 import sys
 import os
 sys.path.insert(0, './ext/')
@@ -80,12 +70,10 @@ class App(object):
     def init_globals(self):
         #stage 1
         NetClientGlobal.init_0()
-        #CubeGlobal.init_0()
         GameStateGlobal.init_0()
         NetEventGlobal.init_0()
         NetOut.init_0()
         ChatClientGlobal.init_0()
-        #MapChunkManagerGlobal.init_0()
         MapControllerGlobal.init_0()
         #stage 2
         NetClientGlobal.init_1()
@@ -93,14 +81,12 @@ class App(object):
         NetEventGlobal.init_1()
         NetOut.init_1()
         ChatClientGlobal.init_1()
-        #MapChunkManagerGlobal.init_1()
         MapControllerGlobal.init_1()
 
         self.SDL_global = SDL.gl.SDL_global #drawing stuff
         self.SDL_global.init()
         SDL.input.init()
         SDL.hud.init()
-        #cube_lib.terrain_map.init()
 
         init_c_lib.init()
 
@@ -142,7 +128,9 @@ class App(object):
         ChatClientGlobal.chatClient.save()
 
     def connect(self):
+        START_CLOCK() #clock must be started before networking stuff
         NetClientGlobal.connect() #starts connection
+        NetClientConnect(127,0,0,1, 0)
 
     def mainLoop(self):
         global P, Phy
@@ -161,15 +149,6 @@ class App(object):
         draw_hud = not opts.opts.no_hud
         ltick, ctick = 0,0
 
-        #TEST
-        theta = 0
-
-        #v2 = vox_lib.Vox_loader().load('html_ed_test.vox')
-        #v3 = vox_lib.Vox_loader().load('base.vox')
-        #v3.color('blue', base_color='black')
-        #v3.move(10,10,15, 0)
-
-
         if ping:
             ping_n = SDL.gl.get_ticks()
 
@@ -179,9 +158,6 @@ class App(object):
         _i = 30
         #StartPhysicsTimer(33)
         c_lib.c_lib_objects._generate_circuit_tree(0,0)
-
-        START_CLOCK() #clock must be started before networking stuff
-        NetClientConnect(127,0,0,1, 0)
 
         def neutron_fountain():
             v = 2
@@ -195,38 +171,26 @@ class App(object):
             c_lib.c_lib_objects._create_neutron(1,1,35.5,35.5,5.5, x,y,z)
 
         while not GameStateGlobal.exit:
-            neutron_fountain()
             self.world.sound_updates()
 
             P2.start_frame() #TEST
-            theta += -.005 #test
+            #theta += -.005 #test
             P.start_frame()
             tc = 0
             _density = 1
             _min = 0.025
             _max = 0.9
-            #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
-            #c_lib.c_lib_map_gen._update_density_map(500)
 
             P.event("Physics Loop")
             sl_c = 0
             while True: #physics loop
-                #tc = PhysicsTimerTickCheck() #get number of ticks server is behind
                 tc = GET_TICK()
-                #print "tc= %i" % (tc)
-                #if tc > 1:
-                #    print "Server is %i ticks behind" % (tc) #only returns 1 right now
-                #'''
-                #if tc == 0 or sl_c > 3:
-                #    NetClientTick()
-                #    break
-                #'''
                 if tc == 0 or sl_c > 2:
-                    #NetClientTick()
                     break
 
                 sl_c += 1
                 _i+=1
+                neutron_fountain()
                 if _i % 30 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
@@ -265,12 +229,7 @@ class App(object):
                     vy = v*(random.random() -0.5)
                     vz = -3.5 #v*(random.random() -0.5)
                     le = math.sqrt(vx**2+vy**2+vz**2)
-                    #vx *= vx / le
-                    #vy *= vy / le
-                    #vz *= vz / le
-                    #_type = random.randint(0,9*3)
                     _type=1
-                    #c_lib.c_lib_objects._create_cspray( _type, 0,0,10, 0,0,2)
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
                 #P.event("get_key_state")
                 #P.event("NetClientTick")
@@ -294,10 +253,6 @@ class App(object):
                 self.world.tick()
                 self.animations.tick()
                 c_lib.c_lib_objects.tick() ## TESTING
-                #if sl_c > 3:
-                #    NetClientTick()
-                #    break
-                #print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
@@ -314,12 +269,6 @@ class App(object):
                 first_person = False
 
             self.camera.worldProjection()
-            #P.event("animations.draw")
-            if False:
-                c_lib.c_lib_objects._draw_agent_bounding_box(5.5,5.5,6, 0.5, 2.0, 3.0)
-            if False:
-                v2.move(10,0,10,theta)
-                v2.draw()
 
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
@@ -345,8 +294,7 @@ class App(object):
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,700,-0.30)
-                #_pviz_draw(500,500, -.30)
-                _pviz_draw(0,0, -.30)
+                _pviz_draw(780,700, -.30)
 
             P.event("SDL flip")
             self.SDL_global.flip()
