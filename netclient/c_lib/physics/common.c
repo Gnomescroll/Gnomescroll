@@ -166,12 +166,14 @@ struct State derivatives[4];
 struct State _derivative = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}};
 
 void accelerate(struct State* state, float t, float dt) {
-    //const float k = 10;
-    //const float b = 1;
-    //state->v.x = -k * inter->p.x - b*inter->v.x;
-    //state->v.y = -k * inter->p.y - b*inter->v.y;
-    //state->v.z = -k * inter->p.z - b*inter->v.z;
-    state->v.z -= 0.025 * dt;
+    const float k = 10;
+    const float b = 1;
+    state->v.z -= 0.25 * dt;
+
+    state->v.x = -k * state->p.x - b*state->v.x;
+    state->v.y = -k * state->p.y - b*state->v.y;
+    state->v.z = -k * state->p.z - b*state->v.z;
+
 }
 
 struct State step_inter;
