@@ -164,7 +164,10 @@ class ChatClient:
 
     # saves ignored list + subscription channel names
     def save(self):
-        from simplejson import dumps as encode_json
+        try:
+            from simplejson import dumps as encode_json
+        except ImportError:
+            from json import dumps as encode_json
         from os import mkdir
         from os.path import exists as path_exists
 
@@ -178,7 +181,10 @@ class ChatClient:
 
     # loads saved ignore list & subscription channels
     def load(self):
-        from simplejson import loads as decode_json
+        try:
+            from simplejson import loads as decode_json
+        except ImportError:
+            from json import loads as decode_json
         from os.path import exists as path_exists
         #print 'loading channels from file'
         conf = CONFIG_PATH + '/' + self._conf

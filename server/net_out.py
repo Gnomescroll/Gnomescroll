@@ -2,7 +2,10 @@
 Outgoing network messages
 '''
 
-import simplejson as json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 import struct
 
 import dats.loader as dl
