@@ -36,7 +36,7 @@ int* bounce_simple(struct Particle* p) {
 }
 
 struct State inter;
-int* bounce_simple_rk4(struct Particle2* p) {
+int* bounce_simple_rk4(struct Particle2* p, float damp) {
 
     //float _x, _y, _z;
     //_x = p->x + p->vx/FPS;
@@ -63,17 +63,22 @@ int* bounce_simple_rk4(struct Particle2* p) {
     //printf("raycast took %d\n", n2-n);
 
     //_adjust_vel(p, s, -1);
-    if(s[0] != 0 ) {
-        p->state.v.x *= -1;
-        //printf("invert vx \n");
-    }
-    if(s[1] != 0) {
-        p->state.v.y *= -1;
-        //printf("invert vy \n");
-    }
-    if(s[2] != 0) {
-        p->state.v.z *= -1;
-        //printf("invert vz \n");
+    if (s[0] != 0 || s[1] != 0 || s[2] != 0) {
+        p->state.v.x *= damp;
+        p->state.v.y *= damp;
+        p->state.v.z *= damp;
+        if(s[0] != 0 ) {
+            p->state.v.x *= -1;
+            //printf("invert vx \n");
+        }
+        if(s[1] != 0) {
+            p->state.v.y *= -1;
+            //printf("invert vy \n");
+        }
+        if(s[2] != 0) {
+            p->state.v.z *= -1;
+            //printf("invert vz \n");
+        }
     }
     
     //p->x = p->x + interval*p->vx/FPS;
@@ -166,13 +171,13 @@ struct State derivatives[4];
 struct State _derivative = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}};
 
 void accelerate(struct State* state, float t, float dt) {
-    const float k = 10;
-    const float b = 1;
-    state->v.z -= 0.25 * dt;
+    //const float k = 10;
+    //const float b = 1;
+    state->v.z -= 1.25 * dt;
 
-    state->v.x = -k * state->p.x - b*state->v.x;
-    state->v.y = -k * state->p.y - b*state->v.y;
-    state->v.z = -k * state->p.z - b*state->v.z;
+    //state->v.x = -k * state->p.x - b*state->v.x;
+    //state->v.y = -k * state->p.y - b*state->v.y;
+    //state->v.z = -k * state->p.z - b*state->v.z;
 
 }
 
