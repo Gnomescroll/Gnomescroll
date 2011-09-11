@@ -29,6 +29,7 @@ if True:
     import init_c_lib
     import c_lib.c_lib_objects
     #import c_lib.c_lib_timer as physics_timer
+    import init_c_lib
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
     from init_c_lib import START_CLOCK, GET_TICK
     from init_c_lib import _pviz_draw
@@ -294,7 +295,7 @@ class App(object):
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,700,-0.30)
-                _pviz_draw(780,700, -.30)
+                _pviz_draw(780,400, -.30)
 
             P.event("SDL flip")
             self.SDL_global.flip()

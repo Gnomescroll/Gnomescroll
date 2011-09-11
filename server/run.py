@@ -306,7 +306,7 @@ class Main:
             NetOut.event.process_events()
             self.intervals.process()
             sleep(0.001)
-
+            #sleep(0.100)
 if __name__ == "__main__":
     print "starting server"
     main = Main()

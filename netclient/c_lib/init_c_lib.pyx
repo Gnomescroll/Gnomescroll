@@ -61,6 +61,10 @@ def GET_TICK():
 
 cdef extern from "./net_lib/client/pviz.h":
     void pviz_draw(float x, float y, float z)
+    void toggle_latency_unit()
 
 def _pviz_draw(float x, float y, float z):
     pviz_draw(x,y,z)
+
+def _toggle_latency_unit():
+    toggle_latency_unit()

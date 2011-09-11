@@ -4,6 +4,7 @@
 Client input
 '''
 
+
 from math import sin, cos, pi
 
 import default_settings as settings
@@ -12,6 +13,7 @@ from opts import opts
 import SDL.input
 
 from cube_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
+from init_c_lib import _toggle_latency_unit
 
 #handles special characters
 Keystring = {}
@@ -283,6 +285,7 @@ class Keyboard(object):
             "m" : toggle_terrain_map_blend_mode,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
+            "p" : _toggle_latency_unit,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):

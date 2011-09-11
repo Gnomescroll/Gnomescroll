@@ -66,6 +66,8 @@ void pviz_draw_grid(float z) {
 #define INC_C 0.5
 void pviz_draw(float x, float y, float z) {
     pviz_packet_histrogram_draw(x,y,z);
+    pviz_packet_histrogram2_draw(x,y,z);
+
     if(x==0) {
         pviz_draw_grid(z);
         return;
@@ -154,8 +156,10 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     int time = get_current_netpeer_time();
     int i,j,k;
     int ft;
-    int ac = 2.0;
 
+
+
+    int ac = 2.0;
     glPointSize(2.0);
     glBegin(GL_POINTS);
 
@@ -169,7 +173,7 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
             }
             glVertex3f(_C+x,_C+y-2*ac*k,z);
         } else {
-            glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
+            glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
             ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
             //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
             for(j=0; j<ft; j++) {
@@ -181,8 +185,12 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     }
     glEnd();
     glPointSize(1.0);
-    /*
-     glBegin(GL_POINTS);
+
+
+/*
+    int ac = 2.0;
+    glPointSize(1.0);
+    glBegin(GL_POINTS);
 
     for(i=0; i<PO_L; i++) {
         if(packet_out_array[i].ack_frame == -1) {
@@ -202,7 +210,7 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
         }
     }
     glEnd();
-    */
+*/
     /*
     glPointSize(2.0);
     glBegin(GL_POINTS);
@@ -227,11 +235,50 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     */
 }
 
-#define bin_size 8
+//#define bin_size 8
+
+int bin_size = 1;
+#define num_bins 512
+int bin[num_bins];
+
+void toggle_latency_unit() {
+    if(bin_size==1) bin_size =2;
+    else if(bin_size==2) bin_size =5;
+    else if(bin_size==5) bin_size =10;
+    else if(bin_size==10) bin_size =1;
+    printf("pviz_packet_histrogram2: latency unit = %ims\n", bin_size);
+}
+
 void pviz_packet_histrogram2_draw(float x, float y, float z) {
-    //int bin_size;
+    //printf("po=%i\n", PO_L);
+    x -= 10;
+    y += 10;
+    int i,j;
+    for(i=0;i<num_bins;i++) bin[i]=0;
+    int ft;
+    for(i=0; i<PO_L; i++) {
+        if(packet_out_array[i].ack_frame == -1) continue;
+        ft = packet_out_array[i].ack_time - packet_out_array[i].send_time;
+        //printf("ft=%i\n", ft);
+        ft = ft / bin_size;
 
+        if(ft <= 0 || ft >= num_bins) {
+            //printf("ft error: ft= %i\n", ft);
+            continue;
+        }
+        bin[ft]++;
 
+    }
 
+    glBegin(GL_POINTS);
+    glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
+    for(i=0; i<num_bins; i++) {
+        //printf("bin[%i]=%i\n", i,bin[i]);
+        for(j=0; j<bin[i]; j++) {
+            glVertex3f(_C+x+2*j,_C+y+2*i,z);
+        }
+    }
+    glEnd();
 
+    //printf("time= %i\n", get_current_netpeer_time());
 }
