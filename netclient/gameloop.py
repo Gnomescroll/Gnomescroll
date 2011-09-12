@@ -169,7 +169,7 @@ class App(object):
             x *= v / le
             y *= v / le
             z *= v / le
-            c_lib.c_lib_objects._create_neutron(1,1,35.5,35.5,5.5, x,y,z)
+            c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
         while not GameStateGlobal.exit:
             self.world.sound_updates()

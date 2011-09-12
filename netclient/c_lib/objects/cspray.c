@@ -1,11 +1,6 @@
 #include "cspray.h"
 
 
-//struct Cspray {
-    //struct Particle particle;
-    //int active;
-//};
-
 struct Cspray {
     struct Particle2 particle;
     int active;
