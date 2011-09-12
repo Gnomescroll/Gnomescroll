@@ -15,8 +15,8 @@ struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigne
     s->address.sin_addr.s_addr = htonl( destination_address );
     s->address.sin_port = htons( port );
 
-    s->ip = htonl( destination_address );
-    s->port = htons( port );
+    s->ip = ntohl( destination_address );
+    s->port = ntohs( port );
 
     s->ttl_max = TTL_MAX_DEFAULT;
     s->ttl = TTL_MAX_DEFAULT;
@@ -34,8 +34,14 @@ struct NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
     s->client_id = 65535;
     s->address = address;
 
-    s->ip = htonl(address.sin_addr.s_addr);
-    s->port = htons( address.sin_port );
+    s->address.sin_family = AF_INET;
+    s->address.sin_addr.s_addr = address.sin_addr.s_addr;
+    s->address.sin_port = htons(6967);
+
+    s->ip = ntohl(address.sin_addr.s_addr);
+    s->port = ntohs( address.sin_port );
+
+    printf("create_net_peer_from_address: %s:%i \n",inet_ntoa(s->address.sin_addr), ntohs( address.sin_port ) );
 
     s->ttl_max = TTL_MAX_DEFAULT;
     s->ttl = TTL_MAX_DEFAULT;
