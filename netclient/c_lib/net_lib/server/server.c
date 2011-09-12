@@ -40,7 +40,9 @@ int accept_connection(struct sockaddr_in from) {
             p->last_packet_time = get_current_netpeer_time();
             p->connected = 0;
             //send client his id
-            printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
+
+            //printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
+            printf("Accepting Connection From: %s:%i \n",inet_ntoa(p->address.sin_addr), p->port );
             return j;
         }
     }
@@ -69,7 +71,7 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
 
     //printf("address: %s\n", (char *)inet_ntoa((struct sockaddr_in)p->address.sin_addr));
 
-    printf("send_to_client: client ip address: %s\n", inet_ntoa(p->address.sin_addr));
+    //printf("send_to_client: client ip address: %s\n", inet_ntoa(p->address.sin_addr));
 
     int sent_bytes = sendto(server_socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n)
