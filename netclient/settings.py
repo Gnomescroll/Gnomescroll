@@ -9,7 +9,7 @@ pyglet = False
 #graphics = "SDL" # options, "SDL", "pyglet"
 
 ''' Sound '''
-audio = False
+audio = True
 sfx = 100
 music = 100
 
