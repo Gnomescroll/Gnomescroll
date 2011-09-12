@@ -117,7 +117,6 @@ static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float da
         p->state.v.x = p->state.v.x * damp;
         p->state.v.y = p->state.v.y * damp;
         p->state.v.z = p->state.v.z * damp;
-        if (p->id == 4) {printf("bounce\n");printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
     }
         
 }
@@ -174,8 +173,8 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
     //printf("raycast took %d\n", n2-n);
 
     _adjust_vel2(p, s, -1, damp);
-    if (s[0] || s[1] || s[2]) {
-            if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
+    //if (s[0] || s[1] || s[2]) {
+            //if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
 
     //if (p->id == 10) {
         //printf("GRENADE\n");
@@ -281,15 +280,23 @@ struct State derivatives[4];
 static inline void rk4_accelerate(struct State* inter, float t, float dt) {
     //const float k = 10;
     //const float b = 1;
-    inter->v.z -= 5.0f * dt;
+//printf("ACCELMAIN\n");
+    //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 
-    //state->v.x = -k * state->p.x - b*state->v.x;
-    //state->v.y = -k * state->p.y - b*state->v.y;
-    //state->v.z = -k * state->p.z - b*state->v.z;
+    const float _air_resist = 0.9f;
+    const float air_resist = (1.0f- (1.0f-_air_resist));
+    //const 
+    inter->v.z -= 20.0f;  // gravity
 
+    inter->v.x *= air_resist;
+    inter->v.y *= air_resist;
+    inter->v.z *= air_resist;
+    //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
+//printf("-----------\n");
 }
 
-struct State step_inter;
+struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}};
+struct State* step_inter = &_step_inter;
 int step_i = 0;
 static inline void rk4_step(struct State* state, struct State* i, struct State* d, float t, float dt)
 {
@@ -298,20 +305,21 @@ static inline void rk4_step(struct State* state, struct State* i, struct State* 
    //printf("RK4STEP\n");
     //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
 
-     step_inter.p.x = state->p.x + d->p.x*dt;
-     step_inter.p.y = state->p.y + d->p.y*dt;
-     step_inter.p.z = state->p.z + d->p.z*dt;
-     step_inter.v.x = state->v.x + d->v.x*dt;
-     step_inter.v.y = state->v.y + d->v.y*dt;
-     step_inter.v.z = state->v.z + d->v.z*dt;
+     step_inter->p.x = state->p.x + d->p.x*dt;
+     step_inter->p.y = state->p.y + d->p.y*dt;
+     step_inter->p.z = state->p.z + d->p.z*dt;
+     step_inter->v.x = state->v.x + d->v.x*dt;
+     step_inter->v.y = state->v.y + d->v.y*dt;
+     step_inter->v.z = state->v.z + d->v.z*dt;
      
     //printf("STEP STATE (should be constant x4)\n");   // it is constant
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
-    i->p = step_inter.v;
-     rk4_accelerate(&step_inter, t+dt, dt);
-     i->v = step_inter.v;
+    //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
+    i->p = step_inter->v;
+     rk4_accelerate(step_inter, t+dt, dt);
+     i->v = step_inter->v;
     //printf("ACCEL\n");
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
+        //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
+    //printf("\n");
 
     //int n2 = _GET_MS_TIME();
     //if (n2-n > 0) {
