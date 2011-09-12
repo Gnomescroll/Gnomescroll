@@ -110,6 +110,8 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
             printf("New Client: sending client id\n");
             client_id = accept_connection(*from);
             send_id(client_id);
+            send_id(client_id);
+            send_id(client_id);
         }  else if ((client_id < HARD_MAX_CONNECTIONS) && (channel_id == 254) && (pool.connection[client_id] != NULL) ) {
             printf("Connection with client %i acked\n",  pool.connection[client_id]->client_id);
             pool.connection[client_id]->connected = 1;
