@@ -93,7 +93,6 @@ int* move_collide_tile(struct Particle* p, int* collision, int* tile) {
 }
 
 
-
 /* motion methods using rk4 */
 static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float damp) {
     int coll = 0;

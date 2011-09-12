@@ -22,7 +22,7 @@ void init_objects_cspray() {
 }
 
 void inline cspray_Tick(struct Cspray* g) {
-    g->particle.vz -= 0.025; //gravity
+    //g->particle.vz -= 0.025; //gravity
 
     g->particle.ttl++;
 
@@ -30,7 +30,10 @@ void inline cspray_Tick(struct Cspray* g) {
     int collision[3];
     int tile;
 
-    s = bounce_collide_tile(&(g->particle), collision, &tile);
+    //s = bounce_collide_tile(&(g->particle), collision, &tile);
+    //int n = _GET_MS_TIME();
+    s = bounce_collide_tile_rk4(&(g->particle), collision, &tile, 0.0f);
+    //printf("CSPRAY RK4 %d\n", _GET_MS_TIME() - n);
 
     // cement effect
     if(g->active == 1) {
