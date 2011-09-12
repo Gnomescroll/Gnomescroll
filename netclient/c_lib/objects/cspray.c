@@ -30,7 +30,7 @@ void inline cspray_Tick(struct Cspray* g) {
     int collision[3];
     int tile;
 
-    //s = bounce_collide_tile(&(g->particle), collision, &tile);
+   //s = bounce_collide_tile(&(g->particle), collision, &tile);
     //int n = _GET_MS_TIME();
     s = bounce_collide_tile_rk4(&(g->particle), collision, &tile, 0.0f);
     //printf("CSPRAY RK4 %d\n", _GET_MS_TIME() - n);
@@ -60,6 +60,8 @@ static inline void cspray_Free(struct Cspray* g) {
 }
 
 void cspray_tick() {
+//int n = _GET_MS_TIME();
+    
     struct Cspray* g = NULL;
     int i;
     for(i=0; i<max_cspray; i++) {
@@ -74,12 +76,17 @@ void cspray_tick() {
             }
         }
     }
+    //int n2 = _GET_MS_TIME();
+    ////if (n2-n > 0) {
+        //printf("cspray_tick :: %d\n", n2-n);
+    ////}
 
 
 }
 
 
 void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
+    return;
     //printf("Create cspray\n");
     struct Cspray* g = NULL;
     int i;
@@ -119,7 +126,7 @@ void cspray_draw() {
     float size = 0.3;
     float up[3] = {a[0]*size, a[4]*size, a[8]*size};
     float right[3] = {a[1]*size, a[5]*size, a[9]*size};
-    int id;
+    int id=21;
 
     float tx_min, tx_max, ty_min, ty_max;
 
@@ -143,7 +150,7 @@ void cspray_draw() {
         _c++;
         g = cspray_list[i];
         //draw setup
-        id = 21;
+        //id = 21;
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);

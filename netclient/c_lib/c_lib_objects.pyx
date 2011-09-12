@@ -90,8 +90,8 @@ def tick():
 
 def draw():
     grenade_draw()
-    neutron_draw()
     cspray_draw()
+    neutron_draw()
     blood_draw()
     shrapnel_draw()
     agent_draw()
