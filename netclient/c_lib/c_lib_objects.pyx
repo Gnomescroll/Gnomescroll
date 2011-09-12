@@ -90,14 +90,13 @@ def tick():
 
 def draw():
     grenade_draw()
-    neutron_draw()
     cspray_draw()
+    neutron_draw()
     blood_draw()
     shrapnel_draw()
     agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
-#    assert False
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)
 
 def _destroy_grenade(int gid):

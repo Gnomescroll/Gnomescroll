@@ -2,7 +2,7 @@
 
 
 struct Cspray {
-    struct Particle particle;
+    struct Particle2 particle;
     int active;
 };
 
@@ -22,7 +22,7 @@ void init_objects_cspray() {
 }
 
 void inline cspray_Tick(struct Cspray* g) {
-    g->particle.vz -= 0.025; //gravity
+    //g->particle.vz -= 0.025; //gravity
 
     g->particle.ttl++;
 
@@ -30,7 +30,10 @@ void inline cspray_Tick(struct Cspray* g) {
     int collision[3];
     int tile;
 
-    s = bounce_collide_tile(&(g->particle), collision, &tile);
+   //s = bounce_collide_tile(&(g->particle), collision, &tile);
+    //int n = _GET_MS_TIME();
+    s = bounce_collide_tile_rk4(&(g->particle), collision, &tile, 0.0f);
+    //printf("CSPRAY RK4 %d\n", _GET_MS_TIME() - n);
 
     // cement effect
     if(g->active == 1) {
@@ -57,6 +60,8 @@ static inline void cspray_Free(struct Cspray* g) {
 }
 
 void cspray_tick() {
+//int n = _GET_MS_TIME();
+    
     struct Cspray* g = NULL;
     int i;
     for(i=0; i<max_cspray; i++) {
@@ -71,12 +76,17 @@ void cspray_tick() {
             }
         }
     }
+    //int n2 = _GET_MS_TIME();
+    ////if (n2-n > 0) {
+        //printf("cspray_tick :: %d\n", n2-n);
+    ////}
 
 
 }
 
 
 void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
+    //return;
     //printf("Create cspray\n");
     struct Cspray* g = NULL;
     int i;
@@ -93,7 +103,7 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
         return;}
 
     //struct Particle* p = (struct Particle*) malloc (sizeof(struct Particle));
-    create_particle(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
+    create_particle2(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
     //g->particle = p;
     g->active = 0;
 }
@@ -116,7 +126,7 @@ void cspray_draw() {
     float size = 0.3;
     float up[3] = {a[0]*size, a[4]*size, a[8]*size};
     float right[3] = {a[1]*size, a[5]*size, a[9]*size};
-    int id;
+    int id=21;
 
     float tx_min, tx_max, ty_min, ty_max;
 
@@ -140,13 +150,13 @@ void cspray_draw() {
         _c++;
         g = cspray_list[i];
         //draw setup
-        id = 21;
+        //id = 21;
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
 
-        x=g->particle.x; y=g->particle.y; z=g->particle.z;
+        x=g->particle.state.p.x; y=g->particle.state.p.y; z=g->particle.state.p.z;
 
         glTexCoord2f(tx_min,ty_max );
         glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left

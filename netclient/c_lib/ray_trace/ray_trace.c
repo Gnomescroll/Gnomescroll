@@ -220,6 +220,9 @@ int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* d
     return &ri3;
 }
 */
+
+//static inline int 
+
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
         float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -260,6 +263,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
+    max_i = (max_i > 1024) ? 1024 : max_i;
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
@@ -344,6 +348,8 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
+        max_i = (max_i > 1024) ? 1024 : max_i;
+
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
@@ -441,6 +447,8 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project
+        max_i = (max_i > 1024) ? 1024 : max_i;
+
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     side[0]=0; side[1]=0; side[2]=0;

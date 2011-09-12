@@ -151,7 +151,7 @@ class Grenade(Projectile):
     def __init__(self, id, state, owner=None, ttl=0, *args, **kwargs):
         self.id = id
         self.owner = owner
-        self.speed = self.speed / GameStateGlobal.fps
+        #self.speed = self.speed / GameStateGlobal.fps
 
         self.ttl = ttl
         x,y,z, vx,vy,vz = state

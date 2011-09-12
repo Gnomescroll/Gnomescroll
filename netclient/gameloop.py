@@ -174,7 +174,7 @@ class App(object):
             x *= v / le
             y *= v / le
             z *= v / le
-            c_lib.c_lib_objects._create_neutron(1,1,35.5,35.5,5.5, x,y,z)
+            c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
         print "==="
         print str(opts.opts.server)
@@ -200,7 +200,7 @@ class App(object):
 
                 sl_c += 1
                 _i+=1
-                neutron_fountain()
+                #neutron_fountain()
                 if _i % 30 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:

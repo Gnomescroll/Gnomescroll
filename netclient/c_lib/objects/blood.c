@@ -16,13 +16,14 @@ void init_objects_blood() {
 }
 
 void inline blood_Tick(struct Particle* g) {
-    g->vz -= 0.025; //gravity
+    //g->vz -= 0.025; //gravity
 
     g->ttl++;
     int* s;
     int collision[3];
     int tile;
-    s = move_collide_tile(g, collision, &tile);
+    //s = move_collide_tile_rk4(g, collision, &tile, 0.25);
+    s = move_collide_tile(g, collision, &tile); // blood doesnt need rk4
 
 }
 
