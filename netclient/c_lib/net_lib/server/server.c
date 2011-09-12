@@ -65,12 +65,8 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
 
     //printf("Sending %i bytes to %i:%i\n",n, p->ip, p->port);
-
     //printf("client_id= %d.%d.%d.%d\n",p->address.sin_addr.S_un.S_un_b.s_b1,p->address.sin_addr.S_un.S_un_b.s_b2, p->address.sin_addr.S_un.S_un_b.s_b3,p->address.sin_addr.S_un.S_un_b.s_b4);
-
-
     //printf("address: %s\n", (char *)inet_ntoa((struct sockaddr_in)p->address.sin_addr));
-
     //printf("send_to_client: client ip address: %s\n", inet_ntoa(p->address.sin_addr));
 
     int sent_bytes = sendto(server_socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
@@ -113,6 +109,8 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         if(client_id==65535 && channel_id == 255) {
             printf("New Client: sending client id\n");
             client_id = accept_connection(*from);
+            send_id(client_id);
+            send_id(client_id);
             send_id(client_id);
         }  else if ((client_id < HARD_MAX_CONNECTIONS) && (channel_id == 254) && (pool.connection[client_id] != NULL) ) {
             printf("Connection with client %i acked\n",  pool.connection[client_id]->client_id);
