@@ -200,7 +200,7 @@ class App(object):
 
                 sl_c += 1
                 _i+=1
-                #neutron_fountain()
+                neutron_fountain()
                 if _i % 30 == 0:
                     c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:

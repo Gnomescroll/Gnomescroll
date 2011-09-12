@@ -298,25 +298,25 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}};
 struct State* step_inter = &_step_inter;
 int step_i = 0;
-static inline void rk4_step(struct State* state, struct State* i, struct State* d, float t, float dt)
+static inline void rk4_step(struct State* initial, struct State* new, struct State* old, float t, float dt)
 {
         //int n = _GET_MS_TIME();
 
    //printf("RK4STEP\n");
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
+    //printf("%f,%f,%f, %f,%f,%f\n", initial->p.x, initial->p.y, initial->p.z, initial->v.x, initial->v.y, initial->v.z);
 
-     step_inter->p.x = state->p.x + d->p.x*dt;
-     step_inter->p.y = state->p.y + d->p.y*dt;
-     step_inter->p.z = state->p.z + d->p.z*dt;
-     step_inter->v.x = state->v.x + d->v.x*dt;
-     step_inter->v.y = state->v.y + d->v.y*dt;
-     step_inter->v.z = state->v.z + d->v.z*dt;
+     step_inter->p.x = initial->p.x + old->p.x*dt;
+     step_inter->p.y = initial->p.y + old->p.y*dt;
+     step_inter->p.z = initial->p.z + old->p.z*dt;
+     step_inter->v.x = initial->v.x + old->v.x*dt;
+     step_inter->v.y = initial->v.y + old->v.y*dt;
+     step_inter->v.z = initial->v.z + old->v.z*dt;
      
     //printf("STEP STATE (should be constant x4)\n");   // it is constant
     //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
-    i->p = step_inter->v;
+    new->p = step_inter->v;
      rk4_accelerate(step_inter, t+dt, dt);
-     i->v = step_inter->v;
+     new->v = step_inter->v;
     //printf("ACCEL\n");
         //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
     //printf("\n");
@@ -329,12 +329,14 @@ static inline void rk4_step(struct State* state, struct State* i, struct State* 
     //step_i %= 4;
 }
 
-static inline void rk4_step0(struct State* state, struct State* i, float t) {
+static inline void rk4_step0(struct State* initial, struct State* new, float t) {
             //int n = _GET_MS_TIME();
 
-    i->p = state->v;
-    i->v = state->v;
-    rk4_accelerate(i, t, 0.0f);
+    new->p = initial->v;
+    new->v.x=0.0f;
+    new->v.y=0.0f;
+    new->v.z=0.0f;
+    rk4_accelerate(new, t, 0.0f);
     //int n2 = _GET_MS_TIME();
     //if (n2-n > 0) {
         //printf("RK4STEP0 %d ms>0 :: %d\n", step_i, n2-n);
