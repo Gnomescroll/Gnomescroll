@@ -17,7 +17,8 @@ void init_client() {
     //init_sequence_numbers(&NPserver); /// FIX
     init_sequencer(&NPserver);
     //int local_port = 6967+(rand()%32);
-    int local_port = 6967+(rand()%32); ///should randomize!
+    //int local_port = 6967+(rand()%32); ///should randomize!
+    int local_port = 6967;
     struct Socket* s = create_socket(local_port);
 
     if(s != NULL) free(s);

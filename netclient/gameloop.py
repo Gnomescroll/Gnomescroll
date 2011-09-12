@@ -9,6 +9,9 @@ import args_client
 import opts
 opts.opts = args_client.get_args()
 
+#from opts import opts
+
+
 import default_settings as settings
 import stats
 
@@ -131,7 +134,9 @@ class App(object):
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
         NetClientGlobal.connect() #starts connection
-        NetClientConnect(127,0,0,1, 0)
+        a,b,c,d = opts.opts.server.split(".")
+        NetClientConnect(int(a),int(b),int(c),int(d), 0)
+        #NetClientConnect(127,0,0,1, 0)
 
     def mainLoop(self):
         global P, Phy
@@ -170,6 +175,10 @@ class App(object):
             y *= v / le
             z *= v / le
             c_lib.c_lib_objects._create_neutron(1,1,35.5,35.5,5.5, x,y,z)
+
+        print "==="
+        print str(opts.opts.server)
+        print "==="
 
         while not GameStateGlobal.exit:
             self.world.sound_updates()

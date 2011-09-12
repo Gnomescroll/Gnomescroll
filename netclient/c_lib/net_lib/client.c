@@ -24,7 +24,8 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     init_message_handler();
 
     unsigned int port = 9999;
-    set_server(127,0,0,1, port);
+    set_server(a,b,c,d, port);
+    //set_server(127,0,0,1, port);
     //set_server(a,b,c,d, port);
     attempt_connection_with_server();
 

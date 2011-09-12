@@ -278,6 +278,13 @@ void pviz_packet_histrogram2_draw(float x, float y, float z) {
             glVertex3f(_C+x+2*j,_C+y+2*i,z);
         }
     }
+
+    glColor3ub((unsigned char) 00,(unsigned char)0,(unsigned char)200);
+    for(i=0; i<8; i++) {
+        glVertex3f(_C+x-2,_C+y+2*10*i,z);
+        glVertex3f(_C+x-3,_C+y+2*10*i,z);
+        glVertex3f(_C+x-4,_C+y+2*10*i,z);
+    }
     glEnd();
 
     //printf("time= %i\n", get_current_netpeer_time());

@@ -63,6 +63,14 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
 
     //printf("Sending %i bytes to %i:%i\n",n, p->ip, p->port);
+
+    //printf("client_id= %d.%d.%d.%d\n",p->address.sin_addr.S_un.S_un_b.s_b1,p->address.sin_addr.S_un.S_un_b.s_b2, p->address.sin_addr.S_un.S_un_b.s_b3,p->address.sin_addr.S_un.S_un_b.s_b4);
+
+
+    //printf("address: %s\n", (char *)inet_ntoa((struct sockaddr_in)p->address.sin_addr));
+
+    printf("send_to_client: client ip address: %s\n", inet_ntoa(p->address.sin_addr));
+
     int sent_bytes = sendto(server_socket.socket,(const char*)buffer, n,0, (const struct sockaddr*)&p->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n)
     {
