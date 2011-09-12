@@ -1,8 +1,13 @@
 #include "cspray.h"
 
 
+//struct Cspray {
+    //struct Particle particle;
+    //int active;
+//};
+
 struct Cspray {
-    struct Particle particle;
+    struct Particle2 particle;
     int active;
 };
 
@@ -96,7 +101,7 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
         return;}
 
     //struct Particle* p = (struct Particle*) malloc (sizeof(struct Particle));
-    create_particle(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
+    create_particle2(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 1200);
     //g->particle = p;
     g->active = 0;
 }
@@ -149,7 +154,7 @@ void cspray_draw() {
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
 
-        x=g->particle.x; y=g->particle.y; z=g->particle.z;
+        x=g->particle.state.p.x; y=g->particle.state.p.y; z=g->particle.state.p.z;
 
         glTexCoord2f(tx_min,ty_max );
         glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
