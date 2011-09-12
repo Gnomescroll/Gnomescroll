@@ -37,7 +37,7 @@ struct NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
     //should be excessive/uneeded
     s->address.sin_family = AF_INET;
     s->address.sin_addr.s_addr = address.sin_addr.s_addr;
-    s->address.sin_port = htons(address.sin_port);
+    s->address.sin_port = address.sin_port;
 
     s->ip = ntohl(address.sin_addr.s_addr);
     s->port = ntohs( address.sin_port );
