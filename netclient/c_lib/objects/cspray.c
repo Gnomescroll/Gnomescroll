@@ -86,7 +86,7 @@ void cspray_tick() {
 
 
 void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz) {
-    return;
+    //return;
     //printf("Create cspray\n");
     struct Cspray* g = NULL;
     int i;
