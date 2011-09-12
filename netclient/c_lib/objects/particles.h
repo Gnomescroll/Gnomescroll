@@ -26,11 +26,14 @@ struct EventParticle {
     unsigned int event_ttl;
 };
 
+struct EventParticle2 {
+    struct Particle2 particle;
+    unsigned int event_ttl;
+};
 
 void create_particle(struct Particle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max);
 void create_particle2(struct Particle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max);
 void create_event_particle(struct EventParticle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
-
-//void free_event_particle(struct EventParticle* p);
+void create_event_particle2(struct EventParticle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
 
 #endif
