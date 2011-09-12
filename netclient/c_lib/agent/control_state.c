@@ -2,7 +2,7 @@
 
 void init_agent_control_state() {
 
-    printf("TEST\n");
+    //printf("TEST\n");
 
     #ifdef DC_CLIENT
 

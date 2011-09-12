@@ -3,6 +3,8 @@
 
 //#include <c_lib.h>
 
+#define DC_SERVER
+
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>

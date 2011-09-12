@@ -19,7 +19,7 @@ int default_handler_function(unsigned char* buff, int n) {
 void init_message_handler() {
     int i;
     for(i=0;i<256;i++) {
-        handler_array[i] = &default_handler_function;
+        handler_array[i] = NULL;
         h_packet_size[i] = -1;
     }
 
@@ -32,7 +32,7 @@ void register_message_handler(int message_id, int size, pt2handler fptr) {
         return;
     }
 
-    if(handler_array[message_id] != &default_handler_function) {
+    if(handler_array[message_id] != NULL) {
         printf("Reassigning message_id %i !!!\n", message_id);
     }
     h_packet_size[message_id] = size;
@@ -51,6 +51,10 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
     if(*n-1+size >= max_n) {
         printf("ERROR! message processor would read past end of packet!\n");
         return 0;
+    }
+    if(handler_array[message_id] == NULL) {
+        printf("message_handler error: no handler for message_id=%i\n", message_id);
+        return -4;
     }
     bytes = handler_array[message_id](buff, *n);
 

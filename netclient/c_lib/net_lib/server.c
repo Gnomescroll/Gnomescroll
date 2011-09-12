@@ -23,6 +23,7 @@ void _NetServerInit() {
     unsigned short port = 9999;
     init_server(port);
     //inits
+    //printf("WTF?WTF?WTF?\n");
     init_agent_control_state();
 }
 
