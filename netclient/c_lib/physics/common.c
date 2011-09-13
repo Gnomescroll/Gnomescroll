@@ -114,7 +114,7 @@ static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float da
     }
     
     if (coll) {
-        if (p->id == 20) {printf("COLL damp= %f\n", damp);printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
+        //if (p->id == 20) {printf("COLL damp= %f\n", damp);printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
         p->state.v.x = p->state.v.x * damp;
         p->state.v.y = p->state.v.y * damp;
         p->state.v.z = p->state.v.z * damp;
@@ -231,9 +231,9 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     //}
 
     _adjust_vel2(p, s, -1, damp);
-    if (s[0] || s[1] || s[2]) {
-        if (p->id == 20) {printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);}
-    }
+    //if (s[0] || s[1] || s[2]) {
+        //if (p->id == 20) {printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);}
+    //}
 
     //if ((int)interval == dt) {
     if (interval >= dt) {
