@@ -5,8 +5,8 @@ void init_agent_control_state() {
     //printf("TEST\n");
 
     #ifdef DC_CLIENT
-    printf("Client Message Registered: handle_agent_state_snapshot\n");
-    register_message_handler(1, 18, &handle_agent_state_snapshot); //id, size, function
+    //printf("Client Message Registered: handle_agent_state_snapshot\n");
+    //register_message_handler(1, 18, &handle_agent_state_snapshot); //id, size, function
     #endif
 
 
