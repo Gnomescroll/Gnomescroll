@@ -1,10 +1,11 @@
 
+#define CSn 8 //number of control state button variables
 
 struct Agent_cs { //control state
     int tick;
     int seq;
     float theta,phi;
-    int cs[6]; //movement, jetpack
+    int cs[CSn]; //movement, jetpack
 };
 
 struct Agent_snapshot {
@@ -12,7 +13,7 @@ struct Agent_snapshot {
     int tick;
     float x,y,z;
     float vx,vy,vz;
-    //float theta,phi;
+    float theta,phi;
 }
 
 struct Agent {
@@ -35,9 +36,9 @@ struct Agent {
 struct Agent* create_agent(int id, struct Agent_snapshot* as) {
 
     struct Agent* a = malloc(sizeof(struct Agent));
-    a.id = id;
-    int tbn=0;
-    int sbn=0;
+    a->id = id;
+    a->tbn=0;
+    a->sbn=0;
 
     int i;
     for(i=0;i<8;i++) {
@@ -54,13 +55,21 @@ struct Agent* create_agent(int id, struct Agent_snapshot* as) {
     a->vx = as->vx;
     a->vy = as->vy;
     a->vz = as->vz;
+    a->theta = as->theta;
+    a->phi = as->phi;
 
     return a;
 }
 
 void apply_control_state(int id, struct Agent_cs* cs ) {
     //get agent
+
+    printf("Agent Control State Change: agent_id=%i, tick=%i\n", a->id, cs->tick);
     a->t_buffer[cs->tick % 128] = *cs;
+    if(cs->tick > a->tick) {
+        a->tick = cs->tick;
+        cs->tbn = cs->tick % 128;
+    }
 }
 
 void apply_agent_snapshot(int id, struct Agent_snapshot* as) {
@@ -76,8 +85,39 @@ void apply_agent_snapshot(int id, struct Agent_snapshot* as) {
                 a->t_buffer[i] = -1; //wipe control state before current snapshot
             }
         }
-        printf("Processed Agent Snapshot: agent_id=%i, tick=%i\n", a-id, as->tick);
+        printf("Agent Snapshot: agent_id=%i, tick=%i\n", a-id, as->tick);
     } else {
         printf("Old snapshot received: tick=%i, newest snapshot is tick=%i\n",as->tick ,a->s_buffer[a->sbn].tick);
     }
+}
+
+void reset_agent_to_last_snapshot(struct Agent *a) {
+    struct Agent_snapshot* s = &a->s_buffer[a->sbn];
+
+    a->x = as->x;
+    a->y = as->y;
+    a->z = as->z;
+    a->vx = as->vx;
+    a->vy = as->vy;
+    a->vz = as->vz;
+    a->theta = as->theta;
+    a->phi = as->phi;
+
+}
+
+void update_agent_position(int id) {
+    int tick = a->s_buffer[a->sbn].tick;
+
+    int i,j;
+    j = a->tbn;
+
+    reset_agent_to_last_snapshot(a);
+    for(i=0; i<128; i++) {
+
+
+        if(t_buffer[i].tick < )
+
+    }
+
+
 }
