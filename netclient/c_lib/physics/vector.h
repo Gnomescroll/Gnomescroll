@@ -89,7 +89,7 @@ inline static struct Vector* mult_vec_scalar(struct Vector* a, float i) {
 inline static struct Vector reflect(struct Vector* inc, struct Vector* nor) {
     struct Vector v;
     v = sub_vec(inc, mult_vec_scalar(nor, 2.0f*(vector_dot(nor,inc))));
-    //v = inc - 2*(nor.inc)*nor
+    //v = inc - 2*(nor.inc)*nor   <<< pseudocode
     return v;
 }
 

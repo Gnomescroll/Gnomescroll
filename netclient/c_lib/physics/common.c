@@ -175,7 +175,13 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
     //int n2 = _GET_MS_TIME();
     //printf("raycast took %d\n", n2-n);
 
-    _adjust_vel2(p, s, -1, damp);
+    //_adjust_vel2(p, s, -1, damp);
+    struct Vector norm = {s[0], s[1], s[2]};
+    //norm->x = (float)s[0];
+    //norm->y = (float)s[1];
+    //norm->z = (float)s[2];
+    struct Vector v = reflect(&(p->state.v), &norm);
+    p->state.v = *(mult_vec_scalar(&v, damp));
     //if (s[0] || s[1] || s[2]) {
             //if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
 
