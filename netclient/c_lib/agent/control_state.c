@@ -5,15 +5,15 @@ void init_agent_control_state() {
     //printf("TEST\n");
 
     #ifdef DC_CLIENT
-
+    printf("Client Message Registered: handle_agent_state_snapshot\n");
+    register_message_handler(1, 18, &handle_agent_state_snapshot); //id, size, function
     #endif
 
 
     #ifdef DC_SERVER
 
-    printf("Message Registered: handle_agent_control_state_message\n");
+    printf("Server Message Registered: handle_agent_control_state_message\n");
     register_message_handler(1, 18, &handle_agent_control_state_message); //id, size, function
-
     #endif
 
 }
