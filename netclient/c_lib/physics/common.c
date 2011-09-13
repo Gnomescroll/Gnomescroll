@@ -288,10 +288,9 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 //printf("ACCELMAIN\n");
     //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 
-    const float _air_resist = 0.9f;
-    const float air_resist = (1.0f- (1.0f-_air_resist));
+    const float air_resist = 0.8f;
     //const 
-    inter->v.z -= 20.0f;  // gravity
+    inter->v.z -= 10.0f;  // gravity
 
     inter->v.x *= air_resist;
     inter->v.y *= air_resist;
