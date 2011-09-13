@@ -94,6 +94,7 @@ int _init_draw_terrain() {
     //glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
     }
+    return 0;
 }
 
 int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
@@ -188,7 +189,7 @@ if(draw_mode_enabled == 0) {
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
-    return 0;
+    //return 0;
 } else {
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
 
@@ -197,8 +198,9 @@ if(draw_mode_enabled == 0) {
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), 20);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
-    return 0;
+    //return 0;
 }
+    return 0;
 
 }
 
@@ -324,7 +326,9 @@ int update_column_VBO(struct vm_column* column) {
         //column->vbo_loaded = 1;
     }
     //printf("vbo_id= %i v_num= %i \n", column->vbo.VBO_id,column->vbo.v_num);
- }
+
+     return 0;
+}
 
 
 int _update_chunks() {
@@ -372,6 +376,8 @@ int _update_chunks() {
 
 
     }}
+        return 0;
+
 }
 
 GLuint filter = 0; ;                                // Which Filter To Use
@@ -391,6 +397,7 @@ glFogf(GL_FOG_START, 1.0f);             // Fog Start Depth
 glFogf(GL_FOG_END, 5.0f);               // Fog End Depth
 glEnable(GL_FOG);                   // Enables GL_FOG
 
+    return 0;
 
 }
 /*
@@ -439,6 +446,8 @@ int _draw_terrain() {
     //_draw_fog();
     //f = SDL_GetTicks();
     //printf("Terrain rendering time= %i \n", f-s);
+    return 0;
+
 }
 
 int __inline chunk_render_check(int x_off, int y_off, int tolerance) {
@@ -451,10 +460,10 @@ if((c.x-x)*(c.x-x) + (c.y-y)*(c.y-y) < (tolerance+view_distance)*(tolerance+view
     {
         return 1;
     }
-else
-    {
+//else
+    //{
         return 0;
-    }
+    //}
 }
 
 int _set_camera(float x, float y, float z, float vx, float vy, float vz, float ux, float uy, float uz, float ratio, float viewangle) {
@@ -468,10 +477,12 @@ return 0;
 
 int _set_view_distance(int vd) {
     view_distance = vd;
+    return 0;
 }
 
 int _set_fulstrum_culling(int value) {
     fulstrum_culling = value;
+    return 0;
 }
 
 
@@ -522,6 +533,7 @@ int* _chunk_request() {
         crb[2] = ch_lowest->z_off;
         return &crb;
     }
+    return NULL;
 }
 
 void _refresh_map_vbo() {
