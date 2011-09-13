@@ -1,3 +1,4 @@
+#include "net_agent.h"
 
 static inline void pack_NET_agent_snapshot(unsigned char* buffer, struct NET_agent_snapshot* s, int* n) {
     PACK_int16_t(s->id, buffer, n);

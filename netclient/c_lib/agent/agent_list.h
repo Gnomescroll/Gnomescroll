@@ -3,4 +3,7 @@
 
 #include "agent.h"
 
+void destroy_agent(int id);
+struct Agent_state* get_agent(int id);
+
 #endif
