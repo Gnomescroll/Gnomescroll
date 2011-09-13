@@ -34,7 +34,7 @@ int _get_key_state(key_state_func key_state_cb) {
         for(x=0; x<numkeys; x++) {
             if(keystate[x] != 0) { printf("%i='%c' ", x, (char)x);}
             }
-        printf("\n", x);
+        printf("\n");
     }
     //if ( keystate[SDLK_UP] ) {printf( "Up Key" );}
     return 0;

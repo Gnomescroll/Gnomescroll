@@ -11,7 +11,7 @@ SDL_VideoInfo *pSDLVideoInfo;
 void _del_video() {
     //printf("SDL_functions.c: _del_video, gracefull shutdown\n");
     SDL_Quit();
-    return 0;
+    //return 0;
 }
 
 int _set_resolution(int xres, int yres, int fullscreen) {
@@ -135,7 +135,7 @@ int _init_video() {
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
-
+    return 0;
 }
 
 

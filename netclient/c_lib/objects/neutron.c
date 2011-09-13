@@ -98,8 +98,8 @@ void inline neutron_Tick(struct Neutron* g) {
                 float _vx, _vy, _vz, len, vel=2;
 
                 _vx = (float)rand()/(float)RAND_MAX;
-                _vx = (float)rand()/(float)RAND_MAX;
-                _vx = (float)rand()/(float)RAND_MAX;
+                _vy = (float)rand()/(float)RAND_MAX;
+                _vz = (float)rand()/(float)RAND_MAX;
                 len = sqrt(_vx*_vx+_vy*_vy+_vz*_vz);
                 _vx *= vel/len;
                 _vy *= vel/len;

@@ -35,10 +35,10 @@ glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
 glDisable(GL_TEXTURE_2D);
-
+return 0;
 }
 
 int init_texture_loader(){
     init_tex_particle_sheet();
-
+    return 0;
 }

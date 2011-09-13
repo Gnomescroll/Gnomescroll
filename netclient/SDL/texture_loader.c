@@ -107,4 +107,5 @@ glEnd();
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
+    return 0;
 }

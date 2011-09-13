@@ -254,7 +254,8 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a) {
 
     int i,j,k;
-    int i1, j1;
+    int i1;
+    //int j1;
     int index;
 
     float vos = v->vox_size;

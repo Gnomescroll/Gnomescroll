@@ -255,17 +255,17 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
-    double xf, yf, zf;
+    //double xf, yf, zf;
 
     ri4[0]=0; ri4[1]=0; ri4[2]=0;
 
-    int end = 0;
+    //int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     max_i = fmin(raycast_tick_max, max_i);
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
-    int side = -1;
+    //int side = -1;
     //collision_check(0,0,0);
     for(i =0; i < max_i; i++) {
         cx += dx;
@@ -340,18 +340,18 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
-    double xf, yf, zf;
+    //double xf, yf, zf;
 
     ri4[0]=0; ri4[1]=0; ri4[2]=0;
 
-    int end = 0;
+    //int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     max_i = fmin(raycast_tick_max, max_i);
 
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
-    int side = -1;
+    //int side = -1;
     int _c = 0;
     //collision_check(0,0,0);
     for(i =0; i < max_i; i++) {
@@ -433,18 +433,18 @@ int* _ray_cast5b(float x0,float y0,float z0, float x1,float y1,float z1, float* 
     cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
-    double xf, yf, zf;
+    //double xf, yf, zf;
 
     ri4[0]=0; ri4[1]=0; ri4[2]=0;
 
-    int end = 0;
+    //int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     max_i = fmin(raycast_tick_max, max_i);
 
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
-    int side = -1;
+    //int side = -1;
     int _c = 0;
     //collision_check(0,0,0);
     for(i =0; i < max_i; i++) {
@@ -535,7 +535,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
     cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
-    double xf, yf, zf;
+    //double xf, yf, zf;
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project

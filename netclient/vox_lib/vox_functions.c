@@ -137,7 +137,8 @@ int init7() {
 
 inline int draw_vol(struct VoxelList* vl, struct Voxel voi, int xi, int yi, int zi) {
     struct Vertex vlist[8];
-    int i,j;
+    int i;
+    //int j;
     //struct Vertex* vt;
 
     if(voi.r == 0 && voi.g == 0 && voi.b == 0)

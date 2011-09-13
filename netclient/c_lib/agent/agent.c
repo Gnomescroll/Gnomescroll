@@ -12,7 +12,7 @@ void agent_Draw(struct Agent_state* g);
 #endif
 
 struct Agent_state* get_agent(int id) {
-    struct Agent_state* g = NULL;
+    //struct Agent_state* g = NULL;
     int i;
     for(i=0; i<1024; i++) {
         if(Agent_list[i] != NULL && Agent_list[i]->id == id) {
@@ -50,7 +50,7 @@ int create_agent(float x, float y, float z) {
             break;
         }
     }
-    if(a== NULL) { printf("Bug: max agent number reached!\n"); return;}
+    if(a== NULL) { printf("Bug: max agent number reached!\n"); return -1;}
     agent_id_counter +=1;
     g->id = agent_id_counter;
     printf("Agent Created: id= %i \n", g->id);

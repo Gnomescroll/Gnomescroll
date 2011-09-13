@@ -51,6 +51,7 @@ int setShaders() {
     shader_program_1 = p;
 
     //glUseProgramObjectARB(p);
+    return 0;
 }
 
 _init_particle_functions() {
@@ -104,7 +105,7 @@ float x_,y_,z_;
 
 x_ = a[0]*x+a[4]*y+a[8]*z;
 y_ = a[1]*x+a[5]*y+a[9]*z;
-y_ = a[2]*x+a[6]*y+a[10]*z;
+z_ = a[2]*x+a[6]*y+a[10]*z;
 
 /*
 x_ = a[0]*x+a[1]*y+a[2]*z;
@@ -207,6 +208,7 @@ glEnd();
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
     glColor3ub(255,255,255);
+    return 0;
 }
 
 
@@ -259,6 +261,8 @@ glEnd();
     //glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glColor3ub(255,255,255);
+        return 0;
+
 }
 
 
@@ -425,7 +429,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     ty_max = ty_min + (1.0/16.0);
     ty_min += epi; ty_max -= epi;
 
-    int i;
+    int i=0;
     float bx,by,bz;
     //struct Vec* vl, vr;
     struct Vec pos = init_Vec(c->x, c->y, c->z); //camera position
@@ -512,4 +516,5 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     //glColor3ub(255,255,255);
+    return 0;
 }

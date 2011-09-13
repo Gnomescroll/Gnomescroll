@@ -72,6 +72,7 @@ int _init_text() {
     SDL_FreeSurface(font);
 
     glDisable(GL_TEXTURE_2D);
+    return 0;
 
 }
 
@@ -147,6 +148,7 @@ if (tex_alpha) {
     if (tex_alpha) {
         glDisable(GL_BLEND);
     }
+    return 0;
 }
 
 
@@ -210,6 +212,7 @@ while(text[c_num] != 0) { c_num++; }
         offset += width;
     }
     glDisable(GL_TEXTURE_2D);
+    return 0;
 }
 /*
 /// DEPRECATE BELOW LINE

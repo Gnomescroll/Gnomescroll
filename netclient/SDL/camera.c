@@ -41,6 +41,7 @@ int _set_camera(struct Camera* c) {
     */
     //while(1);
     camera = c;
+    return 0;
 }
 
 struct Camera* _get_camera() {
@@ -65,7 +66,7 @@ int _world_projection(struct Camera* c) {
     c->y_size = (float) _yres;
 
     float aspect = c->x_size / c->y_size;
-    float camera_focus_x,  camera_focus_y,  camera_focus_z;
+    //float camera_focus_x,  camera_focus_y,  camera_focus_z;
     float length;
     //camera = c;
     c->ratio = c->x_size / c->y_size;

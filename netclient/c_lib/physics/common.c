@@ -204,7 +204,7 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
 
     int t = p->ttl;
     int dt = 1;
-    float fdt = 1.0f;
+    //float fdt = 1.0f;
 
     motion_inter->p.x = p->state.p.x;
     motion_inter->p.y = p->state.p.y;
