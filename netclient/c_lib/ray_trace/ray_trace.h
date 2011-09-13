@@ -24,6 +24,7 @@
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
+int* _ray_cast5b(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side);
 
 #endif
