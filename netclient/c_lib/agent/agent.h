@@ -11,6 +11,7 @@
 #include <t_map/t_properties.h>
 
 #include "agent_vox.h"
+#include "agent_draw.h"
 
 #include <physics/vector.h>
 

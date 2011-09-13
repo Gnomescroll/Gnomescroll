@@ -128,6 +128,10 @@ struct Vox* get_agent_vox_part(int id, int part) {
 void agent_Draw(struct Agent_state* g) {
     //printf("agent draw \n");
 
+    draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
+    ///
+    return; //get voxel model working later
+
     float theta = g->xangle;
     float phi = g->yangle;
     struct Vector c,up,forward,right;
