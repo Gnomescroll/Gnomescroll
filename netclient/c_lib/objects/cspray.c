@@ -4,6 +4,7 @@
 struct Cspray {
     struct Particle2 particle;
     int active;
+    int stopped;
 };
 
 #define max_cspray 4096

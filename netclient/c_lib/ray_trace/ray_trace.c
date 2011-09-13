@@ -2,7 +2,6 @@
 
 ///ray casting stuff
 
-
 //#define ssize 256
 //#define bsize 65536
 
@@ -263,7 +262,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    max_i = (max_i > 1024) ? 1024 : max_i;
+    max_i = fmin(raycast_tick_max, max_i);
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
     int side = -1;
@@ -348,7 +347,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int end = 0;
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-        max_i = (max_i > 1024) ? 1024 : max_i;
+    max_i = fmin(raycast_tick_max, max_i);
 
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
@@ -447,7 +446,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project
-        max_i = (max_i > 1024) ? 1024 : max_i;
+    max_i = fmin(raycast_tick_max, max_i);
 
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);

@@ -69,6 +69,8 @@ def parse(cl_args=None):
 
     parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'])
 
+    parser.add_argument('-nl', '--no-load', action='store_true')
+
     parser.add_argument('-tk', '--team-kills', action='store_true')
 
     parser.add_argument('-vp', '--victory-points', default=DEFAULTS['victory_points'])
@@ -103,6 +105,10 @@ def get_args():
     if args.print_args:
         print_args(args)
 
+    if args.no_load:
+        import sys
+        sys.exit()
+        
     return args
 
 def print_args(args):
@@ -123,7 +129,7 @@ def print_args(args):
     ]
     print 'Options:'
     for key in keys:
-        print getattr(args, key)
+        print '%s :: %s' % (key, getattr(args, key),)
 
 def main():
     import gameloop
