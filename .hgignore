@@ -30,6 +30,7 @@ c_lib_objects.c
 input.c
 c_lib_map_gen.c
 c_lib_timer.c
+c_lib_agents.c
 
 test_client
 test_server

@@ -14,8 +14,7 @@
 #include "./objects/neutron.c"
 #include "./objects/cspray.c"
 
-#include "./agent/agent.c"
-#include "./agent/agent_vox.c"
+#include "./agent/agent_include.h"
 
 #ifdef DC_CLIENT
 #include "./texture_loader.c"

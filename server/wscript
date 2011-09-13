@@ -98,7 +98,7 @@ def build(bld):
         #source=['cube_lib/terrain_map.pyx'],
         #use=common_libraries + ['c_lib'],
         #target='cube_lib.terrain_map')
-        
+
     bld(features='c cshlib pyext',
         source=['c_lib/terrain_map.pyx'],
         use=common_libraries + ['c_lib'],
@@ -120,6 +120,11 @@ def build(bld):
         source=['c_lib/c_lib_objects.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
+
+    bld(features='c cshlib pyext',
+        source=['c_lib/c_lib_agents.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_agents')
 
         #lib=time_lib,
     # final
@@ -154,6 +159,7 @@ def install_in_ext(ctx):
         'c_lib.ray_trace',
         'init_c_lib',
         'c_lib.c_lib_objects',
+        'c_lib.c_lib_agents',
         'c_lib.terrain_map',
     ]
 
