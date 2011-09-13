@@ -156,7 +156,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         return;
     }
     if(from->sin_addr.s_addr != p->address.sin_addr.s_addr) {
-        printf("Sender IP does not match client IP: %i, expected %i\n", htonl(from->sin_addr.s_addr), htonl(p->address.sin_addr.s_addr) );
+        printf("Sender IP does not match client IP: %s, expected %s\n", inet_ntoa(from->sin_addr), inet_ntoa(p->address.sin_addr) );
         return;
     }
     if(client_id != p->client_id) {
