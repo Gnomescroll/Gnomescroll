@@ -1,4 +1,5 @@
-#include "net_agent.c"
+#ifndef objects_agent_h
+#define objects_agent_h
 
 struct Agent_cs { //control state
     int tick;
@@ -8,9 +9,34 @@ struct Agent_cs { //control state
 };
 
 struct Agent_snapshot {
-    int id; //ignore on client
+    //int id; //ignore on client
     int tick;
     float x,y,z;
     float vx,vy,vz;
     //float theta,phi;
 }
+
+struct Agent_state { //Agent_state
+    int id;
+    int local;
+
+    float x,y,z;
+    float theta,phi;
+
+    int tick; //increment every control state change
+
+    int tbn;
+    struct Agent_cs t_buffer[128];
+
+    struct Agent_snapshot last_snapshot;
+    //collision box
+    float camera_height;
+    float cbox_height;
+    float cbox_radius;
+};
+
+#include "net_agent.c"
+
+#include "./angel_list.h"
+
+#endif

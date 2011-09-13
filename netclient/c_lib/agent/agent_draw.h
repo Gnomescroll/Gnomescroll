@@ -8,6 +8,9 @@
 
 #include <physics/vector.h>
 
+#include "./agent_list.h"
+
+void agent_draw(); //draw all agents
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle);
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height);

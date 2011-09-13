@@ -109,7 +109,8 @@ void handle_NET_agent_control_state(unsigned char* buff, int n) {
     cs.phi = ncs.phi;
     cs.cs = ncs.cs;
 
-    apply_agent_snapshot(id, &as);
+    apply_control_state(id, &cs);
+    ///handling code
 }
 /*
 struct Agent_cs { //control state
@@ -119,11 +120,26 @@ struct Agent_cs { //control state
     int cs[CSn]; //movement, jetpack
 };
 */
+
 void handle_NET_agent_snapshot(unsigned char* buff, int n) {
     struct NET_agent_snapshot ncs;
     unpack_NET_agent_snapshot(buff, &ncs, &n);
 
     struct Agent_snapshot cs;
+
+    int id = cs.id;
+    cs.tick = ncs.tick;
+    cs.x = ncs.x;
+    cs.y = ncs.y;
+    cs.z = ncs.z;
+    cs.vx = ncs.vx;
+    cs.vy = ncs.vy;
+    cs.cz = ncs.vz;
+    cs.theta = ncs.theta;
+    cs.phi = ncs.phi;
+
+    apply_agent_snapshot(id, &cs);
+}
 
 /*
 struct Agent_snapshot {
@@ -134,4 +150,3 @@ struct Agent_snapshot {
     //float theta,phi;
 }
 */
-}

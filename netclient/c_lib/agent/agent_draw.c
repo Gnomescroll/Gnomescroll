@@ -1,19 +1,34 @@
 #include "agent_draw.h"
 
-/*
-        self.draw_aiming_direction()
-        self.draw_bounding_box()
-        self.draw_position(points=10, seperation = 0.10)
-        self.draw_velocity(point_density=15, units=200)
-        P.event("draw acceleration")
 
-        P.event("ray cast")
-        pos = ray_cast_farest_empty_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
-        if pos != None:
-            #print str(pos)
-            (x,y,z) = pos
-            draw_cube(x,y,z,[0,155,0])
-*/
+/*
+ *  Client only
+ */
+void agent_Draw(struct Agent_state* g) {
+    //printf("agent draw \n");
+
+    draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
+
+}
+
+void agent_draw() {
+    struct Agent_state* g = NULL;
+    int i;
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] != NULL) {
+            g = Agent_list[i];
+            agent_Draw(g);
+        }
+    }
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+}
+
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
     float distance = 15;

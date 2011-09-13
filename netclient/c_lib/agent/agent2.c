@@ -1,57 +1,29 @@
 
-#define CSn 8 //number of control state button variables
+#include "agent2.h"
 
 
-
-/*
-struct NET_agent_snapshot {
-    int16_t id;
-    int16_t tick;
-    float x;
-    float y;
-    float z;
-    float vx;
-    float vy;
-    float vz;
-};
-
-struct NET_agent_control_state {
-    int16_t id;
-    int16_t tick;
-    uint8_t seq;
-    uint8_t theta;
-    uint8_t phi;
-    uint32_t cs;
-};
-*/
-
-struct Agent {
-    int id;
-    int local;
-
-    float x,y,z;
-    float theta,phi;
-
-    int tick; //increment every control state change
-
-    int tbn;
-    struct Agent_cs t_buffer[128];
-
-    struct Agent_snapshot last_snapshot;
-
-};
-
-void handle_agent_snapshot(char* buff, int* n) {
-
-
-
-
+void agent_Tick(struct Agent_state* g) {
+    g->xangle += 0.01;
+    g->xangle = 0.0;
+    g->yangle += 0; //0.005; //0.35;
 }
 
+void agent_tick() {
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] != NULL) {
+            g = Agent_list[i];
+            agent_Tick(g);
+        }
+    }
+}
 
-struct Agent* create_agent(int id, struct Agent_snapshot* as) {
+// end misc
 
-    struct Agent* a = malloc(sizeof(struct Agent));
+struct Agent_state* create_agent(int id, struct Agent_snapshot* as) {
+
+    struct Agent_state* a = malloc(sizeof(struct Agent_state));
     a->id = id;
     a->tbn=0;
 
@@ -97,7 +69,7 @@ void apply_agent_snapshot(int id, struct Agent_snapshot* as) {
 }
 
 void reset_agent_to_last_snapshot(struct Agent *a) {
-    struct Agent_snapshot* s = &a->s_buffer[a->sbn];
+    struct Agent_snapshot* s = &a->last_snapshot;
 
     a->x = as->x;
     a->y = as->y;
