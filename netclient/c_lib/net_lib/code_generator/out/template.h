@@ -3,35 +3,27 @@
 
 
 { 
-	struct test1 s;
-	s.testbyte = x; // uint8_t 
-	s.testfloat = x; // float 
-	pack_struct_test1(buff, &s, &n); 
+	struct NET_agent_snapshot s;
+	s.id = x; // int16_t 
+	s.tick = x; // int16_t 
+	s.x = x; // float 
+	s.y = x; // float 
+	s.z = x; // float 
+	s.vx = x; // float 
+	s.vy = x; // float 
+	s.vz = x; // float 
+	pack_struct_NET_agent_snapshot(buff, &s, &n); 
  } 
 
 { 
-	struct test2 s;
-	s.testshort = x; // int16_t 
-	s.testint = x; // int32_t 
-	pack_struct_test2(buff, &s, &n); 
- } 
-
-{ 
-	struct test3 s;
-	s.testushort = x; // uint16_t 
-	s.testuint = x; // uint32_t 
-	pack_struct_test3(buff, &s, &n); 
- } 
-
-{ 
-	struct uni s;
-	s.t1 = x; // uint8_t 
-	s.t4 = x; // int16_t 
-	s.t5 = x; // uint16_t 
-	s.t2 = x; // int32_t 
-	s.t3 = x; // uint32_t 
-	s.t6 = x; // float 
-	pack_struct_uni(buff, &s, &n); 
+	struct NET_agent_control_state s;
+	s.id = x; // int16_t 
+	s.tick = x; // int16_t 
+	s.seq = x; // uint8_t 
+	s.theta = x; // uint8_t 
+	s.phi = x; // uint8_t 
+	s.cs = x; // uint32_t 
+	pack_struct_NET_agent_control_state(buff, &s, &n); 
  } 
 
 

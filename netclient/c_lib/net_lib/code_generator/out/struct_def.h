@@ -5,28 +5,24 @@
 #include <stdint.h> 
 #include "../type_pack.h"
 
-struct test1 { 
-	uint8_t testbyte;
-	float testfloat;
+struct NET_agent_snapshot { 
+	int16_t id;
+	int16_t tick;
+	float x;
+	float y;
+	float z;
+	float vx;
+	float vy;
+	float vz;
 };
 
-struct test2 { 
-	int16_t testshort;
-	int32_t testint;
-};
-
-struct test3 { 
-	uint16_t testushort;
-	uint32_t testuint;
-};
-
-struct uni { 
-	uint8_t t1;
-	int16_t t4;
-	uint16_t t5;
-	int32_t t2;
-	uint32_t t3;
-	float t6;
+struct NET_agent_control_state { 
+	int16_t id;
+	int16_t tick;
+	uint8_t seq;
+	uint8_t theta;
+	uint8_t phi;
+	uint32_t cs;
 };
 
 #endif

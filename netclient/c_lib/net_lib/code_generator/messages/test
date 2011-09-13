@@ -7,23 +7,21 @@ us unsigned short
 f float
 
 ---
-
-struct test1
-b testbyte
-f testfloat
+struct NET_agent_snapshot
+s id
+s tick
+f x
+f y
+f z
+f vx
+f vy
+f vz
 ---
-struct test2
-s  testshort
-n testint
+struct NET_agent_control_state
+s id
+s tick
+b seq
+b theta
+b phi
+un cs
 ---
-struct test3
-us testushort
-un testuint
----
-struct uni
-b t1
-s t4
-us t5
-n t2
-un t3
-f t6

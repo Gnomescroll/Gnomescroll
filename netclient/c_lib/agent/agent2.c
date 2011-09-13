@@ -1,20 +1,29 @@
 
 #define CSn 8 //number of control state button variables
 
-struct Agent_cs { //control state
-    int tick;
-    int seq;
-    float theta,phi;
-    int cs[CSn]; //movement, jetpack
+
+
+/*
+struct NET_agent_snapshot {
+    int16_t id;
+    int16_t tick;
+    float x;
+    float y;
+    float z;
+    float vx;
+    float vy;
+    float vz;
 };
 
-struct Agent_snapshot {
-    //int id; //ignore on client
-    int tick;
-    float x,y,z;
-    float vx,vy,vz;
-    float theta,phi;
-}
+struct NET_agent_control_state {
+    int16_t id;
+    int16_t tick;
+    uint8_t seq;
+    uint8_t theta;
+    uint8_t phi;
+    uint32_t cs;
+};
+*/
 
 struct Agent {
     int id;
@@ -28,22 +37,26 @@ struct Agent {
     int tbn;
     struct Agent_cs t_buffer[128];
 
-    int sbn; //index to last snap shot
-    struct Agent_snapshot s_buffer[8];
+    struct Agent_snapshot last_snapshot;
 
 };
+
+void handle_agent_snapshot(char* buff, int* n) {
+
+
+
+
+}
+
 
 struct Agent* create_agent(int id, struct Agent_snapshot* as) {
 
     struct Agent* a = malloc(sizeof(struct Agent));
     a->id = id;
     a->tbn=0;
-    a->sbn=0;
 
     int i;
-    for(i=0;i<8;i++) {
-        a->s_buffer[i].tick = -1;
-    }
+
     for(i=0;i<128;i++) {
         a->t_buffer[i].tick = -1;
         a->t_buffer[i].seq = -1;
@@ -55,9 +68,10 @@ struct Agent* create_agent(int id, struct Agent_snapshot* as) {
     a->vx = as->vx;
     a->vy = as->vy;
     a->vz = as->vz;
-    a->theta = as->theta;
-    a->phi = as->phi;
+    //a->theta = as->theta;
+    //a->phi = as->phi;
 
+    a->last_snapshot = *as;
     return a;
 }
 
@@ -65,27 +79,18 @@ void apply_control_state(int id, struct Agent_cs* cs ) {
     //get agent
 
     printf("Agent Control State Change: agent_id=%i, tick=%i\n", a->id, cs->tick);
-    a->t_buffer[cs->tick % 128] = *cs;
-    if(cs->tick > a->tick) {
-        a->tick = cs->tick;
-        cs->tbn = cs->tick % 128;
+    a->t_buffer[cs->seq % 128] = *cs;
+    if(cs->tick > a->ltick) {
+        a->tick = cs->ltick;
+        cs->tbn = cs->seq % 128;
     }
 }
 
 void apply_agent_snapshot(int id, struct Agent_snapshot* as) {
     //get agent
-    if(a->s_buffer[a->sbn].tick < as->tick]) {
-        a->sbn = (a->sbn+1)%8;
-        s_buffer[a->sbn] = *as;
-
-        int i;
-        for(i=0; i<128; i++) {
-
-            if(a->t_buffer[i].tick < s_buffer[a->sbn]) {
-                a->t_buffer[i] = -1; //wipe control state before current snapshot
-            }
-        }
-        printf("Agent Snapshot: agent_id=%i, tick=%i\n", a-id, as->tick);
+    if(a->last_snapshot.tick < as->tick]) {
+        a->last_snapshot = *as;
+        printf("Agent Snapshot: agent_id=%i, tick=%i\n", a->id, as->tick);
     } else {
         printf("Old snapshot received: tick=%i, newest snapshot is tick=%i\n",as->tick ,a->s_buffer[a->sbn].tick);
     }
@@ -106,7 +111,7 @@ void reset_agent_to_last_snapshot(struct Agent *a) {
 }
 
 void update_agent_position(int id) {
-    int tick = a->s_buffer[a->sbn].tick;
+    int tick = a->last_snapshot.tick;
 
     int i,j;
     j = a->tbn;
@@ -115,7 +120,9 @@ void update_agent_position(int id) {
     for(i=0; i<128; i++) {
 
 
-        if(t_buffer[i].tick < )
+        if(t_buffer[i].tick < tick) {
+
+        }
 
     }
 
