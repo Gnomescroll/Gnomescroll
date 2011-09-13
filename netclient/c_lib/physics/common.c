@@ -176,13 +176,9 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
     //printf("raycast took %d\n", n2-n);
 
     //_adjust_vel2(p, s, -1, damp);
-    struct Vector norm = {s[0], s[1], s[2]};
     //norm->x = (float)s[0];
     //norm->y = (float)s[1];
     //norm->z = (float)s[2];
-    struct Vector v = reflect(&(p->state.v), &norm);
-    p->state.v = *(mult_vec_scalar(&v, damp));
-    //if (s[0] || s[1] || s[2]) {
             //if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
 
     //if (p->id == 10) {
@@ -192,11 +188,18 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
         //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
     //}
 
-    if ((int)interval == dt) {
+    if (interval >= dt) {
         p->state = *motion_inter;
     } else {
         rk4(&(p->state), t, interval);
     }
+
+    if (s[0] || s[1] || s[2]) {
+        struct Vector norm = {s[0], s[1], s[2]};
+        struct Vector v = reflect(&(p->state.v), &norm);
+        p->state.v = *(mult_vec_scalar(&v, damp));
+    }
+
 
     //if (p->id == 10) {
         //j = &(p->state);
@@ -295,9 +298,14 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
     //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 
     const float air_resist = 0.8f;
+    const float spring = 0.1f;
     //const 
     inter->v.z -= 10.0f;  // gravity
 
+    //inter->v.x -= spring * inter->p.x;
+    //inter->v.y -= spring * inter->p.y;
+    //inter->v.z -= spring * (inter->p.z * inter->p.z);
+    
     inter->v.x *= air_resist;
     inter->v.y *= air_resist;
     inter->v.z *= air_resist;
