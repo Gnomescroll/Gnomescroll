@@ -4,6 +4,7 @@
 /*
  *  Client only
  */
+#ifdef DC_CLIENT
 void agent_Draw(struct Agent_state* g) {
     //printf("agent draw \n");
 
@@ -258,3 +259,5 @@ void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
     */
 }
+
+#endif

@@ -20,10 +20,7 @@
 
 #include "./objects/circuit_tree.c"
 
-#include "./agent/agent.c"
-#include "./agent/agent_vox.c"
-#include "./agent/agent_draw.c"
-
+#include "./agent/agent_include.h"
 
 //network
 
