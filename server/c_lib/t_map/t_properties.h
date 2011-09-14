@@ -41,4 +41,7 @@ static inline int isSolid(int id) {
     return cube_list[id].solid;
 }
 
+int inline _maxDamage(int id) {
+    return cube_list[id].max_damage;
+    }
 #endif

@@ -1,0 +1,27 @@
+Ambient Occultion:
+!!! http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/#ambient-occlusion
+
+Lambert's cosine law says that the radiant intensity observed from an ideal diffusely reflecting surface (a Lambertian surface) is directly proportional to the cosine of the angle θ between the observer's line of sight and the surface normal.
+
+Texture Generation:
+
+http://lithosphere.codeflow.org/download.html
+
+Gamma Correction:
+http://http.developer.nvidia.com/GPUGems3/gpugems3_ch24.html
+http://www.4p8.com/eric.brasseur/gamma.html
+
+Passing GL_SRGB_EXT instead of GL_RGB to glTexImage2D, for example, ensures that any shader accesses to the specified texture return linear pixel values.
+
+Array Textures:
+http://www.opengl.org/wiki/Array_Texture
+
+Automatic Mipmapp Generation
+http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
+
+glGenerateMipmap(GL_TEXTURE_2D); 
+
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
+

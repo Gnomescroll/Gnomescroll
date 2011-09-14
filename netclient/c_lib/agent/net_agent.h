@@ -3,9 +3,10 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include "../netlib/common/type_pack.h"
 
-#include "./agent2.h"
+//#include "../common/type_pack.h"
+
+#include "./agent.h"
 
 
 void client_init_net_agent();

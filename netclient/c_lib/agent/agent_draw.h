@@ -4,7 +4,7 @@
 #include <math.h>
 
 #include <compat.h>
-#include <compat_gl.h>
+#include "../compat_gl.h"
 
 #include <physics/vector.h>
 
