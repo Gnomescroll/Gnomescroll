@@ -23,9 +23,12 @@ struct Agent_state { //Agent_state
     int local;
 
     float x,y,z;
+    float vx,vy,vz;
     float theta,phi;
 
     int tick; //increment every control state change
+
+    int ltick; //WTF is this used for?
 
     int tbn;
     struct Agent_cs t_buffer[128];
@@ -37,8 +40,17 @@ struct Agent_state { //Agent_state
     float cbox_radius;
 };
 
-#include "net_agent.h"
 
+#include "net_agent.h"
 #include "./agent_list.h"
+
+    #ifdef DC_SERVER
+    int create_agent(float x, float y, float z);
+    #endif
+
+
+    #ifdef DC_CLIENT
+    struct Agent_state* create_agent_from_snapshot(int id, struct Agent_snapshot* as);
+    #endif
 
 #endif

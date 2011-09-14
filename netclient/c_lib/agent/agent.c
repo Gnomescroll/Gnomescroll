@@ -1,11 +1,25 @@
 
 #include "agent.h"
 
+struct Agent_state* Agent_list[1024];
+int agent_id_counter = 0;
+int a_count = 0;
+
+struct Agent_state* get_agent(int id) {
+    //struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] != NULL && Agent_list[i]->id == id) {
+            return Agent_list[i];
+        }
+    }
+    return NULL;
+}
 
 void agent_Tick(struct Agent_state* g) {
-    g->xangle += 0.01;
-    g->xangle = 0.0;
-    g->yangle += 0; //0.005; //0.35;
+    g->theta += 0.01;
+    g->theta = 0.0;
+    g->phi += 0; //0.005; //0.35;
 }
 
 void agent_tick() {
@@ -21,8 +35,9 @@ void agent_tick() {
 
 // end misc
 
-struct Agent_state* create_agent(int id, struct Agent_snapshot* as) {
-
+//only use on client
+#ifdef DC_CLIENT
+struct Agent_state* create_agent_from_snapshot(int id, struct Agent_snapshot* as) {
     struct Agent_state* a = malloc(sizeof(struct Agent_state));
     a->id = id;
     a->tbn=0;
@@ -40,15 +55,63 @@ struct Agent_state* create_agent(int id, struct Agent_snapshot* as) {
     a->vx = as->vx;
     a->vy = as->vy;
     a->vz = as->vz;
-    //a->theta = as->theta;
-    //a->phi = as->phi;
+    a->theta = 0;
+    a->phi = 0;
+    a->camera_height= 2.5;
+    a->cbox_height= 3.0;
+    a->cbox_radius = 0.45;
 
     a->last_snapshot = *as;
+
+/*
+    for(i=0; i<6;i++) {
+        g->vox_part[i].vox = NULL;
+    }
+*/
+
     return a;
 }
+#endif
+//only use on server
+
+#ifdef DC_SERVER
+int create_agent(float x, float y, float z) {
+    struct Agent_state* g = NULL;
+    int i;
+    for(i=0; i<1024; i++) {
+        if(Agent_list[i] == NULL) {
+            g = (struct Agent_state *) malloc (sizeof(struct Agent_state));
+            Agent_list[i] = g;
+            a_count++;
+            break;
+        }
+    }
+    if(a== NULL) { printf("Bug: max agent number reached!\n"); return -1;}
+    agent_id_counter +=1;
+    g->id = agent_id_counter;
+    printf("Agent Created: id= %i \n", g->id);
+    g->x=x;
+    g->y=y;
+    g->z=z;
+    g->vx=0;
+    g->vy=0;
+    g->vz=0;
+    g->theta=0;
+    g->phi=0;
+    g->camera_height= 2.5;
+    g->cbox_height= 3.0;
+    g->cbox_radius = 0.45;
+
+    return g->id;
+}
+#endif
 
 void apply_control_state(int id, struct Agent_cs* cs ) {
     //get agent
+    struct Agent_state* a = get_agent(id);
+    if(a==NULL) {
+        printf("apply_control_state: agent id does not exist: %i\n", a->id);
+        }
 
     printf("Agent Control State Change: agent_id=%i, tick=%i\n", a->id, cs->tick);
     a->t_buffer[cs->seq % 128] = *cs;
@@ -60,6 +123,10 @@ void apply_control_state(int id, struct Agent_cs* cs ) {
 
 void apply_agent_snapshot(int id, struct Agent_snapshot* as) {
     //get agent
+    struct Agent_state* a = get_agent(id);
+    if(a==NULL) {
+        printf("Agent id does not exist, creating: %i\n", a->id);
+        }
     if(a->last_snapshot.tick < as->tick]) {
         a->last_snapshot = *as;
         printf("Agent Snapshot: agent_id=%i, tick=%i\n", a->id, as->tick);
@@ -69,6 +136,11 @@ void apply_agent_snapshot(int id, struct Agent_snapshot* as) {
 }
 
 void reset_agent_to_last_snapshot(struct Agent *a) {
+    struct Agent_state* a = get_agent(id);
+    if(a==NULL) {
+        printf("Agent id does not exist: %i\n", a->id);
+        }
+
     struct Agent_snapshot* s = &a->last_snapshot;
 
     a->x = as->x;
@@ -83,6 +155,12 @@ void reset_agent_to_last_snapshot(struct Agent *a) {
 }
 
 void update_agent_position(int id) {
+
+    struct Agent_state* a = get_agent(id);
+    if(a==NULL) {
+        printf("Agent id does not exist: %i\n", a->id);
+        }
+
     int tick = a->last_snapshot.tick;
 
     int i,j;
@@ -97,6 +175,4 @@ void update_agent_position(int id) {
         }
 
     }
-
-
 }
