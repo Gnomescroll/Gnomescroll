@@ -158,7 +158,8 @@ class App(object):
         if ping:
             ping_n = SDL.gl.get_ticks()
 
-        c_lib.c_lib_objects._create_agent(0,0,8)
+        tav_x, tav_y, tav_z = 0,0,8
+        test_agent_vox = c_lib.c_lib_objects._create_agent(tav_x, tav_y, tav_z)
 
         self.intervals.set()
         _i = 30
@@ -241,6 +242,11 @@ class App(object):
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
+                tav_x += 0.01
+                tav_y += 0.01
+                #tav_z += 0.1 * (random.randrange(0,3) - 1)
+                tav_z += 0.001
+                c_lib.c_lib_objects._update_agent(test_agent_vox, tav_x, tav_y, tav_z);
                 #P.event("get_key_state")
                 #P.event("NetClientTick")
                 '''

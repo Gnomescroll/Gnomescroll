@@ -297,18 +297,25 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 //printf("ACCELMAIN\n");
     //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 
-    const float air_resist = 0.8f;
+    const float air_resist = 0.1f;
     const float spring = 0.1f;
     //const 
     inter->v.z -= 10.0f;  // gravity
 
-    //inter->v.x -= spring * inter->p.x;
-    //inter->v.y -= spring * inter->p.y;
-    //inter->v.z -= spring * (inter->p.z * inter->p.z);
+    ////inter->v.x -= spring * inter->p.x;
+    ////inter->v.y -= spring * inter->p.y;
+    ////inter->v.z -= spring * (inter->p.z * inter->p.z);
     
     inter->v.x *= air_resist;
     inter->v.y *= air_resist;
     inter->v.z *= air_resist;
+
+    //inter->v.x = 1;
+    //inter->v.y = 1;
+    //inter->v.z = 1;
+
+    
+    
     //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 //printf("-----------\n");
 }

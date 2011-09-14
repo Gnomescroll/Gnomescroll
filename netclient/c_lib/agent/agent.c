@@ -96,6 +96,15 @@ void destroy_agent(int id) {
 
 }
 
+void update_agent(int id, float x, float y, float z) {
+    struct Agent_state* g = get_agent(id);
+    if (g==NULL) { printf("agent.update_agent :: agent %d unknown", id); return;}
+
+    g->x = x;
+    g->y = y;
+    g->z = z;
+}
+
 void set_agent_state(int id, float xangle, float yangle) {
     struct Agent_state* g = get_agent(id);
     if(g==NULL) { printf("agent.set_agent_state: agent id does not exist: %i \n", id); return;}

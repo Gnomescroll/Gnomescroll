@@ -37,6 +37,7 @@ struct Vox vox_part[6]; //head,torso, larm,rarm, lleg, rleg
 
 void agent_tick();
 int create_agent(float x, float y, float z);
+void update_agent(int id, float x, float y, float z);
 void set_agent_state(int id, float xangle, float yangle);
 
 /*

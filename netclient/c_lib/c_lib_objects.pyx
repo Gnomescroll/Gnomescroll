@@ -39,6 +39,7 @@ cdef extern from "./agent/agent.h":
     void agent_tick()
     void agent_draw()
     int create_agent(float x, float y, float z)
+    int update_agent(int id, float x, float y, float z)
     void set_agent_state(int id, float xangle, float yangle)
 
 cdef extern from "./agent/agent_vox.h":
@@ -165,6 +166,9 @@ def _create_agent(float x, float y, float z):
     global agent_list
     agent_list.append(id)
     return id
+
+def _update_agent(int id, float x, float y, float z):
+    update_agent(id, x,y,z)
 
 def _set_agent_state(int id, float xangle, float yangle):
     set_agent_state(id, xangle, yangle)
