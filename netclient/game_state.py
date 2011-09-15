@@ -17,6 +17,8 @@ class GameStateGlobal:
 
     fps = 30.
 
+    apply_gravity = True
+
     def __init__(self):
         pass
 

@@ -175,8 +175,10 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
     //int n2 = _GET_MS_TIME();
     //printf("raycast took %d\n", n2-n);
 
-    _adjust_vel2(p, s, -1, damp);
-    //if (s[0] || s[1] || s[2]) {
+    //_adjust_vel2(p, s, -1, damp);
+    //norm->x = (float)s[0];
+    //norm->y = (float)s[1];
+    //norm->z = (float)s[2];
             //if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
 
     //if (p->id == 10) {
@@ -186,11 +188,18 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
         //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
     //}
 
-    if ((int)interval == dt) {
+    if (interval >= dt) {
         p->state = *motion_inter;
     } else {
         rk4(&(p->state), t, interval);
     }
+
+    if (s[0] || s[1] || s[2]) {
+        struct Vector norm = {s[0], s[1], s[2]};
+        struct Vector v = reflect(&(p->state.v), &norm);
+        p->state.v = *(mult_vec_scalar(&v, damp));
+    }
+
 
     //if (p->id == 10) {
         //j = &(p->state);
@@ -288,14 +297,25 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 //printf("ACCELMAIN\n");
     //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 
-    const float _air_resist = 0.9f;
-    const float air_resist = (1.0f- (1.0f-_air_resist));
+    const float air_resist = 0.1f;
+    const float spring = 0.1f;
     //const 
-    inter->v.z -= 20.0f;  // gravity
+    inter->v.z -= 10.0f;  // gravity
 
+    ////inter->v.x -= spring * inter->p.x;
+    ////inter->v.y -= spring * inter->p.y;
+    ////inter->v.z -= spring * (inter->p.z * inter->p.z);
+    
     inter->v.x *= air_resist;
     inter->v.y *= air_resist;
     inter->v.z *= air_resist;
+
+    //inter->v.x = 1;
+    //inter->v.y = 1;
+    //inter->v.z = 1;
+
+    
+    
     //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 //printf("-----------\n");
 }

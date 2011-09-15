@@ -51,6 +51,7 @@ void inline cspray_Tick(struct Cspray* g) {
     {
         if(isActive(tile)) {
             g->active=1;
+            g->particle.ttl *= 2;
         }
     }
 }
