@@ -243,11 +243,11 @@ class App(object):
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
-                tav_x += 0.01
-                tav_y += 0.01
-                #tav_z += 0.1 * (random.randrange(0,3) - 1)
-                tav_z += 0.001
-                c_lib.c_lib_objects._update_agent(test_agent_vox, tav_x, tav_y, tav_z);
+                #tav_x += 0.01
+                #tav_y += 0.01
+                ##tav_z += 0.1 * (random.randrange(0,3) - 1)
+                #tav_z += 0.001
+                #c_lib.c_lib_objects._update_agent(test_agent_vox, tav_x, tav_y, tav_z);
                 #P.event("get_key_state")
                 #P.event("NetClientTick")
                 '''
