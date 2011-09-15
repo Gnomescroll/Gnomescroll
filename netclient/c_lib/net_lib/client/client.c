@@ -152,7 +152,7 @@ void flush_outgoing_packets() {
         printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
         return;
         }
-    //unsigned char out_buff[800];
+
     int n1 = 0;
     int seq = get_next_sequence_number(&NPserver);
     PACK_uint16_t(NPserver.client_id, client_out_buff, &n1); //client id
@@ -163,30 +163,15 @@ void flush_outgoing_packets() {
     PACK_uint16_t(get_sequence_number(&NPserver), client_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(&NPserver),client_out_buff, &n1); //sequence number
 
-    //unsigned int value = 5;
-    //PACK_uint32_t(value, out_buff, &n1);
-
     if(n1 != 11) {
         printf("flush_outgoing_packets: header should be 11 bytes, is %i\n", n1);
         return;
     }
     //printf("writing messages at byte %i \n", n1);
-    //memcpy(out_buff+n1, buff, n_size);
-    //n1+=n_size;
-    //printf("Sent packet %i\n", seq);
 
-    //Simulated packet lose
-
-/*
-    if(seq%5 == 0) {
-        printf("Intentially dropped packet: %i \n", seq);
-        return;
-    }
-*/
     pviz_packet_sent(seq, client_out_buff_n);
-    int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff_n, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
-    reset_client_out_buffer();
-    if ( sent_bytes != n1) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
+    int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n ); return;}
 }
 
 void attempt_connection_with_server() {
