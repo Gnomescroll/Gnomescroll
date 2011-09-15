@@ -78,7 +78,7 @@ def tick():
     cspray_tick()
     blood_tick()
     shrapnel_tick()
-    agent_skeleton_update()
+    #agent_skeleton_update()
     agent_tick()
 
 def draw():
