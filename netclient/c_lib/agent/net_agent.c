@@ -136,9 +136,10 @@ void handle_NET_agent_snapshot(unsigned char* buff, int n) {
     cs.z = ncs.z;
     cs.vx = ncs.vx;
     cs.vy = ncs.vy;
-    cs.cz = ncs.vz;
-    cs.theta = ncs.theta;
-    cs.phi = ncs.phi;
+    cs.vz = ncs.vz;
+    ///control state packets come also
+    //cs.theta = ncs.theta;
+    //cs.phi = ncs.phi;
 
     apply_agent_snapshot(id, &cs);
 }
