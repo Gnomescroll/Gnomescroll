@@ -28,7 +28,7 @@ struct Agent_state { //Agent_state
 
     int tick; //increment every control state change
 
-    int ltick; //WTF is this used for?
+    int ltick; //last tick/highest tick
 
     int tbn;
     struct Agent_cs t_buffer[128];
@@ -40,6 +40,9 @@ struct Agent_state { //Agent_state
     float cbox_radius;
 };
 
+extern struct Agent_state* Agent_list[1024];
+extern int agent_id_counter;
+extern int a_count;
 
 #include "net_agent.h"
 #include "./agent_list.h"

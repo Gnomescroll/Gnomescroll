@@ -1,6 +1,8 @@
 
 #include "agent_physics.h"
 
-void agent_tick(){
+/*
+void agent_Tick(){
      printf("agent tick\n");
  }
+*/

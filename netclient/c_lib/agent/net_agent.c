@@ -1,5 +1,26 @@
 #include "net_agent.h"
 
+struct NET_agent_snapshot {
+    int16_t id;
+    int16_t tick;
+    float x;
+    float y;
+    float z;
+    float vx;
+    float vy;
+    float vz;
+};
+
+struct NET_agent_control_state {
+    int16_t id;
+    int16_t tick;
+    uint8_t seq;
+    uint8_t theta;
+    uint8_t phi;
+    uint32_t cs;
+};
+
+
 static inline void pack_NET_agent_snapshot(unsigned char* buffer, struct NET_agent_snapshot* s, int* n) {
     PACK_int16_t(s->id, buffer, n);
     PACK_int16_t(s->tick, buffer, n);
@@ -45,26 +66,6 @@ static inline void unpack_NET_agent_control_state(unsigned char* buffer, struct 
 }
 
 
-struct NET_agent_snapshot {
-    int16_t id;
-    int16_t tick;
-    float x;
-    float y;
-    float z;
-    float vx;
-    float vy;
-    float vz;
-};
-
-struct NET_agent_control_state {
-    int16_t id;
-    int16_t tick;
-    uint8_t seq;
-    uint8_t theta;
-    uint8_t phi;
-    uint32_t cs;
-};
-
 void client_init_net_agent() {
 
 }
@@ -103,7 +104,7 @@ void handle_NET_agent_control_state(unsigned char* buff, int n) {
     unpack_NET_agent_control_state(buff, &ncs, &n);
 
     struct Agent_cs cs;
-    int id = cs.id;
+    int id = ncs.id;
     cs.tick = ncs.tick;
     cs.seq = ncs.seq;
     cs.theta = ncs.theta;
@@ -128,7 +129,7 @@ void handle_NET_agent_snapshot(unsigned char* buff, int n) {
 
     struct Agent_snapshot cs;
 
-    int id = cs.id;
+    int id = ncs.id;
     cs.tick = ncs.tick;
     cs.x = ncs.x;
     cs.y = ncs.y;
