@@ -158,7 +158,6 @@ void flush_outgoing_packets() {
     PACK_uint16_t(NPserver.client_id, client_out_buff, &n1); //client id
     PACK_uint8_t(1, client_out_buff, &n1);  //channel 1
     PACK_uint16_t(seq, client_out_buff, &n1); //sequence number
-
     //ack string
     PACK_uint16_t(get_sequence_number(&NPserver), client_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(&NPserver),client_out_buff, &n1); //sequence number

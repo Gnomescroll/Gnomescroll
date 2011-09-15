@@ -40,6 +40,11 @@ void register_message_handler(int message_id, int size, pt2handler fptr) {
 }
 
 int pop_message(unsigned char* buff, int *n, int max_n) {
+
+    if(*n == max_n) {
+        printf("Processed Empty Packet\n");
+        return 0;
+    }
     int bytes, size;
     uint8_t message_id;
     printf("Reading message id from byte %i\n", *n);
