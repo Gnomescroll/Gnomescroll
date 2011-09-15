@@ -8,12 +8,7 @@ import noise
 import random
 class Gen:
 
-    '''
-    Adapted from:
-    http://stackoverflow.com/questions/4753055/perlin-noise-generation-for-terrain
-    '''
-
-    def __init__(self, o=10, p=0.5, f=1.3, a=1, seed=0.9, xint=128, yint=128, salt=0):
+    def __init__(self, o=10, p=0.5, f=1.3, a=1, seed=0.9, xint=128, yint=128, zint=128, salt=0):
         self.octaves = o
         self.num_octaves = range(o)
         self.persistence = p
@@ -22,6 +17,7 @@ class Gen:
         self.seed = 2 + seed**2
         self.xint = xint
         self.yint = yint
+        self.zint = zint
         self.salt = salt
 
     def getHeight(self, x, y):
@@ -30,9 +26,25 @@ class Gen:
         y /= float(self.yint)
         return self.amplitude * self.noise(x, y)
 
+    def getDensity(self, x,y,z):
+        x /= float(self.xint)
+        y /= float(self.yint)
+        z /= float(self.zint)
+        return self.amplitude * self.noise3d(x,y,z)
+
     def noise(self, x, y):
         n = noise.pnoise2(x+self.salt, y+self.salt, octaves=self.octaves, persistence=self.persistence)
         return n
+
+    def noise3d(self, x,y,z):
+        n = noise.pnoise3(x+self.salt, y+self.salt, z+self.salt, octaves=self.octaves, persistence=self.persistence)
+        return n
+        
+    #def snoise(self, x, y):
+        ## noise package broken, this will fail
+        #n = noise.snoise2(x+self.salt, y+self.salt, octaves=self.octaves, persistence=self.persistence)
+        #return n
+
         
 '''
 methods
@@ -219,6 +231,7 @@ def load_map1(terrain_map):
                 terrain_map.set(i,j,k, p)
     print 'Done generating map'
 
+# simple perlin generator, baseline height 2 (small mountains + lava on top)
 def load_map2(terrain_map):
     print 'start map gen'
     max_height = 15
@@ -236,3 +249,59 @@ def load_map2(terrain_map):
             if h==0 or h==1:
                 terrain_map.set(i,j, 2, 211)
     print 'done map gen'
+
+
+# simple perlin generator, baseline height 100 (big cube, small mountains + lava on top)
+def load_map3(terrain_map): 
+    import time
+    _n = time.time()
+    print 'start map gen'
+    max_height = 15
+    baseline = 100
+    g = Gen(salt=random.random())
+    h=0
+    for i in range(512):
+        for j in range(512):
+            h = g.getHeight(i,j)
+            h = abs(h)
+            h *= 100
+            h %= max_height
+            h = int(h)
+            for k in range(h+baseline):
+                terrain_map.set(i, j, k, 2)
+            if h<=1:
+                terrain_map.set(i,j, baseline+1, 211)
+                if h == 0:
+                    terrain_map.set(i,j, baseline, 211)
+
+    print 'done map gen'
+    print 'took %d seconds' % (time.time() - _n)
+
+# loadmap3 + subtractive caves (test)
+def load_map4(terrain_map): 
+    import time
+    _n = time.time()
+    print 'start map gen'
+    max_height = 15
+    baseline = 100
+    g = Gen(salt=random.random(), xint=512, yint=512, zint=128)
+    h=0
+    for i in range(512):
+        for j in range(512):
+            h = g.getHeight(i,j)
+            h = abs(h)
+            h *= 100
+            h %= max_height
+            h = int(h)
+            for k in range(h+baseline):
+                # do 3d noise density
+                solid = g.getDensity(i,j,k)
+                if solid >= 0:
+                    terrain_map.set(i, j, k, 2)
+            if h<=1:  # lava (this will cover up holes in low surface caves)
+                terrain_map.set(i,j, baseline+1, 211)
+                if h == 0:
+                    terrain_map.set(i,j, baseline, 211)
+
+    print 'done map gen'
+    print 'took %d seconds' % (time.time() - _n)
