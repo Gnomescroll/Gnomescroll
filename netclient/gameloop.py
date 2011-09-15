@@ -31,6 +31,7 @@ if True:
     #SDL.gl.init_particles()
     import init_c_lib
     import c_lib.c_lib_objects
+    import c_lib.c_lib_agents
     #import c_lib.c_lib_timer as physics_timer
     import init_c_lib
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -158,8 +159,8 @@ class App(object):
         if ping:
             ping_n = SDL.gl.get_ticks()
 
-        tav_x, tav_y, tav_z = 0,0,8
-        test_agent_vox = c_lib.c_lib_objects._create_agent(tav_x, tav_y, tav_z)
+        #c_lib.c_lib_objects._create_agent(0,0,8)
+        #agent must be created server side
 
         self.intervals.set()
         _i = 30
@@ -272,7 +273,8 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                c_lib.c_lib_objects._set_agent_control_state([0,1,0,0,1,0], 0, 0)
+                #c_lib.c_lib_agents._set_agent_control_state([0,1,0,0,1,0], 0, 0)
+                #control state
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
