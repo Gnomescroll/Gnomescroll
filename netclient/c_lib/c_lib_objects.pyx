@@ -37,6 +37,7 @@ cdef extern from "./objects/circuit_tree.h":
 
 cdef extern from "./agent/agent_physics.h":
     void agent_tick()
+    int update_agent(int id, float x, float y, float z)
 
 cdef extern from "./agent/agent_draw.h":
     void agent_draw() #draw all agents
@@ -118,3 +119,7 @@ def get_grenade_position(int gid):
     pos = _get_grenade_position(gid)
     p = [pos.x, pos.y, pos.z]
     return p
+
+
+def _update_agent(int id, float x, float y, float z):
+    update_agent(id, x,y,z)
