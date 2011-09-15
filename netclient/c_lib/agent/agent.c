@@ -151,7 +151,14 @@ void reset_agent_to_last_snapshot(struct Agent_state* a) {
 }
 
 void update_agent_position(int id) {
-
+    /*
+        Algorithm:
+        -reset agent state to last snapshot
+        -find control states starting at last snapshot
+        -replay agent physics tick by tick until we run out of control states since last tick
+        -use dead reckoning to go from last update to current tick
+    */
+    /*
     struct Agent_state* a = get_agent(id);
     if(a==NULL) {
         printf("Agent id does not exist: %i\n", a->id);
@@ -162,13 +169,34 @@ void update_agent_position(int id) {
     int i,j;
     j = a->tbn;
 
+    int seq = -1;
     reset_agent_to_last_snapshot(a);
     for(i=0; i<128; i++) {
-
-
-        if(a->t_buffer[i].tick < tick) {
-
+        if(a->t_buffer[i].tick == tick) {
+            seq = i;
+            break;
+        }
+    }
+    if(seq=-1) {
+        printf("update_agent_position: seq=-1, no valid control state for agent snapshot\n");
+        return
+    }
+    i = seq %128;
+    int tick0, tick1;
+    while(1) {
+        if(a->t_buffer[i+1].tick < tick) {
+            break;
+        }
+        tick0 = t_buffer[i].tick;
+        tick1 = t_buffer[i+1].tick;
+        if(tick1 - tick0 < 0) {
+            printf("tick1-tick0 is negative! %i, %i, %i\n", tick0, tick1, tick1-tick0);
+            return;
         }
 
+        i = (i+1)%128;
     }
+        //do tick until next delta
+    }
+    */
 }

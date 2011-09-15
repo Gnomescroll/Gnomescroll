@@ -18,6 +18,7 @@
 struct NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
+    reset_client_out_buffer();
     init_message_handler();
     update_current_netpeer_time();
     init_client();
@@ -65,7 +66,8 @@ void _NetClientTick() {
     unsigned char buff[800];
     int n = 0;
     PACK_control_state(buff, &n);
-    send_packet3(buff, n);
+    //send_packet3(buff, n);
+    flush_outgoing_packets();
 
     check_for_dropped_packets(np);
     poll_connection_timeout();
