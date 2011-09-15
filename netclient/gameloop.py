@@ -268,7 +268,8 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                #c_lib.c_lib_objects._set_agent_control_state([0,1,0,0,1,0], 0, 0)
+                #c_lib.c_lib_agents._set_agent_control_state([0,1,0,0,1,0], 0, 0)
+                #control state
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
