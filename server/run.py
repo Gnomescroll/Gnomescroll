@@ -35,11 +35,16 @@ import dats.loader as dat_loader
 import c_lib.c_lib_objects
 
 import random
+
+def pallet_pillar():
+    for i in range(0,32):
+        m = terrain_map
+        m.set(5,5,10+i, i)
+
 def load_map():
     m = terrain_map
     map_type = 5
-
-
+		
     print "Start map generation"
     if map_type == 1:
         x_min = 0
@@ -243,7 +248,8 @@ class Main:
     def __init__(self):
         #setup
         load_map2()
-
+        
+        pallet_pillar() 
         NetServer.init_0()
         NetOut.init_0()
         NetEvent.init_0()
