@@ -11,7 +11,8 @@
 #include "common/sequencer.c"
 #include "common/message_handler.c"
 
-#include <agent/control_state.c>
+//#include <agent/control_state.c>
+#include <agent/agent_client.c>
 
 #include "client/pviz.c"
 
@@ -19,6 +20,7 @@ struct NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
     reset_client_out_buffer();
+    init_agent_client();
     init_message_handler();
     update_current_netpeer_time();
     init_client();
@@ -32,7 +34,7 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
 
     np= CLIENT_get_NP();
 
-    init_agent_control_state();
+    //init_agent_control_state();
 }
 
 /*
@@ -63,10 +65,6 @@ void _NetClientTick() {
         return;
     }
 
-    unsigned char buff[800];
-    int n = 0;
-    PACK_control_state(buff, &n);
-    //send_packet3(buff, n);
     flush_outgoing_packets();
 
     check_for_dropped_packets(np);

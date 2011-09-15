@@ -10,9 +10,22 @@ cdef extern from "./agent/agent_draw.h":
     void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
     void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b)
 
-
+'''
 cdef extern from "./agent/control_state.h":
     void set_agent_control_state(int* cs, float xangle, float yangle)
+'''
+
+cdef extern from "./agent/agent_client.h":
+    void set_agent_control_state(int x[32], float theta, float phi)
+
+def _set_agent_control_state(int f, int b, int l, int r, int jump, float theta, float phi):
+    cdef int x[32]
+    x[0] = f
+    x[1] = b
+    x[2] = l
+    x[3] = r
+    x[4] = jump
+    set_agent_control_state(x, theta, phi)
 
 '''
 cdef extern from "./agent/agent.h":
