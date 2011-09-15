@@ -12,7 +12,7 @@
 #include "common/message_handler.c"
 
 //#include <agent/control_state.c>
-#include <agent/agent_client.c>
+#include <agent/agent_client.h>
 
 #include "client/pviz.c"
 

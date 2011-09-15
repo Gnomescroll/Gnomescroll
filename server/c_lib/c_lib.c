@@ -2,6 +2,10 @@
 
 #include <stdio.h>
 
+#ifdef DC_CLIENT
+#include "./net_lib/client.c"
+#endif
+
 #include "./t_map/t_map.c"
 #include "./t_map/t_properties.c"
 
@@ -15,6 +19,7 @@
 #include "./objects/cspray.c"
 
 #include "./agent/agent_include.h"
+
 
 #ifdef DC_CLIENT
 #include "./texture_loader.c"

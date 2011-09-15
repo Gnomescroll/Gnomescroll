@@ -35,8 +35,10 @@ cdef extern from "./objects/circuit_tree.h":
     void circuit_tree_generate(int type, int seed)
     void circuit_tree_draw()
 
+'''
 cdef extern from "./agent/agent_physics.h":
     void agent_tick()
+'''
 
 cdef extern from "./agent/agent_draw.h":
     void agent_draw() #draw all agents
@@ -45,9 +47,10 @@ cdef extern from "./agent/agent_draw.h":
     void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
     void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b)
 
-
+'''
 cdef extern from "./agent/control_state.h":
     void set_agent_control_state(int* cs, float xangle, float yangle)
+'''
 
 '''
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
@@ -79,7 +82,7 @@ def tick():
     blood_tick()
     shrapnel_tick()
     #agent_skeleton_update()
-    agent_tick()
+    #agent_tick()
 
 def draw():
     grenade_draw()

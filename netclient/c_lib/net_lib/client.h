@@ -16,7 +16,8 @@
 
 //message handling
 //#include <agent/control_state.h>
-#include <agent/agent_client.h>
+
+//#include <agent/agent_client.h>
 
 void _NetClientConnect(int a, int b,int c, int d, int _port);
 void _NetClientTick();
