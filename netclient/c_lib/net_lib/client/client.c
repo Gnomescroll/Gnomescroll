@@ -4,15 +4,15 @@
 unsigned char client_out_buff[1500];
 int client_out_buff_n = 11; //header length;
 
-static inline void reset_client_out_buffer() {
+inline void reset_client_out_buffer() {
     client_out_buff_n = 11;
 }
 
-static inline unsigned char* get_client_out_buffer() {
+inline unsigned char* get_client_out_buffer() {
     return client_out_buff;
 }
 
-static inline int* get_client_out_buffer_n() {
+inline int* get_client_out_buffer_n() {
     return &client_out_buff_n;
 }
 
