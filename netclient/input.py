@@ -286,6 +286,7 @@ class Keyboard(object):
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : _toggle_latency_unit,
+            ',' : self.toggle_agent_gravity,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
@@ -309,6 +310,10 @@ class Keyboard(object):
             self.camera_input_mode(keyboard)
         elif InputGlobal.input == 'agent':
             self.agent_input_mode(keyboard)
+
+    def toggle_agent_gravity(self):
+        print 'toggle agent g'
+        GameStateGlobal.apply_gravity = not GameStateGlobal.apply_gravity
 
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:
