@@ -1,3 +1,35 @@
+Graphics Engine:
+
+:using index array to reduce bytes per quad from 48 to 8
+-decrease map chunk graphics memory usage by 5x
+-increased map chunk update speed
+-decreased bandwidth between graphics card and memory
+-decrease client side memory usage for storing vertex data
+-does not require geometry shaders
+
+:fulstrum culling in x/y
+-reduce draw calls
+
+Minor:
+
+:draw chunks front to back
+-early z-buffer culling
+-can transverse in reverse order for transparency effects
+
+:sort and index map chunk vertices by z-level
+-allows fulstrum culling in z
+-draw range of vertices in VBO buffer, reduces polygons
+
+:sort vertex lists 
+
+Performance Indicator:
+
+:add more colors indcators to hud map loading
+-indicate whether map chunk is loaded from network
+-indicate whether map chunk is in memory
+-indicate whether map chunk is in graphics memory
+-indicate whether map chunk was drawn last frame
+
 1> 
 
 <HaltingState> Triplefox, what do you want in terms of game play, or why do you think AoS or minecraft is engaging?
