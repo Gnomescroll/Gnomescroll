@@ -27,6 +27,7 @@ if settings.pyglet == False:
 
 #from c_lib.c_lib_objects import _create_blood as create_blood
 import c_lib.c_lib_objects
+import c_lib.c_lib_agents
 import c_lib._ray_trace
 import random
 
@@ -374,13 +375,11 @@ class AgentRender:
     def draw_bounding_box(self):
         b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
         x = self.x;y = self.y;z = self.z
-        return
-        c_lib.c_lib_objects._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
+        c_lib.c_lib_agents._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
         #draw box 2 high and then 3 high
 
     def draw_aiming_direction(self, distance=50):
-        return
-        c_lib.c_lib_objects._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
+        c_lib.c_lib_agents._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
     def bleed(self):
         print 'BLEEDING'
@@ -859,11 +858,11 @@ class PlayerAgentRender(AgentRender):
             #print str(pos)
             (x,y,z, px,py,pz, sx,sy,sz) = pos
             #cube selected
-            r,g,b = 0,155,0
-            c_lib.c_lib_objects._draw_agent_cube_selection(px,py,pz, r,g,b)
+            r,g,b = 150,150,150
+            c_lib.c_lib_agents._draw_agent_cube_selection(px,py,pz, r,g,b)
             #cube side selected
-            r,g,b = 0,0,150
-            c_lib.c_lib_objects._draw_agent_cube_side_selection(x,y,z, sx,sy,sz, r,g,b)
+            r,g,b = 0,0,255
+            c_lib.c_lib_agents._draw_agent_cube_side_selection(x,y,z, sx,sy,sz, r,g,b)
 
     def draw_position(self, points, seperation):
         print "agents.py draw position deprecated"

@@ -37,14 +37,14 @@
 
     #include "type_pack.h"
 
-    inline void shutdown_net_lib()
+    static inline void shutdown_net_lib()
     {
         #if PLATFORM == PLATFORM_WINDOWS
         WSACleanup();
         #endif
     }
 
-    inline int init_net_lib()
+    static inline int init_net_lib()
     {
         #if PLATFORM == PLATFORM_WINDOWS
         WSADATA WsaData;

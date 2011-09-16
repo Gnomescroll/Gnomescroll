@@ -14,7 +14,7 @@
 
   //should be in header?
 
-#include <agent/control_state.c>
+//#include <agent/control_state.c>
 
 void _NetServerInit() {
     init_message_handler();
@@ -26,7 +26,7 @@ void _NetServerInit() {
     init_server(port);
     //inits
     //printf("WTF?WTF?WTF?\n");
-    init_agent_control_state();
+    //init_agent_control_state();
 }
 
 long t1 = 0;

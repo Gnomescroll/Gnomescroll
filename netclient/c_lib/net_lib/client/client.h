@@ -52,4 +52,20 @@ void process_outgoing_packets();
 
 int poll_connection_timeout();
 int decrement_ttl();
+
+
+//
+
+void flush_outgoing_packets();
+
+//extern unsigned char client_out_buff[1500];
+//extern int client_out_buff_n; //buffer for writing packets out to;
+
+//unsigned char client_out_buff[1500];
+//int client_out_buff_n = 11; //header length;
+
+inline void reset_client_out_buffer();
+
+inline unsigned char* get_client_out_buffer();
+inline int* get_client_out_buffer_n();
 #endif

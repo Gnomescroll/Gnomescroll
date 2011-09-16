@@ -1,5 +1,22 @@
 #include "client.h"
 
+//globals
+unsigned char client_out_buff[1500];
+int client_out_buff_n = 11; //header length;
+
+inline void reset_client_out_buffer() {
+    client_out_buff_n = 11;
+}
+
+inline unsigned char* get_client_out_buffer() {
+    return client_out_buff;
+}
+
+inline int* get_client_out_buffer_n() {
+    return &client_out_buff_n;
+}
+
+//end globals
 
 struct NetPeer NPserver;
 struct Socket client_socket;
@@ -138,6 +155,39 @@ void send_packet3(unsigned char* buff, int n_size) {
     int sent_bytes = sendto( client_socket.socket, (const char*)out_buff, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "send_packet3: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
 
+}
+
+//unsigned char client_out_buff[1500];
+//int client_out_buff_n = 11; //header length;
+
+void flush_outgoing_packets() {
+    if(client_out_buff_n  >= 800) {
+        printf("flush_outgoing_packets fail!  Packet would exceed 800 bytes. size=%i\n", client_out_buff_n+11);
+        return;
+    }
+    if(NPserver.connected == 0) {
+        printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
+        return;
+        }
+
+    int n1 = 0;
+    int seq = get_next_sequence_number(&NPserver);
+    PACK_uint16_t(NPserver.client_id, client_out_buff, &n1); //client id
+    PACK_uint8_t(1, client_out_buff, &n1);  //channel 1
+    PACK_uint16_t(seq, client_out_buff, &n1); //sequence number
+    //ack string
+    PACK_uint16_t(get_sequence_number(&NPserver), client_out_buff, &n1); //max seq
+    PACK_uint32_t(generate_outgoing_ack_flag(&NPserver),client_out_buff, &n1); //sequence number
+
+    if(n1 != 11) {
+        printf("flush_outgoing_packets: header should be 11 bytes, is %i\n", n1);
+        return;
+    }
+    //printf("writing messages at byte %i \n", n1);
+
+    pviz_packet_sent(seq, client_out_buff_n);
+    int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n ); return;}
 }
 
 void attempt_connection_with_server() {

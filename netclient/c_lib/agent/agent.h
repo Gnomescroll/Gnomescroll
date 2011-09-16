@@ -44,7 +44,7 @@ extern struct Agent_state* Agent_list[1024];
 extern int agent_id_counter;
 extern int a_count;
 
-#include "net_agent.h"
+//#include "net_agent.h"
 #include "./agent_list.h"
 
     #ifdef DC_SERVER

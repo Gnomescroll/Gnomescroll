@@ -15,7 +15,9 @@
 #include <time/physics_timer.h>
 
 //message handling
-#include <agent/control_state.h>
+//#include <agent/control_state.h>
+
+//#include <agent/agent_client.h>
 
 void _NetClientConnect(int a, int b,int c, int d, int _port);
 void _NetClientTick();

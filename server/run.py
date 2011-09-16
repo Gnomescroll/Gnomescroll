@@ -37,13 +37,34 @@ import c_lib.c_lib_objects
 import map_gen
 import random
 
+def pallet_pillar():
+    for i in range(0,32):
+        m = terrain_map
+        m.set(5,5,10+i, i)
+
+
+def draw_sphere(block, radius, x,y,z):
+    m = terrain_map
+    t = int(radius)+1
+    radius = float(radius)
+    fx = float(x);fy=float(y);fz=float(z)
+    for _x in range(-t,t):
+        for _y in range(-t,t):
+            for _z in range (-t,t):
+                d = (float(_x))**2+(float(_y))**2+(float(_z))**2
+                #print "d= %s" % (str(d))
+                if d < radius**2:
+                    m.set(_x+x,_y+y,_z+z,block)
+
 class Main:
 
     def __init__(self):
         #setup
         #map_gen.load_map2(terrain_map)
         map_gen.load_map5(terrain_map)
-
+        draw_sphere(block=5, radius=30, x=40,y=40,z=90)
+        
+        pallet_pillar() 
         NetServer.init_0()
         NetOut.init_0()
         NetEvent.init_0()

@@ -1,7 +1,7 @@
 #ifndef net_lib_common_net_peer_h
 #define net_lib_common_net_peer_h
 
-#include "net_lib_common.h"
+//#include "net_lib_common.h"
 
 #include "./sequencer.h"
 

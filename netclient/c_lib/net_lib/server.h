@@ -13,7 +13,7 @@
 #include <time/physics_timer.h>
 
 //message handling
-#include <agent/control_state.h>
+//#include <agent/control_state.h>
 
 #include "server/server.h"
 
