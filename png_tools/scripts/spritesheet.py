@@ -111,3 +111,9 @@ class Spritesheet(object):
         self.verify()
         self.generate()
         self.write_png()
+
+    def write_out(self, filename):
+        pixels = self.pixels
+        png_out = png.Writer(width=512, height=512, alpha=True, bitdepth=8, transparent=None)
+        with open(filename, 'wb') as f:      # binary mode is important
+            png_out.write(f, pixels)

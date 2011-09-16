@@ -39,12 +39,12 @@ import random
 def pallet_pillar():
     for i in range(0,32):
         m = terrain_map
-        m.set(5,5,10+i, i)
+        m.set(16,16,16+2*i, i)
 
 def load_map():
     m = terrain_map
     map_type = 5
-		
+
     print "Start map generation"
     if map_type == 1:
         x_min = 0
@@ -240,7 +240,7 @@ def load_map2():
             for k in range(h+1):
                 terrain_map.set(i, j, k, 2)
             if h==0 or h==1:
-                terrain_map.set(i,j, 2, 211)
+                terrain_map.set(i,j, 2, 3)
     print 'done map gen'
 
 def draw_sphere(block, radius, x,y,z):
@@ -261,9 +261,9 @@ class Main:
     def __init__(self):
         #setup
         load_map2()
-        draw_sphere(block=5, radius=30, x=40,y=40,z=90)
-        
-        pallet_pillar() 
+        draw_sphere(block=1, radius=30, x=40,y=40,z=90)
+
+        pallet_pillar()
         NetServer.init_0()
         NetOut.init_0()
         NetEvent.init_0()

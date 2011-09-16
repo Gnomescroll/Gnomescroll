@@ -16,7 +16,7 @@ for tex, id in sprites:
 
 print(str(block_tex))
 
-import pprint
+
 
 
 
@@ -24,7 +24,7 @@ import pprint
 # parse file
 # generate dictionary for cubes
 # write dictionary to cube_dat
-
+import pprint
 f = open("../server/dats/cube_dat.py", "w")
 pp = pprint.PrettyPrinter(stream=f, indent=4)
 

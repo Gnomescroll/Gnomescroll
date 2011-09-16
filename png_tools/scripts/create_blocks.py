@@ -1,6 +1,7 @@
-
+#!/usr/bin/python
 
 import os
+import sys
 
 def run():
     global tex,lblock
@@ -133,3 +134,70 @@ class Block_template:
 tex = Texture_set()
 lblock = Block_list()
 run()
+
+import sys
+import os
+
+print str(tex._texture_list())
+
+import spritesheet
+sprite = spritesheet.Spritesheet("test", "./block/", tex._texture_list())
+sprite.verify()
+sprite.generate()
+sprite.write_out("./blocks_01.png")
+sprite.write_out("../netclient/media/texture/blocks_01.png")
+### PASS IN USING ARRAY ###
+'''
+f = open("./conf/block_sprite_conf.py", "w")
+f.write("sprites = ")
+f.write(str(tex._texture_list()))
+f.close
+'''
+
+dat = {
+    0 : {
+        'name': 'empty_space',
+        'occludes' : False,
+        'active' : False,
+        'solid' : False,
+        'max_damage': 32,
+        'neutron_tolerance' : 2,
+        'nuclear': 0,
+        'texture_id': [-1]*6,
+        'texture_order': [[0,1,2,3]] * 6,
+        'gravity'   :   0,
+        'transparent': 0,
+    },
+
+}
+
+default =    {
+            'name'  :   'default',
+            'occludes': True,
+            'active':   True,
+            'solid':    True,
+            'max_damage' : 32,
+            'neutron_tolerance' : 2,
+            'nuclear' : 0,
+            'texture_id': [255]*6,
+            'gravity'   :   0,
+            'transparent': 0,
+    }
+
+for block in lblock.list:
+    if block.name == None or block.id == None:
+        continue
+    x = {}
+    x = default.copy()
+    x['name'] = block.name
+    x['texture_id'] = block.side
+    dat[block.id] = x
+
+#print str(dat)
+
+import pprint
+f = open("../server/dats/cube_dat.py", "w")
+pp = pprint.PrettyPrinter(stream=f, indent=4)
+#pp = pprint.PrettyPrinter(indent=4)
+f.write("dat = ")
+pp.pprint(dat)
