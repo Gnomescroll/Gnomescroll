@@ -26,18 +26,20 @@ class Gen:
         y /= float(self.yint)
         return self.amplitude * self.noise(x, y)
 
-    def getDensity(self, x,y,z):
+    def getDensity(self, x,y,z, octaves=None, persistence=None):
         x /= float(self.xint)
         y /= float(self.yint)
         z /= float(self.zint)
-        return self.amplitude * self.noise3d(x,y,z)
+        return self.amplitude * self.noise3d(x,y,z, octaves=octaves, persistence=persistence)
 
     def noise(self, x, y):
         n = noise.pnoise2(x+self.salt, y+self.salt, octaves=self.octaves, persistence=self.persistence)
         return n
 
-    def noise3d(self, x,y,z):
-        n = noise.pnoise3(x+self.salt, y+self.salt, z+self.salt, octaves=self.octaves, persistence=self.persistence)
+    def noise3d(self, x,y,z, octaves=None, persistence=None):
+        persistence = persistence or self.persistence
+        octaves = octaves or self.persistence
+        n = noise.pnoise3(x+self.salt, y+self.salt, z+self.salt, octaves=octaves, persistence=persistence)
         return n
         
     #def snoise(self, x, y):
@@ -277,31 +279,95 @@ def load_map3(terrain_map):
     print 'done map gen'
     print 'took %d seconds' % (time.time() - _n)
 
-# loadmap3 + subtractive caves (test)
+# cave cube (test)
 def load_map4(terrain_map): 
     import time
     _n = time.time()
     print 'start map gen'
     max_height = 15
     baseline = 100
-    g = Gen(salt=random.random(), xint=512, yint=512, zint=128)
+    xd = 128
+    yd = 128
+    zd = 128
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd)
     h=0
-    for i in range(512):
-        for j in range(512):
+
+    xdr = range(xd)
+    ydr = range(yd)
+    zdr = range(zd)
+
+    # fill in baseline cube with density tubes
+    for i in xdr:
+        for j in ydr:
+            for k in zdr:
+                solid = g.getDensity(i,j,k, persistence=0.8, octaves=8)
+                if solid >= -0.1:
+                    terrain_map.set(i,j,k, 2)
+    
+    ## do height
+    #for i in range(512):
+        #for j in range(512):
+            #h = g.getHeight(i,j)
+            #h = abs(h)
+            #h *= 100
+            #h %= max_height
+            #h = int(h)
+            #for k in range(baseline, h+baseline):
+                ## do 3d noise density
+                #solid = g.getDensity(i,j,k)
+                #if solid >= 0:
+                    #terrain_map.set(i, j, k, 2)
+            #if h<=1:  # lava (this will cover up holes in low surface caves)
+                #terrain_map.set(i,j, baseline+1, 211)
+                #if h == 0:
+                    #terrain_map.set(i,j, baseline, 211)
+
+    print 'done map gen'
+    print 'took %d seconds' % (time.time() - _n)
+
+
+# cave cube + mountain top
+def load_map5(terrain_map): 
+    import time
+    _n = time.time()
+    print 'start map gen'
+    xd = 128
+    yd = 128
+    zd = 128
+    max_height = 15
+    baseline = zd - max_height
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd)
+    h=r=0
+
+    xdr = range(xd)
+    ydr = range(yd)
+    zdr = range(zd)
+
+    print 'generating swiss cube'
+    # fill in baseline cube with density tubes
+    for i in xdr:
+        for j in ydr:
+            for k in zdr:
+                solid = g.getDensity(i,j,k, persistence=0.8, octaves=8)
+                if solid >= -0.1:
+                    terrain_map.set(i,j,k, 2)
+
+    print 'generating mountains + lava'
+    # do height subtractively
+    for i in xdr:
+        for j in ydr:
             h = g.getHeight(i,j)
             h = abs(h)
             h *= 100
             h %= max_height
             h = int(h)
-            for k in range(h+baseline):
-                # do 3d noise density
-                solid = g.getDensity(i,j,k)
-                if solid >= 0:
-                    terrain_map.set(i, j, k, 2)
-            if h<=1:  # lava (this will cover up holes in low surface caves)
-                terrain_map.set(i,j, baseline+1, 211)
-                if h == 0:
-                    terrain_map.set(i,j, baseline, 211)
+            r = zd - (max_height - h)
+            for k in range(r, zd):
+                terrain_map.set(i, j, k, 0) #subtract
+            if h<=1:  # lava
+                # find highest open point, make lava
+                k = terrain_map.get_highest_open_block(i,j)
+                terrain_map.set(i,j, k, 211)
 
     print 'done map gen'
     print 'took %d seconds' % (time.time() - _n)

@@ -374,10 +374,12 @@ class AgentRender:
     def draw_bounding_box(self):
         b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
         x = self.x;y = self.y;z = self.z
+        return
         c_lib.c_lib_objects._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
         #draw box 2 high and then 3 high
 
     def draw_aiming_direction(self, distance=50):
+        return
         c_lib.c_lib_objects._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
     def bleed(self):

@@ -42,7 +42,7 @@ class Main:
     def __init__(self):
         #setup
         #map_gen.load_map2(terrain_map)
-        map_gen.load_map4(terrain_map)
+        map_gen.load_map5(terrain_map)
 
         NetServer.init_0()
         NetOut.init_0()
