@@ -60,10 +60,12 @@ class Main:
 
     def __init__(self):
         #setup
-        #map_gen.load_map2(terrain_map)
-        draw_sphere(block=1, radius=30, x=40,y=40,z=90)
 
+        map_gen.load_map5(terrain_map)
+
+        #draw_sphere(block=1, radius=30, x=40,y=40,z=90)
         pallet_pillar()
+
         NetServer.init_0()
         NetOut.init_0()
         NetEvent.init_0()
@@ -96,8 +98,6 @@ class Main:
     def run2(self):
         #import pdb; pdb.set_trace()
         print "Server Started"
-        #map_gen.load_map(terrain_map)
-        #map_gen.load_map2(terrain_map)
         #physics_timer.start_physics_timer(33)
         init_c_lib.init()
         tick = 0

@@ -41,13 +41,13 @@ class Gen:
         octaves = octaves or self.persistence
         n = noise.pnoise3(x+self.salt, y+self.salt, z+self.salt, octaves=octaves, persistence=persistence)
         return n
-        
+
     #def snoise(self, x, y):
         ## noise package broken, this will fail
         #n = noise.snoise2(x+self.salt, y+self.salt, octaves=self.octaves, persistence=self.persistence)
         #return n
 
-        
+
 '''
 methods
 '''
@@ -254,7 +254,7 @@ def load_map2(terrain_map):
 
 
 # simple perlin generator, baseline height 100 (big cube, small mountains + lava on top)
-def load_map3(terrain_map): 
+def load_map3(terrain_map):
     import time
     _n = time.time()
     print 'start map gen'
@@ -272,15 +272,15 @@ def load_map3(terrain_map):
             for k in range(h+baseline):
                 terrain_map.set(i, j, k, 2)
             if h<=1:
-                terrain_map.set(i,j, baseline+1, 211)
+                terrain_map.set(i,j, baseline+1, 3)
                 if h == 0:
-                    terrain_map.set(i,j, baseline, 211)
+                    terrain_map.set(i,j, baseline, 3)
 
     print 'done map gen'
     print 'took %d seconds' % (time.time() - _n)
 
 # cave cube (test)
-def load_map4(terrain_map): 
+def load_map4(terrain_map):
     import time
     _n = time.time()
     print 'start map gen'
@@ -303,7 +303,7 @@ def load_map4(terrain_map):
                 solid = g.getDensity(i,j,k, persistence=0.8, octaves=8)
                 if solid >= -0.1:
                     terrain_map.set(i,j,k, 2)
-    
+
     ## do height
     #for i in range(512):
         #for j in range(512):
@@ -327,7 +327,7 @@ def load_map4(terrain_map):
 
 
 # cave cube + mountain top
-def load_map5(terrain_map): 
+def load_map5(terrain_map):
     import time
     _n = time.time()
     print 'start map gen'
@@ -367,7 +367,7 @@ def load_map5(terrain_map):
             if h<=1:  # lava
                 # find highest open point, make lava
                 k = terrain_map.get_highest_open_block(i,j)
-                terrain_map.set(i,j, k, 211)
+                terrain_map.set(i,j, k, 3)
 
     print 'done map gen'
     print 'took %d seconds' % (time.time() - _n)
