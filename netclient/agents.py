@@ -103,7 +103,10 @@ class AgentPhysics:
         tr2 = tr**2 #tick rate squared
         xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
-        z_gravity = -.40 / tr2
+        if GameStateGlobal.apply_gravity:
+            z_gravity = -.40 / tr2
+        else:
+            z_gravity = 0
         z_jetpack = 0.80 / tr2
         #gravity
     #TODO: should turn gravity off if agent is in contact with ground
@@ -114,9 +117,12 @@ class AgentPhysics:
 
         #print str((vx,vy))
         if self.brake != 0:
-            vx *= xy_brake
-            vy *= xy_brake
-            vz *= xy_brake
+            if GameStateGlobal.apply_gravity:
+                vx *= xy_brake
+                vy *= xy_brake
+                vz *= xy_brake
+            else:
+                vz += -0.40 / tr2
 
     #constants for collision box
         b_height = self.b_height

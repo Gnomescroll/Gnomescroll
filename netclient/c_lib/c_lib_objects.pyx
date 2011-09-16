@@ -121,3 +121,7 @@ def get_grenade_position(int gid):
     pos = _get_grenade_position(gid)
     p = [pos.x, pos.y, pos.z]
     return p
+
+
+#def _update_agent(int id, float x, float y, float z):
+#    update_agent(id, x,y,z)
