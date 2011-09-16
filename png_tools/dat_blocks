@@ -1,10 +1,25 @@
-
+*
+t top
+b bottom
+n north
+s south
+w west
+e east
 ===
-id 1
-name test
-top ore.png
-bottom ore.png
-north ore.png
-south ore.png
-west ore.png
-east ore.png
+id      1
+name    test
+top     ore.png
+bottom  ore.png
+north   ore.png
+south   ore.png
+west    ore.png
+east    ore.png
+===
+id      2
+name    grass
+top     grass-top.png
+bottom  dirt.png
+north   grass-side.png
+south   grass-side.png
+west    grass-side.png
+east    grass-side.png

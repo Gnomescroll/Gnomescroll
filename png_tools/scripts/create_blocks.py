@@ -8,7 +8,7 @@ def run():
 
     file = f.read()
 
-    l = file.rsplit("---")
+    l = file.rsplit("===")
 
     for n0 in l:
         if n0[0] == "*":
@@ -78,7 +78,7 @@ class Block_list:
     def __init__(self):
         self.list = []
     def new(self):
-        t = block_template()
+        t = Block_template()
         self.list.append(t)
         return t
     def write_block_dat(self):
@@ -86,9 +86,14 @@ class Block_list:
         for t in self.list:
             dict = t
     def block_list(self):
-        return "test"
+        l = []
+        for block in self.list:
+            t = block.texture_list()
+            if t != None:
+                l.append(t)
+        return l
 
-class block_template:
+class Block_template:
     def __init__(self):
         self.name = None
         self.id = None
@@ -117,8 +122,13 @@ class block_template:
             self.side[5] = tex.g(s2)
         else:
             print "Invalid keyword: %s, %s, %s" %(str(s1),str(s2),str(s3))
+    def texture_list(self):
+        if self.name != None and self.id != None:
+            return (self.name, self.id, self.side)
+        else:
+            return None
     def block_dictionary(self):
-
+        pass
 
 tex = Texture_set()
 lblock = Block_list()
