@@ -24,11 +24,11 @@ def _grab_output(*cmd):
 
 
 def options(opt):
-    opt.load('compiler_c python cython')
+    opt.load('compiler_c compiler_cxx python cython')
 
 
 def configure(conf):
-    conf.load('compiler_c python cython')
+    conf.load('compiler_c compiler_cxx python cython')
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
@@ -95,20 +95,17 @@ def build(bld):
         lib=time_lib,
         target='c_lib')
     '''
-    bld(features='c cshlib',
+    ##attemping C++ build
+    bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.c',
-                'c_lib/net_lib/server.c',
+                #'c_lib/net_lib/server.c',
                 'c_lib/time/physics_timer.c',
+                'c_lib/test.cpp',
                 #'c_lib/physics/common.c',
             ],
         use=common_libraries+time_lib,
         lib=time_lib,
         target='c_lib')
-
-    #bld(features='c cshlib pyext',
-        #source=['cube_lib/terrain_map.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='cube_lib.terrain_map')
 
     bld(features='c cshlib pyext',
         source=['c_lib/terrain_map.pyx'],
@@ -166,7 +163,6 @@ def install_in_ext(ctx):
         print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = [
-        'cube_lib.terrain_map',
         'c_lib.ray_trace',
         'init_c_lib',
         'c_lib.c_lib_objects',
