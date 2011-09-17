@@ -1,5 +1,6 @@
 #include "t_map.h"
 
+#include <zlib.h>
 
 struct vm_map map;
 
@@ -207,4 +208,3 @@ int _get_lowest_open_block(int x, int y, int n) {
     }
     return i;
 }
-

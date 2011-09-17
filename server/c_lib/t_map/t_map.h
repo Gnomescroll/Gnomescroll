@@ -9,6 +9,7 @@
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
+#define vm_chunk_voxel_size (vm_chunk_size * vm_chunk_size * vm_chunk_size)
 
 #define xmax (vm_map_dim    * vm_chunk_size)
 #define ymax (vm_map_dim    * vm_chunk_size)
@@ -22,8 +23,8 @@ struct VBO {
 };
 
 struct vm_chunk {
-    unsigned short voxel[512];
-    unsigned char damage[512];
+    unsigned short voxel[vm_chunk_voxel_size];
+    unsigned char damage[vm_chunk_voxel_size];
     int x_off, y_off, z_off; //lower corner of chunk
     unsigned int local_version;
     unsigned int server_version;

@@ -56,6 +56,11 @@ cdef extern from "./t_map/t_map.h":
 
     int _get_highest_open_block(int x, int y, int n)
     int _get_lowest_open_block(int x, int y, int n)
+
+
+cdef extern from "./t_map/t_serialize.h":
+    int _save_to_disk(char* fn)
+    int _load_from_disk(char* fn)
     
 #done
 
@@ -284,3 +289,11 @@ def get_highest_open_block(int x, int y, int n=1):
 
 def get_lowest_open_block(int x, int y, int n=1):
     return _get_lowest_open_block(x,y,n)
+
+def save_to_disk():
+    fn = 'mapsave1'
+    _save_to_disk(fn);
+
+def load_from_disk():
+    fn = 'mapsave1'
+    _load_from_disk(fn)
