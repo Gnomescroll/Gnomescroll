@@ -97,7 +97,8 @@ def build(bld):
     '''
     ##attemping C++ build
     bld(features='cxx cxxshlib',
-        source=['c_lib/c_lib.c',
+        source=['c_lib/c_lib.cpp',
+                #'c_lib/c_lib.c',
                 #'c_lib/net_lib/server.c',
                 'c_lib/time/physics_timer.c',
                 'c_lib/test.cpp',

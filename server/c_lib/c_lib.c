@@ -24,6 +24,8 @@
 
 #include "./net_lib/server.c"
 
+#include "agent/net_agent.cpp"
+
 #ifdef DC_CLIENT
 #include "./texture_loader.c"
 #endif
