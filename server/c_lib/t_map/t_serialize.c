@@ -3,7 +3,7 @@
 // 256kB buffer for compression stream
 #define ZCHUNK (1024*256)
 
-void _save_to_disk(const char* fn) {
+int _save_to_disk(const char* fn) {
     FILE* f = fopen(fn, "wb");
     if (f != NULL) {
         int max = vm_map_dim*vm_map_dim;
@@ -19,9 +19,11 @@ void _save_to_disk(const char* fn) {
         fclose(f);
     } else {
         printf("Failed to open %s for saving map\n", fn);
+        return 1;
     }
+    return 0;
 }
 
-void _load_from_disk(const char* fn) {
-    
+int _load_from_disk(const char* fn) {
+    return 0;
 }
