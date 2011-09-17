@@ -1,6 +1,6 @@
 #include "t_serialize.h"
 
-// 256kB buffer for compression stream
+// buffer size for compression stream
 #define CHUNK_Z (1024*16)
 
 //int _save_to_disk(const char* fn) {
@@ -27,7 +27,7 @@
 char* t_zlib_dest;
 FILE* t_zlib_dest_file;
 
-unsigned short t_compress_buffer[CHUNK_Z / sizeof(unsigned short)];
+unsigned char t_compress_buffer[CHUNK_Z];
 int t_compress_buffer_size = 0;
 
 void t_zerr(int ret);
@@ -35,7 +35,7 @@ void t_zerr(int ret);
 void t_compress_buffer_reset() {
     // zero buffer
     int i;
-    for (i=0; i < CHUNK_Z / sizeof(unsigned short); i++) {
+    for (i=0; i < CHUNK_Z; i++) {
         t_compress_buffer[i] = 0;
     }
     t_compress_buffer_size = 0;
@@ -121,9 +121,12 @@ int t_zlib_compress_init(int level) {
 }
 
 int t_zlib_compress_final() {
-    printf("copress finl\n");
+    printf("compress final\n");
     int ret = deflate(&t_strm, Z_FINISH);
-    if (ret != Z_STREAM_END) return 1;        /* stream will be complete */
+    if (ret != Z_STREAM_END) { /* stream will be incomplete */
+        printf("Z_FINISH deflate failed.\n");
+        return 1;        
+    }
     (void)deflateEnd(&t_strm);
     fclose(t_zlib_dest_file);
     return 0;
@@ -131,16 +134,17 @@ int t_zlib_compress_final() {
 
 int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is none
 {
+    printf("compress chunk\n");
     int ret;
     unsigned have;
-    unsigned char* in = (unsigned char*) t_compress_buffer;
-    unsigned char out[CHUNK_Z / sizeof(unsigned short)];
+    //unsigned char* in = (unsigned char*) t_compress_buffer;
+    unsigned char out[CHUNK_Z];
 
         //return ret;
 
     /* compress until end of file */
     t_strm.avail_in = t_compress_buffer_size;
-    t_strm.next_in = in;
+    t_strm.next_in = t_compress_buffer;
 
     if (&t_strm.next_in == NULL) {
         printf("next_in null!\n");
@@ -149,18 +153,21 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
         printf("avail_in null!\n");
     }
 
+    //printf("%s\n",t_compress_buffer);
+
     /* run deflate() on input until output buffer not full, finish
        compression if all of source has been read in */
     do {
         t_strm.avail_out = t_compress_buffer_size;
         t_strm.next_out = out;
-        printf("deflate piece\n");
+        //printf("deflate piece\n");
         if (&(t_strm.next_out) == NULL) {
             printf("next_out null!\n");
         }
         if (&(t_strm.avail_out) == NULL) {
             printf("avail_out null!\n");
         }
+        printf("%d %d\n", t_strm.avail_in, t_strm.avail_out);
         ret = deflate(&t_strm, Z_BLOCK);    /* no bad return value */
         //printf("%d\n", ret);
         assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
@@ -180,26 +187,30 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
 }
 
 int t_zlib_compress_map_chunk(unsigned short *arr, int arr_size) {
+    arr_size *= sizeof(*arr);
     int i=0;
-    int buffer_pos = 0;
-    int ret = 0;
+    int buffer_pos = t_compress_buffer_size;
+    int ret = Z_OK;
     if (CHUNK_Z - t_compress_buffer_size < arr_size) {  // cant fit in buffer, flush
+        //printf("%d %d %d %d\n", CHUNK_Z, t_compress_buffer_size, arr_size, CHUNK_Z - t_compress_buffer_size);
         ret = t_zlib_compress();
-        if (ret != Z_OK) {
-            printf("zlib compress not ok\n");
-            t_zerr(ret);
-            t_compress_buffer_reset();
-            return 1;
-        }
         t_compress_buffer_reset();
+    }
+
+    if (ret != Z_OK) {
+        printf("zlib compress not ok\n");
+        t_zerr(ret);
+        return 1;
     }
 
     // add to buffer
     for (i=0; i < arr_size; i++) {
-        buffer_pos = t_compress_buffer_size + i; 
-        t_compress_buffer[buffer_pos] = arr[i];
+        t_compress_buffer[buffer_pos] = arr[i] & 0xff;
+        buffer_pos++; 
+        t_compress_buffer[buffer_pos] = (arr[i] >> 8) & 0xff;
+        buffer_pos++; 
     }
-    t_compress_buffer_size += arr_size;
+    t_compress_buffer_size += arr_size*sizeof(unsigned short);
 
     return 0;
 }
