@@ -1,7 +1,7 @@
 #include "t_serialize.h"
 
 // 256kB buffer for compression stream
-#define CHUNK_Z (1024*256)
+#define CHUNK_Z (1024*16)
 
 //int _save_to_disk(const char* fn) {
     //FILE* f = fopen(fn, "wb");
@@ -140,15 +140,28 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
 
     /* compress until end of file */
     t_strm.avail_in = t_compress_buffer_size;
-    t_strm.next_in = &in;
+    t_strm.next_in = in;
+
+    if (&t_strm.next_in == NULL) {
+        printf("next_in null!\n");
+    }
+    if (&t_strm.avail_in == NULL) {
+        printf("avail_in null!\n");
+    }
 
     /* run deflate() on input until output buffer not full, finish
        compression if all of source has been read in */
     do {
         t_strm.avail_out = t_compress_buffer_size;
         t_strm.next_out = out;
-        printf("hey\n");
-        ret = deflate(&t_strm, Z_NO_FLUSH);    /* no bad return value */
+        printf("deflate piece\n");
+        if (&(t_strm.next_out) == NULL) {
+            printf("next_out null!\n");
+        }
+        if (&(t_strm.avail_out) == NULL) {
+            printf("avail_out null!\n");
+        }
+        ret = deflate(&t_strm, Z_BLOCK);    /* no bad return value */
         //printf("%d\n", ret);
         assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
         have = t_compress_buffer_size - t_strm.avail_out;
