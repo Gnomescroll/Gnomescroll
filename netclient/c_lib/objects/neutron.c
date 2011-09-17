@@ -26,7 +26,7 @@ struct Neutron {
 };
 
 struct Neutron* neutron_list[max_neutron];
-float a[16];
+//float a[16];
 int neutron_count=0;
 unsigned int neutron_id=0;
 
@@ -41,7 +41,7 @@ void init_objects_neutron() {
 void inline neutron_Tick(struct Neutron* g) {
     struct EventParticle2* ep = &(g->particle);
     struct Particle2* p = &(g->particle.particle);
-    
+
 
     //float _x, _y, _z;
     //_x = p.x + p.vx/30;
@@ -173,7 +173,7 @@ void create_neutron(int type, int energy, float x, float y, float z, float vx, f
         event_ttl = 150;
     }
     create_event_particle2(&(g->particle), (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 600, event_ttl);
-    
+
     //g->particle = p;
     g->energy = energy;
 }

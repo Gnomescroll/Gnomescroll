@@ -1,6 +1,4 @@
-#ifndef net_lib_client2_h
-#define net_lib_client2_h
-
+#pragma once
 
 /*
 #include <stdint.h>
@@ -33,6 +31,7 @@ struct NetClient {
 };
 */
 
+namespace NetClient {
 int header_size1();
 
 void init_client();
@@ -68,4 +67,4 @@ inline void reset_client_out_buffer();
 
 inline unsigned char* get_client_out_buffer();
 inline int* get_client_out_buffer_n();
-#endif
+}
