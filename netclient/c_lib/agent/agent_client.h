@@ -19,7 +19,7 @@ struct client_agent_state {
     int id;
 
     int seq;
-    struct client_control_state cs[128];
+    struct client_agent_control_state cs[128];
 
 };
 
