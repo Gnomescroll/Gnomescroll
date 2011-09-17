@@ -250,8 +250,8 @@ def load_map2(terrain_map):
                 terrain_map.set(i, j, k, 2)
             if h==0 or h==1:
                 terrain_map.set(i,j, 2, 3)
-    #print 'attempt to save map'
-    #terrain_map.save_to_disk()
+    print 'attempt to save map'
+    terrain_map.save_to_disk()
     print 'done map gen'
 
 
