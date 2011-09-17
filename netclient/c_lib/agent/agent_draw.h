@@ -6,7 +6,7 @@
 #include <compat.h>
 #include "../compat_gl.h"
 
-#include <physics/vector.h>
+//#include <physics/vector.h>
 
 #include "./agent_list.h"
 

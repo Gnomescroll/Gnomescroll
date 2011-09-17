@@ -1,5 +1,4 @@
-#ifndef t_properties
-#define t_properties
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,4 +43,3 @@ static inline int isSolid(int id) {
 int inline _maxDamage(int id) {
     return cube_list[id].max_damage;
     }
-#endif

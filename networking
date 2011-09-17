@@ -1,0 +1,15 @@
+Control data per player can take less than 32 bits
+
+id 8 bits
+x-angle 8 bits
+control - 8 bits
+y-angle 4 bits
+?seq 4 bits
+
+at 30/second, takes 120 bytes/second per client
+
+Two Approaches:
+-send clients control state sequence, with occational state uploads
+-send frequent state updates
+
+With control state, client side and server side prediction are same.  Requires replay of simulation.

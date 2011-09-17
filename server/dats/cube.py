@@ -35,6 +35,7 @@ import cube_dat
 dat = cube_dat.dat
 
 def _build_cubes():
+
     def_tex_order = [[0,1,2,3],
                 [0,1,2,3],
                 [0,1,2,3],
@@ -42,6 +43,14 @@ def _build_cubes():
                 [0,1,2,3],
                 [0,1,2,3],]
 
+    '''
+    def_tex_order = [[1,2,3,0],
+                [1,2,3,0],
+                [1,2,3,0],
+                [1,2,3,0],
+                [1,2,3,0],
+                [1,2,3,0],]
+    '''
     def get_default_tile(i):
 
         return {

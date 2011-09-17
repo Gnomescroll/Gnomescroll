@@ -3,6 +3,14 @@
 
 struct client_agent_state active_agent;
 
+void init_agent_client() {
+    active_agent.id = 0;
+    init_client_agent_start(&active_agent);
+}
+
+//we dont need buffer!!
+//server will drop old sequences!
+
 void init_client_agent_start(struct client_agent_state* a) {
     a->seq = 0;
     int i;
@@ -11,11 +19,6 @@ void init_client_agent_start(struct client_agent_state* a) {
         a->cs[i].seq = -1;
         a->cs[i].tick = -1;
     }
-}
-
-void init_agent_client() {
-    active_agent.id = 0;
-    init_client_agent_start(&active_agent);
 }
 
 void set_agent_control_state(int x[32], float theta, float phi) {
@@ -42,7 +45,7 @@ void set_agent_control_state(int x[32], float theta, float phi) {
 
     unsigned char* buff= get_client_out_buffer();
     int* buff_n = get_client_out_buffer_n();
-
+    int bcount = *buff_n;
     PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     PACK_uint16_t(a->id, buff, buff_n); //agent id
     ///assume agent id is part of state?
@@ -51,5 +54,7 @@ void set_agent_control_state(int x[32], float theta, float phi) {
     PACK_uint32_t(flag, buff, buff_n);
     PACK_float(theta, buff, buff_n);
     PACK_float(phi, buff, buff_n);
+
+    printf("agent_control_state is %i bytes\n", buff_n-bcount);
 }
 

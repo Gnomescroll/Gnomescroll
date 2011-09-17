@@ -20,7 +20,12 @@ Minor:
 -allows fulstrum culling in z
 -draw range of vertices in VBO buffer, reduces polygons
 
-:sort vertex lists 
+:sort vertex lists
+
+Networking:
+
+Halo uses 20 bits per player for control state
+
 
 Performance Indicator:
 
@@ -30,7 +35,17 @@ Performance Indicator:
 -indicate whether map chunk is in graphics memory
 -indicate whether map chunk was drawn last frame
 
-1> 
+===
+Communication:
+SocialibilitY: "Synchronous worlds need asynchronous communication features."
+
+1) Game play facilitates sociability. 2) User interface design is always also social interaction design. 3) Synchronous worlds need asynchronous communication features.
+
+Status, competition, reward and achievement are concepts that the game industry has used for years to increase engagement and drive behavior in games
+
+===
+
+1>
 
 <HaltingState> Triplefox, what do you want in terms of game play, or why do you think AoS or minecraft is engaging?
 <Triplefox> for me it's the accessibility of the low-res voxel world that makes these games different

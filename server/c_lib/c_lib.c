@@ -9,7 +9,7 @@
 #include "./t_map/t_map.c"
 #include "./t_map/t_properties.c"
 
-#include "./physics/vector.h"
+#include "./physics/vector.c"
 #include "./ray_trace/ray_trace.c"
 #include "./physics/common.c"
 
@@ -20,6 +20,8 @@
 
 #include "./agent/agent_include.h"
 
+
+#include "./net_lib/server.c"
 
 #ifdef DC_CLIENT
 #include "./texture_loader.c"
