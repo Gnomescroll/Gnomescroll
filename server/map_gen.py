@@ -249,7 +249,7 @@ def load_map2(terrain_map):
             for k in range(h+1):
                 terrain_map.set(i, j, k, 2)
             if h==0 or h==1:
-                terrain_map.set(i,j, 2, 211)
+                terrain_map.set(i,j, 2, 3)
     print 'done map gen'
 
 
