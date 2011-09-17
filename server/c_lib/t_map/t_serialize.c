@@ -102,13 +102,14 @@ void t_compress_buffer_reset() {
 z_stream t_strm;
 
 int t_zlib_compress_init(int level) {
+    printf("compress init\n");
     t_zlib_dest_file = fopen(t_zlib_dest, "wb");
     if (t_zlib_dest_file != NULL) {
         level = 6;
         t_strm.zalloc = Z_NULL;
         t_strm.zfree = Z_NULL;
         t_strm.opaque = Z_NULL;
-        int ret = deflateInit(&t_strm, Z_DEFAULT_COMPRESSION);
+        int ret = deflateInit(&t_strm, level);
         if (ret != Z_OK) {
             t_zerr(ret);
             return 1;
@@ -120,8 +121,9 @@ int t_zlib_compress_init(int level) {
 }
 
 int t_zlib_compress_final() {
-    //int ret = deflate(&t_strm, Z_FINISH);
-    //if (ret != Z_STREAM_END) return 1;        /* stream will be complete */
+    printf("copress finl\n");
+    int ret = deflate(&t_strm, Z_FINISH);
+    if (ret != Z_STREAM_END) return 1;        /* stream will be complete */
     (void)deflateEnd(&t_strm);
     fclose(t_zlib_dest_file);
     return 0;
@@ -131,23 +133,24 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
 {
     int ret;
     unsigned have;
-    unsigned char* in = (unsigned char*) &t_compress_buffer;
-    unsigned char out[t_compress_buffer_size];
+    unsigned char* in = (unsigned char*) t_compress_buffer;
+    unsigned char out[CHUNK_Z / sizeof(unsigned short)];
 
         //return ret;
 
     /* compress until end of file */
     t_strm.avail_in = t_compress_buffer_size;
-    t_strm.next_in = *in;
+    t_strm.next_in = &in;
 
     /* run deflate() on input until output buffer not full, finish
        compression if all of source has been read in */
     do {
         t_strm.avail_out = t_compress_buffer_size;
         t_strm.next_out = out;
+        printf("hey\n");
         ret = deflate(&t_strm, Z_NO_FLUSH);    /* no bad return value */
         //printf("%d\n", ret);
-        //assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+        assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
         have = t_compress_buffer_size - t_strm.avail_out;
         //printf("%d\n", t_compress_buffer);
         //printf("%d\n", t_strm.avail_out);
@@ -229,7 +232,7 @@ int _save_to_disk(char* fn) {
     for (i=0; i < max; i++) {
         chunk = (struct vm_chunk*) map.column[i].chunk;
         for (j=0; j < vm_column_max; j++) {
-            if (t_zlib_compress_map_chunk(chunk->voxel, 512)) {
+            if (t_zlib_compress_map_chunk(chunk[i].voxel, 512)) {
                 printf("Error: Zlib map compression failed\n");
                 t_compress_buffer_reset();
                 return 1;
