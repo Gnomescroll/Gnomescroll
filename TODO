@@ -20,7 +20,7 @@ Minor:
 -allows fulstrum culling in z
 -draw range of vertices in VBO buffer, reduces polygons
 
-:sort vertex lists 
+:sort vertex lists
 
 Performance Indicator:
 
@@ -30,7 +30,7 @@ Performance Indicator:
 -indicate whether map chunk is in graphics memory
 -indicate whether map chunk was drawn last frame
 
-1> 
+1>
 
 <HaltingState> Triplefox, what do you want in terms of game play, or why do you think AoS or minecraft is engaging?
 <Triplefox> for me it's the accessibility of the low-res voxel world that makes these games different

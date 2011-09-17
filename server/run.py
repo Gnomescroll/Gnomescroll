@@ -61,9 +61,9 @@ class Main:
     def __init__(self):
         #setup
 
-        map_gen.load_map3(terrain_map)
+        map_gen.load_map2(terrain_map)
 
-        #draw_sphere(block=1, radius=30, x=40,y=40,z=90)
+        draw_sphere(block=3, radius=30, x=40,y=40,z=90)
         pallet_pillar()
 
         NetServer.init_0()
