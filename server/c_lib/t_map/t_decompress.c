@@ -1,11 +1,20 @@
 #include "t_decompress.h"
 
+
+
 int map_load_from_disk(const char* fn) {
 
     // open file for reading
 
-    // decompress until EOF
+    FILE* f = fopen(fn, "rb");
+    if (f != NULL) {
 
-    
-    return 0;
+        
+
+        fclose(f);
+        return 0;
+    }
+
+    printf("Failed to open map file %s\n", fn);
+    return 1;
 }

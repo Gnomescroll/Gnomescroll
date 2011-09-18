@@ -118,17 +118,17 @@ int map_save_to_disk(char *fn) {
     int i,j;
 
     unsigned short* vox;
-    struct vm_column col;
+    struct vm_column* col;
     struct vm_chunk* chunk;
 
     for (i=0; i < t_columns;i++) {
         x = i % vm_map_dim;
         y = i / vm_map_dim;
-        col = map.column[i];
-        chunk = col.chunk;
+        col = &map.column[i];
+        chunk = (struct vm_chunk *)col->chunk;
         for (j=0; j < vm_column_max; j++) {
             z = j;
-            vox = chunk->voxel;
+            vox = chunk[j].voxel;
             if (t_zlib_compress_map_chunk(x,y,z, vox, 512)) {
                 printf("Error: Zlib map compression failed\n");
                 t_buffer_reset();

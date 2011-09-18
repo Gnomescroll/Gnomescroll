@@ -131,6 +131,11 @@ int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox) {
 
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
+
+    if (chunk == NULL) {
+        chunk = new_chunk(xoff, yoff, zoff);
+        column->chunk[zoff] = chunk;
+    }
     
     int i;
     for (i=0; i < vm_chunk_voxel_size; i++) {

@@ -72,5 +72,4 @@ void t_zlib_unserialize_chunk(unsigned char* buffer, int* t_buffer_index) {
 
     ret = _set_chunk_voxels(x, y, z, vox);
     if (ret) printf("_set_chunk_voxels failed\n");
-    
 }
