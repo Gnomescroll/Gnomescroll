@@ -2,7 +2,7 @@
 
 
 struct Particle2* Grenade_list[1024];
-//float a[16];
+float a[16];
 int g_count=0;
 
 void inline grenade_Tick(struct Particle2* g);

@@ -31,7 +31,7 @@ void agent_Tick(struct Agent_state* g) {
 //only use on client
 #ifdef DC_CLIENT
 struct Agent_state* create_agent_from_snapshot(int id, struct Agent_snapshot* as) {
-    struct Agent_state* a = malloc(sizeof(struct Agent_state));
+    struct Agent_state* a = (struct Agent_state*) malloc(sizeof(struct Agent_state));
     a->id = id;
     a->tbn=0;
 

@@ -3,14 +3,9 @@
 extern "C" { 
 	#include <stdio.h>
 
-	// #ifdef DC_CLIENT
-	// #include "./net_lib/client.cpp"
-	// #endif
-
 	#include "./t_map/t_map.c"
 	#include "./t_map/t_properties.c"
-	#include "./t_map/t_serialize.c"
-
+	
 	#include "./physics/vector.c"
 	#include "./ray_trace/ray_trace.c"
 	#include "./physics/common.c"
@@ -23,12 +18,13 @@ extern "C" {
 	#include "./agent/agent_include.h"
 
 	#ifdef DC_CLIENT
-		#include "./texture_loader.c"
+		//#include "./texture_loader.c"
 	#endif
 	
 	#ifdef DC_SERVER
 		#include "./t_map/t_serialize.c"
 	#endif
+	
 }
 
 #include <net_lib/net_lib.h>
@@ -42,7 +38,10 @@ extern "C" {
 	    init_objects_grenade();
 	    init_objects_neutron();
 	    init_objects_cspray();
-		//#include "./texture_loader.c"
+
+		#ifdef DC_CLIENT
+			init_texture_loader();
+		#endif
     return 0;
 	}
 }

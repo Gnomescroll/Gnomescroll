@@ -24,7 +24,7 @@ if(!surface) {
 if(surface->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
 
 glEnable(GL_TEXTURE_2D);
-glGenTextures( 1, &particle_texture_id );
+glGenTextures( 1, (GLuint*)&particle_texture_id );
 
 glBindTexture( GL_TEXTURE_2D, particle_texture_id );
 glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?

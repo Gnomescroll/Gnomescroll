@@ -10,7 +10,7 @@ struct Cspray {
 #define max_cspray 4096
 
 struct Cspray* cspray_list[max_cspray];
-float a[16];
+//float a[16];
 int cspray_count=0;
 unsigned int cspray_id=0;
 

@@ -190,7 +190,7 @@ def build(bld):
         target='c_lib')
     '''
 
-    bld(features='c cshlib',
+    bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp',
                 'c_lib/texture_loader.c',
                 #'c_lib/net_lib/client.c',
