@@ -69,9 +69,9 @@ void flush_outgoing_packets();
 
 }
 
-//extern "C" {
+extern "C" {
 	void reset_client_out_buffer();
 
 	unsigned char* get_client_out_buffer();
 	int* get_client_out_buffer_n();
-//}
+}

@@ -1,5 +1,8 @@
-#include "client.h"
+#include <net_lib/client.h>
 
+#include <net_lib/common/message_handler.h>
+#include <net_lib/client/client.hpp>
+//#include >
 
 //#include "common/net_packets.h"
 
@@ -23,19 +26,19 @@ extern "C" {
 
     void _NetClientConnect(int a, int b,int c, int d, int _port) {
         reset_client_out_buffer();
-        init_agent_client();
+        //init_agent_client();
         init_message_handler();
         update_current_netpeer_time();
-        init_client();
+        NetClient::init_client();
         init_message_handler();
 
         unsigned int port = 9999;
-        set_server(a,b,c,d, port);
+        NetClient::set_server(a,b,c,d, port);
         //set_server(127,0,0,1, port);
         //set_server(a,b,c,d, port);
-        attempt_connection_with_server();
+        NetClient::attempt_connection_with_server();
 
-        np= CLIENT_get_NP();
+        np= NetClient::CLIENT_get_NP();
 
         //init_agent_control_state();
     }
@@ -59,20 +62,18 @@ extern "C" {
         _N++;
         //NP_time_delta1(np.last_packet_time) //time since last packet
         //pviz_start_frame();
-        process_incoming_packets();
+        NetClient::process_incoming_packets();
         //NP_time_delta1(np.last_packet_time)
-        poll_connection_timeout();
+        NetClient::poll_connection_timeout();
         if(np->connected == 0) {
             if(_N % 90 == 0) printf("UDP Socket not connected!\n");
-            if(_N % 90 == 0) attempt_connection_with_server();
+            if(_N % 90 == 0) NetClient::attempt_connection_with_server();
             return;
         }
 
-        flush_outgoing_packets();
-
+        NetClient::flush_outgoing_packets();
         check_for_dropped_packets(np);
-        poll_connection_timeout();
-        //decrement_ttl();
+        NetClient::poll_connection_timeout();
 
         return;
     }

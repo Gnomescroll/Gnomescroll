@@ -25,24 +25,12 @@ extern "C" {
 	//#include "./net_lib/server.c"
 	//#include "./net_lib/client.c"
 
-
-	#include <net_lib/common/net_time.c>
-	#include <net_lib/common/net_peer.c>
-	#include <net_lib/client/client.cpp>
-	#include <net_lib/common/sequencer.c>
-	#include <net_lib/common/message_handler.c>
-
-	#include <net_lib/client/pviz.c>
-
 	#ifdef DC_CLIENT
 		#include "./texture_loader.c"
 	#endif
-
-	#include <net_lib/server.c>
-	#include <net_lib/client.c>
 }
 
-#include <net_lib/net_lib.cpp>
+#include <net_lib/net_lib.h>
 
 #include "agent/net_agent.cpp"
 

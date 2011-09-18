@@ -14,6 +14,11 @@ syntax: glob
 
 run 
 
+tags
+tags_sorted_by_file
+server.sublime-workspace
+netclient.sublime-workspace
+
 terrain_map.c
 terrain_map2.c
 dat.c
@@ -34,12 +39,6 @@ c_lib_agents.c
 
 test_client
 test_server
-
-Safe Browsing Bloom
-Safe Browsing Bloom Filter 2
-
-result.jpg
-awesomium.log
 
 VBO.c
 input.c

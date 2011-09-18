@@ -7,22 +7,26 @@
 
 #include <string.h>
 
+extern "C" {
+    
+    unsigned char client_out_buff[1500];
+    int client_out_buff_n = 11; //header length;
+
+    void reset_client_out_buffer() {
+        client_out_buff_n = 11;
+    }
+
+    unsigned char* get_client_out_buffer() {
+        return client_out_buff;
+    }
+
+    int* get_client_out_buffer_n() {
+        return &client_out_buff_n;
+    }
+
+}
+
 namespace NetClient {
-
-unsigned char client_out_buff[1500];
-int client_out_buff_n = 11; //header length;
-
-void reset_client_out_buffer() {
-    client_out_buff_n = 11;
-}
-
-unsigned char* get_client_out_buffer() {
-    return client_out_buff;
-}
-
-int* get_client_out_buffer_n() {
-    return &client_out_buff_n;
-}
 
 //end globals
 

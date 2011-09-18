@@ -1,9 +1,8 @@
-#include "server/server.h"
+
 
 #include "server.h"
 
-//#include "common/net_packets.h"
-
+/*
 #include "common/type_pack.h"
 
 #include "common/net_time.c"
@@ -11,8 +10,7 @@
 #include "common/message_handler.c"
 #include "server/server.c"
 #include "common/sequencer.c"
-
-#include <net_lib/client/client.cpp>
+*/
 
   //should be in header?
 
@@ -26,16 +24,12 @@ void _NetServerInit() {
 
     unsigned short port = 9999;
     init_server(port);
-    //inits
-    //printf("WTF?WTF?WTF?\n");
-    //init_agent_control_state();
 }
 
 long t1 = 0;
 long t2 = 0;
 
 void _NetServerTick() {
-    //printf("tick\n");
     if(0) {
         t2 = t1;
         t1 = _get_time();

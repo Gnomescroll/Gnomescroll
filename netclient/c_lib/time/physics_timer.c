@@ -1,8 +1,9 @@
 
-#ifndef WTF_12
-#define WTF_12
 
 #include "physics_timer.h"
+
+
+extern "C" {
 
 int f;
 long start_time;
@@ -179,4 +180,4 @@ int _GET_MS_TIME() {
 
 }
 
-#endif
+}

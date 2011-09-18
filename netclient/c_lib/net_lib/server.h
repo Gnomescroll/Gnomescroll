@@ -1,5 +1,4 @@
-#ifndef net_lib_client_h
-#define net_lib_client_h
+#pragma once
 
 //#include <c_lib.h>
 
@@ -11,14 +10,12 @@
 #include <stdlib.h>
 
 #include <time/physics_timer.h>
+#include <net_lib/server/server.h>
 
 //message handling
 //#include <agent/control_state.h>
 
-#include "server/server.h"
-
-void _NetServerInit();
-void _NetServerTick();
-
-
-#endif
+extern "C" {
+	void _NetServerInit();
+	void _NetServerTick();
+}
