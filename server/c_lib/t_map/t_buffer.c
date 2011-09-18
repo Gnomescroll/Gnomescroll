@@ -1,8 +1,12 @@
-#define t_buff_size ((131072*2) * sizeof(int) * 3)    // 256kB -- 32*8*512*2  [columns * chunks/col * voxels/chunk * bytes/voxel].  Values below this are associated with the final call to deflate() segfaulting.
-unsigned char buff[t_buff_size];
-int* _t_bi=0, *t_buffer_index = &_t_bi;
+#include "t_buffer.h"
 
-/* Functions */
+void t_buffer_reset() {
+    int i;
+    for (i=0; i < t_buff_size; i++) {
+        buff[i] = 0;
+    }
+    *t_buffer_index = 0;
+}
 
 
 /* Packing buffer */
@@ -23,18 +27,14 @@ inline void t_PACK_int(int d, unsigned char* buffer, int* n) {
 
 void t_zlib_serialize_chunk(int x, int y, int z, unsigned short* vox, unsigned char* buffer, int* t_buffer_index) {
 
-    int _n = *t_buffer_index;
     t_PACK_int(x, buffer, t_buffer_index); //pack x
     t_PACK_int(y, buffer, t_buffer_index); //pack y
     t_PACK_int(z, buffer, t_buffer_index); //pack z
 
     int i;
-    for(i=0;i<512;i++) {
+    for(i=0;i<vm_chunk_voxel_size;i++) {
         t_PACK_ushort(vox[i], buffer, t_buffer_index);
     }
-    //printf("packed map chunk into %i bytes\n", *t_buffer_index-_n);
-    //printf("remaining buffer space: %d\n", t_buff_size-*t_buffer_index);
-    //printf("buff size: %d\n", t_buff_size);
 }
 
 
@@ -51,17 +51,26 @@ inline short t_UNPACK_short(unsigned char* buffer, int*n) {
     return d;
 }
 
+inline int t_UNPACK_int(unsigned char* buffer, int*n) {
+        int d = *((int*)(buffer+*n));
+        *n += sizeof(int);
+    return d;
+}
+
 void t_zlib_unserialize_chunk(unsigned char* buffer, int* t_buffer_index) {
-    short x,y,z;
-    unsigned short vox[512];
+    int x,y,z;
+    unsigned short vox[vm_chunk_voxel_size];
 
-    //x = t_UNPACK_short(buffer, t_buffer_index); //unpack x
-    //y = t_UNPACK_short(buffer, t_buffer_index); //unpack y
-    //z = t_UNPACK_short(buffer, t_buffer_index); //unpack z
+    x = t_UNPACK_int(buffer, t_buffer_index); //unpack x
+    y = t_UNPACK_int(buffer, t_buffer_index); //unpack y
+    z = t_UNPACK_int(buffer, t_buffer_index); //unpack z
 
-    int i;
-    for(i=0; i<512; i++) {
+    int i, ret;
+    for(i=0; i<vm_chunk_voxel_size; i++) {
         vox[i]= t_UNPACK_ushort(buffer, t_buffer_index);
     }
-    //now do something with vox and x,y,z
+
+    ret = _set_chunk_voxels(x, y, z, vox);
+    if (ret) printf("_set_chunk_voxels failed\n");
+    
 }

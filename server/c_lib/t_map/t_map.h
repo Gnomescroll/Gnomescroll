@@ -64,6 +64,9 @@ int _set_server_version(int x,int y,int z, int server_version);
 struct vm_map* _get_map();
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
 
+int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox);
+
+
 int _get_highest_open_block(int x, int y, int n);
 int _get_lowest_open_block(int x, int y, int n);
 
