@@ -1,4 +1,5 @@
 #include "t_serialize.h"
+#include "brandon_serializer.c"
 
 // buffer size for compression stream
 #define CHUNK_Z (sizeof(unsigned short[512])*16)
@@ -27,18 +28,29 @@
 char* t_zlib_dest;
 FILE* t_zlib_dest_file;
 
+//int t_compress_buffer_short_size = CHUNK_Z / sizeof(unsigned short);
+#define t_compress_buffer_short_size (CHUNK_Z / sizeof(unsigned short))
+unsigned short t_compress_buffer_short[t_compress_buffer_short_size];
+
 unsigned char t_compress_buffer[CHUNK_Z];
 int t_compress_buffer_index = 0;
 
 void t_zerr(int ret);
 
 void t_compress_buffer_reset() {
+    //printf("reset buffer\n");
     // zero buffer
     int i;
-    for (i=0; i < CHUNK_Z; i++) {
-        t_compress_buffer[i] = 0;
+    //for (i=0; i < CHUNK_Z; i++) {
+    //for (i=0; i < t_compress_buffer_short_size; i++) {
+        ////t_compress_buffer[i] = 0;
+        //t_compress_buffer_short[i] = 0;
+    //}
+    for (i=0; i < buff_size; i++) {
+        //t_compress_buffer[i] = 0;
+        buff[i] = 0;
     }
-    t_compress_buffer_index = 0;
+    *buffer_index = 0;
 }
 
 /* Compress from file source to file dest until EOF on source.
@@ -135,54 +147,78 @@ int t_zlib_compress_final() {
 int _compress_calls = 0;
 int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is none
 {
-    printf("compress chunk\n");
+    //return Z_OK;
+    //printf("compress chunk\n");
     int ret;
     unsigned have;
     //unsigned char* in = (unsigned char*) t_compress_buffer;
-    unsigned char out[CHUNK_Z];
+    //unsigned char out[CHUNK_Z];
+    unsigned char out[buff_size];
 
+    //unsigned char* buff = (unsigned char*)t_compress_buffer_short;
+    //int i=0;
+    //int ibuff=0;
+    //for (i=0; i < t_compress_buffer_short_size; i++) {
+        //unsigned char* btmp = (unsigned char*)&t_compress_buffer_short[i];
+        //buff[ibuff] = btmp[0];
+        //ibuff++;
+        //buff[ibuff] = btmp[1];
+        //ibuff++;
+    //}
+
+
+    //int buff_size = t_compress_buffer_short_size * sizeof(unsigned short);
         //return ret;
 
     /* compress until end of file */
-    t_strm.avail_in = t_compress_buffer_index;
-    t_strm.next_in = t_compress_buffer;
+    //t_strm.avail_in = t_compress_buffer_index;
+    //t_strm.avail_in = buff_size;
+    t_strm.avail_in = *buffer_index;
+    //t_strm.next_in = t_compress_buffer;
+    t_strm.next_in = buff;
     //t_strm.next_in = &in;
 
     /* run deflate() on input until output buffer not full, finish
        compression if all of source has been read in */
     do {
-        t_strm.avail_out = CHUNK_Z;
+        //t_strm.avail_out = CHUNK_Z;
+        t_strm.avail_out = buff_size;
         t_strm.next_out = out;
         //printf("%d %d\n", t_strm.avail_in, t_strm.avail_out);
         ret = deflate(&t_strm, Z_NO_FLUSH);    /* no bad return value */
         //printf("%d\n", ret);
         _compress_calls++;
         assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-        have = t_compress_buffer_index - t_strm.avail_out;
+        //have = t_compress_buffer_index - t_strm.avail_out;
+        //have = buff_size - t_strm.avail_out;
+        have = *buffer_index - t_strm.avail_out;
         //printf("%d\n", t_strm.avail_out);
         //printf("%d\n", t_compress_buffer_index);
         //printf("%d\n", t_strm.avail_in);
         //printf("%d\n", have);
         //printf("^HAVE\n");
         if (fwrite(out, 1, have, t_zlib_dest_file) != have || ferror(t_zlib_dest_file)) {
+            //printf("DEFLATE OR FILE FAIL\n");
             t_zlib_compress_final();
             return Z_ERRNO;
         }
     } while (t_strm.avail_out == 0);
     //assert(strm.avail_in == 0);     /* all input will be used */
-printf("%d\n", _compress_calls);
+//printf("%d\n", _compress_calls);
     return Z_OK;
 }
 
-int t_zlib_compress_map_chunk(unsigned short *arr, int arr_size) {
+int t_zlib_compress_map_chunk(int x, int y, int z, unsigned short *arr, int arr_size) {
     //arr_size *= sizeof(unsigned short);
-    int buff_arr_size = arr_size * sizeof(unsigned short);
+    //int buff_arr_size = arr_size * sizeof(unsigned short);
     int ret = Z_OK;
-    if (CHUNK_Z - t_compress_buffer_index < buff_arr_size) {  // cant fit in buffer, flush
+    //if (CHUNK_Z - t_compress_buffer_index < buff_arr_size) {  // cant fit in buffer, flush
+    //if (t_compress_buffer_short_size - t_compress_buffer_index < arr_size) {  // cant fit in buffer, flush
+    if (buff_size - *buffer_index < (arr_size*sizeof(unsigned short))) {  // cant fit in buffer, flush
         //printf("%d %d %d %d\n", CHUNK_Z, t_compress_buffer_index, arr_size, CHUNK_Z - t_compress_buffer_index);
         ret = t_zlib_compress();
         t_compress_buffer_reset();
-        printf("RESET %d\n", t_compress_buffer_index);
+        //printf("RESET %d\n", t_compress_buffer_index);
     }
 
     if (ret != Z_OK) {
@@ -193,22 +229,32 @@ int t_zlib_compress_map_chunk(unsigned short *arr, int arr_size) {
 
     // add to buffer
     int i=0;
-    int buffer_pos = t_compress_buffer_index;
+    //int buffer_pos = t_compress_buffer_index;
     //printf("%d %d\n", buffer_pos, t_compress_buffer_index);
     //printf("buff size  %d\n", t_compress_buffer_index);
     //if (buffer_pos + buff_arr_size >= CHUNK_Z+1) {
         //printf("WARNING will segfault\n");
         //printf("%d %d %d %d\n", buffer_pos, buff_arr_size, buffer_pos + buff_arr_size, CHUNK_Z);
     //}
-    for (i=0; i < arr_size; i++) {
-        //if (t_compress_buffer == NULL) printf("t_compress_buffer NULL\n");
-        t_compress_buffer[buffer_pos] = arr[i] & 0xff;
-        buffer_pos++; 
-        t_compress_buffer[buffer_pos] = (arr[i] >> 8) & 0xff;
-        buffer_pos++;
-        //printf("buff pos  %d\n", buffer_pos);
-    }
-    t_compress_buffer_index += buff_arr_size;//*sizeof(unsigned short);
+    //unsigned short k=0;
+    //if (arr == NULL) {
+        //printf("ARR NULL\n");
+    //}
+    //for (i=0; i < arr_size; i++) {
+        ////if (t_compress_buffer == NULL) printf("t_compress_buffer NULL\n");
+        ////t_compress_buffer[buffer_pos] = arr[i] & 0xff;
+        ////buffer_pos++; 
+        ////t_compress_buffer[buffer_pos] = (arr[i] >> 8) & 0xff;
+        ////buffer_pos++;
+        ////printf("buff pos  %d\n", buffer_pos);
+        //k = arr[i];
+        //t_compress_buffer_short[i] = k;
+        ////t_compress_buffer_short[i] = arr[i];
+    //}
+    ////t_compress_buffer_index += buff_arr_size;//*sizeof(unsigned short);
+    //t_compress_buffer_index += arr_size;//*sizeof(unsigned short);
+
+    serialize_chunk(x,y,z, arr, buff, buffer_index);
 
     return 0;
 }
@@ -239,7 +285,50 @@ void t_zerr(int ret)
     }
 }
 
-int _save_to_disk(char* fn) {
+int _processed_chunks = 0;
+//int _save_to_disk(char* fn) {
+    //t_zlib_dest = fn;
+    //if (t_zlib_compress_init(Z_DEFAULT_COMPRESSION)) {
+        //printf("Error: zlib compression init failed.\n");
+        //t_compress_buffer_reset();
+        //return 1;
+    //}
+
+    //int max = vm_map_dim*vm_map_dim;
+    //int i,j;
+    //short x,y,z;
+    ////int s = sizeof(unsigned short);
+    //struct vm_chunk* chunk;
+    //for (i=0; i < max; i++) {
+        ////chunk = (struct vm_chunk*) map.column[i].chunk;
+        //chunk = map.column[i].chunk;
+        //x = i % vm_map_dim;
+        //y = i / vm_map_dim;
+        //for (j=0; j < vm_column_max; j++) {
+            //z = j;
+            //printf("%d %d %d\n", i / vm_map_dim, i % vm_map_dim, j);
+
+            //if (t_zlib_compress_map_chunk(x,y,z, &(chunk[i].voxel), 512)) {
+                //printf("Error: Zlib map compression failed\n");
+                //t_compress_buffer_reset();
+                //return 1;
+            //}
+            //_processed_chunks++;
+            ////printf("Processed chunks: %d\n", _processed_chunks);
+        //}
+    //}
+
+    //if(t_zlib_compress_final()) {
+        //printf("Error: zlib compression close failed.\n");
+        //t_compress_buffer_reset();
+        //return 1;
+    //}
+    //t_compress_buffer_reset();
+    //return 0;
+//}
+
+int _save_to_disk(char *fn) {
+
     t_zlib_dest = fn;
     if (t_zlib_compress_init(Z_DEFAULT_COMPRESSION)) {
         printf("Error: zlib compression init failed.\n");
@@ -247,14 +336,24 @@ int _save_to_disk(char* fn) {
         return 1;
     }
 
-    int max = vm_map_dim*vm_map_dim;
-    int i,j;
-    //int s = sizeof(unsigned short);
+    
+    int t_max = vm_map_dim * vm_map_dim;
+    int x,y,z;
+    int i,j,k;
+    unsigned short s;
+    unsigned short* vox;
+    struct vm_column col;
     struct vm_chunk* chunk;
-    for (i=0; i < max; i++) {
-        chunk = (struct vm_chunk*) map.column[i].chunk;
+    for (i=0; i < t_max;i++) {
+        x = i % vm_map_dim;
+        y = i / vm_map_dim;
+        col = map.column[i];
+        chunk = col.chunk;
         for (j=0; j < vm_column_max; j++) {
-            if (t_zlib_compress_map_chunk(chunk[i].voxel, 512)) {
+            z = j;
+            printf("%d %d %d\n", x,y,z);
+                vox = chunk->voxel;
+            if (t_zlib_compress_map_chunk(x,y,z, vox, 512)) {
                 printf("Error: Zlib map compression failed\n");
                 t_compress_buffer_reset();
                 return 1;
@@ -269,6 +368,7 @@ int _save_to_disk(char* fn) {
     }
     t_compress_buffer_reset();
     return 0;
+
 }
 
 int _load_from_disk(const char* fn) {

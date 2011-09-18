@@ -5,7 +5,7 @@
 struct vm_map map;
 
 int _init_t_map() {
-
+    printf("MAP SIZE %d\n", sizeof(map));
     int i;
     struct vm_column* c;
     for(i=0; i<vm_map_dim*vm_map_dim; i++) {
