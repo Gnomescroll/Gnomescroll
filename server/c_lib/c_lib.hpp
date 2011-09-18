@@ -1,9 +1,11 @@
-#ifndef c_lib_h
-#define c_lib_h
+#pragma once
 
+ extern "C" {
     #include "compat.h"
+}
+
+ extern "C" {
     int init_c_lib();
+}
 
 #define DC_SERVER
-
-#endif

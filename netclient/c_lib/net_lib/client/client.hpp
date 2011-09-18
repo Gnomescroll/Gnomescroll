@@ -1,10 +1,12 @@
 #pragma once
 
-/*
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-*/
+
+
+ extern "C" {
 
 #include "../common/net_lib_common.h"
 #include "../common/sequencer.h"
@@ -14,6 +16,7 @@
 
 #include "../client/pviz.h"
 
+}
 /*
 struct NetClient {
     uint16_t client_id;
@@ -63,8 +66,12 @@ void flush_outgoing_packets();
 //unsigned char client_out_buff[1500];
 //int client_out_buff_n = 11; //header length;
 
-inline void reset_client_out_buffer();
 
-inline unsigned char* get_client_out_buffer();
-inline int* get_client_out_buffer_n();
 }
+
+//extern "C" {
+	void reset_client_out_buffer();
+
+	unsigned char* get_client_out_buffer();
+	int* get_client_out_buffer_n();
+//}

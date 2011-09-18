@@ -1,6 +1,16 @@
 
 #include "net_agent.hpp"
 
+//#include <net_lib/common/message_handler.h>
+
+int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
+    Agent_control_state_message cs;
+    int r = cs.deserialize(buff, buff_n); //should pass in pointer for number of ints read
+
+    printf("control state received: id=%i, seq=%i \n", cs.id, cs.seq);
+    return r;
+}
+
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
@@ -37,12 +47,19 @@ Agent_control_state_message::Agent_control_state_message() {
 
 void Agent_control_state_message::register_message() {
     int size = sizeof(uint8_t)*2+sizeof(uint16_t)*2+sizeof(uint32_t);
-    register_message_handler(id, size, &handle_Agent_control_state_message);
+    //register_message_handler(id, size, (*pt2handler) &handle_agent_control_state_message);
 }
 
 void Agent_control_state_message::send_message() {
-    unsigned char* buff= NetClient::get_client_out_buffer();
-    int* buff_n = NetClient::get_client_out_buffer_n();
+    //unsigned char* buff= NetClient::get_client_out_buffer();
+    //int* buff_n = NetClient::get_client_out_buffer_n();
+
+    //unsigned char* buff= get_client_out_buffer();
+    //int* buff_n = get_client_out_buffer_n();
+
+    unsigned char* buff;
+    int* buff_n;
+
     int bcount = *buff_n;
 
     PACK_uint8_t(3, buff, buff_n);  //push message id on stack
@@ -70,14 +87,6 @@ int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
     return buff_n - _buff_n;
 }
 
-
-int handle_Agent_control_state_message(unsigned char* buff, int buff_n) {
-    Agent_control_state_message cs;
-    int r = cs.deserialize(buff, buff_n); //should pass in pointer for number of ints read
-
-    printf("control state received: id=%i, seq=%i \n", cs.id, cs.seq);
-    return r;
-}
 
 /*
 class CRectangle {

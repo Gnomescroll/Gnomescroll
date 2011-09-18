@@ -41,6 +41,9 @@ void pviz_start_frame() {
 */
 
 //1028x800
+
+#ifdef DC_CLIENT
+
 void pviz_draw_grid(float z) {
     return;
     //printf("X");'
@@ -110,6 +113,7 @@ void pviz_draw(float x, float y, float z) {
     glEnd();
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
 }
+#endif
 
 struct pviz_packet {
     int seq;
@@ -149,6 +153,8 @@ void pviz_packet_ack(int seq) {
 //green acked
 
 #define PO_L2 64 // number to display on screen
+
+#ifdef DC_CLIENT
 void pviz_packet_histrogram_draw(float x, float y, float z) {
     //printf("Test\n");
     x -= 10.0;
@@ -234,7 +240,7 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     glEnd();
     */
 }
-
+#endif
 //#define bin_size 8
 
 int bin_size = 1;
@@ -249,6 +255,7 @@ void toggle_latency_unit() {
     printf("pviz_packet_histrogram2: latency unit = %ims\n", bin_size);
 }
 
+#ifdef DC_CLIENT
 void pviz_packet_histrogram2_draw(float x, float y, float z) {
     //printf("po=%i\n", PO_L);
     x -= 10;
@@ -289,3 +296,4 @@ void pviz_packet_histrogram2_draw(float x, float y, float z) {
 
     //printf("time= %i\n", get_current_netpeer_time());
 }
+#endif

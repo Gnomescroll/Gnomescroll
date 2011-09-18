@@ -12,6 +12,8 @@
 #include "server/server.c"
 #include "common/sequencer.c"
 
+#include <net_lib/client/client.cpp>
+
   //should be in header?
 
 //#include <agent/control_state.c>
