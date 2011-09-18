@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-#include "client/client.h"
+#include <net_lib/client/client.hpp>
 
 #include <time/physics_timer.h>
 

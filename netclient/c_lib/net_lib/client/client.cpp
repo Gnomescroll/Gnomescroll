@@ -3,6 +3,7 @@
 //globals
 
 namespace NetClient {
+
 unsigned char client_out_buff[1500];
 int client_out_buff_n = 11; //header length;
 

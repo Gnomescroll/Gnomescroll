@@ -60,12 +60,12 @@ void Agent_control_state_message::send_message() {
 int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
     //PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     int _buff_n = buff_n;
-    id = UPACK_uint16_t(buff, buff_n); //agent id
-    seq = UPACK_uint8_t(buff, buff_n);
-    tick =UPACK_uint16_t(buff, buff_n);
-    cs = UPACK_uint32_t(buff, buff_n);
-    theta = UPACK_float(buff, buff_n);
-    phi = UPACK_float(buff, buff_n);
+    id = UPACK_uint16_t(buff, &buff_n); //agent id
+    seq = UPACK_uint8_t(buff, &buff_n);
+    tick =UPACK_uint16_t(buff, &buff_n);
+    cs = UPACK_uint32_t(buff, &buff_n);
+    theta = UPACK_float(buff, &buff_n);
+    phi = UPACK_float(buff, &buff_n);
 
     return buff_n - _buff_n;
 }

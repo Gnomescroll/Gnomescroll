@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "client/client.h"
+#include <net_lib/client/client.hpp>
 
 #include "common/sequencer.h"
 #include "common/message_handler.h"

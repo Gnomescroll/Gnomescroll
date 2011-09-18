@@ -39,7 +39,7 @@ void set_agent_control_state(int x[32], float theta, float phi) {
         _n *= 2;
     }
 
-    a->cs[a->seq].cs= flag;
+	sa->cs[a->seq].cs= flag;
     a->cs[a->seq].theta = theta; //should be a byte
     a->cs[a->seq].phi = phi; //should be a byte
 
