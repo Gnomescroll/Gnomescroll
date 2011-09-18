@@ -198,7 +198,8 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
         //printf("%d\n", have);
         //printf("^HAVE\n");
         if (fwrite(out, 1, have, t_zlib_dest_file) != have || ferror(t_zlib_dest_file)) {
-            //printf("DEFLATE OR FILE FAIL\n");
+            printf("DEFLATE OR FILE FAIL\n");
+            //printf("%d\n", have);
             t_zlib_compress_final();
             return Z_ERRNO;
         }

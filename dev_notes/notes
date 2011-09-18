@@ -1,0 +1,22 @@
+If, when compiling cython, you get odd error similar to this:
+
+
+Error converting Pyrex file to C:
+------------------------------------------------------------
+...
+import dats.loader as dat_loader
+c_dat = dat_loader.c_dat
+
+def init_cube_properties(c_dat):
+
+    def apply(id):
+   ^
+------------------------------------------------------------
+
+
+or possibly any cython compile error for no reason (did not edit file etc),
+check version with
+cython -V
+
+0.12.1 failed on ubuntu (cython version available through synaptic)
+0.15.0 passed (build from source)

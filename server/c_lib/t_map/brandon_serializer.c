@@ -9,8 +9,8 @@ inline void PACK_short(short d, unsigned char* buffer, int* n){
 }
 
 //#define buff_size (512*sizeof(unsigned short)+ 3*sizeof(short))
-#define buff_size (512*sizeof(unsigned short))
-//#define buff_size 131072
+//#define buff_size (512*sizeof(unsigned short))
+#define buff_size 131072
 unsigned char buff[buff_size];
 int _buffer_index=0;
 int *buffer_index = &_buffer_index;
