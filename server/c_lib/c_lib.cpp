@@ -9,7 +9,7 @@ extern "C" {
 
 	#include "./t_map/t_map.c"
 	#include "./t_map/t_properties.c"
-	//#include "./t_map/t_serialize.c"
+	#include "./t_map/t_serialize.c"
 
 	#include "./physics/vector.c"
 	#include "./ray_trace/ray_trace.c"
@@ -28,6 +28,7 @@ extern "C" {
 	#ifdef DC_CLIENT
 		#include "./texture_loader.c"
 	#endif
+
 }
 
 #include <net_lib/net_lib.h>
