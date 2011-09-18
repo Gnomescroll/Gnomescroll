@@ -59,8 +59,8 @@ cdef extern from "./t_map/t_map.h":
 
 
 cdef extern from "./t_map/t_serialize.h":
-    int _save_to_disk(char* fn)
-    int _load_from_disk(char* fn)
+    int map_save_to_disk(char* fn)
+    int map_load_from_disk(char* fn)
     
 #done
 
@@ -292,8 +292,8 @@ def get_lowest_open_block(int x, int y, int n=1):
 
 def save_to_disk():
     fn = 'mapsave1'
-    _save_to_disk(fn);
+    map_save_to_disk(fn);
 
 def load_from_disk():
     fn = 'mapsave1'
-    _load_from_disk(fn)
+    map_load_from_disk(fn)

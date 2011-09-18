@@ -8,5 +8,5 @@
 
 extern struct vm_map map;
 
-int _save_to_disk(char *fn);
-int _load_from_disk(const char *fn);
+int map_save_to_disk(char *fn);
+int map_load_from_disk(const char *fn);
