@@ -62,6 +62,8 @@ class Main:
         #setup
 
         map_gen.load_map2(terrain_map)
+        print 'attempt to save map'
+        terrain_map.save_to_disk()
 
         draw_sphere(block=3, radius=30, x=40,y=40,z=90)
         pallet_pillar()

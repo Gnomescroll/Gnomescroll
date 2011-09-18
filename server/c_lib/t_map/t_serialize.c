@@ -1,31 +1,30 @@
 #include "t_serialize.h"
 
-// 256kB buffer for compression stream
-#define ZCHUNK (1024*256)
-
-int _save_to_disk(const char* fn) {
-    /*
-    FILE* f = fopen(fn, "wb");
-    if (f != NULL) {
-        int max = vm_map_dim*vm_map_dim;
-        int i,j;
-        int s = sizeof(unsigned short);
-        struct vm_chunk* chunk;
-        for (i=0; i < max; i++) {
-            chunk = map.column[i].chunk;
-            for (j=0; j < vm_column_max; j++) {
-                fwrite(chunk->voxel, s, 512, f);
-            }
-        }
-        fclose(f);
-    } else {
-        printf("Failed to open %s for saving map\n", fn);
-        return 1;
+/* report a zlib or i/o error */
+void t_zerr(int ret)
+{
+    fputs("zpipe: ", stderr);
+    switch (ret) {
+    case Z_ERRNO:
+        if (ferror(stdin))
+            fputs("error reading stdin\n", stderr);
+        if (ferror(stdout))
+            fputs("error writing stdout\n", stderr);
+        break;
+    case Z_STREAM_ERROR:
+        fputs("invalid compression level\n", stderr);
+        break;
+    case Z_DATA_ERROR:
+        fputs("invalid or incomplete deflate data\n", stderr);
+        break;
+    case Z_MEM_ERROR:
+        fputs("out of memory\n", stderr);
+        break;
+    case Z_VERSION_ERROR:
+        fputs("zlib version mismatch!\n", stderr);
     }
-    * */
-    return 0;
 }
 
-int _load_from_disk(const char* fn) {
-    return 0;
-}
+#include "t_buffer.c"
+#include "t_compress.c"
+#include "t_decompress.c"

@@ -250,8 +250,6 @@ def load_map2(terrain_map):
                 terrain_map.set(i, j, k, 2)
             if h==0 or h==1:
                 terrain_map.set(i,j, 2, 3)
-    #print 'attempt to save map'
-    #terrain_map.save_to_disk()
     print 'done map gen'
 
 
@@ -373,3 +371,16 @@ def load_map5(terrain_map):
 
     print 'done map gen'
     print 'took %d seconds' % (time.time() - _n)
+
+
+# fill map completely
+def load_map_fill(terrain_map):
+    _set = terrain_map.set
+    print 'start map gen'
+    for i in range(64*8):
+        for j in range(64*8):
+            for k in range(8*16):
+                _set(i,j,k, 2)
+    #print 'attempt to save map'
+    #terrain_map.save_to_disk()
+    print 'done map gen'

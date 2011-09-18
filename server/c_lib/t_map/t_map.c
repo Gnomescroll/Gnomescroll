@@ -5,7 +5,7 @@
 struct vm_map map;
 
 int _init_t_map() {
-
+    printf("MAP SIZE %d\n", sizeof(map));
     int i;
     struct vm_column* c;
     for(i=0; i<vm_map_dim*vm_map_dim; i++) {
@@ -118,6 +118,32 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
     chunk = column->chunk[zoff];
     return chunk;
 }
+
+int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox) {
+
+    if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
+        printf("Warning:  _set_chunk_voxels :: chunk offsets out of range :: %d %d %d", xoff, yoff, zoff);
+        return 1;
+    }
+        
+    struct vm_column* column;
+    struct vm_chunk* chunk;
+
+    column = &map.column[vm_map_dim*yoff + xoff];
+    chunk = column->chunk[zoff];
+
+    if (chunk == NULL) {
+        chunk = new_chunk(xoff, yoff, zoff);
+        column->chunk[zoff] = chunk;
+    }
+    
+    int i;
+    for (i=0; i < vm_chunk_voxel_size; i++) {
+        chunk->voxel[i] = vox[i];
+    }
+
+    return 0;
+}
 ///rendering of chunk
 
 //deprecated for server?
@@ -144,9 +170,7 @@ int _set_server_version(int x,int y,int z, int server_version) {
 int _clear() {
     // iterate entire map
     // set to 0
-    int i=0;
-    int j=0;
-    int k=0;
+    int i,j,k;
     for (i=0; i<xmax; i++) {
         for (j=0; j<ymax; j++) {
             for (k=0; k<zmax; k++) {

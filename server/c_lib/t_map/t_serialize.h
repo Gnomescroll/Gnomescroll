@@ -1,8 +1,9 @@
-//#include "t_map.h"
+#pragma once
 
-//#include <zlib.h>
+#include "t_map.h"
 
-//extern struct vm_map map;
+#include <zlib.h>
+#include <assert.h>
+#include <stdio.h>
 
-int _save_to_disk(const char *fn);
-int _load_from_disk(const char *fn);
+extern struct vm_map map;
