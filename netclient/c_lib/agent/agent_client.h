@@ -1,11 +1,10 @@
-#ifndef agent_agent_client_h
-#define agent_agent_client_h
+#pragma once
 
 #include <time/physics_timer.h>
 #include <stdint.h>
 
 #include <net_lib/common/type_pack.h>
-#include <net_lib/client/client.h>
+#include <net_lib/client/client.hpp>
 
 struct client_agent_control_state {
     int seq;
@@ -24,11 +23,9 @@ struct client_agent_state {
 };
 
 
-struct client_agent_state active_agent;
+//struct client_agent_state active_agent;
 
 void init_agent_client();
 void set_agent_control_state(int x[32], float theta, float phi);
 
 void init_client_agent_start(struct client_agent_state* a);
-
-#endif

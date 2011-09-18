@@ -4,7 +4,7 @@
 #define max_shrapnel 4096
 
 struct Particle* shrapnel_list[max_shrapnel];
-float a[16];
+//float a[16];
 int shrapnel_count=0;
 unsigned int shrapnel_id=0;
 

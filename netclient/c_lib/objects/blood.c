@@ -3,7 +3,7 @@
 #define max_blood 4096
 
 struct Particle* blood_list[max_blood];
-float a[16];
+//float a[16];
 int blood_count=0;
 unsigned int blood_id=0;
 

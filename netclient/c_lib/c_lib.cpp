@@ -14,6 +14,10 @@ extern "C" {
 	#include "./objects/grenade.c"
 	#include "./objects/neutron.c"
 	#include "./objects/cspray.c"
+	#include "./objects/circuit_tree.c"
+	#include "./objects/shrapnel.c"
+	#include "./objects/blood.c"
+
 
 	#include "./agent/agent_include.h"
 

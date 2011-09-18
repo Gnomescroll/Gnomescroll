@@ -39,7 +39,7 @@ void set_agent_control_state(int x[32], float theta, float phi) {
         _n *= 2;
     }
 
-	sa->cs[a->seq].cs= flag;
+	a->cs[a->seq].cs= flag;
     a->cs[a->seq].theta = theta; //should be a byte
     a->cs[a->seq].phi = phi; //should be a byte
 
@@ -55,6 +55,6 @@ void set_agent_control_state(int x[32], float theta, float phi) {
     PACK_float(theta, buff, buff_n);
     PACK_float(phi, buff, buff_n);
 
-    printf("agent_control_state is %i bytes\n", buff_n-bcount);
+    printf("agent_control_state is %i bytes\n", *buff_n-bcount);
 }
 
