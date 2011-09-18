@@ -1,7 +1,7 @@
 #include "t_serialize.h"
 
 // buffer size for compression stream
-#define CHUNK_Z (1024*16)
+#define CHUNK_Z (sizeof(unsigned short[512])*16)
 
 //int _save_to_disk(const char* fn) {
     //FILE* f = fopen(fn, "wb");
@@ -28,7 +28,7 @@ char* t_zlib_dest;
 FILE* t_zlib_dest_file;
 
 unsigned char t_compress_buffer[CHUNK_Z];
-int t_compress_buffer_size = 0;
+int t_compress_buffer_index = 0;
 
 void t_zerr(int ret);
 
@@ -38,7 +38,7 @@ void t_compress_buffer_reset() {
     for (i=0; i < CHUNK_Z; i++) {
         t_compress_buffer[i] = 0;
     }
-    t_compress_buffer_size = 0;
+    t_compress_buffer_index = 0;
 }
 
 /* Compress from file source to file dest until EOF on source.
@@ -132,6 +132,7 @@ int t_zlib_compress_final() {
     return 0;
 }
 
+int _compress_calls = 0;
 int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is none
 {
     printf("compress chunk\n");
@@ -143,37 +144,24 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
         //return ret;
 
     /* compress until end of file */
-    t_strm.avail_in = t_compress_buffer_size;
+    t_strm.avail_in = t_compress_buffer_index;
     t_strm.next_in = t_compress_buffer;
-
-    if (&t_strm.next_in == NULL) {
-        printf("next_in null!\n");
-    }
-    if (&t_strm.avail_in == NULL) {
-        printf("avail_in null!\n");
-    }
-
-    //printf("%s\n",t_compress_buffer);
+    //t_strm.next_in = &in;
 
     /* run deflate() on input until output buffer not full, finish
        compression if all of source has been read in */
     do {
-        t_strm.avail_out = t_compress_buffer_size;
+        t_strm.avail_out = CHUNK_Z;
         t_strm.next_out = out;
-        //printf("deflate piece\n");
-        if (&(t_strm.next_out) == NULL) {
-            printf("next_out null!\n");
-        }
-        if (&(t_strm.avail_out) == NULL) {
-            printf("avail_out null!\n");
-        }
-        printf("%d %d\n", t_strm.avail_in, t_strm.avail_out);
-        ret = deflate(&t_strm, Z_BLOCK);    /* no bad return value */
+        //printf("%d %d\n", t_strm.avail_in, t_strm.avail_out);
+        ret = deflate(&t_strm, Z_NO_FLUSH);    /* no bad return value */
         //printf("%d\n", ret);
+        _compress_calls++;
         assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-        have = t_compress_buffer_size - t_strm.avail_out;
-        //printf("%d\n", t_compress_buffer);
+        have = t_compress_buffer_index - t_strm.avail_out;
         //printf("%d\n", t_strm.avail_out);
+        //printf("%d\n", t_compress_buffer_index);
+        //printf("%d\n", t_strm.avail_in);
         //printf("%d\n", have);
         //printf("^HAVE\n");
         if (fwrite(out, 1, have, t_zlib_dest_file) != have || ferror(t_zlib_dest_file)) {
@@ -182,19 +170,19 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
         }
     } while (t_strm.avail_out == 0);
     //assert(strm.avail_in == 0);     /* all input will be used */
-
+printf("%d\n", _compress_calls);
     return Z_OK;
 }
 
 int t_zlib_compress_map_chunk(unsigned short *arr, int arr_size) {
-    arr_size *= sizeof(*arr);
-    int i=0;
-    int buffer_pos = t_compress_buffer_size;
+    //arr_size *= sizeof(unsigned short);
+    int buff_arr_size = arr_size * sizeof(unsigned short);
     int ret = Z_OK;
-    if (CHUNK_Z - t_compress_buffer_size < arr_size) {  // cant fit in buffer, flush
-        //printf("%d %d %d %d\n", CHUNK_Z, t_compress_buffer_size, arr_size, CHUNK_Z - t_compress_buffer_size);
+    if (CHUNK_Z - t_compress_buffer_index < buff_arr_size) {  // cant fit in buffer, flush
+        //printf("%d %d %d %d\n", CHUNK_Z, t_compress_buffer_index, arr_size, CHUNK_Z - t_compress_buffer_index);
         ret = t_zlib_compress();
         t_compress_buffer_reset();
+        printf("RESET %d\n", t_compress_buffer_index);
     }
 
     if (ret != Z_OK) {
@@ -204,13 +192,23 @@ int t_zlib_compress_map_chunk(unsigned short *arr, int arr_size) {
     }
 
     // add to buffer
+    int i=0;
+    int buffer_pos = t_compress_buffer_index;
+    //printf("%d %d\n", buffer_pos, t_compress_buffer_index);
+    //printf("buff size  %d\n", t_compress_buffer_index);
+    //if (buffer_pos + buff_arr_size >= CHUNK_Z+1) {
+        //printf("WARNING will segfault\n");
+        //printf("%d %d %d %d\n", buffer_pos, buff_arr_size, buffer_pos + buff_arr_size, CHUNK_Z);
+    //}
     for (i=0; i < arr_size; i++) {
+        //if (t_compress_buffer == NULL) printf("t_compress_buffer NULL\n");
         t_compress_buffer[buffer_pos] = arr[i] & 0xff;
         buffer_pos++; 
         t_compress_buffer[buffer_pos] = (arr[i] >> 8) & 0xff;
-        buffer_pos++; 
+        buffer_pos++;
+        //printf("buff pos  %d\n", buffer_pos);
     }
-    t_compress_buffer_size += arr_size*sizeof(unsigned short);
+    t_compress_buffer_index += buff_arr_size;//*sizeof(unsigned short);
 
     return 0;
 }
