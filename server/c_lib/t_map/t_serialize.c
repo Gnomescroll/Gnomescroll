@@ -4,6 +4,7 @@
 #define ZCHUNK (1024*256)
 
 int _save_to_disk(const char* fn) {
+    /*
     FILE* f = fopen(fn, "wb");
     if (f != NULL) {
         int max = vm_map_dim*vm_map_dim;
@@ -21,6 +22,7 @@ int _save_to_disk(const char* fn) {
         printf("Failed to open %s for saving map\n", fn);
         return 1;
     }
+    * */
     return 0;
 }
 

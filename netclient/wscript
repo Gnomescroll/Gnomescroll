@@ -32,14 +32,14 @@ def _grab_output(*cmd):
 
 
 def options(opt):
-    opt.load('compiler_c python cython')
+    opt.load('compiler_c compiler_cxx python cython')
 
 
 def configure(conf):
     global _OS
     global os_libpth
 
-    conf.load('compiler_c python cython')
+    conf.load('compiler_c compiler_cxx python cython')
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
@@ -178,11 +178,23 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
+    '''
     bld(features='c cshlib',
         source=['c_lib/c_lib.c',
                 'c_lib/texture_loader.c',
                 'c_lib/net_lib/client.c',
                 'c_lib/time/physics_timer.c',
+                #'c_lib/physics/common.c',
+                ],
+        use=common_libraries+time_lib+SDL_libraries,
+        target='c_lib')
+    '''
+
+    bld(features='c cshlib',
+        source=['c_lib/c_lib.cpp',
+                'c_lib/texture_loader.c',
+                #'c_lib/net_lib/client.c',
+                #'c_lib/time/physics_timer.c',
                 #'c_lib/physics/common.c',
                 ],
         use=common_libraries+time_lib+SDL_libraries,

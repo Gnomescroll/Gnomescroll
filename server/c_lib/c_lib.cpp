@@ -42,7 +42,7 @@ extern "C" {
 	    init_objects_grenade();
 	    init_objects_neutron();
 	    init_objects_cspray();
-	    //init_texture_loader();
+		//#include "./texture_loader.c"
     return 0;
 	}
 }
