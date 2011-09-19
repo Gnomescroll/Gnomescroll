@@ -189,7 +189,7 @@ class Laser(Projectile):
             return
 
         self.check_agent_collision()
-        
+
     def draw(self):
         x,y,z = self.pos()
         SDL.gl.draw_particle(5, 0.5, x,y,z)
@@ -237,5 +237,5 @@ Projectile.dat.on_change = _dat_callback
 
 
 from game_state import GameStateGlobal
-from cube_lib.terrain_map import collisionDetection, isSolid
+from c_lib.terrain_map import collisionDetection, isSolid
 #import draw_utils

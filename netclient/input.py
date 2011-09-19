@@ -12,7 +12,7 @@ from opts import opts
 
 import SDL.input
 
-from cube_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
+from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
 from init_c_lib import _toggle_latency_unit
 
 #handles special characters

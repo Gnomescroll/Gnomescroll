@@ -1135,7 +1135,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
                     NetOut.sendMessage.near_item(self, obj)
 
 
-import cube_lib.terrain_map as terrainMap
+import c_lib.terrain_map as terrainMap
 from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *

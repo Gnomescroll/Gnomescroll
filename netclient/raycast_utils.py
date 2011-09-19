@@ -4,7 +4,7 @@ Rendering utilities
 ### Ray casting utilities
 
 #import cube_lib.terrain_map as terrain_map
-from cube_lib.terrain_map import collisionDetection
+from c_lib.terrain_map import collisionDetection
 
 from math import sin, cos, sqrt, pi
 
