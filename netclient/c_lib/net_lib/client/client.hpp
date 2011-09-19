@@ -6,7 +6,9 @@
 #include <stdlib.h>
 
 
+ #ifdef __cplusplus
  extern "C" {
+ #endif
 
 #include "../common/net_lib_common.h"
 #include "../common/sequencer.h"
@@ -16,7 +18,10 @@
 
 #include "../client/pviz.h"
 
-}
+#ifdef __cplusplus
+ }
+ #endif
+
 /*
 struct NetClient {
     uint16_t client_id;
@@ -67,11 +72,15 @@ void flush_outgoing_packets();
 //int client_out_buff_n = 11; //header length;
 
 
-}
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
 
-extern "C" {
 	void reset_client_out_buffer();
 
 	unsigned char* get_client_out_buffer();
 	int* get_client_out_buffer_n();
-}
+
+#ifdef __cplusplus
+ }
+ #endif

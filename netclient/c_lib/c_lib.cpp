@@ -28,7 +28,7 @@ extern "C" {
 	#include "./agent/agent_include.h"
 
 	#ifdef DC_CLIENT
-		//#include "./texture_loader.c"
+		#include "./texture_loader.c"
 	#endif
 	
 	#ifdef DC_SERVER
