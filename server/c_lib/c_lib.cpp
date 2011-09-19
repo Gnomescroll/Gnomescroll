@@ -9,8 +9,7 @@
 
 	#include "./t_map/t_map.c"
 	#include "./t_map/t_properties.c"
-//	#include "./t_map/t_serialize.c"
-
+	
 	#include "./physics/vector.c"
 	#include "./ray_trace/ray_trace.c"
 	#include "./physics/common.c"

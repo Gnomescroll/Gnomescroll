@@ -108,29 +108,29 @@ def build(bld):
         lib=time_lib,
         target='c_lib')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/terrain_map.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.terrain_map')
 
     # c_lib
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/_ray_trace.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.ray_trace')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
         target='init_c_lib')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_objects.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_agents.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_agents')
