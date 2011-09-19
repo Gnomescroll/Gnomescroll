@@ -6,10 +6,6 @@
 #include <stdlib.h>
 
 
- #ifdef __cplusplus
- extern "C" {
- #endif
-
 #include "../common/net_lib_common.h"
 #include "../common/sequencer.h"
 #include "../common/net_peer.h"
@@ -18,9 +14,6 @@
 
 #include "../client/pviz.h"
 
-#ifdef __cplusplus
- }
- #endif
 
 /*
 struct NetClient {
@@ -61,10 +54,8 @@ int poll_connection_timeout();
 int decrement_ttl();
 
 
-//
-
 void flush_outgoing_packets();
-
+}
 //extern unsigned char client_out_buff[1500];
 //extern int client_out_buff_n; //buffer for writing packets out to;
 
@@ -72,15 +63,8 @@ void flush_outgoing_packets();
 //int client_out_buff_n = 11; //header length;
 
 
- #ifdef __cplusplus
- extern "C" {
- #endif
-
 	void reset_client_out_buffer();
 
 	unsigned char* get_client_out_buffer();
 	int* get_client_out_buffer_n();
 
-#ifdef __cplusplus
- }
- #endif

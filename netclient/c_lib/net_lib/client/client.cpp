@@ -1,43 +1,28 @@
 #include "./client.hpp"
-
-//globals
-
-//extern "C" {
-//}
-
 #include <string.h>
 
-extern "C" {
-    
-    unsigned char client_out_buff[1500];
-    int client_out_buff_n = 11; //header length;
 
-    void reset_client_out_buffer() {
-        client_out_buff_n = 11;
-    }
+unsigned char client_out_buff[1500];
+int client_out_buff_n = 11; //header length;
 
-    unsigned char* get_client_out_buffer() {
-        return client_out_buff;
-    }
-
-    int* get_client_out_buffer_n() {
-        return &client_out_buff_n;
-    }
-
+void reset_client_out_buffer() {
+    client_out_buff_n = 11;
 }
 
-namespace NetClient {
+unsigned char* get_client_out_buffer() {
+    return client_out_buff;
+}
 
-//end globals
+int* get_client_out_buffer_n() {
+    return &client_out_buff_n;
+}
+
+
+namespace NetClient {
 
 struct NetPeer NPserver;
 struct Socket client_socket;
 
-//struct timeval timeout;
-//fd_set read_flags;
-//fd_set write_flags;
-
-//sequence number handling
 
 unsigned char buffer[1500]; //1500 is max ethernet MTU
 

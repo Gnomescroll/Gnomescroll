@@ -25,9 +25,9 @@ if True:
 
     SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
 
-    import cube_lib.terrain_map
-    cube_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
-    SDL.gl.camera_callback = cube_lib.terrain_map.camera_callback
+    import c_lib.terrain_map
+    c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
+    SDL.gl.camera_callback = c_lib.terrain_map.camera_callback
     #SDL.gl.init_particles()
     import init_c_lib
     import c_lib.c_lib_objects
@@ -37,8 +37,8 @@ if True:
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
     from init_c_lib import START_CLOCK, GET_TICK
     from init_c_lib import _pviz_draw
-    P2 = cube_lib.terrain_map.Profiler()
-    #from cube_lib.terrain_map import toggle_t_viz_vbo_indicator_style
+    P2 = c_lib.terrain_map.Profiler()
+    #from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style
 
     from init_c_lib import NetClientTick, NetClientConnect
 ##profiler
@@ -290,7 +290,7 @@ class App(object):
 
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
-            cube_lib.terrain_map.draw_terrain()
+            c_lib.terrain_map.draw_terrain()
             if True:
                 c_lib.c_lib_objects._draw_circuit_tree()
             P.event("Draw World")
@@ -301,7 +301,7 @@ class App(object):
             P.event("c_lib_objects.draw()") #up to 5 ms
             c_lib.c_lib_objects.draw() ## TESTING
             P.event("terrain_map.update_chunks")
-            cube_lib.terrain_map.update_chunks()
+            c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
             if draw_hud:
@@ -310,7 +310,7 @@ class App(object):
                 if GameStateGlobal.agent:
                     draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
-                cube_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
+                c_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,700,-0.30)
                 _pviz_draw(780,400, -.30)
 

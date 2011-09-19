@@ -1,5 +1,4 @@
-#ifndef net_lib_server_h
-#define net_lib_server_h
+#pragma once
 
 #include <errno.h>
 
@@ -55,4 +54,3 @@ void decrement_ttl();
 void poll_connection_timeout();
 
 void check_pool_for_dropped_packets();
-#endif

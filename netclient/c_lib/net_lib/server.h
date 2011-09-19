@@ -2,7 +2,7 @@
 
 //#include <c_lib.h>
 
-#define DC_SERVER
+//#define DC_SERVER
 
 #include <unistd.h>
 #include <stdint.h>
@@ -15,7 +15,7 @@
 //message handling
 //#include <agent/control_state.h>
 
-extern "C" {
+//extern "C" {
 	void _NetServerInit();
 	void _NetServerTick();
-}
+//}

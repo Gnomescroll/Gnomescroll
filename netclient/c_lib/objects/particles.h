@@ -2,8 +2,11 @@
 #define object_particles_h
 //#include <physics/common.h>
 
+#include <physics/common.h>
+
 struct Particle {
-    unsigned int id;
+    int id; // WTF
+    //unsigned int id;
     float x,y,z;
     float vx,vy,vz;
     unsigned int ttl;
@@ -15,7 +18,7 @@ struct Particle2 {
     unsigned int id;
     //float x,y,z;
     //float vx,vy,vz;
-    struct Particle state;
+    struct State state;
     unsigned int ttl;
     unsigned int ttl_max;
     int type;

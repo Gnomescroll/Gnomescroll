@@ -21,7 +21,6 @@
 
 //#include "client/pviz.c"
 
-extern "C" {
     struct NetPeer* np;
 
     void _NetClientConnect(int a, int b,int c, int d, int _port) {
@@ -77,4 +76,3 @@ extern "C" {
 
         return;
     }
-}

@@ -3,12 +3,18 @@
 #include "./c_lib.hpp"
 
 #ifdef DC_SERVER 
-	sasfsafgdg442/3+3/
+	sasfsafgdg4423+3
+#endif
+
+#ifndef DC_CLIENT
+ asdfsfs;fgf;
 #endif
 	//#include "./t_map/t_viz.c"
 	//#include "./t_map/t_vbo.c"
 
 	//#include "./objects/particles.c"
+
+
 	#include "./objects/grenade.c"
 	#include "./objects/neutron.c"
 	#include "./objects/cspray.c"
@@ -16,19 +22,19 @@
 	#include "./objects/shrapnel.c"
 	#include "./objects/blood.c"
 
-extern "C" { 
+//extern "C" { 
 	#include <stdio.h>
 
 
 
 	#include "./t_map/t_map.c"
 	#include "./t_map/t_properties.c"
-/*
+
 #ifdef DC_CLIENT
 	#include "./t_map/t_viz.c"
 	#include "./t_map/t_vbo.c"
 #endif
-*/
+
 
 
 	#include "./physics/vector.c"
@@ -47,12 +53,12 @@ extern "C" {
 		//#include "./t_map/t_serialize.c"
 	#endif
 	
-}
+//}
 
 #include <net_lib/net_lib.h>
 #include "agent/net_agent.cpp"
 
-extern "C" { 
+//extern "C" { 
 
 	int init_c_lib() {
 	    printf("init c_lib\n");
@@ -65,4 +71,4 @@ extern "C" {
 		#endif
     return 0;
 	}
-}
+//}

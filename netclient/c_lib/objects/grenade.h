@@ -6,16 +6,10 @@
 #include <compat_gl.h>
 #endif
 
-//#include <c_lib.h>
+#include <physics/common.h>
 #include <ray_trace/ray_trace.h>
-//#include <t_map/t_properties.h>
-
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
-
-//#include <physics/common.h>
-//#include <physics/vector.h>
-//#include "particles.h"
 
 #ifdef DC_CLIENT
 #include <texture_loader.h>

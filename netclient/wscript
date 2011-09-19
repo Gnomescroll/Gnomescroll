@@ -46,7 +46,11 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
+    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC', '-DDC_CLIENT'] # use '-O2' or '-O3' in distro build
+
+    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT'])
+    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
+
     # '-D DC_CLIENT'
 
     OS = platform.system()
@@ -244,11 +248,12 @@ def build(bld):
     # c_lib
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/t_map/t_vbo.c',
-                'c_lib/t_map/t_viz.c',
-                'c_lib/terrain_map.pyx'],
+        source=['c_lib/terrain_map.pyx'],
         use=common_libraries + SDL_libraries+['c_lib'],
         target='c_lib.terrain_map')
+
+    #'#c_lib/t_map/t_vbo.c',
+    #           #'c_lib/t_map/t_viz.c',
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/_ray_trace.pyx'],
@@ -271,7 +276,7 @@ def build(bld):
         target='c_lib.c_lib_agents')
 
     # sound
-    bld(features='cxx cshlib',
+    bld(features='c cshlib',
         source=['sound/sound.c'],
 
         use=sound_libraries,
@@ -284,7 +289,7 @@ def build(bld):
         target='csound'
     )
 
-    bld(features='cxx cshlib pyext',      #cython
+    bld(features='c cshlib pyext',      #cython
         source=['sound/sounds.pyx'],
         use=['csound'],
         target='sound.sounds')

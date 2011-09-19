@@ -1,16 +1,16 @@
 #pragma once
 
 //put stuff that gets exposed to cython at top here
-extern "C" {
+//extern "C" {
 	#include "./time/physics_timer.c" //physics timer
-}
+//
 
-extern "C" {
+//extern "C" {
 	#include <net_lib/client/pviz.c>
-}
+//}
 
 
-#include <c_lib.hpp> //DC_SERVER/DC_CLIENT define
+//#include <c_lib.hpp> //DC_SERVER/DC_CLIENT define
 
 #include <net_lib/common/net_time.c>
 #include <net_lib/common/net_peer.c>

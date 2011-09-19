@@ -1,8 +1,6 @@
 #include "c_lib.hpp"
 
- #ifdef __cplusplus
- extern "C" {
- #endif
+//extern "C" { 
 	#include <stdio.h>
 
 	// #ifdef DC_CLIENT
@@ -31,14 +29,13 @@
 	#ifdef DC_SERVER
 		#include "./t_map/t_serialize.c"
 	#endif
- #ifdef __cplusplus
-}
- #endif
+//}
+
 #include <net_lib/net_lib.h>
 
 #include "agent/net_agent.cpp"
 
-extern "C" { 
+//extern "C" { 
 
 	int init_c_lib() {
 	    printf("init c_lib\n");
@@ -48,4 +45,4 @@ extern "C" {
 		//#include "./texture_loader.c"
     return 0;
 	}
-}
+//}

@@ -2,7 +2,7 @@
 #define physics_common_h
 
 #include <ray_trace/ray_trace.h>
-
+#include "physics/vector.h"
 
 #define FPS 30
 
