@@ -10,20 +10,19 @@ char* t_zlib_dest;
 FILE* t_zlib_dest_file;
 
 /* allocate deflate state */
-z_stream t_strm;
+z_stream t_strm_compress;
 
+int t_zlib_compress_init(char* fn, int level) {
 
-
-int t_zlib_compress_init(int level) {
-
+    t_zlib_dest = fn;
     t_zlib_dest_file = fopen(t_zlib_dest, "wb");
 
     if (t_zlib_dest_file != NULL) {
         level = 6;
-        t_strm.zalloc = Z_NULL;
-        t_strm.zfree = Z_NULL;
-        t_strm.opaque = Z_NULL;
-        int ret = deflateInit(&t_strm, level);
+        t_strm_compress.zalloc = Z_NULL;
+        t_strm_compress.zfree = Z_NULL;
+        t_strm_compress.opaque = Z_NULL;
+        int ret = deflateInit(&t_strm_compress, level);
         if (ret != Z_OK) {
             t_zerr(ret);
             return 1;
@@ -37,13 +36,13 @@ int t_zlib_compress_init(int level) {
 
 int t_zlib_compress_final() {
 
-    int ret = deflate(&t_strm, Z_FINISH);
+    int ret = deflate(&t_strm_compress, Z_FINISH);
     if (ret != Z_STREAM_END) { /* stream will be incomplete */
         printf("Z_FINISH deflate failed.\n");
         return 1;        
     }
 
-    (void)deflateEnd(&t_strm);
+    (void)deflateEnd(&t_strm_compress);
 
     fclose(t_zlib_dest_file);
 
@@ -53,22 +52,22 @@ int t_zlib_compress_final() {
 int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is none
 {
     int ret;
-    unsigned have;
+    unsigned int have;
     unsigned char out[t_buff_size];
 
-    t_strm.avail_in = *t_buffer_index;
-    t_strm.next_in = buff;
+    t_strm_compress.avail_in = *t_buffer_index;
+    t_strm_compress.next_in = t_buff;
 
     /* run deflate() on input until output buffer not full */
     do {
 
-        t_strm.avail_out = t_buff_size;
-        t_strm.next_out = out;
+        t_strm_compress.avail_out = t_buff_size;
+        t_strm_compress.next_out = out;
 
-        ret = deflate(&t_strm, Z_NO_FLUSH);    /* no bad return value */
+        ret = deflate(&t_strm_compress, Z_NO_FLUSH);    /* no bad return value */
         assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
 
-        have = t_buff_size - t_strm.avail_out;
+        have = t_buff_size - t_strm_compress.avail_out;
         if (fwrite(out, 1, have, t_zlib_dest_file) != have || ferror(t_zlib_dest_file)) {
             printf("DEFLATE OR FILE FAIL\n");
             printf("%d\n", have);
@@ -76,9 +75,9 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
             return Z_ERRNO;
         }
 
-    } while (t_strm.avail_out == 0);
+    } while (t_strm_compress.avail_out == 0);
 
-    assert(t_strm.avail_in == 0);     /* all input will be used */
+    assert(t_strm_compress.avail_in == 0);     /* all input will be used */
     return Z_OK;
 }
 
@@ -96,7 +95,7 @@ int t_zlib_compress_map_chunk(int x, int y, int z, unsigned short *arr, int arr_
         return 1;
     }
 
-    t_zlib_serialize_chunk(x,y,z, arr, buff, t_buffer_index);
+    t_zlib_serialize_chunk(x,y,z, arr, t_buff, t_buffer_index);
 
     return 0;
 }
@@ -106,8 +105,8 @@ int map_save_to_disk(char *fn) {
 
     printf("Map compression begin\n");
 
-    t_zlib_dest = fn;
-    if (t_zlib_compress_init(Z_DEFAULT_COMPRESSION)) {
+    //t_zlib_dest = fn;
+    if (t_zlib_compress_init(fn, Z_DEFAULT_COMPRESSION)) {
         printf("Error: zlib compression init failed.\n");
         t_buffer_reset();
         return 1;
