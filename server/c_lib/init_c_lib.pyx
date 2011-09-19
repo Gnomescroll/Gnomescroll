@@ -1,5 +1,6 @@
-cdef extern from "c_lib.h":
-    int init_c_lib()
+#cdef extern from "c_lib.hpp":
+
+cdef extern int init_c_lib()
 
 #print "Initing c_lib"
 
@@ -12,9 +13,9 @@ def init():
 
 ## net stuff
 
-cdef extern from "./net_lib/server.h":
-    void _NetServerInit()
-    void _NetServerTick()
+#cdef extern from "./net_lib/server.h":
+cdef extern void _NetServerInit()
+cdef extern void _NetServerTick()
 
 def NetServerInit():
     _NetServerInit()
@@ -24,7 +25,7 @@ def NetServerTick():
 
 ##timer
 
-cdef extern from "../c_lib/time/physics_timer.h":
+cdef extern: #s from "../c_lib/time/physics_timer.h":
     int _start_physics_timer(int frequency)
     int _tick_check()
     long _get_time()
