@@ -3,7 +3,7 @@
 void t_buffer_reset() {
     int i;
     for (i=0; i < t_buff_size; i++) {
-        buff[i] = 0;
+        t_buff[i] = 0;
     }
     *t_buffer_index = 0;
 }
@@ -57,7 +57,7 @@ inline int t_UNPACK_int(unsigned char* buffer, int*n) {
     return d;
 }
 
-void t_zlib_unserialize_chunk(unsigned char* buffer, int* t_buffer_index) {
+int t_zlib_unserialize_chunk(unsigned char* buffer, int* t_buffer_index) {
     int x,y,z;
     unsigned short vox[vm_chunk_voxel_size];
 
@@ -65,11 +65,15 @@ void t_zlib_unserialize_chunk(unsigned char* buffer, int* t_buffer_index) {
     y = t_UNPACK_int(buffer, t_buffer_index); //unpack y
     z = t_UNPACK_int(buffer, t_buffer_index); //unpack z
 
-    int i, ret;
+    int i, ret=0;
     for(i=0; i<vm_chunk_voxel_size; i++) {
         vox[i]= t_UNPACK_ushort(buffer, t_buffer_index);
     }
 
     ret = _set_chunk_voxels(x, y, z, vox);
-    if (ret) printf("_set_chunk_voxels failed\n");
+    if (ret) {
+        printf("_set_chunk_voxels failed\n");
+    }
+
+    return ret;
 }
