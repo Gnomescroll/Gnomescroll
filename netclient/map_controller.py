@@ -11,7 +11,7 @@ class MapControllerGlobal:
 from game_state import GameStateGlobal
 from net_out import NetOut
 
-import cube_lib.terrain_map as terrain_map
+import c_lib.terrain_map as terrain_map
 
 
 #time.clock()

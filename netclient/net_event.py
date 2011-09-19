@@ -23,7 +23,7 @@ class NetEventGlobal:
     itemMessageHandler = None
     weaponMessageHandler = None
     datMessageHandler = None
-    
+
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
@@ -55,7 +55,7 @@ class NetEventGlobal:
         GameModeMessageHandler.init()
         ItemMessageHandler.init()
         WeaponMessageHandler.init()
-        
+
     @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
@@ -146,7 +146,7 @@ class ChatMessageHandler(GenericMessageHandler):
     def _you_killed(self, **msg):
         ChatClientGlobal.chatClient.system_notify(msg['msg'])
 
-            
+
 class MiscMessageHandler(GenericMessageHandler):
     events = {
         'ping' : '_ping',
@@ -414,7 +414,7 @@ class PlayerMessageHandler(DatastoreMessageInterface):
         self._default_list(**args)
         if GameStateGlobal.game is not None:
             GameStateGlobal.game.update_players()
-        
+
 
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent
@@ -736,7 +736,7 @@ class GameModeMessageHandler(DatastoreMessageInterface):
             vp = game['victory_points']
         except KeyError:
             pass
-            
+
         teams = None
         try:
             teams = int(msg['teams'])
@@ -748,12 +748,12 @@ class GameModeMessageHandler(DatastoreMessageInterface):
 
         if 'team_list' in msg:
             self._teams(**msg)
-            
+
         if teams is None:
             GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp)
         else:
             GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp, teams=teams)
-            
+
     def _teams(self, **msg):
         self._default_list(**msg)
 
@@ -824,7 +824,7 @@ class DatMessageHandler(GenericMessageHandler):
 
     def _load_name(self, name, dat):
         dat_loader.load(name, dat)
-        
+
     def _load_type_key(self, name, type, key, val):
         dat_loader.set_property(name, type, key, val)
 
@@ -836,6 +836,6 @@ from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from input import InputGlobal
 
-import cube_lib.terrain_map as terrainMap
+import c_lib.terrain_map as terrainMap
 
 import animations

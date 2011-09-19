@@ -118,7 +118,7 @@ class GameStateGlobal:
 
         if seek and obj.owner is not None:
             obj.owner.inventory.drop(obj)
-                    
+
     @classmethod
     def client_quit(cls, id):
         player = cls.playerList.by_client(id)
@@ -168,4 +168,4 @@ from net_client import NetClientGlobal
 from net_out import NetOut
 
 #import cube_lib.terrain_map
-import cube_lib.terrain_map as TerrainMap
+import c_lib.terrain_map as TerrainMap
