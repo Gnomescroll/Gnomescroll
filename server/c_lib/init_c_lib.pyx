@@ -14,9 +14,9 @@ def init():
 
 ## net stuff
 
-#cdef extern from "./net_lib/server.h":
-cdef extern void _NetServerInit()
-cdef extern void _NetServerTick()
+cdef extern from "./net_lib/server.h":
+    cdef extern void _NetServerInit()
+    cdef extern void _NetServerTick()
 
 def NetServerInit():
     _NetServerInit()
