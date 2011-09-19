@@ -1,6 +1,7 @@
 #cdef extern from "c_lib.hpp":
 
-cdef extern int init_c_lib()
+cdef extern from "c_lib.hpp":
+    int init_c_lib()
 
 #print "Initing c_lib"
 

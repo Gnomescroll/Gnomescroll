@@ -58,8 +58,9 @@ cdef extern from "./t_map/t_map.h":
     int _get_lowest_open_block(int x, int y, int n)
 
 
-cdef extern from "./t_map/t_serialize.h":
+cdef extern from "./t_map/t_compress.h":
     int map_save_to_disk(char* fn)
+cdef extern from "./t_map/t_decompress.h":
     int map_load_from_disk(char* fn)
     
 #done
