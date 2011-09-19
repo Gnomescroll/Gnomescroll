@@ -1,20 +1,7 @@
-#include "c_lib.hpp"
+#include "./c_lib.hpp"
 
-
-#include <net_lib/net_lib.h>
-
-
-extern "C" { 
-	#include <stdio.h>
-
-
-
-	#include "./t_map/t_map.c"
-	#include "./t_map/t_properties.c"
-	
-	#include "./physics/vector.c"
-	#include "./ray_trace/ray_trace.c"
-	#include "./physics/common.c"
+	//#include "./t_map/t_viz.c"
+	//#include "./t_map/t_vbo.c"
 
 	#include "./objects/particles.c"
 	#include "./objects/grenade.c"
@@ -24,19 +11,40 @@ extern "C" {
 	#include "./objects/shrapnel.c"
 	#include "./objects/blood.c"
 
+extern "C" { 
+	#include <stdio.h>
+
+
+
+	#include "./t_map/t_map.c"
+	#include "./t_map/t_properties.c"
+/*
+#ifdef DC_CLIENT
+	#include "./t_map/t_viz.c"
+	#include "./t_map/t_vbo.c"
+#endif
+*/
+
+
+	#include "./physics/vector.c"
+	#include "./ray_trace/ray_trace.c"
+	#include "./physics/common.c"
+
+
 
 	#include "./agent/agent_include.h"
 
-	#ifdef DC_CLIENT
-		#include "./texture_loader.c"
-	#endif
+#ifdef DC_CLIENT
+	#include "./texture_loader.c"
+#endif
 	
 	#ifdef DC_SERVER
-		#include "./t_map/t_serialize.c"
+		//#include "./t_map/t_serialize.c"
 	#endif
 	
 }
 
+#include <net_lib/net_lib.h>
 #include "agent/net_agent.cpp"
 
 extern "C" { 

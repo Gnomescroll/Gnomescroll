@@ -179,7 +179,7 @@ def build(bld):
         time_lib = []
 
     '''
-    bld(features='c cshlib',
+    bld(features='cxx cshlib',
         source=['c_lib/c_lib.c',
                 'c_lib/texture_loader.c',
                 'c_lib/net_lib/client.c',
@@ -226,13 +226,15 @@ def build(bld):
         use=common_libraries+SDL_libraries,
         target='SDL.input')
 
-    bld(features='c cshlib pyext',
+    '''
+    bld(features='cxx cshlib pyext',
         source=['cube_lib/t_vbo.c',
                 'cube_lib/t_viz.c',
                 'cube_lib/terrain_map.pyx'],
         use=common_libraries + SDL_libraries+['c_lib'],
         target='cube_lib.terrain_map')
-
+    '''
+         
     bld(features='c cshlib pyext',
         source=['vox_lib/vox_functions.c',
                 'vox_lib/vox_lib.pyx'],
@@ -241,28 +243,35 @@ def build(bld):
 
     # c_lib
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
+        source=['c_lib/t_map/t_vbo.c',
+                'c_lib/t_map/t_viz.c',
+                'c_lib/terrain_map.pyx'],
+        use=common_libraries + SDL_libraries+['c_lib'],
+        target='c_lib.terrain_map')
+
+    bld(features='cxx cshlib pyext',
         source=['c_lib/_ray_trace.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib._ray_trace')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
         target='init_c_lib')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_objects.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_objects')
 
-    bld(features='c cshlib pyext',
+    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_agents.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_agents')
 
     # sound
-    bld(features='c cshlib',
+    bld(features='cxx cshlib',
         source=['sound/sound.c'],
 
         use=sound_libraries,
@@ -275,14 +284,14 @@ def build(bld):
         target='csound'
     )
 
-    bld(features='c cshlib pyext',      #cython
+    bld(features='cxx cshlib pyext',      #cython
         source=['sound/sounds.pyx'],
         use=['csound'],
         target='sound.sounds')
 
 
     # final
-    bld(features='c cprogram pyembed',
+    bld(features='cxx cprogram pyembed',
         #use=common_libraries+SDL_libraries+['sound'],
         use=SDL_libraries,
         source='run.c',
@@ -314,7 +323,7 @@ def install_in_ext(ctx):
     targets = ['SDL.gl',
                'SDL.hud',
                'SDL.input',
-               'cube_lib.terrain_map',
+               'c_lib.terrain_map',
                'vox_lib',
                'c_lib._ray_trace',
                'init_c_lib',

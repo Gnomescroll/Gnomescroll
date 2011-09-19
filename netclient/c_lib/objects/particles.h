@@ -15,7 +15,7 @@ struct Particle2 {
     unsigned int id;
     //float x,y,z;
     //float vx,vy,vz;
-    struct State state;
+    struct Particle state;
     unsigned int ttl;
     unsigned int ttl_max;
     int type;
