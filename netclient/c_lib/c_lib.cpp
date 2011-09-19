@@ -12,9 +12,7 @@
 	//#include "./t_map/t_viz.c"
 	//#include "./t_map/t_vbo.c"
 
-	//#include "./objects/particles.c"
-
-
+	#include "./objects/particles.c"
 	#include "./objects/grenade.c"
 	#include "./objects/neutron.c"
 	#include "./objects/cspray.c"
