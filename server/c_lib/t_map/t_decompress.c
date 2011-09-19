@@ -14,13 +14,14 @@ int t_zlib_decompress_init(char* fn) {
         return 1;
     }
 
+    int ret;
     /* allocate inflate state */
     t_strm_decompress.zalloc = Z_NULL;
     t_strm_decompress.zfree = Z_NULL;
     t_strm_decompress.opaque = Z_NULL;
     t_strm_decompress.avail_in = 0;
     t_strm_decompress.next_in = Z_NULL;
-    int ret = inflateInit(&t_strm_decompress);
+    ret = inflateInit(&t_strm_decompress);
     if (ret != Z_OK) {
         printf("Map decompress init fail.\n");
         return ret;
@@ -29,7 +30,7 @@ int t_zlib_decompress_init(char* fn) {
 }
 
 int t_zlib_decompress_final() {
-
+    printf("decompress final\n");
     (void)inflateEnd(&t_strm_decompress);
     fclose(t_zlib_src_file);
     t_buffer_reset();
@@ -53,47 +54,49 @@ int t_zlib_decompress_update_buffer(int n) {
 
 
 int t_zlib_decompress() {
-printf("start\n");
+    printf("start\n");  // SEGFAULTS ?!?!
+
     int ret;
     unsigned int have;
     unsigned char in[t_buff_size];
-    unsigned char out[t_buff_size];
+    //unsigned char out[t_buff_size];
 
     /* decompress until deflate stream ends or end of file */
     do {
         printf("about to do first read attempt\n");
+        if (t_zlib_src_file == NULL) printf("WTF\n");
+        //t_strm_decompress.avail_in = fread(in, 1, 512*2*(3*sizeof(int)), t_zlib_src_file);
         t_strm_decompress.avail_in = fread(in, 1, t_buff_size, t_zlib_src_file);
+        if (feof(t_zlib_src_file)) {
+            printf("EOF???\n");
+            printf("%s\n", t_zlib_src);
+        }
         if (ferror(t_zlib_src_file)) {
-            (void)inflateEnd(&t_strm_decompress);
             return Z_ERRNO;
         }
-        if (t_strm_decompress.avail_in == 0)
+        if (t_strm_decompress.avail_in == 0) {
+            printf("avail_in is 0\n");
             break;
+        }
         t_strm_decompress.next_in = in;
 
         /* run inflate() on input until output buffer not full */
         do {
             printf("decompress loop\n");
             t_strm_decompress.avail_out = t_buff_size;
-            t_strm_decompress.next_out = out;
+            t_strm_decompress.next_out = t_buff;
             ret = inflate(&t_strm_decompress, Z_NO_FLUSH);
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+            printf("RET %d\n", ret);
             switch (ret) {
             case Z_NEED_DICT:
                 ret = Z_DATA_ERROR;     /* and fall through */
             case Z_DATA_ERROR:
             case Z_MEM_ERROR:
-                //(void)inflateEnd(&t_strm_decompress);
-                t_zlib_decompress_final();
                 return ret;
             }
             have = t_buff_size - t_strm_decompress.avail_out;
-            //if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                //t_zlib_decompress_final();
-                //return Z_ERRNO;
-            //}
             if (t_zlib_decompress_update_buffer(have)) {
-                t_zlib_decompress_final();
                 return Z_ERRNO;
             }
         } while (t_strm_decompress.avail_out == 0);
@@ -112,7 +115,7 @@ int map_load_from_disk(char* fn) {
 
     ret = t_zlib_decompress_init(fn);
     if (ret) {
-         printf("%s", errmsg);
+        printf("%s", errmsg);
         return 1;
     }
     printf("init decompress done\n");

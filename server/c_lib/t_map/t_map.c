@@ -122,7 +122,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
 int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox) {
 
     if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
-        printf("Warning:  _set_chunk_voxels :: chunk offsets out of range :: %d %d %d", xoff, yoff, zoff);
+        printf("Warning:  _set_chunk_voxels :: chunk offsets out of range :: %d %d %d\n", xoff, yoff, zoff);
         return 1;
     }
         
