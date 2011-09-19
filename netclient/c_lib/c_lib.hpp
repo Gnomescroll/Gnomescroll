@@ -9,4 +9,3 @@ extern "C" {
 
 }
 
-#define DC_CLIENT

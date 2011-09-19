@@ -1,9 +1,14 @@
+#define DC_CLIENT
+
 #include "./c_lib.hpp"
 
+#ifdef DC_SERVER 
+	sasfsafgdg442/3+3/
+#endif
 	//#include "./t_map/t_viz.c"
 	//#include "./t_map/t_vbo.c"
 
-	#include "./objects/particles.c"
+	//#include "./objects/particles.c"
 	#include "./objects/grenade.c"
 	#include "./objects/neutron.c"
 	#include "./objects/cspray.c"
