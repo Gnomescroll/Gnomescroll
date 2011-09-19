@@ -1,6 +1,8 @@
 #include "c_lib.hpp"
 
-extern "C" { 
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
 	#include <stdio.h>
 
 	// #ifdef DC_CLIENT
@@ -29,8 +31,9 @@ extern "C" {
 	#ifdef DC_SERVER
 		#include "./t_map/t_serialize.c"
 	#endif
+ #ifdef __cplusplus
 }
-
+ #endif
 #include <net_lib/net_lib.h>
 
 #include "agent/net_agent.cpp"

@@ -13,7 +13,7 @@
 #include <mach/mach.h>
 #endif
 
-extern "C" {
+//extern "C" {
 	int _start_physics_timer(int frequency); //ms per frame
 
 	int _tick_check();
@@ -24,4 +24,4 @@ extern "C" {
 	void _START_CLOCK();
 	int _GET_TICK();
 	int _GET_MS_TIME();
-}
+//}

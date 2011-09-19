@@ -3,7 +3,7 @@
 #include "physics_timer.h"
 
 
-extern "C" {
+//extern "C" {
 
 int f;
 long start_time;
@@ -180,4 +180,4 @@ int _GET_MS_TIME() {
 
 }
 
-}
+//}

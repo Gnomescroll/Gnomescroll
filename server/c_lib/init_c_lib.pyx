@@ -25,7 +25,7 @@ def NetServerTick():
 
 ##timer
 
-cdef extern: #s from "../c_lib/time/physics_timer.h":
+cdef extern from "../c_lib/time/physics_timer.h":
     int _start_physics_timer(int frequency)
     int _tick_check()
     long _get_time()
