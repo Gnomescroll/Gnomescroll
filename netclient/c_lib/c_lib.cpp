@@ -1,7 +1,13 @@
 #include "c_lib.hpp"
 
+
+#include <net_lib/net_lib.h>
+
+
 extern "C" { 
 	#include <stdio.h>
+
+
 
 	#include "./t_map/t_map.c"
 	#include "./t_map/t_properties.c"
@@ -30,8 +36,6 @@ extern "C" {
 	#endif
 	
 }
-
-#include <net_lib/net_lib.h>
 
 #include "agent/net_agent.cpp"
 
