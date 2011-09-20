@@ -1,3 +1,21 @@
+
+Packets:
+-messages go into pool
+-function for adding/removing messages from out_pool
+-are sorted by priority
+-have callback functions
+
+-get_message callback (char*)
+-message_acked callback
+-message failed callback
+
+packet registers callbacks
+
+Types of generic messages:
+	-event (soonest, unreliable); bullet
+	-state (reliable); weapon change, etc retransmit until acked
+	-state (latest only); position, aiming direction
+
 Control data per player can take less than 32 bits
 
 id 8 bits

@@ -51,17 +51,18 @@ void Agent_control_state_message::register_message() {
 }
 
 void Agent_control_state_message::send_message() {
-    //unsigned char* buff= NetClient::get_client_out_buffer();
-    //int* buff_n = NetClient::get_client_out_buffer_n();
+    unsigned char* buff= NetClient::get_client_out_buffer();
+    int* buff_n = NetClient::get_client_out_buffer_n();
 
     //unsigned char* buff= get_client_out_buffer();
     //int* buff_n = get_client_out_buffer_n();
 
-    unsigned char* buff;
-    int* buff_n;
-
     int bcount = *buff_n;
-
+    if(*buff_n > 800) {
+        printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n);
+        return;
+    }
+    
     PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     PACK_uint16_t(id, buff, buff_n); //agent id
     ///assume agent id is part of state?
@@ -72,6 +73,7 @@ void Agent_control_state_message::send_message() {
     PACK_float(phi, buff, buff_n);
 
     seq++;
+    printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
 }
 
 int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {

@@ -24,7 +24,7 @@
     struct NetPeer* np;
 
     void _NetClientConnect(int a, int b,int c, int d, int _port) {
-        reset_client_out_buffer();
+        NetClient::reset_client_out_buffer();
         //init_agent_client();
         init_message_handler();
         update_current_netpeer_time();

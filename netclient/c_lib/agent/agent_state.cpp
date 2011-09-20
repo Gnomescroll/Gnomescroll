@@ -11,7 +11,7 @@ struct Agent_control_state {
 
 };
 
-class Agent_state {
+class _Agent_state {
 
     public:
         int id;
@@ -25,7 +25,7 @@ class Agent_state {
         float theta;
         float phi;
 
-        Agent_state(); //default constructor
+        _Agent_state(); //default constructor
         //set_control_state(int[8] _cs, float theta, float phi);
 
       
@@ -35,7 +35,7 @@ class Agent_state {
 
 };
 
-Agent_state::Agent_state() {
+_Agent_state::_Agent_state() {
 	x = 0;
 	y = 0;
 	z = 0;
@@ -57,6 +57,9 @@ Agent_state::set_control_state(int[8] _cs, float theta, float phi) {
 */
 
 #include <agent/net_agent.hpp>
+#include "agent_state.hpp"
+
+
 
 void send_control_state() {
 	
@@ -68,7 +71,7 @@ void send_control_state() {
 	//m.ctick = 0;
 	m.theta = 0;
 	m.phi = 0;
-	m.send_message()
+	m.send_message();
 	/*
         int id;
         int seq;

@@ -55,7 +55,7 @@ int decrement_ttl();
 
 
 void flush_outgoing_packets();
-}
+
 //extern unsigned char client_out_buff[1500];
 //extern int client_out_buff_n; //buffer for writing packets out to;
 
@@ -68,3 +68,4 @@ void flush_outgoing_packets();
 	unsigned char* get_client_out_buffer();
 	int* get_client_out_buffer_n();
 
+}
