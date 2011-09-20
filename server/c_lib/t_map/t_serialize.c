@@ -22,6 +22,9 @@ void t_zerr(int ret)
         break;
     case Z_VERSION_ERROR:
         fputs("zlib version mismatch!\n", stderr);
+        break;
+    case Z_BUF_ERROR:
+        fputs("zlib buffer error\n", stderr);
     }
 }
 

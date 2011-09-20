@@ -1,6 +1,8 @@
 #pragma once
 
-#define t_buff_size (((32*8*512*2) *2) * sizeof(int) * 3)    // 256kB --  2*[columns * chunks/col * voxels/chunk * bytes/voxel].  Values below this are associated with the final call to deflate() segfaulting.
+#define t_buff_size (((32*8*512*2) *2) + (sizeof(int) * 3))    // 256kB --  2*[columns * chunks/col * voxels/chunk * bytes/voxel].  Values below this are associated with the final call to deflate() segfaulting.
+
+//#define t_buff_size ((8*2*512) + (sizeof(int) * 3))
 
 unsigned char t_buff[t_buff_size];
 int _t_bi=0, *t_buffer_index = &_t_bi;

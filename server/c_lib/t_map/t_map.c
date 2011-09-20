@@ -119,6 +119,7 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff){
     return chunk;
 }
 
+// set a chunk's voxels in bulk
 int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox) {
 
     if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
@@ -137,13 +138,47 @@ int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox) {
         column->chunk[zoff] = chunk;
     }
     
-    int i;
+    int i,j=0;
     for (i=0; i < vm_chunk_voxel_size; i++) {
         chunk->voxel[i] = vox[i];
+        if (vox[i] != 0) j++;
     }
-
+    printf("NONEMPTY VOXELS THIS CHUNK: %d\n", j);
     return 0;
 }
+
+// set a chunk voxel, using chunk offsets and voxel array index
+int _set_chunk_voxel(int xoff, int yoff, int zoff, unsigned short val, int i) {
+
+    if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
+        printf("Warning:  _set_chunk_voxels :: chunk offsets out of range :: %d %d %d\n", xoff, yoff, zoff);
+        return 1;
+    }
+
+    if (i < 0 || i >= vm_chunk_voxel_size) {
+        printf("Warning: _set_chunk_voxel :: voxel array index out of range (%d) :: %d\n", vm_chunk_voxel_size, i);
+        return 1;
+    }
+        
+    struct vm_column* column;
+    struct vm_chunk* chunk;
+
+    column = &map.column[vm_map_dim*yoff + xoff];
+    chunk = column->chunk[zoff];
+
+    if (chunk == NULL) {
+        chunk = new_chunk(xoff, yoff, zoff);
+        column->chunk[zoff] = chunk;
+    }
+
+    chunk->voxel[i] = val;
+    //chunk->voxel[i] = 1;
+    if (val) printf("set chunk voxel to %u\n", val);
+    return 0;
+}
+
+
+
 ///rendering of chunk
 
 //deprecated for server?

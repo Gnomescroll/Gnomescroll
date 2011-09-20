@@ -457,6 +457,7 @@ class AgentInput:
                 'down':self.adjust_block,
                 'b'   : self.bleed,
             })
+
     # accept key,handler or a dict of key,handlers
     def _bind_key_handlers(self, key, handler=None):
         if handler is None:
