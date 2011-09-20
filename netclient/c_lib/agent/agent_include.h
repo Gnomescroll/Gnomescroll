@@ -15,6 +15,8 @@
 #include "./agent.c"
 #include "./agent_list.c"
 
+#include "c_lib/agent/agent_state.cpp"
+
 #ifdef DC_CLIENT
     #include "./agent_client.c"
     #include "./agent_draw.c"

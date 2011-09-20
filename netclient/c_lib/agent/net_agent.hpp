@@ -1,10 +1,8 @@
 #pragma once
 
 #include <net_lib/client/client.hpp>
+#include <net_lib/common/message_handler.h>
 
-extern "C" {
-        #include <net_lib/common/message_handler.h>
- }
 
 class Agent_control_state_message {
 

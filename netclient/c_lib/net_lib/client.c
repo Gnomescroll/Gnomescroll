@@ -70,6 +70,7 @@
             return;
         }
 
+        //set agent state
         NetClient::flush_outgoing_packets();
         check_for_dropped_packets(np);
         NetClient::poll_connection_timeout();
