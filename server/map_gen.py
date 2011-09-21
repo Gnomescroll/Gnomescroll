@@ -236,11 +236,11 @@ def load_map1(terrain_map):
 # simple perlin generator, baseline height 2 (small mountains + lava on top)
 def load_map2(terrain_map):
     print 'start map gen'
-    max_height = 15
+    max_height = 127
     g = Gen(salt=random.random())
     h=0
-    for i in range(128):
-        for j in range(128):
+    for i in range(512):
+        for j in range(512):
             h = g.getHeight(i,j)
             h = abs(h)
             h *= 100

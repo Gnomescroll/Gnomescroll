@@ -61,7 +61,6 @@ class Main:
     def __init__(self):
         #setup
         if opts.opts.map:
-            print 'Loading map %s' % (opts.opts.map,)
             terrain_map.load_from_disk(opts.opts.map)
         else:
             map_gen.load_map2(terrain_map)
