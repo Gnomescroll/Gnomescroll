@@ -30,9 +30,7 @@ int t_zlib_decompress_init(char* fn) {
 }
 
 int t_zlib_decompress_final() {
-    printf("decompress final\n");
-    //t_strm_decompress.avail_out = t_buff_size;
-    //t_strm_decompress.next_out = t_buff;
+
     (void)inflateEnd(&t_strm_decompress);
     fclose(t_zlib_src_file);
     t_buffer_reset();
@@ -40,68 +38,45 @@ int t_zlib_decompress_final() {
     return 0;
 }
 
-//int t_zlib_decompress_update_buffer(int n) {
 int t_zlib_decompress_update_buffer(unsigned char* out, int n) {
 
-    //if (*t_buffer_index + n >= t_buff_size) {
-        //t_buffer_reset();
-    //}
-
-    //if (t_zlib_unserialize_chunk(t_buff, t_buffer_index)) {
-    //if (t_zlib_unserialize_chunk(out, n, t_buffer_index, t_buff_size)) {
     if (t_zlib_unserialize_chunk(out, n)) {
-        printf("Map Decompression: t_zlib_unserialize_chunk failed.\n");
         return 1;
     }
     
     return 0;
 }
 
-
-// read chunk of file
-//  decompress file chunk
-//      each iter update buffer
-//      update_buffer should fill a chunk buffer
-//          add to chunk buffer until new data consumed
-//                if chunk buffer full
-//                    flush
-
-int ttl_have = 0;
 int t_zlib_decompress() {
 
     int ret;
-    unsigned int avail_in;
     unsigned int have;
     unsigned char in[t_buff_size];
 
     /* decompress until deflate stream ends or end of file */
     do {
-        //t_strm_decompress.avail_in = fread(in, 1, 512*2*(3*sizeof(int)), t_zlib_src_file);
-        avail_in = fread(in, 1, t_buff_size, t_zlib_src_file);
-        if (feof(t_zlib_src_file)) {
-            printf("EOF???\n");
-            printf("%d %s\n", avail_in, t_zlib_src);
-        }
-        t_strm_decompress.avail_in = avail_in;
-        
+        t_strm_decompress.avail_in = fread(in, 1, t_buff_size, t_zlib_src_file);
+
         if (ferror(t_zlib_src_file)) {
-            printf("SRC FERROR!\n");
+            printf("Error reading map file: %s!\n", t_zlib_src);
             return Z_ERRNO;
         }
+        
         if (t_strm_decompress.avail_in == 0) {
-            printf("avail_in is 0\n");
             break;
         }
+
         t_strm_decompress.next_in = in;
 
         /* run inflate() on input until output buffer not full */
         do {
-            //printf("decompress loop\n");
+
             t_strm_decompress.avail_out = t_buff_size;
             t_strm_decompress.next_out = t_buff;
+
             ret = inflate(&t_strm_decompress, Z_NO_FLUSH);
+
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            //printf("RET %d\n", ret);
             switch (ret) {
             case Z_NEED_DICT:
                 ret = Z_DATA_ERROR;     /* and fall through */
@@ -109,28 +84,25 @@ int t_zlib_decompress() {
             case Z_MEM_ERROR:
                 return ret;
             }
+
             have = t_buff_size - t_strm_decompress.avail_out;
-            //printf("HAVE %d\n",have);
-            //ttl_have += have;
-            //if (t_zlib_decompress_update_buffer(have)) {
-            //if (t_zlib_decompress_update_buffer(t_strm_decompress.next_out, have)) {
+
             if (t_zlib_decompress_update_buffer(t_buff, have)) {
-                printf("Update buffer failed.\n");
                 return Z_ERRNO;
             }
+
         } while (t_strm_decompress.avail_out == 0);
 
         /* done when inflate() says it's done */
     } while (ret != Z_STREAM_END);
 
-    // do final flush!
-
-    printf("decompress done\n");
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
 
 int map_load_from_disk(char* fn) {
+    printf("Loading map %s\n", fn);
+    
     const char* errmsg = "Map decompress failed.\n";
     int ret;
 
@@ -140,9 +112,7 @@ int map_load_from_disk(char* fn) {
         return 1;
     }
     
-    printf("init decompress done\n");
     ret = t_zlib_decompress();
-    printf("decompress done\n");
     if (ret != Z_OK) {
         t_zerr(ret);
         printf("%s", errmsg);
@@ -153,6 +123,8 @@ int map_load_from_disk(char* fn) {
         printf("%s", errmsg);
         return 1;
     }
+
+    printf("Map decompression end.\n");
 
     return 0;
 }
