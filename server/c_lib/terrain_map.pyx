@@ -296,11 +296,14 @@ import os, os.path
 def save_to_disk(fn=''):
     if not fn:
         fn = 'mapsave1'
+    fn = './content/maps/%s' % (fn,)
     map_save_to_disk(fn);
 
 def load_from_disk(fn=''):
     if not fn:
         fn = 'mapsave1'
-    if not os.path.exists(os.curdir + '/' + fn):
-        print "Map %s does not exist. Abort map load." % (os.curdir + fn,)
+    fn = './content/maps/%s' % (fn,)
+    if not os.path.exists(fn):
+        print "Map %s does not exist. Abort map load." % (fn,)
+        return 1
     map_load_from_disk(fn)
