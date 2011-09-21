@@ -41,7 +41,7 @@ int t_zlib_decompress_final() {
 }
 
 //int t_zlib_decompress_update_buffer(int n) {
-int t_zlib_decompress_update_buffer(int n, unsigned char* out) {
+int t_zlib_decompress_update_buffer(unsigned char* out, int n) {
 
     //if (*t_buffer_index + n >= t_buff_size) {
         //t_buffer_reset();
@@ -57,21 +57,33 @@ int t_zlib_decompress_update_buffer(int n, unsigned char* out) {
     return 0;
 }
 
+
+// read chunk of file
+//  decompress file chunk
+//      each iter update buffer
+//      update_buffer should fill a chunk buffer
+//          add to chunk buffer until new data consumed
+//                if chunk buffer full
+//                    flush
+
 int ttl_have = 0;
 int t_zlib_decompress() {
 
     int ret;
+    unsigned int avail_in;
     unsigned int have;
     unsigned char in[t_buff_size];
 
     /* decompress until deflate stream ends or end of file */
     do {
         //t_strm_decompress.avail_in = fread(in, 1, 512*2*(3*sizeof(int)), t_zlib_src_file);
-        t_strm_decompress.avail_in = fread(in, 1, t_buff_size, t_zlib_src_file);
+        avail_in = fread(in, 1, t_buff_size, t_zlib_src_file);
         if (feof(t_zlib_src_file)) {
             printf("EOF???\n");
-            printf("%s\n", t_zlib_src);
+            printf("%d %s\n", avail_in, t_zlib_src);
         }
+        t_strm_decompress.avail_in = avail_in;
+        
         if (ferror(t_zlib_src_file)) {
             printf("SRC FERROR!\n");
             return Z_ERRNO;
@@ -101,7 +113,8 @@ int t_zlib_decompress() {
             //printf("HAVE %d\n",have);
             //ttl_have += have;
             //if (t_zlib_decompress_update_buffer(have)) {
-            if (t_zlib_decompress_update_buffer(have, t_strm_decompress.next_out)) {
+            //if (t_zlib_decompress_update_buffer(t_strm_decompress.next_out, have)) {
+            if (t_zlib_decompress_update_buffer(t_buff, have)) {
                 printf("Update buffer failed.\n");
                 return Z_ERRNO;
             }
@@ -126,6 +139,7 @@ int map_load_from_disk(char* fn) {
         printf("%s", errmsg);
         return 1;
     }
+    
     printf("init decompress done\n");
     ret = t_zlib_decompress();
     printf("decompress done\n");

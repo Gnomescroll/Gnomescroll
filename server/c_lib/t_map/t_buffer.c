@@ -89,8 +89,12 @@ inline short t_UNPACK_short(unsigned char* buffer, int*n) {
 }
 
 inline int t_UNPACK_int(unsigned char* buffer, int*n) {
+    printf("UNPACKING int\n");
+    printf("n: %d\n", *n);
         int d = *((int*)(buffer+*n));
         *n += sizeof(int);
+    printf("n: %d\n", *n);
+    printf("d: %d\n", d);
     return d;
 }
 
@@ -103,6 +107,8 @@ int t_chunk_buff_index = 0;
 int nz_vox = 0;
 int t_zlib_unserialize_chunk(unsigned char* buffer, int size) {
 printf("SIZE %d\n", size);
+int _k;
+for (_k=0; _k<size; _k++) {if(buffer[_k]) {printf("%c", buffer[_k]);}}
     // buffer is filled by zlib inflate
     // size is how much of the buffer was filled
 
@@ -124,13 +130,15 @@ printf("SIZE %d\n", size);
                 t_chunk_buff[t_chunk_buff_index] = buffer[j];
                 t_chunk_buff_index++;
             }
-            //printf("will not fit\n");
+            printf("will not fit\n");
             break;
         }
 
         // fill chunk buffer
         for (i=t_chunk_buff_index; i < t_chunk_buff_size; i++) {
             t_chunk_buff[i] = buffer[j];
+            //printf("%c\n", buffer[j]);
+            //printf("%u\n", *((unsigned short*)(buffer+(j*2))));
             j++;
         }
 
