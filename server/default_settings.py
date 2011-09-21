@@ -19,6 +19,9 @@ n_teams = 2
 team_kills = False
 victory_points = 3
 
+map = ''
+
+
 try:
     from settings import *
 except ImportError:

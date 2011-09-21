@@ -291,10 +291,16 @@ def get_highest_open_block(int x, int y, int n=1):
 def get_lowest_open_block(int x, int y, int n=1):
     return _get_lowest_open_block(x,y,n)
 
-def save_to_disk():
-    fn = 'mapsave1'
+
+import os, os.path
+def save_to_disk(fn=''):
+    if not fn:
+        fn = 'mapsave1'
     map_save_to_disk(fn);
 
-def load_from_disk():
-    fn = 'mapsave1'
+def load_from_disk(fn=''):
+    if not fn:
+        fn = 'mapsave1'
+    if not os.path.exists(os.curdir + '/' + fn):
+        print "Map %s does not exist. Abort map load." % (os.curdir + fn,)
     map_load_from_disk(fn)

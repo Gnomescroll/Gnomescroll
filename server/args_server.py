@@ -41,6 +41,7 @@ DEFAULTS = {
     'n_teams'   :   settings.n_teams,
     'team_kills':   settings.team_kills,
     'victory_points':   settings.victory_points,
+    'map'       :   settings.map,
 }
 
 def parse(cl_args=None):
@@ -74,6 +75,8 @@ def parse(cl_args=None):
     parser.add_argument('-tk', '--team-kills', action='store_true')
 
     parser.add_argument('-vp', '--victory-points', default=DEFAULTS['victory_points'])
+
+    parser.add_argument('-m', '--map', default=DEFAULTS['map'])
 
     parser.add_argument('--print-args', action='store_true')
 
@@ -126,6 +129,7 @@ def print_args(args):
         'n_teams',
         'team_kills',
         'victory_points',
+        'map',
     ]
     print 'Options:'
     for key in keys:
