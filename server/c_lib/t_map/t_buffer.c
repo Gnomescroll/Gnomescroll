@@ -26,17 +26,53 @@ inline void t_PACK_int(int d, unsigned char* buffer, int* n) {
     *n += sizeof(int);
 }
 
-void t_zlib_serialize_chunk(int x, int y, int z, unsigned short* vox, unsigned char* buffer, int* t_buffer_index) {
+int t_zlib_serialize_chunk_vox(unsigned short* vox, int vox_size, unsigned char* buffer, int* index, int buffer_size) {
 
-    t_PACK_int(x, buffer, t_buffer_index); //pack x
-    t_PACK_int(y, buffer, t_buffer_index); //pack y
-    t_PACK_int(z, buffer, t_buffer_index); //pack z
-
+    int s = sizeof(*vox);
+    int n_can_fit = (buffer_size - *index) / s;
     int i;
-    for(i=0;i<vm_chunk_voxel_size;i++) {
-        t_PACK_ushort(vox[i], buffer, t_buffer_index);
+    int n = (n_can_fit < vox_size) ? n_can_fit : vox_size;
+
+    //printf("sizeof vox: %d\n", s);
+    //printf("can_fit: %d\n", n_can_fit);
+    //printf("going to pack: %d / %d\n", n, vox_size);
+    for (i=0; i < n; i++) {
+        if (i >= vox_size) printf("VOXEL ARRAY I EXCEEDED VOX_SIZE INFINAL CHUNK SERIALIZE\n");
+        //printf("%d\n",i);
+        //printf("vox: %p\n", vox);
+        t_PACK_ushort(vox[i], buffer, index);
     }
+    printf("escaped\n");
+    return n;
 }
+
+int t_zlib_serialize_chunk(int x, int y, int z, unsigned short* vox, int vox_size, unsigned char* buffer, int* index, int buffer_size) {
+    //printf("%d %d %d\n", x,y,z);
+    //printf("vox size: %d\n", vox_size);
+    //printf("index: %d\n", *index);
+    //printf("buffer_size: %d\n", buffer_size);
+    
+    int free_space = buffer_size - *index;
+    int req_space = 3*sizeof(x);
+
+    if (free_space < req_space) {
+        // cant even fit the x,y,z
+        return -1;
+    }
+
+    t_PACK_int(x, buffer, index); //pack x
+    t_PACK_int(y, buffer, index); //pack y
+    t_PACK_int(z, buffer, index); //pack z
+        //printf("vox: %p\n", vox);
+
+    int ret = t_zlib_serialize_chunk_vox(vox, vox_size, buffer, index, buffer_size);
+    return ret;
+    //int i;
+    //for(i=0;i<vox_size;i++) {
+        //t_PACK_ushort(vox[i], buffer, t_buffer_index);
+    //}
+}
+
 
 
 /* unpacking */
@@ -65,29 +101,30 @@ unsigned char t_chunk_buff[t_chunk_buff_size];
 int t_chunk_buff_index = 0;
 
 int nz_vox = 0;
-int t_zlib_unserialize_chunk(unsigned char* buffer, int* index) {
-
+int t_zlib_unserialize_chunk(unsigned char* buffer, int size) {
+printf("SIZE %d\n", size);
     // buffer is filled by zlib inflate
-    // index is how much of the buffer was filled
-
-    // 1. check previous partial chunk buffer
+    // size is how much of the buffer was filled
 
     int i, j=0;
     int x,y,z;
 
+    int index = 0;
+    
     unsigned short vox_i;
 
-    printf("unserialize chunk\n");
+    //printf("unserialize chunk\n");
     //printf("%d < %d\n", j ,*index);
     
-    while (j < *index) {
+    while (j < size) {
 
-        // available buffer will not fill the chunk, copy remains
-        if (t_chunk_buff_size - t_chunk_buff_index > t_buff_size - (*index + j)) {
-            for (j; j < *index; j++) {
+        // available buffer will not fill the chunk, copy to chunk buffer and abort
+        if (t_chunk_buff_size - t_chunk_buff_index > size - j) {
+            for (j; j < size; j++) {
                 t_chunk_buff[t_chunk_buff_index] = buffer[j];
                 t_chunk_buff_index++;
             }
+            //printf("will not fit\n");
             break;
         }
 
@@ -103,6 +140,7 @@ int t_zlib_unserialize_chunk(unsigned char* buffer, int* index) {
         y = t_UNPACK_int(t_chunk_buff, &t_chunk_buff_index); //unpack y
         z = t_UNPACK_int(t_chunk_buff, &t_chunk_buff_index); //unpack z
 
+        //if (x || y || z)
         printf("%d %d %d\n", x,y,z);
         for (i=0; i < vm_chunk_voxel_size; i++) {
             vox_i = t_UNPACK_ushort(t_chunk_buff, &t_chunk_buff_index);
@@ -110,6 +148,7 @@ int t_zlib_unserialize_chunk(unsigned char* buffer, int* index) {
                 nz_vox++;
                 //printf("VOX_I:  %d\n", vox_i);
             }
+            //if (_set_chunk_voxel(x,y,z, vox_i, i)) return 1;
             _set_chunk_voxel(x,y,z, vox_i, i);
         }
 

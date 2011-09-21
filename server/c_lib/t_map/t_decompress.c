@@ -43,12 +43,13 @@ int t_zlib_decompress_final() {
 //int t_zlib_decompress_update_buffer(int n) {
 int t_zlib_decompress_update_buffer(int n, unsigned char* out) {
 
-    if (*t_buffer_index + n >= t_buff_size) {
-        t_buffer_reset();
-    }
+    //if (*t_buffer_index + n >= t_buff_size) {
+        //t_buffer_reset();
+    //}
 
     //if (t_zlib_unserialize_chunk(t_buff, t_buffer_index)) {
-    if (t_zlib_unserialize_chunk(out, t_buffer_index)) {
+    //if (t_zlib_unserialize_chunk(out, n, t_buffer_index, t_buff_size)) {
+    if (t_zlib_unserialize_chunk(out, n)) {
         printf("Map Decompression: t_zlib_unserialize_chunk failed.\n");
         return 1;
     }
@@ -58,17 +59,13 @@ int t_zlib_decompress_update_buffer(int n, unsigned char* out) {
 
 int ttl_have = 0;
 int t_zlib_decompress() {
-    printf("start\n");  // SEGFAULTS ?!?!
 
     int ret;
     unsigned int have;
     unsigned char in[t_buff_size];
-    //unsigned char out[t_buff_size];
 
     /* decompress until deflate stream ends or end of file */
     do {
-        //printf("about to do first read attempt\n");
-        if (t_zlib_src_file == NULL) printf("WTF\n");
         //t_strm_decompress.avail_in = fread(in, 1, 512*2*(3*sizeof(int)), t_zlib_src_file);
         t_strm_decompress.avail_in = fread(in, 1, t_buff_size, t_zlib_src_file);
         if (feof(t_zlib_src_file)) {
@@ -76,6 +73,7 @@ int t_zlib_decompress() {
             printf("%s\n", t_zlib_src);
         }
         if (ferror(t_zlib_src_file)) {
+            printf("SRC FERROR!\n");
             return Z_ERRNO;
         }
         if (t_strm_decompress.avail_in == 0) {
@@ -104,6 +102,7 @@ int t_zlib_decompress() {
             //ttl_have += have;
             //if (t_zlib_decompress_update_buffer(have)) {
             if (t_zlib_decompress_update_buffer(have, t_strm_decompress.next_out)) {
+                printf("Update buffer failed.\n");
                 return Z_ERRNO;
             }
         } while (t_strm_decompress.avail_out == 0);

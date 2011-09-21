@@ -3,7 +3,7 @@
 /* report a zlib or i/o error */
 void t_zerr(int ret)
 {
-    fputs("zpipe: ", stderr);
+    printf("zpipe: errno[%d] :: ", ret);
     switch (ret) {
     case Z_ERRNO:
         if (ferror(stdin))

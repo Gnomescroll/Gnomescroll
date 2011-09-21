@@ -38,7 +38,6 @@ int t_zlib_compress_final() {
     unsigned char out[t_buff_size];
     int ret, have=0;
 
-
    do {
         t_strm_compress.avail_out = t_buff_size;
         t_strm_compress.next_out = out;
@@ -54,27 +53,12 @@ int t_zlib_compress_final() {
         }
     } while (t_strm_compress.avail_out == 0);
 
-
-    //t_strm_compress.next_out = out;
-    //t_strm_compress.avail_out = t_buff_size;
-    //ret = deflate(&t_strm_compress, Z_FINISH);
-    //printf("final avail_out: %d\n", t_strm_compress.avail_out);
-    
     if (ret != Z_STREAM_END) { /* stream will be incomplete */
         printf("RET %d\n", ret);
         t_zerr(ret);
         printf("Z_FINISH deflate failed.\n");
         return 1;        
     }
-
-    //int have = t_buff_size - t_strm_compress.avail_out;
-    //printf("HAVE: %d\n", have);
-    //printf("avail_out: %d\n", t_strm_compress.avail_out);
-    //if (fwrite(out, 1, have, t_zlib_dest_file) != have || ferror(t_zlib_dest_file)) {
-            //printf("DEFLATE OR FILE FAIL\n");
-            //printf("%d\n", have);
-            //return 1;
-        //}
 
     (void)deflateEnd(&t_strm_compress);
 
@@ -113,21 +97,62 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
     return Z_OK;
 }
 
-// entry point for map compression -- decides to compress buffer, and copies voxels to buffer
-int t_zlib_compress_map_chunk(int x, int y, int z, unsigned short *arr, int arr_size) {
-    int ret = Z_OK;
-    if (t_buff_size - *t_buffer_index < (arr_size*sizeof(*arr))) {  // cant fit in buffer, flush
-        ret = t_zlib_compress();
-        t_buffer_reset();
-    }
 
+int t_zlib_flush_buffer() {
+    printf("flushing buffer\n");
+    int ret;
+    ret = t_zlib_compress();
+    t_buffer_reset();
     if (ret != Z_OK) {
         printf("zlib compress not ok\n");
         t_zerr(ret);
-        return 1;
+        return ret;
+    }
+    return 0;
+}
+
+// entry point for map compression -- decides to compress buffer, and copies voxels to buffer
+int t_zlib_compress_map_chunk(int x, int y, int z, unsigned short *arr, int arr_size) {
+    //int i; for (i=0; i<512; i++) printf("%u\n", arr[i]);
+
+    int ret = Z_OK;
+    int ser_ret;
+    //if (t_buff_size - *t_buffer_index < (arr_size*sizeof(*arr))) {  // cant fit in buffer, flush
+        //ret = t_zlib_compress();
+        //t_buffer_reset();
+    //}
+
+    //if (ret != Z_OK) {
+        //printf("zlib compress not ok\n");
+        //t_zerr(ret);
+        //return 1;
+    //}
+        //printf("VOXvox: %p\n", arr);
+
+    ser_ret = t_zlib_serialize_chunk(x,y,z, arr, arr_size, t_buff, t_buffer_index, t_buff_size);
+    //int i; for (i=0; i<512; i++) printf("%u\n", arr[i]);
+        //printf("vox: %p\n", arr);
+
+    if (ser_ret < 0) {  // x,y,z couldnt fit
+    printf("couildnt fit\n");
+        if (t_zlib_flush_buffer()) return 1;
+        ser_ret = t_zlib_serialize_chunk(x,y,z, arr, arr_size, t_buff, t_buffer_index, t_buff_size);
     }
 
-    t_zlib_serialize_chunk(x,y,z, arr, t_buff, t_buffer_index);
+    printf("ser_ret: %d\n", ser_ret);
+    printf("arr_size: %d\n", arr_size);
+
+    int inc_ser_ret = ser_ret;  // incremental serialize return value
+    while (ser_ret < arr_size) { // x,y,z packed, not but all voxels
+        
+        if (t_zlib_flush_buffer()) return 1;
+        printf("moving array thing\n");
+
+        if (ser_ret >= arr_size) printf("VOXEL ARRAY EXCEEDED WHILE FINISHING PARTIAL COPY\n");
+        arr = &arr[inc_ser_ret];
+        inc_ser_ret = t_zlib_serialize_chunk_vox(arr, arr_size - ser_ret, t_buff, t_buffer_index, t_buff_size);
+        ser_ret += inc_ser_ret;
+    }
 
     return 0;
 }
@@ -145,22 +170,24 @@ int map_save_to_disk(char *fn) {
     }
     
     int t_columns = vm_map_dim * vm_map_dim;
-    int x,y,z;
+    int x,y;
     int i,j;
 
     unsigned short* vox;
     struct vm_column* col;
     struct vm_chunk* chunk;
 
-    for (i=0; i < t_columns;i++) {
+    for (i=0; i < t_columns; i++) {
         x = i % vm_map_dim;
         y = i / vm_map_dim;
+        if (i >=t_columns) printf("COLUMN I EXCEEDED\n");
+
         col = &map.column[i];
-        chunk = (struct vm_chunk *)col->chunk;
         for (j=0; j < vm_column_max; j++) {
-            z = j;
-            vox = chunk[j].voxel;
-            if (t_zlib_compress_map_chunk(x,y,z, vox, 512)) {
+            if (j >= vm_column_max) printf("COLUMN CHUNK J EXCEEDED %d %d\n", vm_column_max, j);
+            chunk = col->chunk[j];
+            if (chunk == NULL || chunk->voxel == NULL) continue;
+            if (t_zlib_compress_map_chunk(x,y,j, chunk->voxel, vm_chunk_voxel_size)) {
                 printf("Error: Zlib map compression failed\n");
                 t_buffer_reset();
                 return 1;
@@ -170,19 +197,30 @@ int map_save_to_disk(char *fn) {
 
     //single chunk
     //col = &map.column[0];
-    //chunk = (struct vm_chunk *)col->chunk;
-    //t_zlib_compress_map_chunk(0,0,0, chunk[0].voxel, 512);
+    ////chunk = (struct vm_chunk *)col->chunk;
+    //chunk = col->chunk[0];
+    //vox = chunk->voxel;
+    //for (i=0; i<512; i++) printf("%u\n", vox[i]);
+    //t_zlib_compress_map_chunk(1,1,2, vox, 512);
 
-    //col = &map.column[0];
-    //chunk = (struct vm_chunk *)col->chunk;
-    //for (j=0; j < vm_column_max; j++) {
-        //z = j;
-        //vox = chunk[j].voxel;
-        //if (t_zlib_compress_map_chunk(1,1,z, vox, 512)) {
-            //printf("Error: Zlib map compression failed\n");
-            //t_zlib_compress_final();
-            //t_buffer_reset();
-            //return 1;
+    //unsigned short* vox;
+    //struct vm_column* col;
+    //struct vm_chunk* chunk;
+
+    //for (i=0; i < t_columns; i++) {
+        //x = i % vm_map_dim;
+        //y = i / vm_map_dim;
+        //col = &map.column[i];
+        //chunk = (struct vm_chunk *)col->chunk;
+        //for (j=0; j < vm_column_max; j++) {
+            //z = j;
+            //vox = chunk[j].voxel;
+            //if (t_zlib_compress_map_chunk(x,y,z, vox, 512)) {
+                //printf("Error: Zlib map compression failed\n");
+                //t_zlib_compress_final();
+                //t_buffer_reset();
+                //return 1;
+            //}
         //}
     //}
     
