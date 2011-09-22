@@ -32,7 +32,7 @@
 
 #include <net_lib/net_lib.h>
 
-#include "agent/net_agent.cpp"
+//#include "agent/net_agent.cpp"
 
 //extern "C" { 
 

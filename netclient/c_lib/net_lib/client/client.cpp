@@ -2,6 +2,9 @@
 #include <string.h>
 
 
+
+namespace NetClient {
+
 unsigned char client_out_buff[1500];
 int client_out_buff_n = 11; //header length;
 
@@ -17,9 +20,11 @@ int* get_client_out_buffer_n() {
     return &client_out_buff_n;
 }
 
+}
+
 
 namespace NetClient {
-
+    
 struct NetPeer NPserver;
 struct Socket client_socket;
 
@@ -186,7 +191,8 @@ void flush_outgoing_packets() {
 
     pviz_packet_sent(seq, client_out_buff_n);
     int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
-    if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n ); return;}
+    if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n );}
+    reset_client_out_buffer();
 }
 
 void attempt_connection_with_server() {
@@ -321,17 +327,6 @@ void process_packet(unsigned char* buff, int n) {
     NPserver.last_packet_time = get_current_netpeer_time();
     NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
 
-}
-
-unsigned char* out_buffer[1500];
-unsigned int out_buffer_n;
-
-void send_agent_state_packet() {
-    return;
-}
-
-void process_outgoing_packets() {
-    return;
 }
 
 

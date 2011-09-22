@@ -1,7 +1,11 @@
 
 #include "net_agent.hpp"
 
-//#include <net_lib/common/message_handler.h>
+
+#include <net_lib/common/message_handler.h>
+
+#define Agent_control_state_message_id 3
+#define Agent_control_state_message_size 2*sizeof(uint8_t)+2*sizeof(uint16_t)+3*sizeof(uint32_t)
 
 int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
     Agent_control_state_message cs;
@@ -11,58 +15,32 @@ int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
     return r;
 }
 
+typedef int (*pt2handler)(unsigned char*, int);
+void Agent_control_state_message_register_message() {
+    register_message_handler(Agent_control_state_message_id, Agent_control_state_message_size, (pt2handler) &handle_agent_control_state_message);
+    printf("Registering handler for agent control state input: message_id= %i, message_size= %i\n", Agent_control_state_message_id, Agent_control_state_message_size);
+}
+
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
-
-//move to type pack
-static inline uint8_t UPACK_uint8_t(unsigned char* buffer, int*n) {
-        uint8_t d = *((uint8_t*)(buffer+*n));
-        *n += sizeof(uint8_t);
-        return d;
-}
-
-static inline int16_t UPACK_uint16_t(unsigned char* buffer, int*n) {
-        uint16_t d = *((uint16_t*)(buffer+*n));
-        *n += sizeof(uint16_t);
-        return d;
-}
-
-static inline int16_t UPACK_uint32_t(unsigned char* buffer, int*n) {
-        int16_t d = *((int32_t*)(buffer+*n));
-        *n += sizeof(int32_t);
-        return d;
-}
-
-static inline float UPACK_float(unsigned char* buffer, int*n) {
-        float d = *((float*)(buffer+*n));
-        *n += sizeof(float);
-        return d;
-}
 
 Agent_control_state_message::Agent_control_state_message() {
     id = 3;
     seq = 0;
 }
 
-void Agent_control_state_message::register_message() {
-    int size = sizeof(uint8_t)*2+sizeof(uint16_t)*2+sizeof(uint32_t);
-    //register_message_handler(id, size, (*pt2handler) &handle_agent_control_state_message);
-}
-
 void Agent_control_state_message::send_message() {
-    //unsigned char* buff= NetClient::get_client_out_buffer();
-    //int* buff_n = NetClient::get_client_out_buffer_n();
-
-    //unsigned char* buff= get_client_out_buffer();
-    //int* buff_n = get_client_out_buffer_n();
-
-    unsigned char* buff;
-    int* buff_n;
+    unsigned char* buff= NetClient::get_client_out_buffer();
+    int* buff_n = NetClient::get_client_out_buffer_n();
 
     int bcount = *buff_n;
+    if(*buff_n > 800) {
+        printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n);
+        return;
+    }
 
-    PACK_uint8_t(3, buff, buff_n);  //push message id on stack
+    PACK_uint8_t(Agent_control_state_message_id, buff, buff_n);  //push message id on stack
     PACK_uint16_t(id, buff, buff_n); //agent id
     ///assume agent id is part of state?
     PACK_uint8_t(seq, buff, buff_n);
@@ -72,11 +50,13 @@ void Agent_control_state_message::send_message() {
     PACK_float(phi, buff, buff_n);
 
     seq++;
+    printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
 }
 
 int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
     //PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     int _buff_n = buff_n;
+    int msg_id = UPACK_uint8_t(buff, &buff_n); //msg id, not used
     id = UPACK_uint16_t(buff, &buff_n); //agent id
     seq = UPACK_uint8_t(buff, &buff_n);
     tick =UPACK_uint16_t(buff, &buff_n);
@@ -86,18 +66,3 @@ int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
 
     return buff_n - _buff_n;
 }
-
-
-/*
-class CRectangle {
-    int x, y;
-  public:
-    void set_values (int,int);
-    int area () {return (x*y);}
-};
-
-void CRectangle::set_values (int a, int b) {
-  x = a;
-  y = b;
-}
-*/

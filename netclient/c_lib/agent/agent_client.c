@@ -43,8 +43,8 @@ void set_agent_control_state(int x[32], float theta, float phi) {
     a->cs[a->seq].theta = theta; //should be a byte
     a->cs[a->seq].phi = phi; //should be a byte
 
-    unsigned char* buff= get_client_out_buffer();
-    int* buff_n = get_client_out_buffer_n();
+    unsigned char* buff= NetClient::get_client_out_buffer();
+    int* buff_n = NetClient::get_client_out_buffer_n();
     int bcount = *buff_n;
     PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     PACK_uint16_t(a->id, buff, buff_n); //agent id

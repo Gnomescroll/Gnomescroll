@@ -16,6 +16,11 @@
 
 //#include <agent/control_state.c>
 
+void _NetServerRegisterMessages() {
+    Agent_control_state_message_register_message();
+
+
+}
 void _NetServerInit() {
     init_message_handler();
     update_current_netpeer_time();
@@ -24,6 +29,8 @@ void _NetServerInit() {
 
     unsigned short port = 9999;
     init_server(port);
+
+    _NetServerRegisterMessages();
 }
 
 long t1 = 0;

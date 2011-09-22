@@ -275,6 +275,7 @@ class App(object):
             if sl_c > 0:
                 #c_lib.c_lib_agents._set_agent_control_state([0,1,0,0,1,0], 0, 0)
                 #control state
+                c_lib.c_lib_agents._send_control_state()
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
