@@ -5,6 +5,7 @@
 #include <net_lib/common/message_handler.h>
 
 #define Agent_control_state_message_id 3
+#define Agent_control_state_message_size 2*sizeof(uint8_t)+2*sizeof(uint16_t)+3*sizeof(uint32_t)
 
 int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
     Agent_control_state_message cs;
@@ -16,9 +17,8 @@ int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
 
 typedef int (*pt2handler)(unsigned char*, int);
 void Agent_control_state_message_register_message() {
-    int size = 2*sizeof(uint8_t)+2*sizeof(uint16_t)+3*sizeof(uint32_t);
-    register_message_handler(Agent_control_state_message_id, size, (pt2handler) &handle_agent_control_state_message);
-    printf("Registering handler for agent control state input: message_id %i \n", Agent_control_state_message_id);
+    register_message_handler(Agent_control_state_message_id, Agent_control_state_message_size, (pt2handler) &handle_agent_control_state_message);
+    printf("Registering handler for agent control state input: message_id= %i, message_size= %i\n", Agent_control_state_message_id, Agent_control_state_message_size);
 }
 
 typedef uint8_t uint8;
@@ -66,18 +66,3 @@ int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
 
     return buff_n - _buff_n;
 }
-
-
-/*
-class CRectangle {
-    int x, y;
-  public:
-    void set_values (int,int);
-    int area () {return (x*y);}
-};
-
-void CRectangle::set_values (int a, int b) {
-  x = a;
-  y = b;
-}
-*/
