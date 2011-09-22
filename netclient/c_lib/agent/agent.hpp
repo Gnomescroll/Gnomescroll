@@ -22,13 +22,13 @@ class Agent_state {
 
         int cs_seq;
         struct Agent_control_state cs[128];
-        unsigned int tick;
-        unsigned int ctick; //not used
+        int tick;
+        int ctick; //not used
         float theta;
         float phi;
 
         Agent_state(int _id); //default constructor
-        void tick();
-        void draw();
+        void _tick();
+        //void _draw();
         //set_control_state(int[8] _cs, float theta, float phi);
 };

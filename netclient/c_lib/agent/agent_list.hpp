@@ -11,7 +11,7 @@ class Agent_list {
 	private:
                 int id_c;
         public:
-                int num
+                int num;
                 Agent_state* a[1024];
 
                 Agent_list(); //default constructor

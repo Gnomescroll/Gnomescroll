@@ -13,7 +13,7 @@ pt2handler handler_array[256] = {NULL};
 void default_handler_function(unsigned char* buff, int n, int* read_bytes) {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
-    return -1;
+    *read_bytes = -1;
 }
 
 void init_message_handler() {

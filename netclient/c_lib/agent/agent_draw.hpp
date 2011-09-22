@@ -12,7 +12,7 @@
 
 #ifdef DC_CLIENT
 
-namespace Agent_draw {
+namespace AgentDraw {
 
 void draw_agents(Agent_list* agent_list); 
 void draw_agent(Agent_state* g); 

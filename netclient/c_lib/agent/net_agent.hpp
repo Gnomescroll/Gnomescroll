@@ -20,7 +20,7 @@ class Agent_control_state_message {
         Agent_control_state_message(); //default constructor
         void register_message();
         void send_message();
-        int deserialize(unsigned char* buff, int buff_n, int* read_bytes);
+        void deserialize(unsigned char* buff, int buff_n, int* read_bytes);
 
 };
 

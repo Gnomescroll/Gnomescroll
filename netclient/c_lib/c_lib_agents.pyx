@@ -1,29 +1,29 @@
 
 '''
-cdef extern from "./agent/agent_physics.h":
-    void agent_tick()
-'''
-
 cdef extern from "./agent/agent_draw.h":
     void agent_draw() #draw all agents
+'''
 
-cdef extern from "./agent/agent_draw.h":
+cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
     void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
     void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
     void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b)
 
+'''
 cdef extern from "./agent/agent_state.cpp":
     void send_control_state()
 
 def _send_control_state():
     send_control_state()
+'''
 
 '''
 cdef extern from "./agent/control_state.h":
     void set_agent_control_state(int* cs, float xangle, float yangle)
 '''
 
+'''
 cdef extern from "./agent/agent_client.h":
     void set_agent_control_state(int x[32], float theta, float phi)
 
@@ -35,6 +35,8 @@ def _set_agent_control_state(int f, int b, int l, int r, int jump, float theta, 
     x[3] = r
     x[4] = jump
     set_agent_control_state(x, theta, phi)
+'''
+
 
 '''
 cdef extern from "./agent/agent.h":

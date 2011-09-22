@@ -244,7 +244,7 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
 
     //if(from->sin_addr.s_addr != NPserver.address.sin_addr.s_addr) {
     if(from->sin_port != NPserver.address.sin_port) {
-        unsigned int from_address = ntohl( from->sin_addr.s_addr );
+        //unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
         //printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(NPserver.address.sin_addr.s_addr), ntohs(NPserver.address.sin_port));
         printf("rogue %i byte packet from IP= %s:%i, expected Server IP = %s:%i\n", n, inet_ntoa(from->sin_addr),from_port, inet_ntoa(NPserver.address.sin_addr), ntohs(NPserver.address.sin_port));

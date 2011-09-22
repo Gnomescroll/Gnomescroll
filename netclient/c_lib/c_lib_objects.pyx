@@ -40,8 +40,8 @@ cdef extern from "./agent/agent_physics.h":
     void agent_tick()
 '''
 
-cdef extern from "./agent/agent_draw.h":
-    void agent_draw() #draw all agents
+cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
+    #void agent_draw() #draw all agents
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
     void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
     void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
@@ -90,7 +90,7 @@ def draw():
     neutron_draw()
     blood_draw()
     shrapnel_draw()
-    agent_draw()
+    #agent_draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)

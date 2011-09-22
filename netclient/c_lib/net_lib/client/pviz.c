@@ -14,7 +14,7 @@ struct pviz_frame frame_array[128];
 int frame_n = 0;
 
 void pviz_start_frame() {
-    int time = get_current_netpeer_time();
+    //int time = get_current_netpeer_time();
     frame_array[frame_n%128].end_time = get_current_netpeer_time();
     frame_n = frame_n +1;
     frame_array[frame_n%128].start_time = get_current_netpeer_time();
@@ -76,9 +76,9 @@ void pviz_draw(float x, float y, float z) {
         return;
     }
 
-    int ac = 0;
-    int i=1;
-    int index,len;
+    //int ac = 0;
+    //int i=1;
+    //int index,len;
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
     glBegin(GL_POINTS);
 

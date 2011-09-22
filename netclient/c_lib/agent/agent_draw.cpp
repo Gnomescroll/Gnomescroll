@@ -1,4 +1,4 @@
-#include "agent_draw.h"
+#include "agent_draw.hpp"
 
 
 /*
@@ -6,7 +6,7 @@
  */
 #ifdef DC_CLIENT
 
-namespace Agent_draw {
+namespace AgentDraw {
 
 void draw_agents(Agent_list* agent_list) {
     

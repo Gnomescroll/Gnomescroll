@@ -57,7 +57,7 @@ void Agent_control_state_message::send_message() {
     //printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
 }
 
-int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, int* read_bytes) {
+void Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, int* read_bytes) {
     //PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     int _buff_n = buff_n;
     int msg_id = UPACK_uint8_t(buff, &buff_n); //msg id, not used
@@ -108,7 +108,7 @@ typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
 
-Agent_state_message::Agent_control_state_message() {
+Agent_state_message::Agent_state_message() {
     id = 0;
     seq = 0;
     tick = 0;
