@@ -5,14 +5,13 @@
  *  Client only
  */
 #ifdef DC_CLIENT
-void agent_Draw(struct Agent_state* g) {
-    //printf("agent draw \n");
 
-    draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
+namespace Agent_draw {
 
-}
+void draw_agents(Agent_list* agent_list) {
+    
+    printf("Drawing agents\n");
 
-void agent_draw() {
     struct Agent_state* g = NULL;
     int i;
     glDisable(GL_TEXTURE_2D);
@@ -20,16 +19,22 @@ void agent_draw() {
     glEnable(GL_CULL_FACE);
 
     for(i=0; i<1024; i++) {
-        if(Agent_list[i] != NULL) {
-            g = Agent_list[i];
-            agent_Draw(g);
+        if(agent_list[i] != NULL) {
+            g = agent_list[i];
+            draw_agent(g);
         }
     }
     glDisable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
+
 }
 
+
+void draw_agent(Agent_state* g);  {
+    //printf("agent draw \n");
+    draw_agent_bounding_box(g.x,g.y, g.z, 0.4, 1.8, 2.5);
+}
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
     float distance = 15;
@@ -209,55 +214,8 @@ void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
             glVertex3f(_x,_y,_z);
     }
     glEnd();
-
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
-    /*
-    int side;
-    float _cx,_cy,_cz;
-    if(cx != 0) side = cx<0 ? 4 : 5;
-    if(cy != 0) side = cy<0 ? 2 : 3;
-    if(cz != 0) side = cz<0 ? 0 : 1;
-
-    glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
-    int i,j,k;
-    int index;
-    float _x,_y,_z;
-
-    const float f1 = 1.10;
-    const float f2 = 0.90;
-    float xm,ym,zm;
-    if(cx != 0) {
-        xm = f1;
-        ym = f2;
-        zm = f2;
-    }
-    if(cy != 0) {
-        xm = f2;
-        ym = f1;
-        zm = f2;
-    }
-    if(cz != 0){
-        xm = f1;
-        ym = f1;
-        zm = f2;
-        }
-
-    glBegin(GL_LINES);
-    for(i=0; i<4;i++) {
-        index = side_v2[4*side+i];
-        _x = x+v_set3[3*index+0]*xm;
-        _y = y+v_set3[3*index+1]*ym;
-        _z = z+v_set3[3*index+2]*zm;
-        glVertex3f(_x,_y,_z);
-        index = side_v2[4*side+((i+1)%4)];
-        _x = x+v_set3[3*index+0]*xm;
-        _y = y+v_set3[3*index+1]*ym;
-        _z = z+v_set3[3*index+2]*zm;
-        glVertex3f(_x,_y,_z);
-    }
-    glEnd();
-    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
-    */
 }
 
+}
 #endif
