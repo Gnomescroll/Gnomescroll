@@ -10,10 +10,11 @@
 
 #ifdef DC_CLIENT
 
-namespace AgentDraw {
-
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/agent/agent.hpp>
+
+namespace AgentDraw {
+
 
 void draw_agents(Agent_list* agent_list); 
 void draw_agent(Agent_state* g); 

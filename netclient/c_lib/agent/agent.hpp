@@ -28,7 +28,7 @@ class Agent_state {
         float phi;
 
         Agent_state(int _id); //default constructor
-        void _tick();
+        void Tick();
         //void _draw();
         //set_control_state(int[8] _cs, float theta, float phi);
 };

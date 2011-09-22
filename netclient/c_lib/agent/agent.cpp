@@ -28,7 +28,7 @@ Agent_state::draw() {
 }
 */
 
-Agent_state::_tick() {
+void Agent_state::Tick() {
 	printf("tick not implemented\n");
 	return;
 }

@@ -1,5 +1,9 @@
 #include "agent_list.hpp"
 
+#ifdef DC_CLIENT
+        #include <c_lib/agent/agent_draw.hpp>
+#endif
+
 Agent_list::Agent_list(){
 	num = 0;
 	id_c = 0;
@@ -8,6 +12,7 @@ Agent_list::Agent_list(){
 }
 
 Agent_state* Agent_list::get(int id) {
+	int i;
 	if((i < 0) || (i >= 1024)) {
 		printf("Agent id error: id=%i\n",id);
 		return NULL;
