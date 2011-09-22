@@ -35,8 +35,9 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
-    #,'-D DC_ADMIN_CLIENT'
+    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
+    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_ADMIN_CLIENT'])
+    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_ADMIN_CLIENT'])
 
     OS = platform.system()
     conf.env.os = OS
@@ -57,7 +58,7 @@ def build(bld):
     common_libraries = []
 
     ##attemping C++ build
-    bld(features='cxx cxxshlib',
+    bld(features='c cshlib',
         source=[
             'time_lib/physics_timer.c',
             ],
@@ -65,7 +66,7 @@ def build(bld):
         lib=time_lib,
         target='c_lib')
 
-    bld(features='cxx cshlib pyext',
+    bld(features='c cshlib pyext',
         source=['timer.pyx'],
         use=common_libraries + ['c_lib'],
         target='timer')
