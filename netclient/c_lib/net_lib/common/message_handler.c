@@ -47,12 +47,12 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
     }
     int bytes, size;
     uint8_t message_id;
-    printf("Reading message id from byte %i\n", *n);
+    ///printf("Reading message id from byte %i\n", *n);
     int _n = *n;
     UNPACK_uint8_t(&message_id, buff, &_n);
     size  = h_packet_size[message_id];
 
-    printf("processing: msg= %i len=%i byte %i of %i\n", message_id,size, *n, max_n);
+    ///printf("processing: msg= %i len=%i byte %i of %i\n", message_id,size, *n, max_n);
 
     if(*n-1+size > max_n) { // > or >= ?
         printf("ERROR! message processor would read past end of packet!\n");
