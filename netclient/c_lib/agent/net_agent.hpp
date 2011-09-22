@@ -1,8 +1,6 @@
 #pragma once
 
 #include <net_lib/client/client.hpp>
-#include <net_lib/common/message_handler.h>
-
 
 class Agent_control_state_message {
 
@@ -23,3 +21,4 @@ class Agent_control_state_message {
 };
 
 int handle_agent_control_state_message(unsigned char* buff, int buff_n);
+void Agent_control_state_message_register_message();

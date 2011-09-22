@@ -67,8 +67,8 @@ def configure(conf):
                #mandatory=True)
     ##END TEST
 
-    conf.env.INCLUDES = ['c_lib',]
-    #conf.env.INCLUDES = ['c_lib', 'cube_lib']
+    conf.env.INCLUDES = ['.', 'c_lib',]
+    #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 
     if OS == 'Darwin':

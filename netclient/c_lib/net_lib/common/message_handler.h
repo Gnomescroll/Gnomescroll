@@ -1,5 +1,4 @@
-#ifndef net_lib_type_pack_h
-#define net_lib_type_pack_h
+#pragma once
 
 #include "type_pack.h"
 
@@ -12,6 +11,3 @@ void init_message_handler();
 void register_message_handler(int message_id, int size, pt2handler fptr);
 void process_packet_messages(unsigned char* buff, int *n, int max_n);
 int pop_message(unsigned char* buff, int *n, int max_n);
-
-
-#endif
