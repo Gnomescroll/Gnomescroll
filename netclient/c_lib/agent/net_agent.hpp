@@ -20,11 +20,11 @@ class Agent_control_state_message {
         Agent_control_state_message(); //default constructor
         void register_message();
         void send_message();
-        int deserialize(unsigned char* buff, int buff_n);
+        int deserialize(unsigned char* buff, int buff_n, int* read_bytes);
 
 };
 
-int handle_agent_control_state_message(unsigned char* buff, int buff_n);
+void handle_agent_control_state_message(unsigned char* buff, int buff_n, int* read_bytes);
 void Agent_control_state_message_register_message();
 
 /*
@@ -46,9 +46,9 @@ class Agent_state_message {
         Agent_state_message(); //default constructor
         void register_message();
         void send_message();
-        int deserialize(unsigned char* buff, int buff_n);
+        void deserialize(unsigned char* buff, int buff_n, int read_bytes*);
 
 };
 
-int handle_agent_state_message(unsigned char* buff, int buff_n);
+void handle_agent_state_message(unsigned char* buff, int buff_n, int* read_bytes);
 void Agent_state_message_register_message();

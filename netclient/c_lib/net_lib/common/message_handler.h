@@ -3,7 +3,7 @@
 #include "type_pack.h"
 
 //typedef int (*pt2handler)(int, unsigned char*);
-typedef int (*pt2handler)(unsigned char*, int);
+typedef void (*pt2handler)(unsigned char*, int, int*);
 
 //void default_handler_function(int message_id, unsigned char* buff);
 

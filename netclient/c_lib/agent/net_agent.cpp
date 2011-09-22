@@ -12,15 +12,14 @@
 #define Agent_control_state_message_id 3
 #define Agent_control_state_message_size 2*sizeof(uint8_t)+2*sizeof(uint16_t)+3*sizeof(uint32_t)
 
-int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
+void handle_agent_control_state_message(unsigned char* buff, int buff_n, int* read_bytes) {
     Agent_control_state_message cs;
-    int r = cs.deserialize(buff, buff_n); //should pass in pointer for number of ints read
+    cs.deserialize(buff, buff_n, read_bytes); //should pass in pointer for number of ints read
 
-    //printf("control state received: id=%i, seq=%i \n", cs.id, cs.seq);
-    return r;
+    //printf("Agent control state received: id=%i, seq=%i \n", cs.id, cs.seq);
 }
 
-typedef int (*pt2handler)(unsigned char*, int);
+typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 void Agent_control_state_message_register_message() {
     register_message_handler(Agent_control_state_message_id, Agent_control_state_message_size, (pt2handler) &handle_agent_control_state_message);
     printf("Registering handler for agent control state input: message_id= %i, message_size= %i\n", Agent_control_state_message_id, Agent_control_state_message_size);
@@ -58,7 +57,7 @@ void Agent_control_state_message::send_message() {
     //printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
 }
 
-int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
+int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, int* read_bytes) {
     //PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     int _buff_n = buff_n;
     int msg_id = UPACK_uint8_t(buff, &buff_n); //msg id, not used
@@ -69,27 +68,39 @@ int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
     theta = UPACK_float(buff, &buff_n);
     phi = UPACK_float(buff, &buff_n);
 
-    return buff_n - _buff_n;
+    *read_bytes = buff_n - _buff_n;
 }
 
 /*
     agent state message
 */
 
+/*
+    public:
+        int id;
+        int seq;
+
+        unsigned int tick;
+        float x,y,x;
+        float vx,vy,vz;
+*/
+
 #define Agent_state_message_id 4
-#define Agent_state_message_size 2*sizeof(uint8_t)+2*sizeof(uint16_t)+3*sizeof(uint32_t)
+#define Agent_state_message_size 2*sizeof(uint8_t)+1*sizeof(uint16_t)+6*sizeof(uint32_t)
 
 int handle_agent_state_message(unsigned char* buff, int buff_n) {
-    Agent_control_state_message cs;
+    Agent_state_message cs;
     int r = cs.deserialize(buff, buff_n); //should pass in pointer for number of ints read
 
-    //printf("control state received: id=%i, seq=%i \n", cs.id, cs.seq);
+    printf("Agent state received: id=%i, seq=%i \n", cs.id, cs.seq);
+
+    //check id, if id does not exist, then create agent on receipt
     return r;
 }
 
-typedef int (*pt2handler)(unsigned char*, int);
+typedef void (*pt2handler)(unsigned char*, int, int*);
 void Agent_state_message_register_message() {
-    register_message_handler(Agent_control_state_message_id, Agent_control_state_message_size, (pt2handler) &handle_agent_control_state_message);
+    register_message_handler(Agent_state_message_id, Agent_state_message_size, (pt2handler) &handle_agent_control_state_message);
     printf("Registering handler for agent control state input: message_id= %i, message_size= %i\n", Agent_control_state_message_id, Agent_control_state_message_size);
 }
 
@@ -112,9 +123,8 @@ void Agent_state_message::send_message() {
         return;
     }
 
-    PACK_uint8_t(Agent_control_state_message_id, buff, buff_n);  //push message id on stack
+    PACK_uint8_t(Agent_state_message_id, buff, buff_n);  //push message id on stack
     PACK_uint16_t(id, buff, buff_n); //agent id
-    ///assume agent id is part of state?
     PACK_uint8_t(seq, buff, buff_n);
     PACK_uint16_t(tick%65536, buff, buff_n);
     PACK_uint32_t(cs, buff, buff_n);
@@ -125,7 +135,7 @@ void Agent_state_message::send_message() {
     //printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
 }
 
-int Agent_state_message::deserialize(unsigned char* buff, int buff_n) {
+void Agent_state_message::deserialize(unsigned char* buff, int buff_n, int* read_bytes) {
     //PACK_uint8_t(3, buff, buff_n);  //push message id on stack
     int _buff_n = buff_n;
     int msg_id = UPACK_uint8_t(buff, &buff_n); //msg id, not used
@@ -136,5 +146,5 @@ int Agent_state_message::deserialize(unsigned char* buff, int buff_n) {
     theta = UPACK_float(buff, &buff_n);
     phi = UPACK_float(buff, &buff_n);
 
-    return buff_n - _buff_n;
+    *read_bytes = buff_n - _buff_n;
 }

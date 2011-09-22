@@ -3,14 +3,14 @@
 
 int h_packet_size[256];
 
-typedef int (*pt2handler)(unsigned char*, int);
+typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 //pt2handler* handler_array[256];
 
 pt2handler handler_array[256] = {NULL};
 
 //int (*handler_array[256])(unsigned char*, int) = {NULL};
 
-int default_handler_function(unsigned char* buff, int n) {
+void default_handler_function(unsigned char* buff, int n, int* read_bytes) {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
     return -1;
@@ -62,12 +62,13 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
         printf("message_handler error: no handler for message_id=%i\n", message_id);
         return -4;
     }
-    bytes = handler_array[message_id](buff, *n);
+    int read_bytes = -1;
+    handler_array[message_id](buff, *n, &read_bytes);
 
-    if(bytes == -1) {
+    if(read_bytes == -1) {
         return -1;
     }
-    if(bytes != size) {
+    if(read_bytes != size) {
         printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, bytes);
         return 0;
     }
