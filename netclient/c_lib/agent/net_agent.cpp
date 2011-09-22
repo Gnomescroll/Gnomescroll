@@ -79,14 +79,14 @@ int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, in
     public:
         int id;
         int seq;
-
-        unsigned int tick;
+        int tick;
+        
         float x,y,x;
         float vx,vy,vz;
 */
 
 #define Agent_state_message_id 4
-#define Agent_state_message_size 2*sizeof(uint8_t)+1*sizeof(uint16_t)+6*sizeof(uint32_t)
+#define Agent_state_message_size 2*sizeof(uint8_t)+2*sizeof(uint16_t)+6*sizeof(uint32_t)
 
 int handle_agent_state_message(unsigned char* buff, int buff_n) {
     Agent_state_message cs;
@@ -109,8 +109,12 @@ typedef uint16_t uint16;
 typedef uint32_t uint32;
 
 Agent_state_message::Agent_control_state_message() {
-    id = 3;
+    id = 0;
     seq = 0;
+    tick = 0;
+
+    x=0;y=0;z=0;
+    vx=0;vy=0;vz=0;
 }
 
 void Agent_state_message::send_message() {
@@ -127,9 +131,13 @@ void Agent_state_message::send_message() {
     PACK_uint16_t(id, buff, buff_n); //agent id
     PACK_uint8_t(seq, buff, buff_n);
     PACK_uint16_t(tick%65536, buff, buff_n);
-    PACK_uint32_t(cs, buff, buff_n);
-    PACK_float(theta, buff, buff_n);
-    PACK_float(phi, buff, buff_n);
+
+    PACK_float(x, buff, buff_n);
+    PACK_float(y, buff, buff_n);
+    PACK_float(z, buff, buff_n);
+    PACK_float(vx, buff, buff_n);
+    PACK_float(vy, buff, buff_n);
+    PACK_float(vz, buff, buff_n);
 
     seq++;
     //printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
@@ -141,10 +149,14 @@ void Agent_state_message::deserialize(unsigned char* buff, int buff_n, int* read
     int msg_id = UPACK_uint8_t(buff, &buff_n); //msg id, not used
     id = UPACK_uint16_t(buff, &buff_n); //agent id
     seq = UPACK_uint8_t(buff, &buff_n);
-    tick =UPACK_uint16_t(buff, &buff_n);
-    cs = UPACK_uint32_t(buff, &buff_n);
-    theta = UPACK_float(buff, &buff_n);
-    phi = UPACK_float(buff, &buff_n);
+    tick =UPACK_uint16_t(buff, &buff_n)
+
+    x = UPACK_float(buff, &buff_n);
+    y = UPACK_float(buff, &buff_n);
+    z = UPACK_float(buff, &buff_n);
+    vx = UPACK_float(buff, &buff_n);
+    vy = UPACK_float(buff, &buff_n);
+    vz = UPACK_float(buff, &buff_n);
 
     *read_bytes = buff_n - _buff_n;
 }

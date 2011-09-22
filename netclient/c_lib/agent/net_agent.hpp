@@ -37,8 +37,8 @@ class Agent_state_message {
     public:
         int id;
         int seq;
+        int tick;
 
-        unsigned int tick;
         float x,y,x;
         float vx,vy,vz;
 
