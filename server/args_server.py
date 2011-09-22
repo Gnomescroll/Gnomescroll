@@ -78,6 +78,8 @@ def parse(cl_args=None):
 
     parser.add_argument('-m', '--map', default=DEFAULTS['map'])
 
+    parser.add_argument('--save-map', default='')
+
     parser.add_argument('--print-args', action='store_true')
 
     if cl_args is not None:
@@ -130,6 +132,7 @@ def print_args(args):
         'team_kills',
         'victory_points',
         'map',
+        'save_map',
     ]
     print 'Options:'
     for key in keys:

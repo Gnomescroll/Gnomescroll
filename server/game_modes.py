@@ -153,7 +153,7 @@ class TeamGame(Game):
         if player.team.is_viewers():
             player.agent.dump_inventory()
         NetOut.event.player_team(player)
-        player.agent.die(no_score=True, custom_msg='You joined team %d' % (team.id,))
+        player.agent.die(no_score=True, custom_msg='You joined team %d' % (team.id,), respawn_ticks=0)
 
     def remove_player(self, player):
         for team in self.teams.values():

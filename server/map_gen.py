@@ -239,8 +239,8 @@ def load_map2(terrain_map):
     max_height = 127
     g = Gen(salt=random.random())
     h=0
-    for i in range(512):
-        for j in range(512):
+    for i in range(128):
+        for j in range(128):
             h = g.getHeight(i,j)
             h = abs(h)
             h *= 100
