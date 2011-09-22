@@ -60,14 +60,14 @@ def build(bld):
     ##attemping C++ build
     bld(features='c cshlib',
         source=[
-            'time_lib/physics_timer.c',
+            'timer/time/physics_timer.c',
             ],
         use=common_libraries+time_lib,
         lib=time_lib,
         target='c_lib')
 
     bld(features='c cshlib pyext',
-        source=['timer.pyx'],
+        source=['timer/timer.pyx'],
         use=common_libraries + ['c_lib'],
         target='timer')
 
@@ -92,7 +92,7 @@ def install_in_ext(ctx):
         pass
 
     try:
-        c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
+        c_lib_target = ctx.env.cshlib_PATTERN % 'timer'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
         print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
