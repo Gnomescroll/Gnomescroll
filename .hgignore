@@ -71,6 +71,8 @@ netclient/ext
 server/build
 server/ext
 
+server/content/maps/*
+
 .lock-wafbuild
 
 mapsave*
