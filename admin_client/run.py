@@ -4,6 +4,10 @@
 Admin client
 '''
 
+import sys
+import os
+sys.path.insert(0, './ext/')
+
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
@@ -116,7 +120,7 @@ def perlin_map(block_val):
             time.sleep(0.03)
             return True
         return False
-    
+
     map = []
     setct = 0
     print 'start map gen'
@@ -149,7 +153,7 @@ def perlin_map(block_val):
 
     NetOut.adminMessage.set_map_bulk(map)
     print 'done map gen'
-    
+
 if __name__ == '__main__':
     client = Client()
     client.run()

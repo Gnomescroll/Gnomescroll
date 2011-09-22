@@ -63,11 +63,11 @@ def build(bld):
             ],
         use=common_libraries+time_lib,
         lib=time_lib,
-        target='time_lib')
+        target='c_lib')
 
     bld(features='cxx cshlib pyext',
         source=['timer.pyx'],
-        use=common_libraries + ['time_lib'],
+        use=common_libraries + ['c_lib'],
         target='timer')
 
     # final
