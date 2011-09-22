@@ -73,7 +73,7 @@ class InputEventGlobal:
             #key = Keystring.get(keycode, None)
         key = key_string
         #uncomment to see key inputs
-        #print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
+        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
         if state == 0:
             self.keyboard.on_key_press(key)
         else:
@@ -242,6 +242,9 @@ class Keyboard(object):
         #print 'ON_KEY_PRESS :: ', symbol
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
+        #elif symbol == 'f1':
+            #terrain_map.save_to_disk()
+            
         if InputGlobal.input == 'chat':
             #if symbol in special_keys:
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)

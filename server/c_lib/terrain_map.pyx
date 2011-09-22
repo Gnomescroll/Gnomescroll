@@ -292,18 +292,26 @@ def get_lowest_open_block(int x, int y, int n=1):
     return _get_lowest_open_block(x,y,n)
 
 
-import os, os.path
+import os, os.path, time
+map_file_location = './content/maps/%s'
+
 def save_to_disk(fn=''):
+
     if not fn:
-        fn = 'mapsave1'
-    fn = './content/maps/%s' % (fn,)
+        fn = 'map_%0.2f' % (time.time())
+        fn = fn.replace('.', '_')
+    fn = fn.replace('/', '_')
+    fn = map_file_location % (fn,)
+
     map_save_to_disk(fn);
 
 def load_from_disk(fn=''):
     if not fn:
         fn = 'mapsave1'
-    fn = './content/maps/%s' % (fn,)
+        
+    fn = map_file_location % (fn,)
     if not os.path.exists(fn):
         print "Map %s does not exist. Abort map load." % (fn,)
         return 1
+        
     map_load_from_disk(fn)

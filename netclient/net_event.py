@@ -202,6 +202,7 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _clear_map(self, **msg):
         terrainMap.clear()
+        
 
 class ClientMessageHandler(GenericMessageHandler):
 

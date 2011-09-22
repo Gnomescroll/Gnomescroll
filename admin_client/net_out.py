@@ -82,14 +82,12 @@ class AdminMessage:
 
     @sendJSON('set_map')
     def set_map(self,x,y,z,value):
-        print "set map"
         return {
             'list' : [(x,y,z,value)],
         }
 
     @sendJSON('set_map')
     def set_map_bulk(self, l): #takes a list of 4 tuples of (x,y,z,value)
-        print str(l)
         return {
             'list' : l,
         }
@@ -97,3 +95,9 @@ class AdminMessage:
     @sendJSON('clear_map')
     def clear_map(self):
         return True
+
+    @sendJSON('save_map')
+    def save_map(self, name):
+        return {
+            'name'  :   name,
+        }

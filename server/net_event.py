@@ -376,6 +376,7 @@ class AdminMessageHandler(GenericMessageHandler):
             'admin'     : self.is_admin,
             'set_map' : self._set_map,
             'clear_map': self._clear_map,
+            'save_map': self._save_map,
         }
 
     def is_admin(self, msg, conn):
@@ -392,6 +393,9 @@ class AdminMessageHandler(GenericMessageHandler):
         GameStateGlobal.terrainMap.clear()
         NetOut.event.clear_map()
 
+    @requireKey('name')
+    def _save_map(self, msg, conn, name):
+        GameStateGlobal.terrainMap.save_to_disk(name)
 
 class AgentMessageHandler(GenericMessageHandler):
 

@@ -10,6 +10,8 @@ from net_event import NetEventGlobal
 
 import commands
 
+import time
+
 class Client:
 
     _exit = False
@@ -62,6 +64,7 @@ class Commands(object):
             'clear' :   cls.clear_map,
             'set'   :   cls.set_map,
             'perlin':   cls.perlin,
+            'save'  :   cls.save_map,
         }
         return cls
 
@@ -92,6 +95,14 @@ class Commands(object):
         block_val = int(block_val)
         #NetOut.adminMessage.set_map_bulk(perlin_map())
         perlin_map(block_val)
+
+    @classmethod
+    def save_map(cls, name=''):
+        if not name:
+            name = 'map_%0.2f' % (time.time())
+            name = name.replace('.', '_')
+        name = name.replace('/', '_')
+        NetOut.adminMessage.save_map(name)
 
 def perlin_map(block_val):
 
