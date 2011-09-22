@@ -29,7 +29,7 @@ Agent_state* Agent_list::new_agent() {
 	int id = id_c;
 	id_c++;
 	for(i=0; i<1024;i++) {
-		id = (i+id)%1024
+		id = (i+id)%1024;
 		if(a[id] == NULL) break;
 	}
 	if(i==1024) {
