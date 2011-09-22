@@ -4,7 +4,8 @@
 Client network outgoing
 '''
 
-import SDL.gl
+#import SDL.gl
+from timer import GET_MS_TIME
 
 class NetOut:
     sendPacket = None
@@ -75,7 +76,8 @@ class SendMessage(GenericMessage):
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):
-        return { 'timestamp' : SDL.gl.get_ticks() }
+        #return { 'timestamp' : SDL.gl.get_ticks() }
+        return { 'timestamp' : GET_MS_TIME() }
 
 
 class AdminMessage:

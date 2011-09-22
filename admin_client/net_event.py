@@ -5,7 +5,8 @@ Admin Client network incoming
 '''
 
 import json
-import SDL.gl
+#import SDL.gl
+from timer import GET_MS_TIME
 
 class NetEventGlobal:
     messageHandler = None
@@ -88,7 +89,8 @@ class MiscMessageHandler(GenericMessageHandler):
     }
 
     def _ping(self, **msg):
-        print '%d ms' % (SDL.gl.get_ticks() - msg['timestamp'],)
+        #print '%d ms' % (SDL.gl.get_ticks() - msg['timestamp'],)
+        print '%d ms' % (GET_MS_TIME() - msg['timestamp'],)
 
 class ClientMessageHandler(GenericMessageHandler):
 

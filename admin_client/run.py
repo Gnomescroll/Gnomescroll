@@ -12,6 +12,8 @@ import commands
 
 import time
 
+from timer import START_CLOCK
+
 class Client:
 
     _exit = False
@@ -40,6 +42,7 @@ class Client:
         NetClientGlobal.connect()
 
     def run(self):
+        START_CLOCK()
         self.connect()
         NetOut.sendMessage.is_admin()
 
