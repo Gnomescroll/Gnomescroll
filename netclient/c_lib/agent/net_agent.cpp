@@ -38,7 +38,7 @@ void Agent_control_state_message::send_message() {
     unsigned char* buff= NetClient::get_client_out_buffer();
     int* buff_n = NetClient::get_client_out_buffer_n();
 
-    int bcount = *buff_n;
+    //int bcount = *buff_n;
     if(*buff_n > 800) {
         printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n);
         return;
@@ -88,14 +88,13 @@ void Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, i
 #define Agent_state_message_id 4
 #define Agent_state_message_size 2*sizeof(uint8_t)+2*sizeof(uint16_t)+6*sizeof(uint32_t)
 
-int handle_agent_state_message(unsigned char* buff, int buff_n) {
+void handle_agent_state_message(unsigned char* buff, int buff_n, int* bytes_read) {
     Agent_state_message cs;
-    int r = cs.deserialize(buff, buff_n); //should pass in pointer for number of ints read
+    cs.deserialize(buff, buff_n, bytes_read); //should pass in pointer for number of ints read
 
     printf("Agent state received: id=%i, seq=%i \n", cs.id, cs.seq);
 
     //check id, if id does not exist, then create agent on receipt
-    return r;
 }
 
 typedef void (*pt2handler)(unsigned char*, int, int*);
@@ -149,7 +148,7 @@ void Agent_state_message::deserialize(unsigned char* buff, int buff_n, int* read
     int msg_id = UPACK_uint8_t(buff, &buff_n); //msg id, not used
     id = UPACK_uint16_t(buff, &buff_n); //agent id
     seq = UPACK_uint8_t(buff, &buff_n);
-    tick =UPACK_uint16_t(buff, &buff_n)
+    tick =UPACK_uint16_t(buff, &buff_n);
 
     x = UPACK_float(buff, &buff_n);
     y = UPACK_float(buff, &buff_n);

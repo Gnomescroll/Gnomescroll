@@ -19,8 +19,8 @@ void draw_agents(Agent_list* agent_list) {
     glEnable(GL_CULL_FACE);
 
     for(i=0; i<1024; i++) {
-        if(agent_list[i] != NULL) {
-            g = agent_list[i];
+        if(agent_list->a[i] != NULL) {
+            g = agent_list->a[i];
             draw_agent(g);
         }
     }
@@ -31,9 +31,9 @@ void draw_agents(Agent_list* agent_list) {
 }
 
 
-void draw_agent(Agent_state* g);  {
+void draw_agent(Agent_state* g) {
     //printf("agent draw \n");
-    draw_agent_bounding_box(g.x,g.y, g.z, 0.4, 1.8, 2.5);
+    draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {

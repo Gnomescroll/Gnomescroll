@@ -42,11 +42,13 @@ Agent_state* Agent_list::new_agent() {
 }
 
 void Agent_list::delete_agent(int id) {
+	int i;
 	if(a[i]==NULL) {
 		printf("Cannot delete agent: agent is null\n");
+		return;
 	}
 	delete a[i];
-	a[i] == NULL;
+	a[i] = NULL;
 	num--;
 	printf("Deleted agent %i\n", id);
 	//printf("Agent_list::delete_agent not implemented\n");
@@ -57,7 +59,7 @@ void Agent_list::draw() {
 	printf("Agent_list::draw, not implemented\n");
 
 	#ifdef DC_CLIENT
-	Agent_draw::draw_agents(&this);
+	AgentDraw::draw_agents(this);
 	#endif
 }
 

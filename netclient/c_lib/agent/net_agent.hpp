@@ -39,14 +39,16 @@ class Agent_state_message {
         int seq;
         int tick;
 
-        float x,y,x;
+        float x;
+        float y;
+        float z; //,y,x;
         float vx,vy,vz;
 
 
         Agent_state_message(); //default constructor
         void register_message();
         void send_message();
-        void deserialize(unsigned char* buff, int buff_n, int read_bytes*);
+        void deserialize(unsigned char* buff, int buff_n, int* read_bytes);
 
 };
 

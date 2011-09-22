@@ -16,7 +16,7 @@ class Agent_list {
                 Agent_list(); //default constructor
                 class Agent_state* get(int id);
                 class Agent_state* new_agent();
-                void delete_agent();
+                void delete_agent(int _id);
 
                 void draw();
                 void tick();
