@@ -17,10 +17,10 @@
 //#include <agent/control_state.c>
 
 void _NetServerRegisterMessages() {
-    Agent_control_state_message_register_message();
-
-
+    Agent_control_state_message_register_message(); //3
+    Agent_state_message_register_message();         //4
 }
+
 void _NetServerInit() {
     init_message_handler();
     update_current_netpeer_time();
