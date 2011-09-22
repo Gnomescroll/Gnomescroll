@@ -11,7 +11,7 @@ int handle_agent_control_state_message(unsigned char* buff, int buff_n) {
     Agent_control_state_message cs;
     int r = cs.deserialize(buff, buff_n); //should pass in pointer for number of ints read
 
-    printf("control state received: id=%i, seq=%i \n", cs.id, cs.seq);
+    //printf("control state received: id=%i, seq=%i \n", cs.id, cs.seq);
     return r;
 }
 
@@ -50,7 +50,7 @@ void Agent_control_state_message::send_message() {
     PACK_float(phi, buff, buff_n);
 
     seq++;
-    printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
+    //printf("Agent_control_state_message::send_message: message size= %i bytes\n", *buff_n - bcount);
 }
 
 int Agent_control_state_message::deserialize(unsigned char* buff, int buff_n) {
