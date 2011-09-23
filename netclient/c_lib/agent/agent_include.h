@@ -14,6 +14,8 @@
 //#include <c_lib/agent/agent.c>
 //#include <c_lib/agent/agent_list.c>
 
+#include <stdint.h>
+
 #include <c_lib/agent/agent.cpp>
 #include <c_lib/agent/agent_list.cpp>
 #include <c_lib/agent/net_agent.cpp>

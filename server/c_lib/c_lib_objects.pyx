@@ -18,15 +18,16 @@ cdef extern from "./objects/cspray.h":
     void cspray_tick()
     void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
 
+'''
 cdef extern from "./agent/agent.h":
     void agent_tick()
-
+'''
 
 def tick():
     grenade_tick()
     neutron_tick()
     cspray_tick()
-    agent_tick()
+    #agent_tick()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)

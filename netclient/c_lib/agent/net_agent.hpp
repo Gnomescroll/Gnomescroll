@@ -6,6 +6,7 @@
 Agent control state message
 */
 
+/*
 class Agent_control_state_message {
 
     public:
@@ -24,13 +25,18 @@ class Agent_control_state_message {
 
 };
 
+*/
+
+/*
 void handle_agent_control_state_message(unsigned char* buff, int buff_n, int* read_bytes);
 void Agent_control_state_message_register_message();
+*/
 
 /*
 Agent state message
 */
 
+/*
 
 class Agent_state_message {
 
@@ -54,3 +60,4 @@ class Agent_state_message {
 
 void handle_agent_state_message(unsigned char* buff, int buff_n, int* read_bytes);
 void Agent_state_message_register_message();
+*/

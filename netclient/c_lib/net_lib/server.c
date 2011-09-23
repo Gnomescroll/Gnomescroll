@@ -3,23 +3,23 @@
 #include "server.h"
 
 /*
-#include "common/type_pack.h"
-
-#include "common/net_time.c"
-#include "common/net_peer.c"
-#include "common/message_handler.c"
-#include "server/server.c"
-#include "common/sequencer.c"
-*/
-
-  //should be in header?
-
-//#include <agent/control_state.c>
-
 void _NetServerRegisterMessages() {
     Agent_control_state_message_register_message(); //3
-    Agent_state_message_register_message();         //4
+    //Agent_state_message_register_message();         //4
 }
+*/
+
+#include <c_lib/agent/agent_include.h>
+
+#include <c_lib/state/server_init.cpp>
+/*
+class AgentList agent_list;
+
+void _NetServerInitState() {
+    int id = agent_list.new_agent();
+    printf("new agent id= %i\n", id);
+}
+*/
 
 void _NetServerInit() {
     init_message_handler();
@@ -30,7 +30,11 @@ void _NetServerInit() {
     unsigned short port = 9999;
     init_server(port);
 
-    _NetServerRegisterMessages();
+    ServerInit::RegisterMessages();
+}
+
+void _NetServerStateTick() {
+
 }
 
 long t1 = 0;
@@ -46,6 +50,9 @@ void _NetServerTick() {
         //NP_print_delta();
 
         process_packets(); //should poll for packets very often; event triggered packet dump
+
+        _NetServerStateTick();
+
         broad_cast_packet2();
 
         check_pool_for_dropped_packets();

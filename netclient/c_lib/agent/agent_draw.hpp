@@ -2,13 +2,13 @@
 
 #include <math.h>
 
-#include <compat.h>
-#include "../compat_gl.h"
 
 //#include <physics/vector.h>
 
 
 #ifdef DC_CLIENT
+#include <c_lib/compat.h>
+#include <c_lib/compat_gl.h>
 
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/agent/agent.hpp>
