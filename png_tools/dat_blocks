@@ -43,10 +43,10 @@ west    grass-side.png
 east    grass-side.png
 ===
 id      5
-name    grass
-top     grass-top.png
+name    dirt.png
+top     dirt.png
 bottom  dirt.png
-north   grass-side.png
-south   grass-side.png
-west    grass-side.png
-east    grass-side.png
+north   dirt.png
+south   dirt.png
+west    dirt.png
+east    dirt.png
