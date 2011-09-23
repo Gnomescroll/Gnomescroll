@@ -45,6 +45,11 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
 
 int _N =0;
 void _NetClientTick() {
+
+
+    Agent_control_state_message acs;
+    acs.send();
+
     //printf("net client tick\n");
     update_current_netpeer_time();
     pviz_start_frame();

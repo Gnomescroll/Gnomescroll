@@ -33,6 +33,9 @@ struct NetPeer {
     uint16_t port;
     struct sockaddr_in address;
 
+    //buffer
+    int buff_n;
+    unsigned char buff[1500]; //out buffer
     //ttl
     unsigned int ttl;
     unsigned int ttl_max;
@@ -52,6 +55,8 @@ struct NetPeer {
 
 //struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
 //struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
+
+void reset_NetPeer_buffer(struct NetPeer* s);
 
 struct Socket* create_socket(uint16_t port);
 

@@ -11,28 +11,30 @@
 class ClientToServer {
     public:
         void send();
-        void serialize(unsigned char* buff, int* buff_n, int* size);
+        //virtual void serialize(unsigned char* buff, int* buff_n, int* size){};
+        virtual void serialize(unsigned char* buff, int* buff_n, int* size) = 0;
 };
 
+/*
 void ClientToServer::serialize(unsigned char* buff, int* buff_n, int* size) {
     printf("ClientToServer: this should never happen\n");
     return;
 }
-
+*/
 void ClientToServer::send() {
     unsigned char* buff= NetClient::get_client_out_buffer();
     int* buff_n = NetClient::get_client_out_buffer_n();
     if(*buff_n > 800) { printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n); return; }
 
     int bytes_written;
-    this->serialize(buff, buff_n, &bytes_written);
+    serialize(buff, buff_n, &bytes_written);
 }
 
 class ServerToClient {
     public:
         void sendToClient(int client_id);  
         void broadcast();
-        void serialize(unsigned char* buff, int* buff_n, int* size);
+        virtual void serialize(unsigned char* buff, int* buff_n, int* size) =0;
 };
 
 void ServerToClient::sendToClient(int client_id) {
@@ -43,10 +45,12 @@ void ServerToClient::broadcast() {
     return;
 }
 
+/*
 void ServerToClient::serialize(unsigned char* buff, int* buff_n, int* size) {
     printf("ServerToClient: this should never happen\n");
     return;
 }
+*/
 
 /*
     agent control state message

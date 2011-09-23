@@ -43,6 +43,10 @@ struct ConnectionPool {
 
 void broad_cast_packet(); //every 30 ms
 void broad_cast_packet2();
+void flush_packets(); //all messages to all agents, out
+
+void push_message(int client_id);  //que a message for client
+void push_broadcast_message();  //que a message for broadcast to all clients
 
 void receive_packets(struct Socket* socket);
 
