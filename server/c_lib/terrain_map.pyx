@@ -292,6 +292,10 @@ def get_lowest_open_block(int x, int y, int n=1):
     return _get_lowest_open_block(x,y,n)
 
 
+'''
+Part 5: Serialization
+'''
+
 import os, os.path, time
 map_file_location = './content/maps/%s'
 
@@ -315,3 +319,7 @@ def load_from_disk(fn=''):
         return 1
         
     map_load_from_disk(fn)
+
+'''
+Part 6: Generation
+'''

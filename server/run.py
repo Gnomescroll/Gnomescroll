@@ -63,7 +63,10 @@ class Main:
         if opts.opts.map:
             terrain_map.load_from_disk(opts.opts.map)
         else:
-            map_gen.load_map2(terrain_map)
+            #map_gen.load_map2(terrain_map)
+            map_gen.load_map3(terrain_map)
+            map_gen.grass(terrain_map)
+            map_gen.cave1(terrain_map)
             if opts.opts.save_map:
                 print 'Saving map'
                 terrain_map.save_to_disk(opts.opts.save_map)
