@@ -456,8 +456,8 @@ def ore(terrain_map):
                     x = g.getDensity(i,j,(k%64)+64)
                     #print x
                     if x > 0.25:
-                        terrain_map.set(i,j,k, 3) # ore
-                        
+                        terrain_map.set(i,j,k, 6) # ore
+
     print 'ore done'
     print 'took %0.2f seconds' % (time.time() - _n)
 
@@ -486,11 +486,11 @@ def ore1(tm):
                 if s == 2:
                     n = ridge(i,j,k)
                     if n >= thresh:
-                        tm.set(i,j,k, 3)
-                                    
+                        tm.set(i,j,k, 6)
+
     print 'ore done'
     print 'took %0.2f seconds' % (time.time() - _n)
-    
+
 # doesnt work, levy flight has resolution issue
 #import levy_flight as lf
 #def ore2(terrain_map):
@@ -500,9 +500,9 @@ def ore1(tm):
     #L = lf.LevyFlight(iters=100000)
     #vox = L.generate()
     #print 'simulated levy flight, took %0.2f seconds' % (time.time() - _n)
-    
+
     #for x,y,z in vox:
         #terrain_map.set(x,y,z, 3)
-    
+
     #print 'ore done'
     #print 'took %0.2f seconds' % (time.time() - _n)

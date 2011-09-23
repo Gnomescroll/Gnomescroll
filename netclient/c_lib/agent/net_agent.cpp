@@ -7,10 +7,15 @@
 #include <net_lib/common/message_handler.h>
 #include <c_lib/agent/agent.hpp>
 
+#include <net_lib/server/server.h>
+
+typedef void (*pt2handler)(unsigned char*, int, int*);
+
 //helper class
 class ClientToServer {
     public:
         void send();
+        void register_handler(pt2handler* handler);
         //virtual void serialize(unsigned char* buff, int* buff_n, int* size){};
         virtual void serialize(unsigned char* buff, int* buff_n, int* size) = 0;
 };
@@ -30,19 +35,36 @@ void ClientToServer::send() {
     serialize(buff, buff_n, &bytes_written);
 }
 
+//void push_message(int client_id, unsigned char* buffer, int n_bytes); //que a message for client
+//void push_broadcast_message(unsigned char* buffer, int n_bytes);  //que a message for broadcast to all clients
+
+void ClientToServer::register_handler(pt2handler* handler) {
+    
+}
+
+
 class ServerToClient {
     public:
         void sendToClient(int client_id);  
         void broadcast();
+        void register_handler(pt2handler* handler);
         virtual void serialize(unsigned char* buff, int* buff_n, int* size) =0;
 };
 
 void ServerToClient::sendToClient(int client_id) {
-    return;
+    unsigned char buff[64]; //max message size
+    int buff_n = 0;
+    int size;
+    serialize(buff, &buff_n, &size);
+    push_message(client_id, buff, size);
 }
 
 void ServerToClient::broadcast() {
-    return;
+    unsigned char buff[64]; //max message size
+    int buff_n = 0;
+    int size;
+    serialize(buff, &buff_n, &size);
+    push_broadcast_message(buff, size);
 }
 
 /*

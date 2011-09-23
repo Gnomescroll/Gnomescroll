@@ -268,16 +268,30 @@ void flush_packets() {
     }
 }
 
-void push_message(int client_id) {
+//not used
+void push_message(int client_id, unsigned char* buffer, int n_bytes) {
     struct NetPeer* p;    
     p = pool.connection[client_id];
     if(p == NULL) { printf("server:push_message failed. Client is null\n"); return; }
-
+    if(p->buff_n > 800) {
+        printf("Cannot push message, client %i buffer is full\n", client_id);
+        return;
+    }
+    memcpy(p->buff, buffer, n_bytes );
+    //memcpy( void * destination, const void * source, size_t num );
+    p->buff_n += n_bytes;
 }
 
-void push_broadcast_message() {
-    
-    //implement
+//not used
+void push_broadcast_message(unsigned char* buffer, int n_bytes) {
+    int i;
+    struct NetPeer* p;
+    for(i=0; i<1024; i++) {
+        p = pool.connection[i];
+        if(p == NULL) continue;
+        memcpy(p->buff, buffer, n_bytes);
+        p->buff_n += n_bytes;
+    }
 }
 
 
