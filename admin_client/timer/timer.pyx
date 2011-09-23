@@ -1,6 +1,6 @@
 # TIMER
 
-cdef extern from "./time_lib/physics_timer.h":
+cdef extern from "./timer/time/physics_timer.h":
     int _start_physics_timer(int frequency)
     int _tick_check()
     long _get_time()
