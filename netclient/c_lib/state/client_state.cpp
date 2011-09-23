@@ -4,7 +4,7 @@
 
 namespace ClientState {
 	
-	class Agent_list agentList;
+	//class Agent_list agentList;
 
 
 

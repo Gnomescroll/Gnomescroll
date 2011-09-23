@@ -5,8 +5,10 @@
 
 
 void _NetClientRegisterMessages() {
+    //do something
+    
     //Agent_control_state_message_register_message(); //3
-    Agent_state_message_register_message();             //4
+    //Agent_state_message_register_message();             //4
 }
 
 struct NetPeer* np;
@@ -28,8 +30,7 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     np= NetClient::CLIENT_get_NP();
 
 
-    _NetClientRegisterMessages()
-    //init_agent_control_state();
+    _NetClientRegisterMessages();
 }
 
     /*

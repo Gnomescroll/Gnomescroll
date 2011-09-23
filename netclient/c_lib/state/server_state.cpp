@@ -4,7 +4,7 @@
 
 namespace ServerState {
 	
-	class Agent_list 
+	//class Agent_list 
 
 
 
