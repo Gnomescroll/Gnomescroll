@@ -6,6 +6,47 @@
 #include <net_lib/common/message_handler.h>
 #include <c_lib/agent/agent.hpp>
 
+//helper class
+class ClientToServer {
+    public:
+        void send();
+        void serialize(unsigned char* buff, int* buff_n, int* size);
+};
+
+void serialize(unsigned char* buff, int* buff_n, int* size) {
+    printf("ClientToServer: this should never happen\n");
+    return;
+}
+
+void send::ClientToServer() {
+    unsigned char* buff= NetClient::get_client_out_buffer();
+    int* buff_n = NetClient::get_client_out_buffer_n();
+    if(*buff_n > 800) { printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n); return; }
+
+    int bytes_written;
+    serialize(buff_n,  ,&bytes_written)
+}
+
+class ServerToClient {
+    public:
+        void sendToClient(int client_id);  
+        void broadcast();
+        void serialize(unsigned char* buff, int* buff_n, int* size);
+};
+
+void sendToClient(int client_id) {
+    return;
+}
+
+void broadcast() {
+    return;
+}
+
+void serialize(unsigned char* buff, int* buff_n, int* size) {
+    printf("ServerToClient: this should never happen\n");
+    return;
+}
+
 /*
     agent control state message
 */
@@ -15,7 +56,8 @@ void handle_agent_control_state_message(unsigned char* buff, int buff_n, int* re
     cs.deserialize(buff, buff_n, read_bytes);
 }
 
-class Agent_control_state_message {
+class Agent_control_state_message: public ClientToServer 
+{
     public:
         static int message_id = 3;
         static int size = 2*sizeof(uint8_t) + 2*sizeof(uint16_t) + 3*sizeof(uint32_t);
@@ -29,10 +71,10 @@ class Agent_control_state_message {
         float phi;
 
         void serialize(unsigned char* buff, int* buff_n);
-        void deserialize(unsigned char* buff, int buff_n, int* read_bytes);
+        void deserialize(unsigned char* buff, int buff_n, int* read_bytes, int* size);
 };
 
-void Agent_control_state_message::serialize(unsigned char* buff, int* buff_n) {
+void Agent_control_state_message::serialize(unsigned char* buff, int* buff_n, int* size) {
 /*
     unsigned char* buff= NetClient::get_client_out_buffer();
     int* buff_n = NetClient::get_client_out_buffer_n();
@@ -42,6 +84,7 @@ void Agent_control_state_message::serialize(unsigned char* buff, int* buff_n) {
         return;
     }
 */
+    int _buff_n = *buff_n;
     PACK_uint8_t(Agent_control_state_message_id, buff, buff_n);  //push message id on stack
     PACK_uint16_t(id, buff, buff_n); //agent id
     PACK_uint8_t(seq, buff, buff_n);
@@ -49,6 +92,7 @@ void Agent_control_state_message::serialize(unsigned char* buff, int* buff_n) {
     PACK_uint32_t(cs, buff, buff_n);
     PACK_float(theta, buff, buff_n);
     PACK_float(phi, buff, buff_n);
+    *size= buff_n-_buff_n;
 }
 
 void Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, int* read_bytes) {
@@ -67,7 +111,7 @@ void Agent_control_state_message::deserialize(unsigned char* buff, int buff_n, i
     agent state message
 */
 
-class Agent_state_message 
+class Agent_state_message: public ServerToClient
 {
     public:
         static int message_id = 4;
