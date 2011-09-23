@@ -277,6 +277,7 @@ def init_quad_cache():
 
 def get_cube_texture(tile_id, side, vert_num):
     global c_dat
+    margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
     texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
     x = texture_id % 16
@@ -284,17 +285,17 @@ def get_cube_texture(tile_id, side, vert_num):
     tx = float(x) * 1./16.
     ty = float(y) * 1./16.
     if vert_num == 0:
-        tx += 0
-        ty += 0
+        tx += 0 +margin
+        ty += 0 +margin
     elif vert_num == 1:
-        tx += 1./16.
-        ty += 0
+        tx += 1./16. -margin
+        ty += 0 + margin
     elif vert_num == 2:
-        tx += 1./16.
-        ty += 1./16.
+        tx += 1./16. -margin
+        ty += 1./16. -margin
     elif vert_num == 3:
-        tx += 0
-        ty += 1./16.
+        tx += 0 +margin
+        ty += 1./16. -margin
     else:
         print "Error!!!! set_tex invalid input"
         assert False
