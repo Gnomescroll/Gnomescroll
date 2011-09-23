@@ -37,10 +37,15 @@ import c_lib.c_lib_objects
 import map_gen
 import random
 
-def pallet_pillar():
+def pallet_pillar(x,y,z):
     for i in range(0,32):
         m = terrain_map
-        m.set(16,16,16+2*i, i)
+        m.set(x,y,z+2*i, i)
+
+def clear_pillar(x,y):
+     for i in range(0,128):
+        m = terrain_map
+        m.set(x,y,i, 0)
 
 
 def draw_sphere(block, radius, x,y,z):
@@ -72,7 +77,12 @@ class Main:
                 terrain_map.save_to_disk(opts.opts.save_map)
 
         draw_sphere(block=7, radius=30, x=40,y=40,z=90)
-        pallet_pillar()
+        pallet_pillar(16,16,16)
+        clear_pillar(x=0,y=0)
+        clear_pillar(x=1,y=0)
+        clear_pillar(x=0,y=1)
+        clear_pillar(x=1,y=1)
+        pallet_pillar(0,0,16)
 
         NetServer.init_0()
         NetOut.init_0()

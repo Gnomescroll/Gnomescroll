@@ -53,12 +53,12 @@ east    dirt.png
 ===
 id      6
 name    blue_ore
-top     ore.png
-bottom  ore.png
-north   ore.png
-south   ore.png
-west    ore.png
-east    ore.png
+top     blueore.png
+bottom  blueore.png
+north   blueore.png
+south   blueore.png
+west    blueore.png
+east    blueore.png
 ===
 id      7
 name    terminal
