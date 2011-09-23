@@ -1,6 +1,9 @@
 #include "./net_peer.h"
 
 
+void reset_NetPeer_buffer(struct NetPeer* s) {
+    s->buff_n = 11; //size of header
+}
 
 //struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
 struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port) {
@@ -22,6 +25,7 @@ struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigne
     s->ttl = TTL_MAX_DEFAULT;
     s->last_packet_time = get_current_netpeer_time();
 
+    reset_NetPeer_buffer(s);
     init_sequencer(s);
 ///    init_sequence_numbers_out(&s->sq2); //init
 ///    init_sequence_numbers(&sq);
@@ -48,6 +52,7 @@ struct NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
     s->ttl = TTL_MAX_DEFAULT;
     s->last_packet_time = get_current_netpeer_time();
     //init_sequence_numbers_out(s); //init
+    reset_NetPeer_buffer(s);
     init_sequencer(s);
     return s;
 }
