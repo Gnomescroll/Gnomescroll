@@ -278,7 +278,7 @@ def load_map3(terrain_map):
                     terrain_map.set(i,j, baseline, 3)
 
     print 'done map gen'
-    print 'took %d seconds' % (time.time() - _n)
+    print 'took %0.2f seconds' % (time.time() - _n)
 
 # cave cube (test)
 def load_map4(terrain_map):
@@ -324,7 +324,7 @@ def load_map4(terrain_map):
                     #terrain_map.set(i,j, baseline, 211)
 
     print 'done map gen'
-    print 'took %d seconds' % (time.time() - _n)
+    print 'took %0.2f seconds' % (time.time() - _n)
 
 
 # cave cube + mountain top
@@ -436,3 +436,73 @@ def grass(terrain_map):
             terrain_map.set(i,j,k, 4) # grass
     print 'grass done'
     print 'took %0.2f seconds' % (time.time() - _n)
+
+def ore(terrain_map):
+    print 'start ore'
+    _n = time.time()
+
+    xd=128
+    yd=128
+    zd=128
+    xdr,ydr,zdr = [range(n) for n in [xd,yd,zd]]
+
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd, o=8, p=1.5)
+
+    for i in xdr:
+        for j in ydr:
+            for k in zdr:
+                r = terrain_map.get(i,j,k)
+                if r == 2: #rock
+                    x = g.getDensity(i,j,(k%64)+64)
+                    #print x
+                    if x > 0.25:
+                        terrain_map.set(i,j,k, 3) # ore
+                        
+    print 'ore done'
+    print 'took %0.2f seconds' % (time.time() - _n)
+
+
+def ore1(tm):
+    print 'start ore'
+    _n = time.time()
+
+    xd=128
+    yd=128
+    zd=128
+    scale = map(float, [128]*3)
+    xdr,ydr,zdr = [range(n) for n in [xd,yd,zd]]
+
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd, o=8, p=0.8)
+
+    thresh = 0.9995
+    def ridge(x,y,z):
+        #x,y,z = [n/s for n,s in zip([x,y,z], scale)]
+        return 1.0 - abs(g.getDensity(x,y,z))
+
+    for i in xdr:
+        for j in ydr:
+            for k in zdr:
+                s = tm.get(i,j,k)
+                if s == 2:
+                    n = ridge(i,j,k)
+                    if n >= thresh:
+                        tm.set(i,j,k, 3)
+                                    
+    print 'ore done'
+    print 'took %0.2f seconds' % (time.time() - _n)
+    
+# doesnt work, levy flight has resolution issue
+#import levy_flight as lf
+#def ore2(terrain_map):
+    #print 'start ore'
+    #_n = time.time()
+
+    #L = lf.LevyFlight(iters=100000)
+    #vox = L.generate()
+    #print 'simulated levy flight, took %0.2f seconds' % (time.time() - _n)
+    
+    #for x,y,z in vox:
+        #terrain_map.set(x,y,z, 3)
+    
+    #print 'ore done'
+    #print 'took %0.2f seconds' % (time.time() - _n)

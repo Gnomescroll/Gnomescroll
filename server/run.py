@@ -64,7 +64,7 @@ def draw_sphere(block, radius, x,y,z):
 class Main:
 
     def __init__(self):
-        #setup
+        ##setup
         if opts.opts.map:
             terrain_map.load_from_disk(opts.opts.map)
         else:
@@ -72,13 +72,15 @@ class Main:
             map_gen.load_map3(terrain_map)
             map_gen.grass(terrain_map)
             map_gen.cave1(terrain_map)
+            map_gen.ore1(terrain_map)
+            
             if opts.opts.save_map:
                 print 'Saving map'
                 terrain_map.save_to_disk(opts.opts.save_map)
 
-        draw_sphere(block=7, radius=30, x=40,y=40,z=90)
-        pallet_pillar(16,16,16)
-        clear_pillar(x=0,y=0)
+        #map_gen.ore1(terrain_map)
+
+        #draw_sphere(block=3, radius=30, x=40,y=40,z=90)
         clear_pillar(x=1,y=0)
         clear_pillar(x=0,y=1)
         clear_pillar(x=1,y=1)
