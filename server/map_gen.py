@@ -3,9 +3,10 @@
 '''
 Map gen
 '''
-
+import time
 import noise
 import random
+
 class Gen:
 
     def __init__(self, o=10, p=0.5, f=1.3, a=1, seed=0.9, xint=128, yint=128, zint=128, salt=0):
@@ -38,7 +39,7 @@ class Gen:
 
     def noise3d(self, x,y,z, octaves=None, persistence=None):
         persistence = persistence or self.persistence
-        octaves = octaves or self.persistence
+        octaves = octaves or self.octaves
         n = noise.pnoise3(x+self.salt, y+self.salt, z+self.salt, octaves=octaves, persistence=persistence)
         return n
 
@@ -239,8 +240,8 @@ def load_map2(terrain_map):
     max_height = 127
     g = Gen(salt=random.random())
     h=0
-    for i in range(128):
-        for j in range(128):
+    for i in range(512):
+        for j in range(512):
             h = g.getHeight(i,j)
             h = abs(h)
             h *= 100
@@ -262,8 +263,8 @@ def load_map3(terrain_map):
     baseline = 100
     g = Gen(salt=random.random())
     h=0
-    for i in range(512):
-        for j in range(512):
+    for i in range(128):
+        for j in range(128):
             h = g.getHeight(i,j)
             h = abs(h)
             h *= 100
@@ -384,3 +385,54 @@ def load_map_fill(terrain_map):
     #print 'attempt to save map'
     #terrain_map.save_to_disk()
     print 'done map gen'
+
+
+def cave1(terrain_map):
+    print 'start cave'
+    _n = time.time()
+    xd = 128
+    yd = 128
+    zd = 128
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd, o=12, p=0.5)
+
+    xdr,ydr,zdr = [range(n) for n in [xd,yd,zd]]
+
+    thresh = 0.95
+    def val(x,y,z):
+        return 1.0 - abs(g.getDensity(x,y,z))
+
+    for i in xdr:
+        for j in ydr:
+            for k in range(4, zd):
+                v = val(i,j,k)
+                if v >= thresh: # cave
+                    #s = terrain_map.get(i,j,k)      # toggle block
+                    #if s:
+                    terrain_map.set(i,j,k, 0)
+                    #else:
+                        #terrain_map.set(i,j,k, 2)
+
+    print 'cave done'
+    print 'took %0.2f seconds' % (time.time() - _n)
+
+def grass(terrain_map):
+    print 'start grass'
+    _n = time.time()
+
+    xd = 128
+    yd=128
+    xdr=range(xd)
+    ydr=range(yd)
+
+    for i in xdr:
+        for j in ydr:
+            k = terrain_map.get_highest_open_block(i,j)
+            k -= 1
+            if k < 0:
+                continue
+            lava = terrain_map.get(i,j,k)
+            if lava == 3:   # dont replace lava
+                continue
+            terrain_map.set(i,j,k, 4) # grass
+    print 'grass done'
+    print 'took %0.2f seconds' % (time.time() - _n)
