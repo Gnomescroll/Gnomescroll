@@ -278,7 +278,7 @@ def load_map3(terrain_map):
                     terrain_map.set(i,j, baseline, 3)
 
     print 'done map gen'
-    print 'took %d seconds' % (time.time() - _n)
+    print 'took %0.2f seconds' % (time.time() - _n)
 
 # cave cube (test)
 def load_map4(terrain_map):
@@ -324,7 +324,7 @@ def load_map4(terrain_map):
                     #terrain_map.set(i,j, baseline, 211)
 
     print 'done map gen'
-    print 'took %d seconds' % (time.time() - _n)
+    print 'took %0.2f seconds' % (time.time() - _n)
 
 
 # cave cube + mountain top
@@ -435,4 +435,28 @@ def grass(terrain_map):
                 continue
             terrain_map.set(i,j,k, 4) # grass
     print 'grass done'
+    print 'took %0.2f seconds' % (time.time() - _n)
+
+def ore(terrain_map):
+    print 'start ore'
+    _n = time.time()
+
+    xd=128
+    yd=128
+    zd=128
+    xdr,ydr,zdr = [range(n) for n in [xd,yd,zd]]
+
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd, o=8, p=1.5)
+
+    for i in xdr:
+        for j in ydr:
+            for k in zdr:
+                r = terrain_map.get(i,j,k)
+                if r == 2: #rock
+                    x = g.getDensity(i,j,(k%64)+64)
+                    #print x
+                    if x > 0.25:
+                        terrain_map.set(i,j,k, 3) # ore
+                        
+    print 'ore done'
     print 'took %0.2f seconds' % (time.time() - _n)
