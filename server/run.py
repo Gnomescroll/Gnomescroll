@@ -71,7 +71,7 @@ class Main:
                 print 'Saving map'
                 terrain_map.save_to_disk(opts.opts.save_map)
 
-        draw_sphere(block=3, radius=30, x=40,y=40,z=90)
+        draw_sphere(block=7, radius=30, x=40,y=40,z=90)
         pallet_pillar()
 
         NetServer.init_0()

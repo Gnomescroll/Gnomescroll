@@ -43,10 +43,28 @@ west    grass-side.png
 east    grass-side.png
 ===
 id      5
-name    dirt.png
+name    dirt
 top     dirt.png
 bottom  dirt.png
 north   dirt.png
 south   dirt.png
 west    dirt.png
 east    dirt.png
+===
+id      6
+name    blue_ore
+top     ore.png
+bottom  ore.png
+north   ore.png
+south   ore.png
+west    ore.png
+east    ore.png
+===
+id      7
+name    terminal
+top     test/terminal.png
+bottom  test/terminal.png
+north   test/terminal.png
+south   test/terminal.png
+west    test/terminal.png
+east    test/terminal.png
