@@ -3,6 +3,16 @@ Ambient Occultion:
 
 Lambert's cosine law says that the radiant intensity observed from an ideal diffusely reflecting surface (a Lambertian surface) is directly proportional to the cosine of the angle θ between the observer's line of sight and the surface normal.
 
+Terrain Generation:
+http://www.reddit.com/r/Minecraft/comments/g0my6/how_terrain_generation_works_in_minecraft/
+
+!!! is down, try later
+http://archive.gamedev.net/community/forums/mod/journal/journal.asp?jn=259175&cmonth=11&cyear=2010
+
+Noise:
+
+http://mines.lumpylumpy.com/Electronics/Computers/Software/Cpp/Graphics/Bitmap/Textures/Noise/Voronoi.php
+
 Texture Generation:
 
 http://lithosphere.codeflow.org/download.html
@@ -25,3 +35,5 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
 
+Charged Miners Shots:
+http://miners.walkyrie.se/
