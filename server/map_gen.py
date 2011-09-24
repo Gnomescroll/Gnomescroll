@@ -415,6 +415,38 @@ def cave1(terrain_map):
     print 'cave done'
     print 'took %0.2f seconds' % (time.time() - _n)
 
+# does cave1 + inverse cave below a height
+def cave2(terrain_map):
+    cave1(terrain_map)
+    print 'start cave2 (inverse)'
+    h_max = 100
+    h_max_r = range(h_max)
+    _n = time.time()
+    xd = 128
+    yd = 128
+    zd = 128
+    g = Gen(salt=random.random(), xint=xd, yint=yd, zint=zd, o=12, p=0.5)
+
+    xdr,ydr,zdr = [range(n) for n in [xd,yd,zd]]
+
+    thresh = 0.95
+    def val(x,y,z):
+        return 1.0 - abs(g.getDensity(x,y,z))
+
+    for i in xdr:
+        for j in ydr:
+            for k in h_max_r:
+                v = val(i,k,j)  # intentionally reverse y and z
+                if v >= thresh: # cave
+                    #s = terrain_map.get(i,j,k)      # toggle block
+                    #if s:
+                    terrain_map.set(i,j,k, 2)
+                    #else:
+                        #terrain_map.set(i,j,k, 2)
+
+    print 'cave done'
+    print 'took %0.2f seconds' % (time.time() - _n)
+
 def grass(terrain_map):
     print 'start grass'
     _n = time.time()
