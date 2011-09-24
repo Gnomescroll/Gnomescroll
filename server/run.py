@@ -71,7 +71,7 @@ class Main:
             #map_gen.load_map2(terrain_map)
             map_gen.load_map3(terrain_map)
             map_gen.grass(terrain_map)
-            map_gen.cave1(terrain_map)
+            map_gen.cave2(terrain_map)
             map_gen.ore1(terrain_map)
             
             if opts.opts.save_map:
