@@ -57,10 +57,12 @@ class Sprite(object):
         d1 = d.get_data('RGBA',d.width*4)
 
         self.z += 0.01
+        zoom = 4.0
         for i in range(0,4096):
             x = i % 64
             y = i / 64
-            l = 1+N._p3(x/64.0,y/64.0,self.z)
+            l = 1+N._p3(zoom*x/64.0,zoom*y/64.0,self.z)
+            l -= .2
             if l < 0:
                 l=0
             if l > 1:
