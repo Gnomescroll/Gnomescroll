@@ -42,7 +42,7 @@ def configure(conf):
     OS = platform.system()
     conf.env.os = OS
 
-    conf.env.INCLUDES = ['.', 'time_lib',]
+    conf.env.INCLUDES = ['.', 'time_lib','noise']
     conf.env.RPATH = ['.', '..', './ext/']
 
     if OS == 'Darwin':
@@ -70,6 +70,13 @@ def build(bld):
         source=['timer/timer.pyx'],
         use=common_libraries + ['time_lib'],
         target='timer')
+
+    bld(features='cxx cshlib pyext',
+        source=['noise/_Noise.pyx',
+                'noise/interface.cpp',
+                'noise/Simplex.cpp'],
+        use=common_libraries,
+        target='_Noise')
 
     # final
     bld(features='c cprogram pyembed',
@@ -99,6 +106,7 @@ def install_in_ext(ctx):
 
     targets = [
         'timer',
+        '_Noise',
     ]
 
     for target in targets:

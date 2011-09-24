@@ -19,8 +19,8 @@ class FixedSizeNetPacketToServer {
             int _buff_n = *buff_n;
             packet(buff, buff_n, true);
             *size = *buff_n - _buff_n;
-        };
-        void unserialize(unsigned char* buff, int* buff_n, int* size){
+        }
+        void unserialize(unsigned char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
@@ -37,6 +37,8 @@ class FixedSizeNetPacketToServer {
             serialize(buff, buff_n, &bytes_written);
         }
 
+        int size() { unsigned char buff[64];int buff_n = 0;int size;serialize(buff, &buff_n, &size);return size;}
+
         void register_server_packet_handler(pt2handler* handler) {
             return; //implement!
         }
@@ -49,7 +51,7 @@ class FixedSizeNetPacketToClient {
             int _buff_n = *buff_n;
             packet(buff, buff_n, true);
             *size = *buff_n - _buff_n;
-        };
+        }
         void unserialize(unsigned char* buff, int* buff_n, int* size){
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
@@ -73,9 +75,13 @@ class FixedSizeNetPacketToClient {
             push_broadcast_message(buff, size);
         }
 
+        int size() { unsigned char buff[64];int buff_n = 0;int size;serialize(buff, &buff_n, &size);return size;}
+
         void register_client_packet_handler(pt2handler* handler) {
-            
+            //message_id = 5;
+            return; //implement
         }
+        virtual void handler(unsigned char* buff, int buff_n, int*);
 };
 
 
@@ -83,7 +89,7 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer
 {
     public:
         static const int message_id = 3;
-        static const int size = 2*sizeof(uint8_t) + 2*sizeof(uint16_t) + 3*sizeof(uint32_t);
+        //static const int size = 2*sizeof(uint8_t) + 2*sizeof(uint16_t) + 3*sizeof(uint32_t);
 
         int id;
         int seq;
@@ -106,6 +112,40 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer
 };
 
 
+
+class Agent_state_message: public FixedSizeNetPacketToClient
+{
+    public:
+        static const int message_id = 4;
+        //static const int size = 2*sizeof(uint8_t)+2*sizeof(uint16_t)+6*sizeof(uint32_t);
+
+        int id;
+        int seq;
+        int tick;
+
+        float x;
+        float y;
+        float z;
+        float vx,vy,vz;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_message_id(message_id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&seq, buff, buff_n, pack);
+            pack_16(&tick, buff, buff_n, pack);
+
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+        }
+};
+
+//deprecate
+/*
 class Agent_state_message: public ServerToClient
 {
     public:
@@ -161,3 +201,4 @@ void Agent_state_message::deserialize(unsigned char* buff, int buff_n, int* read
 
     *read_bytes = buff_n - _buff_n;
 }
+*/
