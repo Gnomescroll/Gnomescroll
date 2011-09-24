@@ -69,7 +69,7 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
         return -1;
     }
     if(read_bytes != size) {
-        printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, bytes);
+        printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, read_bytes);
         return 0;
     }
     *n += size;

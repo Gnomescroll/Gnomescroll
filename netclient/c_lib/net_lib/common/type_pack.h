@@ -1,6 +1,70 @@
 #ifndef net_lib_type_pack_h
 #define net_lib_type_pack_h
 
+
+//combined pack/unpack
+static inline void pack_message_id(int message_id, unsigned char* buff, int*buff_n, bool pack) {
+    if(pack == true) *((uint8_t*)(buff+*buff_n)) = (uint8_t)message_id;
+    //if(pack == false); //do nothing
+    *buff_n += sizeof(uint8_t);
+}
+
+static inline void pack_float(float* x, unsigned char* buff, int*buff_n, bool pack)
+{
+    if(pack == true) *((float*)(buff+*buff_n)) = *x;
+    if(pack == false) *x = *((float*)(buff+*buff_n));
+    *buff_n += sizeof(float);
+}
+
+static inline void pack_32(int* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((int32_t*)(buff+*buff_n)) = *x;
+    if(pack == false)   *x = *((int32_t*)(buff+*buff_n));
+    *buff_n += sizeof(int32_t);
+}
+
+static inline void pack_u32(int* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((uint8_t*)(buff+*buff_n)) = *x;
+    if(pack == false)   *x = *((uint32_t*)(buff+*buff_n));
+    *buff_n += sizeof(uint32_t);
+}
+
+static inline void pack_u32_t(uint32_t* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((uint8_t*)(buff+*buff_n)) = *x;
+    if(pack == false)   *x = *((uint32_t*)(buff+*buff_n));
+    *buff_n += sizeof(uint32_t);
+}
+
+static inline void pack_16(int* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((int16_t*)(buff+*buff_n)) = *x; 
+    if(pack == false)   *x = *((int16_t*)(buff+*buff_n));
+    *buff_n += sizeof(int16_t);
+}
+
+static inline void pack_u16(int* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((uint16_t*)(buff+*buff_n)) = *x; 
+    if(pack == false)   *x = *((uint16_t*)(buff+*buff_n));
+    *buff_n += sizeof(uint16_t);
+}
+
+static inline void pack_8(int* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((int8_t*)(buff+*buff_n)) = *x; 
+    if(pack == false)   *x = *((int8_t*)(buff+*buff_n));
+    *buff_n += sizeof(int8_t);
+}
+
+static inline void pack_u8(int* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((uint8_t*)(buff+*buff_n)) = *x; 
+    if(pack == false)   *x = *((uint8_t*)(buff+*buff_n));
+    *buff_n += sizeof(uint8_t);
+}
+
 //pop variables into a new one
 static inline uint8_t UPACK_uint8_t(unsigned char* buffer, int*n) {
         uint8_t d = *((uint8_t*)(buffer+*n));

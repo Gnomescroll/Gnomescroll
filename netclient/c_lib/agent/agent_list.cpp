@@ -12,16 +12,15 @@ Agent_list::Agent_list(){
 }
 
 Agent_state* Agent_list::get(int id) {
-	int i;
 	if((id < 0) || (id >= 1024)) {
 		printf("Agent id error: id=%i\n",id);
 		return NULL;
 	} 
-	if(a[i] == NULL) {
+	if(a[id] == NULL) {
 		printf("agent get error: agent is null, id=%i\n", id);
 		return NULL;
 	}
-	return a[i];
+	return a[id];
 }
 
 Agent_state* Agent_list::new_agent() {
@@ -42,13 +41,12 @@ Agent_state* Agent_list::new_agent() {
 }
 
 void Agent_list::delete_agent(int id) {
-	int i;
 	if(a[id]==NULL) {
 		printf("Cannot delete agent: agent is null\n");
 		return;
 	}
 	delete a[id];
-	a[i] = NULL;
+	a[id] = NULL;
 	num--;
 	printf("Deleted agent %i\n", id);
 	//printf("Agent_list::delete_agent not implemented\n");
