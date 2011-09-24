@@ -10,40 +10,11 @@ from pyglet import font
 import pyglet
 
 class Sprite(object):
-    def __init__(self, image_file=None, image_data=None):
-
-        #init standard variables
-        '''
-        self.image_file = image_file
-        if (image_data is None):
-            self.image = helper.load_image(image_file)
-        else:
-            self.image = image_data
-        '''
-        #self.image = pyglet.image.BufferImage(30,30,64,64)
-        #self.image = Class pyglet.image.ImageData(64,64,
+    def __init__(self):
         self.texture = pyglet.image.Texture.create(64,64, pyglet.gl.GL_RGBA)
         self.x = 150
         self.y = 150
 
-        '''
-        d = self.texture.get_image_data()
-        d1 = d.get_data('RGBA',d.width*4)
-
-        z = 0.5
-        for i in range(0,4096):
-            x = i % 64
-            y = i / 64
-            l = N._p3(x,y,z)
-            print(str(l))
-            l = int(l)
-            d1[4*i+0] = l
-            d1[4*i+1] = l
-            d1[4*i+2] = l
-            d1[4*i+3] = 0
-
-        self.image = pyglet.image.ImageData(64,64,'RGBA',d1)
-        '''
         self.z = 0
         self.update()
 
@@ -61,7 +32,8 @@ class Sprite(object):
         for i in range(0,4096):
             x = i % 64
             y = i / 64
-            l = 1+N._p3(zoom*x/64.0,zoom*y/64.0,self.z)
+            #l = 1+N._p3(zoom*x/64.0,zoom*y/64.0,self.z)
+            l = N._Vo(zoom*x/64.0,zoom*y/64.0,self.z, 0, 0)
             l -= .2
             if l < 0:
                 l=0
@@ -72,9 +44,11 @@ class Sprite(object):
             d1[4*i+0] = l
             d1[4*i+1] = l
             d1[4*i+2] = l
-            d1[4*i+3] = 0
+            d1[4*i+3] = 255
 
         self.image = pyglet.image.ImageData(64,64,'RGBA',d1)
+    def save(self):
+        self.image.save('out.png')
 
 import random
 
@@ -100,6 +74,8 @@ class SpaceGameWindow(window.Window):
 
         i = pyglet.image.ImageData(64,64,'RGBA',d1)
 
+        spr.save()
+
         while not self.has_exit:
             self.dispatch_events()
             self.clear()
@@ -114,7 +90,78 @@ class SpaceGameWindow(window.Window):
             self.flip()
             spr.update()
 
+import png
+import sys
+import os.path
+
+
+
+def gen_perlin(time_step, zoom= 4, offset=-0.2):
+    z = 0.1 * float(time_step)
+    li = []
+
+    x = 0.0
+    for i in range(0,64):
+        y = 0.0
+        for j in range(0,64):
+            l = 1+N._p3(zoom*x/64.0,zoom*y/64.0,z)
+            l += offset
+            if l < 0:
+                l=0
+            if l > 1:
+                l=1
+            li.insert(64*i+j, int(l*255))
+            y += 1.0
+        x += 1.0
+    return li
+
+class Spritesheet(object):
+    def __init__(self):
+        self._set_empty_pixels()
+
+    def _set_empty_pixels(self):
+        rows = []
+        i2=0
+        for i in range(0,1024):
+            rows.insert(i,[])
+            rows[i] = [0,0,0,0] * 1024
+        self.pixels = rows
+
+    def generate(self):
+        print "Generating"
+        def _offset(id):
+            x = id % 16
+            y = (id - x) / 16
+            return (x,y)
+
+        for id in range(0,256):
+            #perlin generator here
+
+            _l = gen_perlin(time_step=id)
+            xi,yi = _offset(id)
+            i = 0
+            j= 0
+            for i in range(64):
+                for j in range(64):
+                    v = _l[64*i+j]
+                    self.pixels[i+64*yi][4*(j+64*xi)+0] = v #r
+                    self.pixels[i+64*yi][4*(j+64*xi)+1] = v #g
+                    self.pixels[i+64*yi][4*(j+64*xi)+2] = v #b
+                    self.pixels[i+64*yi][4*(j+64*xi)+3] = 255 #a
+        return self.pixels
+
+    def write_out(self, filename):
+        print "Writing Out"
+        pixels = self.pixels
+        png_out = png.Writer(width=1024, height=1024, alpha=True, bitdepth=8, transparent=None)
+        with open(filename, 'wb') as f:      # binary mode is important
+            png_out.write(f, pixels)
+
 if __name__ == "__main__":
-    # Someone is launching this directly
+    '''
+    _S = Spritesheet()
+    _S.generate()
+    _S.write_out("simplex.png")
+    '''
     space = SpaceGameWindow()
     space.main_loop()
