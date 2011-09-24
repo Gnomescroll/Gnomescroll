@@ -1,0 +1,37 @@
+3 types of XP
+	-Combat
+	-Exploration/Gathering
+	-Contruction/Design
+
+XP is converted to points at increasing rates. Points are subsequently spent on stats. Stat point costs increase similarly to the point gain. Points can also be spent on special abilities. Special abilities all have minimum stat requirements, and some require other special abilities. (some might also require things from the other XP types.)
+
+
+
+-COMBAT-
+
+XP gained for killing
+
+Points can be spent on 3 stats
+
+	-SREANGTH: increases thrown range, decreases recoil, decreases negative effects of equipped item weight.
+
+	-AGILITY: increases acurracy
+
+
+
+-Exploration/Gathering-
+
+XP gained for gathering resorces.
+
+	-ENDURANCE: increases inventory maximum weight
+
+	-___________: decreases collection time, minimum requirements to collect some resources
+
+
+
+-Crafting-
+
+XP gained for crafting
+
+Crafting has no stats. Instead it has a tech tree where each upgrade allows the ability to craft a new base component or block (wire, thruster, reactor, ect.,) the ability to create a new type of item (worn items, carried items, robots, ect.,) or allows the use of more advanced resources. It also has a level that increases on its own when crafting XP is gained which is use only as a prerequisite for some upgrades.
+

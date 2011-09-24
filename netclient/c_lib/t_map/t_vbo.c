@@ -252,16 +252,16 @@ def draw_chunks():
 */
 
 
-int s_array[18] = {
-            0,0,1,
-            0,0,-1,
-            0,1,0,
-            0,-1,0,
-            -1,0,0,
-            1,0,0
+int inline _is_occluded(int x,int y,int z, int side_num) {
+    const static int s_array[18] = {
+            0,0,1,  //top
+            0,0,-1, //bottom
+            1,0,0,  //north
+            -1,0,0, //south
+            0,1,0,  //west
+            0,-1,0, //east
             };
 
-int inline _is_occluded(int x,int y,int z, int side_num) {
     int i;
     i = 3*side_num;
     x += s_array[i+0];
