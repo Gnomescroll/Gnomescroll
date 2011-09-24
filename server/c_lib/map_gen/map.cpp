@@ -49,3 +49,5 @@ void init_v_points() {
 // apply Lloyd -- move point to center of polygon
 // do this N times, regenerating voroni each time
 // see: http://en.wikipedia.org/wiki/Centroid
+
+//double Voronoi::GetValue(x,y,z)  -- can i get the graph from this module?

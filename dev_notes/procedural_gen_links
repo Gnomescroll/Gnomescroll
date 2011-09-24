@@ -1,0 +1,19 @@
+General:
+
+http://pcg.wikidot.com/pcg-algorithm:map-generation
+http://members.gamedev.net/vertexnormal/turbulence_tutorial.html
+-Turbulence
+http://www.hayles.demon.co.uk/perlin/ridgedmf.html
+-Ridged multifractal
+
+Minecraft:
+http://www.reddit.com/r/Minecraft/comments/g0my6/how_terrain_generation_works_in_minecraft/
+http://blog.movingblocks.net/tag/bilinear-interpolation/
+-Lower perlin sample res and interpolate
+http://www.gamedev.net/blog/33/entry-2227887-more-on-minecraft-type-world-gen/
+-Caves
+
+Voronoi:
+
+http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
+-Makes island w/ rivers, lakes, biomes using voronoi cells & graphs
