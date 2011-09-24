@@ -60,7 +60,7 @@ class Sprite(object):
         for i in range(0,4096):
             x = i % 64
             y = i / 64
-            l = 1+N._p3(x,y,self.z)
+            l = 1+N._p3(x/64.0,y/64.0,self.z)
             if l < 0:
                 l=0
             if l > 1:
