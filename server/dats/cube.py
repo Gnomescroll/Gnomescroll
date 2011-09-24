@@ -35,14 +35,14 @@ import cube_dat
 dat = cube_dat.dat
 
 def _build_cubes():
-
+    '''
     def_tex_order = [[0,1,2,3],
                 [0,1,2,3],
                 [0,1,2,3],
                 [0,1,2,3],
                 [0,1,2,3],
                 [0,1,2,3],]
-
+    '''
     '''
     def_tex_order = [[1,2,3,0],
                 [1,2,3,0],
@@ -62,7 +62,7 @@ def _build_cubes():
             'neutron_tolerance' : 2,
             'nuclear' : i%2,
             'texture_id': [255]*6,
-            'texture_order': def_tex_order,
+            #'texture_order': def_tex_order,
             'gravity'   :   0,
             'transparent': 0,
         }

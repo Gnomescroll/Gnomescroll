@@ -237,6 +237,7 @@ cdef extern from './t_map/t_vbo.h':
 cdef float * v_index
 v_index = <float*> malloc(72*sizeof(float))
 
+'''
 l = [
          0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
          1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
@@ -245,6 +246,37 @@ l = [
          0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #west
          1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #east
     ]
+'''
+'''
+l = [
+         0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
+         1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
+         0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #north
+         1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #south
+         0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #west
+         0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+    ]
+'''
+
+#north/south is +/- x
+#west/east is +/- y
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+
+'''
+ 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
+ 1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
+ 0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #north
+ 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #south
+ 0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #west
+ 0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+'''
 
 for i in range(0,72):
     v_index[i]=l[i]
@@ -284,6 +316,24 @@ def get_cube_texture(tile_id, side, vert_num):
     y = (texture_id - (texture_id % 16)) / 16
     tx = float(x) * 1./16.
     ty = float(y) * 1./16.
+
+    if vert_num == 0:
+        tx += 0 +margin
+        ty += 0 +margin
+    elif vert_num == 1:
+        tx += 0 +margin
+        ty += 1./16. -margin
+    elif vert_num == 2:
+        tx += 1./16. -margin
+        ty += 1./16. -margin
+    elif vert_num == 3:
+        tx += 1./16. -margin
+        ty += 0 + margin
+    else:
+        print "Error!!!! set_tex invalid input"
+        assert False
+    return (tx,ty)
+    '''
     if vert_num == 0:
         tx += 0 +margin
         ty += 0 +margin
@@ -296,10 +346,7 @@ def get_cube_texture(tile_id, side, vert_num):
     elif vert_num == 3:
         tx += 0 +margin
         ty += 1./16. -margin
-    else:
-        print "Error!!!! set_tex invalid input"
-        assert False
-    return (tx,ty)
+    '''
 
 ## functions ##
 '''
