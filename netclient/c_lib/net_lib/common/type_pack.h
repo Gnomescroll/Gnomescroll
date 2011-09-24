@@ -14,7 +14,7 @@ static inline int16_t UPACK_uint16_t(unsigned char* buffer, int*n) {
         return d;
 }
 
-static inline int16_t UPACK_uint32_t(unsigned char* buffer, int*n) {
+static inline int32_t UPACK_uint32_t(unsigned char* buffer, int*n) {
         int16_t d = *((int32_t*)(buffer+*n));
         *n += sizeof(int32_t);
         return d;
