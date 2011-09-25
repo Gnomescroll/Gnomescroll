@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 
+#include <math.h>
+
 Simplex s;
 
 void init_p() {
@@ -17,6 +19,40 @@ return s.Noise3(x,y,z);
 
 }
 
+#define pi 3.14159265
+double p4(int x, int y, double x1, double y1, double x2, double y2, double height, double width) {
+    float _s=x/width;
+    float _t=y/height;
+
+    float dx=x2-x1;
+    float dy=y2-y1;
+
+    double nx=x1+cos(_s*2*pi)*dx/(2*pi);
+    double ny=y1+cos(_t*2*pi)*dy/(2*pi);
+    double nz=x1+sin(_s*2*pi)*dx/(2*pi);
+    double nw=y1+sin(_t*2*pi)*dy/(2*pi);
+
+    //double ret =s.Noise3(nx,ny,nz); //,nw);
+    //double ret =s.Noise4(nx,ny,nz,nw);
+    return s.Noise4(nx,ny,nz,nw);
+}
+/*
+for x=0,bufferwidth-1,1 do
+        for y=0,bufferheight-1,1 do
+                local s=x/bufferwidth
+                local t=y/bufferheight
+                local dx=x2-x1
+                local dy=y2-y1
+
+                local nx=x1+cos(s*2*pi)*dx/(2*pi)
+                local ny=y1+cos(t*2*pi)*dy/(2*pi)
+                local nz=x1+sin(s*2*pi)*dx/(2*pi)
+                local nw=y1+sin(t*2*pi)*dy/(2*pi)
+
+                buffer:set(x,y,Noise4D(nx,ny,nz,nw))
+        end
+}
+*/
 
 
 double Vo(double x, double y, double z, int a, int b) {

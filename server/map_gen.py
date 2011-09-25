@@ -544,11 +544,11 @@ def castle_column1(tm, x,y,z,height):
         tm.set(x,y,_z, 10)
 
 def castle_wall1(tm, _x, _y, _z, dx,dy,dz, length, height):
-    for l in range(0,length+1):
-        for h in range(0,height+1):
+    for l in range(0,length):
+        for h in range(0,height):
             tm.set(_x,_y,_z+h, 10)
         if l % 2 == 0:
-            tm.set(_x,_y,_z+height+1, 10)
+            tm.set(_x,_y,_z+height, 10)
         _x+=dx
         _y+=dy
         _z+=dz
@@ -564,30 +564,39 @@ def castle_tower1(tm, _x,_y,_z, height, wall_length):
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
     #wall 2
     dx,dy,dz = 0,-1,0
-    x,y,z = _x+wall_length,_y+wall_length,_z
+    x,y,z = _x+wall_length-1,_y+wall_length-1,_z
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
     #wall 4
     dx,dy,dz = -1,0,0
-    x,y,z = _x+wall_length,_y+wall_length,_z
+    x,y,z = _x+wall_length-1,_y+wall_length-1,_z
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
 
 def castle_tower2(tm, _x,_y,_z, height=10, wall_length=3):
     #wall 1
     dx,dy,dz = 1,0,0
-    x,y,z = _x+3,_y,_z
-    castle_wall1(tm, x-1,y-1,z, dx,dy,dz, wall_length, height)
+    x,y,z = _x+2,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
     #wall 3
     dx,dy,dz = 0,1,0
-    x,y,z = _x,_y,_z
+    x,y,z = _x,_y+2,_z
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
     #wall 2
-    dx,dy,dz = 0,-1,0
-    x,y,z = _x+wall_length,_y+wall_length,_z
+    dx,dy,dz = 0,1,0
+    x,y,z = _x+3+wall_length,_y+2,_z
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
     #wall 4
-    dx,dy,dz = -1,0,0
-    x,y,z = _x+wall_length,_y+wall_length,_z
+    dx,dy,dz = 1,0,0
+    x,y,z = _x+2,_y+3+wall_length,_z
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+
+    x,y,z = _x+1,_y+1,_z
+    castle_column1(tm, x,y,z,height)
+    x,y,z = _x+2+wall_length,_y+1,_z
+    castle_column1(tm, x,y,z,height)
+    x,y,z = _x+1,_y+2+wall_length,_z
+    castle_column1(tm, x,y,z,height)
+    x,y,z = _x+2+wall_length,_y+2+wall_length,_z
+    castle_column1(tm, x,y,z,height)
 
 def ground_plane(tm, xsize=64, ysize=64):
     for x in range(0,xsize):

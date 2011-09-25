@@ -77,8 +77,13 @@ class Main:
             #map_gen.castle_wall1(terrain_map, 15,15,0, dx=1,dy=1,dz=0, length=13, height=20)
             #map_gen.castle_wall1(terrain_map, _x, _y, dx,dy,dz, length, height):
             map_gen.ground_plane(terrain_map, xsize=64, ysize=64)
-            map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
-            #map_gen.castle_tower2(terrain_map, 15,15,1, height=10, wall_length=3)
+            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
+            map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3)
+            map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5)
+
+            map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3)
+            map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4)
+            map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5)
             if opts.opts.save_map:
                 print 'Saving map'
                 terrain_map.save_to_disk(opts.opts.save_map)
@@ -86,10 +91,10 @@ class Main:
         #map_gen.ore1(terrain_map)
 
         #draw_sphere(block=3, radius=30, x=40,y=40,z=90)
-        clear_pillar(x=1,y=0)
-        clear_pillar(x=0,y=1)
-        clear_pillar(x=1,y=1)
-        pallet_pillar(0,0,16)
+        #clear_pillar(x=1,y=0)
+        #clear_pillar(x=0,y=1)
+        #clear_pillar(x=1,y=1)
+        pallet_pillar(3,3,16)
 
         NetServer.init_0()
         NetOut.init_0()
