@@ -588,3 +588,8 @@ def castle_tower2(tm, _x,_y,_z, height=10, wall_length=3):
     dx,dy,dz = -1,0,0
     x,y,z = _x+wall_length,_y+wall_length,_z
     castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+
+def ground_plane(tm, xsize=64, ysize=64):
+    for x in range(0,xsize):
+        for y in range(0,ysize):
+            tm.set(x,y,0,7)

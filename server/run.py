@@ -76,8 +76,9 @@ class Main:
 
             #map_gen.castle_wall1(terrain_map, 15,15,0, dx=1,dy=1,dz=0, length=13, height=20)
             #map_gen.castle_wall1(terrain_map, _x, _y, dx,dy,dz, length, height):
-            map_gen.castle_tower1(terrain_map, 15,15,15, height=10, wall_length=10)
-            #map_gen.castle_tower2(terrain_map, 15,15,15, height=10, wall_length=3)
+            map_gen.ground_plane(terrain_map, xsize=64, ysize=64)
+            map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
+            #map_gen.castle_tower2(terrain_map, 15,15,1, height=10, wall_length=3)
             if opts.opts.save_map:
                 print 'Saving map'
                 terrain_map.save_to_disk(opts.opts.save_map)
