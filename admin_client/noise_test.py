@@ -27,8 +27,8 @@ class Sprite(object):
         d = self.texture.get_image_data()
         d1 = d.get_data('RGBA',d.width*4)
 
-        self.z += 0.01
-        zoom = 4.0
+        self.z += 0.05
+        zoom = 8.0
         for i in range(0,4096):
             x = i % 64
             y = i / 64
@@ -115,6 +115,26 @@ def gen_perlin(time_step, zoom= 4, offset=-0.2):
         x += 1.0
     return li
 
+def gen_voronoi(time_step, step_size=0.1, zoom= 8, offset=-0.2):
+    z = step_size * float(time_step)
+    li = []
+
+    x = 0.0
+    for i in range(0,64):
+        y = 0.0
+        for j in range(0,64):
+            #l = 1+N._p3(zoom*x/64.0,zoom*y/64.0,z)
+            l = N._Vo(zoom*x/64.0,zoom*y/64.0,z, 0, 0)
+            l += offset
+            if l < 0:
+                l=0
+            if l > 1:
+                l=1
+            li.insert(64*i+j, int(l*255))
+            y += 1.0
+        x += 1.0
+    return li
+
 class Spritesheet(object):
     def __init__(self):
         self._set_empty_pixels()
@@ -137,7 +157,8 @@ class Spritesheet(object):
         for id in range(0,256):
             #perlin generator here
 
-            _l = gen_perlin(time_step=id)
+            #_l = gen_perlin(time_step=id)
+            _l = gen_voronoi(time_step=id, step_size=0.1, zoom= 8, offset=-0.0)
             xi,yi = _offset(id)
             i = 0
             j= 0
@@ -158,10 +179,11 @@ class Spritesheet(object):
             png_out.write(f, pixels)
 
 if __name__ == "__main__":
-    '''
-    _S = Spritesheet()
-    _S.generate()
-    _S.write_out("simplex.png")
-    '''
+    x = True
+    if False:
+        _S = Spritesheet()
+        _S.generate()
+        _S.write_out("simplex.png")
+
     space = SpaceGameWindow()
     space.main_loop()

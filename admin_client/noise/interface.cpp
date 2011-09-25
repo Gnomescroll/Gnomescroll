@@ -3,6 +3,8 @@
 #include "interface.hpp"
 //#include "Simplex.h"
 
+#include <stdio.h>
+
 Simplex s;
 
 void init_p() {
@@ -27,5 +29,66 @@ double Vo(double x, double y, double z, int a, int b) {
     //enum VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
     //enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};
 
-    return Voronoi::Get(x,y,z, Voronoi::Difference21, Voronoi::Quadratic);
+
+    enum Voronoi::VoronoiType A;
+    switch(a) {
+        case 0:
+        A = Voronoi::First;
+        break;
+        case 1:
+        A = Voronoi::Second;
+        break;
+        case 2:
+        A = Voronoi::Third;
+        break;
+        case 3:
+        A = Voronoi::Fourth;
+        break;
+        case 4:
+        A = Voronoi::Difference21;
+        break;
+        case 5:
+        A = Voronoi::Difference32;
+        break;
+        case 6:
+        A = Voronoi::Crackle;
+        break;
+        printf("option %i not valid for a\n", a);
+        A = Voronoi::First;
+    }
+    //enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};
+
+    enum Voronoi::DistanceMethod B;
+
+    switch(b) {
+        case 0:
+        B = Voronoi::Length;
+        break;
+        case 1:
+        B = Voronoi::Length2;
+        break;
+        case 2:
+        B = Voronoi::Manhattan;
+        break;
+        case 3:
+        B = Voronoi::Chebychev;
+        break;
+        case 4:
+        B = Voronoi::Quadratic;
+        break;
+        case 5:
+        B = Voronoi::Minkowski4;
+        break;
+        case 6:
+        B = Voronoi::Minkowski5;
+        break;
+        default:
+        printf("option %i not valid for b\n", b);
+        B = Voronoi::Length;
+    }
+
+    return Voronoi::Get(x,y,z, A,B);
+// VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
+    //enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};
+
 }

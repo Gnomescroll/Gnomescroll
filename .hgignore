@@ -12,6 +12,10 @@ syntax: glob
 
 *.old
 
+test.wav
+perlin.png
+out.png
+
 run 
 
 TODO.tasks
