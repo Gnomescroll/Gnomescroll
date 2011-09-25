@@ -6,8 +6,10 @@
  */
 #ifdef DC_CLIENT
 
+
 namespace AgentDraw {
 
+/*
 void draw_agents(Agent_list* agent_list) {
     
     printf("Drawing agents\n");
@@ -29,7 +31,7 @@ void draw_agents(Agent_list* agent_list) {
     glDisable(GL_DEPTH_TEST);
 
 }
-
+*/
 
 void draw_agent(Agent_state* g) {
     //printf("agent draw \n");
