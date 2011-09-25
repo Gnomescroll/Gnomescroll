@@ -50,3 +50,30 @@ north   grass-side.png
 south   grass-side.png
 west    grass-side.png
 east    grass-side.png
+===
+id      6
+name    leaves
+top     leaves.png
+bottom  leaves.png
+north   leaves.png
+south   leaves.png
+west    leaves.png
+east    leaves.png
+===
+id      7
+name    ocdleaves
+top     ocd.png
+bottom  ocd.png
+north   ocd.png
+south   ocd.png
+west    ocd.png
+east    ocd.png
+===
+id      8
+name    battery
+top     bat-top.png
+bottom  bat-bottom.png
+north   bat-side.png
+south   bat-side.png
+west    bat-side.png
+east    bat-side.png
