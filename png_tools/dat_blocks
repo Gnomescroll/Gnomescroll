@@ -62,18 +62,36 @@ east    blueore.png
 ===
 id      7
 name    terminal
-top     test/terminal.png
-bottom  test/terminal.png
-north   test/terminal.png
-south   test/terminal.png
-west    test/terminal.png
-east    test/terminal.png
+top     terminal.png
+bottom  terminal.png
+north   terminal.png
+south   terminal.png
+west    terminal.png
+east    terminal.png
+===
+id      8
+name    sand_brick
+top     brick-red.png
+bottom  brick-red.png
+north   brick-red.png
+south   brick-red.png
+west    brick-red.png
+east    brick-red.png
+===
+id      9
+name    sand_brick
+top     brick-sand.png
+bottom  brick-sand.png
+north   brick-sand.png
+south   brick-sand.png
+west    brick-sand.png
+east    brick-sand.png
 ===
 id      10
-name    sponge
-top     sponge.png
-bottom  sponge.png
-north   sponge.png
-south   sponge.png
-west    sponge.png
-east    sponge.png
+name    grey_brick
+top     brick-stone.png
+bottom  brick-stone.png
+north   brick-stone.png
+south   brick-stone.png
+west    brick-stone.png
+east    brick-stone.png

@@ -20,8 +20,7 @@ class Object_list {
                 void draw();	//overide in template specilization on client
                 void tick();	//override on template specilization
         };
-
-
+        
 //template <class T>
 //Stack<T>::Stack(int s)
 template <class Object_state, int max_n>
