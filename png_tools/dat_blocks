@@ -86,6 +86,17 @@ north   brick-stone.png
 south   brick-stone.png
 west    brick-stone.png
 east    brick-stone.png
+
+===
+id      11
+name    sand
+top     sand.png
+bottom  sand.png
+north   sand.png
+south   sand.png
+west    sand.png
+east    sand.png
+
 ===
 id      100
 name    terminal

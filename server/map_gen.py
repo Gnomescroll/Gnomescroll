@@ -598,7 +598,7 @@ def castle_tower2(tm, _x,_y,_z, height=10, wall_length=3, tile=10):
     x,y,z = _x+2+wall_length,_y+2+wall_length,_z
     castle_column1(tm, x,y,z,height, tile=tile)
 
-def ground_plane(tm, xsize=64, ysize=64, tile=101):
+def ground_plane(tm, xsize=64, ysize=64, tile=100):
     for x in range(0,xsize):
         for y in range(0,ysize):
             tm.set(x,y,0,tile)
