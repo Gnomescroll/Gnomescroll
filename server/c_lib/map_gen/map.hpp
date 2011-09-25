@@ -5,4 +5,6 @@
 
 #include <c_lib/t_map/t_map.h>
 
-#include "voronoi.hpp"
+#include <c_lib/map_gen/voronoi.hpp>
+
+void start_voronoi();

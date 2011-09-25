@@ -21,6 +21,7 @@
 
     #include "./agent/agent_include.h"
 
+    #include "./map_gen/voronoi.cpp"
     #include "./map_gen/map.cpp"
 
     #ifdef DC_CLIENT

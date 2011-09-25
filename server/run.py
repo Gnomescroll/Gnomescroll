@@ -37,6 +37,10 @@ import c_lib.c_lib_objects
 import map_gen
 import random
 
+import c_lib.map_gen
+print dir(c_lib.map_gen)
+c_lib.map_gen.start()
+
 def pallet_pillar(x,y,z):
     for i in range(0,32):
         m = terrain_map

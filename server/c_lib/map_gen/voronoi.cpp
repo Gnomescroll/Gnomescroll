@@ -1,4 +1,4 @@
-#include "voronoi.hh"
+#include "voronoi.hpp"
 
 priority_queue<point,  vector<point>,  gt> points; // site events
 priority_queue<event*, vector<event*>, gt> events; // circle events

@@ -135,7 +135,12 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_agents')
 
-        #lib=time_lib,
+    bld(features='cxx cshlib pyext',
+        source=['c_lib/map_gen/map_gen.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.map_gen')
+
+        
     # final
     bld(features='c cprogram pyembed',
         #use=common_libraries+time_lib + ['c_lib'],
@@ -169,6 +174,7 @@ def install_in_ext(ctx):
         'c_lib.c_lib_objects',
         'c_lib.c_lib_agents',
         'c_lib.terrain_map',
+        'c_lib.map_gen',
     ]
 
     for target in targets:

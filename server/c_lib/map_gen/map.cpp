@@ -82,3 +82,9 @@ void init_v_points() {
 void load_v_points() {
     load_points(v_points, V_SAMPLES);
 }
+
+
+void start_voronoi() {
+    load_v_points();
+    process_points();
+}
