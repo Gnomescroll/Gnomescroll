@@ -60,15 +60,6 @@ south   blueore.png
 west    blueore.png
 east    blueore.png
 ===
-id      7
-name    terminal
-top     terminal.png
-bottom  terminal.png
-north   terminal.png
-south   terminal.png
-west    terminal.png
-east    terminal.png
-===
 id      8
 name    sand_brick
 top     brick-red.png
@@ -95,3 +86,21 @@ north   brick-stone.png
 south   brick-stone.png
 west    brick-stone.png
 east    brick-stone.png
+===
+id      100
+name    terminal
+top     terminal.png
+bottom  terminal.png
+north   terminal.png
+south   terminal.png
+west    terminal.png
+east    terminal.png
+===
+id      101
+name    tron
+top     tron.png
+bottom  tron.png
+north   tron.png
+south   tron.png
+west    tron.png
+east    tron.png
