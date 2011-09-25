@@ -538,3 +538,53 @@ def ore1(tm):
 
     #print 'ore done'
     #print 'took %0.2f seconds' % (time.time() - _n)
+
+def castle_column1(tm, x,y,z,height):
+    for _z in range(z, z+height):
+        tm.set(x,y,_z, 10)
+
+def castle_wall1(tm, _x, _y, _z, dx,dy,dz, length, height):
+    for l in range(0,length+1):
+        for h in range(0,height+1):
+            tm.set(_x,_y,_z+h, 10)
+        if l % 2 == 0:
+            tm.set(_x,_y,_z+height+1, 10)
+        _x+=dx
+        _y+=dy
+        _z+=dz
+
+def castle_tower1(tm, _x,_y,_z, height, wall_length):
+    #wall 1
+    dx,dy,dz = 1,0,0
+    x,y,z = _x,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+    #wall 3
+    dx,dy,dz = 0,1,0
+    x,y,z = _x,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+    #wall 2
+    dx,dy,dz = 0,-1,0
+    x,y,z = _x+wall_length,_y+wall_length,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+    #wall 4
+    dx,dy,dz = -1,0,0
+    x,y,z = _x+wall_length,_y+wall_length,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+
+def castle_tower2(tm, _x,_y,_z, height=10, wall_length=3):
+    #wall 1
+    dx,dy,dz = 1,0,0
+    x,y,z = _x+3,_y,_z
+    castle_wall1(tm, x-1,y-1,z, dx,dy,dz, wall_length, height)
+    #wall 3
+    dx,dy,dz = 0,1,0
+    x,y,z = _x,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+    #wall 2
+    dx,dy,dz = 0,-1,0
+    x,y,z = _x+wall_length,_y+wall_length,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)
+    #wall 4
+    dx,dy,dz = -1,0,0
+    x,y,z = _x+wall_length,_y+wall_length,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height)

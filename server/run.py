@@ -69,11 +69,15 @@ class Main:
             terrain_map.load_from_disk(opts.opts.map)
         else:
             #map_gen.load_map2(terrain_map)
-            map_gen.load_map3(terrain_map)
-            map_gen.grass(terrain_map)
-            map_gen.cave2(terrain_map)
-            map_gen.ore1(terrain_map)
-            
+            #map_gen.load_map3(terrain_map)
+            #map_gen.grass(terrain_map)
+            #map_gen.cave2(terrain_map)
+            #map_gen.ore1(terrain_map)
+
+            #map_gen.castle_wall1(terrain_map, 15,15,0, dx=1,dy=1,dz=0, length=13, height=20)
+            #map_gen.castle_wall1(terrain_map, _x, _y, dx,dy,dz, length, height):
+            map_gen.castle_tower1(terrain_map, 15,15,15, height=10, wall_length=10)
+            #map_gen.castle_tower2(terrain_map, 15,15,15, height=10, wall_length=3)
             if opts.opts.save_map:
                 print 'Saving map'
                 terrain_map.save_to_disk(opts.opts.save_map)
