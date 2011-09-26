@@ -80,3 +80,13 @@ double X0 = 0, X1 = 0, Y0 = 0, Y1 = 0;
 void load_points(point* pts, int n_pts);
 void process_points();
 /* END STEVE */
+#pragma once
+
+#include <stdlib.h>
+//#include <libnoise.h>
+
+#include <c_lib/t_map/t_map.h>
+
+#include <c_lib/map_gen/voronoi.hpp>
+
+void start_voronoi();
