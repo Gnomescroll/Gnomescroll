@@ -36,9 +36,28 @@ import dats.loader as dat_loader
 import c_lib.c_lib_objects
 
 import map_gen
+
 import random
 
 import c_lib.map_gen
+perlin = c_lib.map_gen.Perlin(octaves=6)
+salt = random.random()
+baseline=10
+maxh = 20
+for i in range(128):
+    for j in range(128):
+        h = perlin.noise2((i/128.)+salt,(j/128.)+salt)
+        h = abs(h)
+        h *= 128
+        h = int(h)
+        h %= maxh
+        for z in range(baseline+h):
+           terrain_map.set(i,j,z, 2)
+        while h>=0:
+            if h<2:
+                terrain_map.set(i,j,baseline+h, 3)
+            h -= 1
+
 #c_lib.map_gen.start()
 
 def pallet_pillar(x,y,z):
@@ -69,18 +88,18 @@ class Main:
 
     def __init__(self):
         ##setup
-        if opts.opts.map:
-            terrain_map.load_from_disk(opts.opts.map)
-        else:
-            #map_gen.load_map2(terrain_map)
-            map_gen.load_map3(terrain_map)
-            map_gen.grass(terrain_map)
-            map_gen.cave2(terrain_map)
-            map_gen.ore1(terrain_map)
+        #if opts.opts.map:
+            #terrain_map.load_from_disk(opts.opts.map)
+        #else:
+            ##map_gen.load_map2(terrain_map)
+            #map_gen.load_map3(terrain_map)
+            #map_gen.grass(terrain_map)
+            #map_gen.cave2(terrain_map)
+            #map_gen.ore1(terrain_map)
             
-            if opts.opts.save_map:
-                print 'Saving map'
-                terrain_map.save_to_disk(opts.opts.save_map)
+            #if opts.opts.save_map:
+                #print 'Saving map'
+                #terrain_map.save_to_disk(opts.opts.save_map)
 
         #map_gen.ore1(terrain_map)
 
