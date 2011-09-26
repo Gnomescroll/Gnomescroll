@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <stdlib.h>
+
 typedef union f3 {
     float xyz[3];
     float x, y, z;
@@ -20,9 +22,14 @@ const float GRAD3[][3] = {
     {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1},
     {1,0,-1},{-1,0,-1},{0,-1,1},{0,1,1}};
 
+#define fastfloor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
+
+
+#define PERM_SIZE 256
 // At the possible cost of unaligned access, we use char instead of
 // int here to try to ensure that this table fits in L1 cache
-const unsigned char PERM[] = {
+//const unsigned char PERM[] = {
+unsigned int PERM[] = {
   151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140,
   36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120,
   234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
@@ -56,4 +63,14 @@ const unsigned char PERM[] = {
   205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156,
   180};
 
-#define fastfloor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
+//unsigned int PERM[PERM_SIZE];
+
+void seed_noise(int seed) {
+    srand((unsigned)seed);
+
+    // build PERM table
+    int i;
+    for (i=0; i < PERM_SIZE; i++) {
+        PERM[i] = rand() & 255;
+    }
+}

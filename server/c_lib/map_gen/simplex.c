@@ -67,7 +67,8 @@ float simplex2(float x, float y, int octaves, float persistence, float frequency
             frequency *= 2.0f;  // constant?
             amplitude *= persistence;
         }
-        return (total/max); // why max
+        //return (total/max); // why max
+        return total;
     }
     return 0.0f;
 }

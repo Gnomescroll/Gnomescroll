@@ -12,8 +12,11 @@ cdef extern from "./map_gen/noise.c":
     float rmf_simplex2(float rmf_x, float rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
     float rmf_simplex3(float rmf_x, float rmf_y, float rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
 
+    void seed_noise(int seed)
 
-
+def set_seed(seed):
+    # convert seed to int
+    seed_noise(seed)
 
 class Perlin:
     def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0, repeatx=1024, repeaty=1024, repeatz=1024, base=0):
