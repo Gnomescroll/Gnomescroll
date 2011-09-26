@@ -5,7 +5,7 @@
 #include <c_lib/agent/agent.hpp>
 
 
-
+/*
 class Agent_list {
         private:
                 int id_c;
@@ -23,3 +23,4 @@ class Agent_list {
         };
 
 
+*/

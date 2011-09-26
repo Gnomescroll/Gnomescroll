@@ -60,11 +60,58 @@ south   blueore.png
 west    blueore.png
 east    blueore.png
 ===
-id      7
+id      8
+name    sand_brick
+top     brick-red.png
+bottom  brick-red.png
+north   brick-red.png
+south   brick-red.png
+west    brick-red.png
+east    brick-red.png
+===
+id      9
+name    sand_brick
+top     brick-sand.png
+bottom  brick-sand.png
+north   brick-sand.png
+south   brick-sand.png
+west    brick-sand.png
+east    brick-sand.png
+===
+id      10
+name    grey_brick
+top     brick-stone.png
+bottom  brick-stone.png
+north   brick-stone.png
+south   brick-stone.png
+west    brick-stone.png
+east    brick-stone.png
+
+===
+id      11
+name    sand
+top     sand.png
+bottom  sand.png
+north   sand.png
+south   sand.png
+west    sand.png
+east    sand.png
+
+===
+id      100
 name    terminal
-top     test/terminal.png
-bottom  test/terminal.png
-north   test/terminal.png
-south   test/terminal.png
-west    test/terminal.png
-east    test/terminal.png
+top     terminal.png
+bottom  terminal.png
+north   terminal.png
+south   terminal.png
+west    terminal.png
+east    terminal.png
+===
+id      101
+name    tron
+top     tron.png
+bottom  tron.png
+north   tron.png
+south   tron.png
+west    tron.png
+east    tron.png

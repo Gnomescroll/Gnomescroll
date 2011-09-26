@@ -74,7 +74,8 @@ def build(bld):
     bld(features='cxx cshlib pyext',
         source=['noise/_Noise.pyx',
                 'noise/interface.cpp',
-                'noise/Simplex.cpp'],
+                'noise/Simplex.cpp',
+                'noise/Voronoi.cpp'],
         use=common_libraries,
         target='_Noise')
 

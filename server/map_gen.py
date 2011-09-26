@@ -538,3 +538,67 @@ def ore1(tm):
 
     #print 'ore done'
     #print 'took %0.2f seconds' % (time.time() - _n)
+
+def castle_column1(tm, x,y,z,height,tile=10):
+    for _z in range(z, z+height):
+        tm.set(x,y,_z, tile)
+
+def castle_wall1(tm, _x, _y, _z, dx,dy,dz, length, height, tile=10):
+    for l in range(0,length):
+        for h in range(0,height):
+            tm.set(_x,_y,_z+h, tile)
+        if l % 2 == 0:
+            tm.set(_x,_y,_z+height, tile)
+        _x+=dx
+        _y+=dy
+        _z+=dz
+
+def castle_tower1(tm, _x,_y,_z, height, wall_length, tile=10):
+    #wall 1
+    dx,dy,dz = 1,0,0
+    x,y,z = _x,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile)
+    #wall 3
+    dx,dy,dz = 0,1,0
+    x,y,z = _x,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile)
+    #wall 2
+    dx,dy,dz = 0,-1,0
+    x,y,z = _x+wall_length-1,_y+wall_length-1,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile)
+    #wall 4
+    dx,dy,dz = -1,0,0
+    x,y,z = _x+wall_length-1,_y+wall_length-1,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile)
+
+def castle_tower2(tm, _x,_y,_z, height=10, wall_length=3, tile=10):
+    #wall 1
+    dx,dy,dz = 1,0,0
+    x,y,z = _x+2,_y,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile=tile)
+    #wall 3
+    dx,dy,dz = 0,1,0
+    x,y,z = _x,_y+2,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile=tile)
+    #wall 2
+    dx,dy,dz = 0,1,0
+    x,y,z = _x+3+wall_length,_y+2,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile=tile)
+    #wall 4
+    dx,dy,dz = 1,0,0
+    x,y,z = _x+2,_y+3+wall_length,_z
+    castle_wall1(tm, x,y,z, dx,dy,dz, wall_length, height, tile=tile)
+
+    x,y,z = _x+1,_y+1,_z
+    castle_column1(tm, x,y,z,height, tile=tile)
+    x,y,z = _x+2+wall_length,_y+1,_z
+    castle_column1(tm, x,y,z,height, tile=tile)
+    x,y,z = _x+1,_y+2+wall_length,_z
+    castle_column1(tm, x,y,z,height, tile=tile)
+    x,y,z = _x+2+wall_length,_y+2+wall_length,_z
+    castle_column1(tm, x,y,z,height, tile=tile)
+
+def ground_plane(tm, xsize=64, ysize=64, tile=100):
+    for x in range(0,xsize):
+        for y in range(0,ysize):
+            tm.set(x,y,0,tile)
