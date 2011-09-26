@@ -4,9 +4,7 @@
 // see LICENSE.txt for details
 // $Id$
 
-//#include "Python.h"
 #include <math.h>
-//#include <stdio.h>
 #include "perlin.h"
 
 #ifdef _MSC_VER
@@ -39,19 +37,8 @@ pnoise1(float x, const int repeat, const int base)
     return lerp(fx, grad1(PERM[i], x), grad1(PERM[ii], x - 1)) * 0.4f;
 }
 
-//static PyObject *
-//py_pnoise1(PyObject *self, PyObject *args, PyObject *kwargs)
-
 float perlin1(float x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base)
 {
-    //float x;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //int repeat = 1024; // arbitrary
-    //int base = 0;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return pnoise1(x, repeat, base);
@@ -67,9 +54,8 @@ float perlin1(float x, int octaves, float persistence, float frequency, float am
             amplitude *= persistence;
         }
         return (total / max);
-    } else {    // octaves <1, invalid
-        return 0.0f;
     }
+    return 0.0f;
 }
 
 float inline
@@ -110,15 +96,6 @@ pnoise2(float x, float y, const float repeatx, const float repeaty, const int ba
 
 float perlin2(float x, float y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
 {
-    //float x, y;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //float repeatx = 1024; // arbitrary
-    //float repeaty = 1024; // arbitrary
-    //int base = 0;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return pnoise2(x,y, repeatx, repeaty, base);
@@ -134,9 +111,8 @@ float perlin2(float x, float y, int octaves, float persistence, float frequency,
             amplitude *= persistence;
         }
         return (total / max);
-    } else {
-        return 0.0f;
     }
+    return 0.0f;
 }
 
 float inline
@@ -185,16 +161,6 @@ pnoise3(float x, float y, float z, const int repeatx, const int repeaty, const i
 
 float perlin3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
 {
-    //float x, y, z;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //int repeatx = 1024; // arbitrary
-    //int repeaty = 1024; // arbitrary
-    //int repeatz = 1024; // arbitrary
-    //int base = 0;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return  pnoise3(x, y, z, repeatx, repeaty, repeatz, base);
@@ -211,39 +177,6 @@ float perlin3(float x, float y, float z, int octaves, float persistence, float f
             amplitude *= persistence;
         }
         return (total / max);
-    } else {
-        return 0.0f;
     }
+    return 0.0f;
 }
-
-//static PyMethodDef perlin_functions[] = {
-    //{"pnoise1", (PyCFunction) py_pnoise1, METH_VARARGS | METH_KEYWORDS, 
-        //"pnoise1(x, octaves=1, persistence=0.5, repeat=1024, base=0.0)\n\n"
-        //"1 dimensional perlin improved noise function (see pnoise3 for more info)"},
-    //{"pnoise2", (PyCFunction) py_pnoise2, METH_VARARGS | METH_KEYWORDS, 
-        //"pnoise2(x, y, octaves=1, persistence=0.5, repeatx=1024, repeaty=1024, base=0.0)\n\n"
-        //"2 dimensional perlin improved noise function (see pnoise3 for more info)"},
-    //{"pnoise3", (PyCFunction) py_pnoise3, METH_VARARGS | METH_KEYWORDS, 
-        //"pnoise3(x, y, z, octaves=1, persistence=0.5, "
-            //"repeatx=1024, repeaty=1024, repeatz=1024, base=0.0)\n\n"
-        //"return perlin \"improved\" noise value for specified coordinate\n\n"
-        //"octaves -- specifies the number of passes for generating fBm noise,\n"
-        //"defaults to 1 (simple noise).\n\n"
-        //"persistence -- specifies the amplitude of each successive octave relative\n"
-        //"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-        //"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
-        //"repeatx, repeaty, repeatz -- specifies the interval along each axis when \n"
-        //"the noise values repeat. This can be used as the tile size for creating \n"
-        //"tileable textures\n\n"
-        //"base -- specifies a fixed offset for the input coordinates. Useful for\n"
-        //"generating different noise textures with the same repeat interval"},
-    //{NULL}
-//};
-
-//void
-//init_perlin(void)
-//{
-    //PyObject *m;
-    //m = Py_InitModule3("_perlin", perlin_functions, 
-        //"Native-code tileable Perlin \"improved\" noise functions");
-//}

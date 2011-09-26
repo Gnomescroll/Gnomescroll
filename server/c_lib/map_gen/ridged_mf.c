@@ -10,14 +10,6 @@
 
 float rmf_perlin1(float x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base)
 {
-    //float x;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //int repeat = 1024; // arbitrary
-    //int base = 0;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return 1.0f - fabs(pnoise1(x, repeat, base));
@@ -39,15 +31,6 @@ float rmf_perlin1(float x, int octaves, float persistence, float frequency, floa
 
 float rmf_perlin2(float x, float y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
 {
-    //float x, y;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //float repeatx = 1024; // arbitrary
-    //float repeaty = 1024; // arbitrary
-    //int base = 0;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return 1.0f - fabs(pnoise2(x,y, repeatx, repeaty, base));
@@ -69,16 +52,6 @@ float rmf_perlin2(float x, float y, int octaves, float persistence, float freque
 
 float rmf_perlin3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
 {
-    //float x, y, z;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //int repeatx = 1024; // arbitrary
-    //int repeaty = 1024; // arbitrary
-    //int repeatz = 1024; // arbitrary
-    //int base = 0;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return 1.0f - fabs(pnoise3(x, y, z, repeatx, repeaty, repeatz, base));
@@ -102,12 +75,6 @@ float rmf_perlin3(float x, float y, float z, int octaves, float persistence, flo
 
 float rmf_simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude)
 {
-    //float x, y;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return 1.0f - fabs(snoise2(x,y));
@@ -129,12 +96,6 @@ float rmf_simplex2(float x, float y, int octaves, float persistence, float frequ
 
 float rmf_simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude)
 {
-    //float x, y, z;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return 1.0f - fabs(snoise3(x,y,z));

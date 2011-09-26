@@ -2,7 +2,6 @@
 // see LICENSE.txt for details
 // $Id$
 
-//#include "Python.h"
 #include <math.h>
 #include "_noise.h"
 
@@ -50,18 +49,10 @@ snoise2(float x, float y)
     return (noise[0] + noise[1] + noise[2]) * 70.0f;
 }
 
-//static PyObject *
-//py_snoise2(PyObject *self, PyObject *args, PyObject *kwargs)
 //float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
 float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude)
 // snoise* methods do not use repeat intervals or base. unknown if this is an algorithmic constraint, or lack of implementation
 {
-    //float x, y;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return snoise2(x,y);
@@ -77,9 +68,8 @@ float simplex2(float x, float y, int octaves, float persistence, float frequency
             amplitude *= persistence;
         }
         return (total/max); // why max
-    } else {
-        return 0.0f;
     }
+    return 0.0f;
 }
 
 #define dot3(v1, v2) ((v1)[0]*(v2)[0] + (v1)[1]*(v2)[1] + (v1)[2]*(v2)[2])
@@ -154,19 +144,10 @@ snoise3(float x, float y, float z)
     return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
 }
 
-//static PyObject *
-//py_snoise3(PyObject *self, PyObject *args, PyObject *kwargs)
-
 //float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
 float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude)
 // snoise* methods do not use repeat intervals or base. unknown if this is an algorithmic constraint, or lack of implementation
 {
-    //float x, y, z;
-    //int octaves = 1;
-    //float persistence = 0.5f;
-    //float freq = 1.0f;
-    //float amp = 1.0f;
-
     if (octaves == 1) {
         // Single octave, return simple noise
         return snoise3(x,y,z);
@@ -183,9 +164,8 @@ float simplex3(float x, float y, float z, int octaves, float persistence, float 
             amplitude *= persistence;
         }
         return (total/max);
-    } else {
-        return 0.0f;
     }
+    return 0.0f;
 }
 
 #define F4 0.30901699437494745f # (sqrt(5.0) - 1.0) / 4.0
@@ -202,29 +182,3 @@ noise4(float x, float y, float z, float w)
 
     float t = (i + j + K + m) * G4;
 */
-
-//static PyMethodDef simplex_functions[] = {
-    //{"snoise2", (PyCFunction) py_snoise2, METH_VARARGS | METH_KEYWORDS, 
-        //"snoise2(x, y, octaves=1, persistence=0.5) return simplex noise value for specified "
-        //"coordinate.\n\n"
-        //"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
-        //"persistence -- specifies the amplitude of each successive octave relative\n"
-        //"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-        //"is halved). Note the amplitude of the first pass is always 1.0."},
-    //{"snoise3", (PyCFunction) py_snoise3, METH_VARARGS | METH_KEYWORDS, 
-        //"snoise3(x, y, z, octaves=1, persistence=0.5) return simplex noise value for "
-        //"specified coordinate\n\n"
-        //"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
-        //"persistence -- specifies the amplitude of each successive octave relative\n"
-        //"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-        //"is halved). Note the amplitude of the first pass is always 1.0."},
-    //{NULL}
-//};
-
-//void
-//init_simplex(void)
-//{
-    //PyObject *m;
-    //m = Py_InitModule3("_simplex", simplex_functions, 
-        //"Native-code simplex noise functions");
-//}
