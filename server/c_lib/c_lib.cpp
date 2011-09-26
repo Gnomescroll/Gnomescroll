@@ -21,9 +21,10 @@
 
     #include "./agent/agent_include.h"
 
-    #include "./map_gen/voronoi.cpp"
-    #include "./map_gen/map.cpp"
-
+    //#include "./map_gen/voronoi.cpp"
+    //#include "./map_gen/map2.cpp"
+    #include "./map_gen/noise.c"
+    
     #ifdef DC_CLIENT
         #include "./texture_loader.c"
     #endif

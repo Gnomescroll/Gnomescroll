@@ -97,7 +97,7 @@ void process_points() {
       process_event();
 
    finish_edges(); // Clean up dangling edges.
-   print_output(); // Output the voronoi diagram.
+   //print_output(); // Output the voronoi diagram.
 
 }
 /* END STEVE */
@@ -305,13 +305,17 @@ void finish_edges()
 void print_output()
 {
    // Bounding box coordinates.
-   cout << X0 << " "<< X1 << " " << Y0 << " " << Y1 << endl;
+   //cout << "Bounding box:" << endl;
+   //cout << X0 << " "<< X1 << " " << Y0 << " " << Y1 << endl;
+   cout << "b=[" << X0 << ", " << X1 << ", " << Y0 << ", " << Y1 << "]" << endl;
+   cout << "v=[" << endl;
 
    // Each output segment in four-column format.
    vector<seg*>::iterator i;
    for (i = output.begin(); i != output.end(); i++) {
       point p0 = (*i)->start;
       point p1 = (*i)->end;
-      cout << p0.x << " " << p0.y << " " << p1.x << " " << p1.y << endl;
+      cout << "[" << p0.x << ", " << p0.y << ", " << p1.x << ", " << p1.y << "]," << endl;
    }
+   cout << "]" << endl;
 }

@@ -28,17 +28,21 @@ inline int randz() {
 
 // returns random double in range [0,1]
 inline double randd() {
-    return ((double)rand()/(double)RAND_MAX);
+    double d = ((double)rand()/(double)RAND_MAX);
+    return d;
 }
 
 inline double randdx() {
-    return randd() * (double)xmax;
+    double d = randd() * xmax;
+    return d;
 }
 inline double randdy() {
-    return randd() * (double)ymax;
+    double d = randd() * ymax;
+    return d;
 }
 inline double randdz() {
-    return randd() * (double)zmax;
+    double d = randd() * zmax;
+    return d;
 }
 
 
@@ -68,6 +72,7 @@ void init_v_points() {
         p.x = randdx();
         p.y = randdy();
         v_points[i]=p;
+        //printf("%Lf %Lf\n", p.x, p.y);
     }
 }
 
@@ -79,12 +84,17 @@ void init_v_points() {
 
 //double Voronoi::GetValue(x,y,z)  -- can i get the graph from this module?
 
+// need to be able to extract region given a point
+
+// then can apply Lloyd's and do all the map stuff
+
 void load_v_points() {
     load_points(v_points, V_SAMPLES);
 }
 
 
 void start_voronoi() {
+    init_v_points();
     load_v_points();
     process_points();
 }
