@@ -59,13 +59,15 @@ float trilinearInterpolate (float p[2][2][2], float x, float y, float z) {
 
 void _interp(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
 
-    int nx = (x / x_interval) + 4,
-        ny = (y / y_interval) + 4,
-        nz = (z / z_interval) + 4;
+    const int margin = 2;
 
-    float fnx = (float)nx + 2.0f,
-           fny = (float)ny + 2.0f,
-           fnz = (float)nz + 2.0f;
+    int nx = (x / x_interval) + (margin*2),
+        ny = (y / y_interval) + (margin*2),
+        nz = (z / z_interval) + (margin*2);
+
+    float fnx = (float)(nx + margin),
+           fny = (float)(ny + margin),
+           fnz = (float)(nz + margin);
 
     float points[nx][ny][nz];
 
@@ -96,17 +98,17 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     for (i=0; i<x; i++) {
         mx = i % x_interval;
         px = mx / fx_interval;
-        sx = (i / x_interval) + 2; // sample point index in anchor pts array
+        sx = (i / x_interval) + margin; // sample point index in anchor pts array
         
         for (j=0; j<y; j++) {
             my = j % y_interval;
             py = my / fy_interval;
-            sy = (j / y_interval) + 2;
+            sy = (j / y_interval) + margin;
 
             for (k=0; k<z; k++) {
                 mz = k % z_interval;
                 pz = mz / fz_interval;
-                sz = (k / z_interval) + 2;
+                sz = (k / z_interval) + margin;
 
                 // collect local samples
                 for (ii=-1; ii < 3; ii++) {
@@ -124,154 +126,65 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     }
 
     //// recalculate the anchor points from the interpolated points
-    // use linear interpolation
-
-    float resamples3[2][2][2];
-    float resamples2[2][2];
-    float resamples1[2];
+    // use linear interpolation for this
+    float resamples[2][2][2];
     int ix,iy,iz;
     int index;
-    int tx=0,ty=0,tz=0;
     int iix,jjy,kkz;
-    for (i=2; i < nx-2; i++) {
-        ix = (i-2) * x_interval;
-        if (!ix) continue;
-        for (j=2; j < ny-2; j++) {
-            iy = (j-2) * y_interval;
+    for (i=margin; i < nx-margin; i++) {
+        ix = (i-margin) * x_interval;
+        if (!ix) continue;          // ix=0 is the same as final's x=0. It cannot interpolate because interpolated values are not calculated for n<0. This applies to x and y.
+                                      // one solution is to generate the interpolate box one level extra backward in each dimension. or, calculate one level forward, but shift the anchor point ix=0 back 1.
+
+        for (j=margin; j < ny-margin; j++) {
+            iy = (j-margin) * y_interval;
             if (!iy) continue;
 
-            for (k=2; k < nz-2; k++) {
-                iz = (k-2) * z_interval;
+            for (k=margin; k < nz-margin; k++) {
+                iz = (k-margin) * z_interval;
                 if (!iz) continue;
-                
 
-                //tx = (i==2 || i == nx-2-1);
-                //ty = (j==2 || j == ny-2-1);
-                //tz = (k==2 || k == nz-2-1);
-
-                //if (tx && ty && tz) {    // corner
-                //printf("corner\n");
-                    //continue;
-                //}
-
-                //if (tx && ty) { // edge z
-                    //for (kk=0; kk < 2; kk++) {
-                        //kkz = (kk == 0) ? -1 : kk;
-                        //index = x*y*(iz + kkz);
-                        //resamples1[kk] = final[index];
-                    //}
-                    //pt = linearInterpolate(resamples1, 0.5f);
-
-                //} else if (tx && tz) {  // edge y
-                    //for (jj=0; jj < 2; jj++) {
-                        //jjy = (jj == 0) ? -1 : jj;
-                        //index = x*(iy + jjy);
-                        //resamples1[jj] = final[index];
-                    //}
-                    //pt = linearInterpolate(resamples1, 0.5f);
-                    
-                //} else if (ty && tz) {  // edge x
-                    //for (ii=0; ii < 2; ii++) {
-                        //iix = (ii == 0) ? -1 : ii;
-                        //index = ix + iix;
-                        //resamples1[ii] = final[index];
-                    //}
-                    //pt = linearInterpolate(resamples1, 0.5f);
-
-                //} else if (tx) {    // side yz
-                    //continue;
-                    //for (jj=0; jj < 2; jj++) {
-                        //jjy = (jj == 0) ? -1 : jj;
-                        //for (kk=0; kk < 2; kk++) {
-                            //kkz = (kk == 0) ? -1 : kk;
-                            //index = x*(iy + jjy) + x*y*(iz + kkz);
-                            //if (index < 0) printf("INDEX BELOW 0!!\n");
-                            //if (index >= x*y*z) printf("INDEX ABOVE MAX RANGE\n");
-                            //resamples2[jj][kk] = final[index];
-                        //}
-                    //}
-                    //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
-                    
-                //} else if (ty) {    // size xz
-                    //continue;
-
-                    //for (ii=0; ii < 2; ii++) {
-                        //iix = (ii == 0) ? -1 : ii;
-                        //for (kk=0; kk < 2; kk++) {
-                            //kkz = (kk == 0) ? -1 : kk;
-                            //index = ix + iix + x*y*(iz + kkz);
-                            //if (index < 0) printf("INDEX BELOW 0!!\n");
-                            //if (index >= x*y*z) printf("INDEX ABOVE MAX RANGE\n");
-                            //resamples2[ii][kk] = final[index];
-                        //}
-                    //}
-                    //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
-                    
-                //} else if (tz) {    // side xy
-                    //continue;
-                    //for (ii=0; ii < 2; ii++) {
-                        //iix = (ii == 0) ? -1 : ii;
-                        //for (jj=0; jj < 2; jj++) {
-                            //jjy = (jj == 0) ? -1 : jj;
-                            //index = ix + iix + x*(iy + jjy);
-                            //if (index < 0) printf("INDEX BELOW 0!!\n");
-                            //if (index >= x*y*z) printf("INDEX ABOVE MAX RANGE\n");
-                            //resamples2[ii][jj] = final[index];
-                        //}
-                    //}
-                    //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
-                    
-                //} else {
-
-                    for (ii=0; ii < 2; ii++) {
-                        iix = (ii == 0) ? -1 : ii;
-                        for (jj=0; jj < 2; jj++) {
-                            jjy = (jj == 0) ? -1 : jj;
-                            for (kk=0; kk < 2; kk++) {
-                                kkz = (kk == 0) ? -1 : kk;
-                                index = ix + iix + x*(iy + jjy) + x*y*(iz + kkz);
-                                if (index < 0) printf("%d :: %d %d %d \n", index, ix, iy, iz);
-                                if (index > x*y*z) printf("INDEX ABOVE MAX!!\n");
-                                resamples3[ii][jj][kk] = final[index];
-                                //printf("%f %d\n", final[index], index);
-                            }
+                // collect samples from final array's interpolated values.
+                // NOTE n_interval=1 appears to work but may be faulty
+                for (ii=0; ii < 2; ii++) {
+                    iix = (ii == 0) ? -1 : ii;
+                    for (jj=0; jj < 2; jj++) {
+                        jjy = (jj == 0) ? -1 : jj;
+                        for (kk=0; kk < 2; kk++) {
+                            kkz = (kk == 0) ? -1 : kk;
+                            index = ix + iix + x*(iy + jjy) + x*y*(iz + kkz);
+                            resamples[ii][jj][kk] = final[index];
                         }
                     }
+                }
 
-                    // update all the samplers to use the new iteration (above)
-                    // just make it a function
-
-                    pt = trilinearInterpolate(resamples3, 0.5f, 0.5f, 0.5f);
-                //}
-
-                //if (pt > 0.0f) {printf("%f\n", pt);}
-                //printf("%f\n", pt);
+                pt = trilinearInterpolate(resamples, 0.5f, 0.5f, 0.5f);
                 points[i][j][k] = pt;
             }
         }
     }
     
-    // merge sample points with interpolated
-    for (i=2; i < nx-2; i++) {
-        ii = (i-2) * x_interval;
+    // merge (recalculated, linearly interpolated) anchor points with (cubic) interpolated
+    for (i=margin; i < nx-margin; i++) {
+        ii = (i-margin) * x_interval;
 
-        for (j=2; j < ny-2; j++) {
-            jj = (j-2) * y_interval;
+        for (j=margin; j < ny-margin; j++) {
+            jj = (j-margin) * y_interval;
 
-            for (k=2; k < nz-2; k++) {
-                kk = (k-2) * z_interval;
+            for (k=margin; k < nz-margin; k++) {
+                kk = (k-margin) * z_interval;
 
                 final[ii + x*jj + x*y*kk] = points[i][j][k];
             }
         }
     }
 
-        
 }
 
 
-float final_interp[xmax*ymax*zmax];
 
+// wrapper
+float final_interp[xmax*ymax*zmax];
 void interp( int x, int y, int z, int x_interval, int y_interval, int z_interval) {
     if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");

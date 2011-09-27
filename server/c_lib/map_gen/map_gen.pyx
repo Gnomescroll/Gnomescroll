@@ -89,6 +89,5 @@ class RMF:
 
 
 def interpolate(x,y,z, ix,iy,iz):
-    print "CYTHON INTERPsssaaaaaassaassaaaaaasscsssassrrdfsteess"
     interp(x,y,z, ix,iy,iz)
     
