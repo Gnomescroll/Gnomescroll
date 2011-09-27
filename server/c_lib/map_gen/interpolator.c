@@ -135,21 +135,23 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     int iix,jjy,kkz;
     for (i=2; i < nx-2; i++) {
         ix = (i-2) * x_interval;
-
+        if (!ix) continue;
         for (j=2; j < ny-2; j++) {
             iy = (j-2) * y_interval;
-            
+            if (!iy) continue;
+
             for (k=2; k < nz-2; k++) {
                 iz = (k-2) * z_interval;
+                if (!iz) continue;
                 
 
-                tx = (i==2 || i == nx-2-1);
-                ty = (j==2 || j == ny-2-1);
-                tz = (k==2 || k == nz-2-1);
+                //tx = (i==2 || i == nx-2-1);
+                //ty = (j==2 || j == ny-2-1);
+                //tz = (k==2 || k == nz-2-1);
 
-                if (tx && ty && tz) {    // corner
-                printf("corner\n");
-                    continue;
+                //if (tx && ty && tz) {    // corner
+                //printf("corner\n");
+                    //continue;
                 //}
 
                 //if (tx && ty) { // edge z
@@ -219,7 +221,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                     //}
                     //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
                     
-                } else {
+                //} else {
 
                     for (ii=0; ii < 2; ii++) {
                         iix = (ii == 0) ? -1 : ii;
@@ -228,6 +230,8 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                             for (kk=0; kk < 2; kk++) {
                                 kkz = (kk == 0) ? -1 : kk;
                                 index = ix + iix + x*(iy + jjy) + x*y*(iz + kkz);
+                                if (index < 0) printf("%d :: %d %d %d \n", index, ix, iy, iz);
+                                if (index > x*y*z) printf("INDEX ABOVE MAX!!\n");
                                 resamples3[ii][jj][kk] = final[index];
                                 //printf("%f %d\n", final[index], index);
                             }
@@ -238,7 +242,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                     // just make it a function
 
                     pt = trilinearInterpolate(resamples3, 0.5f, 0.5f, 0.5f);
-                }
+                //}
 
                 //if (pt > 0.0f) {printf("%f\n", pt);}
                 //printf("%f\n", pt);
