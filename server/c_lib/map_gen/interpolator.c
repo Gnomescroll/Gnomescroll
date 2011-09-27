@@ -63,9 +63,9 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
         ny = (y / y_interval) + 4,
         nz = (z / z_interval) + 4;
 
-    float fnx = (float)nx,
-           fny = (float)ny,
-           fnz = (float)nz;
+    float fnx = (float)nx + 2.0f,
+           fny = (float)ny + 2.0f,
+           fnz = (float)nz + 2.0f;
 
     float points[nx][ny][nz];
 
@@ -79,7 +79,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-                points[i][j][k] = perlin3(i/fnx, j/fny, k/fnz, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 1024, 0);
+                points[i][j][k] = perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 1024, 0);
             }
         }
     }
@@ -148,67 +148,76 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                 tz = (k==2 || k == nz-2-1);
 
                 if (tx && ty && tz) {    // corner
+                printf("corner\n");
                     continue;
-                }
+                //}
 
-                if (tx && ty) { // edge z
-                    for (kk=0; kk < 2; kk++) {
-                        kkz = (kk == 0) ? 0 : kk;
-                        index = x*y*(iz + kkz);
-                        resamples1[kk] = final[index];
-                    }
-                    pt = linearInterpolate(resamples1, 0.5f);
+                //if (tx && ty) { // edge z
+                    //for (kk=0; kk < 2; kk++) {
+                        //kkz = (kk == 0) ? -1 : kk;
+                        //index = x*y*(iz + kkz);
+                        //resamples1[kk] = final[index];
+                    //}
+                    //pt = linearInterpolate(resamples1, 0.5f);
 
-                } else if (tx && tz) {  // edge y
-                    for (jj=0; jj < 2; jj++) {
-                        jjy = (jj == 0) ? 0 : jj;
-                        index = x*(iy + jjy);
-                        resamples1[jj] = final[index];
-                    }
-                    pt = linearInterpolate(resamples1, 0.5f);
+                //} else if (tx && tz) {  // edge y
+                    //for (jj=0; jj < 2; jj++) {
+                        //jjy = (jj == 0) ? -1 : jj;
+                        //index = x*(iy + jjy);
+                        //resamples1[jj] = final[index];
+                    //}
+                    //pt = linearInterpolate(resamples1, 0.5f);
                     
-                } else if (ty && tz) {  // edge x
-                    for (ii=0; ii < 2; ii++) {
-                        iix = (ii == 0) ? 0 : ii;
-                        index = ix + iix;
-                        resamples1[ii] = final[index];
-                    }
-                    pt = linearInterpolate(resamples1, 0.5f);
+                //} else if (ty && tz) {  // edge x
+                    //for (ii=0; ii < 2; ii++) {
+                        //iix = (ii == 0) ? -1 : ii;
+                        //index = ix + iix;
+                        //resamples1[ii] = final[index];
+                    //}
+                    //pt = linearInterpolate(resamples1, 0.5f);
 
-                } else if (tx) {    // side yz
-                    for (jj=0; jj < 2; jj++) {
-                        jjy = (jj == 0) ? 0 : jj;
-                        for (kk=0; kk < 2; kk++) {
-                            kkz = (kk == 0) ? 0 : kk;
-                            index = x*(iy + jjy) + x*y*(iz + kkz);
-                            resamples2[jj][kk] = final[index];
-                        }
-                    }
-                    pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
+                //} else if (tx) {    // side yz
+                    //continue;
+                    //for (jj=0; jj < 2; jj++) {
+                        //jjy = (jj == 0) ? -1 : jj;
+                        //for (kk=0; kk < 2; kk++) {
+                            //kkz = (kk == 0) ? -1 : kk;
+                            //index = x*(iy + jjy) + x*y*(iz + kkz);
+                            //if (index < 0) printf("INDEX BELOW 0!!\n");
+                            //if (index >= x*y*z) printf("INDEX ABOVE MAX RANGE\n");
+                            //resamples2[jj][kk] = final[index];
+                        //}
+                    //}
+                    //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
                     
-                } else if (ty) {    // size xz
+                //} else if (ty) {    // size xz
+                    //continue;
 
-                    for (ii=0; ii < 2; ii++) {
-                        iix = (ii == 0) ? 0 : ii;
-                        for (kk=0; kk < 2; kk++) {
-                            kkz = (kk == 0) ? 0 : kk;
-                            index = ix + iix + x*y*(iz + kkz);
-                            resamples2[ii][kk] = final[index];
-                        }
-                    }
-                    pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
+                    //for (ii=0; ii < 2; ii++) {
+                        //iix = (ii == 0) ? -1 : ii;
+                        //for (kk=0; kk < 2; kk++) {
+                            //kkz = (kk == 0) ? -1 : kk;
+                            //index = ix + iix + x*y*(iz + kkz);
+                            //if (index < 0) printf("INDEX BELOW 0!!\n");
+                            //if (index >= x*y*z) printf("INDEX ABOVE MAX RANGE\n");
+                            //resamples2[ii][kk] = final[index];
+                        //}
+                    //}
+                    //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
                     
-                } else if (tz) {    // side xy
-
-                    for (ii=0; ii < 2; ii++) {
-                        iix = (ii == 0) ? 0 : ii;
-                        for (jj=0; jj < 2; jj++) {
-                            jjy = (jj == 0) ? 0 : jj;
-                            index = ix + iix + x*(iy + jjy);
-                            resamples2[ii][jj] = final[index];
-                        }
-                    }
-                    pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
+                //} else if (tz) {    // side xy
+                    //continue;
+                    //for (ii=0; ii < 2; ii++) {
+                        //iix = (ii == 0) ? -1 : ii;
+                        //for (jj=0; jj < 2; jj++) {
+                            //jjy = (jj == 0) ? -1 : jj;
+                            //index = ix + iix + x*(iy + jjy);
+                            //if (index < 0) printf("INDEX BELOW 0!!\n");
+                            //if (index >= x*y*z) printf("INDEX ABOVE MAX RANGE\n");
+                            //resamples2[ii][jj] = final[index];
+                        //}
+                    //}
+                    //pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
                     
                 } else {
 
