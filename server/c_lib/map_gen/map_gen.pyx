@@ -14,6 +14,9 @@ cdef extern from "./map_gen/noise.c":
 
     void seed_noise(int seed)
 
+    void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval)
+
+
 def set_seed(seed):
     # convert seed to int
     seed_noise(seed)
@@ -83,3 +86,9 @@ class RMF:
         
     def snoise3(self, x,y,z):
         return rmf_simplex3(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude)
+
+
+def interpolate(x,y,z, ix,iy,iz):
+    print "CYTHON INTERPsssssssssscsssssxxxxssrrdfstees"
+    interp(x,y,z, ix,iy,iz)
+    

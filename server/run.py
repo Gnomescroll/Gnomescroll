@@ -41,23 +41,41 @@ import random
 
 import c_lib.map_gen
 c_lib.map_gen.set_seed(666)
-perlin = c_lib.map_gen.Perlin(octaves=6)
-baseline=10
-maxh = 20
-for i in range(128):
-    for j in range(128):
-        h = perlin.noise2((i/128.),(j/128.))
-        h = abs(h)
-        h *= 128
-        h %= maxh
-        h = int(h)
-        #h = -1 if h < 0 else h
-        for z in range(baseline+h):
-           terrain_map.set(i,j,z, 2)
-        if 0<=h<=1:
-            while h >= 0:
-                terrain_map.set(i,j,baseline+h, 3)
-                h -= 1
+
+import time
+_n = time.time()
+#c_lib.map_gen.interpolate(512, 512, 128, 4, 4, 2)
+#print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
+
+c_lib.map_gen.interpolate(128, 128, 128, 4, 4, 2)
+print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n)
+
+#perlin = c_lib.map_gen.Perlin(octaves=6)
+#baseline=10
+#maxh = 20
+#for i in range(128):
+    #for j in range(128):
+        #for k in range(128):
+            #h = perlin.noise3((i/128.),(j/128.), k/128.)
+            #if h > 0:
+                #terrain_map.set(i,j, k, 2)
+                
+            #h = abs(h)
+            #h *= 128
+            #h %= maxh
+            #h = int(h)
+            ##h = -1 if h < 0 else h
+            #for z in range(baseline+h):
+               #terrain_map.set(i,j,z, 2)
+            #if 0<=h<=1:
+                #while h >= 0:
+                    #terrain_map.set(i,j,baseline+h, 3)
+                    #h -= 1
+#for i in range(128):
+    #for j in range(128):
+        #k = terrain_map.get_lowest_open_block(i,j)
+        #k = 127 if k >= 128 else k
+        #terrain_map.set(i,j,k, 3)
 
 #c_lib.map_gen.start()
 
@@ -100,14 +118,14 @@ class Main:
 
             #map_gen.castle_wall1(terrain_map, 15,15,0, dx=1,dy=1,dz=0, length=13, height=20)
             #map_gen.castle_wall1(terrain_map, _x, _y, dx,dy,dz, length, height):
-            map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
-            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
-            map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
-            map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
+            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+            ##map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
+            #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
+            #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
 
-            map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
-            map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
-            map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
+            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
+            #map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
+            #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
 
             #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
 
