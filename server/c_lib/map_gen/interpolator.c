@@ -6,11 +6,18 @@
 /*
  * Interpolation methods borrowed from
  *
+ * http://www.paulinternet.nl/?page=bicubic
+
+ * see also:
  * http://paulbourke.net/miscellaneous/interpolation/index.html
  *
  */
 float cubicInterpolate (float p[4], float x) {
-    return p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0])));
+    return p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0])));  /* Catmull-Rom splines */
+}
+
+float cubicInterpolate_standard (float p[4], float x) {
+    return p[1] + x*(p[2] - p[0] + x*(2.0*(p[0] - p[1]) + p[2] - p[3] + x*(p[1] - p[2] + p[3] - p[0]))); /* cubic (standard) */
 }
 
 float bicubicInterpolate (float p[4][4], float x, float y) {
@@ -29,6 +36,25 @@ float tricubicInterpolate (float p[4][4][4], float x, float y, float z) {
     arr[2] = bicubicInterpolate(p[2], y, z);
     arr[3] = bicubicInterpolate(p[3], y, z);
     return cubicInterpolate(arr, x);
+}
+
+
+float linearInterpolate (float p[2], float x) {
+    return x * (p[1] - p[0]) + p[0];
+}
+
+float bilinearInterpolate (float p[2][2], float x, float y) {
+    float arr[2];
+    arr[0] = linearInterpolate(p[0], y);
+    arr[1] = linearInterpolate(p[1], y);
+    return linearInterpolate(arr, x);
+}
+
+float trilinearInterpolate (float p[2][2][2], float x, float y, float z) {
+    float arr[2];
+    arr[0] = bilinearInterpolate(p[0], y, z);
+    arr[1] = bilinearInterpolate(p[1], y, z);
+    return linearInterpolate(arr, x);
 }
 
 void _interp(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
@@ -53,7 +79,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-                points[i][j][k] = perlin3(i/fnx, j/fny, k/fnz, 6, 0.5, 1.0, 1.0, 1024, 1024, 1024, 0);
+                points[i][j][k] = perlin3(i/fnx, j/fny, k/fnz, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 1024, 0);
             }
         }
     }
@@ -97,6 +123,112 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
         }
     }
 
+    //// recalculate the anchor points from the interpolated points
+    // use linear interpolation
+
+    float resamples3[2][2][2];
+    float resamples2[2][2];
+    float resamples1[2];
+    int ix,iy,iz;
+    int index;
+    int tx,ty,tz;
+    for (i=1; i < nx-1; i++) {
+        ix = i * x_interval;
+
+        for (j=1; j < ny-1; j++) {
+            iy = j * y_interval;
+            
+            for (k=1; k < nz-1; k++) {
+                iz = k * z_interval;
+                
+
+                tx = (i==1 || i == nx-2);
+                ty = (j==1 || j == ny-2);
+                tz = (z==1 || z == nz-2);
+
+                if (tx && ty && tz) {    // corner
+                    continue;
+                }
+
+                if (tx && ty) { // edge z
+                    for (kk=-1; kk < 2; kk+=2) {
+                        index = x*y*(iz + kk);
+                        kk = (kk < 0) ? 0 : kk;
+                        resamples1[kk] = final[index];
+                    }
+                    pt = linearInterpolate(resamples1, 0.5f);
+
+                } else if (tx && tz) {  // edge y
+                    for (jj=-1; jj < 2; jj+=2) {
+                        index = x*(iy + jj);
+                        jj = (jj < 0) ? 0 : jj;
+                        resamples1[jj] = final[index];
+                    }
+                    pt = linearInterpolate(resamples1, 0.5f);
+                    
+                } else if (ty && tz) {  // edge x
+                    for (ii=-1; ii < 2; ii+=2) {
+                        index = ix + ii;
+                        ii = (ii < 0) ? 0 : ii;
+                        resamples1[ii] = final[index];
+                    }
+                    pt = linearInterpolate(resamples1, 0.5f);
+
+                } else if (tx) {    // side yz
+                    for (jj=-1; jj < 2; jj+=2) {
+                        for (kk=-1; kk < 2; kk+=2) {
+                            index = x*(iy + jj) + x*y*(iz + kk);
+                            jj = (jj < 0) ? 0 : jj;
+                            kk = (kk < 0) ? 0 : kk;
+                            resamples2[jj][kk] = final[index];
+                        }
+                    }
+                    pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
+                    
+                } else if (ty) {    // size xz
+                    for (ii=-1; ii < 2; ii+=2) {
+                        for (kk=-1; kk < 2; kk+=2) {
+                            index = ix + ii + x*y*(iz + kk);
+                            ii = (ii < 0) ? 0 : ii;
+                            kk = (kk < 0) ? 0 : kk;
+                            resamples2[ii][kk] = final[index];
+                        }
+                    }
+                    pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
+                    
+                } else if (tz) {    // side xy
+                    for (ii=-1; ii < 2; ii+=2) {
+                        for (jj=-1; jj < 2; jj+=2) {
+                            index = ix + ii + x*(iy + jj);
+                            ii = (ii < 0) ? 0 : ii;
+                            jj = (jj < 0) ? 0 : jj;
+                            resamples2[ii][jj] = final[index];
+                        }
+                    }
+                    pt = bilinearInterpolate(resamples2, 0.5f, 0.5f);
+                    
+                } else {
+
+                    for (ii=-1; ii < 2; ii+=2) {
+                        for (jj=-1; jj < 2; jj+=2) {
+                            for (kk=-1; kk < 2; kk+=2) {
+                                index = ix + ii + x*(iy + jj) + x*y*(iz + kk);
+                                ii = (ii < 0) ? 0 : ii;
+                                jj = (jj < 0) ? 0 : jj;
+                                kk = (kk < 0) ? 0 : kk;
+                                resamples3[ii][jj][kk] = final[index];
+                            }
+                        }
+                    }
+
+                    pt = trilinearInterpolate(resamples3, 0.5f, 0.5f, 0.5f);
+                }
+
+                points[i][j][k] = pt;
+            }
+        }
+    }
+    
     // merge sample points with interpolated
     for (i=1; i < nx-1; i++) {
         ii = (i-1) * x_interval;
@@ -112,29 +244,6 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
         }
     }
 
-    //// recalculate the anchor points from the interpolated points
-    //for (i=1; i < nx-1; i++) {
-        //ii = (i-1) * x_interval;
-
-        //for (j=1; j < ny-1; j++) {
-            //jj = (j-1) * y_interval;
-
-            //for (k=1; k < nz-1; k++) {
-                //kk = (k-1) * z_interval;
-
-                //for (ii=0; ii < 4; ii++) {
-                    //for (jj=0; jj < 4; jj++) {
-                        //for (kk=0; kk < 4; kk++) {
-                            //samples[ii][jj][kk] = final[ii + x*jj + x*y*kk];
-                        //}
-                    //}
-                //}
-                
-                ////final[ii + x*jj + x*y*kk] = points[i][j][k];
-                //final[ii + x*jj + x*y*kk] = tricubicInterpolate(samples, points[i][j][k];
-            //}
-        //}
-    //}
         
 }
 
