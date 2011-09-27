@@ -112,7 +112,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                 for (ii=0; ii < 4; ii++) {
                     for (jj=0; jj < 4; jj++) {
                         for (kk=0; kk < 4; kk++) {
-                            samples[ii][jj][kk] = points[ii+sx-1][jj+sy-1][kk+sz-1];
+                            samples[ii][jj][kk] = points[ii+sx][jj+sy][kk+sz];    // bug
                         }
                     }
                 }
@@ -131,7 +131,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     float resamples1[2];
     int ix,iy,iz;
     int index;
-    int tx,ty,tz;
+    int tx=0,ty=0,tz=0;
     for (i=1; i < nx-1; i++) {
         ix = i * x_interval;
 
@@ -142,9 +142,10 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                 iz = k * z_interval;
                 
 
-                tx = (i==1 || i == nx-2);
-                ty = (j==1 || j == ny-2);
-                tz = (z==1 || z == nz-2);
+                //tx = (i==1 || i == nx-2);
+                //ty = (j==1 || j == ny-2);
+                //tz = (k==1 || k == nz-2);
+                //tx=ty=tz=0;
 
                 if (tx && ty && tz) {    // corner
                     continue;
