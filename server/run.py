@@ -41,12 +41,18 @@ import random
 
 import c_lib.noise
 import c_lib.map_gen
-c_lib.map_gen.set_seed(666)
+#c_lib.map_gen.set_seed(666)
 
 import time
 _n = time.time()
+c_lib.map_gen.conf.seed(666)\
+                  .size(128,128,128)\
+                  .gradient(z0=-0.5, z1=0.5)\
+                  .interpolate(4,4,2)\
+                  .p3()\
+                  .start()
 #c_lib.map_gen.interpolate(512, 512, 128, 4, 4, 2)
-#print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
+print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
 
 #c_lib.map_gen.interpolate(128, 128, 128, 4, 4, 2)
 #c_lib.noise.gradient(128,128,128)

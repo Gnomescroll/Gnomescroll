@@ -1,9 +1,9 @@
 cdef extern from "./map_gen/noise.c":
-    void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval)
+    #void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval)
 
-    void apply_interpolate1(int x, int ix)
-    void apply_interpolate2(int x, int y, int ix, int iy)
-    void apply_interpolate3(int x, int y, int z, int ix, int iy, int iz)
+    void apply_interp1(int x, int ix)
+    void apply_interp2(int x, int y, int ix, int iy)
+    void apply_interp3(int x, int y, int z, int ix, int iy, int iz)
 
     void apply_grad1(int x,               float x0, float x1)
     void apply_grad2(int x, int y,        float x0, float x1, float y0, float y1)
@@ -11,6 +11,7 @@ cdef extern from "./map_gen/noise.c":
                                                               float z0, float z1)
 
     void clear_noisemap()
+    void set_terrain_noise(int x, int y, int z)
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed
 
@@ -130,12 +131,16 @@ class Config:
         interp_args = [self.iz, self.iy, self.iz][:self.dim]
         grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1][:self.dim*2]
 
+        self.noise.fill()
+
         if self.interp:
             interpolates[self.dim](*(size_args+interp_args))
         else:
             getattr(self.noise, noise_method)(*size_args)
         if self.grad:
             gradients[self.dim](*(size_args+grad_args))
+
+        set_terrain_noise(self.x, self.y, self.z)
         
 conf = Config()
 
@@ -143,12 +148,10 @@ def reset():
     clear_noisemap()
 
 def apply_gradient1(x, x0, x1):
-    pass
-    #apply_grad1(x, x0,x1)
+    apply_grad1(x, x0,x1)
 
 def apply_gradient2(x,y,z, x0, x1, y0, y1):
-    #apply_grad2(x,y, x0, x1, y0, y1)
-    pass
+    apply_grad2(x,y, x0, x1, y0, y1)
 
 def apply_gradient3(x,y,z, x0, x1, y0, y1, z0, z1):
     apply_grad3(x,y,z,  x0, x1, y0, y1, z0, z1)
@@ -161,16 +164,13 @@ gradients = {
 }
 
 def apply_interpolate1(x, ix):
-    pass
-    #interpolate1(x, ix)
+    apply_interp1(x, ix)
     
 def apply_interpolate2(x,y, ix,iy):
-    pass
-    #interpolate2(x,y, ix,iy)
+    apply_interp2(x,y, ix,iy)
     
 def apply_interpolate3(x,y,z, ix,iy,iz):
-    pass
-    #interpolate3(x,y,z, ix,iy,iz)
+    apply_interp3(x,y,z, ix,iy,iz)
 
 interpolates = {
     1: apply_interpolate1,

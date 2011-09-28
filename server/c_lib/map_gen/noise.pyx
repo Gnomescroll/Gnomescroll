@@ -32,12 +32,8 @@ def set_seed(seed):
     seed_noise(seed)
 
 class Perlin:
-    def __init__(self, xint, yint, zint,
-                       octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0,
+    def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0,
                        repeatx=1024, repeaty=1024, repeatz=1024, base=0):
-        self.xint = xint
-        self.yint = yint
-        self.zint = zint
 
         self.octaves = octaves
         self.persistence = persistence
@@ -49,25 +45,29 @@ class Perlin:
         self.repeatz = repeatz
         self.base = base
 
-        self.fill = False
+        self.filled = False
+
+    def fill(self):
+        self.filled = True
+        return self
 
     def noise1(self, x):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             perlin1_fill(x, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeat, self.base)
         else:
             return perlin1(x, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeat, self.base)
 
     def noise2(self, x,y):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             perlin2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
         else:
             return perlin2(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
 
     def noise3(self, x,y,z):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             perlin3_fill(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.repeatz, self.base)
         else:
             return perlin3(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.repeatz, self.base)
@@ -75,44 +75,37 @@ class Perlin:
 
 class Simplex:
 
-    def __init__(self, xint, yint, zint,
-                       octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0):
-        self.xint = xint
-        self.yint = yint
-        self.zint = zint
-
+    def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0):
         self.octaves = octaves
         self.persistence = persistence
         self.frequency = frequency
         self.amplitude = amplitude
 
-        self.fill = False
+        self.filled = False
+
+    def fill(self):
+        self.filled = True
+        return self
 
     def noise2(self, x,y):
-        if self.fill:
-            pass # fill
-            self.fill = False
+        if self.filled:
+            self.filled = False
             simplex2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude)
         else:
             return simplex2(x, y, self.octaves, self.persistence, self.frequency, self.amplitude)
         
     def noise3(self, x,y,z):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             simplex3_fill(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude)
         else:
             return simplex3(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude)
 
         
 class RMF:
-    def __init__(self, xint, yint, zint,
-                       octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0,
+    def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0,
                        repeatx=1024, repeaty=1024, repeatz=1024, base=0):
 
-        self.xint = xint
-        self.yint = yint
-        self.zint = zint
-                       
         self.octaves = octaves
         self.persistence = persistence
         self.frequency = frequency
@@ -123,43 +116,43 @@ class RMF:
         self.repeatz = repeatz
         self.base = base
 
-        self.fill = False
+        self.filled = False
 
     def fill(self):
-        self.fill = True
+        self.filled = True
         return self
 
     def pnoise1(self, x):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             rmf_perlin1_fill(x, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeat, self.base)
         else:
             return rmf_perlin1(x, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeat, self.base)
         
     def pnoise2(self, x,y):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             rmf_perlin2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
         else:
             return rmf_perlin2(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
 
     def pnoise3(self, x,y,z):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             rmf_perlin3_fill(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.repeatz, self.base)
         else:
             return rmf_perlin3(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.repeatz, self.base)
 
     def snoise2(self, x,y):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             rmf_simplex2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude)
         else:
             return rmf_simplex2(x, y, self.octaves, self.persistence, self.frequency, self.amplitude)
         
     def snoise3(self, x,y,z):
-        if self.fill:
-            self.fill = False
+        if self.filled:
+            self.filled = False
             rmf_simplex3_fill(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude)
         else:
             return rmf_simplex3(x, y, z, self.octaves, self.persistence, self.frequency, self.amplitude)

@@ -148,7 +148,7 @@ void rmf_perlin3_fill(int x, int y, int z, int octaves, float persistence, float
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                h = rmf_perlin3((i+1)/fz,(j+1)/fz,(k+1)/fz, octaves, persistence, frequency, amplitude, repeatx, repeaty, repeatz, base);
+                h = rmf_perlin3((i+1)/fx,(j+1)/fy,(k+1)/fz, octaves, persistence, frequency, amplitude, repeatx, repeaty, repeatz, base);
                 noisemap[i + x*j + x*y*k] = h;
             }
         }
