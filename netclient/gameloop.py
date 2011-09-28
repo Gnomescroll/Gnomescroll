@@ -205,7 +205,8 @@ class App(object):
                 _i+=1
                 #neutron_fountain()
                 if _i % 30 == 0:
-                    c_lib.c_lib_objects._generate_circuit_tree(0,0)
+                    pass
+                    #c_lib.c_lib_objects._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
                     #c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
                     pass
@@ -294,7 +295,7 @@ class App(object):
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
             c_lib.terrain_map.draw_terrain()
-            if True:
+            if False:
                 c_lib.c_lib_objects._draw_circuit_tree()
             P.event("Draw World")
             #import pdb; pdb.set_trace()

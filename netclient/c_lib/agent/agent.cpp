@@ -42,7 +42,7 @@ void Agent_state::server_tick() {
 	//printf("tick not implemented\n");
 	
 	tick_n++;
-	if(tick_n %30 ==0) {
+	if(tick_n % 30 ==0) {
 		Agent_state_message A;
 	/*
         int id;

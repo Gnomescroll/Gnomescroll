@@ -20,10 +20,6 @@ void _NetServerInit() {
 
 }
 
-void _NetServerStateTick() {
-
-}
-
 long t1 = 0;
 long t2 = 0;
 
@@ -34,13 +30,14 @@ void _NetServerTick() {
         printf("delta: %i\n",(int)(t1 - t2));
     }
         update_current_netpeer_time();
+
+        ServerState::ServerTick();
         //NP_print_delta();
 
         process_packets(); //should poll for packets very often; event triggered packet dump
 
-        _NetServerStateTick();
-
-        broad_cast_packet2();
+        //broad_cast_packet2();
+        flush_packets();
 
         check_pool_for_dropped_packets();
         //decrement_ttl();

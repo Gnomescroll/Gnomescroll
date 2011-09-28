@@ -10,6 +10,6 @@ namespace ServerState {
 		
 	void InitServerState();
 
-	void Tick();
+	void ServerTick();
 
 }

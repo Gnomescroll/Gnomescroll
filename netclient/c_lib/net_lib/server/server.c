@@ -241,7 +241,7 @@ void flush_packets() {
     unsigned char* header;
 
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool.connection[i] == NULL || pool.connection[i]->connected == 0) continue;
+        if(pool.connection[i] == NULL) continue;
         p = pool.connection[i];
         if(p->connected == 0) { printf("Cannot send packet, disconnected: client %i\n",p->client_id); return;}
 
@@ -264,7 +264,7 @@ void flush_packets() {
         //if(seq % 5 == 0) return; //simulate packet loss
         send_to_client(i, header, p->buff_n);
         reset_NetPeer_buffer(p);
-        //printf("Sent packet %i to client %i\n", seq, p->client_id);
+        printf("Sent packet %i to client %i\n", seq, p->client_id);
     }
 }
 

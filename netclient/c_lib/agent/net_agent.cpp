@@ -44,7 +44,7 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_contr
                 return;
             }
             //do something
-            printf("Received control state for agent %i, seq= %i\n", id, seq);
+            //printf("Received control state for agent %i, seq= %i\n", id, seq);
             //apply control state to agent
             A->ctick++;
         }
