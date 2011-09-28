@@ -1,34 +1,182 @@
-cdef extern from "./map_gen/noise.c"
+cdef extern from "./map_gen/noise.c":
     void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval)
 
-    void apply_grad3d(int x, int y, int z, float x_pos, float y_pos, float z_pos, float x_neg, float y_neg, float z_neg)
+    void apply_interpolate1(int x, int ix)
+    void apply_interpolate2(int x, int y, int ix, int iy)
+    void apply_interpolate3(int x, int y, int z, int ix, int iy, int iz)
 
+    void apply_grad1(int x,               float x0, float x1)
+    void apply_grad2(int x, int y,        float x0, float x1, float y0, float y1)
+    void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1,
+                                                              float z0, float z1)
+
+    void clear_noisemap()
+
+from c_lib.noise import Simplex, Perlin, RMF, set_seed
 
 class Config:
 
+    def __init__(self):
+        self.x = self.y = self.z = 0
+
+        self.interp = False
+        self.ix = self.iy = self.iz = 1
+
+        self.grad = False
+        self.gx0 = self.gx1 = self.gy0 = self.gy1 = self.gz0 = self.gz1 = 0.0
+
+        self.octaves = 1
+        self.persistence = 0.5
+        self.frequency = 1.0
+        self.amplitude = 1.0
+        self.repeatx = 1024
+        self.repeaty = 1024
+        self.repeatz = 1024
+        self.base = 0
+
+        self.rmf = False
+        self.dim = 2
+        self.noise_type = 'p'
+        self.noise = None
+
+    def reset(self):
+        self.__init__()
+        return self
+
     def size(self, x,y,z):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x = int(x)
+        self.y = int(y)
+        self.z = int(z)
+        return self
 
     def interpolate(self, x,y,z):
-        self.ix = x
-        self.iy = y
-        self.iz = z
+        self.interp = True
+        self.ix = int(x)
+        self.iy = int(y)
+        self.iz = int(z)
+        return self
+        
+    def gradient(self, x0=0.0, x1=0.0, y0=0.0, y1=0.0, z0=0.0, z1=0.0):
+        self.grad = True
+        self.gx0 = float(x0)
+        self.gx1 = float(x1)
+        self.gy0 = float(y0)
+        self.gy1 = float(y1)
+        self.gz0 = float(z0)
+        self.gz1 = float(z1)
+        return self
 
-    def gradient(x0=0.0, x1=0.0, y0=0.0, y1=0.0, z0=0.0, z1=0.0)
+    def p1(self):
+        self.dim = 1
+        self.noise_type = 'p'
+        return self
 
+    def p2(self):
+        self.dim = 2
+        self.noise_type = 'p'
+        return self
+        
+    def p3(self):
+        self.dim = 3
+        self.noise_type = 'p'
+        return self
+
+    def s2(self):
+        self.dim = 2
+        self.noise_type = 's'
+        return self
+
+    def s3(self):
+        self.dim = 3
+        self.noise_type = 's'
+        return self
+
+    def rmf(self):
+        self.rmf = True
+        return self
+
+    def seed(self, s):
+        set_seed(s)
+        return self
+
+    def start(self):
+        noise_method = 'noise%d' % (self.dim,)
+        if self.rmf:
+            self.noise = RMF(octaves=self.octaves,
+                             persistence=self.persistence,
+                             frequency=self.frequency,
+                             amplitude=self.amplitude,
+                             repeatx=self.repeatx,
+                             repeaty=self.repeaty,
+                             repeatz=self.repeatz,
+                             base=self.base)
+            noise_method = self.noise_type + noise_method
+        elif self.noise_type == 'p':
+            self.noise = Perlin(octaves=self.octaves,
+                                persistence=self.persistence,
+                                frequency=self.frequency,
+                                amplitude=self.amplitude,
+                                repeatx=self.repeatx,
+                                repeaty=self.repeaty,
+                                repeatz=self.repeatz,
+                                base=self.base)
+        elif self.noise_type == 's':
+            self.noise = Simplex(octaves=self.octaves,
+                                 persistence=self.persistence,
+                                 frequency=self.frequency,
+                                 amplitude=self.amplitude)
+
+        size_args = [self.x, self.y, self.z][:self.dim]
+        interp_args = [self.iz, self.iy, self.iz][:self.dim]
+        grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1][:self.dim*2]
+
+        if self.interp:
+            interpolates[self.dim](*(size_args+interp_args))
+        else:
+            getattr(self.noise, noise_method)(*size_args)
+        if self.grad:
+            gradients[self.dim](*(size_args+grad_args))
+        
 conf = Config()
 
+def reset():
+    clear_noisemap()
 
-def interpolate(x,y,z, ix,iy,iz):
-    interp(x,y,z, ix,iy,iz)
+def apply_gradient1(x, x0, x1):
+    pass
+    #apply_grad1(x, x0,x1)
 
-def gradient(x,y,z):
-    print "xrssassdsssssda"
-    apply_grad3d(x,y,z, 0.0, 0.0, 0.5, 0.0, 0.0, -0.5)
+def apply_gradient2(x,y,z, x0, x1, y0, y1):
+    #apply_grad2(x,y, x0, x1, y0, y1)
+    pass
+
+def apply_gradient3(x,y,z, x0, x1, y0, y1, z0, z1):
+    apply_grad3(x,y,z,  x0, x1, y0, y1, z0, z1)
 
 
+gradients = {
+    1: apply_gradient1,
+    2: apply_gradient2,
+    3: apply_gradient3,
+}
+
+def apply_interpolate1(x, ix):
+    pass
+    #interpolate1(x, ix)
+    
+def apply_interpolate2(x,y, ix,iy):
+    pass
+    #interpolate2(x,y, ix,iy)
+    
+def apply_interpolate3(x,y,z, ix,iy,iz):
+    pass
+    #interpolate3(x,y,z, ix,iy,iz)
+
+interpolates = {
+    1: apply_interpolate1,
+    2: apply_interpolate2,
+    3: apply_interpolate3,
+}
 
 def generate():
-    pass
+    conf.start()

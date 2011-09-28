@@ -163,7 +163,7 @@ float perlin3(float x, float y, float z, int octaves, float persistence, float f
 {
     if (octaves == 1) {
         // Single octave, return simple noise
-        return  pnoise3(x, y, z, repeatx, repeaty, repeatz, base);
+        return pnoise3(x, y, z, repeatx, repeaty, repeatz, base);
     } else if (octaves > 1) {
         int i;
         float max = 0.0f;
@@ -179,4 +179,44 @@ float perlin3(float x, float y, float z, int octaves, float persistence, float f
         return (total / max);
     }
     return 0.0f;
+}
+
+/* fill methods */
+void perlin1_fill(int x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base) {
+    float fx = (float)x + 2.0f;
+    int i;
+    float h;
+    for (i=0; i<x; i++) {
+        h = perlin1((i+1)/fx, octaves, persistence, frequency, amplitude, repeat, base);
+        noisemap[i] = h;
+    }
+}
+
+void perlin2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f;
+    int i,j;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            h = perlin2((i+1)/fx,(j+1)/fy, octaves, persistence, frequency, amplitude, repeatx, repeaty, base);
+            noisemap[i + x*j] = h;
+        }
+    }
+}
+
+void perlin3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f,
+           fz = (float)z + 2.0f;
+    int i,j,k;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                h = perlin3((i+1)/fz,(j+1)/fz,(k+1)/fz, octaves, persistence, frequency, amplitude, repeatx, repeaty, repeatz, base);
+                noisemap[i + x*j + x*y*k] = h;
+            }
+        }
+    }
 }

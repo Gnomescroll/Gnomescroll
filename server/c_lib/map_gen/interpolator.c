@@ -1,4 +1,3 @@
-#include <c_lib/t_map/t_map.h>
 
 // For lowering sample resolution and interpolating in between
 
@@ -68,7 +67,7 @@ inline float trilinearInterpolate_condensed(float p[2][2][2], float x, float y, 
             p[1][1][1] * x * y * z;
 }
 
-void _interp(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
+void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
 
     const int margin = 2;
 
@@ -194,26 +193,15 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
 }
 
 // wrapper
-float final_interp[xmax*ymax*zmax];
-void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval) {
+//float final_interp[xmax*ymax*zmax];
+void apply_interp3(int x, int y, int z, int x_interval, int y_interval, int z_interval) {
     if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
-    //float final_interp[x*y*z];
 
-    _interp(final_interp, x,y,z, x_interval, y_interval, z_interval);
-
-    // set terrain
-    int i,j,k;
-    for (i=0; i<x; i++) {
-        for (j=0; j<y; j++) {
-            for (k=0; k<z; k++) {
-                if (final_interp[i + x*j + x*y*k] > 0) {
-                    _set(i,j,k, 2);
-                }
-            }
-        }
-    }
+    _interp3(noisemap, x,y,z, x_interval, y_interval, z_interval);
 }
 
+void apply_interp2(int x, int y, int x_interval, int y_interval) {}
+void apply_interp1(int x, int x_interval){}

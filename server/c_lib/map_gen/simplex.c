@@ -183,3 +183,34 @@ noise4(float x, float y, float z, float w)
 
     float t = (i + j + K + m) * G4;
 */
+
+
+/* fill methods */
+void simplex2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f;
+    int i,j;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            h = simplex2((i+1)/fx,(j+1)/fy, octaves, persistence, frequency, amplitude);
+            noisemap[i + x*j] = h;
+        }
+    }
+}
+
+void simplex3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f,
+           fz = (float)z + 2.0f;
+    int i,j,k;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                h = simplex3((i+1)/fx,(j+1)/fy,(k+1)/fz, octaves, persistence, frequency, amplitude);
+                noisemap[i + x*j + x*y*k] = h;
+            }
+        }
+    }
+}

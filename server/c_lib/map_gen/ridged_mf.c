@@ -114,3 +114,72 @@ float rmf_simplex3(float x, float y, float z, int octaves, float persistence, fl
     }
     return 0.0f;
 }
+
+/* fill methods */
+void rmf_perlin1_fill(int x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base) {
+    float fx = (float)x + 2.0f;
+    int i;
+    float h;
+    for (i=0; i<x; i++) {
+        h = rmf_perlin1((i+1)/fx, octaves, persistence, frequency, amplitude, repeat, base);
+        noisemap[i] = h;
+    }
+}
+
+void rmf_perlin2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f;
+    int i,j;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            h = rmf_perlin2((i+1)/fx,(j+1)/fy, octaves, persistence, frequency, amplitude, repeatx, repeaty, base);
+            noisemap[i + x*j] = h;
+        }
+    }
+}
+
+void rmf_perlin3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f,
+           fz = (float)z + 2.0f;
+    int i,j,k;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                h = rmf_perlin3((i+1)/fz,(j+1)/fz,(k+1)/fz, octaves, persistence, frequency, amplitude, repeatx, repeaty, repeatz, base);
+                noisemap[i + x*j + x*y*k] = h;
+            }
+        }
+    }
+}
+
+void rmf_simplex2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f;
+    int i,j;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            h = simplex2((i+1)/fx,(j+1)/fy, octaves, persistence, frequency, amplitude);
+            noisemap[i + x*j] = h;
+        }
+    }
+}
+
+void rmf_simplex3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude) {
+    float fx = (float)x + 2.0f,
+           fy = (float)y + 2.0f,
+           fz = (float)z + 2.0f;
+    int i,j,k;
+    float h;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                h = simplex3((i+1)/fx,(j+1)/fy,(k+1)/fz, octaves, persistence, frequency, amplitude);
+                noisemap[i + x*j + x*y*k] = h;
+            }
+        }
+    }
+}

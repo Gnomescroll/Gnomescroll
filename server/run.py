@@ -39,6 +39,7 @@ import map_gen
 
 import random
 
+import c_lib.noise
 import c_lib.map_gen
 c_lib.map_gen.set_seed(666)
 
@@ -48,8 +49,8 @@ _n = time.time()
 #print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
 
 #c_lib.map_gen.interpolate(128, 128, 128, 4, 4, 2)
-c_lib.map_gen.gradient(128,128,128)
-print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n)
+#c_lib.noise.gradient(128,128,128)
+#print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n)
 
 #perlin = c_lib.map_gen.Perlin(octaves=6)
 #baseline=10

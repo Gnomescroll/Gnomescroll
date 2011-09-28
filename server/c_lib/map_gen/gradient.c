@@ -1,4 +1,6 @@
-void gradient2d(float f[], int x_size, int y_size, float x0, float y0, float x1, float y1) { // x,y,pos,neg should in [-1,1]. they indicate the gradient extremes along each axis
+void apply_grad1(int x, float x0, float x1) {}
+
+void gradient2d(float f[], int x_size, int y_size, float x0, float x1, float y0, float y1) { // x,y,pos,neg should in [-1,1]. they indicate the gradient extremes along each axis
 
     //float samples[2][2] = { {x_pos, y_pos}, {x_neg, y_neg} };
     //float samples[2][2] = { {x_pos, y_neg}, {x_neg, y_pos} };
@@ -18,7 +20,23 @@ void gradient2d(float f[], int x_size, int y_size, float x0, float y0, float x1,
     }
 }
 
-inline void buildGradientSampleCube(float samples[2][2][2], float x0, float y0, float z0, float x1, float y1, float z1) {
+void apply_grad2(int x, int y, float x0, float x1, float y0, float y1) {
+
+    float fgrad[x*y];
+    gradient2d(fgrad, x,y, x0, x1, y0, y1);
+
+    // set map
+    int i,j;
+    int index;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            index = i + x*j;
+            noisemap[index] += fgrad[index];    // apply gradient to map
+        }
+    }
+}
+
+inline void buildGradientSampleCube(float samples[2][2][2], float x0, float x1, float y0, float y1, float z0, float z1) {
     samples[0][0][0] = (x0 + y0 + z0)/3; // 000
     samples[0][0][1] = (x0 + y0 + z1)/3; // 001
     samples[0][1][0] = (x0 + y1 + z0)/3; // 010
@@ -30,10 +48,10 @@ inline void buildGradientSampleCube(float samples[2][2][2], float x0, float y0, 
 }
 
     
-void gradient3d(float f[], int x_size, int y_size, int z_size, float x0, float y0, float z0, float x1, float y1, float z1) { // x,y,pos,neg should in [-1,1]. they indicate the gradient extremes along each axis
+void gradient3d(float f[], int x_size, int y_size, int z_size, float x0, float x1, float y0, float y1, float z0, float z1) { // x,y,pos,neg should in [-1,1]. they indicate the gradient extremes along each axis
 
     float samples[2][2][2];
-    buildGradientSampleCube(samples, x0, y0, z0, x1, y1, z1);
+    buildGradientSampleCube(samples, x0, x1, y0, y1, z0, z1);
 
     int i,j,k;
     float px,py,pz;
@@ -53,25 +71,19 @@ void gradient3d(float f[], int x_size, int y_size, int z_size, float x0, float y
     }
 }
 
-void apply_grad3d(int x, int y, int z, float x_pos, float y_pos, float z_pos, float x_neg, float y_neg, float z_neg) {
+void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, float z0, float z1) {
 
     // generate gradient
     float fgrad[x*y*z];
-    gradient3d(fgrad, x,y,z, x_pos, y_pos, z_pos, x_neg, y_neg, z_neg);
+    gradient3d(fgrad, x,y,z, x0, x1, y0, y1, z0, z1);
 
-    // generate map
-    interp(x,y,z, 4,4,2);
-
-    // set map
     int i,j,k;
     int index;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
                 index = i + x*j + x*y*k;
-                if (final_interp[index] + fgrad[index] > 0) {    // apply gradient to map
-                    _set(i,j,k, 2);
-                }
+                noisemap[index] += fgrad[index];    // apply gradient to map
             }
         }
     }
