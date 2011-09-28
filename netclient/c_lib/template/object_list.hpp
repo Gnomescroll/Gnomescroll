@@ -19,7 +19,8 @@ class Object_list {
                 void destroy(int _id);
 
                 void draw();	//overide in template specilization on client
-                void tick();	//override on template specilization
+                void client_tick();	//override on template specilization
+                void server_tick();	//override on template specilization
         };
 
 //template <class T>
@@ -106,6 +107,19 @@ void Object_list<Object_state, max_n>::draw() {
 
 
 template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::tick() {
-	printf("%s_list::tick, not implemented\n", name() );
+void Object_list<Object_state, max_n>::client_tick() {
+	int i;
+	for(i=0;i<n_max;i++){
+		if(a[i]==NULL) continue;
+		a[i]->client_tick();
+	}	
+}
+
+template <class Object_state, int max_n>
+void Object_list<Object_state, max_n>::server_tick() {
+	int i;
+	for(i=0;i<n_max;i++){
+		if(a[i]==NULL) continue;
+		a[i]->server_tick();
+	}	
 }

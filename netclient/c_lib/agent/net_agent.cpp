@@ -82,7 +82,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         }
 
         inline void handle() {
-            printf("Received packet %i \n", message_id);
+            printf("Received Agent_state_message packet: agent_id= %i \n", id);
             return;
         }
 };
