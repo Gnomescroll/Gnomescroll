@@ -101,6 +101,8 @@ int _draw_vbo_indicator(float x, float y, float z) {
         glDisable(GL_BLEND);
     }
     glPointSize(1.00);
+
+    return 0;
 }
 
 #define f_count 350
@@ -111,25 +113,27 @@ int intv;
 int intva[f_count];
 
 int _start_frame() {
-int tc = SDL_GetTicks();
-fa[fn] =  tc - fa[fn];
-intv += fa[fn]; if(intv > 5000) { intv = 0; }
-if(intv >= 1000) {
-    intv -= 1000;
-    intva[fn] = 1;
-    } else {
-    intva[fn] = 0;
-    }
+    int tc = SDL_GetTicks();
+    fa[fn] =  tc - fa[fn];
+    intv += fa[fn]; if(intv > 5000) { intv = 0; }
+    if(intv >= 1000) {
+        intv -= 1000;
+        intva[fn] = 1;
+        } else {
+        intva[fn] = 0;
+        }
 
-//printf("t= %i \n", fa[fn]);
-fn = (fn+1) % f_count;
-fa[fn] =  tc;
+    //printf("t= %i \n", fa[fn]);
+    fn = (fn+1) % f_count;
+    fa[fn] =  tc;
+
+    return 0;
 }
 
 int _event(int id){ return 0; }
 
 int _end_frame() {
-return 0;
+    return 0;
 }
 
 int _draw_perf_graph(float x, float y, float z) {

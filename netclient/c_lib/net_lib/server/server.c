@@ -127,7 +127,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     //crc check
     if(error_check_packet(buff,received_bytes) == 0) {printf("Packet failed CRC check!\n");return;}
 
-    uint32_t value;
+    //uint32_t value;
     int n1=0;
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id

@@ -1,3 +1,14 @@
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
+
+def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi):
+    set_control_state(f,b,l,r,jet,jump,theta,phi)
+
+
+'''
+DEPRECATE
+'''
+
 
 '''
 cdef extern from "./agent/agent_draw.h":

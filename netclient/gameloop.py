@@ -32,6 +32,7 @@ if True:
     import init_c_lib
     import c_lib.c_lib_objects
     import c_lib.c_lib_agents
+    from c_lib.c_lib_agents import set_agent_control_state
     #import c_lib.c_lib_timer as physics_timer
     import init_c_lib
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -276,6 +277,7 @@ class App(object):
                 #c_lib.c_lib_agents._set_agent_control_state([0,1,0,0,1,0], 0, 0)
                 #control state
                 #c_lib.c_lib_agents._send_control_state()
+                set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")

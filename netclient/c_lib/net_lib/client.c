@@ -4,12 +4,10 @@
 #include <net_lib/client/client.hpp>
 
 
-void _NetClientRegisterMessages() {
-    //do something
-    
-    //Agent_control_state_message_register_message(); //3
-    //Agent_state_message_register_message();             //4
-}
+
+
+#include <c_lib/state/packet_init.cpp>
+#include <c_lib/state/client_state.cpp>
 
 struct NetPeer* np;
 
@@ -17,6 +15,9 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     NetClient::reset_client_out_buffer();
     //init_agent_client();
     init_message_handler();
+    PacketInit::RegisterMessages();
+    ClientState::InitClientState();
+
     update_current_netpeer_time();
     NetClient::init_client();
     init_message_handler();
@@ -29,8 +30,6 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
 
     np= NetClient::CLIENT_get_NP();
 
-
-    _NetClientRegisterMessages();
 }
 
     /*
@@ -47,8 +46,8 @@ int _N =0;
 void _NetClientTick() {
 
 
-    Agent_control_state_message acs;
-    acs.send();
+    //Agent_control_state_message acs;
+    //acs.send();
 
     //printf("net client tick\n");
     update_current_netpeer_time();
@@ -67,6 +66,8 @@ void _NetClientTick() {
     }
 
     //set agent state
+    ClientState::send_control_state();
+
     NetClient::flush_outgoing_packets();
     check_for_dropped_packets(np);
     NetClient::poll_connection_timeout();

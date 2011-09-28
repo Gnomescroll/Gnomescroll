@@ -8,6 +8,9 @@ typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
 pt2handler handler_array[256] = {NULL};
 
+pt2handler client_handler_array[256] = {NULL};
+pt2handler server_handler_array[256] = {NULL};
+
 //int (*handler_array[256])(unsigned char*, int) = {NULL};
 
 void default_handler_function(unsigned char* buff, int n, int* read_bytes) {
@@ -16,15 +19,35 @@ void default_handler_function(unsigned char* buff, int n, int* read_bytes) {
     *read_bytes = -1;
 }
 
+//base
+
+//typedef const void (*_pt2handler)(unsigned char*, int, int*);
+void register_server_message_handler(int message_id, int size, pt2handler fptr) {
+    if(message_id >=256 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
+    if(server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
+    h_packet_size[message_id] = size;
+    server_handler_array[message_id] = fptr;
+}
+
+void register_client_message_handler(int message_id, int size, pt2handler fptr) {
+    if(message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
+    if(client_handler_array[message_id] != NULL) {printf("register_client_message_handler: Reassigning message_id %i !!!\n", message_id);}
+    h_packet_size[message_id] = size;
+    client_handler_array[message_id] = fptr;
+}
+
 void init_message_handler() {
     int i;
     for(i=0;i<256;i++) {
-        handler_array[i] = NULL;
+        server_handler_array[i] = NULL;
+        client_handler_array[i] = NULL;
         h_packet_size[i] = -1;
     }
 
 }
 
+//deprecated
+/*
 void register_message_handler(int message_id, int size, pt2handler fptr) {
 
     if(message_id >=256 || message_id <0) {
@@ -38,14 +61,14 @@ void register_message_handler(int message_id, int size, pt2handler fptr) {
     h_packet_size[message_id] = size;
     handler_array[message_id] = fptr;
 }
-
+*/
 int pop_message(unsigned char* buff, int *n, int max_n) {
 
     if(*n == max_n) {
         printf("Processed Empty Packet\n");
         return 0;
     }
-    int bytes, size;
+    int size;
     uint8_t message_id;
     ///printf("Reading message id from byte %i\n", *n);
     int _n = *n;
@@ -58,12 +81,24 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
         printf("ERROR! message processor would read past end of packet!\n");
         return 0;
     }
-    if(handler_array[message_id] == NULL) {
+
+#ifdef DC_CLIENT
+    if(client_handler_array[message_id] == NULL) {
         printf("message_handler error: no handler for message_id=%i\n", message_id);
         return -4;
     }
     int read_bytes = -1;
-    handler_array[message_id](buff, *n, &read_bytes);
+    client_handler_array[message_id](buff, *n, &read_bytes);
+#endif
+
+#ifdef DC_SERVER
+    if(server_handler_array[message_id] == NULL) {
+        printf("message_handler error: no handler for message_id=%i\n", message_id);
+        return -4;
+    }
+    int read_bytes = -1;
+    server_handler_array[message_id](buff, *n, &read_bytes);
+#endif
 
     if(read_bytes == -1) {
         return -1;
@@ -75,9 +110,13 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
     *n += size;
 
     //printf("n=%i, max_n=%i \n", *n, max_n);
-    if(*n == max_n) { return 0; }
-    if(*n < max_n) { return -2; }
-    if(*n > max_n) { return -3; }
+
+    if(*n < max_n) { return 1; }        //more messages
+    if(*n == max_n) { return 0; }       //finished
+    if(*n > max_n) {                    //error, read past buff 
+        printf("netrwork error!!! Error: read past buffer\n");
+        return -3; 
+    }
 }
 
 void process_packet_messages(unsigned char* buff, int n, int max_n) {
@@ -86,6 +125,7 @@ void process_packet_messages(unsigned char* buff, int n, int max_n) {
     int condition;
     while(1) {
         condition = pop_message(buff, &n, max_n);
+        if(condition == 1) continue;
         if(condition < 0  ) {
             printf("Packet processing terminated with error: %i\n", condition);
             break;

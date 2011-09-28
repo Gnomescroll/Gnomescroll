@@ -1,7 +1,6 @@
 #pragma once
 
 #include <c_lib/compat.h>
-#include <c_lib/agent/agent_list.hpp>
 
 struct Agent_control_state {
 	
@@ -22,43 +21,64 @@ class Agent_state {
 
         int cs_seq;
         struct Agent_control_state cs[128];
-        int tick_n;
-        int ctick; //not used
+        int tick_n; //increment when ticking
+        int ctick;  //increment when control state received
         float theta;
         float phi;
 
+        //int last_direction_change;
+        int last_control_state_update_message;  //acts like ghost for now
+        int last_full_state_message;
+
         Agent_state(int _id); //default constructor
-        void tick();
+        void server_tick();
+        void client_tick();
         //void _draw();
         //set_control_state(int[8] _cs, float theta, float phi);
 };
 
 #include <c_lib/template/object_list.hpp>
 
-typedef Object_list<Agent_state, 1024> Agent_list;
 
+/*
 template <>
-class Object_list<Agent_state, 1024> {
+class Object_list<Agent_state>
+{
     static const char* name() { return "Agent"; }
+    void draw();
+};
+*/
 
+class Agent_list: public Object_list<Agent_state,1024>
+{
+    static const char* name() { return "Agent"; }
+    void draw();
 };
 
 
+//typedef Object_list<Agent_state,1024> Agent_list;
+
+/*
+template <>
+const char* Agent_list::name() {
+    return "Agent";
+}
+*/
 
 #ifdef DC_CLIENT
-template <>
-void Object_list<Agent_state, 1024>::draw() {
+//template <>
+void Agent_list::draw() {
     int i;
-    struct Object_state* g = NULL;
+    struct Agent_state* g = NULL;
 
     printf("Drawing agents\n");
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    for(i=0; i<1024; i++) { //max_n
+    for(i=0; i<n_max; i++) { //max_n
         if(a[i] != NULL) {
             g = a[i];
-            draw_agent(g);
+            //draw_agent(g);
         }
     }
     glDisable(GL_CULL_FACE);
