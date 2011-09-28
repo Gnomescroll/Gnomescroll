@@ -45,9 +45,9 @@ import c_lib.map_gen
 
 import time
 _n = time.time()
+                  #.gradient(z0=-0.5, z1=0.5)\
 c_lib.map_gen.conf.seed(666)\
                   .size(128,128,128)\
-                  .gradient(z0=-0.5, z1=0.5)\
                   .interpolate(4,4,2)\
                   .p3()\
                   .start()

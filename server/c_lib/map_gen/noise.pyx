@@ -28,7 +28,6 @@ cdef extern from "./map_gen/noise.c":
     void seed_noise(int seed)
 
 def set_seed(seed):
-    # convert seed to int
     seed_noise(seed)
 
 class Perlin:
