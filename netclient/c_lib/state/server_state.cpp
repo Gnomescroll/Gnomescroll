@@ -16,6 +16,9 @@ namespace ServerState {
 	}
 
 
+	void Tick() {
+		agent_list.server_tick();
 
+	}
 
 }
