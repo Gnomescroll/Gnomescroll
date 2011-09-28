@@ -95,6 +95,6 @@ def interpolate(x,y,z, ix,iy,iz):
     interp(x,y,z, ix,iy,iz)
 
 def gradient(x,y,z):
-    print "xrssassdsssssssda"
+    print "xrssassdsssssda"
     apply_grad3d(x,y,z, 0.0, 0.0, 0.5, 0.0, 0.0, -0.5)
 
