@@ -193,8 +193,6 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
 
 }
 
-
-
 // wrapper
 float final_interp[xmax*ymax*zmax];
 void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval) {

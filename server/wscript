@@ -142,9 +142,9 @@ def build(bld):
         target='c_lib.c_lib_agents')
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/map_gen/map_gen.pyx'],
+        source=['c_lib/map_gen/noise.pyx'],
         use=common_libraries + ['c_lib'],
-        target='c_lib.map_gen')
+        target='c_lib.noise')
 
         
     # final
@@ -180,7 +180,7 @@ def install_in_ext(ctx):
         'c_lib.c_lib_objects',
         'c_lib.c_lib_agents',
         'c_lib.terrain_map',
-        'c_lib.map_gen',
+        'c_lib.noise',
     ]
 
     for target in targets:
