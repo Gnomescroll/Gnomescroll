@@ -12,15 +12,15 @@
  * http://paulbourke.net/miscellaneous/interpolation/index.html
  *
  */
-float cubicInterpolate (float p[4], float x) {
+inline float cubicInterpolate (float p[4], float x) {
     return p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0])));  /* Catmull-Rom splines */
 }
 
-float cubicInterpolate_standard (float p[4], float x) {
+inline float cubicInterpolate_standard (float p[4], float x) {
     return p[1] + x*(p[2] - p[0] + x*(2.0*(p[0] - p[1]) + p[2] - p[3] + x*(p[1] - p[2] + p[3] - p[0]))); /* cubic (standard) */
 }
 
-float bicubicInterpolate (float p[4][4], float x, float y) {
+inline float bicubicInterpolate (float p[4][4], float x, float y) {
     float arr[4];
     arr[0] = cubicInterpolate(p[0], y);
     arr[1] = cubicInterpolate(p[1], y);
@@ -39,11 +39,11 @@ float tricubicInterpolate (float p[4][4][4], float x, float y, float z) {
 }
 
 
-float linearInterpolate (float p[2], float x) {
+inline float linearInterpolate (float p[2], float x) {
     return x * (p[1] - p[0]) + p[0];
 }
 
-float bilinearInterpolate (float p[2][2], float x, float y) {
+inline float bilinearInterpolate (float p[2][2], float x, float y) {
     float arr[2];
     arr[0] = linearInterpolate(p[0], y);
     arr[1] = linearInterpolate(p[1], y);
@@ -109,7 +109,7 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                 mz = k % z_interval;
                 pz = mz / fz_interval;
                 sz = (k / z_interval) + margin;
-
+    
                 // collect local samples
                 for (ii=-1; ii < 3; ii++) {
                     for (jj=-1; jj < 3; jj++) {
@@ -118,7 +118,9 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                         }
                     }
                 }
-                
+
+                // inefficiency here: calculating interpolate values for anchor points (just returns the anchor point)
+                // also recalculating the spline for each interpolate value, which is redundant for interval>2
                 pt = tricubicInterpolate(samples, px, py, pz);
                 final[i + x*j + x*y*k] = pt;
             }
@@ -145,7 +147,6 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
                 if (!iz) continue;
 
                 // collect samples from final array's interpolated values.
-                // NOTE n_interval=1 appears to work but may be faulty
                 for (ii=0; ii < 2; ii++) {
                     iix = (ii == 0) ? -1 : ii;
                     for (jj=0; jj < 2; jj++) {
@@ -185,12 +186,13 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
 
 // wrapper
 float final_interp[xmax*ymax*zmax];
-void interp( int x, int y, int z, int x_interval, int y_interval, int z_interval) {
+void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval) {
     if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
-    
+    //float final_interp[x*y*z];
+
     _interp(final_interp, x,y,z, x_interval, y_interval, z_interval);
 
     // set terrain

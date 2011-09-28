@@ -7,3 +7,4 @@
 #include "ridged_mf.c"
 
 #include "interpolator.c"
+#include "gradient.c"

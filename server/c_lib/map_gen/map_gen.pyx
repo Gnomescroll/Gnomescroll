@@ -16,6 +16,9 @@ cdef extern from "./map_gen/noise.c":
 
     void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval)
 
+    void apply_grad3d(int x, int y, int z, float x_pos, float y_pos, float z_pos, float x_neg, float y_neg, float z_neg)
+
+
 
 def set_seed(seed):
     # convert seed to int
@@ -90,4 +93,8 @@ class RMF:
 
 def interpolate(x,y,z, ix,iy,iz):
     interp(x,y,z, ix,iy,iz)
-    
+
+def gradient(x,y,z):
+    print "xrssassdsssssssda"
+    apply_grad3d(x,y,z, 0.0, 0.0, 0.5, 0.0, 0.0, -0.5)
+
