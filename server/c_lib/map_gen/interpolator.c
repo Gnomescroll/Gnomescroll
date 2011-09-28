@@ -57,6 +57,17 @@ float trilinearInterpolate (float p[2][2][2], float x, float y, float z) {
     return linearInterpolate(arr, x);
 }
 
+inline float trilinearInterpolate_condensed(float p[2][2][2], float x, float y, float z) {
+    return p[0][0][0] * (1 - x) * (1 - y) * (1 - z) +
+            p[1][0][0] * (1 - y) * (1 - z) * x + 
+            p[0][1][0] * (1 - x) * (1 - z) * y + 
+            p[0][0][1] * (1 - x) * (1 - y) * z +
+            p[1][0][1] * (1 - y) * x * z + 
+            p[0][1][1] * (1 - x) * y * z + 
+            p[1][1][0] * (1 - z) * x * y + 
+            p[1][1][1] * x * y * z;
+}
+
 void _interp(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
 
     const int margin = 2;
@@ -181,8 +192,6 @@ void _interp(float final[], int x, int y, int z, int x_interval, int y_interval,
     }
 
 }
-
-
 
 // wrapper
 float final_interp[xmax*ymax*zmax];
