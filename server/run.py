@@ -48,7 +48,7 @@ _n = time.time()
 #print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
 
 c_lib.map_gen.interpolate(128, 128, 128, 4, 4, 2)
-print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n)
+print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n)
 
 #perlin = c_lib.map_gen.Perlin(octaves=6)
 #baseline=10
@@ -59,7 +59,7 @@ print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n)
             #h = perlin.noise3((i/128.),(j/128.), k/128.)
             #if h > 0:
                 #terrain_map.set(i,j, k, 2)
-                
+
             #h = abs(h)
             #h *= 128
             #h %= maxh
@@ -107,39 +107,34 @@ class Main:
 
     def __init__(self):
         ##setup
-        #if opts.opts.map:
-            #terrain_map.load_from_disk(opts.opts.map)
-        #else:
+        if opts.opts.map:
+            terrain_map.load_from_disk(opts.opts.map)
+        else:
+            pass
             ##map_gen.load_map2(terrain_map)
             #map_gen.load_map3(terrain_map)
             #map_gen.grass(terrain_map)
             #map_gen.cave2(terrain_map)
             #map_gen.ore1(terrain_map)
 
-            #map_gen.castle_wall1(terrain_map, 15,15,0, dx=1,dy=1,dz=0, length=13, height=20)
-            #map_gen.castle_wall1(terrain_map, _x, _y, dx,dy,dz, length, height):
             #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
-            ##map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
+            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
             #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
             #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
-
             #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
             #map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
             #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
-
             #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
+        if True:
+            clear_pillar(x=1,y=0)
+            clear_pillar(x=0,y=1)
+            clear_pillar(x=1,y=1)
+            pallet_pillar(0,0,0)
 
             #if opts.opts.save_map:
                 #print 'Saving map'
                 #terrain_map.save_to_disk(opts.opts.save_map)
 
-        #map_gen.ore1(terrain_map)
-
-
-        #clear_pillar(x=1,y=0)
-        #clear_pillar(x=0,y=1)
-        #clear_pillar(x=1,y=1)
-        pallet_pillar(1,1,1)
 
         NetServer.init_0()
         NetOut.init_0()

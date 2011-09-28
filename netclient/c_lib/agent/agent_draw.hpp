@@ -10,7 +10,6 @@
 #include <c_lib/compat.h>
 #include <c_lib/compat_gl.h>
 
-#include <c_lib/agent/agent_list.hpp>
 #include <c_lib/agent/agent.hpp>
 
 namespace AgentDraw {

@@ -2,35 +2,22 @@
 
 #include "server.h"
 
-/*
-void _NetServerRegisterMessages() {
-    Agent_control_state_message_register_message(); //3
-    //Agent_state_message_register_message();         //4
-}
-*/
-
 #include <c_lib/agent/agent_include.h>
 
-#include <c_lib/state/server_init.cpp>
-/*
-class AgentList agent_list;
-
-void _NetServerInitState() {
-    int id = agent_list.new_agent();
-    printf("new agent id= %i\n", id);
-}
-*/
+#include <c_lib/state/packet_init.cpp>
+#include <c_lib/state/server_state.cpp>
 
 void _NetServerInit() {
     init_message_handler();
     update_current_netpeer_time();
     init_net_lib();
     init_message_handler();
+    PacketInit::RegisterMessages();
+    ServerState::InitServerState();
 
     unsigned short port = 9999;
     init_server(port);
 
-    ServerInit::RegisterMessages();
 }
 
 void _NetServerStateTick() {

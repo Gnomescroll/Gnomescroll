@@ -1,10 +1,19 @@
+
+#include "server_state.hpp"
+
 #pragma once
 
-#include <c_lib/agent/agent_list.hpp>
+//#include <c_lib/agent/agent.cpp>
+#include <c_lib/agent/net_agent.cpp>
 
 namespace ServerState {
+
+
+		
+	void InitServerState() {
 	
-	class Agent_list agents;
+		agent_list.create(0); //create agent 0
+	}
 
 
 
