@@ -21,13 +21,18 @@ class Agent_state {
 
         int cs_seq;
         struct Agent_control_state cs[128];
-        int tick_n;
-        int ctick; //not used
+        int tick_n; //increment when ticking
+        int ctick;  //increment when control state received
         float theta;
         float phi;
 
+        //int last_direction_change;
+        int last_control_state_update_message;  //acts like ghost for now
+        int last_full_state_message;
+
         Agent_state(int _id); //default constructor
-        void tick();
+        void server_tick();
+        void client_tick();
         //void _draw();
         //set_control_state(int[8] _cs, float theta, float phi);
 };
