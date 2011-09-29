@@ -80,9 +80,59 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
             pack_float(&vz, buff, buff_n, pack);
         }
 
-        inline void handle() {\
+        inline void handle() {
+            Agent_state* A = ClientState::agent_list.get(id);
+            if(A == NULL) {
+                printf("Agent does not exist: create agent, id=%i \n", id);
+                A = ClientState::agent_list.create(id);
+            }            
+            //do something
+            A->x = x;
+            A->y = y;
+            A->z = z;
+            A->vx = vx;
+            A->vy = vy;
+            A->vz = vz;
             //printf("Received Agent_state_message packet: agent_id= %i \n", id);
             return;
         }
 };
 
+
+
+class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<Agent_control_state_to_client_message>
+{
+    public:
+
+        int id;
+        int seq;
+        uint32_t cs;
+        int tick;
+        int ctick;
+        float theta;
+        float phi;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&seq, buff, buff_n, pack);
+            pack_16(&tick, buff, buff_n, pack);
+            pack_u32_t(&cs, buff, buff_n, pack);
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            Agent_state* A = ClientState::agent_list.get(id);
+            if(A == NULL) {
+                printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
+                return;
+            }
+            A->theta = theta;
+            A->phi = phi;
+            //do something
+            //printf("Received control state for agent %i, seq= %i\n", id, seq);
+            //apply control state to agent
+            A->ctick++;
+        }
+};

@@ -42,7 +42,8 @@ void Agent_state::server_tick() {
 	//printf("tick not implemented\n");
 	
 	tick_n++;
-	if(tick_n % 30 ==0) {
+
+	if(tick_n % 3 ==0) {
 		Agent_state_message A;
 	/*
         int id;
@@ -63,5 +64,23 @@ void Agent_state::server_tick() {
 		A.vz = vz;
 		A.broadcast();
 	}
+
+	if(tick_n % 3 ==0) {
+		Agent_control_state_to_client_message B;
+	/*
+        int id;
+        int seq;
+        uint32_t cs;
+        int tick;
+        int ctick;
+        float theta;
+        float phi;
+	*/
+		B.id = id;
+		B.theta = theta;
+		B.phi = phi;
+		B.broadcast();
+	}	
+	
 	return;
 }

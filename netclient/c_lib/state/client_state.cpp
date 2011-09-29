@@ -8,8 +8,6 @@
 
 namespace ClientState {
 
-	class Agent_list agent_list;
-
 	int active_agent = 0;
 	int agent_control_state[16] = {NULL};
 	Agent_control_state_message a_cs;

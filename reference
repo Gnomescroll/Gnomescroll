@@ -26,6 +26,12 @@ Passing GL_SRGB_EXT instead of GL_RGB to glTexImage2D, for example, ensures that
 Array Textures:
 http://www.opengl.org/wiki/Array_Texture
 
+!!! Bitmap Fonts:
+converts true type to bitmap
+http://www.angelcode.com/products/bmfont/
+http://ace-spades.com/wp-content/uploads/DDFontMake.exe
+
+
 Automatic Mipmapp Generation
 http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
 
