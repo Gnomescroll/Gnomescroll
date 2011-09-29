@@ -1,6 +1,6 @@
 #pragma once
 
-static int _packet_id = 0;
+static int _packet_id = 1;
 int next_packet_id() { return _packet_id++; }
 
 typedef const void (*_pt2handler)(unsigned char*, int, int*);
@@ -46,7 +46,7 @@ class FixedSizeNetPacketToServer {
             Derived x;  //allocated on stack
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
-        };
+        }
 
         static void register_server_packet() {
             Derived x = Derived();
@@ -71,6 +71,7 @@ class FixedSizeNetPacketToClient {
     public:
         void serialize(unsigned char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
+            pack_message_id(Derived::message_id, buff, buff_n, true);
             packet(buff, buff_n, true);
             *size = *buff_n - _buff_n;
         }

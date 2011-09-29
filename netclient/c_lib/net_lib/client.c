@@ -20,7 +20,6 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
 
     update_current_netpeer_time();
     NetClient::init_client();
-    init_message_handler();
 
     unsigned int port = 9999;
     NetClient::set_server(a,b,c,d, port);

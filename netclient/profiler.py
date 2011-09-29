@@ -1,7 +1,7 @@
 
 import SDL.gl
 
-p_on = True
+p_on = False
 verbrose = True #only print states that take more than 1 ms
 
 def get_ticks():

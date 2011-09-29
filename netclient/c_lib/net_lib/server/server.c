@@ -192,6 +192,7 @@ void process_packets() {
     }
 }
 
+/*
 void broad_cast_packet() {
     printf("broad_cast_packet deprecated:use broadcast 2\n");
 }
@@ -230,6 +231,7 @@ void broad_cast_packet2(){
         //printf("Sent packet %i to client %i\n", seq, p->client_id);
     }
 }
+*/
 
 void flush_packets() {
 
@@ -262,9 +264,16 @@ void flush_packets() {
         //PACK_uint32_t(value, header, &n1);
 
         //if(seq % 5 == 0) return; //simulate packet loss
+//        printf("n=%i, n_=%i \n", n1,p->buff_n);
+        n1 = p->buff_n;
+        
+//        if(n1 != 11) {
+//        printf("value=%i \n", p->buff[11] );
+//        }
+
         send_to_client(i, header, p->buff_n);
         reset_NetPeer_buffer(p);
-        printf("Sent packet %i to client %i\n", seq, p->client_id);
+        //printf("Sent packet %i, %i bytes to client %i\n", seq, n1, p->client_id);
     }
 }
 
@@ -277,7 +286,7 @@ void push_message(int client_id, unsigned char* buffer, int n_bytes) {
         printf("Cannot push message, client %i buffer is full\n", client_id);
         return;
     }
-    memcpy(p->buff, buffer, n_bytes );
+    memcpy(p->buff+p->buff_n, buffer, n_bytes );
     //memcpy( void * destination, const void * source, size_t num );
     p->buff_n += n_bytes;
 }
@@ -289,7 +298,7 @@ void push_broadcast_message(unsigned char* buffer, int n_bytes) {
     for(i=0; i<1024; i++) {
         p = pool.connection[i];
         if(p == NULL) continue;
-        memcpy(p->buff, buffer, n_bytes);
+        memcpy(p->buff+p->buff_n, buffer, n_bytes);
         p->buff_n += n_bytes;
     }
 }

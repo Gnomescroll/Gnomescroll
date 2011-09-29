@@ -41,8 +41,8 @@ struct ConnectionPool {
     struct NetPeer* connection[HARD_MAX_CONNECTIONS];
 };
 
-void broad_cast_packet(); //every 30 ms
-void broad_cast_packet2();
+//void broad_cast_packet(); //every 30 ms
+//void broad_cast_packet2();
 void flush_packets(); //all messages to all agents, out
 
 void push_message(int client_id, unsigned char* buffer, int n_bytes); //que a message for client

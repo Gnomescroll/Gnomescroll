@@ -65,17 +65,15 @@ void register_message_handler(int message_id, int size, pt2handler fptr) {
 int pop_message(unsigned char* buff, int *n, int max_n) {
 
     if(*n == max_n) {
-        printf("Processed Empty Packet\n");
+        //printf("Processed Empty Packet\n");
         return 0;
     }
     int size;
     uint8_t message_id;
-    ///printf("Reading message id from byte %i\n", *n);
+
     int _n = *n;
     UNPACK_uint8_t(&message_id, buff, &_n);
     size  = h_packet_size[message_id];
-
-    ///printf("processing: msg= %i len=%i byte %i of %i\n", message_id,size, *n, max_n);
 
     if(*n-1+size > max_n) { // > or >= ?
         printf("ERROR! message processor would read past end of packet!\n");
@@ -94,7 +92,7 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
 #ifdef DC_SERVER
     if(server_handler_array[message_id] == NULL) {
         printf("message_handler error: no handler for message_id=%i\n", message_id);
-        return -4;
+        return -5;
     }
     int read_bytes = -1;
     server_handler_array[message_id](buff, *n, &read_bytes);
@@ -114,16 +112,20 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
     if(*n < max_n) { return 1; }        //more messages
     if(*n == max_n) { return 0; }       //finished
     if(*n > max_n) {                    //error, read past buff 
-        printf("netrwork error!!! Error: read past buffer\n");
+        printf("network error!!! Error: read past buffer\n");
         return -3; 
     }
 }
 
 void process_packet_messages(unsigned char* buff, int n, int max_n) {
-
+/*
+    if(n!=max_n) {
+        printf("packet is %i, %i bytes\n", n,max_n);
+    }
+*/
     int i=0;
     int condition;
-    while(1) {
+    while(n != max_n) {
         condition = pop_message(buff, &n, max_n);
         if(condition == 1) continue;
         if(condition < 0  ) {

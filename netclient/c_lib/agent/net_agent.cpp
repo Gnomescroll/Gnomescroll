@@ -68,7 +68,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         inline void packet(unsigned char* buff, int* buff_n, bool pack) 
         {
-            pack_message_id(message_id, buff, buff_n, pack);
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
             pack_16(&tick, buff, buff_n, pack);
@@ -81,8 +80,8 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
             pack_float(&vz, buff, buff_n, pack);
         }
 
-        inline void handle() {
-            printf("Received Agent_state_message packet: agent_id= %i \n", id);
+        inline void handle() {\
+            //printf("Received Agent_state_message packet: agent_id= %i \n", id);
             return;
         }
 };
