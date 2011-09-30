@@ -1,7 +1,10 @@
 #pragma once
 
 #include <c_lib/compat.h>
+
+#ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
+#endif
 
 struct Agent_control_state {
 	

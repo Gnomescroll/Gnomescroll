@@ -106,8 +106,8 @@ class Block_template:
         self.name = None
         self.id = None
         self.side = [255,255,255,255,255,255]
-        self.hud_pos = 0
-        self.hud_img = 0    #not handling undefined case
+        self.hud_pos = -1
+        self.hud_img = -1    #not handling undefined case
     def set_name(self,name):
         self.name = name
     def set_id(self, id):
@@ -115,6 +115,7 @@ class Block_template:
     def set_hud(self,s2,s3):
         global tex
         #self.hud_pos = int(s2)
+        print "%s, %s" % (s2, s3)
         self.hud_pos = int(s2)
         self.hud_img = tex.g(s3)    #eventually may want to use seperate one for hud
     def pinput(self, s1,s2,s3=None):
@@ -180,8 +181,8 @@ dat = {
         'neutron_tolerance' : 2,
         'nuclear': 0,
         'texture_id': [-1]*6,
-        'hud_pos' : 64,
-        'hud_img' : 255,
+        'hud_pos' : -1,
+        'hud_img' : -1,
         'texture_order': [[0,1,2,3]] * 6,
         'gravity'   :   0,
         'transparent': 0,
@@ -198,8 +199,8 @@ default =    {
             'neutron_tolerance' : 2,
             'nuclear' : 0,
             'texture_id': [255]*6,
-            'hud_pos' : 64,
-            'hud_img' : 255,
+            'hud_pos' : -1,
+            'hud_img' : -1,
             'gravity'   :   0,
             'transparent': 0,
     }

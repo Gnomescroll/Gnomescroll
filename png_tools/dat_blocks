@@ -28,7 +28,7 @@ east    stone.png
 ===
 id      3
 name    lava
-hud     1 lava.png
+hud     1 lavablock.png
 top     lavablock.png
 bottom  lavablock.png
 north   lavablock.png
@@ -38,6 +38,7 @@ east    lavablock.png
 ===
 id      4
 name    grass
+hud     4 grass-side.png
 top     grass-top.png
 bottom  dirt.png
 north   grass-side.png
