@@ -2,13 +2,16 @@
 #include "texture_loader.h"
 
 int particle_texture_id;
-int hud_block_selector_id;
+int hud_block_selector_tex_id;
 
 int get_particle_texture() {
     //printf("3: !!! particle sheet id= %i \n", particle_texture_id);
     return particle_texture_id;
 }
 
+int get_hud_block_selector_texture() {
+    return hud_block_selector_tex_id;
+}
 
 int init_tex_particle_sheet() {
 
@@ -39,11 +42,13 @@ glDisable(GL_TEXTURE_2D);
 return 0;
 }
 
-int init_hud_tex_block_sheet() {
+int init_tex_hud_block_sheet() {
+
+printf("init tex hud block sheet\n");
 
 SDL_Surface *surface;
 
-surface=IMG_Load("media/texture/blocks_01.png"); ///does this need to be freed?
+surface=IMG_Load("./media/texture/blocks_01.png"); ///does this need to be freed?
 
 if(!surface) {
     printf("init_hud_tex_block_sheet, IMG_Load: %s \n", IMG_GetError());
@@ -52,9 +57,11 @@ if(!surface) {
 if(surface->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
 
 glEnable(GL_TEXTURE_2D);
-glGenTextures( 1, (GLuint*)&hud_block_selector_id );
+glGenTextures( 1, (GLuint*)&hud_block_selector_tex_id );
 
-glBindTexture( GL_TEXTURE_2D, hud_block_selector_id );
+printf("tex id=%i\n", hud_block_selector_tex_id);
+
+glBindTexture( GL_TEXTURE_2D, hud_block_selector_tex_id );
 glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
 glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
 
@@ -72,6 +79,6 @@ return 0;
 
 int init_texture_loader(){
     init_tex_particle_sheet();
-    init_hud_tex_block_sheet();
+    init_tex_hud_block_sheet();
     return 0;
 }

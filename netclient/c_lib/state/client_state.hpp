@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/agent/agent.hpp>
+
 namespace ClientState {
 
 	class Agent_list agent_list;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/compat.h>
+#include <c_lib/compat_gl.h>
 
 struct Agent_control_state {
 	
