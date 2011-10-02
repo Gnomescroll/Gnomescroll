@@ -60,11 +60,84 @@ struct Vertex* _get_quad_cache() {
     return (struct Vertex*) &quad_cache;
 }
 
+/*
+#north/south is +/- x
+#west/east is +/- y
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+*/
+
+const int _lighting = 0;
+
+int _init_quad_cache_normals() {
+    //int i,j;
+    int cube_id, side, i;
+
+    int n[3];
+    for(cube_id=0;cube_id<max_cubes;cube_id++) {
+        for(side=0;side<6;side++) {
+
+            if(side == 0) {
+                n[0]= 0;
+                n[1]= 0;
+                n[2]= 1;
+            }
+            if(side == 1) {
+                n[0]= 0;
+                n[1]= 0;
+                n[2]= -1;
+            }
+            if(side == 2) {
+                n[0]= 1;
+                n[1]= 0;
+                n[2]= 0;
+            }
+
+            if(side == 3) {
+                n[0]= -1;
+                n[1]= 0;
+                n[2]= 0;
+            }
+            if(side == 4) {
+                n[0]= 0;
+                n[1]= 1;
+                n[2]= 0;
+            }
+            if(side == 5) {
+                n[0]= 0;
+                n[1]= -1;
+                n[2]= 0;
+            }
+        /*
+            if(side == 1) n = {0,0,-1};
+            if(side == 2) n = {1,0,0};
+            if(side == 3) n = {-1,0,0};
+            if(side == 4) n = {0,1,0};
+            if(side == 5) n = {0,-1,0};
+        */       
+            for(i=0;i<4;i++) {
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[0] = n[0];
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[1] = n[1];
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[2] = n[2];
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[3] = 0;
+            }
+        }
+    }
+
+}
+
 int _init_draw_terrain() {
     //quad_cache = _get_quad_cache();
 
     //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     //glEnable(GL_POLYGON_SMOOTH);
+    printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
 
     if(texture == 0) { //load texture if texture is not set
     //surface=IMG_Load("media/texture/textures_03.png");  //should this be freed?
@@ -139,6 +212,24 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);  ///testing
 
+if(_lighting) {
+    
+    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_shininess[] = { 50.0 };
+    GLfloat light_position[] = {0.0, 30.0, 80.0, 0.0};
+    GLfloat light_color[] = {1.0, 1.0, 1.0, 0.0};
+    GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.0};
+    glMaterialfv(GL_FRONT,GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+}
+
 if(T_MAP_Z_BUFFER == 0) {
     glEnable (GL_DEPTH_TEST);
 } else {
@@ -168,6 +259,13 @@ glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+if(_lighting) {
+
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_COLOR_MATERIAL);
+}
+
 glDisable(GL_TEXTURE_2D);
 glDisable (GL_DEPTH_TEST);
 glDisable(GL_CULL_FACE);
@@ -191,6 +289,7 @@ if(draw_mode_enabled == 0) {
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+    //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     //return 0;
@@ -200,6 +299,7 @@ if(draw_mode_enabled == 0) {
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+    //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     //return 0;

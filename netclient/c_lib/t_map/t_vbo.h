@@ -14,6 +14,7 @@
         float x,y,z;
         float tx,ty;
         unsigned char r,g,b,a;
+        char normal[4];
     };
 
 
