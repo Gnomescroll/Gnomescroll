@@ -75,6 +75,16 @@ l = [
 
 const int _lighting = 0;
 
+
+GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat mat_diffuse[] = {1.0, 0.0, 0.0};
+GLfloat mat_shininess[] = { 50.0 };
+GLfloat light_position[] = {256.0, 256.0, 128.0, 0.0};
+GLfloat light_color[] = {1.0, 1.0, 1.0, 0.0};
+GLfloat diffuse_color[] =  {1.0, 1.0, 1.0, 0.0};
+//GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.0};
+GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.8};
+
 int _init_quad_cache_normals() {
     //int i,j;
     int cube_id, side, i;
@@ -134,6 +144,7 @@ int _init_quad_cache_normals() {
 
 int _init_draw_terrain() {
     //quad_cache = _get_quad_cache();
+    _init_quad_cache_normals();
 
     //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     //glEnable(GL_POLYGON_SMOOTH);
@@ -214,15 +225,12 @@ glEnable(GL_CULL_FACE);  ///testing
 
 if(_lighting) {
     
-    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat mat_shininess[] = { 50.0 };
-    GLfloat light_position[] = {0.0, 30.0, 80.0, 0.0};
-    GLfloat light_color[] = {1.0, 1.0, 1.0, 0.0};
-    GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.0};
     glMaterialfv(GL_FRONT,GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_color);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
     glEnable(GL_LIGHT0);
@@ -289,7 +297,7 @@ if(draw_mode_enabled == 0) {
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-    //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+    glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     //return 0;
@@ -299,7 +307,7 @@ if(draw_mode_enabled == 0) {
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-    //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+    glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     //return 0;
