@@ -38,6 +38,7 @@ def configure(conf):
     conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
     conf.env.CXXFLAGS = conf.env.CFLAGS
     #,'-D DC_CLIENT'
+    conf.env.append_value("LINKFLAGS", "-lz")
 
     OS = platform.system()
     conf.env.os = OS
@@ -87,7 +88,7 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    #common_libraries = ['GL', 'SDL', 'SDL_image','z']
+    #common_libraries = ['GL', 'SDL', 'SDL_image']
     common_libraries = []
 
     '''
