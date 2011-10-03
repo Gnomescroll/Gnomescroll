@@ -223,6 +223,8 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);  ///testing
 
+glShadeModel(GL_SMOOTH);
+
 if(_lighting) {
     
     glMaterialfv(GL_FRONT,GL_SPECULAR, mat_specular);
@@ -343,12 +345,13 @@ l = [
 //int CI[9];
 
 
-static const int CI[6*8*3] = {1,1,1, 0,1,1, -1,1,1, -1,0,1, -1,-1,1, 0,-1,1, 1,-1,1, 1,0,1,
--1,1,-1, 0,1,-1, 1,1,-1, 1,0,-1, 1,-1,-1, 0,-1,-1, -1,-1,-1, -1,0,-1,
-0, -1, 2, 0, -1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0, 0, 2,
-0, 1, 2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, 0, 2,
-1, 0, 2, 1, 0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 1, -1, 0, 2, 0, 0, 2,
--1, 0, 2, -1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 2, 0, 0, 2};
+static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
+-1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
+1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
+-1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
+1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
+-1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
+
 
 /*
 static const int CI0[8*3] = { 1,1,1, 0,1,1, -1,1,1, -1,0,1, -1,-1,1, 0,-1,1, 1,-1,1, 1,0,1};
@@ -358,6 +361,19 @@ static const int CI3[8*3] = { 0,1,2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1,
 static const int CI4[8*3] = { 1,0,2, 1, 0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 1, -1, 0, 2, 0, 0, 2,};
 static const int CI5[8*3] = { -1,0,2, -1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 2, 0, 0, 2};
 */
+
+/*
+will be 1 if is adjacent to any side
+will be 2 only if both sides are occluded
+ */
+
+inline int calcAdj(int side_1, int side_2, int corner)
+{
+    int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
+    if( occ == 0) return 255;
+    if(occ == 1) return 177;
+    if(occ == 2) return 100;    
+}
 
 
 void __inline add_quad(int x, int y, int z, int side, int tile_id) {
@@ -384,18 +400,22 @@ void __inline add_quad(int x, int y, int z, int side, int tile_id) {
     int occ = (x+y+z);
     if(occ > 255) occ = 255;
 
+    occ = calcAdj(CX[7], CX[1], CX[0]);
     cs[cs_n+0].r = occ;
     cs[cs_n+0].g = occ;
     cs[cs_n+0].b = occ;
 
+    occ = calcAdj(CX[1], CX[3], CX[2]);
     cs[cs_n+1].r = occ;
     cs[cs_n+1].g = occ;
     cs[cs_n+1].b = occ;
 
+    occ = calcAdj(CX[3], CX[5], CX[4]);
     cs[cs_n+2].r = occ;
     cs[cs_n+2].g = occ;
     cs[cs_n+2].b = occ;
 
+    occ = calcAdj(CX[5], CX[7], CX[6]);
     cs[cs_n+3].r = occ;
     cs[cs_n+3].g = occ;
     cs[cs_n+3].b = occ;
