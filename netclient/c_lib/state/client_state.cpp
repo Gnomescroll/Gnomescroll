@@ -8,6 +8,8 @@
 
 namespace ClientState {
 
+        PlayerAgent_state playerAgent_state;
+        
 	int active_agent = 0;
 	int agent_control_state[16] = {NULL};
 	Agent_control_state_message a_cs;
@@ -18,7 +20,7 @@ namespace ClientState {
 	}
 
 	void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
-		/*
+	/*
         int id;
         int seq;
         uint32_t cs;
@@ -27,7 +29,17 @@ namespace ClientState {
         float theta;
         float phi;
         */
+        uint8_t cs = 0;
+        if(f) a_cs.cs |= 1;
+        if(b) a_cs.cs |= 2;
+        if(l) a_cs.cs |= 4;
+        if(r) a_cs.cs |= 8;
+        if(jet) a_cs.cs |= 16;
+        if(jump) a_cs.cs |= 32;
+        playerAgent_state.set_control_state(cs, theta, phi);
 
+        return;
+        /*
         a_cs.cs = 0;
         if(f) a_cs.cs |= 1;
         if(b) a_cs.cs |= 2;
@@ -46,5 +58,5 @@ namespace ClientState {
 	void send_control_state() {
 		a_cs.send();
 	}
-
+        */
 }

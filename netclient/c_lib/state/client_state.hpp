@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/agent/agent.hpp>
+//#include <c_lib/agent/net_agent.cpp>
 
 namespace ClientState {
 

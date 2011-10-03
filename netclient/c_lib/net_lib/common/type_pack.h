@@ -65,6 +65,14 @@ static inline void pack_u8(int* x, unsigned char* buff, int* buff_n, bool pack)
     *buff_n += sizeof(uint8_t);
 }
 
+static inline void pack_u8(uint8_t* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((uint8_t*)(buff+*buff_n)) = *x; 
+    if(pack == false)   *x = *((uint8_t*)(buff+*buff_n));
+    *buff_n += sizeof(uint8_t);
+}
+
+
 //pop variables into a new one
 static inline uint8_t UPACK_uint8_t(unsigned char* buffer, int*n) {
         uint8_t d = *((uint8_t*)(buffer+*n));
