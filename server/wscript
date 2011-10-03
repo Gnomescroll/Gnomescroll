@@ -87,7 +87,7 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    #common_libraries = ['GL', 'SDL', 'SDL_image']
+    #common_libraries = ['GL', 'SDL', 'SDL_image','z']
     common_libraries = []
 
     '''
@@ -146,7 +146,7 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.map_gen')
 
-        
+
     # final
     bld(features='c cprogram pyembed',
         #use=common_libraries+time_lib + ['c_lib'],
