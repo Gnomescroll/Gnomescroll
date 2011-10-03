@@ -9,7 +9,7 @@
 namespace ClientState {
 
         PlayerAgent_state playerAgent_state;
-        
+
 	int active_agent = 0;
 	int agent_control_state[16] = {NULL};
 	Agent_control_state_message a_cs;
@@ -39,6 +39,7 @@ namespace ClientState {
         playerAgent_state.set_control_state(cs, theta, phi);
 
         return;
+        }
         /*
         a_cs.cs = 0;
         if(f) a_cs.cs |= 1;
@@ -54,9 +55,9 @@ namespace ClientState {
         a_cs.seq++;
         a_cs.id = active_agent;
 	}
-
+        */
 	void send_control_state() {
 		a_cs.send();
 	}
-        */
+
 }

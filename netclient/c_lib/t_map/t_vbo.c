@@ -330,6 +330,80 @@ return 0;
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
 
+/*
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+*/
+//int CI[9];
+
+
+static const int CI[6*8*3] = {1,1,1, 0,1,1, -1,1,1, -1,0,1, -1,-1,1, 0,-1,1, 1,-1,1, 1,0,1,
+-1,1,-1, 0,1,-1, 1,1,-1, 1,0,-1, 1,-1,-1, 0,-1,-1, -1,-1,-1, -1,0,-1,
+0, -1, 2, 0, -1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0, 0, 2,
+0, 1, 2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, 0, 2,
+1, 0, 2, 1, 0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 1, -1, 0, 2, 0, 0, 2,
+-1, 0, 2, -1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 2, 0, 0, 2};
+
+/*
+static const int CI0[8*3] = { 1,1,1, 0,1,1, -1,1,1, -1,0,1, -1,-1,1, 0,-1,1, 1,-1,1, 1,0,1};
+static const int CI1[8*3] = { -1,1,-1, 0,1,-1, 1,1,-1, 1,0,-1, 1,-1,-1, 0,-1,-1, -1,-1,-1, -1,0,-1,};
+static const int CI2[8*3] = { 0,-1,2, 0, -1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0, 0, 2,};
+static const int CI3[8*3] = { 0,1,2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, 0, 2,};
+static const int CI4[8*3] = { 1,0,2, 1, 0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 1, -1, 0, 2, 0, 0, 2,};
+static const int CI5[8*3] = { -1,0,2, -1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 2, 0, 0, 2};
+*/
+
+
+void __inline add_quad(int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    int index;
+    int CX[8];
+    for(i=0; i<8; i++) {
+        index = side*8*3+i*3;
+        CX[i] = isActive(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+    }
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    for(i=0; i<=4;i++) {
+        cs[cs_n+i].x += _x;
+        cs[cs_n+i].y += _y;
+        cs[cs_n+i].z += _z;
+    }
+
+    int occ = (x+y+z);
+    if(occ > 255) occ = 255;
+
+    cs[cs_n+0].r = occ;
+    cs[cs_n+0].g = occ;
+    cs[cs_n+0].b = occ;
+
+    cs[cs_n+1].r = occ;
+    cs[cs_n+1].g = occ;
+    cs[cs_n+1].b = occ;
+
+    cs[cs_n+2].r = occ;
+    cs[cs_n+2].g = occ;
+    cs[cs_n+2].b = occ;
+
+    cs[cs_n+3].r = occ;
+    cs[cs_n+3].g = occ;
+    cs[cs_n+3].b = occ;
+
+    cs_n += 4;
+}
+
+/*
 void __inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
     //struct Vertex* v;
@@ -342,6 +416,7 @@ void __inline add_quad(float x,float y,float z,int side, int tile_id) {
     }
     cs_n += 4;
 }
+*/
 
 /*
 /// ADDRESS
