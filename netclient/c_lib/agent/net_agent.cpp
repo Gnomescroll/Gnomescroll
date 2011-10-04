@@ -218,12 +218,14 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         }
 };
 
-struct PlayerAgent_cs {
+
+struct PlayerAgent_cs2 {
     int seq;
     uint8_t cs;
     float theta;
     float phi;
 };
+
 
 class PlayerAgent_state {
     public:
@@ -231,7 +233,7 @@ class PlayerAgent_state {
         int seq;
         
         //last agent state update
-        PlayerAgent_cs cs_history[128];
+        PlayerAgent_cs2 cs_history[128];
 
         Agent_cs_CtoS cs_0; //last control state
         Agent_cs_CtoS cs_1;
