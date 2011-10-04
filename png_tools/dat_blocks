@@ -119,3 +119,22 @@ north   tron.png
 south   tron.png
 west    tron.png
 east    tron.png
+===
+id      150
+name    rock1
+top     varriount/rock1.png
+bottom  varriount/rock1.png
+north   varriount/rock1.png
+south   varriount/rock1.png
+west    varriount/rock1.png
+east    varriount/rock1.png
+===
+id      151
+name    rock2
+top     varriount/rock2.png
+bottom  varriount/rock2.png
+north   varriount/rock2.png
+south   varriount/rock2.png
+west    varriount/rock2.png
+east    varriount/rock2.png
+

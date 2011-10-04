@@ -48,8 +48,9 @@ _n = time.time()
 #print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
 
 #c_lib.map_gen.interpolate(128, 128, 128, 4, 4, 2)
-c_lib.map_gen.gradient(128,128,128)
-print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n)
+if False:
+    c_lib.map_gen.gradient(128,128,128)
+    print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n)
 
 #perlin = c_lib.map_gen.Perlin(octaves=6)
 #baseline=10
@@ -108,9 +109,14 @@ class Main:
 
     def __init__(self):
         ##setup
+
         if opts.opts.map:
+            print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
         else:
+            terrain_map.load_from_disk("angus")
+
+        if False:
             pass
             ##map_gen.load_map2(terrain_map)
             #map_gen.load_map3(terrain_map)

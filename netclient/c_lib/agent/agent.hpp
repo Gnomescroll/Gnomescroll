@@ -6,6 +6,34 @@
 #include <c_lib/compat_gl.h>
 #endif
 
+//store last network messsage
+struct Agent_state_snapshot_net {
+    int seq;
+    float theta;
+    float phi;        
+    float x,y,z;
+    float vx,vy,vz;
+};
+
+//for rollbacks of a few ticks
+struct Agent_state_snapshot_rollback {
+    int seq;
+    float theta;
+    float phi;        
+    float x,y,z;
+    float vx,vy,vz;
+};
+
+struct Agent_control_state {
+    
+    //int id;
+    int seq;
+    float theta;
+    float phi;        
+    uint32_t cs;
+
+};
+
 struct Agent_control_state {
 	
 	//int id;
@@ -25,6 +53,9 @@ class Agent_state {
 
         int cs_seq;
         struct Agent_control_state cs[128];
+
+
+
         int tick_n; //increment when ticking
         int ctick;  //increment when control state received
         float theta;
