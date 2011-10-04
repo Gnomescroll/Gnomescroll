@@ -18,6 +18,11 @@ Agent_state::Agent_state(int _id) {
 	ctick = 0;  //increment when control state received
 	theta = 0.0;
 	phi = 0.0;
+
+	state_snapshot.seq = -1;
+	state_rollback.seq = -1;
+	int i;
+	for(i=0; i<128;i++) cs[i].seq = -1;
 }
 
 /*

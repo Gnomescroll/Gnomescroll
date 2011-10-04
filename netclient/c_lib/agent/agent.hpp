@@ -7,7 +7,7 @@
 #endif
 
 //store last network messsage
-struct Agent_state_snapshot_net {
+struct Agent_state_snapshot {
     int seq;
     float theta;
     float phi;        
@@ -25,16 +25,6 @@ struct Agent_state_snapshot_rollback {
 };
 
 struct Agent_control_state {
-    
-    //int id;
-    int seq;
-    float theta;
-    float phi;        
-    uint32_t cs;
-
-};
-
-struct Agent_control_state {
 	
 	//int id;
     int seq;
@@ -45,21 +35,47 @@ struct Agent_control_state {
 };
 
 class Agent_state {
+    private:
+        struct Agent_state_snapshot state_snapshot;
+        struct Agent_state_snapshot_rollback state_rollback;
+        struct Agent_control_state cs[128];
 
+        int snapshot_seq;
+        int rollback_seq;
+
+        int cs_window_min;
+        int cs_window_max;
+
+        //deprecate ??
+        int cs_seq; //???
+
+    
     public:
         int id;
 		float x,y,z;
 		float vx,vy,vz;
-
-        int cs_seq;
-        struct Agent_control_state cs[128];
-
-
-
-        int tick_n; //increment when ticking
-        int ctick;  //increment when control state received
         float theta;
         float phi;
+
+        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
+            state_snapshot.seq = seq;
+            state_snapshot.theta = theta;
+            state_snapshot.phi = phi;
+            state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
+            state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
+            snapshot_seq = seq;
+            cs_window_min = seq;
+            int i;
+            for(i=0;i<128;i++){
+                if(1);
+
+            }
+        }
+
+        //deprecate
+        int tick_n; //increment when ticking
+        //deprecate
+        int ctick;  //increment when control state received
 
         //int last_direction_change;
         int last_control_state_update_message;  //acts like ghost for now

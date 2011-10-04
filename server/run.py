@@ -110,6 +110,9 @@ class Main:
     def __init__(self):
         ##setup
 
+        '''
+        loading map from file by default because angus gets segfault
+        '''
         if opts.opts.map:
             print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
