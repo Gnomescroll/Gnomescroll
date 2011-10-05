@@ -52,7 +52,7 @@ printf("init tex hud block sheet\n");
 
 SDL_Surface *surface;
 
-surface=IMG_Load("./media/texture/blocks_01.png"); ///does this need to be freed?
+surface=IMG_Load("./media/texture/hud_block_selector.png"); ///does this need to be freed?
 
 if(!surface) {
     printf("init_hud_tex_block_sheet, IMG_Load: %s \n", IMG_GetError());

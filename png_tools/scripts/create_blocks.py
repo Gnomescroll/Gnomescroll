@@ -4,7 +4,7 @@ import os
 import sys
 
 def run():
-    global tex,lblock
+    global block_tex,lblock
     f = open('./dat_blocks', 'r')
 
     file = f.read()
@@ -30,20 +30,21 @@ def run():
             if len(words) == 3:
                 block.pinput(words[0],words[1],words[2])
     print "=== texture list ==="
-    print str(tex.texture_list())
+    print str(block_tex.texture_list())
     print "=== cube list ==="
     print str(lblock.block_list())
 
 class Texture_set:
-    def __init__(self):
+    def __init__(self, error_png="error.png", texture_dir="./block/"):
         self.texture_id_counter = 0
+        self.texture_dir = texture_dir
         self.A = {}
         self.B = {}
-        self.list = [("error.png",255)]
+        self.list = [(error_png,255)]
     def add_texture(self,tex):
         #check if texture file exists
         #if texture file does not exist, then return 255
-        if not os.path.exists("./block/"+tex):
+        if not os.path.exists(self.texture_dir+tex):
             print "Error: texture file does not exist, %s" %(str(tex))
             self.A[tex] = 255
             return 255
@@ -113,13 +114,13 @@ class Block_template:
     def set_id(self, id):
         self.id = int(id)
     def set_hud(self,s2,s3):
-        global tex
+        global hud_tex
         #self.hud_pos = int(s2)
         print "%s, %s" % (s2, s3)
         self.hud_pos = int(s2)
-        self.hud_img = tex.g(s3)    #eventually may want to use seperate one for hud
+        self.hud_img = hud_tex.g(s3)    #eventually may want to use seperate one for hud
     def pinput(self, s1,s2,s3=None):
-        global tex
+        global hud_tex, block_tex
         if s1 == "id":
             self.set_id(s2)
         elif s1 == "name":
@@ -127,17 +128,17 @@ class Block_template:
         elif s1 == "hud":
             self.set_hud(s2,s3)
         elif s1 == "top":
-            self.side[0] = tex.g(s2)
+            self.side[0] = block_tex.g(s2)
         elif s1 == "bottom":
-            self.side[1] = tex.g(s2)
+            self.side[1] = block_tex.g(s2)
         elif s1 == "west":
-            self.side[2] = tex.g(s2)
+            self.side[2] = block_tex.g(s2)
         elif s1 == "east":
-            self.side[3] = tex.g(s2)
+            self.side[3] = block_tex.g(s2)
         elif s1 == "north":
-            self.side[4] = tex.g(s2)
+            self.side[4] = block_tex.g(s2)
         elif s1 == "south":
-            self.side[5] = tex.g(s2)
+            self.side[5] = block_tex.g(s2)
         else:
             print "Invalid keyword: %s, %s, %s" %(str(s1),str(s2),str(s3))
     def texture_list(self):
@@ -148,21 +149,32 @@ class Block_template:
     def block_dictionary(self):
         pass
 
-tex = Texture_set()
+block_tex = Texture_set(error_png="error.png", texture_dir="./block/") #block textures
+hud_tex = Texture_set(error_png="error.png", texture_dir="./block/")
 lblock = Block_list()
 run()
 
 import sys
 import os
 
-print str(tex._texture_list())
+print str(block_tex._texture_list())
 
+print "Writing out block textures"
 import spritesheet
-sprite = spritesheet.Spritesheet("test", "./block/", tex._texture_list())
+sprite = spritesheet.Spritesheet("test", "./block/", block_tex._texture_list())
 sprite.verify()
 sprite.generate()
 sprite.write_out("./blocks_01.png")
 sprite.write_out("../netclient/media/texture/blocks_01.png")
+
+print "Writing out block selector hud textures"
+import spritesheet
+hud_sprite = spritesheet.Spritesheet("test", "./block/", hud_tex._texture_list())
+hud_sprite.verify()
+hud_sprite.generate()
+hud_sprite.write_out("./hud_block_selector.png")
+hud_sprite.write_out("../netclient/media/texture/hud_block_selector.png")
+
 ### PASS IN USING ARRAY ###
 '''
 f = open("./conf/block_sprite_conf.py", "w")
