@@ -373,7 +373,7 @@ inline int calcAdj(int side_1, int side_2, int corner)
 {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     if( occ == 0) return 255;
-    if(occ == 1) return 177;
+    if(occ == 1) return 177; //177
     //if(occ == 2) return 177;  
     if(occ == 2) return 100;    
 }
