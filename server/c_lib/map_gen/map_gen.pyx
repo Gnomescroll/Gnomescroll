@@ -149,7 +149,7 @@ class Config:
             gradients[self.dim](*(size_args+grad_args))
 
         if self.dim == 1:
-            print "Dimension 1 terrain not implemented.      "
+            print "Dimension 1 terrain not implemented.       "
         elif self.dim == 2:
             print 'setting terrain height '
             set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight)
