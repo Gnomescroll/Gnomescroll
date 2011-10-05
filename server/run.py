@@ -39,53 +39,25 @@ import map_gen
 
 import random
 
-import c_lib.noise
 import c_lib.map_gen
-#c_lib.map_gen.set_seed(666)
-
 import time
 _n = time.time()
+
+#c_lib.map_gen.conf.seed(666)\
+                  #.size(128,128,128)\
+                  #.interpolate(4,4,2)\
+                  #.p3()\
+                  #.start()
                   #.gradient(z0=-0.5, z1=0.5)\
+
+                  #.interpolate(4,2,1)\
 c_lib.map_gen.conf.seed(666)\
-                  .size(128,128,128)\
-                  .interpolate(4,4,2)\
-                  .p3()\
+                  .size(512,512,128)\
+                  .heightmap(baseline=20, maxheight=108)\
+                  .p2()\
                   .start()
-#c_lib.map_gen.interpolate(512, 512, 128, 4, 4, 2)
-print '512**3 interpolated 4,4,4 took %f seconds' % (time.time() - _n) # 71 seconds!
-
-#c_lib.map_gen.interpolate(128, 128, 128, 4, 4, 2)
-#c_lib.noise.gradient(128,128,128)
-#print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n)
-
-#perlin = c_lib.map_gen.Perlin(octaves=6)
-#baseline=10
-#maxh = 20
-#for i in range(128):
-    #for j in range(128):
-        #for k in range(128):
-            #h = perlin.noise3((i/128.),(j/128.), k/128.)
-            #if h > 0:
-                #terrain_map.set(i,j, k, 2)
-
-            #h = abs(h)
-            #h *= 128
-            #h %= maxh
-            #h = int(h)
-            ##h = -1 if h < 0 else h
-            #for z in range(baseline+h):
-               #terrain_map.set(i,j,z, 2)
-            #if 0<=h<=1:
-                #while h >= 0:
-                    #terrain_map.set(i,j,baseline+h, 3)
-                    #h -= 1
-#for i in range(128):
-    #for j in range(128):
-        #k = terrain_map.get_lowest_open_block(i,j)
-        #k = 127 if k >= 128 else k
-        #terrain_map.set(i,j,k, 3)
-
-#c_lib.map_gen.start()
+                  
+print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n) # 71 seconds!
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):

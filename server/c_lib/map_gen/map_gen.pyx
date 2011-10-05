@@ -11,7 +11,8 @@ cdef extern from "./map_gen/noise.c":
                                                               float z0, float z1)
 
     void clear_noisemap()
-    void set_terrain_noise(int x, int y, int z)
+    void set_terrain_density(int x, int y, int z)
+    void set_terrain_height(int x, int y, int z, int baseline, int maxheight)
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed
 
@@ -55,6 +56,11 @@ class Config:
         self.ix = int(x)
         self.iy = int(y)
         self.iz = int(z)
+        return self
+
+    def heightmap(self, baseline=0, maxheight=0):
+        self.baseline = baseline
+        self.maxheight = maxheight
         return self
         
     def gradient(self, x0=0.0, x1=0.0, y0=0.0, y1=0.0, z0=0.0, z1=0.0):
@@ -137,10 +143,19 @@ class Config:
             interpolates[self.dim](*(size_args+interp_args))
         else:
             getattr(self.noise, noise_method)(*size_args)
+            
         if self.grad:
+            print 'grad'
             gradients[self.dim](*(size_args+grad_args))
 
-        set_terrain_noise(self.x, self.y, self.z)
+        if self.dim == 1:
+            print "Dimension 1 terrain not implemented.      "
+        elif self.dim == 2:
+            print 'setting terrain height '
+            set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight)
+        elif self.dim == 3:
+            set_terrain_density(self.x, self.y, self.z)
+
         
 conf = Config()
 

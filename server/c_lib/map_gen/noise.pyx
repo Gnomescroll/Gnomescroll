@@ -59,6 +59,7 @@ class Perlin:
 
     def noise2(self, x,y):
         if self.filled:
+            print 'noise 2 filled     ' 
             self.filled = False
             perlin2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
         else:

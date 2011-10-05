@@ -67,6 +67,105 @@ inline float trilinearInterpolate_condensed(float p[2][2][2], float x, float y, 
             p[1][1][1] * x * y * z;
 }
 
+void _interp1(float final[], int x, int x_interval) {}
+
+void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
+
+    const int margin = 2;
+    int nx = (x / x_interval) + (margin*2),
+        ny = (y / y_interval) + (margin*2);
+
+    float fnx = (float)(nx + margin),
+           fny = (float)(ny + margin);
+
+    // anchor points
+    float points[nx][ny];
+
+    // fractional interval between anchor points
+    float fx_interval = (float)x_interval,
+           fy_interval = (float)y_interval;
+
+    // generate anchor points
+    int i,j;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            points[i][j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
+        }
+    }
+
+    // interpolate
+    int mx,my;
+    int px,py;
+    int sx,sy;
+    int ii,jj;
+    float samples[4][4];
+    float pt;
+    
+    for (i=0; i<x; i++) {
+        mx = i % x_interval;
+        px = mx / fx_interval;
+        sx = (i / x_interval) + margin;
+
+        for (j=0; j<y; j++) {
+            my = j % y_interval;
+            py = my / fy_interval;
+            sy = (j / y_interval) + margin;
+            
+    
+            // collect local samples
+            for (ii=-1; ii < 3; ii++) {
+                for (jj=-1; jj < 3; jj++) {
+                    samples[ii+1][jj+1] = points[ii+sx][jj+sy];  // correct this. increased interpolation margins from 2 to 4, so adjust proper code elsewhere
+                }
+            }
+
+            pt = bicubicInterpolate(samples, px, py);
+            final[i + x*j] = pt;
+        }
+    }
+
+    //// recalculate the anchor points from the interpolated points
+    // use linear interpolation for this
+    float resamples[2][2];
+    int ix,iy;
+    int index;
+    int iix,jjy;
+    for (i=margin; i < nx-margin; i++) {
+        ix = (i-margin) * x_interval;
+        if (!ix) continue;          // ix=0 is the same as final's x=0. It cannot interpolate because interpolated values are not calculated for n<0. This applies to x and y.
+                                      // one solution is to generate the interpolate box one level extra backward in each dimension. or, calculate one level forward, but shift the anchor point ix=0 back 1.
+
+        for (j=margin; j < ny-margin; j++) {
+            iy = (j-margin) * y_interval;
+            if (!iy) continue;
+
+            // collect samples from final array's interpolated values.
+            for (ii=0; ii < 2; ii++) {
+                iix = (ii == 0) ? -1 : ii;
+                for (jj=0; jj < 2; jj++) {
+                    jjy = (jj == 0) ? -1 : jj;
+                    index = ix + iix + x*(iy + jjy);
+                    resamples[ii][jj] = final[index];
+                }
+            }
+
+            pt = bilinearInterpolate(resamples, 0.5f, 0.5f);
+            points[i][j] = pt;
+        }
+    }
+    
+    // merge (recalculated, linearly interpolated) anchor points with (cubic) interpolated
+    for (i=margin; i < nx-margin; i++) {
+        ii = (i-margin) * x_interval;
+        for (j=margin; j < ny-margin; j++) {
+            jj = (j-margin) * y_interval;
+
+            final[ii + x*jj] = points[i][j];
+        }
+    }
+
+}
+
 void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
 
     const int margin = 2;
@@ -203,5 +302,18 @@ void apply_interp3(int x, int y, int z, int x_interval, int y_interval, int z_in
     _interp3(noisemap, x,y,z, x_interval, y_interval, z_interval);
 }
 
-void apply_interp2(int x, int y, int x_interval, int y_interval) {}
-void apply_interp1(int x, int x_interval){}
+void apply_interp2(int x, int y, int x_interval, int y_interval) {
+    if (x > xmax || y > ymax || x < 0 || y < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+    _interp2(noisemap, x,y, x_interval, y_interval);
+}
+
+void apply_interp1(int x, int x_interval) {
+    if (x > xmax || x < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+    _interp1(noisemap, x, x_interval);
+}
