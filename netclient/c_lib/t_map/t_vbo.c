@@ -14,7 +14,7 @@ unsigned int _garbage_collection_counter = 0;
 int T_MAP_BLEND_MODE = 0;
 
 void _toggle_terrain_map_blend_mode() {
-    T_MAP_BLEND_MODE = (T_MAP_BLEND_MODE+1)%5;
+    T_MAP_BLEND_MODE = (T_MAP_BLEND_MODE+1)%7;
     printf("toggle_terrain_map_blend_mode: blend mode= %i\n", T_MAP_BLEND_MODE);
 }
 
@@ -221,7 +221,6 @@ draw_mode_enabled = 1;
 
 glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
-glEnable(GL_CULL_FACE);  ///testing
 
 glShadeModel(GL_SMOOTH);
 
@@ -246,12 +245,19 @@ if(T_MAP_Z_BUFFER == 0) {
     glDisable (GL_DEPTH_TEST);
 }
 
+if(T_MAP_BLEND_MODE != 2) { //make a toggle for cull face
+    glEnable(GL_CULL_FACE);  ///testing
+}
+
 if(T_MAP_BLEND_MODE != 0) {
     glEnable(GL_BLEND);
-    if(T_MAP_BLEND_MODE ==1 ) glBlendFunc(GL_ONE, GL_ONE);
-    if(T_MAP_BLEND_MODE ==2 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    if(T_MAP_BLEND_MODE ==3 ) glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_DST_COLOR);
-    if(T_MAP_BLEND_MODE ==4 ) glBlendFunc(GL_ONE, GL_ALPHA);
+    if(T_MAP_BLEND_MODE ==1 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if(T_MAP_BLEND_MODE ==2 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    if(T_MAP_BLEND_MODE ==3 ) glBlendFunc(GL_ONE, GL_ONE);
+    if(T_MAP_BLEND_MODE ==4 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    if(T_MAP_BLEND_MODE ==5 ) glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_DST_COLOR);
+    if(T_MAP_BLEND_MODE ==6 ) glBlendFunc(GL_ONE, GL_ALPHA);
 }
 
 glBindTexture( GL_TEXTURE_2D, texture );

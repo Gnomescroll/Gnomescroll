@@ -101,6 +101,17 @@ south   sand.png
 west    sand.png
 east    sand.png
 
+
+===
+id      16
+name    tree_alt
+top     tree-alt-small.png
+bottom  tree-alt-small.png
+north   tree-alt-small.png
+south   tree-alt-small.png
+west    tree-alt-small.png
+east    tree-alt-small.png
+
 ===
 id      100
 name    terminal
