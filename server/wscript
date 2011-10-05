@@ -38,6 +38,7 @@ def configure(conf):
     conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
     conf.env.CXXFLAGS = conf.env.CFLAGS
     #,'-D DC_CLIENT'
+    conf.env.append_value("LINKFLAGS", "-lz")
 
     OS = platform.system()
     conf.env.os = OS
@@ -151,7 +152,7 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.map_gen')
 
-        
+
     # final
     bld(features='c cprogram pyembed',
         #use=common_libraries+time_lib + ['c_lib'],

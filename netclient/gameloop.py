@@ -32,6 +32,7 @@ if True:
     import init_c_lib
     import c_lib.c_lib_objects
     import c_lib.c_lib_agents
+    import c_lib.c_lib_hud as cHUD
     from c_lib.c_lib_agents import set_agent_control_state
     #import c_lib.c_lib_timer as physics_timer
     import init_c_lib
@@ -95,6 +96,7 @@ class App(object):
         SDL.hud.init()
 
         init_c_lib.init()
+        cHUD.init_hud()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -315,6 +317,7 @@ class App(object):
                     draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 c_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
+                cHUD.draw_cube_selector(200.0,200.0)
                 P2.draw_perf_graph(50,700,-0.30)
                 _pviz_draw(780,400, -.30)
 

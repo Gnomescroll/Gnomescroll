@@ -15,6 +15,7 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 
+//DEPRECATED
 class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_control_state_message>
 {
     public:
@@ -52,7 +53,7 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_contr
 
 //template class FixedSizeNetPacketToServer<Agent_control_state_message>;
 
-
+//send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
 {
     public:
@@ -68,7 +69,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         inline void packet(unsigned char* buff, int* buff_n, bool pack) 
         {
-            pack_message_id(message_id, buff, buff_n, pack);
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
             pack_16(&tick, buff, buff_n, pack);
@@ -82,8 +82,209 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         }
 
         inline void handle() {
-            printf("Received Agent_state_message packet: agent_id= %i \n", id);
+            Agent_state* A = ClientState::agent_list.get(id);
+            if(A == NULL) {
+                printf("Agent does not exist: create agent, id=%i \n", id);
+                A = ClientState::agent_list.create(id);
+            }            
+            //do something
+        /*
+            A->x = x;
+            A->y = y;
+            A->z = z;
+            A->vx = vx;
+            A->vy = vy;
+            A->vz = vz;
+        */
+            float theta = 0;
+            float phi = 0;
+            A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+            //printf("Received Agent_state_message packet: agent_id= %i \n", id);
             return;
         }
 };
 
+
+
+class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<Agent_control_state_to_client_message>
+{
+    public:
+
+        int id;
+        int seq;
+        uint32_t cs;
+        int tick;
+        int ctick;
+        float theta;
+        float phi;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&seq, buff, buff_n, pack);
+            pack_16(&tick, buff, buff_n, pack);
+            pack_u32_t(&cs, buff, buff_n, pack);
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            Agent_state* A = ClientState::agent_list.get(id);
+            if(A == NULL) {
+                printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
+                return;
+            }
+            A->theta = theta;
+            A->phi = phi;
+            //do something
+            //printf("Received control state for agent %i, seq= %i\n", id, seq);
+            //apply control state to agent
+            A->ctick++;
+        }
+};
+
+
+//Agent control state, server to client
+class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
+{
+    public:
+
+        int id;
+        int seq;
+        uint8_t cs;
+        float theta;
+        float phi;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&seq, buff, buff_n, pack);
+            pack_u8(&cs, buff, buff_n, pack);
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            Agent_state* A = ClientState::agent_list.get(id);
+            if(A == NULL) {
+                printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
+                return;
+            }
+            //place in control buffer
+            //advance physics forward
+        }
+};
+
+//agent control state, client to server
+class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
+{
+    public:
+
+        int id;
+        int seq;
+        uint8_t cs;
+        float theta;
+        float phi;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&seq, buff, buff_n, pack);
+            pack_u8(&cs, buff, buff_n, pack);
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            printf("cs_CtoS: seq= %i \n", seq);
+
+            Agent_state* A = ClientState::agent_list.get(id);
+            if(A == NULL) {
+                printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
+                return;
+            }
+
+
+            //determine if message is new, if so send out
+
+
+            Agent_cs_StoC M;
+            M.id = id;
+            M.seq = seq;
+            M.cs = cs;
+            M.theta = theta;
+            M.phi = phi;
+            M.broadcast();
+            //set buffer
+
+
+            //A->theta = theta;
+            //A->phi = phi;
+
+            //do something
+
+        }
+};
+
+
+struct PlayerAgent_cs2 {
+    int seq;
+    uint8_t cs;
+    float theta;
+    float phi;
+};
+
+
+class PlayerAgent_state {
+    public:
+        int agent_id;
+        int seq;
+        
+        //last agent state update
+        PlayerAgent_cs2 cs_history[128];
+
+        Agent_cs_CtoS cs_0; //last control state
+        Agent_cs_CtoS cs_1;
+
+    PlayerAgent_state() {
+        agent_id = 0;
+        seq = 0;
+        int i;
+        for(i=0;i<128;i++) {
+            cs_history[i].seq = -1;
+        }
+    }
+
+
+    void set_control_state(uint8_t cs, float theta, float phi) {
+        cs_1 = cs_0;
+        seq = (seq+1) % 256;
+
+        //dont need to clear? because are in order?
+
+        /*            
+        if(seq == 0) {
+            int i;
+            for(i=0;i<256;i++) {
+                if(history[i].seq > 127) history[i].seq = -1;
+            }
+        */
+
+        cs_0.seq = seq;
+        cs_0.cs = cs;
+        cs_0.theta = theta;
+        cs_0.phi = phi;
+
+        cs_1.send();
+        //cs_0.send();
+
+        /*
+        int i;
+        for(i=1;i<=64;i++) {
+            history[(seq+i)%128].seq = -1; //clear out future commands
+        }
+        */
+    }
+
+
+};

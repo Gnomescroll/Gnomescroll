@@ -4,66 +4,16 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,theta,phi)
 
-
 '''
 DEPRECATE
 '''
 
-
-'''
-cdef extern from "./agent/agent_draw.h":
-    void agent_draw() #draw all agents
-'''
 
 cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
     void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
     void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
     void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b)
-
-'''
-cdef extern from "./agent/agent_state.cpp":
-    void send_control_state()
-
-def _send_control_state():
-    send_control_state()
-'''
-
-'''
-cdef extern from "./agent/control_state.h":
-    void set_agent_control_state(int* cs, float xangle, float yangle)
-'''
-
-'''
-cdef extern from "./agent/agent_client.h":
-    void set_agent_control_state(int x[32], float theta, float phi)
-
-def _set_agent_control_state(int f, int b, int l, int r, int jump, float theta, float phi):
-    cdef int x[32]
-    x[0] = f
-    x[1] = b
-    x[2] = l
-    x[3] = r
-    x[4] = jump
-    set_agent_control_state(x, theta, phi)
-'''
-
-
-'''
-cdef extern from "./agent/agent.h":
-    int create_agent(float x, float y, float z)
-    void set_agent_state(int id, float xangle, float yangle)
-'''
-
-'''
-cdef extern from "./agent/agent_vox.h":
-    void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
-    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
-
-    void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
-    void set_agent_limb_anchor_point(int id, int part, float length, float ax,float ay,float az)
-'''
-
 
 def _draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle):
     draw_agent_aiming_direction(x, y, z, xangle, yangle)

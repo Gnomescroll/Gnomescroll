@@ -8,6 +8,7 @@ e east
 ===
 id      1
 name    test
+hud     3 error.png
 top     error.png
 bottom  error.png
 north   error.png
@@ -17,6 +18,7 @@ east    error.png
 ===
 id      2
 name    stone
+hud     2 stone.png
 top     stone.png
 bottom  stone.png
 north   stone.png
@@ -26,6 +28,7 @@ east    stone.png
 ===
 id      3
 name    lava
+hud     1 lavablock.png
 top     lavablock.png
 bottom  lavablock.png
 north   lavablock.png
@@ -35,6 +38,7 @@ east    lavablock.png
 ===
 id      4
 name    grass
+hud     4 grass-side.png
 top     grass-top.png
 bottom  dirt.png
 north   grass-side.png
@@ -115,3 +119,22 @@ north   tron.png
 south   tron.png
 west    tron.png
 east    tron.png
+===
+id      150
+name    rock1
+top     varriount/rock1.png
+bottom  varriount/rock1.png
+north   varriount/rock1.png
+south   varriount/rock1.png
+west    varriount/rock1.png
+east    varriount/rock1.png
+===
+id      151
+name    rock2
+top     varriount/rock2.png
+bottom  varriount/rock2.png
+north   varriount/rock2.png
+south   varriount/rock2.png
+west    varriount/rock2.png
+east    varriount/rock2.png
+

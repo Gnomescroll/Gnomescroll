@@ -9,6 +9,9 @@ http://www.reddit.com/r/Minecraft/comments/g0my6/how_terrain_generation_works_in
 !!! is down, try later
 http://archive.gamedev.net/community/forums/mod/journal/journal.asp?jn=259175&cmonth=11&cyear=2010
 
+Catching Memory Leaks:
+ The Valgrind memcheck tool is a fantastic way to find all sorts of uninitialized variables and other memory bugs. Valgrind is limited because it is quite slow, it can only find bugs that still exist in the generated machine code (so it can't find things the optimizer removes),
+
 Noise:
 
 http://mines.lumpylumpy.com/Electronics/Computers/Software/Cpp/Graphics/Bitmap/Textures/Noise/Voronoi.php
@@ -26,6 +29,12 @@ Passing GL_SRGB_EXT instead of GL_RGB to glTexImage2D, for example, ensures that
 Array Textures:
 http://www.opengl.org/wiki/Array_Texture
 
+!!! Bitmap Fonts:
+converts true type to bitmap
+http://www.angelcode.com/products/bmfont/
+http://ace-spades.com/wp-content/uploads/DDFontMake.exe
+http://www.gamedev.net/topic/330742-quick-tutorial-variable-width-bitmap-fonts/
+
 Automatic Mipmapp Generation
 http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
 
@@ -37,3 +46,13 @@ glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
 
 Charged Miners Shots:
 http://miners.walkyrie.se/
+
+Sound Effects:
+http://www.shockwave-sound.com/collections.html
+http://www.sounddogs.com/
+
+Design:
+http://insertcredit.com/2011/09/22/who-killed-videogames-a-ghost-story/
+design: http://www.gdcvault.com/play/1014982/Truth-in-Game
+player types: http://www.gamasutra.com/view/feature/6474/personality_and_play_styles_a_.php
+

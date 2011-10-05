@@ -522,6 +522,22 @@ cdef extern from "./t_map/t_map.h":
 #    int _init_t_map_draw()
 
 _init = 0
+
+
+def set_hud_cube_selector():
+    global c_dat
+    import c_lib.c_lib_hud as cHUD
+
+    def apply(id):
+        hud_img = c_dat.get(id,'hud_img')
+        hud_pos = c_dat.get(id,'hud_pos')
+        cHUD.cube_select_set_hud(pos=hud_pos,cube_id=id,tex_id=hud_img)
+
+    for id in c_dat.dat:
+        apply(id)
+    #assert False
+
+
 def init():
     global _init
     if _init != 0:
@@ -534,7 +550,7 @@ def init():
     _init_t_map();
     #_init_t_map_draw()
     _init_draw_terrain()
-
+    set_hud_cube_selector()
 
 '''
 Epilogue: Cube dat update callbacks

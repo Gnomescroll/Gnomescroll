@@ -3,6 +3,7 @@
 //#include "./t_inline.c"
 
 GLuint texture = 0;
+
 SDL_Surface *surface;
 
 int draw_mode_enabled = 0;
@@ -59,11 +60,95 @@ struct Vertex* _get_quad_cache() {
     return (struct Vertex*) &quad_cache;
 }
 
+/*
+#north/south is +/- x
+#west/east is +/- y
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+*/
+
+const int _lighting = 0;
+
+
+GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat mat_diffuse[] = {1.0, 0.0, 0.0};
+GLfloat mat_shininess[] = { 50.0 };
+GLfloat light_position[] = {256.0, 256.0, 128.0, 0.0};
+GLfloat light_color[] = {1.0, 1.0, 1.0, 0.0};
+GLfloat diffuse_color[] =  {1.0, 1.0, 1.0, 0.0};
+//GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.0};
+GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.8};
+
+int _init_quad_cache_normals() {
+    //int i,j;
+    int cube_id, side, i;
+
+    int n[3];
+    for(cube_id=0;cube_id<max_cubes;cube_id++) {
+        for(side=0;side<6;side++) {
+
+            if(side == 0) {
+                n[0]= 0;
+                n[1]= 0;
+                n[2]= 1;
+            }
+            if(side == 1) {
+                n[0]= 0;
+                n[1]= 0;
+                n[2]= -1;
+            }
+            if(side == 2) {
+                n[0]= 1;
+                n[1]= 0;
+                n[2]= 0;
+            }
+
+            if(side == 3) {
+                n[0]= -1;
+                n[1]= 0;
+                n[2]= 0;
+            }
+            if(side == 4) {
+                n[0]= 0;
+                n[1]= 1;
+                n[2]= 0;
+            }
+            if(side == 5) {
+                n[0]= 0;
+                n[1]= -1;
+                n[2]= 0;
+            }
+        /*
+            if(side == 1) n = {0,0,-1};
+            if(side == 2) n = {1,0,0};
+            if(side == 3) n = {-1,0,0};
+            if(side == 4) n = {0,1,0};
+            if(side == 5) n = {0,-1,0};
+        */       
+            for(i=0;i<4;i++) {
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[0] = n[0];
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[1] = n[1];
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[2] = n[2];
+                quad_cache[cube_id*6*4+ 6*side+ i].normal[3] = 0;
+            }
+        }
+    }
+
+}
+
 int _init_draw_terrain() {
     //quad_cache = _get_quad_cache();
+    _init_quad_cache_normals();
 
     //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     //glEnable(GL_POLYGON_SMOOTH);
+    printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
 
     if(texture == 0) { //load texture if texture is not set
     //surface=IMG_Load("media/texture/textures_03.png");  //should this be freed?
@@ -79,6 +164,9 @@ int _init_draw_terrain() {
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
 
+/*
+ * Replace with tiles and use mipmapping for filter
+*/
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -135,6 +223,23 @@ glEnable(GL_TEXTURE_2D);
 glEnable (GL_DEPTH_TEST);
 glEnable(GL_CULL_FACE);  ///testing
 
+glShadeModel(GL_SMOOTH);
+
+if(_lighting) {
+    
+    glMaterialfv(GL_FRONT,GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_color);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+}
+
 if(T_MAP_Z_BUFFER == 0) {
     glEnable (GL_DEPTH_TEST);
 } else {
@@ -164,6 +269,15 @@ glDisableClientState(GL_VERTEX_ARRAY);
 glDisableClientState(GL_COLOR_ARRAY);
 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+if(_lighting) {
+
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_COLOR_MATERIAL);
+}
+
+glShadeModel(GL_FLAT);
+
 glDisable(GL_TEXTURE_2D);
 glDisable (GL_DEPTH_TEST);
 glDisable(GL_CULL_FACE);
@@ -187,6 +301,7 @@ if(draw_mode_enabled == 0) {
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+    glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     //return 0;
@@ -196,6 +311,7 @@ if(draw_mode_enabled == 0) {
     glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+    glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
     glDrawArrays(GL_QUADS,0, q_VBO->v_num);
     //return 0;
@@ -218,6 +334,99 @@ return 0;
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
 
+/*
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+*/
+//int CI[9];
+
+
+static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
+-1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
+1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
+-1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
+1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
+-1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
+
+
+/*
+static const int CI0[8*3] = { 1,1,1, 0,1,1, -1,1,1, -1,0,1, -1,-1,1, 0,-1,1, 1,-1,1, 1,0,1};
+static const int CI1[8*3] = { -1,1,-1, 0,1,-1, 1,1,-1, 1,0,-1, 1,-1,-1, 0,-1,-1, -1,-1,-1, -1,0,-1,};
+static const int CI2[8*3] = { 0,-1,2, 0, -1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0, 0, 2,};
+static const int CI3[8*3] = { 0,1,2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, 0, 2,};
+static const int CI4[8*3] = { 1,0,2, 1, 0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 1, -1, 0, 2, 0, 0, 2,};
+static const int CI5[8*3] = { -1,0,2, -1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 2, 0, 0, 2};
+*/
+
+/*
+will be 1 if is adjacent to any side
+will be 2 only if both sides are occluded
+ */
+
+inline int calcAdj(int side_1, int side_2, int corner)
+{
+    int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
+    if( occ == 0) return 255;
+    if(occ == 1) return 177;
+    //if(occ == 2) return 177;  
+    if(occ == 2) return 100;    
+}
+
+
+void __inline add_quad(int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    int index;
+    int CX[8];
+    for(i=0; i<8; i++) {
+        index = side*8*3+i*3;
+        CX[i] = isActive(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+    }
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    for(i=0; i<=4;i++) {
+        cs[cs_n+i].x += _x;
+        cs[cs_n+i].y += _y;
+        cs[cs_n+i].z += _z;
+    }
+
+    int occ = (x+y+z);
+    if(occ > 255) occ = 255;
+
+    occ = calcAdj(CX[7], CX[1], CX[0]);
+    cs[cs_n+0].r = occ;
+    cs[cs_n+0].g = occ;
+    cs[cs_n+0].b = occ;
+
+    occ = calcAdj(CX[1], CX[3], CX[2]);
+    cs[cs_n+1].r = occ;
+    cs[cs_n+1].g = occ;
+    cs[cs_n+1].b = occ;
+
+    occ = calcAdj(CX[3], CX[5], CX[4]);
+    cs[cs_n+2].r = occ;
+    cs[cs_n+2].g = occ;
+    cs[cs_n+2].b = occ;
+
+    occ = calcAdj(CX[5], CX[7], CX[6]);
+    cs[cs_n+3].r = occ;
+    cs[cs_n+3].g = occ;
+    cs[cs_n+3].b = occ;
+
+    cs_n += 4;
+}
+
+/*
 void __inline add_quad(float x,float y,float z,int side, int tile_id) {
     int i;
     //struct Vertex* v;
@@ -230,6 +439,7 @@ void __inline add_quad(float x,float y,float z,int side, int tile_id) {
     }
     cs_n += 4;
 }
+*/
 
 /*
 /// ADDRESS

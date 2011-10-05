@@ -30,6 +30,8 @@ int _init_text() {
     glGenTextures(1,&fontTextureId);
     glBindTexture(GL_TEXTURE_2D,fontTextureId);
 
+    //printf("font buffer= %i\n", fontTextureId);
+
     if (tex_alpha) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, font->w, font->h, 0, GL_RGBA, //rgb
                      GL_UNSIGNED_BYTE, font->pixels);

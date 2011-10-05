@@ -94,21 +94,38 @@ class Block_list:
                 l.append(t)
         return l
 
+
+hud_c = 65
+def get_hud_id():
+    global hud_c
+    hud_c += 1
+    return hud_c -1
+
 class Block_template:
     def __init__(self):
         self.name = None
         self.id = None
         self.side = [255,255,255,255,255,255]
+        self.hud_pos = -1
+        self.hud_img = -1    #not handling undefined case
     def set_name(self,name):
         self.name = name
     def set_id(self, id):
         self.id = int(id)
+    def set_hud(self,s2,s3):
+        global tex
+        #self.hud_pos = int(s2)
+        print "%s, %s" % (s2, s3)
+        self.hud_pos = int(s2)
+        self.hud_img = tex.g(s3)    #eventually may want to use seperate one for hud
     def pinput(self, s1,s2,s3=None):
         global tex
         if s1 == "id":
             self.set_id(s2)
         elif s1 == "name":
             self.set_name(s2)
+        elif s1 == "hud":
+            self.set_hud(s2,s3)
         elif s1 == "top":
             self.side[0] = tex.g(s2)
         elif s1 == "bottom":
@@ -164,6 +181,8 @@ dat = {
         'neutron_tolerance' : 2,
         'nuclear': 0,
         'texture_id': [-1]*6,
+        'hud_pos' : -1,
+        'hud_img' : -1,
         'texture_order': [[0,1,2,3]] * 6,
         'gravity'   :   0,
         'transparent': 0,
@@ -180,6 +199,8 @@ default =    {
             'neutron_tolerance' : 2,
             'nuclear' : 0,
             'texture_id': [255]*6,
+            'hud_pos' : -1,
+            'hud_img' : -1,
             'gravity'   :   0,
             'transparent': 0,
     }
@@ -191,6 +212,8 @@ for block in lblock.list:
     x = default.copy()
     x['name'] = block.name
     x['texture_id'] = block.side
+    x['hud_pos'] = block.hud_pos
+    x['hud_img'] = block.hud_img
     dat[block.id] = x
 
 #print str(dat)

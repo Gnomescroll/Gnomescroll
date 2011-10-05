@@ -43,6 +43,7 @@ import c_lib.map_gen
 import time
 _n = time.time()
 
+
 #c_lib.map_gen.conf.seed(666)\
                   #.size(128,128,128)\
                   #.interpolate(4,4,2)\
@@ -87,9 +88,17 @@ class Main:
 
     def __init__(self):
         ##setup
+
+        '''
+        loading map from file by default because angus gets segfault
+        '''
         if opts.opts.map:
+            print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
         else:
+            terrain_map.load_from_disk("angus")
+
+        if False:
             pass
             ##map_gen.load_map2(terrain_map)
             #map_gen.load_map3(terrain_map)

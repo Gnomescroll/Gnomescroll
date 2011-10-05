@@ -138,23 +138,16 @@ void send_packet3(unsigned char* buff, int n_size) {
     //unsigned int value = 5;
     //PACK_uint32_t(value, out_buff, &n1);
 
+/*
     if(n1 != 11) {
         printf("send_packet3: header should be 11 bytes, is %i\n", n1);
         return;
     }
+*/
     //printf("writing messages at byte %i \n", n1);
     memcpy(out_buff+n1, buff, n_size);
     n1+=n_size;
-    //printf("Sent packet %i\n", seq);
 
-    //Simulated packet lose
-
-/*
-    if(seq%5 == 0) {
-        printf("Intentially dropped packet: %i \n", seq);
-        return;
-    }
-*/
     pviz_packet_sent(seq, n1);
     int sent_bytes = sendto( client_socket.socket, (const char*)out_buff, n1,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "send_packet3: failed to send packet: return value = %i of %i\n", sent_bytes, n1 ); return;}
@@ -183,10 +176,12 @@ void flush_outgoing_packets() {
     PACK_uint16_t(get_sequence_number(&NPserver), client_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(&NPserver),client_out_buff, &n1); //sequence number
 
+/*
     if(n1 != 11) {
         printf("flush_outgoing_packets: header should be 11 bytes, is %i\n", n1);
         return;
     }
+*/
     //printf("writing messages at byte %i \n", n1);
 
     pviz_packet_sent(seq, client_out_buff_n);
@@ -310,14 +305,12 @@ void process_packet(unsigned char* buff, int n) {
         return;
     }
 
-    UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+    UNPACK_uint8_t(&channel_id, buff, &n1);         //channel 1
+    UNPACK_uint16_t(&sequence_number, buff, &n1);   //sequence number
+    UNPACK_uint16_t(&max_seq, buff, &n1);           //max seq
+    UNPACK_uint32_t(&acks, buff, &n1);              //sequence number
 
-    UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
-    //ack
-    UNPACK_uint16_t(&max_seq, buff, &n1); //max seq
-    UNPACK_uint32_t(&acks, buff, &n1); //sequence number
-
-    UNPACK_uint32_t(&value, buff, &n1);
+    //UNPACK_uint32_t(&value, buff, &n1);
     //printf("value= %i\n", value);
     //printf("received packet: sequence number %i from server\n", sequence_number);
     //printf("---\n");
@@ -327,6 +320,7 @@ void process_packet(unsigned char* buff, int n) {
     NPserver.last_packet_time = get_current_netpeer_time();
     NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
 
+    process_packet_messages(buff, n1, n);
 }
 
 
@@ -341,9 +335,6 @@ int poll_connection_timeout() {
     }
     return 0;
 }
-
-
-
 
 
 int decrement_ttl() {

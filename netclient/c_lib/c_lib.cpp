@@ -25,8 +25,9 @@
 #include "./t_map/t_properties.c"
 
 #ifdef DC_CLIENT
-	#include "./t_map/t_viz.c"
-	#include "./t_map/t_vbo.c"
+	#include <c_lib/t_map/t_viz.c>
+	#include <c_lib/t_map/t_vbo.c>
+	#include <c_lib/hud/cube_select.cpp>
 #endif
 
 #include "./physics/vector.c"

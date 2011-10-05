@@ -113,6 +113,11 @@ void blood_draw() {
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
 
+        tx_min = 0.0;
+        tx_max = 1.0;
+        ty_min = 0.0;
+        ty_max = 1.0;
+
         x=g->x; y=g->y; z=g->z;
 
         glTexCoord2f(tx_min,ty_max );

@@ -1,3 +1,25 @@
+<Triplefox> like I keep saying - make the pieces, the elemental parts...
+<Triplefox> the only thing aos has is that - a bunch of weapons to use
+<Triplefox> and players to shoot
+
+<Triplefox> well the game is still sci-fi right
+<Triplefox> do you have your resource system figured out?
+<HaltingState> nope
+<HaltingState> i have to get some type of crafting system
+<HaltingState> and stuff for player to hoard
+<Triplefox> one avenue is to develop resource blocks in tandem with the crafting
+<Triplefox> minecraft went very far on just that
+<Triplefox> on the other hand you have aos which has only added weapons
+<Triplefox> and done little with resources
+<Triplefox> on the other hand you have aos which has only added weapons
+<Triplefox> and done little with resources
+<Triplefox> now that you are actually getting into gameplay you have to decide what elements of your game are really key to the experience...not on the abstract level, but like "this is the gun i am shooting, this is the stuff I'm collecting"
+
+<TkTech> Why does it feel like with 1.9 Minecraft is turning into the old Runescape, with the addition of blocks?
+<Jckf> That sounds scary
+<Zaneo> TkTech: It couldn't... oh my god, you're right.
+<TkTech> The new music even sounds like it was swapped out from runescape, circa 2001
+
 Graphics Engine:
 
 :using index array to reduce bytes per quad from 48 to 8
