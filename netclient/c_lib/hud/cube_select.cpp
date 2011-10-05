@@ -42,7 +42,7 @@ void _draw_cube_selector(float x, float y, float size, int mode) {
     const float sborder = 1;
     const float z_ = -0.5;
 
-    const float txmargin = 0.0001;
+    const float txmargin = 0.001;
 
     glColor3ub(255,255,255);
 	//glColor3b(0, 0, 0);
