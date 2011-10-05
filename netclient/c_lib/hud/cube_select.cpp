@@ -16,6 +16,8 @@ void _init_cube_select() {
 		cube_select_array[i].cube_id = -1;
 		cube_select_array[i].tex_id = 254;
 	}
+    cube_select_x = 0;
+    cube_select_y = 0;
 	return;
 }
 
@@ -70,14 +72,6 @@ void _draw_cube_selector(float x, float y, float size, int mode) {
     	tx_max = ti*0.0625 + 0.0625 - txmargin;
     	ty_max = tj*0.0625 + 0.0625 - txmargin;
 
-/*
-    	if(i==2 && j==0) {
-    		//printf("tex_id= %i \n", tex_id);
-   			printf("tx_min, ty_min= %f, %f \n", tx_min, ty_min);
-    	}
-*/
-
-
         glTexCoord2f(tx_min,ty_max);
         glVertex3f(x0, y0, z_);  // Top left
 
@@ -89,27 +83,47 @@ void _draw_cube_selector(float x, float y, float size, int mode) {
 
         glTexCoord2f(tx_min,ty_min );
         glVertex3f(x0,y1, z_);  // Bottom left
-        
-        //       
-/*
-        glTexCoord2f(tx_min,ty_max );
-        glVertex3f(x0,y1, z_);  // Bottom left
-
-        glTexCoord2f(tx_min,ty_min );
-        glVertex3f(x0, y0, z_);  // Top left
-
-        glTexCoord2f(tx_max,ty_min);
-        glVertex3f(x1,y0, z_);  // Top right
-
-        glTexCoord2f(tx_max,ty_max );
-        glVertex3f(x1,y1, z_);  // Bottom right
-*/
     }}
-
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
- 
+    const float s_margin = 1.0; //selector margin
+    i = cube_select_x;
+    j = cube_select_y;
+    x0 = x + i*(_ssize+sborder) + sborder/2 - s_margin;
+    x1 = x + i*(_ssize+sborder) + _ssize - sborder/2 + s_margin;
+    y0 = y - j*(_ssize+sborder) + sborder/2 - s_margin;
+    y1 = y - j*(_ssize+sborder) + _ssize - sborder/2 + s_margin;
+    
+    //printf("%f,%f,%f,%f \n", x0,x1,y0,y1);
+
+    x0 = x + i*(_ssize+sborder) + sborder/2;
+    x1 = x0 + _ssize - sborder;
+    y0 = y - j*(_ssize+sborder) + sborder/2;
+    y1 = y0 + _ssize - sborder;
+    
+    //x0 -= s_margin;
+    //x1 += s_margin;
+    //y0 -= s_margin;
+    //y1 += s_margin;
+
+    glLineWidth(1.0);
+    //glEnable(GL_LINE_SMOOTH);
+    glColor4ub(0,0,255,0);
+    glBegin(GL_LINE_STRIP);
+
+        glVertex3f(x0, y0, z_);  // Top left
+
+        glVertex3f(x1,y0, z_);  // Top right
+
+        glVertex3f(x1,y1, z_);  // Bottom right
+
+        glVertex3f(x0,y1, z_);  // Bottom left
+        glVertex3f(x0, y0, z_);
+
+    glEnd();
+    glLineWidth(1.0);
+    glColor4ub(255,255,255,255);
 	//need to implement draw
 	return;
 }
