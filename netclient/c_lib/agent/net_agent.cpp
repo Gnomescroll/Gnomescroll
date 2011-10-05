@@ -15,6 +15,7 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 
+//DEPRECATED
 class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_control_state_message>
 {
     public:
@@ -52,7 +53,7 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_contr
 
 //template class FixedSizeNetPacketToServer<Agent_control_state_message>;
 
-
+//send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
 {
     public:
@@ -87,12 +88,17 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
                 A = ClientState::agent_list.create(id);
             }            
             //do something
+        /*
             A->x = x;
             A->y = y;
             A->z = z;
             A->vx = vx;
             A->vy = vy;
             A->vz = vz;
+        */
+            float theta = 0;
+            float phi = 0;
+            A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
             //printf("Received Agent_state_message packet: agent_id= %i \n", id);
             return;
         }
@@ -190,6 +196,8 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         }
 
         inline void handle() {
+            printf("cs_CtoS: seq= %i \n", seq);
+
             Agent_state* A = ClientState::agent_list.get(id);
             if(A == NULL) {
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
@@ -268,7 +276,7 @@ class PlayerAgent_state {
         cs_0.phi = phi;
 
         cs_1.send();
-        cs_0.send();
+        //cs_0.send();
 
         /*
         int i;

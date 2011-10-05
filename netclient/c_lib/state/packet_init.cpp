@@ -11,5 +11,8 @@ void RegisterMessages() {
 	Agent_control_state_message::register_server_packet();
 	Agent_state_message::register_client_packet();
 	Agent_control_state_to_client_message::register_client_packet();
+
+	Agent_cs_CtoS::register_server_packet();
+	Agent_cs_StoC::register_client_packet();
 }
 }
