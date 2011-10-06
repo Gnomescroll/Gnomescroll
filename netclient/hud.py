@@ -108,7 +108,7 @@ class Hud(object):
         return stats
 
     def draw_block_selector(self):
-        c_lib_hud.draw_cube_selector(400.0,200.0)
+        c_lib_hud.draw_cube_selector(888.0,130.0)
 
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
