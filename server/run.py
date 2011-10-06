@@ -40,6 +40,7 @@ import map_gen
 import random
 
 import c_lib.map_gen
+
 import time
 _n = time.time()
 
@@ -53,12 +54,14 @@ _n = time.time()
 
                   #.interpolate(4,2,1)\
 c_lib.map_gen.conf.seed(666)\
-                  .size(512,512,128)\
-                  .heightmap(baseline=20, maxheight=108)\
-                  .p2()\
+                  .size(128,128,128)\
+                  .gradient(z0=0, z1=1)\
+                  .heightmap(baseline=1, maxheight=127)\
                   .start()
+                  #.rmf()\
+                  #.p2()\
                   
-print '128**3 interpolated 4,4,2 took %f seconds' % (time.time() - _n) # 71 seconds!
+print 'map gen took %0.2f seconds' % (time.time() - _n) # 71 seconds!
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):
@@ -95,8 +98,8 @@ class Main:
         if opts.opts.map:
             print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
-        else:
-            terrain_map.load_from_disk("angus")
+        #else:
+            #terrain_map.load_from_disk("angus")
 
         if False:
             pass

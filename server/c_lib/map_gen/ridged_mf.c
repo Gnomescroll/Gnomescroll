@@ -3,9 +3,8 @@
  * -same as perlin or simplex noise except one thing
  * -each octave of noise is calculated as 1.0 - abs(noise(x,...))
  */
- 
-#include "perlin.h"
-#include "simplex.h"
+
+#include "ridged_mf.h"
 
 
 float rmf_perlin1(float x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base)

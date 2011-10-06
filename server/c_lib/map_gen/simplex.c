@@ -3,7 +3,6 @@
 // $Id$
 
 #include <math.h>
-#include "_noise.h"
 
 // 2D simplex skew factors
 #define F2 0.3660254037844386f  // 0.5 * (sqrt(3.0) - 1.0)
