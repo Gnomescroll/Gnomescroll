@@ -1,10 +1,8 @@
-// Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
-// see LICENSE.txt for details
-// $Id$
-
 #pragma once
 
 #include <stdlib.h>
+
+#include <c_lib/t_map/t_map.h>
 
 typedef union f3 {
     float xyz[3];
@@ -63,14 +61,11 @@ unsigned char PERM[] = {
   205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156,
   180};
 
-//unsigned int PERM[PERM_SIZE];
+void seed_noise(int seed);
 
-void seed_noise(int seed) {
-    srand((unsigned)seed);
+float noisemap[xmax*ymax*zmax];
 
-    // build PERM table
-    int i;
-    for (i=0; i < PERM_SIZE; i++) {
-        PERM[i] = rand() & 255;
-    }
-}
+void set_terrain_height(int x, int y, int z, int baseline, int maxheight);
+void set_terrain_density(int x, int y, int z);
+void clear_noisemap();
+

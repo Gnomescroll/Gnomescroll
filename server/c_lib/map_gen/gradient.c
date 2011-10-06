@@ -1,3 +1,5 @@
+#include "gradient.h"
+
 void apply_grad1(int x, float x0, float x1) {}
 
 void gradient2d(float f[], int x_size, int y_size, float x0, float x1, float y0, float y1) { // x,y,pos,neg should in [-1,1]. they indicate the gradient extremes along each axis
@@ -73,6 +75,7 @@ void gradient3d(float f[], int x_size, int y_size, int z_size, float x0, float x
 
 void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, float z0, float z1) {
 
+    printf("apply grad noisemap %p\n", noisemap);
     // generate gradient
     float fgrad[x*y*z];
     gradient3d(fgrad, x,y,z, x0, x1, y0, y1, z0, z1);
@@ -84,7 +87,14 @@ void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, fl
             for (k=0; k<z; k++) {
                 index = i + x*j + x*y*k;
                 noisemap[index] += fgrad[index];    // apply gradient to map
+                printf("%0.2f\n", noisemap[index]);
             }
         }
     }
+
+        for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                printf("%0.2f\n", noisemap[i + x*j + x*y+k]);
+        }}}
 }

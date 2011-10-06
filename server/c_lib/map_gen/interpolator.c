@@ -1,3 +1,4 @@
+#include "interpolator.h"
 
 // For lowering sample resolution and interpolating in between
 
