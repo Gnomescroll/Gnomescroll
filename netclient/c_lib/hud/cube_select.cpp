@@ -13,7 +13,7 @@ int cube_select_y = 0;
 void _init_cube_select() {
     int i;
     for(i=0;i<255;i++){
-        cube_select_array[i].cube_id = -1;
+        cube_select_array[i].cube_id = 255;
         cube_select_array[i].tex_id = 254;
     }
     cube_select_x = 0;
