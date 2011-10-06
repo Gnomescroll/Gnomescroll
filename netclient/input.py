@@ -510,79 +510,11 @@ class AgentInput:
             InputGlobal.block_selector.up()
         elif symbol == 'down':
             InputGlobal.block_selector.down()
-        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id()+1)   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
+        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
         #print InputGlobal.block_selector.active
 
 
 class BlockSelector:
-
-    # DONT EDIT THIS it was very tedious to make
-    #block_to_texture = {
-        #0: 0,
-        #1: 1,
-        #2: 2,
-        #3: 3,
-        #4: 4,
-        #5: 81,
-        #6: 82,
-        #7: 146,
-        #8: 16,
-        #9: 17,
-        #10: 18,
-        #11: 19,
-        #12: 20,
-        #13: 97,
-        #14: 98,
-        #15: 162,
-        #16: 32,
-        #17: 33,
-        #18: 34,
-        #19: 35,
-        #20: 36,
-        #21: 83,
-        #22: 21,
-        #23: 178,
-        #24: 48,
-        #25: 49,
-        #26: 50,
-        #27: 51,
-        #28: 52,
-        #29: 43,
-        #30: 37,
-        #31: 194,
-        #32: 64,
-        #33: 65,
-        #34: 66,
-        #35: 67,
-        #36: 68,
-        #37: 44,
-        #38: 53,
-        #39: 210,
-        #40: 240,
-        #41: 241,
-        #42: 242,
-        #43: 243,
-        #44: 244,
-        #45: 245,
-        #46: 246,
-        #47: 247,
-        #48: 31,
-        #49: 237,
-        #50: 205,
-        #51: 22,
-        #52: 23,
-        #53: 24,
-        #54: 248,
-        #55: 249,
-        #56: 14,
-        #57: 46,
-        #58: 62,
-        #59: 71,
-        #60: 72,
-        #61: 73,
-        #62: 74,
-        #63: 75,
-    #}
 
     def __init__(self, x, y, block_ids):
         self.x = x
@@ -635,7 +567,6 @@ class BlockSelector:
         self.horizontal(left=False)
 
     def get_texture_id(self):
-        #return self.block_to_texture[self.active]
         return c_lib_hud.get_selected_cube_id()
 
 

@@ -110,19 +110,6 @@ class Hud(object):
     def draw_block_selector(self):
         c_lib_hud.draw_cube_selector(400.0,200.0)
 
-        #self.block_selector.draw()
-
-        #bs = InputGlobal.block_selector
-        #w = 8
-        #bx, by = w,w
-        #space = 0
-
-        #start_x = self.win_width - 70
-        #start_y = ((bs.y - 1) * by) + 15
-        #active_x = start_x + ((bs.active % bs.x) * (bx + (2*space)))
-        #active_y = start_y - ((bs.active // bs.x) * (by + (2*space)))
-        #self._draw_border_square(active_x, active_y, w+(2*space), color=(255,255,255))
-
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
