@@ -87,14 +87,14 @@ void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, fl
             for (k=0; k<z; k++) {
                 index = i + x*j + x*y*k;
                 noisemap[index] += fgrad[index];    // apply gradient to map
-                printf("%0.2f\n", noisemap[index]);
+                //printf("%0.2f\n", noisemap[index]);
             }
         }
     }
 
-        for (i=0; i<x; i++) {
-        for (j=0; j<y; j++) {
-            for (k=0; k<z; k++) {
-                printf("%0.2f\n", noisemap[i + x*j + x*y+k]);
-        }}}
+        //for (i=0; i<x; i++) {
+        //for (j=0; j<y; j++) {
+            //for (k=0; k<z; k++) {
+                //printf("%0.2f\n", noisemap[i + x*j + x*y+k]);
+        //}}}
 }

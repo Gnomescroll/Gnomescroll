@@ -37,13 +37,13 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight) {
     int i,j,k,h;
     float fh;
 printf("-- %d %d %d\n",x,y,z);
-        for (i=0; i<x; i++) {
-        for (j=0; j<y; j++) {
-        for (k=0; k<z; k++) {
+        //for (i=0; i<x; i++) {
+        //for (j=0; j<y; j++) {
+        //for (k=0; k<z; k++) {
             
-        if (noisemap[i + x*j + x*y*k] != 0.0f) printf("%0.2f\n", noisemap[i+x*j + x*y*k]);
+        //if (noisemap[i + x*j + x*y*k] != 0.0f) printf("%0.2f\n", noisemap[i+x*j + x*y*k]);
 
-        }}}
+        //}}}
         
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
