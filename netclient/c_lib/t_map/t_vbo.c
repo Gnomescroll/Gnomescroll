@@ -551,12 +551,13 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 static const int VERTEX_SLACK = 128; // increase to 128
 
-static bool BUFFER_ORPHANING = true; //recycle buffer or create new
+static bool BUFFER_ORPHANING = false; //recycle buffer or create new
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
 
+    struct VBO* vbo = &column->vbo;
     struct vm_chunk* chunk;
     int i;
     int transparency;
@@ -566,7 +567,7 @@ int update_column_VBO(struct vm_column* column) {
     int cube_vertex_count[4] = {0, 0, 0, 0};
     int vertex_count = 0; //clear counter
 /*    
-    if(column->vbo.VBO_id != 0) {
+    if(vbo->VBO_id != 0) {
         delete_vbo(&column->vbo);
     }
     Dont delete , reuse
@@ -618,18 +619,18 @@ int update_column_VBO(struct vm_column* column) {
     }
     //set offsets
     
-    //column->vbo._v_num[4];       //parameters for draw pass
-    //column->vbo._v_offset[4];
+    //vbo->_v_num[4];       //parameters for draw pass
+    //vbo->_v_offset[4];
 
-    column->vbo._v_num[0] = cube_vertex_count[0];
-    column->vbo._v_num[1] = cube_vertex_count[1];
-    column->vbo._v_num[2] = cube_vertex_count[2];
-    column->vbo._v_num[3] = cube_vertex_count[3];
+    vbo->_v_num[0] = cube_vertex_count[0];
+    vbo->_v_num[1] = cube_vertex_count[1];
+    vbo->_v_num[2] = cube_vertex_count[2];
+    vbo->_v_num[3] = cube_vertex_count[3];
 
-    column->vbo._v_offset[0] = 0;
-    column->vbo._v_offset[1] = cube_vertex_count[0];
-    column->vbo._v_offset[2] = cube_vertex_count[0]+cube_vertex_count[1];
-    column->vbo._v_offset[3] = cube_vertex_count[0]+cube_vertex_count[1]+cube_vertex_count[2];
+    vbo->_v_offset[0] = 0;
+    vbo->_v_offset[1] = cube_vertex_count[0];
+    vbo->_v_offset[2] = cube_vertex_count[0]+cube_vertex_count[1];
+    vbo->_v_offset[3] = cube_vertex_count[0]+cube_vertex_count[1]+cube_vertex_count[2];
 
     /*
         Now that quads have been counted, malloc memory
@@ -639,8 +640,8 @@ int update_column_VBO(struct vm_column* column) {
     //if(cs_n == 0 ) {
 
     if(vertex_count == 0) {
-        //column->vbo.VBO_id = 0;
-        column->vbo.v_num = 0;
+        //vbo->VBO_id = 0;
+        vbo->v_num = 0;
 
         set_flag(column, VBO_loaded, 0);
         set_flag(column, VBO_needs_update, 0);
@@ -654,29 +655,29 @@ int update_column_VBO(struct vm_column* column) {
         //create_vbo(&column->vbo, cs, cs_n);
 
         //printf("Malloc: %i vertex \n", vertex_count);
-        column->vbo.v_num = vertex_count; //total vertices, size of VBO
+        vbo->v_num = vertex_count; //total vertices, size of VBO
 
-        if(vertex_count > column->vbo.v_list_max_size) {
-            if(column->vbo.v_list != NULL) {
-                free(column->vbo.v_list);
-                column->vbo.v_list = NULL;
+        if(vertex_count > vbo->v_list_max_size) {
+            if(vbo->v_list != NULL) {
+                free(vbo->v_list);
+                vbo->v_list = NULL;
             }
-            column->vbo.v_list_max_size = VERTEX_SLACK+vertex_count;
-            column->vbo.v_list = (struct Vertex*)malloc(column->vbo.v_list_max_size*sizeof(struct Vertex)); 
+            vbo->v_list_max_size = VERTEX_SLACK+vertex_count;
+            vbo->v_list = (struct Vertex*)malloc(vbo->v_list_max_size*sizeof(struct Vertex)); 
         }
     }
-    //printf("vbo_id= %i v_num= %i \n", column->vbo.VBO_id,column->vbo.v_num);
+    //printf("vbo_id= %i v_num= %i \n", vbo->VBO_id,vbo->v_num);
 
 
     int _cube_vertex_count[4];
-    _cube_vertex_count[0] = column->vbo._v_offset[0];
-    _cube_vertex_count[1] = column->vbo._v_offset[1];
-    _cube_vertex_count[2] = column->vbo._v_offset[2];
-    _cube_vertex_count[3] = column->vbo._v_offset[3];
+    _cube_vertex_count[0] = vbo->_v_offset[0];
+    _cube_vertex_count[1] = vbo->_v_offset[1];
+    _cube_vertex_count[2] = vbo->_v_offset[2];
+    _cube_vertex_count[3] = vbo->_v_offset[3];
 
     //printf("counts= %i, %i, %i, %i \n", _cube_vertex_count[0],_cube_vertex_count[1],_cube_vertex_count[2],_cube_vertex_count[3]);
     
-    struct Vertex* v_list2 = column->vbo.v_list;
+    struct Vertex* v_list2 = vbo->v_list;
 
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
@@ -739,22 +740,22 @@ int update_column_VBO(struct vm_column* column) {
 
 
     if( BUFFER_ORPHANING ) {
-        if(column->vbo.VBO_id == 0)  glGenBuffers(1, &column->vbo.VBO_id);
-        glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
-        glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW);
+        if(vbo->VBO_id == 0)  glGenBuffers(1, &vbo->VBO_id);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
     } else {
-        if(column->vbo.VBO_id == 0)
+        if(vbo->VBO_id == 0)
         {
-            glGenBuffers(1, &column->vbo.VBO_id);
+            glGenBuffers(1, &vbo->VBO_id);
         } 
         else 
         {
-            glDeleteBuffers(1, &column->vbo.VBO_id);
-            glGenBuffers(1, &column->vbo.VBO_id);
+            glDeleteBuffers(1, &vbo->VBO_id);
+            glGenBuffers(1, &vbo->VBO_id);
         }
-        glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
-        glBufferData(GL_ARRAY_BUFFER, vertex_count*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glBufferData(GL_ARRAY_BUFFER, vertex_count*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
     }
     glDisable(GL_TEXTURE_2D);
 
