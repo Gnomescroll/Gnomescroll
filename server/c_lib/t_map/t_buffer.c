@@ -80,7 +80,7 @@ inline int t_UNPACK_int(unsigned char* buffer, int*n) {
 
 
 // store a partially decompressed chunk here
-#define t_chunk_buff_size (vm_chunk_voxel_size * sizeof(unsigned short)) + (3 * sizeof(int))
+static const int t_chunk_buff_size = (vm_chunk_voxel_size * sizeof(unsigned short)) + (3 * sizeof(int));
 unsigned char t_chunk_buff[t_chunk_buff_size];
 int t_chunk_buff_index = 0;
 
@@ -88,14 +88,13 @@ int t_zlib_unserialize_chunk(unsigned char* buffer, int size) {
 
     int i,j=0;
     int x,y,z;
-    int index = 0;
     unsigned short vox_i;
 
     while (j < size) {
 
         // available buffer will not fill the chunk, copy to chunk buffer and abort
         if (t_chunk_buff_size - t_chunk_buff_index > size - j) {
-            for (j; j < size; j++) {
+            for (j=j; j < size; j++) {
                 t_chunk_buff[t_chunk_buff_index] = buffer[j];
                 t_chunk_buff_index++;
             }

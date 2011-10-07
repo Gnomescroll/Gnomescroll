@@ -1,30 +1,33 @@
-cdef extern from "./map_gen/noise.c":
+cdef extern from "./map_gen/perlin.h":
     float perlin1(float x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base)
     float perlin2(float x, float y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
     float perlin3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
-
-    float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude)
-    float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude)
-    
-    float rmf_perlin1(float rmf_x, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeat, int base)
-    float rmf_perlin2(float rmf_x, float rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeatx, int repeaty, int base)
-    float rmf_perlin3(float rmf_x, float rmf_y, float rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeatx, int repeaty, int repeatz, int base)
-    float rmf_simplex2(float rmf_x, float rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
-    float rmf_simplex3(float rmf_x, float rmf_y, float rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
     
     void perlin1_fill(int x, int octaves, float persistence, float frequency, float amplitude, int repeat, int base)
     void perlin2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
     void perlin3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
 
+cdef extern from "./map_gen/simplex.h":
+    float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude)
+    float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude)
+
     void simplex2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude)
     void simplex3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude)
     
+cdef extern from "./map_gen/ridged_mf.h":
+    float rmf_perlin1(float rmf_x, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeat, int base)
+    float rmf_perlin2(float rmf_x, float rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeatx, int repeaty, int base)
+    float rmf_perlin3(float rmf_x, float rmf_y, float rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeatx, int repeaty, int repeatz, int base)
+    float rmf_simplex2(float rmf_x, float rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
+    float rmf_simplex3(float rmf_x, float rmf_y, float rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
+
     void rmf_perlin1_fill(int rmf_x, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeat, int base)
     void rmf_perlin2_fill(int rmf_x, int rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeatx, int repeaty, int base)
     void rmf_perlin3_fill(int rmf_x, int rmf_y, int rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude, int repeatx, int repeaty, int repeatz, int base)
     void rmf_simplex2_fill(int rmf_x, int rmf_y, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
     void rmf_simplex3_fill(int rmf_x, int rmf_y, int rmf_z, int octaves, float rmf_persistence, float rmf_frequency, float rmf_amplitude)
 
+cdef extern from "./map_gen/noise.h":
     void seed_noise(int seed)
 
 def set_seed(seed):
@@ -59,7 +62,7 @@ class Perlin:
 
     def noise2(self, x,y):
         if self.filled:
-            print 'noise 2 filled     ' 
+            print 'noise 2 filled    '
             self.filled = False
             perlin2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
         else:

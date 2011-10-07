@@ -1,15 +1,14 @@
-cdef extern from "./map_gen/noise.c":
-    #void interp(int x, int y, int z, int x_interval, int y_interval, int z_interval)
-
+cdef extern from "./map_gen/interpolator.h":
     void apply_interp1(int x, int ix)
     void apply_interp2(int x, int y, int ix, int iy)
     void apply_interp3(int x, int y, int z, int ix, int iy, int iz)
 
+cdef extern from "./map_gen/gradient.h":
     void apply_grad1(int x,               float x0, float x1)
     void apply_grad2(int x, int y,        float x0, float x1, float y0, float y1)
     void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1,
                                                               float z0, float z1)
-
+cdef extern from "./map_gen/noise.h":
     void clear_noisemap()
     void set_terrain_density(int x, int y, int z)
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight)
@@ -38,7 +37,7 @@ class Config:
 
         self.rmf = False
         self.dim = 2
-        self.noise_type = 'p'
+        self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
 
     def reset(self):
@@ -135,23 +134,25 @@ class Config:
 
         size_args = [self.x, self.y, self.z][:self.dim]
         interp_args = [self.iz, self.iy, self.iz][:self.dim]
-        grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1][:self.dim*2]
+        #grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1][:self.dim*2]
+        grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1]
 
-        self.noise.fill()
-
-        if self.interp:
-            interpolates[self.dim](*(size_args+interp_args))
-        else:
-            getattr(self.noise, noise_method)(*size_args)
+        if self.noise is not None:
+            self.noise.fill()
+            if self.interp:
+                interpolates[self.dim](*(size_args+interp_args))
+            else:
+                getattr(self.noise, noise_method)(*size_args)
             
         if self.grad:
             print 'grad'
-            gradients[self.dim](*(size_args+grad_args))
+            #gradients[self.dim](*(size_args+grad_args))
+            apply_gradient3(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
 
         if self.dim == 1:
-            print "Dimension 1 terrain not implemented.       "
+            print "Dimension 1 terrain not implemented."
         elif self.dim == 2:
-            print 'setting terrain height '
+            print "setting terrain height"
             set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight)
         elif self.dim == 3:
             set_terrain_density(self.x, self.y, self.z)
@@ -165,10 +166,11 @@ def reset():
 def apply_gradient1(x, x0, x1):
     apply_grad1(x, x0,x1)
 
-def apply_gradient2(x,y,z, x0, x1, y0, y1):
+def apply_gradient2(x,y, x0, x1, y0, y1):
     apply_grad2(x,y, x0, x1, y0, y1)
 
 def apply_gradient3(x,y,z, x0, x1, y0, y1, z0, z1):
+    print "apply grad3"
     apply_grad3(x,y,z,  x0, x1, y0, y1, z0, z1)
 
 

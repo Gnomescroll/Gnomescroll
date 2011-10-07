@@ -13,8 +13,6 @@
 
 #define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
 
-extern float noisemap[xmax*ymax*zmax];
-
 float inline
 grad1(const int hash, const float x)
 {
@@ -195,7 +193,6 @@ void perlin1_fill(int x, int octaves, float persistence, float frequency, float 
 }
 
 void perlin2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base) {
-    //printf("%d %d", x,y);
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
     int i,j;
@@ -204,15 +201,8 @@ void perlin2_fill(int x, int y, int octaves, float persistence, float frequency,
         for (j=0; j<y; j++) {
             h = perlin2((i+1)/fx,(j+1)/fy, octaves, persistence, frequency, amplitude, repeatx, repeaty, base);
             noisemap[i + x*j] = h;
-            //printf("%0.2f\n", h);
         }
     }
-
-    //for (i=0; i<x; i++) {
-        //for (j=0; j<y; j++) {
-            //printf("%0.2f\n", noisemap[i + x*j]);
-        //}
-    //}
 }
 
 void perlin3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base) {

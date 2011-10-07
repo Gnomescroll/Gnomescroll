@@ -1,9 +1,20 @@
-// include aggregator
+#include "noise.h"
 
-#include <c_lib/t_map/t_map.h>
-#include "_noise.h"
+#include "math.h"
 
-float noisemap[xmax*ymax*zmax];
+void seed_noise(int seed) {
+    srand((unsigned)seed);
+
+    // build PERM table
+    int i;
+    for (i=0; i < PERM_SIZE; i++) {
+        PERM[i] = rand() & 255;
+    }
+}
+
+float* get_noisemap() {
+    return noisemap;
+}
 
 void set_terrain_density(int x, int y, int z) {
     // set terrain
@@ -20,15 +31,25 @@ void set_terrain_density(int x, int y, int z) {
 }
 
 void set_terrain_height(int x, int y, int z, int baseline, int maxheight) {
+    printf("trerrina height noisemap %p\n", noisemap);
 
     float fz = (float)z;
     int i,j,k,h;
     float fh;
+printf("-- %d %d %d\n",x,y,z);
+        //for (i=0; i<x; i++) {
+        //for (j=0; j<y; j++) {
+        //for (k=0; k<z; k++) {
+            
+        //if (noisemap[i + x*j + x*y*k] != 0.0f) printf("%0.2f\n", noisemap[i+x*j + x*y*k]);
+
+        //}}}
+        
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             fh = noisemap[i + x*j];
             //printf("%0.2f\n", fh);
-            if (fh < 0) fh = 0.0f;
+            fh = fabs(fh);
             fh *= fz;
             h = ((int)fh) % maxheight;
             for (k=0; k<baseline+h; k++) {
