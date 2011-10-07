@@ -14,6 +14,9 @@ int _init_input() {
 //_set_text_entry_mode(1); //not used right now
 keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
 SDL_EnableUNICODE( SDL_ENABLE );
+
+
+
 return 0;
 }
 
@@ -42,6 +45,10 @@ int _get_key_state(key_state_func key_state_cb) {
 
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
     int t; //temp
+
+    SDL_ShowCursor(0);
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
 
