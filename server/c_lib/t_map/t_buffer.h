@@ -1,6 +1,6 @@
 #pragma once
 
-#define t_buff_size (8*((512*sizeof(unsigned short)) + (sizeof(int) * 3)))
+static const int t_buff_size = (8*((512*sizeof(unsigned short)) + (sizeof(int) * 3)));
 
 unsigned char t_buff[t_buff_size];
 int _t_bi=0, *t_buffer_index = &_t_bi;

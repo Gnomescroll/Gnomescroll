@@ -74,7 +74,8 @@ int t_zlib_compress_final() {
     if (t_zlib_compress()) return 1;
     
     unsigned char out[t_buff_size];
-    int ret, have=0;
+    int ret;
+    unsigned int have = 0;
 
     // write remaining deflate data
    do {
@@ -121,7 +122,6 @@ int t_zlib_flush_buffer() {
 // entry point for map compression
 int t_zlib_compress_map_chunk(int x, int y, int z, unsigned short *arr, int arr_size) {
 
-    int ret = Z_OK;
     int vox_index, vox_inc;
 
     vox_index = t_zlib_serialize_chunk(x,y,z, arr, arr_size, t_buff, t_buffer_index, t_buff_size);
@@ -158,7 +158,6 @@ int map_save_to_disk(char *fn) {
     int x,y;
     int i,j;
 
-    unsigned short* vox;
     struct vm_column* col;
     struct vm_chunk* chunk;
 
