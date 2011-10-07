@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include <compat.h>
-
+#include <compat_gl.h>
 /*
 #include "t_vbo.h"
 #include "t_properties.h"
@@ -31,8 +31,13 @@
 struct VBO {
         int v_num;
         struct Vertex* v_list;
-        int VBO_id;
+        int v_list_max_size;
 
+        #ifdef DC_CLIENT
+        GLuint VBO_id;
+        #else
+        int VBO_id;
+        #endif
         int _v_num[4];       //parameters for draw pass
         int _v_offset[4];
 
