@@ -488,8 +488,6 @@ void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, 
     v_list[offset+3].r = occ;
     v_list[offset+3].g = occ;
     v_list[offset+3].b = occ;
-
-    //cs_n += 4;
 }
 
 int inline _is_occluded(int x,int y,int z, int side_num) {
@@ -509,7 +507,9 @@ int inline _is_occluded(int x,int y,int z, int side_num) {
     z += s_array[i+2];
     //printf("%i, %i, %i \n", s_array[i+0], s_array[i+1], s_array[i+2]);
     //return isOccluded(_get(x,y,z));
-    return isActive(_get(x,y,z));
+    
+    //return isActive(_get(x,y,z));
+    return isOccludes(_get(x,y,z));
 }
 
 const static int s_array[18] = {
@@ -698,8 +698,7 @@ int update_column_VBO(struct vm_column* column) {
                     {
                         if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                         {
-                            printf("2");
-                            //add_quad2(v_list, _cube_vertex_count[transparency],_x,_y,_z,side_num,tile_id);
+                            add_quad2(v_list2, _cube_vertex_count[transparency],_x,_y,_z,side_num,tile_id);
                             _cube_vertex_count[transparency] += 4;
                         }
                     }
