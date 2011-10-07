@@ -70,6 +70,9 @@ int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox);
 int _get_highest_open_block(int x, int y, int n);
 int _get_lowest_open_block(int x, int y, int n);
 
+int _get_highest_solid_block(int x, int y);
+int _get_lowest_solid_block(int x, int y);
+
 //these flags are not used on server for anything
 /*
 #define VBO_loaded 1

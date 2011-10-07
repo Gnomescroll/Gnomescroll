@@ -13,7 +13,13 @@ cdef extern from "./map_gen/noise.h":
     void set_terrain_density(int x, int y, int z)
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight)
 
+cdef extern from "./map_gen/features.h":
+    void grass()
+
+
 from c_lib.noise import Simplex, Perlin, RMF, set_seed
+
+import time
 
 class Config:
 
@@ -39,6 +45,8 @@ class Config:
         self.dim = 2
         self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
+
+        self.use_grass = False
 
     def reset(self):
         self.__init__()
@@ -105,7 +113,13 @@ class Config:
         set_seed(s)
         return self
 
+    def grass(self):
+        self.use_grass = True
+        return self
+
     def start(self):
+        _n = time.time()
+        
         noise_method = 'noise%d' % (self.dim,)
         if self.rmf:
             self.noise = RMF(octaves=self.octaves,
@@ -156,6 +170,13 @@ class Config:
             set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight)
         elif self.dim == 3:
             set_terrain_density(self.x, self.y, self.z)
+
+        # features
+        if self.use_grass:
+            grass()
+
+        print 'map gen took %0.2f seconds' % (time.time() - _n)
+
 
         
 conf = Config()

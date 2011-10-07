@@ -244,6 +244,16 @@ int _get_highest_open_block(int x, int y, int n) {
     return i;
 }
 
+int _get_highest_solid_block(int x, int y) {
+    int k;
+    k = _get_highest_open_block(x,y,1);
+    if (k < 0) {    // failure case, no open blocks, completely solid
+        k = zmax;
+    }
+    k--;
+    return k; // returns -1 if no blocks in column x,y
+}
+
 int _get_lowest_open_block(int x, int y, int n) {
     if (n < 1) {
         printf("WARNING _get_lowest_open_block :: called with n < 1, abort\n");
@@ -266,4 +276,15 @@ int _get_lowest_open_block(int x, int y, int n) {
         i = -1;
     }
     return i;
+}
+
+int _get_lowest_solid_block(int x, int y) {
+
+    int k;
+    k = _get_lowest_open_block(x,y,1);
+    if (k < 0) {    // failure case, no open blocks, completely solid
+        k = 1;
+    }
+    k--;
+    return k;       // will return -1 on failure (no solid blocks)
 }

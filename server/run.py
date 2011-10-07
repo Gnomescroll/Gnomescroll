@@ -41,14 +41,11 @@ import random
 
 import c_lib.map_gen
 
-import time
-_n = time.time()
-
-
 c_lib.map_gen.conf.seed(571)\
                   .size(128,128,128)\
                   .interpolate(4,4,2)\
                   .p3()\
+                  .grass()\
                   .start()
                   #.gradient(z0=-0.5, z1=0.5)\
 
@@ -65,8 +62,6 @@ c_lib.map_gen.conf.reset()\
                   #.p2()\
 
 #c_lib.map_gen.conf.floor().start()
-
-print 'map gen took %0.2f seconds' % (time.time() - _n) # 71 seconds!
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):
