@@ -203,6 +203,11 @@ int _init_draw_terrain() {
     return 0;
 }
 
+
+
+/*
+deprecated
+
 int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     GLuint VBO_id;
     VBO_id = 0;
@@ -219,6 +224,7 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     //printf("inside: VBO_id= %i \n", VBO_id);
     return VBO_id;
 }
+*/
 
 int delete_vbo(struct VBO* vbo) {
 
@@ -437,6 +443,55 @@ void __inline add_quad(int x, int y, int z, int side, int tile_id) {
     cs_n += 4;
 }
 
+void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    int index;
+    int CX[8];
+    for(i=0; i<8; i++) {
+        index = side*8*3+i*3;
+        CX[i] = isActive(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+    }
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    for(i=0; i<=4;i++) {
+        cs[cs_n+i].x += _x;
+        cs[cs_n+i].y += _y;
+        cs[cs_n+i].z += _z;
+    }
+
+    int occ = (x+y+z);
+    if(occ > 255) occ = 255;
+
+    occ = calcAdj(CX[7], CX[1], CX[0]);
+    cs[cs_n+0].r = occ;
+    cs[cs_n+0].g = occ;
+    cs[cs_n+0].b = occ;
+
+    occ = calcAdj(CX[1], CX[3], CX[2]);
+    cs[cs_n+1].r = occ;
+    cs[cs_n+1].g = occ;
+    cs[cs_n+1].b = occ;
+
+    occ = calcAdj(CX[3], CX[5], CX[4]);
+    cs[cs_n+2].r = occ;
+    cs[cs_n+2].g = occ;
+    cs[cs_n+2].b = occ;
+
+    occ = calcAdj(CX[5], CX[7], CX[6]);
+    cs[cs_n+3].r = occ;
+    cs[cs_n+3].g = occ;
+    cs[cs_n+3].b = occ;
+
+    cs_n += 4;
+}
+
 int inline _is_occluded(int x,int y,int z, int side_num) {
     const static int s_array[18] = {
             0,0,1,  //top
@@ -582,9 +637,9 @@ int update_column_VBO(struct vm_column* column) {
         set_flag(column, VBO_needs_update, 0);
         set_flag(column, VBO_has_blocks, 1);
 
-        create_vbo(&column->vbo, cs, cs_n);
-        //column->vbo_needs_update = 0;
-        //column->vbo_loaded = 1;
+        //create_vbo(&column->vbo, cs, cs_n);
+        column->vbo->v_num = vertex_count; //total vertices, size of VBO
+        column->vbo->v_list = (struct Vertex*)malloc(vertex_count*sizeof(struct Vertex)); 
     }
     //printf("vbo_id= %i v_num= %i \n", column->vbo.VBO_id,column->vbo.v_num);
 
@@ -593,6 +648,8 @@ int update_column_VBO(struct vm_column* column) {
     _cube_count[0] = column->vbo._v_offset[1];
     _cube_count[0] = column->vbo._v_offset[2];
     _cube_count[0] = column->vbo._v_offset[3];
+
+    struct Vertex* v_list = column->vbo->v_list;
 
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
@@ -616,22 +673,21 @@ int update_column_VBO(struct vm_column* column) {
                 { 
                     for(side_num=0; side_num<6; side_num++) {
                         if(! _is_occluded(_x,_y,_z,side_num)) {
-                            //add_quad(_x,_y,_z,side_num,tile_id);
-                            vertex_count++;
-                            cube_count[0]++;
+                            add_quad2(v_list, _cube_count[0], _x,_y,_z,side_num,tile_id);
+                            _cube_count[0]++;
                         }
                     }
                 } 
                 else
                 {
+                    continue;
                     //active block that does not occlude
                     for(side_num=0; side_num<6; side_num++) 
                     {
                         if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                         {
-                            //add_quad(_x,_y,_z,side_num,tile_id);
-                            vertex_count++;
-                            cube_count[transparency]++;
+                            add_quad2(v_list, _cube_count[transparency],_x,_y,_z,side_num,tile_id);
+                            _cube_count[transparency]++;
                         }
                     }
                 }
@@ -639,7 +695,21 @@ int update_column_VBO(struct vm_column* column) {
         }}}
     }
 
-     return 0;
+    /*
+        Now that memory is full of quads, push to graphics card
+    */
+
+//int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
+    GLuint VBO_id;
+    VBO_id = 0;
+    glEnable(GL_TEXTURE_2D);
+    glGenBuffers(1, &VBO_id);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count*sizeof(struct Vertex), v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
+    column->vbo->VBO_id = VBO_id;
+    glDisable(GL_TEXTURE_2D);
+
+    return 0;
 }
 
 
