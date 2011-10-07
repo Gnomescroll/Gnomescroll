@@ -28,8 +28,9 @@ int _init_t_map() {
     for(i=0; i<vm_map_dim*vm_map_dim; i++) {
         c = &map.column[i];
         c->vbo.v_list = NULL;
+        c->vbo.v_list_max_size = 0;
         c->vbo.v_num = 0;
-        c->vbo.VBO_id = 0;
+        c->vbo.VBO_id = -1;
         c->x_off = i % vm_map_dim;
         c->y_off = i/vm_map_dim;
         c->flag = 0; //null it
@@ -54,6 +55,7 @@ inline void set_map_chunk_for_update(int xoff, int yoff, int zoff, int dx, int d
 
 struct vm_map* _get_map() { return &map; }
 
+
 struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     int i;
     struct vm_chunk* chunk;
@@ -66,6 +68,7 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     }
     return chunk;
 }
+
 
 // terrain map tile set/get
 

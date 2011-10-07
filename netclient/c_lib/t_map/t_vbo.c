@@ -230,12 +230,15 @@ int delete_vbo(struct VBO* vbo) {
 
     glDeleteBuffers(1, (GLuint*)&vbo->VBO_id);
     ///free the system memory copy of the vertex buffer
-    free(vbo->v_list);
-    vbo->VBO_id = 0;
+    
+    if(vbo->v_list != NULL) free(vbo->v_list);
+    vbo->VBO_id = -1;
     vbo->v_num = 0;
+    vbo->v_list_max_size = 0;
     return 0;
 }
 
+/*
 int start_vbo_draw() {
 
 //glColor4bu(255,255,255,255);
@@ -315,14 +318,15 @@ glDisable(GL_CULL_FACE);
 if(T_MAP_BLEND_MODE != 0) glDisable(GL_BLEND);
 return 0;
 }
+*/
 
 //assums vbo is type quad
 
+/*
 int draw_quad_vbo(struct VBO* q_VBO) {
 
 //printf("wtf\n");
 //printf('vnum= %f \n', (float) (q_VBO->v_num));
-
 
 if(draw_mode_enabled == 0) {
     glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
@@ -349,7 +353,7 @@ if(draw_mode_enabled == 0) {
     return 0;
 
 }
-
+*/
 int print_vertex(struct Vertex* v) {
 printf("x,y,z= %f, %f, %f\n", v->x,v->y,v->z);
 printf("tx,ty= %f, %f\n", v->tx, v->ty);
@@ -361,8 +365,8 @@ return 0;
 /// start VBO
 
 //buffers for VBO stuff
-struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
-unsigned int cs_n; //number of vertices in chunk scratch
+//struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
+//unsigned int cs_n; //number of vertices in chunk scratch
 
 static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
 -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
@@ -395,7 +399,8 @@ inline int calcAdj(int side_1, int side_2, int corner)
     if(occ == 2) return 100;    
 }
 
-
+/*
+//deprecated
 void __inline add_quad(int x, int y, int z, int side, int tile_id) {
     int i;
     //struct Vertex* v;
@@ -442,6 +447,7 @@ void __inline add_quad(int x, int y, int z, int side, int tile_id) {
 
     cs_n += 4;
 }
+*/
 
 void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
     int i;
@@ -549,14 +555,16 @@ int update_column_VBO(struct vm_column* column) {
     int i;
     int transparency;
 
-    cs_n = 0; //clear chunk scratch
+    //cs_n = 0; //clear chunk scratch
 
     int cube_vertex_count[4] = {0, 0, 0, 0};
     int vertex_count = 0; //clear counter
-    
-    if(column->vbo.VBO_id != 0) {
+/*    
+    if(column->vbo.VBO_id != -1) {
         delete_vbo(&column->vbo);
     }
+    Dont delete , reuse
+*/
     //first pass, count quads
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
@@ -619,6 +627,7 @@ int update_column_VBO(struct vm_column* column) {
 
     /*
         Now that quads have been counted, malloc memory
+        -malloc is slow, so over allocated and reuse if possible 
     */
 
     //if(cs_n == 0 ) {
@@ -800,6 +809,9 @@ int _t_ = 0;
 int _c_ = 0;
 */
 
+static int draw_vbo_n;
+static struct VBO* draw_vbo_array[512];  //this should not be hardcoded; will piss someone off
+
 int _draw_terrain() {
 /*
     _c_++;
@@ -821,7 +833,8 @@ int _draw_terrain() {
     int i,j;
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
-    start_vbo_draw();
+    //start_vbo_draw();
+    draw_vbo_n = 0;
     m = _get_map();
     //printf("Start Map Draw\n");
     for(i=0; i<vm_map_dim; i++) {
@@ -830,13 +843,23 @@ int _draw_terrain() {
         if(flag_is_true(col, VBO_loaded) && chunk_render_check(col->x_off, col->y_off, 0)) {
             c_drawn++;
             set_flag(col,VBO_drawn,1);
-            draw_quad_vbo(&col->vbo);
+            //draw_quad_vbo(&col->vbo);
+            /*
+                Que up map VBOs to be drawn
+                !!! May want to sort VBOs in front to back order
+            */
+            draw_vbo_array[draw_vbo_n] = &col->vbo;
+            draw_vbo_n++;
         } else {
             set_flag(col,VBO_drawn,0);
             c_pruned++;
         }
     }}
-    end_vbo_draw();
+
+    DRAW_VBOS1();
+    //DRAW_VBOS2();    
+    //end_vbo_draw();
+    
     //printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
     //_draw_fog();
     //f = SDL_GetTicks();
@@ -952,3 +975,92 @@ void _refresh_map_vbo() {
 
     }}
 }
+
+//BIG FUNCTION
+
+
+//int draw_vbo_n;
+//struct VBO* draw_vbo_array[512];  
+
+void DRAW_VBOS1() {
+        
+    glColor3b(255,255,255);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
+    glBindTexture( GL_TEXTURE_2D, texture );
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    int i;
+    struct VBO* vbo;
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        //start_vbo_draw();
+
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+
+        glDrawArrays(GL_QUADS,0, vbo->v_num);
+    }
+/*
+    Do Stuff
+*/
+
+/*
+    column->vbo._v_num[0]
+    column->vbo._v_num[1]
+    column->vbo._v_num[2]
+    column->vbo._v_num[3]
+
+    column->vbo._v_offset[0]
+    column->vbo._v_offset[1]
+    column->vbo._v_offset[2]
+    column->vbo._v_offset[3]
+*/
+
+//end draw
+glDisableClientState(GL_VERTEX_ARRAY);
+glDisableClientState(GL_COLOR_ARRAY);
+glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+glShadeModel(GL_FLAT);
+
+/*
+glDisable (GL_DEPTH_TEST);
+glDisable(GL_CULL_FACE);
+*/
+
+glDisable(GL_TEXTURE_2D);
+
+}
+
+void DRAW_VBO2() {
+    
+
+}
+
+
+/*
+
+if(T_MAP_BLEND_MODE != 0) {
+    glEnable(GL_BLEND);
+    if(T_MAP_BLEND_MODE ==1 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if(T_MAP_BLEND_MODE ==2 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    if(T_MAP_BLEND_MODE ==3 ) glBlendFunc(GL_ONE, GL_ONE);
+    if(T_MAP_BLEND_MODE ==4 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    if(T_MAP_BLEND_MODE ==5 ) glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_DST_COLOR);
+    if(T_MAP_BLEND_MODE ==6 ) glBlendFunc(GL_ONE, GL_ALPHA);
+}
+*/

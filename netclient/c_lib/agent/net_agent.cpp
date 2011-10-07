@@ -200,6 +200,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 
             Agent_state* A = ClientState::agent_list.get(id);
             if(A == NULL) {
+                ClientState::agent_list.create(id);
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
                 return;
             }

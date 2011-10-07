@@ -47,3 +47,6 @@ struct Vertex* _get_quad_cache();
 void _toggle_terrain_map_blend_mode();
 void _refresh_map_vbo();
 void _toggle_z_buffer();
+
+void DRAW_VBOS1();
+void DRAW_VBOS2(); 

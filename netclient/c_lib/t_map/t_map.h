@@ -31,6 +31,7 @@
 struct VBO {
         int v_num;
         struct Vertex* v_list;
+        int v_list_max_size;
         int VBO_id;
 
         int _v_num[4];       //parameters for draw pass
