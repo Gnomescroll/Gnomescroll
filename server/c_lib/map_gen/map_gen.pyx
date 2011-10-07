@@ -14,12 +14,14 @@ cdef extern from "./map_gen/noise.h":
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight)
 
 cdef extern from "./map_gen/features.h":
-    void grass()
+    void grass(int x, int y)
 
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed
 
 import time
+
+xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#define]]
 
 class Config:
 
@@ -46,7 +48,7 @@ class Config:
         self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
 
-        self.use_grass = False
+        self.add_grass = False
 
     def reset(self):
         self.__init__()
@@ -56,6 +58,12 @@ class Config:
         self.x = int(x)
         self.y = int(y)
         self.z = int(z)
+        return self
+
+    def max_size(self):
+        self.x = xmax
+        self.y = ymax
+        self.z = zmax
         return self
 
     def interpolate(self, x,y,z):
@@ -114,7 +122,7 @@ class Config:
         return self
 
     def grass(self):
-        self.use_grass = True
+        self.add_grass = True
         return self
 
     def start(self):
@@ -172,8 +180,8 @@ class Config:
             set_terrain_density(self.x, self.y, self.z)
 
         # features
-        if self.use_grass:
-            grass()
+        if self.add_grass:
+            grass(self.x, self.y)
 
         print 'map gen took %0.2f seconds' % (time.time() - _n)
 

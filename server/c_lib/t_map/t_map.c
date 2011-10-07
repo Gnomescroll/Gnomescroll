@@ -245,13 +245,14 @@ int _get_highest_open_block(int x, int y, int n) {
 }
 
 int _get_highest_solid_block(int x, int y) {
-    int k;
-    k = _get_highest_open_block(x,y,1);
-    if (k < 0) {    // failure case, no open blocks, completely solid
-        k = zmax;
+
+    int i;
+    for (i=zmax-1; i>=0; i--) {
+        if (isSolid(_get(x,y,i))) {
+            break;
+        }
     }
-    k--;
-    return k; // returns -1 if no blocks in column x,y
+    return  i;
 }
 
 int _get_lowest_open_block(int x, int y, int n) {
@@ -280,11 +281,12 @@ int _get_lowest_open_block(int x, int y, int n) {
 
 int _get_lowest_solid_block(int x, int y) {
 
-    int k;
-    k = _get_lowest_open_block(x,y,1);
-    if (k < 0) {    // failure case, no open blocks, completely solid
-        k = 1;
+    int i;
+    for (i=0; i < zmax; i++) {
+        if (isSolid(_get(x,y,i))) {
+            break;
+        }
     }
-    k--;
-    return k;       // will return -1 on failure (no solid blocks)
+    if (i >= zmax) i = -1;  // failure
+    return i;
 }
