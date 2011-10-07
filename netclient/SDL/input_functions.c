@@ -26,6 +26,10 @@ int _set_text_entry_mode(int n) {
     return 0;
 }
 
+static int MOUSE_BOUND=1;
+int _toggle_mouse_bind() {
+    MOUSE_BOUND = (MOUSE_BOUND + 1) %2;
+}
 
 int _get_key_state(key_state_func key_state_cb) {
     SDL_PumpEvents();
@@ -46,9 +50,13 @@ int _get_key_state(key_state_func key_state_cb) {
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
     int t; //temp
 
-    SDL_ShowCursor(0);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
-
+    if(MOUSE_BOUND) {
+        SDL_ShowCursor(0);
+        SDL_WM_GrabInput(SDL_GRAB_ON);
+    } else {
+        SDL_ShowCursor(1);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);       
+    }
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
     //SDL_PumpEvents();
 
