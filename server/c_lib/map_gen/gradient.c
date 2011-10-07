@@ -1,11 +1,43 @@
 #include "gradient.h"
 
-void apply_grad1(int x, float x0, float x1) {}
+void gradient1d(float f[], int x_size, float x0, float x1) {
+
+    float samples[2] = {x0, x1};
+
+    int i;
+    float px;
+    float fx_size = (float)x_size;
+
+    for (i=0; i<x_size; i++) {
+        px = i / fx_size;
+        f[i] = linearInterpolate(samples, px);
+    }
+
+}
+
+// only in x direction. more directions later if needed (this method is not used currently)
+void apply_grad1(int x, float x0, float x1) {
+    
+    if (x > xmax || x < 0) {
+        printf("WARNING: applying gradient beyond map size. Abort gradient.\n");
+        return;
+    }
+    
+    float * fgrad;
+    fgrad = (float*) malloc(x*sizeof(float));
+
+    gradient1d(fgrad, x, x0, x1);
+
+    int i;
+    for (i=0; i<x; i++) {
+        noisemap[i] += fgrad[i];
+    }
+
+    free(fgrad);
+}
 
 void gradient2d(float f[], int x_size, int y_size, float x0, float x1, float y0, float y1) { // x,y,pos,neg should in [-1,1]. they indicate the gradient extremes along each axis
 
-    //float samples[2][2] = { {x_pos, y_pos}, {x_neg, y_neg} };
-    //float samples[2][2] = { {x_pos, y_neg}, {x_neg, y_pos} };
     float samples[2][2] = { {(x0+y0)/2, (x0+y1)/2}, {(x1+y0)/2, (x1+y1)/2} };
 
     int i,j;
@@ -24,7 +56,14 @@ void gradient2d(float f[], int x_size, int y_size, float x0, float x1, float y0,
 
 void apply_grad2(int x, int y, float x0, float x1, float y0, float y1) {
 
-    float fgrad[x*y];
+    if (x > xmax || y > ymax || x < 0 || y < 0) {
+        printf("WARNING: applying gradient beyond map size. Abort gradient.\n");
+        return;
+    }
+
+    float* fgrad;
+    fgrad = (float*) malloc(x*y*sizeof(float));
+
     gradient2d(fgrad, x,y, x0, x1, y0, y1);
 
     // set map
@@ -36,6 +75,7 @@ void apply_grad2(int x, int y, float x0, float x1, float y0, float y1) {
             noisemap[index] += fgrad[index];    // apply gradient to map
         }
     }
+    free(fgrad);
 }
 
 inline void buildGradientSampleCube(float samples[2][2][2], float x0, float x1, float y0, float y1, float z0, float z1) {
@@ -75,9 +115,15 @@ void gradient3d(float f[], int x_size, int y_size, int z_size, float x0, float x
 
 void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, float z0, float z1) {
 
-    printf("apply grad noisemap %p\n", noisemap);
+    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("WARNING: applying gradient beyond map size. Abort gradient.\n");
+        return;
+    }
+
     // generate gradient
-    float fgrad[x*y*z];
+    float* fgrad;
+    fgrad = (float*) malloc(x*y*z*sizeof(float));
+    
     gradient3d(fgrad, x,y,z, x0, x1, y0, y1, z0, z1);
 
     int i,j,k;
@@ -87,14 +133,9 @@ void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, fl
             for (k=0; k<z; k++) {
                 index = i + x*j + x*y*k;
                 noisemap[index] += fgrad[index];    // apply gradient to map
-                //printf("%0.2f\n", noisemap[index]);
             }
         }
     }
 
-        //for (i=0; i<x; i++) {
-        //for (j=0; j<y; j++) {
-            //for (k=0; k<z; k++) {
-                //printf("%0.2f\n", noisemap[i + x*j + x*y+k]);
-        //}}}
+    free(fgrad);
 }
