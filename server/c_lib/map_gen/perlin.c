@@ -87,7 +87,7 @@ pnoise2(float x, float y, const float repeatx, const float repeaty, const int ba
     B = PERM[ii];
     BA = PERM[B + j];
     BB = PERM[B + jj];
-        
+
     return lerp(fy, lerp(fx, grad2(PERM[AA], x, y),
                              grad2(PERM[BA], x - 1, y)),
                     lerp(fx, grad2(PERM[AB], x, y - 1),
@@ -107,10 +107,10 @@ float perlin2(float x, float y, int octaves, float persistence, float frequency,
         for (i = 0; i < octaves; i++) {
             total += pnoise2(x * frequency, y * frequency, repeatx * frequency, repeaty * frequency, base) * amplitude;
             max += amplitude;
-            frequency *= 2.0f;  // constant?
+            frequency *= 2.0f;  // 2.0f should be deprecated in favor of a variable called lacunarity.
             amplitude *= persistence;
         }
-        return (total / max);
+        return (total / max);   // why /max
     }
     return 0.0f;
 }
