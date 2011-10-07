@@ -293,6 +293,7 @@ class Keyboard(object):
             "v" : toggle_z_buffer,
             "p" : _toggle_latency_unit,
             ',' : self.toggle_agent_gravity,
+            'u' : SDL.input.toggle_mouse_bind,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):

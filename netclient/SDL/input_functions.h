@@ -44,3 +44,5 @@ int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion ms);
 int _mouse_event_callback(mouse_event_func user_func, MouseEvent me);
 int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name);
 int _quit_event_callback(quit_event_func user_func);
+
+int _toggle_mouse_bind();

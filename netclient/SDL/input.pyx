@@ -48,6 +48,9 @@ cdef extern from "input_functions.h":
     cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
     cdef extern int _set_text_entry_mode(int n)
 
+    int _toggle_mouse_bind()
+
+
 def get_key_state():
     _get_key_state(&key_state_callback)
 
@@ -139,3 +142,6 @@ cdef int quit_event_callback():
 
 def init():
     _init_input()
+
+def toggle_mouse_bind():
+    return _toggle_mouse_bind()

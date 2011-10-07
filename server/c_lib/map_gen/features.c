@@ -17,12 +17,10 @@ void grass(int x, int y) {
                 _set(i,j,k, 4);
                 if (k != 0) {
                     // dirt
-                    d = perlin2(i/fx,j/fy, 4, 0.6f, 1.0f, 1.0f, x, y, 0);
-                    //printf("%0.2f\n", d);
+                    d = perlin2((i+1)/fx,(j+1)/fy, 4, 0.6f, 1.0f, 1.0f, x, y, 0);
                     dd = (int)(fabs(d) * 100);
                     dd %= (k < 3) ? k : 3;
                     dd += 1;
-                    printf("%d\n", dd);
                     for (n=1; n <= dd; n++) {
                         _set(i,j,k-n, 5);
                     }
@@ -30,5 +28,4 @@ void grass(int x, int y) {
             }
         }
     }
-
 }
