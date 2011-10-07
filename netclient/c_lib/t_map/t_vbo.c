@@ -228,7 +228,7 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
 
 void delete_vbo(struct VBO* vbo) {
 
-    if(vbo->VBO_id != 0) glDeleteBuffers(1, (GLuint*)&vbo->VBO_id);
+    if(vbo->VBO_id != 0) glDeleteBuffers(1, &vbo->VBO_id);
     ///free the system memory copy of the vertex buffer
     
     if(vbo->v_list != NULL) {
@@ -734,12 +734,15 @@ int update_column_VBO(struct vm_column* column) {
 
 //    GLuint VBO_id;
     glEnable(GL_TEXTURE_2D);
+
+
+    if(1) {
     if(column->vbo.VBO_id == 0)  glGenBuffers(1, &column->vbo.VBO_id);
     //“buffer orphaning”
-    glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
-    //glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
-
+        glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
+        glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW);
+    }
     glDisable(GL_TEXTURE_2D);
 
     return 0;
