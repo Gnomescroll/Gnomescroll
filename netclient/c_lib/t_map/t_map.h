@@ -32,7 +32,17 @@ struct VBO {
         int v_num;
         struct Vertex* v_list;
         int VBO_id;
+
+        int _v_num[4];       //parameters for draw pass
+        int _v_offset[4];
+
+        //draw pass 0, normal quads
+        //draw pass 1, normal quads
+        //draw pass 1, normal quads
+        //draw pass 1, normal quads
 };
+
+//need 3 types of transparency
 
 struct vm_chunk {
     unsigned short voxel[512];

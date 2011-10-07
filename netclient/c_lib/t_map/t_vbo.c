@@ -40,6 +40,16 @@ int fulstrum_culling;
 int view_distance = 40;
 struct _Camera c;
 
+
+/*
+glDepthMask — enable or disable writing into the depth buffer
+
+void glDepthMask(   GLboolean   flag);
+
+Specifies whether the depth buffer is enabled for writing. If flag is GL_FALSE, depth buffer writing is disabled. Otherwise, it is enabled. Initially, depth buffer writing is enabled.
+*/
+
+
 ///advice
 /*
 It turns out that if you disable depth testing (glDisable(GL_DEPTH_TEST)),
@@ -52,6 +62,14 @@ RenderScene();
 SwapBuffers(hdc);  //For Windows
  *
  */
+
+/*
+ OpenGL has a function that can prevent pixels with a specified set of alpha values from writing the colour or Z buffers. For example:
+
+
+     glAlphaFunc ( GL_GREATER, 0.1 ) ;
+     glEnable ( GL_ALPHA_TEST ) ;
+*/
 
 //struct Vertex* quad_cache;
 struct Vertex quad_cache[max_cubes*6*4];
@@ -340,6 +358,13 @@ return 0;
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
 
+//chunk scratch for transparency
+
+static int vertex_count;
+int transparent_cache[8192];    //8192, 16384/2
+int transparent_cache_n;
+
+
 /*
 l = [
         1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
@@ -432,42 +457,6 @@ void __inline add_quad(int x, int y, int z, int side, int tile_id) {
     cs_n += 4;
 }
 
-/*
-void __inline add_quad(float x,float y,float z,int side, int tile_id) {
-    int i;
-    //struct Vertex* v;
-    memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-    for(i=0; i<=4;i++) {
-        cs[cs_n+i].x += x;
-        cs[cs_n+i].y += y;
-        cs[cs_n+i].z += z;
-    //v = &cs[cs_n+i];
-    }
-    cs_n += 4;
-}
-*/
-
-/*
-/// ADDRESS
-def draw_chunks():
-    cdef MapChunk mc
-    ll = terrain_map.get_raw_chunk_list()
-    #print "Draw"
-    #cube_lib.terrain_map.set(5,5,0,1)
-    #for z in range (-16, 16):
-    #    if cube_lib.terrain_map.get(5,5,z) != 0:
-    #        print "non zero!"
-
-    for l in ll:
-        mc = <MapChunk>l
-        if mc.VBO.VBO_id != 0:
-            _draw_vbo(&mc.VBO)
-            #print "VBO_id, v_num= %i, %i" % (mc.VBO.VBO_id, mc.VBO.v_num)
-    _end_vbo_draw()
-/// ADDRESS
-*/
-
-
 int inline _is_occluded(int x,int y,int z, int side_num) {
     const static int s_array[18] = {
             0,0,1,  //top
@@ -488,6 +477,28 @@ int inline _is_occluded(int x,int y,int z, int side_num) {
     return isActive(_get(x,y,z));
 }
 
+const static int s_array[18] = {
+        0,0,1,  //top
+        0,0,-1, //bottom
+        1,0,0,  //north
+        -1,0,0, //south
+        0,1,0,  //west
+        0,-1,0, //east
+        };
+
+int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
+    int i;
+    i = 3*side_num;
+    x += s_array[i+0];
+    y += s_array[i+1];
+    z += s_array[i+2];
+    //printf("%i, %i, %i \n", s_array[i+0], s_array[i+1], s_array[i+2]);
+    //return isOccluded(_get(x,y,z));
+
+    int tile_id = _get(x,y,z);
+    if(tile_id == _tile_id) return 1;
+    return isActive(tile_id);
+}
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
@@ -495,7 +506,9 @@ int update_column_VBO(struct vm_column* column) {
 
     struct vm_chunk* chunk;
     int i;
+    int transparency;
     cs_n = 0; //clear chunk scratch
+    vertex_count = 0; //clear counter
     if(column->vbo.VBO_id != 0) {
         delete_vbo(&column->vbo);
     }
@@ -511,14 +524,27 @@ int update_column_VBO(struct vm_column* column) {
                     tile_id = _get(_x,_y,_z);
                     //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
                     if(isActive(tile_id) == 0) {continue;} else {
-                        //printf("add %i, %i, %i tile_id = %i \n", _x,_y,_z,tile_id);
-                    }
-                    for(side_num=0; side_num<6; side_num++) {
-                        if(! _is_occluded(_x,_y,_z,side_num)) {
-                            add_quad(_x,_y,_z,side_num,tile_id);
+                        if(isOccludes(tile_id) == 1) {
+                            for(side_num=0; side_num<6; side_num++) {
+                                if(! _is_occluded(_x,_y,_z,side_num)) {
+                                    add_quad(_x,_y,_z,side_num,tile_id);
+                                }
+                            }
+                        } 
+                        else
+                        {
+                            //active block that does not occlude
+                            transparency = isTransparent(tile_id);
+                            for(side_num=0; side_num<6; side_num++) 
+                            {
+                                if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                                {
+                                    add_quad(_x,_y,_z,side_num,tile_id);
+                                }
+                            }
                         }
-                    }
-        }
+                    }    
+    }
             }
                 }
     }

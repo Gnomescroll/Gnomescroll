@@ -109,10 +109,13 @@ class Block_template:
         self.side = [255,255,255,255,255,255]
         self.hud_pos = -1
         self.hud_img = -1    #not handling undefined case
+        self.transparent = 0 #default
     def set_name(self,name):
         self.name = name
     def set_id(self, id):
         self.id = int(id)
+    def set_set_transparency(self, level):
+        self.transparency = int(level)
     def set_hud(self,s2,s3):
         global hud_tex
         #self.hud_pos = int(s2)
@@ -127,6 +130,8 @@ class Block_template:
             self.set_name(s2)
         elif s1 == "hud":
             self.set_hud(s2,s3)
+        elif s1 == "transparency":
+            self.set_transparency(s2)
         elif s1 == "top":
             self.side[0] = block_tex.g(s2)
         elif s1 == "bottom":
@@ -226,6 +231,7 @@ for block in lblock.list:
     x['texture_id'] = block.side
     x['hud_pos'] = block.hud_pos
     x['hud_img'] = block.hud_img
+    x['hud_img'] = block.transparent
     dat[block.id] = x
 
 #print str(dat)

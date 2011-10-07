@@ -41,6 +41,17 @@ int _init_t_map() {
     return 0;
 }
 
+
+/*
+zoff and dz are ignored; currently only updates map columns, not map chunks
+*/
+inline void set_map_chunk_for_update(int xoff, int yoff, int zoff, int dx, int dy, int dz) {
+    xoff +=dx;yoff +=dy;
+    if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim ) { return;}
+    struct vm_column* column = &map.column[vm_map_dim*yoff + xoff];
+    set_flag(column, VBO_needs_update, 1);
+}
+
 struct vm_map* _get_map() { return &map; }
 
 struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
@@ -67,6 +78,16 @@ int _set(int x, int y, int z, int value) {
         return 0;
     }
     xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
+
+    if(xrel == 0) set_map_chunk_for_update(xoff,yoff,zoff,-1,0,0);
+    if(xrel == 7) set_map_chunk_for_update(xoff,yoff,zoff,1,0,0);
+    if(yrel == 0) set_map_chunk_for_update(xoff,yoff,zoff,0,-1,0);
+    if(yrel == 7) set_map_chunk_for_update(xoff,yoff,zoff,0,1,0);
+    //if(zrel == 0) set_map_chunk_for_update(xoff,yoff,zoff,0,0,-1);
+    //if(zrel == 7) set_map_chunk_for_update(xoff,yoff,zoff,0,0,1);
+
+    //currently updates map columns, not map chunks!!
+
     //printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
     //printf("xrel,yrel,zrel= %i, %i, %i \n", xrel, yrel, zrel);
     column = &map.column[vm_map_dim*yoff + xoff];
@@ -87,6 +108,7 @@ int _set(int x, int y, int z, int value) {
     set_flag(column, VBO_needs_update, 1);
     set_flag(column, VBO_has_blocks, 1);
     chunk->vbo_needs_update =1;
+
     return 0;
 }
 
