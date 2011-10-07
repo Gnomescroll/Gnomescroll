@@ -692,7 +692,6 @@ int update_column_VBO(struct vm_column* column) {
                 } 
                 else
                 {
-                    continue;
                     //active block that does not occlude
                     for(side_num=0; side_num<6; side_num++) 
                     {
