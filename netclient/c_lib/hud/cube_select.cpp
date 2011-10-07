@@ -11,6 +11,8 @@ int cube_select_x = 0;
 int cube_select_y = 0;
 
 void _init_cube_select() {
+    //printf("init_cube_select\n");
+
     int i;
     for(i=0;i<255;i++){
         cube_select_array[i].cube_id = 255;
@@ -22,13 +24,14 @@ void _init_cube_select() {
 }
 
 int _get_selected_cube_id(){ //get the cube selected by hud
-    return cube_select_array[cube_select_x+16*cube_select_y].cube_id;
+    return cube_select_array[cube_select_x+8*cube_select_y].cube_id;
 }
 
 void _cube_select_set_hud(int pos, int cube_id, int tex_id) { //set the cubes in each position on hud
     if(tex_id == -1 || pos == -1) return;
     cube_select_array[pos].cube_id = cube_id;
     cube_select_array[pos].tex_id = tex_id; 
+    printf("cube_set: pos=%i, cube_id=%i, tex_id=%i \n", pos, cube_id, tex_id);
 }
 
 void _draw_cube_selector(float x, float y, float size, int mode) {
@@ -63,7 +66,7 @@ void _draw_cube_selector(float x, float y, float size, int mode) {
         y0 = y - j*(_ssize+sborder) + sborder/2;
         y1 = y0 + _ssize - sborder;
 
-        tex_id = cube_select_array[i+16*j].tex_id;
+        tex_id = cube_select_array[i+8*j].tex_id;
         ti = tex_id % 16;
         tj = tex_id / 16;
 
@@ -131,4 +134,7 @@ void _draw_cube_selector(float x, float y, float size, int mode) {
 void _hud_control_input(int pos) {
     cube_select_x = pos  % 8;
     cube_select_y = pos / 8;
+
+    printf("hud: block_id=%i, tex_id=%i,  (%i,%i), position %i selected \n", cube_select_array[pos].cube_id, cube_select_array[pos].tex_id, cube_select_x, cube_select_y, pos);
+
 }

@@ -1,0 +1,18 @@
+Crafting:
+
+Sand block produces silica
+Silica + Coal -> solar cells + CO2
+Silica + Hydrogen -> solar cell + H20
+
+Solar Cell used to build solar block
+Solar block wired to battery charger to power battery and lights
+
+Blocks need state, need inventory, need timers
+Items picked up/dropped off
+
+====
+add/remove item from block
+add/remove item from inventory
+pick up item
+drop item
+transmute item

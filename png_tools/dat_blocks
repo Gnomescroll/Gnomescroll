@@ -8,7 +8,7 @@ e east
 ===
 id      1
 name    test
-hud     3 error.png
+hud     63 error.png
 top     error.png
 bottom  error.png
 north   error.png
@@ -18,7 +18,7 @@ east    error.png
 ===
 id      2
 name    stone
-hud     2 stone.png
+hud     0 stone.png
 top     stone.png
 bottom  stone.png
 north   stone.png
@@ -28,7 +28,7 @@ east    stone.png
 ===
 id      3
 name    lava
-hud     1 lavablock.png
+hud     40 lavablock.png
 top     lavablock.png
 bottom  lavablock.png
 north   lavablock.png
@@ -38,7 +38,7 @@ east    lavablock.png
 ===
 id      4
 name    grass
-hud     4 grass-side.png
+hud     8 grass-side.png
 top     grass-top.png
 bottom  dirt.png
 north   grass-side.png
@@ -48,6 +48,7 @@ east    grass-side.png
 ===
 id      5
 name    dirt
+hud     9 dirt.png
 top     dirt.png
 bottom  dirt.png
 north   dirt.png
@@ -57,6 +58,7 @@ east    dirt.png
 ===
 id      6
 name    blue_ore
+hud     1 blueore.png
 top     blueore.png
 bottom  blueore.png
 north   blueore.png
@@ -66,6 +68,7 @@ east    blueore.png
 ===
 id      8
 name    sand_brick
+hud     24 brick-red.png
 top     brick-red.png
 bottom  brick-red.png
 north   brick-red.png
@@ -75,6 +78,7 @@ east    brick-red.png
 ===
 id      9
 name    sand_brick
+hud     25 brick-sand.png
 top     brick-sand.png
 bottom  brick-sand.png
 north   brick-sand.png
@@ -84,6 +88,7 @@ east    brick-sand.png
 ===
 id      10
 name    grey_brick
+hud     26 brick-stone.png
 top     brick-stone.png
 bottom  brick-stone.png
 north   brick-stone.png
@@ -94,17 +99,18 @@ east    brick-stone.png
 ===
 id      11
 name    sand
+hud     16 sand.png
 top     sand.png
 bottom  sand.png
 north   sand.png
 south   sand.png
 west    sand.png
 east    sand.png
-
-
 ===
 id      16
 name    tree_alt
+hud     32 tree-alt-small.png
+transparency 1
 top     tree-alt-small.png
 bottom  tree-alt-small.png
 north   tree-alt-small.png
@@ -115,6 +121,7 @@ east    tree-alt-small.png
 ===
 id      100
 name    terminal
+hud     40 terminal.png
 top     terminal.png
 bottom  terminal.png
 north   terminal.png
@@ -124,6 +131,7 @@ east    terminal.png
 ===
 id      101
 name    tron
+hud     41 tron.png
 top     tron.png
 bottom  tron.png
 north   tron.png

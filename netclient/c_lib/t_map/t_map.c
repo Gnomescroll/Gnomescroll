@@ -68,6 +68,8 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
 }
 
 // terrain map tile set/get
+
+//currently updates map columns, not map chunks!!
 int _set(int x, int y, int z, int value) {
     int xoff, yoff, zoff, xrel, yrel, zrel;
     struct vm_column* column;
@@ -86,10 +88,6 @@ int _set(int x, int y, int z, int value) {
     //if(zrel == 0) set_map_chunk_for_update(xoff,yoff,zoff,0,0,-1);
     //if(zrel == 7) set_map_chunk_for_update(xoff,yoff,zoff,0,0,1);
 
-    //currently updates map columns, not map chunks!!
-
-    //printf("xoff,yoff,zoff= %i, %i, %i \n", xoff,yoff,zoff);
-    //printf("xrel,yrel,zrel= %i, %i, %i \n", xrel, yrel, zrel);
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
     if(chunk == NULL) {

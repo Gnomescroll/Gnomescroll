@@ -203,6 +203,11 @@ int _init_draw_terrain() {
     return 0;
 }
 
+
+
+/*
+deprecated
+
 int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     GLuint VBO_id;
     VBO_id = 0;
@@ -219,6 +224,7 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
     //printf("inside: VBO_id= %i \n", VBO_id);
     return VBO_id;
 }
+*/
 
 int delete_vbo(struct VBO* vbo) {
 
@@ -358,26 +364,6 @@ return 0;
 struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 unsigned int cs_n; //number of vertices in chunk scratch
 
-//chunk scratch for transparency
-
-static int vertex_count;
-int transparent_cache[8192];    //8192, 16384/2
-int transparent_cache_n;
-
-
-/*
-l = [
-        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
-        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
-        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
-        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
-        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
-        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
-]
-*/
-//int CI[9];
-
-
 static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
 -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
@@ -457,6 +443,53 @@ void __inline add_quad(int x, int y, int z, int side, int tile_id) {
     cs_n += 4;
 }
 
+void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    int index;
+    int CX[8];
+    for(i=0; i<8; i++) {
+        index = side*8*3+i*3;
+        CX[i] = isActive(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+    }
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    for(i=0; i<=3;i++) {
+        v_list[offset+i].x += _x;
+        v_list[offset+i].y += _y;
+        v_list[offset+i].z += _z;
+    }
+
+    int occ = (x+y+z);
+    if(occ > 255) occ = 255;
+
+    occ = calcAdj(CX[7], CX[1], CX[0]);
+    v_list[offset+0].r = occ;
+    v_list[offset+0].g = occ;
+    v_list[offset+0].b = occ;
+
+    occ = calcAdj(CX[1], CX[3], CX[2]);
+    v_list[offset+1].r = occ;
+    v_list[offset+1].g = occ;
+    v_list[offset+1].b = occ;
+
+    occ = calcAdj(CX[3], CX[5], CX[4]);
+    v_list[offset+2].r = occ;
+    v_list[offset+2].g = occ;
+    v_list[offset+2].b = occ;
+
+    occ = calcAdj(CX[5], CX[7], CX[6]);
+    v_list[offset+3].r = occ;
+    v_list[offset+3].g = occ;
+    v_list[offset+3].b = occ;
+}
+
 int inline _is_occluded(int x,int y,int z, int side_num) {
     const static int s_array[18] = {
             0,0,1,  //top
@@ -474,7 +507,9 @@ int inline _is_occluded(int x,int y,int z, int side_num) {
     z += s_array[i+2];
     //printf("%i, %i, %i \n", s_array[i+0], s_array[i+1], s_array[i+2]);
     //return isOccluded(_get(x,y,z));
-    return isActive(_get(x,y,z));
+    
+    //return isActive(_get(x,y,z));
+    return isOccludes(_get(x,y,z));
 }
 
 const static int s_array[18] = {
@@ -500,6 +535,12 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
     return isActive(tile_id);
 }
 
+
+//int transparent_cache[8192];    //8192, 16384/2
+//int transparent_cache_n;
+
+//int cube_vertex_count[4];
+
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
@@ -507,11 +548,16 @@ int update_column_VBO(struct vm_column* column) {
     struct vm_chunk* chunk;
     int i;
     int transparency;
+
     cs_n = 0; //clear chunk scratch
-    vertex_count = 0; //clear counter
+
+    int cube_vertex_count[4] = {0, 0, 0, 0};
+    int vertex_count = 0; //clear counter
+    
     if(column->vbo.VBO_id != 0) {
         delete_vbo(&column->vbo);
     }
+    //first pass, count quads
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
         //printf("chunk= %i\n", i);
@@ -519,36 +565,64 @@ int update_column_VBO(struct vm_column* column) {
         //chunk->vbo_needs_update = 0;
         //printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
         for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
-            for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
-                for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
-                    tile_id = _get(_x,_y,_z);
-                    //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
-                    if(isActive(tile_id) == 0) {continue;} else {
-                        if(isOccludes(tile_id) == 1) {
-                            for(side_num=0; side_num<6; side_num++) {
-                                if(! _is_occluded(_x,_y,_z,side_num)) {
-                                    add_quad(_x,_y,_z,side_num,tile_id);
-                                }
-                            }
-                        } 
-                        else
-                        {
-                            //active block that does not occlude
-                            transparency = isTransparent(tile_id);
-                            for(side_num=0; side_num<6; side_num++) 
-                            {
-                                if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
-                                {
-                                    add_quad(_x,_y,_z,side_num,tile_id);
-                                }
-                            }
+        for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
+        for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
+            tile_id = _get(_x,_y,_z);
+            //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
+            if(isActive(tile_id) == 0) {
+                continue;
+            } 
+            else 
+            {
+                transparency = isTransparent(tile_id);
+                //if(isOccludes(tile_id) == 1) {
+                if(transparency == 0)
+                { 
+                    for(side_num=0; side_num<6; side_num++) {
+                        if(! _is_occluded(_x,_y,_z,side_num)) {
+                            //add_quad(_x,_y,_z,side_num,tile_id);
+                            vertex_count += 4;
+                            cube_vertex_count[0] += 4;
                         }
-                    }    
-    }
-            }
+                    }
+                } 
+                else
+                {
+                    //active block that does not occlude
+                    for(side_num=0; side_num<6; side_num++) 
+                    {
+                        if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                        {
+                            //add_quad(_x,_y,_z,side_num,tile_id);
+                            vertex_count += 4;
+                            cube_vertex_count[transparency] += 4;
+                        }
+                    }
                 }
+            }
+        }}}
     }
-    if(cs_n == 0 ) {
+    //set offsets
+    
+    //column->vbo._v_num[4];       //parameters for draw pass
+    //column->vbo._v_offset[4];
+
+    column->vbo._v_num[0] = cube_vertex_count[0];
+    column->vbo._v_num[1] = cube_vertex_count[1];
+    column->vbo._v_num[2] = cube_vertex_count[2];
+    column->vbo._v_num[3] = cube_vertex_count[3];
+
+    column->vbo._v_offset[0] = 0;
+    column->vbo._v_offset[1] = cube_vertex_count[0];
+    column->vbo._v_offset[2] = cube_vertex_count[0]+cube_vertex_count[1];
+    column->vbo._v_offset[3] = cube_vertex_count[0]+cube_vertex_count[1]+cube_vertex_count[2];
+
+    /*
+        Now that quads have been counted, malloc memory
+    */
+
+    //if(cs_n == 0 ) {
+    if(vertex_count == 0) {
         column->vbo.VBO_id = 0;
         column->vbo.v_num = 0;
         //column->vbo_loaded = 0;
@@ -563,13 +637,93 @@ int update_column_VBO(struct vm_column* column) {
         set_flag(column, VBO_needs_update, 0);
         set_flag(column, VBO_has_blocks, 1);
 
-        create_vbo(&column->vbo, cs, cs_n);
-        //column->vbo_needs_update = 0;
-        //column->vbo_loaded = 1;
+        //create_vbo(&column->vbo, cs, cs_n);
+
+        //printf("Malloc: %i vertex \n", vertex_count);
+        column->vbo.v_num = vertex_count; //total vertices, size of VBO
+        column->vbo.v_list = (struct Vertex*)malloc(vertex_count*sizeof(struct Vertex)); 
     }
     //printf("vbo_id= %i v_num= %i \n", column->vbo.VBO_id,column->vbo.v_num);
 
-     return 0;
+
+    int _cube_vertex_count[4];
+    _cube_vertex_count[0] = column->vbo._v_offset[0];
+    _cube_vertex_count[1] = column->vbo._v_offset[1];
+    _cube_vertex_count[2] = column->vbo._v_offset[2];
+    _cube_vertex_count[3] = column->vbo._v_offset[3];
+
+    //printf("counts= %i, %i, %i, %i \n", _cube_vertex_count[0],_cube_vertex_count[1],_cube_vertex_count[2],_cube_vertex_count[3]);
+    
+    struct Vertex* v_list2 = column->vbo.v_list;
+
+    for(i = 0; i < vm_column_max; i++) {
+        if(column->chunk[i] == NULL) { continue; }
+        //printf("chunk= %i\n", i);
+        chunk = column->chunk[i];
+        //chunk->vbo_needs_update = 0;
+        //printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
+        for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
+        for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
+        for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
+            tile_id = _get(_x,_y,_z);
+            //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
+            if(isActive(tile_id) == 0) {
+                continue;
+            } 
+            else 
+            {
+                transparency = isTransparent(tile_id);
+                /*
+                if(transparency > 3) {
+                    printf("Error! transparency value wrong, %i\n");
+                    return 0;
+                }
+                */
+                //if(isOccludes(tile_id) == 1)
+                if(transparency == 0)
+                { 
+                    for(side_num=0; side_num<6; side_num++) {
+                        if(! _is_occluded(_x,_y,_z,side_num)) {
+                            //printf("count= %i\n",_cube_vertex_count[0]);
+                            add_quad2(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
+                            _cube_vertex_count[0] += 4;
+                        }
+                    }
+                } 
+                else
+                {
+                    continue;
+                    //active block that does not occlude
+                    for(side_num=0; side_num<6; side_num++) 
+                    {
+                        if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                        {
+                            add_quad2(v_list2, _cube_vertex_count[transparency],_x,_y,_z,side_num,tile_id);
+                            _cube_vertex_count[transparency] += 4;
+                        }
+                    }
+                }
+            }
+        }}}
+    }
+
+    /*
+        Now that memory is full of quads, push to graphics card
+    */
+
+//int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
+    GLuint VBO_id;
+    VBO_id = 0;
+    glEnable(GL_TEXTURE_2D);
+    glGenBuffers(1, &VBO_id);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
+    glBufferData(GL_ARRAY_BUFFER, column->vbo.v_num*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
+    column->vbo.VBO_id = VBO_id;
+    glDisable(GL_TEXTURE_2D);
+
+    //printf("Crash before its done\n");
+
+    return 0;
 }
 
 
