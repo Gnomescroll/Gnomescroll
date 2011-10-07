@@ -551,6 +551,8 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 static const int VERTEX_SLACK = 128; // increase to 128
 
+static bool BUFFER_ORPHANING = false; //recycle buffer or create new
+
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
@@ -736,12 +738,23 @@ int update_column_VBO(struct vm_column* column) {
     glEnable(GL_TEXTURE_2D);
 
 
-    if(1) {
-    if(column->vbo.VBO_id == 0)  glGenBuffers(1, &column->vbo.VBO_id);
-    //“buffer orphaning”
+    if( BUFFER_ORPHANING ) {
+        if(column->vbo.VBO_id == 0)  glGenBuffers(1, &column->vbo.VBO_id);
         glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
         glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
         glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW);
+    } else {
+        if(column->vbo.VBO_id == 0)
+        {
+            glGenBuffers(1, &column->vbo.VBO_id);
+        } 
+        else 
+        {
+            glDeleteBuffers(1, &column->vbo.VBO_id);
+            glGenBuffers(1, &column->vbo.VBO_id);
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
+        glBufferData(GL_ARRAY_BUFFER, vertex_count*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW);
     }
     glDisable(GL_TEXTURE_2D);
 
