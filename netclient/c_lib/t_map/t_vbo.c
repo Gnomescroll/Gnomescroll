@@ -226,16 +226,18 @@ int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
 }
 */
 
-int delete_vbo(struct VBO* vbo) {
+void delete_vbo(struct VBO* vbo) {
 
-    glDeleteBuffers(1, (GLuint*)&vbo->VBO_id);
+    if(vbo->VBO_id != 0) glDeleteBuffers(1, (GLuint*)&vbo->VBO_id);
     ///free the system memory copy of the vertex buffer
     
-    if(vbo->v_list != NULL) free(vbo->v_list);
-    vbo->VBO_id = -1;
+    if(vbo->v_list != NULL) {
+        free(vbo->v_list);
+        vbo->v_list = NULL;
+    }
+    vbo->VBO_id = 0;
     vbo->v_num = 0;
     vbo->v_list_max_size = 0;
-    return 0;
 }
 
 /*
@@ -547,7 +549,7 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 //int cube_vertex_count[4];
 
-static const int VERTEX_SLACK = 128;
+static const int VERTEX_SLACK = 1; // increase to 128
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
@@ -562,7 +564,7 @@ int update_column_VBO(struct vm_column* column) {
     int cube_vertex_count[4] = {0, 0, 0, 0};
     int vertex_count = 0; //clear counter
 /*    
-    if(column->vbo.VBO_id != -1) {
+    if(column->vbo.VBO_id != 0) {
         delete_vbo(&column->vbo);
     }
     Dont delete , reuse
@@ -653,7 +655,10 @@ int update_column_VBO(struct vm_column* column) {
         column->vbo.v_num = vertex_count; //total vertices, size of VBO
 
         if(vertex_count > column->vbo.v_list_max_size) {
-            if(column->vbo.v_list != NULL) free(column->vbo.v_list);
+            if(column->vbo.v_list != NULL) {
+                free(column->vbo.v_list);
+                column->vbo.v_list = NULL;
+            }
             column->vbo.v_list_max_size = VERTEX_SLACK+vertex_count;
             column->vbo.v_list = (struct Vertex*)malloc(column->vbo.v_list_max_size*sizeof(struct Vertex)); 
         }
@@ -729,9 +734,10 @@ int update_column_VBO(struct vm_column* column) {
 
 //    GLuint VBO_id;
     glEnable(GL_TEXTURE_2D);
-    if(column->vbo.VBO_id == -1)  glGenBuffers(1, &column->vbo.VBO_id);
-
+    if(column->vbo.VBO_id == 0)  glGenBuffers(1, &column->vbo.VBO_id);
+    //“buffer orphaning”
     glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
+    //glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
 
     glDisable(GL_TEXTURE_2D);
@@ -774,7 +780,7 @@ int _update_chunks() {
 
         if(flag_is_true(c, VBO_has_blocks) && ( flag_is_true(c, VBO_needs_update) || flag_is_false(c, VBO_loaded))) {
             /*
-                if(c->vbo.VBO_id == -1) {
+                if(c->vbo.VBO_id == 0) {
                     //printf("create VBO: %i, %i \n", c->x_off, c->y_off);
                 } else {
                     //printf("update VBO: %i, %i \n", c->x_off, c->y_off);

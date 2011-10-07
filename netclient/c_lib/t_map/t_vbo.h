@@ -24,7 +24,7 @@ int _init_draw_terrain();
 int _update_chunks();
 
 int create_vbo(struct VBO* q_VBO, struct Vertex* vlist, int v_num);
-int delete_vbo(struct VBO* q_VBO);
+void delete_vbo(struct VBO* q_VBO);
 
 int start_vbo_draw();
 int draw_quad_vbo(struct VBO* q_VBO);

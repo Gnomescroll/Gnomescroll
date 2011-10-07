@@ -30,7 +30,7 @@ int _init_t_map() {
         c->vbo.v_list = NULL;
         c->vbo.v_list_max_size = 0;
         c->vbo.v_num = 0;
-        c->vbo.VBO_id = -1;
+        c->vbo.VBO_id = 0;
         c->x_off = i % vm_map_dim;
         c->y_off = i/vm_map_dim;
         c->flag = 0; //null it
