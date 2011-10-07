@@ -29,6 +29,7 @@ int _set_text_entry_mode(int n) {
 static int MOUSE_BOUND=1;
 int _toggle_mouse_bind() {
     MOUSE_BOUND = (MOUSE_BOUND + 1) %2;
+    return MOUSE_BOUND;
 }
 
 int _get_key_state(key_state_func key_state_cb) {
