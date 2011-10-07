@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include <compat.h>
-
+#include <compat_gl.h>
 /*
 #include "t_vbo.h"
 #include "t_properties.h"
