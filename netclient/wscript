@@ -122,7 +122,7 @@ def configure(conf):
                mandatory=True)
     '''
 
-    conf.env.INCLUDES = ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc']
+    conf.env.INCLUDES = ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
 
     #hack
@@ -238,7 +238,7 @@ def build(bld):
         use=common_libraries + SDL_libraries+['c_lib'],
         target='cube_lib.terrain_map')
     '''
-         
+
     bld(features='c cshlib pyext',
         source=['vox_lib/vox_functions.c',
                 'vox_lib/vox_lib.pyx'],

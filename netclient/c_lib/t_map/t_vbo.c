@@ -549,7 +549,7 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 //int cube_vertex_count[4];
 
-static const int VERTEX_SLACK = 1; // increase to 128
+static const int VERTEX_SLACK = 128; // increase to 128
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
