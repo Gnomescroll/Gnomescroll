@@ -551,7 +551,7 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 static const int VERTEX_SLACK = 128; // increase to 128
 
-static bool BUFFER_ORPHANING = false; //recycle buffer or create new
+static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
