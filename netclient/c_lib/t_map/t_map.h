@@ -32,8 +32,12 @@ struct VBO {
         int v_num;
         struct Vertex* v_list;
         int v_list_max_size;
-        int VBO_id;
 
+        #ifdef DC_CLIENT
+        GLuint VBO_id;
+        #else
+        int VBO_id;
+        #endif
         int _v_num[4];       //parameters for draw pass
         int _v_offset[4];
 

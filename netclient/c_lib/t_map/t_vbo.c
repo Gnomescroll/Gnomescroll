@@ -547,6 +547,8 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 //int cube_vertex_count[4];
 
+static const int VERTEX_SLACK = 128;
+
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
@@ -631,12 +633,11 @@ int update_column_VBO(struct vm_column* column) {
     */
 
     //if(cs_n == 0 ) {
+
     if(vertex_count == 0) {
-        column->vbo.VBO_id = 0;
+        //column->vbo.VBO_id = 0;
         column->vbo.v_num = 0;
-        //column->vbo_loaded = 0;
-        //column->vbo_needs_update = 0;
-        //column->empty = 1;
+
         set_flag(column, VBO_loaded, 0);
         set_flag(column, VBO_needs_update, 0);
         set_flag(column, VBO_has_blocks, 0);
@@ -650,7 +651,12 @@ int update_column_VBO(struct vm_column* column) {
 
         //printf("Malloc: %i vertex \n", vertex_count);
         column->vbo.v_num = vertex_count; //total vertices, size of VBO
-        column->vbo.v_list = (struct Vertex*)malloc(vertex_count*sizeof(struct Vertex)); 
+
+        if(vertex_count > column->vbo.v_list_max_size) {
+            if(column->vbo.v_list != NULL) free(column->vbo.v_list);
+            column->vbo.v_list_max_size = VERTEX_SLACK+vertex_count;
+            column->vbo.v_list = (struct Vertex*)malloc(column->vbo.v_list_max_size*sizeof(struct Vertex)); 
+        }
     }
     //printf("vbo_id= %i v_num= %i \n", column->vbo.VBO_id,column->vbo.v_num);
 
@@ -720,16 +726,15 @@ int update_column_VBO(struct vm_column* column) {
     */
 
 //int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
-    GLuint VBO_id;
-    VBO_id = 0;
-    glEnable(GL_TEXTURE_2D);
-    glGenBuffers(1, &VBO_id);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
-    glBufferData(GL_ARRAY_BUFFER, column->vbo.v_num*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
-    column->vbo.VBO_id = VBO_id;
-    glDisable(GL_TEXTURE_2D);
 
-    //printf("Crash before its done\n");
+//    GLuint VBO_id;
+    glEnable(GL_TEXTURE_2D);
+    if(column->vbo.VBO_id == -1)  glGenBuffers(1, &column->vbo.VBO_id);
+
+    glBindBuffer(GL_ARRAY_BUFFER, column->vbo.VBO_id);
+    glBufferData(GL_ARRAY_BUFFER, column->vbo.v_list_max_size*sizeof(struct Vertex), column->vbo.v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
+
+    glDisable(GL_TEXTURE_2D);
 
     return 0;
 }
@@ -768,11 +773,13 @@ int _update_chunks() {
             //if(c->vbo_needs_update == 1 || (c->vbo_loaded==0 && c->vbo_needs_update)) {
 
         if(flag_is_true(c, VBO_has_blocks) && ( flag_is_true(c, VBO_needs_update) || flag_is_false(c, VBO_loaded))) {
-                if(c->vbo.VBO_id == 0) {
+            /*
+                if(c->vbo.VBO_id == -1) {
                     //printf("create VBO: %i, %i \n", c->x_off, c->y_off);
                 } else {
                     //printf("update VBO: %i, %i \n", c->x_off, c->y_off);
                 }
+            */
                 update_column_VBO(c);
                 return 0;
             }
