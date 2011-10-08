@@ -11,21 +11,21 @@ void seed_noise(int seed) {
     }
 }
 
-void set_terrain_density(int x, int y, int z) {
+void set_terrain_density(int x, int y, int z, float threshold, int tile) {
     // set terrain
     int i,j,k;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                if (noisemap[i + x*j + x*y*k] > 0) {
-                    _set(i,j,k, 2);
+                if (noisemap[i + x*j + x*y*k] > threshold) {
+                    _set(i,j,k, tile);
                 }
             }
         }
     }
 }
 
-void set_terrain_height(int x, int y, int z, int baseline, int maxheight) {
+void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile) {
 
     if (maxheight <= 0) {
         printf("WARNING: set_terrain_height. maxheight <= 0. Will trigger FPE. abort.\n");
@@ -41,23 +41,29 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight) {
     float fz = (float)z;
     int i,j,k,h;
     float fh;
+
+    int maxh=-1000, minh=1000;  // arbitrary distance outside of map height range
         
-    for (i=0; i<x; i++) {
+    for (i=0; i<x; i++) {       // calculate heights and set to noisemap
         for (j=0; j<y; j++) {
             fh = noisemap[i + x*j];
-            fh = 1.0f - fabs(fh);
+            //fh = 1.0f - fabs(fh);
             fh *= fz;
-            h = ((int)fh) % maxheight;
-            if (h < 0) printf("%d\n", h);
-            
+            h = ((int)fh) % maxheight;  // h can be negative
+
+            if (h > maxh) maxh = h;
+            if (h < minh) minh = h;
+
+            noisemap[i + x*j] = h;  // will cause problems if noisemap is reused without clearing
+        }
+    }
+
+    for (i=0; i<x; i++) {       // use heights, adjusted to be positive
+        for (j=0; j<y; j++) {
+            h = noisemap[i + x*j];
+            h -= minh;
             for (k=0; k<baseline+h; k++) {
-                _set(i,j,k, 2);
-            }
-            // lava
-            if (h < 2) {
-                for (k=h; k>=0; k--) {
-                    _set(i,j,k+baseline, 3);
-                }
+                _set(i,j,k, tile);
             }
         }
     }

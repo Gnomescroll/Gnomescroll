@@ -10,8 +10,8 @@ cdef extern from "./map_gen/gradient.h":
                                                               float z0, float z1)
 cdef extern from "./map_gen/noise.h":
     void clear_noisemap()
-    void set_terrain_density(int x, int y, int z)
-    void set_terrain_height(int x, int y, int z, int baseline, int maxheight)
+    void set_terrain_density(int x, int y, int z, float threshold, int tile)
+    void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
 
 cdef extern from "./map_gen/features.h":
     void grass(int x, int y)
@@ -25,10 +25,11 @@ xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#def
 
 class Config:
 
-    seed = 1
+    seed_int = 1
     
     def __init__(self):
         self.x = self.y = self.z = 0
+        self.base_tile = 2 # stone (1 is error block)
 
         self.interp = False
         self.ix = self.iy = self.iz = 1
@@ -40,6 +41,7 @@ class Config:
         self.persistence = 0.5
         self.frequency = 1.0
         self.amplitude = 1.0
+        self.lacunarity = 2.0
         self.repeatx = 1024
         self.repeaty = 1024
         self.repeatz = 1024
@@ -50,7 +52,11 @@ class Config:
         self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
 
+        self.density_threshold = 0.0
+        
         self.add_grass = False
+        self.use_heightmap = False
+        self.use_density = False
 
     def reset(self):
         self.__init__()
@@ -62,10 +68,14 @@ class Config:
         self.z = int(z)
         return self
 
-    def max_size(self):
+    def max_size(self): # uses max size available
         self.x = xmax
         self.y = ymax
         self.z = zmax
+        return self
+
+    def tile(self, t):
+        self.base_tile = t
         return self
 
     def interpolate(self, x,y,z):
@@ -76,8 +86,14 @@ class Config:
         return self
 
     def heightmap(self, baseline=0, maxheight=0):
+        self.use_heightmap = True
         self.baseline = baseline
         self.maxheight = maxheight
+        return self
+
+    def density(self, threshold=0.0):
+        self.use_density = True
+        self.density_threshold = threshold
         return self
         
     def gradient(self, x0=0.0, x1=0.0, y0=0.0, y1=0.0, z0=0.0, z1=0.0):
@@ -90,29 +106,47 @@ class Config:
         self.gz1 = float(z1)
         return self
 
-    def p1(self):
+    def _noise_conf(self, octaves, persistence, amplitude, frequency, lacunarity):
+        if octaves is not None:
+            self.octaves = octaves
+        if persistence is not None:
+            self.persistence = persistence
+        if amplitude is not None:
+            self.amplitude = amplitude
+        if frequency is not None:
+            self.frequency = frequency
+        if lacunarity is not None:
+            self.lacunarity = lacunarity
+        return self
+
+    def p1(self, octaves=None, persistence=None, amplitude=None, frequency=None, lacunarity=None):
         self.dim = 1
         self.noise_type = 'p'
+        self._noise_conf(octaves, persistence, amplitude, frequency, lacunarity)
         return self
 
-    def p2(self):
+    def p2(self, octaves=None, persistence=None, amplitude=None, frequency=None, lacunarity=None):
         self.dim = 2
         self.noise_type = 'p'
+        self._noise_conf(octaves, persistence, amplitude, frequency, lacunarity)
         return self
         
-    def p3(self):
+    def p3(self, octaves=None, persistence=None, amplitude=None, frequency=None, lacunarity=None):
         self.dim = 3
         self.noise_type = 'p'
+        self._noise_conf(octaves, persistence, amplitude, frequency, lacunarity)
         return self
 
-    def s2(self):
+    def s2(self, octaves=None, persistence=None, amplitude=None, frequency=None, lacunarity=None):
         self.dim = 2
         self.noise_type = 's'
+        self._noise_conf(octaves, persistence, amplitude, frequency, lacunarity)
         return self
 
-    def s3(self):
+    def s3(self, octaves=None, persistence=None, amplitude=None, frequency=None, lacunarity=None):
         self.dim = 3
         self.noise_type = 's'
+        self._noise_conf(octaves, persistence, amplitude, frequency, lacunarity)
         return self
 
     def rmf(self):
@@ -120,7 +154,7 @@ class Config:
         return self
 
     def seed(self, s):
-        self.seed = s
+        self.seed_int = s
         set_seed(s)
         return self
 
@@ -174,19 +208,26 @@ class Config:
             #gradients[self.dim](*(size_args+grad_args))
             apply_gradient3(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
 
-        if self.dim == 1:
+        if self.use_density:
+            set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
+        elif self.use_heightmap:
+            set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight, self.base_tile)
+
+        elif self.dim == 1:
             print "Dimension 1 terrain not implemented."
         elif self.dim == 2:
             print "setting terrain height"
-            set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight)
+            set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight, self.base_tile)
         elif self.dim == 3:
-            set_terrain_density(self.x, self.y, self.z)
+            set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
 
         # features
         if self.add_grass:
             grass(self.x, self.y)
 
         print 'map gen took %0.2f seconds' % (time.time() - _n)
+
+        return self
 
 
         

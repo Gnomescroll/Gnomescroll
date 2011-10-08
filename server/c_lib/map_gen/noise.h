@@ -66,7 +66,7 @@ unsigned char PERM[] = {
 float noisemap[xmax*ymax*zmax];
 
 void seed_noise(int seed);
-void set_terrain_height(int x, int y, int z, int baseline, int maxheight);
-void set_terrain_density(int x, int y, int z);
+void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile);
+void set_terrain_density(int x, int y, int z, float threshold, int tile);
 void clear_noisemap();
 
