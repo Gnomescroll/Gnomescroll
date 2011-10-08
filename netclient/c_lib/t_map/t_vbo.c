@@ -892,7 +892,9 @@ int _draw_terrain() {
         }
     }}
 
-    DRAW_VBOS1();
+    //DRAW_VBOS1();
+    DRAW_VBOS1a();
+
     //DRAW_VBOS2();    
     //end_vbo_draw();
     
@@ -1028,6 +1030,8 @@ void DRAW_VBOS1() {
     glEnable (GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
     glBindTexture( GL_TEXTURE_2D, texture );
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -1039,7 +1043,7 @@ void DRAW_VBOS1() {
     for(i=0;i<draw_vbo_n;i++) {
         vbo = draw_vbo_array[i];
 
-        if(vbo->VBO_id == 0) continue;
+        if(vbo->v_num == 0) continue;
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         //start_vbo_draw();
@@ -1049,22 +1053,167 @@ void DRAW_VBOS1() {
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
         glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
-        glDrawArrays(GL_QUADS,0, vbo->v_num);
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable (GL_ALPHA_TEST);
+        if(vbo->_v_num[1] != 0) 
+        {
+            glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+        }
+    
+        glDisable(GL_CULL_FACE);
+        if(vbo->_v_num[1] != 0) 
+        {
+            glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+        }
+        glDisable(GL_ALPHA_TEST);      
+    /*
+        if(vbo->_v_num[2] != 0) 
+        {
+            glDepthMask(false);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+            glDepthMask(true);
+        }
+    */
+        glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
     }
+
+    glEnable(GL_BLEND);
+    glDepthMask(false);
+    for(i=0;i<draw_vbo_n;i++) {
+        if(vbo->_v_num[3] == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        if(vbo->_v_num[2] != 0) 
+        {
+
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+        }
+    }
+    glDepthMask(true); 
+    glDisable(GL_BLEND);
+
 /*
     Do Stuff
 */
 
 /*
-    column->vbo._v_num[0]
-    column->vbo._v_num[1]
-    column->vbo._v_num[2]
-    column->vbo._v_num[3]
+    vbo->_v_num[0]
+    vbo->_v_num[1]
+    vbo->_v_num[2]
+    vbo->_v_num[3]
 
-    column->vbo._v_offset[0]
-    column->vbo._v_offset[1]
-    column->vbo._v_offset[2]
-    column->vbo._v_offset[3]
+    vbo->_v_offset[0]
+    vbo->_v_offset[1]
+    vbo->_v_offset[2]
+    vbo->_v_offset[3]
+*/
+
+//end draw
+glDisableClientState(GL_VERTEX_ARRAY);
+glDisableClientState(GL_COLOR_ARRAY);
+glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+glShadeModel(GL_FLAT);
+
+/*
+glDisable (GL_DEPTH_TEST);
+glDisable(GL_CULL_FACE);
+*/
+
+glDisable(GL_TEXTURE_2D);
+
+}
+
+void DRAW_VBOS1a() {
+        
+    glColor3b(255,255,255);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
+    glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
+    glBindTexture( GL_TEXTURE_2D, texture );
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    int i;
+    struct VBO* vbo;
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+
+        if(vbo->v_num == 0) continue;
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        //start_vbo_draw();
+
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable (GL_ALPHA_TEST);
+    
+        glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+    
+        glDisable(GL_CULL_FACE);
+
+        glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+
+        glDisable(GL_ALPHA_TEST);      
+    /*
+        if(vbo->_v_num[2] != 0) 
+        {
+            glDepthMask(false);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+            glDepthMask(true);
+        }
+    */
+        glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
+    }
+
+    glEnable(GL_BLEND);
+    glDepthMask(false);
+    for(i=0;i<draw_vbo_n;i++) {
+        if(vbo->v_num == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        //if(vbo->_v_num[2] != 0) 
+        //{
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+        //}
+    }
+    glDepthMask(true); 
+    glDisable(GL_BLEND);
+
+/*
+    Do Stuff
+*/
+
+/*
+    vbo->_v_num[0]
+    vbo->_v_num[1]
+    vbo->_v_num[2]
+    vbo->_v_num[3]
+
+    vbo->_v_offset[0]
+    vbo->_v_offset[1]
+    vbo->_v_offset[2]
+    vbo->_v_offset[3]
 */
 
 //end draw
@@ -1088,6 +1237,9 @@ void DRAW_VBO2() {
 
 }
 
+void DRAW_VBOS2b() {
+    
+}
 
 /*
 

@@ -156,4 +156,37 @@ north   varriount/rock2.png
 south   varriount/rock2.png
 west    varriount/rock2.png
 east    varriount/rock2.png
+===
+id      164
+name    tree_alt
+hud     48 tree-alt-small.png
+transparency 1
+top     tree-alt-small.png
+bottom  tree-alt-small.png
+north   tree-alt-small.png
+south   tree-alt-small.png
+west    tree-alt-small.png
+east    tree-alt-small.png
+===
+id      165
+name    tree_alt
+hud     49 tree-alt-small.png
+transparency 2
+top     tree-alt-small.png
+bottom  tree-alt-small.png
+north   tree-alt-small.png
+south   tree-alt-small.png
+west    tree-alt-small.png
+east    tree-alt-small.png
+===
+id      166
+name    tree_alt
+hud     50 tree-alt-small.png
+transparency 3
+top     tree-alt-small.png
+bottom  tree-alt-small.png
+north   tree-alt-small.png
+south   tree-alt-small.png
+west    tree-alt-small.png
+east    tree-alt-small.png
 

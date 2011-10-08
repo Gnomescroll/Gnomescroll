@@ -35,7 +35,16 @@ def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
 
+def optimize(conf):
+    print dir(conf)
+    optimize = ['-O3']
+    #optimize = ['-O2']
+    conf.env.append_value('CFLAGS', optimize)
+    conf.env.append_value('CXXFLAGS', optimize)
+    configure(conf)
+
 def configure(conf):
+    print dir(conf)
     global _OS
     global os_libpth
 
