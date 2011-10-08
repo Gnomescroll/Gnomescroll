@@ -68,12 +68,14 @@ inline float trilinearInterpolate_condensed(float p[2][2][2], float x, float y, 
             p[1][1][1] * x * y * z;
 }
 
+const int interp_margin = 2;
+
 void _interp1(float final[], int x, int x_interval) {
 
-    const int margin = 2;
-    int nx = (x / x_interval) + (margin * 2);
+    const int interp_margin = 2;
+    int nx = (x / x_interval) + (interp_margin * 2);
 
-    float fnx = (float)(nx + margin);
+    float fnx = (float)(nx + interp_margin);
 
     // anchor pts
     float points[nx];
@@ -96,7 +98,7 @@ void _interp1(float final[], int x, int x_interval) {
     for (i=0; i<x; i++) {
         mx = i % x_interval;
         px = mx / fx_interval;
-        sx = (i / x_interval) + margin;
+        sx = (i / x_interval) + interp_margin;
 
         // collect local samples
         for (ii=-1; ii<3; ii++) {
@@ -114,8 +116,8 @@ void _interp1(float final[], int x, int x_interval) {
     int ix, iix;
     int index;
 
-    for (i=margin; i < nx-margin; i++) {
-        ix = (i-margin) * x_interval;
+    for (i=interp_margin; i < nx-interp_margin; i++) {
+        ix = (i-interp_margin) * x_interval;
         if (!ix) continue;
         for (ii=0; ii < 2; ii++) {
             iix = (ii == 0) ? -1 : ii;
@@ -128,41 +130,75 @@ void _interp1(float final[], int x, int x_interval) {
     }
 
     // merge
-    for (i=margin; i < nx-margin; i++) {
-        ii = (i-margin) * x_interval;
+    for (i=interp_margin; i < nx-interp_margin; i++) {
+        ii = (i-interp_margin) * x_interval;
         final[ii] = points[i];
     }
     
 }
 
-void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
+void _new_interp2(float final[], float points[], int x, int y, int x_interval, int y_interval);
+void _perlin_interp2(float final[], int x, int y,
+                                      int x_interval, int y_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float freq, float lac,
+                                      int rep_x, int rep_y,
+                                      int base) {
 
-    const int margin = 2;
-    int nx = (x / x_interval) + (margin*2),
-        ny = (y / y_interval) + (margin*2);
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2);
 
-    float fnx = (float)(nx + margin),
-           fny = (float)(ny + margin);
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin);
+
+    float points[nx*ny];
+        
+    // generate anchor points
+    int i,j;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            //points[i][j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
+            points[i + nx*j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
+        }
+    }
+
+    _new_interp2(final, points, x, y, x_interval, y_interval);
+}
+
+//void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
+void _new_interp2(float final[], float points[], int x, int y, int x_interval, int y_interval) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2);
+
+    //float fnx = (float)(nx + interp_margin),
+           //fny = (float)(ny + interp_margin);
 
     // anchor points
-    float points[nx][ny];
+    //float points[nx][ny];
+    //float points[nx*ny];
 
     // fractional interval between anchor points
     float fx_interval = (float)x_interval,
            fy_interval = (float)y_interval;
 
     // generate anchor points
-    int i,j;
-    for (i=0; i<nx; i++) {
-        for (j=0; j<ny; j++) {
-            points[i][j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
-        }
-    }
+    //int i,j;
+    //for (i=0; i<nx; i++) {
+        //for (j=0; j<ny; j++) {
+            ////points[i][j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
+            //points[i + nx*j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
+        //}
+    //}
+    
+    //_perlin_interp2(points, nx, ny, 6, 0.5f, 1.0f, 1.0f, 2.0f, 1024, 1024, 0);
 
     // interpolate
     int mx,my;
     int px,py;
     int sx,sy;
+    int i,j;
     int ii,jj;
     float samples[4][4];
     float pt;
@@ -170,17 +206,18 @@ void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
     for (i=0; i<x; i++) {
         mx = i % x_interval;
         px = mx / fx_interval;
-        sx = (i / x_interval) + margin;
+        sx = (i / x_interval) + interp_margin;
 
         for (j=0; j<y; j++) {
             my = j % y_interval;
             py = my / fy_interval;
-            sy = (j / y_interval) + margin;
+            sy = (j / y_interval) + interp_margin;
 
             // collect local samples
             for (ii=-1; ii < 3; ii++) {
                 for (jj=-1; jj < 3; jj++) {
-                    samples[ii+1][jj+1] = points[ii+sx][jj+sy];  // correct this. increased interpolation margins from 2 to 4, so adjust proper code elsewhere
+                    //samples[ii+1][jj+1] = points[ii+sx][jj+sy];
+                    samples[ii+1][jj+1] = points[(ii+sx) + nx*(jj+sy)];
                 }
             }
 
@@ -195,13 +232,13 @@ void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
     int ix,iy;
     int index;
     int iix,jjy;
-    for (i=margin; i < nx-margin; i++) {
-        ix = (i-margin) * x_interval;
+    for (i=interp_margin; i < nx-interp_margin; i++) {
+        ix = (i-interp_margin) * x_interval;
         if (!ix) continue;          // ix=0 is the same as final's x=0. It cannot interpolate because interpolated values are not calculated for n<0. This applies to x and y.
                                       // one solution is to generate the interpolate box one level extra backward in each dimension. or, calculate one level forward, but shift the anchor point ix=0 back 1.
 
-        for (j=margin; j < ny-margin; j++) {
-            iy = (j-margin) * y_interval;
+        for (j=interp_margin; j < ny-interp_margin; j++) {
+            iy = (j-interp_margin) * y_interval;
             if (!iy) continue;
 
             // collect samples from final array's interpolated values.
@@ -215,17 +252,19 @@ void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
             }
 
             pt = bilinearInterpolate(resamples, 0.5f, 0.5f);
-            points[i][j] = pt;
+            //points[i][j] = pt;
+            points[i + nx*j] = pt;
         }
     }
     
     // merge (recalculated, linearly interpolated) anchor points with (cubic) interpolated
-    for (i=margin; i < nx-margin; i++) {
-        ii = (i-margin) * x_interval;
-        for (j=margin; j < ny-margin; j++) {
-            jj = (j-margin) * y_interval;
+    for (i=interp_margin; i < nx-interp_margin; i++) {
+        ii = (i-interp_margin) * x_interval;
+        for (j=interp_margin; j < ny-interp_margin; j++) {
+            jj = (j-interp_margin) * y_interval;
 
-            final[ii + x*jj] = points[i][j];
+            //final[ii + x*jj] = points[i][j];
+            final[ii + x*jj] = points[i + nx*j];
         }
     }
 
@@ -233,15 +272,15 @@ void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
 
 void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval, int z_interval) {
 
-    const int margin = 2;
+    const int interp_margin = 2;
 
-    int nx = (x / x_interval) + (margin*2),
-        ny = (y / y_interval) + (margin*2),
-        nz = (z / z_interval) + (margin*2);
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2),
+        nz = (z / z_interval) + (interp_margin*2);
 
-    float fnx = (float)(nx + margin),
-           fny = (float)(ny + margin),
-           fnz = (float)(nz + margin);
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin),
+           fnz = (float)(nz + interp_margin);
 
     float points[nx][ny][nz];
 
@@ -272,23 +311,23 @@ void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval
     for (i=0; i<x; i++) {
         mx = i % x_interval;
         px = mx / fx_interval;
-        sx = (i / x_interval) + margin; // sample point index in anchor pts array
+        sx = (i / x_interval) + interp_margin; // sample point index in anchor pts array
         
         for (j=0; j<y; j++) {
             my = j % y_interval;
             py = my / fy_interval;
-            sy = (j / y_interval) + margin;
+            sy = (j / y_interval) + interp_margin;
 
             for (k=0; k<z; k++) {
                 mz = k % z_interval;
                 pz = mz / fz_interval;
-                sz = (k / z_interval) + margin;
+                sz = (k / z_interval) + interp_margin;
     
                 // collect local samples
                 for (ii=-1; ii < 3; ii++) {
                     for (jj=-1; jj < 3; jj++) {
                         for (kk=-1; kk < 3; kk++) {
-                            samples[ii+1][jj+1][kk+1] = points[ii+sx][jj+sy][kk+sz];  // correct this. increased interpolation margins from 2 to 4, so adjust proper code elsewhere
+                            samples[ii+1][jj+1][kk+1] = points[ii+sx][jj+sy][kk+sz];  // correct this. increased interpolation interp_margins from 2 to 4, so adjust proper code elsewhere
                         }
                     }
                 }
@@ -307,17 +346,17 @@ void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval
     int ix,iy,iz;
     int index;
     int iix,jjy,kkz;
-    for (i=margin; i < nx-margin; i++) {
-        ix = (i-margin) * x_interval;
+    for (i=interp_margin; i < nx-interp_margin; i++) {
+        ix = (i-interp_margin) * x_interval;
         if (!ix) continue;          // ix=0 is the same as final's x=0. It cannot interpolate because interpolated values are not calculated for n<0. This applies to x and y.
                                       // one solution is to generate the interpolate box one level extra backward in each dimension. or, calculate one level forward, but shift the anchor point ix=0 back 1.
 
-        for (j=margin; j < ny-margin; j++) {
-            iy = (j-margin) * y_interval;
+        for (j=interp_margin; j < ny-interp_margin; j++) {
+            iy = (j-interp_margin) * y_interval;
             if (!iy) continue;
 
-            for (k=margin; k < nz-margin; k++) {
-                iz = (k-margin) * z_interval;
+            for (k=interp_margin; k < nz-interp_margin; k++) {
+                iz = (k-interp_margin) * z_interval;
                 if (!iz) continue;
 
                 // collect samples from final array's interpolated values.
@@ -340,14 +379,14 @@ void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval
     }
     
     // merge (recalculated, linearly interpolated) anchor points with (cubic) interpolated
-    for (i=margin; i < nx-margin; i++) {
-        ii = (i-margin) * x_interval;
+    for (i=interp_margin; i < nx-interp_margin; i++) {
+        ii = (i-interp_margin) * x_interval;
 
-        for (j=margin; j < ny-margin; j++) {
-            jj = (j-margin) * y_interval;
+        for (j=interp_margin; j < ny-interp_margin; j++) {
+            jj = (j-interp_margin) * y_interval;
 
-            for (k=margin; k < nz-margin; k++) {
-                kk = (k-margin) * z_interval;
+            for (k=interp_margin; k < nz-interp_margin; k++) {
+                kk = (k-interp_margin) * z_interval;
 
                 final[ii + x*jj + x*y*kk] = points[i][j][k];
             }
@@ -357,7 +396,6 @@ void _interp3(float final[], int x, int y, int z, int x_interval, int y_interval
 }
 
 // wrapper
-//float final_interp[xmax*ymax*zmax];
 void apply_interp3(int x, int y, int z, int x_interval, int y_interval, int z_interval) {
     if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
@@ -367,12 +405,18 @@ void apply_interp3(int x, int y, int z, int x_interval, int y_interval, int z_in
     _interp3(noisemap, x,y,z, x_interval, y_interval, z_interval);
 }
 
-void apply_interp2(int x, int y, int x_interval, int y_interval) {
+void apply_interp2(int x, int y, int x_interval, int y_interval,
+                                                    int oct,    // noise func args
+                                                    float pers, float amp,
+                                                    float freq, float lac,
+                                                    int rep_x, int rep_y,
+                                                    int base) {
     if (x > xmax || y > ymax || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
-    _interp2(noisemap, x,y, x_interval, y_interval);
+    //_interp2(noisemap, x,y, x_interval, y_interval);
+    _perlin_interp2(noisemap, x,y, x_interval, y_interval, oct, pers, amp, freq, lac, rep_x, rep_y, base);
 }
 
 void apply_interp1(int x, int x_interval) {
