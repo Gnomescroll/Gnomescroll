@@ -53,8 +53,7 @@ c_lib.map_gen.conf.seed(571)
 #c_lib.map_gen.reset()
                   #.gradient(z0=0, z1=1)\
                   #.interpolate(4,2,1)\
-c_lib.map_gen.conf.reset()\
-                  .size(128,128,128)\
+c_lib.map_gen.conf.size(128,128,128)\
                   .heightmap(baseline=100, maxheight=28)\
                   .p2()\
                   .grass()\
