@@ -49,7 +49,7 @@ int t_zlib_decompress_update_buffer(unsigned char* out, int n) {
 
 int t_zlib_decompress() {
 
-    int ret;
+    int ret = Z_OK;
     unsigned int have;
     unsigned char in[t_buff_size];
 

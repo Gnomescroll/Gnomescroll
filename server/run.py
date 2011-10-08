@@ -41,25 +41,25 @@ import random
 
 import c_lib.map_gen
 
-c_lib.map_gen.conf.seed(571)\
-                  .size(128,128,128)\
-                  .interpolate(4,4,2)\
-                  .p3()\
-                  .grass()\
-                  .start()
-                  #.gradient(z0=-0.5, z1=0.5)\
+c_lib.map_gen.conf.seed(571)
 
+#c_lib.map_gen.conf.seed(571)\
+                  #.size(128,128,128)\
+                  #.interpolate(4,4,2)\
+                  #.p3()\
+                  #.grass()\
+                  #.start()
 
-c_lib.map_gen.reset()
+#c_lib.map_gen.reset()
+                  #.gradient(z0=0, z1=1)\
                   #.interpolate(4,2,1)\
-#c_lib.map_gen.conf.seed(666)\
 c_lib.map_gen.conf.reset()\
                   .size(128,128,128)\
-                  .gradient(z0=0, z1=1)\
-                  .heightmap(baseline=3, maxheight=10)\
+                  .heightmap(baseline=100, maxheight=28)\
+                  .p2()\
+                  .grass()\
                   .start()
                   #.rmf()\
-                  #.p2()\
 
 #c_lib.map_gen.conf.floor().start()
 
