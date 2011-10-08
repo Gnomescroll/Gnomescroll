@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdlib.h>
+#include <limits.h>
+
+int seed_max = INT_MAX;
 
 #include <c_lib/t_map/t_map.h>
 

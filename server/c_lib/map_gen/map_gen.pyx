@@ -1,4 +1,5 @@
 cdef extern from "./map_gen/interpolator.h":
+    int seed_max
     void apply_interp1(int x, int ix)
     void apply_interp2(int x, int y, int ix, int iy)
     void apply_interp3(int x, int y, int z, int ix, int iy, int iz)
@@ -26,6 +27,8 @@ xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#def
 class Config:
 
     seed_int = 1
+    seeds = []
+    seed_index = 0
     
     def __init__(self):
         self.x = self.y = self.z = 0
@@ -153,10 +156,22 @@ class Config:
         self.use_rmf = True
         return self
 
+    def _seeds(self):
+        self.seeds = []
+        n = self.seed_int
+        for i in range(10):
+            n += n * i
+            n %= seed_max
+            self.seeds.append(n)
+
     def seed(self, s):
-        self.seed_int = s
+        self.seed_int = s % seed_max
+        self._seeds()
         set_seed(s)
         return self
+
+    def get_current_seed(self):
+        return self.seeds[self.seed_index]
 
     def grass(self):
         self.add_grass = True
@@ -226,6 +241,9 @@ class Config:
             grass(self.x, self.y)
 
         print 'map gen took %0.2f seconds' % (time.time() - _n)
+
+        self.seed_index += 1
+        set_seed(self.get_current_seed())
 
         return self
 
