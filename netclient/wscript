@@ -47,9 +47,11 @@ def configure(conf):
     conf.link_add_flags()   #"-g"
 
     #conf.env.CFLAGS = ['-g','-Wall', '-fPIC', '-DDC_CLIENT'] # use '-O2' or '-O3' in distro build
-
-    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT'])
-    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
+    if OS == 'Darwin':
+        optimize = ['-O3']
+    #optimize = ['-O2']
+    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT']+optimize)
+    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT']+optimize)
 
     # '-D DC_CLIENT'
 

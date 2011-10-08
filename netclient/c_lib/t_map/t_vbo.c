@@ -549,9 +549,11 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 //int cube_vertex_count[4];
 
-static const int VERTEX_SLACK = 128; // increase to 128
+//static const int VERTEX_SLACK = 128; // increase to 128
 
-static bool BUFFER_ORPHANING = false; //recycle buffer or create new
+static const int VERTEX_SLACK = 0;
+
+static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
@@ -733,12 +735,15 @@ int update_column_VBO(struct vm_column* column) {
         Now that memory is full of quads, push to graphics card
     */
 
-//int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
-
-//    GLuint VBO_id;
+//  GLuint VBO_id;
     glEnable(GL_TEXTURE_2D);
 
+    if(vbo->VBO_id == 0)  glGenBuffers(1, &vbo->VBO_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+    glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 
+/*
     if( BUFFER_ORPHANING ) {
         if(vbo->VBO_id == 0)  glGenBuffers(1, &vbo->VBO_id);
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
@@ -755,8 +760,9 @@ int update_column_VBO(struct vm_column* column) {
             glGenBuffers(1, &vbo->VBO_id);
         }
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
-        glBufferData(GL_ARRAY_BUFFER, vertex_count*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
     }
+*/
     glDisable(GL_TEXTURE_2D);
 
     return 0;
@@ -1032,6 +1038,8 @@ void DRAW_VBOS1() {
     struct VBO* vbo;
     for(i=0;i<draw_vbo_n;i++) {
         vbo = draw_vbo_array[i];
+
+        if(vbo->VBO_id == 0) continue;
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         //start_vbo_draw();

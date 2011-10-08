@@ -9,12 +9,16 @@ http://www.reddit.com/r/Minecraft/comments/g0my6/how_terrain_generation_works_in
 !!! is down, try later
 http://archive.gamedev.net/community/forums/mod/journal/journal.asp?jn=259175&cmonth=11&cyear=2010
 
+
 Profiling Tool:
 Need newer version of ubuntu
 http://developer.amd.com/tools/CodeAnalyst/codeanalystlinux/Pages/default.aspx
 
 Catching Memory Leaks:
  The Valgrind memcheck tool is a fantastic way to find all sorts of uninitialized variables and other memory bugs. Valgrind is limited because it is quite slow, it can only find bugs that still exist in the generated machine code (so it can't find things the optimizer removes),
+
+efence - Electric Fence Malloc Debugger
+http://linux.die.net/man/3/efence
 
 Noise:
 
