@@ -68,7 +68,72 @@ inline float trilinearInterpolate_condensed(float p[2][2][2], float x, float y, 
             p[1][1][1] * x * y * z;
 }
 
-void _interp1(float final[], int x, int x_interval) {}
+void _interp1(float final[], int x, int x_interval) {
+
+    const int margin = 2;
+    int nx = (x / x_interval) + (margin * 2);
+
+    float fnx = (float)(nx + margin);
+
+    // anchor pts
+    float points[nx];
+    
+    //fractional interval btwn anchor pts
+    float fx_interval = (float)x_interval;
+
+    // generate anchor pts
+    int i;
+    for (i=0; i < nx; i++) {
+        points[i] = perlin1((i+1)/fnx, 6, 0.5f, 1.0f, 1.0f, 1024, 0);
+    }
+
+    //interpolate
+    int mx, px, sx;
+    int ii;
+    float samples[4];
+    float pt;
+
+    for (i=0; i<x; i++) {
+        mx = i % x_interval;
+        px = mx / fx_interval;
+        sx = (i / x_interval) + margin;
+
+        // collect local samples
+        for (ii=-1; ii<3; ii++) {
+            samples[ii+1] = points[ii+sx];
+        }
+
+        pt = cubicInterpolate(samples, px);
+        final[i] = pt;
+    }
+
+    //// recalculate the anchor points from the interpolated points
+    // use linear interpolation for this
+
+    float resamples[2];
+    int ix, iix;
+    int index;
+
+    for (i=margin; i < nx-margin; i++) {
+        ix = (i-margin) * x_interval;
+        if (!ix) continue;
+        for (ii=0; ii < 2; ii++) {
+            iix = (ii == 0) ? -1 : ii;
+            index = ix + iix;
+            resamples[ii] = final[index];
+        }
+
+        pt = linearInterpolate(resamples, 0.5f); // midpoints
+        points[i] = pt;
+    }
+
+    // merge
+    for (i=margin; i < nx-margin; i++) {
+        ii = (i-margin) * x_interval;
+        final[ii] = points[i];
+    }
+    
+}
 
 void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
 
@@ -111,8 +176,7 @@ void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
             my = j % y_interval;
             py = my / fy_interval;
             sy = (j / y_interval) + margin;
-            
-    
+
             // collect local samples
             for (ii=-1; ii < 3; ii++) {
                 for (jj=-1; jj < 3; jj++) {

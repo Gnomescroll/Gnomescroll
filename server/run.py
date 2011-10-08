@@ -41,18 +41,18 @@ import random
 
 import c_lib.map_gen
 
-#c_lib.map_gen.conf.seed(571)
+c_lib.map_gen.conf.seed(571)
 
-#c_lib.map_gen.conf\
-#.size(128,128,128)\
-#.tile(2)\
-#.interpolate(4,2,1)\
-#.heightmap(baseline=50, maxheight=78)\
-#.p2(octaves=8, persistence=0.6)\
-#.grass()\
-#.start()\
-#.reset()
-##.rmf()\
+c_lib.map_gen.conf\
+.size(128,128,128)\
+.tile(2)\
+.interpolate(4,2,1)\
+.heightmap(baseline=50, maxheight=78)\
+.p2(octaves=8, persistence=0.6)\
+.grass()\
+.rmf()\
+.start()\
+.reset()
 
 #c_lib.map_gen.reset()
 
@@ -112,7 +112,7 @@ class Main:
             terrain_map.load_from_disk(opts.opts.map)
         else:
             #terrain_map.load_from_disk("angus")
-            terrain_map.load_from_disk("natural_terrain")
+            #terrain_map.load_from_disk("natural_terrain")
             pass
 
         if False:

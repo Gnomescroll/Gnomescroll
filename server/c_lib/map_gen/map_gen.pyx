@@ -50,16 +50,17 @@ class Config:
         self.repeatz = 1024
         self.base = 0
 
-        self.use_rmf = False
         self.dim = 2
         self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
 
         self.density_threshold = 0.0
         
-        self.add_grass = False
+        self.use_rmf = False
         self.use_heightmap = False
         self.use_density = False
+
+        self.add_grass = False
 
     def reset(self):
         self.__init__()
@@ -182,6 +183,7 @@ class Config:
         
         noise_method = 'noise%d' % (self.dim,)
         if self.use_rmf:
+            print 'using rmf'
             self.noise = RMF(octaves=self.octaves,
                              persistence=self.persistence,
                              frequency=self.frequency,
@@ -214,6 +216,7 @@ class Config:
         if self.noise is not None:
             self.noise.fill()
             if self.interp:
+                print 'interpolated'
                 interpolates[self.dim](*(size_args+interp_args))
             else:
                 getattr(self.noise, noise_method)(*size_args)

@@ -119,6 +119,7 @@ class RMF:
         self.repeatz = repeatz
         self.base = base
 
+        print 'cython rmf init'
         self.filled = False
 
     def fill(self):
@@ -133,8 +134,10 @@ class RMF:
             return rmf_perlin1(x, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeat, self.base)
         
     def pnoise2(self, x,y):
+        print 'cython rmf pnoise2'
         if self.filled:
             self.filled = False
+            print 'cython rmf perlin 2 fill'
             rmf_perlin2_fill(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)
         else:
             return rmf_perlin2(x, y, self.octaves, self.persistence, self.frequency, self.amplitude, self.repeatx, self.repeaty, self.base)

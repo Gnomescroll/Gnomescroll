@@ -126,6 +126,7 @@ void rmf_perlin1_fill(int x, int octaves, float persistence, float frequency, fl
 }
 
 void rmf_perlin2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base) {
+    printf("RMF PERLIN 2 FILL\n");
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
     int i,j;
