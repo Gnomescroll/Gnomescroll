@@ -34,16 +34,6 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-'''
-def optimize(conf):
-    print dir(conf)
-    optimize = ['-O3']
-    #optimize = ['-O2']
-    conf.env.append_value('CFLAGS', optimize)
-    conf.env.append_value('CXXFLAGS', optimize)
-    configure(conf)
-'''
-
 def configure(conf):
     print dir(conf)
     global _OS
@@ -61,8 +51,10 @@ def configure(conf):
     conf.env.os = OS
 
     #conf.env.CFLAGS = ['-g','-Wall', '-fPIC', '-DDC_CLIENT'] # use '-O2' or '-O3' in distro build
+    '''
     if OS == 'Darwin':
         optimize = ['-O3']
+    '''
     #optimize = ['-O2']
     conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT']+optimize)
     conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT']+optimize)
