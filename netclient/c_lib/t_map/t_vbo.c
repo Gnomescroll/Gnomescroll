@@ -892,8 +892,8 @@ int _draw_terrain() {
         }
     }}
 
-    DRAW_VBOS1();
-    //DRAW_VBOS1a();
+    //DRAW_VBOS1();
+    DRAW_VBOS1a();
 
     //DRAW_VBOS2();    
     //end_vbo_draw();
@@ -1085,6 +1085,7 @@ void DRAW_VBOS1() {
     glEnable(GL_BLEND);
     glDepthMask(false);
     for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
         if(vbo->_v_num[3] == 0) continue; 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
@@ -1186,6 +1187,7 @@ void DRAW_VBOS1a() {
     glEnable(GL_BLEND);
     glDepthMask(false);
     for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
         if(vbo->v_num == 0) continue; 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         //if(vbo->_v_num[2] != 0) 
