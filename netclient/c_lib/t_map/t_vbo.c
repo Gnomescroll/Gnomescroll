@@ -892,8 +892,8 @@ int _draw_terrain() {
         }
     }}
 
-    //DRAW_VBOS1();
-    DRAW_VBOS1a();
+    DRAW_VBOS1();
+    //DRAW_VBOS1a();
 
     //DRAW_VBOS2();    
     //end_vbo_draw();
