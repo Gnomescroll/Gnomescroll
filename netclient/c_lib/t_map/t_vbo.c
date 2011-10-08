@@ -551,7 +551,7 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 //static const int VERTEX_SLACK = 128; // increase to 128
 
-static const int VERTEX_SLACK = 0;
+static const int VERTEX_SLACK = 16;
 
 static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
@@ -1053,6 +1053,7 @@ void DRAW_VBOS1() {
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
         glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
+        glEnable(GL_CULL_FACE);
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
 
         glEnable(GL_BLEND);
@@ -1064,7 +1065,7 @@ void DRAW_VBOS1() {
         }
     
         glDisable(GL_CULL_FACE);
-        if(vbo->_v_num[1] != 0) 
+        if(vbo->_v_num[2] != 0) 
         {
             glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
         }
@@ -1079,7 +1080,6 @@ void DRAW_VBOS1() {
         }
     */
         glDisable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
     }
 
     glEnable(GL_BLEND);
@@ -1089,7 +1089,6 @@ void DRAW_VBOS1() {
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         if(vbo->_v_num[2] != 0) 
         {
-
             glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
         }
     }
