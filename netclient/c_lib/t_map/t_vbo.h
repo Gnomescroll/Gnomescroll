@@ -49,4 +49,6 @@ void _refresh_map_vbo();
 void _toggle_z_buffer();
 
 void DRAW_VBOS1();
+void DRAW_VBOS1a();
 void DRAW_VBOS2(); 
+void DRAW_VBOS2b(); 

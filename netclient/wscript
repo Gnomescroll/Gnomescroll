@@ -34,8 +34,8 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-
 def configure(conf):
+    print dir(conf)
     global _OS
     global os_libpth
 
@@ -46,18 +46,18 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC', '-DDC_CLIENT'] # use '-O2' or '-O3' in distro build
-    if OS == 'Darwin':
-        optimize = ['-O3']
-    #optimize = ['-O2']
-    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT']+optimize)
-    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT']+optimize)
-
-    # '-D DC_CLIENT'
-
     OS = platform.system()
     _OS = OS
     conf.env.os = OS
+
+    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC', '-DDC_CLIENT'] # use '-O2' or '-O3' in distro build
+
+    #optimize = ['-O2']
+    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT'])
+    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
+
+    # '-D DC_CLIENT'
+
 
     conf.check(header_name='GL/glew.h', mandatory=True)
 

@@ -156,4 +156,91 @@ north   varriount/rock2.png
 south   varriount/rock2.png
 west    varriount/rock2.png
 east    varriount/rock2.png
-
+===
+id      164
+name    tree_alt1
+hud     48 tree-alt-small.png
+transparency 1
+top     tree-alt-small.png
+bottom  tree-alt-small.png
+north   tree-alt-small.png
+south   tree-alt-small.png
+west    tree-alt-small.png
+east    tree-alt-small.png
+===
+id      165
+name    tree_alt2
+hud     49 tree-alt-small.png
+transparency 2
+top     tree-alt-small.png
+bottom  tree-alt-small.png
+north   tree-alt-small.png
+south   tree-alt-small.png
+west    tree-alt-small.png
+east    tree-alt-small.png
+===
+id      166
+name    leaves
+hud     50 leaves.png
+transparency 2
+top     leaves.png
+bottom  leaves.png
+north   leaves.png
+south   leaves.png
+west    leaves.png
+east    leaves.png
+===
+id      167
+name    leaves
+hud     51 leaves.png
+transparency 3
+top     leaves.png
+bottom  leaves.png
+north   leaves.png
+south   leaves.png
+west    leaves.png
+east    leaves.png
+===
+id      168
+name    leaves
+hud     52 leaves-alt.png
+transparency 2
+top     leaves-alt.png
+bottom  leaves-alt.png
+north   leaves-alt.png
+south   leaves-alt.png
+west    leaves-alt.png
+east    leaves-alt.png
+===
+id      169
+name    leaves
+hud     53 leaves-alt.png
+transparency 3
+top     leaves-alt.png
+bottom  leaves-alt.png
+north   leaves-alt.png
+south   leaves-alt.png
+west    leaves-alt.png
+east    leaves-alt.png
+===
+id      170
+name    leaves
+hud     54 leaves-block.png
+transparency 2
+top     leaves-block.png
+bottom  leaves-block.png
+north   leaves-block.png
+south   leaves-block.png
+west    leaves-block.png
+east    leaves-block.png
+===
+id      171
+name    leaves
+hud     55 leaves-block.png
+transparency 3
+top     leaves-block.png
+bottom  leaves-block.png
+north   leaves-block.png
+south   leaves-block.png
+west    leaves-block.png
+east    leaves-block.png
