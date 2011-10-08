@@ -25,6 +25,8 @@ xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#def
 
 class Config:
 
+    seed = 1
+    
     def __init__(self):
         self.x = self.y = self.z = 0
 
@@ -43,7 +45,7 @@ class Config:
         self.repeatz = 1024
         self.base = 0
 
-        self.rmf = False
+        self.use_rmf = False
         self.dim = 2
         self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
@@ -114,10 +116,11 @@ class Config:
         return self
 
     def rmf(self):
-        self.rmf = True
+        self.use_rmf = True
         return self
 
     def seed(self, s):
+        self.seed = s
         set_seed(s)
         return self
 
@@ -129,7 +132,7 @@ class Config:
         _n = time.time()
         
         noise_method = 'noise%d' % (self.dim,)
-        if self.rmf:
+        if self.use_rmf:
             self.noise = RMF(octaves=self.octaves,
                              persistence=self.persistence,
                              frequency=self.frequency,

@@ -26,7 +26,6 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-
 def configure(conf):
     conf.load('compiler_c compiler_cxx python cython')
     conf.check_python_version((2,6,0))
@@ -213,3 +212,20 @@ def make_dest_modules(ctx):
     for root, dirs, files in os.walk('./ext/'):
         with open(os.path.join(root, '__init__.py'), 'wb') as f:
             f.close()
+
+
+
+'''
+Subclass related *Context
+e.g. ConfigurationContext, BuildContext
+cmd,fun = 'name_of_function'
+'''
+from waflib.Configure import ConfigurationContext
+class optimized_ctx(ConfigurationContext):
+    cmd = 'optimized'
+    fun = 'optimized'
+
+def optimized(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.append('-O3')
+

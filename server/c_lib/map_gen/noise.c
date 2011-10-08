@@ -26,6 +26,18 @@ void set_terrain_density(int x, int y, int z) {
 }
 
 void set_terrain_height(int x, int y, int z, int baseline, int maxheight) {
+
+    if (maxheight <= 0) {
+        printf("WARNING: set_terrain_height. maxheight <= 0. Will trigger FPE. abort.\n");
+        return;
+    } else if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("WARNING: set_terrain_map. x,y,z out of bounds\n");
+        return;
+    } else if (maxheight + baseline > zmax) {
+        printf("WARNING: maxheight + baseline exceeds map height. abort.\n");
+        return;
+    }
+    
     float fz = (float)z;
     int i,j,k,h;
     float fh;
@@ -33,9 +45,11 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight) {
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             fh = noisemap[i + x*j];
-            fh = fabs(fh);
+            fh = 1.0f - fabs(fh);
             fh *= fz;
             h = ((int)fh) % maxheight;
+            if (h < 0) printf("%d\n", h);
+            
             for (k=0; k<baseline+h; k++) {
                 _set(i,j,k, 2);
             }
