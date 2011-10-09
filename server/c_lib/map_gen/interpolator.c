@@ -139,8 +139,8 @@ void _perlin_interp1(float final[], int x, int x_interval,
 
     float fnx = (float)(nx + interp_margin);
     
-    float points[nx];
-        
+    float *points = (float*)malloc(sizeof(float)*nx);
+    
     // generate anchor points
     int i;
     for (i=0; i<nx; i++) {
@@ -148,6 +148,7 @@ void _perlin_interp1(float final[], int x, int x_interval,
     }
 
     _interp1(final, points, x, x_interval);
+    free(points);
 }
                                       
 void _rmf_perlin_interp1(float final[], int x, int x_interval,
@@ -160,8 +161,8 @@ void _rmf_perlin_interp1(float final[], int x, int x_interval,
 
     float fnx = (float)(nx + interp_margin);
     
-    float points[nx];
-        
+    float *points = (float*)malloc(sizeof(float)*nx);
+    
     // generate anchor points
     int i;
     for (i=0; i<nx; i++) {
@@ -169,6 +170,7 @@ void _rmf_perlin_interp1(float final[], int x, int x_interval,
     }
 
     _interp1(final, points, x, x_interval);
+    free(points);
 }
 
 
@@ -273,7 +275,7 @@ void _perlin_interp2(float final[], int x, int y,
     float fnx = (float)(nx + interp_margin),
            fny = (float)(ny + interp_margin);
 
-    float points[nx*ny];
+    float *points = (float*)malloc(sizeof(float)*nx*ny);
         
     // generate anchor points
     int i,j;
@@ -284,6 +286,7 @@ void _perlin_interp2(float final[], int x, int y,
     }
 
     _interp2(final, points, x, y, x_interval, y_interval);
+    free(points);
 }
 
 void _rmf_perlin_interp2(float final[], int x, int y,
@@ -300,8 +303,8 @@ void _rmf_perlin_interp2(float final[], int x, int y,
     float fnx = (float)(nx + interp_margin),
            fny = (float)(ny + interp_margin);
 
-    float points[nx*ny];
-        
+    float *points = (float*)malloc(sizeof(float)*nx*ny);
+
     // generate anchor points
     int i,j;
     for (i=0; i<nx; i++) {
@@ -310,6 +313,7 @@ void _rmf_perlin_interp2(float final[], int x, int y,
         }
     }
     _interp2(final, points, x, y, x_interval, y_interval);
+    free(points);
 }
 
 void _simplex_interp2(float final[], int x, int y,
@@ -324,8 +328,8 @@ void _simplex_interp2(float final[], int x, int y,
     float fnx = (float)(nx + interp_margin),
            fny = (float)(ny + interp_margin);
 
-    float points[nx*ny];
-        
+    float *points = (float*)malloc(sizeof(float)*nx*ny);
+
     // generate anchor points
     int i,j;
     for (i=0; i<nx; i++) {
@@ -334,6 +338,7 @@ void _simplex_interp2(float final[], int x, int y,
         }
     }
     _interp2(final, points, x, y, x_interval, y_interval);
+    free(points);
 }
 
 void _rmf_simplex_interp2(float final[], int x, int y,
@@ -348,8 +353,8 @@ void _rmf_simplex_interp2(float final[], int x, int y,
     float fnx = (float)(nx + interp_margin),
            fny = (float)(ny + interp_margin);
 
-    float points[nx*ny];
-        
+    float *points = (float*)malloc(sizeof(float)*nx*ny);
+
     // generate anchor points
     int i,j;
     for (i=0; i<nx; i++) {
@@ -358,6 +363,7 @@ void _rmf_simplex_interp2(float final[], int x, int y,
         }
     }
     _interp2(final, points, x, y, x_interval, y_interval);
+    free(points);
 }
 
 
@@ -493,7 +499,6 @@ void _perlin_interp3(float final[], int x, int y, int z,
            fny = (float)(ny + interp_margin),
            fnz = (float)(nz + interp_margin);
 
-    //float points[nx*ny*nz];
     float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
         
     // generate anchor points
@@ -501,7 +506,7 @@ void _perlin_interp3(float final[], int x, int y, int z,
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-            points[i + nx*j + nx*ny*k] = perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
+                points[i + nx*j + nx*ny*k] = perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
             }
         }
     }
@@ -525,18 +530,19 @@ void _rmf_perlin_interp3(float final[], int x, int y, int z,
            fny = (float)(ny + interp_margin),
            fnz = (float)(nz + interp_margin);
 
-    float points[nx*ny*nz];
+    float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
         
     // generate anchor points
     int i,j,k;
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-            points[i + nx*j + nx*ny*k] = rmf_perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
+                points[i + nx*j + nx*ny*k] = rmf_perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
             }
         }
     }
     _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+    free(points);
 }
 
 void _simplex_interp3(float final[], int x, int y, int z,
@@ -553,18 +559,19 @@ void _simplex_interp3(float final[], int x, int y, int z,
            fny = (float)(ny + interp_margin),
            fnz = (float)(nz + interp_margin);
 
-    float points[nx*ny*nz];
+    float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
         
     // generate anchor points
     int i,j,k;
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-            points[i + nx*j + nx*ny*k] = simplex3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq);   
+                points[i + nx*j + nx*ny*k] = simplex3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq);   
             }
         }
     }
     _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+    free(points);
 }
 
 void _rmf_simplex_interp3(float final[], int x, int y, int z,
@@ -581,18 +588,19 @@ void _rmf_simplex_interp3(float final[], int x, int y, int z,
            fny = (float)(ny + interp_margin),
            fnz = (float)(nz + interp_margin);
 
-    float points[nx*ny*nz];
+    float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
         
     // generate anchor points
     int i,j,k;
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-            points[i + nx*j + nx*ny*k] = rmf_simplex3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq);   
+                points[i + nx*j + nx*ny*k] = rmf_simplex3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq);   
             }
         }
     }
     _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+    free(points);
 }
 
 
