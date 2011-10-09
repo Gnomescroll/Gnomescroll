@@ -57,7 +57,7 @@ c_lib.map_gen.conf\
 .interpolate(4,2,1)\
 .size(128,128,128)\
 .tile(2)\
-.density(threshold=0.0)\
+.density(threshold=2.0)\
 .p3(octaves=6, persistence=0.6)\
 .rmf()\
 .start()\

@@ -145,9 +145,7 @@ class RMF:
             return rmf_perlin2(x, y, self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency, self.repeatx, self.repeaty, self.base)
 
     def pnoise3(self, x,y,z):
-        print 'rmf pnoise3'
         if self.filled:
-            print 'pnoise3 fill'
             self.filled = False
             rmf_perlin3_fill(x, y, z, self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency, self.repeatx, self.repeaty, self.repeatz, self.base)
         else:

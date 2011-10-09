@@ -537,7 +537,7 @@ void _rmf_perlin_interp3(float final[], int x, int y, int z,
     for (i=0; i<nx; i++) {
         for (j=0; j<ny; j++) {
             for (k=0; k<nz; k++) {
-                points[i + nx*j + nx*ny*k] = rmf_perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
+                points[i + nx*j + nx*ny*k] = rmf_perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);
             }
         }
     }
