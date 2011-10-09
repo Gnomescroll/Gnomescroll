@@ -1,7 +1,8 @@
 cdef extern from "./map_gen/interpolator.h":
     int seed_max
     void apply_interp1(int x, int ix)
-    void apply_interp2(int x, int y, int ix, int iy, int oct, float pers, float amp, float freq, float lac, int rep_x, int rep_y, int base)
+    void apply_interp2_perlin(int x, int y, int ix, int iy, int oct, float pers, float amp, float lac, float freq, int rep_x, int rep_y, int base)
+    void apply_interp2_rmf_perlin(int x, int y, int ix, int iy, int oct, float pers, float amp, float lac, float freq, int rep_x, int rep_y, int base)
     void apply_interp3(int x, int y, int z, int ix, int iy, int iz)
 
 cdef extern from "./map_gen/gradient.h":
@@ -222,7 +223,7 @@ class Config:
             self.noise.fill()
             if self.interp:
                 print 'interpolated'
-                interpolates[self.dim](*(size_args+interp_args+noise_args))
+                interpolates[self.dim](rmf=self.use_rmf, *(size_args+interp_args+noise_args))
             else:
                 getattr(self.noise, noise_method)(*size_args)
             
@@ -279,13 +280,16 @@ gradients = {
     3: apply_gradient3,
 }
 
-def apply_interpolate1(x, ix, o,p,a,f,l,rx,ry,b):
+def apply_interpolate1(x, ix, o,p,a,f,l,rx,ry,b, rmf=False):
     apply_interp1(x, ix)
     
-def apply_interpolate2(x,y, ix,iy, o,p,a,f,l,rx,ry,b):
-    apply_interp2(x,y, ix,iy, o,p,a,f,l,rx,ry,b)
+def apply_interpolate2(x,y, ix,iy, o,p,a,f,l,rx,ry,b, rmf=False):
+    if rmf:
+        apply_interp2_rmf_perlin(x,y, ix, iy, o,p,a,f,l,rx,ry,b)
+    else:
+        apply_interp2_perlin(x,y, ix,iy, o,p,a,f,l,rx,ry,b)
     
-def apply_interpolate3(x,y,z, ix,iy,iz, o,p,a,f,l,rx,ry,b):
+def apply_interpolate3(x,y,z, ix,iy,iz, o,p,a,f,l,rx,ry,b, rmf=False):
     apply_interp3(x,y,z, ix,iy,iz)
 
 interpolates = {

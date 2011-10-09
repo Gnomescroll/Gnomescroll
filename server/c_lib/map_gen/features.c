@@ -2,7 +2,7 @@
 
 // x,y are dimensions of map to apply to
 
-void grass(int x, int y) {
+void grass(int x, int y, int octaves, float persistence, float amplitude, float lacunarity, float frequency, int base) {
 
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
@@ -17,7 +17,7 @@ void grass(int x, int y) {
                 _set(i,j,k, 4);
                 if (k != 0) {
                     // dirt
-                    d = perlin2((i+1)/fx,(j+1)/fy, 4, 0.6f, 1.0f, 1.0f, x, y, 0);
+                    d = perlin2((i+1)/fx,(j+1)/fy, octaves, persistence, amplitude, lacunarity, frequency, x, y, base);
                     dd = (int)(fabs(d) * 100);
                     dd %= (k < 3) ? k : 3;
                     dd += 1;

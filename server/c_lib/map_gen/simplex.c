@@ -49,7 +49,7 @@ snoise2(float x, float y)
 }
 
 //float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
-float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude)
+float simplex2(float x, float y, int octaves, float persistence, float amplitude, float lacunarity, float frequency)
 // snoise* methods do not use repeat intervals or base. unknown if this is an algorithmic constraint, or lack of implementation
 {
     if (octaves == 1) {
@@ -63,7 +63,7 @@ float simplex2(float x, float y, int octaves, float persistence, float frequency
         for (i = 0; i < octaves; i++) {
             total += snoise2(x * frequency, y * frequency) * amplitude;
             max += amplitude;
-            frequency *= 2.0f;  // constant?
+            frequency *= lacunarity;  // constant?
             amplitude *= persistence;
         }
         //return (total/max); // why max
@@ -145,7 +145,7 @@ snoise3(float x, float y, float z)
 }
 
 //float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
-float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude)
+float simplex3(float x, float y, float z, int octaves, float persistence, float amplitude, float lacunarity, float frequency)
 // snoise* methods do not use repeat intervals or base. unknown if this is an algorithmic constraint, or lack of implementation
 {
     if (octaves == 1) {
@@ -160,7 +160,7 @@ float simplex3(float x, float y, float z, int octaves, float persistence, float 
         for (i = 0; i < octaves; i++) {
             total += snoise3(x * frequency, y * frequency, z * frequency) * amplitude;
             max += amplitude;
-            frequency *= 2.0f;
+            frequency *= lacunarity;
             amplitude *= persistence;
         }
         return (total/max);
@@ -168,37 +168,21 @@ float simplex3(float x, float y, float z, int octaves, float persistence, float 
     return 0.0f;
 }
 
-#define F4 0.30901699437494745f # (sqrt(5.0) - 1.0) / 4.0
-#define G4 0.1381966011250105f # (5.0 - sqrt(5.0)) / 20.0
-/*
-float
-noise4(float x, float y, float z, float w) 
-{
-    float s = (x + y + z + w) * F4;
-    int i = floorf(x + s);
-    int j = floorf(y + s);
-    int k = floorf(z + s);
-    int m = floorf(w + s);
-
-    float t = (i + j + K + m) * G4;
-*/
-
-
 /* fill methods */
-void simplex2_fill(int x, int y, int octaves, float persistence, float frequency, float amplitude) {
+void simplex2_fill(int x, int y, int octaves, float persistence, float amplitude, float lacunarity, float frequency) {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
     int i,j;
     float h;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
-            h = simplex2((i+1)/fx,(j+1)/fy, octaves, persistence, frequency, amplitude);
+            h = simplex2((i+1)/fx,(j+1)/fy, octaves, persistence, amplitude, lacunarity, frequency);
             noisemap[i + x*j] = h;
         }
     }
 }
 
-void simplex3_fill(int x, int y, int z, int octaves, float persistence, float frequency, float amplitude) {
+void simplex3_fill(int x, int y, int z, int octaves, float persistence, float amplitude, float lacunarity, float frequency) {
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,
            fz = (float)z + 2.0f;
@@ -207,7 +191,7 @@ void simplex3_fill(int x, int y, int z, int octaves, float persistence, float fr
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                h = simplex3((i+1)/fx,(j+1)/fy,(k+1)/fz, octaves, persistence, frequency, amplitude);
+                h = simplex3((i+1)/fx,(j+1)/fy,(k+1)/fz, octaves, persistence, amplitude, lacunarity, frequency);
                 noisemap[i + x*j + x*y*k] = h;
             }
         }
