@@ -50,9 +50,9 @@ c_lib.map_gen.conf\
 .heightmap(baseline=50, maxheight=78)\
 .p2(octaves=8, persistence=0.6)\
 .grass()\
+.rmf()\
 .start()\
 .reset()
-#.rmf()\
 
 #c_lib.map_gen.reset()
 

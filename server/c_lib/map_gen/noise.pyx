@@ -34,7 +34,7 @@ def set_seed(seed):
     seed_noise(seed)
 
 class Perlin:
-    def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0, lacunarity=2.0,
+    def __init__(self, octaves=1, persistence=0.5, amplitude=1.0, lacunarity=2.0, frequency=1.0,
                        repeatx=1024, repeaty=1024, repeatz=1024, base=0):
 
         self.octaves = octaves
@@ -79,7 +79,7 @@ class Perlin:
 
 class Simplex:
 
-    def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0, lacunarity=2.0):
+    def __init__(self, octaves=1, persistence=0.5, amplitude=1.0, lacunarity=2.0, frequency=1.0):
         self.octaves = octaves
         self.persistence = persistence
         self.frequency = frequency
@@ -108,7 +108,7 @@ class Simplex:
 
         
 class RMF:
-    def __init__(self, octaves=1, persistence=0.5, frequency=1.0, amplitude=1.0, lacunarity=2.0,
+    def __init__(self, octaves=1, persistence=0.5, amplitude=1.0, lacunarity=2.0, frequency=1.0,
                        repeatx=1024, repeaty=1024, repeatz=1024, base=0):
 
         self.octaves = octaves
@@ -122,7 +122,6 @@ class RMF:
         self.repeatz = repeatz
         self.base = base
 
-        print 'cython rmf init'
         self.filled = False
 
     def fill(self):

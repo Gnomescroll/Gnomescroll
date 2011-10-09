@@ -194,7 +194,6 @@ class Config:
         
         noise_method = 'noise%d' % (self.dim,)
         if self.use_rmf:
-            print 'using rmf'
             self.noise = RMF(octaves=self.octaves,
                              persistence=self.persistence,
                              frequency=self.frequency,

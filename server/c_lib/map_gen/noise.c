@@ -69,12 +69,12 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     // but due to roundoff error, slight variations  in hillside slopes appear
     // this is a good thing for the map.
 
-    float scale;
+    float scale = 1.0f;
     const int plateau_factor = 1;   // use 0 for no ceiling plateaus
     h_range = maxh - minh;
     if (h_range > maxheight) {
         scale = ((float)maxheight + plateau_factor)/((float)h_range);
-    }    
+    }
 
     for (i=0; i<x; i++) {       // use heights, adjusted to be positive
         for (j=0; j<y; j++) {
