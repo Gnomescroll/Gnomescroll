@@ -551,7 +551,7 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
 
 //static const int VERTEX_SLACK = 128; // increase to 128
 
-static const int VERTEX_SLACK = 16;
+static const int VERTEX_SLACK = 256;
 
 static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
@@ -677,8 +677,6 @@ int update_column_VBO(struct vm_column* column) {
     _cube_vertex_count[2] = vbo->_v_offset[2];
     _cube_vertex_count[3] = vbo->_v_offset[3];
 
-    //printf("counts= %i, %i, %i, %i \n", _cube_vertex_count[0],_cube_vertex_count[1],_cube_vertex_count[2],_cube_vertex_count[3]);
-    
     struct Vertex* v_list2 = vbo->v_list;
 
     for(i = 0; i < vm_column_max; i++) {
@@ -731,6 +729,12 @@ int update_column_VBO(struct vm_column* column) {
         }}}
     }
 
+    if(vbo->_v_num[3] > 0) {
+        printf("vnum= %i\n", vbo->v_num);
+        printf("counts= %i, %i, %i, %i \n", _cube_vertex_count[0],_cube_vertex_count[1],_cube_vertex_count[2],_cube_vertex_count[3]);
+        printf("offsets= %i, %i, %i, %i \n", vbo->_v_offset[0], vbo->_v_offset[1], vbo->_v_offset[2], vbo->_v_offset[3]);
+        printf("vnum= %i, %i, %i, %i \n", vbo->_v_num[0], vbo->_v_num[1], vbo->_v_num[2], vbo->_v_num[3]);
+    }
     /*
         Now that memory is full of quads, push to graphics card
     */
@@ -892,8 +896,8 @@ int _draw_terrain() {
         }
     }}
 
-    //DRAW_VBOS1();
-    DRAW_VBOS1a();
+    DRAW_VBOS1();
+    //DRAW_VBOS1a();
 
     //DRAW_VBOS2();    
     //end_vbo_draw();
@@ -1028,7 +1032,7 @@ void DRAW_VBOS1() {
     glEnable (GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable (GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
@@ -1051,7 +1055,7 @@ void DRAW_VBOS1() {
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-        glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
         glEnable(GL_CULL_FACE);
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
@@ -1082,6 +1086,7 @@ void DRAW_VBOS1() {
         glDisable(GL_BLEND);
     }
 
+/*
     glEnable(GL_BLEND);
     glDepthMask(false);
     for(i=0;i<draw_vbo_n;i++) {
@@ -1092,7 +1097,22 @@ void DRAW_VBOS1() {
     }
     glDepthMask(true); 
     glDisable(GL_BLEND);
+*/
+    glEnable(GL_BLEND);
+    glDepthMask(false);
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+        if(vbo->_v_num[3] == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
+        glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+    }
+    glDepthMask(true); 
+    glDisable(GL_BLEND);
 /*
     Do Stuff
 */
@@ -1133,7 +1153,7 @@ void DRAW_VBOS1a() {
     glEnable (GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable (GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
@@ -1156,8 +1176,9 @@ void DRAW_VBOS1a() {
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-        glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
+        glEnable(GL_CULL_FACE);
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
 
         glEnable(GL_BLEND);
@@ -1181,7 +1202,6 @@ void DRAW_VBOS1a() {
         }
     */
         glDisable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
     }
 
     glEnable(GL_BLEND);
@@ -1190,6 +1210,10 @@ void DRAW_VBOS1a() {
         vbo = draw_vbo_array[i];
         if(vbo->v_num == 0) continue; 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
