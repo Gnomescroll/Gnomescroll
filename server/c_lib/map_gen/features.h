@@ -4,4 +4,4 @@
 
 #include "perlin.h"
 
-void grass(int x, int y);
+void grass(int x, int y, int octaves, float persistence, float amplitude, float lacunarity, float frequency, int base);

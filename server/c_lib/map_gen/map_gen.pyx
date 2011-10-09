@@ -1,9 +1,20 @@
 cdef extern from "./map_gen/interpolator.h":
     int seed_max
-    void apply_interp1(int x, int ix)
+
+    void apply_interp1_perlin(int x, int ix, int oct, float pers, float amp, float lac, float freq, int rep, int base)
+    void apply_interp1_rmf_perlin(int x, int ix, int oct, float pers, float amp, float lac, float freq, int rep, int base)
+    
     void apply_interp2_perlin(int x, int y, int ix, int iy, int oct, float pers, float amp, float lac, float freq, int rep_x, int rep_y, int base)
     void apply_interp2_rmf_perlin(int x, int y, int ix, int iy, int oct, float pers, float amp, float lac, float freq, int rep_x, int rep_y, int base)
-    void apply_interp3(int x, int y, int z, int ix, int iy, int iz)
+
+    void apply_interp2_simplex(int x, int y, int ix, int iy, int oct, float pers, float amp, float lac, float freq)
+    void apply_interp2_rmf_simplex(int x, int y, int ix, int iy, int oct, float pers, float amp, float lac, float freq)
+
+    void apply_interp3_perlin(int x, int y, int z, int ix, int iy, int iz, int oct, float pers, float amp, float lac, float freq, int rep_x, int rep_y, int rep_z, int base)
+    void apply_interp3_rmf_perlin(int x, int y, int z, int ix, int iy, int iz, int oct, float pers, float amp, float lac, float freq, int rep_x, int rep_y, int rep_z, int base)
+
+    void apply_interp3_simplex(int x, int y, int z, int ix, int iy, int iz, int oct, float pers, float amp, float lac, float freq)
+    void apply_interp3_rmf_simplex(int x, int y, int z, int ix, int iy, int iz, int oct, float pers, float amp, float lac, float freq)
 
 cdef extern from "./map_gen/gradient.h":
     void apply_grad1(int x,               float x0, float x1)
@@ -16,8 +27,7 @@ cdef extern from "./map_gen/noise.h":
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
 
 cdef extern from "./map_gen/features.h":
-    void grass(int x, int y)
-
+    void grass(int x, int y, int octaves, float persistence, float amplitude, float lacunarity, float frequency, int base)
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed
 
@@ -215,15 +225,16 @@ class Config:
         grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1]
 
         noise_args = [self.octaves, self.persistence, self.amplitude, self.frequency, self.lacunarity]
-        noise_args += [self.repeatx, self.repeaty, self.repeatz][:self.dim]
-        noise_args.append(self.base)
-        
+        if self.noise_type == 'p':
+            noise_args += [self.repeatx, self.repeaty, self.repeatz][:self.dim]
+            noise_args.append(self.base)
 
+        
         if self.noise is not None:
             self.noise.fill()
             if self.interp:
                 print 'interpolated'
-                interpolates[self.dim](rmf=self.use_rmf, *(size_args+interp_args+noise_args))
+                interpolates[self.dim](noise_type=self.noise_type, rmf=self.use_rmf, *(size_args+interp_args+noise_args))
             else:
                 getattr(self.noise, noise_method)(*size_args)
             
@@ -247,7 +258,7 @@ class Config:
 
         # features
         if self.add_grass:
-            grass(self.x, self.y)
+            grass(self.x, self.y, self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency, self.base)
 
         print 'map gen took %0.2f seconds' % (time.time() - _n)
 
@@ -280,18 +291,43 @@ gradients = {
     3: apply_gradient3,
 }
 
-def apply_interpolate1(x, ix, o,p,a,f,l,rx,ry,b, rmf=False):
-    apply_interp1(x, ix)
-    
-def apply_interpolate2(x,y, ix,iy, o,p,a,f,l,rx,ry,b, rmf=False):
-    if rmf:
-        apply_interp2_rmf_perlin(x,y, ix, iy, o,p,a,f,l,rx,ry,b)
+def apply_interpolate1(x, ix, o,p,a,f,l,rx,b, noise_type='p', rmf=False):
+    if noise_type.startswith('p'):
+        if rmf:
+            apply_interp1_rmf_perlin(x, ix, o,p,a,f,l,rx,b)
+        else:
+            apply_interp1_perlin(x, ix, o,p,a,f,l,rx,b)
     else:
-        apply_interp2_perlin(x,y, ix,iy, o,p,a,f,l,rx,ry,b)
+        print "apply interpolate 1 :: unrecognized noise type - %s" % (noise_type,)
     
-def apply_interpolate3(x,y,z, ix,iy,iz, o,p,a,f,l,rx,ry,b, rmf=False):
-    apply_interp3(x,y,z, ix,iy,iz)
-
+def apply_interpolate2(x,y, ix,iy, o,p,a,f,l,rx,ry,b, noise_type='p', rmf=False):
+    if noise_type.startswith('p'):
+        if rmf:
+            apply_interp2_rmf_perlin(x,y, ix, iy, o,p,a,f,l,rx,ry,b)
+        else:
+            apply_interp2_perlin(x,y, ix, iy, o,p,a,f,l,rx,ry,b)
+    elif noise_type.startswith('s'):
+        if rmf:
+            apply_interp2_rmf_simplex(x,y, ix,iy, o,p,a,f,l)
+        else:
+            apply_interp2_simplex(x,y, ix,iy, o,p,a,f,l)
+    else:
+        print "apply interpolate 2 :: unrecognized noise type - %s" % (noise_type,)
+    
+def apply_interpolate3(x,y,z, ix,iy,iz, o,p,a,f,l,rx,ry,rz,b, noise_type='p', rmf=False):
+    if noise_type.startswith('p'):
+        if rmf:
+            apply_interp3_rmf_perlin(x,y,z, ix,iy,iz, o,p,a,f,l,rx,ry,rz,b)
+        else:
+            apply_interp3_perlin(x,y,z, ix,iy,iz, o,p,a,f,l,rx,ry,rz,b)
+    elif noise_type.startswith('s'):
+        if rmf:
+            apply_interp3_rmf_simplex(x,y,z, ix,iy,iz, o,p,a,f,l)
+        else:
+            apply_interp3_simplex(x,y,z, ix,iy,iz, o,p,a,f,l)
+    else:
+        print "apply interpolate 3 :: unrecognized noise type - %s" % (noise_type,)
+        
 interpolates = {
     1: apply_interpolate1,
     2: apply_interpolate2,
@@ -300,3 +336,4 @@ interpolates = {
 
 def generate():
     conf.start()
+

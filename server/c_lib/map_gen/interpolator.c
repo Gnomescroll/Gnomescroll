@@ -70,28 +70,19 @@ inline float trilinearInterpolate_condensed(float p[2][2][2], float x, float y, 
 
 const int interp_margin = 2;
 
-void _interp1(float final[], int x, int x_interval, int octaves, float persistence, float amplitude, float lacunarity, float frequency, int repeat, int base) {
+/* 1 dimensional */
 
-    const int interp_margin = 2;
+// core interpolator
+void _interp1(float final[], float points[], int x, int x_interval) {
+
     int nx = (x / x_interval) + (interp_margin * 2);
 
-    float fnx = (float)(nx + interp_margin);
-
-    // anchor pts
-    float points[nx];
-    
     //fractional interval btwn anchor pts
     float fx_interval = (float)x_interval;
 
-    // generate anchor pts
-    int i;
-    for (i=0; i < nx; i++) {
-        points[i] = perlin1((i+1)/fnx, octaves, persistence, amplitude, lacunarity, frequency, repeat, base);
-    }
-
     //interpolate
     int mx, px, sx;
-    int ii;
+    int i,ii;
     float samples[4];
     float pt;
 
@@ -134,90 +125,64 @@ void _interp1(float final[], int x, int x_interval, int octaves, float persisten
         ii = (i-interp_margin) * x_interval;
         final[ii] = points[i];
     }
+}
+
+/* 1D wrappers */
+
+void _perlin_interp1(float final[], int x, int x_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq,
+                                      int rep, int base) {
+
+    int nx = (x / x_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin);
     
-}
+    float points[nx];
+        
+    // generate anchor points
+    int i;
+    for (i=0; i<nx; i++) {
+        points[i] = perlin1((i+1)/fnx, oct, pers, amp, lac, freq, rep, base);   
+    }
 
-void _new_interp2(float final[], float points[], int x, int y, int x_interval, int y_interval);
-void _perlin_interp2(float final[], int x, int y,
-                                      int x_interval, int y_interval,
+    _interp1(final, points, x, x_interval);
+}
+                                      
+void _rmf_perlin_interp1(float final[], int x, int x_interval,
                                       int oct,                  // noise func args
                                       float pers, float amp,
                                       float lac, float freq,
-                                      int rep_x, int rep_y,
-                                      int base) {
+                                      int rep, int base) {
 
-    int nx = (x / x_interval) + (interp_margin*2),
-        ny = (y / y_interval) + (interp_margin*2);
+    int nx = (x / x_interval) + (interp_margin*2);
 
-    float fnx = (float)(nx + interp_margin),
-           fny = (float)(ny + interp_margin);
-
-    float points[nx*ny];
+    float fnx = (float)(nx + interp_margin);
+    
+    float points[nx];
         
     // generate anchor points
-    int i,j;
+    int i;
     for (i=0; i<nx; i++) {
-        for (j=0; j<ny; j++) {
-            points[i + nx*j] = perlin2((i+1)/fnx, (j+1)/fny, oct, pers, amp, lac, freq, rep_x, rep_y, base);   // update to use map_gen.conf values
-        }
+        points[i] = rmf_perlin1((i+1)/fnx, oct, pers, amp, lac, freq, rep, base);   
     }
 
-    _new_interp2(final, points, x, y, x_interval, y_interval);
+    _interp1(final, points, x, x_interval);
 }
 
-void _rmf_perlin_interp2(float final[], int x, int y,
-                                      int x_interval, int y_interval,
-                                      int oct,                  // noise func args
-                                      float pers, float amp,
-                                      float lac, float freq,
-                                      int rep_x, int rep_y,
-                                      int base) {
+
+/* 2 dimensional */
+
+// base interpolator
+void _interp2(float final[], float points[], int x, int y, int x_interval, int y_interval) {
 
     int nx = (x / x_interval) + (interp_margin*2),
         ny = (y / y_interval) + (interp_margin*2);
-
-    float fnx = (float)(nx + interp_margin),
-           fny = (float)(ny + interp_margin);
-
-    float points[nx*ny];
-        
-    // generate anchor points
-    int i,j;
-    for (i=0; i<nx; i++) {
-        for (j=0; j<ny; j++) {
-            points[i + nx*j] = rmf_perlin2((i+1)/fnx, (j+1)/fny, oct, pers, amp, lac, freq, rep_x, rep_y, base);   // update to use map_gen.conf values
-        }
-    }
-    _new_interp2(final, points, x, y, x_interval, y_interval);
-}
-
-//void _interp2(float final[], int x, int y, int x_interval, int y_interval) {
-void _new_interp2(float final[], float points[], int x, int y, int x_interval, int y_interval) {
-
-    int nx = (x / x_interval) + (interp_margin*2),
-        ny = (y / y_interval) + (interp_margin*2);
-
-    //float fnx = (float)(nx + interp_margin),
-           //fny = (float)(ny + interp_margin);
-
-    // anchor points
-    //float points[nx][ny];
-    //float points[nx*ny];
 
     // fractional interval between anchor points
     float fx_interval = (float)x_interval,
            fy_interval = (float)y_interval;
-
-    // generate anchor points
-    //int i,j;
-    //for (i=0; i<nx; i++) {
-        //for (j=0; j<ny; j++) {
-            ////points[i][j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
-            //points[i + nx*j] = perlin2((i+1)/fnx, (j+1)/fny, 6, 0.5f, 1.0f, 1.0f, 1024, 1024, 0);   // update to use map_gen.conf values
-        //}
-    //}
-    
-    //_perlin_interp2(points, nx, ny, 6, 0.5f, 1.0f, 1.0f, 2.0f, 1024, 1024, 0);
 
     // interpolate
     int mx,my;
@@ -241,7 +206,6 @@ void _new_interp2(float final[], float points[], int x, int y, int x_interval, i
             // collect local samples
             for (ii=-1; ii < 3; ii++) {
                 for (jj=-1; jj < 3; jj++) {
-                    //samples[ii+1][jj+1] = points[ii+sx][jj+sy];
                     samples[ii+1][jj+1] = points[(ii+sx) + nx*(jj+sy)];
                 }
             }
@@ -277,7 +241,6 @@ void _new_interp2(float final[], float points[], int x, int y, int x_interval, i
             }
 
             pt = bilinearInterpolate(resamples, 0.5f, 0.5f);
-            //points[i][j] = pt;
             points[i + nx*j] = pt;
         }
     }
@@ -288,53 +251,139 @@ void _new_interp2(float final[], float points[], int x, int y, int x_interval, i
         for (j=interp_margin; j < ny-interp_margin; j++) {
             jj = (j-interp_margin) * y_interval;
 
-            //final[ii + x*jj] = points[i][j];
             final[ii + x*jj] = points[i + nx*j];
         }
     }
 
 }
 
-void _interp3(float final[], int x, int y, int z,
-                              int x_interval, int y_interval, int z_interval,
-                              int oct,                  // noise func args
-                              float pers, float amp,
-                              float lac, float freq,
-                              int rep_x, int rep_y, int rep_z,
-                              int base) {
+/* 2D Wrappers */
 
-    const int interp_margin = 2;
+void _perlin_interp2(float final[], int x, int y,
+                                      int x_interval, int y_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq,
+                                      int rep_x, int rep_y,
+                                      int base) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin);
+
+    float points[nx*ny];
+        
+    // generate anchor points
+    int i,j;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            points[i + nx*j] = perlin2((i+1)/fnx, (j+1)/fny, oct, pers, amp, lac, freq, rep_x, rep_y, base);   
+        }
+    }
+
+    _interp2(final, points, x, y, x_interval, y_interval);
+}
+
+void _rmf_perlin_interp2(float final[], int x, int y,
+                                      int x_interval, int y_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq,
+                                      int rep_x, int rep_y,
+                                      int base) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin);
+
+    float points[nx*ny];
+        
+    // generate anchor points
+    int i,j;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            points[i + nx*j] = rmf_perlin2((i+1)/fnx, (j+1)/fny, oct, pers, amp, lac, freq, rep_x, rep_y, base);   
+        }
+    }
+    _interp2(final, points, x, y, x_interval, y_interval);
+}
+
+void _simplex_interp2(float final[], int x, int y,
+                                      int x_interval, int y_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin);
+
+    float points[nx*ny];
+        
+    // generate anchor points
+    int i,j;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            points[i + nx*j] = simplex2((i+1)/fnx, (j+1)/fny, oct, pers, amp, lac, freq);   
+        }
+    }
+    _interp2(final, points, x, y, x_interval, y_interval);
+}
+
+void _rmf_simplex_interp2(float final[], int x, int y,
+                                      int x_interval, int y_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin);
+
+    float points[nx*ny];
+        
+    // generate anchor points
+    int i,j;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            points[i + nx*j] = rmf_simplex2((i+1)/fnx, (j+1)/fny, oct, pers, amp, lac, freq);   
+        }
+    }
+    _interp2(final, points, x, y, x_interval, y_interval);
+}
+
+
+
+/* 3 dimensional */
+
+// base interpolator
+void _interp3(float final[], float points[],
+                              int x, int y, int z,
+                              int x_interval, int y_interval, int z_interval) {
 
     int nx = (x / x_interval) + (interp_margin*2),
         ny = (y / y_interval) + (interp_margin*2),
         nz = (z / z_interval) + (interp_margin*2);
-
-    float fnx = (float)(nx + interp_margin),
-           fny = (float)(ny + interp_margin),
-           fnz = (float)(nz + interp_margin);
-
-    float points[nx][ny][nz];
 
     // fractional interval between sample points
     float fx_interval = (float)x_interval,
            fy_interval = (float)y_interval,
            fz_interval = (float)z_interval;
 
-    // generate anchor points
-    int i,j,k;
-    for (i=0; i<nx; i++) {
-        for (j=0; j<ny; j++) {
-            for (k=0; k<nz; k++) {
-                points[i][j][k] = perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);
-            }
-        }
-    }
-
     // interpolate
     int mx,my,mz;
     float px,py,pz;
 
     int sx,sy,sz;
+    int i,j,k;
     int ii,jj,kk;
     float samples[4][4][4];
     float pt;
@@ -358,7 +407,7 @@ void _interp3(float final[], int x, int y, int z,
                 for (ii=-1; ii < 3; ii++) {
                     for (jj=-1; jj < 3; jj++) {
                         for (kk=-1; kk < 3; kk++) {
-                            samples[ii+1][jj+1][kk+1] = points[ii+sx][jj+sy][kk+sz];  // correct this. increased interpolation interp_margins from 2 to 4, so adjust proper code elsewhere
+                            samples[ii+1][jj+1][kk+1] = points[(ii+sx) + nx*(jj+sy) + nx*ny*(kk+sz)];  // correct this. increased interpolation interp_margins from 2 to 4, so adjust proper code elsewhere
                         }
                     }
                 }
@@ -404,7 +453,7 @@ void _interp3(float final[], int x, int y, int z,
                 }
 
                 pt = trilinearInterpolate(resamples, 0.5f, 0.5f, 0.5f);
-                points[i][j][k] = pt;
+                points[i + nx*j + nx*ny*k] = pt;
             }
         }
     }
@@ -419,29 +468,162 @@ void _interp3(float final[], int x, int y, int z,
             for (k=interp_margin; k < nz-interp_margin; k++) {
                 kk = (k-interp_margin) * z_interval;
 
-                final[ii + x*jj + x*y*kk] = points[i][j][k];
+                final[ii + x*jj + x*y*kk] = points[i + nx*j + nx*ny*k];
             }
         }
     }
 
 }
 
-// wrapper
-void apply_interp3(int x, int y, int z,
-                    int x_interval, int y_interval, int z_interval,
-                    int oct,                  // noise func args
-                    float pers, float amp,
-                    float lac, float freq,
-                    int rep_x, int rep_y, int rep_z,
-                    int base) {
-    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+/* 3d Wrappers */
+
+void _perlin_interp3(float final[], int x, int y, int z,
+                                      int x_interval, int y_interval, int z_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq,
+                                      int rep_x, int rep_y, int rep_z,
+                                      int base) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2),
+        nz = (z / z_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin),
+           fnz = (float)(nz + interp_margin);
+
+    float points[nx*ny*nz];
+    //float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
+        
+    // generate anchor points
+    int i,j,k;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            for (k=0; k<nz; k++) {
+            points[i + nx*j + nx*ny*k] = perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
+            }
+        }
+    }
+    _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+    //free(points);
+}
+
+void _rmf_perlin_interp3(float final[], int x, int y, int z,
+                                      int x_interval, int y_interval, int z_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq,
+                                      int rep_x, int rep_y, int rep_z,
+                                      int base) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2),
+        nz = (z / z_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin),
+           fnz = (float)(nz + interp_margin);
+
+    float points[nx*ny*nz];
+        
+    // generate anchor points
+    int i,j,k;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            for (k=0; k<nz; k++) {
+            points[i + nx*j + nx*ny*k] = rmf_perlin3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);   
+            }
+        }
+    }
+    _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+}
+
+void _simplex_interp3(float final[], int x, int y, int z,
+                                      int x_interval, int y_interval, int z_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2),
+        nz = (z / z_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin),
+           fnz = (float)(nz + interp_margin);
+
+    float points[nx*ny*nz];
+        
+    // generate anchor points
+    int i,j,k;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            for (k=0; k<nz; k++) {
+            points[i + nx*j + nx*ny*k] = simplex3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq);   
+            }
+        }
+    }
+    _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+}
+
+void _rmf_simplex_interp3(float final[], int x, int y, int z,
+                                      int x_interval, int y_interval, int z_interval,
+                                      int oct,                  // noise func args
+                                      float pers, float amp,
+                                      float lac, float freq) {
+
+    int nx = (x / x_interval) + (interp_margin*2),
+        ny = (y / y_interval) + (interp_margin*2),
+        nz = (z / z_interval) + (interp_margin*2);
+
+    float fnx = (float)(nx + interp_margin),
+           fny = (float)(ny + interp_margin),
+           fnz = (float)(nz + interp_margin);
+
+    float points[nx*ny*nz];
+        
+    // generate anchor points
+    int i,j,k;
+    for (i=0; i<nx; i++) {
+        for (j=0; j<ny; j++) {
+            for (k=0; k<nz; k++) {
+            points[i + nx*j + nx*ny*k] = rmf_simplex3((i+1)/fnx, (j+1)/fny, (k+1)/fnz, oct, pers, amp, lac, freq);   
+            }
+        }
+    }
+    _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
+}
+
+
+/* Public API */
+
+/* 1D */
+void apply_interp1_perlin(int x, int x_interval,
+                            int oct, //noise args
+                            float pers, float amp,
+                            float lac, float freq,
+                            int repeat, int base) {
+    if (x > xmax || x < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
-
-    _interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);
+    _perlin_interp1(noisemap, x, x_interval, oct, pers, amp, lac, freq, repeat, base);
 }
 
+void apply_interp1_rmf_perlin(int x, int x_interval,
+                            int oct, //noise args
+                            float pers, float amp,
+                            float lac, float freq,
+                            int repeat, int base) {
+    if (x > xmax || x < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+    _rmf_perlin_interp1(noisemap, x, x_interval, oct, pers, amp, lac, freq, repeat, base);
+}
+
+/* 2d */
 void apply_interp2_perlin(int x, int y,
                            int x_interval, int y_interval,
                            int oct,    // noise func args
@@ -453,16 +635,15 @@ void apply_interp2_perlin(int x, int y,
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
-    //_interp2(noisemap, x,y, x_interval, y_interval);
     _perlin_interp2(noisemap, x,y, x_interval, y_interval, oct, pers, amp, lac, freq, rep_x, rep_y, base);
 }
 
 void apply_interp2_rmf_perlin(int x, int y, int x_interval, int y_interval,
-                                                    int oct,    // noise func args
-                                                    float pers, float amp,
-                                                    float lac, float freq,
-                                                    int rep_x, int rep_y,
-                                                    int base) {
+                            int oct,    // noise func args
+                            float pers, float amp,
+                            float lac, float freq,
+                            int rep_x, int rep_y,
+                            int base) {
     if (x > xmax || y > ymax || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
@@ -470,14 +651,82 @@ void apply_interp2_rmf_perlin(int x, int y, int x_interval, int y_interval,
     _rmf_perlin_interp2(noisemap, x,y, x_interval, y_interval, oct, pers, amp, lac, freq, rep_x, rep_y, base);
 }
 
-void apply_interp1(int x, int x_interval,
-                    int oct, //noise args
-                    float pers, float amp,
-                    float lac, float freq,
-                    int repeat, int base) {
-    if (x > xmax || x < 0) {
+void apply_interp2_simplex(int x, int y, int x_interval, int y_interval,
+                            int oct,    // noise func args
+                            float pers, float amp,
+                            float lac, float freq) {
+    if (x > xmax || y > ymax || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
-    _interp1(noisemap, x, x_interval, oct, pers, amp, lac, freq, repeat, base);
+    _simplex_interp2(noisemap, x,y, x_interval, y_interval, oct, pers, amp, lac, freq);
+}
+
+void apply_interp2_rmf_simplex(int x, int y, int x_interval, int y_interval,
+                            int oct,    // noise func args
+                            float pers, float amp,
+                            float lac, float freq) {
+    if (x > xmax || y > ymax || x < 0 || y < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+    _rmf_simplex_interp2(noisemap, x,y, x_interval, y_interval, oct, pers, amp, lac, freq);
+}
+
+/* 3d */
+
+void apply_interp3_perlin(int x, int y, int z,
+                            int x_interval, int y_interval, int z_interval,
+                            int oct,                  // noise func args
+                            float pers, float amp,
+                            float lac, float freq,
+                            int rep_x, int rep_y, int rep_z,
+                            int base) {
+    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+
+    _perlin_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);
+}
+
+void apply_interp3_rmf_perlin(int x, int y, int z,
+                            int x_interval, int y_interval, int z_interval,
+                            int oct,                  // noise func args
+                            float pers, float amp,
+                            float lac, float freq,
+                            int rep_x, int rep_y, int rep_z,
+                            int base) {
+    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+
+    _rmf_perlin_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, oct, pers, amp, lac, freq, rep_x, rep_y, rep_z, base);
+}
+
+void apply_interp3_simplex(int x, int y, int z,
+                            int x_interval, int y_interval, int z_interval,
+                            int oct,                  // noise func args
+                            float pers, float amp,
+                            float lac, float freq) {
+    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+
+    _simplex_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, oct, pers, amp, lac, freq);
+}
+
+void apply_interp3_rmf_simplex(int x, int y, int z,
+                            int x_interval, int y_interval, int z_interval,
+                            int oct,                  // noise func args
+                            float pers, float amp,
+                            float lac, float freq) {
+    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("interpolation error: dimensions out of map range\n");
+        return;
+    }
+
+    _rmf_simplex_interp3(noisemap, x,y,z, x_interval, y_interval, z_interval, oct, pers, amp, lac, freq);
 }
