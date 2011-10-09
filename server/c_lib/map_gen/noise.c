@@ -43,11 +43,11 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     float fh;
 
     int maxh=-1000, minh=1000;  // arbitrary distance outside of map height range
+    int h_range = 0;
         
     for (i=0; i<x; i++) {       // calculate heights and set to noisemap
         for (j=0; j<y; j++) {
             fh = noisemap[i + x*j];
-            //fh = 1.0f - fabs(fh);
             fh *= fz;
             h = ((int)fh) % maxheight;  // h can be negative
 
@@ -58,10 +58,31 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
         }
     }
 
+    // for height range exceeding max height:
+    //  use ceiling i.e., h = min(h, maxheight);
+    // -OR-
+    // scale range
+
+    // RESULTS:
+    // ceiling results in plateaus (obviously)
+    // scale range doesnt have plateaus (altho could scale to slightly larger than maxheight, to get plateau too)
+    // but due to roundoff error, slight variations  in hillside slopes appear
+    // this is a good thing for the map.
+
+    float scale;
+    const int plateau_factor = 1;   // use 0 for no ceiling plateaus
+    h_range = maxh - minh;
+    if (h_range > maxheight) {
+        scale = ((float)maxheight + plateau_factor)/((float)h_range);
+    }    
+
     for (i=0; i<x; i++) {       // use heights, adjusted to be positive
         for (j=0; j<y; j++) {
             h = noisemap[i + x*j];
             h -= minh;
+            fh = h * scale;
+            h = (int)fh;
+            h = (h > maxheight) ? maxheight : h;
             for (k=0; k<baseline+h; k++) {
                 _set(i,j,k, tile);
             }

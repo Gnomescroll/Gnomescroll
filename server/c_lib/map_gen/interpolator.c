@@ -493,8 +493,8 @@ void _perlin_interp3(float final[], int x, int y, int z,
            fny = (float)(ny + interp_margin),
            fnz = (float)(nz + interp_margin);
 
-    float points[nx*ny*nz];
-    //float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
+    //float points[nx*ny*nz];
+    float *points = (float*)malloc(sizeof(float)*nx*ny*nz);
         
     // generate anchor points
     int i,j,k;
@@ -506,7 +506,7 @@ void _perlin_interp3(float final[], int x, int y, int z,
         }
     }
     _interp3(final, points, x, y, z, x_interval, y_interval, z_interval);
-    //free(points);
+    free(points);
 }
 
 void _rmf_perlin_interp3(float final[], int x, int y, int z,
