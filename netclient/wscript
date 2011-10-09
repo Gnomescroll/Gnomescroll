@@ -35,7 +35,6 @@ def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
 def configure(conf):
-    print dir(conf)
     global _OS
     global os_libpth
 

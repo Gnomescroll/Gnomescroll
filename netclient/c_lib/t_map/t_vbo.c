@@ -1108,7 +1108,6 @@ void DRAW_VBOS1() {
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
         //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
@@ -1213,7 +1212,7 @@ void DRAW_VBOS1a() {
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-        
+
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
