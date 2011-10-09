@@ -102,6 +102,19 @@ class Config:
 
     def heightmap(self, baseline=0, maxheight=0):
         self.use_heightmap = True
+        if baseline + maxheight > zmax:
+            print "Map_gen heightmap settings: baseline + maxheight exceed map height. Scaling down"
+            scale = float(zmax) / float(baseline + maxheight)
+            baseline = int(baseline * scale)
+            maxheight = int(maxheight * scale)
+            params = [baseline, maxheight]
+            i = 0
+            while sum(params) < zmax:
+                params[i] += 1
+                i += 1
+                i %= 2
+            baseline, maxheight = params
+            
         self.baseline = baseline
         self.maxheight = maxheight
         return self
@@ -280,9 +293,7 @@ def apply_gradient2(x,y, x0, x1, y0, y1):
     apply_grad2(x,y, x0, x1, y0, y1)
 
 def apply_gradient3(x,y,z, x0, x1, y0, y1, z0, z1):
-    print "apply grad3"
     apply_grad3(x,y,z,  x0, x1, y0, y1, z0, z1)
-
 
 gradients = {
     1: apply_gradient1,

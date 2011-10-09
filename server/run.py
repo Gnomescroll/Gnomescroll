@@ -47,7 +47,7 @@ c_lib.map_gen.conf\
 .size(128,128,128)\
 .tile(2)\
 .interpolate(4,2,1)\
-.heightmap(baseline=50, maxheight=78)\
+.heightmap(baseline=50, maxheight=88)\
 .p2(octaves=8, persistence=0.6)\
 .grass()\
 .rmf()\
