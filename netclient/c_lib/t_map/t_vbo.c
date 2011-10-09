@@ -1190,10 +1190,7 @@ void DRAW_VBOS1a() {
         vbo = draw_vbo_array[i];
         if(vbo->v_num == 0) continue; 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
-        //if(vbo->_v_num[2] != 0) 
-        //{
-            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
-        //}
+        glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
     glDisable(GL_BLEND);
