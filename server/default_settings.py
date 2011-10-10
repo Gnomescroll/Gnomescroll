@@ -20,7 +20,7 @@ team_kills = False
 victory_points = 3
 
 map = ''
-
+seed = 8007513
 
 try:
     from settings import *

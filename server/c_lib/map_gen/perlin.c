@@ -172,7 +172,7 @@ pnoise3(float x, float y, float z, const int repeatx, const int repeaty, const i
 }
 
 
-inline float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
+float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
 {
     int octaves = _oct;
     float persistence = _per,

@@ -41,61 +41,58 @@ import random
 
 import c_lib.map_gen
 
-if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
-    c_lib.map_gen.conf.seed(571)
 
-    #c_lib.map_gen.conf\
-    #.size(128,128,128)\
-    #.tile(2)\
-    #.interpolate(4,2,1)\
-    #.heightmap(baseline=50, maxheight=78)\
-    #.p2(octaves=8, persistence=0.6)\
-    #.grass()\
-    #.start()\
-    #.reset()
+'''
+Noise notes:
 
-    #c_lib.map_gen.conf\
-    #.interpolate(4,2,1)\
-    #.size(128,128,128)\
-    #.tile(2)\
-    #.density(threshold=0.5)\
-    #.p3(octaves=6, persistence=0.6)\
-    #.start()\
-    #.reset()
+For each octave:
+    amplitude *= persistence
+    frequency *= lacunarity
 
-    #c_lib.map_gen.conf\
-    #.interpolate(2,4,1)\
-    #.size(128,128,128)\
-    #.tile(2)\
-    #.density(threshold=2.5)\
-    #.p3(octaves=6, persistence=0.6)\
-    #.rmf()\
-    #.start()\
-    #.reset()
+As persistence approaches 1.0, it gets very bumpy. Above 1.0, extremely bumpy.
+0.6 seems to be the border for bumpiness
 
-    #c_lib.map_gen.invert(128,128,128,tile=2)
+RMF (ridged multifractal) properties:
+Always positive
+Sharp peaks/ edges.
 
-    #c_lib.map_gen.caves(128,128,128)
+DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code stolen
 
-    c_lib.map_gen.conf\
-    .interpolate(4,2,1)\
-    .size(128,128,128)\
-    .tile(2)\
-    .density(threshold=1.6)\
-    .p3(octaves=6, persistence=0.6)\
-    .rmf()\
-    .start()\
-    .reset()
 
-    c_lib.map_gen.reset()
+'''
 
-    #c_lib.map_gen.conf\
-    #.size(128,128,128)\
-    #.tile(0)\
-    #.density(threshold=0.10)\
-    #.interpolate(4,4,2)\
-    #.p3(octaves=8, persistence=0.92)\
-    #.start()
+def _gen_map():
+    if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
+
+        c_lib.map_gen.conf\
+        .size(128,128,128)\
+        .tile(2)\
+        .interpolate(4,2,1)\
+        .heightmap(baseline=40, maxheight=40)\
+        .p2(octaves=6, persistence=0.4)\
+        .grass()\
+        .start()\
+        .reset()
+
+        c_lib.map_gen.conf\
+        .size(128,128,128)\
+        .tile(2)\
+        .interpolate(4,4,2)\
+        .density(threshold=0.2)\
+        .p3(octaves=6, persistence=0.7)\
+        .grass()\
+        .start()\
+        .reset()
+        
+        c_lib.map_gen.conf\
+        .interpolate(4,2,1)\
+        .size(128,128,128)\
+        .tile(0)\
+        .density(threshold=2.438)\
+        .rmf()\
+        .p3(octaves=6, persistence=0.6)\
+        .start()\
+        .reset()
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):
@@ -129,6 +126,8 @@ class Main:
         '''
         loading map from file by default because angus gets segfault
         '''
+        c_lib.map_gen.conf.seed(opts.opts.seed)
+        _gen_map()
         if opts.opts.map:
             print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)

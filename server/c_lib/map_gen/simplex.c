@@ -88,66 +88,72 @@ float simplex2(float x, float y)
 float 
 snoise3(float x, float y, float z) 
 {
-    int c, o1[3], o2[3], g[4], I, J, K;
-    float f[4], noise[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-    float s = (x + y + z) * F3;
-    float i = floorf(x + s);
-    float j = floorf(y + s);
-    float k = floorf(z + s);
-    float t = (i + j + k) * G3;
+    return 0.0f;
 
-    float3 pos[3];
-
-    pos[0].x = x - (i - t);
-    pos[0].y = y - (j - t);
-    pos[0].z = z - (k - t);
-
-    if (pos[0].x >= pos[0].y) {
-        if (pos[0].y >= pos[0].z) {
-            ASSIGN(o1, 1, 0, 0);
-            ASSIGN(o2, 1, 1, 0);
-        } else if (pos[0].x >= pos[0].z) {
-            ASSIGN(o1, 1, 0, 0);
-            ASSIGN(o2, 1, 0, 1);
-        } else {
-            ASSIGN(o1, 0, 0, 1);
-            ASSIGN(o2, 1, 0, 1);
-        }
-    } else {
-        if (pos[0].x < pos[0].z) {
-            ASSIGN(o1, 0, 0, 1);
-            ASSIGN(o2, 0, 1, 1);
-        } else if (pos[0].x < pos[0].z) {
-            ASSIGN(o1, 0, 1, 0);
-            ASSIGN(o2, 0, 1, 1);
-        } else {
-            ASSIGN(o1, 0, 1, 0);
-            ASSIGN(o2, 1, 1, 0);
-        }
-    }
+    // This is broken.
+    // Array subscripts out of bounds
+    // The pos[3] array, and the pos[i].xyz array, are being violated
     
-    for (c = 0; c <= 2; c++) {
-        pos[3].xyz[c] = pos[0].xyz[c] - 1.0f + 3.0f * G3;
-        pos[2].xyz[c] = pos[0].xyz[c] - o2[c] + 2.0f * G3;
-        pos[1].xyz[c] = pos[0].xyz[c] - o1[c] + G3;
-    }
+    //int c, o1[3], o2[3], g[4], I, J, K;
+    //float f[4], noise[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    //float s = (x + y + z) * F3;
+    //float i = floorf(x + s);
+    //float j = floorf(y + s);
+    //float k = floorf(z + s);
+    //float t = (i + j + k) * G3;
 
-    I = (int) i & 255; 
-    J = (int) j & 255; 
-    K = (int) k & 255;
-    g[0] = PERM[I + PERM[J + PERM[K]]] % 12;
-    g[1] = PERM[I + o1[0] + PERM[J + o1[1] + PERM[o1[2] + K]]] % 12;
-    g[2] = PERM[I + o2[0] + PERM[J + o2[1] + PERM[o2[2] + K]]] % 12;
-    g[3] = PERM[I + 1 + PERM[J + 1 + PERM[K + 1]]] % 12; 
+    //float3 pos[3];
 
-    for (c = 0; c <= 3; c++)
-        f[c] = 0.6f - pos[0].xyz[c]*pos[0].xyz[c] - pos[1].xyz[c]*pos[1].xyz[c] - pos[2].xyz[c]*pos[2].xyz[c];
+    //pos[0].x = x - (i - t);
+    //pos[0].y = y - (j - t);
+    //pos[0].z = z - (k - t);
+
+    //if (pos[0].x >= pos[0].y) {
+        //if (pos[0].y >= pos[0].z) {
+            //ASSIGN(o1, 1, 0, 0);
+            //ASSIGN(o2, 1, 1, 0);
+        //} else if (pos[0].x >= pos[0].z) {
+            //ASSIGN(o1, 1, 0, 0);
+            //ASSIGN(o2, 1, 0, 1);
+        //} else {
+            //ASSIGN(o1, 0, 0, 1);
+            //ASSIGN(o2, 1, 0, 1);
+        //}
+    //} else {
+        //if (pos[0].x < pos[0].z) {
+            //ASSIGN(o1, 0, 0, 1);
+            //ASSIGN(o2, 0, 1, 1);
+        //} else if (pos[0].x < pos[0].z) {
+            //ASSIGN(o1, 0, 1, 0);
+            //ASSIGN(o2, 0, 1, 1);
+        //} else {
+            //ASSIGN(o1, 0, 1, 0);
+            //ASSIGN(o2, 1, 1, 0);
+        //}
+    //}
     
-    for (c = 0; c <= 3; c++)
-        if (f[c] > 0)
-            noise[c] = f[c]*f[c]*f[c]*f[c] * dot3(pos[c].xyz, GRAD3[g[c]]);
+    //for (c = 0; c <= 2; c++) {
+        //pos[3].xyz[c] = pos[0].xyz[c] - 1.0f + 3.0f * G3;
+        //pos[2].xyz[c] = pos[0].xyz[c] - o2[c] + 2.0f * G3;
+        //pos[1].xyz[c] = pos[0].xyz[c] - o1[c] + G3;
+    //}
+
+    //I = (int) i & 255; 
+    //J = (int) j & 255; 
+    //K = (int) k & 255;
+    //g[0] = PERM[I + PERM[J + PERM[K]]] % 12;
+    //g[1] = PERM[I + o1[0] + PERM[J + o1[1] + PERM[o1[2] + K]]] % 12;
+    //g[2] = PERM[I + o2[0] + PERM[J + o2[1] + PERM[o2[2] + K]]] % 12;
+    //g[3] = PERM[I + 1 + PERM[J + 1 + PERM[K + 1]]] % 12; 
+
+    //for (c = 0; c <= 3; c++)
+        //f[c] = 0.6f - pos[0].xyz[c]*pos[0].xyz[c] - pos[1].xyz[c]*pos[1].xyz[c] - pos[2].xyz[c]*pos[2].xyz[c];
     
-    return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
+    //for (c = 0; c <= 3; c++)
+        //if (f[c] > 0)
+            //noise[c] = f[c]*f[c]*f[c]*f[c] * dot3(pos[c].xyz, GRAD3[g[c]]);
+    
+    //return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
 }
 
 //float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)

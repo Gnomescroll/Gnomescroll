@@ -13,16 +13,24 @@ void seed_noise(int seed) {
 
 void set_terrain_density(int x, int y, int z, float threshold, int tile) {
     // set terrain
-    int i,j,k;
+    int i,j,k,index;
+    int c=0;
+    float ttl=0.0f;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                if (noisemap[i + x*j + x*y*k] > threshold) {
+                index = i + x*j + x*y*k;
+                c += 1;
+                ttl += noisemap[index];
+                if (noisemap[index] > threshold) {
                     _set(i,j,k, tile);
                 }
             }
         }
     }
+    float avg = ttl / (float)c;
+    printf("ttl: %0.2f, count: %d, avg: %0.2f\n", ttl, c, avg);
+
 }
 
 void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile) {
@@ -49,7 +57,9 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
         for (j=0; j<y; j++) {
             fh = noisemap[i + x*j];
             fh *= fz;
-            h = ((int)fh) % maxheight;  // h can be negative
+            h = (int)fh;
+            //if (maxheight < abs(h)) { printf("h double cycle. %d\n", h); h%=maxheight; printf("h %d\n", h);}
+            //else{h %= maxheight;}  // h can be negative
 
             if (h > maxh) maxh = h;
             if (h < minh) minh = h;
@@ -75,7 +85,7 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     if (h_range > maxheight) {
         scale = ((float)maxheight + plateau_factor)/((float)h_range);
     }
-
+    printf("minh: %d; maxh: %d\n", minh,  maxh);
     printf("scale: %0.2f; h_range: %d;\n", scale, h_range);
 
     for (i=0; i<x; i++) {       // use heights, adjusted to be positive
@@ -84,7 +94,7 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
             h -= minh;
             fh = h * scale;
             h = (int)fh;
-            h = (h > maxheight) ? maxheight : h;
+            h = (h >= maxheight) ? maxheight : (h%maxheight);
             for (k=0; k<baseline+h; k++) {
                 _set(i,j,k, tile);
             }

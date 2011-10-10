@@ -244,11 +244,8 @@ class Config:
         #grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1][:self.dim*2]
         grad_args = [self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1]
 
-        noise_args = []
-        if self.noise_type == 'p':
-            noise_args += [self.repeatx, self.repeaty, self.repeatz][:self.dim]
-            noise_args.append(self.base)
-
+        noise_args = [self.repeatx, self.repeaty, self.repeatz][:self.dim]
+        noise_args.append(self.base)
         
         if self.noise is not None:
             self.noise.fill()
