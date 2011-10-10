@@ -64,6 +64,7 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 def _gen_map():
     if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
 
+        # base heightmap, smooth shallow hills
         c_lib.map_gen.conf\
         .size(128,128,128)\
         .tile(2)\
@@ -74,16 +75,18 @@ def _gen_map():
         .start()\
         .reset()
 
+        # 3d density noise. floating islands, overhangs
         c_lib.map_gen.conf\
         .size(128,128,128)\
         .tile(2)\
         .interpolate(4,4,2)\
-        .density(threshold=0.2)\
+        .density(threshold=0.18)\
         .p3(octaves=6, persistence=0.7)\
         .grass()\
         .start()\
         .reset()
         
+        # 3d density noise, subtractive RMF. forms caves
         c_lib.map_gen.conf\
         .interpolate(4,2,1)\
         .size(128,128,128)\

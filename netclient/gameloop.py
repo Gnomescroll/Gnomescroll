@@ -156,7 +156,6 @@ class App(object):
         ping_text = None
         fps = opts.opts.fps
         ping = opts.opts.fps
-        draw_hud = not opts.opts.no_hud
         ltick, ctick = 0,0
 
         if ping:
@@ -310,7 +309,7 @@ class App(object):
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
-            if draw_hud:
+            if not opts.opts.no_hud:
                 self.camera.hudProjection()
                 draw_bs = False
                 if GameStateGlobal.agent:
