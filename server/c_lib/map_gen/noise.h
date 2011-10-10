@@ -72,4 +72,12 @@ void seed_noise(int seed);
 void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile);
 void set_terrain_density(int x, int y, int z, float threshold, int tile);
 void clear_noisemap();
+void invert_map(int x, int y, int z, int tile);
 
+int _oct = 1;
+float _per = 0.6f;
+float _amp = 1.0f;
+float _lac = 2.0f;
+float _freq = 1.0f;
+
+void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);

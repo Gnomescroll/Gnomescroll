@@ -41,48 +41,73 @@ import random
 
 import c_lib.map_gen
 
-c_lib.map_gen.conf.seed(571)
+if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
+    c_lib.map_gen.conf.seed(571)
 
-#c_lib.map_gen.conf\
-#.size(128,128,128)\
-#.tile(2)\
-#.interpolate(4,2,1)\
-#.heightmap(baseline=50, maxheight=88)\
-#.p2(octaves=8, persistence=0.6)\
-#.grass()\
-#.start()\
-#.reset()
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.tile(2)\
+    #.interpolate(4,2,1)\
+    #.heightmap(baseline=50, maxheight=78)\
+    #.p2(octaves=8, persistence=0.6)\
+    #.grass()\
+    #.start()\
+    #.reset()
 
-c_lib.map_gen.conf\
-.interpolate(4,2,1)\
-.size(128,128,128)\
-.tile(2)\
-.density(threshold=2.0)\
-.p3(octaves=6, persistence=0.6)\
-.rmf()\
-.start()\
-.reset()
+    c_lib.map_gen.conf\
+    .interpolate(4,2,1)\
+    .size(128,128,128)\
+    .tile(2)\
+    .density(threshold=0.0)\
+    .p3(octaves=6, persistence=0.6)\
+    .start()\
+    .reset()
+    #.rmf()\
 
-#c_lib.map_gen.reset()
+    #c_lib.map_gen.conf\
+    #.interpolate(2,4,1)\
+    #.size(128,128,128)\
+    #.tile(2)\
+    #.density(threshold=2.5)\
+    #.p3(octaves=6, persistence=0.6)\
+    #.rmf()\
+    #.start()\
+    #.reset()
 
-#c_lib.map_gen.conf\
-#.size(128,128,128)\
-#.tile(2)\
-#.interpolate(4,4,2)\
-#.p3(octaves=6, persistence=0.7)\
-#.grass()\
-#.start()\
-#.reset()
+    #c_lib.map_gen.invert(128,128,128,tile=2)
 
-#c_lib.map_gen.reset()
+    #c_lib.map_gen.caves(128,128,128)
 
-#c_lib.map_gen.conf\
-#.size(128,128,128)\
-#.tile(0)\
-#.density(threshold=0.10)\
-#.interpolate(4,4,2)\
-#.p3(octaves=8, persistence=0.92)\
-#.start()
+    #c_lib.map_gen.conf\
+    #.interpolate(4,2,1)\
+    #.size(128,128,128)\
+    #.tile(2)\
+    #.density(threshold=1.6)\
+    #.p3(octaves=6, persistence=0.6)\
+    #.rmf()\
+    #.start()\
+    #.reset()
+
+    #c_lib.map_gen.reset()
+
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.tile(2)\
+    #.interpolate(4,4,2)\
+    #.p3(octaves=6, persistence=0.7)\
+    #.grass()\
+    #.start()\
+    #.reset()
+
+    #c_lib.map_gen.reset()
+
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.tile(0)\
+    #.density(threshold=0.10)\
+    #.interpolate(4,4,2)\
+    #.p3(octaves=8, persistence=0.92)\
+    #.start()
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):

@@ -97,6 +97,30 @@ void clear_noisemap() {
     }
 }
 
+void invert_map(int x, int y, int z, int tile) {
+    int i,j,k;
+    for (i=0; i < x; i++) {
+        for (j=0; j < y; j++) {
+            for (k=0; k < z; k++) {
+                if (isSolid(_get(i,j,k))) {
+                    _set(i,j,k, 0);
+                } else {
+                    _set(i,j,k, tile);
+                }
+            }
+        }
+    }
+}
+
+void set_noise_parameters(int oct, float per, float amp, float lac, float freq) {
+    _oct = oct;
+    _per = per;
+    _amp = amp;
+    _lac = lac;
+    _freq = freq;
+}
+
+
 #include "perlin.c"
 #include "simplex.c"
 #include "ridged_mf.c"
