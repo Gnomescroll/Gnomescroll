@@ -8,6 +8,10 @@ syntax: glob
 *.so
 *.o
 
+__MACOSX
+___MACOSX
+*.orig
+
 */build/*
 
 *.old
