@@ -26,6 +26,7 @@ cdef extern from "./map_gen/noise.h":
     void set_terrain_density(int x, int y, int z, float threshold, int tile)
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
     void invert_map(int x, int y, int z, int tile)
+    void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
 
 cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
@@ -206,13 +207,16 @@ class Config:
 
     def start(self):
         _n = time.time()
+
+        set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
         
         noise_method = 'noise%d' % (self.dim,)
         if self.use_rmf:
             self.noise = RMF(octaves=self.octaves,
                              persistence=self.persistence,
-                             frequency=self.frequency,
                              amplitude=self.amplitude,
+                             lacunarity = self.lacunarity,
+                             frequency=self.frequency,
                              repeatx=self.repeatx,
                              repeaty=self.repeaty,
                              repeatz=self.repeatz,
@@ -221,8 +225,9 @@ class Config:
         elif self.noise_type == 'p':
             self.noise = Perlin(octaves=self.octaves,
                                 persistence=self.persistence,
-                                frequency=self.frequency,
                                 amplitude=self.amplitude,
+                                lacunarity=self.lacunarity,
+                                frequency=self.frequency,
                                 repeatx=self.repeatx,
                                 repeaty=self.repeaty,
                                 repeatz=self.repeatz,
@@ -230,8 +235,9 @@ class Config:
         elif self.noise_type == 's':
             self.noise = Simplex(octaves=self.octaves,
                                  persistence=self.persistence,
-                                 frequency=self.frequency,
-                                 amplitude=self.amplitude)
+                                 amplitude=self.amplitude,
+                                 lacunarity=self.lacunarity,
+                                 frequency=self.frequency)
 
         size_args = [self.x, self.y, self.z][:self.dim]
         interp_args = [self.iz, self.iy, self.iz][:self.dim]

@@ -76,6 +76,8 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
         scale = ((float)maxheight + plateau_factor)/((float)h_range);
     }
 
+    printf("scale: %0.2f; h_range: %d;\n", scale, h_range);
+
     for (i=0; i<x; i++) {       // use heights, adjusted to be positive
         for (j=0; j<y; j++) {
             h = noisemap[i + x*j];

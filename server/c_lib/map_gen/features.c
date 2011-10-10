@@ -36,20 +36,27 @@ void _caves(int x, int y, int z, int base) {
            fy = (float)y + 2.0f,
            fz = (float)z + 2.0f;
 
-    seed_noise(571);
-    
+    seed_noise(572);
+
     int i,j,k;
     float n;
+    float ttl=0.0f;
+    int c=0;
     for (i=0; i < x; i++) {
         for (j=0; j < y; j++) {
             for (k=0; k < z; k++) {
                 n = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, base);
-                if (n > 2.45) {
+                c += 1;
+                ttl += n;
+                if (n > 0.97) {
                     _set(i,j,k, 2);
                 }
             }
         }
     }
+
+    float avg = ttl / (float)c;
+    printf("ttl: %0.2f, count: %d, avg: %0.2f\n", ttl, c, avg);
 
     seed_noise(1001);
     
@@ -57,13 +64,14 @@ void _caves(int x, int y, int z, int base) {
         for (j=0; j < y; j++) {
             for (k=0; k < z; k++) {
                 n = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, base);
-                if (n > 2.45 && isSolid(_get(i,j,k))) {
+                if (n > 0.9 && isSolid(_get(i,j,k))) {
                     _set(i,j,k, 3);
                 }
             }
         }
     }
-    
+
+    // invert
     for (i=0; i < x; i++) {
         for (j=0; j < y; j++) {
             for (k=0; k < z; k++) {

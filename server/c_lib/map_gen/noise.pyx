@@ -29,6 +29,7 @@ cdef extern from "./map_gen/ridged_mf.h":
 
 cdef extern from "./map_gen/noise.h":
     void seed_noise(int seed)
+    void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
 
 def set_seed(seed):
     seed_noise(seed)
@@ -49,6 +50,8 @@ class Perlin:
         self.base = base
 
         self.filled = False
+
+        set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
 
     def fill(self):
         self.filled = True
@@ -88,6 +91,8 @@ class Simplex:
 
         self.filled = False
 
+        set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
+
     def fill(self):
         self.filled = True
         return self
@@ -123,6 +128,8 @@ class RMF:
         self.base = base
 
         self.filled = False
+
+        set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
 
     def fill(self):
         self.filled = True

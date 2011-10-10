@@ -48,23 +48,29 @@ snoise2(float x, float y)
     return (noise[0] + noise[1] + noise[2]) * 70.0f;
 }
 
-//float simplex2(float x, float y, int _oct, float _per, float _freq, float _amp, int repeatx, int repeaty, int base)
+//float simplex2(float x, float y, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int base)
 float simplex2(float x, float y)
 // snoise* methods do not use repeat intervals or base. unknown if this is an algorithmic constraint, or lack of implementation
 {
-    if (_oct == 1) {
+    int octaves = _oct;
+    float persistence = _per,
+            amplitude = _amp,
+            lacunarity = _lac,
+            frequency = _freq;
+
+    if (octaves == 1) {
         // Single octave, return simple noise
         return snoise2(x,y);
-    } else if (_oct > 1) {
+    } else if (octaves > 1) {
         int i;
         float max = 0.0f;
         float total = 0.0f;
 
-        for (i = 0; i < _oct; i++) {
-            total += snoise2(x * _freq, y * _freq) * _amp;
-            max += _amp;
-            _freq *= _lac;  // constant?
-            _amp *= _per;
+        for (i = 0; i < octaves; i++) {
+            total += snoise2(x * frequency, y * frequency) * amplitude;
+            max += amplitude;
+            frequency *= lacunarity;  // constant?
+            amplitude *= persistence;
         }
         //return (total/max); // why max
         return total;
@@ -144,24 +150,30 @@ snoise3(float x, float y, float z)
     return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
 }
 
-//float simplex3(float x, float y, float z, int _oct, float _per, float _freq, float _amp, int repeatx, int repeaty, int repeatz, int base)
+//float simplex3(float x, float y, float z, int octaves, float persistence, float frequency, float amplitude, int repeatx, int repeaty, int repeatz, int base)
 float simplex3(float x, float y, float z)
 // snoise* methods do not use repeat intervals or base. unknown if this is an algorithmic constraint, or lack of implementation
 {
-    if (_oct == 1) {
+    int octaves = _oct;
+    float persistence = _per,
+            amplitude = _amp,
+            lacunarity = _lac,
+            frequency = _freq;
+
+    if (octaves == 1) {
         // Single octave, return simple noise
         return snoise3(x,y,z);
-    } else if (_oct > 1) {
+    } else if (octaves > 1) {
         int i;
         float total = 0.0f;
         /* max variable was not present in original code, its purpose is unknown. original code was incomplete, however */
         float max = 0.0f;
 
-        for (i = 0; i < _oct; i++) {
-            total += snoise3(x * _freq, y * _freq, z * _freq) * _amp;
-            max += _amp;
-            _freq *= _lac;
-            _amp *= _per;
+        for (i = 0; i < octaves; i++) {
+            total += snoise3(x * frequency, y * frequency, z * frequency) * amplitude;
+            max += amplitude;
+            frequency *= lacunarity;
+            amplitude *= persistence;
         }
         return (total/max);
     }

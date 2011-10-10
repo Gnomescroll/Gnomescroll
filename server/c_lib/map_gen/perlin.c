@@ -39,19 +39,25 @@ pnoise1(float x, const int repeat, const int base)
 
 float perlin1(float x, int repeat, int base)
 {
-    if (_oct == 1) {
+    int octaves = _oct;
+    float persistence = _per,
+            amplitude = _amp,
+            lacunarity = _lac,
+            frequency = _freq;
+
+   if (octaves == 1) {
         // Single octave, return simple noise
         return pnoise1(x, repeat, base);
-    } else if (_oct > 1) {
+    } else if (octaves > 1) {
         int i;
         float max = 0.0f;
         float total = 0.0f;
 
-        for (i = 0; i < _oct; i++) {
-            total += pnoise1(x * _freq, (const int)(repeat * _freq), base) * _amp;
-            max += _amp;
-            _freq *= _lac;
-            _amp *= _per;
+        for (i = 0; i < octaves; i++) {
+            total += pnoise1(x * frequency, (const int)(repeat * frequency), base) * amplitude;
+            max += amplitude;
+            frequency *= lacunarity;
+            amplitude *= persistence;
         }
         return (total / max);
     }
@@ -96,19 +102,25 @@ pnoise2(float x, float y, const float repeatx, const float repeaty, const int ba
 
 float perlin2(float x, float y, int repeatx, int repeaty, int base)
 {
-    if (_oct == 1) {
+    int octaves = _oct;
+    float persistence = _per,
+            amplitude = _amp,
+            lacunarity = _lac,
+            frequency = _freq;
+
+   if (octaves == 1) {
         // Single octave, return simple noise
         return pnoise2(x,y, repeatx, repeaty, base);
-    } else if (_oct > 1) {
+    } else if (octaves > 1) {
         int i;
         float max = 0.0f;
         float total = 0.0f;
 
-        for (i = 0; i < _oct; i++) {
-            total += pnoise2(x * _freq, y * _freq, repeatx * _freq, repeaty * _freq, base) * _amp;
-            max += _amp;
-            _freq *= _lac;
-            _amp *= _per;
+        for (i = 0; i < octaves; i++) {
+            total += pnoise2(x * frequency, y * frequency, repeatx * frequency, repeaty * frequency, base) * amplitude;
+            max += amplitude;
+            frequency *= lacunarity;
+            amplitude *= persistence;
         }
         return (total / max);   // why /max
     }
@@ -159,45 +171,29 @@ pnoise3(float x, float y, float z, const int repeatx, const int repeaty, const i
                                       grad3(PERM[BB + kk], x - 1, y - 1, z - 1))));
 }
 
-//float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
-//{
-    //if (_oct == 1) {
-        //// Single octave, return simple noise
-        //return pnoise3(x, y, z, repeatx, repeaty, repeatz, base);
-    //} else if (_oct > 1) {
-        //int i;
-        //float max = 0.0f;
-        //float total = 0.0f;
 
-        //for (i = 0; i < _oct; i++) {
-            //total += pnoise3(x * _freq, y * _freq, z * _freq, 
-                //(const int)(repeatx*_freq), (const int)(repeaty*_freq), (const int)(repeatz*_freq), base) * _amp;
-            //max += _amp;
-            //_freq *= _lac;
-            //_amp *= _per;
-        //}
-        //return (total / max);
-    //}
-    //return 0.0f;
-//}
-
- 
-float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
+inline float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
 {
-    if (_oct == 1) {
+    int octaves = _oct;
+    float persistence = _per,
+            amplitude = _amp,
+            lacunarity = _lac,
+            frequency = _freq;
+
+    if (octaves == 1) {
         // Single octave, return simple noise
         return pnoise3(x, y, z, repeatx, repeaty, repeatz, base);
-    } else if (_oct > 1) {
+    } else if (octaves > 1) {
         int i;
         float max = 0.0f;
         float total = 0.0f;
 
-        for (i = 0; i < _oct; i++) {
-            total += pnoise3(x * _freq, y * _freq, z * _freq, 
-                (const int)(repeatx*_freq), (const int)(repeaty*_freq), (const int)(repeatz*_freq), base) * _amp;
-            max += _amp;
-            _freq *= _lac;
-            _amp *= _per;
+        for (i = 0; i < octaves; i++) {
+            total += pnoise3(x * frequency, y * frequency, z * frequency, 
+                (const int)(repeatx*frequency), (const int)(repeaty*frequency), (const int)(repeatz*frequency), base) * amplitude;
+            max += amplitude;
+            frequency *= lacunarity;
+            amplitude *= persistence;
         }
         return (total / max);
     }
