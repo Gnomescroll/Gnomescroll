@@ -10,7 +10,9 @@ syntax: glob
 
 __MACOSX
 ___MACOSX
-*.orig
+*.pyc.orig
+cube_dat.py.orig
+.DS_Store
 
 */build/*
 
