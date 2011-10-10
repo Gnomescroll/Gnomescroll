@@ -8,6 +8,12 @@ syntax: glob
 *.so
 *.o
 
+__MACOSX
+___MACOSX
+*.pyc.orig
+cube_dat.py.orig
+.DS_Store
+
 */build/*
 
 *.old

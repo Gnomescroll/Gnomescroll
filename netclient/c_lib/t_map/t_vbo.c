@@ -240,122 +240,6 @@ void delete_vbo(struct VBO* vbo) {
     vbo->v_list_max_size = 0;
 }
 
-/*
-int start_vbo_draw() {
-
-//glColor4bu(255,255,255,255);
-glColor3b(255,255,255);
-
-draw_mode_enabled = 1;
-
-glEnable(GL_TEXTURE_2D);
-glEnable (GL_DEPTH_TEST);
-
-glShadeModel(GL_SMOOTH);
-
-if(_lighting) {
-    
-    glMaterialfv(GL_FRONT,GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
-
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_color);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
-}
-
-if(T_MAP_Z_BUFFER == 0) {
-    glEnable (GL_DEPTH_TEST);
-} else {
-    glDisable (GL_DEPTH_TEST);
-}
-
-if(T_MAP_BLEND_MODE != 2) { //make a toggle for cull face
-    glEnable(GL_CULL_FACE);  ///testing
-}
-
-if(T_MAP_BLEND_MODE != 0) {
-    glEnable(GL_BLEND);
-    if(T_MAP_BLEND_MODE ==1 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    if(T_MAP_BLEND_MODE ==2 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    if(T_MAP_BLEND_MODE ==3 ) glBlendFunc(GL_ONE, GL_ONE);
-    if(T_MAP_BLEND_MODE ==4 ) glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    if(T_MAP_BLEND_MODE ==5 ) glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_DST_COLOR);
-    if(T_MAP_BLEND_MODE ==6 ) glBlendFunc(GL_ONE, GL_ALPHA);
-}
-
-glBindTexture( GL_TEXTURE_2D, texture );
-
-glEnableClientState(GL_VERTEX_ARRAY);
-glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-glEnableClientState(GL_COLOR_ARRAY);
-
-return 0;
-}
-
-int end_vbo_draw() {
-draw_mode_enabled = 0;
-glDisableClientState(GL_VERTEX_ARRAY);
-glDisableClientState(GL_COLOR_ARRAY);
-glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-if(_lighting) {
-
-    glDisable(GL_LIGHT0);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_COLOR_MATERIAL);
-}
-
-glShadeModel(GL_FLAT);
-
-glDisable(GL_TEXTURE_2D);
-glDisable (GL_DEPTH_TEST);
-glDisable(GL_CULL_FACE);
-
-if(T_MAP_BLEND_MODE != 0) glDisable(GL_BLEND);
-return 0;
-}
-*/
-
-//assums vbo is type quad
-
-/*
-int draw_quad_vbo(struct VBO* q_VBO) {
-
-//printf("wtf\n");
-//printf('vnum= %f \n', (float) (q_VBO->v_num));
-
-if(draw_mode_enabled == 0) {
-    glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
-    start_vbo_draw();
-
-    glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-    glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-
-    glDrawArrays(GL_QUADS,0, q_VBO->v_num);
-    //return 0;
-} else {
-    glBindBuffer(GL_ARRAY_BUFFER, q_VBO->VBO_id);
-
-    glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-    glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-
-    glDrawArrays(GL_QUADS,0, q_VBO->v_num);
-    //return 0;
-}
-    return 0;
-
-}
-*/
 int print_vertex(struct Vertex* v) {
 printf("x,y,z= %f, %f, %f\n", v->x,v->y,v->z);
 printf("tx,ty= %f, %f\n", v->tx, v->ty);
@@ -377,16 +261,6 @@ static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0
 1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
 -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
 
-
-/*
-static const int CI0[8*3] = { 1,1,1, 0,1,1, -1,1,1, -1,0,1, -1,-1,1, 0,-1,1, 1,-1,1, 1,0,1};
-static const int CI1[8*3] = { -1,1,-1, 0,1,-1, 1,1,-1, 1,0,-1, 1,-1,-1, 0,-1,-1, -1,-1,-1, -1,0,-1,};
-static const int CI2[8*3] = { 0,-1,2, 0, -1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0, 0, 2,};
-static const int CI3[8*3] = { 0,1,2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, 0, 2,};
-static const int CI4[8*3] = { 1,0,2, 1, 0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 1, -1, 0, 2, 0, 0, 2,};
-static const int CI5[8*3] = { -1,0,2, -1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 2, 0, 0, 2};
-*/
-
 /*
 will be 1 if is adjacent to any side
 will be 2 only if both sides are occluded
@@ -401,55 +275,36 @@ inline int calcAdj(int side_1, int side_2, int corner)
     if(occ == 2) return 100;    
 }
 
-/*
-//deprecated
-void __inline add_quad(int x, int y, int z, int side, int tile_id) {
+const static int s_array[18] = {
+        0,0,1,  //top
+        0,0,-1, //bottom
+        1,0,0,  //north
+        -1,0,0, //south
+        0,1,0,  //west
+        0,-1,0, //east
+        };
+
+int inline _is_occluded(int x,int y,int z, int side_num) {
     int i;
-    //struct Vertex* v;
-    memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    i = 3*side_num;
+    x += s_array[i+0];
+    y += s_array[i+1];
+    z += s_array[i+2];
 
-    int index;
-    int CX[8];
-    for(i=0; i<8; i++) {
-        index = side*8*3+i*3;
-        CX[i] = isActive(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
-    }
-
-    float _x = x;
-    float _y = y;
-    float _z = z;
-    for(i=0; i<=4;i++) {
-        cs[cs_n+i].x += _x;
-        cs[cs_n+i].y += _y;
-        cs[cs_n+i].z += _z;
-    }
-
-    int occ = (x+y+z);
-    if(occ > 255) occ = 255;
-
-    occ = calcAdj(CX[7], CX[1], CX[0]);
-    cs[cs_n+0].r = occ;
-    cs[cs_n+0].g = occ;
-    cs[cs_n+0].b = occ;
-
-    occ = calcAdj(CX[1], CX[3], CX[2]);
-    cs[cs_n+1].r = occ;
-    cs[cs_n+1].g = occ;
-    cs[cs_n+1].b = occ;
-
-    occ = calcAdj(CX[3], CX[5], CX[4]);
-    cs[cs_n+2].r = occ;
-    cs[cs_n+2].g = occ;
-    cs[cs_n+2].b = occ;
-
-    occ = calcAdj(CX[5], CX[7], CX[6]);
-    cs[cs_n+3].r = occ;
-    cs[cs_n+3].g = occ;
-    cs[cs_n+3].b = occ;
-
-    cs_n += 4;
+    return isOccludes(_get(x,y,z));
 }
-*/
+
+int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
+    int i;
+    i = 3*side_num;
+    x += s_array[i+0];
+    y += s_array[i+1];
+    z += s_array[i+2];
+
+    int tile_id = _get(x,y,z);
+    if(tile_id == _tile_id) return 1;
+    return isActive(tile_id);
+}
 
 void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
     int i;
@@ -498,60 +353,42 @@ void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, 
     v_list[offset+3].b = occ;
 }
 
-int inline _is_occluded(int x,int y,int z, int side_num) {
-    const static int s_array[18] = {
-            0,0,1,  //top
-            0,0,-1, //bottom
-            1,0,0,  //north
-            -1,0,0, //south
-            0,1,0,  //west
-            0,-1,0, //east
-            };
+int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
+int inline _is_occluded(int x,int y,int z, int side_num);
 
+
+
+//Non-normal blocks:vertex count for each
+static int oddBlockVCount[7] = {0, 8, 8, 8, 8, 8, 8};
+
+#define _0 0.01
+#define _1 0.99
+
+static float oddBlockV[2*12] = {
+_0,_1,_1, _1,_0,_1, _1,_0,_0, _0,_1,_0,
+_1,_1,_1, _0,_0,_1, _0,_0,_0, _1,_1,_0
+};
+
+//assume 8 vertices
+inline void insert_oddBlock(struct Vertex* v_list, int offset, int x, int y, int z, int active, int tile_id) {
+    //memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*2*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+0], 4*2*sizeof(struct Vertex));
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    int j = active -2;
     int i;
-    i = 3*side_num;
-    x += s_array[i+0];
-    y += s_array[i+1];
-    z += s_array[i+2];
-    //printf("%i, %i, %i \n", s_array[i+0], s_array[i+1], s_array[i+2]);
-    //return isOccluded(_get(x,y,z));
-    
-    //return isActive(_get(x,y,z));
-    return isOccludes(_get(x,y,z));
-}
+    for(i=0; i<8;i++) {
+        v_list[offset+i].x = _x + oddBlockV[12*j+3*i+0];
+        v_list[offset+i].y = _y + oddBlockV[12*j+3*i+1];
+        v_list[offset+i].z = _z + oddBlockV[12*j+3*i+2];
+    }
 
-const static int s_array[18] = {
-        0,0,1,  //top
-        0,0,-1, //bottom
-        1,0,0,  //north
-        -1,0,0, //south
-        0,1,0,  //west
-        0,-1,0, //east
-        };
-
-int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
-    int i;
-    i = 3*side_num;
-    x += s_array[i+0];
-    y += s_array[i+1];
-    z += s_array[i+2];
-    //printf("%i, %i, %i \n", s_array[i+0], s_array[i+1], s_array[i+2]);
-    //return isOccluded(_get(x,y,z));
-
-    int tile_id = _get(x,y,z);
-    if(tile_id == _tile_id) return 1;
-    return isActive(tile_id);
 }
 
 
-//int transparent_cache[8192];    //8192, 16384/2
-//int transparent_cache_n;
-
-//int cube_vertex_count[4];
-
-//static const int VERTEX_SLACK = 128; // increase to 128
-
-static const int VERTEX_SLACK = 256;
+static const int VERTEX_SLACK = 128;
 
 static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
@@ -562,7 +399,6 @@ int update_column_VBO(struct vm_column* column) {
     struct VBO* vbo = &column->vbo;
     struct vm_chunk* chunk;
     int i;
-    int transparency;
 
     //cs_n = 0; //clear chunk scratch
 
@@ -575,6 +411,8 @@ int update_column_VBO(struct vm_column* column) {
     Dont delete , reuse
 */
     //first pass, count quads
+    int active;
+    int transparency;
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
         //printf("chunk= %i\n", i);
@@ -586,12 +424,13 @@ int update_column_VBO(struct vm_column* column) {
         for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
             tile_id = _get(_x,_y,_z);
             //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
-            if(isActive(tile_id) == 0) {
-                continue;
-            } 
-            else 
+            active = isActive(tile_id);
+            if(active == 0) continue;
+
+            transparency = isTransparent(tile_id);
+            if(active == 1)  
             {
-                transparency = isTransparent(tile_id);
+
                 //if(isOccludes(tile_id) == 1) {
                 if(transparency == 0)
                 { 
@@ -616,7 +455,14 @@ int update_column_VBO(struct vm_column* column) {
                         }
                     }
                 }
+                continue;    
             }
+        if(active > 1)  {
+            vertex_count += oddBlockVCount[active];
+            cube_vertex_count[transparency] += oddBlockVCount[active];
+            continue;
+        }
+
         }}}
     }
     //set offsets
@@ -690,19 +536,11 @@ int update_column_VBO(struct vm_column* column) {
         for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
             tile_id = _get(_x,_y,_z);
             //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
-            if(isActive(tile_id) == 0) {
-                continue;
-            } 
-            else 
+            active = isActive(tile_id);
+            if(active == 0) continue;
+            transparency = isTransparent(tile_id);
+            if(active == 1)
             {
-                transparency = isTransparent(tile_id);
-                /*
-                if(transparency > 3) {
-                    printf("Error! transparency value wrong, %i\n");
-                    return 0;
-                }
-                */
-                //if(isOccludes(tile_id) == 1)
                 if(transparency == 0)
                 { 
                     for(side_num=0; side_num<6; side_num++) {
@@ -725,16 +563,24 @@ int update_column_VBO(struct vm_column* column) {
                         }
                     }
                 }
+                continue;
+            }
+
+            if(active > 1)  {
+                insert_oddBlock(v_list2, _cube_vertex_count[transparency],_x,_y,_z, active, tile_id);
+                _cube_vertex_count[transparency] += oddBlockVCount[active];
+                continue;
             }
         }}}
     }
-
+/*
     if(vbo->_v_num[3] > 0) {
         printf("vnum= %i\n", vbo->v_num);
         printf("counts= %i, %i, %i, %i \n", _cube_vertex_count[0],_cube_vertex_count[1],_cube_vertex_count[2],_cube_vertex_count[3]);
         printf("offsets= %i, %i, %i, %i \n", vbo->_v_offset[0], vbo->_v_offset[1], vbo->_v_offset[2], vbo->_v_offset[3]);
         printf("vnum= %i, %i, %i, %i \n", vbo->_v_num[0], vbo->_v_num[1], vbo->_v_num[2], vbo->_v_num[3]);
     }
+*/
     /*
         Now that memory is full of quads, push to graphics card
     */
@@ -1108,7 +954,6 @@ void DRAW_VBOS1() {
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
         //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
@@ -1213,7 +1058,7 @@ void DRAW_VBOS1a() {
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
-        
+
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
