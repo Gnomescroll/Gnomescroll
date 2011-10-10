@@ -1,10 +1,13 @@
 #!/usr/bin/python
 
+
+### DEPRECATE WHOLE FILE ###
+
 '''
 Map gen
 '''
 import time
-import noise
+#import noise
 import random
 
 class Gen:

@@ -8,8 +8,12 @@ import struct
 
 from opts import opts
 
-import os
-OS = os.uname()[0]
+#import os
+#OS = os.uname()[0]
+
+import platform
+OS = platform.system()
+
 OS = "Windows"
 
 class NetServer:
