@@ -79,7 +79,7 @@ def parse(cl_args=None):
 
     parser.add_argument('-m', '--map', default=DEFAULTS['map'])
 
-    parser.add_argument('--seed', default=DEFAULTS['seed'])
+    parser.add_argument('--seed', default=DEFAULTS['seed'], type=int)
 
     parser.add_argument('--save-map', default='')
 
@@ -114,7 +114,6 @@ def get_args():
         print_args(args)
 
     if args.no_load:
-        import sys
         sys.exit()
         
     return args
