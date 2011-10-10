@@ -244,3 +244,27 @@ north   leaves-block.png
 south   leaves-block.png
 west    leaves-block.png
 east    leaves-block.png
+===
+id      172
+name    leaves
+hud     56 terminal.png
+type 	2
+transparency 2
+top     terminal.png
+bottom  terminal.png
+north   terminal.png
+south   terminal.png
+west    terminal.png
+east    terminal.png
+===
+id      173
+name    leaves
+hud     57 terminal.png
+type 	2
+transparency 3
+top     terminal.png
+bottom  terminal.png
+north   terminal.png
+south   terminal.png
+west    terminal.png
+east    terminal.png

@@ -359,19 +359,30 @@ int inline _is_occluded(int x,int y,int z, int side_num);
 
 
 //Non-normal blocks:vertex count for each
-static int oddBlockVCount[7] {0, 8, 8, 8, 8, 8, 8, 8}
+static int oddBlockVCount[7] = {0, 8, 8, 8, 8, 8, 8};
+
+#define _0 0.01
+#define _1 0.99
+
+static float oddBlockV[2*12] = {
+_0,_1,_1, _1,_0,_1, _1,_0,_0, _0,_1,_0,
+_1,_1,_1, _0,_0,_1, _0,_0,_0, _1,_1,_0
+};
 
 //assume 8 vertices
 inline void insert_oddBlock(struct Vertex* v_list, int offset, int x, int y, int z, int active, int tile_id) {
-    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*2*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    //memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*2*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+0], 4*2*sizeof(struct Vertex));
 
     float _x = x;
     float _y = y;
     float _z = z;
-    for(i=0; i<=6;i++) {
-        v_list[offset+i].x = _x;
-        v_list[offset+i].y = _y;
-        v_list[offset+i].z = _z;
+    int j = active -2;
+    int i;
+    for(i=0; i<8;i++) {
+        v_list[offset+i].x = _x + oddBlockV[12*j+3*i+0];
+        v_list[offset+i].y = _y + oddBlockV[12*j+3*i+1];
+        v_list[offset+i].z = _z + oddBlockV[12*j+3*i+2];
     }
 
 }
@@ -447,8 +458,8 @@ int update_column_VBO(struct vm_column* column) {
                 continue;    
             }
         if(active > 1)  {
-            vertex_count += oddBlockVCound[active];
-            cube_vertex_count[transparency] += oddBlockVCound[active];
+            vertex_count += oddBlockVCount[active];
+            cube_vertex_count[transparency] += oddBlockVCount[active];
             continue;
         }
 
@@ -525,10 +536,10 @@ int update_column_VBO(struct vm_column* column) {
         for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
             tile_id = _get(_x,_y,_z);
             //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
-            active = isActive(tile_id)
+            active = isActive(tile_id);
             if(active == 0) continue;
             transparency = isTransparent(tile_id);
-            if(active) == 1)
+            if(active == 1)
             {
                 if(transparency == 0)
                 { 
@@ -556,8 +567,8 @@ int update_column_VBO(struct vm_column* column) {
             }
 
             if(active > 1)  {
-                insert_oddBlock(v_list2, _cube_vertex_count[transparency],_x,_y,_z, active, tile_id)
-                _cube_vertex_count[transparency] += oddBlockVCound[active];
+                insert_oddBlock(v_list2, _cube_vertex_count[transparency],_x,_y,_z, active, tile_id);
+                _cube_vertex_count[transparency] += oddBlockVCount[active];
                 continue;
             }
         }}}
