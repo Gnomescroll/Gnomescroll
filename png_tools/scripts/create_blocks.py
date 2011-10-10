@@ -238,7 +238,7 @@ for block in lblock.list:
     x['hud_img'] = block.hud_img
     x['transparent'] = block.transparency
     x['active'] = block.type #type 0 is empty, type 1 is normal, type 2+ is weird blocks
-    if(block.transparency > 0):
+    if(block.transparency > 0 or block.type > 1):
         x['occludes'] = False
     dat[block.id] = x
 
