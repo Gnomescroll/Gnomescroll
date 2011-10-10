@@ -14,9 +14,13 @@ sfx = 100
 music = 100
 
 ''' Window '''
-width = 1024
+#width = 1024
+#height = 800
+#width = 1920
+#height = 1200
+width = 1280
 height = 800
-fullscreen = 0
+fullscreen = 1
 
 ''' Controls '''
 # lower is more sensitive
