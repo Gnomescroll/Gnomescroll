@@ -59,17 +59,17 @@ def configure(conf):
     #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
 
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT'])
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall','-fPIC', '-DDC_CLIENT'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
     else:
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
 
-
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':
-        conf.check(lib=['opengl32', 'glu32', 'glew32'], uselib_store='GL')
+        glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
+        conf.check(lib=['opengl32', 'glu32', 'glew32'], libpath=glew_lib_path, uselib_store='GL') 
     elif OS == 'Linux':
         conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
