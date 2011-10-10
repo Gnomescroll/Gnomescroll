@@ -8,7 +8,9 @@ Client input
 from math import sin, cos, pi
 
 import default_settings as settings
-from opts import opts
+
+import opts
+
 
 import SDL.input
 
@@ -177,10 +179,11 @@ class Mouse(object):
         #    self._pan_agent(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
+        #opts = opts.opts
         if InputGlobal.input == 'agent':
-            self._pan_agent(x, y, dx, dy, sen=opts.mouse_sensitivity)
+            self._pan_agent(x, y, dx, dy, sen=opts.opts.mouse_sensitivity)
         if InputGlobal.input == 'camera':
-            self._pan_camera(x, y, dx, dy, sen=opts.camera_sensitivity)
+            self._pan_camera(x, y, dx, dy, sen=opts.opts.camera_sensitivity)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
         GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
@@ -294,6 +297,7 @@ class Keyboard(object):
             "p" : _toggle_latency_unit,
             ',' : self.toggle_agent_gravity,
             'u' : SDL.input.toggle_mouse_bind,
+            '/' : self.toggle_hud,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
@@ -303,6 +307,9 @@ class Keyboard(object):
                 self.key_handlers[k] = h
         else:
             self.key_handlers[key] = handler
+
+    def toggle_hud(self):
+        opts.opts.no_hud = not opts.opts.no_hud
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':

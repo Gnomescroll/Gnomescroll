@@ -76,8 +76,7 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     // RESULTS:
     // ceiling results in plateaus (obviously)
     // scale range doesnt have plateaus (altho could scale to slightly larger than maxheight, to get plateau too)
-    // but due to roundoff error, slight variations  in hillside slopes appear
-    // this is a good thing for the map.
+    // but due to roundoff error, slight variations  in hillside slopes appear (which is good)
 
     float scale = 1.0f;
     const int plateau_factor = 1;   // use 0 for no ceiling plateaus
