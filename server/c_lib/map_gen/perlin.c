@@ -4,7 +4,7 @@
 // see LICENSE.txt for details
 // $Id$
 
-//#include <math.h>
+#include <math.h>
 #include "perlin.h"
 
 #ifdef _MSC_VER

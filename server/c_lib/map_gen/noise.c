@@ -1,5 +1,8 @@
 #include "noise.h"
-//#include "math.h"
+#include "math.h"
+
+
+#include "noise_utils.cpp"
 
 void seed_noise(int seed) {
     srand((unsigned)seed);

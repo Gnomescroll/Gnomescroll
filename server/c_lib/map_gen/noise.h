@@ -7,16 +7,6 @@ int seed_max = INT_MAX;
 
 #include <c_lib/t_map/t_map.h>
 
-//inline float fabs(float x){
-    ////return (float&) ((unsigned int&)x)&0x7fffffff ;
-    ////return ((unsigned int*)(&x))&0x7fffffff;
-//}
-inline float fabs(float x)
-{
-    int y = (int&)x & 0x7FFFFFFF;
-    return (float&)y;
-}
-
 typedef union f3 {
     float xyz[3];
     float x, y, z;
