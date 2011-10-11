@@ -64,31 +64,26 @@ void noise_viz_setup_bin(float* arr, int n) {
 }
 
 
-void rmf_dist(float* arr, int x, int y, int z) {
+void rmf_dist(int x, int y, int z) {
     float fx = (float)x + 2.0f;
     float fy = (float)y + 2.0f;
     float fz = (float)z + 2.0f;
+
+    float *_noise = (float*) malloc(sizeof(float)*x*y*z);
     
     int i,j,k;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                arr[i + x*j + x*y*k] = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, 0);
+                _noise[i + x*j + x*y*k] = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, 0);
             }
         }
     }
-}
 
-#ifdef DC_CLIENT
-void plot_rmf(int x, int y, int z) {
-
-    float *_noise = (float*) malloc(sizeof(float)*x*y*z);
-    rmf_dist(_noise, x, y, z);
-    setup_bin(_noise, x*y*z);
-    bin_histrogram_draw(100.0f, 100.0f, 0.0f);
+    noise_viz_setup_bin(_noise, x*y*z);
+    
     free(_noise);
 }
-#endif
 
 
 #define _C 0.5

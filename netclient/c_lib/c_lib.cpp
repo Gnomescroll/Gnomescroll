@@ -32,6 +32,7 @@
     #include <c_lib/hud/cube_select.cpp>
 #endif
 
+#include <c_lib/map_gen/noise.c>
 #include <c_lib/noise_viz.cpp>
 
 #include "./physics/vector.c"
@@ -51,7 +52,6 @@
 
 #include <net_lib/net_lib.h>
 
-#include <map_gen/noise.c>
 
 int init_c_lib() {
     printf("init c_lib\n");

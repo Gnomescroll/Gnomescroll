@@ -138,5 +138,3 @@ void set_noise_parameters(int oct, float per, float amp, float lac, float freq) 
 #include "interpolator.c"
 #include "gradient.c"
 #include "features.c"
-
-#include "noise_viz.cpp"
