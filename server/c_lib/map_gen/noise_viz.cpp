@@ -2,28 +2,44 @@
 
 int bins[1000];
 
-float bin_min;
-float bin
+float bin_min = -0.2;
+float bin_inc = 0.001;
 
+static int less_than_min = 0;
+static int greater_than_max = 0;
 
 inline void bin_float(float x) {
-    
-
+    if(x < bin_min) {
+        less_than_min++;
+        return;
+    }
+    int bin = x / bin_inc;
+    if(bin > 1000){
+        greater_than_max++;
+        return;    
+    }
+    bins[bin]++;
 }
 
 void setup_bin(float* arr, int n) {
+    printf("Starting Binning\n");
     int i;
+    for(i=0; i<1000;i++) bins[i] = 0;
     double average = 0; 
     for(i=0; i<n; i++) {
         average += arr[n];
         bin_float(arr[n]);
     }
     average = average / (double)(n);
-    prinf("average= %d", average);
+    printf("average= %d \n", average);
+    printf("less_than_min= %i \n",less_than_min);
+    printf("greater_than_max= %i \n", greater_than_max);
+    printf("finished binning\n");
 
 }
+
 #ifdef DC_CLIENT
-void pviz_packet_histrogram2_draw(float x, float y, float z) {
+void bin_histrogram_draw(float x, float y, float z) {
     //printf("po=%i\n", PO_L);
     x -= 10;
     y += 10;
