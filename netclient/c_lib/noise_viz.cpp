@@ -1,26 +1,32 @@
 #include <c_lib/noise_viz.hpp>
 //srand((unsigned)time(0));
 
-static const int num_bins = 1000;
+static const int num_bins = 100;
 static int bin2[num_bins];
 
 const float bin_min = 0;
-const float bin_inc = 0.001;
+const float bin_inc = 0.01;
 
 float bin_scale;
 
 static int less_than_min = 0;
 static int greater_than_max = 0;
 
+float noise_viz_test[2000];
 void noise_viz_test_setup() {
     
     int i;
-    float test[2000];
+
     for(i=0; i< 2000; i++) {
-        test[i] = (float)rand()/(float)RAND_MAX;
-        //printf("%f \n", test[i]);
+        noise_viz_test[i] = (float)rand()/(float)RAND_MAX;
+        //printf("%f \n", noise_viz_test[i]);
     }
-    setup_bin(test, 2000);
+/*
+    for(i=0; i< 2000; i++) {
+        printf("%i= %f \n", i, noise_viz_test[i]);
+    }
+*/
+    noise_viz_setup_bin(noise_viz_test, 2000);
 }
 inline void bin_float(float x) {
     if(x < bin_min) {
@@ -35,16 +41,16 @@ inline void bin_float(float x) {
     bin2[index]++;
 }
 
-void setup_bin(float* arr, int n) {
+void noise_viz_setup_bin(float* arr, int n) {
     printf("===\n");
     printf("Starting Binning\n");
     int i;
-    for(i=0; i<1000;i++) bin2[i] = 0;
+    for(i=0; i<num_bins;i++) bin2[i] = 0;
     double average = 0; 
     for(i=0; i<n; i++) {
-        average += arr[n];
-        printf("%f \n", arr[n]);
-        bin_float(arr[n]);
+        average += arr[i];
+        //printf("%f \n", arr[n]);
+        bin_float(arr[i]);
     }
     //average = average / ((double)(n));
 
