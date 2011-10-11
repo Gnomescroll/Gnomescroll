@@ -52,6 +52,34 @@ void setup_bin(float* arr, int n) {
     bin_scale = ((float)(n))/1000;
 }
 
+
+void rmf_dist(float* arr, int x, int y, int z) {
+    float fx = (float)x + 2.0f;
+    float fy = (float)y + 2.0f;
+    float fz = (float)z + 2.0f;
+    
+    int i,j,k;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                arr[i + x*j + x*y*k] = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, 0);
+            }
+        }
+    }
+}
+
+#ifdef DC_CLIENT
+void plot_rmf(int x, int y, int z) {
+
+    float *_noise = (float*) malloc(sizeof(float)*x*y*z);
+    rmf_dist(_noise, x, y, z);
+    setup_bin(_noise, x*y*z);
+    bin_histrogram_draw(100.0f, 100.0f, 0.0f);
+    free(_noise);
+}
+#endif
+
+
 #define _C 0.5
 #ifdef DC_CLIENT
 void draw_noise_viz_histrogram(float x, float y, float z) {

@@ -75,9 +75,9 @@ void plot_rmf(int x, int y, int z) {
     float *_noise = (float*) malloc(sizeof(float)*x*y*z);
     rmf_dist(_noise, x, y, z);
     setup_bin(_noise, x*y*z);
-    //#ifdef DC_CLIENT
-        //bin_histrogram_draw(100.0f, 100.0f, 0.0f);
-    //#endif
+    #ifdef DC_CLIENT
+        bin_histrogram_draw(100.0f, 100.0f, 0.0f);
+    #endif
     free(_noise);
 }
 
