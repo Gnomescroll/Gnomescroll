@@ -175,13 +175,33 @@ void draw_noise_viz_histrogram(float x, float y, float z) {
             glVertex3f(_C+x+2*j,_C+y+2*i,z);
         }
     }
-
+/*
     glColor3ub((unsigned char) 200,(unsigned char)0,(unsigned char)0);
     for(i=0; i<20; i++) {
         glVertex3f(_C+x-2,_C+y+2*10*i,z);
         glVertex3f(_C+x-3,_C+y+2*10*i,z);
         glVertex3f(_C+x-4,_C+y+2*10*i,z);
     }
+    glEnd();
+*/
+
+    glColor3ub((unsigned char) 200,(unsigned char)0,(unsigned char)0);
+    for(i=0; i<num_bins; i+=25) {
+        glVertex3f(_C+x-2,_C+y+2*i,z);
+        glVertex3f(_C+x-3,_C+y+2*i,z);
+        glVertex3f(_C+x-4,_C+y+2*i,z);
+    }
+    i = 0;
+    glColor3ub((unsigned char) 0,(unsigned char)200,(unsigned char)0);
+    glVertex3f(_C+x-2,_C+y+2*i,z);
+    glVertex3f(_C+x-3,_C+y+2*i,z);
+    glVertex3f(_C+x-4,_C+y+2*i,z);
+
+    i = num_bins;
+    glVertex3f(_C+x-2,_C+y+2*i,z);
+    glVertex3f(_C+x-3,_C+y+2*i,z);
+    glVertex3f(_C+x-4,_C+y+2*i,z);
+
     glEnd();
 
     //printf("time= %i\n", get_current_netpeer_time());
