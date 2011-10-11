@@ -39,29 +39,20 @@ pnoise1(float x, const int repeat, const int base)
 
 float perlin1(float x, int repeat, int base)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-   if (octaves == 1) {
-        // Single octave, return simple noise
-        return pnoise1(x, repeat, base);
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += pnoise1(x * frequency, (const int)(repeat * frequency), base) * amplitude;
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total / max);
+    for (i = 0; i < _oct; i++) {
+        total += pnoise1(x * frequency, (const int)(repeat * frequency), base) * amplitude;
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
+    return (total / max);
 }
 
 float inline
@@ -102,30 +93,21 @@ pnoise2(float x, float y, const float repeatx, const float repeaty, const int ba
 
 float perlin2(float x, float y, int repeatx, int repeaty, int base)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-   if (octaves == 1) {
-        // Single octave, return simple noise
-        return pnoise2(x,y, repeatx, repeaty, base);
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += pnoise2(x * frequency, y * frequency, repeatx * frequency, repeaty * frequency, base) * amplitude;
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total / max);   // why /max
+    for (i = 0; i < _oct; i++) {
+        total += pnoise2(x * frequency, y * frequency, repeatx * frequency, repeaty * frequency, base) * amplitude;
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
-}
+    return (total / max);   // why /max? normalize?
+    }
 
 float inline
 grad3(const int hash, const float x, const float y, const float z)
@@ -174,30 +156,21 @@ pnoise3(float x, float y, float z, const int repeatx, const int repeaty, const i
 
 float perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-    if (octaves == 1) {
-        // Single octave, return simple noise
-        return pnoise3(x, y, z, repeatx, repeaty, repeatz, base);
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += pnoise3(x * frequency, y * frequency, z * frequency, 
-                (const int)(repeatx*frequency), (const int)(repeaty*frequency), (const int)(repeatz*frequency), base) * amplitude;
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total / max);
+    for (i = 0; i < _oct; i++) {
+        total += pnoise3(x * frequency, y * frequency, z * frequency, 
+            (const int)(repeatx*frequency), (const int)(repeaty*frequency), (const int)(repeatz*frequency), base) * amplitude;
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
+    return (total / max);
 }
 
 /* fill methods */

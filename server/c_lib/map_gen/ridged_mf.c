@@ -9,143 +9,94 @@
 
 float rmf_perlin1(float x, int repeat, int base)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-    if (octaves == 1) {
-        // Single octave, return simple noise
-        return 1.0f - fabs(pnoise1(x, repeat, base));
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += 1.0f - fabs(pnoise1(x * frequency, (const int)(repeat * frequency), base) * amplitude);
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total / max);
-    } 
-    return 0.0f;
+    for (i = 0; i < _oct; i++) {
+        total += 1.0f - fabs(pnoise1(x * frequency, (const int)(repeat * frequency), base) * amplitude);
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
+    }
+    return (total / max);
 }
 
 float rmf_perlin2(float x, float y, int repeatx, int repeaty, int base)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-    if (octaves == 1) {
-        // Single octave, return simple noise
-        return 1.0f - fabs(pnoise2(x,y, repeatx, repeaty, base));
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += 1.0f - fabs(pnoise2(x * frequency, y * frequency, repeatx * frequency, repeaty * frequency, base) * amplitude);
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total / max);
+    for (i = 0; i < _oct; i++) {
+        total += 1.0f - fabs(pnoise2(x * frequency, y * frequency, repeatx * frequency, repeaty * frequency, base) * amplitude);
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
+    return (total / max);
 }
 
 float rmf_perlin3(float x, float y, float z, int repeatx, int repeaty, int repeatz, int base)
 {
+    float amplitude = _amp,
+           frequency = _freq;
 
-    //printf("f: %0.2f\n", _freq);
-    //printf("a: %0.2f\n", _amp);
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
-
-    if (octaves == 1) {
-        // Single octave, return simple noise
-        return 1.0f - fabs(pnoise3(x, y, z, repeatx, repeaty, repeatz, base));
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
-
-        for (i = 0; i < octaves; i++) {
-            total += 1.0f - fabs(pnoise3(x * frequency, y * frequency, z * frequency, 
-                (const int)(repeatx*frequency), (const int)(repeaty*frequency), (const int)(repeatz*frequency), base) * amplitude);
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total / max);
+    for (i = 0; i < _oct; i++) {
+        total += 1.0f - fabs(pnoise3(x * frequency, y * frequency, z * frequency, 
+            (const int)(repeatx*frequency), (const int)(repeaty*frequency), (const int)(repeatz*frequency), base) * amplitude);
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
+    return (total / max);
 }
 
 
 float rmf_simplex2(float x, float y)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-    if (octaves == 1) {
-        // Single octave, return simple noise
-        return 1.0f - fabs(snoise2(x,y));
-    } else if (octaves > 1) {
-        int i;
-        float max = 0.0f;
-        float total = 0.0f;
+    int i;
+    float max = 0.0f;
+    float total = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += 1.0f - fabs(snoise2(x * frequency, y * frequency) * amplitude);
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total/max); // why max
+    for (i = 0; i < _oct; i++) {
+        total += 1.0f - fabs(snoise2(x * frequency, y * frequency) * amplitude);
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
+    return (total/max); // why max
 }
 
 float rmf_simplex3(float x, float y, float z)
 {
-    int octaves = _oct;
-    float persistence = _per,
-            amplitude = _amp,
-            lacunarity = _lac,
-            frequency = _freq;
+    float amplitude = _amp,
+           frequency = _freq;
 
-    if (octaves == 1) {
-        // Single octave, return simple noise
-        return 1.0f - fabs(snoise3(x,y,z));
-    } else if (octaves > 1) {
-        int i;
-        float total = 0.0f;
-        float max = 0.0f;
+    int i;
+    float total = 0.0f;
+    float max = 0.0f;
 
-        for (i = 0; i < octaves; i++) {
-            total += 1.0f - fabs(snoise3(x * frequency, y * frequency, z * frequency) * amplitude);
-            max += amplitude;
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-        return (total/max);
+    for (i = 0; i < _oct; i++) {
+        total += 1.0f - fabs(snoise3(x * frequency, y * frequency, z * frequency) * amplitude);
+        max += amplitude;
+        frequency *= _lac;
+        amplitude *= _per;
     }
-    return 0.0f;
+    return (total/max);
 }
 
 /* fill methods */
@@ -160,7 +111,6 @@ void rmf_perlin1_fill(int x, int repeat, int base) {
 }
 
 void rmf_perlin2_fill(int x, int y, int repeatx, int repeaty, int base) {
-    printf("RMF PERLIN 2 FILL\n");
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
     int i,j;

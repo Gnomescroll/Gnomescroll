@@ -124,6 +124,10 @@ void invert_map(int x, int y, int z, int tile) {
 }
 
 void set_noise_parameters(int oct, float per, float amp, float lac, float freq) {
+    if (oct < 1) {
+        printf("ERROR set_noise_parameters :: octaves must be >= 1\n");
+        return;
+    }
     _oct = oct;
     _per = per;
     _amp = amp;
