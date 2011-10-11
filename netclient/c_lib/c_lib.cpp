@@ -30,6 +30,8 @@
 	#include <c_lib/hud/cube_select.cpp>
 #endif
 
+#include <c_lib/noise_viz.cpp>
+
 #include "./physics/vector.c"
 #include "./ray_trace/ray_trace.c"
 #include "./physics/common.c"

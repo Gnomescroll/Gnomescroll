@@ -25,8 +25,21 @@ def draw_cube_selector(float x, float y, float size=1, int mode=0):
     _draw_cube_selector(x, y, size, mode)
 
 '''
+TEST
+'''
+
+cdef extern from "./noise_viz.hpp":
+    void noise_viz_test_setup()
+    void draw_noise_viz_histrogram(float x, float y, float z)
+
+
+def draw_noise_viz(float x, float y, float z):
+    draw_noise_viz_histrogram(x,y,z)
+    
+'''
 HUD global
 '''
 
 def init_hud():
     _init_cube_select()
+    noise_viz_test_setup()
