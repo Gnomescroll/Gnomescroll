@@ -83,7 +83,7 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
         counter += bin_array[i];
         if(counter > terminal) {
             cutoff = min+i*_bin_inc;
-            printf("percentile_cuttoff: percentile= %n, cutoff= %f \n", percentile, cutoff);
+            printf("percentile_cuttoff: percentile= %f, cutoff= %f \n", percentile, cutoff);
             break;
         }
     }
