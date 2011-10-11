@@ -37,6 +37,10 @@ static inline int isNuclear(int id) {
     return cube_list[id].nuclear;
     }
 
+static inline int isSolid(int id) {
+    return cube_list[id].solid;
+}
+
 static inline int isOccludes(int id) {
     return cube_list[id].occludes;
     }

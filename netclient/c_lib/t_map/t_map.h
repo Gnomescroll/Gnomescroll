@@ -27,6 +27,11 @@
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
 #define vm_column_max 16
+#define vm_chunk_voxel_size (vm_chunk_size * vm_chunk_size * vm_chunk_size)
+
+#define xmax (vm_map_dim    * vm_chunk_size)
+#define ymax (vm_map_dim    * vm_chunk_size)
+#define zmax (vm_column_max * vm_chunk_size)
 
 struct VBO {
         int v_num;
@@ -94,6 +99,13 @@ int _set_server_version(int x,int y,int z, int server_version);
 
 struct vm_map* _get_map();
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
+
+int _get_highest_open_block(int x, int y, int n);
+int _get_lowest_open_block(int x, int y, int n);
+
+int _get_highest_solid_block(int x, int y);
+int _get_lowest_solid_block(int x, int y);
+
 
 /*
 #endif

@@ -165,12 +165,7 @@ int _set_server_version(int x,int y,int z, int server_version) {
 int _clear() {
     // iterate entire map
     // set to 0
-    int xmax = vm_map_dim * vm_chunk_size;
-    int ymax = vm_map_dim * vm_chunk_size;
-    int zmax = vm_column_max * vm_chunk_size;
-    int i=0;
-    int j=0;
-    int k=0;
+    int i,j,k;
     for (i=0; i<xmax; i++) {
         for (j=0; j<ymax; j++) {
             for (k=0; k<zmax; k++) {
@@ -179,4 +174,80 @@ int _clear() {
         }
     }
     return 0;
+}
+
+
+int _get_highest_open_block(int x, int y, int n) {
+    if (n < 1) {
+        printf("WARNING _get_highest_open_block :: called with n < 1, abort");
+        return -1;
+    }
+    int i=zmax;
+    int open=0;
+    int tid=0;
+
+    while (i>0) {
+        i--;
+        tid = _get(x,y,i);
+        if (isSolid(tid)) {
+            if (open >= n) {
+                i++;
+                break;
+            }
+            open = 0;
+        } else {
+            open++;
+        }
+    }
+    if (open < n) {   // failure
+        i = -1;
+    }
+    return i;
+}
+
+int _get_highest_solid_block(int x, int y) {
+
+    int i;
+    for (i=zmax-1; i>=0; i--) {
+        if (isSolid(_get(x,y,i))) {
+            break;
+        }
+    }
+    return  i;
+}
+
+int _get_lowest_open_block(int x, int y, int n) {
+    if (n < 1) {
+        printf("WARNING _get_lowest_open_block :: called with n < 1, abort\n");
+        return -1;
+    }
+    int i=0;
+    int open=0;
+    int tid=0;
+    while (open < n && i<zmax) {
+        tid = _get(x,y,i);
+        if (isSolid(tid)) {
+            open=0;
+        } else {
+            open++;
+        }
+        i++;
+    }
+    i--;
+    if (open < n) { // failure
+        i = -1;
+    }
+    return i;
+}
+
+int _get_lowest_solid_block(int x, int y) {
+
+    int i;
+    for (i=0; i < zmax; i++) {
+        if (isSolid(_get(x,y,i))) {
+            break;
+        }
+    }
+    if (i >= zmax) i = -1;  // failure
+    return i;
 }

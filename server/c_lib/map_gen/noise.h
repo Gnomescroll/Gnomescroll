@@ -65,6 +65,11 @@ unsigned char PERM[] = {
   180
 };
 
+//#ifdef DC_CLIENT
+//#define xmax 512
+//#define ymax 512
+//#define zmax 128
+//#endif
 
 float noisemap[xmax*ymax*zmax];
 
@@ -81,3 +86,6 @@ float _lac = 2.0f;
 float _freq = 1.0f;
 
 void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);
+
+//void rmf_dist(int x, int y, int z);
+

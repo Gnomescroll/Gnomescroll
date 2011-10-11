@@ -179,7 +179,6 @@ class Mouse(object):
         #    self._pan_agent(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        #opts = opts.opts
         if InputGlobal.input == 'agent':
             self._pan_agent(x, y, dx, dy, sen=opts.opts.mouse_sensitivity)
         if InputGlobal.input == 'camera':

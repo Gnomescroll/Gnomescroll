@@ -1,11 +1,13 @@
-#define DC_CLIENT
+#ifndef DC_CLIENT
+    #define DC_CLIENT
+#endif
 
 //#include <stdio.h>
 
 #include "./c_lib.hpp"
 
 #ifdef DC_SERVER 
-	sasfsafgdg4423+3
+    sasfsafgdg4423+3
 #endif
 
 #ifndef DC_CLIENT
@@ -25,9 +27,9 @@
 #include "./t_map/t_properties.c"
 
 #ifdef DC_CLIENT
-	#include <c_lib/t_map/t_viz.c>
-	#include <c_lib/t_map/t_vbo.c>
-	#include <c_lib/hud/cube_select.cpp>
+    #include <c_lib/t_map/t_viz.c>
+    #include <c_lib/t_map/t_vbo.c>
+    #include <c_lib/hud/cube_select.cpp>
 #endif
 
 #include "./physics/vector.c"
@@ -37,15 +39,17 @@
 #include "./agent/agent_include.h"
 
 #ifdef DC_CLIENT
-	#include "./texture_loader.c"
+    #include "./texture_loader.c"
 #endif
-	
+    
 #ifdef DC_SERVER
-	//#include "./t_map/t_serialize.c"
+    //#include "./t_map/t_serialize.c"
 #endif
 
 
 #include <net_lib/net_lib.h>
+
+#include <map_gen/noise.c>
 
 int init_c_lib() {
     printf("init c_lib\n");
@@ -53,8 +57,8 @@ int init_c_lib() {
     init_objects_neutron();
     init_objects_cspray();
 
-	#ifdef DC_CLIENT
-		init_texture_loader();
-	#endif
+    #ifdef DC_CLIENT
+        init_texture_loader();
+    #endif
 return 0;
 }

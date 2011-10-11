@@ -158,6 +158,7 @@ int _init_quad_cache_normals() {
         }
     }
 
+    return 0;
 }
 
 int _init_draw_terrain() {
