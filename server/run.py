@@ -76,39 +76,40 @@ def _gen_map():
         .reset()
 
         # 3d density noise. floating islands, overhangs
+        #.repeat(128,128,128)\
         c_lib.map_gen.conf\
         .size(128,128,128)\
         .tile(2)\
         .interpolate(4,4,2)\
         .density(threshold=0.75)\
-        .p3(octaves=6, persistence=0.7, repeatx=128, repeaty=128, repeatz=128)\
+        .p3(octaves=6, persistence=0.7)\
         .grass()\
         .start()\
         .reset()
         
-        ## 3d density noise, subtractive RMF. forms caves
-        #c_lib.map_gen.conf\
-        #.interpolate(4,2,1)\
-        #.size(128,128,128)\
-        #.tile(0)\
-        #.density(threshold=0.95)\
-        #.gradient(z0=0.03, z1=0.0)\
-        #.rmf()\
-        #.p3(octaves=6, persistence=0.6)\
-        #.start()\
-        #.reset()
+        # 3d density noise, subtractive RMF. forms caves
+        c_lib.map_gen.conf\
+        .interpolate(4,2,1)\
+        .size(128,128,128)\
+        .tile(0)\
+        .density(threshold=0.97)\
+        .gradient(z0=0.02, z1=0.0)\
+        .rmf()\
+        .p3(octaves=6, persistence=0.6)\
+        .start()\
+        .reset()
         
-        ## 3d density noise, subtractive RMF. forms caves
-        #c_lib.map_gen.conf\
-        #.interpolate(2,4,1)\
-        #.size(128,128,128)\
-        #.gradient(z0=0.03,  z1=0.0)\
-        #.tile(0)\
-        #.density(threshold=0.95)\
-        #.rmf()\
-        #.p3(octaves=6, persistence=0.6)\
-        #.start()\
-        #.reset()
+        # 3d density noise, subtractive RMF. forms caves
+        c_lib.map_gen.conf\
+        .interpolate(2,4,1)\
+        .size(128,128,128)\
+        .gradient(z0=0.02,  z1=0.0)\
+        .tile(0)\
+        .density(threshold=0.97)\
+        .rmf()\
+        .p3(octaves=6, persistence=0.6)\
+        .start()\
+        .reset()
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):

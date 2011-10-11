@@ -76,10 +76,11 @@ class Config:
 
         self.add_grass = False
 
-    def repeat(x=1024, y=1024, z=1024):
+    def repeat(self, x=1024, y=1024, z=1024):
         self.repeatx = x
         self.repeaty = y
         self.repeatz = z
+        return self
 
     def reset(self):
         self.__init__()
