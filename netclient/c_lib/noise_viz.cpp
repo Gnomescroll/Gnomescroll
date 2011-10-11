@@ -1,46 +1,6 @@
 #include <c_lib/noise_viz.hpp>
 //srand((unsigned)time(0));
 
-static const int num_bins = 100;
-static int bin2[num_bins];
-
-const float bin_min = 0.5;
-const float bin_inc = 0.005;
-
-float bin_scale;
-
-static int less_than_min = 0;
-static int greater_than_max = 0;
-
-float noise_viz_test[2000];
-void noise_viz_test_setup() {
-    
-    int i;
-
-    for(i=0; i< 2000; i++) {
-        noise_viz_test[i] = (float)rand()/(float)RAND_MAX;
-        //printf("%f \n", noise_viz_test[i]);
-    }
-/*
-    for(i=0; i< 2000; i++) {
-        printf("%i= %f \n", i, noise_viz_test[i]);
-    }
-*/
-    noise_viz_setup_bin(noise_viz_test, 2000);
-}
-
-inline void bin_float(float x) {
-    if(x < bin_min) {
-        less_than_min++;
-        return;
-    }
-    int index = (x-bin_min) / bin_inc;
-    if(index > num_bins){
-        greater_than_max++;
-        return;    
-    }
-    bin2[index]++;
-}
 
 float _bin_min = 0.5;
 float _bin_inc = 0.005;
@@ -98,19 +58,55 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
     }
     printf("Total point count= %i\n", counter);
 
-
-/*
-    for(i=0; i<_num_bins; i++) {
-        counter += bin_array[i];
-        if(counter > terminal) {
-            cutoff = min+i*_bin_inc;
-            print("percentile_cuttoff: percentile= %n, cutoff= %f \n", percentile, cutoff);
-            break;
-        }
-    }
-*/
     free(bin_array);
     return cutoff;
+}
+
+
+/*
+
+Drawing code
+
+*/
+static const int num_bins = 100;
+static int bin2[num_bins];
+
+const float bin_min = 0.5;
+const float bin_inc = 0.005;
+
+float bin_scale;
+
+static int less_than_min = 0;
+static int greater_than_max = 0;
+
+float noise_viz_test[2000];
+void noise_viz_test_setup() {
+    
+    int i;
+
+    for(i=0; i< 2000; i++) {
+        noise_viz_test[i] = (float)rand()/(float)RAND_MAX;
+        //printf("%f \n", noise_viz_test[i]);
+    }
+/*
+    for(i=0; i< 2000; i++) {
+        printf("%i= %f \n", i, noise_viz_test[i]);
+    }
+*/
+    noise_viz_setup_bin(noise_viz_test, 2000);
+}
+
+inline void bin_float(float x) {
+    if(x < bin_min) {
+        less_than_min++;
+        return;
+    }
+    int index = (x-bin_min) / bin_inc;
+    if(index > num_bins){
+        greater_than_max++;
+        return;    
+    }
+    bin2[index]++;
 }
 
 void noise_viz_setup_bin(float* arr, int n) {
