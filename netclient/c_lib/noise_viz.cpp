@@ -17,8 +17,10 @@ void noise_viz_test_setup() {
     int i;
     float test[2000];
     for(i=0; i< 2000; i++) {
-    test[i] = (float)rand()/(float)RAND_MAX;
+        test[i] = (float)rand()/(float)RAND_MAX;
+        //printf("%f \n", test[i]);
     }
+    setup_bin(test, 2000);
 }
 inline void bin_float(float x) {
     if(x < bin_min) {
@@ -34,21 +36,24 @@ inline void bin_float(float x) {
 }
 
 void setup_bin(float* arr, int n) {
+    printf("===\n");
     printf("Starting Binning\n");
     int i;
     for(i=0; i<1000;i++) bin2[i] = 0;
     double average = 0; 
     for(i=0; i<n; i++) {
         average += arr[n];
+        printf("%f \n", arr[n]);
         bin_float(arr[n]);
     }
-    average = average / (double)(n);
+    //average = average / ((double)(n));
+
     printf("number of samples= %i\n", n);
-    printf("average= %f \n", average);
+    printf("average= %f, sum= %f \n", average/n, average);
     printf("less_than_min= %i \n",less_than_min);
     printf("greater_than_max= %i \n", greater_than_max);
     printf("finished binning\n");
-
+    printf("===\n");
     bin_scale = ((float)(n))/1000;
 }
 
@@ -59,6 +64,8 @@ void draw_noise_viz_histrogram(float x, float y, float z) {
     x -= 10;
     y += 10;
     int i,j;
+
+    //printf("draw\n");
 
     glBegin(GL_POINTS);
     glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
