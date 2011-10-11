@@ -46,10 +46,12 @@ float _bin_min = 0.5;
 float _bin_inc = 0.005;
 float _bin_range;
 
+int _num_bins = 1000; //parameter
+
 float percentile_cutoff_calculation(float percentile, float* arr, int n) {
+    //return 0;
     int i;
     printf("=== Start percentile_cutoff_calculation ===\n");
-    const int _num_bins = 1000; //parameter
     float* bin_array = (float*) malloc(sizeof(float)*_num_bins);
     for(i=0; i<_num_bins;i++) bin_array[i] = 0;
 
@@ -72,7 +74,7 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
     //do binning
     int bin_index;
     for(i=0; i<n; i++) {
-        bin_index = (arr[i]-min) / bin_inc;
+        bin_index = (arr[i]-min) / _bin_inc;
         bin_array[bin_index]++;
     }
     //do percentile calculation
@@ -81,12 +83,22 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
     float cutoff = -1;
     for(i=0; i<_num_bins; i++) {
         counter += bin_array[i];
+        //printf("i=%i, count=%i \n", i, counter);
         if(counter > terminal) {
             cutoff = min+i*_bin_inc;
+            printf("debug: count=%i, samples=%i, terminal= %i i=%i of %i, min=%f, _bin_inc=%f\n", counter, n, terminal, i, _num_bins, min, _bin_inc);
             printf("percentile_cuttoff: percentile= %f, cutoff= %f \n", percentile, cutoff);
             break;
         }
     }
+
+    counter = 0;
+    for(i=0; i<_num_bins; i++) {
+        counter += bin_array[i];
+    }
+    printf("Total point count= %i\n", counter);
+
+
 /*
     for(i=0; i<_num_bins; i++) {
         counter += bin_array[i];
