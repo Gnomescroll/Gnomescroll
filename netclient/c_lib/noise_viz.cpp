@@ -1,4 +1,4 @@
-
+#include <c_lib/noise_viz.hpp>
 //srand((unsigned)time(0));
 
 static const int num_bins = 1000;
