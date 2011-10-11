@@ -87,5 +87,5 @@ float _freq = 1.0f;
 
 void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);
 
-//void rmf_dist(int x, int y, int z);
+void rmf_dist(int x, int y, int z);
 
