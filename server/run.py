@@ -97,14 +97,14 @@ def _gen_map():
         .group(0)\
         .tile(2)\
         .interpolate(4,2,1)\
-        .heightmap(baseline=40, maxheight=40)\
-        .p2(octaves=6, persistence=0.4)\
+        .heightmap(baseline=40, maxheight=60)\
+        .p2(octaves=6, persistence=0.45)\
         .grass()\
         .start()\
         .reset()
 
-        c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=150.0) 
-        c_lib.map_gen.perturb_height(128,128, 50.0, tile=16, clamp=3)
+        c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=15.0) 
+        c_lib.map_gen.perturb_height(128,128, 10.0, tile=16, clamp=3)
 
 
         # base heightmap, smooth shallow hills
