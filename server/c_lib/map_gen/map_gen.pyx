@@ -35,6 +35,7 @@ cdef extern from "./map_gen/features.h":
 cdef extern from "./map_gen/perturb.h":
     void perturb_perlin2(int x, int y, int z, float turbulence)
     void perturb_perlin3(int x, int y, int z, float turbulence)
+    void perturb_heightmap(int x, int y, float turbulence, int tile, int clamp)
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed, set_next_seed
 
@@ -77,6 +78,10 @@ class Config:
         self.use_rmf = False
         self.use_heightmap = False
         self.use_density = False
+
+        self.use_perturb = False
+        self.turbulence = 1.0
+        self.perturb_height_clamp = 1
 
         self.add_grass = False
 
@@ -210,6 +215,12 @@ class Config:
         self.add_grass = True
         return self
 
+    def perturb(self, turbulence=1.0, height_clamp=1):
+        self.use_perturb = True
+        self.turbulence = turbulence
+        self.perturb_height_clamp = height_clamp
+        return self
+
     def start(self):
         _n = time.time()
 
@@ -268,6 +279,8 @@ class Config:
             set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
         elif self.use_heightmap:
             set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight, self.base_tile)
+            if self.use_perturb:
+                perturb_heightmap(self.x, self.y, self.turbulence, self.base_tile, self.perturb_height_clamp)
 
         elif self.dim == 1:
             print "Dimension 1 terrain not implemented."
@@ -360,8 +373,18 @@ def invert(x=xmax, y=ymax, z=zmax, tile=2):
 def caves(x, y, z):
     _caves(x,y,z, 0.9, 2)
 
+def grass(int x, int y, int base):
+    _grass(x,y, base)
+
 def perturb(int x, int y, int z, float turbulence):
     perturb_perlin2(x,y,z, turbulence)
 
 def perturb3(int x, int y, int z, float turbulence):
     perturb_perlin3(x,y,z, turbulence)
+
+def perturb_height(int x, int y, float turbulence, int tile=2, int clamp=1):
+    perturb_heightmap(x,y, turbulence, tile, clamp)
+
+def noise_parameters(int octaves=1, float persistence=0.6, float amplitude=1.0, float lacunarity=2.0, float frequency=1.0):
+    set_noise_parameters(octaves, persistence, amplitude, lacunarity, frequency)
+
