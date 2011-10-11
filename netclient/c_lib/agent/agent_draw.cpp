@@ -117,15 +117,7 @@ float v_set3[3*8] = {
 
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height) {
 
-    //float zm = height+z;
-    //float xmin,xmax,ymin,ymax;
-    //xmin = x - radius;
-    //xmax = x + radius;
-    //ymin = x - radius;
-    //ymax = x + radius;
-
     int i,j;
-    //int a,b;
     float _x,_y,_z;
 
     glBegin(GL_LINES);
