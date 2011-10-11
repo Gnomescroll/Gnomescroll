@@ -1,15 +1,10 @@
 #include <c_lib/noise_viz.hpp>
 //srand((unsigned)time(0));
 
-
-float _bin_min = 0.5;
-float _bin_inc = 0.005;
-float _bin_range;
-
 int _num_bins = 1000; //parameter
 
 float percentile_cutoff_calculation(float percentile, float* arr, int n) {
-    //return 0;
+
     int i;
     printf("=== Start percentile_cutoff_calculation ===\n");
     float* bin_array = (float*) malloc(sizeof(float)*_num_bins);
