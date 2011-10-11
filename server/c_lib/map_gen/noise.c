@@ -1,8 +1,7 @@
 #include "noise.h"
 #include "math.h"
 
-
-#include "noise_utils.cpp"
+#include "noise_util.cpp"
 
 void seed_noise(int seed) {
     srand((unsigned)seed);
@@ -15,24 +14,25 @@ void seed_noise(int seed) {
 }
 
 void set_terrain_density(int x, int y, int z, float threshold, int tile) {
+    if (threshold < 0.0f || threshold > 1.0f) {
+        printf("WARNING: set_terrain_density - threshold not a percentage (0 <= threshold <= 1) ABORT\n");
+        return;
+    }
+    float cutoff;
+    cutoff = percentile_cutoff_calculation(threshold, noisemap, x*y*z);
+
     // set terrain
     int i,j,k,index;
-    int c=0;
-    float ttl=0.0f;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
                 index = i + x*j + x*y*k;
-                c += 1;
-                ttl += noisemap[index];
-                if (noisemap[index] > threshold) {
+                if (noisemap[index] > cutoff) {
                     _set(i,j,k, tile);
                 }
             }
         }
     }
-    float avg = ttl / (float)c;
-    printf("ttl: %0.2f, count: %d, avg: %0.2f\n", ttl, c, avg);
 
 }
 

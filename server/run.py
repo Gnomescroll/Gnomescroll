@@ -80,7 +80,7 @@ def _gen_map():
         .size(128,128,128)\
         .tile(2)\
         .interpolate(4,4,2)\
-        .density(threshold=0.18)\
+        .density(threshold=0.50)\
         .p3(octaves=6, persistence=0.7)\
         .grass()\
         .start()\
@@ -91,7 +91,7 @@ def _gen_map():
         .interpolate(4,2,1)\
         .size(128,128,128)\
         .tile(0)\
-        .density(threshold=2.438)\
+        .density(threshold=0.9)\
         .rmf()\
         .p3(octaves=6, persistence=0.6)\
         .start()\

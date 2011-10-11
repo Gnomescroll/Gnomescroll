@@ -30,7 +30,11 @@ void _grass(int x, int y, int base) {
     }
 }
 
-void _caves(int x, int y, int z, int base) {
+void _caves(int x, int y, int z, float threshold, int base) {
+
+
+    float cutoff;
+    cutoff = percentile_cutoff_calculation(threshold, noisemap, x*y*z);
 
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f,
@@ -48,7 +52,7 @@ void _caves(int x, int y, int z, int base) {
                 n = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, base);
                 c += 1;
                 ttl += n;
-                if (n > 0.97) {
+                if (n > cutoff) {
                     _set(i,j,k, 2);
                 }
             }
@@ -64,7 +68,7 @@ void _caves(int x, int y, int z, int base) {
         for (j=0; j < y; j++) {
             for (k=0; k < z; k++) {
                 n = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, base);
-                if (n > 0.9 && isSolid(_get(i,j,k))) {
+                if (n > cutoff && isSolid(_get(i,j,k))) {
                     _set(i,j,k, 3);
                 }
             }

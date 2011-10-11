@@ -1,7 +1,4 @@
-#include <c_lib/noise_viz.hpp>
-//srand((unsigned)time(0));
-
-int _num_bins = 1000; //parameter
+const int _num_bins = 1000; //parameter
 
 float percentile_cutoff_calculation(float percentile, float* arr, int n) {
 

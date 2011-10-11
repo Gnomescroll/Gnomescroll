@@ -30,7 +30,7 @@ cdef extern from "./map_gen/noise.h":
 
 cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
-    void _caves(int x, int y, int z, int base)
+    void _caves(int x, int y, int z, float threshold, int base)
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed
 
@@ -356,4 +356,4 @@ def invert(x=xmax, y=ymax, z=zmax, tile=2):
     invert_map(x,y,z,tile)
 
 def caves(x, y, z):
-    _caves(x,y,z, 2)
+    _caves(x,y,z, 0.9, 2)
