@@ -31,8 +31,6 @@ TEST
 cdef extern from "./noise_viz.hpp":
     void noise_viz_test_setup()
     void draw_noise_viz_histrogram(float x, float y, float z)
-    void rmf_dist(int x, int y, int z)
-
 
 def draw_noise_viz(float x, float y, float z):
     draw_noise_viz_histrogram(x,y,z)
@@ -44,4 +42,4 @@ HUD global
 def init_hud():
     _init_cube_select()
     #noise_viz_test_setup()
-    rmf_dist(50,50,50)
+    #rmf_dist(50,50,50)

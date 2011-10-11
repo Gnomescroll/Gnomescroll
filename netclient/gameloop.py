@@ -318,7 +318,7 @@ class App(object):
                 c_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
                 P2.draw_perf_graph(50,700,-0.30)
                 _pviz_draw(780,400, -.30)
-                cHUD.draw_noise_viz(200.0, 200.0, -0.5)
+                #cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
 
             P.event("SDL flip")
             self.SDL_global.flip()
