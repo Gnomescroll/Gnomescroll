@@ -68,10 +68,10 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
 Drawing code
 
 */
-static const int num_bins = 100;
+static const int num_bins = 400;
 static int bin2[num_bins];
 
-const float bin_min = 0.5;
+const float bin_min = -1.0;
 const float bin_inc = 0.005;
 
 float bin_scale;
