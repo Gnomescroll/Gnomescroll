@@ -57,10 +57,10 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
 Drawing code
 
 */
-static const int num_bins = 100;
+static const int num_bins = 400;
 static int bin2[num_bins];
 
-const float bin_min = 0.5;
+const float bin_min = -1.0;
 const float bin_inc = 0.005;
 
 float bin_scale;
@@ -135,6 +135,27 @@ void rmf_dist(int x, int y, int z) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
                 _noise[i + x*j + x*y*k] = rmf_perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, 0);
+            }
+        }
+    }
+
+    noise_viz_setup_bin(_noise, x*y*z);
+    
+    free(_noise);
+}
+
+void perlin3_dist(int x, int y, int z) {
+    float fx = (float)x + 2.0f;
+    float fy = (float)y + 2.0f;
+    float fz = (float)z + 2.0f;
+
+    float *_noise = (float*) malloc(sizeof(float)*x*y*z);
+    
+    int i,j,k;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                _noise[i + x*j + x*y*k] = perlin3((i+1)/fx, (j+1)/fy, (k+1)/fz, x, y, z, 0);
             }
         }
     }
