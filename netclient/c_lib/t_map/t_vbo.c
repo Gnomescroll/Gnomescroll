@@ -361,12 +361,12 @@ int inline _is_occluded(int x,int y,int z, int side_num);
 //Non-normal blocks:vertex count for each
 static int oddBlockVCount[7] = {0, 8, 8, 8, 8, 8, 8};
 
-#define _0 0.01
-#define _1 0.99
+#define _0 0.00
+#define _1 1.00
 
 static float oddBlockV[2*12] = {
-_0,_1,_1, _1,_0,_1, _1,_0,_0, _0,_1,_0,
-_1,_1,_1, _0,_0,_1, _0,_0,_0, _1,_1,_0
+_0,_1,1, _1,_0,1, _1,_0,0, _0,_1,0,
+_1,_1,1, _0,_0,1, _0,_0,0, _1,_1,0
 };
 
 //assume 8 vertices
