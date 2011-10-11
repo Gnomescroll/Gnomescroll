@@ -4,8 +4,8 @@
 static const int num_bins = 100;
 static int bin2[num_bins];
 
-const float bin_min = 0;
-const float bin_inc = 0.01;
+const float bin_min = 0.5;
+const float bin_inc = 0.005;
 
 float bin_scale;
 
@@ -28,6 +28,7 @@ void noise_viz_test_setup() {
 */
     noise_viz_setup_bin(noise_viz_test, 2000);
 }
+
 inline void bin_float(float x) {
     if(x < bin_min) {
         less_than_min++;
@@ -41,7 +42,68 @@ inline void bin_float(float x) {
     bin2[index]++;
 }
 
+float _bin_min = 0.5;
+float _bin_inc = 0.005;
+float _bin_range;
+
+float percentile_cutoff_calculation(float percentile, float* arr, int n) {
+    int i;
+    printf("=== Start percentile_cutoff_calculation ===\n");
+    const int _num_bins = 1000; //parameter
+    float* bin_array = (float*) malloc(sizeof(float)*_num_bins);
+    for(i=0; i<_num_bins;i++) bin_array[i] = 0;
+
+    double average = 0;   
+    float min =  100000;
+    float max = -100000;
+    for(i=0; i<n; i++) {
+        if(arr[i] < min) min = arr[i];
+        if(arr[i] > max) max = arr[i];
+        average += arr[i];
+    }
+    printf("number of samples= %i\n", n);
+    printf("average= %f, sum= %f \n", average/n, average);
+    printf("min_value= %f \n", min);
+    printf("max_value= %f \n", max);
+
+    float _bin_range = max - min;
+    float _bin_inc = _bin_range / _num_bins;
+
+    //do binning
+    int bin_index;
+    for(i=0; i<n; i++) {
+        bin_index = (arr[i]-min) / bin_inc;
+        bin_array[bin_index]++;
+    }
+    //do percentile calculation
+    int counter = 0;
+    int terminal = percentile* ((float)(n));
+    float cutoff = -1;
+    for(i=0; i<_num_bins; i++) {
+        counter += bin_array[i];
+        if(counter > terminal) {
+            cutoff = min+i*_bin_inc;
+            printf("percentile_cuttoff: percentile= %f, cutoff= %f \n", percentile, cutoff);
+            break;
+        }
+    }
+/*
+    for(i=0; i<_num_bins; i++) {
+        counter += bin_array[i];
+        if(counter > terminal) {
+            cutoff = min+i*_bin_inc;
+            print("percentile_cuttoff: percentile= %n, cutoff= %f \n", percentile, cutoff);
+            break;
+        }
+    }
+*/
+    free(bin_array);
+    return cutoff;
+}
+
 void noise_viz_setup_bin(float* arr, int n) {
+    percentile_cutoff_calculation(0.80, arr, n);
+
     printf("===\n");
     printf("Starting Binning\n");
     int i;
@@ -60,7 +122,7 @@ void noise_viz_setup_bin(float* arr, int n) {
     printf("greater_than_max= %i \n", greater_than_max);
     printf("finished binning\n");
     printf("===\n");
-    bin_scale = ((float)(n))/1000;
+    bin_scale = ((float)(n))/num_bins;
 }
 
 
@@ -95,18 +157,19 @@ void draw_noise_viz_histrogram(float x, float y, float z) {
     int i,j;
 
     //printf("draw\n");
-
+    int _num;
     glBegin(GL_POINTS);
     glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
     for(i=0; i<num_bins; i++) {
         //printf("bin[%i]=%i\n", i,bin[i]);
-        for(j=0; j<bin2[i]; j++) {
+        _num = (bin2[i] / bin_scale)*100.0;
+        for(j=0; j<_num; j++) {
             glVertex3f(_C+x+2*j,_C+y+2*i,z);
         }
     }
 
     glColor3ub((unsigned char) 200,(unsigned char)0,(unsigned char)0);
-    for(i=0; i<8; i++) {
+    for(i=0; i<20; i++) {
         glVertex3f(_C+x-2,_C+y+2*10*i,z);
         glVertex3f(_C+x-3,_C+y+2*10*i,z);
         glVertex3f(_C+x-4,_C+y+2*10*i,z);
