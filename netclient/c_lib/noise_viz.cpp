@@ -47,12 +47,6 @@ float percentile_cutoff_calculation(float percentile, float* arr, int n) {
         }
     }
 
-    counter = 0;
-    for(i=0; i<_num_bins; i++) {
-        counter += bin_array[i];
-    }
-    printf("Total point count= %i\n", counter);
-
     free(bin_array);
     return cutoff;
 }
