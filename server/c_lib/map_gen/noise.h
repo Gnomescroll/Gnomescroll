@@ -65,7 +65,6 @@ unsigned char PERM[] = {
   180
 };
 
-
 float noisemap[xmax*ymax*zmax];
 
 void seed_noise(int seed);
@@ -81,3 +80,4 @@ float _lac = 2.0f;
 float _freq = 1.0f;
 
 void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);
+
