@@ -11,7 +11,21 @@ void seed_noise(int seed) {
     for (i=0; i < PERM_SIZE; i++) {
         PERM[i] = rand() & 255;
     }
+
+    _seed = seed;
+    if (!_set_base_seed) {
+        _base_seed = _seed;
+        _set_base_seed = 1;
+    }
 }
+
+int next_seed() {
+    int new_seed;
+    new_seed = (_seed + _base_seed) % seed_max;
+    seed_noise(new_seed);
+    return new_seed;
+}
+
 
 void set_terrain_density(int x, int y, int z, float threshold, int tile) {
     if (threshold < 0.0f || threshold > 1.0f) {
@@ -144,4 +158,5 @@ void set_noise_parameters(int oct, float per, float amp, float lac, float freq) 
 #include "ridged_mf.c"
 #include "interpolator.c"
 #include "gradient.c"
+#include "perturb.c"
 #include "features.c"

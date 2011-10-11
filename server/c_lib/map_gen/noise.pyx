@@ -29,10 +29,15 @@ cdef extern from "./map_gen/ridged_mf.h":
 
 cdef extern from "./map_gen/noise.h":
     void seed_noise(int seed)
+    int next_seed()
+    int seed_max
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
 
 def set_seed(seed):
     seed_noise(seed)
+
+def set_next_seed():
+    next_seed()
 
 class Perlin:
     def __init__(self, octaves=1, persistence=0.5, amplitude=1.0, lacunarity=2.0, frequency=1.0,

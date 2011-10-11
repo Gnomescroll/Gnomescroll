@@ -1,6 +1,4 @@
 cdef extern from "./map_gen/interpolator.h":
-    int seed_max
-
     void apply_interp1_perlin(int x, int ix, int rep, int base)
     void apply_interp1_rmf_perlin(int x, int ix, int rep, int base)
     
@@ -27,12 +25,18 @@ cdef extern from "./map_gen/noise.h":
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
     void invert_map(int x, int y, int z, int tile)
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
+    int seed_max
+
 
 cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
     void _caves(int x, int y, int z, float threshold, int base)
 
-from c_lib.noise import Simplex, Perlin, RMF, set_seed
+cdef extern from "./map_gen/perturb.h":
+    void perturb_perlin2(int x, int y, int z, float turbulence)
+    void perturb_perlin3(int x, int y, int z, float turbulence)
+
+from c_lib.noise import Simplex, Perlin, RMF, set_seed, set_next_seed
 
 import time
 
@@ -68,7 +72,7 @@ class Config:
         self.noise_type = ''    # 'p' for perlin, 's' for simplex
         self.noise = None
 
-        self.density_threshold = 0.0
+        self.density_threshold = 0.5
         
         self.use_rmf = False
         self.use_heightmap = False
@@ -128,7 +132,7 @@ class Config:
         self.maxheight = maxheight
         return self
 
-    def density(self, threshold=0.0):
+    def density(self, threshold=0.5):
         self.use_density = True
         self.density_threshold = threshold
         return self
@@ -190,23 +194,18 @@ class Config:
         self.use_rmf = True
         return self
 
-    def _seeds(self):
-        self.seeds = []
-        n = self.seed_int
-        for i in range(10):
-            n += n * i
-            n %= seed_max
-            self.seeds.append(n)
-
     def seed(self, s):
         self.seed_int = s % seed_max
-        self._seeds()
         set_seed(s)
         return self
 
     def get_current_seed(self):
         return self.seeds[self.seed_index]
 
+    def group(self, n):
+        self.seed_index = n
+        return self
+    
     def grass(self):
         self.add_grass = True
         return self
@@ -284,12 +283,9 @@ class Config:
 
         print 'map gen took %0.2f seconds' % (time.time() - _n)
 
-        self.seed_index += 1
-        self.seed_index %= len(self.seeds)
-        set_seed(self.get_current_seed())
+        set_next_seed()
 
         return self
-
 
         
 conf = Config()
@@ -363,3 +359,9 @@ def invert(x=xmax, y=ymax, z=zmax, tile=2):
 
 def caves(x, y, z):
     _caves(x,y,z, 0.9, 2)
+
+def perturb(int x, int y, int z, float turbulence):
+    perturb_perlin2(x,y,z, turbulence)
+
+def perturb3(int x, int y, int z, float turbulence):
+    perturb_perlin3(x,y,z, turbulence)

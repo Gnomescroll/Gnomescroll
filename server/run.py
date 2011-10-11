@@ -64,52 +64,69 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 def _gen_map():
     if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
 
-        # base heightmap, smooth shallow hills
         c_lib.map_gen.conf\
         .size(128,128,128)\
+        .group(0)\
         .tile(2)\
-        .interpolate(4,2,1)\
-        .heightmap(baseline=40, maxheight=40)\
-        .p2(octaves=6, persistence=0.4)\
-        .grass()\
+        .interpolate(4,4,1)\
+        .p3(octaves=3, persistence=0.5)\
+        .density(threshold=0.9)\
+        .rmf()\
         .start()\
         .reset()
 
-        # 3d density noise. floating islands, overhangs
-        #.repeat(128,128,128)\
-        c_lib.map_gen.conf\
-        .size(128,128,128)\
-        .tile(2)\
-        .interpolate(4,4,2)\
-        .density(threshold=0.75)\
-        .p3(octaves=6, persistence=0.7)\
-        .grass()\
-        .start()\
-        .reset()
+        c_lib.map_gen.perturb3(128,128,128, 100.0)
+
+        # base heightmap, smooth shallow hills
+        #c_lib.map_gen.conf\
+        #.size(128,128,128)\
+        #.group(0)\
+        #.tile(2)\
+        #.interpolate(4,2,1)\
+        #.heightmap(baseline=40, maxheight=40)\
+        #.p2(octaves=6, persistence=0.4)\
+        #.grass()\
+        #.start()\
+        #.reset()
+
+        ## 3d density noise. floating islands, overhangs
+        ##.repeat(128,128,128)\
+        #c_lib.map_gen.conf\
+        #.size(128,128,128)\
+        #.tile(2)\
+        #.group(1)\
+        #.interpolate(4,4,2)\
+        #.density(threshold=0.75)\
+        #.p3(octaves=6, persistence=0.7)\
+        #.grass()\
+        #.start()\
+        #.reset()
         
-        # 3d density noise, subtractive RMF. forms caves
-        c_lib.map_gen.conf\
-        .interpolate(4,2,1)\
-        .size(128,128,128)\
-        .tile(0)\
-        .density(threshold=0.97)\
-        .gradient(z0=0.02, z1=0.0)\
-        .rmf()\
-        .p3(octaves=6, persistence=0.6)\
-        .start()\
-        .reset()
+        ## 3d density noise, subtractive RMF. forms caves
+        #c_lib.map_gen.conf\
+        #.interpolate(4,2,1)\
+        #.size(128,128,128)\
+        #.tile(0)\
+        #.group(2)\
+        #.density(threshold=0.98)\
+        #.gradient(z0=0.1, z1=0.0)\
+        #.rmf()\
+        #.p3(octaves=6, persistence=0.9)\
+        #.start()\
+        #.reset()
         
-        # 3d density noise, subtractive RMF. forms caves
-        c_lib.map_gen.conf\
-        .interpolate(2,4,1)\
-        .size(128,128,128)\
-        .gradient(z0=0.02,  z1=0.0)\
-        .tile(0)\
-        .density(threshold=0.97)\
-        .rmf()\
-        .p3(octaves=6, persistence=0.6)\
-        .start()\
-        .reset()
+        ## 3d density noise, subtractive RMF. forms caves
+        #c_lib.map_gen.conf\
+        #.interpolate(2,4,1)\
+        #.size(128,128,128)\
+        #.gradient(z0=0.02,  z1=0.0)\
+        #.tile(0)\
+        #.group(3)\
+        #.density(threshold=0.97)\
+        #.rmf()\
+        #.p3(octaves=6, persistence=0.7)\
+        #.start()\
+        #.reset()
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):
