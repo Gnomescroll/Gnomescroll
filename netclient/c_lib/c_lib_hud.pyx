@@ -28,8 +28,6 @@ def draw_cube_selector(float x, float y, float size=1, int mode=0):
 '''
 HUD textures
 '''
-cdef extern from "./hud/hud_texture_loader.hpp":
-    int init_hud_texture_loader()
 
 '''
 Inventory
@@ -47,7 +45,3 @@ HUD global
 
 def init_hud():
     _init_cube_select()
-    init_hud_texture_loader
-    #noise_viz_test_setup()
-    #rmf_dist(50,50,50)
-    #perlin3_dist(50,50,50)

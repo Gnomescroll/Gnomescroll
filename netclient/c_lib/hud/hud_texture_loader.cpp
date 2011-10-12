@@ -74,7 +74,7 @@ int _init_item_slot_texture() {
 
 int _init_inventory_background_texture() {
 	SDL_Surface *surface;
-	surface=IMG_Load("./media/texture/hud/inventory_background_texture_621x352.png"); ///does this need to be freed?
+	surface=IMG_Load("./media/texture/hud/inventory_background_461x352.png"); ///does this need to be freed?
 	if(!surface) {
 	    printf("_init_inventory_background_texture, IMG_Load: %s \n", IMG_GetError());
 	    return 0;
