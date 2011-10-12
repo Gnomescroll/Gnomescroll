@@ -6,15 +6,37 @@ int get_item_slot_texture()
 int get_inventory_background_texture()
 */
 
+
+
 /*
     width = 1280
     height = 800
 */
 
+static int inventory_hud_enabled = 0;
+void toggle_inventory_hud() {
+    if(inventory_hud_enabled == 0) {
+        inventory_hud_enabled = 1;
+        printf("Hud: inventory hud enabled\n");
+        //register window
+        return;
+    }
+
+    if(inventory_hud_enabled == 1) {
+        inventory_hud_enabled = 0;
+        printf("Hud: inventory hud disabled\n");
+        //unregister window
+        return;
+    }
+
+}
+
 int draw_inventory(float x, float y) {
-	x = 50.0;
-	y = 500.0;
+	//x = 50.0;
+	//y = 500.0;
 	float z = -0.5;
+
+    if(inventory_hud_enabled == 0) return 0;
 
 	//printf("i=%i \n",get_inventory_background_texture());
 
@@ -106,7 +128,7 @@ int draw_inventory(float x, float y) {
         float _x,_y;
         int _ti, _tj;
         float tx, ty;
-        int index = 0;
+        int index;
 
         const int x_size = 32;
         const int y_size = 32;
@@ -127,7 +149,7 @@ int draw_inventory(float x, float y) {
 
 
             if(i<=j) index = 0;
-            if(i=j) index = 1;
+            if(i>j) index = 1;
 
             _ti = index % 16;
             _tj = index / 16;
@@ -156,4 +178,6 @@ int draw_inventory(float x, float y) {
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+
+    return 0;
 }

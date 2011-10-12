@@ -32,6 +32,8 @@ mouse_sensitivity = 300
 camera_sensitivity = 300
 sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefined
 
+camera_speed = 0.3
+
 ''' Information '''
 fps = True  # display FPS
 ping = True # calculate and display ping

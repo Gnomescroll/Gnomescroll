@@ -17,7 +17,7 @@ import SDL.input
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
 from init_c_lib import _toggle_latency_unit
 
-import c_lib.c_lib_hud as c_lib_hud
+import c_lib.c_lib_hud as cHUD
 
 
 #handles special characters
@@ -287,8 +287,9 @@ class Keyboard(object):
             self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
-            "q" : InputGlobal.toggle_input_mode,
-            "e" : InputGlobal.toggle_camera_mode,
+            "e" : cHUD._toggle_inventory_hud,
+            "f" : InputGlobal.toggle_input_mode,
+            "g" : InputGlobal.toggle_camera_mode,
             "n" : toggle_t_viz_vbo_indicator_style,
             "m" : toggle_terrain_map_blend_mode,
             "l" : refresh_map_vbo,
@@ -397,7 +398,8 @@ class Keyboard(object):
         #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 
     def camera_input_mode(self, keyboard):
-        v = 0.1
+        v = settings.camera_speed
+        #v = 0.3
 
         if settings.pyglet:
             if keyboard[key.W]:
@@ -533,7 +535,7 @@ class BlockSelector:
     def __setattr__(self, k, v):
         self.__dict__[k] = v
         if k == 'active':
-            c_lib_hud.hud_control_input(self.active)
+            cHUD.hud_control_input(self.active)
 
     def vertical(self, up=True):
         shift = -1 if up else 1

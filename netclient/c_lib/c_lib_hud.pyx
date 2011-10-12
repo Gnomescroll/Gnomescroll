@@ -35,9 +35,13 @@ Inventory
 
 cdef extern from "./hud/inventory.hpp":
     int draw_inventory(float x, float y)
+    void toggle_inventory_hud()
 
 def _draw_inventory(float x, float y):
     draw_inventory(x,y)
+
+def _toggle_inventory_hud():
+    toggle_inventory_hud()
 
 '''
 HUD global
