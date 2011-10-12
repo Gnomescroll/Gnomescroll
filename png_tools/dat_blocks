@@ -259,12 +259,12 @@ east    terminal.png
 ===
 id      173
 name    test3
-hud     57 terminal.png
+hud     57 flower.png
 type 	2
 transparency 3
-top     terminal.png
-bottom  terminal.png
-north   terminal.png
-south   terminal.png
-west    terminal.png
-east    terminal.png
+top     flower.png
+bottom  flower.png
+north   flower.png
+south   flower.png
+west    flower.png
+east    flower.png
