@@ -319,7 +319,7 @@ class App(object):
                 P2.draw_perf_graph(50,700,-0.30)
                 _pviz_draw(780,400, -.30)
                 #cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
-                cHUD._draw_inventory(250, 500)
+                cHUD._draw_inventory(settings.inventory_hud_x_offset, settings.inventory_hud_y_offset)
 
             P.event("SDL flip")
             self.SDL_global.flip()

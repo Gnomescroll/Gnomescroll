@@ -34,6 +34,10 @@ sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefi
 
 camera_speed = 0.3
 
+''' HUD '''
+inventory_hud_x_offset = 250
+inventory_hud_y_offset = 500
+
 ''' Information '''
 fps = True  # display FPS
 ping = True # calculate and display ping
