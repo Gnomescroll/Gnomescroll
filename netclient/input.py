@@ -576,7 +576,7 @@ class BlockSelector:
         self.horizontal(left=False)
 
     def get_texture_id(self):
-        return c_lib_hud.get_selected_cube_id()
+        return cHUD.get_selected_cube_id()
 
 
 from game_state import GameStateGlobal
