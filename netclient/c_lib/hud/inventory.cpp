@@ -106,7 +106,7 @@ int draw_inventory(float x, float y) {
         float _x,_y;
         int _ti, _tj;
         float tx, ty;
-        int index;
+        int index = 0;
 
         const int x_size = 32;
         const int y_size = 32;
@@ -125,7 +125,9 @@ int draw_inventory(float x, float y) {
             _x = x + x_off + i*x_inc;
             _y = y - y_off - j*y_inc;
 
-            index = 0;
+
+            if(i<=j) index = 0;
+            if(i=j) index = 1;
 
             _ti = index % 16;
             _tj = index / 16;
@@ -133,8 +135,8 @@ int draw_inventory(float x, float y) {
             tx = _ti*tx_inc;
             ty = _tj*ty_inc;
             
-            tx = 0.0;
-            ty = 0.0;
+            //tx = 0.0;
+            //ty = 0.0;
 
             glTexCoord2f(tx, ty);
             glVertex3f(_x, _y, z);  // Top left
