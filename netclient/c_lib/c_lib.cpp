@@ -30,10 +30,11 @@
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
     #include <c_lib/hud/cube_select.cpp>
+    #include <c_lib/hud/inventory.cpp>
 #endif
 
-#include <c_lib/map_gen/noise.c>
-#include <c_lib/noise_viz.cpp>
+//#include <c_lib/map_gen/noise.c>
+//#include <c_lib/noise_viz.cpp>
 
 #include "./physics/vector.c"
 #include "./ray_trace/ray_trace.c"
@@ -42,7 +43,8 @@
 #include "./agent/agent_include.h"
 
 #ifdef DC_CLIENT
-    #include "./texture_loader.c"
+    #include <c_lib/texture_loader.c>
+    #include <c_lib/hud/hud_texture_loader.cpp>
 #endif
     
 #ifdef DC_SERVER
@@ -61,6 +63,7 @@ int init_c_lib() {
 
     #ifdef DC_CLIENT
         init_texture_loader();
+        init_hud_texture_loader();
     #endif
 return 0;
 }

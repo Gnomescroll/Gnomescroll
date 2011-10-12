@@ -24,24 +24,28 @@ def cube_select_set_hud(int pos, int cube_id, int tex_id):
 def draw_cube_selector(float x, float y, float size=1, int mode=0):
     _draw_cube_selector(x, y, size, mode)
 
+
 '''
-TEST
+HUD textures
 '''
 
-cdef extern from "./noise_viz.hpp":
-    void noise_viz_test_setup()
-    void draw_noise_viz_histrogram(float x, float y, float z)
-    void perlin3_dist(int x, int y, int z)
+'''
+Inventory
+'''
 
-def draw_noise_viz(float x, float y, float z):
-    draw_noise_viz_histrogram(x,y,z)
-    
+cdef extern from "./hud/inventory.hpp":
+    int draw_inventory(float x, float y)
+    void toggle_inventory_hud()
+
+def _draw_inventory(float x, float y):
+    draw_inventory(x,y)
+
+def _toggle_inventory_hud():
+    toggle_inventory_hud()
+
 '''
 HUD global
 '''
 
 def init_hud():
     _init_cube_select()
-    #noise_viz_test_setup()
-    #rmf_dist(50,50,50)
-    perlin3_dist(50,50,50)
