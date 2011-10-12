@@ -36,6 +36,14 @@ cdef extern from "./map_gen/perturb.h":
     void perturb_perlin2(int x, int y, int z, float turbulence)
     void perturb_perlin3(int x, int y, int z, float turbulence)
     void perturb_heightmap(int x, int y, float turbulence, int tile, int clamp)
+    void perturb_2d_noisemap(int x, int y, float turbulence, int blend_mode)
+    enum BLEND_MODE:
+        NO_BLEND
+        ADD_BLEND
+        SUB_BLEND
+        MULT_BLEND
+        DIV_BLEND
+
 
 from c_lib.noise import Simplex, Perlin, RMF, set_seed, set_next_seed
 
@@ -282,6 +290,7 @@ class Config:
             if self.use_perturb:
                 perturb_heightmap(self.x, self.y, self.turbulence, self.base_tile, self.perturb_height_clamp)
 
+        '''
         elif self.dim == 1:
             print "Dimension 1 terrain not implemented."
         elif self.dim == 2:
@@ -289,6 +298,7 @@ class Config:
             set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight, self.base_tile)
         elif self.dim == 3:
             set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
+        '''
 
         # features
         if self.add_grass:
@@ -385,6 +395,28 @@ def perturb3(int x, int y, int z, float turbulence):
 def perturb_height(int x, int y, float turbulence, int tile=2, int clamp=1):
     perturb_heightmap(x,y, turbulence, tile, clamp)
 
+def perturb2d(int x, int y, float turbulence=1.0, blend=''):
+    blend_mode = None
+    if blend == '':
+        blend_mode = NO_BLEND
+    if blend == '+':
+        blend_mode = ADD_BLEND
+    elif blend == '-':
+        blend_mode = SUB_BLEND
+    elif blend == '*':
+        blend_mode = MULT_BLEND
+    elif blend == '/':
+        blend_mode = DIV_BLEND
+
+    if blend_mode is None:
+        print 'Blend mode %s unrecognized. Abort' % (blend,)
+        return
+
+    perturb_2d_noisemap(x,y, turbulence, blend_mode)
+
 def noise_parameters(int octaves=1, float persistence=0.6, float amplitude=1.0, float lacunarity=2.0, float frequency=1.0):
     set_noise_parameters(octaves, persistence, amplitude, lacunarity, frequency)
+
+def heightmap(int x, int y, int z, int baseline=64, int maxheight=64, int base_tile=2):
+    set_terrain_height(x,y,z, baseline, maxheight, base_tile)
 

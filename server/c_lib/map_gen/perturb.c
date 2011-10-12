@@ -225,3 +225,118 @@ void perturb_heightmap(int x, int y, float turbulence, int tile, int clamp) {
         }
     }
 }
+
+
+void perturb_2d_noisemapa(int x, int y, float turbulence, int blend_mode) {
+
+    float fx = (float)x + 2.0f;
+    float fy = (float)y + 2.0f;
+
+    float nx,ny;
+    int i,j;
+    int ii,jj;
+
+    int seed1 = next_seed();
+    int seed2 = next_seed();
+
+    int arr_size = x*y;
+    int index1, index2;
+
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            seed_noise(seed1);
+            nx = perlin2((i+1)/fx, (j+1)/fy, x, y, 0);
+            seed_noise(seed2);
+            ny = perlin2((i+1)/fx, (j+1)/fy, x, y, 0);
+
+            ii = (int)((float)(i) + nx*turbulence);
+            jj = (int)((float)(j) + ny*turbulence);
+
+            index1 = i + x*j;
+            index2 = ii + x*jj;
+
+            index2 %= arr_size;
+            if (index2 < 0 || index2 >= arr_size) {
+                printf("INDEX2 out of range; %d %d\n", index2, arr_size);
+                continue;
+            }
+
+            switch (blend_mode) {
+                case NO_BLEND:
+                    noisemap[index2] = noisemap[index1];
+                    break;
+                case ADD_BLEND:
+                    noisemap[index2] += noisemap[index1];
+                    break;
+                case SUB_BLEND:
+                    noisemap[index2] -= noisemap[index1];
+                    break;
+                case MULT_BLEND:
+                    noisemap[index2] *= noisemap[index1];
+                    break;
+                case DIV_BLEND:
+                    noisemap[index2] /= noisemap[index1];
+                    break;
+            }
+        }
+    }
+}
+
+void perturb_2d_noisemap(int x, int y, float turbulence, int blend_mode) {
+
+    float fx = (float)x + 2.0f;
+    float fy = (float)y + 2.0f;
+
+    float nx,ny;
+    int i,j;
+    int ii,jj;
+
+    int seed1 = next_seed();
+    int seed2 = next_seed();
+
+    float *_noise = (float*) malloc(sizeof(float)*x*y);
+
+    int index1,index2;
+    int arr_size = x*y;
+
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            seed_noise(seed1);
+            nx = perlin2((i+1)/fx, (j+1)/fy, x, y, 0);
+            seed_noise(seed2);
+            ny = perlin2((i+1)/fx, (j+1)/fy, x, y, 0);
+
+            ii = (int)((float)(i) + nx*turbulence);
+            jj = (int)((float)(j) + ny*turbulence);
+
+            index1 = i + x*j;
+            index2 = ii + x*jj;
+            if (index2 < 0 || index2 >= arr_size) continue;
+            _noise[index2] = noisemap[index1];
+        }
+    }
+
+    // copy back to noisemap
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            switch (blend_mode) {
+                case NO_BLEND:
+                    noisemap[i + x*j] = _noise[i + x*j];
+                    break;
+                case ADD_BLEND:
+                    noisemap[i + x*j] += _noise[i + x*j];
+                    break;
+                case SUB_BLEND:
+                    noisemap[i + x*j] -= _noise[i + x*j];
+                    break;
+                case MULT_BLEND:
+                    noisemap[i + x*j] *= _noise[i + x*j];
+                    break;
+                case DIV_BLEND:
+                    noisemap[i + x*j] /= _noise[i + x*j];
+                    break;
+            }
+        }
+    }    
+    free(_noise);
+}
