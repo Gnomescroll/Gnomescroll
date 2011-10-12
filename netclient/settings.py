@@ -14,13 +14,17 @@ sfx = 100
 music = 100
 
 ''' Window '''
-#width = 1024
-#height = 800
-#width = 1920
-#height = 1200
-width = 1280
-height = 800
-fullscreen = 1
+_s_mode = 2
+if _s_mode == 0:	#3 to 4
+	width  = 1024
+	height = 800
+if _s_mode == 1:	#full wide screen
+	width  = 1920
+	height = 1200
+if _s_mode == 2:	#windows wide screen
+	width = 1280
+	height = 800
+fullscreen = False
 
 ''' Controls '''
 # lower is more sensitive
