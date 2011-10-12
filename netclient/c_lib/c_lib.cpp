@@ -30,6 +30,7 @@
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
     #include <c_lib/hud/cube_select.cpp>
+    #include <c_lib/hud/inventory.cpp>
 #endif
 
 //#include <c_lib/map_gen/noise.c>

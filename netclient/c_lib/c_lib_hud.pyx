@@ -32,6 +32,16 @@ cdef extern from "./hud/hud_texture_loader.hpp":
     int init_hud_texture_loader()
 
 '''
+Inventory
+'''
+
+cdef extern from "./hud/inventory.hpp":
+    int draw_inventory(float x, float y)
+
+def _draw_inventory(float x, float y):
+    draw_inventory(x,y)
+
+'''
 HUD global
 '''
 

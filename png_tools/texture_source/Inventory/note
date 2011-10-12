@@ -1,0 +1,17 @@
+!!!
+items should be 4, 4 from the top left
+
+9 pixels between each slot
+slots are 41x41
+
+first slot at x=10, y=51
+41+7 size for each slot cell
+
+for first slot 
+offset is 10/11/2011 03:40:00 PM
+x: 10, y: 51
+and it goes up by 9 on each axis 
+9 x 6 slots 
+idk why its 9 it just turned out that number
+close button has 3 states in one image
+normal, hover, active
