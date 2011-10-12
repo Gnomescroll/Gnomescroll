@@ -64,42 +64,8 @@ int draw_inventory(float x, float y) {
     glBindTexture(GL_TEXTURE_2D, get_item_slot_texture());
     glBegin(GL_QUADS);
 
-/*
-            glTexCoord2f(0.0,1.0);
-            glVertex3f(0, 0, z);  // Top left
-
-            glTexCoord2f(1.0,1.0);
-            glVertex3f(0+64, 0, z);  // Top right
-
-            glTexCoord2f(1.0,0.0);
-            glVertex3i(0+64, 0+64, z);  // Bottom right
-
-            glTexCoord2f(0.0,0.0);
-            glVertex3i(0, 0+64, z);  // Bottom left
-*/
-
-/*
     {
-        const int x_size = 64;
-        const int y_size = 64;
-        
-            glTexCoord2f(0.0,1.0);
-            glVertex3f(0, 0, z);  // Top left
-
-            glTexCoord2f(1.0,1.0);
-            glVertex3f(0+64, 0, z);  // Top right
-
-            glTexCoord2f(1.0,0.0);
-            glVertex3i(0+64, 0+64, z);  // Bottom right
-
-            glTexCoord2f(0.0,0.0);
-            glVertex3i(0, 0+64, z);  // Bottom left
-    }
-*/
-    //x+= 0.001
-    int i, j;
-
-    {
+        int i, j;
 	    float _x,_y;
 
         const int x_size = 64;
@@ -115,19 +81,7 @@ int draw_inventory(float x, float y) {
 	    	
 	    	_x = x + x_off + i*x_inc;
 	    	_y = y - y_off - j*y_inc;
-        /*
-	        glTexCoord2f(0.0,1.0);
-	        glVertex3f(_x, _y, z);  // Top left
 
-	        glTexCoord2f(1.0,1.0);
-	        glVertex3f(_x+x_size, _y, z);  // Top right
-
-	        glTexCoord2f(1.0,0.0);
-	        glVertex3i(_x+x_size, _y-y_size, z);  // Bottom right
-
-	        glTexCoord2f(0.0,0.0);
-	        glVertex3i(_x, _y-y_size, z);  // Bottom left
-        */
             glTexCoord2f(0.0,0.0);
             glVertex3f(_x, _y, z);  // Top left
 
@@ -142,8 +96,62 @@ int draw_inventory(float x, float y) {
 
 	    }}
 	}
-
     glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, get_item_sheet_texture());
+
+    glBegin(GL_QUADS);
+    {
+        int i, j;
+        float _x,_y;
+        int _ti, _tj;
+        float tx, ty;
+        int index;
+
+        const int x_size = 32;
+        const int y_size = 32;
+
+        const int x_off = 14;
+        const int y_off = 55;
+        const int x_inc = 50;
+        const int y_inc = 50;
+
+        const float tx_inc = 0.0625;
+        const float ty_inc = 0.0625;
+
+        for(i=0;i<9; i++) {
+        for(j=0;j<6; j++) {
+            
+            _x = x + x_off + i*x_inc;
+            _y = y - y_off - j*y_inc;
+
+            index = 0;
+
+            _ti = index % 16;
+            _tj = index / 16;
+            
+            tx = _ti*tx_inc;
+            ty = _tj*ty_inc;
+            
+            tx = 0.0;
+            ty = 0.0;
+
+            glTexCoord2f(tx, ty);
+            glVertex3f(_x, _y, z);  // Top left
+
+            glTexCoord2f(tx+tx_inc, ty);
+            glVertex3f(_x+x_size, _y, z);  // Top right
+
+            glTexCoord2f(tx+tx_inc, ty+ty_inc);
+            glVertex3i(_x+x_size, _y-y_size, z);  // Bottom right
+
+            glTexCoord2f(tx, ty+tx_inc);
+            glVertex3i(_x, _y-y_size, z);  // Bottom left
+
+        }}
+    }
+    glEnd();
+
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
