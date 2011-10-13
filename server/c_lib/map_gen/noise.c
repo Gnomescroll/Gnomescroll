@@ -153,6 +153,10 @@ void set_noise_parameters(int oct, float per, float amp, float lac, float freq) 
 }
 
 
+void set_noise_scale(float scale) {
+    noise_scale = scale;
+}
+
 #include "perlin.c"
 #include "simplex.c"
 #include "ridged_mf.c"

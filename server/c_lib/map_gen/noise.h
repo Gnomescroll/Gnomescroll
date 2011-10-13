@@ -85,5 +85,7 @@ float _amp = 1.0f;
 float _lac = 2.0f;
 float _freq = 1.0f;
 
+float noise_scale = 1.0f;
+
 void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);
 
