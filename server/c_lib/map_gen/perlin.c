@@ -179,7 +179,7 @@ void perlin1_fill(int x, int repeat, int base) {
     int i;
     float h;
     for (i=0; i<x; i++) {
-        h = perlin1((i+1)/fx, repeat, base);
+        h = perlin1(((i+1)/fx)*noise_scale, repeat, base);
         noisemap[i] = h;
     }
 }
@@ -191,7 +191,7 @@ void perlin2_fill(int x, int y, int repeatx, int repeaty, int base) {
     float h;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
-            h = perlin2((i+1)/fx,(j+1)/fy, repeatx, repeaty, base);
+            h = perlin2(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale, repeatx, repeaty, base);
             noisemap[i + x*j] = h;
         }
     }
@@ -206,7 +206,7 @@ void perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz, in
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                h = perlin3((i+1)/fx,(j+1)/fy,(k+1)/fz, repeatx, repeaty, repeatz, base);
+                h = perlin3(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale,((k+1)/fz)*noise_scale, repeatx, repeaty, repeatz, base);
                 noisemap[i + x*j + x*y*k] = h;
             }
         }

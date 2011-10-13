@@ -105,7 +105,7 @@ void rmf_perlin1_fill(int x, int repeat, int base) {
     int i;
     float h;
     for (i=0; i<x; i++) {
-        h = rmf_perlin1((i+1)/fx, repeat, base);
+        h = rmf_perlin1(((i+1)/fx)*noise_scale, repeat, base);
         noisemap[i] = h;
     }
 }
@@ -117,7 +117,7 @@ void rmf_perlin2_fill(int x, int y, int repeatx, int repeaty, int base) {
     float h;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
-            h = rmf_perlin2((i+1)/fx,(j+1)/fy, repeatx, repeaty, base);
+            h = rmf_perlin2(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale, repeatx, repeaty, base);
             noisemap[i + x*j] = h;
         }
     }
@@ -132,7 +132,7 @@ void rmf_perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                h = rmf_perlin3((i+1)/fx,(j+1)/fy,(k+1)/fz, repeatx, repeaty, repeatz, base);
+                h = rmf_perlin3(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale,((k+1)/fz)*noise_scale, repeatx, repeaty, repeatz, base);
                 noisemap[i + x*j + x*y*k] = h;
                 printf("%0.2f\n",h);
             }
@@ -147,7 +147,7 @@ void rmf_simplex2_fill(int x, int y) {
     float h;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
-            h = rmf_simplex2((i+1)/fx,(j+1)/fy);
+            h = rmf_simplex2(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale);
             noisemap[i + x*j] = h;
         }
     }
@@ -162,7 +162,7 @@ void rmf_simplex3_fill(int x, int y, int z) {
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                h = rmf_simplex3((i+1)/fx,(j+1)/fy,(k+1)/fz);
+                h = rmf_simplex3(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale,((k+1)/fz)*noise_scale);
                 noisemap[i + x*j + x*y*k] = h;
             }
         }

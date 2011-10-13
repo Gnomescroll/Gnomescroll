@@ -175,7 +175,7 @@ void simplex2_fill(int x, int y) {
     float h;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
-            h = simplex2((i+1)/fx,(j+1)/fy);
+            h = simplex2(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale);
             noisemap[i + x*j] = h;
         }
     }
@@ -190,7 +190,7 @@ void simplex3_fill(int x, int y, int z) {
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             for (k=0; k<z; k++) {
-                h = simplex3((i+1)/fx,(j+1)/fy,(k+1)/fz);
+                h = simplex3(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale,((k+1)/fz)*noise_scale);
                 noisemap[i + x*j + x*y*k] = h;
             }
         }
