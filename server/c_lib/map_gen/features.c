@@ -17,7 +17,7 @@ void _grass(int x, int y, int base) {
                 _set(i,j,k, 4);
                 if (k != 0) {
                     // dirt
-                    d = perlin2(((i+1)/fx)*noise_scale,((j+1)/fy)*noise_scale, x, y, base);
+                    d = perlin2(((i+1)/fx)*xnoise_scale,((j+1)/fy)*ynoise_scale, x, y, base);
                     dd = (int)(fabs(d) * 100);
                     dd %= (k < 3) ? k : 3;
                     dd += 1;
@@ -49,7 +49,7 @@ void _caves(int x, int y, int z, float threshold, int base) {
     for (i=0; i < x; i++) {
         for (j=0; j < y; j++) {
             for (k=0; k < z; k++) {
-                n = rmf_perlin3(((i+1)/fx)*noise_scale, ((j+1)/fy)*noise_scale, ((k+1)/fz)*noise_scale, x, y, z, base);
+                n = rmf_perlin3(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, ((k+1)/fz)*znoise_scale, x, y, z, base);
                 c += 1;
                 ttl += n;
                 if (n > cutoff) {
@@ -67,7 +67,7 @@ void _caves(int x, int y, int z, float threshold, int base) {
     for (i=0; i < x; i++) {
         for (j=0; j < y; j++) {
             for (k=0; k < z; k++) {
-                n = rmf_perlin3(((i+1)/fx)*noise_scale, ((j+1)/fy)*noise_scale, ((k+1)/fz)*noise_scale, x, y, z, base);
+                n = rmf_perlin3(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, ((k+1)/fz)*znoise_scale, x, y, z, base);
                 if (n > cutoff && isSolid(_get(i,j,k))) {
                     _set(i,j,k, 3);
                 }

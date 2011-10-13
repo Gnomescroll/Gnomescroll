@@ -25,8 +25,8 @@ cdef extern from "./map_gen/noise.h":
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
     void invert_map(int x, int y, int z, int tile)
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
+    void set_noise_scale(float xscale, float yscale, float zscale)
     int seed_max
-
 
 cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
@@ -45,7 +45,7 @@ cdef extern from "./map_gen/perturb.h":
         DIV_BLEND
 
 
-from c_lib.noise import Simplex, Perlin, RMF, set_seed, set_next_seed
+from c_lib.noise import Simplex, Perlin, RMF, set_seed, set_next_seed, set_seed_group
 
 import time
 
@@ -54,8 +54,6 @@ xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#def
 class Config:
 
     seed_int = 1
-    seeds = []
-    seed_index = 0
     
     def __init__(self):
         self.x = self.y = self.z = 0
@@ -92,6 +90,14 @@ class Config:
         self.perturb_height_clamp = 1
 
         self.add_grass = False
+
+        self.xscale = 1.0
+        self.yscale = 1.0
+        self.zscale = 1.0
+
+        set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
+        set_noise_scale(self.xscale, self.yscale, self.zscale)
+
 
     def repeat(self, x=1024, y=1024, z=1024):
         self.repeatx = x
@@ -207,16 +213,18 @@ class Config:
         self.use_rmf = True
         return self
 
-    def seed(self, s):
-        self.seed_int = s % seed_max
-        set_seed(s)
+    def scale(self, x=1.0, y=1.0, z=1.0):
+        self.xscale = x
+        self.yscale = y
+        self.zscale = z
         return self
 
-    def get_current_seed(self):
-        return self.seeds[self.seed_index]
+    def seed(self, s):
+        self.seed_int = set_seed(s)
+        return self
 
     def group(self, n):
-        self.seed_index = n
+        set_seed_group(n)
         return self
     
     def grass(self):
@@ -233,6 +241,7 @@ class Config:
         _n = time.time()
 
         set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
+        set_noise_scale(self.xscale, self.yscale, self.zscale)
         
         noise_method = 'noise%d' % (self.dim,)
         if self.use_rmf:
@@ -416,6 +425,9 @@ def perturb2d(int x, int y, float turbulence=1.0, blend=''):
 
 def noise_parameters(int octaves=1, float persistence=0.6, float amplitude=1.0, float lacunarity=2.0, float frequency=1.0):
     set_noise_parameters(octaves, persistence, amplitude, lacunarity, frequency)
+
+def scale(float xscale=1.0, float yscale=1.0, float zscale=1.0):
+    set_noise_scale(xscale, yscale, zscale)
 
 def heightmap(int x, int y, int z, int baseline=64, int maxheight=64, int base_tile=2):
     set_terrain_height(x,y,z, baseline, maxheight, base_tile)

@@ -63,55 +63,69 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 
 def _gen_map():
     if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
+        #import time
+        #_n = time.time()
 
-        ##base heightmap, smooth shallow hills, perturbed
+        ##base heightmap, smooth shallow hills
         #c_lib.map_gen.conf\
         #.size(512,512,128)\
         #.group(0)\
         #.tile(2)\
         #.interpolate(4,2,1)\
+        #.scale(4.0, 4.0, 1.0)\
         #.heightmap(baseline=40, maxheight=60)\
         #.p2(octaves=6, persistence=0.45)\
-        #.grass()\
         #.start()\
         #.reset()
+
+         ####base heightmap, smooth shallowER hills
+        #c_lib.map_gen.conf\
+        #.size(512,512,128)\
+        #.group(5)\
+        #.scale(x=1.0, y=1.0, z=1.0)\
+        #.tile(2)\
+        #.interpolate(2,4,1)\
+        #.heightmap(baseline=30, maxheight=45)\
+        #.p2(octaves=6, persistence=0.4)\
+        #.start()\
+        #.reset()
+
+        #c_lib.map_gen.grass(512,512,0)
         
         ## 3d density noise. floating islands, overhangs
-        ##.repeat(512,512,128)\
         #c_lib.map_gen.conf\
         #.size(512,512,128)\
         #.tile(2)\
+        #.scale(x=3.5, y=3.5, z=1.0)\
+        #.gradient(z0=0.0, z1=-0.2)\
         #.group(1)\
         #.interpolate(4,4,2)\
         #.density(threshold=0.75)\
         #.p3(octaves=6, persistence=0.7)\
-        #.grass()\
         #.start()\
         #.reset()
 
-
-        ##c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=15.0) 
-        ##c_lib.map_gen.perturb_height(512,512, 10.0, tile=165, clamp=3)
-
-
-         ###base heightmap, smooth shallow hills
+        ## 3d density noise. floating islands, overhangs
         #c_lib.map_gen.conf\
         #.size(512,512,128)\
-        #.group(0)\
         #.tile(2)\
-        #.interpolate(4,2,1)\
-        #.heightmap(baseline=40, maxheight=40)\
-        #.p2(octaves=6, persistence=0.4)\
-        #.grass()\
+        #.scale(x=2.0, y=2.0, z=1.0)\
+        #.group(1)\
+        #.gradient(z0=0.0, z1=-0.3)\
+        #.interpolate(4,4,2)\
+        #.density(threshold=0.75)\
+        #.p3(octaves=6, persistence=0.7)\
         #.start()\
         #.reset()
 
-        
+        #c_lib.map_gen.grass(512,512,0)
+
         ## 3d density noise, subtractive RMF. forms caves
         #c_lib.map_gen.conf\
-        #.interpolate(4,2,1)\
+        #.interpolate(4,2,4)\
         #.size(512,512,128)\
         #.tile(0)\
+        #.scale(x=2.0, y=2.0, z=2.0)\
         #.group(2)\
         #.density(threshold=0.98)\
         #.gradient(z0=0.1, z1=0.0)\
@@ -126,6 +140,7 @@ def _gen_map():
         #.size(512,512,128)\
         #.gradient(z0=0.02,  z1=0.0)\
         #.tile(0)\
+        #.scale(x=2.0, y=2.0, z=2.0)\
         #.group(3)\
         #.density(threshold=0.97)\
         #.rmf()\
@@ -149,6 +164,7 @@ def _gen_map():
         #c_lib.map_gen.grass(128,128, 0)
         """
 
+        #print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):
@@ -182,15 +198,16 @@ class Main:
         '''
         loading map from file by default because angus gets segfault
         '''
+        terrain_map.set_map_size(512,512,128) # TODO:: get this value from the map gen or saved map
         c_lib.map_gen.conf.seed(opts.opts.seed)
         _gen_map()
         if opts.opts.map:
             print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
         else:
-            #terrain_map.load_from_disk("angus")
             #terrain_map.load_from_disk("natural_terrain")
-            terrain_map.load_from_disk("natural2_max")
+            #terrain_map.load_from_disk("natural2_max")
+            terrain_map.load_from_disk("natural4")
             pass
 
         if False:

@@ -71,8 +71,9 @@ float noisemap[xmax*ymax*zmax];
 int _base_seed = 1;
 int _set_base_seed = 0;
 int _seed = 1;
-void seed_noise(int seed);
+int seed_noise(int seed);
 int next_seed();
+int set_seed_grp(int grp);
 
 void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile);
 void set_terrain_density(int x, int y, int z, float threshold, int tile);
@@ -85,7 +86,9 @@ float _amp = 1.0f;
 float _lac = 2.0f;
 float _freq = 1.0f;
 
-float noise_scale = 1.0f;
+float xnoise_scale = 1.0f;
+float ynoise_scale = 1.0f;
+float znoise_scale = 1.0f;
 
 void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency);
-
+void set_noise_scale(float xscale, float yscale, float zscale);

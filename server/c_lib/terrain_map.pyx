@@ -291,6 +291,14 @@ def get_highest_open_block(int x, int y, int n=1):
 def get_lowest_open_block(int x, int y, int n=1):
     return _get_lowest_open_block(x,y,n)
 
+map_x,map_y,map_z = 128,128,128
+
+def set_map_size(int x, int y, int z):
+    global map_x, map_y, map_z
+    map_x = x
+    map_y = y
+    map_z = z
+
 
 '''
 Part 5: Serialization

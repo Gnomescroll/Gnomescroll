@@ -3,7 +3,8 @@
 
 #include "noise_util.cpp"
 
-void seed_noise(int seed) {
+int seed_noise(int seed) {
+    seed = seed % seed_max;
     srand((unsigned)seed);
 
     // build PERM table
@@ -17,6 +18,7 @@ void seed_noise(int seed) {
         _base_seed = _seed;
         _set_base_seed = 1;
     }
+    return seed;
 }
 
 int next_seed() {
@@ -24,6 +26,13 @@ int next_seed() {
     new_seed = (_seed + _base_seed) % seed_max;
     seed_noise(new_seed);
     return new_seed;
+}
+
+int set_seed_grp(int grp) {
+    int s;
+    s = (_base_seed * (grp+1)) % seed_max;
+    seed_noise(s);
+    return s;
 }
 
 
@@ -153,8 +162,11 @@ void set_noise_parameters(int oct, float per, float amp, float lac, float freq) 
 }
 
 
-void set_noise_scale(float scale) {
-    noise_scale = scale;
+void set_noise_scale(float xscale, float yscale, float zscale) {
+    xnoise_scale = xscale;
+    ynoise_scale = yscale;
+    znoise_scale = zscale;
+    printf("Noise scale: %0.2f %0.2f %0.2f\n", xnoise_scale, ynoise_scale, znoise_scale);
 }
 
 #include "perlin.c"

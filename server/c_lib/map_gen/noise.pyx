@@ -28,16 +28,21 @@ cdef extern from "./map_gen/ridged_mf.h":
     void rmf_simplex3_fill(int rmf_x, int rmf_y, int rmf_z)
 
 cdef extern from "./map_gen/noise.h":
-    void seed_noise(int seed)
+    int seed_noise(int seed)
     int next_seed()
     int seed_max
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
+    int set_seed_grp(int grp)
 
-def set_seed(seed):
-    seed_noise(seed)
+
+def set_seed(int seed):
+    return seed_noise(seed)
 
 def set_next_seed():
     next_seed()
+
+def set_seed_group(int grp):
+    set_seed_grp(grp)
 
 class Perlin:
     def __init__(self, octaves=1, persistence=0.5, amplitude=1.0, lacunarity=2.0, frequency=1.0,
