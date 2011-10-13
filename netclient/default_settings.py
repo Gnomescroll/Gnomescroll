@@ -20,8 +20,14 @@ sfx = 100
 music = 100
 
 ''' Window '''
-width = 1024
-height = 800
+widescreen = 1
+if widescreen == 0:
+	width = 1024
+	height = 800
+else:
+	width = 1280
+	height = 800
+
 fullscreen = 0
 
 ''' Controls '''
@@ -29,6 +35,8 @@ fullscreen = 0
 mouse_sensitivity = 300
 camera_sensitivity = 300
 sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefined
+
+camera_speed = 0.6
 
 ''' HUD/Information '''
 fps = True  # display FPS

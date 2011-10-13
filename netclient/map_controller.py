@@ -26,7 +26,7 @@ class MapController:
         assert self.mapMessage != None
     def __init__(self):
         self.requests = 0
-        self.requests_max = 5
+        self.requests_max = 30
         self.r_total = 0 #total requests
 
     def process_chunk_list(self, list):
@@ -38,6 +38,8 @@ class MapController:
     def tick(self):
         #print "requests= %i " % (self.requests)
         #while self.requests < self.requests_max:
+
+
         if True:
             if self.requests < self.requests_max:
                 #P.event("terrain_map.chunk_request()")
