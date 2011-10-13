@@ -170,6 +170,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
                 return;
             }
+            //printf("received agent control state\n");
             //place in control buffer
             //advance physics forward
         }

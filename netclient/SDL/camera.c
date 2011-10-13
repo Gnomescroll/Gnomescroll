@@ -115,6 +115,7 @@ int _world_projection(struct Camera* c) {
         #glEnable(GL_CULL_FACE);
 */
     //printf( "gl error: %s\n", SDL_GetError() );
+    glColor3ub(255, 255, 255);
     return 0;
 }
 

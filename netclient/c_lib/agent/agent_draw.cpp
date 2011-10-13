@@ -120,6 +120,7 @@ void draw_agent_bounding_box(float x, float y, float z, float radius, float head
     int i,j;
     float _x,_y,_z;
 
+
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
     for(i=0; i<12; i++) {

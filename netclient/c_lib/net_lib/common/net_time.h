@@ -23,7 +23,8 @@ static inline int get_current_netpeer_time() {
 static inline int NP_time_delta1(int time) {
     int delta = CURRENT_NETPEER_TIME - time;
     if( delta<0) {
-        printf("NP_time_delta1: delta negative. rollover? \n");
+        
+        printf("NP_time_delta1: delta negative. rollover? delta=%i, current_netpeer_timer=%i, last_netpeer_time=%i \n", delta, CURRENT_NETPEER_TIME, LAST_NETPEER_TIME);
         return 0;
     }
     return delta;

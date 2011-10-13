@@ -232,6 +232,7 @@ int _draw(struct VoxelList* vo) {
     struct Voxel voi;
     compute_vo_normals(vo);
     glEnable(GL_DEPTH_TEST);
+    glDisable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
     for(xi = -vo->xdim/2; xi < vo->xdim/2;xi++ ) {
         for(yi = -vo->ydim/2; yi < vo->ydim/2; yi++ ) {
@@ -245,6 +246,7 @@ int _draw(struct VoxelList* vo) {
     }
     glEnd();
     //glDisable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
     glColor3ub(255,255,255);
     return 0;
 }
