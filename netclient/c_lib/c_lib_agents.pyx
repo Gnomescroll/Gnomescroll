@@ -98,8 +98,9 @@ def _create_agent(float x, float y, float z):
     return id
 '''
 
-'''
-def _set_agent_state(int id, float xangle, float yangle):
-    set_agent_state(id, xangle, yangle)
-'''
+cdef extern from "./agent/agent.hpp":
+    void agents_tick()
+    void agents_draw()
 
+def draw_agents():
+    agents_draw()

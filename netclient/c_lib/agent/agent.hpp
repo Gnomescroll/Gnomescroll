@@ -6,6 +6,11 @@
 #include <c_lib/compat_gl.h>
 #endif
 
+#include <c_lib/agent/agent_draw.hpp>
+
+void agents_draw();
+void agents_tick();
+
 //store last network messsage
 
 class AgentState {
@@ -113,7 +118,8 @@ class Object_list<Agent_state>
 class Agent_list: public Object_list<Agent_state,1024>
 {
     static const char* name() { return "Agent"; }
-    void draw();
+    public:
+        void draw();
 };
 
 
@@ -126,24 +132,3 @@ const char* Agent_list::name() {
 }
 */
 
-#ifdef DC_CLIENT
-//template <>
-void Agent_list::draw() {
-    int i;
-    struct Agent_state* g = NULL;
-
-    printf("Drawing agents\n");
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    for(i=0; i<n_max; i++) { //max_n
-        if(a[i] != NULL) {
-            g = a[i];
-            //draw_agent(g);
-        }
-    }
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-}
-#endif

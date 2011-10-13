@@ -33,6 +33,7 @@ if True:
     import c_lib.c_lib_objects
     import c_lib.c_lib_agents
     import c_lib.c_lib_hud as cHUD
+    import c_lib.c_lib_agents as cAgents
     from c_lib.c_lib_agents import set_agent_control_state
     #import c_lib.c_lib_timer as physics_timer
     import init_c_lib
@@ -295,7 +296,12 @@ class App(object):
 
             P.event("Draw Terrain")
             #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
+            
+
             c_lib.terrain_map.draw_terrain()
+            '''
+            cAgents.draw_agents() ##draw agents from agent list
+            '''
             if False:
                 c_lib.c_lib_objects._draw_circuit_tree()
             P.event("Draw World")

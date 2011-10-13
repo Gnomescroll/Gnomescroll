@@ -31,6 +31,9 @@ void toggle_inventory_hud() {
 
 }
 
+
+#ifdef DC_CLIENT
+
 int draw_inventory(float x, float y) {
 	//x = 50.0;
 	//y = 500.0;
@@ -181,3 +184,5 @@ int draw_inventory(float x, float y) {
 
     return 0;
 }
+
+#endif

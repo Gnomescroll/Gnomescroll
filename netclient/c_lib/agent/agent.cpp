@@ -3,6 +3,38 @@
 
 #include <c_lib/agent/net_agent.cpp>
 
+//#ifdef DC_CLIENT
+//#endif
+
+//template <>
+
+
+
+
+void Agent_list::draw() {
+
+    #ifdef DC_CLIENT
+    int i;
+    struct Agent_state* g = NULL;
+
+    //printf("Drawing agents\n");
+    glDisable(GL_TEXTURE_2D);
+    //glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    for(i=0; i<n_max; i++) { //max_n
+        if(a[i] != NULL) {
+            g = a[i];
+            DrawAgent::draw_agent(g);
+        }
+    }
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+    #endif
+};
+
+
 Agent_state::Agent_state(int _id) {
 	id = _id;
 	x = 0;
@@ -88,4 +120,16 @@ void Agent_state::server_tick() {
 	}	
 	
 	return;
+}
+
+
+void agents_draw() {
+#ifdef DC_CLIENT
+ClientState::agent_list.draw();
+#endif
+}
+
+
+void agents_tick() {
+	
 }
