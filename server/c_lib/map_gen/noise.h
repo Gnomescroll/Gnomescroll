@@ -65,8 +65,11 @@ unsigned char PERM[] = {
   180
 };
 
-float noisemap[xmax*ymax*zmax];
-
+//float noisemap[xmax*ymax*zmax];
+float* noisemap = NULL;
+int noisemap_inited = 0;
+float* noise_init(int x, int y, int z);
+void noise_destroy();
 
 int _base_seed = 1;
 int _set_base_seed = 0;

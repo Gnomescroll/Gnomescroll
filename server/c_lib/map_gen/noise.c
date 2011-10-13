@@ -169,6 +169,20 @@ void set_noise_scale(float xscale, float yscale, float zscale) {
     printf("Noise scale: %0.2f %0.2f %0.2f\n", xnoise_scale, ynoise_scale, znoise_scale);
 }
 
+float* noise_init(int x, int y, int z) {
+    if (! noisemap_inited) {
+        noisemap = (float*)malloc(sizeof(float)*x*y*z);
+        noisemap_inited = 1;
+    }
+    return noisemap;
+}
+
+void noise_destroy() {
+    if (noisemap != NULL) {
+        free(noisemap);
+    }
+}
+
 #include "perlin.c"
 #include "simplex.c"
 #include "ridged_mf.c"

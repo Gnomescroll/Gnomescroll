@@ -27,6 +27,8 @@ cdef extern from "./map_gen/noise.h":
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
     void set_noise_scale(float xscale, float yscale, float zscale)
     int seed_max
+    float noise_init(int x, int y, int z)
+    void noise_destroy()
 
 cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
@@ -56,6 +58,7 @@ class Config:
     seed_int = 1
     
     def __init__(self):
+    
         self.x = self.y = self.z = 0
         self.base_tile = 2 # stone (1 is error block)
 
@@ -240,6 +243,9 @@ class Config:
     def start(self):
         _n = time.time()
 
+        if not noise_inited:
+            init(self.x, self.y, self.z)
+
         set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
         set_noise_scale(self.xscale, self.yscale, self.zscale)
         
@@ -321,6 +327,16 @@ class Config:
 
         
 conf = Config()
+
+noise_inited = 0
+def init(int x, int y, int z):
+    global noise_inited
+    if not noise_inited:
+        noise_init(x,y,z)
+        noise_inited = 1
+
+def destroy():
+    noise_destroy()
 
 def reset():
     clear_noisemap()
