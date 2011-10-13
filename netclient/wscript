@@ -42,18 +42,19 @@ def configure(conf):
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 
-    conf.cc_add_flags()     #"-g"
-    conf.link_add_flags()   #"-g"
+    conf.cc_add_flags()     #"-g" -ggdb
+    conf.link_add_flags()   #"-g" -ggdb
 
     OS = platform.system()
     _OS = OS
     conf.env.os = OS
 
-    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC', '-DDC_CLIENT'] # use '-O2' or '-O3' in distro build
-
     #optimize = ['-O2']
-    conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT'])
-    conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
+    #conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_CLIENT'])
+    #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
+
+    #conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
+    #conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-DDC_CLIENT'])
 
     # '-D DC_CLIENT'
 

@@ -27,6 +27,7 @@ class MapController:
     def __init__(self):
         self.requests = 0
         self.requests_max = 30
+        self.max_request_per_frame = 2
         self.r_total = 0 #total requests
 
     def process_chunk_list(self, list):
@@ -40,31 +41,29 @@ class MapController:
         #while self.requests < self.requests_max:
 
 
-        if True:
-            if self.requests < self.requests_max:
-                #P.event("terrain_map.chunk_request()")
-                tmp = terrain_map.chunk_request()
-                #P.event("map request 2")
-                if tmp == None:
-                    pass
-                else:
-                    x,y,z = tmp
-                    self.send_request(x,y,z)
+        '''
+        if self.requests < self.requests_max:
+            #P.event("terrain_map.chunk_request()")
+            tmp = terrain_map.chunk_request()
+            #P.event("map request 2")
+            if tmp == None:
                 pass
-                #P.event("map request 3")
-                #break #optional
-        else:
-            while self.requests < self.requests_max:
-                P.event("map request 1")
-                tmp = terrain_map.chunk_request()
-                P.event("map request 2")
-                if tmp == None:
-                    pass
-                else:
-                    x,y,z = tmp
-                    self.send_request(x,y,z)
-                pass
-                P.event("map request 3")
+            else:
+                x,y,z = tmp
+                self.send_request(x,y,z)
+            pass
+            #P.event("map request 3")
+            #break #optional
+        '''
+        i = 0
+        while i < self.max_request_per_frame and self.requests < self.requests_max:
+            tmp = terrain_map.chunk_request()
+            if tmp == None:
+                return
+            else:
+                i += 1
+                x,y,z = tmp
+                self.send_request(x,y,z)
                 
     def incoming_map_chunk(self, x,y,z):
         #print "map chunk received: %i, %i, %i" %(x,y,z)
