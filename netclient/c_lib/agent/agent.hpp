@@ -6,8 +6,6 @@
 #include <c_lib/compat_gl.h>
 #endif
 
-#include <c_lib/agent/agent_draw.hpp>
-
 void agents_draw();
 void agents_tick();
 

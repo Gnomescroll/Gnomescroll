@@ -158,8 +158,8 @@ void send_packet3(unsigned char* buff, int n_size) {
 //int client_out_buff_n = 11; //header length;
 
 void flush_outgoing_packets() {
-    if(client_out_buff_n  >= 800) {
-        printf("flush_outgoing_packets fail!  Packet would exceed 800 bytes. size=%i\n", client_out_buff_n+11);
+    if(client_out_buff_n  >= 900) {
+        printf("flush_outgoing_packets fail!  Packet would exceed 900 bytes. size=%i\n", client_out_buff_n+11);
         return;
     }
     if(NPserver.connected == 0) {

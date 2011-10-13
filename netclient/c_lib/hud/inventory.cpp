@@ -13,22 +13,28 @@ int get_inventory_background_texture()
     height = 800
 */
 
-static int inventory_hud_enabled = 0;
-void toggle_inventory_hud() {
+int inventory_hud_enabled = 0;
+
+int toggle_inventory_hud() {
+    printf("Hud: inventory_hud_enabled int: %d\n", inventory_hud_enabled);
+
     if(inventory_hud_enabled == 0) {
         inventory_hud_enabled = 1;
         printf("Hud: inventory hud enabled\n");
         //register window
-        return;
+        return inventory_hud_enabled;    
     }
 
     if(inventory_hud_enabled == 1) {
         inventory_hud_enabled = 0;
         printf("Hud: inventory hud disabled\n");
         //unregister window
-        return;
+        return inventory_hud_enabled;
     }
 
+    printf("ERROR: inventory hud has invalid value, %i= inventory_hud_enabled\n");
+    //printf("Hud: inventory_hud_enabled int: %d\n", inventory_hud_enabled);
+    return inventory_hud_enabled;
 }
 
 

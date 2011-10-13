@@ -8,12 +8,12 @@
 
 //template <>
 
-
+#include <c_lib/agent/agent_draw.hpp>
 
 
 void Agent_list::draw() {
 
-    #ifdef DC_CLIENT
+#ifdef DC_CLIENT
     int i;
     struct Agent_state* g = NULL;
 
@@ -25,14 +25,14 @@ void Agent_list::draw() {
     for(i=0; i<n_max; i++) { //max_n
         if(a[i] != NULL) {
             g = a[i];
-            DrawAgent::draw_agent(g);
+            AgentDraw::draw_agent(g);
         }
     }
     glDisable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
-    #endif
-};
+#endif
+}
 
 
 Agent_state::Agent_state(int _id) {

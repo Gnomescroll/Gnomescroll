@@ -32,7 +32,7 @@ mouse_sensitivity = 300
 camera_sensitivity = 300
 sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefined
 
-camera_speed = 0.3
+camera_speed = 0.6
 
 ''' HUD '''
 inventory_hud_x_offset = 250

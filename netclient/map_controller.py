@@ -13,7 +13,7 @@ from net_out import NetOut
 
 import c_lib.terrain_map as terrain_map
 
-
+from profiler import P
 #time.clock()
 class MapController:
     #terrainMap = None
@@ -26,7 +26,7 @@ class MapController:
         assert self.mapMessage != None
     def __init__(self):
         self.requests = 0
-        self.requests_max = 3
+        self.requests_max = 5
         self.r_total = 0 #total requests
 
     def process_chunk_list(self, list):
@@ -37,15 +37,33 @@ class MapController:
 
     def tick(self):
         #print "requests= %i " % (self.requests)
-        while self.requests < self.requests_max:
-            tmp = terrain_map.chunk_request()
-            if tmp == None:
-                break
-            else:
-                x,y,z = tmp
-                self.send_request(x,y,z)
+        #while self.requests < self.requests_max:
+        if True:
+            if self.requests < self.requests_max:
+                #P.event("terrain_map.chunk_request()")
+                tmp = terrain_map.chunk_request()
+                #P.event("map request 2")
+                if tmp == None:
+                    pass
+                else:
+                    x,y,z = tmp
+                    self.send_request(x,y,z)
+                pass
+                #P.event("map request 3")
                 #break #optional
-
+        else:
+            while self.requests < self.requests_max:
+                P.event("map request 1")
+                tmp = terrain_map.chunk_request()
+                P.event("map request 2")
+                if tmp == None:
+                    pass
+                else:
+                    x,y,z = tmp
+                    self.send_request(x,y,z)
+                pass
+                P.event("map request 3")
+                
     def incoming_map_chunk(self, x,y,z):
         #print "map chunk received: %i, %i, %i" %(x,y,z)
         self.requests -= 1

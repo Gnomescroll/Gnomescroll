@@ -288,7 +288,7 @@ class Keyboard(object):
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
             "e" : cHUD._toggle_inventory_hud,
-            "f" : InputGlobal.toggle_input_mode,
+            "h" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
             "n" : toggle_t_viz_vbo_indicator_style,
             "m" : toggle_terrain_map_blend_mode,

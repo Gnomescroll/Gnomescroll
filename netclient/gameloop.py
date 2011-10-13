@@ -180,11 +180,11 @@ class App(object):
             y *= v / le
             z *= v / le
             c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
-
+        '''
         print "==="
         print str(opts.opts.server)
         print "==="
-
+        '''
         while not GameStateGlobal.exit:
             self.world.sound_updates()
 
@@ -247,24 +247,6 @@ class App(object):
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
-                #tav_x += 0.01
-                #tav_y += 0.01
-                ##tav_z += 0.1 * (random.randrange(0,3) - 1)
-                #tav_z += 0.001
-                #c_lib.c_lib_objects._update_agent(test_agent_vox, tav_x, tav_y, tav_z);
-                #P.event("get_key_state")
-                #P.event("NetClientTick")
-                '''
-                SDL.input.get_key_state()
-                SDL.input.process_events()
-                if GameStateGlobal.agent is not None:
-                    NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
-                #check if another physics tick is needed
-                self.world.tick()
-                self.animations.tick()
-                c_lib.c_lib_objects.tick() ## TESTING
-                NetClientGlobal.connection.attempt_recv()
-                '''
                 SDL.input.process_events()
                 SDL.input.get_key_state()
                 if GameStateGlobal.agent is not None:
@@ -277,14 +259,12 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                #c_lib.c_lib_agents._set_agent_control_state([0,1,0,0,1,0], 0, 0)
-                #control state
-                #c_lib.c_lib_agents._send_control_state()
                 set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick()
+            P.event("Camera Setup")
             if InputGlobal.camera == 'agent':
                 self.camera.agent_view(GameStateGlobal.agent)
                 first_person = True
@@ -295,15 +275,10 @@ class App(object):
             self.camera.worldProjection()
 
             P.event("Draw Terrain")
-            #c_lib.c_lib_map_gen._map_density_visualize(1, _min, _max)
-            
-
             c_lib.terrain_map.draw_terrain()
-            '''
+            
             cAgents.draw_agents() ##draw agents from agent list
-            '''
-            if False:
-                c_lib.c_lib_objects._draw_circuit_tree()
+
             P.event("Draw World")
             #import pdb; pdb.set_trace()
             self.world.draw(first_person) #upto 255 ms

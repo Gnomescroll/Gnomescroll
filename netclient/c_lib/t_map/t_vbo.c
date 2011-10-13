@@ -793,9 +793,20 @@ int _set_fulstrum_culling(int value) {
 }
 
 
-int crb[3]; //the request buffer
+/*
+This loop is 65536 iterations per frame
+*/
 
+/*
+!!!    Only update map chunks that are near camera
+*/
+
+#define SCORE_LOWEST_DEFAULT 1000000
+int crb[3]; //the request buffer
 int* _chunk_request() {
+
+
+
     struct vm_map* m;
     struct vm_chunk* ch;
     struct vm_column* col;
@@ -804,24 +815,24 @@ int* _chunk_request() {
     int score, score_lowest;
     int i,j,k;
 
-    score_lowest = -1;
+    score_lowest = SCORE_LOWEST_DEFAULT;
+
+    int _x_ = SDL_GetTicks();
+    int counter = 0;
 
     m = _get_map();
     for(i=0; i<vm_map_dim; i++) {
     for(j=0; j<vm_map_dim;j++) {
         col = &m->column[j*vm_map_dim+i];
         for(k = 0; k < vm_column_max; k++) {
+            //counter++;
+            if(col->chunk[k] == NULL) { continue; }
             ch = col->chunk[k];
-            if(ch == NULL) { continue; }
             if(ch->server_version == ch->local_version || ch->requested == 1) { continue; }
             x = 8*col->x_off + 4;
             y = 8*col->y_off + 4;
             score = (c.x-x)*(c.x-x) + (c.y-y)*(c.y-y);
             //printf("score= %i, x,y,z= %i, %i, %i \n", score, ch->x_off, ch->y_off, ch->z_off);
-            if(score_lowest == -1){
-                score_lowest = score;
-                ch_lowest = ch;
-            }
             if(score < score_lowest) {
                 score_lowest = score;
                 ch_lowest = ch;
@@ -829,10 +840,13 @@ int* _chunk_request() {
         }
     }}
 
-    if(score_lowest == -1) {
+    //printf("=== chunk_request: took %i ms\n", SDL_GetTicks()- _x_);
+    //printf("counter=- %i\n", counter);
+
+    if(score_lowest == SCORE_LOWEST_DEFAULT) {
         return NULL;
     } else {
-        ch = ch_lowest;
+        //ch = ch_lowest;
         //printf("score= %i, x,y,z= %i, %i, %i \n", score_lowest, ch->x_off, ch->y_off, ch->z_off);
         ch_lowest->requested = 1;
         crb[0] = ch_lowest->x_off;

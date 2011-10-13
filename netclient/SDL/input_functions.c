@@ -26,7 +26,11 @@ int _set_text_entry_mode(int n) {
     return 0;
 }
 
-static int MOUSE_BOUND=1;
+/*
+    mouse bound at startup?
+*/
+static int MOUSE_BOUND = 0;
+
 int _toggle_mouse_bind() {
     MOUSE_BOUND = (MOUSE_BOUND + 1) %2;
     return MOUSE_BOUND;

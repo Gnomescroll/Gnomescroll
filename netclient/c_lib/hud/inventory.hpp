@@ -7,4 +7,4 @@
 int draw_inventory(float x, float y);
 
 
-void toggle_inventory_hud();
+int toggle_inventory_hud();
