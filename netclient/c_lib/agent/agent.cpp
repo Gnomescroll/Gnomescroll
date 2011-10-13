@@ -29,8 +29,8 @@ void Agent_list::draw() {
         }
     }
     glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_TEXTURE_2D);
+    //glDisable(GL_DEPTH_TEST);
 #endif
 }
 
