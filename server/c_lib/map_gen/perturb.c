@@ -24,9 +24,9 @@ void perturb_perlin2(int x, int y, int z, float turbulence) {
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             seed_noise(seed1);
-            nx = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x,y,0);
+            nx = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x,y,0);
             seed_noise(seed2);
-            ny = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x,y,0);
+            ny = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x,y,0);
             
             for (k=0; k<z; k++) {
                 bval = _get(i,j,k);
@@ -88,11 +88,11 @@ void perturb_perlin3a(int x, int y, int z, float turbulence) {
                 if (isSolid(bval)) {
 
                     seed_noise(seed1);
-                    nx = perlin3(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, ((k+1)/fz)*znoise_scale, x,y,z, 0);
+                    nx = perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x,y,z, 0);
                     seed_noise(seed2);
-                    ny = perlin3(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, ((k+1)/fz)*znoise_scale, x,y,z, 0);
+                    ny = perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x,y,z, 0);
                     seed_noise(seed3);
-                    nz = perlin3(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, ((k+1)/fz)*znoise_scale, x,y,z, 0);
+                    nz = perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x,y,z, 0);
                 
                     //printf("Block found at %d,%d,%d\n", i,j,k);
                     //_set(i,j,k,0);  // clear
@@ -152,11 +152,11 @@ void perturb_perlin3(int x, int y, int z, float turbulence) {
                 if (isSolid(bval)) {
 
                     seed_noise(seed1);
-                    nx = perlin1(((i+1)/fx)*xnoise_scale, x, 0);
+                    nx = perlin1(((float)(i+1)/fx)*xnoise_scale, x, 0);
                     seed_noise(seed2);
-                    ny = perlin1(((j+1)/fy)*ynoise_scale, y, 0);
+                    ny = perlin1(((float)(j+1)/fy)*ynoise_scale, y, 0);
                     seed_noise(seed3);
-                    nz = perlin1(((k+1)/fz)*znoise_scale, z, 0);
+                    nz = perlin1(((float)(k+1)/fz)*znoise_scale, z, 0);
                 
                     //printf("Block found at %d,%d,%d\n", i,j,k);
                     _set(i,j,k,0);  // clear
@@ -214,7 +214,7 @@ void perturb_heightmap(int x, int y, float turbulence, int tile, int clamp) {
             z = _get_highest_solid_block(i,j);
             b = _get(i,j,z);
             if (! (b==4 || b==5)) continue;
-            nz = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x, y, 0);
+            nz = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x, y, 0);
 
             // perturb
             k = (int)((float)z + nz*turbulence);
@@ -248,9 +248,9 @@ void perturb_2d_noisemapa(int x, int y, float turbulence, int blend_mode) {
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             seed_noise(seed1);
-            nx = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x, y, 0);
+            nx = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x, y, 0);
             seed_noise(seed2);
-            ny = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x, y, 0);
+            ny = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x, y, 0);
 
             ii = (int)((float)(i) + nx*turbulence);
             jj = (int)((float)(j) + ny*turbulence);
@@ -305,9 +305,9 @@ void perturb_2d_noisemap(int x, int y, float turbulence, int blend_mode) {
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             seed_noise(seed1);
-            nx = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x, y, 0);
+            nx = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x, y, 0);
             seed_noise(seed2);
-            ny = perlin2(((i+1)/fx)*xnoise_scale, ((j+1)/fy)*ynoise_scale, x, y, 0);
+            ny = perlin2(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, x, y, 0);
 
             ii = (int)((float)(i) + nx*turbulence);
             jj = (int)((float)(j) + ny*turbulence);
