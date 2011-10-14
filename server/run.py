@@ -210,7 +210,7 @@ class Main:
             #terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
             #terrain_map.load_from_disk("natural4")
-            terrain_map.load_from_disk("savetest")
+            terrain_map.load_from_disk("savetest2")
             #_gen_map()
             #terrain_map.load_from_disk("natural4")
             #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)

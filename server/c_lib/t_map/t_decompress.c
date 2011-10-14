@@ -131,7 +131,9 @@ int _map_load_from_disk(char* fn) {
 
 int map_load_from_disk(char* fn) {
     t_buffer_init();
+    chunk_buffer_init();
     int ret = _map_load_from_disk(fn);
+    chunk_buffer_destroy();
     t_buffer_destroy();
     return ret;
 }

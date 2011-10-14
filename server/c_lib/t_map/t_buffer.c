@@ -18,11 +18,13 @@ int t_buffer_destroy() {
 }
 
 void t_buffer_reset() {
-    int i;
-    for (i=0; i < t_buff_size; i++) {
-        t_buff[i] = 0;
+    if (t_buff != NULL) {
+        int i=0;
+        for (i=0; i < t_buff_size; i++) {
+            t_buff[i] = (unsigned char)0;
+        }
+        *t_buffer_index = 0;
     }
-    *t_buffer_index = 0;
 }
 
 /* Packing buffer */
@@ -44,7 +46,7 @@ inline void t_PACK_int(int d, unsigned char* buffer, int* n) {
 // serialize just the voxel array
 int t_zlib_serialize_chunk_vox(unsigned short* vox, int vox_size, unsigned char* buffer, int* index, int buffer_size) {
 
-    int s = sizeof(*vox);
+    int s = (int)(sizeof(*vox));
     int n_can_fit = (buffer_size - *index) / s;
     int i;
     int n = (n_can_fit < vox_size) ? n_can_fit : vox_size;
@@ -59,17 +61,18 @@ int t_zlib_serialize_chunk_vox(unsigned short* vox, int vox_size, unsigned char*
 int t_zlib_serialize_chunk(int x, int y, int z, unsigned short* vox, int vox_size, unsigned char* buffer, int* index, int buffer_size) {
 
     int free_space = buffer_size - *index;
-    int req_space = 3*sizeof(x);
-
+    int req_space = (int)(3*sizeof(x));
+    int ret = -1;
+    
     if (free_space < req_space) {  // cant fit vox chunk coordinate
-        return -1;
+        return ret;
     }
 
     t_PACK_int(x, buffer, index); //pack x
     t_PACK_int(y, buffer, index); //pack y
     t_PACK_int(z, buffer, index); //pack z
 
-    int ret = t_zlib_serialize_chunk_vox(vox, vox_size, buffer, index, buffer_size);
+    ret = t_zlib_serialize_chunk_vox(vox, vox_size, buffer, index, buffer_size);
     return ret;
 }
 
@@ -96,9 +99,28 @@ inline int t_UNPACK_int(unsigned char* buffer, int*n) {
 
 
 // store a partially decompressed chunk here
-static const int t_chunk_buff_size = (vm_chunk_voxel_size * sizeof(unsigned short)) + (3 * sizeof(int));
-unsigned char t_chunk_buff[t_chunk_buff_size];
-int t_chunk_buff_index = 0;
+static const int t_chunk_buff_size = (int)(vm_chunk_voxel_size * sizeof(unsigned short)) + (3 * sizeof(int));
+//unsigned char t_chunk_buff[t_chunk_buff_size];
+/*@null@*/ unsigned char* t_chunk_buff = NULL;
+static int t_chunk_buff_index = 0;
+
+int chunk_buffer_init() {
+    if (t_chunk_buff == NULL) {
+        t_chunk_buff = (unsigned char*)malloc(sizeof(unsigned char)*t_chunk_buff_size);
+        return 0;
+    }
+    return 1;
+}
+
+int chunk_buffer_destroy() {
+    if (t_chunk_buff != NULL) {
+        free(t_chunk_buff);
+        t_chunk_buff = NULL;
+        return 0;
+    }
+    return 1;
+}
+        
 
 int t_zlib_unserialize_chunk(unsigned char* buffer, int size) {
 
