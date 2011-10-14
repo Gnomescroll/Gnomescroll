@@ -126,12 +126,12 @@ class Agent_state {
             state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
 
             //do this fast way
-            /*
+            
             int i;
             for(i=0;i<128;i++){
                 if(cs[i].seq < seq || cs[i].seq > seq+60) cs[i].seq = -1; //clear any control state not from next 60 ticks
             }
-            */
+            
             state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
             cs_window_min = seq;
             cs_seq = seq;

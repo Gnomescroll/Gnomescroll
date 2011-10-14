@@ -71,5 +71,6 @@ void _NetClientTick() {
     check_for_dropped_packets(np);
     NetClient::poll_connection_timeout();
 
+    ClientState::ClientTick();
     return;
 }
