@@ -67,7 +67,9 @@ class Agent_state {
             int index = (cs_seq+1) % 128;
             //int index2 = (cs_seq+2) % 128;
             if(cs[index].seq == -1) {
-                //no control data
+                printf("===\n");
+                printf("cs_seq= %i",cs_seq);
+                printf("===\n");
                 return;
             }
             printf("=== new control data ===\n");

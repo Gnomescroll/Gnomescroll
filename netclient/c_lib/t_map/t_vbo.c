@@ -905,6 +905,8 @@ void DRAW_VBOS1() {
 
     int i;
     struct VBO* vbo;
+
+    //if(draw_vbo_n != 0)
     for(i=0;i<draw_vbo_n;i++) {
         vbo = draw_vbo_array[i];
 
