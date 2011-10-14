@@ -44,6 +44,9 @@ Agent_state::Agent_state(int _id) {
 	vy = 0;
 	vz = 0;
 
+	s.x = 15;
+	s.y = 15;
+	
 	cs_seq = 0;
 
 	printf("Agent_state::Agent_state, new agent\n");
