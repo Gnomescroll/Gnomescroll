@@ -31,7 +31,7 @@ void _NetServerTick() {
     }
         update_current_netpeer_time();
 
-        ServerState::ServerTick();
+        //ServerState::ServerTick();
         //NP_print_delta();
 
         process_packets(); //should poll for packets very often; event triggered packet dump
@@ -43,4 +43,6 @@ void _NetServerTick() {
         //decrement_ttl();
         poll_connection_timeout();
 
+
+        ServerState::ServerTick();  //tick after process_packets
 }

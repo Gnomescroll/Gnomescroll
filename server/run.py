@@ -212,6 +212,8 @@ class Main:
             #terrain_map.load_from_disk("natural4")
             terrain_map.load_from_disk("savetest")
             #_gen_map()
+            #terrain_map.load_from_disk("natural4")
+            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
             pass
 
         if False:

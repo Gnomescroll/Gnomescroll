@@ -185,6 +185,9 @@ class App(object):
         print str(opts.opts.server)
         print "==="
         '''
+        
+        _m = 0
+
         while not GameStateGlobal.exit:
             self.world.sound_updates()
 
@@ -198,6 +201,7 @@ class App(object):
 
             P.event("Physics Loop")
             sl_c = 0
+
             while True: #physics loop
                 tc = GET_TICK()
                 if tc == 0 or sl_c > 2:
@@ -259,7 +263,23 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                _o = 1
+                if _o==0:
+                    if _m < 40:
+                        _m += 1
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        #print "cs1"
+                    if _m >= 40:
+                        _m += 1
+                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        #print "cs2"
+                    if _m > 80:
+                        _m = 0
+                elif _o==1:
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        #print "_m reset"
+                    #print "_m= %i" % (_m)
+
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")

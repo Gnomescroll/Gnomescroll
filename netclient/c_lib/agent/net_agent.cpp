@@ -170,6 +170,9 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
                 return;
             }
+
+            A->handle_control_state(seq, cs, theta, phi);
+
             //printf("received agent control state\n");
             //place in control buffer
             //advance physics forward
@@ -199,7 +202,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         inline void handle() {
             printf("cs_CtoS: seq= %i \n", seq);
 
-            Agent_state* A = ClientState::agent_list.get(id);
+            Agent_state* A = ServerState::agent_list.get(id);
             if(A == NULL) {
                 ClientState::agent_list.create(id);
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
@@ -217,13 +220,10 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
             M.theta = theta;
             M.phi = phi;
             M.broadcast();
-            //set buffer
 
-
-            //A->theta = theta;
-            //A->phi = phi;
-
-            //do something
+            //local simulation of agent
+            //printf("handling control state \n");
+            A->handle_control_state(seq, cs, theta, phi);
 
         }
 };
@@ -259,33 +259,17 @@ class PlayerAgent_state {
 
 
     void set_control_state(uint8_t cs, float theta, float phi) {
-        cs_1 = cs_0;
+
         seq = (seq+1) % 256;
-
-        //dont need to clear? because are in order?
-
-        /*            
-        if(seq == 0) {
-            int i;
-            for(i=0;i<256;i++) {
-                if(history[i].seq > 127) history[i].seq = -1;
-            }
-        */
 
         cs_0.seq = seq;
         cs_0.cs = cs;
         cs_0.theta = theta;
         cs_0.phi = phi;
 
-        cs_1.send();
-        //cs_0.send();
+        cs_0.send();
 
-        /*
-        int i;
-        for(i=1;i<=64;i++) {
-            history[(seq+i)%128].seq = -1; //clear out future commands
-        }
-        */
+        //printf("control state send: seq= %i, cs= %i \n", seq, cs);
     }
 
 
