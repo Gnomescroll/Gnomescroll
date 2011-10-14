@@ -190,7 +190,8 @@ class Main:
         else:
             #terrain_map.load_from_disk("angus")
             #terrain_map.load_from_disk("natural_terrain")
-            terrain_map.load_from_disk("natural2_max")
+            #terrain_map.load_from_disk("natural2_max")
+            map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
             pass
 
         if False:

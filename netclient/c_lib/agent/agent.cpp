@@ -96,7 +96,7 @@ void Agent_state::server_tick() {
 	printf("Agent %i: new_control_state=  %i \n", id, _new_control_state);
 
 	//printf("cs_seq= %i \n", cs_seq);
-	cs_seq++;
+	//cs_seq++;
 
 	if(_new_control_state == 1) {
 		_tick();	//advance agent

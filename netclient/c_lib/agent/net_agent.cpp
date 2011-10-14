@@ -269,7 +269,7 @@ class PlayerAgent_state {
 
         cs_0.send();
 
-        //printf("seq= %i, cs= %i \n", seq, cs);
+        //printf("control state send: seq= %i, cs= %i \n", seq, cs);
     }
 
 

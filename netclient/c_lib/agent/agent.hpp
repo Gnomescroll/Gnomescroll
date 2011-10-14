@@ -76,20 +76,22 @@ class Agent_state {
             s.theta = cs[index].theta;
             s.phi = cs[index].phi;
 
-            s.x += s.vx;
-            s.y += s.vy;
-            s.z += s.vz;
+            //s.x += s.vx;
+            //s.y += s.vy;
+            //s.z += s.vz;
 
             int a_cs = cs[index].cs;
             if( a_cs & 1 ) {
                 //forward
                 printf("agent forward\n");
-                s.vx += 0.05;
+                //s.vx += 0.05;
+                s.x += 0.10;
             }
             if( a_cs & 2 ) {
                 //backward
                 printf("agent backward\n");
-                s.vx -= 0.05;
+                //s.vx -= 0.05;
+                s.y += 0.10;
             }
             if( a_cs & 4 ) {
                 //left
@@ -139,7 +141,7 @@ class Agent_state {
 
         //this is for client
         void handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-            printf("control state: seq=%i, cs=%i \n", _seq, _cs);
+            printf("control state received: seq=%i, cs=%i \n", _seq, _cs);
             int index = _seq%128;
 
             cs[index].seq = _seq;
@@ -147,7 +149,7 @@ class Agent_state {
             cs[index].theta = _theta;
             cs[index].phi = _phi;
 
-            printf("cs_seq= %i \n", cs_seq);
+            //printf("cs_seq= %i \n", cs_seq);
             _new_control_state = 1;
             #ifdef DC_SERVER
             printf("Agent %i: new_control_state set to 1 \n", id);
