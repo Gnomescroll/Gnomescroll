@@ -1,5 +1,22 @@
 #include "t_buffer.h"
 
+int t_buffer_init() {
+    if (t_buff == NULL) {
+        t_buff = (unsigned char*)malloc(sizeof(unsigned char)*t_buff_size);
+        return 0;
+    }
+    return 1;
+}
+
+int t_buffer_destroy() {
+    if (t_buff != NULL) {
+        free(t_buff);
+        t_buff = NULL;
+        return 0;
+    }
+    return 1;
+}
+
 void t_buffer_reset() {
     int i;
     for (i=0; i < t_buff_size; i++) {
@@ -7,7 +24,6 @@ void t_buffer_reset() {
     }
     *t_buffer_index = 0;
 }
-
 
 /* Packing buffer */
 inline void t_PACK_ushort(unsigned short d, unsigned char* buffer, int* n){

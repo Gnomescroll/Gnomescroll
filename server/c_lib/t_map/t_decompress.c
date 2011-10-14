@@ -100,7 +100,7 @@ int t_zlib_decompress() {
 }
 
 
-int map_load_from_disk(char* fn) {
+int _map_load_from_disk(char* fn) {
     printf("Loading map %s\n", fn);
     
     const char* errmsg = "Map decompress failed.\n";
@@ -129,6 +129,12 @@ int map_load_from_disk(char* fn) {
     return 0;
 }
 
+int map_load_from_disk(char* fn) {
+    t_buffer_init();
+    int ret = _map_load_from_disk(fn);
+    t_buffer_destroy();
+    return ret;
+}
 
 
 ////

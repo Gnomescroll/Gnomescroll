@@ -145,7 +145,7 @@ int t_zlib_compress_map_chunk(int x, int y, int z, unsigned short *arr, int arr_
 }
 
 
-int map_save_to_disk(char *fn) {
+int _map_save_to_disk(char *fn) {
     printf("Map compression begin\n");
 
     if (t_zlib_compress_init(fn, Z_DEFAULT_COMPRESSION)) {
@@ -188,6 +188,13 @@ int map_save_to_disk(char *fn) {
     return 0;
 }
 
+
+int map_save_to_disk(char *fn) {
+    t_buffer_init();
+    int ret = _map_save_to_disk(fn);
+    t_buffer_destroy();
+    return ret;
+}
 
 
 ////

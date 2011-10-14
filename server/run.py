@@ -209,7 +209,8 @@ class Main:
         else:
             #terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
-            terrain_map.load_from_disk("natural4")
+            #terrain_map.load_from_disk("natural4")
+            terrain_map.load_from_disk("savetest")
             #_gen_map()
             pass
 

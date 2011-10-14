@@ -53,6 +53,13 @@ import time
 
 xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#define]]
 
+
+'''
+seed
+x,y,z
+repeatx,repeaty,repeatz
+'''
+
 class Config:
 
     seed_int = 1
