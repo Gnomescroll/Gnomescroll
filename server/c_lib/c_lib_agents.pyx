@@ -1,8 +1,11 @@
 #cdef extern from "./agent/agent.h":
+
+'''
 cdef extern:
     void agent_tick()
     #int create_agent(float x, float y, float z)
     #void set_agent_state(int id, float xangle, float yangle)
+'''
 
 #cdef extern from "./agent/agent_vox.h":
 cdef extern:

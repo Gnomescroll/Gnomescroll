@@ -27,6 +27,9 @@ def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
 def configure(conf):
+    OS = platform.system()
+    conf.env.os = OS
+
     conf.load('compiler_c compiler_cxx python cython')
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
@@ -34,13 +37,19 @@ def configure(conf):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
-    conf.env.CXXFLAGS = conf.env.CFLAGS
+    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
+    #conf.env.CXXFLAGS = conf.env.CFLAGS
+
+
+    if OS == 'Windows':
+        conf.env.append_value('CFLAGS', ['-g','-Wall','-fPIC','-DDC_SERVER'])
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_SERVER'])
+    else:
+        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_SERVER'])
+        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-DDC_SERVER'])
+
     #,'-D DC_CLIENT'
     conf.env.append_value("LINKFLAGS", "-lz")
-
-    OS = platform.system()
-    conf.env.os = OS
 
     ##TEST REMOVE LATER
     #conf.check(header_name='GL/glew.h', mandatory=True)
