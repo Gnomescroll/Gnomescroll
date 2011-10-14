@@ -32,7 +32,7 @@ int toggle_inventory_hud() {
         return inventory_hud_enabled;
     }
 
-    printf("ERROR: inventory hud has invalid value, %i= inventory_hud_enabled\n");
+    printf("ERROR: inventory hud has invalid value, %i= inventory_hud_enabled\n", inventory_hud_enabled);
     //printf("Hud: inventory_hud_enabled int: %d\n", inventory_hud_enabled);
     return inventory_hud_enabled;
 }

@@ -35,13 +35,6 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
 agent_list = []
 
-
-def _set_agent_control_state(l, xangle,yangle):
-    cdef int x[6]
-    for i in range(0,6):
-        x[i] = int(l[i])
-    set_agent_control_state(x, xangle, yangle)
-
 def agent_skeleton_update():
     global agent_list,lu2,lu3
     skel_tick()

@@ -35,7 +35,10 @@ void draw_agents(Agent_list* agent_list) {
 
 void draw_agent(Agent_state* g) {
     //printf("agent draw \n");
-    draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
+    AgentState* s = &g->s;
+
+    //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
+    draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5);
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
