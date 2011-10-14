@@ -6,5 +6,7 @@
     #include "compat.h"
     int init_c_lib();
 //}
- 
-#define DC_SERVER
+
+#ifndef DC_SERVER
+    #define DC_SERVER
+#endif

@@ -1,5 +1,33 @@
 #include "gradient.h"
 
+float parabolic_falloff(int size, int n) {
+    float fsize = (float)size;
+    float fn = (float)n;
+    float res = 0.5*(sqrt(fsize-fn)-0.5*sqrt(fsize));
+    return res;
+}
+
+void gradient3d_falloff(float fgrad[], int x, int y, int z) {
+    int size = z;
+    int i,j,k;
+    
+    // fill a z-column
+    for (k=0; k<x; k++) {
+        fgrad[x*y*k] = parabolic_falloff(size, k);
+    }
+
+    // copy z-column
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            if (i==0 && j==0) continue;
+            for (k=0; k<z; k++) {
+                fgrad[i + x*j + x*y*k] = fgrad[x*y*k];
+            }
+        }
+    }
+    
+}
+
 void gradient1d(float f[], int x_size, float x0, float x1) {
 
     float samples[2] = {x0, x1};
@@ -133,6 +161,35 @@ void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1, fl
             for (k=0; k<z; k++) {
                 index = i + x*j + x*y*k;
                 noisemap[index] += fgrad[index];    // apply gradient to map
+            }
+        }
+    }
+
+    free(fgrad);
+}
+
+void apply_grad3_falloff(int x, int y, int z, float x0, float x1, float y0, float y1, float z0, float z1) {
+
+    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("WARNING: applying gradient beyond map size. Abort gradient.\n");
+        return;
+    }
+
+    // generate gradient
+    float* fgrad;
+    fgrad = (float*) malloc(x*y*z*sizeof(float));
+    
+    gradient3d_falloff(fgrad, x,y,z);
+
+    int i,j,k;
+    int index;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=0; k<z; k++) {
+                index = i + x*j + x*y*k;
+                if (fgrad[index] < 0.0f) {
+                    noisemap[index] += fgrad[index];    // apply gradient to map
+                }
             }
         }
     }

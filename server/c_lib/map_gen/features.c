@@ -89,3 +89,16 @@ void _caves(int x, int y, int z, float threshold, int base) {
     }
 
 }
+
+
+void _ceiling(int x, int y, int z, int height, int tile) {
+    int i,j,k;
+    z -= 1;
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            for (k=z; k>z-height; k--) {
+                _set(i,j,k, tile);
+            }
+        }
+    }
+}

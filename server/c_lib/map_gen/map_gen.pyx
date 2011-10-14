@@ -19,6 +19,8 @@ cdef extern from "./map_gen/gradient.h":
     void apply_grad2(int x, int y,        float x0, float x1, float y0, float y1)
     void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1,
                                                               float z0, float z1)
+    void apply_grad3_falloff(int x, int y, int z, float x0, float x1, float y0, float y1,
+                                                              float z0, float z1)
 cdef extern from "./map_gen/noise.h":
     void clear_noisemap()
     void set_terrain_density(int x, int y, int z, float threshold, int tile)
@@ -33,7 +35,8 @@ cdef extern from "./map_gen/noise.h":
 cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
     void _caves(int x, int y, int z, float threshold, int base)
-
+    void _ceiling(int x, int y, int z, int height, int tile)
+    
 cdef extern from "./map_gen/perturb.h":
     void perturb_perlin2(int x, int y, int z, float turbulence)
     void perturb_perlin3(int x, int y, int z, float turbulence)
@@ -303,7 +306,7 @@ class Config:
         if self.grad:
             print 'grad'
             #gradients[self.dim](*(size_args+grad_args))
-            apply_gradient3(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
+            apply_gradient3_falloff(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
 
         if self.use_density:
             set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
@@ -356,6 +359,9 @@ def apply_gradient2(x,y, x0, x1, y0, y1):
 
 def apply_gradient3(x,y,z, x0, x1, y0, y1, z0, z1):
     apply_grad3(x,y,z,  x0, x1, y0, y1, z0, z1)
+
+def apply_gradient3_falloff(x,y,z, x0, x1, y0, y1, z0, z1):
+    apply_grad3_falloff(x,y,z,  x0, x1, y0, y1, z0, z1)
 
 gradients = {
     1: apply_gradient1,
@@ -455,3 +461,5 @@ def scale(float xscale=1.0, float yscale=1.0, float zscale=1.0):
 def heightmap(int x, int y, int z, int baseline=64, int maxheight=64, int base_tile=2):
     set_terrain_height(x,y,z, baseline, maxheight, base_tile)
 
+def ceiling(int x, int y, int z, int height=1,int tile=2):
+    _ceiling(x,y,z, height, tile);
