@@ -8,6 +8,7 @@
 
 namespace ClientState {
 
+
         PlayerAgent_state playerAgent_state;
 
 	int active_agent = 0;
@@ -29,13 +30,17 @@ namespace ClientState {
         float theta;
         float phi;
         */
+
         uint8_t cs = 0;
-        if(f) a_cs.cs |= 1;
-        if(b) a_cs.cs |= 2;
-        if(l) a_cs.cs |= 4;
-        if(r) a_cs.cs |= 8;
-        if(jet) a_cs.cs |= 16;
-        if(jump) a_cs.cs |= 32;
+        if(f) cs |= 1;
+        if(b) cs |= 2;
+        if(l) cs |= 4;
+        if(r) cs |= 8;
+        if(jet) cs |= 16;
+        if(jump) cs |= 32;
+
+        //printf("cs= %i, f=%i \n", cs, f);
+
         playerAgent_state.set_control_state(cs, theta, phi);
 
         return;
@@ -60,4 +65,7 @@ namespace ClientState {
 		a_cs.send();
 	}
 
+        void ClientTick() {
+                agent_list.client_tick();
+        }
 }
