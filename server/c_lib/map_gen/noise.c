@@ -170,6 +170,7 @@ void set_noise_scale(float xscale, float yscale, float zscale) {
 }
 
 float* noise_init(int x, int y, int z) {
+    printf("Initializing noisemap with size %d %d %d\n", x,y,z);
     if (! noisemap_inited) {
         noisemap = (float*)malloc(sizeof(float)*x*y*z);
         noisemap_inited = 1;

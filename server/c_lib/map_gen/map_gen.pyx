@@ -19,8 +19,8 @@ cdef extern from "./map_gen/gradient.h":
     void apply_grad2(int x, int y,        float x0, float x1, float y0, float y1)
     void apply_grad3(int x, int y, int z, float x0, float x1, float y0, float y1,
                                                               float z0, float z1)
-    void apply_grad3_falloff(int x, int y, int z, float x0, float x1, float y0, float y1,
-                                                              float z0, float z1)
+    void apply_grad3_falloff(int x, int y, int z, int x_dir, int y_dir, int z_dir)
+
 cdef extern from "./map_gen/noise.h":
     void clear_noisemap()
     void set_terrain_density(int x, int y, int z, float threshold, int tile)
@@ -77,6 +77,7 @@ class Config:
 
         self.grad = False
         self.gx0 = self.gx1 = self.gy0 = self.gy1 = self.gz0 = self.gz1 = 0.0
+        self.gx = self.gy = self.gz = 0
 
         self.octaves = 1
         self.persistence = 0.5
@@ -107,6 +108,8 @@ class Config:
         self.xscale = 1.0
         self.yscale = 1.0
         self.zscale = 1.0
+
+        self.grad2 = False
 
         set_noise_parameters(self.octaves, self.persistence, self.amplitude, self.lacunarity, self.frequency)
         set_noise_scale(self.xscale, self.yscale, self.zscale)
@@ -177,6 +180,13 @@ class Config:
         self.gy1 = float(y1)
         self.gz0 = float(z0)
         self.gz1 = float(z1)
+        return self
+
+    def gradient2(self, x_dir=0, y_dir=0, z_dir=1):
+        self.grad2 = True
+        self.gx = x_dir
+        self.gy = y_dir
+        self.gz = z_dir
         return self
 
     def _noise_conf(self, octaves, persistence, amplitude, frequency, lacunarity):
@@ -302,11 +312,13 @@ class Config:
                 interpolates[self.dim](noise_type=self.noise_type, rmf=self.use_rmf, *(size_args+interp_args+noise_args))
             else:
                 getattr(self.noise, noise_method)(*size_args)
-            
-        if self.grad:
+
+        if self.grad2:
+            apply_gradient3_falloff(self.x, self.y, self.z, self.gx, self.gy, self.gz)
+        elif self.grad:
             print 'grad'
             #gradients[self.dim](*(size_args+grad_args))
-            apply_gradient3_falloff(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
+            apply_gradient3(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
 
         if self.use_density:
             set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
@@ -360,8 +372,8 @@ def apply_gradient2(x,y, x0, x1, y0, y1):
 def apply_gradient3(x,y,z, x0, x1, y0, y1, z0, z1):
     apply_grad3(x,y,z,  x0, x1, y0, y1, z0, z1)
 
-def apply_gradient3_falloff(x,y,z, x0, x1, y0, y1, z0, z1):
-    apply_grad3_falloff(x,y,z,  x0, x1, y0, y1, z0, z1)
+def apply_gradient3_falloff(int x, int y, int z, int x_dir, int y_dir, int z_dir):
+    apply_grad3_falloff(x,y,z,  x_dir, y_dir, z_dir)
 
 gradients = {
     1: apply_gradient1,

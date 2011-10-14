@@ -62,113 +62,113 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 '''
 
 def _gen_map():
-    terrain_map.set_map_size(128,128,128) # TODO:: get this value from the map gen or saved map
+    terrain_map.set_map_size(512,512,128) # TODO:: get this value from the map gen or saved map
     if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
-        c_lib.map_gen.init(128,128,128)
+        c_lib.map_gen.init(512,512,128)
         c_lib.map_gen.conf.seed(opts.opts.seed)
-        #import time
-        #_n = time.time()
+        import time
+        _n = time.time()
 
-        ###base heightmap, smooth shallow hills
-        #c_lib.map_gen.conf\
-        #.size(128,128,128)\
-        #.group(0)\
-        #.tile(2)\
-        #.interpolate(4,2,1)\
-        #.scale(4.0, 4.0, 1.0)\
-        #.heightmap(baseline=40, maxheight=60)\
-        #.p2(octaves=6, persistence=0.45)\
-        #.start()\
-        #.reset()
-
-         ####base heightmap, smooth shallowER hills
-        #c_lib.map_gen.conf\
-        #.size(128,128,128)\
-        #.group(5)\
-        #.scale(x=1.0, y=1.0, z=1.0)\
-        #.tile(2)\
-        #.interpolate(2,4,1)\
-        #.heightmap(baseline=30, maxheight=45)\
-        #.p2(octaves=6, persistence=0.4)\
-        #.start()\
-        #.reset()
-
-        #c_lib.map_gen.grass(128,128,0)
-        
-        ## 3d density noise. floating islands, overhangs
-        #c_lib.map_gen.conf\
-        #.size(128,128,128)\
-        #.tile(2)\
-        #.scale(x=3.5, y=3.5, z=1.0)\
-        #.gradient(z0=0.0, z1=-0.2)\
-        #.group(1)\
-        #.interpolate(4,4,2)\
-        #.density(threshold=0.75)\
-        #.p3(octaves=6, persistence=0.7)\
-        #.start()\
-        #.reset()
-
-        ## 3d density noise. floating islands, overhangs
-        #c_lib.map_gen.conf\
-        #.size(128,128,128)\
-        #.tile(2)\
-        #.scale(x=2.0, y=2.0, z=1.0)\
-        #.group(1)\
-        #.gradient(z0=0.0, z1=-0.3)\
-        #.interpolate(4,4,2)\
-        #.density(threshold=0.75)\
-        #.p3(octaves=6, persistence=0.7)\
-        #.start()\
-        #.reset()
-
-        #c_lib.map_gen.grass(128,128,0)
-
-        ## 3d density noise, subtractive RMF. forms caves
-        #c_lib.map_gen.conf\
-        #.interpolate(4,2,4)\
-        #.size(128,128,128)\
-        #.tile(0)\
-        #.scale(x=2.0, y=2.0, z=2.0)\
-        #.group(2)\
-        #.density(threshold=0.98)\
-        #.gradient(z0=0.1, z1=0.0)\
-        #.rmf()\
-        #.p3(octaves=6, persistence=0.9)\
-        #.start()\
-        #.reset()
-        
-         #3d density noise, subtractive RMF. forms caves
-        #c_lib.map_gen.conf\
-        #.interpolate(2,4,1)\
-        #.size(128,128,128)\
-        #.gradient(z0=0.02,  z1=0.0)\
-        #.tile(0)\
-        #.scale(x=2.0, y=2.0, z=2.0)\
-        #.group(3)\
-        #.density(threshold=0.97)\
-        #.rmf()\
-        #.p3(octaves=6, persistence=0.7)\
-        #.start()\
-        #.reset()
-
-
-        """
-        New gradient method
-        """
-        # 3d density noise. floating islands, overhangs
+        ##base heightmap, smooth shallow hills
         c_lib.map_gen.conf\
-        .size(128,128,128)\
+        .size(512,512,128)\
+        .group(0)\
         .tile(2)\
-        .scale(x=1.0, y=1.0, z=1.0)\
-        .gradient()\
-        .interpolate(4,4,2)\
-        .density(threshold=0.75)\
-        .p3(octaves=6, persistence=0.7)\
-        .grass()\
+        .interpolate(4,2,1)\
+        .scale(4.0, 4.0, 1.0)\
+        .heightmap(baseline=40, maxheight=60)\
+        .p2(octaves=6, persistence=0.45)\
         .start()\
         .reset()
 
-        c_lib.map_gen.ceiling(128,128,128,1,3)
+         ###base heightmap, smooth shallowER hills
+        c_lib.map_gen.conf\
+        .size(512,512,128)\
+        .group(5)\
+        .scale(x=1.0, y=1.0, z=1.0)\
+        .tile(2)\
+        .interpolate(2,4,1)\
+        .heightmap(baseline=30, maxheight=45)\
+        .p2(octaves=6, persistence=0.4)\
+        .start()\
+        .reset()
+
+        c_lib.map_gen.grass(512,512,0)
+        
+        ### 3d density noise. floating islands, overhangs
+        #c_lib.map_gen.conf\
+        #.size(512,512,128)\
+        #.tile(2)\
+        #.scale(x=3.5, y=3.5, z=1.0)\
+        #.gradient2()\
+        #.group(1)\
+        #.interpolate(4,4,2)\
+        #.density(threshold=0.75)\
+        #.p3(octaves=6, persistence=0.7)\
+        #.start()\
+        #.reset()
+
+        ## 3d density noise. floating islands, overhangs, same seed different scale
+        c_lib.map_gen.conf\
+        .size(512,512,128)\
+        .tile(2)\
+        .scale(x=4.0, y=4.0, z=1.0)\
+        .group(1)\
+        .gradient(z0=0.0, z1=-0.3)\
+        .interpolate(4,4,2)\
+        .density(threshold=0.75)\
+        .p3(octaves=6, persistence=0.7)\
+        .start()\
+        .reset()
+
+        c_lib.map_gen.grass(512,512,0)
+
+        ## 3d density noise, subtractive RMF. forms caves
+        c_lib.map_gen.conf\
+        .interpolate(4,2,4)\
+        .size(512,512,128)\
+        .tile(0)\
+        .scale(x=4.0, y=4.0, z=2.0)\
+        .group(2)\
+        .density(threshold=0.97)\
+        .gradient2()\
+        .rmf()\
+        .p3(octaves=6, persistence=0.8)\
+        .start()\
+        .reset()
+        
+         ##3d density noise, subtractive RMF. forms caves
+        c_lib.map_gen.conf\
+        .interpolate(2,4,2)\
+        .size(512,512,128)\
+        .gradient2()\
+        .tile(0)\
+        .scale(x=4.0, y=4.0, z=3.0)\
+        .group(3)\
+        .density(threshold=0.97)\
+        .rmf()\
+        .p3(octaves=6, persistence=0.7)\
+        .start()\
+        .reset()
+
+        """
+        New gradient method
+        Uses a parabolic falloff
+        #"""
+        ## 3d density noise. floating islands, overhangs
+        #c_lib.map_gen.conf\
+        #.size(128,128,128)\
+        #.tile(2)\
+        #.scale(x=1.0, y=1.0, z=1.0)\
+        #.gradient2()\
+        #.interpolate(4,4,2)\
+        #.density(threshold=0.75)\
+        #.p3(octaves=6, persistence=0.7)\
+        #.grass()\
+        #.start()\
+        #.reset()
+
+        #c_lib.map_gen.ceiling(128,128,128,1,3)
 
         """
         - Perturbing the noisemap tests
@@ -187,7 +187,7 @@ def _gen_map():
 
         c_lib.map_gen.destroy()
 
-        #print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
+        print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
 
 def pallet_pillar(x,y,z):
     for i in range(0,32):
@@ -225,11 +225,11 @@ class Main:
             print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
         else:
-            terrain_map.load_from_disk("natural_terrain")
+            #terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
             #terrain_map.load_from_disk("natural4")
             #_gen_map()
-            #terrain_map.load_from_disk("natural4")
+            terrain_map.load_from_disk("nat5")
             #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
             pass
 
