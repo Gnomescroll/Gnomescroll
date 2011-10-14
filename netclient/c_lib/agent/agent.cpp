@@ -102,6 +102,7 @@ void Agent_state::server_tick() {
 		_tick();	//advance agent
 	}
 
+
 	if(tick_n % 30 ==0) {
 		Agent_state_message A;
 	/*
@@ -124,6 +125,13 @@ void Agent_state::server_tick() {
 		A.vy = s.vy;
 		A.vz = s.vz;
 		A.broadcast();
+
+
+		//clean out old control state
+        int i;
+        for(i=0;i<128;i++){
+            if(cs[i].seq < cs_seq || cs[i].seq > cs_seq+60) cs[i].seq = -1; //clear any control state not from next 60 ticks
+        }
 	}
 
 	/*

@@ -37,7 +37,6 @@ struct Agent_control_state {
 
 class Agent_state {
     private:
-        class AgentState state_snapshot;
         class AgentState state_rollback;
         struct Agent_control_state cs[128];
 
@@ -51,6 +50,7 @@ class Agent_state {
 
     public:
         class AgentState s; //state current
+        class AgentState state_snapshot;
 
         int id;
 		float x,y,z;
@@ -63,7 +63,7 @@ class Agent_state {
         void _tick() {
             _new_control_state = 0;
 
-            printf("Agent %i tick\n", id);
+            printf("Agent %i tick: cs_seq= %i \n", id, cs_seq);
             int index = (cs_seq+1) % 128;
             //int index2 = (cs_seq+2) % 128;
             if(cs[index].seq == -1) {

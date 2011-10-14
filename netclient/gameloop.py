@@ -263,7 +263,8 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                if True:
+                _o = 1
+                if _o==0:
                     if _m < 40:
                         _m += 1
                         set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
@@ -274,6 +275,8 @@ class App(object):
                         #print "cs2"
                     if _m > 80:
                         _m = 0
+                elif _o==1:
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                         #print "_m reset"
                     #print "_m= %i" % (_m)
 
