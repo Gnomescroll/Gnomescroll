@@ -95,24 +95,22 @@ class Agent_state {
                 int a_cs = cs[index].cs;
                 if( a_cs & 1 ) {
                     //forward
-                    printf("Agent_state._tick: agent forward \n");
-                    //s.vx += 0.05;
+                    //printf("Agent_state._tick: agent forward \n");
                     s.x += 0.10;
                 }
                 if( a_cs & 2 ) {
                     //backward
-                    printf("Agent_state._tick: agent backward \n");
-                    //s.vx -= 0.05;
+                    //printf("Agent_state._tick: agent backward \n");
                     s.x -= 0.10;
                 }
                 if( a_cs & 4 ) {
                     //left
-                    printf("Agent_state._tick: agent left \n");
+                    //printf("Agent_state._tick: agent left \n");
                     s.y += 0.10;
                 }
                 if( a_cs & 8 ) {
                     //right
-                    printf("Agent_state._tick: agent right \n");
+                    //printf("Agent_state._tick: agent right \n");
                     s.y -= 0.10;
                 }
                 if( a_cs & 16 ) {
@@ -120,7 +118,7 @@ class Agent_state {
                     s.z += 0.01;
                 }  
             }
-            printf("_tick: processed %i agent ticks\n", _tc);
+            //printf("_tick: processed %i agent ticks\n", _tc);
         }
 
         void client_tick();
@@ -148,7 +146,7 @@ class Agent_state {
             
             state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
             cs_window_min = seq;
-            printf("handle_state_snapshot: seq= %i, cs_seq= %i \n", seq, cs_seq);
+            //printf("handle_state_snapshot: seq= %i, cs_seq= %i \n", seq, cs_seq);
             cs_seq = seq;
 
             s = state_snapshot;
@@ -158,7 +156,7 @@ class Agent_state {
 
         //this is for client
         void handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-            printf("control state received: seq=%i, cs=%i \n", _seq, _cs);
+            //printf("control state received: seq=%i, cs=%i \n", _seq, _cs);
             int index = _seq%128;
 
             cs[index].seq = _seq;
