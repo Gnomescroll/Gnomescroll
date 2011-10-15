@@ -63,54 +63,67 @@ class Agent_state {
 
         void _tick() {
             _new_control_state = 0;
-
+        /*
             printf("Agent %i tick: cs_seq= %i \n", id, cs_seq);
             int index = (cs_seq+1) % 128;
             //int index2 = (cs_seq+2) % 128;
             if(cs[index].seq == -1) {
-                //no control data
+                printf("Agent_state._tick: skipping: cs_seq= %i, index== %i \n",cs_seq, index);
                 return;
             }
-            printf("=== new control data ===\n");
-            cs_seq = (cs_seq+1)%128;
+        */
+            //if(cs[index].seq == )
+            
 
-            s.theta = cs[index].theta;
-            s.phi = cs[index].phi;
+            //1("=== new control data ===\n");
+            //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
-            //s.x += s.vx;
-            //s.y += s.vy;
-            //s.z += s.vz;
+            int index = (cs_seq+1) % 128;
+            
+            int _tc =0;
+            while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
+                _tc++;
+                cs_seq = (cs_seq+1)%128;
 
-            int a_cs = cs[index].cs;
-            if( a_cs & 1 ) {
-                //forward
-                printf("agent forward\n");
-                //s.vx += 0.05;
-                s.x += 0.10;
+                s.theta = cs[index].theta;
+                s.phi = cs[index].phi;
+
+                //s.x += s.vx;
+                //s.y += s.vy;
+                //s.z += s.vz;
+
+                int a_cs = cs[index].cs;
+                if( a_cs & 1 ) {
+                    //forward
+                    printf("Agent_state._tick: agent forward \n");
+                    //s.vx += 0.05;
+                    s.x += 0.10;
+                }
+                if( a_cs & 2 ) {
+                    //backward
+                    printf("Agent_state._tick: agent backward \n");
+                    //s.vx -= 0.05;
+                    s.x -= 0.10;
+                }
+                if( a_cs & 4 ) {
+                    //left
+                    printf("Agent_state._tick: agent left \n");
+                    s.y += 0.10;
+                }
+                if( a_cs & 8 ) {
+                    //right
+                    printf("Agent_state._tick: agent right \n");
+                    s.y -= 0.10;
+                }
+                if( a_cs & 16 ) {
+                    //jet
+                    s.z += 0.01;
+                }  
             }
-            if( a_cs & 2 ) {
-                //backward
-                printf("agent backward\n");
-                //s.vx -= 0.05;
-                s.y += 0.10;
-            }
-            if( a_cs & 4 ) {
-                //left
-                s.vy += 0.05;
-            }
-            if( a_cs & 8 ) {
-                //right
-                s.vy -= 0.05;
-            }
-            if( a_cs & 16 ) {
-                //jet
-                s.vz += 0.01;
-            }  
+            printf("_tick: processed %i agent ticks\n", _tc);
         }
 
-        void client_tick() {
-            _tick();
-        }
+        void client_tick();
 
         void server_tick();
         /*
@@ -135,9 +148,12 @@ class Agent_state {
             
             state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
             cs_window_min = seq;
+            printf("handle_state_snapshot: seq= %i, cs_seq= %i \n", seq, cs_seq);
             cs_seq = seq;
-            printf("agent snapshot seq= %i \n", cs_seq);
+
             s = state_snapshot;
+
+            _tick();
         }
 
         //this is for client
@@ -153,9 +169,11 @@ class Agent_state {
             //printf("cs_seq= %i \n", cs_seq);
             _new_control_state = 1;
             #ifdef DC_SERVER
-            printf("Agent %i: new_control_state set to 1 \n", id);
+            //printf("Agent %i: new_control_state set to 1 \n", id);
             #endif
             //printf("control state= %i\n", new_control_state);
+
+            _tick();
         }
 
         void revert_to_snapshot() {

@@ -696,8 +696,11 @@ int _t_ = 0;
 int _c_ = 0;
 */
 
+static const int MAX_DRAWN_VBO = 1024;  //hard coded value, bad choice
+
 static int draw_vbo_n;
-static struct VBO* draw_vbo_array[512];  //this should not be hardcoded; will piss someone off
+static struct VBO* draw_vbo_array[MAX_DRAWN_VBO];  //this should not be hardcoded; will piss someone off
+
 
 int _draw_terrain() {
 /*
@@ -735,14 +738,32 @@ int _draw_terrain() {
                 Que up map VBOs to be drawn
                 !!! May want to sort VBOs in front to back order
             */
+
             draw_vbo_array[draw_vbo_n] = &col->vbo;
             draw_vbo_n++;
+            //test
+
+        /*
+            if(col->vbo.v_num == 0) { 
+                printf("ERROR 1!!! v_num zero but its scheduled for drawing \n");
+            }
+        
+            if(draw_vbo_n > 511) {  
+                printf("ERROR 2 !!!: draw vbo= %i \n", draw_vbo_n); 
+                draw_vbo_n=511;
+            }
+        */
+            //untest
         } else {
             set_flag(col,VBO_drawn,0);
             c_pruned++;
         }
     }}
-
+/*
+    if(draw_vbo_n >= 1023) {
+        printf("vbos drawn= %i \n", c_drawn);
+    }
+*/
     DRAW_VBOS1();
     //DRAW_VBOS1a();
 
@@ -817,8 +838,8 @@ int* _chunk_request() {
 
     score_lowest = SCORE_LOWEST_DEFAULT;
 
-    int _x_ = SDL_GetTicks();
-    int counter = 0;
+    //int _x_ = SDL_GetTicks();
+    //int counter = 0;
 
     m = _get_map();
     for(i=0; i<vm_map_dim; i++) {
@@ -905,6 +926,8 @@ void DRAW_VBOS1() {
 
     int i;
     struct VBO* vbo;
+
+    //if(draw_vbo_n != 0)
     for(i=0;i<draw_vbo_n;i++) {
         vbo = draw_vbo_array[i];
 

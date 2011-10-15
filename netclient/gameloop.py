@@ -266,20 +266,29 @@ class App(object):
             if sl_c > 0:
                 _o = 1
                 if _o==0:
-                    if _m < 40:
-                        _m += 1
+                    if _m < 50:
                         set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                        #print "cs1"
-                    if _m >= 40:
-                        _m += 1
+                    elif _m < 100:
+                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _m < 150:
                         set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                        #print "cs2"
-                    if _m > 80:
+                    elif _m < 200:
+                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+
+                    if _m == 199:
                         _m = 0
-                elif _o==1:
+                    else:
+                        _m += 1
+                if _o==1:
+                    if _m < 32:
                         set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                        #print "_m reset"
-                    #print "_m= %i" % (_m)
+                    elif _m < 64:
+                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        
+                    if _m == 64:
+                        _m = 0
+                    else:
+                        _m += 1
 
                 NetClientTick()
 
