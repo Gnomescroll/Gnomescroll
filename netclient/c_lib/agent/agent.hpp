@@ -79,11 +79,11 @@ class Agent_state {
             //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
             int index = (cs_seq+1) % 128;
-            
+
             int _tc =0;
             while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
                 _tc++;
-                cs_seq = (cs_seq+1)%128;
+                cs_seq = (cs_seq+1)%256;
 
                 s.theta = cs[index].theta;
                 s.phi = cs[index].phi;
