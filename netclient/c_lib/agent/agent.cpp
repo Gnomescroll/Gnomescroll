@@ -44,9 +44,9 @@ Agent_state::Agent_state(int _id) {
 	vy = 0;
 	vz = 0;
 
-	s.x = 15;
-	s.y = 15;
-	
+	s.x = 16.5;
+	s.y = 16.5;
+
 	cs_seq = 0;
 
 	printf("Agent_state::Agent_state, new agent\n");
@@ -64,49 +64,21 @@ Agent_state::Agent_state(int _id) {
 	for(i=0; i<128;i++) cs[i].seq = -1;
 }
 
-/*
-Agent_state::handle_control_state(int seq, int cs, float theta, float phi) {
-	
-
-}
-*/
-/*
-#ifdef DC_CLIENT
-	#include <c_lib/agent/agent_draw.hpp>
-#endif
-
-Agent_state::draw() {
-	printf("draw not implemented\n");
-	#ifdef DC_CLIENT
-
-	return;
-	#endif
-}
-*/
-
-/*
 void Agent_state::client_tick() {
-	return;
-}
-*/
-
-void Agent_state::server_tick() {
-	//printf("tick not implemented\n");
-	
-	tick_n++;
-
-	//printf("agent_id=%i, new controlstate = %i\n", id, new_control_state);
-	printf("Agent %i: new_control_state=  %i \n", id, _new_control_state);
-
-	//printf("cs_seq= %i \n", cs_seq);
-	//cs_seq++;
-
-	if(_new_control_state == 1) {
-		_tick();	//advance agent
+        //_tick();
+		//try tick on input received    
 	}
 
+void Agent_state::server_tick() {
 
-	if(tick_n % 30 ==0) {
+	if(_new_control_state == 1) {
+		//_tick();	//advance agent
+		//tick on input received
+	}
+
+	tick_n++;
+	//if(tick_n % 30 == 0) {
+	if(cs_seq % 32 == 0) {
 		Agent_state_message A;
 	/*
         int id;
@@ -133,40 +105,24 @@ void Agent_state::server_tick() {
 		//clean out old control state
         int i;
         for(i=0;i<128;i++){
-            if(cs[i].seq < cs_seq || cs[i].seq > cs_seq+60) cs[i].seq = -1; //clear any control state not from next 60 ticks
-        }
+            if(cs[i].seq < cs_seq || cs[i].seq > cs_seq+60) {
+	        	if(cs[i].seq == cs_seq) printf("!!! Error 1 \n");
+	        	if(cs[i].seq == (cs_seq+1)%128) printf("!!! Error 2 \n");
+	        	if(cs[i].seq == (cs_seq+25)%128) printf("!!! Error 3 \n");
+	        	if(cs[i].seq == (cs_seq+55)%128) printf("!!! Error 4 \n");
+	            cs[i].seq = -1; //clear any control state not from next 60 ticks
+    		}    
+		}
 	}
-
-	/*
-        int id;
-        int seq;
-        uint32_t cs;
-        int tick;
-        int ctick;
-        float theta;
-        float phi;
-	*/
-
-	/*
-	if(tick_n % 3 ==0) {
-		Agent_control_state_to_client_message B;
-
-		B.id = id;
-		B.theta = theta;
-		B.phi = phi;
-		B.broadcast();
-	}	
-	*/
-
 
 	return;
 }
 
 
 void agents_draw() {
-#ifdef DC_CLIENT
-ClientState::agent_list.draw();
-#endif
+	#ifdef DC_CLIENT
+	ClientState::agent_list.draw();
+	#endif
 }
 
 

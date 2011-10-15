@@ -39,13 +39,13 @@ int snapshot_draw_last_seq = 0;
 AgentState snapshot_draw_array[32];
 
 void draw_agent(Agent_state* g) {
+
     //printf("agent draw \n");
     AgentState* s = &g->s;
     draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5);
 
     //AgentState* ss = &g->state_snapshot;
-    //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
-
+    //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
     if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         snapshot_draw_last_seq = g->state_snapshot.seq;
         snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;

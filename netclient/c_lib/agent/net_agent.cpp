@@ -136,6 +136,8 @@ class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<A
             }
             A->theta = theta;
             A->phi = phi;
+
+
             //do something
             //printf("Received control state for agent %i, seq= %i\n", id, seq);
             //apply control state to agent
@@ -171,6 +173,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
                 return;
             }
 
+            //printf("!!! control state= %i \n", cs);
             A->handle_control_state(seq, cs, theta, phi);
 
             //printf("received agent control state\n");
