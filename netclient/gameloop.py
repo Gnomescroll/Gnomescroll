@@ -188,6 +188,7 @@ class App(object):
         
         _m = 0
 
+        cAgents._create_agent(111, 10.,10.,100.)
         while not GameStateGlobal.exit:
             self.world.sound_updates()
 

@@ -94,6 +94,10 @@ def _create_agent(float x, float y, float z):
 cdef extern from "./agent/agent.hpp":
     void agents_tick()
     void agents_draw()
+    int agent_create(int id, float x, float y, float z)
+
+def _create_agent(int id, float x, float y, float z):
+    print "Created agent %d" % agent_create(id, x,y,z)
 
 def draw_agents():
     agents_draw()

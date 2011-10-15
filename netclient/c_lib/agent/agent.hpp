@@ -8,6 +8,7 @@
 
 void agents_draw();
 void agents_tick();
+int agent_create(int id, float x, float y, float z);
 
 //store last network messsage
 
@@ -25,8 +26,8 @@ class AgentState {
 #ifndef AGENT_CONTROL_STATE
 #define AGENT_CONTROL_STATE
 struct Agent_control_state {
-	
-	//int id;
+    
+    //int id;
     int seq;
     float theta;
     float phi;        
@@ -53,8 +54,8 @@ class Agent_state {
         class AgentState state_snapshot;
 
         int id;
-		float x,y,z;
-		float vx,vy,vz;
+        float x,y,z;
+        float vx,vy,vz;
         float theta;
         float phi;
 
