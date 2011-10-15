@@ -203,7 +203,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         }
 
         inline void handle() {
-            printf("cs_CtoS: seq= %i \n", seq);
+            //printf("cs_CtoS: seq= %i \n", seq);
 
             Agent_state* A = ServerState::agent_list.get(id);
             if(A == NULL) {
