@@ -1,5 +1,5 @@
 #include "agent_vox.h"
-#include "agent.h"
+#include "DEP_agent.h"
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize) {
 
@@ -31,8 +31,8 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     v->radius = sqrt((vosize*xdim)*(vosize*xdim) + (vosize*ydim)*(vosize*ydim) + (vosize*zdim)*(vosize*zdim));
     v->vox_size = vosize;
     if(v->vox != NULL) { free(v->vox);} //recycle
-    v->vox = malloc(v->num_vox*sizeof(struct Voxel));
-    int i;
+    v->vox = (struct Voxel*)malloc(v->num_vox*sizeof(struct Voxel));
+    unsigned int i;
     for(i=0; i<v->num_vox; i++) {
         v->vox[i].r = 0;
         v->vox[i].g = 0;
@@ -83,7 +83,7 @@ void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, floa
 
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
     struct Vox* v = get_agent_vox_part(id, part);
-    if(x + y*v->xdim + z*v->xdim*v->ydim >= v->num_vox) {
+    if(x + y*v->xdim + z*v->xdim*v->ydim >= (int)v->num_vox) {
         printf("Warning! %i, %i, %i, %i ; %i, %i, %i; %i \n", v->xdim, v->ydim, v->zdim, v->num_vox, x,y,z, x + y*v->xdim + z*v->xdim*v->ydim);
         //return;
     }
@@ -164,7 +164,7 @@ void t_draw_cube() {
     glEnd();
 }
 */
-void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a) {
+void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_vox* a) {
     float ch = a->camera_height;
     //look is forward direction
     //right is right
@@ -251,7 +251,7 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 
 }
 
-void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a) {
+void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_vox* a) {
 
     int i,j,k;
     int i1;
