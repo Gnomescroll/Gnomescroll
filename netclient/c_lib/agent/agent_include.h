@@ -19,7 +19,12 @@
 #include <c_lib/agent/agent.cpp>
 //#include <c_lib/agent/agent_list.cpp>
 #include <c_lib/agent/net_agent.cpp>
-#include <c_lib/agent/agent_draw.cpp>
+#ifdef DC_CLIENT
+    #include <c_lib/agent/agent_draw.cpp>
+    #include <c_lib/agent/agent_vox.c>
+    #include <c_lib/agent/DEP_agent.c>
+#endif
+
 
 //#include <c_lib/agent/agent_state.cpp>
 //#include <c_lib/agent/agent_state.cpp>
