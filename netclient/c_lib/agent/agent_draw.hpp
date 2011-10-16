@@ -15,6 +15,8 @@
 namespace AgentDraw {
 
 
+void add_snapshot_to_history(Agent_state* g);
+
 void draw_agents(Agent_list* agent_list); 
 void draw_agent(Agent_state* g); 
 

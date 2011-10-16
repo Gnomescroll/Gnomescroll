@@ -10,7 +10,34 @@
 
 #include <c_lib/agent/agent_draw.hpp>
 
+void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
+    state_snapshot.seq = seq;
+    state_snapshot.theta = theta;
+    state_snapshot.phi = phi;
+    state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
+    state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
 
+    //do this fast way
+    
+    int i;
+    for(i=0;i<128;i++){
+        if(cs[i].seq < seq || cs[i].seq > seq+60) cs[i].seq = -1; //clear any control state not from next 60 ticks
+    }
+    
+    state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
+    cs_window_min = seq;
+    //printf("handle_state_snapshot: seq= %i, cs_seq= %i \n", seq, cs_seq);
+    cs_seq = seq;
+
+    s = state_snapshot;
+
+    #ifdef DC_CLIENT
+    AgentDraw::add_snapshot_to_history(this);
+    #endif
+    _tick();
+}
+
+    
 void Agent_list::draw() {
 
 #ifdef DC_CLIENT

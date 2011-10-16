@@ -38,6 +38,17 @@ int snapshot_draw_array_i = 0;
 int snapshot_draw_last_seq = 0;
 AgentState snapshot_draw_array[32];
 
+void add_snapshot_to_history(Agent_state* g) {
+
+    if(g->state_snapshot.seq != snapshot_draw_last_seq) {
+        snapshot_draw_last_seq = g->state_snapshot.seq;
+        snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
+        snapshot_draw_array_i = (snapshot_draw_array_i+1)%32;
+    }
+
+
+}
+
 void draw_agent(Agent_state* g) {
 
     //printf("agent draw \n");
@@ -48,13 +59,6 @@ void draw_agent(Agent_state* g) {
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
     if(g->id == 0) {
-        if(g->state_snapshot.seq != snapshot_draw_last_seq) {
-            snapshot_draw_last_seq = g->state_snapshot.seq;
-            snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
-            snapshot_draw_array_i = (snapshot_draw_array_i+1)%32;
-        }
-
-
         int i;
         for(i=0; i < 32; i++) {
             draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
