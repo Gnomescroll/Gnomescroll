@@ -34,8 +34,7 @@ def end():
 
 #agent
 
-'''
-cdef extern from "./agent/agent_vox.h":
+cdef extern from "./agent/agent_vox.hpp":
     void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
     void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
     void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
@@ -85,7 +84,6 @@ def _set_agent_model(int id):
     for part in range(0,6):
         fx,fy,fz, nx,ny,nz = lu3[part]
         set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-'''
 
 '''
 def _create_agent(float x, float y, float z):
@@ -109,7 +107,7 @@ def _create_agent(int id, float x, float y, float z):
 def _create_agent_with_vox(int id, float x, float y, float z):
     id = agent_create(id, x,y,z)
     print "_create_agent_with_vox (cython) :: created agent %d" % (id,)
-    #_set_agent_model(id)
+    _set_agent_model(id)
     return id
     
 

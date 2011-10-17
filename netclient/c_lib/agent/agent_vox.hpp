@@ -25,21 +25,55 @@ struct Voxel {
 unsigned char r,g,b,a;
 };
 
-struct Vox {
+//struct Vox {
 
-    struct Vector f,n,u;
-    struct Vector a; //forward, normal, anchor
+    //struct Vector f,n,u;
+    //struct Vector a; //forward, normal, anchor
 
-    unsigned short xdim;
-    unsigned short ydim;
-    unsigned short zdim;
-    float vox_size;
-    float radius;
-    struct Voxel* vox;
-    unsigned int num_vox;
+    //unsigned short xdim;
+    //unsigned short ydim;
+    //unsigned short zdim;
+    //float vox_size;
+    //float radius;
+    //struct Voxel* vox;
+    //unsigned int num_vox;
 
-    struct Vector c; //center
-    float length;
+    //struct Vector c; //center
+    //float length;
+//};
+
+class Vox {
+    public:
+        struct Vector f,n,u;
+        struct Vector a; //forward, normal, anchor
+
+        unsigned short xdim;
+        unsigned short ydim;
+        unsigned short zdim;
+        float vox_size;
+        float radius;
+        struct Voxel* vox;
+        unsigned int num_vox;
+
+        struct Vector c; //center
+        float length;
+        Vox(unsigned short _xdim, unsigned short _ydim, unsigned short _zdim,
+            float vosize, float r, unsigned int nv) {
+            f = Vector_init(0.0f, 0.0f, 0.0f);
+            n = Vector_init(0.0f, 0.0f, 0.0f);
+            u = Vector_init(0.0f, 0.0f, 0.0f);
+            a = Vector_init(0.0f, 0.0f, 0.0f);
+            xdim = _xdim;
+            ydim = _ydim;
+            zdim = _zdim;
+            vox_size = vosize;
+            radius = r;
+            vox = (struct Voxel*) malloc(sizeof(struct Voxel*));
+            num_vox = nv;
+        }
+        ~Vox() {
+            free(vox);
+        }
 };
 
 class Agent_state;
@@ -51,23 +85,26 @@ class Agent_vox {
         float camera_height;
         float cbox_height;
         float cbox_radius; // collision box
-        struct Vox vox_part[AGENT_PART_NUM]; //head,torso, larm,rarm, lleg, rleg
+        class Vox* vox_part[AGENT_PART_NUM]; //head,torso, larm,rarm, lleg, rleg
         Agent_vox() {
             lv=ly=lz=0.0;
             camera_height=2.5;
             cbox_height=3.0;
             cbox_radius=0.45;
+            for (int i=0; i<AGENT_PART_NUM; i++) {
+                vox_part[i] = new Vox();
+            }
         }
 };
 
-void init_agent_vox_volume(Agent_list *alist, int id, int part, int xdim, int ydim, int zdim, float vosize);
+void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
 
-void set_agent_limb_direction(Agent_list *alist, int id, int part, float fx,float fy,float fz, float nx,float ny, float nz);
-void set_agent_limb_anchor_point(Agent_list *alist, int id, int part, float length, float ax, float ay, float az);
+void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz);
+void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
 
-void set_agent_vox_volume(Agent_list *alist, int id, int part, int x, int y, int z, int r, int g, int b, int a);
+void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
 
-struct Vox* get_agent_vox_part(Agent_list *alist, int id, int part);
+struct Vox* get_agent_vox_part(int id, int part);
 
 void destroy_vox(struct Vox* v);
 
@@ -75,6 +112,6 @@ void destroy_vox(struct Vox* v);
  *  Client only
  */
 #ifdef DC_CLIENT
-void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, Agent_vox* a);
+void agent_vox_draw_head(struct Vector look, struct Vector right, Agent_state* a);
 void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, Agent_state* a);
 #endif
