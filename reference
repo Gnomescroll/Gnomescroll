@@ -1,6 +1,18 @@
 Ambient Occultion:
 !!! http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/#ambient-occlusion
 
+Fast Inverse Square Root:
+http://betterexplained.com/articles/understanding-quakes-fast-inverse-square-root/
+
+float InvSqrt(float x){
+   float xhalf = 0.5f * x;
+   int i = *(int*)&#038;x; // store floating-point bits in integer
+   i = 0x5f3759d5 - (i >> 1); // initial guess for Newton's method
+   x = *(float*)&#038;i; // convert new bits into float
+   x = x*(1.5f - xhalf*x*x); // One round of Newton's method
+   return x;
+}
+
 Lambert's cosine law says that the radiant intensity observed from an ideal diffusely reflecting surface (a Lambertian surface) is directly proportional to the cosine of the angle θ between the observer's line of sight and the surface normal.
 
 Terrain Generation:

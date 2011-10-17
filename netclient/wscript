@@ -38,7 +38,12 @@ def configure(conf):
     global _OS
     global os_libpth
 
-    conf.load('compiler_c compiler_cxx python cython')
+    conf.check_tool('gcc')
+    conf.check_tool('g++')
+    conf.check_tool('python')
+    conf.check_tool('cython')
+    #conf.load('compiler_c compiler_cxx python cython')
+
     conf.check_python_version((2,6,0))
     conf.check_python_headers()
 

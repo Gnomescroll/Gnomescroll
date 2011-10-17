@@ -55,6 +55,9 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_contr
 
 //template class FixedSizeNetPacketToServer<Agent_control_state_message>;
 
+
+static int _last_seq2 = 0;
+
 //send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
 {
@@ -102,15 +105,19 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
             float phi = 0;
             A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
             //printf("Received Agent_state_message packet: agent_id= %i \n", id);
+
+            printf("seq= %i \n", seq);
+            if(seq != (_last_seq2 + 32)%256) {
+                printf("!!! ERROR2: seq= %i, last_seq= %i \n", seq, _last_seq2);
+            }
+            _last_seq2 = seq;
+
             return;
         }
 };
 
 
-
-static int _last_seq2 = 0;
-
-
+/*
 class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<Agent_control_state_to_client_message>
 {
     public:
@@ -148,14 +155,9 @@ class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<A
             //apply control state to agent
             A->ctick++;
 
-            if(seq != (_last_seq2 + 32)%256) {
-            
-            printf("!!! ERROR2: seq= %i, last_seq= %i \n", seq, _last_seq2);
-
-        }
         }
 };
-
+*/
 
 //Agent control state, server to client
 class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>

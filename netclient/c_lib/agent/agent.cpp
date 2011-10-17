@@ -37,28 +37,28 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     _tick();
 }
 
-    
-void Agent_list::draw() {
 
-#ifdef DC_CLIENT
-    int i;
-    struct Agent_state* g = NULL;
+void Agent_list::draw() 
+{
+	#ifdef DC_CLIENT
+	    int i;
+	    struct Agent_state* g = NULL;
 
-    //printf("Drawing agents\n");
-    glDisable(GL_TEXTURE_2D);
-    //glEnable(GL_DEPTH_TEST);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    for(i=0; i<n_max; i++) { //max_n
-        if(a[i] != NULL) {
-            g = a[i];
-            AgentDraw::draw_agent(g);
-        }
-    }
-    glDisable(GL_CULL_FACE);
-    //glEnable(GL_TEXTURE_2D);
-    //glDisable(GL_DEPTH_TEST);
-#endif
+	    //printf("Drawing agents\n");
+	    glDisable(GL_TEXTURE_2D);
+	    //glEnable(GL_DEPTH_TEST);
+	    glDisable(GL_DEPTH_TEST);
+	    glEnable(GL_CULL_FACE);
+	    for(i=0; i<n_max; i++) { //max_n
+	        if(a[i] != NULL) {
+	            g = a[i];
+	            AgentDraw::draw_agent(g);
+	        }
+	    }
+	    glDisable(GL_CULL_FACE);
+	    //glEnable(GL_TEXTURE_2D);
+	    //glDisable(GL_DEPTH_TEST);
+	#endif
 }
 
 
