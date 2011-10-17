@@ -13,7 +13,18 @@
 
 #include <physics/vector.h>
 //#include "agent.h"
-struct Agent_state;
+
+
+#define AGENT_PART_NUM 6
+#define AGENT_PART_HEAD 0
+#define AGENT_PART_TORSO 1
+#define AGENT_PART_LARM 2
+#define AGENT_PART_RARM 3
+#define AGENT_PART_LLEG 4
+#define AGENT_PART_RLEG 5
+
+#define AGENT_LIST2_SIZE 1024
+
 
 struct Voxel {
 unsigned char r,g,b,a;
@@ -36,6 +47,22 @@ struct Vox {
     struct Vector c; //center
     float length;
 };
+
+class Agent_vox {
+    public:
+        float lv,ly,lz; //looking vector
+        float camera_height;
+        float cbox_height;
+        float cbox_radius; // collision box
+        struct Vox vox_part[AGENT_PART_NUM]; //head,torso, larm,rarm, lleg, rleg
+        Agent_vox() {
+            lv=ly=lz=0.0;
+            camera_height=2.5;
+            cbox_height=3.0;
+            cbox_radius=0.45;
+        }
+};
+
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
 

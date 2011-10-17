@@ -1,4 +1,4 @@
-#include "agent_vox.h"
+#include "agent_vox.hpp"
 #include "DEP_agent.h"
 
 void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize) {
@@ -164,7 +164,7 @@ void t_draw_cube() {
     glEnd();
 }
 */
-void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_vox* a) {
+void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_vox_old* a) {
     float ch = a->camera_height;
     //look is forward direction
     //right is right
@@ -251,7 +251,7 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 
 }
 
-void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_vox* a) {
+void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_vox_old* a) {
 
     int i,j,k;
     int i1;

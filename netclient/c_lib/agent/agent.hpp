@@ -4,6 +4,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
+#include <agent/agent_vox.hpp>
 #endif
 
 void agents_draw();
@@ -36,6 +37,7 @@ struct Agent_control_state {
 };
 #endif
 
+
 class Agent_state {
     private:
         class AgentState state_rollback;
@@ -60,6 +62,8 @@ class Agent_state {
         float phi;
 
         int _new_control_state;
+
+        class Agent_vox vox;
 
         void _tick() {
             _new_control_state = 0;
@@ -172,9 +176,10 @@ class Agent_state {
         int last_control_state_update_message;  //acts like ghost for now
         int last_full_state_message;
 
+        void draw();
+
         Agent_state(int _id); //default constructor
         //void server_tick();
-        //void _draw();
         //set_control_state(int[8] _cs, float theta, float phi);
 };
 

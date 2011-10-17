@@ -3,7 +3,7 @@
 #include <math.h>
 #include <compat.h>
 
-#include <agent/agent_vox.h>
+#include <agent/agent_vox.hpp>
 
 #define AGENT_PART_NUM 6
 #define AGENT_PART_HEAD 0
@@ -15,7 +15,7 @@
 
 #define AGENT_LIST2_SIZE 1024
 
-struct Agent_vox {
+struct Agent_vox_old {
 int id;
 float x,y,z;
 float vx,vy,vz;
@@ -28,7 +28,7 @@ float cbox_radius; // collision box
 struct Vox vox_part[AGENT_PART_NUM]; //head,torso, larm,rarm, lleg, rleg
 };
 
-struct Agent_vox** Agent_list2 = NULL;
+struct Agent_vox_old** Agent_list2 = NULL;
 
 void agent_tick_vox();
 int create_agent_vox(float x, float y, float z);
@@ -41,7 +41,7 @@ int create_agent_vox(float x, float y, float z);
 void agent_draw_vox();
 #endif
 
-//struct Agent_vox* get_agent_vox(int id);
+//struct Agent_vox_old* get_agent_vox(int id);
 struct Vox* get_agent_vox_part(int id, int part);
 
 void init_agent_vox_module();

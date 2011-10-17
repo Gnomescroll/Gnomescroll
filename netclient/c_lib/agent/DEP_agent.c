@@ -1,8 +1,11 @@
 #include "DEP_agent.h"
 
+int agent_id_counter = 0;
+int a_count = 0;
+
 void init_agent_vox_module() {
     if (Agent_list2 == NULL) {
-        Agent_list2 = (struct Agent_vox**)malloc(sizeof(struct Agent_vox)*AGENT_LIST2_SIZE);
+        Agent_list2 = (struct Agent_vox_old**)malloc(sizeof(struct Agent_vox_old)*AGENT_LIST2_SIZE);
     }
 }
 void shutdown_agent_vox_module() {
@@ -14,19 +17,18 @@ void shutdown_agent_vox_module() {
             }
         }
         free(Agent_list2);
+        agent_id_counter = 0;
+        a_count = 0;
     }
 }
 
-int agent_id_counter = 0;
-int a_count = 0;
-
-void agent_Tick_vox(struct Agent_vox* g);
+void agent_Tick_vox(struct Agent_vox_old* g);
 #ifdef DC_CLIENT
-void agent_Draw_vox(struct Agent_vox* g);
+void agent_Draw_vox(struct Agent_vox_old* g);
 #endif
 
-struct Agent_vox* get_agent_vox(int id) {
-    //struct Agent_vox* g = NULL;
+struct Agent_vox_old* get_agent_vox(int id) {
+    //struct Agent_vox_old* g = NULL;
     int i;
     for(i=0; i<AGENT_LIST2_SIZE; i++) {
         if(Agent_list2[i] != NULL && Agent_list2[i]->id == id) {
@@ -36,14 +38,14 @@ struct Agent_vox* get_agent_vox(int id) {
     return NULL;
 }
 
-void agent_Tick_vox(struct Agent_vox* g) {
+void agent_Tick_vox(struct Agent_vox_old* g) {
     g->xangle += 0.01;
     g->xangle = 0.0;
     g->yangle += 0; //0.005; //0.35;
 }
 
 void agent_tick_vox() {
-    struct Agent_vox* g = NULL;
+    struct Agent_vox_old* g = NULL;
     int i;
     for(i=0; i<AGENT_LIST2_SIZE; i++) {
         if(Agent_list2[i] != NULL) {
@@ -54,11 +56,11 @@ void agent_tick_vox() {
 }
 
 int create_agent_vox(float x, float y, float z) {
-    struct Agent_vox* g = NULL;
+    struct Agent_vox_old* g = NULL;
     int i;
     for(i=0; i<AGENT_LIST2_SIZE; i++) {
         if(Agent_list2[i] == NULL) {
-            g = (struct Agent_vox *) malloc (sizeof(struct Agent_vox));
+            g = (struct Agent_vox_old *) malloc (sizeof(struct Agent_vox_old));
             Agent_list2[i] = g;
             a_count++;
             break;
@@ -87,7 +89,7 @@ int create_agent_vox(float x, float y, float z) {
 }
 
 void destroy_agent_vox(int id) {
-    struct Agent_vox* g = NULL;
+    struct Agent_vox_old* g = NULL;
     int i;
     for(i=0; i<AGENT_LIST2_SIZE; i++) {
         if(Agent_list2[i]->id == id) {
@@ -111,7 +113,7 @@ void destroy_agent_vox(int id) {
 }
 
 void set_Agent_vox(int id, float xangle, float yangle) {
-    struct Agent_vox* g = get_agent_vox(id);
+    struct Agent_vox_old* g = get_agent_vox(id);
     if(g==NULL) { printf("agent.set_Agent_vox: agent id does not exist: %i \n", id); return;}
 
     g->xangle = xangle;
@@ -127,7 +129,7 @@ void set_Agent_vox(int id, float xangle, float yangle) {
 
 
 struct Vox* get_agent_vox_part(int id, int part) {
-    struct Agent_vox* g = get_agent_vox(id);
+    struct Agent_vox_old* g = get_agent_vox(id);
     if(g==NULL) { printf("get_agent_vox_part: error \n"); return NULL; }
     struct Vox* v = &g->vox_part[part];
     return v;
@@ -139,7 +141,7 @@ struct Vox* get_agent_vox_part(int id, int part) {
  */
 #ifdef DC_CLIENT
 
-void agent_Draw_vox(struct Agent_vox* g) {
+void agent_Draw_vox(struct Agent_vox_old* g) {
     //printf("agent draw \n");
 
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);
@@ -203,7 +205,7 @@ void agent_Draw_vox(struct Agent_vox* g) {
 }
 
 void agent_draw_vox() {
-    struct Agent_vox* g = NULL;
+    struct Agent_vox_old* g = NULL;
     int i;
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
