@@ -1,24 +1,25 @@
 #include "agent_vox.hpp"
-#include "DEP_agent.h"
 
-void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize) {
+#include "agent.hpp"
 
-/*
-    float cx,cy,cz;
+Agent_vox* get_agent_vox(Agent_list* alist, int id) {
+    Agent_state* a = alist->get(id);
+    if (a != NULL) {
+        return &a->vox;
+    }
+    return NULL;
+}
 
-    float ux,uy,uz; //up, right, forward
-    float rx,ry,rz;
-    float fx,fy,fz;
+struct Vox* get_agent_vox_part(Agent_list* alist, int id, int part) {
+    struct Agent_vox* g = get_agent_vox(alist, id);
+    if(g==NULL) { printf("get_agent_vox_part: error \n"); return NULL; }
+    struct Vox* v = &g->vox_part[part];
+    return v;
+}
 
-    unsigned short xdim;
-    unsigned short ydim;
-    unsigned short zdim;
-    float vox_size;
-    float radius;
-    struct Voxel* vox;
-    unsigned int num_vox;
-*/
-    struct Vox* v = get_agent_vox_part(id, part);
+void init_agent_vox_volume(Agent_list* alist, int id, int part, int xdim, int ydim, int zdim, float vosize) {
+
+    struct Vox* v = get_agent_vox_part(alist, id, part);
     if(v == NULL) {
         printf("init_agent_vox_volume: Vox is Null!\n");
         return;
@@ -46,8 +47,8 @@ void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float
     v->a.z = 0.0;
 }
 
-void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
-    struct Vox* v = get_agent_vox_part(id, part);
+void set_agent_limb_anchor_point(Agent_list* alist, int id, int part, float length, float ax, float ay, float az) {
+    struct Vox* v = get_agent_vox_part(alist, id, part);
     if(v == NULL) {
         printf("init_agent_vox_volume: Vox is Null!\n");
         return;
@@ -58,8 +59,8 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
     v->a.z = az;
 }
 
-void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz) {
-    struct Vox* v = get_agent_vox_part(id, part);
+void set_agent_limb_direction(Agent_list* alist, int id, int part, float fx,float fy,float fz, float nx,float ny, float nz) {
+    struct Vox* v = get_agent_vox_part(alist, id, part);
     if(v == NULL) {
         printf("set_agent_box_anchor_point: Vox is Null!\n");
         return;
@@ -81,8 +82,8 @@ void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, floa
     v->u = vz;
 }
 
-void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
-    struct Vox* v = get_agent_vox_part(id, part);
+void set_agent_vox_volume(Agent_list *alist, int id, int part, int x, int y, int z, int r, int g, int b, int a) {
+    struct Vox* v = get_agent_vox_part(alist, id, part);
     if(x + y*v->xdim + z*v->xdim*v->ydim >= (int)v->num_vox) {
         printf("Warning! %i, %i, %i, %i ; %i, %i, %i; %i \n", v->xdim, v->ydim, v->zdim, v->num_vox, x,y,z, x + y*v->xdim + z*v->xdim*v->ydim);
         //return;
@@ -148,24 +149,8 @@ void print_vector(struct Vector * v) {
 
 #ifdef DC_CLIENT
 
-/*
-void t_draw_cube() {
-    glColor3ub(0,0,255);
-    int i;
-    int j;
-    float x,y,z;
-    x=2;y=2;z=8;
-    glBegin(GL_QUADS);
-    for(i=0; i<6; i++) {
-        for(j=0; j<4; j++){
-            glVertex3f(x+ s_buffer[12*i+3*j+0], y+ s_buffer[12*i+3*j+1], z+ s_buffer[12*i+3*j+2]);
-        }
-    }
-    glEnd();
-}
-*/
-void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_vox_old* a) {
-    float ch = a->camera_height;
+void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, Agent_state* a) {
+    float ch = a->vox.camera_height;
     //look is forward direction
     //right is right
     float vos = v->vox_size;
@@ -251,7 +236,7 @@ void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right,
 
 }
 
-void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_vox_old* a) {
+void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, Agent_state* a) {
 
     int i,j,k;
     int i1;

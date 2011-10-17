@@ -12,8 +12,6 @@
 //#include <t_map/t_properties.h>
 
 #include <physics/vector.h>
-//#include "agent.h"
-
 
 #define AGENT_PART_NUM 6
 #define AGENT_PART_HEAD 0
@@ -23,13 +21,9 @@
 #define AGENT_PART_LLEG 4
 #define AGENT_PART_RLEG 5
 
-#define AGENT_LIST2_SIZE 1024
-
-
 struct Voxel {
 unsigned char r,g,b,a;
 };
-
 
 struct Vox {
 
@@ -48,6 +42,9 @@ struct Vox {
     float length;
 };
 
+class Agent_state;
+class Agent_list;
+
 class Agent_vox {
     public:
         float lv,ly,lz; //looking vector
@@ -63,15 +60,14 @@ class Agent_vox {
         }
 };
 
+void init_agent_vox_volume(Agent_list *alist, int id, int part, int xdim, int ydim, int zdim, float vosize);
 
-void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize);
+void set_agent_limb_direction(Agent_list *alist, int id, int part, float fx,float fy,float fz, float nx,float ny, float nz);
+void set_agent_limb_anchor_point(Agent_list *alist, int id, int part, float length, float ax, float ay, float az);
 
-void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz);
-void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
+void set_agent_vox_volume(Agent_list *alist, int id, int part, int x, int y, int z, int r, int g, int b, int a);
 
-void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
-
-
+struct Vox* get_agent_vox_part(Agent_list *alist, int id, int part);
 
 void destroy_vox(struct Vox* v);
 
@@ -79,6 +75,6 @@ void destroy_vox(struct Vox* v);
  *  Client only
  */
 #ifdef DC_CLIENT
-void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, struct Agent_state* a);
-void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, struct Agent_state* a);
+void agent_vox_draw_head(struct Vox* v, struct Vector look, struct Vector right, Agent_vox* a);
+void agent_vox_draw_vox_volume(struct Vox* v, struct Vector right, Agent_state* a);
 #endif

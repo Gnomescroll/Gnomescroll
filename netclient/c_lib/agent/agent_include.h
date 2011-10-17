@@ -22,7 +22,6 @@
 #ifdef DC_CLIENT
     #include <c_lib/agent/agent_draw.cpp>
     #include <c_lib/agent/agent_vox.cpp>
-    #include <c_lib/agent/DEP_agent.c>
 #endif
 
 

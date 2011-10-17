@@ -2,10 +2,6 @@
 
 #include <math.h>
 
-
-//#include <physics/vector.h>
-
-
 #ifdef DC_CLIENT
 #include <c_lib/compat.h>
 #include <c_lib/compat_gl.h>
@@ -13,7 +9,6 @@
 #include <c_lib/agent/agent.hpp>
 
 namespace AgentDraw {
-
 
 void add_snapshot_to_history(Agent_state* g);
 
@@ -25,7 +20,6 @@ void draw_agent_bounding_box(float x, float y, float z, float radius, float head
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height, int r, int g, int b) ;
 void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b);
 void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b);
-
 
 }
 

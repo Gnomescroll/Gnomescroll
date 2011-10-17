@@ -27,25 +27,12 @@ def _draw_agent_cube_selection(int x, int y, int z, int r, int g, int b):
 def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b):
     draw_agent_cube_side_selection( x,  y,  z,  cx,  cy,  cz,  r,  g,  b)
 
-
+def init():
+    pass
+def end():
+    pass
 
 #agent
-
-'''
-cdef extern from "./agent/DEP_agent.h":
-    void init_agent_vox_module()
-    void shutdown_agent_vox_module()
-
-def init():
-    init_agent_vox_module()
-def end():
-    shutdown_agent_vox_module()
-'''
-def init():
-    pass
-def end():
-    pass
-
 
 '''
 cdef extern from "./agent/agent_vox.h":
