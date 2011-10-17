@@ -38,12 +38,23 @@ int snapshot_draw_array_i = 0;
 int snapshot_draw_last_seq = 0;
 AgentState snapshot_draw_array[32];
 
+
+static int _last_seq = 0;
+
 void add_snapshot_to_history(Agent_state* g) {
 
     if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         snapshot_draw_last_seq = g->state_snapshot.seq;
         snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
         snapshot_draw_array_i = (snapshot_draw_array_i+1)%32;
+
+
+        if(g->state_snapshot.seq != (_last_seq + 32)%256) {
+            
+            printf("!!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
+
+        }
+        _last_seq = g->state_snapshot.seq;
     }
 
 

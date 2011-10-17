@@ -108,6 +108,9 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
 
 
+static int _last_seq2 = 0;
+
+
 class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<Agent_control_state_to_client_message>
 {
     public:
@@ -144,6 +147,12 @@ class Agent_control_state_to_client_message: public FixedSizeNetPacketToClient<A
             //printf("Received control state for agent %i, seq= %i\n", id, seq);
             //apply control state to agent
             A->ctick++;
+
+            if(seq != (_last_seq2 + 32)%256) {
+            
+            printf("!!! ERROR2: seq= %i, last_seq= %i \n", seq, _last_seq2);
+
+        }
         }
 };
 
