@@ -16,6 +16,7 @@
 #include <c_lib/state/client_state.hpp>
 
 //DEPRECATED
+/*
 class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_control_state_message>
 {
     public:
@@ -50,6 +51,7 @@ class Agent_control_state_message: public FixedSizeNetPacketToServer<Agent_contr
             A->ctick++;
         }
 };
+*/
 
 //template class FixedSizeNetPacketToServer<Agent_control_state_message>;
 
@@ -232,13 +234,6 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 };
 
 
-struct PlayerAgent_cs2 {
-    int seq;
-    uint8_t cs;
-    float theta;
-    float phi;
-};
-
 
 class PlayerAgent_state {
     public:
@@ -246,18 +241,13 @@ class PlayerAgent_state {
         int seq;
         
         //last agent state update
-        PlayerAgent_cs2 cs_history[128];
 
         Agent_cs_CtoS cs_0; //last control state
-        Agent_cs_CtoS cs_1;
+        //Agent_cs_CtoS cs_1;
 
     PlayerAgent_state() {
         agent_id = 0;
         seq = 0;
-        int i;
-        for(i=0;i<128;i++) {
-            cs_history[i].seq = -1;
-        }
     }
 
 

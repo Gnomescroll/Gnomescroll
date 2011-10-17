@@ -13,11 +13,8 @@ namespace ClientState {
 
 	int active_agent = 0;
 	int agent_control_state[16] = {NULL};
-	Agent_control_state_message a_cs;
 		
 	void InitClientState() {
-		a_cs.seq = 0;
-		a_cs.cs = 0;
 	}
 
 	void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
@@ -62,7 +59,6 @@ namespace ClientState {
         	}
         */
 	void send_control_state() {
-		a_cs.send();
 	}
 
         void ClientTick() {
