@@ -1,7 +1,21 @@
 #include "DEP_agent.h"
-#include "agent_vox.h"
 
-struct Agent_vox* Agent_list[1024];
+void init_agent_vox_module() {
+    if (Agent_list2 == NULL) {
+        Agent_list2 = (struct Agent_vox**)malloc(sizeof(struct Agent_vox)*AGENT_LIST2_SIZE);
+    }
+}
+void shutdown_agent_vox_module() {
+    if (Agent_list2 != NULL) {
+        int i;
+        for (i=0; i<AGENT_LIST2_SIZE; i++) {
+            if (Agent_list2[i] != NULL) {
+                free(Agent_list2[i]);
+            }
+        }
+        free(Agent_list2);
+    }
+}
 
 int agent_id_counter = 0;
 int a_count = 0;
@@ -14,9 +28,9 @@ void agent_Draw_vox(struct Agent_vox* g);
 struct Agent_vox* get_agent_vox(int id) {
     //struct Agent_vox* g = NULL;
     int i;
-    for(i=0; i<1024; i++) {
-        if(Agent_list[i] != NULL && Agent_list[i]->id == id) {
-            return Agent_list[i];
+    for(i=0; i<AGENT_LIST2_SIZE; i++) {
+        if(Agent_list2[i] != NULL && Agent_list2[i]->id == id) {
+            return Agent_list2[i];
         }
     }
     return NULL;
@@ -31,9 +45,9 @@ void agent_Tick_vox(struct Agent_vox* g) {
 void agent_tick_vox() {
     struct Agent_vox* g = NULL;
     int i;
-    for(i=0; i<1024; i++) {
-        if(Agent_list[i] != NULL) {
-            g = Agent_list[i];
+    for(i=0; i<AGENT_LIST2_SIZE; i++) {
+        if(Agent_list2[i] != NULL) {
+            g = Agent_list2[i];
             agent_Tick_vox(g);
         }
     }
@@ -42,10 +56,10 @@ void agent_tick_vox() {
 int create_agent_vox(float x, float y, float z) {
     struct Agent_vox* g = NULL;
     int i;
-    for(i=0; i<1024; i++) {
-        if(Agent_list[i] == NULL) {
+    for(i=0; i<AGENT_LIST2_SIZE; i++) {
+        if(Agent_list2[i] == NULL) {
             g = (struct Agent_vox *) malloc (sizeof(struct Agent_vox));
-            Agent_list[i] = g;
+            Agent_list2[i] = g;
             a_count++;
             break;
         }
@@ -75,21 +89,21 @@ int create_agent_vox(float x, float y, float z) {
 void destroy_agent_vox(int id) {
     struct Agent_vox* g = NULL;
     int i;
-    for(i=0; i<1024; i++) {
-        if(Agent_list[i]->id == id) {
-            g = Agent_list[i];
+    for(i=0; i<AGENT_LIST2_SIZE; i++) {
+        if(Agent_list2[i]->id == id) {
+            g = Agent_list2[i];
             break;
         }
     }
     if( g != NULL) {
-        Agent_list[i] = NULL;
+        Agent_list2[i] = NULL;
         for(i=0; i < AGENT_PART_NUM; i++) {
             destroy_vox(&g->vox_part[i]);
             }
 
 
         free(g);
-        g_count--;
+        a_count--;
     } else {
         printf("Destroy agent failed: agent does not exist, id=%i \n", id);
     }
@@ -195,9 +209,9 @@ void agent_draw_vox() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    for(i=0; i<1024; i++) {
-        if(Agent_list[i] != NULL) {
-            g = Agent_list[i];
+    for(i=0; i<AGENT_LIST2_SIZE; i++) {
+        if(Agent_list2[i] != NULL) {
+            g = Agent_list2[i];
             agent_Draw_vox(g);
         }
     }

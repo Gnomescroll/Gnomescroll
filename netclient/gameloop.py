@@ -112,7 +112,8 @@ class App(object):
 
     def __init__(self):
         self.init_audio()
-        #return
+        c_lib.c_lib_agents.init()
+
         self.init_globals()
         self.animations = animations
         #other
@@ -126,6 +127,7 @@ class App(object):
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
         self.intervals.register(send_agent_pos, 500)
+
 
         self.init_inputs()
         print "App init finished"
@@ -368,6 +370,8 @@ class App(object):
             P.finish_frame()
 
         sounds.done()
+        c_lib.c_lib_agents.end()
+
 
 if __name__ == '__main__':
     app = App()

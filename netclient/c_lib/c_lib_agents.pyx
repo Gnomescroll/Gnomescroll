@@ -31,6 +31,15 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
 
 #agent
 
+cdef extern from "./agent/DEP_agent.h":
+    void init_agent_vox_module()
+    void shutdown_agent_vox_module()
+
+def init():
+    init_agent_vox_module()
+def end():
+    shutdown_agent_vox_module()
+
 cdef extern from "./agent/agent_vox.h":
     void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
     void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
