@@ -160,6 +160,9 @@ void Agent_vox::draw_head(struct Vector look, struct Vector right, float x, floa
 
     int i1;
 
+    glDisable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+
     glBegin(GL_QUADS);
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
@@ -182,6 +185,8 @@ void Agent_vox::draw_head(struct Vector look, struct Vector right, float x, floa
     }}}
     glEnd();
 
+    glDisable (GL_DEPTH_TEST);
+    
 }
 
 void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
@@ -206,7 +211,6 @@ void Agent_vox::draw(struct Vector look, struct Vector right, float x, float y, 
 }
 
 void Vox::draw(struct Vector right, float x, float y, float z) {
-    glBegin(GL_QUADS);
 
     int i,j,k;
     int i1;
@@ -255,6 +259,11 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
     cz = c.z - (xdim*vx.z + ydim*vy.z + zdim*vz.z)/2;
 
 
+    glDisable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+
+    glBegin(GL_QUADS);
+
     for(i= 0; i < xdim; i++) {
     for(j= 0; j < ydim; j++) {
     for(k= 0; k < zdim; k++) {
@@ -276,6 +285,9 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
 
     }}}
     glEnd();
+
+    glDisable (GL_DEPTH_TEST);
+
 }
 
 #endif

@@ -74,19 +74,7 @@ class Agent_state {
 
         void _tick() {
             _new_control_state = 0;
-        /*
-            printf("Agent %i tick: cs_seq= %i \n", id, cs_seq);
-            int index = (cs_seq+1) % 128;
-            //int index2 = (cs_seq+2) % 128;
-            if(cs[index].seq == -1) {
-                printf("Agent_state._tick: skipping: cs_seq= %i, index== %i \n",cs_seq, index);
-                return;
-            }
-        */
-            //if(cs[index].seq == )
-            
 
-            //1("=== new control data ===\n");
             //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
             int index = (cs_seq+1) % 128;
@@ -98,11 +86,7 @@ class Agent_state {
 
                 s.theta = cs[index].theta;
                 s.phi = cs[index].phi;
-
-                //s.x += s.vx;
-                //s.y += s.vy;
-                //s.z += s.vz;
-
+                
                 int a_cs = cs[index].cs;
                 if( a_cs & 1 ) {
                     //forward
@@ -144,24 +128,7 @@ class Agent_state {
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 
         //this is for client
-        void handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-            //printf("control state received: seq=%i, cs=%i \n", _seq, _cs);
-            int index = _seq%128;
-
-            cs[index].seq = _seq;
-            cs[index].cs = _cs;
-            cs[index].theta = _theta;
-            cs[index].phi = _phi;
-
-            //printf("cs_seq= %i \n", cs_seq);
-            _new_control_state = 1;
-            #ifdef DC_SERVER
-            //printf("Agent %i: new_control_state set to 1 \n", id);
-            #endif
-            //printf("control state= %i\n", new_control_state);
-
-            _tick();
-        }
+        void handle_control_state(int _seq, int _cs, float _theta, float _phi);
 
         void revert_to_snapshot() {
             s = state_snapshot;
