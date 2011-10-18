@@ -112,7 +112,6 @@ class App(object):
 
     def __init__(self):
         self.init_audio()
-        c_lib.c_lib_agents.init()
 
         self.init_globals()
         self.animations = animations
@@ -190,8 +189,9 @@ class App(object):
         
         _m = 0
 
-        cAgents._create_agent(111, 10.,10.,100.)
+        cAgents._init_agent_vox(0)
         while not GameStateGlobal.exit:
+            cAgents._update_agent_vox(0)
             self.world.sound_updates()
 
             P2.start_frame() #TEST
@@ -370,7 +370,6 @@ class App(object):
             P.finish_frame()
 
         sounds.done()
-        c_lib.c_lib_agents.end()
 
 
 if __name__ == '__main__':

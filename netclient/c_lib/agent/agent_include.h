@@ -7,7 +7,7 @@
 #ifdef DC_CLIENT
     #include "./agent_client.h"
     #include "./agent_draw.h"
-    //#include "./agent_vox.h"
+    //#include "./agent_vox.hpp"
 #endif
 */
 
@@ -21,8 +21,7 @@
 #include <c_lib/agent/net_agent.cpp>
 #ifdef DC_CLIENT
     #include <c_lib/agent/agent_draw.cpp>
-    #include <c_lib/agent/agent_vox.c>
-    #include <c_lib/agent/DEP_agent.c>
+    #include <c_lib/agent/agent_vox.cpp>
 #endif
 
 
@@ -33,6 +32,6 @@
 #ifdef DC_CLIENT
     #include "./agent_client.c"
     #include "./agent_draw.c"
-    //#include "./agent_vox.c"
+    //#include "./agent_vox.cpp"
 #endif
 */

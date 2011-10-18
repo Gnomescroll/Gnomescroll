@@ -4,9 +4,15 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
+#include <agent/agent_vox.hpp>
+void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size);
+void init_agent_vox_done(int id);
+void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
+void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
+void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
+void agents_draw();
 #endif
 
-void agents_draw();
 void agents_tick();
 int agent_create(int id, float x, float y, float z);
 
@@ -36,6 +42,7 @@ struct Agent_control_state {
 };
 #endif
 
+
 class Agent_state {
     private:
         class AgentState state_rollback;
@@ -60,6 +67,10 @@ class Agent_state {
         float phi;
 
         int _new_control_state;
+
+        #ifdef DC_CLIENT
+        class Agent_vox* vox;
+        #endif
 
         void _tick() {
             _new_control_state = 0;
@@ -172,9 +183,11 @@ class Agent_state {
         int last_control_state_update_message;  //acts like ghost for now
         int last_full_state_message;
 
+        void draw();
+
         Agent_state(int _id); //default constructor
+        
         //void server_tick();
-        //void _draw();
         //set_control_state(int[8] _cs, float theta, float phi);
 };
 

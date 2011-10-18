@@ -42,7 +42,6 @@ void Agent_list::draw()
 {
 	#ifdef DC_CLIENT
 	    int i;
-	    struct Agent_state* g = NULL;
 
 	    //printf("Drawing agents\n");
 	    glDisable(GL_TEXTURE_2D);
@@ -51,8 +50,7 @@ void Agent_list::draw()
 	    glEnable(GL_CULL_FACE);
 	    for(i=0; i<n_max; i++) { //max_n
 	        if(a[i] != NULL) {
-	            g = a[i];
-	            AgentDraw::draw_agent(g);
+            a[i]->draw();
 	        }
 	    }
 	    glDisable(GL_CULL_FACE);
@@ -61,7 +59,9 @@ void Agent_list::draw()
 	#endif
 }
 
-
+//Agent_state::Agent_state(int _id, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size, float vox_radius, unsigned int vox_num) {
+//#else
+//#endif
 Agent_state::Agent_state(int _id) {
     id = _id;
     x = 0;
@@ -71,8 +71,8 @@ Agent_state::Agent_state(int _id) {
     vy = 0;
     vz = 0;
 
-	s.x = 16.5;
-	s.y = 16.5;
+    s.x = 16.5;
+    s.y = 16.5;
 
     cs_seq = 0;
 
@@ -89,23 +89,35 @@ Agent_state::Agent_state(int _id) {
     state_rollback.seq = -1;
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
+
+    #ifdef DC_CLIENT
+    //vox = new Agent_vox(vox_x, vox_y, vox_z, vox_size, vox_radius, vox_num);
+    vox = NULL;
+    #endif
+}
+
+void Agent_state::draw() {
+
+#ifdef DC_CLIENT
+    AgentDraw::draw_agent(this);
+#endif
 }
 
 void Agent_state::client_tick() {
         //_tick();
-		//try tick on input received    
-	}
+        //try tick on input received    
+    }
 
 void Agent_state::server_tick() {
 
     if(_new_control_state == 1) {
-		//_tick();	//advance agent
-		//tick on input received
+        //_tick();  //advance agent
+        //tick on input received
     }
 
-	tick_n++;
-	//if(tick_n % 30 == 0) {
-	if(cs_seq % 32 == 0) {
+    tick_n++;
+    //if(tick_n % 30 == 0) {
+    if(cs_seq % 32 == 0) {
         Agent_state_message A;
     /*
         int id;
@@ -133,23 +145,23 @@ void Agent_state::server_tick() {
         int i;
         for(i=0;i<128;i++){
             if(cs[i].seq < cs_seq || cs[i].seq > cs_seq+60) {
-	        	if(cs[i].seq == cs_seq) printf("!!! Error 1 \n");
-	        	if(cs[i].seq == (cs_seq+1)%128) printf("!!! Error 2 \n");
-	        	if(cs[i].seq == (cs_seq+25)%128) printf("!!! Error 3 \n");
-	        	if(cs[i].seq == (cs_seq+55)%128) printf("!!! Error 4 \n");
-	            cs[i].seq = -1; //clear any control state not from next 60 ticks
-    		}    
-		}
-	}
+                if(cs[i].seq == cs_seq) printf("!!! Error 1 \n");
+                if(cs[i].seq == (cs_seq+1)%128) printf("!!! Error 2 \n");
+                if(cs[i].seq == (cs_seq+25)%128) printf("!!! Error 3 \n");
+                if(cs[i].seq == (cs_seq+55)%128) printf("!!! Error 4 \n");
+                cs[i].seq = -1; //clear any control state not from next 60 ticks
+            }    
+        }
+    }
 
     return;
 }
 
 
 void agents_draw() {
-	#ifdef DC_CLIENT
-	ClientState::agent_list.draw();
-	#endif
+    #ifdef DC_CLIENT
+    ClientState::agent_list.draw();
+    #endif
 }
 
 int agent_create(int id, float x, float y, float z) {
@@ -168,6 +180,39 @@ int agent_create(int id, float x, float y, float z) {
 #endif
 }
     
+#ifdef DC_CLIENT
+void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s == NULL) return;
+    s->vox->init_vox_part(part, vox_x, vox_y, vox_z, vox_size);
+}
+
+void init_agent_vox_done(int id) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->init_vox_done();
+}
+
+void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->set_vox_volume(part, x,y,z, r,g,b,a);
+}
+
+void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->set_limb_direction(part, fx,fy,fz, nx,ny,nz);
+}
+
+void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->set_limb_anchor_point(part, length, ax,ay,az);
+
+}
+
+#endif
 
 void agents_tick() {
     

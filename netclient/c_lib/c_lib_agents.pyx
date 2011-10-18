@@ -29,93 +29,60 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
 
 
 
-#agent
 
-cdef extern from "./agent/DEP_agent.h":
-    void init_agent_vox_module()
-    void shutdown_agent_vox_module()
-
-def init():
-    init_agent_vox_module()
-def end():
-    shutdown_agent_vox_module()
-
-cdef extern from "./agent/agent_vox.h":
-    void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
-    void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
-    void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
-    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
-
+'''
+DONT DEPRECATE BELOW
+'''
 
 from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
-agent_list = []
-
-def agent_skeleton_update():
-    global agent_list,lu2,lu3
-    skel_tick()
-    for id in agent_list:
-        for part in range(0,6):
-            length, ax,ay,az= lu2[part]
-            set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-        for part in range(0,6):
-            fx,fy,fz,nx,ny,nz = lu3[part]
-            set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
-
-def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float vosize):
-    init_agent_vox_volume(id, part, xdim,ydim,zdim, vosize)
-    for x in range(0,xdim):
-        for y in range(0,ydim):
-            for z in range(0,zdim):
-                a = 255
-                r = 32*x
-                g = 32*y
-                b = 32*z
-                set_agent_vox_volume(id, part, x,y,z, r,g,b,a)
-
-def _set_agent_model(int id):
-    #cdef float vosize = .0625
-    cdef int part
-    cdef int xdim, ydim, zdim
-
-    global lu1, lu2, lu3, vosize
-
-    for part in range(0,6):
-        xdim,ydim,zdim = lu1[part]
-        default_vox_model_init(id, part, xdim,ydim,zdim, vosize)
-
-    for part in range(0,6):
-        length, ax,ay,az= lu2[part]
-        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-    for part in range(0,6):
-        fx,fy,fz, nx,ny,nz = lu3[part]
-        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
-'''
-def _create_agent(float x, float y, float z):
-    cdef int id
-    id = create_agent(x,y,z)
-    _set_agent_model(id)
-    ##
-    global agent_list
-    agent_list.append(id)
-    return id
-'''
-
 cdef extern from "./agent/agent.hpp":
-    void agents_tick()
     void agents_draw()
     int agent_create(int id, float x, float y, float z)
+    void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
+    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
+    void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz)
+    void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
+    void init_agent_vox_done(int id)
 
-def _create_agent(int id, float x, float y, float z):
-    print "Created agent %d" % agent_create(id, x,y,z)
 
-def _create_agent_with_vox(int id, float x, float y, float z):
-    id = agent_create(id, x,y,z)
-    print "_create_agent_with_vox (cython) :: created agent %d" % (id,)
-    _set_agent_model(id)
-    return id
-    
+PART_NUM = 6
+def _init_agent_vox(int id):
+    global lu1, lu2, lu3, vosize
+    global PART_NUM
+
+    for part in range(PART_NUM):
+        xdim,ydim,zdim = lu1[part]
+
+        init_agent_vox_part(id, part, xdim, ydim, zdim, vosize)
+
+        for x in range(0,xdim):
+            for y in range(0,ydim):
+                for z in range(0,zdim):
+                    a = 255
+                    r = 32*x
+                    g = 32*y
+                    b = 32*z
+                    set_agent_vox_volume(id, part, x,y,z, r,g,b,a) # THIS
+
+        for part in range(PART_NUM):
+            length, ax,ay,az= lu2[part]
+            set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+        for part in range(PART_NUM):
+            fx,fy,fz, nx,ny,nz = lu3[part]
+            set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
+
+    init_agent_vox_done(id)
+
+def _update_agent_vox(int id):
+    global agent_list,lu2,lu3
+    skel_tick()
+    for part in range(PART_NUM):
+        length, ax,ay,az= lu2[part]
+        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+    for part in range(PART_NUM):
+        fx,fy,fz,nx,ny,nz = lu3[part]
+        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
+
 
 def draw_agents():
     agents_draw()
