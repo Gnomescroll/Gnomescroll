@@ -1,7 +1,7 @@
 #include "agent_vox.hpp"
 
 void Agent_vox::init_vox_part(int part, int xdim, int ydim, int zdim, float vosize) {
-
+    printf("init vox part\n");
     if(vox_part[part] != NULL) {
         delete vox_part[part];
         vox_part[part] = NULL;
@@ -158,8 +158,8 @@ void Agent_vox::draw_head(struct Vector look, struct Vector right, float x, floa
 
     float x0, y0, z0;
 
-    int i1, j1;
-    //glBegin(GL_POINTS);
+    int i1;
+
     glBegin(GL_QUADS);
     for(i= -v->xdim/2; i < v->xdim/2; i++) {
     for(j= -v->ydim/2; j < v->ydim/2; j++) {
@@ -172,42 +172,13 @@ void Agent_vox::draw_head(struct Vector look, struct Vector right, float x, floa
     y0 = c.y + vos*(i*vx.y + j*vy.y + k*vz.y);
     z0 = c.z + vos*(i*vx.z + j*vy.z + k*vz.z);
 
-    //printf("%f, %f, %f \n", x0,y0,z0);
-    //printf("%i,%i,%i \n", i,j,k);
-
-
-    //glBegin(GL_POINTS);
-    //    glVertex3f(x0,y0,z0);
-    //glEnd();
-
     for(i1=0; i1<6; i1++) {
-        for(j1=0; j1<4; j1++){
-            //glVertex3f(x0+ s_buffer[12*i1+3*j1+0], y0+ s_buffer[12*i1+3*j1+1], z0+ s_buffer[12*i1+3*j1+2]);
-        }
             glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
             glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
             glVertex3f(x0 + s_buffer[12*i1+3*2+0], y0+ s_buffer[12*i1+3*2+1], z0+ s_buffer[12*i1+3*2+2]);
             glVertex3f(x0 + s_buffer[12*i1+3*3+0], y0+ s_buffer[12*i1+3*3+1], z0+ s_buffer[12*i1+3*3+2]);
     }
-
-/*
-    for(_i=0; _i<6; _i++) {
-        for(_j=0; _j<4; _j++){
-
-        //glBegin(GL_QUADS);
-        //    glVertex3f(x0 + s_buffer[12*_i+3*_j+0], y0+ s_buffer[12*_i+3*_j+1], z0+ s_buffer[12*_i+3*_j+2]);
-        //glEnd();
-
-            glVertex3f(x0 + s_buffer[12*_i+3*0+0], y0+ s_buffer[12*_i+3*0+1], z0+ s_buffer[12*_i+3*0+2]);
-            glVertex3f(x0 + s_buffer[12*_i+3*1+0], y0+ s_buffer[12*_i+3*1+1], z0+ s_buffer[12*_i+3*1+2]);
-            glVertex3f(x0 + s_buffer[12*_i+3*2+0], y0+ s_buffer[12*_i+3*2+1], z0+ s_buffer[12*_i+3*2+2]);
-            glVertex3f(x0 + s_buffer[12*_i+3*3+0], y0+ s_buffer[12*_i+3*3+1], z0+ s_buffer[12*_di+3*3+2]);
-
-        }
-    }
-*/
-    //glVertex3f(x0,y0,z0);
-
+    
     }}}
     glEnd();
 
@@ -227,7 +198,7 @@ void Agent_vox::draw(struct Vector look, struct Vector right, float x, float y, 
     if (!vox_ready) return;
     int i;
     for (i=0; i<AGENT_PART_NUM; i++) {
-        if (vox_part[i] != NULL) {
+        if (vox_part[i] != NULL && i != AGENT_PART_HEAD) {
             vox_part[i]->draw(right, x, y, z);
         }
     }
@@ -239,7 +210,6 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
 
     int i,j,k;
     int i1;
-    //int j1;
     int index;
 
     float vos = vox_size;
@@ -248,16 +218,10 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
     c.x = a.x + length*f.x;
     c.y = a.y + length*f.y;
     c.z = a.z + length*f.z;
-    /////vector_rotate_origin(&c,&c,a->xangle*PI);
 
     c.x += x;
     c.y += y;
     c.z += z;
-
-    struct Vector f = f;
-    /////vector_rotate_origin(&f,&f,a->xangle*PI);
-
-    //vector_rotate_origin(&c,&c,a->xangle*PI);
 
     struct Vector vx,vy,vz;
 
@@ -303,10 +267,6 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
     y0 = cy + (i*vx.y + j*vy.y + k*vz.y);
     z0 = cz + (i*vx.z + j*vy.z + k*vz.z);
 
-    //glBegin(GL_POINTS);
-    //    glVertex3f(x0,y0,z0);
-    //glEnd();
-
     for(i1=0; i1<6; i1++) {
         glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
         glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
@@ -316,8 +276,8 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
 
     }}}
     glEnd();
-
 }
+
 #endif
 
 

@@ -189,9 +189,9 @@ class App(object):
         
         _m = 0
 
-        cAgents._init_agent_vox(0)
+        cAgents.create_ag(10, 10.,10.,10.)
         while not GameStateGlobal.exit:
-            cAgents._update_agent_vox(0)
+            cAgents.update_ag(10)
             self.world.sound_updates()
 
             P2.start_frame() #TEST

@@ -103,6 +103,8 @@ class InputGlobal:
     keyboard = None
     mouse = None
     agentInput = None
+    voxel_aligner = None
+    use_voxel_aligner = False
 
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -120,10 +122,11 @@ class InputGlobal:
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.block_selector = BlockSelector(8,8,range(8*8))
-
+        cls.voxel_aligner = VoxelAligner()
 
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
+        
 
     @classmethod
     def init_1(cls, main):
@@ -249,6 +252,10 @@ class Keyboard(object):
             GameStateGlobal.exit = True
         #elif symbol == 'f1':
             #terrain_map.save_to_disk()
+
+        if InputGlobal.use_voxel_aligner:
+            InputGlobal.voxel_aligner.keys(symbol)
+            return
             
         if InputGlobal.input == 'chat':
             #if symbol in special_keys:
@@ -298,6 +305,7 @@ class Keyboard(object):
             ',' : self.toggle_agent_gravity,
             'u' : SDL.input.toggle_mouse_bind,
             '/' : self.toggle_hud,
+            ';' : self.voxel_aligner_mode_toggle,
         })
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
@@ -318,12 +326,17 @@ class Keyboard(object):
             InputGlobal.input = 'chat'
 
     def stateHandler(self, keyboard):
+        if InputGlobal.use_voxel_aligner:
+            return
         if InputGlobal.input == 'chat':
             return
         if InputGlobal.input == 'camera':
             self.camera_input_mode(keyboard)
         elif InputGlobal.input == 'agent':
             self.agent_input_mode(keyboard)
+
+    def voxel_aligner_mode_toggle(self):
+        InputGlobal.use_voxel_aligner = not InputGlobal.use_voxel_aligner
 
     def toggle_agent_gravity(self):
         print 'toggle agent g'
@@ -578,6 +591,79 @@ class BlockSelector:
     def get_texture_id(self):
         return cHUD.get_selected_cube_id()
 
+from math import pi
+class VoxelAligner:
+
+    def __init__(self):
+        self.num_parts = 6
+        self.current_part = 0
+        self.increment = 0.1
+        self.rot_increment = 0.1 * 360 * 4
+        import dat.agent_dim as dat
+        self.dat = dat
+
+    def keys(self, symbol):
+        print 'aligner:: ', symbol
+        if symbol == 'l':
+            self.switch_part()
+        elif symbol == 'w':
+            self.move_part_forward()
+        elif symbol == 'a':
+            self.move_part_left()
+        elif symbol == 's':
+            self.move_part_backward()
+        elif symbol == 'd':
+            self.move_part_right()
+        elif symbol == 'r':
+            self.move_part_up()
+        elif symbol == 'f':
+            self.move_part_down()
+
+        elif symbol == 'u':
+            self.rot1()
+        elif symbol == 'i':
+            self.rot2()
+        elif symbol == 'o':
+            self.rot3()
+
+        elif symbol == 'm':
+            self.save()
+
+        elif symbol == ';':
+            InputGlobal.use_voxel_aligner = False
+
+    def switch_part(self):
+        self.current_part = (self.current_part + 1) % self.num_parts
+
+    def move_part_forward(self):
+        print 'moving part forward'
+        self.dat.lu2[self.current_part][1] += self.increment
+
+    def move_part_backward(self):
+        self.dat.lu2[self.current_part][1] -= self.increment
+
+    def move_part_left(self):
+        self.dat.lu2[self.current_part][2] += self.increment
+
+    def move_part_right(self):
+        self.dat.lu2[self.current_part][2] -= self.increment
+
+    def move_part_up(self):
+        self.dat.lu2[self.current_part][3] += self.increment
+        
+    def move_part_down(self):
+        self.dat.lu2[self.current_part][3] -= self.increment
+        
+    def rot1(self):
+        self.dat.lu3[self.current_part][0] += self.rot_increment
+    def rot2(self):
+        self.dat.lu3[self.current_part][1] += self.rot_increment
+    def rot3(self):
+        self.dat.lu3[self.current_part][2] += self.rot_increment
+
+    def save(self):
+        self.dat.save()
+    
 
 from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal

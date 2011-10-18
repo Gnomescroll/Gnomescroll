@@ -69,13 +69,12 @@ void draw_agent(Agent_state* g) {
     //AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
-    if(g->id == 0) {    // remove this later
-        int i;
-        for(i=0; i < 32; i++) {
-            draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
-        }
+    int i;
+    for(i=0; i < 32; i++) {
+        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
+    }
 
-        printf("Drawin this shit\n");
+    if (g->vox != NULL) {
         struct Vector right;
         struct Vector look;
 

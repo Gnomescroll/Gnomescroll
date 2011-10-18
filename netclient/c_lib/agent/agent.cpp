@@ -40,23 +40,23 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
 
 void Agent_list::draw() 
 {
-	#ifdef DC_CLIENT
-	    int i;
+    #ifdef DC_CLIENT
+        int i;
 
-	    //printf("Drawing agents\n");
-	    glDisable(GL_TEXTURE_2D);
-	    //glEnable(GL_DEPTH_TEST);
-	    glDisable(GL_DEPTH_TEST);
-	    glEnable(GL_CULL_FACE);
-	    for(i=0; i<n_max; i++) { //max_n
-	        if(a[i] != NULL) {
-            a[i]->draw();
-	        }
-	    }
-	    glDisable(GL_CULL_FACE);
-	    //glEnable(GL_TEXTURE_2D);
-	    //glDisable(GL_DEPTH_TEST);
-	#endif
+        //printf("Drawing agents\n");
+        glDisable(GL_TEXTURE_2D);
+        //glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        for(i=0; i<n_max; i++) { //max_n
+            if(a[i] != NULL) {
+                a[i]->draw();
+            }
+        }
+        glDisable(GL_CULL_FACE);
+        //glEnable(GL_TEXTURE_2D);
+        //glDisable(GL_DEPTH_TEST);
+    #endif
 }
 
 //Agent_state::Agent_state(int _id, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size, float vox_radius, unsigned int vox_num) {
@@ -91,8 +91,7 @@ Agent_state::Agent_state(int _id) {
     for(i=0; i<128;i++) cs[i].seq = -1;
 
     #ifdef DC_CLIENT
-    //vox = new Agent_vox(vox_x, vox_y, vox_z, vox_size, vox_radius, vox_num);
-    vox = NULL;
+    vox = new Agent_vox();
     #endif
 }
 
@@ -183,33 +182,32 @@ int agent_create(int id, float x, float y, float z) {
 #ifdef DC_CLIENT
 void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {
     Agent_state* s = ClientState::agent_list.get(id);
-    if (s == NULL) return;
+    if (s==NULL || s->vox == NULL) return;
     s->vox->init_vox_part(part, vox_x, vox_y, vox_z, vox_size);
 }
 
 void init_agent_vox_done(int id) {
     Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL) return;
+    if (s==NULL || s->vox == NULL) return;
     s->vox->init_vox_done();
 }
 
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
     Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL) return;
+    if (s==NULL || s->vox == NULL) return;
     s->vox->set_vox_volume(part, x,y,z, r,g,b,a);
 }
 
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz) {
     Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL) return;
+    if (s==NULL || s->vox == NULL) return;
     s->vox->set_limb_direction(part, fx,fy,fz, nx,ny,nz);
 }
 
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
     Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL) return;
+    if (s==NULL || s->vox == NULL) return;
     s->vox->set_limb_anchor_point(part, length, ax,ay,az);
-
 }
 
 #endif

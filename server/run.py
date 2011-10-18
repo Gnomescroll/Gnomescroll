@@ -225,13 +225,13 @@ class Main:
             print "str= %s" % (opts.opts.map)
             terrain_map.load_from_disk(opts.opts.map)
         else:
-            terrain_map.load_from_disk("natural_terrain")
+            #terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
             #terrain_map.load_from_disk("natural4")
             #terrain_map.load_from_disk("savetest2")
             #_gen_map()
             #terrain_map.load_from_disk("nat5")
-            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+            map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
             pass
 
         if False:
