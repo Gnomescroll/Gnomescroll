@@ -56,4 +56,22 @@ def skel_tick():
 def save():
     import json
     with open("agent_alignment.json", "w") as f:
-        f.write(
+        obj = {
+            'lu1': lu1,
+            'lu2': lu2,
+            'lu3': lu3,
+        }
+        json.dump(obj, f)
+
+def load():
+    global lu1, lu2, lu3
+    import json
+    with open("agent_alignment.json") as f:
+        obj = json.load(f)
+        lu1 = obj['lu1']
+        lu2 = obj['lu2']
+        lu3 = obj['lu3']
+
+import os.path
+if os.path.exists("agent_alignment.json"):
+    load()
