@@ -58,7 +58,7 @@ void draw_agent(Agent_state* g) {
     //AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
-    if(g->id == 0) {
+    if(g->id == 0) {    // remove this later
         int i;
         for(i=0; i < 32; i++) {
             draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
@@ -78,17 +78,7 @@ void draw_agent(Agent_state* g) {
         right = Vector_init(cos(s->theta*PI+PI/2), sin(s->theta*PI+PI/2), 0.0);
         normalize_vector(&right);
 
-        agent_vox_draw_head(look, right, g);
-
-        agent_vox_draw_vox_volume(&g->vox.vox_part[AGENT_PART_HEAD], right, g);
-
-        agent_vox_draw_vox_volume(&g->vox.vox_part[AGENT_PART_TORSO], right, g);
-
-        agent_vox_draw_vox_volume(&g->vox.vox_part[AGENT_PART_LARM], right, g);
-        agent_vox_draw_vox_volume(&g->vox.vox_part[AGENT_PART_RARM], right, g);
-
-        agent_vox_draw_vox_volume(&g->vox.vox_part[AGENT_PART_LLEG], right, g);
-        agent_vox_draw_vox_volume(&g->vox.vox_part[AGENT_PART_RLEG], right, g);
+        g->vox->draw(look, right, s->x, s->y, s->z);
     }
 }
 

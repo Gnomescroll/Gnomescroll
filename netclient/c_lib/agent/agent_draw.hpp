@@ -7,6 +7,7 @@
 #include <c_lib/compat_gl.h>
 
 #include <c_lib/agent/agent.hpp>
+#include <c_lib/agent/agent_vox.hpp>
 
 namespace AgentDraw {
 

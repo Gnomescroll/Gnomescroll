@@ -59,7 +59,9 @@ void Agent_list::draw() {
 #endif
 }
 
-
+//Agent_state::Agent_state(int _id, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size, float vox_radius, unsigned int vox_num) {
+//#else
+//#endif
 Agent_state::Agent_state(int _id) {
     id = _id;
     x = 0;
@@ -87,6 +89,11 @@ Agent_state::Agent_state(int _id) {
     state_rollback.seq = -1;
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
+
+    #ifdef DC_CLIENT
+    //vox = new Agent_vox(vox_x, vox_y, vox_z, vox_size, vox_radius, vox_num);
+    vox = NULL;
+    #endif
 }
 
 void Agent_state::draw() {
@@ -173,6 +180,39 @@ int agent_create(int id, float x, float y, float z) {
 #endif
 }
     
+#ifdef DC_CLIENT
+void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s == NULL) return;
+    s->vox->init_vox_part(part, vox_x, vox_y, vox_z, vox_size);
+}
+
+void init_agent_vox_done(int id) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->init_vox_done();
+}
+
+void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->set_vox_volume(part, x,y,z, r,g,b,a);
+}
+
+void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->set_limb_direction(part, fx,fy,fz, nx,ny,nz);
+}
+
+void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
+    Agent_state* s = ClientState::agent_list.get(id);
+    if (s==NULL) return;
+    s->vox->set_limb_anchor_point(part, length, ax,ay,az);
+
+}
+
+#endif
 
 void agents_tick() {
     
