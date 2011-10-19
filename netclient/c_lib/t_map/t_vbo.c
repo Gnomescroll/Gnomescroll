@@ -1035,7 +1035,6 @@ void DRAW_VBOS1a() {
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
-    glEnable (GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
