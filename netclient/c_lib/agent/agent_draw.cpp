@@ -69,11 +69,26 @@ void draw_agent(Agent_state* g) {
     //AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
-    if(g->id == 0) {
-        int i;
-        for(i=0; i < 32; i++) {
-            draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
-        }
+    int i;
+    for(i=0; i < 32; i++) {
+        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
+    }
+
+    if (g->vox != NULL) {
+        struct Vector right;
+        struct Vector look;
+
+        look = Vector_init(
+                cos( s->theta * PI) * cos( s->phi * PI),
+                sin( s->theta * PI) * cos( s->phi * PI),
+                sin( s->phi)
+        );
+        normalize_vector(&look);
+
+        right = Vector_init(cos(s->theta*PI+PI/2), sin(s->theta*PI+PI/2), 0.0);
+        normalize_vector(&right);
+
+        g->vox->draw(look, right, s->x, s->y, s->z);
     }
 }
 
