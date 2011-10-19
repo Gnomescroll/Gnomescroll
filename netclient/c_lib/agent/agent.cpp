@@ -45,8 +45,6 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
     //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
 
     #ifdef DC_SERVER
-        //if(tick_n % 30 == 0) {
-        //if(cs_seq % 32 == 0) {
         if( _seq % 32 == 0 ) {
             Agent_state_message A;
 
@@ -71,7 +69,6 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
     #endif
     //printf("control state= %i\n", new_control_state);
-
     _tick();
 }
 
@@ -81,13 +78,6 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     state_snapshot.phi = phi;
     state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
     state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
-
-    //do this fast way
-    
-//    int i;
-//    for(i=0;i<128;i++){
-//        if(cs[i].seq < seq || cs[i].seq > seq+60) cs[i].seq = -1; //clear any control state not from next 60 ticks
-//    }
 
     int i;
     int index;
@@ -150,7 +140,7 @@ void Agent_state::draw() {
 
 void Agent_state::client_tick() {
         //_tick();
-        //try tick on input received    
+        //tick on input received    
     }
 
 void Agent_state::server_tick() {

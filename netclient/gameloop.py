@@ -266,7 +266,7 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                _o = 1
+                _o = 2
                 if _o==0:
                     if _m < 50:
                         set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
@@ -291,7 +291,17 @@ class App(object):
                         _m = 0
                     else:
                         _m += 1
-
+                if _o==2:
+                    _r = random.random()
+                    #print str(_r)
+                    if _r < 0.25:
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _r < 0.50:
+                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _r < 0.75:
+                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    else:
+                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
