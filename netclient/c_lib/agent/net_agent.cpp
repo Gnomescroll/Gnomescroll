@@ -62,7 +62,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
             A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
             //printf("Received Agent_state_message packet: agent_id= %i \n", id);
 
-            printf("seq= %i \n", seq);
+            //printf("seq= %i \n", seq);
 
             return;
         }
@@ -182,7 +182,7 @@ class PlayerAgent_state {
 
         cs_0.send();
 
-        printf("control state send: seq= %i, cs= %i \n", seq, cs);
+        //printf("control state send: seq= %i, cs= %i \n", seq, cs);
     }
 
 

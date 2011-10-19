@@ -42,7 +42,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
     cs[index].theta = _theta;
     cs[index].phi = _phi;
 
-    printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
+    //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
 
     #ifdef DC_SERVER
         //if(tick_n % 30 == 0) {
