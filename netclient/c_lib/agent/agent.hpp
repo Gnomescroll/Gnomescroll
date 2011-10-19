@@ -160,30 +160,9 @@ class Agent_state {
 
 #include <c_lib/template/object_list.hpp>
 
-
-/*
-template <>
-class Object_list<Agent_state>
-{
-    static const char* name() { return "Agent"; }
-    void draw();
-};
-*/
-
 class Agent_list: public Object_list<Agent_state,1024>
 {
     static const char* name() { return "Agent"; }
     public:
         void draw();
 };
-
-
-//typedef Object_list<Agent_state,1024> Agent_list;
-
-/*
-template <>
-const char* Agent_list::name() {
-    return "Agent";
-}
-*/
-

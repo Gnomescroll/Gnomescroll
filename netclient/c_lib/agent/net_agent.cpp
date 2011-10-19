@@ -12,8 +12,6 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 
-//static int _last_seq2 = 0;
-
 //send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
 {
