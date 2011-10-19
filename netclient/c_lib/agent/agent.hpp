@@ -72,49 +72,7 @@ class Agent_state {
         class Agent_vox* vox;
         #endif
 
-        void _tick() {
-            _new_control_state = 0;
-
-            //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
-
-            int index = (cs_seq+1) % 128;
-
-            int _tc =0;
-            while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
-                _tc++;
-                cs_seq = (cs_seq+1)%256;
-
-                s.theta = cs[index].theta;
-                s.phi = cs[index].phi;
-                
-                int a_cs = cs[index].cs;
-                if( a_cs & 1 ) {
-                    //forward
-                    //printf("Agent_state._tick: agent forward \n");
-                    s.x += 0.10;
-                }
-                if( a_cs & 2 ) {
-                    //backward
-                    //printf("Agent_state._tick: agent backward \n");
-                    s.x -= 0.10;
-                }
-                if( a_cs & 4 ) {
-                    //left
-                    //printf("Agent_state._tick: agent left \n");
-                    s.y += 0.10;
-                }
-                if( a_cs & 8 ) {
-                    //right
-                    //printf("Agent_state._tick: agent right \n");
-                    s.y -= 0.10;
-                }
-                if( a_cs & 16 ) {
-                    //jet
-                    s.z += 0.01;
-                }  
-            }
-            //printf("_tick: processed %i agent ticks\n", _tc);
-        }
+        void _tick();
 
         void client_tick();
 
