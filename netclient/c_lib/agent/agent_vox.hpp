@@ -31,7 +31,7 @@ class Vox {
         unsigned short zdim;
         float vox_size;
         float radius;
-        struct Voxel* vox;
+        struct Voxel* vox; // will be malloc'd
         unsigned int num_vox;
 
         struct Vector c; //center
@@ -72,6 +72,7 @@ class Vox {
         void set_direction(float fx, float fy, float fz, float nx, float ny, float nz);
         void set_volume(int x, int y, int z, int r, int g, int b, int a);
         void draw(struct Vector right, float x, float y, float z);
+        void draw_head(struct Vector look, struct Vector right, float x, float y, float z);
 };
 
 class Agent_vox {

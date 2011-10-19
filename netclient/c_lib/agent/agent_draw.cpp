@@ -71,7 +71,7 @@ void draw_agent(Agent_state* g) {
 
     int i;
     for(i=0; i < 32; i++) {
-        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
+        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
     }
 
     if (g->vox != NULL) {

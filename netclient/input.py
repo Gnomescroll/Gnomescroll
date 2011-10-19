@@ -632,6 +632,9 @@ class VoxelAligner:
         elif symbol == ';':
             InputGlobal.use_voxel_aligner = False
 
+        elif symbol == 'h':
+            self.change_speed()
+
     def switch_part(self):
         self.current_part = (self.current_part + 1) % self.num_parts
 
@@ -660,6 +663,9 @@ class VoxelAligner:
         self.dat.lu3[self.current_part][1] += self.rot_increment
     def rot3(self):
         self.dat.lu3[self.current_part][2] += self.rot_increment
+
+    def change_speed(self):
+        self.increment = 0.01 if self.increment == 0.1 else 0.1
 
     def save(self):
         self.dat.save()
