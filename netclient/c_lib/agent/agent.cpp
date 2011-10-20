@@ -10,7 +10,7 @@
 
 #include <c_lib/agent/agent_draw.hpp>
 
-
+#include <math.h>
 
 void Agent_list::draw() 
 {
@@ -68,9 +68,15 @@ void Agent_list::draw()
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
+    /*
+        Collision check may be sped up by caching locally
+        May be sped up further by only updating when agent changes cells or terrain changes
+    */
+
 static inline int _collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
+
 
 void Agent_state::_tick(); {
 
@@ -107,22 +113,102 @@ void Agent_state::_tick(); {
         int l_z = s.z;
 
         //local float cordinates
-        float fl_x = s.x - l_x;
-        float fl_y = s.y - l_y;
-        float fl_z = s.z - l_z;
+        float fl_x = s.x - floor(s.x);
+        float fl_y = s.y - floor(s.y);
+        float fl_z = s.z - floor(s.z);
 
         const float tr = 10     //tick rate
         const float tr2 = tr*tr
 
-        float xy_speed = 2.00 / tr
-        float z_jetpack = 0.80 / tr2;
-        float z_gravity = -.40 / tr2;
+        const float xy_speed = 2.00 / tr
+        const float z_jetpack = 0.80 / tr2;
+        const float z_gravity = -.40 / tr2;
 
-        float b_height = 2.0;
-        float t_height = 0.1; //WTF is this
+        const float ground_distance = 0.02;
+        const float z_bounce_v_threshold = 0.35 / tr;
+
+        const float pi = 3.14159265;
+
+        //box properties
+        float b_height = 2.5;  //agent collision box height
         float box_r = 0.4;
 
 //### Collisions on X axis
+
+
+    /*
+        integer cordinates used for checking voxels for collision
+    */
+        int bx_pos_current = s.x+box_r          //floor
+        int bx_neg_current = s.x-box_r
+
+        int by_pos_current = s.y+box_r;
+        int by_neg_current = s.y-box_r;
+
+        int bz_pos_current = s.z+b_height;
+        int bz_neg_current = s.z;           //bottom of agent is just s.z
+
+        //loop setup
+
+        /*
+            Max and min integer boundraries the cubes agent collision boxes occupies
+        */
+        int bx_min = s.x - box_r;
+        int bx_max = s.x + box_r + 1.0;
+
+        int by_min = s.y - box_r;
+        int by_max = s.y + box_r + 1.0;
+
+        int bz_min = s.z
+        int bz_max = s.z + b_height + 1.0;
+
+        //state variables
+
+
+        //projected positions in absence of collision detection
+
+        /* projected z position depends on whether agent is on ground */
+
+        if(forward)
+        {
+                s.vx += xy_speed*cos( s.theta * pi);
+                s.vy += xy_speed*sin( s.theta * pi);
+        }
+        if(backwards)
+        {
+                s.vx += -xy_speed*cos( s.theta * pi);
+                s.vy += -xy_speed*sin( s.theta * pi);
+        }
+        if(left) 
+        {
+                s.vx += xy_speed*cos( s.theta * pi + pi/2);
+                s.vy += xy_speed*sin( s.theta * pi + pi/2);
+        }
+        if(right) 
+        {
+                s.vx += -xy_speed*cos( s.theta * pi + pi/2);
+                s.vy += -xy_speed*sin( s.theta * pi + pi/2);
+        }
+
+        int bx_pos_projected = s.x+s.vx+box_r    //floor
+        int bx_neg_projected = s.x+s.vx-box_
+
+        int by_pos_projected = s.y+s.vy+box_r;
+        int by_neg_projected = s.y+s.vy-box_r; 
+                  
+        int bz_pos_projected = s.z+s.vz+b_height;
+        int bz_neg_projected = s.z+s.vz;
+
+    /*
+        Float to int is floor
+        may be slow or could be optimized
+    */
+        //cast to ints are implicit floors
+
+
+        //floor, float to int
+
+        int bx,by,bz;
 
         int xc_pos_current = 0
         int xc_pos_projected = 0
@@ -130,29 +216,9 @@ void Agent_state::_tick(); {
         int xc_neg_current = 0
         int xc_neg_projected = 0
 
-        int bx_pos_current = s.x+box_r         //floor
-        int bx_pos_projected = s.x+s.vx+box_r)    //floor 
-
-        int bx_neg_current = s.x-box_r)         //floor 
-        int bx_neg_projected = s.x+s.vx-box_r)    //floor
-
-        //int i, j;
-        //int min_i,max_i, min_j, max_j;
-
-        //cast to ints are implicit floors
-
-        int bx_min, bx_max;
-        int by_min, by_max;
-        int bz_min, bz_max;
-
-        bz_min = s.z - b_height //floor;
-        bz_max = s.z + t_height;
-        by_min = s.y - box_r;
-        by_max = s.y + box_r;
-
-        int bx,by,bz;
-        for(bz = bz_min; bz<=bz_max; bz++) { //less than equal
-        for(by = bz_min; by<=by_maz; by++) {
+        //x collisions
+        for(bz = bz_min; bz<bz_max; bz++) { //less than equal
+        for(by = by_min; by<by_max; by++) {
             //#x+
                 if(_collision_check(bx_pos_current,by,bz))  xc_pos_current +=1;
                 if(_collision_check(bx_pos_projected,by,bz) xc_pos_projected +=1;
@@ -161,25 +227,151 @@ void Agent_state::_tick(); {
                 if(_collision_check(bx_neg_projected,by,bz) xc_neg_projected +=1;
         }}
 
-//### Collision on Y axis ###
+        //y collisions
+        int yc_pos_current = 0;
+        int yc_pos_projected = 0;
 
-        int yc_pos_current = 0
-        int yc_pos_projected = 0
+        int yc_neg_current = 0;
+        int yc_neg_projected = 0;
 
-        int yc_neg_current = 0
-        int yc_neg_projected = 0
+        for(bz = bz_min; bz < bz_max; bz++){
+        for(bx = bx_min; bx < bx_max; bx++){
+            //#y+
+                if(_collision_check(bx,by_pos_current,bz)   yc_pos_current +=1;
+                if(_collision_check(bx,by_pos_projected,bz) yc_pos_projected +=1;
+            //#y-
+                if(_collision_check(bx,by_neg_current,bz)   yc_neg_current +=1;
+                if(_collision_check(bx,by_neg_projected,bz) yc_neg_projected +=1;
+        }}
 
-        //implicit floor, by float to int
-        int by_pos_current = s.y+box_r)
-        int by_pos_projected = s.y+vy+box_r)
+        //z collisions
 
-        int by_neg_current = s.y-box_r)
-        int by_neg_projected = s.y+vy-box_r)
+        int zc_pos_current = 0;
+        int zc_pos_projected = 0;
 
-        bz_min = 
-        bz_max = 
-        by_min = 
-        by_max = 
+        int zc_neg_current = 0;
+        int zc_neg_projected = 0;
+                
+        int zc_ground_position = s.z - ground_distance; //checks if player is in contact with ground
+
+        int on_ground = 0;
+
+        for(bx = bx_min; bx < bx_max; bx++){
+        for(by = by_min; by < by_max; by++){
+            //ground contact
+                if(_collision_check(bx,by, zc_ground_position) on_ground += 1;
+            //#z+
+                if(_collision_check(bx,by,bz_pos_current)   zc_pos_current +=1;
+                if(_collision_check(bx,by,bz_pos_projected) zc_pos_projected +=1;
+            //#z-
+                if(_collision_check(bx,by,bz_neg_current)   zc_neg_current +=1;
+                if(_collision_check(bx,by,bz_neg_projected) zc_neg_projected +=1;
+        }}
+
+        //compute state variables
+
+        /*
+                const float z_jetpack = 0.80 / tr2;
+                const float z_gravity = -.40 / tr2;
+        */
+
+        //collision handling
+        int total_current_collisions = xc_pos_current + xc_neg_current + yc_pos_current + yc_neg_current + zc_pos_current + zc_neg_current;
+        if(total_current_collisions > 0) {
+            printf("%i current collisions this frame\n");
+            //push agent out of block
+        }
+
+        //handle x collisions
+        if(xc_pos_current == 0 && xc_neg_current == 0)
+        {
+            if(xc_pos_projected != 0) s.vx = 0.0;
+            if(xc_neg_projected != 0) s.vx = 0.0;
+        }
+
+        //handle y collisions
+
+        if(yc_pos_current ==0 && yc_neg_current ==0)
+        {
+            if(yc_pos_projected != 0) s.vy = 0;
+            if(yc_neg_projected != 0) s.vy = 0;
+        }
+
+        //handle z collision
+
+        //#Hard collision predicted and not inside of something already
+        if(zc_neg_projected != 0 && zc_neg_current == 0)
+        {
+            if(s.vz < 0)
+            {
+                if(s.vz < -z_bounce_v_threshold)
+                {
+                    s.vz *= -1 *z_bounce;
+                }
+                else
+                {
+                    s.vz = 0;
+                }
+            }
+        }
+
+        if(zc_neg_current != 0) // #if agent is inside of block, float them out the top
+        {
+            s.z += 0.50 / tr;
+        }
+
+        if(zc_pos_current != 0) // #if agent is inside of block, float them out the top
+        {
+            s.z += -0.50 / tr;
+        }
+
+        //jetpack handling
+        if(!on_ground) {
+            if(s.z>0)
+            {
+                s.vz += z_gravity;
+            } 
+            else 
+            {
+                s.vz -= z_gravity;
+            }    
+        }
+        if(jetpack) {
+            s.sv += z_jetpack;
+        }
+        
+        //newton intergrate positions
+        s.x += s.vx;    //use better intergrator
+        s.y += s.vy;
+        s.z += s.vz;
+    } //end physics loop
+    //printf("_tick: processed %i agent ticks\n", _tc);
+}
+
+/*
+## determine if agent is on ground and if they are colliding with anything at current position
+        zc_current = 0
+        zc_ground = 0
+        zc_neg_projected = 0
+        bz_current = float(z - b_height)
+        bz_ground = floor(z - b_height - z_margin)
+        bz_neg_projected = floor(z+vz-b_height)
+
+        for bx in range(int(floor(x-box_r)), int(floor(x+box_r)+1)):
+            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
+                if self.collisionDetection(bx,by,bz_current):
+                    zc_current +=1
+                if self.collisionDetection(bx,by,bz_ground):
+                     zc_ground += 1
+                if self.collisionDetection(bx,by,bz_neg_projected):
+                    zc_neg_projected +=1
+*/
+    /*
+        bx_pos_current = floor(x+box_r)
+        bx_pos_projected = floor(x+vx+box_r)
+
+        bx_neg_current = floor(x-box_r)
+        bx_neg_projected = floor(x+vx-box_r)
 
         for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
             for bx in range(int(floor(x-box_r)), int(floor(x+box_r)+1)):
@@ -193,23 +385,7 @@ void Agent_state::_tick(); {
                     yc_neg_current +=1
                 if self.collisionDetection(bx,by_neg_projected,bz):
                     yc_neg_projected +=1
-
-    /*
-        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
-            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
-            #x+
-                if self.collisionDetection(bx_pos_current,by,bz):
-                    xc_pos_current +=1
-                if self.collisionDetection(bx_pos_projected,by,bz):
-                    xc_pos_projected +=1
-            #x-
-                if self.collisionDetection(bx_neg_current,by,bz):
-                    xc_neg_current +=1
-                if self.collisionDetection(bx_neg_projected,by,bz):
-                    xc_neg_projected +=1
     */
-
-
 
 
 /*
@@ -422,9 +598,6 @@ void Agent_state::_tick(); {
         x += vx
         y += vy
 */
-    }
-    //printf("_tick: processed %i agent ticks\n", _tc);
-}
 
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
