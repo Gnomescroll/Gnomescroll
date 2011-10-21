@@ -340,7 +340,7 @@ class AgentAction:
 
 
 # represents an agent under control of a player
-class Agent(AgentPhysics, AgentAction):
+class Agent(AgentPhysics, AgentAction, AgentWrapper):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 2. # seconds
@@ -354,16 +354,16 @@ class Agent(AgentPhysics, AgentAction):
         assert self.collisionDetection != None
         ### End Global imports ###
 
-        self.team = team
-
         if id is not None:
             print "SOMETHING IS GIVING SERVER AGENT AN ID"
             raise Exception
 
         #if id is None:
             #id = GameStateGlobal.new_agent_id()
-        id = AgentListWrapper._create_agent()
-        self.id = id
+        #id = AgentListWrapper._create_agent()
+        AgentWrapper.__init__(self)
+
+        self.team = team
 
         ### Agent Parameters ###
         self.b_height = 1.5

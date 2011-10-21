@@ -577,7 +577,7 @@ class AgentInventory:
 '''
 Data model for agent
 '''
-class AgentModel(object):
+class AgentModel(AgentWrapper):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 1. # seconds
@@ -587,7 +587,8 @@ class AgentModel(object):
         if owner is None or id is None:
             print 'WARNING!! Creating agent with no owner or id'
 
-        AgentListWrapper._create(id)
+        #AgentListWrapper._create(id)
+        AgentWrapper.__init__(self, id)
             
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
@@ -688,7 +689,7 @@ class AgentModel(object):
 
 #experimental
     def __getattribute__(self, name):
-        val = object.__getattribute__(self, name)
+        val = AgentWrapper.__getattribute__(self, name)
         if name == 'team':
             if not isinstance(val, NoTeam):
                 val = GameStateGlobal.teamList[val]

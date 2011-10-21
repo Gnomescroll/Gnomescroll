@@ -26,9 +26,20 @@ cdef extern from "./state/wrapper.hpp":
 
 ###
 
-class AgentWrapper:
-    pass
+class AgentWrapper(object):
 
+    def __init__(self):
+        id = AgentListWrapper._create()
+        self.id = id
+
+    def __setattr__(self, name, val):
+        pass
+
+    def __getattr__(self, name):
+        pass
+
+    def __delattr__(self, name):
+        pass
 
 
 #functions
