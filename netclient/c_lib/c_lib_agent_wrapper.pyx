@@ -26,6 +26,8 @@ cdef extern from "./state/wrapper.hpp":
 
 ### 
 
+agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz']
+
 class AgentWrapper(object):
 
     def __init__(self, id):
@@ -33,13 +35,31 @@ class AgentWrapper(object):
         self.id = id
         
     def __getattribute__(self, name):
-        return
-        '''
+        if name not in agent_props:
+            raise AttributeError
+
+        cdef Agent_state* a
+        a = get_agent(self.id)
         if name == 'id':
+            self.id = id
             return a.id
-        if name == 'x':
-        '''
-            
+        else:
+            if name == 'x':
+                return a.s.x
+            elif name == 'y':
+                return a.s.y
+            elif name == 'z':
+                return a.s.z
+            elif name == 'vx':
+                return a.s.vx
+            elif name == 'vy':
+                return a.s.vy
+            elif name == 'vz':
+                return a.s.vz
+            elif name == 'theta':
+                return a.s.theta
+            elif name == 'phi':
+                return a.s.phi
 
 
 #functions

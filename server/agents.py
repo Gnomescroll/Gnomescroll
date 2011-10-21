@@ -340,7 +340,7 @@ class AgentAction:
 
 
 # represents an agent under control of a player
-class Agent(AgentPhysics, AgentAction, AgentWrapper):
+class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 2. # seconds
@@ -415,6 +415,13 @@ class Agent(AgentPhysics, AgentAction, AgentWrapper):
 
         self.owner = player_id
 
+    def __getattribute__(self, name):
+        try:
+            val = AgentWrapper.__getattribute__(self, name)
+        except AttributeError:
+            val = object.__getattribute__(self, name)
+        return val
+
     # gets or sets
     def pos(self, xyz=None):
         if xyz is None:
@@ -441,41 +448,48 @@ class Agent(AgentPhysics, AgentAction, AgentWrapper):
         self.inventory = new_inv
 
     @property
-    def x(self):
-        return self.state[0]
-    @x.setter
-    def x(self, val):
-        self.state[0] = val
-    @property
-    def y(self):
-        return self.state[1]
-    @y.setter
-    def y(self, val):
-        self.state[1] = val
-    @property
-    def z(self):
-        return self.state[2]
-    @z.setter
-    def z(self, val):
-        self.state[2] = val
-    @property
-    def vx(self):
-        return self.state[3]
-    @vx.setter
-    def vx(self, val):
-        self.state[3] = val
-    @property
-    def vy(self):
-        return self.state[4]
-    @vy.setter
-    def vy(self, val):
-        self.state[4] = val
-    @property
-    def vz(self):
-        return self.state[5]
-    @vz.setter
-    def vz(self, val):
-        self.state[5] = val
+    def state(self):
+        return [self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az]
+    @state.setter
+    def state(self, val):
+        self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
+
+    #@property
+    #def x(self):
+        #return self.state[0]
+    #@x.setter
+    #def x(self, val):
+        #self.state[0] = val
+    #@property
+    #def y(self):
+        #return self.state[1]
+    #@y.setter
+    #def y(self, val):
+        #self.state[1] = val
+    #@property
+    #def z(self):
+        #return self.state[2]
+    #@z.setter
+    #def z(self, val):
+        #self.state[2] = val
+    #@property
+    #def vx(self):
+        #return self.state[3]
+    #@vx.setter
+    #def vx(self, val):
+        #self.state[3] = val
+    #@property
+    #def vy(self):
+        #return self.state[4]
+    #@vy.setter
+    #def vy(self, val):
+        #self.state[4] = val
+    #@property
+    #def vz(self):
+        #return self.state[5]
+    #@vz.setter
+    #def vz(self, val):
+        #self.state[5] = val
     @property
     def ax(self):
         return self.state[6]
