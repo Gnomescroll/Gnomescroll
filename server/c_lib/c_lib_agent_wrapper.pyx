@@ -30,13 +30,14 @@ agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz']
 
 class AgentWrapper(object):
 
-    def __init__(self, id):
-        AgentListWrapper._create(id)
+    def __init__(self):
+        id = AgentListWrapper._add()
         self.id = id
         
-    def __getattribute__(self, name):
+    #def __getattribute__(self, name):
+    def get_agent_attr(self, name):
         if name not in agent_props:
-            raise AttributeError
+            raise ValueError
 
         cdef Agent_state* a
         a = get_agent(self.id)
