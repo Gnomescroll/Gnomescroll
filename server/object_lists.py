@@ -5,6 +5,7 @@ class GenericObjectList:
     def __init__(self):
         self.objects = {}
         self._object_type = None
+        self._wrapper = None
 
     def __getitem__(self, key):
         if not key in self.objects:
@@ -53,6 +54,8 @@ class GenericObjectList:
         if id in self.objects:
             del self.objects[id]
         #    print '%s: %s removed; id= %s' % (self.__class__.__name__, self._object_type.__name__, id,)
+            if self._wrapper is not None:
+                self._wrapper._remove(id)
             return True
         return False
 

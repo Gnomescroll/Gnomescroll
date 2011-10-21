@@ -23,7 +23,10 @@ cdef extern from "./state/wrapper.hpp":
 ### make agent wrapper
 #getters and settings
 
-### 
+###
+
+class AgentWrapper:
+    pass
 
 
 
@@ -37,3 +40,16 @@ def _create_agent():
 
 def _delete_agent(int id):
     delete_agent(id)
+    return id
+
+
+class AgentListWrapper:
+
+    @classmethod
+    def _add(cls):
+        return _create_agent()
+
+    @classmethod
+    def _remove(cls, int id):
+        return _delete_agent(id)
+        
