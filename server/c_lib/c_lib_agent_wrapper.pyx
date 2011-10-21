@@ -18,7 +18,6 @@ cdef extern from "./agent/agent.hpp":
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
     Agent_state* create_agent()         #for server
-    Agent_state* create_agent(int void) #for client   
     Agent_state* get_agent(int id)
     void delete_agent(int id)
 
