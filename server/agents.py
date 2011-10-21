@@ -417,9 +417,8 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
     def __getattribute__(self, name):
         try:
-            #val = AgentWrapper.__getattribute__(self, name)
-            val = AgentWrapper.get_agent_attr(self, name)
-        except ValueError:
+            val = AgentWrapper.__getattribute__(self, name)
+        except AttributeError:
             val = object.__getattribute__(self, name)
         return val
 

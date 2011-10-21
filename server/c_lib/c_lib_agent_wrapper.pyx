@@ -34,13 +34,12 @@ class AgentWrapper(object):
         id = AgentListWrapper._add()
         self.id = id
         
-    #def __getattribute__(self, name):
-    def get_agent_attr(self, name):
+    def __getattribute__(self, name):
         if name not in agent_props:
-            raise ValueError
+            raise AttributeError
 
         cdef Agent_state* a
-        a = get_agent(self.id)
+        a = get_agent(object.__getattribute__(self,'id'))
         if name == 'id':
             self.id = id
             return a.id
