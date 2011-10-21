@@ -124,94 +124,6 @@ void print_vector(struct Vector * v) {
 
 #ifdef DC_CLIENT
 
-void Agent_vox::draw_head(struct Vector look, struct Vector right, float x, float y, float z) {
-    int index;
-    Vox* v = vox_part[AGENT_PART_HEAD];
-    if (v==NULL) return;
-    float ch = camera_height;
-    //look is forward direction
-    //right is right
-    float vos = v->vox_size;
-
-    //struct Vector c = Vector_init(x, y, z + ch);
-    struct Vector c;
-    c.x = x;
-    c.y = y;
-    c.z = z + ch;
-    //c.z = z;
-
-    struct Vector vx,vy,vz;
-
-    vx = look;
-    vz = vector_cross(vx, right);
-    vy = vector_cross(vx, vz);
-    int i,j,k;
-
-    //save 3 multiplications per voxel by premultiplying in vox
-    //vx.x *= vos; vx.y *= vos; vx.z *= vos;
-    //vy.x *= vos; vy.y *= vos; vy.z *= vos;
-    //vz.x *= vos; vz.y *= vos; vz.z *= vos;
-
-    mult_vec_scalar(&vx, vos);
-    mult_vec_scalar(&vy, vos);
-    mult_vec_scalar(&vz, vos);
-
-    for(i=0; i<8; i++) {
-        v_buffer[3*i+0] = vos*(v_set[3*i+0]*vx.x + v_set[3*i+1]*vy.x + v_set[3*i+2]*vz.x );
-        v_buffer[3*i+1] = vos*(v_set[3*i+0]*vx.y + v_set[3*i+1]*vy.y + v_set[3*i+2]*vz.y );
-        v_buffer[3*i+2] = vos*(v_set[3*i+0]*vx.z + v_set[3*i+1]*vy.z + v_set[3*i+2]*vz.z );
-    }
-    for(i=0; i<6; i++) {
-        for(j=0; j<4; j++) {
-            s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
-            s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
-            s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
-        }
-    }
-
-    c.x += -(v->xdim * vx.x + v->ydim*vy.x + v->zdim*vz.x) / 2;
-    c.y += -(v->xdim * vx.y + v->ydim*vy.y + v->zdim*vz.y) / 2;
-    c.z += -(v->xdim * vx.z + v->ydim*vy.z + v->zdim*vz.z) / 2;
-
-    struct Voxel* vo;
-
-    float x0, y0, z0;
-
-    int i1;
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-
-    glBegin(GL_QUADS);
-
-    for(i= 0; i < v->xdim; i++) {
-    for(j= 0; j < v->ydim; j++) {
-    for(k= 0; k < v->zdim; k++) {
-        
-        index = i + j*v->xdim + j*v->xdim*v->ydim;
-        vo = &v->vox[index];
-
-        if(vo->a == 0) continue;
-        glColor3ub((unsigned char)vo->r,(unsigned char)vo->g,(unsigned char)vo->b);
-
-        x0 = c.x + (i*vx.x + j*vy.x + k*vz.x);
-        y0 = c.y + (i*vx.y + j*vy.y + k*vz.y);
-        z0 = c.z + (i*vx.z + j*vy.z + k*vz.z);
-
-        for(i1=0; i1<6; i1++) {
-                glVertex3f(x0 + s_buffer[12*i1+3*0+0], y0+ s_buffer[12*i1+3*0+1], z0+ s_buffer[12*i1+3*0+2]);
-                glVertex3f(x0 + s_buffer[12*i1+3*1+0], y0+ s_buffer[12*i1+3*1+1], z0+ s_buffer[12*i1+3*1+2]);
-                glVertex3f(x0 + s_buffer[12*i1+3*2+0], y0+ s_buffer[12*i1+3*2+1], z0+ s_buffer[12*i1+3*2+2]);
-                glVertex3f(x0 + s_buffer[12*i1+3*3+0], y0+ s_buffer[12*i1+3*3+1], z0+ s_buffer[12*i1+3*3+2]);
-        }
-    
-    }}}
-    glEnd();
-
-    glDisable (GL_DEPTH_TEST);
-    
-}
-
 void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
 
     Vox* v = vox_part[part];
@@ -228,13 +140,12 @@ void Agent_vox::draw(struct Vector look, struct Vector right, float x, float y, 
     for (i=0; i<AGENT_PART_NUM; i++) {
         if (vox_part[i] != NULL) {
             if (i == AGENT_PART_HEAD) {
-                vox_part[i]->draw_head(look, right, x,y,z);
+                vox_part[i]->draw(look, right, x,y,z);
             } else {
                 vox_part[i]->draw(right, x, y, z);
             }
         }
     }
-    //draw_head(look, right, x, y, z);
 }
 
 void Vox::draw(struct Vector right, float x, float y, float z) {
@@ -318,7 +229,7 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
 }
 
 
-void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, float z) {
+void Vox::draw(struct Vector look, struct Vector right, float x, float y, float z) {
 
     int i,j,k;
     int i1;
@@ -336,10 +247,6 @@ void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, f
     c.z += z;
 
     struct Vector vx,vy,vz;
-
-    //vx = f; //instead of look direction
-    //vz = vector_cross(vx, right);
-    //vy = vector_cross(vx, vz);
 
     vx = look;
     vz = vector_cross(vx, right);

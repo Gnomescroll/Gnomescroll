@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 '''
-Converts slab6 VOX format to gnomescroll's .vox json
+Converts slab6 VOX kv6 format to gnomescroll's .vox json
 '''
 
 import argparse

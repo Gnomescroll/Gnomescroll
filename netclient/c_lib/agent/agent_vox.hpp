@@ -72,7 +72,7 @@ class Vox {
         void set_direction(float fx, float fy, float fz, float nx, float ny, float nz);
         void set_volume(int x, int y, int z, int r, int g, int b, int a);
         void draw(struct Vector right, float x, float y, float z);
-        void draw_head(struct Vector look, struct Vector right, float x, float y, float z);
+        void draw(struct Vector look, struct Vector right, float x, float y, float z);
 };
 
 class Agent_vox {
@@ -112,7 +112,6 @@ class Agent_vox {
         void set_vox_volume(int part, int x, int y, int z, int r, int g, int b, int a);
 
         #ifdef DC_CLIENT
-        void draw_head(struct Vector look, struct Vector right, float x, float y, float z);
         void draw_volume(int part, struct Vector right, float x, float y, float z);
         void draw(struct Vector look, struct Vector right, float x, float y, float z);
         #endif
