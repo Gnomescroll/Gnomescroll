@@ -362,7 +362,7 @@ class Agent(AgentPhysics, AgentAction):
 
         #if id is None:
             #id = GameStateGlobal.new_agent_id()
-        id = AgentWrapper._create_agent()
+        id = AgentListWrapper._create_agent()
         self.id = id
 
         ### Agent Parameters ###
