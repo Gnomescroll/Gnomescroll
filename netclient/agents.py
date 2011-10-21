@@ -31,6 +31,7 @@ import c_lib.c_lib_agents
 import c_lib._ray_trace
 import random
 
+from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper
 
 import sound.sounds as sounds
 
@@ -585,6 +586,9 @@ class AgentModel(object):
     def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
             print 'WARNING!! Creating agent with no owner or id'
+
+        AgentListWrapper._create(id)
+            
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(float, state)

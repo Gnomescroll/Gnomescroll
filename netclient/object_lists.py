@@ -1,5 +1,8 @@
 # generic game object datastore
 # has dictionary interface for retrieving items
+
+from c_lib.c_lib_agent_wrapper import AgentListWrapper
+
 class GenericObjectList:
 
     def __init__(self):
@@ -7,6 +10,7 @@ class GenericObjectList:
         self._metaname = 'GenericStateList'
         self._itemname = 'GenericObject'
         self._object_type = None
+        self._wrapper = None
 
     def __getitem__(self, key):
         if key not in self.objects:
@@ -72,6 +76,8 @@ class GenericObjectList:
         if id in self.objects:
             del self.objects[id]
             #print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
+            if self._wrapper is not None:
+                self._wrapper._remove(id)
             return True
         return False
 
@@ -113,6 +119,7 @@ class AgentList(GenericObjectList):
         self._metaname = 'AgentList'
         self._itemname = 'Agent'
         self._object_type = Agent
+        self._wrapper = AgentListWrapper
 
     def create(self, *args, **agent):
         agent = self._add(*args, **agent)
