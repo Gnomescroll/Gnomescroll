@@ -191,18 +191,6 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    '''
-    bld(features='cxx cshlib',
-        source=['c_lib/c_lib.c',
-                'c_lib/texture_loader.c',
-                'c_lib/net_lib/client.c',
-                'c_lib/time/physics_timer.c',
-                #'c_lib/physics/common.c',
-                ],
-        use=common_libraries+time_lib+SDL_libraries,
-        target='c_lib')
-    '''
-
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp',
                 #'c_lib/texture_loader.c',
@@ -232,22 +220,15 @@ def build(bld):
         use=common_libraries+SDL_libraries,
         target='SDL.hud')
 
+    '''
     bld(features='c cshlib pyext',
         source=['SDL/input_functions.c',
                 'SDL/SDL_functions.c',
                 'SDL/input.pyx'],
         use=common_libraries+SDL_libraries,
         target='SDL.input')
-
     '''
-    bld(features='cxx cshlib pyext',
-        source=['cube_lib/t_vbo.c',
-                'cube_lib/t_viz.c',
-                'cube_lib/terrain_map.pyx'],
-        use=common_libraries + SDL_libraries+['c_lib'],
-        target='cube_lib.terrain_map')
-    '''
-
+    
     bld(features='c cshlib pyext',
         source=['vox_lib/vox_functions.c',
                 'vox_lib/vox_lib.pyx'],
@@ -293,6 +274,11 @@ def build(bld):
         source=['c_lib/c_lib_agent_wrapper.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_agent_wrapper')
+
+    bld(features='cxx cshlib pyext',
+        source=['c_lib/c_lib_input.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_input')
 
     # sound
     bld(features='c cshlib',
@@ -355,6 +341,7 @@ def install_in_ext(ctx):
                'c_lib.c_lib_agents',
                'c_lib.c_lib_hud',
                'c_lib.c_lib_agent_wrapper',
+               'c_lib.c_lib_input',
                'csound',
                'sound.sounds',  # cython .so's need to have same name as source
                ]
