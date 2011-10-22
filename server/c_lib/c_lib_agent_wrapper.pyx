@@ -18,3 +18,19 @@ cdef extern from "./agent/agent.hpp":
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
     Agent_state* create_agent()
+
+
+### make agent wrapper
+#getters and settings
+
+### 
+
+
+
+#functions
+
+#create agent and return id
+def _create_agent():
+    cdef Agent_state* a
+    a = create_agent()
+    return a.id
