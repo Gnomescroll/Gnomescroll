@@ -1,8 +1,8 @@
 #agent class wrapper
 
 #AgentState
-cdef extern from ",.agent/agent.hpp":
-	cdef cppclass AgentState:
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass AgentState:
         int seq
         float theta
         float phi
@@ -11,10 +11,10 @@ cdef extern from ",.agent/agent.hpp":
 
 #Agent_state
 cdef extern from "./agent/agent.hpp":
-	cdef cppclass Agent_state:
-		int id
-		AgentState s
+    cdef cppclass Agent_state:
+        int id
+        AgentState s
 
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
-	Agent_state* create_agent()
+    Agent_state* create_agent()
