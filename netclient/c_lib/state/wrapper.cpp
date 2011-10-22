@@ -2,10 +2,20 @@
 
 Agent_state* create_agent() {
     Agent_state* a;
-    a = agent_list.create();
+    
+    #ifdef DC_SERVER
+        a = ServerState::agent_list.create();
+    #else
+        a = ClientState::agent_list.create();
+    #endif
+
     return a;
 }
 
 void delete_agent(int id) {
-    agent_list.destroy(id);
+    #ifdef DC_SERVER
+        a = ServerState::agent_list.destroy(id);
+    #else
+        a = ClientState::agent_list.destroy(id);
+    #endif
 }
