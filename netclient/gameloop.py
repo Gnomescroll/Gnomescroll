@@ -189,9 +189,9 @@ class App(object):
         
         _m = 0
 
-        cAgents.create_ag(10, 10.,10.,10.)
+        #cAgents.create_ag(10, 10.,10.,10.)
         while not GameStateGlobal.exit:
-            cAgents.update_ag(10)
+            #cAgents.update_ag(10)
             self.world.sound_updates()
 
             P2.start_frame() #TEST
@@ -266,7 +266,7 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                _o = 1
+                _o = 0
                 if _o==0:
                     if _m < 50:
                         set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
@@ -302,6 +302,18 @@ class App(object):
                         set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     else:
                         set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                if _o==3:
+                    set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                if _o==4:
+                    if _m < 32:
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _m < 64:
+                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        
+                    if _m == 64:
+                        _m = 0
+                    else:
+                        _m += 1
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")

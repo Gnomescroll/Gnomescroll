@@ -78,7 +78,7 @@ static inline int _collision_check(int x, int y, int z) {
 }
 
 
-void Agent_state::_tick(); {
+void Agent_state::_tick() {
 
     //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
@@ -91,22 +91,24 @@ void Agent_state::_tick(); {
 
         s.theta = cs[index].theta;
         s.phi = cs[index].phi;
-        
+
+    /*    
         int forward =0;
-        int backward =0;
+        int backwards =0;
         int left =0;
         int right =0;
-        int jet =0;
-        
+        int jetpack =0;
+    */  
         int a_cs = cs[index].cs;
 
         //set control state variables
-        if( a_cs & 1 ) forward = 1;
-        if( a_cs & 2 ) backwards = 1;
-        if( a_cs & 4 ) left = 1;
-        if( a_cs & 8 ) right = 1;
-        if( a_cs & 16 ) jet = 1;
-
+        //printf("cs= %i \n", a_cs);
+        bool forward     = a_cs & 1? 1 :0;
+        bool backwards   = a_cs & 2? 1 :0;
+        bool left        = a_cs & 4? 1 :0;
+        bool right       = a_cs & 8? 1 :0;
+        bool jetpack     = a_cs & 16? 1 :0;
+    /*
         //local cordinates
         int l_x = s.x;
         int l_y = s.y;
@@ -116,15 +118,17 @@ void Agent_state::_tick(); {
         float fl_x = s.x - floor(s.x);
         float fl_y = s.y - floor(s.y);
         float fl_z = s.z - floor(s.z);
+    */
 
-        const float tr = 10     //tick rate
-        const float tr2 = tr*tr
+        const float tr = 10.0;    //tick rate
+        const float tr2 = tr*tr;
 
-        const float xy_speed = 2.00 / tr
+        const float xy_speed = 2.00 / tr;
         const float z_jetpack = 0.80 / tr2;
         const float z_gravity = -.40 / tr2;
 
         const float ground_distance = 0.02;
+        const float z_bounce = 0.65;
         const float z_bounce_v_threshold = 0.35 / tr;
 
         const float pi = 3.14159265;
@@ -139,8 +143,8 @@ void Agent_state::_tick(); {
     /*
         integer cordinates used for checking voxels for collision
     */
-        int bx_pos_current = s.x+box_r          //floor
-        int bx_neg_current = s.x-box_r
+        int bx_pos_current = s.x+box_r;          //floor
+        int bx_neg_current = s.x-box_r;
 
         int by_pos_current = s.y+box_r;
         int by_neg_current = s.y-box_r;
@@ -159,7 +163,7 @@ void Agent_state::_tick(); {
         int by_min = s.y - box_r;
         int by_max = s.y + box_r + 1.0;
 
-        int bz_min = s.z
+        int bz_min = s.z;
         int bz_max = s.z + b_height + 1.0;
 
         //state variables
@@ -169,34 +173,37 @@ void Agent_state::_tick(); {
 
         /* projected z position depends on whether agent is on ground */
 
+        float cs_vx =0 ;
+        float cs_vy =0 ;
+
         if(forward)
         {
-                s.vx += xy_speed*cos( s.theta * pi);
-                s.vy += xy_speed*sin( s.theta * pi);
+                cs_vx += xy_speed*cos( s.theta * pi);
+                cs_vy += xy_speed*sin( s.theta * pi);
         }
         if(backwards)
         {
-                s.vx += -xy_speed*cos( s.theta * pi);
-                s.vy += -xy_speed*sin( s.theta * pi);
+                cs_vx += -xy_speed*cos( s.theta * pi);
+                cs_vy += -xy_speed*sin( s.theta * pi);
         }
         if(left) 
         {
-                s.vx += xy_speed*cos( s.theta * pi + pi/2);
-                s.vy += xy_speed*sin( s.theta * pi + pi/2);
+                cs_vx += xy_speed*cos( s.theta * pi + pi/2);
+                cs_vy += xy_speed*sin( s.theta * pi + pi/2);
         }
         if(right) 
         {
-                s.vx += -xy_speed*cos( s.theta * pi + pi/2);
-                s.vy += -xy_speed*sin( s.theta * pi + pi/2);
+                cs_vx += -xy_speed*cos( s.theta * pi + pi/2);
+                cs_vy += -xy_speed*sin( s.theta * pi + pi/2);
         }
 
-        int bx_pos_projected = s.x+s.vx+box_r    //floor
-        int bx_neg_projected = s.x+s.vx-box_
+        int bx_pos_projected = s.x+s.vx+cs_vx+box_r;    //floor
+        int bx_neg_projected = s.x+s.vx+cs_vy-box_r;
 
-        int by_pos_projected = s.y+s.vy+box_r;
-        int by_neg_projected = s.y+s.vy-box_r; 
+        int by_pos_projected = s.y+s.vy+cs_vx+box_r;
+        int by_neg_projected = s.y+s.vy+cs_vy-box_r; 
                   
-        int bz_pos_projected = s.z+s.vz+b_height;
+        int bz_pos_projected = s.z+s.vz+cs_vx+b_height;
         int bz_neg_projected = s.z+s.vz;
 
     /*
@@ -207,24 +214,26 @@ void Agent_state::_tick(); {
 
 
         //floor, float to int
+        
+
 
         int bx,by,bz;
 
-        int xc_pos_current = 0
-        int xc_pos_projected = 0
+        int xc_pos_current = 0;
+        int xc_pos_projected = 0;
 
-        int xc_neg_current = 0
-        int xc_neg_projected = 0
+        int xc_neg_current = 0;
+        int xc_neg_projected = 0;
 
         //x collisions
         for(bz = bz_min; bz<bz_max; bz++) { //less than equal
         for(by = by_min; by<by_max; by++) {
             //#x+
                 if(_collision_check(bx_pos_current,by,bz))  xc_pos_current +=1;
-                if(_collision_check(bx_pos_projected,by,bz) xc_pos_projected +=1;
+                if(_collision_check(bx_pos_projected,by,bz)) xc_pos_projected +=1;
             //#x-
                 if(_collision_check(bx_neg_current,by,bz))  xc_neg_current +=1;
-                if(_collision_check(bx_neg_projected,by,bz) xc_neg_projected +=1;
+                if(_collision_check(bx_neg_projected,by,bz)) xc_neg_projected +=1;
         }}
 
         //y collisions
@@ -237,11 +246,11 @@ void Agent_state::_tick(); {
         for(bz = bz_min; bz < bz_max; bz++){
         for(bx = bx_min; bx < bx_max; bx++){
             //#y+
-                if(_collision_check(bx,by_pos_current,bz)   yc_pos_current +=1;
-                if(_collision_check(bx,by_pos_projected,bz) yc_pos_projected +=1;
+                if(_collision_check(bx,by_pos_current,bz))   yc_pos_current +=1;
+                if(_collision_check(bx,by_pos_projected,bz)) yc_pos_projected +=1;
             //#y-
-                if(_collision_check(bx,by_neg_current,bz)   yc_neg_current +=1;
-                if(_collision_check(bx,by_neg_projected,bz) yc_neg_projected +=1;
+                if(_collision_check(bx,by_neg_current,bz))   yc_neg_current +=1;
+                if(_collision_check(bx,by_neg_projected,bz)) yc_neg_projected +=1;
         }}
 
         //z collisions
@@ -259,13 +268,13 @@ void Agent_state::_tick(); {
         for(bx = bx_min; bx < bx_max; bx++){
         for(by = by_min; by < by_max; by++){
             //ground contact
-                if(_collision_check(bx,by, zc_ground_position) on_ground += 1;
+                if(_collision_check(bx,by, zc_ground_position)) on_ground += 1;
             //#z+
-                if(_collision_check(bx,by,bz_pos_current)   zc_pos_current +=1;
-                if(_collision_check(bx,by,bz_pos_projected) zc_pos_projected +=1;
+                if(_collision_check(bx,by,bz_pos_current))   zc_pos_current +=1;
+                if(_collision_check(bx,by,bz_pos_projected)) zc_pos_projected +=1;
             //#z-
-                if(_collision_check(bx,by,bz_neg_current)   zc_neg_current +=1;
-                if(_collision_check(bx,by,bz_neg_projected) zc_neg_projected +=1;
+                if(_collision_check(bx,by,bz_neg_current))   zc_neg_current +=1;
+                if(_collision_check(bx,by,bz_neg_projected)) zc_neg_projected +=1;
         }}
 
         //compute state variables
@@ -278,7 +287,7 @@ void Agent_state::_tick(); {
         //collision handling
         int total_current_collisions = xc_pos_current + xc_neg_current + yc_pos_current + yc_neg_current + zc_pos_current + zc_neg_current;
         if(total_current_collisions > 0) {
-            printf("%i current collisions this frame\n");
+            printf("%i current collisions this frame\n", total_current_collisions);
             //push agent out of block
         }
 
@@ -337,15 +346,24 @@ void Agent_state::_tick(); {
             }    
         }
         if(jetpack) {
-            s.sv += z_jetpack;
+            s.vz += z_jetpack;
         }
         
         //newton intergrate positions
-        s.x += s.vx;    //use better intergrator
-        s.y += s.vy;
+        s.x += s.vx + cs_vx;    //use better intergrator
+        s.y += s.vy + cs_vy;
         s.z += s.vz;
+        printf("cs_vx= %f, cs_vy= %f \n", cs_vx, cs_vy);
+        printf("dx= %f, dy= %f, dz= %f \n", s.vx + cs_vx, s.vy + cs_vy, s.vz);
+        printf("cs_seq= %i, x= %f, y= %f, z= %f, vx= %f, vy= %f, vz= %f \n",cs_seq, s.x, s.y, s.z, s.vx, s.vy, s.vz);
+        //printf("vx= %f, vy= %f, vz= %f \n", s.vx, s.vy, s.vz);
     } //end physics loop
     //printf("_tick: processed %i agent ticks\n", _tc);
+    if(id == 0) 
+    {
+        //printf("x= %f, y= %f, z= %f \n", s.x, s.y, s.z);
+        //printf("vx= %f, vy= %f, vz= %f \n", s.vx, s.vy, s.vz);
+    }
 }
 
 /*
@@ -621,7 +639,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
             A.x = s.x;
             A.y = s.y;
             A.z = s.z;
-            A.vx = s.vz;
+            A.vx = s.vx;
             A.vy = s.vy;
             A.vz = s.vz;
             A.broadcast();
@@ -667,15 +685,15 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
 }
 Agent_state::Agent_state(int _id) {
     id = _id;
-    x = 0;
-    y = 0;
-    z = 0;
-    vx = 0;
-    vy = 0;
-    vz = 0;
-
     s.x = 16.5;
     s.y = 16.5;
+    s.z = 16;
+    s.vx = 0;
+    s.vy = 0;
+    s.vz = 0;
+
+    //s.x = 16.5;
+    //s.y = 16.5;
 
     cs_seq = 0;
 
