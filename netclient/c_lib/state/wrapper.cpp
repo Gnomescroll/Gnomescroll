@@ -5,3 +5,7 @@ Agent_state* create_agent() {
     a = agent_list.create();
     return a;
 }
+
+void delete_agent(int id) {
+    agent_list.destroy(id);
+}
