@@ -24,12 +24,15 @@ from vector_lib import distance
 
 from opts import opts
 
+from c_lib.c_lib_agent_wrapper import AgentListWrapper, AgentWrapper
+
 # datastore controller for agents
 class AgentList(GenericObjectList):
 
     def __init__(self):
         GenericObjectList.__init__(self)
         self._object_type = Agent
+        self._wrapper = AgentListWrapper
 
     def create(self, player_id, position=None, id=None):
         return self._add(player_id, position=position, id=id)
@@ -353,8 +356,13 @@ class Agent(AgentPhysics, AgentAction):
 
         self.team = team
 
-        if id is None:
-            id = GameStateGlobal.new_agent_id()
+        if id is not None:
+            print "SOMETHING IS GIVING SERVER AGENT AN ID"
+            raise Exception
+
+        #if id is None:
+            #id = GameStateGlobal.new_agent_id()
+        id = AgentWrapper._create_agent()
         self.id = id
 
         ### Agent Parameters ###

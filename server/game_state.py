@@ -15,7 +15,7 @@ class GameStateGlobal:
     teamList = None
     game = None
     #state
-    agent_id = 0
+    #agent_id = 0 #deprecated
     player_id = 0
     projectile_id = 0
 
@@ -43,10 +43,11 @@ class GameStateGlobal:
     def init(cls):
         pass
 
-    @classmethod
-    def new_agent_id(cls):
-        cls.agent_id += 1
-        return cls.agent_id
+    # deprecated
+    #@classmethod
+    #def new_agent_id(cls):
+        #cls.agent_id += 1
+        #return cls.agent_id
 
     @classmethod
     def new_player_id(cls):
