@@ -7,6 +7,7 @@
     // #include "./net_lib/client.cpp"
     // #endif
 
+
     #include "./t_map/t_map.c"
     #include "./t_map/t_properties.c"
     
@@ -21,6 +22,8 @@
 
     #include "./agent/agent_include.h"
 
+    #include <c_lib/state/wrapper.cpp>
+    
     //#include "./map_gen/voronoi.cpp"
     //#include "./map_gen/map2.cpp"
     #include "./map_gen/noise.c"

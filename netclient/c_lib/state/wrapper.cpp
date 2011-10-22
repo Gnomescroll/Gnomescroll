@@ -40,8 +40,8 @@ Agent_state* get_agent(int id) {
 }
 void delete_agent(int id) {
     #ifdef DC_SERVER
-        a = ServerState::agent_list.destroy(id);
+        ServerState::agent_list.destroy(id);
     #else
-        a = ClientState::agent_list.destroy(id);
+        ClientState::agent_list.destroy(id);
     #endif
 }
