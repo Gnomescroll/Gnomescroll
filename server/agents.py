@@ -416,11 +416,17 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         self.owner = player_id
 
     def __getattribute__(self, name):
+        if hasattr(AgentWrapper, name):
+            return AgentWrapper.__getattribute__(self, name)
+        else:
+            return object.__getattribute__(self, name)
+        '''
         try:
             val = AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             val = object.__getattribute__(self, name)
         return val
+        '''
 
     # gets or sets
     def pos(self, xyz=None):
