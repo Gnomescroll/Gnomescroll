@@ -18,6 +18,7 @@ cdef extern from "./agent/agent.hpp":
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
     Agent_state* create_agent()
+    Agent_state* get_agent(int id)
     void delete_agent(int id)
 
 ### make agent wrapper
@@ -33,6 +34,11 @@ cdef extern from "./state/wrapper.hpp":
 def _create_agent():
     cdef Agent_state* a
     a = create_agent()
+    return a.id
+
+cdef Agent_state* _get_agent(int id):
+    cdef Agent_state* a
+    a = get_agent(id)
     return a.id
 
 def _delete_agent(int id):

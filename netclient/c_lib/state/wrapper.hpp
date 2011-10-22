@@ -4,4 +4,5 @@
 #include <c_lib/agent/agent.hpp>
 
 Agent_state* create_agent();
+Agent_state* get_agent(int id);
 void delete_agent(int id);
