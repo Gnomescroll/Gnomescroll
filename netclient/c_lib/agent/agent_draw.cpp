@@ -64,7 +64,9 @@ void draw_agent(Agent_state* g) {
 
     //printf("agent draw \n");
     AgentState* s = &g->s;
-    draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5);
+    //draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
+    //printf("id=%i, x= %f, y= %f, z= %f \n", g->id, s->x, s->y, s->z);
+    //printf("draw\n");
 
     //AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
@@ -73,6 +75,10 @@ void draw_agent(Agent_state* g) {
     for(i=0; i < 32; i++) {
         draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
     }
+
+    draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
+
+    return;
 
     if (g->vox != NULL) {
         struct Vector right;
