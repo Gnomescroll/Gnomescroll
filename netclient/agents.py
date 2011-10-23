@@ -774,61 +774,6 @@ class AgentModel(AgentWrapper):
     def state(self, val):
         self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
 
-    #@property
-    #def x(self):
-        #return self.state[0]
-    #@x.setter
-    #def x(self, val):
-        #self.state[0] = val
-    #@property
-    #def y(self):
-        #return self.state[1]
-    #@y.setter
-    #def y(self, val):
-        #self.state[1] = val
-    #@property
-    #def z(self):
-        #return self.state[2]
-    #@z.setter
-    #def z(self, val):
-        #self.state[2] = val
-    #@property
-    #def vx(self):
-        #return self.state[3]
-    #@vx.setter
-    #def vx(self, val):
-        #self.state[3] = val
-    #@property
-    #def vy(self):
-        #return self.state[4]
-    #@vy.setter
-    #def vy(self, val):
-        #self.state[4] = val
-    #@property
-    #def vz(self):
-        #return self.state[5]
-    #@vz.setter
-    #def vz(self, val):
-        #self.state[5] = val
-    #@property
-    #def ax(self):
-        #return self.state[6]
-    #@ax.setter
-    #def ax(self, val):
-        #self.state[6] = val
-    #@property
-    #def ay(self):
-        #return self.state[7]
-    #@ay.setter
-    #def ay(self, val):
-        #self.state[7] = val
-    #@property
-    #def az(self):
-        #return self.state[8]
-    #@az.setter
-    #def az(self, val):
-        #self.state[8] = val
-
     def normalized_direction(self):
         return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))
 
