@@ -927,6 +927,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+        self.camera_height = 1.5
 
     # set agent state explicitly
     # CONTROL_STATE deprecated. use BUTTON_STATE.  button_state is booleans; control state is computed position/velocity deltas
