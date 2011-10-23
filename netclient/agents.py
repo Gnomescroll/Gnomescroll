@@ -946,7 +946,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __setattr__(self, name, val):
         if name == 'id':
+            print val
             set_player_agent_id(val)
+            assert False
             self._control_state_id_set = True
         self.__dict__[name] = val
 
@@ -957,6 +959,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         f,b,l,r, jet, jump = self.button_state
         theta, phi = self._x_angle, self._y_angle
+        print f,b,l,r, jet, jump, theta, phi
         set_agent_control_state(f,b,l,r, jet, jump, theta, phi)
 
     def fire(self):
