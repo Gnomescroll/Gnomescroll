@@ -128,7 +128,6 @@ class InputGlobal:
 
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
-        
 
     @classmethod
     def init_1(cls, main):
@@ -164,6 +163,14 @@ class InputGlobal:
     @classmethod
     def enable_chat(cls):
         InputGlobal.input = 'chat'
+
+    @classmethod
+    def agent_button_state(cls):
+        return
+
+    @classmethod
+    def agent_mouse_angles(cls):
+        return
 
 class Mouse(object):
 
@@ -353,52 +360,26 @@ class Keyboard(object):
         u,d,l,r, jetpack, brake = [0 for i in range(6)]
         old_buttons = GameStateGlobal.agent.button_state
 
-        if settings.pyglet:
-            if keyboard[key.W]:
-                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
-                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
-            if keyboard[key.S]:
-                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
-                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
-            if keyboard[key.A]:
-                    v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
-            if keyboard[key.D]:
-                    v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
-            if keyboard[key.C]:
-                brake = 1
-            if keyboard[key.SPACE]:
-                jetpack = 1
-        else:
-            if 'w' in keyboard:
-                    #v_x += v*cos( GameStateGlobal.agent.x_angle * pi)
-                    #v_y += v*sin( GameStateGlobal.agent.x_angle * pi)
-                    u=1
-            if 's' in keyboard:
-                    #v_x += -v*cos( GameStateGlobal.agent.x_angle * pi)
-                    #v_y += -v*sin( GameStateGlobal.agent.x_angle * pi)
-                    d=1
-            if 'a' in keyboard:
-                    #v_x += v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    #v_y += v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    l = 1
-            if 'd' in keyboard:
-                    #v_x += -v*cos( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    #v_y += -v*sin( GameStateGlobal.agent.x_angle * pi + pi/2)
-                    r=1
-            if 'c' in keyboard:
-                brake = 1
-            if 'SPACE' in keyboard:
-                jetpack = 1
+        if 'w' in keyboard:
+                u=1
+        if 's' in keyboard:
+                d=1
+        if 'a' in keyboard:
+                l = 1
+        if 'd' in keyboard:
+                r=1
+        if 'c' in keyboard:
+            brake = 1
+        if 'SPACE' in keyboard:
+            jetpack = 1
 
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
-        if old_buttons != button_state:
-            NetOut.sendMessage.agent_button_state(GameStateGlobal.agent)
+        #if old_buttons != button_state:
+            #NetOut.sendMessage.agent_button_state(GameStateGlobal.agent)
 
-        ctrl_state = GameStateGlobal.agent.compute_state()
-        GameStateGlobal.agent.set_control_state(ctrl_state)
+        #ctrl_state = GameStateGlobal.agent.compute_state()
+        #GameStateGlobal.agent.set_control_state(ctrl_state)
 
         #GameStateGlobal.agent.set_control_state([\
             #d_x,

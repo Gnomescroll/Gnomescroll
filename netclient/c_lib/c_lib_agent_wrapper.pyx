@@ -28,9 +28,7 @@ cdef extern from "./state/wrapper.hpp":
 
 ### 
 
-#agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
-
 
 class AgentWrapper(object):
 
@@ -103,7 +101,7 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
     void set_PlayerAgent_id(int id)
 
-def set_agent_control_state(int id, int f, int b, int l, int r, int jet, int jump, float theta, float phi):
+def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,theta,phi)
 
 def set_player_agent_id(int id):

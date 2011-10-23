@@ -31,7 +31,7 @@ import c_lib.c_lib_agents
 import c_lib._ray_trace
 import random
 
-from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper
+from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 
 import sound.sounds as sounds
 
@@ -613,8 +613,8 @@ class AgentModel(AgentWrapper):
         self.last_control_tick = 0
         self.last_button_tick = 0
 
-        self.x_angle = 0
-        self.y_angle = 0
+        self._x_angle = 0
+        self._y_angle = 0
 
         self.d_x = 0
         self.d_y = 0
@@ -735,23 +735,8 @@ class AgentModel(AgentWrapper):
     def angles(self):
         return [self.x_angle, self.y_angle]
 
-    # set agent state explicitly
-    def set_control_state(self, control_state, angle=None, tick=None):
-        d_x, d_y, v_x, v_y, jetpack, brake = control_state
-        self.d_x = d_x
-        self.d_y = d_y
-        self.v_x = v_x
-        self.v_y = v_y
-        self.jetpack = jetpack
-        self.brake = brake
-
-        if tick is not None:
-            self.last_control_tick = tick
-        if angle is not None:
-            self.set_angle(angle)
-
     def set_angle(self, angle):
-        self.x_angle, self.y_angle = angle
+        self._x_angle, self._y_angle = angle
 
     def control_state(self):
         return [\
@@ -918,13 +903,18 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
 
+        self._control_state_id_set = False
+        if id:
+            set_player_agent_id(id)
+            self._control_state_id_set = True
+
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
 
         self.you = True
         #self.control_state = [0,0,0,0,0,0]
-        self.x_angle = 0
-        self.y_angle = 0
+        self._x_angle = 0
+        self._y_angle = 0
 
         self.vx = 0
         self.vy = 0
@@ -937,6 +927,37 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+
+    # set agent state explicitly
+    # CONTROL_STATE deprecated. use BUTTON_STATE.  button_state is booleans; control state is computed position/velocity deltas
+    def set_control_state(self, control_state, angle=None, tick=None):
+        d_x, d_y, v_x, v_y, jetpack, brake = control_state
+        self.d_x = d_x
+        self.d_y = d_y
+        self.v_x = v_x
+        self.v_y = v_y
+        self.jetpack = jetpack
+        self.brake = brake
+
+        if tick is not None:
+            self.last_control_tick = tick
+        if angle is not None:
+            self.set_angle(angle)
+
+    def __setattr__(self, name, val):
+        if name == 'id':
+            set_player_agent_id(val)
+            self._control_state_id_set = True
+        self.__dict__[name] = val
+
+    #def set_button_state(self, buttons, angles):
+    def set_button_state(self):
+        if not self._control_state_id_set:
+            print 'Waiting for player_agent id to be set'
+            return
+        f,b,l,r, jet, jump = self.button_state
+        theta, phi = self._x_angle, self._y_angle
+        set_agent_control_state(f,b,l,r, jet, jump, theta, phi)
 
     def fire(self):
         if self.team.is_viewers():
@@ -1053,12 +1074,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
 
     def pan(self, dx_angle, dy_angle):
-        self.x_angle += dx_angle
-        self.y_angle += dy_angle
-        if self.y_angle < -0.499:
-            self.y_angle = -0.499
-        if self.y_angle > 0.499:
-            self.y_angle = 0.499
+        self._x_angle += dx_angle
+        self._y_angle += dy_angle
+        if self._y_angle < -0.499:
+            self._y_angle = -0.499
+        if self._y_angle > 0.499:
+            self._y_angle = 0.499
 
     #def pickup_item(self, item, index=None):
         #if self.team.is_viewers():

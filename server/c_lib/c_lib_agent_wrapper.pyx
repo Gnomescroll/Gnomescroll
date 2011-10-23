@@ -23,12 +23,6 @@ cdef extern from "./state/wrapper.hpp":
     void delete_agent(int id)
 
 
-### make agent wrapper
-#getters and settings
-
-###
-
-#agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 
 class AgentWrapper(object):

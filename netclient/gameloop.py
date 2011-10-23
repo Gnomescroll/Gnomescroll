@@ -127,7 +127,7 @@ class App(object):
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
-        self.intervals.register(send_agent_pos, 500)
+        #self.intervals.register(send_agent_pos, 500)
 
 
         self.init_inputs()
@@ -258,8 +258,8 @@ class App(object):
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
                 cInput.process_events()
                 cInput.get_key_state()
-                if GameStateGlobal.agent is not None:
-                    NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
+                #if GameStateGlobal.agent is not None:
+                    #NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
                 NetClientGlobal.connection.attempt_recv()
                 #check if another physics tick is needed
                 self.world.tick()
@@ -388,6 +388,7 @@ class App(object):
 
             agent = GameStateGlobal.agent
             if agent:
+                agent.set_button_state()
                 sounds.update(agent.listener_state())
             else:
                 sounds.update()
