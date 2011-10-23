@@ -957,7 +957,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         f,b,l,r, jet, jump = self.button_state
         theta, phi = self._x_angle, self._y_angle
-        print f,b,l,r, jet, jump, theta, phi
         set_agent_control_state(f,b,l,r, jet, jump, theta, phi)
 
     def fire(self):
