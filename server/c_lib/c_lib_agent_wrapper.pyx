@@ -26,7 +26,7 @@ cdef extern from "./state/wrapper.hpp":
 
 ###
 
-agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz']
+agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 
 class AgentWrapper(object):
 
@@ -60,6 +60,12 @@ class AgentWrapper(object):
                 return a.s.theta
             elif name == 'phi':
                 return a.s.phi
+
+            elif name == 'x_angle': # legacy reasons
+                return a.s.theta
+            elif name == 'y_angle':
+                return a.s.phi
+
 
 #functions
 
