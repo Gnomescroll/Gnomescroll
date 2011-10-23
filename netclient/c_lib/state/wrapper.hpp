@@ -5,6 +5,7 @@
 
 Agent_state* create_agent();
 Agent_state* create_agent(int id);
+Agent_state* get_or_create_agent(int id);
 
 Agent_state* get_agent(int id);
 void delete_agent(int id);

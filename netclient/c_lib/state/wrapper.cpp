@@ -1,5 +1,12 @@
 #include "./wrapper.hpp"
 
+#ifdef DC_SERVER
+    #define STATE ServerState
+#else
+    #define STATE ClientState
+#endif
+
+
 Agent_state* create_agent() {
     Agent_state* a;
     
@@ -21,6 +28,16 @@ Agent_state* create_agent(int id) {
         a = ClientState::agent_list.create(id);
     #endif
 
+    return a;
+}
+
+Agent_state* get_or_create_agent(int id) {
+    Agent_state* a;
+    
+    a = STATE::agent_list.get(id);
+    if (a == NULL) {
+        a = STATE::agent_list.create(id);
+    }
     return a;
 }
 
