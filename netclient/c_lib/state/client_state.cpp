@@ -11,17 +11,17 @@ namespace ClientState {
 
         PlayerAgent_state playerAgent_state;
 
-	int active_agent = 0;
-	int agent_control_state[16] = {NULL};
-		
-	void InitClientState() {
-	}
+    int active_agent = 0;
+    int agent_control_state[16] = {NULL};
+        
+    void InitClientState() {
+    }
 
         void set_PlayerAgent_id(int id) {
                 playerAgent_state.set_PlayerAgent_id(id);
         }
 
-	void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
         /*
                 int id;
                 int seq;
@@ -60,10 +60,10 @@ namespace ClientState {
 
                 a_cs.seq++;
                 a_cs.id = active_agent;
-        	}
+            }
         */
-	void send_control_state() {
-	}
+    void send_control_state() {
+    }
 
         void ClientTick() {
                 agent_list.client_tick();

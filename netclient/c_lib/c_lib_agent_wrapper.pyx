@@ -105,4 +105,5 @@ def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float
     set_control_state(f,b,l,r,jet,jump,theta,phi)
 
 def set_player_agent_id(int id):
+    print "SETTING player agent id %d" % (id,)
     set_PlayerAgent_id(id)
