@@ -17,6 +17,10 @@ namespace ClientState {
 	void InitClientState() {
 	}
 
+        void set_PlayerAgent_id(int id) {
+                playerAgent_state.set_PlayerAgent_id(id);
+        }
+
 	void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
         /*
                 int id;

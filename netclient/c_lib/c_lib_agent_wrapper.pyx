@@ -96,3 +96,14 @@ class AgentListWrapper:
     @classmethod
     def _remove(cls, int id):
         return _delete_agent(id)
+
+#control state
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
+    void set_PlayerAgent_id(int id)
+
+def set_agent_control_state(int id, int f, int b, int l, int r, int jet, int jump, float theta, float phi):
+    set_control_state(f,b,l,r,jet,jump,theta,phi)
+
+def set_player_agent_id(int id):
+    set_PlayerAgent_id(id)

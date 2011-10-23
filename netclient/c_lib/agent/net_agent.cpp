@@ -164,12 +164,16 @@ class PlayerAgent_state {
         //Agent_cs_CtoS cs_1;
 
     PlayerAgent_state() {
-        agent_id = 0;
+        agent_id = -1;
         seq = 0;
     }
 
+    void set_PlayerAgent_id(int id) {
+        agent_id = id;
+    }
 
     void set_control_state(uint8_t cs, float theta, float phi) {
+        if(agent_id == -1) return;  //player agent not set
 
         seq = (seq+1) % 256;
 

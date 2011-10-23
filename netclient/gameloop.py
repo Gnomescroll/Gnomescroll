@@ -35,7 +35,7 @@ if True:
     import c_lib.c_lib_agents
     import c_lib.c_lib_hud as cHUD
     import c_lib.c_lib_agents as cAgents
-    from c_lib.c_lib_agents import set_agent_control_state
+    #from c_lib.c_lib_agents import set_agent_control_state
     #import c_lib.c_lib_timer as physics_timer
     import init_c_lib
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -268,16 +268,17 @@ class App(object):
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                _o = 0
+                _o = -1
+                _a_id= 0
                 if _o==0:
                     if _m < 50:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _m < 100:
-                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _m < 150:
-                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _m < 200:
-                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
 
                     if _m == 199:
                         _m = 0
@@ -285,9 +286,9 @@ class App(object):
                         _m += 1
                 if _o==1:
                     if _m < 32:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _m < 64:
-                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                         
                     if _m == 64:
                         _m = 0
@@ -297,20 +298,20 @@ class App(object):
                     _r = random.random()
                     #print str(_r)
                     if _r < 0.25:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _r < 0.50:
-                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _r < 0.75:
-                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     else:
-                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                 if _o==3:
-                    set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    set_agent_control_state(_a_id1, 0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                 if _o==4:
                     if _m < 32:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                     elif _m < 64:
-                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        set_agent_control_state(_a_id1, 0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
                         
                     if _m == 64:
                         _m = 0
