@@ -704,8 +704,7 @@ class AgentModel(AgentWrapper):
         if xyz is None:
             return self.state[0:3]
         else:
-            self.state[0:3] = xyz
-            #self.x, self.y, self.z = xyz
+            self.x, self.y, self.z = xyz
 
     def velocity(self):
         return self.state[3:6]
