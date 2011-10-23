@@ -74,6 +74,8 @@ class Agent_state {
 
         void _tick();
 
+        void teleport(float x,float y,float z);
+
         void client_tick();
 
         void server_tick();
