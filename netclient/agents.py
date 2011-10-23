@@ -946,9 +946,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __setattr__(self, name, val):
         if name == 'id':
-            print val
             set_player_agent_id(val)
-            assert False
             self._control_state_id_set = True
         self.__dict__[name] = val
 
