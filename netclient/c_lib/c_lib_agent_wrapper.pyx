@@ -31,7 +31,6 @@ agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz']
 class AgentWrapper(object):
 
     def __init__(self, id):
-        id = 14
         AgentListWrapper._create(id)
         self.id = id
         
