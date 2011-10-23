@@ -23,10 +23,7 @@ cdef extern from "./state/wrapper.hpp":
     Agent_state* get_agent(int id)
     void delete_agent(int id)
 
-### make agent wrapper
-#getters and settings
-
-### 
+from c_lib.c_lib_agents import _init_agent_vox
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 
@@ -35,6 +32,7 @@ class AgentWrapper(object):
     def __init__(self, id):
         AgentListWrapper._create(id)
         self.id = id
+        _init_agent_vox(id)
         
     def __getattribute__(self, name):
         if name == 'id':

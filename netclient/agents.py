@@ -32,6 +32,7 @@ import c_lib._ray_trace
 import random
 
 from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
+from c_lib.c_lib_agents import _update_agent_vox
 
 import sound.sounds as sounds
 
@@ -650,6 +651,7 @@ class AgentModel(AgentWrapper):
     def tick(self):
         if not self.dead:
             self._tick_physics()
+        _update_agent_vox(self.id)
 
     def update_info(self, **agent):
         old_health = health = self.health

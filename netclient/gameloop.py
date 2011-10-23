@@ -191,9 +191,7 @@ class App(object):
         
         _m = 0
 
-        #cAgents.create_ag(10, 10.,10.,10.)
         while not GameStateGlobal.exit:
-            #cAgents.update_ag(10)
             self.world.sound_updates()
 
             P2.start_frame() #TEST
@@ -206,6 +204,8 @@ class App(object):
 
             P.event("Physics Loop")
             sl_c = 0
+
+            agent = GameStateGlobal.agent
 
             while True: #physics loop
                 tc = GET_TICK()
@@ -256,15 +256,19 @@ class App(object):
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
+
                 cInput.process_events()
                 cInput.get_key_state()
-                #if GameStateGlobal.agent is not None:
-                    #NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
+                if GameStateGlobal.agent:
+                    GameStateGlobal.agent.set_button_state()
+
                 NetClientGlobal.connection.attempt_recv()
+                self.animations.tick()
+
                 #check if another physics tick is needed
                 self.world.tick()
-                self.animations.tick()
                 c_lib.c_lib_objects.tick() ## TESTING
+
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
@@ -388,7 +392,6 @@ class App(object):
 
             agent = GameStateGlobal.agent
             if agent:
-                agent.set_button_state()
                 sounds.update(agent.listener_state())
             else:
                 sounds.update()
