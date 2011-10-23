@@ -177,12 +177,15 @@ class PlayerAgent_state {
 
         seq = (seq+1) % 256;
 
-        cs_0.seq = seq;
-        cs_0.cs = cs;
-        cs_0.theta = theta;
-        cs_0.phi = phi;
+        Agent_cs_CtoS csp;
 
-        cs_0.send();
+        csp.id = agent_id;
+        csp.seq = seq;
+        csp.cs = cs;
+        csp.theta = theta;
+        csp.phi = phi;
+
+        csp.send();
 
         //printf("control state send: seq= %i, cs= %i \n", seq, cs);
     }
