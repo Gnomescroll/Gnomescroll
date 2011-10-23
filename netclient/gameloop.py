@@ -19,7 +19,8 @@ import intervals
 
 if True:
     import SDL.gl
-    import SDL.input
+    #import SDL.input
+    import c_lib.c_lib_input as cInput
     import SDL.hud
     import vox_lib
 
@@ -93,7 +94,8 @@ class App(object):
 
         self.SDL_global = SDL.gl.SDL_global #drawing stuff
         self.SDL_global.init()
-        SDL.input.init()
+        #SDL.input.init()
+        cInput.init()
         SDL.hud.init()
 
         init_c_lib.init()
@@ -254,8 +256,8 @@ class App(object):
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
                     c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
-                SDL.input.process_events()
-                SDL.input.get_key_state()
+                cInput.process_events()
+                cInput.get_key_state()
                 if GameStateGlobal.agent is not None:
                     NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
                 NetClientGlobal.connection.attempt_recv()
