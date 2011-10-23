@@ -9,11 +9,13 @@ cdef extern from "./agent/agent.hpp":
         float x,y,z
         float vx,vy,vz
 
+
 #Agent_state
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_state:
         int id
         AgentState s
+        #void teleport(float x,float y,float z) #use only on server
 
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":

@@ -77,6 +77,24 @@ static inline int _collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
+void Agent_state::teleport(float x,float y,float z) {
+    s.x = x;
+    s.y = y;
+    s.z = z;
+
+    Agent_state_message A;
+
+    A.id = id;
+    A.seq = cs_seq;
+
+    A.x = s.x;
+    A.y = s.y;
+    A.z = s.z;
+    A.vx = s.vx;
+    A.vy = s.vy;
+    A.vz = s.vz;
+    A.broadcast();
+}
 
 void Agent_state::_tick() {
 

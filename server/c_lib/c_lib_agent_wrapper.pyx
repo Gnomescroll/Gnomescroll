@@ -14,12 +14,14 @@ cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_state:
         int id
         AgentState s
+        void teleport(float x,float y,float z)
 
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
     Agent_state* create_agent()         #for server
     Agent_state* get_agent(int id)
     void delete_agent(int id)
+
 
 ### make agent wrapper
 #getters and settings
@@ -68,6 +70,14 @@ class AgentWrapper(object):
 
 
 #functions
+
+def teleport_Agent(int id, float x, float y, float z):
+    cdef Agent_state* a
+    a = get_agent(id)
+    if a != NULL:
+        a.teleport(x,y,z)
+    else:
+        print "Cannot teleport agent: agent %i does not exist" %(id)
 
 #create agent and return id
 def _create_agent():
