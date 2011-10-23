@@ -811,24 +811,24 @@ class AgentModel(AgentWrapper):
     #@vz.setter
     #def vz(self, val):
         #self.state[5] = val
-    @property
-    def ax(self):
-        return self.state[6]
-    @ax.setter
-    def ax(self, val):
-        self.state[6] = val
-    @property
-    def ay(self):
-        return self.state[7]
-    @ay.setter
-    def ay(self, val):
-        self.state[7] = val
-    @property
-    def az(self):
-        return self.state[8]
-    @az.setter
-    def az(self, val):
-        self.state[8] = val
+    #@property
+    #def ax(self):
+        #return self.state[6]
+    #@ax.setter
+    #def ax(self, val):
+        #self.state[6] = val
+    #@property
+    #def ay(self):
+        #return self.state[7]
+    #@ay.setter
+    #def ay(self, val):
+        #self.state[7] = val
+    #@property
+    #def az(self):
+        #return self.state[8]
+    #@az.setter
+    #def az(self, val):
+        #self.state[8] = val
 
     def normalized_direction(self):
         return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))

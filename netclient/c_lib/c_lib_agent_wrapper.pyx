@@ -31,6 +31,7 @@ agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz']
 class AgentWrapper(object):
 
     def __init__(self, id):
+        id = 14
         AgentListWrapper._create(id)
         self.id = id
         
@@ -39,9 +40,9 @@ class AgentWrapper(object):
             raise AttributeError
 
         cdef Agent_state* a
-        a = get_agent(self.id)
+        a = get_agent(object.__getattribute__(self, 'id'))
         if name == 'id':
-            self.id = id
+            self.id = a.id
             return a.id
         else:
             if name == 'x':
@@ -82,9 +83,9 @@ def _delete_agent(int id):
 class AgentListWrapper:
 
     @classmethod
-    def _create(int id):
+    def _create(cls, int id):
         return _create_agent(id)
 
     @classmethod
-    def _remove(int id):
+    def _remove(cls, int id):
         return _delete_agent(id)

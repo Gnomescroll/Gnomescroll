@@ -490,24 +490,24 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
     #@vz.setter
     #def vz(self, val):
         #self.state[5] = val
-    @property
-    def ax(self):
-        return self.state[6]
-    @ax.setter
-    def ax(self, val):
-        self.state[6] = val
-    @property
-    def ay(self):
-        return self.state[7]
-    @ay.setter
-    def ay(self, val):
-        self.state[7] = val
-    @property
-    def az(self):
-        return self.state[8]
-    @az.setter
-    def az(self, val):
-        self.state[8] = val
+    #@property
+    #def ax(self):
+        #return self.state[6]
+    #@ax.setter
+    #def ax(self, val):
+        #self.state[6] = val
+    #@property
+    #def ay(self):
+        #return self.state[7]
+    #@ay.setter
+    #def ay(self, val):
+        #self.state[7] = val
+    #@property
+    #def az(self):
+        #return self.state[8]
+    #@az.setter
+    #def az(self, val):
+        #self.state[8] = val
 
     def json(self, properties=None): # json encodable string representation
         d = {
