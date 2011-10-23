@@ -15,7 +15,6 @@ cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_state:
         int id
         AgentState s
-        #void teleport(float x,float y,float z) #use only on server
 
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
@@ -29,7 +28,9 @@ cdef extern from "./state/wrapper.hpp":
 
 ### 
 
-agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
+#agent_props = ['id', 'theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
+agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
+
 
 class AgentWrapper(object):
 
@@ -38,36 +39,36 @@ class AgentWrapper(object):
         self.id = id
         
     def __getattribute__(self, name):
+        if name == 'id':
+            return object.__getattribute__(self, name)
+            
         if name not in agent_props:
             raise AttributeError
 
         cdef Agent_state* a
         a = get_agent(object.__getattribute__(self, 'id'))
-        if name == 'id':
-            self.id = a.id
-            return a.id
-        else:
-            if name == 'x':
-                return a.s.x
-            elif name == 'y':
-                return a.s.y
-            elif name == 'z':
-                return a.s.z
-            elif name == 'vx':
-                return a.s.vx
-            elif name == 'vy':
-                return a.s.vy
-            elif name == 'vz':
-                return a.s.vz
-            elif name == 'theta':
-                return a.s.theta
-            elif name == 'phi':
-                return a.s.phi
-                
-            elif name == 'x_angle': # legacy reasons
-                return a.s.theta
-            elif name == 'y_angle':
-                return a.s.phi
+        
+        if name == 'x':
+            return a.s.x
+        elif name == 'y':
+            return a.s.y
+        elif name == 'z':
+            return a.s.z
+        elif name == 'vx':
+            return a.s.vx
+        elif name == 'vy':
+            return a.s.vy
+        elif name == 'vz':
+            return a.s.vz
+        elif name == 'theta':
+            return a.s.theta
+        elif name == 'phi':
+            return a.s.phi
+            
+        elif name == 'x_angle': # legacy reasons
+            return a.s.theta
+        elif name == 'y_angle':
+            return a.s.phi
 
 
 #functions
