@@ -26,6 +26,8 @@
 #include "./t_map/t_map.c"
 #include "./t_map/t_properties.c"
 
+#include "c_lib/input/input.cpp"
+
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>

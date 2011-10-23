@@ -12,7 +12,9 @@ import default_settings as settings
 import opts
 
 
-import SDL.input
+#import SDL.input
+
+import c_lib.c_lib_input as cInput
 
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
 from init_c_lib import _toggle_latency_unit
@@ -303,7 +305,7 @@ class Keyboard(object):
             "v" : toggle_z_buffer,
             "p" : _toggle_latency_unit,
             ',' : self.toggle_agent_gravity,
-            'u' : SDL.input.toggle_mouse_bind,
+            'u' : cInput.toggle_mouse_bind,
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
         })
@@ -676,4 +678,4 @@ from chat_client import ChatClientGlobal
 from net_out import NetOut
 
 inputEventGlobal = InputEventGlobal()
-SDL.input.set_input_callback(inputEventGlobal)
+cInput.set_input_callback(inputEventGlobal)
