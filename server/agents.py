@@ -24,7 +24,7 @@ from vector_lib import distance
 
 from opts import opts
 
-from c_lib.c_lib_agent_wrapper import AgentListWrapper, AgentWrapper
+from c_lib.c_lib_agent_wrapper import AgentListWrapper, AgentWrapper, teleport_Agent
 
 # datastore controller for agents
 class AgentList(GenericObjectList):
@@ -726,7 +726,9 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
     def _set_position(self, pos=None):
         if pos is None:
             pos = self._spawn_point()
-        self.pos(pos)
+        x,y,z = map(float, pos)
+        teleport_Agent(self.id, x,y,z)
+        #self.pos(pos)
 
     def respawn(self): # or can destroy / recreate Agent
         self._revive()
