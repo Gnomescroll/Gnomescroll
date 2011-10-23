@@ -115,6 +115,8 @@ def parse(cl_args=None):
     parser.add_argument('--sfx', default=DEFAULTS['sfx'])
     parser.add_argument('--music', default=DEFAULTS['music'])
 
+    parser.add_argument('-da', '--draw-agents', action='store_true')
+
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:
@@ -206,6 +208,7 @@ def print_args(args):
         'audio',
         'sfx',
         'music',
+        'draw_agents',
     ]
     print 'Options:'
     for key in keys:

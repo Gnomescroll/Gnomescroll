@@ -1,5 +1,7 @@
 import default_settings as settings
 
+from opts import opts
+
 if settings.pyglet:
     import pyglet
     from pyglet.gl import *
@@ -76,7 +78,8 @@ class World():
         self.agents.append(agent)
 
     def draw_agents(self, first_person=False):
-        c_lib.c_lib_agents.draw_agents()
+        if opts.draw_agents:
+            c_lib.c_lib_agents.draw_agents()
         #for agent in GameStateGlobal.agentList.values():
             #x= (agent.team and not agent.team.is_viewers())
             #if not agent.dead and not (agent.you and first_person) and \
