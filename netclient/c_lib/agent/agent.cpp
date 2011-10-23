@@ -639,7 +639,7 @@ void Agent_state::_tick() {
 
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-    printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
+    //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
     int index = _seq%128;
 
     cs[index].seq = _seq;
