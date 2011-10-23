@@ -12,6 +12,8 @@ import random
 
 from profiler import P
 
+import c_lib.c_lib_agents
+
 class World():
 
     terrainMap = None
@@ -74,12 +76,13 @@ class World():
         self.agents.append(agent)
 
     def draw_agents(self, first_person=False):
-        for agent in GameStateGlobal.agentList.values():
-            x= (agent.team and not agent.team.is_viewers())
-            if not agent.dead and not (agent.you and first_person) and \
-                (agent.team and not agent.team.is_viewers()):
-                #P.event("E2")
-                agent.draw()
+        c_lib.c_lib_agents.draw_agents()
+        #for agent in GameStateGlobal.agentList.values():
+            #x= (agent.team and not agent.team.is_viewers())
+            #if not agent.dead and not (agent.you and first_person) and \
+                #(agent.team and not agent.team.is_viewers()):
+                ##P.event("E2")
+                #agent.draw()
 
     def sound_updates(self):
         for p in GameStateGlobal.projectileList.values():

@@ -3,11 +3,6 @@
 
 #include <c_lib/agent/net_agent.cpp>
 
-//#ifdef DC_CLIENT
-//#endif
-
-//template <>
-
 #include <c_lib/agent/agent_draw.hpp>
 
 #include <math.h>
@@ -17,7 +12,6 @@ void Agent_list::draw()
     #ifdef DC_CLIENT
         int i;
 
-        //printf("Drawing agents\n");
         glDisable(GL_TEXTURE_2D);
         //glEnable(GL_DEPTH_TEST);
         glDisable(GL_DEPTH_TEST);

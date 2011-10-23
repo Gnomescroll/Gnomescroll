@@ -32,7 +32,7 @@ import c_lib._ray_trace
 import random
 
 from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
-from c_lib.c_lib_agents import _update_agent_vox
+from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox
 
 import sound.sounds as sounds
 
@@ -317,35 +317,15 @@ Agent Voxel
 
 class AgentVoxRender(vox.VoxRender):
 
-    def __init__(self, obj, model=None):
-        if model is not None:
-            vox.VoxRender.__init__(self, obj, model)
-        else:
-            self.obj = obj
-            self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
-            self.vox.set_object(self.obj)
+    def __init__(self):
+        #vox.VoxRender.__init__(self, obj, 'agent.vox')
+        _init_agent_vox(self.id)
 
-            self.vox.set(5,5,5,255,0,0,0)
+    def update_vox(self):
+        #vox.VoxRender.update_vox(self)
+        _update_agent_vox(self.id)
 
-            self.vox.set(4,4,0,255,0,255,0)
-            self.vox.set(4,4,1,0,255,255,0)
-            self.vox.set(4,4,2,0,0,255,0)
-            self.vox.set(4,4,3,0,255,255,0)
 
-            self.vox.set(4,4,4,0,255,255,0)
-            self.vox.set(4,4,5,0,0,255,0)
-            self.vox.set(4,4,6,0,255,255,0)
-            self.vox.set(4,4,7,255,0,255,0)
-
-            self.vox.set(0,0,0, 0,255,0,0)
-            self.vox.set(0,7,0, 0,255,0,0)
-            self.vox.set(7,0,0, 0,255,0,0)
-            self.vox.set(7,7,0, 0,255,0,0)
-
-            self.vox.set(0,0,7, 0,255,0,0)
-            self.vox.set(0,7,7, 0,255,0,0)
-            self.vox.set(7,0,7, 0,255,0,0)
-            self.vox.set(7,7,7, 0,255,0,0)
 
 '''
 Render/Draw methods for agents
@@ -651,7 +631,6 @@ class AgentModel(AgentWrapper):
     def tick(self):
         if not self.dead:
             self._tick_physics()
-        _update_agent_vox(self.id)
 
     def update_info(self, **agent):
         old_health = health = self.health
@@ -769,8 +748,8 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
         #self.init_vox()
-        AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+        AgentVoxRender.__init__(self)
         print 'id %s' % (self.id,)
         print self
         self.inventory = AgentInventory(self, items)
@@ -902,7 +881,6 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
-        AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
 
         self._control_state_id_set = False
@@ -931,6 +909,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.box_r = .30
         self.camera_height = 1.5
 
+        AgentVoxRender.__init__(self)
+
+
     # set agent state explicitly
     # CONTROL_STATE deprecated. use BUTTON_STATE.  button_state is booleans; control state is computed position/velocity deltas
     def set_control_state(self, control_state, angle=None, tick=None):
@@ -948,10 +929,11 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.set_angle(angle)
 
     def __setattr__(self, name, val):
+        self.__dict__[name] = val
         if name == 'id':
             set_player_agent_id(val)
+            AgentVoxRender.__init__(self)
             self._control_state_id_set = True
-        self.__dict__[name] = val
 
     #def set_button_state(self, buttons, angles):
     def set_button_state(self):

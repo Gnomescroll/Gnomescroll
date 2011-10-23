@@ -51,13 +51,6 @@ import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
 vosize = dat.vosize
 
-def create_ag(int id, float x, float y, float z):
-    agent_create(id, x,y,z)
-    _init_agent_vox(id)
-
-def update_ag(int id):
-    _update_agent_vox(id)
-
 PART_NUM = 6
 def _init_agent_vox(int id):
     #global dat.lu1, dat.lu2, dat.lu3,

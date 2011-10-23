@@ -1,7 +1,5 @@
 #pragma once 
 
-
-
 template <class Object_state, int max_n=1024>
 class Object_list {
         private:
@@ -99,10 +97,12 @@ void Object_list<Object_state, max_n>::destroy(int id) {
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::draw() {
     
-    printf("%s_list_list::draw, not implemented\n", name() );
-
     #ifdef DC_CLIENT
-    //AgentDraw::draw_agents(this);
+    int i;
+    for (i=0; i<n_max;i++) {
+        if (a[i]==NULL) continue;
+        a[i]->draw();
+    }
     #endif
 }
 

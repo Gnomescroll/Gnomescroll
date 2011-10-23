@@ -32,7 +32,6 @@ class AgentWrapper(object):
     def __init__(self, id):
         AgentListWrapper._create(id)
         self.id = id
-        _init_agent_vox(id)
         
     def __getattribute__(self, name):
         if name == 'id':

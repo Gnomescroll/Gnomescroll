@@ -338,8 +338,6 @@ class App(object):
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
             
-            cAgents.draw_agents() ##draw agents from agent list
-
             P.event("Draw World")
             #import pdb; pdb.set_trace()
             self.world.draw(first_person) #upto 255 ms
