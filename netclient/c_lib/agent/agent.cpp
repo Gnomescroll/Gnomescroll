@@ -101,11 +101,11 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     int i;
     for(i=0; i<6; i++) collision[i] = 0;
 
-    int x_min = s.x - box_r;
-    int x_max = s.x + box_r;
+    int x_min = x - box_r;
+    int x_max = x + box_r;
 
-    int y_min = s.y - box_r;
-    int y_max = s.y + box_r;
+    int y_min = y - box_r;
+    int y_max = y + box_r;
 
     int z0 = z;
 
@@ -116,25 +116,25 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     //upper right
     //bottom right
     //bottom left
-    if(isActive(_get(x_max,y_max,z0) != 0) {
+    if(isActive(_get(x_max,y_max,z0) != 0)) {
         //north, west
         collision[0]++; //north 
         collision[2]++; //west
     }
 
-    if(isActive(_get(x_max,y_min,z0) != 0) {
+    if(isActive(_get(x_max,y_min,z0) != 0)) {
         //north, east
         collision[0]++; //north 
         collision[3]++; //east 
     }
 
-    if(isActive(_get(x_min,y_min,z0) != 0) {
+    if(isActive(_get(x_min,y_min,z0) != 0)) {
         //south, east
         collision[1]++; //south
         collision[3]++; //east 
     }
 
-    if(isActive(_get(x_min,y_max,z0) != 0) {
+    if(isActive(_get(x_min,y_max,z0) != 0)) {
         //south, west
         collision[1]++; //south
         collision[2]++; //west
@@ -215,7 +215,7 @@ void Agent_state::_tick() {
         //east -y
         //top +z
         //bottom -z
-        collision_check1(box_r, b_height, s.x,s.y,s.z, int collision[6])
+        collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
 
         float cs_vx =0 ;
         float cs_vy =0 ;
