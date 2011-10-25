@@ -79,20 +79,9 @@ void draw_agent(Agent_state* g) {
     draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
 
     if (g->vox != NULL) {
-        struct Vector right;
-        struct Vector look;
 
-        look = Vector_init(
-                cos( s->theta * PI) * cos( s->phi * PI),
-                sin( s->theta * PI) * cos( s->phi * PI),
-                sin( s->phi)
-        );
-        normalize_vector(&look);
-
-        right = Vector_init(cos(s->theta*PI+PI/2), sin(s->theta*PI+PI/2), 0.0);
-        normalize_vector(&right);
-
-        g->vox->draw(look, right, s->x, s->y, s->z);
+        //g->vox->draw(forward, look, right, s->x, s->y, s->z, s->theta, s->phi);
+        g->vox->draw(s->x, s->y, s->z, s->theta, s->phi);
     }
 }
 

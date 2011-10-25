@@ -7,7 +7,7 @@ void Agent_vox::init_vox_part(int part, int xdim, int ydim, int zdim, float vosi
         vox_part[part] = NULL;
     }
 
-    Vox* v = new Vox(xdim, ydim, zdim, vosize);
+    Vox* v = new Vox(part, xdim, ydim, zdim, vosize);
     vox_part[part] = v;
 }
 
@@ -111,12 +111,6 @@ int q_set[4*6]= {
 float v_buffer[3*8];
 float s_buffer[6*(4*3)];
 
-void print_vector(struct Vector * v) {
-    printf("%f, %f, %f \n", v->x, v->y, v->z);
-}
-
-
-
 
 /*
  *  Client only
@@ -124,31 +118,66 @@ void print_vector(struct Vector * v) {
 
 #ifdef DC_CLIENT
 
-void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
+//void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
 
-    Vox* v = vox_part[part];
-    if (v==NULL) {
-        printf("Cant draw null volume. Part # %d\n", part);
-        return;
-    }
-    v->draw(right, x,y,z);
-}
+    //Vox* v = vox_part[part];
+    //if (v==NULL) {
+        //printf("Cant draw null volume. Part # %d\n", part);
+        //return;
+    //}
+    ////v->draw(right, x,y,z);
+//}
 
-void Agent_vox::draw(struct Vector look, struct Vector right, float x, float y, float z) {
+void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     if (!vox_ready) return;
+
+    struct Vector right;
+    struct Vector look;
+    struct Vector forward;
+    struct Vector anchor;
+    struct Vector* a;
+
+    look = Vector_init(
+            cos( theta * PI) * cos( phi * PI),
+            sin( theta * PI) * cos( phi * PI),
+            sin( phi)
+    );
+    normalize_vector(&look);
+
+    right = Vector_init(cos(theta*PI+PI/2), sin(theta*PI+PI/2), 0.0);
+    normalize_vector(&right);
+
+    forward = Vector_init(
+        cos(theta * PI),
+        sin(theta * PI),
+        0.0f
+    );
+    normalize_vector(&forward);
+
+
     int i;
     for (i=0; i<AGENT_PART_NUM; i++) {
         if (vox_part[i] != NULL) {
+
+            a = &vox_part[i]->a;
+            anchor = Vector_init(
+                a->x * cos(theta * PI) - a->y * sin(theta * PI),
+                a->x * sin(theta * PI) + a->y * cos(theta * PI),
+                a->z
+            );
+            vox_part[i]->set_anchor_point(vox_part[i]->length, anchor.x, anchor.y, anchor.z);
+            
             if (i == AGENT_PART_HEAD) {
                 vox_part[i]->draw(look, right, x,y,z);
             } else {
-                vox_part[i]->draw(right, x, y, z);
+                vox_part[i]->draw_head(forward, right, x, y, z);
             }
         }
     }
 }
 
-void Vox::draw(struct Vector right, float x, float y, float z) {
+//void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
+void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
 
     int i,j,k;
     int i1;
@@ -156,18 +185,10 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
 
     float vos = vox_size;
 
-    struct Vector c;
-    c.x = a.x + length*f.x;
-    c.y = a.y + length*f.y;
-    c.z = a.z + length*f.z;
-
-    c.x += x;
-    c.y += y;
-    c.z += z;
-
     struct Vector vx,vy,vz;
 
-    vx = f; //instead of look direction
+    //vx = f; //instead of look direction
+    vx = forward; //instead of look direction
     vz = vector_cross(vx, right);
     vy = vector_cross(vx, vz);
 
@@ -189,18 +210,27 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
         }
     }
 
-
-    float x0, y0, z0;
+    struct Vector c;
     float cx,cy,cz;
+
+    c.x = a.x + length*forward.x;
+    c.y = a.y + length*forward.y;
+    c.z = a.z + length*forward.z;
+
+    c.x += x;
+    c.y += y;
+    c.z += z;
+
     cx = c.x - (xdim*vx.x + ydim*vy.x + zdim*vz.x)/2;
     cy = c.y - (xdim*vx.y + ydim*vy.y + zdim*vz.y)/2;
     cz = c.z - (xdim*vx.z + ydim*vy.z + zdim*vz.z)/2;
-
 
     glDisable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
 
     glBegin(GL_QUADS);
+
+    float x0, y0, z0;
 
     for(i= 0; i < xdim; i++) {
     for(j= 0; j < ydim; j++) {
@@ -229,22 +259,13 @@ void Vox::draw(struct Vector right, float x, float y, float z) {
 }
 
 
-void Vox::draw(struct Vector look, struct Vector right, float x, float y, float z) {
+void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, float z) {
 
     int i,j,k;
     int i1;
     int index;
 
     float vos = vox_size;
-
-    struct Vector c;
-    c.x = a.x + length*f.x;
-    c.y = a.y + length*f.y;
-    c.z = a.z + length*f.z;
-
-    c.x += x;
-    c.y += y;
-    c.z += z;
 
     struct Vector vx,vy,vz;
 
@@ -270,18 +291,26 @@ void Vox::draw(struct Vector look, struct Vector right, float x, float y, float 
         }
     }
 
-
-    float x0, y0, z0;
+    struct Vector c;
     float cx,cy,cz;
+    c.x = a.x + length*f.x;
+    c.y = a.y + length*f.y;
+    c.z = a.z + length*f.z;
+
+    c.x += x;
+    c.y += y;
+    c.z += z;
+
     cx = c.x - (xdim*vx.x + ydim*vy.x + zdim*vz.x)/2;
     cy = c.y - (xdim*vx.y + ydim*vy.y + zdim*vz.y)/2;
     cz = c.z - (xdim*vx.z + ydim*vy.z + zdim*vz.z)/2;
-
 
     glDisable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
 
     glBegin(GL_QUADS);
+
+    float x0, y0, z0;
 
     for(i= 0; i < xdim; i++) {
     for(j= 0; j < ydim; j++) {

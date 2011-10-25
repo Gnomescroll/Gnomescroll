@@ -23,6 +23,7 @@ unsigned char r,g,b,a;
 
 class Vox {
     public:
+        float part_num;
         struct Vector f,n,u;
         struct Vector a; //forward, normal, anchor
 
@@ -36,8 +37,9 @@ class Vox {
 
         struct Vector c; //center
         float length;
-        Vox(unsigned short _xdim, unsigned short _ydim, unsigned short _zdim,
+        Vox(int pt_num, unsigned short _xdim, unsigned short _ydim, unsigned short _zdim,
             float vosize) {
+            part_num = pt_num;
             f = Vector_init(0.0f, 0.0f, 0.0f);
             n = Vector_init(0.0f, 0.0f, 0.0f);
             u = Vector_init(0.0f, 0.0f, 0.0f);
@@ -71,8 +73,8 @@ class Vox {
         void set_anchor_point(float len, float ax, float ay, float az);
         void set_direction(float fx, float fy, float fz, float nx, float ny, float nz);
         void set_volume(int x, int y, int z, int r, int g, int b, int a);
-        void draw(struct Vector right, float x, float y, float z);
-        void draw(struct Vector look, struct Vector right, float x, float y, float z);
+        void draw(struct Vector forward, struct Vector right, float x, float y, float z);
+        void draw_head(struct Vector look, struct Vector right, float x, float y, float z);
 };
 
 class Agent_vox {
@@ -89,7 +91,6 @@ class Agent_vox {
             cbox_height=3.0;
             cbox_radius=0.45;
             for (int i=0; i<AGENT_PART_NUM; i++) {
-                //vox_part[i] = new Vox(_xdim, _ydim, _zdim, vosize, r, nv);
                 vox_part[i] = NULL;
             }
             vox_ready = 0;
@@ -112,7 +113,7 @@ class Agent_vox {
         void set_vox_volume(int part, int x, int y, int z, int r, int g, int b, int a);
 
         #ifdef DC_CLIENT
-        void draw_volume(int part, struct Vector right, float x, float y, float z);
-        void draw(struct Vector look, struct Vector right, float x, float y, float z);
+        //void draw_volume(int part, struct Vector right, float x, float y, float z);
+        void draw(float x, float y, float z, float theta, float phi);
         #endif
 };
