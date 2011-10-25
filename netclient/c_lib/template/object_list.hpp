@@ -17,6 +17,7 @@ class Object_list {
                 void destroy(int _id);
 
                 void draw();    //overide in template specilization on client
+                void draw(int all);
                 void client_tick(); //override on template specilization
                 void server_tick(); //override on template specilization
         };
@@ -93,11 +94,11 @@ void Object_list<Object_state, max_n>::destroy(int id) {
     //printf("Object_list::delete_agent not implemented\n");
 }
 
-
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::draw() {
     
     #ifdef DC_CLIENT
+    // actual implementation will only draw ids from a global to_draw list
     int i;
     for (i=0; i<n_max;i++) {
         if (a[i]==NULL) continue;
@@ -106,6 +107,18 @@ void Object_list<Object_state, max_n>::draw() {
     #endif
 }
 
+template <class Object_state, int max_n>
+void Object_list<Object_state, max_n>::draw(int all) {
+    
+    #ifdef DC_CLIENT
+    if (!all) return;
+    int i;
+    for (i=0; i<n_max;i++) {
+        if (a[i]==NULL) continue;
+        a[i]->draw();
+    }
+    #endif
+}
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::client_tick() {

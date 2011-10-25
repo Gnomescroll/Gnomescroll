@@ -7,9 +7,33 @@
 
 #include <math.h>
 
+// default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
     #ifdef DC_CLIENT
+        int i,j;
+
+        glDisable(GL_TEXTURE_2D);
+        //glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        for(i=0; i<n_agents_to_draw; i++) { //max_n
+            j = agents_to_draw[i];
+            if (j == NULL) continue;
+            if(a[j] != NULL) {
+                a[j]->draw();
+            }
+        }
+        glDisable(GL_CULL_FACE);
+        //glEnable(GL_TEXTURE_2D);
+        //glDisable(GL_DEPTH_TEST);
+    #endif
+}
+
+void Agent_list::draw(int all) 
+{
+    #ifdef DC_CLIENT
+        if (! all) return;
         int i;
 
         glDisable(GL_TEXTURE_2D);
@@ -1113,3 +1137,26 @@ REFERENCE
         x += vx
         y += vy
 */
+
+void agents_draw(int all) {  // if (first_person) dont draw yourself
+    #ifdef DC_CLIENT
+    ClientState::agent_list.draw(all);
+    #endif
+}
+    s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
+
+void clear_agents_to_draw() {
+    int i;
+    for (i=0; i<n_agents_to_draw; i++) {
+        agents_to_draw[i] = NULL;
+    }
+    n_agents_to_draw = 0;
+}
+
+void set_agents_to_draw(int* ids, int ct) {
+    int i;
+    for (i=0; i<ct; i++) {
+        agents_to_draw[i] = ids[i];
+    }
+    n_agents_to_draw = ct;
+}

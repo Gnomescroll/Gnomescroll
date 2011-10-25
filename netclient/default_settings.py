@@ -48,7 +48,7 @@ ping_update_interval = 500  # ms delay between ping updates
 auto_assign_team = True
 
 ''' DEBUG '''
-draw_agents = False
+draw_agents = True
 
 #######
 try:
