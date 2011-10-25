@@ -118,15 +118,15 @@ float s_buffer[6*(4*3)];
 
 #ifdef DC_CLIENT
 
-void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
+//void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
 
-    Vox* v = vox_part[part];
-    if (v==NULL) {
-        printf("Cant draw null volume. Part # %d\n", part);
-        return;
-    }
-    //v->draw(right, x,y,z);
-}
+    //Vox* v = vox_part[part];
+    //if (v==NULL) {
+        //printf("Cant draw null volume. Part # %d\n", part);
+        //return;
+    //}
+    ////v->draw(right, x,y,z);
+//}
 
 void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     if (!vox_ready) return;

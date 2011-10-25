@@ -113,7 +113,7 @@ class Agent_vox {
         void set_vox_volume(int part, int x, int y, int z, int r, int g, int b, int a);
 
         #ifdef DC_CLIENT
-        void draw_volume(int part, struct Vector right, float x, float y, float z);
+        //void draw_volume(int part, struct Vector right, float x, float y, float z);
         void draw(float x, float y, float z, float theta, float phi);
         #endif
 };
