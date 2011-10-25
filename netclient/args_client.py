@@ -115,7 +115,7 @@ def parse(cl_args=None):
     parser.add_argument('--sfx', default=DEFAULTS['sfx'])
     parser.add_argument('--music', default=DEFAULTS['music'])
 
-    parser.add_argument('-dad', '--disable-agents-draw', action='store_true')
+    parser.add_argument('-dad', '--disable-agents-draw', action='store_true', dest='draw_agents')
 
     if cl_args is not None:
         args = parser.parse_args(cl_args)
@@ -167,10 +167,10 @@ def get_args():
     if not args.auto_assign_team:
         args.auto_assign_team = settings.auto_assign_team
 
-    if not args.disable_agents_draw:
-        args.disable_agents_draw = not settings.draw_agents
-    args.draw_agents = not args.disable_agents_draw
-
+    args.draw_agents = not args.draw_agents # cli argument is "--disable-agents-draw", so flip it
+    if args.draw_agents:
+        args.draw_agents = settings.draw_agents # allow settings to override the default(=True) case
+        
     #sound
     if args.audio:
         args.audio = settings.audio
@@ -212,7 +212,7 @@ def print_args(args):
         'audio',
         'sfx',
         'music',
-        'disable_agents_draw',
+        'draw_agents',
     ]
     print 'Options:'
     for key in keys:
