@@ -81,6 +81,7 @@ def _init_agent_vox(int id):
     init_agent_vox_done(id)
 
 def _update_agent_vox(int id):
+    return
     dat.skel_tick()
     for part in range(PART_NUM):
         length, ax,ay,az= dat.lu2[part]
