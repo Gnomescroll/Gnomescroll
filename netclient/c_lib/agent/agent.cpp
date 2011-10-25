@@ -27,6 +27,27 @@ void Agent_list::draw()
     #endif
 }
 
+void Agent_list::draw(int exclude_id) 
+{
+    #ifdef DC_CLIENT
+        int i;
+
+        glDisable(GL_TEXTURE_2D);
+        //glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        for(i=0; i<n_max; i++) { //max_n
+            if(a[i] != NULL) {
+                if (i == exclude_id) continue;
+                a[i]->draw();
+            }
+        }
+        glDisable(GL_CULL_FACE);
+        //glEnable(GL_TEXTURE_2D);
+        //glDisable(GL_DEPTH_TEST);
+    #endif
+}
+
     /* 
         if( a_cs & 1 ) {
             //forward

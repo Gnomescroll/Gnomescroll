@@ -126,4 +126,5 @@ class Agent_list: public Object_list<Agent_state,1024>
     static const char* name() { return "Agent"; }
     public:
         void draw();
+        void draw(int);
 };
