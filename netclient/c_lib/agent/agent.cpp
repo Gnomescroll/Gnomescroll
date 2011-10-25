@@ -7,48 +7,8 @@
 
 #include <math.h>
 
+// default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
-{
-    #ifdef DC_CLIENT
-        int i;
-
-        glDisable(GL_TEXTURE_2D);
-        //glEnable(GL_DEPTH_TEST);
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        for(i=0; i<n_max; i++) { //max_n
-            if(a[i] != NULL) {
-                a[i]->draw();
-            }
-        }
-        glDisable(GL_CULL_FACE);
-        //glEnable(GL_TEXTURE_2D);
-        //glDisable(GL_DEPTH_TEST);
-    #endif
-}
-
-void Agent_list::draw(int exclude_id) 
-{
-    #ifdef DC_CLIENT
-        int i;
-
-        glDisable(GL_TEXTURE_2D);
-        //glEnable(GL_DEPTH_TEST);
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        for(i=0; i<n_max; i++) { //max_n
-            if(a[i] != NULL) {
-                if (i == exclude_id) continue;
-                a[i]->draw();
-            }
-        }
-        glDisable(GL_CULL_FACE);
-        //glEnable(GL_TEXTURE_2D);
-        //glDisable(GL_DEPTH_TEST);
-    #endif
-}
-
-void Agent_list::draw_inc() 
 {
     #ifdef DC_CLIENT
         int i,j;
@@ -62,6 +22,27 @@ void Agent_list::draw_inc()
             if (j == NULL) continue;
             if(a[j] != NULL) {
                 a[j]->draw();
+            }
+        }
+        glDisable(GL_CULL_FACE);
+        //glEnable(GL_TEXTURE_2D);
+        //glDisable(GL_DEPTH_TEST);
+    #endif
+}
+
+void Agent_list::draw(int all) 
+{
+    #ifdef DC_CLIENT
+        if (! all) return;
+        int i;
+
+        glDisable(GL_TEXTURE_2D);
+        //glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        for(i=0; i<n_max; i++) { //max_n
+            if(a[i] != NULL) {
+                a[i]->draw();
             }
         }
         glDisable(GL_CULL_FACE);
@@ -796,14 +777,9 @@ void agents_draw() {
     ClientState::agent_list.draw();
     #endif
 }
-void agents_draw(int exclude_id) {  // if (first_person) dont draw yourself
+void agents_draw(int all) {  // if (first_person) dont draw yourself
     #ifdef DC_CLIENT
-    ClientState::agent_list.draw(exclude_id);
-    #endif
-}
-void agents_draw_inc() {  // if (first_person) dont draw yourself
-    #ifdef DC_CLIENT
-    ClientState::agent_list.draw_inc();
+    ClientState::agent_list.draw(all);
     #endif
 }
 
@@ -863,17 +839,13 @@ void clear_agents_to_draw() {
     n_agents_to_draw = 0;
 }
 
-void add_agent_to_draw(int agent_id) {
+void set_agents_to_draw(int* ids, int ct) {
     int i;
-    for (i=0; i<AGENT_MAX; i++) {
-        if (agents_to_draw[i] == NULL) {
-            agents_to_draw[i] = agent_id;
-            n_agents_to_draw++;
-            break;
-        }
+    for (i=0; i<ct; i++) {
+        agents_to_draw[i] = ids[i];
     }
+    n_agents_to_draw = ct;
 }
-
 #endif
 
 void agents_tick() {

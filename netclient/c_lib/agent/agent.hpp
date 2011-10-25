@@ -13,13 +13,11 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
 void agents_draw();
-void agents_draw(int exclude_id);
-void agents_draw_inc();
 
 int n_agents_to_draw = 0;
 int agents_to_draw[AGENT_MAX];
-void add_agent_to_draw(int agent_id);
 void clear_agents_to_draw();
+void set_agents_to_draw(int* ids, int ct);
 #endif
 
 void agents_tick();
