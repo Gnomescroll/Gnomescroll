@@ -111,12 +111,6 @@ int q_set[4*6]= {
 float v_buffer[3*8];
 float s_buffer[6*(4*3)];
 
-void print_vector(struct Vector * v) {
-    printf("%f, %f, %f \n", v->x, v->y, v->z);
-}
-
-
-
 
 /*
  *  Client only

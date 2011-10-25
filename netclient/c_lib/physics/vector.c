@@ -46,3 +46,8 @@ struct Vector reflect(struct Vector* inc, struct Vector* nor) {
     //v = inc - 2*(nor.inc)*nor   <<< pseudocode
     return v;
 }
+
+void print_vector(struct Vector * v) {
+    printf("%f, %f, %f \n", v->x, v->y, v->z);
+}
+
