@@ -91,6 +91,9 @@ void Agent_state::teleport(float x,float y,float z) {
 }
 
 // assume box_r < 1
+
+#include <math.h>
+
 inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6]) {
     //north +x
     //south -x
@@ -108,6 +111,8 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     int y_max = y + box_r;
 
     int z0 = z;
+    int z1 = z+1.0;
+    int z2 = z+box_h;
 
     //int z_min = s.z;
     //int z_max = s.z + b_height + 1.0;
@@ -117,36 +122,117 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     //bottom right
     //bottom left
     if(isActive(_get(x_max,y_max,z0) != 0)) {
+        //north, west, bottom
+        collision[0]++; //north 
+        collision[2]++; //west
+        collision[5]++; //bottom
+    }
+    if(isActive(_get(x_max,y_max,z1) != 0)) {
         //north, west
         collision[0]++; //north 
         collision[2]++; //west
     }
+    if(isActive(_get(x_max,y_max,z2) != 0)) {
+        //north, west, top
+        collision[0]++; //north 
+        collision[2]++; //west
+        collision[4]++; //top     
+    }
 
+
+    if(isActive(_get(x_max,y_min,z0) != 0)) {
+        //north, east, bottom
+        collision[0]++; //north 
+        collision[3]++; //east 
+        collision[5]++; //bottom
+    }
     if(isActive(_get(x_max,y_min,z0) != 0)) {
         //north, east
         collision[0]++; //north 
         collision[3]++; //east 
     }
+    if(isActive(_get(x_max,y_min,z0) != 0)) {
+        //north, east, top
+        collision[0]++; //north 
+        collision[3]++; //east
+        collision[4]++; //top
+    }
 
+
+    if(isActive(_get(x_min,y_min,z0) != 0)) {
+        //south, east, bottom
+        collision[1]++; //south
+        collision[3]++; //east
+        collision[5]++; //bottom
+    }
     if(isActive(_get(x_min,y_min,z0) != 0)) {
         //south, east
         collision[1]++; //south
         collision[3]++; //east 
+    }
+    if(isActive(_get(x_min,y_min,z0) != 0)) {
+        //south, east, top
+        collision[1]++; //south
+        collision[3]++; //east 
+        collision[4]++; //top
     }
 
     if(isActive(_get(x_min,y_max,z0) != 0)) {
         //south, west
         collision[1]++; //south
         collision[2]++; //west
+        collision[5]++; //bottom
+    }
+    if(isActive(_get(x_min,y_max,z0) != 0)) {
+        //south, west
+        collision[1]++; //south
+        collision[2]++; //west
+    }
+    if(isActive(_get(x_min,y_max,z0) != 0)) {
+        //south, west
+        collision[1]++; //south
+        collision[2]++; //west
+        collision[4]++; //top
     }
 
     printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
 }
 
 
-inline void on_ground() {
-    
+inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
 
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int z0 = z - 0.01; //ground margin is 0.01
+
+    //upper left
+    //upper right
+    //bottom right
+    //bottom left
+
+    //in future, check tile height if collision
+    if(isActive(_get(x_max,y_max,z0) != 0)) {
+        return true;
+    }
+
+    else if(isActive(_get(x_max,y_min,z0) != 0)) {
+        return true; 
+    }
+
+    else if(isActive(_get(x_min,y_min,z0) != 0)) {
+        return true;
+    }
+
+    else if(isActive(_get(x_min,y_max,z0) != 0)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 void Agent_state::_tick() {
@@ -205,7 +291,7 @@ void Agent_state::_tick() {
         const float pi = 3.14159265;
 
         //box properties
-        float b_height = 2.5;  //agent collision box height
+        float b_height = 1.8;  //agent collision box height
         float box_r = 0.4;
 
         int collision[6];

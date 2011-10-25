@@ -340,10 +340,10 @@ class App(object):
             
             P.event("Draw World")
             #import pdb; pdb.set_trace()
-            self.world.draw(first_person) #upto 255 ms
+            self.world.draw(first_person)
             P.event("Animations Draw")
             self.animations.draw()
-            P.event("c_lib_objects.draw()") #up to 5 ms
+            P.event("c_lib_objects.draw()")
             c_lib.c_lib_objects.draw() ## TESTING
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
