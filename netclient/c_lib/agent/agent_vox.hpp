@@ -24,8 +24,9 @@ unsigned char r,g,b,a;
 class Vox {
     public:
         float part_num;
-        struct Vector f,n,u;
-        struct Vector a; //forward, normal, anchor
+        struct Vector f,n,u; //forward, normal, up
+        struct Vector a; // base anchor
+        struct Vector anchor; // working anchor
 
         unsigned short xdim;
         unsigned short ydim;
@@ -44,6 +45,7 @@ class Vox {
             n = Vector_init(0.0f, 0.0f, 0.0f);
             u = Vector_init(0.0f, 0.0f, 0.0f);
             a = Vector_init(0.0f, 0.0f, 0.0f);
+            anchor = Vector_init(0.0f, 0.0f, 0.0f);
             xdim = _xdim;
             ydim = _ydim;
             zdim = _zdim;
@@ -70,11 +72,14 @@ class Vox {
             free(vox);
         }
 
-        void set_anchor_point(float len, float ax, float ay, float az);
+        void set_anchor_point(float ax, float ay, float az);
+        void set_base_anchor_point(float len, float ax, float ay, float az);
         void set_direction(float fx, float fy, float fz, float nx, float ny, float nz);
         void set_volume(int x, int y, int z, int r, int g, int b, int a);
         void draw(struct Vector forward, struct Vector right, float x, float y, float z);
         void draw_head(struct Vector look, struct Vector right, float x, float y, float z);
+
+        void rotate_anchor(float theta);
 };
 
 class Agent_vox {
@@ -109,7 +114,8 @@ class Agent_vox {
         void init_vox_done();
         void init_vox_part(int part, int _xdim, int _ydim, int _zdim, float vosize);
         void set_limb_direction(int part, float fx, float fy, float fz, float nx, float ny, float nz);
-        void set_limb_anchor_point(int part, float length, float ax, float ay, float az);
+        void set_limb_anchor_point(int part, float ax, float ay, float az);
+        void set_limb_base_anchor_point(int part, float len, float ax, float ay, float az);
         void set_vox_volume(int part, int x, int y, int z, int r, int g, int b, int a);
 
         #ifdef DC_CLIENT

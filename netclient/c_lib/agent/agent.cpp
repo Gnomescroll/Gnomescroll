@@ -798,7 +798,7 @@ void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, fl
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
     Agent_state* s = ClientState::agent_list.get(id);
     if (s==NULL || s->vox == NULL) return;
-    s->vox->set_limb_anchor_point(part, length, ax,ay,az);
+    s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
 }
 
 #endif

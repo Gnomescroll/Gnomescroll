@@ -15,16 +15,31 @@ void Agent_vox::init_vox_done() {
     vox_ready = 1;
 }
 
-void Agent_vox::set_limb_anchor_point(int part, float length, float ax, float ay, float az) {
+void Agent_vox::set_limb_anchor_point(int part, float ax, float ay, float az) {
     Vox* v = vox_part[part];
     if(v == NULL) {
-        printf("init_agent_vox_volume: Vox is Null!\n");
+        printf("set_limb_anchor_point: Vox is Null!\n");
         return;
     }
-    v->set_anchor_point(length, ax, ay, az);
+    v->set_anchor_point(ax, ay, az);
 }
 
-void Vox::set_anchor_point(float len, float ax, float ay, float az) {
+void Agent_vox::set_limb_base_anchor_point(int part, float len, float ax, float ay, float az) {
+    Vox* v = vox_part[part];
+    if(v == NULL) {
+        printf("set_limb_base_anchor_point: Vox is Null!\n");
+        return;
+    }
+    v->set_base_anchor_point(len, ax, ay, az);
+}
+
+void Vox::set_anchor_point(float ax, float ay, float az) {
+    anchor.x = ax;
+    anchor.y = ay;
+    anchor.z = az;
+}
+
+void Vox::set_base_anchor_point(float len, float ax, float ay, float az) {
     length = len;
     a.x = ax;
     a.y = ay;
@@ -134,8 +149,6 @@ void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     struct Vector right;
     struct Vector look;
     struct Vector forward;
-    struct Vector anchor;
-    struct Vector* a;
 
     look = Vector_init(
             cos( theta * PI) * cos( phi * PI),
@@ -154,18 +167,11 @@ void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     );
     normalize_vector(&forward);
 
-
     int i;
     for (i=0; i<AGENT_PART_NUM; i++) {
         if (vox_part[i] != NULL) {
 
-            a = &vox_part[i]->a;
-            anchor = Vector_init(
-                a->x * cos(theta * PI) - a->y * sin(theta * PI),
-                a->x * sin(theta * PI) + a->y * cos(theta * PI),
-                a->z
-            );
-            vox_part[i]->set_anchor_point(vox_part[i]->length, anchor.x, anchor.y, anchor.z);
+            vox_part[i]->rotate_anchor(theta);
             
             if (i == AGENT_PART_HEAD) {
                 vox_part[i]->draw(look, right, x,y,z);
@@ -176,7 +182,14 @@ void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     }
 }
 
-//void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
+void Vox::rotate_anchor(float theta) {
+    set_anchor_point(
+        a.x * cos(theta * PI) - a.y * sin(theta * PI),
+        a.x * sin(theta * PI) + a.y * cos(theta * PI),
+        a.z
+    );
+}
+
 void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
 
     int i,j,k;
@@ -213,9 +226,9 @@ void Vox::draw(struct Vector forward, struct Vector right, float x, float y, flo
     struct Vector c;
     float cx,cy,cz;
 
-    c.x = a.x + length*forward.x;
-    c.y = a.y + length*forward.y;
-    c.z = a.z + length*forward.z;
+    c.x = anchor.x + length*forward.x;
+    c.y = anchor.y + length*forward.y;
+    c.z = anchor.z + length*forward.z;
 
     c.x += x;
     c.y += y;
@@ -293,9 +306,9 @@ void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, f
 
     struct Vector c;
     float cx,cy,cz;
-    c.x = a.x + length*f.x;
-    c.y = a.y + length*f.y;
-    c.z = a.z + length*f.z;
+    c.x = anchor.x + length*f.x;
+    c.y = anchor.y + length*f.y;
+    c.z = anchor.z + length*f.z;
 
     c.x += x;
     c.y += y;
