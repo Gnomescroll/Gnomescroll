@@ -40,6 +40,7 @@ DONT DEPRECATE BELOW
 
 cdef extern from "./agent/agent.hpp":
     void agents_draw()
+    void agents_draw(int exclude_id)
     int agent_create(int id, float x, float y, float z)
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
@@ -93,3 +94,6 @@ def _update_agent_vox(int id):
 
 def draw_agents():
     agents_draw()
+
+def draw_agents_excluding(int exclude_id):
+    agents_draw(exclude_id)

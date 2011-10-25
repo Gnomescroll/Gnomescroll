@@ -17,6 +17,7 @@ class Object_list {
                 void destroy(int _id);
 
                 void draw();    //overide in template specilization on client
+                void draw(int exclude_id);
                 void client_tick(); //override on template specilization
                 void server_tick(); //override on template specilization
         };
@@ -101,6 +102,19 @@ void Object_list<Object_state, max_n>::draw() {
     int i;
     for (i=0; i<n_max;i++) {
         if (a[i]==NULL) continue;
+        a[i]->draw();
+    }
+    #endif
+}
+
+template <class Object_state, int max_n>
+void Object_list<Object_state, max_n>::draw(int exclude_id) {
+    
+    #ifdef DC_CLIENT
+    int i;
+    for (i=0; i<n_max;i++) {
+        if (a[i]==NULL) continue;
+        if (i == exclude_id) continue;
         a[i]->draw();
     }
     #endif

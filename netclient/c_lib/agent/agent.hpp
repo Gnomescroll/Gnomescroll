@@ -11,6 +11,7 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
 void agents_draw();
+void agents_draw(int exclude_id);
 #endif
 
 void agents_tick();

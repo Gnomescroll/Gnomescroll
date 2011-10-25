@@ -753,6 +753,11 @@ void agents_draw() {
     ClientState::agent_list.draw();
     #endif
 }
+void agents_draw(int exclude_id) {  // if (first_person) dont draw yourself
+    #ifdef DC_CLIENT
+    ClientState::agent_list.draw(exclude_id);
+    #endif
+}
 
 int agent_create(int id, float x, float y, float z) {
 #ifdef DC_CLIENT
