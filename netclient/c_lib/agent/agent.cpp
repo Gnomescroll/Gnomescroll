@@ -48,6 +48,28 @@ void Agent_list::draw(int exclude_id)
     #endif
 }
 
+void Agent_list::draw_inc() 
+{
+    #ifdef DC_CLIENT
+        int i,j;
+
+        glDisable(GL_TEXTURE_2D);
+        //glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        for(i=0; i<n_agents_to_draw; i++) { //max_n
+            j = agents_to_draw[i];
+            if (j == NULL) continue;
+            if(a[j] != NULL) {
+                a[j]->draw();
+            }
+        }
+        glDisable(GL_CULL_FACE);
+        //glEnable(GL_TEXTURE_2D);
+        //glDisable(GL_DEPTH_TEST);
+    #endif
+}
+
     /* 
         if( a_cs & 1 ) {
             //forward
@@ -779,6 +801,11 @@ void agents_draw(int exclude_id) {  // if (first_person) dont draw yourself
     ClientState::agent_list.draw(exclude_id);
     #endif
 }
+void agents_draw_inc() {  // if (first_person) dont draw yourself
+    #ifdef DC_CLIENT
+    ClientState::agent_list.draw_inc();
+    #endif
+}
 
 int agent_create(int id, float x, float y, float z) {
 #ifdef DC_CLIENT
@@ -825,6 +852,26 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
     Agent_state* s = ClientState::agent_list.get(id);
     if (s==NULL || s->vox == NULL) return;
     s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
+}
+
+
+void clear_agents_to_draw() {
+    int i;
+    for (i=0; i<n_agents_to_draw; i++) {
+        agents_to_draw[i] = NULL;
+    }
+    n_agents_to_draw = 0;
+}
+
+void add_agent_to_draw(int agent_id) {
+    int i;
+    for (i=0; i<AGENT_MAX; i++) {
+        if (agents_to_draw[i] == NULL) {
+            agents_to_draw[i] = agent_id;
+            n_agents_to_draw++;
+            break;
+        }
+    }
 }
 
 #endif

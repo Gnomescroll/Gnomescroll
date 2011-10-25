@@ -2,6 +2,8 @@
 
 #include <c_lib/compat.h>
 
+#define AGENT_MAX 1024
+
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
 #include <agent/agent_vox.hpp>
@@ -12,6 +14,12 @@ void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, fl
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
 void agents_draw();
 void agents_draw(int exclude_id);
+void agents_draw_inc();
+
+int n_agents_to_draw = 0;
+int agents_to_draw[AGENT_MAX];
+void add_agent_to_draw(int agent_id);
+void clear_agents_to_draw();
 #endif
 
 void agents_tick();
@@ -121,10 +129,12 @@ class Agent_state {
 
 #include <c_lib/template/object_list.hpp>
 
-class Agent_list: public Object_list<Agent_state,1024>
+class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     static const char* name() { return "Agent"; }
     public:
         void draw();
         void draw(int);
+        void draw_inc();
 };
+

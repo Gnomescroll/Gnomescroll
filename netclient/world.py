@@ -78,14 +78,21 @@ class World():
         self.agents.append(agent)
 
     def draw_agents(self, first_person=False):
-        exclude_id = None
-        if first_person and GameStateGlobal.agent:
-            exclude_id = GameStateGlobal.agent.id
+        
+        to_draw = []
+        for agent in GameStateGlobal.agentList.values():
+            if not agent.dead and not (agent.you and first_person) and \
+                (agent.team and not agent.team.is_viewers()):
+                    to_draw.append(agent.id)
+            
         if opts.draw_agents:
-            if exclude_id is not None:
-                c_lib.c_lib_agents.draw_agents_excluding(exclude_id)
-            else:
-                c_lib.c_lib_agents.draw_agents()
+            #if exclude_id is not None:
+                #c_lib.c_lib_agents.draw_agents_excluding(exclude_id)
+            #else:
+                #c_lib.c_lib_agents.draw_agents()
+            c_lib.c_lib_agents.load_agents_to_draw(to_draw)
+            c_lib.c_lib_agents.draw_agents_include()
+                
         #for agent in GameStateGlobal.agentList.values():
             #x= (agent.team and not agent.team.is_viewers())
             #if not agent.dead and not (agent.you and first_person) and \

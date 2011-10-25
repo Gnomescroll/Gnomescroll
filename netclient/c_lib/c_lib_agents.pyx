@@ -41,12 +41,16 @@ DONT DEPRECATE BELOW
 cdef extern from "./agent/agent.hpp":
     void agents_draw()
     void agents_draw(int exclude_id)
+    void agents_draw_inc()
     int agent_create(int id, float x, float y, float z)
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
     void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz)
     void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
     void init_agent_vox_done(int id)
+
+    void clear_agents_to_draw()
+    void add_agent_to_draw(int id)
 
 import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
@@ -97,3 +101,11 @@ def draw_agents():
 
 def draw_agents_excluding(int exclude_id):
     agents_draw(exclude_id)
+
+def draw_agents_include():
+    agents_draw_inc()
+
+def load_agents_to_draw(agents):
+    clear_agents_to_draw()
+    for ag in agents:
+        add_agent_to_draw(ag)
