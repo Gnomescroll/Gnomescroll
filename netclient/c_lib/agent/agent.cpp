@@ -254,17 +254,17 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     }
 
 
-    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0)) {
+    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0) ) {
         //north, east
         return true;
     }
 
-    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0)) {
+    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0) ) {
         //south, east
         return true;
     }
 
-    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0)) {
+    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0) ) {
         //south, west
         return true;
     }
@@ -400,6 +400,66 @@ void Agent_state::_tick() {
                 cs_vx += -xy_speed*cos( s.theta * pi + pi/2);
                 cs_vy += -xy_speed*sin( s.theta * pi + pi/2);
         }
+
+        //jet pack and gravity
+        if(s.z>0)
+        {
+            s.vz += z_gravity;
+        } 
+        else 
+        {
+            s.vz -= z_gravity;
+        }    
+        
+        if(jetpack) {
+            s.vz += z_jetpack;
+        }
+
+        float new_x, new_y, new_z;
+        new_x = s.x + s.vx + cs_vx;
+        new_y = s.y + s.vy + cs_vy;
+        new_z = s.z + s.vz;
+
+        bool current_collision = collision_check2(box_r, b_height, s.x,s.y,s.z);
+        if(current_collision) {
+            printf("invalid agent state: agent is coliding!\n");
+        }
+
+        /*
+            Collision Order: x,y,z
+        */
+        bool collision_x = collision_check2(box_r, b_height, new_x,s.y,s.z);
+        if(collision_x) {
+            new_x = s.x;
+            s.vx = 0;
+        }
+
+        bool collision_y = collision_check2(box_r, b_height, new_x,new_y,s.z);
+        if(collision_y) {
+            new_y = s.y;
+            s.vy = 0;
+        }
+
+        //top and bottom matter
+        bool collision_z = collision_check2(box_r, b_height, new_x,new_y,new_z);
+        if(collision_z) {
+
+            if(s.vz < -z_bounce_v_threshold)
+            {
+                s.vz *= -1 *z_bounce;
+            }
+            else
+            {
+                s.vz = 0;
+            }
+
+            new_z = s.z + s.vz;
+        }       
+
+        s.x = new_x;
+        s.y = new_y;
+        s.z = new_z;
+
     /*
         int bx_pos_projected = s.x+s.vx+cs_vx+box_r;    //floor
         int bx_neg_projected = s.x+s.vx+cs_vy-box_r;
@@ -471,11 +531,14 @@ void Agent_state::_tick() {
         */
 
         //newton intergrate positions
+    /*
         s.x += s.vx + cs_vx;    //use better intergrator
         s.y += s.vy + cs_vy;
         s.z += s.vz;
 
         s.z = 1.01;
+    */
+
     /*
         printf("cs_vx= %f, cs_vy= %f \n", cs_vx, cs_vy);
         printf("dx= %f, dy= %f, dz= %f \n", s.vx + cs_vx, s.vy + cs_vy, s.vz);
