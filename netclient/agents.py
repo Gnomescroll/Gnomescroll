@@ -736,14 +736,13 @@ class AgentModel(AgentWrapper):
         self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
 
     def crouch(self):
-        print 'PYTHON CROUCH'
         self.crouching = not self.crouching
         if self.crouching:
             self.b_height = 0.8
         else:
             self.b_height = 1.5
         self.camera_height = self.b_height
-        cAgents._crouch(self.id, int(self.crouching))
+        cAgents.crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
         return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))

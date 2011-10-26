@@ -568,36 +568,14 @@ void Agent_state::server_tick() {
 }
 
 void Agent_state::crouch(int on_off) {
-    printf("C CROUCH ");
     if (on_off) {   // crouch on
         b_height = 0.9;
-        printf("crouched");
     } else {
         b_height = 1.8;
-        printf("standing");
     }
-    printf("\n");
 }
 
-//void agent_ids_in_use() {
-    //Agent_state* a;
-
-    //int i, found=0;
-    //for (i=0; i<AGENT_MAX; i++) {
-        //a = STATELIST::agent_list.get(i);
-        //if (a != NULL) {
-            //printf("%d\n", a->id);
-            //found = 1;
-        //}
-    //}
-    //if (found) {
-        //printf("Are the agent ids in use.\n");
-    //} else {
-        //printf("No agent ids are in use!\n");
-    //}
-//}
-    
-void crouch(int agent_id, int on_off) {
+void agent_crouch(int agent_id, int on_off) {
     Agent_state* a = STATELIST::agent_list.get(agent_id);
     if (a == NULL) {return;}
     a->crouch(on_off);

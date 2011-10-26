@@ -23,7 +23,7 @@ void set_agents_to_draw(int* ids, int ct);
 void agents_tick();
 int agent_create(int id, float x, float y, float z);
 
-void crouch(int agent_id, int on_off);
+void agent_crouch(int agent_id, int on_off);
 
 //store last network messsage
 
