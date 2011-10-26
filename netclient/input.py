@@ -265,7 +265,6 @@ class Keyboard(object):
                 self.toggle_chat()
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol)
-                #self.key_handlers.get(symbol, lambda: None)()
             if symbol == 'tab':
                 InputGlobal.scoreboard = not InputGlobal.scoreboard
             if symbol == 'escape':
@@ -276,8 +275,9 @@ class Keyboard(object):
 
     def on_key_release(self, symbol):
         print 'KEY RELEASE %s' % (symbol,)
-        if symbol.lower() == 'tab':
-            InputGlobal.scoreboard = False\
+
+        if InputGlobal.input == 'agent':
+            InputGlobal.agentInput.on_key_release(symbol)
 
     #deprecate for non-pyglet input
     def _init_key_handlers(self):

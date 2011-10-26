@@ -23,6 +23,8 @@ void set_agents_to_draw(int* ids, int ct);
 void agents_tick();
 int agent_create(int id, float x, float y, float z);
 
+void crouch(int agent_id, int on_off);
+
 //store last network messsage
 
 class AgentState {
@@ -73,6 +75,8 @@ class Agent_state {
         float theta;
         float phi;
 
+        float b_height;
+
         int _new_control_state;
 
         #ifdef DC_CLIENT
@@ -120,7 +124,8 @@ class Agent_state {
         void draw();
 
         Agent_state(int _id); //default constructor
-        
+
+        void crouch(int on_off);
         //void server_tick();
         //set_control_state(int[8] _cs, float theta, float phi);
 };
