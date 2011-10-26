@@ -464,7 +464,6 @@ class AgentInput:
         self.key_release_handlers.get(symbol, lambda s: None)(symbol)
 
     def reload(self, symbol=None, modifiers=None):
-        #print 'reloading'
         GameStateGlobal.agent.reload()
 
     @classmethod
@@ -472,27 +471,28 @@ class AgentInput:
     def bleed(cls, *args, **kwargs):
         GameStateGlobal.agent.bleed()
 
+
+    _crouched = 0
     @classmethod
     @requireAgent
     def crouch(cls, *args, **kwargs):
+        if not cls._crouched:
+            print "FIRST CROUCH"
+        cls._crouched = 1
         GameStateGlobal.agent.crouch()
         
     def switch_weapon(self, symbol=None, modifiers=None):
-        ##print 'switch weapon'
-        ##print symbol, modifiers
-        ##print str(symbol)
         try:
             weapon_index = int(symbol)
         except (ValueError, TypeError):
-            return
-        #print 'attempting to switch weapon to ', weapon_index
-        GameStateGlobal.agent.weapons.switch(weapon_index)
+            pass
+        else:
+            GameStateGlobal.agent.weapons.switch(weapon_index)
 
     def adjust_block(self, symbol=None, modifiers=None):
-        #print 'adjust_block %s %s' % (symbol, modifiers,)
         aw = GameStateGlobal.agent.weapons.active()
+
         if not aw or aw.type != 3:  # block applier
-            #print 'block applier not active'
             return
         if symbol == 'left':
             InputGlobal.block_selector.left()
@@ -503,7 +503,6 @@ class AgentInput:
         elif symbol == 'down':
             InputGlobal.block_selector.down()
         GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
-        #print InputGlobal.block_selector.active
 
 
 class BlockSelector:

@@ -739,9 +739,10 @@ class AgentModel(AgentWrapper):
         print 'PYTHON CROUCH'
         self.crouching = not self.crouching
         if self.crouching:
-            self.b_height = 1.5
-        else:
             self.b_height = 0.8
+        else:
+            self.b_height = 1.5
+        self.camera_height = self.b_height
         cAgents._crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
@@ -908,9 +909,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.az = 0
 
         #settings
-        self.b_height = 1.5
-        self.t_height = .75
-        self.box_r = .30
+        #self.b_height = 1.5
+        #self.t_height = .75
+        #self.box_r = .30
         self.camera_height = 1.5
 
         AgentVoxRender.__init__(self)
