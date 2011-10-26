@@ -36,8 +36,8 @@ class World():
     def tick(self):
         for p in GameStateGlobal.projectileList.values():
             p.tick()
-        for a in GameStateGlobal.agentList.values():
-            a.tick()
+        #for a in GameStateGlobal.agentList.values():
+        #    a.tick()
         if GameStateGlobal.agent is not None:
             GameStateGlobal.agent.nearby_objects()
 

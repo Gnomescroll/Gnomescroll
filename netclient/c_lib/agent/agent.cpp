@@ -431,6 +431,12 @@ void Agent_state::_tick() {
         bool current_collision = collision_check2(box_r, b_height, s.x,s.y,s.z);
         if(current_collision) {
             printf("invalid agent state: agent is coliding!\n");
+
+            s.x = new_x;
+            s.y = new_y;
+            s.z += 0.02; //nudge factor
+            if(s.vz < 0) s.vz = 0;
+            continue;
         }
 
         /*

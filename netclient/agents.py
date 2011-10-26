@@ -99,6 +99,9 @@ class AgentPhysics:
         pass
 
     def _tick_physics(self):
+        print "Error: Agent physics called!"
+        assert False
+        return
         x,y,z, vx,vy,vz, ax,ay,az = self.state
         ax,ay,az = (0,0,0)
         vx,vy = (0,0)
@@ -1058,9 +1061,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         return block
 
     def facing_block_position(self):
+        print "Ray Casting from wrong position!  Use camera position!"
+        assert False
         return ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
 
     def nearest_block_position(self):
+        print "Ray Casting from wrong position!  Use camera position!"
+        assert False
         return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
 
     def pan(self, dx_angle, dy_angle):
