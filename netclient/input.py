@@ -277,7 +277,7 @@ class Keyboard(object):
     def on_key_release(self, symbol):
         print 'KEY RELEASE %s' % (symbol,)
         if symbol.lower() == 'tab':
-            InputGlobal.scoreboard = False
+            InputGlobal.scoreboard = False\
 
     #deprecate for non-pyglet input
     def _init_key_handlers(self):
@@ -417,68 +417,66 @@ class Keyboard(object):
             #if keyboard[key.SPACE]:
             #    pass
 
+
+# only calls method if GameStateGlobal.agent is not None
+def requireAgent(f):
+    def requireAgent_wrap(*args, **kwargs):
+        if GameStateGlobal.agent is not None:
+            f(*args, **kwargs)
+    return requireAgent_wrap
+
 class AgentInput:
 
     def __init__(self):
-        self.key_handlers = {}
+        self.key_press_handlers = {}
+        self.key_release_handlers = {}
         self._init_key_handlers()
 
     def _init_key_handlers(self):
-        if settings.pyglet:
-            self._bind_key_handlers({
-                key.R : self.reload,
-                key._1: self.switch_weapon,
-                key._2: self.switch_weapon,
-                key._3: self.switch_weapon,
-                key._4: self.switch_weapon,
-                key._5: self.switch_weapon,
-                key._6: self.switch_weapon,
-                key._7: self.switch_weapon,
-                key._8: self.switch_weapon,
-                key._9: self.switch_weapon,
-                key._0: self.switch_weapon,
-            })
-        else:
-            self._bind_key_handlers({
-                "r" : self.reload,
-                "1": self.switch_weapon,
-                "2": self.switch_weapon,
-                "3": self.switch_weapon,
-                "4": self.switch_weapon,
-                "5": self.switch_weapon,
-                "6": self.switch_weapon,
-                "7": self.switch_weapon,
-                "8": self.switch_weapon,
-                "9": self.switch_weapon,
-                "0": self.switch_weapon,
-                'left':self.adjust_block,
-                'right':self.adjust_block,
-                'up':self.adjust_block,
-                'down':self.adjust_block,
-                'b'   : self.bleed,
-            })
+        self.key_press_handlers = {
+            "r" : self.reload,
+            "1": self.switch_weapon,
+            "2": self.switch_weapon,
+            "3": self.switch_weapon,
+            "4": self.switch_weapon,
+            "5": self.switch_weapon,
+            "6": self.switch_weapon,
+            "7": self.switch_weapon,
+            "8": self.switch_weapon,
+            "9": self.switch_weapon,
+            "0": self.switch_weapon,
+            'left':self.adjust_block,
+            'right':self.adjust_block,
+            'up':self.adjust_block,
+            'down':self.adjust_block,
+            'b'   : self.bleed,
+            'left ctrl': self.crouch,
+        }
 
-    # accept key,handler or a dict of key,handlers
-    def _bind_key_handlers(self, key, handler=None):
-        if handler is None:
-            assert type(key) == dict
-            for k, h in key.items():
-                self.key_handlers[k] = h
-        else:
-            self.key_handlers[key] = handler
+        self.key_release_handlers = {
+            'left ctrl' :   self.crouch,
+        }
 
     def on_key_press(self, symbol, modifiers=None):
-        self.key_handlers.get(symbol, lambda s: None)(symbol)
+        self.key_press_handlers.get(symbol, lambda s: None)(symbol)
+
+    def on_key_release(self, symbol):
+        self.key_release_handlers.get(symbol, lambda s: None)(symbol)
 
     def reload(self, symbol=None, modifiers=None):
         #print 'reloading'
         GameStateGlobal.agent.reload()
 
     @classmethod
+    @requireAgent
     def bleed(cls, *args, **kwargs):
-        if GameStateGlobal.agent is not None:
-            GameStateGlobal.agent.bleed()
+        GameStateGlobal.agent.bleed()
 
+    @classmethod
+    @requireAgent
+    def crouch(cls, *args, **kwargs):
+        GameStateGlobal.agent.crouch()
+        
     def switch_weapon(self, symbol=None, modifiers=None):
         ##print 'switch weapon'
         ##print symbol, modifiers
