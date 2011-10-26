@@ -7,6 +7,14 @@
 
 #include <math.h>
 
+
+#ifdef DC_CLIENT
+    #define STATELIST ClientState
+#else
+    #define STATELIST ServerState
+#endif
+
+
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
@@ -19,7 +27,7 @@ void Agent_list::draw()
         glEnable(GL_CULL_FACE);
         for(i=0; i<n_agents_to_draw; i++) { //max_n
             j = agents_to_draw[i];
-            if (j == NULL) continue;
+            if (j < 0) continue;
             if(a[j] != NULL) {
                 a[j]->draw();
             }
@@ -365,7 +373,7 @@ void Agent_state::_tick() {
         const float pi = 3.14159265;
 
         //box properties
-        float b_height = 1.8;  //agent collision box height
+        //float b_height = 1.8;  //agent collision box height
         float box_r = 0.4;
 
         int collision[6];
@@ -628,6 +636,8 @@ Agent_state::Agent_state(int _id) {
     s.vy = 0;
     s.vz = 0;
 
+    b_height = 1.8;
+
     //s.x = 16.5;
     //s.y = 16.5;
 
@@ -669,6 +679,19 @@ void Agent_state::server_tick() {
     return;
 }
 
+void Agent_state::crouch(int on_off) {
+    if (on_off) {   // crouch on
+        b_height = 0.9;
+    } else {
+        b_height = 1.8;
+    }
+}
+
+void agent_crouch(int agent_id, int on_off) {
+    Agent_state* a = STATELIST::agent_list.get(agent_id);
+    if (a == NULL) {return;}
+    a->crouch(on_off);
+}
 
 int agent_create(int id, float x, float y, float z) {
 #ifdef DC_CLIENT
@@ -733,7 +756,7 @@ void agents_draw() {
 void clear_agents_to_draw() {
     int i;
     for (i=0; i<n_agents_to_draw; i++) {
-        agents_to_draw[i] = NULL;
+        agents_to_draw[i] = -1;
     }
     n_agents_to_draw = 0;
 }

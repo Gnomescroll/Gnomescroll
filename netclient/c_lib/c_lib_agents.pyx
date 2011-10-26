@@ -51,6 +51,11 @@ cdef extern from "./agent/agent.hpp":
     void clear_agents_to_draw()
     void set_agents_to_draw(int* ids, int ct)
 
+    void agent_crouch(int agent_id, int on_off)
+
+def crouch(int agent_id, int on_off):
+    agent_crouch(agent_id, on_off)
+
 import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
 vosize = dat.vosize

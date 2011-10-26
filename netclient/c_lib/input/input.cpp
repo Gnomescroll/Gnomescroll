@@ -74,9 +74,12 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         //printf("button: %i\n", Event.button.button);
         _mouse_event_callback(mouse_event_cb, me);
     }
-    if (Event.type == SDL_KEYDOWN || Event.type == SDL_KEYUP) {
-        //processKeyEvent(Event);
-    }
+    //if (Event.type == SDL_KEYDOWN || Event.type == SDL_KEYUP) {
+        ////processKeyEvent(Event);
+    //}
+
+    int event_state = 0;
+    char* key_name;
 
     switch( Event.type )
     {
@@ -94,10 +97,22 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
             t = getUnicodeValue(Event.key.keysym);
             if(t==0) t= Event.key.keysym.sym;
-            _key_text_event_callback(keyboard_text_event_cb, t, SDL_GetKeyName(Event.key.keysym.sym));
+            event_state = 1;
+            key_name = SDL_GetKeyName(Event.key.keysym.sym);
+            _key_text_event_callback(keyboard_text_event_cb, t, key_name, event_state);
             ///SDL_EnableUNICODE( SDL_DISABLE );
             //SDL_GetKeyName(Event.key));
 
+            break;
+
+        case SDL_KEYUP:
+            t = getUnicodeValue(Event.key.keysym);
+            if(t==0) t= Event.key.keysym.sym;
+            event_state = 0;
+            key_name = SDL_GetKeyName(Event.key.keysym.sym);
+            _key_text_event_callback(keyboard_text_event_cb, t, SDL_GetKeyName(Event.key.keysym.sym), event_state);
+            ///SDL_EnableUNICODE( SDL_DISABLE );
+            //SDL_GetKeyName(Event.key));
             break;
 
         case SDL_MOUSEMOTION:
@@ -141,8 +156,8 @@ int _key_event_callback(key_event_func user_func, char key) {
     return 0;
 }
 
-int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name) {
-    user_func(key, key_name);
+int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name, int event_state) {
+    user_func(key, key_name, event_state);
     return 0;
 }
 

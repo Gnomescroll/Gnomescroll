@@ -34,6 +34,8 @@ import random
 from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox
 
+import c_lib.c_lib_agents as cAgents
+
 import sound.sounds as sounds
 
 '''
@@ -628,6 +630,8 @@ class AgentModel(AgentWrapper):
         self.t_height = .75
         self.box_r = .30
 
+        self.crouching = False
+
     def tick(self):
         if not self.dead:
             self._tick_physics()
@@ -668,7 +672,6 @@ class AgentModel(AgentWrapper):
 
         GameStateGlobal.agentList.update(self, *args)
 
-#experimental
     def __getattribute__(self, name):
         try:
             val = AgentWrapper.__getattribute__(self, name)
@@ -689,14 +692,6 @@ class AgentModel(AgentWrapper):
 
     def velocity(self):
         return self.state[3:6]
-
-    #def nearby_objects(self):
-        #for obj in GameStateGlobal.itemList.values():
-            #if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
-                #self.near_object(obj)
-
-    #def near_object(self, obj):
-        #pass
 
     def forward(self):
         return vector_lib.forward_vector(self.x_angle)
@@ -739,6 +734,15 @@ class AgentModel(AgentWrapper):
     @state.setter
     def state(self, val):
         self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
+
+    def crouch(self):
+        self.crouching = not self.crouching
+        if self.crouching:
+            self.b_height = 0.8
+        else:
+            self.b_height = 1.5
+        self.camera_height = self.b_height
+        cAgents.crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
         return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))
@@ -904,9 +908,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.az = 0
 
         #settings
-        self.b_height = 1.5
-        self.t_height = .75
-        self.box_r = .30
+        #self.b_height = 1.5
+        #self.t_height = .75
+        #self.box_r = .30
         self.camera_height = 1.5
 
         AgentVoxRender.__init__(self)
@@ -967,8 +971,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             weapon.animation(agent=self).play()
 
         # check agent
-        ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
-        ignore_vox.append(self.vox.id)
+        #ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
+        #ignore_vox.append(self.vox.id)
+        ignore_vox = []
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         print ag, adistance, vox
         body_part_id = 1

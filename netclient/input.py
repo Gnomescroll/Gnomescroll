@@ -11,9 +11,6 @@ import default_settings as settings
 
 import opts
 
-
-#import SDL.input
-
 import c_lib.c_lib_input as cInput
 
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
@@ -50,19 +47,16 @@ def setup_keystring():
         Keystring[value] = key
 setup_keystring()
 
+event_names = {
+    0   :   'SDL_KEYUP',
+    1   :   'SDL_KEYDOWN',
+}
+
+keystate = {}
+
 class InputEventGlobal:
     mouse = None
     keyboard = None
-
-    #deprecate
-    def keyboard_event(self, keycode):
-        #print str(keycode)
-        key = Keystring.get(keycode, None)
-        #print 'keyboard event:'+ str(key)
-        self.keyboard.on_key_press(key)
-        if key == None:
-            pass
-            #print "keycode unhandled= " + str(keycode)
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
@@ -73,33 +67,27 @@ class InputEventGlobal:
         self.keyboard.stateHandler(keyboard)
 
     #add support for key pressed/key released
-    def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
-        #if keycode == 0:
-            #key = key_string.upper().replace(' ', '_')
-        #else:
-            #key = Keystring.get(keycode, None)
-        key = key_string
-        #uncomment to see key inputs
-        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
-        if state == 0:
+    def keyboard_text_event(self, keycode, key, event_type):
+        event_name = event_names[event_type]
+        #print "%s, keycode=%d key=%s" % (event_name, keycode, key,)
+
+        # set keystate map
+        if event_name == 'SDL_KEYDOWN':
+            keystate[keycode] = 1
             self.keyboard.on_key_press(key)
-        else:
+
+        elif event_name == 'SDL_KEYUP':
+            keystate[keycode] = 0
             self.keyboard.on_key_release(key)
-
+        
     def mouse_event(self, button,state,x,y,):
-        #handle scroll events
-        ##print str (button) + " " + str(state)
-
         self.mouse.on_mouse_press(x,y,button, state)
-        ##print "click"
 
     def mouse_motion(self, x,y,dx,dy,button):
         if button != 0:
             self.mouse.on_mouse_drag(x,y,dx,dy,button)
         else:
             self.mouse.on_mouse_motion(x,y,dx,dy)
-            ##print "motion"
-        pass
 
 class InputGlobal:
     keyboard = None
@@ -145,17 +133,15 @@ class InputGlobal:
         #print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
         return current_mode
 
-    @classmethod
     # toggles through modes.
+    @classmethod
     def toggle_input_mode(cls, change=1, current_mode=[0]):
-        #current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'input')
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
         if curr is not None:
             current_mode[0] = curr
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
-        #current_mode[0] = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
             current_mode[0] = curr
@@ -256,7 +242,7 @@ class Keyboard(object):
     # one-time non character key detection
     # e.g. enter
     def on_key_press(self, symbol):
-        #print 'ON_KEY_PRESS :: ', symbol
+
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
         #elif symbol == 'f1':
@@ -267,17 +253,13 @@ class Keyboard(object):
             return
             
         if InputGlobal.input == 'chat':
-            #if symbol in special_keys:
             callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
-            #else:
-             #   callback = ChatClientGlobal.chatClient.input.on_text(symbol)
             self._input_callback(callback)
         else:
             if symbol == 'y':
                 self.toggle_chat()
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol)
-                #self.key_handlers.get(symbol, lambda: None)()
             if symbol == 'tab':
                 InputGlobal.scoreboard = not InputGlobal.scoreboard
             if symbol == 'escape':
@@ -287,20 +269,14 @@ class Keyboard(object):
             self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
-        if symbol == 'TAB':
-            InputGlobal.scoreboard = False
+        #print 'KEY RELEASE %s' % (symbol,)
+
+        if InputGlobal.input == 'agent':
+            InputGlobal.agentInput.on_key_release(symbol)
 
     #deprecate for non-pyglet input
     def _init_key_handlers(self):
-        if settings.pyglet:
-            self.bind_key_handlers({
-            key.G : self.main.world.toggle_mipmap,
-            key.T : self.main.world.toggle_gl_smooth,
-            key.Q : InputGlobal.toggle_input_mode,
-            key.E : InputGlobal.toggle_camera_mode,
-        })
-        else:
-            self.bind_key_handlers({
+        self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
             "e" : cHUD._toggle_inventory_hud,
@@ -316,6 +292,7 @@ class Keyboard(object):
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
         })
+        
     # accept key,handler or a dict of key,handlers
     def bind_key_handlers(self, key, handler=None):
         if handler is None:
@@ -375,23 +352,6 @@ class Keyboard(object):
 
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
-        #if old_buttons != button_state:
-            #NetOut.sendMessage.agent_button_state(GameStateGlobal.agent)
-
-        #ctrl_state = GameStateGlobal.agent.compute_state()
-        #GameStateGlobal.agent.set_control_state(ctrl_state)
-
-        #GameStateGlobal.agent.set_control_state([\
-            #d_x,
-            #d_y,
-            #v_x,
-            #v_y,
-            #jetpack,
-            #brake
-        #])
-
-        ## send control state to server
-        #NetOut.sendMessage.send_agent_control_state(GameStateGlobal.agent.id, *GameStateGlobal.agent.control_state)
 
     def camera_input_mode(self, keyboard):
         v = settings.camera_speed
@@ -428,84 +388,83 @@ class Keyboard(object):
             #if keyboard[key.SPACE]:
             #    pass
 
+
+# only calls method if GameStateGlobal.agent is not None
+def requireAgent(f):
+    def requireAgent_wrap(*args, **kwargs):
+        if GameStateGlobal.agent is not None:
+            f(*args, **kwargs)
+    return requireAgent_wrap
+
 class AgentInput:
 
     def __init__(self):
-        self.key_handlers = {}
+        self.key_press_handlers = {}
+        self.key_release_handlers = {}
         self._init_key_handlers()
 
     def _init_key_handlers(self):
-        if settings.pyglet:
-            self._bind_key_handlers({
-                key.R : self.reload,
-                key._1: self.switch_weapon,
-                key._2: self.switch_weapon,
-                key._3: self.switch_weapon,
-                key._4: self.switch_weapon,
-                key._5: self.switch_weapon,
-                key._6: self.switch_weapon,
-                key._7: self.switch_weapon,
-                key._8: self.switch_weapon,
-                key._9: self.switch_weapon,
-                key._0: self.switch_weapon,
-            })
-        else:
-            self._bind_key_handlers({
-                "r" : self.reload,
-                "1": self.switch_weapon,
-                "2": self.switch_weapon,
-                "3": self.switch_weapon,
-                "4": self.switch_weapon,
-                "5": self.switch_weapon,
-                "6": self.switch_weapon,
-                "7": self.switch_weapon,
-                "8": self.switch_weapon,
-                "9": self.switch_weapon,
-                "0": self.switch_weapon,
-                'left':self.adjust_block,
-                'right':self.adjust_block,
-                'up':self.adjust_block,
-                'down':self.adjust_block,
-                'b'   : self.bleed,
-            })
+        self.key_press_handlers = {
+            "r" : self.reload,
+            "1": self.switch_weapon,
+            "2": self.switch_weapon,
+            "3": self.switch_weapon,
+            "4": self.switch_weapon,
+            "5": self.switch_weapon,
+            "6": self.switch_weapon,
+            "7": self.switch_weapon,
+            "8": self.switch_weapon,
+            "9": self.switch_weapon,
+            "0": self.switch_weapon,
+            'left':self.adjust_block,
+            'right':self.adjust_block,
+            'up':self.adjust_block,
+            'down':self.adjust_block,
+            'b'   : self.bleed,
+            'left ctrl': self.crouch,
+        }
 
-    # accept key,handler or a dict of key,handlers
-    def _bind_key_handlers(self, key, handler=None):
-        if handler is None:
-            assert type(key) == dict
-            for k, h in key.items():
-                self.key_handlers[k] = h
-        else:
-            self.key_handlers[key] = handler
+        self.key_release_handlers = {
+            'left ctrl' :   self.crouch,
+        }
 
     def on_key_press(self, symbol, modifiers=None):
-        self.key_handlers.get(symbol, lambda s: None)(symbol)
+        self.key_press_handlers.get(symbol, lambda s: None)(symbol)
 
-    def reload(self, symbol=None, modifiers=None):
-        #print 'reloading'
+    def on_key_release(self, symbol):
+        self.key_release_handlers.get(symbol, lambda s: None)(symbol)
+
+    @classmethod
+    @requireAgent
+    def reload(cls, symbol=None, modifiers=None):
         GameStateGlobal.agent.reload()
 
     @classmethod
+    @requireAgent
     def bleed(cls, *args, **kwargs):
-        if GameStateGlobal.agent is not None:
-            GameStateGlobal.agent.bleed()
+        GameStateGlobal.agent.bleed()
 
-    def switch_weapon(self, symbol=None, modifiers=None):
-        ##print 'switch weapon'
-        ##print symbol, modifiers
-        ##print str(symbol)
+    @classmethod
+    @requireAgent
+    def crouch(cls, *args, **kwargs):
+        GameStateGlobal.agent.crouch()
+
+    @classmethod
+    @requireAgent
+    def switch_weapon(cls, symbol=None, modifiers=None):
         try:
             weapon_index = int(symbol)
         except (ValueError, TypeError):
-            return
-        #print 'attempting to switch weapon to ', weapon_index
-        GameStateGlobal.agent.weapons.switch(weapon_index)
+            pass
+        else:
+            GameStateGlobal.agent.weapons.switch(weapon_index)
 
-    def adjust_block(self, symbol=None, modifiers=None):
-        #print 'adjust_block %s %s' % (symbol, modifiers,)
+    @classmethod
+    @requireAgent
+    def adjust_block(cls, symbol=None, modifiers=None):
         aw = GameStateGlobal.agent.weapons.active()
+
         if not aw or aw.type != 3:  # block applier
-            #print 'block applier not active'
             return
         if symbol == 'left':
             InputGlobal.block_selector.left()
@@ -516,7 +475,6 @@ class AgentInput:
         elif symbol == 'down':
             InputGlobal.block_selector.down()
         GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
-        #print InputGlobal.block_selector.active
 
 
 class BlockSelector:
