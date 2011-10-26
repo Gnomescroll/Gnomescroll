@@ -11,9 +11,6 @@ import default_settings as settings
 
 import opts
 
-
-#import SDL.input
-
 import c_lib.c_lib_input as cInput
 
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
@@ -50,19 +47,16 @@ def setup_keystring():
         Keystring[value] = key
 setup_keystring()
 
+event_names = {
+    0   :   'SDL_KEYUP',
+    1   :   'SDL_KEYDOWN',
+}
+
+keystate = {}
+
 class InputEventGlobal:
     mouse = None
     keyboard = None
-
-    #deprecate
-    def keyboard_event(self, keycode):
-        #print str(keycode)
-        key = Keystring.get(keycode, None)
-        #print 'keyboard event:'+ str(key)
-        self.keyboard.on_key_press(key)
-        if key == None:
-            pass
-            #print "keycode unhandled= " + str(keycode)
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
@@ -73,33 +67,27 @@ class InputEventGlobal:
         self.keyboard.stateHandler(keyboard)
 
     #add support for key pressed/key released
-    def keyboard_text_event(self, keycode, key_string, state=0): #keystring is null
-        #if keycode == 0:
-            #key = key_string.upper().replace(' ', '_')
-        #else:
-            #key = Keystring.get(keycode, None)
-        key = key_string
-        #uncomment to see key inputs
-        print "Text event, key_string=" + str(key_string) + " keycode=" + str(keycode) + " key= " + str(key)
-        if state == 0:
+    def keyboard_text_event(self, keycode, key, event_type):
+        event_name = event_names[event_type]
+        print "%s, keycode=%d key=%s" % (event_name, keycode, key,)
+
+        # set keystate map
+        if event_name == 'SDL_KEYDOWN':
+            keystate[keycode] = 1
             self.keyboard.on_key_press(key)
-        else:
+
+        elif event_name == 'SDL_KEYUP':
+            keystate[keycode] = 0
             self.keyboard.on_key_release(key)
-
+        
     def mouse_event(self, button,state,x,y,):
-        #handle scroll events
-        ##print str (button) + " " + str(state)
-
         self.mouse.on_mouse_press(x,y,button, state)
-        ##print "click"
 
     def mouse_motion(self, x,y,dx,dy,button):
         if button != 0:
             self.mouse.on_mouse_drag(x,y,dx,dy,button)
         else:
             self.mouse.on_mouse_motion(x,y,dx,dy)
-            ##print "motion"
-        pass
 
 class InputGlobal:
     keyboard = None
@@ -287,7 +275,8 @@ class Keyboard(object):
             self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
-        if symbol == 'TAB':
+        print 'KEY RELEASE %s' % (symbol,)
+        if symbol.lower() == 'tab':
             InputGlobal.scoreboard = False
 
     #deprecate for non-pyglet input

@@ -29,8 +29,8 @@ cdef extern from "./input/input.hpp":
     ctypedef int (*mouse_event_func)(MouseEvent me)
     int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
 
-    ctypedef int (*key_text_event_func)(char key, char* key_name)
-    int _key_text_event(key_text_event_func user_func, char key, char* key_name)
+    ctypedef int (*key_text_event_func)(char key, char* key_name, int event_state)
+    int _key_text_event(key_text_event_func user_func, char key, char* key_name, int event_state)
 
     ctypedef int (*quit_event_func)()
     int _quit_event_callback(quit_event_func user_func)
@@ -61,8 +61,8 @@ def process_events():
     global key_text_event_callback_stack, mouse_event_callback_stack
     temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback, &quit_event_callback)
     while len(key_text_event_callback_stack) != 0:
-        (key, key_string) = key_text_event_callback_stack.pop(0)
-        input_callback.keyboard_text_event(key, key_string)
+        (key, key_string, event_state) = key_text_event_callback_stack.pop(0)
+        input_callback.keyboard_text_event(key, key_string, event_state)
 
     while len(mouse_event_callback_stack) != 0:
         me = mouse_event_callback_stack.pop(0)
@@ -83,7 +83,7 @@ class Callback_dummy:
         pass
     def keyboard_event(self, key):
         pass
-    def keyboard_text_event(self, key, key_string):
+    def keyboard_text_event(self, key, key_string, event_type):
         pass
     def mouse_event(self, button, state, x, y):
         pass
@@ -113,7 +113,7 @@ cdef int key_event_callback(char key):
     global input_callback
     input_callback.keyboard_event(key)
 
-cdef int key_text_event_callback(char key, char* key_name):
+cdef int key_text_event_callback(char key, char* key_name, int event_state):
     global input_callback, key_text_event_callback_stack
     #print "keycode_="+ str(key)
     key_string = key_name
@@ -122,7 +122,7 @@ cdef int key_text_event_callback(char key, char* key_name):
     py_string = key_name
     #key_string = key_name.decode('ascii')
     #input.inputEventGlobal.keyboard_text_event(key, key_string)
-    key_text_event_callback_stack.append((key, key_string))
+    key_text_event_callback_stack.append((key, key_string, event_state))
     #input_callback.keyboard_text_event(key, key_string)
 
 cdef int mouse_motion_callback(MouseMotion ms):

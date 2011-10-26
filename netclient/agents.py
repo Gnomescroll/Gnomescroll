@@ -967,8 +967,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             weapon.animation(agent=self).play()
 
         # check agent
-        ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
-        ignore_vox.append(self.vox.id)
+        #ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
+        #ignore_vox.append(self.vox.id)
+        ignore_vox = []
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         print ag, adistance, vox
         body_part_id = 1
