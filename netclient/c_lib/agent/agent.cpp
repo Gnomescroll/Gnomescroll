@@ -223,6 +223,55 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
 }
 
+inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
+    //north +x
+    //south -x
+    //west +y
+    //east -y
+    //top +z
+    //bottom -z
+
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int z0 = z;
+    int z1 = z+1.0;
+    int z2 = z+box_h;
+
+    //int z_min = s.z;
+    //int z_max = s.z + b_height + 1.0;
+
+    //upper left
+    //upper right
+    //bottom right
+    //bottom left
+    if(isActive(_get(x_max,y_max,z0) != 0) || isActive(_get(x_max,y_max,z1) != 0) || isActive(_get(x_max,y_max,z2) != 0) ) {
+        //north, west
+        return true;
+    }
+
+
+    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0)) {
+        //north, east
+        return true;
+    }
+
+    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0)) {
+        //south, east
+        return true;
+    }
+
+    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0)) {
+        //south, west
+        return true;
+    }
+
+    return false;
+}
+
 
 inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
 
