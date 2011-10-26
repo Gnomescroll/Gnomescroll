@@ -27,7 +27,7 @@ void Agent_list::draw()
         glEnable(GL_CULL_FACE);
         for(i=0; i<n_agents_to_draw; i++) { //max_n
             j = agents_to_draw[i];
-            if (j == NULL) continue;
+            if (j < 0) continue;
             if(a[j] != NULL) {
                 a[j]->draw();
             }
@@ -644,7 +644,7 @@ void agents_draw() {
 void clear_agents_to_draw() {
     int i;
     for (i=0; i<n_agents_to_draw; i++) {
-        agents_to_draw[i] = NULL;
+        agents_to_draw[i] = -1;
     }
     n_agents_to_draw = 0;
 }

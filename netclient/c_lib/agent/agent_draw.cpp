@@ -9,31 +9,6 @@
 
 namespace AgentDraw {
 
-/*
-void draw_agents(Agent_list* agent_list) {
-    
-    printf("Drawing agents\n");
-
-    struct Agent_state* g = NULL;
-    int i;
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-
-    for(i=0; i<1024; i++) {
-        if(agent_list->a[i] != NULL) {
-            g = agent_list->a[i];
-            draw_agent(g);
-        }
-    }
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-
-}
-*/
-
-
 int snapshot_draw_array_i = 0;
 int snapshot_draw_last_seq = 0;
 AgentState snapshot_draw_array[32];
@@ -79,8 +54,6 @@ void draw_agent(Agent_state* g) {
     draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
 
     if (g->vox != NULL) {
-
-        //g->vox->draw(forward, look, right, s->x, s->y, s->z, s->theta, s->phi);
         g->vox->draw(s->x, s->y, s->z, s->theta, s->phi);
     }
 }
