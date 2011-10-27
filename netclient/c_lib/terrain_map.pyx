@@ -286,6 +286,7 @@ cdef enum:
 
 def init_quad_cache():
     global v_index
+    global c_dat
     cdef Vertex* quad_cache
     quad_cache = _get_quad_cache()
     cdef Vertex* v
@@ -304,6 +305,8 @@ def init_quad_cache():
                 v.b = 255
                 v.a = 255
                 tx,ty = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
+                if c_dat.get(id, 'active') > 1:
+                    tx,ty = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
 
@@ -333,20 +336,31 @@ def get_cube_texture(tile_id, side, vert_num):
         print "Error!!!! set_tex invalid input"
         assert False
     return (tx,ty)
-    '''
-    if vert_num == 0:
+
+#for crop blocks
+def get_cube_texture_alt(tile_id, side, vert_num):
+    global c_dat
+    margin = (1./16.) *0.001#*0.004
+    texture_id = c_dat.get(tile_id, 'texture_id')[side]
+    texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
+    x = texture_id % 16
+    y = (texture_id - (texture_id % 16)) / 16
+    tx = float(x) * 1./16.
+    ty = float(y) * 1./16.
+
+    if vert_num == 1:
         tx += 0 +margin
         ty += 0 +margin
-    elif vert_num == 1:
-        tx += 1./16. -margin
-        ty += 0 + margin
     elif vert_num == 2:
-        tx += 1./16. -margin
-        ty += 1./16. -margin
-    elif vert_num == 3:
         tx += 0 +margin
         ty += 1./16. -margin
-    '''
+    elif vert_num == 3:
+        tx += 1./16. -margin
+        ty += 1./16. -margin
+    elif vert_num == 0:
+        tx += 1./16. -margin
+        ty += 0 + margin
+    return (tx,ty)
 
 ## functions ##
 '''

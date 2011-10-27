@@ -280,3 +280,39 @@ north   xox/wheat.png
 south   xox/wheat.png
 west    xox/wheat.png
 east    xox/wheat.png
+===
+id      175
+name    corn1
+hud     59 xox/corn1.png
+type 	2
+transparency 3
+top     xox/corn1.png
+bottom  xox/corn1.png
+north   xox/corn1.png
+south   xox/corn1.png
+west    xox/corn1.png
+east    xox/corn1.png
+===
+id      176
+name    corn2
+hud     60 xox/corn2.png
+type 	2
+transparency 3
+top     xox/corn2.png
+bottom  xox/corn2.png
+north   xox/corn2.png
+south   xox/corn2.png
+west    xox/corn2.png
+east    xox/corn2.png
+===
+id      177
+name    corn2
+hud     61 xox/tomatoe.png
+type 	2
+transparency 3
+top     xox/tomatoe.png
+bottom  xox/tomatoe.png
+north   xox/tomatoe.png
+south   xox/tomatoe.png
+west    xox/tomatoe.png
+east    xox/tomatoe.png
