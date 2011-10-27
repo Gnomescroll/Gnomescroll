@@ -101,7 +101,11 @@ class MessageHandler:
         #use json_events when possible
         cmd = str(cmd)
         if cmd in self.json_events:
-            self.json_events[cmd](**msg)
+            try:
+                self.json_events[cmd](**msg)
+            except TypeError, e:
+                print msg
+                raise TypeError, e
         else:
             print "Error, received command %s that client cannot handle" % (cmd,)
             print 'msg %s' % (msg,)
