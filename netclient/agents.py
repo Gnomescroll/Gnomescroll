@@ -1062,13 +1062,27 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def facing_block_position(self):
         print "Ray Casting from wrong position!  Use camera position!"
-        assert False
-        return ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+        return ray_nearest_block(
+            #self.x + self.box_r,
+            #self.y + self.box_r,
+            self.x,
+            self.y,
+            self.z + self.camera_height,
+            self.x_angle,
+            self.y_angle
+        )
 
     def nearest_block_position(self):
         print "Ray Casting from wrong position!  Use camera position!"
-        assert False
-        return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        return ray_nearest_block(
+            #self.x + self.box_r,
+            #self.y + self.box_r,
+            self.x,
+            self.y,
+            self.z + self.camera_height,
+            self.x_angle,
+            self.y_angle
+        )
 
     def pan(self, dx_angle, dy_angle):
         self._x_angle += dx_angle
