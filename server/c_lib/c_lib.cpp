@@ -22,7 +22,6 @@
 
     #include "./agent/agent_include.h"
 
-    #include <c_lib/state/wrapper.cpp>
     
     //#include "./map_gen/voronoi.cpp"
     //#include "./map_gen/map2.cpp"
@@ -38,6 +37,8 @@
 //}
 
 #include <net_lib/net_lib.h>
+
+#include <c_lib/state/wrapper.cpp>
 
 //#include "agent/net_agent.cpp"
 

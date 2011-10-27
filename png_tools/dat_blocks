@@ -268,3 +268,15 @@ north   flower.png
 south   flower.png
 west    flower.png
 east    flower.png
+===
+id      174
+name    wheat
+hud     58 xox/wheat.png
+type 	2
+transparency 3
+top     xox/wheat.png
+bottom  xox/wheat.png
+north   xox/wheat.png
+south   xox/wheat.png
+west    xox/wheat.png
+east    xox/wheat.png

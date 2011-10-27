@@ -35,7 +35,6 @@
     #include <c_lib/hud/inventory.cpp>
 #endif
 
-#include <c_lib/state/wrapper.cpp>
 
 //#include <c_lib/map_gen/noise.c>
 //#include <c_lib/noise_viz.cpp>
@@ -58,6 +57,7 @@
 
 #include <net_lib/net_lib.h>
 
+#include <c_lib/state/wrapper.cpp>
 
 int init_c_lib() {
     printf("init c_lib\n");

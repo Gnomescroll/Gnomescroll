@@ -3,6 +3,8 @@
 #include <net_lib/common/message_handler.h>
 #include <c_lib/agent/net_agent.cpp>
 
+#include <c_lib/objects/cspray.c>
+
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
@@ -14,5 +16,8 @@ void RegisterMessages() {
 
 	Agent_cs_CtoS::register_server_packet();
 	Agent_cs_StoC::register_client_packet();
+
+    //object packets
+    cspray_StoC::register_client_packet();
 }
 }

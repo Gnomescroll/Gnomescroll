@@ -51,6 +51,13 @@ static inline void pack_u16(int* x, unsigned char* buff, int* buff_n, bool pack)
     *buff_n += sizeof(uint16_t);
 }
 
+static inline void pack_u16(uint16_t* x, unsigned char* buff, int* buff_n, bool pack)
+{
+    if(pack == true)    *((uint16_t*)(buff+*buff_n)) = *x; 
+    if(pack == false)   *x = *((uint16_t*)(buff+*buff_n));
+    *buff_n += sizeof(uint16_t);
+}
+
 static inline void pack_8(int* x, unsigned char* buff, int* buff_n, bool pack)
 {
     if(pack == true)    *((int8_t*)(buff+*buff_n)) = *x; 

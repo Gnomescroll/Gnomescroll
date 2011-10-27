@@ -1,5 +1,6 @@
 #include "cspray.h"
 
+#pragma once
 
 struct Cspray {
     struct Particle2 particle;
@@ -109,6 +110,52 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
     //g->particle = p;
     g->active = 0;
 }
+
+/*
+ *  Networking; spawn packet from server to client
+ */
+
+/*
+    p->ttl = ttl;
+    p->ttl_max = ttl_max;
+    p->id = id;
+    p->type = type;
+*/
+
+#include <c_lib/template/net.hpp>
+
+class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
+{
+    public:
+
+        float x,y,z;
+        float vx,vy,vz;
+        uint16_t ttl;
+        uint16_t ttl_max;
+        uint16_t id;
+        uint8_t type;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u16(&ttl, buff, buff_n, pack);
+            pack_u16(&ttl_max, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            printf("Spawn cspray particle: %i \n", id);
+        }
+};
+
 
 
 /*

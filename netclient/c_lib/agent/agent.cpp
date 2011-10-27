@@ -228,7 +228,7 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
         collision[4]++; //top
     }
 
-    printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
+    //printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
 }
 
 inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
