@@ -1061,7 +1061,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         return block
 
     def facing_block_position(self):
-        #return ray_nearest_block(
         return ray_cast_farest_empty_block(
             self.x,
             self.y,
