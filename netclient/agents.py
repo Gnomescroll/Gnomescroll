@@ -1061,10 +1061,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         return block
 
     def facing_block_position(self):
-        print "Ray Casting from wrong position!  Use camera position!"
         return ray_nearest_block(
-            #self.x + self.box_r,
-            #self.y + self.box_r,
             self.x,
             self.y,
             self.z + self.camera_height,
@@ -1073,10 +1070,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         )
 
     def nearest_block_position(self):
-        print "Ray Casting from wrong position!  Use camera position!"
         return ray_nearest_block(
-            #self.x + self.box_r,
-            #self.y + self.box_r,
             self.x,
             self.y,
             self.z + self.camera_height,
