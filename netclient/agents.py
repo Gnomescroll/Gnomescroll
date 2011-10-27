@@ -1086,25 +1086,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if self._y_angle > 0.499:
             self._y_angle = 0.499
 
-    #def pickup_item(self, item, index=None):
-        #if self.team.is_viewers():
-            #return
-        #item = self.inventory.add(item, index)
-        #if item:
-            #NetOut.sendMessage.pickup_item(self, item, index)
 
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():
             return
         if self.inventory.can_add(item):
             NetOut.sendMessage.pickup_item(self, item, index)
-
-    #def drop_item(self, item):
-        #if self.team.is_viewers():
-            #return
-        #item = self.inventory.drop(item)
-        #if item:
-            #NetOut.sendMessage.drop_item(self, item)
 
     def drop_item(self, item):
         if self.team.is_viewers():
@@ -1124,5 +1111,3 @@ import c_lib.terrain_map as terrainMap
 from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *
-#from cube_dat import CubeGlobal
-#import cube_lib.VBO
