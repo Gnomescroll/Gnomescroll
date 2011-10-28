@@ -130,10 +130,10 @@ class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
 
         float x,y,z;
         float vx,vy,vz;
-        uint16_t ttl;
+        //uint16_t ttl;
         uint16_t ttl_max;
         uint16_t id;
-        uint8_t type;
+        //uint8_t type;
 
         inline void packet(unsigned char* buff, int* buff_n, bool pack) 
         {
@@ -146,9 +146,9 @@ class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
             pack_float(&vz, buff, buff_n, pack);
 
             pack_u16(&id, buff, buff_n, pack);
-            pack_u16(&ttl, buff, buff_n, pack);
+            //pack_u16(&ttl, buff, buff_n, pack);
             pack_u16(&ttl_max, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
+            //pack_u8(&type, buff, buff_n, pack);
         }
 
         inline void handle() {
