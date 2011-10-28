@@ -26,7 +26,7 @@ struct Neutron {
 };
 
 struct Neutron* neutron_list[max_neutron];
-//float a[16];
+float neutron_proj_mtrx[16];
 int neutron_count=0;
 unsigned int neutron_id=0;
 
@@ -188,14 +188,14 @@ void create_neutron(int type, int energy, float x, float y, float z, float vx, f
 void neutron_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(neutron_count == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, a);
+    glGetFloatv(GL_MODELVIEW_MATRIX, neutron_proj_mtrx);
 
     struct Neutron* g = NULL;
     int i;
 
     float size = 0.3;
-    float up[3] = {a[0]*size, a[4]*size, a[8]*size};
-    float right[3] = {a[1]*size, a[5]*size, a[9]*size};
+    float up[3] = {neutron_proj_mtrx[0]*size, neutron_proj_mtrx[4]*size, neutron_proj_mtrx[8]*size};
+    float right[3] = {neutron_proj_mtrx[1]*size, neutron_proj_mtrx[5]*size, neutron_proj_mtrx[9]*size};
     int id = 21;
 
     float tx_min, tx_max, ty_min, ty_max;

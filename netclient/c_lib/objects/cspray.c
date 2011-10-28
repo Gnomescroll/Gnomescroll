@@ -10,7 +10,7 @@ struct Cspray {
 #define max_cspray 4096
 
 struct Cspray* cspray_list[max_cspray];
-//float a[16];
+float cspray_proj_mtrx[16];
 int cspray_count=0;
 unsigned int cspray_id=0;
 
@@ -120,14 +120,14 @@ void create_cspray(int type, float x, float y, float z, float vx, float vy, floa
 void cspray_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(cspray_count == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, a);
+    glGetFloatv(GL_MODELVIEW_MATRIX, cspray_proj_mtrx);
 
     struct Cspray* g = NULL;
     int i;
 
     float size = 0.3;
-    float up[3] = {a[0]*size, a[4]*size, a[8]*size};
-    float right[3] = {a[1]*size, a[5]*size, a[9]*size};
+    float up[3] = {cspray_proj_mtrx[0]*size, cspray_proj_mtrx[4]*size, cspray_proj_mtrx[8]*size};
+    float right[3] = {cspray_proj_mtrx[1]*size, cspray_proj_mtrx[5]*size, cspray_proj_mtrx[9]*size};
     int id=21;
 
     float tx_min, tx_max, ty_min, ty_max;

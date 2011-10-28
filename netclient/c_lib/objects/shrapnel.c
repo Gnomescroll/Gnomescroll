@@ -4,7 +4,7 @@
 #define max_shrapnel 4096
 
 struct Particle* shrapnel_list[max_shrapnel];
-//float a[16];
+float shrapnel_proj_mtrx[16];
 int shrapnel_count=0;
 unsigned int shrapnel_id=0;
 
@@ -70,14 +70,14 @@ void create_shrapnel(int type, float x, float y, float z, float vx, float vy, fl
 void shrapnel_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(shrapnel_count == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, a);
+    glGetFloatv(GL_MODELVIEW_MATRIX, shrapnel_proj_mtrx);
 
     struct Particle* g = NULL;
     int i;
 
     float size = 0.1;
-    float up[3] = {a[0]*size, a[4]*size, a[8]*size};
-    float right[3] = {a[1]*size, a[5]*size, a[9]*size};
+    float up[3] = {shrapnel_proj_mtrx[0]*size, shrapnel_proj_mtrx[4]*size, shrapnel_proj_mtrx[8]*size};
+    float right[3] = {shrapnel_proj_mtrx[1]*size, shrapnel_proj_mtrx[5]*size, shrapnel_proj_mtrx[9]*size};
     int id;
 
     float tx_min, tx_max, ty_min, ty_max;

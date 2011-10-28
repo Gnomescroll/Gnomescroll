@@ -2,7 +2,7 @@
 
 
 struct Particle2* Grenade_list[1024];
-float a[16];
+float g_proj_mtrx[16];
 int g_count=0;
 
 void inline grenade_Tick(struct Particle2* g);
@@ -14,7 +14,8 @@ void init_objects_grenade() {
 void inline grenade_Tick(struct Particle2* g) {
     //printf("%d grenade is ticking\n", g->id);
     //int n = _GET_MS_TIME();
-    int *s = bounce_simple_rk4(g, 0.5f);
+    float damp = 1.0f;
+    int *s = bounce_simple_rk4(g, damp);
     if (s[0] || s[1] || s[2]) {
         printf("GRENADE BOUNCE\n");
         printf("%d, %d, %d\n", s[0], s[1], s[2]);
@@ -88,13 +89,13 @@ void destroy_grenade(int gid) {
 void grenade_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
     if(g_count == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, a);
+    glGetFloatv(GL_MODELVIEW_MATRIX, g_proj_mtrx);
 
     struct Particle2* g = NULL;
     int i;
 
-    float up[3] = {a[0], a[4], a[8]};
-    float right[3] = {a[1], a[5], a[9]};
+    float up[3] = {g_proj_mtrx[0], g_proj_mtrx[4], g_proj_mtrx[8]};
+    float right[3] = {g_proj_mtrx[1], g_proj_mtrx[5], g_proj_mtrx[9]};
     int id = 5;
 
     float tx_min, tx_max, ty_min, ty_max;
