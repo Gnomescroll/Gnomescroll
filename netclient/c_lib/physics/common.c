@@ -289,18 +289,13 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
 /* integrator */
 struct State derivatives[4];
-//struct State _derivative = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}};
 
 static inline void rk4_accelerate(struct State* inter, float t, float dt) {
-    //const float k = 10;
-    //const float b = 1;
-//printf("ACCELMAIN\n");
-    //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
 
-    const float air_resist = 0.1f;
+    const float air_resist = 1.0f;
     //const float spring = 0.1f;
-    //const
-    inter->v.z -= 10.0f;  // gravity
+    const float gravity = 250.0f;
+    inter->v.z -= gravity;
 
     ////inter->v.x -= spring * inter->p.x;
     ////inter->v.y -= spring * inter->p.y;
@@ -309,15 +304,6 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
     inter->v.x *= air_resist;
     inter->v.y *= air_resist;
     inter->v.z *= air_resist;
-
-    //inter->v.x = 1;
-    //inter->v.y = 1;
-    //inter->v.z = 1;
-
-
-
-    //printf("%f,%f,%f, %f,%f,%f\n", inter->p.x, inter->p.y, inter->p.z, inter->v.x, inter->v.y, inter->v.z);
-//printf("-----------\n");
 }
 
 struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate derivative */
