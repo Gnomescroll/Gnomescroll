@@ -746,19 +746,6 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
     s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
 }
 
-
-void agents_draw(int all) {  // if (first_person) dont draw yourself
-    #ifdef DC_CLIENT
-    ClientState::agent_list.draw(all);
-    #endif
-}
-
-void agents_draw() {
-    #ifdef DC_CLIENT
-    ClientState::agent_list.draw();
-    #endif
-}
-
 void clear_agents_to_draw() {
     int i;
     for (i=0; i<n_agents_to_draw; i++) {
