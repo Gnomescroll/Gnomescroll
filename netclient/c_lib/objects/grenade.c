@@ -16,10 +16,10 @@ void inline grenade_Tick(struct Particle2* g) {
     //int n = _GET_MS_TIME();
     float damp = 0.5f;
     int *s = bounce_simple_rk4(g, damp);
-    if (s[0] || s[1] || s[2]) {
-        printf("GRENADE BOUNCE\n");
-        printf("%d, %d, %d\n", s[0], s[1], s[2]);
-    }
+    //if (s[0] || s[1] || s[2]) {
+        //printf("GRENADE BOUNCE\n");
+        //printf("%d, %d, %d\n", s[0], s[1], s[2]);
+    //}
     g->ttl++;
     //int n2 = _GET_MS_TIME();
     //printf("RK4 took %d\n", n2-n);
