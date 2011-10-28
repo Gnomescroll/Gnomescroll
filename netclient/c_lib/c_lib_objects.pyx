@@ -4,6 +4,11 @@ cdef extern from "./physics/vector.h":
         float y
         float z
 
+cdef extern from "./physics/common.h":
+    struct State:
+        Vector p
+        Vector v
+
 cdef extern from "./objects/grenade.h":
     Vector* _get_grenade_position(int gid)
     void grenade_tick()
@@ -30,8 +35,17 @@ cdef extern from "./objects/circuit_tree.h":
     void circuit_tree_generate(int type, int seed)
     void circuit_tree_draw()
 
+cdef extern from "./objects/particles.h":
+    cdef struct Particle2:
+        State state
+
+cdef extern from "./objects/cspray.hpp":
+    cdef cppclass Cspray:
+        Particle2 particle
+
 cdef extern from "./state/wrapper.hpp":
-    void draw_csprays()
+    Cspray* C_create_cspray()
+    void C_draw_csprays()
     
 cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
     #void agent_draw() #draw all agents
@@ -52,7 +66,7 @@ def draw():
     blood_draw()
     shrapnel_draw()
 
-    draw_csprays()
+    C_draw_csprays()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)

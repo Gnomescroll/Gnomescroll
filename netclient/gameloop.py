@@ -242,7 +242,7 @@ class App(object):
                     z *= v / le
                     #_type = random.randint(0,9*3)
                     _type=0
-                    c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+                    #c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 #if True or _i % 15 == 0:
                 for _j_ in range(0,1):
                     v = 3
@@ -255,7 +255,7 @@ class App(object):
                     vz = -3.5 #v*(random.random() -0.5)
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
-                    c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
+                    #c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()

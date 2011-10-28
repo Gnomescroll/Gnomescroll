@@ -55,7 +55,7 @@ class GenericObjectList:
             del self.objects[id]
         #    print '%s: %s removed; id= %s' % (self.__class__.__name__, self._object_type.__name__, id,)
             if self._wrapper is not None:
-                self._wrapper._remove(id)
+                self._wrapper.remove(id)
             return True
         return False
 

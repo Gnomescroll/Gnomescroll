@@ -669,7 +669,7 @@ Agent_state::Agent_state(int _id) {
 }
 
 void Agent_state::draw() {
-
+printf("AGENT DRAW\n");
 #ifdef DC_CLIENT
     AgentDraw::draw_agent(this);
 #endif
