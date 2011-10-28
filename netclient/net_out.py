@@ -303,9 +303,10 @@ class SendMessage(GenericMessage):
     @noViewer
     @sendJSON('throw_grenade')
     def throw_grenade(self, agent):
+        vec = agent.normalized_direction()
         return {
             'aid'       :   agent.id,
-            'vector'    :   agent.normalized_direction(),
+            'vector'    :   vec,
         }
 
 

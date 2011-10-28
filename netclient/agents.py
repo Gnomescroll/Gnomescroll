@@ -750,7 +750,8 @@ class AgentModel(AgentWrapper):
         cAgents.crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
-        return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))
+        vec = vector_lib.angle2vector(self.x_angle, self.y_angle)
+        return vector_lib.normalize(vec)
 
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):

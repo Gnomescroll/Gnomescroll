@@ -14,7 +14,7 @@ void init_objects_grenade() {
 void inline grenade_Tick(struct Particle2* g) {
     //printf("%d grenade is ticking\n", g->id);
     //int n = _GET_MS_TIME();
-    float damp = 1.0f;
+    float damp = 0.5f;
     int *s = bounce_simple_rk4(g, damp);
     if (s[0] || s[1] || s[2]) {
         printf("GRENADE BOUNCE\n");
