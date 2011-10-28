@@ -10,6 +10,8 @@ sprites = [
 ('star5.png', 4),
 ('star6.png', 5),
 
+('xox/flayer-blue.png', 6),
+
 #laser effects
 ('laser1.png', 16),
 ('laser2.png', 17),
