@@ -680,11 +680,13 @@ class AgentModel(AgentWrapper):
             val = AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             val = object.__getattribute__(self, name)
+            
         if name == 'team':
             if not isinstance(val, NoTeam):
                 val = GameStateGlobal.teamList[val]
                 if val is not None:
                     self.team = val
+                    
         return val
 
     def pos(self, xyz=None):

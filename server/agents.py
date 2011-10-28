@@ -333,8 +333,9 @@ class AgentAction:
         print 'Agent.throw_grenade'
         pl = GameStateGlobal.projectileList
         pos = self.pos()
-        pos[2] += 0.25 * self.b_height
+        #pos[2] += 0.25 * self.b_height
         state = pos + direction
+        print pos
         grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
         NetOut.event.projectile_create(grenade)
 
@@ -361,7 +362,8 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         #if id is None:
             #id = GameStateGlobal.new_agent_id()
         #id = AgentListWrapper._create_agent()
-        AgentWrapper.__init__(self)
+        self.wrapper = AgentWrapper()
+        self.id = self.wrapper.id
 
         self.team = team
 
@@ -416,22 +418,16 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         self.owner = player_id
 
     def __getattribute__(self, name):
-        if hasattr(AgentWrapper, name):
-            return AgentWrapper.__getattribute__(self, name)
-        else:
-            return object.__getattribute__(self, name)
-        '''
         try:
             val = AgentWrapper.__getattribute__(self, name)
+            return val
         except AttributeError:
-            val = object.__getattribute__(self, name)
-        return val
-        '''
+            return object.__getattribute__(self, name)
 
     # gets or sets
     def pos(self, xyz=None):
         if xyz is None:
-            return self.state[0:3]
+            return [self.x, self.y, self.z]
         else:
             self.x, self.y, self.z = xyz
 

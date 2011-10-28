@@ -41,6 +41,8 @@ class AgentWrapper(object):
         cdef Agent_state* a
         a = get_agent(object.__getattribute__(self,'id'))
         if name == 'x':
+            print 'returning x'
+            print a.s.x
             return a.s.x
         elif name == 'y':
             return a.s.y
