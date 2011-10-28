@@ -1,6 +1,5 @@
 #ifndef object_particles_h
 #define object_particles_h
-//#include <physics/common.h>
 
 #include <physics/common.h>
 
@@ -16,8 +15,6 @@ struct Particle {
 
 struct Particle2 {
     unsigned int id;
-    //float x,y,z;
-    //float vx,vy,vz;
     struct State state;
     unsigned int ttl;
     unsigned int ttl_max;
