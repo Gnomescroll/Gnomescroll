@@ -333,7 +333,7 @@ class AgentAction:
         print 'Agent.throw_grenade'
         pl = GameStateGlobal.projectileList
         pos = self.pos()
-        #pos[2] += 0.25 * self.b_height
+        pos[2] += self.b_height * 0.75
         state = pos + direction
         print pos
         grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
@@ -427,7 +427,7 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
     # gets or sets
     def pos(self, xyz=None):
         if xyz is None:
-            return [self.x, self.y, self.z]
+            return self.state[0:3]
         else:
             self.x, self.y, self.z = xyz
 
