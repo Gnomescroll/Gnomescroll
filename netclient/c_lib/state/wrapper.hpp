@@ -3,7 +3,7 @@
 
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/objects/cspray.hpp>
-void draw_agents();
+
 /****** fun with macros ******/
 
 #define CREATE_THING(RETURN_TYPE, LIST, NAME, STATE)            \
