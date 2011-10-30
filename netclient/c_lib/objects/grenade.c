@@ -12,17 +12,10 @@ void init_objects_grenade() {
 }
 
 void inline grenade_Tick(struct Particle2* g) {
-    //printf("%d grenade is ticking\n", g->id);
-    //int n = _GET_MS_TIME();
     float damp = 0.5f;
-    int *s = bounce_simple_rk4(g, damp);
-    //if (s[0] || s[1] || s[2]) {
-        //printf("GRENADE BOUNCE\n");
-        //printf("%d, %d, %d\n", s[0], s[1], s[2]);
-    //}
+    //int *s = bounce_simple_rk4(g, damp);
+    bounce_simple_rk4(g, damp);
     g->ttl++;
-    //int n2 = _GET_MS_TIME();
-    //printf("RK4 took %d\n", n2-n);
 }
 
 void grenade_tick() {
@@ -56,7 +49,6 @@ struct Vector* _get_grenade_position(int gid) {
 }
 
 int create_grenade(int type, float x, float y, float z, float vx, float vy, float vz, unsigned int ttl, unsigned int ttl_max) {
-    //printf("Create Gernade\n");
     struct Particle2* g = NULL;
     int i=0;
     for(i=0; i<1024; i++) {

@@ -2,14 +2,16 @@
 
 
 #include <c_lib/agent/agent.hpp>
+#include <c_lib/objects/cspray.hpp>
 
 namespace ServerState {
 
-	class Agent_list agent_list;
-	//class Agent_list agent_list;
-		
-	void InitServerState();
+    class Agent_list agent_list;
 
-	void ServerTick();
+    class Cspray_list cspray_list;
+        
+    void InitServerState();
+
+    void ServerTick();
 
 }

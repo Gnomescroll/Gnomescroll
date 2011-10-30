@@ -14,9 +14,9 @@ cdef extern from "./objects/neutron.h":
     void neutron_tick()
     void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
 
-cdef extern from "./objects/cspray.h":
-    void cspray_tick()
-    void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
+#cdef extern from "./objects/cspray.h":
+    #void cspray_tick()
+    #void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz)
 
 '''
 cdef extern from "./agent/agent.h":
@@ -26,7 +26,7 @@ cdef extern from "./agent/agent.h":
 def tick():
     grenade_tick()
     neutron_tick()
-    cspray_tick()
+    #cspray_tick()
     #agent_tick()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
@@ -39,7 +39,8 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
     create_neutron(type,energy, x,y,z, vx,vy,vz)
 
 def _create_cspray(int type, float x, float y, float z, float vx, float vy, float vz):
-    create_cspray(type, x,y,z, vx,vy,vz)
+    return
+    #create_cspray(type, x,y,z, vx,vy,vz)
 
 def get_grenade_position(int gid):
     cdef Vector *pos

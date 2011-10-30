@@ -1,5 +1,13 @@
 #pragma once 
 
+/*
+ * Objects managed by Object_list must support the minimum interface:
+ *
+ * void draw();
+ * void client_tick();
+ * void server_tick();
+ */
+
 template <class Object_state, int max_n=1024>
 class Object_list {
         private:

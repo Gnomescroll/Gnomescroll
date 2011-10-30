@@ -18,10 +18,10 @@ cdef extern from "./agent/agent.hpp":
 
 #agent list wrapper
 cdef extern from "./state/wrapper.hpp":
-    Agent_state* create_agent(int id) #for client
-    Agent_state* get_or_create_agent(int id)
-    Agent_state* get_agent(int id)
-    void delete_agent(int id)
+    Agent_state* C_create_agent(int id) #for client
+    Agent_state* C_get_or_create_agent(int id)
+    Agent_state* C_get_agent(int id)
+    void C_delete_agent(int id)
 
 from c_lib.c_lib_agents import _init_agent_vox
 
@@ -30,18 +30,15 @@ agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_an
 class AgentWrapper(object):
 
     def __init__(self, id):
-        AgentListWrapper._create(id)
+        AgentListWrapper.create(id)
         self.id = id
         
     def __getattribute__(self, name):
-        if name == 'id':
-            return object.__getattribute__(self, name)
-            
         if name not in agent_props:
             raise AttributeError
 
         cdef Agent_state* a
-        a = get_agent(object.__getattribute__(self, 'id'))
+        a = C_get_agent(object.__getattribute__(self, 'id'))
         
         if name == 'x':
             return a.s.x
@@ -69,29 +66,29 @@ class AgentWrapper(object):
 #functions
 
 #create agent and return id
-def _create_agent(int id):
+def create_agent(int id):
     cdef Agent_state* a
-    a = get_or_create_agent(id)
+    a = C_get_or_create_agent(id)
     return a.id
 
-cdef Agent_state* _get_agent(int id):
+cdef Agent_state* get_agent(int id):
     cdef Agent_state* a
-    a = get_agent(id)
+    a = C_get_agent(id)
     return a
 
-def _delete_agent(int id):
-    delete_agent(id)
+def delete_agent(int id):
+    C_delete_agent(id)
     return id
 
 class AgentListWrapper:
 
     @classmethod
-    def _create(cls, int id):
-        return _create_agent(id)
+    def create(cls, int id):
+        return create_agent(id)
 
     @classmethod
-    def _remove(cls, int id):
-        return _delete_agent(id)
+    def remove(cls, int id):
+        return delete_agent(id)
 
 #control state
 cdef extern from "./state/client_state.hpp" namespace "ClientState":

@@ -39,8 +39,6 @@ DONT DEPRECATE BELOW
 '''
 
 cdef extern from "./agent/agent.hpp":
-    void agents_draw()
-
     int agent_create(int id, float x, float y, float z)
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
@@ -52,6 +50,12 @@ cdef extern from "./agent/agent.hpp":
     void set_agents_to_draw(int* ids, int ct)
 
     void agent_crouch(int agent_id, int on_off)
+
+cdef extern from "./state/wrapper.hpp":
+    void C_draw_agents()
+
+def draw_agents():
+    C_draw_agents()
 
 def crouch(int agent_id, int on_off):
     agent_crouch(agent_id, on_off)
@@ -90,7 +94,7 @@ def _init_agent_vox(int id):
     init_agent_vox_done(id)
 
 def _update_agent_vox(int id):
-    return
+    return # !!!
     dat.skel_tick()
     for part in range(PART_NUM):
         length, ax,ay,az= dat.lu2[part]
@@ -98,9 +102,6 @@ def _update_agent_vox(int id):
     for part in range(PART_NUM):
         fx,fy,fz,nx,ny,nz = dat.lu3[part]
         set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
-def draw_agents():
-    agents_draw()
 
 def load_agents_to_draw(agents):
     clear_agents_to_draw()
