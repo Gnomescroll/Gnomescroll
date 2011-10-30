@@ -25,7 +25,8 @@ cdef extern from "./agent/agent.hpp":
         void destroy(int _id)
         void where()
 
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
+#cdef extern from "./state/client_state.hpp" namespace "ClientState":
+cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
     Agent_list agent_list
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
@@ -78,7 +79,8 @@ def teleport_Agent(int id, float x, float y, float z):
         print "Cannot teleport agent: agent %i does not exist" %(id)
 
 #control state
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
+#cdef extern from "./state/client_state.hpp" namespace "ClientState":
+cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
     void set_PlayerAgent_id(int id)
 

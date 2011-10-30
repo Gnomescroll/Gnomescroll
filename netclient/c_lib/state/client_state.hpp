@@ -8,8 +8,8 @@
 #ifdef DC_CLIENT
 namespace ClientState {
 
-    extern class Agent_list agent_list;
-    extern class Cspray_list cspray_list;
+    class Agent_list agent_list;
+    class Cspray_list cspray_list;
         
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi);
     void set_PlayerAgent_id(int id);
