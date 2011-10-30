@@ -9,6 +9,8 @@
 #ifdef DC_CLIENT
 namespace ClientState {
 
+    class Agent_list agent_list;
+    class Cspray_list cspray_list;
 
         PlayerAgent_state playerAgent_state;
 
