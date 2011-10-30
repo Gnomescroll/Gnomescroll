@@ -55,7 +55,6 @@ def init_draw_agents():
     init_agents_to_draw()
 
 def draw_agents():
-    print 'draw agetns'
     agent_list.draw()
 
 def crouch(int agent_id, int on_off):

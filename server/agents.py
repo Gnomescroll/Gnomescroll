@@ -24,7 +24,7 @@ from vector_lib import distance
 
 from opts import opts
 
-from c_lib.c_lib_agent_wrapper import AgentListWrapper, AgentWrapper, teleport_Agent
+from c_lib.c_lib_agents import AgentListWrapper, AgentWrapper, teleport_Agent
 
 # datastore controller for agents
 class AgentList(GenericObjectList):
