@@ -50,6 +50,7 @@ void Agent_list::draw(int all)
         glEnable(GL_CULL_FACE);
         for(i=0; i<n_max; i++) { //max_n
             if(a[i] != NULL) {
+                printf("SHOULD DRAW AGENT %d\n", i);
                 a[i]->draw();
             }
         }

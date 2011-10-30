@@ -22,10 +22,10 @@ cdef extern from "./agent/agent.hpp":
         Agent_state* create()
         Agent_state* create(int id)
         void destroy(int _id)
+        void where()
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
-
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 
@@ -41,6 +41,7 @@ class AgentWrapper(object):
 
         cdef Agent_state* a
         a = agent_list.get(object.__getattribute__(self,'id'))
+        agent_list.where()
         if name == 'x':
             return a.s.x
         elif name == 'y':

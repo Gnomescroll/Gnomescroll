@@ -28,6 +28,8 @@ class Object_list {
                 void draw(int all);
                 void client_tick(); //override on template specilization
                 void server_tick(); //override on template specilization
+
+                void where();
         };
 
 //template <class T>
@@ -40,12 +42,19 @@ Object_list<Object_state, max_n>::Object_list()
     id_c = 0;
     int i;
     for(i=0;i<max_n;i++) a[i] = NULL;
+    where();
 }
 
+template <class Object_state, int  max_n>
+void Object_list<Object_state, max_n>::where()
+{
+    printf("%s_list pointer is %p\n", name(), this);
+}
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::get(int id)
 {
+    where();
     if((id < 0) || (id >= n_max)) {
         printf("%s id error: id=%i\n", name() ,id);
         return NULL;
@@ -59,6 +68,7 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create() {
+    where();
         int i;
         int id = id_c;
         id_c++;
@@ -78,6 +88,7 @@ Object_state* Object_list<Object_state, max_n>::create() {
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(int id) {
+    where();
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
         printf("%s_list: Created object from id: %i\n", name(), id);
@@ -91,6 +102,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::destroy(int id) {
+    where();
     if(a[id]==NULL) {
         printf("%s_list: Cannot delete object: object is null\n", name() );
         return;
