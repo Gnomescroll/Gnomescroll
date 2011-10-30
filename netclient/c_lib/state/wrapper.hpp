@@ -18,8 +18,10 @@
 
 #define GET_OR_CREATE_THING(RETURN_TYPE, LIST, NAME, STATE)     \
     RETURN_TYPE C_get_or_create_##NAME(int id) {                    \
+    printf("GET O CREATE %d\n", id);\
         RETURN_TYPE a = STATE::LIST.get(id);                    \
-        if (a==NULL) {                                     \
+        if (a==NULL) {                                    \
+        printf("GET FAIL:: CREATING\n");\
             a = STATE::LIST.create(id);                    \
         }                                                  \
         return a;                                         \
@@ -27,6 +29,7 @@
 
 #define GET_THING(RETURN_TYPE, LIST, NAME, STATE)               \
     RETURN_TYPE C_get_##NAME(int id) {                              \
+    printf("GET %d\n", id);\
         return STATE::LIST.get(id);                       \
     }                                                      \
 
@@ -48,10 +51,10 @@
     DELETE_THING(RETURN_TYPE, LIST, NAME, STATE)\
     DRAW_THING(RETURN_TYPE, LIST, NAME, STATE)\
 
-#ifdef DC_SERVER
-    #define STATE ServerState
-#else
+#ifdef DC_CLIENT
     #define STATE ClientState
+#else
+    #define STATE ServerState
 #endif
 
 
@@ -60,3 +63,4 @@
  */
 FULL_WRAPPER(Agent_state*, agent_list, agent, STATE)
 FULL_WRAPPER(Cspray*, cspray_list, cspray, STATE)
+//FULL_WRAPPER(Grenade*, grenade_list, grenade, STATE)
