@@ -44,7 +44,7 @@ Object_list<Object_state, max_n>::Object_list()
     int i;
     for(i=0;i<max_n;i++) a[i] = NULL;
     printf("%s list instantiated\n", name());
-    where();
+    //where();
 }
 
 template <class Object_state, int max_n>
@@ -56,7 +56,7 @@ void Object_list<Object_state, max_n>::where()
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::get(int id)
 {
-    where();
+    //where();
     if((id < 0) || (id >= n_max)) {
         printf("%s id error: id=%i\n", name() ,id);
         return NULL;
@@ -70,7 +70,7 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create() {
-    where();
+    //where();
         int i;
         int id = id_c;
         id_c++;
@@ -90,7 +90,7 @@ Object_state* Object_list<Object_state, max_n>::create() {
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(int id) {
-    where();
+    //where();
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
         printf("%s_list: Created object from id: %i\n", name(), id);
@@ -103,7 +103,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
-    where();
+    //where();
     Object_state* obj = a[id];
     if (obj == NULL) {
         obj = create(id);
@@ -113,7 +113,7 @@ Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::destroy(int id) {
-    where();
+    //where();
     if(a[id]==NULL) {
         printf("%s_list: Cannot delete object: object is null\n", name() );
         return;

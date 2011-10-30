@@ -129,6 +129,7 @@ class App(object):
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
         #self.intervals.register(send_agent_pos, 500)
 
+        cAgents.init_draw_agents()
 
         self.init_inputs()
         print "App init finished"

@@ -18,8 +18,10 @@
 void Agent_list::draw() 
 {
     #ifdef DC_CLIENT
+    printf("C Draw agetn\n");
         int i,j;
 
+        int drew=0;
         glDisable(GL_TEXTURE_2D);
         //glEnable(GL_DEPTH_TEST);
         glDisable(GL_DEPTH_TEST);
@@ -27,8 +29,22 @@ void Agent_list::draw()
         for(i=0; i<n_agents_to_draw; i++) { //max_n
             j = agents_to_draw[i];
             if (j < 0) continue;
+            printf("Told to draw %d\n", j);
             if(a[j] != NULL) {
-                a[j]->draw();
+              printf("SHOULD DRAW AGENT %d\n", j);
+              a[j]->draw();
+              drew = 1;
+            }
+        }
+        if (drew==0) {
+            for (i=0; i<AGENT_MAX; i++) {
+                if (a[i] != NULL) {
+                    printf("Agent %d is not null but nothing was drawn.\n", i);
+                    drew=1;
+                }
+            }
+            if (!drew) {
+                printf("Nothing was drawn at all.\n");
             }
         }
         glDisable(GL_CULL_FACE);
@@ -746,6 +762,14 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
     s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
 }
 
+void init_agents_to_draw() {
+    int i;
+    for (i=0; i<AGENT_MAX; i++) {
+        agents_to_draw[i] = -1;
+    }
+    n_agents_to_draw = 0;
+}
+
 void clear_agents_to_draw() {
     int i;
     for (i=0; i<n_agents_to_draw; i++) {
@@ -758,6 +782,7 @@ void set_agents_to_draw(int* ids, int ct) {
     int i;
     for (i=0; i<ct; i++) {
         agents_to_draw[i] = ids[i];
+        printf("agents_to_draw :: %d\n", ids[i]);
     }
     n_agents_to_draw = ct;
 }

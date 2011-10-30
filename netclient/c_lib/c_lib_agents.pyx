@@ -46,6 +46,7 @@ cdef extern from "./agent/agent.hpp":
     void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
     void init_agent_vox_done(int id)
 
+    void init_agents_to_draw()
     void clear_agents_to_draw()
     void set_agents_to_draw(int* ids, int ct)
 
@@ -59,7 +60,11 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
 
+def init_draw_agents():
+    init_agents_to_draw()
+
 def draw_agents():
+    print 'draw agetns'
     agent_list.draw()
 
 def crouch(int agent_id, int on_off):
