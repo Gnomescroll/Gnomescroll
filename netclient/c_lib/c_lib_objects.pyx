@@ -43,9 +43,17 @@ cdef extern from "./objects/cspray.hpp":
     cdef cppclass Cspray:
         Particle2 particle
 
-cdef extern from "./state/wrapper.hpp":
-    Cspray* C_create_cspray()
-    void C_draw_csprays()
+    cdef cppclass Cspray_list:
+        Cspray* get(int id)
+        Cspray* create()
+        Cspray* create(int id)
+        void destroy(int _id)
+        void draw()
+        void draw(int all)
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Cspray_list cspray_list
+
     
 cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
     #void agent_draw() #draw all agents
@@ -66,7 +74,7 @@ def draw():
     blood_draw()
     shrapnel_draw()
 
-    C_draw_csprays()
+    cspray_list.draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)

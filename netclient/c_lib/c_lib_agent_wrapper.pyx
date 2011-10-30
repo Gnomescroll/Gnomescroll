@@ -22,8 +22,6 @@ cdef extern from "./agent/agent.hpp":
         Agent_state* create()
         Agent_state* create(int id)
         void destroy(int _id)
-        void draw()
-        void draw(int all)
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list

@@ -51,11 +51,16 @@ cdef extern from "./agent/agent.hpp":
 
     void agent_crouch(int agent_id, int on_off)
 
-cdef extern from "./state/wrapper.hpp":
-    void C_draw_agents()
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_list:
+        void draw()
+        void draw(int all)
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Agent_list agent_list
 
 def draw_agents():
-    C_draw_agents()
+    agent_list.draw()
 
 def crouch(int agent_id, int on_off):
     agent_crouch(agent_id, on_off)
