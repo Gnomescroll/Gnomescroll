@@ -17,7 +17,7 @@
 #include "./objects/particles.c"
 #include "./objects/grenade.c"
 #include "./objects/neutron.c"
-#include "./objects/cspray.c"
+#include "./objects/cspray.cpp"
 #include "./objects/circuit_tree.c"
 #include "./objects/shrapnel.c"
 #include "./objects/blood.c"
@@ -57,13 +57,12 @@
 
 #include <net_lib/net_lib.h>
 
-#include <c_lib/state/wrapper.cpp>
+#include <c_lib/state/wrapper.hpp>
 
 int init_c_lib() {
     printf("init c_lib\n");
     init_objects_grenade();
     init_objects_neutron();
-    init_objects_cspray();
 
     #ifdef DC_CLIENT
         init_texture_loader();

@@ -309,7 +309,6 @@ class SendMessage(GenericMessage):
             'vector'    :   vec,
         }
 
-
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):

@@ -12,7 +12,6 @@ void init_agent_vox_done(int id);
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
-void agents_draw();
 
 int n_agents_to_draw = 0;
 int agents_to_draw[AGENT_MAX];
@@ -138,6 +137,5 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     public:
         void draw();
         void draw(int);
-        void draw_inc();
 };
 
