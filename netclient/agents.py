@@ -31,8 +31,7 @@ import c_lib.c_lib_agents
 import c_lib._ray_trace
 import random
 
-from c_lib.c_lib_agent_wrapper import AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
-from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox
+from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 
 import c_lib.c_lib_agents as cAgents
 
