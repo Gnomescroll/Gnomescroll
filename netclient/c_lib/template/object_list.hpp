@@ -12,7 +12,7 @@ template <class Object_state, int max_n=1024>
 class Object_list {
         private:
                 int id_c;
-                const char* name() { return "Object"; }
+                static char* name() { return "Object"; }
         public:
                 static const int n_max = max_n;
                 int num;
