@@ -49,7 +49,8 @@ class Cspray {
 
 class Cspray_list: public Object_list<Cspray,CSPRAY_MAX>
 {
-    static const char* name() { return "Cspray"; }
+    private:
+        const char* name() { return "Cspray"; }
     public:
         void draw();
         void draw(int);

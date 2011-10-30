@@ -14,7 +14,6 @@
     #define STATELIST ServerState
 #endif
 
-
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {

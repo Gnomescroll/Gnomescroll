@@ -67,6 +67,8 @@ void Cspray_list::server_tick() {
     }
 }
 
+//const char* Cspray_list::_name = "Cspray";
+
 //void init_objects_cspray() {
     ////printf("RANDMAX= %i \n", RAND_MAX);
     ////srand(15); //seed

@@ -21,6 +21,7 @@ cdef extern from "./agent/agent.hpp":
         Agent_state* get(int id)
         Agent_state* create()
         Agent_state* create(int id)
+        Agent_state* get_or_create(int id)
         void destroy(int _id)
         void where()
 
@@ -41,6 +42,7 @@ class AgentWrapper(object):
 
         cdef Agent_state* a
         a = agent_list.get(object.__getattribute__(self,'id'))
+        print  "WHERE CYTHON THINKS IT IS"
         agent_list.where()
         if name == 'x':
             return a.s.x
@@ -91,7 +93,7 @@ class AgentListWrapper:
 
     @classmethod
     def add(cls, int id):
-        agent_list.create(id)
+        agent_list.get_or_create(id)
         return id
 
     @classmethod

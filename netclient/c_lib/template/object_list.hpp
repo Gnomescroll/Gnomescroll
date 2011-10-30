@@ -12,7 +12,7 @@ template <class Object_state, int max_n=1024>
 class Object_list {
         private:
                 int id_c;
-                const char* name() { return "Object"; }
+                virtual const char* name() { return "Object"; }
         public:
                 static const int n_max = max_n;
                 int num;
@@ -22,6 +22,7 @@ class Object_list {
                 Object_state* get(int id);
                 Object_state* create();         //object auto id
                 Object_state* create(int id);   //create object with id
+                Object_state* get_or_create(int id);
                 void destroy(int _id);
 
                 void draw();    //overide in template specilization on client
@@ -45,7 +46,7 @@ Object_list<Object_state, max_n>::Object_list()
     where();
 }
 
-template <class Object_state, int  max_n>
+template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::where()
 {
     printf("%s_list pointer is %p\n", name(), this);
@@ -99,6 +100,15 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
     }
 }
 
+template <class Object_state, int max_n>
+Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
+    where();
+    Object_state* obj = a[id];
+    if (obj == NULL) {
+        obj = create(id);
+    }
+    return obj;
+}
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::destroy(int id) {
@@ -111,7 +121,6 @@ void Object_list<Object_state, max_n>::destroy(int id) {
     a[id] = NULL;
     num--;
     printf("%s_list: Deleted object %i\n",name(), id);
-    //printf("Object_list::delete_agent not implemented\n");
 }
 
 template <class Object_state, int max_n>

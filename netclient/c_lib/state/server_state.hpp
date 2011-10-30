@@ -8,9 +8,9 @@
 namespace ServerState {
 
     class Agent_list agent_list;
-
+    
     class Cspray_list cspray_list;
-        
+
     void InitServerState();
 
     void ServerTick();
