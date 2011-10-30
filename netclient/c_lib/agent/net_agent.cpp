@@ -12,6 +12,12 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 
+#ifdef DC_CLIENT
+    #define STATE ClientState
+#else
+    #define STATE ServerState
+#endif
+
 //send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
 {
@@ -41,10 +47,10 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         }
 
         inline void handle() {
-            Agent_state* A = ClientState::agent_list.get(id);
+            Agent_state* A = STATE::agent_list.get(id);
             if(A == NULL) {
                 printf("Agent does not exist: create agent, id=%i \n", id);
-                A = ClientState::agent_list.create(id);
+                A = STATE::agent_list.create(id);
             }            
             //do something
         /*
@@ -87,7 +93,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
         }
 
         inline void handle() {
-            Agent_state* A = ClientState::agent_list.get(id);
+            Agent_state* A = STATE::agent_list.get(id);
             if(A == NULL) {
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
                 return;
@@ -125,9 +131,9 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         inline void handle() {
             //printf("cs_CtoS: seq= %i \n", seq);
 
-            Agent_state* A = ServerState::agent_list.get(id);
+            Agent_state* A = STATE::agent_list.get(id);
             if(A == NULL) {
-                ClientState::agent_list.create(id);
+                STATE::agent_list.create(id);
                 printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
                 return;
             }

@@ -57,8 +57,6 @@
 
 #include <net_lib/net_lib.h>
 
-#include <c_lib/state/wrapper.hpp>
-
 int init_c_lib() {
     printf("init c_lib\n");
     init_objects_grenade();

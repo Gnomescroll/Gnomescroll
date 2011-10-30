@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef DC_CLIENT
+
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -22,5 +24,7 @@
  }
  #endif
 */
-	void _NetClientConnect(int a, int b,int c, int d, int _port);
-	void _NetClientTick();
+    void _NetClientConnect(int a, int b,int c, int d, int _port);
+    void _NetClientTick();
+
+#endif

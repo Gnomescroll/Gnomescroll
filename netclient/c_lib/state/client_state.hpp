@@ -5,6 +5,7 @@
 
 //#include <c_lib/agent/net_agent.cpp>
 
+#ifdef DC_CLIENT
 namespace ClientState {
 
     class Agent_list agent_list;
@@ -19,3 +20,4 @@ namespace ClientState {
 
     void ClientTick();
 }
+#endif

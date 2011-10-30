@@ -38,8 +38,6 @@
 
 #include <net_lib/net_lib.h>
 
-#include <c_lib/state/wrapper.hpp>
-
 //#include "agent/net_agent.cpp"
 
 //extern "C" { 
