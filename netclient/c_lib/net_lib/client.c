@@ -1,3 +1,5 @@
+#ifdef DC_CLIENT
+
 #include <net_lib/client.h>
 
 #include <net_lib/common/message_handler.h>
@@ -75,3 +77,5 @@ void _NetClientTick() {
     ClientState::ClientTick();
     return;
 }
+
+#endif

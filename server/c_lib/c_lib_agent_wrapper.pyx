@@ -16,11 +16,18 @@ cdef extern from "./agent/agent.hpp":
         AgentState s
         void teleport(float x,float y,float z)
 
-#agent list wrapper
-cdef extern from "./state/wrapper.hpp":
-    Agent_state* C_create_agent()         #for server
-    Agent_state* C_get_agent(int id)
-    void C_delete_agent(int id)
+
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_list:
+        Agent_state* get(int id)
+        Agent_state* create()
+        Agent_state* create(int id)
+        void destroy(int _id)
+        void draw()
+        void draw(int all)
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    Agent_list agent_list
 
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
@@ -28,15 +35,17 @@ agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_an
 class AgentWrapper(object):
 
     def __init__(self):
-        id = AgentListWrapper.add()
-        self.id = id
+        cdef Agent_state *a
+        a = agent_list.create()
+        self.id = a.id
         
     def __getattribute__(self, name):
         if name not in agent_props:
             raise AttributeError
 
         cdef Agent_state* a
-        a = C_get_agent(object.__getattribute__(self,'id'))
+        #a = C_get_agent(object.__getattribute__(self,'id'))
+        a = agent_list.get(object.__getattribute__(self,'id'))
         if name == 'x':
             return a.s.x
         elif name == 'y':
@@ -64,35 +73,22 @@ class AgentWrapper(object):
 
 def teleport_Agent(int id, float x, float y, float z):
     cdef Agent_state* a
-    a = C_get_agent(id)
+    a = agent_list.get(id)
     if a != NULL:
         a.teleport(x,y,z)
     else:
         print "Cannot teleport agent: agent %i does not exist" %(id)
 
-#create agent and return id
-def create_agent():
-    cdef Agent_state* a
-    a = C_create_agent()
-    return a.id
-
-cdef Agent_state* get_agent(int id):
-    cdef Agent_state* a
-    a = C_get_agent(id)
-    return a
-
-def delete_agent(int id):
-    C_delete_agent(id)
-    return id
-
-
 class AgentListWrapper:
 
     @classmethod
     def add(cls):
-        return create_agent()
+        cdef Agent_state* a
+        a = agent_list.create()
+        return a.id
 
     @classmethod
     def remove(cls, int id):
-        return delete_agent(id)
+        agent_list.destroy(id)
+        return id
         

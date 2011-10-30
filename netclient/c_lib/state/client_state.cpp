@@ -6,6 +6,7 @@
 //#include <c_lib/agent/agent.cpp>
 #include <c_lib/agent/net_agent.cpp>
 
+#ifdef DC_CLIENT
 namespace ClientState {
 
 
@@ -69,3 +70,4 @@ namespace ClientState {
                 agent_list.client_tick();
         }
 }
+#endif

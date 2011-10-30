@@ -573,8 +573,8 @@ class AgentModel(AgentWrapper):
         if owner is None or id is None:
             print 'WARNING!! Creating agent with no owner or id'
 
-        #AgentListWrapper._create(id)
         AgentWrapper.__init__(self, id)
+        print self.id
             
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]

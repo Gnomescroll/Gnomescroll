@@ -359,9 +359,6 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
             print "SOMETHING IS GIVING SERVER AGENT AN ID"
             raise Exception
 
-        #if id is None:
-            #id = GameStateGlobal.new_agent_id()
-        #id = AgentListWrapper._create_agent()
         AgentWrapper.__init__(self)
 
         self.team = team

@@ -16,7 +16,7 @@ Cspray::Cspray(int _id) {
     stopped = 0;
 
     create_particle2(&particle, _id, CSPRAY_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, CSPRAY_TTL);
-                   // particle, _id,      type,           x,y,z,         vx,vy,vz,   ttl,  ttl_max
+                   // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
 }
 
 //void Cspray::draw() {}
