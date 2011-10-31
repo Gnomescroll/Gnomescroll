@@ -134,7 +134,7 @@ class Agent_state {
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
-    static const char* name() { return "Agent"; }
+        static char* name() { return "Agent"; }
     public:
         void draw();
         void draw(int);
