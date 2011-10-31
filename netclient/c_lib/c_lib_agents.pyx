@@ -20,6 +20,21 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
     draw_agent_cube_side_selection( x,  y,  z,  cx,  cy,  cz,  r,  g,  b)
 
 
+#AgentState
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass AgentState:
+        int seq
+        float theta
+        float phi
+        float x,y,z
+        float vx,vy,vz
+
+#Agent_state
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_state:
+        int id
+        AgentState s
+        void teleport(float x,float y,float z)
 
 
 '''
@@ -118,22 +133,6 @@ WRAPPER
 '''
 
 #agent class wrapper
-
-#AgentState
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass AgentState:
-        int seq
-        float theta
-        float phi
-        float x,y,z
-        float vx,vy,vz
-
-#Agent_state
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass Agent_state:
-        int id
-        AgentState s
-        void teleport(float x,float y,float z)
 
 cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
     Agent_list agent_list
