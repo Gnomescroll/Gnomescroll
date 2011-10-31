@@ -51,7 +51,7 @@ cdef extern from "./objects/cspray.hpp":
         void draw()
         void draw(int all)
 
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
+cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
     Cspray_list cspray_list
 
     

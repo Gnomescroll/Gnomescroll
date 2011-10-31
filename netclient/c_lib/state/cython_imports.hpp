@@ -16,6 +16,7 @@ namespace STATE {
     #ifdef DC_CLIENT
     extern void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi);
     extern void set_PlayerAgent_id(int id);
+    extern void send_control_state();
     #endif
 
 }

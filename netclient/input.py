@@ -11,6 +11,7 @@ import default_settings as settings
 
 import opts
 
+#import c_lib.c_lib_input as cInput
 import c_lib.c_lib_input as cInput
 
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer

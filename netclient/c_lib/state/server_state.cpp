@@ -1,3 +1,4 @@
+#ifdef DC_SERVER
 
 #include "server_state.hpp"
 
@@ -7,7 +8,6 @@
 #include <c_lib/agent/net_agent.cpp>
 
 
-#ifdef DC_SERVER
 namespace ServerState {
 
 

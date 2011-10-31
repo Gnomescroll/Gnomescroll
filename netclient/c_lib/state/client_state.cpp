@@ -1,6 +1,5 @@
-#pragma once
-
 #include "client_state.hpp"
+#pragma once
 
 #include <c_lib/agent/agent.hpp>
 //#include <c_lib/agent/agent.cpp>
@@ -17,9 +16,9 @@ namespace ClientState {
     void InitClientState() {
     }
 
-        void set_PlayerAgent_id(int id) {
-                playerAgent_state.set_PlayerAgent_id(id);
-        }
+    void set_PlayerAgent_id(int id) {
+            playerAgent_state.set_PlayerAgent_id(id);
+    }
 
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
         /*
@@ -65,8 +64,8 @@ namespace ClientState {
     void send_control_state() {
     }
 
-        void ClientTick() {
-                agent_list.client_tick();
-        }
+    void ClientTick() {
+            agent_list.client_tick();
+    }
 }
 #endif

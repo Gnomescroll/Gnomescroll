@@ -10,6 +10,7 @@ import os.path
 import platform
 import shutil
 import subprocess
+import re
 
 
 SDL_MAIN_TEST_CODE = """
@@ -37,6 +38,8 @@ def options(opt):
 def configure(conf):
     global _OS
     global os_libpth
+
+    check_singleton_externs(conf)
 
     conf.check_tool('gcc')
     conf.check_tool('g++')
@@ -154,6 +157,7 @@ def configure(conf):
         except IOError, e:
             pass
 
+    
     '''
     conf.env.INCLUDES = ['c_lib',]
     conf.env.INCLUDES = ['c_lib', 'cube_lib']
@@ -164,6 +168,34 @@ def configure(conf):
     #if OS == 'Darwin':
     #    conf.env.ARCH = ['x86_64']
 
+
+
+def check_singleton_externs(conf):
+    # Checks that cython files do not extern from known singleton-containing
+    # header files.  This would cause multiple instances of the singleton
+    # to be created at runtime.
+
+    pre = 'c_lib'
+    pyx_files = os.listdir(pre)
+    pyx_files = [f for f in pyx_files if f.endswith('pyx')]
+
+    regs = [
+        re.compile('client_state\.[c|h]pp'),
+        re.compile('server_state\.[c|h]pp'),
+    ]
+        
+    for fn in pyx_files:
+        with open(pre + '/' + fn) as f:
+            r = f.read()
+            for reg in regs:
+                m = reg.search(r)
+                if m is not None:
+                    raise conf.errors.ConfigurationError, """
+                        Cython file %s has
+                        extern from client_state.hpp or cpp,
+                        which contains singletons.
+                        Extern from cython_imports.hpp instead.
+                        Configure failed. """ % fn
 
 '''
 t = bld(
@@ -269,11 +301,6 @@ def build(bld):
         source=['c_lib/c_lib_hud.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_hud')
-
-    #bld(features='cxx cshlib pyext',
-        #source=['c_lib/c_lib_agent_wrapper.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='c_lib.c_lib_agent_wrapper')
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_input.pyx'],

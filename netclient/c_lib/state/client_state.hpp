@@ -8,6 +8,9 @@
 #ifdef DC_CLIENT
 namespace ClientState {
 
+    /* SINGLETONS
+     * Make sure to extern declare in cython_imports
+     *          */
     class Agent_list agent_list;
     class Cspray_list cspray_list;
         
@@ -15,7 +18,7 @@ namespace ClientState {
     void set_PlayerAgent_id(int id);
     
     void send_control_state();
-
+    void InitClientState();
 
     void ClientTick();
 }
