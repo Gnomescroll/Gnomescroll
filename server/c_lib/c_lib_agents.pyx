@@ -1,23 +1,98 @@
-#cdef extern from "./agent/agent.h":
-
 '''
-cdef extern:
-    void agent_tick()
-    #int create_agent(float x, float y, float z)
-    #void set_agent_state(int id, float xangle, float yangle)
+Wrapper
 '''
 
-#cdef extern from "./agent/agent_vox.h":
-cdef extern:
-    void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
-    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
+#agent class wrapper
 
-    void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
-    void set_agent_limb_anchor_point(int id, int part, float length, float ax,float ay,float az)
+#AgentState
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass AgentState:
+        int seq
+        float theta
+        float phi
+        float x,y,z
+        float vx,vy,vz
+
+#Agent_state
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_state:
+        int id
+        AgentState s
+        void teleport(float x,float y,float z)
 
 
-'''
-def _create_agent(float x, float y, float z):
-    cdef int id
-    id = create_agent(x,y,z)
-'''
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_list:
+        Agent_state* get(int id)
+        Agent_state* create()
+        Agent_state* create(int id)
+        void destroy(int _id)
+        void draw()
+        void draw(int all)
+
+cdef extern from "./state/cython_imports.hpp" namespace "ServerState":
+    Agent_list agent_list
+
+
+agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
+
+class AgentWrapper(object):
+
+    def __init__(self):
+        cdef Agent_state *a
+        a = agent_list.create()
+        self.id = a.id
+        
+    def __getattribute__(self, name):
+        if name not in agent_props:
+            raise AttributeError
+
+        cdef Agent_state* a
+        #a = C_get_agent(object.__getattribute__(self,'id'))
+        a = agent_list.get(object.__getattribute__(self,'id'))
+        if name == 'x':
+            return a.s.x
+        elif name == 'y':
+            return a.s.y
+        elif name == 'z':
+            return a.s.z
+        elif name == 'vx':
+            return a.s.vx
+        elif name == 'vy':
+            return a.s.vy
+        elif name == 'vz':
+            return a.s.vz
+        elif name == 'theta':
+            return a.s.theta
+        elif name == 'phi':
+            return a.s.phi
+
+        elif name == 'x_angle': # legacy reasons
+            return a.s.theta
+        elif name == 'y_angle':
+            return a.s.phi
+
+
+#functions
+
+def teleport_Agent(int id, float x, float y, float z):
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a != NULL:
+        a.teleport(x,y,z)
+    else:
+        print "Cannot teleport agent: agent %i does not exist" %(id)
+
+class AgentListWrapper:
+
+    @classmethod
+    def add(cls):
+        cdef Agent_state* a
+        a = agent_list.create()
+        return a.id
+
+    @classmethod
+    def remove(cls, int id):
+        agent_list.destroy(id)
+        return id
+        

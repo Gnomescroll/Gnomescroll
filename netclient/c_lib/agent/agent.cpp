@@ -14,7 +14,6 @@
     #define STATELIST ServerState
 #endif
 
-
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
@@ -29,7 +28,7 @@ void Agent_list::draw()
             j = agents_to_draw[i];
             if (j < 0) continue;
             if(a[j] != NULL) {
-                a[j]->draw();
+              a[j]->draw();
             }
         }
         glDisable(GL_CULL_FACE);
@@ -50,6 +49,7 @@ void Agent_list::draw(int all)
         glEnable(GL_CULL_FACE);
         for(i=0; i<n_max; i++) { //max_n
             if(a[i] != NULL) {
+                printf("SHOULD DRAW AGENT %d\n", i);
                 a[i]->draw();
             }
         }
@@ -669,7 +669,6 @@ Agent_state::Agent_state(int _id) {
 }
 
 void Agent_state::draw() {
-printf("AGENT DRAW\n");
 #ifdef DC_CLIENT
     AgentDraw::draw_agent(this);
 #endif
@@ -744,6 +743,14 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
     Agent_state* s = ClientState::agent_list.get(id);
     if (s==NULL || s->vox == NULL) return;
     s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
+}
+
+void init_agents_to_draw() {
+    int i;
+    for (i=0; i<AGENT_MAX; i++) {
+        agents_to_draw[i] = -1;
+    }
+    n_agents_to_draw = 0;
 }
 
 void clear_agents_to_draw() {

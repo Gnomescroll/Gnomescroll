@@ -270,10 +270,10 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_hud')
 
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_agent_wrapper.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_agent_wrapper')
+    #bld(features='cxx cshlib pyext',
+        #source=['c_lib/c_lib_agent_wrapper.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='c_lib.c_lib_agent_wrapper')
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_input.pyx'],
@@ -340,7 +340,7 @@ def install_in_ext(ctx):
                'c_lib.c_lib_objects',
                'c_lib.c_lib_agents',
                'c_lib.c_lib_hud',
-               'c_lib.c_lib_agent_wrapper',
+               #'c_lib.c_lib_agent_wrapper',
                'c_lib.c_lib_input',
                'csound',
                'sound.sounds',  # cython .so's need to have same name as source

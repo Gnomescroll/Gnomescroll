@@ -15,6 +15,7 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
 
 int n_agents_to_draw = 0;
 int agents_to_draw[AGENT_MAX];
+void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
 #endif
@@ -134,7 +135,7 @@ class Agent_state {
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
-        static char* name() { return "Agent"; }
+        const char* name() { return "Agent"; }
     public:
         void draw();
         void draw(int);

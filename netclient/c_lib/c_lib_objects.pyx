@@ -74,7 +74,7 @@ def draw():
     blood_draw()
     shrapnel_draw()
 
-    cspray_list.draw()
+    #cspray_list.draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)

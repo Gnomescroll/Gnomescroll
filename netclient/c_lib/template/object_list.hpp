@@ -12,7 +12,7 @@ template <class Object_state, int max_n=1024>
 class Object_list {
         private:
                 int id_c;
-                const char* name() { return "Object"; }
+                virtual const char* name() { return "Object"; }
         public:
                 static const int n_max = max_n;
                 int num;
@@ -22,12 +22,15 @@ class Object_list {
                 Object_state* get(int id);
                 Object_state* create();         //object auto id
                 Object_state* create(int id);   //create object with id
+                Object_state* get_or_create(int id);
                 void destroy(int _id);
 
                 void draw();    //overide in template specilization on client
                 void draw(int all);
                 void client_tick(); //override on template specilization
                 void server_tick(); //override on template specilization
+
+                void where();
         };
 
 //template <class T>
@@ -40,12 +43,20 @@ Object_list<Object_state, max_n>::Object_list()
     id_c = 0;
     int i;
     for(i=0;i<max_n;i++) a[i] = NULL;
+    printf("%s list instantiated at %p\n", name(), this);
+    //where();
 }
 
+template <class Object_state, int max_n>
+void Object_list<Object_state, max_n>::where()
+{
+    printf("%s_list pointer is %p\n", name(), this);
+}
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::get(int id)
 {
+    //where();
     if((id < 0) || (id >= n_max)) {
         printf("%s id error: id=%i\n", name() ,id);
         return NULL;
@@ -59,6 +70,7 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create() {
+    //where();
         int i;
         int id = id_c;
         id_c++;
@@ -78,6 +90,7 @@ Object_state* Object_list<Object_state, max_n>::create() {
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(int id) {
+    //where();
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
         printf("%s_list: Created object from id: %i\n", name(), id);
@@ -88,9 +101,19 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
     }
 }
 
+template <class Object_state, int max_n>
+Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
+    //where();
+    Object_state* obj = a[id];
+    if (obj == NULL) {
+        obj = create(id);
+    }
+    return obj;
+}
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::destroy(int id) {
+    //where();
     if(a[id]==NULL) {
         printf("%s_list: Cannot delete object: object is null\n", name() );
         return;
@@ -99,7 +122,6 @@ void Object_list<Object_state, max_n>::destroy(int id) {
     a[id] = NULL;
     num--;
     printf("%s_list: Deleted object %i\n",name(), id);
-    //printf("Object_list::delete_agent not implemented\n");
 }
 
 template <class Object_state, int max_n>

@@ -1,7 +1,7 @@
 # generic game object datastore
 # has dictionary interface for retrieving items
 
-from c_lib.c_lib_agent_wrapper import AgentListWrapper
+from c_lib.c_lib_agents import AgentListWrapper
 
 class GenericObjectList:
 
