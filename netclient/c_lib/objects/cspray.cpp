@@ -285,6 +285,7 @@ void Cspray::draw() {
         //}
     //}
     //printf("drew %i gernades\n", _c);
+    printf("drew gernade\n");
 #endif
 }
 

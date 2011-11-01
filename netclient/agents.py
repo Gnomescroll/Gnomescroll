@@ -941,7 +941,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.__dict__[name] = val
         if name == 'id':
             set_player_agent_id(val)
-            AgentVoxRender.__init__(self)
             self._control_state_id_set = True
 
     #def set_button_state(self, buttons, angles):
