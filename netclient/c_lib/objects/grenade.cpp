@@ -17,6 +17,10 @@ void Grenade::tick() {
     particle.ttl++;
 }
 
+void Grenade::set_ttl(int ttl) {
+    particle.ttl = ttl;
+}
+
 void Grenade::draw() {
 #ifdef DC_CLIENT
 

@@ -14,6 +14,21 @@ cdef extern from "./objects/particles.hpp":
         State state
         unsigned int id
 
+cdef extern from "./objects/grenade.hpp":
+    cdef cppclass Grenade:
+        Particle2 particle
+        void set_ttl(int ttl)
+
+    cdef cppclass Grenade_list:
+        Grenade* get(int id)
+        Grenade* create()
+        Grenade* create(int id)
+        Grenade* create(float x, float y, float z, float vx, float vy, float vz)
+        Grenade* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+        
 cdef extern from "./objects/cspray.hpp":
     cdef cppclass Cspray:
         Particle2 particle
@@ -28,20 +43,6 @@ cdef extern from "./objects/cspray.hpp":
         void draw()
         void tick()
 
-cdef extern from "./objects/grenade.hpp":
-    cdef cppclass Grenade:
-        Particle2 particle
-
-    cdef cppclass Grenade_list:
-        Grenade* get(int id)
-        Grenade* create()
-        Grenade* create(int id)
-        Grenade* create(float x, float y, float z, float vx, float vy, float vz)
-        Grenade* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
-        void draw()
-        void tick()
-        
 cdef extern from "./objects/shrapnel.hpp":
     cdef cppclass Shrapnel:
         Particle2 particle
@@ -111,7 +112,8 @@ def draw():
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     cdef Neutron* neutron
     neutron = neutron_list.create(x,y,z, vx,vy,vz)
-    neutron.set_energy(energy)
+    if neutron is not NULL:
+        neutron.set_energy(energy)
 
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)
@@ -127,6 +129,7 @@ def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int
     cdef Grenade* grenade
     grenade = grenade_list.create(x,y,z, vx,vy,vz)
     if grenade is not NULL:
+        grenade.set_ttl(ttl)
         return grenade.particle.id
     return -1
 

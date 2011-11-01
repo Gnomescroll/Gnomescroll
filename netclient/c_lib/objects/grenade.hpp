@@ -30,7 +30,8 @@ class Grenade {
 
         void draw();
         void tick();
-
+        void set_ttl(int ttl);
+        
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
 };
