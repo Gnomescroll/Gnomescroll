@@ -121,26 +121,20 @@ static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float da
     if(rot[0] != 0 ) {
         p->state.v.x *= adj;
         coll=1;
-        //printf("invert vx \n");
     }
     if(rot[1] != 0) {
         p->state.v.y *= adj;
         coll=1;
-        //printf("invert vy \n");
     }
     if(rot[2] != 0) {
         p->state.v.z *= adj;
         coll=1;
-        //printf("invert vz \n");
     }
 
     if (coll) {
-        //if (p->id == 20) {printf("COLL damp= %f\n", damp);printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
-        p->state.v.x = p->state.v.x * damp;
-        p->state.v.y = p->state.v.y * damp;
-        p->state.v.z = p->state.v.z * damp;
-                if (p->id == 20) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
-
+        p->state.v.x *= damp;
+        p->state.v.y *= damp;
+        p->state.v.z *= damp;
     }
 }
 
@@ -191,23 +185,7 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
 
     float interval;
     int* s;
-    //int n = _GET_MS_TIME();
     s = _ray_cast4(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval);
-    //int n2 = _GET_MS_TIME();
-    //printf("raycast took %d\n", n2-n);
-
-    //_adjust_vel2(p, s, -1, damp);
-    //norm->x = (float)s[0];
-    //norm->y = (float)s[1];
-    //norm->z = (float)s[2];
-            //if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
-
-    //if (p->id == 10) {
-        //printf("GRENADE\n");
-        //printf("%d\n", t);
-        //printf("%f\n", interval);
-        //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
-    //}
 
     if (interval >= dt) {
         p->state = *motion_inter;
@@ -220,11 +198,6 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
         struct Vector v = reflect(&(p->state.v), &norm);
         p->state.v = *(mult_vec_scalar(&v, damp));
     }
-
-    //if (p->id == 10) {
-        //j = &(p->state);
-        //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
-    //}
 
     _clamp_vel2(p);
 
@@ -250,23 +223,9 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     float interval;
     int* s;
 
-    int x = p->state.p.x,
-        y = p->state.p.y,
-        z = p->state.p.z;
-
     /* Ray cast to calculated position */
     s = _ray_cast5_capped(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
     _adjust_vel2(p, s, -1, damp);
-
-    int cx = collision[0],
-        cy = collision[1],
-        cz = collision[2];
-
-    if (x != cx && y != cy && z != cz) {
-        printf("%d %d %d\n", x,y,z);
-        printf("%d %d %d\n", x,y,z);
-        printf("\n");
-    }
 
     if (interval >= dt) { // no collision
         p->state = *motion_inter;

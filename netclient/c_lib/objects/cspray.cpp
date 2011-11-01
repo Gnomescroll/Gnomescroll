@@ -43,6 +43,11 @@ void Cspray::tick() {
         if(isActive(tile)) {
             active=1;
             particle.ttl *= 2;
+
+            _set(collision[0] - s[0], collision[1] - s[1], collision[2] - s[2], CSPRAY_CEMENT_BLOCK_TYPE);    // create block
+            particle.ttl = particle.ttl_max;
+            return;
+
         }
     }
 
