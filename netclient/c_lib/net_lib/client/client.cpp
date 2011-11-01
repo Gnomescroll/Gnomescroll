@@ -294,7 +294,7 @@ void process_packet(unsigned char* buff, int n) {
     uint16_t max_seq;
     uint32_t acks;
 
-    uint32_t value;
+    //uint32_t value; //unused
 
     n1=0;
 

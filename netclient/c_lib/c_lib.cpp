@@ -15,7 +15,7 @@
 #endif
 
 /* objects */
-#include <c_lib/objects/object_lib.hpp>
+#include <c_lib/objects/object_lib.cpp>
 
 /* map */
 #include "./t_map/t_map.c"
@@ -51,7 +51,7 @@
 
 int init_c_lib() {
     printf("init c_lib\n");
-    init_objects_neutron();
+    srand(time(NULL));   // seed the RNG
 
     #ifdef DC_CLIENT
         init_texture_loader();

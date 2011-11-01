@@ -30,9 +30,8 @@ cdef extern from "./agent/agent.hpp":
         void draw()
         void draw(int all)
 
-cdef extern from "./state/cython_imports.hpp" namespace "ServerState":
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Agent_list agent_list
-
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 

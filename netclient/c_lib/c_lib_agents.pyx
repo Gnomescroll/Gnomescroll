@@ -134,7 +134,8 @@ WRAPPER
 
 #agent class wrapper
 
-cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
+#cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
     void set_PlayerAgent_id(int id)

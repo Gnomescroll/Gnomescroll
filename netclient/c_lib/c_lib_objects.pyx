@@ -9,11 +9,6 @@ cdef extern from "./physics/common.h":
         Vector p
         Vector v
 
-#cdef extern from "./objects/neutron.h":
-#    void neutron_tick()
-#    void neutron_draw()
-#    void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
-
 cdef extern from "./objects/particles.hpp":
     cdef struct Particle2:
         State state
@@ -60,6 +55,21 @@ cdef extern from "./objects/shrapnel.hpp":
         void destroy(int id)
         void draw()
         void tick()
+        
+cdef extern from "./objects/neutron.hpp":
+    cdef cppclass Neutron:
+        Particle2 particle
+        void set_energy(int energy)
+
+    cdef cppclass Neutron_list:
+        Neutron* get(int id)
+        Neutron* create()
+        Neutron* create(int id)
+        Neutron* create(float x, float y, float z, float vx, float vy, float vz)
+        Neutron* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
 
 cdef extern from "./objects/blood.hpp":
     cdef cppclass Blood:
@@ -75,31 +85,33 @@ cdef extern from "./objects/blood.hpp":
         void draw()
         void tick()
 
-cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
+#cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Cspray_list cspray_list
     Grenade_list grenade_list
     Shrapnel_list shrapnel_list
     Blood_list blood_list
-#    Neutron_list neutron_list
+    Neutron_list neutron_list
 
 
 def tick():
-#    neutron_tick()
+    neutron_list.tick()
     blood_list.tick()
     shrapnel_list.tick()
     grenade_list.tick()
     cspray_list.tick()
     
 def draw():
-#    neutron_draw()
+    neutron_list.draw()
     blood_list.draw()
     shrapnel_list.draw()
     grenade_list.draw()
     cspray_list.draw()
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
-    pass
-#    create_neutron(type,energy, x,y,z, vx,vy,vz)
+    cdef Neutron* neutron
+    neutron = neutron_list.create(x,y,z, vx,vy,vz)
+    neutron.set_energy(energy)
 
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)

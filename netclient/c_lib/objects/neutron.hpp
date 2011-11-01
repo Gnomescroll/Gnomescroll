@@ -1,9 +1,8 @@
-#ifndef objects_neutron_h
-#define objects_neutron_h
+#pragma once
 
 #include <compat.h>
 #ifdef DC_CLIENT
-#include <compat_gl.h>
+    #include <compat_gl.h>
 #endif
 
 #include <physics/common.h>
@@ -12,15 +11,37 @@
 #include <t_map/t_properties.h>
 
 #ifdef DC_CLIENT
-#include <texture_loader.h>
+    #include <texture_loader.h>
 #endif
 
-void init_objects_neutron();
-void neutron_tick();
-void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz);
+#define NEUTRON_MAX 1024
+#define NEUTRON_TTL 600
+#define NEUTRON_DAMP 1.0f
+#define NEUTRON_TYPE 0
+#define NEUTRON_TEXTURE_ID 21 /* Not used. Texture id is dependent on energy */
+#define NEUTRON_TEXTURE_SCALE 0.3f
 
-#ifdef DC_CLIENT
-void neutron_draw();
-#endif
+class Neutron {
+    public:
+        Particle2 particle;
+        unsigned int event_ttl;
+        int energy;
 
-#endif
+        void draw();
+        void tick();
+        void set_energy(int _energy);
+        Neutron(int id);
+        Neutron(int id, float x, float y, float z, float vx, float vy, float vz);
+        Neutron(int id, int _energy, float x, float y, float z, float vx, float vy, float vz);
+};
+
+#include <c_lib/template/object_list.hpp>
+
+class Neutron_list: public Object_list<Neutron, NEUTRON_MAX>
+{
+    private:
+        const char* name() { return "Neutron"; }
+    public:
+        void draw();
+        void tick();
+};

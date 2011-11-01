@@ -9,7 +9,7 @@
     #include "./ray_trace/ray_trace.c"
     #include "./physics/common.c"
 
-    #include <c_lib/objects/object_lib.hpp>
+    #include <c_lib/objects/object_lib.cpp>
 
     #include "./agent/agent_include.h"
 
@@ -27,6 +27,6 @@
 
 int init_c_lib() {
     printf("init c_lib\n");
-    init_objects_neutron();
+    srand(time(NULL));
 return 0;
 }

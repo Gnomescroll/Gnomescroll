@@ -1,22 +1,22 @@
 #pragma once
+#ifdef DC_CLIENT
 
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/objects/object_lib.hpp>
 
 //#include <c_lib/agent/net_agent.cpp>
 
-#ifdef DC_CLIENT
 namespace ClientState {
 
     /* SINGLETONS
      * Make sure to extern declare in cython_imports
      *          */
-    Agent_list agent_list;
-    Cspray_list cspray_list;
-    Grenade_list grenade_list;
-    Shrapnel_list shrapnel_list;
-    Blood_list blood_list;
-    //Neutron_list neutron_list;
+    extern Agent_list agent_list;
+    extern Cspray_list cspray_list;
+    extern Grenade_list grenade_list;
+    extern Shrapnel_list shrapnel_list;
+    extern Blood_list blood_list;
+    extern Neutron_list neutron_list;
         
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi);
     void set_PlayerAgent_id(int id);
