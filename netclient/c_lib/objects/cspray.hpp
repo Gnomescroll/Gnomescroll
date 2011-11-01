@@ -30,9 +30,6 @@ class Cspray {
         void draw();
         void server_tick();
         void client_tick();
-
-        void set_state(float x, float y, float z, float vx, float vy, float vz);
-
         void tick();
 
         Cspray(int _id);

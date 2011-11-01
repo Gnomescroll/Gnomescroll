@@ -86,7 +86,7 @@ Object_state* Object_list<Object_state, max_n>::create() {
         }
         num++;
         a[id] = new Object_state(id);
-        printf("%s_list: Created object %i\n", name(), id);
+        //printf("%s_list: Created object %i\n", name(), id);
         return a[id];
 }
 
@@ -95,7 +95,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
     //where();
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
-        printf("%s_list: Created object from id: %i\n", name(), id);
+        //printf("%s_list: Created object from id: %i\n", name(), id);
         return a[id];
     } else {
         printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
@@ -118,7 +118,7 @@ int i;
         }
         num++;
         a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-        printf("%s_list: Created object %i\n", name(), id);
+        //printf("%s_list: Created object %i\n", name(), id);
         return a[id];
 }
 
@@ -127,7 +127,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y,
 
     if(a[id] == NULL) {
         a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-        printf("%s_list: Created object from id: %i\n", name(), id);
+        //printf("%s_list: Created object from id: %i\n", name(), id);
         return a[id];
     } else {
         printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
@@ -155,7 +155,7 @@ void Object_list<Object_state, max_n>::destroy(int id) {
     delete a[id];
     a[id] = NULL;
     num--;
-    printf("%s_list: Deleted object %i\n",name(), id);
+    //printf("%s_list: Deleted object %i\n",name(), id);
 }
 
 template <class Object_state, int max_n>
