@@ -97,7 +97,6 @@ class HitscanLaserGunAnimation(Animation):
 
 class C_Animation(Animation):
 
-    anim_type = 0
     vel = [0]*3
     anim = lambda _type, x,y,z, vx,vy,vz: None
 
@@ -105,20 +104,18 @@ class C_Animation(Animation):
         Animation.__init__(self)
 
     def create_particles(self):
-        _t = self.anim_type
         _vx, _vy, _vz = self.vel
         for i in self.n_range:
             x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos]
             vx = _vx*(random.random() -0.5)
             vy = _vy*(random.random() -0.5)
             vz = _vz*(random.random() -0.5)
-            self.anim(_t, x,y,z, vx, vy, vz)
+            self.anim(x,y,z, vx, vy, vz)
 
 
 class GrenadeExplodeAnimation(C_Animation):
 
     anim = c_lib.c_lib_objects._create_shrapnel
-    anim_type = 5
     vel = [20]*3
 
     def __init__(self, pos):

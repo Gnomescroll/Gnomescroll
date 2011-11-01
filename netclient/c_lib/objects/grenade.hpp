@@ -20,6 +20,7 @@
 #define GRENADE_DAMP 0.5f
 #define GRENADE_TYPE 1
 #define GRENADE_TEXTURE_ID 5
+#define GRENADE_TEXTURE_SCALE 1.0f
 
 /* Grenade used to be just a Particle2, and effectively is,
  * but fits in the Object_list template as a class */

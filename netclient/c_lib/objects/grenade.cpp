@@ -20,8 +20,17 @@ void Grenade::tick() {
 void Grenade::draw() {
 #ifdef DC_CLIENT
 
-    float up[3] = {grenade_proj_mtrx[0], grenade_proj_mtrx[4], grenade_proj_mtrx[8]};
-    float right[3] = {grenade_proj_mtrx[1], grenade_proj_mtrx[5], grenade_proj_mtrx[9]};
+    float up[3] = {
+        grenade_proj_mtrx[0]*GRENADE_TEXTURE_SCALE,
+        grenade_proj_mtrx[4]*GRENADE_TEXTURE_SCALE,
+        grenade_proj_mtrx[8]*GRENADE_TEXTURE_SCALE
+    };
+    float right[3] = {
+        grenade_proj_mtrx[1]*GRENADE_TEXTURE_SCALE,
+        grenade_proj_mtrx[5]*GRENADE_TEXTURE_SCALE,
+        grenade_proj_mtrx[9]*GRENADE_TEXTURE_SCALE
+    };
+
 
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
@@ -57,9 +66,11 @@ void Grenade_list::tick() {
 
         // destruction currently handled by python,
         // because python is tracking grenades in a Projectile List
-        if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            destroy(a[i]->particle.id);
-        }
+        // and needs to play animation (needs to retrieve grenade
+        // position before it gets destroyed)
+        //if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
+            //destroy(a[i]->particle.id);
+        //}
     }
 }
 
