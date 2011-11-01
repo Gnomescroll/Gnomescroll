@@ -67,7 +67,6 @@ class Projectile:
             self.owner = args['owner']
 
     def delete(self):
-        print 'BULLET DEAD!!'
         GameStateGlobal.projectileList.destroy(self)
 
     def pos(self):

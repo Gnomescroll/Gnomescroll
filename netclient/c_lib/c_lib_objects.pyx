@@ -117,7 +117,6 @@ def _draw_circuit_tree():
     pass
 #    circuit_tree_draw()
 
-
 # Does not use TTL!! Can't cook grenades without TTL set
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):
     cdef Grenade* grenade
