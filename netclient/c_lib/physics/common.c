@@ -1,18 +1,30 @@
 #include "common.h"
 
+static inline void _clamp_vel(struct Particle* p) {
+    static float max_vel = 30.0f;
+    p->vx = (p->vx < max_vel) ? p->vx : max_vel;
+    p->vy = (p->vy < max_vel) ? p->vy : max_vel;
+    p->vz = (p->vz < max_vel) ? p->vz : max_vel;
+}
+
+static inline void _clamp_vel2(struct Particle2* p) {
+    static float max_vel = 30.0f;
+    p->state.v.x = (p->state.v.x < max_vel) ? p->state.v.x : max_vel;
+    p->state.v.y = (p->state.v.y < max_vel) ? p->state.v.y : max_vel;
+    p->state.v.z = (p->state.v.z < max_vel) ? p->state.v.z : max_vel;
+}
+
 static inline void _adjust_vel(struct Particle* p, int* rot, int adj) {
     if(rot[0] != 0 ) {
         p->vx *= adj;
-        //printf("invert vx \n");
     }
     if(rot[1] != 0) {
         p->vy *= adj;
-        //printf("invert vy \n");
     }
     if(rot[2] != 0) {
         p->vz *= adj;
-        //printf("invert vz \n");
     }
+    _clamp_vel(p);
 }
 
 int* bounce_simple(struct Particle* p) {
@@ -61,7 +73,7 @@ int* bounce_collide_tile(struct Particle* p, int* collision, int* tile) {
 
     float interval;
     int* s;
-    s = _ray_cast5(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
+    s = _ray_cast5_capped(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
 
     _adjust_vel(p, s, -1);
 
@@ -81,7 +93,7 @@ int* move_collide_tile(struct Particle* p, int* collision, int* tile) {
 
     float interval;
     int* s;
-    s = _ray_cast5(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
+    s = _ray_cast5_capped(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
 
     _adjust_vel(p, s, 0);
 
@@ -121,7 +133,7 @@ static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float da
                 if (p->id == 20) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
 
     }
-
+    _clamp_vel2(p);
 }
 
 struct State _motion_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate struct used for ray cast */
@@ -213,8 +225,8 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
 
     int t = p->ttl;
     int dt = 1;
-    //float fdt = 1.0f;
 
+    /* copy state */
     motion_inter->p.x = p->state.p.x;
     motion_inter->p.y = p->state.p.y;
     motion_inter->p.z = p->state.p.z;
@@ -222,41 +234,39 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
+    /* integrate */
     rk4(motion_inter, t, dt);
-
 
     float interval;
     int* s;
 
-    //int n = _GET_MS_TIME();
-    s = _ray_cast5(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 10) {
-        //printf("ray_cast5 :: %d\n", n2-n);
-    //if (p->id == 2) {
-        //printf("state:\n");
-        //printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);
-        //printf("%f,%f,%f\n", motion_inter->p.x, motion_inter->p.y, motion_inter->p.z);
-    //}
+    int x = p->state.p.x,
+        y = p->state.p.y,
+        z = p->state.p.z;
 
+    /* Ray cast to calculated position */
+    s = _ray_cast5_capped(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
     _adjust_vel2(p, s, -1, damp);
-    //if (s[0] || s[1] || s[2]) {
-        //if (p->id == 20) {printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);}
-    //}
 
-    //if ((int)interval == dt) {
-    if (interval >= dt) {
+    int cx = collision[0],
+        cy = collision[1],
+        cz = collision[2];
+
+    if (x != cx && y != cy && z != cz) {
+        printf("%d %d %d\n", x,y,z);
+        printf("%d %d %d\n", x,y,z);
+        printf("\n");
+    }
+
+    if (interval >= dt) { // no collision
         p->state = *motion_inter;
-            //if (p->id == 2) {
-
-        //printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);
-        //printf("%f,%f,%f\n", motion_inter->p.x, motion_inter->p.y, motion_inter->p.z);
-    } else {
+    } else {            // collided interval%. integrate this amount
         rk4(&(p->state), t, interval);
     }
 
     return s;
 }
+
 
 int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float damp) {
     int t = p->ttl;
@@ -273,7 +283,7 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
     float interval;
     int* s;
-    s = _ray_cast5(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
+    s = _ray_cast5_capped(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
 
     _adjust_vel2(p, s, 0, damp);
 
