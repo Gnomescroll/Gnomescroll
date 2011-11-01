@@ -14,15 +14,6 @@ cdef extern from "./physics/common.h":
 #    void neutron_draw()
 #    void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
 
-#cdef extern from "./objects/blood.h":
-#    void blood_tick()
-#    void blood_draw()
-#    void create_blood(int type, float x, float y, float z, float vx, float vy, float vz)
-
-#cdef extern from "./objects/circuit_tree.h":
-#    void circuit_tree_generate(int type, int seed)
-#    void circuit_tree_draw()
-
 cdef extern from "./objects/particles.hpp":
     cdef struct Particle2:
         State state
@@ -70,27 +61,38 @@ cdef extern from "./objects/shrapnel.hpp":
         void draw()
         void tick()
 
+cdef extern from "./objects/blood.hpp":
+    cdef cppclass Blood:
+        Particle2 particle
+
+    cdef cppclass Blood_list:
+        Blood* get(int id)
+        Blood* create()
+        Blood* create(int id)
+        Blood* create(float x, float y, float z, float vx, float vy, float vz)
+        Blood* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
 
 cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
     Cspray_list cspray_list
     Grenade_list grenade_list
     Shrapnel_list shrapnel_list
+    Blood_list blood_list
 #    Neutron_list neutron_list
-#    Blood_list blood_list
 
 
 def tick():
 #    neutron_tick()
-#    blood_tick()
-
+    blood_list.tick()
     shrapnel_list.tick()
     grenade_list.tick()
     cspray_list.tick()
     
 def draw():
 #    neutron_draw()
-#    blood_draw()
-
+    blood_list.draw()
     shrapnel_list.draw()
     grenade_list.draw()
     cspray_list.draw()
@@ -102,20 +104,11 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)
 
-def _create_blood(int type, float x, float y, float z, float vx, float vy, float vz):
-    pass
-#    create_blood(type, x,y,z, vx,vy,vz)
+def _create_blood(float x, float y, float z, float vx, float vy, float vz):
+    blood_list.create(x,y,z, vx,vy,vz)
 
 def _create_shrapnel(float x, float y, float z, float vx, float vy, float vz):
     shrapnel_list.create(x,y,z, vx,vy,vz)
-
-def _generate_circuit_tree(int type, int seed):
-    pass
-#    circuit_tree_generate(type, seed)
-
-def _draw_circuit_tree():
-    pass
-#    circuit_tree_draw()
 
 # Does not use TTL!! Can't cook grenades without TTL set
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):
@@ -134,5 +127,19 @@ def get_grenade_position(int gid):
     if grenade is not NULL:
         pos = [grenade.particle.state.p.x, grenade.particle.state.p.y, grenade.particle.state.p.z]
     else:
-        pos = [0., 0., 0.]
+        pos = None
     return pos
+
+
+'''
+Circuit Tree
+'''
+cdef extern from "./objects/circuit_tree.hpp":
+    void circuit_tree_generate(int type, int seed)
+    void circuit_tree_draw()
+
+def _generate_circuit_tree(int type, int seed):
+    circuit_tree_generate(type, seed)
+
+def _draw_circuit_tree():
+    circuit_tree_draw()

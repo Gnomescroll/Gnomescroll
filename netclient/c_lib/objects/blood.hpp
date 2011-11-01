@@ -1,9 +1,8 @@
-#ifndef objects_blood_h
-#define objects_blood_h
+#pragma once
 
 #include <compat.h>
 #ifdef DC_CLIENT
-#include <compat_gl.h>
+    #include <compat_gl.h>
 #endif
 
 #include <physics/common.h>
@@ -12,15 +11,35 @@
 #include <t_map/t_properties.h>
 
 #ifdef DC_CLIENT
-#include <texture_loader.h>
+    #include <texture_loader.h>
 #endif
 
-void init_objects_blood();
-void blood_tick();
-void create_blood(int type, float x, float y, float z, float vx, float vy, float vz);
+#define BLOOD_MAX 4092
+#define BLOOD_TTL 30
+#define BLOOD_DAMP 0.6f
+#define BLOOD_TYPE 2
+#define BLOOD_TEXTURE_ID 54
+#define BLOOD_TEXTURE_SCALE 0.1f
 
-#ifdef DC_CLIENT
-void blood_draw();
-#endif
 
-#endif
+class Blood {
+    public:
+        Particle2 particle;
+
+        void draw();
+        void tick();
+        Blood(int id);
+        Blood(int id, float x, float y, float z, float vx, float vy, float vz);
+};
+
+#include <c_lib/template/object_list.hpp>
+
+class Blood_list: public Object_list<Blood, BLOOD_MAX>
+{
+    private:
+        const char* name() { return "Blood"; }
+    public:
+        void draw();
+        void tick();
+};
+    

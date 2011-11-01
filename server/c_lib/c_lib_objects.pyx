@@ -14,11 +14,6 @@ cdef extern from "./physics/common.h":
 #    void neutron_draw()
 #    void create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz)
 
-#cdef extern from "./objects/blood.h":
-#    void blood_tick()
-#    void blood_draw()
-#    void create_blood(int type, float x, float y, float z, float vx, float vy, float vz)
-
 #cdef extern from "./objects/circuit_tree.h":
 #    void circuit_tree_generate(int type, int seed)
 #    void circuit_tree_draw()
@@ -59,13 +54,9 @@ cdef extern from "./state/cython_imports.hpp" namespace "ServerState":
     Cspray_list cspray_list
     Grenade_list grenade_list
 #    Neutron_list neutron_list
-#    Blood_list blood_list
-
 
 def tick():
 #    neutron_tick()
-#    blood_tick()
-
     grenade_list.tick()
     cspray_list.tick()
     
@@ -75,10 +66,6 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)
-
-def _create_blood(int type, float x, float y, float z, float vx, float vy, float vz):
-    pass
-#    create_blood(type, x,y,z, vx,vy,vz)
 
 def _generate_circuit_tree(int type, int seed):
     pass

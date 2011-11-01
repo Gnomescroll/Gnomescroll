@@ -372,13 +372,12 @@ class AgentRender:
         create_blood = c_lib.c_lib_objects._create_blood
         n = 100
         v = 15
-        _t = 2
         for i in range(n):
             x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
             vz = random.randrange(-4, 2) + random.random()
-            create_blood(_t, x, y,z, vx, vy, vz)
+            create_blood(x, y,z, vx, vy, vz)
 
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector

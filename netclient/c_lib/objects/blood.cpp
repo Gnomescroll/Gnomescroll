@@ -1,146 +1,102 @@
 #include "blood.hpp"
 
-#define max_blood 4096
-
-struct Particle* blood_list[max_blood];
 float blood_proj_mtrx[16];
-int blood_count=0;
-unsigned int blood_id=0;
 
-void inline blood_Tick(struct Particle* g);
-
-void init_objects_blood() {
-    //printf("RANDMAX= %i \n", RAND_MAX);
-    //srand(15); //seed
-    return;
+Blood::Blood(int id) {
+    create_particle2(&particle, id, BLOOD_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BLOOD_TTL);
 }
 
-void inline blood_Tick(struct Particle* g) {
-    //g->vz -= 0.025; //gravity
-
-    g->ttl++;
-    int* s;
-    int collision[3];
-    int tile;
-    //s = move_collide_tile_rk4(g, collision, &tile, 0.25);
-    s = move_collide_tile(g, collision, &tile); // blood doesnt need rk4
-
+Blood::Blood(int id, float x, float y, float z, float vx, float vy, float vz) {
+    create_particle2(&particle, id, BLOOD_TYPE, x,y,z,vx,vy,vz, 0, BLOOD_TTL);
 }
 
-void blood_tick() {
-    struct Particle* g = NULL;
-    int i;
-    for(i=0; i<max_blood; i++) {
-        if(blood_list[i] != NULL) {
-            g = blood_list[i];
-            blood_Tick(g);
-            if(g->ttl >= g-> ttl_max) {
-                //boom!
-                blood_list[i] = NULL;
-                free(g);
-                blood_count--;
-            }
-        }
-    }
+void Blood::tick() {
+    bounce_simple_rk4(&particle, BLOOD_DAMP);
+    particle.ttl++;
 }
 
-
-void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create Particle\n");
-    struct Particle* g = NULL;
-    int i;
-    for(i=0; i<max_blood; i++) {
-        if(blood_list[i] == NULL) {
-            g = (struct Particle *) malloc (sizeof(struct Particle));
-            blood_list[i] = g;
-            blood_count++;
-            break;
-        }
-    }
-    if(g== NULL) {
-        //printf("Bug: max Particle number reached!\n");
-        return;}
-    create_particle(g, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 30);
-}
-
-
-/*
- *  Client only
- */
+void Blood::draw() {
 
 #ifdef DC_CLIENT
 
-//GLint particle_sheet_id;
-void blood_draw() {
-    //printf("particle sheet id= %i \n", get_particle_texture() );
-    if(blood_count == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, blood_proj_mtrx);
-
-    struct Particle* g = NULL;
-    int i;
-
-    float size = 0.1;
-    float up[3] = {blood_proj_mtrx[0]*size, blood_proj_mtrx[4]*size, blood_proj_mtrx[8]*size};
-    float right[3] = {blood_proj_mtrx[1]*size, blood_proj_mtrx[5]*size, blood_proj_mtrx[9]*size};
-    int id;
+    float up[3] = {
+        blood_proj_mtrx[0]*BLOOD_TEXTURE_SCALE,
+        blood_proj_mtrx[4]*BLOOD_TEXTURE_SCALE,
+        blood_proj_mtrx[8]*BLOOD_TEXTURE_SCALE
+    };
+    float right[3] = {
+        blood_proj_mtrx[1]*BLOOD_TEXTURE_SCALE,
+        blood_proj_mtrx[5]*BLOOD_TEXTURE_SCALE,
+        blood_proj_mtrx[9]*BLOOD_TEXTURE_SCALE
+    };
 
     float tx_min, tx_max, ty_min, ty_max;
+    float x,y,z;
 
-    //should not change state unless there is something to draw
+    tx_min = (float)(BLOOD_TEXTURE_ID%16)* (1.0/16.0);
+    tx_max = tx_min + (1.0/16.0);
+    ty_min = (float)(BLOOD_TEXTURE_ID/16)* (1.0/16.0);
+    ty_max = ty_min + (1.0/16.0);
+
+    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+
+    glTexCoord2f(tx_min,ty_max );
+    glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
+
+    glTexCoord2f(tx_min,ty_min );
+    glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
+
+    glTexCoord2f(tx_max,ty_min);
+    glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
+
+    glTexCoord2f(tx_max,ty_max );
+    glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
+
+#endif    
+}
+
+
+/* Blood list */
+
+void Blood_list::tick() {
+    int i;
+    for (i=0; i<n_max; i++) {
+        if (a[i] == NULL) continue;
+        a[i]->tick();
+        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
+            destroy(a[i]->particle.id);
+        }
+    }
+}
+
+void Blood_list::draw() {
+#ifdef DC_CLIENT
+
+    if(num == 0) { return; }
+    glGetFloatv(GL_MODELVIEW_MATRIX, blood_proj_mtrx);
+
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
     glBindTexture( GL_TEXTURE_2D, get_particle_texture() );
-    //printf("particle sheet= %i \n", particle_sheet_id);
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     glBegin( GL_QUADS );
-    float x,y,z;
 
-    int _c = 0;
-    for(i=0; i<max_blood; i++) {
-    if(blood_list[i] != NULL) {
-        //printf("draw Particle: %i \n", i);
-        _c++;
-        g = blood_list[i];
-        //draw setup
-
-        id = 54;    // location in spritesheet
-        tx_min = (float)(id%16)* (1.0/16.0);
-        tx_max = tx_min + (1.0/16.0);
-        ty_min = (float)(id/16)* (1.0/16.0);
-        ty_max = ty_min + (1.0/16.0);
-
-        tx_min = 0.0;
-        tx_max = 1.0;
-        ty_min = 0.0;
-        ty_max = 1.0;
-
-        x=g->x; y=g->y; z=g->z;
-
-        glTexCoord2f(tx_min,ty_max );
-        glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
-
-        glTexCoord2f(tx_min,ty_min );
-        glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
-
-        glTexCoord2f(tx_max,ty_min);
-        glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
-
-        glTexCoord2f(tx_max,ty_max );
-        glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
-        }
+    int i;
+    for(i=0; i<n_max; i++) {
+        if (a[i] == NULL) continue;
+        a[i]->draw();
     }
-    //printf("drew %i gernades\n", _c);
-    glEnd();
 
+    glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-}
 
 #endif
+}
 
