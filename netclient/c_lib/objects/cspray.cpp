@@ -45,6 +45,16 @@ void Cspray::tick() {
             particle.ttl *= 2;
         }
     }
+
+    /* TEST: Stop cspray falling indefinitely */
+    if (particle.state.p.z < -1.0f) {
+        particle.state.p.z = 0.0f;
+        particle.state.v.x = 0.0f;
+        particle.state.v.y = 0.0f;
+        particle.state.v.z = 0.0f;
+
+        particle.ttl = particle.ttl_max;
+    }
 }
 
 

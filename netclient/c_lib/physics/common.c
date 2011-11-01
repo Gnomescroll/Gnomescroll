@@ -24,7 +24,6 @@ static inline void _adjust_vel(struct Particle* p, int* rot, int adj) {
     if(rot[2] != 0) {
         p->vz *= adj;
     }
-    _clamp_vel(p);
 }
 
 int* bounce_simple(struct Particle* p) {
@@ -43,6 +42,9 @@ int* bounce_simple(struct Particle* p) {
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
+
     return s;
 }
 
@@ -61,6 +63,9 @@ int* move_simple(struct Particle* p) {
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
+
     return s;
 }
 
@@ -81,6 +86,8 @@ int* bounce_collide_tile(struct Particle* p, int* collision, int* tile) {
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
 
+    _clamp_vel(p);
+
     return s;
 }
 
@@ -100,6 +107,8 @@ int* move_collide_tile(struct Particle* p, int* collision, int* tile) {
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
 
     return s;
 }
@@ -133,7 +142,6 @@ static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float da
                 if (p->id == 20) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
 
     }
-    _clamp_vel2(p);
 }
 
 struct State _motion_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate struct used for ray cast */
@@ -162,6 +170,7 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
     } else {
         rk4(&(p->state), t, interval);
     }
+    _clamp_vel2(p);
 
     return s;
 }
@@ -212,11 +221,12 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
         p->state.v = *(mult_vec_scalar(&v, damp));
     }
 
-
     //if (p->id == 10) {
         //j = &(p->state);
         //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
     //}
+
+    _clamp_vel2(p);
 
     return s;
 }
@@ -263,6 +273,7 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     } else {            // collided interval%. integrate this amount
         rk4(&(p->state), t, interval);
     }
+    _clamp_vel2(p);
 
     return s;
 }
@@ -292,6 +303,7 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
     } else {
         rk4(&(p->state), t, interval);
     }
+    _clamp_vel2(p);
 
     return s;
 }
