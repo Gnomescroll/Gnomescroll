@@ -28,8 +28,6 @@ class Cspray {
         int stopped;
 
         void draw();
-        void server_tick();
-        void client_tick();
         void tick();
 
         Cspray(int _id);
@@ -45,6 +43,6 @@ class Cspray_list: public Object_list<Cspray,CSPRAY_MAX>
         const char* name() { return "Cspray"; }
     public:
         void draw();
-        void draw(int);
+        //void draw(int);
         void tick();
 };

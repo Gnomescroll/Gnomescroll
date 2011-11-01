@@ -208,7 +208,8 @@ class Grenade(Projectile):
         self.speed = self.speed / GameStateGlobal.fps
         self.ttl = ttl
         x,y,z, vx,vy,vz = state
-        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
+        #self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
+        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl)
 
     def pos(self):
         return c_obj.get_grenade_position(self.g_index)

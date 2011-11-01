@@ -1,60 +1,64 @@
-#include "shrapnel.h"
+#include "blood.hpp"
 
+#define max_blood 4096
 
-#define max_shrapnel 4096
+struct Particle* blood_list[max_blood];
+float blood_proj_mtrx[16];
+int blood_count=0;
+unsigned int blood_id=0;
 
-struct Particle* shrapnel_list[max_shrapnel];
-float shrapnel_proj_mtrx[16];
-int shrapnel_count=0;
-unsigned int shrapnel_id=0;
+void inline blood_Tick(struct Particle* g);
 
-void inline shrapnel_Tick(struct Particle* g);
-
-void init_objects_shrapnel() {
+void init_objects_blood() {
     //printf("RANDMAX= %i \n", RAND_MAX);
     //srand(15); //seed
     return;
 }
 
-void inline shrapnel_Tick(struct Particle* g) {
-    g->vz -= 0.025; //gravity
-    g->ttl++;
+void inline blood_Tick(struct Particle* g) {
+    //g->vz -= 0.025; //gravity
 
-    bounce_simple(g);
+    g->ttl++;
+    int* s;
+    int collision[3];
+    int tile;
+    //s = move_collide_tile_rk4(g, collision, &tile, 0.25);
+    s = move_collide_tile(g, collision, &tile); // blood doesnt need rk4
+
 }
 
-void shrapnel_tick() {
+void blood_tick() {
     struct Particle* g = NULL;
     int i;
-    for(i=0; i<max_shrapnel; i++) {
-        if(shrapnel_list[i] != NULL) {
-            g = shrapnel_list[i];
-            shrapnel_Tick(g);
+    for(i=0; i<max_blood; i++) {
+        if(blood_list[i] != NULL) {
+            g = blood_list[i];
+            blood_Tick(g);
             if(g->ttl >= g-> ttl_max) {
                 //boom!
-                shrapnel_list[i] = NULL;
+                blood_list[i] = NULL;
                 free(g);
-                shrapnel_count--;
+                blood_count--;
             }
         }
     }
 }
 
 
-void create_shrapnel(int type, float x, float y, float z, float vx, float vy, float vz) {
-    //printf("Create shrapnel\n");
+void create_blood(int type, float x, float y, float z, float vx, float vy, float vz) {
+    //printf("Create Particle\n");
     struct Particle* g = NULL;
     int i;
-    for(i=0; i<max_shrapnel; i++) {
-        if(shrapnel_list[i] == NULL) {
+    for(i=0; i<max_blood; i++) {
+        if(blood_list[i] == NULL) {
             g = (struct Particle *) malloc (sizeof(struct Particle));
-            shrapnel_list[i] = g;
-            shrapnel_count++;
+            blood_list[i] = g;
+            blood_count++;
             break;
         }
     }
     if(g== NULL) {
-        //printf("Bug: max shrapnel number reached!\n");
+        //printf("Bug: max Particle number reached!\n");
         return;}
     create_particle(g, (unsigned int)i, type, x,y,z, vx,vy,vz, 0, 30);
 }
@@ -67,17 +71,17 @@ void create_shrapnel(int type, float x, float y, float z, float vx, float vy, fl
 #ifdef DC_CLIENT
 
 //GLint particle_sheet_id;
-void shrapnel_draw() {
+void blood_draw() {
     //printf("particle sheet id= %i \n", get_particle_texture() );
-    if(shrapnel_count == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, shrapnel_proj_mtrx);
+    if(blood_count == 0) { return; }
+    glGetFloatv(GL_MODELVIEW_MATRIX, blood_proj_mtrx);
 
     struct Particle* g = NULL;
     int i;
 
     float size = 0.1;
-    float up[3] = {shrapnel_proj_mtrx[0]*size, shrapnel_proj_mtrx[4]*size, shrapnel_proj_mtrx[8]*size};
-    float right[3] = {shrapnel_proj_mtrx[1]*size, shrapnel_proj_mtrx[5]*size, shrapnel_proj_mtrx[9]*size};
+    float up[3] = {blood_proj_mtrx[0]*size, blood_proj_mtrx[4]*size, blood_proj_mtrx[8]*size};
+    float right[3] = {blood_proj_mtrx[1]*size, blood_proj_mtrx[5]*size, blood_proj_mtrx[9]*size};
     int id;
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -96,18 +100,23 @@ void shrapnel_draw() {
     float x,y,z;
 
     int _c = 0;
-    for(i=0; i<max_shrapnel; i++) {
-    if(shrapnel_list[i] != NULL) {
-        //printf("draw shrapnel: %i \n", i);
+    for(i=0; i<max_blood; i++) {
+    if(blood_list[i] != NULL) {
+        //printf("draw Particle: %i \n", i);
         _c++;
-        g = shrapnel_list[i];
+        g = blood_list[i];
         //draw setup
 
-        id = 63;    // location in spritesheet
+        id = 54;    // location in spritesheet
         tx_min = (float)(id%16)* (1.0/16.0);
         tx_max = tx_min + (1.0/16.0);
         ty_min = (float)(id/16)* (1.0/16.0);
         ty_max = ty_min + (1.0/16.0);
+
+        tx_min = 0.0;
+        tx_max = 1.0;
+        ty_min = 0.0;
+        ty_max = 1.0;
 
         x=g->x; y=g->y; z=g->z;
 

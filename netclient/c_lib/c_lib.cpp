@@ -15,14 +15,7 @@
 #endif
 
 /* objects */
-#include "./objects/particles.c"
-#include "./objects/grenade.c"
-#include "./objects/neutron.c"
-#include "./objects/cspray.cpp"
-#include "./objects/circuit_tree.c"
-#include "./objects/shrapnel.c"
-#include "./objects/blood.c"
-
+#include <c_lib/objects/object_lib.hpp>
 
 /* map */
 #include "./t_map/t_map.c"
@@ -58,7 +51,6 @@
 
 int init_c_lib() {
     printf("init c_lib\n");
-    init_objects_grenade();
     init_objects_neutron();
 
     #ifdef DC_CLIENT

@@ -45,7 +45,7 @@ Object_list<Object_state, max_n>::Object_list()
     id_c = 0;
     int i;
     for(i=0;i<max_n;i++) a[i] = NULL;
-    printf("%s list instantiated at %p\n", name(), this);
+    printf("%s list instantiated at %p\n", this->name(), this);
     //where();
 }
 

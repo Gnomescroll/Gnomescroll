@@ -1,68 +1,34 @@
-#include "cspray.hpp"
+#include "grenade.hpp"
 
-#pragma once
+float grenade_proj_mtrx[16];
 
-float cspray_proj_mtrx[16];
-
-Cspray::Cspray(int _id) {
-    active = 0;
-    stopped = 0;
-    create_particle2(&particle, _id, CSPRAY_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, CSPRAY_TTL);
+Grenade::Grenade(int id) {
+    create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
                    // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
 }
 
-Cspray::Cspray(int _id, float x, float y, float z, float vx, float vy, float vz) {
-    active = 0;
-    stopped = 0;
-    create_particle2(&particle, _id, CSPRAY_TYPE, x,y,z, vx,vy,vz, 0, CSPRAY_TTL);
-                   // particle, _id,      type,   x,y,z, vx,vy,vz, ttl, ttl_max
+Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz) {
+    create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
+                   // particle, _id,      type,   x,y,z vx,vy,vz, ttl, ttl_max
 }
 
-void Cspray::tick() {
-
+void Grenade::tick() {
+    bounce_simple_rk4(&particle, GRENADE_DAMP);
     particle.ttl++;
-
-    int* s;
-    int collision[3];
-    int tile;
-
-    s = bounce_collide_tile_rk4(&(particle), collision, &tile, CSPRAY_DAMP);
-
-    // cement effect
-    if(active == 1) {
-        particle.ttl= particle.ttl_max;
-        if(!isActive(tile)) {
-            _set(collision[0],collision[1],collision[2], CSPRAY_CEMENT_BLOCK_TYPE);    // create block
-            particle.ttl = particle.ttl_max;
-            return;
-        }
-    }
-
-    if(s[0] != 0 || s[1] != 0 || s[2] != 0)
-    {
-        if(isActive(tile)) {
-            active=1;
-            particle.ttl *= 2;
-        }
-    }
 }
 
-
-
-void Cspray::draw() {
+void Grenade::draw() {
 #ifdef DC_CLIENT
 
-    float size = 0.3;
-    float up[3] = {cspray_proj_mtrx[0]*size, cspray_proj_mtrx[4]*size, cspray_proj_mtrx[8]*size};
-    float right[3] = {cspray_proj_mtrx[1]*size, cspray_proj_mtrx[5]*size, cspray_proj_mtrx[9]*size};
+    float up[3] = {grenade_proj_mtrx[0], grenade_proj_mtrx[4], grenade_proj_mtrx[8]};
+    float right[3] = {grenade_proj_mtrx[1], grenade_proj_mtrx[5], grenade_proj_mtrx[9]};
 
     float tx_min, tx_max, ty_min, ty_max;
-
     float x,y,z;
 
-    tx_min = (float)(CSPRAY_TEXTURE_ID%16)* (1.0/16.0);
+    tx_min = (float)(GRENADE_TEXTURE_ID%16)* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(CSPRAY_TEXTURE_ID/16)* (1.0/16.0);
+    ty_min = (float)(GRENADE_TEXTURE_ID/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
     x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
@@ -78,31 +44,30 @@ void Cspray::draw() {
 
     glTexCoord2f(tx_max,ty_max );
     glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
-#endif
+#endif    
 }
 
+/* Grenade list */
 
-/* Cspray_list */
-
-void Cspray_list::tick() {
-
+void Grenade_list::tick() {
     int i;
-    for (i=0; i<n_max; i++) {
-
+    for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
+
+        // destruction currently handled by python,
+        // because python is tracking grenades in a Projectile List
+        if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
             destroy(a[i]->particle.id);
         }
-
     }
 }
 
-void Cspray_list::draw() {
+void Grenade_list::draw() {
 #ifdef DC_CLIENT
-    if (num==0) return;
 
-    glGetFloatv(GL_MODELVIEW_MATRIX, cspray_proj_mtrx);
+    if(num == 0) { return; }
+    glGetFloatv(GL_MODELVIEW_MATRIX, grenade_proj_mtrx);
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -115,14 +80,12 @@ void Cspray_list::draw() {
     glBegin( GL_QUADS );
 
     int i;
-    for (i=0; i<n_max; i++) {
-        if (a[i] != NULL) {
-            a[i]->draw();
-        }
+    for(i=0; i<n_max; i++) {
+        if (a[i] == NULL) continue;
+        a[i]->draw();
     }
-    
-    glEnd();
 
+    glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
@@ -139,7 +102,7 @@ void Cspray_list::draw() {
 
 #include <c_lib/template/net.hpp>
 
-class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
+class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {
     public:
 
@@ -167,7 +130,6 @@ class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
         }
 
         inline void handle() {
-            printf("Spawn cspray particle: %i \n", id);
+            printf("Spawn grenade particle: %i \n", id);
         }
 };
-

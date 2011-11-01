@@ -1,4 +1,4 @@
-#include "neutron.h"
+#include "neutron.hpp"
 
 #define max_neutron 1024
 

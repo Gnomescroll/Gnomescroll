@@ -11,7 +11,7 @@ struct State {
     struct Vector v;
 };
 
-#include <objects/particles.h>
+#include <objects/particles.hpp>
 
 int* bounce_simple(struct Particle* p);
 int* bounce_collide_tile(struct Particle* p, int* collision, int* tile);

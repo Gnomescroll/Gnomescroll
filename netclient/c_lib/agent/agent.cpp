@@ -366,7 +366,7 @@ void Agent_state::_tick() {
         const float z_jetpack = 0.80 / tr2;
         const float z_gravity = -.40 / tr2;
 
-        const float ground_distance = 0.02;
+        //const float ground_distance = 0.02;   // unused
         const float z_bounce = 0.65;
         const float z_bounce_v_threshold = 0.35 / tr;
 
