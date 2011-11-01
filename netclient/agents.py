@@ -893,9 +893,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
 
         self._control_state_id_set = False
+
         if id:
-            set_player_agent_id(id)
-            self._control_state_id_set = True
+            self.id = id
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
