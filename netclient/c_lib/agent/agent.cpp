@@ -668,6 +668,41 @@ Agent_state::Agent_state(int _id) {
     #endif
 }
 
+Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) {
+    id = _id;
+    s.x = _x;
+    s.y = _y;
+    s.z = _z;
+    s.vx = _vx;
+    s.vy = _vy;
+    s.vz = _vz;
+
+    b_height = 1.8;
+
+    //s.x = 16.5;
+    //s.y = 16.5;
+
+    cs_seq = 0;
+
+    printf("Agent_state::Agent_state, new agent, id=%i \n", id);
+
+    _new_control_state = 0;
+    
+    tick_n = 0; //increment when ticking
+    ctick = 0;  //increment when control state received
+    theta = 0.0;
+    phi = 0.0;
+
+    state_snapshot.seq = -1;
+    state_rollback.seq = -1;
+    int i;
+    for(i=0; i<128;i++) cs[i].seq = -1;
+
+    #ifdef DC_CLIENT
+    vox = new Agent_vox();
+    #endif
+}
+
 void Agent_state::draw() {
 #ifdef DC_CLIENT
     AgentDraw::draw_agent(this);

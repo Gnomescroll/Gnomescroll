@@ -47,9 +47,12 @@ cdef extern from "./objects/cspray.hpp":
         Cspray* get(int id)
         Cspray* create()
         Cspray* create(int id)
+        Cspray* create(float x, float y, float z, float vx, float vy, float vz)
+        Cspray* create(int id, float x, float y, float z, float vx, float vy, float vz)
         void destroy(int _id)
         void draw()
         void draw(int all)
+        void tick()
 
 cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
     Cspray_list cspray_list
@@ -68,13 +71,15 @@ def tick():
     blood_tick()
     shrapnel_tick()
 
+    cspray_list.tick()
+    
 def draw():
     grenade_draw()
     neutron_draw()
     blood_draw()
     shrapnel_draw()
 
-    #cspray_list.draw()
+    cspray_list.draw()
 
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max):
     return create_grenade(1, x,y,z, vx,vy,vz, ttl, ttl_max)
@@ -85,9 +90,8 @@ def _destroy_grenade(int gid):
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     create_neutron(type,energy, x,y,z, vx,vy,vz)
 
-def _create_cspray(int type, float x, float y, float z, float vx, float vy, float vz):
-    return
-    #create_cspray(type, x,y,z, vx,vy,vz)
+def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
+    cspray_list.create(x,y,z, vx,vy,vz)
 
 def _create_blood(int type, float x, float y, float z, float vx, float vy, float vz):
     create_blood(type, x,y,z, vx,vy,vz)

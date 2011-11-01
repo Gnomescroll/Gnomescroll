@@ -124,6 +124,7 @@ class Agent_state {
         void draw();
 
         Agent_state(int _id); //default constructor
+        Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
 
         void crouch(int on_off);
         //void server_tick();
