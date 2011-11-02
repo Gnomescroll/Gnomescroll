@@ -1,15 +1,16 @@
 #pragma once
 
-#include <c_lib/ray_trace/ray_trace.h>
 #include <c_lib/physics/vector.h>
-#include <objects/particles.hpp>
-
-#define FPS 30.0f
 
 struct State {
     struct Vector p;
     struct Vector v;
 };
+
+#include <c_lib/ray_trace/ray_trace.h>
+#include <c_lib/objects/particles.hpp>
+
+#define FPS 30.0f
 
 int* bounce_simple(struct Particle* p);
 int* bounce_collide_tile(struct Particle* p, int* collision, int* tile);
