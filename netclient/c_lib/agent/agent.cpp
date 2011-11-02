@@ -281,7 +281,7 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
 }
 
 
-inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
+inline bool on_ground(float box_r, float x, float y, float z) {
 
     int x_min = x - box_r;
     int x_max = x + box_r;
@@ -289,7 +289,7 @@ inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
     int y_min = y - box_r;
     int y_max = y + box_r;
 
-    int z0 = z - 0.01; //ground margin is 0.01
+    int z0 = z - 0.10; //ground margin is 0.01
 
     //upper left
     //upper right
@@ -301,20 +301,20 @@ inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
         return true;
     }
 
-    else if(isActive(_get(x_max,y_min,z0) != 0)) {
+    if(isActive(_get(x_max,y_min,z0) != 0)) {
         return true; 
     }
 
-    else if(isActive(_get(x_min,y_min,z0) != 0)) {
+    if(isActive(_get(x_min,y_min,z0) != 0)) {
         return true;
     }
 
-    else if(isActive(_get(x_min,y_max,z0) != 0)) {
+    if(isActive(_get(x_min,y_max,z0) != 0)) {
         return true;
     }
-    else {
-        return false;
-    }
+   
+    return false;
+
 }
 
 void Agent_state::_tick() {
@@ -384,6 +384,13 @@ void Agent_state::_tick() {
         //top +z
         //bottom -z
         collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
+
+        if(on_ground(box_r, s.x, s.y, s.z) == true) {
+            printf("on ground\n");
+        }
+        else {
+            printf("off ground\n");
+        }
 
         float cs_vx =0 ;
         float cs_vy =0 ;
