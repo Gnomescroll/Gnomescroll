@@ -24,4 +24,4 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
 
 /* integrator */
-void rk4(struct State* state, int t, int dt);
+void rk4(struct State* state, float dt);
