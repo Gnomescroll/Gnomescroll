@@ -289,14 +289,8 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 
 struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate derivative */
 struct State* step_inter = &_step_inter;
-int step_i = 0;
-static inline void rk4_step(struct State* initial, struct State* NEW, struct State* old, float t, float dt)
+static inline void rk4_step(struct State* initial, struct State* final, struct State* old, float t, float dt)
 {
-        //int n = _GET_MS_TIME();
-
-   //printf("RK4STEP\n");
-    //printf("%f,%f,%f, %f,%f,%f\n", initial->p.x, initial->p.y, initial->p.z, initial->v.x, initial->v.y, initial->v.z);
-
      step_inter->p.x = initial->p.x + old->p.x*dt;
      step_inter->p.y = initial->p.y + old->p.y*dt;
      step_inter->p.z = initial->p.z + old->p.z*dt;
@@ -304,62 +298,28 @@ static inline void rk4_step(struct State* initial, struct State* NEW, struct Sta
      step_inter->v.y = initial->v.y + old->v.y*dt;
      step_inter->v.z = initial->v.z + old->v.z*dt;
 
-    //printf("STEP STATE (should be constant x4)\n");   // it is constant
-    //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
-    NEW->p = step_inter->v;
+    final->p = step_inter->v;
      rk4_accelerate(step_inter, t+dt, dt);
-     NEW->v = step_inter->v;
-    //printf("ACCEL\n");
-        //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
-    //printf("\n");
-
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 0) {
-        //printf("RK4STEP %d ms>0 :: %d\n", step_i, n2-n);
-    //}
-    //step_i++;
-    //step_i %= 4;
+     final->v = step_inter->v;
 }
 
-static inline void rk4_step0(struct State* initial, struct State* NEW, float t) {
-            //int n = _GET_MS_TIME();
-
-    NEW->p = initial->v;
-    NEW->v.x=0.0f;
-    NEW->v.y=0.0f;
-    NEW->v.z=0.0f;
-    rk4_accelerate(NEW, t, 0.0f);
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 0) {
-        //printf("RK4STEP0 %d ms>0 :: %d\n", step_i, n2-n);
-    //}
-    //step_i++;
-    //step_i %= 4;
-//
+static inline void rk4_step0(struct State* initial, struct State* final, float t) {
+    final->p = initial->v;
+    final->v.x=0.0f;
+    final->v.y=0.0f;
+    final->v.z=0.0f;
+    rk4_accelerate(final, t, 0.0f);
 }
 
 void rk4(struct State* state, int _t, int _dt)
 {
-    //int n = _GET_MS_TIME();
+    float t = _t / FPS;
+    float dt = _dt / FPS;
 
-    float t = _t / 30.0f;
-    float dt = _dt / 30.0f;
-    //printf("RK4\n");
-    //printf("%f\n", t);
-    //printf("%f\n", dt);
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
-
-     //rk4_step(state, &derivatives[0], &_derivative, t, 0.0f);
     rk4_step0(state, &derivatives[0],                  t                 );
      rk4_step(state, &derivatives[1], &derivatives[0], t+dt*0.5f, dt*0.5f);
      rk4_step(state, &derivatives[2], &derivatives[1], t+dt*0.5f, dt*0.5f);
      rk4_step(state, &derivatives[3], &derivatives[2], t+dt, dt);
-
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[0].p.x, derivatives[0].p.y, derivatives[0].p.z, derivatives[0].v.x, derivatives[0].v.y, derivatives[0].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[1].p.x, derivatives[1].p.y, derivatives[1].p.z, derivatives[1].v.x, derivatives[1].v.y, derivatives[1].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[2].p.x, derivatives[2].p.y, derivatives[2].p.z, derivatives[2].v.x, derivatives[2].v.y, derivatives[2].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[3].p.x, derivatives[3].p.y, derivatives[3].p.z, derivatives[3].v.x, derivatives[3].v.y, derivatives[3].v.z);
-
 
      const float dxdt = 1.0f/6.0f * (derivatives[0].p.x + 2.0f*(derivatives[1].p.x + derivatives[2].p.x) + derivatives[3].p.x);
      const float dydt = 1.0f/6.0f * (derivatives[0].p.y + 2.0f*(derivatives[1].p.y + derivatives[2].p.y) + derivatives[3].p.y);
@@ -368,7 +328,6 @@ void rk4(struct State* state, int _t, int _dt)
      const float dvxdt = 1.0f/6.0f * (derivatives[0].v.x + 2.0f*(derivatives[1].v.x + derivatives[2].v.x) + derivatives[3].v.x);
      const float dvydt = 1.0f/6.0f * (derivatives[0].v.y + 2.0f*(derivatives[1].v.y + derivatives[2].v.y) + derivatives[3].v.y);
      const float dvzdt = 1.0f/6.0f * (derivatives[0].v.z + 2.0f*(derivatives[1].v.z + derivatives[2].v.z) + derivatives[3].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", dxdt, dydt, dzdt, dvxdt, dvydt, dvzdt);
 
      state->p.x = state->p.x + dxdt * dt;
      state->p.y = state->p.y + dydt * dt;
@@ -377,12 +336,4 @@ void rk4(struct State* state, int _t, int _dt)
      state->v.x = state->v.x + dvxdt * dt;
      state->v.y = state->v.y + dvydt * dt;
      state->v.z = state->v.z + dvzdt * dt;
-
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
-
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 0) {
-        //printf("RK4 ms>0 :: %d\n", n2-n);
-    //}
-
 }

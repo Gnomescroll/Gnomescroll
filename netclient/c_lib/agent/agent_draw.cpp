@@ -7,12 +7,13 @@
 #ifdef DC_CLIENT
 
 
+#define SNAPSHOT_DRAW_ARRAY_SIZE 32
+
 namespace AgentDraw {
 
-int snapshot_draw_array_i = 0;
-int snapshot_draw_last_seq = 0;
-AgentState snapshot_draw_array[32];
-
+static int snapshot_draw_array_i = 0;
+static int snapshot_draw_last_seq = 0;
+AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
 
 static int _last_seq = 0;
 
@@ -21,10 +22,10 @@ void add_snapshot_to_history(Agent_state* g) {
     if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         snapshot_draw_last_seq = g->state_snapshot.seq;
         snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
-        snapshot_draw_array_i = (snapshot_draw_array_i+1)%32;
+        snapshot_draw_array_i = (snapshot_draw_array_i+1)%SNAPSHOT_DRAW_ARRAY_SIZE;
 
 
-        if(g->state_snapshot.seq != (_last_seq + 32)%256) {
+        if(g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
             
             printf("!!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
 
@@ -47,7 +48,7 @@ void draw_agent(Agent_state* g) {
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
     int i;
-    for(i=0; i < 32; i++) {
+    for(i=0; i < SNAPSHOT_DRAW_ARRAY_SIZE; i++) {
         draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
     }
 

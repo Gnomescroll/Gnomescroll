@@ -4,7 +4,7 @@
 #include <ray_trace/ray_trace.h>
 #include "physics/vector.h"
 
-#define FPS 30
+#define FPS 30.0f
 
 struct State {
     struct Vector p;
@@ -25,8 +25,6 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
 
 /* integrator */
-//void accelerate(struct State* state, float t, float dt);
-//void rk4_step(struct State* state, struct State* i, struct State* d, float t, float dt);
 void rk4(struct State* state, int t, int dt);
 
 
