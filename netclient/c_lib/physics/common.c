@@ -275,8 +275,11 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 
     //const float air_resist = 1.0f;
     //const float spring = 0.1f;
-    const float gravity = 28.0f;
+    //const float gravity = 28.0f;
+    const float gravity = 9.8f * 2.0f;
+    //printf("final g %0.2f\n", gravity*dt);
     inter->v.z -= gravity;
+    //inter->v.z -= gravity * dt; /* This is too fucking slow!! The ball does not drop */
 
     ////inter->v.x -= spring * inter->p.x;
     ////inter->v.y -= spring * inter->p.y;
