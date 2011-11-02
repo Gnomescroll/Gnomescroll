@@ -2,7 +2,9 @@
 
 #pragma once
 
+#ifdef DC_CLIENT
 static float cspray_proj_mtrx[16];
+#endif
 
 Cspray::Cspray(int _id) {
     active = 0;

@@ -1,10 +1,14 @@
 #include "neutron.hpp"
 
+#pragma once
+
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/defines.h>
 
+#ifdef DC_CLIENT
 static float neutron_proj_mtrx[16];
+#endif
 
 Neutron::Neutron(int id) {
     create_particle2(&particle, (unsigned int)id, NEUTRON_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, NEUTRON_TTL);

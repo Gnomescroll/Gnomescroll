@@ -1,6 +1,9 @@
 #include "grenade.hpp"
+#pragma once
 
+#ifdef DC_CLIENT
 static float grenade_proj_mtrx[16];
+#endif
 
 Grenade::Grenade(int id) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);

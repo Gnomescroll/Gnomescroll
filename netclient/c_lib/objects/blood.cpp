@@ -1,6 +1,9 @@
 #include "blood.hpp"
+#pragma once
 
+#ifdef DC_CLIENT
 static float blood_proj_mtrx[16];
+#endif
 
 Blood::Blood(int id) {
     create_particle2(&particle, id, BLOOD_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BLOOD_TTL);

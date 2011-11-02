@@ -1,6 +1,9 @@
 #include "shrapnel.hpp"
+#pragma once
 
+#ifdef DC_CLIENT
 static float shrapnel_proj_mtrx[16];
+#endif
 
 Shrapnel::Shrapnel(int id) {
     create_particle2(&particle, id, SHRAPNEL_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, SHRAPNEL_TTL);
