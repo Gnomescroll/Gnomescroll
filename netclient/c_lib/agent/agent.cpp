@@ -289,7 +289,7 @@ inline bool on_ground(float box_r, float x, float y, float z) {
     int y_min = y - box_r;
     int y_max = y + box_r;
 
-    int z0 = z - 0.10; //ground margin is 0.01
+    int z0 = z - 0.01; //ground margin is 0.01
 
     //upper left
     //upper right
