@@ -5,6 +5,11 @@
 #include <c_lib/defines.h>
 #include <math.h>
 
+#ifdef DC_CLIENT
+static int n_agents_to_draw = 0;
+static int agents_to_draw[AGENT_MAX];
+#endif
+
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
@@ -716,12 +721,6 @@ void Agent_state::crouch(int on_off) {
     } else {
         b_height = 1.8;
     }
-}
-
-void agent_crouch(int agent_id, int on_off) {
-    Agent_state* a = STATE::agent_list.get(agent_id);
-    if (a == NULL) {return;}
-    a->crouch(on_off);
 }
 
 int agent_create(int id, float x, float y, float z) {

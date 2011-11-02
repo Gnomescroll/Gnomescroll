@@ -20,6 +20,10 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
     draw_agent_cube_side_selection( x,  y,  z,  cx,  cy,  cz,  r,  g,  b)
 
 
+'''
+DONT DEPRECATE BELOW
+'''
+
 #AgentState
 cdef extern from "./agent/agent.hpp":
     cdef cppclass AgentState:
@@ -35,11 +39,8 @@ cdef extern from "./agent/agent.hpp":
         int id
         AgentState s
         void teleport(float x,float y,float z)
+        void crouch(int on_off)
 
-
-'''
-DONT DEPRECATE BELOW
-'''
 
 cdef extern from "./agent/agent.hpp":
     int agent_create(int id, float x, float y, float z)
@@ -53,8 +54,6 @@ cdef extern from "./agent/agent.hpp":
     void clear_agents_to_draw()
     void set_agents_to_draw(int* ids, int ct)
 
-    void agent_crouch(int agent_id, int on_off)
-
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
         void draw()
@@ -66,6 +65,11 @@ cdef extern from "./agent/agent.hpp":
         void destroy(int _id)
         void where()
 
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Agent_list agent_list
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
+    void set_PlayerAgent_id(int id)
+
 def init_draw_agents():
     init_agents_to_draw()
 
@@ -73,7 +77,10 @@ def draw_agents():
     agent_list.draw()
 
 def crouch(int agent_id, int on_off):
-    agent_crouch(agent_id, on_off)
+    cdef Agent_state* agent
+    agent = agent_list.get(agent_id)
+    if agent is not NULL:
+        agent.crouch(on_off)
 
 import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
@@ -133,12 +140,6 @@ WRAPPER
 '''
 
 #agent class wrapper
-
-#cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    Agent_list agent_list
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
-    void set_PlayerAgent_id(int id)
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 

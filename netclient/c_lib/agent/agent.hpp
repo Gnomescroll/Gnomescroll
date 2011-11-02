@@ -13,17 +13,10 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
 
-int n_agents_to_draw = 0;
-int agents_to_draw[AGENT_MAX];
 void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
 #endif
-
-void agents_tick();
-int agent_create(int id, float x, float y, float z);
-
-void agent_crouch(int agent_id, int on_off);
 
 //store last network messsage
 
