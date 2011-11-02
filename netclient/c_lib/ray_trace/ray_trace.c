@@ -345,7 +345,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
         cx += dx;
         cy += dy;
         cz += dz;
-        //if(cx >= bsize || cy >= bsize || cz >= bsize) {
+        if(cx >= bsize || cy >= bsize || cz >= bsize) {
             if(cx >= bsize) {
                 cx -= bsize;
                 x += cdx;
@@ -371,7 +371,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 }
             }
             if (_c) break;
-        //}
+        }
     }
 
     collision[0]=x;collision[1]=y;collision[2]=z;
@@ -415,40 +415,42 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     // this adjustment is necessary, but the step may need to be resized
     // if max_i > ray_cast_max.
-    max_i = fmin(raycast_tick_max, max_i);
+    if (max_i > raycast_tick_max) {
+        printf("WARNING: _ray_cast5_capped :: max_i ticks exceeded tick_max. max_i=%d\n", max_i);
+        max_i = raycast_tick_max;
+    }
 
     int _c = 0;
     for(i=0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
-        //if(cx >= bsize || cy >= bsize || cz >= bsize) {
-            if(cx >= bsize) {
-                cx -= bsize;
-                x += cdx;
-                if(collision_check2(x,y,z)) {
-                    ri4[0] = cdx;
-                    _c = 1;
-                }
+
+        if(cx >= bsize) {
+            cx -= bsize;
+            x += cdx;
+            if(collision_check2(x,y,z)) {
+                ri4[0] = cdx;
+                _c = 1;
             }
-            if(cy >= bsize) {
-                cy -= bsize;
-                y += cdy;
-                if(_c || collision_check2(x,y,z)) {
-                    ri4[1] = cdy;
-                    _c = 1;
-                }
+        }
+        if(cy >= bsize) {
+            cy -= bsize;
+            y += cdy;
+            if(_c || collision_check2(x,y,z)) {
+                ri4[1] = cdy;
+                _c = 1;
             }
-            if(cz >= bsize) {
-                cz -= bsize;
-                z += cdz;
-                if(_c || collision_check2(x,y,z)) {
-                    ri4[2] = cdz;
-                    _c = 1;
-                }
+        }
+        if(cz >= bsize) {
+            cz -= bsize;
+            z += cdz;
+            if(_c || collision_check2(x,y,z)) {
+                ri4[2] = cdz;
+                _c = 1;
             }
-            if (_c) break;
-        //}
+        }
+        if (_c) break;
     }
 
     collision[0]=x;collision[1]=y;collision[2]=z;
