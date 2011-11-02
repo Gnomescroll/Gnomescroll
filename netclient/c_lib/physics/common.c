@@ -269,7 +269,7 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
 
 /* integrator */
-struct State derivatives[4];
+static struct State derivatives[4];
 
 static inline void rk4_accelerate(struct State* inter, float t, float dt) {
 
@@ -287,8 +287,8 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
     //inter->v.z *= air_resist;
 }
 
-struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate derivative */
-struct State* step_inter = &_step_inter;
+static struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate derivative */
+static struct State* step_inter = &_step_inter;
 static inline void rk4_step(struct State* initial, struct State* final, struct State* old, float t, float dt)
 {
      step_inter->p.x = initial->p.x + old->p.x*dt;

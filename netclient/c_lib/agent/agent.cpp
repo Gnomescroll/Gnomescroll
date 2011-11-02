@@ -1,18 +1,9 @@
-
 #include "agent.hpp"
 
 #include <c_lib/agent/net_agent.cpp>
-
 #include <c_lib/agent/agent_draw.hpp>
-
+#include <c_lib/defines.h>
 #include <math.h>
-
-
-#ifdef DC_CLIENT
-    #define STATELIST ClientState
-#else
-    #define STATELIST ServerState
-#endif
 
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
@@ -728,7 +719,7 @@ void Agent_state::crouch(int on_off) {
 }
 
 void agent_crouch(int agent_id, int on_off) {
-    Agent_state* a = STATELIST::agent_list.get(agent_id);
+    Agent_state* a = STATE::agent_list.get(agent_id);
     if (a == NULL) {return;}
     a->crouch(on_off);
 }

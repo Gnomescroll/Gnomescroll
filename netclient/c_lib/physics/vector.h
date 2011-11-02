@@ -58,5 +58,3 @@ inline static struct Vector sub_vec(struct Vector* a, struct Vector* b) {
 struct Vector* mult_vec_scalar(struct Vector* a, float i);
 struct Vector reflect(struct Vector* inc, struct Vector* nor);
 
-///fix?
-

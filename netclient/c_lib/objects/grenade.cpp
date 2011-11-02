@@ -1,6 +1,6 @@
 #include "grenade.hpp"
 
-float grenade_proj_mtrx[16];
+static float grenade_proj_mtrx[16];
 
 Grenade::Grenade(int id) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);

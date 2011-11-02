@@ -1,6 +1,6 @@
 #include "shrapnel.hpp"
 
-float shrapnel_proj_mtrx[16];
+static float shrapnel_proj_mtrx[16];
 
 Shrapnel::Shrapnel(int id) {
     create_particle2(&particle, id, SHRAPNEL_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, SHRAPNEL_TTL);

@@ -2,7 +2,7 @@
 
 #pragma once
 
-float cspray_proj_mtrx[16];
+static float cspray_proj_mtrx[16];
 
 Cspray::Cspray(int _id) {
     active = 0;

@@ -1,17 +1,10 @@
 #include "neutron.hpp"
 
-#ifdef DC_CLIENT
-    #define STATE ClientState
-#else
-    #define STATE ServerState
-#endif
-
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
+#include <c_lib/defines.h>
 
-//namespace STATE { extern Neutron_list neutron_list; };
-
-float neutron_proj_mtrx[16];
+static float neutron_proj_mtrx[16];
 
 Neutron::Neutron(int id) {
     create_particle2(&particle, (unsigned int)id, NEUTRON_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, NEUTRON_TTL);

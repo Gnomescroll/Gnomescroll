@@ -12,11 +12,7 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 
-#ifdef DC_CLIENT
-    #define STATE ClientState
-#else
-    #define STATE ServerState
-#endif
+#include <c_lib/defines.h>
 
 //send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
