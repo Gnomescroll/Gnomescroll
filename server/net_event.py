@@ -657,6 +657,7 @@ class MiscMessageHandler(GenericMessageHandler):
             'identify': self.identify,
             'request_client_id':    self.request_client_id,
             'received_client_id':   self.received_client_id,
+            'agent_tick_mode'   :   self.agent_tick_mode,
         }
 
     @logError('ping')
@@ -668,6 +669,14 @@ class MiscMessageHandler(GenericMessageHandler):
     @requireKey('name')
     def identify(self, msg, conn, name):
         conn.identify(name)
+
+    @logError('agent_tick_mode')
+    @requireKey('mode')
+    def agent_tick_mode(self, msg, conn, mode):
+        if not GameStateGlobal.set_agent_tick_mode(mode):
+            print 'Agent_tick_mode msg received with invalid mode %s' % (mode,)
+        else:
+            print 'set mode to %s' % (mode,)
 
     def request_client_id(self, msg, conn):
         conn.send_client_id()

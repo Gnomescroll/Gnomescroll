@@ -43,7 +43,6 @@ cdef extern from "./agent/agent.hpp":
 
 
 cdef extern from "./agent/agent.hpp":
-    int agent_create(int id, float x, float y, float z)
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
     void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz)
@@ -53,6 +52,11 @@ cdef extern from "./agent/agent.hpp":
     void init_agents_to_draw()
     void clear_agents_to_draw()
     void set_agents_to_draw(int* ids, int ct)
+
+    void set_agent_tick_mode(int mode)
+    cdef enum tick_modes:
+        use_jetpack
+        use_jump
 
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
@@ -81,6 +85,11 @@ def crouch(int agent_id, int on_off):
     agent = agent_list.get(agent_id)
     if agent is not NULL:
         agent.crouch(on_off)
+
+def jump_physics():
+    set_agent_tick_mode(use_jump)
+def jetpack_physics():
+    set_agent_tick_mode(use_jetpack)
 
 import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick

@@ -18,7 +18,7 @@ from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_m
 from init_c_lib import _toggle_latency_unit
 
 import c_lib.c_lib_hud as cHUD
-
+import c_lib.c_lib_agents as cAgents
 
 #handles special characters
 Keystring = {}
@@ -292,6 +292,7 @@ class Keyboard(object):
             'u' : cInput.toggle_mouse_bind,
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
+            ']' : self.toggle_agent_tick_mode,
         })
         
     # accept key,handler or a dict of key,handlers
@@ -328,6 +329,16 @@ class Keyboard(object):
     def toggle_agent_gravity(self):
         print 'toggle agent g'
         GameStateGlobal.apply_gravity = not GameStateGlobal.apply_gravity
+
+    def toggle_agent_tick_mode(self):
+        print 'toggle agent tick mode'
+        if GameStateGlobal.agent_tick_mode == 'jetpack':
+            GameStateGlobal.agent_tick_mode = 'jump'
+            cAgents.jump_physics()
+        else:
+            GameStateGlobal.agent_tick_mode = 'jetpack'
+            cAgents.jetpack_physics()
+        NetOut.miscMessage.agent_tick_mode(GameStateGlobal.agent_tick_mode)
 
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:

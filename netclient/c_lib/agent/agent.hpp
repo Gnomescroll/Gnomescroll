@@ -4,6 +4,9 @@
 
 #define AGENT_MAX 1024
 
+#define AGENT_HEIGHT 1.8
+#define AGENT_HEIGHT_CROUCHED 0.9
+
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
 #include <agent/agent_vox.hpp>
@@ -72,11 +75,15 @@ class Agent_state {
 
         int _new_control_state;
 
+        int jump_ready;
+
         #ifdef DC_CLIENT
         class Agent_vox* vox;
         #endif
 
         void _tick();
+        void _tick_jetpack();
+        void _tick_jump();
 
         void teleport(float x,float y,float z);
 
@@ -135,3 +142,10 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void draw(int);
 };
 
+
+enum tick_modes {
+    use_jetpack,
+    use_jump
+};
+
+void set_agent_tick_mode(int mode);
