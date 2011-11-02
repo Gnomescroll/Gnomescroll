@@ -153,7 +153,7 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     int y_max = y + box_r;
 
     int z0 = z;
-    int z1 = z+1.0;
+    int z1 = z+1.0f;
     int z2 = z+box_h;
 
     //int z_min = s.z;
@@ -289,8 +289,9 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     return false;
 }
 
-
-inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
+#define GROUND_MARGIN 0.10f
+// checks the (agent bottom - margin) at 4 corners of the agent
+inline bool on_ground(float box_r, float x, float y, float z) {
 
     int x_min = x - box_r;
     int x_max = x + box_r;
@@ -298,7 +299,7 @@ inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
     int y_min = y - box_r;
     int y_max = y + box_r;
 
-    int z0 = z - 0.01; //ground margin is 0.01
+    int z0 = z - GROUND_MARGIN;
 
     //upper left
     //upper right
@@ -321,9 +322,8 @@ inline bool on_ground(float box_r, float box_h, float x, float y, float z) {
     else if(isActive(_get(x_min,y_max,z0) != 0)) {
         return true;
     }
-    else {
-        return false;
-    }
+
+    return false;
 }
 
 void Agent_state::_tick()
@@ -628,53 +628,53 @@ void Agent_state::_tick_jump() {
         const float tr2 = tr*tr;
 
         const float xy_speed = 2.00 / tr;
-        const float z_jetpack = 0.80 / tr2;
-        const float z_gravity = -.40 / tr2;
+        const float z_gravity = -2.0f / tr2;
 
-        float jump_boost = 0.2f;
+        float jump_boost = 0.25f;
 
-        //const float ground_distance = 0.02;   // unused
-        const float z_bounce = 0.65;
-        const float z_bounce_v_threshold = 0.35 / tr;
+        const float z_bounce = 0.20;
+        const float z_bounce_v_threshold = 0.7 / tr;
 
         const float pi = 3.14159265;
 
         //box properties
-        //float b_height = 1.8;  //agent collision box height
         float box_r = 0.4;
 
-        int collision[6];
+        //int collision[6];
         //north +x
         //south -x
         //west +y
         //east -y
         //top +z
         //bottom -z
-        collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
+        //collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
 
         float cs_vx =0 ;
         float cs_vy =0 ;
 
-        if(forward)
-        {
-                cs_vx += xy_speed*cos( s.theta * pi);
-                cs_vy += xy_speed*sin( s.theta * pi);
-        }
-        if(backwards)
-        {
-                cs_vx += -xy_speed*cos( s.theta * pi);
-                cs_vy += -xy_speed*sin( s.theta * pi);
-        }
-        if(left) 
-        {
-                cs_vx += xy_speed*cos( s.theta * pi + pi/2);
-                cs_vy += xy_speed*sin( s.theta * pi + pi/2);
-        }
-        if(right) 
-        {
-                cs_vx += -xy_speed*cos( s.theta * pi + pi/2);
-                cs_vy += -xy_speed*sin( s.theta * pi + pi/2);
-        }
+        // only allow agent control movement if on ground [CANCELLED // FAILURE]
+        //if (on_ground(box_r, s.x, s.y, s.z)) {
+            if(forward)
+            {
+                    cs_vx += xy_speed*cos( s.theta * pi);
+                    cs_vy += xy_speed*sin( s.theta * pi);
+            }
+            if(backwards)
+            {
+                    cs_vx += -xy_speed*cos( s.theta * pi);
+                    cs_vy += -xy_speed*sin( s.theta * pi);
+            }
+            if(left) 
+            {
+                    cs_vx += xy_speed*cos( s.theta * pi + pi/2);
+                    cs_vy += xy_speed*sin( s.theta * pi + pi/2);
+            }
+            if(right) 
+            {
+                    cs_vx += -xy_speed*cos( s.theta * pi + pi/2);
+                    cs_vy += -xy_speed*sin( s.theta * pi + pi/2);
+            }
+        //}
 
         //jet pack and gravity
         if(s.z>0)
@@ -698,7 +698,7 @@ void Agent_state::_tick_jump() {
 
         bool current_collision = collision_check2(box_r, b_height, s.x,s.y,s.z);
         if(current_collision) {
-            printf("invalid agent state: agent is coliding!\n");
+            //printf("invalid agent state: agent is coliding!\n");
 
             s.x = new_x;
             s.y = new_y;
