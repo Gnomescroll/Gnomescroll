@@ -372,11 +372,16 @@ class AgentRender:
         create_blood = c_lib.c_lib_objects._create_blood
         n = 100
         v = 15
+        blood_pos = self.pos()
+        blood_pos[0] += self.box_r
+        blood_pos[1] += self.box_r
+        blood_pos[2] += self.b_height * 0.75
         for i in range(n):
-            x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
+            
+            x,y,z = [i + ((random.random()-0.5) / 20) for i in blood_pos]
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
-            vz = random.randrange(-4, 2) + random.random()
+            vz = random.randrange(-4, 4) + random.random()
             create_blood(x, y,z, vx, vy, vz)
 
             # need directional blood
