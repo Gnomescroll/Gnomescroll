@@ -194,6 +194,7 @@ def build(bld):
 
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
+    #SDL_libraries = ['GL', 'SDL_image']
     sound_libraries = ['fmodex']
 
     time_lib = ['rt']
