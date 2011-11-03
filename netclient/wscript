@@ -60,8 +60,8 @@ def configure(conf):
     #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
 
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT', '-Wimplicit'])
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT', '-Wimplicit'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
     else:
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
@@ -81,13 +81,14 @@ def configure(conf):
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
     if OS == 'Windows':
-        conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
+        conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
+        #conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
 
 	#print "WTF"
-
+	
 	conf.env.INCLUDES = []
-	if OS == 'Windows':
-		conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
+	#if OS == 'Windows':
+	#	conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
 
 	conf.check(header_name='SDL.h',
                use='SDL',
