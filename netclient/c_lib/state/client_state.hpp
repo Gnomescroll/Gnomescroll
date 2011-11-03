@@ -17,6 +17,7 @@ namespace ClientState {
     extern Shrapnel_list shrapnel_list;
     extern Blood_list blood_list;
     extern Neutron_list neutron_list;
+    extern Minivox_list minivox_list;
         
     void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi);
     void set_PlayerAgent_id(int id);

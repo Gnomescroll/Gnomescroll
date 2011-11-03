@@ -16,7 +16,7 @@ namespace ClientState {
     Shrapnel_list shrapnel_list;
     Blood_list blood_list;
     Neutron_list neutron_list;
-
+    Minivox_list minivox_list;
 
     PlayerAgent_state playerAgent_state;
 

@@ -105,43 +105,11 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
 }
 
 
-int v_set[3*8] = {
-        0,0,0,
-        1,0,0,
-        1,1,0,
-        0,1,0,
-        0,0,1,
-        1,0,1,
-        1,1,1,
-        0,1,1 };
-
-int q_set[4*6]= {
-        4,5,6,7,
-        3,2,1,0,
-        2,3,7,6,
-        0,1,5,4,
-        0,4,7,3,
-        1,2,6,5 };
-
-float v_buffer[3*8];
-float s_buffer[6*(4*3)];
-
-
 /*
  *  Client only
  */
 
 #ifdef DC_CLIENT
-
-//void Agent_vox::draw_volume(int part, struct Vector right, float x, float y, float z) {
-
-    //Vox* v = vox_part[part];
-    //if (v==NULL) {
-        //printf("Cant draw null volume. Part # %d\n", part);
-        //return;
-    //}
-    ////v->draw(right, x,y,z);
-//}
 
 void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     if (!vox_ready) return;
@@ -238,11 +206,6 @@ void Vox::draw(struct Vector forward, struct Vector right, float x, float y, flo
     cy = c.y - (xdim*vx.y + ydim*vy.y + zdim*vz.y)/2;
     cz = c.z - (xdim*vx.z + ydim*vy.z + zdim*vz.z)/2;
 
-    glDisable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-
-    glBegin(GL_QUADS);
-
     float x0, y0, z0;
 
     for(i= 0; i < xdim; i++) {
@@ -265,12 +228,7 @@ void Vox::draw(struct Vector forward, struct Vector right, float x, float y, flo
     }
 
     }}}
-    glEnd();
-
-    glDisable (GL_DEPTH_TEST);
-
 }
-
 
 void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, float z) {
 
@@ -318,11 +276,6 @@ void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, f
     cy = c.y - (xdim*vx.y + ydim*vy.y + zdim*vz.y)/2;
     cz = c.z - (xdim*vx.z + ydim*vy.z + zdim*vz.z)/2;
 
-    glDisable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-
-    glBegin(GL_QUADS);
-
     float x0, y0, z0;
 
     for(i= 0; i < xdim; i++) {
@@ -345,10 +298,6 @@ void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, f
     }
 
     }}}
-    glEnd();
-
-    glDisable (GL_DEPTH_TEST);
-
 }
 
 #endif

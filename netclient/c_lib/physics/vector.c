@@ -40,6 +40,12 @@ struct Vector* mult_vec_scalar(struct Vector* a, float i) {
     return mult_vec_scalar_tmp;
 }
 
+void mult_vec_scalar_ptr(struct Vector* a, float i) {
+    a->x *= i;
+    a->y *= i;
+    a->z *= i;
+}
+
 struct Vector reflect(struct Vector* inc, struct Vector* nor) {
     struct Vector v;
     v = sub_vec(inc, mult_vec_scalar(nor, 2.0f*(vector_dot(nor,inc))));

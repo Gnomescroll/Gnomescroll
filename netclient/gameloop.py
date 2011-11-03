@@ -264,9 +264,16 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -3.5 #v*(random.random() -0.5)
-                    le = math.sqrt(vx**2+vy**2+vz**2)
-                    _type=1
-                    c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
+                    #c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
+
+                for _j_ in range(0,10):
+                    x = 32+ 16*random.random()
+                    y = 32+ 16*random.random()
+                    z = 40.
+                    vx = v*(random.random() -0.5)
+                    vy = v*(random.random() -0.5)
+                    vz = -1. #v*(random.random() -0.5)
+                    c_lib.c_lib_objects._create_minivox(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()

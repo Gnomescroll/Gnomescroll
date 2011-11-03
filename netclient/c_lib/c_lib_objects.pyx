@@ -86,14 +86,27 @@ cdef extern from "./objects/blood.hpp":
         void draw()
         void tick()
 
-#cdef extern from "./state/cython_imports.hpp" namespace "ClientState":
+cdef extern from "./objects/minivox.hpp":
+    cdef cppclass Minivox:
+        Particle2 particle
+
+    cdef cppclass Minivox_list:
+        Minivox* get(int id)
+        Minivox* create()
+        Minivox* create(int id)
+        Minivox* create(float x, float y, float z, float vx, float vy, float vz)
+        Minivox* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Cspray_list cspray_list
     Grenade_list grenade_list
     Shrapnel_list shrapnel_list
     Blood_list blood_list
     Neutron_list neutron_list
-
+    Minivox_list minivox_list
 
 def tick():
     neutron_list.tick()
@@ -101,6 +114,7 @@ def tick():
     shrapnel_list.tick()
     grenade_list.tick()
     cspray_list.tick()
+    minivox_list.tick()
     
 def draw():
     neutron_list.draw()
@@ -108,6 +122,7 @@ def draw():
     shrapnel_list.draw()
     grenade_list.draw()
     cspray_list.draw()
+    minivox_list.draw()
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     cdef Neutron* neutron
@@ -123,6 +138,9 @@ def _create_blood(float x, float y, float z, float vx, float vy, float vz):
 
 def _create_shrapnel(float x, float y, float z, float vx, float vy, float vz):
     shrapnel_list.create(x,y,z, vx,vy,vz)
+    
+def _create_minivox(float x, float y, float z, float vx, float vy, float vz):
+    minivox_list.create(x,y,z, vx,vy,vz)
 
 # Does not use TTL!! Can't cook grenades without TTL set
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):

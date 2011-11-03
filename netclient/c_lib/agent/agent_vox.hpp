@@ -7,6 +7,7 @@
 #include <compat_gl.h>
 #endif
 
+#include <c_lib/voxel/common.h>
 #include <physics/vector.h>
 
 #define AGENT_PART_NUM 6
@@ -16,10 +17,6 @@
 #define AGENT_PART_RARM 3
 #define AGENT_PART_LLEG 4
 #define AGENT_PART_RLEG 5
-
-struct Voxel {
-unsigned char r,g,b,a;
-};
 
 class Vox {
     public:

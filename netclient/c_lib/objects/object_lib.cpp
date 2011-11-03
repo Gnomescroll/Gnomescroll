@@ -10,3 +10,4 @@
 #include "./objects/circuit_tree.cpp"
 #include "./objects/shrapnel.cpp"
 #include "./objects/blood.cpp"
+#include "./objects/minivox.cpp"

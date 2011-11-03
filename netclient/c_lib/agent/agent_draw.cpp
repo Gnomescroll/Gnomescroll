@@ -54,9 +54,6 @@ void draw_agent(Agent_state* g) {
 
     draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
 
-    if (g->vox != NULL) {
-        g->vox->draw(s->x, s->y, s->z, s->theta, s->phi);
-    }
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
