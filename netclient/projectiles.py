@@ -193,7 +193,8 @@ class Laser(Projectile):
         SDL.gl.draw_particle(5, 0.5, x,y,z) #was 5
 
     def update_sound(self):
-        sounds.update_3d(self.snd_id, self.pos(), self.velocity())
+        if settings.sound:
+            sounds.update_3d(self.snd_id, self.pos(), self.velocity())
 
 Laser.init()
 
