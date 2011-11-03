@@ -16,12 +16,12 @@
 #endif
 
 #define MINIVOX_MAX 4096
-#define MINIVOX_TTL 40
-#define MINIVOX_DAMP 0.15f
+#define MINIVOX_TTL 100
+#define MINIVOX_DAMP 0.5f
 #define MINIVOX_TYPE 6
 
 /* voxel properties */
-#define MINIVOX_SIZE 0.1f
+#define MINIVOX_SIZE 0.05f
 #define MINIVOX_R 136
 #define MINIVOX_G 27
 #define MINIVOX_B 224
