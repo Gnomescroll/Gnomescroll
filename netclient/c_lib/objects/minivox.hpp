@@ -22,10 +22,10 @@
 
 /* voxel properties */
 #define MINIVOX_SIZE 0.1f
-#define MINIVOX_R 184
-#define MINIVOX_G 138
-#define MINIVOX_B 0
-#define MINIVOX_A 150
+#define MINIVOX_R 136
+#define MINIVOX_G 27
+#define MINIVOX_B 224
+#define MINIVOX_A 255
 
 class Minivox {
     private:

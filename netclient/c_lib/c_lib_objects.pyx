@@ -89,6 +89,8 @@ cdef extern from "./objects/blood.hpp":
 cdef extern from "./objects/minivox.hpp":
     cdef cppclass Minivox:
         Particle2 particle
+        void set_color(unsigned char r, unsigned char g, unsigned char b)
+        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
 
     cdef cppclass Minivox_list:
         Minivox* get(int id)
@@ -141,6 +143,19 @@ def _create_shrapnel(float x, float y, float z, float vx, float vy, float vz):
     
 def _create_minivox(float x, float y, float z, float vx, float vy, float vz):
     minivox_list.create(x,y,z, vx,vy,vz)
+
+def _create_minivox_colored(float x, float y, float z, float vx, float vy, float vz, int r, int g, int b):
+    if r > 255: r = 255
+    if g > 255: g = 255
+    if b > 255: b = 255
+    if r < 0: r = 0
+    if g < 0: g = 0
+    if b < 0: b = 0
+
+    cdef Minivox* minivox
+    minivox = minivox_list.create(x,y,z, vx,vy,vz)
+    minivox.set_color(r,g,b)
+    
 
 # Does not use TTL!! Can't cook grenades without TTL set
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):

@@ -128,7 +128,8 @@ class GrenadeExplodeAnimation(C_Animation):
 
 
 class BlockCrumbleAnimation(C_Animation):
-    anim = c_lib.c_lib_objects._create_minivox
+    #anim = c_lib.c_lib_objects._create_minivox
+    anim = c_lib.c_lib_objects._create_minivox_colored
     minivox_size = 0.1
 
     def __init__(self, pos):
@@ -157,4 +158,4 @@ class BlockCrumbleAnimation(C_Animation):
             vx = _vx*(random.random() -0.5)
             vy = _vy*(random.random() -0.5)
             vz = _vz*(random.random() -0.5)
-            self.anim(nx,ny,nz, vx,vy,vz)
+            self.anim(nx,ny,nz, vx,vy,vz, random.randint(0,256), random.randint(0,256), random.randint(0,256))
