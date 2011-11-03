@@ -10,6 +10,7 @@ import stats
 #import struct
 from opts import opts
 from dat_loader import dat_loader
+import animations
 
 class NetEventGlobal:
     messageHandler = None
@@ -201,6 +202,8 @@ class MapMessageHandler(GenericMessageHandler):
             #print 'settings block %s' % list[0]
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
+            if value == 0:
+                animations.BlockCrumbleAnimation([x,y,z]).play()
             #self.mapChunkManager.set_map(x,y,z) #redraw chunk
 
     def _clear_map(self, **msg):

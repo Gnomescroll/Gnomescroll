@@ -273,7 +273,7 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -1. #v*(random.random() -0.5)
-                    c_lib.c_lib_objects._create_minivox(x,y,z, vx,vy,vz)
+                    #c_lib.c_lib_objects._create_minivox(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()

@@ -39,7 +39,7 @@ animations = Animations()
 class Animation:
 
     def __init__(self):
-        self.life = 0
+        self.life = 1
 
     def next(self):
         pass
@@ -97,11 +97,25 @@ class HitscanLaserGunAnimation(Animation):
 
 class C_Animation(Animation):
 
-    vel = [0]*3
-    anim = lambda _type, x,y,z, vx,vy,vz: None
+    anim = lambda x,y,z, vx,vy,vz: None
 
     def __init__(self):
         Animation.__init__(self)
+
+    def create_particles(self):
+        pass
+
+class GrenadeExplodeAnimation(C_Animation):
+
+    anim = c_lib.c_lib_objects._create_shrapnel
+    vel = [20]*3
+
+    def __init__(self, pos):
+        C_Animation.__init__(self)
+        self.n = random.randrange(8,13)
+        self.n_range = range(self.n)
+        self.pos = pos
+        self.create_particles()
 
     def create_particles(self):
         _vx, _vy, _vz = self.vel
@@ -113,15 +127,34 @@ class C_Animation(Animation):
             self.anim(x,y,z, vx, vy, vz)
 
 
-class GrenadeExplodeAnimation(C_Animation):
-
-    anim = c_lib.c_lib_objects._create_shrapnel
-    vel = [20]*3
+class BlockCrumbleAnimation(C_Animation):
+    anim = c_lib.c_lib_objects._create_minivox
+    minivox_size = 0.1
 
     def __init__(self, pos):
         C_Animation.__init__(self)
+        self.interval = int(1.0 / self.minivox_size) - 1
+        self.n = self.interval ** 3
+        self.n_range = xrange(self.n)
         self.pos = pos
-        self.n = random.randrange(8,13)
-        self.n_range = range(self.n)
         self.create_particles()
 
+    def create_particles(self):
+        _vx,_vy,_vz = 2.,2.,2.
+        x,y,z = 0,0,0
+        for i in self.n_range:
+            x += 1
+            x %= self.interval
+            if not x:
+                y += 1
+                y %= self.interval
+                if not y:
+                    z += 1
+                    z %= self.interval
+            nx,ny,nz = [n*self.minivox_size + self.pos[i] for i,n in enumerate([x,y,z])]
+            nx,ny,nz = [n + ((random.random()-0.5) * 0.05) for n in [nx,ny,nz]]
+
+            vx = _vx*(random.random() -0.5)
+            vy = _vy*(random.random() -0.5)
+            vz = _vz*(random.random() -0.5)
+            self.anim(nx,ny,nz, vx,vy,vz)
