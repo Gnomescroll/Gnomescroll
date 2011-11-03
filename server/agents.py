@@ -24,12 +24,15 @@ from vector_lib import distance
 
 from opts import opts
 
+from c_lib.c_lib_agents import AgentListWrapper, AgentWrapper, teleport_Agent
+
 # datastore controller for agents
 class AgentList(GenericObjectList):
 
     def __init__(self):
         GenericObjectList.__init__(self)
         self._object_type = Agent
+        self._wrapper = AgentListWrapper
 
     def create(self, player_id, position=None, id=None):
         return self._add(player_id, position=position, id=id)
@@ -330,14 +333,15 @@ class AgentAction:
         print 'Agent.throw_grenade'
         pl = GameStateGlobal.projectileList
         pos = self.pos()
-        pos[2] += 0.25 * self.b_height
+        pos[2] += self.b_height * 0.75
         state = pos + direction
+        print pos
         grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
         NetOut.event.projectile_create(grenade)
 
 
 # represents an agent under control of a player
-class Agent(AgentPhysics, AgentAction):
+class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 2. # seconds
@@ -351,11 +355,13 @@ class Agent(AgentPhysics, AgentAction):
         assert self.collisionDetection != None
         ### End Global imports ###
 
-        self.team = team
+        if id is not None:
+            print "SOMETHING IS GIVING SERVER AGENT AN ID"
+            raise Exception
 
-        if id is None:
-            id = GameStateGlobal.new_agent_id()
-        self.id = id
+        AgentWrapper.__init__(self)
+
+        self.team = team
 
         ### Agent Parameters ###
         self.b_height = 1.5
@@ -407,6 +413,13 @@ class Agent(AgentPhysics, AgentAction):
 
         self.owner = player_id
 
+    def __getattribute__(self, name):
+        try:
+            val = AgentWrapper.__getattribute__(self, name)
+            return val
+        except AttributeError:
+            return object.__getattribute__(self, name)
+
     # gets or sets
     def pos(self, xyz=None):
         if xyz is None:
@@ -433,59 +446,11 @@ class Agent(AgentPhysics, AgentAction):
         self.inventory = new_inv
 
     @property
-    def x(self):
-        return self.state[0]
-    @x.setter
-    def x(self, val):
-        self.state[0] = val
-    @property
-    def y(self):
-        return self.state[1]
-    @y.setter
-    def y(self, val):
-        self.state[1] = val
-    @property
-    def z(self):
-        return self.state[2]
-    @z.setter
-    def z(self, val):
-        self.state[2] = val
-    @property
-    def vx(self):
-        return self.state[3]
-    @vx.setter
-    def vx(self, val):
-        self.state[3] = val
-    @property
-    def vy(self):
-        return self.state[4]
-    @vy.setter
-    def vy(self, val):
-        self.state[4] = val
-    @property
-    def vz(self):
-        return self.state[5]
-    @vz.setter
-    def vz(self, val):
-        self.state[5] = val
-    @property
-    def ax(self):
-        return self.state[6]
-    @ax.setter
-    def ax(self, val):
-        self.state[6] = val
-    @property
-    def ay(self):
-        return self.state[7]
-    @ay.setter
-    def ay(self, val):
-        self.state[7] = val
-    @property
-    def az(self):
-        return self.state[8]
-    @az.setter
-    def az(self, val):
-        self.state[8] = val
+    def state(self):
+        return [self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az]
+    @state.setter
+    def state(self, val):
+        self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
 
     def json(self, properties=None): # json encodable string representation
         d = {
@@ -753,8 +718,9 @@ class Agent(AgentPhysics, AgentAction):
     def _set_position(self, pos=None):
         if pos is None:
             pos = self._spawn_point()
-        assert len(pos) <= 3
-        self.state[0:3] = pos
+        x,y,z = map(float, pos)
+        teleport_Agent(self.id, x,y,z)
+        #self.pos(pos)
 
     def respawn(self): # or can destroy / recreate Agent
         self._revive()

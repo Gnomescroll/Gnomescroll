@@ -7,37 +7,13 @@
 #ifdef DC_CLIENT
 
 
+#define SNAPSHOT_DRAW_ARRAY_SIZE 32
+
 namespace AgentDraw {
 
-/*
-void draw_agents(Agent_list* agent_list) {
-    
-    printf("Drawing agents\n");
-
-    struct Agent_state* g = NULL;
-    int i;
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-
-    for(i=0; i<1024; i++) {
-        if(agent_list->a[i] != NULL) {
-            g = agent_list->a[i];
-            draw_agent(g);
-        }
-    }
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-
-}
-*/
-
-
-int snapshot_draw_array_i = 0;
-int snapshot_draw_last_seq = 0;
-AgentState snapshot_draw_array[32];
-
+static int snapshot_draw_array_i = 0;
+static int snapshot_draw_last_seq = 0;
+AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
 
 static int _last_seq = 0;
 
@@ -46,10 +22,10 @@ void add_snapshot_to_history(Agent_state* g) {
     if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         snapshot_draw_last_seq = g->state_snapshot.seq;
         snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
-        snapshot_draw_array_i = (snapshot_draw_array_i+1)%32;
+        snapshot_draw_array_i = (snapshot_draw_array_i+1)%SNAPSHOT_DRAW_ARRAY_SIZE;
 
 
-        if(g->state_snapshot.seq != (_last_seq + 32)%256) {
+        if(g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
             
             printf("!!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
 
@@ -64,16 +40,22 @@ void draw_agent(Agent_state* g) {
 
     //printf("agent draw \n");
     AgentState* s = &g->s;
-    draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5);
+    //draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
+    //printf("id=%i, x= %f, y= %f, z= %f \n", g->id, s->x, s->y, s->z);
+    //printf("draw\n");
 
     //AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
-    if(g->id == 0) {
-        int i;
-        for(i=0; i < 32; i++) {
-            draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.8, 2.5);  
-        }
+    int i;
+    for(i=0; i < SNAPSHOT_DRAW_ARRAY_SIZE; i++) {
+        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
+    }
+
+    draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
+
+    if (g->vox != NULL) {
+        g->vox->draw(s->x, s->y, s->z, s->theta, s->phi);
     }
 }
 

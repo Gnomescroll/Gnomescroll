@@ -1,5 +1,5 @@
 '''
-Default settings for server
+Default settings for client
 
 DO NOT MODIFY
 
@@ -22,11 +22,11 @@ music = 100
 ''' Window '''
 widescreen = 1
 if widescreen == 0:
-	width = 1024
-	height = 800
+    width = 1024
+    height = 800
 else:
-	width = 1280
-	height = 800
+    width = 1280
+    height = 800
 
 fullscreen = 0
 
@@ -47,7 +47,14 @@ ping_update_interval = 500  # ms delay between ping updates
 ''' Game '''
 auto_assign_team = True
 
+''' DEBUG '''
+draw_agents = True
+
+#######
 try:
     from settings import *
 except ImportError:
     print 'settings.py file not found, using all defaults'
+
+
+

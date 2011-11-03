@@ -1,5 +1,8 @@
 #pragma once
 
+#include <net_lib/client/client.hpp>
+#include <net_lib/server/server.h>
+
 static int _packet_id = 1;
 int next_packet_id() { return _packet_id++; }
 

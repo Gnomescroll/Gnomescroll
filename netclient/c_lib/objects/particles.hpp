@@ -1,8 +1,6 @@
-#ifndef object_particles_h
-#define object_particles_h
-//#include <physics/common.h>
+#pragma once
 
-#include <physics/common.h>
+#include <c_lib/physics/common.h>
 
 struct Particle {
     int id; // WTF
@@ -16,8 +14,6 @@ struct Particle {
 
 struct Particle2 {
     unsigned int id;
-    //float x,y,z;
-    //float vx,vy,vz;
     struct State state;
     unsigned int ttl;
     unsigned int ttl_max;
@@ -38,5 +34,3 @@ void create_particle(struct Particle* p, unsigned int id, int type, float x, flo
 void create_particle2(struct Particle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max);
 void create_event_particle(struct EventParticle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
 void create_event_particle2(struct EventParticle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
-
-#endif

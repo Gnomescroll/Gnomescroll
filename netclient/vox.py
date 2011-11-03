@@ -2,6 +2,8 @@ import vox_lib
 
 vox_loader = vox_lib.Vox_loader()
 
+from c_lib.c_lib_agents import _init_agent_vox, _update_agent_vox
+
 class VoxRender:
 
     def __init__(self, obj, model):
@@ -9,7 +11,7 @@ class VoxRender:
         self.vox = vox_loader.load(model)
         self.obj = obj
         self.vox.set_object(self.obj)
-
+        
     def update_vox(self):
         x,y,z = self.pos()
         self.vox.move(x,y,z, 0)

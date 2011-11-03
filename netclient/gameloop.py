@@ -19,7 +19,8 @@ import intervals
 
 if True:
     import SDL.gl
-    import SDL.input
+    #import SDL.input
+    import c_lib.c_lib_input as cInput
     import SDL.hud
     import vox_lib
 
@@ -34,7 +35,7 @@ if True:
     import c_lib.c_lib_agents
     import c_lib.c_lib_hud as cHUD
     import c_lib.c_lib_agents as cAgents
-    from c_lib.c_lib_agents import set_agent_control_state
+    #from c_lib.c_lib_agents import set_agent_control_state
     #import c_lib.c_lib_timer as physics_timer
     import init_c_lib
     from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -93,7 +94,8 @@ class App(object):
 
         self.SDL_global = SDL.gl.SDL_global #drawing stuff
         self.SDL_global.init()
-        SDL.input.init()
+        #SDL.input.init()
+        cInput.init()
         SDL.hud.init()
 
         init_c_lib.init()
@@ -112,7 +114,6 @@ class App(object):
 
     def __init__(self):
         self.init_audio()
-        c_lib.c_lib_agents.init()
 
         self.init_globals()
         self.animations = animations
@@ -126,8 +127,9 @@ class App(object):
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
-        self.intervals.register(send_agent_pos, 500)
+        #self.intervals.register(send_agent_pos, 500)
 
+        cAgents.init_draw_agents()
 
         self.init_inputs()
         print "App init finished"
@@ -190,7 +192,6 @@ class App(object):
         
         _m = 0
 
-        cAgents._create_agent(111, 10.,10.,100.)
         while not GameStateGlobal.exit:
             self.world.sound_updates()
 
@@ -204,6 +205,8 @@ class App(object):
 
             P.event("Physics Loop")
             sl_c = 0
+
+            agent = GameStateGlobal.agent
 
             while True: #physics loop
                 tc = GET_TICK()
@@ -240,7 +243,7 @@ class App(object):
                     z *= v / le
                     #_type = random.randint(0,9*3)
                     _type=0
-                    c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+                    #c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 #if True or _i % 15 == 0:
                 for _j_ in range(0,1):
                     v = 3
@@ -253,20 +256,25 @@ class App(object):
                     vz = -3.5 #v*(random.random() -0.5)
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
-                    c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
-                SDL.input.process_events()
-                SDL.input.get_key_state()
-                if GameStateGlobal.agent is not None:
-                    NetOut.sendMessage.agent_angle(GameStateGlobal.agent)
+                    c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
+
+                cInput.process_events()
+                cInput.get_key_state()
+                if GameStateGlobal.agent:
+                    GameStateGlobal.agent.set_button_state()
+
                 NetClientGlobal.connection.attempt_recv()
+                self.animations.tick()
+
                 #check if another physics tick is needed
                 self.world.tick()
-                self.animations.tick()
                 c_lib.c_lib_objects.tick() ## TESTING
+
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
             if sl_c > 0:
-                _o = 1
+                _o = -1
+                _a_id= 0
                 if _o==0:
                     if _m < 50:
                         set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
@@ -291,7 +299,29 @@ class App(object):
                         _m = 0
                     else:
                         _m += 1
-
+                if _o==2:
+                    _r = random.random()
+                    #print str(_r)
+                    if _r < 0.25:
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _r < 0.50:
+                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _r < 0.75:
+                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    else:
+                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                if _o==3:
+                    set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                if _o==4:
+                    if _m < 32:
+                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                    elif _m < 64:
+                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+                        
+                    if _m == 64:
+                        _m = 0
+                    else:
+                        _m += 1
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
@@ -309,14 +339,12 @@ class App(object):
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
             
-            cAgents.draw_agents() ##draw agents from agent list
-
             P.event("Draw World")
             #import pdb; pdb.set_trace()
-            self.world.draw(first_person) #upto 255 ms
+            self.world.draw(first_person)
             P.event("Animations Draw")
             self.animations.draw()
-            P.event("c_lib_objects.draw()") #up to 5 ms
+            P.event("c_lib_objects.draw()")
             c_lib.c_lib_objects.draw() ## TESTING
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
@@ -370,7 +398,6 @@ class App(object):
             P.finish_frame()
 
         sounds.done()
-        c_lib.c_lib_agents.end()
 
 
 if __name__ == '__main__':

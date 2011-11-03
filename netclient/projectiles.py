@@ -67,7 +67,6 @@ class Projectile:
             self.owner = args['owner']
 
     def delete(self):
-        print 'BULLET DEAD!!'
         GameStateGlobal.projectileList.destroy(self)
 
     def pos(self):
@@ -192,7 +191,7 @@ class Laser(Projectile):
 
     def draw(self):
         x,y,z = self.pos()
-        SDL.gl.draw_particle(5, 0.5, x,y,z)
+        SDL.gl.draw_particle(5, 0.5, x,y,z) #was 5
 
     def update_sound(self):
         sounds.update_3d(self.snd_id, self.pos(), self.velocity())
@@ -208,7 +207,7 @@ class Grenade(Projectile):
         self.speed = self.speed / GameStateGlobal.fps
         self.ttl = ttl
         x,y,z, vx,vy,vz = state
-        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, self.ttl_max)
+        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl)
 
     def pos(self):
         return c_obj.get_grenade_position(self.g_index)

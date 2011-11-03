@@ -31,6 +31,9 @@ import c_lib.c_lib_agents
 import c_lib._ray_trace
 import random
 
+from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
+
+import c_lib.c_lib_agents as cAgents
 
 import sound.sounds as sounds
 
@@ -95,6 +98,9 @@ class AgentPhysics:
         pass
 
     def _tick_physics(self):
+        print "Error: Agent physics called!"
+        assert False
+        return
         x,y,z, vx,vy,vz, ax,ay,az = self.state
         ax,ay,az = (0,0,0)
         vx,vy = (0,0)
@@ -315,35 +321,15 @@ Agent Voxel
 
 class AgentVoxRender(vox.VoxRender):
 
-    def __init__(self, obj, model=None):
-        if model is not None:
-            vox.VoxRender.__init__(self, obj, model)
-        else:
-            self.obj = obj
-            self.vox = vox_lib.Vox(0,0,5,0, 8,8,8)
-            self.vox.set_object(self.obj)
+    def __init__(self):
+        #vox.VoxRender.__init__(self, obj, 'agent.vox')
+        _init_agent_vox(self.id)
 
-            self.vox.set(5,5,5,255,0,0,0)
+    def update_vox(self):
+        #vox.VoxRender.update_vox(self)
+        _update_agent_vox(self.id)
 
-            self.vox.set(4,4,0,255,0,255,0)
-            self.vox.set(4,4,1,0,255,255,0)
-            self.vox.set(4,4,2,0,0,255,0)
-            self.vox.set(4,4,3,0,255,255,0)
 
-            self.vox.set(4,4,4,0,255,255,0)
-            self.vox.set(4,4,5,0,0,255,0)
-            self.vox.set(4,4,6,0,255,255,0)
-            self.vox.set(4,4,7,255,0,255,0)
-
-            self.vox.set(0,0,0, 0,255,0,0)
-            self.vox.set(0,7,0, 0,255,0,0)
-            self.vox.set(7,0,0, 0,255,0,0)
-            self.vox.set(7,7,0, 0,255,0,0)
-
-            self.vox.set(0,0,7, 0,255,0,0)
-            self.vox.set(0,7,7, 0,255,0,0)
-            self.vox.set(7,0,7, 0,255,0,0)
-            self.vox.set(7,7,7, 0,255,0,0)
 
 '''
 Render/Draw methods for agents
@@ -386,13 +372,17 @@ class AgentRender:
         create_blood = c_lib.c_lib_objects._create_blood
         n = 100
         v = 15
-        _t = 2
+        blood_pos = self.pos()
+        blood_pos[0] += self.box_r
+        blood_pos[1] += self.box_r
+        blood_pos[2] += self.b_height * 0.75
         for i in range(n):
-            x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
+            
+            x,y,z = [i + ((random.random()-0.5) / 20) for i in blood_pos]
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
-            vz = random.randrange(-4, 2) + random.random()
-            create_blood(_t, x, y,z, vx, vy, vz)
+            vz = random.randrange(-4, 4) + random.random()
+            create_blood(x, y,z, vx, vy, vz)
 
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector
@@ -576,7 +566,7 @@ class AgentInventory:
 '''
 Data model for agent
 '''
-class AgentModel(object):
+class AgentModel(AgentWrapper):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 1. # seconds
@@ -585,6 +575,10 @@ class AgentModel(object):
     def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
             print 'WARNING!! Creating agent with no owner or id'
+
+        AgentWrapper.__init__(self, id)
+        print self.id
+            
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(float, state)
@@ -608,8 +602,8 @@ class AgentModel(object):
         self.last_control_tick = 0
         self.last_button_tick = 0
 
-        self.x_angle = 0
-        self.y_angle = 0
+        self._x_angle = 0
+        self._y_angle = 0
 
         self.d_x = 0
         self.d_y = 0
@@ -641,6 +635,8 @@ class AgentModel(object):
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
+
+        self.crouching = False
 
     def tick(self):
         if not self.dead:
@@ -682,33 +678,28 @@ class AgentModel(object):
 
         GameStateGlobal.agentList.update(self, *args)
 
-#experimental
     def __getattribute__(self, name):
-        val = object.__getattribute__(self, name)
+        try:
+            val = AgentWrapper.__getattribute__(self, name)
+        except AttributeError:
+            val = object.__getattribute__(self, name)
+            
         if name == 'team':
             if not isinstance(val, NoTeam):
                 val = GameStateGlobal.teamList[val]
                 if val is not None:
                     self.team = val
+                    
         return val
 
     def pos(self, xyz=None):
         if xyz is None:
             return self.state[0:3]
         else:
-            self.state[0:3] = xyz
-            #self.x, self.y, self.z = xyz
+            self.x, self.y, self.z = xyz
 
     def velocity(self):
         return self.state[3:6]
-
-    #def nearby_objects(self):
-        #for obj in GameStateGlobal.itemList.values():
-            #if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
-                #self.near_object(obj)
-
-    #def near_object(self, obj):
-        #pass
 
     def forward(self):
         return vector_lib.forward_vector(self.x_angle)
@@ -728,23 +719,8 @@ class AgentModel(object):
     def angles(self):
         return [self.x_angle, self.y_angle]
 
-    # set agent state explicitly
-    def set_control_state(self, control_state, angle=None, tick=None):
-        d_x, d_y, v_x, v_y, jetpack, brake = control_state
-        self.d_x = d_x
-        self.d_y = d_y
-        self.v_x = v_x
-        self.v_y = v_y
-        self.jetpack = jetpack
-        self.brake = brake
-
-        if tick is not None:
-            self.last_control_tick = tick
-        if angle is not None:
-            self.set_angle(angle)
-
     def set_angle(self, angle):
-        self.x_angle, self.y_angle = angle
+        self._x_angle, self._y_angle = angle
 
     def control_state(self):
         return [\
@@ -761,70 +737,32 @@ class AgentModel(object):
         self.v_y = v_y
 
     @property
-    def x(self):
-        return self.state[0]
-    @x.setter
-    def x(self, val):
-        self.state[0] = val
-    @property
-    def y(self):
-        return self.state[1]
-    @y.setter
-    def y(self, val):
-        self.state[1] = val
-    @property
-    def z(self):
-        return self.state[2]
-    @z.setter
-    def z(self, val):
-        self.state[2] = val
-    @property
-    def vx(self):
-        return self.state[3]
-    @vx.setter
-    def vx(self, val):
-        self.state[3] = val
-    @property
-    def vy(self):
-        return self.state[4]
-    @vy.setter
-    def vy(self, val):
-        self.state[4] = val
-    @property
-    def vz(self):
-        return self.state[5]
-    @vz.setter
-    def vz(self, val):
-        self.state[5] = val
-    @property
-    def ax(self):
-        return self.state[6]
-    @ax.setter
-    def ax(self, val):
-        self.state[6] = val
-    @property
-    def ay(self):
-        return self.state[7]
-    @ay.setter
-    def ay(self, val):
-        self.state[7] = val
-    @property
-    def az(self):
-        return self.state[8]
-    @az.setter
-    def az(self, val):
-        self.state[8] = val
+    def state(self):
+        return [self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az]
+    @state.setter
+    def state(self, val):
+        self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
+
+    def crouch(self):
+        self.crouching = not self.crouching
+        if self.crouching:
+            self.b_height = 0.8
+        else:
+            self.b_height = 1.5
+        self.camera_height = self.b_height
+        cAgents.crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
-        return vector_lib.normalize(vector_lib.angle2vector(self.x_angle, self.y_angle))
+        vec = vector_lib.angle2vector(self.x_angle, self.y_angle)
+        return vector_lib.normalize(vec)
 
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
         #self.init_vox()
-        AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+        AgentVoxRender.__init__(self)
         print 'id %s' % (self.id,)
         print self
         self.inventory = AgentInventory(self, items)
@@ -956,16 +894,20 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
-        AgentVoxRender.__init__(self, self)
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+
+        self._control_state_id_set = False
+
+        if id:
+            self.id = id
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
 
         self.you = True
         #self.control_state = [0,0,0,0,0,0]
-        self.x_angle = 0
-        self.y_angle = 0
+        self._x_angle = 0
+        self._y_angle = 0
 
         self.vx = 0
         self.vy = 0
@@ -975,9 +917,44 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.az = 0
 
         #settings
-        self.b_height = 1.5
-        self.t_height = .75
-        self.box_r = .30
+        #self.b_height = 1.5
+        #self.t_height = .75
+        #self.box_r = .30
+        self.camera_height = 1.5
+
+        AgentVoxRender.__init__(self)
+
+
+    # set agent state explicitly
+    # CONTROL_STATE deprecated. use BUTTON_STATE.  button_state is booleans; control state is computed position/velocity deltas
+    def set_control_state(self, control_state, angle=None, tick=None):
+        d_x, d_y, v_x, v_y, jetpack, brake = control_state
+        self.d_x = d_x
+        self.d_y = d_y
+        self.v_x = v_x
+        self.v_y = v_y
+        self.jetpack = jetpack
+        self.brake = brake
+
+        if tick is not None:
+            self.last_control_tick = tick
+        if angle is not None:
+            self.set_angle(angle)
+
+    def __setattr__(self, name, val):
+        self.__dict__[name] = val
+        if name == 'id':
+            set_player_agent_id(val)
+            self._control_state_id_set = True
+
+    #def set_button_state(self, buttons, angles):
+    def set_button_state(self):
+        if not self._control_state_id_set:
+            print 'Waiting for player_agent id to be set'
+            return
+        f,b,l,r, jet, jump = self.button_state
+        theta, phi = self._x_angle, self._y_angle
+        set_agent_control_state(f,b,l,r, jet, jump, theta, phi)
 
     def fire(self):
         if self.team.is_viewers():
@@ -1002,8 +979,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             weapon.animation(agent=self).play()
 
         # check agent
-        ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
-        ignore_vox.append(self.vox.id)
+        #ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
+        #ignore_vox.append(self.vox.id)
+        ignore_vox = []
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         print ag, adistance, vox
         body_part_id = 1
@@ -1088,38 +1066,37 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         return block
 
     def facing_block_position(self):
-        return ray_cast_farest_empty_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+        return ray_cast_farest_empty_block(
+            self.x,
+            self.y,
+            self.z + self.camera_height,
+            self.x_angle,
+            self.y_angle
+        )
 
     def nearest_block_position(self):
-        return ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        return ray_nearest_block(
+            self.x,
+            self.y,
+            self.z + self.camera_height,
+            self.x_angle,
+            self.y_angle
+        )
 
     def pan(self, dx_angle, dy_angle):
-        self.x_angle += dx_angle
-        self.y_angle += dy_angle
-        if self.y_angle < -0.499:
-            self.y_angle = -0.499
-        if self.y_angle > 0.499:
-            self.y_angle = 0.499
+        self._x_angle += dx_angle
+        self._y_angle += dy_angle
+        if self._y_angle < -0.499:
+            self._y_angle = -0.499
+        if self._y_angle > 0.499:
+            self._y_angle = 0.499
 
-    #def pickup_item(self, item, index=None):
-        #if self.team.is_viewers():
-            #return
-        #item = self.inventory.add(item, index)
-        #if item:
-            #NetOut.sendMessage.pickup_item(self, item, index)
 
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():
             return
         if self.inventory.can_add(item):
             NetOut.sendMessage.pickup_item(self, item, index)
-
-    #def drop_item(self, item):
-        #if self.team.is_viewers():
-            #return
-        #item = self.inventory.drop(item)
-        #if item:
-            #NetOut.sendMessage.drop_item(self, item)
 
     def drop_item(self, item):
         if self.team.is_viewers():
@@ -1139,5 +1116,3 @@ import c_lib.terrain_map as terrainMap
 from net_out import NetOut
 from raycast_utils import *
 from draw_utils import *
-#from cube_dat import CubeGlobal
-#import cube_lib.VBO

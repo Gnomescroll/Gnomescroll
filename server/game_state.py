@@ -3,6 +3,8 @@ import math
 import c_lib.terrain_map as terrain_map
 from opts import opts
 
+import c_lib.c_lib_agents as cAgents
+
 class GameStateGlobal:
 
     gameState = None
@@ -15,11 +17,12 @@ class GameStateGlobal:
     teamList = None
     game = None
     #state
-    agent_id = 0
+    #agent_id = 0 #deprecated
     player_id = 0
     projectile_id = 0
 
     fps = 30.
+    agent_tick_mode = 'jetpack'
 
     def __init__(self):
         GameStateGlobal.terrainMap = terrain_map
@@ -43,10 +46,11 @@ class GameStateGlobal:
     def init(cls):
         pass
 
-    @classmethod
-    def new_agent_id(cls):
-        cls.agent_id += 1
-        return cls.agent_id
+    # deprecated
+    #@classmethod
+    #def new_agent_id(cls):
+        #cls.agent_id += 1
+        #return cls.agent_id
 
     @classmethod
     def new_player_id(cls):
@@ -66,6 +70,22 @@ class GameStateGlobal:
                 GameStateGlobal.agentList.destroy(connection.player.agent)
             connection.player.quit()
             GameStateGlobal.game.remove_player(connection.player)
+
+    @classmethod
+    def set_agent_tick_mode(cls, mode):
+        valid_modes = ['jetpack', 'jump']
+        if mode not in valid_modes:
+            return False
+
+        if mode == 'jump':
+            cAgents.jump_physics()
+        elif mode == 'jetpack':
+            cAgents.jetpack_physics()
+
+        cls.agent_tick_mode = mode
+
+        return True
+
 
 from net_server import NetServer
 

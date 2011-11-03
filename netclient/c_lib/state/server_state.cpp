@@ -1,25 +1,30 @@
-
 #include "server_state.hpp"
-
 #pragma once
+#ifdef DC_SERVER
 
-//#include <c_lib/agent/agent.cpp>
+#include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.cpp>
+#include <c_lib/objects/object_lib.hpp>
+
 
 namespace ServerState {
 
+    Agent_list agent_list;
+    Cspray_list cspray_list;
+    Grenade_list grenade_list;
+    Neutron_list neutron_list;
+        
+    void InitServerState() {
+    
+        agent_list.create(0); //create agent 0
+    }
 
-		
-	void InitServerState() {
-	
-		agent_list.create(0); //create agent 0
-	}
 
+    void ServerTick() {
+        //printf("server tick\n");
+        agent_list.server_tick();
 
-	void ServerTick() {
-		//printf("server tick\n");
-		agent_list.server_tick();
-
-	}
+    }
 
 }
+#endif

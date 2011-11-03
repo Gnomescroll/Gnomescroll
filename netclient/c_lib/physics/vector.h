@@ -13,6 +13,7 @@ float vector_dot(struct Vector* v1, struct Vector* v2);
 void print_vector_dot(struct Vector v1, struct Vector v2);
 float vector_length(struct Vector *v);
 void print_vector_length(struct Vector *v);
+void print_vector(struct Vector * v);
 
 inline static struct Vector Vector_init(float x, float y, float z) {
     struct Vector v;
@@ -56,6 +57,4 @@ inline static struct Vector sub_vec(struct Vector* a, struct Vector* b) {
 
 struct Vector* mult_vec_scalar(struct Vector* a, float i);
 struct Vector reflect(struct Vector* inc, struct Vector* nor);
-
-///fix?
 

@@ -318,7 +318,7 @@ void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, 
     int CX[8];
     for(i=0; i<8; i++) {
         index = side*8*3+i*3;
-        CX[i] = isActive(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+        CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
 
     float _x = x;
@@ -1035,7 +1035,6 @@ void DRAW_VBOS1a() {
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
-    glEnable (GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;

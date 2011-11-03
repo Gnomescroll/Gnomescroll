@@ -129,5 +129,7 @@ class Camera(object):
         self.x = getattr(obj, prefix + 'x')
         self.y = getattr(obj, prefix + 'y')
         self.z = getattr(obj, prefix + 'z')
+        if hasattr(obj, prefix + 'camera_height'):
+            self.z += getattr(obj, prefix + 'camera_height')
         self.x_angle = getattr(obj, prefix + 'x_angle')
         self.y_angle = getattr(obj, prefix + 'y_angle')

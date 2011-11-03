@@ -32,6 +32,8 @@ Graphics Engine:
 :fulstrum culling in x/y
 -reduce draw calls
 
+!!! Lighting bug: corner vertices are lit even if they are not adjacent to blocks
+
 Minor:
 
 :draw chunks front to back

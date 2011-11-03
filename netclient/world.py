@@ -1,5 +1,7 @@
 import default_settings as settings
 
+from opts import opts
+
 if settings.pyglet:
     import pyglet
     from pyglet.gl import *
@@ -11,6 +13,8 @@ base_dir = "./"
 import random
 
 from profiler import P
+
+import c_lib.c_lib_agents
 
 class World():
 
@@ -32,8 +36,8 @@ class World():
     def tick(self):
         for p in GameStateGlobal.projectileList.values():
             p.tick()
-        for a in GameStateGlobal.agentList.values():
-            a.tick()
+        #for a in GameStateGlobal.agentList.values():
+        #    a.tick()
         if GameStateGlobal.agent is not None:
             GameStateGlobal.agent.nearby_objects()
 
@@ -74,12 +78,16 @@ class World():
         self.agents.append(agent)
 
     def draw_agents(self, first_person=False):
+        
+        to_draw = []
         for agent in GameStateGlobal.agentList.values():
-            x= (agent.team and not agent.team.is_viewers())
             if not agent.dead and not (agent.you and first_person) and \
                 (agent.team and not agent.team.is_viewers()):
-                #P.event("E2")
-                agent.draw()
+                    to_draw.append(agent.id)
+            
+        if opts.draw_agents:
+            c_lib.c_lib_agents.load_agents_to_draw(to_draw)
+            c_lib.c_lib_agents.draw_agents()
 
     def sound_updates(self):
         for p in GameStateGlobal.projectileList.values():

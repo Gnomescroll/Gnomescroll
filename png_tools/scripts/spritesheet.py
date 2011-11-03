@@ -101,7 +101,7 @@ class Spritesheet(object):
         png_out = png.Writer(width=512, height=512, alpha=True, bitdepth=8, transparent=None)
 
         print "writing out"
-        with open('../%s_01.png' % (self.name,), 'wb') as f:      # binary mode is important
+        with open('./%s_01.png' % (self.name,), 'wb') as f:      # binary mode is important
             png_out.write(f, pixels)
 
         with open('../netclient/media/texture/%s_01.png' % (self.name,), 'wb') as f:      # binary mode is important

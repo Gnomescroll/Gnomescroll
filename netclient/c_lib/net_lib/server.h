@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef DC_SERVER
+
 //#include <c_lib.h>
 
 //#define DC_SERVER
@@ -16,6 +18,8 @@
 //#include <agent/control_state.h>
 
 //extern "C" {
-	void _NetServerInit();
-	void _NetServerTick();
+    void _NetServerInit();
+    void _NetServerTick();
 //}
+
+#endif

@@ -1,3 +1,6 @@
+#include "circuit_tree.hpp"
+#pragma once
+
 /*
  *  Client only
  */

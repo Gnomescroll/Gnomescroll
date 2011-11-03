@@ -141,8 +141,8 @@ int _key_event_callback(key_event_func user_func, char key) {
     return 0;
 }
 
-int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name) {
-    user_func(key, key_name);
+int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name, int event_state) {
+    user_func(key, key_name, event_state);
     return 0;
 }
 

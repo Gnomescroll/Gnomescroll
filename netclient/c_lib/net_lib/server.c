@@ -1,4 +1,5 @@
 
+#ifdef DC_SERVER
 
 #include "server.h"
 
@@ -46,3 +47,4 @@ void _NetServerTick() {
 
         ServerState::ServerTick();  //tick after process_packets
 }
+#endif

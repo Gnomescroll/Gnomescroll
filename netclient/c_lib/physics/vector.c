@@ -30,8 +30,8 @@ void print_vector_length(struct Vector *v) {
     }
 
 //moved
-struct Vector _mult_vec_scalar_tmp = {0.0f,0.0f,0.0f};
-struct Vector* mult_vec_scalar_tmp = &_mult_vec_scalar_tmp;
+static struct Vector _mult_vec_scalar_tmp = {0.0f,0.0f,0.0f};
+static struct Vector* mult_vec_scalar_tmp = &_mult_vec_scalar_tmp;
 
 struct Vector* mult_vec_scalar(struct Vector* a, float i) {
     mult_vec_scalar_tmp->x = a->x * i;
@@ -46,3 +46,8 @@ struct Vector reflect(struct Vector* inc, struct Vector* nor) {
     //v = inc - 2*(nor.inc)*nor   <<< pseudocode
     return v;
 }
+
+void print_vector(struct Vector * v) {
+    printf("%f, %f, %f \n", v->x, v->y, v->z);
+}
+

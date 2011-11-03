@@ -12,7 +12,7 @@ lu1 = [             # dimensions
 [4,4,l_len]
 ]
 
-lu2 = [             # anchor points
+lu2 = [             # anchor points (length, anchor [x,y,z])
 [0, 0,0,2.5],
 [0, 0,0,1.875],
 [0, 0,-0.50,1.75],
@@ -34,7 +34,7 @@ from math import sin, cos, pi
 i = 0.0
 d = 1
 def skel_tick():
-    #return
+    return
     global i,d, lu3
     rate = 1.0
     #if d == 1:
@@ -52,3 +52,26 @@ def skel_tick():
     i += 0.1
     lu3[4] = [sin(i/128*pi),0,cos(i/128*pi), 0,1,0]
     lu3[5] = [cos(i/128*pi),0,sin(i/128*pi), 0,-1,0]
+
+def save():
+    import json
+    with open("agent_alignment.json", "w") as f:
+        obj = {
+            'lu1': lu1,
+            'lu2': lu2,
+            'lu3': lu3,
+        }
+        json.dump(obj, f)
+
+def load():
+    global lu1, lu2, lu3
+    import json
+    with open("agent_alignment.json") as f:
+        obj = json.load(f)
+        lu1 = obj['lu1']
+        lu2 = obj['lu2']
+        lu3 = obj['lu3']
+
+import os.path
+if os.path.exists("agent_alignment.json"):
+    load()

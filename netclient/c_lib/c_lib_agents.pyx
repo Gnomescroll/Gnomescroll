@@ -1,14 +1,6 @@
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
-
-def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi):
-    set_control_state(f,b,l,r,jet,jump,theta,phi)
-
 '''
 DEPRECATE
 '''
-
-
 cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
     void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
     void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
@@ -28,94 +20,200 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
     draw_agent_cube_side_selection( x,  y,  z,  cx,  cy,  cz,  r,  g,  b)
 
 
-
-#agent
-
-cdef extern from "./agent/DEP_agent.h":
-    void init_agent_vox_module()
-    void shutdown_agent_vox_module()
-
-def init():
-    init_agent_vox_module()
-def end():
-    shutdown_agent_vox_module()
-
-cdef extern from "./agent/agent_vox.h":
-    void init_agent_vox_volume(int id, int part, int xdim, int ydim, int zdim, float vosize)
-    void set_agent_limb_direction(int id, int part, float fx,float fy,float fz, float nx,float ny, float nz)
-    void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
-    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
-
-
-from dat.agent_dim import lu1, lu2, lu3, vosize, skel_tick
-agent_list = []
-
-def agent_skeleton_update():
-    global agent_list,lu2,lu3
-    skel_tick()
-    for id in agent_list:
-        for part in range(0,6):
-            length, ax,ay,az= lu2[part]
-            set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-        for part in range(0,6):
-            fx,fy,fz,nx,ny,nz = lu3[part]
-            set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
-
-def default_vox_model_init(int id, int part, int xdim, int ydim, int zdim, float vosize):
-    init_agent_vox_volume(id, part, xdim,ydim,zdim, vosize)
-    for x in range(0,xdim):
-        for y in range(0,ydim):
-            for z in range(0,zdim):
-                a = 255
-                r = 32*x
-                g = 32*y
-                b = 32*z
-                set_agent_vox_volume(id, part, x,y,z, r,g,b,a)
-
-def _set_agent_model(int id):
-    #cdef float vosize = .0625
-    cdef int part
-    cdef int xdim, ydim, zdim
-
-    global lu1, lu2, lu3, vosize
-
-    for part in range(0,6):
-        xdim,ydim,zdim = lu1[part]
-        default_vox_model_init(id, part, xdim,ydim,zdim, vosize)
-
-    for part in range(0,6):
-        length, ax,ay,az= lu2[part]
-        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-    for part in range(0,6):
-        fx,fy,fz, nx,ny,nz = lu3[part]
-        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
 '''
-def _create_agent(float x, float y, float z):
-    cdef int id
-    id = create_agent(x,y,z)
-    _set_agent_model(id)
-    ##
-    global agent_list
-    agent_list.append(id)
-    return id
+DONT DEPRECATE BELOW
 '''
+
+#AgentState
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass AgentState:
+        int seq
+        float theta
+        float phi
+        float x,y,z
+        float vx,vy,vz
+
+#Agent_state
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_state:
+        int id
+        AgentState s
+        void teleport(float x,float y,float z)
+        void crouch(int on_off)
+
 
 cdef extern from "./agent/agent.hpp":
-    void agents_tick()
-    void agents_draw()
-    int agent_create(int id, float x, float y, float z)
+    void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
+    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
+    void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz)
+    void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
+    void init_agent_vox_done(int id)
 
-def _create_agent(int id, float x, float y, float z):
-    print "Created agent %d" % agent_create(id, x,y,z)
+    void init_agents_to_draw()
+    void clear_agents_to_draw()
+    void set_agents_to_draw(int* ids, int ct)
 
-def _create_agent_with_vox(int id, float x, float y, float z):
-    id = agent_create(id, x,y,z)
-    print "_create_agent_with_vox (cython) :: created agent %d" % (id,)
-    _set_agent_model(id)
-    return id
-    
+    void set_agent_tick_mode(int mode)
+    cdef enum tick_modes:
+        use_jetpack
+        use_jump
+
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_list:
+        void draw()
+        void draw(int all)
+        Agent_state* get(int id)
+        Agent_state* create()
+        Agent_state* create(int id)
+        Agent_state* get_or_create(int id)
+        void destroy(int _id)
+        void where()
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Agent_list agent_list
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
+    void set_PlayerAgent_id(int id)
+
+def init_draw_agents():
+    init_agents_to_draw()
 
 def draw_agents():
-    agents_draw()
+    agent_list.draw()
+
+def crouch(int agent_id, int on_off):
+    cdef Agent_state* agent
+    agent = agent_list.get(agent_id)
+    if agent is not NULL:
+        agent.crouch(on_off)
+
+def jump_physics():
+    set_agent_tick_mode(use_jump)
+def jetpack_physics():
+    set_agent_tick_mode(use_jetpack)
+
+import dat.agent_dim as dat
+# import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
+vosize = dat.vosize
+
+PART_NUM = 6
+def _init_agent_vox(int id):
+    #global dat.lu1, dat.lu2, dat.lu3,
+    global vosize
+    global PART_NUM
+
+    for part in range(PART_NUM):
+        xdim,ydim,zdim = dat.lu1[part]
+
+        init_agent_vox_part(id, part, xdim, ydim, zdim, vosize)
+
+        for x in range(xdim):
+            for y in range(ydim):
+                for z in range(zdim):
+                    a = 255
+                    r = 32*x
+                    g = 32*y
+                    b = 32*z
+                    set_agent_vox_volume(id, part, x,y,z, r,g,b,a) # THIS
+
+    for part in range(PART_NUM):
+        length, ax,ay,az= dat.lu2[part]
+        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+    for part in range(PART_NUM):
+        fx,fy,fz, nx,ny,nz = dat.lu3[part]
+        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
+
+    init_agent_vox_done(id)
+
+def _update_agent_vox(int id):
+    return # !!!
+    dat.skel_tick()
+    for part in range(PART_NUM):
+        length, ax,ay,az= dat.lu2[part]
+        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+    for part in range(PART_NUM):
+        fx,fy,fz,nx,ny,nz = dat.lu3[part]
+        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
+
+def load_agents_to_draw(agents):
+    clear_agents_to_draw()
+    cdef int a[1024]
+    cdef int i = 0
+    for ag in agents:
+        a[i] = ag
+        i += 1
+    set_agents_to_draw(a, i)
+
+
+'''
+WRAPPER
+'''
+
+#agent class wrapper
+
+agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
+
+class AgentWrapper(object):
+
+    def __init__(self, int id):
+        agent_list.create(id)
+        self.id = id
+        
+    def __getattribute__(self, name):
+        if name not in agent_props:
+            raise AttributeError
+
+        cdef Agent_state* a
+        a = agent_list.get(object.__getattribute__(self,'id'))
+
+        if name == 'x':
+            return a.s.x
+        elif name == 'y':
+            return a.s.y
+        elif name == 'z':
+            return a.s.z
+        elif name == 'vx':
+            return a.s.vx
+        elif name == 'vy':
+            return a.s.vy
+        elif name == 'vz':
+            return a.s.vz
+        elif name == 'theta':
+            return a.s.theta
+        elif name == 'phi':
+            return a.s.phi
+
+        elif name == 'x_angle': # legacy reasons
+            return a.s.theta
+        elif name == 'y_angle':
+            return a.s.phi
+
+
+#functions
+
+def teleport_Agent(int id, float x, float y, float z):
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a != NULL:
+        a.teleport(x,y,z)
+    else:
+        print "Cannot teleport agent: agent %i does not exist" %(id)
+
+def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi):
+    set_control_state(f,b,l,r,jet,jump,theta,phi)
+
+def set_player_agent_id(int id):
+    set_PlayerAgent_id(id)
+
+
+class AgentListWrapper:
+
+    @classmethod
+    def add(cls, int id):
+        agent_list.get_or_create(id)
+        return id
+
+    @classmethod
+    def remove(cls, int id):
+        agent_list.destroy(id)
+        return id
+

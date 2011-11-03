@@ -303,16 +303,22 @@ class SendMessage(GenericMessage):
     @noViewer
     @sendJSON('throw_grenade')
     def throw_grenade(self, agent):
+        vec = agent.normalized_direction()
         return {
             'aid'       :   agent.id,
-            'vector'    :   agent.normalized_direction(),
+            'vector'    :   vec,
         }
-
 
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):
         return { 'timestamp' : SDL.gl.get_ticks() }
+
+    @sendJSON('agent_tick_mode')
+    def agent_tick_mode(self, mode):
+        return {
+            'mode'  :   mode
+        }
 
 class DatMessage:
     @sendJSON('dat_loaded')

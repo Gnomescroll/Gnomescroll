@@ -1,3 +1,5 @@
+#ifdef DC_CLIENT
+
 #include <net_lib/client.h>
 
 #include <net_lib/common/message_handler.h>
@@ -8,6 +10,7 @@
 
 #include <c_lib/state/packet_init.cpp>
 #include <c_lib/state/client_state.cpp>
+
 
 struct NetPeer* np;
 
@@ -74,3 +77,5 @@ void _NetClientTick() {
     ClientState::ClientTick();
     return;
 }
+
+#endif
