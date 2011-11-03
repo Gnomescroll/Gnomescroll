@@ -175,6 +175,7 @@ class Grenade(Projectile):
 
     def explode(self):
         pos = self.pos()
+        
         # calculate distance for all damageable objects
         # if <self.blast_radius, apply self.blast_damage
         [agent.take_damage(self.splash_damage, self.owner, self.suicidal) \
@@ -189,8 +190,7 @@ class Grenade(Projectile):
         gn = grenade_block_destroy_distance
         diag_len = gn / sqrt(2) # the distance along 2 axes to form diagonal affine shift of len = gn
 
-        print "Grenade destroying blocks around point ", pos
-
+        #print "Grenade destroying blocks around point ", pos
         blocks = [
             # x
             map(int, [pos[0] + gn, pos[1], pos[2]]),
