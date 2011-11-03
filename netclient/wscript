@@ -60,14 +60,18 @@ def configure(conf):
     #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
 
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT', '-Wimplicit'])
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT', '-Wimplicit'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive'])
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive'])
     else:
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
 
 
-
+    if OS == 'Windows':
+        pass
+        conf.env.append_value("LINKFLAGS", "-lwsock32")
+        conf.env.append_value("LINKFLAGS", "-lws2_32")
+        
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':
@@ -81,13 +85,14 @@ def configure(conf):
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
     if OS == 'Windows':
-        conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
+        conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
+        #conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
 
 	#print "WTF"
-
+	
 	conf.env.INCLUDES = []
-	if OS == 'Windows':
-		conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
+	#if OS == 'Windows':
+	#	conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
 
 	conf.check(header_name='SDL.h',
                use='SDL',
@@ -139,8 +144,8 @@ def configure(conf):
     conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
     
-    if OS == 'Windows':
-        conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
+    #if OS == 'Windows':
+    #    conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
 		
     #hack
     print os.path.abspath(os.curdir)
@@ -227,7 +232,7 @@ def build(bld):
                 'SDL/texture_loader.c',
                 'SDL/hud/block_selector.c',
                 'SDL/hud.pyx'],
-        use=common_libraries+SDL_libraries,
+        use=SDL_libraries+common_libraries,
         target='SDL.hud')
 
     '''
