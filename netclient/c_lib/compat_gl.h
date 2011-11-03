@@ -8,6 +8,7 @@
         #include <SDL.h>
         #include <SDL_opengl.h>
     #elif _WIN32
+		//#define NO_SDL_GLEXT //do not need on windows?
         #include <windows.h>
         #include <SDL.h>
         #include <GL/glew.h>

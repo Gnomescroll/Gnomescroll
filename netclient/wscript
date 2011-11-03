@@ -59,8 +59,8 @@ def configure(conf):
     #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
 
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT', '-Wimplicit'])
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT', '-Wimplicit'])
     else:
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
@@ -77,11 +77,20 @@ def configure(conf):
 
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+    if OS == 'Windows':
+        conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
 
-    conf.check(header_name='SDL.h',
+	#print "WTF"
+
+	conf.env.INCLUDES = []
+	if OS == 'Windows':
+		conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
+
+	conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
+	
 
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
@@ -89,13 +98,6 @@ def configure(conf):
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-    '''
-        os_libpth = './libraries/win'
-        os_libpth = './libraries/lin'
-        os_libpth = './libraries/osx'
-    '''
-    #conf.env.INCLUDES += [incp]
-    #print incp
 
     incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
@@ -131,7 +133,7 @@ def configure(conf):
                mandatory=True)
     '''
 
-    conf.env.INCLUDES = ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
+    conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
 
     #hack
