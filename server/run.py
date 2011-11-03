@@ -13,7 +13,7 @@ opts.opts = args_server.get_args()
 from time import sleep
 
 #import cython
-import pyximport #; pyximport.install()
+#import pyximport #; pyximport.install()
 
 #from pudb import set_trace; set_trace()
 
