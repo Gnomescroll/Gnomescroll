@@ -137,10 +137,10 @@ def configure(conf):
     '''
 
     conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
-	conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
-
-	if OS == 'Windows':
-		conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
+    conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib']
+    
+    if OS == 'Windows':
+        conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
 		
     #hack
     print os.path.abspath(os.curdir)
