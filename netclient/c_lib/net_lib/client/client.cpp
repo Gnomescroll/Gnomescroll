@@ -259,14 +259,14 @@ int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
     return 0; //does not validate
 }
 
+#if PLATFORM == PLATFORM_WINDOWS
+typedef int socklen_t;
+#endif
+	
 void process_incoming_packets() {
     struct sockaddr_in from;
     socklen_t fromLength = sizeof( from );
     int bytes_received;
-
-    #if PLATFORM == PLATFORM_WINDOWS
-    typedef int socklen_t;
-    #endif
 
     while(1) {
         bytes_received = recvfrom(client_socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);

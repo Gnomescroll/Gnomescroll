@@ -3,7 +3,7 @@
 #include <errno.h>
 
 #include <sys/types.h> //?
-#include <sys/socket.h> //?
+//#include <sys/socket.h> //?
 
 #include "../common/net_lib_common.h"
 #include "../common/sequencer.h"

@@ -32,7 +32,9 @@ long Cget_time() {
             //printf("current time is: %ld \n", tp.tv_nsec);
             return tp.tv_sec*1000 + tp.tv_nsec/(1000*1000);
         #else
-            printf("_POSIX_TIMERS not defined! \n");
+            //printf("_POSIX_TIMERS not defined! \n");
+			//windows millisecond timer
+			return GetTickCount();
         #endif
     #endif
 }
@@ -82,8 +84,13 @@ int _tick_check() {
     }
 }
 
-int start_sec;
-int start_nsec;
+#ifdef _POSIX_TIMERS
+	int start_sec;
+	int start_nsec;
+#else
+	int window_ms_start;
+#endif
+
 int c_tick = 0;
 
 void _START_CLOCK() {
@@ -104,8 +111,9 @@ void _START_CLOCK() {
             start_sec = tp.tv_sec;
             start_nsec = tp.tv_nsec;
         #else
-            printf("_POSIX_TIMERS not defined! \n");
-        #endif
+            //printf("_POSIX_TIMERS not defined! \n");
+			window_ms_start = GetTickCount();
+		#endif
     #endif
 }
 
@@ -129,18 +137,25 @@ int _GET_TICK() {
             s_sec = tp.tv_sec;
             n_sec = tp.tv_nsec;
         #else
-            printf("_POSIX_TIMERS not defined! \n");
+            //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-    int cs_sec, cn_sec;
-    cs_sec = s_sec - start_sec;
-    cn_sec = n_sec - start_nsec;
+	
+	#ifdef _POSIX_TIMERS
+		int cs_sec, cn_sec;
+		cs_sec = s_sec - start_sec;
+		cn_sec = n_sec - start_nsec;
 
-    //printf("s= %i n=%i \n", cs_sec, cn_sec/1000000);
+		//printf("s= %i n=%i \n", cs_sec, cn_sec/1000000);
 
-    int t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
-    //printf("t=%i ;%i, %i \n", t, cs_sec*1000/TICK_MS, cn_sec/(1000*1000)/TICK_MS);
+		int t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
+		//printf("t=%i ;%i, %i \n", t, cs_sec*1000/TICK_MS, cn_sec/(1000*1000)/TICK_MS);
     //printf("d=%i t=%i c=%i \n", t - c_tick, t, c_tick);
+	#else
+		int cs_ms = GetTickCount();
+		int t = (cs_ms-window_ms_start) / TICK_MS;		
+	#endif
+	
     if(c_tick < t) {
         c_tick++;
         return 1;
@@ -169,14 +184,19 @@ int _GET_MS_TIME() {
             s_sec = tp.tv_sec;
             n_sec = tp.tv_nsec;
         #else
-            printf("_POSIX_TIMERS not defined! \n");
+            //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-    int cs_sec, cn_sec;
-    cs_sec = s_sec - start_sec;
-    cn_sec = n_sec - start_nsec;
-    //printf("ms_time= %i\n",cs_sec*1000+ (cn_sec/ 1000000));
-    return cs_sec*1000+ (cn_sec/ 1000000);
+	
+	#ifdef _POSIX_TIMERS
+		int cs_sec, cn_sec;
+		cs_sec = s_sec - start_sec;
+		cn_sec = n_sec - start_nsec;
+		return cs_sec*1000+ (cn_sec/ 1000000);
+	#else
+		return GetTickCount();	
+	#endif
+	
 
 }
 
