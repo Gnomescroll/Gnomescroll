@@ -138,7 +138,7 @@ cdef int mouse_event_callback(MouseEvent me):
 
 cdef int quit_event_callback():
     global input_callback, key_text_event_callback_stack
-    key_text_event_callback_stack.append((9999, 'QUIT',))
+    key_text_event_callback_stack.append((9999, 'QUIT', 1))
 
 def init():
     _init_input()
