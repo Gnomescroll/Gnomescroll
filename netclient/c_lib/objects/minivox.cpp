@@ -158,26 +158,18 @@ void Minivox::draw() {
         }
     }
 
-    float x0, y0, z0;
-    //x0 = vec_x.x + vec_y.x + vec_z.x + particle.state.p.x;
-    //y0 = vec_x.y + vec_y.y + vec_z.y + particle.state.p.y;
-    //z0 = vec_x.z + vec_y.z + vec_z.z + particle.state.p.z;
-    x0 = particle.state.p.x;
-    y0 = particle.state.p.y;
-    z0 = particle.state.p.z;
-
-    //printf("%0.2f %0.2f %0.2f\n", x0, y0, z0);
+    const float
+        x0 = particle.state.p.x,
+        y0 = particle.state.p.y,
+        z0 = particle.state.p.z;
 
     // draw voxel
     for(i=0; i<6; i++) {
         glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
-        //printf("draw minivox at %0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
         glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
         glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
         glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
     }
-
-    //printf("should see minivox\n");
 
 #endif
 }
