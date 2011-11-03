@@ -60,14 +60,18 @@ def configure(conf):
     #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
 
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive'])
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive'])
     else:
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
 
 
-
+    if OS == 'Windows':
+        pass
+        conf.env.append_value("LINKFLAGS", "-lwsock32")
+        conf.env.append_value("LINKFLAGS", "-lws2_32")
+        
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':

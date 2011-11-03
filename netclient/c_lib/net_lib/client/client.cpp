@@ -269,7 +269,7 @@ void process_incoming_packets() {
     int bytes_received;
 
     while(1) {
-        bytes_received = recvfrom(client_socket.socket, buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+        bytes_received = recvfrom(client_socket.socket, (char*)buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
         if(bytes_received <= 0) {return;}
         //printf("Packet\n");
         if(validate_packet(buffer, bytes_received, &from)) {

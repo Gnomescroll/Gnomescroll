@@ -1,5 +1,12 @@
 #include "sound.h"
 
+#ifndef TRUE
+  #define TRUE 1
+#endif
+#ifndef FALSE
+  #define FALSE 0
+#endif
+
 /* Init and update */
 void init_sound_system() {
     FMOD_RESULT result;
@@ -302,7 +309,7 @@ int test() {
     FMOD_SOUND* gun = _load_2d_sound("../media/sound/wav/semishoot.wav");
 
     _play_2d_sound(gun);
-    Sleep(1500);
+    //Sleep(1500);
 
     release_sound(gun);
     release_sound_system();
