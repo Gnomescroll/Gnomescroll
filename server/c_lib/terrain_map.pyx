@@ -71,6 +71,15 @@ cpdef inline set(int x,int y, int z,int value):
 cpdef inline int get(int x, int y,int z):
     return _get(x,y,z)
 
+# returns True if the block value will be different on set
+def set_notify(int x, int y, int z, int value):
+    cdef int val
+    val = _get(x,y,z)
+    if value != val:
+        _set(x,y,z, value)
+        return True
+    return False
+
 #implement
 
 def get_server_chunk_list():

@@ -186,7 +186,7 @@ void process_packets() {
 
     int bytes_received;
     while(1) {
-        bytes_received = recvfrom(server_socket.socket, (char*)buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+        bytes_received = recvfrom(server_socket.socket, (char*) buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
         if(bytes_received <= 0) return;
         process_packet(buffer, bytes_received, &from);
     }

@@ -36,6 +36,12 @@ inline static struct Vector vector_cross(struct Vector v1, struct Vector v2) {
     return v0;
 }
 
+inline static void vector_cross_ptr(struct Vector* v0, struct Vector* v1, struct Vector* v2) {
+    v0->x = v1->y*v2->z - v1->z*v2->y;
+    v0->y = v1->z*v2->x - v1->x*v2->z;
+    v0->z = v1->x*v2->y - v1->y*v2->x;
+}
+
 //rotate vector in xy plane around origin
 inline static void vector_rotate_origin(struct Vector* in, struct Vector* out, float theta) {
     float cost = cos(theta);
@@ -56,5 +62,8 @@ inline static struct Vector sub_vec(struct Vector* a, struct Vector* b) {
 }
 
 struct Vector* mult_vec_scalar(struct Vector* a, float i);
+void mult_vec_scalar_ptr(struct Vector *a, float i);
 struct Vector reflect(struct Vector* inc, struct Vector* nor);
+
+void print_vector(struct Vector* v);
 

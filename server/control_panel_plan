@@ -1,0 +1,22 @@
+
+Server instance:
+Load json dats into memory
+
+Page request
+Send dat to template, tempalte print out info
+Widgets correspond to data types
+
+
+Front end:
+Widgets make ajax get request on change -- json?
+
+Get request handler parses json
+finds what object to change
+looks for what is changing
+updates memory, and serializes to disk
+
+
+Game server:
+monitors json files for changes
+if change, dat loader reads & parses the updated json file
+feeds this into the updater
