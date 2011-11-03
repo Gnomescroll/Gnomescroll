@@ -13,6 +13,10 @@ import c_lib.c_lib_objects as c_obj
 import dats.loader as dat_loader
 p_dat = dat_loader.p_dat
 
+import c_lib.terrain_map as terrain_map
+
+from net_out import NetOut
+
 '''
 Projectile Controller
 '''
@@ -34,7 +38,7 @@ class ProjectileList(GenericMultiObjectList):
 '''
 Projectile class
 '''
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 #from game_objects import GameObject
 from utils import filter_props
 #from cube_dat import CubeGlobal
@@ -176,8 +180,49 @@ class Grenade(Projectile):
         [agent.take_damage(self.splash_damage, self.owner, self.suicidal) \
          for agent in GameStateGlobal.agentList.values() \
          if distance(pos, agent.pos()) < self.splash_radius]
-        
-    
+
+        # destroy nearby blocks
+        # look in 8 adjacent spots around grenade (16 maybe)
+        # n distance away (probably n<1, maybe n=0.7
+
+        grenade_block_destroy_distance = 0.6    # make this a parameter later
+        gn = grenade_block_destroy_distance
+        diag_len = gn / sqrt(2) # the distance along 2 axes to form diagonal affine shift of len = gn
+
+        print "Grenade destroying blocks around point ", pos
+
+        blocks = [
+            # x
+            map(int, [pos[0] + gn, pos[1], pos[2]]),
+            map(int, [pos[0] - gn, pos[1], pos[2]]),
+            # y
+            map(int, [pos[0], pos[1] + gn, pos[2]]),
+            map(int, [pos[0], pos[1] - gn, pos[2]]),
+            # z
+            map(int, [pos[0], pos[1], pos[2] + gn]),
+            map(int, [pos[0], pos[1], pos[2] - gn]),
+
+            # xy plane
+            map(int, [pos[0] + diag_len, pos[1] + diag_len, pos[2]]),
+            map(int, [pos[0] - diag_len, pos[1] + diag_len, pos[2]]),
+            map(int, [pos[0] + diag_len, pos[1] - diag_len, pos[2]]),
+            map(int, [pos[0] - diag_len, pos[1] - diag_len, pos[2]]),
+            # xz plane
+            map(int, [pos[0] + diag_len, pos[1], pos[2] + diag_len]),
+            map(int, [pos[0] - diag_len, pos[1], pos[2] + diag_len]),
+            map(int, [pos[0] + diag_len, pos[1], pos[2] - diag_len]),
+            map(int, [pos[0] - diag_len, pos[1], pos[2] - diag_len]),
+        ]
+
+        changes = []
+        for b in blocks:
+            x,y,z = b
+            changed = terrain_map.set_notify(x,y,z, 0)
+            if changed:
+                changes.append([x,y,z,0])
+
+        NetOut.event.set_map(changes)
+            
     def delete(self):
         Projectile.delete(self)
         c_obj._destroy_grenade(self.g_index)

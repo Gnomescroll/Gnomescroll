@@ -395,12 +395,12 @@ void Agent_state::_tick()
         //bottom -z
         collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
 
-        if(on_ground(box_r, s.x, s.y, s.z) == true) {
-            printf("on ground\n");
-        }
-        else {
-            printf("off ground\n");
-        }
+        //if(on_ground(box_r, s.x, s.y, s.z) == true) {
+            //printf("on ground\n");
+        //}
+        //else {
+            //printf("off ground\n");
+        //}
 
         float cs_vx =0 ;
         float cs_vy =0 ;
