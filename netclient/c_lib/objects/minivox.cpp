@@ -39,8 +39,8 @@ void Minivox::orient_vectors() {
     normalize_vector(&vec_x);
 
     vec_y.x = cos(theta*PI + PI/2);
-    vec_y.x = sin(theta*PI + PI/2);
-    vec_y.x = 0.0f;
+    vec_y.y = sin(theta*PI + PI/2);
+    vec_y.z = 0.0f;
     normalize_vector(&vec_y);
     
     vector_cross_ptr(&minivox_intermediate, &vec_x, &vec_y);
@@ -109,31 +109,6 @@ void Minivox_list::draw() {
 #endif
 }
 
-#ifdef DC_CLIENT
-namespace miniset {
-const int v_set[3*8] = {
-        0,0,0,
-        1,0,0,
-        1,1,0,
-        0,1,0,
-        0,0,1,
-        1,0,1,
-        1,1,1,
-        0,1,1 };
-
-const int q_set[4*6]= {
-        4,5,6,7,
-        3,2,1,0,
-        2,3,7,6,
-        0,1,5,4,
-        0,4,7,3,
-        1,2,6,5 };
-
-float v_buffer[3*8];
-float s_buffer[6*(4*3)];
-}
-#endif
-
 void Minivox::draw() {
 #ifdef DC_CLIENT
 
@@ -143,21 +118,27 @@ void Minivox::draw() {
     // set color mode
     glColor3ub(vox.r, vox.g, vox.b);
 
+    //print_vector(&vec_x);
+    //print_vector(&vec_y);
+    //print_vector(&vec_z);
+    //printf("\n");
+
     // fill vertex buffer
     int i,j;
     for(i=0; i<8; i++) {
-        miniset::v_buffer[3*i+0] = miniset::v_set[3*i+0]*vec_x.x + miniset::v_set[3*i+1]*vec_y.x + miniset::v_set[3*i+2]*vec_z.x;
-        miniset::v_buffer[3*i+1] = miniset::v_set[3*i+0]*vec_x.y + miniset::v_set[3*i+1]*vec_y.y + miniset::v_set[3*i+2]*vec_z.y;
-        miniset::v_buffer[3*i+2] = miniset::v_set[3*i+0]*vec_x.z + miniset::v_set[3*i+1]*vec_y.z + miniset::v_set[3*i+2]*vec_z.z;
+        v_buffer[3*i+0] = v_set[3*i+0]*vec_x.x + v_set[3*i+1]*vec_y.x + v_set[3*i+2]*vec_z.x;
+        v_buffer[3*i+1] = v_set[3*i+0]*vec_x.y + v_set[3*i+1]*vec_y.y + v_set[3*i+2]*vec_z.y;
+        v_buffer[3*i+2] = v_set[3*i+0]*vec_x.z + v_set[3*i+1]*vec_y.z + v_set[3*i+2]*vec_z.z;
     }
     for(i=0; i<6; i++) {
         for(j=0; j<4; j++) {
-            miniset::s_buffer[12*i+3*j+0] = miniset::v_buffer[3*miniset::q_set[4*i+j] + 0];
-            miniset::s_buffer[12*i+3*j+1] = miniset::v_buffer[3*miniset::q_set[4*i+j] + 1];
-            miniset::s_buffer[12*i+3*j+2] = miniset::v_buffer[3*miniset::q_set[4*i+j] + 2];
+            s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
+            s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
+            s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
         }
     }
 
+    // copy the particle position for cleaner code
     const float
         x0 = particle.state.p.x,
         y0 = particle.state.p.y,
@@ -169,6 +150,12 @@ void Minivox::draw() {
         glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
         glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
         glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
+
+        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
+        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
+        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
+        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
+        //printf("\n");
     }
 
 #endif

@@ -65,3 +65,5 @@ struct Vector* mult_vec_scalar(struct Vector* a, float i);
 void mult_vec_scalar_ptr(struct Vector *a, float i);
 struct Vector reflect(struct Vector* inc, struct Vector* nor);
 
+void print_vector(struct Vector* v);
+
