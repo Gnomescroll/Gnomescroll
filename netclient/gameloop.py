@@ -266,7 +266,7 @@ class App(object):
                     vz = -3.5 #v*(random.random() -0.5)
                     #c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
 
-                for _j_ in range(0,10):
+                for _j_ in range(0,5):
                     x = 32+ 16*random.random()
                     y = 32+ 16*random.random()
                     z = 40.

@@ -21,7 +21,7 @@
 #define MINIVOX_TYPE 6
 
 /* voxel properties */
-#define MINIVOX_SIZE 0.9f
+#define MINIVOX_SIZE 0.2f
 #define MINIVOX_R 10
 #define MINIVOX_G 255
 #define MINIVOX_B 50
