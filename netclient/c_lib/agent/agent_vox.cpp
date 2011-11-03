@@ -119,13 +119,17 @@ void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     struct Vector forward;
 
     look = Vector_init(
-            cos( theta * PI) * cos( phi * PI),
-            sin( theta * PI) * cos( phi * PI),
-            sin( phi)
+        cos(theta * PI) * cos(phi * PI),
+        sin(theta * PI) * cos(phi * PI),
+        sin(phi)
     );
     normalize_vector(&look);
 
-    right = Vector_init(cos(theta*PI+PI/2), sin(theta*PI+PI/2), 0.0);
+    right = Vector_init(
+        cos(theta * PI + PI/2), 
+        sin(theta * PI + PI/2),
+        0.0f
+    );
     normalize_vector(&right);
 
     forward = Vector_init(

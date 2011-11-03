@@ -30,22 +30,20 @@ Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz
 }
 
 // recalculates orientation vectors from angular parameter
-static Vector minivox_intermediate = {0.0f, 0.0f, 0.0f};
 void Minivox::orient_vectors() {
 
-    vec_x.x = cos(theta * PI);
-    vec_x.y = sin(theta * PI);
-    vec_x.z = 0.0f;
+    vec_x.x = cos(theta * PI) * cos(phi * PI);
+    vec_x.y = sin(theta * PI) * cos(phi * PI);
+    vec_x.z = sin(phi);
     normalize_vector(&vec_x);
 
-    vec_y.x = cos(theta*PI + PI/2);
-    vec_y.y = sin(theta*PI + PI/2);
+    vec_y.x = cos(theta*PI + PI/2.0f);
+    vec_y.y = sin(theta*PI + PI/2.0f);
     vec_y.z = 0.0f;
     normalize_vector(&vec_y);
-    
-    vector_cross_ptr(&minivox_intermediate, &vec_x, &vec_y);
-    vector_cross_ptr(&vec_z, &vec_x, &minivox_intermediate);
-    normalize_vector(&vec_z);   // necessary?
+
+    vec_z = vector_cross(vec_x, vec_y);
+    vec_y = vector_cross(vec_x, vec_z);
 
     mult_vec_scalar_ptr(&vec_x, size);
     mult_vec_scalar_ptr(&vec_y, size);
@@ -118,11 +116,6 @@ void Minivox::draw() {
     // set color mode
     glColor3ub(vox.r, vox.g, vox.b);
 
-    //print_vector(&vec_x);
-    //print_vector(&vec_y);
-    //print_vector(&vec_z);
-    //printf("\n");
-
     // fill vertex buffer
     int i,j;
     for(i=0; i<8; i++) {
@@ -150,12 +143,6 @@ void Minivox::draw() {
         glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
         glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
         glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
-
-        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
-        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
-        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
-        //printf("%0.2f %0.2f %0.2f\n", x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
-        //printf("\n");
     }
 
 #endif
