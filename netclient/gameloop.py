@@ -1,7 +1,15 @@
+#!/c/Python27/python.exe
 
 import sys
 import os
+print "Working Directory: %s" % (os.getcwd())
 sys.path.insert(0, './ext/')
+
+sys.path.insert(0, '/c/dc_mmo/netclient/ext/')
+
+sys.path.insert(0, 'c:/dc_mmo/netclient/ext/')
+
+import SDL
 
 import math
 
@@ -72,7 +80,8 @@ import random #remove?
 #import hotshot
 import time
 
-import sound.sounds as sounds
+if settings.sound:
+    import sound.sounds as sounds
 
 class App(object):
 
@@ -110,7 +119,8 @@ class App(object):
         soundfiles = None
         if audio:
             soundfiles = os.listdir('./media/sound/wav/')
-        sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+        if settings.sound:
+            sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
 
     def __init__(self):
         self.init_audio()
@@ -390,14 +400,15 @@ class App(object):
             self.intervals.process()
 
             agent = GameStateGlobal.agent
-            if agent:
-                sounds.update(agent.listener_state())
-            else:
-                sounds.update()
+            if settings.sound:
+                if agent:
+                    sounds.update(agent.listener_state())
+                else:
+                    sounds.update()
 
             P.finish_frame()
-
-        sounds.done()
+        if settings.sound:
+            sounds.done()
 
 
 if __name__ == '__main__':

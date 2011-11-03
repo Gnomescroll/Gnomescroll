@@ -35,7 +35,8 @@ from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper,
 
 import c_lib.c_lib_agents as cAgents
 
-import sound.sounds as sounds
+if settings.sound:
+    import sound.sounds as sounds
 
 '''
 Physics for agents

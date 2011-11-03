@@ -7,13 +7,11 @@ import c_lib.c_lib_objects as c_obj
 
 from animations import GrenadeExplodeAnimation
 
-import sound.sounds as sounds
+if settings.sound:
+    import sound.sounds as sounds
 
-if settings.pyglet:
-    import pyglet
-    from pyglet.gl import *
-else:
-    import SDL.gl
+
+import SDL.gl
 
 from dat_loader import p_dat
 
@@ -128,7 +126,8 @@ class Laser(Projectile):
         self.sample_rate = 10.
         self.sample_range = range(int(self.sample_rate))
         self.sample_delta = 0.10
-        self.snd_id  = sounds.play_3d('warp2.wav', self.pos(), self.velocity())
+        if settings.sound:
+            self.snd_id  = sounds.play_3d('warp2.wav', self.pos(), self.velocity())
 
     def tick(self):
         if not self.check_life():
