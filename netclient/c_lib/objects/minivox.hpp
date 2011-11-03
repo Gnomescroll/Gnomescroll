@@ -5,6 +5,7 @@
     #include <compat_gl.h>
 #endif
 
+#include <c_lib/voxel/common.h>
 #include <physics/common.h>
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.h>
@@ -14,38 +15,43 @@
     #include <texture_loader.h>
 #endif
 
-
 #define MINIVOX_MAX 4096
-#define MINIVOX_TTL 30
-#define MINIVOX_DAMP 0.5f
-#define MINIVOX_TYPE 5
-#define MINIVOX_TEXTURE_ID 5
-#define MINIVOX_TEXTURE_SCALE 0.1f
+#define MINIVOX_TTL 300
+#define MINIVOX_DAMP 0.1f
+#define MINIVOX_TYPE 6
 
-#define MINIVOX_DEFAULT_VOXEL {255, 50, 50, 255}
-
-/* also defined in agent/agent_vox.hpp */
-struct Voxel {
-unsigned char r,g,b,a;
-};
+/* voxel properties */
+#define MINIVOX_SIZE 0.9f
+#define MINIVOX_R 10
+#define MINIVOX_G 255
+#define MINIVOX_B 50
+#define MINIVOX_A 255
 
 class Minivox {
+    private:
+        float theta;
+        float phi;
+        void orient_vectors();
+
     public:
         Particle2 particle;
 
         float size;
+
+        Vector vec_x;
+        Vector vec_y;
+        Vector vec_z;
+        
         Voxel vox;
 
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-        void set_size(float s);
-
+        void set_orientation(float theta, float phi);
 
         void draw();
         void tick();
         Minivox(int id);
         Minivox(int id, float x, float y, float z, float vx, float vy, float vz);
-        ~Minivox();
 };
 
 #include <c_lib/template/object_list.hpp>

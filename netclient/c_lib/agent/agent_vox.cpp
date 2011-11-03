@@ -111,27 +111,6 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
 
 #ifdef DC_CLIENT
 
-static int v_set[3*8] = {
-        0,0,0,
-        1,0,0,
-        1,1,0,
-        0,1,0,
-        0,0,1,
-        1,0,1,
-        1,1,1,
-        0,1,1 };
-
-static int q_set[4*6]= {
-        4,5,6,7,
-        3,2,1,0,
-        2,3,7,6,
-        0,1,5,4,
-        0,4,7,3,
-        1,2,6,5 };
-
-static float v_buffer[3*8];
-static float s_buffer[6*(4*3)];
-
 void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
     if (!vox_ready) return;
 
