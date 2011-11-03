@@ -27,22 +27,24 @@ void set_agent_tick_mode(int mode) {
 void Agent_list::draw() 
 {
     #ifdef DC_CLIENT
-        int i,j;
+    int i,j;
 
-        glDisable(GL_TEXTURE_2D);
-        //glEnable(GL_DEPTH_TEST);
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        for(i=0; i<n_agents_to_draw; i++) { //max_n
-            j = agents_to_draw[i];
-            if (j < 0) continue;
-            if(a[j] != NULL) {
-              a[j]->draw();
-            }
+    glDisable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glBegin(GL_QUADS);
+    //glEnable(GL_CULL_FACE);   // for bounding box lines (disabled)
+
+    for(i=0; i<n_agents_to_draw; i++) { //max_n
+        j = agents_to_draw[i];
+        if (j < 0) continue;
+        if(a[j] != NULL) {
+          a[j]->draw();
         }
-        glDisable(GL_CULL_FACE);
-        //glEnable(GL_TEXTURE_2D);
-        //glDisable(GL_DEPTH_TEST);
+    }
+
+    //glDisable(GL_CULL_FACE);
+    glDisable (GL_DEPTH_TEST);
+    glEnd();
     #endif
 }
 
@@ -52,19 +54,21 @@ void Agent_list::draw(int all)
         if (! all) return;
         int i;
 
-        glDisable(GL_TEXTURE_2D);
-        //glEnable(GL_DEPTH_TEST);
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        for(i=0; i<n_max; i++) { //max_n
-            if(a[i] != NULL) {
-                printf("SHOULD DRAW AGENT %d\n", i);
-                a[i]->draw();
-            }
+    glDisable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glBegin(GL_QUADS);
+    //glEnable(GL_CULL_FACE);   // for bounding box lines (disabled)
+
+    for(i=0; i<n_max; i++) { //max_n
+        if(a[i] != NULL) {
+            printf("SHOULD DRAW AGENT %d\n", i);
+            a[i]->draw();
         }
-        glDisable(GL_CULL_FACE);
-        //glEnable(GL_TEXTURE_2D);
-        //glDisable(GL_DEPTH_TEST);
+    }
+
+    //glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glEnd();
     #endif
 }
 
@@ -1000,7 +1004,11 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
 
 void Agent_state::draw() {
 #ifdef DC_CLIENT
-    AgentDraw::draw_agent(this);
+    //AgentDraw::draw_agent(this);
+    if (vox != NULL) {
+        vox->draw(s.x, s.y, s.z, s.theta, s.phi);
+    }
+
 #endif
 }
 

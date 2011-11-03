@@ -15,7 +15,7 @@
 #endif
 
 
-#define SHRAPNEL_MAX 4092
+#define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30
 #define SHRAPNEL_DAMP 0.5f
 #define SHRAPNEL_TYPE 5
