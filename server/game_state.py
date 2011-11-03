@@ -3,6 +3,8 @@ import math
 import c_lib.terrain_map as terrain_map
 from opts import opts
 
+import c_lib.c_lib_agents as cAgents
+
 class GameStateGlobal:
 
     gameState = None
@@ -20,6 +22,7 @@ class GameStateGlobal:
     projectile_id = 0
 
     fps = 30.
+    agent_tick_mode = 'jetpack'
 
     def __init__(self):
         GameStateGlobal.terrainMap = terrain_map
@@ -67,6 +70,22 @@ class GameStateGlobal:
                 GameStateGlobal.agentList.destroy(connection.player.agent)
             connection.player.quit()
             GameStateGlobal.game.remove_player(connection.player)
+
+    @classmethod
+    def set_agent_tick_mode(cls, mode):
+        valid_modes = ['jetpack', 'jump']
+        if mode not in valid_modes:
+            return False
+
+        if mode == 'jump':
+            cAgents.jump_physics()
+        elif mode == 'jetpack':
+            cAgents.jetpack_physics()
+
+        cls.agent_tick_mode = mode
+
+        return True
+
 
 from net_server import NetServer
 

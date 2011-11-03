@@ -314,6 +314,12 @@ class MiscMessage:
     def ping(self):
         return { 'timestamp' : SDL.gl.get_ticks() }
 
+    @sendJSON('agent_tick_mode')
+    def agent_tick_mode(self, mode):
+        return {
+            'mode'  :   mode
+        }
+
 class DatMessage:
     @sendJSON('dat_loaded')
     def loaded(self):

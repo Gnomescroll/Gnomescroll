@@ -2,65 +2,56 @@
     #define DC_CLIENT
 #endif
 
-//#include <stdio.h>
-
 #include "./c_lib.hpp"
 
+/* kill the compiler */
 #ifdef DC_SERVER 
     sasfsafgdg4423+3
 #endif
 
+/* kill the compiler */
 #ifndef DC_CLIENT
  asdfsfs;fgf;
 #endif
 
-#include "./objects/particles.c"
-#include "./objects/grenade.c"
-#include "./objects/neutron.c"
-#include "./objects/cspray.cpp"
-#include "./objects/circuit_tree.c"
-#include "./objects/shrapnel.c"
-#include "./objects/blood.c"
+/* objects */
+#include <c_lib/objects/object_lib.cpp>
 
-
+/* map */
 #include "./t_map/t_map.c"
 #include "./t_map/t_properties.c"
-
-#include "c_lib/input/input.cpp"
-
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
-    #include <c_lib/hud/cube_select.cpp>
-    #include <c_lib/hud/inventory.cpp>
 #endif
 
+/* input */
+#ifdef DC_CLIENT
+    #include "c_lib/input/input.cpp"
+#endif
 
-//#include <c_lib/map_gen/noise.c>
-//#include <c_lib/noise_viz.cpp>
-
+/* Vectors, Ray Tracers, Physics */
 #include "./physics/vector.c"
 #include "./ray_trace/ray_trace.c"
 #include "./physics/common.c"
 
+/* Agents */
 #include "./agent/agent_include.h"
 
+/* HUD */
 #ifdef DC_CLIENT
+    #include <c_lib/hud/cube_select.cpp>
+    #include <c_lib/hud/inventory.cpp>
     #include <c_lib/texture_loader.c>
     #include <c_lib/hud/hud_texture_loader.cpp>
 #endif
-    
-#ifdef DC_SERVER
-    //#include "./t_map/t_serialize.c"
-#endif
 
-
+/* Network */
 #include <net_lib/net_lib.h>
 
 int init_c_lib() {
     printf("init c_lib\n");
-    init_objects_grenade();
-    init_objects_neutron();
+    srand(time(NULL));   // seed the RNG
 
     #ifdef DC_CLIENT
         init_texture_loader();

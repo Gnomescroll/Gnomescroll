@@ -38,7 +38,8 @@ class Vox {
 
         struct Vector c; //center
         float length;
-        Vox(int pt_num, unsigned short _xdim, unsigned short _ydim, unsigned short _zdim,
+        Vox(int pt_num,
+            unsigned short _xdim, unsigned short _ydim, unsigned short _zdim,
             float vosize) {
             part_num = pt_num;
             f = Vector_init(0.0f, 0.0f, 0.0f);
@@ -105,7 +106,7 @@ class Agent_vox {
             if (vox_ready) {
                 for (int  i=0; i<AGENT_PART_NUM; i++) {
                     if (vox_part[i] != NULL) {
-                        free(vox_part[i]);
+                        delete vox_part[i];
                     }
                 }
             }

@@ -1,4 +1,4 @@
-#include "particles.h"
+#include "particles.hpp"
 
 void create_particle(struct Particle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max) {
     p->id = id;

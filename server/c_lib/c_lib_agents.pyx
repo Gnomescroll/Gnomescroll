@@ -20,6 +20,11 @@ cdef extern from "./agent/agent.hpp":
         AgentState s
         void teleport(float x,float y,float z)
 
+    void set_agent_tick_mode(int mode)
+    cdef enum tick_modes:
+        use_jetpack
+        use_jump
+
 
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
@@ -30,8 +35,14 @@ cdef extern from "./agent/agent.hpp":
         void draw()
         void draw(int all)
 
-cdef extern from "./state/cython_imports.hpp" namespace "ServerState":
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Agent_list agent_list
+
+
+def jump_physics():
+    set_agent_tick_mode(use_jump)
+def jetpack_physics():
+    set_agent_tick_mode(use_jetpack)
 
 
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']

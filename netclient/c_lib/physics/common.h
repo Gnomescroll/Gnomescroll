@@ -1,17 +1,16 @@
-#ifndef physics_common_h
-#define physics_common_h
+#pragma once
 
-#include <ray_trace/ray_trace.h>
-#include "physics/vector.h"
-
-#define FPS 30
+#include <c_lib/physics/vector.h>
 
 struct State {
     struct Vector p;
     struct Vector v;
 };
 
-#include <objects/particles.h>
+#include <c_lib/ray_trace/ray_trace.h>
+#include <c_lib/objects/particles.hpp>
+
+#define FPS 30.0f
 
 int* bounce_simple(struct Particle* p);
 int* bounce_collide_tile(struct Particle* p, int* collision, int* tile);
@@ -25,9 +24,4 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
 
 /* integrator */
-//void accelerate(struct State* state, float t, float dt);
-//void rk4_step(struct State* state, struct State* i, struct State* d, float t, float dt);
-void rk4(struct State* state, int t, int dt);
-
-
-#endif
+void rk4(struct State* state, float dt);

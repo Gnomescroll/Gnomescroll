@@ -372,13 +372,17 @@ class AgentRender:
         create_blood = c_lib.c_lib_objects._create_blood
         n = 100
         v = 15
-        _t = 2
+        blood_pos = self.pos()
+        blood_pos[0] += self.box_r
+        blood_pos[1] += self.box_r
+        blood_pos[2] += self.b_height * 0.75
         for i in range(n):
-            x,y,z = [i + ((random.random()-0.5) / 20) for i in self.pos()]
+            
+            x,y,z = [i + ((random.random()-0.5) / 20) for i in blood_pos]
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
-            vz = random.randrange(-4, 2) + random.random()
-            create_blood(_t, x, y,z, vx, vy, vz)
+            vz = random.randrange(-4, 4) + random.random()
+            create_blood(x, y,z, vx, vy, vz)
 
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector
@@ -893,9 +897,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
 
         self._control_state_id_set = False
+
         if id:
-            set_player_agent_id(id)
-            self._control_state_id_set = True
+            self.id = id
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
@@ -941,7 +945,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.__dict__[name] = val
         if name == 'id':
             set_player_agent_id(val)
-            AgentVoxRender.__init__(self)
             self._control_state_id_set = True
 
     #def set_button_state(self, buttons, angles):

@@ -10,6 +10,7 @@ import os.path
 import platform
 import shutil
 import subprocess
+import re
 
 
 SDL_MAIN_TEST_CODE = """
@@ -64,6 +65,8 @@ def configure(conf):
     else:
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
+
+
 
 
     conf.check(header_name='GL/glew.h', mandatory=True)
@@ -154,6 +157,7 @@ def configure(conf):
         except IOError, e:
             pass
 
+    
     '''
     conf.env.INCLUDES = ['c_lib',]
     conf.env.INCLUDES = ['c_lib', 'cube_lib']
@@ -269,11 +273,6 @@ def build(bld):
         source=['c_lib/c_lib_hud.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_hud')
-
-    #bld(features='cxx cshlib pyext',
-        #source=['c_lib/c_lib_agent_wrapper.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='c_lib.c_lib_agent_wrapper')
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_input.pyx'],
@@ -398,6 +397,40 @@ class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'
     fun = 'optimized'
 
+class lint_ctx(ConfigurationContext):
+    cmd = 'lint'
+    fun = 'lint'
+
 def optimized(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')
+    ctx.env.CXXFLAGS.append('-O3')
+
+# dont use this. it was an attempt to use GCC flags to lint the C/C++ code
+# just throws a shit ton of errors starting from the SDL libraries
+def lint(ctx):
+    configure(ctx)
+    lint_flags = [
+        '-ansi',
+        '-fno-common',
+        '-fshort-enums',
+        '-pedantic',
+        '-undef',
+        '-W',
+        '-Waggregate-return',
+        '-Wall',
+        '-Wcast-align',
+        '-Wcast-qual',
+        '-Wconversion',
+        '-Wmissing-declarations',
+        '-Wredundant-decls',
+        '-Wmissing-prototypes',
+        '-Wnested-externs',
+        '-Wpointer-arith',
+        '-Wshadow',
+        '-Wstrict-prototypes',
+         #'-Wtraditional',
+        '-Wwrite-strings',
+    ]
+    ctx.env.CFLAGS += lint_flags
+    ctx.env.CXXFLAGS += lint_flags

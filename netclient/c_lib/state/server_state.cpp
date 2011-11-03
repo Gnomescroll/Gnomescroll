@@ -1,16 +1,18 @@
-
 #include "server_state.hpp"
-
 #pragma once
-
-//#include <c_lib/agent/agent.cpp>
-#include <c_lib/agent/net_agent.cpp>
-
-
 #ifdef DC_SERVER
+
+#include <c_lib/agent/agent.hpp>
+#include <c_lib/agent/net_agent.cpp>
+#include <c_lib/objects/object_lib.hpp>
+
+
 namespace ServerState {
 
-
+    Agent_list agent_list;
+    Cspray_list cspray_list;
+    Grenade_list grenade_list;
+    Neutron_list neutron_list;
         
     void InitServerState() {
     

@@ -256,7 +256,7 @@ class App(object):
                     vz = -3.5 #v*(random.random() -0.5)
                     le = math.sqrt(vx**2+vy**2+vz**2)
                     _type=1
-                    #c_lib.c_lib_objects._create_cspray( _type, x,y,z, vx,vy,vz)
+                    c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()

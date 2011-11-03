@@ -1,9 +1,8 @@
-#ifndef objects_cspray_h
-#define objects_cspray_h
+#pragma once
 
 #include <compat.h>
 #ifdef DC_CLIENT
-#include <compat_gl.h>
+    #include <compat_gl.h>
 #endif
 
 #include <physics/common.h>
@@ -12,22 +11,15 @@
 #include <t_map/t_properties.h>
 
 #ifdef DC_CLIENT
-#include <texture_loader.h>
+    #include <texture_loader.h>
 #endif
-
-
-//struct Cspray {
-    //struct Particle2 particle;
-    //int active;
-    //int stopped;
-//};
 
 #define CSPRAY_MAX 4096
 #define CSPRAY_TTL 1200
 #define CSPRAY_CEMENT_BLOCK_TYPE 2
 #define CSPRAY_DAMP 0.0f
 #define CSPRAY_TYPE 1
-
+#define CSPRAY_TEXTURE_ID 21
 
 class Cspray {
     public:
@@ -36,12 +28,10 @@ class Cspray {
         int stopped;
 
         void draw();
-        void server_tick();
-        void client_tick();
-
-        void _tick();
+        void tick();
 
         Cspray(int _id);
+        Cspray(int _id, float x, float y, float z, float vx, float vy, float vz);
 };
 
 
@@ -53,21 +43,6 @@ class Cspray_list: public Object_list<Cspray,CSPRAY_MAX>
         const char* name() { return "Cspray"; }
     public:
         void draw();
-        void draw(int);
-        void server_tick();
-        void client_tick();
+        //void draw(int);
+        void tick();
 };
-
-
-//void init_objects_cspray();
-//void cspray_tick();
-//void create_cspray(int type, float x, float y, float z, float vx, float vy, float vz);
-
-/*
- *  Client only
- */
-#ifdef DC_CLIENT
-//void cspray_draw();
-#endif
-
-#endif

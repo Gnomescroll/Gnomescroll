@@ -1,17 +1,28 @@
 #include "common.h"
 
+static inline void _clamp_vel(struct Particle* p) {
+    static float max_vel = 30.0f;
+    p->vx = (p->vx < max_vel) ? p->vx : max_vel;
+    p->vy = (p->vy < max_vel) ? p->vy : max_vel;
+    p->vz = (p->vz < max_vel) ? p->vz : max_vel;
+}
+
+static inline void _clamp_vel2(struct Particle2* p) {
+    static float max_vel = 30.0f;
+    p->state.v.x = (p->state.v.x < max_vel) ? p->state.v.x : max_vel;
+    p->state.v.y = (p->state.v.y < max_vel) ? p->state.v.y : max_vel;
+    p->state.v.z = (p->state.v.z < max_vel) ? p->state.v.z : max_vel;
+}
+
 static inline void _adjust_vel(struct Particle* p, int* rot, int adj) {
     if(rot[0] != 0 ) {
         p->vx *= adj;
-        //printf("invert vx \n");
     }
     if(rot[1] != 0) {
         p->vy *= adj;
-        //printf("invert vy \n");
     }
     if(rot[2] != 0) {
         p->vz *= adj;
-        //printf("invert vz \n");
     }
 }
 
@@ -31,6 +42,9 @@ int* bounce_simple(struct Particle* p) {
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
+
     return s;
 }
 
@@ -49,6 +63,9 @@ int* move_simple(struct Particle* p) {
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
+
     return s;
 }
 
@@ -61,13 +78,15 @@ int* bounce_collide_tile(struct Particle* p, int* collision, int* tile) {
 
     float interval;
     int* s;
-    s = _ray_cast5(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
+    s = _ray_cast5_capped(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
 
     _adjust_vel(p, s, -1);
 
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
 
     return s;
 }
@@ -81,13 +100,15 @@ int* move_collide_tile(struct Particle* p, int* collision, int* tile) {
 
     float interval;
     int* s;
-    s = _ray_cast5(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
+    s = _ray_cast5_capped(p->x, p->y, p->z, _x,_y,_z, &interval, collision, tile);
 
     _adjust_vel(p, s, 0);
 
     p->x = p->x + interval*p->vx/FPS;
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
+
+    _clamp_vel(p);
 
     return s;
 }
@@ -100,35 +121,28 @@ static inline void _adjust_vel2(struct Particle2* p, int* rot, int adj, float da
     if(rot[0] != 0 ) {
         p->state.v.x *= adj;
         coll=1;
-        //printf("invert vx \n");
     }
     if(rot[1] != 0) {
         p->state.v.y *= adj;
         coll=1;
-        //printf("invert vy \n");
     }
     if(rot[2] != 0) {
         p->state.v.z *= adj;
         coll=1;
-        //printf("invert vz \n");
     }
 
     if (coll) {
-        //if (p->id == 20) {printf("COLL damp= %f\n", damp);printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
-        p->state.v.x = p->state.v.x * damp;
-        p->state.v.y = p->state.v.y * damp;
-        p->state.v.z = p->state.v.z * damp;
-                if (p->id == 20) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}
-
+        p->state.v.x *= damp;
+        p->state.v.y *= damp;
+        p->state.v.z *= damp;
     }
-
 }
 
 struct State _motion_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate struct used for ray cast */
 struct State* motion_inter = &_motion_inter;
 int* move_simple_rk4(struct Particle2* p, float damp) {
-    int t = p->ttl;
-    int dt = 1;
+
+    float dt = 1.0f;
 
     motion_inter->p.x = p->state.p.x;
     motion_inter->p.y = p->state.p.y;
@@ -137,7 +151,7 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, t, dt);
+    rk4(motion_inter, dt);
 
     float interval;
     int* s;
@@ -145,19 +159,20 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
 
     _adjust_vel2(p, s, 0, damp);
 
-    if ((int)interval == dt) {
+    if (interval >= dt) {
         p->state = *motion_inter;
     } else {
-        rk4(&(p->state), t, interval);
+        rk4(&(p->state), interval);
     }
+    _clamp_vel2(p);
 
     return s;
 }
 
 int* bounce_simple_rk4(struct Particle2* p, float damp) {
 
-    int t = p->ttl;
-    int dt = 1;
+
+    float dt = 1.0f;
 
     motion_inter->p.x = p->state.p.x;
     motion_inter->p.y = p->state.p.y;
@@ -166,55 +181,37 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, t, dt);
+    rk4(motion_inter, dt);
 
     float interval;
     int* s;
-    //int n = _GET_MS_TIME();
-    s = _ray_cast4(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval);
-    //int n2 = _GET_MS_TIME();
-    //printf("raycast took %d\n", n2-n);
-
-    //_adjust_vel2(p, s, -1, damp);
-    //norm->x = (float)s[0];
-    //norm->y = (float)s[1];
-    //norm->z = (float)s[2];
-            //if (p->id == 4) {printf("%f,%f,%f\n", p->state.v.x, p->state.v.y, p->state.v.z);}}
-
-    //if (p->id == 10) {
-        //printf("GRENADE\n");
-        //printf("%d\n", t);
-        //printf("%f\n", interval);
-        //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
-    //}
+    s = _ray_cast4(
+        p->state.p.x, p->state.p.y, p->state.p.z,
+        motion_inter->p.x, motion_inter->p.y, motion_inter->p.z,
+        &interval
+    );
 
     if (interval >= dt) {
         p->state = *motion_inter;
     } else {
-        rk4(&(p->state), t, interval);
-    }
-
-    if (s[0] || s[1] || s[2]) {
-        struct Vector norm = {s[0], s[1], s[2]};
+        // collision
+        rk4(&(p->state), interval);
+        struct Vector norm = {(float)s[0], (float)s[1], (float)s[2]};
         struct Vector v = reflect(&(p->state.v), &norm);
         p->state.v = *(mult_vec_scalar(&v, damp));
     }
 
-
-    //if (p->id == 10) {
-        //j = &(p->state);
-        //printf("%f,%f,%f, %f,%f,%f\n", j->p.x, j->p.y, j->p.z, j->v.x, j->v.y, j->v.z);
-    //}
+    _clamp_vel2(p);
 
     return s;
 }
 
 int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float damp) {
 
-    int t = p->ttl;
-    int dt = 1;
-    //float fdt = 1.0f;
 
+    float dt = 1.0f;
+
+    /* copy state */
     motion_inter->p.x = p->state.p.x;
     motion_inter->p.y = p->state.p.y;
     motion_inter->p.z = p->state.p.z;
@@ -222,45 +219,34 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, t, dt);
-
+    /* integrate */
+    rk4(motion_inter, dt);
 
     float interval;
     int* s;
 
-    //int n = _GET_MS_TIME();
-    s = _ray_cast5(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 10) {
-        //printf("ray_cast5 :: %d\n", n2-n);
-    //if (p->id == 2) {
-        //printf("state:\n");
-        //printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);
-        //printf("%f,%f,%f\n", motion_inter->p.x, motion_inter->p.y, motion_inter->p.z);
-    //}
-
+    /* Ray cast to calculated position */
+    s = _ray_cast5_capped(
+        p->state.p.x, p->state.p.y, p->state.p.z,
+        motion_inter->p.x, motion_inter->p.y, motion_inter->p.z,
+        &interval, collision, tile);
+        
     _adjust_vel2(p, s, -1, damp);
-    //if (s[0] || s[1] || s[2]) {
-        //if (p->id == 20) {printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);}
-    //}
 
-    //if ((int)interval == dt) {
-    if (interval >= dt) {
+    if (interval >= dt) { // no collision
         p->state = *motion_inter;
-            //if (p->id == 2) {
-
-        //printf("%f,%f,%f\n", p->state.p.x, p->state.p.y, p->state.p.z);
-        //printf("%f,%f,%f\n", motion_inter->p.x, motion_inter->p.y, motion_inter->p.z);
-    } else {
-        rk4(&(p->state), t, interval);
+    } else {            // collided interval%. integrate this amount
+        rk4(&(p->state), interval);
     }
+    _clamp_vel2(p);
 
     return s;
 }
 
+
 int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float damp) {
-    int t = p->ttl;
-    int dt = 1;
+
+    float dt = 1.0f;
 
     motion_inter->p.x = p->state.p.x;
     motion_inter->p.y = p->state.p.y;
@@ -269,33 +255,37 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, t, dt);
+    rk4(motion_inter, dt);
 
     float interval;
     int* s;
-    s = _ray_cast5(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
+    s = _ray_cast5_capped(p->state.p.x, p->state.p.y, p->state.p.z, motion_inter->p.x, motion_inter->p.y, motion_inter->p.z, &interval, collision, tile);
 
     _adjust_vel2(p, s, 0, damp);
 
-    if ((int)interval == dt) {
+    if (interval >= dt) {
         p->state = *motion_inter;
     } else {
-        rk4(&(p->state), t, interval);
+        rk4(&(p->state), interval);
     }
+    _clamp_vel2(p);
 
     return s;
 }
 
 
 /* integrator */
-struct State derivatives[4];
+static struct State derivatives[4];
 
-static inline void rk4_accelerate(struct State* inter, float t, float dt) {
+static inline void rk4_accelerate(struct State* inter, float dt) {
 
     //const float air_resist = 1.0f;
     //const float spring = 0.1f;
-    const float gravity = 28.0f;
-    inter->v.z -= gravity;
+    const float gravity = 28.0f * 30.0f;
+    //const float gravity = 9.8f * 2.0f;
+    //printf("final g %0.2f\n", gravity*dt);
+    inter->v.z -= gravity * dt;
+    //inter->v.z -= gravity * dt; /* This is too fucking slow!! The ball does not drop */
 
     ////inter->v.x -= spring * inter->p.x;
     ////inter->v.y -= spring * inter->p.y;
@@ -306,16 +296,10 @@ static inline void rk4_accelerate(struct State* inter, float t, float dt) {
     //inter->v.z *= air_resist;
 }
 
-struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate derivative */
-struct State* step_inter = &_step_inter;
-int step_i = 0;
-static inline void rk4_step(struct State* initial, struct State* NEW, struct State* old, float t, float dt)
+static struct State _step_inter = {{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}}; /* intermediate derivative */
+static struct State* step_inter = &_step_inter;
+static inline void rk4_step(struct State* initial, struct State* final, struct State* old, float dt)
 {
-        //int n = _GET_MS_TIME();
-
-   //printf("RK4STEP\n");
-    //printf("%f,%f,%f, %f,%f,%f\n", initial->p.x, initial->p.y, initial->p.z, initial->v.x, initial->v.y, initial->v.z);
-
      step_inter->p.x = initial->p.x + old->p.x*dt;
      step_inter->p.y = initial->p.y + old->p.y*dt;
      step_inter->p.z = initial->p.z + old->p.z*dt;
@@ -323,85 +307,41 @@ static inline void rk4_step(struct State* initial, struct State* NEW, struct Sta
      step_inter->v.y = initial->v.y + old->v.y*dt;
      step_inter->v.z = initial->v.z + old->v.z*dt;
 
-    //printf("STEP STATE (should be constant x4)\n");   // it is constant
-    //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
-    NEW->p = step_inter->v;
-     rk4_accelerate(step_inter, t+dt, dt);
-     NEW->v = step_inter->v;
-    //printf("ACCEL\n");
-        //printf("%f,%f,%f, %f,%f,%f\n", step_inter->p.x, step_inter->p.y, step_inter->p.z, step_inter->v.x, step_inter->v.y, step_inter->v.z);
-    //printf("\n");
-
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 0) {
-        //printf("RK4STEP %d ms>0 :: %d\n", step_i, n2-n);
-    //}
-    //step_i++;
-    //step_i %= 4;
+    final->p = step_inter->v;
+     rk4_accelerate(step_inter, dt);
+     final->v = step_inter->v;
 }
 
-static inline void rk4_step0(struct State* initial, struct State* NEW, float t) {
-            //int n = _GET_MS_TIME();
-
-    NEW->p = initial->v;
-    NEW->v.x=0.0f;
-    NEW->v.y=0.0f;
-    NEW->v.z=0.0f;
-    rk4_accelerate(NEW, t, 0.0f);
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 0) {
-        //printf("RK4STEP0 %d ms>0 :: %d\n", step_i, n2-n);
-    //}
-    //step_i++;
-    //step_i %= 4;
-//
+static inline void rk4_step0(struct State* initial, struct State* final) {
+    final->p = initial->v;
+    final->v.x=0.0f;
+    final->v.y=0.0f;
+    final->v.z=0.0f;
+    rk4_accelerate(final, 0.0f);
 }
 
-void rk4(struct State* state, int _t, int _dt)
+void rk4(struct State* state, float dt)
 {
-    //int n = _GET_MS_TIME();
+    dt /= FPS;
+    
+    rk4_step0(state, &derivatives[0]);
+    rk4_step(state, &derivatives[1], &derivatives[0], dt*0.5f);
+    rk4_step(state, &derivatives[2], &derivatives[1], dt*0.5f);
+    rk4_step(state, &derivatives[3], &derivatives[2], dt);
 
-    float t = _t / 30.0f;
-    float dt = _dt / 30.0f;
-    //printf("RK4\n");
-    //printf("%f\n", t);
-    //printf("%f\n", dt);
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
+    const float dxdt = (1.0f/6.0f) * (derivatives[0].p.x + 2.0f*(derivatives[1].p.x + derivatives[2].p.x) + derivatives[3].p.x);
+    const float dydt = (1.0f/6.0f) * (derivatives[0].p.y + 2.0f*(derivatives[1].p.y + derivatives[2].p.y) + derivatives[3].p.y);
+    const float dzdt = (1.0f/6.0f) * (derivatives[0].p.z + 2.0f*(derivatives[1].p.z + derivatives[2].p.z) + derivatives[3].p.z);
 
-     //rk4_step(state, &derivatives[0], &_derivative, t, 0.0f);
-    rk4_step0(state, &derivatives[0],                  t                 );
-     rk4_step(state, &derivatives[1], &derivatives[0], t+dt*0.5f, dt*0.5f);
-     rk4_step(state, &derivatives[2], &derivatives[1], t+dt*0.5f, dt*0.5f);
-     rk4_step(state, &derivatives[3], &derivatives[2], t+dt, dt);
+    const float dvxdt = (1.0f/6.0f) * (derivatives[0].v.x + 2.0f*(derivatives[1].v.x + derivatives[2].v.x) + derivatives[3].v.x);
+    const float dvydt = (1.0f/6.0f) * (derivatives[0].v.y + 2.0f*(derivatives[1].v.y + derivatives[2].v.y) + derivatives[3].v.y);
+    const float dvzdt = (1.0f/6.0f) * (derivatives[0].v.z + 2.0f*(derivatives[1].v.z + derivatives[2].v.z) + derivatives[3].v.z);
 
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[0].p.x, derivatives[0].p.y, derivatives[0].p.z, derivatives[0].v.x, derivatives[0].v.y, derivatives[0].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[1].p.x, derivatives[1].p.y, derivatives[1].p.z, derivatives[1].v.x, derivatives[1].v.y, derivatives[1].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[2].p.x, derivatives[2].p.y, derivatives[2].p.z, derivatives[2].v.x, derivatives[2].v.y, derivatives[2].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", derivatives[3].p.x, derivatives[3].p.y, derivatives[3].p.z, derivatives[3].v.x, derivatives[3].v.y, derivatives[3].v.z);
+    state->p.x = state->p.x + dxdt * dt;
+    state->p.y = state->p.y + dydt * dt;
+    state->p.z = state->p.z + dzdt * dt;
 
-
-     const float dxdt = 1.0f/6.0f * (derivatives[0].p.x + 2.0f*(derivatives[1].p.x + derivatives[2].p.x) + derivatives[3].p.x);
-     const float dydt = 1.0f/6.0f * (derivatives[0].p.y + 2.0f*(derivatives[1].p.y + derivatives[2].p.y) + derivatives[3].p.y);
-     const float dzdt = 1.0f/6.0f * (derivatives[0].p.z + 2.0f*(derivatives[1].p.z + derivatives[2].p.z) + derivatives[3].p.z);
-
-     const float dvxdt = 1.0f/6.0f * (derivatives[0].v.x + 2.0f*(derivatives[1].v.x + derivatives[2].v.x) + derivatives[3].v.x);
-     const float dvydt = 1.0f/6.0f * (derivatives[0].v.y + 2.0f*(derivatives[1].v.y + derivatives[2].v.y) + derivatives[3].v.y);
-     const float dvzdt = 1.0f/6.0f * (derivatives[0].v.z + 2.0f*(derivatives[1].v.z + derivatives[2].v.z) + derivatives[3].v.z);
-    //printf("%f,%f,%f, %f,%f,%f\n", dxdt, dydt, dzdt, dvxdt, dvydt, dvzdt);
-
-     state->p.x = state->p.x + dxdt * dt;
-     state->p.y = state->p.y + dydt * dt;
-     state->p.z = state->p.z + dzdt * dt;
-
-     state->v.x = state->v.x + dvxdt * dt;
-     state->v.y = state->v.y + dvydt * dt;
-     state->v.z = state->v.z + dvzdt * dt;
-
-    //printf("%f,%f,%f, %f,%f,%f\n", state->p.x, state->p.y, state->p.z, state->v.x, state->v.y, state->v.z);
-
-    //int n2 = _GET_MS_TIME();
-    //if (n2-n > 0) {
-        //printf("RK4 ms>0 :: %d\n", n2-n);
-    //}
-
+    state->v.x = state->v.x + dvxdt * dt;
+    state->v.y = state->v.y + dvydt * dt;
+    state->v.z = state->v.z + dvzdt * dt;
 }

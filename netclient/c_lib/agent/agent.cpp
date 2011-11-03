@@ -1,18 +1,27 @@
-
 #include "agent.hpp"
 
 #include <c_lib/agent/net_agent.cpp>
-
 #include <c_lib/agent/agent_draw.hpp>
-
+#include <c_lib/defines.h>
 #include <math.h>
 
-
 #ifdef DC_CLIENT
-    #define STATELIST ClientState
-#else
-    #define STATELIST ServerState
+static int n_agents_to_draw = 0;
+static int agents_to_draw[AGENT_MAX];
 #endif
+
+static enum tick_modes tick_mode = use_jetpack;
+void set_agent_tick_mode(int mode) {
+    if (mode == use_jetpack) {
+        tick_mode = use_jetpack;
+    }
+    else if (mode == use_jump) {
+        tick_mode = use_jump;
+    }
+    else {
+        printf("set_agent_tick_mode :: Unrecognized mode %d\n", mode);
+    }
+}
 
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
@@ -144,7 +153,7 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     int y_max = y + box_r;
 
     int z0 = z;
-    int z1 = z+1.0;
+    int z1 = z+1.0f;
     int z2 = z+box_h;
 
     //int z_min = s.z;
@@ -280,7 +289,8 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     return false;
 }
 
-
+#define GROUND_MARGIN 0.10f
+// checks the (agent bottom - margin) at 4 corners of the agent
 inline bool on_ground(float box_r, float x, float y, float z) {
 
     int x_min = x - box_r;
@@ -289,7 +299,7 @@ inline bool on_ground(float box_r, float x, float y, float z) {
     int y_min = y - box_r;
     int y_max = y + box_r;
 
-    int z0 = z - 0.01; //ground margin is 0.01
+    int z0 = z - GROUND_MARGIN;
 
     //upper left
     //upper right
@@ -312,12 +322,12 @@ inline bool on_ground(float box_r, float x, float y, float z) {
     if(isActive(_get(x_min,y_max,z0) != 0)) {
         return true;
     }
-   
-    return false;
 
+    return false;
 }
 
-void Agent_state::_tick() {
+void Agent_state::_tick()
+ {
 
     //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
@@ -366,7 +376,7 @@ void Agent_state::_tick() {
         const float z_jetpack = 0.80 / tr2;
         const float z_gravity = -.40 / tr2;
 
-        const float ground_distance = 0.02;
+        //const float ground_distance = 0.02;   // unused
         const float z_bounce = 0.65;
         const float z_bounce_v_threshold = 0.35 / tr;
 
@@ -423,7 +433,7 @@ void Agent_state::_tick() {
         {
             s.vz += z_gravity;
         } 
-        else 
+        else // under the floor, go back up
         {
             s.vz -= z_gravity;
         }    
@@ -577,6 +587,272 @@ void Agent_state::_tick() {
     }
 }
 
+void Agent_state::_tick_jetpack() {
+    _tick();
+}
+
+void Agent_state::_tick_jump() {
+
+    //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
+
+    int index = (cs_seq+1) % 128;
+
+    int _tc =0;
+    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
+        _tc++;
+        cs_seq = (cs_seq+1)%256;
+
+        s.theta = cs[index].theta;
+        s.phi = cs[index].phi;
+
+    /*    
+        int forward =0;
+        int backwards =0;
+        int left =0;
+        int right =0;
+        int jetpack =0;
+    */  
+        int a_cs = cs[index].cs;
+
+        //set control state variables
+        //printf("cs= %i \n", a_cs);
+        bool forward     = a_cs & 1? 1 :0;
+        bool backwards   = a_cs & 2? 1 :0;
+        bool left        = a_cs & 4? 1 :0;
+        bool right       = a_cs & 8? 1 :0;
+        bool jetpack     = a_cs & 16? 1 :0;
+    /*
+        //local cordinates
+        int l_x = s.x;
+        int l_y = s.y;
+        int l_z = s.z;
+
+        //local float cordinates
+        float fl_x = s.x - floor(s.x);
+        float fl_y = s.y - floor(s.y);
+        float fl_z = s.z - floor(s.z);
+    */
+
+        const float tr = 10.0;    //tick rate
+        const float tr2 = tr*tr;
+
+        const float xy_speed = 2.00 / tr;
+        const float z_gravity = -2.0f / tr2;
+
+        float jump_boost = 0.25f;
+
+        const float z_bounce = 0.20;
+        const float z_bounce_v_threshold = 0.7 / tr;
+
+        const float pi = 3.14159265;
+
+        //box properties
+        float box_r = 0.4;
+
+        //int collision[6];
+        //north +x
+        //south -x
+        //west +y
+        //east -y
+        //top +z
+        //bottom -z
+        //collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
+
+        float cs_vx =0 ;
+        float cs_vy =0 ;
+
+        // only allow agent control movement if on ground [CANCELLED // FAILURE]
+        //if (on_ground(box_r, s.x, s.y, s.z)) {
+            if(forward)
+            {
+                    cs_vx += xy_speed*cos( s.theta * pi);
+                    cs_vy += xy_speed*sin( s.theta * pi);
+            }
+            if(backwards)
+            {
+                    cs_vx += -xy_speed*cos( s.theta * pi);
+                    cs_vy += -xy_speed*sin( s.theta * pi);
+            }
+            if(left) 
+            {
+                    cs_vx += xy_speed*cos( s.theta * pi + pi/2);
+                    cs_vy += xy_speed*sin( s.theta * pi + pi/2);
+            }
+            if(right) 
+            {
+                    cs_vx += -xy_speed*cos( s.theta * pi + pi/2);
+                    cs_vy += -xy_speed*sin( s.theta * pi + pi/2);
+            }
+        //}
+
+        //jet pack and gravity
+        if(s.z>0)
+        {
+            s.vz += z_gravity;
+        } 
+        else 
+        {
+            s.vz -= z_gravity;
+        }    
+        
+        if (jetpack && jump_ready) {
+            s.vz += jump_boost;
+            jump_ready = 0;
+        }
+
+        float new_x, new_y, new_z;
+        new_x = s.x + s.vx + cs_vx;
+        new_y = s.y + s.vy + cs_vy;
+        new_z = s.z + s.vz;
+
+        bool current_collision = collision_check2(box_r, b_height, s.x,s.y,s.z);
+        if(current_collision) {
+            //printf("invalid agent state: agent is coliding!\n");
+
+            s.x = new_x;
+            s.y = new_y;
+            s.z += 0.02; //nudge factor
+            if(s.vz < 0) s.vz = 0;
+            continue;
+        }
+
+        /*
+            Collision Order: x,y,z
+        */
+        bool collision_x = collision_check2(box_r, b_height, new_x,s.y,s.z);
+        if(collision_x) {
+            new_x = s.x;
+            s.vx = 0;
+        }
+
+        bool collision_y = collision_check2(box_r, b_height, new_x,new_y,s.z);
+        if(collision_y) {
+            new_y = s.y;
+            s.vy = 0;
+        }
+
+        //top and bottom matter
+        bool collision_z = collision_check2(box_r, b_height, new_x,new_y,new_z);
+        if(collision_z) {
+
+            if(s.vz < -z_bounce_v_threshold)
+            {
+                s.vz *= -1 *z_bounce;
+            }
+            else
+            {
+                s.vz = 0;
+            }
+
+            new_z = s.z + s.vz;
+        }       
+
+        s.x = new_x;
+        s.y = new_y;
+        s.z = new_z;
+
+        // allow jumping if on ground or under the floor
+        if (collision_z || s.z < 0.0f) {
+            jump_ready = 1;
+        }
+        
+
+    /*
+        int bx_pos_projected = s.x+s.vx+cs_vx+box_r;    //floor
+        int bx_neg_projected = s.x+s.vx+cs_vy-box_r;
+
+        int by_pos_projected = s.y+s.vy+cs_vx+box_r;
+        int by_neg_projected = s.y+s.vy+cs_vy-box_r; 
+                  
+        int bz_pos_projected = s.z+s.vz+cs_vx+b_height;
+        int bz_neg_projected = s.z+s.vz;
+
+
+        //handle x collisions
+        if(xc_pos_current == 0 && xc_neg_current == 0)
+        {
+            if(xc_pos_projected != 0) s.vx = 0.0;
+            if(xc_neg_projected != 0) s.vx = 0.0;
+        }
+
+        //handle y collisions
+
+        if(yc_pos_current ==0 && yc_neg_current ==0)
+        {
+            if(yc_pos_projected != 0) s.vy = 0;
+            if(yc_neg_projected != 0) s.vy = 0;
+        }
+
+        //handle z collision
+
+        //#Hard collision predicted and not inside of something already
+        if(zc_neg_projected != 0 && zc_neg_current == 0)
+        {
+            if(s.vz < 0)
+            {
+                if(s.vz < -z_bounce_v_threshold)
+                {
+                    s.vz *= -1 *z_bounce;
+                }
+                else
+                {
+                    s.vz = 0;
+                }
+            }
+        }
+
+        if(zc_neg_current != 0) // #if agent is inside of block, float them out the top
+        {
+            s.z += 0.50 / tr;
+        }
+
+        if(zc_pos_current != 0) // #if agent is inside of block, float them out the top
+        {
+            s.z += -0.50 / tr;
+        }
+
+        //jetpack handling
+        if(!on_ground) {
+            if(s.z>0)
+            {
+                s.vz += z_gravity;
+            } 
+            else 
+            {
+                s.vz -= z_gravity;
+            }    
+        }
+        if(jetpack) {
+            s.vz += z_jetpack;
+        }
+        */
+
+        //newton intergrate positions
+    /*
+        s.x += s.vx + cs_vx;    //use better intergrator
+        s.y += s.vy + cs_vy;
+        s.z += s.vz;
+
+        s.z = 1.01;
+    */
+
+    /*
+        printf("cs_vx= %f, cs_vy= %f \n", cs_vx, cs_vy);
+        printf("dx= %f, dy= %f, dz= %f \n", s.vx + cs_vx, s.vy + cs_vy, s.vz);
+        printf("cs_seq= %i, x= %f, y= %f, z= %f, vx= %f, vy= %f, vz= %f \n",cs_seq, s.x, s.y, s.z, s.vx, s.vy, s.vz);
+    */
+        //printf("vx= %f, vy= %f, vz= %f \n", s.vx, s.vy, s.vz);
+    } //end physics loop
+    //printf("_tick: processed %i agent ticks\n", _tc);
+    if(id == 0) 
+    {
+        //printf("x= %f, y= %f, z= %f \n", s.x, s.y, s.z);
+        //printf("vx= %f, vy= %f, vz= %f \n", s.vx, s.vy, s.vz);
+    }
+}
+
+
+
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
     //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
     int index = _seq%128;
@@ -613,7 +889,9 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
     #endif
     //printf("control state= %i\n", new_control_state);
-    _tick();
+    if (tick_mode == use_jetpack) _tick_jetpack();
+    else if (tick_mode == use_jump) _tick_jump();
+    //_tick();
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
@@ -640,8 +918,12 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     #ifdef DC_CLIENT
     AgentDraw::add_snapshot_to_history(this);
     #endif
-    _tick();
+
+    if (tick_mode == use_jetpack) _tick_jetpack();
+    else if (tick_mode == use_jump) _tick_jump();
+    //_tick();
 }
+
 Agent_state::Agent_state(int _id) {
     id = _id;
     s.x = 16.5;
@@ -651,7 +933,46 @@ Agent_state::Agent_state(int _id) {
     s.vy = 0;
     s.vz = 0;
 
-    b_height = 1.8;
+    b_height = AGENT_HEIGHT;
+
+    jump_ready = 1;
+
+    //s.x = 16.5;
+    //s.y = 16.5;
+
+    cs_seq = 0;
+
+    printf("Agent_state::Agent_state, new agent, id=%i \n", id);
+
+    _new_control_state = 0;
+    
+    tick_n = 0; //increment when ticking
+    ctick = 0;  //increment when control state received
+    theta = 0.0;
+    phi = 0.0;
+
+    state_snapshot.seq = -1;
+    state_rollback.seq = -1;
+    int i;
+    for(i=0; i<128;i++) cs[i].seq = -1;
+
+    #ifdef DC_CLIENT
+    vox = new Agent_vox();
+    #endif
+}
+
+Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) {
+    id = _id;
+    s.x = _x;
+    s.y = _y;
+    s.z = _z;
+    s.vx = _vx;
+    s.vy = _vy;
+    s.vz = _vz;
+
+    b_height = AGENT_HEIGHT;
+
+    jump_ready = 1;
 
     //s.x = 16.5;
     //s.y = 16.5;
@@ -684,45 +1005,23 @@ void Agent_state::draw() {
 }
 
 void Agent_state::client_tick() {
-        //_tick();
-        //tick on input received    
-    }
+    //_tick();
+    //tick on input received
+    return;
+}
 
 void Agent_state::server_tick() {
-
     return;
 }
 
 void Agent_state::crouch(int on_off) {
     if (on_off) {   // crouch on
-        b_height = 0.9;
+        b_height = AGENT_HEIGHT_CROUCHED;
     } else {
-        b_height = 1.8;
+        b_height = AGENT_HEIGHT;
     }
 }
 
-void agent_crouch(int agent_id, int on_off) {
-    Agent_state* a = STATELIST::agent_list.get(agent_id);
-    if (a == NULL) {return;}
-    a->crouch(on_off);
-}
-
-int agent_create(int id, float x, float y, float z) {
-#ifdef DC_CLIENT
-    Agent_state* s = ClientState::agent_list.create(id);
-    if (s != NULL) {
-        id = s->id;
-        s->s.x = x;
-        s->s.y = y;
-        s->s.z = z;
-    }
-    
-    return id;
-#else
-    return 0;
-#endif
-}
-    
 #ifdef DC_CLIENT
 void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {
     Agent_state* s = ClientState::agent_list.get(id);

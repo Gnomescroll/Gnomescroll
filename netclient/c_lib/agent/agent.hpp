@@ -4,6 +4,9 @@
 
 #define AGENT_MAX 1024
 
+#define AGENT_HEIGHT 1.8
+#define AGENT_HEIGHT_CROUCHED 0.9
+
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
 #include <agent/agent_vox.hpp>
@@ -13,17 +16,10 @@ void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, i
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
 
-int n_agents_to_draw = 0;
-int agents_to_draw[AGENT_MAX];
 void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
 #endif
-
-void agents_tick();
-int agent_create(int id, float x, float y, float z);
-
-void agent_crouch(int agent_id, int on_off);
 
 //store last network messsage
 
@@ -79,11 +75,15 @@ class Agent_state {
 
         int _new_control_state;
 
+        int jump_ready;
+
         #ifdef DC_CLIENT
         class Agent_vox* vox;
         #endif
 
         void _tick();
+        void _tick_jetpack();
+        void _tick_jump();
 
         void teleport(float x,float y,float z);
 
@@ -124,6 +124,7 @@ class Agent_state {
         void draw();
 
         Agent_state(int _id); //default constructor
+        Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
 
         void crouch(int on_off);
         //void server_tick();
@@ -141,3 +142,10 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void draw(int);
 };
 
+
+enum tick_modes {
+    use_jetpack,
+    use_jump
+};
+
+void set_agent_tick_mode(int mode);
