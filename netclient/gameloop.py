@@ -32,7 +32,7 @@ if True:
     import SDL.hud
     import vox_lib
 
-    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=int(opts.opts.fullscreen))
+    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=(int(opts.opts.fullscreen or settings.fullscreen))
 
     import c_lib.terrain_map
     c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
@@ -374,8 +374,8 @@ class App(object):
                     draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
                 c_lib.terrain_map.draw_vbo_indicator(50,50, -0.3)
-                P2.draw_perf_graph(50,700,-0.30)
-                _pviz_draw(780,400, -.30)
+                P2.draw_perf_graph(fps_perf_graph_x_offset, fps_perf_graph_y_offset,-0.30)
+                _pviz_draw(network_latency_graph_x_offset,network_latency_graph_y_offset, -.30)
                 #cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
                 cHUD._draw_inventory(settings.inventory_hud_x_offset, settings.inventory_hud_y_offset)
 

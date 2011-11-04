@@ -26,6 +26,8 @@ int _multisampling = 0;
 int _init_video() {
     int nFlags;
     int value;
+    
+    printf("Creating SDL window\n");
     SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
     SDL_WM_SetCaption( "SDL + OpenGL", NULL );
@@ -40,7 +42,7 @@ int _init_video() {
     }
     nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
     if(_fullscreen != 0) {nFlags |= SDL_FULLSCREEN; }
-
+/*
     if( pSDLVideoInfo->hw_available ) // Hardware surfaces enabled?
         nFlags |= SDL_HWSURFACE;
     else {
@@ -51,6 +53,7 @@ int _init_video() {
         nFlags |= SDL_HWACCEL;
     else
         printf( "SDL_HWACCEL Error: Hardware blitting not enabled!\n");
+*/
 
     if(0) //When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         nFlags |= SDL_RESIZABLE;
