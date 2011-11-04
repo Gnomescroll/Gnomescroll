@@ -41,6 +41,9 @@ fps_perf_graph_y_offset = 70.0
 network_latency_graph_x_offset = 780.0
 network_latency_graph_y_offset = 400.0
 
+map_vbo_indicator_x_offset = 50.0
+map_vbo_indicator_y_offset = 50.0
+
 ''' Controls '''
 # lower is more sensitive
 mouse_sensitivity = 300
