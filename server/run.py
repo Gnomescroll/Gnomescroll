@@ -2,9 +2,10 @@
 
 #!/usr/bin/python
 
-
 import sys
-sys.path.insert(0, './ext/')
+import os
+print "Working Directory: %s" % (os.getcwd())
+
 
 import args_server
 import opts
@@ -16,6 +17,9 @@ from time import sleep
 #import pyximport #; pyximport.install()
 
 #from pudb import set_trace; set_trace()
+
+import sys
+sys.path.insert(0, './ext/')
 
 import init_c_lib
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -302,6 +306,7 @@ class Main:
         #StartPhysicsTimer(33)
         START_CLOCK()
         NetServerInit()
+        #import pdb; pdb.set_trace()
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
