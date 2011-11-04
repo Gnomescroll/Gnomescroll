@@ -1,6 +1,6 @@
 
 print "ERROR: SETTINGS IMPORTED"
-assert False
+#assert False
 
 pyglet = False
 

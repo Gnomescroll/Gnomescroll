@@ -32,7 +32,7 @@ if True:
     import SDL.hud
     import vox_lib
 
-    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=(int(opts.opts.fullscreen or settings.fullscreen))
+    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=(int(opts.opts.fullscreen or settings.fullscreen)))
 
     import c_lib.terrain_map
     c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
