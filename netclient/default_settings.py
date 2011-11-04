@@ -14,7 +14,7 @@ alt_name = '[%s]' % (name,)
 pyglet = False
 
 ''' Sound '''
-sound = False
+sound = True
 sfx = 100
 music = 100
 
