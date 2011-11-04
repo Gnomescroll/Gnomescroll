@@ -7,9 +7,6 @@ import default_settings as settings
 from time import time
 from collections import deque
 
-if settings.pyglet:
-    from pyglet.window import key
-
 def now():
     return int(time() * 1000)
 
@@ -655,19 +652,20 @@ class ChatInputProcessor:
         return lambda input: input.add(text)
 
     def on_text_motion(self, motion):
-        motion = key.motion_string(motion)
-        callback = None
-        if motion == 'MOTION_UP':            # up history
-            callback = lambda input: input.history_older()
-        elif motion == 'MOTION_DOWN':        # down history
-            callback = lambda input: input.history_newer()
-        elif motion == 'MOTION_LEFT':        # move cursor
-            callback = lambda input: input.cursor_left()
-        elif motion == 'MOTION_RIGHT':       # move cursor
-            callback = lambda input: input.cursor_right()
-        elif motion == 'MOTION_BACKSPACE':   # delete
-            callback = lambda input: input.remove()
-        return callback
+        print 'ChatClient.on_text_motion not implemented'
+        #motion = key.motion_string(motion)
+        #callback = None
+        #if motion == 'MOTION_UP':            # up history
+            #callback = lambda input: input.history_older()
+        #elif motion == 'MOTION_DOWN':        # down history
+            #callback = lambda input: input.history_newer()
+        #elif motion == 'MOTION_LEFT':        # move cursor
+            #callback = lambda input: input.cursor_left()
+        #elif motion == 'MOTION_RIGHT':       # move cursor
+            #callback = lambda input: input.cursor_right()
+        #elif motion == 'MOTION_BACKSPACE':   # delete
+            #callback = lambda input: input.remove()
+        #return callback
 
 # history of submitted messages
 class ChatInputHistory:
