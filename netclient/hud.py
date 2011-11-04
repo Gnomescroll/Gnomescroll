@@ -1,4 +1,5 @@
-import settings
+import default_settings as settings
+
 import SDL.hud
 
 from chat_client import ChatClientGlobal

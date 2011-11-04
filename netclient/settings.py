@@ -1,3 +1,7 @@
+
+print "ERROR: SETTINGS IMPORTED"
+assert False
+
 pyglet = False
 
 ''' User '''
@@ -48,7 +52,9 @@ ping_update_interval = 500  # ms delay between ping updates
 ''' Game '''
 auto_assign_team = True
 
+'''
 try:
     from settings import *
 except ImportError:
     print 'settings.py file not found, using all defaults'
+'''

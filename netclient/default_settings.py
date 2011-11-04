@@ -60,6 +60,8 @@ if os.path.exists("./settings.py"):
 	execfile("./settings.py")
 	print "_test= %s" % (str(_test))
 	
+	print "xy_resolution= %i, %i" % (width, height)
+
 else:
 	print "!!! Settings File Fallback!!!"
 	try:

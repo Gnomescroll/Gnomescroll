@@ -1,13 +1,8 @@
 '''
 Drawing/rendering utilities
 '''
-import settings
 
-if settings.pyglet:
-    import pyglet
-    from pyglet.gl import *
-else:
-    import SDL.gl
+import SDL.gl
 
 ### DRAWING STUFF ####
 
