@@ -2,9 +2,6 @@
 name = 'a_name'
 alt_name = '[%s]' % (name,)
 
-''' Rendering (will be deprecated, keep pyglet=False) '''
-pyglet = False
-
 ''' Sound '''
 sound = True # global sound.
 sfx = 100
