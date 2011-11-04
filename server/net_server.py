@@ -65,8 +65,6 @@ class ServerListener:
     def __init__(self):
         self.tcp = None
         self.tcp_fileno = 0
-        self.udp = None
-        self.udp_fileno = 0
         self._setup_tcp_socket()
         atexit.register(self.on_exit)
         global OS
@@ -115,8 +113,6 @@ class ServerListener:
                         NetServer.connectionPool.addClient(connection, address) #hand off connection to connection pool
                     except socket.error, (value,message):
                         print "ServerListener.accept error: " + str(value) + ", " + message
-                if fileno == self.udp_fileno:
-                    print "UDP event"
         elif OS == "Windows" or OS == "Darwin":
             inputready,outputready,exceptready = select.select([self.tcp],[],[],0)
             if len(inputready) != 0:
@@ -264,9 +260,13 @@ class TcpClient:
                 while total_sent < msg_size:
                     try:
                         _msg = MESSAGE[total_sent:]
-                        sent = self.connection.send(_msg, self.BUFFER_SIZE)
+                        #sent = self.connection.send(_msg, self.BUFFER_SIZE)
+                        sent = self.connection.send(_msg)
+                        #if sent != self.BUFFER_SIZE:
+                        #    print "Potential Error: have %i bytes in buffer, only sent %i bytes" % (self.BUFFER_SIZE, sent)
                         total_sent += sent
                     except socket.error, (value, message):
+                        print "SOCKET ERROR: error value= %i" %(value)
                         if value == 32:
                             NetServer.connectionPool.tearDownClient(self)
                             break

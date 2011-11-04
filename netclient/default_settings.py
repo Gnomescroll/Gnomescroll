@@ -51,10 +51,21 @@ auto_assign_team = True
 draw_agents = True
 
 #######
-try:
-    from settings import *
-except ImportError:
-    print 'settings.py file not found, using all defaults'
+_test = 5
+import os.path
+if os.path.exists("./settings.py"):
+	print "Loading Settings File"
+	
+	print "_test= %s" % (str(_test))
+	execfile("./settings.py")
+	print "_test= %s" % (str(_test))
+	
+else:
+	print "!!! Settings File Fallback!!!"
+	try:
+		from settings import *
+	except ImportError:
+		print 'settings.py file not found, using all defaults'
 
 
 
