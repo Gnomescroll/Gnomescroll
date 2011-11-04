@@ -961,7 +961,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            sounds.play_2d('semishoot.wav')
+            #sounds.play_2d('semishoot.wav')
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:
