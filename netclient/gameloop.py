@@ -114,16 +114,14 @@ class App(object):
         InputGlobal.init_0(self)
         InputGlobal.init_1(self)
 
-    def init_audio(self):
-        audio = opts.opts.audio
-        soundfiles = None
-        if audio:
-            soundfiles = os.listdir('./media/sound/wav/')
-        if settings.sound:
-            sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+    def init_sound(self):
+        if not opts.opts.sound:
+            return
+        soundfiles = os.listdir('./media/sound/wav/')
+        sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
 
     def __init__(self):
-        self.init_audio()
+        self.init_sound()
 
         self.init_globals()
         self.animations = animations

@@ -111,7 +111,7 @@ def parse(cl_args=None):
 
     parser.add_argument('-nh', '--no-hud', action='store_true')
 
-    parser.add_argument('--no-audio', action='store_false', dest='audio')
+    parser.add_argument('-ns', '--no-sound', action='store_false', dest='sound')
     parser.add_argument('--sfx', default=DEFAULTS['sfx'])
     parser.add_argument('--music', default=DEFAULTS['music'])
 
@@ -172,8 +172,8 @@ def get_args():
         args.draw_agents = settings.draw_agents # allow settings to override the default(=True) case
         
     #sound
-    if args.audio:
-        args.audio = settings.audio
+    if args.sound:
+        args.sound = settings.sound
     args.sfx = max(min(args.sfx, 100), 0)
     args.sfx /= 100.
     args.music = max(min(args.music, 100), 0)
@@ -209,7 +209,7 @@ def print_args(args):
         'fps',
         'ping',
         'no_hud',
-        'audio',
+        'sound',
         'sfx',
         'music',
         'draw_agents',

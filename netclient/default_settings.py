@@ -12,23 +12,16 @@ alt_name = '[%s]' % (name,)
 
 ''' Rendering (will be deprecated, keep pyglet=False) '''
 pyglet = False
-#graphics = "SDL" # options, "SDL", "pyglet"
 
 ''' Sound '''
-audio = False
+sound = False
 sfx = 100
 music = 100
 
 ''' Window '''
-widescreen = 1
-if widescreen == 0:
-    width = 1024
-    height = 800
-else:
-    width = 1280
-    height = 800
-
-fullscreen = 0
+width = 1024
+height = 800
+fullscreen = False
 
 ''' Controls '''
 # lower is more sensitive
@@ -51,23 +44,14 @@ auto_assign_team = True
 draw_agents = True
 
 #######
-_test = 5
 import os.path
 if os.path.exists("./settings.py"):
-	print "Loading Settings File"
-	
-	print "_test= %s" % (str(_test))
-	execfile("./settings.py")
-	print "_test= %s" % (str(_test))
-	
-	print "xy_resolution= %i, %i" % (width, height)
-
+    print "Loading Settings File"
+    execfile("./settings.py")
 else:
-	print "!!! Settings File Fallback!!!"
-	try:
-		from settings import *
-	except ImportError:
-		print 'settings.py file not found, using all defaults'
+    try:
+        from settings import *
+    except ImportError:
+        print 'settings.py file not found, using all defaults'
 
-
-
+print "Window resolution - %dx%d" % (width, height,)

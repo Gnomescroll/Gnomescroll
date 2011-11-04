@@ -1,22 +1,12 @@
-
-print "ERROR: SETTINGS IMPORTED"
-#assert False
-
-pyglet = False
-
-pyglet = False
-
 ''' User '''
 name = 'a_name'
 alt_name = '[%s]' % (name,)
 
 ''' Rendering (will be deprecated, keep pyglet=False) '''
 pyglet = False
-#graphics = "SDL" # options, "SDL", "pyglet"
 
 ''' Sound '''
-sound = False #sound off
-audio = True
+sound = False # global sound.
 sfx = 100
 music = 100
 
@@ -27,6 +17,7 @@ width = 1280
 height = 800
 #fullscreen
 fullscreen = False
+widescreen = False
 
 ''' HUD '''
 inventory_hud_x_offset = 250
