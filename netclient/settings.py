@@ -6,7 +6,7 @@ alt_name = '[%s]' % (name,)
 pyglet = False
 
 ''' Sound '''
-sound = False # global sound.
+sound = True # global sound.
 sfx = 100
 music = 100
 

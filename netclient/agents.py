@@ -21,11 +21,8 @@ import vector_lib
 import raycast_utils
 import vox
 
-if settings.pyglet == False:
-    import SDL.gl
+import SDL.gl
 
-
-#from c_lib.c_lib_objects import _create_blood as create_blood
 import c_lib.c_lib_objects
 import c_lib.c_lib_agents
 import c_lib._ray_trace
@@ -35,8 +32,7 @@ from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper,
 
 import c_lib.c_lib_agents as cAgents
 
-if settings.sound:
-    import sound.sounds as sounds
+import sound.sounds as sounds
 
 '''
 Physics for agents
@@ -965,8 +961,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            #sounds.play_gunshot()
-            #sounds.play_2d('semishoot.wav')
+            sounds.play_2d('semishoot.wav')
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:

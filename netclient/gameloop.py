@@ -118,7 +118,7 @@ class App(object):
         if not opts.opts.sound:
             return
         soundfiles = os.listdir('./media/sound/wav/')
-        sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+        sounds.init(enabled=opts.opts.sound, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
 
     def __init__(self):
         self.init_sound()

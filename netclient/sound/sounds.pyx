@@ -14,17 +14,6 @@ cdef extern from "./sound.h":
     
     int update_channel(int ch_id, float x, float y, float z, float vx, float vy, float vz)
 
-#cdef extern from "./player_sounds.h":
-#    void load_player_gunshot()
-#    void play_player_gunshot()
-#    void end_player_gunshot()
-
-#cdef extern from "./projectile_sounds.h":
-#    void load_projectile()
-#    void end_projectile()
-#    int play_projectile_sound(float x, float y, float z, float vx, float vy, float vz)
-#    int update_projectile_sound(int p_snd_id, float x, float y, float z, float vx, float vy, float vz)
-
 _enabled = True
 #decorator to require enabled audio
 def e(f):
@@ -124,26 +113,3 @@ def update_3d(ch, pos, vel):
 @e
 def done():
     release_all()
-
-#@e
-#def update_projectile(p_snd_id, pos, vel):
-#    if p_snd_id < 0:
-#        return -1
-#    x,y,z = pos
-#    vx,vy,vz = vel
-#    fail = update_projectile_sound(p_snd_id, x,y,z, vx,vy,vz)
-#    if fail:
-#        return -1
-#    return p_snd_id
-
-#@e
-#def play_gunshot():
-#    play_player_gunshot()
-
-#@e
-#def play_projectile(pos, vel):
-#    x,y,z = pos
-#    vx,vy,vz = vel
-#    p_snd_id = play_projectile_sound(x,y,z, vx,vy,vz)
-#    return p_snd_id
-

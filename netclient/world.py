@@ -1,12 +1,7 @@
 import default_settings as settings
 
 from opts import opts
-
-if settings.pyglet:
-    import pyglet
-    from pyglet.gl import *
-else:
-    import SDL
+import SDL
 
 base_dir = "./"
 

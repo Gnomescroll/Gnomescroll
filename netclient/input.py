@@ -120,9 +120,8 @@ class InputGlobal:
 
     @classmethod
     def init_1(cls, main):
-        if settings.pyglet: #deprecate!!
-            InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
-
+        pass
+        
     @classmethod
     def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')
@@ -164,12 +163,6 @@ class Mouse(object):
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
-
-        if settings.pyglet:
-            self.main.win.on_mouse_drag = self.on_mouse_drag
-            self.main.win.on_mouse_motion = self.on_mouse_motion
-            self.main.win.on_mouse_press = self.on_mouse_press
-            self.main.win.on_mouse_scroll = self.on_mouse_scroll
 
     #inplement draw detection...
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
@@ -275,7 +268,6 @@ class Keyboard(object):
         if InputGlobal.input == 'agent':
             InputGlobal.agentInput.on_key_release(symbol)
 
-    #deprecate for non-pyglet input
     def _init_key_handlers(self):
         self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
@@ -367,38 +359,19 @@ class Keyboard(object):
 
     def camera_input_mode(self, keyboard):
         v = settings.camera_speed
-        #v = 0.3
 
-        if settings.pyglet:
-            if keyboard[key.W]:
-                self.camera.move_camera(v,0,0)
-            if keyboard[key.S]:
-                self.camera.move_camera(-v,0,0)
-            if keyboard[key.A]:
-                self.camera.move_camera(0,v,0)
-            if keyboard[key.D]:
-                self.camera.move_camera(0,-v,0)
-            if keyboard[key.R]:
-                self.camera.move_camera(0,0,v)
-            if keyboard[key.F]:
-                self.camera.move_camera(0,0,-v)
-            if keyboard[key.SPACE]:
-                pass
-        else:
-            if 'w' in keyboard:
-                self.camera.move_camera(v,0,0)
-            if 's' in keyboard:
-                self.camera.move_camera(-v,0,0)
-            if 'a' in keyboard:
-                self.camera.move_camera(0,v,0)
-            if 'd' in keyboard:
-                self.camera.move_camera(0,-v,0)
-            if 'r' in keyboard:
-                self.camera.move_camera(0,0,v)
-            if 'f' in keyboard:
-                self.camera.move_camera(0,0,-v)
-            #if keyboard[key.SPACE]:
-            #    pass
+        if 'w' in keyboard:
+            self.camera.move_camera(v,0,0)
+        if 's' in keyboard:
+            self.camera.move_camera(-v,0,0)
+        if 'a' in keyboard:
+            self.camera.move_camera(0,v,0)
+        if 'd' in keyboard:
+            self.camera.move_camera(0,-v,0)
+        if 'r' in keyboard:
+            self.camera.move_camera(0,0,v)
+        if 'f' in keyboard:
+            self.camera.move_camera(0,0,-v)
 
 
 # only calls method if GameStateGlobal.agent is not None
