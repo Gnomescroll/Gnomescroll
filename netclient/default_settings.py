@@ -32,6 +32,7 @@ camera_speed = 0.6
 
 ''' HUD/Information '''
 hud = True  # show hud
+diagnostic_hud = True # show diagnostic HUD elements (graphs, ping, fps)
 
 inventory_hud_x_offset = 250
 inventory_hud_y_offset = 500

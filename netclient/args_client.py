@@ -35,6 +35,7 @@ camera-sensitivity  Mouse sensitivity for camera (Override sensitivity)
 camera-speed    Camera speed
 
 no-hud          Don't display HUD elements on start (Enable in game with /)
+disable-diagnostic-hud  Don't display diagnostic HUD elements
 display-fps     Show FPS (frames per second) in HUD
 display-ping    Show round trip ping time in milliseconds in HUD
 ping-update-interval    How often the server is pinged
@@ -137,6 +138,7 @@ def parse(cl_args=None):
 
     ''' HUD/Info panels '''
     parser.add_argument('-nh', '--no-hud', action='store_true', dest='hud')
+    parser.add_argument('-ddh', '--disable-diagnostic-hud', action='store_true', dest='diagnostic_hud')
     parser.add_argument('-fps', '--display-fps', action='store_true', dest='fps')  # display frames per second in hudp
     parser.add_argument('-ping', '--display-ping', action='store_true', dest='ping')
     parser.add_argument('-pud', '--ping-update-interval', default=DEFAULTS['ping_update_interval'], type=int)
@@ -209,6 +211,11 @@ def postprocess_args(args):
         args.sensitivity = DEFAULTS['sensitivity']
 
     ''' HUD/Info panels '''
+    if not args.diagnostic_hud:
+        args.diagnostic_hud = settings.diagnostic_hud
+    else:
+        args.diagnostic_hud = not args.diagnostic_hud
+        
     if not args.fps and settings.fps:
         args.fps = settings.fps
     if not args.ping and settings.ping:
