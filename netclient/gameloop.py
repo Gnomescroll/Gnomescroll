@@ -365,7 +365,7 @@ class App(object):
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
-            if not opts.opts.no_hud:
+            if opts.opts.hud:
                 self.camera.hudProjection()
                 draw_bs = False
                 if GameStateGlobal.agent:

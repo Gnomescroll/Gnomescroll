@@ -297,7 +297,7 @@ class Keyboard(object):
             self.key_handlers[key] = handler
 
     def toggle_hud(self):
-        opts.opts.no_hud = not opts.opts.no_hud
+        opts.opts.hud = not opts.opts.hud
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
