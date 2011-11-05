@@ -55,7 +55,7 @@ import sys
 import argparse
 import default_settings as settings
 
-DC_VERSION = '0.8'
+DC_CLIENT_VERSION = '3.7'
 
 # Booleans cannot be processed in this way by the argparser.
 # They will be processed after argparse.parse()
@@ -66,7 +66,7 @@ DEFAULTS = {
     'alt_name'  :   settings.alt_name,
 
     # Common CLI Options
-    'version'   : '%%(prog)s %s' % (DC_VERSION,),
+    'version'   : '%%(prog)s %s' % (DC_CLIENT_VERSION,),
 
     # Network
     'server'    :   settings.server,
@@ -106,7 +106,7 @@ def load_defaults():
 load_defaults()
 
 def parse(cl_args=None):
-    parser = argparse.ArgumentParser(description="DC_MMO Netclient", prog="Dwarf Control (in Space)")
+    parser = argparse.ArgumentParser(description="Client", prog="Gnomescroll")
 
     ''' CLI Options '''
     parser.add_argument('-V', '--version', action='version', version=DEFAULTS['version'])
@@ -143,8 +143,8 @@ def parse(cl_args=None):
 
     ''' Sound '''
     parser.add_argument('-ns', '--no-sound', action='store_true', dest='sound')
-    parser.add_argument('--sfx', default=DEFAULTS['sfx'])
-    parser.add_argument('--music', default=DEFAULTS['music'])
+    parser.add_argument('--sfx', default=DEFAULTS['sfx'], type=int)
+    parser.add_argument('--music', default=DEFAULTS['music'], type=int)
 
     ''' Rendering '''
     parser.add_argument('-np', '--no-player', action='store_true') # no player, just camera viewer
@@ -166,7 +166,7 @@ def parse(cl_args=None):
     else:
         args = parser.parse_args()
         
-    setattr(args, 'version', DC_VERSION)
+    setattr(args, 'version', DC_CLIENT_VERSION)
     
     return args
 
@@ -181,22 +181,8 @@ def merge_with_settings(args):
         if not hasattr(args, p):
             setattr(args, p, getattr(settings, p))
 
-def get_args():
-    try:
-        args = parse()
-    except Exception, e:
-        # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
-        server = sys.argv[1]
-        if ':' in server:
-            server, port = server.split(':')
-            cl_args = '--server %s --port %s' % (server, port,)
-        else:
-            cl_args = '--server %s' % (server,)
-
-        args = parse(cl_args.split())
-
+def postprocess_args(args):
     # Check booleans and override
-
     ''' Game Preferences '''
     if not args.auto_assign_team:
         args.auto_assign_team = settings.auto_assign_team
@@ -248,6 +234,28 @@ def get_args():
     ''' Camera, Rendering '''
     args.draw_agents = not args.draw_agents # cli argument is "--disable-agents-draw", so flip it
 
+
+def get_args():
+    try:
+        args = parse()
+    except:
+        # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
+        server = sys.argv[1]
+        try:
+            if not len(server.split('.')) == 4:
+                raise Exception
+        except:
+            sys.exit()
+
+        if ':' in server:
+            server, port = server.split(':')
+            cl_args = '--server %s --port %s' % (server, port,)
+        else:
+            cl_args = '--server %s' % (server,)
+
+        args = parse(cl_args.split())
+
+    postprocess_args(args)
     merge_with_settings(args)
     
     if args.print_args:
@@ -273,4 +281,4 @@ def print_args(args):
 
 if __name__ == '__main__':
     args = get_args()
-    print dir(args)
+    print_args(args)

@@ -344,8 +344,9 @@ class AgentAction:
 class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
     HEALTH_MAX = 100
-    _RESPAWN_TIME = 2. # seconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
+    _RESPAWN_TIME = 2000  # milliseconds
+    _TICK_RATE = 30       # milliseconds
+    RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
 
     def __init__(self, player_id, position=None, id=None, team=None):
 
