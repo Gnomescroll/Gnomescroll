@@ -1,3 +1,13 @@
+'''
+Shared utility methods
+'''
+
+import time
+
+def now():
+    ''' returns time in ms '''
+    return time.time() * 1000
+    
 # use for filtering properties for json dicts
 def filter_props(obj, properties):
     ptype = type(properties)
@@ -12,3 +22,4 @@ def filter_props(obj, properties):
             val = int(val)
         d[prop] = val
     return d
+

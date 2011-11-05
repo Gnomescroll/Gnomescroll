@@ -224,32 +224,27 @@ class Main:
             #terrain_map.load_from_disk("nat5")
             pass
 
-        if False:
-            pass
-            ##map_gen.load_map2(terrain_map)
-            #map_gen.load_map3(terrain_map)
-            #map_gen.grass(terrain_map)
-            #map_gen.cave2(terrain_map)
-            #map_gen.ore1(terrain_map)
+        #map_gen.grass(terrain_map)
+        #map_gen.cave2(terrain_map)
+        #map_gen.ore1(terrain_map)
 
-            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
-            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
-            #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
-            #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
-            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
-            #map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
-            #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
-            #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
-        if True:
-            clear_pillar(x=1,y=0)
-            clear_pillar(x=0,y=1)
-            clear_pillar(x=1,y=1)
-            pallet_pillar(0,0,0)
+        #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+        #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
+        #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
+        #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
+        #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
+        #map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
+        #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
+        #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
 
-            #if opts.save_map:
-                #print 'Saving map'
-                #terrain_map.save_to_disk(opts.save_map)
+        clear_pillar(x=1,y=0)
+        clear_pillar(x=0,y=1)
+        clear_pillar(x=1,y=1)
+        pallet_pillar(0,0,0)
 
+        if opts.save_map:
+            print 'Saving map as %s' % (opts.save_map,)
+            terrain_map.save_to_disk(opts.save_map)
 
         NetServer.init_0()
         NetOut.init_0()
