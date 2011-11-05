@@ -1,5 +1,4 @@
-#ifndef camera_h
-#define camera_h
+#pragma once
 
 #include <compat_gl.h>
 #include <math.h>
@@ -21,11 +20,6 @@ int _hud_projection(struct Camera* camera);
 
 int _set_camera(struct Camera* c);
 struct Camera* _get_camera();
+void _set_camera_state(float x, float y, float z, float theta, float phi);
 
 void set_model_view_matrix(float *a);
-
-
-//extern int _xres;
-//extern int _yres;
-
-#endif

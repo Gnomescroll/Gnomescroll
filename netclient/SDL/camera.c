@@ -1,18 +1,3 @@
-/* moved to header
-
-struct Camera {
-float fov;
-float x_size;
-float y_size;
-float z_near;
-float z_far;
-
-float x,y,z;
-float x_angle;
-float y_angle;
-};
-*/
-
 #include "./camera.h"
 
 #define PI 3.14159265
@@ -20,26 +5,9 @@ float y_angle;
 extern int _xres;
 extern int _yres;
 
-/*
-void _camera_projection( Camera c) {
-    float aspect = c.x_size / c.y_size;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective( c.fov, aspect, c.z_near, c.z_far);
-}
-*/
-
-struct Camera* camera;
+static struct Camera* camera;
 
 int _set_camera(struct Camera* c) {
-    /*
-    if(c != NULL) {
-        printf("Set Camera: Camera not null \n");
-    } else {
-        printf("Set Camera: Error: camera is null \n");
-    }
-    */
-    //while(1);
     camera = c;
     return 0;
 }
@@ -53,22 +21,20 @@ struct Camera* _get_camera() {
     return camera;
 }
 
-float * model_view_matrix;
+static float* model_view_matrix;
 
 void set_model_view_matrix(float *a){
     model_view_matrix = a;
 }
 
 int _world_projection(struct Camera* c) {
-    //float aspect = c->x_size / c->y_size;
 
     c->x_size = (float) _xres;
     c->y_size = (float) _yres;
 
     float aspect = c->x_size / c->y_size;
-    //float camera_focus_x,  camera_focus_y,  camera_focus_z;
     float length;
-    //camera = c;
+
     c->ratio = c->x_size / c->y_size;
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -85,9 +51,6 @@ int _world_projection(struct Camera* c) {
     c->zl = c->z + sin( c->y_angle);
 
     length = sqrt(c->xl*c->xl + c->yl*c->yl + c->zl*c->zl);
-    //c->xl /= length;
-    //c->yl /= length;
-    //c->zl /= length;
 
     c->xu = 0;
     c->yu = 0;
@@ -103,18 +66,8 @@ int _world_projection(struct Camera* c) {
         printf("!? null pointer \n");
     }
 
-    //printf( "(%f, %f, %f), (%f, %f, %f) \n",c.x,c.y,c.z,camera_focus_x, camera_focus_y,  camera_focus_z );
-
-    //glEnable(GL_TEXTURE_2D);
-
     glEnable (GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
 
-/*
-        glEnable (GL_DEPTH_TEST)
-        #glEnable(GL_CULL_FACE);
-*/
-    //printf( "gl error: %s\n", SDL_GetError() );
     glColor3ub(255, 255, 255);
     return 0;
 }
@@ -131,8 +84,6 @@ glMatrixMode(GL_PROJECTION);
 glLoadIdentity();
 gluOrtho2D(0, c->x_size, 0, c->y_size);
 
-//printf( "(%f, %f) (%i,%i)\n", c->x_size, c->y_size, _xres, _yres);
-
 glMatrixMode( GL_MODELVIEW );
 glLoadIdentity();
 
@@ -140,22 +91,14 @@ glDisable(GL_DEPTH_TEST);
 
 glEnable(GL_TEXTURE_2D);
 
-//glClearColor(0, 0, 0, 0);
-//glClear(GL_COLOR_BUFFER_BIT); //causes terrain not to render
-
-//glEnable(GL_TEXTURE_2D);
-
-/*
-         glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluOrtho2D(0, self.win.width, 0, self.win.height)
-
-        glMatrixMode( GL_MODELVIEW )
-        glLoadIdentity()
-
-        glDisable(GL_DEPTH_TEST);
-        #glDisable(GL_CULL_FACE);
-        glEnable(gl.GL_TEXTURE_2D)
-*/
 return 0;
+}
+
+void _set_camera_state(float x, float y, float z, float theta, float phi) {
+    camera->x = x;
+    camera->y = y;
+    camera->z = z;
+
+    camera->x_angle = theta;
+    camera->y_angle = phi;
 }
