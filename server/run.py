@@ -17,8 +17,8 @@ opts = opts.opts
 import random
 import time
 
-import map_gen
 import intervals
+import map_gen
 import file_monitor
 import init_c_lib
 import c_lib.c_lib_objects
@@ -222,7 +222,6 @@ class Main:
             #terrain_map.load_from_disk("savetest2")
             #_gen_map()
             #terrain_map.load_from_disk("nat5")
-            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=101) #11
             pass
 
         if False:

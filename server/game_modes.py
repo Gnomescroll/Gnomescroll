@@ -6,6 +6,7 @@ import opts
 opts = opts.opts
 
 import toys
+
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
