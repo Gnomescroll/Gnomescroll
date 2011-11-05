@@ -3,15 +3,13 @@
 '''
 Chat client
 '''
-from time import time
 from collections import deque
 from json import dumps as encode_json
 from json import loads as decode_json
 from os import mkdir
 from os.path import exists as path_exists
 
-def now():
-    return int(time() * 1000)
+from utils import now
 
 class ChatClientGlobal:
     chatClient = None
@@ -230,7 +228,7 @@ class SystemChannel(Channel):
 
     def receive(self, msg):
         if msg.payload.content == 'ping':
-            content = 'Chat ping round-trip time = %ims' % (now()-int(msg.payload.time),)
+            content = 'Chat ping round-trip time = %ims' % (int(now())-int(msg.payload.time),)
             log = ChatMessageIn({
                 'content'   : content,
                 'channel'   : 'system',
@@ -440,7 +438,7 @@ class ChatMessageIn():
         self.payload.clean()
         self.valid = self.payload.valid()
         self.filter()
-        self.timestamp = now()
+        self.timestamp = int(now())
         #print 'chatmessageIN timestamp %i' % (self.timestamp,)
         if 'name' in msg:
             self.name = msg['name']
@@ -486,7 +484,7 @@ class Payload:
         #required
         self.cmd = msg.get('cmd', 'chat')
         self.content = msg.get('content', '')
-        self.time = int(msg.get('time', now()))
+        self.time = int(msg.get('time', int(now())))
         self.channel = msg.get('channel', '')
         self.cid = msg.get('cid', NetClientGlobal.client_id)
         self.id = msg.get('id', '')
@@ -727,7 +725,7 @@ class ChatRender:
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
-            if now() - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
+            if int(now()) - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
                 break
             to_render.appendleft(msg)

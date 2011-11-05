@@ -38,7 +38,6 @@ class NetOut:
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
 
-
 def sendJSON(cmd=None, tick=False):
     def outer(f, *args):
         def wrapped(*args, **kwargs):

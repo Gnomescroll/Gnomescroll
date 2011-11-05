@@ -6,6 +6,7 @@ Client network interface
 
 import opts
 opts = opts.opts
+
 import socket
 import struct
 import json

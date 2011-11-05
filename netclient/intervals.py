@@ -7,12 +7,7 @@ Manages methods that should be triggered on a time based interval,
 as opposed to every tick of the loop
 '''
 
-import time
-
-def now():
-    ''' returns time in ms '''
-    return time.time() * 1000
-    
+from utils import now
 
 class Intervals:
 
