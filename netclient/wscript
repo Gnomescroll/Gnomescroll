@@ -88,17 +88,17 @@ def configure(conf):
         conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
         #conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
 
-	#print "WTF"
-	
-	conf.env.INCLUDES = []
-	#if OS == 'Windows':
-	#	conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
+    #print "WTF"
+    
+    conf.env.INCLUDES = []
+    #if OS == 'Windows':
+    #   conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
 
-	conf.check(header_name='SDL.h',
+    conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-	
+    
 
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
@@ -146,7 +146,7 @@ def configure(conf):
     
     #if OS == 'Windows':
     #    conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
-		
+        
     #hack
     print os.path.abspath(os.curdir)
     libpth = '%s/fmod/lib/' % (os_libpth,)
@@ -290,6 +290,11 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_input')
 
+    bld(features='cxx cshlib pyext',
+        source=['c_lib/c_lib_animations.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_animations')
+
     # sound
     bld(features='c cshlib',
         source=['sound/sound.c'],
@@ -352,6 +357,7 @@ def install_in_ext(ctx):
                'c_lib.c_lib_hud',
                #'c_lib.c_lib_agent_wrapper',
                'c_lib.c_lib_input',
+               'c_lib.c_lib_animations',
                'csound',
                'sound.sounds',  # cython .so's need to have same name as source
                ]

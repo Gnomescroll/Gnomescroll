@@ -17,6 +17,9 @@
 /* objects */
 #include <c_lib/objects/object_lib.cpp>
 
+/* animations */
+#include <c_lib/animations/animations.cpp>
+
 /* map */
 #include "./t_map/t_map.c"
 #include "./t_map/t_properties.c"
