@@ -1,15 +1,12 @@
-import default_settings as settings
-
-from opts import opts
+import opts
+opts = opts.opts
 import SDL
-
-base_dir = "./"
-
 import random
+import c_lib.c_lib_agents
 
 from profiler import P
 
-import c_lib.c_lib_agents
+base_dir = "./"
 
 class World():
 

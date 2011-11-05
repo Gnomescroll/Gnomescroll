@@ -3,14 +3,16 @@
 '''
 Client network incoming
 '''
-import SDL.gl #for timer function
+import opts
+opts = opts.opts
 
 import json
+
+import SDL.gl #for timer function
 import stats
-#import struct
-from opts import opts
-from dat_loader import dat_loader
 import animations
+
+from dat_loader import dat_loader
 
 class NetEventGlobal:
     messageHandler = None
@@ -199,7 +201,7 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _set_map(self, list, **msg):
         #if len(list) == 1:
-            #print 'settings block %s' % list[0]
+            #print 'setting block %s' % list[0]
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
             if value == 0:

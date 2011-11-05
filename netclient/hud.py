@@ -1,15 +1,13 @@
-import default_settings as settings
+import opts
+opts = opts.opts
 
 import SDL.hud
+import c_lib.c_lib_hud as c_lib_hud
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
-
-import c_lib.c_lib_hud as c_lib_hud
-
-from opts import opts
 
 '''
 HUD overlay
@@ -109,7 +107,7 @@ class Hud(object):
         return stats
 
     def draw_block_selector(self):
-        c_lib_hud.draw_cube_selector(settings.block_selector_x_offset, settings.block_selector_y_offset)
+        c_lib_hud.draw_cube_selector(opts.block_selector_x_offset, opts.block_selector_y_offset)
 
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)

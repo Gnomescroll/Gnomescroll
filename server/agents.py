@@ -2,29 +2,23 @@
 Agents:
     Objects through which a Player experiences the game world
 '''
+import opts
+opts = opts.opts
 
-import math
-
-from math import floor, ceil
+from math import floor, ceil, pow
 from math import pi, cos, sin
 from random import randrange
 
+from vector_lib import distance
+from weapons import LaserGun, Pick, BlockApplier
 from game_state import GameStateGlobal
 from object_lists import GenericObjectList
 from net_out import NetOut
 from net_server import NetServer
-
-import c_lib.terrain_map as terrain_map
-collisionDetection = terrain_map.collisionDetection
-#from cube_dat import CubeGlobal
-
-from weapons import LaserGun, Pick, BlockApplier
-
-from vector_lib import distance
-
-from opts import opts
-
 from c_lib.c_lib_agents import AgentListWrapper, AgentWrapper, teleport_Agent
+import c_lib.terrain_map as terrain_map
+
+collisionDetection = terrain_map.collisionDetection
 
 # datastore controller for agents
 class AgentList(GenericObjectList):
@@ -114,7 +108,7 @@ class AgentPhysics:
         #constants
         tr = 10. #tick rate
         tr2 = tr**2 #tick rate squared
-        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
+        xy_brake = pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
         z_gravity = -.40 / tr2
         z_jetpack = 0.80 / tr2
@@ -352,8 +346,6 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
-        self.collisionDetection = collisionDetection
-        assert self.collisionDetection != None
         ### End Global imports ###
 
         if id is not None:

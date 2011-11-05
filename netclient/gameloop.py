@@ -1,87 +1,64 @@
 #!/c/Python27/python.exe
 
+# boot hack
 import sys
 import os
 print "Working Directory: %s" % (os.getcwd())
 sys.path.insert(0, './ext/')
-
 sys.path.insert(0, '/c/dc_mmo/netclient/ext/')
-
 sys.path.insert(0, 'c:/dc_mmo/netclient/ext/')
 
-import SDL
-
-import math
-
+# load arguments & settings
 import args_client
 import opts
 opts.opts = args_client.get_args()
+opts = opts.opts
 
-#from opts import opts
+import math
+import time
+import random
 
-
-import default_settings as settings
+import SDL
 import stats
-
 import intervals
+import SDL.gl
+import SDL.hud
+import vox_lib
+import c_lib.c_lib_input as cInput
+import sound.sounds as sounds
+import world
 
-if True:
-    import SDL.gl
-    #import SDL.input
-    import c_lib.c_lib_input as cInput
-    import SDL.hud
-    import vox_lib
+import c_lib.terrain_map
+import init_c_lib
+import c_lib.c_lib_objects
+import c_lib.c_lib_agents
+import c_lib.c_lib_hud as cHUD
+import c_lib.c_lib_agents as cAgents
 
-    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=(int(opts.opts.fullscreen or settings.fullscreen)))
-
-    import c_lib.terrain_map
-    c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
-    SDL.gl.camera_callback = c_lib.terrain_map.camera_callback
-    #SDL.gl.init_particles()
-    import init_c_lib
-    import c_lib.c_lib_objects
-    import c_lib.c_lib_agents
-    import c_lib.c_lib_hud as cHUD
-    import c_lib.c_lib_agents as cAgents
-    #from c_lib.c_lib_agents import set_agent_control_state
-    #import c_lib.c_lib_timer as physics_timer
-    import init_c_lib
-    from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
-    from init_c_lib import START_CLOCK, GET_TICK
-    from init_c_lib import _pviz_draw
-    P2 = c_lib.terrain_map.Profiler()
-    #from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style
-
-    from init_c_lib import NetClientTick, NetClientConnect
-##profiler
+from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
+from init_c_lib import START_CLOCK, GET_TICK
+from init_c_lib import _pviz_draw
+from init_c_lib import NetClientTick, NetClientConnect
 from profiler import P
-
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-
 from game_state import GameStateGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
-
 from map_controller import MapControllerGlobal
-
 from players import Player
 from input import Mouse, Keyboard
 from camera import Camera
 from hud import Hud
-
-import world #deprecate
-
 from animations import animations
 
-import random #remove?
+SDL.gl.set_resolution(opts.width, opts.height, fullscreen=(int(opts.fullscreen)))
+c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
+SDL.gl.camera_callback = c_lib.terrain_map.camera_callback
+#SDL.gl.init_particles()
 
-#import hotshot
-import time
-
-if settings.sound:
-    import sound.sounds as sounds
+P2 = c_lib.terrain_map.Profiler()
 
 class App(object):
 
@@ -103,7 +80,6 @@ class App(object):
 
         self.SDL_global = SDL.gl.SDL_global #drawing stuff
         self.SDL_global.init()
-        #SDL.input.init()
         cInput.init()
         SDL.hud.init()
 
@@ -115,18 +91,17 @@ class App(object):
         InputGlobal.init_1(self)
 
     def init_sound(self):
-        if not opts.opts.sound:
+        if not opts.sound:
             return
         soundfiles = os.listdir('./media/sound/wav/')
-        sounds.init(enabled=opts.opts.sound, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+        sounds.init(enabled=opts.sound, soundfiles=soundfiles, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
         self.init_sound()
 
         self.init_globals()
         self.animations = animations
-        #other
-        self.world = world.World()  #deprecate?
+        self.world = world.World()
 
         self.camera = Camera(x=0, z=50, rot=-1.)
         self.hud = Hud()
@@ -135,7 +110,6 @@ class App(object):
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
-        #self.intervals.register(send_agent_pos, 500)
 
         cAgents.init_draw_agents()
 
@@ -151,7 +125,7 @@ class App(object):
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
         NetClientGlobal.connect() #starts connection
-        a,b,c,d = opts.opts.server.split(".")
+        a,b,c,d = opts.server.split(".")
         NetClientConnect(int(a),int(b),int(c),int(d), 0)
         #NetClientConnect(127,0,0,1, 0)
 
@@ -161,25 +135,21 @@ class App(object):
         self.world.add_agent(GameStateGlobal.agent)
 
         self.connect()
-        #ChatClientGlobal.on_connect()
         NetOut.mapMessage.request_chunk_list()
 
         average = []
         fps_text = None
         ping_text = None
-        fps = opts.opts.fps
-        ping = opts.opts.fps
+        fps = opts.fps
+        ping = opts.fps
         ltick, ctick = 0,0
 
         if ping:
             ping_n = SDL.gl.get_ticks()
 
-        #c_lib.c_lib_objects._create_agent(0,0,8)
-        #agent must be created server side
-
         self.intervals.set()
         _i = 30
-        #StartPhysicsTimer(33)
+
         c_lib.c_lib_objects._generate_circuit_tree(0,0)
 
         def neutron_fountain():
@@ -192,12 +162,7 @@ class App(object):
             y *= v / le
             z *= v / le
             c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
-        '''
-        print "==="
-        print str(opts.opts.server)
-        print "==="
-        '''
-        
+
         _m = 0
 
         while not GameStateGlobal.exit:
@@ -365,17 +330,17 @@ class App(object):
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
-            if opts.opts.hud:
+            if opts.hud:
                 self.camera.hudProjection()
                 draw_bs = False
                 if GameStateGlobal.agent:
                     draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
-                c_lib.terrain_map.draw_vbo_indicator(settings.map_vbo_indicator_x_offset, settings.map_vbo_indicator_y_offset, -0.3)
-                P2.draw_perf_graph(settings.fps_perf_graph_x_offset, settings.fps_perf_graph_y_offset,-0.30)
-                _pviz_draw(settings.network_latency_graph_x_offset, settings.network_latency_graph_y_offset, -.30)
+                c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset, opts.map_vbo_indicator_y_offset, -0.3)
+                P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)
+                _pviz_draw(opts.network_latency_graph_x_offset, opts.network_latency_graph_y_offset, -.30)
                 #cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
-                cHUD._draw_inventory(settings.inventory_hud_x_offset, settings.inventory_hud_y_offset)
+                cHUD._draw_inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
 
             P.event("SDL flip")
             self.SDL_global.flip()
@@ -396,7 +361,7 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if ping:
-                if SDL.gl.get_ticks() - ping_n > settings.ping_update_interval:
+                if SDL.gl.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
                     ping_n = SDL.gl.get_ticks()
                     NetOut.miscMessage.ping()
@@ -405,14 +370,14 @@ class App(object):
             self.intervals.process()
 
             agent = GameStateGlobal.agent
-            if settings.sound:
+            if opts.sound:
                 if agent:
                     sounds.update(agent.listener_state())
                 else:
                     sounds.update()
 
             P.finish_frame()
-        if settings.sound:
+        if opts.sound:
             sounds.done()
 
 

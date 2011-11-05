@@ -1,4 +1,3 @@
-import default_settings as settings
 import SDL.gl
 from math import sin, cos, pi
 

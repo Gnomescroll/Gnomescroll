@@ -1,20 +1,13 @@
-from math import sin, cos, pi
-import math
-from vector_lib import distance, vector_between_points, normalize, vector_components, reflect
-import default_settings as settings
-
+import opts
+opts = opts.opts
+import sound.sounds as sounds
 import c_lib.c_lib_objects as c_obj
-
-from animations import GrenadeExplodeAnimation
-
-if settings.sound:
-    import sound.sounds as sounds
-
-
 import SDL.gl
 
+from math import sin, cos, pi, ceil
+from vector_lib import distance, vector_between_points, normalize, vector_components, reflect
+from animations import GrenadeExplodeAnimation
 from dat_loader import p_dat
-
 
 class Projectile:
 
@@ -126,7 +119,7 @@ class Laser(Projectile):
         self.sample_rate = 10.
         self.sample_range = range(int(self.sample_rate))
         self.sample_delta = 0.10
-        if settings.sound:
+        if opts.sound:
             self.snd_id  = sounds.play_3d('warp2.wav', self.pos(), self.velocity())
 
     def tick(self):
@@ -167,7 +160,7 @@ class Laser(Projectile):
             x,y,z = last_pos
 
             d = distance(pos, last_pos)
-            pts = math.ceil(d/self.sample_delta)
+            pts = ceil(d/self.sample_delta)
             r = range(int(pts))
             for i in r:
                 x += dx
@@ -193,7 +186,7 @@ class Laser(Projectile):
         SDL.gl.draw_particle(5, 0.5, x,y,z) #was 5
 
     def update_sound(self):
-        if settings.sound:
+        if opts.sound:
             sounds.update_3d(self.snd_id, self.pos(), self.velocity())
 
 Laser.init()

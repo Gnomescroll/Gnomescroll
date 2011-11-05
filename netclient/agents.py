@@ -3,36 +3,26 @@ Agents:
     Objects through which a Player experiences the game world
 '''
 
-import math
-from math import sin, cos, pi
-from math import floor, ceil, fabs
-
-from game_state import GameStateGlobal #Deprecate?
-
-from opts import opts
-
-from weapons import LaserGun, Pick, BlockApplier
-from game_modes import NoTeam
-
-import default_settings as settings
-
+import opts
+opts = opts.opts
+import random
 import vox_lib
 import vector_lib
 import raycast_utils
 import vox
-
 import SDL.gl
-
 import c_lib.c_lib_objects
 import c_lib.c_lib_agents
 import c_lib._ray_trace
-import random
-
-from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
-
 import c_lib.c_lib_agents as cAgents
-
 import sound.sounds as sounds
+
+from math import sin, cos, pi
+from math import floor, ceil, fabs, pow
+from game_state import GameStateGlobal #Deprecate?
+from weapons import LaserGun, Pick, BlockApplier
+from game_modes import NoTeam
+from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 
 '''
 Physics for agents
@@ -104,7 +94,7 @@ class AgentPhysics:
         #constants
         tr = 10. #tick rate
         tr2 = tr**2 #tick rate squared
-        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
+        xy_brake = pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
         if GameStateGlobal.apply_gravity:
             z_gravity = -.40 / tr2
@@ -629,7 +619,6 @@ class AgentModel(AgentWrapper):
 
         self.active_block = active_block   # which block to create
 
-        #settings
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
@@ -914,10 +903,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.ay = 0
         self.az = 0
 
-        #settings
-        #self.b_height = 1.5
-        #self.t_height = .75
-        #self.box_r = .30
         self.camera_height = 1.5
 
         AgentVoxRender.__init__(self)

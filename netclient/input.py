@@ -3,22 +3,16 @@
 '''
 Client input
 '''
-
-
-from math import sin, cos, pi
-
-import default_settings as settings
-
 import opts
+opts = opts.opts
 
-#import c_lib.c_lib_input as cInput
 import c_lib.c_lib_input as cInput
-
-from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
-from init_c_lib import _toggle_latency_unit
-
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
+
+from math import sin, cos, pi
+from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
+from init_c_lib import _toggle_latency_unit
 
 #handles special characters
 Keystring = {}
@@ -172,9 +166,9 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         if InputGlobal.input == 'agent':
-            self._pan_agent(x, y, dx, dy, sen=opts.opts.mouse_sensitivity)
+            self._pan_agent(x, y, dx, dy, sen=opts.mouse_sensitivity)
         if InputGlobal.input == 'camera':
-            self._pan_camera(x, y, dx, dy, sen=opts.opts.camera_sensitivity)
+            self._pan_camera(x, y, dx, dy, sen=opts.camera_sensitivity)
 
     def _pan_agent(self, x, y, dx, dy, sen=50):
         GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
@@ -297,7 +291,7 @@ class Keyboard(object):
             self.key_handlers[key] = handler
 
     def toggle_hud(self):
-        opts.opts.hud = not opts.opts.hud
+        opts.hud = not opts.hud
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
@@ -358,7 +352,7 @@ class Keyboard(object):
         GameStateGlobal.agent.button_state = button_state
 
     def camera_input_mode(self, keyboard):
-        v = settings.camera_speed
+        v = opts.camera_speed
 
         if 'w' in keyboard:
             self.camera.move_camera(v,0,0)

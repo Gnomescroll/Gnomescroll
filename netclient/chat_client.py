@@ -3,9 +3,12 @@
 '''
 Chat client
 '''
-import default_settings as settings
 from time import time
 from collections import deque
+from json import dumps as encode_json
+from json import loads as decode_json
+from os import mkdir
+from os.path import exists as path_exists
 
 def now():
     return int(time() * 1000)
@@ -148,8 +151,6 @@ class ChatClient:
 
     # receive incoming message
     def receive(self, msg):
-        #print 'Received msg:'
-        #print msg
         channel = msg.get('channel', None)
         if channel is None:
             return
@@ -161,13 +162,6 @@ class ChatClient:
 
     # saves ignored list + subscription channel names
     def save(self):
-        try:
-            from simplejson import dumps as encode_json
-        except ImportError:
-            from json import dumps as encode_json
-        from os import mkdir
-        from os.path import exists as path_exists
-
         channels = [channel for channel in self.subscriptions.keys() if channel[0:3] != 'pm_']
         path_exists(CONFIG_PATH) or mkdir(CONFIG_PATH)
         with open(CONFIG_PATH + '/' + self._conf, 'w') as f:
@@ -178,30 +172,20 @@ class ChatClient:
 
     # loads saved ignore list & subscription channels
     def load(self):
-        try:
-            from simplejson import loads as decode_json
-        except ImportError:
-            from json import loads as decode_json
-        from os.path import exists as path_exists
-        #print 'loading channels from file'
         conf = CONFIG_PATH + '/' + self._conf
         channels = []
         if path_exists(conf):
             with open(conf, 'r') as f:
                 settings = decode_json(f.read())
-                #print settings
                 ignored = settings.get('ignored', None)
                 if ignored is not None:
                     self.ignored = ignored
                 channels = settings.get('subscriptions', channels)
-                #print channels
                 for channel in channels:
                     if channel[0:3] == 'pm_':
                         continue
-                    #print channel
                     
                     self.subscribe(channel)
-        #print 'done'
         return channels
 
     def system_notify(self, txt):
