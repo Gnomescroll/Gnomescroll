@@ -566,8 +566,9 @@ Data model for agent
 class AgentModel(AgentWrapper):
 
     HEALTH_MAX = 100
-    _RESPAWN_TIME = 1. # seconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
+    _RESPAWN_TIME = 1000. # milliseconds
+    _TICK_RATE = 30. # milliseconds
+    RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
     def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:

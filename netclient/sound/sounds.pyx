@@ -28,6 +28,8 @@ def init(enabled=True, soundfiles=None, sfxvol=1.0, musicvol=1.0):
     global _enabled
     if soundfiles is None:
         enabled = False
+    if sfxvol <= 0 and musicvol <= 0:
+        enabled = False
     _enabled = enabled
     _init(sfxvol, soundfiles)
 

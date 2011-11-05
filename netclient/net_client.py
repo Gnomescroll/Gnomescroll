@@ -125,7 +125,7 @@ class PacketDecoder:
 
 class TcpConnection:
     server = opts.server
-    tcp_port = opts.port
+    tcp_port = opts.tcp_port
     #settings
     noDelay = True
 
