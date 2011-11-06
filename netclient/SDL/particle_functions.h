@@ -1,7 +1,7 @@
 
 #include <compat_gl.h>
 
-#include "camera.h"
+//#include "camera.h"
 
 #include "math.h"
 

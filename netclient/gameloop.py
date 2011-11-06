@@ -27,6 +27,7 @@ import vox_lib
 import c_lib.c_lib_input as cInput
 import sound.sounds as sounds
 import world
+import c_lib.c_lib_camera as cCamera
 
 import c_lib.terrain_map
 import init_c_lib
@@ -54,6 +55,9 @@ from hud import Hud
 from animations import animations
 
 SDL.gl.set_resolution(opts.width, opts.height, fullscreen=(int(opts.fullscreen)))
+cCamera.init()
+cCamera.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen) # remove this once SDL_functions migrated to c_lib
+
 c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
 SDL.gl.camera_callback = c_lib.terrain_map.camera_callback
 #SDL.gl.init_particles()

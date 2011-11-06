@@ -2,7 +2,7 @@
     #define DC_CLIENT
 #endif
 
-#include "./c_lib.hpp"
+#include <c_lib.hpp>
 
 /* kill the compiler */
 #ifdef DC_SERVER 
@@ -21,8 +21,8 @@
 #include <c_lib/animations/animations.cpp>
 
 /* map */
-#include "./t_map/t_map.c"
-#include "./t_map/t_properties.c"
+#include <c_lib/t_map/t_map.c>
+#include <c_lib/t_map/t_properties.c>
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
@@ -30,16 +30,21 @@
 
 /* input */
 #ifdef DC_CLIENT
-    #include "c_lib/input/input.cpp"
+    #include <c_lib/input/input.cpp>
+#endif
+
+/* camera */
+#ifdef DC_CLIENT
+    #include <c_lib/camera/camera.c>
 #endif
 
 /* Vectors, Ray Tracers, Physics */
-#include "./physics/vector.c"
-#include "./ray_trace/ray_trace.c"
-#include "./physics/common.c"
+#include <c_lib/physics/vector.c>
+#include <c_lib/ray_trace/ray_trace.c>
+#include <c_lib/physics/common.c>
 
 /* Agents */
-#include "./agent/agent_include.h"
+#include <c_lib/agent/agent_include.h>
 
 /* HUD */
 #ifdef DC_CLIENT

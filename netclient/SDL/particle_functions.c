@@ -5,7 +5,20 @@
 SDL_Surface *surface;
 GLuint particle_texture;
 
-struct Camera* c;
+//hack
+struct Camera {
+float fov;
+float x_size,y_size;
+float ratio;
+float z_near, z_far;
+
+float x,y,z;
+float xl, yl, zl;
+float xu, yu, zu;
+float x_angle, y_angle;
+};
+struct Camera* c=NULL;
+
 
 float a[16];
 
@@ -54,7 +67,7 @@ int setShaders() {
     return 0;
 }
 
-_init_particle_functions() {
+int _init_particle_functions() {
 /*
     printf("set shaders\n");
     setShaders();
@@ -64,7 +77,7 @@ _init_particle_functions() {
 //    printf("t\n");
 //}
 
-c = _get_camera();
+//c = _get_camera();
 /*
     if(c != NULL) {
         printf("Particle Function Camera: Camera not null \n");
@@ -72,7 +85,7 @@ c = _get_camera();
         printf("Particle Function Camera: Error: camera is null \n");
     }
 */
-set_model_view_matrix(&a);
+//set_model_view_matrix(&a);
 
 surface=IMG_Load("./media/texture/particles_01.png");
 if(!surface) {

@@ -1,5 +1,6 @@
-#include "./input_functions.h"
+#include "./input.hpp"
 
+#include <c_lib/camera/camera.h>
 
 //event globals
 SDL_Event Event;
@@ -52,7 +53,23 @@ int _get_key_state(key_state_func key_state_cb) {
     return 0;
 }
 
+/* Separate Mouse querying for physics-independent camera */
+
+//static float* mouse_render_state[2];
+static int mouse_render_state[2];
+//float* get_mouse_render_state() {
+#define camera_sen 300.0f
+int* get_mouse_render_state() {
+    SDL_GetRelativeMouseState(&mouse_render_state[0], &mouse_render_state[1]);
+    //printf("%0.2f %0.2f\n", mouse_render_state[0], mouse_render_state[1]);
+    printf("%d %d\n", mouse_render_state[0], mouse_render_state[1]);
+    _pan_camera(((float)mouse_render_state[0])*-1.0f / camera_sen, ((float)mouse_render_state[1])*1.0f / camera_sen);
+    return mouse_render_state;
+}
+
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
+    get_mouse_render_state();
+
     int t; //temp
 
     if(MOUSE_BOUND) {

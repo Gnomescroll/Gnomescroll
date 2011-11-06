@@ -21,5 +21,11 @@ int _hud_projection(struct Camera* camera);
 int _set_camera(struct Camera* c);
 struct Camera* _get_camera();
 void _set_camera_state(float x, float y, float z, float theta, float phi);
+void _pan_camera(float dtheta, float dphi);
 
 void set_model_view_matrix(float *a);
+
+// redundant hack; remove this once SDL_functions are migrated to c_lib
+int _set_resolution_camera(int xres, int yres, int fullscreen);
+
+void init_camera_c();

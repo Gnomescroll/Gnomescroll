@@ -4,26 +4,26 @@ cimport libc.stdlib
 #type imports
 
 ## Camera.c ##
-cdef extern from "camera.h":
-    cdef struct Camera: #maybe public?
-        float fov
-        float x_size
-        float y_size
-        float z_near
-        float z_far
-        float x
-        float y
-        float z
-        float x_angle
-        float y_angle
-        float xl, yl, zl
-        float xu, yu, zu
-        float ratio
+#cdef extern from "camera.h":
+#    cdef struct Camera: #maybe public?
+#        float fov
+#        float x_size
+#        float y_size
+#        float z_near
+#        float z_far
+#        float x
+#        float y
+#        float z
+#        float x_angle
+#        float y_angle
+#        float xl, yl, zl
+#        float xu, yu, zu
+#        float ratio
 
-cdef extern from "camera.h":
-    int _world_projection(Camera* camera)
-    int _hud_projection(Camera* camera)
-    int _set_camera(Camera* c)
+#cdef extern from "camera.h":
+#    int _world_projection(Camera* camera)
+#    int _hud_projection(Camera* camera)
+#    int _set_camera(Camera* c)
 
 ## End Camera.c ##
 
@@ -145,18 +145,19 @@ from libc.stdlib cimport malloc, free
 camera_callback = None
 
 cdef class Global:
-    cdef Camera* camera
+#    cdef Camera* camera
     #textures = Textures()
 #    cdef Window window
 
     #make field of view adjustable!
     def __init__(self):
-        cdef Camera *camera
-        camera = <Camera *>malloc(sizeof(Camera))
-        self.camera = camera
-        _set_camera(camera)
-        self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
-        self.set_projection(0.,0.,0.,0.,0.)
+        pass
+#        cdef Camera *camera
+#        camera = <Camera *>malloc(sizeof(Camera))
+#        self.camera = camera
+#        _set_camera(camera)
+#        self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
+#        self.set_projection(0.,0.,0.,0.,0.)
 
     def init(self):
         print "Creating SDL OpenGL Window"
@@ -172,36 +173,36 @@ cdef class Global:
         _swap_buffers()
 
     #camera
-    def set_aspect(self, float fov, float x_size, float y_size, float z_near, float z_far):
-        cdef Camera* camera
-        camera = self.camera
+#    def set_aspect(self, float fov, float x_size, float y_size, float z_near, float z_far):
+#        cdef Camera* camera
+#        camera = self.camera
 
-        camera.fov = fov
-        camera.x_size = x_size
-        camera.y_size = y_size
-        camera.z_near = z_near
-        camera.z_far = z_far
+#        camera.fov = fov
+#        camera.x_size = x_size
+#        camera.y_size = y_size
+#        camera.z_near = z_near
+#        camera.z_far = z_far
 
-    def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
-        cdef Camera* camera
-        camera = self.camera
+#    def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
+#        cdef Camera* camera
+#        camera = self.camera
 
-        camera.x = x
-        camera.y = y
-        camera.z = z
-        camera.x_angle = x_angle
-        camera.y_angle = y_angle
+#        camera.x = x
+#        camera.y = y
+#        camera.z = z
+#        camera.x_angle = x_angle
+#        camera.y_angle = y_angle
 
-    def world_projection(self):
-        cdef Camera* c
-        _world_projection(self.camera)
-        global camera_callback
-        if camera_callback != None:
-            c = self.camera
-            camera_callback(c.x, c.y, c.z, c.xl, c.yl, c.zl, c.xu,c.yu, c.zu, c.ratio, c.fov)
+#    def world_projection(self):
+#        cdef Camera* c
+#        _world_projection(self.camera)
+#        global camera_callback
+#        if camera_callback != None:
+#            c = self.camera
+#            camera_callback(c.x, c.y, c.z, c.xl, c.yl, c.zl, c.xu,c.yu, c.zu, c.ratio, c.fov)
 
-    def hud_projection(self):
-        _hud_projection(self.camera)
+#    def hud_projection(self):
+#        _hud_projection(self.camera)
 
 ### init
 

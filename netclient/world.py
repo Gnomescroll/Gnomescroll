@@ -1,7 +1,6 @@
 import opts
 opts = opts.opts
 
-import SDL
 import random
 import c_lib.c_lib_agents
 
