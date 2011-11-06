@@ -25,7 +25,7 @@ class Camera(object):
     def hudProjection(self):
         c_lib.c_lib_sdl.SDL_global.hud_projection()
 
-    def update(self, poll_mouse=True):
+    def input_update(self, poll_mouse=True):
         if poll_mouse:
             dxa, dya = c_lib.c_lib_input.get_mouse_deltas()
             self.pan(*self._convert_mouse_deltas(dxa,dya))
@@ -68,12 +68,13 @@ class Camera(object):
         if self.mode != 'agent':
             self._save_position()
             self.mode = 'agent'
-        self._load_position(agent)
+            self._load_position(agent)
 
     def camera_view(self):
         if self.mode != 'camera':
-            self._load_position()
             self.mode = 'camera'
+            self._load_position()
+            self._save_position()
 
     def _save_position(self):
         self._x = self.x
@@ -91,7 +92,7 @@ class Camera(object):
         self.z = getattr(obj, prefix + 'z')
         if hasattr(obj, prefix + 'camera_height'):
             self.z += getattr(obj, prefix + 'camera_height')
-        #self.x_angle = getattr(obj, prefix + 'x_angle')
-        #self.y_angle = getattr(obj, prefix + 'y_angle')
+        self.x_angle = getattr(obj, prefix + 'x_angle')
+        self.y_angle = getattr(obj, prefix + 'y_angle')
 
 from game_state import GameStateGlobal

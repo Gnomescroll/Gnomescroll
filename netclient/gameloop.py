@@ -323,7 +323,8 @@ class App(object):
             
             P.event("Draw World")
             #import pdb; pdb.set_trace()
-            self.camera.update(poll_mouse = (InputGlobal.input == 'camera'))
+            self.camera.input_update(poll_mouse = (InputGlobal.input == 'camera'))
+
             self.world.draw(first_person)
             if GameStateGlobal.agent is not None:
                 GameStateGlobal.agent.draw_aiming_direction()
