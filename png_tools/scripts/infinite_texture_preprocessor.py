@@ -23,9 +23,6 @@ for x in os.listdir(texture_dir):
 exit()
 
 for tex_dir in texture_source_dirs:
-    x = png.Reader(filename = tex_dir+"source_texture.png")
-    #get x,y dimensions
-    width, height, pixels, meta = x.asRGBA8()
 
     import random
 
@@ -48,7 +45,9 @@ for tex_dir in texture_source_dirs:
 
     if os.path.isfile(tex_dir+'source_tile_1.png') and os.path.isfile(tex_dir+'source_tile_2.png'):
         print "Using user defined intial tiles"
+        user_source_tiles = 1
     else:
+        user_source_tiles = 0
         print "No user defined initial tiles: generating source tiles from source_texture.png"
         if random_x1 != -1:
             print "Using Random source tiles from source_texture.png: seed = %i" % (seed)
@@ -68,11 +67,6 @@ for tex_dir in texture_source_dirs:
     random_x2 = 32
     random_y2 = 32
     '''
-
-    print "source width, height = %i, %i" % (width, height)
-    print "color1: x1, y1 = %i, %i" % (random_x1, random_y1)
-    print "color2: x2, y2 = %i, %i" % (random_x2, random_y2)
-
     def empty_32():
         rows = []
         i2=0
@@ -89,98 +83,141 @@ for tex_dir in texture_source_dirs:
             rows[i] = [0,0,0,0] * 64
         return rows
 
-    def empty_64():
-        rows = []
-        i2=0
-        for i in range(0,64):
-            rows.insert(i,[])
-            rows[i] = [0,0,0,0] * 64
-        return rows
-
-    print "Moving source image into array"
-    pixel2 = []
-    for i in range(0,height):
-        pixel2.insert(i,[])
-        pixel2[i] = [0,0,0,0] * width
-    #print "stage 1 done"
-    i = 0
-    for row in pixels:
-        for j in range(0,width): #x is x
-            r = row[4*(j)+0]
-            g = row[4*(j)+1]
-            b = row[4*(j)+2]
-            a = row[4*(j)+3]
-            pixel2[i][4*j+0] = r
-            pixel2[i][4*j+1] = g
-            pixel2[i][4*j+2] = b
-            pixel2[i][4*j+3] = a
-        i += 1
-
-    print "Source image copied"
 
 
-    color1 = empty_32()
-    color2 = empty_32()
+    if user_source_tiles == 0:
+        print "source width, height = %i, %i" % (width, height)
+        print "source_tile_1: x1, y1 = %i, %i" % (random_x1, random_y1)
+        print "source_tile_2: x2, y2 = %i, %i" % (random_x2, random_y2)
+
+        print "Creating Source Tiles From Source Texture"
+
+        x = png.Reader(filename = tex_dir+"source_texture.png")
+        #get x,y dimensions
+        width, height, pixels, meta = x.asRGBA8()
+
+        #print "Moving source image into array"
+        pixel2 = []
+        for i in range(0,height):
+            pixel2.insert(i,[])
+            pixel2[i] = [0,0,0,0] * width
+        #print "stage 1 done"
+        i = 0
+        for row in pixels:
+            for j in range(0,width): #x is x
+                r = row[4*(j)+0]
+                g = row[4*(j)+1]
+                b = row[4*(j)+2]
+                a = row[4*(j)+3]
+                pixel2[i][4*j+0] = r
+                pixel2[i][4*j+1] = g
+                pixel2[i][4*j+2] = b
+                pixel2[i][4*j+3] = a
+            i += 1
+
+        #print "Source image copied"
+
+
+        color1 = empty_32()
+        color2 = empty_32()
+
+
+
+        #load 32x32 from source textures
+
+        #print "Loading color 1"
+        #load color1
+        xoff,yoff = random_x1, random_y1
+        i = 0
+        j= 0
+
+        for row in color1:
+            for j in range(32): #x is x
+                r = pixel2[i+yoff][4*(j+xoff)+0]
+                g = pixel2[i+yoff][4*(j+xoff)+1]
+                b = pixel2[i+yoff][4*(j+xoff)+2]
+                a = pixel2[i+yoff][4*(j+xoff)+3]
+                color1[i][4*j+0] = r
+                color1[i][4*j+1] = g
+                color1[i][4*j+2] = b
+                color1[i][4*j+3] = a
+            i += 1
+
+        #print "Loading color 2"
+        #load color 2
+        xoff,yoff = random_x2, random_y2
+        i = 0
+        j= 0
+        for row in color2:
+            for j in range(32): #x is x
+                r = pixel2[i+yoff][4*(j+xoff)+0]
+                g = pixel2[i+yoff][4*(j+xoff)+1]
+                b = pixel2[i+yoff][4*(j+xoff)+2]
+                a = pixel2[i+yoff][4*(j+xoff)+3]
+                color2[i][4*j+0] = r
+                color2[i][4*j+1] = g
+                color2[i][4*j+2] = b
+                color2[i][4*j+3] = a
+            i += 1
+
+    if user_source_tiles == 0:
+        print "Loading User Defined Source Tiles"
+
+        color1 = empty_32()
+        color2 = empty_32()
+
+        x = png.Reader(filename = tex_dir+"source_tile_0.png")
+        #get x,y dimensions
+        width, height, pixels, meta = x.asRGBA8()
+
+        pixel2 = []
+        for i in range(0,32):
+            pixel2.insert(i,[])
+            pixel2[i] = [0,0,0,0] * 32
+        #print "stage 1 done"
+        i = 0
+        for row in pixels:
+            for j in range(0,32): #x is x
+                r = row[4*(j)+0]
+                g = row[4*(j)+1]
+                b = row[4*(j)+2]
+                a = row[4*(j)+3]
+                color1[i][4*j+0] = r
+                color1[i][4*j+1] = g
+                color1[i][4*j+2] = b
+                color1[i][4*j+3] = a
+            i += 1
+
+        x = png.Reader(filename = tex_dir+"source_tile_1.png")
+        #get x,y dimensions
+        width, height, pixels, meta = x.asRGBA8()
+
+        pixel2 = []
+        for i in range(0,32):
+            pixel2.insert(i,[])
+            pixel2[i] = [0,0,0,0] * 32
+        #print "stage 1 done"
+        i = 0
+        for row in pixels:
+            for j in range(0,32): #x is x
+                r = row[4*(j)+0]
+                g = row[4*(j)+1]
+                b = row[4*(j)+2]
+                a = row[4*(j)+3]
+                color2[i][4*j+0] = r
+                color2[i][4*j+1] = g
+                color2[i][4*j+2] = b
+                color2[i][4*j+3] = a
+            i += 1
+
+        png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
+        with open(tex_dir+'out/source_tile_1.png', 'wb') as f:      # binary mode is important
+            png_out.write(f, color1)
+        with open(tex_dir+'out/source_tile_2.png', 'wb') as f:      # binary mode is important
+            png_out.write(f, color2)
+
 
     intermediate_tile = empty_64()
-
-    #load 32x32 from source textures
-
-    #print "Loading color 1"
-    #load color1
-    xoff,yoff = random_x1, random_y1
-    i = 0
-    j= 0
-
-    for row in color1:
-        for j in range(32): #x is x
-            r = pixel2[i+yoff][4*(j+xoff)+0]
-            g = pixel2[i+yoff][4*(j+xoff)+1]
-            b = pixel2[i+yoff][4*(j+xoff)+2]
-            a = pixel2[i+yoff][4*(j+xoff)+3]
-            color1[i][4*j+0] = r
-            color1[i][4*j+1] = g
-            color1[i][4*j+2] = b
-            color1[i][4*j+3] = a
-        i += 1
-
-    #print "Loading color 2"
-    #load color 2
-    xoff,yoff = random_x2, random_y2
-    i = 0
-    j= 0
-    for row in color2:
-        for j in range(32): #x is x
-            r = pixel2[i+yoff][4*(j+xoff)+0]
-            g = pixel2[i+yoff][4*(j+xoff)+1]
-            b = pixel2[i+yoff][4*(j+xoff)+2]
-            a = pixel2[i+yoff][4*(j+xoff)+3]
-            color2[i][4*j+0] = r
-            color2[i][4*j+1] = g
-            color2[i][4*j+2] = b
-            color2[i][4*j+3] = a
-        i += 1
-
-    print ""
-
-    png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
-    print "writing out"
-    with open(tex_dir+'source_tile_1.png', 'wb') as f:      # binary mode is important
-        png_out.write(f, color1)
-
-    print "writing out"
-    with open(tex_dir+'source_tile_2.png', 'wb') as f:      # binary mode is important
-        png_out.write(f, color2)
-
-    '''
-    index = 0
-    _list = []
-    for c1 in [color1, color2]:
-        for c2 in [color1, color2]:
-            for c3 in [color1, color2]:
-                for c4 in [color1, color2]:
-                    _list.append([c1,c2,c3,c4])
-    '''
 
     _list = []
 
@@ -324,10 +361,10 @@ for tex_dir in texture_source_dirs:
                 result[i][4*(j)+2] = b
                 result[i][4*(j)+3] = a
             i += 1
-        with open(tex_dir+'_out_%i.png' % (_i), 'wb') as f:      # binary mode is important
+        with open(tex_dir+'temp/_out_%i.png' % (_i), 'wb') as f:      # binary mode is important
             png_out.write(f, result)
 
-        with open(tex_dir+'out_%i.png' % (_i), 'wb') as f:      # binary mode is important
+        with open(tex_dir+'temp/out_%i.png' % (_i), 'wb') as f:      # binary mode is important
             png_out2.write(f, scratch)
         _i += 1
 '''
