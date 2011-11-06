@@ -35,11 +35,12 @@ def run():
     print str(lblock.block_list())
 
 class Texture_set:
-    def __init__(self, error_png="error.png", texture_dir="./block/"):
+    def __init__(self, error_png="./block/error.png", texture_dir="./block/"):
         self.texture_id_counter = 0
         self.texture_dir = texture_dir
         self.A = {}
         self.B = {}
+        self.C = {}
         self.list = [(error_png,255)]
     def add_texture(self,tex):
         #check if texture file exists
@@ -63,9 +64,12 @@ class Texture_set:
         return 255
     '''
     def g(self, tex):
+        if self.C.get(tex, None) != None:
+            return self.C.get(tex)
         id = self.A.get(tex, None)
         if id == None:
             id = self.add_texture(tex)
+        self.C[tex] = id
         return id
     def add_inf_tex(self, index, texname):
         tex = "./infinite_texture/"+texname+"/out/%02d.png" %(index)
@@ -191,8 +195,8 @@ class Block_template:
     def block_dictionary(self):
         pass
 
-block_tex = Texture_set(error_png="error.png", texture_dir="./block/") #block textures
-hud_tex = Texture_set(error_png="error.png", texture_dir="./block/")
+block_tex = Texture_set(error_png="./block/error.png", texture_dir="./block/") #block textures
+hud_tex = Texture_set(error_png="./block/error.png", texture_dir="./block/")
 lblock = Block_list()
 run()
 
@@ -203,7 +207,7 @@ print str(block_tex._texture_list())
 
 print "Writing out block textures"
 import spritesheet
-sprite = spritesheet.Spritesheet("test", "./block/", block_tex._texture_list())
+sprite = spritesheet.Spritesheet("test", "./", block_tex._texture_list())
 sprite.verify()
 sprite.generate()
 sprite.write_out("./blocks_01.png")
@@ -211,7 +215,7 @@ sprite.write_out("../netclient/media/texture/blocks_01.png")
 
 print "Writing out block selector hud textures"
 import spritesheet
-hud_sprite = spritesheet.Spritesheet("test", "./block/", hud_tex._texture_list())
+hud_sprite = spritesheet.Spritesheet("test", "./", hud_tex._texture_list())
 hud_sprite.verify()
 hud_sprite.generate()
 hud_sprite.write_out("./hud_block_selector.png")
