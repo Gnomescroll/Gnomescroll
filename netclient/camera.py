@@ -1,5 +1,4 @@
-#import SDL.gl
-import c_lib.c_lib_camera
+import c_lib.c_lib_sdl
 from math import sin, cos, pi
 
 base_dir = "./"
@@ -18,16 +17,12 @@ class Camera(object):
         self.mode = 'camera'
 
     def worldProjection(self):
-        #SDL.gl.SDL_global.swap_buffers()  ##move to end of drawing frame ??
         ## swap buffers from last frame
-        #SDL.gl.SDL_global.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
-        #SDL.gl.SDL_global.world_projection()
-        c_lib.c_lib_camera.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
-        c_lib.c_lib_camera.world_projection()
+        c_lib.c_lib_sdl.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        c_lib.c_lib_sdl.world_projection()
 
     def hudProjection(self):
-        #SDL.gl.SDL_global.hud_projection()
-        c_lib.c_lib_camera.hud_projection()
+        c_lib.c_lib_sdl.hud_projection()
 
     def move_camera(self, dx, dy, dz):
         if self.rts:

@@ -1,5 +1,5 @@
 cdef extern from "./camera/camera.h":
-    cdef struct Camera: #maybe public?
+    cdef struct Camera2: #maybe public?
         float fov
         float x_size
         float y_size
@@ -14,10 +14,9 @@ cdef extern from "./camera/camera.h":
         float xu, yu, zu
         float ratio
 
-cdef extern from "./camera/camera.h":
-    int _world_projection(Camera* camera)
-    int _hud_projection(Camera* camera)
-    int _set_camera(Camera* c)
+    int _world_projection(Camera2* camera2)
+    int _hud_projection(Camera2* camera2)
+    int _set_camera(Camera2* c)
     int _set_resolution_camera(int x, int y, int fullscreen)
     void init_camera_c()
 
@@ -31,48 +30,48 @@ from libc.stdlib cimport malloc, free
 # what the shit
 
 
-#camera
+#camera2
 def set_aspect(float fov, float x_size, float y_size, float z_near, float z_far):
-    cdef Camera* camera
-    camera = camera
+    cdef Camera2* camera2
+    camera2 = camera2
 
-    camera.fov = fov
-    camera.x_size = x_size
-    camera.y_size = y_size
-    camera.z_near = z_near
-    camera.z_far = z_far
+    camera2.fov = fov
+    camera2.x_size = x_size
+    camera2.y_size = y_size
+    camera2.z_near = z_near
+    camera2.z_far = z_far
 
 def set_projection(float x, float y, float z, float x_angle, float y_angle):
-    cdef Camera* camera
-    camera = camera
+    cdef Camera2* camera2
+    camera2 = camera2
 
-    camera.x = x
-    camera.y = y
-    camera.z = z
-    camera.x_angle = x_angle
-    camera.y_angle = y_angle
+    camera2.x = x
+    camera2.y = y
+    camera2.z = z
+    camera2.x_angle = x_angle
+    camera2.y_angle = y_angle
 
 def world_projection():
-    cdef Camera* c
-    _world_projection(camera)
+    cdef Camera2* c
+    _world_projection(camera2)
     global camera_callback
     if camera_callback != None:
-        c = camera
+        c = camera2
         camera_callback(c.x, c.y, c.z, c.xl, c.yl, c.zl, c.xu,c.yu, c.zu, c.ratio, c.fov)
 
 def hud_projection():
-    _hud_projection(camera)
+    _hud_projection(camera2)
 
-cdef Camera *camera
-#camera = <Camera *>malloc(sizeof(Camera))
-#_set_camera(camera)
+cdef Camera2 *camera2
+#camera2 = <Camera2 *>malloc(sizeof(Camera2))
+#_set_camera(camera2)
 #set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
 #set_projection(0.,0.,0.,0.,0.)
 
 def init():
-    init_camera_c()
-    global camera
-    camera = <Camera *>malloc(sizeof(Camera))
-    _set_camera(camera)
+#    init_camera_c()
+    global camera2
+    camera2 = <Camera2 *>malloc(sizeof(Camera2))
+    _set_camera(camera2)
     set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
     set_projection(0.,0.,0.,0.,0.)

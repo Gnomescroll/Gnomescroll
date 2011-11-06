@@ -4,7 +4,7 @@ opts = opts.opts
 
 import sound.sounds as sounds
 import c_lib.c_lib_objects as c_obj
-import SDL.gl
+import c_lib.c_lib_sdl
 
 from math import sin, cos, pi, ceil
 from vector_lib import distance, vector_between_points, normalize, vector_components, reflect
@@ -185,7 +185,7 @@ class Laser(Projectile):
 
     def draw(self):
         x,y,z = self.pos()
-        SDL.gl.draw_particle(5, 0.5, x,y,z) #was 5
+        #c_lib.c_lib_sdl.draw_particle(5, 0.5, x,y,z) #was 5
 
     def update_sound(self):
         if opts.sound:

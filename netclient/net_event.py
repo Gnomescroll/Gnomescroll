@@ -8,7 +8,7 @@ opts = opts.opts
 
 import json
 
-import SDL.gl #for timer function
+import c_lib.c_lib_sdl
 import stats
 import animations
 
@@ -164,7 +164,7 @@ class MiscMessageHandler(GenericMessageHandler):
         pass
 
     def _ping(self, timestamp, **msg):
-        stats.last_ping = SDL.gl.get_ticks() - timestamp
+        stats.last_ping = c_lib.c_lib_sdl.get_ticks() - timestamp
         #print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
 
 class MapMessageHandler(GenericMessageHandler):

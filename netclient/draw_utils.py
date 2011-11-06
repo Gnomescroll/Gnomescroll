@@ -2,7 +2,7 @@
 Drawing/rendering utilities
 '''
 
-import SDL.gl
+import c_lib.c_lib_sdl
 
 ### DRAWING STUFF ####
 
@@ -37,7 +37,7 @@ def draw_box(x_neg, x_pos, y_neg, y_pos, z_neg, z_pos, color = [255,0,0]):
         x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
         x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
         r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-        SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
+        c_lib.c_lib_sdl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 
 
@@ -99,7 +99,7 @@ def draw_sides( p_list):
         x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
         x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
         r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-        SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
+        c_lib.c_lib_sdl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 #deprecate
 def draw_cube( x,y,z, color = None):
@@ -161,13 +161,13 @@ def draw_cube( x,y,z, color = None):
         x0,y0,z0 = v_list[6*i], v_list[6*i+1], v_list[6*i+2]
         x1,y1,z1 = v_list[6*i+3], v_list[6*i+4], v_list[6*i+5]
         r,g,b = c_list[6*i], c_list[6*i+1], c_list[6*i+2]
-        SDL.gl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
+        c_lib.c_lib_sdl.draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
 
 def draw_line(v1, v2, color):
     r,g,b = color
     x1,y1,z1 = v1
     x2,y2,z2 = v2
-    SDL.gl.draw_line(r,g,b,x1,y1,z1,x2,y2,z2)
+    c_lib.c_lib_sdl.draw_line(r,g,b,x1,y1,z1,x2,y2,z2)
 
 def draw_ray(pt, v, l, color):
     pt1 = vector_lib.move_point(pt, v, l)
@@ -185,7 +185,7 @@ def draw_laser_ray(v1, v2, l, radius, fade, png_id):
     z2 *= l
     density = int(l)
     #print "density= %i" % (density)
-    SDL.gl.planar_laser2(density, radius, x1,y1,z1, x2,y2,z2)
+    c_lib.c_lib_sdl.planar_laser2(density, radius, x1,y1,z1, x2,y2,z2)
     #draw_utils.draw_laser_ray(self.loc, self.vector, self.length, self.color, radius, fade)
     #_planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1);
 

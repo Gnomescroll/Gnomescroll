@@ -18,16 +18,15 @@ import math
 import time
 import random
 
-import SDL
+#import SDL
 import stats
 import intervals
-import SDL.gl
-import SDL.hud
+#import SDL.gl
+#import SDL.hud
 import vox_lib
 import c_lib.c_lib_input as cInput
 import sound.sounds as sounds
 import world
-import c_lib.c_lib_camera as cCamera
 
 import c_lib.terrain_map
 import init_c_lib
@@ -54,13 +53,13 @@ from camera import Camera
 from hud import Hud
 from animations import animations
 
-SDL.gl.set_resolution(opts.width, opts.height, fullscreen=(int(opts.fullscreen)))
-cCamera.init()
-cCamera.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen) # remove this once SDL_functions migrated to c_lib
+c_lib.c_lib_sdl.set_resolution(opts.width, opts.height, fullscreen=(int(opts.fullscreen)))
+c_lib.c_lib_sdl.init_particles()
+c_lib.c_lib_sdl.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen) # remove this once SDL_functions migrated to c_lib
 
 c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
-SDL.gl.camera_callback = c_lib.terrain_map.camera_callback
-#SDL.gl.init_particles()
+c_lib.c_lib_sdl.camera_callback = c_lib.terrain_map.camera_callback
+#c_lib.c_lib_sdl.init_particles()
 
 P2 = c_lib.terrain_map.Profiler()
 
@@ -82,10 +81,9 @@ class App(object):
         ChatClientGlobal.init_1()
         MapControllerGlobal.init_1()
 
-        self.SDL_global = SDL.gl.SDL_global #drawing stuff
-        self.SDL_global.init()
+        c_lib.c_lib_sdl.SDL_global.init()
         cInput.init()
-        SDL.hud.init()
+        #SDL.hud.init()
 
         init_c_lib.init()
         cHUD.init_hud()
@@ -149,7 +147,7 @@ class App(object):
         ltick, ctick = 0,0
 
         if ping:
-            ping_n = SDL.gl.get_ticks()
+            ping_n = c_lib.c_lib_sdl.get_ticks()
 
         self.intervals.set()
         _i = 30
@@ -349,11 +347,11 @@ class App(object):
                 cHUD._draw_inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
 
             P.event("SDL flip")
-            self.SDL_global.flip()
+            c_lib.c_lib_sdl.flip()
             P.event("Misc")
             #FPS calculation
             if fps:
-                ctick = SDL.gl.get_ticks()
+                ctick = c_lib.c_lib_sdl.get_ticks()
                 #print str(ctick - ltick)
                 average.append(ctick-ltick)
                 ltick = ctick
@@ -367,9 +365,9 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if ping:
-                if SDL.gl.get_ticks() - ping_n > opts.ping_update_interval:
+                if c_lib.c_lib_sdl.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
-                    ping_n = SDL.gl.get_ticks()
+                    ping_n = c_lib.c_lib_sdl.get_ticks()
                     NetOut.miscMessage.ping()
                     ping_text = stats.last_ping
 

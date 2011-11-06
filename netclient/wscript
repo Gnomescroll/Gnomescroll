@@ -216,24 +216,24 @@ def build(bld):
         use=common_libraries+time_lib+SDL_libraries,
         target='c_lib')
 
-    bld(features='c cshlib pyext',
-        source=['SDL/SDL_functions.c',
-                #'SDL/camera.c',
-                'SDL/draw_functions.c',
-                'SDL/texture_loader.c',
-                'SDL/particle_functions.c',
-                'SDL/gl.pyx'],
-        use=common_libraries+SDL_libraries,
-        target='SDL.gl')
+    #bld(features='c cshlib pyext',
+        #source=['SDL/SDL_functions.c',
+                ##'SDL/camera.c',
+                #'SDL/draw_functions.c',
+                #'SDL/texture_loader.c',
+                #'SDL/particle_functions.c',
+                #'SDL/gl.pyx'],
+        #use=common_libraries+SDL_libraries,
+        #target='SDL.gl')
 
-    bld(features='c cshlib pyext',
-        source=['SDL/SDL_text.c',
-                'SDL/draw_functions.c',
-                'SDL/texture_loader.c',
-                'SDL/hud/block_selector.c',
-                'SDL/hud.pyx'],
-        use=SDL_libraries+common_libraries,
-        target='SDL.hud')
+    #bld(features='c cshlib pyext',
+        #source=['SDL/SDL_text.c',
+                #'SDL/draw_functions.c',
+                #'SDL/texture_loader.c',
+                #'SDL/hud/block_selector.c',
+                #'SDL/hud.pyx'],
+        #use=SDL_libraries+common_libraries,
+        #target='SDL.hud')
 
     '''
     bld(features='c cshlib pyext',
@@ -286,6 +286,11 @@ def build(bld):
         target='c_lib.c_lib_hud')
 
     bld(features='cxx cshlib pyext',
+        source=['c_lib/c_lib_sdl.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_sdl')
+
+    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_input.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_input')
@@ -295,10 +300,10 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_animations')
         
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_camera.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_camera')
+    #bld(features='cxx cshlib pyext',
+        #source=['c_lib/c_lib_camera.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='c_lib.c_lib_camera')
 
     # sound
     bld(features='c cshlib',
@@ -350,23 +355,24 @@ def install_in_ext(ctx):
         print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
 
-    targets = ['SDL.gl',
-               'SDL.hud',
-               'SDL.input',
-               'c_lib.terrain_map',
-               'vox_lib',
-               'c_lib._ray_trace',
-               'init_c_lib',
-               'c_lib.c_lib_objects',
-               'c_lib.c_lib_agents',
-               'c_lib.c_lib_hud',
-               #'c_lib.c_lib_agent_wrapper',
-               'c_lib.c_lib_input',
-               'c_lib.c_lib_animations',
-               'c_lib.c_lib_camera',
-               'csound',
-               'sound.sounds',  # cython .so's need to have same name as source
-               ]
+    targets = [
+        #'SDL.gl',
+       #'SDL.hud',
+       #'SDL.input',
+       'c_lib.terrain_map',
+       'vox_lib',
+       'c_lib._ray_trace',
+       'init_c_lib',
+       'c_lib.c_lib_objects',
+       'c_lib.c_lib_agents',
+       'c_lib.c_lib_hud',
+       'c_lib.c_lib_input',
+       'c_lib.c_lib_animations',
+       'c_lib.c_lib_sdl',
+       #'c_lib.c_lib_camera',
+       'csound',
+       'sound.sounds',  # cython .so's need to have same name as source
+    ]
 
     for target in targets:
         dest_path = target.replace('.', '/')
@@ -377,8 +383,9 @@ def install_in_ext(ctx):
                 target = target.replace('csound', 'libcsound')
                 dest_path = dest_path.replace('csound', 'libcsound')
             shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-        except:
-            print "Error2: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        except Exception, e:
+            print e
+            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
     install_libs()

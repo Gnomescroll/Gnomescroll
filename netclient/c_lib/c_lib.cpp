@@ -34,9 +34,11 @@
 #endif
 
 /* camera */
+/*
 #ifdef DC_CLIENT
-    #include <c_lib/camera/camera.c>
+#include <c_lib/camera/camera.c>
 #endif
+*/
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vector.c>
@@ -52,6 +54,17 @@
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/texture_loader.c>
     #include <c_lib/hud/hud_texture_loader.cpp>
+#endif
+
+/* SDL */
+#ifdef DC_CLIENT
+    #include <c_lib/SDL/camera.c>
+    #include <c_lib/SDL/draw_functions.c>
+    #include <c_lib/SDL/particle_functions.c>
+    #include <c_lib/SDL/SDL_functions.c>
+    #include <c_lib/SDL/SDL_text.c>
+    #include <c_lib/SDL/texture_loader.c>
+    #include <c_lib/SDL/block_selector.c>
 #endif
 
 /* Network */

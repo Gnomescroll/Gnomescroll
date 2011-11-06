@@ -11,7 +11,6 @@ import vox_lib
 import vector_lib
 import raycast_utils
 import vox
-import SDL.gl
 import c_lib.c_lib_objects
 import c_lib.c_lib_agents
 import c_lib._ray_trace
@@ -341,16 +340,10 @@ class AgentRender:
         print "Draw position Deprecated!"
         return
 
-        for i in range(0,v_num):
-            x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-            r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-            SDL.gl.draw_point(r,g,b,x,y,z)
-
     def draw_bounding_box(self):
         b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
         x = self.x;y = self.y;z = self.z
         c_lib.c_lib_agents._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
-        #draw box 2 high and then 3 high
 
     def draw_aiming_direction(self, distance=50):
         c_lib.c_lib_agents._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
