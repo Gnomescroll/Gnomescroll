@@ -108,4 +108,3 @@ void _pan_camera(float dtheta, float dphi) {    // args are deltas
         camera->x_angle = -0.499f;
     }
 }
-

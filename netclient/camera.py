@@ -1,3 +1,5 @@
+import opts
+opts = opts.opts
 import c_lib.c_lib_sdl
 from math import sin, cos, pi
 
@@ -18,11 +20,20 @@ class Camera(object):
 
     def worldProjection(self):
         ## swap buffers from last frame
-        c_lib.c_lib_sdl.SDL_global.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
         c_lib.c_lib_sdl.SDL_global.world_projection()
 
     def hudProjection(self):
         c_lib.c_lib_sdl.SDL_global.hud_projection()
+
+    def update(self):
+        dxa, dya = c_lib.c_lib_input.get_mouse_deltas()
+        self.pan(*self._convert_mouse_deltas(dxa,dya))
+        c_lib.c_lib_sdl.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
+
+    def _convert_mouse_deltas(self, dx, dy):
+        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
+        dy = (float(-dy) * opts.sensitivity) / 40000.
+        return dx,dy
 
     def move_camera(self, dx, dy, dz):
         if self.rts:

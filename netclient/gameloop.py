@@ -323,6 +323,7 @@ class App(object):
             
             P.event("Draw World")
             #import pdb; pdb.set_trace()
+            self.camera.update()
             self.world.draw(first_person)
             P.event("Animations Draw")
             self.animations.draw()

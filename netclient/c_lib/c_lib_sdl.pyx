@@ -21,6 +21,10 @@ cdef extern from "./SDL/camera.h":
     int _world_projection(Camera* camera)
     int _hud_projection(Camera* camera)
     int _set_camera(Camera* c)
+    void _set_camera_state(float x, float y, float z, float theta, float phi)
+
+def set_projection(float x, float y, float z, float x_angle, float y_angle):
+    _set_camera_state(x,y,z, x_angle, y_angle);
 
 ## Texture Loader ##
 cdef extern from "./SDL/SDL.h":
@@ -279,17 +283,4 @@ class block_selector:
 
     def draw(self):
         draw_block_selector(self.x, self.y)
-
-'''
-New
-'''
-def set_projection(float x, float y, float z, float x_angle, float y_angle):
-    cdef Camera* camera
-    camera = camera
-
-    camera.x = x
-    camera.y = y
-    camera.z = z
-    camera.x_angle = x_angle
-    camera.y_angle = y_angle
 

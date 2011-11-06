@@ -165,16 +165,17 @@ class Mouse(object):
         #    self._pan_agent(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if InputGlobal.input == 'agent':
-            self._pan_agent(dx, dy, sen=opts.mouse_sensitivity)
-        if InputGlobal.input == 'camera':
-            self._pan_camera(dx, dy, sen=opts.camera_sensitivity)
+        pass
+        #if InputGlobal.input == 'agent':
+            #self._pan_agent(dx, dy, sen=opts.mouse_sensitivity)
+        #if InputGlobal.input == 'camera':
+            #self._pan_camera(dx, dy, sen=opts.camera_sensitivity)
 
-    def _pan_agent(self, dx, dy, sen):
-        GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
+    #def _pan_agent(self, dx, dy, sen):
+        #GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
-    def _pan_camera(self, dx, dy, sen):
-        self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
+    #def _pan_camera(self, dx, dy, sen):
+        #self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
 
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down

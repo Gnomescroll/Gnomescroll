@@ -29,9 +29,7 @@ fullscreen      Run game in fullscreen
 width           Window width
 height          Window height
 
-sensitivity     Global mouse sensitivity
-mouse-sensitivity   Mouse sensitivity for player agent (Overrides sensitivity)
-camera-sensitivity  Mouse sensitivity for camera (Override sensitivity)
+sensitivity     Mouse sensitivity
 camera-speed    Camera speed
 
 no-hud          Don't display HUD elements on start (Enable in game with /)
@@ -80,8 +78,6 @@ DEFAULTS = {
     
     # Controls
     'sensitivity'        : settings.sensitivity,
-    'mouse_sensitivity'  : settings.mouse_sensitivity,
-    'camera_sensitivity' : settings.camera_sensitivity,
     'camera_speed'  :   settings.camera_speed,
 
     # HUD / Info Panels
@@ -91,20 +87,6 @@ DEFAULTS = {
     'sfx'       :   settings.sfx,
     'music'     :   settings.music,
 }
-
-def load_defaults():
-    global DEFAULTS
-
-    if hasattr(settings, 'sensitivity'):
-        DEFAULTS['sensitivity'] = settings.sensitivity
-
-    for prop in ['mouse_sensitivity', 'camera_sensitivity']:
-        if hasattr(settings, prop):
-            DEFAULTS[prop] = getattr(settings, prop)
-        else:
-            DEFAULTS[prop] = DEFAULTS['sensitivity']
-        
-load_defaults()
 
 def parse(cl_args=None):
     parser = argparse.ArgumentParser(description="Client", prog="Gnomescroll")
@@ -131,9 +113,7 @@ def parse(cl_args=None):
     parser.add_argument('-y', '--height', default=DEFAULTS['height'], type=int)
 
     ''' Controls '''
-    parser.add_argument('-sen', '--sensitivity', default=argparse.SUPPRESS, type=int)
-    parser.add_argument('-csen', '--camera-sensitivity', default=argparse.SUPPRESS, type=int)
-    parser.add_argument('-msen', '--mouse-sensitivity', default=argparse.SUPPRESS, type=int)
+    parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=int)
     parser.add_argument('-cs', '--camera-speed', default=DEFAULTS['camera_speed'], type=float)
 
     ''' HUD/Info panels '''
@@ -192,23 +172,6 @@ def postprocess_args(args):
     ''' Window '''
     if not args.fullscreen:
         args.fullscreen = settings.fullscreen
-
-    ''' Controls '''
-    # if -sen --sensitivity is provided on the command line, override all sensitivity,
-    # except other cli sensitivities
-    # e.g. ./run -sen 500           --- mouse and camera sen 500
-    # e.g. ./run -sen 500 -csen 200 --- mouse 500, camera 200
-    # e.g. ./run -msen 200          --- mouse 200, camera is either settings.camera_sensitivity, settings.sensitivity, or DEFAULTS['sensitivity'] (in decreasing priority order)
-    sen_cli_defined = hasattr(args, 'sensitivity')
-    for prop in ['mouse_sensitivity', 'camera_sensitivity']:
-        if not hasattr(args, prop):
-            if sen_cli_defined:
-                sen_attr = args.sensitivity
-            else:
-                sen_attr = DEFAULTS[prop]
-            setattr(args, prop, sen_attr)
-    if not sen_cli_defined:
-        args.sensitivity = DEFAULTS['sensitivity']
 
     ''' HUD/Info panels '''
     if not args.diagnostic_hud:
