@@ -33,7 +33,6 @@ int _world_projection(struct Camera* c_cam) {
     c_cam->y_size = (float) _yres;
 
     float aspect = c_cam->x_size / c_cam->y_size;
-    float length;
 
     c_cam->ratio = c_cam->x_size / c_cam->y_size;
 
@@ -49,8 +48,6 @@ int _world_projection(struct Camera* c_cam) {
     c_cam->xl = c_cam->x + cos( c_cam->x_angle * PI) * cos( c_cam->y_angle * PI);
     c_cam->yl = c_cam->y + sin( c_cam->x_angle * PI) * cos( c_cam->y_angle * PI);
     c_cam->zl = c_cam->z + sin( c_cam->y_angle);
-
-    length = sqrt(c_cam->xl*c_cam->xl + c_cam->yl*c_cam->yl + c_cam->zl*c_cam->zl);
 
     c_cam->xu = 0;
     c_cam->yu = 0;

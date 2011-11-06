@@ -21,7 +21,8 @@ namespace ClientState {
     PlayerAgent_state playerAgent_state;
 
     int active_agent = 0;
-    int agent_control_state[16] = {NULL};
+    //int agent_control_state[16] = {NULL};
+    int agent_control_state[16];
         
     void InitClientState() {
     }
