@@ -363,7 +363,7 @@ for tex_dir in texture_source_dirs:
             i += 1
 
         png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
-        with open(tex_dir+'out/out_%02d.png' % (_i), 'wb') as f:      # binary mode is important
+        with open(tex_dir+'out/_%02d.png' % (_i), 'wb') as f:      # binary mode is important
             png_out.write(f, result)
         '''
         png_out2 = png.Writer(width=64, height=64, alpha=True, bitdepth=8, transparent=None)

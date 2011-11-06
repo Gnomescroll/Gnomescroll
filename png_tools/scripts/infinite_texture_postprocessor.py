@@ -41,6 +41,7 @@ def runtest(filename, testname, testcommand, testparameters, out, indir, outdir)
     infilepath = indir + filename
     outfilepath = outdir + out + '.png'
 
+    print "filename= %s%s" % (outdir, filename)
     #open file
     image = pdb.gimp_file_load(infilepath, infilepath, run_mode=RUN_NONINTERACTIVE)
     drawable = pdb.gimp_image_get_active_layer(image)
@@ -61,7 +62,7 @@ def runtest(filename, testname, testcommand, testparameters, out, indir, outdir)
 
     # Build a test string
     teststring = testcommand + "(image, drawable," + testparameters + ",run_mode=RUN_NONINTERACTIVE)"
-    logging.info("Test string:" + teststring)
+    #logging.info("Test string:" + teststring)
 
     # Invoke the test
     # Formerly: eval(teststring) but eval only takes expressions, not statements
@@ -93,26 +94,23 @@ def empty_128():
 for tex_dir in texture_source_dirs:
 
     # Open the log
-    LOG_FILENAME = 'resynth-test.log'
-    logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+    #LOG_FILENAME = 'resynth-test.log'
+    #logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 
     test = "pdb.plug_in_resynthesizer"
 
     print "source_image = %s " % (tex_dir+"source_texture.png")
     for _i in range(0,16):
-        print "image in= %sout_%02d.png" % (tex_dir, _i))
-        print "image out= %simg_%02d.png" % (tex_dir, _i))
+        #print "image in= out/_%02d.png" % (_i)
+        #print "image out= %02d"%(_i) % (_i)
         parameters = "0,0, True, drawable_of_file('"+ tex_dir+"source_texture.png" + "').ID, -1, -1, 0.0, 0.117, 16, 500"
-        runtest("%sout_%02d.png" % (tex_dir, _i)), 'resynthtwoimages', test, parameters, out="%simg_%02d"%(tex_dir,_i))
+        runtest("out/_%02d.png" % (_i), 'resynthtwoimages', test, parameters, out="%02d"%(_i), indir = tex_dir, outdir = tex_dir+ "out/")
 
-
-tileset = empty_128()
-debugset = empty_128()
-
-for tex_dir in texture_source_dirs:
+    tileset = empty_128()
+    debugset = empty_128()
     for _i in range(0,16):
 
-        x = png.Reader(filename = "%simg_%02d"%(tex_dir,_i))
+        x = png.Reader(filename = "%sout/%02d.png"%(tex_dir,_i))
         width, height, pixels, meta = x.asRGBA8()
 
         xoff = 32 * (_i%4)
@@ -131,7 +129,7 @@ for tex_dir in texture_source_dirs:
                 tileset[i+yoff][4*(j+xoff)+3] = a
             i += 1
 
-        x = png.Reader(filename = '_out_%i.png' % (_i))
+        x = png.Reader(filename = "%sout/_%02d.png"%(tex_dir,_i))
         width, height, pixels, meta = x.asRGBA8()
         xoff = 32 * (_i%4)
         yoff = 32 * int( (_i-(_i%4))/4)
@@ -150,11 +148,12 @@ for tex_dir in texture_source_dirs:
             i += 1
 
     png_out = png.Writer(width=128, height=128, alpha=True, bitdepth=8, transparent=None)
-    #print "writing out"
+    print "Finished %s" % (tex_dir)
     with open(tex_dir+'out/wang_array.png', 'wb') as f:      # binary mode is important
         png_out.write(f, tileset)
     with open(tex_dir+'out/debug_array.png', 'wb') as f:      # binary mode is important
         png_out.write(f, debugset)
+
 
 
 pdb.gimp_quit(True)
