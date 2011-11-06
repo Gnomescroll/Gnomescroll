@@ -123,7 +123,7 @@ cdef class Global:
         self.camera = camera
         _set_camera(camera)
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
-        self.set_projection(0.,0.,0.,0.,0.)
+        self._set_projection(0.,0.,0.,0.,0.)
 
     def init(self):
         print "Creating SDL OpenGL Window"
@@ -147,7 +147,8 @@ cdef class Global:
         camera.z_near = z_near
         camera.z_far = z_far
 
-    def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
+    def _set_projection(self, float x, float y, float z, float x_angle, float y_angle):
+        print "SDL_Global set camera state"
         cdef Camera* camera
         camera = self.camera
 

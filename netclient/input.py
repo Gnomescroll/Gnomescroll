@@ -164,15 +164,19 @@ class Mouse(object):
         #if InputGlobal.input == 'agent':
         #    self._pan_agent(x, y, dx, dy)
 
+    def _apply_sensitivity(self, dx, dy):
+        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
+        dy = (float(-dy) * opts.sensitivity) / 40000.
+        return dx,dy
+
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
-        #if InputGlobal.input == 'agent':
-            #self._pan_agent(dx, dy, sen=opts.mouse_sensitivity)
+        if InputGlobal.input == 'agent':
+            self._pan_agent(*self._apply_sensitivity(dx, dy))
         #if InputGlobal.input == 'camera':
             #self._pan_camera(dx, dy, sen=opts.camera_sensitivity)
 
-    #def _pan_agent(self, dx, dy, sen):
-        #GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
+    def _pan_agent(self, dx, dy):
+        GameStateGlobal.agent.pan(dx, dy)
 
     #def _pan_camera(self, dx, dy, sen):
         #self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)

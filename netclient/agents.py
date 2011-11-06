@@ -1067,7 +1067,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if self._y_angle > 0.499:
             self._y_angle = 0.499
 
-
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():
             return
