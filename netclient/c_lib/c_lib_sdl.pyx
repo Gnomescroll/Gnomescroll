@@ -34,11 +34,6 @@ cdef extern from "./SDL/texture_loader.h":
     int _create_block_texture(char *file) #deprecate
     int _create_texture(SDL_Surface* surface)
 
-cdef int testt():
-    cdef int i
-    i = _init_image_loader()
-    return i
-
 cdef SDL_Surface* load_image(char* file):
     cdef SDL_Surface* surface
     surface = _load_image(file)

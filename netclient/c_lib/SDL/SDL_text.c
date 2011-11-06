@@ -1,7 +1,7 @@
 #include "SDL_text.h"
 
-static GLuint fontTextureId;
-static int tex_alpha = 1;
+GLuint fontTextureId;
+int tex_alpha = 1;
 
 int _init_text() {
 
@@ -106,24 +106,25 @@ int _draw_text2(char* text, float x, float y, float height, float width, float d
     return 0;
 }
 
-
-
 int _draw_text(char* text, float x, float y, float height, float width, float depth) {
 
-int c_num = 0;
+    int c_num = 0;
 
-int i;
-float offset = x;
-int index,xi,yi;
-float x_min, x_max, y_min, y_max;
+    int i;
+    float offset = x;
+    int index,xi,yi;
+    float x_min, x_max, y_min, y_max;
 
-float Xmin,Xmax, Ymin,Ymax;
+    float Xmin,Xmax, Ymin,Ymax;
 
-while(text[c_num] != 0) { c_num++; }
+    while(text[c_num] != 0) {
+        c_num++;
+    }
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, fontTextureId);
-    for(i=0; i<c_num; i++){
+
+    for(i=0; i<c_num; i++) {
         index = text[i];
         xi = index % 16;
         yi = index >> 4;

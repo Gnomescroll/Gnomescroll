@@ -1,4 +1,3 @@
-
 #include "texture_loader.h"
 
 int particle_texture_id;

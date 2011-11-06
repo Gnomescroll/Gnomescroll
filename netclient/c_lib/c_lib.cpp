@@ -77,6 +77,7 @@ int init_c_lib() {
     #ifdef DC_CLIENT
         init_texture_loader();
         init_hud_texture_loader();
+        _init_image_loader();
     #endif
 return 0;
 }
