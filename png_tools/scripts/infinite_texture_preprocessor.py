@@ -27,29 +27,39 @@ for tex_dir in texture_source_dirs:
     #get x,y dimensions
     width, height, pixels, meta = x.asRGBA8()
 
-
-    #Return a random integer N such that a <= N <= b.
-    #random.randint(a, b)
-
-    #choose 2 random spots
-
     import random
 
+    print "Processing %s" % (tex_dir)
 
     seed = None
+
+    random_x1 = -1
+    random_y1 = -1
+
+    random_x2 = -1
+    random_y2 = -1
+
     try:
-        execfile("seed.py") #should have seed = number
+        execfile(tex_dir+"config.py") #should have seed = number
         random.seed(seed)
     except:
         print "No seed.py file"
 
 
-    random_x1 = random.randint(0, width-32)
-    random_y1 = random.randint(0, height-32)
+    if os.path.isfile(tex_dir+'source_tile_1.png') and os.path.isfile(tex_dir+'source_tile_2.png'):
+        print "Using user defined intial tiles"
+    else:
+        print "No user defined initial tiles: generating source tiles from source_texture.png"
+        if random_x1 != -1:
+            print "Using Random source tiles from source_texture.png: seed = %i" % (seed)
+            random_x1 = random.randint(0, width-32)
+            random_y1 = random.randint(0, height-32)
 
-    random_x2 = random.randint(0, width-32)
-    random_y2 = random.randint(0, height-32)
-
+            random_x2 = random.randint(0, width-32)
+            random_y2 = random.randint(0, height-32)
+        else:
+            print "Using user defined source tile cordinates"
+    ##add support for user defined color1 and color2
 
     '''
     random_x1 = 0
@@ -59,10 +69,9 @@ for tex_dir in texture_source_dirs:
     random_y2 = 32
     '''
 
-    print "source width= %i" % (width)
-    print "source height= %i" % (height)
-    print "x1, y1 = %i, %i" % (random_x1, random_y1)
-    print "x2, y2 = %i, %i" % (random_x2, random_y2)
+    print "source width, height = %i, %i" % (width, height)
+    print "color1: x1, y1 = %i, %i" % (random_x1, random_y1)
+    print "color2: x2, y2 = %i, %i" % (random_x2, random_y2)
 
     def empty_32():
         rows = []
@@ -117,7 +126,7 @@ for tex_dir in texture_source_dirs:
 
     #load 32x32 from source textures
 
-    print "Loading color 1"
+    #print "Loading color 1"
     #load color1
     xoff,yoff = random_x1, random_y1
     i = 0
@@ -135,7 +144,7 @@ for tex_dir in texture_source_dirs:
             color1[i][4*j+3] = a
         i += 1
 
-    print "Loading color 2"
+    #print "Loading color 2"
     #load color 2
     xoff,yoff = random_x2, random_y2
     i = 0
@@ -156,11 +165,11 @@ for tex_dir in texture_source_dirs:
 
     png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
     print "writing out"
-    with open(tex_dir+'color_1.png', 'wb') as f:      # binary mode is important
+    with open(tex_dir+'source_tile_1.png', 'wb') as f:      # binary mode is important
         png_out.write(f, color1)
 
     print "writing out"
-    with open(tex_dir+'color_2.png', 'wb') as f:      # binary mode is important
+    with open(tex_dir+'source_tile_2.png', 'wb') as f:      # binary mode is important
         png_out.write(f, color2)
 
     '''
