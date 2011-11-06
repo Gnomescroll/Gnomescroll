@@ -41,8 +41,8 @@ for tex_dir in texture_source_dirs:
         execfile(tex_dir+"config.py") #should have seed = number
         random.seed(seed)
     except:
-        print "No seed.py file"
-
+        print "No config.py file"
+        random.seed(1) #use default seed
 
     if os.path.isfile(tex_dir+'source_tile_1.png') and os.path.isfile(tex_dir+'source_tile_2.png'):
         print "Using user defined intial tiles"

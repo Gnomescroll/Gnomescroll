@@ -44,7 +44,8 @@ class Texture_set:
     def add_texture(self,tex):
         #check if texture file exists
         #if texture file does not exist, then return 255
-        if not os.path.exists(self.texture_dir+tex):
+        tex = self.texture_dir + tex
+        if not os.path.exists(tex):
             print "Error: texture file does not exist, %s" %(str(tex))
             self.A[tex] = 255
             return 255
@@ -65,6 +66,19 @@ class Texture_set:
         id = self.A.get(tex, None)
         if id == None:
             id = self.add_texture(tex)
+        return id
+    def add_inf_tex(self, index, texname):
+        tex = "./infinite_texture/"+texname+"/out/%02d.png" %(index)
+        if not os.path.isfile(tex):
+            print "Error: infinite texture tile does not exist, %s" %(str(tex))
+            assert False
+            self.A[tex] = 255
+            return 255
+        self.A[tex] = self.texture_id_counter
+        self.B[self.texture_id_counter] = tex
+        id= self.texture_id_counter
+        self.list.append((tex,id))
+        self.texture_id_counter +=1
         return id
     def texture_list(self):
         return self.list
@@ -111,6 +125,9 @@ class Block_template:
         self.type = 1
         self.hud_img = -1    #not handling undefined case
         self.transparency = 0 #default
+        self.infinite_texture_level = 0 #default
+        self.infinite_texture = None
+        self.infinite_texture_array = []
     def set_name(self,name):
         self.name = name
     def set_id(self, id):
@@ -125,6 +142,19 @@ class Block_template:
         print "%s, %s" % (s2, s3)
         self.hud_pos = int(s2)
         self.hud_img = hud_tex.g(s3)    #eventually may want to use seperate one for hud
+    def set_infinite_texture(self, level, texname):
+        self.infinite_texture_level = level
+        self.infinite_texture = texname
+        if level == 2:
+            for _i in range(0,16):
+                self.infinite_texture_array.insert(_i, block_tex.add_inf_tex(_i, texname))
+        elif level == 3:
+            for _i in range(0,81):
+                pass
+        else:
+            print "Invalid Argument for level: must be 2 or 3"
+            print "level = %s" % (str(level))
+            assert False
     def pinput(self, s1,s2,s3=None):
         global hud_tex, block_tex
         if s1 == "id":
@@ -137,6 +167,8 @@ class Block_template:
             self.set_transparency(s2)
         elif s1 == "type":
             self.set_type(s2)
+        elif s1 == "infinite_texture":
+            self.set_infinite_texture(int(s2), s3)
         elif s1 == "top":
             self.side[0] = block_tex.g(s2)
         elif s1 == "bottom":
