@@ -31,6 +31,7 @@ height          Window height
 
 sensitivity     Mouse sensitivity
 camera-speed    Camera speed
+invert-mouse    Invert mouse (mouse down is camera up)
 
 no-hud          Don't display HUD elements on start (Enable in game with /)
 disable-diagnostic-hud  Don't display diagnostic HUD elements
@@ -115,6 +116,7 @@ def parse(cl_args=None):
     ''' Controls '''
     parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=int)
     parser.add_argument('-cs', '--camera-speed', default=DEFAULTS['camera_speed'], type=float)
+    parser.add_argument('-im', '--invert-mouse', action='store_true')
 
     ''' HUD/Info panels '''
     parser.add_argument('-nh', '--no-hud', action='store_true', dest='hud')
@@ -172,6 +174,10 @@ def postprocess_args(args):
     ''' Window '''
     if not args.fullscreen:
         args.fullscreen = settings.fullscreen
+
+    ''' Controls '''
+    if not args.invert_mouse:
+        args.invert_mouse = settings.invert_mouse
 
     ''' HUD/Info panels '''
     if not args.diagnostic_hud:

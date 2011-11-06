@@ -1059,7 +1059,14 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.y_angle
         )
 
+    def _apply_sensitivity(self, dx, dy):
+        invert = -1 if opts.invert_mouse else 1
+        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
+        dy = (float(invert*dy) * opts.sensitivity) / 40000.
+        return dx,dy
+
     def pan(self, dx_angle, dy_angle):
+        dx_angle, dy_angle = self._apply_sensitivity(dx_angle, dy_angle)
         self._x_angle += dx_angle
         self._y_angle += dy_angle
         if self._y_angle < -0.499:

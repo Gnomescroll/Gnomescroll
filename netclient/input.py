@@ -133,12 +133,14 @@ class InputGlobal:
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
         if curr is not None:
             current_mode[0] = curr
+        print 'input mode is %s' % curr
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
             current_mode[0] = curr
+        print 'camera mode is %s' % curr
 
     @classmethod
     def enable_chat(cls):
@@ -164,14 +166,9 @@ class Mouse(object):
         #if InputGlobal.input == 'agent':
         #    self._pan_agent(x, y, dx, dy)
 
-    def _apply_sensitivity(self, dx, dy):
-        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
-        dy = (float(-dy) * opts.sensitivity) / 40000.
-        return dx,dy
-
     def on_mouse_motion(self, x, y, dx, dy):
         if InputGlobal.input == 'agent':
-            self._pan_agent(*self._apply_sensitivity(dx, dy))
+            self._pan_agent(dx, dy)
         #if InputGlobal.input == 'camera':
             #self._pan_camera(dx, dy, sen=opts.camera_sensitivity)
 
