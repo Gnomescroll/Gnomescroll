@@ -129,8 +129,6 @@ cdef class Global:
     def init(self):
         print "Creating SDL OpenGL Window"
         _init_video()
-        init_particles()
-
 
     def close_window(self):
         print "Deconstructing SDL OpenGL Window"
