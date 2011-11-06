@@ -8,7 +8,7 @@ typedef struct {
     int h;
 } Texture;
 
-Texture hud_texture;
+static Texture hud_texture;
 void _load_hud_texture(char *file) {
     SDL_Surface *surface;
 
@@ -32,7 +32,7 @@ void _draw_loaded_hud_texture(int x, int y) {
     _blit_sprite2(hud_texture.tex, x, y, x1, y1, 0);
 }
 
-Texture block_selector_texture;
+static Texture block_selector_texture;
 void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
 

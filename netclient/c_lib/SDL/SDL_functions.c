@@ -9,9 +9,7 @@ static SDL_Surface *pSDLSurface;
 static const SDL_VideoInfo *pSDLVideoInfo;
 
 void _del_video() {
-    //printf("SDL_functions.c: _del_video, gracefull shutdown\n");
     SDL_Quit();
-    //return 0;
 }
 
 int _set_resolution(int xres, int yres, int fullscreen) {
@@ -21,7 +19,7 @@ int _set_resolution(int xres, int yres, int fullscreen) {
     return 0;
 }
 
-int _multisampling = 0;
+static int _multisampling = 0;
 
 int _init_video() {
     int nFlags;
@@ -31,7 +29,6 @@ int _init_video() {
     SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
     SDL_WM_SetCaption( "SDL + OpenGL", NULL );
-    //const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
     pSDLVideoInfo = SDL_GetVideoInfo();
 
     if( !pSDLVideoInfo )
@@ -107,19 +104,6 @@ int _init_video() {
         glDisable(GL_MULTISAMPLE);
     }
     SDL_ShowCursor(SDL_DISABLE);
-    //glEnable(GL_TEXTURE_2D); // ??? Needed?
-
-    //whaa
-
-    //glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-    //glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
-/*
-    glEnable( GL_TEXTURE_2D );
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective( 45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
-*/
 
     atexit(_del_video);
 
@@ -129,9 +113,6 @@ int _init_video() {
     else {
         printf("OpenGL 2.0 not supported \n");
     }
-
-    //multisample_test();
-    //return 0;
 
     if(GLEW_ARB_multisample) {
         printf("ARB_MULTISAMPLE supported \n");
@@ -144,11 +125,10 @@ int _init_video() {
 
 int _swap_buffers() {
     SDL_GL_SwapBuffers();
-    //printf( "swap buffers\n");
     return 0;
 }
 
 int _get_ticks() {
-return SDL_GetTicks();
+    return SDL_GetTicks();
 }
 
