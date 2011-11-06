@@ -17,7 +17,7 @@ for x in os.listdir(texture_dir):
         print texture_dir + x + "/"
         texture_source_dirs.append(texture_dir + x + "/")
         try:
-            os.mkdir(texture_dir + x + "/temp")
+            #os.mkdir(texture_dir + x + "/temp")
             os.mkdir(texture_dir + x + "/out")
         except:
             pass
@@ -363,37 +363,14 @@ for tex_dir in texture_source_dirs:
             i += 1
 
         png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
-        with open(tex_dir+'temp/_out_%i.png' % (_i), 'wb') as f:      # binary mode is important
+        with open(tex_dir+'out/out_%02d.png' % (_i), 'wb') as f:      # binary mode is important
             png_out.write(f, result)
-
+        '''
         png_out2 = png.Writer(width=64, height=64, alpha=True, bitdepth=8, transparent=None)
-        with open(tex_dir+'temp/out_%i.png' % (_i), 'wb') as f:      # binary mode is important
+        with open(tex_dir+'temp/out_%02d.png' % (_i), 'wb') as f:      # binary mode is important
             png_out2.write(f, scratch)
+        '''
         _i += 1
-'''
-#loading into 64x 64
-def
-    xoff,yoff = random_x1, random_y1
-    i = 0
-    j= 0
-    for row in pixels:
-        for j in range(32): #x is x
-            r = row[4*j+0]
-            g = row[4*j+1]
-            b = row[4*j+2]
-            a = row[4*j+3]
-            self.pixels[i+yoff][4*(j+xoff)+0] = r
-            self.pixels[i+yoff][4*(j+xoff)+1] = g
-            self.pixels[i+yoff][4*(j+xoff)+2] = b
-            self.pixels[i+yoff][4*(j+xoff)+3] = a
-        i += 1
-
-png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
-print "writing out"
-with open('./out_%i.png' % (n), 'wb') as f:      # binary mode is important
-    png_out.write(f, pixels)
-'''
-
 
 #import postprocess
 
