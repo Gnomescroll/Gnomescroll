@@ -37,8 +37,9 @@ class Camera(object):
             c_lib.c_lib_sdl.set_projection(x,y,z, xa,ya)
             
     def _convert_mouse_deltas(self, dx, dy):
+        invert = 1 if opts.invert_mouse else -1
         dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
-        dy = (float(-dy) * opts.sensitivity) / 40000.
+        dy = (float(invert*dy) * opts.sensitivity) / 40000.
         return dx,dy
 
     def move_camera(self, dx, dy, dz):
