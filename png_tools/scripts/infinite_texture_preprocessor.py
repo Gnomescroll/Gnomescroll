@@ -18,9 +18,10 @@ for x in os.listdir(texture_dir):
         texture_source_dirs.append(texture_dir + x + "/")
         try:
             os.mkdir(texture_dir + x + "/temp")
-        try:
             os.mkdir(texture_dir + x + "/out")
-exit()
+        except:
+            pass
+#exit()
 
 for tex_dir in texture_source_dirs:
 
@@ -49,8 +50,13 @@ for tex_dir in texture_source_dirs:
     else:
         user_source_tiles = 0
         print "No user defined initial tiles: generating source tiles from source_texture.png"
-        if random_x1 != -1:
-            print "Using Random source tiles from source_texture.png: seed = %i" % (seed)
+        if random_x1 == -1 or random_y1 == -1:
+            print "Using Random source tiles from source_texture.png: seed = %s" % (str(seed))
+
+            x = png.Reader(filename = tex_dir+"source_texture.png")
+            #get x,y dimensions
+            width, height, pixels, meta = x.asRGBA8()
+
             random_x1 = random.randint(0, width-32)
             random_y1 = random.randint(0, height-32)
 
@@ -86,15 +92,12 @@ for tex_dir in texture_source_dirs:
 
 
     if user_source_tiles == 0:
+
         print "source width, height = %i, %i" % (width, height)
         print "source_tile_1: x1, y1 = %i, %i" % (random_x1, random_y1)
         print "source_tile_2: x2, y2 = %i, %i" % (random_x2, random_y2)
 
         print "Creating Source Tiles From Source Texture"
-
-        x = png.Reader(filename = tex_dir+"source_texture.png")
-        #get x,y dimensions
-        width, height, pixels, meta = x.asRGBA8()
 
         #print "Moving source image into array"
         pixel2 = []
@@ -160,7 +163,7 @@ for tex_dir in texture_source_dirs:
                 color2[i][4*j+3] = a
             i += 1
 
-    if user_source_tiles == 0:
+    if user_source_tiles == 1:
         print "Loading User Defined Source Tiles"
 
         color1 = empty_32()
@@ -210,11 +213,11 @@ for tex_dir in texture_source_dirs:
                 color2[i][4*j+3] = a
             i += 1
 
-        png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
-        with open(tex_dir+'out/source_tile_1.png', 'wb') as f:      # binary mode is important
-            png_out.write(f, color1)
-        with open(tex_dir+'out/source_tile_2.png', 'wb') as f:      # binary mode is important
-            png_out.write(f, color2)
+    png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
+    with open(tex_dir+'out/source_tile_1.png', 'wb') as f:      # binary mode is important
+        png_out.write(f, color1)
+    with open(tex_dir+'out/source_tile_2.png', 'wb') as f:      # binary mode is important
+        png_out.write(f, color2)
 
 
     intermediate_tile = empty_64()
@@ -271,9 +274,6 @@ for tex_dir in texture_source_dirs:
             temp.insert(3, color2)
 
         _list.insert(_i, temp)
-
-
-    png_out2 = png.Writer(width=64, height=64, alpha=True, bitdepth=8, transparent=None)
 
     scratch = empty_64()
     result = empty_32()
@@ -361,9 +361,12 @@ for tex_dir in texture_source_dirs:
                 result[i][4*(j)+2] = b
                 result[i][4*(j)+3] = a
             i += 1
+
+        png_out = png.Writer(width=32, height=32, alpha=True, bitdepth=8, transparent=None)
         with open(tex_dir+'temp/_out_%i.png' % (_i), 'wb') as f:      # binary mode is important
             png_out.write(f, result)
 
+        png_out2 = png.Writer(width=64, height=64, alpha=True, bitdepth=8, transparent=None)
         with open(tex_dir+'temp/out_%i.png' % (_i), 'wb') as f:      # binary mode is important
             png_out2.write(f, scratch)
         _i += 1
