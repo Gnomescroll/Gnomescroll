@@ -1,19 +1,11 @@
-
 #include "block_selector.h"
-
-
-typedef struct {
-    int tex;
-    int w;
-    int h;
-} Texture;
 
 static Texture hud_texture;
 void _load_hud_texture(char *file) {
     SDL_Surface *surface;
 
     surface = _load_image(file);
-    int tex = _create_hud_texture2(surface);
+    int tex = _create_hud_texture(surface);
 
     hud_texture.tex = tex;
     hud_texture.w = surface->w;
@@ -37,7 +29,7 @@ void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
 
     surface = _load_image(file);
-    int tex = _create_hud_texture2(surface);
+    int tex = _create_hud_texture(surface);
 
     block_selector_texture.tex = tex;
     block_selector_texture.w = surface->w / scale;
