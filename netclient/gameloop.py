@@ -347,7 +347,7 @@ class App(object):
                 cHUD._draw_inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
 
             P.event("SDL flip")
-            c_lib.c_lib_sdl.flip()
+            c_lib.c_lib_sdl.SDL_global.flip()
             P.event("Misc")
             #FPS calculation
             if fps:
