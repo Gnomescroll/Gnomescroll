@@ -209,40 +209,7 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
     return 0;
 }
 
-/* deprecate, use /physics/ */
-struct Vec {
-    float x,y,z;
-};
-
-inline struct Vec init_Vec(float x, float y, float z) {
-    struct Vec v; v.x=x;v.y=y;v.z=z; return v;
-}
-
-inline void normalize(struct Vec* v) {
-    float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
-    v->x /= l; v->y /=l; v->z /=l;
-}
-
-struct Vec cross(struct Vec v1, struct Vec v2) {
-    struct Vec v0;
-    v0.x = v1.y*v2.z - v1.z*v2.y;
-    v0.y = v1.z*v2.x - v1.x*v2.z;
-    v0.z = v1.x*v2.y - v1.y*v2.x;
-    return v0;
-}
-
-void dot(struct Vec v1, struct Vec v2) {
-    float d;
-    d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
-}
-
-void calc_len(struct Vec *v) {
-    float l;
-    l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
-    v->x /= l; v->y /=l; v->z /=l;
-}
-
-void draw(struct Vec v0, struct Vec v1, int r, int g, int b) {
+void draw(struct Vector v0, struct Vector v1, int r, int g, int b) {
 
     glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
     glBegin(GL_LINES);
@@ -257,37 +224,33 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
         printf("particle_functions _planar_laser camera is null \n");
         return 0;
     }
-    struct Vec pos = init_Vec(particle_c->x, particle_c->y, particle_c->z);
+    struct Vector pos = Vector_init(particle_c->x, particle_c->y, particle_c->z);
 
-    struct Vec po;
+    struct Vector po;
     po.x =  pos.x - (x0+y1)/2;
     po.y =  pos.y - (y0+y1)/2;
     po.z =  pos.z -(z0+z1)/2;
-    normalize(&po);
+    normalize_vector(&po);
 
     int i =0 ;
-    struct Vec up = init_Vec(x1-x0, y1-y0, z1-z0);
-    normalize(&up);
-    calc_len(&up);
-    struct Vec left = cross(po, up);
-    normalize(&left);
-    calc_len(&left);
-    struct Vec right = cross(left, up);
-    calc_len(&right);
+    struct Vector up = Vector_init(x1-x0, y1-y0, z1-z0);
+    normalize_vector(&up);
+    vector_length(&up);
+    struct Vector left = vector_cross(po, up);
+    normalize_vector(&left);
+    vector_length(&left);
+    struct Vector right = vector_cross(left, up);
+    vector_length(&right);
 
-    struct Vec vu;
-    vu = init_Vec((x0+y1)/2, (y0+y1)/2, (z0+z1)/2);
+    struct Vector vu;
+    vu = Vector_init((x0+y1)/2, (y0+y1)/2, (z0+z1)/2);
     draw(vu, up, 255,0,0);
     draw(vu, left, 0,255,0);
     draw(vu, right, 0,0,255);
 
     float a, b;
 
-    dot(up, left);
-    dot(up, right);
-    dot(left, right);
-
-    struct Vec v1;
+    struct Vector v1;
 
     while(i< 8) {
     a = sin(i*PI/8);
@@ -319,7 +282,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     return 0;
 }
 
-static struct Vec ta[1024*2]; //temp array
+static struct Vector ta[1024*2]; //temp array
 
 int _planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1) {
     if(particle_c == NULL) {
@@ -349,12 +312,12 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     int i=0;
     float bx,by,bz;
 
-    struct Vec pos = init_Vec(particle_c->x, particle_c->y, particle_c->z); //camera position
-    struct Vec up = init_Vec(x1-x0, y1-y0, z1-z0); //up position
-    normalize(&up);
-    struct Vec po; //camera to point vector
+    struct Vector pos = Vector_init(particle_c->x, particle_c->y, particle_c->z); //camera position
+    struct Vector up = Vector_init(x1-x0, y1-y0, z1-z0); //up position
+    normalize_vector(&up);
+    struct Vector po; //camera to point vector
 
-    struct Vec left;
+    struct Vector left;
 
     bx = i*dx + x0;
     by = i*dy + y0;
@@ -363,9 +326,9 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     po.x =  pos.x - bx;
     po.y =  pos.y - by;
     po.z =  pos.z - bz;
-    normalize(&po);
+    normalize_vector(&po);
 
-    left = cross(po, up);
+    left = vector_cross(po, up);
 
     for(i=0; i<=density; i++) {
         bx = i*dx + x0;
@@ -375,12 +338,12 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
         po.x =  pos.x - bx;
         po.y =  pos.y - by;
         po.z =  pos.z - bz;
-        normalize(&po);
+        normalize_vector(&po);
 
-        left = cross(po, up);
+        left = vector_cross(po, up);
 
-        ta[2*i+0] = init_Vec(bx - width*left.x, by - width*left.y, bz - width*left.z);
-        ta[2*i+1] = init_Vec(bx + width*left.x, by + width*left.y, bz + width*left.z);
+        ta[2*i+0] = Vector_init(bx - width*left.x, by - width*left.y, bz - width*left.z);
+        ta[2*i+1] = Vector_init(bx + width*left.x, by + width*left.y, bz + width*left.z);
     }
 
     glEnable(GL_TEXTURE_2D);
