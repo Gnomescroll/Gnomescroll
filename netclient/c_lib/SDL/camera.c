@@ -1,7 +1,5 @@
 #include "./camera.h"
 
-#define PI 3.14159265
-
 extern int _xres;
 extern int _yres;
 

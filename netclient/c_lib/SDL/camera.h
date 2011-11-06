@@ -3,6 +3,8 @@
 #include <compat_gl.h>
 #include <math.h>
 
+#include <c_lib/physics/vector.h>
+
 struct Camera {
     float fov;
     float x_size,y_size;
