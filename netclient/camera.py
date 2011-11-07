@@ -44,6 +44,7 @@ class Camera(object):
         #dy delta
         self.x += dy*cos(self.x_angle * pi + pi/2)
         self.y += dy*sin(self.x_angle * pi + pi/2)
+        self.z += dz
 
     def pan(self, dx_angle, dy_angle):
         self.x_angle += dx_angle

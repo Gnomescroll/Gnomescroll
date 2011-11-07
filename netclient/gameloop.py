@@ -244,8 +244,9 @@ class App(object):
 
                 cInput.process_events()
                 cInput.get_key_state()
-                if GameStateGlobal.agent:
+                if GameStateGlobal.agent is not None:
                     GameStateGlobal.agent.set_button_state()
+                    GameStateGlobal.agent.set_angle(self.agent_camera.angles())
 
                 NetClientGlobal.connection.attempt_recv()
                 self.animations.tick()
@@ -330,11 +331,11 @@ class App(object):
             P.event("Draw World")
             #import pdb; pdb.set_trace()
             
-            #camera.camera.input_update()
             ## deprecate this in favor of the line above, once mouse deltas are sent in control state
             if InputGlobal.input == 'agent':
+                self.agent_camera.input_update()
                 if GameStateGlobal.agent is not None:
-                    self.agent_camera.angles(GameStateGlobal.agent.angles())
+                    #self.agent_camera.angles(GameStateGlobal.agent.angles())
                     self.agent_camera.pos(GameStateGlobal.agent.pos())
             elif InputGlobal.input == 'camera':
                 self.camera.input_update()

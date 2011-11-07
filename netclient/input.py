@@ -134,8 +134,8 @@ class InputGlobal:
         if curr is not None:
             current_mode[0] = curr
         print 'input mode is %s' % curr
-        if cls._inputs[curr] == 'camera':
-            cls.mouse.clear_mouse_deltas()
+        #if cls._inputs[curr] == 'camera':
+            #cls.mouse.clear_mouse_deltas()
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
@@ -166,11 +166,11 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
-        if InputGlobal.input == 'agent':
-            self._pan_agent(dx, dy)
+        #if InputGlobal.input == 'agent':
+            #self._pan_agent(dx, dy)
 
-    def _pan_agent(self, dx, dy):
-        GameStateGlobal.agent.pan(dx,dy)
+    #def _pan_agent(self, dx, dy):
+        #GameStateGlobal.agent.pan(dx,dy)
         
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
