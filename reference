@@ -1,3 +1,8 @@
+Splatter Textures:
+http://en.wikipedia.org/wiki/Texture_splatting
+<JoJoeStinky> might be useful for drawing pathways and roads through yyour terrain,
+!!! For pathways and roads
+
 Ragdoll:
 
 http://www.gamasutra.com/resource_guide/20030121/jacobson_01.shtml
@@ -62,9 +67,9 @@ http://www.gamedev.net/topic/330742-quick-tutorial-variable-width-bitmap-fonts/
 Automatic Mipmapp Generation
 http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
 
-glGenerateMipmap(GL_TEXTURE_2D); 
+glGenerateMipmap(GL_TEXTURE_2D);
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
 
