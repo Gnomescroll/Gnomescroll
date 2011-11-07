@@ -309,7 +309,7 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
     return isActive(tile_id);
 }
 
-inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int side)
+inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int index;
     int CX[8];
@@ -357,7 +357,7 @@ inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, in
     }
 
 
-    _set_quad_local_ambient_occlusion(v_list, offset, side);
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 }
 
 void __inline add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
@@ -384,7 +384,7 @@ void __inline add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, 
 
     }
 
-    _set_quad_local_ambient_occlusion(v_list, offset, side);
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 }
 
 int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
