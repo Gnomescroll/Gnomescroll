@@ -1,10 +1,13 @@
 
 #include <compat_gl.h>
 
-#include "windows.h"
+#ifdef _WIN32
+	#include "windows.h"
+#endif
 
 int DisplayBox()
 {
+#ifdef _WIN32
     int msgboxID = MessageBox(
         NULL,
         (LPCWSTR)L"Error: check console log",
@@ -20,6 +23,7 @@ int DisplayBox()
     }
 
     return msgboxID;
+#endif
 }
 
 int _xres = 800;
