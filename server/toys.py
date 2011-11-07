@@ -2,12 +2,11 @@
 Toys, miscellaneous objects
 '''
 
-from game_objects import DetachableObject, StaticObject, TeamItem
-from utils import filter_props
-
 import c_lib.terrain_map as terrain_map
 
 from random import randint as rand
+from game_objects import DetachableObject, StaticObject, TeamItem
+from utils import filter_props
 
 def rand_spot(n=1, lowest=True):
     x,y = rand(5, 15), rand(5, 15)

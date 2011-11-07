@@ -1,20 +1,12 @@
-import default_settings as settings
-
-from opts import opts
-
-if settings.pyglet:
-    import pyglet
-    from pyglet.gl import *
-else:
-    import SDL
-
-base_dir = "./"
+import opts
+opts = opts.opts
 
 import random
+import c_lib.c_lib_agents
 
 from profiler import P
 
-import c_lib.c_lib_agents
+base_dir = "./"
 
 class World():
 

@@ -48,8 +48,15 @@ cdef extern from "./input/input.hpp":
     cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
     cdef extern int _set_text_entry_mode(int n)
 
-    int _toggle_mouse_bind()
+    cdef int* get_mouse_render_state()
+    cdef int _toggle_mouse_bind()
 
+def get_mouse_deltas():
+    cdef int* d
+    d = get_mouse_render_state()
+    dx, dy = d[0], d[1]
+    deltas = [dx, dy]
+    return deltas
 
 def get_key_state():
     _get_key_state(&key_state_callback)

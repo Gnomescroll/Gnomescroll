@@ -1,3 +1,5 @@
+import c_lib.terrain_map as terrain_map
+from profiler import P
 
 class MapControllerGlobal:
     mapController = None
@@ -11,19 +13,16 @@ class MapControllerGlobal:
 from game_state import GameStateGlobal
 from net_out import NetOut
 
-import c_lib.terrain_map as terrain_map
-
-from profiler import P
-#time.clock()
 class MapController:
-    #terrainMap = None
+
     mapMessage = None
+
     @classmethod
     def init(self):
-        #self.terrainMap = GameStateGlobal.terrainMap
         assert NetOut.mapMessage != None
         self.mapMessage = NetOut.mapMessage
         assert self.mapMessage != None
+
     def __init__(self):
         self.requests = 0
         self.requests_max = 30

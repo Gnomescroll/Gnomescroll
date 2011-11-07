@@ -115,6 +115,7 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
         printf("network error!!! Error: read past buffer\n");
         return -3; 
     }
+    return -4;
 }
 
 void process_packet_messages(unsigned char* buff, int n, int max_n) {

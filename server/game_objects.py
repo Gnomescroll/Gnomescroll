@@ -4,7 +4,6 @@ from utils import filter_props
 import dats.loader as dat_loader
 i_dat = dat_loader.i_dat
 
-
 class GameObject:
 
     _types = {

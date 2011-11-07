@@ -1,3 +1,4 @@
+
 class Player:
 
     def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None, score=0):

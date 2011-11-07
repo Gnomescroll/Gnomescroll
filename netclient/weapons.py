@@ -1,7 +1,6 @@
-from game_objects import GameObject
-from game_objects import EquippableObject
 import animations
 
+from game_objects import GameObject, EquippableObject
 from dat_loader import w_dat
 
 class Weapon(EquippableObject):

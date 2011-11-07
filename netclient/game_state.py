@@ -1,5 +1,7 @@
+import opts
+opts = opts.opts
+
 import math
-from opts import opts
 
 class GameStateGlobal:
 

@@ -1,15 +1,13 @@
-import default_settings as settings
+import opts
+opts = opts.opts
 
-import SDL.hud
+import c_lib.c_lib_sdl # for some hud methods; migrate to c_lib_hud
+import c_lib.c_lib_hud as c_lib_hud
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
-
-import c_lib.c_lib_hud as c_lib_hud
-
-from opts import opts
 
 '''
 HUD overlay
@@ -45,11 +43,11 @@ class Hud(object):
         # center it
         # draw_functions._blit_sprite
         tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = SDL.hud.reticle(tex_file, self.win_width/2, self.win_height/2)
+        self.reticle = c_lib.c_lib_sdl.reticle(tex_file, self.win_width/2, self.win_height/2) # make this c_lib_hud
 
     def _init_block_selector(self):
         tex_file = '%stexture/block_selector_hud.png' % (base_dir,)
-        self.block_selector = SDL.hud.block_selector(tex_file, self.win_width - 70, 15, scale=16)
+        self.block_selector = c_lib.c_lib_sdl.block_selector(tex_file, self.win_width - 70, 15, scale=16) # make this c_lib_hud
 
     def _init_text_dict(self):
         offset = 20
@@ -109,7 +107,7 @@ class Hud(object):
         return stats
 
     def draw_block_selector(self):
-        c_lib_hud.draw_cube_selector(settings.block_selector_x_offset, settings.block_selector_y_offset)
+        c_lib_hud.draw_cube_selector(opts.block_selector_x_offset, opts.block_selector_y_offset)
 
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
@@ -211,7 +209,7 @@ class Hud(object):
         if color is None:
             color = (255, 255, 0)
         r, g, b = color
-        SDL.gl.draw_line(r, g, b, x, y, 0, x1, y1, 0)
+        c_lib.c_lib_sdl.draw_line(r, g, b, x, y, 0, x1, y1, 0)
 
     def _draw_square(self, x, y, w, color=None):
         self._draw_rect(x, y, w, w, color)
@@ -220,7 +218,7 @@ class Hud(object):
         if color is None:
             color = (255,255,255)
         r,g,b = color
-        SDL.gl.draw_rect(r,g,b, x,y, w,h)
+        c_lib.c_lib_sdl.draw_rect(r,g,b, x,y, w,h)
 
     def _draw_border_square(self, x, y, w, color=None):
         self._draw_border_rect(x, y, w, w, color)
@@ -229,7 +227,7 @@ class Hud(object):
         if color is None:
             color = (255,255,255)
         r,g,b = color
-        SDL.gl.draw_border_rect(r,g,b, x,y, w,h)
+        c_lib.c_lib_sdl.draw_border_rect(r,g,b, x,y, w,h)
 
     def _draw_horizontal_line(self, x, y, length=10):
         self._draw_line(x, y, x + length, y)
@@ -249,7 +247,7 @@ class Hud(object):
             self._draw_cursor()
 
     def _to_draw_text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = SDL.hud.text(
+        txt = c_lib.c_lib_sdl.text(
             text = text,
             x = x,
             y = self.win_height - offset,

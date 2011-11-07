@@ -2,51 +2,38 @@
 
 #!/usr/bin/python
 
+# boot hack
 import sys
 import os
+sys.path.insert(0, './ext/')
 print "Working Directory: %s" % (os.getcwd())
 
-
+# set up arguments and settings
 import args_server
 import opts
 opts.opts = args_server.get_args()
+opts = opts.opts
 
-from time import sleep
+import random
+import time
 
-#import cython
-#import pyximport #; pyximport.install()
-
-#from pudb import set_trace; set_trace()
-
-import sys
-sys.path.insert(0, './ext/')
-
+import intervals
+import map_gen
+import file_monitor
 import init_c_lib
+import c_lib.c_lib_objects
+import c_lib.map_gen
+import c_lib.terrain_map as terrain_map
+import dats.loader as dat_loader
+
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import NetServerInit, NetServerTick
 from init_c_lib import START_CLOCK, GET_TICK
-
 from net_server import NetServer
 from net_out import NetOut
 from net_event import NetEvent
 from game_state import GameStateGlobal
 from chat_server import ChatServer
-
-import c_lib.terrain_map as terrain_map
-#from cube_dat import CubeGlobal
-
-import intervals
-import file_monitor
-import dats.loader as dat_loader
-
-import c_lib.c_lib_objects
-
-import map_gen
-
-import random
-
-import c_lib.map_gen
-
 
 '''
 Noise notes:
@@ -64,15 +51,13 @@ Sharp peaks/ edges.
 
 DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code stolen
 
-
 '''
 
 def _gen_map():
     terrain_map.set_map_size(512,512,128) # TODO:: get this value from the map gen or saved map
-    if not opts.opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
+    if not opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
         c_lib.map_gen.init(512,512,128)
-        c_lib.map_gen.conf.seed(opts.opts.seed)
-        import time
+        c_lib.map_gen.conf.seed(opts.seed)
         _n = time.time()
 
         ##base heightmap, smooth shallow hills
@@ -227,9 +212,9 @@ class Main:
         '''
         loading map from file by default because angus gets segfault
         '''
-        if opts.opts.map:
-            print "str= %s" % (opts.opts.map)
-            terrain_map.load_from_disk(opts.opts.map)
+        if opts.map:
+            print "str= %s" % (opts.map)
+            terrain_map.load_from_disk(opts.map)
         else:
             terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
@@ -237,35 +222,29 @@ class Main:
             #terrain_map.load_from_disk("savetest2")
             #_gen_map()
             #terrain_map.load_from_disk("nat5")
-            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=101) #11
             pass
 
-        if False:
-            pass
-            ##map_gen.load_map2(terrain_map)
-            #map_gen.load_map3(terrain_map)
-            #map_gen.grass(terrain_map)
-            #map_gen.cave2(terrain_map)
-            #map_gen.ore1(terrain_map)
+        #map_gen.grass(terrain_map)
+        #map_gen.cave2(terrain_map)
+        #map_gen.ore1(terrain_map)
 
-            #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
-            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
-            #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
-            #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
-            #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
-            #map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
-            #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
-            #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
-        if True:
-            clear_pillar(x=1,y=0)
-            clear_pillar(x=0,y=1)
-            clear_pillar(x=1,y=1)
-            pallet_pillar(0,0,0)
+        #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+        #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
+        #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
+        #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
+        #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=3, tile=8)
+        #map_gen.castle_tower1(terrain_map, 30,15,1, height=10, wall_length=4, tile=10)
+        #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
+        #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
 
-            #if opts.opts.save_map:
-                #print 'Saving map'
-                #terrain_map.save_to_disk(opts.opts.save_map)
+        clear_pillar(x=1,y=0)
+        clear_pillar(x=0,y=1)
+        clear_pillar(x=1,y=1)
+        pallet_pillar(0,0,0)
 
+        if opts.save_map:
+            print 'Saving map as %s' % (opts.save_map,)
+            terrain_map.save_to_disk(opts.save_map)
 
         NetServer.init_0()
         NetOut.init_0()
@@ -297,7 +276,6 @@ class Main:
         self.intervals.register(self.file_monitor, self.file_monitor.interval)
 
     def run2(self):
-        #import pdb; pdb.set_trace()
         print "Server Started"
         #physics_timer.start_physics_timer(33)
         init_c_lib.init()
@@ -306,7 +284,6 @@ class Main:
         #StartPhysicsTimer(33)
         START_CLOCK()
         NetServerInit()
-        #import pdb; pdb.set_trace()
         while True:
             NetServer.serverListener.accept() #accept incoming connections
             NetServer.connectionPool.process_events() #check for new data
@@ -327,8 +304,8 @@ class Main:
                 print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
             self.intervals.process()
-            sleep(0.001)
-            #sleep(0.100)
+            time.sleep(0.001)
+            #time.sleep(0.100)
 if __name__ == "__main__":
     print "starting server"
     main = Main()

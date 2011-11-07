@@ -1,7 +1,6 @@
 from game_objects import GameObject
 from game_objects import EquippableObject
 from object_lists import GenericMultiObjectList
-
 from utils import filter_props
 
 import dats.loader as dat_loader

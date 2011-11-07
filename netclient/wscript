@@ -88,17 +88,17 @@ def configure(conf):
         conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
         #conf.check_cfg(path='bash.exe', args='/c/MinGW/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')
 
-	#print "WTF"
-	
-	conf.env.INCLUDES = []
-	#if OS == 'Windows':
-	#	conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
+    #print "WTF"
+    
+    conf.env.INCLUDES = []
+    #if OS == 'Windows':
+    #   conf.env.INCLUDES = ["c:/MinGW/include/SDL/"]
 
-	conf.check(header_name='SDL.h',
+    conf.check(header_name='SDL.h',
                use='SDL',
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-	
+    
 
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
@@ -146,7 +146,7 @@ def configure(conf):
     
     #if OS == 'Windows':
     #    conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
-		
+        
     #hack
     print os.path.abspath(os.curdir)
     libpth = '%s/fmod/lib/' % (os_libpth,)
@@ -216,24 +216,24 @@ def build(bld):
         use=common_libraries+time_lib+SDL_libraries,
         target='c_lib')
 
-    bld(features='c cshlib pyext',
-        source=['SDL/SDL_functions.c',
-                'SDL/camera.c',
-                'SDL/draw_functions.c',
-                'SDL/texture_loader.c',
-                'SDL/particle_functions.c',
-                'SDL/gl.pyx'],
-        use=common_libraries+SDL_libraries,
-        target='SDL.gl')
+    #bld(features='c cshlib pyext',
+        #source=['SDL/SDL_functions.c',
+                ##'SDL/camera.c',
+                #'SDL/draw_functions.c',
+                #'SDL/texture_loader.c',
+                #'SDL/particle_functions.c',
+                #'SDL/gl.pyx'],
+        #use=common_libraries+SDL_libraries,
+        #target='SDL.gl')
 
-    bld(features='c cshlib pyext',
-        source=['SDL/SDL_text.c',
-                'SDL/draw_functions.c',
-                'SDL/texture_loader.c',
-                'SDL/hud/block_selector.c',
-                'SDL/hud.pyx'],
-        use=SDL_libraries+common_libraries,
-        target='SDL.hud')
+    #bld(features='c cshlib pyext',
+        #source=['SDL/SDL_text.c',
+                #'SDL/draw_functions.c',
+                #'SDL/texture_loader.c',
+                #'SDL/hud/block_selector.c',
+                #'SDL/hud.pyx'],
+        #use=SDL_libraries+common_libraries,
+        #target='SDL.hud')
 
     '''
     bld(features='c cshlib pyext',
@@ -286,9 +286,24 @@ def build(bld):
         target='c_lib.c_lib_hud')
 
     bld(features='cxx cshlib pyext',
+        source=['c_lib/c_lib_sdl.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_sdl')
+
+    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_input.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_input')
+
+    bld(features='cxx cshlib pyext',
+        source=['c_lib/c_lib_animations.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_animations')
+        
+    #bld(features='cxx cshlib pyext',
+        #source=['c_lib/c_lib_camera.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='c_lib.c_lib_camera')
 
     # sound
     bld(features='c cshlib',
@@ -340,21 +355,24 @@ def install_in_ext(ctx):
         print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
 
-    targets = ['SDL.gl',
-               'SDL.hud',
-               'SDL.input',
-               'c_lib.terrain_map',
-               'vox_lib',
-               'c_lib._ray_trace',
-               'init_c_lib',
-               'c_lib.c_lib_objects',
-               'c_lib.c_lib_agents',
-               'c_lib.c_lib_hud',
-               #'c_lib.c_lib_agent_wrapper',
-               'c_lib.c_lib_input',
-               'csound',
-               'sound.sounds',  # cython .so's need to have same name as source
-               ]
+    targets = [
+        #'SDL.gl',
+       #'SDL.hud',
+       #'SDL.input',
+       'c_lib.terrain_map',
+       'vox_lib',
+       'c_lib._ray_trace',
+       'init_c_lib',
+       'c_lib.c_lib_objects',
+       'c_lib.c_lib_agents',
+       'c_lib.c_lib_hud',
+       'c_lib.c_lib_input',
+       'c_lib.c_lib_animations',
+       'c_lib.c_lib_sdl',
+       #'c_lib.c_lib_camera',
+       'csound',
+       'sound.sounds',  # cython .so's need to have same name as source
+    ]
 
     for target in targets:
         dest_path = target.replace('.', '/')
@@ -365,8 +383,9 @@ def install_in_ext(ctx):
                 target = target.replace('csound', 'libcsound')
                 dest_path = dest_path.replace('csound', 'libcsound')
             shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-        except:
-            print "Error2: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        except Exception, e:
+            print e
+            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
     install_libs()

@@ -66,6 +66,12 @@ south   blueore.png
 west    blueore.png
 east    blueore.png
 ===
+id      7
+name    infinite_grass
+hud     6 grass-side.png
+infinite_texture 2 grass_01
+
+===
 id      8
 name    sand_brick
 hud     24 brick-red.png

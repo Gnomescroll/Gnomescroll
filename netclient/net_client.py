@@ -4,26 +4,14 @@
 Client network interface
 '''
 
+import opts
+opts = opts.opts
+
 import socket
 import struct
-
 import json
-
-from opts import opts
-import default_settings as settings
-
-import platform
-OS = platform.system()
-#OS = "Windows"
-
-if OS == "Linux":
-    pass
-elif OS == "Windows":
-    pass
-elif OS == "Darwin":
-    pass
-
 import select
+
 _epoll = 0
 
 class NetClientGlobal:
@@ -125,8 +113,7 @@ class PacketDecoder:
 
 class TcpConnection:
     server = opts.server
-    tcp_port = opts.port
-    #settings
+    tcp_port = opts.tcp_port
     noDelay = True
 
     def __init__(self):

@@ -273,7 +273,9 @@ inline int calcAdj(int side_1, int side_2, int corner)
     if( occ == 0) return 255;
     if(occ == 1) return 177;
     //if(occ == 2) return 177;  
-    if(occ == 2) return 100;    
+    if(occ == 2) return 100;
+    printf("t_vbo.c calcAdj :: invalid occlusion = %d", occ);
+    return -1;
 }
 
 const static int s_array[18] = {
@@ -391,7 +393,7 @@ inline void insert_oddBlock(struct Vertex* v_list, int offset, int x, int y, int
 
 static const int VERTEX_SLACK = 128;
 
-static bool BUFFER_ORPHANING = true; //recycle buffer or create new
+//static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;

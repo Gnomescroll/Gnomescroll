@@ -13,15 +13,24 @@ args = get_args()
 '''
 Available options:
 
-version         Prints client version to STDOUT
-server          Server IP Address
-port            Server Port
-quiet           Suppress STDOUT
-cli             Command-line mode (no viewer)
-no_player       Free-camera only. Will not create player / join game
-admin           Enable admin commands
-tick            Set game clock tick
-name            Set player name (overrides settings.py name)
+version         Prints server version to STDOUT
+quiet           Suppress STDOUT (not implemented)
+
+ip-address      Server IP Address
+tcp-port        Server TCP Port
+udp-port        Server UDP Port
+
+game-mode       e.g. ctf, dm, tdm. ctf is the only valid option at the moment.
+n-teams         Number of teams.
+team-kills      Team killing allowed
+victory-points  Number of points for a team/player victory
+
+map             Name of map file in ./content/maps. If not provided, map will be generated
+seed            RNG seed to use for map generator
+save-map        Name of file to save map as after generating. Name is not required; will default to something unique
+
+print-args      Print all settings to STDOUT
+no-load         Don't start the server. Abort after argument processing.
 
 '''
 
@@ -29,86 +38,99 @@ import sys
 import argparse
 import default_settings as settings
 
-DC_VERSION = '0.2'
+DC_SERVER_VERSION = '3.7'
 
+# Note: boolean defaults are not loaded here
 DEFAULTS = {
+    'version'   :   '%%(prog)s %s' % (DC_SERVER_VERSION,),
+
+    # Server Settings
+    'name'      :   settings.server_name,
+
+    # Network
     'ip_address': settings.ip_address,
     'tcp_port'  : settings.tcp_port,
     'udp_port'  : settings.udp_port,
-    'tick'      :   0.01,
-    'name'      :   settings.server_name,
+    
+    # Game Settings
     'game_mode' :   settings.game_mode,
-    'n_teams'   :   settings.n_teams,
-    'team_kills':   settings.team_kills,
+    'n_teams'   :   settings.number_of_teams,
     'victory_points':   settings.victory_points,
+    
+    # Map
     'map'       :   settings.map,
     'seed'      :   settings.seed,
 }
 
 def parse(cl_args=None):
-    parser = argparse.ArgumentParser(description="DC_MMO Netclient", prog="Dwarf Control (in Space)")
+    parser = argparse.ArgumentParser(description="Server", prog="Gnomescroll")
 
-    vs = '%(prog)s ' + DC_VERSION
-    parser.add_argument('-V', '--version', action='version', version=vs)
-
-    parser.add_argument('-ip', '--ip-address', default=DEFAULTS['ip_address'])
-
-    parser.add_argument('-tp', '--tcp-port', default=DEFAULTS['tcp_port'], type=int)
-    parser.add_argument('-up', '--udp-port', default=DEFAULTS['udp_port'], type=int)
-
-    #parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('-q', '--quiet', action='store_true')
-
-    parser.add_argument('-c', '--cli', action='store_true') # command line mode
-
-    parser.add_argument('-a', '--admin', action='store_true') # admin mode
-
-    parser.add_argument('-t', '--tick', default=DEFAULTS['tick'])
+    parser.add_argument('-V', '--version', action='version', version=DEFAULTS['version'])
+    parser.add_argument('-q', '--quiet', action='store_true')   # not implemented!
 
     parser.add_argument('-n', '--name', default=DEFAULTS['name'], metavar='SERVER NAME', dest='server_name')
 
-    parser.add_argument('-g', '--game-mode', default=DEFAULTS['game_mode'])
+    ''' Network '''
+    parser.add_argument('-ip', '--ip-address', default=DEFAULTS['ip_address'])
+    parser.add_argument('-tcp', '--tcp-port', default=DEFAULTS['tcp_port'], type=int)
+    parser.add_argument('-udp', '--udp-port', default=DEFAULTS['udp_port'], type=int)
 
-    parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'])
-
-    parser.add_argument('-nl', '--no-load', action='store_true')
-
+    ''' Game Settings '''
+    parser.add_argument('-gm', '--game-mode', default=DEFAULTS['game_mode'], choices=['ctf', 'dm', 'tdm'])
+    parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'], type=int)
     parser.add_argument('-tk', '--team-kills', action='store_true')
+    parser.add_argument('-vp', '--victory-points', default=DEFAULTS['victory_points'], type=int)
 
-    parser.add_argument('-vp', '--victory-points', default=DEFAULTS['victory_points'])
-
+    ''' Map '''
     parser.add_argument('-m', '--map', default=DEFAULTS['map'])
-
     parser.add_argument('--seed', default=DEFAULTS['seed'], type=int)
-
     parser.add_argument('--save-map', default='')
 
+    ''' Debug '''
     parser.add_argument('--print-args', action='store_true')
+    parser.add_argument('-nl', '--no-load', action='store_true')
 
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:
         args = parser.parse_args()
-    setattr(args, 'version', DC_VERSION)
+
+    setattr(args, 'version', DC_SERVER_VERSION)
+
     return args
 
-def modify_args(args):
+def merge_with_settings(args):
+    # collect settings keys (ignore builtins like __doc__)
+    s_props = [p for p in dir(settings) if not (p.startswith('__') and p.endswith('__'))]
 
+    # only copy values that are not defined in the args object
+    # the args object already collects defaults from settings
+    # in the process step, for shared arg names
+    for p in s_props:
+        if not hasattr(args, p):
+            setattr(args, p, getattr(settings, p))
+
+def postprocess_args(args):
+    # Check booleans and override
     if not args.team_kills:
-        args.team_kills = DEFAULTS['team_kills']
-
-    return args
+        args.team_kills = settings.team_kills
 
 def get_args():
     try:
         args = parse()
-    except:             # this allows us to do: python gameloop.py 222.33.44.55  or 222.333.44.55:6666 (i.e. specifying only the ip address)
+    except argparse.ArgumentError:             # this allows us to do: python gameloop.py 222.33.44.55 (i.e. specifying only the ip address)
         server = sys.argv[1]
+        try:
+            if not len(server.split('.')) == 4:
+                raise Exception
+        except:
+            sys.exit()
         cl_args = '--ip-address %s' % (server,)
 
         args = parse(cl_args.split())
 
-    args = modify_args(args)
+    postprocess_args(args)
+    merge_with_settings(args)
 
     if args.print_args:
         print_args(args)
@@ -119,34 +141,18 @@ def get_args():
     return args
 
 def print_args(args):
-    keys = [
-        'version',
-        'ip_address',
-        'tcp_port',
-        'udp_port',
-        'quiet',
-        'cli',
-        'admin',
-        'tick',
-        'server_name',
-        'game_mode',
-        'n_teams',
-        'team_kills',
-        'victory_points',
-        'map',
-        'seed',
-        'save_map',
-    ]
+    keypairs = []
     print 'Options:'
-    for key in keys:
-        print '%s :: %s' % (key, getattr(args, key),)
-
-def main():
-    import gameloop
-    args = parse()
-    gameloop.App(args).mainLoop()
+    for key in dir(args):
+        if key.startswith('__') and key.endswith('__'): continue # __special__
+        val = getattr(args, key)
+        if type(val).__name__ in ['instancemethod', 'module']:
+            continue
+        keypairs.append((key, getattr(args, key)))
+    keypairs.sort()
+    for keypair in keypairs:
+        print '%s :: %s' % keypair
 
 if __name__ == '__main__':
-    #main()
-    args = parse()
-    print dir(args)
+    args = get_args()
+    print_args(args)

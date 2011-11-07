@@ -47,6 +47,9 @@ int _get_key_state(key_state_func key_state_cb);
 //int _process_events(...);
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb);
 
+//float* get_mouse_render_state();
+int* get_mouse_render_state();
+
 //call backs
 
 

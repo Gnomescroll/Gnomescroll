@@ -1,8 +1,9 @@
+import opts
+opts = opts.opts
+
 import math
 
 import c_lib.terrain_map as terrain_map
-from opts import opts
-
 import c_lib.c_lib_agents as cAgents
 
 class GameStateGlobal:
