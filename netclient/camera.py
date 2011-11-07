@@ -28,7 +28,7 @@ class Camera(object):
     def input_update(self):
         dxa, dya = c_lib.c_lib_input.get_mouse_deltas()
         self.pan(*self._convert_mouse_deltas(dxa,dya))
-        c_lib.c_lib_sdl.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
+        self.set_c_camera()
         
     def _convert_mouse_deltas(self, dx, dy):
         invert = 1 if opts.invert_mouse else -1
@@ -57,11 +57,23 @@ class Camera(object):
             return [self.x, self.y, self.z]
         else:
             self.x, self.y, self.z = p
+        self.set_c_camera()
+        
+    def set_c_camera(self):
+        c_lib.c_lib_sdl.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
+
+    def angles(self, a=None):
+        if a is None:
+            return [self.x_angle, self.y_angle]
+        else:
+            self.x_angle, self.y_angle = a
+        self.set_c_camera()
 
     def load(self):
         global camera
         camera = self
         self.loaded = True
+        self.set_c_camera()
 
     def unload(self):
         self.loaded = False

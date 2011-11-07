@@ -329,7 +329,15 @@ class App(object):
             
             P.event("Draw World")
             #import pdb; pdb.set_trace()
-            camera.camera.input_update()
+            
+            #camera.camera.input_update()
+            ## deprecate this in favor of the line above, once mouse deltas are sent in control state
+            if InputGlobal.input == 'agent':
+                if GameStateGlobal.agent is not None:
+                    self.agent_camera.angles(GameStateGlobal.agent.angles())
+                    self.agent_camera.pos(GameStateGlobal.agent.pos())
+            elif InputGlobal.input == 'camera':
+                self.camera.input_update()
 
             self.world.draw(first_person)
             if GameStateGlobal.agent is not None:
