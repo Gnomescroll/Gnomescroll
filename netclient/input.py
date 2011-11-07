@@ -166,7 +166,12 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
+        if InputGlobal.input == 'agent':
+            self._pan_agent(dx, dy)
 
+    def _pan_agent(self, dx, dy):
+        GameStateGlobal.agent.pan(dx,dy)
+        
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
@@ -191,7 +196,6 @@ class Mouse(object):
     def clear_mouse_deltas(self):
         print 'clearing mouse deltas'
         cInput.get_mouse_deltas() # discard
-
 
 class Keyboard(object):
 
