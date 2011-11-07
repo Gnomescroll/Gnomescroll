@@ -324,9 +324,9 @@ def init_quad_cache():
     quad_cache = _get_quad_cache()
     cdef Vertex* v
     cdef int id,side,vnum,index
-    for id in range(0, max_cubes):
-        for side in range(0,6):
-            for vert_num in range(0,4):
+    for id in range(max_cubes):
+        for side in range(6):
+            for vert_num in range(4):
                 index = id*6*4+4*side+vert_num
                 index2 = 12*side+3*vert_num
                 v = &quad_cache[index]
@@ -338,7 +338,7 @@ def init_quad_cache():
                 v.b = 255
                 v.a = 255
                 tx,ty = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
-                if c_dat.get(id, 'active') > 1:
+                if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
                     tx,ty = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
@@ -349,7 +349,7 @@ def get_cube_texture(tile_id, side, vert_num):
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
 
     cdef cubeProperties* cp
-    cp = _get_cube(id)
+    cp = _get_cube(tile_id)
     if cp.infinite_texture > 0:  #zero textures for blocks with multiple textures, such as infinite texture blocks
         texture_id = 0
 
