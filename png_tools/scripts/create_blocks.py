@@ -244,6 +244,9 @@ dat = {
         'texture_order': [[0,1,2,3]] * 6,
         'gravity'   :   0,
         'transparent': 0,
+        'infinite_texture_level' : 0,
+        'infinite_texture' : None,
+        'infinite_texture_array' : [],
     },
 
 }
@@ -261,6 +264,9 @@ default =    {
             'hud_img' : -1,
             'gravity'   :   0,
             'transparent': 0,
+            'infinite_texture_level' : 0,
+            'infinite_texture' : None,
+            'infinite_texture_array' : [],
     }
 
 for block in lblock.list:
@@ -276,6 +282,9 @@ for block in lblock.list:
     x['active'] = block.type #type 0 is empty, type 1 is normal, type 2+ is weird blocks
     if(block.transparency > 0 or block.type > 1):
         x['occludes'] = False
+    x['infinite_texture_level'] = block.infinite_texture_level
+    x['infinite_texture'] = block.infinite_texture
+    x['infinite_texture_array'] = block.infinite_texture_array
     dat[block.id] = x
 
 #print str(dat)
