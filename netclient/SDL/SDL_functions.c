@@ -1,6 +1,27 @@
 
 #include <compat_gl.h>
 
+#include "windows.h"
+
+int DisplayBox()
+{
+    int msgboxID = MessageBox(
+        NULL,
+        (LPCWSTR)L"Error: check console log",
+        (LPCWSTR)L"Possible Error",
+        MB_ICONWARNING | MB_DEFBUTTON2
+    );
+
+    switch (msgboxID)
+    {
+    case IDCANCEL:
+        // TODO: add code
+        break;
+    }
+
+    return msgboxID;
+}
+
 int _xres = 800;
 int _yres = 600;
 int _fullscreen = 0;
@@ -24,20 +45,35 @@ int _set_resolution(int xres, int yres, int fullscreen) {
 int _multisampling = 0;
 
 int _init_video() {
+
+	//DisplayBox();
+	
     int nFlags;
     int value;
     
     printf("Creating SDL window\n");
-    SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
+    //SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
+	//-1 on error, 0 on success
+    if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) == -1) {
+       // Unrecoverable error, exit here.
+       printf("SDL_Init failed: %s\n", SDL_GetError());
+	   DisplayBox();
+       return 1;
+    }
+
+	printf("SDL: %s\n", SDL_GetError());
+	
     SDL_WM_SetCaption( "SDL + OpenGL", NULL );
     ///const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
     pSDLVideoInfo = SDL_GetVideoInfo();
-
+	printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
+	
     if( !pSDLVideoInfo )
     {
         printf("SDL_GetVideoInfo() failed. SDL Error: %s\n", SDL_GetError());
-        SDL_Quit();
+        DisplayBox();
+		SDL_Quit();
         return 1;
     }
     nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
@@ -55,9 +91,10 @@ int _init_video() {
         printf( "SDL_HWACCEL Error: Hardware blitting not enabled!\n");
 */
 
-    if(0) //When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
+    if(0) {//When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         nFlags |= SDL_RESIZABLE;
-
+	}
+	
     if(_multisampling) {
         SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
         SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
@@ -79,11 +116,13 @@ int _init_video() {
     ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
     //pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
     pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
-
+	printf("SDL_SetVideoMode: %s\n", SDL_GetError());
+	
     if( !pSDLSurface )
     {
         printf( "Call to SDL_SetVideoMode() failed! - SDL_Error: %s\n", SDL_GetError() );
-        SDL_Quit();
+        DisplayBox();
+		SDL_Quit();
         return 1;
     }
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
@@ -123,6 +162,9 @@ int _init_video() {
 
     atexit(_del_video);
 
+    printf("SDL: %s\n", SDL_GetError());
+    
+    printf("glew init\n");
     glewInit();
     if (glewIsSupported("GL_VERSION_2_0"))
         printf("OpenGL 2.0 Supported \n");
@@ -138,6 +180,9 @@ int _init_video() {
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
+	
+	printf("SDL: %s\n", SDL_GetError());
+	
     return 0;
 }
 
