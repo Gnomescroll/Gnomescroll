@@ -681,7 +681,7 @@ class AgentModel(AgentWrapper):
             
     def camera_position(self):
         p = self.state[0:3]
-        p[2] += 0.7 * self.b_height
+        p[2] += self.camera_height
         return p
 
     def velocity(self):
