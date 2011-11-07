@@ -134,6 +134,8 @@ class InputGlobal:
         if curr is not None:
             current_mode[0] = curr
         print 'input mode is %s' % curr
+        if cls._inputs[curr] == 'camera':
+            cls.mouse.clear_mouse_deltas()
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
@@ -186,12 +188,17 @@ class Mouse(object):
             elif state == 0: #mouse button released
                 pass
 
+    def clear_mouse_deltas(self):
+        print 'clearing mouse deltas'
+        cInput.get_mouse_deltas() # discard
+
 
 class Keyboard(object):
 
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
+        self.agent_camera = main.agent_camera
         self.key_handlers = {}
 
         self._init_key_handlers()
@@ -242,12 +249,9 @@ class Keyboard(object):
             if symbol == 'escape':
                 GameStateGlobal.exit = True
 
-            ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
-        #print 'KEY RELEASE %s' % (symbol,)
-
         if InputGlobal.input == 'agent':
             InputGlobal.agentInput.on_key_release(symbol)
 
@@ -339,6 +343,8 @@ class Keyboard(object):
 
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
+
+
 
     def camera_input_mode(self, keyboard):
         v = opts.camera_speed

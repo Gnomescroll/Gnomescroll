@@ -105,9 +105,9 @@ class App(object):
         self.animations = animations
         self.world = world.World()
 
-        self.camera = camera.Camera(x=0, z=50, rot=-1.)
+        self.camera = camera.Camera(x=0, z=50, rot=-1., name='camera')
         self.camera.load()
-        self.agent_camera = camera.Camera(x=0, z=50, rot=-1.)
+        self.agent_camera = camera.Camera(x=0, z=50, rot=-1., name='agent_camera')
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()

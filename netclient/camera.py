@@ -15,7 +15,8 @@ camera = None   # current active camera. Camera.load() will set this
 
 class Camera(object):
 
-    def __init__(self, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0, x_angle=0.0, y_angle=0.0):
+    def __init__(self, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0, x_angle=0.0, y_angle=0.0, name=''):
+        self.name = name
         self.x = x
         self.y = y
         self.z = z
@@ -72,8 +73,8 @@ class Camera(object):
     def load(self):
         global camera
         camera = self
-        self.loaded = True
         self.set_c_camera()
+        self.loaded = True
 
     def unload(self):
         self.loaded = False
