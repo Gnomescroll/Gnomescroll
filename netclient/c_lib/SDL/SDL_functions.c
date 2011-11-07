@@ -50,12 +50,13 @@ int _set_resolution(int xres, int yres, int fullscreen) {
 int _multisampling = 0;
 
 int _init_video() {
+    printf("ININININITT!!!\n");
 
     //DisplayBox();
-    
+
     int nFlags;
     int value;
-    
+
     printf("Creating SDL window\n");
     //SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
@@ -68,12 +69,12 @@ int _init_video() {
     }
 
     printf("SDL: %s\n", SDL_GetError());
-    
+
     SDL_WM_SetCaption( "Gnomescroll", NULL );
     const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
     //pSDLVideoInfo = SDL_GetVideoInfo();
     printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
-    
+
     if( !pSDLVideoInfo )
     {
         printf("SDL_GetVideoInfo() failed. SDL Error: %s\n", SDL_GetError());
@@ -99,7 +100,7 @@ int _init_video() {
     if(0) {//When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         nFlags |= SDL_RESIZABLE;
     }
-    
+
     nFlags |= SDL_DOUBLEBUF; // http://sdl.beuc.net/sdl.wiki/SDL_Flip
 
     if(_multisampling) {
@@ -124,7 +125,7 @@ int _init_video() {
     //pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
     pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
     printf("SDL_SetVideoMode: %s\n", SDL_GetError());
-    
+
     if( !pSDLSurface )
     {
         printf( "Call to SDL_SetVideoMode() failed! - SDL_Error: %s\n", SDL_GetError() );
@@ -157,7 +158,7 @@ int _init_video() {
     atexit(_del_video);
 
     printf("SDL: %s\n", SDL_GetError());
-    
+
     printf("glew init\n");
     glewInit();
     if (glewIsSupported("GL_VERSION_2_0"))
@@ -171,9 +172,9 @@ int _init_video() {
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
-    
+
     printf("SDL: %s\n", SDL_GetError());
-    
+
     return 0;
 }
 
@@ -195,13 +196,13 @@ int _swap_buffers() {
     int _time1;
     int _time2;
 
-    if(_SDL_SWAP_DEBUG) 
+    if(_SDL_SWAP_DEBUG)
     {
        _time1 = SDL_GetTicks();
     }
     SDL_GL_SwapBuffers();
 
-    if(_SDL_SWAP_DEBUG) 
+    if(_SDL_SWAP_DEBUG)
     {
         int _time2 = SDL_GetTicks();
         _s2_buffer[_s_index] = _time2 - _last_frame_t;
@@ -211,7 +212,7 @@ int _swap_buffers() {
 
         _s_index = (_s_index + 1 )%_L;
         if(_flip_time > 2) {
-            printf("Warning: SDL buffer swap took %i ms\n", _flip_time);   
+            printf("Warning: SDL buffer swap took %i ms\n", _flip_time);
             //can do stuff here!!!
             int i;
             for(i=0; i < 6; i++) {
