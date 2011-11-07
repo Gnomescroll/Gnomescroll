@@ -267,7 +267,7 @@ will be 1 if is adjacent to any side
 will be 2 only if both sides are occluded
  */
 
-inline int calcAdj(int side_1, int side_2, int corner)
+static inline int calcAdj(int side_1, int side_2, int corner)
 {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     if( occ == 0) return 255;
@@ -287,7 +287,7 @@ const static int s_array[18] = {
         0,-1,0, //east
         };
 
-int inline _is_occluded(int x,int y,int z, int side_num) {
+static inline int _is_occluded(int x,int y,int z, int side_num) {
     int i;
     i = 3*side_num;
     x += s_array[i+0];
@@ -297,7 +297,7 @@ int inline _is_occluded(int x,int y,int z, int side_num) {
     return isOccludes(_get(x,y,z));
 }
 
-int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
+static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
     int i;
     i = 3*side_num;
     x += s_array[i+0];
@@ -309,9 +309,11 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
     return isActive(tile_id);
 }
 
-inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
+    int i;
     int index;
+    int occ;
     int CX[8];
     for(i=0; i<8; i++) 
     {
@@ -340,7 +342,7 @@ inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset,
     v_list[offset+3].b = occ;
 }
 
-inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
     int i;
     //struct Vertex* v;
     //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
@@ -360,7 +362,7 @@ inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, in
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 }
 
-void __inline add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
     int i;
     //struct Vertex* v;
     //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
@@ -387,8 +389,8 @@ void __inline add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, 
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 }
 
-int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
-int inline _is_occluded(int x,int y,int z, int side_num);
+static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
+static inline int _is_occluded(int x,int y,int z, int side_num);
 
 
 
