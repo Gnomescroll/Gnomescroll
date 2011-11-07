@@ -103,7 +103,7 @@ class InputGlobal:
     def init_0(cls, main):
         #InputEventGlobal.inputGlobal = cls
 
-        InputGlobal.mouse = Mouse(main)
+        InputGlobal.mouse = Mouse()
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.block_selector = BlockSelector(8,8,range(8*8))
@@ -156,32 +156,19 @@ class InputGlobal:
 
 class Mouse(object):
 
-    def __init__(self, main):
-        self.main = main
-        self.camera = main.camera
-
-    #inplement draw detection...
+    def __init__(self):
+        pass
+        
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
         pass
-        #if InputGlobal.input == 'agent':
-        #    self._pan_agent(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if InputGlobal.input == 'agent':
-            self._pan_agent(dx, dy)
-        #if InputGlobal.input == 'camera':
-            #self._pan_camera(dx, dy, sen=opts.camera_sensitivity)
-
-    def _pan_agent(self, dx, dy):
-        GameStateGlobal.agent.pan(dx, dy)
-
-    #def _pan_camera(self, dx, dy, sen):
-        #self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
+        pass
 
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
-    def on_mouse_press(self, x, y, button, state= None):
+    def on_mouse_press(self, x, y, button, state):
         if InputGlobal.input == 'agent':
             if state == 1: #pressed down
                 if button == 1:
