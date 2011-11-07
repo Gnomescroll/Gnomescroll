@@ -35,16 +35,18 @@ def run():
     print str(lblock.block_list())
 
 class Texture_set:
-    def __init__(self, error_png="error.png", texture_dir="./block/"):
+    def __init__(self, error_png="./block/error.png", texture_dir="./block/"):
         self.texture_id_counter = 0
         self.texture_dir = texture_dir
         self.A = {}
         self.B = {}
+        self.C = {}
         self.list = [(error_png,255)]
     def add_texture(self,tex):
         #check if texture file exists
         #if texture file does not exist, then return 255
-        if not os.path.exists(self.texture_dir+tex):
+        tex = self.texture_dir + tex
+        if not os.path.exists(tex):
             print "Error: texture file does not exist, %s" %(str(tex))
             self.A[tex] = 255
             return 255
@@ -62,9 +64,25 @@ class Texture_set:
         return 255
     '''
     def g(self, tex):
+        if self.C.get(tex, None) != None:
+            return self.C.get(tex)
         id = self.A.get(tex, None)
         if id == None:
             id = self.add_texture(tex)
+        self.C[tex] = id
+        return id
+    def add_inf_tex(self, index, texname):
+        tex = "./infinite_texture/"+texname+"/out/%02d.png" %(index)
+        if not os.path.isfile(tex):
+            print "Error: infinite texture tile does not exist, %s" %(str(tex))
+            assert False
+            self.A[tex] = 255
+            return 255
+        self.A[tex] = self.texture_id_counter
+        self.B[self.texture_id_counter] = tex
+        id= self.texture_id_counter
+        self.list.append((tex,id))
+        self.texture_id_counter +=1
         return id
     def texture_list(self):
         return self.list
@@ -111,6 +129,9 @@ class Block_template:
         self.type = 1
         self.hud_img = -1    #not handling undefined case
         self.transparency = 0 #default
+        self.infinite_texture_level = 0 #default
+        self.infinite_texture = None
+        self.infinite_texture_array = []
     def set_name(self,name):
         self.name = name
     def set_id(self, id):
@@ -125,6 +146,19 @@ class Block_template:
         print "%s, %s" % (s2, s3)
         self.hud_pos = int(s2)
         self.hud_img = hud_tex.g(s3)    #eventually may want to use seperate one for hud
+    def set_infinite_texture(self, level, texname):
+        self.infinite_texture_level = level
+        self.infinite_texture = texname
+        if level == 2:
+            for _i in range(0,16):
+                self.infinite_texture_array.insert(_i, block_tex.add_inf_tex(_i, texname))
+        elif level == 3:
+            for _i in range(0,81):
+                pass
+        else:
+            print "Invalid Argument for level: must be 2 or 3"
+            print "level = %s" % (str(level))
+            assert False
     def pinput(self, s1,s2,s3=None):
         global hud_tex, block_tex
         if s1 == "id":
@@ -137,6 +171,8 @@ class Block_template:
             self.set_transparency(s2)
         elif s1 == "type":
             self.set_type(s2)
+        elif s1 == "infinite_texture":
+            self.set_infinite_texture(int(s2), s3)
         elif s1 == "top":
             self.side[0] = block_tex.g(s2)
         elif s1 == "bottom":
@@ -159,8 +195,8 @@ class Block_template:
     def block_dictionary(self):
         pass
 
-block_tex = Texture_set(error_png="error.png", texture_dir="./block/") #block textures
-hud_tex = Texture_set(error_png="error.png", texture_dir="./block/")
+block_tex = Texture_set(error_png="./block/error.png", texture_dir="./block/") #block textures
+hud_tex = Texture_set(error_png="./block/error.png", texture_dir="./block/")
 lblock = Block_list()
 run()
 
@@ -171,7 +207,7 @@ print str(block_tex._texture_list())
 
 print "Writing out block textures"
 import spritesheet
-sprite = spritesheet.Spritesheet("test", "./block/", block_tex._texture_list())
+sprite = spritesheet.Spritesheet("test", "./", block_tex._texture_list())
 sprite.verify()
 sprite.generate()
 sprite.write_out("./blocks_01.png")
@@ -179,7 +215,7 @@ sprite.write_out("../netclient/media/texture/blocks_01.png")
 
 print "Writing out block selector hud textures"
 import spritesheet
-hud_sprite = spritesheet.Spritesheet("test", "./block/", hud_tex._texture_list())
+hud_sprite = spritesheet.Spritesheet("test", "./", hud_tex._texture_list())
 hud_sprite.verify()
 hud_sprite.generate()
 hud_sprite.write_out("./hud_block_selector.png")
@@ -208,6 +244,9 @@ dat = {
         'texture_order': [[0,1,2,3]] * 6,
         'gravity'   :   0,
         'transparent': 0,
+        'infinite_texture_level' : 0,
+        'infinite_texture' : None,
+        'infinite_texture_array' : [],
     },
 
 }
@@ -225,6 +264,9 @@ default =    {
             'hud_img' : -1,
             'gravity'   :   0,
             'transparent': 0,
+            'infinite_texture_level' : 0,
+            'infinite_texture' : None,
+            'infinite_texture_array' : [],
     }
 
 for block in lblock.list:
@@ -240,6 +282,9 @@ for block in lblock.list:
     x['active'] = block.type #type 0 is empty, type 1 is normal, type 2+ is weird blocks
     if(block.transparency > 0 or block.type > 1):
         x['occludes'] = False
+    x['infinite_texture_level'] = block.infinite_texture_level
+    x['infinite_texture'] = block.infinite_texture
+    x['infinite_texture_array'] = block.infinite_texture_array
     dat[block.id] = x
 
 #print str(dat)

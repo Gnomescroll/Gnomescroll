@@ -185,12 +185,18 @@ cdef extern from "./t_map/t_properties.h":
         int max_damage
         int neutron_tolerance
         int nuclear
+        int infinite_texture
 
 #cdef extern from "./t_properties.h":
 cdef extern from "./t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
     cubeProperties* _get_cube(int id)
+    void set_infinite_texture(int id, int texture)
+    void init_t_properties()
+
+cdef int infinite_texture_counter = 1
+
 
 ## Setup ##
 from dat_loader import c_dat
@@ -199,6 +205,7 @@ def init_cube_properties(id=None):
     global c_dat
 
     def apply(id):
+        global infinite_texture_counter
         cdef cubeProperties* cp
         cp = _get_cube(id)
         cp.active = int(c_dat.get(id,'active'))
@@ -209,6 +216,32 @@ def init_cube_properties(id=None):
         cp.max_damage = int(c_dat.get(id,'max_damage'))
         cp.neutron_tolerance = int(c_dat.get(id,'neutron_tolerance'))
         cp.nuclear = int(c_dat.get(id,'nuclear'))
+
+        #init infinite textures
+        if(int(c_dat.get(id,'infinite_texture_level')) not in [2,3]):
+            cp.infinite_texture = 0;
+        else:
+            if(c_dat.get(id,'infinite_texture_level') == 2):
+                if cp.infinite_texture == 0:
+                    cp.infinite_texture = infinite_texture_counter
+                    for _i in range(0,16):
+                        set_infinite_texture(infinite_texture_counter+_i, c_dat.get(id,'infinite_texture_array')[_i])
+                    infinite_texture_counter += 16
+                else:
+                    for _i in range(0,16):
+                        set_infinite_texture(cp.infinite_texture+_i, c_dat.get(id,'infinite_texture_array')[_i])
+            if(c_dat.get(id,'infinite_texture_level') == 3):
+                if cp.infinite_texture == 0:
+                    cp.infinite_texture = infinite_texture_counter
+                    for _i in range(0,81):
+                        set_infinite_texture(infinite_texture_counter+_i, c_dat.get(id,'infinite_texture_array')[_i])
+                    infinite_texture_counter += 81
+                else:
+                    for _i in range(0,81):
+                        set_infinite_texture(infinite_texture_counter+_i, c_dat.get(id,'infinite_texture_array')[_i])
+        #'infinite_texture_level' : 0,
+        #'infinite_texture' : None,
+        #'infinite_texture_array' : [],
 
     if id is None:
         for id in c_dat.dat:
@@ -314,6 +347,12 @@ def get_cube_texture(tile_id, side, vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
+
+    cdef cubeProperties* cp
+    cp = _get_cube(id)
+    if cp.infinite_texture > 0:  #zero textures for blocks with multiple textures, such as infinite texture blocks
+        texture_id = 0
+
     texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
     x = texture_id % 16
     y = (texture_id - (texture_id % 16)) / 16
@@ -559,6 +598,7 @@ def init():
     else:
         init =1
     print "Init Terrain Map"
+    init_t_properties()
     init_cube_properties()
     init_quad_cache()
     _init_t_map();
