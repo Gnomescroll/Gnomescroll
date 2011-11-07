@@ -103,7 +103,7 @@ class InputGlobal:
     def init_0(cls, main):
         #InputEventGlobal.inputGlobal = cls
 
-        InputGlobal.mouse = Mouse(main)
+        InputGlobal.mouse = Mouse()
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.block_selector = BlockSelector(8,8,range(8*8))
@@ -133,12 +133,16 @@ class InputGlobal:
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
         if curr is not None:
             current_mode[0] = curr
+        print 'input mode is %s' % curr
+        if cls._inputs[curr] == 'camera':
+            cls.mouse.clear_mouse_deltas()
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
             current_mode[0] = curr
+        print 'camera mode is %s' % curr
 
     @classmethod
     def enable_chat(cls):
@@ -154,32 +158,24 @@ class InputGlobal:
 
 class Mouse(object):
 
-    def __init__(self, main):
-        self.main = main
-        self.camera = main.camera
-
-    #inplement draw detection...
+    def __init__(self):
+        pass
+        
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
         pass
-        #if InputGlobal.input == 'agent':
-        #    self._pan_agent(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
+        pass
         if InputGlobal.input == 'agent':
-            self._pan_agent(dx, dy, sen=opts.mouse_sensitivity)
-        if InputGlobal.input == 'camera':
-            self._pan_camera(dx, dy, sen=opts.camera_sensitivity)
+            self._pan_agent(dx, dy)
 
-    def _pan_agent(self, dx, dy, sen):
-        GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
-
-    def _pan_camera(self, dx, dy, sen):
-        self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
-
+    def _pan_agent(self, dx, dy):
+        GameStateGlobal.agent.pan(dx,dy)
+        
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
-    def on_mouse_press(self, x, y, button, state= None):
+    def on_mouse_press(self, x, y, button, state):
         if InputGlobal.input == 'agent':
             if state == 1: #pressed down
                 if button == 1:
@@ -197,12 +193,16 @@ class Mouse(object):
             elif state == 0: #mouse button released
                 pass
 
+    def clear_mouse_deltas(self):
+        print 'clearing mouse deltas'
+        cInput.get_mouse_deltas() # discard
 
 class Keyboard(object):
 
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
+        self.agent_camera = main.agent_camera
         self.key_handlers = {}
 
         self._init_key_handlers()
@@ -253,12 +253,9 @@ class Keyboard(object):
             if symbol == 'escape':
                 GameStateGlobal.exit = True
 
-            ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
-        #print 'KEY RELEASE %s' % (symbol,)
-
         if InputGlobal.input == 'agent':
             InputGlobal.agentInput.on_key_release(symbol)
 
@@ -350,6 +347,8 @@ class Keyboard(object):
 
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
+
+
 
     def camera_input_mode(self, keyboard):
         v = opts.camera_speed

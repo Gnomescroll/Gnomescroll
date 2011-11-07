@@ -678,6 +678,11 @@ class AgentModel(AgentWrapper):
             return self.state[0:3]
         else:
             self.x, self.y, self.z = xyz
+            
+    def camera_position(self):
+        p = self.state[0:3]
+        p[2] += 0.7 * self.b_height
+        return p
 
     def velocity(self):
         return self.state[3:6]
@@ -1059,14 +1064,20 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.y_angle
         )
 
+    def _apply_sensitivity(self, dx, dy):
+        invert = -1 if opts.invert_mouse else 1
+        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
+        dy = (float(invert*dy) * opts.sensitivity) / 40000.
+        return dx,dy
+
     def pan(self, dx_angle, dy_angle):
+        dx_angle, dy_angle = self._apply_sensitivity(dx_angle, dy_angle)
         self._x_angle += dx_angle
         self._y_angle += dy_angle
         if self._y_angle < -0.499:
             self._y_angle = -0.499
         if self._y_angle > 0.499:
             self._y_angle = 0.499
-
 
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():

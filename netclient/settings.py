@@ -17,10 +17,9 @@ fullscreen = False
 
 ''' Controls '''
 # lower is more sensitive
-sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefined
-mouse_sensitivity = 300
-camera_sensitivity = 300
+sensitivity = 100
 camera_speed = 0.3
+invert_mouse = False
 
 ''' HUD/Info panels '''
 hud = True  # show hud

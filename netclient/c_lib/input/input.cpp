@@ -56,15 +56,10 @@ int _get_key_state(key_state_func key_state_cb) {
 static int mouse_render_state[2];
 int* get_mouse_render_state() {
     SDL_GetRelativeMouseState(&mouse_render_state[0], &mouse_render_state[1]);
-    //printf("%0.2f %0.2f\n", mouse_render_state[0], mouse_render_state[1]);
-    printf("%d %d\n", mouse_render_state[0], mouse_render_state[1]);
-    _pan_camera(((float)mouse_render_state[0])*-1.0f / camera_sen, ((float)mouse_render_state[1])*1.0f / camera_sen);
     return mouse_render_state;
 }
 
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
-    get_mouse_render_state();
-
     int t; //temp
 
     if(MOUSE_BOUND) {

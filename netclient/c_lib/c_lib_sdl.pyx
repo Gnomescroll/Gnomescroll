@@ -21,6 +21,10 @@ cdef extern from "./SDL/camera.h":
     int _world_projection(Camera* camera)
     int _hud_projection(Camera* camera)
     int _set_camera(Camera* c)
+    void _set_camera_state(float x, float y, float z, float theta, float phi)
+
+def set_projection(float x, float y, float z, float x_angle, float y_angle):
+    _set_camera_state(x,y,z, x_angle, y_angle);
 
 ## Texture Loader ##
 cdef extern from "./SDL/SDL.h":
@@ -33,11 +37,6 @@ cdef extern from "./SDL/texture_loader.h":
     SDL_Surface* _load_image(char *file)
     int _create_block_texture(char *file) #deprecate
     int _create_texture(SDL_Surface* surface)
-
-cdef int testt():
-    cdef int i
-    i = _init_image_loader()
-    return i
 
 cdef SDL_Surface* load_image(char* file):
     cdef SDL_Surface* surface
@@ -124,7 +123,7 @@ cdef class Global:
         self.camera = camera
         _set_camera(camera)
         self.set_aspect(85.0 ,800.0, 600.0, 0.1, 1000.0)
-        self.set_projection(0.,0.,0.,0.,0.)
+        self._set_projection(0.,0.,0.,0.,0.)
 
     def init(self):
         print "Creating SDL OpenGL Window"
@@ -148,7 +147,8 @@ cdef class Global:
         camera.z_near = z_near
         camera.z_far = z_far
 
-    def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
+    def _set_projection(self, float x, float y, float z, float x_angle, float y_angle):
+        print "SDL_Global set camera state"
         cdef Camera* camera
         camera = self.camera
 
@@ -220,8 +220,7 @@ cdef extern from './SDL/SDL_text.h':
     SDL_Surface* _create_text_surface(char* text,r,g,b,a)
     int _draw_text_surface(SDL_Surface* surface, int x, int y)
     int _free_text_surface(SDL_Surface* surface)
-    int _draw_text(char* text, float x, float y, float height, float width, float depth)
-    int _draw_text2(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
+    int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
 
 cdef extern from './SDL/draw_functions.h':
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
@@ -229,12 +228,6 @@ cdef extern from './SDL/draw_functions.h':
 cdef extern from './SDL/block_selector.h':
     void _draw_block_selector(int x, int y)
     void _load_block_selector_texture(char *file, int scale)
-
-def init():
-    _init_text()
-
-def draw_text(text, x, y, height = 10., width = 10., depth = -.5):
-    _draw_text(text, x, y, height, width, depth)
 
 def create_text_surface(string):
     pass
@@ -252,40 +245,24 @@ def load_block_selector_texture(file, scale=1):
     _load_block_selector_texture(file, scale)
 
 class text:
-#    cdef float x, y
-#    cdef float height, width, depth
-#    cdef int r,g,b,a
-#    text = {}
 
     def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
         self.height = 10
         self.width = 10
         self.depth = -0.1
         if len(color) == 4:
-            self.r, self.g, self.b, self.a = color
+            self.color = color
         else:
-            self.r, self.g, self.b = color
-            self.a = 255
+            self.color = list(color)
+            self.color.append(255) # default alpha
+
         self.text = text
         self.x = x
         self.y = y
 
     def draw(self):
-        assert self.text != None
-        #_draw_text(self.text, self.x, self.y, self.height, self.width, self.depth)
-        _draw_text2(self.text, self.x, self.y, self.height, self.width, self.depth, self.r, self.g, self.b, self.a)
-
-    def _get_color(self):
-        return (self.r, self.g, self.b, self.a)
-    def _set_color(self, color):
-        if len(color) == 4:
-            self.r, self.g, self.b, self.a = color
-        else:
-            self.r, self.g, self.b = color
-    def _del_color(self):
-        del self.r, self.g, self.b, self.a
-
-    color = property(_get_color, _set_color, _del_color, "text color")
+        r,g,b,a  = self.color
+        _draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
 
 class reticle:
 
@@ -294,10 +271,8 @@ class reticle:
         self.y = y
         load_hud_texture(file)
 
-
     def draw(self):
         draw_loaded_hud_texture(self.x, self.y)
-
 
 class block_selector:
 
@@ -309,17 +284,4 @@ class block_selector:
 
     def draw(self):
         draw_block_selector(self.x, self.y)
-
-'''
-New
-'''
-def set_projection(float x, float y, float z, float x_angle, float y_angle):
-    cdef Camera* camera
-    camera = camera
-
-    camera.x = x
-    camera.y = y
-    camera.z = z
-    camera.x_angle = x_angle
-    camera.y_angle = y_angle
 

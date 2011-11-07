@@ -27,6 +27,7 @@ import vox_lib
 import c_lib.c_lib_input as cInput
 import sound.sounds as sounds
 import world
+import camera
 
 import c_lib.terrain_map
 import init_c_lib
@@ -49,7 +50,6 @@ from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from players import Player
 from input import Mouse, Keyboard
-from camera import Camera
 from hud import Hud
 from animations import animations
 
@@ -105,7 +105,9 @@ class App(object):
         self.animations = animations
         self.world = world.World()
 
-        self.camera = Camera(x=0, z=50, rot=-1.)
+        self.camera = camera.Camera(x=0, z=50, rot=-1., name='camera')
+        self.camera.load()
+        self.agent_camera = camera.Camera(x=0, z=50, rot=-1., name='agent_camera')
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
@@ -310,20 +312,37 @@ class App(object):
             MapControllerGlobal.mapController.tick()
             P.event("Camera Setup")
             if InputGlobal.camera == 'agent':
-                self.camera.agent_view(GameStateGlobal.agent)
+                #self.agent_camera.load(GameStateGlobal.agent)
+                self.camera.unload()
+                self.agent_camera.load()
+                self.agent_camera.pos(GameStateGlobal.agent.camera_position())
                 first_person = True
             elif InputGlobal.camera == 'camera':
-                self.camera.camera_view()
+                self.agent_camera.unload()
+                self.camera.load()
                 first_person = False
 
-            self.camera.worldProjection()
+            camera.worldProjection()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
             
             P.event("Draw World")
             #import pdb; pdb.set_trace()
+            
+            #camera.camera.input_update()
+            ## deprecate this in favor of the line above, once mouse deltas are sent in control state
+            if InputGlobal.input == 'agent':
+                if GameStateGlobal.agent is not None:
+                    self.agent_camera.angles(GameStateGlobal.agent.angles())
+                    self.agent_camera.pos(GameStateGlobal.agent.pos())
+            elif InputGlobal.input == 'camera':
+                self.camera.input_update()
+
             self.world.draw(first_person)
+            if GameStateGlobal.agent is not None:
+                GameStateGlobal.agent.draw_aiming_direction()
+                
             P.event("Animations Draw")
             self.animations.draw()
             P.event("c_lib_objects.draw()")
@@ -333,7 +352,7 @@ class App(object):
             #camera prospective
             P.event("draw hud")
             if opts.hud:
-                self.camera.hudProjection()
+                camera.hudProjection()
                 draw_bs = False
                 if GameStateGlobal.agent:
                     draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
