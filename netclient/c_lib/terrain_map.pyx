@@ -347,6 +347,12 @@ def get_cube_texture(tile_id, side, vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
+
+    cdef cubeProperties* cp
+    cp = _get_cube(id)
+    if cp.infinite_texture > 0:  #zero textures for blocks with multiple textures, such as infinite texture blocks
+        texture_id = 0
+
     texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
     x = texture_id % 16
     y = (texture_id - (texture_id % 16)) / 16
