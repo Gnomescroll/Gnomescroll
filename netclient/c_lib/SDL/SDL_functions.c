@@ -70,8 +70,8 @@ int _init_video() {
     printf("SDL: %s\n", SDL_GetError());
     
     SDL_WM_SetCaption( "Gnomescroll", NULL );
-    ///const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
-    pSDLVideoInfo = SDL_GetVideoInfo();
+    const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
+    //pSDLVideoInfo = SDL_GetVideoInfo();
     printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
     
     if( !pSDLVideoInfo )
@@ -185,25 +185,38 @@ static int _s_index = 0;
 
 static int _last_frame_t;
 
+const int _SDL_SWAP_DEBUG = 0;
+
+/*
+    Measure the time since last frame and if there is extra time before next flip, do map processing
+
+*/
 int _swap_buffers() {
-    int _time1 = SDL_GetTicks();
+    int _time1;
+    int _time2;
+
+    if(_SDL_SWAP_DEBUG) 
+    {
+       _time1 = SDL_GetTicks();
+    }
     SDL_GL_SwapBuffers();
 
-    int _time2 = SDL_GetTicks();
+    if(_SDL_SWAP_DEBUG) 
+    {
+        int _time2 = SDL_GetTicks();
+        _s2_buffer[_s_index] = _time2 - _last_frame_t;
+        _s_buffer[_s_index] = _time2 - _time1;
+        _last_frame_t = _time2;
+        int _flip_time = _time2 - _time1;
 
-    _s2_buffer[_s_index] = _time2 - _last_frame_t;
-    _s_buffer[_s_index] = _time2 - _time1;
-
-    _last_frame_t = _time2;
-    int _flip_time = _time2 - _time1;
-
-    _s_index = (_s_index + 1 )%_L;
-    if(_flip_time > 2) {
-        printf("Warning: SDL buffer swap took %i ms\n", _flip_time);   
-        //can do stuff here!!!
-        int i;
-        for(i=0; i < 6; i++) {
-            printf("frame %i: %i ms, %i ms\n", i, _s_buffer[(_s_index+i)%_L], _s2_buffer[(_s_index+i)%_L] );
+        _s_index = (_s_index + 1 )%_L;
+        if(_flip_time > 2) {
+            printf("Warning: SDL buffer swap took %i ms\n", _flip_time);   
+            //can do stuff here!!!
+            int i;
+            for(i=0; i < 6; i++) {
+                printf("frame %i: %i ms, %i ms\n", i, _s_buffer[(_s_index+i)%_L], _s2_buffer[(_s_index+i)%_L] );
+            }
         }
     }
     return 0;
