@@ -343,7 +343,7 @@ def init_quad_cache():
                 v.tx = tx
                 v.ty = ty
 
-def get_cube_texture(tile_id, side, vert_num):
+def get_cube_texture(int tile_id, int side, int vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]

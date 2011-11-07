@@ -309,31 +309,15 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
     return isActive(tile_id);
 }
 
-void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
-    int i;
-    //struct Vertex* v;
-    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-
-    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-
+inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int side)
+{
     int index;
     int CX[8];
-    for(i=0; i<8; i++) {
+    for(i=0; i<8; i++) 
+    {
         index = side*8*3+i*3;
         CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
-
-    float _x = x;
-    float _y = y;
-    float _z = z;
-    for(i=0; i<=3;i++) {
-        v_list[offset+i].x += _x;
-        v_list[offset+i].y += _y;
-        v_list[offset+i].z += _z;
-    }
-
-    int occ = (x+y+z);
-    if(occ > 255) occ = 255;
 
     occ = calcAdj(CX[7], CX[1], CX[0]);
     v_list[offset+0].r = occ;
@@ -354,6 +338,53 @@ void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, 
     v_list[offset+3].r = occ;
     v_list[offset+3].g = occ;
     v_list[offset+3].b = occ;
+}
+
+inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    for(i=0; i<=3;i++) {
+        v_list[offset+i].x += _x;
+        v_list[offset+i].y += _y;
+        v_list[offset+i].z += _z;
+    }
+
+
+    _set_quad_local_ambient_occlusion(v_list, offset, side);
+}
+
+void __inline add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    {
+        float _x = x;
+        float _y = y;
+        float _z = z;
+        for(i=0; i<=3;i++) {
+            v_list[offset+i].x += _x;
+            v_list[offset+i].y += _y;
+            v_list[offset+i].z += _z;
+        }
+    }
+    //compute hash values
+    {
+        
+
+
+    }
+
+    _set_quad_local_ambient_occlusion(v_list, offset, side);
 }
 
 int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
