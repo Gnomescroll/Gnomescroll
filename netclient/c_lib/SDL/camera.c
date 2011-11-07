@@ -67,7 +67,7 @@ int _world_projection(struct Camera* c_cam) {
     return 0;
 }
 
-void __inline end_world_projection() {
+inline void end_world_projection() {
    glDisable (GL_DEPTH_TEST);
 }
 
@@ -102,9 +102,16 @@ void _pan_camera(float dtheta, float dphi) {    // args are deltas
     camera->x_angle += dtheta;
     camera->y_angle += dphi;
 
-    if (camera->y_angle > 0.499f) {
-        camera->y_angle = 0.499f;
-    } else if (camera->x_angle < -0.499f) {
-        camera->x_angle = -0.499f;
+    if (camera->x_angle > 0.499999f) {
+        camera->x_angle = 0.499999f;
+    } else if (camera->x_angle < -0.499999f) {
+        camera->x_angle = -0.499999f;
     }
+
+    if (camera->y_angle > 0.499999f) {
+        camera->y_angle = 0.499999f;
+    } else if (camera->y_angle < -0.499999f) {
+        camera->x_angle = -0.499999f;
+    }
+
 }

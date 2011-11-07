@@ -56,6 +56,8 @@ struct VBO {
 
 struct vm_chunk {
     unsigned short voxel[512];
+    unsigned char hash2[8*8*8];   //hash result for 2ary infinite texture
+    unsigned char hash3[8*8*8];   //hash result for 3ary infinite texture
     int x_off, y_off, z_off; //lower corner of chunk
     unsigned int local_version;
     unsigned int server_version;
