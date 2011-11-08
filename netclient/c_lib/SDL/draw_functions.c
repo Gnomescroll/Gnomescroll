@@ -56,12 +56,11 @@ int _draw_border_rect(int r, int g, int b, float x, float y, float w, float h) {
 }
 
 int _blit_sprite(int texture, float x0, float y0, float x1, float y1, float z) {
-    glColor3ub(255,255,255);
-    glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, texture );
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor3ub(255, 255, 255);
 
     glBegin( GL_QUADS );
     glTexCoord2i( 0, 0 );

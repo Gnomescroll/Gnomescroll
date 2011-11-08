@@ -21,7 +21,7 @@ void _draw_loaded_hud_texture(int x, int y) {
     x1 = x + hud_texture.w;
     y1 = y + hud_texture.h;
 
-    _blit_sprite2(hud_texture.tex, x, y, x1, y1, 0);
+    _blit_sprite(hud_texture.tex, x, y, x1, y1, 0);
 }
 
 static Texture block_selector_texture;
@@ -40,7 +40,7 @@ void _draw_block_selector(int x, int y) {
     int x1, y1;
     x1 = block_selector_texture.h + x;
     y1 = block_selector_texture.w + y;
-    _blit_sprite2(block_selector_texture.tex, x, y1, x1, y, 0);
+    _blit_sprite(block_selector_texture.tex, x, y1, x1, y, 0);
 }
 
 int _create_block_texture(char *file) {

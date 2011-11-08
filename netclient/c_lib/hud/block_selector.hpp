@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include <c_lib/hud/texture_loader.h>
+#include <c_lib/SDL/draw_functions.h>
 
 int _init_block_selector();
 void _draw_block_selector(int x, int y);

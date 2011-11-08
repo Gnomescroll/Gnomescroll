@@ -3,12 +3,15 @@
 HUD Cube Selector
 '''
 
-cdef extern from "./hud/cube_select.hpp":
+cdef extern from "./hud/block_selector.hpp":
     void _init_cube_select()
     int _get_selected_cube_id()
     void _cube_select_set_hud(int pos, int cube_id, int tex_id)
     void _draw_cube_selector(float x, float y, float size, int mode)
     void _hud_control_input(int pos)
+
+    void _draw_block_selector(int x, int y)
+    void _load_block_selector_texture(char *file, int scale)
 
 #returns the id of the cube which is selected in hud
 def get_selected_cube_id():
@@ -83,7 +86,8 @@ cdef extern from './hud/texture_loader.h':
     void _draw_loaded_hud_texture(int x, int y)
     void _load_hud_texture(char *file)
 
-
+cdef extern from "./SDL/draw_functions.h":
+    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
 cdef extern from './hud/text.h':
     int _init_text()
@@ -91,14 +95,6 @@ cdef extern from './hud/text.h':
     int _draw_text_surface(SDL_Surface* surface, int x, int y)
     int _free_text_surface(SDL_Surface* surface)
     int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
-
-# update this
-cdef extern from './SDL/draw_functions.h':
-    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
-
-cdef extern from './hud/block_selector.h':
-    void _draw_block_selector(int x, int y)
-    void _load_block_selector_texture(char *file, int scale)
 
 def create_text_surface(string):
     pass
