@@ -70,9 +70,9 @@ def toggle_inventory_hud():
 HUD.pyx
 """
 
-cdef extern from './hud/texture_loader.h':
-    void _draw_loaded_texture(int x, int y)
-    void _load_texture(char *file)
+#cdef extern from './hud/texture_loader.h':
+#    void _draw_loaded_texture(int x, int y)
+#    void _load_texture(char *file)
 
 cdef extern from "./SDL/draw_functions.h":
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
@@ -83,11 +83,11 @@ cdef extern from './hud/text.h':
     int _free_text_surface(SDL_Surface* surface)
     int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
 
-def draw_loaded_hud_texture(x, y):
-    _draw_loaded_texture(x, y)
+#def draw_loaded_hud_texture(x, y):
+#    _draw_loaded_texture(x, y)
 
-def load_hud_texture(file):
-    _load_texture(file)
+#def load_hud_texture(file):
+#    _load_texture(file)
 
 class Text:
 
@@ -107,29 +107,63 @@ class Text:
         r,g,b,a  = self.color
         _draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
 
-class Reticle:
+#class Reticle:
+#    cdef SDL_surface *surface
+#    cdef int texture
+#    cdef int w
+#    cdef int h
 
-    def __init__(self, file, x=0, y=0):
-        self.x = x
-        self.y = y
-        load_hud_texture(file)
+#    def __init__(self, file, x=0, y=0):
+#        self.x = x
+#        self.y = y
+#        load_hud_texture(file)
 
-    def draw(self):
-        draw_loaded_hud_texture(self.x, self.y)
+#    def draw(self):
+
+#        x = x - hud_texture.w/2;
+#        y = y - hud_texture.h/2;
+
+#        x1 = x + hud_texture.w;
+#        y1 = y + hud_texture.h;
+
+
+#        _blit_sprite(self.texture, x, y, x1, y1, 0);
+#        draw_loaded_hud_texture(self.x, self.y)
 
 cdef class Texture:
-    cdef int tex
+    cdef SDL_Surface* surface
+    cdef int texture
     cdef int w
     cdef int h
-    cdef SDL_Surface* surface
 
     def __init__(Texture self, char * file):
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        err = create_texture_from_surface(self.surface, &self.tex)
+        err = create_texture_from_surface(self.surface, &self.texture)
         if err:
             print "Cython Texture.__init__ :: Loading error %d" % (err,)
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
-        _blit_sprite(self.id, x0, y0, x1, y1, z)
+        _blit_sprite(self.texture, x0, y0, x1, y1, z)
+
+
+cdef class Reticle(Texture):
+    cdef float x0
+    cdef float y0
+    cdef float x1
+    cdef float y1
+
+    def __init__(Reticle self, char* file, int window_width, int window_height):
+        Texture.__init__(self, file)
+
+        center_x = window_width / 2.
+        center_y = window_height / 2.
+
+        self.x0 = center_x - (self.w / 2.)
+        self.y0 = center_y - (self.h / 2.)
+        self.x1 = self.x0 + self.w
+        self.y1 = self.y0 + self.h
+
+    def draw(self):
+        _blit_sprite(self.texture, self.x0, self.y0, self.x1, self.y1, 0)

@@ -15,7 +15,7 @@ void init_cube_selector() {
 }
 
 int _get_selected_cube_id(){ //get the cube selected by hud
-    return cube_select_array[cube_select_x+8*cube_select_y].cube_id;
+    return cube_select_array[cube_select_x + 8 * cube_select_y].cube_id;
 }
 
 void _cube_select_set_hud(int pos, int cube_id, int tex_id) { //set the cubes in each position on hud

@@ -39,7 +39,7 @@ class Hud(object):
 
     def _init_reticle(self):
         tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = cHUD.Reticle(tex_file, self.win_width/2, self.win_height/2)
+        self.reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
 
     def _init_text_dict(self):
         offset = 20

@@ -66,30 +66,3 @@ int create_texture_from_file(char* filename, int* tex) {
     glDisable(GL_TEXTURE_2D);
     return 0;
 }
-
-/* COPIED FROM block_selector.cpp */
-// this is only for the reticle
-static Texture hud_texture;
-void _load_texture(char *file) {
-    SDL_Surface *surface;
-    int tex = 0;
-
-    surface = _load_image(file);
-    create_texture_from_surface(surface, &tex);
-
-    hud_texture.tex = tex;
-    hud_texture.w = surface->w;
-    hud_texture.h = surface->h;
-}
-
-void _draw_loaded_texture(int x, int y) {
-    int x1, y1;
-
-    x = x - hud_texture.w/2;
-    y = y - hud_texture.h/2;
-
-    x1 = x + hud_texture.w;
-    y1 = y + hud_texture.h;
-
-    _blit_sprite(hud_texture.tex, x, y, x1, y1, 0);
-}
