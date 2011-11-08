@@ -64,6 +64,10 @@ int init_c_lib() {
     srand(time(NULL));   // seed the RNG
 
     #ifdef DC_CLIENT
+        init_video();
+        init_input();
+        init_particle_functions();
+
         init_image_loader();
         init_particles();
         init_text();

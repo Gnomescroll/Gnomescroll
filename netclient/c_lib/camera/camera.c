@@ -1,76 +1,64 @@
-#include "./camera.h"
+#include "./current_camera.h"
 
-#define PI 3.14159265
+extern int _xres;
+extern int _yres;
 
-// revert to extern once SDL_functions migrated to c_lib
-//extern int _xres;
-//extern int _yres;
-int _xres;
-int _yres;
-int _fullscreen; //remove
+static struct Camera cameras[N_CAMERAS];
+static struct Camera* current_camera;
 
-int _set_resolution_camera(int xres, int yres, int fullscreen) {
-    _xres = xres;
-    _yres = yres;
-    _fullscreen = fullscreen;
-    return 0;
+static float *model_view_matrix;
+
+void _set_camera(struct Camera* cam) {
+    current_camera = cam;
 }
 
-static struct Camera2* camera2;
-
-int _set_camera(struct Camera2* c_cam) {
-    camera2 = c_cam;
-    return 0;
-}
-
-struct Camera2* _get_camera() {
-    if(camera2 != NULL) {
-        printf("Get Camera2: Camera2 not null \n");
+struct Camera* _get_camera() {
+    if(current_camera != NULL) {
+        printf("Get Camera: Camera not null \n");
     } else {
-        printf("Get Camera2: Error: camera2 is null \n");
+        printf("Get Camera: Error: current_camera is null \n");
     }
-    return camera2;
+    return current_camera;
 }
 
-static float a_cam[16];
+void set_model_view_matrix(float *a) {
+    model_view_matrix = a;
+}
 
-int _world_projection(struct Camera2* c_cam) {
+int _world_projection(struct Camera* cam) {
 
-    c_cam->x_size = (float) _xres;
-    c_cam->y_size = (float) _yres;
+    cam->x_size = (float) _xres;
+    cam->y_size = (float) _yres;
 
-    float aspect = c_cam->x_size / c_cam->y_size;
-    float length;
+    float aspect = cam->x_size / cam->y_size;
 
-    c_cam->ratio = c_cam->x_size / c_cam->y_size;
+    cam->ratio = cam->x_size / cam->y_size;
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective( c_cam->fov, aspect, c_cam->z_near, c_cam->z_far);
+    gluPerspective( cam->fov, aspect, cam->z_near, cam->z_far);
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
-    c_cam->xl = c_cam->x + cos( c_cam->x_angle * PI) * cos( c_cam->y_angle * PI);
-    c_cam->yl = c_cam->y + sin( c_cam->x_angle * PI) * cos( c_cam->y_angle * PI);
-    c_cam->zl = c_cam->z + sin( c_cam->y_angle);
+    cam->xl = cam->x + cos( cam->x_angle * PI) * cos( cam->y_angle * PI);
+    cam->yl = cam->y + sin( cam->x_angle * PI) * cos( cam->y_angle * PI);
+    cam->zl = cam->z + sin( cam->y_angle);
 
-    length = sqrt(c_cam->xl*c_cam->xl + c_cam->yl*c_cam->yl + c_cam->zl*c_cam->zl);
+    cam->xu = 0;
+    cam->yu = 0;
+    cam->zu = 1;
 
-    c_cam->xu = 0;
-    c_cam->yu = 0;
-    c_cam->zu = 1;
+    gluLookAt(cam->x,cam->y,cam->z,
+               cam->xl, cam->yl, cam->zl,
+               cam->xu, cam->yu, cam->zu);
 
-    gluLookAt(c_cam->x,c_cam->y,c_cam->z,
-               c_cam->xl, c_cam->yl, c_cam->zl,
-               c_cam->xu, c_cam->yu, c_cam->zu);
-
-    if(a_cam != NULL){
-        glGetFloatv(GL_MODELVIEW_MATRIX, a_cam);
+    if(model_view_matrix != NULL){
+        glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);
     } else {
-        printf("camera2.c_cam _world_projection :: a_cam is null\n");
+        printf("current_camera.cam _world_projection :: model_view_matrix is null\n");
     }
 
     glEnable (GL_DEPTH_TEST);
@@ -79,169 +67,51 @@ int _world_projection(struct Camera2* c_cam) {
     return 0;
 }
 
-void __inline end_world_projection() {
+inline void end_world_projection() {
    glDisable (GL_DEPTH_TEST);
 }
 
-int _hud_projection(struct Camera2 * c_cam) {
+int _hud_projection(struct Camera *cam) {
 
-end_world_projection();
+    end_world_projection();
 
-glMatrixMode(GL_PROJECTION);
-glLoadIdentity();
-gluOrtho2D(0, c_cam->x_size, 0, c_cam->y_size);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, cam->x_size, 0, cam->y_size);
 
-glMatrixMode( GL_MODELVIEW );
-glLoadIdentity();
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
 
-glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
 
-glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 
-return 0;
+    return 0;
 }
 
 void _set_camera_state(float x, float y, float z, float theta, float phi) {
-    camera2->x = x;
-    camera2->y = y;
-    camera2->z = z;
+    current_camera->x = x;
+    current_camera->y = y;
+    current_camera->z = z;
 
-    camera2->x_angle = theta;
-    camera2->y_angle = phi;
+    current_camera->x_angle = theta;
+    current_camera->y_angle = phi;
 }
 
 void _pan_camera(float dtheta, float dphi) {    // args are deltas
-    camera2->x_angle += dtheta;
-    camera2->y_angle += dphi;
+    current_camera->x_angle += dtheta;
+    current_camera->y_angle += dphi;
 
-    if (camera2->y_angle > 0.499f) {
-        camera2->y_angle = 0.499f;
-    } else if (camera2->x_angle < -0.499f) {
-        camera2->x_angle = -0.499f;
-    }
-}
-
-
-/* Copied from particle functions. need the projection matrix */
-
-
-
-#include <compat_gl.h>
-
-//#include "camera2.h"
-
-#include "math.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-
-int _init_particle_functions();
-
-SDL_Surface *cam_surface;
-GLuint particle_texture;
-
-struct Camera2* c_cam=NULL;
-
-static inline void _begin_matrix () {
-    glGetFloatv(GL_MODELVIEW_MATRIX, a_cam);
-    glPushMatrix();
-
-    int i,j;
-    for( i=0; i<3; i++ )
-        for( j=0; j<3; j++ ) {
-            if ( i==j ) {
-                a_cam[i*4+j] = 1.0;
-            } else {
-                a_cam[i*4+j] = 0.0;
-            }
-    }
-    glLoadMatrixf(a_cam);
-}
-
-int _init_particle_functions_camera() {
-
-    _begin_matrix();
-
-    cam_surface=IMG_Load("./media/texture/particles_01.png");
-    if(!cam_surface) {
-        printf("_init_particle_functions, IMG_Load: %s \n", IMG_GetError());
-        return 0;
-    }
-    if(cam_surface->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &particle_texture );
-    glBindTexture( GL_TEXTURE_2D, particle_texture );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
-
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, cam_surface->w, cam_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, cam_surface->pixels );
-    glDisable(GL_TEXTURE_2D);
-
-    printf("particle_texture_id= %i \n", particle_texture);
-}
-
-void __inline bb_q(float x, float y, float z) {
-
-float x_,y_,z_;
-
-x_ = a_cam[0]*x+a_cam[4]*y+a_cam[8]*z;
-y_ = a_cam[1]*x+a_cam[5]*y+a_cam[9]*z;
-z_ = a_cam[2]*x+a_cam[6]*y+a_cam[10]*z;
-
-glVertex3f( x_, y_, z_ );
-}
-
-struct Vec {
-float x,y,z;
-};
-
-inline struct Vec init_Vec(float x, float y, float z) {
-    struct Vec v; v.x=x;v.y=y;v.z=z; return v;
-}
-
-inline void normalize(struct Vec* v) {
-float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
-v->x /= l; v->y /=l; v->z /=l;
-}
-
-struct Vec cross(struct Vec v1, struct Vec v2) {
-    struct Vec v0;
-    v0.x = v1.y*v2.z - v1.z*v2.y;
-    v0.y = v1.z*v2.x - v1.x*v2.z;
-    v0.z = v1.x*v2.y - v1.y*v2.x;
-    return v0;
-}
-
-void dot(struct Vec v1, struct Vec v2) {
-    float d;
-    d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
-    //printf("dot= %f \n", d);
-}
-
-void calc_len(struct Vec *v) {
-    float l;
-    l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
-    v->x /= l; v->y /=l; v->z /=l;
-    //printf("l= %fs \n", l);
+    if (current_camera->x_angle > 0.499999f) {
+        current_camera->x_angle = 0.499999f;
+    } else if (current_camera->x_angle < -0.499999f) {
+        current_camera->x_angle = -0.499999f;
     }
 
-void draw(struct Vec v0, struct Vec v1, int r, int g, int b) {
+    if (current_camera->y_angle > 0.499999f) {
+        current_camera->y_angle = 0.499999f;
+    } else if (current_camera->y_angle < -0.499999f) {
+        current_camera->x_angle = -0.499999f;
+    }
 
-glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
-glBegin(GL_LINES);
-glVertex3f(v0.x, v0.y, v0.z);
-glVertex3f(v0.x+v1.x, v0.y+v1.y, v0.z+v1.z);
-glEnd();
-//glColor3ub(255,255,255);
 }
-
-void init_camera_c() {
-    _init_particle_functions_camera();
-}
-

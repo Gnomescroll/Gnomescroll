@@ -10,7 +10,7 @@ static int text_entry_mode;
 static int numkeys;
 static Uint8* keystate;
 
-int _init_input() {
+int init_input() {
     keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
     SDL_EnableUNICODE( SDL_ENABLE );
     return 0;

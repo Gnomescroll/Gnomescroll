@@ -49,7 +49,7 @@ int _set_resolution(int xres, int yres, int fullscreen) {
 
 int _multisampling = 0;
 
-int _init_video() {
+int init_video() {
     printf("ININININITT!!!\n");
 
     //DisplayBox();

@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int _init_particle_functions();
+int init_particle_functions();
 
 int _draw_particle(int id, float size, float x, float y, float z);
 int _draw_particle2(int id, float size, float x, float y, float z);

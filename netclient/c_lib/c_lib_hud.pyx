@@ -36,7 +36,6 @@ cdef class Texture:
 '''
 Reticle
 '''
-
 cdef class Reticle(Texture):
     cdef float x0
     cdef float y0

@@ -51,7 +51,7 @@ int setShaders() {
     return 0;
 }
 
-int _init_particle_functions() {
+int init_particle_functions() {
 
     particle_c = _get_camera();
     set_model_view_matrix(a);
