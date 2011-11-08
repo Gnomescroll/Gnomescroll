@@ -39,9 +39,6 @@ class Hud(object):
         self._init_block_selector()
 
     def _init_reticle(self):
-        # load texture
-        # center it
-        # draw_functions._blit_sprite
         tex_file = '%stexture/target.png' % (base_dir,)
         self.reticle = cHUD.Reticle(tex_file, self.win_width/2, self.win_height/2)
 

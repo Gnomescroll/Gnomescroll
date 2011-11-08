@@ -1,19 +1,8 @@
 #include "inventory.hpp"
 
-/*
-int get_item_sheet_texture()
-int get_item_slot_texture()
-int get_inventory_background_texture()
-*/
+#ifdef DC_CLIENT
 
-
-
-/*
-    width = 1280
-    height = 800
-*/
-
-int inventory_hud_enabled = 0;
+static int inventory_hud_enabled = 0;
 
 int toggle_inventory_hud() {
     printf("Hud: inventory_hud_enabled int: %d\n", inventory_hud_enabled);
@@ -21,33 +10,27 @@ int toggle_inventory_hud() {
     if(inventory_hud_enabled == 0) {
         inventory_hud_enabled = 1;
         printf("Hud: inventory hud enabled\n");
-        //register window
         return inventory_hud_enabled;    
     }
 
     if(inventory_hud_enabled == 1) {
         inventory_hud_enabled = 0;
         printf("Hud: inventory hud disabled\n");
-        //unregister window
         return inventory_hud_enabled;
     }
 
     printf("ERROR: inventory hud has invalid value, %i= inventory_hud_enabled\n", inventory_hud_enabled);
-    //printf("Hud: inventory_hud_enabled int: %d\n", inventory_hud_enabled);
     return inventory_hud_enabled;
 }
 
-
-#ifdef DC_CLIENT
-
 int draw_inventory(float x, float y) {
-	//x = 50.0;
-	//y = 500.0;
-	float z = -0.5;
+    //x = 50.0;
+    //y = 500.0;
+    float z = -0.5;
 
     if(inventory_hud_enabled == 0) return 0;
 
-	//printf("i=%i \n",get_inventory_background_texture());
+    //printf("i=%i \n",get_inventory_background_texture());
 
     glColor3ub(255,255,255);
 
@@ -57,23 +40,8 @@ int draw_inventory(float x, float y) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    
-   	//draw background
+    //draw background
     glBegin(GL_QUADS);
-/*
-        glTexCoord2f(0.0,1.0);	
-        glVertex3f(x, y, z);  // Top left
-
-        glTexCoord2f(1.0,1.0);
-        glVertex3f(x+621.0, y, z);  // Top right
-
-        glTexCoord2f(1.0,0.0);
-        glVertex3f(x+621.0, y+352.0, z);  // Bottom right
-
-        glTexCoord2f(0.0,0.0);
-        glVertex3f(x, y+352.0, z);  // Bottom left
-*/
-        //stuff
-
     {
         const int x_size = 512;
         const int y_size = 512;
@@ -91,27 +59,27 @@ int draw_inventory(float x, float y) {
         glVertex3i(x, y-y_size, z);  // Bottom left
     }
     glEnd();
-    //z = -0.1;
+
     glBindTexture(GL_TEXTURE_2D, get_item_slot_texture());
     glBegin(GL_QUADS);
 
     {
         int i, j;
-	    float _x,_y;
+        float _x,_y;
 
         const int x_size = 64;
         const int y_size = 64;
 
-	    const int x_off = 10;
-	    const int y_off = 51;
-	    const int x_inc = 50;
-	    const int y_inc = 50;
+        const int x_off = 10;
+        const int y_off = 51;
+        const int x_inc = 50;
+        const int y_inc = 50;
 
-	    for(i=0;i<9; i++) {
-	    for(j=0;j<6; j++) {
-	    	
-	    	_x = x + x_off + i*x_inc;
-	    	_y = y - y_off - j*y_inc;
+        for(i=0;i<9; i++) {
+        for(j=0;j<6; j++) {
+            
+            _x = x + x_off + i*x_inc;
+            _y = y - y_off - j*y_inc;
 
             glTexCoord2f(0.0,0.0);
             glVertex3f(_x, _y, z);  // Top left
@@ -125,8 +93,8 @@ int draw_inventory(float x, float y) {
             glTexCoord2f(0.0,1.0);
             glVertex3i(_x, _y-y_size, z);  // Bottom left
 
-	    }}
-	}
+        }}
+    }
     glEnd();
 
     glBindTexture(GL_TEXTURE_2D, get_item_sheet_texture());

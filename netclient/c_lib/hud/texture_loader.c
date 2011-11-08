@@ -1,8 +1,8 @@
 #include "./texture_loader.h"
 
-int _init_image_loader(void) {
+int _init_image_loader() {
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
-return 0;
+    return 0;
 }
 
 SDL_Surface* _load_image(char *file) {

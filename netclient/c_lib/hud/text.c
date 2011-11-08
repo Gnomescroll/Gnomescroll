@@ -1,10 +1,9 @@
 #include "text.h"
 
-GLuint fontTextureId;
-int tex_alpha = 1;
+static GLuint fontTextureId;
+static int tex_alpha = 1;
 
 int _init_text() {
-    printf("TEXT INIT\n");
     SDL_Surface *font = IMG_Load("media/fonts/font.png");
 
     if(!font) { printf("text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}
@@ -34,14 +33,10 @@ int _init_text() {
 
     glDisable(GL_TEXTURE_2D);
     return 0;
-
 }
 
-//static const float dx = 1.0f/16.0f;
-//static const float dy = 1.0f/16.0f;
-
-const float dx = 1.0f/16.0f;
-const float dy = 1.0f/16.0f;
+static const float dx = 1.0f/16.0f;
+static const float dy = 1.0f/16.0f;
 
 int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
 
@@ -90,9 +85,6 @@ int _draw_text(char* text, float x, float y, float height, float width, float de
         Ymin = y;
         Ymax = y+height;
 
-        //printf("%0.2f %0.2f %0.2f %0.2f\n",x_min,x_max,y_min,y_max);
-        //printf("%0.2f %0.2f %0.2f %0.2f\n",Xmin,Xmax,Ymin,Ymax);
-
         glBegin( GL_QUADS );
         glTexCoord2f(x_min,y_max);
         glVertex3f(Xmin, Ymax, depth);
@@ -113,58 +105,3 @@ int _draw_text(char* text, float x, float y, float height, float width, float de
     }
     return 0;
 }
-
-//int _draw_text(char* text, float x, float y, float height, float width, float depth) {
-
-    //int c_num = 0;
-
-    //int i;
-    //float offset = x;
-    //int index,xi,yi;
-    //float x_min, x_max, y_min, y_max;
-
-    //float Xmin,Xmax, Ymin,Ymax;
-
-    //while(text[c_num] != 0) {
-        //c_num++;
-    //}
-
-    //glEnable(GL_TEXTURE_2D);
-    //glBindTexture( GL_TEXTURE_2D, fontTextureId);
-
-    //for(i=0; i<c_num; i++) {
-        //index = text[i];
-        //xi = index % 16;
-        //yi = index >> 4;
-        ////texture cordinates
-        //x_min = (float)(xi)*dx;
-        //x_max = (float)(xi+1)*dx;
-        //y_max = (float)(yi)*dy;
-        //y_min = (float)(yi+1)*dy;
-        ////vertex cordinates
-        //Xmin = i*width+x;
-        //Xmax = (i+1)*width+x;
-        //Ymin = y;
-        //Ymax = y+height;
-
-        //printf("xi, yi= %i, %i \n", xi, yi);
-        //printf("dx, dy: %f, %f \n", dx, dy);
-        //printf("x_min, x_max, y_min, y_max= %f, %f, %f, %f \n", x_min, x_max, y_min, y_max);
-        //printf("Xmin, Xmax, Ymin, Ymax= %f, %f, %f, %f \n", Xmin, Xmax, Ymin, Ymax);
-
-        //glBegin( GL_QUADS );
-        //glTexCoord2f(x_min,y_max);
-        //glVertex3f(Xmin, Ymax, depth);
-        //glTexCoord2f(x_min, y_min);
-        //glVertex3f(Xmin, Ymin, depth);
-        //glTexCoord2f(x_max, y_min);
-        //glVertex3f(Xmax, Ymin, depth);
-        //glTexCoord2f(x_max, y_max);
-        //glVertex3f(Xmax, Ymax, depth);
-        //glEnd();
-
-        //offset += width;
-    //}
-    //glDisable(GL_TEXTURE_2D);
-    //return 0;
-//}
