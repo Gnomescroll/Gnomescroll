@@ -70,10 +70,6 @@ def toggle_inventory_hud():
 HUD.pyx
 """
 
-#cdef extern from './hud/texture_loader.h':
-#    void _draw_loaded_texture(int x, int y)
-#    void _load_texture(char *file)
-
 cdef extern from "./SDL/draw_functions.h":
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
@@ -82,12 +78,6 @@ cdef extern from './hud/text.h':
     int _draw_text_surface(SDL_Surface* surface, int x, int y)
     int _free_text_surface(SDL_Surface* surface)
     int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
-
-#def draw_loaded_hud_texture(x, y):
-#    _draw_loaded_texture(x, y)
-
-#def load_hud_texture(file):
-#    _load_texture(file)
 
 class Text:
 
@@ -107,28 +97,6 @@ class Text:
         r,g,b,a  = self.color
         _draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
 
-#class Reticle:
-#    cdef SDL_surface *surface
-#    cdef int texture
-#    cdef int w
-#    cdef int h
-
-#    def __init__(self, file, x=0, y=0):
-#        self.x = x
-#        self.y = y
-#        load_hud_texture(file)
-
-#    def draw(self):
-
-#        x = x - hud_texture.w/2;
-#        y = y - hud_texture.h/2;
-
-#        x1 = x + hud_texture.w;
-#        y1 = y + hud_texture.h;
-
-
-#        _blit_sprite(self.texture, x, y, x1, y1, 0);
-#        draw_loaded_hud_texture(self.x, self.y)
 
 cdef class Texture:
     cdef SDL_Surface* surface
@@ -146,7 +114,6 @@ cdef class Texture:
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
         _blit_sprite(self.texture, x0, y0, x1, y1, z)
-
 
 cdef class Reticle(Texture):
     cdef float x0
