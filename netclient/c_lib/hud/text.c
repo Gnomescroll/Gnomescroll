@@ -3,7 +3,7 @@
 static GLuint fontTextureId;
 static int tex_alpha = 1;
 
-int _init_text() {
+int init_text() {
     SDL_Surface *font = IMG_Load("media/fonts/font.png");
 
     if(!font) { printf("text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}

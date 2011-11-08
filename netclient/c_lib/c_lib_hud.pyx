@@ -40,8 +40,7 @@ cdef extern from "./SDL/SDL.h":
 cdef extern from "./hud/texture_loader.h":
     int _init_image_loader()
     SDL_Surface* _load_image(char *file)
-    int _create_block_texture(char *file) #deprecate
-    int init_texture_from_surface(SDL_Surface* surface, int* texture)
+    int create_texture_from_surface(SDL_Surface* surface, int* texture)
 
 cdef SDL_Surface* load_image(char* file):
     cdef SDL_Surface* surface
@@ -51,7 +50,7 @@ cdef SDL_Surface* load_image(char* file):
 cdef create_texture(SDL_Surface* surface, type =None): #eventually support mippapped textures
     cdef int tex = 0
     cdef int err
-    err = init_texture_from_surface(surface, &tex)
+    err = create_texture_from_surface(surface, &tex)
     if err:
         print "Cython create_texture failed with error %d" % (err,)
     return tex
@@ -122,10 +121,8 @@ class Text:
         self.height = 10
         self.width = 10
         self.depth = -0.1
-        if len(color) == 4:
-            self.color = color
-        else:
-            self.color = list(color)
+        self.color = list(color)
+        if len(self.color) == 3:
             self.color.append(255) # default alpha
 
         self.text = text
@@ -167,7 +164,7 @@ cdef class Texture:
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        err = init_texture_from_surface(self.surface, &self.tex)
+        err = create_texture_from_surface(self.surface, &self.tex)
         if err:
             print "Cython Texture.__init__ :: Loading error %d" % (err,)
 

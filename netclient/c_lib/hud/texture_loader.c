@@ -1,6 +1,6 @@
 #include "./texture_loader.h"
 
-int _init_image_loader() {
+int init_image_loader() {
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
     return 0;
 }
@@ -19,9 +19,9 @@ SDL_Surface* _load_image(char *file) {
     return image;
 }
 
-int init_texture_from_surface(SDL_Surface *surface, int *tex) {
+int create_texture_from_surface(SDL_Surface *surface, int *tex) {
     if(surface == NULL) {
-        printf("Error: texture_loader.c create_texture, surface is null!\n");
+        printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
         return 1;
     }
 
@@ -38,7 +38,7 @@ int init_texture_from_surface(SDL_Surface *surface, int *tex) {
     return 0;
 }
 
-int init_texture_from_file(char* filename, int* tex) {
+int create_texture_from_file(char* filename, int* tex) {
     SDL_Surface *surface;
     surface=IMG_Load(filename); //does this need to be freed?
     if (!surface) {

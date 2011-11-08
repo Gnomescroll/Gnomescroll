@@ -6,7 +6,7 @@ void _load_hud_texture(char *file) {
     int tex = 0;
 
     surface = _load_image(file);
-    init_texture_from_surface(surface, &tex);
+    create_texture_from_surface(surface, &tex);
 
     hud_texture.tex = tex;
     hud_texture.w = surface->w;
@@ -31,7 +31,7 @@ void _load_block_selector_texture(char *file, int scale) {
     int tex = 0;
 
     surface = _load_image(file);
-    init_texture_from_surface(surface, &tex);
+    create_texture_from_surface(surface, &tex);
 
     block_selector_texture.tex = tex;
     block_selector_texture.w = surface->w / scale;

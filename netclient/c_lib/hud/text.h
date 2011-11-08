@@ -3,7 +3,7 @@
 #include <compat_gl.h>
 #include <stdio.h>
 
-int _init_text();
+int init_text();
 
 SDL_Surface* _create_text_surface(char* text,int r,int g,int b,int a);
 int _draw_text_surface(SDL_Surface* surface, int x, int y);
