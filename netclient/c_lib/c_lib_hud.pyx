@@ -115,7 +115,7 @@ def draw_block_selector(x, y):
 def load_block_selector_texture(file, scale=1):
     _load_block_selector_texture(file, scale)
 
-class text:
+class Text:
 
     def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
         self.height = 10
@@ -135,7 +135,7 @@ class text:
         r,g,b,a  = self.color
         _draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
 
-class reticle:
+class Reticle:
 
     def __init__(self, file, x=0, y=0):
         self.x = x
@@ -145,7 +145,7 @@ class reticle:
     def draw(self):
         draw_loaded_hud_texture(self.x, self.y)
 
-class block_selector:
+class BlockSelector:
 
     def __init__(self, file, x=0, y=0, scale=1):
         self.x = x

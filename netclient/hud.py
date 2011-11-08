@@ -43,11 +43,11 @@ class Hud(object):
         # center it
         # draw_functions._blit_sprite
         tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = cHUD.reticle(tex_file, self.win_width/2, self.win_height/2)
+        self.reticle = cHUD.Reticle(tex_file, self.win_width/2, self.win_height/2)
 
     def _init_block_selector(self):
         tex_file = '%stexture/block_selector_hud.png' % (base_dir,)
-        self.block_selector = cHUD.block_selector(tex_file, self.win_width - 70, 15, scale=16)
+        self.block_selector = cHUD.BlockSelector(tex_file, self.win_width - 70, 15, scale=16)
 
     def _init_text_dict(self):
         offset = 20
@@ -247,7 +247,7 @@ class Hud(object):
             self._draw_cursor()
 
     def _to_draw_text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = cHUD.text(
+        txt = cHUD.Text(
             text = text,
             x = x,
             y = self.win_height - offset,
