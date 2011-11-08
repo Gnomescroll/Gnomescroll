@@ -39,3 +39,32 @@ int _create_texture(SDL_Surface *surface) {
 
     return texture;
 }
+
+int _init_texture(const char* filename, int* tex) {
+    SDL_Surface *surface;
+    surface=IMG_Load(filename); //does this need to be freed?
+    if (!surface) {
+        printf("Error loading texture %s, %s \n", filename, IMG_GetError());
+        return 1;
+    }
+    if (surface->format->BytesPerPixel != 4) {
+        printf("IMG_Load: image is missing alpha channel \n");
+        return 2;
+    }
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures( 1, (GLuint*)tex );
+    glBindTexture( GL_TEXTURE_2D, *tex );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    int texture_format;
+    if (surface->format->Rmask == 0x000000ff) {
+        texture_format = GL_RGBA;
+    } else {
+        texture_format = GL_BGRA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+    glDisable(GL_TEXTURE_2D);
+    return 0;
+}

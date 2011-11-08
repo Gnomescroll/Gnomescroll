@@ -16,3 +16,5 @@ int _create_texture(SDL_Surface* surface);
 
 void _draw_loaded_hud_texture(int x, int y);
 void _load_hud_texture(char *file);
+
+int _init_texture(const char* filename, int* tex);
