@@ -3,9 +3,10 @@
 static Texture hud_texture;
 void _load_hud_texture(char *file) {
     SDL_Surface *surface;
+    int tex = 0;
 
     surface = _load_image(file);
-    int tex = _create_texture(surface);
+    init_texture_from_surface(surface, &tex);
 
     hud_texture.tex = tex;
     hud_texture.w = surface->w;
@@ -27,9 +28,10 @@ void _draw_loaded_hud_texture(int x, int y) {
 static Texture block_selector_texture;
 void _load_block_selector_texture(char *file, int scale) {
     SDL_Surface *surface;
+    int tex = 0;
 
     surface = _load_image(file);
-    int tex = _create_texture(surface);
+    init_texture_from_surface(surface, &tex);
 
     block_selector_texture.tex = tex;
     block_selector_texture.w = surface->w / scale;
@@ -43,21 +45,11 @@ void _draw_block_selector(int x, int y) {
     _blit_sprite(block_selector_texture.tex, x, y1, x1, y, 0);
 }
 
-int _create_block_texture(char *file) {
-    return 0;
-}
-
-
 /* COPIED FROM cube_select.cpp */
 
-struct cube_select_element {
-    int cube_id;
-    int tex_id;
-};
-
-struct cube_select_element cube_select_array[255];
-int cube_select_x = 0;
-int cube_select_y = 0;
+static struct cube_select_element cube_select_array[255];
+static int cube_select_x = 0;
+static int cube_select_y = 0;
 
 void _init_cube_select() {
     //printf("init_cube_select\n");

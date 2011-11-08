@@ -6,9 +6,9 @@ static int inventory_background_texture;
 
 int init_hud_texture_loader() {
     int a,b,c;
-    a =_init_texture("./media/texture/hud/item_sheet_01.png", &item_sheet_texture);
-    b = _init_texture("./media/texture/hud/item_slot_41x41.png", &item_slot_texture);
-    c = _init_texture("./media/texture/hud/inventory_background_461x352.png", &inventory_background_texture);
+    a = init_texture_from_file("./media/texture/hud/item_sheet_01.png", &item_sheet_texture);
+    b = init_texture_from_file("./media/texture/hud/item_slot_41x41.png", &item_slot_texture);
+    c = init_texture_from_file("./media/texture/hud/inventory_background_461x352.png", &inventory_background_texture);
     printf("%d %d %d -HUD Texture Loader Results\n", a,b,c);
     return 0;
 }

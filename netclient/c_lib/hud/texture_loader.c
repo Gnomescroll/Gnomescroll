@@ -17,30 +17,28 @@ SDL_Surface* _load_image(char *file) {
     if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
 
     return image;
-
 }
 
-int _create_texture(SDL_Surface *surface) {
+int init_texture_from_surface(SDL_Surface *surface, int *tex) {
     if(surface == NULL) {
         printf("Error: texture_loader.c create_texture, surface is null!\n");
+        return 1;
     }
-    GLuint texture;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &texture );
+    glGenTextures( 1, (GLuint*)tex );
     // Bind the texture object
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, *tex );
     // Set the texture's stretching properties
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     // Edit the texture object's image data using the information SDL_Surface gives us
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
     glDisable(GL_TEXTURE_2D);
-
-    return texture;
+    return 0;
 }
 
-int _init_texture(const char* filename, int* tex) {
+int init_texture_from_file(char* filename, int* tex) {
     SDL_Surface *surface;
     surface=IMG_Load(filename); //does this need to be freed?
     if (!surface) {

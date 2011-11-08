@@ -41,7 +41,7 @@ cdef extern from "./hud/texture_loader.h":
     int _init_image_loader()
     SDL_Surface* _load_image(char *file)
     int _create_block_texture(char *file) #deprecate
-    int _create_texture(SDL_Surface* surface)
+    int init_texture_from_surface(SDL_Surface* surface, int* texture)
 
 cdef SDL_Surface* load_image(char* file):
     cdef SDL_Surface* surface
@@ -49,7 +49,12 @@ cdef SDL_Surface* load_image(char* file):
     return surface
 
 cdef create_texture(SDL_Surface* surface, type =None): #eventually support mippapped textures
-    return _create_texture(surface)
+    cdef int tex = 0
+    cdef int err
+    err = init_texture_from_surface(surface, &tex)
+    if err:
+        print "Cython create_texture failed with error %d" % (err,)
+    return tex
 
 
 
@@ -153,7 +158,7 @@ class BlockSelector:
         draw_block_selector(self.x, self.y)
 
 cdef class Texture:
-    cdef int id
+    cdef int tex
     cdef int w
     cdef int h
     cdef SDL_Surface* surface
@@ -162,7 +167,9 @@ cdef class Texture:
         self.surface = load_image(file)
         self.w = self.surface.w
         self.h = self.surface.h
-        self.id = _create_texture(self.surface)
+        err = init_texture_from_surface(self.surface, &self.tex)
+        if err:
+            print "Cython Texture.__init__ :: Loading error %d" % (err,)
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
         _blit_sprite(self.id, x0, y0, x1, y1, z)
