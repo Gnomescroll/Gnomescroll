@@ -98,16 +98,18 @@ class InputGlobal:
     _cameras = ('camera', 'agent')
 
     scoreboard = False
-    block_selector = None
+    cube_selector = None
 
     @classmethod
     def init_0(cls, main):
         #InputEventGlobal.inputGlobal = cls
 
+        InputGlobal.app = main
+
         InputGlobal.mouse = Mouse()
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
-        cls.block_selector = BlockSelector(8,8,range(8*8))
+        cls.cube_selector = CubeSelector(8,8,range(8*8))
         cls.voxel_aligner = VoxelAligner()
 
         InputEventGlobal.mouse = cls.mouse
@@ -449,17 +451,17 @@ class AgentInput:
         if not aw or aw.type != 3:  # block applier
             return
         if symbol == 'left':
-            InputGlobal.block_selector.left()
+            InputGlobal.cube_selector.left()
         elif symbol == 'right':
-            InputGlobal.block_selector.right()
+            InputGlobal.cube_selector.right()
         elif symbol == 'up':
-            InputGlobal.block_selector.up()
+            InputGlobal.cube_selector.up()
         elif symbol == 'down':
-            InputGlobal.block_selector.down()
-        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
+            InputGlobal.cube_selector.down()
+        GameStateGlobal.agent.set_active_block(InputGlobal.cube_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
 
 
-class BlockSelector:
+class CubeSelector:
 
     def __init__(self, x, y, block_ids):
         self.x = x
@@ -471,7 +473,7 @@ class BlockSelector:
     def __setattr__(self, k, v):
         self.__dict__[k] = v
         if k == 'active':
-            cHUD.hud_control_input(self.active)
+            InputGlobal.app.hud.cube_selector.set(self.active)
 
     def vertical(self, up=True):
         shift = -1 if up else 1
@@ -512,7 +514,7 @@ class BlockSelector:
         self.horizontal(left=False)
 
     def get_texture_id(self):
-        return cHUD.get_selected_cube_id()
+        return InputGlobal.app.hud.cube_selector.active()
 
 from math import pi
 class VoxelAligner:

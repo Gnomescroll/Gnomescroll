@@ -28,6 +28,7 @@ class Hud(object):
         self._init_player_stats()
 
         self.inventory = cHUD.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
+        self.cube_selector = cHUD.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
 
         self.fps = self._to_draw_text(
             text = '',
@@ -102,9 +103,6 @@ class Hud(object):
             stats[lprop] = '\n'.join(lines)
         return stats
 
-    def draw_cube_selector(self):
-        cHUD.draw_cube_selector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
-
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
@@ -126,7 +124,7 @@ class Hud(object):
         if ping is not None:
             self.draw_ping(ping)
         if cube_selector:
-            self.draw_cube_selector()
+            self.cube_selector.draw()
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent

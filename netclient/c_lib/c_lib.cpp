@@ -37,7 +37,7 @@
     #include <c_lib/animations/animations.cpp>
 
     /* HUD */
-    #include <c_lib/hud/block_selector.cpp>
+    #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/texture_loader.c>
     #include <c_lib/hud/hud_texture_loader.cpp>
