@@ -11,7 +11,7 @@ import vox_lib
 import vector_lib
 import raycast_utils
 import vox
-import c_lib.c_lib_objects
+import c_lib.c_lib_particles
 import c_lib.c_lib_agents
 import c_lib._ray_trace
 import c_lib.c_lib_agents as cAgents
@@ -350,7 +350,7 @@ class AgentRender:
 
     def bleed(self):
         print 'BLEEDING'
-        create_blood = c_lib.c_lib_objects._create_blood
+        create_blood = c_lib.c_lib_particles._create_blood
         n = 100
         v = 15
         blood_pos = self.pos()

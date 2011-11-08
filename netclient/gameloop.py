@@ -31,7 +31,7 @@ import camera
 
 import c_lib.terrain_map
 import init_c_lib
-import c_lib.c_lib_objects
+import c_lib.c_lib_particles
 import c_lib.c_lib_agents
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
@@ -153,7 +153,7 @@ class App(object):
         self.intervals.set()
         _i = 30
 
-        c_lib.c_lib_objects._generate_circuit_tree(0,0)
+        c_lib.c_lib_particles._generate_circuit_tree(0,0)
 
         def neutron_fountain():
             v = 2
@@ -164,7 +164,7 @@ class App(object):
             x *= v / le
             y *= v / le
             z *= v / le
-            c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
+            c_lib.c_lib_particles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
         _m = 0
 
@@ -194,9 +194,9 @@ class App(object):
                 #neutron_fountain()
                 if _i % 30 == 0:
                     pass
-                    #c_lib.c_lib_objects._generate_circuit_tree(0,0)
+                    #c_lib.c_lib_particles._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
-                    #c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+                    #c_lib.c_lib_particles._create_grenade(5,5,2, 0, 0, 50, 0, 350)
                     pass
                 if False or _i % 15 == 0:
                     v = 4
@@ -207,7 +207,7 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    #c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z, 0, 350)
+                    #c_lib.c_lib_particles._create_grenade(25,25,-4, x,y,z, 0, 350)
                 if _i % 150 == 0:
                     v = 2
                     x = v*(random.random() -0.5)
@@ -219,7 +219,7 @@ class App(object):
                     z *= v / le
                     #_type = random.randint(0,9*3)
                     _type=0
-                    #c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+                    #c_lib.c_lib_particles._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 #if True or _i % 15 == 0:
                 for _j_ in range(0,1):
                     v = 3
@@ -230,7 +230,7 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -3.5 #v*(random.random() -0.5)
-                    #c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
+                    #c_lib.c_lib_particles._create_cspray(x,y,z, vx,vy,vz)
 
                 for _j_ in range(0,5):
                     x = 32+ 16*random.random()
@@ -239,7 +239,7 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -1. #v*(random.random() -0.5)
-                    #c_lib.c_lib_objects._create_minivox(x,y,z, vx,vy,vz)
+                    #c_lib.c_lib_particles._create_minivox(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()
@@ -252,7 +252,7 @@ class App(object):
 
                 #check if another physics tick is needed
                 self.world.tick()
-                c_lib.c_lib_objects.tick() ## TESTING
+                c_lib.c_lib_particles.tick() ## TESTING
 
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
@@ -345,8 +345,8 @@ class App(object):
                 
             P.event("Animations Draw")
             self.animations.draw()
-            P.event("c_lib_objects.draw()")
-            c_lib.c_lib_objects.draw() ## TESTING
+            P.event("c_lib_particles.draw()")
+            c_lib.c_lib_particles.draw() ## TESTING
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
             #camera prospective
