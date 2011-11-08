@@ -17,7 +17,7 @@ fullscreen = False
 
 ''' Controls '''
 # lower is more sensitive
-sensitivity = 100
+sensitivity = 125.
 camera_speed = 0.3
 invert_mouse = False
 

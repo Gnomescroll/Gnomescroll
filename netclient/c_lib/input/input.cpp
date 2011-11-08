@@ -50,15 +50,6 @@ int _get_key_state(key_state_func key_state_cb) {
     return 0;
 }
 
-/* Separate Mouse querying for physics-independent camera */
-
-#define camera_sen 300.0f
-static int mouse_render_state[2];
-int* get_mouse_render_state() {
-    SDL_GetRelativeMouseState(&mouse_render_state[0], &mouse_render_state[1]);
-    return mouse_render_state;
-}
-
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
     int t; //temp
 
@@ -185,3 +176,52 @@ char getUnicodeValue(SDL_keysym keysym ) {
     return '?';
     }
 }
+
+
+/* Separate Mouse querying for physics-independent camera */
+static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];
+static int mouse_input_buffer_x[MOUSE_INPUT_BUFFER_SIZE];
+static int mouse_buffer_index = 0;
+static struct MouseMotionAverage mm = {0.0f, 0.0f};
+
+#define MOUSE_AXIS_AVERAGE(AXIS) \
+    static inline float mouse_axis_average_##AXIS() { \
+        float ttl = 0.0f; \
+        float divisor = 0.0f; \
+ \
+        int i,  index; \
+        float decay = 1.0f; \
+        for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { \
+            index = (mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
+            if (index < 0) index += MOUSE_INPUT_BUFFER_SIZE; \
+            ttl += mouse_input_buffer_##AXIS[index] * decay; \
+            divisor += decay; \
+            decay *= MOUSE_BUFFER_DECAY; \
+        } \
+ \
+        ttl /= divisor; \
+ \
+        return ttl; \
+    }
+
+MOUSE_AXIS_AVERAGE(x)
+MOUSE_AXIS_AVERAGE(y)
+
+static inline void calculate_mouse_state() {
+
+    SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
+
+    mouse_buffer_index++;
+    mouse_buffer_index %= MOUSE_INPUT_BUFFER_SIZE;
+    if (mouse_buffer_index < 0) mouse_buffer_index += MOUSE_INPUT_BUFFER_SIZE;
+
+    mm.x = mouse_axis_average_x();
+    mm.y = mouse_axis_average_y();
+}
+
+struct MouseMotionAverage* get_mouse_render_state() {
+    calculate_mouse_state();
+    return &mm;
+}
+
+
