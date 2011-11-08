@@ -28,8 +28,8 @@ diagnostic_hud = False # show diagnostic HUD elements (graphs, ping, fps)
 inventory_hud_x_offset = 250
 inventory_hud_y_offset = 500
 
-block_selector_x_offset = 888.0
-block_selector_y_offset = 130.0
+cube_selector_x_offset = 888.0
+cube_selector_y_offset = 130.0
 
 fps_perf_graph_x_offset = 50.0
 fps_perf_graph_y_offset = 70.0

@@ -4,18 +4,15 @@
 
 static int inventory_hud_enabled = 0;
 
-int toggle_inventory_hud() {
-    printf("Hud: inventory_hud_enabled int: %d\n", inventory_hud_enabled);
+int _toggle_inventory_hud() {
 
     if(inventory_hud_enabled == 0) {
         inventory_hud_enabled = 1;
-        printf("Hud: inventory hud enabled\n");
         return inventory_hud_enabled;    
     }
 
     if(inventory_hud_enabled == 1) {
         inventory_hud_enabled = 0;
-        printf("Hud: inventory hud disabled\n");
         return inventory_hud_enabled;
     }
 

@@ -62,6 +62,7 @@
 
 int init_c_lib() {
     printf("init c_lib\n");
+
     srand(time(NULL));   // seed the RNG
 
     #ifdef DC_CLIENT
@@ -69,6 +70,8 @@ int init_c_lib() {
         init_hud_texture_loader();
         init_image_loader();
         init_text();
+        init_cube_selector();
     #endif
-return 0;
+    
+    return 0;
 }

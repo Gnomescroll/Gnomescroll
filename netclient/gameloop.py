@@ -86,7 +86,6 @@ class App(object):
         #SDL.hud.init()
 
         init_c_lib.init()
-        cHUD.init_hud()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -354,10 +353,10 @@ class App(object):
             P.event("draw hud")
             if opts.hud:
                 camera.hudProjection()
-                draw_bs = False
+                draw_cube_selector = False
                 if GameStateGlobal.agent:
-                    draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
-                self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
+                    draw_cube_selector = (GameStateGlobal.agent.weapons.active().type == 3)
+                self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
                 cHUD._draw_inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
 
                 if opts.diagnostic_hud:

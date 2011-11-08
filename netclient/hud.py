@@ -36,15 +36,10 @@ class Hud(object):
             x = 0,
             offset = self.win_height - 10
         )
-        self._init_block_selector()
 
     def _init_reticle(self):
         tex_file = '%stexture/target.png' % (base_dir,)
         self.reticle = cHUD.Reticle(tex_file, self.win_width/2, self.win_height/2)
-
-    def _init_block_selector(self):
-        tex_file = '%stexture/block_selector_hud.png' % (base_dir,)
-        self.block_selector = cHUD.BlockSelector(tex_file, self.win_width - 70, 15, scale=16)
 
     def _init_text_dict(self):
         offset = 20
@@ -103,8 +98,8 @@ class Hud(object):
             stats[lprop] = '\n'.join(lines)
         return stats
 
-    def draw_block_selector(self):
-        cHUD.draw_cube_selector(opts.block_selector_x_offset, opts.block_selector_y_offset)
+    def draw_cube_selector(self):
+        cHUD.draw_cube_selector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
 
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
@@ -114,7 +109,7 @@ class Hud(object):
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
-    def draw(self, fps=None, ping=None, block_selector=False):
+    def draw(self, fps=None, ping=None, cube_selector=False):
         self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
@@ -124,8 +119,8 @@ class Hud(object):
             self.draw_fps(fps)
         if ping is not None:
             self.draw_ping(ping)
-        if block_selector:
-            self.draw_block_selector()
+        if cube_selector:
+            self.draw_cube_selector()
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent

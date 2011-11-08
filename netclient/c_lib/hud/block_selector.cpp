@@ -1,59 +1,10 @@
 #include "block_selector.hpp"
 
-static Texture hud_texture;
-void _load_hud_texture(char *file) {
-    SDL_Surface *surface;
-    int tex = 0;
-
-    surface = _load_image(file);
-    create_texture_from_surface(surface, &tex);
-
-    hud_texture.tex = tex;
-    hud_texture.w = surface->w;
-    hud_texture.h = surface->h;
-}
-
-void _draw_loaded_hud_texture(int x, int y) {
-    int x1, y1;
-
-    x = x - hud_texture.w/2;
-    y = y - hud_texture.h/2;
-
-    x1 = x + hud_texture.w;
-    y1 = y + hud_texture.h;
-
-    _blit_sprite(hud_texture.tex, x, y, x1, y1, 0);
-}
-
-static Texture block_selector_texture;
-void _load_block_selector_texture(char *file, int scale) {
-    SDL_Surface *surface;
-    int tex = 0;
-
-    surface = _load_image(file);
-    create_texture_from_surface(surface, &tex);
-
-    block_selector_texture.tex = tex;
-    block_selector_texture.w = surface->w / scale;
-    block_selector_texture.h = surface->h / scale;
-}
-
-void _draw_block_selector(int x, int y) {
-    int x1, y1;
-    x1 = block_selector_texture.h + x;
-    y1 = block_selector_texture.w + y;
-    _blit_sprite(block_selector_texture.tex, x, y1, x1, y, 0);
-}
-
-/* COPIED FROM cube_select.cpp */
-
 static struct cube_select_element cube_select_array[255];
 static int cube_select_x = 0;
 static int cube_select_y = 0;
 
-void _init_cube_select() {
-    //printf("init_cube_select\n");
-
+void init_cube_selector() {
     int i;
     for(i=0;i<255;i++){
         cube_select_array[i].cube_id = 255;
@@ -61,7 +12,6 @@ void _init_cube_select() {
     }
     cube_select_x = 0;
     cube_select_y = 0;
-    return;
 }
 
 int _get_selected_cube_id(){ //get the cube selected by hud

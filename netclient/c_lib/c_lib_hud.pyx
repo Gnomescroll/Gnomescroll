@@ -1,3 +1,29 @@
+'''
+HUD textures
+'''
+## Texture Loader ##
+cdef extern from "./SDL/SDL.h":
+    struct SDL_Surface:
+        int w
+        int h
+
+cdef extern from "./hud/texture_loader.h":
+    SDL_Surface* _load_image(char *file)
+    int create_texture_from_surface(SDL_Surface* surface, int* texture)
+
+cdef SDL_Surface* load_image(char* file):
+    cdef SDL_Surface* surface
+    surface = _load_image(file)
+    return surface
+
+cdef create_texture(SDL_Surface* surface): #eventually support mippapped textures
+    cdef int tex = 0
+    cdef int err
+    err = create_texture_from_surface(surface, &tex)
+    if err:
+        print "Cython create_texture failed with error %d" % (err,)
+    return tex
+
 
 '''
 HUD Cube Selector
@@ -9,9 +35,6 @@ cdef extern from "./hud/block_selector.hpp":
     void _cube_select_set_hud(int pos, int cube_id, int tex_id)
     void _draw_cube_selector(float x, float y, float size, int mode)
     void _hud_control_input(int pos)
-
-    void _draw_block_selector(int x, int y)
-    void _load_block_selector_texture(char *file, int scale)
 
 #returns the id of the cube which is selected in hud
 def get_selected_cube_id():
@@ -29,91 +52,42 @@ def draw_cube_selector(float x, float y, float size=1, int mode=0):
 
 
 '''
-HUD textures
-'''
-## Texture Loader ##
-cdef extern from "./SDL/SDL.h":
-    struct SDL_Surface:
-        int w
-        int h
-
-cdef extern from "./hud/texture_loader.h":
-    int _init_image_loader()
-    SDL_Surface* _load_image(char *file)
-    int create_texture_from_surface(SDL_Surface* surface, int* texture)
-
-cdef SDL_Surface* load_image(char* file):
-    cdef SDL_Surface* surface
-    surface = _load_image(file)
-    return surface
-
-cdef create_texture(SDL_Surface* surface, type =None): #eventually support mippapped textures
-    cdef int tex = 0
-    cdef int err
-    err = create_texture_from_surface(surface, &tex)
-    if err:
-        print "Cython create_texture failed with error %d" % (err,)
-    return tex
-
-
-
-'''
 Inventory
 '''
 
 cdef extern from "./hud/inventory.hpp":
     int draw_inventory(float x, float y)
-    int toggle_inventory_hud()
+    int _toggle_inventory_hud()
 
 def _draw_inventory(float x, float y):
     draw_inventory(x,y)
 
-def _toggle_inventory_hud():
-    print 'cython inventory hud toggle'
-    if toggle_inventory_hud():
-        print 'inventory hud on'
-    else:
-        print 'inventory hud off'
+def toggle_inventory_hud():
+    _toggle_inventory_hud()
 
-'''
-HUD global
-'''
-
-def init_hud():
-    _init_cube_select()
 
 """
 HUD.pyx
 """
 
 cdef extern from './hud/texture_loader.h':
-    void _draw_loaded_hud_texture(int x, int y)
-    void _load_hud_texture(char *file)
+    void _draw_loaded_texture(int x, int y)
+    void _load_texture(char *file)
 
 cdef extern from "./SDL/draw_functions.h":
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
 cdef extern from './hud/text.h':
     int _init_text()
-    SDL_Surface* _create_text_surface(char* text,r,g,b,a)
     int _draw_text_surface(SDL_Surface* surface, int x, int y)
     int _free_text_surface(SDL_Surface* surface)
     int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
 
-def create_text_surface(string):
-    pass
-
 def draw_loaded_hud_texture(x, y):
-    _draw_loaded_hud_texture(x, y)
+    _draw_loaded_texture(x, y)
 
 def load_hud_texture(file):
-    _load_hud_texture(file)
-
-def draw_block_selector(x, y):
-    _draw_block_selector(x, y)
-
-def load_block_selector_texture(file, scale=1):
-    _load_block_selector_texture(file, scale)
+    _load_texture(file)
 
 class Text:
 
@@ -143,17 +117,6 @@ class Reticle:
     def draw(self):
         draw_loaded_hud_texture(self.x, self.y)
 
-class BlockSelector:
-
-    def __init__(self, file, x=0, y=0, scale=1):
-        self.x = x
-        self.y = y
-        self.scale = scale
-        load_block_selector_texture(file, scale)
-
-    def draw(self):
-        draw_block_selector(self.x, self.y)
-
 cdef class Texture:
     cdef int tex
     cdef int w
@@ -170,10 +133,3 @@ cdef class Texture:
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
         _blit_sprite(self.id, x0, y0, x1, y1, z)
-
-class Textures:
-    hud_tex = None
-
-    def init(self):
-        print "Initing Textures"
-        self.hud_tex = Texture("./media/texture/target.png")

@@ -263,7 +263,7 @@ class Keyboard(object):
         self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
-            "e" : cHUD._toggle_inventory_hud,
+            "e" : cHUD.toggle_inventory_hud,
             "h" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
             "n" : toggle_t_viz_vbo_indicator_style,
