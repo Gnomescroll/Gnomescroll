@@ -52,7 +52,6 @@ int _get_key_state(key_state_func key_state_cb) {
 
 /* Separate Mouse querying for physics-independent camera */
 
-#define camera_sen 300.0f
 static int mouse_render_state[2];
 int* get_mouse_render_state() {
     SDL_GetRelativeMouseState(&mouse_render_state[0], &mouse_render_state[1]);

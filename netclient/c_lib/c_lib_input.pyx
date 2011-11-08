@@ -36,13 +36,7 @@ cdef extern from "./input/input.hpp":
     int _quit_event_callback(quit_event_func user_func)
 
     int _init_input()
-#    int _get_key_state(key_state_func key_state_cb)
-#    int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
-#    int _set_text_entry_mode(int n)
 
-## input.c
-
-#cdef extern int _init_input()
 cdef extern from "./input/input.hpp":
     cdef extern int _get_key_state(key_state_func key_state_cb)
     cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
@@ -55,7 +49,7 @@ def get_mouse_deltas():
     cdef int* d
     d = get_mouse_render_state()
     dx, dy = d[0], d[1]
-    deltas = [dx, dy]
+    deltas = map(float, [dx, dy])
     return deltas
 
 def get_key_state():
@@ -75,15 +69,8 @@ def process_events():
         me = mouse_event_callback_stack.pop(0)
         input_callback.mouse_event(*me)
 
-    #mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb)
-
 def set_text_entry_mode(int n):
     temp = _set_text_entry_mode(n)
-
-#cpdef int call_back_test():
-#    _key_event_callback(&key_event_callback, 42)
-
-#import input
 
 class Callback_dummy:
     def keyboard_state(self, pressed_keys):
@@ -99,8 +86,6 @@ class Callback_dummy:
 
 input_callback = Callback_dummy()
 
-#input_callback = None
-
 def set_input_callback(callback):
     global input_callback
     input_callback = callback
@@ -112,36 +97,26 @@ cdef int key_state_callback(Uint8* keystate, int numkeys):
     for i in range(0, numkeys):
         if keystate[i] != 0:
             pressed_keys.append(i)
-    #input.inputEventGlobal.keyboard_state(pressed_keys)
     input_callback.keyboard_state(pressed_keys)
 
 cdef int key_event_callback(char key):
-    #print "key event___"
     global input_callback
     input_callback.keyboard_event(key)
 
 cdef int key_text_event_callback(char key, char* key_name, int event_state):
     global input_callback, key_text_event_callback_stack
-    #print "keycode_="+ str(key)
     key_string = key_name
-    #print 'keystring_= %s' % (str(key_name),)
     cdef bytes py_string
     py_string = key_name
-    #key_string = key_name.decode('ascii')
-    #input.inputEventGlobal.keyboard_text_event(key, key_string)
     key_text_event_callback_stack.append((key, key_string, event_state))
-    #input_callback.keyboard_text_event(key, key_string)
 
 cdef int mouse_motion_callback(MouseMotion ms):
     global input_callback
     input_callback.mouse_motion(ms.x,ms.y, ms.dx,-1*ms.dy, ms.button)
-    #input.inputEventGlobal.mouse_motion(ms.x,ms.y,ms.dx,ms.dy, ms.button)
 
 cdef int mouse_event_callback(MouseEvent me):
     global input_callback, mouse_event_callback_stack
     mouse_event_callback_stack.append((me.button, me.state, me.x, -1*me.y))
-    #input_callback.mouse_event(me.button, me.state, me.x, -1*me.y)
-    #input.inputEventGlobal.mouse_event(me.button, me.state, me.x, me.y)
 
 cdef int quit_event_callback():
     global input_callback, key_text_event_callback_stack
