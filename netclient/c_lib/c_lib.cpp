@@ -17,7 +17,7 @@
 #include <c_lib/physics/common.c>
 
 /* objects */
-#include <c_lib/objects/object_lib.cpp>
+#include <c_lib/particles/object_lib.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>

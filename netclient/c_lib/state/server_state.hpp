@@ -2,7 +2,7 @@
 #ifdef DC_SERVER
 
 #include <c_lib/agent/agent.hpp>
-#include <c_lib/objects/object_lib.hpp>
+#include <c_lib/particles/object_lib.hpp>
 
 namespace ServerState {
 

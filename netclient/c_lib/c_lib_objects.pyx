@@ -9,12 +9,12 @@ cdef extern from "./physics/common.h":
         Vector p
         Vector v
 
-cdef extern from "./objects/particles.hpp":
+cdef extern from "./particles/particles.hpp":
     cdef struct Particle2:
         State state
         unsigned int id
 
-cdef extern from "./objects/grenade.hpp":
+cdef extern from "./particles/grenade.hpp":
     cdef cppclass Grenade:
         Particle2 particle
         void set_ttl(int ttl)
@@ -29,7 +29,7 @@ cdef extern from "./objects/grenade.hpp":
         void draw()
         void tick()
         
-cdef extern from "./objects/cspray.hpp":
+cdef extern from "./particles/cspray.hpp":
     cdef cppclass Cspray:
         Particle2 particle
 
@@ -43,7 +43,7 @@ cdef extern from "./objects/cspray.hpp":
         void draw()
         void tick()
 
-cdef extern from "./objects/shrapnel.hpp":
+cdef extern from "./particles/shrapnel.hpp":
     cdef cppclass Shrapnel:
         Particle2 particle
 
@@ -57,7 +57,7 @@ cdef extern from "./objects/shrapnel.hpp":
         void draw()
         void tick()
         
-cdef extern from "./objects/neutron.hpp":
+cdef extern from "./particles/neutron.hpp":
     cdef cppclass Neutron:
         Particle2 particle
         void set_energy(int energy)
@@ -72,7 +72,7 @@ cdef extern from "./objects/neutron.hpp":
         void draw()
         void tick()
 
-cdef extern from "./objects/blood.hpp":
+cdef extern from "./particles/blood.hpp":
     cdef cppclass Blood:
         Particle2 particle
 
@@ -86,7 +86,7 @@ cdef extern from "./objects/blood.hpp":
         void draw()
         void tick()
 
-cdef extern from "./objects/minivox.hpp":
+cdef extern from "./particles/minivox.hpp":
     cdef cppclass Minivox:
         Particle2 particle
         void set_color(unsigned char r, unsigned char g, unsigned char b)
@@ -182,7 +182,7 @@ def get_grenade_position(int gid):
 '''
 Circuit Tree
 '''
-cdef extern from "./objects/circuit_tree.hpp":
+cdef extern from "./particles/circuit_tree.hpp":
     void circuit_tree_generate(int type, int seed)
     void circuit_tree_draw()
 
