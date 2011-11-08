@@ -207,58 +207,20 @@ def build(bld):
         time_lib = []
 
     bld(features='cxx cxxshlib',
-        source=['c_lib/c_lib.cpp',
-                #'c_lib/texture_loader.c',
-                #'c_lib/net_lib/client.c',
-                #'c_lib/time/physics_timer.c',
-                #'c_lib/physics/common.c',
-                ],
+        source=['c_lib/c_lib.cpp'],
         use=common_libraries+time_lib+SDL_libraries,
         target='c_lib')
 
-    #bld(features='c cshlib pyext',
-        #source=['SDL/SDL_functions.c',
-                ##'SDL/camera.c',
-                #'SDL/draw_functions.c',
-                #'SDL/texture_loader.c',
-                #'SDL/particle_functions.c',
-                #'SDL/gl.pyx'],
-        #use=common_libraries+SDL_libraries,
-        #target='SDL.gl')
-
-    #bld(features='c cshlib pyext',
-        #source=['SDL/SDL_text.c',
-                #'SDL/draw_functions.c',
-                #'SDL/texture_loader.c',
-                #'SDL/hud/block_selector.c',
-                #'SDL/hud.pyx'],
-        #use=SDL_libraries+common_libraries,
-        #target='SDL.hud')
-
-    '''
-    bld(features='c cshlib pyext',
-        source=['SDL/input_functions.c',
-                'SDL/SDL_functions.c',
-                'SDL/input.pyx'],
-        use=common_libraries+SDL_libraries,
-        target='SDL.input')
-    '''
-    
     bld(features='c cshlib pyext',
         source=['vox_lib/vox_functions.c',
                 'vox_lib/vox_lib.pyx'],
         use=common_libraries+SDL_libraries,
         target='vox_lib')
 
-    # c_lib
-
     bld(features='cxx cshlib pyext',
         source=['c_lib/terrain_map.pyx'],
         use=common_libraries + SDL_libraries+['c_lib'],
         target='c_lib.terrain_map')
-
-    #'#c_lib/t_map/t_vbo.c',
-    #           #'c_lib/t_map/t_viz.c',
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/_ray_trace.pyx'],
@@ -356,9 +318,6 @@ def install_in_ext(ctx):
 
 
     targets = [
-        #'SDL.gl',
-       #'SDL.hud',
-       #'SDL.input',
        'c_lib.terrain_map',
        'vox_lib',
        'c_lib._ray_trace',

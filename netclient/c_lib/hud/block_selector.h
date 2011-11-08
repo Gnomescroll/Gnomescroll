@@ -3,7 +3,7 @@
 #include <compat_gl.h>
 #include <math.h>
 
-#include <c_lib/SDL/texture_loader.h>
+#include <c_lib/hud/texture_loader.h>
 
 int _init_block_selector();
 

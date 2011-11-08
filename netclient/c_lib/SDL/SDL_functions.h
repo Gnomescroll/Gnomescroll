@@ -1,4 +1,4 @@
-
+#pragma once
 
 int _set_resolution(int xres, int yres, int fullscreen);
 

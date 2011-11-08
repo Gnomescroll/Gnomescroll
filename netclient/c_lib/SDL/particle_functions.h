@@ -1,3 +1,5 @@
+#pragma once
+
 #include <compat_gl.h>
 #include <math.h>
 

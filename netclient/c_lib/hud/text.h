@@ -1,7 +1,7 @@
+#pragma once
 
 #include <compat_gl.h>
 #include <stdio.h>
-
 
 int _init_text();
 

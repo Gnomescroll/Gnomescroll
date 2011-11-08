@@ -41,15 +41,15 @@
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/texture_loader.c>
     #include <c_lib/hud/hud_texture_loader.cpp>
+    #include <c_lib/hud/text.c>
+    #include <c_lib/hud/texture_loader.c>
+    #include <c_lib/hud/block_selector.c>
 
     /* SDL */
     #include <c_lib/SDL/camera.c>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
-    #include <c_lib/SDL/SDL_text.c>
-    #include <c_lib/SDL/texture_loader.c>
-    #include <c_lib/SDL/block_selector.c>
 
     /* input */
     #include <c_lib/input/input.cpp>

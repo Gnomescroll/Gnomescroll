@@ -1,4 +1,4 @@
-#include "SDL_text.h"
+#include "text.h"
 
 GLuint fontTextureId;
 int tex_alpha = 1;
@@ -7,7 +7,7 @@ int _init_text() {
     printf("TEXT INIT\n");
     SDL_Surface *font = IMG_Load("media/fonts/font.png");
 
-    if(!font) { printf("SDL_text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}
+    if(!font) { printf("text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}
     if(font->format->BytesPerPixel != 4) {
         printf("Font Image File: image is missing alpha channel \n");
         tex_alpha = 0;
