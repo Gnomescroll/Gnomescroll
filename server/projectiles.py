@@ -7,7 +7,7 @@ Projectile data (will be moved to configurable external format)
 '''
 
 import c_lib.terrain_map as terrain_map
-import c_lib.c_lib_objects as c_obj
+import c_lib.c_lib_particles as c_obj
 import dats.loader as dat_loader
 p_dat = dat_loader.p_dat
 

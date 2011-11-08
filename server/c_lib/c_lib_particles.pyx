@@ -9,12 +9,12 @@ cdef extern from "./physics/common.h":
         Vector p
         Vector v
 
-cdef extern from "./objects/particles.hpp":
+cdef extern from "./particles/particles.hpp":
     cdef struct Particle2:
         State state
         unsigned int id
 
-cdef extern from "./objects/grenade.hpp":
+cdef extern from "./particles/grenade.hpp":
     cdef cppclass Grenade:
         Particle2 particle
 
@@ -27,7 +27,7 @@ cdef extern from "./objects/grenade.hpp":
         void destroy(int id)
         void tick()
 
-cdef extern from "./objects/cspray.hpp":
+cdef extern from "./particles/cspray.hpp":
     cdef cppclass Cspray:
         Particle2 particle
 
@@ -40,7 +40,7 @@ cdef extern from "./objects/cspray.hpp":
         void destroy(int id)
         void tick()
 
-cdef extern from "./objects/neutron.hpp":
+cdef extern from "./particles/neutron.hpp":
     cdef cppclass Neutron:
         Particle2 particle
         void set_energy(int energy)

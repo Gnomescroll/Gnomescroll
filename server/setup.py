@@ -76,14 +76,14 @@ init_c_lib = Extension('init_c_lib',
                     ]
                                 )
 
-c_lib_objects = Extension('c_lib.c_lib_objects',
+c_lib_particles = Extension('c_lib.c_lib_particles',
                     include_dirs = include_dirs,
                     libraries = [] + alt_lib,
                     library_dirs = library_dirs,
                     extra_compile_args = extra_compile_args,
                     extra_link_args = extra_link_args,
                     sources = [
-                    'c_lib/c_lib_objects.pyx',
+                    'c_lib/c_lib_particles.pyx',
                     ]
                                 )
 '''
@@ -101,7 +101,7 @@ setup(
         c_lib,
         ray_trace,
         init_c_lib,
-        c_lib_objects,
+        c_lib_particles,
     ] + cythonize("*.pyx")
 )
 
