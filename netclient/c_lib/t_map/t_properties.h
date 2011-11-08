@@ -29,6 +29,8 @@ struct cubeProperties* _get_cube(int id);
 extern struct cubeProperties cube_list[max_cubes];
 
 void set_infinite_texture(int id, int texture);
+int get_infinite_texture(int index);
+
 void init_t_properties();
 
 int _isActive(int id);
