@@ -90,6 +90,7 @@ class InputGlobal:
     agentInput = None
     voxel_aligner = None
     use_voxel_aligner = False
+    inventory = False
 
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -263,7 +264,7 @@ class Keyboard(object):
         self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
-            "e" : cHUD.toggle_inventory_hud,
+            "e" : self.toggle_inventory,
             "h" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
             "n" : toggle_t_viz_vbo_indicator_style,
@@ -289,6 +290,9 @@ class Keyboard(object):
 
     def toggle_hud(self):
         opts.hud = not opts.hud
+
+    def toggle_inventory(self):
+        InputGlobal.inventory = not InputGlobal.inventory
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':

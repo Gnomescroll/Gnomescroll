@@ -26,11 +26,15 @@ class Hud(object):
         self._init_text_dict()
         self._init_scoreboard()
         self._init_player_stats()
+
+        self.inventory = cHUD.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
+
         self.fps = self._to_draw_text(
             text = '',
             x = 0,
             offset = self.win_height
         )
+
         self.ping = self._to_draw_text(
             text = '',
             x = 0,
@@ -113,6 +117,8 @@ class Hud(object):
         self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
+        if InputGlobal.inventory:
+            self.inventory.draw()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
         if fps is not None:
@@ -156,24 +162,11 @@ class Hud(object):
         return s
 
     def draw_player_stats(self):
-        # draw label in top
-        #stats = self._format_player_stats_html()
         stats = self._format_player_stats_plain()
         old = self.player_stats.text
         if old != stats:
-            #self.player_stats.begin_update()
             self.player_stats.text = stats
-            #self.player_stats.end_update()
         self.player_stats.draw()
-
-    #def draw_reticle(self):
-        #gl.glEnable(gl.GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
-        #gl.glBindTexture(self.reticle_texture.target, self.reticle_texture.id)
-
-        #gl.glEnable(gl.GL_BLEND)
-        #gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-        #self.reticleVertexList.draw(gl.GL_QUADS)
-        #gl.glDisable(gl.GL_BLEND)
 
     def draw_reticle(self):
         self.reticle.draw()
@@ -186,15 +179,12 @@ class Hud(object):
         self._draw_square(x, y, w, color=(255,10,10))
 
     def draw_scoreboard(self):
-        #stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())
         stats_txt = self._format_scoreboard_plain(GameStateGlobal.scoreboard())
         for key, txt in stats_txt.items():
             curr_sb = self.scoreboard[key]
             old = curr_sb.text
             if old != txt:
-                #curr_sb.begin_update()
                 curr_sb.text = txt
-                #curr_sb.end_update()
             curr_sb.draw()
 
     def _draw_line(self, x, y, x1, y1, color=None):

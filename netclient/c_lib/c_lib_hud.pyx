@@ -9,20 +9,52 @@ cdef extern from "./SDL/SDL.h":
 
 cdef extern from "./hud/texture_loader.h":
     SDL_Surface* _load_image(char *file)
-    int create_texture_from_surface(SDL_Surface* surface, int* texture)
+    int create_texture_from_surface(SDL_Surface *surface, int *tex)
 
-cdef SDL_Surface* load_image(char* file):
+
+cdef extern from "./SDL/draw_functions.h":
+    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
+
+
+
+cdef class Texture:
     cdef SDL_Surface* surface
-    surface = _load_image(file)
-    return surface
+    cdef int texture
+    cdef int w
+    cdef int h
 
-cdef create_texture(SDL_Surface* surface): #eventually support mippapped textures
-    cdef int tex = 0
-    cdef int err
-    err = create_texture_from_surface(surface, &tex)
-    if err:
-        print "Cython create_texture failed with error %d" % (err,)
-    return tex
+    def __init__(Texture self, char * file):
+        self.surface = _load_image(file)
+        self.w = self.surface.w
+        self.h = self.surface.h
+        err = create_texture_from_surface(self.surface, &self.texture)
+        if err:
+            print "Cython Texture.__init__ :: Loading error %d" % (err,)
+
+    def draw(self, x0, y0, x1, y1, z=-0.5):
+        _blit_sprite(self.texture, x0, y0, x1, y1, z)
+
+
+cdef class Reticle(Texture):
+    cdef float x0
+    cdef float y0
+    cdef float x1
+    cdef float y1
+
+    def __init__(Reticle self, char* file, int window_width, int window_height):
+        Texture.__init__(self, file)
+
+        center_x = window_width / 2.
+        center_y = window_height / 2.
+
+        self.x0 = center_x - (self.w / 2.)
+        self.y0 = center_y - (self.h / 2.)
+        self.x1 = self.x0 + self.w
+        self.y1 = self.y0 + self.h
+
+    def draw(self):
+        _blit_sprite(self.texture, self.x0, self.y0, self.x1, self.y1, 0.)
+
 
 
 '''
@@ -57,27 +89,26 @@ Inventory
 
 cdef extern from "./hud/inventory.hpp":
     int draw_inventory(float x, float y)
-    int _toggle_inventory_hud()
 
-def _draw_inventory(float x, float y):
-    draw_inventory(x,y)
+cdef class Inventory:
+    cdef float x
+    cdef float y
 
-def toggle_inventory_hud():
-    _toggle_inventory_hud()
+    def __init__(self, float x, float y):
+        self.x = x
+        self.y = y
 
+    def draw(self):
+        draw_inventory(self.x, self.y)
 
-"""
-HUD.pyx
-"""
-
-cdef extern from "./SDL/draw_functions.h":
-    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
+'''
+Text
+'''
 
 cdef extern from './hud/text.h':
     int _init_text()
-    int _draw_text_surface(SDL_Surface* surface, int x, int y)
-    int _free_text_surface(SDL_Surface* surface)
-    int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
+    int draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
+
 
 class Text:
 
@@ -95,42 +126,5 @@ class Text:
 
     def draw(self):
         r,g,b,a  = self.color
-        _draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
+        draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
 
-
-cdef class Texture:
-    cdef SDL_Surface* surface
-    cdef int texture
-    cdef int w
-    cdef int h
-
-    def __init__(Texture self, char * file):
-        self.surface = load_image(file)
-        self.w = self.surface.w
-        self.h = self.surface.h
-        err = create_texture_from_surface(self.surface, &self.texture)
-        if err:
-            print "Cython Texture.__init__ :: Loading error %d" % (err,)
-
-    def draw(self, x0, y0, x1, y1, z=-0.5):
-        _blit_sprite(self.texture, x0, y0, x1, y1, z)
-
-cdef class Reticle(Texture):
-    cdef float x0
-    cdef float y0
-    cdef float x1
-    cdef float y1
-
-    def __init__(Reticle self, char* file, int window_width, int window_height):
-        Texture.__init__(self, file)
-
-        center_x = window_width / 2.
-        center_y = window_height / 2.
-
-        self.x0 = center_x - (self.w / 2.)
-        self.y0 = center_y - (self.h / 2.)
-        self.x1 = self.x0 + self.w
-        self.y1 = self.y0 + self.h
-
-    def draw(self):
-        _blit_sprite(self.texture, self.x0, self.y0, self.x1, self.y1, 0)

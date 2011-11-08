@@ -38,7 +38,7 @@ int init_text() {
 static const float dx = 1.0f/16.0f;
 static const float dy = 1.0f/16.0f;
 
-int _draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
+int draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
 
     int c_num = 0;
 

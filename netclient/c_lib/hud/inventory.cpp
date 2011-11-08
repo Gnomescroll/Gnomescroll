@@ -2,30 +2,10 @@
 
 #ifdef DC_CLIENT
 
-static int inventory_hud_enabled = 0;
-
-int _toggle_inventory_hud() {
-
-    if(inventory_hud_enabled == 0) {
-        inventory_hud_enabled = 1;
-        return inventory_hud_enabled;    
-    }
-
-    if(inventory_hud_enabled == 1) {
-        inventory_hud_enabled = 0;
-        return inventory_hud_enabled;
-    }
-
-    printf("ERROR: inventory hud has invalid value, %i= inventory_hud_enabled\n", inventory_hud_enabled);
-    return inventory_hud_enabled;
-}
-
 int draw_inventory(float x, float y) {
     //x = 50.0;
     //y = 500.0;
     float z = -0.5;
-
-    if(inventory_hud_enabled == 0) return 0;
 
     //printf("i=%i \n",get_inventory_background_texture());
 

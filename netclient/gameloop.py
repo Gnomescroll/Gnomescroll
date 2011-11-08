@@ -357,7 +357,6 @@ class App(object):
                 if GameStateGlobal.agent:
                     draw_cube_selector = (GameStateGlobal.agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
-                cHUD._draw_inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(settings.map_vbo_indicator_x_offset,settings.map_vbo_indicator_y_offset, -0.3)
