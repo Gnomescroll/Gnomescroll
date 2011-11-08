@@ -192,8 +192,7 @@ static struct MouseMotionAverage mm = {0.0f, 0.0f};
         int i,  index; \
         float decay = 1.0f; \
         for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { \
-            index = (mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
-            if (index < 0) index += MOUSE_INPUT_BUFFER_SIZE; \
+            index = (MOUSE_INPUT_BUFFER_SIZE+ mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
             ttl += mouse_input_buffer_##AXIS[index] * decay; \
             divisor += decay; \
             decay *= MOUSE_BUFFER_DECAY; \
