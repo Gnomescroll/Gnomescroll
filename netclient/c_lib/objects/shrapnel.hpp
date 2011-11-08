@@ -10,11 +10,6 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
-#ifdef DC_CLIENT
-    #include <texture_loader.h>
-#endif
-
-
 #define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30
 #define SHRAPNEL_DAMP 0.5f

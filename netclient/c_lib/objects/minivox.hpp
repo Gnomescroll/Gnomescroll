@@ -11,10 +11,6 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
-#ifdef DC_CLIENT
-    #include <texture_loader.h>
-#endif
-
 #define MINIVOX_MAX 4096
 #define MINIVOX_TTL 100
 #define MINIVOX_DAMP 0.5f

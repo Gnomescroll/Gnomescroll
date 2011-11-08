@@ -183,7 +183,7 @@ void circuit_tree_draw() {
 
 /*
 void neutron_draw() {
-    //printf("particle sheet id= %i \n", get_particle_texture() );
+    //printf("particle sheet id= %i \n", particle_texture_id );
     if(neutron_count == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, a);
 
@@ -202,7 +202,7 @@ void neutron_draw() {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, get_particle_texture() );
+    glBindTexture( GL_TEXTURE_2D, particle_texture_id );
     //printf("particle sheet= %i \n", particle_sheet_id);
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);

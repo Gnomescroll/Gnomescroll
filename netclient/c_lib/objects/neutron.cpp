@@ -159,7 +159,7 @@ void Neutron_list::draw() {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, get_particle_texture() );
+    glBindTexture( GL_TEXTURE_2D, particle_texture_id );
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 

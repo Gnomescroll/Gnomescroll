@@ -10,10 +10,6 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
-#ifdef DC_CLIENT
-    #include <texture_loader.h>
-#endif
-
 #define BLOOD_MAX 4096
 #define BLOOD_TTL 30
 #define BLOOD_DAMP 0.6f

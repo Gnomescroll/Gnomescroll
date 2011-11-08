@@ -10,10 +10,6 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
-#ifdef DC_CLIENT
-    #include <texture_loader.h>
-#endif
-
 #define CSPRAY_MAX 4096
 #define CSPRAY_TTL 1200
 #define CSPRAY_CEMENT_BLOCK_TYPE 2

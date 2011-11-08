@@ -10,10 +10,6 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
-#ifdef DC_CLIENT
-    #include <texture_loader.h>
-#endif
-
 /* These should be pulled from a dat or something */
 #define GRENADE_MAX 1024
 #define GRENADE_TTL 100

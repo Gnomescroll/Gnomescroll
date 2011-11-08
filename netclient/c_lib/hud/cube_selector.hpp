@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <c_lib/hud/texture_loader.h>
 #include <c_lib/SDL/draw_functions.h>
 
 void init_cube_selector();

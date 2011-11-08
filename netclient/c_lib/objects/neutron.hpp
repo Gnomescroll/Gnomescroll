@@ -10,10 +10,6 @@
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
-#ifdef DC_CLIENT
-    #include <texture_loader.h>
-#endif
-
 #define NEUTRON_MAX 1024
 #define NEUTRON_TTL 600
 #define NEUTRON_DAMP 1.0f

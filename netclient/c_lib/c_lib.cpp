@@ -36,18 +36,17 @@
     /* animations */
     #include <c_lib/animations/animations.cpp>
 
-    /* HUD */
-    #include <c_lib/hud/cube_selector.cpp>
-    #include <c_lib/hud/inventory.cpp>
-    #include <c_lib/texture_loader.c>
-    #include <c_lib/hud/text.c>
-    #include <c_lib/hud/texture_loader.c>
-
     /* SDL */
+    #include <c_lib/SDL/texture_loader.c>
     #include <c_lib/SDL/camera.c>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
+
+    /* HUD */
+    #include <c_lib/hud/cube_selector.cpp>
+    #include <c_lib/hud/inventory.cpp>
+    #include <c_lib/hud/text.c>
 
     /* input */
     #include <c_lib/input/input.cpp>
@@ -66,8 +65,7 @@ int init_c_lib() {
 
     #ifdef DC_CLIENT
         init_image_loader();
-
-        init_texture_loader();  // deprecate. inits a particle sheet
+        init_particles();
         init_text();
         init_cube_selector();
         init_inventory();
