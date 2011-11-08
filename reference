@@ -3,6 +3,11 @@ http://en.wikipedia.org/wiki/Texture_splatting
 <JoJoeStinky> might be useful for drawing pathways and roads through yyour terrain,
 !!! For pathways and roads
 
+Why Minecraft is Slow:
+http://optifog.blogspot.com/
+
+!!! OptiFine MT (multithreaded) tries to solve the problem by decoupling the chunk loading from the screen updates so that one complex chunk is distributed over several frames or several empty chunks are loaded inside one frame. The target is to stabilize the frame rate and speed up the loading of empty chunks.
+
 Ragdoll:
 
 http://www.gamasutra.com/resource_guide/20030121/jacobson_01.shtml

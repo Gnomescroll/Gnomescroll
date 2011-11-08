@@ -186,7 +186,7 @@ static int _s_index = 0;
 
 static int _last_frame_t;
 
-const int _SDL_SWAP_DEBUG = 1;
+const int _SDL_SWAP_DEBUG = 0;
 
 /*
     Measure the time since last frame and if there is extra time before next flip, do map processing
@@ -200,8 +200,14 @@ int _swap_buffers() {
     {
        _time1 = SDL_GetTicks();
     }
-    SDL_GL_SwapBuffers();
+    
+    // Do not call glFlush() before SDL_GL_SwapBuffers since the latter implies the former.
 
+    //SDL_GL_SwapBuffers();
+    //glFlush();
+    //glFinish();
+    SDL_GL_SwapBuffers();
+    
     if(_SDL_SWAP_DEBUG)
     {
         int _time2 = SDL_GetTicks();

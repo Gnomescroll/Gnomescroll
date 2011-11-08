@@ -428,6 +428,35 @@ static const int VERTEX_SLACK = 128;
 
 //static bool BUFFER_ORPHANING = true; //recycle buffer or create new
 
+
+/*
+    Can speed up rendering by determining rendering type of each block and keeping count in map object, instead of counting it
+    First step (counting step) can be eliminated
+*/
+
+/*
+#include <sys/resource.h>
+
+int who = RUSAGE_SELF;
+
+struct rusage usage1;
+struct rusage usage2;
+struct rusage usage3;
+
+getrusage(who, &usage1);
+getrusage(who, &usage2);
+getrusage(who, &usage2);
+
+ru_utime.tv_sec and ru_utime.tv_usec
+
+usage1.tv_sec
+usage1.tv_usec
+
+//posix, benchmarking resource usage
+benchmarking
+
+*/
+
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
