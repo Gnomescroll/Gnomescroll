@@ -20,22 +20,9 @@ SDL_Surface* _load_image(char *file) {
 
 }
 
-int _create_texture(SDL_Surface* surface) {
-    GLuint texture;
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &texture );
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
-    glDisable(GL_TEXTURE_2D);
-    return texture;
-}
-
-int _create_hud_texture(SDL_Surface *surface) {
+int _create_texture(SDL_Surface *surface) {
     if(surface == NULL) {
-        printf("Error: _SDL/texture_loader.c create_hud_texture, surface is null!\n");
+        printf("Error: texture_loader.c create_texture, surface is null!\n");
     }
     GLuint texture;
 
