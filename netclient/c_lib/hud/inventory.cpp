@@ -2,17 +2,26 @@
 
 #ifdef DC_CLIENT
 
-int draw_inventory(float x, float y) {
-    //x = 50.0;
-    //y = 500.0;
-    float z = -0.5;
+static int item_sheet_texture;
+static int item_slot_texture;
+static int inventory_background_texture;
 
-    //printf("i=%i \n",get_inventory_background_texture());
+int init_inventory() {
+    int a,b,c;
+    a = create_texture_from_file("./media/texture/hud/item_sheet_01.png", &item_sheet_texture);
+    b = create_texture_from_file("./media/texture/hud/item_slot_41x41.png", &item_slot_texture);
+    c = create_texture_from_file("./media/texture/hud/inventory_background_461x352.png", &inventory_background_texture);
+    printf("%d %d %d -HUD Texture Loader Results\n", a,b,c);
+    return a||b||c;
+}
+
+int draw_inventory(float x, float y) {
+    float z = -0.5;
 
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, get_inventory_background_texture());
+    glBindTexture(GL_TEXTURE_2D, inventory_background_texture);
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -37,7 +46,7 @@ int draw_inventory(float x, float y) {
     }
     glEnd();
 
-    glBindTexture(GL_TEXTURE_2D, get_item_slot_texture());
+    glBindTexture(GL_TEXTURE_2D, item_slot_texture);
     glBegin(GL_QUADS);
 
     {
@@ -74,7 +83,7 @@ int draw_inventory(float x, float y) {
     }
     glEnd();
 
-    glBindTexture(GL_TEXTURE_2D, get_item_sheet_texture());
+    glBindTexture(GL_TEXTURE_2D, item_sheet_texture);
 
     glBegin(GL_QUADS);
     {
@@ -111,9 +120,6 @@ int draw_inventory(float x, float y) {
             tx = _ti*tx_inc;
             ty = _tj*ty_inc;
             
-            //tx = 0.0;
-            //ty = 0.0;
-
             glTexCoord2f(tx, ty);
             glVertex3f(_x, _y, z);  // Top left
 

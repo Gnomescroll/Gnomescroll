@@ -40,7 +40,6 @@
     #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/texture_loader.c>
-    #include <c_lib/hud/hud_texture_loader.cpp>
     #include <c_lib/hud/text.c>
     #include <c_lib/hud/texture_loader.c>
 
@@ -66,11 +65,12 @@ int init_c_lib() {
     srand(time(NULL));   // seed the RNG
 
     #ifdef DC_CLIENT
-        init_texture_loader();
-        init_hud_texture_loader();
         init_image_loader();
+
+        init_texture_loader();  // deprecate. inits a particle sheet
         init_text();
         init_cube_selector();
+        init_inventory();
     #endif
     
     return 0;
