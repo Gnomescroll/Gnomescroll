@@ -71,16 +71,15 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
     current_camera->x_angle += dx;
     current_camera->y_angle += dy;
 
-    // buggy
-    //if (current_camera->x_angle >= PI) {
-        //current_camera->x_angle = -PI;
-    //} else if (current_camera->x_angle <= -PI) {
-        //current_camera->x_angle = PI;
-    //}
+    if (current_camera->x_angle >= 2.0f*PI) {
+        current_camera->x_angle = -2.0f*PI;
+    } else if (current_camera->x_angle <= -2.0f*PI) {
+        current_camera->x_angle = 2.0f*PI;
+    }
 
-    if (current_camera->y_angle > 0.499999f) {
+    if (current_camera->y_angle >= 0.499999f) {
         current_camera->y_angle = 0.499999f;
-    } else if (current_camera->y_angle < -0.499999f) {
+    } else if (current_camera->y_angle <= -0.499999f) {
         current_camera->y_angle = -0.499999f;
     }
 }
