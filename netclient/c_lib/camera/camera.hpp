@@ -25,7 +25,8 @@ class CCamera {
 
         void set_aspect(float fov, float x_size, float y_size, float z_near, float z_far);
         void set_projection(float x, float y, float z, float x_angle, float y_angle);
-
+        void set_dimensions();  // sets x_size,y_size and ratio from window resolution
+        
         void hud_projection();
         void world_projection();
 

@@ -9,6 +9,7 @@ CCamera* current_camera;
 float model_view_matrix[16];
 
 void set_camera(CCamera* cam) {
+    printf("set camera\n");
     current_camera = cam;
 }
 
@@ -39,6 +40,7 @@ void init_cameras() {
 CCamera::CCamera() {
     set_aspect(85.0f, 800.0f, 600.0f, 0.1f, 1000.0f);
     set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    set_dimensions();
 }
 
 int CCamera::current() {
@@ -64,6 +66,12 @@ void CCamera::set_projection(float x, float y, float z, float x_angle, float y_a
     this->y_angle = y_angle;
 }
 
+void CCamera::set_dimensions() {
+    x_size = _xresf;
+    y_size = _yresf;
+    ratio = x_size / y_size;
+}
+
 void CCamera::pan(float dx, float dy) {    // args are deltas
     current_camera->x_angle += dx;
     current_camera->y_angle += dy;
@@ -85,18 +93,13 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
 
 void CCamera::world_projection() {
 
-    x_size = _xresf;
-    y_size = _yresf;
-
-    float aspect = x_size / y_size;
-
-    ratio = x_size / y_size;
+    set_dimensions();
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective( fov, aspect, z_near, z_far);
+    gluPerspective( fov, ratio, z_near, z_far);
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();

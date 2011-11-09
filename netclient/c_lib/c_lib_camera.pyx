@@ -59,7 +59,7 @@ cdef class Camera(object):
             self.active = 1
 
     def load(self):
-        if not self.active:
+        if self.active == 0:
             set_camera(self.camera)
             self.active = 1
 

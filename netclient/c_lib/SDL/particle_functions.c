@@ -242,33 +242,32 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     draw(vu, left, 0,255,0);
     draw(vu, right, 0,0,255);
 
-    float model_view_matrix, b;
-
+    float a, b;
     struct Vector v1;
 
     while(i< 8) {
-    model_view_matrix = sin(i*PI/8);
-    b = cos(i*PI/8);
-    i++;
+        a = sin(i*PI/8);
+        b = cos(i*PI/8);
+        i++;
 
-    v1.x = model_view_matrix*left.x + b*right.x;
-    v1.y = model_view_matrix*left.y + b*right.y;
-    v1.z = model_view_matrix*left.z + b*right.z;
+        v1.x = a*left.x + b*right.x;
+        v1.y = a*left.y + b*right.y;
+        v1.z = a*left.z + b*right.z;
 
-    glColor3ub(255,255,255);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+        glColor3ub(255,255,255);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
-    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)20);
-    glBegin( GL_QUADS );
-        glVertex3f(x1 -model_view_matrix*v1.x, y1 -model_view_matrix*v1.y, z1 -model_view_matrix*v1.z);
-        glVertex3f(x1 +model_view_matrix*v1.x, y1 +model_view_matrix*v1.y, z1 +model_view_matrix*v1.z);
-        glVertex3f(x0 +model_view_matrix*v1.x, y0 +model_view_matrix*v1.y, z0 +model_view_matrix*v1.z);
-        glVertex3f(x0 -model_view_matrix*v1.x, y0 -model_view_matrix*v1.y, z0 -model_view_matrix*v1.z);
-    glEnd();
-
+        glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)20);
+        glBegin( GL_QUADS );
+            glVertex3f(x1 -a*v1.x, y1 -a*v1.y, z1 -a*v1.z);
+            glVertex3f(x1 +a*v1.x, y1 +a*v1.y, z1 +a*v1.z);
+            glVertex3f(x0 +a*v1.x, y0 +a*v1.y, z0 +a*v1.z);
+            glVertex3f(x0 -a*v1.x, y0 -a*v1.y, z0 -a*v1.z);
+        glEnd();
     }
+    
     glDisable(GL_TEXTURE_2D);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
