@@ -20,6 +20,7 @@ cdef extern from "./camera/camera.hpp":
         int hud_projection()
 
         void pan(float dx, float dy)
+        void move(float dx, float dy, float dz)
         void set_aspect(float fov, float x_size, float y_size, float z_near, float z_far)
         void set_projection(float x, float y, float z, float x_angle, float y_angle)
         
@@ -75,6 +76,9 @@ cdef class Camera(object):
     def pan(self, float dx, float dy):
         self.camera.pan(dx,dy)
 
+    def move(self, float dx, float dy, float dz):
+        self.camera.move(dx, dy, dz)
+        
     def world_projection(self):
         cdef CCamera* c
         self.camera.world_projection()

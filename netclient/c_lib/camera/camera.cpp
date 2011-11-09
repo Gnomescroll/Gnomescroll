@@ -91,6 +91,14 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
     }
 }
 
+void CCamera::move(float dx, float dy, float dz) {
+    x += dx*cos(x_angle * PI);
+    x += dy*cos(x_angle * PI + PI/2.0f);
+    y += dx*sin(x_angle * PI);
+    y += dy*sin(x_angle * PI + PI/2.0f);
+    z += dz;
+}
+
 void CCamera::world_projection() {
 
     set_dimensions();

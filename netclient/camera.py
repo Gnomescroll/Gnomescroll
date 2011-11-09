@@ -58,13 +58,7 @@ class Camera(object):
         return dx,dy
 
     def move_camera(self, dx, dy, dz):
-        #dx delta
-        self.x += dx*cos(self.x_angle * pi)
-        self.y += dx*sin(self.x_angle * pi)
-        #dy delta
-        self.x += dy*cos(self.x_angle * pi + pi/2)
-        self.y += dy*sin(self.x_angle * pi + pi/2)
-        self.z += dz
+        self.camera.move(dx,dy,dz)
 
     def pan(self, dx_angle, dy_angle):
         self.camera.pan(dx_angle, dy_angle)
