@@ -73,21 +73,21 @@ void CCamera::set_dimensions() {
 }
 
 void CCamera::pan(float dx, float dy) {    // args are deltas
-    current_camera->x_angle += dx;
-    current_camera->y_angle += dy;
+    x_angle += dx;
+    y_angle += dy;
 
-    if (current_camera->x_angle > 2.0f*PI) {
-        current_camera->x_angle = -2.0f*PI;
-    } else if (current_camera->x_angle < -2.0f*PI) {
-        current_camera->x_angle = 2.0f*PI;
+    if (x_angle > 2.0f*PI) {
+        x_angle = -2.0f*PI;
+    } else if (x_angle < -2.0f*PI) {
+        x_angle = 2.0f*PI;
     }
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
     // Camera behavior when looking straight up or down is fucked up otherwise
-    if (current_camera->y_angle > 0.4999f) {
-        current_camera->y_angle = 0.4999f;
-    } else if (current_camera->y_angle < -0.4999f) {
-        current_camera->y_angle = -0.4999f;
+    if (y_angle > 0.4999f) {
+        y_angle = 0.4999f;
+    } else if (y_angle < -0.4999f) {
+        y_angle = -0.4999f;
     }
 }
 
