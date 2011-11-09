@@ -381,6 +381,7 @@ static inline int hash_function3(int x,int y,int z) {
 }
 
 static const int test_array[16] = {7,9,2,3,10,1,0,4,13,12,8,6,15,11,5,14};
+static const int test_array2[16] = { 6,5,2,3,7,14,11,0,10,1,4,13,9,8,15,12};
 
 static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id, int infinite_texture) {
     int i;
@@ -394,19 +395,26 @@ static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, in
     int id;
     {
         int ul, ur, bl, br;
-        ul = hash_function2(x+1,y+1,z);
-        ur = hash_function2(x,y+1,z);
-        bl = hash_function2(x,y,z);
-        br = hash_function2(x+1,y,z);
+        ul = hash_function2(x+1, y+1, z);
+        ur = hash_function2(x+1, y,   z);
+        bl = hash_function2(x,   y,   z);
+        br = hash_function2(x,   y+1, z);
+    
+        ul = 0;
+        ur = 0;
+        bl = 0;
+        br = 0;
 
-        int hf = 4*(y%4) + (x%4);
-        hf = test_array[hf];
-
+    /* Working
+        int h1 = 3-(y%4);
+        int h2 = 3-(x%4);
+        int hf = h1+4*h2;
+        id= get_infinite_texture(infinite_texture + hf);
+    */
        // printf("hash = %i, tex_id= %i tex_base = %i \n", 8*ul + 4*ur + 2*bl + br, infinite_texture + 8*ul + 4*ur + 2*bl + br, infinite_texture);
         //id = infinite_texture + 8*ul + 4*ur + 2*bl + br; //infinite texture level 2
-        id = get_infinite_texture(infinite_texture + 8*ul + 4*ur + 2*bl + br);
+        id = get_infinite_texture(infinite_texture + test_array2[1*ul + 2*ur + 4*bl + 8*br]);
         //id = get_infinite_texture(infinite_texture);
-        id= get_infinite_texture(infinite_texture + hf);
     }
     {
         float _x = x;

@@ -359,22 +359,40 @@ def get_cube_texture(int tile_id, int side, int vert_num):
     tx = float(x) * 1./16.
     ty = float(y) * 1./16.
 
-    if vert_num == 0:
-        tx += 0 +margin
-        ty += 0 +margin
-    elif vert_num == 1:
-        tx += 0 +margin
-        ty += 1./16. -margin
-    elif vert_num == 2:
-        tx += 1./16. -margin
-        ty += 1./16. -margin
-    elif vert_num == 3:
-        tx += 1./16. -margin
-        ty += 0 + margin
+    if cp.infinite_texture == 0:
+        if vert_num == 0:
+            tx += 0 +margin
+            ty += 0 +margin
+        elif vert_num == 1:
+            tx += 0 +margin
+            ty += 1./16. -margin
+        elif vert_num == 2:
+            tx += 1./16. -margin
+            ty += 1./16. -margin
+        elif vert_num == 3:
+            tx += 1./16. -margin
+            ty += 0 + margin
+        else:
+            print "Error!!!! set_tex invalid input"
+            assert False
+        return (tx,ty)
     else:
-        print "Error!!!! set_tex invalid input"
-        assert False
-    return (tx,ty)
+        if vert_num == 0:
+            tx += 0 +margin
+            ty += 0 +margin
+        elif vert_num == 1:
+            tx += 0 +margin
+            ty += 1./16. -margin
+        elif vert_num == 2:
+            tx += 1./16. -margin
+            ty += 1./16. -margin
+        elif vert_num == 3:
+            tx += 1./16. -margin
+            ty += 0 + margin
+        else:
+            print "Error!!!! set_tex invalid input"
+            assert False
+        return (tx,ty)
 
 #for crop blocks
 def get_cube_texture_alt(tile_id, side, vert_num):
