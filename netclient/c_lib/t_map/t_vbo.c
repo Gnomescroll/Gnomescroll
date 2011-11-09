@@ -380,6 +380,8 @@ static inline int hash_function3(int x,int y,int z) {
     //take modulos of the last byte
 }
 
+static const int test_array[16] = {7,9,2,3,10,1,0,4,13,12,8,6,15,11,5,14};
+
 static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id, int infinite_texture) {
     int i;
     //struct Vertex* v;
@@ -397,9 +399,14 @@ static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, in
         bl = hash_function2(x,y,z);
         br = hash_function2(x+1,y,z);
 
+        int hf = 4*(y%4) + (x%4);
+        hf = test_array[hf];
+
        // printf("hash = %i, tex_id= %i tex_base = %i \n", 8*ul + 4*ur + 2*bl + br, infinite_texture + 8*ul + 4*ur + 2*bl + br, infinite_texture);
         //id = infinite_texture + 8*ul + 4*ur + 2*bl + br; //infinite texture level 2
         id = get_infinite_texture(infinite_texture + 8*ul + 4*ur + 2*bl + br);
+        //id = get_infinite_texture(infinite_texture);
+        id= get_infinite_texture(infinite_texture + hf);
     }
     {
         float _x = x;

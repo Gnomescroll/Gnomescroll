@@ -169,7 +169,7 @@ for tex_dir in texture_source_dirs:
         color1 = empty_32()
         color2 = empty_32()
 
-        x = png.Reader(filename = tex_dir+"source_tile_0.png")
+        x = png.Reader(filename = tex_dir+"source_tile_1.png")
         #get x,y dimensions
         width, height, pixels, meta = x.asRGBA8()
 
@@ -191,7 +191,7 @@ for tex_dir in texture_source_dirs:
                 color1[i][4*j+3] = a
             i += 1
 
-        x = png.Reader(filename = tex_dir+"source_tile_1.png")
+        x = png.Reader(filename = tex_dir+"source_tile_2.png")
         #get x,y dimensions
         width, height, pixels, meta = x.asRGBA8()
 

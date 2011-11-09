@@ -8,6 +8,12 @@ http://optifog.blogspot.com/
 
 !!! OptiFine MT (multithreaded) tries to solve the problem by decoupling the chunk loading from the screen updates so that one complex chunk is distributed over several frames or several empty chunks are loaded inside one frame. The target is to stabilize the frame rate and speed up the loading of empty chunks.
 
+Enabling SSE3 optimizations:
+http://gcc.gnu.org/onlinedocs/gcc/i386-and-x86_002d64-Options.html
+http://stackoverflow.com/questions/661338/sse-sse2-and-sse3-for-gnu-c
+-mtune
+-march
+
 Ragdoll:
 
 http://www.gamasutra.com/resource_guide/20030121/jacobson_01.shtml

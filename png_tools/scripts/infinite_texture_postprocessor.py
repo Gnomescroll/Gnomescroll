@@ -14,8 +14,13 @@ import png
 texture_dir = "./infinite_texture/"
 
 texture_source_dirs = []
+exclude_dir = ["test_01", "test_02"]
+
 for x in os.listdir(texture_dir):
     if os.path.isdir(texture_dir + x):
+        if x in exclude_dir:
+            print "Skipping test directory: %s" % (texture_dir + x + "/")
+            continue
         print texture_dir + x + "/"
         texture_source_dirs.append(texture_dir + x + "/")
 
