@@ -190,8 +190,7 @@ static struct MouseMotionAverage mm = {0.0f, 0.0f};
         int i,  index; \
         float decay = 1.0f; \
         for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { \
-            index = (mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
-            if (index < 0) index += MOUSE_INPUT_BUFFER_SIZE; \
+            index = (MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
             ttl += mouse_input_buffer_##AXIS[index] * decay; \
             divisor += decay; \
             decay *= MOUSE_BUFFER_DECAY; \
@@ -207,11 +206,12 @@ MOUSE_AXIS_AVERAGE(y)
 
 static inline void calculate_mouse_state() {
 
-    SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
-
     mouse_buffer_index++;
     mouse_buffer_index %= MOUSE_INPUT_BUFFER_SIZE;
-    if (mouse_buffer_index < 0) mouse_buffer_index += MOUSE_INPUT_BUFFER_SIZE;
+
+    SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
+
+    //if (mouse_buffer_index < 0) mouse_buffer_index += MOUSE_INPUT_BUFFER_SIZE;
 
     mm.x = mouse_axis_average_x();
     mm.y = mouse_axis_average_y();

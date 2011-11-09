@@ -32,7 +32,7 @@ cube_selector_x_offset = 888.0
 cube_selector_y_offset = 130.0
 
 fps_perf_graph_x_offset = 50.0
-fps_perf_graph_y_offset = 70.0
+fps_perf_graph_y_offset = 700.0
 
 network_latency_graph_x_offset = 780.0
 network_latency_graph_y_offset = 400.0

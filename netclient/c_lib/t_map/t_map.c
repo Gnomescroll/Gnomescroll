@@ -55,8 +55,8 @@ inline void set_map_chunk_for_update(int xoff, int yoff, int zoff, int dx, int d
 
 struct vm_map* _get_map() { return &map; }
 
-
-inline int hash_function2(vm_chunk* c, int x,int y,int z) {
+/*
+static inline int hash_function2(vm_chunk* c, int x,int y,int z) {
     x += c->x_off;
     y += c->y_off;
     z += c->z_off;
@@ -68,7 +68,7 @@ inline int hash_function2(vm_chunk* c, int x,int y,int z) {
     return (0x6996 >> v) & 1;
 }
 
-inline int hash_function3(vm_chunk* c, int x,int y,int z) {
+static inline int hash_function3(vm_chunk* c, int x,int y,int z) {
     x += c->x_off;
     y += c->y_off;
     z += c->z_off;
@@ -79,6 +79,7 @@ inline int hash_function3(vm_chunk* c, int x,int y,int z) {
     return v % 3;
     //take modulos of the last byte
 }
+*/
 
 /*
 fast parity

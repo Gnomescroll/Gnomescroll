@@ -12,6 +12,10 @@ void set_infinite_texture(int id, int texture) {
     printf("id=%i texture= %i \n", id, texture);
 }
 
+int get_infinite_texture(int index) {
+    return infinite_texture_array[index];
+}
+
 void init_t_properties() {
     int i;
     for(i=0;i<max_cubes; i++) cube_list[i].infinite_texture = 0;
