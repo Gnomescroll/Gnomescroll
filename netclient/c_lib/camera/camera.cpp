@@ -75,11 +75,6 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
     current_camera->x_angle += dx;
     current_camera->y_angle += dy;
 
-    //if (current_camera->x_angle > 0.499999f) {
-        //current_camera->x_angle = 0.499999f;
-    //} else if (current_camera->x_angle < -0.499999f) {
-        //current_camera->x_angle = -0.499999f;
-    //}
     if (current_camera->x_angle > PI) {
         current_camera->x_angle = PI;
     } else if (current_camera->x_angle < -PI) {
@@ -95,8 +90,10 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
 
 void CCamera::world_projection() {
 
-    x_size = _xresf;
-    y_size = _yresf;
+    //x_size = _xresf;
+    //y_size = _yresf;
+    x_size = (float)_xres;
+    y_size = (float)_yres;
 
     float aspect = x_size / y_size;
 

@@ -85,10 +85,6 @@ cdef class Camera(object):
         self.camera.hud_projection()
 
     def _getattribute__py(self, name):
-        print 'getattr cython ', name
-        if name not in camera_properties:
-            raise AttributeError
-
         if name == 'x':
             return self.camera.x
         elif name == 'y':
@@ -127,11 +123,9 @@ cdef class Camera(object):
         elif name == 'z_far':
             return self.camera.z_far
 
-    def _setattr__py(self, k, float v):
-        print 'CYTHON CAM setattr ', k,v
-        if k not in camera_properties:
-            raise AttributeError
+        raise AttributeError
 
+    def _setattr__py(self, k, float v):
         if k == 'x':
             self.camera.x = v
         elif k == 'y':
@@ -169,4 +163,4 @@ cdef class Camera(object):
         elif k == 'z_far':
             self.camera.z_far = v
 
-        print "CYTHONCAMERA set %s to %0.2f" % (k, v,)
+        raise AttributeError

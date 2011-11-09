@@ -14,9 +14,10 @@ def set_callback(callback):
 
 class Camera(object):
 
+    _local = ['camera', 'name', 'loaded']
+
     def __init__(self, x=0.0, y=0.0, z=0.0, x_angle=0.0, y_angle=0.0, name=''):
         self.camera = cCamera.Camera()
-        #self.camera.set_projection(x,y,z, x_angle, y_angle)
 
         self.name = name
         self.x = x
@@ -27,23 +28,24 @@ class Camera(object):
         self.loaded = False
 
     def __getattribute__(self, name):
-        try:
-            cam = object.__getattribute__(self, 'camera')
-            val = cam._getattribute__py(name)
-        except AttributeError:
+        if name in Camera._local:
             val = object.__getattribute__(self, name)
+        else:
+            try:
+                cam = object.__getattribute__(self, 'camera')
+                val = cam._getattribute__py(name)
+            except AttributeError:
+                val = object.__getattribute__(self, name)
         return val
 
     def __setattr__(self, k, v):
-        if k not in cCamera.camera_properties:
+        if k in Camera._local:
             object.__setattr__(self, k, v)
-            return
-
-        try:
-            self.__dict__['camera']._setattr__py(k,v)
-        except AttributeError, e:
-            print e
-            object.__setattr__(self, k, v)
+        else:
+            try:
+                self.__dict__['camera']._setattr__py(k,v)
+            except AttributeError, e:
+                object.__setattr__(self, k, v)
 
     def input_update(self):
         dxa, dya = cInput.get_mouse_deltas()
@@ -83,12 +85,16 @@ class Camera(object):
             self.y_angle = a[1]
 
     def load(self):
+        if self.loaded:
+            return
         global camera
         camera = self
         self.loaded = True
         self.camera.load()
 
     def unload(self):
+        if not self.loaded:
+            return
         self.loaded = False
         self.camera.unload()
 
