@@ -9,7 +9,6 @@ CCamera* current_camera;
 float model_view_matrix[16];
 
 void set_camera(CCamera* cam) {
-    printf("set camera\n");
     current_camera = cam;
 }
 

@@ -3,7 +3,6 @@
 #include <compat_gl.h>
 #include <math.h>
 
-//#include <c_lib/SDL/camera.h>
 #include <c_lib/physics/vector.h>
 
 #include <stdio.h>
