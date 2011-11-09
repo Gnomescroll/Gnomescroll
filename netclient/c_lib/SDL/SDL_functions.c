@@ -44,6 +44,8 @@ void _del_video() {
 int _set_resolution(int xres, int yres, int fullscreen) {
     _xres = xres;
     _yres = yres;
+    _xresf = (float)_xres;
+    _yresf = (float)_yres;
     _fullscreen = fullscreen;
     return 0;
 }

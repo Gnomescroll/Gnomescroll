@@ -10,10 +10,6 @@ static CCamera cameras[N_CAMERAS];
 CCamera* current_camera;
 float model_view_matrix[16];
 
-//void set_model_view_matrix(float *a) {
-    //model_view_matrix = a;
-//}
-
 void set_camera(CCamera* cam) {
     printf("set camera\n");
     current_camera = cam;
@@ -90,10 +86,8 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
 
 void CCamera::world_projection() {
 
-    //x_size = _xresf;
-    //y_size = _yresf;
-    x_size = (float)_xres;
-    y_size = (float)_yres;
+    x_size = _xresf;
+    y_size = _yresf;
 
     float aspect = x_size / y_size;
 
