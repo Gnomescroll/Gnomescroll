@@ -53,7 +53,6 @@ from animations import animations
 cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
 c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
-cSDL.camera_callback = c_lib.terrain_map.camera_callback
 
 P2 = c_lib.terrain_map.Profiler()
 
@@ -98,9 +97,11 @@ class App(object):
         self.animations = animations
         self.world = world.World()
 
-        self.camera = camera.Camera(x=0, z=50, rot=-1., name='camera')
+        camera.set_callback(c_lib.terrain_map.camera_callback)
+        self.camera = camera.Camera(x=0., z=50., name='camera')
         self.camera.load()
-        self.agent_camera = camera.Camera(x=0, z=50, rot=-1., name='agent_camera')
+        self.agent_camera = camera.Camera(x=0., z=50., name='agent_camera')
+        
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
@@ -306,7 +307,6 @@ class App(object):
             MapControllerGlobal.mapController.tick()
             P.event("Camera Setup")
             if InputGlobal.camera == 'agent':
-                #self.agent_camera.load(GameStateGlobal.agent)
                 self.camera.unload()
                 self.agent_camera.load()
                 self.agent_camera.pos(GameStateGlobal.agent.camera_position())
@@ -316,7 +316,7 @@ class App(object):
                 self.camera.load()
                 first_person = False
 
-            camera.worldProjection()
+            camera.camera.world_projection()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
@@ -346,7 +346,7 @@ class App(object):
             #camera prospective
             P.event("draw hud")
             if opts.hud:
-                camera.hudProjection()
+                camera.camera.hud_projection()
                 draw_cube_selector = False
                 if GameStateGlobal.agent:
                     draw_cube_selector = (GameStateGlobal.agent.weapons.active().type == 3)

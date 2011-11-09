@@ -7,7 +7,7 @@ cdef extern from "./SDL/SDL.h":
         int w
         int h
 
-cdef extern from "./hud/texture_loader.h":
+cdef extern from "./SDL/texture_loader.h":
     SDL_Surface* _load_image(char *file)
     int create_texture_from_surface(SDL_Surface *surface, int *tex)
 

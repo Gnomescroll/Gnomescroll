@@ -1,30 +1,6 @@
-### Camera.c ##
-#cdef extern from "./SDL/camera.h":
-#    cdef struct Camera: #maybe public?
-#        float fov
-#        float x_size
-#        float y_size
-#        float z_near
-#        float z_far
-#        float x
-#        float y
-#        float z
-#        float x_angle
-#        float y_angle
-#        float xl, yl, zl
-#        float xu, yu, zu
-#        float ratio
-
-#cdef extern from "./SDL/camera.h":
-#    int _world_projection(Camera* camera)
-#    int _hud_projection(Camera* camera)
-#    int _set_camera(Camera* c)
-#    void _set_camera_state(float x, float y, float z, float theta, float phi)
-
-#def set_projection(float x, float y, float z, float x_angle, float y_angle):
-#    _set_camera_state(x,y,z, x_angle, y_angle);
-
-## SDL functions ##
+'''
+SDL
+'''
 cdef extern from "./SDL/SDL_functions.h":
     int _set_resolution(int xres, int yres, int fullscreen)
     int _init_video()
@@ -32,14 +8,23 @@ cdef extern from "./SDL/SDL_functions.h":
     int _swap_buffers()
     int _get_ticks()
 
+def close():
+    print "Deconstructing SDL OpenGL Window"
+    _del_video()
+
+def flip():
+    _swap_buffers()
+
 def get_ticks():
     return _get_ticks()
 
-## Settings ##
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-## Draw functions ##
+
+'''
+Draw functions
+'''
 cdef extern from "./SDL/draw_functions.h":
     int _draw_point(int r, int g,int b, float x0, float y0, float z0)
     int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
@@ -58,18 +43,6 @@ def draw_rect(int r, int g, int b, float x, float y, float w, float h):
 
 def draw_border_rect(int r, int g, int b, float x, float y, float w, float h):
     return _draw_border_rect(r,g,b, x,y, w,h)
-
-## Window Properties ##
-cdef class Window:
-    cdef int w
-    cdef int h
-
-def close(self):
-    print "Deconstructing SDL OpenGL Window"
-    _del_video()
-
-def flip(self):
-    _swap_buffers()
 
 
 '''

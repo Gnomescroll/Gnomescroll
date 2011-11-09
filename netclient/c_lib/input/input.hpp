@@ -2,6 +2,8 @@
 #include <compat_gl.h>
 
 //#include "../libChrome.h"
+//#include <c_lib/camera/camera.hpp>
+
 
 typedef struct {
   int x;

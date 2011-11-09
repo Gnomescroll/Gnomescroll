@@ -36,9 +36,12 @@
     /* animations */
     #include <c_lib/animations/animations.cpp>
 
+
+    /* camera */
+    #include <c_lib/camera/camera.cpp>
+
     /* SDL */
     #include <c_lib/SDL/texture_loader.c>
-    #include <c_lib/SDL/camera.c>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
@@ -51,11 +54,6 @@
     /* input */
     #include <c_lib/input/input.cpp>
 
-    /* camera */
-    /*
-    #include <c_lib/camera/camera.c>
-    */
-
 #endif
 
 int init_c_lib() {
@@ -67,6 +65,7 @@ int init_c_lib() {
         init_video();
         init_input();
         init_particle_functions();
+        init_cameras();
 
         init_image_loader();
         init_particles();

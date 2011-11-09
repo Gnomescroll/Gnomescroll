@@ -262,10 +262,10 @@ def build(bld):
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_animations')
         
-    #bld(features='cxx cshlib pyext',
-        #source=['c_lib/c_lib_camera.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='c_lib.c_lib_camera')
+    bld(features='cxx cshlib pyext',
+        source=['c_lib/c_lib_camera.pyx'],
+        use=common_libraries + ['c_lib'],
+        target='c_lib.c_lib_camera')
 
     # sound
     bld(features='c cshlib',
@@ -328,7 +328,7 @@ def install_in_ext(ctx):
        'c_lib.c_lib_input',
        'c_lib.c_lib_animations',
        'c_lib.c_lib_sdl',
-       #'c_lib.c_lib_camera',
+       'c_lib.c_lib_camera',
        'csound',
        'sound.sounds',  # cython .so's need to have same name as source
     ]

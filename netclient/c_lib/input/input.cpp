@@ -1,7 +1,5 @@
 #include "./input.hpp"
 
-#include <c_lib/SDL/camera.h>
-
 static SDL_Event Event;
 
 //input modes
