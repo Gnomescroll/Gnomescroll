@@ -106,7 +106,7 @@ void CCamera::world_projection() {
 
     xl = x + cos( x_angle * PI) * cos( y_angle * PI);
     yl = y + sin( x_angle * PI) * cos( y_angle * PI);
-    zl = z + sin( y_angle);
+    zl = z + sin( y_angle * PI);
 
     xu = 0;
     yu = 0;
