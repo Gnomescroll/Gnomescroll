@@ -2,11 +2,9 @@
 
 static SDL_Surface *particle_surface;
 static GLuint particle_texture;
-
-//static float model_view_matrix[16];
-extern float model_view_matrix[16];
-
 static GLuint shader_program_1;
+
+extern float model_view_matrix[16];
 
 int setShaders() {
     char *vs,*gs,*fs;
@@ -51,8 +49,6 @@ int setShaders() {
 }
 
 int init_particle_functions() {
-
-    //set_model_view_matrix(model_view_matrix);
 
     particle_surface=IMG_Load("./media/texture/particles_01.png");
     if(!particle_surface) {

@@ -76,7 +76,7 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
     }
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
-    // Camera behavior when looking straight up or down is just fucked up otherwise
+    // Camera behavior when looking straight up or down is fucked up otherwise
     if (current_camera->y_angle > 0.4999f) {
         current_camera->y_angle = 0.4999f;
     } else if (current_camera->y_angle < -0.4999f) {
@@ -114,7 +114,7 @@ void CCamera::world_projection() {
                xl, yl, zl,
                xu, yu, zu);
 
-    if(model_view_matrix != NULL){
+    if(model_view_matrix != NULL) {
         glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);
     } else {
         printf("camera world_projection :: model_view_matrix is null\n");
