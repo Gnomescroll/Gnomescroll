@@ -2,8 +2,9 @@
 
 #include <c_lib/compat.h>
 
-#define AGENT_MAX 1024
+#include <c_lib/physics/vector.h>
 
+#define AGENT_MAX 1024
 #define AGENT_HEIGHT 1.8
 #define AGENT_HEIGHT_CROUCHED 0.9
 
@@ -129,6 +130,14 @@ class Agent_state {
         void crouch(int on_off);
         //void server_tick();
         //set_control_state(int[8] _cs, float theta, float phi);
+
+        struct Vector interpolate;
+        void set_interpolated() {
+            const float weight = 0.0f;
+            interpolate.x = weight * (s.x - state_snapshot.x) + state_snapshot.x;
+            interpolate.y = weight * (s.y - state_snapshot.y) + state_snapshot.y;
+            interpolate.z = weight * (s.z - state_snapshot.z) + state_snapshot.z;
+        }
 };
 
 #include <c_lib/template/object_list.hpp>

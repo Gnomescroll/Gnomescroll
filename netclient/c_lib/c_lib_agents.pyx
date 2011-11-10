@@ -23,6 +23,11 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
 '''
 DONT DEPRECATE BELOW
 '''
+cdef extern from "./physics/vector.h":
+    cdef struct Vector:
+        float x
+        float y
+        float z
 
 #AgentState
 cdef extern from "./agent/agent.hpp":
@@ -40,6 +45,8 @@ cdef extern from "./agent/agent.hpp":
         AgentState s
         void teleport(float x,float y,float z)
         void crouch(int on_off)
+        Vector interpolate
+        void set_interpolated()
 
 
 cdef extern from "./agent/agent.hpp":
@@ -148,8 +155,6 @@ def load_agents_to_draw(agents):
 WRAPPER
 '''
 
-#agent class wrapper
-
 agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
 
 class AgentWrapper(object):
@@ -187,6 +192,20 @@ class AgentWrapper(object):
         elif name == 'y_angle':
             return a.s.phi
 
+    def interpolated(self):
+        cdef Agent_state* a
+        cdef float x
+        cdef float y
+        cdef float z
+
+        a = agent_list.get(object.__getattribute__(self,'id'))
+        a.set_interpolated()
+
+        x = a.interpolate.x
+        y = a.interpolate.y
+        z = a.interpolate.z
+
+        return [x,y,z]
 
 #functions
 

@@ -680,6 +680,7 @@ class AgentModel(AgentWrapper):
             self.x, self.y, self.z = xyz
             
     def camera_position(self):
+        #p = self.interpolated()
         p = self.state[0:3]
         p[2] += self.camera_height
         return p

@@ -196,9 +196,9 @@ class Mouse(object):
             elif state == 0: #mouse button released
                 pass
 
-    def clear_mouse_deltas(self):
-        print 'clearing mouse deltas'
-        cInput.get_mouse_deltas() # discard
+    #def clear_mouse_deltas(self):
+        #print 'clearing mouse deltas'
+        #cInput.get_mouse_deltas() # discard
 
 class Keyboard(object):
 

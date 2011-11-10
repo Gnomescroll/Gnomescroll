@@ -47,8 +47,8 @@ class Camera(object):
             except AttributeError, e:
                 object.__setattr__(self, k, v)
 
-    def input_update(self):
-        dxa, dya = cInput.get_mouse_deltas()
+    def input_update(self, t):
+        dxa, dya = cInput.get_mouse_deltas(t)
         self.pan(*self._convert_mouse_deltas(dxa,dya))
         
     def _convert_mouse_deltas(self, dx, dy):

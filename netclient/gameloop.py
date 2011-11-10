@@ -163,6 +163,8 @@ class App(object):
 
         _m = 0
 
+        last_tick = 0
+
         while not GameStateGlobal.exit:
             self.world.sound_updates()
 
@@ -325,13 +327,12 @@ class App(object):
             #import pdb; pdb.set_trace()
             
             ## deprecate this in favor of the line above, once mouse deltas are sent in control state
-            if InputGlobal.input == 'agent':
-                self.agent_camera.input_update()
-                if GameStateGlobal.agent is not None:
-                    #self.agent_camera.angles(GameStateGlobal.agent.angles())
-                    self.agent_camera.pos(GameStateGlobal.agent.pos())
-            elif InputGlobal.input == 'camera':
-                self.camera.input_update()
+            current_tick = cSDL.get_ticks()
+            delta_tick = current_tick - last_tick
+            last_tick = current_tick
+            camera.camera.input_update(delta_tick)
+            if InputGlobal.input == 'agent' and GameStateGlobal.agent is not None:
+                self.agent_camera.pos(GameStateGlobal.agent.camera_position())
 
             self.world.draw(first_person)
             if GameStateGlobal.agent is not None:
