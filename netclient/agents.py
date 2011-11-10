@@ -15,6 +15,7 @@ import c_lib.c_lib_agents
 import c_lib._ray_trace as ray_tracer
 import c_lib.c_lib_agents as cAgents
 import c_lib.terrain_map as terrainMap
+import c_lib.c_lib_sdl as cSDL
 if opts.sound:
     import sound.sounds as sounds
 
@@ -681,10 +682,18 @@ class AgentModel(AgentWrapper):
             return self.state[0:3]
         else:
             self.x, self.y, self.z = xyz
+
+    def update_interpolated_position(self, ticks):
+        self.update_interpolate(ticks)
+
+    def interpolated_position(self):
+        return self.interpolated()
             
-    def camera_position(self):
-        #p = self.interpolated()
-        p = self.state[0:3]
+    def camera_position(self, last=[0]):
+        if opts.agent_interpolated:
+            p = self.interpolated_position()
+        else:
+            p = self.state[0:3]
         p[2] += self.camera_height
         return p
 

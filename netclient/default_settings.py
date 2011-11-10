@@ -28,6 +28,7 @@ fullscreen = False
 sensitivity = 125.
 camera_speed = 0.6
 invert_mouse = False
+agent_interpolated = True
 
 ''' HUD/Information '''
 hud = True  # show hud

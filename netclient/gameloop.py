@@ -182,8 +182,9 @@ class App(object):
             sl_c = 0
 
             agent = GameStateGlobal.agent
-            if agent and agent.camera is None:
-                agent.camera = self.agent_camera
+            if agent:
+                if agent.camera is None:
+                    agent.camera = self.agent_camera
 
             while True: #physics loop
                 tc = GET_TICK()
@@ -330,10 +331,12 @@ class App(object):
             P.event("Draw World")
             #import pdb; pdb.set_trace()
             
-            ## deprecate this in favor of the line above, once mouse deltas are sent in control state
             current_tick = cSDL.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
+
+            if agent:
+                agent.update_interpolated_position(delta_tick)
             camera.camera.input_update(delta_tick)
             if InputGlobal.input == 'agent' and GameStateGlobal.agent is not None:
                 self.agent_camera.pos(GameStateGlobal.agent.camera_position())

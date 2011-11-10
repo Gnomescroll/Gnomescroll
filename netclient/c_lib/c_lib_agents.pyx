@@ -46,7 +46,7 @@ cdef extern from "./agent/agent.hpp":
         void teleport(float x,float y,float z)
         void crouch(int on_off)
         Vector interpolate
-        void set_interpolated()
+        void set_interpolated(int t)
 
 
 cdef extern from "./agent/agent.hpp":
@@ -192,6 +192,11 @@ class AgentWrapper(object):
         elif name == 'y_angle':
             return a.s.phi
 
+    def update_interpolate(self, int t):
+        cdef Agent_state* a
+        a = agent_list.get(object.__getattribute__(self,'id'))
+        a.set_interpolated(t)
+
     def interpolated(self):
         cdef Agent_state* a
         cdef float x
@@ -199,7 +204,6 @@ class AgentWrapper(object):
         cdef float z
 
         a = agent_list.get(object.__getattribute__(self,'id'))
-        a.set_interpolated()
 
         x = a.interpolate.x
         y = a.interpolate.y

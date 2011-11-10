@@ -49,9 +49,7 @@ def nearest_block(pos, vector, float max_distance=4., int z_low=4, int z_high=3)
     cdef float vx
     cdef float vy
     cdef float vz
-#    x = pos[0]
-#    y = pos[1]
-#    z = pos[2]
+
     x,y,z = pos
     vx,vy,vz = vector
     
@@ -68,9 +66,7 @@ def farthest_empty_block(pos, vector, float max_distance=4., int z_low=4, int z_
     cdef float vx
     cdef float vy
     cdef float vz
-#    x = pos[0]
-#    y = pos[1]
-#    z = pos[2]
+
     x,y,z = pos
     vx,vy,vz = vector
     

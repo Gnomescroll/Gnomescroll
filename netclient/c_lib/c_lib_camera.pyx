@@ -83,7 +83,7 @@ cdef class Camera(object):
         return [self.camera.xl, self.camera.yl, self.camera.zl]
         
     def normal(self):
-        return [self.camera.xu, self.camera.yu, self.camera.zu] 
+        return [self.camera.xu, self.camera.yu, self.camera.zu]
         
     def world_projection(self):
         cdef CCamera* c

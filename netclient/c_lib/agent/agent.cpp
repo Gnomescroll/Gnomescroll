@@ -330,8 +330,23 @@ inline bool on_ground(float box_r, float x, float y, float z) {
     return false;
 }
 
+void Agent_state::save_state() {
+    // copies current state to old state
+    s_old.seq = s.seq;
+    s_old.phi = s.phi;
+    s_old.theta = s.theta;
+    s_old.x = s.x;
+    s_old.y = s.y;
+    s_old.z = s.z;
+    s_old.vx = s.vx;
+    s_old.vy = s.vy;
+    s_old.vz = s.vz;
+}
+
 void Agent_state::_tick()
  {
+
+    save_state();
 
     //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
@@ -596,6 +611,7 @@ void Agent_state::_tick_jetpack() {
 }
 
 void Agent_state::_tick_jump() {
+    save_state();
 
     //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
@@ -1029,6 +1045,15 @@ void Agent_state::crouch(int on_off) {
         b_height = AGENT_HEIGHT;
     }
 }
+
+void Agent_state::set_interpolated(int t) {
+    float weight = (float) t / 60.0f;
+    interpolate.x = weight * (s.x - s_old.x) + s_old.x;
+    interpolate.y = weight * (s.y - s_old.y) + s_old.y;
+    interpolate.z = weight * (s.z - s_old.z) + s_old.z;
+}
+
+
 
 #ifdef DC_CLIENT
 void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {

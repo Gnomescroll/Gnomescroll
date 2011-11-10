@@ -279,6 +279,7 @@ class Keyboard(object):
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
             ']' : self.toggle_agent_tick_mode,
+            '[' : self.toggle_agent_interpolated,
         })
         
     # accept key,handler or a dict of key,handlers
@@ -328,6 +329,10 @@ class Keyboard(object):
             GameStateGlobal.agent_tick_mode = 'jetpack'
             cAgents.jetpack_physics()
         NetOut.miscMessage.agent_tick_mode(GameStateGlobal.agent_tick_mode)
+
+    def toggle_agent_interpolated(self):
+        opts.agent_interpolated = not opts.agent_interpolated
+        print 'agent interpolation is ', opts.agent_interpolated
 
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:
