@@ -7,11 +7,11 @@ mkdir ./dist/netclient
 mkdir ./dist/server
 
 cd netclient
-./package.sh
+./win_package.sh
 cd ..
 cp -rf ./netclient/dist/. ./dist/netclient/
 
 cd server
-./package.sh
+./win_package.sh
 cd ..
 cp -rf ./server/dist/. ./dist/server/

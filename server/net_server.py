@@ -266,7 +266,7 @@ class TcpClient:
                         #    print "Potential Error: have %i bytes in buffer, only sent %i bytes" % (self.BUFFER_SIZE, sent)
                         total_sent += sent
                     except socket.error, (value, message):
-                        print "SOCKET ERROR: error value= %i" %(value)
+                        print "send: SOCKET ERROR: error value= %i" %(value)
                         if value == 32:
                             NetServer.connectionPool.tearDownClient(self)
                             break
