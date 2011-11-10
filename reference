@@ -1,3 +1,24 @@
+Splatter Textures:
+http://en.wikipedia.org/wiki/Texture_splatting
+<JoJoeStinky> might be useful for drawing pathways and roads through yyour terrain,
+!!! For pathways and roads
+
+Why Minecraft is Slow:
+http://optifog.blogspot.com/
+http://www.reddit.com/r/programming/comments/kgq62/understanding_minecraft_performance/
+
+!!! OptiFine MT (multithreaded) tries to solve the problem by decoupling the chunk loading from the screen updates so that one complex chunk is distributed over several frames or several empty chunks are loaded inside one frame. The target is to stabilize the frame rate and speed up the loading of empty chunks.
+
+Enabling SSE3 optimizations:
+http://gcc.gnu.org/onlinedocs/gcc/i386-and-x86_002d64-Options.html
+http://stackoverflow.com/questions/661338/sse-sse2-and-sse3-for-gnu-c
+-mtune
+-march
+
+Ragdoll:
+
+http://www.gamasutra.com/resource_guide/20030121/jacobson_01.shtml
+
 Ambient Occultion:
 !!! http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/#ambient-occlusion
 
@@ -58,9 +79,9 @@ http://www.gamedev.net/topic/330742-quick-tutorial-variable-width-bitmap-fonts/
 Automatic Mipmapp Generation
 http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
 
-glGenerateMipmap(GL_TEXTURE_2D); 
+glGenerateMipmap(GL_TEXTURE_2D);
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
 

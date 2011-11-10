@@ -158,9 +158,9 @@ def build(bld):
         target='init_c_lib')
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_objects.pyx'],
+        source=['c_lib/c_lib_particles.pyx'],
         use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_objects')
+        target='c_lib.c_lib_particles')
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_agents.pyx'],
@@ -214,7 +214,7 @@ def install_in_ext(ctx):
     targets = [
         'c_lib.ray_trace',
         'init_c_lib',
-        'c_lib.c_lib_objects',
+        'c_lib.c_lib_particles',
         'c_lib.c_lib_agents',
         #'c_lib.c_lib_agent_wrapper',
         'c_lib.terrain_map',

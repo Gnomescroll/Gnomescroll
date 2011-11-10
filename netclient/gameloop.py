@@ -1,87 +1,60 @@
 #!/c/Python27/python.exe
 
+# boot hack
 import sys
 import os
 print "Working Directory: %s" % (os.getcwd())
 sys.path.insert(0, './ext/')
-
 sys.path.insert(0, '/c/dc_mmo/netclient/ext/')
-
 sys.path.insert(0, 'c:/dc_mmo/netclient/ext/')
 
-import SDL
-
-import math
-
+# load arguments & settings
 import args_client
 import opts
 opts.opts = args_client.get_args()
+opts = opts.opts
 
-#from opts import opts
+import math
+import time
+import random
 
-
-import default_settings as settings
 import stats
-
 import intervals
+import vox_lib
+import sound.sounds as sounds
+import world
+import camera
 
-if True:
-    import SDL.gl
-    #import SDL.input
-    import c_lib.c_lib_input as cInput
-    import SDL.hud
-    import vox_lib
+import c_lib.terrain_map
+import init_c_lib
+import c_lib.c_lib_particles as cParticles
+import c_lib.c_lib_agents as cAgents
+import c_lib.c_lib_hud as cHUD
+import c_lib.c_lib_input as cInput
+import c_lib.c_lib_sdl as cSDL
 
-    SDL.gl.set_resolution(opts.opts.width, opts.opts.height, fullscreen=(int(opts.opts.fullscreen or settings.fullscreen)))
-
-    import c_lib.terrain_map
-    c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
-    SDL.gl.camera_callback = c_lib.terrain_map.camera_callback
-    #SDL.gl.init_particles()
-    import init_c_lib
-    import c_lib.c_lib_objects
-    import c_lib.c_lib_agents
-    import c_lib.c_lib_hud as cHUD
-    import c_lib.c_lib_agents as cAgents
-    #from c_lib.c_lib_agents import set_agent_control_state
-    #import c_lib.c_lib_timer as physics_timer
-    import init_c_lib
-    from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
-    from init_c_lib import START_CLOCK, GET_TICK
-    from init_c_lib import _pviz_draw
-    P2 = c_lib.terrain_map.Profiler()
-    #from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style
-
-    from init_c_lib import NetClientTick, NetClientConnect
-##profiler
+from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
+from init_c_lib import START_CLOCK, GET_TICK
+from init_c_lib import _pviz_draw
+from init_c_lib import NetClientTick, NetClientConnect
 from profiler import P
-
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-
 from game_state import GameStateGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
-
 from map_controller import MapControllerGlobal
-
 from players import Player
 from input import Mouse, Keyboard
-from camera import Camera
 from hud import Hud
-
-import world #deprecate
-
 from animations import animations
 
-import random #remove?
+cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
-#import hotshot
-import time
+c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
 
-if settings.sound:
-    import sound.sounds as sounds
+P2 = c_lib.terrain_map.Profiler()
 
 class App(object):
 
@@ -101,43 +74,40 @@ class App(object):
         ChatClientGlobal.init_1()
         MapControllerGlobal.init_1()
 
-        self.SDL_global = SDL.gl.SDL_global #drawing stuff
-        self.SDL_global.init()
-        #SDL.input.init()
-        cInput.init()
-        SDL.hud.init()
+        #cSDL.SDL_global.init()
+        #cInput.init()
+        #SDL.hud.init()
 
         init_c_lib.init()
-        cHUD.init_hud()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
         InputGlobal.init_1(self)
 
-    def init_audio(self):
-        audio = opts.opts.audio
-        soundfiles = None
-        if audio:
-            soundfiles = os.listdir('./media/sound/wav/')
-        if settings.sound:
-            sounds.init(enabled=opts.opts.audio, soundfiles=soundfiles, sfxvol=opts.opts.sfx, musicvol=opts.opts.music)
+    def init_sound(self):
+        if not opts.sound:
+            return
+        soundfiles = os.listdir('./media/sound/wav/')
+        sounds.init(enabled=opts.sound, soundfiles=soundfiles, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
-        self.init_audio()
+        self.init_sound()
 
         self.init_globals()
         self.animations = animations
-        #other
-        self.world = world.World()  #deprecate?
+        self.world = world.World()
 
-        self.camera = Camera(None, x=0, z=50, rot=-1.)
+        camera.set_callback(c_lib.terrain_map.camera_callback)
+        self.camera = camera.Camera(x=0., z=50., name='camera')
+        self.camera.load()
+        self.agent_camera = camera.Camera(x=0., z=50., name='agent_camera')
+        
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
-        #self.intervals.register(send_agent_pos, 500)
 
         cAgents.init_draw_agents()
 
@@ -153,7 +123,7 @@ class App(object):
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
         NetClientGlobal.connect() #starts connection
-        a,b,c,d = opts.opts.server.split(".")
+        a,b,c,d = opts.server.split(".")
         NetClientConnect(int(a),int(b),int(c),int(d), 0)
         #NetClientConnect(127,0,0,1, 0)
 
@@ -163,26 +133,22 @@ class App(object):
         self.world.add_agent(GameStateGlobal.agent)
 
         self.connect()
-        #ChatClientGlobal.on_connect()
         NetOut.mapMessage.request_chunk_list()
 
         average = []
         fps_text = None
         ping_text = None
-        fps = opts.opts.fps
-        ping = opts.opts.fps
+        fps = opts.fps
+        ping = opts.fps
         ltick, ctick = 0,0
 
         if ping:
-            ping_n = SDL.gl.get_ticks()
-
-        #c_lib.c_lib_objects._create_agent(0,0,8)
-        #agent must be created server side
+            ping_n = cSDL.get_ticks()
 
         self.intervals.set()
         _i = 30
-        #StartPhysicsTimer(33)
-        c_lib.c_lib_objects._generate_circuit_tree(0,0)
+
+        cParticles._generate_circuit_tree(0,0)
 
         def neutron_fountain():
             v = 2
@@ -193,13 +159,8 @@ class App(object):
             x *= v / le
             y *= v / le
             z *= v / le
-            c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
-        '''
-        print "==="
-        print str(opts.opts.server)
-        print "==="
-        '''
-        
+            cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
+
         _m = 0
 
         while not GameStateGlobal.exit:
@@ -228,9 +189,9 @@ class App(object):
                 #neutron_fountain()
                 if _i % 30 == 0:
                     pass
-                    #c_lib.c_lib_objects._generate_circuit_tree(0,0)
+                    #cParticles._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
-                    #c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+                    #cParticles._create_grenade(5,5,2, 0, 0, 50, 0, 350)
                     pass
                 if False or _i % 15 == 0:
                     v = 4
@@ -241,7 +202,7 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    #c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z, 0, 350)
+                    #cParticles._create_grenade(25,25,-4, x,y,z, 0, 350)
                 if _i % 150 == 0:
                     v = 2
                     x = v*(random.random() -0.5)
@@ -253,7 +214,7 @@ class App(object):
                     z *= v / le
                     #_type = random.randint(0,9*3)
                     _type=0
-                    #c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+                    #cParticles._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 #if True or _i % 15 == 0:
                 for _j_ in range(0,1):
                     v = 3
@@ -264,7 +225,7 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -3.5 #v*(random.random() -0.5)
-                    #c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
+                    #cParticles._create_cspray(x,y,z, vx,vy,vz)
 
                 for _j_ in range(0,5):
                     x = 32+ 16*random.random()
@@ -273,19 +234,20 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -1. #v*(random.random() -0.5)
-                    #c_lib.c_lib_objects._create_minivox(x,y,z, vx,vy,vz)
+                    #cParticles._create_minivox(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()
-                if GameStateGlobal.agent:
+                if GameStateGlobal.agent is not None:
                     GameStateGlobal.agent.set_button_state()
+                    GameStateGlobal.agent.set_angle(self.agent_camera.angles())
 
                 NetClientGlobal.connection.attempt_recv()
                 self.animations.tick()
 
                 #check if another physics tick is needed
                 self.world.tick()
-                c_lib.c_lib_objects.tick() ## TESTING
+                cParticles.tick() ## TESTING
 
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
@@ -345,46 +307,63 @@ class App(object):
             MapControllerGlobal.mapController.tick()
             P.event("Camera Setup")
             if InputGlobal.camera == 'agent':
-                self.camera.agent_view(GameStateGlobal.agent)
+                self.camera.unload()
+                self.agent_camera.load()
+                self.agent_camera.pos(GameStateGlobal.agent.camera_position())
                 first_person = True
             elif InputGlobal.camera == 'camera':
-                self.camera.camera_view()
+                self.agent_camera.unload()
+                self.camera.load()
                 first_person = False
 
-            self.camera.worldProjection()
+            camera.camera.world_projection()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
             
             P.event("Draw World")
             #import pdb; pdb.set_trace()
+            
+            ## deprecate this in favor of the line above, once mouse deltas are sent in control state
+            if InputGlobal.input == 'agent':
+                self.agent_camera.input_update()
+                if GameStateGlobal.agent is not None:
+                    #self.agent_camera.angles(GameStateGlobal.agent.angles())
+                    self.agent_camera.pos(GameStateGlobal.agent.pos())
+            elif InputGlobal.input == 'camera':
+                self.camera.input_update()
+
             self.world.draw(first_person)
+            if GameStateGlobal.agent is not None:
+                GameStateGlobal.agent.draw_aiming_direction()
+                
             P.event("Animations Draw")
             self.animations.draw()
-            P.event("c_lib_objects.draw()")
-            c_lib.c_lib_objects.draw() ## TESTING
+            P.event("c_lib_particles.draw()")
+            cParticles.draw() ## TESTING
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
-            if not opts.opts.no_hud:
-                self.camera.hudProjection()
-                draw_bs = False
+            if opts.hud:
+                camera.camera.hud_projection()
+                draw_cube_selector = False
                 if GameStateGlobal.agent:
-                    draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
-                self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
-                c_lib.terrain_map.draw_vbo_indicator(settings.map_vbo_indicator_x_offset,settings.map_vbo_indicator_y_offset, -0.3)
-                P2.draw_perf_graph(settings.fps_perf_graph_x_offset, settings.fps_perf_graph_y_offset,-0.30)
-                _pviz_draw(settings.network_latency_graph_x_offset,settings.network_latency_graph_y_offset, -.30)
-                #cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
-                cHUD._draw_inventory(settings.inventory_hud_x_offset, settings.inventory_hud_y_offset)
+                    draw_cube_selector = (GameStateGlobal.agent.weapons.active().type == 3)
+                self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
+
+                if opts.diagnostic_hud:
+                    c_lib.terrain_map.draw_vbo_indicator(settings.map_vbo_indicator_x_offset,settings.map_vbo_indicator_y_offset, -0.3)
+                    P2.draw_perf_graph(settings.fps_perf_graph_x_offset, settings.fps_perf_graph_y_offset,-0.30)
+                    _pviz_draw(settings.network_latency_graph_x_offset,settings.network_latency_graph_y_offset, -.30)
+                    cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
 
             P.event("SDL flip")
-            self.SDL_global.flip()
+            cSDL.flip()
             P.event("Misc")
             #FPS calculation
             if fps:
-                ctick = SDL.gl.get_ticks()
+                ctick = cSDL.get_ticks()
                 #print str(ctick - ltick)
                 average.append(ctick-ltick)
                 ltick = ctick
@@ -398,24 +377,26 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if ping:
-                if SDL.gl.get_ticks() - ping_n > settings.ping_update_interval:
+                if cSDL.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
-                    ping_n = SDL.gl.get_ticks()
+                    ping_n = cSDL.get_ticks()
                     NetOut.miscMessage.ping()
                     ping_text = stats.last_ping
 
             self.intervals.process()
 
             agent = GameStateGlobal.agent
-            if settings.sound:
+            if opts.sound:
                 if agent:
                     sounds.update(agent.listener_state())
                 else:
                     sounds.update()
 
             P.finish_frame()
-        if settings.sound:
+        if opts.sound:
             sounds.done()
+
+        cSDL.close()
 
 
 if __name__ == '__main__':

@@ -1,12 +1,7 @@
-'''
-Rendering utilities
-'''
 ### Ray casting utilities
 
-#import cube_lib.terrain_map as terrain_map
-from c_lib.terrain_map import collisionDetection
-
 from math import sin, cos, sqrt, pi
+from c_lib.terrain_map import collisionDetection
 
 def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
 

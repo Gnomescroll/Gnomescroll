@@ -3,14 +3,16 @@
 '''
 Client network incoming
 '''
-import SDL.gl #for timer function
+import opts
+opts = opts.opts
 
 import json
+
+import c_lib.c_lib_sdl
 import stats
-#import struct
-from opts import opts
-from dat_loader import dat_loader
 import animations
+
+from dat_loader import dat_loader
 
 class NetEventGlobal:
     messageHandler = None
@@ -102,11 +104,11 @@ class MessageHandler:
         #use json_events when possible
         cmd = str(cmd)
         if cmd in self.json_events:
-            try:
-                self.json_events[cmd](**msg)
-            except TypeError, e:
-                print msg
-                raise TypeError, e
+            #try:
+            self.json_events[cmd](**msg)
+            #except TypeError, e:
+                #print msg
+                #raise TypeError, e
         else:
             print "Error, received command %s that client cannot handle" % (cmd,)
             print 'msg %s' % (msg,)
@@ -162,7 +164,7 @@ class MiscMessageHandler(GenericMessageHandler):
         pass
 
     def _ping(self, timestamp, **msg):
-        stats.last_ping = SDL.gl.get_ticks() - timestamp
+        stats.last_ping = c_lib.c_lib_sdl.get_ticks() - timestamp
         #print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
 
 class MapMessageHandler(GenericMessageHandler):
@@ -199,7 +201,7 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _set_map(self, list, **msg):
         #if len(list) == 1:
-            #print 'settings block %s' % list[0]
+            #print 'setting block %s' % list[0]
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
             if value == 0:

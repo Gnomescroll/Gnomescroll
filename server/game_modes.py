@@ -2,9 +2,12 @@
 Initialization specific to game modes
 '''
 
+import opts
+opts = opts.opts
+
 import toys
+
 from object_lists import GenericMultiObjectList
-from opts import opts
 from utils import filter_props
 
 team_types = {

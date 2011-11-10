@@ -6,19 +6,21 @@ DO NOT MODIFY
 Edit your settings in settings.py
 '''
 
+''' Server Settings '''
 server_name = 'dc_mmo_server'
 
-tcp_port = 5055
-udp_port = 5060
+''' Network '''
 ip_address = '127.0.0.1'
+tcp_port = 5055
+udp_port = 5056
 
-
-''' Game '''
+''' Game Settings '''
 game_mode = 'ctf'
-n_teams = 2
+number_of_teams = 2
 team_kills = False
 victory_points = 3
 
+''' Map '''
 map = ''
 seed = 8007513
 

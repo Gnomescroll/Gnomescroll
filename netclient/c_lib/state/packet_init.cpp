@@ -3,7 +3,7 @@
 #include <net_lib/common/message_handler.h>
 #include <c_lib/agent/net_agent.cpp>
 
-#include <c_lib/objects/cspray.cpp>
+#include <c_lib/particles/cspray.cpp>
 
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);

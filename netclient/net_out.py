@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import SDL.gl #for time stamp function
+import c_lib.c_lib_sdl #for time stamp function
 
 '''
 Client network outgoing
@@ -37,7 +37,6 @@ class NetOut:
 
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
-
 
 def sendJSON(cmd=None, tick=False):
     def outer(f, *args):
@@ -312,7 +311,7 @@ class SendMessage(GenericMessage):
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):
-        return { 'timestamp' : SDL.gl.get_ticks() }
+        return { 'timestamp' : c_lib.c_lib_sdl.get_ticks() }
 
     @sendJSON('agent_tick_mode')
     def agent_tick_mode(self, mode):

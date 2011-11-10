@@ -3,15 +3,13 @@
 '''
 Chat client
 '''
-import default_settings as settings
-from time import time
 from collections import deque
+from json import dumps as encode_json
+from json import loads as decode_json
+from os import mkdir
+from os.path import exists as path_exists
 
-if settings.pyglet:
-    from pyglet.window import key
-
-def now():
-    return int(time() * 1000)
+from utils import now
 
 class ChatClientGlobal:
     chatClient = None
@@ -151,8 +149,6 @@ class ChatClient:
 
     # receive incoming message
     def receive(self, msg):
-        #print 'Received msg:'
-        #print msg
         channel = msg.get('channel', None)
         if channel is None:
             return
@@ -164,13 +160,6 @@ class ChatClient:
 
     # saves ignored list + subscription channel names
     def save(self):
-        try:
-            from simplejson import dumps as encode_json
-        except ImportError:
-            from json import dumps as encode_json
-        from os import mkdir
-        from os.path import exists as path_exists
-
         channels = [channel for channel in self.subscriptions.keys() if channel[0:3] != 'pm_']
         path_exists(CONFIG_PATH) or mkdir(CONFIG_PATH)
         with open(CONFIG_PATH + '/' + self._conf, 'w') as f:
@@ -181,30 +170,20 @@ class ChatClient:
 
     # loads saved ignore list & subscription channels
     def load(self):
-        try:
-            from simplejson import loads as decode_json
-        except ImportError:
-            from json import loads as decode_json
-        from os.path import exists as path_exists
-        #print 'loading channels from file'
         conf = CONFIG_PATH + '/' + self._conf
         channels = []
         if path_exists(conf):
             with open(conf, 'r') as f:
                 settings = decode_json(f.read())
-                #print settings
                 ignored = settings.get('ignored', None)
                 if ignored is not None:
                     self.ignored = ignored
                 channels = settings.get('subscriptions', channels)
-                #print channels
                 for channel in channels:
                     if channel[0:3] == 'pm_':
                         continue
-                    #print channel
                     
                     self.subscribe(channel)
-        #print 'done'
         return channels
 
     def system_notify(self, txt):
@@ -249,7 +228,7 @@ class SystemChannel(Channel):
 
     def receive(self, msg):
         if msg.payload.content == 'ping':
-            content = 'Chat ping round-trip time = %ims' % (now()-int(msg.payload.time),)
+            content = 'Chat ping round-trip time = %ims' % (int(now())-int(msg.payload.time),)
             log = ChatMessageIn({
                 'content'   : content,
                 'channel'   : 'system',
@@ -459,7 +438,7 @@ class ChatMessageIn():
         self.payload.clean()
         self.valid = self.payload.valid()
         self.filter()
-        self.timestamp = now()
+        self.timestamp = int(now())
         #print 'chatmessageIN timestamp %i' % (self.timestamp,)
         if 'name' in msg:
             self.name = msg['name']
@@ -505,7 +484,7 @@ class Payload:
         #required
         self.cmd = msg.get('cmd', 'chat')
         self.content = msg.get('content', '')
-        self.time = int(msg.get('time', now()))
+        self.time = int(msg.get('time', int(now())))
         self.channel = msg.get('channel', '')
         self.cid = msg.get('cid', NetClientGlobal.client_id)
         self.id = msg.get('id', '')
@@ -655,19 +634,20 @@ class ChatInputProcessor:
         return lambda input: input.add(text)
 
     def on_text_motion(self, motion):
-        motion = key.motion_string(motion)
-        callback = None
-        if motion == 'MOTION_UP':            # up history
-            callback = lambda input: input.history_older()
-        elif motion == 'MOTION_DOWN':        # down history
-            callback = lambda input: input.history_newer()
-        elif motion == 'MOTION_LEFT':        # move cursor
-            callback = lambda input: input.cursor_left()
-        elif motion == 'MOTION_RIGHT':       # move cursor
-            callback = lambda input: input.cursor_right()
-        elif motion == 'MOTION_BACKSPACE':   # delete
-            callback = lambda input: input.remove()
-        return callback
+        print 'ChatClient.on_text_motion not implemented'
+        #motion = key.motion_string(motion)
+        #callback = None
+        #if motion == 'MOTION_UP':            # up history
+            #callback = lambda input: input.history_older()
+        #elif motion == 'MOTION_DOWN':        # down history
+            #callback = lambda input: input.history_newer()
+        #elif motion == 'MOTION_LEFT':        # move cursor
+            #callback = lambda input: input.cursor_left()
+        #elif motion == 'MOTION_RIGHT':       # move cursor
+            #callback = lambda input: input.cursor_right()
+        #elif motion == 'MOTION_BACKSPACE':   # delete
+            #callback = lambda input: input.remove()
+        #return callback
 
 # history of submitted messages
 class ChatInputHistory:
@@ -745,7 +725,7 @@ class ChatRender:
         to_render = deque([], self.MESSAGE_RENDER_COUNT_MAX)
         i = 0
         for msg in msgs:
-            if now() - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
+            if int(now()) - msg.timestamp > self.MESSAGE_RENDER_TIMEOUT or \
                i == self.MESSAGE_RENDER_COUNT_MAX:
                 break
             to_render.appendleft(msg)

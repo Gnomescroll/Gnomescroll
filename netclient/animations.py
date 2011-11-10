@@ -1,12 +1,13 @@
 '''
 Animations
 '''
+
 import draw_utils
 import vector_lib
 import random
 from math import ceil
 
-import c_lib.c_lib_objects
+import c_lib.c_lib_particles
 
 class Animations:
 
@@ -107,7 +108,7 @@ class C_Animation(Animation):
 
 class GrenadeExplodeAnimation(C_Animation):
 
-    anim = c_lib.c_lib_objects._create_shrapnel
+    anim = c_lib.c_lib_particles._create_shrapnel
     vel = [20]*3
 
     def __init__(self, pos):
@@ -126,39 +127,12 @@ class GrenadeExplodeAnimation(C_Animation):
             vz = _vz*(random.random() -0.5)
             self.anim(x,y,z, vx, vy, vz)
 
+import c_lib.c_lib_animations
 
 class BlockCrumbleAnimation(C_Animation):
-    anim = c_lib.c_lib_objects._create_minivox_colored
-    minivox_size = 0.05
+    anim = c_lib.c_lib_animations.block_crumble
 
     def __init__(self, pos):
         C_Animation.__init__(self)
-        self.interval = int(1.0 / self.minivox_size) - 1
-        self.n = self.interval ** 2
-        self.n_range = xrange(self.n)
         self.pos = pos
-        self.create_particles()
-
-    def create_particles(self):
-        _vx,_vy,_vz = 10.,10.,10.
-        x,y,z = 0,0,0
-        for i in self.n_range:
-            #x += 1
-            #x %= self.interval
-            #if not x:
-                #y += 1
-                #y %= self.interval
-                #if not y:
-                    #z += 1
-                    #z %= self.interval
-            #nx,ny,nz = [n*self.minivox_size + self.pos[i] for i,n in enumerate([x,y,z])]
-            nx = random.random()
-            ny = random.random()
-            nz = random.random()
-            nx,ny,nz = map(lambda a: a[0]+a[1], zip([nx,ny,nz], self.pos))
-            nx,ny,nz = [n + ((random.random()-0.5) * 0.2) for n in [nx,ny,nz]]
-
-            vx = _vx*(random.random() -0.5)
-            vy = _vy*(random.random() -0.5)
-            vz = _vz*(random.random() -0.5)
-            self.anim(nx,ny,nz, vx,vy,vz, random.randint(38,154), random.randint(6,29), random.randint(54,256)) #purple shades
+        self.anim(self.pos, random.randrange(10,30))

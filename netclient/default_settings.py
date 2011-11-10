@@ -10,64 +10,62 @@ Edit your settings in settings.py
 name = 'a_name'
 alt_name = '[%s]' % (name,)
 
-''' Rendering (will be deprecated, keep pyglet=False) '''
-pyglet = False
-#graphics = "SDL" # options, "SDL", "pyglet"
+''' Network '''
+server = '127.0.0.1'
+tcp_port = 5055
+udp_port = 5056
 
-''' Sound '''
-audio = False
-sfx = 100
-music = 100
+''' Game Preferences '''
+auto_assign_team = True
 
 ''' Window '''
-widescreen = 1
-if widescreen == 0:
-    width = 1024
-    height = 800
-else:
-    width = 1280
-    height = 800
-
-fullscreen = 0
+width = 1024
+height = 800
+fullscreen = False
 
 ''' Controls '''
 # lower is more sensitive
-mouse_sensitivity = 300
-camera_sensitivity = 300
-sensitivity = 90 # both camera and mouse(agent) sensitivity, if those are undefined
-
+sensitivity = 125.
 camera_speed = 0.6
+invert_mouse = False
 
 ''' HUD/Information '''
+hud = True  # show hud
+diagnostic_hud = True # show diagnostic HUD elements (graphs, ping, fps)
+
+inventory_hud_x_offset = 250
+inventory_hud_y_offset = 500
+
+cube_selector_x_offset = 888.0
+cube_selector_y_offset = 130.0
+
+fps_perf_graph_x_offset = 50.0
+fps_perf_graph_y_offset = 70.0
+
+network_latency_graph_x_offset = 780.0
+network_latency_graph_y_offset = 400.0
+
+map_vbo_indicator_x_offset = 50.0
+map_vbo_indicator_y_offset = 50.0
+
 fps = True  # display FPS
 ping = True # calculate and display ping
 ping_update_interval = 500  # ms delay between ping updates
 
-
-''' Game '''
-auto_assign_team = True
-
-''' DEBUG '''
-draw_agents = True
+''' Sound '''
+sound = True
+sfx = 100
+music = 100
 
 #######
-_test = 5
 import os.path
 if os.path.exists("./settings.py"):
-	print "Loading Settings File"
-	
-	print "_test= %s" % (str(_test))
-	execfile("./settings.py")
-	print "_test= %s" % (str(_test))
-	
-	print "xy_resolution= %i, %i" % (width, height)
-
+    print "Loading Settings File"
+    execfile("./settings.py")
 else:
-	print "!!! Settings File Fallback!!!"
-	try:
-		from settings import *
-	except ImportError:
-		print 'settings.py file not found, using all defaults'
+    try:
+        from settings import *
+    except ImportError:
+        print 'settings.py file not found, using all defaults'
 
-
-
+print "Window resolution - %dx%d" % (width, height,)

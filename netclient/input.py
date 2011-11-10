@@ -3,22 +3,16 @@
 '''
 Client input
 '''
-
-
-from math import sin, cos, pi
-
-import default_settings as settings
-
 import opts
+opts = opts.opts
 
-#import c_lib.c_lib_input as cInput
 import c_lib.c_lib_input as cInput
-
-from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
-from init_c_lib import _toggle_latency_unit
-
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
+
+from math import sin, cos, pi
+from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
+from init_c_lib import _toggle_latency_unit
 
 #handles special characters
 Keystring = {}
@@ -96,6 +90,7 @@ class InputGlobal:
     agentInput = None
     voxel_aligner = None
     use_voxel_aligner = False
+    inventory = False
 
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -103,16 +98,18 @@ class InputGlobal:
     _cameras = ('camera', 'agent')
 
     scoreboard = False
-    block_selector = None
+    cube_selector = None
 
     @classmethod
     def init_0(cls, main):
         #InputEventGlobal.inputGlobal = cls
 
-        InputGlobal.mouse = Mouse(main)
+        InputGlobal.app = main
+
+        InputGlobal.mouse = Mouse()
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
-        cls.block_selector = BlockSelector(8,8,range(8*8))
+        cls.cube_selector = CubeSelector(8,8,range(8*8))
         cls.voxel_aligner = VoxelAligner()
 
         InputEventGlobal.mouse = cls.mouse
@@ -120,9 +117,8 @@ class InputGlobal:
 
     @classmethod
     def init_1(cls, main):
-        if settings.pyglet: #deprecate!!
-            InputGlobal.keyboard.bind_key_handlers(key.ESCAPE, main._exit)
-
+        pass
+        
     @classmethod
     def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')
@@ -140,12 +136,16 @@ class InputGlobal:
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
         if curr is not None:
             current_mode[0] = curr
+        print 'input mode is %s' % curr
+        #if cls._inputs[curr] == 'camera':
+            #cls.mouse.clear_mouse_deltas()
 
     @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
             current_mode[0] = curr
+        print 'camera mode is %s' % curr
 
     @classmethod
     def enable_chat(cls):
@@ -161,38 +161,24 @@ class InputGlobal:
 
 class Mouse(object):
 
-    def __init__(self, main):
-        self.main = main
-        self.camera = main.camera
-
-        if settings.pyglet:
-            self.main.win.on_mouse_drag = self.on_mouse_drag
-            self.main.win.on_mouse_motion = self.on_mouse_motion
-            self.main.win.on_mouse_press = self.on_mouse_press
-            self.main.win.on_mouse_scroll = self.on_mouse_scroll
-
-    #inplement draw detection...
+    def __init__(self):
+        pass
+        
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
         pass
-        #if InputGlobal.input == 'agent':
-        #    self._pan_agent(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if InputGlobal.input == 'agent':
-            self._pan_agent(x, y, dx, dy, sen=opts.opts.mouse_sensitivity)
-        if InputGlobal.input == 'camera':
-            self._pan_camera(x, y, dx, dy, sen=opts.opts.camera_sensitivity)
+        pass
+        #if InputGlobal.input == 'agent':
+            #self._pan_agent(dx, dy)
 
-    def _pan_agent(self, x, y, dx, dy, sen=50):
-        GameStateGlobal.agent.pan(dx*-1.0 / sen, dy*1.0 / sen)
-
-    def _pan_camera(self, x, y, dx, dy, sen=50):
-        self.camera.pan(dx*-1.0 / sen, dy*1.0 / sen)
-
+    #def _pan_agent(self, dx, dy):
+        #GameStateGlobal.agent.pan(dx,dy)
+        
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
-    def on_mouse_press(self, x, y, button, state= None):
+    def on_mouse_press(self, x, y, button, state):
         if InputGlobal.input == 'agent':
             if state == 1: #pressed down
                 if button == 1:
@@ -210,12 +196,16 @@ class Mouse(object):
             elif state == 0: #mouse button released
                 pass
 
+    def clear_mouse_deltas(self):
+        print 'clearing mouse deltas'
+        cInput.get_mouse_deltas() # discard
 
 class Keyboard(object):
 
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
+        self.agent_camera = main.agent_camera
         self.key_handlers = {}
 
         self._init_key_handlers()
@@ -266,21 +256,17 @@ class Keyboard(object):
             if symbol == 'escape':
                 GameStateGlobal.exit = True
 
-            ### FIX
             self.key_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
-        #print 'KEY RELEASE %s' % (symbol,)
-
         if InputGlobal.input == 'agent':
             InputGlobal.agentInput.on_key_release(symbol)
 
-    #deprecate for non-pyglet input
     def _init_key_handlers(self):
         self.bind_key_handlers({
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
-            "e" : cHUD._toggle_inventory_hud,
+            "e" : self.toggle_inventory,
             "h" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
             "n" : toggle_t_viz_vbo_indicator_style,
@@ -305,7 +291,10 @@ class Keyboard(object):
             self.key_handlers[key] = handler
 
     def toggle_hud(self):
-        opts.opts.no_hud = not opts.opts.no_hud
+        opts.hud = not opts.hud
+
+    def toggle_inventory(self):
+        InputGlobal.inventory = not InputGlobal.inventory
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
@@ -365,40 +354,23 @@ class Keyboard(object):
         button_state = [u,d,l,r, jetpack, brake]
         GameStateGlobal.agent.button_state = button_state
 
-    def camera_input_mode(self, keyboard):
-        v = settings.camera_speed
-        #v = 0.3
 
-        if settings.pyglet:
-            if keyboard[key.W]:
-                self.camera.move_camera(v,0,0)
-            if keyboard[key.S]:
-                self.camera.move_camera(-v,0,0)
-            if keyboard[key.A]:
-                self.camera.move_camera(0,v,0)
-            if keyboard[key.D]:
-                self.camera.move_camera(0,-v,0)
-            if keyboard[key.R]:
-                self.camera.move_camera(0,0,v)
-            if keyboard[key.F]:
-                self.camera.move_camera(0,0,-v)
-            if keyboard[key.SPACE]:
-                pass
-        else:
-            if 'w' in keyboard:
-                self.camera.move_camera(v,0,0)
-            if 's' in keyboard:
-                self.camera.move_camera(-v,0,0)
-            if 'a' in keyboard:
-                self.camera.move_camera(0,v,0)
-            if 'd' in keyboard:
-                self.camera.move_camera(0,-v,0)
-            if 'r' in keyboard:
-                self.camera.move_camera(0,0,v)
-            if 'f' in keyboard:
-                self.camera.move_camera(0,0,-v)
-            #if keyboard[key.SPACE]:
-            #    pass
+
+    def camera_input_mode(self, keyboard):
+        v = opts.camera_speed
+
+        if 'w' in keyboard:
+            self.camera.move_camera(v,0,0)
+        if 's' in keyboard:
+            self.camera.move_camera(-v,0,0)
+        if 'a' in keyboard:
+            self.camera.move_camera(0,v,0)
+        if 'd' in keyboard:
+            self.camera.move_camera(0,-v,0)
+        if 'r' in keyboard:
+            self.camera.move_camera(0,0,v)
+        if 'f' in keyboard:
+            self.camera.move_camera(0,0,-v)
 
 
 # only calls method if GameStateGlobal.agent is not None
@@ -479,17 +451,17 @@ class AgentInput:
         if not aw or aw.type != 3:  # block applier
             return
         if symbol == 'left':
-            InputGlobal.block_selector.left()
+            InputGlobal.cube_selector.left()
         elif symbol == 'right':
-            InputGlobal.block_selector.right()
+            InputGlobal.cube_selector.right()
         elif symbol == 'up':
-            InputGlobal.block_selector.up()
+            InputGlobal.cube_selector.up()
         elif symbol == 'down':
-            InputGlobal.block_selector.down()
-        GameStateGlobal.agent.set_active_block(InputGlobal.block_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
+            InputGlobal.cube_selector.down()
+        GameStateGlobal.agent.set_active_block(InputGlobal.cube_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
 
 
-class BlockSelector:
+class CubeSelector:
 
     def __init__(self, x, y, block_ids):
         self.x = x
@@ -501,7 +473,7 @@ class BlockSelector:
     def __setattr__(self, k, v):
         self.__dict__[k] = v
         if k == 'active':
-            cHUD.hud_control_input(self.active)
+            InputGlobal.app.hud.cube_selector.set(self.active)
 
     def vertical(self, up=True):
         shift = -1 if up else 1
@@ -542,7 +514,7 @@ class BlockSelector:
         self.horizontal(left=False)
 
     def get_texture_id(self):
-        return cHUD.get_selected_cube_id()
+        return InputGlobal.app.hud.cube_selector.active()
 
 from math import pi
 class VoxelAligner:

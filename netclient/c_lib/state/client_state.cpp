@@ -5,7 +5,7 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.cpp>
 
-#include <c_lib/objects/object_lib.hpp>
+#include <c_lib/particles/object_lib.hpp>
 
 
 namespace ClientState {
@@ -21,7 +21,8 @@ namespace ClientState {
     PlayerAgent_state playerAgent_state;
 
     int active_agent = 0;
-    int agent_control_state[16] = {NULL};
+    //int agent_control_state[16] = {NULL};
+    int agent_control_state[16];
         
     void InitClientState() {
     }

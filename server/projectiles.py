@@ -6,23 +6,23 @@ Projectiles
 Projectile data (will be moved to configurable external format)
 '''
 
-from c_lib.terrain_map import collisionDetection
-from vector_lib import distance
-import c_lib.c_lib_objects as c_obj
-
+import c_lib.terrain_map as terrain_map
+import c_lib.c_lib_particles as c_obj
 import dats.loader as dat_loader
 p_dat = dat_loader.p_dat
 
-import c_lib.terrain_map as terrain_map
-
+from math import sin, cos, pi, sqrt
+from c_lib.terrain_map import collisionDetection
+from vector_lib import distance
 from net_out import NetOut
+from object_lists import GenericMultiObjectList
+from game_state import GameStateGlobal
+from utils import filter_props
+
 
 '''
 Projectile Controller
 '''
-from object_lists import GenericMultiObjectList
-from game_state import GameStateGlobal
-
 class ProjectileList(GenericMultiObjectList):
 
     def __init__(self):
@@ -38,11 +38,6 @@ class ProjectileList(GenericMultiObjectList):
 '''
 Projectile class
 '''
-from math import sin, cos, pi, sqrt
-#from game_objects import GameObject
-from utils import filter_props
-#from cube_dat import CubeGlobal
-
 class Projectile:
 
     _types = {

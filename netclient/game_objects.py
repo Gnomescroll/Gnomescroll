@@ -1,7 +1,6 @@
 from vox import GameObjectRender
 from dat_loader import i_dat
 
-
 class GameObject:
 
     _types = {

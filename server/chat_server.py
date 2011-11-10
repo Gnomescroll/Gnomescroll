@@ -1,12 +1,8 @@
 #!/usr/bin/python
 
-from time import time
 from collections import defaultdict
-
 from net_server import NetServer
-
-def now():
-    return int(time() * 1000)
+from utils import now
 
 class ChatServer:
     chat = None
@@ -162,7 +158,7 @@ class ChatMessage:
         connection = connection or {}
         self.payload = {}
         self.payload['cmd'] = 'chat'
-        self.payload['time'] = msg.get('time', None) or now()
+        self.payload['time'] = msg.get('time', None) or int(now())
         self.payload['cid'] = getattr(connection, 'id', '')
         self.payload['content'] = msg.get('content', '')
         self.payload['channel'] = msg.get('channel', '')

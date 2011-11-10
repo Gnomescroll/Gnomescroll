@@ -3,40 +3,26 @@ Agents:
     Objects through which a Player experiences the game world
 '''
 
-import math
-from math import sin, cos, pi
-from math import floor, ceil, fabs
+import opts
+opts = opts.opts
 
-from game_state import GameStateGlobal #Deprecate?
-
-from opts import opts
-
-from weapons import LaserGun, Pick, BlockApplier
-from game_modes import NoTeam
-
-import default_settings as settings
-
+import random
 import vox_lib
 import vector_lib
 import raycast_utils
 import vox
-
-if settings.pyglet == False:
-    import SDL.gl
-
-
-#from c_lib.c_lib_objects import _create_blood as create_blood
-import c_lib.c_lib_objects
+import c_lib.c_lib_particles
 import c_lib.c_lib_agents
 import c_lib._ray_trace
-import random
-
-from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
-
 import c_lib.c_lib_agents as cAgents
+import sound.sounds as sounds
 
-if settings.sound:
-    import sound.sounds as sounds
+from math import sin, cos, pi
+from math import floor, ceil, fabs, pow
+from game_state import GameStateGlobal #Deprecate?
+from weapons import LaserGun, Pick, BlockApplier
+from game_modes import NoTeam
+from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 
 '''
 Physics for agents
@@ -108,7 +94,7 @@ class AgentPhysics:
         #constants
         tr = 10. #tick rate
         tr2 = tr**2 #tick rate squared
-        xy_brake = math.pow(.50, 1/(float(tr))) #in percent per second
+        xy_brake = pow(.50, 1/(float(tr))) #in percent per second
         xy_speed = 2. / tr
         if GameStateGlobal.apply_gravity:
             z_gravity = -.40 / tr2
@@ -354,23 +340,17 @@ class AgentRender:
         print "Draw position Deprecated!"
         return
 
-        for i in range(0,v_num):
-            x,y,z = v_list[3*i], v_list[3*i+1], v_list[3*i+2]
-            r,g,b = c_list[3*i], c_list[3*i+1], c_list[3*i+2]
-            SDL.gl.draw_point(r,g,b,x,y,z)
-
     def draw_bounding_box(self):
         b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
         x = self.x;y = self.y;z = self.z
         c_lib.c_lib_agents._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
-        #draw box 2 high and then 3 high
 
     def draw_aiming_direction(self, distance=50):
         c_lib.c_lib_agents._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
     def bleed(self):
         print 'BLEEDING'
-        create_blood = c_lib.c_lib_objects._create_blood
+        create_blood = c_lib.c_lib_particles._create_blood
         n = 100
         v = 15
         blood_pos = self.pos()
@@ -570,8 +550,9 @@ Data model for agent
 class AgentModel(AgentWrapper):
 
     HEALTH_MAX = 100
-    _RESPAWN_TIME = 1. # seconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / opts.tick)
+    _RESPAWN_TIME = 1000. # milliseconds
+    _TICK_RATE = 30. # milliseconds
+    RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
     def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
@@ -632,7 +613,6 @@ class AgentModel(AgentWrapper):
 
         self.active_block = active_block   # which block to create
 
-        #settings
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
@@ -698,6 +678,11 @@ class AgentModel(AgentWrapper):
             return self.state[0:3]
         else:
             self.x, self.y, self.z = xyz
+            
+    def camera_position(self):
+        p = self.state[0:3]
+        p[2] += self.camera_height
+        return p
 
     def velocity(self):
         return self.state[3:6]
@@ -917,10 +902,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.ay = 0
         self.az = 0
 
-        #settings
-        #self.b_height = 1.5
-        #self.t_height = .75
-        #self.box_r = .30
         self.camera_height = 1.5
 
         AgentVoxRender.__init__(self)
@@ -965,7 +946,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            #sounds.play_gunshot()
             #sounds.play_2d('semishoot.wav')
             if weapon.hitscan:
                 self.hitscan(weapon)
@@ -1084,14 +1064,20 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             self.y_angle
         )
 
+    def _apply_sensitivity(self, dx, dy):
+        invert = -1 if opts.invert_mouse else 1
+        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
+        dy = (float(invert*dy) * opts.sensitivity) / 40000.
+        return dx,dy
+
     def pan(self, dx_angle, dy_angle):
+        dx_angle, dy_angle = self._apply_sensitivity(dx_angle, dy_angle)
         self._x_angle += dx_angle
         self._y_angle += dy_angle
         if self._y_angle < -0.499:
             self._y_angle = -0.499
         if self._y_angle > 0.499:
             self._y_angle = 0.499
-
 
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():

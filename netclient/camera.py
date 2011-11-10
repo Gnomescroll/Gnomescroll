@@ -1,135 +1,99 @@
+import opts
+opts = opts.opts
+
+import c_lib.c_lib_camera as cCamera
+import c_lib.c_lib_input as cInput
 from math import sin, cos, pi
-
-import default_settings as settings
-
-if settings.pyglet:
-    from pyglet.gl import *
-    from pyglet import clock, font, image, window
-else:
-    import SDL.gl
 
 base_dir = "./"
 
+camera = None   # current active camera. Camera.load() will set this
+
+def set_callback(callback):
+    cCamera.callback = callback
+
 class Camera(object):
 
-    def __init__(self, win, x=0.0, y=0.0, z=0.0, rot=0.0, zoom=1.0, x_angle=0.0, y_angle=0.0):
-        if settings.pyglet == False:
-            self.SDL_global = SDL.gl.SDL_global
-        if settings.pyglet:
-            self.win = win
+    _local = ['camera', 'name', 'loaded']
+
+    def __init__(self, x=0.0, y=0.0, z=0.0, x_angle=0.0, y_angle=0.0, name=''):
+        self.camera = cCamera.Camera()
+
+        self.name = name
         self.x = x
         self.y = y
         self.z = z
         self.x_angle = x_angle
         self.y_angle = y_angle
-        self.rot = rot
-        self.zoom = zoom
-        self.rts = True
-        self.mode = 'camera'
+        self.loaded = False
 
-    def worldProjection(self):
-        if settings.pyglet:
-            glMatrixMode(GL_PROJECTION)
-            glLoadIdentity()
-            aspect = self.win.width / float(self.win.height)
-            #gluPerspective( 45.0 / self.scale, aspect, 0.1, 100.0);
-            gluPerspective(65, aspect, .1, 1000)
-
-            glMatrixMode( GL_MODELVIEW )
-            glLoadIdentity()
-
-            camera_focus_x = self.x + cos( self.x_angle * pi) * cos( self.y_angle * pi)
-            camera_focus_y = self.y + sin( self.x_angle * pi) * cos( self.y_angle * pi)
-            camera_focus_z = self.z + sin( self.y_angle)
-
-            gluLookAt( self.x, self.y, self.z,
-                    camera_focus_x, camera_focus_y, camera_focus_z,
-                    0., 0., 1.0)
-
-            glEnable (GL_DEPTH_TEST)
-            #glEnable(GL_CULL_FACE);
+    def __getattribute__(self, name):
+        if name in Camera._local:
+            val = object.__getattribute__(self, name)
         else:
-            ## SDL prep
-            #self.SDL_global.swap_buffers()  ##move to end of drawing frame ??
-            ## swap buffers from last frame
-            self.SDL_global.set_projection(self.x,self.y,self.z,self.x_angle,self.y_angle)
-            self.SDL_global.world_projection()
-            ## End SDL prep
+            try:
+                cam = object.__getattribute__(self, 'camera')
+                val = cam._getattribute__py(name)
+            except AttributeError:
+                val = object.__getattribute__(self, name)
+        return val
 
-    def hudProjection(self):
-
-        if settings.pyglet:
-            glMatrixMode(GL_PROJECTION)
-            glLoadIdentity()
-            gluOrtho2D(0, self.win.width, 0, self.win.height)
-
-            glMatrixMode( GL_MODELVIEW )
-            glLoadIdentity()
-
-            glDisable(GL_DEPTH_TEST);
-            #glDisable(GL_CULL_FACE);
-            glEnable(gl.GL_TEXTURE_2D)
+    def __setattr__(self, k, v):
+        if k in Camera._local:
+            object.__setattr__(self, k, v)
         else:
-            self.SDL_global.hud_projection()
+            try:
+                self.__dict__['camera']._setattr__py(k,v)
+            except AttributeError, e:
+                object.__setattr__(self, k, v)
+
+    def input_update(self):
+        dxa, dya = cInput.get_mouse_deltas()
+        self.pan(*self._convert_mouse_deltas(dxa,dya))
+        
+    def _convert_mouse_deltas(self, dx, dy):
+        invert = 1 if opts.invert_mouse else -1
+        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
+        dy = (float(invert*dy) * opts.sensitivity) / 40000.
+        return dx,dy
 
     def move_camera(self, dx, dy, dz):
-
-        if self.rts:
-            #dx delta
-            self.x += dx*cos(self.x_angle * pi)
-            self.y += dx*sin(self.x_angle * pi)
-            #dy delta
-            self.x += dy*cos(self.x_angle * pi + pi/2)
-            self.y += dy*sin(self.x_angle * pi + pi/2)
-        else:
-            self.x += dx
-            self.y += dy
-        #dz delta
-        self.z += dz
+        self.camera.move(dx,dy,dz)
 
     def pan(self, dx_angle, dy_angle):
-        self.x_angle += dx_angle
-        self.y_angle += dy_angle
-        if self.y_angle < -0.499:
-            self.y_angle = -0.499
-        if self.y_angle > 0.499:
-            self.y_angle = 0.499
+        self.camera.pan(dx_angle, dy_angle)
 
-    def on_resize(self, width, height):
-        if settings.pyglet:
-            print "Resize Window"
-            glViewport(0, 0, width, height)
-            self.worldProjection()
-            return pyglet.event.EVENT_HANDLED
+    def pos(self, p=None):
+        if p is None:
+            return [self.x, self.y, self.z]
         else:
-            print "Deprecate Pyglet resize event"
+            self.x = p[0]
+            self.y = p[1]
+            self.z = p[2]
+        
+    def angles(self, a=None):
+        if a is None:
+            return [self.x_angle, self.y_angle]
+        else:
+            self.x_angle = a[0]
+            self.y_angle = a[1]
 
-    def agent_view(self, agent):
-        if self.mode != 'agent':
-            self._save_position()
-            self.mode = 'agent'
-        self._load_position(agent)
+    def load(self):
+        if self.loaded:
+            return
+        global camera
+        camera = self
+        self.loaded = True
+        self.camera.load()
 
-    def camera_view(self):
-        if self.mode != 'camera':
-            self._load_position()
-            self.mode = 'camera'
+    def unload(self):
+        if not self.loaded:
+            return
+        self.loaded = False
+        self.camera.unload()
 
-    def _save_position(self):
-        self._x = self.x
-        self._y = self.y
-        self._z = self.z
-        self._x_angle = self.x_angle
-        self._y_angle = self.y_angle
+    def world_projection(self):
+        self.camera.world_projection()
 
-    def _load_position(self, obj=None, prefix=''):
-        if obj is None:
-            obj = self
-            prefix = '_'
-        self.x = getattr(obj, prefix + 'x')
-        self.y = getattr(obj, prefix + 'y')
-        self.z = getattr(obj, prefix + 'z')
-        if hasattr(obj, prefix + 'camera_height'):
-            self.z += getattr(obj, prefix + 'camera_height')
-        self.x_angle = getattr(obj, prefix + 'x_angle')
-        self.y_angle = getattr(obj, prefix + 'y_angle')
+    def hud_projection(self):
+        self.camera.hud_projection()

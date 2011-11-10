@@ -185,12 +185,18 @@ cdef extern from "./t_map/t_properties.h":
         int max_damage
         int neutron_tolerance
         int nuclear
+        int infinite_texture
 
 #cdef extern from "./t_properties.h":
 cdef extern from "./t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
     cubeProperties* _get_cube_list()
     cubeProperties* _get_cube(int id)
+    void set_infinite_texture(int id, int texture)
+    void init_t_properties()
+
+cdef int infinite_texture_counter = 1
+
 
 ## Setup ##
 from dat_loader import c_dat
@@ -199,6 +205,7 @@ def init_cube_properties(id=None):
     global c_dat
 
     def apply(id):
+        global infinite_texture_counter
         cdef cubeProperties* cp
         cp = _get_cube(id)
         cp.active = int(c_dat.get(id,'active'))
@@ -209,6 +216,32 @@ def init_cube_properties(id=None):
         cp.max_damage = int(c_dat.get(id,'max_damage'))
         cp.neutron_tolerance = int(c_dat.get(id,'neutron_tolerance'))
         cp.nuclear = int(c_dat.get(id,'nuclear'))
+
+        #init infinite textures
+        if(int(c_dat.get(id,'infinite_texture_level')) not in [2,3]):
+            cp.infinite_texture = 0;
+        else:
+            if(c_dat.get(id,'infinite_texture_level') == 2):
+                if cp.infinite_texture == 0:
+                    cp.infinite_texture = infinite_texture_counter
+                    for _i in range(0,16):
+                        set_infinite_texture(infinite_texture_counter+_i, c_dat.get(id,'infinite_texture_array')[_i])
+                    infinite_texture_counter += 16
+                else:
+                    for _i in range(0,16):
+                        set_infinite_texture(cp.infinite_texture+_i, c_dat.get(id,'infinite_texture_array')[_i])
+            if(c_dat.get(id,'infinite_texture_level') == 3):
+                if cp.infinite_texture == 0:
+                    cp.infinite_texture = infinite_texture_counter
+                    for _i in range(0,81):
+                        set_infinite_texture(infinite_texture_counter+_i, c_dat.get(id,'infinite_texture_array')[_i])
+                    infinite_texture_counter += 81
+                else:
+                    for _i in range(0,81):
+                        set_infinite_texture(infinite_texture_counter+_i, c_dat.get(id,'infinite_texture_array')[_i])
+        #'infinite_texture_level' : 0,
+        #'infinite_texture' : None,
+        #'infinite_texture_array' : [],
 
     if id is None:
         for id in c_dat.dat:
@@ -291,9 +324,9 @@ def init_quad_cache():
     quad_cache = _get_quad_cache()
     cdef Vertex* v
     cdef int id,side,vnum,index
-    for id in range(0, max_cubes):
-        for side in range(0,6):
-            for vert_num in range(0,4):
+    for id in range(max_cubes):
+        for side in range(6):
+            for vert_num in range(4):
                 index = id*6*4+4*side+vert_num
                 index2 = 12*side+3*vert_num
                 v = &quad_cache[index]
@@ -305,37 +338,61 @@ def init_quad_cache():
                 v.b = 255
                 v.a = 255
                 tx,ty = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
-                if c_dat.get(id, 'active') > 1:
+                if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
                     tx,ty = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
 
-def get_cube_texture(tile_id, side, vert_num):
+def get_cube_texture(int tile_id, int side, int vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
+
+    cdef cubeProperties* cp
+    cp = _get_cube(tile_id)
+    if cp.infinite_texture > 0:  #zero textures for blocks with multiple textures, such as infinite texture blocks
+        texture_id = 0
+
     texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
     x = texture_id % 16
     y = (texture_id - (texture_id % 16)) / 16
     tx = float(x) * 1./16.
     ty = float(y) * 1./16.
 
-    if vert_num == 0:
-        tx += 0 +margin
-        ty += 0 +margin
-    elif vert_num == 1:
-        tx += 0 +margin
-        ty += 1./16. -margin
-    elif vert_num == 2:
-        tx += 1./16. -margin
-        ty += 1./16. -margin
-    elif vert_num == 3:
-        tx += 1./16. -margin
-        ty += 0 + margin
+    if cp.infinite_texture == 0:
+        if vert_num == 0:
+            tx += 0 +margin
+            ty += 0 +margin
+        elif vert_num == 1:
+            tx += 0 +margin
+            ty += 1./16. -margin
+        elif vert_num == 2:
+            tx += 1./16. -margin
+            ty += 1./16. -margin
+        elif vert_num == 3:
+            tx += 1./16. -margin
+            ty += 0 + margin
+        else:
+            print "Error!!!! set_tex invalid input"
+            assert False
+        return (tx,ty)
     else:
-        print "Error!!!! set_tex invalid input"
-        assert False
-    return (tx,ty)
+        if vert_num == 0:
+            tx += 0 +margin
+            ty += 0 +margin
+        elif vert_num == 1:
+            tx += 0 +margin
+            ty += 1./16. -margin
+        elif vert_num == 2:
+            tx += 1./16. -margin
+            ty += 1./16. -margin
+        elif vert_num == 3:
+            tx += 1./16. -margin
+            ty += 0 + margin
+        else:
+            print "Error!!!! set_tex invalid input"
+            assert False
+        return (tx,ty)
 
 #for crop blocks
 def get_cube_texture_alt(tile_id, side, vert_num):
@@ -537,6 +594,20 @@ cdef extern from "./t_map/t_map.h":
 
 _init = 0
 
+def init():
+    global _init
+    if _init != 0:
+        assert False
+    else:
+        _init = 1
+    print "Init Terrain Map"
+    init_t_properties()
+    init_cube_properties()
+    init_quad_cache()
+    _init_t_map();
+    #_init_t_map_draw()
+    _init_draw_terrain()
+    set_hud_cube_selector()
 
 def set_hud_cube_selector():
     global c_dat
@@ -545,26 +616,12 @@ def set_hud_cube_selector():
     def apply(id):
         hud_img = c_dat.get(id,'hud_img')
         hud_pos = c_dat.get(id,'hud_pos')
-        cHUD.cube_select_set_hud(pos=hud_pos,cube_id=id,tex_id=hud_img)
+        cHUD.CubeSelector.load_cube_properties(hud_pos, id, hud_img)
 
     for id in c_dat.dat:
         apply(id)
-    #assert False
 
 
-def init():
-    global _init
-    if _init != 0:
-        assert False
-    else:
-        init =1
-    print "Init Terrain Map"
-    init_cube_properties()
-    init_quad_cache()
-    _init_t_map();
-    #_init_t_map_draw()
-    _init_draw_terrain()
-    set_hud_cube_selector()
 
 '''
 Epilogue: Cube dat update callbacks
@@ -572,6 +629,7 @@ Epilogue: Cube dat update callbacks
 def _cube_inits(id=None):
     init_cube_properties(id)
     init_quad_cache()
+    set_hud_cube_selector()
 
 c_dat.on_first_load = init
 c_dat.on_change = _cube_inits

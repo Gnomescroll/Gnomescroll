@@ -267,13 +267,15 @@ will be 1 if is adjacent to any side
 will be 2 only if both sides are occluded
  */
 
-inline int calcAdj(int side_1, int side_2, int corner)
+static inline int calcAdj(int side_1, int side_2, int corner)
 {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     if( occ == 0) return 255;
     if(occ == 1) return 177;
     //if(occ == 2) return 177;  
-    if(occ == 2) return 100;    
+    if(occ == 2) return 100;
+    printf("t_vbo.c calcAdj :: invalid occlusion = %d", occ);
+    return -1;
 }
 
 const static int s_array[18] = {
@@ -285,7 +287,7 @@ const static int s_array[18] = {
         0,-1,0, //east
         };
 
-int inline _is_occluded(int x,int y,int z, int side_num) {
+static inline int _is_occluded(int x,int y,int z, int side_num) {
     int i;
     i = 3*side_num;
     x += s_array[i+0];
@@ -295,7 +297,7 @@ int inline _is_occluded(int x,int y,int z, int side_num) {
     return isOccludes(_get(x,y,z));
 }
 
-int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
+static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
     int i;
     i = 3*side_num;
     x += s_array[i+0];
@@ -307,31 +309,17 @@ int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
     return isActive(tile_id);
 }
 
-void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
     int i;
-    //struct Vertex* v;
-    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-
-    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
-
     int index;
+    int occ;
     int CX[8];
-    for(i=0; i<8; i++) {
+    for(i=0; i<8; i++) 
+    {
         index = side*8*3+i*3;
         CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
-
-    float _x = x;
-    float _y = y;
-    float _z = z;
-    for(i=0; i<=3;i++) {
-        v_list[offset+i].x += _x;
-        v_list[offset+i].y += _y;
-        v_list[offset+i].z += _z;
-    }
-
-    int occ = (x+y+z);
-    if(occ > 255) occ = 255;
 
     occ = calcAdj(CX[7], CX[1], CX[0]);
     v_list[offset+0].r = occ;
@@ -354,8 +342,107 @@ void __inline add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, 
     v_list[offset+3].b = occ;
 }
 
-int inline _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
-int inline _is_occluded(int x,int y,int z, int side_num);
+static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+    int i;
+    //struct Vertex* v;
+    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    float _x = x;
+    float _y = y;
+    float _z = z;
+    for(i=0; i<=3;i++) {
+        v_list[offset+i].x += _x;
+        v_list[offset+i].y += _y;
+        v_list[offset+i].z += _z;
+    }
+
+
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+}
+
+static inline int hash_function2(int x,int y,int z) {
+    unsigned int v = ((x*967 + y)*337 + z);
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    v &= 0xf;
+    return (0x6996 >> v) & 1;
+}
+
+static inline int hash_function3(int x,int y,int z) {
+    unsigned int v = ((x*967 + y)*337 + z);
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    return v % 3;
+    //take modulos of the last byte
+}
+
+static const int test_array[16] = {7,9,2,3,10,1,0,4,13,12,8,6,15,11,5,14};
+static const int test_array2[16] = { 6,5,2,3,7,14,11,0,10,1,4,13,9,8,15,12};
+
+static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id, int infinite_texture) {
+    int i;
+    //struct Vertex* v;
+    //memcpy(&cs[cs_n], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    //compute hash values
+
+    int id;
+    {
+        int ul, ur, bl, br;
+        ul = hash_function2(x+1, y+1, z);
+        ur = hash_function2(x+1, y,   z);
+        bl = hash_function2(x,   y,   z);
+        br = hash_function2(x,   y+1, z);
+    /*
+        ul = 0;
+        ur = 0;
+        bl = 0;
+        br = 0;
+    */
+
+    /* Working
+        int h1 = 3-(y%4);
+        int h2 = 3-(x%4);
+        int hf = h1+4*h2;
+        id= get_infinite_texture(infinite_texture + hf);
+    */
+       // printf("hash = %i, tex_id= %i tex_base = %i \n", 8*ul + 4*ur + 2*bl + br, infinite_texture + 8*ul + 4*ur + 2*bl + br, infinite_texture);
+        //id = infinite_texture + 8*ul + 4*ur + 2*bl + br; //infinite texture level 2
+        id = get_infinite_texture(infinite_texture + test_array2[1*ul + 2*ur + 4*bl + 8*br]);
+
+        id = get_infinite_texture(infinite_texture);
+    }
+    {
+        float _x = x;
+        float _y = y;
+        float _z = z;
+
+        int _tx = id % 16;
+        int _ty = id / 16;
+
+        for(i=0; i<=3;i++) {
+            v_list[offset+i].x += _x;
+            v_list[offset+i].y += _y;
+            v_list[offset+i].z += _z;
+
+            v_list[offset+i].tx += _tx*0.0625;
+            v_list[offset+i].ty += _ty*0.0625;
+        }
+    }
+    //compute hash values
+
+
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+}
+
+static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id);
+static inline int _is_occluded(int x,int y,int z, int side_num);
 
 
 
@@ -391,7 +478,36 @@ inline void insert_oddBlock(struct Vertex* v_list, int offset, int x, int y, int
 
 static const int VERTEX_SLACK = 128;
 
-static bool BUFFER_ORPHANING = true; //recycle buffer or create new
+//static bool BUFFER_ORPHANING = true; //recycle buffer or create new
+
+
+/*
+    Can speed up rendering by determining rendering type of each block and keeping count in map object, instead of counting it
+    First step (counting step) can be eliminated
+*/
+
+/*
+#include <sys/resource.h>
+
+int who = RUSAGE_SELF;
+
+struct rusage usage1;
+struct rusage usage2;
+struct rusage usage3;
+
+getrusage(who, &usage1);
+getrusage(who, &usage2);
+getrusage(who, &usage2);
+
+ru_utime.tv_sec and ru_utime.tv_usec
+
+usage1.tv_sec
+usage1.tv_usec
+
+//posix, benchmarking resource usage
+benchmarking
+
+*/
 
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
@@ -526,6 +642,7 @@ int update_column_VBO(struct vm_column* column) {
 
     struct Vertex* v_list2 = vbo->v_list;
 
+    int infinite_texture;
     for(i = 0; i < vm_column_max; i++) {
         if(column->chunk[i] == NULL) { continue; }
         //printf("chunk= %i\n", i);
@@ -538,17 +655,32 @@ int update_column_VBO(struct vm_column* column) {
             tile_id = _get(_x,_y,_z);
             //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
             active = isActive(tile_id);
+            infinite_texture = getInfiniteTexture(tile_id);
             if(active == 0) continue;
             transparency = isTransparent(tile_id);
             if(active == 1)
             {
                 if(transparency == 0)
                 { 
-                    for(side_num=0; side_num<6; side_num++) {
-                        if(! _is_occluded(_x,_y,_z,side_num)) {
-                            //printf("count= %i\n",_cube_vertex_count[0]);
-                            add_quad2(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
-                            _cube_vertex_count[0] += 4;
+                    //no infinite texture
+                    if(infinite_texture == 0) {
+                        for(side_num=0; side_num<6; side_num++) {
+                            if(! _is_occluded(_x,_y,_z,side_num)) {
+                                //printf("count= %i\n",_cube_vertex_count[0]);
+                                add_quad2(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
+                                _cube_vertex_count[0] += 4;
+                            }
+                        }
+                    }
+                    else  //infinite texture
+                    {  
+                        for(side_num=0; side_num<6; side_num++) {
+                            if(! _is_occluded(_x,_y,_z,side_num)) {
+                                //add_quad2(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
+                                add_inf_tex_quad(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id, infinite_texture);
+
+                                _cube_vertex_count[0] += 4;
+                            }
                         }
                     }
                 } 

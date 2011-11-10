@@ -9,14 +9,26 @@ import opts
 import args_client
 opts.opts = args_client.get_args()
 
-Do this *before* importing anything that will evaluate the statement 'from opts import opts'.
+Do this *before* importing anything that will evaluate 'import opts'.
 
 
-In the other files, you can:
+In the other files, you:
 
-from opts import opts
+import opts
+opts = opts.opts
 if opts.verbose:
     print 'debug'
+
+Do NOT do:
+from opts import opts
+
+If values in the opts.opts object change,
+an opts objects imported this way will not be updated
+
+You CANT do:
+import opts.opts as opts
+
+because opts.opts is not a module
 '''
 
 opts = None

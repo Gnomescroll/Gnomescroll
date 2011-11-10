@@ -2,6 +2,8 @@
 #include <compat_gl.h>
 
 //#include "../libChrome.h"
+//#include <c_lib/camera/camera.hpp>
+
 
 typedef struct {
   int x;
@@ -20,7 +22,7 @@ typedef struct {
 
 
 //prototypes
-int _init_input(void);
+int init_input(void);
 int _set_text_enty_mode(int n);
 char getUnicodeValue(SDL_keysym keysym );
 
@@ -48,8 +50,6 @@ int _get_key_state(key_state_func key_state_cb);
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb);
 
 //call backs
-
-
 int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys);
 int _key_event_callback(key_event_func user_func, char key);
 int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion ms);
@@ -60,3 +60,15 @@ int _quit_event_callback(quit_event_func user_func);
 int _toggle_mouse_bind();
 
 int _set_text_entry_mode(int n);
+
+
+// mouse sampling
+struct MouseMotionAverage {
+    float x,y;
+};
+
+#define MOUSE_INPUT_BUFFER_SIZE 16
+#define MOUSE_BUFFER_DECAY 0.50f
+
+struct MouseMotionAverage* get_mouse_render_state();
+
