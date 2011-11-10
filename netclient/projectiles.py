@@ -2,7 +2,8 @@
 import opts
 opts = opts.opts
 
-import sound.sounds as sounds
+if opts.sound:
+	import sound.sounds as sounds
 import c_lib.c_lib_particles as c_obj
 import c_lib.c_lib_sdl
 

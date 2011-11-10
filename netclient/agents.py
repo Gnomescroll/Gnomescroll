@@ -15,7 +15,8 @@ import c_lib.c_lib_particles
 import c_lib.c_lib_agents
 import c_lib._ray_trace
 import c_lib.c_lib_agents as cAgents
-import sound.sounds as sounds
+if opts.sound:
+	import sound.sounds as sounds
 
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow

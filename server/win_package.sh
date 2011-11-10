@@ -1,6 +1,8 @@
 
 ./py2exe_package.py py2exe
 
+cp -f ./c_lib.dll ./dist/c_lib.dll
+
 rm -rf ./dist/content
 cp -rf ./content ./dist/content
 

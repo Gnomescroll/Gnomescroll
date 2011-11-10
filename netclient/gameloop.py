@@ -21,7 +21,9 @@ import random
 import stats
 import intervals
 import vox_lib
-import sound.sounds as sounds
+
+if opts.sound:
+	import sound.sounds as sounds
 import world
 import camera
 

@@ -2,7 +2,7 @@
 HUD textures
 '''
 
-cdef extern from "./SDL/SDL.h":
+cdef extern from "./SDL/texture_loader.h":
     struct SDL_Surface:
         int w
         int h
