@@ -184,7 +184,7 @@ static int mouse_buffer_index = 0;
 static struct MouseMotionAverage mm = {0.0f, 0.0f};
 
 #define INITIAL_MOUSE_WEIGHT 1.0f
-#define TICK_DURATION (30.0f/1000.0f)
+#define TICK_DURATION 30.0f
 
 static inline float _mouse_weight(float t) {
     return INITIAL_MOUSE_WEIGHT * pow(MOUSE_BUFFER_DECAY, t/TICK_DURATION);
@@ -222,7 +222,7 @@ static inline void calculate_mouse_state(int t) { // t is time since last tick
 
     SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
 
-    mouse_input_buffer_timestamps[mouse_buffer_index] = (float)t / 1000.0f;
+    mouse_input_buffer_timestamps[mouse_buffer_index] = (float)t;
     mm.x = mouse_axis_average_x();
     mm.y = mouse_axis_average_y();
 
