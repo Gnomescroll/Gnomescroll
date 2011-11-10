@@ -9,12 +9,12 @@ opts = opts.opts
 import random
 import vox_lib
 import vector_lib
-import raycast_utils
 import vox
 import c_lib.c_lib_particles
 import c_lib.c_lib_agents
-import c_lib._ray_trace
+import c_lib._ray_trace as ray_tracer
 import c_lib.c_lib_agents as cAgents
+import c_lib.terrain_map as terrainMap
 if opts.sound:
     import sound.sounds as sounds
 
@@ -24,6 +24,8 @@ from game_state import GameStateGlobal #Deprecate?
 from weapons import LaserGun, Pick, BlockApplier
 from game_modes import NoTeam
 from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
+from draw_utils import *
+from net_out import NetOut
 
 '''
 Physics for agents
@@ -969,7 +971,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         print ag, adistance, vox
         body_part_id = 1
-        block = raycast_utils.nearest_block(self.camera_position(), self.camera.forward())
+        block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
         bdistance = None
         if block is not None:
             bdistance = vector_lib.distance(self.pos(), block)
@@ -1036,7 +1038,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if self.camera is None:
             return
         if block_type is None:
-            pos = nearest_block(self.camera_position(), self.camera.forward())
             block_type = self.facing_block()
         if not block_type:
             return
@@ -1052,12 +1053,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
     def facing_block_position(self):
         if self.camera is None:
             return
-        return farthest_empty_block(self.camera_position(), self.camera.forward())
+        return ray_tracer.farthest_empty_block(self.camera_position(), self.camera.forward())
 
     def nearest_block_position(self):
         if self.camera is None:
             return
-        return nearest_block(self.camera_position(), self.camera.forward())
+        return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
 
     def _apply_sensitivity(self, dx, dy):
         invert = -1 if opts.invert_mouse else 1
@@ -1093,8 +1094,3 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
                 if obj.proximity_effect:
                     NetOut.sendMessage.near_item(self, obj)
 
-
-import c_lib.terrain_map as terrainMap
-from net_out import NetOut
-from raycast_utils import *
-from draw_utils import *
