@@ -19,6 +19,20 @@ SDL_Surface* _load_image(char *file) {
     return image;
 }
 
+struct Texture _load_image_create_texture(char *file) {
+    SDL_Surface *image = _load_image(file);
+
+    Texture texture;
+    texture.w = image->w;
+    texture.h = image->h;
+    texture.tex = 0;
+    int err = create_texture_from_surface(image, &texture.tex);
+    if (err) {
+        printf("_load_image_create_texture :: Texture could not be created from surface. Error code %d\n", err);
+    }
+    return texture;
+}
+
 int create_texture_from_surface(SDL_Surface *surface, int *tex) {
     if(surface == NULL) {
         printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");

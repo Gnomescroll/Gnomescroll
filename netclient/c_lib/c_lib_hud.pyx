@@ -3,31 +3,27 @@ HUD textures
 '''
 
 cdef extern from "./SDL/texture_loader.h":
-    struct SDL_Surface:
+    struct Texture:
         int w
         int h
+        int tex
 
-cdef extern from "./SDL/texture_loader.h":
-    SDL_Surface* _load_image(char *file)
-    int create_texture_from_surface(SDL_Surface *surface, int *tex)
+    Texture _load_image_create_texture(char *file)
 
 cdef extern from "./SDL/draw_functions.h":
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
-
-cdef class Texture:
-    cdef SDL_Surface* surface
+cdef class CyTexture:
     cdef int texture
     cdef int w
     cdef int h
 
     def __init__(Texture self, char * file):
-        self.surface = _load_image(file)
-        self.w = self.surface.w
-        self.h = self.surface.h
-        err = create_texture_from_surface(self.surface, &self.texture)
-        if err:
-            print "Cython Texture.__init__ :: Loading error %d" % (err,)
+        cdef Texture tex
+        tex = _load_image_create_texture(file)
+        self.w = tex.w
+        self.h = tex.h
+        self.texture = tex.tex
 
     def draw(self, x0, y0, x1, y1, z=-0.5):
         _blit_sprite(self.texture, x0, y0, x1, y1, z)
@@ -36,14 +32,14 @@ cdef class Texture:
 '''
 Reticle
 '''
-cdef class Reticle(Texture):
+cdef class Reticle(CyTexture):
     cdef float x0
     cdef float y0
     cdef float x1
     cdef float y1
 
     def __init__(Reticle self, char* file, int window_width, int window_height):
-        Texture.__init__(self, file)
+        CyTexture.__init__(self, file)
 
         center_x = window_width / 2.
         center_y = window_height / 2.
