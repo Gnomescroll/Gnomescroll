@@ -3,6 +3,9 @@
 
 cp -f ./c_lib.dll ./dist/c_lib.dll
 
+rm -f ./dist/settings.py
+cp -f ./settings.py ./dist/settings.py
+
 rm -rf ./dist/ext
 cp -rf ./ext ./dist/ext
 
