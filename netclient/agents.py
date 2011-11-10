@@ -938,7 +938,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         f,b,l,r, jet, jump = self.button_state
         theta, phi = self._x_angle, self._y_angle
-        set_agent_control_state(f,b,l,r, jet, jump, theta, phi)
+        crouch = 0
+        boost = 0
+        misc1 = 0
+        misc2 = 0
+        misc3 = 0
+        set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     def fire(self):
         if self.team.is_viewers():

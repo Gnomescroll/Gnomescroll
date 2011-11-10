@@ -19,7 +19,9 @@ namespace ClientState {
     extern Neutron_list neutron_list;
     extern Minivox_list minivox_list;
         
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi);
+    //void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi);
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);
+
     void set_PlayerAgent_id(int id);
     
     void send_control_state();

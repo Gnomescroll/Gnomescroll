@@ -31,7 +31,7 @@ namespace ClientState {
             playerAgent_state.set_PlayerAgent_id(id);
     }
 
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi) {
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi) {
         /*
                 int id;
                 int seq;
@@ -49,7 +49,11 @@ namespace ClientState {
                 if(r) cs |= 8;
                 if(jet) cs |= 16;
                 if(jump) cs |= 32;
-
+                if(crouch) cs |= 64;
+                if(boost) cs |= 128;
+                if(misc1) cs |= 256;
+                if(misc2) cs |= 512;
+                if(misc3) cs |= 1024;
                 //printf("cs= %i, f=%i \n", cs, f);
 
                 playerAgent_state.set_control_state(cs, theta, phi);

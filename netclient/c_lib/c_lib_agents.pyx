@@ -78,7 +78,7 @@ cdef extern from "./agent/agent.hpp":
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi)
+    void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
     void set_PlayerAgent_id(int id)
 
 def init_draw_agents():
@@ -217,8 +217,8 @@ def teleport_Agent(int id, float x, float y, float z):
     else:
         print "Cannot teleport agent: agent %i does not exist" %(id)
 
-def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, float theta, float phi):
-    set_control_state(f,b,l,r,jet,jump,theta,phi)
+def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
+    set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
 
 def set_player_agent_id(int id):
     set_PlayerAgent_id(id)
