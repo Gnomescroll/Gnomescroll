@@ -70,5 +70,5 @@ struct MouseMotionAverage {
 #define MOUSE_INPUT_BUFFER_SIZE 16
 #define MOUSE_BUFFER_DECAY 0.50f
 
-struct MouseMotionAverage* get_mouse_render_state();
+struct MouseMotionAverage* get_mouse_render_state(int t);
 

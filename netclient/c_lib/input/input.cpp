@@ -179,46 +179,59 @@ char getUnicodeValue(SDL_keysym keysym ) {
 /* Separate Mouse querying for physics-independent camera */
 static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_input_buffer_x[MOUSE_INPUT_BUFFER_SIZE];
+static float mouse_input_buffer_timestamps[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_buffer_index = 0;
 static struct MouseMotionAverage mm = {0.0f, 0.0f};
 
+#define INITIAL_MOUSE_WEIGHT 1.0f
+#define TICK_DURATION (30.0f/1000.0f)
+
+static inline float _mouse_weight(float t) {
+    return INITIAL_MOUSE_WEIGHT * pow(MOUSE_BUFFER_DECAY, t/TICK_DURATION);
+}
+
 #define MOUSE_AXIS_AVERAGE(AXIS) \
-    static inline float mouse_axis_average_##AXIS() { \
-        float ttl = 0.0f; \
-        float divisor = 0.0f; \
- \
-        int i,  index; \
-        float decay = 1.0f; \
-        for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { \
-            index = (MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
-            ttl += mouse_input_buffer_##AXIS[index] * decay; \
-            divisor += decay; \
-            decay *= MOUSE_BUFFER_DECAY; \
-        } \
- \
-        ttl /= divisor; \
- \
-        return ttl; \
-    }
+static inline float mouse_axis_average_##AXIS() { \
+    float total = 0.0f; \
+    float divisor = 0.0f; \
+    float t = 0.0f;\
+\
+    int i, index; \
+    float weight;\
+\
+    for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { \
+        index = (MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
+\
+        weight = _mouse_weight(t);\
+        divisor += weight; \
+\
+        total += mouse_input_buffer_##AXIS[index] * weight; \
+\
+        t += mouse_input_buffer_timestamps[index];\
+    } \
+\
+    total /= divisor; \
+\
+    return total; \
+}
 
 MOUSE_AXIS_AVERAGE(x)
 MOUSE_AXIS_AVERAGE(y)
 
-static inline void calculate_mouse_state() {
-
-    mouse_buffer_index++;
-    mouse_buffer_index %= MOUSE_INPUT_BUFFER_SIZE;
+static inline void calculate_mouse_state(int t) { // t is time since last tick
 
     SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
 
-    //if (mouse_buffer_index < 0) mouse_buffer_index += MOUSE_INPUT_BUFFER_SIZE;
-
+    mouse_input_buffer_timestamps[mouse_buffer_index] = (float)t / 1000.0f;
     mm.x = mouse_axis_average_x();
     mm.y = mouse_axis_average_y();
+
+    mouse_buffer_index++;
+    mouse_buffer_index %= MOUSE_INPUT_BUFFER_SIZE;
 }
 
-struct MouseMotionAverage* get_mouse_render_state() {
-    calculate_mouse_state();
+struct MouseMotionAverage* get_mouse_render_state(int t) {
+    calculate_mouse_state(t);
     return &mm;
 }
 
