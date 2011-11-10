@@ -594,27 +594,12 @@ cdef extern from "./t_map/t_map.h":
 
 _init = 0
 
-
-def set_hud_cube_selector():
-    global c_dat
-    import c_lib.c_lib_hud as cHUD
-
-    def apply(id):
-        hud_img = c_dat.get(id,'hud_img')
-        hud_pos = c_dat.get(id,'hud_pos')
-        cHUD.cube_select_set_hud(pos=hud_pos,cube_id=id,tex_id=hud_img)
-
-    for id in c_dat.dat:
-        apply(id)
-    #assert False
-
-
 def init():
     global _init
     if _init != 0:
         assert False
     else:
-        init =1
+        _init = 1
     print "Init Terrain Map"
     init_t_properties()
     init_cube_properties()
@@ -624,12 +609,27 @@ def init():
     _init_draw_terrain()
     set_hud_cube_selector()
 
+def set_hud_cube_selector():
+    global c_dat
+    import c_lib.c_lib_hud as cHUD
+
+    def apply(id):
+        hud_img = c_dat.get(id,'hud_img')
+        hud_pos = c_dat.get(id,'hud_pos')
+        cHUD.CubeSelector.load_cube_properties(hud_pos, id, hud_img)
+
+    for id in c_dat.dat:
+        apply(id)
+
+
+
 '''
 Epilogue: Cube dat update callbacks
 '''
 def _cube_inits(id=None):
     init_cube_properties(id)
     init_quad_cache()
+    set_hud_cube_selector()
 
 c_dat.on_first_load = init
 c_dat.on_change = _cube_inits

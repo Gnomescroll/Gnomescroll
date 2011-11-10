@@ -8,7 +8,7 @@ struct State {
 };
 
 #include <c_lib/ray_trace/ray_trace.h>
-#include <c_lib/objects/particles.hpp>
+#include <c_lib/particles/particles.hpp>
 
 #define FPS 30.0f
 

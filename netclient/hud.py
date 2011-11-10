@@ -1,8 +1,8 @@
 import opts
 opts = opts.opts
 
-import c_lib.c_lib_sdl # for some hud methods; migrate to c_lib_hud
-import c_lib.c_lib_hud as c_lib_hud
+import c_lib.c_lib_sdl as cSDL
+import c_lib.c_lib_hud as cHUD
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
@@ -26,28 +26,25 @@ class Hud(object):
         self._init_text_dict()
         self._init_scoreboard()
         self._init_player_stats()
+
+        self.inventory = cHUD.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
+        self.cube_selector = cHUD.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
+
         self.fps = self._to_draw_text(
             text = '',
             x = 0,
             offset = self.win_height
         )
+
         self.ping = self._to_draw_text(
             text = '',
             x = 0,
             offset = self.win_height - 10
         )
-        self._init_block_selector()
 
     def _init_reticle(self):
-        # load texture
-        # center it
-        # draw_functions._blit_sprite
         tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = c_lib.c_lib_sdl.reticle(tex_file, self.win_width/2, self.win_height/2) # make this c_lib_hud
-
-    def _init_block_selector(self):
-        tex_file = '%stexture/block_selector_hud.png' % (base_dir,)
-        self.block_selector = c_lib.c_lib_sdl.block_selector(tex_file, self.win_width - 70, 15, scale=16) # make this c_lib_hud
+        self.reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
 
     def _init_text_dict(self):
         offset = 20
@@ -106,9 +103,6 @@ class Hud(object):
             stats[lprop] = '\n'.join(lines)
         return stats
 
-    def draw_block_selector(self):
-        c_lib_hud.draw_cube_selector(opts.block_selector_x_offset, opts.block_selector_y_offset)
-
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
@@ -117,18 +111,20 @@ class Hud(object):
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
-    def draw(self, fps=None, ping=None, block_selector=False):
+    def draw(self, fps=None, ping=None, cube_selector=False):
         self.draw_reticle()
         self.draw_chat()
         self.draw_player_stats()
+        if InputGlobal.inventory:
+            self.inventory.draw()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
         if fps is not None:
             self.draw_fps(fps)
         if ping is not None:
             self.draw_ping(ping)
-        if block_selector:
-            self.draw_block_selector()
+        if cube_selector:
+            self.cube_selector.draw()
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
@@ -164,24 +160,11 @@ class Hud(object):
         return s
 
     def draw_player_stats(self):
-        # draw label in top
-        #stats = self._format_player_stats_html()
         stats = self._format_player_stats_plain()
         old = self.player_stats.text
         if old != stats:
-            #self.player_stats.begin_update()
             self.player_stats.text = stats
-            #self.player_stats.end_update()
         self.player_stats.draw()
-
-    #def draw_reticle(self):
-        #gl.glEnable(gl.GL_TEXTURE_2D)        # typically target is GL_TEXTURE_2D
-        #gl.glBindTexture(self.reticle_texture.target, self.reticle_texture.id)
-
-        #gl.glEnable(gl.GL_BLEND)
-        #gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-        #self.reticleVertexList.draw(gl.GL_QUADS)
-        #gl.glDisable(gl.GL_BLEND)
 
     def draw_reticle(self):
         self.reticle.draw()
@@ -194,22 +177,19 @@ class Hud(object):
         self._draw_square(x, y, w, color=(255,10,10))
 
     def draw_scoreboard(self):
-        #stats_txt = self._format_scoreboard_html(GameStateGlobal.scoreboard())
         stats_txt = self._format_scoreboard_plain(GameStateGlobal.scoreboard())
         for key, txt in stats_txt.items():
             curr_sb = self.scoreboard[key]
             old = curr_sb.text
             if old != txt:
-                #curr_sb.begin_update()
                 curr_sb.text = txt
-                #curr_sb.end_update()
             curr_sb.draw()
 
     def _draw_line(self, x, y, x1, y1, color=None):
         if color is None:
             color = (255, 255, 0)
         r, g, b = color
-        c_lib.c_lib_sdl.draw_line(r, g, b, x, y, 0, x1, y1, 0)
+        cSDL.draw_line(r, g, b, x, y, 0, x1, y1, 0)
 
     def _draw_square(self, x, y, w, color=None):
         self._draw_rect(x, y, w, w, color)
@@ -218,7 +198,7 @@ class Hud(object):
         if color is None:
             color = (255,255,255)
         r,g,b = color
-        c_lib.c_lib_sdl.draw_rect(r,g,b, x,y, w,h)
+        cSDL.draw_rect(r,g,b, x,y, w,h)
 
     def _draw_border_square(self, x, y, w, color=None):
         self._draw_border_rect(x, y, w, w, color)
@@ -227,7 +207,7 @@ class Hud(object):
         if color is None:
             color = (255,255,255)
         r,g,b = color
-        c_lib.c_lib_sdl.draw_border_rect(r,g,b, x,y, w,h)
+        cSDL.draw_border_rect(r,g,b, x,y, w,h)
 
     def _draw_horizontal_line(self, x, y, length=10):
         self._draw_line(x, y, x + length, y)
@@ -247,7 +227,7 @@ class Hud(object):
             self._draw_cursor()
 
     def _to_draw_text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = c_lib.c_lib_sdl.text(
+        txt = cHUD.Text(
             text = text,
             x = x,
             y = self.win_height - offset,

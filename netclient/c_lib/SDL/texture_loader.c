@@ -1,8 +1,8 @@
 #include "./texture_loader.h"
 
-int _init_image_loader(void) {
+int init_image_loader() {
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
-return 0;
+    return 0;
 }
 
 SDL_Surface* _load_image(char *file) {
@@ -17,64 +17,52 @@ SDL_Surface* _load_image(char *file) {
     if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
 
     return image;
-
 }
 
-int _create_texture(SDL_Surface* surface) {
-    GLuint texture;
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &texture );
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
-    glDisable(GL_TEXTURE_2D);
-    return texture;
-}
-
-int _create_hud_texture(SDL_Surface *surface) {
+int create_texture_from_surface(SDL_Surface *surface, int *tex) {
     if(surface == NULL) {
-        printf("Error: _SDL/texture_loader.c create_hud_texture, surface is null!\n");
+        printf("Error: texture_loader.c create_texture_from_surface, surface is null!\n");
+        return 1;
     }
-    GLuint texture;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &texture );
+    glGenTextures( 1, (GLuint*)tex );
     // Bind the texture object
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, *tex );
     // Set the texture's stretching properties
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); ///tweak?
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); ///tweak?
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     // Edit the texture object's image data using the information SDL_Surface gives us
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels ); //2nd parameter is level
     glDisable(GL_TEXTURE_2D);
-
-    return texture;
+    return 0;
 }
 
-int _blit_sprite2(int texture, float x0, float y0, float x1, float y1, float z) {
+int create_texture_from_file(char* filename, int* tex) {
+    SDL_Surface *surface;
+    surface=IMG_Load(filename); //does this need to be freed?
+    if (!surface) {
+        printf("Error loading texture %s, %s \n", filename, IMG_GetError());
+        return 1;
+    }
+    if (surface->format->BytesPerPixel != 4) {
+        printf("IMG_Load: image is missing alpha channel \n");
+        return 2;
+    }
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-glColor3ub(255, 255, 255);
-
-glBegin( GL_QUADS );
-    glTexCoord2i( 0, 0 );
-    glVertex3f( x0, y0, z );
-
-    glTexCoord2i( 1, 0 );
-    glVertex3f( x1, y0, z );
-
-    glTexCoord2i( 1, 1 );
-    glVertex3f( x1, y1, z );
-
-    glTexCoord2i( 0, 1 );
-    glVertex3f( x0, y1, z );
-glEnd();
-
-    glDisable(GL_BLEND);
+    glGenTextures( 1, (GLuint*)tex );
+    glBindTexture( GL_TEXTURE_2D, *tex );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    int texture_format;
+    if (surface->format->Rmask == 0x000000ff) {
+        texture_format = GL_RGBA;
+    } else {
+        texture_format = GL_BGRA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
     return 0;
 }

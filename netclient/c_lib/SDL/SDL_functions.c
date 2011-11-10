@@ -29,6 +29,8 @@ int DisplayBox()
 
 int _xres = 800;
 int _yres = 600;
+float _xresf = (float) _xres;
+float _yresf = (float) _yres;
 int _fullscreen = 0;
 
 SDL_Surface *pSDLSurface;
@@ -37,20 +39,20 @@ SDL_VideoInfo *pSDLVideoInfo;
 void _del_video() {
     //printf("SDL_functions.c: _del_video, gracefull shutdown\n");
     SDL_Quit();
-    //return 0;
 }
 
 int _set_resolution(int xres, int yres, int fullscreen) {
     _xres = xres;
     _yres = yres;
+    _xresf = (float)_xres;
+    _yresf = (float)_yres;
     _fullscreen = fullscreen;
     return 0;
 }
 
 int _multisampling = 0;
 
-int _init_video() {
-    printf("ININININITT!!!\n");
+int init_video() {
 
     //DisplayBox();
 

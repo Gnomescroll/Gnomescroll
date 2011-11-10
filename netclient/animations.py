@@ -7,7 +7,7 @@ import vector_lib
 import random
 from math import ceil
 
-import c_lib.c_lib_objects
+import c_lib.c_lib_particles
 
 class Animations:
 
@@ -108,7 +108,7 @@ class C_Animation(Animation):
 
 class GrenadeExplodeAnimation(C_Animation):
 
-    anim = c_lib.c_lib_objects._create_shrapnel
+    anim = c_lib.c_lib_particles._create_shrapnel
     vel = [20]*3
 
     def __init__(self, pos):

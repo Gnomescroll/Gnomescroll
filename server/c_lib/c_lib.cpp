@@ -9,7 +9,7 @@
     #include "./ray_trace/ray_trace.c"
     #include "./physics/common.c"
 
-    #include <c_lib/objects/object_lib.cpp>
+    #include <c_lib/particles/object_lib.cpp>
 
     #include "./agent/agent_include.h"
 

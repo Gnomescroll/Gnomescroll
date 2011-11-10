@@ -17,7 +17,7 @@
 #include <c_lib/physics/common.c>
 
 /* objects */
-#include <c_lib/objects/object_lib.cpp>
+#include <c_lib/particles/object_lib.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>
@@ -36,40 +36,43 @@
     /* animations */
     #include <c_lib/animations/animations.cpp>
 
-    /* HUD */
-    #include <c_lib/hud/cube_select.cpp>
-    #include <c_lib/hud/inventory.cpp>
-    #include <c_lib/texture_loader.c>
-    #include <c_lib/hud/hud_texture_loader.cpp>
+
+    /* camera */
+    #include <c_lib/camera/camera.cpp>
 
     /* SDL */
-    #include <c_lib/SDL/camera.c>
+    #include <c_lib/SDL/texture_loader.c>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
-    #include <c_lib/SDL/SDL_text.c>
-    #include <c_lib/SDL/texture_loader.c>
-    #include <c_lib/SDL/block_selector.c>
+
+    /* HUD */
+    #include <c_lib/hud/cube_selector.cpp>
+    #include <c_lib/hud/inventory.cpp>
+    #include <c_lib/hud/text.c>
 
     /* input */
     #include <c_lib/input/input.cpp>
-
-    /* camera */
-    /*
-    #include <c_lib/camera/camera.c>
-    */
 
 #endif
 
 int init_c_lib() {
     printf("init c_lib\n");
+
     srand(time(NULL));   // seed the RNG
 
     #ifdef DC_CLIENT
-        init_texture_loader();
-        init_hud_texture_loader();
-        _init_image_loader();
-        _init_text();
+        init_video();
+        init_input();
+        init_particle_functions();
+        init_cameras();
+
+        init_image_loader();
+        init_particles();
+        init_text();
+        init_cube_selector();
+        init_inventory();
     #endif
-return 0;
+    
+    return 0;
 }

@@ -21,7 +21,7 @@ import intervals
 import map_gen
 import file_monitor
 import init_c_lib
-import c_lib.c_lib_objects
+import c_lib.c_lib_particles
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
 import dats.loader as dat_loader
@@ -295,7 +295,7 @@ class Main:
                 if tc == 0 or sl_c > 3: #net out
                     break
                 GameStateGlobal.gameState.tick()
-                c_lib.c_lib_objects.tick()
+                c_lib.c_lib_particles.tick()
                 sl_c+=1
                 tick+=1
             if sl_c != 0:

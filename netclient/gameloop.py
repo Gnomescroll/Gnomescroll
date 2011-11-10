@@ -18,23 +18,20 @@ import math
 import time
 import random
 
-#import SDL
 import stats
 import intervals
-#import SDL.gl
-#import SDL.hud
 import vox_lib
-import c_lib.c_lib_input as cInput
 import sound.sounds as sounds
 import world
 import camera
 
 import c_lib.terrain_map
 import init_c_lib
-import c_lib.c_lib_objects
-import c_lib.c_lib_agents
-import c_lib.c_lib_hud as cHUD
+import c_lib.c_lib_particles as cParticles
 import c_lib.c_lib_agents as cAgents
+import c_lib.c_lib_hud as cHUD
+import c_lib.c_lib_input as cInput
+import c_lib.c_lib_sdl as cSDL
 
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
@@ -53,13 +50,9 @@ from input import Mouse, Keyboard
 from hud import Hud
 from animations import animations
 
-c_lib.c_lib_sdl.set_resolution(opts.width, opts.height, fullscreen=(int(opts.fullscreen)))
-c_lib.c_lib_sdl.init_particles()
-c_lib.c_lib_sdl.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen) # remove this once SDL_functions migrated to c_lib
+cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
 c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
-c_lib.c_lib_sdl.camera_callback = c_lib.terrain_map.camera_callback
-#c_lib.c_lib_sdl.init_particles()
 
 P2 = c_lib.terrain_map.Profiler()
 
@@ -81,12 +74,11 @@ class App(object):
         ChatClientGlobal.init_1()
         MapControllerGlobal.init_1()
 
-        c_lib.c_lib_sdl.SDL_global.init()
-        cInput.init()
+        #cSDL.SDL_global.init()
+        #cInput.init()
         #SDL.hud.init()
 
         init_c_lib.init()
-        cHUD.init_hud()
 
     def init_inputs(self):
         InputGlobal.init_0(self)
@@ -105,9 +97,11 @@ class App(object):
         self.animations = animations
         self.world = world.World()
 
-        self.camera = camera.Camera(x=0, z=50, rot=-1., name='camera')
+        camera.set_callback(c_lib.terrain_map.camera_callback)
+        self.camera = camera.Camera(x=0., z=50., name='camera')
         self.camera.load()
-        self.agent_camera = camera.Camera(x=0, z=50, rot=-1., name='agent_camera')
+        self.agent_camera = camera.Camera(x=0., z=50., name='agent_camera')
+        
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
@@ -149,12 +143,12 @@ class App(object):
         ltick, ctick = 0,0
 
         if ping:
-            ping_n = c_lib.c_lib_sdl.get_ticks()
+            ping_n = cSDL.get_ticks()
 
         self.intervals.set()
         _i = 30
 
-        c_lib.c_lib_objects._generate_circuit_tree(0,0)
+        cParticles._generate_circuit_tree(0,0)
 
         def neutron_fountain():
             v = 2
@@ -165,7 +159,7 @@ class App(object):
             x *= v / le
             y *= v / le
             z *= v / le
-            c_lib.c_lib_objects._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
+            cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
         _m = 0
 
@@ -195,9 +189,9 @@ class App(object):
                 #neutron_fountain()
                 if _i % 30 == 0:
                     pass
-                    #c_lib.c_lib_objects._generate_circuit_tree(0,0)
+                    #cParticles._generate_circuit_tree(0,0)
                 if _i % 350 == 0:
-                    #c_lib.c_lib_objects._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+                    #cParticles._create_grenade(5,5,2, 0, 0, 50, 0, 350)
                     pass
                 if False or _i % 15 == 0:
                     v = 4
@@ -208,7 +202,7 @@ class App(object):
                     x *= v / le
                     y *= v / le
                     z *= v / le
-                    #c_lib.c_lib_objects._create_grenade(25,25,-4, x,y,z, 0, 350)
+                    #cParticles._create_grenade(25,25,-4, x,y,z, 0, 350)
                 if _i % 150 == 0:
                     v = 2
                     x = v*(random.random() -0.5)
@@ -220,7 +214,7 @@ class App(object):
                     z *= v / le
                     #_type = random.randint(0,9*3)
                     _type=0
-                    #c_lib.c_lib_objects._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+                    #cParticles._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
                 #if True or _i % 15 == 0:
                 for _j_ in range(0,1):
                     v = 3
@@ -231,7 +225,7 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -3.5 #v*(random.random() -0.5)
-                    #c_lib.c_lib_objects._create_cspray(x,y,z, vx,vy,vz)
+                    #cParticles._create_cspray(x,y,z, vx,vy,vz)
 
                 for _j_ in range(0,5):
                     x = 32+ 16*random.random()
@@ -240,7 +234,7 @@ class App(object):
                     vx = v*(random.random() -0.5)
                     vy = v*(random.random() -0.5)
                     vz = -1. #v*(random.random() -0.5)
-                    #c_lib.c_lib_objects._create_minivox(x,y,z, vx,vy,vz)
+                    #cParticles._create_minivox(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()
@@ -253,7 +247,7 @@ class App(object):
 
                 #check if another physics tick is needed
                 self.world.tick()
-                c_lib.c_lib_objects.tick() ## TESTING
+                cParticles.tick() ## TESTING
 
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
@@ -313,7 +307,6 @@ class App(object):
             MapControllerGlobal.mapController.tick()
             P.event("Camera Setup")
             if InputGlobal.camera == 'agent':
-                #self.agent_camera.load(GameStateGlobal.agent)
                 self.camera.unload()
                 self.agent_camera.load()
                 self.agent_camera.pos(GameStateGlobal.agent.camera_position())
@@ -323,7 +316,7 @@ class App(object):
                 self.camera.load()
                 first_person = False
 
-            camera.worldProjection()
+            camera.camera.world_projection()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
@@ -346,19 +339,18 @@ class App(object):
                 
             P.event("Animations Draw")
             self.animations.draw()
-            P.event("c_lib_objects.draw()")
-            c_lib.c_lib_objects.draw() ## TESTING
+            P.event("c_lib_particles.draw()")
+            cParticles.draw() ## TESTING
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
             if opts.hud:
-                camera.hudProjection()
-                draw_bs = False
+                camera.camera.hud_projection()
+                draw_cube_selector = False
                 if GameStateGlobal.agent:
-                    draw_bs = (GameStateGlobal.agent.weapons.active().type == 3)
-                self.hud.draw(fps=fps_text, ping=ping_text, block_selector=draw_bs)
-                cHUD._draw_inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
+                    draw_cube_selector = (GameStateGlobal.agent.weapons.active().type == 3)
+                self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(settings.map_vbo_indicator_x_offset,settings.map_vbo_indicator_y_offset, -0.3)
@@ -367,11 +359,11 @@ class App(object):
                     cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
 
             P.event("SDL flip")
-            c_lib.c_lib_sdl.SDL_global.flip()
+            cSDL.flip()
             P.event("Misc")
             #FPS calculation
             if fps:
-                ctick = c_lib.c_lib_sdl.get_ticks()
+                ctick = cSDL.get_ticks()
                 #print str(ctick - ltick)
                 average.append(ctick-ltick)
                 ltick = ctick
@@ -385,9 +377,9 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if ping:
-                if c_lib.c_lib_sdl.get_ticks() - ping_n > opts.ping_update_interval:
+                if cSDL.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
-                    ping_n = c_lib.c_lib_sdl.get_ticks()
+                    ping_n = cSDL.get_ticks()
                     NetOut.miscMessage.ping()
                     ping_text = stats.last_ping
 
@@ -403,6 +395,8 @@ class App(object):
             P.finish_frame()
         if opts.sound:
             sounds.done()
+
+        cSDL.close()
 
 
 if __name__ == '__main__':
