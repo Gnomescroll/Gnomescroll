@@ -3,7 +3,7 @@
 from math import sin, cos, sqrt, pi
 from c_lib.terrain_map import collisionDetection
 
-def farthest_empty_block(pos, vector, max_distance= 4., z_low=4, z_high=3 ):
+def farthest_empty_block(pos, vector, max_distance= 4., z_low=4, z_high=3):
 
     sampling_density = 100.00
 
@@ -25,7 +25,6 @@ def farthest_empty_block(pos, vector, max_distance= 4., z_low=4, z_high=3 ):
         z_max = z_low
         z_inc = -1*dz
 
-    #md2 = max_distance**2
     while True:
         n += inc
         if n*xy_inc > max_distance or n*z_inc > z_max:
@@ -48,7 +47,7 @@ def farthest_empty_block(pos, vector, max_distance= 4., z_low=4, z_high=3 ):
                     #print "out of range:" + str((x_, y_, z_))
                     return None
 
-def nearest_block(pos, vector, max_distance= 4., z_low=4, z_high=3 ):
+def nearest_block(pos, vector, max_distance= 4., z_low=4, z_high=3):
     sampling_density = 100.00
 
     x,y,z = pos

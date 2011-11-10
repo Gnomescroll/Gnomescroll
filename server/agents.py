@@ -324,12 +324,10 @@ class AgentAction:
         NetOut.event.projectile_create(projectile)
 
     def throw_grenade(self, direction):
-        print 'Agent.throw_grenade'
         pl = GameStateGlobal.projectileList
         pos = self.pos()
         pos[2] += self.b_height * 0.75
         state = pos + direction
-        print pos
         grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
         NetOut.event.projectile_create(grenade)
 
