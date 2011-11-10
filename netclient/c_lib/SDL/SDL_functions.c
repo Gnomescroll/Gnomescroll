@@ -11,8 +11,8 @@ int DisplayBox()
 #ifdef _WIN32
     int msgboxID = MessageBox(
         NULL,
-        (LPCWSTR)L"Error: check console log",
-        (LPCWSTR)L"Possible Error",
+        (LPCSTR)L"Error: check console log",
+        (LPCSTR)L"Possible Error",
         MB_ICONWARNING | MB_DEFBUTTON2
     );
 
