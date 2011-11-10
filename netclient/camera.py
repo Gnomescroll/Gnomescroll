@@ -92,6 +92,12 @@ class Camera(object):
         self.loaded = False
         self.camera.unload()
 
+    def forward(self):
+        return self.camera.forward()
+        
+    def normal(self):
+        return self.camera.normal()
+
     def world_projection(self):
         self.camera.world_projection()
 

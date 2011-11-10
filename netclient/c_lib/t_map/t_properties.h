@@ -60,5 +60,8 @@ static inline int getInfiniteTexture(int id) {
     return cube_list[id].infinite_texture;
     }
 
+static inline int collidesBlock(int x, int y, int z) {
+    return isSolid(_get(x,y,z));
+}
 
 #endif

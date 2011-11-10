@@ -64,6 +64,7 @@ class Agent_state {
 
     public:
         class AgentState s; //state current
+        class AgentState s_old; // last state
         class AgentState state_snapshot;
 
         int id;
@@ -132,12 +133,9 @@ class Agent_state {
         //set_control_state(int[8] _cs, float theta, float phi);
 
         struct Vector interpolate;
-        void set_interpolated() {
-            const float weight = 0.0f;
-            interpolate.x = weight * (s.x - state_snapshot.x) + state_snapshot.x;
-            interpolate.y = weight * (s.y - state_snapshot.y) + state_snapshot.y;
-            interpolate.z = weight * (s.z - state_snapshot.z) + state_snapshot.z;
-        }
+        void set_interpolated(int t);
+        
+        void save_state();
 };
 
 #include <c_lib/template/object_list.hpp>

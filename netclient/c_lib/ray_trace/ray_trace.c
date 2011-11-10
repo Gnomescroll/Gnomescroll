@@ -1,6 +1,6 @@
 #include "ray_trace.h"
 
-///ray casting stuff
+//ray casting stuff
 
 //#define ssize 256
 //#define bsize 65536
@@ -566,4 +566,97 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
         distance = 0;
         return 0; //no collision
     }
+}
+
+
+/* Formerly raycast_utils.py */
+static int ray_cast_block[3];
+int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high) {
+
+    const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
+    float xy_inc = sqrt(vx*vx + vy*vy);
+
+    int z_max;
+    float z_inc;
+    float n = 0.0f;
+
+    int x_, y_, z_;
+    int x__, y__, z__;
+
+    if (vz >= 0.0f) {
+        z_max = z_high;
+        z_inc = vz;
+    } else {
+        z_max = z_low;
+        z_inc = -1.0f*vz;
+    }
+
+    while (!(n*xy_inc > max_distance || n*z_inc > z_max)) {
+        n += inc;
+
+        x_ = (int)(x+vx*n);
+        y_ = (int)(y+vy*n);
+        z_ = (int)(z+vz*n);
+
+        x__ = (int)(x+ vx*(n+inc));
+        y__ = (int)(y+ vy*(n+inc));
+        z__ = (int)(z+ vz*(n+inc));
+
+        if (x_ != x__ || y_ != y__ || z_ != z__) {
+            if (collidesBlock(x__, y__, z__)) {
+                if (z_ >= z-z_low and z_ <= z+z_high) {
+                    ray_cast_block[0] = x_;
+                    ray_cast_block[1] = y_;
+                    ray_cast_block[2] = z_;
+                    return ray_cast_block;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high) {
+
+    const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
+    float xy_inc = sqrt(vx*vx + vy*vy);
+
+    int z_max;
+    float z_inc;
+    float n = 0.0f;
+
+    int x_, y_, z_;
+    int x__, y__, z__;
+
+    if (vz >= 0.0f) {
+        z_max = z_high;
+        z_inc = vz;
+    } else {
+        z_max = z_low;
+        z_inc = -1.0f*vz;
+    }
+
+    while (!(n*xy_inc > max_distance || n*z_inc > z_max)) {
+        n += inc;
+
+        x_ = (int)(x+vx*n);
+        y_ = (int)(y+vy*n);
+        z_ = (int)(z+vz*n);
+
+        x__ = (int)(x+ vx*(n+inc));
+        y__ = (int)(y+ vy*(n+inc));
+        z__ = (int)(z+ vz*(n+inc));
+
+        if (x_ != x__ || y_ != y__ || z_ != z__) {
+            if (collidesBlock(x__, y__, z__)) {
+                ray_cast_block[0] = x__;
+                ray_cast_block[1] = y__;
+                ray_cast_block[2] = z__;
+                return ray_cast_block;
+            }
+        }
+    }
+    return NULL;
 }
