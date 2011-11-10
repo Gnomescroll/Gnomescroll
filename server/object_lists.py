@@ -43,7 +43,6 @@ class GenericObjectList:
         return repr(self.objects)
 
     def _add(self, *args, **kwargs):
-        print args
         object = self._object_type(*args, **kwargs)
         self.objects[object.id] = object
        # print '%s: %s created; id= %s' % (self.__class__.__name__, self._object_type.__name__, object.id,)
