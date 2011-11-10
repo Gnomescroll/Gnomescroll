@@ -23,7 +23,7 @@ import intervals
 import vox_lib
 
 if opts.sound:
-	import sound.sounds as sounds
+    import sound.sounds as sounds
 import world
 import camera
 
@@ -182,6 +182,8 @@ class App(object):
             sl_c = 0
 
             agent = GameStateGlobal.agent
+            if agent and agent.camera is None:
+                agent.camera = self.agent_camera
 
             while True: #physics loop
                 tc = GET_TICK()

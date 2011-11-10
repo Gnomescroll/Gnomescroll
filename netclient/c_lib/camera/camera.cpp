@@ -112,16 +112,16 @@ void CCamera::world_projection() {
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
-    xl = x + cos( x_angle * PI) * cos( y_angle * PI);
-    yl = y + sin( x_angle * PI) * cos( y_angle * PI);
-    zl = z + sin( y_angle * PI);
+    xl = cos( x_angle * PI) * cos( y_angle * PI);
+    yl = sin( x_angle * PI) * cos( y_angle * PI);
+    zl = sin( y_angle * PI);
 
     xu = 0;
     yu = 0;
     zu = 1;
 
     gluLookAt(x,y,z,
-               xl, yl, zl,
+               x+xl, y+yl, z+zl,
                xu, yu, zu);
 
     if(model_view_matrix != NULL) {

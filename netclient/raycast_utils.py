@@ -3,13 +3,12 @@
 from math import sin, cos, sqrt, pi
 from c_lib.terrain_map import collisionDetection
 
-def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
+def farthest_empty_block(pos, vector, max_distance= 4., z_low=4, z_high=3 ):
 
     sampling_density = 100.00
 
-    dx = cos( x_angle * pi) * cos( y_angle * pi)
-    dy = sin( x_angle * pi) * cos( y_angle * pi)
-    dz = sin( y_angle)
+    x,y,z = pos
+    dx,dy,dz = vector
     le = sqrt(dx**2+dy**2+dz**2)
     dx /= le
     dy /= le
@@ -49,12 +48,11 @@ def ray_cast_farest_empty_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low
                     #print "out of range:" + str((x_, y_, z_))
                     return None
 
-def ray_nearest_block(x,y,z, x_angle, y_angle, max_distance= 4., z_low=4, z_high=3 ):
+def nearest_block(pos, vector, max_distance= 4., z_low=4, z_high=3 ):
     sampling_density = 100.00
 
-    dx = cos( x_angle * pi) * cos( y_angle * pi)
-    dy = sin( x_angle * pi) * cos( y_angle * pi)
-    dz = sin( y_angle)
+    x,y,z = pos
+    dx,dy,dz = vector
     le = sqrt(dx**2+dy**2+dz**2)
     dx /= le
     dy /= le

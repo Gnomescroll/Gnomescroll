@@ -78,6 +78,12 @@ cdef class Camera(object):
 
     def move(self, float dx, float dy, float dz):
         self.camera.move(dx, dy, dz)
+
+    def forward(self):
+        return [self.camera.xl, self.camera.yl, self.camera.zl]
+        
+    def normal(self):
+        return [self.camera.xu, self.camera.yu, self.camera.zu] 
         
     def world_projection(self):
         cdef CCamera* c

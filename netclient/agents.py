@@ -16,7 +16,7 @@ import c_lib.c_lib_agents
 import c_lib._ray_trace
 import c_lib.c_lib_agents as cAgents
 if opts.sound:
-	import sound.sounds as sounds
+    import sound.sounds as sounds
 
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
@@ -905,7 +905,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.az = 0
 
         self.camera_height = 1.5
-
+        self.camera = None
+        
         AgentVoxRender.__init__(self)
 
 
@@ -968,7 +969,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         print ag, adistance, vox
         body_part_id = 1
-        block = raycast_utils.ray_nearest_block(self.x, self.y, self.z, self.x_angle, self.y_angle)
+        block = raycast_utils.nearest_block(self.camera_position(), self.camera.forward())
         bdistance = None
         if block is not None:
             bdistance = vector_lib.distance(self.pos(), block)
@@ -1032,39 +1033,31 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
     def set_active_block(self, block_type=None):
         if self.team.is_viewers():
             return
+        if self.camera is None:
+            return
         if block_type is None:
-            pos = ray_nearest_block(self.x,self.y,self.z,self.x_angle,self.y_angle)
+            pos = nearest_block(self.camera_position(), self.camera.forward())
             block_type = self.facing_block()
         if not block_type:
             return
         self.active_block = block_type
-        #print 'set active block to ', self.active_block
 
     def facing_block(self):
         block = self.nearest_block_position()
         if block is None:
             return None
-        #block = GameStateGlobal.terrainMap.get(*block)
         block = terrainMap.get(*block)
         return block
 
     def facing_block_position(self):
-        return ray_cast_farest_empty_block(
-            self.x,
-            self.y,
-            self.z + self.camera_height,
-            self.x_angle,
-            self.y_angle
-        )
+        if self.camera is None:
+            return
+        return farthest_empty_block(self.camera_position(), self.camera.forward())
 
     def nearest_block_position(self):
-        return ray_nearest_block(
-            self.x,
-            self.y,
-            self.z + self.camera_height,
-            self.x_angle,
-            self.y_angle
-        )
+        if self.camera is None:
+            return
+        return nearest_block(self.camera_position(), self.camera.forward())
 
     def _apply_sensitivity(self, dx, dy):
         invert = -1 if opts.invert_mouse else 1
