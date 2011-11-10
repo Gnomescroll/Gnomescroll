@@ -1,0 +1,20 @@
+<tGM>: SOCKET ERROR: error value= 10035,  "error: (10035, "The socket operation could not complete without blocking")
+<tGM> http://pastebin.com/B9epjWz5 error 10035
+<tGM> http://i.imgur.com/bjE8f.png
+
+
+Toryjn: BF3/rage beta drivers cause window crash
+<Toryjn> HaltingState: Did that window creation thing get fixed yet?
+<Toryjn> HaltingState: http://i.imgur.com/Kw4gw.png
+<Toryjn> Win7 64Bit AMD 6850
+<Toryjn> GDB http://i.imgur.com/Lklt4.png
+<Toryjn> GDB threads: http://i.imgur.com/Nekmw.png
+
+<tGM> HaltingState: still doesnt work for me
+
+
+http://imgur.com/LII9D
+http://imgur.com/Bp7cI
+http://imgur.com/LBB5S
+
+asher418: windows 7, random crash after window creation
