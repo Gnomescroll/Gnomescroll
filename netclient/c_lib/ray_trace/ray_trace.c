@@ -603,7 +603,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
         z__ = (int)(z+ vz*(n+inc));
 
         if (x_ != x__ || y_ != y__ || z_ != z__) {
-            if (collidesBlock(x__, y__, z__)) {
+            if (collision_check(x__, y__, z__)) {
                 if (z_ >= z-z_low and z_ <= z+z_high) {
                     ray_cast_block[0] = x_;
                     ray_cast_block[1] = y_;
@@ -650,7 +650,7 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
         z__ = (int)(z+ vz*(n+inc));
 
         if (x_ != x__ || y_ != y__ || z_ != z__) {
-            if (collidesBlock(x__, y__, z__)) {
+            if (collision_check(x__, y__, z__)) {
                 ray_cast_block[0] = x__;
                 ray_cast_block[1] = y__;
                 ray_cast_block[2] = z__;
