@@ -416,7 +416,7 @@ static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, in
         //id = infinite_texture + 8*ul + 4*ur + 2*bl + br; //infinite texture level 2
         id = get_infinite_texture(infinite_texture + test_array2[1*ul + 2*ur + 4*bl + 8*br]);
 
-        id = get_infinite_texture(infinite_texture);
+        //id = get_infinite_texture(infinite_texture);
     }
     {
         float _x = x;
