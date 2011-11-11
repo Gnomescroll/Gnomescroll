@@ -75,7 +75,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 
         int id;
         int seq;
-        uint8_t cs;
+        uint16_t cs;
         float theta;
         float phi;
 
@@ -83,7 +83,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
-            pack_u8(&cs, buff, buff_n, pack);
+            pack_u16(&cs, buff, buff_n, pack);
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);
         }
@@ -111,7 +111,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 
         int id;
         int seq;
-        uint8_t cs;
+        uint16_t cs;
         float theta;
         float phi;
 
@@ -119,7 +119,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
-            pack_u8(&cs, buff, buff_n, pack);
+            pack_u16(&cs, buff, buff_n, pack);
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);
         }
@@ -153,7 +153,10 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         }
 };
 
+/*
+    Use for client side and state update to server
 
+*/
 
 class PlayerAgent_state {
     public:
@@ -174,7 +177,7 @@ class PlayerAgent_state {
         agent_id = id;
     }
 
-    void set_control_state(uint8_t cs, float theta, float phi) {
+    void set_control_state(uint16_t cs, float theta, float phi) {
         if(agent_id == -1) return;  //player agent not set
 
         seq = (seq+1) % 256;
