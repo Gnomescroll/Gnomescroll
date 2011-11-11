@@ -54,7 +54,7 @@ void init_server(unsigned short port);
 inline int error_check_packet(unsigned char* data, int n);
 void process_packets();
 
-void decrement_ttl();
+//void decrement_ttl();
 void poll_connection_timeout();
 
 void check_pool_for_dropped_packets();

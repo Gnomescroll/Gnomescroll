@@ -50,7 +50,7 @@ struct NetPeer {
     int highest_packet_sequence_number;
 };
 
-#define TTL_MAX_DEFAULT 150
+#define TTL_MAX_DEFAULT 120
 
 
 //struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);

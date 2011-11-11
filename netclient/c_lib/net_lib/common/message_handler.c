@@ -46,22 +46,6 @@ void init_message_handler() {
 
 }
 
-//deprecated
-/*
-void register_message_handler(int message_id, int size, pt2handler fptr) {
-
-    if(message_id >=256 || message_id <0) {
-        printf("Message ID invalid!\n");
-        return;
-    }
-
-    if(handler_array[message_id] != NULL) {
-        printf("Reassigning message_id %i !!!\n", message_id);
-    }
-    h_packet_size[message_id] = size;
-    handler_array[message_id] = fptr;
-}
-*/
 int pop_message(unsigned char* buff, int *n, int max_n) {
 
     if(*n == max_n) {

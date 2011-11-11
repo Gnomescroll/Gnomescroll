@@ -328,6 +328,7 @@ void poll_connection_timeout() {
     }
 }
 
+/*
 void decrement_ttl() {
     printf("decrement ttl deprecated\n");
     int i;
@@ -344,4 +345,4 @@ void decrement_ttl() {
     }
 
 }
-
+*/

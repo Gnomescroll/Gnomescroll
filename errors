@@ -10,6 +10,22 @@ Toryjn: BF3/rage beta drivers cause window crash
 <Toryjn> GDB http://i.imgur.com/Lklt4.png
 <Toryjn> GDB threads: http://i.imgur.com/Nekmw.png
 
+Toryjn: summary, server freezes after a while
+
+<Toryjn> HaltingState: When I connect to the server it prints "send: SOCKET ERROR: error value= 10035" about a hundred times
+<Toryjn> and after it creates new player and identifies it, "Agent id error: id = -1"
+<Toryjn> It starts to load
+<Toryjn> then the server stops responding
+HaltingState> if the map does not load AND its printing that message; then the message is a problem
+<Toryjn> Like a 16x8 column loads 
+<Toryjn> http://i.imgur.com/YURKh.png
+
+<Pulchritude> has same problem as Toryjn
+
+<StackOverflow> about 1 chunk loads then some "UDP socket not connected!" "Client id requested"
+<StackOverflow> crashes
+<StackOverflow> server runs fine though
+
 <tGM> HaltingState: still doesnt work for me
 
 
