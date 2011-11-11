@@ -5,6 +5,11 @@
 rm -rf ./server/c_lib/agent
 cp -rf ./netclient/c_lib/agent ./server/c_lib/agent
 
+rm -rf ./server/c_lib/common
+cp -rf ./netclient/c_lib/common ./server/c_lib/common
+
+rm -rf ./server/c_lib/net_lib
+cp -rf ./netclient/c_lib/net_lib ./server/c_lib/net_lib
 
 rm -rf ./server/c_lib/particles
 cp -rf ./netclient/c_lib/particles ./server/c_lib/particles
