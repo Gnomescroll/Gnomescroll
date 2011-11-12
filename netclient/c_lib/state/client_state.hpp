@@ -24,7 +24,7 @@ namespace ClientState {
 
     void set_PlayerAgent_id(int id);
     
-    void send_control_state();
+    //void send_control_state();
     void InitClientState();
 
     void ClientTick();

@@ -177,6 +177,7 @@ class PlayerAgent_state {
         agent_id = id;
     }
 
+    //set actually sends
     void set_control_state(uint16_t cs, float theta, float phi) {
         if(agent_id == -1) return;  //player agent not set
 
