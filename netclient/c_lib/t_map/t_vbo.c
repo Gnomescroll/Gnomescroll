@@ -161,7 +161,14 @@ int _init_quad_cache_normals() {
     return 0;
 }
 
+//performance counters
+GLuint gl_perf_queries[64];
+int gl_per_queries_index = 0;
+
 int _init_draw_terrain() {
+
+    glGenQueries(64, gl_perf_queries);  //generate timer queries for rendering
+
     //quad_cache = _get_quad_cache();
     _init_quad_cache_normals();
 
@@ -833,23 +840,12 @@ static const int MAX_DRAWN_VBO = 1024;  //hard coded value, bad choice
 static int draw_vbo_n;
 static struct VBO* draw_vbo_array[MAX_DRAWN_VBO];  //this should not be hardcoded; will piss someone off
 
+//GLuint gl_perf_queries[64];
+//int gl_per_queries_index = 0;
 
 int _draw_terrain() {
-/*
-    _c_++;
-    if(_c_ % 120 == 0) {
-        _t_ ++;
-        if(_t_ %2 == 0) {
-            printf("multisample enabled\n");
-            glEnable(GL_MULTISAMPLE);
-        } else {
-            printf("multisample disabled\n");
-            glDisable(GL_MULTISAMPLE);
-        }
-    }
-*/
-    //int s,f;
-    //s= SDL_GetTicks();
+
+
     struct vm_map* m;
     struct vm_column* col;
     int i,j;
@@ -896,7 +892,84 @@ int _draw_terrain() {
         printf("vbos drawn= %i \n", c_drawn);
     }
 */
+
+/*
+    GLuint gl_perf_queries[64];
+    int gl_per_queries_index = 0;
+*/
+
+
+/*
+    static GLuint queries[32];
+    static GLint available = 0;
+        // timer queries can contain more than 32 bits of data, so always
+        // query them using the 64 bit types to avoid overflow
+    
+    static int init = 0;
+    GLuint64 timeElapsed = 0;
+
+        // Create a query object.
+
+    if(init == 0) {
+        glGenQueries(32, queries);
+        init = 1;  
+    }
+
+    glBeginQuery(GL_TIME_ELAPSED, queries[0]);
+   */
+    
     DRAW_VBOS1();
+
+/*
+    GLuint available = 0;
+    GLuint _result = 0;
+
+    DRAW_VBOS1();
+
+    glEndQuery(GL_TIME_ELAPSED_EXT);
+
+    glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &_result);
+    printf("querry done: %i us\n", _result/1000);
+
+    gl_per_queries_index = (gl_per_queries_index+1) % 32;
+*/
+
+    //glGetQueryObject(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &available);
+
+
+    //glGetQueryObject(gl_perf_queries[gl_per_queries_index],glGetQueryObject, &_result )
+
+    //GL_QUERY_RESULT_AVAILABLE
+    //GL_QUERY_RESULT
+
+/*
+    glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT_AVAILABLE, &available);
+    if(available) {
+        glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &_result);
+        printf("querry done: %i us\n", _result/1000);
+    }
+*/
+    /*
+    glEndQuery(GL_TIME_ELAPSED);
+
+
+    while (!available) {
+        glGetQueryObjectiv(queries[0], GL_QUERY_RESULT_AVAILABLE, &available);
+    }
+    glGetQueryObjectui64v(queries[0], GL_QUERY_RESULT, &timeElapsed);
+
+    printf("Terrain map takes %i nanoseconds\n", timeElapsed);
+     */           
+/*
+    glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);
+
+    glEndQuery(gl_perf_queries[gl_per_queries_index]);
+    gl_per_queries_index = (gl_per_queries_index+1) % 64;
+    glGetQueryObject(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT
+*/
+
+    //glGetQueryObject(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT_AVAILABLE)
+
     //DRAW_VBOS1a();
 
     //DRAW_VBOS2();    
@@ -906,6 +979,10 @@ int _draw_terrain() {
     //_draw_fog();
     //f = SDL_GetTicks();
     //printf("Terrain rendering time= %i \n", f-s);
+
+
+
+
     return 0;
 
 }
@@ -926,6 +1003,9 @@ if((c.x-x)*(c.x-x) + (c.y-y)*(c.y-y) < (tolerance+view_distance)*(tolerance+view
     //}
 }
 
+
+//DEPRECATE!!!
+//DEPRECATE!!!
 int _set_camera(float x, float y, float z, float vx, float vy, float vz, float ux, float uy, float uz, float ratio, float viewangle) {
 c.x = x; c.y = y; c.z = z;
 c.ux=ux; c.uy=uy; c.uz=uz;
@@ -1040,6 +1120,8 @@ void _refresh_map_vbo() {
 
 void DRAW_VBOS1() {
         
+    int _vnum = 0;
+
     glColor3b(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
@@ -1064,6 +1146,8 @@ void DRAW_VBOS1() {
         vbo = draw_vbo_array[i];
 
         if(vbo->v_num == 0) continue;
+
+        _vnum += vbo->v_num;
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         //start_vbo_draw();
@@ -1128,21 +1212,6 @@ void DRAW_VBOS1() {
     }
     glDepthMask(true); 
     glDisable(GL_BLEND);
-/*
-    Do Stuff
-*/
-
-/*
-    vbo->_v_num[0]
-    vbo->_v_num[1]
-    vbo->_v_num[2]
-    vbo->_v_num[3]
-
-    vbo->_v_offset[0]
-    vbo->_v_offset[1]
-    vbo->_v_offset[2]
-    vbo->_v_offset[3]
-*/
 
 //end draw
 glDisableClientState(GL_VERTEX_ARRAY);
@@ -1158,6 +1227,7 @@ glDisable(GL_CULL_FACE);
 
 glDisable(GL_TEXTURE_2D);
 
+    printf("vnum= %i\n", _vnum);
 }
 
 void DRAW_VBOS1a() {

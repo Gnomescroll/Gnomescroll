@@ -71,12 +71,12 @@ int init_video() {
        return 1;
     }
 
-    printf("SDL: %s\n", SDL_GetError());
+    //printf("SDL: %s\n", SDL_GetError());
 
     SDL_WM_SetCaption( "Gnomescroll", NULL );
     const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
     //pSDLVideoInfo = SDL_GetVideoInfo();
-    printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
+    //printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
 
     if( !pSDLVideoInfo )
     {
@@ -127,7 +127,7 @@ int init_video() {
     ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
     //pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
     pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
-    printf("SDL_SetVideoMode: %s\n", SDL_GetError());
+    //printf("SDL_SetVideoMode: %s\n", SDL_GetError());
 
     if( !pSDLSurface )
     {
@@ -160,7 +160,7 @@ int init_video() {
 
     atexit(_del_video);
 
-    printf("SDL: %s\n", SDL_GetError());
+    //printf("SDL: %s\n", SDL_GetError());
 
     printf("glew init\n");
     glewInit();
@@ -177,15 +177,15 @@ int init_video() {
     }
 
 
-    if(GLEW_GL_EXT_timer_query) {
+    if(GLEW_EXT_timer_query) {
         printf("GL_EXT_timer_query supported\n");
     } else {
         printf("GL_EXT_timer_query not supported\n");
     }
 
+    //printf("SDL: %s\n", SDL_GetError());
 
-    printf("SDL: %s\n", SDL_GetError());
-
+    printf("Finished OpenGL init\n");
     return 0;
 }
 

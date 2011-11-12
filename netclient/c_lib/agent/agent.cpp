@@ -275,17 +275,17 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     }
 
 
-    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z0) != 0) ) {
+    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z1) != 0) || isActive(_get(x_max,y_min,z2) != 0) ) {
         //north, east
         return true;
     }
 
-    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z0) != 0) ) {
+    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z1) != 0) || isActive(_get(x_min,y_min,z2) != 0) ) {
         //south, east
         return true;
     }
 
-    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z0) != 0) ) {
+    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0) || isActive(_get(x_min,y_max,z2) != 0) ) {
         //south, west
         return true;
     }
