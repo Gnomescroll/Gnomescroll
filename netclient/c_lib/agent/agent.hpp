@@ -7,6 +7,8 @@
 #define AGENT_MAX 1024
 #define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT_CROUCHED 0.9f
+#define AGENT_CAMERA_HEIGHT 1.5f
+#define AGENT_CAMERA_HEIGHT_CROUCHED 0.75f
 #define AGENT_BOX_RADIUS 0.4f
 
 #ifdef DC_CLIENT
@@ -76,7 +78,8 @@ class Agent_state {
 
         float b_height;
         float box_r;
-
+        float camera_height;
+        
         int _new_control_state;
 
         int jump_ready;
@@ -86,8 +89,6 @@ class Agent_state {
         #endif
 
         void _tick();
-        //void _tick_jetpack();
-        //void _tick_jump();
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
 
@@ -132,7 +133,6 @@ class Agent_state {
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
 
-        void crouch(int on_off);
         //void server_tick();
         //set_control_state(int[8] _cs, float theta, float phi);
 

@@ -621,8 +621,6 @@ class AgentModel(AgentWrapper):
         self.t_height = .75
         self.box_r = .30
 
-        self.crouching = False
-
     def tick(self):
         if not self.dead:
             self._tick_physics()
@@ -741,15 +739,6 @@ class AgentModel(AgentWrapper):
     @state.setter
     def state(self, val):
         self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
-
-    def crouch(self):
-        self.crouching = not self.crouching
-        if self.crouching:
-            self.b_height = 0.8
-        else:
-            self.b_height = 1.5
-        self.camera_height = self.b_height
-        cAgents.crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
         vec = vector_lib.angle2vector(self.x_angle, self.y_angle)
@@ -912,7 +901,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.ay = 0
         self.az = 0
 
-        self.camera_height = 1.5
+        #self.camera_height = 1.5
         self.camera = None
         
         AgentVoxRender.__init__(self)

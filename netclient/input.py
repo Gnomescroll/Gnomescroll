@@ -151,14 +151,6 @@ class InputGlobal:
     def enable_chat(cls):
         InputGlobal.input = 'chat'
 
-    @classmethod
-    def agent_button_state(cls):
-        return
-
-    @classmethod
-    def agent_mouse_angles(cls):
-        return
-
 class Mouse(object):
 
     def __init__(self):
@@ -169,11 +161,6 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
-        #if InputGlobal.input == 'agent':
-            #self._pan_agent(dx, dy)
-
-    #def _pan_agent(self, dx, dy):
-        #GameStateGlobal.agent.pan(dx,dy)
         
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
@@ -195,10 +182,6 @@ class Mouse(object):
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
-
-    #def clear_mouse_deltas(self):
-        #print 'clearing mouse deltas'
-        #cInput.get_mouse_deltas() # discard
 
 class Keyboard(object):
 
@@ -354,9 +337,9 @@ class Keyboard(object):
             jet = 1
         if 'SPACE' in keyboard:
             jump = 1
-        if 'left ctrl' in keyboard:
+        if 'LCTRL' in keyboard:
             crouch = 1
-        #misc1=misc2=misc3=0
+        #misc1=misc2=misc3=boost=0
 
         button_state = [f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3]
         GameStateGlobal.agent.button_state = button_state
@@ -410,11 +393,9 @@ class AgentInput:
             'up':self.adjust_block,
             'down':self.adjust_block,
             'b'   : self.bleed,
-            'left ctrl': self.crouch,
         }
 
         self.key_release_handlers = {
-            'left ctrl' :   self.crouch,
         }
 
     def on_key_press(self, symbol, modifiers=None):
@@ -432,11 +413,6 @@ class AgentInput:
     @requireAgent
     def bleed(cls, *args, **kwargs):
         GameStateGlobal.agent.bleed()
-
-    @classmethod
-    @requireAgent
-    def crouch(cls, *args, **kwargs):
-        GameStateGlobal.agent.crouch()
 
     @classmethod
     @requireAgent
