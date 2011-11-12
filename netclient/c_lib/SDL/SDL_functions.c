@@ -25,6 +25,7 @@ int DisplayBox()
 
     return msgboxID;
 #endif
+    return 0;
 }
 
 int _xres = 800;
