@@ -44,8 +44,7 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     physics tick, control input sample ticks and netout ticks should be seperate loops
     */
 
-int _N =0;
-
+/*
 void _NetClientTick() {
 
 
@@ -78,107 +77,64 @@ void _NetClientTick() {
     ClientState::ClientTick();
     return;
 }
+*/
 
+int _N =0;
 
-/*
-void _NetClientStateTick() {
+void _NetClientStartFrame() {
 
-
-    //Agent_control_state_message acs;
-    //acs.send();
-
-    //printf("net client tick\n");
     update_current_netpeer_time();
+    //start physics frame
     pviz_start_frame();
-    //NP_print_delta();
+
+    //connection management stuff
     _N++;
-    //NP_time_delta1(np.last_packet_time) //time since last packet
-    //pviz_start_frame();
-    NetClient::process_incoming_packets();
-    //NP_time_delta1(np.last_packet_time)
-    NetClient::poll_connection_timeout();
+
+    //connection timeout returns if connected and times out on this frame
+    if(NetClient::poll_connection_timeout() == 1) _N=0; //by setting _N to 0, will attempt to reconnect immediately on disconnect
+
     if(np->connected == 0) {
         if(_N % 90 == 0) printf("UDP Socket not connected!\n");
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     }
 
-    //set agent state
-    ClientState::send_control_state();
-
-    NetClient::flush_outgoing_packets();
+    //deal with retransmission before retransmission
     check_for_dropped_packets(np);
-    NetClient::poll_connection_timeout();
 
+}
+
+void _NetClientStateTick() {
+
+    //Does nothing
     ClientState::ClientTick();
-    return;
+
 }
 
 void _NetClientNetInTick() {
 
-
-    //Agent_control_state_message acs;
-    //acs.send();
-
-    //printf("net client tick\n");
+    //update time before processing packets
     update_current_netpeer_time();
-    pviz_start_frame();
-    //NP_print_delta();
-    _N++;
-    //NP_time_delta1(np.last_packet_time) //time since last packet
-    //pviz_start_frame();
     NetClient::process_incoming_packets();
-    //NP_time_delta1(np.last_packet_time)
-    NetClient::poll_connection_timeout();
-    if(np->connected == 0) {
-        if(_N % 90 == 0) printf("UDP Socket not connected!\n");
-        if(_N % 90 == 0) NetClient::attempt_connection_with_server();
-        return;
-    }
 
-    //set agent state
-    ClientState::send_control_state();
-
-    NetClient::flush_outgoing_packets();
-    check_for_dropped_packets(np);
-    NetClient::poll_connection_timeout();
-
-    ClientState::ClientTick();
-    return;
 }
 
 void _NetClientNetOutTick() {
 
 
-    //Agent_control_state_message acs;
-    //acs.send();
-
-    //printf("net client tick\n");
     update_current_netpeer_time();
-    pviz_start_frame();
-    //NP_print_delta();
-    _N++;
-    //NP_time_delta1(np.last_packet_time) //time since last packet
-    //pviz_start_frame();
-    NetClient::process_incoming_packets();
-    //NP_time_delta1(np.last_packet_time)
-    NetClient::poll_connection_timeout();
-    if(np->connected == 0) {
-        if(_N % 90 == 0) printf("UDP Socket not connected!\n");
-        if(_N % 90 == 0) NetClient::attempt_connection_with_server();
-        return;
-    }
 
-    //set agent state
-    ClientState::send_control_state();
+    //does not do anything
+    //ClientState::send_control_state();
 
+    check_for_dropped_packets(np);      //check again, probably redundant
     NetClient::flush_outgoing_packets();
-    check_for_dropped_packets(np);
+
     NetClient::poll_connection_timeout();
 
     ClientState::ClientTick();
-    return;
+
 }
-*/
+
 
 #endif

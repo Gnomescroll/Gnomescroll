@@ -38,7 +38,7 @@ import c_lib.c_lib_sdl as cSDL
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
 from init_c_lib import _pviz_draw
-from init_c_lib import NetClientTick, NetClientConnect
+from init_c_lib import NetClientStateTick, NetClientNetInTick, NetClientNetOutTick, NetClientStartFrame, NetClientConnect
 from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -57,6 +57,7 @@ cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
 
 P2 = c_lib.terrain_map.Profiler()
+
 
 class App(object):
 
@@ -178,70 +179,24 @@ class App(object):
             _min = 0.025
             _max = 0.9
 
-            P.event("Physics Loop")
-            sl_c = 0
-
             agent = GameStateGlobal.agent
             if agent:
                 if agent.camera is None:
                     agent.camera = self.agent_camera
 
+            P.event("Physics Loop")
+            sl_c = 0
             while True: #physics loop
                 tc = GET_TICK()
                 if tc == 0 or sl_c > 2:
                     break
+                if sl_c == 0:
+                    NetClientStartFrame() #physics tick
 
                 sl_c += 1
+
+                ParticleTestSpawn(_i)
                 _i+=1
-                #neutron_fountain()
-                if _i % 30 == 0:
-                    pass
-                    #cParticles._generate_circuit_tree(0,0)
-                if _i % 350 == 0:
-                    #cParticles._create_grenade(5,5,2, 0, 0, 50, 0, 350)
-                    pass
-                if False or _i % 15 == 0:
-                    v = 4
-                    x = v*random.random() -0.5
-                    y = v*random.random() -0.5
-                    z = v*random.random() -0.5
-                    le = math.sqrt(x**2+y**2+z**2)
-                    x *= v / le
-                    y *= v / le
-                    z *= v / le
-                    #cParticles._create_grenade(25,25,-4, x,y,z, 0, 350)
-                if _i % 150 == 0:
-                    v = 2
-                    x = v*(random.random() -0.5)
-                    y = v*(random.random() -0.5)
-                    z = v*(random.random() -0.5)
-                    le = math.sqrt(x**2+y**2+z**2)
-                    x *= v / le
-                    y *= v / le
-                    z *= v / le
-                    #_type = random.randint(0,9*3)
-                    _type=0
-                    #cParticles._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
-                #if True or _i % 15 == 0:
-                for _j_ in range(0,1):
-                    v = 3
-                    x = 32+ 16*random.random()
-                    y = 32+ 16*random.random()
-                    z = 40
-
-                    vx = v*(random.random() -0.5)
-                    vy = v*(random.random() -0.5)
-                    vz = -3.5 #v*(random.random() -0.5)
-                    #cParticles._create_cspray(x,y,z, vx,vy,vz)
-
-                for _j_ in range(0,5):
-                    x = 32+ 16*random.random()
-                    y = 32+ 16*random.random()
-                    z = 40.
-                    vx = v*(random.random() -0.5)
-                    vy = v*(random.random() -0.5)
-                    vz = -1. #v*(random.random() -0.5)
-                    #cParticles._create_minivox(x,y,z, vx,vy,vz)
 
                 cInput.process_events()
                 cInput.get_key_state()
@@ -254,60 +209,20 @@ class App(object):
                 #check if another physics tick is needed
                 self.world.tick()
                 cParticles.tick() ## TESTING
+                #state tick (whatever this does)
+                NetClientNetInTick()
+                NetClientStateTick()
 
-            if sl_c > 2:
+            #this gets triggered if longer than 30ms between render frames
+            if sl_c >= 2:
                 print "Physics: %i ticks this frame" % (sl_c)
-            if sl_c > 0:
-                _o = -1
-                _a_id= 0
-                if _o==0:
-                    if _m < 50:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _m < 100:
-                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _m < 150:
-                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _m < 200:
-                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
 
-                    if _m == 199:
-                        _m = 0
-                    else:
-                        _m += 1
-                if _o==1:
-                    if _m < 32:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _m < 64:
-                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                        
-                    if _m == 64:
-                        _m = 0
-                    else:
-                        _m += 1
-                if _o==2:
-                    _r = random.random()
-                    #print str(_r)
-                    if _r < 0.25:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _r < 0.50:
-                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _r < 0.75:
-                        set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    else:
-                        set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                if _o==3:
-                    set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                if _o==4:
-                    if _m < 32:
-                        set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                    elif _m < 64:
-                        set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-                        
-                    if _m == 64:
-                        _m = 0
-                    else:
-                        _m += 1
-                NetClientTick()
+            #if there has been at least one physics tick
+            if sl_c > 0:
+                #NetClientTick()
+                NetClientNetOutTick()
+
+            NetClientNetInTick() #every draw frame, process incoming
 
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick()
@@ -327,9 +242,9 @@ class App(object):
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
             
-            P.event("Draw World")
             #import pdb; pdb.set_trace()
-            
+
+            P.event("Draw Interpolation")
             current_tick = cSDL.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
@@ -340,6 +255,7 @@ class App(object):
             if InputGlobal.input == 'agent' and GameStateGlobal.agent is not None:
                 self.agent_camera.pos(GameStateGlobal.agent.camera_position())
 
+            P.event("Draw World")
             self.world.draw(first_person)
             if GameStateGlobal.agent is not None:
                 GameStateGlobal.agent.draw_aiming_direction()
@@ -405,6 +321,111 @@ class App(object):
 
         cSDL.close()
 
+
+'''
+if sl_c > 0:
+    _o = -1
+    _a_id= 0
+    if _o==0:
+        if _m < 50:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 100:
+            set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 150:
+            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 200:
+            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+
+        if _m == 199:
+            _m = 0
+        else:
+            _m += 1
+    if _o==1:
+        if _m < 32:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 64:
+            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+            
+        if _m == 64:
+            _m = 0
+        else:
+            _m += 1
+    if _o==2:
+        _r = random.random()
+        #print str(_r)
+        if _r < 0.25:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _r < 0.50:
+            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _r < 0.75:
+            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        else:
+            set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+    if _o==3:
+        set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+    if _o==4:
+        if _m < 32:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 64:
+            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+            
+        if _m == 64:
+            _m = 0
+        else:
+            _m += 1
+'''
+
+def ParticleTestSpawn(_i):
+    return
+    #neutron_fountain()
+    if _i % 30 == 0:
+        pass
+        #cParticles._generate_circuit_tree(0,0)
+    if _i % 350 == 0:
+        #cParticles._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+        pass
+    if False or _i % 15 == 0:
+        v = 4
+        x = v*random.random() -0.5
+        y = v*random.random() -0.5
+        z = v*random.random() -0.5
+        le = math.sqrt(x**2+y**2+z**2)
+        x *= v / le
+        y *= v / le
+        z *= v / le
+        #cParticles._create_grenade(25,25,-4, x,y,z, 0, 350)
+    if _i % 150 == 0:
+        v = 2
+        x = v*(random.random() -0.5)
+        y = v*(random.random() -0.5)
+        z = v*(random.random() -0.5)
+        le = math.sqrt(x**2+y**2+z**2)
+        x *= v / le
+        y *= v / le
+        z *= v / le
+        #_type = random.randint(0,9*3)
+        _type=0
+        #cParticles._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+    #if True or _i % 15 == 0:
+    for _j_ in range(0,1):
+        v = 3
+        x = 32+ 16*random.random()
+        y = 32+ 16*random.random()
+        z = 40
+
+        vx = v*(random.random() -0.5)
+        vy = v*(random.random() -0.5)
+        vz = -3.5 #v*(random.random() -0.5)
+        #cParticles._create_cspray(x,y,z, vx,vy,vz)
+
+    for _j_ in range(0,5):
+        x = 32+ 16*random.random()
+        y = 32+ 16*random.random()
+        z = 40.
+        vx = v*(random.random() -0.5)
+        vy = v*(random.random() -0.5)
+        vz = -1. #v*(random.random() -0.5)
+        #cParticles._create_minivox(x,y,z, vx,vy,vz)
 
 if __name__ == '__main__':
     app = App()
