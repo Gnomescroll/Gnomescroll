@@ -68,7 +68,15 @@ Gamma Correction:
 http://http.developer.nvidia.com/GPUGems3/gpugems3_ch24.html
 http://www.4p8.com/eric.brasseur/gamma.html
 
+
 Passing GL_SRGB_EXT instead of GL_RGB to glTexImage2D, for example, ensures that any shader accesses to the specified texture return linear pixel values.
+
+
+Occlusion Queries:
+
+http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter06.html
+
+Some games—for example, shader-heavy ones—use a separate initial rendering pass that writes only to the depth buffer. Subsequent passes test against this depth buffer, and thus expensive shading is done only for visible pixels. If the scenes are complex, our occlusion-culling algorithm can be used to accelerate establishing the initial depth buffer and at the same time to obtain a complete visibility classification of the hierarchy. For the subsequent passes, we skip over objects or whole groups of objects that are completely invisible at virtually no cost.
 
 Array Textures:
 http://www.opengl.org/wiki/Array_Texture

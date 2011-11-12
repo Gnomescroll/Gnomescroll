@@ -179,13 +179,12 @@ class App(object):
             _min = 0.025
             _max = 0.9
 
-            P.event("Physics Loop")
-
             agent = GameStateGlobal.agent
             if agent:
                 if agent.camera is None:
                     agent.camera = self.agent_camera
 
+            P.event("Physics Loop")
             sl_c = 0
             while True: #physics loop
                 tc = GET_TICK()
@@ -213,7 +212,7 @@ class App(object):
                 cParticles.tick() ## TESTING
                 #state tick (whatever this does)
                 NetClientNetInTick()
-                NetClientNetStateTick()
+                NetClientStateTick()
 
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
@@ -244,9 +243,9 @@ class App(object):
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
             
-            P.event("Draw World")
             #import pdb; pdb.set_trace()
-            
+
+            P.event("Draw Interpolation")
             current_tick = cSDL.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
@@ -257,6 +256,7 @@ class App(object):
             if InputGlobal.input == 'agent' and GameStateGlobal.agent is not None:
                 self.agent_camera.pos(GameStateGlobal.agent.camera_position())
 
+            P.event("Draw World")
             self.world.draw(first_person)
             if GameStateGlobal.agent is not None:
                 GameStateGlobal.agent.draw_aiming_direction()

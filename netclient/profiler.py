@@ -1,7 +1,7 @@
 
 import c_lib.c_lib_sdl
 
-p_on = False
+p_on = True
 verbrose = True #only print states that take more than 1 ms
 
 def get_ticks():

@@ -175,6 +175,14 @@ int init_video() {
         printf("ARB_MULTISAMPLE not supported \n");
     }
 
+
+    if(GLEW_GL_EXT_timer_query) {
+        printf("GL_EXT_timer_query supported\n");
+    } else {
+        printf("GL_EXT_timer_query not supported\n");
+    }
+
+
     printf("SDL: %s\n", SDL_GetError());
 
     return 0;
