@@ -5,8 +5,9 @@
 #include <c_lib/physics/vector.h>
 
 #define AGENT_MAX 1024
-#define AGENT_HEIGHT 1.8
-#define AGENT_HEIGHT_CROUCHED 0.9
+#define AGENT_HEIGHT 1.8f
+#define AGENT_HEIGHT_CROUCHED 0.9f
+#define AGENT_BOX_RADIUS 0.4f
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
@@ -74,6 +75,7 @@ class Agent_state {
         float phi;
 
         float b_height;
+        float box_r;
 
         int _new_control_state;
 
@@ -84,8 +86,10 @@ class Agent_state {
         #endif
 
         void _tick();
-        void _tick_jetpack();
-        void _tick_jump();
+        //void _tick_jetpack();
+        //void _tick_jump();
+
+        void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
 
         void teleport(float x,float y,float z);
 
