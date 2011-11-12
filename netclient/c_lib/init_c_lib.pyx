@@ -18,6 +18,7 @@ cdef extern from "./net_lib/client.h":
     void _NetClientStateTick()
     void _NetClientNetInTick()
     void _NetClientNetOutTick()
+    void _NetClientStartFrame()
     void _NetClientConnect(int a, int b,int c, int d, int _port)
 #   void _NetClientTick()
 
@@ -32,6 +33,9 @@ def NetClientNetInTick():
 
 def NetClientNetOutTick():
     _NetClientNetOutTick()
+
+def NetClientStartFrame():
+    _NetClientStartFrame()
 
 def NetClientConnect(int a, int b,int c, int d, int _port):
     _NetClientConnect(a,b,c,d, _port)

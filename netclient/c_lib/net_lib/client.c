@@ -81,13 +81,13 @@ void _NetClientTick() {
 
 int _N =0;
 
-void _NetClientStateTick() {
-
+void _NetClientStartFrame() {
 
     update_current_netpeer_time();
     //start physics frame
     pviz_start_frame();
 
+    //connection management stuff
     _N++;
 
     NetClient::poll_connection_timeout();
@@ -97,8 +97,14 @@ void _NetClientStateTick() {
         return;
     }
 
+    //deal with retransmission before retransmission
     check_for_dropped_packets(np);
+    
     NetClient::poll_connection_timeout();
+
+}
+
+void _NetClientStateTick() {
 
     //Does nothing
     ClientState::ClientTick();

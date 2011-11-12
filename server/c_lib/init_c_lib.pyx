@@ -41,7 +41,7 @@ cdef extern from "../c_lib/time/physics_timer.h":
 
 #consider deprecating?
 
- #DEPRECATE
+#DEPRECATE
 def StartPhysicsTimer(frequency):
     _start_physics_timer(frequency)
 
