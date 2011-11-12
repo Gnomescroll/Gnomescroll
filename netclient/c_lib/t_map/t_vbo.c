@@ -1227,7 +1227,7 @@ glDisable(GL_CULL_FACE);
 
 glDisable(GL_TEXTURE_2D);
 
-    printf("vnum= %i\n", _vnum);
+    //printf("vnum= %i\n", _vnum);
 }
 
 void DRAW_VBOS1a() {
