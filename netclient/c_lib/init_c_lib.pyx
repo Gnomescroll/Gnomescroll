@@ -32,10 +32,9 @@ def NetClientNetInTick():
 
 def NetClientNetOutTick():
     _NetClientNetOutTick()
-    
+
 def NetClientConnect(int a, int b,int c, int d, int _port):
     _NetClientConnect(a,b,c,d, _port)
-
 
 ##timer
 

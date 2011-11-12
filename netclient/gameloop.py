@@ -38,7 +38,7 @@ import c_lib.c_lib_sdl as cSDL
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
 from init_c_lib import _pviz_draw
-from init_c_lib import NetClientTick, NetClientConnect
+from init_c_lib import NetClientStateTick, NetClientNetInTick, NetClientNetOutTick, NetClientConnect
 from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -192,6 +192,7 @@ class App(object):
                     break
 
                 sl_c += 1
+                '''
                 _i+=1
                 #neutron_fountain()
                 if _i % 30 == 0:
@@ -242,7 +243,7 @@ class App(object):
                     vy = v*(random.random() -0.5)
                     vz = -1. #v*(random.random() -0.5)
                     #cParticles._create_minivox(x,y,z, vx,vy,vz)
-
+                '''
                 cInput.process_events()
                 cInput.get_key_state()
                 if GameStateGlobal.agent is not None:
@@ -255,9 +256,10 @@ class App(object):
                 #check if another physics tick is needed
                 self.world.tick()
                 cParticles.tick() ## TESTING
-
+            
             if sl_c > 2:
                 print "Physics: %i ticks this frame" % (sl_c)
+            '''
             if sl_c > 0:
                 _o = -1
                 _a_id= 0
@@ -308,6 +310,8 @@ class App(object):
                         _m = 0
                     else:
                         _m += 1
+            '''
+            if sl_c > 0:
                 NetClientTick()
 
             P.event("MapControllerGlobal.mapController.tick()")
