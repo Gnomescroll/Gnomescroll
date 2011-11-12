@@ -638,6 +638,7 @@ void Agent_state::_tick()
         if (s.z < 0.0f) {
             jump_ready = true;
         }
+    }
 }
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
