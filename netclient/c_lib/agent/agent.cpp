@@ -261,7 +261,7 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
 
     int z0 = z;
     //int z1 = z+1.0;
-    int z1 = z+ (box_h/2.0f);
+    int z1 = z+ (box_h/2.0f);   // this a bug but we can tunnel
     int z2 = z+box_h;
 
     //int z_min = s.z;
