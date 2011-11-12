@@ -247,7 +247,6 @@ class App(object):
                 cInput.get_key_state()
                 if GameStateGlobal.agent is not None:
                     GameStateGlobal.agent.set_button_state()
-                    GameStateGlobal.agent.set_angle(self.agent_camera.angles())
 
                 NetClientGlobal.connection.attempt_recv()
                 self.animations.tick()

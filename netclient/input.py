@@ -337,29 +337,29 @@ class Keyboard(object):
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:
             return
-        v = 1
-        d_x, d_y, v_x, v_y, jetpack, brake = [0 for i in range(6)]
 
-        u,d,l,r, jetpack, brake = [0 for i in range(6)]
-        old_buttons = GameStateGlobal.agent.button_state
+        f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = [0]*11
 
         if 'w' in keyboard:
-                u=1
+            f = 1
         if 's' in keyboard:
-                d=1
+            b = 1
         if 'a' in keyboard:
-                l = 1
+            l = 1
         if 'd' in keyboard:
-                r=1
+            r=1
         if 'c' in keyboard:
-            brake = 1
+            boost = 1
+        if 'z' in keyboard:
+            jet = 1
         if 'SPACE' in keyboard:
-            jetpack = 1
+            jump = 1
+        if 'left ctrl' in keyboard:
+            crouch = 1
+        #misc1=misc2=misc3=0
 
-        button_state = [u,d,l,r, jetpack, brake]
+        button_state = [f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3]
         GameStateGlobal.agent.button_state = button_state
-
-
 
     def camera_input_mode(self, keyboard):
         v = opts.camera_speed

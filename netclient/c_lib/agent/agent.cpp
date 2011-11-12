@@ -402,7 +402,6 @@ void Agent_state::_tick()
         const float xy_speed = 2.0f / tr;
         const float z_gravity = -2.0f / tr2;
         const float z_jetpack = (0.5f / tr2) - z_gravity;
-        //const float z_jetpack = 2.5f / tr2;
 
         float jump_boost = 0.25f;
 
@@ -412,9 +411,6 @@ void Agent_state::_tick()
 
         const float pi = 3.14159265f;
 
-        //box properties
-        //float b_height = 1.8;  //agent collision box height
-        
         if (crouch) {
             b_height = AGENT_HEIGHT_CROUCHED;
         } else {
