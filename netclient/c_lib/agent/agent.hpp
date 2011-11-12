@@ -82,7 +82,8 @@ class Agent_state {
         
         int _new_control_state;
 
-        int jump_ready;
+        bool jump_ready;
+        bool crouching;
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;

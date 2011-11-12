@@ -260,9 +260,8 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     int y_max = y + box_r;
 
     int z0 = z;
-    //int z1 = z+1.0;
-    int z1 = z+ (box_h/2.0f);   // this a bug but we can tunnel
-    int z2 = z+box_h;
+    int z1 = z + 1.0f;
+    int z2 = z + box_h;
 
     //int z_min = s.z;
     //int z_max = s.z + b_height + 1.0;
@@ -288,6 +287,40 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     }
 
     if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0) || isActive(_get(x_min,y_max,z2) != 0) ) {
+        //south, west
+        return true;
+    }
+
+    return false;
+}
+
+// for when box_h < 1
+inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int z0 = z;
+    int z1 = z + box_h;
+
+    if(isActive(_get(x_max,y_max,z0) != 0) || isActive(_get(x_max,y_max,z1) != 0)) {
+        //north, west
+        return true;
+    }
+
+    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z1) != 0)) {
+        //north, east
+        return true;
+    }
+
+    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z1) != 0)) {
+        //south, east
+        return true;
+    }
+
+    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0)) {
         //south, west
         return true;
     }
@@ -365,6 +398,40 @@ inline bool on_solid_ground(float box_r, float x, float y, float z) {
 
     return false;
 }
+
+inline bool can_stand_up_inner(int x_min, int x_max, int y_min, int y_max, float z) {
+    int z0 = (int)(z);
+
+    if (isActive(_get(x_min, y_min, z0)) ||
+        isActive(_get(x_max, y_min, z0)) ||
+        isActive(_get(x_min, y_max, z0)) ||
+        isActive(_get(x_max, y_max, z0))) {
+        return false;
+    }
+    return true;
+}
+
+// check if there will be a collision if standing up
+inline bool can_stand_up(float box_r, float x, float y, float z, float current_h, float new_h) {
+    int x_min = (int)(x - box_r);
+    int x_max = (int)(x + box_r);
+
+    int y_min = (int)(y - box_r);
+    int y_max = (int)(y + box_r);    
+
+    z += current_h;
+
+    bool yes = true;
+
+    do {
+        yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
+        z += 1.0f;
+        z = (z > new_h) ? new_h : z;
+    } while (yes && z < new_h);
+
+    return yes;
+}
+
 
 void Agent_state::save_state() {
     // copies current state to old state
@@ -446,14 +513,6 @@ void Agent_state::_tick()
 
         const float pi = 3.14159265f;
 
-        if (crouch) {
-            b_height = AGENT_HEIGHT_CROUCHED;
-            camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
-        } else {
-            b_height = AGENT_HEIGHT;
-            camera_height = AGENT_CAMERA_HEIGHT;
-        }
-        
         //int collision[6];
         //north +x
         //south -x
@@ -504,7 +563,6 @@ void Agent_state::_tick()
         // jump
         if (jump && jump_ready) {
             s.vz += jump_boost;
-            jump_ready = 0;
         }
 
         float new_x, new_y, new_z;
@@ -512,7 +570,20 @@ void Agent_state::_tick()
         new_y = s.y + s.vy + cs_vy;
         new_z = s.z + s.vz;
 
-        bool current_collision = collision_check2(box_r, b_height, s.x,s.y,s.z);
+        bool (*collision_check)(float, float, float, float, float);
+        if (crouch || (crouching && !can_stand_up(box_r, s.x, s.y, s.z, AGENT_HEIGHT, b_height))) {
+            crouching = true;
+            b_height = AGENT_HEIGHT_CROUCHED;
+            camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
+            collision_check = &collision_check_short;
+        } else {
+            crouching = false;
+            b_height = AGENT_HEIGHT;
+            camera_height = AGENT_CAMERA_HEIGHT;
+            collision_check = &collision_check2;
+        }
+
+        bool current_collision = collision_check(box_r, b_height, s.x,s.y,s.z);
         if(current_collision) {
             s.x = new_x;
             s.y = new_y;
@@ -524,20 +595,20 @@ void Agent_state::_tick()
         /*
             Collision Order: x,y,z
         */
-        bool collision_x = collision_check2(box_r, b_height, new_x,s.y,s.z);
+        bool collision_x = collision_check(box_r, b_height, new_x,s.y,s.z);
         if(collision_x) {
             new_x = s.x;
             s.vx = 0;
         }
 
-        bool collision_y = collision_check2(box_r, b_height, new_x,new_y,s.z);
+        bool collision_y = collision_check(box_r, b_height, new_x,new_y,s.z);
         if(collision_y) {
             new_y = s.y;
             s.vy = 0;
         }
 
         //top and bottom matter
-        bool collision_z = collision_check2(box_r, b_height, new_x,new_y,new_z);
+        bool collision_z = collision_check(box_r, b_height, new_x,new_y,new_z);
         if(collision_z) {
 
             if(s.vz < -z_bounce_v_threshold)
@@ -558,102 +629,15 @@ void Agent_state::_tick()
 
         // allow jumping if on ground or under the floor
         bool is_on_ground = on_solid_ground(box_r, s.x, s.y, s.z);
-        if (is_on_ground || s.z < 0.0f) {
-            jump_ready = 1;
+        if (! is_on_ground) {
+            jump_ready = false;
+        } else {
+            jump_ready = true;
         }
-
-    /*
-        int bx_pos_projected = s.x+s.vx+cs_vx+box_r;    //floor
-        int bx_neg_projected = s.x+s.vx+cs_vy-box_r;
-
-        int by_pos_projected = s.y+s.vy+cs_vx+box_r;
-        int by_neg_projected = s.y+s.vy+cs_vy-box_r; 
-                  
-        int bz_pos_projected = s.z+s.vz+cs_vx+b_height;
-        int bz_neg_projected = s.z+s.vz;
-
-
-        //handle x collisions
-        if(xc_pos_current == 0 && xc_neg_current == 0)
-        {
-            if(xc_pos_projected != 0) s.vx = 0.0;
-            if(xc_neg_projected != 0) s.vx = 0.0;
+        
+        if (s.z < 0.0f) {
+            jump_ready = true;
         }
-
-        //handle y collisions
-
-        if(yc_pos_current ==0 && yc_neg_current ==0)
-        {
-            if(yc_pos_projected != 0) s.vy = 0;
-            if(yc_neg_projected != 0) s.vy = 0;
-        }
-
-        //handle z collision
-
-        //#Hard collision predicted and not inside of something already
-        if(zc_neg_projected != 0 && zc_neg_current == 0)
-        {
-            if(s.vz < 0)
-            {
-                if(s.vz < -z_bounce_v_threshold)
-                {
-                    s.vz *= -1 *z_bounce;
-                }
-                else
-                {
-                    s.vz = 0;
-                }
-            }
-        }
-
-        if(zc_neg_current != 0) // #if agent is inside of block, float them out the top
-        {
-            s.z += 0.50 / tr;
-        }
-
-        if(zc_pos_current != 0) // #if agent is inside of block, float them out the top
-        {
-            s.z += -0.50 / tr;
-        }
-
-        //jetpack handling
-        if(!on_ground) {
-            if(s.z>0)
-            {
-                s.vz += z_gravity;
-            } 
-            else 
-            {
-                s.vz -= z_gravity;
-            }    
-        }
-        if(jetpack) {
-            s.vz += z_jetpack;
-        }
-        */
-
-        //newton intergrate positions
-    /*
-        s.x += s.vx + cs_vx;    //use better intergrator
-        s.y += s.vy + cs_vy;
-        s.z += s.vz;
-
-        s.z = 1.01;
-    */
-
-    /*
-        printf("cs_vx= %f, cs_vy= %f \n", cs_vx, cs_vy);
-        printf("dx= %f, dy= %f, dz= %f \n", s.vx + cs_vx, s.vy + cs_vy, s.vz);
-        printf("cs_seq= %i, x= %f, y= %f, z= %f, vx= %f, vy= %f, vz= %f \n",cs_seq, s.x, s.y, s.z, s.vx, s.vy, s.vz);
-    */
-        //printf("vx= %f, vy= %f, vz= %f \n", s.vx, s.vy, s.vz);
-    } //end physics loop
-    //printf("_tick: processed %i agent ticks\n", _tc);
-    if(id == 0) 
-    {
-        //printf("x= %f, y= %f, z= %f \n", s.x, s.y, s.z);
-        //printf("vx= %f, vy= %f, vz= %f \n", s.vx, s.vy, s.vz);
-    }
 }
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
@@ -745,7 +729,8 @@ Agent_state::Agent_state(int _id) {
     box_r = AGENT_BOX_RADIUS;
     camera_height = AGENT_CAMERA_HEIGHT;
 
-    jump_ready = 1;
+    jump_ready = true;
+    crouching = false;
 
     cs_seq = 0;
 
@@ -777,7 +762,8 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
     box_r = AGENT_BOX_RADIUS;
     camera_height = AGENT_CAMERA_HEIGHT;
 
-    jump_ready = 1;
+    jump_ready = true;
+    crouching = false;
 
     //s.x = 16.5;
     //s.y = 16.5;
