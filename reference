@@ -7,6 +7,9 @@ Why Minecraft is Slow:
 http://optifog.blogspot.com/
 http://www.reddit.com/r/programming/comments/kgq62/understanding_minecraft_performance/
 
+Character Dimensions and Boss Battle:
+http://www.youtube.com/watch?v=6lA4ohHhCsw&feature=feedu
+
 !!! OptiFine MT (multithreaded) tries to solve the problem by decoupling the chunk loading from the screen updates so that one complex chunk is distributed over several frames or several empty chunks are loaded inside one frame. The target is to stabilize the frame rate and speed up the loading of empty chunks.
 
 Enabling SSE3 optimizations:

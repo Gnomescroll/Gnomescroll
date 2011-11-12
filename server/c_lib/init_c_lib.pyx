@@ -26,13 +26,20 @@ def NetServerTick():
 
 ##timer
 
+#old functions: deprecate
 cdef extern from "../c_lib/time/physics_timer.h":
     int _start_physics_timer(int frequency)
     int _tick_check()
     long _get_time()
     long _get_tick()
+
+#new functions
+cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
     int _GET_TICK()
+    int _GET_MS_TIME()
+
+#consider deprecating?
 
  #DEPRECATE
 def StartPhysicsTimer(frequency):
@@ -55,3 +62,6 @@ def START_CLOCK():
 
 def GET_TICK():
     return _GET_TICK()
+
+def GET_MS_TIME():
+    return _GET_MS_TIME();
