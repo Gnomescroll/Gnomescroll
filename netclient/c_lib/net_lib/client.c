@@ -90,7 +90,9 @@ void _NetClientStartFrame() {
     //connection management stuff
     _N++;
 
-    NetClient::poll_connection_timeout();
+    //connection timeout returns if connected and times out on this frame
+    if(NetClient::poll_connection_timeout() == 1) _N=0; //by setting _N to 0, will attempt to reconnect immediately on disconnect
+
     if(np->connected == 0) {
         if(_N % 90 == 0) printf("UDP Socket not connected!\n");
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
@@ -99,8 +101,6 @@ void _NetClientStartFrame() {
 
     //deal with retransmission before retransmission
     check_for_dropped_packets(np);
-    
-    NetClient::poll_connection_timeout();
 
 }
 
@@ -127,8 +127,9 @@ void _NetClientNetOutTick() {
     //does not do anything
     //ClientState::send_control_state();
 
+    check_for_dropped_packets(np);      //check again, probably redundant
     NetClient::flush_outgoing_packets();
-    check_for_dropped_packets(np);
+
     NetClient::poll_connection_timeout();
 
     ClientState::ClientTick();

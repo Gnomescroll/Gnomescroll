@@ -15,10 +15,10 @@ def init():
 #network stuff
 
 cdef extern from "./net_lib/client.h":
+    void _NetClientStartFrame()
     void _NetClientStateTick()
     void _NetClientNetInTick()
     void _NetClientNetOutTick()
-    void _NetClientStartFrame()
     void _NetClientConnect(int a, int b,int c, int d, int _port)
 #   void _NetClientTick()
 
