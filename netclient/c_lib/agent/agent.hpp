@@ -91,6 +91,7 @@ class Agent_state {
         #endif
 
         void _tick();
+        //inline void __tick(); //does the actual work
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
 
@@ -143,6 +144,8 @@ class Agent_state {
         
         void save_state();
 };
+
+inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>
 

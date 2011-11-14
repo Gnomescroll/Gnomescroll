@@ -446,22 +446,37 @@ void Agent_state::save_state() {
     s_old.vz = s.vz;
 }
 
-void Agent_state::_tick()
- {
-
+void Agent_state::_tick() 
+{
+    
     save_state();
 
     //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
 
-    int index = (cs_seq+1) % 128;
+
 
     int _tc =0;
+    int index;
+    struct Agent_control_state _cs;
+
     while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
-        _tc++;
+
         cs_seq = (cs_seq+1)%256;
 
-        s.theta = cs[index].theta;
-        s.phi = cs[index].phi;
+        index = (cs_seq+1) % 128;
+        _cs = cs[index];
+
+        s = _agent_tick(_cs, s);
+
+        _tc++;
+    }
+
+
+}
+
+//takes an agent state and control state and returns new agent state
+inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as)
+ {
 
     /*    
         int forward =0;
@@ -470,182 +485,203 @@ void Agent_state::_tick()
         int right =0;
         int jetpack =0;
     */  
-        int a_cs = cs[index].cs;
 
-        //set control state variables
-        //printf("cs= %i \n", a_cs);
-        bool forward     = a_cs & 1? 1 :0;
-        bool backwards   = a_cs & 2? 1 :0;
-        bool left        = a_cs & 4? 1 :0;
-        bool right       = a_cs & 8? 1 :0;
-        bool jetpack     = a_cs & 16? 1 :0;
-        bool jump        = a_cs & 32? 1 :0;
-        bool crouch      = a_cs & 64? 1 :0;
-        bool boost       = a_cs & 128? 1 :0;
-        bool misc1       = a_cs & 256? 1 :0;
-        bool misc2       = a_cs & 512? 1 :0;
-        bool misc3       = a_cs & 1024? 1 :0;     
+    int a_cs = _cs.cs;
+    //set control state variables
+    //printf("cs= %i \n", a_cs);
+    bool forward     = a_cs & 1? 1 :0;
+    bool backwards   = a_cs & 2? 1 :0;
+    bool left        = a_cs & 4? 1 :0;
+    bool right       = a_cs & 8? 1 :0;
+    bool jetpack     = a_cs & 16? 1 :0;
+    bool jump        = a_cs & 32? 1 :0;
+    bool crouch      = a_cs & 64? 1 :0;
+    bool boost       = a_cs & 128? 1 :0;
+    bool misc1       = a_cs & 256? 1 :0;
+    bool misc2       = a_cs & 512? 1 :0;
+    bool misc3       = a_cs & 1024? 1 :0;     
+
+/*
+    //local cordinates
+    int l_x = as.x;
+    int l_y = as.y;
+    int l_z = as.z;
+
+    //local float cordinates
+    float fl_x = as.x - floor(as.x);
+    float fl_y = as.y - floor(as.y);
+    float fl_z = as.z - floor(as.z);
+*/
+
+    const float tr = 10.0f;    //tick rate
+    const float tr2 = tr*tr;
+
+    const float xy_speed = 2.0f / tr;
+    const float z_gravity = -2.0f / tr2;
+    const float z_jetpack = (0.5f / tr2) - z_gravity;
+
+    float jump_boost = 0.25f;
+
+    //const float ground_distance = 0.02;   // unused
+    const float z_bounce = 0.20f;
+    const float z_bounce_v_threshold = 1.5f / tr;
+
+    const float pi = 3.14159265f;
+
+    //int collision[6];
+    //north +x
+    //south -x
+    //west +y
+    //east -y
+    //top +z
+    //bottom -z
+    //collision_check1(box_r, b_height, as.x,as.y,as.z, collision);
+
+    float cs_vx = 0;
+    float cs_vy = 0;
+
+    if(forward)
+    {
+            cs_vx += xy_speed*cos( as.theta * pi);
+            cs_vy += xy_speed*sin( as.theta * pi);
+    }
+    if(backwards)
+    {
+            cs_vx += -xy_speed*cos( as.theta * pi);
+            cs_vy += -xy_speed*sin( as.theta * pi);
+    }
+    if(left) 
+    {
+            cs_vx += xy_speed*cos( as.theta * pi + pi/2);
+            cs_vy += xy_speed*sin( as.theta * pi + pi/2);
+    }
+    if(right) 
+    {
+            cs_vx += -xy_speed*cos( as.theta * pi + pi/2);
+            cs_vy += -xy_speed*sin( as.theta * pi + pi/2);
+    }
+
+    //jet pack and gravity
+    if(as.z > 0)
+    {
+        as.vz += z_gravity;
+    } 
+    else // under the floor, go back up
+    {
+        as.vz -= z_gravity;
+    }    
+    
+    if (jetpack) {
+        as.vz += z_jetpack;
+    }
+
+
+    // allow jumping if on ground
+    bool is_on_ground = on_solid_ground(box_r, as.x, as.y, as.z);
+
+    // jump
+    if (jump && is_on_ground) {
+        as.vz += jump_boost;
+    } else {
+        printf("Warning: Agent tried to jump but is not on ground!\n");
+    }
 
     /*
-        //local cordinates
-        int l_x = s.x;
-        int l_y = s.y;
-        int l_z = s.z;
-
-        //local float cordinates
-        float fl_x = s.x - floor(s.x);
-        float fl_y = s.y - floor(s.y);
-        float fl_z = s.z - floor(s.z);
-    */
-
-        const float tr = 10.0f;    //tick rate
-        const float tr2 = tr*tr;
-
-        const float xy_speed = 2.0f / tr;
-        const float z_gravity = -2.0f / tr2;
-        const float z_jetpack = (0.5f / tr2) - z_gravity;
-
-        float jump_boost = 0.25f;
-
-        //const float ground_distance = 0.02;   // unused
-        const float z_bounce = 0.20f;
-        const float z_bounce_v_threshold = 1.5f / tr;
-
-        const float pi = 3.14159265f;
-
-        //int collision[6];
-        //north +x
-        //south -x
-        //west +y
-        //east -y
-        //top +z
-        //bottom -z
-        //collision_check1(box_r, b_height, s.x,s.y,s.z, collision);
-
-        float cs_vx = 0;
-        float cs_vy = 0;
-
-        if(forward)
-        {
-                cs_vx += xy_speed*cos( s.theta * pi);
-                cs_vy += xy_speed*sin( s.theta * pi);
-        }
-        if(backwards)
-        {
-                cs_vx += -xy_speed*cos( s.theta * pi);
-                cs_vy += -xy_speed*sin( s.theta * pi);
-        }
-        if(left) 
-        {
-                cs_vx += xy_speed*cos( s.theta * pi + pi/2);
-                cs_vy += xy_speed*sin( s.theta * pi + pi/2);
-        }
-        if(right) 
-        {
-                cs_vx += -xy_speed*cos( s.theta * pi + pi/2);
-                cs_vy += -xy_speed*sin( s.theta * pi + pi/2);
-        }
-
-        //jet pack and gravity
-        if(s.z > 0)
-        {
-            s.vz += z_gravity;
-        } 
-        else // under the floor, go back up
-        {
-            s.vz -= z_gravity;
-        }    
-        
-        if (jetpack) {
-            s.vz += z_jetpack;
-        }
-
         // jump
         if (jump) {
             if (!jump_held && jump_ready) {
-                s.vz += jump_boost;
+                as.vz += jump_boost;
             }
             jump_held = true;
         } else {
             jump_held = false;
         }
+    */
 
-        float new_x, new_y, new_z;
-        new_x = s.x + s.vx + cs_vx;
-        new_y = s.y + s.vy + cs_vy;
-        new_z = s.z + s.vz;
+    float new_x, new_y, new_z;
+    new_x = as.x + as.vx + cs_vx;
+    new_y = as.y + as.vy + cs_vy;
+    new_z = as.z + as.vz;
 
-        bool (*collision_check)(float, float, float, float, float);
-        if (crouch || (crouching && !can_stand_up(box_r, s.x, s.y, s.z, AGENT_HEIGHT, b_height))) {
-            crouching = true;
-            b_height = AGENT_HEIGHT_CROUCHED;
-            camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
-            collision_check = &collision_check_short;
-        } else {
-            crouching = false;
-            b_height = AGENT_HEIGHT;
-            camera_height = AGENT_CAMERA_HEIGHT;
-            collision_check = &collision_check2;
-        }
 
-        bool current_collision = collision_check(box_r, b_height, s.x,s.y,s.z);
-        if(current_collision) {
-            s.x = new_x;
-            s.y = new_y;
-            s.z += 0.02; //nudge factor
-            if(s.vz < 0) s.vz = 0;
-            continue;
-        }
+    //assume agent is crouching if they are holding crouch!
+    //set crouch flag if agent is crouching!
 
-        /*
-            Collision Order: x,y,z
-        */
-        bool collision_x = collision_check(box_r, b_height, new_x,s.y,s.z);
-        if(collision_x) {
-            new_x = s.x;
-            s.vx = 0;
-        }
-
-        bool collision_y = collision_check(box_r, b_height, new_x,new_y,s.z);
-        if(collision_y) {
-            new_y = s.y;
-            s.vy = 0;
-        }
-
-        //top and bottom matter
-        bool collision_z = collision_check(box_r, b_height, new_x,new_y,new_z);
-        if(collision_z) {
-
-            if(s.vz < -z_bounce_v_threshold)
-            {
-                s.vz *= -1 *z_bounce;
-            }
-            else
-            {
-                s.vz = 0;
-            }
-
-            new_z = s.z + s.vz;
-        }       
-
-        // allow jumping if on ground
-        bool is_on_ground = on_solid_ground(box_r, s.x, s.y, s.z);
-        if (! is_on_ground) {
-            jump_ready = false;
-        } else {
-            jump_ready = true;
-        }
-
-        // or under the floor
-        if (s.z < 0.0f) {
-            jump_ready = true;
-        }
-
-        s.x = new_x;
-        s.y = new_y;
-        s.z = new_z;
-
+/*
+    bool (*collision_check)(float, float, float, float, float);
+    if (crouch || (crouching && !can_stand_up(box_r, as.x, as.y, as.z, AGENT_HEIGHT, b_height))) {
+        crouching = true;
+        b_height = AGENT_HEIGHT_CROUCHED;
+        camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
+        collision_check = &collision_check_short;
+    } else {
+        crouching = false;
+        b_height = AGENT_HEIGHT;
+        camera_height = AGENT_CAMERA_HEIGHT;
+        collision_check = &collision_check2;
     }
+*/
+
+    bool current_collision = collision_check(box_r, b_height, as.x,as.y,as.z);
+    if(current_collision) {
+        as.x = new_x;
+        as.y = new_y;
+        as.z += 0.02; //nudge factor
+        if(as.vz < 0) as.vz = 0;
+        continue;
+    }
+
+    /*
+        Collision Order: x,y,z
+    */
+    bool collision_x = collision_check(box_r, b_height, new_x,as.y,as.z);
+    if(collision_x) {
+        new_x = as.x;
+        as.vx = 0;
+    }
+
+    bool collision_y = collision_check(box_r, b_height, new_x,new_y,as.z);
+    if(collision_y) {
+        new_y = as.y;
+        as.vy = 0;
+    }
+
+    //top and bottom matter
+    bool collision_z = collision_check(box_r, b_height, new_x,new_y,new_z);
+    if(collision_z) {
+
+        if(as.vz < -z_bounce_v_threshold)
+        {
+            as.vz *= -1 *z_bounce;
+        }
+        else
+        {
+            as.vz = 0;
+        }
+
+        new_z = as.z + as.vz;
+    }       
+
+/*
+    if (! is_on_ground) {
+        jump_ready = false;
+    } else {
+        jump_ready = true;
+    }
+*/
+
+/*
+    // or under the floor
+    if (as.z < 0.0f) {
+        jump_ready = true;
+    }
+*/
+
+    as.x = new_x;
+    as.y = new_y;
+    as.z = new_z;
+
+    return as;
 }
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {

@@ -1,20 +1,7 @@
 
 #pragma once
-/*
-#include <net_lib/client/client.hpp>
-#include <net_lib/common/message_handler.h>
-#include <c_lib/agent/agent.hpp>
-*/
 
 #include <c_lib/agent/net_agent.hpp>
-
-//#include <net_lib/server/server.h>
-
-//#include <c_lib/template/net.hpp>
-
-//#include <net_lib/client/client.hpp>
-
-//#include <c_lib/agent/net_agent.cpp>
 
 /*
     Use for client side and state update to server
