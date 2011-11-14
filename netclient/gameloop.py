@@ -200,8 +200,8 @@ class App(object):
 
                 cInput.process_events()
                 cInput.get_key_state()
-                if GameStateGlobal.agent is not None:
-                    GameStateGlobal.agent.set_button_state()
+                if agent:
+                    agent.set_button_state()
 
                 NetClientGlobal.connection.attempt_recv()
                 self.animations.tick()
@@ -230,12 +230,25 @@ class App(object):
             if InputGlobal.camera == 'agent':
                 self.camera.unload()
                 self.agent_camera.load()
-                self.agent_camera.pos(GameStateGlobal.agent.camera_position())
+                if agent:
+                    self.agent_camera.pos(agent.camera_position())
                 first_person = True
             elif InputGlobal.camera == 'camera':
                 self.agent_camera.unload()
                 self.camera.load()
                 first_person = False
+
+            current_tick = cSDL.get_ticks()
+            delta_tick = current_tick - last_tick
+            last_tick = current_tick
+            if agent:
+                agent.update_interpolated_position(delta_tick)
+            if InputGlobal.input == 'agent':
+                self.agent_camera.input_update(delta_tick)
+                if agent:
+                    self.agent_camera.pos(agent.camera_position())
+            elif InputGlobal.input == 'camera':
+                self.camera.input_update(delta_tick)
 
             camera.camera.world_projection()
 
@@ -245,23 +258,11 @@ class App(object):
             #import pdb; pdb.set_trace()
 
             P.event("Draw Interpolation")
-            current_tick = cSDL.get_ticks()
-            delta_tick = current_tick - last_tick
-            last_tick = current_tick
-
-            if agent:
-                agent.update_interpolated_position(delta_tick)
-            if InputGlobal.input == 'agent':
-                self.agent_camera.input_update(delta_tick)
-                if agent:
-                    self.agent_camera.pos(GameStateGlobal.agent.camera_position())
-            elif InputGlobal.input == 'camera':
-                self.camera.input_update(delta_tick)
 
             P.event("Draw World")
             self.world.draw(first_person)
-            if GameStateGlobal.agent is not None:
-                GameStateGlobal.agent.draw_aiming_direction()
+            if agent:
+                agent.draw_aiming_direction()
                 
             P.event("Animations Draw")
             self.animations.draw()
@@ -274,8 +275,8 @@ class App(object):
             if opts.hud:
                 camera.camera.hud_projection()
                 draw_cube_selector = False
-                if GameStateGlobal.agent:
-                    draw_cube_selector = (GameStateGlobal.agent.weapons.active().type == 3)
+                if agent:
+                    draw_cube_selector = (agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
 
                 if opts.diagnostic_hud:
@@ -311,7 +312,6 @@ class App(object):
 
             self.intervals.process()
 
-            agent = GameStateGlobal.agent
             if opts.sound:
                 if agent:
                     sounds.update(agent.listener_state())
