@@ -251,9 +251,12 @@ class App(object):
 
             if agent:
                 agent.update_interpolated_position(delta_tick)
-            camera.camera.input_update(delta_tick)
-            if InputGlobal.input == 'agent' and GameStateGlobal.agent is not None:
-                self.agent_camera.pos(GameStateGlobal.agent.camera_position())
+            if InputGlobal.input == 'agent':
+                self.agent_camera.input_update(delta_tick)
+                if agent:
+                    self.agent_camera.pos(GameStateGlobal.agent.camera_position())
+            elif InputGlobal.input == 'camera':
+                self.camera.input_update(delta_tick)
 
             P.event("Draw World")
             self.world.draw(first_person)
