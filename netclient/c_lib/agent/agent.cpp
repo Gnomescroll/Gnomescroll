@@ -509,7 +509,7 @@ void Agent_state::_tick()
 
         //const float ground_distance = 0.02;   // unused
         const float z_bounce = 0.20f;
-        const float z_bounce_v_threshold = 0.8f / tr;
+        const float z_bounce_v_threshold = 1.5f / tr;
 
         const float pi = 3.14159265f;
 
@@ -561,8 +561,13 @@ void Agent_state::_tick()
         }
 
         // jump
-        if (jump && jump_ready) {
-            s.vz += jump_boost;
+        if (jump) {
+            if (!jump_held && jump_ready) {
+                s.vz += jump_boost;
+            }
+            jump_held = true;
+        } else {
+            jump_held = false;
         }
 
         float new_x, new_y, new_z;
@@ -623,21 +628,23 @@ void Agent_state::_tick()
             new_z = s.z + s.vz;
         }       
 
-        s.x = new_x;
-        s.y = new_y;
-        s.z = new_z;
-
-        // allow jumping if on ground or under the floor
+        // allow jumping if on ground
         bool is_on_ground = on_solid_ground(box_r, s.x, s.y, s.z);
         if (! is_on_ground) {
             jump_ready = false;
         } else {
             jump_ready = true;
         }
-        
+
+        // or under the floor
         if (s.z < 0.0f) {
             jump_ready = true;
         }
+
+        s.x = new_x;
+        s.y = new_y;
+        s.z = new_z;
+
     }
 }
 

@@ -82,6 +82,7 @@ class Agent_state {
         
         int _new_control_state;
 
+        bool jump_held;
         bool jump_ready;
         bool crouching;
 
