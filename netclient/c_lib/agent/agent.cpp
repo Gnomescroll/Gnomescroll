@@ -600,28 +600,22 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     new_z = as.z + as.vz;
 
     // crouching
-    float b_height;
-    if (as.crouching) {
-        b_height = AGENT_HEIGHT_CROUCHED;
-    } else {
-        b_height = AGENT_HEIGHT;
-    }
-    const float box_r = AGENT_BOX_RADIUS;
+    float height;
     bool (*collision_check)(float, float, float, float, float);
-    if (crouch || (as.crouching && !can_stand_up(box_r, as.x, as.y, as.z, AGENT_HEIGHT, b_height))) {
+    if (crouch || (as.crouching && !can_stand_up(box.box_r, as.x, as.y, as.z, box.b_height, box.c_height))) {
         as.crouching = true;
-        b_height = AGENT_HEIGHT_CROUCHED;
-        as.camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
+        height = box.c_height;
+        //as.camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
         collision_check = &collision_check_short;
     } else {
         as.crouching = false;
-        b_height = AGENT_HEIGHT;
-        as.camera_height = AGENT_CAMERA_HEIGHT;
+        height = box.b_height;
+        //as.camera_height = AGENT_CAMERA_HEIGHT;
         collision_check = &collision_check2;
     }
 
     // collision
-    bool current_collision = collision_check(box_r, b_height, as.x,as.y,as.z);
+    bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
         as.y = new_y;
@@ -635,20 +629,20 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     /*
         Collision Order: x,y,z
     */
-    bool collision_x = collision_check(box_r, b_height, new_x,as.y,as.z);
+    bool collision_x = collision_check(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
         new_x = as.x;
         as.vx = 0;
     }
 
-    bool collision_y = collision_check(box_r, b_height, new_x,new_y,as.z);
+    bool collision_y = collision_check(box.box_r, height, new_x,new_y,as.z);
     if(collision_y) {
         new_y = as.y;
         as.vy = 0;
     }
 
     //top and bottom matter
-    bool collision_z = collision_check(box_r, b_height, new_x,new_y,new_z);
+    bool collision_z = collision_check(box.box_r, height, new_x,new_y,new_z);
     if(collision_z) {
 
         if(as.vz < -z_bounce_v_threshold)
