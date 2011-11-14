@@ -38,9 +38,9 @@ void init_cameras() {
 }
 
 CCamera::CCamera() {
-    set_aspect(85.0f, 800.0f, 600.0f, 0.1f, 1000.0f);
-    set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    set_aspect(85.0f, 0.1f, 1000.0f);
     set_dimensions();
+    set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 int CCamera::current() {
@@ -50,12 +50,14 @@ int CCamera::current() {
     return 0;
 }
 
-void CCamera::set_aspect(float fov, float x_size, float y_size, float z_near, float z_far) {
+void CCamera::set_aspect(float fov, float z_near, float z_far) {
     this->fov = fov;
-    this->x_size = x_size;
-    this->y_size = y_size;
     this->z_near = z_near;
     this->z_far = z_far;
+}
+
+void CCamera::set_fov(float fov) {
+    this->fov = fov;
 }
 
 void CCamera::set_projection(float x, float y, float z, float x_angle, float y_angle) {

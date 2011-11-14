@@ -28,6 +28,7 @@ auto-assign     Automatically assign to team
 fullscreen      Run game in fullscreen
 width           Window width
 height          Window height
+fov             Camera field of view
 
 sensitivity     Mouse sensitivity
 camera-speed    Camera speed
@@ -73,9 +74,10 @@ DEFAULTS = {
     'tcp'       :   settings.tcp_port,
     'udp'       :   settings.udp_port,
 
-    # Window
+    # Window / Camera
     'width'     :   settings.width,
     'height'    :   settings.height,
+    'fov'       :   settings.fov,
     
     # Controls
     'sensitivity'        : settings.sensitivity,
@@ -112,6 +114,7 @@ def parse(cl_args=None):
     parser.add_argument('-fs', '--fullscreen', action='store_true')
     parser.add_argument('-x', '--width', default=DEFAULTS['width'], type=int)
     parser.add_argument('-y', '--height', default=DEFAULTS['height'], type=int)
+    parser.add_argument('-fov', '--field-of-view', default=DEFAULTS['fov'], dest='fov', type=float)
 
     ''' Controls '''
     parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=int)
