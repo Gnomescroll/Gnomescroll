@@ -466,7 +466,7 @@ void Agent_state::_tick()
         index = (cs_seq+1) % 128;
         _cs = cs[index];
 
-        s = _agent_tick(_cs, s);
+        s = _agent_tick(_cs, box, s);
 
         _tc++;
     }
@@ -475,7 +475,7 @@ void Agent_state::_tick()
 }
 
 //takes an agent state and control state and returns new agent state
-inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as)
+inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
  {
 
     /*    
@@ -577,7 +577,7 @@ inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentS
 
 
     // allow jumping if on ground
-    bool is_on_ground = on_solid_ground(box_r, as.x, as.y, as.z);
+    bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
 
     // jump
     if (jump && is_on_ground) {
@@ -622,32 +622,37 @@ inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentS
     }
 */
 
-    bool current_collision = collision_check(box_r, b_height, as.x,as.y,as.z);
+    bool (*collision_check)(float, float, float, float, float);
+    collision_check = &collision_check2;
+
+    bool current_collision = collision_check(box.box_r, box.b_height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
         as.y = new_y;
         as.z += 0.02; //nudge factor
         if(as.vz < 0) as.vz = 0;
-        continue;
+
+        printf("Agent Tick: warning current collision is true!\n");
+        return as;
     }
 
     /*
         Collision Order: x,y,z
     */
-    bool collision_x = collision_check(box_r, b_height, new_x,as.y,as.z);
+    bool collision_x = collision_check(box.box_r, box.b_height, new_x,as.y,as.z);
     if(collision_x) {
         new_x = as.x;
         as.vx = 0;
     }
 
-    bool collision_y = collision_check(box_r, b_height, new_x,new_y,as.z);
+    bool collision_y = collision_check(box.box_r, box.b_height, new_x,new_y,as.z);
     if(collision_y) {
         new_y = as.y;
         as.vy = 0;
     }
 
     //top and bottom matter
-    bool collision_z = collision_check(box_r, b_height, new_x,new_y,new_z);
+    bool collision_z = collision_check(box.box_r, box.b_height, new_x,new_y,new_z);
     if(collision_z) {
 
         if(as.vz < -z_bounce_v_threshold)
@@ -769,8 +774,9 @@ Agent_state::Agent_state(int _id) {
 
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
 
-    b_height = AGENT_HEIGHT;
-    box_r = AGENT_BOX_RADIUS;
+    box.b_height = AGENT_HEIGHT;
+    box.box_r = AGENT_BOX_RADIUS;
+
     camera_height = AGENT_CAMERA_HEIGHT;
 
     jump_ready = true;
@@ -802,8 +808,8 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
 
     set_state(_x, _y, _z, _vx, _vy, _vz);
 
-    b_height = AGENT_HEIGHT;
-    box_r = AGENT_BOX_RADIUS;
+    box.b_height = AGENT_HEIGHT;
+    box.box_r = AGENT_BOX_RADIUS;
     camera_height = AGENT_CAMERA_HEIGHT;
 
     jump_ready = true;

@@ -51,6 +51,10 @@ struct Agent_control_state {
 };
 #endif
 
+struct Agent_collision_box {
+    float b_height;
+    float box_r;
+};
 
 class Agent_state {
     private:
@@ -76,13 +80,16 @@ class Agent_state {
         float theta;
         float phi;
 
-        float b_height;
-        float box_r;
-        float camera_height;
+        //float b_height;
+        //float box_r;
+        
+        struct Agent_collision_box box;
+
+        float camera_height; //move to player agent
         
         int _new_control_state;
 
-        bool jump_held;
+        bool jump_held; //move to player agent
         bool jump_ready;
         bool crouching;
 
@@ -145,7 +152,8 @@ class Agent_state {
         void save_state();
 };
 
-inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
+//inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
+inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>
 
