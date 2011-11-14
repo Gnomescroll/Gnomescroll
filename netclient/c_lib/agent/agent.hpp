@@ -89,7 +89,7 @@ class Agent_state {
         
         int _new_control_state;
 
-        bool jump_held; //move to player agent
+        //bool jump_held; //move to player agent
         bool jump_ready;
         bool crouching;
 

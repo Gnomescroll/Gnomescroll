@@ -580,12 +580,16 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
 
     // jump
-    if (jump && is_on_ground) {
-        as.vz += jump_boost;
-    } else {
-        printf("Warning: Agent tried to jump but is not on ground!\n");
+    if (jump) 
+    {
+        if(is_on_ground)
+        {
+            as.vz += jump_boost;
+        } else 
+        {
+            printf("Warning: Agent tried to jump but is not on ground!\n");
+        }
     }
-
     /*
         // jump
         if (jump && jump_ready) {
