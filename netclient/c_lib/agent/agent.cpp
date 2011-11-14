@@ -509,7 +509,7 @@ void Agent_state::_tick()
 
         //const float ground_distance = 0.02;   // unused
         const float z_bounce = 0.20f;
-        const float z_bounce_v_threshold = 0.75f / tr;
+        const float z_bounce_v_threshold = 0.8f / tr;
 
         const float pi = 3.14159265f;
 
