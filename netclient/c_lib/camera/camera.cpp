@@ -76,10 +76,12 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
     x_angle += dx;
     y_angle += dy;
 
-    if (x_angle > 2.0f*PI) {
-        x_angle = -2.0f*PI;
-    } else if (x_angle < -2.0f*PI) {
-        x_angle = 2.0f*PI;
+    if (x_angle > 1.0f) {
+        x_angle -= 2.0f;
+        printf("1\n");
+    } else if (x_angle < -1.0f) {
+        x_angle += 2.0f;
+        printf("2\n");
     }
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f

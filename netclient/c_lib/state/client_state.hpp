@@ -6,8 +6,13 @@
 
 //#include <c_lib/agent/net_agent.cpp>
 
+//#include <c_lib/agent/player_agent.cpp>
+
+class PlayerAgent_state; //forward declaration
+
 namespace ClientState {
 
+    extern PlayerAgent_state playerAgent_state;
     /* SINGLETONS
      * Make sure to extern declare in cython_imports
      *          */
