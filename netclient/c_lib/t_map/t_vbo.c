@@ -885,7 +885,10 @@ int _draw_terrain() {
 
     //toggle to enable printing performance numbers
     if(1) {
-       DRAW_VBOS1();
+       //DRAW_VBOS1();
+
+       //DRAW_VBOS1a();
+       DRAW_VBOS2();        
     } else {
 
         glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);
@@ -908,11 +911,7 @@ int _draw_terrain() {
 
     }
     //GL_QUERY_RESULT_AVAILABLE
-    //GL_QUERY_RESULT
-
-    //DRAW_VBOS1a();
-
-    //DRAW_VBOS2();    
+    //GL_QUERY_RESULT  
     
     //printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
     //_draw_fog();

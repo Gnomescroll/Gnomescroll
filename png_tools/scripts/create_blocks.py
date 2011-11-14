@@ -65,11 +65,14 @@ class Texture_set:
     '''
     def g(self, tex):
         if self.C.get(tex, None) != None:
-            return self.C.get(tex)
+            id = self.C.get(tex)
+            print "tex: tex= %s, id= %i" % (tex, id)
+            return id
         id = self.A.get(tex, None)
         if id == None:
             id = self.add_texture(tex)
         self.C[tex] = id
+        print "tex: tex= %s, id= %i" % (tex, id)
         return id
     def add_inf_tex(self, index, texname):
         tex = "./infinite_texture/"+texname+"/out/%02d.png" %(index)
@@ -218,8 +221,8 @@ import spritesheet
 hud_sprite = spritesheet.Spritesheet("test", "./", hud_tex._texture_list())
 hud_sprite.verify()
 hud_sprite.generate()
-hud_sprite.write_out("./hud_block_selector.png")
-hud_sprite.write_out("../netclient/media/texture/hud_block_selector.png")
+hud_sprite.write_out("./hud_cube_selector.png")
+hud_sprite.write_out("../netclient/media/texture/hud_cube_selector.png")
 
 ### PASS IN USING ARRAY ###
 '''
@@ -286,7 +289,7 @@ for block in lblock.list:
     x['infinite_texture'] = block.infinite_texture
     x['infinite_texture_array'] = block.infinite_texture_array
     dat[block.id] = x
-
+    print "block_id= %i, name= %s, hud_tex = %i, hud_pos = %i" % (block.id, block.name, block.hud_img, block.hud_pos)
 #print str(dat)
 
 import pprint

@@ -68,17 +68,17 @@ east    blueore.png
 ===
 id      7
 name    infinite_grass
-hud     6 grass-side.png
+hud     5 grass-side.png
 infinite_texture 2 grass_01
 ===
 id      12
 name    infinite_brick
-hud     7 grass-side.png
+hud     6 grass-side.png
 infinite_texture 2 brick_01
 ===
 id      13
 name    infinite_test
-hud     4 grass-side.png
+hud     7 grass-side.png
 infinite_texture 2 test_02
 ===
 id      14

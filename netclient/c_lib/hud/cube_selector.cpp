@@ -28,7 +28,7 @@ void set_active_cube_id(int pos) {
     cube_select_x = pos  % 8;
     cube_select_y = pos / 8;
 
-    printf("hud: block_id=%i, tex_id=%i,  (%i,%i), position %i selected \n", cube_select_array[pos].cube_id, cube_select_array[pos].tex_id, cube_select_x, cube_select_y, pos);
+    printf("hud: block_id=%i, hud_tex=%i, hud_pos=  %i,  (%i,%i)\n", cube_select_array[pos].cube_id, cube_select_array[pos].tex_id, pos, cube_select_x, cube_select_y);
 }
 
 void set_cube_selector_property(int pos, int cube_id, int tex_id) { //set the cubes in each position on hud
@@ -94,6 +94,8 @@ void draw_cube_selector(float x, float y, float size, int mode) {
     const float s_margin = 1.0; //selector margin
     i = cube_select_x;
     j = cube_select_y;
+    //printf("i= %i, j= %i\n",i,j);
+
     x0 = x + i*(_ssize+sborder) + sborder/2 - s_margin;
     x1 = x + i*(_ssize+sborder) + _ssize - sborder/2 + s_margin;
     y0 = y - j*(_ssize+sborder) + sborder/2 - s_margin;
