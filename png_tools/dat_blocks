@@ -81,6 +81,27 @@ name    infinite_test
 hud     4 grass-side.png
 infinite_texture 2 test_02
 ===
+id      14
+name    tree_top
+hud     10 xox/Tree-top_01.png
+transparency 1
+top     xox/Tree-top_01.png
+bottom  xox/Tree-top_01.png
+north   xox/Tree-top_01.png
+south   xox/Tree-top_01.png
+west    xox/Tree-top_01.png
+east    xox/Tree-top_01.png
+===
+id      15
+name    tree_bark
+hud     12 xox/Tree-bark_01.png
+top     xox/Tree-bark_01.png
+bottom  xox/Tree-bark_01.png
+north   xox/Tree-bark_01.png
+south   xox/Tree-bark_01.png
+west    xox/Tree-bark_01.png
+east    xox/Tree-bark_01.png
+===
 id      8
 name    sand_brick
 hud     24 brick-red.png

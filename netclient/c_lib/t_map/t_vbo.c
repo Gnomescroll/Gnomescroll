@@ -869,119 +869,53 @@ int _draw_terrain() {
 
             draw_vbo_array[draw_vbo_n] = &col->vbo;
             draw_vbo_n++;
-            //test
 
-        /*
-            if(col->vbo.v_num == 0) { 
-                printf("ERROR 1!!! v_num zero but its scheduled for drawing \n");
-            }
-        
-            if(draw_vbo_n > 511) {  
-                printf("ERROR 2 !!!: draw vbo= %i \n", draw_vbo_n); 
-                draw_vbo_n=511;
-            }
-        */
-            //untest
         } else {
             set_flag(col,VBO_drawn,0);
             c_pruned++;
         }
     }}
-/*
-    if(draw_vbo_n >= 1023) {
-        printf("vbos drawn= %i \n", c_drawn);
-    }
-*/
 
-/*
-    GLuint gl_perf_queries[64];
-    int gl_per_queries_index = 0;
-*/
-
-
-/*
+    /*
     static GLuint queries[32];
     static GLint available = 0;
-        // timer queries can contain more than 32 bits of data, so always
-        // query them using the 64 bit types to avoid overflow
-    
-    static int init = 0;
-    GLuint64 timeElapsed = 0;
 
-        // Create a query object.
+    glGenQueries(32, queries);
+    */
 
-    if(init == 0) {
-        glGenQueries(32, queries);
-        init = 1;  
+    //toggle to enable printing performance numbers
+    if(1) {
+       DRAW_VBOS1();
+    } else {
+
+        glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);
+                
+        GLuint available = 0;
+        GLuint _result = 0;
+
+        //DRAW_VBOS1();
+        DRAW_VBOS2();
+
+        glEndQuery(GL_TIME_ELAPSED_EXT);
+
+        gl_per_queries_index = (gl_per_queries_index+1) % 32;
+
+        glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT_AVAILABLE, &available);
+        if(available) {
+            glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &_result);
+            printf("querry done: %i us\n", _result/1000);
+        }
+
     }
-
-    glBeginQuery(GL_TIME_ELAPSED, queries[0]);
-   */
-    
-    DRAW_VBOS1();
-
-/*
-    GLuint available = 0;
-    GLuint _result = 0;
-
-    DRAW_VBOS1();
-
-    glEndQuery(GL_TIME_ELAPSED_EXT);
-
-    glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &_result);
-    printf("querry done: %i us\n", _result/1000);
-
-    gl_per_queries_index = (gl_per_queries_index+1) % 32;
-*/
-
-    //glGetQueryObject(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &available);
-
-
-    //glGetQueryObject(gl_perf_queries[gl_per_queries_index],glGetQueryObject, &_result )
-
     //GL_QUERY_RESULT_AVAILABLE
     //GL_QUERY_RESULT
-
-/*
-    glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT_AVAILABLE, &available);
-    if(available) {
-        glGetQueryObjectuiv(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT, &_result);
-        printf("querry done: %i us\n", _result/1000);
-    }
-*/
-    /*
-    glEndQuery(GL_TIME_ELAPSED);
-
-
-    while (!available) {
-        glGetQueryObjectiv(queries[0], GL_QUERY_RESULT_AVAILABLE, &available);
-    }
-    glGetQueryObjectui64v(queries[0], GL_QUERY_RESULT, &timeElapsed);
-
-    printf("Terrain map takes %i nanoseconds\n", timeElapsed);
-     */           
-/*
-    glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);
-
-    glEndQuery(gl_perf_queries[gl_per_queries_index]);
-    gl_per_queries_index = (gl_per_queries_index+1) % 64;
-    glGetQueryObject(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT
-*/
-
-    //glGetQueryObject(gl_perf_queries[gl_per_queries_index], GL_QUERY_RESULT_AVAILABLE)
 
     //DRAW_VBOS1a();
 
     //DRAW_VBOS2();    
-    //end_vbo_draw();
     
     //printf("drawn chunks= %i, pruned chunks= %i \n", c_drawn, c_pruned);
     //_draw_fog();
-    //f = SDL_GetTicks();
-    //printf("Terrain rendering time= %i \n", f-s);
-
-
-
 
     return 0;
 
@@ -1335,8 +1269,103 @@ glDisable(GL_TEXTURE_2D);
 
 }
 
-void DRAW_VBO2() {
+//minimizes state changes
+void DRAW_VBOS2() {
     
+        int _vnum = 0;
+
+        glColor3b(255,255,255);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable (GL_DEPTH_TEST);
+        glShadeModel(GL_SMOOTH);
+        glEnable (GL_DEPTH_TEST);
+        //glEnable(GL_CULL_FACE);
+
+        glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
+        glBindTexture( GL_TEXTURE_2D, texture );
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        int i;
+        struct VBO* vbo;
+
+        //if(draw_vbo_n != 0)
+
+
+        glEnable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[0] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        }
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable (GL_ALPHA_TEST);
+
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[1] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+        }
+
+        glDisable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[2] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+        }
+        
+        glDisable(GL_ALPHA_TEST);   
+
+        glDepthMask(false);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[3] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+        }
+        glDepthMask(true); 
+        glDisable(GL_BLEND);
+        
+    //end draw
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glShadeModel(GL_FLAT);
+
+    /*
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    */
+
+    glDisable(GL_TEXTURE_2D);
+
+        //printf("vnum= %i\n", _vnum);
 
 }
 

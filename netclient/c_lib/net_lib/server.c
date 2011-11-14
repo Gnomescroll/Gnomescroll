@@ -33,14 +33,13 @@ void _NetServerTick() {
         update_current_netpeer_time();
 
         //ServerState::ServerTick();
-        //NP_print_delta();
 
         process_packets(); //should poll for packets very often; event triggered packet dump
 
+        check_pool_for_dropped_packets(); //get dropped packets before broadcasting, so retransmission can occur
         //broad_cast_packet2();
         flush_packets();
 
-        check_pool_for_dropped_packets();
         //decrement_ttl();
         poll_connection_timeout();
 
