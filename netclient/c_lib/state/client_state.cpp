@@ -4,6 +4,7 @@
 
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.cpp>
+#include <c_lib/agent/player_agent.cpp>
 
 #include <c_lib/particles/object_lib.hpp>
 
