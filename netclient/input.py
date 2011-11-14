@@ -49,6 +49,16 @@ event_names = {
 
 keystate = {}
 
+#def record_call(name='', calls={}):
+    #calls[name] = 0
+    #def outer(f, *args, **kwargs):
+        #def wrapped(*args, **kwargs):
+            #calls[name] += 1
+            #print calls
+            #return f(*args, **kwargs)
+        #return wrapped
+    #return outer
+
 class InputEventGlobal:
     mouse = None
     keyboard = None
@@ -91,7 +101,8 @@ class InputGlobal:
     voxel_aligner = None
     use_voxel_aligner = False
     inventory = False
-
+    agent_can_jump = True
+    
     input = 'camera'
     _inputs = ('camera', 'agent')
     camera = 'camera'
@@ -147,9 +158,6 @@ class InputGlobal:
             current_mode[0] = curr
         print 'camera mode is %s' % curr
 
-    @classmethod
-    def enable_chat(cls):
-        InputGlobal.input = 'chat'
 
 class Mouse(object):
 
@@ -182,6 +190,7 @@ class Mouse(object):
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
+
 
 class Keyboard(object):
 
@@ -239,14 +248,15 @@ class Keyboard(object):
             if symbol == 'escape':
                 GameStateGlobal.exit = True
 
-            self.key_handlers.get(symbol, lambda : None)()
+            self.key_press_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol):
         if InputGlobal.input == 'agent':
             InputGlobal.agentInput.on_key_release(symbol)
+        self.key_release_handlers.get(symbol, lambda: None)()
 
     def _init_key_handlers(self):
-        self.bind_key_handlers({
+        self.key_press_handlers = {
             "G" : self.main.world.toggle_mipmap,
             "T" : self.main.world.toggle_gl_smooth,
             "e" : self.toggle_inventory,
@@ -263,22 +273,19 @@ class Keyboard(object):
             ';' : self.voxel_aligner_mode_toggle,
             ']' : self.toggle_agent_tick_mode,
             '[' : self.toggle_agent_interpolated,
-        })
-        
-    # accept key,handler or a dict of key,handlers
-    def bind_key_handlers(self, key, handler=None):
-        if handler is None:
-            assert type(key) == dict
-            for k, h in key.items():
-                self.key_handlers[k] = h
-        else:
-            self.key_handlers[key] = handler
+        }
 
+        self.key_release_handlers = {
+        }
+        
     def toggle_hud(self):
         opts.hud = not opts.hud
 
     def toggle_inventory(self):
         InputGlobal.inventory = not InputGlobal.inventory
+
+    def toggle_agent_interpolated(self):
+        opts.agent_interpolated = not opts.agent_interpolated
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
@@ -313,10 +320,6 @@ class Keyboard(object):
             cAgents.jetpack_physics()
         NetOut.miscMessage.agent_tick_mode(GameStateGlobal.agent_tick_mode)
 
-    def toggle_agent_interpolated(self):
-        opts.agent_interpolated = not opts.agent_interpolated
-        print 'agent interpolation is ', opts.agent_interpolated
-
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:
             return
@@ -335,8 +338,9 @@ class Keyboard(object):
             boost = 1
         if 'z' in keyboard:
             jet = 1
-        if 'SPACE' in keyboard:
+        if 'SPACE' in keyboard and InputGlobal.agentInput.can_jump:
             jump = 1
+            InputGlobal.agentInput.toggle_jump_state(None)
         if 'LCTRL' in keyboard:
             crouch = 1
         #misc1=misc2=misc3=boost=0
@@ -370,6 +374,8 @@ def requireAgent(f):
 
 class AgentInput:
 
+    can_jump = True
+
     def __init__(self):
         self.key_press_handlers = {}
         self.key_release_handlers = {}
@@ -393,9 +399,11 @@ class AgentInput:
             'up':self.adjust_block,
             'down':self.adjust_block,
             'b'   : self.bleed,
+            #'space': self.toggle_jump_state    # toggle on in the agent button state handler
         }
 
         self.key_release_handlers = {
+            'space': self.toggle_jump_state
         }
 
     def on_key_press(self, symbol, modifiers=None):
@@ -440,6 +448,9 @@ class AgentInput:
         elif symbol == 'down':
             InputGlobal.cube_selector.down()
         GameStateGlobal.agent.set_active_block(InputGlobal.cube_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
+
+    def toggle_jump_state(self, symbol):
+        self.can_jump = not self.can_jump
 
 
 class CubeSelector:

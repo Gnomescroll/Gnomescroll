@@ -561,13 +561,8 @@ void Agent_state::_tick()
         }
 
         // jump
-        if (jump) {
-            if (!jump_held && jump_ready) {
-                s.vz += jump_boost;
-            }
-            jump_held = true;
-        } else {
-            jump_held = false;
+        if (jump && jump_ready) {
+            s.vz += jump_boost;
         }
 
         float new_x, new_y, new_z;
