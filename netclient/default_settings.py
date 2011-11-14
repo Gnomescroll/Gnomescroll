@@ -18,10 +18,11 @@ udp_port = 5056
 ''' Game Preferences '''
 auto_assign_team = True
 
-''' Window '''
+''' Window / Camera '''
 width = 1024
 height = 800
 fullscreen = False
+fov = 85.
 
 ''' Controls '''
 # lower is more sensitive

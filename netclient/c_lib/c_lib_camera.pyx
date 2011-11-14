@@ -21,9 +21,10 @@ cdef extern from "./camera/camera.hpp":
 
         void pan(float dx, float dy)
         void move(float dx, float dy, float dz)
-        void set_aspect(float fov, float x_size, float y_size, float z_near, float z_far)
+        void set_aspect(float fov, float z_near, float z_far)
         void set_projection(float x, float y, float z, float x_angle, float y_angle)
-        void set_dimensions()
+        void set_dimensions()   # uses SDL_functions' xres & yres properties
+        void set_fov(float fov)
         
     void set_camera(CCamera* c)
     CCamera* get_available_camera()
@@ -69,9 +70,12 @@ cdef class Camera(object):
 
     def unload(self):
         self.active = 0
+
+    def set_fov(self, float fov):
+        self.camera.set_fov(fov)
             
-    def set_aspect(self, float fov, float x_size, float y_size, float z_near, float z_far):
-        self.camera.set_aspect(fov, x_size, y_size, z_near, z_far)
+    def set_aspect(self, float fov, float z_near, float z_far):
+        self.camera.set_aspect(fov, z_near, z_far)
 
     def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
         self.camera.set_projection(x,y,z, x_angle, y_angle)
