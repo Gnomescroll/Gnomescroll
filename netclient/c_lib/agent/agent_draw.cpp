@@ -58,9 +58,9 @@ void draw_agent(Agent_state* g) {
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
     //printf("%0.2f %0.2f\n", xangle, yangle);
-    float distance = 15;
-    float density = 3;
-    float delta = 1/density;
+    const float distance = 15;
+    const float density = 3;
+    const float delta = 1/density;
 
     float _x,_y,_z;
     float dx,dy,dz;
@@ -72,6 +72,11 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     normalize_vector(&dv);
 
     glBegin(GL_POINTS);
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
+
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
     float l =0;
     while(l < distance) {
@@ -81,8 +86,12 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
         _z = z+dv.z*l;
         glVertex3f(_x,_y,_z);
     }
-    glEnd();
     glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+    //glDisable(GL_CULL_FACE);
+
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+    glEnd();
 }
 
 int v_set2[3*8] = {
