@@ -52,7 +52,8 @@ struct Agent_control_state {
 #endif
 
 struct Agent_collision_box {
-    float b_height;
+    float b_height; //standing height
+    float c_height; //crouch height
     float box_r;
 };
 
