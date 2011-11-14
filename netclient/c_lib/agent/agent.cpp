@@ -456,15 +456,15 @@ void Agent_state::_tick()
 
 
     int _tc =0;
-    int index;
+    //int index = (cs_seq+1) % 128;
+
     struct Agent_control_state _cs;
 
     while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
 
+        //int index = (cs_seq+1) % 128;
         cs_seq = (cs_seq+1)%256;
-
-        index = (cs_seq+1) % 128;
-        _cs = cs[index];
+        _cs = cs[cs_seq % 128];
 
         s = _agent_tick(_cs, box, s);
 
@@ -686,6 +686,9 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     as.y = new_y;
     as.z = new_z;
 
+    as.theta = _cs.theta;
+    as.phi = _cs.phi;
+    
     return as;
 }
 
