@@ -72,7 +72,12 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     normalize_vector(&dv);
 
     glBegin(GL_POINTS);
-    //glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);    // is having no effect. aiming direction always black
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
+
+    glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
     float l =0;
     while(l < distance) {
         l += delta;
@@ -81,7 +86,11 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
         _z = z+dv.z*l;
         glVertex3f(_x,_y,_z);
     }
-    //glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+    //glDisable(GL_CULL_FACE);
+
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
     glEnd();
 }
 
