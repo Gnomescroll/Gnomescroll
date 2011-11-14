@@ -475,7 +475,7 @@ void Agent_state::_tick()
 }
 
 //takes an agent state and control state and returns new agent state
-inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
+inline class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
  {
 
     /*    
@@ -542,23 +542,23 @@ inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct
 
     if(forward)
     {
-            cs_vx += xy_speed*cos( as.theta * pi);
-            cs_vy += xy_speed*sin( as.theta * pi);
+            cs_vx += xy_speed*cos( _cs.theta * pi);
+            cs_vy += xy_speed*sin( _cs.theta * pi);
     }
     if(backwards)
     {
-            cs_vx += -xy_speed*cos( as.theta * pi);
-            cs_vy += -xy_speed*sin( as.theta * pi);
+            cs_vx += -xy_speed*cos( _cs.theta * pi);
+            cs_vy += -xy_speed*sin( _cs.theta * pi);
     }
     if(left) 
     {
-            cs_vx += xy_speed*cos( as.theta * pi + pi/2);
-            cs_vy += xy_speed*sin( as.theta * pi + pi/2);
+            cs_vx += xy_speed*cos( _cs.theta * pi + pi/2);
+            cs_vy += xy_speed*sin( _cs.theta * pi + pi/2);
     }
     if(right) 
     {
-            cs_vx += -xy_speed*cos( as.theta * pi + pi/2);
-            cs_vy += -xy_speed*sin( as.theta * pi + pi/2);
+            cs_vx += -xy_speed*cos( _cs.theta * pi + pi/2);
+            cs_vy += -xy_speed*sin( _cs.theta * pi + pi/2);
     }
 
     //jet pack and gravity
