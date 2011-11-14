@@ -33,8 +33,15 @@ class AgentState {
         float theta;
         float phi;        
         float x,y,z;
-        float vx,vy,vz;        
-        AgentState() { seq=-1;theta=0;phi=0;x=0;y=0;z=0;vx=0;vy=0;vz=0;}
+        float vx,vy,vz;
+        
+        bool jump_ready;
+        bool crouching;
+        float camera_height; //move to player agent
+
+        AgentState() { seq=-1;theta=0;phi=0;x=0;y=0;z=0;vx=0;vy=0;vz=0;
+                        jump_ready=true;crouching=false;
+                        camera_height = AGENT_CAMERA_HEIGHT;}
 };
 
 
@@ -80,18 +87,9 @@ class Agent_state {
         float theta;
         float phi;
 
-        //float b_height;
-        //float box_r;
-        
         struct Agent_collision_box box;
 
-        float camera_height; //move to player agent
-        
         int _new_control_state;
-
-        //bool jump_held; //move to player agent
-        bool jump_ready;
-        bool crouching;
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;

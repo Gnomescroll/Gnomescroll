@@ -33,7 +33,6 @@ void Agent_list::draw()
     glDisable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glBegin(GL_QUADS);
-    //glEnable(GL_CULL_FACE);   // for bounding box lines (disabled)
 
     for(i=0; i<n_agents_to_draw; i++) { //max_n
         j = agents_to_draw[i];
@@ -43,7 +42,6 @@ void Agent_list::draw()
         }
     }
 
-    //glDisable(GL_CULL_FACE);
     glDisable (GL_DEPTH_TEST);
     glEnd();
     #endif
@@ -520,7 +518,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     const float z_gravity = -2.0f / tr2;
     const float z_jetpack = (0.5f / tr2) - z_gravity;
 
-    float jump_boost = 0.25f;
+    const float jump_boost = 0.25f;
 
     //const float ground_distance = 0.02;   // unused
     const float z_bounce = 0.20f;
@@ -535,7 +533,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     //east -y
     //top +z
     //bottom -z
-    //collision_check1(box_r, b_height, as.x,as.y,as.z, collision);
+    //collision_check1(box.box_r, box.b_height, as.x,as.y,as.z, collision);
 
     float cs_vx = 0;
     float cs_vy = 0;
@@ -590,41 +588,40 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
             printf("Warning: Agent tried to jump but is not on ground!\n");
         }
     }
-    /*
-        // jump
-        if (jump && jump_ready) {
-                as.vz += jump_boost;
-        }
-    */
+
+    // jump
+    if (jump && as.jump_ready) {
+        as.vz += jump_boost;
+    }
 
     float new_x, new_y, new_z;
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
 
-
-    //assume agent is crouching if they are holding crouch!
-    //set crouch flag if agent is crouching!
-
-/*
-    bool (*collision_check)(float, float, float, float, float);
-    if (crouch || (crouching && !can_stand_up(box_r, as.x, as.y, as.z, AGENT_HEIGHT, b_height))) {
-        crouching = true;
+    // crouching
+    float b_height;
+    if (as.crouching) {
         b_height = AGENT_HEIGHT_CROUCHED;
-        camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
+    } else {
+        b_height = AGENT_HEIGHT;
+    }
+    const float box_r = AGENT_BOX_RADIUS;
+    bool (*collision_check)(float, float, float, float, float);
+    if (crouch || (as.crouching && !can_stand_up(box_r, as.x, as.y, as.z, AGENT_HEIGHT, b_height))) {
+        as.crouching = true;
+        b_height = AGENT_HEIGHT_CROUCHED;
+        as.camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
         collision_check = &collision_check_short;
     } else {
-        crouching = false;
+        as.crouching = false;
         b_height = AGENT_HEIGHT;
-        camera_height = AGENT_CAMERA_HEIGHT;
+        as.camera_height = AGENT_CAMERA_HEIGHT;
         collision_check = &collision_check2;
     }
-*/
 
-    bool (*collision_check)(float, float, float, float, float);
-    collision_check = &collision_check2;
-
-    bool current_collision = collision_check(box.box_r, box.b_height, as.x,as.y,as.z);
+    // collision
+    bool current_collision = collision_check(box_r, b_height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
         as.y = new_y;
@@ -638,20 +635,20 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     /*
         Collision Order: x,y,z
     */
-    bool collision_x = collision_check(box.box_r, box.b_height, new_x,as.y,as.z);
+    bool collision_x = collision_check(box_r, b_height, new_x,as.y,as.z);
     if(collision_x) {
         new_x = as.x;
         as.vx = 0;
     }
 
-    bool collision_y = collision_check(box.box_r, box.b_height, new_x,new_y,as.z);
+    bool collision_y = collision_check(box_r, b_height, new_x,new_y,as.z);
     if(collision_y) {
         new_y = as.y;
         as.vy = 0;
     }
 
     //top and bottom matter
-    bool collision_z = collision_check(box.box_r, box.b_height, new_x,new_y,new_z);
+    bool collision_z = collision_check(box_r, b_height, new_x,new_y,new_z);
     if(collision_z) {
 
         if(as.vz < -z_bounce_v_threshold)
@@ -666,20 +663,16 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         new_z = as.z + as.vz;
     }       
 
-/*
     if (! is_on_ground) {
-        jump_ready = false;
+        as.jump_ready = false;
     } else {
-        jump_ready = true;
+        as.jump_ready = true;
     }
-*/
 
-/*
     // or under the floor
     if (as.z < 0.0f) {
-        jump_ready = true;
+        as.jump_ready = true;
     }
-*/
 
     as.x = new_x;
     as.y = new_y;
@@ -779,11 +772,6 @@ Agent_state::Agent_state(int _id) {
     box.b_height = AGENT_HEIGHT;
     box.box_r = AGENT_BOX_RADIUS;
 
-    camera_height = AGENT_CAMERA_HEIGHT;
-
-    jump_ready = true;
-    crouching = false;
-
     cs_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
@@ -812,13 +800,6 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
 
     box.b_height = AGENT_HEIGHT;
     box.box_r = AGENT_BOX_RADIUS;
-    camera_height = AGENT_CAMERA_HEIGHT;
-
-    jump_ready = true;
-    crouching = false;
-
-    //s.x = 16.5;
-    //s.y = 16.5;
 
     cs_seq = 0;
 
