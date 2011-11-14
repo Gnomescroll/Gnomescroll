@@ -42,9 +42,9 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_state:
         int id
+        float camera_height
         AgentState s
         void teleport(float x,float y,float z)
-        void crouch(int on_off)
         Vector interpolate
         void set_interpolated(int t)
 
@@ -86,13 +86,6 @@ def init_draw_agents():
 
 def draw_agents():
     agent_list.draw()
-
-def crouch(int agent_id, int on_off):
-    cdef Agent_state* agent
-    agent = agent_list.get(agent_id)
-    if agent is not NULL:
-        agent.crouch(on_off)
-
 def jump_physics():
     set_agent_tick_mode(use_jump)
 def jetpack_physics():
@@ -155,7 +148,7 @@ def load_agents_to_draw(agents):
 WRAPPER
 '''
 
-agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
+agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle', 'camera_height']
 
 class AgentWrapper(object):
 
@@ -192,6 +185,9 @@ class AgentWrapper(object):
         elif name == 'y_angle':
             return a.s.phi
 
+        elif name == 'camera_height':
+            return a.camera_height
+
     def update_interpolate(self, int t):
         cdef Agent_state* a
         a = agent_list.get(object.__getattribute__(self,'id'))
@@ -219,7 +215,7 @@ def teleport_Agent(int id, float x, float y, float z):
     if a != NULL:
         a.teleport(x,y,z)
     else:
-        print "Cannot teleport agent: agent %i does not exist" %(id)
+        print "Cannot teleport agent: agent %i does not exist" % (id,)
 
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)

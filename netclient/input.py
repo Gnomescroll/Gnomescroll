@@ -151,14 +151,6 @@ class InputGlobal:
     def enable_chat(cls):
         InputGlobal.input = 'chat'
 
-    @classmethod
-    def agent_button_state(cls):
-        return
-
-    @classmethod
-    def agent_mouse_angles(cls):
-        return
-
 class Mouse(object):
 
     def __init__(self):
@@ -169,11 +161,6 @@ class Mouse(object):
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
-        #if InputGlobal.input == 'agent':
-            #self._pan_agent(dx, dy)
-
-    #def _pan_agent(self, dx, dy):
-        #GameStateGlobal.agent.pan(dx,dy)
         
     #buttonss:
     #1 left, 2 right, 4 scroll up, 5 scroll down
@@ -195,10 +182,6 @@ class Mouse(object):
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
-
-    #def clear_mouse_deltas(self):
-        #print 'clearing mouse deltas'
-        #cInput.get_mouse_deltas() # discard
 
 class Keyboard(object):
 
@@ -337,29 +320,29 @@ class Keyboard(object):
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:
             return
-        v = 1
-        d_x, d_y, v_x, v_y, jetpack, brake = [0 for i in range(6)]
 
-        u,d,l,r, jetpack, brake = [0 for i in range(6)]
-        old_buttons = GameStateGlobal.agent.button_state
+        f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = [0]*11
 
         if 'w' in keyboard:
-                u=1
+            f = 1
         if 's' in keyboard:
-                d=1
+            b = 1
         if 'a' in keyboard:
-                l = 1
+            l = 1
         if 'd' in keyboard:
-                r=1
+            r=1
         if 'c' in keyboard:
-            brake = 1
+            boost = 1
+        if 'z' in keyboard:
+            jet = 1
         if 'SPACE' in keyboard:
-            jetpack = 1
+            jump = 1
+        if 'LCTRL' in keyboard:
+            crouch = 1
+        #misc1=misc2=misc3=boost=0
 
-        button_state = [u,d,l,r, jetpack, brake]
+        button_state = [f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3]
         GameStateGlobal.agent.button_state = button_state
-
-
 
     def camera_input_mode(self, keyboard):
         v = opts.camera_speed
@@ -410,11 +393,9 @@ class AgentInput:
             'up':self.adjust_block,
             'down':self.adjust_block,
             'b'   : self.bleed,
-            'left ctrl': self.crouch,
         }
 
         self.key_release_handlers = {
-            'left ctrl' :   self.crouch,
         }
 
     def on_key_press(self, symbol, modifiers=None):
@@ -432,11 +413,6 @@ class AgentInput:
     @requireAgent
     def bleed(cls, *args, **kwargs):
         GameStateGlobal.agent.bleed()
-
-    @classmethod
-    @requireAgent
-    def crouch(cls, *args, **kwargs):
-        GameStateGlobal.agent.crouch()
 
     @classmethod
     @requireAgent
