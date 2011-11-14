@@ -23,6 +23,7 @@ cdef extern from "./camera/camera.hpp":
         void move(float dx, float dy, float dz)
         void set_aspect(float fov, float x_size, float y_size, float z_near, float z_far)
         void set_projection(float x, float y, float z, float x_angle, float y_angle)
+        void set_dimensions()
         
     void set_camera(CCamera* c)
     CCamera* get_available_camera()
@@ -58,6 +59,8 @@ cdef class Camera(object):
         if self.camera.current():
             print 'Cython camera is current camera'
             self.active = 1
+
+        self.camera.set_dimensions()
 
     def load(self):
         if self.active == 0:

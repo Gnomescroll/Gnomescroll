@@ -581,7 +581,7 @@ class AgentModel(AgentWrapper):
 
         #self.terrainMap = GameStateGlobal.terrainMap
 
-        self.button_state = [0 for i in range(6)]
+        self.button_state = [0 for i in range(11)]
 
         self.id = id
 
@@ -620,8 +620,6 @@ class AgentModel(AgentWrapper):
         self.b_height = 1.5
         self.t_height = .75
         self.box_r = .30
-
-        self.crouching = False
 
     def tick(self):
         if not self.dead:
@@ -719,7 +717,7 @@ class AgentModel(AgentWrapper):
         return [self.x_angle, self.y_angle]
 
     def set_angle(self, angle):
-        self._x_angle, self._y_angle = angle
+        self.x_angle, self.y_angle = angle
 
     def control_state(self):
         return [\
@@ -741,15 +739,6 @@ class AgentModel(AgentWrapper):
     @state.setter
     def state(self, val):
         self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
-
-    def crouch(self):
-        self.crouching = not self.crouching
-        if self.crouching:
-            self.b_height = 0.8
-        else:
-            self.b_height = 1.5
-        self.camera_height = self.b_height
-        cAgents.crouch(self.id, int(self.crouching))
 
     def normalized_direction(self):
         vec = vector_lib.angle2vector(self.x_angle, self.y_angle)
@@ -904,9 +893,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.inventory = PlayerAgentInventory(self, items)
 
         self.you = True
-        #self.control_state = [0,0,0,0,0,0]
-        self._x_angle = 0
-        self._y_angle = 0
 
         self.vx = 0
         self.vy = 0
@@ -915,27 +901,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.ay = 0
         self.az = 0
 
-        self.camera_height = 1.5
+        #self.camera_height = 1.5
         self.camera = None
         
         AgentVoxRender.__init__(self)
-
-
-    # set agent state explicitly
-    # CONTROL_STATE deprecated. use BUTTON_STATE.  button_state is booleans; control state is computed position/velocity deltas
-    def set_control_state(self, control_state, angle=None, tick=None):
-        d_x, d_y, v_x, v_y, jetpack, brake = control_state
-        self.d_x = d_x
-        self.d_y = d_y
-        self.v_x = v_x
-        self.v_y = v_y
-        self.jetpack = jetpack
-        self.brake = brake
-
-        if tick is not None:
-            self.last_control_tick = tick
-        if angle is not None:
-            self.set_angle(angle)
 
     def __setattr__(self, name, val):
         self.__dict__[name] = val
@@ -943,18 +912,14 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             set_player_agent_id(val)
             self._control_state_id_set = True
 
-    #def set_button_state(self, buttons, angles):
     def set_button_state(self):
         if not self._control_state_id_set:
-            print 'Waiting for player_agent id to be set'
             return
-        f,b,l,r, jet, jump = self.button_state
-        theta, phi = self._x_angle, self._y_angle
-        crouch = 0
-        boost = 0
-        misc1 = 0
-        misc2 = 0
-        misc3 = 0
+        if self.camera is None:
+            return
+
+        f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = self.button_state
+        theta, phi = self.camera.angles()
         set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     def fire(self):
@@ -965,7 +930,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
             return
         fire_command = weapon.fire()
         if fire_command:
-            #sounds.play_2d('semishoot.wav')
             if weapon.hitscan:
                 self.hitscan(weapon)
             else:
@@ -1073,21 +1037,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if self.camera is None:
             return
         return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
-
-    def _apply_sensitivity(self, dx, dy):
-        invert = -1 if opts.invert_mouse else 1
-        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
-        dy = (float(invert*dy) * opts.sensitivity) / 40000.
-        return dx,dy
-
-    def pan(self, dx_angle, dy_angle):
-        dx_angle, dy_angle = self._apply_sensitivity(dx_angle, dy_angle)
-        self._x_angle += dx_angle
-        self._y_angle += dy_angle
-        if self._y_angle < -0.499:
-            self._y_angle = -0.499
-        if self._y_angle > 0.499:
-            self._y_angle = 0.499
 
     def pickup_item(self, item, index=None):
         if self.team.is_viewers():
