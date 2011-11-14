@@ -57,7 +57,6 @@ void draw_agent(Agent_state* g) {
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {
-    //printf("%0.2f %0.2f\n", xangle, yangle);
     const float distance = 15;
     const float density = 3;
     const float delta = 1/density;
