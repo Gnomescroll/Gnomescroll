@@ -7,8 +7,6 @@
 #define AGENT_MAX 1024
 #define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT_CROUCHED 0.9f
-#define AGENT_CAMERA_HEIGHT 1.5f
-#define AGENT_CAMERA_HEIGHT_CROUCHED 0.75f
 #define AGENT_BOX_RADIUS 0.4f
 
 #ifdef DC_CLIENT
@@ -37,11 +35,9 @@ class AgentState {
         
         bool jump_ready;
         bool crouching;
-        float camera_height; //move to player agent
 
         AgentState() { seq=-1;theta=0;phi=0;x=0;y=0;z=0;vx=0;vy=0;vz=0;
-                        jump_ready=true;crouching=false;
-                        camera_height = AGENT_CAMERA_HEIGHT;}
+                        jump_ready=true;crouching=false;}
 };
 
 

@@ -573,22 +573,6 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         as.vz += z_jetpack;
     }
 
-
-    // allow jumping if on ground
-    bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
-
-    // jump
-    if (jump) 
-    {
-        if(is_on_ground)
-        {
-            as.vz += jump_boost;
-        } else 
-        {
-            printf("Warning: Agent tried to jump but is not on ground!\n");
-        }
-    }
-
     // jump
     if (jump && as.jump_ready) {
         as.vz += jump_boost;
@@ -605,12 +589,10 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     if (crouch || (as.crouching && !can_stand_up(box.box_r, as.x, as.y, as.z, box.b_height, box.c_height))) {
         as.crouching = true;
         height = box.c_height;
-        //as.camera_height = AGENT_CAMERA_HEIGHT_CROUCHED;
         collision_check = &collision_check_short;
     } else {
         as.crouching = false;
         height = box.b_height;
-        //as.camera_height = AGENT_CAMERA_HEIGHT;
         collision_check = &collision_check2;
     }
 
@@ -657,6 +639,13 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         new_z = as.z + as.vz;
     }       
 
+    as.x = new_x;
+    as.y = new_y;
+    as.z = new_z;
+
+    // allow jumping if on ground
+    bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
+
     if (! is_on_ground) {
         as.jump_ready = false;
     } else {
@@ -667,10 +656,6 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     if (as.z < 0.0f) {
         as.jump_ready = true;
     }
-
-    as.x = new_x;
-    as.y = new_y;
-    as.z = new_z;
 
     as.theta = _cs.theta;
     as.phi = _cs.phi;
@@ -764,6 +749,7 @@ Agent_state::Agent_state(int _id) {
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
 
     box.b_height = AGENT_HEIGHT;
+    box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
 
     cs_seq = 0;

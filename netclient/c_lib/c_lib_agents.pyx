@@ -29,6 +29,7 @@ cdef extern from "./physics/vector.h":
         float y
         float z
 
+from libcpp cimport bool
 #AgentState
 cdef extern from "./agent/agent.hpp":
     cdef cppclass AgentState:
@@ -37,17 +38,25 @@ cdef extern from "./agent/agent.hpp":
         float phi
         float x,y,z
         float vx,vy,vz
+        float camera_height
+        bool crouching
+        bool jump_ready
+
 
 #Agent_state
 cdef extern from "./agent/agent.hpp":
+    cdef struct Agent_collision_box:
+        float b_height
+        float c_height
+        float box_r
+
     cdef cppclass Agent_state:
         int id
-        float camera_height
         AgentState s
+        Agent_collision_box box
         void teleport(float x,float y,float z)
         Vector interpolate
         void set_interpolated(int t)
-
 
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
@@ -186,7 +195,10 @@ class AgentWrapper(object):
             return a.s.phi
 
         elif name == 'camera_height':
-            return a.camera_height
+            if a.s.crouching:
+                return a.box.c_height * 0.83
+            else:
+                return a.box.b_height * 0.83
 
     def update_interpolate(self, int t):
         cdef Agent_state* a
