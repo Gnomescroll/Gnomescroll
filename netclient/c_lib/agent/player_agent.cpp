@@ -25,11 +25,13 @@ class PlayerAgent_state {
     public:
         int agent_id;
         int seq;
-        
+
         //last agent state update
 
         Agent_cs_CtoS cs_0; //last control state
         //Agent_cs_CtoS cs_1;
+
+        //AgentState
 
     PlayerAgent_state() {
         agent_id = -1;

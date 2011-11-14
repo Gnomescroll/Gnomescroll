@@ -118,9 +118,9 @@ void CCamera::world_projection() {
     yl = sin( x_angle * PI) * cos( y_angle * PI);
     zl = sin( y_angle * PI);
 
-    xu = 0;
-    yu = 0;
-    zu = 1;
+    xu = 0.0f;
+    yu = 0.0f;
+    zu = 1.0f;
 
     gluLookAt(x,y,z,
                x+xl, y+yl, z+zl,
