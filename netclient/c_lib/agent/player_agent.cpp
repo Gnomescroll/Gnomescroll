@@ -3,7 +3,7 @@
 #include "player_agent.hpp"
 #include <c_lib/agent/agent.hpp>
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     agent_id = id;
@@ -11,7 +11,7 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
     printf("should never be called");
-    
+
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;
@@ -39,7 +39,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
 }
 
-#endif
+//#endif
 
 /*
 void PlayerAgent_state::calculate_interpolate(int t) {

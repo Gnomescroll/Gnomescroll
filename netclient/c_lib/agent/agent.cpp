@@ -523,16 +523,27 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         as.vz += z_jetpack;
     }
 
+    /*
     // jump
     if (jump && as.jump_ready) {
         as.vz += jump_boost;
     }
-
+    */
+    if (jump) {
+        as.vz += jump_boost;
+    }
+     
     float new_x, new_y, new_z;
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
 
+    //using function pointer may throw off 
+
+    /*
+        Warning: using function pointer may throw off brach prediction and hurt performance, look this up
+    */
+/*
     // crouching
     float height;
     bool (*collision_check)(float, float, float, float, float);
@@ -545,6 +556,10 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         height = box.b_height;
         collision_check = &collision_check2;
     }
+*/
+    float height;
+    bool (*collision_check)(float, float, float, float, float);
+    collision_check = &collision_check2;
 
     // collision
     bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
@@ -596,6 +611,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     // allow jumping if on ground
     bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
 
+    /*
     if (! is_on_ground) {
         as.jump_ready = false;
     } else {
@@ -606,6 +622,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     if (as.z < 0.0f) {
         as.jump_ready = true;
     }
+    */
 
     as.theta = _cs.theta;
     as.phi = _cs.phi;
@@ -637,6 +654,10 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
             A.vx = s.vx;
             A.vy = s.vy;
             A.vz = s.vz;
+
+            A.theta = s.theta;
+            A.phi = s.phi;
+
             A.broadcast();
 
             //clean out old control state
@@ -714,8 +735,9 @@ Agent_state::Agent_state(int _id) {
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
 
+    client_id = -1;
+
     #ifdef DC_SERVER
-        client_id = -1;
     #endif
 
     #ifdef DC_CLIENT
@@ -745,8 +767,9 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
 
+    client_id = -1;
+
     #ifdef DC_SERVER
-        client_id = -1;
     #endif
 
     #ifdef DC_CLIENT

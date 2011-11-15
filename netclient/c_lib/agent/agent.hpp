@@ -34,11 +34,12 @@ class AgentState {
         float x,y,z;
         float vx,vy,vz;
         
-        bool jump_ready;
-        bool crouching;
+        bool jump_ready;    //move client side
+        bool crouching;     //move client side
 
         AgentState() { seq=-1;theta=0;phi=0;x=0;y=0;z=0;vx=0;vy=0;vz=0;
-                        jump_ready=true;crouching=false;}
+                        //jump_ready=true;crouching=false;
+                    }
 };
 
 
@@ -79,10 +80,7 @@ class Agent_state {
         class AgentState state_snapshot;
 
         int id;
-        //float x,y,z;
-        //float vx,vy,vz;
-        //float theta;
-        //float phi;
+        int client_id;
 
         struct Agent_collision_box box;
 
@@ -93,7 +91,6 @@ class Agent_state {
         #endif
 
         #ifdef DC_SERVER
-        int client_id;
         #endif
 
         void _tick();
