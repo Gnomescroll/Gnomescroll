@@ -59,10 +59,9 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
-        Vector interpolate
         float camera_height_scale
-        void calculate_interpolate(int t)
-    PlayerAgent_state* current_player_agent
+        AgentState interpolate
+        void calculate_interpolate()
 
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
@@ -251,29 +250,21 @@ class PlayerAgentWrapper(object):
         raise AttributeError
 
     def update_interpolate(self, int t):
-#        cdef Agent_state* a
-#        a = agent_list.get(object.__getattribute__(self,'id'))
-#        a.calculate_interpolate(t)
-        pass
+        playerAgent_state.calculate_interpolate()
 
     def interpolated(self):
-#        cdef Agent_state* a
-#        cdef float x
-#        cdef float y
-#        cdef float z
+        cdef float x
+        cdef float y
+        cdef float z
 
-#        a = agent_list.get(object.__getattribute__(self,'id'))
+        x = playerAgent_state.interpolate.x
+        y = playerAgent_state.interpolate.y
+        z = playerAgent_state.interpolate.z
 
-#        x = a.interpolate.x
-#        y = a.interpolate.y
-#        z = a.interpolate.z
-
-#        return [x,y,z]
-        pass
+        return [x,y,z]
 
 
 #functions
-
 def teleport_Agent(int id, float x, float y, float z):
     cdef Agent_state* a
     a = agent_list.get(id)
