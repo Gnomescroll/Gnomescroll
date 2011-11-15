@@ -10,15 +10,27 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
-    printf("should never be called");
+    //printf("should never be called");
 
-    state_snapshot.seq = seq;
-    state_snapshot.theta = theta;
-    state_snapshot.phi = phi;
-    state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
-    state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
+
+    class AgentState ss;
+
+    ss.seq = seq;
+    ss.theta = theta;
+    ss.phi = phi;
+    ss.x=x;ss.y=y;ss.z=z;
+    ss.vx=vx;ss.vy=vy;ss.vz=vz;
+
+    int index = seq%8;
+
+    state_history[index] = ss;
+
+
+    if((state_history_index+1)%8 == index) state_history_index = index;
 
     //do tick and update stuff
+
+    //printf("received snaphshot %i\n", seq);
 }
 
 //set actually sends

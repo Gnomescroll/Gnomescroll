@@ -2,6 +2,8 @@
 
 #include <c_lib/agent/net_agent.cpp>
 #include <c_lib/agent/agent_draw.hpp>
+#include <c_lib/agent/player_agent.hpp>
+
 #include <c_lib/defines.h>
 #include <math.h>
 
@@ -408,17 +410,34 @@ void Agent_state::_tick()
 
     struct Agent_control_state _cs;
 
-    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
+    if(1) 
+    {
+        while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
 
-        //int index = (cs_seq+1) % 128;
-        cs_seq = (cs_seq+1)%256;
-        _cs = cs[cs_seq % 128];
+            //int index = (cs_seq+1) % 128;
+            cs_seq = (cs_seq+1)%256;
+            _cs = cs[cs_seq % 128];
 
-        s = _agent_tick(_cs, box, s);
+            s = _agent_tick(_cs, box, s);
 
-        _tc++;
+            _tc++;
+        }
     }
+    else
+    {
+        while(cs[cs_seq % 128].seq == cs_seq % 256) {
 
+            //int index = (cs_seq+1) % 128;
+            _cs = cs[cs_seq % 128];
+
+            s = _agent_tick(_cs, box, s);
+
+            cs_seq = (cs_seq+1)%256;
+            _tc++;
+        }
+
+        cs_seq = (cs_seq + 256 - 1) % 256;  
+    }
 
 }
 
@@ -631,6 +650,18 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     return as;
 }
 
+    /*
+        int id;
+        int seq;
+        int tick;
+
+        float x;
+        float y;
+        float z;
+        float vx,vy,vz;
+        float theta, phi;
+    */
+
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
     //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
     int index = _seq%128;
@@ -642,7 +673,38 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
 
     //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
 
+    _tick();
+
     #ifdef DC_SERVER
+    if(_seq != cs_seq) {
+        
+        printf("_seq != cs_seq \n");
+    }
+    
+    #endif
+
+    #ifdef DC_SERVER
+    
+        if(client_id != -1) 
+        {
+            PlayerAgent_Snapshot P;
+            
+            P.id = id;
+            P.seq = cs_seq;
+
+            P.x = s.x;
+            P.y = s.y;
+            P.z = s.z;
+            P.vx = s.vx;
+            P.vy = s.vy;
+            P.vz = s.vz;
+
+            P.theta = s.theta;
+            P.phi = s.phi;
+
+            P.sendToClient(client_id);
+        }
+
         if( _seq % 32 == 0 ) {
             Agent_state_message A;
 
@@ -671,7 +733,6 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
     #endif
     //printf("control state= %i\n", new_control_state);
-    _tick();
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {

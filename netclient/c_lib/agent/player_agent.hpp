@@ -16,6 +16,9 @@ class PlayerAgent_state {
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
 
+        class AgentState state_history[8];
+        int state_history_index;
+
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 
 
@@ -43,6 +46,7 @@ class PlayerAgent_state {
             seq = 0;
             camera_height_scale = 0.83f;
 
+            state_history_index = 0;
         }
 
         ~PlayerAgent_state() {}
@@ -96,8 +100,9 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
         */
             //float theta = 0;
             //float phi = 0;
+            #ifdef DC_CLIENT
             ClientState:: playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
-            
+            #endif
             //printf("Received Agent_state_message packet: agent_id= %i \n", id);
 
             //printf("seq= %i \n", seq);
