@@ -49,16 +49,6 @@ event_names = {
 
 keystate = {}
 
-#def record_call(name='', calls={}):
-    #calls[name] = 0
-    #def outer(f, *args, **kwargs):
-        #def wrapped(*args, **kwargs):
-            #calls[name] += 1
-            #print calls
-            #return f(*args, **kwargs)
-        #return wrapped
-    #return outer
-
 class InputEventGlobal:
     mouse = None
     keyboard = None
@@ -271,7 +261,6 @@ class Keyboard(object):
             'u' : cInput.toggle_mouse_bind,
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
-            ']' : self.toggle_agent_tick_mode,
             '[' : self.toggle_agent_interpolated,
         }
 
@@ -309,16 +298,6 @@ class Keyboard(object):
     def toggle_agent_gravity(self):
         print 'toggle agent g'
         GameStateGlobal.apply_gravity = not GameStateGlobal.apply_gravity
-
-    def toggle_agent_tick_mode(self):
-        print 'toggle agent tick mode'
-        if GameStateGlobal.agent_tick_mode == 'jetpack':
-            GameStateGlobal.agent_tick_mode = 'jump'
-            cAgents.jump_physics()
-        else:
-            GameStateGlobal.agent_tick_mode = 'jetpack'
-            cAgents.jetpack_physics()
-        NetOut.miscMessage.agent_tick_mode(GameStateGlobal.agent_tick_mode)
 
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:

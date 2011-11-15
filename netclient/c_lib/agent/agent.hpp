@@ -155,11 +155,3 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void draw();
         void draw(int);
 };
-
-
-enum tick_modes {
-    use_jetpack,
-    use_jump
-};
-
-void set_agent_tick_mode(int mode);

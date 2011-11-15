@@ -29,12 +29,6 @@ cdef extern from "./agent/agent.hpp":
         Agent_collision_box box
         void teleport(float x,float y,float z)
 
-    void set_agent_tick_mode(int mode)
-    cdef enum tick_modes:
-        use_jetpack
-        use_jump
-
-
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
         Agent_state* get(int id)

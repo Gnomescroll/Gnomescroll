@@ -74,11 +74,6 @@ cdef extern from "./agent/agent.hpp":
     void clear_agents_to_draw()
     void set_agents_to_draw(int* ids, int ct)
 
-    void set_agent_tick_mode(int mode)
-    cdef enum tick_modes:
-        use_jetpack
-        use_jump
-
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
         void draw()
@@ -101,10 +96,6 @@ def init_draw_agents():
 
 def draw_agents():
     agent_list.draw()
-def jump_physics():
-    set_agent_tick_mode(use_jump)
-def jetpack_physics():
-    set_agent_tick_mode(use_jetpack)
 
 import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick

@@ -10,20 +10,6 @@ static int n_agents_to_draw = 0;
 static int agents_to_draw[AGENT_MAX];
 #endif
 
-// deprecate
-static enum tick_modes tick_mode = use_jetpack;
-void set_agent_tick_mode(int mode) {
-    if (mode == use_jetpack) {
-        tick_mode = use_jetpack;
-    }
-    else if (mode == use_jump) {
-        tick_mode = use_jump;
-    }
-    else {
-        printf("set_agent_tick_mode :: Unrecognized mode %d\n", mode);
-    }
-}
-
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
