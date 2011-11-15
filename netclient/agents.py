@@ -67,19 +67,13 @@ class AgentPhysics(object):
     #collision tests
     def point_collision_test(self, x_,y_,z_):
         x,y,z = self.pos()
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
 
-        z_max = z + self.t_height
-        z_min = z - self.b_height
-        x_max = x + box_r
-        x_min = x - box_r
-        y_max = y + box_r
-        y_min = y - box_r
-
-        #print str((x_min, x_max, y_min, y_max, z_min, z_max))
-        #print str((x_,y_,z_))
+        z_max = z + self.b_height
+        z_min = z
+        x_max = x + self.box_r
+        x_min = x - self.box_r
+        y_max = y + self.box_r
+        y_min = y - self.box_r
 
         if x_min < x_ and x_ < x_max and y_min < y_ and y_ < y_max and z_min < z_ and z_ < z_max:
             return True

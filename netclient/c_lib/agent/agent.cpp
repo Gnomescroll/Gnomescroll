@@ -578,7 +578,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         as.z += 0.02f; //nudge factor
         if(as.vz < 0.0f) as.vz = 0.0f;
 
-        printf("Agent Tick: warning current collision is true!\n");
+        //printf("Agent Tick: warning current collision is true!\n");
         return as;
     }
 
