@@ -6,8 +6,6 @@
 static int _packet_id = 1;
 int next_packet_id() { return _packet_id++; }
 
-//typedef const void (*_pt2handler)(unsigned char*, int, int*, int);
-
 typedef void (*pt2handler)(unsigned char*, int, int*, int);
 
 template <class Derived>
