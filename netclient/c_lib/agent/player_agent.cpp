@@ -1,6 +1,7 @@
 #pragma once
 
 #include "player_agent.hpp"
+#include <c_lib/agent/agent.hpp>
 
 #ifdef DC_CLIENT
 

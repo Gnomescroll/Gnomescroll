@@ -684,7 +684,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     }
                 
     state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
-    cs_window_min = seq;
+    //cs_window_min = seq;
     //printf("handle_state_snapshot: seq= %i, cs_seq= %i \n", seq, cs_seq);
     cs_seq = seq;
 
