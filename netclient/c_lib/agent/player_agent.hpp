@@ -12,9 +12,9 @@ class PlayerAgent_state {
         //class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
         
     public:
-        class Agent
-        class AgentState s;     //current
-        class AgentState state_snapshot;
+        class AgentState c;                 //Use for camera, smoothed
+        class AgentState s;                 //client side predicted from control state
+        class AgentState state_snapshot;    //last snapshot from server
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 

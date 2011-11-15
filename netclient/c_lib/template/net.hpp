@@ -45,7 +45,7 @@ class FixedSizeNetPacketToServer {
 
         //virtual inline void handle() = 0;
 
-        static void handler(unsigned char* buff, int buff_n, int* bytes_read) {
+        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int client_id) {
             Derived x;  //allocated on stack
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
@@ -107,7 +107,7 @@ class FixedSizeNetPacketToClient {
         //will overflow if more than 64 bytes
         int _size() { unsigned char buff[64];int buff_n = 0;int size;serialize(buff, &buff_n, &size);return size;}
 
-        static void handler(unsigned char* buff, int buff_n, int* bytes_read) {
+        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int client_id) {
             Derived x;  //allocated on stack
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();

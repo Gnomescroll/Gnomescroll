@@ -320,7 +320,7 @@ void process_packet(unsigned char* buff, int n) {
     NPserver.last_packet_time = get_current_netpeer_time();
     NPserver.ttl = NPserver.ttl_max; //increase ttl if packet received
 
-    process_packet_messages(buff, n1, n);
+    process_packet_messages(buff, n1, n, client_id);
 }
 
 

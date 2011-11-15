@@ -3,7 +3,7 @@
 
 int h_packet_size[256];
 
-typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
+typedef void (*pt2handler)(unsigned char*, int, int* read_bytes, int client_id);
 //pt2handler* handler_array[256];
 
 pt2handler handler_array[256] = {NULL};
@@ -13,7 +13,7 @@ pt2handler server_handler_array[256] = {NULL};
 
 //int (*handler_array[256])(unsigned char*, int) = {NULL};
 
-void default_handler_function(unsigned char* buff, int n, int* read_bytes) {
+void default_handler_function(unsigned char* buff, int n, int* read_bytes, int client_id) {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
     *read_bytes = -1;
@@ -46,7 +46,7 @@ void init_message_handler() {
 
 }
 
-int pop_message(unsigned char* buff, int *n, int max_n) {
+int pop_message(unsigned char* buff, int *n, int max_n, int client_id) {
 
     if(*n == max_n) {
         //printf("Processed Empty Packet\n");
@@ -70,7 +70,7 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
         return -4;
     }
     int read_bytes = -1;
-    client_handler_array[message_id](buff, *n, &read_bytes);
+    client_handler_array[message_id](buff, *n, &read_bytes, client_id);
 #endif
 
 #ifdef DC_SERVER
@@ -79,7 +79,7 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
         return -5;
     }
     int read_bytes = -1;
-    server_handler_array[message_id](buff, *n, &read_bytes);
+    server_handler_array[message_id](buff, *n, &read_bytes, client_id);
 #endif
 
     if(read_bytes == -1) {
@@ -102,7 +102,7 @@ int pop_message(unsigned char* buff, int *n, int max_n) {
     return -4;
 }
 
-void process_packet_messages(unsigned char* buff, int n, int max_n) {
+void process_packet_messages(unsigned char* buff, int n, int max_n, int client_id) {
 /*
     if(n!=max_n) {
         printf("packet is %i, %i bytes\n", n,max_n);
@@ -111,7 +111,7 @@ void process_packet_messages(unsigned char* buff, int n, int max_n) {
     int i=0;
     int condition;
     while(n != max_n) {
-        condition = pop_message(buff, &n, max_n);
+        condition = pop_message(buff, &n, max_n, client_id);
         if(condition == 1) continue;
         if(condition < 0  ) {
             printf("Packet processing terminated with error: %i\n", condition);
