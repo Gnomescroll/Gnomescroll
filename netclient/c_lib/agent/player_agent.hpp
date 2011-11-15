@@ -33,7 +33,7 @@ class PlayerAgent_state {
 
         PlayerAgent_state() {
             static int inited=0;
-            if (inited) printf("Only one PlayerAgent_state allowed!\n");
+            if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
             state_history_index = 0;
             agent_id = -1;
             seq = 0;
