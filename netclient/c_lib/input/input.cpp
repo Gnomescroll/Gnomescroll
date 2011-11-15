@@ -184,7 +184,6 @@ static int mouse_buffer_index = 0;
 static struct MouseMotionAverage mm = {0.0f, 0.0f};
 
 #define INITIAL_MOUSE_WEIGHT 1.0f
-#define TICK_DURATION 30.0f
 
 static inline float _mouse_weight(float t) {
     return INITIAL_MOUSE_WEIGHT * pow(MOUSE_BUFFER_DECAY, t/TICK_DURATION);
