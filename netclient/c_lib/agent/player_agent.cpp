@@ -55,8 +55,10 @@ static inline float _agent_weight(float t) {
     return pow(AGENT_INTERPOLATION_DECAY, t/TICK_DURATION);
 }
 
+
 // assumes constant time between history states, until delta_t is defined on the states
 void PlayerAgent_state::calculate_interpolate() {
+/*
     interpolate.x = 0.0f;
     interpolate.y = 0.0f;
     interpolate.z = 0.0f;
@@ -92,5 +94,7 @@ void PlayerAgent_state::calculate_interpolate() {
     a->vx /= divisor;
     a->vy /= divisor;
     a->vz /= divisor;
-}
+
 */
+}
+

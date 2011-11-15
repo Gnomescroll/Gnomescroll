@@ -10,7 +10,7 @@
 class PlayerAgent_state {
     private:
         //class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
-        int state_history_index;
+        //int state_history_index;
         
     public:
         class AgentState c;                 //Use for camera, smoothed
@@ -41,7 +41,6 @@ class PlayerAgent_state {
         PlayerAgent_state() {
             static int inited=0;
             if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
-            state_history_index = 0;
             inited++;
 
             agent_id = -1;
