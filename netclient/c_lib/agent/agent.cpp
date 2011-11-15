@@ -2,6 +2,8 @@
 
 #include <c_lib/agent/net_agent.cpp>
 #include <c_lib/agent/agent_draw.hpp>
+#include <c_lib/agent/player_agent.hpp>
+
 #include <c_lib/defines.h>
 #include <math.h>
 
@@ -57,39 +59,6 @@ void Agent_list::draw(int all)
     #endif
 }
 
-
-    /* 
-        if( a_cs & 1 ) {
-            //forward
-            //printf("Agent_state._tick: agent forward \n");
-            s.x += 0.10;
-            forward = 1;
-        }
-        if( a_cs & 2 ) {
-            //backward
-            //printf("Agent_state._tick: agent backward \n");
-            s.x -= 0.10;
-            backwards = 1;
-        }
-        if( a_cs & 4 ) {
-            //left
-            //printf("Agent_state._tick: agent left \n");
-            s.y += 0.10;
-            left = 1;
-        }
-        if( a_cs & 8 ) {
-            //right
-            //printf("Agent_state._tick: agent right \n");
-            s.y -= 0.10;
-            right = 1;
-        }
-        if( a_cs & 16 ) {
-            //jet
-            s.z += 0.01;
-            jet = 1;
-        }  
-    */
-
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
@@ -102,6 +71,7 @@ static inline int _collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
+#ifdef DC_SERVER
 void Agent_state::teleport(float x,float y,float z) {
     s.x = x;
     s.y = y;
@@ -120,12 +90,13 @@ void Agent_state::teleport(float x,float y,float z) {
     A.vz = s.vz;
     A.broadcast();
 }
+#endif
 
 // assume box_r < 1
 
 #include <math.h>
 
-inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6]) {
+static inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6]) {
     //north +x
     //south -x
     //west +y
@@ -229,7 +200,7 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     //printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
 }
 
-inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
+static inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
     //north +x
     //south -x
     //west +y
@@ -279,7 +250,7 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
 }
 
 // for when box_h < 1
-inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
+static inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
     int x_min = x - box_r;
     int x_max = x + box_r;
 
@@ -314,7 +285,7 @@ inline bool collision_check_short(float box_r, float box_h, float x, float y, fl
 
 #define GROUND_MARGIN 0.10f
 // checks the (agent bottom - margin) at 4 corners of the agent
-inline bool on_ground(float box_r, float x, float y, float z) {
+static inline bool on_ground(float box_r, float x, float y, float z) {
 
     int x_min = x - box_r;
     int x_max = x + box_r;
@@ -349,7 +320,7 @@ inline bool on_ground(float box_r, float x, float y, float z) {
     return false;
 }
 
-inline bool on_solid_ground(float box_r, float x, float y, float z) {
+static inline bool on_solid_ground(float box_r, float x, float y, float z) {
     int x_min = (int)(x - box_r);
     int x_max = (int)(x + box_r);
 
@@ -430,18 +401,35 @@ void Agent_state::_tick()
 
     struct Agent_control_state _cs;
 
-    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
+    if(1) 
+    {
+        while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
 
-        //int index = (cs_seq+1) % 128;
-        cs_seq = (cs_seq+1)%256;
-        _cs = cs[cs_seq % 128];
+            //int index = (cs_seq+1) % 128;
+            cs_seq = (cs_seq+1)%256;
+            _cs = cs[cs_seq % 128];
 
-        s = _agent_tick(_cs, box, s);
+            s = _agent_tick(_cs, box, s);
         //s.tick(_cs, box);
 
-        _tc++;
+            _tc++;
+        }
     }
+    else
+    {
+        while(cs[cs_seq % 128].seq == cs_seq % 256) {
 
+            //int index = (cs_seq+1) % 128;
+            _cs = cs[cs_seq % 128];
+
+            s = _agent_tick(_cs, box, s);
+
+            cs_seq = (cs_seq+1)%256;
+            _tc++;
+        }
+
+        cs_seq = (cs_seq + 256 - 1) % 256;  
+    }
 
 }
 
@@ -547,16 +535,27 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         as.vz += z_jetpack;
     }
 
+    /*
     // jump
     if (jump && as.jump_ready) {
         as.vz += jump_boost;
     }
-
+    */
+    if (jump) {
+        as.vz += jump_boost;
+    }
+     
     float new_x, new_y, new_z;
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
 
+    //using function pointer may throw off 
+
+    /*
+        Warning: using function pointer may throw off brach prediction and hurt performance, look this up
+    */
+/*
     //crouching
     float height;
     bool (*collision_check)(float, float, float, float, float);
@@ -569,6 +568,11 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         height = box.b_height;
         collision_check = &collision_check2;
     }
+*/
+    float height;
+    height = box.b_height;
+    bool (*collision_check)(float, float, float, float, float);
+    collision_check = &collision_check2;
 
     // collision
     bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
@@ -620,6 +624,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     // allow jumping if on ground
     bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
 
+    /*
     if (! is_on_ground) {
         as.jump_ready = false;
     } else {
@@ -630,12 +635,25 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     if (as.z < 0.0f) {
         as.jump_ready = true;
     }
+    */
 
     as.theta = _cs.theta;
     as.phi = _cs.phi;
 
     return as;
 }
+
+    /*
+        int id;
+        int seq;
+        int tick;
+
+        float x;
+        float y;
+        float z;
+        float vx,vy,vz;
+        float theta, phi;
+    */
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
     //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
@@ -648,7 +666,38 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
 
     //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
 
+    _tick();
+
     #ifdef DC_SERVER
+    if(_seq != cs_seq) {
+        
+        printf("_seq != cs_seq \n");
+    }
+    
+    #endif
+
+    #ifdef DC_SERVER
+    
+        if(client_id != -1) 
+        {
+            PlayerAgent_Snapshot P;
+            
+            P.id = id;
+            P.seq = cs_seq;
+
+            P.x = s.x;
+            P.y = s.y;
+            P.z = s.z;
+            P.vx = s.vx;
+            P.vy = s.vy;
+            P.vz = s.vz;
+
+            P.theta = s.theta;
+            P.phi = s.phi;
+
+            P.sendToClient(client_id);
+        }
+
         if( _seq % 32 == 0 ) {
             Agent_state_message A;
 
@@ -661,6 +710,10 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
             A.vx = s.vx;
             A.vy = s.vy;
             A.vz = s.vz;
+
+            A.theta = s.theta;
+            A.phi = s.phi;
+
             A.broadcast();
 
             //clean out old control state
@@ -673,7 +726,6 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
     #endif
     //printf("control state= %i\n", new_control_state);
-    _tick();
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
@@ -732,13 +784,16 @@ Agent_state::Agent_state(int _id) {
     
     tick_n = 0; //increment when ticking
     ctick = 0;  //increment when control state received
-    theta = 0.0;
-    phi = 0.0;
 
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
+
+    client_id = -1;
+
+    #ifdef DC_SERVER
+    #endif
 
     #ifdef DC_CLIENT
     vox = new Agent_vox();
@@ -761,13 +816,16 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
     
     tick_n = 0; //increment when ticking
     ctick = 0;  //increment when control state received
-    theta = 0.0;
-    phi = 0.0;
 
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
+
+    client_id = -1;
+
+    #ifdef DC_SERVER
+    #endif
 
     #ifdef DC_CLIENT
     vox = new Agent_vox();

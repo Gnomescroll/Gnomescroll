@@ -34,12 +34,12 @@ class AgentState {
         float x,y,z;
         float vx,vy,vz;
         
-        bool jump_ready;
-        bool crouching;
+        bool jump_ready;    //move client side
+        bool crouching;     //move client side
 
         AgentState() { seq=-1;theta=0;phi=0;x=0;y=0;z=0;vx=0;vy=0;vz=0;
-                        jump_ready=true;crouching=false;}
-
+                        //jump_ready=true;crouching=false;
+                    }
         //void tick(const struct Agent_control_state _cs, const struct Agent_collision_box box);
 };
 
@@ -81,28 +81,26 @@ class Agent_state {
         class AgentState state_snapshot;
 
         int id;
-        float x,y,z;
-        float vx,vy,vz;
-        float theta;
-        float phi;
+        int client_id;
 
         struct Agent_collision_box box;
 
-        int _new_control_state;
+        int _new_control_state; //Deprecate
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;
+        #endif
+
+        #ifdef DC_SERVER
         #endif
 
         void _tick();
         //inline void __tick(); //does the actual work
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
-
-        void teleport(float x,float y,float z);
+        void teleport(float x,float y,float z); //should only be used on server
 
         void client_tick();
-
         void server_tick();
         /*
             server tick:
@@ -144,7 +142,6 @@ class Agent_state {
         //set_control_state(int[8] _cs, float theta, float phi);
 };
 
-//inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
 inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>

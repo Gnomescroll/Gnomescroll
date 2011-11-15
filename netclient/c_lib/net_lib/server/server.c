@@ -170,7 +170,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     p->last_packet_time = get_current_netpeer_time();
 
     //attempt to decode message in packet
-    process_packet_messages(buff, n1, received_bytes);
+    process_packet_messages(buff, n1, received_bytes, client_id);
     return;
 }
 

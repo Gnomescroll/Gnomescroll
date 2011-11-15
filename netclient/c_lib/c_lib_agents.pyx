@@ -54,7 +54,7 @@ cdef extern from "./agent/agent.hpp":
         int id
         AgentState s
         Agent_collision_box box
-        void teleport(float x,float y,float z)
+        #void teleport(float x,float y,float z)
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
@@ -256,6 +256,7 @@ class PlayerAgentWrapper(object):
 
 
 #functions
+'''
 def teleport_Agent(int id, float x, float y, float z):
     cdef Agent_state* a
     a = agent_list.get(id)
@@ -263,6 +264,7 @@ def teleport_Agent(int id, float x, float y, float z):
         a.teleport(x,y,z)
     else:
         print "Cannot teleport agent: agent %i does not exist" % (id,)
+'''
 
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)

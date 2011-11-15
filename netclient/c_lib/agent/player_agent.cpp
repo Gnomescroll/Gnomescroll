@@ -3,10 +3,34 @@
 #include "player_agent.hpp"
 #include <c_lib/agent/agent.hpp>
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     agent_id = id;
+}
+
+void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
+    //printf("should never be called");
+
+
+    class AgentState ss;
+
+    ss.seq = seq;
+    ss.theta = theta;
+    ss.phi = phi;
+    ss.x=x;ss.y=y;ss.z=z;
+    ss.vx=vx;ss.vy=vy;ss.vz=vz;
+
+    int index = seq%8;
+
+    state_history[index] = ss;
+
+
+    if((state_history_index+1)%8 == index) state_history_index = index;
+
+    //do tick and update stuff
+
+    //printf("received snaphshot %i\n", seq);
 }
 
 //set actually sends
@@ -25,15 +49,16 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     csp.send();
 
-    //printf("control state send: seq= %i, cs= %i \n", seq, cs);
 }
 
 static inline float _agent_weight(float t) {
     return pow(AGENT_INTERPOLATION_DECAY, t/TICK_DURATION);
 }
 
+
 // assumes constant time between history states, until delta_t is defined on the states
 void PlayerAgent_state::calculate_interpolate() {
+/*
     interpolate.x = 0.0f;
     interpolate.y = 0.0f;
     interpolate.z = 0.0f;
@@ -69,6 +94,7 @@ void PlayerAgent_state::calculate_interpolate() {
     a->vx /= divisor;
     a->vy /= divisor;
     a->vz /= divisor;
+
+*/
 }
 
-#endif
