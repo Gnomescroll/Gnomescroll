@@ -40,7 +40,7 @@ class AgentState {
         AgentState() { seq=-1;theta=0;phi=0;x=0;y=0;z=0;vx=0;vy=0;vz=0;
                         jump_ready=true;crouching=false;}
 
-        void tick(const struct Agent_control_state _cs, const struct Agent_collision_box box);
+        //void tick(const struct Agent_control_state _cs, const struct Agent_collision_box box);
 };
 
 
@@ -145,7 +145,7 @@ class Agent_state {
 };
 
 //inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
-//inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
+inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>
 

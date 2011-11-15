@@ -397,23 +397,27 @@ inline bool can_stand_up_inner(int x_min, int x_max, int y_min, int y_max, float
 
 // check if there will be a collision if standing up
 inline bool can_stand_up(float box_r, float x, float y, float z, float current_h, float new_h) {
-    if (new_h < current_h) printf("can_stand_up:: new height < current height. You're doing it wrong\n");
+    if (new_h <= current_h) printf("can_stand_up:: new height <= current height. You're doing it wrong\n");
     int x_min = (int)(x - box_r);
     int x_max = (int)(x + box_r);
 
     int y_min = (int)(y - box_r);
     int y_max = (int)(y + box_r);    
 
+    new_h += z;
+
     z += current_h;
 
     bool yes = true;
 
-    do {
-        yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
-        z += 1.0f;
-        z = (z > new_h) ? new_h : z;
-    } while (yes && z < new_h);
-
+    yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
+    if (yes) {
+        do {
+            z += 1.0f;
+            z = (z > new_h) ? (new_h + 0.001f) : z;
+            yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
+        } while (yes && z <= new_h);
+    }
     return yes;
 }
 
@@ -432,8 +436,8 @@ void Agent_state::_tick()
         cs_seq = (cs_seq+1)%256;
         _cs = cs[cs_seq % 128];
 
-        //s = _agent_tick(_cs, box, s);
-        s.tick(_cs, box);
+        s = _agent_tick(_cs, box, s);
+        //s.tick(_cs, box);
 
         _tc++;
     }
@@ -442,8 +446,8 @@ void Agent_state::_tick()
 }
 
 //takes an agent state and control state and returns new agent state
-//inline class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
-void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_collision_box box)
+inline class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
+//void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_collision_box box)
  {
 
     /*    
@@ -471,14 +475,14 @@ void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_c
 
 /*
     //local cordinates
-    int l_x = x;
-    int l_y = y;
-    int l_z = z;
+    int l_x = as.x;
+    int l_y = as.y;
+    int l_z = as.z;
 
     //local float cordinates
-    float fl_x = x - floor(x);
-    float fl_y = y - floor(y);
-    float fl_z = z - floor(z);
+    float fl_x = as.x - floor(as.x);
+    float fl_y = as.y - floor(as.y);
+    float fl_z = as.z - floor(as.z);
 */
 
     const float tr = 10.0f;    //tick rate
@@ -497,13 +501,13 @@ void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_c
     const float pi = 3.14159265f;
 
     //int collision[6];
-    //north +x
-    //south -x
-    //west +y
-    //east -y
-    //top +z
-    //bottom -z
-    //collision_check1(box.box_r, box.b_height, x,y,z, collision);
+    //north +as.x
+    //south -as.x
+    //west +as.y
+    //east -as.y
+    //top +as.z
+    //bottom -as.z
+    //collision_check1(box.box_r, box.b_height, as.x,as.y,as.z, collision);
 
     float cs_vx = 0;
     float cs_vy = 0;
@@ -530,105 +534,107 @@ void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_c
     }
 
     //jet pack and gravity
-    if(z > 0)
+    if(as.z > 0)
     {
-        vz += z_gravity;
+        as.vz += z_gravity;
     } 
     else // under the floor, go back up
     {
-        vz -= z_gravity;
+        as.vz -= z_gravity;
     }    
     
     if (jetpack) {
-        vz += z_jetpack;
+        as.vz += z_jetpack;
     }
 
     // jump
-    if (jump && jump_ready) {
-        vz += jump_boost;
+    if (jump && as.jump_ready) {
+        as.vz += jump_boost;
     }
 
     float new_x, new_y, new_z;
-    new_x = x + vx + cs_vx;
-    new_y = y + vy + cs_vy;
-    new_z = z + vz;
+    new_x = as.x + as.vx + cs_vx;
+    new_y = as.y + as.vy + cs_vy;
+    new_z = as.z + as.vz;
 
-    // crouching
+    //crouching
     float height;
     bool (*collision_check)(float, float, float, float, float);
-    if (crouch || (crouching && !can_stand_up(box.box_r, x, y, z, box.c_height, box.b_height))) {
-        crouching = true;
+    if (crouch || (as.crouching && !can_stand_up(box.box_r, as.x, as.y, as.z, box.c_height, box.b_height))) {
+        as.crouching = true;
         height = box.c_height;
         collision_check = &collision_check_short;
     } else {
-        crouching = false;
+        as.crouching = false;
         height = box.b_height;
         collision_check = &collision_check2;
     }
 
     // collision
-    bool current_collision = collision_check(box.box_r, height, x,y,z);
+    bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
-        x = new_x;
-        y = new_y;
-        z += 0.02f; //nudge factor
-        if(vz < 0.0f) vz = 0.0f;
+        as.x = new_x;
+        as.y = new_y;
+        as.z += 0.02f; //nudge factor
+        if(as.vz < 0.0f) as.vz = 0.0f;
 
         printf("Agent Tick: warning current collision is true!\n");
-        return;
+        return as;
     }
 
     /*
-        Collision Order: x,y,z
+        Collision Order: as.x,as.y,as.z
     */
-    bool collision_x = collision_check(box.box_r, height, new_x,y,z);
+    bool collision_x = collision_check(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
-        new_x = x;
-        vx = 0.0f;
+        new_x = as.x;
+        as.vx = 0.0f;
     }
 
-    bool collision_y = collision_check(box.box_r, height, new_x,new_y,z);
+    bool collision_y = collision_check(box.box_r, height, new_x,new_y,as.z);
     if(collision_y) {
-        new_y = y;
-        vy = 0.0f;
+        new_y = as.y;
+        as.vy = 0.0f;
     }
 
     //top and bottom matter
     bool collision_z = collision_check(box.box_r, height, new_x,new_y,new_z);
     if(collision_z) {
 
-        if(vz < -z_bounce_v_threshold)
+        if(as.vz < -z_bounce_v_threshold)
         {
-            vz *= -1.0f *z_bounce;
+            as.vz *= -1.0f *z_bounce;
         }
         else
         {
-            vz = 0.0f;
+            as.vz = 0.0f;
         }
 
-        new_z = z + vz;
+        new_z = as.z + as.vz;
     }       
 
-    x = new_x;
-    y = new_y;
-    z = new_z;
+    as.x = new_x;
+    as.y = new_y;
+    as.z = new_z;
 
     // allow jumping if on ground
-    bool is_on_ground = on_solid_ground(box.box_r, x, y, z);
+    bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
 
     if (! is_on_ground) {
-        jump_ready = false;
+        as.jump_ready = false;
     } else {
-        jump_ready = true;
+        as.jump_ready = true;
     }
 
     // or under the floor
-    if (z < 0.0f) {
-        jump_ready = true;
+    if (as.z < 0.0f) {
+        as.jump_ready = true;
     }
 
-    theta = _cs.theta;
-    phi = _cs.phi;
+    as.theta = _cs.theta;
+    as.phi = _cs.phi;
+
+    return as;
 }
 
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
