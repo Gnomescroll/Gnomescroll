@@ -10,6 +10,8 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
+    printf("should never be called");
+    
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;

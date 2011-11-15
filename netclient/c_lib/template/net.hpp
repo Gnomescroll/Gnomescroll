@@ -13,6 +13,7 @@ class FixedSizeNetPacketToServer {
     public:
         static int message_id;
         static int size;
+        int client_id; //id of the UDP client who sent message
 
         void serialize(unsigned char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
@@ -43,8 +44,9 @@ class FixedSizeNetPacketToServer {
 
         //virtual inline void handle() = 0;
 
-        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int client_id) {
+        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
+            x.client_id = _client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
@@ -68,7 +70,7 @@ class FixedSizeNetPacketToClient {
     public:
         static int message_id;
         static int size;
-
+        //int client_id; //not used yet
     public:
         void serialize(unsigned char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
@@ -105,8 +107,9 @@ class FixedSizeNetPacketToClient {
         //will overflow if more than 64 bytes
         int _size() { unsigned char buff[64];int buff_n = 0;int size;serialize(buff, &buff_n, &size);return size;}
 
-        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int client_id) {
+        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
+            //x.client_id = _client_id //not used yet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
