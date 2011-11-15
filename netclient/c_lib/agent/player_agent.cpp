@@ -25,14 +25,15 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     csp.send();
 
-    //printf("control state send: seq= %i, cs= %i \n", seq, cs);
 }
 
+#endif
+
+/*
 void PlayerAgent_state::calculate_interpolate(int t) {
     float weight = (float) t / TICK_TIME;
     //interpolate.x = weight * (s.x - s_old.x) + s_old.x;
     //interpolate.y = weight * (s.y - s_old.y) + s_old.y;
     //interpolate.z = weight * (s.z - s_old.z) + s_old.z;
 }
-
-#endif
+*/

@@ -71,39 +71,6 @@ void Agent_list::draw(int all)
     #endif
 }
 
-
-    /* 
-        if( a_cs & 1 ) {
-            //forward
-            //printf("Agent_state._tick: agent forward \n");
-            s.x += 0.10;
-            forward = 1;
-        }
-        if( a_cs & 2 ) {
-            //backward
-            //printf("Agent_state._tick: agent backward \n");
-            s.x -= 0.10;
-            backwards = 1;
-        }
-        if( a_cs & 4 ) {
-            //left
-            //printf("Agent_state._tick: agent left \n");
-            s.y += 0.10;
-            left = 1;
-        }
-        if( a_cs & 8 ) {
-            //right
-            //printf("Agent_state._tick: agent right \n");
-            s.y -= 0.10;
-            right = 1;
-        }
-        if( a_cs & 16 ) {
-            //jet
-            s.z += 0.01;
-            jet = 1;
-        }  
-    */
-
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
 
@@ -116,6 +83,7 @@ static inline int _collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
+#ifdef DC_SERVER
 void Agent_state::teleport(float x,float y,float z) {
     s.x = x;
     s.y = y;
@@ -134,12 +102,13 @@ void Agent_state::teleport(float x,float y,float z) {
     A.vz = s.vz;
     A.broadcast();
 }
+#endif
 
 // assume box_r < 1
 
 #include <math.h>
 
-inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6]) {
+static inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6]) {
     //north +x
     //south -x
     //west +y
@@ -243,7 +212,7 @@ inline void collision_check1(float box_r, float box_h, float x, float y, float z
     //printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
 }
 
-inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
+static inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
     //north +x
     //south -x
     //west +y
@@ -293,7 +262,7 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
 }
 
 // for when box_h < 1
-inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
+static inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
     int x_min = x - box_r;
     int x_max = x + box_r;
 
@@ -328,7 +297,7 @@ inline bool collision_check_short(float box_r, float box_h, float x, float y, fl
 
 #define GROUND_MARGIN 0.10f
 // checks the (agent bottom - margin) at 4 corners of the agent
-inline bool on_ground(float box_r, float x, float y, float z) {
+static inline bool on_ground(float box_r, float x, float y, float z) {
 
     int x_min = x - box_r;
     int x_max = x + box_r;
@@ -363,7 +332,7 @@ inline bool on_ground(float box_r, float x, float y, float z) {
     return false;
 }
 
-inline bool on_solid_ground(float box_r, float x, float y, float z) {
+static inline bool on_solid_ground(float box_r, float x, float y, float z) {
     int x_min = (int)(x - box_r);
     int x_max = (int)(x + box_r);
 
@@ -739,13 +708,15 @@ Agent_state::Agent_state(int _id) {
     
     tick_n = 0; //increment when ticking
     ctick = 0;  //increment when control state received
-    theta = 0.0;
-    phi = 0.0;
 
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
+
+    #ifdef DC_SERVER
+        client_id = -1;
+    #endif
 
     #ifdef DC_CLIENT
     vox = new Agent_vox();
@@ -768,13 +739,15 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
     
     tick_n = 0; //increment when ticking
     ctick = 0;  //increment when control state received
-    theta = 0.0;
-    phi = 0.0;
 
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     int i;
     for(i=0; i<128;i++) cs[i].seq = -1;
+
+    #ifdef DC_SERVER
+        client_id = -1;
+    #endif
 
     #ifdef DC_CLIENT
     vox = new Agent_vox();

@@ -79,28 +79,30 @@ class Agent_state {
         class AgentState state_snapshot;
 
         int id;
-        float x,y,z;
-        float vx,vy,vz;
-        float theta;
-        float phi;
+        //float x,y,z;
+        //float vx,vy,vz;
+        //float theta;
+        //float phi;
 
         struct Agent_collision_box box;
 
-        int _new_control_state;
+        int _new_control_state; //Deprecate
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;
+        #endif
+
+        #ifdef DC_SERVER
+        int client_id;
         #endif
 
         void _tick();
         //inline void __tick(); //does the actual work
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
-
-        void teleport(float x,float y,float z);
+        void teleport(float x,float y,float z); //should only be used on server
 
         void client_tick();
-
         void server_tick();
         /*
             server tick:
@@ -142,7 +144,6 @@ class Agent_state {
         //set_control_state(int[8] _cs, float theta, float phi);
 };
 
-//inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
 inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>
