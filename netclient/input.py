@@ -275,6 +275,7 @@ class Keyboard(object):
 
     def toggle_agent_interpolated(self):
         opts.agent_interpolated = not opts.agent_interpolated
+        print "Agent interpolation: ", opts.agent_interpolated
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':
