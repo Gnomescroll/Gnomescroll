@@ -558,6 +558,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     }
 */
     float height;
+    height = box.b_height;
     bool (*collision_check)(float, float, float, float, float);
     collision_check = &collision_check2;
 
