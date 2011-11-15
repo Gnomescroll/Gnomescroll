@@ -79,19 +79,13 @@ class AgentPhysics:
     #collision tests
     def point_collision_test(self, x_,y_,z_):
         x,y,z = self.pos()
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
 
-        z_max = z + self.t_height
-        z_min = z - self.b_height
-        x_max = x + box_r
-        x_min = x - box_r
-        y_max = y + box_r
-        y_min = y - box_r
-
-        #print str((x_min, x_max, y_min, y_max, z_min, z_max))
-        #print str((x_,y_,z_))
+        z_min = z
+        z_max = z + self.b_height
+        x_max = x + self.box_r
+        x_min = x - self.box_r
+        y_max = y + self.box_r
+        y_min = y - self.box_r
 
         if x_min < x_ and x_ < x_max and y_min < y_ and y_ < y_max and z_min < z_ and z_ < z_max:
             return True
@@ -148,11 +142,6 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         
         self.team = team
 
-        ### Agent Parameters ###
-        self.block_height = int(ceil(self.b_height))
-        #self.t_height = .75
-        ### End Agent Paramters ###
-
         ### Agent State
         self.d_x = 0 #yaw?
         self.d_y = 0 #pitch?
@@ -202,6 +191,9 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         except AttributeError:
             val = object.__getattribute__(self, name)
         return val
+
+    def block_height(self):
+        return int(ceil(self.b_height))
 
     # gets or sets
     def pos(self, xyz=None):
@@ -493,7 +485,7 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         x,y,z = terrain_map.map_x, terrain_map.map_y, terrain_map.map_z
         x = randrange(3*(x/8), 5*(x/8))
         y = randrange(3*(x/8), 5*(y/8))
-        z = terrain_map.get_highest_open_block(x,y, self.block_height)
+        z = terrain_map.get_highest_open_block(x,y, self.block_height())
         if z < 0:
             z = terrain_map.zmax
         return [x+0.5, y+0.5, z+self.b_height]
