@@ -33,6 +33,7 @@ fov             Camera field of view
 sensitivity     Mouse sensitivity
 camera-speed    Camera speed
 invert-mouse    Invert mouse (mouse down is camera up)
+agent-interpolated  Use interpolation for the player agent camera
 
 no-hud          Don't display HUD elements on start (Enable in game with /)
 disable-diagnostic-hud  Don't display diagnostic HUD elements
@@ -120,6 +121,7 @@ def parse(cl_args=None):
     parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=int)
     parser.add_argument('-cs', '--camera-speed', default=DEFAULTS['camera_speed'], type=float)
     parser.add_argument('-im', '--invert-mouse', action='store_true')
+    parser.add_argument('-ai', '--agent-interpolated', action='store_true')
 
     ''' HUD/Info panels '''
     parser.add_argument('-nh', '--no-hud', action='store_true', dest='hud')
@@ -181,6 +183,8 @@ def postprocess_args(args):
     ''' Controls '''
     if not args.invert_mouse:
         args.invert_mouse = settings.invert_mouse
+    if not args.agent_interpolated:
+        args.agent_interpolated = settings.agent_interpolated
 
     ''' HUD/Info panels '''
     if not args.diagnostic_hud:

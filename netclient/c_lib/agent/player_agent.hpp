@@ -3,8 +3,8 @@
 //#ifdef DC_CLIENT
 
 #include <c_lib/agent/net_agent.cpp>
-//#define AGENT_STATE_HISTORY_SIZE 5
-#define AGENT_INTERPOLATION_DECAY 0.5f
+#define AGENT_STATE_HISTORY_SIZE 8
+#define AGENT_INTERPOLATION_DECAY 0.8f
 
 
 class PlayerAgent_state {
@@ -17,7 +17,7 @@ class PlayerAgent_state {
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
 
-        class AgentState state_history[8];
+        class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
         int state_history_index;
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);

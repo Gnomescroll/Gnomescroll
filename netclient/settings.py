@@ -21,6 +21,7 @@ fov = 85.
 sensitivity = 125.
 camera_speed = 0.3
 invert_mouse = False
+agent_interpolated = False
 
 ''' HUD/Info panels '''
 hud = True  # show hud
