@@ -9,9 +9,6 @@
 
 class PlayerAgent_state {
     private:
-        //class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
-        //int state_history_index;
-        
     public:
         class AgentState c;                 //Use for camera, smoothed
         class AgentState s;                 //client side predicted from control state
