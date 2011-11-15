@@ -60,8 +60,11 @@ HUD Cube Selector
 cdef extern from "./hud/cube_selector.hpp":
     void set_cube_selector_property(int pos, int cube_id, int tex_id)
     void draw_cube_selector(float x, float y, float size, int mode)
-    void set_active_cube_id(int pos)
+    void set_active_cube_id(int id)
+    void set_active_cube_pos(int pos)
     int get_active_cube_id()
+    int get_active_cube_pos()
+
 
 cdef class CubeSelector:
 
@@ -74,17 +77,23 @@ cdef class CubeSelector:
     def load_cube_properties(cls, int pos, int cube_id, int tex_id):
         set_cube_selector_property(pos, cube_id, tex_id)
 
-    def __init__(self, float x, float y):
+    def __init__(self, float x, float y, int active_pos=0):
         self.x = x
         self.y = y
-
+        
     def draw(self):
         draw_cube_selector(self.x, self.y, 1., 0)
 
     def set(self, int pos):
-        set_active_cube_id(pos)
+        set_active_cube_pos(pos)
+
+    def set_id(self, int id):
+        set_active_cube_id(id)
 
     def active(self):
+        return get_active_cube_pos()
+
+    def active_id(self):
         return get_active_cube_id()
 
 

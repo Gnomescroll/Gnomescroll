@@ -267,7 +267,7 @@ class SendMessage(GenericMessage):
             return
         return {
             'aid'   :   agent.id,
-            'type'  :   agent.active_block,
+            'type'  :   agent.active_block(),
             'pos'   :   block_position,
         }
         

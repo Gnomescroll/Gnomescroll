@@ -426,13 +426,12 @@ class AgentInput:
             InputGlobal.cube_selector.up()
         elif symbol == 'down':
             InputGlobal.cube_selector.down()
-        GameStateGlobal.agent.set_active_block(InputGlobal.cube_selector.get_texture_id())   # +1 because used 0-index when created mapping, but cube_list stores them 1-indexed (0 is reserved for block absence)
 
     def toggle_jump_state(self, symbol):
         self.can_jump = not self.can_jump
 
 
-class CubeSelector:
+class CubeSelector(object):
 
     def __init__(self, x, y, block_ids):
         self.x = x
@@ -444,7 +443,16 @@ class CubeSelector:
     def __setattr__(self, k, v):
         self.__dict__[k] = v
         if k == 'active':
-            InputGlobal.app.hud.cube_selector.set(self.active)
+            InputGlobal.app.hud.cube_selector.set(v)
+        elif k == 'active_id':
+            InputGlobal.app.hud.cube_selector.set_id(v)
+
+    def __getattribute__(self, k):
+        if k == 'active_id':
+            return InputGlobal.app.hud.cube_selector.active_id()
+        if k == 'active':
+            return InputGlobal.app.hud.cube_selector.active()
+        return object.__getattribute__(self, k)
 
     def vertical(self, up=True):
         shift = -1 if up else 1
@@ -455,7 +463,6 @@ class CubeSelector:
         new = (row * self.x) + col
 
         if new < 0 or new > self.n - 1:
-            #print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
 
@@ -474,7 +481,6 @@ class CubeSelector:
         new += row * self.x
 
         if new < 0 or new > self.n - 1:
-            #print 'warning, block selector attempted to select block out of range'
             return
         self.active = new
 
@@ -484,10 +490,7 @@ class CubeSelector:
     def right(self):
         self.horizontal(left=False)
 
-    def get_texture_id(self):
-        return InputGlobal.app.hud.cube_selector.active()
 
-from math import pi
 class VoxelAligner:
 
     def __init__(self):
