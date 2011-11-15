@@ -24,7 +24,8 @@ class Animations:
         dead = []
         died = False
         for animation in self.animations:
-            if not animation.life:
+            if animation.life <= 0:
+                animation.die()
                 dead.append(animation)
                 died = True
                 continue
@@ -54,47 +55,33 @@ class Animation:
     def stop(self):
         self.life = 0
 
+    def die(self):  # teardown
+        pass
+
 
 class HitscanLaserGunAnimation(Animation):
 
     def __init__(self, origin, vector, target=None):
+        print vector
         self.length = 15
-        self.speed = 2 # per tick!
-        #self.color = (30, 255, 100)
         self.png_id = 18
         self.radius = 0.5
 
         self.origin = origin
-        self.loc = self.origin
         self.vector = vector
-        #self.end = vector_lib.move_point(self.loc, self.vector, self.length)
 
-        if target is None: # "go forever" somewhere really far
-            life_ticks = 10000
-        else:
-            life_ticks = ceil(vector_lib.distance(self.origin, target) / self.speed)
-
-        self.life = life_ticks
+        self.life = 50
         self.length = self.life
 
     def next(self):
-        # move self.loc in direction of vector  by magnitude speed
-        #self.loc = vector_lib.move_point(self.loc, self.vector, self.speed)
-        #self.end = vector_lib.move_point(self.loc, self.vector, self.length)
         self.life -= 1
-        self.length = min(self.life, 1000)
-        if self.length < 1000:
-            self.length -= 1
-        self.length = max(self.length, 0)
-        #print 'animation life: %i' % self.life
 
     def draw(self):
-        # draw a line of some length & color
         fade = 1
-        draw_utils.draw_laser_ray(self.loc, self.vector, self.length, self.radius, fade, self.png_id)
-        #draw_utils.draw_ray(self.loc, self.vector, self.length, self.color)
-        #draw_utils.draw_line(self.loc, self.end, self.color)
+        draw_utils.draw_laser_ray(self.origin, self.vector, self.length, self.radius, fade, self.png_id)
 
+    def die(self):
+        pass
 
 class C_Animation(Animation):
 

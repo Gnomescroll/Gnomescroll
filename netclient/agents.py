@@ -90,13 +90,10 @@ Agent Voxel
 class AgentVoxRender(vox.VoxRender):
 
     def __init__(self):
-        #vox.VoxRender.__init__(self, obj, 'agent.vox')
         _init_agent_vox(self.id)
 
     def update_vox(self):
-        #vox.VoxRender.update_vox(self)
         _update_agent_vox(self.id)
-
 
 
 '''
@@ -105,17 +102,13 @@ Render/Draw methods for agents
 class AgentRender(object):
 
     def draw(self):
+        assert False
         #P.event("Draw 2")
         self.draw_aiming_direction()
         self.draw_bounding_box()
 
         self.update_vox()
         self.draw_vox()
-        ##self.draw_selected_cube()
-        ##self.draw_selected_cube2()
-        #self.draw_position(points=10, seperation = 0.10)
-        #self.draw_velocity(point_density=15, units=200)  #NOOO
-        #self.draw_acceleration(point_density=15, units=100000) #NOOO
 
     def draw_position(self, points, seperation):
         print "Draw position Deprecated!"

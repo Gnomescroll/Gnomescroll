@@ -24,7 +24,7 @@ def normalize(v):
 def angle2vector(x_angle, y_angle):
     x1 = cos( x_angle * pi) * cos( y_angle * pi);
     y1 = sin( x_angle * pi) * cos( y_angle * pi);
-    z1 = sin( y_angle);
+    z1 = sin( y_angle * pi);
     return [x1, y1, z1]
 
 def forward_vector(xangle):
