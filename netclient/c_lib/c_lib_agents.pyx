@@ -55,8 +55,14 @@ cdef extern from "./agent/agent.hpp":
         AgentState s
         Agent_collision_box box
         void teleport(float x,float y,float z)
+
+cdef extern from "./agent/player_agent.hpp":
+    cdef cppclass PlayerAgent_state:
+        int agent_id
         Vector interpolate
-        void set_interpolated(int t)
+        float camera_height_scale
+        void calculate_interpolate(int t)
+    PlayerAgent_state* current_player_agent
 
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
@@ -89,6 +95,7 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
     void set_PlayerAgent_id(int id)
+    PlayerAgent_state playerAgent_state
 
 def init_draw_agents():
     init_agents_to_draw()
@@ -157,20 +164,35 @@ def load_agents_to_draw(agents):
 WRAPPER
 '''
 
-agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle', 'camera_height']
 
 class AgentWrapper(object):
+    properties = [
+        'x', 'y', 'z',
+        'vx', 'vy', 'vz',
+        'theta', 'phi',
+        'x_angle', 'y_angle',
+        'crouch_height','c_height',
+        'box_height', 'b_height',
+        'box_r',
+        'crouching'
+    ]
 
     def __init__(self, int id):
         agent_list.create(id)
         self.id = id
         
     def __getattribute__(self, name):
-        if name not in agent_props:
+        if name not in AgentWrapper.properties:
             raise AttributeError
 
         cdef Agent_state* a
-        a = agent_list.get(object.__getattribute__(self,'id'))
+        cdef int i
+        i = object.__getattribute__(self,'id')
+        a = agent_list.get(i)
+
+        if a == NULL:
+            print "AgentWrapper.__getattribute__ :: agent %d not found" % (i,)
+            raise AttributeError
 
         if name == 'x':
             return a.s.x
@@ -194,30 +216,61 @@ class AgentWrapper(object):
         elif name == 'y_angle':
             return a.s.phi
 
-        elif name == 'camera_height':
-            if a.s.crouching:
-                return a.box.c_height * 0.83
+        elif name == 'crouch_height' or name == 'c_height':
+            return a.box.c_height
+        elif name == 'box_height' or name == 'b_height':
+            return a.box.b_height
+        elif name == 'box_r':
+            return a.box.box_r
+
+        elif name == 'crouching':
+            return a.s.crouching
+
+        print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
+        raise AttributeError
+
+class PlayerAgentWrapper(object):
+
+    properties = ['camera_height',]
+
+    def __init__(self, int id):
+        self.id = id
+        set_PlayerAgent_id(id)
+
+    def __getattribute__(self, name):
+        if name not in PlayerAgentWrapper.properties:
+            raise AttributeError
+
+        if name == 'camera_height':
+            if AgentWrapper.__getattribute__(self, 'crouching'):
+                return AgentWrapper.__getattribute__(self, 'crouch_height') * playerAgent_state.camera_height_scale
             else:
-                return a.box.b_height * 0.83
+                return AgentWrapper.__getattribute__(self, 'box_height') * playerAgent_state.camera_height_scale
+
+        print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
+        raise AttributeError
 
     def update_interpolate(self, int t):
-        cdef Agent_state* a
-        a = agent_list.get(object.__getattribute__(self,'id'))
-        a.set_interpolated(t)
+#        cdef Agent_state* a
+#        a = agent_list.get(object.__getattribute__(self,'id'))
+#        a.calculate_interpolate(t)
+        pass
 
     def interpolated(self):
-        cdef Agent_state* a
-        cdef float x
-        cdef float y
-        cdef float z
+#        cdef Agent_state* a
+#        cdef float x
+#        cdef float y
+#        cdef float z
 
-        a = agent_list.get(object.__getattribute__(self,'id'))
+#        a = agent_list.get(object.__getattribute__(self,'id'))
 
-        x = a.interpolate.x
-        y = a.interpolate.y
-        z = a.interpolate.z
+#        x = a.interpolate.x
+#        y = a.interpolate.y
+#        z = a.interpolate.z
 
-        return [x,y,z]
+#        return [x,y,z]
+        pass
+
 
 #functions
 

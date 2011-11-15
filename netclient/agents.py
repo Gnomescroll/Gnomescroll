@@ -24,7 +24,7 @@ from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
 from weapons import LaserGun, Pick, BlockApplier
 from game_modes import NoTeam
-from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
+from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 from draw_utils import *
 from net_out import NetOut
 
@@ -33,7 +33,7 @@ Physics for agents
 
 -- 7/27/11 Copied from /server/agents.py --
 '''
-class AgentPhysics:
+class AgentPhysics(object):
 
     def compute_state(self):
         # only v_x and v_y are used
@@ -325,7 +325,7 @@ class AgentVoxRender(vox.VoxRender):
 '''
 Render/Draw methods for agents
 '''
-class AgentRender:
+class AgentRender(object):
 
     def draw(self):
         #P.event("Draw 2")
@@ -373,7 +373,7 @@ class AgentRender:
             # take vector from killer, put vel in random bounded cone around vector
 
 
-class AgentWeapons:
+class AgentWeapons(object):
 
     def __init__(self, agent, weapons=None):
         self.agent = agent
@@ -473,7 +473,7 @@ class AgentWeapons:
         return iter(self.weapons)
 
 
-class AgentInventory:
+class AgentInventory(object):
 
     def __init__(self, agent, items=None):
         self.agent = agent
@@ -561,9 +561,9 @@ class AgentModel(AgentWrapper):
     def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
         if owner is None or id is None:
             print 'WARNING!! Creating agent with no owner or id'
+            raise ValueError, "Attempted to create agent with no owner or id"
 
         AgentWrapper.__init__(self, id)
-        print self.id
             
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
@@ -661,6 +661,13 @@ class AgentModel(AgentWrapper):
 
         GameStateGlobal.agentList.update(self, *args)
 
+    def _update_team_object(self):
+        t = self.__dict__['team']
+        if not isinstance(t, NoTeam):
+            t = GameStateGlobal.teamList[t]
+            if t is not None:
+                self.team = t
+
     def __getattribute__(self, name):
         try:
             val = AgentWrapper.__getattribute__(self, name)
@@ -668,10 +675,7 @@ class AgentModel(AgentWrapper):
             val = object.__getattribute__(self, name)
             
         if name == 'team':
-            if not isinstance(val, NoTeam):
-                val = GameStateGlobal.teamList[val]
-                if val is not None:
-                    self.team = val
+            AgentModel._update_team_object(self)
                     
         return val
 
@@ -879,15 +883,15 @@ class PlayerAgentInventory(AgentInventory):
 '''
 Client's player's agent
 '''
-class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
+class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
         AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
-
+        PlayerAgentWrapper.__init__(self, id)
         self._control_state_id_set = False
 
-        if id:
-            self.id = id
+        #if id:
+            #self.id = id
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
@@ -901,7 +905,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         self.ay = 0
         self.az = 0
 
-        #self.camera_height = 1.5
         self.camera = None
         
         AgentVoxRender.__init__(self)
@@ -911,6 +914,20 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
         if name == 'id':
             set_player_agent_id(val)
             self._control_state_id_set = True
+
+    def __getattribute__(self, name):
+        try:
+            val = AgentWrapper.__getattribute__(self, name)
+        except AttributeError:
+            try:
+                val = PlayerAgentWrapper.__getattribute__(self, name)
+            except AttributeError:
+                val = object.__getattribute__(self, name)
+
+        if name == 'team':
+            AgentModel._update_team_object(self)
+
+        return val
 
     def set_button_state(self):
         if not self._control_state_id_set:
@@ -938,13 +955,11 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender):
     def hitscan(self, weapon=None):
         if self.team.is_viewers():
             return
-        #print 'HITSCAN!!'
+
         if weapon is not None:
             weapon.animation(agent=self).play()
 
         # check agent
-        #ignore_vox = [player.agent.vox.id for player in GameStateGlobal.teamList.get_viewers().values()]
-        #ignore_vox.append(self.vox.id)
         ignore_vox = []
         (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
         print ag, adistance, vox

@@ -4,6 +4,7 @@ Wrapper
 
 #agent class wrapper
 
+from libcpp cimport bool
 #AgentState
 cdef extern from "./agent/agent.hpp":
     cdef cppclass AgentState:
@@ -12,12 +13,20 @@ cdef extern from "./agent/agent.hpp":
         float phi
         float x,y,z
         float vx,vy,vz
-
+        bool crouching
+        bool jump_ready
+        
 #Agent_state
 cdef extern from "./agent/agent.hpp":
+    cdef struct Agent_collision_box:
+        float b_height
+        float c_height
+        float box_r
+
     cdef cppclass Agent_state:
         int id
         AgentState s
+        Agent_collision_box box
         void teleport(float x,float y,float z)
 
     void set_agent_tick_mode(int mode)
@@ -38,29 +47,37 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Agent_list agent_list
 
-
-def jump_physics():
-    set_agent_tick_mode(use_jump)
-def jetpack_physics():
-    set_agent_tick_mode(use_jetpack)
-
-
-agent_props = ['theta', 'phi', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'x_angle', 'y_angle']
-
 class AgentWrapper(object):
+    properties = [
+        'x', 'y', 'z',
+        'vx', 'vy', 'vz',
+        'theta', 'phi',
+        'x_angle', 'y_angle',
+        'crouch_height','c_height',
+        'box_height', 'b_height',
+        'box_r',
+        'crouching'
+    ]
 
+#    cdef int id
     def __init__(self):
         cdef Agent_state *a
         a = agent_list.create()
         self.id = a.id
         
     def __getattribute__(self, name):
-        if name not in agent_props:
+        if name not in AgentWrapper.properties:
             raise AttributeError
 
         cdef Agent_state* a
-        #a = C_get_agent(object.__getattribute__(self,'id'))
-        a = agent_list.get(object.__getattribute__(self,'id'))
+        cdef int i
+        i = object.__getattribute__(self,'id')
+        a = agent_list.get(i)
+
+        if a == NULL:
+            print "AgentWrapper.__getattribute__ :: agent %d not found" % (i,)
+            raise AttributeError
+
         if name == 'x':
             return a.s.x
         elif name == 'y':
@@ -82,6 +99,18 @@ class AgentWrapper(object):
             return a.s.theta
         elif name == 'y_angle':
             return a.s.phi
+            
+        elif name == 'crouch_height' or name == 'c_height':
+            return a.box.c_height
+        elif name == 'box_height' or name == 'b_height':
+            return a.box.b_height
+        elif name == 'box_r':
+            return a.box.box_r
+
+        elif name == 'crouching':
+            return a.s.crouching
+
+        raise AttributeError
 
 
 #functions

@@ -430,28 +430,9 @@ inline bool can_stand_up(float box_r, float x, float y, float z, float current_h
     return yes;
 }
 
-
-void Agent_state::save_state() {
-    // copies current state to old state
-    s_old.seq = s.seq;
-    s_old.phi = s.phi;
-    s_old.theta = s.theta;
-    s_old.x = s.x;
-    s_old.y = s.y;
-    s_old.z = s.z;
-    s_old.vx = s.vx;
-    s_old.vy = s.vy;
-    s_old.vz = s.vz;
-}
-
 void Agent_state::_tick() 
 {
-    
-    save_state();
-
     //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
-
-
 
     int _tc =0;
     //int index = (cs_seq+1) % 128;
@@ -601,8 +582,8 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     if(current_collision) {
         as.x = new_x;
         as.y = new_y;
-        as.z += 0.02; //nudge factor
-        if(as.vz < 0) as.vz = 0;
+        as.z += 0.02f; //nudge factor
+        if(as.vz < 0.0f) as.vz = 0.0f;
 
         printf("Agent Tick: warning current collision is true!\n");
         return as;
@@ -614,13 +595,13 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     bool collision_x = collision_check(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
         new_x = as.x;
-        as.vx = 0;
+        as.vx = 0.0f;
     }
 
     bool collision_y = collision_check(box.box_r, height, new_x,new_y,as.z);
     if(collision_y) {
         new_y = as.y;
-        as.vy = 0;
+        as.vy = 0.0f;
     }
 
     //top and bottom matter
@@ -629,11 +610,11 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
 
         if(as.vz < -z_bounce_v_threshold)
         {
-            as.vz *= -1 *z_bounce;
+            as.vz *= -1.0f *z_bounce;
         }
         else
         {
-            as.vz = 0;
+            as.vz = 0.0f;
         }
 
         new_z = as.z + as.vz;
@@ -699,8 +680,6 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
     #endif
     //printf("control state= %i\n", new_control_state);
-    //if (tick_mode == use_jetpack) _tick_jetpack();
-    //else if (tick_mode == use_jump) _tick_jump();
     _tick();
 }
 
@@ -821,15 +800,6 @@ void Agent_state::client_tick() {
 void Agent_state::server_tick() {
     return;
 }
-
-void Agent_state::set_interpolated(int t) {
-    float weight = (float) t / 30.0f;
-    interpolate.x = weight * (s.x - s_old.x) + s_old.x;
-    interpolate.y = weight * (s.y - s_old.y) + s_old.y;
-    interpolate.z = weight * (s.z - s_old.z) + s_old.z;
-}
-
-
 
 #ifdef DC_CLIENT
 void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {

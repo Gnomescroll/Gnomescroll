@@ -21,6 +21,7 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
 void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
+
 #endif
 
 //store last network messsage
@@ -75,7 +76,6 @@ class Agent_state {
 
     public:
         class AgentState s; //state current
-        class AgentState s_old; // last state
         class AgentState state_snapshot;
 
         int id;
@@ -140,11 +140,6 @@ class Agent_state {
 
         //void server_tick();
         //set_control_state(int[8] _cs, float theta, float phi);
-
-        struct Vector interpolate;
-        void set_interpolated(int t);
-        
-        void save_state();
 };
 
 //inline class AgentState _agent_tick(struct Agent_control_state _cs, class AgentState as);
