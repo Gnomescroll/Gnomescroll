@@ -87,7 +87,7 @@ def parse(cl_args=None):
     parser.add_argument('--save-map', default='')
 
     ''' Debug '''
-    parser.add_argument('--print-args', action='store_true')
+    parser.add_argument('-pa', '--print-args', action='store_true')
     parser.add_argument('-nl', '--no-load', action='store_true')
 
     if cl_args is not None:
