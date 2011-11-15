@@ -27,6 +27,7 @@ from game_modes import NoTeam
 from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 from draw_utils import *
 from net_out import NetOut
+from input import InputGlobal
 
 '''
 Physics for agents
@@ -66,19 +67,13 @@ class AgentPhysics(object):
     #collision tests
     def point_collision_test(self, x_,y_,z_):
         x,y,z = self.pos()
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
 
-        z_max = z + self.t_height
-        z_min = z - self.b_height
-        x_max = x + box_r
-        x_min = x - box_r
-        y_max = y + box_r
-        y_min = y - box_r
-
-        #print str((x_min, x_max, y_min, y_max, z_min, z_max))
-        #print str((x_,y_,z_))
+        z_max = z + self.b_height
+        z_min = z
+        x_max = x + self.box_r
+        x_min = x - self.box_r
+        y_max = y + self.box_r
+        y_min = y - self.box_r
 
         if x_min < x_ and x_ < x_max and y_min < y_ and y_ < y_max and z_min < z_ and z_ < z_max:
             return True
@@ -87,224 +82,6 @@ class AgentPhysics(object):
 
     def sphere_collision_test(self, x,y,z,r):
         pass
-
-    def _tick_physics(self):
-        print "Error: Agent physics called!"
-        assert False
-        return
-        x,y,z, vx,vy,vz, ax,ay,az = self.state
-        ax,ay,az = (0,0,0)
-        vx,vy = (0,0)
-        #constants
-        tr = 10. #tick rate
-        tr2 = tr**2 #tick rate squared
-        xy_brake = pow(.50, 1/(float(tr))) #in percent per second
-        xy_speed = 2. / tr
-        if GameStateGlobal.apply_gravity:
-            z_gravity = -.40 / tr2
-        else:
-            z_gravity = 0
-        z_jetpack = 0.80 / tr2
-        #gravity
-    #TODO: should turn gravity off if agent is in contact with ground
-        #velocity from acceleration and inputs
-
-        vx += ax + self.v_x*xy_speed
-        vy += ay + self.v_y*xy_speed
-
-        #print str((vx,vy))
-        if self.brake != 0:
-            if GameStateGlobal.apply_gravity:
-                vx *= xy_brake
-                vy *= xy_brake
-                vz *= xy_brake
-            else:
-                vz += -0.40 / tr2
-
-    #constants for collision box
-        b_height = self.b_height
-        t_height = self.t_height
-        box_r = self.box_r
-
-### Collisions on X axis collision ###
-
-        xc_pos_current = 0
-        xc_pos_projected = 0
-
-        xc_neg_current = 0
-        xc_neg_projected = 0
-
-        bx_pos_current = floor(x+box_r)
-        bx_pos_projected = floor(x+vx+box_r)
-
-        bx_neg_current = floor(x-box_r)
-        bx_neg_projected = floor(x+vx-box_r)
-
-        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
-            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
-            #x+
-                if self.collisionDetection(bx_pos_current,by,bz):
-                    xc_pos_current +=1
-                if self.collisionDetection(bx_pos_projected,by,bz):
-                    xc_pos_projected +=1
-            #x-
-                if self.collisionDetection(bx_neg_current,by,bz):
-                    xc_neg_current +=1
-                if self.collisionDetection(bx_neg_projected,by,bz):
-                    xc_neg_projected +=1
-
-### Collision on Y axis ###
-
-        yc_pos_current = 0
-        yc_pos_projected = 0
-
-        yc_neg_current = 0
-        yc_neg_projected = 0
-
-        by_pos_current = floor(y+box_r)
-        by_pos_projected = floor(y+vy+box_r)
-
-        by_neg_current = floor(y-box_r)
-        by_neg_projected = floor(y+vy-box_r)
-
-        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
-            for bx in range(int(floor(x-box_r)), int(floor(x+box_r)+1)):
-            #x+
-                if self.collisionDetection(bx,by_pos_current,bz):
-                    yc_pos_current +=1
-                if self.collisionDetection(bx,by_pos_projected,bz):
-                    yc_pos_projected +=1
-            #x-
-                if self.collisionDetection(bx,by_neg_current,bz):
-                    yc_neg_current +=1
-                if self.collisionDetection(bx,by_neg_projected,bz):
-                    yc_neg_projected +=1
-
-### XY Collision ###
-
-        xyc_projected = 0
-
-        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
-            for by in range(int(floor(y+vy-box_r)), int(floor(y+vy+box_r)+1)):
-                for bx in range(int(floor(x+vx-box_r+vx)), int(floor(x+vx+box_r)+1)):
-                    if self.collisionDetection(bx,by,bz):
-                        xyc_projected += 1
-
-        xyc_current = 0
-
-        for bz in range(int(floor(z - b_height)), int(floor(z +t_height)+1)):
-            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
-                for bx in range(int(floor(x-box_r+vx)), int(floor(x+box_r)+1)):
-                    if self.collisionDetection(bx,by,bz):
-                        xyc_current += 1
-
-        #dont do this right now
-
-        if False and xyc_projected != 0:
-            # print "Projected XY collision!"
-            vx =0
-            vy =0
-
-### XY collision constants
-        xy_bounce = .65
-        xy_bounce_v_threshold = 0.35 / tr
-
-    ## handle x collisions
-        #xc_pos_current, xc_pos_projected , xc_neg_current, xc_neg_projected
-
-        if xc_pos_current == 0 and xc_neg_current == 0:
-            if xc_pos_projected != 0:
-                vx = 0
-            if xc_neg_projected != 0:
-                vx = 0
-        else:
-            pass
-            #print "X collision error!!"
-
-    ## handle y collisions
-        #yc_pos_current, yc_pos_projected , yc_neg_current, yc_neg_projected
-
-        if yc_pos_current ==0 and yc_neg_current ==0:
-            if yc_pos_projected != 0:
-                vy = 0
-            if yc_neg_projected != 0:
-                vy = 0
-        else:
-            pass
-            #print "Y collision error!!"
-
-
-        #environmental and input controls
-        on_ground = self.on_ground #environmental state
-        jetpack = self.jetpack #control state
-
-        if on_ground == 0: #agent on ground
-            az += (z_gravity) if z>0 else (-z_gravity)
-        #jetpack adjustment to gravity
-        if jetpack != 0: az += z_jetpack
-    ## calculate velocity from acceleration inputs
-        vz += az
-
-##parameters for collision
-        z_margin = .01
-        z_bounce = .65
-        z_bounce_v_threshold = 0.35 / tr
-
-## determine if agent is on ground and if they are colliding with anything at current position
-        zc_current = 0
-        zc_ground = 0
-        zc_neg_projected = 0
-        bz_current = float(z - b_height)
-        bz_ground = floor(z - b_height - z_margin)
-        bz_neg_projected = floor(z+vz-b_height)
-
-        for bx in range(int(floor(x-box_r)), int(floor(x+box_r)+1)):
-            for by in range(int(floor(y-box_r)), int(floor(y+box_r)+1)):
-                if self.collisionDetection(bx,by,bz_current):
-                    zc_current +=1
-                if self.collisionDetection(bx,by,bz_ground):
-                     zc_ground += 1
-                if self.collisionDetection(bx,by,bz_neg_projected):
-                    zc_neg_projected +=1
-    ##  calculate environmental state
-        #agent ground state
-        if zc_ground != 0:
-            if self.on_ground != 1:
-                self.on_ground = 1
-                #print "On ground!"
-        else:
-            if self.on_ground == 1:
-                #print "Off ground!"
-                self.on_ground = 0
-
-    ## apply velocity
-        #Hard collision predicted and not inside of something already
-        if zc_neg_projected != 0 and zc_current == 0:
-            if vz < 0:
-                if vz < -z_bounce_v_threshold: #vertical velocity bounce treshold
-                    vz *= -1 *z_bounce
-                else:
-                    vz = 0
-
-        if zc_current != 0: #if agent is inside of block, float them out the top
-            z += .50 / tr
-
-        if zc_neg_projected != 0:
-            #print "Predicted neg Z-Collision!"
-            pass
-        if zc_current != 0:
-            pass
-            #print "Hard current neg Z-Collision!"
-
-## Position Change ##
-        z += vz
-        x += vx
-        y += vy
-
-        self.state = [x,y,z, vx,vy,vz, ax,ay,az]
-        #print 'agent state:'
-        #if not self.you:
-            #print self.state
 
 '''
 Agent Voxel
@@ -558,7 +335,7 @@ class AgentModel(AgentWrapper):
     _TICK_RATE = 30. # milliseconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
-    def __init__(self, owner, id, state=None, health=None, dead=False, active_block=1, team=None):
+    def __init__(self, owner, id, state=None, health=None, dead=False, team=None):
         if owner is None or id is None:
             print 'WARNING!! Creating agent with no owner or id'
             raise ValueError, "Attempted to create agent with no owner or id"
@@ -614,12 +391,6 @@ class AgentModel(AgentWrapper):
         self.owner = owner
 
         self.you = False
-
-        self.active_block = active_block   # which block to create
-
-        self.b_height = 1.5
-        self.t_height = .75
-        self.box_r = .30
 
     def tick(self):
         if not self.dead:
@@ -751,9 +522,9 @@ class AgentModel(AgentWrapper):
 # represents an agent under control of a player
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
         #self.init_vox()
-        AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+        AgentModel.__init__(self, owner, id, state, health, dead, team)
         AgentVoxRender.__init__(self)
         print 'id %s' % (self.id,)
         print self
@@ -885,8 +656,8 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, active_block=1, items=None, team=None):
-        AgentModel.__init__(self, owner, id, state, health, dead, active_block, team)
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
+        AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
         self._control_state_id_set = False
 
@@ -1032,9 +803,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
             return
         if block_type is None:
             block_type = self.facing_block()
+            print "Gonna set block type to", block_type
         if not block_type:
             return
-        self.active_block = block_type
+        InputGlobal.cube_selector.active_id = block_type
+
+    def active_block(self):
+        return InputGlobal.cube_selector.active_id
 
     def facing_block(self):
         block = self.nearest_block_position()

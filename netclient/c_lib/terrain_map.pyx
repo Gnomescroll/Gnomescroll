@@ -592,22 +592,23 @@ cdef extern from "./t_map/t_map.h":
 #cdef extern from "./t_map_draw.h":
 #    int _init_t_map_draw()
 
-_init = 0
-
-def init():
-    global _init
-    if _init != 0:
-        assert False
+def init(inited=[0]):
+    if inited[0]:
+        raise Exception, "Attempt to init terrain_map twice"
     else:
-        _init = 1
+        inited[0] += 1
+        
     print "Init Terrain Map"
     init_t_properties()
-    init_cube_properties()
-    init_quad_cache()
+
+# these get loaded in _cube_inits after cube_dat is received from server
+#    init_cube_properties()
+#    init_quad_cache()
+#    set_hud_cube_selector()
+
     _init_t_map();
     #_init_t_map_draw()
     _init_draw_terrain()
-    set_hud_cube_selector()
 
 def set_hud_cube_selector():
     global c_dat
@@ -620,7 +621,6 @@ def set_hud_cube_selector():
 
     for id in c_dat.dat:
         apply(id)
-
 
 
 '''

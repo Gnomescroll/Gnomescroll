@@ -12,20 +12,6 @@ static int n_agents_to_draw = 0;
 static int agents_to_draw[AGENT_MAX];
 #endif
 
-// deprecate
-static enum tick_modes tick_mode = use_jetpack;
-void set_agent_tick_mode(int mode) {
-    if (mode == use_jetpack) {
-        tick_mode = use_jetpack;
-    }
-    else if (mode == use_jump) {
-        tick_mode = use_jump;
-    }
-    else {
-        printf("set_agent_tick_mode :: Unrecognized mode %d\n", mode);
-    }
-}
-
 // default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
@@ -382,22 +368,27 @@ inline bool can_stand_up_inner(int x_min, int x_max, int y_min, int y_max, float
 
 // check if there will be a collision if standing up
 inline bool can_stand_up(float box_r, float x, float y, float z, float current_h, float new_h) {
+    if (new_h <= current_h) printf("can_stand_up:: new height <= current height. You're doing it wrong\n");
     int x_min = (int)(x - box_r);
     int x_max = (int)(x + box_r);
 
     int y_min = (int)(y - box_r);
     int y_max = (int)(y + box_r);    
 
+    new_h += z;
+
     z += current_h;
 
     bool yes = true;
 
-    do {
-        yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
-        z += 1.0f;
-        z = (z > new_h) ? new_h : z;
-    } while (yes && z < new_h);
-
+    yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
+    if (yes) {
+        do {
+            z += 1.0f;
+            z = (z > new_h) ? (new_h + 0.001f) : z;
+            yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
+        } while (yes && z <= new_h);
+    }
     return yes;
 }
 
@@ -419,6 +410,7 @@ void Agent_state::_tick()
             _cs = cs[cs_seq % 128];
 
             s = _agent_tick(_cs, box, s);
+        //s.tick(_cs, box);
 
             _tc++;
         }
@@ -443,6 +435,7 @@ void Agent_state::_tick()
 
 //takes an agent state and control state and returns new agent state
 inline class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
+//void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_collision_box box)
  {
 
     /*    
@@ -496,12 +489,12 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     const float pi = 3.14159265f;
 
     //int collision[6];
-    //north +x
-    //south -x
-    //west +y
-    //east -y
-    //top +z
-    //bottom -z
+    //north +as.x
+    //south -as.x
+    //west +as.y
+    //east -as.y
+    //top +as.z
+    //bottom -as.z
     //collision_check1(box.box_r, box.b_height, as.x,as.y,as.z, collision);
 
     float cs_vx = 0;
@@ -563,10 +556,10 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         Warning: using function pointer may throw off brach prediction and hurt performance, look this up
     */
 /*
-    // crouching
+    //crouching
     float height;
     bool (*collision_check)(float, float, float, float, float);
-    if (crouch || (as.crouching && !can_stand_up(box.box_r, as.x, as.y, as.z, box.b_height, box.c_height))) {
+    if (crouch || (as.crouching && !can_stand_up(box.box_r, as.x, as.y, as.z, box.c_height, box.b_height))) {
         as.crouching = true;
         height = box.c_height;
         collision_check = &collision_check_short;
@@ -589,12 +582,12 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
         as.z += 0.02f; //nudge factor
         if(as.vz < 0.0f) as.vz = 0.0f;
 
-        printf("Agent Tick: warning current collision is true!\n");
+        //printf("Agent Tick: warning current collision is true!\n");
         return as;
     }
 
     /*
-        Collision Order: x,y,z
+        Collision Order: as.x,as.y,as.z
     */
     bool collision_x = collision_check(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
@@ -646,7 +639,7 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
 
     as.theta = _cs.theta;
     as.phi = _cs.phi;
-    
+
     return as;
 }
 

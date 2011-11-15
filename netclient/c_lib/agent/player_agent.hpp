@@ -4,12 +4,13 @@
 
 #include <c_lib/agent/net_agent.cpp>
 //#define AGENT_STATE_HISTORY_SIZE 5
-#define TICK_TIME 30.0f
+#define AGENT_INTERPOLATION_DECAY 0.5f
 
 
 class PlayerAgent_state {
     private:
         //class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
+        int state_history_index;
         
     public:
         class AgentState c;                 //Use for camera, smoothed
@@ -30,8 +31,8 @@ class PlayerAgent_state {
         //last agent state update
         Agent_cs_CtoS cs_0; //last control state
 
-        //struct Vector interpolate;
-        //void calculate_interpolate(int t);
+        void calculate_interpolate();
+        AgentState interpolate;
 
         void set_PlayerAgent_id(int id);
         //set actually sends
@@ -39,7 +40,8 @@ class PlayerAgent_state {
 
         PlayerAgent_state() {
             static int inited=0;
-            if (inited) printf("Only one PlayerAgent_state allowed!\n");
+            if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
+            state_history_index = 0;
             inited++;
 
             agent_id = -1;

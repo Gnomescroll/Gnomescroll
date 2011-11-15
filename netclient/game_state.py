@@ -20,7 +20,6 @@ class GameStateGlobal:
     fps = 30.
 
     apply_gravity = True
-    agent_tick_mode = 'jetpack'
 
     def __init__(self):
         pass

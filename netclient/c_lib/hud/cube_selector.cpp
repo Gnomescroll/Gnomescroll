@@ -24,17 +24,31 @@ int get_active_cube_id(){ //get the cube selected by hud
     return cube_select_array[cube_select_x + 8 * cube_select_y].cube_id;
 }
 
-void set_active_cube_id(int pos) {
-    cube_select_x = pos  % 8;
+int get_active_cube_pos(){ //get the position of cube selected by hud
+    return cube_select_x + (8 * cube_select_y);
+}
+
+void set_active_cube_pos(int pos) {
+    cube_select_x = pos % 8;
     cube_select_y = pos / 8;
 
     printf("hud: block_id=%i, hud_tex=%i, hud_pos=  %i,  (%i,%i)\n", cube_select_array[pos].cube_id, cube_select_array[pos].tex_id, pos, cube_select_x, cube_select_y);
 }
 
+void set_active_cube_id(int id) {
+    int i;
+    for (i=0; i<255; i++) {
+        if (cube_select_array[i].cube_id == id) {
+            set_active_cube_pos(i);
+            break;
+        }
+    }
+}
+
 void set_cube_selector_property(int pos, int cube_id, int tex_id) { //set the cubes in each position on hud
     if(tex_id == -1 || pos == -1) return;
     cube_select_array[pos].cube_id = cube_id;
-    cube_select_array[pos].tex_id = tex_id; 
+    cube_select_array[pos].tex_id = tex_id;
     printf("cube_set: pos=%i, cube_id=%i, tex_id=%i \n", pos, cube_id, tex_id);
 }
 

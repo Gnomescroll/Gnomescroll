@@ -3,3 +3,5 @@
 #else
     #define STATE ServerState
 #endif
+
+#define TICK_DURATION 30.0f

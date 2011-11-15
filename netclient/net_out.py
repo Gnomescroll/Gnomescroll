@@ -267,7 +267,7 @@ class SendMessage(GenericMessage):
             return
         return {
             'aid'   :   agent.id,
-            'type'  :   agent.active_block,
+            'type'  :   agent.active_block(),
             'pos'   :   block_position,
         }
         
@@ -312,12 +312,6 @@ class MiscMessage:
     @sendJSON('ping')
     def ping(self):
         return { 'timestamp' : c_lib.c_lib_sdl.get_ticks() }
-
-    @sendJSON('agent_tick_mode')
-    def agent_tick_mode(self, mode):
-        return {
-            'mode'  :   mode
-        }
 
 class DatMessage:
     @sendJSON('dat_loaded')

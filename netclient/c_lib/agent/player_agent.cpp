@@ -51,13 +51,46 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
 }
 
-//#endif
+static inline float _agent_weight(float t) {
+    return pow(AGENT_INTERPOLATION_DECAY, t/TICK_DURATION);
+}
 
-/*
-void PlayerAgent_state::calculate_interpolate(int t) {
-    float weight = (float) t / TICK_TIME;
-    //interpolate.x = weight * (s.x - s_old.x) + s_old.x;
-    //interpolate.y = weight * (s.y - s_old.y) + s_old.y;
-    //interpolate.z = weight * (s.z - s_old.z) + s_old.z;
+// assumes constant time between history states, until delta_t is defined on the states
+void PlayerAgent_state::calculate_interpolate() {
+    interpolate.x = 0.0f;
+    interpolate.y = 0.0f;
+    interpolate.z = 0.0f;
+    interpolate.vx = 0.0f;
+    interpolate.vy = 0.0f;
+    interpolate.vz = 0.0f;
+
+    AgentState* a = &interpolate;
+    float divisor, t, weight;
+    divisor = t = 0.0f;
+    
+    int i, index;
+    for (i=0; i<AGENT_STATE_HISTORY_SIZE; i++) {
+        index = (AGENT_STATE_HISTORY_SIZE + state_history_index - i) % AGENT_STATE_HISTORY_SIZE;
+
+        weight = _agent_weight(t);
+        divisor += weight;
+
+        a->x += state_history[index].x;
+        a->y += state_history[index].y;
+        a->z += state_history[index].z;
+        a->vx += state_history[index].vx;
+        a->vy += state_history[index].vy;
+        a->vz += state_history[index].vz;
+
+        t += TICK_DURATION;
+        //t += state_history[index].dt;
+    }
+
+    a->x /= divisor;
+    a->y /= divisor;
+    a->z /= divisor;
+    a->vx /= divisor;
+    a->vy /= divisor;
+    a->vz /= divisor;
 }
 */
