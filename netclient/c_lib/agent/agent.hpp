@@ -69,8 +69,8 @@ class Agent_state {
         int snapshot_seq;
         //int rollback_seq;
 
-        int cs_window_min;
-        int cs_window_max;
+        //int cs_window_min;
+        //int cs_window_max;
 
         int cs_seq; // <--current counter
 
@@ -116,7 +116,7 @@ class Agent_state {
         void revert_to_snapshot() {
             s = state_snapshot;
             cs_seq = state_snapshot.seq;
-            cs_window_min = state_snapshot.seq;
+            //cs_window_min = state_snapshot.seq;
         }
 
         void revert_to_rollback() {
