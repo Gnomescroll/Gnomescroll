@@ -401,36 +401,17 @@ void Agent_state::_tick()
 
     struct Agent_control_state _cs;
 
-    if(1) 
-    {
-        while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
+    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
 
-            //int index = (cs_seq+1) % 128;
-            cs_seq = (cs_seq+1)%256;
-            _cs = cs[cs_seq % 128];
+        //int index = (cs_seq+1) % 128;
+        cs_seq = (cs_seq+1)%256;
+        _cs = cs[cs_seq % 128];
 
-            s = _agent_tick(_cs, box, s);
-        //s.tick(_cs, box);
+        s = _agent_tick(_cs, box, s);
+    //s.tick(_cs, box);
 
-            _tc++;
-        }
+        _tc++;
     }
-    else
-    {
-        while(cs[cs_seq % 128].seq == cs_seq % 256) {
-
-            //int index = (cs_seq+1) % 128;
-            _cs = cs[cs_seq % 128];
-
-            s = _agent_tick(_cs, box, s);
-
-            cs_seq = (cs_seq+1)%256;
-            _tc++;
-        }
-
-        cs_seq = (cs_seq + 256 - 1) % 256;  
-    }
-
 }
 
 //takes an agent state and control state and returns new agent state

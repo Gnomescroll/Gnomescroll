@@ -17,6 +17,9 @@ class PlayerAgent_state {
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence
 
+        struct Agent_control_state cs_local[128];
+        struct Agent_control_state cs_net[128];
+
         class AgentState snapshot_local[64];
         class AgentState snapshot_net[64];
 
@@ -31,7 +34,8 @@ class PlayerAgent_state {
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
         void handle_local_control_state(int _seq, int _cs, float _theta, float _phi);
         void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
-
+        void client_side_prediction_tick();
+        
         float camera_height_scale;
         
         int agent_id;   //agent_id for player agent

@@ -37,39 +37,60 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 void PlayerAgent_state::handle_local_control_state(int _seq, int _cs, float _theta, float _phi) {
     //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
     
-
+/*
     int index = _seq%128;
 
-/*
-    cs[index].seq = _seq;
-    cs[index].cs = _cs;
-    cs[index].theta = _theta;
-    cs[index].phi = _phi;
-*/
+    cs_local[index].seq = _seq;
+    cs_local[index].cs = _cs;
+    cs_local[index].theta = _theta;
+    cs_local[index].phi = _phi;
+
     //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
 
-    //_tick();
+    client_side_prediction_tick();
 
     //printf("control state= %i\n", new_control_state);
+*/
+}
+
+void client_side_prediction_tick()
+{
+/*
+    Agent_state* A = ClientState::agent_list.get(agent_id);
+    if(A == NULL) return;
+
+    struct Agent_control_state _cs;
+
+    _cs = cs[cs_seq_local % 128];
+
+    s = _agent_tick(_cs, box, s);
+*/
 }
 
 void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi) {
-    //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
-    
 
     int index = _seq%128;
 
-/*
-    cs[index].seq = _seq;
-    cs[index].cs = _cs;
-    cs[index].theta = _theta;
-    cs[index].phi = _phi;
-*/
-    //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
+    //save cs
+    cs_net[index].seq = _seq;
+    cs_net[index].cs = _cs;
+    cs_net[index].theta = _theta;
+    cs_net[index].phi = _phi;
 
-    //_tick();
+    //clear out old cs
+    int i;
+    for(i=32;i<64;i++){
+        index = (_seq + i)%128;
+        cs_net[index].seq = -1;
+    }
+    //check for differences between client out cs and in??
 
-    //printf("control state= %i\n", new_control_state);
+    printf("1");
+
+    if(cs_net[index].seq != cs_local[index].seq) printf("player agent: e1\n");
+    if(cs_net[index].cs != cs_local[index].cs) printf("player agent: server corrected control state\n");
+    if(cs_net[index].theta != cs_local[index].theta) printf("player agent: e3\n");
+    if(cs_net[index].phi != cs_local[index].phi) printf("player agent: e4\n");
 }
 
 //set actually sends
@@ -89,8 +110,27 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     csp.send();
 
     //add control state to control buffer
+    //handle_local_control_state(cs_seq_local, cs, theta, phi);
 
-    handle_local_control_state(cs_seq_local, cs, theta, phi);
+    //save control state
+    int index = cs_seq_local%128;
+
+    cs_local[index].seq = cs_seq_local;
+    cs_local[index].cs = cs;
+    cs_local[index].theta = theta;
+    cs_local[index].phi = phi;
+    //clear out next control state
+    cs_local[(index+1)%128].seq = -1;
+    //client side tick forward
+
+    Agent_state* A = ClientState::agent_list.get(agent_id);
+    if(A == NULL) return;
+
+    struct Agent_control_state _cs;
+
+    _cs = cs_local[index];
+
+    s = _agent_tick(_cs, A->box, s);
 
 }
 
