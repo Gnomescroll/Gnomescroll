@@ -218,7 +218,7 @@ int _clear() {
 
 int _get_highest_open_block(int x, int y, int n) {
     if (n < 1) {
-        printf("WARNING _get_highest_open_block :: called with n < 1, abort");
+        printf("WARNING _get_highest_open_block :: called with n < 1, abort [[ n = %d ]]", n);
         return -1;
     }
     int i=zmax;
