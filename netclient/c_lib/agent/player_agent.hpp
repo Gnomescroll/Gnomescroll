@@ -43,7 +43,7 @@ class PlayerAgent_state {
         int active_camera_state_type;
 
         void set_active_camera_state(int type) {
-            int success = 1;
+            bool success = true;
             switch (type) {
                 case smoothed:
                     active_camera_state = &smooth;
@@ -59,7 +59,7 @@ class PlayerAgent_state {
                     break;
                 default:
                     printf("set_active_camera_state - Unknown type %d\n", type);
-                    success = 0;
+                    success = false;
                     break;
             }
             if (success) active_camera_state_type = type;
