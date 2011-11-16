@@ -62,8 +62,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         }
 };
 
-PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
-
 //Agent control state, server to client
 class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 {
