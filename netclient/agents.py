@@ -461,14 +461,11 @@ class AgentModel(AgentWrapper):
     def interpolated_prediction_position(self):
         return self.client_side_prediction_interpolated()
 
-    def update_prediction(self):
+    def update_prediction(self, ticks):
         pass
 
     def prediction_position(self):
         return self.client_side_prediction()
-
-    def update_last_snapshot(self):
-        pass
 
     def server_snapshot_position(self):
         return self.last_snapshot()
