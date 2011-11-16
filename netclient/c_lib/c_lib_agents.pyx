@@ -244,9 +244,6 @@ class PlayerAgentWrapper(object):
         print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
         raise AttributeError
 
-    def update_smoothing(self, int t):
-        playerAgent_state.calculate_smoothing()
-
     def _pos(self):
         cdef float x
         cdef float y
@@ -274,16 +271,16 @@ class PlayerAgentWrapper(object):
         playerAgent_state.set_active_camera_state(last_snapshot)
         return self._pos()
 
-#functions
-'''
-def teleport_Agent(int id, float x, float y, float z):
-    cdef Agent_state* a
-    a = agent_list.get(id)
-    if a != NULL:
-        a.teleport(x,y,z)
-    else:
-        print "Cannot teleport agent: agent %i does not exist" % (id,)
-'''
+    def update_smoothing(self, int t):
+        playerAgent_state.calculate_smoothing()
+
+    def update_interpolated_prediction(self, int t):
+        pass
+
+    def update_prediction(self, int t):
+        pass
+
+
 
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
