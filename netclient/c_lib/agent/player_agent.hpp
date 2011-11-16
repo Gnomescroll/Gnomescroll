@@ -11,6 +11,7 @@ enum active_camera_states {
     smoothed,
     predicted,
     last_snapshot
+    
 };
 
 class PlayerAgent_state {
