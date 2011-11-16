@@ -83,24 +83,24 @@ infinite_texture 2 test_02
 ===
 id      14
 name    tree_top
-hud     10 xox/Tree-top_02.png
+hud     10 xox/Tree-top_03.png
 transparency 1
-top     xox/Tree-top_02.png
-bottom  xox/Tree-top_02.png
-north   xox/Tree-top_02.png
-south   xox/Tree-top_02.png
-west    xox/Tree-top_02.png
-east    xox/Tree-top_02.png
+top     xox/Tree-top_03.png
+bottom  xox/Tree-top_03.png
+north   xox/Tree-top_03.png
+south   xox/Tree-top_03.png
+west    xox/Tree-top_03.png
+east    xox/Tree-top_03.png
 ===
 id      15
 name    tree_bark
-hud     11 xox/Tree-bark_02.png
+hud     11 xox/Tree-bark_03.png
 top     xox/Tree-End.png
 bottom  xox/Tree-End.png
-north   xox/Tree-bark_02.png
-south   xox/Tree-bark_02.png
-west    xox/Tree-bark_02.png
-east    xox/Tree-bark_02.png
+north   xox/Tree-bark_03.png
+south   xox/Tree-bark_03.png
+west    xox/Tree-bark_03.png
+east    xox/Tree-bark_03.png
 ===
 id      8
 name    sand_brick

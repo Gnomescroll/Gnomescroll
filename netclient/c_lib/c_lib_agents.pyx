@@ -42,8 +42,6 @@ cdef extern from "./agent/agent.hpp":
         bool crouching
         bool jump_ready
 
-
-
 #Agent_state
 cdef extern from "./agent/agent.hpp":
     cdef struct Agent_collision_box:
@@ -246,6 +244,9 @@ class PlayerAgentWrapper(object):
         print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
         raise AttributeError
 
+    def update_smoothing(self, int t):
+        playerAgent_state.calculate_smoothing()
+
     def _pos(self):
         cdef float x
         cdef float y
@@ -272,16 +273,6 @@ class PlayerAgentWrapper(object):
     def last_snapshot(self):
         playerAgent_state.set_active_camera_state(last_snapshot)
         return self._pos()
-
-    def update_smoothing(self, int t):
-        playerAgent_state.calculate_smoothing()
-
-    def update_interpolated_prediction(self, int t):
-        pass
-
-    def update_prediction(self, int t):
-        pass
-
 
 #functions
 '''
