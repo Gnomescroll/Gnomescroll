@@ -23,8 +23,10 @@ class PlayerAgent_state {
         struct Agent_control_state cs_local[128];
         struct Agent_control_state cs_net[128];
 
-        class AgentState snapshot_local[64];
-        class AgentState snapshot_net[64];
+        class AgentState snapshot_local[128];
+        class AgentState snapshot_net[128];
+
+        int most_recent_net_snapshot_seq;
 
         AgentState smooth;
         //class AgentState c;                 //Use for camera, smoothed
@@ -60,7 +62,7 @@ class PlayerAgent_state {
         void handle_local_control_state(int _seq, int _cs, float _theta, float _phi);
         void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
         void client_side_prediction_tick();
-        
+
         float camera_height_scale;
         float camera_height();
         
@@ -89,6 +91,11 @@ class PlayerAgent_state {
             camera_height_scale = 0.83f;
 
             state_history_index = 0;
+            most_recent_net_snapshot_seq = -1;
+
+            int i;
+            for(i=0; i<128; i++) cs_local[i].seq = -1;
+            for(i=0; i<128; i++) cs_net[i].seq = -1;
             active_camera_state = &state_snapshot;
                     
             box.b_height = AGENT_HEIGHT;

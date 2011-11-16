@@ -25,8 +25,27 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
     state_history[index] = ss;
 
-
     if((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) state_history_index = index;
+
+    //save
+
+
+    snapshot_net[seq%128] = ss;
+
+    int i;
+    for(i=32;i<64;i++){
+        index = (seq + i)%128;
+        snapshot_net[index].seq = -1;
+    }
+
+    if( (most_recent_net_snapshot_seq - seq) > 5 || seq > most_recent_net_snapshot_seq) {
+        most_recent_net_snapshot_seq = seq;
+        //if newest snapshot is newer than previous snapshot, do tick stuff
+        state_snapshot = ss;    //set state snapsot
+
+        class AgentState s_backup = s; //back up the current latest
+
+    }
     //do tick and update stuff
 
     //printf("received snaphshot %i\n", seq);
@@ -85,7 +104,7 @@ void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta
     }
     //check for differences between client out cs and in??
 
-    printf("1");
+    if(cs_net[index].seq == -1) return;
 
     if(cs_net[index].seq != cs_local[index].seq) printf("player agent: e1\n");
     if(cs_net[index].cs != cs_local[index].cs) printf("player agent: server corrected control state\n");
