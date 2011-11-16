@@ -455,7 +455,7 @@ class AgentModel(AgentWrapper):
     def interpolated_position(self):
         return self.interpolated()
             
-    def camera_position(self, last=[0]):
+    def camera_position(self):
         if opts.agent_interpolated:
             p = self.interpolated_position()
         else:

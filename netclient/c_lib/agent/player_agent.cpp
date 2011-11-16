@@ -27,7 +27,6 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
 
     if((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) state_history_index = index;
-
     //do tick and update stuff
 
     //printf("received snaphshot %i\n", seq);
@@ -56,7 +55,12 @@ static inline float _agent_weight(float t) {
     return INITIAL_AGENT_INTERPOLATION_WEIGHT * pow(AGENT_INTERPOLATION_DECAY, t/TICK_DURATION);
 }
 
+static inline float _agent_interp(float s0, float s1, float scale) {
+    return scale*(s1 - s0) + s0;
+}
+
 // assumes constant time between history states, until delta_t is defined on the states
+//void PlayerAgent_state::calculate_interpolate() {
 void PlayerAgent_state::calculate_interpolate() {
     interpolate.x = 0.0f;
     interpolate.y = 0.0f;

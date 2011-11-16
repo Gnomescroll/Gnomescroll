@@ -16,6 +16,7 @@ class PlayerAgent_state {
 
         class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
         int state_history_index;
+        int last_snapshot_time;
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 
