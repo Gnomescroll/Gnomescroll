@@ -454,12 +454,37 @@ class AgentModel(AgentWrapper):
 
     def smoothed_position(self):
         return self.smoothed()
+
+    def update_interpolated_prediction(self, ticks):
+        pass
+
+    def interpolated_prediction_position(self):
+        return self.client_side_prediction_interpolated()
+
+    def update_prediction(self):
+        pass
+
+    def prediction_position(self):
+        return self.client_side_prediction()
+
+    def update_last_snapshot(self):
+        pass
+
+    def server_snapshot_position(self):
+        return self.last_snapshot()
             
     def camera_position(self):
-        if opts.agent_smoothed:
-            p = self.smoothed_position()
-        else:
+        if opts.agent_motion == 'normal':
             p = self.state[0:3]
+        elif opts.agent_motion == 'smoothed':
+            p = self.smoothed_position()
+        elif opts.agent_motion == 'interpolated_prediction':
+            p = self.interpolated_prediction_position()
+        elif opts.agent_motion == 'prediction':
+            p = self.prediction_position()
+        elif opts.agent_motion == 'server_snapshot':
+            p = self.server_snapshot_position()
+        
         p[2] += self.camera_height
         return p
 

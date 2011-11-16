@@ -33,7 +33,7 @@ fov             Camera field of view
 sensitivity     Mouse sensitivity
 camera-speed    Camera speed
 invert-mouse    Invert mouse (mouse down is camera up)
-agent-smoothed  Use smoothing for the player agent camera
+agent-motion    Motion style for the player agent camera. Choices are: normal, smoothed, interpolated_prediction, prediction, server_snapshot
 
 no-hud          Don't display HUD elements on start (Enable in game with /)
 disable-diagnostic-hud  Don't display diagnostic HUD elements
@@ -81,8 +81,9 @@ DEFAULTS = {
     'fov'       :   settings.fov,
     
     # Controls
-    'sensitivity'        : settings.sensitivity,
+    'sensitivity'   :   settings.sensitivity,
     'camera_speed'  :   settings.camera_speed,
+    'agent_motion'  :   settings.agent_motion,
 
     # HUD / Info Panels
     'ping_update_interval' : settings.ping_update_interval,
@@ -121,7 +122,7 @@ def parse(cl_args=None):
     parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=int)
     parser.add_argument('-cs', '--camera-speed', default=DEFAULTS['camera_speed'], type=float)
     parser.add_argument('-im', '--invert-mouse', action='store_true')
-    parser.add_argument('-as', '--agent-smoothed', action='store_true')
+    parser.add_argument('-am', '--agent-motion', default=DEFAULTS['agent_motion'], choices=['normal', 'smoothed', 'interpolated_prediction', 'prediction', 'server_snapshot'])
 
     ''' HUD/Info panels '''
     parser.add_argument('-nh', '--no-hud', action='store_true', dest='hud')
@@ -183,8 +184,6 @@ def postprocess_args(args):
     ''' Controls '''
     if not args.invert_mouse:
         args.invert_mouse = settings.invert_mouse
-    if not args.agent_smoothed:
-        args.agent_smoothed = settings.agent_smoothed
 
     ''' HUD/Info panels '''
     if not args.diagnostic_hud:

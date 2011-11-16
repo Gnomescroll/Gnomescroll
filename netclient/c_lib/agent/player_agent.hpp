@@ -9,10 +9,9 @@
 
 enum active_camera_states {
     smoothed,
-    client_side_prediction_interpolated
-    client_side_prediction
+    client_side_prediction_interpolated,
+    client_side_prediction,
     last_snapshot
-    
 };
 
 class PlayerAgent_state {
@@ -48,7 +47,7 @@ class PlayerAgent_state {
                 case smoothed:
                     active_camera_state = &smooth;
                     break;
-                case client_side_prediction_interpolated,
+                case client_side_prediction_interpolated:
                     active_camera_state = &c;
                     break;
                 case client_side_prediction:

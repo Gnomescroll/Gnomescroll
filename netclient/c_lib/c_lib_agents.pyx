@@ -67,7 +67,6 @@ cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
         float camera_height()
-#        AgentState smooth
         void calculate_smoothing()
         AgentState* active_camera_state
         void set_active_camera_state(int type)
