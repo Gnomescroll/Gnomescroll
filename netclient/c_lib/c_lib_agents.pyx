@@ -57,12 +57,19 @@ cdef extern from "./agent/agent.hpp":
         #void teleport(float x,float y,float z)
 
 cdef extern from "./agent/player_agent.hpp":
+    cdef enum active_camera_states:
+        smoothed
+        predicted
+        last_snapshot
+
     cdef cppclass PlayerAgent_state:
         int agent_id
-        float camera_height_scale
-        AgentState smooth
+        float camera_height()
+#        AgentState smooth
         void calculate_smoothing()
-
+        AgentState* active_camera_state
+        void set_active_camera_state(int type)
+        
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
@@ -233,10 +240,7 @@ class PlayerAgentWrapper(object):
             raise AttributeError
 
         if name == 'camera_height':
-            if AgentWrapper.__getattribute__(self, 'crouching'):
-                return AgentWrapper.__getattribute__(self, 'crouch_height') * playerAgent_state.camera_height_scale
-            else:
-                return AgentWrapper.__getattribute__(self, 'box_height') * playerAgent_state.camera_height_scale
+            return playerAgent_state.camera_height()
 
         print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
         raise AttributeError
@@ -244,16 +248,28 @@ class PlayerAgentWrapper(object):
     def update_smoothing(self, int t):
         playerAgent_state.calculate_smoothing()
 
-    def smoothed(self):
+    def _pos(self):
         cdef float x
         cdef float y
         cdef float z
 
-        x = playerAgent_state.smooth.x
-        y = playerAgent_state.smooth.y
-        z = playerAgent_state.smooth.z
+        x = playerAgent_state.active_camera_state.x
+        y = playerAgent_state.active_camera_state.y
+        z = playerAgent_state.active_camera_state.z
 
         return [x,y,z]
+
+    def smoothed(self):
+        playerAgent_state.set_active_camera_state(smoothed)
+        return self._pos()
+
+    def predicted(self):
+        playerAgent_state.set_active_camera_state(predicted)
+        return self._pos()
+
+    def last_snapshot(self):
+        playerAgent_state.set_active_camera_state(last_snapshot)
+        return self._pos()
 
 
 #functions

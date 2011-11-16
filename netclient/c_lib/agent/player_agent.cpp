@@ -134,6 +134,13 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
 }
 
+float PlayerAgent_state::camera_height() {
+    if (active_camera_state->crouching) {
+        return box.c_height * camera_height_scale;
+    }
+    return box.b_height * camera_height_scale;
+}
+
 #define INITIAL_AGENT_INTERPOLATION_WEIGHT 1.0f
 static inline float _agent_weight(float t) {
     return INITIAL_AGENT_INTERPOLATION_WEIGHT * pow(AGENT_INTERPOLATION_DECAY, t/TICK_DURATION);

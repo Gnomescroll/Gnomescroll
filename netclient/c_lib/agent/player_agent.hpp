@@ -7,12 +7,15 @@
 #define AGENT_STATE_HISTORY_SIZE 8
 #define AGENT_INTERPOLATION_DECAY 0.8f
 
+enum active_camera_states {
+    smoothed,
+    predicted,
+    last_snapshot
+};
 
 class PlayerAgent_state {
     private:
     public:
-
-        //
 
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence
@@ -27,7 +30,28 @@ class PlayerAgent_state {
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
 
+        struct Agent_collision_box box;
+
         class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
+
+        class AgentState* active_camera_state;
+
+        void set_active_camera_state(int type) {
+            switch (type) {
+                case smoothed:
+                    active_camera_state = &c;
+                    break;
+                case predicted:
+                    active_camera_state = &s;
+                    break;
+                case last_snapshot:
+                    active_camera_state = &state_snapshot;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
         int state_history_index;
         int last_snapshot_time;
 
@@ -37,6 +61,7 @@ class PlayerAgent_state {
         void client_side_prediction_tick();
         
         float camera_height_scale;
+        float camera_height();
         
         int agent_id;   //agent_id for player agent
         //int seq;        //client side control state sequence number
@@ -64,6 +89,11 @@ class PlayerAgent_state {
             camera_height_scale = 0.83f;
 
             state_history_index = 0;
+            active_camera_state = &state_snapshot;
+                    
+            box.b_height = AGENT_HEIGHT;
+            box.c_height = AGENT_HEIGHT_CROUCHED;
+            box.box_r = AGENT_BOX_RADIUS;
         }
 
         ~PlayerAgent_state() {}
