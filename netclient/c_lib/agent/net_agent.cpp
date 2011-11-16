@@ -1,10 +1,14 @@
 #pragma once
 
+#include "net_agent.hpp"
+
 //#include "net_agent.hpp"
 
 #include <net_lib/client/client.hpp>
 #include <net_lib/common/message_handler.h>
+
 #include <c_lib/agent/agent.hpp>
+
 #include <net_lib/server/server.h>
 
 #include <c_lib/template/net.hpp>
@@ -73,6 +77,8 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         }
 };
 
+PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
+
 //Agent control state, server to client
 class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 {
@@ -102,6 +108,9 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 
             //printf("!!! control state= %i \n", cs);
             A->handle_control_state(seq, cs, theta, phi);
+            #ifdef DC_CLIENT
+            ClientState::playerAgent_state.handle_net_control_state(seq, cs, theta, phi);
+            #endif
         }
 };
 

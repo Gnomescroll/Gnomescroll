@@ -2,7 +2,8 @@
 
 //#ifdef DC_CLIENT
 
-#include <c_lib/agent/net_agent.cpp>
+#include <c_lib/agent/net_agent.hpp>
+
 #define AGENT_STATE_HISTORY_SIZE 8
 #define AGENT_INTERPOLATION_DECAY 0.8f
 
@@ -28,8 +29,8 @@ class PlayerAgent_state {
         int last_snapshot_time;
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
-        void handle_control_state(int _seq, int _cs, float _theta, float _phi);
-
+        void handle_local_control_state(int _seq, int _cs, float _theta, float _phi);
+        void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
 
         float camera_height_scale;
         
@@ -52,7 +53,7 @@ class PlayerAgent_state {
             inited++;
 
             agent_id = -1;
-            
+
             cs_seq_local = 0;
             cs_seq_net = -1;
 

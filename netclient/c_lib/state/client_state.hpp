@@ -34,4 +34,6 @@ namespace ClientState {
 
     void ClientTick();
 }
+
 #endif
+

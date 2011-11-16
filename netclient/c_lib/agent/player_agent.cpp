@@ -34,7 +34,26 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
 //take outgoing control input and do client side prediction
 //seq for prediction will always exceed client side one
-void PlayerAgent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
+void PlayerAgent_state::handle_local_control_state(int _seq, int _cs, float _theta, float _phi) {
+    //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
+    
+
+    int index = _seq%128;
+
+/*
+    cs[index].seq = _seq;
+    cs[index].cs = _cs;
+    cs[index].theta = _theta;
+    cs[index].phi = _phi;
+*/
+    //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
+
+    //_tick();
+
+    //printf("control state= %i\n", new_control_state);
+}
+
+void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi) {
     //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
     
 
@@ -68,6 +87,10 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     csp.phi = phi;
 
     csp.send();
+
+    //add control state to control buffer
+
+    handle_local_control_state(cs_seq_local, cs, theta, phi);
 
 }
 

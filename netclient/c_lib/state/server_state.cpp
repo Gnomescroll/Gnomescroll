@@ -3,7 +3,7 @@
 #ifdef DC_SERVER
 
 #include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/net_agent.cpp>
+#include <c_lib/agent/net_agent.hpp>
 #include <c_lib/particles/object_lib.hpp>
 
 
