@@ -455,14 +455,14 @@ class AgentModel(AgentWrapper):
     def smoothed_position(self):
         return self.smoothed()
 
-    def update_interpolated_prediction(self, ticks):
-        pass
+    def update_interpolated_prediction_position(self, ticks):
+        return self.update_interpolated_prediction(ticks)
 
     def interpolated_prediction_position(self):
         return self.client_side_prediction_interpolated()
 
-    def update_prediction(self, ticks):
-        pass
+    def update_prediction_position(self, ticks):
+        return self.update_prediction(ticks)
 
     def prediction_position(self):
         return self.client_side_prediction()
