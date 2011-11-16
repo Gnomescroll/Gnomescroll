@@ -242,7 +242,7 @@ class App(object):
             delta_tick = current_tick - last_tick
             last_tick = current_tick
             if agent:
-                agent.update_interpolated_position(delta_tick)
+                agent.update_smoothed_position(delta_tick)
             if InputGlobal.input == 'agent':
                 self.agent_camera.input_update(delta_tick)
                 if agent:

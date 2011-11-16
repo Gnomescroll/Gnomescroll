@@ -144,16 +144,15 @@ static inline float _agent_interp(float s0, float s1, float scale) {
 }
 
 // assumes constant time between history states, until delta_t is defined on the states
-//void PlayerAgent_state::calculate_interpolate() {
-void PlayerAgent_state::calculate_interpolate() {
-    interpolate.x = 0.0f;
-    interpolate.y = 0.0f;
-    interpolate.z = 0.0f;
-    interpolate.vx = 0.0f;
-    interpolate.vy = 0.0f;
-    interpolate.vz = 0.0f;
+void PlayerAgent_state::calculate_smoothing() {
+    smooth.x = 0.0f;
+    smooth.y = 0.0f;
+    smooth.z = 0.0f;
+    smooth.vx = 0.0f;
+    smooth.vy = 0.0f;
+    smooth.vz = 0.0f;
 
-    AgentState* a = &interpolate;
+    AgentState* a = &smooth;
     float divisor = 0.0f;
     float t = 0.0f;
     float weight;

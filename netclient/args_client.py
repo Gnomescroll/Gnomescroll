@@ -183,8 +183,8 @@ def postprocess_args(args):
     ''' Controls '''
     if not args.invert_mouse:
         args.invert_mouse = settings.invert_mouse
-    if not args.agent_interpolated:
-        args.agent_interpolated = settings.agent_interpolated
+    if not args.agent_smoothed:
+        args.agent_smoothed = settings.agent_smoothed
 
     ''' HUD/Info panels '''
     if not args.diagnostic_hud:

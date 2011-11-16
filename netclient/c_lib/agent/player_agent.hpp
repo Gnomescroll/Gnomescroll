@@ -44,8 +44,8 @@ class PlayerAgent_state {
         //last agent state update
         Agent_cs_CtoS cs_0; //last control state
 
-        void calculate_interpolate();
-        AgentState interpolate;
+        void calculate_smoothing();
+        AgentState smooth;
 
         void set_PlayerAgent_id(int id);
         //set actually sends

@@ -261,7 +261,7 @@ class Keyboard(object):
             'u' : cInput.toggle_mouse_bind,
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
-            '[' : self.toggle_agent_interpolated,
+            '[' : self.toggle_agent_smoothed,
         }
 
         self.key_release_handlers = {
@@ -273,9 +273,9 @@ class Keyboard(object):
     def toggle_inventory(self):
         InputGlobal.inventory = not InputGlobal.inventory
 
-    def toggle_agent_interpolated(self):
-        opts.agent_interpolated = not opts.agent_interpolated
-        print "Agent interpolation: ", opts.agent_interpolated
+    def toggle_agent_smoothed(self):
+        opts.agent_smoothed = not opts.agent_smoothed
+        print "Agent interpolation: ", opts.agent_smoothed
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':

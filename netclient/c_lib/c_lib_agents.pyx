@@ -60,8 +60,8 @@ cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
         float camera_height_scale
-        AgentState interpolate
-        void calculate_interpolate()
+        AgentState smooth
+        void calculate_smoothing()
 
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
@@ -218,6 +218,7 @@ class AgentWrapper(object):
 
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
+        
 
 class PlayerAgentWrapper(object):
 
@@ -240,17 +241,17 @@ class PlayerAgentWrapper(object):
         print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
         raise AttributeError
 
-    def update_interpolate(self, int t):
-        playerAgent_state.calculate_interpolate()
+    def update_smoothing(self, int t):
+        playerAgent_state.calculate_smoothing()
 
-    def interpolated(self):
+    def smoothed(self):
         cdef float x
         cdef float y
         cdef float z
 
-        x = playerAgent_state.interpolate.x
-        y = playerAgent_state.interpolate.y
-        z = playerAgent_state.interpolate.z
+        x = playerAgent_state.smooth.x
+        y = playerAgent_state.smooth.y
+        z = playerAgent_state.smooth.z
 
         return [x,y,z]
 

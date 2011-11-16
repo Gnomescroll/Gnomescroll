@@ -449,15 +449,15 @@ class AgentModel(AgentWrapper):
         else:
             self.x, self.y, self.z = xyz
 
-    def update_interpolated_position(self, ticks):
-        self.update_interpolate(ticks)
+    def update_smoothed_position(self, ticks):
+        self.update_smoothing(ticks)
 
-    def interpolated_position(self):
-        return self.interpolated()
+    def smoothed_position(self):
+        return self.smoothed()
             
     def camera_position(self):
-        if opts.agent_interpolated:
-            p = self.interpolated_position()
+        if opts.agent_smoothed:
+            p = self.smoothed_position()
         else:
             p = self.state[0:3]
         p[2] += self.camera_height
