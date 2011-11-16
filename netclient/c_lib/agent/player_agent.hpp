@@ -9,7 +9,8 @@
 
 enum active_camera_states {
     smoothed,
-    predicted,
+    client_side_prediction_interpolated
+    client_side_prediction
     last_snapshot
     
 };
@@ -30,7 +31,7 @@ class PlayerAgent_state {
         int most_recent_net_snapshot_seq;
 
         AgentState smooth;
-        //class AgentState c;                 //Use for camera, smoothed
+        class AgentState c;                 //Use for camera, smoothed
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
 
@@ -47,7 +48,10 @@ class PlayerAgent_state {
                 case smoothed:
                     active_camera_state = &smooth;
                     break;
-                case predicted:
+                case client_side_prediction_interpolated,
+                    active_camera_state = &c;
+                    break;
+                case client_side_prediction:
                     active_camera_state = &s;
                     break;
                 case last_snapshot:

@@ -60,7 +60,8 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./agent/player_agent.hpp":
     cdef enum active_camera_states:
         smoothed
-        predicted
+        client_side_prediction_interpolated
+        client_side_prediction
         last_snapshot
 
     cdef cppclass PlayerAgent_state:
@@ -264,14 +265,17 @@ class PlayerAgentWrapper(object):
         playerAgent_state.set_active_camera_state(smoothed)
         return self._pos()
 
-    def predicted(self):
-        playerAgent_state.set_active_camera_state(predicted)
+    def client_side_prediction_interpolated(self):
+        playerAgent_state.set_active_camera_state(client_side_prediction_interpolated)
+        return self._pos()
+
+    def client_side_prediction(self):
+        playerAgent_state.set_active_camera_state(client_side_prediction)
         return self._pos()
 
     def last_snapshot(self):
         playerAgent_state.set_active_camera_state(last_snapshot)
         return self._pos()
-
 
 #functions
 '''
