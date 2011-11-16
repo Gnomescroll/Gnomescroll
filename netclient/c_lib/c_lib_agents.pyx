@@ -43,6 +43,7 @@ cdef extern from "./agent/agent.hpp":
         bool jump_ready
 
 
+
 #Agent_state
 cdef extern from "./agent/agent.hpp":
     cdef struct Agent_collision_box:
