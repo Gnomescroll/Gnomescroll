@@ -10,6 +10,15 @@
 class PlayerAgent_state {
     private:
     public:
+
+        //
+
+        int cs_seq_local;   // client side cs
+        int cs_seq_net;     // snapshot cs sequence
+
+        class AgentState snapshot_local[64];
+        class AgentState snapshot_net[64];
+
         class AgentState c;                 //Use for camera, smoothed
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
@@ -19,12 +28,13 @@ class PlayerAgent_state {
         int last_snapshot_time;
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
+        void handle_control_state(int _seq, int _cs, float _theta, float _phi);
 
 
         float camera_height_scale;
         
         int agent_id;   //agent_id for player agent
-        int seq;        //client side control state sequence number
+        //int seq;        //client side control state sequence number
 
         //last agent state update
         Agent_cs_CtoS cs_0; //last control state
@@ -42,7 +52,10 @@ class PlayerAgent_state {
             inited++;
 
             agent_id = -1;
-            seq = 0;
+            
+            cs_seq_local = 0;
+            cs_seq_net = -1;
+
             camera_height_scale = 0.83f;
 
             state_history_index = 0;
