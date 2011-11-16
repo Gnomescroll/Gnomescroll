@@ -83,6 +83,7 @@ class PlayerAgent_state {
         Agent_cs_CtoS cs_0; //last control state
 
         void calculate_smoothing();
+        void update_client_side_prediction_interpolated();
 
         void set_PlayerAgent_id(int id);
         //set actually sends
