@@ -26,6 +26,7 @@ class PlayerAgent_state {
         class AgentState snapshot_local[64];
         class AgentState snapshot_net[64];
 
+        AgentState smooth;
         class AgentState c;                 //Use for camera, smoothed
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
@@ -39,7 +40,7 @@ class PlayerAgent_state {
         void set_active_camera_state(int type) {
             switch (type) {
                 case smoothed:
-                    active_camera_state = &c;
+                    active_camera_state = &smooth;
                     break;
                 case predicted:
                     active_camera_state = &s;
@@ -70,7 +71,6 @@ class PlayerAgent_state {
         Agent_cs_CtoS cs_0; //last control state
 
         void calculate_smoothing();
-        AgentState smooth;
 
         void set_PlayerAgent_id(int id);
         //set actually sends
