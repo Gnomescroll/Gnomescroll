@@ -56,6 +56,7 @@ void start_text_draw(int r, int g, int b, int a) {
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fontTextureId);
+    glBegin( GL_QUADS );
 }
 
 void blit_glyph(
@@ -65,7 +66,6 @@ void blit_glyph(
     float screen_y_min, float screen_y_max,
     float depth)
 {
-    glBegin( GL_QUADS );
     glTexCoord2f(tex_x_min, tex_y_max);
     glVertex3f(screen_x_min, screen_y_max, depth);
     glTexCoord2f(tex_x_min, tex_y_min);
@@ -74,10 +74,10 @@ void blit_glyph(
     glVertex3f(screen_x_max, screen_y_min, depth);
     glTexCoord2f(tex_x_max, tex_y_max);
     glVertex3f(screen_x_max, screen_y_max, depth);
-    glEnd();
 }
 
 void end_text_draw() {
+    glEnd();
     glDisable(GL_TEXTURE_2D);
     if (tex_alpha) {
         glDisable(GL_BLEND);

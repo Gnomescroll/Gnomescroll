@@ -24,7 +24,7 @@ class Hud(object):
 
         self.win_width = opts.width
         self.win_height = opts.height
-        self.font_height = 16
+        self.font_height = opts.font_size
         self.height_margin = 5
         self.width_margin = 3
 
@@ -131,6 +131,8 @@ class Hud(object):
             self.draw_ping(ping)
         if cube_selector:
             self.cube_selector.draw()
+
+        #cHUD.Font.font.stress_test()
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent

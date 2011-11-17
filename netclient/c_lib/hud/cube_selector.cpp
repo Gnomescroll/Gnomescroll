@@ -53,7 +53,7 @@ void set_cube_selector_property(int pos, int cube_id, int tex_id) { //set the cu
 }
 
 void draw_cube_selector(float x, float y, float size, int mode) {
-
+printf("%0.2f %0.2f\n", x,y);
     int i,j;
     float x0,y0,x1,y1;
 
@@ -105,6 +105,7 @@ void draw_cube_selector(float x, float y, float size, int mode) {
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
+    // draw selected cube outline
     const float s_margin = 1.0; //selector margin
     i = cube_select_x;
     j = cube_select_y;
@@ -121,7 +122,7 @@ void draw_cube_selector(float x, float y, float size, int mode) {
     y1 = y0 + _ssize - sborder;
     
     glLineWidth(1.0);
-    glColor4ub(0,0,255,0);
+    glColor4ub(0,0,255,0);  // blue
     glBegin(GL_LINE_STRIP);
 
         glVertex3f(x0, y0, z_);  // Top left

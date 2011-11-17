@@ -152,6 +152,9 @@ class Text:
 
 ''' Font '''
 import os.path
+import random
+import string
+
 class Font:
 
     font_path = "./media/fonts/"
@@ -180,7 +183,8 @@ class Font:
         self.fontfile = fn
         self.pngfile = ''
         self.process_font_filename()
-
+#        self._gen_stress()
+        
     def process_font_filename(self):
         fn = self.fontfile
         fn = fn.split('.')[0]
@@ -251,6 +255,20 @@ class Font:
         if not load_font(self.pngfile):
             self.ready = False
         self.ready = True
+
+    def _gen_stress(self):
+        num = 1024
+        self.stressers = []
+        for i in range(num):
+            s = random.choice(string.letters)
+            x = random.randrange(0, 1280)
+            y = random.randrange(0, 800)
+            color = (random.randrange(0,256),random.randrange(0,256),random.randrange(0,256),random.randrange(0,256))
+            self.stressers.append((s, x,y,color))
+      
+    def stress_test(self):
+        for s,x,y,color in self.stressers:
+            self.draw(s, x,y,0.1, color)
 
     def draw(self, text, x, y, depth, color):
         if not self.ready:

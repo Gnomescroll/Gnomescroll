@@ -38,8 +38,8 @@ diagnostic_hud = True # show diagnostic HUD elements (graphs, ping, fps)
 inventory_hud_x_offset = 250
 inventory_hud_y_offset = 500
 
-cube_selector_x_offset = 888.0
-cube_selector_y_offset = 130.0
+cube_selector_x_offset = 1130.0
+cube_selector_y_offset = 150.0
 
 fps_perf_graph_x_offset = 50.0
 fps_perf_graph_y_offset = 70.0
@@ -55,6 +55,7 @@ ping = True # calculate and display ping
 ping_update_interval = 500  # ms delay between ping updates
 
 font = "inc_18"
+font_size = 18
 
 ''' Sound '''
 sound = True
