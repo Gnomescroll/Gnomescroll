@@ -69,7 +69,7 @@ int init_c_lib() {
 
         init_image_loader();
         init_particles();
-        init_text();
+        //init_text();
         init_cube_selector();
         init_inventory();
     #endif

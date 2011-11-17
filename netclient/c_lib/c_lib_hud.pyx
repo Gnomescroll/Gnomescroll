@@ -121,8 +121,18 @@ Text
 '''
 
 cdef extern from './hud/text.h':
-    int _init_text()
     int draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
+    int load_font(char* fontfile)
+
+    void start_text_draw(int r, int g, int b, int a)
+    void end_text_draw()
+    void blit_glyph(
+        float tex_x_min, float tex_x_max,
+        float tex_y_min, float tex_y_max,
+        float screen_x_min, float screen_x_max,
+        float screen_y_min, float screen_y_max,
+        float depth
+    )
 
 class Text:
 
@@ -140,5 +150,170 @@ class Text:
 
     def draw(self):
         r,g,b,a  = self.color
-        draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
+#        draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
+        Font.font.draw(self.text, self.x, self.y, self.depth, self.color)
 
+''' Font '''
+import os.path
+class Font:
+
+    font_path = "./media/fonts/"
+    font_ext = ".fnt"
+    png_ext = "_0.png"
+    missing_character = '?'
+    glyphs = {}
+    info = {}
+    font = None
+
+    ready = False
+    
+    @classmethod
+    def init(cls):
+        if not os.path.exists(cls.font_path):
+            print "ERROR c_lib_fonts.pyx :: cannot find font path %s" % (cls.font_path,)
+            cls.ready = False
+            return
+
+        import opts
+        cls.font = cls(opts.opts.font)
+        cls.font.parse()
+        cls.font.load()
+
+    def __init__(self, fn):
+        self.fontfile = fn
+        self.pngfile = ''
+        self.process_font_filename()
+
+    def process_font_filename(self):
+        fn = self.fontfile
+        fn = fn.split('.')[0]
+        fn += self.font_ext
+        fn = self.font_path + fn
+        self.fontfile = fn
+        if not os.path.exists(self.fontfile):
+            print "ERROR c_lib_fonts.pyx :: cannot find font file %s in %s" % (fn, self.font_path,)
+            self.ready = False
+            return
+        self.ready = True
+            
+    def parse(self):
+        png = ""
+        
+        # parse .fnt
+        with open(self.fontfile) as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                tags = line.split()
+                name = tags[0]
+                tags = dict(map(lambda a: a.split('='), tags[1:]))
+
+                if name == 'page':
+                    png = tags['file'].strip('"')
+                elif name == 'info':
+                    self.info.update(tags)
+                    print "Font: %s" % (line,)
+                elif name == 'common':
+                    self.info.update(tags)
+                    print "Font: %s" % (line,)
+                elif name == 'chars':
+                    print '%s characters in font set' % (tags['count'],)
+                elif name == 'char':
+                    self.glyphs[int(tags['id'])] = tags
+
+        # process png filename
+        if not png:
+            png = self.fontfile + self.png_ext
+        fp_png = self.font_path + png
+        if not os.path.exists(fp_png):
+            print "ERROR c_lib_fonts.pyx :: cannot find font png file %s in %s" % (fp_png, self.font_path,)
+            self.ready = False
+            return
+        self.pngfile = fp_png
+
+        self.clean_glyphs()
+
+    def clean_glyphs(self):
+        for kc, glyph in self.glyphs.items():
+            for k,v in glyph.items():
+                try:
+                    glyph[k] = int(glyph[k])
+                except ValueError:
+                    pass
+        
+    def load(self):
+        if not load_font(self.pngfile):
+            self.ready = False
+        self.ready = True
+
+    def draw_test_glyph(self):
+        cursor_x=cursor_y=0
+        cc = ord("A")
+        data = self.glyphs[cc]
+        start_text_draw(255,20,20,255)
+        tx_min = data['x'] / 256.
+        tx_max = (data['x'] + data['width']) / 256.
+        ty_max = (256 - data['y']) / 256.
+        ty_min = (256 - data['y'] - data['height']) / 256.
+#        tx_min = 0.
+#        tx_max = 1.
+#        ty_min = 0.
+#        ty_max = 1.
+        # surface quad coordinates
+        sx_min = 660 + data['xoffset']
+        sx_max = 660 + cursor_x + data['width']
+        sy_min = 440 + data['height']
+        sy_max = 440 + cursor_y + data['yoffset']
+#        sx_min = 640
+#        sx_max = 640+256
+#        sy_max = 400
+#        sy_min = 400+256
+        print tx_min, tx_max, ty_min, ty_max
+        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, 0.1)
+
+        end_text_draw()
+        
+    def draw(self, text, x, y, depth, color):
+        if not self.ready:
+            print "Cannot draw font. Font not ready"
+            return
+
+        self.draw_test_glyph()
+#        return
+
+        r,g,b,a = color
+        start_text_draw(r,g,b,a);
+
+        cursor_x = cursor_y = 0
+        for c in text:
+            cc = ord(c)
+
+            if cc == 10:
+                cursor_y += 10
+                continue
+            
+            if cc not in self.glyphs:
+                print "Character unknown: %s" % (c,)
+                cc  = ord(self.missing_character)
+                
+            data = self.glyphs[cc]
+
+            # font texture coordinates
+            tx_min = data['x'] / 256.
+            tx_max = (data['x'] + data['width'] ) / 256.
+            ty_max = data['y'] / 256.
+            ty_min = (data['y'] - data['height']) / 256.
+
+            # surface quad coordinates
+            sx_min = x + cursor_x + data['xoffset']
+            sx_max = sx_min + data['width']
+            sy_min = y - cursor_y - data['yoffset']
+            sy_max = sy_min - data['height']
+
+            # copy glyph
+            blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth)
+
+            # advance quad cursor
+            cursor_x += data['xadvance']
+    
+        end_text_draw()

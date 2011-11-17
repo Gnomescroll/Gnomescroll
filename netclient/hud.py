@@ -20,6 +20,8 @@ class Hud(object):
 
     def __init__(self):
 
+        cHUD.Font.init()
+
         self.win_width = opts.width
         self.win_height = opts.height
 
@@ -39,8 +41,8 @@ class Hud(object):
 
         self.ping = self._to_draw_text(
             text = '',
-            x = 0,
-            offset = self.win_height - 10
+            x = 10,
+            offset = self.win_height - 100
         )
 
     def _init_reticle(self):
@@ -109,6 +111,7 @@ class Hud(object):
         self.fps.draw()
 
     def draw_ping(self, ping_text):
+        ping_text  = 555
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 

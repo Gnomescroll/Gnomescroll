@@ -2,11 +2,12 @@
 
 static GLuint fontTextureId;
 static int tex_alpha = 1;
+static int font_loaded = 0;
 
-int init_text() {
-    SDL_Surface *font = IMG_Load(FONTFILE);
+int load_font(char* fontfile) {
+    SDL_Surface *font = IMG_Load(fontfile);
 
-    if(!font) { printf("text.init_test(): font load error, %s \n", IMG_GetError()); return 1;}
+    if(!font) { printf("text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}
     if(font->format->BytesPerPixel != 4) {
         printf("Font Image File: image is missing alpha channel \n");
         tex_alpha = 0;
@@ -32,7 +33,9 @@ int init_text() {
     SDL_FreeSurface(font);
 
     glDisable(GL_TEXTURE_2D);
-    return 0;
+    font_loaded = 1;
+    printf("Loaded font %s\n", fontfile);
+    return 1;
 }
 
 static const float dx = 1.0f/16.0f;
@@ -40,11 +43,15 @@ static const float dy = 1.0f/16.0f;
 
 int draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a) {
 
+    if (!font_loaded) {
+        printf("No font loaded\n");
+        return 1;
+    }
+
     int c_num = 0;
 
     int i;
     int j = 0;
-    float offset = x;
     int index,xi,yi;
     float x_min, x_max, y_min, y_max;
     float Xmin,Xmax, Ymin,Ymax;
@@ -96,7 +103,6 @@ int draw_text(char* text, float x, float y, float height, float width, float dep
         glVertex3f(Xmax, Ymax, depth);
         glEnd();
 
-        offset += width;
         j++;
     }
     glDisable(GL_TEXTURE_2D);
@@ -104,4 +110,50 @@ int draw_text(char* text, float x, float y, float height, float width, float dep
         glDisable(GL_BLEND);
     }
     return 0;
+}
+
+void start_text_draw(int r, int g, int b, int a) {
+    
+    if (!font_loaded) {
+        printf("No font loaded\n");
+        return;
+    }
+
+    if (tex_alpha) {
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+
+        glColor4ub((unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a); //replace with color cordinates on texture
+    } else {
+        glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, fontTextureId);
+}
+
+void blit_glyph(
+    float tex_x_min, float tex_x_max,
+    float tex_y_min, float tex_y_max,
+    float screen_x_min, float screen_x_max,
+    float screen_y_min, float screen_y_max,
+    float depth)
+{
+    glBegin( GL_QUADS );
+    glTexCoord2f(tex_x_min, tex_y_max);
+    glVertex3f(screen_x_min, screen_y_max, depth);
+    glTexCoord2f(tex_x_min, tex_y_min);
+    glVertex3f(screen_x_min, screen_y_min, depth);
+    glTexCoord2f(tex_x_max, tex_y_min);
+    glVertex3f(screen_x_max, screen_y_min, depth);
+    glTexCoord2f(tex_x_max, tex_y_max);
+    glVertex3f(screen_x_max, screen_y_max, depth);
+    glEnd();
+}
+
+void end_text_draw() {
+    glDisable(GL_TEXTURE_2D);
+    if (tex_alpha) {
+        glDisable(GL_BLEND);
+    }
 }
