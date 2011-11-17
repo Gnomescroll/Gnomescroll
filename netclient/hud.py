@@ -118,21 +118,28 @@ class Hud(object):
         self.ping.draw()
 
     def draw(self, fps=None, ping=None, cube_selector=False):
+        # draw non-text first
         self.draw_reticle()
-        self.draw_chat()
-        self.draw_player_stats()
+        if cube_selector:
+            self.cube_selector.draw()
         if InputGlobal.inventory:
             self.inventory.draw()
+        self.draw_chat_cursor()
+
+        # draw text
+        cHUD.Font.font.start()
+
+        self.draw_player_stats()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
         if fps is not None:
             self.draw_fps(fps)
         if ping is not None:
             self.draw_ping(ping)
-        if cube_selector:
-            self.cube_selector.draw()
-
+        self.draw_chat_text()
         #cHUD.Font.font.stress_test()
+
+        cHUD.Font.font.end()
 
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
@@ -228,10 +235,13 @@ class Hud(object):
             _x = x + i
             self._draw_vertical_line(_x, y, length)
 
-    def draw_chat(self):
+    def draw_chat_text(self):
         self._draw_chat_messages()
         if InputGlobal.input == 'chat':
             self._draw_chat_input(draw=True)
+
+    def draw_chat_cursor(self):
+        if InputGlobal.input == 'chat':
             self._draw_cursor()
 
     def _to_draw_text(self, text='', offset=120, x=20, color=(255,40,0,255)):

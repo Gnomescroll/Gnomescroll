@@ -7,7 +7,7 @@ import vector_lib
 import random
 from math import ceil
 
-import c_lib.c_lib_particles
+import c_lib.c_lib_particles as cParticles
 
 class Animations:
 
@@ -95,7 +95,7 @@ class C_Animation(Animation):
 
 class GrenadeExplodeAnimation(C_Animation):
 
-    anim = c_lib.c_lib_particles._create_shrapnel
+    anim = cParticles._create_shrapnel
     vel = [20]*3
 
     def __init__(self, pos):
@@ -123,3 +123,17 @@ class BlockCrumbleAnimation(C_Animation):
         C_Animation.__init__(self)
         self.pos = pos
         self.anim(self.pos, random.randrange(10,30))
+
+class FloatTextAnimation(C_Animation):
+    anim = cParticles._create_billboard_text
+
+    def __init__(self, pos):
+        C_Animation.__init__(self)
+        self.pos = pos
+        self.vel = [0.,0.,7.5] # straight up
+        self.create_particles()
+
+    def create_particles(self):
+        x,y,z = self.pos
+        vx,vy,vz = self.vel
+        self.anim(x,y,z, vx,vy,vz)

@@ -122,8 +122,11 @@ Text
 
 cdef extern from './hud/text.h':
     int load_font(char* fontfile)
-    void start_text_draw(int r, int g, int b, int a)
+
+    void start_text_draw()
+    void set_text_color(int r, int g, int b, int a)
     void end_text_draw()
+
     void blit_glyph(
         float tex_x_min, float tex_x_max,
         float tex_y_min, float tex_y_max,
@@ -131,6 +134,16 @@ cdef extern from './hud/text.h':
         float screen_y_min, float screen_y_max,
         float depth
     )
+
+    void add_glyph(
+        int c,
+        float x, float y,
+        float xoff, float yoff,
+        float w, float h,
+        float xadvance
+    )
+    void set_missing_character(int cc)
+    void draw_text(char* t, int len, float x, float y, float depth)
 
 class Text:
 
@@ -147,8 +160,9 @@ class Text:
         self.y = y
 
     def draw(self):
-        r,g,b,a  = self.color
-        Font.font.draw(self.text, self.x, self.y, self.depth, self.color)
+        r,g,b,a = self.color
+        set_text_color(r,g,b,a)
+        draw_text(self.text, len(self.text), self.x, self.y, self.depth)
 
 ''' Font '''
 import os.path
@@ -234,7 +248,18 @@ class Font:
 
         self.clean_glyphs()
         self.missing_character_available()
-        
+
+    def add_glyphs_to_c(self):
+        for char_code, glyph in self.glyphs.items():
+            x = float(glyph['x'])
+            y = float(glyph['y'])
+            xoff = float(glyph['xoffset'])
+            yoff = float(glyph['yoffset'])
+            w = float(glyph['width'])
+            h = float(glyph['height'])
+            xadvance = float(glyph['xadvance'])
+            add_glyph(char_code, x, y, xoff, yoff, w,h, xadvance)
+                
     def clean_glyphs(self):
         for kc, glyph in self.glyphs.items():
             for k,v in glyph.items():
@@ -249,65 +274,39 @@ class Font:
             print "ERROR Missing character placeholder %s is not a known glyph" % (self.missing_character,)
             self.ready = False
             return False
+        set_missing_character(cc)
         return True
         
     def load(self):
         if not load_font(self.pngfile):
             self.ready = False
+            return
+        self.add_glyphs_to_c()
         self.ready = True
 
     def _gen_stress(self):
-        num = 1024
+        num = 4096
         self.stressers = []
         for i in range(num):
             s = random.choice(string.letters)
-            x = random.randrange(0, 1280)
-            y = random.randrange(0, 800)
+            x = float(random.randrange(0, 1280))
+            y = float(random.randrange(0, 800))
             color = (random.randrange(0,256),random.randrange(0,256),random.randrange(0,256),random.randrange(0,256))
             self.stressers.append((s, x,y,color))
       
     def stress_test(self):
+        set_text_color(100,100,100,255)
         for s,x,y,color in self.stressers:
-            self.draw(s, x,y,0.1, color)
+            r,g,b,a = color
+            set_text_color(r,g,b,a)
+            draw_text(s, 1, x,y,0.1)
 
-    def draw(self, text, x, y, depth, color):
-        if not self.ready:
-            print "Cannot draw font. Font not ready"
-            return
-
-        r,g,b,a = color
-        start_text_draw(r,g,b,a);
-
-        cursor_x = cursor_y = 0
-        for c in text:
-            cc = ord(c)
-
-            if cc == 10:
-                cursor_y += 10
-                continue
-            
-            if cc not in self.glyphs:
-                print "Character unknown: %s" % (c,)
-                cc  = ord(self.missing_character)
-                
-            data = self.glyphs[cc]
-
-            # font texture coordinates
-            tx_max = data['x'] / 256.
-            tx_min = (data['x'] + data['width'] ) / 256.
-            ty_min = data['y'] / 256.
-            ty_max = (data['y'] + data['height']) / 256.
-
-            # surface quad coordinates
-            sx_max = x + cursor_x + data['xoffset']
-            sx_min = x + cursor_x + data['xoffset'] + data['width']
-            sy_min = y - (cursor_y + data['yoffset'])
-            sy_max = y - (cursor_y + data['yoffset'] + data['height'])
-
-            # copy glyph
-            blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth)
-
-            # advance quad cursor
-            cursor_x += data['xadvance']
-    
+    def start(self):
+        start_text_draw()
+        
+    def end(self):
         end_text_draw()
+
+    def set_color(self, color):
+        r,g,b,a = color
+        set_text_color(r,g,b,a)

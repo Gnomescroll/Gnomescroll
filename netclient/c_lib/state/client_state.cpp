@@ -18,7 +18,8 @@ namespace ClientState {
     Blood_list blood_list;
     Neutron_list neutron_list;
     Minivox_list minivox_list;
-
+    BillboardText_list billboard_text_list;
+    
     PlayerAgent_state playerAgent_state;
 
     int active_agent = 0;

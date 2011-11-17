@@ -10,6 +10,7 @@ import random
 import vox_lib
 import vector_lib
 import vox
+import animations
 import c_lib.c_lib_particles
 import c_lib.c_lib_agents
 import c_lib._ray_trace as ray_tracer
@@ -141,6 +142,9 @@ class AgentRender(object):
 
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector
+        p = self.pos()
+        p[2] += self.b_height
+        animations.FloatTextAnimation(p)
 
 
 class AgentWeapons(object):

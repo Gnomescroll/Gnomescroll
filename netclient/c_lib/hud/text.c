@@ -1,8 +1,10 @@
 #include "text.h"
 
-static GLuint fontTextureId;
+GLuint fontTextureId;
 static int tex_alpha = 1;
 static int font_loaded = 0;
+
+void init_glyphs();
 
 int load_font(char* fontfile) {
     SDL_Surface *font = IMG_Load(fontfile);
@@ -35,10 +37,21 @@ int load_font(char* fontfile) {
     glDisable(GL_TEXTURE_2D);
     font_loaded = 1;
     printf("Loaded font %s\n", fontfile);
+
+    init_glyphs();
+    
     return 1;
 }
 
-void start_text_draw(int r, int g, int b, int a) {
+void set_text_color(int r, int g, int b, int a) {
+    if (tex_alpha) {
+        glColor4ub((unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a); //replace with color cordinates on texture
+    } else {
+        glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
+    }
+}
+    
+void start_text_draw() {
     
     if (!font_loaded) {
         printf("No font loaded\n");
@@ -48,15 +61,11 @@ void start_text_draw(int r, int g, int b, int a) {
     if (tex_alpha) {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
-
-        glColor4ub((unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a); //replace with color cordinates on texture
-    } else {
-        glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
     }
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fontTextureId);
-    glBegin( GL_QUADS );
+    glBegin(GL_QUADS);
 }
 
 void blit_glyph(
@@ -81,5 +90,98 @@ void end_text_draw() {
     glDisable(GL_TEXTURE_2D);
     if (tex_alpha) {
         glDisable(GL_BLEND);
+    }
+}
+
+
+/* Glyph store */
+
+struct Glyph glyphs[128];
+int missing_character = 63; // "?"
+
+void print_glyph(struct Glyph g) {
+    printf("%0.2f %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f %d\n", g.x, g.y, g.xoff, g.yoff, g.w, g.h, g.xadvance, g.available);
+}
+
+void set_missing_character(int cc) {
+    missing_character = cc;
+}
+
+void init_glyphs() {
+    static int once = 0;
+    if (once) return;
+    int i;
+    for (i=0; i<128; i++) {
+        glyphs[i].x = 0.0f;
+        glyphs[i].y = 0.0f;
+        glyphs[i].xoff = 0.0f;
+        glyphs[i].yoff = 0.0f;
+        glyphs[i].w = 0.0f;
+        glyphs[i].h = 0.0f;
+        glyphs[i].xadvance = 0.0f;
+        glyphs[i].available = 0;
+    }
+    once++;
+}
+
+void add_glyph(
+    int c,
+    float x, float y,
+    float xoff, float yoff,
+    float w, float h,
+    float xadvance
+) {
+    glyphs[c].x = x / 256.0f;
+    glyphs[c].y = y / 256.0f;
+    glyphs[c].tw = w / 256.0f;
+    glyphs[c].th = h / 256.0f;
+    glyphs[c].w = w;
+    glyphs[c].h = h;
+    glyphs[c].xoff = xoff;
+    glyphs[c].yoff = yoff;
+    glyphs[c].xadvance = xadvance;
+    glyphs[c].available = 1;
+    print_glyph(glyphs[c]);
+}
+
+void draw_text(char* t, int len, float x, float y, float depth) {
+    int i;
+    char c;
+    struct Glyph glyph;
+
+    float tx_min, tx_max, ty_min, ty_max;
+    float sx_min, sx_max, sy_min, sy_max;
+    float cursor_x = 0.0f;
+    float cursor_y = 0.0f;
+
+    for (i=0; i<len; i++) {
+        c = t[i];
+
+        // newline
+        if (c == 10) {
+            cursor_y += 10.0f;
+            continue;
+        }
+        
+        glyph = glyphs[c];
+
+        // known glyph?
+        if (! glyph.available) {
+            printf("Character unknown: %c\n", c);
+            glyph = glyphs[missing_character];
+        }
+
+        tx_max = glyph.x;
+        tx_min = glyph.x + glyph.tw;
+        ty_min = glyph.y;
+        ty_max = glyph.y + glyph.th;
+
+        sx_max = x + cursor_x + glyph.xoff;
+        sx_min = x + cursor_x + glyph.xoff + glyph.w;
+        sy_min = y - (cursor_y + glyph.yoff);
+        sy_max = y - (cursor_y + glyph.yoff + glyph.h);
+        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
+
+        cursor_x += glyph.xadvance;
     }
 }

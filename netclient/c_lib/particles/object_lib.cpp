@@ -9,6 +9,7 @@
 #include "./particles/shrapnel.cpp"
 #include "./particles/blood.cpp"
 #include "./particles/minivox.cpp"
+#include "./particles/billboard_text.cpp"
 #endif
 
 /* objects */
@@ -16,4 +17,3 @@
 #include "./particles/grenade.cpp"
 #include "./particles/neutron.cpp"
 #include "./particles/cspray.cpp"
-

@@ -101,6 +101,22 @@ cdef extern from "./particles/minivox.hpp":
         void destroy(int id)
         void draw()
         void tick()
+        
+cdef extern from "./particles/billboard_text.hpp":
+    cdef cppclass BillboardText:
+        Particle2 particle
+        void set_color(unsigned char r, unsigned char g, unsigned char b)
+        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
+
+    cdef cppclass BillboardText_list:
+        BillboardText* get(int id)
+        BillboardText* create()
+        BillboardText* create(int id)
+        BillboardText* create(float x, float y, float z, float vx, float vy, float vz)
+        BillboardText* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Cspray_list cspray_list
@@ -109,6 +125,7 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Blood_list blood_list
     Neutron_list neutron_list
     Minivox_list minivox_list
+    BillboardText_list billboard_text_list
 
 def tick():
     neutron_list.tick()
@@ -117,6 +134,7 @@ def tick():
     grenade_list.tick()
     cspray_list.tick()
     minivox_list.tick()
+    billboard_text_list.tick()
     
 def draw():
     neutron_list.draw()
@@ -125,6 +143,7 @@ def draw():
     grenade_list.draw()
     cspray_list.draw()
     minivox_list.draw()
+    billboard_text_list.draw()
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     cdef Neutron* neutron
@@ -143,7 +162,7 @@ def _create_shrapnel(float x, float y, float z, float vx, float vy, float vz):
     
 def _create_minivox(float x, float y, float z, float vx, float vy, float vz):
     minivox_list.create(x,y,z, vx,vy,vz)
-
+    
 def _create_minivox_colored(float x, float y, float z, float vx, float vy, float vz, int r, int g, int b):
     if r > 255: r = 255
     if g > 255: g = 255
@@ -155,7 +174,9 @@ def _create_minivox_colored(float x, float y, float z, float vx, float vy, float
     cdef Minivox* minivox
     minivox = minivox_list.create(x,y,z, vx,vy,vz)
     minivox.set_color(r,g,b)
-    
+
+def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz):
+    billboard_text_list.create(x,y,z, vx,vy,vz)
 
 # Does not use TTL!! Can't cook grenades without TTL set
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):
