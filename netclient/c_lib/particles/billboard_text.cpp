@@ -7,14 +7,12 @@ static float billboard_text_proj_mtrx[16];
 
 BillboardText::BillboardText(int id) {
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
-    text_len = 3;
-    text = "25";
+    text_len = 0;
 }
 
 BillboardText::BillboardText(int id, float x, float y, float z, float vx, float vy, float vz) {
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
-    text_len = 3;
-    text = "25";
+    text_len = 0;
 }
 
 void BillboardText::tick() {
@@ -22,26 +20,36 @@ void BillboardText::tick() {
     particle.ttl++;
 }
 
+#include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {
 
 #ifdef DC_CLIENT
 
-    //float up[3] = {
-        //billboard_text_proj_mtrx[0]*BILLBOARD_TEXT_TEXTURE_SCALE,
-        //billboard_text_proj_mtrx[4]*BILLBOARD_TEXT_TEXTURE_SCALE,
-        //billboard_text_proj_mtrx[8]*BILLBOARD_TEXT_TEXTURE_SCALE
-    //};
     float up[3] = {
         0.0f,
         0.0f,
-        //1.0f
-        1.0f * BILLBOARD_TEXT_TEXTURE_SCALE
+        1.0f
     };
-    float right[3] = {
-        billboard_text_proj_mtrx[1]*BILLBOARD_TEXT_TEXTURE_SCALE,
-        billboard_text_proj_mtrx[5]*BILLBOARD_TEXT_TEXTURE_SCALE,
-        billboard_text_proj_mtrx[9]*BILLBOARD_TEXT_TEXTURE_SCALE
-    };
+
+    float norm;
+
+    float look[3];
+    look[0] = current_camera->x - particle.state.p.x;
+    look[1] = current_camera->y - particle.state.p.y;
+    look[2] = current_camera->z - particle.state.p.z;
+    norm = sqrt(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
+    look[0] /= -norm;
+    look[1] /= -norm;
+    look[2] /= -norm;
+
+    float right[3];
+    right[0] = up[1]*look[2] - look[2]*up[1];
+    right[1] = up[2]*look[0] - up[0]*look[2];
+    right[2] = up[0]*look[1] - up[1]*look[0];
+    norm = sqrt(right[0]*right[0] + right[1]*right[1] + right[2]*right[2]);
+    right[0] /= norm;
+    right[1] /= norm;
+    right[2] /= norm;
 
     int i;
     char c;
@@ -49,6 +57,15 @@ void BillboardText::draw() {
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
     float cursor = 0.0f;
+
+    up[0] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+    up[1] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+    up[2] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+    right[0] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+    right[1] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+    right[2] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+
+    const float magic_cursor_ratio = 1.8f / 9.0f;
     for (i=0; i<text_len; i++) {
         c = text[i];
         glyph = glyphs[c];
@@ -58,11 +75,13 @@ void BillboardText::draw() {
         ty_min = glyph.y;
         ty_max = glyph.y + glyph.th;
 
-        cursor += 1.8f; // use glyph.xadvance; once we figure how to scale properly
+
+        cursor += magic_cursor_ratio * glyph.xadvance; // use glyph.xadvance; once we figure how to scale properly
 
         x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
         x -= right[0] * cursor;
         y -= right[1] * cursor;
+        z -= glyph.yoff * magic_cursor_ratio;  // magic fraction
         // also incorporate yoff/xoff
 
         glTexCoord2f(tx_min,ty_max );
@@ -110,7 +129,7 @@ void BillboardText_list::draw() {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     glBegin( GL_QUADS );
-set_text_color(255,10,10,255);  // red
+    set_text_color(255,10,10,255);  // red
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;

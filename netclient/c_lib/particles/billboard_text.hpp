@@ -21,14 +21,38 @@
 class BillboardText {
 
     public:
+        unsigned char r;
+        unsigned char g;
+        unsigned char b;
+        unsigned char a;
         Particle2 particle;
-        char* text;
+        char text[10];
         int text_len;
 
         void set_text(char* t, int c) {
-            text = t;
+            c = (c > 10) ? 10 : c;
+            int i;
+            for (i=0; i<c; i++) {
+                text[i] = t[i];
+            }
+            //text = t;
+            printf("Set text to %s\n",text);
             text_len = c;
         }
+
+        void set_color(unsigned char r, unsigned char g, unsigned char b) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+        }
+
+        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+            this->a = a;
+        }
+
         
         void draw();
         void tick();

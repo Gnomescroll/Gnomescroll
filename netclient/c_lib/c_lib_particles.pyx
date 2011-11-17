@@ -107,6 +107,9 @@ cdef extern from "./particles/billboard_text.hpp":
         Particle2 particle
         void set_color(unsigned char r, unsigned char g, unsigned char b)
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
+        void set_text(char* text, int text_len)
+        char* text
+        int text_len
 
     cdef cppclass BillboardText_list:
         BillboardText* get(int id)
@@ -175,8 +178,11 @@ def _create_minivox_colored(float x, float y, float z, float vx, float vy, float
     minivox = minivox_list.create(x,y,z, vx,vy,vz)
     minivox.set_color(r,g,b)
 
-def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz):
-    billboard_text_list.create(x,y,z, vx,vy,vz)
+def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz, text):
+    cdef BillboardText* bb = billboard_text_list.create(x,y,z, vx,vy,vz)
+    cdef int tlen = len(text)
+    bb.set_text(text, tlen)
+    print 'set text to', text
 
 # Does not use TTL!! Can't cook grenades without TTL set
 def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):

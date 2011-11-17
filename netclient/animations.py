@@ -127,13 +127,14 @@ class BlockCrumbleAnimation(C_Animation):
 class FloatTextAnimation(C_Animation):
     anim = cParticles._create_billboard_text
 
-    def __init__(self, pos):
+    def __init__(self, pos, text):
         C_Animation.__init__(self)
         self.pos = pos
+        self.text = str(text)
         self.vel = [0.,0.,7.5] # straight up
         self.create_particles()
 
     def create_particles(self):
         x,y,z = self.pos
         vx,vy,vz = self.vel
-        self.anim(x,y,z, vx,vy,vz)
+        self.anim(x,y,z, vx,vy,vz, self.text)

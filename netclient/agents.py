@@ -123,7 +123,7 @@ class AgentRender(object):
     def draw_aiming_direction(self, distance=50):
         c_lib.c_lib_agents._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
-    def bleed(self):
+    def bleed(self, dmg=0):
         print 'BLEEDING'
         create_blood = c_lib.c_lib_particles._create_blood
         n = 100
@@ -142,9 +142,12 @@ class AgentRender(object):
 
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector
+
+    def take_damage(self, dmg):
+        print "TAKING DAMAGE", dmg
         p = self.pos()
         p[2] += self.b_height
-        animations.FloatTextAnimation(p)
+        animations.FloatTextAnimation(p, dmg)
 
 
 class AgentWeapons(object):
@@ -403,10 +406,13 @@ class AgentModel(AgentWrapper):
         if 'health' in agent:
             self.health = agent['health']
             health = self.health
+            if health < old_health:
+                self.take_damage(old_health - health)
         if 'dead' in agent:
             self.dead = bool(agent['dead'])
             if was_alive and self.dead:
                 self.bleed()
+                self.take_damage(old_health)
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
 
