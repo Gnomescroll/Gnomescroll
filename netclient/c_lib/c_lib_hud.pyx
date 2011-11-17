@@ -247,23 +247,22 @@ class Font:
         self.ready = True
 
     def draw_test_glyph(self):
-        cursor_x=cursor_y=0
-        cc = ord("A")
+        cc = ord("5")
         data = self.glyphs[cc]
         start_text_draw(255,20,20,255)
-        tx_min = data['x'] / 256.
-        tx_max = (data['x'] + data['width']) / 256.
-        ty_max = (256 - data['y']) / 256.
-        ty_min = (256 - data['y'] - data['height']) / 256.
+        tx_max = data['x'] / 256.
+        tx_min = (data['x'] + data['width']) / 256.
+        ty_min = data['y'] / 256.
+        ty_max = (data['y'] + data['height']) / 256.
 #        tx_min = 0.
 #        tx_max = 1.
 #        ty_min = 0.
 #        ty_max = 1.
         # surface quad coordinates
-        sx_min = 660 + data['xoffset']
-        sx_max = 660 + cursor_x + data['width']
+        sx_max = 660 + data['xoffset']
+        sx_min = 660 + data['width']
         sy_min = 440 + data['height']
-        sy_max = 440 + cursor_y + data['yoffset']
+        sy_max = 440 + data['yoffset']
 #        sx_min = 640
 #        sx_max = 640+256
 #        sy_max = 400
@@ -299,16 +298,16 @@ class Font:
             data = self.glyphs[cc]
 
             # font texture coordinates
-            tx_min = data['x'] / 256.
-            tx_max = (data['x'] + data['width'] ) / 256.
-            ty_max = data['y'] / 256.
-            ty_min = (data['y'] - data['height']) / 256.
+            tx_max = data['x'] / 256.
+            tx_min = (data['x'] + data['width'] ) / 256.
+            ty_min = data['y'] / 256.
+            ty_max = (data['y'] + data['height']) / 256.
 
             # surface quad coordinates
-            sx_min = x + cursor_x + data['xoffset']
-            sx_max = sx_min + data['width']
-            sy_min = y - cursor_y - data['yoffset']
-            sy_max = sy_min - data['height']
+            sx_max = x + cursor_x + data['xoffset']
+            sx_min = x + cursor_x + data['xoffset'] + data['width']
+            sy_max = y + cursor_y + data['yoffset']
+            sy_min = y + cursor_y + data['yoffset'] + data['height']
 
             # copy glyph
             blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth)
