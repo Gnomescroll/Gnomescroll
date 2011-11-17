@@ -121,9 +121,7 @@ Text
 '''
 
 cdef extern from './hud/text.h':
-    int draw_text(char* text, float x, float y, float height, float width, float depth, int r, int g, int b, int a)
     int load_font(char* fontfile)
-
     void start_text_draw(int r, int g, int b, int a)
     void end_text_draw()
     void blit_glyph(
@@ -150,7 +148,6 @@ class Text:
 
     def draw(self):
         r,g,b,a  = self.color
-#        draw_text(self.text, self.x, self.y, self.height, self.width, self.depth, r,g,b,a)
         Font.font.draw(self.text, self.x, self.y, self.depth, self.color)
 
 ''' Font '''
@@ -232,7 +229,8 @@ class Font:
         self.pngfile = fp_png
 
         self.clean_glyphs()
-
+        self.missing_character_available()
+        
     def clean_glyphs(self):
         for kc, glyph in self.glyphs.items():
             for k,v in glyph.items():
@@ -240,45 +238,24 @@ class Font:
                     glyph[k] = int(glyph[k])
                 except ValueError:
                     pass
+
+    def missing_character_available(self):
+        cc = ord(self.missing_character)
+        if cc not in self.glyphs:
+            print "ERROR Missing character placeholder %s is not a known glyph" % (self.missing_character,)
+            self.ready = False
+            return False
+        return True
         
     def load(self):
         if not load_font(self.pngfile):
             self.ready = False
         self.ready = True
 
-    def draw_test_glyph(self):
-        cc = ord("5")
-        data = self.glyphs[cc]
-        start_text_draw(255,20,20,255)
-        tx_max = data['x'] / 256.
-        tx_min = (data['x'] + data['width']) / 256.
-        ty_min = data['y'] / 256.
-        ty_max = (data['y'] + data['height']) / 256.
-#        tx_min = 0.
-#        tx_max = 1.
-#        ty_min = 0.
-#        ty_max = 1.
-        # surface quad coordinates
-        sx_max = 660 + data['xoffset']
-        sx_min = 660 + data['width']
-        sy_min = 440 + data['height']
-        sy_max = 440 + data['yoffset']
-#        sx_min = 640
-#        sx_max = 640+256
-#        sy_max = 400
-#        sy_min = 400+256
-        print tx_min, tx_max, ty_min, ty_max
-        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, 0.1)
-
-        end_text_draw()
-        
     def draw(self, text, x, y, depth, color):
         if not self.ready:
             print "Cannot draw font. Font not ready"
             return
-
-        self.draw_test_glyph()
-#        return
 
         r,g,b,a = color
         start_text_draw(r,g,b,a);
@@ -306,8 +283,8 @@ class Font:
             # surface quad coordinates
             sx_max = x + cursor_x + data['xoffset']
             sx_min = x + cursor_x + data['xoffset'] + data['width']
-            sy_max = y + cursor_y + data['yoffset']
-            sy_min = y + cursor_y + data['yoffset'] + data['height']
+            sy_min = y - (cursor_y + data['yoffset'])
+            sy_max = y - (cursor_y + data['yoffset'] + data['height'])
 
             # copy glyph
             blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth)

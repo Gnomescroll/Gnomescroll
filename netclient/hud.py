@@ -24,6 +24,9 @@ class Hud(object):
 
         self.win_width = opts.width
         self.win_height = opts.height
+        self.font_height = 16
+        self.height_margin = 5
+        self.width_margin = 3
 
         self._init_reticle()
         self._init_text_dict()
@@ -35,14 +38,14 @@ class Hud(object):
 
         self.fps = self._to_draw_text(
             text = '',
-            x = 0,
-            offset = self.win_height
+            x = 0 + self.width_margin,
+            offset = self.win_height - self.font_height - self.height_margin
         )
 
         self.ping = self._to_draw_text(
             text = '',
-            x = 0,
-            offset = self.win_height - 15
+            x = 0 + self.width_margin,
+            offset = self.win_height - (self.font_height * 2) - self.height_margin
         )
 
     def _init_reticle(self):
@@ -63,7 +66,7 @@ class Hud(object):
     def _init_player_stats(self):
         self.player_stats = self._to_draw_text(
             text = '',
-            offset = self.win_height,
+            offset = self.win_height - self.font_height - self.height_margin,
             x = self.win_width - 330
         )
 
