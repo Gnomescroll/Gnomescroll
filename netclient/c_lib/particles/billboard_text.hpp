@@ -26,16 +26,18 @@ class BillboardText {
         unsigned char b;
         unsigned char a;
         Particle2 particle;
-        char text[10];
+        //char text[10];
+        char *text;
         int text_len;
 
         void set_text(char* t, int c) {
-            c = (c > 10) ? 10 : c;
-            int i;
-            for (i=0; i<c; i++) {
-                text[i] = t[i];
-            }
+            //c = (c > 10) ? 10 : c;
+            //int i;
+            //for (i=0; i<c; i++) {
+                //text[i] = t[i];
+            //}
             //text = t;
+            sprintf(this->text, "%s", t);
             printf("Set text to %s\n",text);
             text_len = c;
         }
