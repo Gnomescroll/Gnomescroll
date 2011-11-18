@@ -49,7 +49,7 @@ void set_cube_selector_property(int pos, int cube_id, int tex_id) { //set the cu
     if(tex_id == -1 || pos == -1) return;
     cube_select_array[pos].cube_id = cube_id;
     cube_select_array[pos].tex_id = tex_id;
-    printf("cube_set: pos=%i, cube_id=%i, tex_id=%i \n", pos, cube_id, tex_id);
+    //printf("cube_set: pos=%i, cube_id=%i, tex_id=%i \n", pos, cube_id, tex_id);
 }
 
 void draw_cube_selector(float x, float y, float size, int mode) {
