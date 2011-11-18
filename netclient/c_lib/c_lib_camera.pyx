@@ -65,7 +65,6 @@ cdef class Camera(object):
 
     def load(self):
         if self.active == 0:
-            print 'settin cam'
             print_cam(self.camera)
             set_camera(self.camera)
             self.active = 1
