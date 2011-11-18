@@ -13,7 +13,7 @@
 #include <hud/text.h>
 
 #define BILLBOARD_TEXT_MAX 1024
-#define BILLBOARD_TEXT_TTL 90
+#define BILLBOARD_TEXT_TTL 300
 #define BILLBOARD_TEXT_TYPE 10
 #define BILLBOARD_TEXT_DAMP 0.1f
 #define BILLBOARD_TEXT_TEXTURE_SCALE 0.3f
@@ -43,13 +43,15 @@ class BillboardText {
             //}
             //text = t;
             //sprintf(this->text, "%s", t);
-            if(length > max_letters) length = max_letters;
+            if(length > max_letters) {
+                length = max_letters;
+            }
             int i;
             for (i=0; i<length; i++) {
                 text[i] = t[i];
             }
             text[length] = NULL;
-            printf("Set text to %s, length= %i\n",text, length);
+            //printf("Set text to %s, length= %i\n",text, length);
             text_len = length;
         }
 
