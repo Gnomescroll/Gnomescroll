@@ -9,7 +9,7 @@ void set_infinite_texture(int id, int texture) {
         printf("ERROR: more than 1024 infinite texture tiles, increase array size\n");
     }
     infinite_texture_array[id] = texture;
-    printf("id=%i texture= %i \n", id, texture);
+    //printf("id=%i texture= %i \n", id, texture);
 }
 
 int get_infinite_texture(int index) {
