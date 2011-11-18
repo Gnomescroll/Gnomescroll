@@ -235,7 +235,7 @@ class App(object):
                 if agent:
                     agent.update_camera()
                     #self.agent_camera.pos(agent.camera_position())
-                    self.agent_camera.pos(agent._camera_position())
+                    self.agent_camera.pos(agent.camera_position())
                 first_person = True
             elif InputGlobal.camera == 'camera':
                 self.agent_camera.unload()

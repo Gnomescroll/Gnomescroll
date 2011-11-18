@@ -273,7 +273,7 @@ class PlayerAgentWrapper(object):
     def toggle_agent_camera_mode(self):
         playerAgent_state.toggle_camera_mode()
 
-    def _camera_position(self):
+    def camera_position(self):
         z_off = playerAgent_state.camera_height()
         x = playerAgent_state.camera_state.x
         y = playerAgent_state.camera_state.y
