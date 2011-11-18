@@ -31,6 +31,8 @@ class BillboardText {
         int text_len;
 
         void set_text(char* t, int c) {
+            c=0;
+            return;
             //c = (c > 10) ? 10 : c;
             //int i;
             //for (i=0; i<c; i++) {

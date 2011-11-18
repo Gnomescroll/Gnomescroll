@@ -41,7 +41,7 @@ cdef extern from "./agent/agent.hpp":
         float camera_height
         bool crouching
         bool jump_ready
-
+ 
 #Agent_state
 cdef extern from "./agent/agent.hpp":
     cdef struct Agent_collision_box:

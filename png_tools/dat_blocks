@@ -83,20 +83,30 @@ infinite_texture 2 test_02
 ===
 id      14
 name    tree_top
-hud     10 xox/Tree-top_03.png
+hud     10 xox/Tree-top_04.png
 transparency 1
-top     xox/Tree-top_03.png
-bottom  xox/Tree-top_03.png
-north   xox/Tree-top_03.png
-south   xox/Tree-top_03.png
-west    xox/Tree-top_03.png
-east    xox/Tree-top_03.png
+top     xox/Tree-top_04.png
+bottom  xox/Tree-top_04.png
+north   xox/Tree-top_04.png
+south   xox/Tree-top_04.png
+west    xox/Tree-top_04.png
+east    xox/Tree-top_04.png
 ===
 id      15
 name    tree_bark
-hud     11 xox/Tree-bark_03.png
-top     xox/Tree-End.png
-bottom  xox/Tree-End.png
+hud     11 xox/Tree-bark_04.png
+top     xox/Tree-End_01.png
+bottom  xox/Tree-End_01.png
+north   xox/Tree-bark_04.png
+south   xox/Tree-bark_04.png
+west    xox/Tree-bark_04.png
+east    xox/Tree-bark_04.png
+===
+id      16
+name    tree_bark2
+hud     12 xox/Tree-bark_03.png
+top     xox/Tree-End_02.png
+bottom  xox/Tree-End_02.png
 north   xox/Tree-bark_03.png
 south   xox/Tree-bark_03.png
 west    xox/Tree-bark_03.png
@@ -143,7 +153,7 @@ south   sand.png
 west    sand.png
 east    sand.png
 ===
-id      16
+id      17
 name    tree_alt
 hud     32 tree-alt-small.png
 transparency 1

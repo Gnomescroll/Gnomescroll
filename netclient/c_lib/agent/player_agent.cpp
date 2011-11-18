@@ -174,7 +174,7 @@ static inline float _agent_interp(float s0, float s1, float scale) {
 }
 
 // assumes constant time between history states, until delta_t is defined on the states
-void PlayerAgent_state::calculate_smoothing() {
+void PlayerAgent_state::update_camera_smoothing() {
     smooth.x = 0.0f;
     smooth.y = 0.0f;
     smooth.z = 0.0f;

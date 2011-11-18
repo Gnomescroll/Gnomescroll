@@ -274,7 +274,7 @@ class Keyboard(object):
         InputGlobal.inventory = not InputGlobal.inventory
 
     def cycle_agent_motion(self):
-        agent_motions = ['normal', 'smoothed', 'interpolated_prediction', 'prediction', 'server_snapshot']
+        agent_motions = ['normal', 'smoothed', 'client_side_prediction_interpolated', 'client_side_prediction', 'last_server_snapshot']
         opts.agent_motion = agent_motions[(agent_motions.index(opts.agent_motion) + 1) % len(agent_motions)]
         print "Agent interpolation: ", opts.agent_motion
 
