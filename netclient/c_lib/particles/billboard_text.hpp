@@ -13,10 +13,13 @@
 #include <hud/text.h>
 
 #define BILLBOARD_TEXT_MAX 1024
-#define BILLBOARD_TEXT_TTL 30
+#define BILLBOARD_TEXT_TTL 300
 #define BILLBOARD_TEXT_TYPE 10
 #define BILLBOARD_TEXT_DAMP 0.1f
 #define BILLBOARD_TEXT_TEXTURE_SCALE 0.3f
+
+
+const static int max_letters = 12;
 
 class BillboardText {
 
@@ -27,19 +30,28 @@ class BillboardText {
         unsigned char a;
         Particle2 particle;
         //char text[10];
-        char *text;
+        char text[max_letters];
         int text_len;
 
-        void set_text(char* t, int c) {
-            c = (c > 10) ? 10 : c;
+        void set_text(char* t, int length) {
+            //c=0;
+            //return;
             //int i;
             //for (i=0; i<c; i++) {
                 //text[i] = t[i];
             //}
             //text = t;
-            sprintf(this->text, "%s", t);
-            printf("Set text to %s\n",text);
-            text_len = c;
+            //sprintf(this->text, "%s", t);
+            if(length > max_letters) {
+                length = max_letters;
+            }
+            int i;
+            for (i=0; i<length; i++) {
+                text[i] = t[i];
+            }
+            text[length] = NULL;
+            //printf("Set text to %s, length= %i\n",text, length);
+            text_len = length;
         }
 
         void set_color(unsigned char r, unsigned char g, unsigned char b) {

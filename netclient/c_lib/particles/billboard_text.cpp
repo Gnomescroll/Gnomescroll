@@ -75,10 +75,13 @@ void BillboardText::draw() {
     right[2] *= BILLBOARD_TEXT_TEXTURE_SCALE;
 
     const float magic_cursor_ratio = 1.8f / 9.0f;
+    //text_len = 1;
+    //printf("text_len = %i \n", text_len);
+
     for (i=0; i<text_len; i++) {
         c = text[i];
         glyph = glyphs[c];
-        
+        //glyph = glyphs[54];
         tx_max = glyph.x;
         tx_min = glyph.x + glyph.tw;
         ty_min = glyph.y;
@@ -138,7 +141,9 @@ void BillboardText_list::draw() {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     glBegin( GL_QUADS );
-    set_text_color(255,10,10,255);  // red
+    //set_text_color(255,10,10,255);  // red
+    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
