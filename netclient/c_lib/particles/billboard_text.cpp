@@ -37,8 +37,8 @@ void BillboardText::draw() {
 #ifdef DC_CLIENT
     
     if(current_camera == NULL) {
-        
         printf("warning\n");
+        return;
     }
 
     current_camera->x = 0;
