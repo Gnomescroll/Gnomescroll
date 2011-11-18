@@ -20,8 +20,19 @@ void BillboardText::tick() {
     particle.ttl++;
 }
 
+/*
+    Note: billboarded text is client side only, so whole file can be #ifdef DC_CLIENT
+
+*/
+
 #include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {
+
+    /*
+        This is segfaultintg
+
+    */
+    return;
 
 #ifdef DC_CLIENT
 

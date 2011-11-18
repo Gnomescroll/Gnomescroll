@@ -269,7 +269,8 @@ class App(object):
             P.event("Draw World")
             self.world.draw(first_person)
             if agent:
-                agent.draw_aiming_direction()
+                pass
+                #agent.draw_aiming_direction() #this is broken
                 
             P.event("Animations Draw")
             self.animations.draw()
