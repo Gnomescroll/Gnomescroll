@@ -274,11 +274,11 @@ class PlayerAgentWrapper(object):
         playerAgent_state.toggle_camera_mode()
 
     def _camera_position(self):
-        y_off = playerAgent_state.camera_height()
+        z_off = playerAgent_state.camera_height()
         x = playerAgent_state.camera_state.x
         y = playerAgent_state.camera_state.y
         z = playerAgent_state.camera_state.z
-        return [x, y+y_off, z]
+        return [x, y, z+z_off]
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
