@@ -99,10 +99,6 @@ void end_text_draw() {
 struct Glyph glyphs[128];
 int missing_character = 63; // "?"
 
-void print_glyph(struct Glyph g) {
-    printf("%0.2f %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f %d\n", g.x, g.y, g.xoff, g.yoff, g.w, g.h, g.xadvance, g.available);
-}
-
 void set_missing_character(int cc) {
     missing_character = cc;
 }
@@ -141,7 +137,6 @@ void add_glyph(
     glyphs[c].yoff = yoff;
     glyphs[c].xadvance = xadvance;
     glyphs[c].available = 1;
-    print_glyph(glyphs[c]);
 }
 
 void draw_text(char* t, int len, float x, float y, float depth) {
