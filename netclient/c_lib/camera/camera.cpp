@@ -5,11 +5,10 @@ extern float _yresf;
 
 static CCamera cameras[N_CAMERAS];
 
-CCamera* current_camera;
+CCamera* current_camera = NULL;
 float model_view_matrix[16];
 
 void set_camera(CCamera* cam) {
-    printf("set camera\n");
     current_camera = cam;
 }
 
@@ -149,3 +148,6 @@ void CCamera::hud_projection() {
     glEnable(GL_TEXTURE_2D);
 }
 
+void print_cam(CCamera* c) {
+    printf("print cam:: %p\n", c);
+}

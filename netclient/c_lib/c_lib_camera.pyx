@@ -28,7 +28,7 @@ cdef extern from "./camera/camera.hpp":
         
     void set_camera(CCamera* c)
     CCamera* get_available_camera()
-    CCamera* current_camera
+    void print_cam(CCamera* c)
 
 camera_properties = [
     'fov',
@@ -65,6 +65,7 @@ cdef class Camera(object):
 
     def load(self):
         if self.active == 0:
+            print_cam(self.camera)
             set_camera(self.camera)
             self.active = 1
 
