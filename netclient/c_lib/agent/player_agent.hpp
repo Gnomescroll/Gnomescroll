@@ -32,6 +32,8 @@ class PlayerAgent_state {
         int camera_mode;
         AgentState camera_state;
 
+        class AgentState* active_camera_state;
+
         void toggle_camera_mode() {
             camera_mode = (camera_mode + 1) % CameraStatesEnd;
             switch (camera_mode) {
@@ -54,6 +56,7 @@ class PlayerAgent_state {
                     printf("PlayerAgent toggle_camera_mode: error\n");
                     break;
                 active_camera_state = &camera_state;
+            }
         }
 
         void pump_camera() {
@@ -61,25 +64,29 @@ class PlayerAgent_state {
                 case net_agent:
                     if(agent_id != -1) {
                         Agent_state* A = ClientState::agent_list.get(agent_id);
-                        active_camera = A.cs;
+                        camera_state = A->s;
                     } else {
                         printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
                     }
                     break;
                 case net_agent_smoothed:
                     update_camera_smoothing();
-                    active_camera = smooth;
+                    camera_state = smooth;
                     break;
                 case client_side_prediction_interpolated:
                     update_client_side_prediction_interpolated();
+                    camera_state = c;
                     break;
                 case client_side_prediction:
+                    camera_state = s;
                     break;
                 case last_server_snapshot,:
+                    camera_state = state_snapshot;
                     break;
                 default:
                     printf("PlayerAgent toggle_camera_mode: error\n");
                     break;
+            }
         }
 
         //control state history buffer
