@@ -37,7 +37,9 @@ Physics for agents
 '''
 class AgentPhysics(object):
 
+    #deprecate
     def compute_state(self):
+        assert False
         # only v_x and v_y are used
         v = 1
         d_x, d_y, v_x, v_y = 0,0,0,0
@@ -65,8 +67,9 @@ class AgentPhysics(object):
             brake,
         ]
 
-    #collision tests
+    #deprecate
     def point_collision_test(self, x_,y_,z_):
+        assert False
         x,y,z = self.pos()
 
         z_max = z + self.b_height
@@ -361,7 +364,7 @@ class AgentModel(AgentWrapper):
         self.button_state = [0 for i in range(11)]
 
         self.id = id
-
+        '''
         self.last_control_tick = 0
         self.last_button_tick = 0
 
@@ -375,12 +378,13 @@ class AgentModel(AgentWrapper):
 
         self.jetpack = 0
         self.brake = 0
-
+        '''
+        '''
+        self.on_ground = 0
+        '''
         self.x_int = int(state[0])
         self.y_int = int(state[1])
         self.z_int = int(state[2])
-
-        self.on_ground = 0
 
         if health is None:
             self.health = self.HEALTH_MAX
@@ -458,29 +462,13 @@ class AgentModel(AgentWrapper):
             return self.state[0:3]
         else:
             self.x, self.y, self.z = xyz
-
-    def update_smoothed_position(self, ticks):
-        self.update_smoothing(ticks)
-
-    def smoothed_position(self):
-        return self.smoothed()
-
-    def update_interpolated_prediction_position(self, ticks):
-        return self.update_interpolated_prediction(ticks)
-
-    def interpolated_prediction_position(self):
-        return self.client_side_prediction_interpolated()
-
-    def update_prediction_position(self, ticks):
-        return self.update_prediction(ticks)
-
-    def prediction_position(self):
-        return self.client_side_prediction()
-
-    def server_snapshot_position(self):
-        return self.last_snapshot()
             
+    #deprecated
+    #this is player agent, not agent
+    #moved to player agent wrappper in c_lib_agents.pyx
+    '''
     def camera_position(self):
+        assert False
         if opts.agent_motion == 'normal':
             p = self.state[0:3]
         elif opts.agent_motion == 'smoothed':
@@ -492,8 +480,11 @@ class AgentModel(AgentWrapper):
         elif opts.agent_motion == 'server_snapshot':
             p = self.server_snapshot_position()
         
+        assert False
+        p = self._camera_position()
         p[2] += self.camera_height
         return p
+    '''
 
     def velocity(self):
         return self.state[3:6]
