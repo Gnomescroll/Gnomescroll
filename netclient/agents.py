@@ -68,8 +68,9 @@ class AgentPhysics(object):
         ]
 
     #deprecate
+    #use by  "/home/atomos/dc_mmo/netclient/projectiles.py", line 92
     def point_collision_test(self, x_,y_,z_):
-        assert False
+        #assert False
         x,y,z = self.pos()
 
         z_max = z + self.b_height
