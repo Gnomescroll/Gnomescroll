@@ -13,7 +13,7 @@ cdef extern from "./agent/agent.hpp":
         float phi
         float x,y,z
         float vx,vy,vz
-        bool crouching
+        #bool crouching
         bool jump_ready
         
 #Agent_state
@@ -50,7 +50,7 @@ class AgentWrapper(object):
         'crouch_height','c_height',
         'box_height', 'b_height',
         'box_r',
-        'crouching'
+        #'crouching'
     ]
 
 #    cdef int id
@@ -101,8 +101,8 @@ class AgentWrapper(object):
         elif name == 'box_r':
             return a.box.box_r
 
-        elif name == 'crouching':
-            return a.s.crouching
+        #elif name == 'crouching':
+        #    return a.s.crouching
 
         raise AttributeError
 
