@@ -56,7 +56,7 @@ class PlayerAgent_state {
                 active_camera_state = &camera_state;
         }
 
-        void pump_camera_state() {
+        void pump_camera() {
             switch (camera_mode) {
                 case net_agent:
                     if(agent_id != -1) {

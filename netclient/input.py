@@ -261,7 +261,7 @@ class Keyboard(object):
             'u' : cInput.toggle_mouse_bind,
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
-            '[' : self.cycle_agent_motion,
+            '[' : self.cycle_agent_camera_mode,
         }
 
         self.key_release_handlers = {
@@ -273,10 +273,8 @@ class Keyboard(object):
     def toggle_inventory(self):
         InputGlobal.inventory = not InputGlobal.inventory
 
-    def cycle_agent_motion(self):
-        agent_motions = ['normal', 'smoothed', 'client_side_prediction_interpolated', 'client_side_prediction', 'last_server_snapshot']
-        opts.agent_motion = agent_motions[(agent_motions.index(opts.agent_motion) + 1) % len(agent_motions)]
-        print "Agent interpolation: ", opts.agent_motion
+    def cycle_agent_camera_mode(self):
+        
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':

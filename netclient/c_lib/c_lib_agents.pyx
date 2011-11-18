@@ -30,6 +30,14 @@ cdef extern from "./physics/vector.h":
         float z
 
 from libcpp cimport bool
+
+#collision box
+cdef extern from "./agent/agent.hpp":
+    cdef struct Agent_collision_box:
+        float b_height
+        float c_height
+        float box_r
+
 #AgentState
 cdef extern from "./agent/agent.hpp":
     cdef cppclass AgentState:
@@ -42,33 +50,14 @@ cdef extern from "./agent/agent.hpp":
         bool crouching
         bool jump_ready
  
-#Agent_state
+#Agent_state 
 cdef extern from "./agent/agent.hpp":
-    cdef struct Agent_collision_box:
-        float b_height
-        float c_height
-        float box_r
-
     cdef cppclass Agent_state:
         int id
         AgentState s
-        Agent_collision_box box
+        Agent_collision_box box_r   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
         #void teleport(float x,float y,float z)
 
-cdef extern from "./agent/player_agent.hpp":
-    cdef enum active_camera_states:
-        smoothed
-        client_side_prediction_interpolated
-        client_side_prediction
-        last_snapshot
-
-    cdef cppclass PlayerAgent_state:
-        int agent_id
-        float camera_height()
-        void calculate_smoothing()
-        AgentState* active_camera_state
-        void set_active_camera_state(int type)
-        
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
     void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
@@ -90,6 +79,16 @@ cdef extern from "./agent/agent.hpp":
         Agent_state* get_or_create(int id)
         void destroy(int _id)
         void where()
+
+
+cdef extern from "./agent/player_agent.hpp":
+    cdef cppclass PlayerAgent_state:
+        int agent_id
+        float camera_height()
+        AgentState* active_camera_state #deprecate, use AgentState camera_state
+        AgentState camera_state
+        void toggle_camera_mode()
+        void pump_camera() #update camera
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
@@ -212,12 +211,13 @@ class AgentWrapper(object):
         elif name == 'y_angle':
             return a.s.phi
 
-        elif name == 'crouch_height' or name == 'c_height':
-            return a.box.c_height
-        elif name == 'box_height' or name == 'b_height':
-            return a.box.b_height
-        elif name == 'box_r':
-            return a.box.box_r
+        
+        #elif name == 'crouch_height' or name == 'c_height':
+        #    return a.box.c_height
+        #elif name == 'box_height' or name == 'b_height':
+        #    return a.box.b_height
+        #elif name == 'box_r':
+        #    return a.box.box_r
 
         elif name == 'crouching':
             return a.s.crouching
@@ -225,6 +225,16 @@ class AgentWrapper(object):
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
         
+
+'''
+
+Player Agent Stuff
+
+'''
+
+'''
+    Python should not need collision box for agent
+'''
 
 class PlayerAgentWrapper(object):
 
@@ -249,36 +259,45 @@ class PlayerAgentWrapper(object):
         cdef float y
         cdef float z
 
-        x = playerAgent_state.active_camera_state.x
-        y = playerAgent_state.active_camera_state.y
-        z = playerAgent_state.active_camera_state.z
+        x = playerAgent_state.camera_state.x
+        y = playerAgent_state.camera_state.y
+        z = playerAgent_state.camera_state.z
 
         return [x,y,z]
 
+    #call before rendering to have camera state updated
+    def update_camera():
+        playerAgent_state.pump_camera()
+
+    #toggle camera toggle_camera_mode
+    def toggle_agent_camera_mode():
+        playerAgent_state.toggle_camera_mode()
+
+    #deprecate functions below
     def smoothed(self):
-        playerAgent_state.set_active_camera_state(smoothed)
+        assert False
         return self._pos()
 
     def client_side_prediction_interpolated(self):
-        playerAgent_state.set_active_camera_state(client_side_prediction_interpolated)
+        assert False
         return self._pos()
 
     def client_side_prediction(self):
-        playerAgent_state.set_active_camera_state(client_side_prediction)
+        assert False
         return self._pos()
 
     def last_snapshot(self):
-        playerAgent_state.set_active_camera_state(last_snapshot)
+        assert False
         return self._pos()
 
     def update_smoothing(self, int t):
-        playerAgent_state.calculate_smoothing()
+        assert False
 
     def update_interpolated_prediction(self, int t):
-        pass
+        assert False
 
     def update_prediction(self, int t):
-        pass
+        assert False
 
 
 
