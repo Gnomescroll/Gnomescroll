@@ -28,15 +28,9 @@ void BillboardText::tick() {
 #include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {
 
-    /*
-        This is segfaultintg
-
-    */
-    //return;
-
 #ifdef DC_CLIENT
-    
-    if(current_camera == NULL) {
+    if(!text_len || text == NULL || current_camera == NULL) {
+        printf("%d %s %p\n", text_len, text, current_camera);
         return;
     }
 
@@ -111,7 +105,7 @@ void BillboardText::draw() {
         glTexCoord2f(tx_max,ty_max );
         glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
     }
-
+printf("drew a billbaord\n");
 #endif    
 }
 

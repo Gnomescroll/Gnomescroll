@@ -149,6 +149,8 @@ class AgentRender(object):
             # need directional blood
             # take vector from killer, put vel in random bounded cone around vector
 
+        self.take_damage(666)
+
     def take_damage(self, dmg):
         print "TAKING DAMAGE", dmg
         p = self.pos()
