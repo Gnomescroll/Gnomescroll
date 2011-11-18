@@ -32,9 +32,17 @@ void BillboardText::draw() {
         This is segfaultintg
 
     */
-    return;
+    //return;
 
 #ifdef DC_CLIENT
+    
+    if(current_camera == NULL) {
+        
+        printf("warning\n");
+    }
+
+    current_camera->x = 0;
+    particle.state.p.x = 0;
 
     float up[3] = {
         0.0f,

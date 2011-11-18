@@ -40,6 +40,7 @@ class AgentPhysics(object):
     #deprecate
     def compute_state(self):
         assert False
+        '''
         # only v_x and v_y are used
         v = 1
         d_x, d_y, v_x, v_y = 0,0,0,0
@@ -66,6 +67,7 @@ class AgentPhysics(object):
             jetpack,
             brake,
         ]
+        '''
 
     #deprecate
     #use by  "/home/atomos/dc_mmo/netclient/projectiles.py", line 92

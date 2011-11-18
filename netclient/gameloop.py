@@ -164,6 +164,17 @@ class App(object):
             z *= v / le
             cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
+        def billboard_text_fountain():
+            v = 2
+            vx = v*(random.random() -0.5)
+            vy = v*(random.random() -0.5)
+            vz = v*(random.random() -0.5)
+            le = math.sqrt(vx**2+vy**2+vz**2)
+            vx *= v / le
+            vy *= v / le
+            vz *= v / le
+            cParticles._create_billboard_text(16,16,50, vx, vy,vz, "test")
+
         _m = 0
 
         last_tick = 0
@@ -198,6 +209,8 @@ class App(object):
                 ParticleTestSpawn(_i)
                 _i+=1
 
+                billboard_text_fountain()
+                
                 #process input
                 cInput.process_events()
                 cInput.get_key_state()
