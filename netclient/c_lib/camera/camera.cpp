@@ -147,7 +147,3 @@ void CCamera::hud_projection() {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 }
-
-void print_cam(CCamera* c) {
-    printf("print cam:: %p\n", c);
-}

@@ -42,5 +42,3 @@ void init_cameras();
 extern int current_camera_id;
 extern CCamera* current_camera;
 extern float model_view_matrix[16];
-
-void print_cam(CCamera* c);
