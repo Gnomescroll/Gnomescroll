@@ -173,7 +173,7 @@ class App(object):
             vx *= v / le
             vy *= v / le
             vz *= v / le
-            cParticles._create_billboard_text(-5,-5,16, vx, vy,vz, "test")
+            cParticles._create_billboard_text(16.0,16.0,129.0, vx, vy,vz, "12")
 
         _m = 0
 
