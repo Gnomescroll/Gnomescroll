@@ -463,27 +463,10 @@ class AgentModel(AgentWrapper):
         else:
             self.x, self.y, self.z = xyz
             
-    #deprecated
-    #this is player agent, not agent
     #moved to player agent wrappper in c_lib_agents.pyx
     '''
     def camera_position(self):
         assert False
-        if opts.agent_motion == 'normal':
-            p = self.state[0:3]
-        elif opts.agent_motion == 'smoothed':
-            p = self.smoothed_position()
-        elif opts.agent_motion == 'interpolated_prediction':
-            p = self.interpolated_prediction_position()
-        elif opts.agent_motion == 'prediction':
-            p = self.prediction_position()
-        elif opts.agent_motion == 'server_snapshot':
-            p = self.server_snapshot_position()
-        
-        assert False
-        p = self._camera_position()
-        p[2] += self.camera_height
-        return p
     '''
 
     def velocity(self):
