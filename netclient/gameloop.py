@@ -173,7 +173,7 @@ class App(object):
             vx *= v / le
             vy *= v / le
             vz *= v / le
-            cParticles._create_billboard_text(16,16,50, vx, vy,vz, "test")
+            cParticles._create_billboard_text(-5,-5,16, vx, vy,vz, "test")
 
         _m = 0
 
@@ -210,7 +210,7 @@ class App(object):
                 _i+=1
 
                 billboard_text_fountain()
-                
+
                 #process input
                 cInput.process_events()
                 cInput.get_key_state()

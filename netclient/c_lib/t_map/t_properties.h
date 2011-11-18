@@ -1,14 +1,15 @@
-#ifndef t_properties
-#define t_properties
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <compat.h>
 
+#include "t_map.h"
+
 // cube properties
 
-#define max_cubes 1024
+const int max_cubes = 1024;
 
 struct cubeProperties {
     int active;
@@ -63,5 +64,3 @@ static inline int getInfiniteTexture(int id) {
 static inline int collidesBlock(int x, int y, int z) {
     return isSolid(_get(x,y,z));
 }
-
-#endif

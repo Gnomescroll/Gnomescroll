@@ -71,11 +71,13 @@ SwapBuffers(hdc);  //For Windows
      glEnable ( GL_ALPHA_TEST ) ;
 */
 
-//struct Vertex* quad_cache;
-struct Vertex quad_cache[max_cubes*6*4];
+//struct Vertex quad_cache[max_cubes*6*4];
+struct Vertex* quad_cache = NULL;
 
 struct Vertex* _get_quad_cache() {
-    return (struct Vertex*) &quad_cache;
+    if(quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
+    return quad_cache;
+    //return (struct Vertex*) &quad_cache;
 }
 
 /*
@@ -104,6 +106,10 @@ GLfloat diffuse_color[] =  {1.0, 1.0, 1.0, 0.0};
 GLfloat lmodel_ambient[] = {0.8, 0.8, 0.8, 0.8};
 
 int _init_quad_cache_normals() {
+    //return;
+    /*
+    This function is bugged and writes out of bounds
+    */
     //int i,j;
     int cube_id, side, i;
 
@@ -148,12 +154,14 @@ int _init_quad_cache_normals() {
             if(side == 3) n = {-1,0,0};
             if(side == 4) n = {0,1,0};
             if(side == 5) n = {0,-1,0};
-        */       
+        */      
+            int index; 
             for(i=0;i<4;i++) {
-                quad_cache[cube_id*6*4+ 6*side+ i].normal[0] = n[0];
-                quad_cache[cube_id*6*4+ 6*side+ i].normal[1] = n[1];
-                quad_cache[cube_id*6*4+ 6*side+ i].normal[2] = n[2];
-                quad_cache[cube_id*6*4+ 6*side+ i].normal[3] = 0;
+                index = cube_id*6*4+ 4*side+ i;
+                quad_cache[index].normal[0] = n[0];
+                quad_cache[index].normal[1] = n[1];
+                quad_cache[index].normal[2] = n[2];
+                quad_cache[index].normal[3] = 0;
             }
         }
     }
@@ -166,6 +174,8 @@ GLuint gl_perf_queries[64];
 int gl_per_queries_index = 0;
 
 int _init_draw_terrain() {
+
+    if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
 
     glGenQueries(64, gl_perf_queries);  //generate timer queries for rendering
 

@@ -41,9 +41,6 @@ void BillboardText::draw() {
         printf("warning\n");
     }
 
-    current_camera->x = 0;
-    particle.state.p.x = 0;
-
     float up[3] = {
         0.0f,
         0.0f,

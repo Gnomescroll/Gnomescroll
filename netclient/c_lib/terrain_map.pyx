@@ -1,5 +1,8 @@
 
 
+cdef extern from "./t_map/t_properties.h":
+    int max_cubes
+
 cdef extern from "../c_lib/t_map/t_map.h":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
@@ -314,9 +317,6 @@ l = [
 for i in range(0,72):
     v_index[i]=l[i]
 
-cdef enum:
-    max_cubes = 1024
-
 def init_quad_cache():
     global v_index
     global c_dat
@@ -599,16 +599,18 @@ def init(inited=[0]):
         inited[0] += 1
         
     print "Init Terrain Map"
+
+    _init_draw_terrain()
     init_t_properties()
+    _init_t_map();
 
 # these get loaded in _cube_inits after cube_dat is received from server
 #    init_cube_properties()
 #    init_quad_cache()
 #    set_hud_cube_selector()
 
-    _init_t_map();
+    
     #_init_t_map_draw()
-    _init_draw_terrain()
 
 def set_hud_cube_selector():
     global c_dat
