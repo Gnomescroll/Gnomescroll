@@ -66,12 +66,14 @@ class PlayerAgent_state {
         void pump_camera() {
             switch (camera_mode) {
                 case net_agent:
+                    #ifdef DC_CLIENT
                     if(agent_id != -1) {
                         Agent_state* A = ClientState::agent_list.get(agent_id);
                         camera_state = A->s;
                     } else {
                         printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
                     }
+                    #endif
                     break;
                 case net_agent_smoothed:
                     update_camera_smoothing();
