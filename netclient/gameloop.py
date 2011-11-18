@@ -198,20 +198,29 @@ class App(object):
                 ParticleTestSpawn(_i)
                 _i+=1
 
+                #process input
                 cInput.process_events()
                 cInput.get_key_state()
                 if agent:
                     agent.set_button_state()
-
+                #update camera position right away, after control state input
+                if InputGlobal.input == 'agent':
+                    self.agent_camera.input_update(delta_tick)
+                if agent:
+                    self.agent_camera.pos(agent.camera_position())
+                elif InputGlobal.input == 'camera':
+                    self.camera.input_update(delta_tick)
+                #TCP in
                 NetClientGlobal.connection.attempt_recv()
+                
+                #physics tick routine
                 self.animations.tick()
-
-                #check if another physics tick is needed
                 self.world.tick()
                 cParticles.tick() ## TESTING
-                #state tick (whatever this does)
-                NetClientNetInTick()
-                NetClientStateTick()
+                
+                
+                NetClientNetInTick()    #UDP in
+                NetClientStateTick()    #state tick (this does nothing?)
 
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
@@ -241,16 +250,12 @@ class App(object):
             current_tick = cSDL.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
+
             if agent:
-                agent.update_smoothed_position(delta_tick)
-                agent.update_interpolated_prediction_position(delta_tick)
-                agent.update_prediction_position(delta_tick)
-            if InputGlobal.input == 'agent':
-                self.agent_camera.input_update(delta_tick)
-                if agent:
-                    self.agent_camera.pos(agent.camera_position())
-            elif InputGlobal.input == 'camera':
-                self.camera.input_update(delta_tick)
+                agent.update_camera()
+                #agent.update_smoothed_position(delta_tick)
+                #agent.update_interpolated_prediction_position(delta_tick)
+                #agent.update_prediction_position(delta_tick)
 
             camera.camera.world_projection()
 

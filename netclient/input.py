@@ -274,7 +274,8 @@ class Keyboard(object):
         InputGlobal.inventory = not InputGlobal.inventory
 
     def cycle_agent_camera_mode(self):
-        
+        GameStateGlobal.agent.toggle_camera_mode()
+        #agent.toggle_camera_mode()
 
     def toggle_chat(self, empty=None):
         if InputGlobal.input == 'chat':

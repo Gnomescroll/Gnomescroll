@@ -20,6 +20,10 @@ class PlayerAgent_state {
     private:
     public:
 
+        //client side state variables
+        bool jump_ready;    //move client side
+        bool crouching;     //move client side
+
         //cameras
         class AgentState smooth;
         class AgentState c;                 //Use for camera, smoothed
@@ -30,9 +34,9 @@ class PlayerAgent_state {
         void update_client_side_prediction_interpolated();
         //camera mode
         int camera_mode;
-        AgentState camera_state;
+        AgentState camera_state;    //USE THIS FOR CAMERA!!!
 
-        class AgentState* active_camera_state;
+        //class AgentState* active_camera_state;
 
         void toggle_camera_mode() {
             camera_mode = (camera_mode + 1) % CameraStatesEnd;
@@ -55,7 +59,7 @@ class PlayerAgent_state {
                 default:
                     printf("PlayerAgent toggle_camera_mode: error\n");
                     break;
-                active_camera_state = &camera_state;
+                //active_camera_state = &camera_state;
             }
         }
 
@@ -80,7 +84,7 @@ class PlayerAgent_state {
                 case client_side_prediction:
                     camera_state = s;
                     break;
-                case last_server_snapshot,:
+                case last_server_snapshot:
                     camera_state = state_snapshot;
                     break;
                 default:
@@ -121,6 +125,9 @@ class PlayerAgent_state {
 
         //collision box;
         struct Agent_collision_box box; //WTF!?!?! Should be from netagent, not in player agent!!!
+        /*
+            WTF
+        */
 
         //camera properties
         float camera_height_scale;
@@ -132,7 +139,12 @@ class PlayerAgent_state {
 
 
         PlayerAgent_state() {
+            //client side state variables
+            jump_ready = false;
+            crouching = false;
+            //camera
             camera_mode = 0;
+            //init
             static int inited=0;
             if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
             inited++;
@@ -151,6 +163,14 @@ class PlayerAgent_state {
             for(i=0; i<128; i++) cs_local[i].seq = -1;
             for(i=0; i<128; i++) cs_net[i].seq = -1;
 
+            //these are net agent variables!! Get these from the net agent through agent_id!!
+            /*
+                ERROR: server sider variables in player agent class
+                do, 
+                    Agent_state* A = ClientState::agent_list.get(agent_id);
+                    Agent_collision_box box = A->box;
+                grab box from the net agent class instead of replicating it
+            */
             box.b_height = AGENT_HEIGHT;
             box.c_height = AGENT_HEIGHT_CROUCHED;
             box.box_r = AGENT_BOX_RADIUS;
