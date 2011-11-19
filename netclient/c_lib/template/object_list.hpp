@@ -96,6 +96,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
         //printf("%s_list: Created object from id: %i\n", name(), id);
+        num++;
         return a[id];
     } else {
         printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
@@ -105,7 +106,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
 
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z, float vx, float vy, float vz) {
-int i;
+        int i;
         int id = id_c;
         id_c++;
         for(i=0; i<n_max;i++) {
@@ -127,6 +128,7 @@ Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y,
 
     if(a[id] == NULL) {
         a[id] = new Object_state(id, x,y,z, vx,vy,vz);
+        num++;
         //printf("%s_list: Created object from id: %i\n", name(), id);
         return a[id];
     } else {

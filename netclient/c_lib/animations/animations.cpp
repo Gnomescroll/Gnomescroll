@@ -43,4 +43,26 @@ void block_crumble_animation(float x, float y, float z, int n) {
     }
 }
 
+void grenade_explode_animation(float x, float y, float z) {
+    int n = randrange(8,13);
+
+    float vx = 20.0f;
+    float vy = 20.0f;
+    float vz = 20.0f;
+
+    float cx,cy,cz;
+    float cvx,cvy,cvz;
+
+    int i;
+    for (i=0; i<n; i++) {
+        cx = x + ((randf() - 0.5f) / 20.0f);
+        cy = y + ((randf() - 0.5f) / 20.0f);
+        cz = z + ((randf() - 0.5f) / 20.0f);
+        cvx = vx * (randf() - 0.5f);
+        cvy = vy * (randf() - 0.5f);
+        cvz = vz * (randf() - 0.5f);
+        ClientState::shrapnel_list.create(cx, cy, cz, cvx, cvy, cvz);
+    }
+}
+
 }

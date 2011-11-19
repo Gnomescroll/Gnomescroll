@@ -3,7 +3,7 @@ import opts
 opts = opts.opts
 
 if opts.sound:
-	import sound.sounds as sounds
+    import sound.sounds as sounds
 import c_lib.c_lib_particles as c_obj
 import c_lib.c_lib_sdl
 
@@ -198,27 +198,30 @@ Laser.init()
 class Grenade(Projectile):
 
     def __init__(self, id, state=None, owner=None, ttl=0, *args, **kwargs):
-        self.id = id
-        self.owner = owner
-        self.speed = self.speed / GameStateGlobal.fps
-        self.ttl = ttl
-        x,y,z, vx,vy,vz = state
-        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl)
+        raise Exception, "Dont create grenades"
+        #self.id = id
+        #self.owner = owner
+        #self.speed = self.speed / GameStateGlobal.fps
+        #self.ttl = ttl
+        #x,y,z, vx,vy,vz = state
+        #self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl)
 
     def pos(self):
         return c_obj.get_grenade_position(self.g_index)
 
     def tick(self):
-        if not self.check_life(delete=False):
-            self.explode()
-            self.delete()
+        pass
+        #if not self.check_life(delete=False):
+            #self.explode()
+            #self.delete()
 
     def explode(self):
         GrenadeExplodeAnimation(self.pos()).play()
 
     def delete(self):
-        Projectile.delete(self)
-        c_obj._destroy_grenade(self.g_index)
+        pass
+        #Projectile.delete(self)
+        #c_obj._destroy_grenade(self.g_index)
 
 Grenade.init()
 

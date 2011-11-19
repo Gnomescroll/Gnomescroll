@@ -2,6 +2,9 @@
 #pragma once
 
 #ifdef DC_CLIENT
+#include <c_lib/state/client_state.hpp>
+#include <c_lib/animations/animations.hpp>
+
 static float grenade_proj_mtrx[16];
 #endif
 
@@ -21,10 +24,6 @@ Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz
     grenade_StoC g = grenade_StoC(this);
     g.broadcast();
     #endif
-}
-
-Grenade::Grenade(grenade_StoC* g) {
-    create_particle2(&particle, g->id, g->type, g->x, g->y, g->z, g->vx, g->vy, g->vz, 0, g->ttl_max);
 }
 
 void Grenade::tick() {
@@ -76,26 +75,24 @@ void Grenade::draw() {
 }
 
 /* Grenade list */
-
 void Grenade_list::tick() {
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
 
-        // destruction currently handled by python,
-        // because python is tracking grenades in a Projectile List
-        // and needs to play animation (needs to retrieve grenade
-        // position before it gets destroyed)
-        //if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            //destroy(a[i]->particle.id);
-        //}
+        if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
+            #ifdef DC_CLIENT
+            Animations::grenade_explode_animation(a[i]->particle.state.p.x, a[i]->particle.state.p.y, a[i]->particle.state.p.z);
+            #endif
+            destroy(a[i]->particle.id);
+            num--;
+        }
     }
 }
 
 void Grenade_list::draw() {
 #ifdef DC_CLIENT
-
     if(num == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, grenade_proj_mtrx);
 
@@ -132,10 +129,14 @@ inline void print_grenade(Grenade *g) {
     printf("TTL max: %d\n", g->particle.ttl_max);
     printf("Type: %d\n", g->particle.type);
 }
+
 inline void grenade_StoC::handle() {
-    printf("Spawn grenade particle: %i \n", id);
-    Grenade* g = new Grenade(this);
-    print_grenade(g);
+    #ifdef DC_CLIENT
+    //printf("Spawn grenade particle: %i \n", id);
+    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, vx, vy, vz);
+    g->particle.ttl_max = (int)ttl_max;
+    g->particle.type = (int)type;
+    #endif
 }
 
 grenade_StoC::grenade_StoC(Grenade *g) {

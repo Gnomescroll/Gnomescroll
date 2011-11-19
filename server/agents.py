@@ -117,7 +117,7 @@ class AgentAction:
         pos[2] += self.b_height * 0.75
         state = pos + direction
         grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
-        NetOut.event.projectile_create(grenade)
+        #NetOut.event.projectile_create(grenade)
 
 
 # represents an agent under control of a player

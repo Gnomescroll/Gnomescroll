@@ -9,6 +9,8 @@
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.h>
 #include <t_map/t_properties.h>
+#include <c_lib/template/object_list.hpp>
+#include <c_lib/template/net.hpp>
 
 /* These should be pulled from a dat or something */
 #define GRENADE_MAX 1024
@@ -18,7 +20,6 @@
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
 
-class grenade_StoC;
 class Grenade {
     public:
         struct Particle2 particle;
@@ -29,10 +30,7 @@ class Grenade {
         
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
-        Grenade(grenade_StoC *g);
 };
-
-#include <c_lib/template/object_list.hpp>
 
 class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 {
@@ -46,8 +44,6 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 /*
  *  Networking; spawn packet from server to client
  */
-
-#include <c_lib/template/net.hpp>
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {
@@ -89,4 +85,3 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
         type = GRENADE_TYPE;
     }
 };
-
