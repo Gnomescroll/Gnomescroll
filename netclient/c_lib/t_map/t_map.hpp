@@ -1,7 +1,4 @@
-
-
-#ifndef t_map
-#define t_map
+#pragma once
 
 
 #include <stdio.h>
@@ -9,6 +6,9 @@
 
 #include <compat.h>
 #include <compat_gl.h>
+
+#include <c_lib/common/functional.h>
+
 /*
 #include "t_vbo.h"
 #include "t_properties.h"
@@ -108,6 +108,7 @@ int _get_lowest_open_block(int x, int y, int n);
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
 
+int block_sphere(float x, float y, float z, float radius, int* blocks, int max_blocks);
 
 /*
 #endif
@@ -151,4 +152,36 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 //extern void set_flag(struct vm_column* c, unsigned int flag, int value);
 //extern int get_flag(struct vm_column* c, unsigned int flag);
 
-#endif
+
+/* Network */
+class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
+{
+    public:
+
+        int x,y,z;
+        int val;
+        
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            _set(x,y,z,val);
+        }
+
+        block_StoC(int x, int y, int z, int val) {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+            this->val = val;
+        }
+        
+        block_StoC() {
+            x=y=z=val=0;
+        }
+};
+

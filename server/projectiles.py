@@ -161,12 +161,14 @@ class Grenade(Projectile):
         self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl)
 
     def pos(self):
-        return c_obj.get_grenade_position(self.g_index)
+        return
+        #return c_obj.get_grenade_position(self.g_index)
 
     def tick(self):
-        if not self.check_life(delete=False):
-            self.explode()
-            self.delete()
+        pass
+        #if not self.check_life(delete=False):
+            #self.explode()
+            #self.delete()
 
     def explode(self):
         pos = self.pos()

@@ -5,7 +5,7 @@
 #include <c_lib/agent/player_agent.hpp>
 
 #include <c_lib/particles/object_lib.hpp>
-
+#include <c_lib/t_map/t_map.hpp>
 
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
@@ -20,6 +20,8 @@ void RegisterMessages() {
     Agent_cs_StoC::register_client_packet();
 
     grenade_StoC::register_client_packet();
+
+    block_StoC::register_client_packet();
 
     //player agent
     PlayerAgent_Snapshot::register_client_packet();

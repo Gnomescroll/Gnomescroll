@@ -1,8 +1,10 @@
-#ifndef t_map
-#define t_map
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <c_lib/common/functional.h>
+#include <c_lib/template/net.hpp>
 
 #include "t_properties.h"
 
@@ -74,6 +76,9 @@ int _get_lowest_open_block(int x, int y, int n);
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
 
+void block_sphere(float x, float y, float z, float radius, int* blocks, int max_blocks, int* blocks_set);
+int _set_broadcast(int x, int y, int z, int value);
+
 //these flags are not used on server for anything
 /*
 #define VBO_loaded 1
@@ -99,4 +104,36 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 }
 
 
-#endif
+
+/* Network */
+class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
+{
+    public:
+
+        int x,y,z;
+        int val;
+        
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            _set(x,y,z,val);
+        }
+
+        block_StoC(int x, int y, int z, int val) {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+            this->val = val;
+        }
+        
+        block_StoC() {
+            x=y=z=val=0;
+        }
+};
+

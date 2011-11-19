@@ -1,4 +1,4 @@
-#include "t_map.h"
+#include "t_map.hpp"
 
 #include <zlib.h>
 
@@ -289,4 +289,208 @@ int _get_lowest_solid_block(int x, int y) {
     }
     if (i >= zmax) i = -1;  // failure
     return i;
+}
+
+// returns number of blocks set
+int block_sphere(float x, float y, float z, float radius, int* blocks, int max_blocks) {
+    if (radius > 1.0f) printf("block_sphere :: radius too large, will fail. (radius=%0.2f)\n", radius);
+
+    int block_count = 0;
+
+    int p[3];
+    float q[3] = {x,y,z};
+
+    const float diagonal_step = radius / sqrt(2);
+
+    // x
+    q[0] = x + radius;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[0] = x - radius;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+    q[0] = x;
+
+    // y
+    q[1] = y + radius;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[1] = y - radius;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+    q[1] = y;
+    
+    // z
+    q[2] = z + radius;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[2] = z - radius;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+    q[2] = z;
+    
+    // xy plane
+    q[0] = x + diagonal_step;
+    q[1] = y + diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[0] = x - diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[1] = y - diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[0] = x + diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+    q[1] = y;
+
+    // xz plane
+    q[2] = z + diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[2] = z - diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[0] = x - diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    q[2] = z + diagonal_step;
+    map_float_to_int_3(p,q);
+    if (_get(p[0], p[1], p[2]) != 0) {
+            blocks[block_count*3 + 0] = p[0];
+            blocks[block_count*3 + 1] = p[1];
+            blocks[block_count*3 + 2] = p[2];
+            block_count++;
+    }
+    if (block_count >= max_blocks) {
+        return block_count;
+    }
+
+    return block_count;
+}
+
+int _set_broadcast(int x, int y, int z, int value) {
+    block_StoC* msg;
+    int i,j=0;
+    i = _get(x,y,z):
+    if (i != value) {
+        j = _set(x,y,z, value);
+        msg = new block_StoC(x,y,z,value);
+        msg.broadcast();
+    }
+    return j;
 }

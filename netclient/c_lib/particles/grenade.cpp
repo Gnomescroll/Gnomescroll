@@ -49,7 +49,6 @@ void Grenade::draw() {
         grenade_proj_mtrx[9]*GRENADE_TEXTURE_SCALE
     };
 
-
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
 
@@ -74,6 +73,36 @@ void Grenade::draw() {
 #endif    
 }
 
+void Grenade::explode() {
+#ifdef DC_CLIENT
+    Animations::grenade_explode_animation(particle.state.p.x, particle.state.p.y, particle.state.p.z);
+#endif
+
+#ifdef DC_SERVER
+    // find all agents in radius, apply damage
+
+    // find all blocks in radius, destroy/damage
+    int max_blocks = 14;
+    int blocks_set = 0;
+    int blocks[14*3];
+    int x,y,z;
+    int i;
+    
+    blocks_set = block_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_BLOCK_DESTROY_RADIUS, blocks, max_blocks);
+    for (i=0; i<blocks_set; i++) {
+        x = blocks[i*3 +0];
+        y = blocks[i*3 +1];
+        z = blocks[i*3 +2];
+        _set(x,y,z, 0);
+        //send_map_message(x,y,z, 0);
+    }
+#endif
+}
+
+//[agent.take_damage(self.splash_damage, self.owner, self.suicidal)
+         //for agent in GameStateGlobal.agentList.values()
+         //if distance(pos, agent.pos()) < self.splash_radius]
+
 /* Grenade list */
 void Grenade_list::tick() {
     int i;
@@ -82,9 +111,7 @@ void Grenade_list::tick() {
         a[i]->tick();
 
         if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            #ifdef DC_CLIENT
-            Animations::grenade_explode_animation(a[i]->particle.state.p.x, a[i]->particle.state.p.y, a[i]->particle.state.p.z);
-            #endif
+            a[i]->explode();
             destroy(a[i]->particle.id);
             num--;
         }

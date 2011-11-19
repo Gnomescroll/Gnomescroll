@@ -2,7 +2,7 @@
 
     #include <stdio.h>
 
-    #include "./t_map/t_map.c"
+    #include "./t_map/t_map.cpp"
     #include "./t_map/t_properties.c"
     
     #include "./physics/vector.c"
@@ -15,13 +15,7 @@
 
     #include "./map_gen/noise.c"
     
-    #ifdef DC_CLIENT
-        #include "./texture_loader.c"
-    #endif
-    
-    #ifdef DC_SERVER
-        #include "./t_map/t_serialize.c"
-    #endif
+    #include "./t_map/t_serialize.c"
 
 #include <net_lib/net_lib.h>
 

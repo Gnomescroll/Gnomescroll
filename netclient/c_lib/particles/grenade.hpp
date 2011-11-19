@@ -19,6 +19,7 @@
 #define GRENADE_TYPE 1
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
+#define GRENADE_BLOCK_DESTROY_RADIUS 0.6f
 
 class Grenade {
     public:
@@ -27,6 +28,8 @@ class Grenade {
         void draw();
         void tick();
         void set_ttl(int ttl);
+
+        void explode();
         
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
@@ -72,16 +75,16 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
         inline void handle();
 
-    grenade_StoC(Grenade* g);
-    grenade_StoC() {
-        x=0.0f;
-        y=0.0f;
-        z=0.0f;
-        vx=0.0f;
-        vy=0.0f;
-        vz=0.0f;
-        ttl_max = 0;
-        this->id = id;
-        type = GRENADE_TYPE;
-    }
+        grenade_StoC(Grenade* g);
+        grenade_StoC() {
+            x=0.0f;
+            y=0.0f;
+            z=0.0f;
+            vx=0.0f;
+            vy=0.0f;
+            vz=0.0f;
+            ttl_max = 0;
+            this->id = id;
+            type = GRENADE_TYPE;
+        }
 };

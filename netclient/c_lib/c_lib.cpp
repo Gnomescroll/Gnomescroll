@@ -27,7 +27,7 @@
 
 
 /* map */
-#include <c_lib/t_map/t_map.c>
+#include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.c>
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
@@ -35,7 +35,6 @@
 
     /* animations */
     #include <c_lib/animations/animations.cpp>
-
 
     /* camera */
     #include <c_lib/camera/camera.cpp>
