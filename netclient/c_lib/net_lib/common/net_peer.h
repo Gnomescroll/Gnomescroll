@@ -48,6 +48,9 @@ struct NetPeer {
     //x to y: y state
     struct packet_sequence2 seqbuff[256];
     int highest_packet_sequence_number;
+
+    //struct net_message out_messages[1024];
+    // message pool for sent messages
 };
 
 #define TTL_MAX_DEFAULT 120
