@@ -9,6 +9,8 @@
 #define AGENT_HEIGHT_CROUCHED 0.9f
 #define AGENT_BOX_RADIUS 0.4f
 
+#define AGENT_START_HEALTH 100
+
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
 #include <agent/agent_vox.hpp>
@@ -129,6 +131,20 @@ class Agent_state {
 
         void draw();
 
+        //int health;
+        //bool dead;
+        void apply_damage(int dmg) {    // TODO add owner, suicidal flags
+            //health -= dmg;
+            //health = (health < 0) ? 0 : health;
+            //if (!health) {
+                //die();//owner);
+            //}
+            // send update?? how is health to be done over network
+        }
+        void die() {
+            //dead = true;
+        }
+
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
 
@@ -147,4 +163,22 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     public:
         void draw();
         void draw(int);
+        
+        Agent_state* filtered_agents[AGENT_MAX]; // tmp array for filtering agents
+        int agents_within_sphere(float x, float y, float z, float radius) {
+            int ct = 0;
+            float dist;
+            
+            int i;
+            for (i=0; i<AGENT_MAX; i++) {
+                if (a[i] == NULL) continue;
+                dist = distance(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+                if (dist > radius) {
+                    // agent in sphere
+                    filtered_agents[ct] = a[i];
+                    ct++;
+                }
+            }
+            return ct;
+        }
 };

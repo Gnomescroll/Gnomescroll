@@ -171,58 +171,60 @@ class Grenade(Projectile):
             #self.delete()
 
     def explode(self):
-        pos = self.pos()
+        pass
+        #pos = self.pos()
         
-        # calculate distance for all damageable objects
-        # if <self.blast_radius, apply self.blast_damage
-        [agent.take_damage(self.splash_damage, self.owner, self.suicidal) \
-         for agent in GameStateGlobal.agentList.values() \
-         if distance(pos, agent.pos()) < self.splash_radius]
+        ## calculate distance for all damageable objects
+        ## if <self.blast_radius, apply self.blast_damage
+        #[agent.take_damage(self.splash_damage, self.owner, self.suicidal) \
+         #for agent in GameStateGlobal.agentList.values() \
+         #if distance(pos, agent.pos()) < self.splash_radius]
 
-        # destroy nearby blocks
-        # look in 8 adjacent spots around grenade (16 maybe)
-        # n distance away (probably n<1, maybe n=0.7
+        ## destroy nearby blocks
+        ## look in 8 adjacent spots around grenade (16 maybe)
+        ## n distance away (probably n<1, maybe n=0.7
 
-        grenade_block_destroy_distance = 0.6    # make this a parameter later
-        gn = grenade_block_destroy_distance
-        diag_len = gn / sqrt(2) # the distance along 2 axes to form diagonal affine shift of len = gn
+        #grenade_block_destroy_distance = 0.6    # make this a parameter later
+        #gn = grenade_block_destroy_distance
+        #diag_len = gn / sqrt(2) # the distance along 2 axes to form diagonal affine shift of len = gn
 
-        #print "Grenade destroying blocks around point ", pos
-        blocks = [
-            # x
-            map(int, [pos[0] + gn, pos[1], pos[2]]),
-            map(int, [pos[0] - gn, pos[1], pos[2]]),
-            # y
-            map(int, [pos[0], pos[1] + gn, pos[2]]),
-            map(int, [pos[0], pos[1] - gn, pos[2]]),
-            # z
-            map(int, [pos[0], pos[1], pos[2] + gn]),
-            map(int, [pos[0], pos[1], pos[2] - gn]),
+        ##print "Grenade destroying blocks around point ", pos
+        #blocks = [
+            ## x
+            #map(int, [pos[0] + gn, pos[1], pos[2]]),
+            #map(int, [pos[0] - gn, pos[1], pos[2]]),
+            ## y
+            #map(int, [pos[0], pos[1] + gn, pos[2]]),
+            #map(int, [pos[0], pos[1] - gn, pos[2]]),
+            ## z
+            #map(int, [pos[0], pos[1], pos[2] + gn]),
+            #map(int, [pos[0], pos[1], pos[2] - gn]),
 
-            # xy plane
-            map(int, [pos[0] + diag_len, pos[1] + diag_len, pos[2]]),
-            map(int, [pos[0] - diag_len, pos[1] + diag_len, pos[2]]),
-            map(int, [pos[0] + diag_len, pos[1] - diag_len, pos[2]]),
-            map(int, [pos[0] - diag_len, pos[1] - diag_len, pos[2]]),
-            # xz plane
-            map(int, [pos[0] + diag_len, pos[1], pos[2] + diag_len]),
-            map(int, [pos[0] - diag_len, pos[1], pos[2] + diag_len]),
-            map(int, [pos[0] + diag_len, pos[1], pos[2] - diag_len]),
-            map(int, [pos[0] - diag_len, pos[1], pos[2] - diag_len]),
-        ]
+            ## xy plane
+            #map(int, [pos[0] + diag_len, pos[1] + diag_len, pos[2]]),
+            #map(int, [pos[0] - diag_len, pos[1] + diag_len, pos[2]]),
+            #map(int, [pos[0] + diag_len, pos[1] - diag_len, pos[2]]),
+            #map(int, [pos[0] - diag_len, pos[1] - diag_len, pos[2]]),
+            ## xz plane
+            #map(int, [pos[0] + diag_len, pos[1], pos[2] + diag_len]),
+            #map(int, [pos[0] - diag_len, pos[1], pos[2] + diag_len]),
+            #map(int, [pos[0] + diag_len, pos[1], pos[2] - diag_len]),
+            #map(int, [pos[0] - diag_len, pos[1], pos[2] - diag_len]),
+        #]
 
-        changes = []
-        for b in blocks:
-            x,y,z = b
-            changed = terrain_map.set_notify(x,y,z, 0)
-            if changed:
-                changes.append([x,y,z,0])
+        #changes = []
+        #for b in blocks:
+            #x,y,z = b
+            #changed = terrain_map.set_notify(x,y,z, 0)
+            #if changed:
+                #changes.append([x,y,z,0])
 
-        NetOut.event.set_map(changes)
+        #NetOut.event.set_map(changes)
             
     def delete(self):
-        Projectile.delete(self)
-        c_obj._destroy_grenade(self.g_index)
+        pass
+        #Projectile.delete(self)
+        #c_obj._destroy_grenade(self.g_index)
 
 Grenade.init()
 

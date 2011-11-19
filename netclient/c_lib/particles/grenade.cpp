@@ -2,11 +2,13 @@
 #pragma once
 
 #ifdef DC_CLIENT
-#include <c_lib/state/client_state.hpp>
 #include <c_lib/animations/animations.hpp>
-
 static float grenade_proj_mtrx[16];
 #endif
+
+#include <c_lib/state/client_state.hpp>
+#include <c_lib/state/server_state.hpp>
+
 
 Grenade::Grenade(int id) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
@@ -79,22 +81,26 @@ void Grenade::explode() {
 #endif
 
 #ifdef DC_SERVER
+    int i;
     // find all agents in radius, apply damage
+    int num_agents;
+    num_agents = ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
 
+    for (i=0; i<num_agents; i++) {
+        ServerState::agent_list.filtered_agents[i]->apply_damage(GRENADE_SPLASH_DAMAGE); // need to be able to pass owner & suicidal arguments to apply_damage
+    }
+    
     // find all blocks in radius, destroy/damage
     int max_blocks = 14;
     int blocks_set = 0;
     int blocks[14*3];
     int x,y,z;
-    int i;
     
     blocks_set = block_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_BLOCK_DESTROY_RADIUS, blocks, max_blocks);
-    printf("Blocks set: %d\n", blocks_set);
     for (i=0; i<blocks_set; i++) {
         x = blocks[i*3 +0];
         y = blocks[i*3 +1];
         z = blocks[i*3 +2];
-        printf("%d %d %d\n", x,y,z);
         _set_broadcast(x,y,z,0);
     }
 #endif

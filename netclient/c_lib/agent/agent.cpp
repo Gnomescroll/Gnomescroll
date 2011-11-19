@@ -773,6 +773,9 @@ Agent_state::Agent_state(int _id) {
 
     client_id = -1;
 
+    //health = AGENT_START_HEALTH;
+    //dead = false;
+
     #ifdef DC_SERVER
     #endif
 
@@ -805,6 +808,9 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
 
     client_id = -1;
 
+    //health = AGENT_START_HEALTH;
+    //dead = false;
+    
     #ifdef DC_SERVER
     #endif
 

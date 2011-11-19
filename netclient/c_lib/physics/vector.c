@@ -57,3 +57,6 @@ void print_vector(struct Vector * v) {
     printf("%f, %f, %f \n", v->x, v->y, v->z);
 }
 
+float distance(float x, float y, float z, float x1, float y1, float z1) {
+    return sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y) + (z1-z)*(z1-z));
+}

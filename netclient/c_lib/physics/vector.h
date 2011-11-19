@@ -66,4 +66,4 @@ void mult_vec_scalar_ptr(struct Vector *a, float i);
 struct Vector reflect(struct Vector* inc, struct Vector* nor);
 
 void print_vector(struct Vector* v);
-
+float distance(float x, float y, float z, float x1, float y1, float z1);
