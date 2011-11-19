@@ -80,7 +80,8 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
         grenade_StoC(Grenade* g);
         grenade_StoC() {
-            //dont set values in intializer unless they have default values; its faster to not set values
+            //its faster to not set values
+            //only set default values, not required values in intializer
         /*
             x=0.0f;
             y=0.0f;
