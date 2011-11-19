@@ -165,7 +165,7 @@ class App(object):
             cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
         def billboard_text_fountain():
-            v = 2
+            v = 6
             vx = v*(random.random() -0.5)
             vy = v*(random.random() -0.5)
             vz = v*(random.random() -0.5)
@@ -173,8 +173,11 @@ class App(object):
             vx *= v / le
             vy *= v / le
             vz *= v / le
+            vz = 0
+            _x = (random.random() -0.5) * 1
+            _y = (random.random() -0.5) * 1
             num = random.randint(0,25)
-            cParticles._create_billboard_text(16.0,16.0,129.0, vx, vy,vz, str(num))
+            cParticles._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
 
         _m = 0
 
