@@ -28,3 +28,5 @@ cp -rf ./netclient/c_lib/template ./server/c_lib/template
 
 rm -rf ./server/c_lib/time
 cp -rf ./netclient/c_lib/time ./server/c_lib/time
+
+echo finished

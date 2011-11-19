@@ -170,6 +170,9 @@ int _init_quad_cache_normals() {
 }
 
 //performance counters
+
+static const bool GL_PERF = 0;
+
 GLuint gl_perf_queries[64];
 int gl_per_queries_index = 0;
 
@@ -177,7 +180,7 @@ int _init_draw_terrain() {
 
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
 
-    glGenQueries(64, gl_perf_queries);  //generate timer queries for rendering
+    if(GL_PERF) glGenQueries(64, gl_perf_queries);  //generate timer queries for rendering
 
     //quad_cache = _get_quad_cache();
     _init_quad_cache_normals();
@@ -894,7 +897,7 @@ int _draw_terrain() {
     */
 
     //toggle to enable printing performance numbers
-    if(1) {
+    if(! GL_PERF) {
        //DRAW_VBOS1();
 
        //DRAW_VBOS1a();
