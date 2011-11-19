@@ -130,7 +130,6 @@ class AgentRender(object):
         c_lib.c_lib_agents._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
 
     def bleed(self, dmg=0):
-        print 'BLEEDING'
         create_blood = c_lib.c_lib_particles._create_blood
         n = 100
         v = 15
@@ -152,7 +151,6 @@ class AgentRender(object):
         self.take_damage(666)
 
     def take_damage(self, dmg):
-        print "TAKING DAMAGE", dmg
         p = self.pos()
         p[2] += self.b_height
         animations.FloatTextAnimation(p, dmg)

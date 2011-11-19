@@ -15,7 +15,7 @@
 #define BILLBOARD_TEXT_MAX 1024
 #define BILLBOARD_TEXT_TTL 300
 #define BILLBOARD_TEXT_TYPE 10
-#define BILLBOARD_TEXT_DAMP 0.1f
+#define BILLBOARD_TEXT_DAMP 0.3f
 #define BILLBOARD_TEXT_TEXTURE_SCALE 0.3f
 
 
@@ -29,19 +29,10 @@ class BillboardText {
         unsigned char b;
         unsigned char a;
         Particle2 particle;
-        //char text[10];
         char text[max_letters];
         int text_len;
 
         void set_text(char* t, int length) {
-            //c=0;
-            //return;
-            //int i;
-            //for (i=0; i<c; i++) {
-                //text[i] = t[i];
-            //}
-            //text = t;
-            //sprintf(this->text, "%s", t);
             if(length > max_letters) {
                 length = max_letters;
             }
@@ -50,7 +41,6 @@ class BillboardText {
                 text[i] = t[i];
             }
             text[length] = NULL;
-            //printf("Set text to %s, length= %i\n",text, length);
             text_len = length;
         }
 

@@ -4,7 +4,7 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/player_agent.hpp>
 
-#include <c_lib/particles/cspray.cpp>
+#include <c_lib/particles/object_lib.hpp>
 
 
 namespace PacketInit {
@@ -18,6 +18,8 @@ void RegisterMessages() {
 
     Agent_cs_CtoS::register_server_packet();
     Agent_cs_StoC::register_client_packet();
+
+    grenade_StoC::register_client_packet();
 
     //player agent
     PlayerAgent_Snapshot::register_client_packet();

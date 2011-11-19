@@ -18,8 +18,7 @@
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
 
-/* Grenade used to be just a Particle2, and effectively is,
- * but fits in the Object_list template as a class */
+class grenade_StoC;
 class Grenade {
     public:
         struct Particle2 particle;
@@ -30,6 +29,7 @@ class Grenade {
         
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
+        Grenade(grenade_StoC *g);
 };
 
 #include <c_lib/template/object_list.hpp>
@@ -42,3 +42,51 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
         void draw();
         void tick();
 };
+
+/*
+ *  Networking; spawn packet from server to client
+ */
+
+#include <c_lib/template/net.hpp>
+
+class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
+{
+    public:
+
+        float x,y,z;
+        float vx,vy,vz;
+        uint16_t ttl_max;
+        uint16_t id;
+        uint8_t type;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u16(&ttl_max, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+        }
+
+        inline void handle();
+
+    grenade_StoC(Grenade* g);
+    grenade_StoC() {
+        x=0.0f;
+        y=0.0f;
+        z=0.0f;
+        vx=0.0f;
+        vy=0.0f;
+        vz=0.0f;
+        ttl_max = 0;
+        this->id = id;
+        type = GRENADE_TYPE;
+    }
+};
+

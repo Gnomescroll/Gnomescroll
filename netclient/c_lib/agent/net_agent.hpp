@@ -22,7 +22,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         int id;
         int seq;
-        int tick;
+        //int tick;
 
         float x;
         float y;

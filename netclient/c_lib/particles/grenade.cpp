@@ -8,11 +8,23 @@ static float grenade_proj_mtrx[16];
 Grenade::Grenade(int id) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
                    // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
+    #ifdef DC_SERVER
+    grenade_StoC g = grenade_StoC(this);
+    g.broadcast();
+    #endif
 }
 
 Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz) {
     create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
                    // particle, _id,      type,   x,y,z vx,vy,vz, ttl, ttl_max
+    #ifdef DC_SERVER
+    grenade_StoC g = grenade_StoC(this);
+    g.broadcast();
+    #endif
+}
+
+Grenade::Grenade(grenade_StoC* g) {
+    create_particle2(&particle, g->id, g->type, g->x, g->y, g->z, g->vx, g->vy, g->vz, 0, g->ttl_max);
 }
 
 void Grenade::tick() {
@@ -112,42 +124,29 @@ void Grenade_list::draw() {
 #endif
 }
 
+inline void print_grenade(Grenade *g) {
+    printf("Print Grenade -\n");
+    printf("ID: %d\n", g->particle.id);
+    printf("Pos: %0.2f %0.2f %0.2f\n", g->particle.state.p.x, g->particle.state.p.y, g->particle.state.p.z);
+    printf("Vel: %0.2f %0.2f %0.2f\n", g->particle.state.v.x, g->particle.state.v.y, g->particle.state.v.z);
+    printf("TTL max: %d\n", g->particle.ttl_max);
+    printf("Type: %d\n", g->particle.type);
+}
+inline void grenade_StoC::handle() {
+    printf("Spawn grenade particle: %i \n", id);
+    Grenade* g = new Grenade(this);
+    print_grenade(g);
+}
 
-/*
- *  Networking; spawn packet from server to client
- */
+grenade_StoC::grenade_StoC(Grenade *g) {
 
-
-#include <c_lib/template/net.hpp>
-
-class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
-{
-    public:
-
-        float x,y,z;
-        float vx,vy,vz;
-        uint16_t ttl;
-        uint16_t ttl_max;
-        uint16_t id;
-        uint8_t type;
-
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
-        {
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
-
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u16(&ttl, buff, buff_n, pack);
-            pack_u16(&ttl_max, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-        }
-
-        inline void handle() {
-            printf("Spawn grenade particle: %i \n", id);
-        }
-};
+    x = g->particle.state.p.x;
+    y = g->particle.state.p.y;
+    z = g->particle.state.p.z;
+    vx = g->particle.state.v.x;
+    vy = g->particle.state.v.y;
+    vz = g->particle.state.v.z;
+    ttl_max = g->particle.ttl_max - g->particle.ttl;
+    id = g->particle.id;
+    type = g->particle.type;
+}
