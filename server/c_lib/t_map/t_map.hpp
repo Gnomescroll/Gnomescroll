@@ -76,7 +76,6 @@ int _get_lowest_open_block(int x, int y, int n);
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
 
-//int block_sphere(float x, float y, float z, float radius, int* blocks, int max_blocks, int* blocks_set);
 int _set_broadcast(int x, int y, int z, int value);
 
 //these flags are not used on server for anything
