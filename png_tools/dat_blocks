@@ -28,7 +28,7 @@ east    stone.png
 ===
 id      3
 name    lava
-hud     40 lavablock.png
+hud     1 lavablock.png
 top     lavablock.png
 bottom  lavablock.png
 north   lavablock.png
@@ -38,7 +38,7 @@ east    lavablock.png
 ===
 id      4
 name    grass
-hud     8 grass-side.png
+hud     2 grass-side.png
 top     grass-top.png
 bottom  dirt.png
 north   grass-side.png
@@ -48,7 +48,7 @@ east    grass-side.png
 ===
 id      5
 name    dirt
-hud     9 dirt.png
+hud     3 dirt.png
 top     dirt.png
 bottom  dirt.png
 north   dirt.png
@@ -58,7 +58,7 @@ east    dirt.png
 ===
 id      6
 name    blue_ore
-hud     1 blueore.png
+hud     4 blueore.png
 top     blueore.png
 bottom  blueore.png
 north   blueore.png
@@ -66,14 +66,9 @@ south   blueore.png
 west    blueore.png
 east    blueore.png
 ===
-id      7
-name    infinite_grass
-hud     5 grass-side.png
-infinite_texture 2 grass_01
-===
 id      8
 name    sand_brick
-hud     24 brick-red.png
+hud     5 brick-red.png
 top     brick-red.png
 bottom  brick-red.png
 north   brick-red.png
@@ -83,7 +78,7 @@ east    brick-red.png
 ===
 id      9
 name    sand_brick
-hud     25 brick-sand.png
+hud     6 brick-sand.png
 top     brick-sand.png
 bottom  brick-sand.png
 north   brick-sand.png
@@ -93,7 +88,7 @@ east    brick-sand.png
 ===
 id      10
 name    grey_brick
-hud     26 brick-stone.png
+hud     7 brick-stone.png
 top     brick-stone.png
 bottom  brick-stone.png
 north   brick-stone.png
@@ -103,7 +98,7 @@ east    brick-stone.png
 ===
 id      11
 name    sand
-hud     27 sand.png
+hud     8 sand.png
 top     sand.png
 bottom  sand.png
 north   sand.png
@@ -122,14 +117,14 @@ hud     17 infinite/water_02.png
 infinite_texture 2 water_02
 ===
 id      22
-name    infinite_test
-hud     18 infinite/water_02.png
-infinite_texture 2 test_02
+name    infinite_sand_01
+hud     18 infinite/sand_01.png
+infinite_texture 2 sand_01
 ===
 id      23
-name    infinite_test
-hud     19 infinite/water_02.png
-infinite_texture 2 test_02
+name    infinite_wood_01
+hud     19 infinite/wood_01.png
+infinite_texture 2 wood_01
 ===
 id      40
 name    tree_top_01
@@ -144,7 +139,7 @@ east    xox/Tree-top_01.png
 ===
 id      41
 name    tree_top_02
-hud     32 xox/Tree-top_02.png
+hud     33 xox/Tree-top_02.png
 transparency 1
 top     xox/Tree-top_02.png
 bottom  xox/Tree-top_02.png
@@ -155,7 +150,7 @@ east    xox/Tree-top_02.png
 ===
 id      42
 name    tree_top_03
-hud     32 xox/Tree-top_03.png
+hud     34 xox/Tree-top_03.png
 transparency 1
 top     xox/Tree-top_03.png
 bottom  xox/Tree-top_03.png
@@ -166,7 +161,7 @@ east    xox/Tree-top_03.png
 ===
 id      43
 name    tree_top_04
-hud     32 xox/Tree-top_04.png
+hud     35 xox/Tree-top_04.png
 transparency 1
 top     xox/Tree-top_04.png
 bottom  xox/Tree-top_04.png
@@ -177,7 +172,7 @@ east    xox/Tree-top_04.png
 ===
 id      44
 name    tree_bark_01
-hud     33 xox/Tree-bark_01.png
+hud     36 xox/Tree-bark_01.png
 top     xox/Tree-End_01.png
 bottom  xox/Tree-End_01.png
 north   xox/Tree-bark_01.png
@@ -185,9 +180,9 @@ south   xox/Tree-bark_01.png
 west    xox/Tree-bark_01.png
 east    xox/Tree-bark_01.png
 ===
-id      44
+id      45
 name    tree_bark_02
-hud     34 xox/Tree-bark_02.png
+hud     37 xox/Tree-bark_02.png
 top     xox/Tree-End_02.png
 bottom  xox/Tree-End_02.png
 north   xox/Tree-bark_02.png
@@ -195,9 +190,9 @@ south   xox/Tree-bark_02.png
 west    xox/Tree-bark_02.png
 east    xox/Tree-bark_02.png
 ===
-id      45
+id      46
 name    tree_bark_03
-hud     35 xox/Tree-bark_03.png
+hud     38 xox/Tree-bark_03.png
 top     xox/Tree-End_01.png
 bottom  xox/Tree-End_01.png
 north   xox/Tree-bark_03.png
@@ -205,9 +200,9 @@ south   xox/Tree-bark_03.png
 west    xox/Tree-bark_03.png
 east    xox/Tree-bark_03.png
 ===
-id      46
+id      47
 name    tree_bark_01
-hud     36 xox/Tree-bark_04.png
+hud     39 xox/Tree-bark_04.png
 top     xox/Tree-End_02.png
 bottom  xox/Tree-End_02.png
 north   xox/Tree-bark_04.png
@@ -215,9 +210,9 @@ south   xox/Tree-bark_04.png
 west    xox/Tree-bark_04.png
 east    xox/Tree-bark_04.png
 ===
-id      47
+id      48
 name    tree_bark2
-hud     37 xox/Tree-bark_03.png
+hud     40 xox/Tree-bark_03.png
 top     xox/Tree-End_02.png
 bottom  xox/Tree-End_02.png
 north   xox/Tree-bark_03.png
@@ -225,9 +220,9 @@ south   xox/Tree-bark_03.png
 west    xox/Tree-bark_03.png
 east    xox/Tree-bark_03.png
 ===
-id      48
+id      49
 name    cherry_tree_bark
-hud     38 xox/cherrytreebark.png
+hud     41 xox/cherrytreebark.png
 top     xox/cherrytreebark.png
 bottom  xox/cherrytreebark.png
 north   xox/cherrytreebark.png
@@ -235,9 +230,9 @@ south   xox/cherrytreebark.png
 west    xox/cherrytreebark.png
 east    xox/cherrytreebark.png
 ===
-id      49
+id      50
 name    cherry_tree_top
-hud     39 xox/cherrytreetop.png
+hud     42 xox/cherrytreetop.png
 transparency 1
 top     xox/cherrytreetop.png
 bottom  xox/cherrytreetop.png
@@ -248,7 +243,7 @@ east    xox/cherrytreetop.png
 ===
 id      100
 name    terminal
-hud     40 terminal.png
+hud     9 terminal.png
 top     terminal.png
 bottom  terminal.png
 north   terminal.png
@@ -258,7 +253,7 @@ east    terminal.png
 ===
 id      101
 name    tron
-hud     41 tron.png
+hud     10 tron.png
 top     tron.png
 bottom  tron.png
 north   tron.png
@@ -266,15 +261,25 @@ south   tron.png
 west    tron.png
 east    tron.png
 ===
-id      101
+id      102
 name    battery
-hud     42 bat-side.png
+hud     11 bat-side.png
 top     bat-top.png
 bottom  bat-bottom.png
 north   bat-side.png
 south   bat-side.png
 west    bat-side.png
 east    bat-side.png
+===
+id      103
+name    solar_panel
+hud     12 solar-panel.png
+top     solar-panel.png
+bottom  solar-panel.png
+north   solar-panel.png
+south   solar-panel.png
+west    solar-panel.png
+east    solar-panel.png
 ===
 id      164
 name    tree_alt1
