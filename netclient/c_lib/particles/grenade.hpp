@@ -15,7 +15,7 @@
 /* These should be pulled from a dat or something */
 #define GRENADE_MAX 1024
 #define GRENADE_TTL 100
-#define GRENADE_DAMP 0.1f
+#define GRENADE_DAMP 0.3f
 #define GRENADE_TYPE 1
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
