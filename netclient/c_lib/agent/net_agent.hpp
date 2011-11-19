@@ -138,3 +138,31 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 
         }
 };
+
+class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
+{
+    public:
+
+        int id;
+        int dmg;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&dmg, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            Agent_state* a = STATE::agent_list.get(id);
+            if(a == NULL) {
+                return;
+            }
+            a->took_damage(dmg);
+        }
+
+        agent_damage_StoC();
+        agent_damage_StoC(int id, int dmg) {
+            this->id = id;
+            this->dmg = dmg;
+        }
+};

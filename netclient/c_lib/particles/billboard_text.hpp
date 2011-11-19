@@ -9,8 +9,8 @@
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
-
 #include <hud/text.h>
+#include <c_lib/template/object_list.hpp>
 
 #define BILLBOARD_TEXT_MAX 1024
 #define BILLBOARD_TEXT_TTL 300
@@ -40,7 +40,7 @@ class BillboardText {
             for (i=0; i<length; i++) {
                 text[i] = t[i];
             }
-            text[length] = NULL;
+            //text[length] = NULL;  // cool segfault
             text_len = length;
         }
 
@@ -64,8 +64,6 @@ class BillboardText {
         BillboardText(int id, float x, float y, float z, float vx, float vy, float vz);
 };
 
-#include <c_lib/template/object_list.hpp>
-
 class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
 {
     private:
@@ -74,4 +72,4 @@ class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
         void draw();
         void tick();
 };
-    
+

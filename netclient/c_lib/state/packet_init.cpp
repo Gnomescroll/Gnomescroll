@@ -21,6 +21,8 @@ void RegisterMessages() {
 
     grenade_StoC::register_client_packet();
 
+    agent_damage_StoC::register_client_packet();
+
     block_StoC::register_client_packet();
 
     //player agent

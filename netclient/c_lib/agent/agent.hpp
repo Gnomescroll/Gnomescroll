@@ -13,6 +13,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
+//#include <c_lib/state/client_state.hpp>
 #include <agent/agent_vox.hpp>
 void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size);
 void init_agent_vox_done(int id);
@@ -133,17 +134,13 @@ class Agent_state {
 
         //int health;
         //bool dead;
-        void apply_damage(int dmg) {    // TODO add owner, suicidal flags
-            //health -= dmg;
-            //health = (health < 0) ? 0 : health;
-            //if (!health) {
-                //die();//owner);
-            //}
-            // send update?? how is health to be done over network
-        }
+        void apply_damage(int dmg);
         void die() {
             //dead = true;
         }
+
+        // side effects of taking damage. dont modify health/death here
+        void took_damage(int dmg);
 
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);

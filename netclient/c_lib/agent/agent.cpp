@@ -92,6 +92,30 @@ void Agent_state::teleport(float x,float y,float z) {
 }
 #endif
 
+// side effects of taking damage. dont modify health/death here
+void Agent_state::took_damage(int dmg) {
+    #ifdef DC_CLIENT
+    BillboardText* b = ClientState::billboard_text_list.create(s.x,s.y,s.z, 0.0f,0.0f, 7.0f);
+    b->set_color(255,10,10, 255);   // red
+    char txt[10+1];
+    sprintf(txt, "%d\n", dmg);
+    b->set_text(txt, 10);
+    #endif
+}
+
+void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
+    //health -= dmg;
+    //health = (health < 0) ? 0 : health;
+    //if (!health) {
+        //die();//owner);
+    //}
+    // send update?? how is health to be done over network
+    #ifdef DC_SERVER
+    agent_damage_StoC* msg = new agent_damage_StoC(id, dmg);
+    msg->broadcast();
+    #endif
+}
+
 // assume box_r < 1
 
 #include <math.h>
@@ -413,6 +437,7 @@ void Agent_state::_tick()
         _tc++;
     }
 }
+
 
 //takes an agent state and control state and returns new agent state
 inline class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
