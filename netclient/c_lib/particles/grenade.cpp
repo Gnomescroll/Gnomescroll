@@ -95,13 +95,16 @@ void Grenade::explode() {
     int blocks_set = 0;
     int blocks[14*3];
     int x,y,z;
-    
+    int block_damage;
     blocks_set = block_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_BLOCK_DESTROY_RADIUS, blocks, max_blocks);
     for (i=0; i<blocks_set; i++) {
         x = blocks[i*3 +0];
         y = blocks[i*3 +1];
         z = blocks[i*3 +2];
-        _set_broadcast(x,y,z,0);
+        block_damage = _apply_damage(x,y,z, GRENADE_BLOCK_DAMAGE);
+        if (block_damage == 0) { // block was destroyed
+            _block_broadcast(x,y,z,0);
+        }
     }
 #endif
 }

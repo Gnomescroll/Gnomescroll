@@ -23,6 +23,7 @@
 #define GRENADE_BLOCK_DESTROY_RADIUS 0.9f
 #define GRENADE_AGENT_DAMAGE_RADIUS 2.0f
 #define GRENADE_SPLASH_DAMAGE 20
+#define GRENADE_BLOCK_DAMAGE 16
 
 class Grenade {
     public:

@@ -137,3 +137,4 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
         }
 };
 
+void _block_broadcast(int x, int y, int z, int value);
