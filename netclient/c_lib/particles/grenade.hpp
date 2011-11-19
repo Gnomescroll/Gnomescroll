@@ -80,14 +80,18 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
         grenade_StoC(Grenade* g);
         grenade_StoC() {
+            //dont set values in intializer unless they have default values; its faster to not set values
+        /*
             x=0.0f;
             y=0.0f;
             z=0.0f;
             vx=0.0f;
             vy=0.0f;
             vz=0.0f;
-            ttl_max = 0;
-            this->id = id;
+        */
+            //this->id = id; //wtf does this mean, id=id?
+            ttl_max = GRENADE_TTL;
             type = GRENADE_TYPE;
+
         }
 };
