@@ -101,7 +101,6 @@ int Grenade::block_damage(int dist) {
     float dmg = ratio * (float)(GRENADE_BLOCK_DAMAGE);
     int idmg = (int)(dmg);
     printf("%d %d %0.2f %0.2f %d\n", dist, max_dist, ratio, dmg, idmg);
-    if (idmg > GRENADE_BLOCK_DAMAGE) printf("imdg exceeds block damage!\n");
     return idmg;
 }
 
