@@ -5,7 +5,7 @@
     #include <compat_gl.h>
 #endif
 
-#include <t_map/t_map.h>
+#include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
 #ifdef DC_CLIENT

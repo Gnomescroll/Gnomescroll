@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/t_map/t_map.h>
+#include <c_lib/t_map/t_map.hpp>
 
 #include "perlin.h"
 #include "noise.h"

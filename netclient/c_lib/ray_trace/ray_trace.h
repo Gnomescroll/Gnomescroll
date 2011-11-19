@@ -5,7 +5,7 @@
 
 #include <compat.h>
 
-#include <t_map/t_map.h>
+#include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
 #define ssize 256

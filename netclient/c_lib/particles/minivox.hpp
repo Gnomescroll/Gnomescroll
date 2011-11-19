@@ -8,7 +8,7 @@
 #include <c_lib/voxel/common.h>
 #include <physics/common.h>
 #include <ray_trace/ray_trace.h>
-#include <t_map/t_map.h>
+#include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
 #define MINIVOX_MAX 4096

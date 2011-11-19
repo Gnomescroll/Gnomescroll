@@ -7,7 +7,7 @@
 
 #include <physics/common.h>
 #include <ray_trace/ray_trace.h>
-#include <t_map/t_map.h>
+#include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
 #define BLOOD_MAX 4096

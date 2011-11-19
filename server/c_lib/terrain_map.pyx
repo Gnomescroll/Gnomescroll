@@ -24,7 +24,7 @@ xmax = _xmax
 ymax = _ymax
 zmax = _zmax
 
-cdef extern from "./t_map/t_map.h":
+cdef extern from "./t_map/t_map.hpp":
 
     struct vm_chunk:
         unsigned short voxel[512]
@@ -41,7 +41,7 @@ cdef extern from "./t_map/t_map.h":
     struct vm_map:
         vm_column column[vm_map_dim*vm_map_dim]
 
-cdef extern from "./t_map/t_map.h":
+cdef extern from "./t_map/t_map.hpp":
     int _init_t_map()
     int _clear()
 

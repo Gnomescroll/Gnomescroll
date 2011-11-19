@@ -486,11 +486,11 @@ int block_sphere(float x, float y, float z, float radius, int* blocks, int max_b
 int _set_broadcast(int x, int y, int z, int value) {
     block_StoC* msg;
     int i,j=0;
-    i = _get(x,y,z):
+    i = _get(x,y,z);
     if (i != value) {
         j = _set(x,y,z, value);
         msg = new block_StoC(x,y,z,value);
-        msg.broadcast();
+        msg->broadcast();
     }
     return j;
 }

@@ -7,7 +7,7 @@
 
 #include <physics/common.h>
 #include <ray_trace/ray_trace.h>
-#include <t_map/t_map.h>
+#include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 #include <c_lib/template/object_list.hpp>
 #include <c_lib/template/net.hpp>
@@ -19,7 +19,7 @@
 #define GRENADE_TYPE 1
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
-#define GRENADE_BLOCK_DESTROY_RADIUS 0.6f
+#define GRENADE_BLOCK_DESTROY_RADIUS 0.9f
 
 class Grenade {
     public:

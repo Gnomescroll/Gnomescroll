@@ -7,7 +7,7 @@
 
 #include <ray_trace/ray_trace.h>
 
-#include <t_map/t_map.h>
+#include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
 #include "agent_vox.h"

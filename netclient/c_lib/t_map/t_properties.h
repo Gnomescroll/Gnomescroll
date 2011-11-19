@@ -5,7 +5,7 @@
 
 #include <compat.h>
 
-#include "t_map.h"
+#include "t_map.hpp"
 
 // cube properties
 

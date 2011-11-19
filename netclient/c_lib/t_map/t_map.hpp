@@ -8,6 +8,7 @@
 #include <compat_gl.h>
 
 #include <c_lib/common/functional.h>
+#include <c_lib/template/net.hpp>
 
 /*
 #include "t_vbo.h"

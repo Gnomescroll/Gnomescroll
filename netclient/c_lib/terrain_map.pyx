@@ -3,7 +3,7 @@
 cdef extern from "./t_map/t_properties.h":
     int max_cubes
 
-cdef extern from "../c_lib/t_map/t_map.h":
+cdef extern from "../c_lib/t_map/t_map.hpp":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
     int _clear()
@@ -25,7 +25,7 @@ cdef enum:
     vm_chunk_size = 8
     vm_column_max = 16
 
-cdef extern from "../c_lib/t_map/t_map.h":
+cdef extern from "../c_lib/t_map/t_map.hpp":
     struct vm_chunk:
         unsigned short voxel[512]
         int x_off, y_off, z_off
@@ -41,7 +41,7 @@ cdef extern from "../c_lib/t_map/t_map.h":
     struct vm_map:
         vm_column column[vm_map_dim*vm_map_dim]
 
-cdef extern from "./t_map/t_map.h":
+cdef extern from "./t_map/t_map.hpp":
     int _set(int x, int y, int z, int value)
     int _get(int x, int y, int z)
 
@@ -586,8 +586,8 @@ PART 6: Init
 cdef extern from "./t_map/t_vbo.h":
     int _init_draw_terrain()
 
-#cdef extern from "./t_map.h":
-cdef extern from "./t_map/t_map.h":
+#cdef extern from "./t_map.hpp":
+cdef extern from "./t_map/t_map.hpp":
     int _init_t_map()
 #cdef extern from "./t_map_draw.h":
 #    int _init_t_map_draw()

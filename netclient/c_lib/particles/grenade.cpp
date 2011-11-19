@@ -89,12 +89,13 @@ void Grenade::explode() {
     int i;
     
     blocks_set = block_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_BLOCK_DESTROY_RADIUS, blocks, max_blocks);
+    printf("Blocks set: %d\n", blocks_set);
     for (i=0; i<blocks_set; i++) {
         x = blocks[i*3 +0];
         y = blocks[i*3 +1];
         z = blocks[i*3 +2];
-        _set(x,y,z, 0);
-        //send_map_message(x,y,z, 0);
+        printf("%d %d %d\n", x,y,z);
+        _set_broadcast(x,y,z,0);
     }
 #endif
 }
