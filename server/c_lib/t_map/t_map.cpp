@@ -41,17 +41,28 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
 
 // destroys block and returns 0 if damage exceeds max damage
 // else return current damage of block
+// return  -4 when damage <= 0 (will have no / bad effects)
+// returns -3 when chunk is NULL
+// returns -2 on map coordinates out of bounds failure
+// returns -1 when  blocks is already 0 / empty
 int _apply_damage(int x, int y, int z, int dmg) {
+    if (dmg <= 0) return -4;
     int xoff, yoff, zoff, xrel, yrel, zrel;
     int tile;
     struct vm_column* column;
     struct vm_chunk* chunk;
     xoff = x >> 3; yoff = y >> 3; zoff = z >> 3;
+    if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
+        return -2;
+    }
     xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
-    if(chunk == NULL) { printf("!!! _apply_damage: Chunk is NULL  ||| ERROR THIS CANNOT OCCUR< EVER\n"); return 0; }
+    if(chunk == NULL) { printf("!!! _apply_damage: Chunk is NULL  ||| ERROR THIS CANNOT OCCUR< EVER\n"); printf("%d %d %d %d\n", x,y,z, dmg); return -3; }
     tile = chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
+    if (tile==0) {
+        return -1;
+    }
     unsigned char* damage;
     damage = &chunk->damage[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
     *damage += dmg;

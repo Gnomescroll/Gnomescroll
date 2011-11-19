@@ -91,27 +91,68 @@ void Grenade::explode() {
     }
     
     // find all blocks in radius, destroy/damage
-    int max_blocks = 14;
-    int blocks_set = 0;
-    int blocks[14*3];
-    int x,y,z;
-    int block_damage;
-    blocks_set = block_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_BLOCK_DESTROY_RADIUS, blocks, max_blocks);
-    for (i=0; i<blocks_set; i++) {
-        x = blocks[i*3 +0];
-        y = blocks[i*3 +1];
-        z = blocks[i*3 +2];
-        block_damage = _apply_damage(x,y,z, GRENADE_BLOCK_DAMAGE);
-        if (block_damage == 0) { // block was destroyed
-            _block_broadcast(x,y,z,0);
+    damage_blocks();
+#endif
+}
+
+int Grenade::block_damage(int dist) {
+    int max_dist = GRENADE_BLOCK_DESTROY_RADIUS*3;
+    float ratio = (float)(max_dist - dist) / (float)(max_dist);
+    float dmg = ratio * (float)(GRENADE_BLOCK_DAMAGE);
+    int idmg = (int)(dmg);
+    printf("%d %d %0.2f %0.2f %d\n", dist, max_dist, ratio, dmg, idmg);
+    if (idmg > GRENADE_BLOCK_DAMAGE) printf("imdg exceeds block damage!\n");
+    return idmg;
+}
+
+void Grenade::damage_blocks() {
+#ifdef DC_SERVER
+    float x = particle.state.p.x;
+    float y = particle.state.p.y;
+    float z = particle.state.p.z;
+
+    int ir = GRENADE_BLOCK_DESTROY_RADIUS;
+
+    int ix = (int)x;
+    int iy = (int)y;
+    int iz = (int)z;
+    
+    int i,j,k;
+    int bx,by,bz;
+    int res;
+    int dmg;
+    for (i=0; i<ir; i++) {
+        for (j=0; j<ir; j++) {
+            for (k=0; k<ir; k++) {
+                dmg = block_damage(i+j+k);
+
+                bx = ix + i;
+                by = iy + j;
+                bz = iz + k;
+                res = _apply_damage(bx,by,bz, dmg);
+                if (res==0) _block_broadcast(bx,by,bz,0);
+                bx = ix - i;
+                _apply_damage(bx,by,bz, dmg);
+                if (res==0) _block_broadcast(bx,by,bz,0);
+                by = iy - j;
+                _apply_damage(bx,by,bz, dmg);
+                if (res==0) _block_broadcast(bx,by,bz,0);
+                by = iy + j;
+                bz = iz - k;
+                _apply_damage(bx,by,bz, dmg);
+                if (res==0) _block_broadcast(bx,by,bz,0);
+                bx = ix + i;
+                by = iy - j;
+                _apply_damage(bx,by,bz, dmg);
+                if (res==0) _block_broadcast(bx,by,bz,0);
+                bx = ix - i;
+                _apply_damage(bx,by,bz, dmg);
+                if (res==0) _block_broadcast(bx,by,bz,0);
+            }
         }
     }
 #endif
 }
-
-//[agent.take_damage(self.splash_damage, self.owner, self.suicidal)
-         //for agent in GameStateGlobal.agentList.values()
-         //if distance(pos, agent.pos()) < self.splash_radius]
 
 /* Grenade list */
 void Grenade_list::tick() {

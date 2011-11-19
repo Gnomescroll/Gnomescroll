@@ -59,7 +59,7 @@ int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
 int _clear();
 
-int _apply_damage(int x, int y, int z, int value);
+int _apply_damage(int x, int y, int z, int dmg);
 
 int _set_server_version(int x,int y,int z, int server_version);
 
@@ -76,7 +76,7 @@ int _get_lowest_open_block(int x, int y, int n);
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
 
-void block_sphere(float x, float y, float z, float radius, int* blocks, int max_blocks, int* blocks_set);
+//int block_sphere(float x, float y, float z, float radius, int* blocks, int max_blocks, int* blocks_set);
 int _set_broadcast(int x, int y, int z, int value);
 
 //these flags are not used on server for anything

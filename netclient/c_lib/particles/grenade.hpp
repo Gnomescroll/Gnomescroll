@@ -20,10 +20,10 @@
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
 
-#define GRENADE_BLOCK_DESTROY_RADIUS 0.9f
+#define GRENADE_BLOCK_DESTROY_RADIUS 3
 #define GRENADE_AGENT_DAMAGE_RADIUS 2.0f
 #define GRENADE_SPLASH_DAMAGE 20
-#define GRENADE_BLOCK_DAMAGE 16
+#define GRENADE_BLOCK_DAMAGE 32
 
 class Grenade {
     public:
@@ -34,6 +34,10 @@ class Grenade {
         void set_ttl(int ttl);
 
         void explode();
+
+        int block_damage(int dist);
+        void damage_blocks();
+
         
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
