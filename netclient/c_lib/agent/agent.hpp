@@ -13,7 +13,6 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
-//#include <c_lib/state/client_state.hpp>
 #include <agent/agent_vox.hpp>
 void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size);
 void init_agent_vox_done(int id);
@@ -170,7 +169,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
             for (i=0; i<AGENT_MAX; i++) {
                 if (a[i] == NULL) continue;
                 dist = distance(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
-                if (dist > radius) {
+                if (dist < radius) {
                     // agent in sphere
                     filtered_agents[ct] = a[i];
                     ct++;

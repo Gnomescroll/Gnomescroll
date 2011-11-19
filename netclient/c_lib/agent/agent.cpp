@@ -98,8 +98,8 @@ void Agent_state::took_damage(int dmg) {
     BillboardText* b = ClientState::billboard_text_list.create(s.x,s.y,s.z, 0.0f,0.0f, 7.0f);
     b->set_color(255,10,10, 255);   // red
     char txt[10+1];
-    sprintf(txt, "%d\n", dmg);
-    b->set_text(txt, 10);
+    int n = sprintf(txt, "%d", dmg);
+    b->set_text(txt, n);
     #endif
 }
 

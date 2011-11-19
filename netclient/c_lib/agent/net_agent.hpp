@@ -160,7 +160,7 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
             a->took_damage(dmg);
         }
 
-        agent_damage_StoC();
+        agent_damage_StoC(){}
         agent_damage_StoC(int id, int dmg) {
             this->id = id;
             this->dmg = dmg;
