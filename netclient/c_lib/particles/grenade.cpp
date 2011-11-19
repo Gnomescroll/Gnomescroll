@@ -100,7 +100,6 @@ int Grenade::block_damage(int dist) {
     float ratio = (float)(max_dist - dist) / (float)(max_dist);
     float dmg = ratio * (float)(GRENADE_BLOCK_DAMAGE);
     int idmg = (int)(dmg);
-    printf("%d %d %0.2f %0.2f %d\n", dist, max_dist, ratio, dmg, idmg);
     return idmg;
 }
 
@@ -129,24 +128,24 @@ void Grenade::damage_blocks() {
                 by = iy + j;
                 bz = iz + k;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) _block_broadcast(bx,by,bz,0);
+                if (res==0) { _block_broadcast(bx,by,bz,0); }
                 bx = ix - i;
-                _apply_damage(bx,by,bz, dmg);
-                if (res==0) _block_broadcast(bx,by,bz,0);
+                res = _apply_damage(bx,by,bz, dmg);
+                if (res==0) { _block_broadcast(bx,by,bz,0); }
                 by = iy - j;
-                _apply_damage(bx,by,bz, dmg);
-                if (res==0) _block_broadcast(bx,by,bz,0);
+                res = _apply_damage(bx,by,bz, dmg);
+                if (res==0) { _block_broadcast(bx,by,bz,0); }
                 by = iy + j;
                 bz = iz - k;
-                _apply_damage(bx,by,bz, dmg);
-                if (res==0) _block_broadcast(bx,by,bz,0);
+                res = _apply_damage(bx,by,bz, dmg);
+                if (res==0) { _block_broadcast(bx,by,bz,0); }
                 bx = ix + i;
                 by = iy - j;
-                _apply_damage(bx,by,bz, dmg);
-                if (res==0) _block_broadcast(bx,by,bz,0);
+                res = _apply_damage(bx,by,bz, dmg);
+                if (res==0) { _block_broadcast(bx,by,bz,0); }
                 bx = ix - i;
-                _apply_damage(bx,by,bz, dmg);
-                if (res==0) _block_broadcast(bx,by,bz,0);
+                res = _apply_damage(bx,by,bz, dmg);
+                if (res==0) { _block_broadcast(bx,by,bz,0); }
             }
         }
     }
