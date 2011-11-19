@@ -121,17 +121,17 @@ name    infinite_water_02
 hud     17 infinite/water_02.png
 infinite_texture 2 water_02
 ===
-id      21
+id      22
 name    infinite_test
 hud     18 infinite/water_02.png
 infinite_texture 2 test_02
 ===
-id      22
+id      23
 name    infinite_test
 hud     19 infinite/water_02.png
 infinite_texture 2 test_02
 ===
-id      23
+id      40
 name    tree_top_01
 hud     32 xox/Tree-top_01.png
 transparency 1
