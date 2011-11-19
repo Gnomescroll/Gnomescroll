@@ -71,47 +71,6 @@ name    infinite_grass
 hud     5 grass-side.png
 infinite_texture 2 grass_01
 ===
-id      12
-name    infinite_brick
-hud     6 grass-side.png
-infinite_texture 2 brick_01
-===
-id      13
-name    infinite_test
-hud     7 grass-side.png
-infinite_texture 2 test_02
-===
-id      14
-name    tree_top
-hud     10 xox/Tree-top_04.png
-transparency 1
-top     xox/Tree-top_04.png
-bottom  xox/Tree-top_04.png
-north   xox/Tree-top_04.png
-south   xox/Tree-top_04.png
-west    xox/Tree-top_04.png
-east    xox/Tree-top_04.png
-===
-id      15
-name    tree_bark
-hud     11 xox/Tree-bark_04.png
-top     xox/Tree-End_01.png
-bottom  xox/Tree-End_01.png
-north   xox/Tree-bark_04.png
-south   xox/Tree-bark_04.png
-west    xox/Tree-bark_04.png
-east    xox/Tree-bark_04.png
-===
-id      16
-name    tree_bark2
-hud     12 xox/Tree-bark_03.png
-top     xox/Tree-End_02.png
-bottom  xox/Tree-End_02.png
-north   xox/Tree-bark_03.png
-south   xox/Tree-bark_03.png
-west    xox/Tree-bark_03.png
-east    xox/Tree-bark_03.png
-===
 id      8
 name    sand_brick
 hud     24 brick-red.png
@@ -141,11 +100,10 @@ north   brick-stone.png
 south   brick-stone.png
 west    brick-stone.png
 east    brick-stone.png
-
 ===
 id      11
 name    sand
-hud     16 sand.png
+hud     27 sand.png
 top     sand.png
 bottom  sand.png
 north   sand.png
@@ -153,17 +111,140 @@ south   sand.png
 west    sand.png
 east    sand.png
 ===
-id      17
-name    tree_alt
-hud     32 tree-alt-small.png
+id      20
+name    infinite_water_01
+hud     16 infinite/water_01.png
+infinite_texture 2 water_01
+===
+id      21
+name    infinite_water_02
+hud     17 infinite/water_02.png
+infinite_texture 2 water_02
+===
+id      22
+name    infinite_test
+hud     18 infinite/water_02.png
+infinite_texture 2 test_02
+===
+id      23
+name    infinite_test
+hud     19 infinite/water_02.png
+infinite_texture 2 test_02
+===
+id      40
+name    tree_top_01
+hud     32 xox/Tree-top_01.png
 transparency 1
-top     tree-alt-small.png
-bottom  tree-alt-small.png
-north   tree-alt-small.png
-south   tree-alt-small.png
-west    tree-alt-small.png
-east    tree-alt-small.png
-
+top     xox/Tree-top_01.png
+bottom  xox/Tree-top_01.png
+north   xox/Tree-top_01.png
+south   xox/Tree-top_01.png
+west    xox/Tree-top_01.png
+east    xox/Tree-top_01.png
+===
+id      41
+name    tree_top_02
+hud     32 xox/Tree-top_02.png
+transparency 1
+top     xox/Tree-top_02.png
+bottom  xox/Tree-top_02.png
+north   xox/Tree-top_02.png
+south   xox/Tree-top_02.png
+west    xox/Tree-top_02.png
+east    xox/Tree-top_02.png
+===
+id      42
+name    tree_top_03
+hud     32 xox/Tree-top_03.png
+transparency 1
+top     xox/Tree-top_03.png
+bottom  xox/Tree-top_03.png
+north   xox/Tree-top_03.png
+south   xox/Tree-top_03.png
+west    xox/Tree-top_03.png
+east    xox/Tree-top_03.png
+===
+id      43
+name    tree_top_04
+hud     32 xox/Tree-top_04.png
+transparency 1
+top     xox/Tree-top_04.png
+bottom  xox/Tree-top_04.png
+north   xox/Tree-top_04.png
+south   xox/Tree-top_04.png
+west    xox/Tree-top_04.png
+east    xox/Tree-top_04.png
+===
+id      44
+name    tree_bark_01
+hud     33 xox/Tree-bark_01.png
+top     xox/Tree-End_01.png
+bottom  xox/Tree-End_01.png
+north   xox/Tree-bark_01.png
+south   xox/Tree-bark_01.png
+west    xox/Tree-bark_01.png
+east    xox/Tree-bark_01.png
+===
+id      44
+name    tree_bark_02
+hud     34 xox/Tree-bark_02.png
+top     xox/Tree-End_02.png
+bottom  xox/Tree-End_02.png
+north   xox/Tree-bark_02.png
+south   xox/Tree-bark_02.png
+west    xox/Tree-bark_02.png
+east    xox/Tree-bark_02.png
+===
+id      45
+name    tree_bark_03
+hud     35 xox/Tree-bark_03.png
+top     xox/Tree-End_01.png
+bottom  xox/Tree-End_01.png
+north   xox/Tree-bark_03.png
+south   xox/Tree-bark_03.png
+west    xox/Tree-bark_03.png
+east    xox/Tree-bark_03.png
+===
+id      46
+name    tree_bark_01
+hud     36 xox/Tree-bark_04.png
+top     xox/Tree-End_02.png
+bottom  xox/Tree-End_02.png
+north   xox/Tree-bark_04.png
+south   xox/Tree-bark_04.png
+west    xox/Tree-bark_04.png
+east    xox/Tree-bark_04.png
+===
+id      47
+name    tree_bark2
+hud     37 xox/Tree-bark_03.png
+top     xox/Tree-End_02.png
+bottom  xox/Tree-End_02.png
+north   xox/Tree-bark_03.png
+south   xox/Tree-bark_03.png
+west    xox/Tree-bark_03.png
+east    xox/Tree-bark_03.png
+===
+id      48
+name    cherry_tree_bark
+hud     38 xox/cherrytreebark.png
+top     xox/cherrytreebark.png
+bottom  xox/cherrytreebark.png
+north   xox/cherrytreebark.png
+south   xox/cherrytreebark.png
+west    xox/cherrytreebark.png
+east    xox/cherrytreebark.png
+===
+id      49
+name    cherry_tree_top
+hud     39 xox/cherrytreetop.png
+transparency 1
+top     xox/cherrytreetop.png
+bottom  xox/cherrytreetop.png
+north   xox/cherrytreetop.png
+south   xox/cherrytreetop.png
+west    xox/cherrytreetop.png
+east    xox/cherrytreetop.png
 ===
 id      100
 name    terminal
@@ -185,23 +266,15 @@ south   tron.png
 west    tron.png
 east    tron.png
 ===
-id      150
-name    rock1
-top     varriount/rock1.png
-bottom  varriount/rock1.png
-north   varriount/rock1.png
-south   varriount/rock1.png
-west    varriount/rock1.png
-east    varriount/rock1.png
-===
-id      151
-name    rock2
-top     varriount/rock2.png
-bottom  varriount/rock2.png
-north   varriount/rock2.png
-south   varriount/rock2.png
-west    varriount/rock2.png
-east    varriount/rock2.png
+id      101
+name    battery
+hud     42 bat-side.png
+top     bat-top.png
+bottom  bat-bottom.png
+north   bat-side.png
+south   bat-side.png
+west    bat-side.png
+east    bat-side.png
 ===
 id      164
 name    tree_alt1

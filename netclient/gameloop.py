@@ -213,7 +213,7 @@ class App(object):
                 ParticleTestSpawn(_i)
                 _i+=1
 
-                billboard_text_fountain()
+                #billboard_text_fountain()
 
                 #process input
                 cInput.process_events()
