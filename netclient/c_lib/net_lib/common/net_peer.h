@@ -68,10 +68,13 @@ struct NetPeer {
     //buffer
     int buff_n;
     unsigned char buff[1500]; //out buffer
+    /*
+        push packets ont net_message_array and flush from here
+    */
     class Net_message* net_message_array[1024];
     int net_message_array_index;
     int pending_bytes_out;
-    
+
     //ttl
     unsigned int ttl;
     unsigned int ttl_max;

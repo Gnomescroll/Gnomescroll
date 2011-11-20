@@ -25,7 +25,7 @@ class Net_message_buffer {
     int offset;
     char buffer[NET_MESSAGE_BUFFER_SIZE];
     class Net_message_buffer* next;    //may not be used
-
+    
     static class Net_message_buffer* acquire() {
         //get from pool
         return new Net_message_buffer;
@@ -35,9 +35,39 @@ class Net_message_buffer {
         //return to object pool
         delete this;
     }
+
+
 };
 
 class Net_message_buffer_pool: public Object_pool<Net_message_buffer_pool, 128> {};
+
+class Net_message {
+    private:
+        class Net_message_buffer* b;
+        char* buff;
+        int len;
+        int reference_count;
+
+        //bool reliable; //if not reliable, decrement reference count after sending
+        //reliable can be in send method
+    public:
+        Net_message() {
+            reference_count = 1;
+        }
+        //not used
+        void retire();
+        static class Net_message* acquire() { return new Net_message; }
+
+};
+
+void Net_message::retire() {
+            delete this;
+            return;
+
+            b->reference_count--;
+            if(b->reference_count == 0) b->retire();
+            //return to pool
+    }
 
 //Net_message_buffer_pool
 
@@ -63,33 +93,7 @@ struct net_message {
 */
 
 //version with reference count and version without?
-class Net_message {
-    private:
-        class Net_message_buffer* b;
-        char* buff;
-        int len;
-        int reference_count;
-    public:
-        Net_message() {
-            reference_count = 1;
-        }
-        //
 
-
-        //not used
-        void retire();
-        static class Net_message* acquire() { return new Net_message; }
-
-};
-
-void Net_message::retire() {
-            delete this;
-            return;
-
-            b->reference_count--;
-            if(b->reference_count == 0) b->retire();
-            //return to pool
-        }
 
 /*
 class Net_message_buffer {
