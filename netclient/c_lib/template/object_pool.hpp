@@ -10,12 +10,12 @@ class Object_pool {
         void batch_alloc();
 
     public:
-    class Object* first;
-    class Object* last;
+    Object* first;
+    Object* last;
 
-    class Object* acquire() ;
+    Object* acquire() ;
 
-    void retire(class Object* nmb);
+    void retire(Object* nmb);
 
     Object_pool();
 
@@ -26,10 +26,10 @@ class Object_pool {
 //class Object_pool {
 
 template <class Object, int BUFFER_POOL_SIZE>
-Object_pool<class Object, BUFFER_POOL_SIZE>::Object_pool()
+Object_pool<Object, BUFFER_POOL_SIZE>::Object_pool()
 {
     batch_num = 1;
-    class Object* ar = (class Object*) malloc(BUFFER_POOL_SIZE*sizeof(class Object));
+    Object* ar = (Object*) malloc(BUFFER_POOL_SIZE*sizeof(Object));
     first = &ar[0];
     int i;
     for(i=0;i<BUFFER_POOL_SIZE-1; i++){
@@ -44,11 +44,11 @@ Object_pool<class Object, BUFFER_POOL_SIZE>::Object_pool()
 
 
 template <class Object, int BUFFER_POOL_SIZE>
-void Object_pool<class Object, BUFFER_POOL_SIZE>::batch_alloc()
+void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
 {
     batch_num++;
     printf("Batch Alloc: %i \n", batch_num);
-    class Object* ar = (class Object*) malloc(BUFFER_POOL_SIZE*sizeof(class Object));
+    Object* ar = (Object*) malloc(BUFFER_POOL_SIZE*sizeof(Object));
 
     last.next = &ar[0];
 
@@ -63,7 +63,7 @@ void Object_pool<class Object, BUFFER_POOL_SIZE>::batch_alloc()
 }
 
 template <class Object, int BUFFER_POOL_SIZE>
-class Object* Object_pool<class Object, BUFFER_POOL_SIZE>::acquire()
+Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
 {
     if(tDEBUG) { if(first == NULL) printf("tError1 \n");}
 
@@ -78,13 +78,13 @@ class Object* Object_pool<class Object, BUFFER_POOL_SIZE>::acquire()
     }
     if(first == last) printf("tError2 \n");
 
-    class Object* tmp = first;
+    Object* tmp = first;
     first = first.next;
     return tmp;
 }
 
 template <class Object, int BUFFER_POOL_SIZE>
-void Object_pool<class Object, BUFFER_POOL_SIZE>::retire(class Object* nmb)
+void Object_pool<Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
 {
     /*
         retiring to back is better for thread safety, but for single threaded, retiring to front is better for cache
@@ -92,7 +92,7 @@ void Object_pool<class Object, BUFFER_POOL_SIZE>::retire(class Object* nmb)
     if(1) //retire to front or retire to back of list?
     {
         nmb.next = first;
-        first = nbm;
+        first = nmb;
 
     }
     else

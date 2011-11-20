@@ -7,9 +7,7 @@
 //when reference count goes to zero, retire
 //check offset, when a write would bring offset over buffer size, get new one
 
-struct net_message_buffer;
-
-static const NET_MESSAGE_BUFFER_SIZE = 4096;
+static const int NET_MESSAGE_BUFFER_SIZE = 4096;
 
 /*
     struct net_message_buffer {
@@ -30,17 +28,18 @@ class Net_message_buffer {
 
     static class Net_message_buffer* acquire() {
         //get from pool
-
+        return new Net_message_buffer;
     }
 
     void retire() {
         //return to object pool
+        delete this;
     }
 };
 
-class Net_message_buffer_pool: public Object_list<Net_message_buffer_pool,128>
+class Net_message_buffer_pool: public Object_pool<Net_message_buffer_pool, 128> {};
 
-Net_message_buffer_pool
+//Net_message_buffer_pool
 
 /*
 struct net_message {
@@ -66,12 +65,12 @@ struct net_message {
 //version with reference count and version without?
 class Net_message {
     private:
-        struct net_message_buffer* b
+        class Net_message_buffer* b;
         char* buff;
         int len;
         int reference_count;
     public:
-        void Net_message() {
+        Net_message() {
             reference_count = 1;
         }
         //
@@ -79,15 +78,17 @@ class Net_message {
 
         //not used
         void retire();
-        static class net_message* acquire() { return;}
+        static class Net_message* acquire() { return new Net_message; }
 
 };
 
 void Net_message::retire() {
+            delete this;
             return;
-            //return to pool
+
             b->reference_count--;
             if(b->reference_count == 0) b->retire();
+            //return to pool
         }
 
 /*
