@@ -8,6 +8,8 @@ syntax: glob
 *.so
 *.o
 
+dist
+
 __MACOSX
 ___MACOSX
 *.pyc.orig

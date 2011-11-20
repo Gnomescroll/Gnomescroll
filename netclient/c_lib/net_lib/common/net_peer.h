@@ -37,20 +37,37 @@ struct net_message_list {
 class Net_message_list {
     private:
     public:
-    class Net_message* net_message_array[1024];
-    int net_message_array_index;
+    class Net_message* unreliable_net_message_array[256];
+    int unreliable_net_message_array_index;
+    
+    class Net_message* reliable_net_message_array[256];
+    int reliable_net_message_array_index;
+
     int pending_bytes_out;
     //char buff[1500]; //out buffer, write unreliable packets directly to buff
     //int buff_n;
 
     Net_message_list() {
-        for(int i=0; i< 1024; i++) net_message_array[i] = NULL;
-        net_message_array_index = 0;
+        for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
+        for(int i=0; i< 256; i++) reliable_net_message_array[i] = NULL;
+
+        unreliable_net_message_array_index = 0;
+        reliable_net_message_array_index = 0;
+
         pending_bytes_out = 0;
     }
 
     void write_to_buffer(char* buff, int max_size) {
         
+
+    }
+
+    void flush_messages_to_buffer(char* buff, int* index) {
+        for(int i=0; i< unreliable_net_message_array; i++)
+        {
+               
+
+        }     
 
     }
 };
@@ -71,9 +88,6 @@ struct NetPeer {
     /*
         push packets ont net_message_array and flush from here
     */
-    class Net_message* net_message_array[1024];
-    int net_message_array_index;
-    int pending_bytes_out;
 
     //ttl
     unsigned int ttl;
