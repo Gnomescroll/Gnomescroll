@@ -8,7 +8,7 @@
 //check offset, when a write would bring offset over buffer size, get new one
 
 //static const int NET_MESSAGE_BUFFER_SIZE = 4092;
-static const int NET_MESSAGE_BUFFER_SIZE = 16384;
+static const int NET_MESSAGE_BUFFER_SIZE = 4096;
 /*
     struct net_message_buffer {
         int reference_count;
@@ -30,61 +30,58 @@ class Net_message_buffer {
 
 class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128>
 {
-    private:
     public:
-    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
-    {
-        static Net_message_buffer* current = NULL;
-        static int remaining = 0;
-        static char* offset = NULL;
-
-        if(remaining < length) 
-        {
-            current = acquire();
-            remaining = NET_MESSAGE_BUFFER_SIZE;
-            offset = current->buffer;
-        }
-        *b = offset;
-        *nmb = current;
-        remaining -= length;
-        offset += length;
-        current->reference_count++;
-    }
-
     Net_message_buffer_pool() { if(first == NULL) printf("error init\n"); }
 };
+
 
 //use for unreliable packets
 class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16>
 {
-    private:
     public:
-
-    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
-    {
-        static Net_message_buffer* current = NULL;
-        static int remaining = 0;
-        static char* offset = NULL;
-
-        if(remaining < length) 
-        {
-            current = acquire();
-            remaining = NET_MESSAGE_BUFFER_SIZE;
-            offset = current->buffer;
-        }
-        *b = offset;
-        *nmb = current;
-        remaining -= length;
-        offset += length;
-        current->reference_count++;
-    }
-
     Net_message_buffer_pool2() { if(first == NULL) printf("error init\n"); }
 };
 
 Net_message_buffer_pool net_message_buffer_pool;   //use for reliable udp packets
 Net_message_buffer_pool2 net_message_buffer_pool2; //use for unreliable udp packets
 
+inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
+{
+    static Net_message_buffer* current = NULL;
+    static int remaining = 0;
+    static char* offset = NULL;
+
+    if(remaining < length) 
+    {
+        current = net_message_buffer_pool.acquire();
+        remaining = NET_MESSAGE_BUFFER_SIZE;
+        offset = current->buffer;
+    }
+    *b = offset;
+    *nmb = current;
+    remaining -= length;
+    offset += length;
+    current->reference_count++;
+}
+
+inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb) 
+{
+    static Net_message_buffer* current = NULL;
+    static int remaining = 0;
+    static char* offset = NULL;
+
+    if(remaining < length) 
+    {
+        current = net_message_buffer_pool2.acquire();
+        remaining = NET_MESSAGE_BUFFER_SIZE;
+        offset = current->buffer;
+    }
+    *b = offset;
+    *nmb = current;
+    remaining -= length;
+    offset += length;
+    current->reference_count++;
+}
 
 class Net_message {
     private:
@@ -137,13 +134,13 @@ void inline Net_message::decrement_unreliable()
 class Net_message* Net_message::acquire_reliable()
 {
     //fix, get buffer
-    return new Net_message;
+    return net_message_pool.acquire();
 }
 
 class Net_message* Net_message::acquire_unreliable()
 {
     //fix, get buffer
-    return new Net_message;
+    return net_message_pool.acquire();
 }
 
 
