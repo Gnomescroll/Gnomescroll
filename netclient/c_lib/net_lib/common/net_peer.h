@@ -4,6 +4,7 @@
 
 #include "./sequencer.h"
 
+#include <net_lib/common/packet_buffer.hpp>
 
 struct Socket {
     uint32_t ip;
@@ -71,7 +72,7 @@ class Net_message_list {
     }
     //void * memcpy ( void * destination, const void * source, size_t num );
     void flush_to_buffer(char* buff, int* index) {
-        NetPacket* np;
+        Net_message* np;
         char* offset = *index + buff;
         for(int i=0; i< unreliable_net_message_array_index; i++)
         {
@@ -86,7 +87,7 @@ class Net_message_list {
             offset += np->len;
         }
         *index = buff - offset;
-        
+
         pending_bytes_out = 0;
         unreliable_net_message_array_index = 0;
         reliable_net_message_array_index = 0;

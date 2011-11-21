@@ -50,7 +50,7 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
     printf("Batch Alloc: %i \n", batch_num);
     Object* ar = (Object*) malloc(BUFFER_POOL_SIZE*sizeof(Object));
 
-    last.next = &ar[0];
+    last->next = &ar[0];
 
     int i;
     for(i=0;i<BUFFER_POOL_SIZE-1; i++)
@@ -68,7 +68,7 @@ Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
     if(tDEBUG) { if(first == NULL) printf("tError1 \n");}
 
     //if first==last, assuming, that first.next == NULL
-    if(first.next == NULL) 
+    if(first->next == NULL) 
     {
         //first = (struct Object*) malloc(sizeof(struct Object))
         //first.next = NULL;
@@ -79,7 +79,7 @@ Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
     if(first == last) printf("tError2 \n");
 
     Object* tmp = first;
-    first = first.next;
+    first = first->next;
     return tmp;
 }
 
@@ -91,13 +91,13 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
     */
     if(1) //retire to front or retire to back of list?
     {
-        nmb.next = first;
+        nmb->next = first;
         first = nmb;
 
     }
     else
     {
-        last.next = nmb;
+        last->next = nmb;
         last = nmb;   
     }
 }

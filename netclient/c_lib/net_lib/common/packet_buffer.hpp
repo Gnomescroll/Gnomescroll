@@ -23,18 +23,23 @@ class Net_message_buffer {
     public:
     int reference_count;
     char buffer[NET_MESSAGE_BUFFER_SIZE];
+    Net_message_buffer* next;
 
     Net_message_buffer() { reference_count = 0; }
 };
 
-class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128>;
+class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128>
 {
-    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) {
+    private:
+    public:
+    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
+    {
         static Net_message_buffer* current = NULL;
         static int remaining = 0;
         static char* offset = NULL;
 
-        if(remaining < length) {
+        if(remaining < length) 
+        {
             current = acquire();
             remaining = NET_MESSAGE_BUFFER_SIZE;
             offset = current->buffer;
@@ -52,12 +57,17 @@ class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128>;
 //use for unreliable packets
 class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16>
 {
-    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) {
+    private:
+    public:
+
+    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
+    {
         static Net_message_buffer* current = NULL;
         static int remaining = 0;
         static char* offset = NULL;
 
-        if(remaining < length) {
+        if(remaining < length) 
+        {
             current = acquire();
             remaining = NET_MESSAGE_BUFFER_SIZE;
             offset = current->buffer;
@@ -69,11 +79,11 @@ class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16>
         current->reference_count++;
     }
 
-    Net_message_buffer_pool() { if(first == NULL) printf("error init\n"); }
+    Net_message_buffer_pool2() { if(first == NULL) printf("error init\n"); }
 };
 
-Net_message_buffer_pool Net_message_pool;   //use for reliable udp packets
-Net_message_buffer_pool2 Net_message_pool2; //use for unreliable udp packets
+Net_message_buffer_pool net_message_buffer_pool;   //use for reliable udp packets
+Net_message_buffer_pool2 net_message_buffer_pool2; //use for unreliable udp packets
 
 
 class Net_message {
@@ -83,6 +93,7 @@ class Net_message {
         char* buff;
         int len;
         int reference_count;
+        Net_message* next;
 
     void inline decrement_reliable();
     void inline decrement_unreliable();
@@ -97,7 +108,7 @@ class Net_message {
         }
 };
 
-class Net_message_pool: public Object_pool<Net_message_buffer_pool, 4096>;
+class Net_message_pool: public Object_pool<Net_message, 4096> {};
 
 Net_message_pool net_message_pool;
 
@@ -107,7 +118,7 @@ void inline Net_message::decrement_reliable()
     if(reference_count == 0) 
     {
         b->reference_count--;
-        if(b->reference_count == 0) Net_message_pool.retire(b);
+        if(b->reference_count == 0) net_message_buffer_pool.retire(b);
         net_message_pool.retire(this);
     }
 }
@@ -118,18 +129,18 @@ void inline Net_message::decrement_unreliable()
     if(reference_count == 0) 
     {
         b->reference_count--;
-        if(b->reference_count == 0) Net_message_pool2.retire(b);
+        if(b->reference_count == 0) net_message_buffer_pool2.retire(b);
         net_message_pool.retire(this);
     }
 }
 
-static inline class Net_message* Net_message::acquire_reliable()
+class Net_message* Net_message::acquire_reliable()
 {
     //fix, get buffer
     return new Net_message;
 }
 
-static inline class Net_message* Net_message::acquire_unreliable()
+class Net_message* Net_message::acquire_unreliable()
 {
     //fix, get buffer
     return new Net_message;
