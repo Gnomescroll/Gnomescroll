@@ -22,7 +22,7 @@ struct Socket {
 #define TTL_MAX 150
 //5 seconds timeout?
 
-struct NetPeer {
+class NetPeer {
     unsigned short id;
     uint32_t ip;
     uint16_t port;
@@ -38,7 +38,7 @@ struct NetPeer {
 #define HARD_MAX_CONNECTIONS 1024
 struct ConnectionPool {
     int n_connections;
-    struct NetPeer* connection[HARD_MAX_CONNECTIONS];
+    class NetPeer* connection[HARD_MAX_CONNECTIONS];
 };
 
 //void broad_cast_packet(); //every 30 ms

@@ -46,6 +46,9 @@ struct net_message_list {
 class Net_message_list {
     private:
     public:
+    /*
+        Make variable length later or ignore
+    */
     class Net_message* unreliable_net_message_array[256];
     int unreliable_net_message_array_index;
     
@@ -66,9 +69,16 @@ class Net_message_list {
         pending_bytes_out = 0;
     }
 
-    void write_to_buffer(char* buff, int max_size) {
-        
+    void push_unreliable_packet(Net_message* np) {
+        unreliable_net_message_array[unreliable_net_message_array_index] = np;
+        unreliable_net_message_array_index++;
+        if(unreliable_net_message_array_index > 256) printf("Net_message_list overflow 1\n");   //debug
+    }
 
+    void push_reliable_packet(Net_message* np) {
+        reliable_net_message_array[reliable_net_message_array_index] = np;
+        reliable_net_message_array_index++;
+        if(reliable_net_message_array_index > 256) printf("Net_message_list overflow 2\n");     //debug
     }
     //void * memcpy ( void * destination, const void * source, size_t num );
     void flush_to_buffer(char* buff, int* index) {
@@ -79,6 +89,7 @@ class Net_message_list {
             np = unreliable_net_message_array[i];
             memcpy(offset, np->buff, np->len);
             offset += np->len;
+            np->decrement_unreliable();
         }     
         for(int i=0; i< reliable_net_message_array_index; i++)
         {
@@ -94,7 +105,9 @@ class Net_message_list {
     }
 };
 
-struct NetPeer {
+class NetPeer {
+    private:
+    public:
     int client_id;
     int connected;
 
@@ -131,12 +144,12 @@ struct NetPeer {
 #define TTL_MAX_DEFAULT 120
 
 
-//struct NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-//struct NetPeer* create_raw_net_peer(struct sockaddr_in address);
+//class NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
+//class NetPeer* create_raw_net_peer(struct sockaddr_in address);
 
-void reset_NetPeer_buffer(struct NetPeer* s);
+void reset_NetPeer_buffer(class NetPeer* s);
 
 struct Socket* create_socket(uint16_t port);
 
-struct NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port);
-struct NetPeer* create_net_peer_from_address(struct sockaddr_in address);
+class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port);
+class NetPeer* create_net_peer_from_address(struct sockaddr_in address);

@@ -27,7 +27,7 @@ int pool_n_offset = 1;
 
 int accept_connection(struct sockaddr_in from) {
     pool_n_offset++;
-    struct NetPeer* p ;
+    class NetPeer* p ;
     p = create_net_peer_from_address(from);
 
     int i,j;
@@ -60,7 +60,7 @@ inline int error_check_packet(unsigned char* data, int n) {
 
 void send_to_client(int client_id, unsigned char* buffer, int n) {
     //printf("Sending %i bytes to client %i \n", n, client_id);
-    struct NetPeer* p;
+    class NetPeer* p;
     p = pool.connection[client_id];
     if(p == NULL) { printf("Send to client failed.  Client is null\n"); return; }
 
@@ -99,7 +99,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     uint16_t max_seq;
     uint32_t acks;
 
-    struct NetPeer* p;
+    class NetPeer* p;
     if(received_bytes < 6) { printf("Packet too small: %i bytes\n", received_bytes); return; }
     if(received_bytes == 6) {
 
@@ -200,7 +200,7 @@ void broad_cast_packet() {
 void broad_cast_packet2(){
 
     int i,n1;
-    struct NetPeer* p;
+    class NetPeer* p;
     int seq;
 
     unsigned char header[1500];
@@ -236,7 +236,7 @@ void broad_cast_packet2(){
 void flush_packets() {
 
     int i,n1;
-    struct NetPeer* p;
+    class NetPeer* p;
     int seq;
 
     //unsigned char header[1500];
@@ -279,7 +279,7 @@ void flush_packets() {
 
 //not used
 void push_message(int client_id, unsigned char* buffer, int n_bytes) {
-    struct NetPeer* p;    
+    class NetPeer* p;    
     p = pool.connection[client_id];
     if(p == NULL) { printf("server:push_message failed. Client is null\n"); return; }
     if(p->buff_n > 800) {
@@ -294,7 +294,7 @@ void push_message(int client_id, unsigned char* buffer, int n_bytes) {
 //not used
 void push_broadcast_message(unsigned char* buffer, int n_bytes) {
     int i;
-    struct NetPeer* p;
+    class NetPeer* p;
     for(i=0; i<1024; i++) {
         p = pool.connection[i];
         if(p == NULL) continue;
@@ -306,7 +306,7 @@ void push_broadcast_message(unsigned char* buffer, int n_bytes) {
 
 void check_pool_for_dropped_packets() {
     int i;
-    struct NetPeer* p;
+    class NetPeer* p;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
     if(pool.connection[i] == NULL) continue;
         p = pool.connection[i];
@@ -316,7 +316,7 @@ void check_pool_for_dropped_packets() {
 
 void poll_connection_timeout() {
     int i;
-    struct NetPeer* p;
+    class NetPeer* p;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
     if(pool.connection[i] == NULL) continue;
         p = pool.connection[i];
@@ -332,7 +332,7 @@ void poll_connection_timeout() {
 void decrement_ttl() {
     printf("decrement ttl deprecated\n");
     int i;
-    struct NetPeer* p;
+    class NetPeer* p;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
     if(pool.connection[i] == NULL) continue;
         p = pool.connection[i];

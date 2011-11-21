@@ -36,7 +36,7 @@ namespace NetClient {
 int header_size1();
 
 void init_client();
-struct NetPeer* CLIENT_get_NP();
+class NetPeer* CLIENT_get_NP();
 
 //void send_packet(unsigned char* buffer, int n);
 //void send_packet2(); //adding sequence number and acks

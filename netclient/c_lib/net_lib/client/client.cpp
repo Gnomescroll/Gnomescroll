@@ -25,7 +25,7 @@ int* get_client_out_buffer_n() {
 
 namespace NetClient {
     
-struct NetPeer NPserver;
+class NetPeer NPserver;
 struct Socket client_socket;
 
 
@@ -59,7 +59,7 @@ void init_client() {
     init_sequencer(&NPserver);
 }
 
-struct NetPeer* CLIENT_get_NP() {
+class NetPeer* CLIENT_get_NP() {
     return &NPserver;
 }
 
@@ -67,7 +67,7 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
     NPserver.ip =  ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
     NPserver.port = port;
 
-    struct NetPeer* p = create_net_peer_by_remote_IP(a,b,c,d,port);
+    class NetPeer* p = create_net_peer_by_remote_IP(a,b,c,d,port);
     NPserver = *p;
     free(p);
 }
