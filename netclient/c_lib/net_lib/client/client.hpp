@@ -8,7 +8,7 @@
 
 #include "../common/net_lib_common.h"
 #include "../common/sequencer.h"
-#include "../common/net_peer.h"
+#include "../common/net_peer.hpp"
 
 #include "../common/message_handler.h"
 

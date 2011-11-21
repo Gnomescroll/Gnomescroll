@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../common/net_time.h"
-//#include "../common/net_peer.h"
 
 #ifdef DC_CLIENT
 	#include <compat_gl.h>

@@ -69,19 +69,25 @@ class Net_message_list {
         pending_bytes_out = 0;
     }
 
+    /*
+        Use arrays/pointers/pool later for packets, to remove limits
+    */
     void push_unreliable_packet(Net_message* np) {
         unreliable_net_message_array[unreliable_net_message_array_index] = np;
         unreliable_net_message_array_index++;
-        if(unreliable_net_message_array_index > 256) printf("Net_message_list overflow 1\n");   //debug
+        pending_bytes_out += np->len;
+        if(unreliable_net_message_array_index > 256) printf("Net_message_list Push_unreliable_packet overflow 1\n");   //debug
     }
 
     void push_reliable_packet(Net_message* np) {
         reliable_net_message_array[reliable_net_message_array_index] = np;
         reliable_net_message_array_index++;
-        if(reliable_net_message_array_index > 256) printf("Net_message_list overflow 2\n");     //debug
+        pending_bytes_out += np->len;
+        if(reliable_net_message_array_index > 256) printf("Net_message_list Push_reliable_packet overflow 2\n");     //debug
     }
     //void * memcpy ( void * destination, const void * source, size_t num );
     void flush_to_buffer(char* buff, int* index) {
+        if(pending_bytes_out > 1500) printf("Net_message_list Error: too much data in packet buffer");
         Net_message* np;
         char* offset = *index + buff;
         for(int i=0; i< unreliable_net_message_array_index; i++)
@@ -105,7 +111,9 @@ class Net_message_list {
     }
 };
 
-class NetPeer {
+//class NetPeer {
+class NetPeer: public Net_message_list 
+{
     private:
     public:
     int client_id;

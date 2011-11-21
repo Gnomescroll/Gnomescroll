@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "net_peer.h"
+#include <net_lib/common/net_peer.hpp>
 
 #ifdef DC_CLIENT
 #include "../client/pviz.h"

@@ -1,4 +1,4 @@
-#include "./net_peer.h"
+#include "./net_peer.hpp"
 
 
 void reset_NetPeer_buffer(class NetPeer* s) {
