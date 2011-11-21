@@ -19,11 +19,17 @@ void RegisterMessages() {
     Agent_cs_CtoS::register_server_packet();
     Agent_cs_StoC::register_client_packet();
 
+    // grenade creation
     grenade_StoC::register_client_packet();
 
+    // agent took damage indicator
     agent_damage_StoC::register_client_packet();
 
+    // block value change
     block_StoC::register_client_packet();
+    
+    // agent hit block action
+    hit_block_CtoS::register_server_packet();
 
     //player agent
     PlayerAgent_Snapshot::register_client_packet();

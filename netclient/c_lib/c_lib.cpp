@@ -18,6 +18,8 @@
 
 /* objects */
 #include <c_lib/particles/object_lib.cpp>
+/* Weapons */
+#include <c_lib/weapons/weapons.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>

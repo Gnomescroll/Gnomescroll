@@ -95,6 +95,9 @@ class PlayerAgent_state {
             }
         }
 
+        //Weapon active_weapon;
+        void hit_block();
+
         //control state history buffer
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence

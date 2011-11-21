@@ -139,6 +139,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         }
 };
 
+// damage indicator packet
 class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
 {
     public:
@@ -164,5 +165,51 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
         agent_damage_StoC(int id, int dmg) {
             this->id = id;
             this->dmg = dmg;
+        }
+};
+
+#include <c_lib/weapons/weapons.hpp>
+#ifdef DC_SERVER
+#include <c_lib/t_map/t_map.hpp>
+#endif
+// agent block hit action
+class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
+{
+    public:
+
+        int id;
+        int x,y,z;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&x, buff, buff_n, pack);
+            pack_u8(&y, buff, buff_n, pack);
+            pack_u8(&z, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            #ifdef DC_SERVER
+            Agent_state* a = STATE::agent_list.get(id);
+            if(a == NULL) {
+                return;
+            }
+            // check that agent has this weapon equipped
+            //if (! Weapons::isBlockPick(a->active_weapon.type)) {
+                //return;
+            //}
+            //int dmg = a->active_weapon.damage;
+            int dmg = 32;
+            // apply damage to block & broadcast
+            _apply_damage_broadcast(x,y,z, dmg);
+            #endif
+        }
+
+        hit_block_CtoS(){}
+        hit_block_CtoS(int id, int x, int y, int z) {
+            this->id = id;
+            this->x = x;
+            this->y = y;
+            this->z = z;
         }
 };

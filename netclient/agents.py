@@ -720,10 +720,13 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
             return
         fire_command = weapon.fire()
         if fire_command:
-            if weapon.hitscan:
-                self.hitscan(weapon)
+            if fire_command == 'hit_block':
+                self.hit_block()
             else:
-                NetOut.sendMessage(fire_command, self)
+                if weapon.hitscan:
+                    self.hitscan(weapon)
+                else:
+                    NetOut.sendMessage(fire_command, self)
 
     def hitscan(self, weapon=None):
         if self.team.is_viewers():

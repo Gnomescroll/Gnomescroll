@@ -2,6 +2,7 @@
 
 #include "player_agent.hpp"
 #include <c_lib/agent/agent.hpp>
+#include <c_lib/ray_trace/ray_trace.h>
 
 //#ifdef DC_CLIENT
 
@@ -32,7 +33,6 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
     if((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) state_history_index = index;
 
     //save
-
 
     snapshot_net[seq%128] = ss;
 
@@ -155,6 +155,19 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     s = _agent_tick(_cs, A->box, s);
 
+}
+
+#define BLOCK_PICK_MAX_DISTANCE 4.0f
+void PlayerAgent_state::hit_block() {
+    const int z_low = 4;
+    const int z_high = 3;
+    float f[3];
+    camera_state.forward_vector(f);
+    int *pos = _nearest_block(camera_state.x, camera_state.y, camera_state.z + camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
+    if (pos != NULL) {
+        hit_block_CtoS* msg = new hit_block_CtoS(agent_id, pos[0], pos[1], pos[2]);
+        msg->send();
+    }
 }
 
 float PlayerAgent_state::camera_height() {

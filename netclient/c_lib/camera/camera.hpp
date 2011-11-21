@@ -33,6 +33,12 @@ class CCamera {
         void world_projection();
 
         int current();
+
+        //void forward(float f[3]) {
+            //f[0] = xl;
+            //f[1] = yl;
+            //f[2] = zl;
+        //}
 };
 
 CCamera* get_available_camera();
