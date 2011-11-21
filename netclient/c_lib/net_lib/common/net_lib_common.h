@@ -2,6 +2,7 @@
 #define net_lib_common_h
 
 
+#include <string.h>
 
 //if PLATFORM == PLATFORM_WINDOWS
 //pragma comment( lib, "wsock32.lib" )
