@@ -34,6 +34,14 @@ struct net_message_list {
 };
 */
 
+/*
+    NetMessage
+    class Net_message_buffer* b;
+    char* buff;
+    int len;
+    int reference_count;
+*/
+
 class Net_message_list {
     private:
     public:
@@ -61,14 +69,27 @@ class Net_message_list {
         
 
     }
-
-    void flush_messages_to_buffer(char* buff, int* index) {
-        for(int i=0; i< unreliable_net_message_array; i++)
+    //void * memcpy ( void * destination, const void * source, size_t num );
+    void flush_to_buffer(char* buff, int* index) {
+        NetPacket* np;
+        char* offset = *index + buff;
+        for(int i=0; i< unreliable_net_message_array_index; i++)
         {
-               
-
+            np = unreliable_net_message_array[i];
+            memcpy(offset, np->buff, np->len);
+            offset += np->len;
         }     
-
+        for(int i=0; i< reliable_net_message_array_index; i++)
+        {
+            np = unreliable_net_message_array[i];
+            memcpy(offset, np->buff, np->len);
+            offset += np->len;
+        }
+        *index = buff - offset;
+        
+        pending_bytes_out = 0;
+        unreliable_net_message_array_index = 0;
+        reliable_net_message_array_index = 0;
     }
 };
 

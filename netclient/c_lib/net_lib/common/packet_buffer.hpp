@@ -21,17 +21,23 @@ static const int NET_MESSAGE_BUFFER_SIZE = 4096;
 class Net_message_buffer {
     private:
     public:
-    int reference_count;
-    int offset;
+    int reference_count;    char* offset;
     char buffer[NET_MESSAGE_BUFFER_SIZE];
     class Net_message_buffer* next;    //may not be used
     
     static class Net_message_buffer* acquire() {
         //get from pool
-        return new Net_message_buffer;
+
+        class Net_message_buffer* a = new Net_message_buffer;
+        return a;
     }
 
-    void retire() {
+    inline void decrement() {
+            
+
+    }
+
+    inline void retire() {
         //return to object pool
         delete this;
     }
@@ -39,35 +45,127 @@ class Net_message_buffer {
 
 };
 
-class Net_message_buffer_pool: public Object_pool<Net_message_buffer_pool, 128> {};
+class Net_message_buffer_pool: public Object_pool<Net_message_buffer_pool, 128> {
+    
+    Net_message_buffer* current_0;
+    int remaining_0;
+    char* offset_0;
+
+    Net_message_buffer* current_1;
+    int remaining_1;
+    char* offset_1;
+
+    inline char* get_char_buffer_0(int length) {
+
+        if(remaining < length) {
+            current = acquire();
+            remaining = NET_MESSAGE_BUFFER_SIZE;
+        }
+        char* b = current->offset;
+        remaining -= length
+        offset += length;
+    }
+
+    Net_message_buffer_pool() {
+        
+        if(first == NULL) printf("error init\n");
+
+        current_0 = acquire();
+        remaining_0 = NET_MESSAGE_BUFFER_SIZE;;
+        offset_0 = current_0->buffer;
+
+        //current_1 = acquire();
+        //remaining_1 = NET_MESSAGE_BUFFER_SIZE;;
+        //offset_1 = current_1->buffer;
+    }
+};
+
+
+
+
+char* get_buffer_char_buffer_1(int length) {
+    static Net_message_buffer* current = acquire();;
+    static int remaining = NET_MESSAGE_BUFFER_SIZE;;
+    static char* offset = current->buffer;
+
+    if(remaining < length) {
+        current = acquire();
+        remaining = NET_MESSAGE_BUFFER_SIZE;
+    }
+    char* b = current->offset;
+    remaining -= length
+    offset += length;
+}
+
+{
+    
+    Net_message_buffer* current;
+    int remaining;
+    char* offset;
+
+    char* get_buffer(int length) {
+        if(remaining < length) {
+            current = acquire;
+            remaining = NET_MESSAGE_BUFFER_SIZE;
+        }
+        char* b = current->offset;
+        remaining -= length
+        offset += length;
+
+    }
+
+    Net_message_buffer_pool() {
+        //test
+        if(first==NULL) {
+            printf("ERROR!!\n");
+        }
+        current = acquire();
+        remaining = NET_MESSAGE_BUFFER_SIZE;
+    }
+};
 
 class Net_message {
     private:
+        //bool reliable; //if not reliable, decrement reference count after sending
+        //reliable can be in send method
+    public:
         class Net_message_buffer* b;
         char* buff;
         int len;
         int reference_count;
 
-        //bool reliable; //if not reliable, decrement reference count after sending
-        //reliable can be in send method
-    public:
+        void inline decrement_reliable() {
+            return;
+            reference_count--;
+            if(reference_count == 0) 
+            {
+                Net_message_buffer->decrement();
+                retire();
+            }
+        }
         Net_message() {
             reference_count = 1;
         }
         //not used
-        void retire();
-        static class Net_message* acquire() { return new Net_message; }
+        inline void retire();
+        static class Net_message* acquire(int size) { 
+            //check pool
+        }
 
+        static class Net_message* acquire_reliable() { return new Net_message; }
+        static class Net_message* acquire_unreliable() { return new Net_message; }
 };
 
-void Net_message::retire() {
-            delete this;
-            return;
+inline void Net_message::retire() {
+    return;
 
-            b->reference_count--;
-            if(b->reference_count == 0) b->retire();
-            //return to pool
-    }
+    delete this;
+    return;
+
+    b->reference_count--;
+    if(b->reference_count == 0) b->retire();
+    //return to pool
+}
 
 //Net_message_buffer_pool
 
