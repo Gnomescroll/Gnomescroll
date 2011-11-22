@@ -177,6 +177,7 @@ void NetPeer::flush_to_buffer(char* buff_, int* index) {
         np = unreliable_net_message_array[i];
         memcpy(offset, np->buff, np->len);
         offset += np->len;
+        np->decrement_reliable();
     }
     *index = buff_ - offset;
 

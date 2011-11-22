@@ -83,6 +83,8 @@ inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb)
     current->reference_count++;
 }
 
+int Net_message_n = 0;
+
 class Net_message {
     private:
     public:
@@ -92,22 +94,26 @@ class Net_message {
         int reference_count;
         Net_message* next;
 
+    static inline class Net_message* acquire();
+
     void inline decrement_reliable();
     void inline decrement_unreliable();
 
     static inline class Net_message* acquire_reliable();
     static inline class Net_message* acquire_unreliable();
 
-        Net_message() {
-            reference_count = 0; 
-            //increment reference on pushing onto packet buffer
-            //decrement on dispatch or completion
-        }
+    Net_message() {
+        reference_count = 0; 
+        //increment reference on pushing onto packet buffer
+        //decrement on dispatch or completion
+    }
 };
 
 class Net_message_pool: public Object_pool<Net_message, 4096> {};
 
 Net_message_pool net_message_pool;
+
+//Net_message_n++; printf("Created: %i netmessages\n", Net_message_n);
 
 void inline Net_message::decrement_reliable() 
 {
@@ -116,6 +122,7 @@ void inline Net_message::decrement_reliable()
     {
         b->reference_count--;
         if(b->reference_count == 0) net_message_buffer_pool.retire(b);
+        Net_message_n--; printf("Deleted: %i netmessages\n", Net_message_n );
         net_message_pool.retire(this);
     }
 }
@@ -128,17 +135,18 @@ void inline Net_message::decrement_unreliable()
         b->reference_count--;
         if(b->reference_count == 0) net_message_buffer_pool2.retire(b);
         net_message_pool.retire(this);
+        Net_message_n--; printf("Deleted: %i netmessages\n", Net_message_n );
     }
 }
 
 class Net_message* Net_message::acquire_reliable()
 {
-    //fix, get buffer
+    Net_message_n++; printf("Created: %i netmessages\n", Net_message_n);
     return net_message_pool.acquire();
 }
 
 class Net_message* Net_message::acquire_unreliable()
 {
-    //fix, get buffer
+    Net_message_n++; printf("Created: %i netmessages\n", Net_message_n);
     return net_message_pool.acquire();
 }
