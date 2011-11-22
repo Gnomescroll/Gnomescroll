@@ -35,14 +35,14 @@ class NetPeer {
 };
 */
 
-#define HARD_MAX_CONNECTIONS 1024
+const static HARD_MAX_CONNECTIONS  = 1024;
 struct ConnectionPool {
     int n_connections;
     class NetPeer* connection[HARD_MAX_CONNECTIONS];
 };
 
-//void broad_cast_packet(); //every 30 ms
-//void broad_cast_packet2();
+void init_server(unsigned short port);
+
 void flush_packets(); //all messages to all agents, out
 
 void push_message(int client_id, unsigned char* buffer, int n_bytes); //que a message for client
@@ -50,11 +50,7 @@ void push_broadcast_message(unsigned char* buffer, int n_bytes);  //que a messag
 
 void receive_packets(struct Socket* socket);
 
-void init_server(unsigned short port);
-inline int error_check_packet(unsigned char* data, int n);
 void process_packets();
 
-//void decrement_ttl();
 void poll_connection_timeout();
-
 void check_pool_for_dropped_packets();

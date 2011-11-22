@@ -105,9 +105,37 @@ class Net_message_list {
         }
         *index = buff - offset;
 
+        //channel send here
+        /*
+            Channels write to buffer
+            Channels use the reliable_net_message delivery
+            reliable net_messages encapsolate buffer
+        */
+
         pending_bytes_out = 0;
         unreliable_net_message_array_index = 0;
         reliable_net_message_array_index = 0;
+    }
+
+    void flush_to_net() {
+        int n1 = 0;
+        int seq = get_next_sequence_number(this);
+        
+        //pack header
+        PACK_uint16_t(client_id, net_out_buff, &n1); //client id
+        PACK_uint8_t(1, net_out_buff, &n1);  //channel 1
+        PACK_uint16_t(seq, net_out_buff, &n1); //sequence number
+        PACK_uint16_t(get_sequence_number(&NPserver), net_out_buff, &n1); //max seq
+        PACK_uint32_t(generate_outgoing_ack_flag(&NPserver), net_out_buff, &n1); //sequence number
+        //pack body
+        flush_to_buffer(net_out_buff, &n1);
+
+        #ifdef DC_CLIENT
+        pviz_packet_sent(seq, n1);
+        #endif
+
+        int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+        if ( sent_bytes != client_out_buff_n) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n );}
     }
 };
 

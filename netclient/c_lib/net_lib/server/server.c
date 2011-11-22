@@ -54,10 +54,6 @@ int accept_connection(struct sockaddr_in from) {
 //min/max MTU is 576
 //1500 is max MTU for ethernet
 
-inline int error_check_packet(unsigned char* data, int n) {
-    return 1;
-}
-
 void send_to_client(int client_id, unsigned char* buffer, int n) {
     //printf("Sending %i bytes to client %i \n", n, client_id);
     class NetPeer* p;
@@ -124,10 +120,6 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
         return;
     }
 
-    //crc check
-    if(error_check_packet(buff,received_bytes) == 0) {printf("Packet failed CRC check!\n");return;}
-
-    //uint32_t value;
     int n1=0;
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
@@ -192,47 +184,6 @@ void process_packets() {
     }
 }
 
-/*
-void broad_cast_packet() {
-    printf("broad_cast_packet deprecated:use broadcast 2\n");
-}
-
-void broad_cast_packet2(){
-
-    int i,n1;
-    class NetPeer* p;
-    int seq;
-
-    unsigned char header[1500];
-
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool.connection[i] == NULL || pool.connection[i]->connected == 0) continue;
-        p = pool.connection[i];
-        if(p->connected == 0) { printf("Cannot send packet, disconnected: client %i\n",p->client_id); return;}
-
-        n1 = 0;
-
-        PACK_uint16_t(p->client_id, header, &n1); //client id
-        PACK_uint8_t(1, header, &n1);  //channel 1
-
-        //sequence number
-        seq = get_next_sequence_number(p);
-        PACK_uint16_t(seq, header, &n1); //sequence number
-
-        //ack string
-        PACK_uint16_t(get_sequence_number(p), header, &n1); //max seq
-        PACK_uint32_t(generate_outgoing_ack_flag(p), header, &n1); //sequence number
-
-        //unsigned int value = 5;
-        //PACK_uint32_t(value, header, &n1);
-
-        //if(seq % 5 == 0) return; //simulate packet loss
-        send_to_client(i, header, n1);
-        //printf("Sent packet %i to client %i\n", seq, p->client_id);
-    }
-}
-*/
-
 void flush_packets() {
 
     int i,n1;
@@ -277,7 +228,7 @@ void flush_packets() {
     }
 }
 
-//not used
+
 void push_message(int client_id, unsigned char* buffer, int n_bytes) {
     class NetPeer* p;    
     p = pool.connection[client_id];
@@ -291,11 +242,10 @@ void push_message(int client_id, unsigned char* buffer, int n_bytes) {
     p->buff_n += n_bytes;
 }
 
-//not used
 void push_broadcast_message(unsigned char* buffer, int n_bytes) {
     int i;
     class NetPeer* p;
-    for(i=0; i<1024; i++) {
+    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
         p = pool.connection[i];
         if(p == NULL) continue;
         memcpy(p->buff+p->buff_n, buffer, n_bytes);
@@ -327,22 +277,3 @@ void poll_connection_timeout() {
         }
     }
 }
-
-/*
-void decrement_ttl() {
-    printf("decrement ttl deprecated\n");
-    int i;
-    class NetPeer* p;
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-    if(pool.connection[i] == NULL) continue;
-        p = pool.connection[i];
-        p->ttl -= 1;
-        if(p->ttl <= 0) {
-            printf("Connection %i ttl expire: timeout\n", p->client_id);
-            pool.connection[i] = NULL;
-            free(p);
-        }
-    }
-
-}
-*/
