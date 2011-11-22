@@ -5,11 +5,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include <net_lib/common/net_peer.hpp>
+//#include <net_lib/common/net_peer.hpp>
 
 #ifdef DC_CLIENT
-#include "../client/pviz.h"
+#include <net_lib/client/pviz.h>
 #endif
+
+class NetPeer;
 
 //outgoing
 /*
@@ -26,19 +28,19 @@ struct packet_sequence2 {
 };
 */
 
-void init_sequencer(struct NetPeer* np);
+void init_sequencer(class NetPeer* np);
 
-void init_sequence_numbers(struct NetPeer* np);
-void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag);
-uint16_t get_next_sequence_number(struct NetPeer* np);
+void init_sequence_numbers(class NetPeer* np);
+void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag);
+uint16_t get_next_sequence_number(class NetPeer* np);
 int check_dropped_packets();
 
-void check_for_dropped_packets(struct NetPeer* np);
+void check_for_dropped_packets(class NetPeer* np);
 
-void init_sequence_numbers_out(struct NetPeer* np);
-void set_ack_for_received_packet(struct NetPeer* np, int seq);
-uint16_t get_sequence_number(struct NetPeer* np);
-uint32_t generate_outgoing_ack_flag(struct NetPeer* np);
+void init_sequence_numbers_out(class NetPeer* np);
+void set_ack_for_received_packet(class NetPeer* np, int seq);
+uint16_t get_sequence_number(class NetPeer* np);
+uint32_t generate_outgoing_ack_flag(class NetPeer* np);
 
 #endif
 

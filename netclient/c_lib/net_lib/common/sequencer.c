@@ -1,17 +1,18 @@
 
 #include "sequencer.h"
 
+#include <net_lib/common/net_peer.hpp>
 
 #define INIT_V_1 0
 #define INIT_V_2 0
 
 
-void init_sequencer(struct NetPeer* np) {
+void init_sequencer(class NetPeer* np) {
     init_sequence_numbers(np);
     init_sequence_numbers_out(np);
 }
 
-void init_sequence_numbers(struct NetPeer* np) {
+void init_sequence_numbers(class NetPeer* np) {
     np->packet_sequence_number = INIT_V_1;
     int i;
     for(i=0;i<256;i++) {
@@ -24,7 +25,7 @@ void init_sequence_numbers(struct NetPeer* np) {
 
 #define UPDATE_MASK 2048-1
 
-void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
+void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
     unsigned int n = 1;
     int i;
     int index;
@@ -75,7 +76,7 @@ void process_acks(struct NetPeer* np, unsigned short seq, unsigned int flag) {
 
 }
 
-uint16_t get_next_sequence_number(struct NetPeer* np) {
+uint16_t get_next_sequence_number(class NetPeer* np) {
     np->packet_sequence_number = (np->packet_sequence_number+1)%2048;
     int index = np->packet_sequence_number%256;
     //np->packet_sequence_buffer[index].active = 1; //may set timer?
@@ -91,7 +92,7 @@ int check_dropped_packets() {
     return DROPPED_PACKETS;
 }
 
-void check_for_dropped_packets(struct NetPeer* np) {
+void check_for_dropped_packets(class NetPeer* np) {
 
 //ttl based
 
@@ -140,7 +141,7 @@ void check_for_dropped_packets(struct NetPeer* np) {
 
 //
 
-void init_sequence_numbers_out(struct NetPeer* np) {
+void init_sequence_numbers_out(class NetPeer* np) {
     int i;
     np->highest_packet_sequence_number = INIT_V_2;
     for(i=0;i<256;i++) {
@@ -149,7 +150,7 @@ void init_sequence_numbers_out(struct NetPeer* np) {
     }
 }
 
-void set_ack_for_received_packet(struct NetPeer* np, int seq) {
+void set_ack_for_received_packet(class NetPeer* np, int seq) {
     int index = seq % 256;
     np->seqbuff[index].received = 1;
     np->seqbuff[index].seq = seq;
@@ -164,11 +165,11 @@ void set_ack_for_received_packet(struct NetPeer* np, int seq) {
     }
 }
 
-uint16_t get_sequence_number(struct NetPeer* np) {
+uint16_t get_sequence_number(class NetPeer* np) {
     return np->highest_packet_sequence_number;
 }
 
-uint32_t generate_outgoing_ack_flag(struct NetPeer* np) {
+uint32_t generate_outgoing_ack_flag(class NetPeer* np) {
 
     unsigned int n = 1;
     int i,index;
