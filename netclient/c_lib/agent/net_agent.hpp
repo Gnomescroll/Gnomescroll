@@ -31,7 +31,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         float theta, phi;
 
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_u8(&seq, buff, buff_n, pack);
@@ -73,7 +73,7 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
         float theta;
         float phi;
 
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
@@ -96,7 +96,7 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
         float theta;
         float phi;
 
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
@@ -146,7 +146,7 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
         int id;
         int dmg;
 
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&dmg, buff, buff_n, pack);

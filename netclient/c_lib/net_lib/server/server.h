@@ -35,7 +35,7 @@ class NetPeer {
 };
 */
 
-const static HARD_MAX_CONNECTIONS  = 1024;
+const static int HARD_MAX_CONNECTIONS  = 1024;
 struct ConnectionPool {
     int n_connections;
     class NetPeer* connection[HARD_MAX_CONNECTIONS];

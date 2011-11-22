@@ -162,7 +162,7 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
         int x,y,z;
         int val;
         
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
