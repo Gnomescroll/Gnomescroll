@@ -54,7 +54,7 @@ int accept_connection(struct sockaddr_in from) {
 //min/max MTU is 576
 //1500 is max MTU for ethernet
 
-void send_to_client(int client_id, unsigned char* buffer, int n) {
+void send_to_client(int client_id, char* buffer, int n) {
     //printf("Sending %i bytes to client %i \n", n, client_id);
     class NetPeer* p;
     p = pool.connection[client_id];
@@ -76,7 +76,7 @@ void send_to_client(int client_id, unsigned char* buffer, int n) {
 
 void send_id(uint16_t client_id) {
     printf("Sending Client Id\n");
-    unsigned char buffer[6];
+    char buffer[6];
     int n=0;
     PACK_uint16_t(0, buffer, &n);
     PACK_uint16_t(client_id, buffer, &n);
@@ -84,7 +84,7 @@ void send_id(uint16_t client_id) {
     send_to_client(client_id, buffer, n);
 }
 
-void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in* from) {
+void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     //printf("Packet\n");
     int n=0;
 
@@ -166,7 +166,7 @@ void process_packet(unsigned char* buff, int received_bytes, struct sockaddr_in*
     return;
 }
 
-unsigned char buffer[1500];
+char buffer[1500];
 
 void process_packets() {
 
@@ -190,8 +190,8 @@ void flush_packets() {
     class NetPeer* p;
     int seq;
 
-    //unsigned char header[1500];
-    unsigned char* header;
+    //char header[1500];
+    char* header;
 
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
         if(pool.connection[i] == NULL) continue;
@@ -229,7 +229,7 @@ void flush_packets() {
 }
 
 
-void push_message(int client_id, unsigned char* buffer, int n_bytes) {
+void push_message(int client_id, char* buffer, int n_bytes) {
     class NetPeer* p;    
     p = pool.connection[client_id];
     if(p == NULL) { printf("server:push_message failed. Client is null\n"); return; }
@@ -242,7 +242,7 @@ void push_message(int client_id, unsigned char* buffer, int n_bytes) {
     p->buff_n += n_bytes;
 }
 
-void push_broadcast_message(unsigned char* buffer, int n_bytes) {
+void push_broadcast_message(char* buffer, int n_bytes) {
     int i;
     class NetPeer* p;
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {

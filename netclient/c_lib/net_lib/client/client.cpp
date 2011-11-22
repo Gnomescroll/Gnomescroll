@@ -5,14 +5,14 @@
 
 namespace NetClient {
 
-unsigned char client_out_buff[1500];
+char client_out_buff[1500];
 int client_out_buff_n = 11; //header length;
 
 void reset_client_out_buffer() {
     client_out_buff_n = 11;
 }
 
-unsigned char* get_client_out_buffer() {
+char* get_client_out_buffer() {
     return client_out_buff;
 }
 
@@ -29,7 +29,7 @@ class NetPeer NPserver;
 struct Socket client_socket;
 
 
-unsigned char buffer[1500]; //1500 is max ethernet MTU
+char buffer[1500]; //1500 is max ethernet MTU
 
 void init_client() {
 
@@ -110,7 +110,7 @@ void attempt_connection_with_server() {
         printf("attempt_connection_with_server: Error! client is already connected\n");
     }
     init_sequencer(&NPserver); //virgin state on reconnect
-    unsigned char buff[6];
+    char buff[6];
     int n=0;
     PACK_uint16_t(65535, buff, &n);
     PACK_uint8_t(255, buff, &n);
@@ -121,7 +121,7 @@ void attempt_connection_with_server() {
 }
 
 void ack_connection_with_server() {
-    unsigned char buff[6];
+    char buff[6];
     int n=0;
     PACK_uint16_t(NPserver.client_id, buff, &n);
     PACK_uint8_t(254, buff, &n);
@@ -131,7 +131,7 @@ void ack_connection_with_server() {
     if ( sent_bytes <= 0) { printf( "ack_connection_with_server: failed to send packet: return value = %i\n", sent_bytes); return;}
 }
 
-int validate_packet(unsigned char* buff, int n, struct sockaddr_in* from) {
+int validate_packet(char* buff, int n, struct sockaddr_in* from) {
     //check CRC
     if(n <= 0) return 1;
     if(NPserver.connected == 0 && n ==6) { //server connection packet
@@ -197,7 +197,7 @@ int header_size1() {
     return sizeof(uint8_t)+3*sizeof(uint16_t)+ 2*sizeof(uint32_t);
 }
 
-void process_packet(unsigned char* buff, int n) {
+void process_packet(char* buff, int n) {
     if(n==6) return;
 
     int n1=0;

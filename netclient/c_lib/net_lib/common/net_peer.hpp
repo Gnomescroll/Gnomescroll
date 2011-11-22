@@ -81,7 +81,7 @@ class NetPeer: public Net_message_list
 
     //buffer
     int buff_n;
-    unsigned char buff[1500]; //out buffer
+    char buff[1500]; //out buffer
     /*
         push packets ont net_message_array and flush from here
     */
