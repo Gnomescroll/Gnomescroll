@@ -140,7 +140,7 @@ class NetPeer: public Net_message_list
 };
 
 
-static unsigned char net_out_buff[1500];
+static char net_out_buff[1500];
 
 /*
     Use arrays/pointers/pool later for packets, to remove limits
@@ -161,10 +161,10 @@ void NetPeer::push_reliable_packet(Net_message* np) {
 
  
 //void * memcpy ( void * destination, const void * source, size_t num );
-void NetPeer::flush_to_buffer(char* buff, int* index) {
+void NetPeer::flush_to_buffer(char* buff_, int* index) {
     if(pending_bytes_out > 1500) printf("Net_message_list Error: too much data in packet buffer");
     Net_message* np;
-    char* offset = *index + buff;
+    char* offset = *index + buff_;
     for(int i=0; i< unreliable_net_message_array_index; i++)
     {
         np = unreliable_net_message_array[i];
@@ -178,7 +178,7 @@ void NetPeer::flush_to_buffer(char* buff, int* index) {
         memcpy(offset, np->buff, np->len);
         offset += np->len;
     }
-    *index = buff - offset;
+    *index = buff_ - offset;
 
     //channel send here
     /*
