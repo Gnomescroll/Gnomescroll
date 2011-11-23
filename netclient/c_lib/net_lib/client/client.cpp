@@ -9,7 +9,7 @@ char client_out_buff[1500];
 int client_out_buff_n = 11; //header length;
 
 void reset_client_out_buffer() {
-    //client_out_buff_n = 11;
+    client_out_buff_n = 11;
 }
 
 char* get_client_out_buffer() {
@@ -57,7 +57,7 @@ void init_client() {
 
     }
     */
-    //reset_client_out_buffer();
+    reset_client_out_buffer();
     init_sequencer(&NPserver);
 }
 
@@ -105,7 +105,7 @@ void flush_outgoing_packets() {
     pviz_packet_sent(seq, client_out_buff_n);
     int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n );}
-    //reset_client_out_buffer();
+    reset_client_out_buffer();
 }
 
 void attempt_connection_with_server() {

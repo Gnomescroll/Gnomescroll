@@ -137,7 +137,7 @@ void _NetClientNetOutTick() {
     //ClientState::send_control_state();
 
     check_for_dropped_packets(np);      //check again, probably redundant
-    //NetClient::flush_outgoing_packets();
+    NetClient::flush_outgoing_packets();
 
     NetClient::poll_connection_timeout();
 

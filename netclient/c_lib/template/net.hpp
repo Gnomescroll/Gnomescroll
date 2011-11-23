@@ -33,7 +33,6 @@ class FixedSizeNetPacketToServer {
         virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
         //inline void packet(char* buff, int* buff_n, bool pack);
 
-        /*
         void send() {
             char* buff= NetClient::get_client_out_buffer();
             int* buff_n = NetClient::get_client_out_buffer_n();
@@ -41,9 +40,9 @@ class FixedSizeNetPacketToServer {
             int bytes_written;
             serialize(buff, buff_n, &bytes_written);
         }
-        */
 
-        
+
+        /*
         void send() {
             //char* buff= NetClient::get_client_out_buffer();
             //int* buff_n = NetClient::get_client_out_buffer_n();
@@ -67,7 +66,7 @@ class FixedSizeNetPacketToServer {
 
             if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }
-        
+        */
 
         //will overflow if more than 64 bytes
         int Size() { char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
