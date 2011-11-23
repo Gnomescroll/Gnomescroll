@@ -213,3 +213,101 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
             this->z = z;
         }
 };
+
+
+// fire weapon action
+class fire_weapon_CtoS: public FixedSizeNetPacketToServer<fire_weapon_CtoS>
+{
+    public:
+        int id;
+        int weapon_id;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&weapon_id, buff, buff_n, pack);
+        }
+
+        inline void handle() {}
+        fire_weapon_CtoS() {}
+        fire_weapon_CtoS(int id, int weapon_id) {
+            this->id = id;
+            this->weapon_id = weapon_id;
+        }
+}
+
+// fire weapon action
+class fire_weapon_StoC: public FixedSizeNetPacketToServer<fire_weapon_StoC>
+{
+    public:
+        int id;
+        int weapon_id;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&weapon_id, buff, buff_n, pack);
+        }
+
+        inline void handle() {}
+
+        fire_weapon_StoC() {}
+        fire_weapon_StoC(int id, int weapon_id) {
+            this->id = id;
+            this->weapon_id = weapon_id;
+        }
+}
+
+// hitscan: target = agent
+class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
+{
+    public:
+        int id;
+        int agent_id;
+        int body_part;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u8(&body_part, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+        }
+
+        hitscan_agent_CtoS() {}
+        hitscan_agent_CtoS(int id, int agent_id, int body_part) {
+            this->id = id;
+            this->agent_id = agent_id;
+            this->body_part = body_part;
+        }
+}
+
+// hitscan: target = block
+class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
+{
+    public:
+        int id;
+        int x,y,z;
+
+        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&x, buff, buff_n, pack);
+            pack_u8(&y, buff, buff_n, pack);
+            pack_u8(&z, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+
+        }
+
+        hitscan_block_CtoS() {}
+        hitscan_block_CtoS() {
+            this->id = id;
+            this->x = x;
+            this->y = y;
+            this->z = z;
+        }
+}
