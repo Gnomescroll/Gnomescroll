@@ -7,8 +7,9 @@ void reset_NetPeer_buffer(class NetPeer* s) {
 
 //class NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
 class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port) {
-    class NetPeer* s = (class NetPeer*) malloc(sizeof(class NetPeer));
-
+    //class NetPeer* s = (class NetPeer*) malloc(sizeof(class NetPeer));
+    class NetPeer* s = new NetPeer;
+    
     unsigned int destination_address = ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
 
     s->client_id = 65535;
@@ -34,7 +35,8 @@ class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned
 
 //class NetPeer* create_raw_net_peer(struct sockaddr_in address) {
 class NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
-    class NetPeer* s = (class NetPeer*) malloc(sizeof(class NetPeer));
+    //class NetPeer* s = (class NetPeer*) malloc(sizeof(class NetPeer));
+    class NetPeer* s = new NetPeer;
     s->client_id = 65535;
     s->address = address;
 

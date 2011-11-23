@@ -46,7 +46,7 @@ int accept_connection(struct sockaddr_in from) {
             return j;
         }
     }
-    if(i >= HARD_MAX_CONNECTIONS) {printf("Could not open client connection: connection pool full!\n");free(p);return -1;}
+    if(i >= HARD_MAX_CONNECTIONS) {printf("Could not open client connection: connection pool full!\n"); delete p ;return -1;}
     printf("Accept connection: error, should never reach this line!\n");
     return -1;
 }
@@ -273,7 +273,7 @@ void poll_connection_timeout() {
         if(NP_time_delta1(p->last_packet_time) > 4000) { //4000 ms timeout
             printf("Connection %i timeout\n", p->client_id);
             pool.connection[i] = NULL;
-            free(p); //need to clean up!
+            delete p; //need to clean up!
         }
     }
 }

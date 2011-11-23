@@ -58,6 +58,8 @@ struct net_message_list {
 
 //#include <sys/mman.h>
 
+int GLOBAL_ = 0;
+
 class NetPeer
 {
     private:
@@ -118,10 +120,9 @@ class NetPeer
         Init
     */
 
-    void init() {
-        printf("NetPeerInit\n");
-
-        //init NetMessageList
+    void init() {}
+    
+    NetPeer() {
         for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
         for(int i=0; i< 256; i++) reliable_net_message_array[i] = NULL;
 
@@ -129,11 +130,7 @@ class NetPeer
         reliable_net_message_array_index = 0;
 
         pending_bytes_out = 0;
-
-        printf("this= %x \n", this);
-        printf("watch index= %x \n", &this->unreliable_net_message_array_index);
     }
-    NetPeer() {}
 };
 
 

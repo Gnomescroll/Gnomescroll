@@ -34,6 +34,7 @@ def NetClientNetInTick():
 def NetClientNetOutTick():
     _NetClientNetOutTick()
 
+### The problem
 def NetClientStartFrame():
     _NetClientStartFrame()
 

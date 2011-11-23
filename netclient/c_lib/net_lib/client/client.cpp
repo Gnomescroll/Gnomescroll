@@ -42,7 +42,8 @@ void init_client() {
     //int local_port = 6967;
     struct Socket* s = create_socket(local_port);
 
-    if(s != NULL) free(s);
+    //if(s != NULL) free(s);
+    if(s != NULL) delete s ;
     client_socket = *s;
     /*
     if(s != NULL) {
@@ -70,7 +71,8 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
 
     class NetPeer* p = create_net_peer_by_remote_IP(a,b,c,d,port);
     NPserver = *p;
-    free(p);
+    //free(p);
+    delete p;
 }
 
 void flush_outgoing_packets() {

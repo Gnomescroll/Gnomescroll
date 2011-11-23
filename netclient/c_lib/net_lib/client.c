@@ -1,6 +1,16 @@
+#include <net_lib/client.h>
 #ifdef DC_CLIENT
 
-#include <net_lib/client.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <string.h>
+
+#include <time/physics_timer.h>
+
+
 
 #include <net_lib/common/message_handler.h>
 #include <net_lib/client/client.hpp>
@@ -10,6 +20,7 @@
 
 #include <c_lib/state/packet_init.cpp>
 #include <c_lib/state/client_state.cpp>
+
 
 
 class NetPeer* np;
@@ -90,6 +101,7 @@ void _NetClientStartFrame() {
     _N++;
 
     //connection timeout returns if connected and times out on this frame
+
     if(NetClient::poll_connection_timeout() == 1) _N=0; //by setting _N to 0, will attempt to reconnect immediately on disconnect
 
     if(np->connected == 0) {
@@ -97,14 +109,12 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     }
-
     //deal with retransmission before retransmission
     check_for_dropped_packets(np);
-
 }
 
 void _NetClientStateTick() {
-
+    return;
     //Does nothing
     ClientState::ClientTick();
 
