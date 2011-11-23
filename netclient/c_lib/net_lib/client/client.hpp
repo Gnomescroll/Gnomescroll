@@ -33,6 +33,9 @@ struct NetClient {
 */
 
 namespace NetClient {
+
+extern class NetPeer NPserver;
+
 int header_size1();
 
 void init_client();

@@ -66,7 +66,7 @@ class Net_message_list {
 };
 
 //class NetPeer {
-class NetPeer: public Net_message_list 
+class NetPeer
 {
     private:
     public:
@@ -128,6 +128,7 @@ class NetPeer: public Net_message_list
 
     NetPeer() 
     {
+        printf("NetPeerInit\n");
         //init NetMessageList
         for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
         for(int i=0; i< 256; i++) reliable_net_message_array[i] = NULL;
@@ -146,6 +147,7 @@ static char net_out_buff[1500];
     Use arrays/pointers/pool later for packets, to remove limits
 */
 void NetPeer::push_unreliable_packet(Net_message* np) {
+    np->reference_count++;
     unreliable_net_message_array[unreliable_net_message_array_index] = np;
     unreliable_net_message_array_index++;
     pending_bytes_out += np->len;
