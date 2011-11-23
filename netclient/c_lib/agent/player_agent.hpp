@@ -16,7 +16,12 @@ enum active_camera_states {
     CameraStatesEnd
 };
 
-class PlayerAgent_state {
+class Agent_status {
+    public:
+        int health;
+};
+
+class PlayerAgent_state: public Agent_status {
     private:
     public:
 
@@ -94,6 +99,9 @@ class PlayerAgent_state {
                     break;
             }
         }
+
+        //Weapon active_weapon;
+        void hit_block();
 
         //control state history buffer
         int cs_seq_local;   // client side cs

@@ -18,6 +18,8 @@
 
 /* objects */
 #include <c_lib/particles/object_lib.cpp>
+/* Weapons */
+#include <c_lib/weapons/weapons.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>
@@ -25,6 +27,10 @@
 /* Agents */
 #include <c_lib/agent/agent_include.h>
 
+#ifdef DC_CLIENT
+    /* animations */
+    #include <c_lib/animations/animations.cpp>
+#endif
 
 /* map */
 #include <c_lib/t_map/t_map.cpp>
@@ -32,9 +38,6 @@
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
-
-    /* animations */
-    #include <c_lib/animations/animations.cpp>
 
     /* camera */
     #include <c_lib/camera/camera.cpp>

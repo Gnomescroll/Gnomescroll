@@ -1,21 +1,24 @@
 #include "c_lib.hpp"
 
-    #include <stdio.h>
+#include <stdio.h>
 
-    #include "./t_map/t_map.cpp"
-    #include "./t_map/t_properties.c"
-    
-    #include "./physics/vector.c"
-    #include "./ray_trace/ray_trace.c"
-    #include "./physics/common.c"
+#include "./t_map/t_map.cpp"
+#include "./t_map/t_properties.c"
 
-    #include <c_lib/particles/object_lib.cpp>
+#include "./physics/vector.c"
+#include "./ray_trace/ray_trace.c"
+#include "./physics/common.c"
 
-    #include "./agent/agent_include.h"
+/* Weapons */
+#include <c_lib/weapons/weapons.cpp>
 
-    #include "./map_gen/noise.c"
-    
-    #include "./t_map/t_serialize.c"
+#include <c_lib/particles/object_lib.cpp>
+
+#include "./agent/agent_include.h"
+
+#include "./map_gen/noise.c"
+
+#include "./t_map/t_serialize.c"
 
 #include <net_lib/net_lib.h>
 

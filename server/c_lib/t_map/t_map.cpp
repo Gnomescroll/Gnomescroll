@@ -75,6 +75,15 @@ int _apply_damage(int x, int y, int z, int dmg) {
     }
 }
 
+// apply block damage & broadcast the update to client
+int _apply_damage_broadcast(int x, int y, int z, int dmg) {
+    int res = _apply_damage(x,y,z, dmg);
+    if (res == 0) {
+        _block_broadcast(x,y,z, 0);
+    }
+    return res;
+}
+
 // terrain map tile set/get
 int _set(int x, int y, int z, int value) {
     int xoff, yoff, zoff, xrel, yrel, zrel;

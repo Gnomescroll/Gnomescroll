@@ -147,25 +147,6 @@ def configure(conf):
     #if OS == 'Windows':
     #    conf.env.INCLUDES += ['../netclient/c_lib/', '../netclient/c_lib/net_lib']
         
-    #hack
-    print os.path.abspath(os.curdir)
-    libpth = '%s/fmod/lib/' % (os_libpth,)
-    despth = './build/sound/api/lib/'
-    print os.path.abspath(libpth)
-    print os.path.abspath(despth)
-
-
-    #WTF crashes
-    if os.path.exists(despth):
-        for fn in os.listdir(despth):
-            os.remove(despth + fn)
-        for fn in os.listdir(libpth):
-            shutil.copy2(libpth + fn, despth + fn)
-    else:
-        try:
-            shutil.copytree(libpth, despth, symlinks=True)
-        except IOError, e:
-            pass
 
     
     '''
@@ -196,6 +177,33 @@ t = bld(
 '''
 def build(bld):
     OS = platform.system()
+
+    """"""
+    # FMOD hack
+    if OS == 'Windows':
+        os_libpth = './libraries/win'
+    elif OS == 'Linux':
+        os_libpth = './libraries/lin'
+    elif OS == 'Darwin':
+        os_libpth = './libraries/osx'
+
+    print os.path.abspath(os.curdir)
+    libpth = '%s/fmod/lib/' % (os_libpth,)
+    despth = './build/sound/api/lib/'
+    #print os.path.abspath(libpth)
+    #print os.path.abspath(despth)
+
+    if os.path.exists(despth):
+        for fn in os.listdir(despth):
+            os.remove(despth + fn)
+        for fn in os.listdir(libpth):
+            shutil.copy2(libpth + fn, despth + fn)
+    else:
+        try:
+            shutil.copytree(libpth, despth, symlinks=True)
+        except IOError, e:
+            pass
+    """"""
 
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']

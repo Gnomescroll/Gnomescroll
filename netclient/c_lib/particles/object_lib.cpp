@@ -2,6 +2,9 @@
 
 /* Aggregator */
 
+/* objects */
+#include "./particles/particles.cpp"
+
 #ifdef DC_CLIENT
 #include "./particles/textures.cpp" /* Textures */
 
@@ -12,8 +15,6 @@
 #include "./particles/billboard_text.cpp"
 #endif
 
-/* objects */
-#include "./particles/particles.cpp"
 #include "./particles/grenade.cpp"
 #include "./particles/neutron.cpp"
 #include "./particles/cspray.cpp"

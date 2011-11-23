@@ -89,6 +89,7 @@ cdef extern from "./agent/player_agent.hpp":
         AgentState camera_state
         void toggle_camera_mode()
         void pump_camera() #update camera
+        void hit_block()
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
@@ -279,6 +280,9 @@ class PlayerAgentWrapper(object):
         y = playerAgent_state.camera_state.y
         z = playerAgent_state.camera_state.z
         return [x, y, z+z_off]
+
+    def hit_block(self):
+        playerAgent_state.hit_block()
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
