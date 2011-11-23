@@ -1,4 +1,4 @@
-cdef extern from "./sound.h":
+cdef extern from "./sound/sound.h":
     void C_init(float vol)
     void update_sound_system()
     void release_all()

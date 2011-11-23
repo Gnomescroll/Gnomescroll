@@ -24,7 +24,9 @@ void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
 
+#include <c_lib/agent/agent_event.hpp>
 #endif
+
 
 //store last network messsage
 
@@ -88,7 +90,12 @@ struct Agent_collision_box {
     float box_r;
 };
 
-class Agent_state {
+class Agent_model {
+    public:
+        int health;
+};
+
+class Agent_state: public Agent_model {
     private:
         class AgentState state_rollback;
         struct Agent_control_state cs[128];
@@ -101,7 +108,7 @@ class Agent_state {
 
         int cs_seq; // <--current counter
 
-    public:
+    public:    
         class AgentState s; //state current
         class AgentState state_snapshot;
 
@@ -114,6 +121,7 @@ class Agent_state {
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;
+        class Agent_event event;
         #endif
 
         #ifdef DC_SERVER
@@ -166,9 +174,6 @@ class Agent_state {
         void die() {
             //dead = true;
         }
-
-        // side effects of taking damage. dont modify health/death here
-        void took_damage(int dmg);
 
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);

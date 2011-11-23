@@ -1,6 +1,6 @@
 #include <fmod.h>
 #include <fmod_errors.h>
-#include <wincompat.h>
+#include <c_lib/sound/wincompat.h>
 #include <stdio.h>
 
 #define MAX_CHANNELS 100
