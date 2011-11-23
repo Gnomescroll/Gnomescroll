@@ -28,19 +28,11 @@ class Net_message_buffer {
     Net_message_buffer() { reference_count = 0; }
 };
 
-class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128>
-{
-    public:
-    Net_message_buffer_pool() { if(first == NULL) printf("error init\n"); }
-};
+class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128> {};
 
 
 //use for unreliable packets
-class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16>
-{
-    public:
-    Net_message_buffer_pool2() { if(first == NULL) printf("error init\n"); }
-};
+class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16> {};
 
 Net_message_buffer_pool net_message_buffer_pool;   //use for reliable udp packets
 Net_message_buffer_pool2 net_message_buffer_pool2; //use for unreliable udp packets
