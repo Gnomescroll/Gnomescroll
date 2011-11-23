@@ -52,12 +52,18 @@ class FixedSizeNetPacketToServer {
             //NetPeer* np = NetClient::NPserver; //NetClient::CLIENT_get_NP()
 
             //Derived::size
+            printf("size= %i\n", Derived::size );
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
+            //Net_message* nm = new Net_message;
+            //nm->buff = new char[Derived::size];
+
             int bytes_written;
             int buff_n = 0;
+            
             serialize(nm->buff, &buff_n, &bytes_written);
 
-            NetClient::NPserver.push_unreliable_packet(nm);
+            //NetClient::NPserver.push_unreliable_packet(nm);
+            NetClient::CLIENT_get_NP()->push_unreliable_packet(nm);
 
             if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }

@@ -100,7 +100,7 @@ class Net_message {
     }
 };
 
-class Net_message_pool: public Object_pool<Net_message, 4096> {};
+class Net_message_pool: public Object_pool<Net_message, 8> {}; //use 4096
 
 Net_message_pool net_message_pool;
 

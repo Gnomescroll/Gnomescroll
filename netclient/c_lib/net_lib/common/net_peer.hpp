@@ -52,20 +52,12 @@ struct net_message_list {
     int reference_count;
 */
 
-class Net_message_list {
-    private:
-    public:
-    /*
-        Make variable length later or ignore
-    */
 
-    //char buff[1500]; //out buffer, write unreliable packets directly to buff
-    //int buff_n;
-
-
-};
 
 //class NetPeer {
+
+//#include <sys/mman.h>
+
 class NetPeer
 {
     private:
@@ -126,9 +118,9 @@ class NetPeer
         Init
     */
 
-    NetPeer() 
-    {
+    void init() {
         printf("NetPeerInit\n");
+
         //init NetMessageList
         for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
         for(int i=0; i< 256; i++) reliable_net_message_array[i] = NULL;
@@ -137,20 +129,30 @@ class NetPeer
         reliable_net_message_array_index = 0;
 
         pending_bytes_out = 0;
+
+        printf("this= %x \n", this);
+        printf("watch index= %x \n", &this->unreliable_net_message_array_index);
     }
+    NetPeer() {}
 };
 
 
-static char net_out_buff[1500];
+char net_out_buff[128];
 
 /*
     Use arrays/pointers/pool later for packets, to remove limits
 */
-void NetPeer::push_unreliable_packet(Net_message* np) {
-    np->reference_count++;
-    unreliable_net_message_array[unreliable_net_message_array_index] = np;
+
+void NetPeer::push_unreliable_packet(Net_message* nm) {
+    nm->reference_count++;
+    printf("index= %i \n", unreliable_net_message_array_index);
+    //printf("wtf2= %i \n", this->unreliable_net_message_array_index);
+    printf("this= %x \n", this);
+    printf("watch index= %x \n", &this->unreliable_net_message_array_index);
+    //printf("wtf3= %i \n", NetClient::NPserver.unreliable_net_message_array_index);
+    unreliable_net_message_array[unreliable_net_message_array_index] = nm;
     unreliable_net_message_array_index++;
-    pending_bytes_out += np->len;
+    pending_bytes_out += nm->len;
     if(unreliable_net_message_array_index > 256) printf("Net_message_list Push_unreliable_packet overflow 1\n");   //debug
 }
 

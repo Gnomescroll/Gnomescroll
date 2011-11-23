@@ -15,7 +15,6 @@
 class NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
-    NetClient::reset_client_out_buffer();
     //init_agent_client();
     init_message_handler();
     PacketInit::RegisterMessages();
@@ -128,7 +127,7 @@ void _NetClientNetOutTick() {
     //ClientState::send_control_state();
 
     check_for_dropped_packets(np);      //check again, probably redundant
-    NetClient::flush_outgoing_packets();
+    //NetClient::flush_outgoing_packets();
 
     NetClient::poll_connection_timeout();
 

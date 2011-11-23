@@ -63,8 +63,8 @@ def configure(conf):
         conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc'])
         conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc'])
     else:
-        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT'])
-        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'])
+        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']) # '-lefence'
+        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']) # '-lefence'
 
 
     if OS == 'Windows':
@@ -290,7 +290,7 @@ def build(bld):
     # final
     bld(features='cxx cprogram pyembed',
         #use=common_libraries+SDL_libraries+['sound'],
-        use=SDL_libraries,
+        use=SDL_libraries + ['c_lib'], #added clib
         source='run.c',
         target='run')
 

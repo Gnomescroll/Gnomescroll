@@ -31,7 +31,7 @@ Object_pool<Object, BUFFER_POOL_SIZE>::Object_pool()
     
     batch_num = 0;
     first = NULL;
-    last = NULL;
+    //last = NULL;
     /*
     Object* ar = (Object*) malloc(BUFFER_POOL_SIZE*sizeof(Object));
     first = &ar[0];
@@ -52,10 +52,10 @@ template <class Object, int BUFFER_POOL_SIZE>
 void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
 {
     batch_num++;
-    printf("Batch Alloc: %i \n", batch_num);
+    printf("Batch Alloc: %i n_elements: %i \n", batch_num, BUFFER_POOL_SIZE);
     //Object* ar = (Object*) malloc(BUFFER_POOL_SIZE*sizeof(Object));
     Object* ar = new Object[BUFFER_POOL_SIZE];
-    
+
     first = &ar[0];
 
     int i;
@@ -65,7 +65,7 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
     }
 
     ar[BUFFER_POOL_SIZE-1].next = NULL;
-    last = &ar[BUFFER_POOL_SIZE-1];
+    //last = &ar[BUFFER_POOL_SIZE-1];
 }
 
 template <class Object, int BUFFER_POOL_SIZE>
