@@ -37,6 +37,13 @@ void RegisterMessages() {
     //object packets
     cspray_StoC::register_client_packet();
 
+    // fire weapon
+    fire_weapon_CtoS::register_server_packet();
+    fire_weapon_StoC::register_client_packet();
+
+    // hitscans
+    hitscan_agent_CtoS::register_server_packet();
+    hitscan_block_CtoS::register_server_packet();
 
 }
 }

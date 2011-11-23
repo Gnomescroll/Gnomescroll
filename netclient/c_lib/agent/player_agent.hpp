@@ -16,7 +16,12 @@ enum active_camera_states {
     CameraStatesEnd
 };
 
-class PlayerAgent_state {
+class Agent_status {
+    public:
+        int health;
+};
+
+class PlayerAgent_state: public Agent_status {
     private:
     public:
 

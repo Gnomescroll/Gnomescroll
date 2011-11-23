@@ -102,8 +102,6 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
     if((c->flag & flag) == 0) { return 1; } else {return 0;}
 }
 
-
-
 /* Network */
 class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
 {
@@ -137,3 +135,4 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
 };
 
 void _block_broadcast(int x, int y, int z, int value);
+int _apply_damage_broadcast(int x, int y, int z, int dmg);
