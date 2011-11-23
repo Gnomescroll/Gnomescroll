@@ -762,7 +762,11 @@ void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy,
     s.vz = _vz;
 }
 
+#ifdef DC_CLIENT
 Agent_state::Agent_state(int _id) : event(this) {
+#else
+Agent_state::Agent_state(int _id) {
+#endif
     id = _id;
 
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
@@ -798,7 +802,11 @@ Agent_state::Agent_state(int _id) : event(this) {
     #endif
 }
 
+#ifdef DC_CLIENT
 Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) : event(this) {
+#else
+Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) {
+#endif
     id = _id;
 
     set_state(_x, _y, _z, _vx, _vy, _vz);
@@ -909,19 +917,3 @@ void set_agents_to_draw(int* ids, int ct) {
 }
 
 #endif
-
-void Agent_event::fired_weapon(int weapon_id) {
-    // play weapon animation & sound
-}
-
-
-// side effects of taking damage. dont modify health/death here
-void Agent_event::took_damage(int dmg) {
-    #ifdef DC_CLIENT
-    BillboardText* b = ClientState::billboard_text_list.create(a->s.x, a->s.y, a->s.z, 0.0f,0.0f, 7.0f);
-    b->set_color(255,10,10, 255);   // red
-    char txt[10+1];
-    int n = sprintf(txt, "%d", dmg);
-    b->set_text(txt, n);
-    #endif
-}

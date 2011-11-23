@@ -24,7 +24,9 @@ void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
 
+#include <c_lib/agent/agent_event.hpp>
 #endif
+
 
 //store last network messsage
 
@@ -93,19 +95,6 @@ class Agent_model {
         int health;
 };
 
-class Agent_state;
-
-class Agent_event {
-    private:
-        Agent_state* a;
-    public:
-        void fired_weapon(int weapon_id);
-        // side effects of taking damage. dont modify health/death here
-        void took_damage(int dmg);
-
-        Agent_event(Agent_state* owner) : a(owner) {}
-};
-
 class Agent_state: public Agent_model {
     private:
         class AgentState state_rollback;
@@ -119,9 +108,7 @@ class Agent_state: public Agent_model {
 
         int cs_seq; // <--current counter
 
-    public:
-        class Agent_event event;
-    
+    public:    
         class AgentState s; //state current
         class AgentState state_snapshot;
 
@@ -134,6 +121,7 @@ class Agent_state: public Agent_model {
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;
+        class Agent_event event;
         #endif
 
         #ifdef DC_SERVER
