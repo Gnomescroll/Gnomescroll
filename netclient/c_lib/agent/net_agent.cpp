@@ -45,11 +45,22 @@ inline void fire_weapon_StoC::handle() {
     //a->fired_weapon(weapon_id);
 }
 
+inline void Agent_cs_CtoS::handle() {}
+inline void hit_block_CtoS::handle() {}
+inline void fire_weapon_CtoS::handle() {}
+inline void hitscan_agent_CtoS::handle() {}
+inline void hitscan_block_CtoS::handle() {}
+
 #endif
 
 
 // Client -> Server handlers
 #ifdef DC_SERVER
+
+inline void Agent_state_message::handle() {}
+inline void Agent_cs_StoC::handle() {}
+inline void agent_damage_StoC::handle() {}
+inline void fire_weapon_StoC::handle() {}
 
 inline void Agent_cs_CtoS::handle() {
     //printf("cs_CtoS: seq= %i \n", seq);
