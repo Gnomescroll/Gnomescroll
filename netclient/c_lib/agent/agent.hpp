@@ -88,7 +88,25 @@ struct Agent_collision_box {
     float box_r;
 };
 
-class Agent_state {
+class Agent_model {
+    public:
+        int health;
+};
+
+class Agent_state;
+
+class Agent_event {
+    private:
+        Agent_state* a;
+    public:
+        void fired_weapon(int weapon_id);
+        // side effects of taking damage. dont modify health/death here
+        void took_damage(int dmg);
+
+        Agent_event(Agent_state* owner) : a(owner) {}
+};
+
+class Agent_state: public Agent_model {
     private:
         class AgentState state_rollback;
         struct Agent_control_state cs[128];
@@ -102,6 +120,8 @@ class Agent_state {
         int cs_seq; // <--current counter
 
     public:
+        class Agent_event event;
+    
         class AgentState s; //state current
         class AgentState state_snapshot;
 
@@ -166,9 +186,6 @@ class Agent_state {
         void die() {
             //dead = true;
         }
-
-        // side effects of taking damage. dont modify health/death here
-        void took_damage(int dmg);
 
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
