@@ -300,11 +300,11 @@ class Main:
                 tick+=1
             if sl_c != 0:
                 NetServerTick()
-            if sl_c > 2:
+            if sl_c > 1:
                 print "Physics: %i ticks this frame" % (sl_c)
             NetOut.event.process_events()
             self.intervals.process()
-            time.sleep(0.001)
+            time.sleep(0.0001)
             #time.sleep(0.100)
 if __name__ == "__main__":
     print "starting server"

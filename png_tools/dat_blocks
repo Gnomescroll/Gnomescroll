@@ -107,23 +107,28 @@ west    sand.png
 east    sand.png
 ===
 id      20
-name    infinite_water_01
-hud     16 infinite/water_01.png
-infinite_texture 2 water_01
+name    infinite_test_01
+hud     16 infinite/test_01.png
+infinite_texture 2 test_01
 ===
 id      21
-name    infinite_water_02
-hud     17 infinite/water_02.png
-infinite_texture 2 water_02
+name    infinite_water_01
+hud     17 infinite/water_01.png
+infinite_texture 2 water_01
 ===
 id      22
-name    infinite_sand_01
-hud     18 infinite/sand_01.png
-infinite_texture 2 sand_01
+name    infinite_water_02
+hud     18 infinite/water_02.png
+infinite_texture 2 water_02
 ===
 id      23
+name    infinite_sand_01
+hud     19 infinite/sand_01.png
+infinite_texture 2 sand_01
+===
+id      24
 name    infinite_wood_01
-hud     19 infinite/wood_01.png
+hud     20 infinite/wood_01.png
 infinite_texture 2 wood_01
 ===
 id      40

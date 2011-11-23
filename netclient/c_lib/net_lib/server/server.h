@@ -7,7 +7,7 @@
 
 #include "../common/net_lib_common.h"
 #include "../common/sequencer.h"
-#include "../common/net_peer.h"
+#include "../common/net_peer.hpp"
 
 #include "../common/message_handler.h"
 
@@ -22,7 +22,7 @@ struct Socket {
 #define TTL_MAX 150
 //5 seconds timeout?
 
-struct NetPeer {
+class NetPeer {
     unsigned short id;
     uint32_t ip;
     uint16_t port;
@@ -35,26 +35,22 @@ struct NetPeer {
 };
 */
 
-#define HARD_MAX_CONNECTIONS 1024
+const static int HARD_MAX_CONNECTIONS  = 1024;
 struct ConnectionPool {
     int n_connections;
-    struct NetPeer* connection[HARD_MAX_CONNECTIONS];
+    class NetPeer* connection[HARD_MAX_CONNECTIONS];
 };
 
-//void broad_cast_packet(); //every 30 ms
-//void broad_cast_packet2();
+void init_server(unsigned short port);
+
 void flush_packets(); //all messages to all agents, out
 
-void push_message(int client_id, unsigned char* buffer, int n_bytes); //que a message for client
-void push_broadcast_message(unsigned char* buffer, int n_bytes);  //que a message for broadcast to all clients
+void push_message(int client_id, char* buffer, int n_bytes); //que a message for client
+void push_broadcast_message(char* buffer, int n_bytes);  //que a message for broadcast to all clients
 
 void receive_packets(struct Socket* socket);
 
-void init_server(unsigned short port);
-inline int error_check_packet(unsigned char* data, int n);
 void process_packets();
 
-//void decrement_ttl();
 void poll_connection_timeout();
-
 void check_pool_for_dropped_packets();

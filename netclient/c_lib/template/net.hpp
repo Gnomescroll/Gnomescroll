@@ -6,7 +6,7 @@
 static int _packet_id = 1;
 int next_packet_id() { return _packet_id++; }
 
-typedef void (*pt2handler)(unsigned char*, int, int*, int);
+typedef void (*pt2handler)(char*, int, int*, int);
 
 template <class Derived>
 class FixedSizeNetPacketToServer {
@@ -15,24 +15,24 @@ class FixedSizeNetPacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
-        void serialize(unsigned char* buff, int* buff_n, int* size) {
+        void serialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, true);
             packet(buff, buff_n, true);
             *size = *buff_n - _buff_n;
         }
-        inline void unserialize(unsigned char* buff, int* buff_n, int* size) {
+        inline void unserialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, false); //auto message unpack
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
         
-        virtual inline void packet(unsigned char* buff, int* buff_n, bool pack) = 0;
-        //inline void packet(unsigned char* buff, int* buff_n, bool pack);
+        virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
+        //inline void packet(char* buff, int* buff_n, bool pack);
 
         void send() {
-            unsigned char* buff= NetClient::get_client_out_buffer();
+            char* buff= NetClient::get_client_out_buffer();
             int* buff_n = NetClient::get_client_out_buffer_n();
             if(*buff_n > 800) { printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n); return; }
             int bytes_written;
@@ -40,11 +40,11 @@ class FixedSizeNetPacketToServer {
         }
 
         //will overflow if more than 64 bytes
-        int Size() { unsigned char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
+        int Size() { char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
 
         //virtual inline void handle() = 0;
 
-        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int _client_id) {
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
             x.client_id = _client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
@@ -72,24 +72,24 @@ class FixedSizeNetPacketToClient {
         static int size;
         //int client_id; //not used yet
     public:
-        void serialize(unsigned char* buff, int* buff_n, int* size) {
+        void serialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, true);
             packet(buff, buff_n, true);
             *size = *buff_n - _buff_n;
         }
-        inline void unserialize(unsigned char* buff, int* buff_n, int* size) {
+        inline void unserialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, false); //auto message unpack
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
         
-        virtual inline void packet(unsigned char* buff, int* buff_n, bool pack) = 0;
-        //inline void packet(unsigned char* buff, int* buff_n, bool pack);
+        virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
+        //inline void packet(char* buff, int* buff_n, bool pack);
 
         void sendToClient(int client_id) {
-            unsigned char buff[64]; //max message size
+            char buff[64]; //max message size
             int buff_n = 0;
             int size;
             serialize(buff, &buff_n, &size);
@@ -97,7 +97,7 @@ class FixedSizeNetPacketToClient {
         }
 
         void broadcast() {
-            unsigned char buff[64]; //max message size
+            char buff[64]; //max message size
             int buff_n = 0;
             int size;
             serialize(buff, &buff_n, &size);
@@ -105,9 +105,9 @@ class FixedSizeNetPacketToClient {
         }
 
         //will overflow if more than 64 bytes
-        int _size() { unsigned char buff[64];int buff_n = 0;int size;serialize(buff, &buff_n, &size);return size;}
+        int _size() { char buff[64];int buff_n = 0;int size;serialize(buff, &buff_n, &size);return size;}
 
-        static void handler(unsigned char* buff, int buff_n, int* bytes_read, int _client_id) {
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
             //x.client_id = _client_id //not used yet
             x.unserialize(buff, &buff_n, bytes_read);

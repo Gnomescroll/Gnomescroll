@@ -3,7 +3,7 @@
 
 int h_packet_size[256];
 
-typedef void (*pt2handler)(unsigned char*, int, int* read_bytes, int client_id);
+typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
 //pt2handler* handler_array[256];
 
 pt2handler handler_array[256] = {NULL};
@@ -11,9 +11,9 @@ pt2handler handler_array[256] = {NULL};
 pt2handler client_handler_array[256] = {NULL};
 pt2handler server_handler_array[256] = {NULL};
 
-//int (*handler_array[256])(unsigned char*, int) = {NULL};
+//int (*handler_array[256])(char*, int) = {NULL};
 
-void default_handler_function(unsigned char* buff, int n, int* read_bytes, int client_id) {
+void default_handler_function(char* buff, int n, int* read_bytes, int client_id) {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
     *read_bytes = -1;
@@ -21,7 +21,7 @@ void default_handler_function(unsigned char* buff, int n, int* read_bytes, int c
 
 //base
 
-//typedef const void (*_pt2handler)(unsigned char*, int, int*);
+//typedef const void (*_pt2handler)(char*, int, int*);
 void register_server_message_handler(int message_id, int size, pt2handler fptr) {
     if(message_id >=256 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
     if(server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
@@ -46,7 +46,7 @@ void init_message_handler() {
 
 }
 
-int pop_message(unsigned char* buff, int *n, int max_n, int client_id) {
+int pop_message(char* buff, int *n, int max_n, int client_id) {
 
     if(*n == max_n) {
         //printf("Processed Empty Packet\n");
@@ -102,7 +102,7 @@ int pop_message(unsigned char* buff, int *n, int max_n, int client_id) {
     return -4;
 }
 
-void process_packet_messages(unsigned char* buff, int n, int max_n, int client_id) {
+void process_packet_messages(char* buff, int n, int max_n, int client_id) {
 /*
     if(n!=max_n) {
         printf("packet is %i, %i bytes\n", n,max_n);

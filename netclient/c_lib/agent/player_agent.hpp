@@ -202,7 +202,7 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
         float vx,vy,vz;
         float theta, phi;
 
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
             pack_u8(&seq, buff, buff_n, pack);

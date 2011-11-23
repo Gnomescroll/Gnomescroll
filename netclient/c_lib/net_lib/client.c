@@ -12,7 +12,7 @@
 #include <c_lib/state/client_state.cpp>
 
 
-struct NetPeer* np;
+class NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
     NetClient::reset_client_out_buffer();

@@ -66,7 +66,7 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
         uint16_t id;
         uint8_t type;
 
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
