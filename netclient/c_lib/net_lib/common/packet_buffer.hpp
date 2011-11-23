@@ -159,6 +159,7 @@ class Net_message* Net_message::acquire_reliable(int length)
     Net_message* t = net_message_pool.acquire();
     t->len = length;
     t->buff = new char[length];
+    t->reference_count = 0;
     return t;
 }
 
@@ -172,5 +173,6 @@ class Net_message* Net_message::acquire_unreliable(int length)
     Net_message* t = net_message_pool.acquire();
     t->len = length;
     t->buff = new char[length];
+    t->reference_count = 0;
     return t;
 }

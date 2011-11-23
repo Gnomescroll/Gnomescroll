@@ -146,6 +146,7 @@ static char net_out_buff[1500];
     Use arrays/pointers/pool later for packets, to remove limits
 */
 void NetPeer::push_unreliable_packet(Net_message* np) {
+    np->reference_count++;
     unreliable_net_message_array[unreliable_net_message_array_index] = np;
     unreliable_net_message_array_index++;
     pending_bytes_out += np->len;
