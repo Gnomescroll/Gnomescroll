@@ -762,11 +762,11 @@ void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy,
     s.vz = _vz;
 }
 
+Agent_state::Agent_state(int _id) : status(this)
 #ifdef DC_CLIENT
-Agent_state::Agent_state(int _id) : status(this), event(this) {
-#else
-Agent_state::Agent_state(int _id) : status(this) {
+, event(this)
 #endif
+{
     id = _id;
 
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
@@ -802,11 +802,11 @@ Agent_state::Agent_state(int _id) : status(this) {
     #endif
 }
 
+Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) : status(this)
 #ifdef DC_CLIENT
-Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) : status(this), event(this) {
-#else
-Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) : status(this) {
+, event(this)
 #endif
+{
     id = _id;
 
     set_state(_x, _y, _z, _vx, _vy, _vz);
