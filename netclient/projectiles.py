@@ -3,7 +3,7 @@ import opts
 opts = opts.opts
 
 if opts.sound:
-    import sound.sounds as sounds
+    import c_lib.c_lib_sounds as sounds
 import c_lib.c_lib_particles as c_obj
 import c_lib.c_lib_sdl
 
