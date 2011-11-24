@@ -16,7 +16,7 @@ enum active_camera_states {
     CameraStatesEnd
 };
 
-class PlayerAgent_state: public Agent_model {
+class PlayerAgent_state {
     private:
     public:
 
@@ -140,8 +140,6 @@ class PlayerAgent_state: public Agent_model {
         
 
         Agent_cs_CtoS cs_0; //last control state
-
-
 
         PlayerAgent_state() {
             //client side state variables

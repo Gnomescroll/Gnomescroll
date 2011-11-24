@@ -26,6 +26,7 @@ void set_agents_to_draw(int* ids, int ct);
 
 #include <c_lib/agent/agent_event.hpp>
 #endif
+#include <c_lib/agent/agent_status.hpp>
 
 
 //store last network messsage
@@ -90,12 +91,7 @@ struct Agent_collision_box {
     float box_r;
 };
 
-class Agent_model {
-    public:
-        int health;
-};
-
-class Agent_state: public Agent_model {
+class Agent_state {
     private:
         class AgentState state_rollback;
         struct Agent_control_state cs[128];
@@ -118,6 +114,8 @@ class Agent_state: public Agent_model {
         struct Agent_collision_box box;
 
         int _new_control_state; //Deprecate
+
+        class Agent_status status;
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;
@@ -193,7 +191,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     public:
         void draw();
         void draw(int);
-        
+
         Agent_state* filtered_agents[AGENT_MAX]; // tmp array for filtering agents
         int agents_within_sphere(float x, float y, float z, float radius) {
             int ct = 0;
