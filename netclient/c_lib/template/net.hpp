@@ -41,7 +41,7 @@ class FixedSizeNetPacketToServer {
             serialize(buff, buff_n, &bytes_written);
         }
 
-
+ 
         /*
         void send() {
             //char* buff= NetClient::get_client_out_buffer();
