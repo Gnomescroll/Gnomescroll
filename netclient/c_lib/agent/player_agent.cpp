@@ -227,4 +227,3 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vy /= divisor;
     a->vz /= divisor;
 }
-
