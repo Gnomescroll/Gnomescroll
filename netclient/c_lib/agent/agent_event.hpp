@@ -11,6 +11,7 @@ class Agent_event {
         void fired_weapon(int weapon_id);
         // side effects of taking damage. dont modify health/death here
         void took_damage(int dmg);
+        void died();
 
         Agent_event(Agent_state* owner) : a(owner) {}
 };

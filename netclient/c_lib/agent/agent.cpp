@@ -38,8 +38,8 @@ void Agent_list::draw()
 void Agent_list::draw(int all) 
 {
     #ifdef DC_CLIENT
-        if (! all) return;
-        int i;
+    if (! all) return;
+    int i;
 
     glDisable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -93,16 +93,19 @@ void Agent_state::teleport(float x,float y,float z) {
 #endif
 
 void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
-    //health -= dmg;
-    //health = (health < 0) ? 0 : health;
-    //if (!health) {
-        //die();//owner);
-    //}
-    // send update?? how is health to be done over network
-    #ifdef DC_SERVER
+
+    // forward dmg indicator packet
+    //#ifdef DC_SERVER
     agent_damage_StoC* msg = new agent_damage_StoC(id, dmg);
     msg->broadcast();
-    #endif
+    //#endif
+
+    // update internal state
+    status.apply_damage(dmg);
+    if (status.dead) {
+        agent_dead_StoC* dead_msg = new agent_dead_StoC(id);
+        dead_msg->broadcast();
+    }
 }
 
 // assume box_r < 1

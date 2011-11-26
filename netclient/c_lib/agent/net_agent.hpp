@@ -255,3 +255,20 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
             this->z = z;
         }
 };
+
+// agent death notification
+class agent_dead_StoC: public FixedSizeNetPacketToClient<agent_dead_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+
+        inline void handle();
+        
+        agent_dead_StoC() {}
+        agent_dead_StoC(int id) : id(id) {}
+};

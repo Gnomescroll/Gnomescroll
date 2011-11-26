@@ -45,6 +45,12 @@ inline void fire_weapon_StoC::handle() {
     a->event.fired_weapon(weapon_id);
 }
 
+inline void agent_dead_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->event.died();
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}

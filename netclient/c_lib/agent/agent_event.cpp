@@ -17,4 +17,8 @@ void Agent_event::took_damage(int dmg) {
     b->set_text(txt, n);
 }
 
+void Agent_event::died() {
+    a->status.dead = true;
+}
+
 #endif
