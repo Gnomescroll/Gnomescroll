@@ -19,21 +19,9 @@ void init_client() {
     int local_port = 6967+(rand()%32); ///should randomize!
     struct Socket* s = create_socket(local_port);
 
-    //if(s != NULL) free(s);
     if(s != NULL) delete s ;
     client_socket = *s;
-    /*
-    if(s != NULL) {
-    client_socket = *s;
-    free(s);
-    } else {
-        printf("Attempting alterntive socket\n");
-        s = create_socket(local_port+(rand()%32));
-        *s;
-        free(s);
 
-    }
-    */
     init_sequencer(&NPserver);
 }
 
