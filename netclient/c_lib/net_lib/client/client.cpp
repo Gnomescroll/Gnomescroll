@@ -3,48 +3,20 @@
 
 #include "../common/sequencer.h"
 
-namespace NetClient 
-{
-    //struct Socket client_socket;
-
-    //char client_out_buff[1500];
-    //int client_out_buff_n = 11; //header length;
-
-    //void reset_client_out_buffer() {
-    //    client_out_buff_n = 11;
-    //}
-
-    //char* get_client_out_buffer() {
-    //    return client_out_buff;
-    //}
-
-    //int* get_client_out_buffer_n() {
-    //    return &client_out_buff_n;
-    //}
-
-    //int get_socket() {
-    //    return client_socket.socket;
-    //}
-}
-
-
 namespace NetClient {
 
 //class NetPeer NPserver;
 //struct Socket client_socket;
 
-
-char buffer[1500]; //1500 is max ethernet MTU
+//used for incoming data
+char buffer[2000]; //1500 is max ethernet MTU
 
 void init_client() {
 
     NPserver.init();
     update_current_netpeer_time();
-    //init_sequence_numbers(&NPserver); /// FIX
     init_sequencer(&NPserver);
-    //int local_port = 6967+(rand()%32);
     int local_port = 6967+(rand()%32); ///should randomize!
-    //int local_port = 6967;
     struct Socket* s = create_socket(local_port);
 
     //if(s != NULL) free(s);
@@ -62,7 +34,6 @@ void init_client() {
 
     }
     */
-    //reset_client_out_buffer();
     init_sequencer(&NPserver);
 }
 
@@ -79,35 +50,6 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
     //free(p);
     delete p;
 }
-
-/*
-void flush_outgoing_packets() {
-    if(client_out_buff_n  >= 900) {
-        printf("flush_outgoing_packets fail!  Packet would exceed 900 bytes. size=%i\n", client_out_buff_n+11);
-        return;
-    }
-    if(NPserver.connected == 0) {
-        printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
-        return;
-        }
-
-    int n1 = 0;
-    int seq = get_next_sequence_number(&NPserver);
-    PACK_uint16_t(NPserver.client_id, client_out_buff, &n1); //client id
-    PACK_uint8_t(1, client_out_buff, &n1);  //channel 1
-    PACK_uint16_t(seq, client_out_buff, &n1); //sequence number
-    //ack string
-    PACK_uint16_t(get_sequence_number(&NPserver), client_out_buff, &n1); //max seq
-    PACK_uint32_t(generate_outgoing_ack_flag(&NPserver),client_out_buff, &n1); //sequence number
-
-    //printf("writing messages at byte %i \n", n1);
-
-    pviz_packet_sent(seq, client_out_buff_n);
-    int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
-    if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n );}
-    reset_client_out_buffer();
-}
-*/
 
 void attempt_connection_with_server() {
     if(NPserver.connected == 1) {
@@ -155,25 +97,14 @@ int validate_packet(char* buff, int n, struct sockaddr_in* from) {
         return 0;
     }
 
-
-    //if(from->sin_addr.s_addr != NPserver.address.sin_addr.s_addr) {
     if(from->sin_port != NPserver.address.sin_port) {
-        //unsigned int from_address = ntohl( from->sin_addr.s_addr );
         unsigned short from_port = ntohs( from->sin_port );
-        //printf("rogue %i byte packet from IP= %i:%i  Server IP = %i:%i\n", n, from_address,from_port, ntohl(NPserver.address.sin_addr.s_addr), ntohs(NPserver.address.sin_port));
         printf("rogue %i byte packet from IP= %s:%i, expected Server IP = %s:%i\n", n, inet_ntoa(from->sin_addr),from_port, inet_ntoa(NPserver.address.sin_addr), ntohs(NPserver.address.sin_port));
 
         return 1;
     }
     return 1;
-    /*
-        int n1=0;
-        unsigned short message_id, client_id;
-        UNPACK_uint16_t(&message_id, buff, &n1);
-        UNPACK_uint16_t(&client_id, buff, &n1);
-        return 1; /validates
-        printf("WTF:validate_packet\n");
-    */
+
 
     return 0; //does not validate
 }
@@ -190,7 +121,6 @@ void process_incoming_packets() {
     while(1) {
         bytes_received = recvfrom(client_socket.socket, (char*)buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
         if(bytes_received <= 0) {return;}
-        //printf("Packet\n");
         if(validate_packet(buffer, bytes_received, &from)) {
             process_packet(buffer, bytes_received);
         }
@@ -213,8 +143,6 @@ void process_packet(char* buff, int n) {
     uint16_t max_seq;
     uint32_t acks;
 
-    //uint32_t value; //unused
-
     n1=0;
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
@@ -228,11 +156,6 @@ void process_packet(char* buff, int n) {
     UNPACK_uint16_t(&sequence_number, buff, &n1);   //sequence number
     UNPACK_uint16_t(&max_seq, buff, &n1);           //max seq
     UNPACK_uint32_t(&acks, buff, &n1);              //sequence number
-
-    //UNPACK_uint32_t(&value, buff, &n1);
-    //printf("value= %i\n", value);
-    //printf("received packet: sequence number %i from server\n", sequence_number);
-    //printf("---\n");
 
     process_acks(&NPserver, max_seq, acks);
     set_ack_for_received_packet(&NPserver ,sequence_number);
