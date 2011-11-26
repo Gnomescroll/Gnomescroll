@@ -14,6 +14,7 @@
 #include <net_lib/common/sequencer.h>
 #include <net_lib/common/net_peer.hpp>
 
+#include <net_lib/common/packet_buffer.hpp>
 
 struct Socket {
     uint32_t ip;
@@ -22,11 +23,16 @@ struct Socket {
     struct sockaddr_in address;
 };
 
+class NetMessageBuffer; //forward declaration
 
 struct packet_sequence {
     int seq;
     int ack;
     int time;
+
+    class NetMessageBuffer* buffer;   //pointer to buffer
+    int index;  //starting index in buffer
+    int num;    //number of packets
 };
 
 struct packet_sequence2 {
@@ -36,29 +42,110 @@ struct packet_sequence2 {
 
 #include <net_lib/common/packet_buffer.hpp>
 
-/*
-struct net_message_list {
-    class Net_message* net_message_array[1024];
-    int net_message_array_index;
-    int pending_bytes_out;
+static const int PACKET_ARRAY_SIZE = 256;
+
+class Packet {
+    private:
+    public:
+    int time_out;    
+    int message_n; //number of messages
 };
-*/
 
-/*
-    NetMessage
-    class Net_message_buffer* b;
-    char* buff;
-    int len;
+class PacketArray {
+    private:
+    public:
+    int lowest_packet;
+    int packet_index;
+    int free_index;
+    class Net_message* net_message_array[PACKET_ARRAY_SIZE];
+    class PacketArray* next;
+    
+};
+
+static const int NET_MESSAGE_ARRAY_SIZE = 256;
+
+class NetMessageArray {
+    private:
+    public:
+    class Net_message* net_message_array[NET_MESSAGE_ARRAY_SIZE];
     int reference_count;
-*/
+    class NetMessageArray* next;
 
+    NetMessageArray()
+    {
+        for(int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
+        reference_count = 0;
+        next = NULL;
+    }
 
+    inline void retire() 
+    {
+        delete this;
+    }
 
-//class NetPeer {
+    static NetMessageArray* acquire()
+    {
+        return new NetMessageArray;
+    }
+};
 
-//#include <sys/mman.h>
+class NetMessageBuffer {
+    private:
+    public:    
+    //class NetMessageArray* head;
+    //int consume_index;
 
-//int GLOBAL_ = 0;
+    class NetMessageArray* current;
+    int insert_index;
+
+    inline void insert(class Net_message* nm)
+    {
+        current->net_message_array[insert_index] = nm;
+        current->reference_count++;
+        insert_index++;
+        if(insert_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            insert_index = 0;
+            current->next = NetMessageArray::acquire();
+            current = current->next;
+        }
+    }
+
+    //example iterator
+
+    /*
+        1> packet acked: decrement reference to packets
+        2> packet dropped: put packet back onto que
+    */
+    void consume(NetMessageArray* nma, int consume_index, int num) 
+    {
+        int i;
+        class Net_message* nm;
+        for(i=0; i < num; i++)
+        {
+            nm = nma->net_message_array[consume_index];
+            //do something
+
+            nma->reference_count--;
+            /*
+            //optimize this; refence either equal zero at end or going into next buffer
+            if(head->refence_count == 0)
+            {
+                head->retire();
+            }
+            */
+            consume_index++;
+            if(consume_index == NET_MESSAGE_ARRAY_SIZE)
+            {
+                if(nma->reference_count == 0) nma->retire(); //check 1
+                nma = nma->next;
+                consume_index=0;
+            }
+        }
+        if(nma->reference_count == 0) nma->retire(); //check 2
+
+    }
+};
 
 class NetPeer
 {

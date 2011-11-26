@@ -7,8 +7,16 @@
 //when reference count goes to zero, retire
 //check offset, when a write would bring offset over buffer size, get new one
 
+/*
+Benchmarks for buffer size for unreliable message packets
+*/
 //static const int NET_MESSAGE_BUFFER_SIZE = 4092;
-static const int NET_MESSAGE_BUFFER_SIZE = 4096;
+static const int NET_MESSAGE_BUFFER_SIZE = 4096; // 69,000 per second, 74-78k per second
+//static const int NET_MESSAGE_BUFFER_SIZE = 8192; // 79,000 per second
+//static const int NET_MESSAGE_BUFFER_SIZE = 16384; //  81,000 per second
+
+//static const int NET_MESSAGE_BUFFER_SIZE = 32768; //  71,000 per second
+
 /*
     struct net_message_buffer {
         int reference_count;

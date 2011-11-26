@@ -63,7 +63,6 @@ void _net_test() {
 class NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
-    //init_agent_client();
     init_message_handler();
     PacketInit::RegisterMessages();
     ClientState::InitClientState();
@@ -91,41 +90,6 @@ void _NetClientConnect(int a, int b,int c, int d, int _port) {
     physics tick, control input sample ticks and netout ticks should be seperate loops
     */
 
-/*
-void _NetClientTick() {
-
-
-    //Agent_control_state_message acs;
-    //acs.send();
-
-    //printf("net client tick\n");
-    update_current_netpeer_time();
-    pviz_start_frame();
-    //NP_print_delta();
-    _N++;
-    //NP_time_delta1(np.last_packet_time) //time since last packet
-    //pviz_start_frame();
-    NetClient::process_incoming_packets();
-    //NP_time_delta1(np.last_packet_time)
-    NetClient::poll_connection_timeout();
-    if(np->connected == 0) {
-        if(_N % 90 == 0) printf("UDP Socket not connected!\n");
-        if(_N % 90 == 0) NetClient::attempt_connection_with_server();
-        return;
-    }
-
-    //set agent state
-    ClientState::send_control_state();
-
-    NetClient::flush_outgoing_packets();
-    check_for_dropped_packets(np);
-    NetClient::poll_connection_timeout();
-
-    ClientState::ClientTick();
-    return;
-}
-*/
-
 int _N =0;
 
 void _NetClientStartFrame() {
@@ -145,6 +109,8 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) printf("UDP Socket not connected!\n");
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
+    } else {
+        //_net_test(); //benchmark
     }
 
     //deal with retransmission before retransmission

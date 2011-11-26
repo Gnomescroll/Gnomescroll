@@ -62,8 +62,22 @@ inline void Agent_cs_StoC::handle() {}
 inline void agent_damage_StoC::handle() {}
 inline void fire_weapon_StoC::handle() {}
 
+//for benchmarking
+//static int _total = 0;
+//static const int a_DEBUG = 1;
+
 inline void Agent_cs_CtoS::handle() {
     //printf("cs_CtoS: seq= %i \n", seq);
+
+    //for benchmarking
+    /*
+    if(a_DEBUG)
+    {
+        _total++;
+        if(_total % 1000 == 0) printf("%i messages\n", _total);
+        return;
+    }
+    */
 
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
