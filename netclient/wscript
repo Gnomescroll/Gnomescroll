@@ -398,10 +398,24 @@ class lint_ctx(ConfigurationContext):
     cmd = 'lint'
     fun = 'lint'
 
+class profile_ctx(ConfigurationContext):
+    cmd = 'profile'
+    fun = 'profile'
+
+def profile(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.append('-O3')
+    ctx.env.CXXFLAGS.append('-O3')
+    ctx.env.CFLAGS.append('-pg')
+    ctx.env.CXXFLAGS.append('-pg')
+    ctx.env.append_value("LINKFLAGS", "-pg")
+
 def optimized(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')
     ctx.env.CXXFLAGS.append('-O3')
+    #ctx.env.CXXFLAGS.append('-mtune=native')
+    #ctx.env.CXXFLAGS.append('-march=native')
 
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code
 # just throws a shit ton of errors starting from the SDL libraries

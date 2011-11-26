@@ -15,7 +15,7 @@ class Object_pool {
 
     Object* acquire() ;
 
-    void retire(Object* nmb);
+    inline void retire(Object* nmb);
 
     Object_pool();
 
@@ -71,14 +71,14 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
 template <class Object, int BUFFER_POOL_SIZE>
 Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
 {
-    printf("alloc\n");
+    //printf("alloc\n");
 
     //if(tDEBUG) { if(first == NULL) printf("tError1 \n");}
 
     //if first==last, assuming, that first.next == NULL
     if(first == NULL) 
     {
-        printf("first0>next is null\n");
+        printf("First is null: allocate new object pool\n");
         //first = (struct Object*) malloc(sizeof(struct Object))
         //first.next = NULL;
         //last = first; 

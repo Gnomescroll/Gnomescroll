@@ -55,7 +55,8 @@ inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
     current->reference_count++;
 }
 
-inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb) 
+//for unreliable packets, short term storage
+inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb)
 {
     static Net_message_buffer* current = NULL;
     static int remaining = 0;
@@ -74,7 +75,7 @@ inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb)
 }
 
 int Net_message_n = 0;
-const bool Net_message_debug = 1;
+const bool Net_message_debug = 0;
 
 class Net_message {
     private:
@@ -90,8 +91,8 @@ class Net_message {
     void inline decrement_reliable();
     void inline decrement_unreliable();
 
-    static inline class Net_message* acquire_reliable(int length);
-    static inline class Net_message* acquire_unreliable(int length);
+    static class Net_message* acquire_reliable(int length);
+    static class Net_message* acquire_unreliable(int length);
 
     Net_message() {
         reference_count = 0; 
@@ -100,11 +101,35 @@ class Net_message {
     }
 };
 
-class Net_message_pool: public Object_pool<Net_message, 8> {}; //use 4096
+class Net_message_pool: public Object_pool<Net_message, 4096> {}; //use 4096
 
 Net_message_pool net_message_pool;
 
 //Net_message_n++; printf("Created: %i netmessages\n", Net_message_n);
+
+void inline Net_message::decrement_unreliable() 
+{
+    reference_count--;
+    if(reference_count == 0) 
+    {
+        //b->reference_count--;
+        
+        //free(buff); //debug
+        //delete buff; //debug
+
+        b->reference_count--;
+        if(b->reference_count == 0) net_message_buffer_pool2.retire(b);
+        if(Net_message_debug)
+        {
+            Net_message_n--;
+            //printf("Deleted: %i netmessages\n", Net_message_n );
+        }
+
+        net_message_pool.retire(this);
+
+        //delete this; //debug
+    }
+}
 
 void inline Net_message::decrement_reliable() 
 {
@@ -116,43 +141,11 @@ void inline Net_message::decrement_reliable()
         if(Net_message_debug)
         {
             Net_message_n--; 
-            printf("Deleted: %i netmessages\n", Net_message_n );
+            //printf("Deleted: %i netmessages\n", Net_message_n );
         }
         free(buff); //DEBUG
         net_message_pool.retire(this);
     }
-}
-
-void inline Net_message::decrement_unreliable() 
-{
-    reference_count--;
-    if(reference_count == 0) 
-    {
-        b->reference_count--;
-        if(b->reference_count == 0) net_message_buffer_pool2.retire(b);
-        if(Net_message_debug)
-        {
-            Net_message_n--;
-            printf("Deleted: %i netmessages\n", Net_message_n );
-        }
-        free(buff); //debug
-        net_message_pool.retire(this);
-}
-}
-
-class Net_message* Net_message::acquire_reliable(int length)
-{
-    if(Net_message_debug)
-    {
-        Net_message_n++;
-        printf("Created: %i netmessages\n", Net_message_n);
-    }
-    
-    Net_message* t = net_message_pool.acquire();
-    t->len = length;
-    t->buff = new char[length];
-    t->reference_count = 0;
-    return t;
 }
 
 class Net_message* Net_message::acquire_unreliable(int length)
@@ -160,8 +153,27 @@ class Net_message* Net_message::acquire_unreliable(int length)
     if(Net_message_debug)
     {
         Net_message_n++;
-        printf("Created: %i netmessages\n", Net_message_n);
+        //printf("Created: %i netmessages\n", Net_message_n);
+        //if((Net_message_n+1) % 50) printf("Created: %i netmessages\n", Net_message_n);
     }
+    Net_message* t = net_message_pool.acquire();
+    t->len = length;
+    //t->buff = new char[length]; //use pool after debugging
+    get_char_buffer2(length, &t->buff, &t->b); //set buffer and set char pool
+
+    t->reference_count = 0;
+    //printf("length= %i \n", t->len);
+    return t;
+}
+
+class Net_message* Net_message::acquire_reliable(int length)
+{
+    if(Net_message_debug)
+    {
+        Net_message_n++;
+        //printf("Created: %i netmessages\n", Net_message_n);
+    }
+    
     Net_message* t = net_message_pool.acquire();
     t->len = length;
     t->buff = new char[length];

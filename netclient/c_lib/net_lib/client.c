@@ -23,6 +23,43 @@
 
 
 
+#include <c_lib/agent/net_agent.hpp>
+#include <stdlib.h>
+
+void _net_test() {
+    //return;
+
+    int start1 = _GET_MS_TIME();
+    int start =  _GET_MS_TIME();
+    int c = 0;
+    while(1) 
+    {
+        c++;
+        Agent_cs_CtoS a;
+        a.id = 0;
+        a.seq = 5;
+        a.cs = 15;
+        a.theta = 15.60;
+        a.phi = 243.0;
+        int i;
+        for(i=0; i < 70; i++) a.send();
+
+        int ti= _GET_MS_TIME();
+        if(ti - start > 5000) 
+        {
+            printf("%i packets in %i ms, %i per second \n", c, ti - start, c/5);
+            start = ti;
+            c = 0;
+        }
+        NetClient::NPserver.flush_to_net();
+
+        if(ti -start1 > 20000) {
+            exit(0);
+            return;
+        }
+    }
+}
+
 class NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
@@ -109,6 +146,7 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     }
+
     //deal with retransmission before retransmission
     check_for_dropped_packets(np);
 }
@@ -137,8 +175,9 @@ void _NetClientNetOutTick() {
     //ClientState::send_control_state();
 
     check_for_dropped_packets(np);      //check again, probably redundant
-    NetClient::flush_outgoing_packets();
-
+    //NetClient::flush_outgoing_packets();
+    NetClient::NPserver.flush_to_net();
+    
     NetClient::poll_connection_timeout();
 
     ClientState::ClientTick();

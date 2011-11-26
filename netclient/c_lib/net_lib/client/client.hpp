@@ -6,13 +6,11 @@
 #include <stdlib.h>
 
 
-#include "../common/net_lib_common.h"
-#include "../common/sequencer.h"
-#include "../common/net_peer.hpp"
+#include <net_lib/common/net_lib_common.h>
+#include <net_lib/common/message_handler.h>
 
-#include "../common/message_handler.h"
-
-#include "../client/pviz.h"
+#include <net_lib/client/pviz.h>
+#include <net_lib/common/net_peer.hpp>
 
 
 /*
@@ -32,9 +30,13 @@ struct NetClient {
 };
 */
 
+//class Netpeer; //forward declaration
+
 namespace NetClient {
 
 class NetPeer NPserver;
+struct Socket client_socket;
+//int get_socket();
 
 int header_size1();
 

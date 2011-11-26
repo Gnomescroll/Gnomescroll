@@ -33,6 +33,7 @@ class FixedSizeNetPacketToServer {
         virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
         //inline void packet(char* buff, int* buff_n, bool pack);
 
+        /*
         void send() {
             char* buff= NetClient::get_client_out_buffer();
             int* buff_n = NetClient::get_client_out_buffer_n();
@@ -40,9 +41,9 @@ class FixedSizeNetPacketToServer {
             int bytes_written;
             serialize(buff, buff_n, &bytes_written);
         }
-
+        */
  
-        /*
+        
         void send() {
             //char* buff= NetClient::get_client_out_buffer();
             //int* buff_n = NetClient::get_client_out_buffer_n();
@@ -51,22 +52,33 @@ class FixedSizeNetPacketToServer {
             //NetPeer* np = NetClient::NPserver; //NetClient::CLIENT_get_NP()
 
             //Derived::size
-            printf("size= %i\n", Derived::size );
+            
+            //printf("size= %i\n", Derived::size );
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
-            //Net_message* nm = new Net_message;
-            //nm->buff = new char[Derived::size];
-
+            /*
+            if(0) 
+            {
+                nm = new Net_message;
+                nm->buff = new char[Derived::size];
+                nm->len = Derived::size;
+                nm->reference_count = 0;
+                nm->next = NULL;
+            } 
+            */
             int bytes_written;
             int buff_n = 0;
             
             serialize(nm->buff, &buff_n, &bytes_written);
 
-            //NetClient::NPserver.push_unreliable_packet(nm);
-            NetClient::CLIENT_get_NP()->push_unreliable_packet(nm);
+            //printf("id= %i \n", Derived::message_id);
+            //printf("msg_id0= %i \n", (int)nm->buff[0]);
 
-            if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
+            NetClient::NPserver.push_unreliable_packet(nm);
+            //NetClient::CLIENT_get_NP()->push_unreliable_packet(nm);
+
+            //if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }
-        */
+        
 
         //will overflow if more than 64 bytes
         int Size() { char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}

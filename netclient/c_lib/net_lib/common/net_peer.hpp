@@ -58,7 +58,7 @@ struct net_message_list {
 
 //#include <sys/mman.h>
 
-int GLOBAL_ = 0;
+//int GLOBAL_ = 0;
 
 class NetPeer
 {
@@ -68,7 +68,8 @@ class NetPeer
     int connected;
 
     //remote server
-    int socket;
+    struct Socket* socket;
+
     uint32_t ip;
     uint16_t port;
     struct sockaddr_in address;
@@ -121,7 +122,7 @@ class NetPeer
     */
 
     void init() {}
-    
+
     NetPeer() {
         for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
         for(int i=0; i< 256; i++) reliable_net_message_array[i] = NULL;
@@ -132,88 +133,6 @@ class NetPeer
         pending_bytes_out = 0;
     }
 };
-
-
-char net_out_buff[128];
-
-/*
-    Use arrays/pointers/pool later for packets, to remove limits
-*/
-
-void NetPeer::push_unreliable_packet(Net_message* nm) {
-    nm->reference_count++;
-    printf("index= %i \n", unreliable_net_message_array_index);
-    //printf("wtf2= %i \n", this->unreliable_net_message_array_index);
-    printf("this= %x \n", this);
-    printf("watch index= %x \n", &this->unreliable_net_message_array_index);
-    //printf("wtf3= %i \n", NetClient::NPserver.unreliable_net_message_array_index);
-    unreliable_net_message_array[unreliable_net_message_array_index] = nm;
-    unreliable_net_message_array_index++;
-    pending_bytes_out += nm->len;
-    if(unreliable_net_message_array_index > 256) printf("Net_message_list Push_unreliable_packet overflow 1\n");   //debug
-}
-
-void NetPeer::push_reliable_packet(Net_message* np) {
-    reliable_net_message_array[reliable_net_message_array_index] = np;
-    reliable_net_message_array_index++;
-    pending_bytes_out += np->len;
-    if(reliable_net_message_array_index > 256) printf("Net_message_list Push_reliable_packet overflow 2\n");     //debug
-}
-
- 
-//void * memcpy ( void * destination, const void * source, size_t num );
-void NetPeer::flush_to_buffer(char* buff_, int* index) {
-    if(pending_bytes_out > 1500) printf("Net_message_list Error: too much data in packet buffer");
-    Net_message* np;
-    char* offset = *index + buff_;
-    for(int i=0; i< unreliable_net_message_array_index; i++)
-    {
-        np = unreliable_net_message_array[i];
-        memcpy(offset, np->buff, np->len);
-        offset += np->len;
-        np->decrement_unreliable();
-    }     
-    for(int i=0; i< reliable_net_message_array_index; i++)
-    {
-        np = unreliable_net_message_array[i];
-        memcpy(offset, np->buff, np->len);
-        offset += np->len;
-        np->decrement_reliable();
-    }
-    *index = buff_ - offset;
-
-    //channel send here
-    /*
-        Channels write to buffer
-        Channels use the reliable_net_message delivery
-        reliable net_messages encapsolate buffer
-    */
-
-    pending_bytes_out = 0;
-    unreliable_net_message_array_index = 0;
-    reliable_net_message_array_index = 0;
-}
-
-void NetPeer::flush_to_net() {
-    int n1 = 0;
-    int seq = get_next_sequence_number(this);
-    
-    //pack header
-    PACK_uint16_t(client_id, net_out_buff, &n1); //client id
-    PACK_uint8_t(1, net_out_buff, &n1);  //channel 1
-    PACK_uint16_t(seq, net_out_buff, &n1); //sequence number
-    PACK_uint16_t(get_sequence_number(this), net_out_buff, &n1); //max seq
-    PACK_uint32_t(generate_outgoing_ack_flag(this), net_out_buff, &n1); //sequence number
-    //pack body
-    flush_to_buffer(net_out_buff, &n1);
-
-    #ifdef DC_CLIENT
-    pviz_packet_sent(seq, n1);
-    #endif
-
-    int sent_bytes = sendto( socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&address, sizeof(struct sockaddr_in) );
-    if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
-}
 
 
 #define TTL_MAX_DEFAULT 120
