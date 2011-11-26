@@ -3,6 +3,7 @@
 //#ifdef DC_CLIENT
 
 #include <c_lib/agent/net_agent.hpp>
+#include <c_lib/agent/agent_status.hpp>
 
 #define AGENT_STATE_HISTORY_SIZE 8
 #define AGENT_INTERPOLATION_DECAY 0.8f
@@ -16,12 +17,7 @@ enum active_camera_states {
     CameraStatesEnd
 };
 
-class Agent_status {
-    public:
-        int health;
-};
-
-class PlayerAgent_state: public Agent_status {
+class PlayerAgent_state {
     private:
     public:
 
@@ -142,13 +138,12 @@ class PlayerAgent_state: public Agent_status {
         //camera properties
         float camera_height_scale;
         float camera_height();
-        
+
+        PlayerAgent_status status;
 
         Agent_cs_CtoS cs_0; //last control state
 
-
-
-        PlayerAgent_state() {
+        PlayerAgent_state() : status(this) {
             //client side state variables
             jump_ready = false;
             crouching = false;
@@ -185,8 +180,6 @@ class PlayerAgent_state: public Agent_status {
             box.c_height = AGENT_HEIGHT_CROUCHED;
             box.box_r = AGENT_BOX_RADIUS;
         }
-
-        ~PlayerAgent_state() {}
 
 };
 

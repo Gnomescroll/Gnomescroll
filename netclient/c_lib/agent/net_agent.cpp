@@ -34,7 +34,7 @@ inline void agent_damage_StoC::handle() {
     if(a == NULL) {
         return;
     }
-    a->took_damage(dmg);
+    a->event.took_damage(dmg);
 }
 
 // fire weapon action
@@ -42,7 +42,13 @@ inline void fire_weapon_StoC::handle() {
     // play weapon firing animation and sounds
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
-    //a->fired_weapon(weapon_id);
+    a->event.fired_weapon(weapon_id);
+}
+
+inline void agent_dead_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->event.died();
 }
 
 inline void Agent_cs_CtoS::handle() {}

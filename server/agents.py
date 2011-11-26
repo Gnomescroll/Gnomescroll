@@ -486,7 +486,7 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         x = randrange(3*(x/8), 5*(x/8))
         y = randrange(3*(x/8), 5*(y/8))
         b_height = int(self.block_height())
-        b_height = min(1, b_height)
+        b_height = max(1, b_height)
         z = terrain_map.get_highest_open_block(x,y, b_height)
         if z < 0:
             z = terrain_map.zmax

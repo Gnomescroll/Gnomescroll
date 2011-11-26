@@ -277,7 +277,7 @@ def build(bld):
 
     # sound
     bld(features='c cshlib',
-        source=['sound/sound.c'],
+        source=['c_lib/sound/sound.c'],
 
         use=sound_libraries,
         lib=sound_libraries,
@@ -290,9 +290,9 @@ def build(bld):
     )
 
     bld(features='c cshlib pyext',      #cython
-        source=['sound/sounds.pyx'],
+        source=['c_lib/c_lib_sound.pyx'],
         use=['csound'],
-        target='sound.sounds')
+        target='c_lib.c_lib_sound')
 
 
     # final

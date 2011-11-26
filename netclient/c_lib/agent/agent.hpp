@@ -24,7 +24,10 @@ void init_agents_to_draw();
 void clear_agents_to_draw();
 void set_agents_to_draw(int* ids, int ct);
 
+#include <c_lib/agent/agent_event.hpp>
 #endif
+#include <c_lib/agent/agent_status.hpp>
+
 
 //store last network messsage
 
@@ -101,7 +104,7 @@ class Agent_state {
 
         int cs_seq; // <--current counter
 
-    public:
+    public:    
         class AgentState s; //state current
         class AgentState state_snapshot;
 
@@ -112,8 +115,11 @@ class Agent_state {
 
         int _new_control_state; //Deprecate
 
+        class Agent_status status;
+
         #ifdef DC_CLIENT
         class Agent_vox* vox;
+        class Agent_event event;
         #endif
 
         #ifdef DC_SERVER
@@ -167,9 +173,6 @@ class Agent_state {
             //dead = true;
         }
 
-        // side effects of taking damage. dont modify health/death here
-        void took_damage(int dmg);
-
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
 
@@ -188,7 +191,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     public:
         void draw();
         void draw(int);
-        
+
         Agent_state* filtered_agents[AGENT_MAX]; // tmp array for filtering agents
         int agents_within_sphere(float x, float y, float z, float radius) {
             int ct = 0;

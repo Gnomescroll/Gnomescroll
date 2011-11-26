@@ -18,7 +18,7 @@ import c_lib.c_lib_agents as cAgents
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_sdl as cSDL
 if opts.sound:
-    import sound.sounds as sounds
+    import c_lib.c_lib_sounds as sounds
 
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
