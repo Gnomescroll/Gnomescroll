@@ -53,13 +53,13 @@ void set_server(int a, int b, int c, int d, unsigned short port);
 int validate_packet(char* buffer, int n, struct sockaddr_in*);
 void process_incoming_packets();
 void process_packet(char* buffer, int n);
-void process_outgoing_packets();
+//void process_outgoing_packets(); //does not exist
 
 int poll_connection_timeout();
 int decrement_ttl();
 
 
-void flush_outgoing_packets();
+//void flush_outgoing_packets();
 
 //extern char client_out_buff[1500];
 //extern int client_out_buff_n; //buffer for writing packets out to;

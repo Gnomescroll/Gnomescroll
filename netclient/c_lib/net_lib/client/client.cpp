@@ -7,20 +7,20 @@ namespace NetClient
 {
     //struct Socket client_socket;
 
-    char client_out_buff[1500];
-    int client_out_buff_n = 11; //header length;
+    //char client_out_buff[1500];
+    //int client_out_buff_n = 11; //header length;
 
-    void reset_client_out_buffer() {
-        client_out_buff_n = 11;
-    }
+    //void reset_client_out_buffer() {
+    //    client_out_buff_n = 11;
+    //}
 
-    char* get_client_out_buffer() {
-        return client_out_buff;
-    }
+    //char* get_client_out_buffer() {
+    //    return client_out_buff;
+    //}
 
-    int* get_client_out_buffer_n() {
-        return &client_out_buff_n;
-    }
+    //int* get_client_out_buffer_n() {
+    //    return &client_out_buff_n;
+    //}
 
     //int get_socket() {
     //    return client_socket.socket;
@@ -62,7 +62,7 @@ void init_client() {
 
     }
     */
-    reset_client_out_buffer();
+    //reset_client_out_buffer();
     init_sequencer(&NPserver);
 }
 
@@ -80,6 +80,7 @@ void set_server(int a, int b, int c, int d, unsigned short port) {
     delete p;
 }
 
+/*
 void flush_outgoing_packets() {
     if(client_out_buff_n  >= 900) {
         printf("flush_outgoing_packets fail!  Packet would exceed 900 bytes. size=%i\n", client_out_buff_n+11);
@@ -99,12 +100,6 @@ void flush_outgoing_packets() {
     PACK_uint16_t(get_sequence_number(&NPserver), client_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(&NPserver),client_out_buff, &n1); //sequence number
 
-/*
-    if(n1 != 11) {
-        printf("flush_outgoing_packets: header should be 11 bytes, is %i\n", n1);
-        return;
-    }
-*/
     //printf("writing messages at byte %i \n", n1);
 
     pviz_packet_sent(seq, client_out_buff_n);
@@ -112,6 +107,7 @@ void flush_outgoing_packets() {
     if ( sent_bytes != client_out_buff_n) { printf( "flush_outgoing_packets: failed to send packet: return value = %i of %i\n", sent_bytes, client_out_buff_n );}
     reset_client_out_buffer();
 }
+*/
 
 void attempt_connection_with_server() {
     if(NPserver.connected == 1) {
