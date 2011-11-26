@@ -31,52 +31,13 @@ class FixedSizeNetPacketToServer {
         }
         
         virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
-        //inline void packet(char* buff, int* buff_n, bool pack);
 
-        /*
-        void send() {
-            char* buff= NetClient::get_client_out_buffer();
-            int* buff_n = NetClient::get_client_out_buffer_n();
-            if(*buff_n > 800) { printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n); return; }
-            int bytes_written;
-            serialize(buff, buff_n, &bytes_written);
-        }
-        */
- 
         
         void send() {
-            //char* buff= NetClient::get_client_out_buffer();
-            //int* buff_n = NetClient::get_client_out_buffer_n();
-            //if(*buff_n > 800) { printf("Cannot send message: output buffer is full! %i bytes\n", *buff_n); return; }
-            
-            //NetPeer* np = NetClient::NPserver; //NetClient::CLIENT_get_NP()
-
-            //Derived::size
-            
-            //printf("size= %i\n", Derived::size );
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
-            /*
-            if(0) 
-            {
-                nm = new Net_message;
-                nm->buff = new char[Derived::size];
-                nm->len = Derived::size;
-                nm->reference_count = 0;
-                nm->next = NULL;
-            } 
-            */
-
             int buff_n = 0;
-            //int bytes_written;            
-            //serialize(nm->buff, &buff_n, &bytes_written);
             serialize(nm->buff, &buff_n);
-
-            //printf("id= %i \n", Derived::message_id);
-            //printf("msg_id0= %i \n", (int)nm->buff[0]);
-
             NetClient::NPserver.push_unreliable_packet(nm);
-            //NetClient::CLIENT_get_NP()->push_unreliable_packet(nm);
-
             //if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }
         
