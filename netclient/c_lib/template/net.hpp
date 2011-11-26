@@ -17,11 +17,11 @@ class FixedSizeNetPacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
-        void serialize(char* buff, int* buff_n, int* size) {
+        void serialize(char* buff, int* buff_n) { //, int* size
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, true);
             packet(buff, buff_n, true);
-            *size = *buff_n - _buff_n;
+            //*size = *buff_n - _buff_n;
         }
         inline void unserialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
@@ -65,10 +65,11 @@ class FixedSizeNetPacketToServer {
                 nm->next = NULL;
             } 
             */
-            int bytes_written;
+
             int buff_n = 0;
-            
-            serialize(nm->buff, &buff_n, &bytes_written);
+            //int bytes_written;            
+            //serialize(nm->buff, &buff_n, &bytes_written);
+            serialize(nm->buff, &buff_n);
 
             //printf("id= %i \n", Derived::message_id);
             //printf("msg_id0= %i \n", (int)nm->buff[0]);
