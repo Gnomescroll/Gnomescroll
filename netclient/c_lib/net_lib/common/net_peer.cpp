@@ -86,6 +86,7 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
 
 void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
 {
+    return;
     //see if there is room for channel bytes
     /*
     if(channel_out_byte != 0)
