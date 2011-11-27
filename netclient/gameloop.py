@@ -307,10 +307,9 @@ class App(object):
                 self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
 
                 if opts.diagnostic_hud:
-                    c_lib.terrain_map.draw_vbo_indicator(settings.map_vbo_indicator_x_offset,settings.map_vbo_indicator_y_offset, -0.3)
-                    P2.draw_perf_graph(settings.fps_perf_graph_x_offset, settings.fps_perf_graph_y_offset,-0.30)
-                    _pviz_draw(settings.network_latency_graph_x_offset,settings.network_latency_graph_y_offset, -.30)
-                    cHUD.draw_noise_viz(200.0, 200.0, -0.5) #noise histogram
+                    c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
+                    P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)
+                    _pviz_draw(opts.network_latency_graph_x_offset,opts.network_latency_graph_y_offset, -.30)
 
             P.event("SDL flip")
             cSDL.flip()
