@@ -722,6 +722,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
         if fire_command:
             if fire_command == 'hit_block':
                 self.hit_block()
+            elif fire_command == 'hitscan':
+                self.hitscan()
             else:
                 if weapon.hitscan:
                     self.hitscan(weapon)
@@ -731,6 +733,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
     def hitscan(self, weapon=None):
         if self.team.is_viewers():
             return
+
+        self.fire_hitscan()
+        return
 
         if weapon is not None:
             weapon.animation(agent=self).play()

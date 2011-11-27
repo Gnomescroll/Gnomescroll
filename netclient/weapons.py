@@ -140,6 +140,10 @@ class HitscanLaserGun(LaserGun):
         LaserGun.__init__(self, id=id, owner=owner, clip=clip, state=state, **kwargs)
         self._animation = animations.HitscanLaserGunAnimation
 
+    def fire(self):
+        LaserGun.fire(self)
+        return 'hitscan'
+
     def animation(self, target=None, agent=None, vector=None):
         if agent is None:
             agent = GameStateGlobal.agentList[self.owner]

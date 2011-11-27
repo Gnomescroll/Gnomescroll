@@ -80,6 +80,10 @@ cdef extern from "./agent/agent.hpp":
         void destroy(int _id)
         void where()
 
+cdef extern from "./agent/player_agent_action.hpp":
+    cdef cppclass PlayerAgent_action:
+        void hit_block()
+        void fire()
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
@@ -89,7 +93,7 @@ cdef extern from "./agent/player_agent.hpp":
         AgentState camera_state
         void toggle_camera_mode()
         void pump_camera() #update camera
-        void hit_block()
+        PlayerAgent_action action
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
@@ -282,7 +286,10 @@ class PlayerAgentWrapper(object):
         return [x, y, z+z_off]
 
     def hit_block(self):
-        playerAgent_state.hit_block()
+        playerAgent_state.action.hit_block()
+
+    def fire_hitscan(self):
+        playerAgent_state.action.fire()
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)

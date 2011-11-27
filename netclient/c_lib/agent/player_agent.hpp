@@ -4,6 +4,7 @@
 
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/agent_status.hpp>
+#include <c_lib/agent/player_agent_action.hpp>
 
 #define AGENT_STATE_HISTORY_SIZE 8
 #define AGENT_INTERPOLATION_DECAY 0.8f
@@ -96,9 +97,6 @@ class PlayerAgent_state {
             }
         }
 
-        //Weapon active_weapon;
-        void hit_block();
-
         //control state history buffer
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence
@@ -140,10 +138,11 @@ class PlayerAgent_state {
         float camera_height();
 
         PlayerAgent_status status;
+        PlayerAgent_action action;
 
         Agent_cs_CtoS cs_0; //last control state
 
-        PlayerAgent_state() : status(this) {
+        PlayerAgent_state() : status(this), action(this) {
             //client side state variables
             jump_ready = false;
             crouching = false;
