@@ -76,6 +76,8 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     */
 
     pending_bytes_out = 0;
+    pending_unreliable_bytes_out = 0;
+
     unreliable_net_message_array_index = 0;
 
     *_index = index;    //bytes out
@@ -117,25 +119,28 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     /*
         Retire on packet ack, not on dispatch
     */
-    for(int i=0; i < num; i++)
+
+    for(int i=0; i < rnma_pending_messages; i++)
     {
-        nm = nma_read->net_message_array[rnma_read_index];
+        nm = rnma_read->net_message_array[rnma_read_index];
         //do something
 
         nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
 
-        rnma_nma->reference_count--;
+        //rnma_nma->reference_count--; //wtf, decrement on confirmation
 
         rnma_read_index++;
         if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
         {
             //if(nma->reference_count == 0) nma->retire(); //check 1
             rnma_read = rnma_read->next;
-            read_index=0;
+            rnma_read_index=0;
         }
     }
+
+
     //if(nma->reference_count == 0) nma->retire(); //check 2
 
     //channel send here
