@@ -23,16 +23,16 @@ struct Socket {
     struct sockaddr_in address;
 };
 
-class NetMessageBuffer; //forward declaration
+class NetMessageArray; //forward declaration
 
 struct packet_sequence {
     int seq;
     int ack;
     int time;
 
-    class NetMessageBuffer* buffer;   //pointer to buffer
-    int index;  //starting index in buffer
-    int num;    //number of packets
+    class NetMessageArray* nmb;   //pointer to buffer
+    int read_index;  //starting index in buffer
+    int messages_n;    //number of packets
 };
 
 struct packet_sequence2 {
@@ -117,7 +117,7 @@ class NetPeer
     //void push_reliable_packet(Net_message* np);
 
     inline void flush_unreliable_to_buffer(char* buff, int* index);
-    inline void flush_reliable_to_buffer(char* buff_, int* _index, struct* packet_sequence);
+    inline void flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps);
     void flush_to_net();
 
     //reliable packets

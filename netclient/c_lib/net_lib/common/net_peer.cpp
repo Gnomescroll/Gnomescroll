@@ -53,8 +53,8 @@ void NetPeer::push_reliable_packet(Net_message* np) {
 //void * memcpy ( void * destination, const void * source, size_t num );
 void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     //if(pending_bytes_out > 1500) printf("NetPeer Error 1: too much data in packet buffer, %i \n", pending_bytes_out);
-    if(pending_unreliable_bytes_out > 1500) printf("NetPeer Error 2: unreliable bytes out exceeds 1500, %i \n", pending_unreliable_bytes_out)
-    Net_message* nm;
+    if(pending_unreliable_bytes_out > 1500) printf("NetPeer Error 2: unreliable bytes out exceeds 1500, %i \n", pending_unreliable_bytes_out);
+    class Net_message* nm;
     int index = *_index;
     for(int i=0; i< unreliable_net_message_array_index; i++)
     {
@@ -82,7 +82,7 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
 }
 
 
-void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct* packet_sequence)
+void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
 {
     //see if there is room for channel bytes
     /*
@@ -94,6 +94,7 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct* packet_
     if(pending_reliable_bytes_out + index < 1500)
     { 
         pop stuff from channel onto stack
+
     }
     else
     {
@@ -101,31 +102,37 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct* packet_
     }
     */
 
+    ps->nmb = rnma_read;
+    ps->read_index = rnma_read_index;
+    ps->messages_n = rnma_pending_messages;
+
     int index = *_index;
+
+    //NetMessageArray* nma = rnma_read;
+    //int read_index = rnma_read_index;
+    //int num = rnma_pending_messages;
+
     class Net_message* nm;
-    const NetMessageArray* nma = rnma_read;
-    const int read_index = rnma_read_index;
-    const int num = rnma_pending_messages;
 
     /*
         Retire on packet ack, not on dispatch
     */
     for(int i=0; i < num; i++)
     {
-        nm = nma->net_message_array[read_index];
+        nm = nma_read->net_message_array[rnma_read_index];
         //do something
 
         nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
 
-        nma->reference_count--;
+        rnma_nma->reference_count--;
 
-        read_index++;
-        if(read_index == NET_MESSAGE_ARRAY_SIZE)
+        rnma_read_index++;
+        if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
         {
             //if(nma->reference_count == 0) nma->retire(); //check 1
-            nma = nma->next;
+            rnma_read = rnma_read->next;
             read_index=0;
         }
     }
@@ -140,7 +147,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct* packet_
 
 
     rnma_pending_messages = 0;
-    reliable_net_message_array_index = 0;
 
     *_index = index;    //bytes out
 }
