@@ -19,6 +19,7 @@ void Agent_event::took_damage(int dmg) {
 
 void Agent_event::died() {
     a->status.dead = true;
+    printf("UR DEAD\n");
 }
 
 #endif

@@ -103,7 +103,6 @@ void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
     // update internal state
     if (dmg) {
         status.apply_damage(dmg);
-        printf("-%d :: %d\n", dmg, status.health);
         agent_health_StoC* health_msg = new agent_health_StoC(id, status.health);
         health_msg->sendToClient(client_id);
 

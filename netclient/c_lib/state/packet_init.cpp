@@ -28,6 +28,7 @@ void RegisterMessages() {
     agent_damage_StoC::register_client_packet();
     // player health update
     agent_health_StoC::register_client_packet();
+    agent_dead_StoC::register_client_packet();
 
     // block value change
     block_StoC::register_client_packet();

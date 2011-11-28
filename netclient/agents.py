@@ -389,11 +389,11 @@ class AgentModel(AgentWrapper):
         self.y_int = int(state[1])
         self.z_int = int(state[2])
 
-        if health is None:
-            self.health = self.HEALTH_MAX
-        else:
-            self.health = health
-        self.dead = bool(dead)
+        #if health is None:
+            #self.health = self.HEALTH_MAX
+        #else:
+            #self.health = health
+        #self.dead = bool(dead)
 
         self.owner = owner
 
@@ -404,22 +404,22 @@ class AgentModel(AgentWrapper):
             self._tick_physics()
 
     def update_info(self, **agent):
-        old_health = health = self.health
+        #old_health = health = self.health
         args = []
-        was_alive = not self.dead
+        #was_alive = not self.dead
         if 'id' in agent:
             args.append(self.id)
             self.id = agent['id']
-        if 'health' in agent:
-            self.health = agent['health']
-            health = self.health
-            if health < old_health:
-                self.take_damage(old_health - health)
-        if 'dead' in agent:
-            self.dead = bool(agent['dead'])
-            if was_alive and self.dead:
-                self.bleed()
-                self.take_damage(old_health)
+        #if 'health' in agent:
+            #self.health = agent['health']
+            #health = self.health
+            #if health < old_health:
+                #self.take_damage(old_health - health)
+        #if 'dead' in agent:
+            #self.dead = bool(agent['dead'])
+            #if was_alive and self.dead:
+                #self.bleed()
+                #self.take_damage(old_health)
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
 
@@ -436,9 +436,9 @@ class AgentModel(AgentWrapper):
         if 'team' in agent:
             self.team = GameStateGlobal.teamList[agent['team']]
 
-        if not was_alive and not self.dead:
-            print "REVIVING"
-            print self.pos()
+        #if not was_alive and not self.dead:
+            #print "REVIVING"
+            #print self.pos()
 
         GameStateGlobal.agentList.update(self, *args)
 

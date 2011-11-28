@@ -179,7 +179,7 @@ class AgentWrapper(object):
         'box_height', 'b_height',
         'box_r',
         #'crouching',
-        'health',
+        'health', 'dead',
     ]
 
     def __init__(self, int id):
@@ -234,6 +234,8 @@ class AgentWrapper(object):
 
         elif name == 'health':
             return a.status.health
+        elif name == 'dead':
+            return a.status.dead
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError

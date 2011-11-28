@@ -75,6 +75,7 @@ inline void Agent_cs_StoC::handle() {}
 inline void agent_damage_StoC::handle() {}
 inline void fire_weapon_StoC::handle() {}
 inline void agent_health_StoC::handle() {}
+inline void agent_dead_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
