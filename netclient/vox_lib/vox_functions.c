@@ -354,6 +354,9 @@ int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x
     return _ray_cast_collision(vo, x,y,z,x1,y1,z1);
 }
 
+// xyz1 is origin
+// xyz2 is normalized orientation
+// vo is list of voxel structs to check against
 int _ray_cast_collision(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2) {
     float t;
     float x0,y0,z0;

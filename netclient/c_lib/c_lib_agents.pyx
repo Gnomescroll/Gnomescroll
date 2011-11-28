@@ -50,13 +50,12 @@ cdef extern from "./agent/agent.hpp":
         bool crouching
         bool jump_ready
  
-#Agent_state 
-cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_state:
         int id
         AgentState s
         Agent_collision_box box   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
         #void teleport(float x,float y,float z)
+        Agent_status status
 
 cdef extern from "./agent/agent.hpp":
     void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
@@ -174,7 +173,8 @@ class AgentWrapper(object):
         'crouch_height','c_height',
         'box_height', 'b_height',
         'box_r',
-        #'crouching'
+        #'crouching',
+        'health',
     ]
 
     def __init__(self, int id):
@@ -227,6 +227,9 @@ class AgentWrapper(object):
         #elif name == 'crouching':
         #    return a.s.crouching
 
+        elif name == 'health':
+            return a.status.health
+            
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
         

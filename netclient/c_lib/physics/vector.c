@@ -8,6 +8,13 @@ float vector_dot(struct Vector* v1, struct Vector* v2) {
     return d;
 }
 
+float vector_dot1(float x, float y, float z, float a, float b, float c) {
+    float d;
+    d = x*a + y*b + z*c;
+    //printf("dot= %f \n", d);
+    return d;
+}
+
 void print_vector_dot(struct Vector v1, struct Vector v2) {
     float d;
     d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
@@ -18,6 +25,14 @@ float vector_length(struct Vector *v) {
     float l;
     l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
     v->x /= l; v->y /=l; v->z /=l;
+    //printf("l= %fs \n", l);
+    return l;
+}
+
+float vector_length1(float x, float y, float z) {
+    float l;
+    l = sqrt(x*x + y*y + z*z);
+    x /= l; y /=l; z /=l;
     //printf("l= %fs \n", l);
     return l;
 }
@@ -59,4 +74,14 @@ void print_vector(struct Vector * v) {
 
 float distance(float x, float y, float z, float x1, float y1, float z1) {
     return sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y) + (z1-z)*(z1-z));
+}
+
+float angle_between_vectors(float x, float y, float z, float a, float b, float c) {
+    float angle;
+    float dot = vector_dot1(x,y,z, a,b,c);
+    float len1 = vector_length1(x,y,z);
+    float len2 = vector_length1(a,b,c);
+
+    angle = acos(dot / (len1 * len2));
+    return angle;
 }
