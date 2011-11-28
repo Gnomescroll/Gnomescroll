@@ -31,6 +31,11 @@ cdef extern from "./physics/vector.h":
 
 from libcpp cimport bool
 
+cdef extern from "./agent/agent_status.hpp":
+    cdef cppclass Agent_status:
+        int health
+        bool dead
+        
 #collision box
 cdef extern from "./agent/agent.hpp":
     cdef struct Agent_collision_box:
