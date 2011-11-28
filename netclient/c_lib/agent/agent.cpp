@@ -25,7 +25,7 @@ void Agent_list::draw()
     for(i=0; i<n_agents_to_draw; i++) { //max_n
         j = agents_to_draw[i];
         if (j < 0) continue;
-        if(a[j] != NULL) {
+        if(a[j] != NULL && !a[j]->status.dead) {
           a[j]->draw();
         }
     }
@@ -47,7 +47,7 @@ void Agent_list::draw(int all)
     //glEnable(GL_CULL_FACE);   // for bounding box lines (disabled)
 
     for(i=0; i<n_max; i++) { //max_n
-        if(a[i] != NULL) {
+        if(a[i] != NULL && !a[i]->status.dead) {
             printf("SHOULD DRAW AGENT %d\n", i);
             a[i]->draw();
         }
@@ -103,13 +103,6 @@ void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
     // update internal state
     if (dmg) {
         status.apply_damage(dmg);
-        agent_health_StoC* health_msg = new agent_health_StoC(id, status.health);
-        health_msg->sendToClient(client_id);
-
-        if (status.dead) {
-            agent_dead_StoC* dead_msg = new agent_dead_StoC(id);
-            dead_msg->broadcast();
-        }
     }
 }
 

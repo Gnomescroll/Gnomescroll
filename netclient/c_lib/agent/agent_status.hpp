@@ -10,7 +10,6 @@ class Base_status {
     public:
         int health;
         bool dead;
-        int apply_damage(int dmg);
 
         Base_status() : health(AGENT_HEALTH), dead(false) {}
 };
@@ -26,6 +25,10 @@ class Agent_status: public Base_status {
 
     public:
         Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
+
+        int apply_damage(int dmg);
+        void die();
+
 };
 
 // Use for:
