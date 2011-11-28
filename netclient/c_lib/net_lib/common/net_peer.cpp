@@ -171,21 +171,14 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
         nm = nma->net_message_array[nma_index];
         //do something
 
-        memcpy(buff_+index, nm->buff, nm->len);
-        index += nm->len;
-
-        //rnma_nma->reference_count--; //wtf, decrement on confirmation
-
         nma_index++;
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
         {
-            //if(nma->reference_count == 0) nma->retire(); //check 1
             nma = nma->next;
             nma_index=0;
         }
     }
 
-    //rnma_pending_messages = 0;
 }
 
 void NetPeer::ack_packet(struct packet_sequence* ps)
@@ -200,11 +193,11 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
 
     for(int i=0; i < num; i++)
     {
-        nm = rnma->net_message_array[nma_index];
+        nm = nma->net_message_array[nma_index];
         nm->decrement_reliable();
         //do something
 
-        nma_nma->reference_count--;    //decrement on confirmation
+        nma->reference_count--;    //decrement on confirmation
 
         nma_index++;
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
