@@ -90,18 +90,6 @@ void Agent_state::teleport(float x,float y,float z) {
     A.broadcast();
 }
 
-void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
-
-    // forward dmg indicator packet
-    agent_damage_StoC* msg = new agent_damage_StoC(id, dmg);
-    msg->broadcast();
-
-    // update internal state
-    if (dmg) {
-        status.apply_damage(dmg);
-    }
-}
-
 // assume box_r < 1
 
 #include <math.h>

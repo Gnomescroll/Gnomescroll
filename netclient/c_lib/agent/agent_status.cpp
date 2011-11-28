@@ -14,25 +14,48 @@
  *
  */
 
-int Agent_status::apply_damage(int dmg) {
-    if (dead) return 0;
+int Agent_status::apply_damage(int dmg, int inflictor_id) {
+    if (dead) return health;
     
+    // forward dmg indicator packet
+    agent_damage_StoC* dmg_msg = new agent_damage_StoC(a->id, dmg);
+    dmg_msg->broadcast();
+
+    if (!dmg) return health;
+
     health -= dmg;
     health = (health < 0) ? 0 : health;
 
     agent_health_StoC* health_msg = new agent_health_StoC(a->id, health);
     health_msg->sendToClient(a->client_id);
 
-    if (!health) die();
+    if (!health) die(inflictor_id);
     
     return health;
 }
 
-void Agent_status::die() {
-    if (dead) return;
+int Agent_status::die() {
+    if (dead) return 0;
     dead = true;
+    deaths++;
     agent_dead_StoC* dead_msg = new agent_dead_StoC(a->id, dead);
     dead_msg->broadcast();
+    return 1;
+}
+
+int Agent_status::die(int inflictor_id) {
+    int killed = die();
+    if (killed) {
+        Agent_state* killer = STATE::agent_list.get(inflictor_id);
+        if (killer != NULL) {
+            killer->status.kill(a->id);
+        }
+    }
+    return killed;
+}
+
+void Agent_status::kill(int victim_id) {
+    kills++;
 }
 
 void Agent_status::get_spawn_point(int* spawn) {

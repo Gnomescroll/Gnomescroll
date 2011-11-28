@@ -155,7 +155,7 @@ inline void hitscan_agent_CtoS::handle() {
     if (target==NULL) return;
     // apply damage
     int dmg = 25;
-    target->apply_damage(dmg);
+    target->status.apply_damage(dmg, id);
     // TODO: Use weapon dmg. Use body_part
     printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
 }

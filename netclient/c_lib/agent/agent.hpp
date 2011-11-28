@@ -167,13 +167,6 @@ class Agent_state {
 
         void draw();
 
-        //int health;
-        //bool dead;
-        void apply_damage(int dmg);
-        void die() {
-            //dead = true;
-        }
-
         Agent_state(int _id); //default constructor
         Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
 

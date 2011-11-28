@@ -10,7 +10,7 @@ static float grenade_proj_mtrx[16];
 #include <c_lib/state/server_state.hpp>
 
 
-Grenade::Grenade(int id) {
+Grenade::Grenade(int id) : owner(-1) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
                    // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
     #ifdef DC_SERVER
@@ -19,7 +19,7 @@ Grenade::Grenade(int id) {
     #endif
 }
 
-Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz) {
+Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz) : owner(-1) {
     create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
                    // particle, _id,      type,   x,y,z vx,vy,vz, ttl, ttl_max
     #ifdef DC_SERVER
@@ -87,7 +87,7 @@ void Grenade::explode() {
     num_agents = ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
 
     for (i=0; i<num_agents; i++) {
-        ServerState::agent_list.filtered_agents[i]->apply_damage(GRENADE_SPLASH_DAMAGE); // need to be able to pass owner & suicidal arguments to apply_damage
+        ServerState::agent_list.filtered_agents[i]->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner); // need to be able to pass owner & suicidal arguments to apply_damage
     }
     
     // find all blocks in radius, destroy/damage

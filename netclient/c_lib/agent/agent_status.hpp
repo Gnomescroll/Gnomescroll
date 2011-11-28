@@ -12,8 +12,16 @@ class Base_status {
         int health;
         bool dead;
         int respawn_countdown;
+        unsigned int kills;
+        unsigned int deaths;
         
-        Base_status() : health(AGENT_HEALTH), dead(false), respawn_countdown(RESPAWN_TICKS) {}
+        Base_status() :
+            health(AGENT_HEALTH),
+            dead(false),
+            respawn_countdown(RESPAWN_TICKS),
+            kills(0),
+            deaths(0)
+        {}
 };
 
 // Use for:
@@ -29,8 +37,10 @@ class Agent_status: public Base_status {
     public:
         Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
 
-        int apply_damage(int dmg);
-        void die();
+        int apply_damage(int dmg, int inflictor_id);
+        int die();
+        int die(int inflictor_id);
+        void kill(int victim_id);
         void respawn();
 
 };

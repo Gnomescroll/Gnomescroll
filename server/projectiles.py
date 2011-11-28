@@ -158,7 +158,7 @@ class Grenade(Projectile):
 
         self.state = x,y,z, vx,vy,vz  # this is static!
 
-        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl)
+        self.g_index = c_obj._create_grenade(x,y,z, vx,vy,vz, ttl, owner)
 
     def pos(self):
         return

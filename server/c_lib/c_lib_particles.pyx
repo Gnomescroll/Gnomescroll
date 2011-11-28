@@ -17,6 +17,7 @@ cdef extern from "./particles/particles.hpp":
 cdef extern from "./particles/grenade.hpp":
     cdef cppclass Grenade:
         Particle2 particle
+        void set_owner(int owner)
 
     cdef cppclass Grenade_list:
         Grenade* get(int id)
@@ -75,10 +76,11 @@ def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)
 
 # Does not use TTL!! Can't cook grenades without TTL set
-def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):
+def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int owner):
     cdef Grenade* grenade
     grenade = grenade_list.create(x,y,z, vx,vy,vz)
     if grenade is not NULL:
+        grenade.set_owner(owner)
         return grenade.particle.id
     return -1
 
