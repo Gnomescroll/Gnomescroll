@@ -43,7 +43,7 @@ void _net_test() {
         a.theta = 15.60;
         a.phi = 243.0;
         int i;
-        for(i=0; i < 70; i++) a.send();
+        for(i=0; i < 75; i++) a.send(); //70
 
         int ti= _GET_MS_TIME();
         if(ti - start > 5000) 
@@ -111,7 +111,7 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     } else {
-        _net_test(); //benchmark
+        //_net_test(); //benchmark
     }
 
     //deal with retransmission before retransmission
