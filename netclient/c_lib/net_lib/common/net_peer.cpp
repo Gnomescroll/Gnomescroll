@@ -105,6 +105,8 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
 
+    if(rnma_pending_messages == 0) return;
+
     int index = *_index;
     if(pending_reliable_bytes_out + index > 1500) printf("NetPeer error: reliable bytes out overflows 1500 byte buffer\n");
     //NetMessageArray* nma = rnma_read;
@@ -148,6 +150,7 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
 
 void NetPeer::resend_packet(struct packet_sequence* ps)
 {
+    if(ps->messages_n == 0) return;
 
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
@@ -174,6 +177,7 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
 void NetPeer::ack_packet(struct packet_sequence* ps)
 {
     if(ps->messages_n == 0) return;
+    
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
     int num = ps->messages_n;
