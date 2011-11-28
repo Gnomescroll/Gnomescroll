@@ -67,3 +67,4 @@ struct Vector reflect(struct Vector* inc, struct Vector* nor);
 
 void print_vector(struct Vector* v);
 float distance(float x, float y, float z, float x1, float y1, float z1);
+float angle_between_vectors(float x, float y, float z, float a, float b, float c);

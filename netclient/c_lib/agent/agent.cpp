@@ -38,8 +38,8 @@ void Agent_list::draw()
 void Agent_list::draw(int all) 
 {
     #ifdef DC_CLIENT
-        if (! all) return;
-        int i;
+    if (! all) return;
+    int i;
 
     glDisable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -92,28 +92,20 @@ void Agent_state::teleport(float x,float y,float z) {
 }
 #endif
 
-// side effects of taking damage. dont modify health/death here
-void Agent_state::took_damage(int dmg) {
-    #ifdef DC_CLIENT
-    BillboardText* b = ClientState::billboard_text_list.create(s.x,s.y,s.z, 0.0f,0.0f, 7.0f);
-    b->set_color(255,10,10, 255);   // red
-    char txt[10+1];
-    int n = sprintf(txt, "%d", dmg);
-    b->set_text(txt, n);
-    #endif
-}
-
 void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
-    //health -= dmg;
-    //health = (health < 0) ? 0 : health;
-    //if (!health) {
-        //die();//owner);
-    //}
-    // send update?? how is health to be done over network
-    #ifdef DC_SERVER
+
+    // forward dmg indicator packet
+    //#ifdef DC_SERVER
     agent_damage_StoC* msg = new agent_damage_StoC(id, dmg);
     msg->broadcast();
-    #endif
+    //#endif
+
+    // update internal state
+    status.apply_damage(dmg);
+    if (status.dead) {
+        agent_dead_StoC* dead_msg = new agent_dead_StoC(id);
+        dead_msg->broadcast();
+    }
 }
 
 // assume box_r < 1
@@ -773,7 +765,11 @@ void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy,
     s.vz = _vz;
 }
 
-Agent_state::Agent_state(int _id) {
+Agent_state::Agent_state(int _id) : status(this)
+#ifdef DC_CLIENT
+, event(this)
+#endif
+{
     id = _id;
 
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
@@ -809,7 +805,11 @@ Agent_state::Agent_state(int _id) {
     #endif
 }
 
-Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) {
+Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) : status(this)
+#ifdef DC_CLIENT
+, event(this)
+#endif
+{
     id = _id;
 
     set_state(_x, _y, _z, _vx, _vy, _vz);
@@ -920,6 +920,3 @@ void set_agents_to_draw(int* ids, int ct) {
 }
 
 #endif
-
-
-

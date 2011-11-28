@@ -157,19 +157,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
 }
 
-#define BLOCK_PICK_MAX_DISTANCE 4.0f
-void PlayerAgent_state::hit_block() {
-    const int z_low = 4;
-    const int z_high = 3;
-    float f[3];
-    camera_state.forward_vector(f);
-    int *pos = _nearest_block(camera_state.x, camera_state.y, camera_state.z + camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
-    if (pos != NULL) {
-        hit_block_CtoS* msg = new hit_block_CtoS(agent_id, pos[0], pos[1], pos[2]);
-        msg->send();
-    }
-}
-
 float PlayerAgent_state::camera_height() {
     
     //Agent_state has not crouching parameter!!! Crouching must be in player agent
@@ -227,4 +214,3 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vy /= divisor;
     a->vz /= divisor;
 }
-

@@ -23,7 +23,7 @@ import intervals
 import vox_lib
 
 if opts.sound:
-    import sound.sounds as sounds
+    import c_lib.c_lib_sounds as sounds
 import world
 import camera
 
