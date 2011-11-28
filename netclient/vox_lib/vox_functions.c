@@ -486,7 +486,9 @@ d is distance from x0 to nearest point to sphere
 * returns distance between origin and point on line closest to target
 */
 
-
+/*
+ * Moved to: c_lib/ray_trace/ray_trace.c
+ * 
 float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* rad2) {
     float t;
     float d;
@@ -516,4 +518,4 @@ float sphere_line_distance(float px, float py, float pz, float ox, float oy, flo
 
     return d;
 }
-
+*/

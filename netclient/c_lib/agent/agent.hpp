@@ -212,6 +212,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 
         Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* rad2, float* distance, int ignore_id) {
             int i;
+            
             float _trad2=0.0f, *trad2=&_trad2;
             float dist;
             float min_dist = 100000.0f; // far away
@@ -219,9 +220,11 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
             float tpos[3];
             for (i=0; i<AGENT_MAX; i++) {
                 if (a[i] == NULL) continue;
-                if (a[i]->id == ignore_id) continue;
+                if (a[i]->id == ignore_id) {printf("ignoring %d\n", ignore_id);continue;}
                 dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x, a[i]->s.y, a[i]->s.z, tpos, trad2);
+                printf("distance: %0.2f\n", dist);
                 if (dist < 0.0f || dist > min_dist) continue;
+                if (*trad2 > a[i]->box.box_r*a[i]->box.box_r) continue;
                 min_dist = dist;
                 agent = a[i];
                 rad2 = trad2;
