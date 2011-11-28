@@ -101,7 +101,12 @@ void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
     //#endif
 
     // update internal state
+    int old_health = status.health;
     status.apply_damage(dmg);
+    if (status.health != old_health) {
+        agent_health_StoC* health_msg = new agent_health_StoC(id, status.health);
+        health_msg->sendToClient(client_id);
+    }
     if (status.dead) {
         agent_dead_StoC* dead_msg = new agent_dead_StoC(id);
         dead_msg->broadcast();

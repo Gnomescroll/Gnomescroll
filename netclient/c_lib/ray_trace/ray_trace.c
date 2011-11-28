@@ -670,9 +670,9 @@ float sphere_line_distance(float px, float py, float pz, float ox, float oy, flo
     float d;
     float x,y,z;
 
-    tx = tx - px;
-    ty = tx - py;
-    tz = tx - pz;
+    tx -= px;
+    ty -= py;
+    tz -= pz;
 
     t =  tx*ox + ty*oy + tz*oz; // <tx|ox>
 

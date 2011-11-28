@@ -8,7 +8,7 @@
 #define AGENT_MAX 1024
 #define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT_CROUCHED 0.9f
-#define AGENT_BOX_RADIUS 0.4f
+#define AGENT_BOX_RADIUS 0.5f
 
 #define AGENT_START_HEALTH 100
 
@@ -220,11 +220,10 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
             float tpos[3];
             for (i=0; i<AGENT_MAX; i++) {
                 if (a[i] == NULL) continue;
-                if (a[i]->id == ignore_id) {printf("ignoring %d\n", ignore_id);continue;}
-                dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x, a[i]->s.y, a[i]->s.z, tpos, trad2);
-                printf("distance: %0.2f\n", dist);
+                if (a[i]->id == ignore_id) continue;
+                dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x + a[i]->box.box_r, a[i]->s.y + a[i]->box.box_r, a[i]->s.z + 0.5*a[i]->box.b_height, tpos, trad2);
                 if (dist < 0.0f || dist > min_dist) continue;
-                if (*trad2 > a[i]->box.box_r*a[i]->box.box_r) continue;
+                if (*trad2 > 1.0f) continue;
                 min_dist = dist;
                 agent = a[i];
                 rad2 = trad2;

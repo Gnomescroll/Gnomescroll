@@ -272,3 +272,20 @@ class agent_dead_StoC: public FixedSizeNetPacketToClient<agent_dead_StoC>
         agent_dead_StoC() {}
         agent_dead_StoC(int id) : id(id) {}
 };
+
+class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
+{
+    public:
+        int id;
+        int health;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+
+        inline void handle();
+
+        agent_health_StoC() {}
+        agent_health_StoC(int id, int health): id(id), health(health) {}
+};

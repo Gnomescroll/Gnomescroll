@@ -51,6 +51,12 @@ inline void agent_dead_StoC::handle() {
     a->event.died();
 }
 
+inline void agent_health_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->status.health = health;
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}
@@ -67,6 +73,7 @@ inline void Agent_state_message::handle() {}
 inline void Agent_cs_StoC::handle() {}
 inline void agent_damage_StoC::handle() {}
 inline void fire_weapon_StoC::handle() {}
+inline void agent_health_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
