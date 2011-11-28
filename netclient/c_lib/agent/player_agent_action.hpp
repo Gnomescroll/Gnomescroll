@@ -11,8 +11,8 @@ class PlayerAgent_action {
         PlayerAgent_state* p;
         
     public:
-        PlayerAgent_action(PlayerAgent_state* player_agent): p(player_agent) {printf("PA Action init:: owner %p\n", player_agent);}
-
+        PlayerAgent_action(PlayerAgent_state* player_agent): p(player_agent) {}
+        
         //void left_mouse_click() {}
         //void right_mouse_click() {}
 
