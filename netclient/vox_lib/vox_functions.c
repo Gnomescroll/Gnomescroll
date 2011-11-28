@@ -499,7 +499,7 @@ int line_sphere_intersection_1(float x0, float y0, float z0, float x1, float y1,
     x = t*x2 - x0;
     y = t*y2 - y0;
     z = t*z2 - z0;
-    r2 = x*x+y*y+z*z; //sphere of radius between sphere center and closest point
+    r2 = x*x+y*y+z*z; //distance squared between v0 and closest point on line to v0
 
     //x,y,z is closest point
     x = t*x2 + x1;
