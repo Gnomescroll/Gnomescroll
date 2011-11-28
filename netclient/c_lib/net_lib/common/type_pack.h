@@ -1,8 +1,30 @@
-#ifndef net_lib_type_pack_h
-#define net_lib_type_pack_h
+#pragma once
 
+
+//always inline
+
+/*
+__attribute((always_inline)); will force gcc to inline
+*/
+static inline void pack_message_id(int message_id, char* buff, int*buff_n, bool pack)  __attribute((always_inline));
+
+static inline void pack_float(float* x, char* buff, int*buff_n, bool pack) __attribute((always_inline));
+
+static inline void pack_32(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_u32(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_u32_t(uint32_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+
+static inline void pack_16(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_u16(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_u16(uint16_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+
+static inline void pack_8(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_u8(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
 
 //combined pack/unpack
+
+
 static inline void pack_message_id(int message_id, char* buff, int*buff_n, bool pack) {
     if(pack == true) *((uint8_t*)(buff+*buff_n)) = (uint8_t)message_id;
     //if(pack == false); //do nothing
@@ -171,5 +193,3 @@ static inline void UNPACK_float(float* d, char* buffer, int*n) {
         *d = *((float*)(buffer+*n));
         *n += sizeof(float);
 }
-
-#endif

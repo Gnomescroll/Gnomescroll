@@ -86,7 +86,7 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
 
 void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
 {
-    return;
+    //return;
     //see if there is room for channel bytes
     /*
     if(channel_out_byte != 0)
@@ -139,8 +139,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
             rnma_read_index=0;
         }
     }
-
-
     //if(nma->reference_count == 0) nma->retire(); //check 2
 
     //channel send here
@@ -149,7 +147,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         Channels use the reliable_net_message delivery
         reliable net_messages encapsolate buffer
     */
-
 
     rnma_pending_messages = 0;
 
@@ -170,6 +167,8 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
     {
         nm = nma->net_message_array[nma_index];
         //do something
+        push_reliable_packet(nm);
+        nm->reference_count--; //will increment again when pushed
 
         nma_index++;
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
