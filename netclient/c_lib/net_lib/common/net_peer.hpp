@@ -14,6 +14,7 @@
 #include <net_lib/common/sequencer.h>
 #include <net_lib/common/net_peer.hpp>
 
+#include <net_lib/common/packet_buffer.hpp>
 
 struct Socket {
     uint32_t ip;
@@ -22,11 +23,16 @@ struct Socket {
     struct sockaddr_in address;
 };
 
+class NetMessageArray; //forward declaration
 
 struct packet_sequence {
     int seq;
     int ack;
     int time;
+
+    class NetMessageArray* nmb;   //pointer to buffer
+    int read_index;  //starting index in buffer
+    int messages_n;    //number of packets
 };
 
 struct packet_sequence2 {
@@ -36,29 +42,40 @@ struct packet_sequence2 {
 
 #include <net_lib/common/packet_buffer.hpp>
 
-/*
-struct net_message_list {
-    class Net_message* net_message_array[1024];
-    int net_message_array_index;
-    int pending_bytes_out;
-};
-*/
+static const int NET_MESSAGE_ARRAY_SIZE = 256;
 
-/*
-    NetMessage
-    class Net_message_buffer* b;
-    char* buff;
-    int len;
+class NetMessageArray {
+    private:
+    public:
+    class Net_message* net_message_array[NET_MESSAGE_ARRAY_SIZE];
     int reference_count;
-*/
+    class NetMessageArray* next;
 
+    NetMessageArray()
+    {
+        for(int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
+        reference_count = 0;
+        next = NULL;
+    }
 
+    inline void retire() 
+    {
+        delete this;
+    }
 
-//class NetPeer {
+    static NetMessageArray* acquire()
+    {
+        return new NetMessageArray;
+    }
+};
 
-//#include <sys/mman.h>
+class NetMessageBuffer {
+    private:
+    public:    
+    //class NetMessageArray* head;
+    //int consume_index;
 
-//int GLOBAL_ = 0;
+};
 
 class NetPeer
 {
@@ -87,16 +104,67 @@ class NetPeer
     class Net_message* unreliable_net_message_array[256];
     int unreliable_net_message_array_index;
     
-    class Net_message* reliable_net_message_array[256];
-    int reliable_net_message_array_index;
+    //class Net_message* reliable_net_message_array[256];
+    //int reliable_net_message_array_index;
 
     int pending_bytes_out;
+    int pending_unreliable_bytes_out;
+    int pending_reliable_bytes_out;
+
+    int pending_reliable_packets_out;
 
     void push_unreliable_packet(Net_message* np) ;
-    void push_reliable_packet(Net_message* np);
+    //void push_reliable_packet(Net_message* np);
 
-    void flush_to_buffer(char* buff, int* index);
+    inline void flush_unreliable_to_buffer(char* buff, int* index);
+    inline void flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps);
     void flush_to_net();
+
+    //reliable packets
+    class NetMessageArray* rnma_insert; //reliable net message array, for inserting
+    int rnma_insert_index;  //index for insertions
+
+    class NetMessageArray* rnma_read;   //offset for reading off net packets
+    int rnma_read_index;  //index for insertions
+    int rnma_pending_messages;
+
+    void push_reliable_packet(class Net_message* nm);
+    //example iterator
+
+    /*
+        1> packet acked: decrement reference to packets
+        2> packet dropped: put packet back onto que
+    */
+
+    //reference
+    inline void consume(NetMessageArray* nma, int consume_index, int num) 
+    {
+        int i;
+        class Net_message* nm;
+        for(i=0; i < num; i++)
+        {
+            nm = nma->net_message_array[consume_index];
+            //do something
+
+            nma->reference_count--;
+            /*
+            //optimize this; refence either equal zero at end or going into next buffer
+            if(head->refence_count == 0)
+            {
+                head->retire();
+            }
+            */
+            consume_index++;
+            if(consume_index == NET_MESSAGE_ARRAY_SIZE)
+            {
+                if(nma->reference_count == 0) nma->retire(); //check 1
+                nma = nma->next;
+                consume_index=0;
+            }
+        }
+        if(nma->reference_count == 0) nma->retire(); //check 2
+    }
+
 
     /*
         TTL
@@ -125,13 +193,23 @@ class NetPeer
 
     NetPeer() {
         for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
-        for(int i=0; i< 256; i++) reliable_net_message_array[i] = NULL;
-
         unreliable_net_message_array_index = 0;
-        reliable_net_message_array_index = 0;
+
+        //reliable message que
+        rnma_insert = NetMessageArray::acquire();
+        rnma_insert_index = 0;
+        rnma_read = rnma_insert;
+        rnma_read_index = 0;
+        rnma_pending_messages = 0;
 
         pending_bytes_out = 0;
+        pending_reliable_packets_out = 0;
+
+        pending_unreliable_bytes_out = 0;
+        pending_reliable_bytes_out = 0;
     }
+
+
 };
 
 

@@ -7,8 +7,16 @@
 //when reference count goes to zero, retire
 //check offset, when a write would bring offset over buffer size, get new one
 
+/*
+Benchmarks for buffer size for unreliable message packets
+*/
 //static const int NET_MESSAGE_BUFFER_SIZE = 4092;
-static const int NET_MESSAGE_BUFFER_SIZE = 4096;
+static const int NET_MESSAGE_BUFFER_SIZE = 4096; // 69,000 per second, 74-78k per second
+//static const int NET_MESSAGE_BUFFER_SIZE = 8192; // 79,000 per second
+//static const int NET_MESSAGE_BUFFER_SIZE = 16384; //  81,000 per second
+
+//static const int NET_MESSAGE_BUFFER_SIZE = 32768; //  71,000 per second
+
 /*
     struct net_message_buffer {
         int reference_count;
@@ -28,14 +36,13 @@ class Net_message_buffer {
     Net_message_buffer() { reference_count = 0; }
 };
 
+//reliable packet scratch
 class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128> {};
-
-
-//use for unreliable packets
+//unreliable
 class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16> {};
 
-Net_message_buffer_pool net_message_buffer_pool;   //use for reliable udp packets
-Net_message_buffer_pool2 net_message_buffer_pool2; //use for unreliable udp packets
+static Net_message_buffer_pool net_message_buffer_pool;   //use for reliable udp packets
+static Net_message_buffer_pool2 net_message_buffer_pool2; //use for unreliable udp packets
 
 inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
 {
@@ -74,8 +81,7 @@ inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb)
     current->reference_count++;
 }
 
-int Net_message_n = 0;
-const bool Net_message_debug = 0;
+//int Net_message_n = 0;
 
 class Net_message {
     private:
@@ -103,7 +109,7 @@ class Net_message {
 
 class Net_message_pool: public Object_pool<Net_message, 4096> {}; //use 4096
 
-Net_message_pool net_message_pool;
+static Net_message_pool net_message_pool;
 
 //Net_message_n++; printf("Created: %i netmessages\n", Net_message_n);
 
@@ -112,22 +118,9 @@ void inline Net_message::decrement_unreliable()
     reference_count--;
     if(reference_count == 0) 
     {
-        //b->reference_count--;
-        
-        //free(buff); //debug
-        //delete buff; //debug
-
         b->reference_count--;
         if(b->reference_count == 0) net_message_buffer_pool2.retire(b);
-        if(Net_message_debug)
-        {
-            Net_message_n--;
-            //printf("Deleted: %i netmessages\n", Net_message_n );
-        }
-
         net_message_pool.retire(this);
-
-        //delete this; //debug
     }
 }
 
@@ -138,45 +131,24 @@ void inline Net_message::decrement_reliable()
     {
         b->reference_count--;
         if(b->reference_count == 0) net_message_buffer_pool.retire(b);
-        if(Net_message_debug)
-        {
-            Net_message_n--; 
-            //printf("Deleted: %i netmessages\n", Net_message_n );
-        }
-        free(buff); //DEBUG
         net_message_pool.retire(this);
     }
 }
 
 class Net_message* Net_message::acquire_unreliable(int length)
 {
-    if(Net_message_debug)
-    {
-        Net_message_n++;
-        //printf("Created: %i netmessages\n", Net_message_n);
-        //if((Net_message_n+1) % 50) printf("Created: %i netmessages\n", Net_message_n);
-    }
     Net_message* t = net_message_pool.acquire();
     t->len = length;
-    //t->buff = new char[length]; //use pool after debugging
     get_char_buffer2(length, &t->buff, &t->b); //set buffer and set char pool
-
     t->reference_count = 0;
-    //printf("length= %i \n", t->len);
     return t;
 }
 
 class Net_message* Net_message::acquire_reliable(int length)
 {
-    if(Net_message_debug)
-    {
-        Net_message_n++;
-        //printf("Created: %i netmessages\n", Net_message_n);
-    }
-    
     Net_message* t = net_message_pool.acquire();
     t->len = length;
-    t->buff = new char[length];
+    get_char_buffer(length, &t->buff, &t->b); //set buffer and set char pool
     t->reference_count = 0;
     return t;
 }

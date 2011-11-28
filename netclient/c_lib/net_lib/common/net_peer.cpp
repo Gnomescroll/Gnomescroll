@@ -8,31 +8,53 @@ static char net_out_buff[2000];
     Use arrays/pointers/pool later for packets, to remove limits
 */
 
-void NetPeer::push_unreliable_packet(Net_message* nm) {
+void NetPeer::push_unreliable_packet(Net_message* nm) 
+{
+    pending_unreliable_bytes_out += nm->len;
+    pending_bytes_out += nm->len;
+
     nm->reference_count++;
-    //printf("index= %i \n", unreliable_net_message_array_index);
-    //printf("wtf2= %i \n", this->unreliable_net_message_array_index);
-    //printf("this= %x \n", this);
-    //printf("watch index= %x \n", &this->unreliable_net_message_array_index);
-    //printf("wtf3= %i \n", NetClient::NPserver.unreliable_net_message_array_index);
     unreliable_net_message_array[unreliable_net_message_array_index] = nm;
     unreliable_net_message_array_index++;
-    pending_bytes_out += nm->len;
     if(unreliable_net_message_array_index > 256) printf("Net_message_list Push_unreliable_packet overflow 1\n");   //debug
+    //would require all messages were less than 6 bytes to fit 256 messagse into 1500 byte packet
 }
 
+void NetPeer::push_reliable_packet(class Net_message* nm)
+{
+    pending_bytes_out += nm->len; //
+    pending_reliable_bytes_out += nm->len;
+    rnma_pending_messages++;
+
+    nm->reference_count++;  //increment reference count?
+    pending_reliable_packets_out++;
+
+    rnma_insert->net_message_array[rnma_insert_index] = nm;
+    rnma_insert->reference_count++;
+    rnma_insert_index++;
+    if(rnma_insert_index == NET_MESSAGE_ARRAY_SIZE)
+    {
+        rnma_insert_index = 0;
+        rnma_insert->next = NetMessageArray::acquire();
+        rnma_insert = rnma_insert->next;
+    }
+}
+
+/*
 void NetPeer::push_reliable_packet(Net_message* np) {
     reliable_net_message_array[reliable_net_message_array_index] = np;
     reliable_net_message_array_index++;
     pending_bytes_out += np->len;
+    //nm->reference_count++;
     if(reliable_net_message_array_index > 256) printf("Net_message_list Push_reliable_packet overflow 2\n");     //debug
 }
-
+*/
  
 //void * memcpy ( void * destination, const void * source, size_t num );
-void NetPeer::flush_to_buffer(char* buff_, int* _index) {
-    if(pending_bytes_out > 1500) printf("Net_message_list Error: too much data in packet buffer, %i \n", pending_bytes_out);
-    Net_message* nm;
+void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
+    //if(pending_bytes_out > 1500) printf("NetPeer Error 1: too much data in packet buffer, %i \n", pending_bytes_out);
+    if(pending_unreliable_bytes_out > 1500) printf("NetPeer Error 2: unreliable bytes out exceeds 1500, %i \n", pending_unreliable_bytes_out);
+    class Net_message* nm;
     int index = *_index;
     for(int i=0; i< unreliable_net_message_array_index; i++)
     {
@@ -40,15 +62,88 @@ void NetPeer::flush_to_buffer(char* buff_, int* _index) {
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
         nm->decrement_unreliable();
-    }     
+    }
+
+    
+    //reliable packets
+    /*
     for(int i=0; i< reliable_net_message_array_index; i++)
     {
         nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
-        nm->decrement_reliable();
     }
-    *_index = index;
+    */
+
+    pending_bytes_out = 0;
+    pending_unreliable_bytes_out = 0;
+
+    unreliable_net_message_array_index = 0;
+
+    *_index = index;    //bytes out
+}
+
+
+void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
+{
+    return;
+    //see if there is room for channel bytes
+    /*
+    if(channel_out_byte != 0)
+    {
+        int free_bytes = 1500 - (pending_reliable_bytes_out + index)
+        while(free_bytes > 256) //pad to 1500 with channel packets
+    }
+    if(pending_reliable_bytes_out + index < 1500)
+    { 
+        pop stuff from channel onto stack
+
+    }
+    else
+    {
+           
+    }
+    */
+
+    ps->nmb = rnma_read;
+    ps->read_index = rnma_read_index;
+    ps->messages_n = rnma_pending_messages;
+
+    int index = *_index;
+
+    //NetMessageArray* nma = rnma_read;
+    //int read_index = rnma_read_index;
+    //int num = rnma_pending_messages;
+
+    class Net_message* nm;
+
+    /*
+        Retire on packet ack, not on dispatch
+    */
+
+    for(int i=0; i < rnma_pending_messages; i++)
+    {
+        nm = rnma_read->net_message_array[rnma_read_index];
+        //do something
+
+        nm = unreliable_net_message_array[i];
+        memcpy(buff_+index, nm->buff, nm->len);
+        index += nm->len;
+
+        //rnma_nma->reference_count--; //wtf, decrement on confirmation
+
+        rnma_read_index++;
+        if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            //if(nma->reference_count == 0) nma->retire(); //check 1
+            rnma_read = rnma_read->next;
+            rnma_read_index=0;
+        }
+    }
+
+
+    //if(nma->reference_count == 0) nma->retire(); //check 2
+
     //channel send here
     /*
         Channels write to buffer
@@ -56,9 +151,10 @@ void NetPeer::flush_to_buffer(char* buff_, int* _index) {
         reliable net_messages encapsolate buffer
     */
 
-    pending_bytes_out = 0;
-    unreliable_net_message_array_index = 0;
-    reliable_net_message_array_index = 0;
+
+    rnma_pending_messages = 0;
+
+    *_index = index;    //bytes out
 }
 
 void NetPeer::flush_to_net() {
@@ -71,16 +167,9 @@ void NetPeer::flush_to_net() {
     PACK_uint16_t(seq, net_out_buff, &n1); //sequence number
     PACK_uint16_t(get_sequence_number(this), net_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(this), net_out_buff, &n1); //sequence number
-    //pack body
-    //printf("n1= %i\n", n1);
-    //printf("header offset= %i \n", n1);
 
-    flush_to_buffer(net_out_buff, &n1);
-
-    //printf("msg_id1= %i \n", (int)net_out_buff[10]);
-    //printf("msg_id1= %i \n", net_out_buff[11]);
-    //printf("msg_id2= %i \n", net_out_buff[12]);
-    //printf("n1= %i, connected= %i, client_id=%i \n", n1, connected, client_id);
+    flush_unreliable_to_buffer(net_out_buff, &n1);
+    flush_reliable_to_buffer(net_out_buff, &n1, &packet_sequence_buffer[seq%256]);
 
     if(this->connected == 0) 
     {
