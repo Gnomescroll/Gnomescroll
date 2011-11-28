@@ -472,56 +472,6 @@ int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x
 
 }
 
-int _ray_cast_tracer2(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2) {
-    float t;
-    //float x0,y0,z0;
-    float r2
-    float x,y,z;
-    float u;
-
-    x0 = x0 - x1;
-    y0 = x0 - y1;
-    z0 = x0 - z1;
-
-    t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
-    //comment next line if x2 is unit vector
-    t = t/(x2*x2+y2*y2+z2*z2);
-
-    x = t*x2 - x0; x*=x;
-    y = t*y2 - y0; y*=y;
-    z = t*z2 - z0; z*=z;
-    r2 = x+y+z; //sphere of radius between sphere center and closest point
-
-    x = t*x2 + x1;
-    y = t*y2 + y1;
-    z = t*z2 + z1;
-
-    glBegin(GL_LINES);
-        glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-        glVertex3f(x1,y1,z1); // origin of the line
-        glVertex3f(x2+x1,y2+y1,z2+z1); // ending point of the line
-    glEnd();
-    glColor3ub(255,255,255);
-
-        glBegin(GL_POINTS);
-            glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            u = 0.1;
-            glVertex3f(x+u,y,z);
-            glVertex3f(x-u,y,z);
-            glVertex3f(x,y+u,z);
-            glVertex3f(x,y-u,z);
-            glVertex3f(x,y,z+u);
-            glVertex3f(x,y,z-u);
-        glEnd();
-        glColor3ub(255,255,255);
-
-        //if(r > vo->radius2) {return 0; }
-        //return (int)(t*256);
-
-}
-
-
-
 /*
 x0 is the center of the sphere
 x1 is the origin
@@ -549,9 +499,9 @@ int _ray_cast_tracer3(float x0, float y0, float z0, float x1, float y1, float z1
 
     //x,y,z is closest point
     float x,y,z;
-    x = t*x2 - x0; x*=x;
-    y = t*y2 - y0; y*=y;
-    z = t*z2 - z0; z*=z;
+    x = t*x2 - x0;
+    y = t*y2 - y0;
+    z = t*z2 - z0;
 
     r2 = x*x+y*y+z*z; //sphere of radius between sphere center and closest point
 
