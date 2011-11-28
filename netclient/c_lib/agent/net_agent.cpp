@@ -46,9 +46,10 @@ inline void fire_weapon_StoC::handle() {
 }
 
 inline void agent_dead_StoC::handle() {
+    bool _dead = (bool)dead;
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) return;
-    a->event.died();
+    a->event.life_changing(_dead);
 }
 
 inline void agent_health_StoC::handle() {

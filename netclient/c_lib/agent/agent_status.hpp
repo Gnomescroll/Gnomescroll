@@ -1,6 +1,7 @@
 #pragma once
 
 #define AGENT_HEALTH 100
+#define RESPAWN_TICKS (2000 / 30)
 
 class Agent_state;  // forward declaration
 class PlayerAgent_state;
@@ -10,8 +11,9 @@ class Base_status {
     public:
         int health;
         bool dead;
-
-        Base_status() : health(AGENT_HEALTH), dead(false) {}
+        int respawn_countdown;
+        
+        Base_status() : health(AGENT_HEALTH), dead(false), respawn_countdown(RESPAWN_TICKS) {}
 };
 
 // Use for:
@@ -22,12 +24,14 @@ class Agent_status: public Base_status {
 
     private:
         Agent_state* a;
+        void get_spawn_point(int* spawn);
 
     public:
         Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
 
         int apply_damage(int dmg);
         void die();
+        void respawn();
 
 };
 

@@ -93,10 +93,8 @@ void Agent_state::teleport(float x,float y,float z) {
 void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
 
     // forward dmg indicator packet
-    //#ifdef DC_SERVER
     agent_damage_StoC* msg = new agent_damage_StoC(id, dmg);
     msg->broadcast();
-    //#endif
 
     // update internal state
     if (dmg) {
@@ -424,6 +422,8 @@ void Agent_state::_tick()
 
         _tc++;
     }
+
+    status.respawn();
 }
 
 

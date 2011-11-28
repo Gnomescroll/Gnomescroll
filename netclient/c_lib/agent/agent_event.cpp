@@ -21,4 +21,13 @@ void Agent_event::died() {
     a->status.dead = true;
 }
 
+void Agent_event::born() {
+    a->status.dead = false;
+}
+
+void Agent_event::life_changing(bool dead) {
+    if (dead) died();
+    else born();
+}
+
 #endif

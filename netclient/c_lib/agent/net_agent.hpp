@@ -116,7 +116,7 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&dmg, buff, buff_n, pack);
+            pack_u16(&dmg, buff, buff_n, pack);
         }
 
         inline void handle();
@@ -167,9 +167,9 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&x, buff, buff_n, pack);
-            pack_u8(&y, buff, buff_n, pack);
-            pack_u8(&z, buff, buff_n, pack);
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
         }
 
         inline void handle();
@@ -240,9 +240,9 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&x, buff, buff_n, pack);
-            pack_u8(&y, buff, buff_n, pack);
-            pack_u8(&z, buff, buff_n, pack);
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
         }
 
         inline void handle();
@@ -261,16 +261,18 @@ class agent_dead_StoC: public FixedSizeNetPacketToClient<agent_dead_StoC>
 {
     public:
         int id;
-
+        int dead;   // should be bool
+        
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&dead, buff, buff_n, pack);
         }
 
         inline void handle();
         
         agent_dead_StoC() {}
-        agent_dead_StoC(int id) : id(id) {}
+        agent_dead_StoC(int id, bool dead) : id(id), dead(dead) {}
 };
 
 class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
@@ -282,7 +284,7 @@ class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&health, buff, buff_n, pack);
+            pack_u16(&health, buff, buff_n, pack);
         }
 
         inline void handle();
