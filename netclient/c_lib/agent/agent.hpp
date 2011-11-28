@@ -223,7 +223,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
                 if (a[i]->id == ignore_id) continue;
                 dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x + a[i]->box.box_r, a[i]->s.y + a[i]->box.box_r, a[i]->s.z + 0.5*a[i]->box.b_height, tpos, trad2);
                 if (dist < 0.0f || dist > min_dist) continue;
-                if (*trad2 > 1.0f) continue;
+                if (*trad2 > 2.0f) continue;
                 min_dist = dist;
                 agent = a[i];
                 rad2 = trad2;
