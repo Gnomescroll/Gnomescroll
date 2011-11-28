@@ -173,9 +173,14 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
 
 void NetPeer::ack_packet(struct packet_sequence* ps)
 {
+    if(ps->messages_n == 0) return;
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
     int num = ps->messages_n;
+
+    printf("ack \n");
+    printf("num= %i\n", num);
+    printf("read_index= %i\n", nma_index);
 
     class Net_message* nm;
 
