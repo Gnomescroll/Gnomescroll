@@ -4,6 +4,9 @@ Add Riot Shields!!
 
 GLSL shader for laser crossbow bolt
 
+Handling Death Sequence:
+Less common are feedback systems that inform players about their improvement at the game. One great example happens in Team Fortress 2. When players die, a message informs them about how they did relative to previous attempts, for example: "On the bright side... You came close to your record for time alive as a Scout in that round." The message goes on to indicate how long the player lived that round and what his previous personal best was. This is excellent feedback.
+
 Character Dimensions and Boss Battle:
 http://www.youtube.com/watch?v=6lA4ohHhCsw&feature=feedu
 

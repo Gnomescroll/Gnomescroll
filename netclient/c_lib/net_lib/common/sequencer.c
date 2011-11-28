@@ -17,7 +17,7 @@ void init_sequence_numbers(class NetPeer* np) {
     int i;
     for(i=0;i<256;i++) {
         //packet_buffer[i].active = 0;
-        np->packet_sequence_buffer[i].ack = 0;
+        np->packet_sequence_buffer[i].ack = 1;
         np->packet_sequence_buffer[i].seq = -1;
         np->packet_sequence_buffer[i].time = 0;
     }
@@ -27,7 +27,6 @@ void init_sequence_numbers(class NetPeer* np) {
 
 void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
     unsigned int n = 1;
-    int i;
     int index;
 
     //index &= UPDATE_MASK;
@@ -44,18 +43,21 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
     */
     index = seq;
     n = 1;
-    for(i=0;i<32;i++) {
+    for(int i=0;i<32;i++) {
 
         if((flag & n) != 0) {
-            if(np->packet_sequence_buffer[index%256].seq != index) {
+            //DEBUG, can disable
+            
+            if(np->packet_sequence_buffer[index%256].seq != index)
+            {
                 printf("sequence number error: expected %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
                 //printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
-
-                }
-
+            }
+            
             if(np->packet_sequence_buffer[index%256].ack == 0) { //dont ack same packet twice
                 //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, NP_time_delta1(np->packet_sequence_buffer[index%256].time));
                 np->packet_sequence_buffer[index%256].ack = 1;
+                np->ack_packet(&np->packet_sequence_buffer[index%256]); //ack packet, free buffer
                 #ifdef DC_CLIENT
                 pviz_packet_ack(index);
                 #endif
@@ -79,16 +81,24 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
 uint16_t get_next_sequence_number(class NetPeer* np) {
     np->packet_sequence_number = (np->packet_sequence_number+1)%2048;
     int index = np->packet_sequence_number%256;
+    struct packet_sequence* ps = &np->packet_sequence_buffer[index];
     //np->packet_sequence_buffer[index].active = 1; //may set timer?
-    np->packet_sequence_buffer[index].seq = np->packet_sequence_number;
-    np->packet_sequence_buffer[index].ack = 0;
-    np->packet_sequence_buffer[index].time = get_current_netpeer_time();
+    ps->seq = np->packet_sequence_number;
+    ps->ack = 0;
+    ps->time = get_current_netpeer_time();
+
+    /*
+    DEBUG
+    */
+    ps->nma = NULL;
+    ps->read_index = 0;
+    ps->messages_n = 0 ;
+
     return np->packet_sequence_number;
 }
 
 int DROPPED_PACKETS = 0;
-
-int check_dropped_packets() {
+int dropped_packet_count() {
     return DROPPED_PACKETS;
 }
 
@@ -101,6 +111,7 @@ void check_for_dropped_packets(class NetPeer* np) {
     for(i=0;i<32;i++) {
         //printf("i=%i, t=%i\n", j, NP_time_delta1(np->packet_sequence_buffer[j].time));
         if((np->packet_sequence_buffer[j].seq != -1) && (np->packet_sequence_buffer[j].ack == 0)) {
+            np->resend_packet(&np->packet_sequence_buffer[j]);  //retransmit on drop
             printf("***Packet Dropped: %i:%i ***\n", np->client_id, np->packet_sequence_buffer[j].seq);
             DROPPED_PACKETS++;
             //np->packet_sequence_buffer[i].ack = 0;

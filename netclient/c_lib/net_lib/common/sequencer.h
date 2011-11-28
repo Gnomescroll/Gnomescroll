@@ -33,7 +33,8 @@ void init_sequencer(class NetPeer* np);
 void init_sequence_numbers(class NetPeer* np);
 void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag);
 uint16_t get_next_sequence_number(class NetPeer* np);
-int check_dropped_packets();
+
+int dropped_packet_count();
 
 void check_for_dropped_packets(class NetPeer* np);
 
