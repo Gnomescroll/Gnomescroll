@@ -490,7 +490,7 @@ int line_sphere_intersection_1(float x0, float y0, float z0, float x1, float y1,
 
     x0 = x0 - x1;
     y0 = y0 - y1;
-    z0 = y0 - z1;
+    z0 = z0 - z1;
 
     t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
 
