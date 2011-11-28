@@ -478,7 +478,7 @@ int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x
 int _ray_cast_tracer2(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2) {
     float t;
     //float x0,y0,z0;
-    float r2
+    float r2;
     float x,y,z;
     float d;
 
@@ -525,62 +525,40 @@ int _ray_cast_tracer2(float x0, float y0, float z0, float x1, float y1, float z1
 
 
 /*
-x0 is the center of the sphere
-x1 is the origin
-x2 is the direction
+* pxyz is origin
+* oxyz is normalized orientation
+* txyz is target
 
 r2 is the square of distance between sphere center and closest point on line
 d is distance from x0 to nearest point to sphere
+*
+* returns distance
 */
 
 
-int _ray_cast_tracer3(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2) {
-    float t;
-    float r2
+float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz) {
+    float t,d;
+    //float r2;
     float x,y,z;
 
-    x0 = x0 - x1;
-    y0 = x0 - y1;
-    z0 = x0 - z1;
+    tx = tx - px;
+    ty = tx - py;
+    tz = tx - pz;
 
-    t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
+    t =  tx*ox + ty*oy + tz*oz; // <tx|ox>
 
-    d = t/(x2*x2+y2*y2+z2*z2); //distance to collision
+    d = t/(ox*ox+oy*oy+oz*oz); //distance to collision
 
-    x = t*x2 - x0;
-    y = t*y2 - y0;
-    z = t*z2 - z0;
-    r2 = x*x+y*y+z*z; //sphere of radius between sphere center and closest point
+    x = t*ox - tx;
+    y = t*oy - ty;
+    z = t*oz - tz;
+    //r2 = x*x+y*y+z*z; //sphere of radius between sphere center and closest point
 
     //x,y,z is closest point
-    x = t*x2 + x1;
-    y = t*y2 + y1;
-    z = t*z2 + z1;
+    x = t*ox + px;
+    y = t*oy + py;
+    z = t*oz + pz;
 
-    /*
-    float u;
-
-    glBegin(GL_LINES);
-        glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-        glVertex3f(x1,y1,z1); // origin of the line
-        glVertex3f(x2+x1,y2+y1,z2+z1); // ending point of the line
-    glEnd();
-    glColor3ub(255,255,255);
-
-        glBegin(GL_POINTS);
-            glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-            u = 0.1;
-            glVertex3f(x+u,y,z);
-            glVertex3f(x-u,y,z);
-            glVertex3f(x,y+u,z);
-            glVertex3f(x,y-u,z);
-            glVertex3f(x,y,z+u);
-            glVertex3f(x,y,z-u);
-        glEnd();
-        glColor3ub(255,255,255);
-
-        //if(r > vo->radius2) {return 0; }
-        //return (int)(t*256);
-    */
+    return d;
 }
 
