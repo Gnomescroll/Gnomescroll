@@ -507,7 +507,7 @@ int line_sphere_intersection_1(float x0, float y0, float z0, float x1, float y1,
     z = t*z2 + z1;
 
     /*
-    float u;
+    float u = 5.0;
 
     glBegin(GL_LINES);
         glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
