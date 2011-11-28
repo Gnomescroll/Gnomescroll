@@ -3,6 +3,9 @@
 
 #include "server.h"
 
+
+#include <net_lib/benchmark.hpp>
+
 #include <c_lib/agent/agent_include.h>
 
 #include <c_lib/state/packet_init.cpp>

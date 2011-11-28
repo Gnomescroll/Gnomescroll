@@ -86,7 +86,7 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
 
 void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
 {
-    return;
+    //return;
     //see if there is room for channel bytes
     /*
     if(channel_out_byte != 0)
@@ -105,7 +105,7 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     }
     */
 
-    ps->nmb = rnma_read;
+    ps->nma = rnma_read;
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
 
@@ -126,7 +126,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         nm = rnma_read->net_message_array[rnma_read_index];
         //do something
 
-        nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
 
@@ -140,8 +139,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
             rnma_read_index=0;
         }
     }
-
-
     //if(nma->reference_count == 0) nma->retire(); //check 2
 
     //channel send here
@@ -151,13 +148,69 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         reliable net_messages encapsolate buffer
     */
 
-
     rnma_pending_messages = 0;
 
     *_index = index;    //bytes out
 }
 
-void NetPeer::flush_to_net() {
+void NetPeer::resend_packet(struct packet_sequence* ps)
+{
+    return;
+
+    NetMessageArray* nma = ps->nma;
+    int nma_index = ps->read_index;
+    int num = ps->messages_n;
+
+    class Net_message* nm;
+
+    for(int i=0; i < num; i++)
+    {
+        nm = nma->net_message_array[nma_index];
+        //do something
+        push_reliable_packet(nm);
+        nm->reference_count--; //will increment again when pushed
+
+        nma_index++;
+        if(nma_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            nma = nma->next;
+            nma_index=0;
+        }
+    }
+
+}
+
+void NetPeer::ack_packet(struct packet_sequence* ps)
+{
+    return;
+
+    NetMessageArray* nma = ps->nma;
+    int nma_index = ps->read_index;
+    int num = ps->messages_n;
+
+    class Net_message* nm;
+
+    for(int i=0; i < num; i++)
+    {
+        nm = nma->net_message_array[nma_index];
+        nm->decrement_reliable();
+        //do something
+
+        nma->reference_count--;    //decrement on confirmation
+
+        nma_index++;
+        if(nma_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            if(nma->reference_count == 0) nma->retire(); //check 1
+            nma = nma->next;
+            nma_index=0;
+        }
+    }
+    if(nma->reference_count == 0) nma->retire(); //check 1
+}
+
+void NetPeer::flush_to_net() 
+{
     int n1 = 0;
     int seq = get_next_sequence_number(this);
     

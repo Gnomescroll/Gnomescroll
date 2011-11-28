@@ -30,7 +30,7 @@ struct packet_sequence {
     int ack;
     int time;
 
-    class NetMessageArray* nmb;   //pointer to buffer
+    class NetMessageArray* nma;   //pointer to buffer
     int read_index;  //starting index in buffer
     int messages_n;    //number of packets
 };
@@ -119,6 +119,9 @@ class NetPeer
     inline void flush_unreliable_to_buffer(char* buff, int* index);
     inline void flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps);
     void flush_to_net();
+
+    void ack_packet(struct packet_sequence* ps);
+    void resend_packet(struct packet_sequence* ps);
 
     //reliable packets
     class NetMessageArray* rnma_insert; //reliable net message array, for inserting

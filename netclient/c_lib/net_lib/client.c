@@ -11,6 +11,7 @@
 #include <time/physics_timer.h>
 
 
+#include <net_lib/benchmark.hpp>
 
 #include <net_lib/common/message_handler.h>
 #include <net_lib/client/client.hpp>
@@ -23,7 +24,7 @@
 
 
 
-#include <c_lib/agent/net_agent.hpp>
+#include <net_lib/benchmark.hpp>
 #include <stdlib.h>
 
 void _net_test() {
@@ -35,14 +36,14 @@ void _net_test() {
     while(1) 
     {
         c++;
-        Agent_cs_CtoS a;
+        benchmarkCtoS a;
         a.id = 0;
         a.seq = 5;
         a.cs = 15;
         a.theta = 15.60;
         a.phi = 243.0;
         int i;
-        for(i=0; i < 70; i++) a.send();
+        for(i=0; i < 75; i++) a.send(); //70
 
         int ti= _GET_MS_TIME();
         if(ti - start > 5000) 
