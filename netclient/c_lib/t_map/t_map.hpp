@@ -157,8 +157,6 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 /* Network */
 
 /* move these, along with the handler */
-#include <c_lib/animations/animations.hpp>
-#include <c_lib/common/random.h>
 class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
 {
     public:
@@ -174,21 +172,10 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
             pack_u16(&val, buff, buff_n, pack);
         }
 
-        inline void handle() {
-            _set(x,y,z,val);
-            // animations
-            Animations::block_crumble_animation((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30));
-        }
-
-        block_StoC(int x, int y, int z, int val) {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            this->val = val;
-        }
+        inline void handle();
         
-        block_StoC() {
-            x=y=z=val=0;
-        }
+        block_StoC(int x, int y, int z, int val): x(x), y(y), z(z), val(val) {}
+        
+        block_StoC(): x(0), y(0), z(0), val(0) {}
 };
 

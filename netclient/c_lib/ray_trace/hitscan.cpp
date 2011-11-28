@@ -2,6 +2,8 @@
 
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
+#include <c_lib/state/client_state.hpp>
+
 
 namespace Hitscan {
 

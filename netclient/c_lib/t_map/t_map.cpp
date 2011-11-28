@@ -501,3 +501,11 @@ int block_sphere(float x, float y, float z, float radius, int* blocks, int max_b
     return block_count;
 }
 
+#include <c_lib/animations/animations.hpp>
+#include <c_lib/common/random.h>
+inline void block_StoC::handle() {
+    _set(x,y,z,val);
+    // play animation
+    Animations::block_crumble_animation((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30));
+}
+
