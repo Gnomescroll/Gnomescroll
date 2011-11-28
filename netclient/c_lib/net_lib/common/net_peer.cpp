@@ -105,7 +105,7 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     }
     */
 
-    ps->nmb = rnma_read;
+    ps->nma = rnma_read;
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
 
@@ -126,7 +126,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         nm = rnma_read->net_message_array[rnma_read_index];
         //do something
 
-        nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
 
@@ -157,7 +156,69 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     *_index = index;    //bytes out
 }
 
-void NetPeer::flush_to_net() {
+void NetPeer::resend_packet(struct packet_sequence* ps)
+{
+    return;
+
+    NetMessageArray* nma = ps->nma;
+    int nma_index = ps->read_index;
+    int num = ps->messages_n;
+
+    class Net_message* nm;
+
+    for(int i=0; i < num; i++)
+    {
+        nm = nma->net_message_array[nma_index];
+        //do something
+
+        memcpy(buff_+index, nm->buff, nm->len);
+        index += nm->len;
+
+        //rnma_nma->reference_count--; //wtf, decrement on confirmation
+
+        nma_index++;
+        if(nma_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            //if(nma->reference_count == 0) nma->retire(); //check 1
+            nma = nma->next;
+            nma_index=0;
+        }
+    }
+
+    //rnma_pending_messages = 0;
+}
+
+void NetPeer::ack_packet(struct packet_sequence* ps)
+{
+    return;
+
+    NetMessageArray* nma = ps->nma;
+    int nma_index = ps->read_index;
+    int num = ps->messages_n;
+
+    class Net_message* nm;
+
+    for(int i=0; i < num; i++)
+    {
+        nm = rnma->net_message_array[nma_index];
+        nm->decrement_reliable();
+        //do something
+
+        nma_nma->reference_count--;    //decrement on confirmation
+
+        nma_index++;
+        if(nma_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            if(nma->reference_count == 0) nma->retire(); //check 1
+            nma = nma->next;
+            nma_index=0;
+        }
+    }
+    if(nma->reference_count == 0) nma->retire(); //check 1
+}
+
+void NetPeer::flush_to_net() 
+{
     int n1 = 0;
     int seq = get_next_sequence_number(this);
     
