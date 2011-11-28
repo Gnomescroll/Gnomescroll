@@ -86,7 +86,6 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
 
 void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
 {
-    //return;
     //see if there is room for channel bytes
     /*
     if(channel_out_byte != 0)
@@ -95,22 +94,19 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         while(free_bytes > 256) //pad to 1500 with channel packets
     }
     if(pending_reliable_bytes_out + index < 1500)
-    { 
-        pop stuff from channel onto stack
+    {  pop stuff from channel onto stack
 
-    }
-    else
-    {
-           
-    }
-    */
+    */ 
+
+
+    //need to handle this case and do alternate loop otherwise
 
     ps->nma = rnma_read;
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
 
     int index = *_index;
-
+    if(pending_reliable_bytes_out + index > 1500) printf("NetPeer error: reliable bytes out overflows 1500 byte buffer\n");
     //NetMessageArray* nma = rnma_read;
     //int read_index = rnma_read_index;
     //int num = rnma_pending_messages;
@@ -125,12 +121,9 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     {
         nm = rnma_read->net_message_array[rnma_read_index];
         //do something
-
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
-
         //rnma_nma->reference_count--; //wtf, decrement on confirmation
-
         rnma_read_index++;
         if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
         {
@@ -147,7 +140,7 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         Channels use the reliable_net_message delivery
         reliable net_messages encapsolate buffer
     */
-
+    pending_reliable_bytes_out = 0;
     rnma_pending_messages = 0;
 
     *_index = index;    //bytes out
@@ -155,7 +148,6 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
 
 void NetPeer::resend_packet(struct packet_sequence* ps)
 {
-    return;
 
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
@@ -166,7 +158,6 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
     for(int i=0; i < num; i++)
     {
         nm = nma->net_message_array[nma_index];
-        //do something
         push_reliable_packet(nm);
         nm->reference_count--; //will increment again when pushed
 
@@ -182,8 +173,6 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
 
 void NetPeer::ack_packet(struct packet_sequence* ps)
 {
-    return;
-
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
     int num = ps->messages_n;
@@ -193,6 +182,8 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
     for(int i=0; i < num; i++)
     {
         nm = nma->net_message_array[nma_index];
+        nma->net_message_array[nma_index] = NULL; //!!! DEBUG
+
         nm->decrement_reliable();
         //do something
 
