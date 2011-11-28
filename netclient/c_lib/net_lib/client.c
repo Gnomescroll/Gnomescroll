@@ -11,6 +11,7 @@
 #include <time/physics_timer.h>
 
 
+#include <net_lib/benchmark.hpp>
 
 #include <net_lib/common/message_handler.h>
 #include <net_lib/client/client.hpp>
@@ -23,7 +24,7 @@
 
 
 
-#include <c_lib/agent/net_agent.hpp>
+#include <net_lib/benchmark.hpp>
 #include <stdlib.h>
 
 void _net_test() {
@@ -35,7 +36,7 @@ void _net_test() {
     while(1) 
     {
         c++;
-        Agent_cs_CtoS a;
+        benchmarkCtoS a;
         a.id = 0;
         a.seq = 5;
         a.cs = 15;
@@ -110,7 +111,7 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     } else {
-        //_net_test(); //benchmark
+        _net_test(); //benchmark
     }
 
     //deal with retransmission before retransmission

@@ -25,7 +25,7 @@ agent_motion = 'normal'
 
 ''' HUD/Info panels '''
 hud = True  # show hud
-diagnostic_hud = False # show diagnostic HUD elements (graphs, ping, fps)
+diagnostic_hud = True # show diagnostic HUD elements (graphs, ping, fps)
 
 inventory_hud_x_offset = 250
 inventory_hud_y_offset = 500

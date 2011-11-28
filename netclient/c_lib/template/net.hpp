@@ -131,6 +131,9 @@ template <class Derived> int FixedSizeNetPacketToClient<Derived>::size(-1);
 
 template <class Derived>
 class FixedSizeReliableNetPacketToServer {
+    private:
+        virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+
     public:
         static int message_id;
         static int size;
@@ -148,9 +151,6 @@ class FixedSizeReliableNetPacketToServer {
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
-        
-        virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
-
         
         void send() {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
@@ -173,7 +173,7 @@ class FixedSizeReliableNetPacketToServer {
             x.handle();
         }
 
-        static void register_server_packet() {
+        static void register_reliable_server_packet() {
             Derived x = Derived();
             Derived::message_id = next_packet_id(); //set size
             Derived::size = x.Size();
@@ -189,11 +189,13 @@ template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::size(-
 
 template <class Derived>
 class FixedSizeReliableNetPacketToClient {
+    private:
+        virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
         static int message_id;
         static int size;
         //int client_id; //not used yet
-    public:
+
         void serialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, true);
@@ -206,9 +208,6 @@ class FixedSizeReliableNetPacketToClient {
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
-        
-        virtual inline void packet(char* buff, int* buff_n, bool pack) = 0;
-        //inline void packet(char* buff, int* buff_n, bool pack);
 
         void sendToClient(int client_id) {
             char buff[64]; //max message size
@@ -236,7 +235,7 @@ class FixedSizeReliableNetPacketToClient {
             x.handle();
         }
 
-        static void register_client_packet() {
+        static void register_reliable_client_packet() {
             Derived x = Derived();
             Derived::message_id = next_packet_id(); //set size
             x.size = x._size();
