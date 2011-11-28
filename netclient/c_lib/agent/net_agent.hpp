@@ -282,6 +282,7 @@ class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&health, buff, buff_n, pack);
         }
 
         inline void handle();
