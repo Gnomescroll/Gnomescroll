@@ -1,5 +1,8 @@
 #include "ray_trace.h"
 
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
+
 //ray casting stuff
 
 //#define ssize 256
@@ -635,7 +638,7 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
         z_inc = vz;
     } else {
         z_max = z_low;
-        z_inc = -1.0f*vz;
+        z_inc = -vz;
     }
 
     while (!(n*xy_inc > max_distance || n*z_inc > z_max)) {
@@ -659,4 +662,35 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
         }
     }
     return NULL;
+}
+
+
+float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* rad2) {
+    float t;
+    float d;
+    float x,y,z;
+
+    tx = tx - px;
+    ty = tx - py;
+    tz = tx - pz;
+
+    t =  tx*ox + ty*oy + tz*oz; // <tx|ox>
+
+    d = t/(ox*ox+oy*oy+oz*oz); //distance to collision
+
+    x = t*ox - tx;
+    y = t*oy - ty;
+    z = t*oz - tz;
+    *rad2 = x*x+y*y+z*z; // minimum distance between target and line
+
+    //x,y,z is closest point
+    x = t*ox + px;
+    y = t*oy + py;
+    z = t*oz + pz;
+
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+
+    return d;
 }

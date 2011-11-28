@@ -3,6 +3,7 @@
 #include <c_lib/compat.h>
 
 #include <c_lib/physics/vector.h>
+#include <c_lib/ray_trace/ray_trace.h>
 
 #define AGENT_MAX 1024
 #define AGENT_HEIGHT 1.8f
@@ -183,7 +184,6 @@ class Agent_state {
 inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>
-
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
@@ -208,5 +208,26 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
                 }
             }
             return ct;
+        }
+
+        Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* rad2, float* distance, int ignore_id) {
+            int i;
+            float _trad2=0.0f, *trad2=&_trad2;
+            float dist;
+            float min_dist = 100000.0f; // far away
+            Agent_state* agent = NULL;
+            float tpos[3];
+            for (i=0; i<AGENT_MAX; i++) {
+                if (a[i] == NULL) continue;
+                if (a[i]->id == ignore_id) continue;
+                dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x, a[i]->s.y, a[i]->s.z, tpos, trad2);
+                if (dist < 0.0f || dist > min_dist) continue;
+                min_dist = dist;
+                agent = a[i];
+                rad2 = trad2;
+                pos = tpos;
+            }
+            *distance = min_dist;
+            return agent;
         }
 };

@@ -48,4 +48,3 @@ int _raw_cast_collision(struct VoxelList* vo, float x, float y, float z, float x
 int _raw_ray_cast_tracer(struct VoxelList* vo, float x, float y, float z, float x_angle, float y_angle);
 int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x2, float y2, float z2);
 
-float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz);

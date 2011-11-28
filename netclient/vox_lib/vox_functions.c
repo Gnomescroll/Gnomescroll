@@ -475,7 +475,6 @@ int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x
 
 }
 
-    float r2;
 /*
 * pxyz is origin
 * oxyz is normalized orientation
@@ -484,14 +483,13 @@ int _ray_cast_tracer(struct VoxelList* vo, float x1, float y1, float z1, float x
 r2 is the square of distance between sphere center and closest point on line
 d is distance from x0 to nearest point to sphere
 *
-* returns distance
+* returns distance between origin and point on line closest to target
 */
 
 
-float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz) {
-    float t,d;
-    //float r2;
-    float r2;
+float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* rad2) {
+    float t;
+    float d;
     float x,y,z;
 
     tx = tx - px;
@@ -505,12 +503,16 @@ float sphere_line_distance(float px, float py, float pz, float ox, float oy, flo
     x = t*ox - tx;
     y = t*oy - ty;
     z = t*oz - tz;
-    //r2 = x*x+y*y+z*z; //sphere of radius between sphere center and closest point
+    *rad2 = x*x+y*y+z*z; // minimum distance between target and line
 
     //x,y,z is closest point
     x = t*ox + px;
     y = t*oy + py;
     z = t*oz + pz;
+
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
 
     return d;
 }

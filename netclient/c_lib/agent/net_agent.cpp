@@ -148,6 +148,7 @@ inline void hitscan_agent_CtoS::handle() {
     int dmg = 25;
     target->apply_damage(dmg);
     // TODO: Use weapon dmg. Use body_part
+    printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
 }
 
 // hitscan target:block
@@ -157,6 +158,7 @@ inline void hitscan_block_CtoS::handle() {
     // shoot block
     int weapon_block_damage = 12;
     _apply_damage_broadcast(x,y,z, weapon_block_damage);
+    printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
 }
 

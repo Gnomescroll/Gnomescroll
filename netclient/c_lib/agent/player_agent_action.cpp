@@ -17,7 +17,8 @@ void PlayerAgent_action::fire() {
     target = Hitscan::resolve_hitscan_target(
         p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
         vec[0], vec[1], vec[2],
-        data
+        data,
+        p->agent_id
     );
 
     hitscan_agent_CtoS* agent_msg;
@@ -27,14 +28,17 @@ void PlayerAgent_action::fire() {
         case Hitscan::HITSCAN_TARGET_AGENT:
             agent_msg = new hitscan_agent_CtoS(p->agent_id, data[0], data[1]);
             agent_msg->send();
+            printf("hit agent\n");
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:
             block_msg = new hitscan_block_CtoS(p->agent_id, data[0], data[1], data[2]);
             block_msg->send();
+            printf("hit block\n");
             break;
             
         case Hitscan::HITSCAN_TARGET_NONE:
+            printf("hit nothin\n");
         default:
             break;
     }

@@ -466,12 +466,6 @@ class AgentModel(AgentWrapper):
         else:
             self.x, self.y, self.z = xyz
             
-    #moved to player agent wrappper in c_lib_agents.pyx
-    '''
-    def camera_position(self):
-        assert False
-    '''
-
     def velocity(self):
         return self.state[3:6]
 
