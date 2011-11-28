@@ -538,7 +538,6 @@ int _ray_cast_tracer3(float x0, float y0, float z0, float x1, float y1, float z1
     float r2
     float x,y,z;
     float _x, _y,_z;
-    float u;
 
     x0 = x0 - x1;
     y0 = x0 - y1;
@@ -557,6 +556,8 @@ int _ray_cast_tracer3(float x0, float y0, float z0, float x1, float y1, float z1
     r2 = x*x+y*y+z*z; //sphere of radius between sphere center and closest point
 
     /*
+    float u;
+
     glBegin(GL_LINES);
         glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
         glVertex3f(x1,y1,z1); // origin of the line
