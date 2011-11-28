@@ -12,7 +12,7 @@
  */
 
 int Agent_status::apply_damage(int dmg) {
-    if (dead) return;
+    if (dead) return 0;
     
     health -= dmg;
     health = (health < 0) ? 0 : health;
@@ -30,6 +30,7 @@ void Agent_status::die() {
         dead = true;
         agent_dead_StoC* dead_msg = new agent_dead_StoC(a->id);
         dead_msg->broadcast();
+        a->teleport(a->s.x, a->s.y, a->s.z + 10.0f);
     }
 }
 

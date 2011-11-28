@@ -59,7 +59,6 @@ cdef extern from "./agent/agent.hpp":
         int id
         AgentState s
         Agent_collision_box box   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
-        #void teleport(float x,float y,float z)
         Agent_status status
 
 cdef extern from "./agent/agent.hpp":

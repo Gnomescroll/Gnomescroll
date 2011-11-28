@@ -71,7 +71,6 @@ static inline int _collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
-#ifdef DC_SERVER
 void Agent_state::teleport(float x,float y,float z) {
     s.x = x;
     s.y = y;
@@ -90,7 +89,6 @@ void Agent_state::teleport(float x,float y,float z) {
     A.vz = s.vz;
     A.broadcast();
 }
-#endif
 
 void Agent_state::apply_damage(int dmg) {    // TODO add owner, suicidal flags
 
