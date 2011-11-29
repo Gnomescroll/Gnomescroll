@@ -18,7 +18,7 @@ namespace NetServer
 
 struct ConnectionPool {
     int n_connections;
-    class NetPeer* connection[HARD_MAX_CONNECTIONS];
+    class NetPeer* connection[NetServer::HARD_MAX_CONNECTIONS];
 };
 
 namespace NetServer
@@ -34,11 +34,11 @@ namespace NetServer
     void receive_packets(struct Socket* socket);
 
     void process_packets();
+    void flush_packets(); //all messages to all agents, out
 
     void poll_connection_timeout();
     void check_pool_for_dropped_packets();
 }
 
-//void flush_packets(); //all messages to all agents, out
 //void push_message(int client_id, char* buffer, int n_bytes); //que a message for client
 //void push_broadcast_message(char* buffer, int n_bytes);  //que a message for broadcast to all clients

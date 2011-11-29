@@ -20,7 +20,7 @@ void _NetServerInit() {
     ServerState::InitServerState();
 
     unsigned short port = 9999;
-    init_server(port);
+    NetServer::init_server(port);
 
 }
 
@@ -37,14 +37,15 @@ void _NetServerTick() {
 
         //ServerState::ServerTick();
 
-        process_packets(); //should poll for packets very often; event triggered packet dump
+        NetServer::process_packets(); //should poll for packets very often; event triggered packet dump
 
-        check_pool_for_dropped_packets(); //get dropped packets before broadcasting, so retransmission can occur
+        NetServer::check_pool_for_dropped_packets(); //get dropped packets before broadcasting, so retransmission can occur
         //broad_cast_packet2();
-        flush_packets();
+        
+        NetServer::flush_packets(); //flush in waves later
 
         //decrement_ttl();
-        poll_connection_timeout();
+        NetServer::poll_connection_timeout();
 
 
         ServerState::ServerTick();  //tick after process_packets

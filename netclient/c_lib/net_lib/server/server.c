@@ -10,6 +10,9 @@ namespace NetServer
 //struct ConnectionPool pool;
 //struct Socket server_socket;
 
+char buffer[1500]; //buffer for incoming packets
+
+
 unsigned int id_counter=0;
 
 
@@ -57,8 +60,9 @@ int accept_connection(struct sockaddr_in from) {
 //min/max MTU is 576
 //1500 is max MTU for ethernet
 
-/*
-void send_to_client(int client_id, char* buffer, int n) {
+
+void send_to_client(int client_id, char* buffer, int n)
+{
     //printf("Sending %i bytes to client %i \n", n, client_id);
     class NetPeer* p;
     p = pool.connection[client_id];
@@ -76,7 +80,7 @@ void send_to_client(int client_id, char* buffer, int n) {
         return;
     }
 }
-*/
+
 
 void send_id(uint16_t client_id) {
     printf("Sending Client Id\n");
@@ -170,8 +174,6 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     return;
 }
 
-char buffer[1500];
-
 void process_packets() {
 
     struct sockaddr_in from;
@@ -188,6 +190,19 @@ void process_packets() {
     }
 }
 
+
+void flush_packets()
+{
+    class NetPeer* np ;
+
+    for(int i=0; i< HARD_MAX_CONNECTIONS; i++) 
+    {
+        np = pool.connection[i]; //use better iterator
+        if(np == NULL) continue;
+        np->flush_to_net();
+    }
+
+}
 /*
 void flush_packets() {
 
