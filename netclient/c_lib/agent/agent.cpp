@@ -749,13 +749,11 @@ void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy,
     s.vz = _vz;
 }
 
-Agent_state::Agent_state(int _id) : status(this)
+Agent_state::Agent_state(int id) : id (id), status(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
 {
-    id = _id;
-
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
 
     box.b_height = AGENT_HEIGHT;
@@ -782,6 +780,8 @@ Agent_state::Agent_state(int _id) : status(this)
     //dead = false;
 
     #ifdef DC_SERVER
+    agent_create_StoC* msg = new agent_create_StoC(id);
+    msg->broadcast();
     #endif
 
     #ifdef DC_CLIENT
@@ -789,14 +789,12 @@ Agent_state::Agent_state(int _id) : status(this)
     #endif
 }
 
-Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz) : status(this)
+Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz) : id(id), status(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
 {
-    id = _id;
-
-    set_state(_x, _y, _z, _vx, _vy, _vz);
+    set_state(x, y, z, vx, vy, vz);
 
     box.b_height = AGENT_HEIGHT;
     box.box_r = AGENT_BOX_RADIUS;
@@ -821,6 +819,8 @@ Agent_state::Agent_state(int _id, float _x, float _y, float _z, float _vx, float
     //dead = false;
     
     #ifdef DC_SERVER
+    agent_create_StoC* msg = new agent_create_StoC(id);
+    msg->broadcast();
     #endif
 
     #ifdef DC_CLIENT
@@ -904,3 +904,14 @@ void set_agents_to_draw(int* ids, int ct) {
 }
 
 #endif
+
+void Agent_list::send_to_client(int client_id) {
+    int i;
+    agent_create_StoC* msg;
+    for (i=0; i<AGENT_MAX; i++) {
+        if (a[i]==NULL) continue;
+        msg = new agent_create_StoC(a[i]->id);
+        msg->sendToClient(client_id);
+    }
+}
+

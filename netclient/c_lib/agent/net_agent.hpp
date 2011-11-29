@@ -292,3 +292,19 @@ class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
         agent_health_StoC() {}
         agent_health_StoC(int id, int health): id(id), health(health) {}
 };
+
+class agent_create_StoC: public FixedSizeNetPacketToClient<agent_create_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+
+        inline void handle();
+
+        agent_create_StoC() {}
+        agent_create_StoC(int id) : id(id) {}
+};
