@@ -1,6 +1,7 @@
 #include "./net_peer.hpp"
 
 #include <net_lib/client/client.hpp>
+#include <net_lib/server/server.h>
 
 static char net_out_buff[2000];
 
@@ -100,11 +101,22 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
 
 
     //need to handle this case and do alternate loop otherwise
+    /*
+    printf("NetPeer::flush_reliable_to_buffer \n");
 
+    printf("seq= %i \n", ps->seq);
+    printf("read_index= %i \n", ps->read_index);
+    printf("messages_n= %i\n", ps->messages_n);
+    printf("\n y= %i \n\n", rnma_pending_messages);
+    */
     ps->nma = rnma_read;
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
-
+    /*
+    printf("seq= %i \n", ps->seq);
+    printf("read_index= %i \n", ps->read_index);
+    printf("messages_n= %i\n", ps->messages_n);
+    */
     if(rnma_pending_messages == 0) return;
 
     int index = *_index;
@@ -177,15 +189,12 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
 void NetPeer::ack_packet(struct packet_sequence* ps)
 {
     if(ps->messages_n == 0) return;
-    
+
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
     int num = ps->messages_n;
 
-    printf("ack \n");
-    printf("num= %i\n", num);
-    printf("read_index= %i\n", nma_index);
-
+    printf("NetPeer::ack_packet, ps->messages_n= %i \n", ps->messages_n);
     class Net_message* nm;
 
     for(int i=0; i < num; i++)
@@ -230,26 +239,20 @@ void NetPeer::flush_to_net()
         return;
     }
 
-    
-    //printf("n_bytes out= %i \n", n1);
-
     #ifdef DC_CLIENT
     pviz_packet_sent(seq, n1);
-    //int sent_bytes = sendto( client_socket.socket, (const char*)client_out_buff, client_out_buff_n,0, (const struct sockaddr*)&NPserver.address, sizeof(struct sockaddr_in) );
+
     int sent_bytes = sendto( NetClient::client_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
     #endif
 
+    #ifdef DC_SERVER
+    int sent_bytes = sendto( NetServer::server_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
+    if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
+    #endif
 }
 
-
-void reset_NetPeer_buffer(class NetPeer* s) {
-    s->buff_n = 11; //size of header
-}
-
-//class NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port) {
 class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port) {
-    //class NetPeer* s = (class NetPeer*) malloc(sizeof(class NetPeer));
     class NetPeer* s = new NetPeer;
     
     unsigned int destination_address = ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d;
@@ -268,16 +271,12 @@ class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned
     s->ttl = TTL_MAX_DEFAULT;
     s->last_packet_time = get_current_netpeer_time();
 
-    reset_NetPeer_buffer(s);
     init_sequencer(s);
-///    init_sequence_numbers_out(&s->sq2); //init
-///    init_sequence_numbers(&sq);
+
     return s;
 }
 
-//class NetPeer* create_raw_net_peer(struct sockaddr_in address) {
 class NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
-    //class NetPeer* s = (class NetPeer*) malloc(sizeof(class NetPeer));
     class NetPeer* s = new NetPeer;
     s->client_id = 65535;
     s->address = address;
@@ -295,8 +294,7 @@ class NetPeer* create_net_peer_from_address(struct sockaddr_in address) {
     s->ttl_max = TTL_MAX_DEFAULT;
     s->ttl = TTL_MAX_DEFAULT;
     s->last_packet_time = get_current_netpeer_time();
-    //init_sequence_numbers_out(s); //init
-    reset_NetPeer_buffer(s);
+
     init_sequencer(s);
     return s;
 }

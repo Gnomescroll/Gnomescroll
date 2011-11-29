@@ -9,7 +9,7 @@ namespace NetClient {
 //struct Socket client_socket;
 
 //used for incoming data
-char buffer[2000]; //1500 is max ethernet MTU
+char buffer[4096]; //1500 is max ethernet MTU
 
 void init_client() {
 
@@ -66,7 +66,6 @@ void ack_connection_with_server() {
 }
 
 int validate_packet(char* buff, int n, struct sockaddr_in* from) {
-    //check CRC
     if(n <= 0) return 1;
     if(NPserver.connected == 0 && n ==6) { //server connection packet
         int n1=0;

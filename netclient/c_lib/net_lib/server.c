@@ -20,7 +20,7 @@ void _NetServerInit() {
     ServerState::InitServerState();
 
     unsigned short port = 9999;
-    init_server(port);
+    NetServer::init_server(port);
 
 }
 
@@ -28,7 +28,8 @@ long t1 = 0;
 long t2 = 0;
 
 void _NetServerTick() {
-    if(0) {
+    if(0) 
+    {
         t2 = t1;
         t1 = _get_time();
         printf("delta: %i\n",(int)(t1 - t2));
@@ -37,14 +38,15 @@ void _NetServerTick() {
 
         //ServerState::ServerTick();
 
-        process_packets(); //should poll for packets very often; event triggered packet dump
+        NetServer::process_packets(); //should poll for packets very often; event triggered packet dump
 
-        check_pool_for_dropped_packets(); //get dropped packets before broadcasting, so retransmission can occur
+        NetServer::check_pool_for_dropped_packets(); //get dropped packets before broadcasting, so retransmission can occur
         //broad_cast_packet2();
-        flush_packets();
+        
+        NetServer::flush_packets(); //flush in waves later
 
         //decrement_ttl();
-        poll_connection_timeout();
+        NetServer::poll_connection_timeout();
 
 
         ServerState::ServerTick();  //tick after process_packets

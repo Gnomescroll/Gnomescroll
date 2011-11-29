@@ -1,11 +1,17 @@
 
 #include "server.h"
 
+namespace NetServer
+{
+//static const int maximum_packet_size 1024; // not used
 
-#define maximum_packet_size 1024
 // SERVER SPECIFIC CONNECTION POOL STUF
-struct ConnectionPool pool;
-struct Socket server_socket;
+
+//struct ConnectionPool pool;
+//struct Socket server_socket;
+
+char buffer[1500]; //buffer for incoming packets
+
 
 unsigned int id_counter=0;
 
@@ -54,7 +60,9 @@ int accept_connection(struct sockaddr_in from) {
 //min/max MTU is 576
 //1500 is max MTU for ethernet
 
-void send_to_client(int client_id, char* buffer, int n) {
+
+void send_to_client(int client_id, char* buffer, int n)
+{
     //printf("Sending %i bytes to client %i \n", n, client_id);
     class NetPeer* p;
     p = pool.connection[client_id];
@@ -166,8 +174,6 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     return;
 }
 
-char buffer[1500];
-
 void process_packets() {
 
     struct sockaddr_in from;
@@ -184,6 +190,21 @@ void process_packets() {
     }
 }
 
+
+void flush_packets()
+{
+    class NetPeer* np ;
+
+    for(int i=0; i< HARD_MAX_CONNECTIONS; i++) 
+    {
+        np = pool.connection[i]; //use better iterator
+        if(np == NULL) continue;
+        if(np->connected == 0) { printf("Cannot send packet, disconnected: client %i\n",np->client_id); return;}
+        np->flush_to_net();
+    }
+
+}
+/*
 void flush_packets() {
 
     int i,n1;
@@ -227,21 +248,25 @@ void flush_packets() {
         //printf("Sent packet %i, %i bytes to client %i\n", seq, n1, p->client_id);
     }
 }
+*/
 
-
+//Replace
+/*
 void push_message(int client_id, char* buffer, int n_bytes) {
     class NetPeer* p;    
     p = pool.connection[client_id];
     if(p == NULL) { printf("server:push_message failed. Client is null\n"); return; }
-    if(p->buff_n > 800) {
-        printf("Cannot push message, client %i buffer is full\n", client_id);
-        return;
-    }
+    //if(p->buff_n > 800) {
+    //    printf("Cannot push message, client %i buffer is full\n", client_id);
+    //    return;
+    //}
     memcpy(p->buff+p->buff_n, buffer, n_bytes );
     //memcpy( void * destination, const void * source, size_t num );
     p->buff_n += n_bytes;
 }
+*/
 
+/*
 void push_broadcast_message(char* buffer, int n_bytes) {
     int i;
     class NetPeer* p;
@@ -252,7 +277,7 @@ void push_broadcast_message(char* buffer, int n_bytes) {
         p->buff_n += n_bytes;
     }
 }
-
+*/
 
 void check_pool_for_dropped_packets() {
     int i;
@@ -276,4 +301,6 @@ void poll_connection_timeout() {
             delete p; //need to clean up!
         }
     }
+}
+
 }
