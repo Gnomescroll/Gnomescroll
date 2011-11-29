@@ -1,11 +1,14 @@
 
 #include "server.h"
 
+namespace NetServer
+{
+//static const int maximum_packet_size 1024; // not used
 
-#define maximum_packet_size 1024
 // SERVER SPECIFIC CONNECTION POOL STUF
-struct ConnectionPool pool;
-struct Socket server_socket;
+
+//struct ConnectionPool pool;
+//struct Socket server_socket;
 
 unsigned int id_counter=0;
 
@@ -54,6 +57,7 @@ int accept_connection(struct sockaddr_in from) {
 //min/max MTU is 576
 //1500 is max MTU for ethernet
 
+/*
 void send_to_client(int client_id, char* buffer, int n) {
     //printf("Sending %i bytes to client %i \n", n, client_id);
     class NetPeer* p;
@@ -72,7 +76,7 @@ void send_to_client(int client_id, char* buffer, int n) {
         return;
     }
 }
-
+*/
 
 void send_id(uint16_t client_id) {
     printf("Sending Client Id\n");
@@ -184,6 +188,7 @@ void process_packets() {
     }
 }
 
+/*
 void flush_packets() {
 
     int i,n1;
@@ -227,16 +232,17 @@ void flush_packets() {
         //printf("Sent packet %i, %i bytes to client %i\n", seq, n1, p->client_id);
     }
 }
+*/
 
-
+//Replace
 void push_message(int client_id, char* buffer, int n_bytes) {
     class NetPeer* p;    
     p = pool.connection[client_id];
     if(p == NULL) { printf("server:push_message failed. Client is null\n"); return; }
-    if(p->buff_n > 800) {
-        printf("Cannot push message, client %i buffer is full\n", client_id);
-        return;
-    }
+    //if(p->buff_n > 800) {
+    //    printf("Cannot push message, client %i buffer is full\n", client_id);
+    //    return;
+    //}
     memcpy(p->buff+p->buff_n, buffer, n_bytes );
     //memcpy( void * destination, const void * source, size_t num );
     p->buff_n += n_bytes;
@@ -276,4 +282,6 @@ void poll_connection_timeout() {
             delete p; //need to clean up!
         }
     }
+}
+
 }
