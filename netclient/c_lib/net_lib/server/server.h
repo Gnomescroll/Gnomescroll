@@ -43,10 +43,9 @@ struct ConnectionPool {
 
 void init_server(unsigned short port);
 
-void flush_packets(); //all messages to all agents, out
-
-void push_message(int client_id, char* buffer, int n_bytes); //que a message for client
-void push_broadcast_message(char* buffer, int n_bytes);  //que a message for broadcast to all clients
+//void flush_packets(); //all messages to all agents, out
+//void push_message(int client_id, char* buffer, int n_bytes); //que a message for client
+//void push_broadcast_message(char* buffer, int n_bytes);  //que a message for broadcast to all clients
 
 void receive_packets(struct Socket* socket);
 

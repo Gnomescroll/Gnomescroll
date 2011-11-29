@@ -43,21 +43,28 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
     */
     index = seq;
     n = 1;
+    struct packet_sequence* ps;
     for(int i=0;i<32;i++) {
 
         if((flag & n) != 0) {
             //DEBUG, can disable
-            
-            if(np->packet_sequence_buffer[index%256].seq != index)
+            ps = &np->packet_sequence_buffer[index%256];
+            if(ps->seq != index)
             {
                 printf("sequence number error: expected %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
                 //printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
             }
             
-            if(np->packet_sequence_buffer[index%256].ack == 0) { //dont ack same packet twice
+            if(ps->ack == 0) { //dont ack same packet twice
                 //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, NP_time_delta1(np->packet_sequence_buffer[index%256].time));
-                np->packet_sequence_buffer[index%256].ack = 1;
-                np->ack_packet(&np->packet_sequence_buffer[index%256]); //ack packet, free buffer
+                ps->ack = 1;
+            /*
+                printf("ack \n");
+                printf("seq= %i \n", ps->seq);
+                printf("read_index= %i \n", ps->read_index);
+                printf("messages_n= %i\n", ps->messages_n);
+            */
+                np->ack_packet(ps); //ack packet, free buffer
                 #ifdef DC_CLIENT
                 pviz_packet_ack(index);
                 #endif
@@ -87,12 +94,18 @@ uint16_t get_next_sequence_number(class NetPeer* np) {
     ps->ack = 0;
     ps->time = get_current_netpeer_time();
 
+    //ps->nma = NULL;
+    //ps->read_index = 0;
     /*
-    DEBUG
+    REMOVE BELOW WHEN SERVER IS PORTED TO NETPEER SEND METHODS
     */
-    ps->nma = NULL;
-    ps->read_index = 0;
+    #ifdef DC_SERVER
     ps->messages_n = 0 ;
+    #endif
+    //printf("send packet, seq= %i \n", np->packet_sequence_number);
+    //printf("seq= %i \n", ps->seq);
+    //printf("read_index= %i \n", ps->read_index);
+    //printf("messages_n= %i\n", ps->messages_n);
 
     return np->packet_sequence_number;
 }
@@ -155,7 +168,8 @@ void check_for_dropped_packets(class NetPeer* np) {
 void init_sequence_numbers_out(class NetPeer* np) {
     int i;
     np->highest_packet_sequence_number = INIT_V_2;
-    for(i=0;i<256;i++) {
+    for(i=0;i<256;i++) 
+    {
         np->seqbuff[i].seq = -1;
         np->seqbuff[i].received = 0;
     }
@@ -171,7 +185,8 @@ void set_ack_for_received_packet(class NetPeer* np, int seq) {
         //printf("new high seq: %i\n",seq);
     }
     */
-    if( (seq > np->highest_packet_sequence_number) || ((seq < 256) && (np->highest_packet_sequence_number > 1984))) {
+    if( (seq > np->highest_packet_sequence_number) || ((seq < 256) && (np->highest_packet_sequence_number > 1984))) 
+    {
         np->highest_packet_sequence_number = seq;
     }
 }

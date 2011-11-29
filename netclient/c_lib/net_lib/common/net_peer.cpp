@@ -100,11 +100,22 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
 
 
     //need to handle this case and do alternate loop otherwise
+    /*
+    printf("NetPeer::flush_reliable_to_buffer \n");
 
+    printf("seq= %i \n", ps->seq);
+    printf("read_index= %i \n", ps->read_index);
+    printf("messages_n= %i\n", ps->messages_n);
+    printf("\n y= %i \n\n", rnma_pending_messages);
+    */
     ps->nma = rnma_read;
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
-
+    /*
+    printf("seq= %i \n", ps->seq);
+    printf("read_index= %i \n", ps->read_index);
+    printf("messages_n= %i\n", ps->messages_n);
+    */
     if(rnma_pending_messages == 0) return;
 
     int index = *_index;
@@ -177,15 +188,12 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
 void NetPeer::ack_packet(struct packet_sequence* ps)
 {
     if(ps->messages_n == 0) return;
-    
+
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
     int num = ps->messages_n;
 
-    printf("ack \n");
-    printf("num= %i\n", num);
-    printf("read_index= %i\n", nma_index);
-
+    printf("NetPeer::ack_packet, ps->messages_n= %i \n", ps->messages_n);
     class Net_message* nm;
 
     for(int i=0; i < num; i++)
