@@ -199,6 +199,7 @@ void flush_packets()
     {
         np = pool.connection[i]; //use better iterator
         if(np == NULL) continue;
+        if(np->connected == 0) { printf("Cannot send packet, disconnected: client %i\n",np->client_id); return;}
         np->flush_to_net();
     }
 
