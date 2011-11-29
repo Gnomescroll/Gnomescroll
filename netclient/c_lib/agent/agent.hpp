@@ -225,4 +225,6 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
             *distance = min_dist;
             return agent;
         }
+
+        void send_to_client(int client_id);
 };

@@ -58,6 +58,10 @@ inline void agent_health_StoC::handle() {
     a->status.health = health;
 }
 
+inline void agent_create_StoC::handle() {
+    ClientState::agent_list.create(id);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}
@@ -76,6 +80,7 @@ inline void agent_damage_StoC::handle() {}
 inline void fire_weapon_StoC::handle() {}
 inline void agent_health_StoC::handle() {}
 inline void agent_dead_StoC::handle() {}
+inline void agent_create_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;

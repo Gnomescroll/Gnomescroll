@@ -416,6 +416,7 @@ class AgentMessageHandler(GenericMessageHandler):
     @logError('create_agent')
     def create_agent(self, msg, connection):
         print 'Received message CREATE_AGENT. Why????'
+        assert False
         GameStateGlobal.agentList.create(msg)
 
     @logError('agent_position')
