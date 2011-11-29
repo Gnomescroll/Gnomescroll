@@ -92,8 +92,10 @@ class NetPeer
     struct sockaddr_in address;
 
     //buffer
+    /*
     int buff_n;
     char buff[1500]; //out buffer
+    */
     /*
         push packets ont net_message_array and flush from here
     */
@@ -221,8 +223,6 @@ class NetPeer
 
 //class NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
 //class NetPeer* create_raw_net_peer(struct sockaddr_in address);
-
-void reset_NetPeer_buffer(class NetPeer* s);
 
 struct Socket* create_socket(uint16_t port);
 

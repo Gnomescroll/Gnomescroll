@@ -28,7 +28,8 @@ long t1 = 0;
 long t2 = 0;
 
 void _NetServerTick() {
-    if(0) {
+    if(0) 
+    {
         t2 = t1;
         t1 = _get_time();
         printf("delta: %i\n",(int)(t1 - t2));

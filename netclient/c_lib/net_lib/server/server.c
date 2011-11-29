@@ -251,6 +251,7 @@ void flush_packets() {
 */
 
 //Replace
+/*
 void push_message(int client_id, char* buffer, int n_bytes) {
     class NetPeer* p;    
     p = pool.connection[client_id];
@@ -263,7 +264,9 @@ void push_message(int client_id, char* buffer, int n_bytes) {
     //memcpy( void * destination, const void * source, size_t num );
     p->buff_n += n_bytes;
 }
+*/
 
+/*
 void push_broadcast_message(char* buffer, int n_bytes) {
     int i;
     class NetPeer* p;
@@ -274,7 +277,7 @@ void push_broadcast_message(char* buffer, int n_bytes) {
         p->buff_n += n_bytes;
     }
 }
-
+*/
 
 void check_pool_for_dropped_packets() {
     int i;

@@ -121,7 +121,7 @@ class FixedSizeNetPacketToClient {
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
-            class NetPeer* np ;
+            class NetPeer* np;
 
             for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
