@@ -9,6 +9,10 @@ static char net_out_buff[2000];
     Use arrays/pointers/pool later for packets, to remove limits
 */
 
+/*
+Possible Memory leak
+*/
+
 void NetPeer::push_unreliable_packet(Net_message* nm) 
 {
     pending_unreliable_bytes_out += nm->len;
@@ -239,6 +243,10 @@ void NetPeer::flush_to_net()
         return;
     }
 
+    /*
+        simulate packet loss
+        if(seq % 4 == 0 ) return; //drop every 4th packet
+    */
     #ifdef DC_CLIENT
     pviz_packet_sent(seq, n1);
 

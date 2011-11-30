@@ -10,6 +10,9 @@ class Object_pool {
         void batch_alloc();
 
     public:
+
+    virtual char* name() = 0;
+
     Object* first;
     Object* last;
 
@@ -52,7 +55,7 @@ template <class Object, int BUFFER_POOL_SIZE>
 void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
 {
     batch_num++;
-    printf("Batch Alloc: %i n_elements: %i \n", batch_num, BUFFER_POOL_SIZE);
+    printf("%s: Batch Alloc: %i n_elements: %i \n", name(), batch_num, BUFFER_POOL_SIZE);
     //Object* ar = (Object*) malloc(BUFFER_POOL_SIZE*sizeof(Object));
     Object* ar = new Object[BUFFER_POOL_SIZE];
 
@@ -78,7 +81,7 @@ Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
     //if first==last, assuming, that first.next == NULL
     if(first == NULL) 
     {
-        printf("First is null: allocate new object pool\n");
+        printf("%s: First is null: allocate new object pool\n", name());
         //first = (struct Object*) malloc(sizeof(struct Object))
         //first.next = NULL;
         //last = first; 

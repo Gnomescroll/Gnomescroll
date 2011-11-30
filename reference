@@ -88,6 +88,11 @@ http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter06.html
 
 Some games—for example, shader-heavy ones—use a separate initial rendering pass that writes only to the depth buffer. Subsequent passes test against this depth buffer, and thus expensive shading is done only for visible pixels. If the scenes are complex, our occlusion-culling algorithm can be used to accelerate establishing the initial depth buffer and at the same time to obtain a complete visibility classification of the hierarchy. For the subsequent passes, we skip over objects or whole groups of objects that are completely invisible at virtually no cost.
 
+Minimizing polygon count by software backface culling:
+sort polygons into lists based upon z level and faces
+"the vertex processor has no information regarding connectivity, hence operations that require topological knowledge can’t be performed in here. For instance it is not possible for a vertex shader to perform back face culling, since it operates on vertices and not on faces. The vertex processor processes vertices individually and has no clue of the remaining vertices."
+http://www.lighthouse3d.com/tutorials/glsl-tutorial/vertex-processor/
+
 Array Textures:
 http://www.opengl.org/wiki/Array_Texture
 
