@@ -138,7 +138,7 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
             print "SOMETHING IS GIVING SERVER AGENT AN ID"
             raise Exception
 
-        AgentWrapper.__init__(self)
+        AgentWrapper.__init__(self, player_id)
         
         self.team = team
 

@@ -106,65 +106,68 @@ class GenericObjectList:
         o.update_info(**obj)
         return o
 
-#class GenericObjectListWrapper(GenericObjectList):
 
-    #def __init__(self):
-        #GenericObjectList.__init__(self)
+# override dict methods to hit down to c *list
+class GenericObjectListWrapper(GenericObjectList):
 
-    #def _add(self):
-        #raise Exception, "NO _ADD!"
-    #def create(self):
-        #raise Exception, "NO CREATION!!"
+    _wrapper = None
 
-    #def _remove(self):
-        #raise Exception "Wont _remove"
-    #def destroy(self):
-        #raise Exception, "You cant destroy"
+    def __init__(self):
+        pass
 
-    #def __getitem__(self, key):
-        #if key not in self.objects:
-            #print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
-            #return
-        #return self.objects[key]
+    def update_from_list(self):
+        ids = self._wrapper.ids()
+        for id in ids:
+            if id not in self.objects:
+                # create object
+                obj = self._object_type(id=id)
+                self.objects[id] = obj
+    
+    def __getitem__(self, key):
+        return GenericObjectList.__getitem__(self, key)
         
-    #def __setitem__(self, key, value):
-        #self.objects[key] = value
+    def __setitem__(self, key, value):
+        self.update_from_list()
+        GenericObjectList.__setitem__(self, key, value)
         
-    #def __delitem__(self, key):
-        #del self.objects[key]
+    def __delitem__(self, key):
+        self.update_from_list()
+        GenericObjectList.__delitem__(self, key)
         
-    #def __len__(self):
-        #return len(self.objects)
+    def __len__(self):
+        self.update_from_list()
+        return GenericObjectList.__len__(self)
 
-    #def __contains__(self, key):
-        #return key in self.objects
+    def __contains__(self, key):
+        self.update_from_list()
+        return GenericObjectList.__contains__(self, key)
 
-    #def __iter__(self):
-        #return iter(self.objects)
+    def __iter__(self):
+        self.update_from_list()
+        return GenericObjectList.__iter__(self)
 
-    #def keys(self):
-        #return self.objects.keys()
+    def keys(self):
+        self.update_from_list()
+        return GenericObjectList.keys(self)
 
-    #def values(self):
-        #return self.objects.values()
+    def values(self):
+        self.update_from_list()
+        return GenericObjectList.values(self)
 
-    #def items(self):
-        #return self.objects.items()
+    def items(self):
+        self.update_from_list()
+        return GenericObjectList.items(self)
 
-    #def get(self, key, default=None):
-        #if key in self.objects:
-            #return self.objects[key]
-        #else:
-            #return default
-        
-
+    def get(self, key, default=None):
+        self.update_from_list()
+        return GenericObjectList.get(self, key, default)
 
 # datastore for agents
-class AgentList(GenericObjectList):
-#class AgentList(GenericObjectListWrapper):
+class AgentList(GenericObjectListWrapper):
 
     def __init__(self):
         from agents import Agent
+        GenericObjectListWrapper.__init__(self)
         GenericObjectList.__init__(self)
         self._metaname = 'AgentList'
         self._itemname = 'Agent'
@@ -205,6 +208,7 @@ class AgentList(GenericObjectList):
             if r2 > (x_-x)**2 + (y_-y)**2 + (z_-z)**2:
                 l.append(agent)
         return l
+
 
 # datastore for Players
 class PlayerList(GenericObjectList):

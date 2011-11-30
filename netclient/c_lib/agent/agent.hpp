@@ -5,7 +5,7 @@
 #include <c_lib/physics/vector.h>
 #include <c_lib/ray_trace/ray_trace.h>
 
-#define AGENT_MAX 1024
+const int AGENT_MAX = 256;
 #define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT_CROUCHED 0.9f
 #define AGENT_BOX_RADIUS 0.4f
@@ -20,10 +20,6 @@ void init_agent_vox_done(int id);
 void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a);
 void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz);
 void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az);
-
-void init_agents_to_draw();
-void clear_agents_to_draw();
-void set_agents_to_draw(int* ids, int ct);
 
 #include <c_lib/agent/agent_event.hpp>
 #endif
@@ -111,7 +107,8 @@ class Agent_state {
 
         int id;
         int client_id;
-
+        int owner;
+        
         struct Agent_collision_box box;
 
         int _new_control_state; //Deprecate
@@ -167,8 +164,8 @@ class Agent_state {
 
         void draw();
 
-        Agent_state(int _id); //default constructor
-        Agent_state(int _id, float _x, float _y, float _z, float _vx, float _vy, float _vz);
+        Agent_state(int id); //default constructor
+        Agent_state(int id, int owner, float x, float y, float z, float vx, float vy, float vz);
 
         //void server_tick();
         //set_control_state(int[8] _cs, float theta, float phi);
@@ -184,6 +181,8 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     public:
         void draw();
         void draw(int);
+
+        int ids_in_use[AGENT_MAX];
 
         Agent_state* filtered_agents[AGENT_MAX]; // tmp array for filtering agents
         int agents_within_sphere(float x, float y, float z, float radius) {
@@ -227,4 +226,19 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         }
 
         void send_to_client(int client_id);
+
+        int get_ids(int* p) {
+            p = ids_in_use;
+            return get_ids();
+        }
+
+        int get_ids() {
+            int i,j=0;
+            for (i=0; i<AGENT_MAX;i++) {
+                if (a[i] == NULL) continue;
+                j++;
+                ids_in_use[j] = a[i]->id;
+            }
+            return j;            
+        }
 };

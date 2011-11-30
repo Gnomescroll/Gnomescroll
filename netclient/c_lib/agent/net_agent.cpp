@@ -8,8 +8,9 @@
 inline void Agent_state_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
-        printf("Agent does not exist: create agent, id=%i \n", id);
-        A = STATE::agent_list.create(id);
+        printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
+        //A = STATE::agent_list.create(id);
+        return;
     }            
     A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
     return;
@@ -59,7 +60,8 @@ inline void agent_health_StoC::handle() {
 }
 
 inline void agent_create_StoC::handle() {
-    ClientState::agent_list.create(id);
+    Agent_state* a = ClientState::agent_list.create(id);
+    a->owner = owner;
 }
 
 inline void Agent_cs_CtoS::handle() {}
@@ -101,7 +103,7 @@ inline void Agent_cs_CtoS::handle() {
 
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
-        STATE::agent_list.create(id);
+        //STATE::agent_list.create(id);
         printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
         return;
     }

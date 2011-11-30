@@ -297,14 +297,16 @@ class agent_create_StoC: public FixedSizeNetPacketToClient<agent_create_StoC>
 {
     public:
         int id;
-
+        int owner;
+        
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&owner, buff, buff_n, pack);
         }
 
         inline void handle();
 
         agent_create_StoC() {}
-        agent_create_StoC(int id) : id(id) {}
+        agent_create_StoC(int id, int owner) : id(id), owner(owner) {}
 };

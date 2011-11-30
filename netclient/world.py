@@ -71,14 +71,7 @@ class World():
 
     def draw_agents(self, first_person=False):
         
-        to_draw = []
-        for agent in GameStateGlobal.agentList.values():
-            if not agent.dead and not (agent.you and first_person) and \
-                (agent.team and not agent.team.is_viewers()):
-                    to_draw.append(agent.id)
-            
         if opts.draw_agents:
-            c_lib.c_lib_agents.load_agents_to_draw(to_draw)
             c_lib.c_lib_agents.draw_agents()
 
     def sound_updates(self):

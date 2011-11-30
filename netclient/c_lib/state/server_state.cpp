@@ -17,6 +17,7 @@ namespace ServerState {
     void InitServerState() {
     
         agent_list.create(0); //create agent 0
+        
     }
 
 

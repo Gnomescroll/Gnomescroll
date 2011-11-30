@@ -13,7 +13,7 @@ static HitscanBlock dummy_hitscan_block;
 HitscanAgent* ray_intersect_agent(float x, float y, float z, float vx, float vy, float vz, int ignore_agent) {
 
     float pos[3];
-    float *rad2;
+    float _rad2=0.0f,*rad2=&_rad2;
     float _dist=0.0f,*dist=&_dist;
     Agent_state* a = STATE::agent_list.hitscan_agents(x,y,z, vx,vy,vz, pos, rad2, dist, ignore_agent);
     if (a == NULL) {

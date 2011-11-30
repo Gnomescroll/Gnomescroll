@@ -92,6 +92,16 @@ void send_id(uint16_t client_id) {
     send_to_client(client_id, buffer, n);
 }
 
+uint16_t init_client(struct sockaddr_in* from) {
+    printf("New Client: sending client id\n");
+    uint16_t client_id = accept_connection(*from);
+    send_id(client_id);
+    send_id(client_id);
+    send_id(client_id);
+    ServerState::agent_list.send_to_client(client_id);
+    return client_id;
+}
+
 void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     //printf("Packet\n");
     int n=0;
@@ -111,11 +121,7 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
         UNPACK_uint8_t(&channel_id, buff, &n);
 
         if(client_id==65535 && channel_id == 255) {
-            printf("New Client: sending client id\n");
-            client_id = accept_connection(*from);
-            send_id(client_id);
-            send_id(client_id);
-            send_id(client_id);
+            client_id = init_client(from);
         }  else if ((client_id < HARD_MAX_CONNECTIONS) && (channel_id == 254) && (pool.connection[client_id] != NULL) ) {
             printf("Connection with client %i acked\n",  pool.connection[client_id]->client_id);
             pool.connection[client_id]->connected = 1;

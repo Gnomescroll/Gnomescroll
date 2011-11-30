@@ -7,26 +7,20 @@
 #include <c_lib/defines.h>
 #include <math.h>
 
-#ifdef DC_CLIENT
-static int n_agents_to_draw = 0;
-static int agents_to_draw[AGENT_MAX];
-#endif
-
-// default draw mode, uses agents_to_draw list
 void Agent_list::draw() 
 {
     #ifdef DC_CLIENT
-    int i,j;
+    int i;
 
     glDisable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glBegin(GL_QUADS);
 
-    for(i=0; i<n_agents_to_draw; i++) { //max_n
-        j = agents_to_draw[i];
-        if (j < 0) continue;
-        if(a[j] != NULL && !a[j]->status.dead) {
-          a[j]->draw();
+    for(i=0; i<AGENT_MAX; i++) { //max_n
+        if (a[i] == NULL) continue;
+        if (!a[i]->id != ClientState::playerAgent_state.agent_id && // you
+            !a[i]->status.dead) {
+                a[i]->draw();
         }
     }
 
@@ -48,7 +42,6 @@ void Agent_list::draw(int all)
 
     for(i=0; i<n_max; i++) { //max_n
         if(a[i] != NULL && !a[i]->status.dead) {
-            printf("SHOULD DRAW AGENT %d\n", i);
             a[i]->draw();
         }
     }
@@ -762,6 +755,8 @@ Agent_state::Agent_state(int id) : id (id), status(this)
 
     cs_seq = 0;
 
+    owner = 0;
+
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
 
     _new_control_state = 0;
@@ -780,7 +775,7 @@ Agent_state::Agent_state(int id) : id (id), status(this)
     //dead = false;
 
     #ifdef DC_SERVER
-    agent_create_StoC* msg = new agent_create_StoC(id);
+    agent_create_StoC* msg = new agent_create_StoC(id, owner);
     msg->broadcast();
     #endif
 
@@ -789,7 +784,8 @@ Agent_state::Agent_state(int id) : id (id), status(this)
     #endif
 }
 
-Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz) : id(id), status(this)
+Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx, float vy, float vz)
+: id(id), owner(owner), status(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
@@ -819,7 +815,7 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
     //dead = false;
     
     #ifdef DC_SERVER
-    agent_create_StoC* msg = new agent_create_StoC(id);
+    agent_create_StoC* msg = new agent_create_StoC(id, owner);
     msg->broadcast();
     #endif
 
@@ -879,30 +875,6 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
     s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
 }
 
-void init_agents_to_draw() {
-    int i;
-    for (i=0; i<AGENT_MAX; i++) {
-        agents_to_draw[i] = -1;
-    }
-    n_agents_to_draw = 0;
-}
-
-void clear_agents_to_draw() {
-    int i;
-    for (i=0; i<n_agents_to_draw; i++) {
-        agents_to_draw[i] = -1;
-    }
-    n_agents_to_draw = 0;
-}
-
-void set_agents_to_draw(int* ids, int ct) {
-    int i;
-    for (i=0; i<ct; i++) {
-        agents_to_draw[i] = ids[i];
-    }
-    n_agents_to_draw = ct;
-}
-
 #endif
 
 void Agent_list::send_to_client(int client_id) {
@@ -910,7 +882,7 @@ void Agent_list::send_to_client(int client_id) {
     agent_create_StoC* msg;
     for (i=0; i<AGENT_MAX; i++) {
         if (a[i]==NULL) continue;
-        msg = new agent_create_StoC(a[i]->id);
+        msg = new agent_create_StoC(a[i]->id, a[i]->owner);
         msg->sendToClient(client_id);
     }
 }

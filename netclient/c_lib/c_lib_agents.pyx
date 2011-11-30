@@ -57,6 +57,7 @@ cdef extern from "./agent/agent.hpp":
  
     cdef cppclass Agent_state:
         int id
+        int owner
         AgentState s
         Agent_collision_box box   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
         Agent_status status
@@ -68,11 +69,8 @@ cdef extern from "./agent/agent.hpp":
     void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
     void init_agent_vox_done(int id)
 
-    void init_agents_to_draw()
-    void clear_agents_to_draw()
-    void set_agents_to_draw(int* ids, int ct)
-
 cdef extern from "./agent/agent.hpp":
+    int AGENT_MAX
     cdef cppclass Agent_list:
         void draw()
         void draw(int all)
@@ -82,6 +80,8 @@ cdef extern from "./agent/agent.hpp":
         Agent_state* get_or_create(int id)
         void destroy(int _id)
         void where()
+        int get_ids()
+        int* ids_in_use
 
 cdef extern from "./agent/player_agent_action.hpp":
     cdef cppclass PlayerAgent_action:
@@ -103,9 +103,6 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
     void set_PlayerAgent_id(int id)
     PlayerAgent_state playerAgent_state
-
-def init_draw_agents():
-    init_agents_to_draw()
 
 def draw_agents():
     agent_list.draw()
@@ -153,15 +150,6 @@ def _update_agent_vox(int id):
         fx,fy,fz,nx,ny,nz = dat.lu3[part]
         set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
 
-def load_agents_to_draw(agents):
-    clear_agents_to_draw()
-    cdef int a[1024]
-    cdef int i = 0
-    for ag in agents:
-        a[i] = ag
-        i += 1
-    set_agents_to_draw(a, i)
-
 
 '''
 WRAPPER
@@ -179,10 +167,11 @@ class AgentWrapper(object):
         'box_r',
         #'crouching',
         'health', 'dead',
+        'owner',
     ]
 
     def __init__(self, int id):
-        agent_list.create(id)
+#        agent_list.create(id)
         self.id = id
         
     def __getattribute__(self, name):
@@ -235,6 +224,9 @@ class AgentWrapper(object):
             return a.status.health
         elif name == 'dead':
             return a.status.dead
+
+        elif name == 'owner':
+            return a.owner
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
@@ -318,3 +310,13 @@ class AgentListWrapper:
     def remove(cls, int id):
         agent_list.destroy(id)
         return id
+
+    @classmethod
+    def ids(cls):
+        cdef int n
+        n = agent_list.get_ids()
+        ids = []
+        for k in range(n):
+            ids.append(agent_list.ids_in_use[k])
+        return ids
+        

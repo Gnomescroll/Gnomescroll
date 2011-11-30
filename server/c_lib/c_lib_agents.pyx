@@ -25,6 +25,7 @@ cdef extern from "./agent/agent.hpp":
 
     cdef cppclass Agent_state:
         int id
+        int owner
         AgentState s
         Agent_collision_box box
         void teleport(float x,float y,float z)
@@ -54,10 +55,11 @@ class AgentWrapper(object):
     ]
 
 #    cdef int id
-    def __init__(self):
+    def __init__(self, int owner):
         cdef Agent_state *a
         a = agent_list.create()
         self.id = a.id
+        a.owner = owner
         
     def __getattribute__(self, name):
         if name not in AgentWrapper.properties:

@@ -2,11 +2,11 @@
 
 //put stuff that gets exposed to cython at top here
 //extern "C" {
-	#include "./time/physics_timer.c" //physics timer
+    #include "./time/physics_timer.c" //physics timer
 //
 
 //extern "C" {
-	#include <net_lib/client/pviz.c>
+    #include <net_lib/client/pviz.c>
 //}
 
 
@@ -17,8 +17,12 @@
 #include <net_lib/common/sequencer.c>
 #include <net_lib/common/message_handler.c>
 
+#ifdef DC_CLIENT
 #include <net_lib/client/client.cpp>
-#include <net_lib/server/server.c>
-
-#include <net_lib/server.c>
 #include <net_lib/client.c>
+#endif
+
+#ifdef DC_SERVER
+#include <net_lib/server/server.c>
+#include <net_lib/server.c>
+#endif

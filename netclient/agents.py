@@ -38,38 +38,6 @@ Physics for agents
 class AgentPhysics(object):
 
     #deprecate
-    def compute_state(self):
-        assert False
-        '''
-        # only v_x and v_y are used
-        v = 1
-        d_x, d_y, v_x, v_y = 0,0,0,0
-        u,d,l,r, jetpack, brake = self.button_state
-
-        if u:
-                v_x += v*cos( self.x_angle * pi)
-                v_y += v*sin( self.x_angle * pi)
-        if d:
-                v_x += -v*cos( self.x_angle * pi)
-                v_y += -v*sin( self.x_angle * pi)
-        if l:
-                v_x += v*cos( self.x_angle * pi + pi/2)
-                v_y += v*sin( self.x_angle * pi + pi/2)
-        if r:
-                v_x += -v*cos( self.x_angle * pi + pi/2)
-                v_y += -v*sin( self.x_angle * pi + pi/2)
-
-        return [\
-            d_x,
-            d_y,
-            v_x,
-            v_y,
-            jetpack,
-            brake,
-        ]
-        '''
-
-    #deprecate
     #use by  "/home/atomos/dc_mmo/netclient/projectiles.py", line 92
     def point_collision_test(self, x_,y_,z_):
         #assert False
@@ -342,11 +310,11 @@ class AgentModel(AgentWrapper):
     RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
     def __init__(self, owner, id, state=None, health=None, dead=False, team=None):
-        if owner is None or id is None:
-            print 'WARNING!! Creating agent with no owner or id'
-            raise ValueError, "Attempted to create agent with no owner or id"
+        #if id is None:
+            #print 'WARNING!! Creating agent with no owner or id'
+            #raise ValueError, "Attempted to create agent with no owner or id"
 
-        AgentWrapper.__init__(self, id)
+        #AgentWrapper.__init__(self, id)
             
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
@@ -395,7 +363,7 @@ class AgentModel(AgentWrapper):
             #self.health = health
         #self.dead = bool(dead)
 
-        self.owner = owner
+        #self.owner = owner
 
         self.you = False
 
@@ -426,8 +394,8 @@ class AgentModel(AgentWrapper):
         if 'inventory' in agent:
             self.inventory.update_info(**agent['inventory'])
 
-        if 'owner' in agent:
-            self.owner = agent['owner']
+        #if 'owner' in agent:
+            #self.owner = agent['owner']
         if 'state' in agent:
             state = agent['state']
             if type(state) == list and len(state) == len(self.state):
@@ -444,7 +412,7 @@ class AgentModel(AgentWrapper):
 
     def _update_team_object(self):
         t = self.__dict__['team']
-        if not isinstance(t, NoTeam):
+        if t and not isinstance(t, NoTeam):
             t = GameStateGlobal.teamList[t]
             if t is not None:
                 self.team = t
@@ -519,19 +487,14 @@ class AgentModel(AgentWrapper):
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        assert False
+        #assert False
         #self.init_vox()
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         AgentVoxRender.__init__(self)
-        print 'id %s' % (self.id,)
+        print 'Python Agent creation: id %s' % (self.id,)
         print self
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
-
-
-
-
-#from profiler import P
 
 
 '''
@@ -552,8 +515,6 @@ class PlayerAgentRender(AgentRender):
         max_l = 20
         pos = c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, max_l)
         if pos != None:
-            pass
-            #print str(pos)
             (x,y,z, px,py,pz, sx,sy,sz) = pos
             #cube selected
             r,g,b = 150,150,150

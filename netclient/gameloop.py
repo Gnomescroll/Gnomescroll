@@ -112,8 +112,6 @@ class App(object):
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
 
-        cAgents.init_draw_agents()
-
         self.init_inputs()
         print "App init finished"
 
