@@ -42,6 +42,10 @@ struct packet_sequence2 {
 
 #include <net_lib/common/packet_buffer.hpp>
 
+/*
+Net message array
+*/
+
 static const int NET_MESSAGE_ARRAY_SIZE = 256;
 
 class NetMessageArray {
@@ -58,24 +62,35 @@ class NetMessageArray {
         next = NULL;
     }
 
-    inline void retire() 
-    {
-        delete this;
-    }
+    inline void retire();
 
-    static NetMessageArray* acquire()
-    {
-        return new NetMessageArray;
-    }
+    inline static NetMessageArray* acquire();
 };
 
-class NetMessageBuffer {
-    private:
-    public:    
-    //class NetMessageArray* head;
-    //int consume_index;
-
+class NetMessageArray_pool: public Object_pool<NetMessageArray, 2>  //set to 64, 2 for testing
+{
+    public:
+    char* name() { static char x[] = "NetMessageArray_pool"; return x; } 
 };
+
+static NetMessageArray_pool net_message_array_pool;
+
+inline void NetMessageArray::retire() 
+{
+    net_message_array_pool.retire(this);
+}
+
+NetMessageArray* NetMessageArray::acquire()
+{
+    NetMessageArray* a = net_message_array_pool.acquire();
+    a->next = NULL;
+    //a->reference_count = 0; //set to 1 automaticly
+    return a;
+}    
+
+/*
+NetPeer
+*/
 
 class NetPeer
 {

@@ -36,12 +36,18 @@ void NetPeer::push_reliable_packet(class Net_message* nm)
 
     rnma_insert->net_message_array[rnma_insert_index] = nm;
     rnma_insert->reference_count++;
+    printf("packet pushed: ref count = %i\n", rnma_insert->reference_count);
     rnma_insert_index++;
     if(rnma_insert_index == NET_MESSAGE_ARRAY_SIZE)
     {
+        rnma_insert->reference_count--;
+        if(rnma_insert->reference_count == 0) rnma_insert->retire();
+ 
         rnma_insert_index = 0;
         rnma_insert->next = NetMessageArray::acquire();
         rnma_insert = rnma_insert->next;
+        rnma_insert->reference_count = 1;
+
     }
 }
 
@@ -200,6 +206,8 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
 
     printf("NetPeer::ack_packet, ps->messages_n= %i \n", ps->messages_n);
     class Net_message* nm;
+    printf("NetPeer::ack_packet, nma ref count= %i \n", nma->reference_count);
+    printf("num= %i\n", num);
 
     for(int i=0; i < num; i++)
     {
@@ -208,18 +216,29 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
 
         nm->decrement_reliable();
         //do something
-
         nma->reference_count--;    //decrement on confirmation
 
         nma_index++;
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
         {
-            if(nma->reference_count == 0) nma->retire(); //check 1
+            //if(nma->reference_count == 0) nma->retire(); //check 1
+            if(nma->reference_count == 0) 
+            {
+                printf("1 delete nma %i \n", nma);
+                nma->retire();
+                nma = nma->next;
+            }
             nma = nma->next;
             nma_index=0;
         }
     }
-    if(nma->reference_count == 0) nma->retire(); //check 1
+    //if(nma->reference_count == 0) nma->retire(); //check 1
+    if(nma != NULL && nma->reference_count == 0)
+    {
+        printf("2 delete nma %i \n", nma);
+        nma->retire();
+        //delete nma; //debug  
+    } 
 }
 
 void NetPeer::flush_to_net() 
