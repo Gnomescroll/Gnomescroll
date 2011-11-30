@@ -318,4 +318,3 @@ class AgentListWrapper:
     def remove(cls, int id):
         agent_list.destroy(id)
         return id
-
