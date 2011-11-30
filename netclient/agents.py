@@ -519,6 +519,7 @@ class AgentModel(AgentWrapper):
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
+        assert False
         #self.init_vox()
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         AgentVoxRender.__init__(self)
@@ -653,12 +654,10 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
+        #assert False
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
         self._control_state_id_set = False
-
-        #if id:
-            #self.id = id
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)

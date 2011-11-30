@@ -55,11 +55,9 @@ class GenericObjectList:
         return repr(self.objects)
 
     def _add(self, *args, **kwargs):
-        #print args, kwargs
         obj = self._object_type(*args, **kwargs)
         if obj.id in self.objects:
             print 'Create %s failed; id %s already exists' % (self._itemname, obj.id,)
-            pass
         else:
             self.objects[obj.id] = obj
             #print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
@@ -108,10 +106,62 @@ class GenericObjectList:
         o.update_info(**obj)
         return o
 
+#class GenericObjectListWrapper(GenericObjectList):
+
+    #def __init__(self):
+        #GenericObjectList.__init__(self)
+
+    #def _add(self):
+        #raise Exception, "NO _ADD!"
+    #def create(self):
+        #raise Exception, "NO CREATION!!"
+
+    #def _remove(self):
+        #raise Exception "Wont _remove"
+    #def destroy(self):
+        #raise Exception, "You cant destroy"
+
+    #def __getitem__(self, key):
+        #if key not in self.objects:
+            #print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
+            #return
+        #return self.objects[key]
         
+    #def __setitem__(self, key, value):
+        #self.objects[key] = value
+        
+    #def __delitem__(self, key):
+        #del self.objects[key]
+        
+    #def __len__(self):
+        #return len(self.objects)
+
+    #def __contains__(self, key):
+        #return key in self.objects
+
+    #def __iter__(self):
+        #return iter(self.objects)
+
+    #def keys(self):
+        #return self.objects.keys()
+
+    #def values(self):
+        #return self.objects.values()
+
+    #def items(self):
+        #return self.objects.items()
+
+    #def get(self, key, default=None):
+        #if key in self.objects:
+            #return self.objects[key]
+        #else:
+            #return default
+        
+
 
 # datastore for agents
 class AgentList(GenericObjectList):
+#class AgentList(GenericObjectListWrapper):
 
     def __init__(self):
         from agents import Agent
