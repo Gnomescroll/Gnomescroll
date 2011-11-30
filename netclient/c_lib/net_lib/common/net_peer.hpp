@@ -217,6 +217,7 @@ class NetPeer
 
         //reliable message que
         rnma_insert = NetMessageArray::acquire();
+        rnma_insert->reference_count = 1;
         rnma_insert_index = 0;
         rnma_read = rnma_insert;
         rnma_read_index = 0;

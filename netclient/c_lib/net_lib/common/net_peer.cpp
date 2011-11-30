@@ -209,31 +209,35 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
     printf("NetPeer::ack_packet, nma ref count= %i \n", nma->reference_count);
     printf("num= %i\n", num);
 
+
+    //for(int i=0; i < num; i++)
+    /*        
+        Iterate over num packets
+        Dont let retire check 1 on last loop
+    */
     for(int i=0; i < num; i++)
     {
         nm = nma->net_message_array[nma_index];
         nma->net_message_array[nma_index] = NULL; //!!! DEBUG
 
         nm->decrement_reliable();
-        //do something
         nma->reference_count--;    //decrement on confirmation
-
         nma_index++;
+        
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
         {
-            //if(nma->reference_count == 0) nma->retire(); //check 1
-            if(nma->reference_count == 0) 
+            if(nma->reference_count == 0)
             {
+                if(i+1 == num) break;   //prevent from running on last loop, to avoid double retiring
                 printf("1 delete nma %i \n", nma);
                 nma->retire();
-                nma = nma->next;
             }
             nma = nma->next;
             nma_index=0;
         }
     }
     //if(nma->reference_count == 0) nma->retire(); //check 1
-    if(nma != NULL && nma->reference_count == 0)
+    if(nma->reference_count == 0)
     {
         printf("2 delete nma %i \n", nma);
         nma->retire();
