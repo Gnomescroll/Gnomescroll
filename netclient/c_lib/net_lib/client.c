@@ -65,6 +65,8 @@ void _test_reliable() {
     
     static int _r_sent = 0;
 
+    if(_r_sent > 1000) return;
+
     benchmarkReliableCtoS a;
     a.id = 0;
     a.seq = 5;
@@ -129,7 +131,7 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     } else {
-        _test_reliable();
+        //_test_reliable();
         //_net_test(); //benchmark
     }
 

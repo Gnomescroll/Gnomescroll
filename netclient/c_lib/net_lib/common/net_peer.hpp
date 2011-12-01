@@ -46,7 +46,7 @@ struct packet_sequence2 {
 Net message array
 */
 
-static const int NET_MESSAGE_ARRAY_SIZE = 256;
+static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
 
 class NetMessageArray {
     private:
@@ -67,7 +67,7 @@ class NetMessageArray {
     inline static NetMessageArray* acquire();
 };
 
-class NetMessageArray_pool: public Object_pool<NetMessageArray, 2>  //set to 64, 2 for testing
+class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
     char* name() { static char x[] = "NetMessageArray_pool"; return x; } 

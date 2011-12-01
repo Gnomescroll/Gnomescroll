@@ -217,15 +217,23 @@ class FixedSizeReliableNetPacketToServer {
 template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::size(-1);
 
+/*
+Optimize this so it only serilizes once when sending to multiple clients
+Should onyl use one net message allocation per message
+*/
 
 template <class Derived>
 class FixedSizeReliableNetPacketToClient {
     private:
         virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        class Net_message* nm;
     public:
         static int message_id;
         static int size;
         //int client_id; //not used yet
+
+        //FixedSizeReliableNetPacketToClient() : nm(NULL) {}
+        FixedSizeReliableNetPacketToClient(){ nm = NULL; }
 
         void serialize(char* buff, int* buff_n) { //, int* size
             //int _buff_n = *buff_n;
@@ -248,10 +256,18 @@ class FixedSizeReliableNetPacketToClient {
             serialize(buff, &buff_n, &size);
             push_message(client_id, buff, size);
             */
+            if(nm == NULL) 
+            {
+                nm = Net_message::acquire_reliable(Derived::size);
+                int buff_n = 0;
+                serialize(nm->buff, &buff_n);
+            }
+            /*
             Net_message* nm = Net_message::acquire_reliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            //NetClient::NPserver.push_unreliable_packet(nm);
+            */
+
             if(NetServer::pool.connection[client_id] == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id % is null\n", client_id);

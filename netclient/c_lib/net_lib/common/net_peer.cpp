@@ -204,10 +204,10 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
     int nma_index = ps->read_index;
     int num = ps->messages_n;
 
-    printf("NetPeer::ack_packet, ps->messages_n= %i \n", ps->messages_n);
+    //printf("NetPeer::ack_packet, ps->messages_n= %i \n", ps->messages_n);
     class Net_message* nm;
-    printf("NetPeer::ack_packet, nma ref count= %i \n", nma->reference_count);
-    printf("num= %i\n", num);
+    //printf("NetPeer::ack_packet, nma ref count= %i \n", nma->reference_count);
+    //printf("num= %i\n", num);
 
 
     //for(int i=0; i < num; i++)
@@ -266,18 +266,20 @@ void NetPeer::flush_to_net()
         return;
     }
 
-    /*
-        simulate packet loss
-        if(seq % 4 == 0 ) return; //drop every 4th packet
-    */
+    
+    
     #ifdef DC_CLIENT
     pviz_packet_sent(seq, n1);
+
+    //simulate packet loss
+    //if(seq % 2 == 0 ) return; //drop every 4th packet
 
     int sent_bytes = sendto( NetClient::client_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
     #endif
 
     #ifdef DC_SERVER
+    //if(seq % 2 == 0 ) return; //drop every 4th packet
     int sent_bytes = sendto( NetServer::server_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
     #endif
