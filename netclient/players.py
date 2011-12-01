@@ -13,12 +13,6 @@ class Player:
         print 'New player assigned name: %s' % (name,)
         self.kills = kills
         self.deaths = deaths
-        if type(agent) == dict:
-            print 'new Player: agent dict, creating agent'
-            print "^ lying"
-            #agent = GameStateGlobal.agentList.create(**agent)
-        #self.agent = agent
-        #self.agent = agent['id']
         self.agent = None
         self.you = False
         self.score = score
@@ -58,7 +52,6 @@ class YouPlayer(Player):
         self.id = id
         self.kills = kills
         self.deaths = deaths
-        #self.agent = agent['id']
         self.agent = None
         self.you = True
         self.suicides = suicides

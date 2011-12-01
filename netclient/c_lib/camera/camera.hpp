@@ -44,7 +44,9 @@ class CCamera {
 CCamera* get_available_camera();
 void set_camera(CCamera* cam);
 void init_cameras();
+void set_camera_first_person(int fp);
 
+extern int first_person;
 extern int current_camera_id;
 extern CCamera* current_camera;
 extern float model_view_matrix[16];

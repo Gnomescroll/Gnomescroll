@@ -134,10 +134,6 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         self.terrainMap = GameStateGlobal.terrainMap
         ### End Global imports ###
 
-        if id is not None:
-            print "SOMETHING IS GIVING SERVER AGENT AN ID"
-            raise Exception
-
         AgentWrapper.__init__(self, player_id)
         
         self.team = team

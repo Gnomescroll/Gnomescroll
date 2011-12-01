@@ -27,6 +27,7 @@ cdef extern from "./camera/camera.hpp":
         void set_fov(float fov)
         
     void set_camera(CCamera* c)
+    void set_camera_first_person(int first_person)
     CCamera* get_available_camera()
 
 camera_properties = [
@@ -45,8 +46,9 @@ callback = None
 cdef class Camera(object):
     cdef CCamera* camera
     cdef int active
+    cdef int first_person
 
-    def __init__(self):
+    def __init__(self, int first_person):
         cdef CCamera* cam
 
         cam = get_available_camera();
@@ -62,9 +64,12 @@ cdef class Camera(object):
 
         self.camera.set_dimensions()
 
+        self.first_person = int(first_person)
+
     def load(self):
         if self.active == 0:
             set_camera(self.camera)
+            set_camera_first_person(self.first_person)
             self.active = 1
 
     def unload(self):

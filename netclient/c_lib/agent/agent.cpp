@@ -16,38 +16,16 @@ void Agent_list::draw()
     glEnable (GL_DEPTH_TEST);
     glBegin(GL_QUADS);
 
+    bool you;
     for(i=0; i<AGENT_MAX; i++) { //max_n
         if (a[i] == NULL) continue;
-        if (!a[i]->id != ClientState::playerAgent_state.agent_id && // you
-            !a[i]->status.dead) {
-                a[i]->draw();
-        }
+        you = (!a[i]->id != ClientState::playerAgent_state.agent_id);
+        if ((first_person && you) ||
+            a[i]->status.dead) {printf("not drawing. you: %d, first_person: %d, dead: %d\n", (int)you, first_person, (int)a[i]->status.dead); continue;}
+        a[i]->draw();
     }
 
     glDisable (GL_DEPTH_TEST);
-    glEnd();
-    #endif
-}
-
-void Agent_list::draw(int all) 
-{
-    #ifdef DC_CLIENT
-    if (! all) return;
-    int i;
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-    glBegin(GL_QUADS);
-    //glEnable(GL_CULL_FACE);   // for bounding box lines (disabled)
-
-    for(i=0; i<n_max; i++) { //max_n
-        if(a[i] != NULL && !a[i]->status.dead) {
-            a[i]->draw();
-        }
-    }
-
-    //glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
     glEnd();
     #endif
 }
@@ -829,7 +807,7 @@ void Agent_state::draw() {
     //AgentDraw::draw_agent(this);
     if (vox != NULL) {
         vox->draw(s.x, s.y, s.z, s.theta, s.phi);
-    }
+    } else {printf("vox null\n");}
 
 #endif
 }

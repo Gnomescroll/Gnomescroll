@@ -73,7 +73,6 @@ cdef extern from "./agent/agent.hpp":
     int AGENT_MAX
     cdef cppclass Agent_list:
         void draw()
-        void draw(int all)
         Agent_state* get(int id)
         Agent_state* create()
         Agent_state* create(int id)
@@ -104,6 +103,19 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void set_PlayerAgent_id(int id)
     PlayerAgent_state playerAgent_state
 
+cdef extern from "./agent/agent_vox.hpp":
+    int AGENT_PART_NUM
+    cdef cppclass VoxBody:
+        float vox_size
+        void set_part(
+            float rot_x, float rot_y, float rot_z,
+            float rot_ax, float rot_ay, float rot_az,
+            float anc_len, float anc_x, float anc_y, float anc_z,
+            int dim_x, int dim_y, int dim_z,
+            int part_num
+        )
+    VoxBody agent_vox_dat
+
 def draw_agents():
     agent_list.draw()
 
@@ -111,7 +123,7 @@ import dat.agent_dim as dat
 # import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
 vosize = dat.vosize
 
-PART_NUM = 6
+PART_NUM = AGENT_PART_NUM
 def _init_agent_vox(int id):
     #global dat.lu1, dat.lu2, dat.lu3,
     global vosize
@@ -139,16 +151,27 @@ def _init_agent_vox(int id):
         set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
 
     init_agent_vox_done(id)
+    
+def load_agent_voxel_dat():
+    agent_vox_dat.vox_size = dat.vosize
+
+    for part in range(AGENT_PART_NUM):
+        xdim,ydim,zdim = dat.lu1[part]
+        length, ax,ay,az= dat.lu2[part]
+        fx,fy,fz, nx,ny,nz = dat.lu3[part]
+
+        agent_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part)
+
 
 def _update_agent_vox(int id):
-    return # !!!
-    dat.skel_tick()
-    for part in range(PART_NUM):
-        length, ax,ay,az= dat.lu2[part]
-        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-    for part in range(PART_NUM):
-        fx,fy,fz,nx,ny,nz = dat.lu3[part]
-        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
+#    dat.skel_tick()
+#    for part in range(PART_NUM):
+#        length, ax,ay,az= dat.lu2[part]
+#        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
+#    for part in range(PART_NUM):
+#        fx,fy,fz,nx,ny,nz = dat.lu3[part]
+#        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
+    return
 
 
 '''
@@ -185,7 +208,7 @@ class AgentWrapper(object):
 
         if a == NULL:
             print "AgentWrapper.__getattribute__ :: agent %d not found" % (i,)
-            raise AttributeError
+            raise ValueError, "C Agent %d not found" % (i,)
 
         if name == 'x':
             return a.s.x

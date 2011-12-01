@@ -103,7 +103,7 @@ class App(object):
         camera.set_callback(c_lib.terrain_map.camera_callback)
         self.camera = camera.Camera(x=0., z=50., fov=opts.fov, name='camera')
         self.camera.load()
-        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent_camera')
+        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent_camera', first_person=True)
         
         self.hud = Hud()
 
@@ -113,6 +113,9 @@ class App(object):
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
 
         self.init_inputs()
+
+        cAgents.load_agent_voxel_dat()
+        
         print "App init finished"
 
     def _exit(self):

@@ -12,9 +12,6 @@ class PlayerAgent_action {
         
     public:
         PlayerAgent_action(PlayerAgent_state* player_agent): p(player_agent) {}
-        
-        //void left_mouse_click() {}
-        //void right_mouse_click() {}
 
         void fire();
         void hit_block();

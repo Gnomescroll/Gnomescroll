@@ -180,7 +180,6 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         const char* name() { return "Agent"; }
     public:
         void draw();
-        void draw(int);
 
         int ids_in_use[AGENT_MAX];
 

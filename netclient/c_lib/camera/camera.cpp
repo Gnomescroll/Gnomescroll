@@ -7,9 +7,14 @@ static CCamera cameras[N_CAMERAS];
 
 CCamera* current_camera = NULL;
 float model_view_matrix[16];
+int first_person = 0;
 
 void set_camera(CCamera* cam) {
     current_camera = cam;
+}
+
+void set_camera_first_person(int fp) {
+    first_person = first_person;
 }
 
 CCamera* get_available_camera() {

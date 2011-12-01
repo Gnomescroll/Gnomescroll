@@ -1,5 +1,7 @@
 #include "agent_vox.hpp"
 
+VoxBody agent_vox_dat;
+
 void Agent_vox::init_vox_part(int part, int xdim, int ydim, int zdim, float vosize) {
     printf("init vox part\n");
     if(vox_part[part] != NULL) {
@@ -112,6 +114,7 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
 #ifdef DC_CLIENT
 
 void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
+    //if (!vox_ready) {printf("vox not rdy\n");return;}
     if (!vox_ready) return;
 
     struct Vector right;

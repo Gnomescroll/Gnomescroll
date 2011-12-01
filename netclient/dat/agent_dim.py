@@ -1,15 +1,15 @@
 
 vosize = .0625
 
-l_len = 20
+l_len = 20      # leg length
 
 lu1 = [             # dimensions
 [6,8,6],
 [12,12,12],
 [4,12,4],
 [4,12,4],
-[4,4,l_len],
-[4,4,l_len]
+[4,4,l_len],    # leg1
+[4,4,l_len]     # leg2
 ]
 
 lu2 = [             # anchor points (length, anchor [x,y,z])

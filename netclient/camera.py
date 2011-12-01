@@ -16,8 +16,8 @@ class Camera(object):
 
     _local = ['camera', 'name', 'loaded']
 
-    def __init__(self, x=0.0, y=0.0, z=0.0, x_angle=0.0, y_angle=0.0, name='', fov=85.):
-        self.camera = cCamera.Camera()
+    def __init__(self, x=0.0, y=0.0, z=0.0, x_angle=0.0, y_angle=0.0, name='', fov=85., first_person=False):
+        self.camera = cCamera.Camera(first_person=first_person)
         self.camera.set_fov(fov)
         self.name = name
         self.x = x

@@ -10,7 +10,7 @@
 #include <c_lib/voxel/common.h>
 #include <physics/vector.h>
 
-#define AGENT_PART_NUM 6
+const int AGENT_PART_NUM = 6;
 #define AGENT_PART_HEAD 0
 #define AGENT_PART_TORSO 1
 #define AGENT_PART_LARM 2
@@ -121,3 +121,126 @@ class Agent_vox {
         void draw(float x, float y, float z, float theta, float phi);
         #endif
 };
+
+
+/* Dat storage */
+
+class VoxPartRotation {
+    public:
+        float x,y,z;     // internal orientation
+        float ax,ay,az; // orientation vector relative to main anchor point
+        void set(float x, float y, float z, float ax, float ay, float az) {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+            this->ax = ax;
+            this->ay = ay;
+            this->az = az;
+        }
+        VoxPartRotation(){}
+        VoxPartRotation(float x, float y, float z, float ax, float ay, float az)
+        :   x(x), y(y), z(z), ax(ax), ay(ay), az(az) {}
+};
+
+class VoxPartAnchor {
+    public:
+        float length;
+        float x,y,z;
+        void set(float length, float x, float y, float z) {
+            this->length = length;
+            this->x = x;
+            this->y = y;
+            this->z = z;
+        }
+        VoxPartAnchor(){}
+        VoxPartAnchor(float length, float x, float y, float z)
+        :   length(length), x(x), y(y), z(z) {}
+};
+
+class VoxPartDimension {
+    public:
+        int x,y,z;
+        void set(int x, int y, int z) {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+        }
+        VoxPartDimension(){}
+        VoxPartDimension(int x, int y, int z)
+        :   x(x), y(y), z(z) {}
+};
+
+struct VoxPart {
+    public:
+        struct VoxPartRotation rotation;
+        struct VoxPartAnchor anchor;
+        struct VoxPartDimension dimension;
+        int part_num;
+
+        void set_rotation(float x, float y, float z, float ax, float ay, float az) {
+            rotation.set(x, y, z, ax, ay, az);
+        }
+
+        void set_anchor(float len, float x, float y, float z) {
+            anchor.set(len, x, y, z);
+        }
+
+        void set_dimension(int x, int y, int z) {
+            dimension.set(x,y,z);
+        }
+        
+        VoxPart(
+            float rot_x, float rot_y, float rot_z,
+            float rot_ax, float rot_ay, float rot_az,
+            float anc_len, float anc_x, float anc_y, float anc_z,
+            int dim_x, int dim_y, int dim_z,
+            int part_num
+        ):  rotation(rot_x, rot_y, rot_z, rot_ax, rot_ay, rot_az),
+            anchor(anc_len, anc_x, anc_y, anc_z),
+            dimension(dim_x, dim_y, dim_z),
+            part_num(part_num)
+        {}
+};
+
+class VoxBody {
+    public:
+        class VoxPart* vox_part[AGENT_PART_NUM];
+        float vox_size;
+
+        void set_part(
+            float rot_x, float rot_y, float rot_z,
+            float rot_ax, float rot_ay, float rot_az,
+            float anc_len, float anc_x, float anc_y, float anc_z,
+            int dim_x, int dim_y, int dim_z,
+            int part_num
+        ) {
+            VoxPart* p = vox_part[part_num];
+            if (p==NULL) {
+                p = new VoxPart(
+                        rot_x, rot_y, rot_z,
+                        rot_ax, rot_ay, rot_az,
+                        anc_len, anc_x, anc_y, anc_z,
+                        dim_x, dim_y, dim_z,
+                        part_num
+                    );
+            } else {
+                p->set_rotation(rot_x, rot_y, rot_z, rot_ax, rot_ay, rot_az);
+                p->set_anchor(anc_len, anc_x, anc_y, anc_z);
+                p->set_dimension(dim_x, dim_y, dim_z);
+                p->part_num = part_num;
+            }
+        }
+
+        VoxBody() {}
+        VoxBody(float vox_size) : vox_size(vox_size) {}
+
+        ~VoxBody() {
+            int i;
+            for (i=0; i<AGENT_PART_NUM; i++) {
+                if (vox_part[i] == NULL) continue;
+                delete vox_part[i];
+            }
+        }
+};
+
+extern VoxBody agent_vox_dat;

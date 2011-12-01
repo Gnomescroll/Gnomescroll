@@ -490,7 +490,7 @@ class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
         #assert False
         #self.init_vox()
         AgentModel.__init__(self, owner, id, state, health, dead, team)
-        AgentVoxRender.__init__(self)
+        #AgentVoxRender.__init__(self)
         print 'Python Agent creation: id %s' % (self.id,)
         print self
         self.inventory = AgentInventory(self, items)
@@ -616,9 +616,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
         #assert False
+        self._control_state_id_set = False
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
-        self._control_state_id_set = False
 
         self.weapons = PlayerAgentWeapons(self, weapons)
         self.inventory = PlayerAgentInventory(self, items)
@@ -633,14 +633,15 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
         self.az = 0
 
         self.camera = None
-        
-        AgentVoxRender.__init__(self)
+
+        #AgentVoxRender.__init__(self)
 
     def __setattr__(self, name, val):
         self.__dict__[name] = val
         if name == 'id':
-            set_player_agent_id(val)
-            self._control_state_id_set = True
+            if not self._control_state_id_set:
+                set_player_agent_id(val)
+                self._control_state_id_set = True
 
     def __getattribute__(self, name):
         try:

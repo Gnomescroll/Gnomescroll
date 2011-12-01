@@ -65,6 +65,7 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
     } 
     if(a[id] == NULL) {
         printf("%s get error: object is null, id=%i\n",name(), id);
+        //throw 40;
         return NULL;
     }
     return a[id];
