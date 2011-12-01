@@ -34,6 +34,7 @@ class GameStateGlobal:
         cls.teamList = game_modes.TeamList()
         cls.gameState = GameState()
         cls.exit = False
+        #cls.agent = GameStateGlobal.agentList.create_player_agent(0, 0)
 
     @classmethod
     def init_1(cls):

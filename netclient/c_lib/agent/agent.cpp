@@ -858,7 +858,7 @@ void set_agent_limb_anchor_point(int id, int part, float length, float ax, float
 void Agent_list::send_to_client(int client_id) {
     int i;
     agent_create_StoC* msg;
-    for (i=0; i<AGENT_MAX; i++) {
+    for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
         if (a[i]==NULL) continue;
         msg = new agent_create_StoC(a[i]->id, a[i]->owner);
         msg->sendToClient(client_id);

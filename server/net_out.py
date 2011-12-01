@@ -366,11 +366,11 @@ class SendMessage: #each connection has one of these
             'full'  :   int(not properties),
         }
 
-    @sendJSON('agent_list')
-    def send_agents(self):
-        return {
-            'agent_list'    :   GameStateGlobal.agentList.json(),
-        }
+    #@sendJSON('agent_list')
+    #def send_agents(self):
+        #return {
+            #'agent_list'    :   GameStateGlobal.agentList.json(),
+        #}
 
     @sendJSON('agent_update')
     def send_agent(self, agent, properties=None):

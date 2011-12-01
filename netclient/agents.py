@@ -639,6 +639,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
     def __setattr__(self, name, val):
         self.__dict__[name] = val
         if name == 'id':
+            #if val:
+                #raise ValueError, "setting playeragent id to %d" % (val,)
             if not self._control_state_id_set:
                 set_player_agent_id(val)
                 self._control_state_id_set = True

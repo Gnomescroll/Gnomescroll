@@ -60,8 +60,9 @@ inline void agent_health_StoC::handle() {
 }
 
 inline void agent_create_StoC::handle() {
-    Agent_state* a = ClientState::agent_list.create(id);
+    Agent_state* a = ClientState::agent_list.get_or_create(id);
     a->owner = owner;
+    printf("C Agent created. id: %d\n", a->id);
 }
 
 inline void Agent_cs_CtoS::handle() {}

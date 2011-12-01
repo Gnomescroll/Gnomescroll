@@ -271,6 +271,7 @@ class PlayerAgentWrapper(object):
 
     def __init__(self, int id):
         self.id = id
+        agent_list.create(id)
         set_PlayerAgent_id(id)
 
     def __getattribute__(self, name):
