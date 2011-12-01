@@ -128,8 +128,7 @@ class App(object):
         START_CLOCK() #clock must be started before networking stuff
         a,b,c,d = opts.server.split(".")
         NetClientConnect(int(a),int(b),int(c),int(d), 0)
-        NetClientGlobal.connect() #starts connection
-        #NetClientConnect(127,0,0,1, 0)
+        NetClientGlobal.connect() #python connection
 
     def mainLoop(self):
         global P, Phy

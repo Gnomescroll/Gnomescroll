@@ -63,13 +63,6 @@ cdef extern from "./agent/agent.hpp":
         Agent_status status
 
 cdef extern from "./agent/agent.hpp":
-    void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size)
-    void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a)
-    void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz)
-    void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az)
-    void init_agent_vox_done(int id)
-
-cdef extern from "./agent/agent.hpp":
     int AGENT_MAX
     cdef cppclass Agent_list:
         void draw()
@@ -91,7 +84,6 @@ cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
         float camera_height()
-        #AgentState* active_camera_state #deprecate, use AgentState camera_state
         AgentState camera_state
         void toggle_camera_mode()
         void pump_camera() #update camera
@@ -120,38 +112,6 @@ def draw_agents():
     agent_list.draw()
 
 import dat.agent_dim as dat
-# import dat.lu1, dat.lu2, dat.lu3, vosize, skel_tick
-vosize = dat.vosize
-
-PART_NUM = AGENT_PART_NUM
-def _init_agent_vox(int id):
-    #global dat.lu1, dat.lu2, dat.lu3,
-    global vosize
-    global PART_NUM
-
-    for part in range(PART_NUM):
-        xdim,ydim,zdim = dat.lu1[part]
-
-        init_agent_vox_part(id, part, xdim, ydim, zdim, vosize)
-
-        for x in range(xdim):
-            for y in range(ydim):
-                for z in range(zdim):
-                    a = 255
-                    r = 32*x
-                    g = 32*y
-                    b = 32*z
-                    set_agent_vox_volume(id, part, x,y,z, r,g,b,a) # THIS
-
-    for part in range(PART_NUM):
-        length, ax,ay,az= dat.lu2[part]
-        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-    for part in range(PART_NUM):
-        fx,fy,fz, nx,ny,nz = dat.lu3[part]
-        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-
-    init_agent_vox_done(id)
-    
 def load_agent_voxel_dat():
     agent_vox_dat.vox_size = dat.vosize
 
@@ -163,22 +123,9 @@ def load_agent_voxel_dat():
         agent_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part)
 
 
-def _update_agent_vox(int id):
-#    dat.skel_tick()
-#    for part in range(PART_NUM):
-#        length, ax,ay,az= dat.lu2[part]
-#        set_agent_limb_anchor_point(id, part, length,ax,ay,az)
-#    for part in range(PART_NUM):
-#        fx,fy,fz,nx,ny,nz = dat.lu3[part]
-#        set_agent_limb_direction(id, part, fx, fy, fz, nx,ny,nz)
-    return
-
-
 '''
 WRAPPER
 '''
-
-
 class AgentWrapper(object):
     properties = [
         'x', 'y', 'z',

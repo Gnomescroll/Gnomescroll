@@ -25,7 +25,7 @@ from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
 from weapons import LaserGun, Pick, BlockApplier
 from game_modes import NoTeam
-from c_lib.c_lib_agents import _update_agent_vox, _init_agent_vox, AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
+from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 from draw_utils import *
 from net_out import NetOut
 from input import InputGlobal

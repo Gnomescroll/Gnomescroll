@@ -2,8 +2,37 @@
 
 VoxBody agent_vox_dat;
 
+void Agent_vox::init() {
+    if (agent_vox_dat.vox_size == 0.0f) {
+        printf("Agent_vox::init() error. agent_vox_dat is not initialized");
+        return;
+    }
+
+    VoxPart* part;
+
+    Vox* v;
+    int i;
+
+    for (i=0; i<AGENT_PART_NUM; i++) {
+        part = agent_vox_dat.vox_part[i];
+
+        // create and assign vox part
+        v = new Vox(i, part->dimension.x, part->dimension.y, part->dimension.z, agent_vox_dat.vox_size);
+        vox_part[i] = v;
+        
+        // apply dats
+        v->set_base_anchor_point(part->anchor.length, part->anchor.x, part->anchor.y, part->anchor.z);
+        v->set_direction(
+            part->rotation.fx, part->rotation.fy, part->rotation.fz,
+            part->rotation.nx, part->rotation.ny, part->rotation.nz
+        );
+
+        // set color
+        v->set_color(255,10,10,255);
+    }
+}
+
 void Agent_vox::init_vox_part(int part, int xdim, int ydim, int zdim, float vosize) {
-    printf("init vox part\n");
     if(vox_part[part] != NULL) {
         delete vox_part[part];
         vox_part[part] = NULL;
@@ -11,10 +40,6 @@ void Agent_vox::init_vox_part(int part, int xdim, int ydim, int zdim, float vosi
 
     Vox* v = new Vox(part, xdim, ydim, zdim, vosize);
     vox_part[part] = v;
-}
-
-void Agent_vox::init_vox_done() {
-    vox_ready = 1;
 }
 
 void Agent_vox::set_limb_anchor_point(int part, float ax, float ay, float az) {
@@ -106,6 +131,30 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
     vo->a =a;
 }
 
+void Vox::set_color(int r, int g, int b, int a) {
+    int n,j;
+    n = xdim*ydim*zdim;
+    struct Voxel* vo;
+    for (j=0; j<n; j++) {
+        vo = &vox[j];
+        vo->r = r;
+        vo->g = g;
+        vo->b = b;
+        vo->a = a;
+    }
+}
+
+void Vox::set_color(int x, int y, int z, int r, int g, int b, int a) {
+    struct Voxel* vo = &vox[x + y*xdim + z*xdim*ydim];
+    if (vo==NULL) {
+        printf("set_agent_vox_volume: null ptr\n");
+        return;
+    }
+    vo->r = r;
+    vo->g = g;
+    vo->b = b;
+    vo->a = a;
+}
 
 /*
  *  Client only
@@ -114,9 +163,6 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
 #ifdef DC_CLIENT
 
 void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
-    //if (!vox_ready) {printf("vox not rdy\n");return;}
-    if (!vox_ready) return;
-
     struct Vector right;
     struct Vector look;
     struct Vector forward;
@@ -148,7 +194,7 @@ void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
 
             vox_part[i]->rotate_anchor(theta);
             
-            if (i == AGENT_PART_HEAD) {
+            if (i == AGENT_PART_HEAD) { // what
                 vox_part[i]->draw(look, right, x,y,z);
             } else {
                 vox_part[i]->draw_head(forward, right, x, y, z);

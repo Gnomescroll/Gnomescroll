@@ -14,7 +14,7 @@ void set_camera(CCamera* cam) {
 }
 
 void set_camera_first_person(int fp) {
-    first_person = first_person;
+    first_person = fp;
 }
 
 CCamera* get_available_camera() {

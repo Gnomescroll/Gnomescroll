@@ -19,9 +19,11 @@ void Agent_list::draw()
     bool you;
     for(i=0; i<AGENT_MAX; i++) { //max_n
         if (a[i] == NULL) continue;
-        you = (!a[i]->id != ClientState::playerAgent_state.agent_id);
+        you = (a[i]->id == ClientState::playerAgent_state.agent_id);
         if ((first_person && you) ||
-            a[i]->status.dead) {printf("not drawing. you: %d, first_person: %d, dead: %d\n", (int)you, first_person, (int)a[i]->status.dead); continue;}
+            a[i]->status.dead) {
+            continue;
+        }
         a[i]->draw();
     }
 
@@ -749,9 +751,6 @@ Agent_state::Agent_state(int id) : id (id), status(this)
 
     client_id = -1;
 
-    //health = AGENT_START_HEALTH;
-    //dead = false;
-
     #ifdef DC_SERVER
     agent_create_StoC* msg = new agent_create_StoC(id, owner);
     msg->broadcast();
@@ -789,9 +788,6 @@ Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx,
 
     client_id = -1;
 
-    //health = AGENT_START_HEALTH;
-    //dead = false;
-    
     #ifdef DC_SERVER
     agent_create_StoC* msg = new agent_create_StoC(id, owner);
     msg->broadcast();
@@ -804,11 +800,9 @@ Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx,
 
 void Agent_state::draw() {
 #ifdef DC_CLIENT
-    //AgentDraw::draw_agent(this);
     if (vox != NULL) {
         vox->draw(s.x, s.y, s.z, s.theta, s.phi);
-    } else {printf("vox null\n");}
-
+    }
 #endif
 }
 
@@ -821,39 +815,6 @@ void Agent_state::client_tick() {
 void Agent_state::server_tick() {
     return;
 }
-
-#ifdef DC_CLIENT
-void init_agent_vox_part(int id, int part, unsigned short vox_x, unsigned short vox_y, unsigned short vox_z, float vox_size) {
-    Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL || s->vox == NULL) return;
-    s->vox->init_vox_part(part, vox_x, vox_y, vox_z, vox_size);
-}
-
-void init_agent_vox_done(int id) {
-    Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL || s->vox == NULL) return;
-    s->vox->init_vox_done();
-}
-
-void set_agent_vox_volume(int id, int part, int x, int y, int z, int r, int g, int b, int a) {
-    Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL || s->vox == NULL) return;
-    s->vox->set_vox_volume(part, x,y,z, r,g,b,a);
-}
-
-void set_agent_limb_direction(int id, int part, float fx, float fy, float fz, float nx, float ny, float nz) {
-    Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL || s->vox == NULL) return;
-    s->vox->set_limb_direction(part, fx,fy,fz, nx,ny,nz);
-}
-
-void set_agent_limb_anchor_point(int id, int part, float length, float ax, float ay, float az) {
-    Agent_state* s = ClientState::agent_list.get(id);
-    if (s==NULL || s->vox == NULL) return;
-    s->vox->set_limb_base_anchor_point(part, length, ax,ay,az);
-}
-
-#endif
 
 void Agent_list::send_to_client(int client_id) {
     int i;

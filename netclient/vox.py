@@ -1,5 +1,4 @@
 import vox_lib
-from c_lib.c_lib_agents import _init_agent_vox, _update_agent_vox
 
 vox_loader = vox_lib.Vox_loader()
 
