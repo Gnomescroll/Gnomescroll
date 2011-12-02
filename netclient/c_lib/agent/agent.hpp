@@ -195,7 +195,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
             return ct;
         }
 
-        Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* rad2, float* distance, int ignore_id) {
+        Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float* pos, float* rad2, float* distance, int ignore_id) {
             int i;
             
             float _trad2=0.0f, *trad2=&_trad2;
