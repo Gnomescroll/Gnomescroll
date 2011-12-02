@@ -192,7 +192,7 @@ int _init_draw_terrain() {
     if(texture == 0) { //load texture if texture is not set
     //surface=IMG_Load("media/texture/textures_03.png");  //should this be freed?
     surface=IMG_Load("media/texture/blocks_01.png");
-    if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
+    if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
 
     //SDL_Surface *_surface = IMG_Load("media/texture/textures_03.png");
     //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
@@ -223,8 +223,6 @@ int _init_draw_terrain() {
     }
     return 0;
 }
-
-
 
 /*
 deprecated

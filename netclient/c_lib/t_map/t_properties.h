@@ -10,6 +10,7 @@
 // cube properties
 
 const int max_cubes = 1024;
+const int N_PIXEL_SAMPLES = 10;
 
 struct cubeProperties {
     int active;
@@ -22,6 +23,7 @@ struct cubeProperties {
     int neutron_tolerance;
     int nuclear;
     int infinite_texture;
+
 };
 
 struct cubeProperties* _get_cube_list();
