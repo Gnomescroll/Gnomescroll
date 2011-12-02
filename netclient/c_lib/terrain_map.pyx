@@ -606,7 +606,6 @@ def init(inited=[0]):
 
     _init_draw_terrain()
     init_t_properties()
-    grab_cube_pixel_samples()
     _init_t_map();
 
 # these get loaded in _cube_inits after cube_dat is received from server

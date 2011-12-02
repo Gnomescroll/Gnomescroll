@@ -224,14 +224,6 @@ int _init_draw_terrain() {
     return 0;
 }
 
-// gets random pixel values for cube sides
-static int cube_pixels
-void grab_cube_pixel_samples() {
-    SDL_LockSurface(surface);
-
-    SDL_UnlockSurface(surface);
-}
-
 /*
 deprecated
 
