@@ -44,10 +44,12 @@ int _isActive(int id);
 void _set_cube_side_texture(int id, int side, int tex_id);
 //int _get_cube_side_texture(int id, int side);
 extern short cube_side_texture_array[max_cubes*6];
+
 static inline int _get_cube_side_texture(int id, int side)
 {
     return cube_side_texture_array[6*id +side];
 }
+
 
 /*
 Cube Properties
@@ -81,3 +83,12 @@ static inline int getInfiniteTexture(int id) {
 static inline int collidesBlock(int x, int y, int z) {
     return isSolid(_get(x,y,z));
 }
+
+
+/*
+Texture Sampling
+*/
+
+static const int MAX_TEXTURES = 256;
+
+void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);

@@ -3,8 +3,9 @@
 struct cubeProperties cube_list[max_cubes];
 
 short infinite_texture_array[1024];
-
 short cube_side_texture_array[max_cubes*6];
+
+static unsigned char* pixel_data[MAX_TEXTURES];
 
 void set_infinite_texture(int id, int texture) {
     if(id > 1024) {
@@ -22,6 +23,7 @@ void init_t_properties() {
     int i;
     for(i=0;i<max_cubes; i++) cube_list[i].infinite_texture = 0;
     for(i=0;i<max_cubes*6; i++) cube_side_texture_array[i] = 255; //use error block
+    //for(i=0;i<MAX_TEXTURES; i++) pixel_data[i] = NULL;
 }
 
 struct cubeProperties* _get_cube_list() {
@@ -37,18 +39,70 @@ int _isActive(int id) {
     }
 
 
+const static int TEXTURE_WIDTH = 32;
+
 void _set_cube_side_texture(int id, int side, int tex_id) {
     
+    if(tex_id > MAX_TEXTURES)
+    {
+        printf("_set_cube_side_texture: error, tex id would exceed MAX_TEXTURES: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
+        return;
+    }
     if(6*id + side > max_cubes*6)
     {
         printf("_set_cube_side_texture: error, would overflow array: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
         return;
     }
     cube_side_texture_array[6*id +side] = tex_id;
+
+    //init pixel sampler if it has not been inited
+    if(pixel_data[tex_id] == NULL)
+        pixel_data[tex_id] = (unsigned char*) malloc(32*32*sizeof(char));
+
+        int _tx = tex_id % 16;
+        int _ty = tex_id / 16;
+        
+        int tx = tx*32;
+        int ty = ty*32;
+        
+        //int px = tx + px // x pixel offset
+        //int py = ty + py // y pixel offset
+        int px, py;
+
+        unsigned char r,b,g,a;
+
+        {
+
+        int i,j;
+        for(i=0; i < TEXTURE_WIDTH; i++) {
+        for(j=0; j < TEXTURE_WIDTH; j++) {
+            //get RGBA value
+            //r,g,b,a set
+            px = tx + i;
+            py = ty + j;
+            //get(px, py, &r, &g, &b, &a)
+            // get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
+            
+            //uncomment
+            get_texture_pixel(px, py, &r, &g,&b, &a);
+            
+            pixel_data[tex_id][4*(32*i+j)+0] = r;
+            pixel_data[tex_id][4*(32*i+j)+1] = g;
+            pixel_data[tex_id][4*(32*i+j)+2] = b;
+            pixel_data[tex_id][4*(32*i+j)+3] = a;
+        }
+        }
+    }
 }
-/*
-int _get_cube_side_texture(int id, int side)
+
+
+void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
-    return cube_side_texture_array[6*id +side];
+    int tex_id = _get_cube_side_texture(cube_id, side);
+
+    int ra = rand() % (32*32);
+    *r = pixel_data[tex_id][4*(ra)+0];
+    *g = pixel_data[tex_id][4*(ra)+1];
+    *b = pixel_data[tex_id][4*(ra)+2];
+    *a = pixel_data[tex_id][4*(ra)+3];
 }
-*/
