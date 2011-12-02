@@ -39,9 +39,9 @@ int _isActive(int id) {
 
 void _set_cube_side_texture(int id, int side, int tex_id) {
     
-    if(6*id +side > max_cubes)
+    if(6*id + side > max_cubes*6)
     {
-        printf("_set_cube_side_texture: error, would overflow array\n");
+        printf("_set_cube_side_texture: error, would overflow array: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
         return;
     }
     cube_side_texture_array[6*id +side] = tex_id;
