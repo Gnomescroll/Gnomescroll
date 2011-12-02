@@ -16,6 +16,8 @@
 
 #include <net_lib/common/packet_buffer.hpp>
 
+//#include <net_lib/common/python_channel.hpp>
+
 struct Socket {
     uint32_t ip;
     uint16_t port;
@@ -42,40 +44,9 @@ struct packet_sequence2 {
 
 #include <net_lib/common/packet_buffer.hpp>
 
-static const int NET_MESSAGE_ARRAY_SIZE = 256;
-
-class NetMessageArray {
-    private:
-    public:
-    class Net_message* net_message_array[NET_MESSAGE_ARRAY_SIZE];
-    int reference_count;
-    class NetMessageArray* next;
-
-    NetMessageArray()
-    {
-        for(int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
-        reference_count = 0;
-        next = NULL;
-    }
-
-    inline void retire() 
-    {
-        delete this;
-    }
-
-    static NetMessageArray* acquire()
-    {
-        return new NetMessageArray;
-    }
-};
-
-class NetMessageBuffer {
-    private:
-    public:    
-    //class NetMessageArray* head;
-    //int consume_index;
-
-};
+/*
+NetPeer
+*/
 
 class NetPeer
 {
@@ -91,23 +62,9 @@ class NetPeer
     uint16_t port;
     struct sockaddr_in address;
 
-    //buffer
-    /*
-    int buff_n;
-    char buff[1500]; //out buffer
-    */
-    /*
-        push packets ont net_message_array and flush from here
-    */
-
-    /*
-        NetMessageList
-    */
-    class Net_message* unreliable_net_message_array[256];
+    Net_message* unreliable_net_message_array[256];
     int unreliable_net_message_array_index;
     
-    //class Net_message* reliable_net_message_array[256];
-    //int reliable_net_message_array_index;
 
     int pending_bytes_out;
     int pending_unreliable_bytes_out;
@@ -152,13 +109,7 @@ class NetPeer
             //do something
 
             nma->reference_count--;
-            /*
-            //optimize this; refence either equal zero at end or going into next buffer
-            if(head->refence_count == 0)
-            {
-                head->retire();
-            }
-            */
+
             consume_index++;
             if(consume_index == NET_MESSAGE_ARRAY_SIZE)
             {
@@ -202,6 +153,7 @@ class NetPeer
 
         //reliable message que
         rnma_insert = NetMessageArray::acquire();
+        rnma_insert->reference_count = 1;
         rnma_insert_index = 0;
         rnma_read = rnma_insert;
         rnma_read_index = 0;
@@ -219,10 +171,6 @@ class NetPeer
 
 
 #define TTL_MAX_DEFAULT 120
-
-
-//class NetPeer* create_net_peer(int a, int b, int c, int d, unsigned short port);
-//class NetPeer* create_raw_net_peer(struct sockaddr_in address);
 
 struct Socket* create_socket(uint16_t port);
 

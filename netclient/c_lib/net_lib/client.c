@@ -61,6 +61,26 @@ void _net_test() {
     }
 }
 
+void _test_reliable() {
+    
+    static int _r_sent = 0;
+
+    if(_r_sent > 1000) return;
+
+    benchmarkReliableCtoS a;
+    a.id = 0;
+    a.seq = 5;
+    a.cs = 15;
+    a.theta = 15.60;
+    a.phi = 243.0;
+    
+    a.send();
+
+    _r_sent++;
+    printf("sent %i messages\n", _r_sent);
+
+}
+
 class NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
@@ -111,6 +131,7 @@ void _NetClientStartFrame() {
         if(_N % 90 == 0) NetClient::attempt_connection_with_server();
         return;
     } else {
+        //_test_reliable();
         //_net_test(); //benchmark
     }
 

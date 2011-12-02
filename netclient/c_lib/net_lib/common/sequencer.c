@@ -94,7 +94,7 @@ uint16_t get_next_sequence_number(class NetPeer* np) {
     ps->ack = 0;
     ps->time = get_current_netpeer_time();
 
-    //ps->nma = NULL;
+    ps->nma = NULL;
     //ps->read_index = 0;
     /*
     REMOVE BELOW WHEN SERVER IS PORTED TO NETPEER SEND METHODS

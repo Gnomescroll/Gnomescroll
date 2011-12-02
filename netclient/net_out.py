@@ -15,7 +15,7 @@ class NetOut:
     chatMessage = None
     miscMessage = None
     datMessage = None
-    
+
     @classmethod
     def init_0(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
@@ -125,10 +125,12 @@ class SendMessage(GenericMessage):
             'id'    :   wid,
         }
 
+    #deprecate
     @idRequired
     @noViewer
     @sendJSON('agent_position', tick=True)
     def agent_position(self, agent):
+        assert False
         if agent is None or not agent.id:
             return
         return {
@@ -137,10 +139,12 @@ class SendMessage(GenericMessage):
             'pos'   :   agent.state,
         }
 
+    #deprecate
     @idRequired
     @noViewer
     @sendJSON('agent_angle', tick=True)
     def agent_angle(self, agent):
+        assert False
         if agent is None or not agent.id:
             return
         return {
@@ -148,10 +152,12 @@ class SendMessage(GenericMessage):
             'angle' :   agent.angles(),
         }
 
+    #deprecate
     @idRequired
     @noViewer
     @sendJSON('agent_control_state', tick=True)
     def send_agent_control_state(self, agent):
+        assert False
         if not agent.id :  # agent not identified
             return
         return {
@@ -160,19 +166,23 @@ class SendMessage(GenericMessage):
             'aid'  : agent.id,
         }
 
+    #deprecate
     @idRequired
     @noViewer
     @sendJSON('agent_button_state', tick=True)
     def agent_button_state(self, agent):
+        assert False
         return {
             'id'     : agent.id,
             'buttons' : agent.button_state,
         }
-        
+
+    #in use, but move to C/deprecate
     @idRequired
     @noViewer
     @sendJSON('fire_projectile', tick=True)
     def fire_projectile(self, agent=None):
+        #assert False
         if agent is None or agent.id is None:
             return
         return {
@@ -246,6 +256,7 @@ class SendMessage(GenericMessage):
     @noViewer
     @sendJSON('hit_block', tick=True)
     def hit_block(self, agent=None):
+        assert False
         pass
         #if agent is None or agent.id is None:
             #return
@@ -271,7 +282,7 @@ class SendMessage(GenericMessage):
             'type'  :   agent.active_block(),
             'pos'   :   block_position,
         }
-        
+
     @sendJSON('identify')
     def identify(self, name=None):
         if name is None:
@@ -288,6 +299,7 @@ class SendMessage(GenericMessage):
     @noViewer
     @sendJSON('hitscan', tick=True)
     def hitscan(self, target):
+        assert False
         return {
             'target'    :   target
         }
