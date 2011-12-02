@@ -60,11 +60,11 @@ def configure(conf):
     #conf.env.append_value('CXXFLAGS', ['-g','-Wall','-DDC_CLIENT'])
 
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc', '-fno-exceptions'])
         conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc'])
     else:
-        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']) # '-lefence'
-        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']) # '-lefence'
+        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT', '-fno-exceptions']) # '-lefence'
+        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT', '-fno-exceptions']) # '-lefence'
 
 
     if OS == 'Windows':

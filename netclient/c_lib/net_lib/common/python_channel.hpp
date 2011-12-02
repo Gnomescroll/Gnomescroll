@@ -34,7 +34,7 @@ Net_message_buffer {
 //size_t copy ( char* s, size_t n, size_t pos = 0) const;
 //string& erase ( size_t pos = 0, size_t n = npos );
 
-Class Python_channel_out {
+class Python_channel_out {
     public:
 
     int pending_bytes_out;  //pending bytes out
@@ -44,13 +44,13 @@ Class Python_channel_out {
 
     void write_message(char* buff, int n)
     {
-        pending_bytes_out += n+2
+        pending_bytes_out += n+2;
         
         char t[2];
         int n1=0;
         PACK_uint16_t(n+2, t, &n1);
 
-        str.reserve(n+2+str.size())
+        str.reserve(n+2+str.size());
         str.append(t, 2);
         str.append(buff, n);
     }
@@ -61,13 +61,13 @@ Class Python_channel_out {
         Net_message* nm = Net_message::acquire_reliable(bytes+2);   //need 2 bytes for sequence prefix
         //pack sequence number
         int n1 =0;
-        PACK_uint16_t(sequence_number, nm->buffer, &n1);
+        PACK_uint16_t(sequence_number, nm->buff, &n1);
         sequence_number++;
         //pack data
-        str.copy(nm->buffer+2, bytes, 0); //copy bytes
+        str.copy(nm->buff+2, bytes, 0); //copy bytes
         //clean string
         str.erase(0, bytes);            //erase bytes
-        pending_bytes_out -= bytes
+        pending_bytes_out -= bytes;
         return nm;
     }
 
@@ -76,13 +76,13 @@ Class Python_channel_out {
         pending_bytes_out = 0;
         sequence_number = 0;
     }
-}
+};
 
 /*
 Need a list of sequences, need to determine 
 */
 
-Class Python_channel_in_message {
+class Python_channel_in_message {
         
     public:
         int sequence;
@@ -97,15 +97,15 @@ Class Python_channel_in_message {
         str = NULL;
     }
 
-    Python_channel_in_message(int seq, std::str _str)
+    Python_channel_in_message(int seq, std::string* _str)
     {
         //sequence = NULL;
         sequence = seq;
         str = _str;
-        bytes = _str.size();
+        bytes = _str->size();
     }
 
-    ~Python_channel_in_message {}
+    //~Python_channel_in_message {}
 
 };
 
@@ -116,22 +116,26 @@ Class Python_channel_in_message {
 
 //vector<int>::iterator myIntVectorIterator;
 
-deque<Python_channel_in_message> pcim_deque;
-deque<Python_channel_in_message>::iterator pcim_dequeIterator;
+/*
+For compile speed, move everything using standard template, into cpp files
+*/
 
-Class Python_channel_in {
+std::deque<Python_channel_in_message> pcim_deque;
+std::deque<Python_channel_in_message>::iterator pcim_dequeIterator;
+
+class Python_channel_in {
     public:
     //int pending_bytes_out;  //pending bytes out
     //std::string str;
 
-    pcim_deque deq;
+    std::deque<Python_channel_in_message> deq;
 
     int len;
     int bytes_received;
     int bytes_next_message;
 
     int min_sequence;
-    int 
+
     int max_sequence;
 
 
@@ -139,7 +143,7 @@ Class Python_channel_in {
     {
         while(sequence > max_sequence) {
             Python_channel_in_message tmp (max_sequence);
-            deq = push_back(tmp)
+            deq.push_back(tmp);
             max_sequence++;
         }
 
@@ -162,4 +166,4 @@ Class Python_channel_in {
         bytes_received = 0;
         bytes_next_message = 0;
     }
-}
+};
