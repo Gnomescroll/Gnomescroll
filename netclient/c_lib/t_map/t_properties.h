@@ -88,5 +88,5 @@ Texture Sampling
 */
 
 static const int MAX_TEXTURES = 256;
-extern char* pixel_data[MAX_TEXTURES];
 
+void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
