@@ -291,20 +291,22 @@ static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0
 1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
 -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
 
+
+static inline int calcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
+static inline int _is_occluded(int x,int y,int z, int side_num) __attribute((always_inline));
+static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) __attribute((always_inline));
+static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id)  __attribute((always_inline));
+
+const static int occ_array[3] = { 255, 177, 100 };
+
 /*
 will be 1 if is adjacent to any side
 will be 2 only if both sides are occluded
  */
-
-static inline int calcAdj(int side_1, int side_2, int corner)
-{
+static inline int calcAdj(int side_1, int side_2, int corner) {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
-    if( occ == 0) return 255;
-    if(occ == 1) return 177;
-    //if(occ == 2) return 177;  
-    if(occ == 2) return 100;
-    printf("t_vbo.c calcAdj :: invalid occlusion = %d", occ);
-    return -1;
+    return occ_array[occ];
+
 }
 
 const static int s_array[18] = {
@@ -316,9 +318,9 @@ const static int s_array[18] = {
         0,-1,0, //east
         };
 
-static inline int _is_occluded(int x,int y,int z, int side_num) {
-    int i;
-    i = 3*side_num;
+static inline int _is_occluded(int x,int y,int z, int side_num)
+{
+    int i = 3*side_num;
     x += s_array[i+0];
     y += s_array[i+1];
     z += s_array[i+2];
@@ -338,6 +340,8 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
     return isActive(tile_id);
 }
 
+//inline?
+//__attribute((always_inline))
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -391,7 +395,14 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
 }
 
-static inline int hash_function2(int x,int y,int z) {
+
+
+static inline int hash_function2(int x,int y,int z) __attribute((always_inline));
+static inline int hash_function3(int x,int y,int z) __attribute((always_inline));
+
+
+static inline int hash_function2(int x,int y,int z)
+ {
     unsigned int v = ((x*967 + y)*337 + z);
     v ^= v >> 16;
     v ^= v >> 8;
@@ -400,7 +411,8 @@ static inline int hash_function2(int x,int y,int z) {
     return (0x6996 >> v) & 1;
 }
 
-static inline int hash_function3(int x,int y,int z) {
+static inline int hash_function3(int x,int y,int z)
+{
     unsigned int v = ((x*967 + y)*337 + z);
     v ^= v >> 16;
     v ^= v >> 8;
@@ -507,37 +519,6 @@ inline void insert_oddBlock(struct Vertex* v_list, int offset, int x, int y, int
 
 static const int VERTEX_SLACK = 128;
 
-//static bool BUFFER_ORPHANING = true; //recycle buffer or create new
-
-
-/*
-    Can speed up rendering by determining rendering type of each block and keeping count in map object, instead of counting it
-    First step (counting step) can be eliminated
-*/
-
-/*
-#include <sys/resource.h>
-
-int who = RUSAGE_SELF;
-
-struct rusage usage1;
-struct rusage usage2;
-struct rusage usage3;
-
-getrusage(who, &usage1);
-getrusage(who, &usage2);
-getrusage(who, &usage2);
-
-ru_utime.tv_sec and ru_utime.tv_usec
-
-usage1.tv_sec
-usage1.tv_usec
-
-//posix, benchmarking resource usage
-benchmarking
-
-*/
-
 int update_column_VBO(struct vm_column* column) {
     int tile_id, side_num;
     int _x, _y, _z;
@@ -546,16 +527,9 @@ int update_column_VBO(struct vm_column* column) {
     struct vm_chunk* chunk;
     int i;
 
-    //cs_n = 0; //clear chunk scratch
-
     int cube_vertex_count[4] = {0, 0, 0, 0};
     int vertex_count = 0; //clear counter
-/*    
-    if(vbo->VBO_id != 0) {
-        delete_vbo(&column->vbo);
-    }
-    Dont delete , reuse
-*/
+
     //first pass, count quads
     int active;
     int transparency;
@@ -576,8 +550,6 @@ int update_column_VBO(struct vm_column* column) {
             transparency = isTransparent(tile_id);
             if(active == 1)  
             {
-
-                //if(isOccludes(tile_id) == 1) {
                 if(transparency == 0)
                 { 
                     for(side_num=0; side_num<6; side_num++) {
