@@ -210,7 +210,7 @@ int _init_draw_terrain() {
 
     //Uint32 GL_PIXEL_TYPE = GL_BGR;
     int texture_format;
-    if (surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
+    if (block_surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
     else texture_format = GL_BGRA;
 
     //sdl_pixel_format = surface->format;
