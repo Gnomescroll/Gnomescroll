@@ -1,9 +1,0 @@
-
-
-
-
-class FIFO_buffer {
-    
-    
-
-};
