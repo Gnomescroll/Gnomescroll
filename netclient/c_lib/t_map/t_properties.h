@@ -43,12 +43,9 @@ int _isActive(int id);
 */
 void _set_cube_side_texture(int id, int side, int tex_id);
 //int _get_cube_side_texture(int id, int side);
-extern short cube_side_texture_array[max_cubes*6];
+//extern short cube_side_texture_array[max_cubes*6];
 
-static inline int _get_cube_side_texture(int id, int side)
-{
-    return cube_side_texture_array[6*id +side];
-}
+int _get_cube_side_texture(int id, int side);
 
 
 /*

@@ -3,8 +3,8 @@
 struct cubeProperties cube_list[max_cubes];
 
 short infinite_texture_array[1024];
-short cube_side_texture_array[max_cubes*6];
 
+static short cube_side_texture_array[max_cubes*6];
 static unsigned char* pixel_data[MAX_TEXTURES];
 
 void set_infinite_texture(int id, int texture) {
@@ -38,6 +38,16 @@ int _isActive(int id) {
     return cube_list[id].active;
     }
 
+/*
+Texture stuff
+
+*/
+
+int _get_cube_side_texture(int id, int side)
+{
+    return cube_side_texture_array[6*id +side];
+}
+
 
 const static int TEXTURE_WIDTH = 32;
 
@@ -57,7 +67,7 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
 
     //init pixel sampler if it has not been inited
     if(pixel_data[tex_id] == NULL)
-        pixel_data[tex_id] = (unsigned char*) malloc(32*32*sizeof(char));
+        pixel_data[tex_id] = new unsigned char[4*32*32];
 
         int _tx = tex_id % 16;
         int _ty = tex_id / 16;
@@ -74,8 +84,8 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
         {
 
         int i,j;
-        for(i=0; i < TEXTURE_WIDTH; i++) {
-        for(j=0; j < TEXTURE_WIDTH; j++) {
+        for(i=0; i < 32; i++) {
+        for(j=0; j < 32; j++) {
             //get RGBA value
             //r,g,b,a set
             px = tx + i;
