@@ -209,9 +209,9 @@ int _init_draw_terrain() {
     if (surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
     else texture_format = GL_BGRA;
 
-    sdl_pixel_format = surface->format;
-    block_surface_width = (int)surface->w;
-    block_surface_height = (int)surface->h;
+    //sdl_pixel_format = surface->format;
+    //block_surface_width = (int)surface->w;
+    //block_surface_height = (int)surface->h;
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
