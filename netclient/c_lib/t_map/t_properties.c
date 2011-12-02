@@ -3,8 +3,8 @@
 struct cubeProperties cube_list[max_cubes];
 
 short infinite_texture_array[1024];
-
 short cube_side_texture_array[max_cubes*6];
+char* pixel_data[MAX_TEXTURES];
 
 void set_infinite_texture(int id, int texture) {
     if(id > 1024) {
@@ -22,6 +22,7 @@ void init_t_properties() {
     int i;
     for(i=0;i<max_cubes; i++) cube_list[i].infinite_texture = 0;
     for(i=0;i<max_cubes*6; i++) cube_side_texture_array[i] = 255; //use error block
+    for(i=0;i<MAX_TEXTURES; i++) pixel_data[i] = NULL;
 }
 
 struct cubeProperties* _get_cube_list() {
@@ -39,6 +40,11 @@ int _isActive(int id) {
 
 void _set_cube_side_texture(int id, int side, int tex_id) {
     
+    if(tex_id > MAX_TEXTURES)
+    {
+        printf("_set_cube_side_texture: error, tex id would exceed MAX_TEXTURES: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
+        return;
+    }
     if(6*id + side > max_cubes*6)
     {
         printf("_set_cube_side_texture: error, would overflow array: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
