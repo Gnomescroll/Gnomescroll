@@ -56,4 +56,3 @@ void DRAW_VBOS1a();
 void DRAW_VBOS2(); 
 void DRAW_VBOS2b();
 
-void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);

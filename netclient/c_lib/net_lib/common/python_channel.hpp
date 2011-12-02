@@ -25,8 +25,8 @@ Net_message_buffer {
 //python channel
 
 
-#include <iostream>
-#include <string>
+//#include <iostream>
+//#include <string>
 
 //using namespace std;
 
@@ -34,17 +34,26 @@ Net_message_buffer {
 //size_t copy ( char* s, size_t n, size_t pos = 0) const;
 //string& erase ( size_t pos = 0, size_t n = npos );
 
+#include <c_lib/template/char_buffer.hpp>
+
+
 
 class Python_channel_out {
     public:
 
-    int pending_bytes_out;  //pending bytes out
-    std::string str;
+    Fifo_char_buffer fcb;
 
     int sequence_number;
 
+    int size() { return fcb.size; }
+
     void write_message(char* buff, int n)
     {
+
+        char t[2]; int n1=0; PACK_uint16_t(n+2, t, &n1);
+        fcb.write(t,2);
+        fcb.write(buff,n);
+        /*
         pending_bytes_out += n+2;
         
         char t[2];
@@ -54,6 +63,7 @@ class Python_channel_out {
         str.reserve(n+2+str.size());
         str.append(t, 2);
         str.append(buff, n);
+        */
     }
 
     Net_message* serialize_to_packet(int max_n)
@@ -61,13 +71,11 @@ class Python_channel_out {
         int bytes = max_n > pending_bytes_out ? max_n : pending_bytes_out;
         Net_message* nm = Net_message::acquire_reliable(bytes+2);   //need 2 bytes for sequence prefix
         //pack sequence number
-        int n1 =0;
+        char t[2]; int n1 =0;
         PACK_uint16_t(sequence_number, nm->buff, &n1);
         sequence_number++;
         //pack data
-        str.copy(nm->buff+2, bytes, 0); //copy bytes
-        //clean string
-        str.erase(0, bytes);            //erase bytes
+        fcb.write(nm->buff+2, bytes);
         pending_bytes_out -= bytes;
         return nm;
     }

@@ -230,11 +230,6 @@ int _init_draw_terrain() {
     return 0;
 }
 
-void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
-    Uint32 pixel = px + py*block_surface_width;
-    SDL_GetRGBA(pixel, sdl_pixel_format, r,g,b,a);
-}
-
 /*
 deprecated
 
