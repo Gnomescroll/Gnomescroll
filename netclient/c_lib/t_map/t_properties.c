@@ -70,6 +70,8 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
     }
     cube_side_texture_array[6*id +side] = tex_id;
 
+    printf("tex_id= %i \n", tex_id);
+
     //init pixel sampler if it has not been inited
     if(pixel_data[tex_id] == NULL) 
     {
@@ -78,28 +80,21 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
         int _tx = tex_id % 16;
         int _ty = tex_id / 16;
         
+        printf("tx, ty= %i, %i \n", _tx, _ty);
+                
         int tx = _tx*32;
         int ty = _ty*32;
         
-        //int px = tx + px // x pixel offset
-        //int py = ty + py // y pixel offset
         int px, py;
-
         unsigned char r,b,g,a;
 
-        
-
-        int i,j;
-        for(i=0; i < 32; i++) {
-        for(j=0; j < 32; j++) {
-            //get RGBA value
-            //r,g,b,a set
+        for(int i=0; i < 32; i++) {
+        for(int j=0; j < 32; j++) {
+            //pixel offset
             px = tx + i;
             py = ty + j;
-            //get(px, py, &r, &g, &b, &a)
             //get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
-            
-            //uncomment
+            //get RGBA value
             get_texture_pixel(px, py, &r, &g,&b, &a);
             
             pixel_data[tex_id][4*(32*i+j)+0] = r;
@@ -115,6 +110,8 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
     int tex_id = _get_cube_side_texture(cube_id, side);
+    printf("tex_id= %i\n", tex_id);
+
     int ra = rand() % (32*32);
     *r = pixel_data[tex_id][4*(ra)+0];
     *g = pixel_data[tex_id][4*(ra)+1];

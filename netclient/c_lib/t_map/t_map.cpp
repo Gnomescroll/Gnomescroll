@@ -505,6 +505,7 @@ int block_sphere(float x, float y, float z, float radius, int* blocks, int max_b
 #include <c_lib/common/random.h>
 inline void block_StoC::handle() {
     int cube_id = _get(x,y,z);
+    printf("cube_id = %i \n", cube_id);
     Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
     _set(x,y,z,val);
     // play animation
