@@ -66,7 +66,8 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
     cube_side_texture_array[6*id +side] = tex_id;
 
     //init pixel sampler if it has not been inited
-    if(pixel_data[tex_id] == NULL)
+    if(pixel_data[tex_id] == NULL) 
+    {
         pixel_data[tex_id] = new unsigned char[4*32*32];
 
         int _tx = tex_id % 16;
@@ -81,7 +82,7 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
 
         unsigned char r,b,g,a;
 
-        {
+        
 
         int i,j;
         for(i=0; i < 32; i++) {
