@@ -178,6 +178,8 @@ static const bool GL_PERF = 0;
 GLuint gl_perf_queries[64];
 int gl_per_queries_index = 0;
 
+SDL_Surface *px_surface;
+
 int _init_draw_terrain() {
 
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
@@ -195,15 +197,21 @@ int _init_draw_terrain() {
     //surface=IMG_Load("media/texture/textures_03.png");  //should this be freed?
     surface=IMG_Load("media/texture/blocks_01.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
-
-    sdl_pixel_format = surface->format;
-    block_surface_width = (int)surface->w;
-    block_surface_height = (int)surface->h;
     
+    px_surface = surface;
     //SDL_Surface *_surface = IMG_Load("media/texture/textures_03.png");
     //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
 
     //SDL_FreeSurface(_surface);
+
+    //Uint32 GL_PIXEL_TYPE = GL_BGR;
+    int texture_format;
+    if (surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
+    else texture_format = GL_BGRA;
+
+    sdl_pixel_format = surface->format;
+    block_surface_width = (int)surface->w;
+    block_surface_height = (int)surface->h;
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
@@ -217,24 +225,11 @@ int _init_draw_terrain() {
 
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
-    //Uint32 GL_PIXEL_TYPE = GL_BGR;
-    int texture_format;
-    if (surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
-    else texture_format = GL_BGRA;
-
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
     }
     return 0;
 }
-
-void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
-    Uint32 pixel = px + py*block_surface_width;
-    SDL_GetRGBA(pixel, sdl_pixel_format, r,g,b,a);
-}
-
 /*
 deprecated
 
