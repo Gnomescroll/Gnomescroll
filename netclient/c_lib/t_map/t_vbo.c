@@ -5,8 +5,8 @@
 GLuint texture = 0;
 
 SDL_Surface *surface;
-static SDL_PixelFormat *sdl_pixel_format;
-static int block_surface_width, block_surface_height;
+SDL_PixelFormat *block_surface_pixel_format;
+int block_surface_width, block_surface_height;
 
 int draw_mode_enabled = 0;
 
@@ -196,7 +196,7 @@ int _init_draw_terrain() {
     surface=IMG_Load("media/texture/blocks_01.png");
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
 
-    sdl_pixel_format = surface->format;
+    block_surface_pixel_format = surface->format;
     block_surface_width = (int)surface->w;
     block_surface_height = (int)surface->h;
     

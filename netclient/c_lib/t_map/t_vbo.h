@@ -56,3 +56,5 @@ void DRAW_VBOS1a();
 void DRAW_VBOS2(); 
 void DRAW_VBOS2b();
 
+extern SDL_PixelFormat *block_surface_pixel_format;
+extern int block_surface_width, block_surface_height;
