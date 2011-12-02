@@ -80,8 +80,6 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
 
         int _tx = tex_id % 16;
         int _ty = tex_id / 16;
-
-        printf("tex_id= %i tx= %i, ty= %i \n", tex_id, _tx, _ty);
                 
         int tx = _tx*32;
         int ty = _ty*32;
@@ -111,24 +109,7 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
     int tex_id = _get_cube_side_texture(cube_id, side);
-
-    //unsigned char r,b,g,a;
-    get_texture_pixel(0, 0, r, g,b, a);
-    printf("1: 0, 0= %i,%i,%i,%i \n", *r,*g,*b,*a);
-
-    get_texture_pixel(511, 0, r, g,b, a);
-    printf("2: 511, 0= %i,%i,%i,%i \n", *r,*g,*b,*a);
-
-    get_texture_pixel(0, 511, r, g,b, a);
-    printf("3: 0, 511= %i,%i,%i,%i \n", *r,*g,*b,*a);
-
-    get_texture_pixel(511, 511, r, g,b, a);
-    printf("4: 511, 511= %i,%i,%i,%i \n", *r,*g,*b,*a);
-
-    printf("tex_id= %i\n", tex_id);
-
     int ra = rand() % (32*32);
-    ra = 0;
     *r = pixel_data[tex_id][4*(ra)+0];
     *g = pixel_data[tex_id][4*(ra)+1];
     *b = pixel_data[tex_id][4*(ra)+2];
