@@ -410,12 +410,14 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     bool right       = a_cs & 8? 1 :0;
     bool jetpack     = a_cs & 16? 1 :0;
     bool jump        = a_cs & 32? 1 :0;
+    //implemented, but unused
+    /*
     bool crouch      = a_cs & 64? 1 :0;
     bool boost       = a_cs & 128? 1 :0;
     bool misc1       = a_cs & 256? 1 :0;
     bool misc2       = a_cs & 512? 1 :0;
     bool misc3       = a_cs & 1024? 1 :0;     
-
+    */
 /*
     //local cordinates
     int l_x = as.x;
@@ -577,7 +579,8 @@ inline class AgentState _agent_tick(const struct Agent_control_state _cs, const 
     as.z = new_z;
 
     // allow jumping if on ground
-    bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
+    
+    //bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
 
     /*
     if (! is_on_ground) {
