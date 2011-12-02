@@ -307,6 +307,13 @@ for i in range(0,72):
 cdef extern from "./t_map/t_properties.h":
     void _set_cube_side_texture(int id, int size, int tex_id)
 
+def init_cube_side_texture():
+    global c_dat
+    for id in range(max_cubes):
+        for side in range(6):
+            texture_id = c_dat.get(id, 'texture_id')[side]
+            _set_cube_side_texture(id, side, texture_id)
+
 def init_quad_cache():
     global v_index
     global c_dat
@@ -332,7 +339,6 @@ def init_quad_cache():
                     tx,ty = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
-            _set_cube_side_texture(id, side, c_dat.get(id, 'texture_id')[side])
 
 def get_cube_texture(int tile_id, int side, int vert_num):
     global c_dat
@@ -620,6 +626,7 @@ Epilogue: Cube dat update callbacks
 '''
 def _cube_inits(id=None):
     init_cube_properties(id)
+    init_cube_side_texture()
     init_quad_cache()
     set_hud_cube_selector()
 

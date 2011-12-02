@@ -99,6 +99,7 @@ inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
     if(remaining < length) 
     {
         current = net_message_buffer_pool.acquire();
+        current->reference_count = 0; //needed? BUG?
         remaining = NET_MESSAGE_BUFFER_SIZE;
         offset = current->buffer;
     }
@@ -118,6 +119,7 @@ inline void get_char_buffer2(int length, char** b, Net_message_buffer** nmb)
     if(remaining < length) 
     {
         current = net_message_buffer_pool2.acquire();
+        current->reference_count = 0; //needed? BUG?
         remaining = NET_MESSAGE_BUFFER_SIZE;
         offset = current->buffer;
     }

@@ -115,7 +115,6 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
     int tex_id = _get_cube_side_texture(cube_id, side);
-
     int ra = rand() % (32*32);
     *r = pixel_data[tex_id][4*(ra)+0];
     *g = pixel_data[tex_id][4*(ra)+1];

@@ -108,7 +108,16 @@ class Fifo_char_buffer
 };
 
 /*
+    UNUSED BELOW LINE
+*/
+
+
+/*
 reference counted, variable length string buffer
+
+used for
+-getting string/small object allocator
+-reference counted string
 */
 
 static const int CHAR_BUFFER_REF_SIZE=2048;
@@ -130,6 +139,81 @@ class Char_buffer: public Object_pool<Char_buffer_ref, 32>  //64, 2048 byte buff
 };
 
 Char_buffer_ref_pool char_buffer_ref_pool;
+
+class char_buffer_instance {
+    private:
+    public:
+
+};
+
+class Char_buffer2;
+
+class char_buffer_inheritance_template {
+    public:
+    char_buffer_inheritance_template* next;
+    char* buff;
+    int length;
+    Char_buffer_ref* cbf;
+
+    void retire() {
+        cbf->reference_count--;
+        if(cbf->reference_count == 0) {
+            char_buffer_ref_pool.retire(ctf);
+        }
+        //return this object to object pool
+    }
+/*
+    static char_buffer_inheritance_template* acquire() {
+        return object from pool
+    }
+*/
+};
+
+/*
+reference counted version
+*/
+class char_buffer_ref_inheritance_template {
+    public:
+    int reference_count;
+      
+};
+
+class Char_buffer2 {
+    private:
+    public:
+    Char_buffer_ref* current;
+    int remaining;
+    char* offset;
+
+    /*
+        Object can acquire a char buffer as long it decrements cbf reference count when its done
+    */
+    void acquire(int length, char** b, Char_buffer_ref** cbf) {
+        if(remaining < length) 
+        {
+            current = char_buffer_ref_pool.acquire();
+            current.reference_count = 0;
+            remaining = CHAR_BUFFER_REF_SIZE;
+            offset = current->buffer;
+        }
+        remaining -= length;
+        offset += length;
+        current->reference_count++;
+        
+        *b = offset;
+        *cbf = current;
+        remaining -= length;
+        offset += length;
+        current->reference_count++; 
+    }
+
+    Char_buffer2 
+    {
+        current = NULL;
+        offset = NULL;
+        remaining = -1;
+    }
+};
 
 
 inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
