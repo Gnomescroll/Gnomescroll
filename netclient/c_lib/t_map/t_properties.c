@@ -1,5 +1,9 @@
 #include "./t_properties.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
 struct cubeProperties cube_list[max_cubes];
 
 short infinite_texture_array[1024];
@@ -73,8 +77,8 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
         int _tx = tex_id % 16;
         int _ty = tex_id / 16;
         
-        int tx = tx*32;
-        int ty = ty*32;
+        int tx = _tx*32;
+        int ty = _ty*32;
         
         //int px = tx + px // x pixel offset
         //int py = ty + py // y pixel offset

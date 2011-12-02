@@ -13,7 +13,7 @@ typedef void (*pt2handler)(char*, int, int*, int);
 template <class Derived>
 class FixedSizeNetPacketToServer {
     private:
-        virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
         static int message_id;
         static int size;
@@ -70,7 +70,7 @@ template <class Derived> int FixedSizeNetPacketToServer<Derived>::size(-1);
 template <class Derived>
 class FixedSizeNetPacketToClient {
     private:
-        virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
         static int message_id;
         static int size;
