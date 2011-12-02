@@ -87,20 +87,6 @@ cpdef get_chunk_list():
     print "end chunk list"
     return ll
 
-cdef get_raw_chunk_list(): #DEPRECATE? USED by VBO.pyx
-    assert False
-    cdef vm_map *m
-    cdef vm_chunk *c
-    cdef int i,j
-    m = _get_map()
-    ll = []
-    for i in range(0, vm_map_dim**2):
-        for j in range(0, vm_column_max):
-            if m.column[i].chunk[j] != NULL:
-                c = m.column[i].chunk[j]
-                #ll.append(c)
-    return ll
-
 def get_packed_chunk(xoff, yoff, zoff):
     cdef vm_chunk *c
     c = _get_chunk(xoff, yoff, zoff)

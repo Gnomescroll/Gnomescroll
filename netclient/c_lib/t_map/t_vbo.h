@@ -41,7 +41,7 @@ int* _chunk_request();
 //internal
 //int update_column_VBO(struct vm_column* column);
 //inline void add_quad2(float x,float y,float z,int side, int tile_id);
-static void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side);
+//static void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side);
 
 int _draw_terrain();
 
