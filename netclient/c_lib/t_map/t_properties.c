@@ -121,7 +121,10 @@ void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g,
 }
 
 void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
-    Uint32 pixel = px + py*block_surface_width;
+    if (must_lock_block_surface) SDL_LockSurface(block_surface);
+    int p = px + py*block_surface_width;
+    Uint32 pixel = ((Uint32*)block_surface->pixels)[p];
     SDL_GetRGBA(pixel, block_surface_pixel_format, r,g,b,a);
+    if (must_lock_block_surface) SDL_UnlockSurface(block_surface);
 }
 
