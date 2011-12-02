@@ -190,6 +190,7 @@ cdef extern from "./t_map/t_properties.h":
         int nuclear
         int infinite_texture
 
+
 #cdef extern from "./t_properties.h":
 cdef extern from "./t_map/t_properties.h":
     int _init_cube_properties(int id, int active, int occludes, int solid, int gravity, int transparent)
@@ -422,7 +423,6 @@ def get_cube_texture_alt(tile_id, side, vert_num):
 ## functions ##
 '''
 PART 3: Drawing Functions
-
 '''
 #cdef extern from 't_vbo.h':
 cdef extern from "./t_map/t_vbo.h":
@@ -602,6 +602,7 @@ def init(inited=[0]):
 
     _init_draw_terrain()
     init_t_properties()
+    grab_cube_pixel_samples()
     _init_t_map();
 
 # these get loaded in _cube_inits after cube_dat is received from server
