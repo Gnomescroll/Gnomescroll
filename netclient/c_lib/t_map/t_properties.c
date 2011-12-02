@@ -84,7 +84,8 @@ void _set_cube_side_texture(int id, int side, int tex_id) {
             // get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
             
             //uncomment
-            //get_texture_pixel(px, py, &r, &g,&b, &a);
+            get_texture_pixel(px, py, &r, &g,&b, &a);
+            
             pixel_data[tex_id][4*(32*i+j)+0] = r;
             pixel_data[tex_id][4*(32*i+j)+1] = g;
             pixel_data[tex_id][4*(32*i+j)+2] = b;
