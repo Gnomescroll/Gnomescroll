@@ -229,7 +229,7 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
             if(nma->reference_count == 0)
             {
                 if(i+1 == num) break;   //prevent from running on last loop, to avoid double retiring
-                printf("1 delete nma %i \n", nma);
+                printf("1 delete nma %i \n", (int)nma);
                 nma->retire();
             }
             nma = nma->next;
@@ -239,7 +239,7 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
     //if(nma->reference_count == 0) nma->retire(); //check 1
     if(nma->reference_count == 0)
     {
-        printf("2 delete nma %i \n", nma);
+        printf("2 delete nma %i \n", (int) nma);
         nma->retire();
         //delete nma; //debug  
     } 

@@ -60,7 +60,8 @@ void BillboardText::draw() {
     right[2] /= norm;
 
     int i;
-    char c;
+    //char c;
+    int c;
     struct Glyph glyph;
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;

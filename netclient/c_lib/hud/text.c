@@ -141,7 +141,8 @@ void add_glyph(
 
 void draw_text(char* t, int len, float x, float y, float depth) {
     int i;
-    char c;
+    //char c;
+    int c;
     struct Glyph glyph;
 
     float tx_min, tx_max, ty_min, ty_max;

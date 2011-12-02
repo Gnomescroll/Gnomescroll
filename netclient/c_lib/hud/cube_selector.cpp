@@ -14,7 +14,7 @@ void init_cube_selector() {
     cube_select_x = 0;
     cube_select_y = 0;
 
-    i = create_texture_from_file("./media/texture/hud_cube_selector.png", &cube_selector_cube_texture);
+    i = create_texture_from_file((char*) "./media/texture/hud_cube_selector.png", &cube_selector_cube_texture);
     if (i) {
         printf("init_cube_selector_textures failed with code %d\n", i);
     }

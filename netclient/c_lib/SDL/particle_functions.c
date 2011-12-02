@@ -14,9 +14,9 @@ int setShaders() {
     g = glCreateShaderObjectARB(GL_GEOMETRY_SHADER_ARB);
     f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-    vs = textFileRead("./media/shaders/test1.vert");
-    gs = textFileRead("./media/shaders/test1.geom");
-    fs = textFileRead("./media/shaders/test1.frag");
+    vs = textFileRead((char*) "./media/shaders/test1.vert");
+    gs = textFileRead((char*) "./media/shaders/test1.geom");
+    fs = textFileRead((char*) "./media/shaders/test1.frag");
 
     const char * vv = vs;
     const char * ff = fs;

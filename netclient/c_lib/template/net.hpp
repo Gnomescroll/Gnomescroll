@@ -159,7 +159,7 @@ template <class Derived>
 class FixedSizeReliableNetPacketToServer {
 
     private:
-        virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
         static int message_id;
         static int size;
@@ -225,7 +225,7 @@ Should onyl use one net message allocation per message
 template <class Derived>
 class FixedSizeReliableNetPacketToClient {
     private:
-        virtual inline void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
         class Net_message* nm;
     public:
         static int message_id;

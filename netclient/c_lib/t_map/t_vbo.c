@@ -1293,7 +1293,7 @@ glDisable(GL_TEXTURE_2D);
 //minimizes state changes
 void DRAW_VBOS2() {
     
-        int _vnum = 0;
+        //int _vnum = 0; //unused
 
         glColor3b(255,255,255);
 

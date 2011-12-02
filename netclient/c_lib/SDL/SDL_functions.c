@@ -205,7 +205,6 @@ const int _SDL_SWAP_DEBUG = 0;
 */
 int _swap_buffers() {
     int _time1;
-    int _time2;
 
     if(_SDL_SWAP_DEBUG)
     {
