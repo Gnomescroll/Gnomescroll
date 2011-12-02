@@ -16,7 +16,7 @@
 
 #include <net_lib/common/packet_buffer.hpp>
 
-#include <net_lib/common/python_channel.hpp>
+//#include <net_lib/common/python_channel.hpp>
 
 struct Socket {
     uint32_t ip;
