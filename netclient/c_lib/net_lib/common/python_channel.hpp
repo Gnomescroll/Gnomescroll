@@ -34,6 +34,7 @@ Net_message_buffer {
 //size_t copy ( char* s, size_t n, size_t pos = 0) const;
 //string& erase ( size_t pos = 0, size_t n = npos );
 
+
 class Python_channel_out {
     public:
 
@@ -120,8 +121,8 @@ class Python_channel_in_message {
 For compile speed, move everything using standard template, into cpp files
 */
 
-std::deque<Python_channel_in_message> pcim_deque;
-std::deque<Python_channel_in_message>::iterator pcim_dequeIterator;
+//std::deque<Python_channel_in_message> pcim_deque;
+//std::deque<Python_channel_in_message>::iterator pcim_dequeIterator;
 
 class Python_channel_in {
     public:
@@ -142,11 +143,14 @@ class Python_channel_in {
     void receive_message(char* buff, int n, int sequence)
     {
         while(sequence > max_sequence) {
-            Python_channel_in_message tmp (max_sequence);
-            deq.push_back(tmp);
             max_sequence++;
+            Python_channel_in_message tmp =  (max_sequence);
+            deq.push_back(tmp);
         }
+        if(sequence == max_sequence) {
+            Python_channel_in_message tmp = deq.
 
+        }
         while(max_sequence != sequence) {
             
             
