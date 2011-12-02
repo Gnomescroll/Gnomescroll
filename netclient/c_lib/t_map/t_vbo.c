@@ -5,8 +5,8 @@
 GLuint texture = 0;
 
 SDL_Surface *surface;
-SDL_PixelFormat *sdl_pixel_format;
-int surface_width, surface_height;
+static SDL_PixelFormat *sdl_pixel_format;
+static int block_surface_width, block_surface_height;
 
 int draw_mode_enabled = 0;
 
@@ -197,8 +197,8 @@ int _init_draw_terrain() {
     if(!surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
 
     sdl_pixel_format = surface->format;
-    surface_width = (int)surface->w;
-    surface_height = (int)surface->h;
+    block_surface_width = (int)surface->w;
+    block_surface_height = (int)surface->h;
     
     //SDL_Surface *_surface = IMG_Load("media/texture/textures_03.png");
     //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
@@ -231,7 +231,7 @@ int _init_draw_terrain() {
 }
 
 void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
-    Uint32 pixel = px + py*surface_width;
+    Uint32 pixel = px + py*block_surface_width;
     SDL_GetRGBA(pixel, sdl_pixel_format, r,g,b,a);
 }
 

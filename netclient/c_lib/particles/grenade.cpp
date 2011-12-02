@@ -77,7 +77,7 @@ void Grenade::draw() {
 
 void Grenade::explode() {
 #ifdef DC_CLIENT
-    Animations::grenade_explode_animation(particle.state.p.x, particle.state.p.y, particle.state.p.z);
+    Animations::grenade_explode(particle.state.p.x, particle.state.p.y, particle.state.p.z);
 #endif
 
 #ifdef DC_SERVER

@@ -1,22 +1,18 @@
 #include "animations.hpp"
 
-// purple color ranges
-#define R_MIN 38
-#define R_MAX 154
-#define G_MIN 6
-#define G_MAX 29
-#define B_MIN 54
-#define B_MAX 256
-
 namespace Animations {
 
-void block_crumble_animation(float x, float y, float z, int n) {
+void block_crumble(float x, float y, float z, int n, int cube_id) {
+
+    const float crumble_size = 0.2f;
+    ClientState::minivox_list.set_size(crumble_size);
 
     const float _vx = 10.0f,
                   _vy = 10.0f,
                   _vz = 10.0f;
 
-    int r,g,b;
+    unsigned char r,g,b,a;
+    int side;
     float nx,ny,nz;
     float vx,vy,vz;
 
@@ -25,25 +21,24 @@ void block_crumble_animation(float x, float y, float z, int n) {
     int i;
     for (i=0; i < n; i++) {
 
-        nx = randf() + x;
-        ny = randf() + y;
-        nz = randf() + z;
+        nx = x + randf() -0.5f;
+        ny = y + randf() -0.5f;
+        nz = z + randf() -0.5f;
 
         vx = _vx*(randf() -0.5f);
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
 
-        //purple shades
-        r = randrange(R_MIN, R_MAX);
-        g = randrange(G_MIN, G_MAX);
-        b = randrange(B_MIN, B_MAX);
-        
+        side = randrange(0,5);
+        get_random_pixel(cube_id, side, &r, &g, &b, &a);
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
         minivox->set_color(r,g,b);
     }
+
+    ClientState::minivox_list.unset_size();
 }
 
-void grenade_explode_animation(float x, float y, float z) {
+void grenade_explode(float x, float y, float z) {
     int n = randrange(8,13);
 
     float vx = 20.0f;

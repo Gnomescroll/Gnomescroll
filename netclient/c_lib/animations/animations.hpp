@@ -2,8 +2,8 @@
 
 namespace Animations {
 
-void block_crumble_animation(float x, float y, float z, int n);
-void grenade_explode_animation(float x, float y, float z);
+void block_crumble(float x, float y, float z, int n, int cube_id);
+void grenade_explode(float x, float y, float z);
 
 
 }

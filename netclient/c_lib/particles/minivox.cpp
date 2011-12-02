@@ -1,9 +1,7 @@
 #include "minivox.hpp"
-#pragma once
 
-Minivox::Minivox(int id) {
+Minivox::Minivox(int id) : size(minivox_size) {
     create_particle2(&particle, id, MINIVOX_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, MINIVOX_TTL);
-    size = MINIVOX_SIZE;
 
     vox.r = MINIVOX_R;
     vox.g = MINIVOX_G;
@@ -15,9 +13,8 @@ Minivox::Minivox(int id) {
     orient_vectors();
 }
 
-Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz) {
+Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz) : size(minivox_size) {
     create_particle2(&particle, id, MINIVOX_TYPE, x,y,z,vx,vy,vz, 0, MINIVOX_TTL);
-    size = MINIVOX_SIZE;
 
     vox.r = MINIVOX_R;
     vox.g = MINIVOX_G;

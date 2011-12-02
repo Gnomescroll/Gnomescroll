@@ -17,7 +17,7 @@
 #define MINIVOX_TYPE 6
 
 /* voxel properties */
-#define MINIVOX_SIZE 0.05f
+float minivox_size = 0.05f;
 #define MINIVOX_R 136
 #define MINIVOX_G 27
 #define MINIVOX_B 224
@@ -59,5 +59,16 @@ class Minivox_list: public Object_list<Minivox, MINIVOX_MAX>
     public:
         void draw();
         void tick();
+
+        float _s;
+        void set_size(float s) {
+            _s = minivox_size;
+            minivox_size = s;
+        }
+        void unset_size() {
+            minivox_size = _s;
+        }
+
+        Minivox_list() : _s(minivox_size) {}
 };
     
