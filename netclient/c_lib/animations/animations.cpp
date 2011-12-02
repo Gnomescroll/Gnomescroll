@@ -4,7 +4,7 @@ namespace Animations {
 
 void block_crumble(float x, float y, float z, int n, int cube_id) {
 
-    const float crumble_size = 0.2f;
+    const float crumble_size = 0.17f;
     ClientState::minivox_list.set_size(crumble_size);
 
     const float _vx = 10.0f,
@@ -12,7 +12,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
                   _vz = 10.0f;
 
     unsigned char r,g,b,a;
-    int side;
+    int side, ttl;
     float nx,ny,nz;
     float vx,vy,vz;
 
@@ -30,9 +30,11 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
         vz = _vz*(randf() -0.5f);
 
         side = randrange(0,5);
+        ttl = randrange(20,40);
         get_random_pixel(cube_id, side, &r, &g, &b, &a);
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
         minivox->set_color(r,g,b);
+        minivox->set_ttl(ttl);
     }
 
     ClientState::minivox_list.unset_size();

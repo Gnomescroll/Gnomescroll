@@ -43,6 +43,9 @@ class Minivox {
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_orientation(float theta, float phi);
+        void set_ttl(int ttl) {
+            particle.ttl = ttl;
+        }
 
         void draw();
         void tick();
