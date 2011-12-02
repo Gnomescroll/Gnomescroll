@@ -26,6 +26,56 @@ static const int NET_MESSAGE_BUFFER_SIZE = 4096; // 69,000 per second, 74-78k pe
     };
 */
 
+/*
+NetMessage Array
+*/
+
+static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
+
+class NetMessageArray {
+    private:
+    public:
+    class Net_message* net_message_array[NET_MESSAGE_ARRAY_SIZE];
+    int reference_count;
+    class NetMessageArray* next;
+
+    NetMessageArray()
+    {
+        for(int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
+        reference_count = 0;
+        next = NULL;
+    }
+
+    inline void retire();
+
+    inline static NetMessageArray* acquire();
+};
+
+class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing
+{
+    public:
+    char* name() { static char x[] = "NetMessageArray_pool"; return x; } 
+};
+
+static NetMessageArray_pool net_message_array_pool;
+
+inline void NetMessageArray::retire() 
+{
+    net_message_array_pool.retire(this);
+}
+
+NetMessageArray* NetMessageArray::acquire()
+{
+    NetMessageArray* a = net_message_array_pool.acquire();
+    a->next = NULL;
+    //a->reference_count = 0; //set to 1 automaticly
+    return a;
+}    
+
+/*
+Net message buffer
+*/
+
 class Net_message_buffer {
     private:
     public:

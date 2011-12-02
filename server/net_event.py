@@ -16,7 +16,7 @@ class NetEvent:
     projectileMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
-    
+
     @classmethod
     def init_0(cls):
         cls.messageHandler = MessageHandler()
@@ -31,11 +31,11 @@ class NetEvent:
         cls.projectileMessageHandler = ProjectileMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
-        
+
     @classmethod
     def init_1(cls):
         pass
-        
+
     @classmethod
     def register_json_events(cls, events, interface=None):
         for name, function in events.items():
@@ -74,7 +74,7 @@ class ErrorNames:
 
     def no_player(self, client_id):
         return 'could not find player for client %s' % (client_id,)
-        
+
     def agent_ownership(self, p, a):
         return 'player %d does not own agent %d' % (p.id, a.id,)
 
@@ -107,7 +107,7 @@ class ErrorNames:
 
 err = ErrorNames()
 
-        
+
 '''
 Processors, for common message items/keys
 '''
@@ -352,7 +352,7 @@ def processTeam(key='team', err_key=None):
         return wrapped
     return outer
 
-       
+
 '''
 Message Handlers
 '''
@@ -364,11 +364,11 @@ class GenericMessageHandler:
 
     def _events(self):
         return {}
-        
+
     def register_events(self):
         NetEvent.register_json_events(self.events(), self)
 
-        
+
 class AdminMessageHandler(GenericMessageHandler):
 
     def events(self):
@@ -402,9 +402,9 @@ class AgentMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'request_agent'     :   self.request_agent,
-            'agent_position'    :   self.agent_position,
-            'agent_button_state':   self.agent_button_state,
-            'agent_angle'       :   self.agent_angle,
+            #'agent_position'    :   self.agent_position,
+            #'agent_button_state':   self.agent_button_state,
+            #'agent_angle'       :   self.agent_angle,
             'create_agent'      :   self.create_agent,
         }
 
@@ -419,31 +419,37 @@ class AgentMessageHandler(GenericMessageHandler):
         assert False
         GameStateGlobal.agentList.create(msg)
 
+    #deprecate
     @logError('agent_position')
     @extractPlayer
     @processAgent()
     @processIterable('pos', 9)
     def agent_position(self, msg, player, agent, pos):
+        assert False
         agent.state = pos
         NetOut.event.agent_position(agent)
 
+    #deprecate
     @logError('agent_button_state')
     @extractPlayer
     @processAgent()
     @processIterable('buttons', 6)
     def agent_button_state(self, msg, player, agent, buttons):
+        assert False
         if buttons != agent.button_state:
             agent.button_state = buttons
             NetOut.event.agent_button_state(agent)
             ctrl_state = agent.compute_state()
             agent.set_control_state(ctrl_state)
 
+    #deprecate
     @logError('agent_angle')
     @extractPlayer
     @processAgent()
     @processIterable('angle', 2)
     @requireKey('tick')
     def agent_angle(self, msg, player, agent, angle, tick):
+        assert False
         agent.set_angle(angle)
 
 
@@ -458,14 +464,17 @@ class PlayerMessageHandler(GenericMessageHandler):
     @requireKey('id')
     def request_player(self, msg, connection, pid):
         connection.sendMessage.send_player(pid)
-        
+
+'''s
+Move throwing grenade into C
+'''
 
 class ProjectileMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
             'request_projectile':   self.request_projectile,
-            'fire_projectile'   :   self.fire_projectile,
+            #'fire_projectile'   :   self.fire_projectile,
             'throw_grenade' : self.throw_grenade,
         }
 
@@ -474,6 +483,7 @@ class ProjectileMessageHandler(GenericMessageHandler):
     def request_projectile(self, msg, conn, prid):
         conn.sendMessage.send_projectile(prid)
 
+    #deprecate
     @logError('throw_grenade')
     @extractPlayer
     @processAgent('aid')
@@ -493,16 +503,19 @@ class ProjectileMessageHandler(GenericMessageHandler):
         if weapon.fire_command == 'fire_projectile' and weapon.fire():
             agent.fire_projectile(pos=pos, direction=vec)
 
-    
+'''
+move reload, to C
+Deprecate drop weapon
+'''
 class WeaponMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
-            'request_weapon'    :   self.request_weapon,
-            'reload_weapon'     :   self.reload_weapon,
-            'hitscan'           :   self.hitscan,
-            'drop_weapon'       :   self.drop_weapon,
-            'change_weapon'     :   self.change_weapon,
+            'request_weapon'    :   self.request_weapon, #deprecate
+            'reload_weapon'     :   self.reload_weapon, #move to c
+            'hitscan'           :   self.hitscan,   #deprecate
+            'drop_weapon'       :   self.drop_weapon, #deprecate
+            'change_weapon'     :   self.change_weapon, #move to C
         }
 
     @logError('request_weapon')
@@ -524,13 +537,15 @@ class WeaponMessageHandler(GenericMessageHandler):
         if weapon.reload():
             NetOut.event.agent_update(agent, 'weapons')
 
+    #deprecate
     @logError('hitscan')
     @extractPlayer
     @processPlayerAgent
     @requireKey('target')
     def hitscan(self, msg, player, firing_agent, target):
+        assert False
         err_msg = None
-        
+
         weapon = firing_agent.active_weapon()
         if not weapon.hitscan:
             return 'Client sent hitscan message for non-hitscan weapon'
@@ -736,7 +751,7 @@ class ChatMessageHandler(GenericMessageHandler):
 
     def received(self, msg, conn):
         ChatServer.chat.received(msg, conn)
-        
+
     def subscribe(self, msg, conn):
         ChatServer.chat.client_subscribe(msg, conn)
 
