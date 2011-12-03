@@ -85,3 +85,21 @@ float angle_between_vectors(float x, float y, float z, float a, float b, float c
     angle = acos(dot / (len1 * len2));
     return angle;
 }
+
+void reflect_f(float inc[3], float nor[3], float ref[3]) {
+    struct Vector _inc;
+    _inc.x = inc[0];
+    _inc.y = inc[1];
+    _inc.z = inc[2];
+
+    struct Vector _nor;
+    _nor.x = nor[0];
+    _nor.y = nor[1];
+    _nor.z = nor[2];
+
+    struct Vector _ref;
+    _ref = reflect(&_inc, &_nor);
+    ref[0] = _ref.x;
+    ref[1] = _ref.y;
+    ref[2] = _ref.z;
+}

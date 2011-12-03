@@ -45,7 +45,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
 }
 
 // surface block dmg
-void block_damage(float x, float y, float z, int cube_id, int *side) {
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side) {
 
     // determine which side was hit
     int cube_side = 0;
@@ -58,11 +58,18 @@ void block_damage(float x, float y, float z, int cube_id, int *side) {
 
     int tex_id = _get_cube_side_texture(cube_id, cube_side);
 
+    // reflection bias
+    float ref[3];
+    float inc[3];   inc[0]=ix;inc[1]=iy;inc[2]=iz;
+    float nor[3];   nor[0]=(float)side[0];nor[1]=(float)side[1];nor[2]=(float)side[2];
+    reflect_f(inc, nor, ref);
+    normalize_vector_f(&ref[0], &ref[1], &ref[2]);
+
     // compute initial base velocities
-    const float base_v = 1.0f;
-    float _vx = base_v*side[0],
-          _vy = base_v*side[1],
-          _vz = base_v*side[2];
+    const float base_v = 2.5f;
+    float _vx = base_v*ref[0],
+          _vy = base_v*ref[1],
+          _vz = base_v*ref[2];
 
     // "invert" the normal for perturbing the initial positions along the plane
     side[0] = (side[0]) ? 0 : 1;
@@ -86,9 +93,9 @@ void block_damage(float x, float y, float z, int cube_id, int *side) {
         vz = _vz + (randf() -0.5f);
 
         // perturb the initial positions along the side's plane
-        nx = x + ((randf() -0.5f)*0.2f*side[0]);
-        ny = y + ((randf() -0.5f)*0.2f*side[1]);
-        nz = z + ((randf() -0.5f)*0.2f*side[2]);
+        nx = x + ((randf() -0.5f)*0.4f*side[0]);
+        ny = y + ((randf() -0.5f)*0.4f*side[1]);
+        nz = z + ((randf() -0.5f)*0.4f*side[2]);
         
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
         minivox->set_texture(tex_id, 2);

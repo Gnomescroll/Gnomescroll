@@ -36,7 +36,7 @@ void Agent_event::fired_weapon(int weapon_id) {
     y += f[1] * _distance;
     z += f[2] * _distance;
 
-    Animations::block_damage(x,y,z, _cube, side);
+    Animations::block_damage(x,y,z, f[0], f[1], f[2], _cube, side);
 }
 
 // side effects of taking damage. dont modify health/death here

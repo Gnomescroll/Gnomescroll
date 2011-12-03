@@ -71,6 +71,7 @@ inline static struct Vector sub_vec(struct Vector* a, struct Vector* b) {
 struct Vector* mult_vec_scalar(struct Vector* a, float i);
 void mult_vec_scalar_ptr(struct Vector *a, float i);
 struct Vector reflect(struct Vector* inc, struct Vector* nor);
+void reflect_f(float inc[3], float nor[3], float ref[3]);
 
 void print_vector(struct Vector* v);
 float distance(float x, float y, float z, float x1, float y1, float z1);
