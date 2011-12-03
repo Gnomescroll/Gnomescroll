@@ -403,6 +403,11 @@ class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'
     fun = 'optimized'
 
+from waflib.Configure import ConfigurationContext
+class optimized_ctx(ConfigurationContext):
+    cmd = 'optimized2'
+    fun = 'optimized2'
+
 class lint_ctx(ConfigurationContext):
     cmd = 'lint'
     fun = 'lint'
@@ -425,6 +430,15 @@ def optimized(ctx):
     ctx.env.CXXFLAGS.append('-O3')
     #ctx.env.CXXFLAGS.append('-mtune=native')
     #ctx.env.CXXFLAGS.append('-march=native')
+
+#run time profile optimization
+def optimized2(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.append('-O3')
+    ctx.env.CXXFLAGS.append('-O3')
+    ctx.env.CFLAGS.append('-fprofile-generate')
+    ctx.env.CXXFLAGS.append('-fprofile-generate')
+
 
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code
 # just throws a shit ton of errors starting from the SDL libraries

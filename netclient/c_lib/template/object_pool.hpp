@@ -1,5 +1,4 @@
-
-//static const bool tDEBUG = true;
+#pragma once
 
 template <class Object, int BUFFER_POOL_SIZE>
 class Object_pool {

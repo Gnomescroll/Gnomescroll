@@ -44,7 +44,8 @@ class Python_channel_out {
     Fifo_char_buffer fcb;
 
     int sequence_number;
-
+    int pending_bytes_out;
+    
     int size() { return fcb.size; }
 
     void write_message(char* buff, int n)
@@ -53,6 +54,8 @@ class Python_channel_out {
         char t[2]; int n1=0; PACK_uint16_t(n+2, t, &n1);
         fcb.write(t,2);
         fcb.write(buff,n);
+
+        pending_bytes_out += n+2;
         /*
         pending_bytes_out += n+2;
         
@@ -142,26 +145,40 @@ class Sequence_buffer {
 
     void insert(char* buff, int size, int sequence)
     {
-        Sequence_buffer_element* sbe;
+        Sequence_buffer_element* sbe = read_sb;
         int i = read_index;
         int index = lowest_sequence;
+        int _read_index = read_index;
+
+        int count = 0; //debug
 
         //check to see if next packet in sequence
+
+        if(lowest_sequence == sequence)
+        {
+
+            pop(buff, size);
+            
+            return;
+        }
 
         while(index != sequence) 
         {
             index++ //update index, MOD SOMETHING
-            read_index++;
-            if(read_index == SEQUENCE_BUFFER_SIZE)
+            _read_index++;
+            if(_read_index == SEQUENCE_BUFFER_SIZE)
             {
-                read_index = 0;
-                if(sbe.next == NULL ) 
+                _read_index = 0;
+                if(sbe->next == NULL ) 
                 {
-                    sbe.next = new Sequence_buffer_element; //use pool
-                    sbe.next.next = NULL; //for object pool
+                    sbe->next = new Sequence_buffer_element; //use pool
+                    sbe->next->next = NULL; //for object pool
                 }
-                sbe = sbe.next;
+                sbe = sbe->next;
             }
+
+            count++; //debug
+            if(count > 1) printf("python channel: count = %i \n", count); //debug
         }
 
         Channel_message* cm = &sbe[read_index].cm;
@@ -171,64 +188,64 @@ class Sequence_buffer {
         cm->sequence = sequence;
     }
 
-    void pop() 
+    void pop(char* buff, int size) 
     {
         if(sbe.cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
 
+        //process cm
+
         read_index++;
+        lowest_sequence++; //USE MODULO
         if(read_index == SEQUENCE_BUFFER_SIZE)
         {
-            read_index = 0;
             Sequence_buffer_element* sbe = read_sb;
-            read_sb = read_sb.next;
-            delete Sequence_buffer_element //use object pool
+            read_index = 0;
+            if(read_sb->next == NULL ) 
+            {
+                read_sb->next = new Sequence_buffer_element; //use pool
+                read_sb->next->next = NULL;
+            }
+            read_sb = sbe->next;
+
+            delete sbe; //retire old buffer
+        }
+
+        Channel_message* cm;
+
+        while(sbe.cm[read_index].buffer != NULL)
+        {
+            cm = &sbe->cm[read_index];
+            //process cm
+            delete cm->buffer;
+            cm->buffer = NULL;
+
+            read_index++;
+            lowest_sequence++;  //USE MODULO
+
+            if(read_index == SEQUENCE_BUFFER_SIZE)
+            {
+                read_index = 0;
+                Sequence_buffer_element* sbe = read_sb;
+                read_sb = read_sb->next;
+                delete sbe //use object pool
+                //return sequence buffer when done
+            }
         }
     }
 };
 class Python_channel_in {
     public:
-    //int pending_bytes_out;  //pending bytes out
-    //std::string str;
-
-    std::deque<Python_channel_in_message> deq;
-
-    int len;
-    int bytes_received;
-    int bytes_next_message;
-
-    int min_sequence;
-
-    int max_sequence;
-
 
     void receive_message(char* buff, int n, int sequence)
     {
-        while(sequence > max_sequence) {
-            max_sequence++;
-            Python_channel_in_message tmp =  (max_sequence);
-            deq.push_back(tmp);
-        }
-        if(sequence == max_sequence) {
-            Python_channel_in_message tmp = deq.
-
-        }
-        while(max_sequence != sequence) {
-            
-            
-            sequence++;
-
-        } 
     }
 
     Net_message* serialize_to_packet(int max_n)
     {
-
+        return NULL:
     }
 
     Python_channel_in()
     {
-        len = 0;
-        bytes_received = 0;
-        bytes_next_message = 0;
     }
 };

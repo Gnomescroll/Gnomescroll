@@ -44,7 +44,7 @@ class Fifo_char_buffer
     Fifo_char_buffer()
     {
         cb_read = char_buffer_pool.acquire();
-        cb_read.next = NULL;
+        cb_read->next = NULL;
         cb_write = cb_read;
 
         size=0;
@@ -61,20 +61,20 @@ class Fifo_char_buffer
         {
             printf("write %i bytes and new buffer\n", fb);  //debug
 
-            memcpy(cb_write.buffer+write_index, buff, fb);
+            memcpy(cb_write->buffer+write_index, buff, fb);
             buff += fb;
             n -= fb;
             size += fb;
 
-            cb_write.next = char_buffer_pool.acquire();
-            cb_write = cb_write.next;
+            cb_write->next = char_buffer_pool.acquire();
+            cb_write = cb_write->next;
             write_index = 0;
 
             fb = CHAR_BUFFER_SIZE - write_index;
         }
         printf("write %i bytes and new buffer\n", n); //debug
 
-        memcpy(cb_write_buffer+write_index, buff, n);
+        memcpy(cb_write->buffer+write_index, buff, n);
         size += n;
         write_index += n;
     }
@@ -89,13 +89,13 @@ class Fifo_char_buffer
 
         while(rb < n)
         {
-            memcpy(buff, cb_read.buffer+read_index, rb);
+            memcpy(buff, cb_read->buffer+read_index, rb);
             buff += rb;
             n -= rb;
             size -= rb;
 
             Char_buffer* tmp = cb_read;
-            cb_read = cb_read.next;
+            cb_read = cb_read->next;
             char_buffer_pool.retire(tmp);
             
             read_index = 0;
@@ -103,7 +103,7 @@ class Fifo_char_buffer
             rb = CHAR_BUFFER_SIZE - read_index;
         }
 
-        memcpy(buff, cb_read.buff+read_index, n);
+        memcpy(buff, cb_read->buff+read_index, n);
         size -= n
         read_index += n;
     }
@@ -122,6 +122,7 @@ used for
 -reference counted string
 */
 
+/*
 static const int CHAR_BUFFER_REF_SIZE=2048;
 
 class Char_buffer_ref {
@@ -164,16 +165,14 @@ class char_buffer_inheritance_template {
         }
         //return this object to object pool
     }
-/*
-    static char_buffer_inheritance_template* acquire() {
-        return object from pool
-    }
-*/
+
+    //static char_buffer_inheritance_template* acquire() { return object from pool }
+
 };
 
-/*
-reference counted version
-*/
+
+//reference counted version
+
 class char_buffer_ref_inheritance_template {
     public:
     int reference_count;
@@ -187,9 +186,9 @@ class Char_buffer2 {
     int remaining;
     char* offset;
 
-    /*
-        Object can acquire a char buffer as long it decrements cbf reference count when its done
-    */
+    
+        //Object can acquire a char buffer as long it decrements cbf reference count when its done
+    
     void acquire(int length, char** b, Char_buffer_ref** cbf) {
         if(remaining < length) 
         {
@@ -235,3 +234,4 @@ inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
     offset += length;
     current->reference_count++;
 }
+*/
