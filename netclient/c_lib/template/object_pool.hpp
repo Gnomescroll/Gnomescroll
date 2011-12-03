@@ -10,8 +10,8 @@ class Object_pool {
 
     public:
 
-    //virtual char* name() = 0;
-    virtual const char* name() { static const char x[]= "generic object pool"; return x; }
+    virtual const char* name() = 0;
+    //virtual const char* name() { static const char x[]= "generic object pool"; return x; }
 
     Object* first;
     Object* last;
@@ -35,7 +35,6 @@ template <class Object, int BUFFER_POOL_SIZE>
 void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
 {
     batch_num++;
-    //printf("%s: Batch Alloc: %i n_elements: %i \n", name(), batch_num, BUFFER_POOL_SIZE);
 
     Object* ar = new Object[BUFFER_POOL_SIZE];
     first = &ar[0];
@@ -46,6 +45,8 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
     }
 
     ar[BUFFER_POOL_SIZE-1].next = NULL;
+    const char* _name = name();
+    printf("%s: Batch Alloc: %i n_elements: %i \n", _name, batch_num, BUFFER_POOL_SIZE);
 }
 
 template <class Object, int BUFFER_POOL_SIZE>

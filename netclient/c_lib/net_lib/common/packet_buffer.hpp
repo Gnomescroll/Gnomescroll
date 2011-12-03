@@ -35,7 +35,7 @@ class NetMessageArray {
 class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
-    const char* name() { static const char x[] = "NetMessageArray_pool"; return x; } 
+        const char* name();
 };
 
 static NetMessageArray_pool net_message_array_pool;
