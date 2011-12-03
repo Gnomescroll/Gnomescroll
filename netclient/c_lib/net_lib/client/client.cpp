@@ -5,6 +5,9 @@
 
 namespace NetClient {
 
+class NetPeer NPserver;
+struct Socket client_socket;
+
 //class NetPeer NPserver;
 //struct Socket client_socket;
 
@@ -99,7 +102,7 @@ int validate_packet(char* buff, int n, struct sockaddr_in* from) {
 #if PLATFORM == PLATFORM_WINDOWS
 typedef int socklen_t;
 #endif
-	
+    
 void process_incoming_packets() {
     struct sockaddr_in from;
     socklen_t fromLength = sizeof( from );

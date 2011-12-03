@@ -10,8 +10,9 @@ class Object_pool {
 
     public:
 
-    virtual const char* name() = 0;
+    //virtual const char* name() = 0;
     //virtual const char* name() { static const char x[]= "generic object pool"; return x; }
+    virtual const char* name() { return "generic object pool"; }
 
     Object* first;
     Object* last;

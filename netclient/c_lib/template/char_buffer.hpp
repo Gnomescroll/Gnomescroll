@@ -20,7 +20,7 @@ class Char_buffer {
 class Char_buffer_pool: public Object_pool<Char_buffer, 128>  //64, 2048 byte buffers
 {
     public:
-    char* name() { static char x[] = "Generic Char_buffer_pool"; return x; } 
+    const char* name() { static const char x[] = "Generic Char_buffer_pool"; return x; } 
 };
 
 Char_buffer_pool char_buffer_pool;

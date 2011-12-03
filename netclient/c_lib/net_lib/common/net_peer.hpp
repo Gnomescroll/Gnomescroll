@@ -4,9 +4,6 @@
 
 #include "./sequencer.h"
 
-#include <net_lib/common/packet_buffer.hpp>
-
-
 #ifdef DC_CLIENT
 #include <net_lib/client/pviz.h>
 #endif
@@ -41,8 +38,6 @@ struct packet_sequence2 {
     int seq;
     int received;
 };
-
-#include <net_lib/common/packet_buffer.hpp>
 
 /*
 NetPeer

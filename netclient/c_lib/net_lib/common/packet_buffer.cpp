@@ -1,6 +1,6 @@
-#include "packet_buffer.cpp"
+#include "packet_buffer.hpp"
 
 const char* NetMessageArray_pool::name() {
-    static const char x[] = "NetMessageArray_pool";
-    return x;
+    return "NetMessageArray_pool";
 } 
+

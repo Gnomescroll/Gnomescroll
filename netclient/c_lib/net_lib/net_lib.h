@@ -16,6 +16,7 @@
 #include <net_lib/common/net_peer.cpp>
 #include <net_lib/common/sequencer.c>
 #include <net_lib/common/message_handler.c>
+#include <net_lib/common/packet_buffer.cpp>
 
 #ifdef DC_CLIENT
 #include <net_lib/client/client.cpp>
