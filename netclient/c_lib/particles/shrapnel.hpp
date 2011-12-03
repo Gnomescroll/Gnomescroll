@@ -15,7 +15,7 @@
 #define SHRAPNEL_DAMP 0.5f
 #define SHRAPNEL_TYPE 5
 #define SHRAPNEL_TEXTURE_ID 5
-#define SHRAPNEL_TEXTURE_SCALE 0.1f
+#define SHRAPNEL_TEXTURE_SCALE 0.15f
 
 class Shrapnel {
     public:

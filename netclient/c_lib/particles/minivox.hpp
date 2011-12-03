@@ -10,6 +10,7 @@
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
+#include <t_map/t_vbo.h>
 
 #define MINIVOX_MAX 4096
 #define MINIVOX_TTL 100
@@ -22,6 +23,8 @@ float minivox_size = 0.05f;
 #define MINIVOX_G 27
 #define MINIVOX_B 224
 #define MINIVOX_A 255
+
+#define MINIVOX_DRAW_MODE_TEXTURED 1
 
 class Minivox {
     private:
@@ -43,8 +46,17 @@ class Minivox {
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_orientation(float theta, float phi);
+        void set_ttl(int ttl) {
+            particle.ttl = ttl;
+        }
 
+        int draw_mode;
+        float pix_margin;
+        float tx,ty;
+        void set_texture(int tex_id);
+        
         void draw();
+        void draw_textured();
         void tick();
         Minivox(int id);
         Minivox(int id, float x, float y, float z, float vx, float vy, float vz);

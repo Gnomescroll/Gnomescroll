@@ -2,7 +2,7 @@
 
 //#include "./t_inline.c"
 
-GLuint texture = 0;
+GLuint block_texture = 0;
 
 int must_lock_block_surface;
 SDL_Surface *block_surface;
@@ -194,8 +194,8 @@ int _init_draw_terrain() {
     //glEnable(GL_POLYGON_SMOOTH);
     printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
 
-    if(texture == 0) { //load texture if texture is not set
-    //block_surface=IMG_Load("media/texture/textures_03.png");  //should this be freed?
+    if(block_texture == 0) { //load block_texture if block_texture is not set
+    //block_surface=IMG_Load("media/block_texture/textures_03.png");  //should this be freed?
     block_surface=IMG_Load("media/texture/blocks_01.png");
     if(!block_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
     
@@ -203,7 +203,7 @@ int _init_draw_terrain() {
     must_lock_block_surface = SDL_MUSTLOCK(block_surface);
     block_surface_width = (int)block_surface->w;
     block_surface_height = (int)block_surface->h;
-    //SDL_Surface *_surface = IMG_Load("media/texture/textures_03.png");
+    //SDL_Surface *_surface = IMG_Load("media/block_texture/textures_03.png");
     //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
 
     //SDL_FreeSurface(_surface);
@@ -218,8 +218,8 @@ int _init_draw_terrain() {
     //block_surface_height = (int)surface->h;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &texture );
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glGenTextures( 1, &block_texture );
+    glBindTexture( GL_TEXTURE_2D, block_texture );
 
 /*
  * Replace with tiles and use mipmapping for filter
@@ -454,7 +454,7 @@ static inline void add_inf_tex_quad(struct Vertex* v_list, int offset, int x, in
         id= get_infinite_texture(infinite_texture + hf);
     */
        // printf("hash = %i, tex_id= %i tex_base = %i \n", 8*ul + 4*ur + 2*bl + br, infinite_texture + 8*ul + 4*ur + 2*bl + br, infinite_texture);
-        //id = infinite_texture + 8*ul + 4*ur + 2*bl + br; //infinite texture level 2
+        //id = infinite_texture + 8*ul + 4*ur + 2*bl + br; //infinite block_texture level 2
         id = get_infinite_texture(infinite_texture + test_array2[1*ul + 2*ur + 4*bl + 8*br]);
 
         //id = get_infinite_texture(infinite_texture);
@@ -663,7 +663,7 @@ int update_column_VBO(struct vm_column* column) {
             {
                 if(transparency == 0)
                 { 
-                    //no infinite texture
+                    //no infinite block_texture
                     if(infinite_texture == 0) {
                         for(side_num=0; side_num<6; side_num++) {
                             if(! _is_occluded(_x,_y,_z,side_num)) {
@@ -673,7 +673,7 @@ int update_column_VBO(struct vm_column* column) {
                             }
                         }
                     }
-                    else  //infinite texture
+                    else  //infinite block_texture
                     {  
                         for(side_num=0; side_num<6; side_num++) {
                             if(! _is_occluded(_x,_y,_z,side_num)) {
@@ -1059,7 +1059,7 @@ void DRAW_VBOS1() {
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, block_texture );
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1168,7 +1168,7 @@ void DRAW_VBOS1a() {
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, block_texture );
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1277,7 +1277,7 @@ void DRAW_VBOS2() {
 
         glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-        glBindTexture( GL_TEXTURE_2D, texture );
+        glBindTexture( GL_TEXTURE_2D, block_texture );
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);

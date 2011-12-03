@@ -124,4 +124,3 @@ void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsig
     SDL_GetRGBA(pixel, block_surface_pixel_format, r,g,b,a);
     if (must_lock_block_surface) SDL_UnlockSurface(block_surface);
 }
-
