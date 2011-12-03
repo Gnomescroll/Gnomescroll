@@ -1,42 +1,13 @@
 #pragma once
 
-/*
-Two aspects: messages out, messages in
 
-
-*/
 
 //#include <net_lib/common/packet_buffer.cpp>
 //#include <c_lib/template/object_pool.hpp>
 
-/*
-Net_message_buffer {
-    private:
-    public:
-    int reference_count;
-    char buffer[NET_MESSAGE_BUFFER_SIZE];
-    Net_message_buffer* next;
-
-    Net_message_buffer() { reference_count = 0; }
-};
-*/
-//static const int NET_MESSAGE_BUFFER_SIZE = 4096;
-
-//python channel
-
-
-//#include <iostream>
-//#include <string>
-
-//using namespace std;
-
 //void * memcpy ( void * destination, const void * source, size_t num );
-//size_t copy ( char* s, size_t n, size_t pos = 0) const;
-//string& erase ( size_t pos = 0, size_t n = npos );
 
 #include <c_lib/template/char_buffer.hpp>
-
-
 
 class Python_channel_out {
     public:
@@ -129,42 +100,33 @@ class Sequence_buffer {
     int read_index;
     
     int lowest_sequence;
-    //int highest_sequence;
-
-    //Sequence_buffer_element* write_sb;
-    //int write_index;
+    
+    int size;
 
     Sequence_buffer()
     {
         read_index = 0;
-        //write_index = 0;
-        //lowest_sequence = 0;
-        //highest_sequence = 0;
-
+        size = 0;
         read_sb = new Sequence_buffer_element;
     }
 
     void insert(char* buff, int size, int sequence)
     {
         Sequence_buffer_element* sbe = read_sb;
-        
+
         int index = lowest_sequence;
         int _read_index = read_index;
 
         int count = 0; //debug
 
-        //check to see if next packet in sequence
-
         if(lowest_sequence == sequence)
         {
-
             pop(buff, size);
-            
             return;
         }
 
         while(index != sequence) 
-        {
+        {   
             index++; //update index, MOD SOMETHING
             _read_index++;
             if(_read_index == SEQUENCE_BUFFER_SIZE)
@@ -177,24 +139,21 @@ class Sequence_buffer {
                 }
                 sbe = sbe->next;
             }
-
             count++; //debug
             if(count > 1) printf("python channel: count = %i \n", count); //debug
         }
 
+        size++; printf("size increment= %i\n", size);
         Channel_message* cm = &sbe->cm[read_index];
-
         cm->buffer = new char[size];    //bypass when 
         cm->size = size;
-        //cm->sequence = sequence;
     }
 
     void pop(char* buff, int size) 
     {
         if(read_sb->cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
-
         //process cm
-
+        printf("processed: %i \n", lowest_sequence);
         read_index++;
         lowest_sequence++; //USE MODULO
         if(read_index == SEQUENCE_BUFFER_SIZE)
@@ -207,46 +166,129 @@ class Sequence_buffer {
                 read_sb->next->next = NULL;
             }
             read_sb = sbe->next;
-
             delete sbe; //retire old buffer
         }
-
+        //if(size == 0) return;
         Channel_message* cm;
-
-        while(sbe.cm[read_index].buffer != NULL)
+        Sequence_buffer_element* sbe = read_sb;
+        while(sbe->cm[read_index].buffer != NULL)
         {
+            size--; printf("size decrement= %i\n", size);
             cm = &sbe->cm[read_index];
             //process cm
             delete cm->buffer;
             cm->buffer = NULL;
-
+            printf("processed: %i \n", lowest_sequence);
             read_index++;
             lowest_sequence++;  //USE MODULO
-
             if(read_index == SEQUENCE_BUFFER_SIZE)
             {
                 read_index = 0;
-                Sequence_buffer_element* sbe = read_sb;
+                Sequence_buffer_element* tmp = read_sb;
                 read_sb = read_sb->next;
-                delete sbe //use object pool
+                delete tmp; //use object pool
                 //return sequence buffer when done
             }
         }
     }
 };
+
+
 class Python_channel_in {
     public:
-
-    void receive_message(char* buff, int n, int sequence)
-    {
-    }
-
-    Net_message* serialize_to_packet(int max_n)
-    {
-        return NULL:
-    }
+    Sequence_buffer_element* read_sb;
+    int read_index;
+    
+    int lowest_sequence;
+    
+    int size;
 
     Python_channel_in()
     {
+        read_index = 0;
+        size = 0;
+        read_sb = new Sequence_buffer_element;
+    }
+
+    void insert(char* buff, int size, int sequence)
+    {
+        Sequence_buffer_element* sbe = read_sb;
+
+        int index = lowest_sequence;
+        int _read_index = read_index;
+
+        int count = 0; //debug
+
+        if(lowest_sequence == sequence)
+        {
+            pop(buff, size);
+            return;
+        }
+
+        while(index != sequence) 
+        {   
+            index++; //update index, MOD SOMETHING
+            _read_index++;
+            if(_read_index == SEQUENCE_BUFFER_SIZE)
+            {
+                _read_index = 0;
+                if(sbe->next == NULL ) 
+                {
+                    sbe->next = new Sequence_buffer_element; //use pool
+                    sbe->next->next = NULL; //for object pool
+                }
+                sbe = sbe->next;
+            }
+            count++; //debug
+            if(count > 1) printf("python channel: count = %i \n", count); //debug
+        }
+
+        size++; printf("size increment= %i\n", size);
+        Channel_message* cm = &sbe->cm[read_index];
+        cm->buffer = new char[size];    //bypass when 
+        cm->size = size;
+    }
+
+    void pop(char* buff, int size) 
+    {
+        if(read_sb->cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
+        //process cm
+        printf("processed: %i \n", lowest_sequence);
+        read_index++;
+        lowest_sequence++; //USE MODULO
+        if(read_index == SEQUENCE_BUFFER_SIZE)
+        {
+            Sequence_buffer_element* sbe = read_sb;
+            read_index = 0;
+            if(read_sb->next == NULL ) 
+            {
+                read_sb->next = new Sequence_buffer_element; //use pool
+                read_sb->next->next = NULL;
+            }
+            read_sb = sbe->next;
+            delete sbe; //retire old buffer
+        }
+        //if(size == 0) return;
+        Channel_message* cm;
+        Sequence_buffer_element* sbe = read_sb;
+        while(sbe->cm[read_index].buffer != NULL)
+        {
+            size--; printf("size decrement= %i\n", size);
+            cm = &sbe->cm[read_index];
+            //process cm
+            delete cm->buffer;
+            cm->buffer = NULL;
+            printf("processed: %i \n", lowest_sequence);
+            read_index++;
+            lowest_sequence++;  //USE MODULO
+            if(read_index == SEQUENCE_BUFFER_SIZE)
+            {
+                read_index = 0;
+                Sequence_buffer_element* tmp = read_sb;
+                read_sb = read_sb->next;
+                delete tmp; //use object pool
+                //return sequence buffer when done
+            }
+        }
     }
 };
