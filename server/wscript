@@ -45,13 +45,13 @@ def configure(conf):
     #conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
     #conf.env.CXXFLAGS = conf.env.CFLAGS
 
-
+    extra_options = [ '-fno-exceptions', '-Winline']
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall','-DDC_SERVER','-fpermissive', '-static-libgcc'])
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_SERVER','-fpermissive', '-static-libgcc'])
+        conf.env.append_value('CFLAGS', ['-g','-Wall','-DDC_SERVER','-fpermissive', '-static-libgcc']+extra_options)
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_SERVER','-fpermissive', '-static-libgcc']+extra_options)
     else:
-        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_SERVER'])
-        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_SERVER'])
+        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_SERVER']+extra_options)
+        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_SERVER']+extra_options)
 
     #,'-D DC_CLIENT'
     #if OS != 'Windows':

@@ -94,8 +94,10 @@ class Fifo_char_buffer
             n -= rb;
             size -= rb;
 
-            char_buffer_pool.retire(cb_read);
+            Char_buffer* tmp = cb_read;
             cb_read = cb_read.next;
+            char_buffer_pool.retire(tmp);
+            
             read_index = 0;
 
             rb = CHAR_BUFFER_SIZE - read_index;

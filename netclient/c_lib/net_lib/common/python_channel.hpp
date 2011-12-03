@@ -94,14 +94,13 @@ Need a list of sequences, need to determine
 class Channel_message {
         
     public:
-        int sequence;
         int size;
         char* buffer;
-
+        //dont need sequence number explicitly
     Channel_message() {
         buffer = NULL;
         size = 0;
-        sequence = -1;
+        //sequence = -1;
     }
 };
 
@@ -111,11 +110,12 @@ static const int SEQUENCE_BUFFER_SIZE = 32;
 class Sequence_buffer_element {
     public:
         Sequence_buffer_element* next;
-        Channel_message[SEQUENCE_BUFFER_SIZE];
+        Channel_message cm[SEQUENCE_BUFFER_SIZE];
 
-    Sequence_buffer_element() {
+    Sequence_buffer_element() 
+    {
         next = NULL;
-        for(int i=0; i<SEQUENCE_BUFFER_SIZE; i++) Channel_message[i]
+        for(int i=0; i<SEQUENCE_BUFFER_SIZE; i++) cm[i].buffer = NULL:
     }
 };
 
@@ -123,30 +123,67 @@ class Sequence_buffer {
     public:
     Sequence_buffer_element* read_sb;
     int read_index;
+    
     int lowest_sequence;
+    //int highest_sequence;
 
-    Sequence_buffer_element* write_sb;
-    int write_index;
+    //Sequence_buffer_element* write_sb;
+    //int write_index;
 
     Sequence_buffer(){
         read_index = 0;
-        write_index = 0;
-        lowest_sequence = 0;
+        //write_index = 0;
+        //lowest_sequence = 0;
+        //highest_sequence = 0;
 
         read_sb = new Sequence_buffer_element;
         write_sb = read_sb;
     }
 
-    void write(char* buff, int size, int sequence)
+    void insert(char* buff, int size, int sequence)
     {
-        int Sequence_buffer_element* sbe;
+        Sequence_buffer_element* sbe;
         int i = read_index;
-        int n = lowest_sequence;
-        
-        while(n != sequence)
+        int index = lowest_sequence;
 
+        //check to see if next packet in sequence
+
+        while(index != sequence) 
+        {
+            index++ //update index, MOD SOMETHING
+            read_index++;
+            if(read_index == SEQUENCE_BUFFER_SIZE)
+            {
+                read_index = 0;
+                if(sbe.next == NULL ) 
+                {
+                    sbe.next = new Sequence_buffer_element; //use pool
+                    sbe.next.next = NULL; //for object pool
+                }
+                sbe = sbe.next;
+            }
+        }
+
+        Channel_message* cm = &sbe[read_index].cm;
+
+        cm->buffer = new char[size];    //bypass when 
+        cm->size = size;
+        cm->sequence = sequence;
     }
 
+    void pop() 
+    {
+        if(sbe.cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
+
+        read_index++;
+        if(read_index == SEQUENCE_BUFFER_SIZE)
+        {
+            read_index = 0;
+            Sequence_buffer_element* sbe = read_sb;
+            read_sb = read_sb.next;
+            delete Sequence_buffer_element //use object pool
+        }
+    }
 };
 class Python_channel_in {
     public:
