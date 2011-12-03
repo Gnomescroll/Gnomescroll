@@ -35,7 +35,7 @@ class NetMessageArray {
 class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
-    char* name() { static char x[] = "NetMessageArray_pool"; return x; } 
+    const char* name() { static const char x[] = "NetMessageArray_pool"; return x; } 
 };
 
 static NetMessageArray_pool net_message_array_pool;
@@ -71,9 +71,9 @@ class Net_message_buffer {
 class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128> 
 {
 public:
-char* name() 
+const char* name() 
     { 
-        static char x[] = "Net_message_buffer_pool";
+        static const char x[] = "Net_message_buffer_pool";
         return x;
     } 
 };
@@ -81,9 +81,9 @@ char* name()
 class Net_message_buffer_pool2: public Object_pool<Net_message_buffer, 16>
 {
 public:
-char* name() 
+const char* name() 
     { 
-        static char x[] = "Net_message_buffer_pool2";
+        static const char x[] = "Net_message_buffer_pool2";
         return x;
     } 
 };
@@ -159,9 +159,9 @@ class Net_message {
 class Net_message_pool: public Object_pool<Net_message, 4096> // {}; //use 4096
 {
 public:
-char* name() 
+const char* name() 
     { 
-        static char x[] = "Net_message_pool";
+        static const char x[] = "Net_message_pool";
         return x;
     } 
 };
