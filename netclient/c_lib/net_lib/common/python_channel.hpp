@@ -191,7 +191,7 @@ class Sequence_buffer {
 
     void pop(char* buff, int size) 
     {
-        if(sbe.cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
+        if(read_sb->cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
 
         //process cm
 
