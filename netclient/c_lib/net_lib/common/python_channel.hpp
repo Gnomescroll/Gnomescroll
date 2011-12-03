@@ -147,7 +147,7 @@ class Sequence_buffer {
     void insert(char* buff, int size, int sequence)
     {
         Sequence_buffer_element* sbe = read_sb;
-        int i = read_index;
+        
         int index = lowest_sequence;
         int _read_index = read_index;
 
@@ -182,11 +182,11 @@ class Sequence_buffer {
             if(count > 1) printf("python channel: count = %i \n", count); //debug
         }
 
-        Channel_message* cm = &sbe.cm[read_index];
+        Channel_message* cm = &sbe->cm[read_index];
 
         cm->buffer = new char[size];    //bypass when 
         cm->size = size;
-        cm->sequence = sequence;
+        //cm->sequence = sequence;
     }
 
     void pop(char* buff, int size) 
