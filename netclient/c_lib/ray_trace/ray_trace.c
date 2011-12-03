@@ -665,7 +665,7 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
 }
 
 
-float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* rad2) {
+float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2) {
     float t;
     float d;
     float x,y,z;
@@ -681,7 +681,7 @@ float sphere_line_distance(float px, float py, float pz, float ox, float oy, flo
     x = t*ox - tx;
     y = t*oy - ty;
     z = t*oz - tz;
-    *rad2 = x*x+y*y+z*z; // minimum distance between target and line
+    *_rad2 = x*x+y*y+z*z; // minimum distance between target and line
 
     //x,y,z is closest point
     x = t*ox + px;

@@ -91,47 +91,63 @@ class Python_channel_out {
 Need a list of sequences, need to determine 
 */
 
-class Python_channel_in_message {
+class Channel_message {
         
     public:
         int sequence;
-        int bytes;
-        std::string* str;
+        int size;
+        char* buffer;
 
-    Python_channel_in_message(int seq)
-    {
-        //sequence = NULL;
-        sequence = seq;
-        bytes = NULL;
-        str = NULL;
+    Channel_message() {
+        buffer = NULL;
+        size = 0;
+        sequence = -1;
     }
-
-    Python_channel_in_message(int seq, std::string* _str)
-    {
-        //sequence = NULL;
-        sequence = seq;
-        str = _str;
-        bytes = _str->size();
-    }
-
-    //~Python_channel_in_message {}
-
 };
 
-#include <iostream>
-#include <deque>
 
-//template <Python_channel_in_message> class pcim_deque;
+static const int SEQUENCE_BUFFER_SIZE = 32;
 
-//vector<int>::iterator myIntVectorIterator;
+class Sequence_buffer_element {
+    public:
+        Sequence_buffer_element* next;
+        Channel_message[SEQUENCE_BUFFER_SIZE];
 
-/*
-For compile speed, move everything using standard template, into cpp files
-*/
+    Sequence_buffer_element() {
+        next = NULL;
+        for(int i=0; i<SEQUENCE_BUFFER_SIZE; i++) Channel_message[i]
+    }
+};
 
-//std::deque<Python_channel_in_message> pcim_deque;
-//std::deque<Python_channel_in_message>::iterator pcim_dequeIterator;
+class Sequence_buffer {
+    public:
+    Sequence_buffer_element* read_sb;
+    int read_index;
+    int lowest_sequence;
 
+    Sequence_buffer_element* write_sb;
+    int write_index;
+
+    Sequence_buffer(){
+        read_index = 0;
+        write_index = 0;
+        lowest_sequence = 0;
+
+        read_sb = new Sequence_buffer_element;
+        write_sb = read_sb;
+    }
+
+    void write(char* buff, int size, int sequence)
+    {
+        int Sequence_buffer_element* sbe;
+        int i = read_index;
+        int n = lowest_sequence;
+        
+        while(n != sequence)
+
+    }
+
+};
 class Python_channel_in {
     public:
     //int pending_bytes_out;  //pending bytes out

@@ -29,4 +29,7 @@ cp -rf ./netclient/c_lib/template ./server/c_lib/template
 rm -rf ./server/c_lib/time
 cp -rf ./netclient/c_lib/time ./server/c_lib/time
 
+rm -rf ./server/c_lib/weapons
+cp -rf ./netclient/c_lib/weapons ./server/c_lib/weapons
+
 echo finished
