@@ -463,15 +463,20 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 }
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
+    // normalize direction
     float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
     _dfy /= len2;
     _dfz /= len2;
+
+    // calculate endpoint
     float x1,y1,z1;
     x1 = x0 + _dfx*max_l;
     y1 = y0 + _dfy*max_l;
     z1 = z0 + _dfz*max_l;
-    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    // redundant len calculation, will always be max_l
+    //float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = max_l;
 
     //int lx,ly,lz; //may or may not be used
     int x,y,z;
@@ -509,7 +514,6 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 
     int i;
     int max_i = (bsize / ssize)*len + 1; //over project
-    max_i = fmin(raycast_tick_max, max_i);
 
     //printf("max_l= %f \n", len);
     //printf("max_i= %i \n", max_i);
@@ -554,16 +558,15 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
             }
         }
     }
-    //if( max_i - i != 0) {
-    //printf("i, max_i= %i, %i, %i \n", i, max_i, max_i - i);
-    //}
     if(col == 1) {
-    //side[0]=ri[0]; side[1]=ri[1]; side[2]=ri[2];
-    collision[0]=x;collision[1]=y;collision[2]=z;
-    pre_collision[0]=_x;pre_collision[1]=_y;pre_collision[2]=_z;
-    *tile = _get(x,y,z);
-    *distance = len*((float)(i) / max_i);
-    return 1;
+        side[0] *= -1;
+        side[1] *= -1;
+        side[2] *= -1;
+        collision[0]=x;collision[1]=y;collision[2]=z;
+        pre_collision[0]=_x;pre_collision[1]=_y;pre_collision[2]=_z;
+        *tile = _get(x,y,z);
+        *distance = len * (((float)i) / ((float)max_i));
+        return 1;
     } else {
         *tile = 0;
         distance = 0;

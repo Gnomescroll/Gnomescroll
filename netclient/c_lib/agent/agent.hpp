@@ -9,6 +9,7 @@ const int AGENT_MAX = 256;
 #define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT_CROUCHED 0.9f
 #define AGENT_BOX_RADIUS 0.4f
+#define CAMERA_HEIGHT_SCALE 0.83f
 
 #define AGENT_START_HEALTH 100
 
@@ -157,6 +158,10 @@ class Agent_state {
         int last_full_state_message;
 
         void draw();
+
+        float camera_height() {
+            return box.b_height * CAMERA_HEIGHT_SCALE;
+        }
 
         Agent_state(int id); //default constructor
         Agent_state(int id, int owner, float x, float y, float z, float vx, float vy, float vz);

@@ -53,7 +53,9 @@ class Minivox {
         int draw_mode;
         float pix_margin;
         float tx,ty;
+        int texture_pixel_width;
         void set_texture(int tex_id);
+        void set_texture(int tex_id, int pixels_wide);
         
         void draw();
         void draw_textured();

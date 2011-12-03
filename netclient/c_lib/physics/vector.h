@@ -28,6 +28,13 @@ float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
 v->x /= l; v->y /=l; v->z /=l;
 }
 
+inline static void normalize_vector_f(float* x, float *y, float *z) {
+    float l = sqrt(*x**x + *y**y + *z**z);
+    *x = *x/l;
+    *y = *y/l;
+    *z = *z/l;
+}
+
 inline static struct Vector vector_cross(struct Vector v1, struct Vector v2) {
     struct Vector v0;
     v0.x = v1.y*v2.z - v1.z*v2.y;

@@ -1,7 +1,7 @@
 #include "minivox.hpp"
 
 Minivox::Minivox(int id)
-: size(minivox_size), draw_mode(0) {
+: size(minivox_size), draw_mode(0), texture_pixel_width(2) {
     create_particle2(&particle, id, MINIVOX_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, MINIVOX_TTL);
 
     vox.r = MINIVOX_R;
@@ -15,7 +15,7 @@ Minivox::Minivox(int id)
 }
 
 Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz)
-: size(minivox_size), draw_mode(0) {
+: size(minivox_size), draw_mode(0), texture_pixel_width(2) {
     create_particle2(&particle, id, MINIVOX_TYPE, x,y,z,vx,vy,vz, 0, MINIVOX_TTL);
 
     vox.r = MINIVOX_R;
@@ -69,7 +69,7 @@ void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b, unsig
 }
 
 void Minivox::set_texture(int tex_id) {
-    const int pix = 10;  // NxN random texture sample within cube identified by tex_id
+    const int pix = this->texture_pixel_width;  // NxN random texture sample within cube identified by tex_id
     const int cube_w = 32;
     const int cube_surface_w = 512;
     const int cubes_per_surface_axis = cube_surface_w / cube_w;
@@ -109,6 +109,12 @@ void Minivox::set_texture(int tex_id) {
     draw_mode = MINIVOX_DRAW_MODE_TEXTURED;
 }
 
+void Minivox::set_texture(int tex_id, int pixels_wide) {
+    int prev = this->texture_pixel_width;
+    this->texture_pixel_width = pixels_wide;
+    set_texture(tex_id);
+    this->texture_pixel_width = prev;
+}
 
 void Minivox::tick() {
     bounce_simple_rk4(&particle, MINIVOX_DAMP);

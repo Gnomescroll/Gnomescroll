@@ -163,7 +163,9 @@ float PlayerAgent_state::camera_height() {
     //if (active_camera_state->crouching) {
     //    return box.c_height * camera_height_scale;
     //}
-    return box.b_height * camera_height_scale;
+    Agent_state* a = ClientState::agent_list.get(agent_id);
+    if (a==NULL) return 0.0f;
+    return a->camera_height();
 }
 
 #define INITIAL_AGENT_INTERPOLATION_WEIGHT 1.0f

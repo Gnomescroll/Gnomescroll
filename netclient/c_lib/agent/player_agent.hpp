@@ -128,13 +128,12 @@ class PlayerAgent_state {
         void set_control_state(uint16_t cs, float theta, float phi);
 
         //collision box;
-        struct Agent_collision_box box; //WTF!?!?! Should be from netagent, not in player agent!!!
+        //struct Agent_collision_box box; //WTF!?!?! Should be from netagent, not in player agent!!!
         /*
             WTF
         */
 
         //camera properties
-        float camera_height_scale;
         float camera_height();
 
         PlayerAgent_status status;
@@ -151,14 +150,13 @@ class PlayerAgent_state {
             //init
             static int inited=0;
             if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
+            //assert(!inited);
             inited++;
 
             agent_id = -1;
 
             cs_seq_local = 0;
             cs_seq_net = -1;
-
-            camera_height_scale = 0.83f;
 
             state_history_index = 0;
             most_recent_net_snapshot_seq = -1;
@@ -175,9 +173,9 @@ class PlayerAgent_state {
                     Agent_collision_box box = A->box;
                 grab box from the net agent class instead of replicating it
             */
-            box.b_height = AGENT_HEIGHT;
-            box.c_height = AGENT_HEIGHT_CROUCHED;
-            box.box_r = AGENT_BOX_RADIUS;
+            //box.b_height = AGENT_HEIGHT;
+            //box.c_height = AGENT_HEIGHT_CROUCHED;
+            //box.box_r = AGENT_BOX_RADIUS;
         }
 
 };

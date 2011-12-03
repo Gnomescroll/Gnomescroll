@@ -28,17 +28,17 @@ void PlayerAgent_action::fire() {
         case Hitscan::HITSCAN_TARGET_AGENT:
             agent_msg = new hitscan_agent_CtoS(p->agent_id, data[0], data[1]);
             agent_msg->send();
-            printf("hit agent\n");
+            //printf("hit agent\n");
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:
             block_msg = new hitscan_block_CtoS(p->agent_id, data[0], data[1], data[2]);
             block_msg->send();
-            printf("hit block\n");
+            //printf("hit block\n");
             break;
             
         case Hitscan::HITSCAN_TARGET_NONE:
-            printf("hit nothin\n");
+            //printf("hit nothin\n");
         default:
             break;
     }

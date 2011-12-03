@@ -40,7 +40,6 @@ inline void agent_damage_StoC::handle() {
 
 // fire weapon action
 inline void fire_weapon_StoC::handle() {
-    // play weapon firing animation and sounds
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
     a->event.fired_weapon(weapon_id);
