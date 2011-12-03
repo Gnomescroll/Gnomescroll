@@ -23,7 +23,7 @@ def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz,
 '''
 DONT DEPRECATE BELOW
 '''
-cdef extern from "./physics/vector.h":
+cdef extern from "./physics/vector.hpp":
     cdef struct Vector:
         float x
         float y

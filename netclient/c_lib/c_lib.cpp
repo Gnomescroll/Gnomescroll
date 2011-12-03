@@ -12,7 +12,7 @@
 #include <defines.h>
 
 /* Vectors, Ray Tracers, Physics */
-#include <c_lib/physics/vector.c>
+#include <c_lib/physics/vector.cpp>
 #include <c_lib/ray_trace/ray_trace.c>
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/physics/common.c>

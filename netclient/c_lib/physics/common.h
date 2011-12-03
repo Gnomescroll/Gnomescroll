@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/physics/vector.h>
+#include <c_lib/physics/vector.hpp>
 
 struct State {
     struct Vector p;

@@ -2,7 +2,7 @@
 
 #include <c_lib/compat.h>
 
-#include <c_lib/physics/vector.h>
+#include <c_lib/physics/vector.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
 const int AGENT_MAX = 256;

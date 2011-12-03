@@ -8,7 +8,7 @@
 #endif
 
 #include <c_lib/voxel/common.h>
-#include <physics/vector.h>
+#include <physics/vector.hpp>
 
 const int AGENT_PART_NUM = 6;
 #define AGENT_PART_HEAD 0

@@ -1,4 +1,4 @@
-cdef extern from "./physics/vector.h":
+cdef extern from "./physics/vector.hpp":
     struct Vector:
         float x
         float y

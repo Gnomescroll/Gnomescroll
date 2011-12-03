@@ -5,7 +5,7 @@
 #include "./t_map/t_map.cpp"
 #include "./t_map/t_properties.c"
 
-#include "./physics/vector.c"
+#include "./physics/vector.cpp"
 #include "./ray_trace/ray_trace.c"
 #include "./physics/common.c"
 

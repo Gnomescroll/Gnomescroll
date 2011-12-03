@@ -4,7 +4,7 @@
 #include <math.h>
 
 #include <c_lib/camera/camera.hpp>
-#include <c_lib/physics/vector.h>
+#include <c_lib/physics/vector.hpp>
 
 #include <stdio.h>
 #include <stdlib.h>

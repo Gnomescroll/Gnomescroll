@@ -1,4 +1,4 @@
-#include "vector.h"
+#include "vector.hpp"
 
 
 float vector_dot(struct Vector* v1, struct Vector* v2) {
