@@ -27,9 +27,9 @@ class NetMessageArray {
         next = NULL;
     }
 
-    inline void retire();
+    inline void retire() __attribute__((always_inline));
 
-    inline static NetMessageArray* acquire();
+    inline static NetMessageArray* acquire() __attribute__((always_inline));
 };
 
 class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing

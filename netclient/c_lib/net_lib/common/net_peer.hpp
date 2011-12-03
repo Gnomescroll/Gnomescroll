@@ -16,7 +16,7 @@
 
 #include <net_lib/common/packet_buffer.hpp>
 
-//#include <net_lib/common/python_channel.hpp>
+#include <net_lib/common/python_channel.hpp>
 
 struct Socket {
     uint32_t ip;
@@ -113,8 +113,9 @@ class NetPeer
             consume_index++;
             if(consume_index == NET_MESSAGE_ARRAY_SIZE)
             {
+                NetMessageArray* _next = nma->next;
                 if(nma->reference_count == 0) nma->retire(); //check 1
-                nma = nma->next;
+                nma = _next;
                 consume_index=0;
             }
         }
