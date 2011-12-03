@@ -103,8 +103,8 @@ class Fifo_char_buffer
             rb = CHAR_BUFFER_SIZE - read_index;
         }
 
-        memcpy(buff, cb_read->buff+read_index, n);
-        size -= n
+        memcpy(buff, cb_read->buffer+read_index, n);
+        size -= n;
         read_index += n;
     }
 };

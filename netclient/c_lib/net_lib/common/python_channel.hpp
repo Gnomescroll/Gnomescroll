@@ -45,7 +45,7 @@ class Python_channel_out {
 
     int sequence_number;
     int pending_bytes_out;
-    
+
     int size() { return fcb.size; }
 
     void write_message(char* buff, int n)
@@ -76,6 +76,7 @@ class Python_channel_out {
         //pack sequence number
         char t[2]; int n1 =0;
         PACK_uint16_t(sequence_number, nm->buff, &n1);
+        fcb.write(t, 2);
         sequence_number++;
         //pack data
         fcb.write(nm->buff+2, bytes);
@@ -118,7 +119,7 @@ class Sequence_buffer_element {
     Sequence_buffer_element() 
     {
         next = NULL;
-        for(int i=0; i<SEQUENCE_BUFFER_SIZE; i++) cm[i].buffer = NULL:
+        for(int i=0; i<SEQUENCE_BUFFER_SIZE; i++) cm[i].buffer = NULL;
     }
 };
 
@@ -133,14 +134,14 @@ class Sequence_buffer {
     //Sequence_buffer_element* write_sb;
     //int write_index;
 
-    Sequence_buffer(){
+    Sequence_buffer()
+    {
         read_index = 0;
         //write_index = 0;
         //lowest_sequence = 0;
         //highest_sequence = 0;
 
         read_sb = new Sequence_buffer_element;
-        write_sb = read_sb;
     }
 
     void insert(char* buff, int size, int sequence)
@@ -164,7 +165,7 @@ class Sequence_buffer {
 
         while(index != sequence) 
         {
-            index++ //update index, MOD SOMETHING
+            index++; //update index, MOD SOMETHING
             _read_index++;
             if(_read_index == SEQUENCE_BUFFER_SIZE)
             {
@@ -181,7 +182,7 @@ class Sequence_buffer {
             if(count > 1) printf("python channel: count = %i \n", count); //debug
         }
 
-        Channel_message* cm = &sbe[read_index].cm;
+        Channel_message* cm = &sbe.cm[read_index];
 
         cm->buffer = new char[size];    //bypass when 
         cm->size = size;
