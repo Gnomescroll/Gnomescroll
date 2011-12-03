@@ -62,7 +62,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     float ref[3];
     float inc[3];   inc[0]=ix;inc[1]=iy;inc[2]=iz;
     float nor[3];   nor[0]=(float)side[0];nor[1]=(float)side[1];nor[2]=(float)side[2];
-    reflect_f(inc, nor, ref);
+    reflect(inc, nor, ref);
     normalize_vector_f(&ref[0], &ref[1], &ref[2]);
 
     // compute initial base velocities

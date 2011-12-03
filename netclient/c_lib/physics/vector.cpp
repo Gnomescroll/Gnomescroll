@@ -8,7 +8,14 @@ float vector_dot(struct Vector* v1, struct Vector* v2) {
     return d;
 }
 
-float vector_dot1(float x, float y, float z, float a, float b, float c) {
+float vector_dot(float a[3], float b[3]) {
+    float d;
+    d = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    //printf("dot= %f \n", d);
+    return d;
+}
+
+float vector_dot(float x, float y, float z, float a, float b, float c) {
     float d;
     d = x*a + y*b + z*c;
     //printf("dot= %f \n", d);
@@ -55,6 +62,12 @@ struct Vector* mult_vec_scalar(struct Vector* a, float i) {
     return mult_vec_scalar_tmp;
 }
 
+void mult_vec_scalar(float a[3], float i, float b[3]) {
+    b[0] = a[0] * i;
+    b[1] = a[1] * i;
+    b[2] = a[2] * i;
+}
+
 void mult_vec_scalar_ptr(struct Vector* a, float i) {
     a->x *= i;
     a->y *= i;
@@ -78,7 +91,7 @@ float distance(float x, float y, float z, float x1, float y1, float z1) {
 
 float angle_between_vectors(float x, float y, float z, float a, float b, float c) {
     float angle;
-    float dot = vector_dot1(x,y,z, a,b,c);
+    float dot = vector_dot(x,y,z, a,b,c);
     float len1 = vector_length1(x,y,z);
     float len2 = vector_length1(a,b,c);
 
@@ -86,20 +99,8 @@ float angle_between_vectors(float x, float y, float z, float a, float b, float c
     return angle;
 }
 
-void reflect_f(float inc[3], float nor[3], float ref[3]) {
-    struct Vector _inc;
-    _inc.x = inc[0];
-    _inc.y = inc[1];
-    _inc.z = inc[2];
-
-    struct Vector _nor;
-    _nor.x = nor[0];
-    _nor.y = nor[1];
-    _nor.z = nor[2];
-
-    struct Vector _ref;
-    _ref = reflect(&_inc, &_nor);
-    ref[0] = _ref.x;
-    ref[1] = _ref.y;
-    ref[2] = _ref.z;
+void reflect(float inc[3], float nor[3], float ref[3]) {
+    float inter[3];
+    mult_vec_scalar(nor, 2.0f*vector_dot(nor, inc), inter);
+    sub_vec(inc, inter, ref);
 }
