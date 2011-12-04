@@ -1,6 +1,6 @@
 #pragma once
 
-#define OBJECT_POOL_DEBUG 0
+#define OBJECT_POOL_DEBUG 1
 
 #define OBJECT_POOL_DEBUG_BATCH 0
 
