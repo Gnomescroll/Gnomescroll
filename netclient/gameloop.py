@@ -34,6 +34,7 @@ import c_lib.c_lib_agents as cAgents
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_sdl as cSDL
+import c_lib.c_lib_camera as cCamera
 
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
@@ -115,6 +116,8 @@ class App(object):
         self.init_inputs()
 
         cAgents.load_agent_voxel_dat()
+
+        cCamera.load_skybox()
         
         print "App init finished"
 
@@ -277,6 +280,9 @@ class App(object):
                 agent.update_camera()
 
             camera.camera.world_projection()
+
+            P.event("Draw skybox")
+            cCamera.render_skybox()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()

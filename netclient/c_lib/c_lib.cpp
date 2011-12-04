@@ -43,6 +43,9 @@
     /* camera */
     #include <c_lib/camera/camera.cpp>
 
+    /* skybox */
+    #include <c_lib/skybox/skybox.cpp>
+
     /* SDL */
     #include <c_lib/SDL/texture_loader.c>
     #include <c_lib/SDL/draw_functions.c>

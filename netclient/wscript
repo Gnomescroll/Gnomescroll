@@ -345,9 +345,9 @@ def install_in_ext(ctx):
        'c_lib.c_lib_input',
        'c_lib.c_lib_animations',
        'c_lib.c_lib_sdl',
+       'c_lib.c_lib_sound',
        'c_lib.c_lib_camera',
        'csound',
-       'sound.sounds',  # cython .so's need to have same name as source
     ]
 
     for target in targets:
