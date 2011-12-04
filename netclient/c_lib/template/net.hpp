@@ -5,8 +5,11 @@
 
 #include <net_lib/common/packet_buffer.hpp>
 
-static int _packet_id = 1;
-int next_packet_id() { return _packet_id++; }
+static int _server_packet_id = 1;
+int next_server_packet_id() { return _server_packet_id++; }
+
+static int _client_packet_id = 1;
+int next_client_packet_id() { return _client_packet_id++; }
 
 typedef void (*pt2handler)(char*, int, int*, int);
 
@@ -55,7 +58,7 @@ class FixedSizeNetPacketToServer {
 
         static void register_server_packet() {
             Derived x = Derived();
-            Derived::message_id = next_packet_id(); //set size
+            Derived::message_id = next_server_packet_id(); //set size
             Derived::size = x.Size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
@@ -143,7 +146,7 @@ class FixedSizeNetPacketToClient {
 
         static void register_client_packet() {
             Derived x = Derived();
-            Derived::message_id = next_packet_id(); //set size
+            Derived::message_id = next_client_packet_id(); //set size
             x.size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
@@ -206,7 +209,7 @@ class FixedSizeReliableNetPacketToServer {
 
         static void register_server_packet() {
             Derived x = Derived();
-            Derived::message_id = next_packet_id(); //set size
+            Derived::message_id = next_server_packet_id(); //set size
             Derived::size = x.Size();
             register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
@@ -310,7 +313,7 @@ class FixedSizeReliableNetPacketToClient {
 
         static void register_client_packet() {
             Derived x = Derived();
-            Derived::message_id = next_packet_id(); //set size
+            Derived::message_id = next_client_packet_id(); //set size
             x.size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
