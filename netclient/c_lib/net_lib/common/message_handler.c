@@ -1,7 +1,10 @@
 
 #include "message_handler.h"
 
-int h_packet_size[256]; 
+//int h_packet_size[256]; 
+
+static int h_client_packet_size[256]; 
+static int h_server_packet_size[256]; 
 
 typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
 //pt2handler* handler_array[256];
@@ -28,7 +31,8 @@ void register_server_message_handler(int message_id, int size, pt2handler fptr) 
     
     if(message_id > 255 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
     if(server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
-    h_packet_size[message_id] = size;
+
+    h_server_packet_size[message_id] = size;
     server_handler_array[message_id] = fptr;
 }
 
@@ -38,7 +42,8 @@ void register_client_message_handler(int message_id, int size, pt2handler fptr) 
 
     if(message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
     if(client_handler_array[message_id] != NULL) {printf("register_client_message_handler: Reassigning message_id %i !!!\n", message_id);}
-    h_packet_size[message_id] = size;
+
+    h_client_packet_size[message_id] = size;
     client_handler_array[message_id] = fptr;
 }
 
@@ -47,7 +52,8 @@ void init_message_handler() {
     for(i=0;i<256;i++) {
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
-        h_packet_size[i] = -1;
+        h_server_packet_size[i] = -1;
+        h_client_packet_size[i] = -1;
     }
 
 }
@@ -67,7 +73,13 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
 
     int _n = *n;
     UNPACK_uint8_t(&message_id, buff, &_n);
-    size  = h_packet_size[message_id];
+
+    #ifdef DC_SERVER
+    size  = h_server_packet_size[message_id];
+    #endif
+    #ifdef DC_CLIENT
+    size  = h_client_packet_size[message_id];
+    #endif
 
     if(*n-1+size > max_n) { // > or >= ?
         printf("ERROR! message processor would read past end of packet!\n");
