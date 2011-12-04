@@ -1,5 +1,7 @@
 #include "t_buffer.h"
 
+#include "t_map.hpp"
+
 int t_buffer_init() {
     if (t_buff == NULL) {
         t_buff = (unsigned char*)malloc(sizeof(unsigned char)*t_buff_size);

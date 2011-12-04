@@ -1,15 +1,5 @@
 #pragma once
 
-#include <compat_gl.h>
-
-#include <stdio.h>
-
-//#include "t_map.hpp"
-//#include "t_properties.h"
-
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
-
     struct Vertex {
         float x,y,z;
         float tx,ty;
