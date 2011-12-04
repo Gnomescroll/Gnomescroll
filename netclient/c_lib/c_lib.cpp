@@ -63,6 +63,9 @@
 
 #endif
 
+#include <c_lib/state/client_state.cpp>
+#include <c_lib/state/packet_init.cpp>
+
 int init_c_lib() {
     printf("init c_lib\n");
 

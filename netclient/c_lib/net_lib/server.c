@@ -3,13 +3,20 @@
 
 #include "server.h"
 
+#include <unistd.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <time/physics_timer.h>
+#include <net_lib/server/server.h>
 
 #include <net_lib/benchmark.hpp>
 
 #include <c_lib/agent/agent_include.h>
 
-#include <c_lib/state/packet_init.cpp>
-#include <c_lib/state/server_state.cpp>
+#include <c_lib/state/packet_init.hpp>
+#include <c_lib/state/server_state.hpp>
 
 void _NetServerInit() {
     init_message_handler();

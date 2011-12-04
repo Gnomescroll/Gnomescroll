@@ -4,7 +4,16 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
-//#ifdef DC_CLIENT
+/*
+Net Messages
+*/
+
+//#include <c_lib/template/net.hpp>
+
+
+/*
+Other Stuff
+*/
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     agent_id = id;

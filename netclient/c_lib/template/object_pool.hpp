@@ -87,7 +87,7 @@ Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
         if(tmp->allocated != 0)
         {
             static const char* _name = name();
-            printf("%s: Memory Pool Acquire Error, allocated= %i, object= %i \n", _name, tmp->allocated, (int)tmp );
+            printf("%s: Memory Pool Acquire Error, allocated= %i, object= %lx \n", _name, tmp->allocated, (long) tmp );
             //int segfault = *((int*) NULL);
         }
         tmp->allocated++;
@@ -107,7 +107,7 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
         if(nmb->allocated != 1)
         {
             static const char* _name = name();
-            printf("%s: Memory Pool Retire Error, allocated= %i, object= %i \n", _name, nmb->allocated, (int)nmb );
+            printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", _name, nmb->allocated, (long) nmb );
             //int segfault = *((int*) NULL);
             //printf("sefault= %i", segfault);
         }

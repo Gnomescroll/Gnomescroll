@@ -1,10 +1,12 @@
 #include "client_state.hpp"
-#ifdef DC_CLIENT
+
+//#ifdef DC_CLIENT
+
 #pragma once
 
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.hpp>
-#include <c_lib/agent/player_agent.cpp>
+#include <c_lib/agent/player_agent.hpp>
 
 #include <c_lib/particles/object_lib.hpp>
 
@@ -84,4 +86,4 @@ namespace ClientState {
         agent_list.client_tick();
     }
 }
-#endif
+//#endif

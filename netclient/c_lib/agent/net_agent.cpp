@@ -2,6 +2,19 @@
 
 #include "net_agent.hpp"
 
+/*
+ *  Player Agent Packets
+ */
+
+inline void PlayerAgent_Snapshot::handle() {
+    #ifdef DC_CLIENT
+    ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+    #endif
+    //printf("Received Agent_state_message packet: agent_id= %i \n", id);
+    //printf("seq= %i \n", seq);
+    return;
+}
+
 // Server -> Client handlers
 #ifdef DC_CLIENT
 

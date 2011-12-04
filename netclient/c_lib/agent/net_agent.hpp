@@ -20,6 +20,46 @@
 #include <c_lib/t_map/t_map.hpp>
 #endif
 
+
+/*
+ *  Player Agent Packets
+*/
+
+class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapshot>
+{
+    public:
+
+        int id;
+        int seq;
+        int tick;
+
+        float x;
+        float y;
+        float z;
+        float vx,vy,vz;
+        float theta, phi;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
+            pack_u8(&seq, buff, buff_n, pack);
+            //pack_16(&tick, buff, buff_n, pack);
+
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle();
+};
+
+
 /*
  *  Server -> Client packets
  */

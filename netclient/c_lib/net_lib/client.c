@@ -17,14 +17,7 @@
 //#include <net_lib/common/packet_buffer.cpp>
 
 #include <net_lib/client/client.hpp>
-
-
-
-
-#include <c_lib/state/packet_init.cpp>
-#include <c_lib/state/client_state.cpp>
-
-
+#include <c_lib/state/packet_init.hpp>
 
 #include <net_lib/benchmark.hpp>
 #include <stdlib.h>
