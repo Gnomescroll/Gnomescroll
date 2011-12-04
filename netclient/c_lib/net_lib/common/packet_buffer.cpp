@@ -54,7 +54,7 @@ class ReliableNet_message_buffer_pool: public Object_pool<Net_message_buffer, 12
 
     ReliableNet_message_buffer_pool()
     {
-        printf("=== init ====\n");
+        //printf("=== init ====\n");
         current = this->acquire();
         remaining = NET_MESSAGE_BUFFER_SIZE;;
         offset = current->buffer;
@@ -172,7 +172,7 @@ class Net_message* Net_message::acquire_unreliable(int length)
     Net_message* t = net_message_pool.acquire();
     t->len = length;
     unreliable_net_message_buffer_pool.get_char_buffer(length, &t->buff, &t->b); //set buffer and set char pool
-    t->reference_count = 0;
+    //t->reference_count = 0;
     return t;
 }
 
@@ -181,6 +181,6 @@ class Net_message* Net_message::acquire_reliable(int length)
     Net_message* t = net_message_pool.acquire();
     t->len = length;
     reliable_net_message_buffer_pool.get_char_buffer(length, &t->buff, &t->b); //set buffer and set char pool
-    t->reference_count = 0;
+    //t->reference_count = 0;
     return t;
 }

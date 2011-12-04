@@ -13,8 +13,7 @@ static const int NET_MESSAGE_BUFFER_SIZE = 4096; // 69,000 per second, 74-78k pe
 static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
 
 
-//class Net_message_buffer;
-
+//used by net_peer
 class NetMessageArray {
     private:
     public:
