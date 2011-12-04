@@ -9,10 +9,6 @@ static char net_out_buff[2000];
     Use arrays/pointers/pool later for packets, to remove limits
 */
 
-/*
-Possible Memory leak
-*/
-
 void NetPeer::push_unreliable_packet(Net_message* nm) 
 {
     pending_unreliable_bytes_out += nm->len;
@@ -41,14 +37,15 @@ void NetPeer::push_reliable_packet(class Net_message* nm)
     if(rnma_insert_index == NET_MESSAGE_ARRAY_SIZE)
     {
         //DEBUG?
-        rnma_insert->reference_count--;
-        NetMessageArray* tmp = rnma_insert->next;
+        NetMessageArray* tmp = rnma_insert;
+        tmp->reference_count--;
         rnma_insert = NetMessageArray::acquire();
-        tmp->next = rnma_insert;
-        if(tmp->reference_count == 0) tmp->retire();
+        rnma_insert->next = NULL; //head of list
         rnma_insert_index = 0;
         rnma_insert->reference_count = 1;
 
+        tmp->next = rnma_insert;
+        if(tmp->reference_count == 0) tmp->retire();
     }
 }
 

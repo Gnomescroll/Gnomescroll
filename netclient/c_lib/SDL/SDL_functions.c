@@ -213,9 +213,9 @@ int init_video() {
     //const char* GLVersionString = (char *) glGetString(GL_VERSION);
     //printf("OpenGL version: %s \n", GLVersionString);
 
-    printf("OpenGL: %s \n", (char*)glGetString(GL_VERSION));
-    printf("GPU: \n", (char*)glGetString(GL_RENDERER));
-    printf("Driver: \n", (char*)glGetString(GL_VENDOR));
+    printf("OpenGL: %s \n", (char*) glGetString(GL_VERSION));
+    printf("GPU: %s \n", (char*) glGetString(GL_RENDERER));
+    printf("Driver: %s \n", (char*) glGetString(GL_VENDOR));
 
     //printf("Extentions= %s \n", (char*)glGetString(GL_EXTENSIONS));
 
