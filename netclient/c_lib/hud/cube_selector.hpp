@@ -1,11 +1,5 @@
 #pragma once
 
-#include <compat_gl.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <c_lib/SDL/draw_functions.h>
 
 void init_cube_selector();
 int get_active_cube_id(); //get the cube selected by hud

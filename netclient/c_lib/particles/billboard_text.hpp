@@ -10,7 +10,6 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 #include <hud/text.h>
-#include <c_lib/template/object_list.hpp>
 
 #define BILLBOARD_TEXT_MAX 1024
 #define BILLBOARD_TEXT_TTL 300
@@ -63,6 +62,8 @@ class BillboardText {
         BillboardText(int id);
         BillboardText(int id, float x, float y, float z, float vx, float vy, float vz);
 };
+
+#include <c_lib/template/object_list.hpp>
 
 class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
 {

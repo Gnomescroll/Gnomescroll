@@ -1,5 +1,11 @@
 #include "t_serialize.h"
 
+#include "t_map.hpp"
+
+#include <zlib.h>
+#include <assert.h>
+#include <stdio.h>
+
 /* report a zlib or i/o error */
 void t_zerr(int ret)
 {

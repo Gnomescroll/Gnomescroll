@@ -1,9 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <compat.h>
 
 // cube properties
 

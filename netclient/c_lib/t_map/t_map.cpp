@@ -1,6 +1,38 @@
 
 #include "t_map.hpp"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+/* Network */
+
+#include <c_lib/template/net.hpp>
+
+class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
+{
+    public:
+
+        int x,y,z;
+        int val;
+        
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+        }
+
+        inline void handle();
+        
+        block_StoC(int x, int y, int z, int val): x(x), y(y), z(z), val(val) {}
+        
+        block_StoC(): x(0), y(0), z(0), val(0) {}
+};
+
+
 //#include "./t_inline.c"
 //globals
 

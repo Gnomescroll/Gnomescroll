@@ -1,14 +1,10 @@
 #pragma once
 
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <compat.h>
 #include <compat_gl.h>
 
 #include <c_lib/common/functional.h>
-#include <c_lib/template/net.hpp>
 
 /*
 #include "t_vbo.h"
@@ -150,30 +146,4 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 
 //extern void set_flag(struct vm_column* c, unsigned int flag, int value);
 //extern int get_flag(struct vm_column* c, unsigned int flag);
-
-
-/* Network */
-
-/* move these, along with the handler */
-class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
-{
-    public:
-
-        int x,y,z;
-        int val;
-        
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u16(&x, buff, buff_n, pack);
-            pack_u16(&y, buff, buff_n, pack);
-            pack_u16(&z, buff, buff_n, pack);
-            pack_u16(&val, buff, buff_n, pack);
-        }
-
-        inline void handle();
-        
-        block_StoC(int x, int y, int z, int val): x(x), y(y), z(z), val(val) {}
-        
-        block_StoC(): x(0), y(0), z(0), val(0) {}
-};
 
