@@ -1,7 +1,7 @@
 
 #include "message_handler.h"
 
-int h_packet_size[256];
+int h_packet_size[256]; 
 
 typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
 //pt2handler* handler_array[256];
@@ -23,13 +23,19 @@ void default_handler_function(char* buff, int n, int* read_bytes, int client_id)
 
 //typedef const void (*_pt2handler)(char*, int, int*);
 void register_server_message_handler(int message_id, int size, pt2handler fptr) {
-    if(message_id >=256 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
+    if(message_id == 254) { printf("register_server_message_handler: Error, message id 254 is reserverd!\n"); return;}
+    if(message_id == 255) { printf("register_server_message_handler: Error, message id 255 is reserverd!\n"); return;}
+    
+    if(message_id > 255 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
     if(server_handler_array[message_id] != NULL) {printf("register_server_message_handler: reassigning message_id %i !!!\n", message_id);}
     h_packet_size[message_id] = size;
     server_handler_array[message_id] = fptr;
 }
 
 void register_client_message_handler(int message_id, int size, pt2handler fptr) {
+    if(message_id == 254) { printf("register_server_message_handler: Error, message id 254 is reserverd!\n");}
+    if(message_id == 255) { printf("register_server_message_handler: Error, message id 255 is reserverd!\n");}
+
     if(message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
     if(client_handler_array[message_id] != NULL) {printf("register_client_message_handler: Reassigning message_id %i !!!\n", message_id);}
     h_packet_size[message_id] = size;
@@ -45,6 +51,10 @@ void init_message_handler() {
     }
 
 }
+
+/*
+Put client and server message ids in seperate counters so they dont overlap
+*/
 
 int pop_message(char* buff, int *n, int max_n, int client_id) {
 
@@ -65,6 +75,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
     }
 
 #ifdef DC_CLIENT
+    //remove this!
     if(client_handler_array[message_id] == NULL) {
         printf("message_handler error: no handler for message_id=%i\n", message_id);
         return -4;
@@ -74,6 +85,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
 #endif
 
 #ifdef DC_SERVER
+    //remove this check
     if(server_handler_array[message_id] == NULL) {
         printf("message_handler error: no handler for message_id=%i\n", message_id);
         return -5;
@@ -81,7 +93,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
     int read_bytes = -1;
     server_handler_array[message_id](buff, *n, &read_bytes, client_id);
 #endif
-
+    //stream line this
     if(read_bytes == -1) {
         return -1;
     }
@@ -104,9 +116,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
 
 void process_packet_messages(char* buff, int n, int max_n, int client_id) {
 /*
-    if(n!=max_n) {
-        printf("packet is %i, %i bytes\n", n,max_n);
-    }
+    Deprecate, steamline processing
 */
     int i=0;
     int condition;
