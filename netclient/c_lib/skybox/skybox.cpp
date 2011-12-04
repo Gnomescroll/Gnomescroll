@@ -62,95 +62,121 @@ void load() {
     printf("Loaded skybox textures\n");
 }
 
-/*
- * As explained above this makes sure the textures displayed correctly and
- * no edges will appear on the quads. In some cases we need to turn off
- * interpolation too. Just set GL_TEXTURE_MAG_FILTER and GL_TEXTURE_MIN_FILTER
- * to GL_NEAREST. Below is a sample routine to render the skybox. All lines
- * will be explained later.
+/*  Render a skybox with center point position and dimension sizes size */
+/* Adapted from
+ * http://content.gpwiki.org/index.php/Sky_Box
  */
-
 void render() {
-//Code: Rendering
-    // Store the current matrix
+
+// Begin DrawSkybox
+    glColor4f(1.0, 1.0, 1.0,1.0f);
+
+// Save Current Matrix
     glPushMatrix();
- 
-    // Reset and transform the matrix.
-    glLoadIdentity();
-    gluLookAt(
-        0,0,0,
-        current_camera->x,// + current_camera->xl,
-        current_camera->y,// + current_camera->yl,
-        current_camera->z,// + current_camera->zl,
-        0,1,0);
- 
-    // Enable/Disable features
+
+// Enable/Disable features
     glPushAttrib(GL_ENABLE_BIT);
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glDisable(GL_BLEND);
- 
-    // Just in case we set all vertices to white.
-    glColor4f(1,1,1,1);
- 
-    // Render the front quad
+
+// Second Move the render space to the correct position (Translate)
+    //glTranslatef(position.x,position.y,position.z);
+    glTranslatef(current_camera->x, current_camera->y, current_camera->z);
+
+// First apply scale matrix
+    glScalef(512,512,512);  // a big number?
+
+    float cz = -0.0f,cx = 1.0f; // texture corners
+    float r = 1.005f; // If you have border issues change this to 1.005f
+    // increasing it further does not eliminate remaining border problems & warps the skybox to bad statezzzzzzzzzz
+    float y = 1.0f;//dont change this
+
+//F L U B R D
+// Common Axis Z - FRONT Side
     glBindTexture(GL_TEXTURE_2D, skybox_texture[0]);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-        glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-        glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-        glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
+    glTexCoord2f(cx, cx);
+    glVertex3f(-r ,y,-r);
+    glTexCoord2f(cz, cx);
+    glVertex3f( r ,y,-r);
+    glTexCoord2f(cz, cz);
+    glVertex3f( r,y,r);
+    glTexCoord2f(cx, cz);
+    glVertex3f(-r,y,r);
     glEnd();
- 
-    // Render the left quad
-    glBindTexture(GL_TEXTURE_2D, skybox_texture[1]);
-    glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-        glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-        glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-        glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-    glEnd();
- 
-    // Render the back quad
+
+// Common Axis Z - BACK side
     glBindTexture(GL_TEXTURE_2D, skybox_texture[3]);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-        glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-        glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-        glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
- 
+    
+    glTexCoord2f(cx,cx);
+    glVertex3f( r,-y,-r);
+
+    glTexCoord2f(cz,cx);
+    glVertex3f(-r,-y,-r);
+
+    glTexCoord2f(cz,cz);
+    glVertex3f(-r,-y, r);
+
+    glTexCoord2f(cx,cz);
+    glVertex3f( r,-y, r);
     glEnd();
- 
-    // Render the right quad
-    glBindTexture(GL_TEXTURE_2D, skybox_texture[4]);
+
+// Common Axis X - Left side
+    glBindTexture(GL_TEXTURE_2D,skybox_texture[1]);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-        glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-        glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
-        glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
+    glTexCoord2f(cx,cx);
+    glVertex3f(-y, -r,-r);
+    glTexCoord2f(cz,cx);
+    glVertex3f(-y, r,-r);
+    glTexCoord2f(cz,cz);
+    glVertex3f(-y, r, r);
+    glTexCoord2f(cx,cz);
+    glVertex3f(-y, -r, r);
     glEnd();
- 
-    // Render the top quad
-    glBindTexture(GL_TEXTURE_2D, skybox_texture[2]);
+
+// Common Axis X - Right side
+    glBindTexture(GL_TEXTURE_2D,skybox_texture[4]);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-        glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-        glTexCoord2f(1, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
-        glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
+    glTexCoord2f( cx,cx);
+    glVertex3f(y, r,-r);
+    glTexCoord2f(cz, cx);
+    glVertex3f(y, -r,-r);
+    glTexCoord2f(cz, cz);
+    glVertex3f(y, -r, r);
+    glTexCoord2f(cx, cz);
+    glVertex3f(y, r, r);
     glEnd();
- 
-    // Render the bottom quad
-    glBindTexture(GL_TEXTURE_2D, skybox_texture[5]);
+
+// Common Axis Y - Draw Up side
+    glBindTexture(GL_TEXTURE_2D,skybox_texture[2]);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-        glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-        glTexCoord2f(1, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-        glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
+    glTexCoord2f(cz, cz);
+    glVertex3f(-r, -r,y);
+    glTexCoord2f(cx, cz);
+    glVertex3f(-r, r,y);
+    glTexCoord2f(cx, cx);
+    glVertex3f( r, r,y);
+    glTexCoord2f(cz, cx);
+    glVertex3f( r, -r,y);
     glEnd();
- 
-    // Restore enable bits and matrix
-    glPopAttrib();
+
+// Common Axis Y - Down side
+    glBindTexture(GL_TEXTURE_2D,skybox_texture[5]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(cz, cz);
+    glVertex3f( r, -r,-y);
+    glTexCoord2f(cx, cz);
+    glVertex3f( r, r,-y);
+    glTexCoord2f(cx, cx);
+    glVertex3f(-r, r,-y);
+    glTexCoord2f(cz, cx);
+    glVertex3f(-r, -r,-y);
+    glEnd();
+
+// Load Saved Matrix
     glPopMatrix();
 }
 
