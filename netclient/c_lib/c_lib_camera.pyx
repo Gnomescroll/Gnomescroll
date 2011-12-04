@@ -186,3 +186,16 @@ cdef class Camera(object):
             self.camera.z_far = v
 
         raise AttributeError
+
+"""
+Skybox
+"""
+cdef extern from "./skybox/skybox.hpp" namespace "Skybox":
+    void render()
+    void load()
+
+def load_skybox():
+    load()
+
+def render_skybox():
+    render()
