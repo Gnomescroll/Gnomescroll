@@ -40,27 +40,18 @@ void NetPeer::push_reliable_packet(class Net_message* nm)
     rnma_insert_index++;
     if(rnma_insert_index == NET_MESSAGE_ARRAY_SIZE)
     {
+        //DEBUG?
         rnma_insert->reference_count--;
-        if(rnma_insert->reference_count == 0) rnma_insert->retire();
- 
+        NetMessageArray* tmp = rnma_insert->next;
+        rnma_insert = NetMessageArray::acquire();
+        tmp->next = rnma_insert;
+        if(tmp->reference_count == 0) tmp->retire();
         rnma_insert_index = 0;
-        rnma_insert->next = NetMessageArray::acquire();
-        rnma_insert = rnma_insert->next;
         rnma_insert->reference_count = 1;
 
     }
 }
 
-/*
-void NetPeer::push_reliable_packet(Net_message* np) {
-    reliable_net_message_array[reliable_net_message_array_index] = np;
-    reliable_net_message_array_index++;
-    pending_bytes_out += np->len;
-    //nm->reference_count++;
-    if(reliable_net_message_array_index > 256) printf("Net_message_list Push_reliable_packet overflow 2\n");     //debug
-}
-*/
- 
 //void * memcpy ( void * destination, const void * source, size_t num );
 void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     //if(pending_bytes_out > 1500) printf("NetPeer Error 1: too much data in packet buffer, %i \n", pending_bytes_out);
@@ -75,17 +66,6 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
         nm->decrement_unreliable();
     }
 
-    
-    //reliable packets
-    /*
-    for(int i=0; i< reliable_net_message_array_index; i++)
-    {
-        nm = unreliable_net_message_array[i];
-        memcpy(buff_+index, nm->buff, nm->len);
-        index += nm->len;
-    }
-    */
-
     pending_bytes_out = 0;
     pending_unreliable_bytes_out = 0;
 
@@ -97,43 +77,15 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
 
 void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_sequence* ps)
 {
-    //see if there is room for channel bytes
-    /*
-    if(channel_out_byte != 0)
-    {
-        int free_bytes = 1500 - (pending_reliable_bytes_out + index)
-        while(free_bytes > 256) //pad to 1500 with channel packets
-    }
-    if(pending_reliable_bytes_out + index < 1500)
-    {  pop stuff from channel onto stack
 
-    */ 
-
-
-    //need to handle this case and do alternate loop otherwise
-    /*
-    printf("NetPeer::flush_reliable_to_buffer \n");
-
-    printf("seq= %i \n", ps->seq);
-    printf("read_index= %i \n", ps->read_index);
-    printf("messages_n= %i\n", ps->messages_n);
-    printf("\n y= %i \n\n", rnma_pending_messages);
-    */
     ps->nma = rnma_read;
     ps->read_index = rnma_read_index;
     ps->messages_n = rnma_pending_messages;
-    /*
-    printf("seq= %i \n", ps->seq);
-    printf("read_index= %i \n", ps->read_index);
-    printf("messages_n= %i\n", ps->messages_n);
-    */
+
     if(rnma_pending_messages == 0) return;
 
     int index = *_index;
     if(pending_reliable_bytes_out + index > 1500) printf("NetPeer error: reliable bytes out overflows 1500 byte buffer\n");
-    //NetMessageArray* nma = rnma_read;
-    //int read_index = rnma_read_index;
-    //int num = rnma_pending_messages;
 
     class Net_message* nm;
 
@@ -151,12 +103,10 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
         rnma_read_index++;
         if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
         {
-            //if(nma->reference_count == 0) nma->retire(); //check 1
             rnma_read = rnma_read->next;
             rnma_read_index=0;
         }
     }
-    //if(nma->reference_count == 0) nma->retire(); //check 2
 
     //channel send here
     /*
@@ -204,11 +154,7 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
     int nma_index = ps->read_index;
     int num = ps->messages_n;
 
-    //printf("NetPeer::ack_packet, ps->messages_n= %i \n", ps->messages_n);
     class Net_message* nm;
-    //printf("NetPeer::ack_packet, nma ref count= %i \n", nma->reference_count);
-    //printf("num= %i\n", num);
-
 
     //for(int i=0; i < num; i++)
     /*        
@@ -226,22 +172,21 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
         
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
         {
+            NetMessageArray* tmp = nma->next;
             if(nma->reference_count == 0)
             {
                 if(i+1 == num) break;   //prevent from running on last loop, to avoid double retiring
-                printf("1 delete nma %i \n", (int)nma);
+                //printf("1 delete nma %i \n", (int)nma);
                 nma->retire();
             }
-            nma = nma->next;
+            nma = tmp;
             nma_index=0;
         }
     }
-    //if(nma->reference_count == 0) nma->retire(); //check 1
     if(nma->reference_count == 0)
     {
-        printf("2 delete nma %i \n", (int) nma);
+        //printf("2 delete nma %i \n", (int) nma);
         nma->retire();
-        //delete nma; //debug  
     } 
 }
 
