@@ -14,9 +14,7 @@ class Char_buffer {
     Char_buffer* next;
     char buffer[CHAR_BUFFER_SIZE];
 
-    #ifdef OBJECT_POOL_DEBUG
-    bool allocated;
-    #endif
+    OBJECT_POOL_OBJECT_MACRO
     
     Char_buffer() {}
 };

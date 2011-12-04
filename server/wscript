@@ -258,7 +258,16 @@ class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'
     fun = 'optimized'
 
+from waflib.Configure import ConfigurationContext
+class optimized_ctx(ConfigurationContext):
+    cmd = 'debug'
+    fun = 'debug'
+
 def optimized(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')
 
+def debug(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.append('-fstack-protector-all')
+    ctx.env.CXXFLAGS.append('-fstack-protector-all')
