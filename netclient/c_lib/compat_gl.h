@@ -12,6 +12,7 @@
         #include <windows.h>
         #include <SDL.h>
         #include <GL/glew.h>
+        //#include <GL/wglew.h> //just in case?
     #elif __APPLE__
         //#define NO_SDL_GLEXT
         #include <GL/glew.h>
