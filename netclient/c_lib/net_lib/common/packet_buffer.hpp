@@ -19,7 +19,8 @@ class NetMessageArray {
     class NetMessageArray* next;
     class Net_message* net_message_array[NET_MESSAGE_ARRAY_SIZE];
 
-
+    OBJECT_POOL_OBJECT_MACRO
+    
     NetMessageArray()
     {
         for(int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
@@ -63,6 +64,10 @@ class Net_message_buffer {
     int reference_count;
     char buffer[NET_MESSAGE_BUFFER_SIZE];
     Net_message_buffer* next;
+
+    #ifdef OBJECT_POOL_DEBUG
+    bool allocated;
+    #endif
 
     Net_message_buffer() { reference_count = 0; }
 };
@@ -140,6 +145,10 @@ class Net_message {
         int len;
         int reference_count;
         Net_message* next;
+
+        #ifdef OBJECT_POOL_DEBUG
+        bool allocated;
+        #endif
 
     static inline class Net_message* acquire();
 
