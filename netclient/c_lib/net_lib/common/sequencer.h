@@ -1,5 +1,4 @@
-#ifndef net_lib_common_sequencer_h
-#define net_lib_common_sequencer_h
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +42,6 @@ void set_ack_for_received_packet(class NetPeer* np, int seq);
 uint16_t get_sequence_number(class NetPeer* np);
 uint32_t generate_outgoing_ack_flag(class NetPeer* np);
 
-#endif
 
 //incoming/response to outgoing
 /*

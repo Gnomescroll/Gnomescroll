@@ -53,6 +53,45 @@ int _set_resolution(int xres, int yres, int fullscreen) {
 
 int _multisampling = 0;
 
+void ati_meminfo(void)
+{
+
+    //printf("OpenGL: %s \n", (char*)glGetString(GL_VERSION));
+    //printf("GPU: \n", (char*)glGetString(GL_RENDERER));
+    //printf("Extentions= %s \n", (char*)glGetString(GL_EXTENSIONS));
+
+    printf("\n");
+
+    GLint param[4];
+
+    glGetIntegerv (GL_VBO_FREE_MEMORY_ATI, param);
+    printf ("VBO_FREE_MEMORY_ATI\n");
+    printf ("  Total memory free in the pool: %i Kbyte\n", param[0]);
+    printf ("  Largest available free block in the pool: %i Kbyte\n", param[1]);
+    printf ("  Total auxiliary memory free: %i Kbyte\n", param[2]);
+    printf ("  Largest auxiliary free block: %i Kbyte\n", param[3]);
+    printf ("\n");
+
+    glGetIntegerv (GL_TEXTURE_FREE_MEMORY_ATI, param);
+    printf ("TEXTURE_FREE_MEMORY_ATI\n");
+    printf ("  Total memory free in the pool: %i Kbyte\n", param[0]);
+    printf ("  Largest available free block in the pool: %i Kbyte\n", param[1]);
+    printf ("  Total auxiliary memory free: %i Kbyte\n", param[2]);
+    printf ("  Largest auxiliary free block: %i Kbyte\n", param[3]);
+    printf ("\n");
+
+    glGetIntegerv (GL_RENDERBUFFER_FREE_MEMORY_ATI, param);
+    printf ("RENDERBUFFER_FREE_MEMORY_ATI\n");
+    printf ("  Total memory free in the pool: %i Kbyte\n", param[0]);
+    printf ("  Largest available free block in the pool: %i Kbyte\n", param[1]);
+    printf ("  Total auxiliary memory free: %i Kbyte\n", param[2]);
+    printf ("  Largest auxiliary free block: %i Kbyte\n", param[3]);
+    printf ("\n");
+
+    return;
+}
+
+
 int init_video() {
 
     //DisplayBox();
@@ -170,6 +209,22 @@ int init_video() {
         printf("OpenGL 2.0 not supported \n");
     }
 
+
+    //const char* GLVersionString = (char *) glGetString(GL_VERSION);
+    //printf("OpenGL version: %s \n", GLVersionString);
+
+    printf("OpenGL: %s \n", (char*) glGetString(GL_VERSION));
+    printf("GPU: %s \n", (char*) glGetString(GL_RENDERER));
+    printf("Driver: %s \n", (char*) glGetString(GL_VENDOR));
+
+    //printf("Extentions= %s \n", (char*)glGetString(GL_EXTENSIONS));
+
+    //Or better yet, use the GL3 way to get the version number
+    //int OpenGLVersion[2];
+    //glGetIntegerv(GL_MAJOR_VERSION, &OpenGLVersion[0]);
+    //glGetIntegerv(GL_MINOR_VERSION, &OpenGLVersion[1]);
+
+
     if(GLEW_ARB_multisample) {
         printf("ARB_MULTISAMPLE supported \n");
     } else {
@@ -184,6 +239,8 @@ int init_video() {
     }
 
     //printf("SDL: %s\n", SDL_GetError());
+
+    //if(GLEW_ATI_meminfo) { ati_meminfo(); } 
 
     printf("Finished OpenGL init\n");
     return 0;
