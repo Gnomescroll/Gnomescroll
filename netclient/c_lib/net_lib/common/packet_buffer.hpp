@@ -144,7 +144,7 @@ class UnreliableNet_message_buffer_pool: public Object_pool<Net_message_buffer, 
 };
 
 static ReliableNet_message_buffer_pool reliable_net_message_buffer_pool;   //use for reliable udp packets
-static UnreliableNet_message_buffer_pool2 unreliable_net_message_buffer_pool; //use for unreliable udp packets
+static UnreliableNet_message_buffer_pool unreliable_net_message_buffer_pool; //use for unreliable udp packets
 
 class Net_message {
     private:
@@ -221,7 +221,7 @@ class Net_message* Net_message::acquire_unreliable(int length)
 {
     Net_message* t = net_message_pool.acquire();
     t->len = length;
-    get_char_buffer2(length, &t->buff, &t->b); //set buffer and set char pool
+    unreliable_net_message_buffer_pool.get_char_buffer(length, &t->buff, &t->b); //set buffer and set char pool
     t->reference_count = 0;
     return t;
 }
