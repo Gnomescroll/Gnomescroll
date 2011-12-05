@@ -31,15 +31,6 @@ void init_surface() {
         return;
     }
 
-    SDL_LockSurface(surface);
-    Uint32 pix = SDL_MapRGB(surface->format, 0x00, 0x00, 0x00);
-    for(int i=0; i<16; i++) {
-    for(int j=0; j<16; j++) {
-        PutPixel32_nolock(surface, i,j, pix);
-    }
-    }
-    SDL_UnlockSurface(surface);
-
     glEnable(GL_TEXTURE_2D);
 
     glGenTextures(1, &texture);
