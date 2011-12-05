@@ -305,7 +305,7 @@ class App(object):
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
-            if opts.hud:
+            if opts.hud and not camera.camera.zoomed:
                 camera.camera.hud_projection()
                 draw_cube_selector = False
                 if agent:

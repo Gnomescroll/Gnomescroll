@@ -18,6 +18,8 @@ class Camera(object):
 
     def __init__(self, x=0.0, y=0.0, z=0.0, x_angle=0.0, y_angle=0.0, name='', fov=85., first_person=False):
         self.camera = cCamera.Camera(first_person=first_person)
+        self.base_fov = fov
+        self.zoom_factor = 2.
         self.camera.set_fov(fov)
         self.name = name
         self.x = x
@@ -26,6 +28,7 @@ class Camera(object):
         self.x_angle = x_angle
         self.y_angle = y_angle
         self.loaded = False
+        self.zoomed = False
 
     def __getattribute__(self, name):
         if name in Camera._local:
@@ -103,3 +106,16 @@ class Camera(object):
 
     def hud_projection(self):
         self.camera.hud_projection()
+
+    def toggle_zoom(self):
+        self.zoomed = not self.zoomed
+        if self.zoomed:
+            self.zoom()
+        else:
+            self.unzoom()
+            
+    def zoom(self):
+        self.camera.set_fov(self.fov / self.zoom_factor)
+
+    def unzoom(self):
+        self.camera.set_fov(self.base_fov)

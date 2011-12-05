@@ -14,6 +14,8 @@ from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
 from init_c_lib import _toggle_latency_unit
 
+import camera
+
 #handles special characters
 Keystring = {}
 def setup_keystring():
@@ -180,6 +182,9 @@ class Mouse(object):
                     GameStateGlobal.agent.weapons.switch(direction)
             elif state == 0: #mouse button released
                 pass
+
+        if button == 3 and state == 1:  # right click down
+            camera.camera.toggle_zoom()
 
 
 class Keyboard(object):
