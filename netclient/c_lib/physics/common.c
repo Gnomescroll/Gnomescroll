@@ -1,19 +1,5 @@
 #include "common.h"
 
-static inline void _clamp_vel(struct Particle* p) {
-    static float max_vel = 30.0f;
-    p->vx = (p->vx < max_vel) ? p->vx : max_vel;
-    p->vy = (p->vy < max_vel) ? p->vy : max_vel;
-    p->vz = (p->vz < max_vel) ? p->vz : max_vel;
-}
-
-static inline void _clamp_vel2(struct Particle2* p) {
-    static float max_vel = 30.0f;
-    p->state.v.x = (p->state.v.x < max_vel) ? p->state.v.x : max_vel;
-    p->state.v.y = (p->state.v.y < max_vel) ? p->state.v.y : max_vel;
-    p->state.v.z = (p->state.v.z < max_vel) ? p->state.v.z : max_vel;
-}
-
 static inline void _adjust_vel(struct Particle* p, int* rot, int adj) {
     if(rot[0] != 0 ) {
         p->vx *= adj;
@@ -43,7 +29,7 @@ int* bounce_simple(struct Particle* p) {
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
 
-    _clamp_vel(p);
+    
 
     return s;
 }
@@ -64,7 +50,7 @@ int* move_simple(struct Particle* p) {
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
 
-    _clamp_vel(p);
+    
 
     return s;
 }
@@ -86,7 +72,7 @@ int* bounce_collide_tile(struct Particle* p, int* collision, int* tile) {
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
 
-    _clamp_vel(p);
+    
 
     return s;
 }
@@ -108,7 +94,7 @@ int* move_collide_tile(struct Particle* p, int* collision, int* tile) {
     p->y = p->y + interval*p->vy/FPS;
     p->z = p->z + interval*p->vz/FPS;
 
-    _clamp_vel(p);
+    
 
     return s;
 }
@@ -164,7 +150,7 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
     } else {
         rk4(&(p->state), interval);
     }
-    _clamp_vel2(p);
+    
 
     return s;
 }
@@ -201,7 +187,7 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
         p->state.v = *(mult_vec_scalar(&v, damp));
     }
 
-    _clamp_vel2(p);
+    
 
     return s;
 }
@@ -238,8 +224,7 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     } else {            // collided interval%. integrate this amount
         rk4(&(p->state), interval);
     }
-    _clamp_vel2(p);
-
+    
     return s;
 }
 
@@ -268,7 +253,6 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
     } else {
         rk4(&(p->state), interval);
     }
-    _clamp_vel2(p);
 
     return s;
 }
