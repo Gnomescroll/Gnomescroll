@@ -1,7 +1,8 @@
 #pragma once
 
-#define OBJECT_POOL_DEBUG 1
+#define OBJECT_POOL_DEBUG 0
 
+//enabling this will turn off object pools and use malloc and free
 #define OBJECT_POOL_DEBUG_BATCH 0
 
 #if OBJECT_POOL_DEBUG
@@ -108,8 +109,8 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
         {
             static const char* _name = name();
             printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", _name, nmb->allocated, (long) nmb );
-            //int segfault = *((int*) NULL);
-            //printf("sefault= %i", segfault);
+            int segfault = *((int*) NULL);
+            printf("sefault= %i", segfault);
         }
         nmb->allocated--;
     #endif

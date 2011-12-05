@@ -1,4 +1,5 @@
 #pragma once
+
 #ifdef DC_CLIENT
 
 #include <c_lib/agent/agent.hpp>

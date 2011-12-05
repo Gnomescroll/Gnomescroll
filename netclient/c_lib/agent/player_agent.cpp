@@ -1,6 +1,7 @@
 #pragma once
 
 #include "player_agent.hpp"
+
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
@@ -64,6 +65,7 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
     //printf("received snaphshot %i\n", seq);
 }
 
+#ifdef DC_CLIENT
 //take outgoing control input and do client side prediction
 //seq for prediction will always exceed client side one
 void PlayerAgent_state::handle_local_control_state(int _seq, int _cs, float _theta, float _phi) {
@@ -163,7 +165,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     _cs = cs_local[index];
 
     s = _agent_tick(_cs, A->box, s);
-
 }
 
 float PlayerAgent_state::camera_height() {
@@ -225,3 +226,5 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vy /= divisor;
     a->vz /= divisor;
 }
+
+#endif

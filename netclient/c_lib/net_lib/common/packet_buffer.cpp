@@ -58,6 +58,7 @@ class ReliableNet_message_buffer_pool: public Object_pool<Net_message_buffer, 12
         current = this->acquire();
         remaining = NET_MESSAGE_BUFFER_SIZE;;
         offset = current->buffer;
+        current->reference_count = 1;
     }
 
     inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
@@ -94,6 +95,7 @@ class UnreliableNet_message_buffer_pool: public Object_pool<Net_message_buffer, 
         current = this->acquire();
         remaining = NET_MESSAGE_BUFFER_SIZE;;
         offset = current->buffer;
+        current->reference_count = 1;
     }
 
     inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
@@ -137,12 +139,15 @@ static Net_message_pool net_message_pool;
 
 void inline Net_message::decrement_unreliable() 
 {
+    //printf("net message decrement: object=%lx ref count= %i, b->refcount= %i \n", (long)this, reference_count, b->reference_count);
     reference_count--;
     if(reference_count == 0) 
     {
         b->reference_count--;
         if(b->reference_count == 0) 
         {
+            //printf("net message reference count == 0\n");
+            //printf("alloc= %i \n", allocated);
             unreliable_net_message_buffer_pool.retire(b);
             b = NULL;   //debug
         }
