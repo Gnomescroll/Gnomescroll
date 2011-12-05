@@ -287,11 +287,6 @@ class App(object):
                     draw_cube_selector = (agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
 
-                mapdraw=True
-                if mapdraw:
-                    #cHUD.Map.update()
-                    cHUD.Map.draw()
-
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
                     P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)

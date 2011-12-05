@@ -126,6 +126,9 @@ class Hud(object):
             self.inventory.draw()
         self.draw_chat_cursor()
 
+        if InputGlobal.map:
+            cHUD.Map.draw()
+
         # draw text
         cHUD.Font.font.start()
 

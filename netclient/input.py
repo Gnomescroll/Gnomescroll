@@ -102,6 +102,7 @@ class InputGlobal:
 
     scoreboard = False
     cube_selector = None
+    map = False
 
     @classmethod
     def init_0(cls, main):
@@ -258,7 +259,8 @@ class Keyboard(object):
             "h" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
             "n" : toggle_t_viz_vbo_indicator_style,
-            "m" : toggle_terrain_map_blend_mode,
+            "o" : toggle_terrain_map_blend_mode,
+            "m" : self.toggle_map,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : _toggle_latency_unit,
@@ -277,6 +279,9 @@ class Keyboard(object):
 
     def toggle_inventory(self):
         InputGlobal.inventory = not InputGlobal.inventory
+
+    def toggle_map(self):
+        InputGlobal.map = not InputGlobal.map
 
     def cycle_agent_camera_mode(self):
         GameStateGlobal.agent.toggle_agent_camera_mode()
