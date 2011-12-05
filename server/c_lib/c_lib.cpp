@@ -22,6 +22,9 @@
 
 #include <net_lib/net_lib.h>
 
+#include <c_lib/state/packet_init.cpp>
+#include <c_lib/state/server_state.cpp>
+
 int init_c_lib() {
     printf("init c_lib\n");
     srand(time(NULL));

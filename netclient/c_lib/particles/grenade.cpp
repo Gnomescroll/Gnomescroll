@@ -10,6 +10,59 @@ static float grenade_proj_mtrx[16];
 #include <c_lib/state/server_state.hpp>
 
 
+/*
+ *  Networking; spawn packet from server to client
+ */
+
+#include <c_lib/template/net.hpp>
+
+class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
+{
+    public:
+
+        float x,y,z;
+        float vx,vy,vz;
+        uint16_t ttl_max;
+        uint16_t id;
+        uint8_t type;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u16(&ttl_max, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+        }
+
+        inline void handle();
+
+        grenade_StoC(Grenade* g);
+        grenade_StoC() {
+            //its faster to not set values
+            //only set default values, not required values in intializer
+        /*
+            x=0.0f;
+            y=0.0f;
+            z=0.0f;
+            vx=0.0f;
+            vy=0.0f;
+            vz=0.0f;
+        */
+            //this->id = id; //wtf does this mean, id=id?
+            ttl_max = GRENADE_TTL;
+            type = GRENADE_TYPE;
+
+        }
+};
+
+
 Grenade::Grenade(int id) : owner(-1) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
                    // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max

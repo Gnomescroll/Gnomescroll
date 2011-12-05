@@ -55,14 +55,17 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     if(pending_unreliable_bytes_out > 1500) printf("NetPeer Error 2: unreliable bytes out exceeds 1500, %i \n", pending_unreliable_bytes_out);
     class Net_message* nm;
     int index = *_index;
-    for(int i=0; i< unreliable_net_message_array_index; i++)
+
+    if(unreliable_net_message_array_index == 0) return;
+
+    for(int i=0; i < unreliable_net_message_array_index; i++)
     {
         nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
         nm->decrement_unreliable();
+        //nm = NULL; //debug
     }
-
     pending_bytes_out = 0;
     pending_unreliable_bytes_out = 0;
 

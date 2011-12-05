@@ -1,5 +1,7 @@
 #include "text.h"
 
+#include <stdio.h>
+
 GLuint fontTextureId;
 static int tex_alpha = 1;
 static int font_loaded = 0;

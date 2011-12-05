@@ -1,12 +1,6 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
 
-#include <c_lib/common/functional.h>
-#include <c_lib/template/net.hpp>
-
-#include "t_properties.h"
 
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
@@ -102,37 +96,6 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
     if((c->flag & flag) == 0) { return 1; } else {return 0;}
 }
 
-/* Network */
-class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
-{
-    public:
-
-        int x,y,z;
-        int val;
-        
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u16(&x, buff, buff_n, pack);
-            pack_u16(&y, buff, buff_n, pack);
-            pack_u16(&z, buff, buff_n, pack);
-            pack_u16(&val, buff, buff_n, pack);
-        }
-
-        inline void handle() {
-            _set(x,y,z,val);
-        }
-
-        block_StoC(int x, int y, int z, int val) {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            this->val = val;
-        }
-        
-        block_StoC() {
-            x=y=z=val=0;
-        }
-};
 
 void _block_broadcast(int x, int y, int z, int value);
 int _apply_damage_broadcast(int x, int y, int z, int dmg);

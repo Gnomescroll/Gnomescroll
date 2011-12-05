@@ -1,5 +1,7 @@
 #include "inventory.hpp"
 
+#include <compat_gl.h>
+
 #ifdef DC_CLIENT
 
 static int item_sheet_texture;

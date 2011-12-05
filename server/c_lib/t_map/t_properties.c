@@ -1,5 +1,10 @@
 #include "./t_properties.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <compat.h>
+
 struct cubeProperties cube_list[max_cubes];
 
 struct cubeProperties* _get_cube_list() {

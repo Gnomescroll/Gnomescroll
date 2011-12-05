@@ -1,7 +1,49 @@
 #include "t_map.hpp"
 
 #include <zlib.h>
+#include "t_properties.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <c_lib/common/functional.h>
+#include <c_lib/template/net.hpp>
+
+/* Network */
+class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
+{
+    public:
+
+        int x,y,z;
+        int val;
+        
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+        }
+
+        inline void handle() {
+            _set(x,y,z,val);
+        }
+
+        block_StoC(int x, int y, int z, int val) {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+            this->val = val;
+        }
+        
+        block_StoC() {
+            x=y=z=val=0;
+        }
+};
+
+/*
+    Non-networking
+*/
 struct vm_map map;
 
 int _init_t_map() {

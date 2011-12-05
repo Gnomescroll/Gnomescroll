@@ -1,6 +1,9 @@
 #include "./t_vbo.h"
 
-//#include "./t_inline.c"
+#include <stdio.h>
+#include <compat_gl.h>
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
 
 GLuint block_texture = 0;
 

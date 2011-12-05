@@ -14,6 +14,8 @@ class Char_buffer {
     Char_buffer* next;
     char buffer[CHAR_BUFFER_SIZE];
 
+    OBJECT_POOL_OBJECT_MACRO
+    
     Char_buffer() {}
 };
 

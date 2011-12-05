@@ -1,6 +1,5 @@
 #pragma once
 
-#include "t_map.hpp"
 
 static const int t_buff_size = (int)(8*((512*sizeof(unsigned short)) + (sizeof(int) * 3)));
 

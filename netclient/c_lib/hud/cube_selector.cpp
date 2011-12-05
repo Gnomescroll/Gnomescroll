@@ -1,5 +1,12 @@
 #include "cube_selector.hpp"
 
+#include <compat_gl.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <c_lib/SDL/draw_functions.h>
+
 static struct cube_select_element cube_select_array[255];
 static int cube_select_x = 0;
 static int cube_select_y = 0;

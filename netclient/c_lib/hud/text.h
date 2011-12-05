@@ -1,7 +1,6 @@
 #pragma once
 
 #include <compat_gl.h>
-#include <stdio.h>
 
 int load_font(char* fontfile);
 

@@ -22,9 +22,6 @@
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>
 
-/* Network */
-#include <net_lib/net_lib.h>
-
 /* Agents */
 #include <c_lib/agent/agent_include.h>
 
@@ -36,6 +33,10 @@
 /* map */
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.c>
+
+/* Network */
+#include <net_lib/net_lib.h>
+
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
@@ -61,6 +62,9 @@
     #include <c_lib/input/input.cpp>
 
 #endif
+
+#include <c_lib/state/client_state.cpp>
+#include <c_lib/state/packet_init.cpp>
 
 int init_c_lib() {
     printf("init c_lib\n");

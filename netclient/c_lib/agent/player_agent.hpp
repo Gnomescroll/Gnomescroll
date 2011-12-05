@@ -1,10 +1,9 @@
 #pragma once
 
-//#ifdef DC_CLIENT
-
-#include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/player_agent_action.hpp>
+
+#include <c_lib/state/client_state.hpp>
 
 #define AGENT_STATE_HISTORY_SIZE 8
 #define AGENT_INTERPOLATION_DECAY 0.8f
@@ -127,19 +126,10 @@ class PlayerAgent_state {
         //set actually sends
         void set_control_state(uint16_t cs, float theta, float phi);
 
-        //collision box;
-        //struct Agent_collision_box box; //WTF!?!?! Should be from netagent, not in player agent!!!
-        /*
-            WTF
-        */
-
-        //camera properties
         float camera_height();
 
         PlayerAgent_status status;
         PlayerAgent_action action;
-
-        Agent_cs_CtoS cs_0; //last control state
 
         PlayerAgent_state() : status(this), action(this) {
             //client side state variables
@@ -181,92 +171,4 @@ class PlayerAgent_state {
 };
 
 
-//#endif
-
-class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapshot>
-{
-    public:
-
-        int id;
-        int seq;
-        int tick;
-
-        float x;
-        float y;
-        float z;
-        float vx,vy,vz;
-        float theta, phi;
-
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
-            pack_u8(&seq, buff, buff_n, pack);
-            //pack_16(&tick, buff, buff_n, pack);
-
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
-
-            pack_float(&theta, buff, buff_n, pack);
-            pack_float(&phi, buff, buff_n, pack);
-        }
-
-        inline void handle() {
-                        
-            //do something
-        /*
-            A->x = x;
-            A->y = y;
-            A->z = z;
-            A->vx = vx;
-            A->vy = vy;
-            A->vz = vz;
-        */
-            //float theta = 0;
-            //float phi = 0;
-            #ifdef DC_CLIENT
-            ClientState:: playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
-            #endif
-            //printf("Received Agent_state_message packet: agent_id= %i \n", id);
-
-            //printf("seq= %i \n", seq);
-
-            return;
-        }
-};
-
-/*
-class PlayerAgent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
-{
-    public:
-
-        int id;
-        int seq;
-        uint16_t cs;
-        float theta;
-        float phi;
-
-        inline void packet(unsigned char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&seq, buff, buff_n, pack);
-            pack_u16(&cs, buff, buff_n, pack);
-            pack_float(&theta, buff, buff_n, pack);
-            pack_float(&phi, buff, buff_n, pack);
-        }
-
-        inline void handle() {
-            Agent_state* A = STATE::agent_list.get(id);
-            if(A == NULL) {
-                printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
-                return;
-            }
-
-            //printf("!!! control state= %i \n", cs);
-            A->handle_control_state(seq, cs, theta, phi);
-        }
-};
-*/
+//#include <c_lib/agent/net_agent.hpp>
