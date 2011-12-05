@@ -83,7 +83,7 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
 
 // destroys block and returns 0 if damage exceeds max damage
 // else return current damage of block
-// return  -4 when damage <= 0 (will have no / bad effects)
+// return  -4 when damage <= 0 (would have had no or bad effects)
 // returns -3 when chunk is NULL
 // returns -2 on map coordinates out of bounds failure
 // returns -1 when  blocks is already 0 / empty
@@ -100,7 +100,11 @@ int _apply_damage(int x, int y, int z, int dmg) {
     xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
-    if(chunk == NULL) { printf("!!! _apply_damage: Chunk is NULL  ||| ERROR THIS CANNOT OCCUR< EVER\n"); printf("%d %d %d %d\n", x,y,z, dmg); return -3; }
+    if(chunk == NULL) {
+        printf("_apply_damage: Chunk is NULL:: %d,%d,%d dmg=%d\n", x,y,z, dmg);
+        printf("xyzoff:: %d %d %d\n", xoff, yoff, zoff);
+        return -3;
+    }
     tile = chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
     if (tile==0) {
         return -1;
