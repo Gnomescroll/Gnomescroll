@@ -14,6 +14,8 @@ static unsigned char cells[num_cells];
 static SDL_Surface* surface;
 static GLuint texture;
 
+static SDL_Surface* gradient_surface;
+
 void init_surface() {
     // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
     
@@ -30,6 +32,10 @@ void init_surface() {
     bmask = 0x00ff0000;
     amask = 0xff000000;
 #endif
+
+    gradient_surface =IMG_Load("media/texture/heightmap_gradient_01.png");
+    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_02.png");
+    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
     
@@ -61,7 +67,7 @@ void update_surface() {
     int i,j;
     Uint32 pix;
     for (i=0; i<num_cells; i++) {
-        pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
+        //pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
         /*
         pix = 0xff000000; //alpha
         pix = 0x00ff0000; //red
@@ -69,6 +75,7 @@ void update_surface() {
         pix = 0x000000ff; //blue
         */
         //pix = 0xffff0000;
+        pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
         ((Uint32*)surface->pixels)[i] = pix;
     }
     
@@ -90,6 +97,9 @@ void update_heightmap() {
     for (i=0; i < width; i++) {
         for (j=0; j < height; j++) {
             h = get_height_at(i,j);
+            //h = 2*(h - (h%2));
+
+            //cells[i + width*j] = ((Uint32*)gradient_surface->pixels)[h];
             cells[i + width*j] = (unsigned char)2*h;
         }
     }
