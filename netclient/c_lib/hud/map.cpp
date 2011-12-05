@@ -39,7 +39,7 @@ void init_surface() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -75,7 +75,7 @@ void update_heightmap() {
     for (i=0; i < width; i++) {
         for (j=0; j < height; j++) {
             h = get_height_at(i,j);
-            cells[i + width*j] = (char)h;
+            cells[i + width*j] = (char)2*h;
         }
     }
 }
