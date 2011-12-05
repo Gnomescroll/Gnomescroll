@@ -57,6 +57,7 @@
     #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/hud/text.c>
+    #include <c_lib/hud/map.cpp>
 
     /* input */
     #include <c_lib/input/input.cpp>
@@ -81,6 +82,7 @@ int init_c_lib() {
         init_particles();
         init_cube_selector();
         init_inventory();
+        Map::init();
     #endif
     
     return 0;

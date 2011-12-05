@@ -341,6 +341,16 @@ int _get_lowest_solid_block(int x, int y) {
     return i;
 }
 
+int get_height_at(int x, int y) {
+    int i;
+    int c;  // block val
+    for (i=zmax; i>0; i--) {
+        c = _get(x,y,i);
+        if (c) return i;
+    }
+    return 0;
+}
+
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>
 inline void block_StoC::handle() {

@@ -104,6 +104,7 @@ int _get_lowest_open_block(int x, int y, int n);
 
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
+int get_height_at(int x, int y);
 
 /*
 #endif
@@ -140,6 +141,8 @@ static inline int flag_is_true(struct vm_column* c, int flag) {
 static inline int flag_is_false(struct vm_column* c, int flag) {
     if((c->flag & flag) == 0) { return 1; } else {return 0;}
 }
+
+
 
 //void set_flag(struct vm_column* c, unsigned int flag, int value);
 //int get_flag(struct vm_column* c, unsigned int flag);

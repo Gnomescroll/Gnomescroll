@@ -181,6 +181,9 @@ void render() {
 
 // Load Saved Matrix
     glPopMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 };

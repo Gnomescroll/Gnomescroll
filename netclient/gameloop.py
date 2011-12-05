@@ -156,32 +156,6 @@ class App(object):
 
         cParticles._generate_circuit_tree(0,0)
 
-        def neutron_fountain():
-            v = 2
-            x = v*(random.random() -0.5)
-            y = v*(random.random() -0.5)
-            z = v*(random.random() -0.5)
-            le = math.sqrt(x**2+y**2+z**2)
-            x *= v / le
-            y *= v / le
-            z *= v / le
-            cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
-
-        def billboard_text_fountain():
-            v = 6
-            vx = v*(random.random() -0.5)
-            vy = v*(random.random() -0.5)
-            vz = v*(random.random() -0.5)
-            le = math.sqrt(vx**2+vy**2+vz**2)
-            vx *= v / le
-            vy *= v / le
-            vz *= v / le
-            vz = 0
-            _x = (random.random() -0.5) * 1
-            _y = (random.random() -0.5) * 1
-            num = random.randint(0,25)
-            cParticles._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
-
         _m = 0
 
         last_tick = 0
@@ -265,6 +239,7 @@ class App(object):
             '''
             !?
                 What is delta tick used for?
+                --mouse motion interpolation
             '''
             current_tick = cSDL.get_ticks()
             delta_tick = current_tick - last_tick
@@ -311,6 +286,11 @@ class App(object):
                 if agent:
                     draw_cube_selector = (agent.weapons.active().type == 3)
                 self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
+
+                mapdraw=True
+                if mapdraw:
+                    #cHUD.Map.update()
+                    cHUD.Map.draw()
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
@@ -461,6 +441,34 @@ def ParticleTestSpawn(_i):
         vy = v*(random.random() -0.5)
         vz = -1. #v*(random.random() -0.5)
         #cParticles._create_minivox(x,y,z, vx,vy,vz)
+
+
+def neutron_fountain():
+    v = 2
+    x = v*(random.random() -0.5)
+    y = v*(random.random() -0.5)
+    z = v*(random.random() -0.5)
+    le = math.sqrt(x**2+y**2+z**2)
+    x *= v / le
+    y *= v / le
+    z *= v / le
+    cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
+
+def billboard_text_fountain():
+    v = 6
+    vx = v*(random.random() -0.5)
+    vy = v*(random.random() -0.5)
+    vz = v*(random.random() -0.5)
+    le = math.sqrt(vx**2+vy**2+vz**2)
+    vx *= v / le
+    vy *= v / le
+    vz *= v / le
+    vz = 0
+    _x = (random.random() -0.5) * 1
+    _y = (random.random() -0.5) * 1
+    num = random.randint(0,25)
+    cParticles._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
+
 
 if __name__ == '__main__':
     app = App()

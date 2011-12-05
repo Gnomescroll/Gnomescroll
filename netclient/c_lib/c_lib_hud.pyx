@@ -310,3 +310,17 @@ class Font:
     def set_color(self, color):
         r,g,b,a = color
         set_text_color(r,g,b,a)
+
+"""Map"""
+cdef extern from "hud/map.hpp" namespace "Map":
+    void update_map()
+    void draw_map()
+
+class Map:
+    @classmethod
+    def update(cls):
+        update_map()
+    @classmethod
+    def draw(cls):
+        draw_map()
+
