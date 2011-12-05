@@ -86,37 +86,9 @@ class NetPeer
     int rnma_pending_messages;
 
     void push_reliable_packet(class Net_message* nm);
-    //example iterator
 
-    /*
-        1> packet acked: decrement reference to packets
-        2> packet dropped: put packet back onto que
-    */
-
-    //reference
-    inline void consume(NetMessageArray* nma, int consume_index, int num) 
-    {
-        int i;
-        class Net_message* nm;
-        for(i=0; i < num; i++)
-        {
-            nm = nma->net_message_array[consume_index];
-            //do something
-
-            nma->reference_count--;
-
-            consume_index++;
-            if(consume_index == NET_MESSAGE_ARRAY_SIZE)
-            {
-                NetMessageArray* _next = nma->next;
-                if(nma->reference_count == 0) nma->retire(); //check 1
-                nma = _next;
-                consume_index=0;
-            }
-        }
-        if(nma->reference_count == 0) nma->retire(); //check 2
-    }
-
+    Python_channel_in py_in;
+    Python_channel_in py_out;
 
     /*
         TTL
@@ -172,3 +144,30 @@ struct Socket* create_socket(uint16_t port);
 
 class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port);
 class NetPeer* create_net_peer_from_address(struct sockaddr_in address);
+
+
+    //reference
+    /*
+    inline void consume(NetMessageArray* nma, int consume_index, int num) 
+    {
+        int i;
+        class Net_message* nm;
+        for(i=0; i < num; i++)
+        {
+            nm = nma->net_message_array[consume_index];
+            //do something
+
+            nma->reference_count--;
+
+            consume_index++;
+            if(consume_index == NET_MESSAGE_ARRAY_SIZE)
+            {
+                NetMessageArray* _next = nma->next;
+                if(nma->reference_count == 0) nma->retire(); //check 1
+                nma = _next;
+                consume_index=0;
+            }
+        }
+        if(nma->reference_count == 0) nma->retire(); //check 2
+    }
+    */
