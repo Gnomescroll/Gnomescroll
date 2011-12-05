@@ -60,6 +60,8 @@ class Fifo_char_buffer
         int _n = n; //debug
         int fb = CHAR_BUFFER_SIZE - write_index;
 
+        printf("Fifo_char_buffer: write \n");
+
         while(fb < n)
         {
             printf("Fifo_char_buffer: write %i of %i bytes and new buffer\n", fb, n);  //debug
@@ -86,7 +88,7 @@ class Fifo_char_buffer
 
     void read(char* buff, int n)
     {
-        printf("Fifo_char_buffer: read \n");
+        printf("Fifo_char_buffer: read \n" );
 
         if(n > size) printf("Fifo_char_buffer: n greater than size, n=%i, size=%i \n", n, size); //debug
         if(n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug

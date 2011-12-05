@@ -31,12 +31,13 @@ class Python_channel_out {
 
     Net_message* serialize_to_packet(int max_n)
     {
-        int bytes = max_n > pending_bytes_out ? max_n : pending_bytes_out;
+        int bytes = max_n > pending_bytes_out ? pending_bytes_out : max_n;
         Net_message* nm = Net_message::acquire_reliable(bytes+5);   //need 2 bytes for sequence prefix
         //pack sequence number
         //char t[5]; 
         int n1 =0;
-        PACK_uint16_t(254, nm->buff, &n1);      //message id
+        printf("Py_out: length= %i, sequence= %i \n", bytes, sequence_number);
+        PACK_uint8_t(254, nm->buff, &n1);      //message id
         PACK_uint16_t(bytes, nm->buff, &n1);    //length
         PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
         //fcb.write(t, 5);

@@ -79,11 +79,32 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
     {
         uint16_t length;
         uint16_t sequence;
+        //uint16_t len;
+
         UNPACK_uint16_t(&length, buff, &_n);
         UNPACK_uint16_t(&sequence, buff, &_n);        
+        //UNPACK_uint16_t(&len, buff, &_n);
 
-        printf("Python Packet Received: length= %i length, sequence= %i \n", length, sequence);
+        //pack_u16(&length, buff, &_n, false); 
+        //pack_u16(&sequence, buff, &_n, false); 
+        //pack_u16(&len, buff, &_n, false); 
 
+        printf("Python Packet Received: sequence= %i, length= %i \n", sequence, length);
+
+        //5 bytes, message id, length and sequence
+        *n += length + 5;
+        if(*n != max_n) 
+        {
+            printf("message handler: python packet processing error *n= %i, max_n= %i, length= %i \n", *n, max_n, length);    
+        }
+        #ifdef DC_CLIENT
+            
+        #endif
+        #ifdef DC_SERVER
+
+        #endif
+
+        return 0;
         //send buffer to python_in for processing
     }
 
