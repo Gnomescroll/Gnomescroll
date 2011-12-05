@@ -101,8 +101,8 @@ int _apply_damage(int x, int y, int z, int dmg) {
     column = &map.column[vm_map_dim*yoff + xoff];
     chunk = column->chunk[zoff];
     if(chunk == NULL) {
-        printf("_apply_damage: Chunk is NULL:: %d,%d,%d dmg=%d\n", x,y,z, dmg);
-        printf("xyzoff:: %d %d %d\n", xoff, yoff, zoff);
+        //printf("_apply_damage: Chunk is NULL:: %d,%d,%d dmg=%d\n", x,y,z, dmg);
+        //printf("xyzoff:: %d %d %d\n", xoff, yoff, zoff);
         return -3;
     }
     tile = chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
