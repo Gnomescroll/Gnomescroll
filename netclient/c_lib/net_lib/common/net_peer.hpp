@@ -88,8 +88,13 @@ class NetPeer
     void push_reliable_packet(class Net_message* nm);
 
     Python_channel_in py_in;
-    Python_channel_in py_out;
+    Python_channel_out py_out;
 
+    void write_python_packet(char* buff, int bytes)
+    {
+        py_out.write_message(buff, bytes);
+
+    }
     /*
         TTL
     */

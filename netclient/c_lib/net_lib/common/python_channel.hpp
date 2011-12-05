@@ -17,10 +17,11 @@ class Python_channel_out {
     int sequence_number;
     int pending_bytes_out;
 
-    int size() { return fcb.size; }
+    //inline int size() { return fcb.size; }
 
     void write_message(char* buff, int n)
     {
+        printf("write_message: length= %i \n", n);
         char t[2]; int n1=0; PACK_uint16_t(n+2, t, &n1);
         fcb.write(t,2);
         fcb.write(buff,n);
@@ -31,14 +32,21 @@ class Python_channel_out {
     Net_message* serialize_to_packet(int max_n)
     {
         int bytes = max_n > pending_bytes_out ? max_n : pending_bytes_out;
-        Net_message* nm = Net_message::acquire_reliable(bytes+2);   //need 2 bytes for sequence prefix
+        Net_message* nm = Net_message::acquire_reliable(bytes+5);   //need 2 bytes for sequence prefix
         //pack sequence number
-        char t[2]; int n1 =0;
-        PACK_uint16_t(sequence_number, nm->buff, &n1);
-        fcb.write(t, 2);
+        //char t[5]; 
+        int n1 =0;
+        PACK_uint16_t(254, nm->buff, &n1);      //message id
+        PACK_uint16_t(bytes, nm->buff, &n1);    //length
+        PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
+        //fcb.write(t, 5);
         sequence_number++;
         //pack data
-        fcb.write(nm->buff+2, bytes);
+        //fcb.write(nm->buff+5, bytes);
+        
+        //read data into packet
+        fcb.read(nm->buff+5, bytes);
+
         pending_bytes_out -= bytes;
         return nm;
     }
@@ -140,6 +148,11 @@ class Python_channel_in {
     {
         if(read_sb->cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
         //process cm
+
+        //PACK_uint16_t(254, nm->buff, &n1);      //message id
+        //PACK_uint16_t(bytes, nm->buff, &n1);    //length
+        //PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
+
         printf("processed: %i \n", lowest_sequence);
         read_index++;
         lowest_sequence++; //USE MODULO

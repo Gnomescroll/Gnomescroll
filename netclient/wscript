@@ -441,8 +441,9 @@ def optimized2(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')
     ctx.env.CXXFLAGS.append('-O3')
-    ctx.env.CFLAGS.append('-fprofile-generate')
-    ctx.env.CXXFLAGS.append('-fprofile-generate')
+    ctx.env.CXXFLAGS.append('-Winline')
+    #ctx.env.CFLAGS.append('-fprofile-generate')
+    #ctx.env.CXXFLAGS.append('-fprofile-generate')
 
 def debug(ctx):
     configure(ctx)

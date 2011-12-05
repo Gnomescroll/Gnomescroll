@@ -199,6 +199,17 @@ void NetPeer::flush_to_net()
     PACK_uint16_t(client_id, net_out_buff, &n1); //client id
     PACK_uint8_t(1, net_out_buff, &n1);  //channel 1
     PACK_uint16_t(seq, net_out_buff, &n1); //sequence number
+
+    if(py_out.fcb.size != 0 && pending_reliable_bytes_out + pending_unreliable_bytes_out < 1450)
+    {
+        //may want to cap packet size at 512
+        printf("flush python packets: py_out.size()= %i \n", py_out.fcb.size );
+        int max_bytes = 1450 - (pending_reliable_bytes_out + pending_unreliable_bytes_out);
+        Net_message* nm = py_out.serialize_to_packet(max_bytes);
+        printf("py packet size= %i \n", nm->len);
+        push_reliable_packet(nm);
+    }
+
     PACK_uint16_t(get_sequence_number(this), net_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(this), net_out_buff, &n1); //sequence number
 
@@ -211,8 +222,6 @@ void NetPeer::flush_to_net()
         return;
     }
 
-    
-    
     #ifdef DC_CLIENT
     pviz_packet_sent(seq, n1);
 

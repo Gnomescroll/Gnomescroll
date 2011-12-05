@@ -76,6 +76,16 @@ void _test_reliable() {
 
 }
 
+void py_out_test() 
+{
+    printf("py_out_test\n");
+    
+    char* _ctest = "test1\n";
+    int length = 6;
+    NetClient::NPserver.write_python_packet(_ctest, length);
+
+}
+
 class NetPeer* np;
 
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
@@ -128,6 +138,7 @@ void _NetClientStartFrame() {
     } else {
         //_test_reliable();
         //_net_test(); //benchmark
+        py_out_test();
     }
 
     //deal with retransmission before retransmission

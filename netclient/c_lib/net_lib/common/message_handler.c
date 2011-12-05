@@ -74,6 +74,19 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
     int _n = *n;
     UNPACK_uint8_t(&message_id, buff, &_n);
 
+    //python packet
+    if(message_id == 254)
+    {
+        uint16_t length;
+        uint16_t sequence;
+        UNPACK_uint16_t(&length, buff, &_n);
+        UNPACK_uint16_t(&sequence, buff, &_n);        
+
+        printf("Python Packet Received: length= %i length, sequence= %i \n", length, sequence);
+
+        //send buffer to python_in for processing
+    }
+
     #ifdef DC_SERVER
     size  = h_server_packet_size[message_id];
     #endif
