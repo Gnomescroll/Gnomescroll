@@ -1,5 +1,6 @@
 #pragma once
 
+//keeps track of alloc and dealloc count for objects
 #define OBJECT_POOL_DEBUG 0
 
 //enabling this will turn off object pools and use malloc and free
@@ -22,10 +23,6 @@ class Object_pool {
         virtual const char* name() { return "generic object pool"; }
 
     public:
-
-    //virtual const char* name() = 0;
-    //virtual const char* name() { static const char x[]= "generic object pool"; return x; }
-
 
     Object* first;
     Object* last;

@@ -22,12 +22,14 @@ class FixedSizeNetPacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
+        //flatten this
         void serialize(char* buff, int* buff_n) { //, int* size
             //int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, true);
             packet(buff, buff_n, true);
             //*size = *buff_n - _buff_n;
         }
+        //flatten this
         inline void unserialize(char* buff, int* buff_n, int* size) {
             int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, false); //auto message unpack

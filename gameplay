@@ -1,0 +1,12 @@
+algae biofarms:
+solar panel -> light source
+water blcok -> algae block
+(water gets greener as it matures)
+harvest with rake
+algae sepreads to ajacent blocks
+
+-add water flow
+-add light
+-make maturity speed function of light intensity
+
+there will be lights but they have to either use a battery (runs out and has to be replaced/recharged) or needs wire from solar panels

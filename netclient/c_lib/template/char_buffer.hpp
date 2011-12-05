@@ -57,11 +57,14 @@ class Fifo_char_buffer
     //void * memcpy ( void * destination, const void * source, size_t num );
     void write(char* buff, int n)
     {
+        int _n = n; //debug
         int fb = CHAR_BUFFER_SIZE - write_index;
+
+        printf("Fifo_char_buffer: write \n");
 
         while(fb < n)
         {
-            printf("write %i bytes and new buffer\n", fb);  //debug
+            printf("Fifo_char_buffer: write %i of %i bytes and new buffer\n", fb, n);  //debug
 
             memcpy(cb_write->buffer+write_index, buff, fb);
             buff += fb;
@@ -74,18 +77,21 @@ class Fifo_char_buffer
 
             fb = CHAR_BUFFER_SIZE - write_index;
         }
-        printf("write %i bytes and new buffer\n", n); //debug
+        printf("Fifo_char_buffer: write %i bytes\n", n); //debug
 
         memcpy(cb_write->buffer+write_index, buff, n);
         size += n;
         write_index += n;
+
+        printf("Fifo_char_buffer: write end, size= %i \n", size);
     }
 
     void read(char* buff, int n)
     {
+        printf("Fifo_char_buffer: read \n" );
 
-        if(n > size) printf("n greater than size\n"); //debug
-        if(n==size) printf("full read of buffer\n"); //debug
+        if(n > size) printf("Fifo_char_buffer: n greater than size, n=%i, size=%i \n", n, size); //debug
+        if(n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
 
         int rb = CHAR_BUFFER_SIZE - read_index;
 
@@ -108,6 +114,8 @@ class Fifo_char_buffer
         memcpy(buff, cb_read->buffer+read_index, n);
         size -= n;
         read_index += n;
+
+        printf("Fifo_char_buffer: read finished \n");
     }
 };
 
