@@ -109,19 +109,21 @@ void draw() {
 
     glBegin(GL_QUADS);
 
+    const float x = 50.0f;
+    const float y = 50.0f;
+
     glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(50.0f, 50.0f, z);
+        glVertex3f(x, y, z);
     glTexCoord2f(1.0f, 0.0f);
-        glVertex3f((float)width, 50.0f, z);
+        glVertex3f((float)width+x, y, z);
     glTexCoord2f(1.0f, 1.0f);
-        glVertex3f((float)width, (float)height, z);
+        glVertex3f((float)width+x, (float)height+y, z);
     glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(50.0f, (float)height, z);
+        glVertex3f(x, (float)height+y, z);
 
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
-
 }
 
 // for cython
