@@ -9,20 +9,33 @@ static const int width = 128;
 static const int height = 128;
 
 static const int num_cells = width*height;
-static char cells[num_cells];
+static unsigned char cells[num_cells];
 
 static SDL_Surface* surface;
 static GLuint texture;
+
+static SDL_Surface* gradient_surface;
 
 void init_surface() {
     // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
     
     Uint32 rmask, gmask, bmask, amask;
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;
     bmask = 0x0000ff00;
     amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+    gradient_surface =IMG_Load("media/texture/heightmap_gradient_01.png");
+    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_02.png");
+    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
     
@@ -39,7 +52,8 @@ void init_surface() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels );
+    //GL_BGRA
+    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -53,7 +67,15 @@ void update_surface() {
     int i;
     Uint32 pix;
     for (i=0; i<num_cells; i++) {
-        pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
+        //pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
+        /*
+        pix = 0xff000000; //alpha
+        pix = 0x00ff0000; //red
+        pix = 0x0000ff00; //green
+        pix = 0x000000ff; //blue
+        */
+        //pix = 0xffff0000;
+        pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
         ((Uint32*)surface->pixels)[i] = pix;
     }
     
@@ -75,7 +97,10 @@ void update_heightmap() {
     for (i=0; i < width; i++) {
         for (j=0; j < height; j++) {
             h = get_height_at(i,j);
-            cells[i + width*j] = (char)h;
+            //h = 2*(h - (h%2));
+
+            //cells[i + width*j] = ((Uint32*)gradient_surface->pixels)[h];
+            cells[i + width*j] = (unsigned char)2*h;
         }
     }
 }
