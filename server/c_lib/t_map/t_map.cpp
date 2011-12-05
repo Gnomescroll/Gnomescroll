@@ -41,7 +41,7 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
 
 // destroys block and returns 0 if damage exceeds max damage
 // else return current damage of block
-// return  -4 when damage <= 0 (will have no / bad effects)
+// return  -4 when damage <= 0 (would have had no or bad effects)
 // returns -3 when chunk is NULL
 // returns -2 on map coordinates out of bounds failure
 // returns -1 when  blocks is already 0 / empty
