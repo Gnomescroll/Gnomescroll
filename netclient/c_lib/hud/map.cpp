@@ -50,7 +50,7 @@ void init() {
 void update_surface() {
     SDL_LockSurface(surface);
     
-    int i,j;
+    int i;
     Uint32 pix;
     for (i=0; i<num_cells; i++) {
         pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
