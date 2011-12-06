@@ -17,6 +17,8 @@ namespace Skybox {
 
 static GLuint skybox_texture[6];
 
+const int size = 1024;
+
 void load() {
 
     SDL_Surface* surface;
@@ -89,7 +91,7 @@ void render() {
     glTranslatef(current_camera->x, current_camera->y, current_camera->z);
 
 // First apply scale matrix
-    glScalef(512,512,512);  // a big number?
+    glScalef(size, size, size);  // a big number?
 
     float cz = -0.0f,cx = 1.0f; // texture corners
     float r = 1.005f; // If you have border issues change this to 1.005f

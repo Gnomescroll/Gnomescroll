@@ -32,6 +32,10 @@ void init_surface() {
         return;
     }
 
+    Uint32 tex_format = GL_BGRA;
+    if (panel_surface->format->Rmask == 0x000000ff)
+        tex_format = GL_RGBA;
+
     // Panel
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &panel_texture);
@@ -40,6 +44,9 @@ void init_surface() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D( GL_TEXTURE_2D, 0, 4, panel_surface->w, panel_surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, panel_surface->pixels );
     glDisable(GL_TEXTURE_2D);
+
+    if (sprite_surface->format->Rmask == 0x000000ff)
+        tex_format = GL_RGBA;
 
     // Sprite
     glEnable(GL_TEXTURE_2D);
