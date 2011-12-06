@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Map {
+namespace HudMap {
 
 void init();
 void update();

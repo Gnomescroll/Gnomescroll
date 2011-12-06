@@ -2,8 +2,9 @@
 
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/state/client_state.hpp>
+#include <c_lib/SDL/texture_loader.h>
 
-namespace Map {
+namespace HudMap {
 
 // pull these from loaded map dimensions (not available yet)
 static const int width = 128;
@@ -17,48 +18,50 @@ static GLuint texture;
 
 static SDL_Surface* gradient_surface;
 
+// create blank surface
 void init_surface() {
-    // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
     printf("init: hud_map \n");
 
-    Uint32 rmask, gmask, bmask, amask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
+    int ret;
 
     const int grad_num = 4;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);
-    gradient_surface =IMG_Load(grad_str);
+    gradient_surface = create_surface_from_file(grad_str);
 
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
-    
-    if(surface == NULL) {
-        fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-        return;
-    }
+    surface = create_surface_from_nothing(width, height);
+    if (surface == NULL) printf("DAMN hudmap surface null\n");
 
+    // texture
     glEnable(GL_TEXTURE_2D);
-
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     //GL_BGRA
     glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
+
+    //surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
+    
+    //if(surface == NULL) {
+        //fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+        //return;
+    //}
+
+    //glEnable(GL_TEXTURE_2D);
+
+    //glGenTextures(1, &texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    ////GL_BGRA
+    //glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
+    //glDisable(GL_TEXTURE_2D);
 }
 
 void init() {
@@ -78,6 +81,7 @@ Uint32 get_agent_pixel(int *x, int *y) {
 }
 
 void update_surface() {
+    if (surface == NULL) printf("surface null fuck\n");
     SDL_LockSurface(surface);
     
     int i;

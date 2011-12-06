@@ -1,6 +1,9 @@
 #include "./texture_loader.h"
 
+// Note: Don't load surfaces via arguments, you must return SDL_Surface*
+
 int init_image_loader() {
+    printf("image loader init\n");
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
     return 0;
 }
@@ -17,6 +20,10 @@ SDL_Surface* _load_image(char *file) {
     if(image->format->BytesPerPixel != 4) {printf("IMG_Load: image is missing alpha channel \n"); return 0;}
 
     return image;
+}
+
+SDL_Surface* create_surface_from_file(char* file) {
+    return _load_image(file);
 }
 
 struct Texture _load_image_create_texture(char *file) {
@@ -79,4 +86,57 @@ int create_texture_from_file(char* filename, int* tex) {
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
     return 0;
+}
+
+SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex) {
+    SDL_Surface* surface;
+    surface=IMG_Load(filename); //does this need to be freed?
+    if (surface==NULL) {
+        printf("Error loading texture %s, %s \n", filename, IMG_GetError());
+        return surface;
+    }
+    if (surface->format->BytesPerPixel != 4) {
+        printf("IMG_Load: image is missing alpha channel \n");
+        return 0;
+    }
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures( 1, tex );
+    glBindTexture( GL_TEXTURE_2D, *tex );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    int texture_format;
+    if (surface->format->Rmask == 0x000000ff) {
+        texture_format = GL_RGBA;
+    } else {
+        texture_format = GL_BGRA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+    glDisable(GL_TEXTURE_2D);
+    return surface;
+}
+
+SDL_Surface* create_surface_from_nothing(int w, int h) {
+    // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
+    SDL_Surface* surface;
+
+    static Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w,h, 32, rmask, gmask, bmask, amask);
+    if(surface == NULL) {
+        fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+    }
+    return surface;
 }

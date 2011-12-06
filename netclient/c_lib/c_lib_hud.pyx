@@ -312,7 +312,7 @@ class Font:
         set_text_color(r,g,b,a)
 
 """Map"""
-cdef extern from "hud/map.hpp" namespace "Map":
+cdef extern from "hud/map.hpp" namespace "HudMap":
     void update_map()
     void draw_map()
 

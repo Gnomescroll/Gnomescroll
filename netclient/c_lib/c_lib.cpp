@@ -58,6 +58,7 @@
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/hud/text.c>
     #include <c_lib/hud/map.cpp>
+    #include <c_lib/hud/equipment.cpp>
 
     /* input */
     #include <c_lib/input/input.cpp>
@@ -74,15 +75,16 @@ int init_c_lib() {
 
     #ifdef DC_CLIENT
         init_video();
+        init_image_loader();
         init_input();
         init_particle_functions();
         init_cameras();
 
-        init_image_loader();
         init_particles();
         init_cube_selector();
         init_inventory();
-        Map::init();
+        HudMap::init();
+        HudEquipment::init();
     #endif
     
     return 0;
