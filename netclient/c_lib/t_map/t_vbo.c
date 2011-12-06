@@ -187,7 +187,7 @@ int gl_per_queries_index = 0;
 SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
-
+    printf("init: draw_terrain \n");
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
 
     if(GL_PERF) glGenQueries(64, gl_perf_queries);  //generate timer queries for rendering
@@ -1056,8 +1056,7 @@ void DRAW_VBOS1() {
         
     int _vnum = 0;
 
-    //glColor3b(255,255,255);
-    glColor3b(155,0,0);
+    glColor3b(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -1167,8 +1166,7 @@ glDisable(GL_TEXTURE_2D);
 
 void DRAW_VBOS1a() {
         
-    //glColor3b(255,255,255);
-    glColor3b(155,0,0);
+    glColor3b(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
