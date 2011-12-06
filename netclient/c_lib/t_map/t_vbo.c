@@ -237,8 +237,8 @@ int _init_draw_terrain() {
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
     //possible texture problem
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-    //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
     glDisable(GL_TEXTURE_2D);
     }
 
