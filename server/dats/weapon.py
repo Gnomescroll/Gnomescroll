@@ -10,6 +10,7 @@ dat = {
         'hitscan'   :   False,
         'reload_speed'  :   500, #ms
         'firing_rate'   :   500, #ms
+        'scope'     :   False,
     },
 
     1   :   {   # LaserGun
@@ -42,6 +43,7 @@ dat = {
         'reload_speed': 750, #ms
         'firing_rate':  330, #ms
         'hitscan'   :   True,
+        'scope'     :   True,
     },
 
     5   :   {   # GrenadePouch

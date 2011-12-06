@@ -185,7 +185,8 @@ class Mouse(object):
                 pass
 
         if button == 3 and state == 1:  # right click down
-            camera.camera.toggle_zoom()
+            if not (InputGlobal.input == 'agent' and not GameStateGlobal.agent.weapons.active().scope):
+                camera.camera.toggle_zoom()
 
 
 class Keyboard(object):

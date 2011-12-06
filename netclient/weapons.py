@@ -25,15 +25,6 @@ class Weapon(EquippableObject):
         EquippableObject.__init__(self, id, state)
         self.owner = owner
         self._set_type()
-        #self.max_ammo = self.get_dat('max_ammo')
-        #self.ammo = self.get_dat('ammo')
-        #self.clip_size = self.get_dat('clip_size')
-        #self.clip = self.get_dat('clip')
-        #self.base_damage = self.get_dat('base_damage')
-        #self.automatic = self.get_dat('automatic')
-        #self.hitscan = self.get_dat('hitscan')
-        #self.reload_speed = self.get_dat('reload_speed')
-        #self.firing_rate = self.get_dat('firing_rate')
         self.dat.apply(self)
         self._animation = animations.Animation
 
@@ -132,6 +123,8 @@ class LaserGun(Weapon):
             self.automatic = bool(weapon['automatic'])
         if 'firing_rate' in weapon:
             self.firing_rate = weapon['firing_rate']
+        if 'scope' in weapon:
+            self.scope = bool(weapon['scope'])
         GameStateGlobal.weaponList.update(*args)
 
 class HitscanLaserGun(LaserGun):
