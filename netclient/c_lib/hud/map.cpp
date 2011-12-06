@@ -33,9 +33,11 @@ void init_surface() {
     amask = 0xff000000;
 #endif
 
-    gradient_surface =IMG_Load("media/texture/heightmap_gradient_01.png");
-    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_02.png");
-    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
+    const int grad_num = 5;
+    const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
+    char grad_str[strlen(grad_fmt) -2 +1];
+    sprintf(grad_str, grad_fmt, grad_num);
+    gradient_surface =IMG_Load(grad_str);
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
     
@@ -67,14 +69,6 @@ void update_surface() {
     int i;
     Uint32 pix;
     for (i=0; i<num_cells; i++) {
-        //pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
-        /*
-        pix = 0xff000000; //alpha
-        pix = 0x00ff0000; //red
-        pix = 0x0000ff00; //green
-        pix = 0x000000ff; //blue
-        */
-        //pix = 0xffff0000;
         pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
         ((Uint32*)surface->pixels)[i] = pix;
     }
