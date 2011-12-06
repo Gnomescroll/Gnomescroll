@@ -113,7 +113,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
                 return 0;
             }
             //py_in.insert(char* buff, int size, int sequence)
-            //NetServer::pool.connection[client_id]->py_in.insert(buff+_n, length, sequence);
+            NetServer::pool.connection[client_id]->py_in.insert(buff+_n, length, sequence);
         #endif
 
         return 0;
