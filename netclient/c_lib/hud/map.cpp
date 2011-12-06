@@ -1,6 +1,7 @@
 #include "map.hpp"
 
 #include <c_lib/t_map/t_map.hpp>
+#include <c_lib/state/client_state.hpp>
 
 namespace Map {
 
@@ -34,9 +35,11 @@ void init_surface() {
     amask = 0xff000000;
 #endif
 
-    gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
-    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_02.png");
-    //gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
+    const int grad_num = 4;
+    const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
+    char grad_str[strlen(grad_fmt) -2 +1];
+    sprintf(grad_str, grad_fmt, grad_num);
+    gradient_surface =IMG_Load(grad_str);
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
     
@@ -62,33 +65,36 @@ void init() {
     init_surface();
 }
 
+Uint32 get_agent_pixel(int *x, int *y) {
+    *x = (int)ClientState::playerAgent_state.camera_state.x;
+    *y = (int)ClientState::playerAgent_state.camera_state.y;
+
+    static const Uint8
+        a(255),
+        r(255),
+        g(10),
+        b(10);
+    return SDL_MapRGBA(surface->format, b,g,r,a); // bgra, red
+}
+
 void update_surface() {
     SDL_LockSurface(surface);
     
-    int i;//,j;
+    int i;
     Uint32 pix;
-    //Uint8 pix2;
     Uint8 r,g,b,a;
     for (i=0; i<num_cells; i++) {
-        //pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
-        /*
-        pix = 0xff000000; //alpha
-        pix = 0x00ff0000; //red
-        pix = 0x0000ff00; //green
-        pix = 0x000000ff; //blue
-        */
-        //pix = 0xffff0000;
         pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
         SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, b,g,r,a);
-
-        //pix = SDL_MapRGBA(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-        //pix2 = (Uint8* )&(((Uint32*)surface->pixels)[i]);
-
-        //SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
-        //((Uint32*)surface->pixels)[i] = pix;
-        //pix = SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
+        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, r,g,b,a);
     }
+
+    // set agent pixel
+    int x=0,*_x=&x;
+    int y=0,*_y=&y;
+    pix = get_agent_pixel(_x,_y);
+    if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in bounds (or could segfault)
+        ((Uint32*)surface->pixels)[x + width*y] = pix;
     
     SDL_UnlockSurface(surface);
 }
