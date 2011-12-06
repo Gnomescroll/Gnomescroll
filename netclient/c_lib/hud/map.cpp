@@ -22,17 +22,22 @@ static SDL_Surface* gradient_surface;
 void init_surface() {
     printf("init: hud_map \n");
 
-    int ret;
-
     const int grad_num = 4;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);
     gradient_surface = create_surface_from_file(grad_str);
+    if (gradient_surface==NULL) {
+        printf("HudMap gradient surface is NULL\n");
+        return;
+    }
 
     surface = create_surface_from_nothing(width, height);
-    if (surface == NULL) printf("DAMN hudmap surface null\n");
-
+    if (surface==NULL) {
+        printf("HudMap blank surface is NULL\n");
+        return;
+    }
+    
     // texture
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &texture);
@@ -43,25 +48,6 @@ void init_surface() {
     //GL_BGRA
     glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
-
-    //surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
-    
-    //if(surface == NULL) {
-        //fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-        //return;
-    //}
-
-    //glEnable(GL_TEXTURE_2D);
-
-    //glGenTextures(1, &texture);
-    //glBindTexture(GL_TEXTURE_2D, texture);
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    ////GL_BGRA
-    //glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
-    //glDisable(GL_TEXTURE_2D);
 }
 
 void init() {
