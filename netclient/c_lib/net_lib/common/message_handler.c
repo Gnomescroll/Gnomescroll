@@ -109,7 +109,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
         #ifdef DC_SERVER
             if(NetServer::pool.connection[client_id] == NULL)
             {
-                printf("python packet error: client does not exist\n")
+                printf("python packet error: client does not exist\n");
                 return 0;
             }
             NetServer::pool.connection[client_id]->py_in
