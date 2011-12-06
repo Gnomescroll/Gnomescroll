@@ -114,9 +114,6 @@ void update_heightmap() {
     for (i=0; i < width; i++) {
         for (j=0; j < height; j++) {
             h = get_height_at(i,j);
-            //h = 2*(h - (h%2));
-
-            //cells[i + width*j] = ((Uint32*)gradient_surface->pixels)[h];
             cells[i + width*j] = (unsigned char)2*h;
         }
     }
