@@ -1169,7 +1169,9 @@ glDisable(GL_TEXTURE_2D);
 }
 
 void DRAW_VBOS1a() {
-        
+    
+    printf("block texture= %i \n", block_texture);
+
     glColor3b(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
@@ -1276,6 +1278,7 @@ glDisable(GL_TEXTURE_2D);
 //minimizes state changes
 void DRAW_VBOS2() {
     
+    printf("block texture= %i \n", block_texture);
         //int _vnum = 0; //unused
 
         glColor3b(255,255,255);
