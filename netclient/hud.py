@@ -117,33 +117,6 @@ class Hud(object):
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
-    def draw(self, fps=None, ping=None, cube_selector=False):
-        # draw non-text first
-        self.draw_reticle()
-        if cube_selector:
-            self.cube_selector.draw()
-        if InputGlobal.inventory:
-            self.inventory.draw()
-        self.draw_chat_cursor()
-
-        if InputGlobal.map:
-            cHUD.Map.draw()
-
-        # draw text
-        cHUD.Font.font.start()
-
-        self.draw_player_stats()
-        if InputGlobal.scoreboard:
-            self.draw_scoreboard()
-        if fps is not None:
-            self.draw_fps(fps)
-        if ping is not None:
-            self.draw_ping(ping)
-        self.draw_chat_text()
-        #cHUD.Font.font.stress_test()
-
-        cHUD.Font.font.end()
-
     def _format_player_stats_html(self):
         agent = GameStateGlobal.agent
         if agent is None:
@@ -332,3 +305,32 @@ class Hud(object):
                 #dummy.text = input.text[0:cursor]
                 #x += dummy.width
         self._draw_vertical_lines(x, y, length, 2)
+
+    def draw(self, fps=None, ping=None, cube_selector=False):
+        # draw non-text first
+        self.draw_reticle()
+        if cube_selector:
+            self.cube_selector.draw()
+        if InputGlobal.inventory:
+            self.inventory.draw()
+        self.draw_chat_cursor()
+
+        if InputGlobal.map:
+            cHUD.Map.draw()
+
+        cHUD.Equipment.draw()
+
+        # draw text
+        cHUD.Font.font.start()
+
+        self.draw_player_stats()
+        if InputGlobal.scoreboard:
+            self.draw_scoreboard()
+        if fps is not None:
+            self.draw_fps(fps)
+        if ping is not None:
+            self.draw_ping(ping)
+        self.draw_chat_text()
+        #cHUD.Font.font.stress_test()
+
+        cHUD.Font.font.end()

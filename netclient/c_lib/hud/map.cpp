@@ -3,6 +3,7 @@
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/SDL/texture_loader.h>
+#include <c_lib/SDL/draw_functions.h>
 
 namespace HudMap {
 
@@ -127,27 +128,13 @@ void draw() {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glBegin(GL_QUADS);
-    
     static const float z = -0.5f;
     static const int x = 50;
-    static const int y = 512+50;
-    static const int x_size = 512;
-    static const int y_size = 512;
+    static const int y = 50;
+    static const int w = 512;
+    static const int h = 512;
 
-    glTexCoord2f(0.0,0.0);
-    glVertex3f(x, y, z);  // Top left
-
-    glTexCoord2f(1.0,0.0);
-    glVertex3f(x+x_size, y, z);  // Top right
-
-    glTexCoord2f(1.0,1.0);
-    glVertex3i(x+x_size, y-y_size, z);  // Bottom right
-
-    glTexCoord2f(0.0,1.0);
-    glVertex3i(x, y-y_size, z);  // Bottom left
-
-    glEnd();
+    draw_bound_texture(x, y, w, h, z);
 
     glDisable(GL_TEXTURE_2D);
 }

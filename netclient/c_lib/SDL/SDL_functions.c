@@ -1,4 +1,4 @@
-
+#include "SDL_functions.h"
 
 #include <compat_gl.h>
 

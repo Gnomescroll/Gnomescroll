@@ -1,5 +1,7 @@
 #include "draw_functions.h"
 
+#include "SDL_functions.h"
+
 int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1) {
 
     glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
@@ -79,4 +81,23 @@ int _blit_sprite(int texture, float x0, float y0, float x1, float y1, float z) {
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
     return 0;
+}
+
+// y coordinates start along the bottom
+void draw_bound_texture(float x, float y, float w, float h, float z) {
+
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(0.0,0.0);
+    glVertex3f(x, y, z);  // Top left
+
+    glTexCoord2f(1.0,0.0);
+    glVertex3f(x+w, y, z);  // Top right
+
+    glTexCoord2f(1.0,1.0);
+    glVertex3i(x+w, y+h, z);  // Bottom right
+
+    glTexCoord2f(0.0,1.0);
+    glVertex3i(x, y+h, z);  // Bottom left
+    glEnd();
 }

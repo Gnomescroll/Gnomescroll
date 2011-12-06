@@ -20,3 +20,5 @@ int _draw_rect(int r, int g, int b, float x, float y, float w, float h);
 int _draw_border_rect(int r, int g, int b, float x, float y, float w, float h);
 
 int _bind_VBO(struct Quad* quad_list, int v_num);
+
+void draw_bound_texture(float x, float y, float w, float h, float z);
