@@ -18,8 +18,6 @@ namespace Skybox {
 static GLuint skybox_texture[6];
 
 void load() {
-    return;
-
     SDL_Surface* surface;
     const char fmt_str[] = "media/skybox/skyrender%04d.png";
     char filename[strlen(fmt_str)+1];
@@ -72,7 +70,7 @@ void load() {
  * http://content.gpwiki.org/index.php/Sky_Box
  */
 void render() {
-    return;
+
 // Begin DrawSkybox
     glColor4f(1.0, 1.0, 1.0,1.0f);
 

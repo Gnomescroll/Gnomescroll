@@ -18,8 +18,7 @@ static SDL_Surface* gradient_surface;
 
 void init_surface() {
     // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
-    return;
-
+    
     Uint32 rmask, gmask, bmask, amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -123,7 +122,6 @@ void update() {
 }
 
 void draw() {
-    return;
     static unsigned int update_counter = 0;
 
     update_counter++;

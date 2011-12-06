@@ -7,6 +7,8 @@
 
 GLuint block_texture = 0;
 
+GLuint _block_texture = 0;
+
 int must_lock_block_surface;
 SDL_Surface *block_surface;
 SDL_PixelFormat *block_surface_pixel_format;
@@ -197,7 +199,7 @@ int _init_draw_terrain() {
     //glEnable(GL_POLYGON_SMOOTH);
     printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
 
-    if(block_texture == 0) { //load block_texture if block_texture is not set
+    if(_block_texture == 0) { //load block_texture if block_texture is not set
     //block_surface=IMG_Load("media/block_texture/textures_03.png");  //should this be freed?
     block_surface=IMG_Load("media/texture/blocks_01.png");
     if(!block_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
@@ -221,8 +223,8 @@ int _init_draw_terrain() {
     //block_surface_height = (int)surface->h;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &block_texture );
-    glBindTexture( GL_TEXTURE_2D, block_texture );
+    glGenTextures( 1, &_block_texture );
+    glBindTexture( GL_TEXTURE_2D, _block_texture );
 
 /*
  * Replace with tiles and use mipmapping for filter
@@ -235,6 +237,9 @@ int _init_draw_terrain() {
     glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
     glDisable(GL_TEXTURE_2D);
     }
+
+    block_texture = _block_texture;
+    
     return 0;
 }
 /*
@@ -1061,7 +1066,7 @@ void DRAW_VBOS1() {
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-    glBindTexture( GL_TEXTURE_2D, block_texture );
+    glBindTexture( GL_TEXTURE_2D, _block_texture );
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1170,7 +1175,7 @@ void DRAW_VBOS1a() {
 
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-    glBindTexture( GL_TEXTURE_2D, block_texture );
+    glBindTexture( GL_TEXTURE_2D, _block_texture );
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1279,7 +1284,7 @@ void DRAW_VBOS2() {
 
         glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-        glBindTexture( GL_TEXTURE_2D, block_texture );
+        glBindTexture( GL_TEXTURE_2D, _block_texture );
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
