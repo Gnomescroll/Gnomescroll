@@ -38,6 +38,10 @@ void init_surface() {
         printf("HudMap blank surface is NULL\n");
         return;
     }
+
+    Uint32 tex_format = GL_BGRA;
+    if (surface->format->Rmask == 0x000000ff)
+        tex_format = GL_RGBA;
     
     // texture
     glEnable(GL_TEXTURE_2D);
@@ -47,7 +51,7 @@ void init_surface() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     //GL_BGRA
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels );
+    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, tex_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -77,7 +81,7 @@ void update_surface() {
     for (i=0; i<num_cells; i++) {
         pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
         SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, r,g,b,a);
+        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, b,g,r,a);
     }
 
     // set agent pixel

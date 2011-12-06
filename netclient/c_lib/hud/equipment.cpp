@@ -67,10 +67,8 @@ void draw() {
     static const float z = -0.5f;
     static const int x = 0;
     static const int y = _yresf - height;
-    static const int w = width;
-    static const int h = height;
 
-    draw_bound_texture(x, y, w, h, z);
+    draw_bound_texture(x, y, width, height, z);
 
     glDisable(GL_TEXTURE_2D);
 }
