@@ -239,7 +239,7 @@ int _init_draw_terrain() {
     }
 
     block_texture = _block_texture;
-    
+
     return 0;
 }
 /*
@@ -1056,7 +1056,8 @@ void DRAW_VBOS1() {
         
     int _vnum = 0;
 
-    glColor3b(255,255,255);
+    //glColor3b(255,255,255);
+    glColor3b(155,0,0);
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -1166,7 +1167,8 @@ glDisable(GL_TEXTURE_2D);
 
 void DRAW_VBOS1a() {
         
-    glColor3b(255,255,255);
+    //glColor3b(255,255,255);
+    glColor3b(155,0,0);
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
