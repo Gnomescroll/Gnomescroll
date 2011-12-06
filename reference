@@ -1,6 +1,10 @@
 OpenGL Profiling:
 NVidia's PerfHUD and GLExpert 
 
+Motion Blur:
+http://http.developer.nvidia.com/GPUGems3/gpugems3_ch27.html
+http://gamedev.stackexchange.com/questions/8770/glsl-shader-effects-how-to-do-motion-blur-etc
+
 Handling Mouse Movement:
 http://gamedev.stackexchange.com/questions/1083/what-makes-aiming-in-a-console-first-person-shooter-feel-good
 
