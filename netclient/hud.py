@@ -318,7 +318,10 @@ class Hud(object):
         if InputGlobal.map:
             cHUD.Map.draw()
 
-        cHUD.Equipment.draw()
+        active_equipment_slot = -1
+        if GameStateGlobal.agent and GameStateGlobal.agent.weapons:
+            active_equipment_slot = GameStateGlobal.agent.weapons.hud_slot()
+        cHUD.Equipment.draw(active_equipment_slot)
 
         # draw text
         cHUD.Font.font.start()

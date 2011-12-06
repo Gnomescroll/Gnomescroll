@@ -161,6 +161,11 @@ class AgentWeapons(object):
             return None
         return self.weapons[self._active_weapon]
 
+    def hud_slot(self):
+        if self._active_weapon is None:
+            return -1
+        return self._active_weapon
+
     def update_info(self, **weapons_data):
         if 'weapons' in weapons_data:
             weapons = weapons_data['weapons']

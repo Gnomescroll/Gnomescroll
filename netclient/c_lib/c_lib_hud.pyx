@@ -326,9 +326,9 @@ class Map:
 
 """Equipment Panel"""
 cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
-    void draw_equipment()
+    void draw_equipment(int slot)
 
 class Equipment:
     @classmethod
-    def draw(cls):
-        draw_equipment();
+    def draw(cls, int slot):
+        draw_equipment(slot);

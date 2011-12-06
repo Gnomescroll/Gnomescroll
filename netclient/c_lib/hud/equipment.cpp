@@ -10,10 +10,17 @@ static GLuint panel_texture;
 static SDL_Surface* sprite_surface;
 static GLuint sprite_texture;
 
-const int width = 256;
-const int height = 32;
+static const int width = 256;
+static const int height = 32;
 
-const int n_items = width / height; // assumes height is the size of an icon side
+static const int icon_width = 32;
+static const int icon_height = 32;
+
+static const float spritesheet_width = 256.0f;
+static const float spritesheet_height = 256.0f;
+
+static const int n_items = width / icon_height;
+static int active = 0;
 
 void init_surface() {
 
@@ -64,11 +71,22 @@ void init() {
 }
 
 
-void draw() {
+void set_active_slot(int slot) {
+    if (slot >= n_items) {
+        printf("WARNING: set_active_slot, slot=%d out of bounds\n", slot);
+        return;
+    }
+    active = slot;
+}
 
-    glColor3ub(255,255,255);
+int get_equipment_slot_icon(int slot) {
+     static int i=-1;
+     i++;
+     return i%n_items;
+}
 
-    glEnable(GL_TEXTURE_2D);
+void draw_panel() {
+
     glBindTexture(GL_TEXTURE_2D, panel_texture);
 
     static const float z = -0.5f;
@@ -76,11 +94,43 @@ void draw() {
     static const int y = _yresf - height;
 
     draw_bound_texture(x, y, width, height, z);
+}
+
+void draw_icons() {
+
+    glBindTexture(GL_TEXTURE_2D, sprite_texture);
+
+    static const float z = -0.5f;
+
+    float x;
+    float y = _yresf - icon_height;
+    int i;
+    float sx,sy;
+    int icon;
+    for (i=0; i<n_items; i++) {
+        x = i*icon_width;
+        icon = get_equipment_slot_icon(i);
+        sx = (icon % n_items) * icon_width;
+        sy = (icon / n_items) * icon_height;
+        draw_bound_texture_sprite(x,y, icon_width, icon_height, z, sx, sy, icon_width, icon_height, spritesheet_width, spritesheet_height);
+    }
+}
+
+void draw() {
+
+    glColor3ub(255,255,255);
+    glEnable(GL_TEXTURE_2D);
+    
+    //draw_panel();
+    draw_icons();
 
     glDisable(GL_TEXTURE_2D);
 }
 
 //cython
-void draw_equipment(){draw();}
+void draw_equipment(int slot){
+    set_active_slot(slot);
+    draw();
+}
 
 }

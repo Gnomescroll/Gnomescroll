@@ -21,4 +21,8 @@ int _draw_border_rect(int r, int g, int b, float x, float y, float w, float h);
 
 int _bind_VBO(struct Quad* quad_list, int v_num);
 
+// Draw full texture
 void draw_bound_texture(float x, float y, float w, float h, float z);
+
+// Blit sprites from a larger bound texture
+void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);

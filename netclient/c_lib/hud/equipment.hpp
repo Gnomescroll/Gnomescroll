@@ -7,6 +7,6 @@ void init();
 void draw();
 
 //cython
-void draw_equipment();
+void draw_equipment(int slot);
 
 }
