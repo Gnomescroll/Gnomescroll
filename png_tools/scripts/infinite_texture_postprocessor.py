@@ -106,8 +106,7 @@ for tex_dir in texture_source_dirs:
 
     print "source_image = %s " % (tex_dir+"source_texture.png")
     for _i in range(0,16):
-        #print "image in= out/_%02d.png" % (_i)
-        #print "image out= %02d"%(_i) % (_i)
+        #PARAMETERS ARE HERE!!!
         parameters = "0,0, True, drawable_of_file('"+ tex_dir+"source_texture.png" + "').ID, -1, -1, 0.0, 0.117, 16, 500"
         runtest("out/_%02d.png" % (_i), 'resynthtwoimages', test, parameters, out="%02d"%(_i), indir = tex_dir, outdir = tex_dir+ "out/")
 

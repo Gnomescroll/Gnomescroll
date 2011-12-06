@@ -18,7 +18,8 @@ static SDL_Surface* gradient_surface;
 
 void init_surface() {
     // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
-    
+    printf("init: hud_map \n");
+
     Uint32 rmask, gmask, bmask, amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -68,9 +69,19 @@ void update_surface() {
     
     int i;
     Uint32 pix;
+    //Uint8 pix2;
+    Uint8 r,g,b,a;
     for (i=0; i<num_cells; i++) {
         pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
-        ((Uint32*)surface->pixels)[i] = pix;
+        SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, b,g,r,a);
+
+        //pix = SDL_MapRGBA(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+        //pix2 = (Uint8* )&(((Uint32*)surface->pixels)[i]);
+
+        //SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
+        //((Uint32*)surface->pixels)[i] = pix;
+        //pix = SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
     }
     
     SDL_UnlockSurface(surface);

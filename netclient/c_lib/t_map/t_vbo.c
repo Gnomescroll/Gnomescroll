@@ -185,7 +185,7 @@ int gl_per_queries_index = 0;
 SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
-
+    printf("init: draw_terrain \n");
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
 
     if(GL_PERF) glGenQueries(64, gl_perf_queries);  //generate timer queries for rendering
@@ -197,10 +197,14 @@ int _init_draw_terrain() {
     //glEnable(GL_POLYGON_SMOOTH);
     printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
 
-    if(block_texture == 0) { //load block_texture if block_texture is not set
-    //block_surface=IMG_Load("media/block_texture/textures_03.png");  //should this be freed?
-    block_surface=IMG_Load("media/texture/blocks_01.png");
-    if(!block_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;}
+    if(block_texture == 0) 
+    { 
+        printf("init terrain_map: block texture load \n");
+        //load block_texture if block_texture is not set
+        //block_surface=IMG_Load("media/block_texture/textures_03.png");  //should this be freed?
+        block_surface=IMG_Load("media/texture/blocks_01.png");
+        if(!block_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 1;
+    }
     
     block_surface_pixel_format = block_surface->format;
     must_lock_block_surface = SDL_MUSTLOCK(block_surface);
@@ -213,8 +217,7 @@ int _init_draw_terrain() {
 
     //Uint32 GL_PIXEL_TYPE = GL_BGR;
     int texture_format;
-    if (block_surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
-    else texture_format = GL_BGRA;
+    if (block_surface->format->Rmask == 0x000000ff) {texture_format = GL_RGBA;} else {texture_format = GL_BGRA;}
 
     //sdl_pixel_format = surface->format;
     //block_surface_width = (int)surface->w;
@@ -232,9 +235,14 @@ int _init_draw_terrain() {
 
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    //possible texture problem
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
     glDisable(GL_TEXTURE_2D);
     }
+
+    block_texture = block_texture;
+
     return 0;
 }
 /*
@@ -1160,7 +1168,7 @@ glDisable(GL_TEXTURE_2D);
 }
 
 void DRAW_VBOS1a() {
-        
+
     glColor3b(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
