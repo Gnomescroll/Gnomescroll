@@ -18,7 +18,6 @@ namespace Skybox {
 static GLuint skybox_texture[6];
 
 void load() {
-    return;
 
     SDL_Surface* surface;
     const char fmt_str[] = "media/skybox/skyrender%04d.png";
@@ -52,7 +51,7 @@ void load() {
         glTexImage2D(
             GL_TEXTURE_2D,  //target
             0,  // level
-            tex_format,  // internalformat
+            4,  // internalformat, use 4 for 4 bytes per pixel
             surface->w, surface->h, //width, height
             0,  // border
             tex_format, // format
@@ -72,7 +71,6 @@ void load() {
  * http://content.gpwiki.org/index.php/Sky_Box
  */
 void render() {
-    return;
 // Begin DrawSkybox
     glColor4f(1.0, 1.0, 1.0,1.0f);
 
