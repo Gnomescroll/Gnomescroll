@@ -227,7 +227,9 @@ void NetPeer::flush_to_net()
     pviz_packet_sent(seq, n1);
 
     //simulate packet loss
-    //if(seq % 3 == 0 ) return; //drop every 4th packet
+    //static _i = 0;
+    //if(_i<300 && seq % 2 == 0 ) return; //drop every 4th packet
+    //_i++;
 
     int sent_bytes = sendto( NetClient::client_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}

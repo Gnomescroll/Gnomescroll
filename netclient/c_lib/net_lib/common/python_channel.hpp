@@ -150,27 +150,17 @@ class Python_channel_in {
 
     void insert(char* buff, int length, int sequence)
     {
-        printf("py_in packet %i: seq=%i, len=%i lowest_sequence=%i read_index=%i \n", _total_packets, sequence, length, lowest_sequence, read_index);
-        _total_packets++;
+        //printf("py_in packet %i: seq=%i, len=%i lowest_sequence=%i read_index=%i \n", _total_packets, sequence, length, lowest_sequence, read_index);
         //if sequence is expected packet, use fast path and dont store anything
         if(lowest_sequence == sequence)
         {
-            printf("reaction: 1\n");
             pop(buff, length);
             return;
         } 
-        else 
-        {
-            
-            printf("reaction: 2\n");
-        }
 
         Sequence_buffer_element* sbe = read_sb;
-
-        int index = lowest_sequence;
+        int index = lowest_sequence+1; //use modulo
         int _read_index = read_index;
-
-        int count = 0; //debug
 
         while(index != sequence) 
         {
@@ -186,56 +176,22 @@ class Python_channel_in {
                 }
                 sbe = sbe->next;
             }
-            count++; //debug
         }
-        if(count == 0 ) printf("FATAL ERROR\n");
-        //if(count > 1) printf("python channel: interations to index = %i, lowest seq= %i, sequence= %i \n", count, lowest_sequence, sequence); //debug
-
         size++; 
-        printf("insert: %i elements, index %i \n", size, read_index);
-        Channel_message* cm = &sbe->cm[read_index];
+        //printf("insert: index= %i, read_index= %i, %i elements \n", index, read_index, size);
+        Channel_message* cm = &sbe->cm[_read_index];
         cm->buffer = new char[length];
         cm->length = length;
-        //mem copy into buffer
-        memcpy (cm->buffer, buff, length );
-
+        memcpy (cm->buffer, buff, length);
     }
 
     void pop(char* buff, int length) 
     {
-        //if(read_sb->cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
-
-        //PACK_uint16_t(254, nm->buff, &n1);      //message id
-        //PACK_uint16_t(bytes, nm->buff, &n1);    //length
-        //PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
-        
         //process cm
-        printf("1 python packet processed:: seq= %i \n", lowest_sequence);
+        //printf("1 python packet processed:: seq= %i \n", lowest_sequence);
         lowest_sequence++; //USE MODULO
 
-        if(size == 0)
-        {
-            printf("size equals zero: fast path return\n");
-            return;   
-        }
-        read_index++; //only need to increment read index if there is stuff to read
-
-        if(read_index == SEQUENCE_BUFFER_SIZE)
-        {
-            Sequence_buffer_element* sbe = read_sb;
-            read_index = 0;
-            //DEBUG: cut out later, can never happen
-            if(read_sb->next == NULL ) 
-            {
-                printf("Python Channel: CAN NEVER HAPPEN \n");
-                read_sb->next = new Sequence_buffer_element; //use pool
-                read_sb->next->next = NULL;
-            }
-            //DEBUG
-            read_sb = sbe->next;
-            delete sbe; //use pool
-        }
-
+        if(size == 0)  return;  //size equals zero: fast path return
         Channel_message* cm;
         Sequence_buffer_element* sbe = read_sb;
         while(sbe->cm[read_index].buffer != NULL)
@@ -245,7 +201,7 @@ class Python_channel_in {
             //process cm
             delete cm->buffer;
             cm->buffer = NULL; //clear message
-            printf("2 python packet processed: seq= %i, %i left in buffer \n", lowest_sequence, size);
+            //printf("2 python packet processed: seq= %i, %i left in buffer \n", lowest_sequence, size);
             read_index++;
             lowest_sequence++;  //USE MODULO
             if(read_index == SEQUENCE_BUFFER_SIZE)
@@ -256,15 +212,6 @@ class Python_channel_in {
                 delete tmp; //use object pool
             }
         }
-
-        /*
-            Test case where buffer fills and then is emptied
-        */
-        //reset if size == 0
-        if(size==0)
-        {
-            //no elements in buffer!
-            read_index = 0;
-        }
+        if(size==0) read_index = 0;
     }
 };
