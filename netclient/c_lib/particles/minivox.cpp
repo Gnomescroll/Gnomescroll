@@ -135,8 +135,6 @@ void Minivox_list::tick() {
 }
 
 void Minivox_list::draw() {
-
-    return;
 #ifdef DC_CLIENT
 
     if(num == 0) { return; }
@@ -166,7 +164,6 @@ void Minivox_list::draw() {
 }
 
 void Minivox::draw() {
-    return;
 #ifdef DC_CLIENT
     if (draw_mode == MINIVOX_DRAW_MODE_TEXTURED) {
         draw_textured();
@@ -212,7 +209,6 @@ void Minivox::draw() {
 }
 
 void Minivox::draw_textured() {
-    return;
 #ifdef DC_CLIENT
     if(vox.a == 0) return;
 

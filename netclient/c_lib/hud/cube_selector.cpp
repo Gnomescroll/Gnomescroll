@@ -142,5 +142,5 @@ void draw_cube_selector(float x, float y, float size, int mode) {
 
     glEnd();
     glLineWidth(1.0);
-    glColor4ub(255,255,255,255);
+    glColor3ub(255,255,255);
 }

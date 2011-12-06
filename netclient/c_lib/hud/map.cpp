@@ -18,7 +18,8 @@ static SDL_Surface* gradient_surface;
 
 void init_surface() {
     // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
-    
+    printf("init: hud_map \n");
+
     Uint32 rmask, gmask, bmask, amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
