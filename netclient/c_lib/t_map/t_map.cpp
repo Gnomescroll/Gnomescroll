@@ -29,7 +29,7 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
         
         block_StoC(int x, int y, int z, int val): x(x), y(y), z(z), val(val) {}
         
-        block_StoC(): x(0), y(0), z(0), val(0) {}
+        block_StoC() {}
 };
 
 

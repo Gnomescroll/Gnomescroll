@@ -62,6 +62,12 @@ void init_message_handler() {
 Put client and server message ids in seperate counters so they dont overlap
 */
 
+
+//move this and handler somewhere else
+#ifdef DC_SERVER
+#include <net_lib/server/server.h>
+#endif
+
 int pop_message(char* buff, int *n, int max_n, int client_id) {
 
     if(*n == max_n) {
@@ -101,7 +107,12 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
             
         #endif
         #ifdef DC_SERVER
-
+        if(NetServer::pool.connection[client_id] == NULL)
+        {
+            printf("python packet error: client does not exist\n")
+            return 0;
+        }
+        //NetServer::pool.connection[client_id]->py_in
         #endif
 
         return 0;

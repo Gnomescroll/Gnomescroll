@@ -18,7 +18,8 @@ static SDL_Surface* gradient_surface;
 
 void init_surface() {
     // taken from http://sdl.beuc.net/sdl.wiki/SDL_CreateRGBSurface
-    
+    return;
+
     Uint32 rmask, gmask, bmask, amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -33,7 +34,7 @@ void init_surface() {
     amask = 0xff000000;
 #endif
 
-    gradient_surface =IMG_Load("media/texture/heightmap_gradient_01.png");
+    gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
     //gradient_surface =IMG_Load("media/texture/heightmap_gradient_02.png");
     //gradient_surface =IMG_Load("media/texture/heightmap_gradient_03.png");
 
@@ -64,8 +65,10 @@ void init() {
 void update_surface() {
     SDL_LockSurface(surface);
     
-    int i,j;
+    int i;//,j;
     Uint32 pix;
+    //Uint8 pix2;
+    Uint8 r,g,b,a;
     for (i=0; i<num_cells; i++) {
         //pix = SDL_MapRGB(surface->format, cells[i], cells[i], cells[i]);
         /*
@@ -76,7 +79,15 @@ void update_surface() {
         */
         //pix = 0xffff0000;
         pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
-        ((Uint32*)surface->pixels)[i] = pix;
+        SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, b,g,r,a);
+
+        //pix = SDL_MapRGBA(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+        //pix2 = (Uint8* )&(((Uint32*)surface->pixels)[i]);
+
+        //SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
+        //((Uint32*)surface->pixels)[i] = pix;
+        //pix = SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
     }
     
     SDL_UnlockSurface(surface);
@@ -112,6 +123,7 @@ void update() {
 }
 
 void draw() {
+    return;
     static unsigned int update_counter = 0;
 
     update_counter++;
