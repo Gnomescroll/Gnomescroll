@@ -217,8 +217,7 @@ int _init_draw_terrain() {
 
     //Uint32 GL_PIXEL_TYPE = GL_BGR;
     int texture_format;
-    if (block_surface->format->Rmask == 0x000000ff) texture_format = GL_RGBA;
-    else texture_format = GL_BGRA;
+    if (block_surface->format->Rmask == 0x000000ff) {texture_format = GL_RGBA;} else {texture_format = GL_BGRA;}
 
     //sdl_pixel_format = surface->format;
     //block_surface_width = (int)surface->w;
@@ -237,8 +236,8 @@ int _init_draw_terrain() {
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
     //possible texture problem
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-    glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
     glDisable(GL_TEXTURE_2D);
     }
 
