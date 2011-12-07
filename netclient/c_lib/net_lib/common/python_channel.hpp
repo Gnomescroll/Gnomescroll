@@ -21,7 +21,7 @@ class Python_channel_out {
 
     void write_message(char* buff, int n)
     {
-        printf("write_message: length= %i \n", n);
+        //printf("write_message: length= %i \n", n);
         char t[2]; int n1=0; PACK_uint16_t(n+2, t, &n1);
         fcb.write(t,2);
         fcb.write(buff,n);
@@ -35,13 +35,53 @@ class Python_channel_out {
         Net_message* nm = Net_message::acquire_reliable(bytes+5);   //need 2 bytes for sequence prefix
         //pack sequence number
         //char t[5]; 
+        static int _i = 0;
+        static int l1 = 0;
+        static int l2 = 0;
+
+        if(_i % 3 == 0)
+        {
+            l1 += 3;
+            l2 = 1;
+        }
+        if(_i % 3 == 1)
+        {
+            l1 += 0;
+            l2 = 2;
+        }
+        if(_i % 3 == 2)
+        {
+            l1 += 0;
+            l2 = 3;
+        }
+
+        int _sequence_number = l1 - l2;
+
+        _i++;
+        //int _sequence_number;
+        //static int _alt = 0;
+        //_alt = (_alt+1) % 3;
+        //if (_alt == 0) _sequence_number = sequence_number;
+
+        //if(_i % 3 == 0) l1 += 3;  
+        //l2 = 2 - (_i%3);
+        //_i++;
+        
+        //_sequence_number = l2 + l1;
+    
+        
+        
+        //printf("sequence= %i \n", sequence_number);
+
         int n1 =0;
-        printf("Py_out: length= %i, sequence= %i \n", bytes, sequence_number);
+        printf("Py_out: sequence= %i, length= %i \n", _sequence_number, bytes);
         PACK_uint8_t(254, nm->buff, &n1);      //message id
         PACK_uint16_t(bytes, nm->buff, &n1);    //length
-        PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
+        PACK_uint16_t(_sequence_number, nm->buff, &n1); //sequence number
         //fcb.write(t, 5);
+        
         sequence_number++;
+
         //pack data
         //fcb.write(nm->buff+5, bytes);
         
@@ -66,12 +106,12 @@ Need a list of sequences, need to determine
 class Channel_message {
         
     public:
-        int size;
+        int length;
         char* buffer;
         //dont need sequence number explicitly
     Channel_message() {
         buffer = NULL;
-        size = 0;
+        length = 0;
         //sequence = -1;
     }
 };
@@ -91,6 +131,7 @@ class Sequence_buffer_element {
     }
 };
 
+static int _total_packets = 0;
 
 class Python_channel_in {
     public:
@@ -101,28 +142,28 @@ class Python_channel_in {
 
     Python_channel_in()
     {
+        lowest_sequence = 0;
         read_index = 0;
         size = 0;
         read_sb = new Sequence_buffer_element;
     }
 
-    void insert(char* buff, int size, int sequence)
+    void insert(char* buff, int length, int sequence)
     {
-        Sequence_buffer_element* sbe = read_sb;
-
-        int index = lowest_sequence;
-        int _read_index = read_index;
-
-        int count = 0; //debug
-
+        //printf("py_in packet %i: seq=%i, len=%i lowest_sequence=%i read_index=%i \n", _total_packets, sequence, length, lowest_sequence, read_index);
+        //if sequence is expected packet, use fast path and dont store anything
         if(lowest_sequence == sequence)
         {
-            pop(buff, size);
+            pop(buff, length);
             return;
-        }
+        } 
+
+        Sequence_buffer_element* sbe = read_sb;
+        int index = lowest_sequence+1; //use modulo
+        int _read_index = read_index;
 
         while(index != sequence) 
-        {   
+        {
             index++; //update index, MOD SOMETHING
             _read_index++;
             if(_read_index == SEQUENCE_BUFFER_SIZE)
@@ -131,55 +172,36 @@ class Python_channel_in {
                 if(sbe->next == NULL ) 
                 {
                     sbe->next = new Sequence_buffer_element; //use pool
-                    sbe->next->next = NULL; //for object pool
+                    sbe->next->next = NULL; //new head
                 }
                 sbe = sbe->next;
             }
-            count++; //debug
-            if(count > 1) printf("python channel: count = %i \n", count); //debug
         }
-
-        size++; printf("size increment= %i\n", size);
-        Channel_message* cm = &sbe->cm[read_index];
-        cm->buffer = new char[size];    //bypass when 
-        cm->size = size;
+        size++; 
+        //printf("insert: index= %i, read_index= %i, %i elements \n", index, read_index, size);
+        Channel_message* cm = &sbe->cm[_read_index];
+        cm->buffer = new char[length];
+        cm->length = length;
+        memcpy (cm->buffer, buff, length);
     }
 
-    void pop(char* buff, int size) 
+    void pop(char* buff, int length) 
     {
-        if(read_sb->cm[read_index].buffer == NULL) printf("python sequence buffer ERROR!!\n");
         //process cm
-
-        //PACK_uint16_t(254, nm->buff, &n1);      //message id
-        //PACK_uint16_t(bytes, nm->buff, &n1);    //length
-        //PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
-
-        printf("processed: %i \n", lowest_sequence);
-        read_index++;
+        //printf("1 python packet processed:: seq= %i \n", lowest_sequence);
         lowest_sequence++; //USE MODULO
-        if(read_index == SEQUENCE_BUFFER_SIZE)
-        {
-            Sequence_buffer_element* sbe = read_sb;
-            read_index = 0;
-            if(read_sb->next == NULL ) 
-            {
-                read_sb->next = new Sequence_buffer_element; //use pool
-                read_sb->next->next = NULL;
-            }
-            read_sb = sbe->next;
-            delete sbe; //retire old buffer
-        }
-        //if(size == 0) return;
+
+        if(size == 0)  return;  //size equals zero: fast path return
         Channel_message* cm;
         Sequence_buffer_element* sbe = read_sb;
         while(sbe->cm[read_index].buffer != NULL)
         {
-            size--; printf("size decrement= %i\n", size);
+            size--; 
             cm = &sbe->cm[read_index];
             //process cm
             delete cm->buffer;
-            cm->buffer = NULL;
-            printf("processed: %i \n", lowest_sequence);
+            cm->buffer = NULL; //clear message
+            //printf("2 python packet processed: seq= %i, %i left in buffer \n", lowest_sequence, size);
             read_index++;
             lowest_sequence++;  //USE MODULO
             if(read_index == SEQUENCE_BUFFER_SIZE)
@@ -188,8 +210,8 @@ class Python_channel_in {
                 Sequence_buffer_element* tmp = read_sb;
                 read_sb = read_sb->next;
                 delete tmp; //use object pool
-                //return sequence buffer when done
             }
         }
+        if(size==0) read_index = 0;
     }
 };

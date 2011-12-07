@@ -95,7 +95,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
         //pack_u16(&sequence, buff, &_n, false); 
         //pack_u16(&len, buff, &_n, false); 
 
-        printf("Python Packet Received: sequence= %i, length= %i \n", sequence, length);
+        //printf("Python Packet Received: sequence= %i, length= %i \n", sequence, length);
 
         //5 bytes, message id, length and sequence
         *n += length + 5;

@@ -206,7 +206,8 @@ void NetPeer::flush_to_net()
         printf("flush python packets: py_out.size()= %i \n", py_out.fcb.size );
         int max_bytes = 1450 - (pending_reliable_bytes_out + pending_unreliable_bytes_out);
         Net_message* nm = py_out.serialize_to_packet(max_bytes);
-        printf("py packet size= %i \n", nm->len);
+        printf("flush python packets: py_out.size()= %i, packet_size= %i \n", py_out.fcb.size, nm->len );
+        //printf("py packet size= %i \n", nm->len);
         push_reliable_packet(nm);
     }
 
@@ -226,7 +227,9 @@ void NetPeer::flush_to_net()
     pviz_packet_sent(seq, n1);
 
     //simulate packet loss
-    //if(seq % 2 == 0 ) return; //drop every 4th packet
+    //static _i = 0;
+    //if(_i<300 && seq % 2 == 0 ) return; //drop every 4th packet
+    //_i++;
 
     int sent_bytes = sendto( NetClient::client_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
