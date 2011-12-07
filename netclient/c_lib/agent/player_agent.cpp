@@ -5,7 +5,9 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
+#ifdef DC_CLIENT
 #include <c_lib/sound/sound.hpp>
+#endif
 
 /*
 Net Messages
