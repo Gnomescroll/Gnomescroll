@@ -11,13 +11,25 @@ static char net_out_buff[2000];
 
 void NetPeer::push_unreliable_packet(Net_message* nm) 
 {
+    if(unreliable_net_message_array_index == 255)
+    {
+        printf("NetPeer Error: unreliable_net_message_array_index == 255, flush to net \n")
+        flush_to_net();
+    }
+
+    if(nm->len + pending_unreliable_bytes_out > 1500)
+    {
+        printf("NetPeer Error: nm->len + pending_unreliable_bytes_out > 1500, flush to net \n")
+        flush_to_net();
+    }
+    
     pending_unreliable_bytes_out += nm->len;
     pending_bytes_out += nm->len;
 
     nm->reference_count++;
     unreliable_net_message_array[unreliable_net_message_array_index] = nm;
     unreliable_net_message_array_index++;
-    if(unreliable_net_message_array_index > 256) printf("Net_message_list Push_unreliable_packet overflow 1\n");   //debug
+    if(unreliable_net_message_array_index > 255) printf("Net_message_list Push_unreliable_packet overflow 1\n");   //debug
     //would require all messages were less than 6 bytes to fit 256 messagse into 1500 byte packet
 }
 
@@ -52,7 +64,13 @@ void NetPeer::push_reliable_packet(class Net_message* nm)
 //void * memcpy ( void * destination, const void * source, size_t num );
 void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     //if(pending_bytes_out > 1500) printf("NetPeer Error 1: too much data in packet buffer, %i \n", pending_bytes_out);
-    if(pending_unreliable_bytes_out > 1500) printf("NetPeer Error 2: unreliable bytes out exceeds 1500, %i \n", pending_unreliable_bytes_out);
+    if(pending_unreliable_bytes_out > 1500) 
+    {
+        printf("NetPeer Error 2: unreliable bytes out exceeds 1500, %i \n", pending_unreliable_bytes_out);
+        pending_unreliable_bytes_out = 0;
+        class Net_message* nm;
+    }
+
     class Net_message* nm;
     int index = *_index;
 
