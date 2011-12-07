@@ -2,7 +2,7 @@ import opts
 opts = opts.opts
 
 import random
-import c_lib.c_lib_agents
+import c_lib.c_lib_agents as cAgents
 
 from profiler import P
 
@@ -32,6 +32,9 @@ class World():
         #    a.tick()
         if GameStateGlobal.agent is not None:
             GameStateGlobal.agent.nearby_objects()
+
+        
+
 
     def draw(self, first_person=False):
         P.event("World.draw(), draw agents")
@@ -72,7 +75,7 @@ class World():
     def draw_agents(self, first_person=False):
         
         if opts.draw_agents:
-            c_lib.c_lib_agents.draw_agents()
+            cAgents.draw_agents()
 
 import projectiles
 

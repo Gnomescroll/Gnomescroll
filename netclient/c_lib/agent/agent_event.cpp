@@ -3,9 +3,12 @@
 #ifdef DC_CLIENT
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/animations/animations.hpp>
+#include <c_lib/sound/sound.hpp>
 
 void Agent_event::fired_weapon(int weapon_id) {
     // play weapon animation & sound
+    char soundfile[] = "semishoot.wav";
+    Sound::play_2d_sound(soundfile);
 
     // raycast from current aiming direction to nearest block
     // get side of block hit, point of collision

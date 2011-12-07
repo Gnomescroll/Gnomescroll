@@ -5,6 +5,8 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
+#include <c_lib/sound/sound.hpp>
+
 /*
 Net Messages
 */
@@ -225,6 +227,17 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vx /= divisor;
     a->vy /= divisor;
     a->vz /= divisor;
+}
+
+void PlayerAgent_state::tick() {
+    void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz);
+
+    AgentState s = camera_state;
+
+    float f[3];
+    s.forward_vector(f);
+
+    Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, f[0], f[1], f[2], 0,0,1);
 }
 
 #endif

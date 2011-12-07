@@ -812,3 +812,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
                 if obj.proximity_effect:
                     NetOut.sendMessage.near_item(self, obj)
 
+    def tick(self):
+        AgentModel.tick(self)
+        PlayerAgentWrapper.tick(self)

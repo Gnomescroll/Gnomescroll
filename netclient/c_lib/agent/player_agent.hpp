@@ -168,6 +168,7 @@ class PlayerAgent_state {
             //box.box_r = AGENT_BOX_RADIUS;
         }
 
+        void tick();
 };
 
 

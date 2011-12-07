@@ -88,6 +88,7 @@ cdef extern from "./agent/player_agent.hpp":
         void toggle_camera_mode()
         void pump_camera() #update camera
         PlayerAgent_action action
+        void tick()
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
@@ -262,6 +263,9 @@ class PlayerAgentWrapper(object):
 
     def fire_hitscan(self):
         playerAgent_state.action.fire()
+
+    def tick(self):
+        playerAgent_state.tick()
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
