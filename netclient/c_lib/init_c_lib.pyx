@@ -100,7 +100,7 @@ def _toggle_latency_unit():
 cdef extern from "./net_lib/export.hpp":
     ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
     void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
-    void send_python_net_message(char* message, int size, client_id)
+    void send_python_net_message(char* message, int size, int client_id)
 
 cdef void py_net_callback(char* buff, int n, int client_id):
     print "python callback: received %i bytes from client %i" % (n, client_id)
