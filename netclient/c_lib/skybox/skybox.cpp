@@ -91,7 +91,9 @@ void render() {
     glTranslatef(current_camera->x, current_camera->y, current_camera->z);
 
 // First apply scale matrix
-    glScalef(size, size, size);  // a big number?
+    //glScalef(size, size, size);  // a big number?
+    float _sky_scale = 64.0;
+    glScalef(_sky_scale, _sky_scale, _sky_scale);
 
     float cz = -0.0f,cx = 1.0f; // texture corners
     float r = 1.005f; // If you have border issues change this to 1.005f
