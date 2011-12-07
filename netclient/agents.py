@@ -17,8 +17,6 @@ import c_lib._ray_trace as ray_tracer
 import c_lib.c_lib_agents as cAgents
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_sdl as cSDL
-if opts.sound:
-    import c_lib.c_lib_sounds as sounds
 
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow

@@ -7,6 +7,8 @@ void _del_video();
 int _swap_buffers();
 int _get_ticks();
 
+void close_SDL();
+
 extern int _xres;
 extern int _yres;
 extern float _xresf;

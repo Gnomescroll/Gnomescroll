@@ -2,6 +2,7 @@
 
 cdef extern from "c_lib.hpp":
     int init_c_lib()
+    void close_c_lib()
 
 #print "Initing c_lib"
 
@@ -11,6 +12,9 @@ def init():
     if _init == 0:
         init_c_lib()
     _init = 1
+
+def close():
+    close_c_lib()
 
 #network stuff
 

@@ -1,5 +1,4 @@
-cdef extern from "./sound/sound.h":
-    void C_init(float vol)
+cdef extern from "./sound/sound.hpp" namespace "Sound":
     void update_sound_system()
     void release_all()
     void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
@@ -14,6 +13,8 @@ cdef extern from "./sound/sound.h":
     
     int update_channel(int ch_id, float x, float y, float z, float vx, float vy, float vz)
 
+    void set_volume(float vol)
+
 _enabled = True
 #decorator to require enabled audio
 def e(f):
@@ -24,18 +25,18 @@ def e(f):
     return wrapped
 
 
-def init(enabled=True, soundfiles=None, sfxvol=1.0, musicvol=1.0):
+def init(enabled=True, soundfiles=None, float sfxvol=1.0, float musicvol=1.0):
     global _enabled
     if soundfiles is None:
         enabled = False
-    if sfxvol <= 0 and musicvol <= 0:
+    if sfxvol <= 0. and musicvol <= 0.:
         enabled = False
     _enabled = enabled
-    _init(sfxvol, soundfiles)
+    init(soundfiles)
+    set_volume(sfxvol)
 
 @e
-def _init(vol, soundfiles):
-    C_init(vol)
+def init(soundfiles):
     set_soundfiles(soundfiles)
 
 '''

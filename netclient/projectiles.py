@@ -2,8 +2,6 @@
 import opts
 opts = opts.opts
 
-if opts.sound:
-    import c_lib.c_lib_sounds as sounds
 import c_lib.c_lib_particles as c_obj
 import c_lib.c_lib_sdl
 
@@ -109,9 +107,6 @@ class Projectile:
     def draw(self):
         return
 
-    def update_sound(self):
-        return
-
 Projectile.init()
 
 
@@ -122,8 +117,6 @@ class Laser(Projectile):
         self.sample_rate = 10.
         self.sample_range = range(int(self.sample_rate))
         self.sample_delta = 0.10
-        if opts.sound:
-            self.snd_id  = sounds.play_3d('warp2.wav', self.pos(), self.velocity())
 
     def tick(self):
         if not self.check_life():
@@ -186,14 +179,8 @@ class Laser(Projectile):
 
     def draw(self):
         x,y,z = self.pos()
-        #c_lib.c_lib_sdl.draw_particle(5, 0.5, x,y,z) #was 5
-
-    def update_sound(self):
-        if opts.sound:
-            sounds.update_3d(self.snd_id, self.pos(), self.velocity())
 
 Laser.init()
-
 
 class Grenade(Projectile):
 

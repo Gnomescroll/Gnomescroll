@@ -74,11 +74,6 @@ class World():
         if opts.draw_agents:
             c_lib.c_lib_agents.draw_agents()
 
-    def sound_updates(self):
-        for p in GameStateGlobal.projectileList.values():
-            p.update_sound()
-
-
 import projectiles
 
 #from cube_dat import CubeGlobal

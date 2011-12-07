@@ -22,8 +22,6 @@ import stats
 import intervals
 import vox_lib
 
-if opts.sound:
-    import c_lib.c_lib_sounds as sounds
 import world
 import camera
 
@@ -88,14 +86,13 @@ class App(object):
         InputGlobal.init_0(self)
         InputGlobal.init_1(self)
 
-    def init_sound(self):
-        if not opts.sound:
-            return
-        soundfiles = os.listdir('./media/sound/wav/')
-        sounds.init(enabled=opts.sound, soundfiles=soundfiles, sfxvol=opts.sfx, musicvol=opts.music)
+    #def init_sound(self):
+        #if not opts.sound:
+            #return
+        #soundfiles = os.listdir('./media/sound/wav/')
+        #sounds.init(enabled=opts.sound, soundfiles=soundfiles, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
-        self.init_sound()
 
         self.init_globals()
         self.animations = animations
@@ -161,8 +158,6 @@ class App(object):
         last_tick = 0
 
         while not GameStateGlobal.exit:
-            self.world.sound_updates()
-
             P2.start_frame() #TEST
             #theta += -.005 #test
             P.start_frame()
@@ -319,17 +314,9 @@ class App(object):
 
             self.intervals.process()
 
-            if opts.sound:
-                if agent:
-                    sounds.update(agent.listener_state())
-                else:
-                    sounds.update()
-
             P.finish_frame()
-        if opts.sound:
-            sounds.done()
 
-        cSDL.close()
+        init_c_lib.close()
 
 
 '''

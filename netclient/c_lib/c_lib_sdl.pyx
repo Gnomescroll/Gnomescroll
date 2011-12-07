@@ -8,10 +8,6 @@ cdef extern from "./SDL/SDL_functions.h":
     int _swap_buffers()
     int _get_ticks()
 
-def close():
-    print "Deconstructing SDL OpenGL Window"
-    _del_video()
-
 def flip():
     _swap_buffers()
 

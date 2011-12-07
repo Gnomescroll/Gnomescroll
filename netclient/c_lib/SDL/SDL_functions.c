@@ -305,6 +305,7 @@ int _get_ticks() {
     return SDL_GetTicks();
 }
 
-//  for(i=0; i < 16; i++) {
-//      s_buffer[(16 + s_index - i) % 16)
-//{
+void close_SDL() {
+    printf("Deconstructing SDL OpenGL Window\n");
+    _del_video();
+}

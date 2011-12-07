@@ -63,6 +63,9 @@
     /* input */
     #include <c_lib/input/input.cpp>
 
+    /* sound */
+    #include <c_lib/sound/sound.cpp>
+
 #endif
 
 #include <c_lib/state/client_state.cpp>
@@ -85,7 +88,18 @@ int init_c_lib() {
         init_inventory();
         HudMap::init();
         HudEquipment::init();
+
+        Sound::init();
     #endif
     
     return 0;
+}
+
+void close_c_lib() {
+    printf("close c_lib\n");
+
+    #ifdef DC_CLIENT
+        Sound::close();
+        close_SDL();
+    #endif
 }

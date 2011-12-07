@@ -3,12 +3,19 @@
 #include <c_lib/sound/wincompat.h>
 #include <stdio.h>
 
-#define MAX_CHANNELS 100
-#define MAX_SOUNDS 200
+namespace Sound {
+
+const int MAX_CHANNELS = 100;
+const int MAX_SOUNDS = 200;
+
 
 // Init, globals, system
 FMOD_SYSTEM* sound_sys;
-void C_init(float vol);
+void init(float vol);
+void close();
+
+void set_volume(float vol);
+
 void update_sound_system();
 void release_globals();
 void release_all();
@@ -38,4 +45,6 @@ void set_vector(FMOD_VECTOR* vec, float x, float y, float z);
 // Debug
 int ERRCHECK(FMOD_RESULT result);
 int test();
-//void print_trace();
+
+
+}

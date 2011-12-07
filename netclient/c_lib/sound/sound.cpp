@@ -1,4 +1,4 @@
-#include "sound.h"
+#include "sound.hpp"
 
 #ifndef TRUE
   #define TRUE 1
@@ -6,6 +6,8 @@
 #ifndef FALSE
   #define FALSE 0
 #endif
+
+namespace Sound {
 
 /* Init and update */
 void init_sound_system() {
@@ -18,21 +20,17 @@ void init_sound_system() {
     ERRCHECK(result);
 }
 
-void init_channel_group(float vol) {
+void init_channel_group() {
     FMOD_RESULT r;
     r = FMOD_System_CreateChannelGroup(sound_sys, "main", &chgroup);
     ERRCHECK(r);
     
-    // assign channel group
-    r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
-    ERRCHECK(r);
-
     update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void C_init(float vol) {
+void init() {
     init_sound_system();
-    init_channel_group(vol);
+    init_channel_group();
 }
 
 void update_sound_system() {
@@ -40,6 +38,13 @@ void update_sound_system() {
     // do not ERRCHECK
 }
 
+void set_volume(float vol) {
+    FMOD_RESULT r;
+    r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
+    ERRCHECK(r);
+
+    //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+}
 
 /* Listener (player) */
 
@@ -265,6 +270,10 @@ void release_all() {
     release_globals();
 }
 
+void close() {
+    release_all();
+}
+
 /*
     UTILITIES
                 */
@@ -305,8 +314,9 @@ int ERRCHECK(FMOD_RESULT result)
 }
 
 int test() {
-    init_sound_system(100);
-    FMOD_SOUND* gun = _load_2d_sound("../media/sound/wav/semishoot.wav");
+    init_sound_system();
+    char testfile[] = "../media/sound/wav/semishoot.wav";
+    FMOD_SOUND* gun = _load_2d_sound(testfile);
 
     _play_2d_sound(gun);
     //Sleep(1500);
@@ -316,22 +326,4 @@ int test() {
     return 0;
 }
 
-//void
- //print_trace (void)
- //{
-   //void *array[10];
-   //size_t size;
-   //char **strings;
-   //size_t i;
- 
-   //size = backtrace (array, 10);
-   //strings = backtrace_symbols (array, size);
- 
-   ////printf ("Obtained %zd stack frames.\n", size);
- 
-   //for (i = 0; i < size; i++)
-      ////printf ("%s\n", strings[i]);
- 
-   //free (strings);
- //}
-     
+}
