@@ -20,7 +20,7 @@ static const float spritesheet_width = 256.0f;
 static const float spritesheet_height = 256.0f;
 
 static const int n_items = width / icon_height;
-static int active = 0;
+static int slot = 0;
 
 void init_surface() {
 
@@ -71,12 +71,12 @@ void init() {
 }
 
 
-void set_active_slot(int slot) {
-    if (slot >= n_items) {
-        printf("WARNING: set_active_slot, slot=%d out of bounds\n", slot);
+void set_slot(int s) {
+    if (s >= n_items) {
+        printf("WARNING: set_slot, slot=%d out of bounds\n", s);
         return;
     }
-    active = slot;
+    slot = s;
 }
 
 int get_equipment_slot_icon(int slot) {
@@ -116,20 +116,48 @@ void draw_icons() {
     }
 }
 
+void draw_equipped() {
+    static const float z = -0.5f;
+    static const float line_width = 2.0f;
+
+    float x0,y0,x1,y1;
+
+    x0 = icon_width * slot;
+    x1 = x0 + icon_width;
+    y0 = _yresf - icon_height;
+    y1 = _yresf;
+    
+    glLineWidth(line_width);
+    glColor4ub(0,0,255,0);  // blue
+    glBegin(GL_LINE_STRIP);
+
+    glVertex3f(x0, y0, z);  // Top left
+    glVertex3f(x1, y0, z);  // Top right
+    glVertex3f(x1, y1, z);  // Bottom right
+    glVertex3f(x0, y1, z);  // Bottom left
+    glVertex3f(x0, y0, z);
+
+    glEnd();
+    glLineWidth(1.0);
+    glColor3ub(255,255,255);
+}
+
 void draw() {
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     
-    //draw_panel();
+    draw_panel();
     draw_icons();
 
     glDisable(GL_TEXTURE_2D);
+
+    draw_equipped();
 }
 
 //cython
 void draw_equipment(int slot){
-    set_active_slot(slot);
+    set_slot(slot);
     draw();
 }
 
