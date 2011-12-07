@@ -8,6 +8,7 @@
 //void * memcpy ( void * destination, const void * source, size_t num );
 
 #include <c_lib/template/char_buffer.hpp>
+#include <net_lib/export.hpp>
 
 class Python_channel_out {
     public:
@@ -22,7 +23,7 @@ class Python_channel_out {
     void write_message(char* buff, int n)
     {
         //printf("write_message: length= %i \n", n);
-        char t[2]; int n1=0; PACK_uint16_t(n+2, t, &n1);
+        char t[2]; int n1=0; PACK_uint16_t(n, t, &n1);
         fcb.write(t,2);
         fcb.write(buff,n);
 
@@ -35,6 +36,9 @@ class Python_channel_out {
         Net_message* nm = Net_message::acquire_reliable(bytes+5);   //need 2 bytes for sequence prefix
         //pack sequence number
         //char t[5]; 
+
+
+        /*
         static int _i = 0;
         static int l1 = 0;
         static int l2 = 0;
@@ -58,26 +62,15 @@ class Python_channel_out {
         int _sequence_number = l1 - l2;
 
         _i++;
-        //int _sequence_number;
-        //static int _alt = 0;
-        //_alt = (_alt+1) % 3;
-        //if (_alt == 0) _sequence_number = sequence_number;
+        */
 
-        //if(_i % 3 == 0) l1 += 3;  
-        //l2 = 2 - (_i%3);
-        //_i++;
-        
-        //_sequence_number = l2 + l1;
-    
-        
-        
         //printf("sequence= %i \n", sequence_number);
 
         int n1 =0;
-        printf("Py_out: sequence= %i, length= %i \n", _sequence_number, bytes);
+        printf("Py_out: sequence= %i, length= %i \n", sequence_number, bytes);
         PACK_uint8_t(254, nm->buff, &n1);      //message id
         PACK_uint16_t(bytes, nm->buff, &n1);    //length
-        PACK_uint16_t(_sequence_number, nm->buff, &n1); //sequence number
+        PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
         //fcb.write(t, 5);
         
         sequence_number++;
@@ -131,7 +124,7 @@ class Sequence_buffer_element {
     }
 };
 
-static int _total_packets = 0;
+//static int _total_packets = 0;
 
 class Python_channel_in {
     public:
@@ -145,6 +138,7 @@ class Python_channel_in {
         lowest_sequence = 0;
         read_index = 0;
         size = 0;
+        need = 0;
         read_sb = new Sequence_buffer_element;
     }
 
@@ -188,10 +182,16 @@ class Python_channel_in {
     void pop(char* buff, int length) 
     {
         //process cm
+        fcb.write(buff, length);
+        //process(buff, length);
         //printf("1 python packet processed:: seq= %i \n", lowest_sequence);
         lowest_sequence++; //USE MODULO
 
-        if(size == 0)  return;  //size equals zero: fast path return
+        if(size == 0)
+        {
+            process();
+            return;  //size equals zero: fast path return   
+        }
         Channel_message* cm;
         Sequence_buffer_element* sbe = read_sb;
         while(sbe->cm[read_index].buffer != NULL)
@@ -199,6 +199,8 @@ class Python_channel_in {
             size--; 
             cm = &sbe->cm[read_index];
             //process cm
+            //process(cm->buffer, cm->length);
+            fcb.write(cm->buffer, cm->length);
             delete cm->buffer;
             cm->buffer = NULL; //clear message
             //printf("2 python packet processed: seq= %i, %i left in buffer \n", lowest_sequence, size);
@@ -213,5 +215,46 @@ class Python_channel_in {
             }
         }
         if(size==0) read_index = 0;
+        process();
+    }
+
+    //handling
+    Fifo_char_buffer fcb;
+    int need;
+
+    //parse python packet
+    void process()
+    {
+        if(fcb.size != 0 and fcb.size <= 2) printf("py_message 3: #$@432432432\n");
+        while(need < fcb.size)
+        {
+            if(need == 0)
+            {
+                if(fcb.size <= 2) printf("py_message 2: #$@432432432\n");
+                char t[2];
+                int _n = 0;
+                fcb.read(t,2);
+                uint16_t _length;
+                UNPACK_uint16_t(&_length, t, &_n);
+                need = _length;
+
+                if(need < fcb.size) break;
+            }
+
+            char* tmp = new char[need];
+            fcb.read(tmp, need);
+            
+            if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
+            {
+                printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
+            } else {
+                int client_id = 0;
+                PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, client_id);
+            }
+
+            delete tmp;
+            need = 0;
+        }
+
     }
 };

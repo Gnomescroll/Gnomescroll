@@ -65,3 +65,20 @@ def GET_TICK():
 
 def GET_MS_TIME():
     return _GET_MS_TIME();
+
+
+
+
+### python network
+
+cdef extern from "./net_lib/export.hpp":
+    ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
+    void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
+
+cdef void py_net_callback(char* buff, int n, int client_id):
+    print "python callback: received %i bytes from client %i" % (n, client_id)
+
+cpdef init_python_net():
+    cdef PY_MESSAGE_CALLBACK p = py_net_callback
+    set_python_net_callback_function(py_net_callback)
+    print "Python net callback set"
