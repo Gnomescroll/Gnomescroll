@@ -36,6 +36,7 @@ import c_lib.c_lib_input as cInput
 import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_camera as cCamera
 
+init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
 from init_c_lib import _pviz_draw

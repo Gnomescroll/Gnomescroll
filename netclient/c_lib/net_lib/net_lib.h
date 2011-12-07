@@ -12,6 +12,8 @@
 
 //#include <c_lib.hpp> //DC_SERVER/DC_CLIENT define
 
+#include <net_lib/export.cpp>
+
 #include <net_lib/common/net_time.c>
 #include <net_lib/common/net_peer.cpp>
 #include <net_lib/common/sequencer.c>

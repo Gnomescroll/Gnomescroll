@@ -142,7 +142,7 @@ void _NetClientStartFrame() {
     } else {
         //_test_reliable();
         //_net_test(); //benchmark
-        //py_out_test();
+        py_out_test();
     }
 
     //deal with retransmission before retransmission

@@ -8,6 +8,7 @@
 //void * memcpy ( void * destination, const void * source, size_t num );
 
 #include <c_lib/template/char_buffer.hpp>
+#include <net_lib/export.hpp>
 
 class Python_channel_out {
     public:
@@ -22,7 +23,7 @@ class Python_channel_out {
     void write_message(char* buff, int n)
     {
         //printf("write_message: length= %i \n", n);
-        char t[2]; int n1=0; PACK_uint16_t(n+2, t, &n1);
+        char t[2]; int n1=0; PACK_uint16_t(n, t, &n1);
         fcb.write(t,2);
         fcb.write(buff,n);
 
@@ -63,19 +64,6 @@ class Python_channel_out {
         _i++;
         */
 
-        //int _sequence_number;
-        //static int _alt = 0;
-        //_alt = (_alt+1) % 3;
-        //if (_alt == 0) _sequence_number = sequence_number;
-
-        //if(_i % 3 == 0) l1 += 3;  
-        //l2 = 2 - (_i%3);
-        //_i++;
-        
-        //_sequence_number = l2 + l1;
-    
-        
-        
         //printf("sequence= %i \n", sequence_number);
 
         int n1 =0;
@@ -237,17 +225,35 @@ class Python_channel_in {
     //parse python packet
     void process()
     {
-        if(fcb.size != 0 and fcb.size <= 2) printf("#$@432432432\n");
+        if(fcb.size != 0 and fcb.size <= 2) printf("py_message 3: #$@432432432\n");
         while(need < fcb.size)
         {
             if(need == 0)
             {
+                if(fcb.size <= 2) printf("py_message 2: #$@432432432\n");
                 char t[2];
                 int _n = 0;
                 fcb.read(t,2);
-                uint16_t length;
-                UNPACK_uint16_t(&length, t, &_n);
+                uint16_t _length;
+                UNPACK_uint16_t(&_length, t, &_n);
+                need = _length;
+
+                if(need < fcb.size) break;
             }
+
+            char* tmp = new char[need];
+            fcb.read(tmp, need);
+            
+            if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
+            {
+                printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
+            } else {
+                int client_id = 0;
+                PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, client_id);
+            }
+
+            delete tmp;
+            need = 0;
         }
 
     }
