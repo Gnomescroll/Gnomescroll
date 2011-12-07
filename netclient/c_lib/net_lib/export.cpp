@@ -30,8 +30,16 @@ void send_python_net_message(char* message, int length, int client_id)
 
 }
 
-int _get_client_id() {
+int _get_client_id() 
+{
     #ifdef DC_CLIENT
         return NetClient::NPserver.client_id;
+    #endif
+}
+
+int _check_connection_status()
+{
+    #ifdef DC_CLIENT
+        return NetClient::NPserver.connected;
     #endif
 }
