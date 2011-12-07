@@ -47,7 +47,7 @@ ping = True # calculate and display ping
 ping_update_interval = 500  # ms delay between ping updates
 
 ''' Sound '''
-sound = False # global sound.
+sound = True # global sound.
 sfx = 100
 music = 100
 

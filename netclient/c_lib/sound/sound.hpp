@@ -5,34 +5,30 @@
 
 namespace Sound {
 
-const int MAX_CHANNELS = 100;
-const int MAX_SOUNDS = 200;
+class Soundfile {
+    public:
+        unsigned int hash;
+        int sound2d;
+        int sound3d;
+};
 
-
-// Init, globals, system
-FMOD_SYSTEM* sound_sys;
 void init(float vol);
 void close();
 
 void set_volume(float vol);
+void set_enabled(int y);
+void set_sound_path(char* path);
 
-void update_sound_system();
-void release_globals();
-void release_all();
+void update();
 
 // Sounds
-FMOD_SOUND* sounds[MAX_SOUNDS];
-int _add_sound(FMOD_SOUND* snd);
-int load_2d_sound(char* soundfile);
-int load_3d_sound(char* soundfile, float mindistance);
+void load_sound(char* file);
+
 int play_2d_sound(int snd_id);
 int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, float vz);
 void end_sound(int snd_id);
-void release_sound(FMOD_SOUND* sound);
 
 // Channels
-FMOD_CHANNELGROUP* chgroup;
-FMOD_CHANNEL* channels[MAX_CHANNELS];
 int update_channel(int ch_id, float x, float y, float z, float vx, float vy, float vz);
 
 // Listener
@@ -43,8 +39,6 @@ const FMOD_VECTOR create_vector(float x, float y, float z);
 void set_vector(FMOD_VECTOR* vec, float x, float y, float z);
 
 // Debug
-int ERRCHECK(FMOD_RESULT result);
 int test();
-
 
 }

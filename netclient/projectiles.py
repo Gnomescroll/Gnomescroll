@@ -118,7 +118,7 @@ class Laser(Projectile):
         self.sample_range = range(int(self.sample_rate))
         self.sample_delta = 0.10
 
-    def tick(self):
+    def _tick(self):
         if not self.check_life():
             return
 

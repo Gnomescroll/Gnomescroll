@@ -33,6 +33,7 @@ import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_camera as cCamera
+import c_lib.c_lib_sound as cSound
 
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
@@ -76,24 +77,19 @@ class App(object):
         ChatClientGlobal.init_1()
         MapControllerGlobal.init_1()
 
-        #cSDL.SDL_global.init()
-        #cInput.init()
-        #SDL.hud.init()
-
         init_c_lib.init()
+
 
     def init_inputs(self):
         InputGlobal.init_0(self)
         InputGlobal.init_1(self)
 
-    #def init_sound(self):
-        #if not opts.sound:
-            #return
-        #soundfiles = os.listdir('./media/sound/wav/')
-        #sounds.init(enabled=opts.sound, soundfiles=soundfiles, sfxvol=opts.sfx, musicvol=opts.music)
+    def init_sound(self):
+        path = './media/sound/wav/'
+        soundfiles = os.listdir(path)
+        cSound.Sound.init(path, soundfiles, enabled=opts.sound, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
-
         self.init_globals()
         self.animations = animations
         self.world = world.World()
@@ -111,10 +107,10 @@ class App(object):
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
 
         self.init_inputs()
-
         cAgents.load_agent_voxel_dat()
-
         cCamera.load_skybox()
+
+        self.init_sound()
         
         print "App init finished"
 
@@ -315,6 +311,8 @@ class App(object):
             self.intervals.process()
 
             P.finish_frame()
+
+            cSound.Sound.update()
 
         init_c_lib.close()
 

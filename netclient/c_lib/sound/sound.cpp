@@ -9,6 +9,39 @@
 
 namespace Sound {
 
+static int enabled = 1;
+static const int MAX_CHANNELS = 100;
+static const int MAX_SOUNDS = 200;
+
+static FMOD_VECTOR lis_pos;
+static FMOD_VECTOR lis_vel;
+static FMOD_VECTOR lis_for;
+static FMOD_VECTOR lis_up;
+
+static char sound_path[100];
+
+static FMOD_SYSTEM* sound_sys;
+
+static FMOD_CHANNELGROUP* chgroup;
+static FMOD_CHANNEL* channels[MAX_CHANNELS];
+
+static FMOD_SOUND* sounds[MAX_SOUNDS];
+static Soundfile soundfiles[MAX_SOUNDS/2];
+
+
+/* Debug */
+int ERRCHECK(FMOD_RESULT result)
+{
+    if (result != FMOD_OK)
+    {
+        printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+        //print_trace();
+        //exit(1);
+        return 1;
+    }
+    return 0;
+}
+
 /* Init and update */
 void init_sound_system() {
     FMOD_RESULT result;
@@ -38,6 +71,11 @@ void update_sound_system() {
     // do not ERRCHECK
 }
 
+void update() {
+    update_sound_system();
+}
+
+/* Setters */
 void set_volume(float vol) {
     FMOD_RESULT r;
     r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
@@ -46,12 +84,15 @@ void set_volume(float vol) {
     //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-/* Listener (player) */
+void set_enabled(int y) {
+    enabled = y;
+}
 
-FMOD_VECTOR lis_pos;
-FMOD_VECTOR lis_vel;
-FMOD_VECTOR lis_for;
-FMOD_VECTOR lis_up;
+void set_sound_path(char* path) {
+    strcpy(sound_path, path);
+}
+
+/* Listener (player) */
 
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz) {
     set_vector(&lis_pos, x, y, z);
@@ -71,12 +112,12 @@ int _add_channel(FMOD_CHANNEL* ch) {    // to channels array
     for (i=0; i<MAX_CHANNELS; i++) {
         if (channels[i] == NULL) {
             channels[i] = ch;
-            ////printf("_add_channel :: channel found :: %d\n", i);
+            //printf("_add_channel :: channel found :: %d\n", i);
             break;
         }
     }
     if (i == MAX_CHANNELS) {
-        ////printf("_add_channel :: No NULL channels found\n");
+        //printf("_add_channel :: No NULL channels found\n");
         i = -1;
     }
     return i;
@@ -102,8 +143,27 @@ int update_channel(int ch_id, float x, float y, float z, float vx, float vy, flo
     return i;
 }
 
-
 /* Sounds */
+
+unsigned int hash(char* s) {
+    unsigned int highorder;
+    unsigned int h = 0;
+    int i;
+    for (i=0; s[i] != '\0'; i++) {
+         highorder = h & 0xf8000000;    // extract high-order 5 bits from h
+                                        // 0xf8000000 is the hexadecimal representation
+                                        //   for the 32-bit number with the first five 
+                                        //   bits = 1 and the other bits = 0   
+         h = h << 5;                    // shift h left by 5 bits
+         h = h ^ (highorder >> 27);     // move the highorder 5 bits to the low-order
+                                        //   end and XOR into h
+         h = h ^ (unsigned int)s[i];                  // XOR h and ki
+    }
+    return h;
+}
+
+
+/* Loading */
 
 int _add_sound(FMOD_SOUND* snd) {   // to sounds array
     int i;
@@ -143,6 +203,39 @@ FMOD_SOUND* _load_3d_sound(char *soundfile, float mindistance) { // use lower mi
     return sound;
 }
 
+int load_2d_sound(char *soundfile) {
+    FMOD_SOUND* snd = _load_2d_sound(soundfile);
+    int i = _add_sound(snd);
+    return i;
+}
+
+int load_3d_sound(char *soundfile, float mindistance) {
+    //printf("load_3d_sound :: request :: %s %f\n", soundfile, mindistance);
+    FMOD_SOUND* snd = _load_3d_sound(soundfile, mindistance);
+    int i = _add_sound(snd);
+    //printf("load_3d_sound :: loaded :: %d\n", i);
+    return i;
+}
+
+void load_sound(char *file) {
+    static int soundfile_index = 0;
+
+    if (soundfile_index >= MAX_SOUNDS/2) {
+        printf("MAX_SOUNDS reached.\n");
+        return;
+    }
+
+    static const float mindistance = 100.0f;
+    Soundfile s = soundfiles[soundfile_index];
+    s.hash = hash(file);
+    s.sound2d = load_2d_sound(file);
+    s.sound3d = load_3d_sound(file, mindistance);
+
+    soundfile_index++;
+}
+
+/* Playback */
+
 FMOD_CHANNEL* _play_2d_sound(FMOD_SOUND* sound) {
     FMOD_CHANNEL* channel = 0;
     FMOD_RESULT result;
@@ -156,7 +249,6 @@ FMOD_CHANNEL* _play_2d_sound(FMOD_SOUND* sound) {
 
     return channel;
 }
-
 
 FMOD_CHANNEL* _play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
     FMOD_CHANNEL* channel = 0;
@@ -174,22 +266,6 @@ FMOD_CHANNEL* _play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMO
     return channel;
 }
 
-
-//Public
-int load_2d_sound(char *soundfile) {
-    FMOD_SOUND* snd = _load_2d_sound(soundfile);
-    int i = _add_sound(snd);
-    return i;
-}
-
-//Public
-int load_3d_sound(char *soundfile, float mindistance) {
-    //printf("load_3d_sound :: request :: %s %f\n", soundfile, mindistance);
-    FMOD_SOUND* snd = _load_3d_sound(soundfile, mindistance);
-    int i = _add_sound(snd);
-    //printf("load_3d_sound :: loaded :: %d\n", i);
-    return i;
-}
 
 //Public
 int play_2d_sound(int snd_id) {
@@ -279,7 +355,7 @@ void close() {
                 */
 
 /* Vectors */
-const float _tick = 30.0f; // ticks per second
+static const float _tick = 30.0f; // ticks per second
 void set_vector(FMOD_VECTOR* vec, float x, float y, float z) {
     // convert velocity units to m/s (comes in at m/tick, tick=33ms)
     x *= _tick;
@@ -298,28 +374,13 @@ const FMOD_VECTOR create_vector(float x, float y, float z) {
     return vec;
 }
 
-
-/* Debug */
-
-int ERRCHECK(FMOD_RESULT result)
-{
-    if (result != FMOD_OK)
-    {
-        printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
-        //print_trace();
-        //exit(1);
-        return 1;
-    }
-    return 0;
-}
-
+/*DEBUG*/
 int test() {
     init_sound_system();
     char testfile[] = "../media/sound/wav/semishoot.wav";
     FMOD_SOUND* gun = _load_2d_sound(testfile);
 
     _play_2d_sound(gun);
-    //Sleep(1500);
 
     release_sound(gun);
     release_sound_system();

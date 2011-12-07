@@ -28,11 +28,6 @@ from draw_utils import *
 from net_out import NetOut
 from input import InputGlobal
 
-'''
-Physics for agents
-
--- 7/27/11 Copied from /server/agents.py --
-'''
 class AgentPhysics(object):
 
     #deprecate
