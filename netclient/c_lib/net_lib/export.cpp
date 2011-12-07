@@ -29,3 +29,9 @@ void send_python_net_message(char* message, int length, int client_id)
     #endif    
 
 }
+
+int _get_client_id() {
+    #ifdef DC_CLIENT
+        return NetClient::NPserver.client_id;
+    #endif
+}
