@@ -92,7 +92,7 @@ void render() {
 
 // First apply scale matrix
     //glScalef(size, size, size);  // a big number?
-    float _sky_scale = 32.0;
+    float _sky_scale = 1.0;
     glScalef(_sky_scale, _sky_scale, _sky_scale);
 
     float cz = -0.0f,cx = 1.0f; // texture corners

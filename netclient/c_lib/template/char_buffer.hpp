@@ -57,7 +57,7 @@ class Fifo_char_buffer
     //void * memcpy ( void * destination, const void * source, size_t num );
     void write(char* buff, int n)
     {
-        int _n = n; //debug
+        //int _n = n; //debug
         int fb = CHAR_BUFFER_SIZE - write_index;
 
         //printf("Fifo_char_buffer: write \n");
