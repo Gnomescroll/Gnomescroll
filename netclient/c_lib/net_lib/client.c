@@ -79,13 +79,14 @@ void _test_reliable() {
 void py_out_test() 
 {
     static int t_count = 0;
-    t_count++;
-    if(t_count % 100 == 0)
+    //if(t_count % 100 == 0)
+    if(t_count < 150)
     {
-        printf("py_out_test\n");
+        printf("py_out_test: packet %i \n", t_count);
         char* _ctest = "test1\n";
         int length = 6;
         NetClient::NPserver.write_python_packet(_ctest, length);
+        t_count++;
     }
 }
 
