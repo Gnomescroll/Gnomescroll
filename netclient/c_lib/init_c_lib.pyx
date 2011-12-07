@@ -97,3 +97,33 @@ def _pviz_draw(float x, float y, float z):
 
 def _toggle_latency_unit():
     toggle_latency_unit()
+
+
+### python network
+
+cdef extern from "./net_lib/export.hpp":
+    ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
+    void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
+    void send_python_net_message(char* message, int size, int client_id)
+    int _get_client_id()
+    int _check_connection_status()
+
+def get_client_id():
+    return _get_client_id()
+
+def connected():
+    return _check_connection_status()
+    
+cdef void py_net_callback(char* buff, int n, int client_id):
+    print "python callback: received %i bytes from client %i" % (n, client_id)
+
+def init_python_net():
+    cdef PY_MESSAGE_CALLBACK p = py_net_callback
+    set_python_net_callback_function(py_net_callback)
+    print "Python net callback set"
+
+def _send_python_net_message(message, int client_id):
+    print "Send python net message"
+    cdef int length = len(message)
+    cdef char* c_string = message
+    send_python_net_message(message, length, client_id)
