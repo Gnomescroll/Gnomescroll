@@ -8,7 +8,12 @@ void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
     PY_MESSAGE_CALLBACK_GLOBAL = pt;
 }
 
+PY_CLIENT_EVENT_CALLBACK PY_CLIENT_EVENT_CALLBACK_GLOBAL = NULL;
 
+void set_python_net_event_callback_function(PY_CLIENT_EVENT_CALLBACK pt) 
+{
+    PY_CLIENT_EVENT_CALLBACK_GLOBAL = pt;
+}
 
 void send_python_net_message(char* message, int length, int client_id)
 {
