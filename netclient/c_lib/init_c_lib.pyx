@@ -109,9 +109,11 @@ def get_client_id():
 
 def connected():
     return _check_connection_status()
-    
+
 cdef void py_net_callback(char* buff, int n, int client_id):
     print "python callback: received %i bytes from client %i" % (n, client_id)
+    ustring = buff[:n].decode('UTF-8')
+    print "str: %s" % (ustring)
 
 def init_python_net():
     cdef PY_MESSAGE_CALLBACK p = py_net_callback

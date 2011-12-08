@@ -74,11 +74,25 @@ def GET_MS_TIME():
 cdef extern from "./net_lib/export.hpp":
     ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
     void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
+    void send_python_net_message(char* message, int size, int client_id)
+    int _check_connection_status(int client_id)
+
+def connected(client_id):
+    return _check_connection_status(client_id)
 
 cdef void py_net_callback(char* buff, int n, int client_id):
-    print "python callback: received %i bytes from client %i" % (n, client_id)
+    ustring = buff[:n].decode('UTF-8')
+    #print "str: %s" % (ustring)
+    print "%i bytes,from client %i: %s" % (n, client_id, ustring)
+
 
 cpdef init_python_net():
     cdef PY_MESSAGE_CALLBACK p = py_net_callback
     set_python_net_callback_function(py_net_callback)
     print "Python net callback set"
+
+def _send_python_net_message(message, int client_id):
+    print "Send python net message"
+    cdef int length = len(message)
+    cdef char* c_string = message
+    send_python_net_message(message, length, client_id)

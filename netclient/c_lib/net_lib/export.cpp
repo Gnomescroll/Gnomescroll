@@ -34,6 +34,8 @@ int _get_client_id()
 {
     #ifdef DC_CLIENT
         return NetClient::NPserver.client_id;
+    #else
+        return 0;
     #endif
 }
 
@@ -41,5 +43,21 @@ int _check_connection_status()
 {
     #ifdef DC_CLIENT
         return NetClient::NPserver.connected;
+    #else
+        return 0;
+    #endif
+}
+
+int _check_connection_status(int client_id) 
+{
+    #ifdef DC_SERVER
+        if(NetServer::pool.connection[client_id] == NULL)
+        {
+            printf("_check_connection_status: client_id % is null\n", client_id);
+            return 0;
+        }
+        return NetServer::pool.connection[client_id]->connected;
+    #else
+        return 0;
     #endif
 }

@@ -106,7 +106,7 @@ class App(object):
         self.camera = camera.Camera(x=0., z=50., fov=opts.fov, name='camera')
         self.camera.load()
         self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent_camera', first_person=True)
-        
+
         self.hud = Hud()
 
         self.intervals = intervals.Intervals()
@@ -119,7 +119,7 @@ class App(object):
         cAgents.load_agent_voxel_dat()
 
         cCamera.load_skybox()
-        
+
         print "App init finished"
 
     def _exit(self):
@@ -199,14 +199,14 @@ class App(object):
                 if agent:
                     agent.set_button_state()
                 #TCP in
-                NetClientGlobal.connection.attempt_recv()
-                
+                #NetClientGlobal.connection.attempt_recv()
+
                 #physics tick routine
                 self.animations.tick()
                 self.world.tick()
                 cParticles.tick() ## TESTING
-                
-                
+
+
                 NetClientNetInTick()    #UDP in
                 NetClientStateTick()    #state tick (this does nothing?)
 
@@ -262,7 +262,7 @@ class App(object):
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
-            
+
             #import pdb; pdb.set_trace()
 
             P.event("Draw Interpolation")
@@ -272,7 +272,7 @@ class App(object):
             if agent:
                 pass
                 #agent.draw_aiming_direction() #this is broken
-                
+
             P.event("Animations Draw")
             self.animations.draw()
             P.event("c_lib_particles.draw()")
@@ -356,7 +356,7 @@ if sl_c > 0:
             set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
         elif _m < 64:
             set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-            
+
         if _m == 64:
             _m = 0
         else:
@@ -379,7 +379,7 @@ if sl_c > 0:
             set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
         elif _m < 64:
             set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-            
+
         if _m == 64:
             _m = 0
         else:

@@ -9,3 +9,4 @@ extern PY_MESSAGE_CALLBACK PY_MESSAGE_CALLBACK_GLOBAL;
 void send_python_net_message(char* message, int size, int client_id);
 int _get_client_id();
 int _check_connection_status();
+int _check_connection_status(int client_id);

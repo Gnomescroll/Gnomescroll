@@ -137,6 +137,8 @@ class NetPeer
 
         pending_unreliable_bytes_out = 0;
         pending_reliable_bytes_out = 0;
+
+        py_in.np = this;
     }
 
 

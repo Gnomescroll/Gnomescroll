@@ -8,21 +8,25 @@ import json
 import struct
 import platform
 
+import init_c_lib
+
+from init_c_lib import connected, _send_python_net_message
+
 #OS = platform.system()
 OS = "Windows"
 
 class NetServer:
     connectionPool = None
-    datagramDecoder = None
-    serverListener = None
+    #datagramDecoder = None
+    #serverListener = None
 
     #state
-    _client_id = 0
+    #_client_id = 0
 
-    @classmethod
-    def generate_client_id(cls):
-        cls._client_id += 1
-        return cls._client_id
+    #@classmethod
+    #def generate_client_id(cls):
+    #    cls._client_id += 1
+    #    return cls._client_id
 
     @classmethod
     def init_0(cls):
