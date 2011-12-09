@@ -65,7 +65,8 @@ class PyClient:
         self.out = SendPacket(self)
         self.client_id = None
 
-        self.fmt = '<I H'
+        #self.fmt = '<I H'
+        self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
 
         global _msg_buffer     
@@ -96,9 +97,11 @@ class PyClient:
         self.message_buffer = []
 
     def handleMessage(self, message):
-        print "message= %s" %(message)
-        msg_type, datagram = message[:self.fmtlen], message[self.fmtlen:]
-        self.messageHandler.process_net_event(msg_type, datagram)
+        msg_type = struct.unpack(self.fmt, message[0:2])
+        msg_type = msg_type[0]
+        message = message[2:]
+        print "message: %s" % (message)
+        self.messageHandler.process_net_event(msg_type, message)
 
     def close(self):
         pass
