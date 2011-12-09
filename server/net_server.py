@@ -178,7 +178,7 @@ class PyClient:
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
 
 
-_msg_buffer = False
+_msg_buffer = True
 
 
 
@@ -218,10 +218,11 @@ class PyClientPool:
             self.handleMessage(client_id, message)
         self.message_buffer = []
 
-    def handleMessage(self, _client_id, message):
+    def handleMessage(self, client_id, message):
         print "client %i: %s" % (client_id, message)
         #message handling
-        length, msg_type = struct.unpack(self.fmt, prefix)
+        length, msg_type = struct.unpack(self.fmt, message)
+        print "length=%i, msg=%s" % (length, msg_type)
         connection = clients_by_id.get(_client_id, None)
         if connection == None:
             print "PyClientPool: handleMessage, client id does not exist in pool"
