@@ -18,7 +18,8 @@ class NetClientGlobal:
     connection = None
     sendPacket = None
 
-    client_id = '0'
+    #client_id = '0'
+
     name = opts.name
     VERSION = opts.version
 
@@ -31,6 +32,9 @@ class NetClientGlobal:
     def init_1(cls):
         NetClientGlobal.connection.init()
         assert cls.sendPacket != None
+    @classmethod
+    def client_id(cls):
+        return NetClientGlobal.connection.client_id
 
 import init_c_lib
 from init_c_lib import get_client_id, connected, _send_python_net_message
