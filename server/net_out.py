@@ -279,10 +279,11 @@ def sendJSON(cmd=None):
     return outer
 
 class SendMessage: #each connection has one of these
-    fmt = '<I H'
+    #fmt = '<I H'
+    fmt = '<H'
     @classmethod
     def add_prefix(cls, id, msg):
-        return struct.pack(cls.fmt, 4+2+len(msg), id) + msg #length prefix not included in length?
+        return struct.pack(cls.fmt, id) + msg #length prefix not included in length?
     @classmethod
     def get_json(cls, dict):
         return cls.add_prefix(1, json.dumps(dict))
