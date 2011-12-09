@@ -138,7 +138,7 @@ cdef void py_net_message_callback(char* buff, int n, int client_id):
     print "str: %s" % (ustring)
 
 def _send_python_net_message(message, int client_id):
-    print "Send python net message"
+    #print "Send python net message"
     cdef int length = len(message)
     cdef char* c_string = message
     send_python_net_message(message, length, client_id)

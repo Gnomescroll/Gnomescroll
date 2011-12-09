@@ -53,7 +53,6 @@ def sendJSON(cmd=None, tick=False):
                 cmd_final = ''
             if cmd_final != '' or 'cmd' not in json_data:
                 json_data['cmd'] = cmd_final
-
             if tick:
                 json_data['tick'] = GameStateGlobal.gameState.time
 

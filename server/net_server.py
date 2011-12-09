@@ -180,8 +180,6 @@ from init_c_lib import register_client_creation, register_client_deletion, regis
 
 _msg_buffer = True
 
-
-
 #function = lambda: 42
 class PyClientPool:
 

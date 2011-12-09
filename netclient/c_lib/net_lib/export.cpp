@@ -40,7 +40,7 @@ void send_python_net_message(char* message, int length, int client_id)
 {
     #ifdef DC_CLIENT
         static int t_count = 0;
-        printf("py_out: packet %i \n", t_count);
+        //printf("py_out: packet %i \n", t_count);
         NetClient::NPserver.write_python_packet(message, length);
         t_count++;
     #endif
