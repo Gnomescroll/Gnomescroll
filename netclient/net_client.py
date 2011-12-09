@@ -34,7 +34,11 @@ class NetClientGlobal:
         assert cls.sendPacket != None
     @classmethod
     def client_id(cls):
-        return NetClientGlobal.connection.client_id
+        cid = NetClientGlobal.connection.client_id
+        if cid == None:
+            assert False
+        else:
+            return cid
 
 import init_c_lib
 from init_c_lib import get_client_id, connected, _send_python_net_message

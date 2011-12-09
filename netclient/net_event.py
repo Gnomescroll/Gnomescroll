@@ -210,26 +210,30 @@ class MapMessageHandler(GenericMessageHandler):
 
     def _clear_map(self, **msg):
         terrainMap.clear()
-        
+
 
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        'client_id' : '_client_id',
-        'set_client_id' : '_set_client_id',
+        #'client_id' : '_client_id',
+        #'set_client_id' : '_set_client_id',
         'client_quit' : '_client_quit',
         'identified' : '_identified',
         'identify_fail' : '_identify_fail',
     }
 
+    #deprecate
     def _client_id(self, **msg):
+        assert False
         if self._set_client_id(**msg):
             NetOut.sendMessage.received_client_id()
             NetOut.sendMessage.identify()
         else:
             NetOut.sendMessage.request_client_id()
 
+    #deprecate
     def _set_client_id(self, id, **arg):
+        asser False
         print "Received Client Id: %s" % (id,)
         NetClientGlobal.client_id = id
         return True
