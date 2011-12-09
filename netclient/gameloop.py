@@ -125,7 +125,6 @@ class App(object):
         START_CLOCK() #clock must be started before networking stuff
         a,b,c,d = opts.server.split(".")
         NetClientConnect(int(a),int(b),int(c),int(d), 0)
-        NetClientGlobal.connect() #python connection
 
     def mainLoop(self):
         global P, Phy
@@ -158,6 +157,11 @@ class App(object):
             P2.start_frame() #TEST
             #theta += -.005 #test
             P.start_frame()
+
+
+            NetClientGlobal.connection.dispatch_buffer()
+
+
             tc = 0
             _density = 1
             _min = 0.025

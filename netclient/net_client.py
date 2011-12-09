@@ -33,11 +33,6 @@ class NetClientGlobal:
         #assert cls.connection != None
         assert cls.sendPacket != None
 
-    @classmethod
-    def connect(cls):
-        return
-        #cls.connection.connect()
-
 import init_c_lib
 from init_c_lib import get_client_id, connected, _send_python_net_message
 
@@ -66,27 +61,35 @@ class PyClient:
     def __init__(self):
         self.connected = False
         self.out = SendPacket(self)
+        self.client_id = None
 
         global _msg_buffer     
         if _msg_buffer: 
             self.message_buffer = []
-            register_client_message_handling(( lambda _client_id, message : self.push_to_buffer(_client_id, message) ))
+            register_client_message_handling(( lambda _client_id, message : self.push_to_buffer(message) ))
 
-        register_client_creation(( lambda _client_id: self.addClient(_client_id) ))
-        register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
+        register_client_creation(( lambda client_id: self.on_connect(client_id) ))
+        register_client_deletion(( lambda client_id: self.removeClient(client_id) ))
 
-    def push_to_buffer(self, client_id, message):
-        self.message_buffer.append([client_id, message])
+    def on_connect(self, client_id):
+        print "NetClient connected: client id = %i" % (client_id)
+        self.client_id = client_id
+
+    def on_disconnect(self):
+        self.client_id = None
+        self.connected = False
+
+    def push_to_buffer(self, message):
+        self.message_buffer.append(message)
     def dispatch_buffer(self):
         global _msg_buffer     
         if not _msg_buffer:
             return
-        self.dispatch_event_buffer()
-        for client_id, message in self.message_buffer:
-            self.handleMessage(client_id, message)
+        for message in self.message_buffer:
+            self.handleMessage(message)
         self.message_buffer = []
 
-    def handleMessage(self, client_id, message):
+    def handleMessage(self, message):
         pass
 
     #def connect(self):

@@ -166,7 +166,6 @@ void Python_channel_in::process()
         {
             printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
         } else {
-            int client_id = 0;
             PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, np->client_id);
         }
 
