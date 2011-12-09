@@ -288,6 +288,7 @@ class Main:
         while True:
             #NetServer.serverListener.accept() #accept incoming connections
             #NetServer.connectionPool.process_events() #check for new data
+            NetServer.connectionPool.dispatch_buffer()
             sl_c =0
             while True: #physics loop
                 tc = GET_TICK()
