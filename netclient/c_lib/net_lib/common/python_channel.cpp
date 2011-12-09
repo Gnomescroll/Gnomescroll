@@ -155,9 +155,9 @@ void Python_channel_in::process()
             uint16_t _length;
             UNPACK_uint16_t(&_length, t, &_n);
             need = _length;
-
-            if(need < fcb.size) break;
         }
+        
+        if(need < fcb.size) break;
 
         char* tmp = new char[need];
         fcb.read(tmp, need);

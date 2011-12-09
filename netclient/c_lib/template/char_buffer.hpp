@@ -93,7 +93,7 @@ class Fifo_char_buffer
         if(n > size)
         {
           printf("Fifo_char_buffer: FATAL ERROR, n greater than size, n=%i, size=%i \n", n, size);   
-          printf("segfault= %i \n", ((int*)NULL));
+          printf("segfault= %li \n", (long)((int*)NULL));
         } //debug
         //if(n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
 
