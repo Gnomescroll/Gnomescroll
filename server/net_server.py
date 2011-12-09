@@ -183,7 +183,7 @@ class PyClientPool:
         pass
     def __init__(self):
         self._client_count = 0
-        self._clients_by_id = {}
+        self.clients_by_id = {}
         self.names = {}
         atexit.register(self.on_exit)
 
@@ -197,21 +197,23 @@ class PyClientPool:
     def on_exit(self):
         pass
 
+    #called when client connection established
     def addClient(self, _client_id):
         print "PyClientPool: addClient, id= %i" % (_client_id)
         self._client_count += 1
-        if type == 'tcp':
-            client =  PyClient(_client_id)
-            if client.id not in self._clients_by_id:
-                self._clients_by_id[client.id] = client
-                print "Connection associated with client_id= %s" % (client.id,)
+        client =  PyClient(_client_id)
+        if client.id not in self.clients_by_id:
+            self.clients_by_id[client.id] = client
+            print "Connection associated with client_id= %s" % (client.id,)
 
+    #called on connection deconstruction
     def removeClient(self, _client_id):
         print "PyClientPool: removeClient, id= %i" % (_client_id)
+        del self.clients_by_id[client.id]
 
     def by_client_id(self, client_id):
-        if client_id in self._clients_by_id:
-            return self._clients_by_id[client_id]
+        if client_id in self.clients_by_id:
+            return self.clients_by_id[client_id]
 
     def name_client(self, connection, name):
         avail, you = self.name_available(name, connection)
@@ -245,7 +247,7 @@ class PyClientPool:
         del self._client_pool[fileno] #remove from client pool
         if connection.id != 0: # remove from chat
             ChatServer.chat.disconnect(connection)
-            del self._clients_by_id[connection.id]
+            del self.clients_by_id[connection.id]
         if connection.name in self.names:
             del self.names[connection.name]
         GameStateGlobal.disconnect(connection)
