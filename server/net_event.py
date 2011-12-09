@@ -493,12 +493,14 @@ class ProjectileMessageHandler(GenericMessageHandler):
         if weapon.fire_command == 'throw_grenade' and weapon.fire():
             agent.throw_grenade(vector)
 
+    #deprecate
     @logError('fire_projectile')
     @extractPlayer
     @processAgent('aid')
     @processIterable('pos', 3)
     @processIterable('vec', 3, err_key='vec (direction)')
     def fire_projectile(self, msg, player, agent, pos, vec):
+        assert False
         weapon = agent.active_weapon()
         if weapon.fire_command == 'fire_projectile' and weapon.fire():
             agent.fire_projectile(pos=pos, direction=vec)
