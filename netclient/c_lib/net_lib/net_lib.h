@@ -19,6 +19,7 @@
 #include <net_lib/common/sequencer.c>
 #include <net_lib/common/message_handler.c>
 #include <net_lib/common/packet_buffer.cpp>
+#include <net_lib/common/python_channel.cpp>
 
 #ifdef DC_CLIENT
 #include <net_lib/client/client.cpp>
