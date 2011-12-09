@@ -234,7 +234,7 @@ class PyClientPool:
         msg_type = struct.unpack(self.fmt, message[0:2])
         msg_type = msg_type[0]
         message = message[2:]
-        print "client %i: %s" % (client_id, message)
+        #print "client %i: %s" % (client_id, message)
         #print "length=%i, msg=%s" % (length, message)
         connection = self.clients_by_id.get(client_id, None)
         if connection == None:
