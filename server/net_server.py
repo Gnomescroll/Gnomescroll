@@ -218,7 +218,7 @@ class PyClientPool:
                 self.addClient(client_id)
             if event_id == 1:
                 self.removeClient(client_id)
-        self.message_buffer = []
+        self.event_buffer = []
 
     def push_to_buffer(self, client_id, message):
         self.message_buffer.append([client_id, message])
