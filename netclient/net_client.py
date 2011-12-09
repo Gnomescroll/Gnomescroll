@@ -34,8 +34,6 @@ class NetClientGlobal:
 
 import init_c_lib
 from init_c_lib import get_client_id, connected, _send_python_net_message
-
-
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
 
 class SendPacket:
@@ -67,6 +65,9 @@ class PyClient:
         self.out = SendPacket(self)
         self.client_id = None
 
+        self.fmt = '<I H'
+        self.fmtlen = struct.calcsize(self.fmt)
+
         global _msg_buffer     
         if _msg_buffer: 
             self.message_buffer = []
@@ -96,16 +97,11 @@ class PyClient:
 
     def handleMessage(self, message):
         print "message= %s" %(message)
+        msg_type, datagram = message[:self.fmtlen], message[self.fmtlen:]
+        self.messageHandler.process_net_event(msg_type, datagram)
 
     def close(self):
         pass
-    
-    def send(self, MESSAGE):
-        assert False
-    def attempt_recv(self):
-        assert False
-    def recv(self):
-        assert False
 
 from game_state import GameStateGlobal
 from net_event import NetEventGlobal
