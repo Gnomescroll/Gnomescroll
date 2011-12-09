@@ -78,7 +78,7 @@ class PyClient:
         self.name = None
         #self.ec = 0
 
-        self._set_client_id()
+        #self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
@@ -199,7 +199,7 @@ class PyClientPool:
         print "client %i: %s" % (client_id, message)
         #message handling
         length, msg_type = struct.unpack(self.fmt, prefix)
-        connection = clients_by_id.get(client_id, None)
+        connection = clients_by_id.get(_client_id, None)
         if connection == None:
             print "PyClientPool: handleMessage, client id does not exist in pool"
             return
