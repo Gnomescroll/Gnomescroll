@@ -195,7 +195,7 @@ class PyClientPool:
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
 
-    def handleMessage(self, _client_id, message):
+    def handleMessage(self, client_id, message):
         print "client %i: %s" % (client_id, message)
         #message handling
         length, msg_type = struct.unpack(self.fmt, prefix)
