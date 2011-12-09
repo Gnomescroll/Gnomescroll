@@ -80,7 +80,7 @@ class PyClient:
         #self.ec = 0
 
         #self._set_client_id()
-        self.sendMessage.send_client_id(self) #send client an id upon connection
+        #self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
     def identify(self, name):

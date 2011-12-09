@@ -72,36 +72,7 @@ class EventOut:
     def add_json_event(self, dict):
         self.event_packets.append(SendMessage.get_json(dict))
 
-    @sendJSONevent('agent_position')
-    def agent_state_change(self, agent):
-        return {
-            'id'   : agent.id,
-            'state': agent.state, #is a 9 tuple
-        }
-
-#deprecated
-    @sendJSONevent('agent_control_state')
-    def agent_control_state(self, agent):
-        return {
-            'id'    :   agent.id,
-            'state' :   agent.control_state(),
-            'angle' :   agent.angle(),
-        }
-
-    @sendJSONevent('agent_angle')
-    def agent_angle(self, agent):
-        return {
-            'id'    :   agent.id,
-            'angle' :   agent.angle(),
-        }
-
-    @sendJSONevent('agent_button_state')
-    def agent_button_state(self, agent):
-        return {
-            'id'        :   agent.id,
-            'buttons'   :   agent.button_state,
-        }
-
+    #Deprecate?
     @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
         print 'sending agent update'
@@ -109,27 +80,22 @@ class EventOut:
             'agent' :   agent.json(properties),
         }
 
-    # special case method for agent xyz. the client processes this differently than normal agent_update
-    @sendJSONevent('agent_position')
-    def agent_position(self, agent):
-        return {
-            'id'    :   agent.id,
-            #'pos'   :   agent.pos(),
-            'pos'   :   agent.state,
-        }
-
+    #deprecate
     @sendJSONevent('projectile_create')
     def projectile_create(self, projectile):
+        assert False
         return {
             'projectile'    :   projectile.json(),
         }
 
+    #deprecate
     @sendJSONevent('projectile_destroy')
     def projectile_destroy(self, projectile):
         return {
             'id'    :   projectile.id,
         }
 
+    #deprecate
     @sendJSONevent('projectile_update')
     def projectile_update(self, projectile):
         return {
@@ -179,6 +145,7 @@ class EventOut:
             'id'    :   weapon.id,
         }
 
+    #deprecate
     @sendJSONevent('player_create', tick=False)
     def player_create(self, player):
         return {
@@ -311,9 +278,10 @@ class SendMessage: #each connection has one of these
                     fin['key'] = key
         return fin
 
-    ## messages go out immediately
+    ## DEPRECATE
     @sendJSON('client_id')
     def send_client_id(self, connection):
+        assert False
         print "Send client id"
         return {
             'id'   : connection.client_id,
