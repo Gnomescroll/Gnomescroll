@@ -36,7 +36,8 @@ class NetClientGlobal:
     def client_id(cls):
         cid = NetClientGlobal.connection.client_id
         if cid == None:
-            assert False
+            return 0
+            #assert False
         else:
             return cid
 
