@@ -246,17 +246,17 @@ class PyClientPool:
             print "test message received"
         elif msg_type == 1: #client json messages
             try:
-                msg = json.loads(datagram)
+                msg = json.loads(message)
             except Exception, e:
                 print Exception, e
-                print "JSON DECODING ERROR: %s" % (str(datagram),)
+                print "JSON DECODING ERROR: %s" % (str(message),)
                 return
             NetEvent.messageHandler.process_json(msg, connection)
         elif msg_type == 2: #client admin messages
             try:
-                msg = json.loads(datagram)
+                msg = json.loads(message)
             except:
-                print "JSON DECODING ERROR: %s" % (str(datagram),)
+                print "JSON DECODING ERROR: %s" % (str(message),)
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
 

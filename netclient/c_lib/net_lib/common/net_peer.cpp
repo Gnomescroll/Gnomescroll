@@ -227,7 +227,7 @@ void NetPeer::flush_to_net()
     if(py_out.fcb.size != 0 && pending_reliable_bytes_out + pending_unreliable_bytes_out < 1450)
     {
         //may want to cap packet size at 512
-        printf("flush python packets: py_out.size()= %i \n", py_out.fcb.size );
+        //printf("flush python packets: py_out.size()= %i \n", py_out.fcb.size );
         int max_bytes = 1450 - (pending_reliable_bytes_out + pending_unreliable_bytes_out);
         Net_message* nm = py_out.serialize_to_packet(max_bytes);
         printf("flush python packets: py_out.size()= %i, packet_size= %i \n", py_out.fcb.size, nm->len );
