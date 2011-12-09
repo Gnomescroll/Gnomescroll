@@ -1,5 +1,6 @@
 
 #include "server.h"
+#include <net_lib/export.hpp>
 
 namespace NetServer
 {
@@ -49,6 +50,8 @@ int accept_connection(struct sockaddr_in from) {
 
             //printf("Accepting Connection From: %i:%i \n",p->ip, p->port );
             printf("Accepting Connection From: %s:%i \n",inet_ntoa(p->address.sin_addr), p->port );
+
+            client_connect_event(p->client_id);
             return j;
         }
     }

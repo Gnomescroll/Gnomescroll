@@ -3,6 +3,8 @@
 
 #include "../common/sequencer.h"
 
+#include <net_lib/export.hpp>
+
 namespace NetClient {
 
 class NetPeer NPserver;
@@ -84,6 +86,8 @@ int validate_packet(char* buff, int n, struct sockaddr_in* from) {
         //server.server_address.sin_port = from->sin_port;
         printf("Client id assigned: %i server: %i:%i\n", client_id, htonl(from->sin_addr.s_addr), ntohs( from->sin_port ));
         ack_connection_with_server();
+
+        client_connect_event(NPserver.client_id);
         return 0;
     }
 
