@@ -95,8 +95,8 @@ class PyClient:
         self.connected = False
 
     def push_to_buffer(self, message):
-        print "received %i bytes of python packet" % (len(message))
         self.message_buffer.append(message)
+        #print "received %i bytes of python packet" % (len(message))
     def dispatch_buffer(self):
         global _msg_buffer     
         if not _msg_buffer:
@@ -109,7 +109,7 @@ class PyClient:
         msg_type = struct.unpack(self.fmt, message[0:2])
         msg_type = msg_type[0]
         message = message[2:]
-        print "message: %s" % (message)
+        #print "message: %s" % (message)
         self.messageHandler.process_net_event(msg_type, message)
 
     def close(self):
