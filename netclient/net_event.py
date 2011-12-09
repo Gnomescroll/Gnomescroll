@@ -233,7 +233,7 @@ class ClientMessageHandler(GenericMessageHandler):
 
     #deprecate
     def _set_client_id(self, id, **arg):
-        asser False
+        assert False
         print "Received Client Id: %s" % (id,)
         NetClientGlobal.client_id = id
         return True
