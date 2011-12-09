@@ -78,7 +78,7 @@ class PyClient:
         self.name = None
         #self.ec = 0
 
-        self._set_client_id()
+        #self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
@@ -172,9 +172,15 @@ class PyClient:
         return (valid, name, you,)
 
     def send(self, MESSAGE):
+        assert False
         pass
 
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
+
+
+_msg_buffer = True
+
+
 
 #function = lambda: 42
 class PyClientPool:
@@ -189,17 +195,35 @@ class PyClientPool:
 
         register_client_creation(( lambda _client_id: self.addClient(_client_id) ))
         register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
-        register_client_message_handling(( lambda _client_id, message : self.handleMessage(_client_id, message) ))
+    
         
+        global _msg_buffer     
+        if _msg_buffer: 
+            self.message_buffer = []
+            register_client_message_handling(( lambda _client_id, message : self.push_to_buffer(_client_id, message) ))
+        else:
+            register_client_message_handling(( lambda _client_id, message : self.handleMessage(_client_id, message) ))
         #for messages
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
 
+    def push_to_buffer(self, client_id, message):
+        self.message_buffer.append([client_id, message])
+
+    def dispatch_buffer(self):
+        global _msg_buffer     
+        if not _msg_buffer:
+            return
+        for client_id, message in self.message_buffer:
+            self.handleMessage(client_id, message)
+        self.message_buffer = []
+
     def handleMessage(self, client_id, message):
         print "client %i: %s" % (client_id, message)
         #message handling
-        length, msg_type = struct.unpack(self.fmt, prefix)
-        connection = clients_by_id.get(client_id, None)
+        length, msg_type = struct.unpack(self.fmt, message)
+        print "length=%i, msg=%s" % (length, msg_type)
+        connection = clients_by_id.get(_client_id, None)
         if connection == None:
             print "PyClientPool: handleMessage, client id does not exist in pool"
             return

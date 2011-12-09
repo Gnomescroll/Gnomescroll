@@ -315,7 +315,7 @@ class SendMessage: #each connection has one of these
     def send_client_id(self, connection):
         print "Send client id"
         return {
-            'id'   : connection.id,
+            'id'   : connection.client_id,
         }
 
     @sendJSON('client_quit')
