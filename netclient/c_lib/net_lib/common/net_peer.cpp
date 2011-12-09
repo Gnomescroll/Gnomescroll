@@ -230,7 +230,7 @@ void NetPeer::flush_to_net()
         //printf("flush python packets: py_out.size()= %i \n", py_out.fcb.size );
         int max_bytes = 1450 - (pending_reliable_bytes_out + pending_unreliable_bytes_out);
         Net_message* nm = py_out.serialize_to_packet(max_bytes);
-        printf("flush python packets: py_out.size()= %i, packet_size= %i \n", py_out.fcb.size, nm->len );
+        //printf("flush python packets: py_out.size()= %i, packet_size= %i \n", py_out.fcb.size, nm->len );
         //printf("py packet size= %i \n", nm->len);
         push_reliable_packet(nm);
     }
