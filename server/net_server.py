@@ -191,8 +191,35 @@ class PyClientPool:
         register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
         register_client_message_handling(( lambda _client_id, message : self.handleMessage(_client_id, message) ))
         
+        #for messages
+        self.fmt = '<H'
+        self.fmtlen = struct.calcsize(self.fmt)
+
     def handleMessage(self, _client_id, message):
-        print "client %i: %s" % (_client_id, message)
+        print "client %i: %s" % (client_id, message)
+        #message handling
+        length, msg_type = struct.unpack(self.fmt, prefix)
+        connection = clients_by_id.get(client_id, None)
+        if connection == None:
+            print "PyClientPool: handleMessage, client id does not exist in pool"
+            return
+        if msg_type == 0:
+            print "test message received"
+        elif msg_type == 1: #client json messages
+            try:
+                msg = json.loads(datagram)
+            except Exception, e:
+                print Exception, e
+                print "JSON DECODING ERROR: %s" % (str(datagram),)
+                return
+            NetEvent.messageHandler.process_json(msg, connection)
+        elif msg_type == 2: #client admin messages
+            try:
+                msg = json.loads(datagram)
+            except:
+                print "JSON DECODING ERROR: %s" % (str(datagram),)
+                return
+            NetEvent.adminMessageHandler.process_json(msg, connection)
 
     def on_exit(self):
         pass
