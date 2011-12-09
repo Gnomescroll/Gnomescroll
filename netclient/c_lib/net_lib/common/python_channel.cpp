@@ -44,7 +44,7 @@ Net_message* Python_channel_out::serialize_to_packet(int max_n)
     //printf("sequence= %i \n", sequence_number);
 
     int n1 =0;
-    printf("Py_out: sequence= %i, length= %i \n", sequence_number, bytes);
+    //printf("Py_out: sequence= %i, length= %i \n", sequence_number, bytes);
     PACK_uint8_t(254, nm->buff, &n1);      //message id
     PACK_uint16_t(bytes, nm->buff, &n1);    //length
     PACK_uint16_t(sequence_number, nm->buff, &n1); //sequence number
