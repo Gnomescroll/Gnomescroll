@@ -221,9 +221,11 @@ class PyClientPool:
     def handleMessage(self, client_id, message):
         print "client %i: %s" % (client_id, message)
         #message handling
-        length, msg_type = struct.unpack(self.fmt, message)
-        print "length=%i, msg=%s" % (length, msg_type)
-        connection = clients_by_id.get(_client_id, None)
+        length = struct.unpack(self.fmt, message[0:2])
+        length = length[0]
+        message = message[2:]
+        print "length=%i, msg=%s" % (length, message)
+        connection = self.clients_by_id.get(client_id, None)
         if connection == None:
             print "PyClientPool: handleMessage, client id does not exist in pool"
             return
