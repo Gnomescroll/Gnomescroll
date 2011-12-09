@@ -104,11 +104,13 @@ def register_client_message_handling(function):
     global _CLIENT_MESSAGE_CALLBACK
     _CLIENT_MESSAGE_CALLBACK = function
 
-
+_total_python_bytes = 0 
 cdef void py_net_message_callback(char* buff, int n, int client_id):
     ustring = buff[:n].decode('UTF-8')
-    #print "str: %s" % (ustring)
-    print "%i bytes,from client %i: %s" % (n, client_id, ustring)
+    #_total_python_bytes += n
+    #print "%i bytes,from client %i: %s" % (n, client_id, ustring)
+    if(_CLIENT_MESSAGE_CALLBACK != None):
+        _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
 
 cdef void py_net_event_callback(int client_id, int event_type):
     if event_type == 0:

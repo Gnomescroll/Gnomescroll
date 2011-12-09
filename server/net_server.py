@@ -189,7 +189,7 @@ class PyClientPool:
 
         register_client_creation(( lambda _client_id: self.addClient(_client_id) ))
         register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
-        register_client_message_handling(( lambda _client_id: self.removeClient(_client_id, message) ))
+        register_client_message_handling(( lambda _client_id, message : self.handleMessage(_client_id, message) ))
         
     def handleMessage(self, _client_id, message):
         print "client %i: %s" % (_client_id, message)
