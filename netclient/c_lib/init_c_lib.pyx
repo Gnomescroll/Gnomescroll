@@ -133,11 +133,22 @@ def connected():
     return _check_connection_status()
 
 cdef void py_net_message_callback(char* buff, int n, int client_id):
+    ustring = buff[:n]
+    if(_CLIENT_MESSAGE_CALLBACK != None):
+        _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
+'''
+    cdef bytes py_string = buff[:n]
+    if(_CLIENT_MESSAGE_CALLBACK != None):
+        _CLIENT_MESSAGE_CALLBACK(client_id, bytes)
+'''
+
+'''
     ustring = buff[:n].decode('UTF-8')
     if(_CLIENT_MESSAGE_CALLBACK != None):
         _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
     #print "python callback: received %i bytes from client %i" % (n, client_id)
     #print "str: %s" % (ustring)
+'''
 
 def _send_python_net_message(message, int client_id):
     #print "Send python net message"
