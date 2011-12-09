@@ -192,28 +192,41 @@ class PyClientPool:
         self.clients_by_id = {}
         self.names = {}
         atexit.register(self.on_exit)
-
-        register_client_creation(( lambda _client_id: self.addClient(_client_id) ))
-        register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
     
         
         global _msg_buffer     
         if _msg_buffer: 
+            self.event_buffer = []
             self.message_buffer = []
             register_client_message_handling(( lambda _client_id, message : self.push_to_buffer(_client_id, message) ))
+            register_client_creation(( lambda _client_id: self.push_to_event_buffer(_client_id,0) ))
+            register_client_deletion(( lambda _client_id: self.push_to_event_buffer(_client_id,1) ))
+
         else:
             register_client_message_handling(( lambda _client_id, message : self.handleMessage(_client_id, message) ))
+            register_client_creation(( lambda _client_id: self.addClient(_client_id) ))
+            register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
         #for messages
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
 
+    def push_to_event_buffer(self, client_id, event_id):
+        self.event_buffer.append((client_id, event_id))
+    def dispatch_event_buffer(self):
+        for client_id, event_id in self.event_buffer:
+            if event_id == 0:
+                self.addClient(client_id)
+            if event_id == 1:
+                self.removeClient(client_id)
+        self.message_buffer = []
+
     def push_to_buffer(self, client_id, message):
         self.message_buffer.append([client_id, message])
-
     def dispatch_buffer(self):
         global _msg_buffer     
         if not _msg_buffer:
             return
+        self.dispatch_event_buffer()
         for client_id, message in self.message_buffer:
             self.handleMessage(client_id, message)
         self.message_buffer = []
