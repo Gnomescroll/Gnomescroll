@@ -135,7 +135,7 @@ def connected():
 cdef void py_net_message_callback(char* buff, int n, int client_id):
     print "python callback: received %i bytes from client %i" % (n, client_id)
     ustring = buff[:n].decode('UTF-8')
-    print "str: %s" % (ustring)
+    #print "str: %s" % (ustring)
 
 def _send_python_net_message(message, int client_id):
     #print "Send python net message"

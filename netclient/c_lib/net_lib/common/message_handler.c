@@ -104,7 +104,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
             printf("message handler: python packet processing error *n= %i, max_n= %i, length= %i \n", *n, max_n, length);    
         }
         #ifdef DC_CLIENT
-            
+            NetClient::NPserver.py_in.insert(buff+_n, length, sequence);
         #endif
         #ifdef DC_SERVER
             if(NetServer::pool.connection[client_id] == NULL)

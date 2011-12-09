@@ -29,8 +29,7 @@ class NetClientGlobal:
         NetClientGlobal.sendPacket = SendPacket()
     @classmethod
     def init_1(cls):
-        #ClientDatagramDecoder.init()
-        #assert cls.connection != None
+        NetClientGlobal.connection.init()
         assert cls.sendPacket != None
 
 import init_c_lib
@@ -58,6 +57,11 @@ _msg_buffer = True
 
 class PyClient:
 
+    messageHandler = None
+    @classmethod
+    def init(cls):
+        cls.messageHandler = NetEventGlobal.messageHandler
+        assert cls.messageHandler != None
     def __init__(self):
         self.connected = False
         self.out = SendPacket(self)
@@ -91,16 +95,15 @@ class PyClient:
 
     def handleMessage(self, message):
         pass
+        #print "message= %s" %(message)
 
-    #def connect(self):
-    #    return
-    #def close(self):
-    #    pass
+    def close(self):
+        pass
     
     def send(self, MESSAGE):
         assert False
     def attempt_recv(self):
-        return
+        assert False
     def recv(self):
         assert False
 
