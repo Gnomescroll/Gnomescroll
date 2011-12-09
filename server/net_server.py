@@ -10,7 +10,6 @@ import platform
 
 import init_c_lib
 
-from init_c_lib import connected, _send_python_net_message
 
 #OS = platform.system()
 #OS = "Windows"
@@ -51,6 +50,8 @@ from game_state import GameStateGlobal
 #NetServer.connectionPool.addClient(connection, address) #hand off connection to connection pool
 
 # manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
+
+from init_c_lib import connected, _send_python_net_message
 
 class PyClient:
 
@@ -172,8 +173,7 @@ class PyClient:
         return (valid, name, you,)
 
     def send(self, MESSAGE):
-        assert False
-        pass
+        _send_python_net_message(MESSAGE, self.client_id)
 
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
 
@@ -268,9 +268,8 @@ class PyClientPool:
         print "PyClientPool: addClient, id= %i" % (_client_id)
         self._client_count += 1
         client =  PyClient(_client_id)
-        if client.id not in self.clients_by_id:
-            self.clients_by_id[client.id] = client
-            print "Connection associated with client_id= %s" % (client.id,)
+        self.clients_by_id[_client_id] = client
+        print "Connection associated with client_id= %s" % (_client_id)
 
     #called on connection deconstruction
     def removeClient(self, _client_id):
