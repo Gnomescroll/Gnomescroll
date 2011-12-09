@@ -84,6 +84,7 @@ class PyClient:
         self.connected = False
 
     def push_to_buffer(self, message):
+        print "received %i bytes of python packet" % (len(message))
         self.message_buffer.append(message)
     def dispatch_buffer(self):
         global _msg_buffer     
@@ -94,8 +95,7 @@ class PyClient:
         self.message_buffer = []
 
     def handleMessage(self, message):
-        pass
-        #print "message= %s" %(message)
+        print "message= %s" %(message)
 
     def close(self):
         pass
