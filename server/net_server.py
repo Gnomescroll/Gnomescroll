@@ -178,7 +178,7 @@ class PyClient:
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
 
 
-_msg_buffer = True
+_msg_buffer = False
 
 
 
@@ -208,15 +208,15 @@ class PyClientPool:
         self.fmtlen = struct.calcsize(self.fmt)
 
     def push_to_buffer(self, client_id, message):
-        self.message_buffer.append([[client_id, message])
+        self.message_buffer.append([client_id, message])
 
     def dispatch_buffer(self):
         global _msg_buffer     
         if not _msg_buffer:
             return
         for client_id, message in self.message_buffer:
-            
-        
+            self.handleMessage(client_id, message)
+        self.message_buffer = []
 
     def handleMessage(self, _client_id, message):
         print "client %i: %s" % (client_id, message)
