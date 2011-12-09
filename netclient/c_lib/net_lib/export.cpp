@@ -15,6 +15,27 @@ void set_python_net_event_callback_function(PY_CLIENT_EVENT_CALLBACK pt)
     PY_CLIENT_EVENT_CALLBACK_GLOBAL = pt;
 }
 
+
+void client_connect_event(int client_id)
+{
+    if(PY_CLIENT_EVENT_CALLBACK_GLOBAL == NULL)
+    {
+        printf("client_connect_event Error: PY_CLIENT_EVENT_CALLBACK is null \n");
+        return;
+    }
+    PY_CLIENT_EVENT_CALLBACK_GLOBAL(client_id, 0);
+}
+
+void client_disconnect_event(int client_id)
+{
+    if(PY_CLIENT_EVENT_CALLBACK_GLOBAL == NULL)
+    {
+        printf("client_disconnect_event Error: PY_CLIENT_EVENT_CALLBACK is null \n");
+        return;
+    }
+    PY_CLIENT_EVENT_CALLBACK_GLOBAL(client_id, 1);
+}
+
 void send_python_net_message(char* message, int length, int client_id)
 {
     #ifdef DC_CLIENT
