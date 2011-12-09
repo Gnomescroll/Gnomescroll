@@ -436,17 +436,19 @@ class AgentMessageHandler(DatastoreMessageInterface):
     def __init__(self):
         self.name = 'agent'
         self.store = GameStateGlobal.agentList
-        self._bind_event('agent_position', self._agent_position)
-        self._bind_event('agent_button_state', self._agent_button_state)
-        self._bind_event('agent_control_state', self._agent_control_state)
-        self._bind_event('agent_angle', self._agent_angle)
+        self._bind_event('agent_position', self._agent_position) #DEPRECATE
+        self._bind_event('agent_button_state', self._agent_button_state) #DEPRECATE
+        self._bind_event('agent_control_state', self._agent_control_state) #DEPRECATE
+        self._bind_event('agent_angle', self._agent_angle) #DEPRECATE
         DatastoreMessageInterface.__init__(self)
 
     def request_data(self, **data):
         if 'id' in data:
             NetOut.sendMessage.request_agent(data['id'])
 
+    #deprecated
     def _agent_position(self, **args):
+        assert False
         pos = args.get('pos', None)
         id = args.get('id', None)
         tick = args.get('tick', None)
@@ -466,7 +468,9 @@ class AgentMessageHandler(DatastoreMessageInterface):
         agent.state = pos
         #print agent.state
 
+    #deprecated
     def _agent_angle(self, **msg):
+        assert False
         err_msg = None
         try:
             angle = msg['angle']
@@ -502,6 +506,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
     #deprecated
     def _agent_control_state(self, **msg):
+        assert False
         print 'received deprecated agent_control_state msg. ignoring'
         return
         err_msg = None
@@ -540,8 +545,9 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
         agent.set_control_state(state, angle, tick)
 
-
+    #assert
     def _agent_button_state(self, **msg):
+        assert False
         err_msg = None
         try:
             buttons = msg['buttons']

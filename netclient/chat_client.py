@@ -182,7 +182,7 @@ class ChatClient:
                 for channel in channels:
                     if channel[0:3] == 'pm_':
                         continue
-                    
+
                     self.subscribe(channel)
         return channels
 
@@ -237,7 +237,7 @@ class SystemChannel(Channel):
             })
         else:
             log = msg
-            
+
         if log.valid:
             self.history.appendleft(log)
 
@@ -313,7 +313,7 @@ class ChatCommand():
                 'content'   : 'Listening to channel: %s' % (ChatClient.chatClient.CURRENT_CHANNEL,),
                 'channel'   : 'system',
             })
-            
+
         elif command == 'team':
             try:
                 team_id = int(args[0])
@@ -348,7 +348,7 @@ class ChatCommand():
         elif command == 'exit' or command == 'quit':
             #print 'exiting'
             GameStateGlobal.exit = True
-            
+
         else:
             _send = self._unimplemented(command)
 
@@ -403,7 +403,7 @@ class SystemChatCommand(ChatCommand):
         if 'channel' not in data:
             data['channel'] = 'system'
         return ChatCommand._send_local(self, data)
-            
+
 
 # msg to be sent
 class ChatMessageOut():
@@ -450,7 +450,7 @@ class ChatMessageIn():
                 self.name = 'System'
             else:
                 self.name = sender.name
-            
+
 
     def filter(self):
         if self.payload.content == 'ping' and \
@@ -479,7 +479,7 @@ class Payload:
         'cid',
         'id',
     ]
-    
+
     def __init__(self, **msg):
         #required
         self.cmd = msg.get('cmd', 'chat')
@@ -581,7 +581,7 @@ class ChatInput:
     def _input_callback(self, callback):
         if callable(callback):
             return callback(self)
-            
+
     def on_key_press(self, symbol):
         callback = self.processor.on_key_press(symbol)
         return self._input_callback(callback)
@@ -589,7 +589,7 @@ class ChatInput:
     def on_text(self, text):
         callback = self.processor.on_text(text)
         return self._input_callback(callback)
-        
+
     def on_text_motion(self, motion):
         callback = self.processor.on_text_motion(motion)
         return self._input_callback(callback)
@@ -710,7 +710,7 @@ class ChatRender:
         if channel != 'system':
             to_merge = self._filter_channel('system')
             to_render = self._merge_channels(to_render, to_merge)
-        to_merge = self._filter_channel('pm_' + NetClientGlobal.client_id)
+        to_merge = self._filter_channel('pm_' + str(NetClientGlobal.client_id()))
         to_render = self._merge_channels(to_render, to_merge)
         self._pad_queue(to_render)
         return to_render
@@ -745,7 +745,7 @@ class ChatRender:
     # pads queue with empty messages
     def _pad_queue(self, queue):
         queue.extend([self.empty_message for j in range(self.MESSAGE_RENDER_COUNT_MAX - len(queue))])
-        
+
     def user_input(self):
         return str(ChatClientGlobal.chatClient.input)
 
