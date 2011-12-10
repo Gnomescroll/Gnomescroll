@@ -64,7 +64,7 @@ class EventOut:
     def process_events(self):
         #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
-            for client in NetServer.connectionPool._client_pool.values():
+            for client in NetServer.connectionPool.clients_by_id.values():
                 if not client.admin:
                     client.send(event_packet)
         self.event_packets = []

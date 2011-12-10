@@ -272,6 +272,7 @@ class PyClientPool:
         self._client_count += 1
         client =  PyClient(_client_id)
         self.clients_by_id[_client_id] = client
+        #self._client_pool[_client_id] = client #save client
         print "Connection associated with client_id= %s" % (_client_id)
 
     #called on connection deconstruction

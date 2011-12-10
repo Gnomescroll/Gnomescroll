@@ -243,7 +243,7 @@ class Hud(object):
         line_height = 20
         i = 0
         msgs = ChatClientGlobal.chatRender.messages()
-        pm_channel = 'pm_' + str(NetClientGlobal.client_id() )
+        pm_channel = 'pm_' + str(NetClientGlobal.client_id)
         for msg in msgs:
             content = msg.name
             if content:

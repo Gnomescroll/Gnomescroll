@@ -710,7 +710,7 @@ class ChatRender:
         if channel != 'system':
             to_merge = self._filter_channel('system')
             to_render = self._merge_channels(to_render, to_merge)
-        to_merge = self._filter_channel('pm_' + str( NetClientGlobal.client_id() ))
+        to_merge = self._filter_channel('pm_' + str(NetClientGlobal.client_id))
         to_render = self._merge_channels(to_render, to_merge)
         self._pad_queue(to_render)
         return to_render
