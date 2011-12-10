@@ -7,7 +7,7 @@
 
 void Agent_event::fired_weapon(int weapon_id) {
     // play weapon animation & sound
-    char soundfile[] = "semishoot.wav";
+    char soundfile[] = "laser_01.wav";
     Sound::play_2d_sound(soundfile);
 
     // raycast from current aiming direction to nearest block
