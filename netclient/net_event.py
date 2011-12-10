@@ -215,8 +215,8 @@ class MapMessageHandler(GenericMessageHandler):
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        #'client_id' : '_client_id',
-        #'set_client_id' : '_set_client_id',
+        'client_id' : '_client_id',
+        'set_client_id' : '_set_client_id',
         'client_quit' : '_client_quit',
         'identified' : '_identified',
         'identify_fail' : '_identify_fail',
@@ -224,24 +224,25 @@ class ClientMessageHandler(GenericMessageHandler):
 
     #deprecate
     def _client_id(self, **msg):
-        assert False
+        #assert False
         if self._set_client_id(**msg):
             NetOut.sendMessage.received_client_id()
             NetOut.sendMessage.identify()
-        else:
-            NetOut.sendMessage.request_client_id()
+        #else:
+            #NetOut.sendMessage.request_client_id()
 
     #deprecate
     def _set_client_id(self, id, **arg):
-        assert False
+        #assert False
         print "Received Client Id: %s" % (id,)
-        NetClientGlobal.client_id = id
+        #NetClientGlobal.client_id = id
         return True
 
     def _client_quit(self, id, **msg):
         GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
+        print "IDENTIFY IN"
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
         player = msg.get('player', None)
@@ -269,6 +270,7 @@ class ClientMessageHandler(GenericMessageHandler):
 
     used_alt = False
     def _identify_fail(self, msg, **arg):
+        print "IDENTIFY FAILED"
         # send system notification
         if self.used_alt:
             ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)

@@ -424,15 +424,18 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
                 NetOut.event.agent_update(self, 'health')
 
     def die(self, projectile_owner=None, no_score=False, custom_msg=None, respawn_ticks=None):
+        print 'dying'
         if self.dead:
+            print "already dead"
             return
             
         suicide = False
         try:
             you_player = GameStateGlobal.playerList[self.owner]
             you = NetServer.connectionPool.by_client_id(you_player.cid)
+            print you_player, you
             you_player.died(no_score)
-        except e:
+        except Exception, e:
             print 'Error obtaining client object that owns dying agent.'
             print e
             self.dead = True

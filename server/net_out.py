@@ -281,7 +281,7 @@ class SendMessage: #each connection has one of these
     ## DEPRECATE
     @sendJSON('client_id')
     def send_client_id(self, connection):
-        assert False
+        #assert False
         print "Send client id"
         return {
             'id'   : connection.client_id,

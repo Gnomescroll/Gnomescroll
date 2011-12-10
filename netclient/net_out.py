@@ -284,6 +284,7 @@ class SendMessage(GenericMessage):
 
     @sendJSON('identify')
     def identify(self, name=None):
+        print "IDENTIFY OUT"
         if name is None:
             name = NetClientGlobal.name
         return {

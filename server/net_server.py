@@ -20,12 +20,12 @@ class NetServer:
     #serverListener = None
 
     #state
-    #_client_id = 0
+    _client_id = 0
 
-    #@classmethod
-    #def generate_client_id(cls):
-    #    cls._client_id += 1
-    #    return cls._client_id
+    @classmethod
+    def generate_client_id(cls):
+        cls._client_id += 1
+        return cls._client_id
 
     @classmethod
     def init_0(cls):
@@ -79,12 +79,14 @@ class PyClient:
         self.name = None
         #self.ec = 0
 
-        #self._set_client_id()
-        #self.sendMessage.send_client_id(self) #send client an id upon connection
+        self._set_client_id()
+        self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
     def identify(self, name):
+        print 'identify attempt'
         valid, name, you = self._valid_player_name(name)
+        print valid, name, you
         if valid:
             self.identified = True
             print 'IDENTIFIED'
@@ -98,9 +100,13 @@ class PyClient:
                 self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
 
     def check_ready(self):
+        print 'checkin ready'
+        print 'dat_loaded? ' + str(self.dat_loaded)
+        print 'identified? ' + str(self.identified)
         if self.dat_loaded and self.identified:
             self.ready()
             return True
+        print 'not rdy'
         return False
 
     def ready(self):
@@ -117,15 +123,16 @@ class PyClient:
         self.check_ready()
 
     #id is automatic, send dat afterwards
-    #def set_id_received(self):
+    def set_id_received(self):
     #    if not self.received_id:
-    #        self.received_id = True
+        self.received_id = True
     #        self.sendMessage.send_dat()
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
 
     def start_player(self):
+        print "Netserver start_player"
         NetOut.event.player_create(self.player)
 
     def send_game_state(self):
@@ -144,14 +151,12 @@ class PyClient:
             print 'Created new player'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
 
-    '''
     def _set_client_id(self):
-        if hasattr(self, 'id'):
-            print "ERROR: TcpClient.set_client_id, client_id already assigned"
-            return False
+        #if hasattr(self, 'id'):
+            #print "ERROR: TcpClient.set_client_id, client_id already assigned"
+            #return False
         self.id = str(NetServer.generate_client_id())
         return True
-    '''
 
     def _valid_player_name(self, name):
         valid = True
@@ -276,7 +281,9 @@ class PyClientPool:
 
     def by_client_id(self, client_id):
         if client_id in self.clients_by_id:
+            print self.clients_by_id
             return self.clients_by_id[client_id]
+        raise ValueError, "Unknown client_id %d", client_id
 
     def name_client(self, connection, name):
         avail, you = self.name_available(name, connection)
