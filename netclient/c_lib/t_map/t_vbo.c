@@ -29,9 +29,9 @@ void setShaders2()
 
     printf("loading text files \n");
 
-    vs = textFileRead((char*) "./media/shaders/test_01.vsh");
-    fs = textFileRead((char*) "./media/shaders/test_01.fsh");
-    
+    vs = textFileRead((char*) "./media/shaders/terrain_map_00.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain_map_00.fsh");
+
     //glShaderSourceARB(shader_vert, 1, (const GLcharARB**)&shader_vert_source, &len);
     //glShaderSourceARB(shader_frag, 1, (const GLcharARB**)&shader_frag_source, &len);
 
@@ -46,11 +46,49 @@ void setShaders2()
     glAttachObjectARB(shader_prog, shader_vert);
     glAttachObjectARB(shader_prog, shader_frag);
 
+    /* Bind attribute index 0 (coordinates) to in_Position and attribute index 1 (color) to in_Color */
+    /* Attribute locations must be setup before calling glLinkProgram. */
+    
+    //glBindAttribLocation(shaderprogram, 0, "in_Position");
+    //glBindAttribLocation(shaderprogram, 1, "in_Color");
+
+    //glBindAttribLocation(shader_prog, 0, "vert_pos");
+    //glBindAttribLocation(shader_prog, 1, "vert_uv");
+    glBindAttribLocation(shader_prog, 2, "vert_rgba");
+    //glBindAttribLocation(shaderprogram, 3, "vert_normal");
+
     glLinkProgramARB(shader_prog);
 
     if(DEBUG) printProgramInfoLog(shader_prog); // print diagonostic information
         
 }
+
+/*
+void glVertexAttribPointer( GLuint      index,
+    GLint   size,
+    GLenum      type,
+    GLboolean   normalized,
+    GLsizei     stride,
+    const GLvoid *      pointer);
+*/
+
+/*
+glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+//glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+*/
+
+//glBindAttribLocation(shaderprogram, 0, "vert_xyz");
+//glBindAttribLocation(shaderprogram, 1, "vert_uv");
+//glBindAttribLocation(shaderprogram, 2, "vert_rgba");
+//glBindAttribLocation(shaderprogram, 3, "vert_normal");
+
+//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0)
+//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12)
+//glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20)
+//glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24)
+
 
 GLuint block_texture = 0;
 
@@ -358,16 +396,51 @@ static inline int _is_occluded(int x,int y,int z, int side_num) __attribute((alw
 static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) __attribute((always_inline));
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id)  __attribute((always_inline));
 
-const static int occ_array[3] = { 255, 177, 100 };
-
 /*
 will be 1 if is adjacent to any side
 will be 2 only if both sides are occluded
  */
+
+const static int occ_array[3] = { 255, 177, 100 };
+//const static int occ_array[3] = { 255, 177, 177 };
+
+
+//255, 177, 100 
+
+void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list) 
+{
+    int occ = (side_1 | side_2 | corner) + (side_1 & side_2);   
+    occ = occ_array[occ];
+
+    int r,g,b;
+    if(occ == 255)
+    {
+        r = 255;
+        g = 0;
+        b = 0;
+    }
+    if(occ == 177)
+    {
+        r = 0;
+        g = 255;
+        b = 0;
+    }
+    if(occ == 100)
+    {
+        r = 0;
+        g = 0;
+        b = 255;
+    }
+
+    v_list->r = r;
+    v_list->g = g;
+    v_list->b = b;
+}
+
+
 static inline int calcAdj(int side_1, int side_2, int corner) {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     return occ_array[occ];
-
 }
 
 const static int s_array[18] = {
@@ -415,25 +488,33 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
 
-    occ = calcAdj(CX[7], CX[1], CX[0]);
-    v_list[offset+0].r = occ;
-    v_list[offset+0].g = occ;
-    v_list[offset+0].b = occ;
+    if(1)
+    {
+        occ = calcAdj(CX[7], CX[1], CX[0]);
+        v_list[offset+0].r = occ;
+        v_list[offset+0].g = occ;
+        v_list[offset+0].b = occ;
 
-    occ = calcAdj(CX[1], CX[3], CX[2]);
-    v_list[offset+1].r = occ;
-    v_list[offset+1].g = occ;
-    v_list[offset+1].b = occ;
+        occ = calcAdj(CX[1], CX[3], CX[2]);
+        v_list[offset+1].r = occ;
+        v_list[offset+1].g = occ;
+        v_list[offset+1].b = occ;
 
-    occ = calcAdj(CX[3], CX[5], CX[4]);
-    v_list[offset+2].r = occ;
-    v_list[offset+2].g = occ;
-    v_list[offset+2].b = occ;
+        occ = calcAdj(CX[3], CX[5], CX[4]);
+        v_list[offset+2].r = occ;
+        v_list[offset+2].g = occ;
+        v_list[offset+2].b = occ;
 
-    occ = calcAdj(CX[5], CX[7], CX[6]);
-    v_list[offset+3].r = occ;
-    v_list[offset+3].g = occ;
-    v_list[offset+3].b = occ;
+        occ = calcAdj(CX[5], CX[7], CX[6]);
+        v_list[offset+3].r = occ;
+        v_list[offset+3].g = occ;
+        v_list[offset+3].b = occ;
+    } else {
+        occ_debug(CX[7], CX[1], CX[0], &v_list[offset+0]);
+        occ_debug(CX[1], CX[3], CX[2], &v_list[offset+1]);
+        occ_debug(CX[3], CX[5], CX[4], &v_list[offset+2]);
+        occ_debug(CX[5], CX[7], CX[6], &v_list[offset+3]);
+    }
 }
 
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
@@ -943,7 +1024,7 @@ int _draw_terrain() {
        //DRAW_VBOS1();
 
        //DRAW_VBOS1a();
-       DRAW_VBOS2();        
+       DRAW_VBOS3();        
     } else {
 
         glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);
@@ -952,7 +1033,7 @@ int _draw_terrain() {
         GLuint _result = 0;
 
         //DRAW_VBOS1();
-        DRAW_VBOS2();
+        DRAW_VBOS3();
 
         glEndQuery(GL_TIME_ELAPSED_EXT);
 
@@ -1252,6 +1333,7 @@ void DRAW_VBOS1a() {
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
         //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
+
         glEnable(GL_CULL_FACE);
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
 
@@ -1347,7 +1429,7 @@ void DRAW_VBOS2() {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
-
+        
         int i;
         struct VBO* vbo;
 
@@ -1424,6 +1506,124 @@ void DRAW_VBOS2() {
     glDisable(GL_TEXTURE_2D);
 
     glUseProgramObjectARB(0);
+        //printf("vnum= %i\n", _vnum);
+
+}
+
+//shader version
+void DRAW_VBOS3() {
+    
+        //int _vnum = 0; //unused
+
+        if(SHADER_ON) glUseProgramObjectARB(shader_prog);
+
+        glColor3b(255,255,255);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable (GL_DEPTH_TEST);
+        glShadeModel(GL_SMOOTH);
+        glEnable (GL_DEPTH_TEST);
+        //glEnable(GL_CULL_FACE);
+
+        glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
+        glBindTexture( GL_TEXTURE_2D, block_texture );
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
+        //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+        //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
+        
+        int i;
+        struct VBO* vbo;
+
+        //if(draw_vbo_n != 0)
+
+
+        glEnable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[0] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+
+            //comment out and test
+            //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+            glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+            //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
+            
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        }
+
+
+        glUseProgramObjectARB(0);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable (GL_ALPHA_TEST);
+
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[1] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+        }
+
+        glDisable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[2] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+        }
+        
+        glDisable(GL_ALPHA_TEST);   
+
+        glDepthMask(false);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[3] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+        }
+        glDepthMask(true); 
+        glDisable(GL_BLEND);
+        
+    //end draw
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glShadeModel(GL_FLAT);
+
+    /*
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    */
+
+    glDisable(GL_TEXTURE_2D);
         //printf("vnum= %i\n", _vnum);
 
 }

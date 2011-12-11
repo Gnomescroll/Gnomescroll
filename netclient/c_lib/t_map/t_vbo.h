@@ -44,6 +44,7 @@ void _toggle_z_buffer();
 void DRAW_VBOS1();
 void DRAW_VBOS1a();
 void DRAW_VBOS2(); 
+void DRAW_VBOS3(); //shader version 
 void DRAW_VBOS2b();
 
 extern int must_lock_block_surface;
