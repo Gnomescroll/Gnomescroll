@@ -186,6 +186,7 @@ int decrement_ttl() {
     if(NPserver.ttl <= 0) {
         NPserver.connected = 0;
         printf("===\nConnection to server timed out!\n====\n");
+        client_disconnect_event(0);
         return 1;
     }
     return 0;
