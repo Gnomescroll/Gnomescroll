@@ -84,6 +84,9 @@ int _tick_check() {
     }
 }
 
+
+//int delta;
+
 #ifdef _POSIX_TIMERS
 	int start_sec;
 	int start_nsec;

@@ -306,7 +306,7 @@ class App(object):
                     #print "mean render time= %f" % (sum)
                     fps_text = "%.2f" % (sum)
 
-            if ping:
+            if False and ping:
                 if cSDL.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
                     ping_n = cSDL.get_ticks()

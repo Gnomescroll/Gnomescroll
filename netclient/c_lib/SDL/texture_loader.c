@@ -1,5 +1,18 @@
 #include "./texture_loader.h"
 
+
+#include <c_lib/camera/camera.hpp>
+#include <c_lib/physics/vector.hpp>
+//wtf
+#include <compat_gl.h>
+#include <math.h>
+
+#include <compat_gl.h>
+
+#include <c_lib/SDL/shader_loader.hpp>
+
+
+
 // Note: Don't load surfaces via arguments, you must return SDL_Surface*
 
 int init_image_loader() {

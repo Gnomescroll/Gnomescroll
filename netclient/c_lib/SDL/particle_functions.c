@@ -48,6 +48,7 @@ int setShaders() {
     return 0;
 }
 
+
 int init_particle_functions() {
 
     particle_surface=IMG_Load("./media/texture/particles_01.png");

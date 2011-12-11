@@ -48,11 +48,13 @@ def NetClientConnect(int a, int b,int c, int d, int _port):
 ##timer
 
 #old functions: deprecate
+'''
 cdef extern from "../c_lib/time/physics_timer.h":
     int _start_physics_timer(int frequency)
     int _tick_check()
     long _get_time()
     long _get_tick()
+'''
 
 #new functions
 cdef extern from "../c_lib/time/physics_timer.h":
@@ -63,19 +65,23 @@ cdef extern from "../c_lib/time/physics_timer.h":
 
  #DEPRECATE
 def StartPhysicsTimer(frequency):
-    _start_physics_timer(frequency)
+    #_start_physics_timer(frequency)
+    _START_CLOCK()
 
 #DEPRECATE
 def PhysicsTimerTickCheck():
-    return _tick_check()
+    return _GET_TICK()
+    #return _tick_check()
 
  #DEPRECATE
 def get_time():
-    return _get_time()
+    return _GET_MS_TIME();
+    #return _get_time()
 
  #DEPRECATE
 def get_tick():
-    return _get_tick()
+    return _GET_TICK()
+#    return _get_tick()
 
 def START_CLOCK():
     _START_CLOCK()

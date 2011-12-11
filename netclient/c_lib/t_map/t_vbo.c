@@ -5,6 +5,53 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
+#include <c_lib/SDL/shader_loader.hpp>
+
+//shaders
+static GLenum shader_vert = 0;
+static GLenum shader_frag = 0;
+static GLenum shader_prog = 0;
+
+const int SHADER_ON = 1;
+ 
+void setShaders2() 
+{
+
+    int DEBUG = 1;
+
+    shader_prog = glCreateProgramObjectARB();
+    shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char *vs, *fs;
+    //vs = textFileRead((char*) "./media/shaders/lsd.vsh");
+    //fs = textFileRead((char*) "./media/shaders/lsd.fsh");
+
+    printf("loading text files \n");
+
+    vs = textFileRead((char*) "./media/shaders/test_01.vsh");
+    fs = textFileRead((char*) "./media/shaders/test_01.fsh");
+    
+    //glShaderSourceARB(shader_vert, 1, (const GLcharARB**)&shader_vert_source, &len);
+    //glShaderSourceARB(shader_frag, 1, (const GLcharARB**)&shader_frag_source, &len);
+
+    glShaderSourceARB(shader_vert, 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(shader_frag, 1, (const GLcharARB**)&fs, NULL);
+    glCompileShaderARB(shader_vert);
+    if(DEBUG) printShaderInfoLog(shader_vert);
+
+    glCompileShaderARB(shader_frag);
+    if(DEBUG) printShaderInfoLog(shader_frag);
+    
+    glAttachObjectARB(shader_prog, shader_vert);
+    glAttachObjectARB(shader_prog, shader_frag);
+
+    glLinkProgramARB(shader_prog);
+
+    if(DEBUG) printProgramInfoLog(shader_prog); // print diagonostic information
+        
+}
+
 GLuint block_texture = 0;
 
 int must_lock_block_surface;
@@ -185,6 +232,10 @@ int gl_per_queries_index = 0;
 SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
+
+    printf("init: LSD shader \n");
+    setShaders2();
+
     printf("init: draw_terrain \n");
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
 
@@ -1169,6 +1220,8 @@ glDisable(GL_TEXTURE_2D);
 
 void DRAW_VBOS1a() {
 
+    if(SHADER_ON) glUseProgramObjectARB(shader_prog);
+
     glColor3b(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
@@ -1277,6 +1330,8 @@ void DRAW_VBOS2() {
     
         //int _vnum = 0; //unused
 
+        if(SHADER_ON) glUseProgramObjectARB(shader_prog);
+
         glColor3b(255,255,255);
 
         glEnable(GL_TEXTURE_2D);
@@ -1368,6 +1423,7 @@ void DRAW_VBOS2() {
 
     glDisable(GL_TEXTURE_2D);
 
+    glUseProgramObjectARB(0);
         //printf("vnum= %i\n", _vnum);
 
 }
