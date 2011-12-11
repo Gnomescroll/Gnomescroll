@@ -16,6 +16,10 @@ struct Socket client_socket;
 //used for incoming data
 char buffer[4096]; //1500 is max ethernet MTU
 
+
+/*
+    Port needs to be passed in
+*/
 void init_client() {
 
     NPserver.init();
@@ -23,8 +27,8 @@ void init_client() {
     init_sequencer(&NPserver);
     
 
-    //int local_port = 6967+(rand()%32); ///should randomize!
-    int local_port =  8989;
+    int local_port = 6967+(rand()%32); ///should randomize!
+    //int local_port =  8989;
 
     struct Socket* s = create_socket(local_port);
 

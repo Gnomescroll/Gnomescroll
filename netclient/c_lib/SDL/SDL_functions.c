@@ -270,7 +270,13 @@ int init_video() {
         printf("ARB_MULTISAMPLE not supported \n");
     }
 
+    if(GLEW_EXT_provoking_vertex) 
+    {
+        glProvokingVertexEXT(GL_FIRST_VERTEX_CONVENTION_EXT);
+    } else {
+        printf("warning: ProvokingVertex extention not supported \n");
 
+    }
     if(GLEW_EXT_timer_query) {
         printf("GL_EXT_timer_query supported\n");
     } else {

@@ -12,7 +12,7 @@ static GLenum shader_vert = 0;
 static GLenum shader_frag = 0;
 static GLenum shader_prog = 0;
 
-const int SHADER_ON = 1;
+const int SHADER_ON = 0;
  
 void setShaders2() 
 {
@@ -1020,11 +1020,16 @@ int _draw_terrain() {
     */
 
     //toggle to enable printing performance numbers
+
+
+    //ShadeModel(GL_FLAT);
+
     if(! GL_PERF) {
        //DRAW_VBOS1();
 
        //DRAW_VBOS1a();
-       DRAW_VBOS3();        
+       //DRAW_VBOS3();  
+        DRAW_VBOS2();
     } else {
 
         glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);
@@ -1033,7 +1038,8 @@ int _draw_terrain() {
         GLuint _result = 0;
 
         //DRAW_VBOS1();
-        DRAW_VBOS3();
+        DRAW_VBOS2();
+        //DRAW_VBOS3();
 
         glEndQuery(GL_TIME_ELAPSED_EXT);
 
@@ -1521,7 +1527,11 @@ void DRAW_VBOS3() {
 
         glEnable(GL_TEXTURE_2D);
         glEnable (GL_DEPTH_TEST);
+        
+
         glShadeModel(GL_SMOOTH);
+        //glShadeModel(GL_FLAT);
+
         glEnable (GL_DEPTH_TEST);
         //glEnable(GL_CULL_FACE);
 
@@ -1616,7 +1626,7 @@ void DRAW_VBOS3() {
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glShadeModel(GL_FLAT);
+    //glShadeModel(GL_FLAT);
 
     /*
     glDisable (GL_DEPTH_TEST);
