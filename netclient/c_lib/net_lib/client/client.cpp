@@ -16,7 +16,7 @@ struct Socket client_socket;
 //used for incoming data
 char buffer[4096]; //1500 is max ethernet MTU
 
-void init_client(short ) {
+void init_client() {
 
     NPserver.init();
     update_current_netpeer_time();
@@ -25,7 +25,7 @@ void init_client(short ) {
 
     //int local_port = 6967+(rand()%32); ///should randomize!
     int local_port =  8989;
-    
+
     struct Socket* s = create_socket(local_port);
 
     if(s != NULL) delete s ;
