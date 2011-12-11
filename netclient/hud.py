@@ -53,14 +53,14 @@ class Hud(object):
         self.reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
 
     def _init_text_dict(self):
-        offset = 20
+        offset = 50
         msg_height = 0
         line_height = 20
         msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
 
-        self.text_dict = dict(zip(msg_count, [self._to_draw_text('', (offset + (line_height * i) + msg_height)) for i in msg_count]))
-        self.text_dict['input'] = self._to_draw_text('j', 120) # 'j' to force text height to be cached so cursor will appear properly on first load
-        self.text_dict['input'].text = ''
+        blanks = [self._to_draw_text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
+        self.text_dict = dict(zip(msg_count, blanks))
+        self.text_dict['input'] = self._to_draw_text(text='', offset=200, x=50)
         self.text_dict['cursor_position'] = self._to_draw_text(text='')
 
     def _init_player_stats(self):
@@ -246,27 +246,27 @@ class Hud(object):
         pm_channel = 'pm_' + str(NetClientGlobal.client_id)
         for msg in msgs:
             if not msg.payload.content.strip(): continue
-            print msg.payload.content
+            #print msg.payload.content
             content = msg.name
             if content:
                 content += ': '
             content += msg.payload.content
             channel = msg.payload.channel
             if channel == 'system':
-                color = (40, 255, 0, 1)
+                color = (40, 255, 0, 255)
             elif channel == pm_channel:
-                color = (120, 200, 200, 1)
+                color = (120, 200, 200, 255)
             else:
-                color = (255, 40, 0, 1)
+                color = (255, 40, 0, 255)
             txt = self.text_dict[i]
             if txt.text != content:
                 txt.text = content
-            if txt.color != color:
-                txt.color = color
+            txt.color = color
             to_draw.append(txt)
             i += 1
 
         for t in to_draw:
+            print t.text
             t.draw()
 
     def _draw_cursor(self, direction='vertical'):

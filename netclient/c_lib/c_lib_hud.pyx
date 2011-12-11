@@ -145,7 +145,7 @@ cdef extern from './hud/text.h':
     void set_missing_character(int cc)
     void draw_text(char* t, int len, float x, float y, float depth)
 
-class Text:
+class Text(object):
 
     def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
         self.height = 10
@@ -156,14 +156,22 @@ class Text:
             self.color.append(255) # default alpha
 
         self.text = text
+        self.text_len = len(text)
         self.x = x
         self.y = y
+
+    def __setattr__(self, k, v):
+        if k == 'text':
+            object.__setattr__(self, "text_len", len(v))
+        object.__setattr__(self, k, v)
 
     def draw(self):
         r,g,b,a = self.color
         set_text_color(r,g,b,a)
-        draw_text(self.text, len(self.text), self.x, self.y, self.depth)
-
+        draw_text(self.text, self.text_len, self.x, self.y, self.depth)
+        print self.text
+        print self.x, self.y
+        
 ''' Font '''
 import os.path
 import random
