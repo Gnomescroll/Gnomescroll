@@ -87,12 +87,9 @@ class PyClient:
         self.sendMessage.send_dat()
 
     def identify(self, name):
-        print 'identify attempt as %s' % (name,)
         valid, name, you = self._valid_player_name(name)
-        print "Valid?: ", valid, " Name: ", name, " You?: ", you
         if valid:
             self.identified = True
-            print 'IDENTIFIED'
             NetServer.connectionPool.name_client(self, name)
             self.name = name
             self.check_ready()
@@ -103,20 +100,15 @@ class PyClient:
                 self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
 
     def check_ready(self):
-        print 'checkin ready'
-        print 'dat_loaded? ' + str(self.dat_loaded)
-        print 'identified? ' + str(self.identified)
         if self.dat_loaded and self.identified:
             self.ready()
             return True
-        print 'not rdy'
         return False
 
     def ready(self):
         if self.loaded_once:
             return
         self.loaded_once = True
-        print '%s ready' % (self.id,)
         self._register()
         self.start_player()
         self.send_game_state()
@@ -125,17 +117,13 @@ class PyClient:
         self.dat_loaded = True
         self.check_ready()
 
-    #id is automatic, send dat afterwards
     def set_id_received(self):
-    #    if not self.received_id:
         self.received_id = True
-    #        self.sendMessage.send_dat()
 
     def send_client_id(self):
         self.sendMessage.send_client_id(self)
 
     def start_player(self):
-        print "Netserver start_player"
         NetOut.event.player_create(self.player)
 
     def send_game_state(self):
@@ -145,21 +133,12 @@ class PyClient:
 
     def _register(self):
         ChatServer.chat.connect(self) # join chat server
-        print 'Joined chat'
         if self.player is not None and self.player.id in GameStateGlobal.playerList:
             self.player.update_info(name=self.name)
-            print 'Updating existing player'
         else:
             self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
             print 'Created new player'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
-
-    #def _set_client_id(self):
-        ##if hasattr(self, 'id'):
-            ##print "ERROR: TcpClient.set_client_id, client_id already assigned"
-            ##return False
-        #self.id = str(NetServer.generate_client_id())
-        #return True
 
     def _valid_player_name(self, name):
         valid = True

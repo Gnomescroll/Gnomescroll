@@ -118,30 +118,3 @@ class PyClient:
 from game_state import GameStateGlobal
 from net_event import NetEventGlobal
 from net_out import NetOut
-
-##remove below
-'''
-class ClientDatagramDecoder:
-
-    messageHandler = None
-    @classmethod
-    def init(cls):
-        cls.messageHandler = NetEventGlobal.messageHandler
-        assert cls.messageHandler != None
-    def __init__(self, connection):
-        self.connection = connection
-        self.fmt = '<I H'
-        self.fmtlen = struct.calcsize(self.fmt)
-
-    def process_datagram(self, message):
-        prefix, datagram = message[:self.fmtlen], message[self.fmtlen:]
-        length, msg_type = struct.unpack(self.fmt, prefix)
-        self.messageHandler.process_net_event(msg_type, datagram)
-'''
-
-'''
-    def process_datagram(self, message):
-        prefix, datagram = message[:self.fmtlen], message[self.fmtlen:]
-        length, msg_type = struct.unpack(self.fmt, prefix)
-        self.messageHandler.process_net_event(msg_type, datagram)
-'''

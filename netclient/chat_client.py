@@ -56,14 +56,10 @@ class ChatClient:
 
     def __init__(self):
         self.input = ChatInput()
-        #print '__init__ subscribe'
         self.subscribe('system')
-        #print 'done'
 
     def on_identify(self, channel=None):
-        #print 'post identify subscribe'
         self._initial_subscribe(self.CURRENT_CHANNEL)
-        #print 'done'
 
     def _initial_subscribe(self, channel=None, _subscribed=[False]):
         loaded_channels = []
@@ -89,7 +85,6 @@ class ChatClient:
         self.subscribe(self.CURRENT_CHANNEL)
 
     def subscribe(self, channel):
-        #assert type(channel) == str
         if not channel:
             return
         if channel == 'system':
@@ -97,7 +92,6 @@ class ChatClient:
         else:
             self.subscriptions.setdefault(channel, Channel(channel))
         NetOut.chatMessage.subscribe(channel)
-        #print 'Chat client subscribed to %s' % (channel,)
 
     def unsubscribe(self, channel=None):
         switch = False
