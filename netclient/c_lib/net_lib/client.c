@@ -83,7 +83,7 @@ void py_out_test()
     if(t_count < 150)
     {
         printf("py_out_test: packet %i \n", t_count);
-        char* _ctest = "test1\n";
+        char* _ctest = (char*) "test1\n";
         int length = 6;
         NetClient::NPserver.write_python_packet(_ctest, length);
         t_count++;

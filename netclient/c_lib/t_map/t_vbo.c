@@ -8,11 +8,13 @@
 #include <c_lib/SDL/shader_loader.hpp>
 
 //shaders
-static GLenum shader_vert = 0;
-static GLenum shader_frag = 0;
-static GLenum shader_prog = 0;
 
 const int SHADER_ON = 1;
+
+
+    static GLenum shader_vert = 0;
+    static GLenum shader_frag = 0;
+    static GLenum shader_prog = 0;
 
 void setShaders2() 
 {
@@ -59,9 +61,140 @@ void setShaders2()
 
     glLinkProgramARB(shader_prog);
 
-    if(DEBUG) printProgramInfoLog(shader_prog); // print diagonostic information
-        
+    if(DEBUG) printProgramInfoLog(shader_prog); // print diagonostic information     
 }
+
+static GLenum shader_vert2 = 0;
+static GLenum shader_frag2 = 0;
+static GLenum shader_prog2 = 0;
+
+void setShaders3() 
+{
+
+    int DEBUG = 1;
+
+    shader_prog2 = glCreateProgramObjectARB();
+    shader_vert2 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    shader_frag2 = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char *vs, *fs;
+
+    printf("loading text files \n");
+
+    vs = textFileRead((char*) "./media/shaders/terrain_map_00.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain_map_00.fsh");
+
+    glShaderSourceARB(shader_vert2, 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(shader_frag2, 1, (const GLcharARB**)&fs, NULL);
+    glCompileShaderARB(shader_vert2);
+    if(DEBUG) printShaderInfoLog(shader_vert2);
+
+    glCompileShaderARB(shader_frag2);
+    if(DEBUG) printShaderInfoLog(shader_frag2);
+    
+    glAttachObjectARB(shader_prog2, shader_vert2);
+    glAttachObjectARB(shader_prog2, shader_frag2);
+
+    /* Bind attribute index 0 (coordinates) to in_Position and attribute index 1 (color) to in_Color */
+    /* Attribute locations must be setup before calling glLinkProgram. */
+    
+    //glBindAttribLocation(shaderprogram, 0, "in_Position");
+    //glBindAttribLocation(shaderprogram, 1, "in_Color");
+
+    //glBindAttribLocation(shader_prog2, 0, "vert_pos");
+    //glBindAttribLocation(shader_prog2, 1, "vert_uv");
+    //glBindAttribLocation(shader_prog2, 2, "vert_rgba");
+    //glBindAttribLocation(shaderprogram, 3, "vert_normal");
+
+    glLinkProgramARB(shader_prog2);
+
+    if(DEBUG) printProgramInfoLog(shader_prog2); // print diagonostic information     
+}
+
+
+SDL_Surface *terrain_map_glsl_surface_1;
+GLuint terrain_map_glsl_1;
+
+void initTexture3()
+{
+/*
+    GLenum internalFormat = GL_RGBA;
+    GLenum format = GL_RGBA;
+    s32 w = 128;
+    s32 h = 128;
+    s32 d = numberOfTilesets * 16;
+    u8 * Pixels = new u8[w * h * d * 4];
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
+*/
+
+//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+
+    terrain_map_glsl_surface_1=IMG_Load("media/texture/blocks_01.png");
+    if(!terrain_map_glsl_surface_1) {printf("IMG_Load: %s \n", IMG_GetError());return;}
+
+    //SDL_Surface *_surface = IMG_Load("media/terrain_map_glsl_1/textures_03.png");
+    //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
+    glEnable(GL_TEXTURE_2D);
+
+    GLenum internalFormat = GL_RGBA;
+    GLenum format;
+    if (block_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
+    if (block_surface->format->Rmask != 0x000000ff) format = GL_BGRA;
+
+    int w = 512;
+    int h = 512;
+    int d = 256;
+    //u8 * Pixels = new u8[w * h * d * 4];
+
+    glGenTextures( 1, &terrain_map_glsl_1 );
+    glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1);
+
+    //glGenTextures( 1, &terrain_map_glsl_1 );
+    //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
+
+    //possible texture problem
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+
+    //glGenTextures( 1, &terrain_map_glsl_1_no_gamma_correction );
+    //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1_no_gamma_correction );
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+
+    glDisable(GL_TEXTURE_2D);
+    
+
+}
+
+
 
 /*
 void glVertexAttribPointer( GLuint      index,
