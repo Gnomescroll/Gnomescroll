@@ -12,8 +12,8 @@ static GLenum shader_vert = 0;
 static GLenum shader_frag = 0;
 static GLenum shader_prog = 0;
 
-const int SHADER_ON = 0;
- 
+const int SHADER_ON = 1;
+
 void setShaders2() 
 {
 
@@ -91,7 +91,8 @@ glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
 
 
 GLuint block_texture = 0;
-
+GLuint block_texture_no_gamma_correction = 0;
+ 
 int must_lock_block_surface;
 SDL_Surface *block_surface;
 SDL_PixelFormat *block_surface_pixel_format;
@@ -305,8 +306,7 @@ int _init_draw_terrain() {
     //SDL_FreeSurface(_surface);
 
     //Uint32 GL_PIXEL_TYPE = GL_BGR;
-    int texture_format;
-    if (block_surface->format->Rmask == 0x000000ff) {texture_format = GL_RGBA;} else {texture_format = GL_BGRA;}
+
 
     //sdl_pixel_format = surface->format;
     //block_surface_width = (int)surface->w;
@@ -322,11 +322,39 @@ int _init_draw_terrain() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+
+
+    int texture_format;
+    if (block_surface->format->Rmask == 0x000000ff)
+    {
+        texture_format = GL_RGBA;
+    } else {
+        texture_format = GL_BGRA;
+    }
+
+    //texture_format2 = GL_BGRA_EXT;
+    //texture_format2 = GL_SRGBA_EXT;
+    //GL_BGRA_EXT
+    //GL_SRGB_ALPHA_EXT
+
+    //internal format, input format
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8_EXT, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
 
     //possible texture problem
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
     //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+
+    glGenTextures( 1, &block_texture_no_gamma_correction );
+    glBindTexture( GL_TEXTURE_2D, block_texture_no_gamma_correction );
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+
     glDisable(GL_TEXTURE_2D);
     }
 
@@ -401,7 +429,6 @@ will be 1 if is adjacent to any side
 will be 2 only if both sides are occluded
  */
 
-const static int occ_array[3] = { 255, 177, 100 };
 //const static int occ_array[3] = { 255, 177, 177 };
 
 
@@ -410,22 +437,20 @@ const static int occ_array[3] = { 255, 177, 100 };
 void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list) 
 {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);   
-    occ = occ_array[occ];
-
     int r,g,b;
-    if(occ == 255)
+    if(occ == 0)
     {
         r = 255;
         g = 0;
         b = 0;
     }
-    if(occ == 177)
+    if(occ == 1)
     {
         r = 0;
         g = 255;
         b = 0;
     }
-    if(occ == 100)
+    if(occ == 2)
     {
         r = 0;
         g = 0;
@@ -437,7 +462,7 @@ void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list)
     v_list->b = b;
 }
 
-
+const static int occ_array[3] = { 255, 177, 100 };
 static inline int calcAdj(int side_1, int side_2, int corner) {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     return occ_array[occ];
@@ -1028,8 +1053,12 @@ int _draw_terrain() {
        //DRAW_VBOS1();
 
        //DRAW_VBOS1a();
-       //DRAW_VBOS3();  
+
+       if(SHADER_ON) {
+       DRAW_VBOS3();  
+        } else {
         DRAW_VBOS2();
+        } 
     } else {
 
         glBeginQuery(GL_TIME_ELAPSED_EXT, gl_perf_queries[gl_per_queries_index]);

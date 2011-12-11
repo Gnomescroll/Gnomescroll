@@ -272,7 +272,7 @@ int init_video() {
 
     if(GLEW_EXT_provoking_vertex) 
     {
-        glProvokingVertexEXT(GL_FIRST_VERTEX_CONVENTION_EXT);
+        //glProvokingVertexEXT(GL_FIRST_VERTEX_CONVENTION_EXT);
     } else {
         printf("warning: ProvokingVertex extention not supported \n");
 
