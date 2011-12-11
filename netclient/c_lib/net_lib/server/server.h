@@ -13,7 +13,7 @@
 
 namespace NetServer
 {
-    const static int HARD_MAX_CONNECTIONS  = 1024;
+    const static int HARD_MAX_CONNECTIONS  = 256;
 }
 
 struct ConnectionPool {

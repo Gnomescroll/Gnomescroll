@@ -27,7 +27,7 @@ void init_server(unsigned short port) {
     server_socket = *s;
     free(s);
 
-    printf("Server Connection Pool Ready\n");
+    printf("init server connection pool: port %i \n", (int) port);
 }
 
 int pool_n_offset = 1;
