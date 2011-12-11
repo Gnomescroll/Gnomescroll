@@ -246,7 +246,6 @@ class Hud(object):
         pm_channel = 'pm_' + str(NetClientGlobal.client_id)
         for msg in msgs:
             if not msg.payload.content.strip(): continue
-            #print msg.payload.content
             content = msg.name
             if content:
                 content += ': '
@@ -266,7 +265,6 @@ class Hud(object):
             i += 1
 
         for t in to_draw:
-            print t.text
             t.draw()
 
     def _draw_cursor(self, direction='vertical'):

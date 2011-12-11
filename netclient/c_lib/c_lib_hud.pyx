@@ -169,8 +169,6 @@ class Text(object):
         r,g,b,a = self.color
         set_text_color(r,g,b,a)
         draw_text(self.text, self.text_len, self.x, self.y, self.depth)
-        print self.text
-        print self.x, self.y
         
 ''' Font '''
 import os.path

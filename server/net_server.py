@@ -20,12 +20,12 @@ class NetServer:
     #serverListener = None
 
     #state
-    _client_id = 0
+    #_client_id = 0
 
-    @classmethod
-    def generate_client_id(cls):
-        cls._client_id += 1
-        return cls._client_id
+    #@classmethod
+    #def generate_client_id(cls):
+        #cls._client_id += 1
+        #return cls._client_id
 
     @classmethod
     def init_0(cls):
@@ -61,6 +61,8 @@ class PyClient:
     def __init__(self, client_id):
 
         self.client_id = client_id
+        print "PyClient initialized with client_id %d" % (client_id,)
+
         #self.connection = connection
         #self.address = address
 
@@ -79,14 +81,14 @@ class PyClient:
         self.name = None
         #self.ec = 0
 
-        self._set_client_id()
+        #self._set_client_id()
         self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
     def identify(self, name):
-        print 'identify attempt'
+        print 'identify attempt as %s' % (name,)
         valid, name, you = self._valid_player_name(name)
-        print valid, name, you
+        print "Valid?: ", valid, " Name: ", name, " You?: ", you
         if valid:
             self.identified = True
             print 'IDENTIFIED'
@@ -151,12 +153,12 @@ class PyClient:
             print 'Created new player'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
 
-    def _set_client_id(self):
-        #if hasattr(self, 'id'):
-            #print "ERROR: TcpClient.set_client_id, client_id already assigned"
-            #return False
-        self.id = str(NetServer.generate_client_id())
-        return True
+    #def _set_client_id(self):
+        ##if hasattr(self, 'id'):
+            ##print "ERROR: TcpClient.set_client_id, client_id already assigned"
+            ##return False
+        #self.id = str(NetServer.generate_client_id())
+        #return True
 
     def _valid_player_name(self, name):
         valid = True
@@ -276,8 +278,20 @@ class PyClientPool:
         print "Connection associated with client_id= %s" % (_client_id)
 
     #called on connection deconstruction
-    def removeClient(self, _client_id):
-        print "PyClientPool: removeClient, id= %i" % (_client_id)
+    def removeClient(self, client_id):
+        print "PyClientPool: removeClient, id= %i" % (client_id)
+        client = self.clients_by_id[client_id]
+
+        # dispatch event
+        ChatServer.chat.disconnect(client)
+        GameStateGlobal.disconnect(client)
+        NetOut.event.client_quit(client.id)
+
+        # recycle name
+        if client.name in self.names:
+            del self.names[client.name]
+
+        # remove from registry
         del self.clients_by_id[client.id]
 
     def by_client_id(self, client_id):
@@ -299,32 +313,13 @@ class PyClientPool:
 
     def name_available(self, name, connection=None):
         you = False
+        avail = False
         if connection is not None:
-            if self.names.get(name, None) == connection.id:
-                you = True
-        if name in self.names:
-            avail = False
+            if name in self.names and self.names[name] == connection.id:
+                    you = True
         else:
             avail = True
         return (avail, you,)
-
-    '''
-    def tearDownClient(self, connection, duplicate_id = False):
-        fileno = connection.fileno
-        for sock in self.socket_list:
-            if sock.fileno() == fileno:
-                self.socket_list.remove(sock)
-        self._client_pool[fileno].close()
-        del self._client_pool[fileno] #remove from client pool
-        if connection.id != 0: # remove from chat
-            ChatServer.chat.disconnect(connection)
-            del self.clients_by_id[connection.id]
-        if connection.name in self.names:
-            del self.names[connection.name]
-        GameStateGlobal.disconnect(connection)
-        NetOut.event.client_quit(connection.id)
-        ChatServer.chat.disconnect(connection)
-    '''
 
 '''
 Decoders
