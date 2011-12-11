@@ -307,6 +307,7 @@ void poll_connection_timeout() {
         if(NP_time_delta1(p->last_packet_time) > 4000) { //4000 ms timeout
             printf("Connection %i timeout\n", p->client_id);
             pool.connection[i] = NULL;
+            client_disconnect_event(i);
             delete p; //need to clean up!
         }
     }

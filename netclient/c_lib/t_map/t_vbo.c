@@ -91,7 +91,7 @@ glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
 
 
 GLuint block_texture = 0;
-GLuint block_texture_no_gamma_correction = 0;
+GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
  
 int must_lock_block_surface;
 SDL_Surface *block_surface;
@@ -462,7 +462,10 @@ void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list)
     v_list->b = b;
 }
 
-const static int occ_array[3] = { 255, 177, 100 };
+//const static int occ_array[3] = { 255, 177, 100 };
+
+const static int occ_array[3] = { 255, 128, 64 };
+
 static inline int calcAdj(int side_1, int side_2, int corner) {
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     return occ_array[occ];
