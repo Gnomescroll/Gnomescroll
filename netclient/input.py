@@ -145,6 +145,13 @@ class InputGlobal:
             #cls.mouse.clear_mouse_deltas()
 
     @classmethod
+    def toggle_chat(cls):
+        if cls.input == 'chat':
+            cls.toggle_input_mode(0)
+        else:
+            cls.input = 'chat'
+
+    @classmethod
     def toggle_camera_mode(cls, change=1, current_mode=[0]):
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
@@ -288,11 +295,8 @@ class Keyboard(object):
         GameStateGlobal.agent.toggle_agent_camera_mode()
         #agent.toggle_camera_mode()
 
-    def toggle_chat(self, empty=None):
-        if InputGlobal.input == 'chat':
-            InputGlobal.toggle_input_mode(0)
-        else:
-            InputGlobal.input = 'chat'
+    def toggle_chat(self):
+        InputGlobal.toggle_chat()
 
     def stateHandler(self, keyboard):
         if InputGlobal.use_voxel_aligner:

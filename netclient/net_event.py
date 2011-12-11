@@ -276,7 +276,7 @@ class ClientMessageHandler(GenericMessageHandler):
             ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
             ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
             # activate chat, insert /nick
-            #InputGlobal.enable_chat()
+            InputGlobal.toggle_chat()
             ChatClientGlobal.chatClient.insert_string('/nick ')
         else:
             NetOut.sendMessage.identify(name=opts.alt_name)
