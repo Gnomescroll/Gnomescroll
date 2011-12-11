@@ -61,6 +61,7 @@ class PyClient:
     def __init__(self, client_id):
 
         self.client_id = client_id
+        self.id = client_id
         print "PyClient initialized with client_id %d" % (client_id,)
 
         #self.connection = connection
@@ -311,14 +312,14 @@ class PyClientPool:
         self.names[name] = connection.id
         return name
 
-    def name_available(self, name, connection=None):
+    def name_available(self, name, connection):
         you = False
-        avail = False
-        if connection is not None:
-            if name in self.names and self.names[name] == connection.id:
-                    you = True
-        else:
-            avail = True
+        avail = True
+        if name in self.names:
+            if self.names[name] == connection.id:
+                you = True
+            else:
+                avail = False
         return (avail, you,)
 
 '''

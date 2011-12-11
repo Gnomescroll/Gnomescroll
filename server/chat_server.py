@@ -50,16 +50,18 @@ class Chat:
         print msg.payload
         if 'channel' not in msg.payload:
             return
+        print self.channels[msg.payload['channel']]
         for client_id in self.channels[msg.payload['channel']]:
-            print "Broadcasting %s on channel %s to client %s" % (msg.payload['content'], msg.payload['channel'], client_id,)
+            print "Broadcasting %s on channel %s to client %d" % (msg.payload['content'], msg.payload['channel'], client_id,)
             self.clients[client_id].send(msg)
 
     # connect client
     def connect(self, connection):
         client = ChatClient(connection)
-        cid = client.id
-        self.clients[cid] = client
-        self.add_channel('pm_'+cid)
+        self.clients[client.id] = client
+        print self.clients
+        self.add_channel('pm_'+str(client.id))
+        print "client %d connected to chat" % (client.id,)
 
     # disconnect client
     def disconnect(self, connection):
@@ -67,7 +69,8 @@ class Chat:
             return
         client = self.clients[connection.id]
         self.remove(client) 
-        self.remove_channel('pm_' + client.id)
+        self.remove_channel('pm_' + str(client.id))
+        print 'chat disconnected client'
 
     # remove client
     def remove(self, client):
@@ -75,25 +78,24 @@ class Chat:
             if channel in self.channels and client.id in self.channels[channel]:
                 self.channels[channel].remove(client.id)
         del self.clients[client.id]
+        print 'chat removed client'
 
     def client_listen(self, connection, channel=None):
 
         def _add_client_to_channel(client, channel):
-            client_id = str(client.id)
             channel_parts = channel.split('_')
-            if channel_parts[0] == 'pm' and channel_parts[1] != client_id:
+            if channel_parts[0] == 'pm' and channel_parts[1] != str(client.id):
                 print 'Client attempted to listen to another\'s private client channel'
                 return
             listeners = self.channels[channel]
-            if client_id not in listeners:
-                print 'client %s now listening to %s' %(client_id, channel,)
-                listeners.append(client_id)
+            if client.id not in listeners:
+                print 'client %d now listening to %s' %(client.id, channel,)
+                listeners.append(client.id)
 
             if channel not in client.channels:
                 client.channels.append(channel)
 
-        client_id = connection.id
-        client = self.clients.get(client_id, None)
+        client = self.clients.get(connection.id, None)
         if client is None:
             print 'client_listen: client unknown'
             return
