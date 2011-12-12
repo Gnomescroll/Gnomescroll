@@ -61,10 +61,9 @@ def sendJSON(cmd=None, tick=False):
     return outer
 
 # if client_id is required
+import init_c_lib
 def idRequired(f):
     def wrapped(*args, **kwargs):
-        print 'idRequired'
-        print NetClientGlobal.connection.client_id
         if NetClientGlobal.connection.client_id:
             f(*args, **kwargs)
     return wrapped
@@ -255,22 +254,6 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
-    @sendJSON('hit_block', tick=True)
-    def hit_block(self, agent=None):
-        assert False
-        pass
-        #if agent is None or agent.id is None:
-            #return
-        #block_position = agent.nearest_block_position()
-        #if block_position is None:
-            #return
-        #return {
-            #'aid'   :   agent.id,
-            #'pos'   :   block_position,
-        #}
-
-    @idRequired
-    @noViewer
     @sendJSON('set_block', tick=True)
     def set_block(self, agent=None):
         if agent is None or agent.id is None:
@@ -292,10 +275,6 @@ class SendMessage(GenericMessage):
         return {
             'name': name,
         }
-
-    #@sendJSON('request_client_id')
-    #def request_client_id(self):
-        #return True
 
     @idRequired
     @noViewer

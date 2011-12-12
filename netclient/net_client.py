@@ -49,7 +49,7 @@ class SendPacket:
 
 _msg_buffer = True
 
-class PyClient:
+class PyClient(object):
 
     messageHandler = None
     @classmethod
@@ -59,7 +59,6 @@ class PyClient:
     def __init__(self):
         self.connected = False
         self.out = SendPacket(self)
-        self.client_id = None
 
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
@@ -72,18 +71,16 @@ class PyClient:
         register_client_creation(( lambda client_id: self.on_connect(client_id) ))
         register_client_deletion(( lambda client_id: self.removeClient(client_id) ))
 
-    @property
-    def client_id(self):
-        print "CLIENT_ID %d" % get_client_id()
-        return get_client_id()
+    def __getattribute__(self, k):
+        if k == 'client_id':
+            return get_client_id()
+        return object.__getattribute__(self, k)
 
     def on_connect(self, client_id):
         print "NetClient connected: client id = %i" % (client_id)
         NetOut.sendMessage.identify()
-        #self.client_id = client_id
 
     def on_disconnect(self):
-        self.client_id = None
         self.connected = False
 
     def push_to_buffer(self, message):

@@ -416,6 +416,7 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             GameStateGlobal.game.player_join_team(player, team)
 
     def _player_list(self, **args):
+        print args
         self._default_list(**args)
         if GameStateGlobal.game is not None:
             GameStateGlobal.game.update_players()
@@ -456,9 +457,7 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
         if agent.you:
             return
-        #agent.pos(pos)
         agent.state = pos
-        #print agent.state
 
     #deprecated
     def _agent_angle(self, **msg):
