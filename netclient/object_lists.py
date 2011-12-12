@@ -410,10 +410,9 @@ class GenericMultiObjectList(GenericObjectList):
 class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
-        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun, GrenadePouch
+        from weapons import Pick, BlockApplier, HitscanLaserGun, GrenadePouch
         GenericMultiObjectList.__init__(self)
         self._allow_klasses([ \
-            LaserGun,
             Pick,
             BlockApplier,
             HitscanLaserGun,

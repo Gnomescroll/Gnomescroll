@@ -21,7 +21,7 @@ import c_lib.c_lib_sdl as cSDL
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
-from weapons import LaserGun, Pick, BlockApplier
+from weapons import Pick, BlockApplier
 from game_modes import NoTeam
 from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 from draw_utils import *

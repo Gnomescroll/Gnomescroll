@@ -10,7 +10,7 @@ from math import pi, cos, sin
 from random import randrange
 
 from vector_lib import distance
-from weapons import LaserGun, Pick, BlockApplier
+from weapons import Pick, BlockApplier
 from game_state import GameStateGlobal
 from object_lists import GenericObjectList
 from net_out import NetOut
@@ -101,24 +101,12 @@ class AgentPhysics:
 
 class AgentAction:
 
-    def fire_projectile(self, pos=None, direction=None):
-        print 'Agent.fire_projectile'
-        state = self.state_vector()
-        if pos is not None:
-            state[0:3] = pos
-        if direction is not None:
-            state[3:6] = direction
-        projectile = GameStateGlobal.projectileList.create('Laser', state, owner=self.owner)
-        NetOut.event.projectile_create(projectile)
-
     def throw_grenade(self, direction):
         pl = GameStateGlobal.projectileList
         pos = self.pos()
         pos[2] += self.b_height * 0.75
         state = pos + direction
         grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
-        #NetOut.event.projectile_create(grenade)
-
 
 # represents an agent under control of a player
 class Agent(AgentWrapper, AgentPhysics, AgentAction):

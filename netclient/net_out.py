@@ -125,20 +125,6 @@ class SendMessage(GenericMessage):
             'id'    :   wid,
         }
 
-    #in use, but move to C/deprecate
-    @idRequired
-    @noViewer
-    @sendJSON('fire_projectile', tick=True)
-    def fire_projectile(self, agent=None):
-        assert False
-        if agent is None or agent.id is None:
-            return
-        return {
-            'aid'   : agent.id,
-            'pos'   : agent.pos(),
-            'vec'   : agent.normalized_direction(),
-        }
-
     @idRequired
     @noViewer
     @sendJSON('reload_weapon', tick=True)

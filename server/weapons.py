@@ -11,7 +11,6 @@ class WeaponList(GenericMultiObjectList):
     def __init__(self):
         GenericMultiObjectList.__init__(self)
         self._allow_klasses([ \
-            LaserGun,
             Pick,
             BlockApplier,
             HitscanLaserGun,
@@ -81,11 +80,12 @@ class Weapon(EquippableObject):
             d.update(filter_props(self, properties))
         return d
 
-class LaserGun(Weapon):
+class HitscanLaserGun(Weapon):
 
-    def __init__(self, id, owner=None):
+    def __init__(self, id, owner=None, **kwargs):
         Weapon.__init__(self, id, owner)
-        self.fire_command = 'fire_projectile'
+        self.hitscan = True
+        self.fire_command = 'hitscan'
 
     def reload(self):
         if self.ammo == 0:
@@ -110,16 +110,6 @@ class LaserGun(Weapon):
         else:
             d.update(filter_props(self, properties))
         return d
-
-class HitscanLaserGun(LaserGun):
-
-    def __init__(self, id=None, owner=None, **kwargs):
-        LaserGun.__init__(self, id=id, owner=owner, **kwargs)
-        self.hitscan = True
-        self.fire_command = 'hitscan'
-
-    def fire(self):
-        return LaserGun.fire(self)
 
 class BlockApplier(Weapon):
 
