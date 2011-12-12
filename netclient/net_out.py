@@ -125,64 +125,11 @@ class SendMessage(GenericMessage):
             'id'    :   wid,
         }
 
-    #deprecate
-    @idRequired
-    @noViewer
-    @sendJSON('agent_position', tick=True)
-    def agent_position(self, agent):
-        assert False
-        if agent is None or not agent.id:
-            return
-        return {
-            'id'    :   agent.id,
-            #'pos'   :   agent.pos(),
-            'pos'   :   agent.state,
-        }
-
-    #deprecate
-    @idRequired
-    @noViewer
-    @sendJSON('agent_angle', tick=True)
-    def agent_angle(self, agent):
-        assert False
-        if agent is None or not agent.id:
-            return
-        return {
-            'id'    :   agent.id,
-            'angle' :   agent.angles(),
-        }
-
-    #deprecate
-    @idRequired
-    @noViewer
-    @sendJSON('agent_control_state', tick=True)
-    def send_agent_control_state(self, agent):
-        assert False
-        if not agent.id :  # agent not identified
-            return
-        return {
-            'state': agent.control_state(),
-            'angle': [agent.x_angle, agent.y_angle],
-            'aid'  : agent.id,
-        }
-
-    #deprecate
-    @idRequired
-    @noViewer
-    @sendJSON('agent_button_state', tick=True)
-    def agent_button_state(self, agent):
-        assert False
-        return {
-            'id'     : agent.id,
-            'buttons' : agent.button_state,
-        }
-
     #in use, but move to C/deprecate
     @idRequired
     @noViewer
     @sendJSON('fire_projectile', tick=True)
     def fire_projectile(self, agent=None):
-        #assert False
         if agent is None or agent.id is None:
             return
         return {
@@ -274,15 +221,6 @@ class SendMessage(GenericMessage):
             name = NetClientGlobal.name
         return {
             'name': name,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('hitscan', tick=True)
-    def hitscan(self, target):
-        assert False
-        return {
-            'target'    :   target
         }
 
     @idRequired

@@ -402,56 +402,12 @@ class AgentMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'request_agent'     :   self.request_agent,
-            #'agent_position'    :   self.agent_position,
-            #'agent_button_state':   self.agent_button_state,
-            #'agent_angle'       :   self.agent_angle,
-            'create_agent'      :   self.create_agent,
         }
 
     @logError('request_agent')
     @requireKey('id')
     def request_agent(self, msg, connection, aid):
         connection.sendMessage.send_agent(aid)
-
-    @logError('create_agent')
-    def create_agent(self, msg, connection):
-        print 'Received message CREATE_AGENT. Why????'
-        assert False
-        GameStateGlobal.agentList.create(msg)
-
-    #deprecate
-    @logError('agent_position')
-    @extractPlayer
-    @processAgent()
-    @processIterable('pos', 9)
-    def agent_position(self, msg, player, agent, pos):
-        assert False
-        agent.state = pos
-        NetOut.event.agent_position(agent)
-
-    #deprecate
-    @logError('agent_button_state')
-    @extractPlayer
-    @processAgent()
-    @processIterable('buttons', 6)
-    def agent_button_state(self, msg, player, agent, buttons):
-        assert False
-        if buttons != agent.button_state:
-            agent.button_state = buttons
-            NetOut.event.agent_button_state(agent)
-            ctrl_state = agent.compute_state()
-            agent.set_control_state(ctrl_state)
-
-    #deprecate
-    @logError('agent_angle')
-    @extractPlayer
-    @processAgent()
-    @processIterable('angle', 2)
-    @requireKey('tick')
-    def agent_angle(self, msg, player, agent, angle, tick):
-        assert False
-        agent.set_angle(angle)
-
 
 class PlayerMessageHandler(GenericMessageHandler):
 
@@ -474,7 +430,6 @@ class ProjectileMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'request_projectile':   self.request_projectile,
-            #'fire_projectile'   :   self.fire_projectile,
             'throw_grenade' : self.throw_grenade,
         }
 
@@ -493,17 +448,6 @@ class ProjectileMessageHandler(GenericMessageHandler):
         if weapon.fire_command == 'throw_grenade' and weapon.fire():
             agent.throw_grenade(vector)
 
-    #deprecate
-    @logError('fire_projectile')
-    @extractPlayer
-    @processAgent('aid')
-    @processIterable('pos', 3)
-    @processIterable('vec', 3, err_key='vec (direction)')
-    def fire_projectile(self, msg, player, agent, pos, vec):
-        assert False
-        weapon = agent.active_weapon()
-        if weapon.fire_command == 'fire_projectile' and weapon.fire():
-            agent.fire_projectile(pos=pos, direction=vec)
 
 '''
 move reload, to C
@@ -515,7 +459,6 @@ class WeaponMessageHandler(GenericMessageHandler):
         return {
             'request_weapon'    :   self.request_weapon, #deprecate
             'reload_weapon'     :   self.reload_weapon, #move to c
-            'hitscan'           :   self.hitscan,   #deprecate
             'drop_weapon'       :   self.drop_weapon, #deprecate
             'change_weapon'     :   self.change_weapon, #move to C
         }
@@ -538,56 +481,6 @@ class WeaponMessageHandler(GenericMessageHandler):
         weapon = agent.weapons[weapon_index]
         if weapon.reload():
             NetOut.event.agent_update(agent, 'weapons')
-
-    #deprecate
-    @logError('hitscan')
-    @extractPlayer
-    @processPlayerAgent
-    @requireKey('target')
-    def hitscan(self, msg, player, firing_agent, target):
-        assert False
-        err_msg = None
-
-        weapon = firing_agent.active_weapon()
-        if not weapon.hitscan:
-            return 'Client sent hitscan message for non-hitscan weapon'
-
-        try:
-            type = target['type']
-        except KeyError:
-            err_msg = err.key_missing('target type')
-
-        try:
-            loc = target['loc']
-            if type == 'block' or type == 'empty':
-                assert len(loc) == 3
-            elif type == 'agent':
-                assert len(loc) == 2
-        except KeyError:
-            err_msg = err.key_missing('target loc')
-        except TypeError:
-            err_msg = err.not_iterable('target loc')
-        except AssertionError:
-            err_msg = err.wrong_size('target loc')
-
-        if err_msg: return err_msg
-
-        # add agent/projectile information to packet and forward
-        if not weapon.fire():
-            return
-        NetOut.event.hitscan(target, firing_agent.id, weapon.type)
-        print 'Hitscan target type %s' % (type,)
-        # apply damage
-        if type == 'block':
-            pass
-        elif type == 'agent':
-            target_aid, body_part_id = loc
-            try:
-                target_agent = GameStateGlobal.agentList[target_aid]
-            except KeyError:
-                return 'target agent does not exist'
-            # improve damage calculation later
-            target_agent.take_damage(weapon.base_damage, firing_agent.owner)
 
     @logError('change_weapon')
     @extractPlayer
@@ -673,8 +566,6 @@ class MiscMessageHandler(GenericMessageHandler):
         return {
             'ping'  :   self.ping,
             'identify': self.identify,
-            #'request_client_id':    self.request_client_id,
-            #'received_client_id':   self.received_client_id,
         }
 
     @logError('ping')
@@ -687,11 +578,6 @@ class MiscMessageHandler(GenericMessageHandler):
     def identify(self, msg, conn, name):
         conn.identify(name)
 
-    #def request_client_id(self, msg, conn):
-        #conn.send_client_id()
-
-    #def received_client_id(self, msg, conn):
-        #conn.set_id_received()
 
 class MapMessageHandler(GenericMessageHandler):
 
