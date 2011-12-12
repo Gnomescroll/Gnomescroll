@@ -81,8 +81,8 @@ void setShaders3()
 
     printf("loading text files \n");
 
-    vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap.vsh");
-    fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap.fsh");
+    vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
 
     glShaderSourceARB(shader_vert2, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(shader_frag2, 1, (const GLcharARB**)&fs, NULL);
@@ -105,7 +105,7 @@ void setShaders3()
     //glBindAttribLocation(shader_prog2, 1, "vert_uv");
     //glBindAttribLocation(shader_prog2, 2, "vert_rgba");
     //glBindAttribLocation(shader_prog2, 3, "vert_normal");
-    glBindAttribLocation(shader_prog2, 4, "tex");
+    glBindAttribLocation(shader_prog2, 0, "tex");
 
     glLinkProgramARB(shader_prog2);
 
@@ -143,9 +143,6 @@ void initTexture3()
     terrain_map_glsl_surface_1=IMG_Load("media/texture/blocks_01.png");
     if(!terrain_map_glsl_surface_1) {printf("IMG_Load: %s \n", IMG_GetError());return;}
 
-    //SDL_Surface *_surface = IMG_Load("media/terrain_map_glsl_1/textures_03.png");
-    //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
-    glEnable(GL_TEXTURE_2D);
 
     GLuint internalFormat = GL_RGBA;
     GLuint format;
@@ -155,7 +152,36 @@ void initTexture3()
     int w = 32;
     int h = 32;
     int d = 256;
-    //u8 * Pixels = new u8[w * h * d * 4];
+    Uint32* Pixels = new Uint32[w * h * d];
+
+    SDL_LockSurface(terrain_map_glsl_surface_1);
+
+    //int px, py;
+    //unsigned char r,b,g,a;
+    int index;
+    Uint32 pix;
+
+for(int _i=0; _i < 16; _i++) {
+for(int _j=0; _j < 16; _j++) {
+
+    //px = 32*_i;
+    //py = 512*_j;
+    index = _i + 16*_j;
+
+    for(int i=0; i < 32; i++) {
+    for(int j=0; j < 32; j++) {
+        pix = ((Uint32*) terrain_map_glsl_surface_1->pixels)[ 512*(j+_j) + (i+_i) ];
+        Pixels[ 32*32*index + (j*32+i) ] = pix;
+    }
+    }
+}
+}
+
+    SDL_UnlockSurface(terrain_map_glsl_surface_1);
+            
+
+    glEnable(GL_TEXTURE_2D);
+
 
     glGenTextures( 1, &terrain_map_glsl_1 );
     glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1);
@@ -173,7 +199,12 @@ void initTexture3()
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
 
-    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, NULL);
+
+    int depth = 0;
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 1, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
+   glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
+    //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
 
     //possible texture problem
     //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
@@ -1836,7 +1867,10 @@ void DRAW_VBOS4() {
         //terrain_map_glsl_1
         //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        glActiveTexture(0);
         glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
+
+        //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1845,9 +1879,10 @@ void DRAW_VBOS4() {
 
         //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
         //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+        //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
         //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
-        
+        glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+
         int i;
         struct VBO* vbo;
 
@@ -1863,13 +1898,17 @@ void DRAW_VBOS4() {
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
             glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glTexCoordPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
+            
+            glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)28);
 
             //comment out and test
             //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-            glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+            //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+            //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
             //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
             //glVertexAttribPointer(4, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+            //glBindAttribLocation(shader_prog2, 4, "tex");
 
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
