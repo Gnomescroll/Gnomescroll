@@ -241,7 +241,7 @@ void NetPeer::flush_to_net()
     int n1 = 0;
     int seq = get_next_sequence_number(this);
     
-    printf("Sending Packet: seq= %i \n", seq);
+    //printf("Sending Packet: seq= %i \n", seq);
 
     #if NET_PEER_DEBUG
         _TotalBytes = 0;

@@ -86,7 +86,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
     UNPACK_uint16_t(&packet_size, buff, &n2); 
     //debugging
 
-    printf("*n= %i, max_x= %i, message_id= %i, packet_size= %i \n", *n, max_n, message_id, packet_size);
+    //printf("*n= %i, max_x= %i, message_id= %i, packet_size= %i \n", *n, max_n, message_id, packet_size);
 
     //python packet
     if(message_id == 254)
