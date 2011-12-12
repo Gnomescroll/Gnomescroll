@@ -63,6 +63,9 @@ Net_message* Python_channel_out::serialize_to_packet(int max_n)
 }
 
 //Python_channel_in
+
+static int _TERMINATE = 0;
+
 void Python_channel_in::insert(char* buff, int length, int sequence)
 {
     //printf("py_in packet %i: seq=%i, len=%i lowest_sequence=%i read_index=%i \n", _total_packets, sequence, length, lowest_sequence, read_index);
@@ -90,6 +93,12 @@ void Python_channel_in::insert(char* buff, int length, int sequence)
             if(sbe->next == NULL ) 
             {
                 printf("new sequence buffer element \n");
+                _TERMINATE++;
+                if(_TERMINATE > 64)
+                {
+                    int segfault = (int)*(int*)NULL;
+                    printf("Segfault= %i", segfault);
+                }
                 sbe->next = new Sequence_buffer_element; //use pool
                 sbe->next->next = NULL; //new head
             }
@@ -137,6 +146,7 @@ void Python_channel_in::pop(char* buff, int length)
             Sequence_buffer_element* tmp = read_sb;
             read_sb = read_sb->next;
             delete tmp; //use object pool
+            _TERMINATE--;
         }
     }
     if(size==0) read_index = 0;
