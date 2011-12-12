@@ -5,6 +5,7 @@
         float tx,ty;
         unsigned char r,g,b,a;
         char normal[4];
+        unsigned char tex[4];
     };
 
 
@@ -45,7 +46,7 @@ void DRAW_VBOS1();
 void DRAW_VBOS1a();
 void DRAW_VBOS2(); 
 void DRAW_VBOS3(); //shader version 
-void DRAW_VBOS2b();
+void DRAW_VBOS4();
 
 extern int must_lock_block_surface;
 extern SDL_Surface* block_surface;

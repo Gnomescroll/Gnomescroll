@@ -70,15 +70,23 @@ Put client and server message ids in seperate counters so they dont overlap
 
 int pop_message(char* buff, int *n, int max_n, int client_id) {
 
-    if(*n == max_n) {
-        //printf("Processed Empty Packet\n");
-        return 0;
-    }
+    //if(*n == max_n) {
+    //    //printf("Processed Empty Packet\n");
+    //    return 0;
+    //}
     int size;
     uint8_t message_id;
 
     int _n = *n;
     UNPACK_uint8_t(&message_id, buff, &_n);
+
+    //debugging
+    int n2 = 2;
+    uint16_t packet_size;
+    UNPACK_uint16_t(&packet_size, buff, &n2); 
+    //debugging
+
+    printf("*n= %i, max_x= %i, message_id= %i, packet_size= %i \n", *n, max_n, message_id, packet_size);
 
     //python packet
     if(message_id == 254)
@@ -178,6 +186,8 @@ void process_packet_messages(char* buff, int n, int max_n, int client_id) {
 /*
     Deprecate, steamline processing
 */
+    printf("Start New Packet \n");
+
     int i=0;
     int condition;
     while(n != max_n) {

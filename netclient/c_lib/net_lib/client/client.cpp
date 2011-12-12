@@ -121,8 +121,12 @@ void process_incoming_packets() {
     int bytes_received;
 
     while(1) {
-        bytes_received = recvfrom(client_socket.socket, (char*)buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
+        bytes_received = recvfrom(client_socket.socket, (char*)buffer, 4096, 0, (struct sockaddr*)&from, &fromLength);
         if(bytes_received <= 0) {return;}
+        if(bytes_received >= 1500) 
+        {
+            printf("NetClient Warning: Packet received was over 1500 bytes!  %i bytes\n ", bytes_received);
+        }
         if(validate_packet(buffer, bytes_received, &from)) {
             process_packet(buffer, bytes_received);
         }
@@ -138,7 +142,7 @@ void process_packet(char* buff, int n) {
 
     int n1=0;
 
-    uint8_t channel_id;
+    uint16_t packet_size;
     uint16_t client_id;
     uint16_t sequence_number;
 
@@ -154,7 +158,7 @@ void process_packet(char* buff, int n) {
         return;
     }
 
-    UNPACK_uint8_t(&channel_id, buff, &n1);         //channel 1
+    UNPACK_uint16_t(&packet_size, buff, &n1);         //channel 1
     UNPACK_uint16_t(&sequence_number, buff, &n1);   //sequence number
     UNPACK_uint16_t(&max_seq, buff, &n1);           //max seq
     UNPACK_uint32_t(&acks, buff, &n1);              //sequence number

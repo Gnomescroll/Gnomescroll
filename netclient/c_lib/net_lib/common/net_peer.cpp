@@ -66,6 +66,12 @@ void NetPeer::push_reliable_packet(class Net_message* nm)
     }
 }
 
+#if NET_PEER_DEBUG
+    static int _TotalBytes = 0;
+    static int _TotalUnreliableBytes = 0;
+    static int _TotalReliableBytes = 0;
+#endif
+
 //void * memcpy ( void * destination, const void * source, size_t num );
 void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     //if(pending_bytes_out > 1500) printf("NetPeer Error 1: too much data in packet buffer, %i \n", pending_bytes_out);
@@ -83,6 +89,10 @@ void NetPeer::flush_unreliable_to_buffer(char* buff_, int* _index) {
     {
         nm = unreliable_net_message_array[i];
         memcpy(buff_+index, nm->buff, nm->len);
+        #if NET_PEER_DEBUG
+            _TotalBytes += nm->len;
+            _TotalUnreliableBytes += nm->len;
+        #endif
         index += nm->len;
         nm->decrement_unreliable();
         //nm = NULL; //debug
@@ -121,8 +131,14 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
     {
         nm = rnma_read->net_message_array[rnma_read_index];
         //do something
+
         memcpy(buff_+index, nm->buff, nm->len);
         index += nm->len;
+
+        #if NET_PEER_DEBUG
+            _TotalBytes += nm->len;
+            _TotalReliableBytes += nm->len;
+        #endif
         //rnma_nma->reference_count--; //wtf, decrement on confirmation
         rnma_read_index++;
         if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
@@ -216,12 +232,29 @@ void NetPeer::ack_packet(struct packet_sequence* ps)
 
 void NetPeer::flush_to_net() 
 {
+    if(this->connected == 0) 
+    {
+        printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
+        return;
+    }
+
     int n1 = 0;
     int seq = get_next_sequence_number(this);
     
+    printf("Sending Packet: seq= %i \n", seq);
+
+    #if NET_PEER_DEBUG
+        _TotalBytes = 0;
+    #endif
+
     //pack header
     PACK_uint16_t(client_id, net_out_buff, &n1); //client id
-    PACK_uint8_t(1, net_out_buff, &n1);  //channel 1
+
+    #if NET_PEER_DEBUG 
+        int size_tmp = n1;
+    #endif
+    
+    PACK_uint16_t(0, net_out_buff, &n1);  //packet_size
     PACK_uint16_t(seq, net_out_buff, &n1); //sequence number
 
     if(py_out.fcb.size != 0 && pending_reliable_bytes_out + pending_unreliable_bytes_out < 1450)
@@ -241,11 +274,9 @@ void NetPeer::flush_to_net()
     flush_unreliable_to_buffer(net_out_buff, &n1);
     flush_reliable_to_buffer(net_out_buff, &n1, &packet_sequence_buffer[seq%256]);
 
-    if(this->connected == 0) 
-    {
-        printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
-        return;
-    }
+    #if NET_PEER_DEBUG   
+        PACK_uint16_t(_TotalBytes, net_out_buff, &size_tmp);
+    #endif
 
     #ifdef DC_CLIENT
     pviz_packet_sent(seq, n1);

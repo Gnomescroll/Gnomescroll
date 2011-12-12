@@ -154,6 +154,7 @@ cdef extern from './t_map/t_vbo.h':
         float x,y,z
         float tx,ty
         unsigned char r,g,b,a
+        unsigned char tex[4]
     struct VBO:
         int v_num
         Vertex* vlist
@@ -339,6 +340,10 @@ def init_quad_cache():
                     tx,ty = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
+                tex0, tex1, tex2 = get_tex_texture(id, side, vert_num)
+                v.tex[0] = tex0
+                v.tex[1] = tex1
+                v.tex[2] = tex2
 
 def get_cube_texture(int tile_id, int side, int vert_num):
     global c_dat
@@ -390,6 +395,51 @@ def get_cube_texture(int tile_id, int side, int vert_num):
             print "Error!!!! set_tex invalid input"
             assert False
         return (tx,ty)
+
+def get_tex_texture(int tile_id, int side, int vert_num):
+    global c_dat
+    texture_id = c_dat.get(tile_id, 'texture_id')[side]
+
+    cdef cubeProperties* cp
+    cp = _get_cube(tile_id)
+    if cp.infinite_texture > 0:  #zero textures for blocks with multiple textures, such as infinite texture blocks
+        texture_id = 0
+    
+    if(texture_id < 0):
+        texture_id = 255
+
+    texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
+    tx = 0
+    ty = 0
+
+    if cp.infinite_texture == 0:
+        if vert_num == 0:
+            tx += 0
+            ty += 0
+        elif vert_num == 1:
+            tx += 0
+            ty += 255
+        elif vert_num == 2:
+            tx += 255
+            ty += 255
+        elif vert_num == 3:
+            tx += 255
+            ty += 0
+        return (tx,ty,texture_id)
+    else:
+        if vert_num == 0:
+            tx += 0
+            ty += 0
+        elif vert_num == 1:
+            tx += 0
+            ty += 255
+        elif vert_num == 2:
+            tx += 255
+            ty += 255
+        elif vert_num == 3:
+            tx += 255
+            ty += 0
+        return (tx,ty,texture_id)
 
 #for crop blocks
 def get_cube_texture_alt(tile_id, side, vert_num):

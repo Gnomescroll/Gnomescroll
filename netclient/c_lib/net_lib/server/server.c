@@ -110,7 +110,7 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     int n=0;
 
     uint16_t client_id;
-    uint8_t channel_id;
+    uint16_t packet_size;
 
     uint16_t sequence_number;
     uint16_t max_seq;
@@ -119,7 +119,7 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     class NetPeer* p;
     if(received_bytes < 6) { printf("Packet too small: %i bytes\n", received_bytes); return; }
     if(received_bytes == 6) {
-
+        uint8_t channel_id;
         UNPACK_uint16_t(&client_id, buff, &n);
         UNPACK_uint8_t(&channel_id, buff, &n);
 
@@ -140,7 +140,7 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     int n1=0;
 
     UNPACK_uint16_t(&client_id, buff, &n1); //client id
-    UNPACK_uint8_t(&channel_id, buff, &n1);  //channel 1
+    UNPACK_uint16_t(&packet_size, buff, &n1);  //channel 1
 
     UNPACK_uint16_t(&sequence_number, buff, &n1); //sequence number
     //ack string
@@ -213,80 +213,6 @@ void flush_packets()
     }
 
 }
-/*
-void flush_packets() {
-
-    int i,n1;
-    class NetPeer* p;
-    int seq;
-
-    //char header[1500];
-    char* header;
-
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-        if(pool.connection[i] == NULL) continue;
-        p = pool.connection[i];
-        if(p->connected == 0) { printf("Cannot send packet, disconnected: client %i\n",p->client_id); return;}
-
-        n1 = 0;
-        header = p->buff; //client out buffer
-        PACK_uint16_t(p->client_id, header, &n1); //client id
-        PACK_uint8_t(1, header, &n1);  //channel 1
-
-        //sequence number
-        seq = get_next_sequence_number(p);
-        PACK_uint16_t(seq, header, &n1); //sequence number
-
-        //ack string
-        PACK_uint16_t(get_sequence_number(p), header, &n1); //max seq
-        PACK_uint32_t(generate_outgoing_ack_flag(p), header, &n1); //sequence number
-
-        //unsigned int value = 5;
-        //PACK_uint32_t(value, header, &n1);
-
-        //if(seq % 5 == 0) return; //simulate packet loss
-//        printf("n=%i, n_=%i \n", n1,p->buff_n);
-        n1 = p->buff_n;
-        
-//        if(n1 != 11) {
-//        printf("value=%i \n", p->buff[11] );
-//        }
-
-        send_to_client(i, header, p->buff_n);
-        reset_NetPeer_buffer(p);
-        //printf("Sent packet %i, %i bytes to client %i\n", seq, n1, p->client_id);
-    }
-}
-*/
-
-//Replace
-/*
-void push_message(int client_id, char* buffer, int n_bytes) {
-    class NetPeer* p;    
-    p = pool.connection[client_id];
-    if(p == NULL) { printf("server:push_message failed. Client is null\n"); return; }
-    //if(p->buff_n > 800) {
-    //    printf("Cannot push message, client %i buffer is full\n", client_id);
-    //    return;
-    //}
-    memcpy(p->buff+p->buff_n, buffer, n_bytes );
-    //memcpy( void * destination, const void * source, size_t num );
-    p->buff_n += n_bytes;
-}
-*/
-
-/*
-void push_broadcast_message(char* buffer, int n_bytes) {
-    int i;
-    class NetPeer* p;
-    for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
-        p = pool.connection[i];
-        if(p == NULL) continue;
-        memcpy(p->buff+p->buff_n, buffer, n_bytes);
-        p->buff_n += n_bytes;
-    }
-}
-*/
 
 void check_pool_for_dropped_packets() {
     int i;
@@ -304,8 +230,13 @@ void poll_connection_timeout() {
     for(i=0; i<HARD_MAX_CONNECTIONS; i++) {
     if(pool.connection[i] == NULL) continue;
         p = pool.connection[i];
-        if(NP_time_delta1(p->last_packet_time) > 4000) { //4000 ms timeout
+
+        int _time_since = NP_time_delta1(p->last_packet_time);
+
+        //if( _time_since > 4000) { //4000 ms timeout
+        if( _time_since > 10000) { //4000 ms timeout
             printf("Connection %i timeout\n", p->client_id);
+            printf("Last packet at %i \n", _time_since);
             pool.connection[i] = NULL;
             client_disconnect_event(i);
             delete p; //need to clean up!

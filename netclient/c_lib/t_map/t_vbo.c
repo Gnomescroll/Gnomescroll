@@ -31,8 +31,8 @@ void setShaders2()
 
     printf("loading text files \n");
 
-    vs = textFileRead((char*) "./media/shaders/terrain_map_00.vsh");
-    fs = textFileRead((char*) "./media/shaders/terrain_map_00.fsh");
+    vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.fsh");
 
     //glShaderSourceARB(shader_vert, 1, (const GLcharARB**)&shader_vert_source, &len);
     //glShaderSourceARB(shader_frag, 1, (const GLcharARB**)&shader_frag_source, &len);
@@ -81,8 +81,8 @@ void setShaders3()
 
     printf("loading text files \n");
 
-    vs = textFileRead((char*) "./media/shaders/terrain_map_00.vsh");
-    fs = textFileRead((char*) "./media/shaders/terrain_map_00.fsh");
+    vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap.fsh");
 
     glShaderSourceARB(shader_vert2, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(shader_frag2, 1, (const GLcharARB**)&fs, NULL);
@@ -104,13 +104,13 @@ void setShaders3()
     //glBindAttribLocation(shader_prog2, 0, "vert_pos");
     //glBindAttribLocation(shader_prog2, 1, "vert_uv");
     //glBindAttribLocation(shader_prog2, 2, "vert_rgba");
-    //glBindAttribLocation(shaderprogram, 3, "vert_normal");
+    //glBindAttribLocation(shader_prog2, 3, "vert_normal");
+    glBindAttribLocation(shader_prog2, 4, "tex");
 
     glLinkProgramARB(shader_prog2);
 
     if(DEBUG) printProgramInfoLog(shader_prog2); // print diagonostic information     
 }
-
 
 SDL_Surface *terrain_map_glsl_surface_1;
 GLuint terrain_map_glsl_1;
@@ -147,13 +147,13 @@ void initTexture3()
     //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
     glEnable(GL_TEXTURE_2D);
 
-    GLenum internalFormat = GL_RGBA;
-    GLenum format;
-    if (block_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
-    if (block_surface->format->Rmask != 0x000000ff) format = GL_BGRA;
+    GLuint internalFormat = GL_RGBA;
+    GLuint format;
+    if (terrain_map_glsl_surface_1->format->Rmask == 0x000000ff) format = GL_RGBA;
+    if (terrain_map_glsl_surface_1->format->Rmask != 0x000000ff) format = GL_BGRA;
 
-    int w = 512;
-    int h = 512;
+    int w = 32;
+    int h = 32;
     int d = 256;
     //u8 * Pixels = new u8[w * h * d * 4];
 
@@ -171,7 +171,7 @@ void initTexture3()
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
+    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
 
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
 
@@ -407,6 +407,11 @@ int _init_draw_terrain() {
 
     printf("init: LSD shader \n");
     setShaders2();
+
+    printf("init glsl mipmapp shader \n");
+    
+    setShaders3();
+    initTexture3();
 
     printf("init: draw_terrain \n");
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
@@ -1191,7 +1196,8 @@ int _draw_terrain() {
        //DRAW_VBOS1a();
 
        if(SHADER_ON) {
-       DRAW_VBOS3();  
+       //DRAW_VBOS3();  
+       DRAW_VBOS4();
         } else {
         DRAW_VBOS2();
         } 
@@ -1735,7 +1741,8 @@ void DRAW_VBOS3() {
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
             glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
             //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
-            
+            //glVertexAttribPointer(4, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         }
@@ -1803,8 +1810,132 @@ void DRAW_VBOS3() {
 
 }
 
-void DRAW_VBOS2b() {
+
+
+void DRAW_VBOS4() {
     
+        //int _vnum = 0; //unused
+
+        if(SHADER_ON) glUseProgramObjectARB(shader_prog2);
+
+        glColor3b(255,255,255);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable (GL_DEPTH_TEST);
+        
+
+        glShadeModel(GL_SMOOTH);
+        //glShadeModel(GL_FLAT);
+
+        glEnable (GL_DEPTH_TEST);
+        //glEnable(GL_CULL_FACE);
+
+        glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
+
+        //terrain_map_glsl_1
+        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
+        //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+        //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
+        
+        int i;
+        struct VBO* vbo;
+
+        //if(draw_vbo_n != 0)
+
+
+        glEnable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[0] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+
+            //comment out and test
+            //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+            glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+            //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
+            //glVertexAttribPointer(4, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        }
+
+
+        glUseProgramObjectARB(0);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable (GL_ALPHA_TEST);
+
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[1] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+        }
+
+        glDisable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[2] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+        }
+        
+        glDisable(GL_ALPHA_TEST);   
+
+        glDepthMask(false);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[3] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+        }
+        glDepthMask(true); 
+        glDisable(GL_BLEND);
+        
+    //end draw
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    //glShadeModel(GL_FLAT);
+
+    /*
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    */
+
+    glDisable(GL_TEXTURE_2D);
+        //printf("vnum= %i\n", _vnum);
+
 }
 
 /*
