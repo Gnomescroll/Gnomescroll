@@ -16,7 +16,7 @@ void NetPeer::push_unreliable_packet(Net_message* nm)
     #if NET_PEER_DEBUG   
         if(unreliable_net_message_array_index == 255)
         {
-            printf("NetPeer Error: unreliable_net_message_array_index == 255, flush to net: should never happen \n"); //debug
+            printf("NetPeer Warning: unreliable_net_message_array_index == 255, flush to net: this should never happen \n"); //debug
             flush_to_net();
         }
     #endif
