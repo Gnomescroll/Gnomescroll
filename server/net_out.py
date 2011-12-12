@@ -7,6 +7,7 @@ try:
 except ImportError:
     import json
 import struct
+import zlib
 
 import dats.loader as dl
 
@@ -195,6 +196,7 @@ class EventOut:
             'player_list'   :   GameStateGlobal.playerList.json()
         }
 
+    # not used???
     @sendJSONevent('dat')
     def send_dat(self, dat_name=None, type=None, key=None):
         if dat_name is None:
@@ -219,13 +221,6 @@ class MessageOut:
         pass
     def __init__(self):
         pass
-
-# calls send_json
-#def sendJSON2(f):
-    #def wrapped(*args):
-        #self = args[0]
-        #self.send_json(f(*args))
-    #return wrapped
 
 def sendJSON(cmd=None):
     def outer(f, *args, **kwargs):
@@ -278,14 +273,11 @@ class SendMessage: #each connection has one of these
                     fin['key'] = key
         return fin
 
-    ## DEPRECATE
-    @sendJSON('client_id')
-    def send_client_id(self, connection):
-        #assert False
-        print "Send client id"
-        return {
-            'id'   : connection.client_id,
-        }
+    #@sendJSON('client_id')
+    #def send_client_id(self, connection):
+        #return {
+            #'id'   : connection.client_id,
+        #}
 
     @sendJSON('client_quit')
     def client_quit(self, client_id):

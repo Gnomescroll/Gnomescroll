@@ -673,8 +673,8 @@ class MiscMessageHandler(GenericMessageHandler):
         return {
             'ping'  :   self.ping,
             'identify': self.identify,
-            'request_client_id':    self.request_client_id,
-            'received_client_id':   self.received_client_id,
+            #'request_client_id':    self.request_client_id,
+            #'received_client_id':   self.received_client_id,
         }
 
     @logError('ping')
@@ -687,11 +687,11 @@ class MiscMessageHandler(GenericMessageHandler):
     def identify(self, msg, conn, name):
         conn.identify(name)
 
-    def request_client_id(self, msg, conn):
-        conn.send_client_id()
+    #def request_client_id(self, msg, conn):
+        #conn.send_client_id()
 
-    def received_client_id(self, msg, conn):
-        conn.set_id_received()
+    #def received_client_id(self, msg, conn):
+        #conn.set_id_received()
 
 class MapMessageHandler(GenericMessageHandler):
 

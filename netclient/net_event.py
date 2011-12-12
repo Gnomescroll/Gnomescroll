@@ -7,6 +7,7 @@ import opts
 opts = opts.opts
 
 import json
+import zlib
 
 import c_lib.c_lib_sdl
 import stats
@@ -215,29 +216,30 @@ class MapMessageHandler(GenericMessageHandler):
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        'client_id' : '_client_id',
-        #'set_client_id' : '_set_client_id',
+        #'client_id' : '_client_id',
         'client_quit' : '_client_quit',
         'identified' : '_identified',
         'identify_fail' : '_identify_fail',
     }
 
-    #deprecate
-    def _client_id(self, **msg):
-        NetOut.sendMessage.received_client_id()
-        NetOut.sendMessage.identify()
+    ##deprecate
+    #def _client_id(self, **msg):
+        #NetOut.sendMessage.received_client_id()
+        #NetOut.sendMessage.identify()
 
     def _client_quit(self, id, **msg):
         GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
-        print "IDENTIFY IN"
+
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
+
         player = msg.get('player', None)
         if player is None:
             print 'msg::identified - missing player'
             return False
+
         name = player.get('name', None)
         if name is None:
             print 'msg::identified - player missing name'
@@ -246,15 +248,15 @@ class ClientMessageHandler(GenericMessageHandler):
         if not name:
             print 'msg identified :: name is empty'
             return False
-        client_id = player.get('cid', None) # client_id is currently optional for server to send
-        if client_id is not None:
-            NetClientGlobal.client_id = client_id
+
         NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
         ChatClientGlobal.on_identify()
+
         player = GameStateGlobal.update_your_info(player)
         if player.you:
             GameStateGlobal.playerList.identify(player)
+
         return True
 
     used_alt = False
@@ -802,6 +804,7 @@ class DatMessageHandler(GenericMessageHandler):
     }
 
     def _load_dat(self, **msg):
+        print "RECEIVED DAT"
         err_msg = None
         try:
             dat = msg['dat']
@@ -810,6 +813,7 @@ class DatMessageHandler(GenericMessageHandler):
 
         if err_msg is not None:
             print 'msg dat :: %s' % (err_msg,)
+            return
 
         name, type, key = None, None, None
         if 'name' in msg:
@@ -830,6 +834,8 @@ class DatMessageHandler(GenericMessageHandler):
     def _load_all(self, dat):
         dat_loader.load_all(dat)
         NetOut.datMessage.loaded()
+        #BAD HACK
+        NetOut.sendMessage.identify()
 
     def _load_name(self, name, dat):
         dat_loader.load(name, dat)

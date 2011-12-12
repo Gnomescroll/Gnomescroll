@@ -63,7 +63,9 @@ def sendJSON(cmd=None, tick=False):
 # if client_id is required
 def idRequired(f):
     def wrapped(*args, **kwargs):
-        if NetClientGlobal.client_id != '0':
+        print 'idRequired'
+        print NetClientGlobal.connection.client_id
+        if NetClientGlobal.connection.client_id:
             f(*args, **kwargs)
     return wrapped
 
@@ -291,9 +293,9 @@ class SendMessage(GenericMessage):
             'name': name,
         }
 
-    @sendJSON('request_client_id')
-    def request_client_id(self):
-        return True
+    #@sendJSON('request_client_id')
+    #def request_client_id(self):
+        #return True
 
     @idRequired
     @noViewer
@@ -348,7 +350,7 @@ class ChatMessage:
     @idRequired
     @sendJSON('chat')
     def send_chat(self, d):
-        d['cid'] = str(NetClientGlobal.client_id)
+        d['cid'] = str(NetClientGlobal.connection.client_id)
         return d
 
     @idRequired
@@ -356,7 +358,7 @@ class ChatMessage:
     def subscribe(self, channel):
         return {
             'channel'   : channel,
-            'cid' : str(NetClientGlobal.client_id),
+            'cid' : str(NetClientGlobal.connection.client_id),
         }
 
     @idRequired
@@ -364,7 +366,7 @@ class ChatMessage:
     def unsubscribe(self, channel):
         return {
             'channel'   : channel,
-            'cid' : str(NetClientGlobal.client_id),
+            'cid' : str(NetClientGlobal.connection.client_id),
         }
 
 class AdminMessage:

@@ -10,36 +10,17 @@ import platform
 
 import init_c_lib
 
-
-#OS = platform.system()
-#OS = "Windows"
-
 class NetServer:
     connectionPool = None
-    #datagramDecoder = None
-    #serverListener = None
-
-    #state
-    #_client_id = 0
-
-    #@classmethod
-    #def generate_client_id(cls):
-        #cls._client_id += 1
-        #return cls._client_id
 
     @classmethod
     def init_0(cls):
         global OS
         cls.connectionPool = PyClientPool()
 
-        #cls.datagramDecoder = DatagramDecoder()
-        #cls.serverListener = ServerListener()
-
     @classmethod
     def init_1(cls):
         cls.connectionPool.init()
-        #cls.datagramDecoder.init()
-        #cls.serverListener.init()
 
 from chat_server import ChatServer
 from net_out import SendMessage
@@ -69,7 +50,7 @@ class PyClient:
 
         self.admin = False
 
-        self.received_id = False
+        #self.received_id = False
         self.identified = False
         self.dat_loaded = False
         self.loaded_once = False
@@ -82,12 +63,13 @@ class PyClient:
         self.name = None
         #self.ec = 0
 
-        #self._set_client_id()
-        self.sendMessage.send_client_id(self) #send client an id upon connection
+        #self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
     def identify(self, name):
+        print "IDENTIFY ATTEMPT"
         valid, name, you = self._valid_player_name(name)
+        print valid, name, you
         if valid:
             self.identified = True
             NetServer.connectionPool.name_client(self, name)
@@ -100,6 +82,8 @@ class PyClient:
                 self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
 
     def check_ready(self):
+        print "checkin ready"
+        print self.dat_loaded, self.identified
         if self.dat_loaded and self.identified:
             self.ready()
             return True
@@ -114,14 +98,15 @@ class PyClient:
         self.send_game_state()
 
     def set_dat_loaded(self):
+        print "DAT LOADED"
         self.dat_loaded = True
         self.check_ready()
 
-    def set_id_received(self):
-        self.received_id = True
+    #def set_id_received(self):
+        #self.received_id = True
 
-    def send_client_id(self):
-        self.sendMessage.send_client_id(self)
+    #def send_client_id(self):
+        #self.sendMessage.send_client_id(self)
 
     def start_player(self):
         NetOut.event.player_create(self.player)

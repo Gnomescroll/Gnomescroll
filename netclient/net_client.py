@@ -7,7 +7,6 @@ Client network interface
 import opts
 opts = opts.opts
 
-#import socket
 import struct
 import json
 import select
@@ -18,28 +17,16 @@ class NetClientGlobal:
     connection = None
     sendPacket = None
 
-    #client_id = '0'
-
     name = opts.name
     VERSION = opts.version
 
     @classmethod
     def init_0(cls):
-        pass
         NetClientGlobal.connection = PyClient()
         NetClientGlobal.sendPacket = SendPacket()
     @classmethod
     def init_1(cls):
         NetClientGlobal.connection.init()
-        assert cls.sendPacket != None
-    @classmethod
-    def client_id(cls):
-        cid = NetClientGlobal.connection.client_id
-        if cid == None:
-            return 0
-            #assert False
-        else:
-            return cid
 
 import init_c_lib
 from init_c_lib import get_client_id, connected, _send_python_net_message
@@ -74,7 +61,6 @@ class PyClient:
         self.out = SendPacket(self)
         self.client_id = None
 
-        #self.fmt = '<I H'
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
 
@@ -86,9 +72,15 @@ class PyClient:
         register_client_creation(( lambda client_id: self.on_connect(client_id) ))
         register_client_deletion(( lambda client_id: self.removeClient(client_id) ))
 
+    @property
+    def client_id(self):
+        print "CLIENT_ID %d" % get_client_id()
+        return get_client_id()
+
     def on_connect(self, client_id):
         print "NetClient connected: client id = %i" % (client_id)
-        self.client_id = client_id
+        NetOut.sendMessage.identify()
+        #self.client_id = client_id
 
     def on_disconnect(self):
         self.client_id = None
@@ -96,7 +88,7 @@ class PyClient:
 
     def push_to_buffer(self, message):
         self.message_buffer.append(message)
-        #print "received %i bytes of python packet" % (len(message))
+
     def dispatch_buffer(self):
         global _msg_buffer     
         if not _msg_buffer:
@@ -109,7 +101,6 @@ class PyClient:
         msg_type = struct.unpack(self.fmt, message[0:2])
         msg_type = msg_type[0]
         message = message[2:]
-        #print "message: %s" % (message)
         self.messageHandler.process_net_event(msg_type, message)
 
     def close(self):

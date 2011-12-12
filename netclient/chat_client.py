@@ -39,7 +39,7 @@ To send messages, use
 NetOut.chatMessage.send_chat(d)
 
 Modify chatMessage classs in net_out.py for additional message types
-client_id is NetClientGlobal.client_id
+client_id is NetClientGlobal.connection.client_id
 
 Incoming json message handler is in net_event.py
 '''
@@ -74,7 +74,7 @@ class ChatClient:
             if 'system' not in loaded_channels:
                 self.subscribe('system')
                 loaded_channels.append('system')
-            pm_channel = 'pm_' + str(NetClientGlobal.client_id)
+            pm_channel = 'pm_' + str(NetClientGlobal.connection.client_id)
             if pm_channel not in loaded_channels:
                 self.subscribe(pm_channel)
                 loaded_channels.append(pm_channel)
@@ -127,7 +127,7 @@ class ChatClient:
             self.ignored.remove(client_id)
 
     def send(self, text=None):
-        if not NetClientGlobal.client_id:
+        if not NetClientGlobal.connection.client_id:
             #print 'Client_id is not set; cannot send chat msg'
             return
 
@@ -271,9 +271,9 @@ class ChatCommand():
         elif command == 'join':
             if len(args) < 1:
                 return
-            if args[0][0:3] == 'pm_' and args[3:-1] != NetClientGlobal.client_id:
+            if args[0][0:3] == 'pm_' and args[3:-1] != NetClientGlobal.connection.client_id:
                 _send = self._send_local({
-                    'content'   :   'Cannot join this private channel. Your channel is pm_%s' % (NetClientGlobal.client_id,),
+                    'content'   :   'Cannot join this private channel. Your channel is pm_%s' % (NetClientGlobal.connection.client_id,),
                     'channel'   :   'system',
                 })
             else:
@@ -448,7 +448,7 @@ class ChatMessageIn():
 
     def filter(self):
         if self.payload.content == 'ping' and \
-           self.payload.cid != NetClientGlobal.client_id and \
+           self.payload.cid != NetClientGlobal.connection.client_id and \
            self.payload.channel == 'system':
                self.payload = None
                self.valid = False
@@ -480,7 +480,7 @@ class Payload:
         self.content = msg.get('content', '')
         self.time = int(msg.get('time', int(now())))
         self.channel = msg.get('channel', '')
-        self.cid = msg.get('cid', NetClientGlobal.client_id)
+        self.cid = msg.get('cid', NetClientGlobal.connection.client_id)
         self.id = msg.get('id', '')
         self.valid()
     def clean(self):
@@ -704,7 +704,7 @@ class ChatRender:
         if channel != 'system':
             to_merge = self._filter_channel('system')
             to_render = self._merge_channels(to_render, to_merge)
-        to_merge = self._filter_channel('pm_' + str(NetClientGlobal.client_id))
+        to_merge = self._filter_channel('pm_' + str(NetClientGlobal.connection.client_id))
         to_render = self._merge_channels(to_render, to_merge)
         self._pad_queue(to_render)
         return to_render

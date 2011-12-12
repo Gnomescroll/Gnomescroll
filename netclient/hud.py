@@ -243,7 +243,7 @@ class Hud(object):
         line_height = 20
         i = 0
         msgs = ChatClientGlobal.chatRender.messages()
-        pm_channel = 'pm_' + str(NetClientGlobal.client_id)
+        pm_channel = 'pm_' + str(NetClientGlobal.connection.client_id)
         for msg in msgs:
             if not msg.payload.content.strip(): continue
             content = msg.name
