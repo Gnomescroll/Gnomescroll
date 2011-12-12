@@ -30,6 +30,6 @@ void process_incoming_packets();
 void process_packet(char* buffer, int n);
 
 int poll_connection_timeout();
-int decrement_ttl();
+//int decrement_ttl();
 
 }

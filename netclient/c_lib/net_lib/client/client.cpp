@@ -189,12 +189,13 @@ int poll_connection_timeout() {
     if(NP_time_delta1(NPserver.last_packet_time) > 4000 && NPserver.connected == 1) {
         NPserver.connected = 0;
         printf("=== \nConnection to server timed out!\n=== \n");
+        client_disconnect_event(0);
         return 1;
     }
     return 0;
 }
 
-
+/*
 int decrement_ttl() {
     NPserver.ttl -= 1;
     if(NPserver.ttl <= 0) {
@@ -205,5 +206,6 @@ int decrement_ttl() {
     }
     return 0;
 }
+*/
 
 }
