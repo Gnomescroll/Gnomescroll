@@ -170,7 +170,6 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
         wl = GameStateGlobal.weaponList
         self.weapons = [    \
-            wl.create('LaserGun', owner=self),
             wl.create('Pick', owner=self),
             wl.create('BlockApplier', owner=self),
             wl.create('HitscanLaserGun', owner=self),

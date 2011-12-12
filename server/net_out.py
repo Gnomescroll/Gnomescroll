@@ -81,6 +81,7 @@ class EventOut:
     #Deprecate?
     @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
+        #assert False
         print 'sending agent update'
         return {
             'agent' :   agent.json(properties),
@@ -89,6 +90,7 @@ class EventOut:
     #deprecate
     @sendJSONevent('projectile_destroy')
     def projectile_destroy(self, projectile):
+        assert False
         return {
             'id'    :   projectile.id,
         }
@@ -96,6 +98,7 @@ class EventOut:
     #deprecate
     @sendJSONevent('projectile_update')
     def projectile_update(self, projectile):
+        assert False
         return {
             'projectile'    :   projectile.json(),
         }
