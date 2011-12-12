@@ -186,7 +186,7 @@ void process_packet_messages(char* buff, int n, int max_n, int client_id) {
 /*
     Deprecate, steamline processing
 */
-    printf("Start New Packet \n");
+    //printf("Start New Packet \n");
 
     int i=0;
     int condition;

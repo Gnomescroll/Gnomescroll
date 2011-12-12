@@ -71,7 +71,7 @@ void Python_channel_in::insert(char* buff, int length, int sequence)
     //printf("py_in packet %i: seq=%i, len=%i lowest_sequence=%i read_index=%i \n", _total_packets, sequence, length, lowest_sequence, read_index);
     //if sequence is expected packet, use fast path and dont store anything
     
-    printf("python channel insert \n");
+    //printf("python channel insert \n");
 
     if(lowest_sequence == sequence)
     {
