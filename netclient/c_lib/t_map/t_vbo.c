@@ -1196,8 +1196,8 @@ int _draw_terrain() {
        //DRAW_VBOS1a();
 
        if(SHADER_ON) {
-       DRAW_VBOS3();  
-       //DRAW_VBOS4();
+       //DRAW_VBOS3();  
+       DRAW_VBOS4();
         } else {
         DRAW_VBOS2();
         } 

@@ -165,7 +165,9 @@ def _send_python_net_message(message, int client_id):
 cdef void py_net_net_event_callback(int client_id, int event_type):
     if event_type == 0:
         print "Client connected: %i" % (client_id)
+        _CLIENT_CREATION_CALLBACK(client_id)
     if event_type == 1:
+        print "Client disconnected: %i" % (client_id)
         print "Client disconnected: %i" % (client_id)
 
 cpdef init_python_net():
