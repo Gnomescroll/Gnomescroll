@@ -52,7 +52,6 @@ class Weapon(EquippableObject):
         max_ammo = getattr(self, 'max_ammo', undef)
         clip = getattr(self, 'clip', undef)
         clip_size = getattr(self, 'clip_size', undef)
-        #strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
         strfs = (clip, clip_size, ammo, max_ammo,)
         return self.hud_display_format_string() % strfs
 
