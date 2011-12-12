@@ -76,8 +76,13 @@ class MessageHandler:
     def process_net_event(self, msg_type, datagram):
         if msg_type == 1:       #json message
             self.process_json_event(msg_type, datagram)
-        else:                   #create a process json message
+        elif msg_type == 3:                   #create a process json message
             self.process_binary_event(msg_type, datagram)
+        elif msg_type == 4:
+            self.process_json_compressed_event(msg_type, datagram)
+        else:
+            print "WARNING: MessageHandler:: unknown msg_type %d" % (msg_type,)
+        
 
 #binary events
     def process_binary_event(self, msg_type, datagram):
@@ -87,8 +92,8 @@ class MessageHandler:
             self._4_
         else:
             print "MessageHandler.process_binary_event: message type unknown, " + str(msg_type)
-#message events
 
+#message events
     def process_json_event(self, msg_type, datagram):
         try:
             msg = json.loads(datagram)
@@ -115,6 +120,15 @@ class MessageHandler:
             print 'msg %s' % (msg,)
             print self.json_events.keys()
             assert False
+
+    def process_json_compressed_event(self, msg_type, datagram):
+        try:
+            msg = zlib.decompress(datagram)
+        except Exception, e:
+            print "MessageHandler zlib decompression failed"
+            print e
+            return
+        self.process_json_event(msg_type, msg)
 
 class GenericMessageHandler:
 
