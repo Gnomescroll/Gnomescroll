@@ -7,7 +7,6 @@ class Weapon(EquippableObject):
 
     _types = {
         'Weapon'    :   0,
-        'LaserGun'  :   1,
         'Pick'      :   2,
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
@@ -27,9 +26,6 @@ class Weapon(EquippableObject):
         self._set_type()
         self.dat.apply(self)
         self._animation = animations.Animation
-
-    #def get_dat(self, prop):
-        #return w_dat.get(self.type, prop)
 
     def fire(self):
         return False
@@ -56,7 +52,6 @@ class Weapon(EquippableObject):
         max_ammo = getattr(self, 'max_ammo', undef)
         clip = getattr(self, 'clip', undef)
         clip_size = getattr(self, 'clip_size', undef)
-        #strfs = tuple([str(a) for a in [clip, clip_size, ammo, max_ammo]])
         strfs = (clip, clip_size, ammo, max_ammo,)
         return self.hud_display_format_string() % strfs
 
@@ -82,19 +77,21 @@ class Weapon(EquippableObject):
     def animation(self, target=None, agent=None):
         return self._animation()
 
-class LaserGun(Weapon):
+
+class HitscanLaserGun(Weapon):
 
     def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
         Weapon.__init__(self, id, owner, state)
         if clip is None:
             clip = self.clip_size
         self.clip = clip
+        self._animation = animations.HitscanLaserGunAnimation
 
     def fire(self):
         if self.clip == 0:
             return False
         self.clip -= 1
-        return 'fire_projectile'
+        return 'hitscan'
 
     def reload(self):
         if self.ammo == 0:
@@ -103,6 +100,15 @@ class LaserGun(Weapon):
         self.ammo -= amt
         self.clip += amt
         return 'reload_weapon'
+
+    def animation(self, target=None, agent=None, vector=None):
+        if agent is None:
+            agent = GameStateGlobal.agentList[self.owner]
+        origin = agent.camera_position()
+        if vector is None:
+            vector = agent.direction()
+        anim = self._animation(origin, vector, target)
+        return anim
 
     def update_info(self, **weapon):
         print 'updating weapon %s' % (weapon,)
@@ -126,25 +132,6 @@ class LaserGun(Weapon):
         if 'scope' in weapon:
             self.scope = bool(weapon['scope'])
         GameStateGlobal.weaponList.update(*args)
-
-class HitscanLaserGun(LaserGun):
-
-    def __init__(self, id=None, owner=None, clip=None, state=None, **kwargs):
-        LaserGun.__init__(self, id=id, owner=owner, clip=clip, state=state, **kwargs)
-        self._animation = animations.HitscanLaserGunAnimation
-
-    def fire(self):
-        LaserGun.fire(self)
-        return 'hitscan'
-
-    def animation(self, target=None, agent=None, vector=None):
-        if agent is None:
-            agent = GameStateGlobal.agentList[self.owner]
-        origin = agent.camera_position()
-        if vector is None:
-            vector = agent.direction()
-        anim = self._animation(origin, vector, target)
-        return anim
     
 
 class BlockApplier(Weapon):

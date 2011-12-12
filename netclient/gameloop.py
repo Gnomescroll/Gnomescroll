@@ -74,7 +74,6 @@ class App(object):
         NetClientGlobal.init_1()
         GameStateGlobal.init_1()
         NetEventGlobal.init_1()
-        NetOut.init_1()
         ChatClientGlobal.init_1()
         MapControllerGlobal.init_1()
 

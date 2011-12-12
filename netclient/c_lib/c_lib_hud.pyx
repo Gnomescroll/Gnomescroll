@@ -337,4 +337,4 @@ cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
 class Equipment:
     @classmethod
     def draw(cls, int slot):
-        draw_equipment(slot);
+        draw_equipment(slot)
