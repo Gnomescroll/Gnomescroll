@@ -91,9 +91,13 @@ void setShaders3()
 
     glCompileShaderARB(shader_frag2);
     if(DEBUG) printShaderInfoLog(shader_frag2);
-    
+
+    glBindAttribLocation(shader_prog2, 20, "AttTexCoord");
+        
     glAttachObjectARB(shader_prog2, shader_vert2);
     glAttachObjectARB(shader_prog2, shader_frag2);
+
+
 
     /* Bind attribute index 0 (coordinates) to in_Position and attribute index 1 (color) to in_Color */
     /* Attribute locations must be setup before calling glLinkProgram. */
@@ -105,7 +109,6 @@ void setShaders3()
     //glBindAttribLocation(shader_prog2, 1, "vert_uv");
     //glBindAttribLocation(shader_prog2, 2, "vert_rgba");
     //glBindAttribLocation(shader_prog2, 3, "vert_normal");
-    glBindAttribLocation(shader_prog2, 0, "tex");
 
     glLinkProgramARB(shader_prog2);
 
@@ -180,7 +183,7 @@ for(int _j=0; _j < 16; _j++) {
     SDL_UnlockSurface(terrain_map_glsl_surface_1);
             
 
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
 
 
     glGenTextures( 1, &terrain_map_glsl_1 );
@@ -192,19 +195,24 @@ for(int _j=0; _j < 16; _j++) {
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    
     //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
 
-    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, NULL);
+    //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, NULL);
 
+/*
     int depth = 0;
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 1, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
-   glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
-    //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
+*/  
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
+    //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
 
     //possible texture problem
     //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
@@ -239,7 +247,7 @@ void glVertexAttribPointer( GLuint      index,
 /*
 glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
 glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 */
 
@@ -250,7 +258,7 @@ glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
 
 //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0)
 //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12)
-//glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20)
+//glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24)
 //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24)
 
 
@@ -1431,7 +1439,7 @@ void DRAW_VBOS1() {
 
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
         //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
         glEnable(GL_CULL_FACE);
@@ -1483,7 +1491,7 @@ void DRAW_VBOS1() {
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
         //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
@@ -1538,7 +1546,7 @@ void DRAW_VBOS1a() {
 
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
         //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
 
@@ -1576,7 +1584,7 @@ void DRAW_VBOS1a() {
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
@@ -1651,7 +1659,7 @@ void DRAW_VBOS2() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         }
@@ -1666,7 +1674,7 @@ void DRAW_VBOS2() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
         }
@@ -1678,7 +1686,7 @@ void DRAW_VBOS2() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
         }
@@ -1692,7 +1700,7 @@ void DRAW_VBOS2() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
         }
@@ -1748,7 +1756,7 @@ void DRAW_VBOS3() {
 
         //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
         //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24);
         //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
         
         int i;
@@ -1765,12 +1773,12 @@ void DRAW_VBOS3() {
             
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
             //comment out and test
             //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-            glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+            glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24);
             //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
             //glVertexAttribPointer(4, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
 
@@ -1791,7 +1799,7 @@ void DRAW_VBOS3() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
         }
@@ -1803,7 +1811,7 @@ void DRAW_VBOS3() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
         }
@@ -1817,7 +1825,7 @@ void DRAW_VBOS3() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
         }
@@ -1867,7 +1875,10 @@ void DRAW_VBOS4() {
         //terrain_map_glsl_1
         //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glActiveTexture(0);
+        //glActiveTexture(0);
+
+        glActiveTexture(GL_TEXTURE0);
+
         glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
 
         //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
@@ -1879,9 +1890,10 @@ void DRAW_VBOS4() {
 
         //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
         //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-        //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+        //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24);
         //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
-        glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+        
+        //glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
 
         int i;
         struct VBO* vbo;
@@ -1897,15 +1909,17 @@ void DRAW_VBOS4() {
             
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glTexCoordPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
             
-            glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)28);
+            //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
+
+            //glVertexAttribPointer(20, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
 
             //comment out and test
             //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
             //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-            //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)20);
+            //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24);
             //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
             //glVertexAttribPointer(4, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
             //glBindAttribLocation(shader_prog2, 4, "tex");
@@ -1927,7 +1941,7 @@ void DRAW_VBOS4() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
         }
@@ -1939,7 +1953,7 @@ void DRAW_VBOS4() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
         }
@@ -1953,7 +1967,7 @@ void DRAW_VBOS4() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
             glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)20);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
         }

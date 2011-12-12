@@ -152,9 +152,8 @@ from libc.stdlib cimport malloc, free
 cdef extern from './t_map/t_vbo.h':
     struct Vertex:
         float x,y,z
-        float tx,ty
+        float tx,ty,tz
         unsigned char r,g,b,a
-        unsigned char tex[4]
     struct VBO:
         int v_num
         Vertex* vlist
@@ -315,9 +314,13 @@ def init_cube_side_texture():
             texture_id = c_dat.get(id, 'texture_id')[side]
             _set_cube_side_texture(id, side, texture_id)
 
+
+GLSL_TEXTURE_ARRAY = True
+
 def init_quad_cache():
     global v_index
     global c_dat
+    global GLSL_TEXTURE_ARRAY
     cdef Vertex* quad_cache
     quad_cache = _get_quad_cache()
     cdef Vertex* v
@@ -335,20 +338,25 @@ def init_quad_cache():
                 v.g = 255
                 v.b = 255
                 v.a = 255
-                tx,ty = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
-                if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
-                    tx,ty = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
+
+                if GLSL_TEXTURE_ARRAY:
+                    tx,ty,tz = get_tex_texture(id, side, vert_num) #tile_id, side, vert_num
+                    if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
+                        tx,ty,tz = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
+                else:
+                    tx,ty,tz = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
+                    if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
+                        tx,ty,tz = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
                 v.tx = tx
                 v.ty = ty
-                tex0, tex1, tex2 = get_tex_texture(id, side, vert_num)
-                v.tex[0] = tex0
-                v.tex[1] = tex1
-                v.tex[2] = tex2
+                v.tz = tz
 
 def get_cube_texture(int tile_id, int side, int vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
+    if texture_id < 0:
+        texture_id = 255
 
     cdef cubeProperties* cp
     cp = _get_cube(tile_id)
@@ -377,7 +385,7 @@ def get_cube_texture(int tile_id, int side, int vert_num):
         else:
             print "Error!!!! set_tex invalid input"
             assert False
-        return (tx,ty)
+        return (tx,ty,texture_id)
     else:
         if vert_num == 0:
             tx += 0 +margin
@@ -394,7 +402,7 @@ def get_cube_texture(int tile_id, int side, int vert_num):
         else:
             print "Error!!!! set_tex invalid input"
             assert False
-        return (tx,ty)
+        return (tx,ty,texture_id)
 
 def get_tex_texture(int tile_id, int side, int vert_num):
     global c_dat
@@ -414,31 +422,31 @@ def get_tex_texture(int tile_id, int side, int vert_num):
 
     if cp.infinite_texture == 0:
         if vert_num == 0:
-            tx += 0
-            ty += 0
+            tx = 0.0
+            ty = 0.0
         elif vert_num == 1:
-            tx += 0
-            ty += 255
+            tx = 0.0
+            ty = 1.0
         elif vert_num == 2:
-            tx += 255
-            ty += 255
+            tx = 1.0
+            ty = 1.0
         elif vert_num == 3:
-            tx += 255
-            ty += 0
+            tx = 1.0
+            ty = 0.0
         return (tx,ty,texture_id)
     else:
         if vert_num == 0:
-            tx += 0
-            ty += 0
+            tx = 0.0
+            ty = 0.0
         elif vert_num == 1:
-            tx += 0
-            ty += 255
+            tx = 0.0
+            ty = 1.0
         elif vert_num == 2:
-            tx += 255
-            ty += 255
+            tx = 1.0
+            ty = 1.0
         elif vert_num == 3:
-            tx += 255
-            ty += 0
+            tx = 1.0
+            ty = 0.0
         return (tx,ty,texture_id)
 
 #for crop blocks
@@ -446,6 +454,8 @@ def get_cube_texture_alt(tile_id, side, vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
     texture_id = c_dat.get(tile_id, 'texture_id')[side]
+    if texture_id < 0:
+        texture_id = 255
     texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
     x = texture_id % 16
     y = (texture_id - (texture_id % 16)) / 16
@@ -464,7 +474,7 @@ def get_cube_texture_alt(tile_id, side, vert_num):
     elif vert_num == 0:
         tx += 1./16. -margin
         ty += 0 + margin
-    return (tx,ty)
+    return (tx,ty, texture_id)
 
 ## functions ##
 '''

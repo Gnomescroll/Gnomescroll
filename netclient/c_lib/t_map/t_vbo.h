@@ -2,7 +2,7 @@
 
     struct Vertex {
         float x,y,z;
-        float tx,ty;
+        float tx,ty,tz;
         unsigned char r,g,b,a;
         char normal[4];
         unsigned char tex[4];
