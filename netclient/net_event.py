@@ -230,16 +230,10 @@ class MapMessageHandler(GenericMessageHandler):
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        #'client_id' : '_client_id',
         'client_quit' : '_client_quit',
         'identified' : '_identified',
         'identify_fail' : '_identify_fail',
     }
-
-    ##deprecate
-    #def _client_id(self, **msg):
-        #NetOut.sendMessage.received_client_id()
-        #NetOut.sendMessage.identify()
 
     def _client_quit(self, id, **msg):
         GameStateGlobal.client_quit(id)
@@ -443,152 +437,11 @@ class AgentMessageHandler(DatastoreMessageInterface):
     def __init__(self):
         self.name = 'agent'
         self.store = GameStateGlobal.agentList
-        self._bind_event('agent_position', self._agent_position) #DEPRECATE
-        self._bind_event('agent_button_state', self._agent_button_state) #DEPRECATE
-        self._bind_event('agent_control_state', self._agent_control_state) #DEPRECATE
-        self._bind_event('agent_angle', self._agent_angle) #DEPRECATE
         DatastoreMessageInterface.__init__(self)
 
     def request_data(self, **data):
         if 'id' in data:
             NetOut.sendMessage.request_agent(data['id'])
-
-    #deprecated
-    def _agent_position(self, **args):
-        assert False
-        pos = args.get('pos', None)
-        id = args.get('id', None)
-        tick = args.get('tick', None)
-        if None in (pos, id, tick,):
-            print 'agent_position, missing keys'
-            print args
-            return
-
-        agent = GameStateGlobal.agentList[id]
-        if agent is None: # agent not found, request agent
-            NetOut.sendMessage.request_agent(id)
-            return
-
-        if agent.you:
-            return
-        agent.state = pos
-
-    #deprecated
-    def _agent_angle(self, **msg):
-        assert False
-        err_msg = None
-        try:
-            angle = msg['angle']
-        except KeyError:
-            err_msg = 'msg agent_angle :: angle missing'
-        try:
-            agent_id = msg['id']
-        except KeyError:
-            err_msg = 'msg agent_angle :: agent id missing'
-        try:
-            tick = msg['tick']
-        except KeyError:
-            err_msg = 'msg agent_angle :: tick missing'
-
-        try:
-            agent = GameStateGlobal.agentList[agent_id]
-        except KeyError:
-            err_msg = 'msg agent_angle :: agent %s does not exist' % (str(agent_id),)
-
-        if agent is None:
-            print 'agent_angle msg :: agent %s is None' % (agent_id,)
-            print 'AgentList: %s' % (str(GameStateGlobal.agentList,))
-            err_msg = 'fail'
-
-        if err_msg is not None:
-            print err_msg
-            return
-
-        if agent.you:
-            return
-
-        agent.set_angle(angle)
-
-    #deprecated
-    def _agent_control_state(self, **msg):
-        assert False
-        print 'received deprecated agent_control_state msg. ignoring'
-        return
-        err_msg = None
-        try:
-            state = msg['state']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: state missing'
-        try:
-            angle = msg['angle']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: angle missing'
-        try:
-            agent_id = msg['id']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: agent id missing'
-        try:
-            tick = msg['tick']
-        except KeyError:
-            err_msg = 'msg agent_control_state :: tick missing'
-
-        try:
-            agent = GameStateGlobal.agentList[agent_id]
-        except KeyError:
-            err_msg = 'msg agent_control_state :: agent %s does not exist' % (str(agent_id),)
-
-        if agent is None:
-            print 'Agent_control_state msg :: agent %s is None' % (agent_id,)
-            print 'AgentList: %s' % (str(GameStateGlobal.agentList,))
-
-        if err_msg is not None:
-            print err_msg
-            return
-
-        if agent.you:
-            return
-
-        agent.set_control_state(state, angle, tick)
-
-    #assert
-    def _agent_button_state(self, **msg):
-        assert False
-        err_msg = None
-        try:
-            buttons = msg['buttons']
-        except KeyError:
-            err_msg = 'msg agent_button_state :: buttons key is missing'
-        btn_size = 6
-        btn_len = len(buttons)
-        if btn_size != btn_len:
-            err_msg = 'msg agent_button_state :: buttons array is wrong size (is %d should be %d)' % (btn_len, btn_size)
-        try:
-            tick = msg['tick']
-        except KeyError:
-            err_msg = 'msg agent_button_state :: tick is missing'
-        try:
-            agent_id = msg['id']
-        except KeyError:
-            err_msg = 'msg agent_button_state :: aid is missing'
-        try:
-            agent = GameStateGlobal.agentList[agent_id]
-        except KeyError:
-            err_msg = 'msg agent_button state :: agent %s not found' % (agent_id,)
-        if agent is None:
-            err_msg = 'msg agent_button state :: agent %s not found' % (agent_id,)
-        if err_msg is not None:
-            print err_msg
-            return
-
-        if agent.you:
-            return
-
-        if tick > agent.last_button_tick:
-            agent.last_button_tick = tick
-            agent.button_state = buttons
-
-        ctrl_state = agent.compute_state()
-        agent.set_control_state(ctrl_state)
 
     def _agent_destroy(self, **args):
         id = self._default_destroy(**args)
@@ -847,8 +700,6 @@ class DatMessageHandler(GenericMessageHandler):
     def _load_all(self, dat):
         dat_loader.load_all(dat)
         NetOut.datMessage.loaded()
-        #BAD HACK
-        NetOut.sendMessage.identify()
 
     def _load_name(self, name, dat):
         dat_loader.load(name, dat)

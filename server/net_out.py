@@ -87,14 +87,6 @@ class EventOut:
         }
 
     #deprecate
-    @sendJSONevent('projectile_create')
-    def projectile_create(self, projectile):
-        assert False
-        return {
-            'projectile'    :   projectile.json(),
-        }
-
-    #deprecate
     @sendJSONevent('projectile_destroy')
     def projectile_destroy(self, projectile):
         return {
@@ -310,12 +302,6 @@ class SendMessage: #each connection has one of these
                 if key is not None:
                     fin['key'] = key
         return fin
-
-    #@sendJSON('client_id')
-    #def send_client_id(self, connection):
-        #return {
-            #'id'   : connection.client_id,
-        #}
 
     @sendJSON('client_quit')
     def client_quit(self, client_id):
