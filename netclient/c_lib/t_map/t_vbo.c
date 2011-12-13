@@ -16,6 +16,8 @@ const int SHADER_ON = 1;
     static GLenum shader_frag = 0;
     static GLenum shader_prog = 0;
 
+
+
 void setShaders2() 
 {
 
@@ -68,6 +70,8 @@ static GLenum shader_vert2 = 0;
 static GLenum shader_frag2 = 0;
 static GLenum shader_prog2 = 0;
 
+int texCoord0Loc; // = glGetAttribLocation(MyShader, "InTexCoord0");
+
 void setShaders3() 
 {
 
@@ -84,6 +88,11 @@ void setShaders3()
     vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
 
+    //glBindAttribLocation(shader_vert2, 1, "InTexCoord0");
+
+    //glBindAttribLocation(shader_prog2, 20, "TexCoordin");
+    //glBindAttribLocation can be called before any vertex shader objects are bound to the specified program object. 
+    
     glShaderSourceARB(shader_vert2, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(shader_frag2, 1, (const GLcharARB**)&fs, NULL);
     glCompileShaderARB(shader_vert2);
@@ -91,13 +100,9 @@ void setShaders3()
 
     glCompileShaderARB(shader_frag2);
     if(DEBUG) printShaderInfoLog(shader_frag2);
-
-    glBindAttribLocation(shader_prog2, 20, "AttTexCoord");
-        
+    
     glAttachObjectARB(shader_prog2, shader_vert2);
     glAttachObjectARB(shader_prog2, shader_frag2);
-
-
 
     /* Bind attribute index 0 (coordinates) to in_Position and attribute index 1 (color) to in_Color */
     /* Attribute locations must be setup before calling glLinkProgram. */
@@ -112,7 +117,9 @@ void setShaders3()
 
     glLinkProgramARB(shader_prog2);
 
-    if(DEBUG) printProgramInfoLog(shader_prog2); // print diagonostic information     
+    if(DEBUG) printProgramInfoLog(shader_prog2); // print diagonostic information
+    
+    texCoord0Loc = glGetAttribLocation(shader_prog2, "InTexCoord0");     
 }
 
 SDL_Surface *terrain_map_glsl_surface_1;
@@ -174,18 +181,24 @@ for(int _j=0; _j < 16; _j++) {
 
     for(int i=0; i < 32; i++) {
     for(int j=0; j < 32; j++) {
-        pix = ((Uint32*) terrain_map_glsl_surface_1->pixels)[ 512*(j+_j) + (i+_i) ];
+        pix = ((Uint32*) terrain_map_glsl_surface_1->pixels)[ 512*(j+32*_j) + (i+32*_i) ];
         Pixels[ 32*32*index + (j*32+i) ] = pix;
     }
     }
 }
 }
 
+/*
+    for(int i = 0; i < w*h*d; i++) 
+    {
+        ((Uint32*) terrain_map_glsl_surface_1->pixels)[i] = Pixels[i];
+    }
+*/
     SDL_UnlockSurface(terrain_map_glsl_surface_1);
-            
-
-    //glEnable(GL_TEXTURE_2D);
-
+               
+    //SDL_SaveBMP(terrain_map_glsl_surface_1, (const char*) "test.bmp");
+    
+    glEnable(GL_TEXTURE_2D);
 
     glGenTextures( 1, &terrain_map_glsl_1 );
     glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1);
@@ -198,24 +211,36 @@ for(int _j=0; _j < 16; _j++) {
 
 if(0)
 {
-    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 } else {
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 6);
+
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
 }
-    //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, NULL);
 
-/*
-    int depth = 0;
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 1, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
-*/  
+if(0)
+{
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, NULL);
+    
+    if(0) {
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, format, GL_UNSIGNED_BYTE, Pixels);
+    } else {
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
+    }
 
+    //glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 256, format, GL_UNSIGNED_BYTE, Pixels);
+    //glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 1, GL_RGBA, GL_UNSIGNED_BYTE, Pixels+1*32*32);
+    //glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 2, GL_RGBA, GL_UNSIGNED_BYTE, Pixels+2*32*32);
+} else {
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
+    }
     //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
 
     //possible texture problem
@@ -1859,7 +1884,11 @@ void DRAW_VBOS4() {
     
         //int _vnum = 0; //unused
 
+        //printf("attribute loc= %i \n", texCoord0Loc);
+
         if(SHADER_ON) glUseProgramObjectARB(shader_prog2);
+
+        glEnableVertexAttribArray(texCoord0Loc);
 
         glColor3b(255,255,255);
 
@@ -1881,14 +1910,13 @@ void DRAW_VBOS4() {
 
         //glActiveTexture(0);
 
-        glActiveTexture(GL_TEXTURE0);
 
         glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
 
         //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
 
         glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
 
@@ -1904,7 +1932,6 @@ void DRAW_VBOS4() {
 
         //if(draw_vbo_n != 0)
 
-
         glEnable(GL_CULL_FACE);
         for(i=0;i<draw_vbo_n;i++) {
             vbo = draw_vbo_array[i];
@@ -1912,10 +1939,12 @@ void DRAW_VBOS4() {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
             
             glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            //glTexCoordPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
             glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glTexCoordPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
             
+            glVertexAttribPointer(texCoord0Loc, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+
             //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
 
             //glVertexAttribPointer(20, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
@@ -1932,8 +1961,10 @@ void DRAW_VBOS4() {
             glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         }
 
+        glDisableVertexAttribArray(texCoord0Loc);
 
         glUseProgramObjectARB(0);
+        glActiveTexture(GL_TEXTURE0);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

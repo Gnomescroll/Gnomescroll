@@ -347,6 +347,7 @@ def init_quad_cache():
                     tx,ty,tz = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
                     if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
                         tx,ty,tz = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
+                    tz = 0.0
                 v.tx = tx
                 v.ty = ty
                 v.tz = tz

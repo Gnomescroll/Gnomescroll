@@ -5,7 +5,9 @@
 
 varying float intensity;
 
-attribute vec3 AttTexCoord;
+//attribute vec3 texCoordin;
+
+attribute vec3 InTexCoord0;
 
 varying vec3 texCoord;
 
@@ -15,13 +17,11 @@ void main(void) {
 
 	intensity = gl_Color.r;
 
-	//texCoord =  vec3(vec2(gl_MultiTexCoord0), 0.0f);
-	//texCoord = vec3(gl_Color.r, gl_Color.g, gl_Color.b);
+	//texCoord =  vec3(vec2(gl_MultiTexCoord0.st), 0.0f);
+	//texCoord = vec3(gl_MultiTexCoord0);
+	texCoord = InTexCoord0;
 
-	texCoord = vec3(gl_MultiTexCoord0);
-
-	//texCoord = vec3(gl_Color.r, gl_Color.g, 2.0);
-	//texCoord = vec3(AttTexCoord.x, AttTexCoord.y, 16.0f);
+	//texCoord =  vec3(vec2(InTexCoord0.st), 1.0f);
 
 	//gl_FrontColor = gl_Color;
 }
