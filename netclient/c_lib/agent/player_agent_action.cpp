@@ -3,6 +3,11 @@
 #include <c_lib/ray_trace/hitscan.hpp>
 
 void PlayerAgent_action::fire() {
+
+    // play sound
+    char soundfile[] = "laser_01.wav";
+    Sound::play_2d_sound(soundfile);
+    
     // send fire weapon packet
     const int weapon_id = 1;    // TODO: move this
     fire_weapon_CtoS* fire_msg = new fire_weapon_CtoS(p->agent_id, weapon_id);

@@ -91,13 +91,14 @@ void init_channel_group() {
     r = FMOD_System_CreateChannelGroup(sound_sys, "main", &chgroup);
     ERRCHECK(r);
     
-    update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void init() {
     printf("sound init\n");
     init_sound_system();
     init_channel_group();
+    //set_3D_settings(1.0, 1.0, 10.0);
 }
 
 void update_sound_system() {
@@ -114,10 +115,7 @@ void set_volume(float vol) {
     FMOD_RESULT r;
     r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
     ERRCHECK(r);
-
     printf("volume set to %0.2f\n", vol);
-
-    //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void set_enabled(int y) {
@@ -126,6 +124,12 @@ void set_enabled(int y) {
 
 void set_sound_path(char* path) {
     strcpy(sound_path, path);
+}
+
+void set_3D_settings(float doppler_scale, float distance_factor, float rolloff_scale) {
+    FMOD_RESULT r;
+    r = FMOD_System_Set3DSettings(sound_sys, doppler_scale, distance_factor, rolloff_scale);
+    ERRCHECK(r);
 }
 
 /* Listener (player) */
@@ -250,6 +254,7 @@ int load_3d_sound(char *soundfile, float mindistance) {
     return i;
 }
 
+// Public
 void load_sound(char *file) {
     static int soundfile_index = 0;
 
@@ -328,8 +333,6 @@ FMOD_CHANNEL* _play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMO
     return channel;
 }
 
-
-//Public
 int play_2d_sound(int snd_id) {
     int i = -1;
     if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
@@ -344,7 +347,6 @@ int play_2d_sound(int snd_id) {
     return i;
 }
 
-//Public
 int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, float vz) {
     int i = -1;
     if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
@@ -362,14 +364,20 @@ int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, flo
 }
 
 
+// Public
 int play_2d_sound(char* file) {
-    int snd_id = get_sound_id(file, true);
+    if (!enabled) return -1;
+    bool three_d = false;
+    int snd_id = get_sound_id(file, three_d);
     if (snd_id < 0) return snd_id;
     return play_2d_sound(snd_id);
 }
 
+//Public
 int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz) {
-    int snd_id = get_sound_id(file, false);
+    if (!enabled) return -1;
+    bool three_d = true;
+    int snd_id = get_sound_id(file, three_d);
     if (snd_id < 0) return snd_id;
     return play_3d_sound(snd_id, x,y,z,vx,vy,vz);
 }

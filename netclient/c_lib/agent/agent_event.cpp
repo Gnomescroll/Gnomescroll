@@ -8,7 +8,9 @@
 void Agent_event::fired_weapon(int weapon_id) {
     // play weapon animation & sound
     char soundfile[] = "laser_01.wav";
-    Sound::play_2d_sound(soundfile);
+    if (a->id != ClientState::playerAgent_state.agent_id) { // only play for other agents
+        Sound::play_3d_sound(soundfile, a->s.x, a->s.y, a->s.z, a->s.vx, a->s.vy, a->s.vz);
+    }
 
     // raycast from current aiming direction to nearest block
     // get side of block hit, point of collision
