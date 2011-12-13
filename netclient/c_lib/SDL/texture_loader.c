@@ -147,7 +147,9 @@ SDL_Surface* create_surface_from_nothing(int w, int h) {
     amask = 0xff000000;
 #endif
 
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w,h, 32, rmask, gmask, bmask, amask);
+    //surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w,h, 32, rmask, gmask, bmask, amask);
+    surface = SDL_CreateRGBSurface(SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);
+    //surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, w,h, 32, rmask, gmask, bmask, amask);
     if(surface == NULL) {
         fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
     }

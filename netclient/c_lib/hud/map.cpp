@@ -14,8 +14,11 @@ static const int height = 128;
 static const int num_cells = width*height;
 static unsigned char cells[num_cells];
 
-static SDL_Surface* surface;
-static GLuint texture;
+static SDL_Surface* map_surface;
+static GLuint map_texture;
+
+static SDL_Surface* overlay_surface;
+static GLuint overlay_texture;
 
 static SDL_Surface* gradient_surface;
 
@@ -33,25 +36,50 @@ void init_surface() {
         return;
     }
 
-    surface = create_surface_from_nothing(width, height);
-    if (surface==NULL) {
+    Uint32 tex_format;
+
+    /* Init blank map surface */
+    map_surface = create_surface_from_nothing(width, height);
+    if (map_surface==NULL) {
         printf("HudMap blank surface is NULL\n");
         return;
     }
 
-    Uint32 tex_format = GL_BGRA;
-    if (surface->format->Rmask == 0x000000ff)
+    tex_format = GL_BGRA;
+    if (map_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
     
     // texture
     glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenTextures(1, &map_texture);
+    glBindTexture(GL_TEXTURE_2D, map_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     //GL_BGRA
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, tex_format, GL_UNSIGNED_BYTE, surface->pixels );
+    glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels );
+    glDisable(GL_TEXTURE_2D);
+
+    /* Init blank indicator overlay surface */
+    overlay_surface = create_surface_from_nothing(width, height);
+    if (overlay_surface==NULL) {
+        printf("Hud indicator overlay blank surface is NULL\n");
+        return;
+    }
+
+    tex_format = GL_BGRA;
+    if (overlay_surface->format->Rmask == 0x000000ff)
+        tex_format = GL_RGBA;
+    
+    // texture
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures(1, &overlay_texture);
+    glBindTexture(GL_TEXTURE_2D, overlay_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    //GL_BGRA
+    glTexImage2D( GL_TEXTURE_2D, 0, 4, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -68,39 +96,7 @@ Uint32 get_agent_pixel(int *x, int *y) {
         r(255),
         g(10),
         b(10);
-    return SDL_MapRGBA(surface->format, b,g,r,a); // bgra, red
-}
-
-void update_surface() {
-    if (surface == NULL) printf("surface null fuck\n");
-    SDL_LockSurface(surface);
-    
-    int i;
-    Uint32 pix;
-    Uint8 r,g,b,a;
-    for (i=0; i<num_cells; i++) {
-        pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
-        SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-        ((Uint32*)surface->pixels)[i] = SDL_MapRGBA(surface->format, b,g,r,a);
-    }
-
-    // set agent pixel
-    int x=0,*_x=&x;
-    int y=0,*_y=&y;
-    pix = get_agent_pixel(_x,_y);
-    if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in bounds (or could segfault)
-        ((Uint32*)surface->pixels)[x + width*y] = pix;
-    
-    SDL_UnlockSurface(surface);
-}
-
-void update_texture() {
-    glEnable(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
-
-    glDisable(GL_TEXTURE_2D);
+    return SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
 }
 
 void update_heightmap() {
@@ -114,10 +110,72 @@ void update_heightmap() {
     }
 }
 
+void update_map_surface() {
+    if (map_surface == NULL) return;
+    SDL_LockSurface(map_surface);
+    
+    int i;
+    Uint32 pix;
+    Uint8 r,g,b,a;
+    for (i=0; i<num_cells; i++) {
+        pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
+        SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+        ((Uint32*)map_surface->pixels)[i] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+    }
+
+    SDL_UnlockSurface(map_surface);
+}
+
+void update_texture(GLuint texture, SDL_Surface* surface) {
+    glEnable(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+void update_overlay_surface() {
+
+    // blank the surface
+    int i;
+    for (i=0; i<num_cells; i++) {
+        ((Uint32*)overlay_surface->pixels)[i] = SDL_MapRGBA(overlay_surface->format, 0,0,0,0);
+    }
+}
+
+void update_agents() {
+
+    // set agent pixel
+    int x=0,*_x=&x;
+    int y=0,*_y=&y;
+    Uint32 pix = get_agent_pixel(_x,_y);
+    if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in bounds (or could segfault)
+    {
+        ((Uint32*)overlay_surface->pixels)[x + width*y] = pix;
+    }
+}
+
+void update_items(){};
+
+void update_indicators() {
+
+    if (overlay_surface == NULL) return;
+    SDL_LockSurface(overlay_surface);
+
+    update_overlay_surface();
+    update_agents();
+    update_items();
+
+    SDL_UnlockSurface(overlay_surface);
+    
+    update_texture(overlay_texture, overlay_surface);
+}
+
 void update() {
     update_heightmap();
-    update_surface();
-    update_texture();
+    update_map_surface();
+    update_texture(map_texture, map_surface);
 }
 
 void draw() {
@@ -127,10 +185,8 @@ void draw() {
     if(update_counter % 30 == 0)
         update();
 
-    glColor3ub(255,255,255);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    if (update_counter % 2 == 0)
+        update_indicators();
 
     static const float z = -0.5f;
     static const int x = 50;
@@ -138,9 +194,20 @@ void draw() {
     static const int w = 512;
     static const int h = 512;
 
-    draw_bound_texture(x, y, w, h, z);
+    glColor3ub(255,255,255);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glBindTexture(GL_TEXTURE_2D, map_texture);
+    draw_bound_texture(x, y, w, h, z*2);
+
+    glBindTexture(GL_TEXTURE_2D, overlay_texture);
+    draw_bound_texture(x,y,w,h,z);
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 // for cython
