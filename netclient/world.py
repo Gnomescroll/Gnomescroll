@@ -28,13 +28,10 @@ class World():
     def tick(self):
         for p in GameStateGlobal.projectileList.values():
             p.tick()
-        #for a in GameStateGlobal.agentList.values():
-        #    a.tick()
+
         if GameStateGlobal.agent is not None:
             GameStateGlobal.agent.nearby_objects()
-
-        
-
+            GameStateGlobal.agent.update_sound()
 
     def draw(self, first_person=False):
         P.event("World.draw(), draw agents")

@@ -17,11 +17,12 @@ import c_lib._ray_trace as ray_tracer
 import c_lib.c_lib_agents as cAgents
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_sdl as cSDL
+import c_lib.c_lib_hud as cHUD
 
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
-from weapons import LaserGun, Pick, BlockApplier
+from weapons import Pick, BlockApplier
 from game_modes import NoTeam
 from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
 from draw_utils import *
@@ -119,6 +120,8 @@ class AgentRender(object):
 
 class AgentWeapons(object):
 
+    max_weapons = 8
+
     def __init__(self, agent, weapons=None):
         self.agent = agent
 
@@ -148,16 +151,12 @@ class AgentWeapons(object):
             self._adjust_active_weapon()
         else:
             self._active_weapon = active_weapon #    which weapon is held
-
+    
     def active(self):
         if self._active_weapon is None:
             return None
         return self.weapons[self._active_weapon]
 
-    def hud_slot(self):
-        if self._active_weapon is None:
-            return -1
-        return self._active_weapon
 
     def update_info(self, **weapons_data):
         if 'weapons' in weapons_data:
@@ -308,18 +307,10 @@ class AgentModel(AgentWrapper):
     RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
     def __init__(self, owner, id, state=None, health=None, dead=False, team=None):
-        #if id is None:
-            #print 'WARNING!! Creating agent with no owner or id'
-            #raise ValueError, "Attempted to create agent with no owner or id"
-
-        #AgentWrapper.__init__(self, id)
-            
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(float, state)
 
-        #self.collisionDetection = CubeGlobal.collisionDetection
-        #assert False #fix
         self.collisionDetection = terrainMap.collisionDetection
 
         self.state = state #position, velocity, acceleration
@@ -328,40 +319,13 @@ class AgentModel(AgentWrapper):
 
         self.team = team
 
-        #self.terrainMap = GameStateGlobal.terrainMap
-
         self.button_state = [0 for i in range(11)]
 
         self.id = id
-        '''
-        self.last_control_tick = 0
-        self.last_button_tick = 0
 
-        self._x_angle = 0
-        self._y_angle = 0
-
-        self.d_x = 0
-        self.d_y = 0
-        self.v_x = 0
-        self.v_y = 0
-
-        self.jetpack = 0
-        self.brake = 0
-        '''
-        '''
-        self.on_ground = 0
-        '''
         self.x_int = int(state[0])
         self.y_int = int(state[1])
         self.z_int = int(state[2])
-
-        #if health is None:
-            #self.health = self.HEALTH_MAX
-        #else:
-            #self.health = health
-        #self.dead = bool(dead)
-
-        #self.owner = owner
 
         self.you = False
 
@@ -370,30 +334,18 @@ class AgentModel(AgentWrapper):
             self._tick_physics()
 
     def update_info(self, **agent):
-        #old_health = health = self.health
         args = []
-        #was_alive = not self.dead
+
         if 'id' in agent:
             args.append(self.id)
             self.id = agent['id']
-        #if 'health' in agent:
-            #self.health = agent['health']
-            #health = self.health
-            #if health < old_health:
-                #self.take_damage(old_health - health)
-        #if 'dead' in agent:
-            #self.dead = bool(agent['dead'])
-            #if was_alive and self.dead:
-                #self.bleed()
-                #self.take_damage(old_health)
+
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
 
         if 'inventory' in agent:
             self.inventory.update_info(**agent['inventory'])
 
-        #if 'owner' in agent:
-            #self.owner = agent['owner']
         if 'state' in agent:
             state = agent['state']
             if type(state) == list and len(state) == len(self.state):
@@ -401,10 +353,6 @@ class AgentModel(AgentWrapper):
 
         if 'team' in agent:
             self.team = GameStateGlobal.teamList[agent['team']]
-
-        #if not was_alive and not self.dead:
-            #print "REVIVING"
-            #print self.pos()
 
         GameStateGlobal.agentList.update(self, *args)
 
@@ -485,12 +433,8 @@ class AgentModel(AgentWrapper):
 class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        #assert False
-        #self.init_vox()
         AgentModel.__init__(self, owner, id, state, health, dead, team)
-        #AgentVoxRender.__init__(self)
         print 'Python Agent creation: id %s' % (self.id,)
-        print self
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
 
@@ -545,6 +489,10 @@ class PlayerAgentRender(AgentRender):
 
 class PlayerAgentWeapons(AgentWeapons):
 
+    def __init__(self, agent, weapons=None):
+        AgentWeapons.__init__(self, agent, weapons)
+        self.set_hud_icons()
+
     def switch(self, weapon_index):
         if self.agent.team.is_viewers():
             return
@@ -591,6 +539,24 @@ class PlayerAgentWeapons(AgentWeapons):
         AgentWeapons._adjust_active_weapon(self)
         if self._active_weapon != prev:
             NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
+
+    def hud_slot(self):
+        if self._active_weapon is None:
+            return -1
+        return self._active_weapon
+
+    def set_hud_icons(self):
+        for i in range(self.max_weapons):
+            try:
+                weapon = self.weapons[i]
+                cHUD.Equipment.set_equipment_icon(i, weapon.icon)
+            except IndexError:
+                cHUD.Equipment.set_equipment_icon(i, 0)
+
+    def update_info(self, **weapon_data):
+        ret = AgentWeapons.update_info(self, **weapon_data)
+        self.set_hud_icons()
+        return ret
 
 
 class PlayerAgentInventory(AgentInventory):

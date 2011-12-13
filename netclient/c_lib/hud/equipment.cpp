@@ -22,6 +22,9 @@ static const float spritesheet_height = 256.0f;
 static const int n_items = width / icon_height;
 static int slot = 0;
 
+static const int n_icons = (spritesheet_width / icon_width) * (spritesheet_height / icon_height);
+static int slot_icons[n_items];
+
 void init_surface() {
 
     char panel_fn[] = "media/texture/equipment_panel.png";
@@ -72,17 +75,27 @@ void init() {
 
 
 void set_slot(int s) {
-    if (s >= n_items) {
+    if (s >= n_items) { // allow negative slot number for "no slot"
         printf("WARNING: set_slot, slot=%d out of bounds\n", s);
         return;
     }
     slot = s;
 }
 
+void set_slot_icon(int slot, int icon_id) {
+    if (slot < 0 || slot >= n_items) {
+        printf("WARNING: set_slot_icon, slot=%d out of range\n", slot);
+        return;
+    }
+    if (icon_id < 0 || icon_id >= n_icons) {
+        printf("WARNING: set_slot_icon, icon_id=%d out of range\n", icon_id);
+        return;
+    }
+    slot_icons[slot] = icon_id;
+}
+
 int get_equipment_slot_icon(int slot) {
-     static int i=-1;
-     i++;
-     return i%n_items;
+    return slot_icons[slot];
 }
 
 void draw_panel() {
@@ -146,17 +159,20 @@ void draw() {
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    draw_panel();
+    //draw_panel();
     draw_icons();
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 
     draw_equipped();
 }
 
 //cython
-void draw_equipment(int slot){
+void draw_equipment(int slot) {
     set_slot(slot);
     draw();
 }
