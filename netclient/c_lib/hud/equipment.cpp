@@ -159,11 +159,14 @@ void draw() {
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    draw_panel();
+    //draw_panel();
     draw_icons();
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 
     draw_equipped();
 }

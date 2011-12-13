@@ -117,11 +117,9 @@ class GenericObjectListWrapper(GenericObjectList):
 
     def update_from_list(self):
         ids = self._wrapper.ids()
-        print "ids: ", ids
         for id in ids:
             if id not in self.objects:
-                # create object
-                obj = self._object_type(id=id)
+                obj = self._object_type(id=id)  # create object
                 self.objects[id] = obj
     
     def __getitem__(self, key):
