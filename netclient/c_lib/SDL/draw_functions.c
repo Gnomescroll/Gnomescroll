@@ -111,13 +111,16 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 
     glBegin(GL_QUADS);
 
-    glTexCoord2f(sx, sy);
-        glVertex3f(x,y,z);
-    glTexCoord2f(sx+sw, sy);
-        glVertex3f(x+w, y,z);
-    glTexCoord2f(sx+sw, sy+sh);
-        glVertex3f(x+w, y+h, z);
     glTexCoord2f(sx, sy+sh);
+        glVertex3f(x,y,z);
+
+    glTexCoord2f(sx+sw, sy+sh);
+        glVertex3f(x+w, y,z);
+        
+    glTexCoord2f(sx+sw, sy);
+        glVertex3f(x+w, y+h, z);
+
+    glTexCoord2f(sx, sy);
         glVertex3f(x, y+h, z);
 
     glEnd();

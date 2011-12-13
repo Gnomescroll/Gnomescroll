@@ -85,6 +85,7 @@ class GenericMessage:
 
 class SendMessage(GenericMessage):
 
+    @idRequired
     @sendJSON('received_client_id')
     def received_client_id(self):
         return True
@@ -203,7 +204,6 @@ class SendMessage(GenericMessage):
 
     @sendJSON('identify')
     def identify(self, name=None):
-        print "IDENTIFY OUT"
         if name is None:
             name = NetClientGlobal.name
         return {
@@ -277,7 +277,6 @@ class AdminMessage:
 
     @sendJSON('set_map')
     def set_map(self,x,y,z,value):
-        print "set map"
         return {
             'list' : [(x,y,z,value)],
         }

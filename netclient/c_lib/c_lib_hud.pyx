@@ -333,8 +333,13 @@ class Map:
 """Equipment Panel"""
 cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
     void draw_equipment(int slot)
+    void set_slot_icon(int slot, int icon_id)
 
 class Equipment:
     @classmethod
     def draw(cls, int slot):
         draw_equipment(slot)
+
+    @classmethod
+    def set_equipment_icon(cls, int slot, int icon_id):
+        set_slot_icon(slot, icon_id)

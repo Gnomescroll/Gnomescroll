@@ -21,12 +21,10 @@ class Weapon(EquippableObject):
 
     _weapons = {    # maps .__class__.__name__ to type identifier. must be the same on server and client.
         'Weapon'    :   0,
-        'LaserGun'  :   1,
         'Pick'      :   2,
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
         'GrenadePouch'  :   5,
-        'GrenadePouch_C':   6,
     }
 
     dat = w_dat

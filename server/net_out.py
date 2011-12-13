@@ -72,11 +72,11 @@ class EventOut:
                     client.send(event_packet)
         self.event_packets = []
 
-    def add_json_event(self, dict):
-        self.event_packets.append(SendMessage.get_json(dict))
+    def add_json_event(self, data):
+        self.event_packets.append(SendMessage.get_json(data))
 
     def add_json_compressed_event(self, data, level):
-        self.event_packets.append(SendMessage.get_json_compressed(dict, level))
+        self.event_packets.append(SendMessage.get_json_compressed(data, level))
 
     #Deprecate?
     @sendJSONevent('agent_update')
@@ -196,7 +196,6 @@ class EventOut:
             'player_list'   :   GameStateGlobal.playerList.json()
         }
 
-    # not used???
     @sendJSONevent('dat', zlib=6)
     def send_dat(self, dat_name=None, type=None, key=None):
         if dat_name is None:
@@ -268,12 +267,12 @@ class SendMessage: #each connection has one of these
         return struct.pack(cls.fmt, id) + msg #length prefix not included in length?
 
     @classmethod
-    def get_json(cls, dict):
-        return cls.add_prefix(1, json.dumps(dict))
+    def get_json(cls, d):
+        return cls.add_prefix(1, json.dumps(d))
 
     @classmethod
-    def get_json_compressed(cls, dict, level=6):
-        msg = json.dumps(dict)
+    def get_json_compressed(cls, d, level=6):
+        msg = json.dumps(d)
         msg = zlib.compress(msg, level) # compression level 1-9
         msg = cls.add_prefix(4, msg)    # 4 identifies msg as zlib json
         return msg
@@ -281,12 +280,12 @@ class SendMessage: #each connection has one of these
     def __init__(self, client):
         self.client = client
 
-    def send_json(self, dict):
-        msg = self.get_json(dict)
+    def send_json(self, data):
+        msg = self.get_json(data)
         self.client.send(msg)
 
-    def send_json_compressed(self, dict, zlib=6):
-        msg = self.get_json_compressed(dict, zlib)
+    def send_json_compressed(self, d, zlib=6):
+        msg = self.get_json_compressed(d, zlib)
         self.client.send(msg)
 
     @sendJSON('dat', zlib=6)

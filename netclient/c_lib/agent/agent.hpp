@@ -234,8 +234,9 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
             int i,j=0;
             for (i=0; i<AGENT_MAX;i++) {
                 if (a[i] == NULL) continue;
-                j++;
+                if (a[i]->id == 0) continue;// skip 0th agent
                 ids_in_use[j] = a[i]->id;
+                j++;
             }
             return j;            
         }

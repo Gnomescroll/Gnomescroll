@@ -11,7 +11,6 @@ class Weapon(EquippableObject):
         'BlockApplier':   3,
         'HitscanLaserGun': 4,
         'GrenadePouch'  :   5,
-        'GrenadePouch_C':   6,
     }
 
     _names = None
@@ -25,6 +24,7 @@ class Weapon(EquippableObject):
         self.owner = owner
         self._set_type()
         self.dat.apply(self)
+        print "weapon icon %d"  % self.icon
         self._animation = animations.Animation
 
     def fire(self):

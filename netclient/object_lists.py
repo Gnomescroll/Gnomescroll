@@ -117,6 +117,7 @@ class GenericObjectListWrapper(GenericObjectList):
 
     def update_from_list(self):
         ids = self._wrapper.ids()
+        print "ids: ", ids
         for id in ids:
             if id not in self.objects:
                 # create object
