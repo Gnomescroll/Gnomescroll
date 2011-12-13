@@ -123,16 +123,6 @@ void update_map_surface() {
         ((Uint32*)map_surface->pixels)[i] = SDL_MapRGBA(map_surface->format, b,g,r,a);
     }
 
-    //// set agent pixel
-    //int x=0,*_x=&x;
-    //int y=0,*_y=&y;
-    //pix = get_agent_pixel(_x,_y);
-    //if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in bounds (or could segfault)
-    //{
-        ////printf("drawin agent pixel\n");
-        //((Uint32*)map_surface->pixels)[x + width*y] = pix;
-    //}
-    
     SDL_UnlockSurface(map_surface);
 }
 
@@ -162,7 +152,6 @@ void update_agents() {
     Uint32 pix = get_agent_pixel(_x,_y);
     if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in bounds (or could segfault)
     {
-        printf("drawin agent pixel\n");
         ((Uint32*)overlay_surface->pixels)[x + width*y] = pix;
     }
 }
