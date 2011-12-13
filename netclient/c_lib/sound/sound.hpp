@@ -11,6 +11,7 @@ void close();
 void set_volume(float vol);
 void set_enabled(int y);
 void set_sound_path(char* path);
+void set_3D_settings(float doppler_scale, float distance_factor, float rolloff_scale);
 
 void update();
 

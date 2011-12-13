@@ -25,12 +25,11 @@ class NetOut:
         cls.chatMessage = ChatMessage()
         cls.miscMessage = MiscMessage()
         cls.datMessage = DatMessage()
-    @classmethod
-    def init_1(cls):
-        assert cls.mapMessage != None
+        
     @classmethod
     def send_json(cls, dict):
         cls.sendPacket.send_json(dict)
+
     @classmethod
     def send_binary(cls, msg_id, bin_string):
         cls.sendPacket.send_binary(msg_id, bin_string)
@@ -60,8 +59,8 @@ def sendJSON(cmd=None, tick=False):
         return wrapped
     return outer
 
+""" Decorators """
 # if client_id is required
-import init_c_lib
 def idRequired(f):
     def wrapped(*args, **kwargs):
         if NetClientGlobal.connection.client_id:
@@ -74,6 +73,7 @@ def noViewer(f):
             f(*args, **kwargs)
     return wrapped
 
+""" Messages """
 class GenericMessage:
 
     def __init__(self):
@@ -85,6 +85,7 @@ class GenericMessage:
 
 class SendMessage(GenericMessage):
 
+    @idRequired
     @sendJSON('received_client_id')
     def received_client_id(self):
         return True
@@ -123,19 +124,6 @@ class SendMessage(GenericMessage):
     def request_weapon(self, wid):
         return {
             'id'    :   wid,
-        }
-
-    #in use, but move to C/deprecate
-    @idRequired
-    @noViewer
-    @sendJSON('fire_projectile', tick=True)
-    def fire_projectile(self, agent=None):
-        if agent is None or agent.id is None:
-            return
-        return {
-            'aid'   : agent.id,
-            'pos'   : agent.pos(),
-            'vec'   : agent.normalized_direction(),
         }
 
     @idRequired
@@ -216,7 +204,6 @@ class SendMessage(GenericMessage):
 
     @sendJSON('identify')
     def identify(self, name=None):
-        print "IDENTIFY OUT"
         if name is None:
             name = NetClientGlobal.name
         return {
@@ -290,7 +277,6 @@ class AdminMessage:
 
     @sendJSON('set_map')
     def set_map(self,x,y,z,value):
-        print "set map"
         return {
             'list' : [(x,y,z,value)],
         }

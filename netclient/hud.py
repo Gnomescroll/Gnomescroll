@@ -36,13 +36,20 @@ class Hud(object):
         self.inventory = cHUD.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
         self.cube_selector = cHUD.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
 
-        self.fps = self._to_draw_text(
+        self.disconnected_message = self.text(
+            text = 'Server not connected',
+            x = self.win_width/2 - 80,
+            offset = self.win_height/2 + self.font_height*2,
+            color = (255,10,10,255),
+        )
+
+        self.fps = self.text(
             text = '',
             x = 0 + self.width_margin,
             offset = self.win_height - self.font_height - self.height_margin
         )
 
-        self.ping = self._to_draw_text(
+        self.ping = self.text(
             text = '',
             x = 0 + self.width_margin,
             offset = self.win_height - (self.font_height * 2) - self.height_margin
@@ -58,13 +65,13 @@ class Hud(object):
         line_height = 20
         msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
 
-        blanks = [self._to_draw_text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
+        blanks = [self.text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
         self.text_dict = dict(zip(msg_count, blanks))
-        self.text_dict['input'] = self._to_draw_text(text='', offset=200, x=50)
-        self.text_dict['cursor_position'] = self._to_draw_text(text='')
+        self.text_dict['input'] = self.text(text='', offset=200, x=50)
+        self.text_dict['cursor_position'] = self.text(text='')
 
     def _init_player_stats(self):
-        self.player_stats = self._to_draw_text(
+        self.player_stats = self.text(
             text = '',
             offset = self.win_height - self.font_height - self.height_margin,
             x = self.win_width - 330
@@ -77,7 +84,7 @@ class Hud(object):
         start_x = self.win_width // 8
         i = 0
         for col_name in self._scoreboard_properties:
-            self.scoreboard[col_name.lower()] = self._to_draw_text(
+            self.scoreboard[col_name.lower()] = self.text(
                 text = '',
                 x = start_x + (i * col_width),
                 offset = (self.win_height // 8),
@@ -220,7 +227,7 @@ class Hud(object):
         if InputGlobal.input == 'chat':
             self._draw_cursor()
 
-    def _to_draw_text(self, text='', offset=120, x=20, color=(255,40,0,255)):
+    def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
         txt = cHUD.Text(
             text = text,
             x = x,
@@ -306,6 +313,10 @@ class Hud(object):
                 #x += dummy.width
         self._draw_vertical_lines(x, y, length, 2)
 
+    def draw_network_status(self, connected):
+        if not connected:
+            self.disconnected_message.draw()
+
     def draw(self, fps=None, ping=None, cube_selector=False):
         # draw non-text first
         self.draw_reticle()
@@ -323,17 +334,24 @@ class Hud(object):
             active_equipment_slot = GameStateGlobal.agent.weapons.hud_slot()
         cHUD.Equipment.draw(active_equipment_slot)
 
+        self.draw_text_items(fps, ping)
+
+    def draw_text_items(self, fps, ping):
         # draw text
         cHUD.Font.font.start()
 
         self.draw_player_stats()
+
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
+
         if fps is not None:
             self.draw_fps(fps)
+
         if ping is not None:
             self.draw_ping(ping)
+            
         self.draw_chat_text()
-        #cHUD.Font.font.stress_test()
+        self.draw_network_status(NetClientGlobal.connection.connected)
 
         cHUD.Font.font.end()

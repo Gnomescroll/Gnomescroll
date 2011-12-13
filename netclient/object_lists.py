@@ -119,8 +119,7 @@ class GenericObjectListWrapper(GenericObjectList):
         ids = self._wrapper.ids()
         for id in ids:
             if id not in self.objects:
-                # create object
-                obj = self._object_type(id=id)
+                obj = self._object_type(id=id)  # create object
                 self.objects[id] = obj
     
     def __getitem__(self, key):
@@ -410,10 +409,9 @@ class GenericMultiObjectList(GenericObjectList):
 class WeaponList(GenericMultiObjectList):
 
     def __init__(self):
-        from weapons import LaserGun, Pick, BlockApplier, HitscanLaserGun, GrenadePouch
+        from weapons import Pick, BlockApplier, HitscanLaserGun, GrenadePouch
         GenericMultiObjectList.__init__(self)
         self._allow_klasses([ \
-            LaserGun,
             Pick,
             BlockApplier,
             HitscanLaserGun,

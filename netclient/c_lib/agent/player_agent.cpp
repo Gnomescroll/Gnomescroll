@@ -231,9 +231,7 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vz /= divisor;
 }
 
-void PlayerAgent_state::tick() {
-    void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz);
-
+void PlayerAgent_state::update_sound() {
     AgentState s = camera_state;
 
     float f[3];

@@ -78,9 +78,11 @@ class PyClient(object):
 
     def on_connect(self, client_id):
         print "NetClient connected: client id = %i" % (client_id)
+        self.connected = True
         NetOut.sendMessage.identify()
 
     def on_disconnect(self):
+        print "NetClient disconnected"
         self.connected = False
 
     def push_to_buffer(self, message):
