@@ -60,6 +60,35 @@ void Agent_state::teleport(float x,float y,float z) {
     A.vx = s.vx;
     A.vy = s.vy;
     A.vz = s.vz;
+    A.theta = s.theta;
+    A.phi = s.phi;
+    A.broadcast();
+}
+
+void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi) {
+    s.x = x;
+    s.y = y;
+    s.z = z;
+    s.vx = vx;
+    s.vy = vy;
+    s.vz = vz;
+
+    s.theta = theta;
+    s.phi = phi;
+    
+    Agent_state_message A;
+
+    A.id = id;
+    A.seq = cs_seq;
+
+    A.x = s.x;
+    A.y = s.y;
+    A.z = s.z;
+    A.vx = s.vx;
+    A.vy = s.vy;
+    A.vz = s.vz;
+    A.theta = s.theta;
+    A.phi = s.phi;
     A.broadcast();
 }
 
@@ -725,12 +754,18 @@ void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy,
     s.vz = _vz;
 }
 
+void Agent_state::set_angles(float theta, float phi) {
+    s.theta = theta;
+    s.phi = phi;
+}
+
 Agent_state::Agent_state(int id) : id (id), status(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
 {
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
+    set_angles(0.5f, 0.0f);
 
     box.b_height = AGENT_HEIGHT;
     box.c_height = AGENT_HEIGHT_CROUCHED;
@@ -771,7 +806,8 @@ Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx,
 #endif
 {
     set_state(x, y, z, vx, vy, vz);
-
+    set_angles(0.5f, 0.0f);
+    
     box.b_height = AGENT_HEIGHT;
     box.box_r = AGENT_BOX_RADIUS;
 

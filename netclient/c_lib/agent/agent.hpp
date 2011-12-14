@@ -122,7 +122,9 @@ class Agent_state {
         //inline void __tick(); //does the actual work
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
+        void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
+        void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
 
         void client_tick();
         void server_tick();

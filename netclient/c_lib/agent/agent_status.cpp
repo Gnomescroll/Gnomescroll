@@ -77,7 +77,7 @@ void Agent_status::respawn() {
     // update position
     int spawn[3];
     get_spawn_point(spawn);
-    a->teleport(spawn[0], spawn[1], spawn[2]);
+    a->teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, 0.5f, 0.0f);
 
     // restore health
     health = AGENT_HEALTH;

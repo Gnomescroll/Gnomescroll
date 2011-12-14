@@ -28,17 +28,12 @@ class CCamera {
         void set_dimensions();  // sets x_size,y_size and ratio from window resolution
         void set_fov(float fov);
         void move(float dx, float dy, float dz);
+        void set_angles(float theta, float phi);
         
         void hud_projection();
         void world_projection();
 
         int current();
-
-        //void forward(float f[3]) {
-            //f[0] = xl;
-            //f[1] = yl;
-            //f[2] = zl;
-        //}
 };
 
 CCamera* get_available_camera();

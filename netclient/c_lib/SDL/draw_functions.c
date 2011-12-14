@@ -109,39 +109,15 @@ void rotate_point(float x, float y, float theta, float *x1, float *y1) {
 
 // y coordinates start along the bottom
 void draw_bound_texture_rotated(float x, float y, float w, float h, float z, float theta) {
-//printf("theta: %0.2f\n", theta);
-    //const float pi = 3.14159;
-    //theta += 1.0f;
-    //theta *= pi;
-    //float cx = x + w/2;
-    //float cy = y + h/2; //center
 
-    //x -= cx;
-    //y -= cy;
+    const float pi = 3.14159;
+    theta -= 0.5f;
+    theta *= pi;
+    float cx = x + w/2;
+    float cy = y + h/2; //center
 
-    //float x1,y1,x2,y2;
-
-    //x1 = x - cx;
-    //y1 = y - cy;
-    //x1 = -(x - cx);
-    //y1 = -(y - cy);
-    //x2 = x + w - cx;
-    //y2 = y + h - cy;
-
-    //x1 = x1*cos(theta) - y1*sin(theta);
-    //y1 = x1*sin(theta) + y1*cos(theta);
-    //x2 = x2*cos(theta) - y2*sin(theta);
-    //y2 = x2*sin(theta) + y2*cos(theta);
-
-    //x1 *= -1;
-    //y1 *= -1;
-    //x2 *= -1;
-    //y2 *= -1;
-
-    //x1 += cx;
-    //y1 += cy;
-    //x2 += cx;
-    //y2 += cy;
+    x -= cx;
+    y -= cy;
 
     float rx=0.0f,*_rx=&rx,
           ry=0.0f,*_ry=&ry;
@@ -150,19 +126,19 @@ void draw_bound_texture_rotated(float x, float y, float w, float h, float z, flo
 
     glTexCoord2f(0.0,1.0);
     rotate_point(x, y, theta, _rx, _ry);
-    glVertex3f(rx, ry, z);  // Top left
+    glVertex3f(rx+cx, ry+cy, z);  // Top left
 
     glTexCoord2f(1.0,1.0);
     rotate_point(x+w, y, theta, _rx, _ry);
-    glVertex3f(rx, ry, z);  // Top right
+    glVertex3f(rx+cx, ry+cy, z);  // Top right
 
     glTexCoord2f(1.0,0.0);
     rotate_point(x+w, y+h, theta, _rx, _ry);
-    glVertex3i(rx, ry, z);  // Bottom right
+    glVertex3i(rx+cx, ry+cy, z);  // Bottom right
 
     glTexCoord2f(0.0,0.0);
     rotate_point(x, y+h, theta, _rx, _ry);
-    glVertex3i(rx, ry, z);  // Bottom left
+    glVertex3i(rx+cx, ry+cy, z);  // Bottom left
     glEnd();
 }
 

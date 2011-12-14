@@ -44,7 +44,7 @@ void init_cameras() {
 CCamera::CCamera() {
     set_aspect(85.0f, 0.1f, 1000.0f);
     set_dimensions();
-    set_projection(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 }
 
 int CCamera::current() {
@@ -137,6 +137,11 @@ void CCamera::world_projection() {
     glEnable (GL_DEPTH_TEST);
 
     glColor3ub(255, 255, 255);
+}
+
+void CCamera::set_angles(float theta, float phi) {
+    this->x_angle = theta;
+    this->y_angle = phi;
 }
 
 void CCamera::hud_projection() {

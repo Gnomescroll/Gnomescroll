@@ -131,8 +131,8 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
         self.d_y = 0 #pitch?
         self.v_x = 0
         self.v_y = 0
-        self.x_angle = 0
-        self.y_angle = 0
+        self.x_angle = 0.5
+        self.y_angle = 0.
         ### End Agent State ###
 
         #control state variables
