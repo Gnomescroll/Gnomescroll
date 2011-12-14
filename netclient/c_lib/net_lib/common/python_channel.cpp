@@ -73,6 +73,11 @@ void Python_channel_in::insert(char* buff, int length, int sequence)
     
     //printf("python channel insert \n");
 
+    if(sequence < lowest_sequence)
+    {
+        printf("Python_channel_in: received redundant sequence number \n");
+        return;
+    }
     if(lowest_sequence == sequence)
     {
         pop(buff, length);

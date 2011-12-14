@@ -25,6 +25,9 @@ class Object_list {
                 Object_state* create(float x, float y, float z, float vx, float vy, float vz);
                 Object_state* create(int id, float x, float y, float z, float vx, float vy, float vz);
                 Object_state* get_or_create(int id);
+
+                bool exists(int id);
+
                 void destroy(int _id);
 
                 void draw();    //overide in template specilization on client
@@ -139,6 +142,16 @@ Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y,
 }
 
 template <class Object_state, int max_n>
+bool Object_list<Object_state, max_n>::exists(int id) {
+    //where();
+    Object_state* obj = a[id];
+    if (obj == NULL) {
+        return false;
+    }
+    return true;
+}
+           
+template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
     //where();
     Object_state* obj = a[id];
@@ -204,3 +217,5 @@ void Object_list<Object_state, max_n>::server_tick() {
         a[i]->server_tick();
     }   
 }
+
+
