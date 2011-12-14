@@ -28,6 +28,7 @@ from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrappe
 from draw_utils import *
 from net_out import NetOut
 from input import InputGlobal
+import camera
 
 class AgentPhysics(object):
 
@@ -524,6 +525,7 @@ class PlayerAgentWeapons(AgentWeapons):
                 self._active_weapon = weapon_index
 
         if old != self._active_weapon:
+            camera.camera.unzoom()
             NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
 
         print 'weapon is: %s' % (self.active(),)

@@ -108,14 +108,16 @@ class Camera(object):
         self.camera.hud_projection()
 
     def toggle_zoom(self):
-        self.zoomed = not self.zoomed
-        if self.zoomed:
+        zoom = not self.zoomed
+        if zoom:
             self.zoom()
         else:
             self.unzoom()
             
     def zoom(self):
+        self.zoomed = True
         self.camera.set_fov(self.fov / self.zoom_factor)
 
     def unzoom(self):
+        self.zoomed = False
         self.camera.set_fov(self.base_fov)
