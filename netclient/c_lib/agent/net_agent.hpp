@@ -297,7 +297,7 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
 };
 
 // agent death notification
-class agent_dead_StoC: public FixedSizeNetPacketToClient<agent_dead_StoC>
+class agent_dead_StoC: public FixedSizeReliableNetPacketToClient<agent_dead_StoC>
 {
     public:
         int id;
@@ -333,7 +333,7 @@ class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
         agent_health_StoC(int id, int health): id(id), health(health) {}
 };
 
-class agent_create_StoC: public FixedSizeNetPacketToClient<agent_create_StoC>
+class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_StoC>
 {
     public:
         int id;

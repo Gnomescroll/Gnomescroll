@@ -158,9 +158,9 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
 
         wl = GameStateGlobal.weaponList
         self.weapons = [    \
+            wl.create('HitscanLaserGun', owner=self),
             wl.create('Pick', owner=self),
             wl.create('BlockApplier', owner=self),
-            wl.create('HitscanLaserGun', owner=self),
             wl.create('GrenadePouch', owner=self),
         ]
         self._active_weapon = 0
