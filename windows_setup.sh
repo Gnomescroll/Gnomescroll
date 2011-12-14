@@ -17,6 +17,9 @@ cp -rf ./netclient/c_lib/particles ./server/c_lib/particles
 rm -rf ./server/c_lib/physics
 cp -rf ./netclient/c_lib/physics ./server/c_lib/physics
 
+rm -rf ./server/c_lib/items
+cp -rf ./netclient/c_lib/items ./server/c_lib/items
+
 rm -rf ./server/c_lib/ray_trace
 cp -rf ./netclient/c_lib/ray_trace ./server/c_lib/ray_trace
 
