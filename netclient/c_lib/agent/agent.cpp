@@ -13,7 +13,7 @@ void Agent_list::draw()
     int i;
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
 
     bool you;
@@ -29,7 +29,7 @@ void Agent_list::draw()
     glEnd();
 
     glDisable(GL_DEPTH_TEST);
-    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
     glColor3ub(255,255,255);
 
     #endif
