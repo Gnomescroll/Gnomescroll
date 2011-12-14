@@ -120,6 +120,8 @@ class NetPeer
 
     void init() {}
 
+    int received_since_last_send;
+
     NetPeer() {
         for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
         unreliable_net_message_array_index = 0;
@@ -139,6 +141,8 @@ class NetPeer
         pending_reliable_bytes_out = 0;
 
         py_in.np = this;
+
+        received_since_last_send = 0;
     }
 
 

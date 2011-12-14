@@ -120,7 +120,6 @@ void process_incoming_packets() {
     socklen_t fromLength = sizeof( from );
     int bytes_received;
 
-    int packets_processed = 0;
     while(1) {
         bytes_received = recvfrom(client_socket.socket, (char*)buffer, 4096, 0, (struct sockaddr*)&from, &fromLength);
         if(bytes_received <= 0) {return;}
@@ -133,10 +132,11 @@ void process_incoming_packets() {
         }
 
         //force flush to make sure acks get through during stalls
-        packets_processed++;
-        if(packets_processed == 8)
+
+
+        NPserver.received_since_last_send++;
+        if( NPserver.received_since_last_send >= 8)
         {
-            packets_processed = 0;
             NPserver.flush_to_net();
             printf("client.process_incoming_packets: force flush ack, more than 8 packets received between acks \n");
         }

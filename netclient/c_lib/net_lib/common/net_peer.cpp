@@ -3,6 +3,9 @@
 #include <net_lib/client/client.hpp>
 #include <net_lib/server/server.h>
 
+#include <errno.h>
+#include <sys/types.h>
+
 static char net_out_buff[2000];
 
 #define NET_PEER_DEBUG 1
@@ -296,6 +299,8 @@ void NetPeer::flush_to_net()
     int sent_bytes = sendto( NetServer::server_socket.socket, (const char*)net_out_buff, n1,0, (const struct sockaddr*)&this->address, sizeof(struct sockaddr_in) );
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
     #endif
+
+    received_since_last_send = 0;
 }
 
 class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port) {

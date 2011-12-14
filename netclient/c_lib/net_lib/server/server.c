@@ -178,8 +178,17 @@ void process_packet(char* buff, int received_bytes, struct sockaddr_in* from) {
     p->ttl = p->ttl_max;
     p->last_packet_time = get_current_netpeer_time();
 
-    //attempt to decode message in packet
+
     process_packet_messages(buff, n1, received_bytes, client_id);
+
+    //ack stuff
+    p->received_since_last_send++;
+    if(p->received_since_last_send >= 8)
+    {
+        p->flush_to_net();
+        printf("client.process_incoming_packets: client id= %i, force flush ack, more than 8 packets received between acks \n", p->client_id);
+    }
+    //attempt to decode message in packet
     return;
 }
 
