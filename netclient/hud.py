@@ -28,7 +28,7 @@ class Hud(object):
         self.height_margin = 5
         self.width_margin = 3
 
-        self._init_reticle()
+        self._init_reticles()
         self._init_text_dict()
         self._init_scoreboard()
         self._init_player_stats()
@@ -55,9 +55,11 @@ class Hud(object):
             offset = self.win_height - (self.font_height * 2) - self.height_margin
         )
 
-    def _init_reticle(self):
+    def _init_reticles(self):
         tex_file = '%stexture/target.png' % (base_dir,)
         self.reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
+        tex_file = '%stexture/target-zoom.png' % (base_dir,)
+        self.scope_reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
 
     def _init_text_dict(self):
         offset = 50
@@ -166,7 +168,10 @@ class Hud(object):
 
     def draw_reticle(self):
         self.reticle.draw()
-        self._draw_reference_center()
+        #self._draw_reference_center()
+
+    def draw_scope_reticle(self):
+        self.scope_reticle.draw()
 
     def _draw_reference_center(self):
         w = 2
@@ -317,8 +322,11 @@ class Hud(object):
         if not connected:
             self.disconnected_message.draw()
 
-    def draw(self, fps=None, ping=None, cube_selector=False):
+    def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
         # draw non-text first
+        if zoom:
+            self.draw_scope_reticle()
+            return
         self.draw_reticle()
         if cube_selector:
             self.cube_selector.draw()

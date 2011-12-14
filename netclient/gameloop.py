@@ -275,12 +275,12 @@ class App(object):
             c_lib.terrain_map.update_chunks()
             #camera prospective
             P.event("draw hud")
-            if opts.hud and not camera.camera.zoomed:
+            if opts.hud:
                 camera.camera.hud_projection()
                 draw_cube_selector = False
                 if agent:
                     draw_cube_selector = (agent.weapons.active().type == 3)
-                self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector)
+                self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector, zoom=camera.camera.zoomed)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
