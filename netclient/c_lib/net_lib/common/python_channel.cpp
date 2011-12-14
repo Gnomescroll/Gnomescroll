@@ -75,7 +75,7 @@ void Python_channel_in::insert(char* buff, int length, int sequence)
 
     if(sequence < lowest_sequence)
     {
-        printf("Python_channel_in: received redundant sequence number \n");
+        printf("Python_channel_in: received packet twice \n");
         return;
     }
     if(lowest_sequence == sequence)
