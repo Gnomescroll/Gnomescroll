@@ -334,6 +334,8 @@ class Hud(object):
             active_equipment_slot = GameStateGlobal.agent.weapons.hud_slot()
         cHUD.Equipment.draw(active_equipment_slot)
 
+        cHUD.Compass.draw()
+
         self.draw_text_items(fps, ping)
 
     def draw_text_items(self, fps, ping):

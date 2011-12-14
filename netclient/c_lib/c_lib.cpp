@@ -59,6 +59,7 @@
     #include <c_lib/hud/text.c>
     #include <c_lib/hud/map.cpp>
     #include <c_lib/hud/equipment.cpp>
+    #include <c_lib/hud/compass.cpp>
 
     /* input */
     #include <c_lib/input/input.cpp>
@@ -88,6 +89,7 @@ int init_c_lib() {
         init_inventory();
         HudMap::init();
         HudEquipment::init();
+        Compass::init();
 
         Sound::init();
     #endif

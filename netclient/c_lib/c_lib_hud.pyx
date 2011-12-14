@@ -343,3 +343,12 @@ class Equipment:
     @classmethod
     def set_equipment_icon(cls, int slot, int icon_id):
         set_slot_icon(slot, icon_id)
+
+"""Compass"""
+cdef extern from "hud/compass.hpp" namespace "Compass":
+    void draw_compass()
+
+class Compass:
+    @classmethod
+    def draw(cls):
+        draw_compass()

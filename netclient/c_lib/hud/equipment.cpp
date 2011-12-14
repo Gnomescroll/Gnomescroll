@@ -55,6 +55,7 @@ void init_surface() {
     glTexImage2D( GL_TEXTURE_2D, 0, 4, panel_surface->w, panel_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, panel_surface->pixels );
     glDisable(GL_TEXTURE_2D);
 
+    tex_format = GL_BGRA;
     if (sprite_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
 
