@@ -54,10 +54,11 @@ class World():
             proj.draw()
 
     def draw_items(self):
+        pass
         #print "num items= %i" % (len(GameStateGlobal.itemList.values()))
-        for item in GameStateGlobal.itemList.values():
-            if item.on_ground:
-                item.draw()
+        #for item in GameStateGlobal.itemList.values():
+            #if item.on_ground:
+                #item.draw()
 
     #deprecate
     def draw_chunk(self):

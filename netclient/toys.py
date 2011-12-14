@@ -12,7 +12,7 @@ class Flag(DetachableObject, TeamItem, TeamItemRender):
             team = GameStateGlobal.teamList[team]
         DetachableObject.__init__(self, id, state=state, **kwargs)
         TeamItem.__init__(self, team, **kwargs)
-        TeamItemRender.__init__(self, self, model='black_flag.vox')
+        #TeamItemRender.__init__(self, self, model='black_flag.vox')
 
     def take(self, new_owner):
         if TeamItem.can_take(self, new_owner):
@@ -26,6 +26,6 @@ class Base(StaticObject, TeamItemRender, TeamItem):
             team = GameStateGlobal.teamList[team]
         StaticObject.__init__(self, id, state, **kwargs)
         TeamItem.__init__(self, team, **kwargs)
-        TeamItemRender.__init__(self, self, 'base.vox')
+        #TeamItemRender.__init__(self, self, 'base.vox')
 
 from game_state import GameStateGlobal
