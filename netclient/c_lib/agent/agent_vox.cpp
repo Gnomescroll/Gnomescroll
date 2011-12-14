@@ -193,11 +193,14 @@ void Agent_vox::draw(float x, float y, float z, float theta, float phi) {
         if (vox_part[i] != NULL) {
 
             vox_part[i]->rotate_anchor(theta);
-            
-            if (i == AGENT_PART_HEAD) { // what
-                vox_part[i]->draw(look, right, x,y,z);
-            } else {
-                vox_part[i]->draw_head(forward, right, x, y, z);
+
+            switch (i) {
+                case AGENT_PART_HEAD:
+                    vox_part[i]->draw_head(look, right, x,y,z);
+                    break;
+                default:
+                    vox_part[i]->draw(forward, right, x, y, z);
+                    break;
             }
         }
     }
@@ -211,7 +214,8 @@ void Vox::rotate_anchor(float theta) {
     );
 }
 
-void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
+
+void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, float z) {
 
     int i,j,k;
     int i1;
@@ -221,8 +225,7 @@ void Vox::draw(struct Vector forward, struct Vector right, float x, float y, flo
 
     struct Vector vx,vy,vz;
 
-    //vx = f; //instead of look direction
-    vx = forward; //instead of look direction
+    vx = look; //instead of look direction
     vz = vector_cross(vx, right);
     vy = vector_cross(vx, vz);
 
@@ -246,10 +249,9 @@ void Vox::draw(struct Vector forward, struct Vector right, float x, float y, flo
 
     struct Vector c;
     float cx,cy,cz;
-
-    c.x = anchor.x + length*forward.x;
-    c.y = anchor.y + length*forward.y;
-    c.z = anchor.z + length*forward.z;
+    c.x = anchor.x + length*look.x;
+    c.y = anchor.y + length*look.y;
+    c.z = anchor.z + length*look.z;
 
     c.x += x;
     c.y += y;
@@ -283,7 +285,8 @@ void Vox::draw(struct Vector forward, struct Vector right, float x, float y, flo
     }}}
 }
 
-void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, float z) {
+//void Vox::draw(struct Vector right, float x, float y, float z) {
+void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
 
     int i,j,k;
     int i1;
@@ -293,7 +296,8 @@ void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, f
 
     struct Vector vx,vy,vz;
 
-    vx = look;
+    vx = forward;
+    //vx = f;
     vz = vector_cross(vx, right);
     vy = vector_cross(vx, vz);
 

@@ -75,6 +75,7 @@ class Vox {
         void set_direction(float fx, float fy, float fz, float nx, float ny, float nz);
         void set_volume(int x, int y, int z, int r, int g, int b, int a);
         void draw(struct Vector forward, struct Vector right, float x, float y, float z);
+        //void draw(struct Vector right, float x, float y, float z);
         void draw_head(struct Vector look, struct Vector right, float x, float y, float z);
 
         void set_color(int r, int g, int b, int a);
