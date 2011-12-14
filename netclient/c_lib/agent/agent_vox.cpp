@@ -285,7 +285,6 @@ void Vox::draw_head(struct Vector look, struct Vector right, float x, float y, f
     }}}
 }
 
-//void Vox::draw(struct Vector right, float x, float y, float z) {
 void Vox::draw(struct Vector forward, struct Vector right, float x, float y, float z) {
 
     int i,j,k;

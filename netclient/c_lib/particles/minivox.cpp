@@ -139,10 +139,6 @@ void Minivox_list::draw() {
 
     if(num == 0) { return; }
 
-    //glDisable(GL_TEXTURE_2D);
-    //glEnable (GL_DEPTH_TEST);
-    //glBegin(GL_QUADS);
-
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glBindTexture(GL_TEXTURE_2D, block_texture_no_gamma_correction);
@@ -158,8 +154,6 @@ void Minivox_list::draw() {
     glDisable(GL_DEPTH_TEST);
     glEnd();
 
-    //glDisable(GL_DEPTH_TEST);
-    //glEnd();
 #endif
 }
 

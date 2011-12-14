@@ -12,8 +12,8 @@ void Agent_list::draw()
     #ifdef DC_CLIENT
     int i;
 
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
 
     bool you;
@@ -26,10 +26,12 @@ void Agent_list::draw()
         }
         a[i]->draw();
     }
+    glEnd();
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
-    glEnd();
+    glColor3ub(255,255,255);
+
     #endif
 }
 
