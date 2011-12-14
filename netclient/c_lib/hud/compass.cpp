@@ -4,12 +4,15 @@ namespace Compass {
 
 static char file[] = "media/texture/compass.png";
 
-static const float scale = 1.0f;
+static const float scale = 0.5f;
+static const int x_margin = 10;
+static const int y_margin = 10;
+
 static int width;
 static int height;
-static float theta = 0.0f; // rotation
-static const int x = 200;
-static const int y = 200;
+static float x;
+static float y;
+static float theta = 0.5f; // rotation
 
 static SDL_Surface* surface;
 static GLuint texture;
@@ -25,6 +28,8 @@ void init() {
 
     width = surface->w;
     height = surface->h;
+    x = _xresf - ((float)width * scale) - x_margin;
+    y = _yresf - ((float)height * scale) - y_margin;
 
     Uint32 tex_format = GL_BGRA;
     if (surface->format->Rmask == 0x000000ff)
@@ -57,7 +62,7 @@ void draw() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     glBindTexture(GL_TEXTURE_2D, texture);
-    draw_bound_texture_rotated(x,y, width, height, z, theta);
+    draw_bound_texture_rotated(x,y, ((float)width)*scale, ((float)height)*scale, z, theta);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
