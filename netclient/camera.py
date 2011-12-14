@@ -16,8 +16,8 @@ class Camera(object):
 
     _local = ['camera', 'name', 'loaded']
 
-    def __init__(self, x=0.0, y=0.0, z=0.0, name='', fov=85., first_person=False):
-        self.camera = cCamera.Camera(first_person=first_person)
+    def __init__(self, x=0.0, y=0.0, z=0.0, fov=85., first_person=False, name="camera"):
+        self.camera = cCamera.Camera(first_person=first_person, name=name)
         self.base_fov = fov
         self.zoom_factor = 2.
         self.camera.set_fov(fov)
@@ -25,8 +25,6 @@ class Camera(object):
         self.x = x
         self.y = y
         self.z = z
-        #self.x_angle = x_angle
-        #self.y_angle = y_angle
         self.loaded = False
         self.zoomed = False
 

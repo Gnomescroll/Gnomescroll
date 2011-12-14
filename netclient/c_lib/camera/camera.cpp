@@ -47,7 +47,7 @@ CCamera::CCamera() {
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 }
 
-int CCamera::current() {
+int CCamera::is_current() {
     if (this == current_camera) {
         return 1;
     }

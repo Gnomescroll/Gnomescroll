@@ -14,7 +14,9 @@ cdef extern from "./camera/camera.hpp":
         float xu, yu, zu
         float ratio
 
-        int current()
+        int type
+
+        int is_current()
 
         int world_projection()
         int hud_projection()
@@ -29,6 +31,11 @@ cdef extern from "./camera/camera.hpp":
     void set_camera(CCamera* c)
     void set_camera_first_person(int first_person)
     CCamera* get_available_camera()
+
+    cdef enum CAMERA_TYPES:
+        UNKNOWN_CAM
+        AGENT_CAM
+        CAMERA_CAM
 
 camera_properties = [
     'fov',
@@ -48,7 +55,7 @@ cdef class Camera(object):
     cdef int active
     cdef int first_person
 
-    def __init__(self, int first_person):
+    def __init__(self, int first_person, name="camera"):
         cdef CCamera* cam
 
         cam = get_available_camera();
@@ -58,13 +65,21 @@ cdef class Camera(object):
 
         self.camera = cam
         self.active = 0
-        if self.camera.current():
+        if self.camera.is_current():
             print 'Cython camera is current camera'
             self.active = 1
 
         self.camera.set_dimensions()
 
         self.first_person = int(first_person)
+
+        if name.lower() == 'camera':
+            cam.type = CAMERA_CAM
+        elif name.lower() == 'agent':
+            cam.type = AGENT_CAM
+        else:
+            print "Warning: Creating camera with unknown name/type %s" % (name,)
+            cam.type = UNKNOWN_CAM
 
     def load(self):
         if self.active == 0:

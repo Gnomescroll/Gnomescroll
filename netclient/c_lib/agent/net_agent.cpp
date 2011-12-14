@@ -22,11 +22,11 @@ inline void Agent_state_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
         printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
-        //A = STATE::agent_list.create(id);
         return;
     }
     // reset camera angle
-    current_camera->set_angles(theta, phi);
+    if (current_camera->type == AGENT_CAM)
+        current_camera->set_angles(theta, phi);
     A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 

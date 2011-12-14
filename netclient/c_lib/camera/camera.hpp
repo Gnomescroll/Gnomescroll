@@ -7,6 +7,12 @@
 
 #define N_CAMERAS 2
 
+enum CAMERA_TYPES {
+    UNKNOWN_CAM,
+    AGENT_CAM,
+    CAMERA_CAM
+};
+
 class CCamera {
     public:
         float fov;
@@ -18,6 +24,8 @@ class CCamera {
         float xl, yl, zl;
         float xu, yu, zu;
         float x_angle, y_angle;
+
+        int type;
 
         CCamera();
 
@@ -33,7 +41,7 @@ class CCamera {
         void hud_projection();
         void world_projection();
 
-        int current();
+        int is_current();
 };
 
 CCamera* get_available_camera();

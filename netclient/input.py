@@ -177,8 +177,6 @@ class Mouse(object):
         if InputGlobal.input == 'agent':
             if state == 1: #pressed down
                 if button == 1:
-                    #playSound.build()
-                    ##print "fire"
                     GameStateGlobal.agent.fire()
                 elif button == 3: #right click
                     GameStateGlobal.agent.set_active_block()
@@ -293,7 +291,6 @@ class Keyboard(object):
 
     def cycle_agent_camera_mode(self):
         GameStateGlobal.agent.toggle_agent_camera_mode()
-        #agent.toggle_camera_mode()
 
     def toggle_chat(self):
         InputGlobal.toggle_chat()
