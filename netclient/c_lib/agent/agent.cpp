@@ -47,6 +47,16 @@ static inline int _collision_check(int x, int y, int z) {
     return isActive(_get(x,y,z));
 }
 
+bool Agent_state::is_you() {
+    bool is = false;
+    #ifdef DC_CLIENT
+    if (id == ClientState::playerAgent_state.agent_id) {
+        is = true;
+    }
+    #endif
+    return is;
+}
+
 void Agent_state::teleport(float x,float y,float z) {
     s.x = x;
     s.y = y;
