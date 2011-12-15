@@ -236,7 +236,6 @@ class ClientMessageHandler(GenericMessageHandler):
         GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
-
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
 
@@ -259,8 +258,8 @@ class ClientMessageHandler(GenericMessageHandler):
         ChatClientGlobal.on_identify()
 
         player = GameStateGlobal.update_your_info(player)
-        if player.you:
-            GameStateGlobal.playerList.identify(player)
+        #if player.you:
+        GameStateGlobal.playerList.identify(player)
 
         return True
 
@@ -405,7 +404,8 @@ class PlayerMessageHandler(DatastoreMessageInterface):
 
         try:
             team_id = int(msg.get('team', None))
-            team = GameStateGlobal.teamList[team_id]
+            team = team_id
+            #team = GameStateGlobal.teamList[team_id]
         except ValueError:
             err_msg = 'team id invalid'
         except TypeError:
@@ -421,7 +421,6 @@ class PlayerMessageHandler(DatastoreMessageInterface):
             GameStateGlobal.game.player_join_team(player, team)
 
     def _player_list(self, **args):
-        print args
         self._default_list(**args)
         if GameStateGlobal.game is not None:
             GameStateGlobal.game.update_players()
@@ -463,8 +462,6 @@ class WeaponMessageHandler(DatastoreMessageInterface):
             GameStateGlobal.remove_weapon(id)
 
     def _weapon_update(self, **args):
-        print 'weapon update'
-        print args
         return self._default_update(**args)
 
 
@@ -488,7 +485,6 @@ class ItemMessageHandler(DatastoreMessageInterface):
         return self._default_update(**args)
 
     def _item_list(self, **args):
-        print args
         return self._default_list(**args)
 
 
@@ -645,7 +641,8 @@ class GameModeMessageHandler(DatastoreMessageInterface):
 
         try:
             tid = int(msg.get('team', None))
-            team = GameStateGlobal.teamList[tid]
+            team = tid
+            #team = GameStateGlobal.teamList[tid]
         except TypeError:
             err_msg = 'team missing'
         except ValueError:

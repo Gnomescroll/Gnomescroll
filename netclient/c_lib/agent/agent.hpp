@@ -161,6 +161,8 @@ class Agent_state {
 
         void draw();
 
+        bool is_you();
+
         float camera_height() {
             return box.b_height * CAMERA_HEIGHT_SCALE;
         }

@@ -28,7 +28,7 @@ class NoTeam:
         self.players[player.id] = player
         player.team = self
         if player.agent is not None:
-            player.agent.team = self
+            player.agent.team = self.id
 
     def remove_player(self, player):
         if player.id not in self.players:
@@ -141,7 +141,11 @@ class TeamGame(Game):
         self.team_kills = bool(team_kills)
         self.victory_points = victory_points
 
-    def player_join_team(self, player, team):
+    def player_join_team(self, player, team_id):
+        team = GameStateGlobal.teamList[team_id]
+        if team is None:
+            print "Team %d unknown" % (team_id,)
+            return
         for t in self.teams.values():
             if player.id in t and t != team:
                 t.remove_player(player)
@@ -156,13 +160,11 @@ class TeamGame(Game):
         return self.smallest_team()
 
     def smallest_team(self):
-        print self.teams
         sorted_t = sorted(self.teams.values(), key=len)
         smallest = sorted_t[0]
         if smallest.type == 1: # viewers, skip this team
             smallest = sorted_t[1]
         return smallest
-
 
 
 class CTF(TeamGame):
@@ -188,6 +190,7 @@ class TeamList(GenericMultiObjectList):
     def __init__(self):
         GenericMultiObjectList.__init__(self)
         self._metaname = 'TeamList'
+        self._itemname = 'Team'
         self._allow_klasses([\
             NoTeam,
             Team,

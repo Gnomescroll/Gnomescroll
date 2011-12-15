@@ -353,16 +353,9 @@ class AgentModel(AgentWrapper):
                 self.state = state
 
         if 'team' in agent:
-            self.team = GameStateGlobal.teamList[agent['team']]
+            self.team = agent['team']
 
         GameStateGlobal.agentList.update(self, *args)
-
-    def _update_team_object(self):
-        t = self.__dict__['team']
-        if t and not isinstance(t, NoTeam):
-            t = GameStateGlobal.teamList[t]
-            if t is not None:
-                self.team = t
 
     def __getattribute__(self, name):
         try:
@@ -370,8 +363,8 @@ class AgentModel(AgentWrapper):
         except AttributeError:
             val = object.__getattribute__(self, name)
             
-        if name == 'team':
-            AgentModel._update_team_object(self)
+        if name == 'team' and val is not None:
+            val = GameStateGlobal.teamList[val]
                     
         return val
 
@@ -581,7 +574,6 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        #assert False
         self._control_state_id_set = False
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
@@ -600,13 +592,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
 
         self.camera = None
 
-        #AgentVoxRender.__init__(self)
-
     def __setattr__(self, name, val):
         self.__dict__[name] = val
         if name == 'id':
-            #if val:
-                #raise ValueError, "setting playeragent id to %d" % (val,)
             if not self._control_state_id_set:
                 set_player_agent_id(val)
                 self._control_state_id_set = True
@@ -620,8 +608,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
-        if name == 'team':
-            AgentModel._update_team_object(self)
+        if name == 'team' and val is not None:
+            val = GameStateGlobal.teamList[val]
 
         return val
 
@@ -656,60 +644,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
     def hitscan(self, weapon=None):
         if self.team.is_viewers():
             return
-
         self.fire_hitscan()
-        return
-
-        if weapon is not None:
-            weapon.animation(agent=self).play()
-
-        # check agent
-        ignore_vox = []
-        (ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
-        print ag, adistance, vox
-        body_part_id = 1
-        block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
-        bdistance = None
-        if block is not None:
-            bdistance = vector_lib.distance(self.pos(), block)
-        #check block
-        # if both agent & block got hit, check which is closer
-
-        if ag is not None and block is not None:
-            if bdistance < adistance:
-                ttype = 'block'
-                loc = block
-            else:
-                ttype = 'agent'
-                loc = (ag.id, body_part_id)
-        elif ag is not None:
-            ttype = 'agent'
-            loc = (ag.id, body_part_id)
-        elif block is not None:
-            ttype = 'block'
-            loc = block
-        else:
-            ttype = 'empty'
-            loc = self.normalized_direction()
-
-        # short circuit shooting voxel items
-        # can add 'item' ttype to API later
-        if ttype == 'agent' and not isinstance(ag, Agent):
-            ttype = 'empty'
-            loc = self.normalized_direction()
-
-        if ttype == 'agent':
-            if ag.team == self.team and not GameStateGlobal.game.team_kills:
-                return
-            ag.bleed()
-
-        # determine target w/ ray cast
-        #target = ray_cast_from(agent)
-        target = {
-            'type'  :   ttype,
-            'loc'   :   loc
-        }
-        NetOut.sendMessage.hitscan(target)
 
     def add_ammo(self, amt, weapon_type):
         if self.team.is_viewers():
@@ -736,7 +671,7 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
             return
         if block_type is None:
             block_type = self.facing_block()
-            print "Gonna set block type to", block_type
+            print "Setting active block type to ", block_type
         if not block_type:
             return
         InputGlobal.cube_selector.active_id = block_type

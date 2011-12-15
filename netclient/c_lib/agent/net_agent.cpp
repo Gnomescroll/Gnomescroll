@@ -25,7 +25,7 @@ inline void Agent_state_message::handle() {
         return;
     }
     // reset camera angle
-    if (current_camera->type == AGENT_CAM)
+    if (A->is_you() && current_camera->type == AGENT_CAM)
         current_camera->set_angles(theta, phi);
     A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
