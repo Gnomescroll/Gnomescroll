@@ -27,7 +27,7 @@ void add_snapshot_to_history(Agent_state* g) {
 
         if(g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
             
-            printf("!!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
+            printf("AgentDraw, add_snapshot_to_history !!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
 
         }
         _last_seq = g->state_snapshot.seq;

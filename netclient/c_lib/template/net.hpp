@@ -108,7 +108,7 @@ class FixedSizeNetPacketToClient {
             //NetClient::NPserver.push_unreliable_packet(nm);
             if(NetServer::pool.connection[client_id] == NULL)
             {
-                printf("FixedSizeNetPacketToClient: sendToClient error, client_id % is null\n", client_id);
+                printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
                 return;
             }
             NetServer::pool.connection[client_id]->push_unreliable_packet(nm);
@@ -275,7 +275,7 @@ class FixedSizeReliableNetPacketToClient {
 
             if(NetServer::pool.connection[client_id] == NULL)
             {
-                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id % is null\n", client_id);
+                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
                 return;
             }
             NetServer::pool.connection[client_id]->push_reliable_packet(nm);
