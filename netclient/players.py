@@ -1,5 +1,5 @@
 
-class Player:
+class Player(object):
 
     def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None, score=0):
         if cid is None or id is None:
@@ -18,8 +18,11 @@ class Player:
         self.score = score
         self.suicides = suicides # use this later
 
-    def tick(self):
-        pass
+    def __getattribute__(self, k):
+        v = object.__getattribute__(self, k)
+        if k == 'team' and v is not None:
+            return GameStateGlobal.teamList[v]
+        return v
 
     def update_info(self, **player):
         args = {}
@@ -38,7 +41,8 @@ class Player:
         if 'deaths' in player:
             self.deaths = player['deaths']
         if 'team' in player:
-            self.team = GameStateGlobal.teamList[player['team']]
+            self.team = player['team']
+            #self.team = GameStateGlobal.teamList[player['team']]
         if 'score' in player:
             self.score = player['score']
 

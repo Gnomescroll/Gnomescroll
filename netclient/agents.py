@@ -353,16 +353,9 @@ class AgentModel(AgentWrapper):
                 self.state = state
 
         if 'team' in agent:
-            self.team = GameStateGlobal.teamList[agent['team']]
+            self.team = agent['team']
 
         GameStateGlobal.agentList.update(self, *args)
-
-    def _update_team_object(self):
-        t = self.__dict__['team']
-        if t and not isinstance(t, NoTeam):
-            t = GameStateGlobal.teamList[t]
-            if t is not None:
-                self.team = t
 
     def __getattribute__(self, name):
         try:
@@ -370,8 +363,9 @@ class AgentModel(AgentWrapper):
         except AttributeError:
             val = object.__getattribute__(self, name)
             
-        if name == 'team':
-            AgentModel._update_team_object(self)
+        if name == 'team' and val is not None:
+            print val
+            val = GameStateGlobal.teamList[val]
                     
         return val
 
@@ -581,7 +575,6 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        #assert False
         self._control_state_id_set = False
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
@@ -600,13 +593,9 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
 
         self.camera = None
 
-        #AgentVoxRender.__init__(self)
-
     def __setattr__(self, name, val):
         self.__dict__[name] = val
         if name == 'id':
-            #if val:
-                #raise ValueError, "setting playeragent id to %d" % (val,)
             if not self._control_state_id_set:
                 set_player_agent_id(val)
                 self._control_state_id_set = True
@@ -620,8 +609,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
-        if name == 'team':
-            AgentModel._update_team_object(self)
+        if name == 'team' and val is not None:
+            val = GameStateGlobal.teamList[val]
 
         return val
 

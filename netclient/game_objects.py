@@ -1,7 +1,7 @@
 from vox import GameObjectRender
 from dat_loader import i_dat
 
-class GameObject:
+class GameObject(object):
 
     _types = {
         'GameObject'    :   0,
@@ -140,10 +140,16 @@ class DetachableObject(GameObject):
                 print 'WARNING trying to set item position while item is possessed'
             return self.owner.pos()
 
-class TeamItem:
+class TeamItem(object):
 
     def __init__(self, team, **kwargs):
         self.team = team
+
+    def __getattribute__(self, k):
+        v = object.__getattribute__(self, k)
+        if k == 'team' and v is not None:
+            v = GameStateGlobal.teamList[v]
+        return v
 
     def can_take(self, new_owner):
         #print new_owner.team, self.team

@@ -24,7 +24,6 @@ class Weapon(EquippableObject):
         self.owner = owner
         self._set_type()
         self.dat.apply(self)
-        print "weapon icon %d"  % self.icon
         self._animation = animations.Animation
 
     def fire(self):
