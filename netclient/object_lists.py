@@ -13,6 +13,9 @@ class GenericObjectList:
         self._wrapper = None
 
     def __getitem__(self, key):
+        if type(key) != int:
+            print key, type(key), self._metaname, self
+            raise TypeError
         if key not in self.objects:
             print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
             return

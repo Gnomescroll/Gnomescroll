@@ -236,7 +236,6 @@ class ClientMessageHandler(GenericMessageHandler):
         GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
-
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
 
@@ -405,7 +404,8 @@ class PlayerMessageHandler(DatastoreMessageInterface):
 
         try:
             team_id = int(msg.get('team', None))
-            team = GameStateGlobal.teamList[team_id]
+            team = team_id
+            #team = GameStateGlobal.teamList[team_id]
         except ValueError:
             err_msg = 'team id invalid'
         except TypeError:
@@ -645,7 +645,8 @@ class GameModeMessageHandler(DatastoreMessageInterface):
 
         try:
             tid = int(msg.get('team', None))
-            team = GameStateGlobal.teamList[tid]
+            team = tid
+            #team = GameStateGlobal.teamList[tid]
         except TypeError:
             err_msg = 'team missing'
         except ValueError:
