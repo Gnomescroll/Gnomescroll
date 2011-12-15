@@ -56,13 +56,11 @@ class GameStateGlobal:
             print 'Creating YouPlayer'
             cls.player = cls.playerList.join_yourself(**player)
 
-        print 'update player info, player: %s' % (player,)
         cls.player.update_info(**player)
         agent = player.get('agent', None)
         if agent is not None: # agent as a property of player is currently optional for server to send
             if cls.agent is None:
                 cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
-                print "Created python player agent"
                 weapons = agent.get('weapons', None)
                 if weapons is not None:
                     cls.agent.weapons.update_info(**weapons)

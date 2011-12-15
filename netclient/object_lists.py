@@ -13,9 +13,6 @@ class GenericObjectList:
         self._wrapper = None
 
     def __getitem__(self, key):
-        if type(key) != int:
-            print key, type(key), self._metaname, self
-            raise TypeError
         if key not in self.objects:
             print '%s: %s does not exist: id= %s' % (self._metaname, self._itemname, str(key),)
             return
@@ -58,10 +55,11 @@ class GenericObjectList:
         return repr(self.objects)
 
     def _add(self, *args, **kwargs):
-        obj = self._object_type(*args, **kwargs)
-        if obj.id in self.objects:
-            print 'Create %s failed; id %s already exists' % (self._itemname, obj.id,)
+        obj = None
+        if kwargs['id'] in self.objects:
+            print '%s::id %s already exists' % (self._itemname, kwargs['id'],)
         else:
+            obj = self._object_type(*args, **kwargs)
             self.objects[obj.id] = obj
             #print '%s: %s created; id= %s' % (self._metaname, self._itemname, object.id,)
         return obj
@@ -185,6 +183,7 @@ class AgentList(GenericObjectListWrapper):
         self._object_type = PlayerAgent
         player_agent = self._add(*args, **agent)
         self._object_type = Agent
+        print "Created python player agent"
         return player_agent
 
     def destroy(self, agent):
@@ -232,8 +231,9 @@ class PlayerList(GenericObjectList):
             print player
             return
         player = self._add(**player)
-        self.client_ids[client_id] = player.id
-        self.names[name] = client_id
+        if player is not None:
+            self.client_ids[client_id] = player.id
+            self.names[name] = client_id
         return player
 
     def join_yourself(self, **player):
@@ -249,15 +249,11 @@ class PlayerList(GenericObjectList):
         return player
         
     def destroy(self, player):
-        print 'playerlist destroy'
-        print player
         client_id = player.cid
         name = player.name
         if self._remove(player):
             if client_id in self.client_ids:
                 del self.client_ids[client_id]
-            print name
-            print self.names
             if name in self.names:
                 del self.names[name]
 
@@ -265,7 +261,6 @@ class PlayerList(GenericObjectList):
 
     def by_name(self, name):    # returns a client_id
         if name in self.names:
-            print 'NAME %s ID %s' % (name, self.names[name],)
             return self.names[name]
         else:
             return 0
@@ -275,19 +270,14 @@ class PlayerList(GenericObjectList):
             pid = self.client_ids[id]
             if pid in self.objects:
                 return self.objects[pid]
-            else:
-                return
 
     def update(self, player, old_id=None, old_cid=None, old_name=None):
         if old_cid is not None and old_cid in self.client_ids:
-            print 'cid= %s' % (old_cid,)
             del self.client_ids[old_cid]
         if old_id != player.id and old_id in self.objects:
-            print 'id= %s' % (old_id,)
             del self.objects[old_id]
         if old_name is not None and old_name in self.names:
             if player.cid == old_cid:
-                print 'name= %s' % (old_name,)
                 del self.names[old_name]
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id

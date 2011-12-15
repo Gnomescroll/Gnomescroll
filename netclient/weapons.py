@@ -110,7 +110,6 @@ class HitscanLaserGun(Weapon):
         return anim
 
     def update_info(self, **weapon):
-        print 'updating weapon %s' % (weapon,)
         args = self._update_info(**weapon)
         if 'clip' in weapon:
             self.clip = weapon['clip']

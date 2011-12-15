@@ -160,13 +160,11 @@ class TeamGame(Game):
         return self.smallest_team()
 
     def smallest_team(self):
-        print self.teams
         sorted_t = sorted(self.teams.values(), key=len)
         smallest = sorted_t[0]
         if smallest.type == 1: # viewers, skip this team
             smallest = sorted_t[1]
         return smallest
-
 
 
 class CTF(TeamGame):

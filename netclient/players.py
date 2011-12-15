@@ -10,13 +10,13 @@ class Player(object):
         self.id = id
         self.name = name
         self.team = team
-        print 'New player assigned name: %s' % (name,)
         self.kills = kills
         self.deaths = deaths
         self.agent = None
         self.you = False
         self.score = score
         self.suicides = suicides # use this later
+        print 'New player assigned name: %s, id: %d' % (name, self.id,)
 
     def __getattribute__(self, k):
         v = object.__getattribute__(self, k)
@@ -33,7 +33,8 @@ class Player(object):
             args['old_cid'] = self.cid
             self.cid = player['cid']
         if 'name' in player:
-            print 'updating player name: %s  -> %s' % (self.name, player['name'],)
+            if self.name != player['name']:
+                print 'updating player name: %s  -> %s' % (self.name, player['name'],)
             args['old_name'] = self.name
             self.name = player['name']
         if 'kills' in player:
@@ -42,7 +43,6 @@ class Player(object):
             self.deaths = player['deaths']
         if 'team' in player:
             self.team = player['team']
-            #self.team = GameStateGlobal.teamList[player['team']]
         if 'score' in player:
             self.score = player['score']
 
