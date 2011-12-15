@@ -100,6 +100,32 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         inline void handle();
 };
 
+class Agent_teleport_message: public FixedSizeNetPacketToClient<Agent_teleport_message>
+{
+    public:
+        int id;
+        float x,y,z;
+        float vx,vy,vz;
+        float theta,phi;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle();
+};
+
 //Agent control state, server to client
 class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 {

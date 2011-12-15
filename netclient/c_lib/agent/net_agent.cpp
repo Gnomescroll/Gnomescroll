@@ -24,10 +24,20 @@ inline void Agent_state_message::handle() {
         printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
         return;
     }
+    A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+}
+
+inline void Agent_teleport_message::handle() {
+    Agent_state* A = STATE::agent_list.get(id);
+    if(A == NULL) {
+        printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
+        return;
+    }
     // reset camera angle
     if (A->is_you() && current_camera->type == AGENT_CAM)
         current_camera->set_angles(theta, phi);
-    A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+    A->set_state(x,y,z, vx,vy,vz);
+    A->set_angles(theta, phi);
 }
 
 //Agent control state, server to client
@@ -91,6 +101,7 @@ inline void hitscan_block_CtoS::handle() {}
 #ifdef DC_SERVER
 
 inline void Agent_state_message::handle() {}
+inline void Agent_teleport_message::handle() {}
 inline void Agent_cs_StoC::handle() {}
 inline void agent_damage_StoC::handle() {}
 inline void fire_weapon_StoC::handle() {}

@@ -62,10 +62,9 @@ void Agent_state::teleport(float x,float y,float z) {
     s.y = y;
     s.z = z;
 
-    Agent_state_message A;
+    Agent_teleport_message A;
 
     A.id = id;
-    A.seq = cs_seq;
 
     A.x = s.x;
     A.y = s.y;
@@ -89,10 +88,9 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     s.theta = theta;
     s.phi = phi;
     
-    Agent_state_message A;
+    Agent_teleport_message A;
 
     A.id = id;
-    A.seq = cs_seq;
 
     A.x = s.x;
     A.y = s.y;
