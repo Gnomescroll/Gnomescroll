@@ -641,63 +641,10 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
                 else:
                     NetOut.sendMessage(fire_command, self)
 
-    #def hitscan(self, weapon=None):
-        #if self.team.is_viewers():
-            #return
-
-        #self.fire_hitscan()
-        #return
-
-        #if weapon is not None:
-            #weapon.animation(agent=self).play()
-
-        ## check agent
-        #ignore_vox = []
-        #(ag, adistance, vox) = vox_lib.hitscan2(self.x,self.y,self.z,self.x_angle, self.y_angle, ignore_vox=ignore_vox)
-        #print ag, adistance, vox
-        #body_part_id = 1
-        #block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
-        #bdistance = None
-        #if block is not None:
-            #bdistance = vector_lib.distance(self.pos(), block)
-        ##check block
-        ## if both agent & block got hit, check which is closer
-
-        #if ag is not None and block is not None:
-            #if bdistance < adistance:
-                #ttype = 'block'
-                #loc = block
-            #else:
-                #ttype = 'agent'
-                #loc = (ag.id, body_part_id)
-        #elif ag is not None:
-            #ttype = 'agent'
-            #loc = (ag.id, body_part_id)
-        #elif block is not None:
-            #ttype = 'block'
-            #loc = block
-        #else:
-            #ttype = 'empty'
-            #loc = self.normalized_direction()
-
-        ## short circuit shooting voxel items
-        ## can add 'item' ttype to API later
-        #if ttype == 'agent' and not isinstance(ag, Agent):
-            #ttype = 'empty'
-            #loc = self.normalized_direction()
-
-        #if ttype == 'agent':
-            #if ag.team == self.team and not GameStateGlobal.game.team_kills:
-                #return
-            #ag.bleed()
-
-        ## determine target w/ ray cast
-        ##target = ray_cast_from(agent)
-        #target = {
-            #'type'  :   ttype,
-            #'loc'   :   loc
-        #}
-        #NetOut.sendMessage.hitscan(target)
+    def hitscan(self, weapon=None):
+        if self.team.is_viewers():
+            return
+        self.fire_hitscan()
 
     def add_ammo(self, amt, weapon_type):
         if self.team.is_viewers():
