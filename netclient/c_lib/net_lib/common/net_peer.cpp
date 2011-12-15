@@ -300,6 +300,7 @@ void NetPeer::flush_to_net()
     if ( sent_bytes != n1) { printf( "NetPeer::flush_to_net(): failed to send packet: return value = %i of %i\n", sent_bytes, n1 );}
     #endif
 
+    if(sent_bytes < 0 ) printf("value less than zero\n"); //debug
     received_since_last_send = 0;
 }
 
