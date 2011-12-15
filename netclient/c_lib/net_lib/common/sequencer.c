@@ -51,7 +51,7 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
             ps = &np->packet_sequence_buffer[index%256];
             if(ps->seq != index)
             {
-                printf("sequence number error: expected %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
+                printf("packet sequencer: number error expected sequence %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
                 //printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
             }
             
