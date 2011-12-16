@@ -377,7 +377,7 @@ struct Socket* create_socket(uint16_t port) {
     { 
         #ifdef _WIN32
             int error_code = WSAGetLastError();
-            printf( "Error: create socket failed, error %i \n", error_code);
+            printf( "Error: create socket failed, error code %i \n", error_code);
         #else
             //linux and mac
             printf( "Error: create socket failed\n");
