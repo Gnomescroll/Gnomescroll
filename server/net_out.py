@@ -87,22 +87,6 @@ class EventOut:
             'agent' :   agent.json(properties),
         }
 
-    #deprecate
-    @sendJSONevent('projectile_destroy')
-    def projectile_destroy(self, projectile):
-        assert False
-        return {
-            'id'    :   projectile.id,
-        }
-
-    #deprecate
-    @sendJSONevent('projectile_update')
-    def projectile_update(self, projectile):
-        assert False
-        return {
-            'projectile'    :   projectile.json(),
-        }
-
     @sendJSONevent('item_update')
     def item_update(self, item, properties=None):
         return {
@@ -327,6 +311,7 @@ class SendMessage: #each connection has one of these
 
     @sendJSON('chunk_list')
     def send_chunk_list(self):
+        print "Sending chunk list"
         return {
             'list' : GameStateGlobal.terrainMap.get_server_chunk_list(),
         }

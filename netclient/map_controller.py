@@ -39,7 +39,6 @@ class MapController:
         #print "requests= %i " % (self.requests)
         #while self.requests < self.requests_max:
 
-
         '''
         if self.requests < self.requests_max:
             #P.event("terrain_map.chunk_request()")

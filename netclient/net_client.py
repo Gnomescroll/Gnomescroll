@@ -79,6 +79,9 @@ class PyClient(object):
     def on_connect(self, client_id):
         print "NetClient connected: client id = %i" % (client_id)
         self.connected = True
+        # HACK -- This is required or else python will not accept dats
+        # Could not figure out why.
+        NetOut.mapMessage.request_chunk(0,0,0)
         NetOut.sendMessage.identify()
 
     def on_disconnect(self):
