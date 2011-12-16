@@ -133,7 +133,7 @@ class App(object):
         self.world.add_agent(GameStateGlobal.agent)
 
         self.connect()
-        # Server sends the chunk list after client is "ready" (identified & dats loaded)
+        # Server sends the chunk list after client is "ready" (identified & dat loaded)
         #NetOut.mapMessage.request_chunk_list()
 
         average = []
