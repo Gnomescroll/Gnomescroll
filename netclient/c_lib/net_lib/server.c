@@ -19,9 +19,10 @@
 #include <c_lib/state/server_state.hpp>
 
 void _NetServerInit() {
+    init_net_lib(); //windows socket stuff
+
     init_message_handler();
     update_current_netpeer_time();
-    init_net_lib();
     init_message_handler();
     PacketInit::RegisterMessages();
     ServerState::InitServerState();

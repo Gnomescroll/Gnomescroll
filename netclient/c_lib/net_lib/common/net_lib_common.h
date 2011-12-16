@@ -38,16 +38,16 @@
 
     #include "type_pack.h"
 
-    static inline void shutdown_net_lib()
+    void shutdown_net_lib()
     {
-        #if PLATFORM == PLATFORM_WINDOWS
+        #ifdef _WIN32
         WSACleanup();
         #endif
     }
 
-    static inline int init_net_lib()
+    int init_net_lib()
     {
-        #if PLATFORM == PLATFORM_WINDOWS
+        #ifdef _WIN32
         WSADATA WsaData;
         return WSAStartup( MAKEWORD(2,2), &WsaData ) == NO_ERROR;
         #else
