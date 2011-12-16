@@ -68,7 +68,7 @@ static int _TERMINATE = 0;
 
 void Python_channel_in::insert(char* buff, int length, int sequence)
 {
-	printf("py_in: sequence= %i, lowest_sequence=%i \n", sequence, lowest_sequence);
+    //printf("py_in: sequence= %i, lowest_sequence=%i \n", sequence, lowest_sequence);
     //printf("py_in packet %i: seq=%i, len=%i lowest_sequence=%i read_index=%i \n", _total_packets, sequence, length, lowest_sequence, read_index);
     //if sequence is expected packet, use fast path and dont store anything
     
