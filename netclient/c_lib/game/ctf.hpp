@@ -12,4 +12,9 @@ class CTF {
         CTFTeam two;
 
         CTF();
+
+        void add_agent_to_team(int team, int agent);
+        void set_team_color(int team,
+            unsigned char r, unsigned char g, unsigned char b);
 };
+

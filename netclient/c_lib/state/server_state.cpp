@@ -5,7 +5,6 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/particles/particle_lib.hpp>
-//#include <c_lib/items/items.hpp>
 #include <c_lib/game/ctf.hpp>
 
 
@@ -15,8 +14,6 @@ namespace ServerState {
     Cspray_list cspray_list;
     Grenade_list grenade_list;
     Neutron_list neutron_list;
-    //Items:Flag_list flag_list;
-    //Items::Base_list base_list;
 
     CTF ctf;
         

@@ -7,6 +7,8 @@
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/t_map/t_map.hpp>
 
+#include <c_lib/game/packets.hpp>
+
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
@@ -52,6 +54,14 @@ void RegisterMessages() {
     // hitscans
     hitscan_agent_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
+
+    // game/teams stuff
+    TeamColor_StoC::register_client_packet();
+    //TeamName_StoC::register_client_packet();
+    AgentJoinTeam_StoC::register_client_packet();
+    AgentJoinTeam_CtoS::register_server_packet();
+
+    PlayerAgent_id_StoC::register_client_packet();
 
 }
 }

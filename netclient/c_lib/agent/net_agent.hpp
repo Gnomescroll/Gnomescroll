@@ -1,24 +1,9 @@
 #pragma once
 
-#include <net_lib/client/client.hpp>
-#include <net_lib/common/message_handler.h>
-
-#include <c_lib/agent/agent.hpp>
-
-#include <net_lib/server/server.h>
-
 #include <c_lib/template/net.hpp>
-
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/state/client_state.hpp>
-
-#include <c_lib/defines.h>
-
-#include <c_lib/weapons/weapons.hpp>
-
-#ifdef DC_SERVER
-#include <c_lib/t_map/t_map.hpp>
-#endif
+#include <net_lib/common/message_handler.h>
+#include <net_lib/client/client.hpp>
+#include <net_lib/server/server.h>
 
 
 /*
@@ -375,4 +360,21 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
 
         agent_create_StoC() {}
         agent_create_StoC(int id, int owner) : id(id), owner(owner) {}
+};
+
+class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent_id_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+
+        PlayerAgent_id_StoC(){}
+        PlayerAgent_id_StoC(int id)
+        : id(id)
+        {}
 };

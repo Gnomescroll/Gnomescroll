@@ -16,7 +16,7 @@ void Team::init(int id)
 
 void Team::set_name(char* name) {
     int i;
-    for (i=0; i<TEAM_NAME_MAX_LENGTH || name[i] != '\0'; i++) {
+    for (i=0; i<TEAM_NAME_MAX_LENGTH && name[i] != '\0'; i++) {
         this->name[i] = name[i];
     }
     name[i] = '\0';

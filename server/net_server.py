@@ -67,7 +67,7 @@ class PyClient:
         self.sendMessage.send_dat()
 
     def identify(self, name):
-        print "IDENTIFY ATTEMPT"
+        print "Client identifying as %s" % (name,)
         valid, name, you = self._valid_player_name(name)
         print valid, name, you
         if valid:
@@ -82,14 +82,13 @@ class PyClient:
                 self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
 
     def check_ready(self):
-        print "checkin ready"
-        print self.dat_loaded, self.identified
         if self.dat_loaded and self.identified:
             self.ready()
             return True
         return False
 
     def ready(self):
+        print "Client is ready"
         if self.loaded_once:
             return
         self.loaded_once = True
@@ -98,15 +97,9 @@ class PyClient:
         self.send_game_state()
 
     def set_dat_loaded(self):
-        print "DAT LOADED"
+        print "Client loaded dat"
         self.dat_loaded = True
         self.check_ready()
-
-    #def set_id_received(self):
-        #self.received_id = True
-
-    #def send_client_id(self):
-        #self.sendMessage.send_client_id(self)
 
     def start_player(self):
         NetOut.event.player_create(self.player)

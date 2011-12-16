@@ -1,6 +1,15 @@
-#pragma once
-
 #include "net_agent.hpp"
+
+#include <c_lib/agent/agent.hpp>
+#include <c_lib/state/server_state.hpp>
+#include <c_lib/state/client_state.hpp>
+#include <c_lib/defines.h>
+#include <c_lib/weapons/weapons.hpp>
+
+#ifdef DC_SERVER
+#include <c_lib/t_map/t_map.hpp>
+#endif
+
 
 /*
  *  Player Agent Packets
@@ -88,6 +97,10 @@ inline void agent_create_StoC::handle() {
     printf("C Agent created. id: %d\n", a->id);
 }
 
+inline void PlayerAgent_id_StoC::handle() {
+    ClientState::set_PlayerAgent_id(id);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}
@@ -108,7 +121,7 @@ inline void fire_weapon_StoC::handle() {}
 inline void agent_health_StoC::handle() {}
 inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
-
+inline void PlayerAgent_id_StoC::handle() {}
 //for benchmarking
 //static int _total = 0;
 //static const int a_DEBUG = 1;

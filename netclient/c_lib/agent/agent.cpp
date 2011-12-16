@@ -57,6 +57,13 @@ bool Agent_state::is_you() {
     return is;
 }
 
+void Agent_state::send_id_to_client(int client_id) {
+    #ifdef DC_SERVER
+    PlayerAgent_id_StoC* msg = new PlayerAgent_id_StoC(id);
+    msg->sendToClient(client_id);
+    #endif
+}
+
 void Agent_state::teleport(float x,float y,float z) {
     s.x = x;
     s.y = y;

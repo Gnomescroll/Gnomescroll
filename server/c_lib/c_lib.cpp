@@ -19,6 +19,7 @@
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/ctf.cpp>
 #include <c_lib/game/teams.cpp>
+#include <c_lib/game/packets.cpp>
 
 #include "./agent/agent_include.h"
 

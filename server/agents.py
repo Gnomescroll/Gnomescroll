@@ -28,8 +28,8 @@ class AgentList(GenericObjectList):
         self._object_type = Agent
         self._wrapper = AgentListWrapper
 
-    def create(self, player_id, position=None, id=None):
-        return self._add(player_id, position=position, id=id)
+    def create(self, player_id, client_id, position=None, id=None):
+        return self._add(player_id, client_id, position=position, id=id)
 
     def destroy(self, agent):
         if agent is None:
@@ -116,13 +116,14 @@ class Agent(AgentWrapper, AgentPhysics, AgentAction):
     _TICK_RATE = 30       # milliseconds
     RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
 
-    def __init__(self, player_id, position=None, id=None, team=None):
+    def __init__(self, player_id, client_id, position=None, id=None, team=None):
 
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
         ### End Global imports ###
 
         AgentWrapper.__init__(self, player_id)
+        AgentWrapper.send_id_to_client(self, client_id)
         
         self.team = team
 

@@ -126,6 +126,8 @@ class Agent_state {
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
 
+        void send_id_to_client(int client_id);
+
         void client_tick();
         void server_tick();
         /*

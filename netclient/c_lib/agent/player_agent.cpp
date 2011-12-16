@@ -61,7 +61,9 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
         //if newest snapshot is newer than previous snapshot, do tick stuff
         state_snapshot = ss;    //set state snapsot
 
-        class AgentState s_backup = s; //back up the current latest
+        // DISABLED DUE TO COMPILER WARNING "set but not used"
+        // might be actual error
+        //class AgentState s_backup = s; //back up the current latest
 
     }
     //do tick and update stuff

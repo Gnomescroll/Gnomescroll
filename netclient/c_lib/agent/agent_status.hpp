@@ -14,13 +14,16 @@ class Base_status {
         int respawn_countdown;
         unsigned int kills;
         unsigned int deaths;
+
+        int team;
         
         Base_status() :
             health(AGENT_HEALTH),
             dead(false),
             respawn_countdown(RESPAWN_TICKS),
             kills(0),
-            deaths(0)
+            deaths(0),
+            team(0)
         {}
 };
 
