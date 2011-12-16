@@ -85,7 +85,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         inline void handle();
 };
 
-class Agent_teleport_message: public FixedSizeNetPacketToClient<Agent_teleport_message>
+class Agent_teleport_message: public FixedSizeReliableNetPacketToClient<Agent_teleport_message>
 {
     public:
         int id;

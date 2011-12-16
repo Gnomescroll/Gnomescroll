@@ -24,7 +24,7 @@ from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
 from weapons import Pick, BlockApplier
 from game_modes import NoTeam
-from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_player_agent_id, set_agent_control_state
+from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_agent_control_state
 from draw_utils import *
 from net_out import NetOut
 from input import InputGlobal
@@ -574,7 +574,7 @@ Client's player's agent
 class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        self._control_state_id_set = False
+        #self._control_state_id_set = False
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
 
@@ -592,12 +592,12 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
 
         self.camera = None
 
-    def __setattr__(self, name, val):
-        self.__dict__[name] = val
-        if name == 'id':
-            if not self._control_state_id_set:
-                set_player_agent_id(val)
-                self._control_state_id_set = True
+    #def __setattr__(self, name, val):
+        #self.__dict__[name] = val
+        #if name == 'id':
+            #if not self._control_state_id_set:
+                #set_player_agent_id(val)
+                #self._control_state_id_set = True
 
     def __getattribute__(self, name):
         try:
@@ -614,8 +614,8 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
         return val
 
     def set_button_state(self):
-        if not self._control_state_id_set:
-            return
+        #if not self._control_state_id_set:
+            #return
         if self.camera is None:
             return
 

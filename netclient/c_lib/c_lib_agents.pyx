@@ -93,7 +93,6 @@ cdef extern from "./agent/player_agent.hpp":
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
-    void set_PlayerAgent_id(int id)
     PlayerAgent_state playerAgent_state
 
 cdef extern from "./agent/agent_vox.hpp":
@@ -142,7 +141,6 @@ class AgentWrapper(object):
     ]
 
     def __init__(self, int id):
-#        agent_list.create(id)
         self.id = id
         
     def __getattribute__(self, name):
@@ -219,8 +217,6 @@ class PlayerAgentWrapper(object):
 
     def __init__(self, int id):
         self.id = id
-#        agent_list.create(id)
-#        set_PlayerAgent_id(id)
 
     def __getattribute__(self, name):
         if name not in PlayerAgentWrapper.properties:
@@ -269,9 +265,6 @@ class PlayerAgentWrapper(object):
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
-
-def set_player_agent_id(int id):
-    set_PlayerAgent_id(id)
 
 
 class AgentListWrapper:
