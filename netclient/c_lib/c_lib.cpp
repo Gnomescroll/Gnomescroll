@@ -101,6 +101,8 @@ int init_c_lib() {
 
         Sound::init();
     #endif
+
+    ClientState::ctf.init();
     
     return 0;
 }
