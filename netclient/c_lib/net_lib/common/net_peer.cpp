@@ -301,6 +301,19 @@ void NetPeer::flush_to_net()
     #endif
 
     received_since_last_send = 0;
+/*
+	int len = 256;
+	char error[256];
+	error[0] = 0;
+	#ifdef DC_SERVER
+	int err = getsockopt(NetServer::server_socket.socket, SOL_SOCKET, SO_ERROR, error, &len);
+	#else
+	int err = getsockopt(NetClient::client_socket.socket, SOL_SOCKET, SO_ERROR, error, &len);
+	#endif
+	
+	if(err != 0) printf("error: %i, \n", err);
+	if(err != 0) printf("error: %i, %s \n", err, error);
+*/
 }
 
 class NetPeer* create_net_peer_by_remote_IP(int a, int b, int c, int d, unsigned short port) {
@@ -372,6 +385,12 @@ struct Socket* create_socket(uint16_t port) {
     #elif PLATFORM == PLATFORM_WINDOWS
         DWORD nonBlocking = 1;
         if ( ioctlsocket( s->socket, FIONBIO, &nonBlocking ) != 0 ){printf( "failed to set non-blocking socket\n" );free(s);return NULL;}
-    #endif
+    
+		//int buffsize = 32768; // 65536
+		int buffsize = 65536; // 65536
+		setsockopt(s->socket, SOL_SOCKET, SO_RCVBUF, (void*)&buffsize, sizeof(buffsize));
+
+	#endif
+	
     return s;
 }
