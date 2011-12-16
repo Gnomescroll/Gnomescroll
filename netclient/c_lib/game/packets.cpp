@@ -30,7 +30,11 @@ inline void AgentJoinTeam_StoC::handle(){}
 //inline void TeamName_StoC::handle(){}
 
 inline void AgentJoinTeam_CtoS::handle() {
-    ServerState::ctf.add_agent_to_team(team, agent);
+    bool added = ServerState::ctf.add_agent_to_team(team, agent);
+    if (added) {
+        AgentJoinTeam_StoC* msg = new AgentJoinTeam_StoC(team, agent);
+        msg->broadcast();
+    }
 }
 
 #endif

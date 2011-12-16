@@ -1,5 +1,7 @@
 #include "c_lib.hpp"
 
+#include <defines.h>
+
 #include <stdio.h>
 
 #include "./t_map/t_map.cpp"
@@ -35,5 +37,6 @@
 int init_c_lib() {
     printf("init c_lib\n");
     srand(time(NULL));
+    ServerState::ctf.init();
 return 0;
 }
