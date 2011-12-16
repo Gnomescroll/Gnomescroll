@@ -34,6 +34,7 @@ import c_lib.c_lib_input as cInput
 import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_camera as cCamera
 import c_lib.c_lib_sound as cSound
+import c_lib.c_lib_options as cOptions
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -90,6 +91,7 @@ class App(object):
         cSound.Sound.init(path, soundfiles, enabled=opts.sound, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
+        #cOptions.load(opts)
         self.init_globals()
         self.animations = animations
         self.world = world.World()
@@ -131,7 +133,8 @@ class App(object):
         self.world.add_agent(GameStateGlobal.agent)
 
         self.connect()
-        NetOut.mapMessage.request_chunk_list()
+        # Server sends the chunk list after client is "ready" (identified & dats loaded)
+        #NetOut.mapMessage.request_chunk_list()
 
         average = []
         fps_text = None

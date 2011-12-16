@@ -6,14 +6,27 @@ class DatInterface(object):
 
     def __init__(self):
         self.index = {}
+        self.loaded = {}
+        self.fully_loaded = False
 
     def _register_dat(self, name, dat):
         self.index[name] = dat
+        self.loaded[name] = False
 
+    def check_loaded(self):
+        for rdy in self.loaded:
+            if not rdy:
+                return
+        self.fully_loaded = True
+
+    # loads a dat by name
     def load(self, name, dat):
         klass = self.index[name]
         klass.update(dat)
+        self.loaded[name] = True
+        self.check_loaded()
 
+    #  loads a collection of named dats
     def load_all(self, dat):
         for name, d in dat.items():
             self.load(name, d)

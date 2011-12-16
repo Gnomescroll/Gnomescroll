@@ -7,6 +7,10 @@ class CTF {
 
     public:
 
+        //#ifdef DC_CLIENT
+        int auto_assign;
+        //#endif
+
         NoTeam none;
         CTFTeam one;
         CTFTeam two;

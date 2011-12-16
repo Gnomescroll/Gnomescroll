@@ -95,6 +95,10 @@ class PyClient:
         self._register()
         self.start_player()
         self.send_game_state()
+        self.send_map()
+
+    def send_map(self):
+        self.sendMessage.send_chunk_list()
 
     def set_dat_loaded(self):
         print "Client loaded dat"
