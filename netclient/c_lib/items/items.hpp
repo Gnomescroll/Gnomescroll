@@ -1,13 +1,10 @@
 #pragma once
 
-#define N_FLAGS 2 
+/* Aggregator */
 
-#include <c_lib/template/object_list.hpp>
+//namespace Items {
 
-class Flag_list: public Object_list<Flag,N_FLAGS>
-{
-    private:
-        const char* name() { return "Flag"; }
-    public:
-        void draw();
-};
+#include <c_lib/items/flag.hpp>
+#include <c_lib/items/base.hpp>
+
+//}

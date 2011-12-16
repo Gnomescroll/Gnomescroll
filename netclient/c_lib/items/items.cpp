@@ -1,12 +1,10 @@
 #include "items.hpp"
 
+/* Aggregator */
 
+//namespace Items {
 
+#include <c_lib/items/flag.cpp>
+#include <c_lib/items/base.cpp>
 
-void Flag_list::draw() {
-    int i;
-    for (i=0; i<N_FLAGS; i++) {
-        if (a[i]==NULL) continue;
-        a[i]->draw();
-    }
-}
+//}

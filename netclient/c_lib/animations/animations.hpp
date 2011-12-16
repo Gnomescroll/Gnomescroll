@@ -12,7 +12,7 @@ void grenade_explode(float x, float y, float z);
 
 }
 
-#include <c_lib/particles/object_lib.hpp>
+#include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
 

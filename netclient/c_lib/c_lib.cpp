@@ -17,10 +17,17 @@
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/physics/common.c>
 
-/* objects */
-#include <c_lib/particles/object_lib.cpp>
+/* particles */
+#include <c_lib/particles/particle_lib.cpp>
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>
+/* Items */
+#include <c_lib/items/items.cpp>
+
+/* Game Stuff */
+#include <c_lib/game/game.cpp>
+#include <c_lib/game/teams.cpp>
+#include <c_lib/game/ctf.cpp>
 
 /* Agents */
 #include <c_lib/agent/agent_include.h>

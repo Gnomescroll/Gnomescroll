@@ -218,4 +218,20 @@ void Object_list<Object_state, max_n>::server_tick() {
     }   
 }
 
+//// takes an existing Object_state, adds it to list and assigns id
+//// return false if list full
+//template <class Object_state, int max_n>
+//bool Object_list<Object_state, max_n>::add_existing(Object_state* obj) {
+    //bool success = false;
+    //int i;
+    //for (i=0; i<max_n; i++) {
+        //if (a[i]!=NULL) continue;
+        //a[i] = obj;
+        //obj->id = i;
+        //num++
+        //success=true;
+    //}
+    //return success;
+//} 
+
 

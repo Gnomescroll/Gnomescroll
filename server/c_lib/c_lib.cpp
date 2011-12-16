@@ -12,7 +12,13 @@
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>
 
-#include <c_lib/particles/object_lib.cpp>
+#include <c_lib/particles/particle_lib.cpp>
+
+#include <c_lib/items/items.cpp>
+
+#include <c_lib/game/game.cpp>
+#include <c_lib/game/ctf.cpp>
+#include <c_lib/game/teams.cpp>
 
 #include "./agent/agent_include.h"
 

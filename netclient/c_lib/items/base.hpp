@@ -4,9 +4,9 @@
 
 #include <c_lib/game/game.hpp>
 
-const int N_FLAGS = N_TEAMS;
+const int N_BASES = N_TEAMS;
 
-class Flag {
+class Base {
     public:
         float x,y,z;
         //float vx,vy,vz;
@@ -22,10 +22,10 @@ class Flag {
 };
 
 
-//class Flag_list: public Object_list<Flag,N_FLAGS>
+//class Base_list: public Object_list<Base,N_BASES>
 //{
     //private:
-        //const char* name() { return "Flag"; }
+        //const char* name() { return "Base"; }
     //public:
         //void draw();
 //};

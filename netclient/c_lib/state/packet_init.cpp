@@ -4,7 +4,7 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/player_agent.hpp>
 
-#include <c_lib/particles/object_lib.hpp>
+#include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/t_map/t_map.hpp>
 
 namespace PacketInit {
