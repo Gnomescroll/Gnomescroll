@@ -91,7 +91,7 @@ class App(object):
         cSound.Sound.init(path, soundfiles, enabled=opts.sound, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
-        #cOptions.load(opts)
+        cOptions.load(opts)
         self.init_globals()
         self.animations = animations
         self.world = world.World()
