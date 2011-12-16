@@ -172,9 +172,9 @@ void process_packet(char* buff, int n) {
     UNPACK_uint16_t(&sequence_number, buff, &n1);   //sequence number
     UNPACK_uint16_t(&max_seq, buff, &n1);           //max seq
     UNPACK_uint32_t(&acks, buff, &n1);              //sequence number
-	
-	printf("sequence number= %i \n", sequence_number);
-	
+    
+    //printf("sequence number= %i \n", sequence_number);
+    
     process_acks(&NPserver, max_seq, acks);
     set_ack_for_received_packet(&NPserver ,sequence_number);
     NPserver.last_packet_time = get_current_netpeer_time();

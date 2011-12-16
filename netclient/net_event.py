@@ -690,9 +690,8 @@ class DatMessageHandler(GenericMessageHandler):
         else:
             self._load_all(dat)
 
-        print "Loaded a dat"
         if dat_loader.fully_loaded:
-            print "Fully loaded"
+            print "Dats are loaded"
             NetOut.datMessage.loaded()
 
     def _load_all(self, dat):
