@@ -370,14 +370,33 @@ struct Socket* create_socket(uint16_t port) {
     s->ip=0;
     s->port = port;
     if(s==NULL) { printf("Malloc of socket failed.  Out of memory? \n"); return NULL;}
+
     s->socket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
-    if ( s->socket <= 0 ){ printf( "failed to create socket\n" );free(s);return NULL;}
+    //INVALID_SOCKET is -1
+    if ( s->socket == -1 )
+    { 
+        #ifdef _WIN32
+            int error_code = WSAGetLastError();
+            printf( "Error: create socket failed, error %i \n", error_code);
+        #else
+            //linux and mac
+            printf( "Error: create socket failed\n");
+        #endif
+        free(s);
+        return NULL;
+    }
+    if ( s->socket < 0 ) 
+    {
+        printf("Error: socket creation failed, socket is less than 0 and is not -1, is %i \n", s->socket);
+        free(s);
+        return NULL;
+    }
     //bind socket
     s->address.sin_family = AF_INET;
     s->address.sin_addr.s_addr = INADDR_ANY;
     s->address.sin_port = htons( (unsigned short) port ); //set port 0 for any port
 
-    if ( bind( s->socket, (const struct sockaddr*) &s->address, sizeof(struct sockaddr_in) ) < 0 ){printf( "failed to bind socket\n" );free(s);return NULL;}
+    if ( bind( s->socket, (const struct sockaddr*) &s->address, sizeof(struct sockaddr_in) ) < 0 ){printf( "failed to bind socket \n");free(s);return NULL;}
     printf("Socket bound to port %i\n", port);
     //set socket to non-blocking
     #if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
