@@ -9,7 +9,7 @@ inline void TeamColor_StoC::handle(){
     ClientState::ctf.set_team_color(team, r,g,b);
 }
 
-inline void AgentJoinTeam_StoC::handle(){
+inline void AgentJoinTeam_StoC::handle() {
     ClientState::ctf.add_agent_to_team(team, agent);
 }
 
@@ -19,6 +19,7 @@ inline void AgentJoinTeam_StoC::handle(){
 
 // dummies
 inline void AgentJoinTeam_CtoS::handle(){}
+inline void AgentAutoAssignTeam_CtoS::handle(){}
 
 #endif
 
@@ -36,5 +37,10 @@ inline void AgentJoinTeam_CtoS::handle() {
         msg->broadcast();
     }
 }
+
+inline void AgentAutoAssignTeam_CtoS::handle() {
+    ServerState::ctf.auto_assign_agent(agent);
+}
+
 
 #endif

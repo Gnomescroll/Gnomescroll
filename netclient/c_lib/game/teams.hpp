@@ -26,6 +26,8 @@ class Team {
 
         void init(int id);
 
+        bool full();
+
         #ifdef DC_SERVER
         void update_client(int client_id);
         #endif

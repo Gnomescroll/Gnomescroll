@@ -15,6 +15,7 @@ class CTF {
 
         #ifdef DC_SERVER
         void on_client_connect(int client_id);
+        void auto_assign_agent(int agent_id);
         #endif
 
         NoTeam none;

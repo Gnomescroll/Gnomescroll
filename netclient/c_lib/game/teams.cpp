@@ -34,6 +34,13 @@ void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
     #endif
 }
 
+bool Team::full() {
+    if (n == TEAM_MAX_PLAYERS) {
+        return true;
+    }
+    return false;
+}
+
 bool Team::has_agent(int id) {
     int i;
     for (i=0; i<TEAM_MAX_PLAYERS; i++) {

@@ -2,6 +2,7 @@
 
 #include <c_lib/agent/player_agent.hpp>
 #include <c_lib/state/client_state.hpp>
+#include <c_lib/game/packets.hpp>
 
 void CTF::init() {
     none.init(0);
@@ -27,9 +28,8 @@ void CTF::join_team(int team) {
 
 void CTF::on_ready() {
     if (!auto_assign) return;
-    // choose the less populated team
-    int team = (one.n > two.n) ? two.id : one.id;
-    join_team(team);
+    AgentAutoAssignTeam_CtoS* msg = new AgentAutoAssignTeam_CtoS(ClientState::playerAgent_state.agent_id);
+    msg->send();
 }
 
 #endif
@@ -39,6 +39,21 @@ void CTF::on_ready() {
 void CTF::on_client_connect(int client_id) {
     one.update_client(client_id);
     two.update_client(client_id);
+}
+
+void CTF::auto_assign_agent(int agent_id) {
+    // choose the less populated team
+    printf("Team one: %d, team two: %d\n", one.n, two.n);
+    CTFTeam* team = (one.n > two.n) ? &two : &one;
+    bool added = false;
+    if (!team->full()) {
+        added = add_agent_to_team(team->id, agent_id);
+    }
+    if (added) {
+        AgentJoinTeam_StoC* msg = new AgentJoinTeam_StoC(team->id, agent_id);
+        msg->broadcast();
+    }
+    printf("Team one: %d, team two: %d\n", one.n, two.n);
 }
 
 #endif
@@ -88,6 +103,7 @@ bool CTF::add_agent_to_team(int team, int agent) {
     }
 
     a->status.team = team;
+    printf("Added agent %d to team %d\n", agent, team);
     return success;
 }
 
