@@ -108,8 +108,7 @@ int init_c_lib() {
 }
 
 void close_c_lib() {
-    printf("close c_lib\n");
-
+    printf("close c_lib() \n");
     #ifdef DC_CLIENT
         Sound::close();
         close_SDL();
