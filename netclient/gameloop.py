@@ -463,3 +463,6 @@ if __name__ == '__main__':
 else:
     print "Not Run as Main!"
 #app.mainLoop()
+
+import sys
+sys.exit()

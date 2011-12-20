@@ -427,6 +427,7 @@ void release_all() {
 }
 
 void close() {
+	printf("Sound.cpp: release all\n");
     release_all();
 }
 
