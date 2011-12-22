@@ -173,16 +173,6 @@ class SendMessage(GenericMessage):
             'team'  :   team.id,
         }
 
-    @idRequired
-    @noViewer
-    @sendJSON('throw_grenade')
-    def throw_grenade(self, agent):
-        vec = agent.normalized_direction()
-        return {
-            'aid'       :   agent.id,
-            'vector'    :   vec,
-        }
-
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):

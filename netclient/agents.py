@@ -476,25 +476,21 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
     def fire(self):
         if self.team.is_viewers():
             return
+
         weapon = self.weapons.active()
         if weapon is None:
             return
-        fire_command = weapon.fire()
-        if fire_command:
-            if fire_command == 'hit_block':
-                self.hit_block()
-            elif fire_command == 'hitscan':
-                self.hitscan()
-            else:
-                if weapon.hitscan:
-                    self.hitscan(weapon)
-                else:
-                    NetOut.sendMessage(fire_command, self)
 
-    def hitscan(self, weapon=None):
-        if self.team.is_viewers():
-            return
-        self.fire_hitscan()
+        fire_command = weapon.fire()
+
+        if fire_command == 'hit_block':
+            self.hit_block()
+        elif fire_command == 'hitscan':
+            self.fire_hitscan()
+        elif fire_command == 'throw_grenade':
+            self.throw_grenade()
+        else:
+            print "Agent.fire :: unknown command %s" % (fire_command,)
 
     def add_ammo(self, amt, weapon_type):
         if self.team.is_viewers():
