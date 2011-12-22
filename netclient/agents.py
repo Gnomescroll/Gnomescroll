@@ -7,9 +7,7 @@ import opts
 opts = opts.opts
 
 import random
-import vox_lib
 import vector_lib
-import vox
 import animations
 import c_lib.c_lib_particles
 import c_lib.c_lib_agents
@@ -29,95 +27,6 @@ from draw_utils import *
 from net_out import NetOut
 from input import InputGlobal
 import camera
-
-class AgentPhysics(object):
-
-    #deprecate
-    #use by  "/home/atomos/dc_mmo/netclient/projectiles.py", line 92
-    def point_collision_test(self, x_,y_,z_):
-        #assert False
-        x,y,z = self.pos()
-
-        z_max = z + self.b_height
-        z_min = z
-        x_max = x + self.box_r
-        x_min = x - self.box_r
-        y_max = y + self.box_r
-        y_min = y - self.box_r
-
-        if x_min < x_ and x_ < x_max and y_min < y_ and y_ < y_max and z_min < z_ and z_ < z_max:
-            return True
-        else:
-            return False
-
-    def sphere_collision_test(self, x,y,z,r):
-        pass
-
-'''
-Agent Voxel
-'''
-
-class AgentVoxRender(vox.VoxRender):
-
-    def __init__(self):
-        _init_agent_vox(self.id)
-
-    def update_vox(self):
-        _update_agent_vox(self.id)
-
-
-'''
-Render/Draw methods for agents
-'''
-class AgentRender(object):
-
-    def draw(self):
-        assert False
-        #P.event("Draw 2")
-        self.draw_aiming_direction()
-        self.draw_bounding_box()
-
-        self.update_vox()
-        self.draw_vox()
-
-    def draw_position(self, points, seperation):
-        print "Draw position Deprecated!"
-        return
-
-    def draw_bounding_box(self):
-        b_height = self.b_height;t_height = self.t_height;box_r = self.box_r
-        x = self.x;y = self.y;z = self.z
-        c_lib.c_lib_agents._draw_agent_bounding_box(x,y,z-b_height, box_r, 2.0, 3.0)
-
-    def draw_aiming_direction(self, distance=50):
-        c_lib.c_lib_agents._draw_agent_aiming_direction(self.x,self.y,self.z, self.x_angle, self.y_angle)
-
-    def bleed(self, dmg=0):
-        create_blood = c_lib.c_lib_particles._create_blood
-        n = 100
-        v = 15
-        blood_pos = self.pos()
-        blood_pos[0] += self.box_r
-        blood_pos[1] += self.box_r
-        blood_pos[2] += self.b_height * 0.75
-        for i in range(n):
-            
-            x,y,z = [i + ((random.random()-0.5) / 20) for i in blood_pos]
-            vx = v*(random.random() -0.5)
-            vy = v*(random.random() -0.5)
-            vz = random.randrange(-4, 4) + random.random()
-            create_blood(x, y,z, vx, vy, vz)
-
-            # need directional blood
-            # take vector from killer, put vel in random bounded cone around vector
-
-        self.take_damage(666)
-
-    def take_damage(self, dmg):
-        p = self.pos()
-        p[2] += self.b_height
-        animations.FloatTextAnimation(p, dmg)
-
 
 class AgentWeapons(object):
 
@@ -424,62 +333,13 @@ class AgentModel(AgentWrapper):
         return vector_lib.normalize(vec)
 
 # represents an agent under control of a player
-class Agent(AgentModel, AgentPhysics, AgentRender, AgentVoxRender):
+class Agent(AgentModel):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         print 'Python Agent creation: id %s' % (self.id,)
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
-
-
-'''
-Client's player's agent draw methods
-'''
-class PlayerAgentRender(AgentRender):
-
-
-    def draw(self):
-        self.draw_aiming_direction()
-        self.draw_bounding_box()
-        self.update_vox()
-        self.draw_vox()
-
-        dx = cos( self.x_angle * pi) * cos( self.y_angle * pi)
-        dy = sin( self.x_angle * pi) * cos( self.y_angle * pi)
-        dz = sin( self.y_angle)
-        max_l = 20
-        pos = c_lib._ray_trace.ray_cast6(self.x,self.y,self.z, dx,dy,dz, max_l)
-        if pos != None:
-            (x,y,z, px,py,pz, sx,sy,sz) = pos
-            #cube selected
-            r,g,b = 150,150,150
-            c_lib.c_lib_agents._draw_agent_cube_selection(px,py,pz, r,g,b)
-            #cube side selected
-            r,g,b = 0,0,255
-            c_lib.c_lib_agents._draw_agent_cube_side_selection(x,y,z, sx,sy,sz, r,g,b)
-
-    def draw_position(self, points, seperation):
-        print "agents.py draw position deprecated"
-        return
-
-    def draw_velocity(self, point_density, units):
-        print "agents.py draw velocity deprecated"
-        return
-
-    def draw_acceleration(self, point_density, units):
-        print "agents.py draw acceleration deprecated"
-        return
-
-    def draw_selected_cube(self):
-        print "agents.py draw_selected_cube deprecated"
-        return
-
-
-    def draw_selected_cube2(self, distance = 20):
-        print "agents.py draw_selected_cube2 deprecated"
-        return
-
 
 class PlayerAgentWeapons(AgentWeapons):
 
@@ -571,10 +431,9 @@ class PlayerAgentInventory(AgentInventory):
 '''
 Client's player's agent
 '''
-class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, PlayerAgentWrapper):
+class PlayerAgent(AgentModel, PlayerAgentWrapper):
 
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        #self._control_state_id_set = False
         AgentModel.__init__(self, owner, id, state, health, dead, team)
         PlayerAgentWrapper.__init__(self, id)
 
@@ -592,13 +451,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
 
         self.camera = None
 
-    #def __setattr__(self, name, val):
-        #self.__dict__[name] = val
-        #if name == 'id':
-            #if not self._control_state_id_set:
-                #set_player_agent_id(val)
-                #self._control_state_id_set = True
-
     def __getattribute__(self, name):
         try:
             val = AgentWrapper.__getattribute__(self, name)
@@ -614,8 +466,6 @@ class PlayerAgent(AgentModel, AgentPhysics, PlayerAgentRender, AgentVoxRender, P
         return val
 
     def set_button_state(self):
-        #if not self._control_state_id_set:
-            #return
         if self.camera is None:
             return
 

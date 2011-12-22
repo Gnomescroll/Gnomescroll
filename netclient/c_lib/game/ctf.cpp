@@ -19,6 +19,24 @@ void CTF::init() {
     two.set_name(team_name_two);
 }
 
+void CTF::set_score(int team, int score) {
+    if (team != 1 && team != 2) {
+        printf("CTF::set_score, team %d invalid\n", team);
+    }
+
+    switch (team) {
+        case 1:
+            one.score = score;
+            break;
+        case 2:
+            two.score = score;
+            break;
+        default:
+            break;
+    }
+    printf("Set team %d score to %d\n", team, score);
+}
+
 #ifdef DC_CLIENT
 
 void CTF::join_team(int team) {

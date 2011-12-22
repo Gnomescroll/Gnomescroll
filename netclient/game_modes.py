@@ -2,15 +2,16 @@
 Initialization specific to game modes
 '''
 
-import toys
 from object_lists import GenericMultiObjectList
+
+import c_lib.c_lib_game_modes as cGame
 
 team_types = {
     1   :   'NoTeam',
     2   :   'Team',
 }
 
-class NoTeam:
+class NoTeam(object):
 
     @classmethod
     def name_from_type(self, type):
@@ -23,6 +24,14 @@ class NoTeam:
         else:
             self.load_players_list(players)
         self.type = 1
+        self.team = 0
+        
+    def __getattribute__(self, k):
+        try:
+            v = cGame.NoTeamWrapper.__getattribute__py(self, k)
+        except AttributeError:
+            v = object.__getattribute__(self, k)
+        return v
 
     def add_player(self, player):
         self.players[player.id] = player
@@ -91,6 +100,7 @@ class NoTeam:
             self.load_players_list(team['players'])
         GameStateGlobal.teamList.update(self, old_id)
 
+team_ctr = 1
 class Team(NoTeam):
 
     def __init__(self, id, color=None, players=None, *args, **kwargs):
@@ -101,6 +111,16 @@ class Team(NoTeam):
         self.color = color
         if 'flag_captures' in kwargs:
             self.flag_captures = kwargs['flag_captures']
+        global team_ctr
+        self.team = team_ctr
+        team_ctr += 1
+
+    def __getattribute__(self, k):
+        try:
+            v = cGame.CTFTeamWrapper.__getattribute__py(self, k)
+        except AttributeError:
+            v = object.__getattribute__(self, k)
+        return v
 
     def is_viewers(self):
         return False

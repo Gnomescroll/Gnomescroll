@@ -184,6 +184,12 @@ def build(bld):
         target='c_lib.map_gen')
 
 
+    bld(features='cxx cshlib pyext',      #cython
+        source=['c_lib/c_lib_game_modes.pyx'],
+        use=common_libraries+['c_lib'],
+        target='c_lib.c_lib_game_modes')
+
+
     # final
     bld(features='c cprogram pyembed',
         #use=common_libraries+time_lib + ['c_lib'],
@@ -216,10 +222,10 @@ def install_in_ext(ctx):
         'init_c_lib',
         'c_lib.c_lib_particles',
         'c_lib.c_lib_agents',
-        #'c_lib.c_lib_agent_wrapper',
         'c_lib.terrain_map',
         'c_lib.noise',
         'c_lib.map_gen',
+        'c_lib.c_lib_game_modes',
     ]
 
     for target in targets:
