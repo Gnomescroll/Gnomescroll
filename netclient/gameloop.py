@@ -22,7 +22,6 @@ import stats
 import intervals
 import vox_lib
 
-import world
 import camera
 
 import c_lib.terrain_map
@@ -94,7 +93,6 @@ class App(object):
         cOptions.load(opts)
         self.init_globals()
         self.animations = animations
-        self.world = world.World()
 
         camera.set_callback(c_lib.terrain_map.camera_callback)
         self.camera = camera.Camera(x=0., z=50., fov=opts.fov, name='camera')
@@ -198,7 +196,9 @@ class App(object):
 
                 #physics tick routine
                 self.animations.tick()
-                self.world.tick()
+                if GameStateGlobal.agent is not None:
+                    GameStateGlobal.agent.update_sound()
+
                 cParticles.tick() ## TESTING
 
 
@@ -258,10 +258,9 @@ class App(object):
 
             #import pdb; pdb.set_trace()
 
-            P.event("Draw Interpolation")
-
-            P.event("Draw World")
-            self.world.draw()
+            P.event("World.draw(), draw agents")
+            if opts.draw_agents:
+                cAgents.draw_agents()
 
             P.event("Animations Draw")
             self.animations.draw()
