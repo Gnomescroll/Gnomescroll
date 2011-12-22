@@ -129,8 +129,6 @@ class App(object):
 
     def mainLoop(self):
         global P, Phy
-        self.world.add_player(GameStateGlobal.player) #do something about this
-        self.world.add_agent(GameStateGlobal.agent)
 
         self.connect()
         # Server sends the chunk list after client is "ready" (identified & dat loaded)
@@ -228,11 +226,9 @@ class App(object):
                     agent.update_camera()
                     #self.agent_camera.pos(agent.camera_position())
                     self.agent_camera.pos(agent.camera_position())
-                first_person = True
             elif InputGlobal.camera == 'camera':
                 self.agent_camera.unload()
                 self.camera.load()
-                first_person = False
 
             '''
             !?
@@ -265,10 +261,7 @@ class App(object):
             P.event("Draw Interpolation")
 
             P.event("Draw World")
-            self.world.draw(first_person)
-            if agent:
-                pass
-                #agent.draw_aiming_direction() #this is broken
+            self.world.draw()
 
             P.event("Animations Draw")
             self.animations.draw()

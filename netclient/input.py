@@ -259,8 +259,6 @@ class Keyboard(object):
 
     def _init_key_handlers(self):
         self.key_press_handlers = {
-            "G" : self.main.world.toggle_mipmap,
-            "T" : self.main.world.toggle_gl_smooth,
             "e" : self.toggle_inventory,
             "h" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
