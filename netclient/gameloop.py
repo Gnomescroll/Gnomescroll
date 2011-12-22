@@ -22,7 +22,6 @@ import stats
 import intervals
 import vox_lib
 
-import world
 import camera
 
 import c_lib.terrain_map
@@ -94,7 +93,6 @@ class App(object):
         cOptions.load(opts)
         self.init_globals()
         self.animations = animations
-        self.world = world.World()
 
         camera.set_callback(c_lib.terrain_map.camera_callback)
         self.camera = camera.Camera(x=0., z=50., fov=opts.fov, name='camera')
@@ -129,8 +127,6 @@ class App(object):
 
     def mainLoop(self):
         global P, Phy
-        self.world.add_player(GameStateGlobal.player) #do something about this
-        self.world.add_agent(GameStateGlobal.agent)
 
         self.connect()
         # Server sends the chunk list after client is "ready" (identified & dat loaded)
@@ -200,7 +196,9 @@ class App(object):
 
                 #physics tick routine
                 self.animations.tick()
-                self.world.tick()
+                if GameStateGlobal.agent is not None:
+                    GameStateGlobal.agent.update_sound()
+
                 cParticles.tick() ## TESTING
 
 
@@ -228,11 +226,9 @@ class App(object):
                     agent.update_camera()
                     #self.agent_camera.pos(agent.camera_position())
                     self.agent_camera.pos(agent.camera_position())
-                first_person = True
             elif InputGlobal.camera == 'camera':
                 self.agent_camera.unload()
                 self.camera.load()
-                first_person = False
 
             '''
             !?
@@ -262,13 +258,9 @@ class App(object):
 
             #import pdb; pdb.set_trace()
 
-            P.event("Draw Interpolation")
-
-            P.event("Draw World")
-            self.world.draw(first_person)
-            if agent:
-                pass
-                #agent.draw_aiming_direction() #this is broken
+            P.event("World.draw(), draw agents")
+            if opts.draw_agents:
+                cAgents.draw_agents()
 
             P.event("Animations Draw")
             self.animations.draw()
@@ -463,3 +455,6 @@ if __name__ == '__main__':
 else:
     print "Not Run as Main!"
 #app.mainLoop()
+
+import sys
+sys.exit()

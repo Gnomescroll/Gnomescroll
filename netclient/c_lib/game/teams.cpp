@@ -1,9 +1,12 @@
 #include "teams.hpp"
 
+#include <c_lib/game/packets.hpp>
+
 void Team::init(int id)
 {
     this->id = id;
     n = 0;
+    score = 0;
     r = 255;
     g = 10;
     b = 10;
@@ -26,6 +29,17 @@ void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
     this->r = r;
     this->g = g;
     this->b = b;
+    #ifdef DC_SERVER
+    TeamColor_StoC* msg = new TeamColor_StoC(id, r,g,b);
+    msg->broadcast();
+    #endif
+}
+
+bool Team::full() {
+    if (n == TEAM_MAX_PLAYERS) {
+        return true;
+    }
+    return false;
 }
 
 bool Team::has_agent(int id) {
@@ -43,27 +57,39 @@ bool Team::add_agent(int id) {
     bool added = false;
     int i;
     for (i=0; i<TEAM_MAX_PLAYERS; i++) {
-        if (members[i] == -1) {
-            members[i] = id;
-            added = true;
-            n++;
-        }
+        if (members[i] != -1) continue; // spot taken
+        members[i] = id;
+        added = true;
+        n++;
+        break;
     }
     return added;
 }
 
+// returns false if agent wasnt found in team
 bool Team::remove_agent(int id) {
     bool removed = false;
     int i;
     for (i=0; i<TEAM_MAX_PLAYERS; i++) {
-        if (members[i] == id) {
-            members[i] = -1;
-            removed = true;
-            n--;
-        }
+        if (members[i] != id) continue;
+        members[i] = -1;
+        removed = true;
+        n--;
+        break;
     }
     return removed;
 }
+
+#ifdef DC_SERVER
+
+void Team::update_client(int client_id) {
+    // send color
+    TeamColor_StoC* msg = new TeamColor_StoC(id, r,g,b);
+    msg->sendToClient(client_id);
+    // team roster is sent via agent objects
+}
+
+#endif
 
 /* NoTeam */
 
@@ -95,11 +121,11 @@ bool NoTeam::add_agent(int id) {
     bool added = false;
     int i;
     for (i=0; i<GAME_MAX_PLAYERS; i++) {
-        if (members[i] == -1) {
-            members[i] = id;
-            added = true;
-            n++;
-        }
+        if (members[i] != -1) continue;
+        members[i] = id;
+        added = true;
+        n++;
+        break;
     }
     return added;
 }
@@ -109,11 +135,11 @@ bool NoTeam::remove_agent(int id) {
     bool removed = false;
     int i;
     for (i=0; i<GAME_MAX_PLAYERS; i++) {
-        if (members[i] == id) {
-            members[i] = -1;
-            removed = true;
-            n--;
-        }
+        if (members[i] != id) continue;
+        members[i] = -1;
+        removed = true;
+        n--;
+        break;
     }
     return removed;
 }
@@ -122,7 +148,7 @@ bool NoTeam::remove_agent(int id) {
 
 void CTFTeam::init(int id)
 {
-    this->id = id;
+    Team::init(id);
     flag.team = id;
     base.team = id;
 }

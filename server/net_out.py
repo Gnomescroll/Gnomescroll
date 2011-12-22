@@ -87,24 +87,6 @@ class EventOut:
             'agent' :   agent.json(properties),
         }
 
-    @sendJSONevent('item_update')
-    def item_update(self, item, properties=None):
-        return {
-            'item'   :   item.json(properties),
-        }
-
-    @sendJSONevent('item_create')
-    def item_create(self, item):
-        return {
-            'item'   :   item.json(),
-        }
-
-    @sendJSONevent('item_destroy')
-    def item_destroy(self, item):
-        return {
-            'id'    :   item.id,
-        }
-
     @sendJSONevent('team_update')
     def team_update(self, team, properties=None):
         return {
@@ -374,21 +356,6 @@ class SendMessage: #each connection has one of these
             weapon = GameStateGlobal.weaponList[weapon]
         return {
             'weapon'    :   weapon.json(properties),
-            'full'  :   int(not properties),
-        }
-
-    @sendJSON('item_list')
-    def send_items(self):
-        return {
-            'item_list' :   GameStateGlobal.itemList.json(),
-        }
-
-    @sendJSON('item_update')
-    def send_item(self, item, properties=None):
-        if not hasattr(item, 'id'):
-            item = GameStateGlobal.itemList[item]
-        return {
-            'item'  :   item.json(properties),
             'full'  :   int(not properties),
         }
 

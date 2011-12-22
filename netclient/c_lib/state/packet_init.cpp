@@ -61,6 +61,8 @@ void RegisterMessages() {
     AgentJoinTeam_StoC::register_client_packet();
     AgentJoinTeam_CtoS::register_server_packet();
 
+    AgentAutoAssignTeam_CtoS::register_server_packet();
+
     PlayerAgent_id_StoC::register_client_packet();
 
 }

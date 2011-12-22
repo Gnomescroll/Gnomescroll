@@ -132,16 +132,16 @@ class PlayerAgent_state {
         PlayerAgent_action action;
 
         PlayerAgent_state() : status(this), action(this) {
+            //init
+            static int inited=0;
+            if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
+            inited++;
+
             //client side state variables
             jump_ready = false;
             crouching = false;
             //camera
             camera_mode = 0;
-            //init
-            static int inited=0;
-            if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
-            //assert(!inited);
-            inited++;
 
             agent_id = -1;
 

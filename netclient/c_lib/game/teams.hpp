@@ -24,9 +24,13 @@ class Team {
         bool remove_agent(int id);
         bool has_agent(int id);
 
-        //Team();
-
         void init(int id);
+
+        bool full();
+
+        #ifdef DC_SERVER
+        void update_client(int client_id);
+        #endif
 };
 
 class NoTeam {
@@ -41,8 +45,6 @@ class NoTeam {
         bool remove_agent(int id);
         bool has_agent(int id);
 
-        //NoTeam();
-
         void init(int id);
 };
 
@@ -51,8 +53,6 @@ class CTFTeam: public Team {
     public:
         Flag flag;
         Base base;
-
-        //CTFTeam();
 
         void init(int id);
 };

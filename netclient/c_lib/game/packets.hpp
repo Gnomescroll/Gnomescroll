@@ -69,6 +69,23 @@ class AgentJoinTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentJoinTea
         {}
 };
 
+class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentAutoAssignTeam_CtoS>
+{
+    public:
+        int agent;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent, buff, buff_n, pack);
+        }
+        inline void handle();
+
+        AgentAutoAssignTeam_CtoS(){}
+        AgentAutoAssignTeam_CtoS(int agent)
+        : agent(agent)
+        {}
+};
+
 // Needs: string packing
 //class TeamName_StoC: public FixedSizeReliableNetPacketToClient<TeamName_StoC>
 //{
@@ -96,3 +113,23 @@ class AgentJoinTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentJoinTea
             //// dont copy null terminator
         //}
 //};
+
+class TeamScore_StoC: public FixedSizeReliableNetPacketToServer<TeamScore_StoC>
+{
+    public:
+        int team;
+        int score;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&team, buff, buff_n, pack);
+            pack_u8(&score, buff, buff_n, pack);
+        }
+        inline void handle();
+
+        TeamScore_StoC(){}
+        TeamScore_StoC(int team, int score)
+        : team(team), score(score)
+        {}
+};
+            

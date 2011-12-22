@@ -31,6 +31,7 @@ namespace ClientState {
 
     void set_PlayerAgent_id(int id) {
         playerAgent_state.set_PlayerAgent_id(id);
+        ctf.on_ready();
     }
 
     void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi) {

@@ -37,7 +37,7 @@ class NetOut:
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
 
-def sendJSON(cmd=None, tick=False):
+def sendJSON(cmd=None):
     def outer(f, *args):
         def wrapped(*args, **kwargs):
             self = args[0]
@@ -52,8 +52,6 @@ def sendJSON(cmd=None, tick=False):
                 cmd_final = ''
             if cmd_final != '' or 'cmd' not in json_data:
                 json_data['cmd'] = cmd_final
-            if tick:
-                json_data['tick'] = GameStateGlobal.gameState.time
 
             NetOut.send_json(json_data)
         return wrapped
@@ -108,18 +106,6 @@ class SendMessage(GenericMessage):
             'id'    :   team_id,
         }
 
-    @sendJSON('request_item')
-    def request_item(self, item_id):
-        return {
-            'id'    :   item_id,
-        }
-
-    @sendJSON('request_projectile')
-    def request_projectile(self, pid):
-        return {
-            'id'    :   pid,
-        }
-
     @sendJSON('request_weapon')
     def request_weapon(self, wid):
         return {
@@ -128,7 +114,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
-    @sendJSON('reload_weapon', tick=True)
+    @sendJSON('reload_weapon')
     def reload_weapon(self, agent=None):
         if agent is None or agent.id is None:
             return
@@ -139,7 +125,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
-    @sendJSON('change_weapon', tick=True)
+    @sendJSON('change_weapon')
     def change_weapon(self, agent, active_weapon):
         if active_weapon is None:
             active_weapon = -1
@@ -150,7 +136,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
-    @sendJSON('drop_weapon', tick=True)
+    @sendJSON('drop_weapon')
     def drop_weapon(self, agent, wid):
         return {
             'aid'   :   agent.id,
@@ -159,37 +145,7 @@ class SendMessage(GenericMessage):
 
     @idRequired
     @noViewer
-    @sendJSON('pickup_item', tick=True)
-    def pickup_item(self, agent, item, index=None):
-        msg = {
-            'aid'   :   agent.id,
-            'iid'   :   item.id,
-        }
-        if index is not None:
-            msg['slot'] = index
-        return msg
-
-    @idRequired
-    @noViewer
-    @sendJSON('drop_item', tick=True)
-    def drop_item(self, agent, item):
-        return {
-            'aid'   :   agent.id,
-            'iid'   :   item.id,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('near_item', tick=True)
-    def near_item(self, agent, item):
-        return {
-            'aid'   :   agent.id,
-            'iid'   :   item.id,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('set_block', tick=True)
+    @sendJSON('set_block')
     def set_block(self, agent=None):
         if agent is None or agent.id is None:
             return

@@ -6,11 +6,8 @@ import math
 class GameStateGlobal:
 
     gameState = None
-    #terrainMap = None # use cube_libs.terrainMap module
     agentList = None
     playerList = None
-    projectileList = None
-    itemList = None
     teamList = None
     game = None
 
@@ -28,11 +25,8 @@ class GameStateGlobal:
     def init_0(cls):
         cls.agentList = AgentList()
         cls.playerList = PlayerList()
-        cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
-        cls.itemList = ItemList()
         cls.teamList = game_modes.TeamList()
-        cls.gameState = GameState()
         cls.exit = False
 
     @classmethod
@@ -110,16 +104,6 @@ class GameStateGlobal:
                 owner.weapons.drop(weapon)
 
     @classmethod
-    def remove_item(cls, id, seek=True):
-        obj = cls.itemList.get(id, None)
-        if obj is None:
-            return
-        cls.itemList.destroy(obj)
-
-        if seek and obj.owner is not None:
-            obj.owner.inventory.drop(obj)
-
-    @classmethod
     def client_quit(cls, id):
         player = cls.playerList.by_client(id)
         if player is None:
@@ -141,27 +125,10 @@ class GameStateGlobal:
 
         return stats
 
-# main game state wrapper
-class GameState:
-
-    def __init__(self):
-        self.time = 0
-
-    # tick all agents
-    #def tick(self):
-        #for agent in GameStateGlobal.agentList.values():
-            #agent.tick()
-        #self.time += 1
-        #if self.time % 100 == 0:
-            #print "time= %i" % (self.time,)
-
-#from terrain_map import TerrainMap
-from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
-from object_lists import ItemList
 import game_modes
 from players import Player
 from net_client import NetClientGlobal

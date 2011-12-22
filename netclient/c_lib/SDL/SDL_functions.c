@@ -77,6 +77,18 @@ SDL_Surface *pSDLSurface;
 SDL_VideoInfo *pSDLVideoInfo;
 
 void _del_video() {
+
+	static int SDL_CLOSED = 0;
+    if(SDL_CLOSED == 1)
+	{
+		printf("FATAL ERROR: SDL un-init function called twiced! \n");
+		return;
+	}
+	SDL_CLOSED = 1;
+		
+	printf("Deconstructing SDL OpenGL Window\n");
+    _del_video();
+	
     //printf("SDL_functions.c: _del_video, gracefull shutdown\n");
     SDL_Quit();
 }
@@ -236,7 +248,7 @@ int init_video() {
     }
     SDL_ShowCursor(SDL_DISABLE);
 
-    atexit(_del_video);
+    //atexit(_del_video);
 
     //printf("SDL: %s\n", SDL_GetError());
 
@@ -350,7 +362,9 @@ int _get_ticks() {
     return SDL_GetTicks();
 }
 
-void close_SDL() {
-    printf("Deconstructing SDL OpenGL Window\n");
+void close_SDL() 
+{
+	printf("close_SDL: Deconstructing SDL OpenGL Window\n");
     _del_video();
+	
 }

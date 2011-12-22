@@ -1,7 +1,10 @@
 #include "ctf.hpp"
 
-CTF::CTF() {
+#include <c_lib/agent/player_agent.hpp>
+#include <c_lib/state/client_state.hpp>
+#include <c_lib/game/packets.hpp>
 
+void CTF::init() {
     none.init(0);
     one.init(1);
     two.init(2);
@@ -16,16 +19,78 @@ CTF::CTF() {
     two.set_name(team_name_two);
 }
 
-void CTF::add_agent_to_team(int team, int agent) {
+void CTF::set_score(int team, int score) {
+    if (team != 1 && team != 2) {
+        printf("CTF::set_score, team %d invalid\n", team);
+    }
+
+    switch (team) {
+        case 1:
+            one.score = score;
+            break;
+        case 2:
+            two.score = score;
+            break;
+        default:
+            break;
+    }
+    printf("Set team %d score to %d\n", team, score);
+}
+
+#ifdef DC_CLIENT
+
+void CTF::join_team(int team) {
+    AgentJoinTeam_CtoS* msg = new AgentJoinTeam_CtoS(team, ClientState::playerAgent_state.agent_id);
+    msg->send();
+}
+
+void CTF::on_ready() {
+    if (!auto_assign) return;
+    AgentAutoAssignTeam_CtoS* msg = new AgentAutoAssignTeam_CtoS(ClientState::playerAgent_state.agent_id);
+    msg->send();
+}
+
+#endif
+
+#ifdef DC_SERVER
+
+void CTF::on_client_connect(int client_id) {
+    one.update_client(client_id);
+    two.update_client(client_id);
+}
+
+void CTF::auto_assign_agent(int agent_id) {
+    // choose the less populated team
+    printf("Team one: %d, team two: %d\n", one.n, two.n);
+    CTFTeam* team = (one.n > two.n) ? &two : &one;
+    bool added = false;
+    if (!team->full()) {
+        added = add_agent_to_team(team->id, agent_id);
+    }
+    if (added) {
+        AgentJoinTeam_StoC* msg = new AgentJoinTeam_StoC(team->id, agent_id);
+        msg->broadcast();
+    }
+    printf("Team one: %d, team two: %d\n", one.n, two.n);
+}
+
+#endif
+
+bool CTF::add_agent_to_team(int team, int agent) {
+    bool success = false;
+
     if (team < 0 || team > 2) {
         printf("CTF::add_agent_to_team -- team id %d out of range\n", team);
-        return;
+        return success;
     }
 
     Agent_state* a = STATE::agent_list.get(agent);
-    if (a==NULL) return;
+    if (a==NULL) return success;
 
-    if (a->status.team == team) return;    // already in team
+    if (a->status.team == team) {
+        return success;    // already in team
+    }
+
 
     switch(a->status.team) {
         case 0:
@@ -43,19 +108,21 @@ void CTF::add_agent_to_team(int team, int agent) {
     
     switch(team) {
         case 0:
-            none.add_agent(agent);
+            success = none.add_agent(agent);
             break;
         case 1:
-            one.add_agent(agent);
+            success = one.add_agent(agent);
             break;
         case 2:
-            two.add_agent(agent);
+            success = two.add_agent(agent);
             break;
         default:
             break;
     }
 
     a->status.team = team;
+    printf("Added agent %d to team %d\n", agent, team);
+    return success;
 }
 
 void CTF::set_team_color(int team,
