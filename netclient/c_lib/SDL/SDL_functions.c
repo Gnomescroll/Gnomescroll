@@ -81,7 +81,7 @@ void _del_video() {
 	static int SDL_CLOSED = 0;
     if(SDL_CLOSED == 1)
 	{
-		printf("FATAL ERROR: SDL un-init function called twiced! \n");
+		printf("Warning! SDL un-init function called twiced! \n");
 		return;
 	}
 	SDL_CLOSED = 1;
