@@ -222,8 +222,12 @@ inline void ThrowGrenade_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
 
+    static const float grenade_vel = 22.0f; // load from dat later
+    vx *= grenade_vel;
+    vy *= grenade_vel;
+    vz *= grenade_vel;
     //create grenade
-    Grenade* g = ServerState::grenade_list.create(a->s.x, a->s.y, a->s.z + a->camera_height(), vx,vy,vz);
+    Grenade* g = ServerState::grenade_list.create(x,y,z, vx,vy,vz);
     g->owner = id;
 }
 

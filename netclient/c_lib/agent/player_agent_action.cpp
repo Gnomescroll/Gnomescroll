@@ -52,11 +52,17 @@ void PlayerAgent_action::fire() {
 void PlayerAgent_action::throw_grenade() {
     static ThrowGrenade_CtoS msg;
     msg.id = p->agent_id;
+
+    msg.x = p->camera_state.x;
+    msg.y = p->camera_state.y;
+    msg.z = p->camera_state.z + p->camera_height();
+
     static float f[3];
     p->camera_state.forward_vector(f);
     msg.vx = f[0];
     msg.vy = f[1];
     msg.vz = f[2];
+    
     msg.send();
 }
 

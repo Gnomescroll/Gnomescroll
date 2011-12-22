@@ -13,7 +13,6 @@ class NetEvent:
     weaponMessageHandler = None
     itemMessageHandler = None
     gameModeMessageHandler = None
-    projectileMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
 
@@ -28,7 +27,6 @@ class NetEvent:
         cls.weaponMessageHandler = WeaponMessageHandler()
         cls.itemMessageHandler = ItemMessageHandler()
         cls.gameModeMessageHandler = GameModeMessageHandler()
-        cls.projectileMessageHandler = ProjectileMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
 
@@ -420,34 +418,6 @@ class PlayerMessageHandler(GenericMessageHandler):
     @requireKey('id')
     def request_player(self, msg, connection, pid):
         connection.sendMessage.send_player(pid)
-
-'''s
-Move throwing grenade into C
-'''
-
-class ProjectileMessageHandler(GenericMessageHandler):
-
-    def events(self):
-        return {
-            'request_projectile':   self.request_projectile,
-            'throw_grenade' : self.throw_grenade,
-        }
-
-    @logError('request_projectile')
-    @requireKey('id')
-    def request_projectile(self, msg, conn, prid):
-        conn.sendMessage.send_projectile(prid)
-
-    #deprecate
-    @logError('throw_grenade')
-    @extractPlayer
-    @processAgent('aid')
-    @processIterable('vector', 3)
-    def throw_grenade(self, msg, player, agent, vector):
-        weapon = agent.active_weapon()
-        if weapon.fire_command == 'throw_grenade' and weapon.fire():
-            agent.throw_grenade(vector)
-
 
 '''
 move reload, to C

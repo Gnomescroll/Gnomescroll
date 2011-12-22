@@ -98,18 +98,8 @@ class AgentPhysics:
     def _tick_physics(self):
         return
 
-
-class AgentAction:
-
-    def throw_grenade(self, direction):
-        pl = GameStateGlobal.projectileList
-        pos = self.pos()
-        pos[2] += self.b_height * 0.75
-        state = pos + direction
-        grenade = pl.create('Grenade', state, owner=self.owner, ttl=0)
-
 # represents an agent under control of a player
-class Agent(AgentWrapper, AgentPhysics, AgentAction):
+class Agent(AgentWrapper, AgentPhysics):
 
     HEALTH_MAX = 100
     _RESPAWN_TIME = 2000  # milliseconds

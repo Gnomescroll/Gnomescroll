@@ -383,16 +383,23 @@ class ThrowGrenade_CtoS: public FixedSizeNetPacketToServer<ThrowGrenade_CtoS>
 {
     public:
         int id;
+        float x,y,z;
         float vx,vy,vz;    // direction
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
         }
         inline void handle();
 
         ThrowGrenade_CtoS(){}
-        ThrowGrenade_CtoS(int id, float vx, float vy, float vz)
-        : id(id), vx(vx), vy(vy), vz(vz)
+        ThrowGrenade_CtoS(int id, float x, float y, float z, float vx, float vy, float vz)
+        : id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz)
         {}
 };
