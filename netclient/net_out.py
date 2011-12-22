@@ -108,18 +108,6 @@ class SendMessage(GenericMessage):
             'id'    :   team_id,
         }
 
-    @sendJSON('request_item')
-    def request_item(self, item_id):
-        return {
-            'id'    :   item_id,
-        }
-
-    @sendJSON('request_projectile')
-    def request_projectile(self, pid):
-        return {
-            'id'    :   pid,
-        }
-
     @sendJSON('request_weapon')
     def request_weapon(self, wid):
         return {
@@ -155,36 +143,6 @@ class SendMessage(GenericMessage):
         return {
             'aid'   :   agent.id,
             'wid'   :   wid,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('pickup_item', tick=True)
-    def pickup_item(self, agent, item, index=None):
-        msg = {
-            'aid'   :   agent.id,
-            'iid'   :   item.id,
-        }
-        if index is not None:
-            msg['slot'] = index
-        return msg
-
-    @idRequired
-    @noViewer
-    @sendJSON('drop_item', tick=True)
-    def drop_item(self, agent, item):
-        return {
-            'aid'   :   agent.id,
-            'iid'   :   item.id,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('near_item', tick=True)
-    def near_item(self, agent, item):
-        return {
-            'aid'   :   agent.id,
-            'iid'   :   item.id,
         }
 
     @idRequired
