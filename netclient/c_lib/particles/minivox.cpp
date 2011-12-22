@@ -1,5 +1,17 @@
 #include "minivox.hpp"
 
+#include <compat.h>
+#ifdef DC_CLIENT
+    #include <compat_gl.h>
+#endif
+
+#include <voxel/common_data.h>
+
+#include <ray_trace/ray_trace.h>
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
+#include <t_map/t_vbo.h>
+
 Minivox::Minivox(int id)
 : size(minivox_size), draw_mode(0), texture_pixel_width(2) {
     create_particle2(&particle, id, MINIVOX_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, MINIVOX_TTL);

@@ -1,14 +1,9 @@
 #pragma once
 
-#include <compat.h>
-#ifdef DC_CLIENT
-    #include <compat_gl.h>
-#endif
+
 
 #include <physics/common.h>
-#include <ray_trace/ray_trace.h>
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
+
 
 #define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30

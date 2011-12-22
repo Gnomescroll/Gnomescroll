@@ -1,11 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <math.h>
-
-#include <compat.h>
-
-
 #define ssize 256
 #define bsize 65536
 

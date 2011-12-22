@@ -1,9 +1,12 @@
 
-#include <compat_gl.h>
+
 
 //#include "../libChrome.h"
 //#include <c_lib/camera/camera.hpp>
 
+#include <compat_gl.h>
+
+#include <compat.h>
 
 typedef struct {
   int x;
@@ -24,7 +27,6 @@ typedef struct {
 //prototypes
 int init_input(void);
 int _set_text_enty_mode(int n);
-char getUnicodeValue(SDL_keysym keysym );
 
 
 //typedef key_state_func void*;

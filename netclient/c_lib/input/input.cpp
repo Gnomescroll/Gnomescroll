@@ -1,5 +1,7 @@
 #include "./input.hpp"
 
+char getUnicodeValue(SDL_keysym keysym );
+
 static SDL_Event Event;
 
 //input modes

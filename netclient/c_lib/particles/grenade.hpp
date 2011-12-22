@@ -1,15 +1,7 @@
 #pragma once
 
-#include <compat.h>
-#ifdef DC_CLIENT
-    #include <compat_gl.h>
-#endif
-
 #include <physics/common.h>
-#include <ray_trace/ray_trace.h>
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
-#include <c_lib/template/object_list.hpp>
+
 
 /* These should be pulled from a dat or something */
 #define GRENADE_MAX 1024
@@ -44,6 +36,7 @@ class Grenade {
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
 };
 
+#include <c_lib/template/object_list.hpp>
 class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 {
     private:

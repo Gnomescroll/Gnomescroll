@@ -1,3 +1,4 @@
+
 cdef extern from "./animations/animations.hpp" namespace "Animations":
     void block_crumble(float x, float y, float z, int n)
 

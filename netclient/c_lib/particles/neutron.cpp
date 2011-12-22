@@ -1,6 +1,13 @@
 #include "neutron.hpp"
 
-#pragma once
+#include <compat.h>
+#ifdef DC_CLIENT
+    #include <compat_gl.h>
+#endif
+
+#include <ray_trace/ray_trace.h>
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
 
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>

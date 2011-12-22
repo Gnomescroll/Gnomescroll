@@ -5,6 +5,16 @@
 static float billboard_text_proj_mtrx[16];
 #endif
 
+#include <compat.h>
+#ifdef DC_CLIENT
+    #include <compat_gl.h>
+#endif
+
+#include <ray_trace/ray_trace.h>
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
+#include <hud/text.h>
+
 BillboardText::BillboardText(int id) {
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
     text_len = 0;

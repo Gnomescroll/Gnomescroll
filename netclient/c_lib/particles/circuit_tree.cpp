@@ -1,6 +1,14 @@
 #include "circuit_tree.hpp"
 #pragma once
 
+#include <compat.h>
+#ifdef DC_CLIENT
+    #include <compat_gl.h>
+#endif
+
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
+
 /*
  *  Client only
  */

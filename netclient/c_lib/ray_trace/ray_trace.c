@@ -1,5 +1,10 @@
 #include "ray_trace.h"
 
+#include <stdio.h>
+#include <math.h>
+
+#include <compat.h>
+
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 

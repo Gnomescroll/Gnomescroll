@@ -5,6 +5,15 @@
 static float blood_proj_mtrx[16];
 #endif
 
+#include <compat.h>
+#ifdef DC_CLIENT
+    #include <compat_gl.h>
+#endif
+
+#include <ray_trace/ray_trace.h>
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
+
 Blood::Blood(int id) {
     create_particle2(&particle, id, BLOOD_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BLOOD_TTL);
 }

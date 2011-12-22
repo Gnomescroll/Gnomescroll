@@ -1,6 +1,12 @@
 #include "textures.hpp"
 
+#include "compat.h"
+
 #ifdef DC_CLIENT
+
+#include <compat_gl.h>
+
+#include <c_lib/SDL/texture_loader.h>
 
 static int particle_texture_id;
 
