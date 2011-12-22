@@ -1,3 +1,8 @@
+eNet Performance issues:
+http://www.leadwerks.com/werkspace/blog/50/entry-248-enet-modifications/
+preventing clients from crashing server
+track memory allocation / malloc
+
 GLSL Tricks:
 
 -use for gamma
@@ -10,6 +15,9 @@ http://hacksoflife.blogspot.com/2010/12/fun-with-glsl-compilers.html
 
 OpenGL Profiling:
 NVidia's PerfHUD and GLExpert 
+
+Bloom Filter:
+http://en.wikipedia.org/wiki/Bloom_(shader_effect)
 
 Motion Blur:
 http://http.developer.nvidia.com/GPUGems3/gpugems3_ch27.html

@@ -44,6 +44,8 @@ def draw_border_rect(int r, int g, int b, float x, float y, float w, float h):
 '''
 Particles
 '''
+
+'''
 cdef extern from "./SDL/particle_functions.h":
     int _draw_particle(int id, float size, float x, float y, float z)
     int _draw_particle2(int id, float size, float x, float y, float z)
@@ -58,3 +60,4 @@ def planar_laser(float x0, float y0, float z0, float x1, float y1, float z1):
 
 def planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1):
     _planar_laser2(density, width, x0, y0, z0, x1, y1, z1)
+'''
