@@ -11,7 +11,6 @@ class NetEvent:
     mapMessageHandler = None
     playerMessageHandler = None
     weaponMessageHandler = None
-    itemMessageHandler = None
     gameModeMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
@@ -25,7 +24,6 @@ class NetEvent:
         cls.mapMessageHandler = MapMessageHandler()
         cls.playerMessageHandler = PlayerMessageHandler()
         cls.weaponMessageHandler = WeaponMessageHandler()
-        cls.itemMessageHandler = ItemMessageHandler()
         cls.gameModeMessageHandler = GameModeMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
@@ -467,47 +465,6 @@ class WeaponMessageHandler(GenericMessageHandler):
     @requireKey('wid')
     def drop_weapon(self, msg, player, agent, weapon_id):
         agent.drop_weapon(weapon_id, by_id=True)
-
-
-class ItemMessageHandler(GenericMessageHandler):
-
-    def events(self):
-        return {
-            'request_item'  :   self.request_item,
-            'near_item'     :   self.near_item,
-            'pickup_item'   :   self.pickup_item,
-            'drop_item'     :   self.drop_item,
-        }
-
-    @logError('request_item')
-    @requireKey('id')
-    def request_item(self, msg, conn, iid):
-        conn.sendMessage.send_item(iid)
-
-    @logError('pickup_item')
-    @extractPlayer
-    @processAgent('aid')
-    @processItem()
-    @requireTypeIfPresent('slot', int)
-    def pickup_item(self, msg, player, agent, item, slot):
-        if agent.near_item(item):
-            print 'agent picking up %s' % (item,)
-            agent.pickup_item(item, slot)
-
-    @logError('near_item')
-    @extractPlayer
-    @processAgent('aid')
-    @processItem()
-    def near_item(self, msg, player, agent, item):
-        if agent.near_item(item) and hasattr(item, 'agent_nearby'):
-            item.agent_nearby(agent)
-
-    @logError('drop_item')
-    @extractPlayer
-    @processAgent('aid')
-    @processItem()
-    def drop_item(self, msg, player):
-        agent.drop_item(item)
 
 
 class GameModeMessageHandler(GenericMessageHandler):
