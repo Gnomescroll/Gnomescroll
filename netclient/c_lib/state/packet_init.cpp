@@ -65,5 +65,7 @@ void RegisterMessages() {
 
     PlayerAgent_id_StoC::register_client_packet();
 
+    ThrowGrenade_CtoS::register_server_packet();
+
 }
 }

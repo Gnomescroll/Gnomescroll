@@ -79,6 +79,7 @@ cdef extern from "./agent/player_agent_action.hpp":
     cdef cppclass PlayerAgent_action:
         void hit_block()
         void fire()
+        void throw_grenade()
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
@@ -259,6 +260,9 @@ class PlayerAgentWrapper(object):
 
     def fire_hitscan(self):
         playerAgent_state.action.fire()
+
+    def throw_grenade(self):
+        playerAgent_state.action.throw_grenade()
 
     def update_sound(self):
         playerAgent_state.update_sound()

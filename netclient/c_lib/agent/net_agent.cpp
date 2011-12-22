@@ -107,6 +107,8 @@ inline void fire_weapon_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 
+inline void ThrowGrenade_CtoS::handle(){}
+
 #endif
 
 
@@ -214,6 +216,15 @@ inline void hitscan_block_CtoS::handle() {
     _apply_damage_broadcast(x,y,z, weapon_block_damage);
     printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
+}
+
+inline void ThrowGrenade_CtoS::handle() {
+    Agent_state* a = ServerState::agent_list.get(id);
+    if (a==NULL) return;
+
+    //create grenade
+    Grenade* g = ServerState::grenade_list.create(a->s.x, a->s.y, a->s.z + a->camera_height(), vx,vy,vz);
+    g->owner = id;
 }
 
 #endif

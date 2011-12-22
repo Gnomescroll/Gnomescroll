@@ -15,5 +15,6 @@ class PlayerAgent_action {
 
         void fire();
         void hit_block();
+        void throw_grenade();
         
 };

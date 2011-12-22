@@ -378,3 +378,21 @@ class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent
         : id(id)
         {}
 };
+
+class ThrowGrenade_CtoS: public FixedSizeNetPacketToServer<ThrowGrenade_CtoS>
+{
+    public:
+        int id;
+        float vx,vy,vz;    // direction
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+
+        ThrowGrenade_CtoS(){}
+        ThrowGrenade_CtoS(int id, float vx, float vy, float vz)
+        : id(id), vx(vx), vy(vy), vz(vz)
+        {}
+};

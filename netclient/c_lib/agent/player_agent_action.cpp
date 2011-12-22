@@ -49,6 +49,17 @@ void PlayerAgent_action::fire() {
     }
 }
 
+void PlayerAgent_action::throw_grenade() {
+    static ThrowGrenade_CtoS msg;
+    msg.id = p->agent_id;
+    static float f[3];
+    p->camera_state.forward_vector(f);
+    msg.vx = f[0];
+    msg.vy = f[1];
+    msg.vz = f[2];
+    msg.send();
+}
+
 #define BLOCK_PICK_MAX_DISTANCE 4.0f
 void PlayerAgent_action::hit_block() {
     const int z_low = 4;
