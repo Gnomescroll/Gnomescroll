@@ -2,7 +2,6 @@
 Initialization specific to game modes
 '''
 
-import toys
 from object_lists import GenericMultiObjectList
 
 import c_lib.c_lib_game_modes as cGame

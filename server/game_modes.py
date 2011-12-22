@@ -5,8 +5,6 @@ Initialization specific to game modes
 import opts
 opts = opts.opts
 
-import toys
-
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
@@ -85,11 +83,8 @@ class Team(NoTeam):
 
     def __init__(self, id, color='red', *args, **kwargs):
         NoTeam.__init__(self, id, *args, **kwargs)
-        self.flag = None
-        self.base = None
         self.type = 2
         self.color = color
-        self.create_base()
 
     def __getattribute__(self, k):
         try:
@@ -98,22 +93,12 @@ class Team(NoTeam):
             v = object.__getattribute__(self, k)
         return v
 
-    def create_base(self):
-        self.base = GameStateGlobal.itemList.create('Base', self)
-
-    def create_flag(self):
-        self.flag = GameStateGlobal.itemList.create('Flag', self)
-
     def is_viewers(self):
         return False
 
     def json(self, properties=None):
         d = NoTeam.json(self, properties)
         if properties is None:
-            if self.flag is not None:
-                d['flag'] = self.flag.id
-            if self.base is not None:
-                d['base'] = self.base.id
             d['color'] = self.color
         else:
             d.update(filter_props(self, properties))
@@ -192,7 +177,6 @@ class CTF(TeamGame):
             if team == self.viewers:
                 team.flag = None
             else:
-                team.create_flag()
                 team.flag_captures = 0
         self.flag_points = 10
         self.victory_points = opts.victory_points
@@ -224,7 +208,6 @@ class CTF(TeamGame):
             if team.is_viewers():
                 continue
             team.flag_captures = 0
-            team.flag.spawn()
             for player in team.values():
                 player.agent.respawn()
         NetOut.event.send_players()

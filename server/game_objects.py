@@ -152,17 +152,4 @@ class TeamItem:
             d['team'] = self.team.id
         return d
 
-
-class ItemList(GenericMultiObjectList):
-
-    def __init__(self):
-        from toys import Flag, Base
-        GenericMultiObjectList.__init__(self)
-        self._allow_klasses([\
-            Flag,
-            Base,
-        ])
-        self._metaname = 'ItemList'
-        self._itemname = 'Item'
-
 from net_out import NetOut
