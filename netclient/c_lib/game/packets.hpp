@@ -113,3 +113,23 @@ class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentA
             //// dont copy null terminator
         //}
 //};
+
+class TeamScore_StoC: public FixedSizeReliableNetPacketToServer<TeamScore_StoC>
+{
+    public:
+        int team;
+        int score;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&team, buff, buff_n, pack);
+            pack_u8(&score, buff, buff_n, pack);
+        }
+        inline void handle();
+
+        TeamScore_StoC(){}
+        TeamScore_StoC(int team, int score)
+        : team(team), score(score)
+        {}
+};
+            

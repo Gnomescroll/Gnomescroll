@@ -10,17 +10,26 @@ import toys
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
+import c_lib.c_lib_game_modes as cGame
+
 team_types = {
     1   :   'NoTeam',
     2   :   'Team',
 }
 
-class NoTeam:
+class NoTeam(object):
 
     def __init__(self, id, *args, **kwargs):
         self.id = id
         self.players = {}
         self.type = 1
+
+    def __getattribute__(self, k):
+        try:
+            v = cGame.NoTeamWrapper.__getattribute__py(self, k)
+        except AttributeError:
+            v = object.__getattribute__(self, k)
+        return v
 
     def add_player(self, player):
         self.players[player.id] = player
@@ -81,6 +90,13 @@ class Team(NoTeam):
         self.type = 2
         self.color = color
         self.create_base()
+
+    def __getattribute__(self, k):
+        try:
+            v = cGame.CTFTeamWrapper.__getattribute__py(self, k)
+        except AttributeError:
+            v = object.__getattribute__(self, k)
+        return v
 
     def create_base(self):
         self.base = GameStateGlobal.itemList.create('Base', self)

@@ -26,8 +26,8 @@ class World():
         self.init()
 
     def tick(self):
-        for p in GameStateGlobal.projectileList.values():
-            p.tick()
+        #for p in GameStateGlobal.projectileList.values():
+            #p.tick()
 
         if GameStateGlobal.agent is not None:
             GameStateGlobal.agent.nearby_objects()
@@ -36,8 +36,8 @@ class World():
     def draw(self, first_person=False):
         P.event("World.draw(), draw agents")
         self.draw_agents(first_person)
-        P.event("World.draw(), draw projectiles")
-        self.draw_projectiles()
+        #P.event("World.draw(), draw projectiles")
+        #self.draw_projectiles()
         P.event("World.draw(), draw items")
         self.draw_items()
 
@@ -49,9 +49,9 @@ class World():
     def toggle_gl_smooth(self):
         print "Input.py line 272: deprecated, use for other graphics options"
 
-    def draw_projectiles(self):
-        for proj in GameStateGlobal.projectileList.values():
-            proj.draw()
+    #def draw_projectiles(self):
+        #for proj in GameStateGlobal.projectileList.values():
+            #proj.draw()
 
     def draw_items(self):
         pass
@@ -75,7 +75,7 @@ class World():
         if opts.draw_agents:
             cAgents.draw_agents()
 
-import projectiles
+#import projectiles
 
 #from cube_dat import CubeGlobal
 from game_state import GameStateGlobal

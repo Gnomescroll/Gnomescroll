@@ -19,7 +19,7 @@ class NetEventGlobal:
     messageHandler = None
     clientMessageHandler = None
     mapMessageHandler = None
-    projectileMessageHandler = None
+    #projectileMessageHandler = None
     agentMessageHandler = None
     playerMessageHandler = None
     miscMessageHandler = None
@@ -38,7 +38,7 @@ class NetEventGlobal:
 
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        cls.projectileMessageHandler = ProjectileMessageHandler()
+        #cls.projectileMessageHandler = ProjectileMessageHandler()
         cls.weaponMessageHandler = WeaponMessageHandler()
 
         cls.gameModeMessageHandler = GameModeMessageHandler()
@@ -55,7 +55,7 @@ class NetEventGlobal:
 
         AgentMessageHandler.init()
         MapMessageHandler.init()
-        ProjectileMessageHandler.init()
+        #ProjectileMessageHandler.init()
         GameModeMessageHandler.init()
         ItemMessageHandler.init()
         WeaponMessageHandler.init()
@@ -488,86 +488,86 @@ class ItemMessageHandler(DatastoreMessageInterface):
         return self._default_list(**args)
 
 
-class ProjectileMessageHandler(DatastoreMessageInterface):
+#class ProjectileMessageHandler(DatastoreMessageInterface):
 
-    def __init__(self):
-        self.name = 'projectile'
-        self.store = GameStateGlobal.projectileList
-        self._bind_event('hitscan', self._hitscan)
-        DatastoreMessageInterface.__init__(self)
+    #def __init__(self):
+        #self.name = 'projectile'
+        #self.store = GameStateGlobal.projectileList
+        #self._bind_event('hitscan', self._hitscan)
+        #DatastoreMessageInterface.__init__(self)
 
-    def request_data(self, **data):
-        if 'id' in data:
-            NetOut.sendMessage.request_projectile(data['id'])
+    #def request_data(self, **data):
+        #if 'id' in data:
+            #NetOut.sendMessage.request_projectile(data['id'])
 
-    def _hitscan(self, **msg):
-        err_msg = None
-        try:
-            agent_id = msg['aid']
-            if agent_id == GameStateGlobal.agent.id: # ignore, you fired this
-                return
-        except KeyError:
-            err_msg = 'msg hitscan :: aid missing'
-        try:
-            agent = GameStateGlobal.agentList[agent_id]
-        except KeyError:
-            err_msg = 'msg hitscan :: agent %s does not exist' % (agent_id,)
-        try:
-            target = msg['target']
-        except KeyError:
-            err_msg = 'msg hitscan :: target missing'
-        try:
-            type = target['type']
-        except KeyError:
-            err_msg = 'msg hitscan :: target type missing'
-        try:
-            loc = target['loc']
-            if type == 'block' or type == 'empty':
-                assert len(loc) == 3
-            elif type == 'agent':
-                assert len(loc) == 2
-        except KeyError:
-            err_msg = 'msg hitscan :: target location missing'
-        except TypeError:
-            err_msg = 'msg hitscan :: target block location not iterable'
-        except AssertionError:
-            err_msg = 'msg hitscan :: target location wrong length'
-        try:
-            weapon_type = msg['wtype']
-        except KeyError:
-            err_msg = 'msg hitscan :: wtype missing'
+    #def _hitscan(self, **msg):
+        #err_msg = None
+        #try:
+            #agent_id = msg['aid']
+            #if agent_id == GameStateGlobal.agent.id: # ignore, you fired this
+                #return
+        #except KeyError:
+            #err_msg = 'msg hitscan :: aid missing'
+        #try:
+            #agent = GameStateGlobal.agentList[agent_id]
+        #except KeyError:
+            #err_msg = 'msg hitscan :: agent %s does not exist' % (agent_id,)
+        #try:
+            #target = msg['target']
+        #except KeyError:
+            #err_msg = 'msg hitscan :: target missing'
+        #try:
+            #type = target['type']
+        #except KeyError:
+            #err_msg = 'msg hitscan :: target type missing'
+        #try:
+            #loc = target['loc']
+            #if type == 'block' or type == 'empty':
+                #assert len(loc) == 3
+            #elif type == 'agent':
+                #assert len(loc) == 2
+        #except KeyError:
+            #err_msg = 'msg hitscan :: target location missing'
+        #except TypeError:
+            #err_msg = 'msg hitscan :: target block location not iterable'
+        #except AssertionError:
+            #err_msg = 'msg hitscan :: target location wrong length'
+        #try:
+            #weapon_type = msg['wtype']
+        #except KeyError:
+            #err_msg = 'msg hitscan :: wtype missing'
 
-        # look up projectile type
-        firing_weapon = agent.weapons.has(weapon_type)
+        ## look up projectile type
+        #firing_weapon = agent.weapons.has(weapon_type)
 
-        # look up spatial coordinates of target
-        if type == 'block':
-            # later, adjust this so that the end is at the corrent surface point of the block
-            anim = lambda: firing_weapon.animation(agent=agent, target=loc).play()
-        elif type == 'agent':
-            target_agent_id, body_part_id = loc
-            target_agent = GameStateGlobal.agentList[target_agent_id]
-            if target_agent is None:
-                print 'msg hitscan :: target agent %s does not exist' % (target_agent_id,)
-                print 'msg :: %s' % (msg,)
-                return
-            target = target_agent.pos()
-            anim = lambda: firing_weapon.animation(agent=agent, target=target).play()
-            target_agent.bleed()
-        elif type == 'empty':
-            # special mode; in this case, loc is a unit vector
-            # call different animation
-            anim = lambda: firing_weapon.animation(agent=agent, vector=loc).play()
+        ## look up spatial coordinates of target
+        #if type == 'block':
+            ## later, adjust this so that the end is at the corrent surface point of the block
+            #anim = lambda: firing_weapon.animation(agent=agent, target=loc).play()
+        #elif type == 'agent':
+            #target_agent_id, body_part_id = loc
+            #target_agent = GameStateGlobal.agentList[target_agent_id]
+            #if target_agent is None:
+                #print 'msg hitscan :: target agent %s does not exist' % (target_agent_id,)
+                #print 'msg :: %s' % (msg,)
+                #return
+            #target = target_agent.pos()
+            #anim = lambda: firing_weapon.animation(agent=agent, target=target).play()
+            #target_agent.bleed()
+        #elif type == 'empty':
+            ## special mode; in this case, loc is a unit vector
+            ## call different animation
+            #anim = lambda: firing_weapon.animation(agent=agent, vector=loc).play()
 
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
+        #if err_msg is not None:
+            #print self._error_message(err_msg, **args)
+            #return
 
-        if firing_weapon:
-            anim()
-        # look up agent origin
-        # animate
-        #print 'animating a projectile to wherever target %s %s is' % (type, loc,)
+        #if firing_weapon:
+            #anim()
+        ## look up agent origin
+        ## animate
+        ##print 'animating a projectile to wherever target %s %s is' % (type, loc,)
 
 
 class GameModeMessageHandler(DatastoreMessageInterface):

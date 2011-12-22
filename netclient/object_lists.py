@@ -416,20 +416,20 @@ class WeaponList(GenericMultiObjectList):
 
 from weapons import Weapon
 
-class ProjectileList(GenericMultiObjectList):
+#class ProjectileList(GenericMultiObjectList):
 
-    def __init__(self):
-        from projectiles import Laser, Grenade
-        GenericMultiObjectList.__init__(self)
-        self._allow_klasses([\
-            Laser,
-            Grenade,
-        ])
-        self._metaname = 'ProjectileList'
-        self._itemname = 'Projectile'
-        self.name_from_type = Projectile.name_from_type
+    #def __init__(self):
+        #from projectiles import Laser, Grenade
+        #GenericMultiObjectList.__init__(self)
+        #self._allow_klasses([\
+            #Laser,
+            #Grenade,
+        #])
+        #self._metaname = 'ProjectileList'
+        #self._itemname = 'Projectile'
+        #self.name_from_type = Projectile.name_from_type
 
-from projectiles import Projectile
+#from projectiles import Projectile
 
 class ItemList(GenericMultiObjectList):
 

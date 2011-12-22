@@ -9,7 +9,7 @@ class GameStateGlobal:
     #terrainMap = None # use cube_libs.terrainMap module
     agentList = None
     playerList = None
-    projectileList = None
+    #projectileList = None
     itemList = None
     teamList = None
     game = None
@@ -28,7 +28,7 @@ class GameStateGlobal:
     def init_0(cls):
         cls.agentList = AgentList()
         cls.playerList = PlayerList()
-        cls.projectileList = ProjectileList()
+        #cls.projectileList = ProjectileList()
         cls.weaponList = WeaponList()
         cls.itemList = ItemList()
         cls.teamList = game_modes.TeamList()
@@ -156,7 +156,7 @@ class GameState:
             #print "time= %i" % (self.time,)
 
 #from terrain_map import TerrainMap
-from object_lists import ProjectileList
+#from object_lists import ProjectileList
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList

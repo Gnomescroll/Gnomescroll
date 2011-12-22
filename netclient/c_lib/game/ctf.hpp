@@ -24,6 +24,8 @@ class CTF {
 
         void init();
 
+        void set_score(int team, int score);
+
         bool add_agent_to_team(int team, int agent);
         void set_team_color(int team,
             unsigned char r, unsigned char g, unsigned char b);

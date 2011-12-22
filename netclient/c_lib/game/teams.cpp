@@ -6,6 +6,7 @@ void Team::init(int id)
 {
     this->id = id;
     n = 0;
+    score = 0;
     r = 255;
     g = 10;
     b = 10;
