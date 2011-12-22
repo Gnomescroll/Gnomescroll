@@ -18,8 +18,12 @@ def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
 
+#moved to SDL hud
+
 '''
 Draw functions
+'''
+
 '''
 cdef extern from "./SDL/draw_functions.h":
     int _draw_point(int r, int g,int b, float x0, float y0, float z0)
@@ -39,8 +43,10 @@ def draw_rect(int r, int g, int b, float x, float y, float w, float h):
 
 def draw_border_rect(int r, int g, int b, float x, float y, float w, float h):
     return _draw_border_rect(r,g,b, x,y, w,h)
+'''
 
 
+#Deprecate
 '''
 Particles
 '''
