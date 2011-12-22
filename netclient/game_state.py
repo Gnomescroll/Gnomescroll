@@ -27,7 +27,6 @@ class GameStateGlobal:
         cls.playerList = PlayerList()
         cls.weaponList = WeaponList()
         cls.teamList = game_modes.TeamList()
-        cls.gameState = GameState()
         cls.exit = False
 
     @classmethod
@@ -125,20 +124,6 @@ class GameStateGlobal:
             stats['id'].append(player.id)
 
         return stats
-
-# main game state wrapper
-class GameState:
-
-    def __init__(self):
-        self.time = 0
-
-    # tick all agents
-    #def tick(self):
-        #for agent in GameStateGlobal.agentList.values():
-            #agent.tick()
-        #self.time += 1
-        #if self.time % 100 == 0:
-            #print "time= %i" % (self.time,)
 
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
