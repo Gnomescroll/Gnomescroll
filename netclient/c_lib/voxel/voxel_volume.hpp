@@ -130,6 +130,12 @@ class Voxel_volume
         needs_vbo_update = false;
         scale = _scale;
 
+        v[0] = Vector_init(1.0f,0.0f,0.0f);
+        v[1] = Vector_init(0.0f,1.0f,0.0f);
+        v[2] = Vector_init(0.0f,0.0f,1.0f);
+        //v[3] = Vector_init(0,0,0);  //center
+        this->set_center(0.0,0.0,0.0);
+
         int xdim = __xdim;
         int ydim = __ydim;
         int zdim = __zdim;
@@ -174,4 +180,6 @@ void voxel_test()
     return;
     Voxel_volume vv(9,9,9, 1.0);
     Voxel* v = vv.get(4,5,6);
+
+    vv.set_center( -5.0, -5.0, 10.0);
 }
