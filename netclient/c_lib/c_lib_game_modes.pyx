@@ -34,7 +34,7 @@ class DummyCTFTeam(object):
             raise ValueError
         self.id = id
 
-    def __getattribute__py(self, k):
+    def __getattribute__(self, k):
         cdef Team t
         if self.id == 1:
             t = <Team>(ctf.one)
@@ -65,7 +65,7 @@ ctf_two = DummyCTFTeam(2)
 
 class DummyNoTeam(object):
 
-    def __getattribute__py(self, k):
+    def __getattribute__(self, k):
         cdef NoTeam t
         t = ctf.none
 
