@@ -12,11 +12,20 @@ struct Vector {
 
 inline static void vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest) __attribute((always_inline)); 
 
-inline static void vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
+void vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
 {
     dest->x = v1->y*v2->z - v1->z*v2->y;
     dest->y = v1->z*v2->x - v1->x*v2->z;
     dest->z = v1->x*v2->y - v1->y*v2->x;
+}
+
+inline static void vector_scalar(struct Vector* v1, float scalar) __attribute((always_inline)); 
+
+void vector_scalar(struct Vector* v, float scalar)
+{
+    v->x *= scalar;
+    v->y *= scalar;
+    v->z *= scalar;
 }
 
 //

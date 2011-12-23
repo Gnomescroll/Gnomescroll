@@ -68,7 +68,7 @@ class Voxel_volume
 
     bool needs_vbo_update;
 
-    int xdim,ydim,zdim;
+    //int xdim,ydim,zdim;
     int _xdim,_ydim,_zdim;
     Voxel* voxel;
     int index1, index12;
@@ -92,9 +92,12 @@ class Voxel_volume
 
     void set_center(float x, float y, float z)
     {
-        center.x = x; center.y = y; center.z = z;
+        center.x = x;
+        center.y = y;
+        center.z = z;
 
-
+        Vector tmp = center;
+        
     }
 
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
@@ -124,9 +127,9 @@ class Voxel_volume
         needs_vbo_update = false;
         scale = _scale;
 
-        xdim = __xdim;
-        ydim = __ydim;
-        zdim = __zdim;
+        int xdim = __xdim;
+        int ydim = __ydim;
+        int zdim = __zdim;
 
         hdx = ((float) xdim) / 2;
         hdy = ((float) ydim) / 2;
