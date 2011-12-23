@@ -224,6 +224,10 @@ class Voxel_volume
         v[0] = vx;
         v[2] = vz;
 
+        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
+        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
+        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
+
         update_center();
     }
 
@@ -244,7 +248,6 @@ class Voxel_volume
 */
     void update_center()
     {
-        printf("WTF\n");
         Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
         Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
         Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
@@ -383,6 +386,13 @@ void Voxel_volume::draw_bounding_box()
     int i,j;
     float _x,_y,_z;
 
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex3f(center.x,center.y, center.z);
+    glEnd();
+    glPointSize(1.0);
+
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
     
@@ -424,9 +434,13 @@ void voxel_test()
     static Voxel_volume vv(8,8,8, 1.0);
     //Voxel* v = vv.get(4,5,6);
 
+    //static float c = 0.0;
+    //c -= 0.02;
+    vv.set_center( -5.0, -5.0, 10.0);
+
     static float c = 0.0;
-    c -= 0.02;
-    vv.set_center( c, -5.0, 10.0);
+    c += 0.005;
+    vv.set_rotated_unit_axis(0.0f, 0.0f, c);
 
     vv.draw_bounding_box();
 }
