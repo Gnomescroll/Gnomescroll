@@ -9,6 +9,8 @@ from json import loads as decode_json
 from os import mkdir
 from os.path import exists as path_exists
 
+import c_lib.c_lib_game_modes as cGame
+
 from utils import now
 
 class ChatClientGlobal:
@@ -326,7 +328,7 @@ class ChatCommand():
                         'channel'   :   'system',
                     })
                 else:
-                    NetOut.sendMessage.join_team(team_id)
+                    cGame.join_team(team_id)
 
         elif command == 'teams':
             _send = self._send_local({

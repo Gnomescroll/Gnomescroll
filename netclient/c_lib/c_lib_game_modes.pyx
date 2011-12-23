@@ -62,3 +62,6 @@ def get_team(int id):
         return ctf_two
     else:
         print "c_lib_game_modes.get_team :: invalid team id %d" % (id,)
+
+def join_team(int team):
+    ctf.join_team(team)
