@@ -29,7 +29,30 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
 class DummyCTFTeam(object):
 
     def __init__(self, id):
+        if id not in [1,2]:
+            print "DummyCTFTeam object -- id invalid %d" % (id,)
+            raise ValueError
         self.id = id
+
+    def __getattribute__py(self, k):
+        cdef Team t
+        if self.id == 1:
+            t = <Team>(ctf.one)
+        elif self.id == 2:
+            t = <Team>(ctf.two)
+
+        if k == 'score':
+            return t.score
+        elif k == 'name':
+            return t.name
+        elif k == 'n':
+            return t.n
+        elif k == 'viewers':
+            return  k.viewers
+        elif k == 'id':
+            return k.id
+
+        raise AttributeError
 
     def is_viewers(self):
         if self.id == 1:
@@ -41,6 +64,21 @@ ctf_one = DummyCTFTeam(1)
 ctf_two = DummyCTFTeam(2)
 
 class DummyNoTeam(object):
+
+    def __getattribute__py(self, k):
+        cdef NoTeam t
+        t = ctf.none
+
+        if k == 'name':
+            return t.name
+        elif k == 'n':
+            return t.n
+        elif k == 'viewers':
+            return  k.viewers
+        elif k == 'id':
+            return k.id
+
+        raise AttributeError
 
     def is_viewers(self):
         return ctf.none.viewers
