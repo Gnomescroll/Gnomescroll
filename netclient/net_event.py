@@ -232,12 +232,6 @@ class ClientMessageHandler(GenericMessageHandler):
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
 
-        #player = msg.get('player', None)
-        #if player is None:
-            #print 'msg::identified - missing player'
-            #return False
-
-        #name = player.get('name', None)
         name = msg.get('name', None)
         if name is None:
             print 'msg::identified - player missing name'
@@ -250,10 +244,6 @@ class ClientMessageHandler(GenericMessageHandler):
         NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
         ChatClientGlobal.on_identify()
-
-        #player = GameStateGlobal.update_your_info(player)
-        #if player.you:
-        #GameStateGlobal.playerList.identify(player)
 
         return True
 

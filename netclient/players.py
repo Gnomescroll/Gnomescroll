@@ -1,7 +1,6 @@
 
 class Player(object):
 
-    #def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, score=0):
     def __init__(self, cid=None, id=None, agent=None):
         if cid is None or id is None:
             print 'Client_id or pid missing; abort creating player'
@@ -9,14 +8,8 @@ class Player(object):
             return
         self.cid = cid
         self.id = id
-        #self.name = name
-        #self.kills = kills
-        #self.deaths = deaths
         self.agent = None
         self.you = False
-        #self.score = score
-        #self.suicides = suicides # use this later
-        #print 'New player assigned name: %s, id: %d' % (name, self.id,)
 
     def __getattribute__(self, k):
         v = object.__getattribute__(self, k)
@@ -32,17 +25,6 @@ class Player(object):
         if 'cid' in player:
             args['old_cid'] = self.cid
             self.cid = player['cid']
-        #if 'name' in player:
-            #if self.name != player['name']:
-                #print 'updating player name: %s  -> %s' % (self.name, player['name'],)
-            #args['old_name'] = self.name
-            #self.name = player['name']
-        #if 'kills' in player:
-            #self.kills = player['kills']
-        #if 'deaths' in player:
-            #self.deaths = player['deaths']
-        #if 'score' in player:
-            #self.score = player['score']
 
         GameStateGlobal.playerList.update(self, **args)
 
