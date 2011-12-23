@@ -311,18 +311,16 @@ class ChatCommand():
             })
 
         elif command == 'team':
+            teams = [0,1,2]
             try:
                 team_id = int(args[0])
             except (ValueError, IndexError):
-                #print args
                 _send = self._send_local({
                     'content'   :   'Team command usage: /team <team_id>',
                     'channel'   :   'system',
                 })
             else:
-                #team = GameStateGlobal.teamList[team_id]
-                #if team is None:
-                if team_id not in [0,1,2]:
+                if team_id not in teams:
                     _send = self._send_local({
                         'content'   :   'Team %d does not exist' % (team_id,),
                         'channel'   :   'system',
@@ -332,7 +330,7 @@ class ChatCommand():
 
         elif command == 'teams':
             _send = self._send_local({
-                'content'   :   str([0,1,2]),
+                'content'   :   str(teams),
                 'channel'   :   'system',
             })
 
