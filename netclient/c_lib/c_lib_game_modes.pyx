@@ -1,14 +1,17 @@
+from libcpp cimport bool
 cdef extern from "./game/teams.hpp":
     cdef cppclass Team:
         int id
         int score
         char* name
         int n
+        bool viewers
 
     cdef cppclass NoTeam:
         int id
         char* name
         int n
+        bool viewers
 
     cdef cppclass CTFTeam:  # inherits Team
         pass
@@ -25,31 +28,22 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
 
 class DummyCTFTeam(object):
 
-#    CTFTeam* team
-
     def __init__(self, id):
-#        if id == 1:
-#            self.team = cython.address(ctf.one)
-#        elif id == 2:
-#            self.team = cython.address(ctf.two)
-#        else:
-#            print "DummyCTFTeam init :: invalid id %d" % (id,)
-        pass
+        self.id = id
+
     def is_viewers(self):
-        return False
+        if self.id == 1:
+            return (<Team>(ctf.one)).viewers
+        elif self.id == 2:
+            return (<Team>(ctf.two)).viewers
 
 ctf_one = DummyCTFTeam(1)
 ctf_two = DummyCTFTeam(2)
 
 class DummyNoTeam(object):
 
-#    NoTeam* team
-
-    def __init__(self):
-#        self.team = cython.address(ctf.none)
-        pass
     def is_viewers(self):
-        return True
+        return ctf.none.viewers
 
 ctf_none = DummyNoTeam()
 

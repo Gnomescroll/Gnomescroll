@@ -4,6 +4,7 @@
 
 void Team::init(int id)
 {
+    viewers = false;
     this->id = id;
     n = 0;
     score = 0;
@@ -95,6 +96,7 @@ void Team::update_client(int client_id) {
 
 void NoTeam::init(int id)
 {
+    viewers = true;
     n = 0;
     this->id = id;
     int i;

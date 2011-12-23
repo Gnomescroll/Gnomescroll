@@ -17,6 +17,8 @@ class Team {
 
         int score;
 
+        bool viewers;
+
         void set_name(char* name);
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         
@@ -41,6 +43,8 @@ class NoTeam {
         int members[GAME_MAX_PLAYERS];
         int n;
 
+        bool viewers;
+        
         bool add_agent(int id);
         bool remove_agent(int id);
         bool has_agent(int id);
