@@ -3,6 +3,8 @@
 #define AGENT_HEALTH 100
 #define RESPAWN_TICKS (2000 / 30)
 
+const int PLAYER_NAME_MAX_LENGTH = 24;
+
 class Agent_state;  // forward declaration
 class PlayerAgent_state;
 
@@ -12,10 +14,25 @@ class Base_status {
         int health;
         bool dead;
         int respawn_countdown;
+
         unsigned int kills;
         unsigned int deaths;
+        unsigned int suicides;
+        int score() {
+            return kills - suicides;
+        }
+
+        char name[PLAYER_NAME_MAX_LENGTH + 1];
 
         int team;
+
+        void set_name(char* n) {
+            int i;
+            for (i=0; i<PLAYER_NAME_MAX_LENGTH && n[i] != '\0'; i++) {
+                name[i] = n[i];
+            }
+            name[i] = '\0';
+        }
         
         Base_status() :
             health(AGENT_HEALTH),

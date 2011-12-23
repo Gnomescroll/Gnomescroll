@@ -113,6 +113,7 @@ class Agent(AgentWrapper, AgentPhysics):
         self.terrainMap = GameStateGlobal.terrainMap
         ### End Global imports ###
 
+        print player_id
         AgentWrapper.__init__(self, player_id)
         AgentWrapper.send_id_to_client(self, client_id)
         

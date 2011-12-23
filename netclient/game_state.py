@@ -17,9 +17,6 @@ class GameStateGlobal:
 
     apply_gravity = True
 
-    def __init__(self):
-        pass
-
     @classmethod
     def init_0(cls):
         cls.agentList = AgentList()
@@ -31,24 +28,25 @@ class GameStateGlobal:
     def init_1(cls):
         pass
 
-    # for your player
     @classmethod
-    def update_your_info(cls, player):
-        if cls.player is None:
-            print 'Creating YouPlayer'
-            cls.player = cls.playerList.join_yourself(**player)
+    def update_your_info(cls, player, data):
+        print data
+        if cls.player is None and player.cid == NetClientGlobal.connection.client_id:
+            print "Assigned GameStateGlobal.player"
+            cls.player = player
 
-        cls.player.update_info(**player)
-        agent = player.get('agent', None)
-        if agent is not None: # agent as a property of player is currently optional for server to send
             if cls.agent is None:
-                cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
-                weapons = agent.get('weapons', None)
-                if weapons is not None:
-                    cls.agent.weapons.update_info(**weapons)
-                cls.player.agent = cls.agent
-            else:
-                cls.agent.update_info(**agent)
+                agent = data['player'].get('agent', None)
+                if agent is not None:
+                    cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
+                    print 'Assigned GameStateGlobal.agent'
+                    print str(cls.agent)
+                    weapons = agent.get('weapons', None)
+                    if weapons is not None:
+                        cls.agent.weapons.update_info(**weapons)
+
+            cls.player.agent = cls.agent
+            
         return cls.player
 
     @classmethod
@@ -100,15 +98,16 @@ class GameStateGlobal:
 
     @classmethod
     def scoreboard(cls):
-        props = ['name', 'kills', 'deaths', 'score', 'id']
+        #props = ['name', 'kills', 'deaths', 'score', 'id']
+        props = ['id']
         defs =  [[] for i in range(len(props))]
         stats = dict(zip(props, defs))
 
         for player in cls.playerList.values():
-            stats['name'].append(player.name)
-            stats['kills'].append(player.kills)
-            stats['deaths'].append(player.deaths)
-            stats['score'].append(player.score)
+            #stats['name'].append(player.name)
+            #stats['kills'].append(player.kills)
+            #stats['deaths'].append(player.deaths)
+            #stats['score'].append(player.score)
             stats['id'].append(player.id)
 
         return stats

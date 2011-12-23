@@ -117,7 +117,8 @@ class PyClient:
         if self.player is not None and self.player.id in GameStateGlobal.playerList:
             self.player.update_info(name=self.name)
         else:
-            self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
+            #self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
+            self.player = GameStateGlobal.playerList.join(self)  # create player
             print 'Created new player'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
 
