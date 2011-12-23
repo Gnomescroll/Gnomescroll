@@ -259,9 +259,9 @@ class Voxel_volume
         center.z = z;
 
         //rintf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
-        printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-        printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-        printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
+        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
+        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
+        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
 
         Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
         Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
@@ -272,7 +272,7 @@ class Voxel_volume
         v[3] = vector_add4(&vx,&vy,&vz,&center);
 
 
-        printf("0c x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+        //printf("0c x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
 
     }
 
@@ -424,7 +424,9 @@ void voxel_test()
     static Voxel_volume vv(8,8,8, 1.0);
     //Voxel* v = vv.get(4,5,6);
 
-    vv.set_center( -5.0, -5.0, 10.0);
+    static float c = 0.0;
+    c -= 0.02;
+    vv.set_center( c, -5.0, 10.0);
 
     vv.draw_bounding_box();
 }
