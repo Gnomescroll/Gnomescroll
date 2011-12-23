@@ -395,19 +395,39 @@ void Voxel_volume::draw_bounding_box()
 
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-    
+
+    Vector vx;
+    Vector vy;
+    Vector vz;
+
+    Vector u;
+
+        v[3] = vector_add4(&vx,&vy,&vz,&center);
+
     for(i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
-            _x = v[3].x + v_set2[j+0]*hdx*scale;
-            _y = v[3].y + v_set2[j+1]*hdy*scale;
-            _z = v[3].z + v_set2[j+2]*hdz*scale;
-           // printf("1 x,y,z= %i, %i, %i \n", _x,_y,_z);
+            
+            vx = vector_scalar2(&v[0], v_set2[j+0]*hdx*scale);
+            vy = vector_scalar2(&v[1], v_set2[j+1]*hdy*scale);
+            vz = vector_scalar2(&v[2], v_set2[j+2]*hdz*scale);
+            u = vector_add3(&vx,&vy,&vz);
+
+            _x = v[3].x + u.x;
+            _y = v[3].y + u.y;
+            _z = v[3].z + u.z;
+
             glVertex3f(_x,_y,_z);
             j = 3*vertex_index2[2*i+1];
-            _x = v[3].x + v_set2[j+0]*hdx*scale;
-            _y = v[3].y + v_set2[j+1]*hdy*scale;
-            _z = v[3].z + v_set2[j+2]*hdz*scale;
-            //printf("2 x,y,z= %i, %i, %i \n", _x,_y,_z);
+
+            vx = vector_scalar2(&v[0], v_set2[j+0]*hdx*scale);
+            vy = vector_scalar2(&v[1], v_set2[j+1]*hdy*scale);
+            vz = vector_scalar2(&v[2], v_set2[j+2]*hdz*scale);
+            u = vector_add3(&vx,&vy,&vz);
+
+            _x = v[3].x + u.x;
+            _y = v[3].y + u.y;
+            _z = v[3].z + u.z;
+
             glVertex3f(_x,_y,_z);
     }
 
