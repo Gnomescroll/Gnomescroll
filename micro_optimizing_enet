@@ -1,0 +1,32 @@
+Object pools and cache locality
+
+atomos@maslow-4:~/ccm$ grep -rn "enet_malloc" 
+./net_lib/enet/callbacks.c:32:enet_malloc (size_t size)
+./net_lib/enet/callbacks.h:21:extern void * enet_malloc (size_t);
+./net_lib/enet/protocol.c:289:    currentPeer -> channels = (ENetChannel *) enet_malloc (channelCount * sizeof (ENetChannel));
+./net_lib/enet/packet.c:22:    ENetPacket * packet = (ENetPacket *) enet_malloc (sizeof (ENetPacket));
+./net_lib/enet/packet.c:30:       packet -> data = (enet_uint8 *) enet_malloc (dataLength);
+./net_lib/enet/packet.c:80:    newData = (enet_uint8 *) enet_malloc (dataLength);
+./net_lib/enet/peer.c:147:         fragment = (ENetOutgoingCommand *) enet_malloc (sizeof (ENetOutgoingCommand));
+./net_lib/enet/peer.c:521:    acknowledgement = (ENetAcknowledgement *) enet_malloc (sizeof (ENetAcknowledgement));
+./net_lib/enet/peer.c:604:    ENetOutgoingCommand * outgoingCommand = (ENetOutgoingCommand *) enet_malloc (sizeof (ENetOutgoingCommand));
+./net_lib/enet/peer.c:821:    incomingCommand = (ENetIncomingCommand *) enet_malloc (sizeof (ENetIncomingCommand));
+./net_lib/enet/peer.c:835:       incomingCommand -> fragments = (enet_uint32 *) enet_malloc ((fragmentCount + 31) / 32 * sizeof (enet_uint32));
+./net_lib/enet/compress.c:51:    ENetRangeCoder * rangeCoder = (ENetRangeCoder *) enet_malloc (sizeof (ENetRangeCoder));
+./net_lib/enet/host.c:38:    host = (ENetHost *) enet_malloc (sizeof (ENetHost));
+./net_lib/enet/host.c:42:    host -> peers = (ENetPeer *) enet_malloc (peerCount * sizeof (ENetPeer));
+./net_lib/enet/host.c:185:    currentPeer -> channels = (ENetChannel *) enet_malloc (channelCount * sizeof (ENetChannel));
+
+enet_packet_create (const void * data, size_t dataLength, enet_uint32 flags)
+{
+ENetPacket * packet = (ENetPacket *) enet_malloc (sizeof (ENetPacket));
+packet -> data = (enet_uint8 *) enet_malloc (dataLength);
+
+1> Packet object pool.  Cache locality
+2> Packet data object pool (char array). -avoid malloc
+3> avoid second memcpy, serialize packet to buffer and dealloc when done
+
+4> since each packet is sent to ~30 clients, serialize on send (packet is list of pointers to messages) (reference counted)
+
+Object pool for linked list
+Use array+list for iterator
