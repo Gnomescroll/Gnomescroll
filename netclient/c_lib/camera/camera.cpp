@@ -141,7 +141,7 @@ void CCamera::world_projection() {
     glColor3ub(255, 255, 255);
 
     //DEBUG!!!
-    voxel_test();
+    //voxel_test();
 }
 
 void CCamera::set_angles(float theta, float phi) {
@@ -150,6 +150,9 @@ void CCamera::set_angles(float theta, float phi) {
 }
 
 void CCamera::hud_projection() {
+
+    voxel_test();
+
     glDisable (GL_DEPTH_TEST);   // end world projection
 
     glMatrixMode(GL_PROJECTION);
