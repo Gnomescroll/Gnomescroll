@@ -100,15 +100,16 @@ class GameStateGlobal:
 
     @classmethod
     def scoreboard(cls):
-        props = ['name', 'kills', 'deaths', 'score', 'id']
+        #props = ['name', 'kills', 'deaths', 'score', 'id']
+        props = ['id']
         defs =  [[] for i in range(len(props))]
         stats = dict(zip(props, defs))
 
         for player in cls.playerList.values():
-            stats['name'].append(player.name)
-            stats['kills'].append(player.kills)
-            stats['deaths'].append(player.deaths)
-            stats['score'].append(player.score)
+            #stats['name'].append(player.name)
+            #stats['kills'].append(player.kills)
+            #stats['deaths'].append(player.deaths)
+            #stats['score'].append(player.score)
             stats['id'].append(player.id)
 
         return stats

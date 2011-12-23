@@ -269,7 +269,8 @@ class SendMessage: #each connection has one of these
         print 'Identified'
         return {
             'msg'   : msg,
-            'player': connection.player.json(),
+            #'player': connection.player.json(),
+            'name'  :   connection.name,
         }
 
     @sendJSON('chunk_list')

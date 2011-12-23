@@ -232,12 +232,13 @@ class ClientMessageHandler(GenericMessageHandler):
         note = msg.get('msg', '')
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
 
-        player = msg.get('player', None)
-        if player is None:
-            print 'msg::identified - missing player'
-            return False
+        #player = msg.get('player', None)
+        #if player is None:
+            #print 'msg::identified - missing player'
+            #return False
 
-        name = player.get('name', None)
+        #name = player.get('name', None)
+        name = msg.get('name', None)
         if name is None:
             print 'msg::identified - player missing name'
             return False
@@ -250,9 +251,9 @@ class ClientMessageHandler(GenericMessageHandler):
         print 'Identified: name is %s' % (name,)
         ChatClientGlobal.on_identify()
 
-        player = GameStateGlobal.update_your_info(player)
+        #player = GameStateGlobal.update_your_info(player)
         #if player.you:
-        GameStateGlobal.playerList.identify(player)
+        #GameStateGlobal.playerList.identify(player)
 
         return True
 
@@ -475,7 +476,6 @@ from game_state import GameStateGlobal
 from net_client import NetClientGlobal
 from net_out import NetOut
 from chat_client import ChatClientGlobal
-#from map_chunk_manager import MapChunkManagerGlobal
 from map_controller import MapControllerGlobal
 from input import InputGlobal
 

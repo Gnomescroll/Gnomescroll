@@ -9,55 +9,58 @@ class PlayerList(GenericObjectList):
         GenericObjectList.__init__(self)
         self._object_type = Player
         self.client_ids = {}
-        self.names = {}
+        #self.names = {}
 
-    def join(self, connection, name):
-        player = self._add(connection, name)
+    #def join(self, connection, name):
+    def join(self, connection):
+        player = self._add(connection)
         self.client_ids[player.cid] = player.id
-        self.names[name] = player.cid
+        #self.names[name] = player.cid
         return player
         
     def leave(self, player):
         try:
             client_id = player.cid
-            name = player.name
+            #name = player.name
         except AttributeError:
             return
         if self._remove(player):
             if client_id in self.client_ids:
                 del self.client_ids[client_id]
-            if name in self.names:
-                del self.names[name]
+            #if name in self.names:
+                #del self.names[name]
         return player
 
     def client(self, client_id):
         return self[self.client_ids[client_id]]
 
-    def by_name(self, name):    # returns a client_id
-        if name in self.names:
-            return self.names[name]
-        else:
-            return 0
+    #def by_name(self, name):    # returns a client_id
+        #if name in self.names:
+            #return self.names[name]
+        #else:
+            #return 0
 
-    def update(self, player, old_id=None, old_cid=None, old_name=None):
+    #def update(self, player, old_id=None, old_cid=None, old_name=None):
+    def update(self, player, old_id=None, old_cid=None):
         if old_id != player.id and old_id in self:
             del self.objects[old_id]
         if old_cid is not None and old_cid in self.client_ids:
             del self.client_ids[old_cid]
-        if old_name is not None and old_name in self.names:
-            del self.names[old_name]
+        #if old_name is not None and old_name in self.names:
+            #del self.names[old_name]
         self.objects[player.id] = player
         self.client_ids[player.cid] = player.id
-        self.names[player.name] = player.cid
+        #self.names[player.name] = player.cid
                 
 # represents a "Player" (player score, agents they control etc)
 class Player:
 
-    def __init__(self, connection, name, id=None):
-        self.kills = 0
-        self.deaths = 0
-        self.score = 0
-        self.name = name
+    #def __init__(self, connection, name, id=None):
+    def __init__(self, connection, id=None):
+        #self.kills = 0
+        #self.deaths = 0
+        #self.score = 0
+        #self.name = name
         self.connection = connection
         self.cid = connection.id
         if id is None:
@@ -71,9 +74,9 @@ class Player:
         }
         if properties is None:
             d.update({
-            'kills' : self.kills,
-            'deaths': self.deaths,
-            'name'  : self.name,
+            #'kills' : self.kills,
+            #'deaths': self.deaths,
+            #'name'  : self.name,
             'cid'   : self.cid,
             'agent' : '',
         })
@@ -94,15 +97,15 @@ class Player:
 
         return v
 
-    def killed(self):
-        self.kills += 1
-        self.score += 1
-        NetOut.event.player_update(self, ['kills', 'score'])
+    #def killed(self):
+        #self.kills += 1
+        #self.score += 1
+        #NetOut.event.player_update(self, ['kills', 'score'])
 
-    def died(self, no_score=False):
-        if not no_score:
-            self.deaths += 1
-            NetOut.event.player_update(self, 'deaths')
+    #def died(self, no_score=False):
+        #if not no_score:
+            #self.deaths += 1
+            #NetOut.event.player_update(self, 'deaths')
 
     def quit(self):
         GameStateGlobal.playerList.leave(self)
@@ -118,13 +121,13 @@ class Player:
         if 'cid' in player:
             args['old_cid'] = self.cid
             self.cid = player['cid']
-        if 'name' in player:
-            print 'updating player name: %s  -> %s' % (self.name, player['name'],)
-            args['old_name'] = self.name
-            self.name = player['name']
-        if 'kills' in player:
-            self.kills = player['kills']
-        if 'deaths' in player:
-            self.deaths = player['deaths']
+        #if 'name' in player:
+            #print 'updating player name: %s  -> %s' % (self.name, player['name'],)
+            #args['old_name'] = self.name
+            #self.name = player['name']
+        #if 'kills' in player:
+            #self.kills = player['kills']
+        #if 'deaths' in player:
+            #self.deaths = player['deaths']
 
         GameStateGlobal.playerList.update(self, **args)
