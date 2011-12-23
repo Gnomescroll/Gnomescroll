@@ -105,6 +105,8 @@ void CCamera::move(float dx, float dy, float dz) {
     z += dz;
 }
 
+#include <voxel/voxel_volume.hpp>
+
 void CCamera::world_projection() {
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -137,6 +139,9 @@ void CCamera::world_projection() {
     glEnable (GL_DEPTH_TEST);
 
     glColor3ub(255, 255, 255);
+
+    //DEBUG!!!
+    voxel_test();
 }
 
 void CCamera::set_angles(float theta, float phi) {
