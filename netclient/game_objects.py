@@ -139,20 +139,4 @@ class DetachableObject(GameObject):
                 print 'WARNING trying to set item position while item is possessed'
             return self.owner.pos()
 
-class TeamItem(object):
-
-    def __init__(self, team, **kwargs):
-        self.team = team
-
-    def __getattribute__(self, k):
-        v = object.__getattribute__(self, k)
-        if k == 'team' and v is not None:
-            v = GameStateGlobal.teamList[v]
-        return v
-
-    def can_take(self, new_owner):
-        return (new_owner.team == self.team and self.pickup_by_own_team) or \
-                (new_owner.team != self.team and self.pickup_by_other_team)
-                
-
 from game_state import GameStateGlobal

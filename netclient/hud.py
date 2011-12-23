@@ -8,7 +8,6 @@ from chat_client import ChatClientGlobal
 from input import InputGlobal
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
-#from game_modes import Team
 
 '''
 HUD overlay

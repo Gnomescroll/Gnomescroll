@@ -87,12 +87,6 @@ class EventOut:
             'agent' :   agent.json(properties),
         }
 
-    #@sendJSONevent('team_update')
-    #def team_update(self, team, properties=None):
-        #return {
-            #'team'  :   team.json(properties),
-        #}
-
     @sendJSONevent('player_update', tick=False)
     def player_update(self, player, properties=None):
         return {
@@ -119,13 +113,6 @@ class EventOut:
             'player'    :   player.json(),
         }
 
-    #@sendJSONevent('player_team', tick=False)
-    #def player_team(self, player):
-        #return {
-            #'id'    :   player.id,
-            #'team'  :   player.team.id,
-        #}
-
     @sendJSONevent('client_quit', tick=False)
     def client_quit(self, client_id):
         return {
@@ -149,12 +136,6 @@ class EventOut:
             'aid'       :   agent_id,
             'wtype'     :   weapon_type,
         }
-
-    #@sendJSONevent('team_list')
-    #def send_teams(self):
-        #return {
-            #'team_list' :   GameStateGlobal.teamList.json()
-        #}
 
     @sendJSONevent('player_list')
     def send_players(self):
@@ -388,29 +369,3 @@ class SendMessage: #each connection has one of these
         return {
             'timestamp'   :   timestamp,
         }
-
-    #@sendJSON('game_mode')
-    #def game_mode(self, send_teams=True):
-        #d = {
-            #'game'  :   GameStateGlobal.game.json(),
-        #}
-        #if send_teams:
-            #d['team_list'] = GameStateGlobal.teamList.json()
-            #d['teams'] = len(d['team_list'])
-        #return d
-
-    #@sendJSON('teams')
-    #def teams(self, teams):
-        #return {
-            #'team_list' :   [team.json() for team in teams],
-        #}
-
-    #@sendJSON('team_update')
-    #def send_team(self, team, properties=None):
-        #if not hasattr(team, 'id'):
-            #team = GameStateGlobal.teamList[team]
-        #d = {
-            #'team'  :   team.json(properties),
-            #'full'  :   int(not properties),
-        #}
-        

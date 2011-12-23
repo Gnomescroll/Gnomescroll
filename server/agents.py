@@ -107,7 +107,6 @@ class Agent(AgentWrapper, AgentPhysics):
     _TICK_RATE = 30       # milliseconds
     RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
 
-    #def __init__(self, player_id, client_id, position=None, id=None, team=None):
     def __init__(self, player_id, client_id, position=None, id=None):
 
         ### Global imports ###
@@ -117,8 +116,6 @@ class Agent(AgentWrapper, AgentPhysics):
         AgentWrapper.__init__(self, player_id)
         AgentWrapper.send_id_to_client(self, client_id)
         
-        #self.team = team
-
         ### Agent State
         self.d_x = 0 #yaw?
         self.d_y = 0 #pitch?
@@ -221,7 +218,6 @@ class Agent(AgentWrapper, AgentPhysics):
                     'active' : self._active_weapon,
                 },
                 'state' : self.state,
-                #'team'  : self.team.id,
             })
         else:
             if type(properties) == str:
@@ -237,8 +233,6 @@ class Agent(AgentWrapper, AgentPhysics):
                     val = {
                         'active'    :   int(self._active_weapon),
                     }
-                #elif prop == 'team':
-                    #val = self.team.id
                 else:
                     val = getattr(self, prop)
 
@@ -357,37 +351,6 @@ class Agent(AgentWrapper, AgentPhysics):
             sin( self.x_angle * pi) * cos( self.y_angle * pi),
             sin( self.y_angle),
         ]
-
-    #def has_flags(self):
-        #flags = [team.flag for team in GameStateGlobal.teamList.values() if team.flag is not None]
-        #flags = [flag for flag in flags if flag != self.team.flag]
-        #held_flags = [flag for flag in self.inventory if flag in flags]
-        #return held_flags
-
-    def take_damage(self, damage, projectile_owner=None, suicidal=False):
-        print 'agent %s taking damage %i' % (self.id, damage,)
-        print self.health
-        if self.dead:
-            return
-        # check team kills
-        if projectile_owner is not None:
-            if not hasattr(projectile_owner, 'id'):
-                projectile_owner = GameStateGlobal.playerList[projectile_owner]
-
-            #if suicidal and projectile_owner.agent == self:
-                #pass
-            #elif projectile_owner.team == self.team and not opts.team_kills:
-                #print 'team_kill'
-                #return
-            
-        old = self.health
-        self.health -= damage
-        self.health = max(self.health, 0)
-        if self.health <= 0:
-            self.die(projectile_owner)
-        elif self.health != old:
-            NetOut.event.agent_update(self, 'health')
-        print damage
 
     def heal_all(self):
         self.heal(self.HEALTH_MAX)

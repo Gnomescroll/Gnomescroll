@@ -100,12 +100,6 @@ class SendMessage(GenericMessage):
             'id'   :   player_id,
         }
 
-    #@sendJSON('request_team')
-    #def request_team(self, team_id):
-        #return {
-            #'id'    :   team_id,
-        #}
-
     @sendJSON('request_weapon')
     def request_weapon(self, wid):
         return {
@@ -164,13 +158,6 @@ class SendMessage(GenericMessage):
             name = NetClientGlobal.name
         return {
             'name': name,
-        }
-
-    @idRequired
-    @sendJSON('join_team')
-    def join_team(self, team):
-        return {
-            'team'  :   team,
         }
 
 class MiscMessage:

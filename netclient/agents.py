@@ -22,7 +22,6 @@ from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
 from weapons import Pick, BlockApplier
-#from game_modes import NoTeam
 from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_agent_control_state
 from draw_utils import *
 from net_out import NetOut
@@ -217,7 +216,6 @@ class AgentModel(AgentWrapper):
     _TICK_RATE = 30. # milliseconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
-    #def __init__(self, owner, id, state=None, health=None, dead=False, team=None):
     def __init__(self, owner, id, state=None, health=None, dead=False):
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
@@ -228,8 +226,6 @@ class AgentModel(AgentWrapper):
         self.state = state #position, velocity, acceleration
         self.xa = state[3]
         self.ya = state[4]
-
-        #self.team = team
 
         self.button_state = [0 for i in range(11)]
 
@@ -262,9 +258,6 @@ class AgentModel(AgentWrapper):
             state = agent['state']
             if type(state) == list and len(state) == len(self.state):
                 self.state = state
-
-        #if 'team' in agent:
-            #self.team = agent['team']
 
         GameStateGlobal.agentList.update(self, *args)
 
@@ -337,9 +330,7 @@ class AgentModel(AgentWrapper):
 # represents an agent under control of a player
 class Agent(AgentModel):
 
-    #def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None):
-        #AgentModel.__init__(self, owner, id, state, health, dead, team)
         AgentModel.__init__(self, owner, id, state, health, dead)
         print 'Python Agent creation: id %s' % (self.id,)
         self.inventory = AgentInventory(self, items)
@@ -437,9 +428,7 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, PlayerAgentWrapper):
 
-    #def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
     def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None):
-        #AgentModel.__init__(self, owner, id, state, health, dead, team)
         AgentModel.__init__(self, owner, id, state, health, dead)
         PlayerAgentWrapper.__init__(self, id)
 

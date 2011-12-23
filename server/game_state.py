@@ -13,8 +13,6 @@ class GameStateGlobal:
     agentList = None
     playerList = None
     weaponList = None
-    #teamList = None
-    #game = None
 
     player_id = 0
 
@@ -27,15 +25,6 @@ class GameStateGlobal:
         GameStateGlobal.agentList = AgentList()
         GameStateGlobal.playerList = PlayerList()
         GameStateGlobal.weaponList = WeaponList()
-        #GameStateGlobal.teamList = game_modes.TeamList()
-
-        #GameStateGlobal.game_mode_name = opts.game_mode
-        #game_args = {
-            #'teams' :   opts.n_teams,
-            #'team_kills':   opts.team_kills,
-        #}
-        #game = game_modes.names[opts.game_mode]
-        #GameStateGlobal.game = game(**game_args)
 
     @classmethod
     def init(cls):
@@ -53,14 +42,12 @@ class GameStateGlobal:
                 connection.player.agent.quit()
                 GameStateGlobal.agentList.destroy(connection.player.agent)
             connection.player.quit()
-            #GameStateGlobal.game.remove_player(connection.player)
 
 from net_server import NetServer
 
 from agents import AgentList
 from players import PlayerList
 from weapons import WeaponList
-#import game_modes
 
 # main game state wrapper
 class GameState:

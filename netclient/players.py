@@ -1,7 +1,6 @@
 
 class Player(object):
 
-    #def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None, score=0):
     def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, score=0):
         if cid is None or id is None:
             print 'Client_id or pid missing; abort creating player'
@@ -10,7 +9,6 @@ class Player(object):
         self.cid = cid
         self.id = id
         self.name = name
-        #self.team = team
         self.kills = kills
         self.deaths = deaths
         self.agent = None
@@ -44,8 +42,6 @@ class Player(object):
             self.kills = player['kills']
         if 'deaths' in player:
             self.deaths = player['deaths']
-        #if 'team' in player:
-            #self.team = player['team']
         if 'score' in player:
             self.score = player['score']
 
@@ -53,7 +49,6 @@ class Player(object):
 
 class YouPlayer(Player):
 
-    #def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, team=None, score=0):
     def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, score=0):
         self.cid = cid
         self.name = name
@@ -63,7 +58,6 @@ class YouPlayer(Player):
         self.agent = None
         self.you = True
         self.suicides = suicides
-        #self.team = team
         self.score = score
         
 
