@@ -86,7 +86,7 @@ def _gen_map():
         .reset()
 
         c_lib.map_gen.grass(512,512,0)
-        
+
         ### 3d density noise. floating islands, overhangs
         #c_lib.map_gen.conf\
         #.size(512,512,128)\
@@ -128,7 +128,7 @@ def _gen_map():
         .p3(octaves=6, persistence=0.8)\
         .start()\
         .reset()
-        
+
          ##3d density noise, subtractive RMF. forms caves
         c_lib.map_gen.conf\
         .interpolate(2,4,2)\
@@ -171,7 +171,7 @@ def _gen_map():
         #.interpolate(4,2,1)\
         #.p2(octaves=6, persistence=0.45)\
         #.start()
-        #c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=15.0) 
+        #c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=15.0)
         #c_lib.map_gen.perturb2d(128,128, turbulence=1.0, blend='-')
         #c_lib.map_gen.heightmap(128,128,128, 40, 40, base_tile=2)
         #c_lib.map_gen.grass(128,128, 0)
@@ -217,7 +217,8 @@ class Main:
             print "str= %s" % (opts.map)
             terrain_map.load_from_disk(opts.map)
         else:
-            terrain_map.load_from_disk("natural_terrain")
+            pass
+            #terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
             #terrain_map.load_from_disk("natural4")
             #terrain_map.load_from_disk("savetest2")
@@ -229,7 +230,7 @@ class Main:
         #map_gen.cave2(terrain_map)
         #map_gen.ore1(terrain_map)
 
-        #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+        map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
         #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
         #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
         #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)
