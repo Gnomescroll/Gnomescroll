@@ -318,18 +318,19 @@ class ChatCommand():
                     'channel'   :   'system',
                 })
             else:
-                team = GameStateGlobal.teamList[team_id]
-                if team is None:
+                #team = GameStateGlobal.teamList[team_id]
+                #if team is None:
+                if team_id not in [0,1,2]:
                     _send = self._send_local({
                         'content'   :   'Team %d does not exist' % (team_id,),
                         'channel'   :   'system',
                     })
                 else:
-                    NetOut.sendMessage.join_team(team)
+                    NetOut.sendMessage.join_team(team_id)
 
         elif command == 'teams':
             _send = self._send_local({
-                'content'   :   str(GameStateGlobal.teamList),
+                'content'   :   str([0,1,2]),
                 'channel'   :   'system',
             })
 

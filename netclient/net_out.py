@@ -166,12 +166,12 @@ class SendMessage(GenericMessage):
             'name': name,
         }
 
-    #@idRequired
-    #@sendJSON('join_team')
-    #def join_team(self, team):
-        #return {
-            #'team'  :   team.id,
-        #}
+    @idRequired
+    @sendJSON('join_team')
+    def join_team(self, team):
+        return {
+            'team'  :   team,
+        }
 
 class MiscMessage:
     @sendJSON('ping')
