@@ -386,6 +386,11 @@ class PlayerMessageHandler(DatastoreMessageInterface):
         if GameStateGlobal.game is not None:
             GameStateGlobal.game.update_players()
 
+    def _player_create(self, **args):
+        player = self._default_create(**args)
+        if player is not None and player.cid == NetClientGlobal.connection.client_id:
+            GameStateGlobal.update_your_info(player, args)
+            
 
 # agent messages needs to be updated
 # there is no agent_create, and agent_destroy is called remove_agent

@@ -58,6 +58,7 @@ class GenericObjectList:
         obj = None
         if kwargs['id'] in self.objects:
             print '%s::id %s already exists' % (self._itemname, kwargs['id'],)
+            obj = self.objects[kwargs['id']]
         else:
             obj = self._object_type(*args, **kwargs)
             self.objects[obj.id] = obj
@@ -235,14 +236,6 @@ class PlayerList(GenericObjectList):
         if player is not None:
             self.client_ids[client_id] = player.id
             #self.names[name] = client_id
-        return player
-
-    def join_yourself(self, **player):
-        from players import Player, YouPlayer
-        self._object_type = YouPlayer
-        player = self._add(**player)
-        self._object_type = Player
-        self.client_ids[player.cid] = player.id
         return player
 
     #def identify(self, player):

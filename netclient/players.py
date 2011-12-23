@@ -20,10 +20,8 @@ class Player(object):
 
     def __getattribute__(self, k):
         v = object.__getattribute__(self, k)
-        
         if k == 'team':
             v = cGame.get_team(v)
-
         return v
 
     def update_info(self, **player):
@@ -47,21 +45,6 @@ class Player(object):
             #self.score = player['score']
 
         GameStateGlobal.playerList.update(self, **args)
-
-class YouPlayer(Player):
-
-    #def __init__(self, cid=None, id=None, name='', kills=0, deaths=0, suicides=0, agent=None, score=0):
-    def __init__(self, cid=None, id=None, agent=None):
-        self.cid = cid
-        #self.name = name
-        self.id = id
-        #self.kills = kills
-        #self.deaths = deaths
-        self.agent = None
-        self.you = True
-        #self.suicides = suicides
-        #self.score = score
-        
 
 from game_state import GameStateGlobal
 from net_client import NetClientGlobal
