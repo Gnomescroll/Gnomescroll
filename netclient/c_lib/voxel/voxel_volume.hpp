@@ -96,8 +96,11 @@ class Voxel_volume
         center.y = y;
         center.z = z;
 
-        Vector tmp = center;
-        
+        //Vector tmp = center;
+        Vector vx = vector_scalar2(&v[0],hdx*scale);
+        Vector vy = vector_scalar2(&v[1],hdy*scale);
+        Vector vz = vector_scalar2(&v[2],hdz*scale);
+        v[4] = vector_add4(&vx,&vy,&vz,&center);
     }
 
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
@@ -135,6 +138,8 @@ class Voxel_volume
         hdy = ((float) ydim) / 2;
         hdz = ((float) zdim) / 2;
 
+        radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
+
         _xdim = pow2_2(__xdim);
         _ydim = pow2_2(__ydim);
         _zdim = pow2_2(__zdim);
@@ -166,7 +171,7 @@ inline Voxel* Voxel_volume::get(int x, int y, int z) __attribute((always_inline)
 
 void voxel_test()
 {
-    
+    return;
     Voxel_volume vv(9,9,9, 1.0);
     Voxel* v = vv.get(4,5,6);
 }
