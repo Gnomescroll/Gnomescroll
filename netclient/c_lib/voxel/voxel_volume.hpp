@@ -68,7 +68,7 @@ class Voxel_volume
 
     bool needs_vbo_update;
 
-    //int xdim,ydim,zdim;
+    int xdim,ydim,zdim;
     int _xdim,_ydim,_zdim;
     Voxel* voxel;
     int index1, index12;
@@ -97,7 +97,8 @@ class Voxel_volume
 
     }
 
-    void translate_center(float dx, dy, dz)
+    // testing/tweaking
+    void translate_center(float dx, float dy, float dz)
     {
         center.x += dx;
         center.y += dy;
@@ -108,6 +109,7 @@ class Voxel_volume
         Vector vz = vector_scalar2(&v[2],hdz*scale);
         v[4] = vector_add4(&vx,&vy,&vz,&center);
     }
+
     void set_center(float x, float y, float z)
     {
         center.x = x;
@@ -153,9 +155,9 @@ class Voxel_volume
         //v[3] = Vector_init(0,0,0);  //center
         this->set_center(0.0,0.0,0.0);
 
-        int xdim = __xdim;
-        int ydim = __ydim;
-        int zdim = __zdim;
+        xdim = __xdim;
+        ydim = __ydim;
+        zdim = __zdim;
 
         hdx = ((float) xdim) / 2;
         hdy = ((float) ydim) / 2;
