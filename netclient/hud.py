@@ -130,8 +130,8 @@ class Hud(object):
         agent = GameStateGlobal.agent
         if agent is None:
             s = 'No agent yet'
-        #elif not isinstance(agent.team, Team) or agent.team.is_viewers():
-            #s = 'Viewer Mode'
+        elif agent.team.is_viewers():
+            s = 'Viewer Mode'
         else:
             health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
             weapon = agent.weapons.active()
@@ -147,8 +147,8 @@ class Hud(object):
         if agent is None:
             s = 'No agent yet.'
         else:
-            #if agent.team is None or not isinstance(agent.team, Team) or agent.team.is_viewers():
-                #s = 'Viewer Mode'
+            if agent.team.is_viewers():
+                s = 'Viewer Mode'
             if False:
                 pass
             else:

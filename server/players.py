@@ -93,6 +93,14 @@ class Player:
             d['agent'] = self.agent.json(agent_properties)
         return d    
 
+    def __getattribute__(self, k):
+        v = object.__getattribute__(self, k)
+        
+        if name == 'team':
+            val = cGame.get_team(val)
+
+        return v
+
     def killed(self):
         self.kills += 1
         self.score += 1

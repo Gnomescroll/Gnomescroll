@@ -16,6 +16,7 @@ import c_lib.c_lib_agents as cAgents
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_hud as cHUD
+import c_lib.c_lib_game_modes as cGame
 
 from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
@@ -273,8 +274,8 @@ class AgentModel(AgentWrapper):
         except AttributeError:
             val = object.__getattribute__(self, name)
             
-        #if name == 'team' and val is not None:
-            #val = GameStateGlobal.teamList[val]
+        if name == 'team':
+            val = cGame.get_team(val)
                     
         return val
 
@@ -351,8 +352,8 @@ class PlayerAgentWeapons(AgentWeapons):
         self.set_hud_icons()
 
     def switch(self, weapon_index):
-        #if self.agent.team.is_viewers():
-            #return
+        if self.agent.team.is_viewers():
+            return
         old = self._active_weapon
         num_weapons = len(self.weapons)
         if num_weapons == 0:
@@ -465,8 +466,8 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
-        #if name == 'team' and val is not None:
-            #val = GameStateGlobal.teamList[val]
+        if name == 'team':
+            val = cGame.get_team(val)
 
         return val
 
@@ -479,8 +480,8 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     def fire(self):
-        #if self.team.is_viewers():
-            #return
+        if self.team.is_viewers():
+            return
 
         weapon = self.weapons.active()
         if weapon is None:
@@ -498,16 +499,16 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             print "Agent.fire :: unknown command %s" % (fire_command,)
 
     def add_ammo(self, amt, weapon_type):
-        #if self.team.is_viewers():
-            #return
+        if self.team.is_viewers():
+            return
         for weapon in weapons:
             if weapon.type == weapon_type:
                 weapon.restock(amt)
                 break
 
     def reload(self):
-        #if self.team.is_viewers():
-            #return
+        if self.team.is_viewers():
+            return
         weapon = self.weapons.active()
         if weapon is None:
             return
@@ -516,8 +517,8 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             NetOut.sendMessage(reload_command, self)
 
     def set_active_block(self, block_type=None):
-        #if self.team.is_viewers():
-            #return
+        if self.team.is_viewers():
+            return
         if self.camera is None:
             return
         if block_type is None:
@@ -548,14 +549,14 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
 
     def pickup_item(self, item, index=None):
-        #if self.team.is_viewers():
-            #return
+        if self.team.is_viewers():
+            return
         if self.inventory.can_add(item):
             NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
-        #if self.team.is_viewers():
-            #return
+        if self.team.is_viewers():
+            return
         if self.inventory.can_drop(item):
             NetOut.sendMessage.drop_item(self, item)
 

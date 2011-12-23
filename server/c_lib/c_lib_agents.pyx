@@ -15,6 +15,12 @@ cdef extern from "./agent/agent.hpp":
         float vx,vy,vz
         #bool crouching
         bool jump_ready
+
+cdef extern from "./agent/agent_status.hpp":
+    cdef cppclass Agent_status:
+        int health
+        bool dead
+        int team
         
 #Agent_state
 cdef extern from "./agent/agent.hpp":
@@ -28,6 +34,7 @@ cdef extern from "./agent/agent.hpp":
         int owner
         AgentState s
         Agent_collision_box box
+        Agent_status status
         void teleport(float x,float y,float z)
         void send_id_to_client(int client_id)
 
@@ -52,7 +59,9 @@ class AgentWrapper(object):
         'crouch_height','c_height',
         'box_height', 'b_height',
         'box_r',
-        #'crouching'
+        #'crouching',
+        'owner',
+        'team',
     ]
 
 #    cdef int id
@@ -108,6 +117,12 @@ class AgentWrapper(object):
             return a.box.b_height
         elif name == 'box_r':
             return a.box.box_r
+
+        elif name == 'owner':
+            return a.owner
+
+        elif name == 'team':
+            return a.status.team
 
         #elif name == 'crouching':
         #    return a.s.crouching

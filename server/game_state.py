@@ -14,7 +14,7 @@ class GameStateGlobal:
     playerList = None
     weaponList = None
     #teamList = None
-    game = None
+    #game = None
 
     player_id = 0
 
@@ -53,7 +53,7 @@ class GameStateGlobal:
                 connection.player.agent.quit()
                 GameStateGlobal.agentList.destroy(connection.player.agent)
             connection.player.quit()
-            GameStateGlobal.game.remove_player(connection.player)
+            #GameStateGlobal.game.remove_player(connection.player)
 
 from net_server import NetServer
 

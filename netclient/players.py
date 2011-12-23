@@ -21,8 +21,10 @@ class Player(object):
 
     def __getattribute__(self, k):
         v = object.__getattribute__(self, k)
-        #if k == 'team' and v is not None:
-            #return GameStateGlobal.teamList[v]
+        
+        if k == 'team':
+            v = cGame.get_team(v)
+
         return v
 
     def update_info(self, **player):

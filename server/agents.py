@@ -17,6 +17,7 @@ from net_out import NetOut
 from net_server import NetServer
 from c_lib.c_lib_agents import AgentListWrapper, AgentWrapper, teleport_Agent
 import c_lib.terrain_map as terrain_map
+import c_lib.c_lib_game_modes as cGame
 
 collisionDetection = terrain_map.collisionDetection
 
@@ -165,6 +166,10 @@ class Agent(AgentWrapper, AgentPhysics):
             val = AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             val = object.__getattribute__(self, name)
+
+        if name == 'team':
+            val = cGame.get_team(val)
+
         return val
 
     def block_height(self):
