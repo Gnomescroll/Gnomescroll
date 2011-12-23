@@ -343,7 +343,7 @@ class PlayerAgentWeapons(AgentWeapons):
         self.set_hud_icons()
 
     def switch(self, weapon_index):
-        if self.agent.team.is_viewers():
+        if self.agent.team.viewers:
             return
         old = self._active_weapon
         num_weapons = len(self.weapons)
@@ -469,7 +469,7 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     def fire(self):
-        if self.team.is_viewers():
+        if self.team.viewers:
             return
 
         weapon = self.weapons.active()
@@ -488,7 +488,7 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             print "Agent.fire :: unknown command %s" % (fire_command,)
 
     def add_ammo(self, amt, weapon_type):
-        if self.team.is_viewers():
+        if self.team.viewers:
             return
         for weapon in weapons:
             if weapon.type == weapon_type:
@@ -496,7 +496,7 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
                 break
 
     def reload(self):
-        if self.team.is_viewers():
+        if self.team.viewers:
             return
         weapon = self.weapons.active()
         if weapon is None:
@@ -506,7 +506,7 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             NetOut.sendMessage(reload_command, self)
 
     def set_active_block(self, block_type=None):
-        if self.team.is_viewers():
+        if self.team.viewers:
             return
         if self.camera is None:
             return
@@ -538,13 +538,13 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
 
     def pickup_item(self, item, index=None):
-        if self.team.is_viewers():
+        if self.team.viewers:
             return
         if self.inventory.can_add(item):
             NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
-        if self.team.is_viewers():
+        if self.team.viewers:
             return
         if self.inventory.can_drop(item):
             NetOut.sendMessage.drop_item(self, item)

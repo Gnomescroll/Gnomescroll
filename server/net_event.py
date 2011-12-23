@@ -133,7 +133,7 @@ class Processors:
         err_msg, agent = None, None
         try:
             agent = player.agent
-            if agent.team.is_viewers():
+            if agent.team.viewers:
                 err_msg = err.is_viewer(msg)
         except AttributeError:
             err_msg = err.player_has_no_agent(player)
@@ -164,7 +164,7 @@ class Processors:
         if m.error:
             return m
 
-        if m.agent.team.is_viewers():
+        if m.agent.team.viewers:
             m.error = err.is_viewer(msg)
         if not player.owns(m.agent):
             m.error = err.agent_ownership(player, m.agent)

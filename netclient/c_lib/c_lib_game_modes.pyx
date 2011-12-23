@@ -35,10 +35,12 @@ class DummyCTFTeam(object):
         self.id = id
 
     def __getattribute__(self, k):
+
+        id = object.__getattribute__(self, 'id')
         cdef Team t
-        if self.id == 1:
+        if id == 1:
             t = <Team>(ctf.one)
-        elif self.id == 2:
+        elif id == 2:
             t = <Team>(ctf.two)
 
         if k == 'score':
@@ -48,17 +50,13 @@ class DummyCTFTeam(object):
         elif k == 'n':
             return t.n
         elif k == 'viewers':
-            return  k.viewers
+            return t.viewers
         elif k == 'id':
             return k.id
+        elif k.startswith('__'):
+            return object.__getattribute__(self, k)
 
         raise AttributeError
-
-    def is_viewers(self):
-        if self.id == 1:
-            return (<Team>(ctf.one)).viewers
-        elif self.id == 2:
-            return (<Team>(ctf.two)).viewers
 
 ctf_one = DummyCTFTeam(1)
 ctf_two = DummyCTFTeam(2)
@@ -66,6 +64,7 @@ ctf_two = DummyCTFTeam(2)
 class DummyNoTeam(object):
 
     def __getattribute__(self, k):
+
         cdef NoTeam t
         t = ctf.none
 
@@ -74,14 +73,12 @@ class DummyNoTeam(object):
         elif k == 'n':
             return t.n
         elif k == 'viewers':
-            return  k.viewers
+            return t.viewers
         elif k == 'id':
             return k.id
-
+        elif k.startswith('__'):
+            return object.__getattribute__(self, k)
         raise AttributeError
-
-    def is_viewers(self):
-        return ctf.none.viewers
 
 ctf_none = DummyNoTeam()
 
