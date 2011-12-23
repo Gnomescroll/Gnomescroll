@@ -90,13 +90,30 @@ class Voxel_volume
         vector_cross(f, u, &v[1]);
     }
 
+    //applies rotation
+    void rotate_axis(float theta, float phi)
+    {
+        
+
+    }
+
+    void translate_center(float dx, dy, dz)
+    {
+        center.x += dx;
+        center.y += dy;
+        center.z += dz;
+
+        Vector vx = vector_scalar2(&v[0],hdx*scale);
+        Vector vy = vector_scalar2(&v[1],hdy*scale);
+        Vector vz = vector_scalar2(&v[2],hdz*scale);
+        v[4] = vector_add4(&vx,&vy,&vz,&center);
+    }
     void set_center(float x, float y, float z)
     {
         center.x = x;
         center.y = y;
         center.z = z;
 
-        //Vector tmp = center;
         Vector vx = vector_scalar2(&v[0],hdx*scale);
         Vector vy = vector_scalar2(&v[1],hdy*scale);
         Vector vz = vector_scalar2(&v[2],hdz*scale);
