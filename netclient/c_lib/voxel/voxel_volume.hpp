@@ -33,7 +33,7 @@ unsigned NextPow2( unsigned x ) {
 int pow2_1(int n)
 {
     int x = 1;
-    int i = 1;
+    int i = 0;
     while(x < n) 
     {
         i++;
@@ -45,49 +45,102 @@ int pow2_1(int n)
 int pow2_2(int n)
 {
     int x = 1;
-    int i = 1;
+    //int i = 0;
     while(x < n) 
     {
-        i++;
+        //i++;
         x <<= 1;
     }
-    return n;
+    return x;
 } 
 
 #include <voxel/common.h>
-
+#include <physics/vector.hpp>
 
 class Voxel_volume
 {
-    float v[3][4]; // forward, up, right (x,y,z), offset
+    public:
+    Vector v[4]; // forward, up, right (x,y,z), offset
     float scale;    //size of voxels
     //bounding sphere
-    float center[3];
-    float radius;
+    Vector center;
+    float radius2;
 
+    bool needs_vbo_update;
 
     int xdim,ydim,zdim;
     int _xdim,_ydim,_zdim;
     Voxel* voxel;
     int index1, index12;
 
+    float hdx,hdy,hdz;  //half of width, height, depth as floats
 
-
-    Voxel_volume(int __xdim, int __ydim, int __zdim)
+    void update()
     {
+        
+
+    }
+
+    //vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
+    //forward and up vector
+    void set_axis(Vector* f, Vector* u)
+    {
+        v[0] = *f;
+        v[2] = *u; 
+        vector_cross(f, u, &v[1]);
+    }
+
+    void set_center(float x, float y, float z)
+    {
+        center.x = x; center.y = y; center.z = z;
+
+
+    }
+
+    inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
+    {
+        //if(x+(y << index1)+(z << index1) != (x+_xdim*y+(_xdim*_ydim*z) ) ) printf("ERROR!\n");
+        //printf("1: %i, %i, %i \n",x, (y << index1), (z << index1) );
+        //printf("2: %i, %i, %i \n", x,_xdim*y, _xdim*_ydim*z );
+        return &voxel[x+(y << index1)+(z << index1)];
+    }
+
+    inline void set(int x, int y, int z, Voxel* v) __attribute((always_inline))  __attribute((always_inline)) 
+    {
+        voxel[x+(y << index1)+(z << index1)] = *v;
+    }
+
+    inline void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))  __attribute((always_inline)) 
+    {
+        Voxel* v = &voxel[x+(y << index1)+(z << index1)];
+        v->r = r;
+        v->g = g;
+        v->b = b;
+        v->a = a;
+    }
+
+    Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
+    {
+        needs_vbo_update = false;
+        scale = _scale;
+
         xdim = __xdim;
         ydim = __ydim;
         zdim = __zdim;
+
+        hdx = ((float) xdim) / 2;
+        hdy = ((float) ydim) / 2;
+        hdz = ((float) zdim) / 2;
 
         _xdim = pow2_2(__xdim);
         _ydim = pow2_2(__ydim);
         _zdim = pow2_2(__zdim);
         
-        index1 = pow2_1(__ydim);
-        index12 = pow2_1(__ydim) + pow2_1(__zdim);
+        index1 = pow2_1(__xdim);
+        index12 = pow2_1(__xdim) + pow2_1(__ydim);
 
         printf("__xdim, __ydim, __zdim= %i, %i, %i \n", __xdim, __ydim,__zdim);
-        printf("_xdim, _ydim, _zdim= %i, %i, %i \n", xdim, _ydim, _zdim);
+        printf("_xdim, _ydim, _zdim= %i, %i, %i \n", _xdim, _ydim, _zdim);
         printf("index1, index12= %i, %i \n", index1, index12);
 
         voxel = new Voxel[_xdim*_ydim*_zdim];
@@ -99,10 +152,18 @@ class Voxel_volume
     }
 };
 
+/*
+inline Voxel* Voxel_volume::get(int x, int y, int z) __attribute((always_inline)) = 0;
+{
+    if(x+(index1<<y)+(index12<<z) != (x+_xdim*y+(_xdim*_ydim*z) ) ) printf("ERROR!\n");
+    return &voxel[x+(index1<<y)+(index12<<z)]   ;
+
+}
+*/
 
 void voxel_test()
 {
     
-    Voxel_volume vv(8,8,8);
-
+    Voxel_volume vv(9,9,9, 1.0);
+    Voxel* v = vv.get(4,5,6);
 }
