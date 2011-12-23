@@ -110,7 +110,7 @@ class PyClient:
 
     def send_game_state(self):
         self.sendMessage.send_players()
-        self.sendMessage.game_mode()
+        #self.sendMessage.game_mode()
 
     def _register(self):
         ChatServer.chat.connect(self) # join chat server

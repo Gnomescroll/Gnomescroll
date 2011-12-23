@@ -22,7 +22,7 @@ class NetEventGlobal:
     agentMessageHandler = None
     playerMessageHandler = None
     miscMessageHandler = None
-    gameModeMessageHandler = None
+    #gameModeMessageHandler = None
     weaponMessageHandler = None
     datMessageHandler = None
 
@@ -38,7 +38,7 @@ class NetEventGlobal:
         cls.mapMessageHandler = MapMessageHandler()
         cls.weaponMessageHandler = WeaponMessageHandler()
 
-        cls.gameModeMessageHandler = GameModeMessageHandler()
+        #cls.gameModeMessageHandler = GameModeMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
 
     @classmethod
@@ -50,7 +50,7 @@ class NetEventGlobal:
 
         AgentMessageHandler.init()
         MapMessageHandler.init()
-        GameModeMessageHandler.init()
+        #GameModeMessageHandler.init()
         WeaponMessageHandler.init()
 
     @classmethod
@@ -369,7 +369,7 @@ class PlayerMessageHandler(DatastoreMessageInterface):
     def __init__(self):
         self.name = 'player'
         self.store = GameStateGlobal.playerList
-        self._bind_event('player_team', self._player_team)
+        #self._bind_event('player_team', self._player_team)
         DatastoreMessageInterface.__init__(self)
 
     def request_data(self, **data):
@@ -381,37 +381,37 @@ class PlayerMessageHandler(DatastoreMessageInterface):
         if id is not None:
             GameStateGlobal.remove_player(id)    # this method manages FK relationships
 
-    def _player_team(self, **msg):
-        err_msg = None
-        try:
-            pid = int(msg.get('id', None))
-            player = GameStateGlobal.playerList[pid]
-        except ValueError:
-            err_msg = 'player id invalid'
-        except TypeError:
-            err_msg = 'player id missing'
+    #def _player_team(self, **msg):
+        #err_msg = None
+        #try:
+            #pid = int(msg.get('id', None))
+            #player = GameStateGlobal.playerList[pid]
+        #except ValueError:
+            #err_msg = 'player id invalid'
+        #except TypeError:
+            #err_msg = 'player id missing'
 
-        if player is None:
-            err_msg = 'player %d unknown' % (pid,)
-            NetOut.sendMessage.request_player(pid)
+        #if player is None:
+            #err_msg = 'player %d unknown' % (pid,)
+            #NetOut.sendMessage.request_player(pid)
 
-        try:
-            team_id = int(msg.get('team', None))
-            team = team_id
-            #team = GameStateGlobal.teamList[team_id]
-        except ValueError:
-            err_msg = 'team id invalid'
-        except TypeError:
-            err_msg = 'team id missing'
-        except (KeyError, IndexError):
-            err_msg = 'team %d sunknown' % (team_id,)
+        #try:
+            #team_id = int(msg.get('team', None))
+            #team = team_id
+            ##team = GameStateGlobal.teamList[team_id]
+        #except ValueError:
+            #err_msg = 'team id invalid'
+        #except TypeError:
+            #err_msg = 'team id missing'
+        #except (KeyError, IndexError):
+            #err_msg = 'team %d sunknown' % (team_id,)
 
-        if err_msg is not None:
-            print 'msg player_team :: %s' % (err_msg,)
-            return
+        #if err_msg is not None:
+            #print 'msg player_team :: %s' % (err_msg,)
+            #return
 
-        if GameStateGlobal.game is not None:
-            GameStateGlobal.game.player_join_team(player, team)
+        #if GameStateGlobal.game is not None:
+            #GameStateGlobal.game.player_join_team(player, team)
 
     def _player_list(self, **args):
         self._default_list(**args)
@@ -457,92 +457,92 @@ class WeaponMessageHandler(DatastoreMessageInterface):
     def _weapon_update(self, **args):
         return self._default_update(**args)
 
-class GameModeMessageHandler(DatastoreMessageInterface):
+#class GameModeMessageHandler(DatastoreMessageInterface):
 
-    def __init__(self):
-        self.name = 'team'
-        self.store = GameStateGlobal.teamList
-        self._bind_event('game_mode', '_game_mode')
-        self._bind_event('teams', '_teams')
-        DatastoreMessageInterface.__init__(self)
+    #def __init__(self):
+        #self.name = 'team'
+        #self.store = GameStateGlobal.teamList
+        #self._bind_event('game_mode', '_game_mode')
+        #self._bind_event('teams', '_teams')
+        #DatastoreMessageInterface.__init__(self)
 
-    def request_data(self, **data):
-        if 'id' in data:
-            NetOut.sendMessage.request_team(data['id'])
+    #def request_data(self, **data):
+        #if 'id' in data:
+            #NetOut.sendMessage.request_team(data['id'])
 
-    def _game_mode(self, **msg):
-        try:
-            game = msg['game']
-        except KeyError:
-            print 'msg game_mode :: game missing'
-            return
+    #def _game_mode(self, **msg):
+        #try:
+            #game = msg['game']
+        #except KeyError:
+            #print 'msg game_mode :: game missing'
+            #return
 
-        try:
-            mode = game['mode']
-        except KeyError:
-            print 'msg game_mode :: game.mode missing'
-            return
-        tk = None
-        try:
-            tk = game['team_kills']
-            tk = bool(tk)
-        except KeyError:
-            pass
-        victory_points = None
-        try:
-            vp = game['victory_points']
-        except KeyError:
-            pass
+        #try:
+            #mode = game['mode']
+        #except KeyError:
+            #print 'msg game_mode :: game.mode missing'
+            #return
+        #tk = None
+        #try:
+            #tk = game['team_kills']
+            #tk = bool(tk)
+        #except KeyError:
+            #pass
+        #victory_points = None
+        #try:
+            #vp = game['victory_points']
+        #except KeyError:
+            #pass
 
-        teams = None
-        try:
-            teams = int(msg['teams'])
-        except ValueError:
-            print 'msg game_mode :: teams number invalid'
-            return
-        except KeyError:
-            pass
+        #teams = None
+        #try:
+            #teams = int(msg['teams'])
+        #except ValueError:
+            #print 'msg game_mode :: teams number invalid'
+            #return
+        #except KeyError:
+            #pass
 
-        if 'team_list' in msg:
-            self._teams(**msg)
+        #if 'team_list' in msg:
+            #self._teams(**msg)
 
-        if teams is None:
-            GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp)
-        else:
-            GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp, teams=teams)
+        #if teams is None:
+            #GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp)
+        #else:
+            #GameStateGlobal.start_game_mode(mode, team_kills=tk, victory_points=vp, teams=teams)
 
-    def _teams(self, **msg):
-        self._default_list(**msg)
+    #def _teams(self, **msg):
+        #self._default_list(**msg)
 
-    def _player_team(self, **msg):
-        err_msg = None
-        try:
-            pid = int(msg.get('id', None))
-            player = GameStateGlobal.playerList[pid]
-        except TypeError:
-            err_msg = 'player id missing'
-        except ValueError:
-            err_msg = 'player id invalid'
-        except KeyError:
-            err_msg = 'player %d unknown' % (pid,)
+    #def _player_team(self, **msg):
+        #err_msg = None
+        #try:
+            #pid = int(msg.get('id', None))
+            #player = GameStateGlobal.playerList[pid]
+        #except TypeError:
+            #err_msg = 'player id missing'
+        #except ValueError:
+            #err_msg = 'player id invalid'
+        #except KeyError:
+            #err_msg = 'player %d unknown' % (pid,)
 
-        try:
-            tid = int(msg.get('team', None))
-            team = tid
-            #team = GameStateGlobal.teamList[tid]
-        except TypeError:
-            err_msg = 'team missing'
-        except ValueError:
-            err_msg = 'team invalid'
-        except KeyError:
-            err_msg = 'team %d unknown' % (pid,)
+        #try:
+            #tid = int(msg.get('team', None))
+            #team = tid
+            ##team = GameStateGlobal.teamList[tid]
+        #except TypeError:
+            #err_msg = 'team missing'
+        #except ValueError:
+            #err_msg = 'team invalid'
+        #except KeyError:
+            #err_msg = 'team %d unknown' % (pid,)
 
-        if err_msg is not None:
-            print 'msg player_team :: %s' % (err_msg,)
-            return
+        #if err_msg is not None:
+            #print 'msg player_team :: %s' % (err_msg,)
+            #return
 
-        if GameStateGlobal.game is not None:
-            GameStateGlobal.game.player_join_team(player, team)
+        #if GameStateGlobal.game is not None:
+            #GameStateGlobal.game.player_join_team(player, team)
 
 
 class DatMessageHandler(GenericMessageHandler):

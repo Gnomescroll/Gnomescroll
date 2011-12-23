@@ -21,7 +21,7 @@ from math import sin, cos, pi
 from math import floor, ceil, fabs, pow
 from game_state import GameStateGlobal #Deprecate?
 from weapons import Pick, BlockApplier
-from game_modes import NoTeam
+#from game_modes import NoTeam
 from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_agent_control_state
 from draw_utils import *
 from net_out import NetOut
@@ -216,7 +216,8 @@ class AgentModel(AgentWrapper):
     _TICK_RATE = 30. # milliseconds
     RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
 
-    def __init__(self, owner, id, state=None, health=None, dead=False, team=None):
+    #def __init__(self, owner, id, state=None, health=None, dead=False, team=None):
+    def __init__(self, owner, id, state=None, health=None, dead=False):
         if state is None:
             state = [0,0,0,0,0,0,0,0,0]
         state = map(float, state)
@@ -227,7 +228,7 @@ class AgentModel(AgentWrapper):
         self.xa = state[3]
         self.ya = state[4]
 
-        self.team = team
+        #self.team = team
 
         self.button_state = [0 for i in range(11)]
 
@@ -261,8 +262,8 @@ class AgentModel(AgentWrapper):
             if type(state) == list and len(state) == len(self.state):
                 self.state = state
 
-        if 'team' in agent:
-            self.team = agent['team']
+        #if 'team' in agent:
+            #self.team = agent['team']
 
         GameStateGlobal.agentList.update(self, *args)
 
@@ -272,8 +273,8 @@ class AgentModel(AgentWrapper):
         except AttributeError:
             val = object.__getattribute__(self, name)
             
-        if name == 'team' and val is not None:
-            val = GameStateGlobal.teamList[val]
+        #if name == 'team' and val is not None:
+            #val = GameStateGlobal.teamList[val]
                     
         return val
 
@@ -335,8 +336,10 @@ class AgentModel(AgentWrapper):
 # represents an agent under control of a player
 class Agent(AgentModel):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        AgentModel.__init__(self, owner, id, state, health, dead, team)
+    #def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None):
+        #AgentModel.__init__(self, owner, id, state, health, dead, team)
+        AgentModel.__init__(self, owner, id, state, health, dead)
         print 'Python Agent creation: id %s' % (self.id,)
         self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
@@ -348,8 +351,8 @@ class PlayerAgentWeapons(AgentWeapons):
         self.set_hud_icons()
 
     def switch(self, weapon_index):
-        if self.agent.team.is_viewers():
-            return
+        #if self.agent.team.is_viewers():
+            #return
         old = self._active_weapon
         num_weapons = len(self.weapons)
         if num_weapons == 0:
@@ -433,8 +436,10 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, PlayerAgentWrapper):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
-        AgentModel.__init__(self, owner, id, state, health, dead, team)
+    #def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None, team=None):
+    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None):
+        #AgentModel.__init__(self, owner, id, state, health, dead, team)
+        AgentModel.__init__(self, owner, id, state, health, dead)
         PlayerAgentWrapper.__init__(self, id)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
@@ -460,8 +465,8 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
-        if name == 'team' and val is not None:
-            val = GameStateGlobal.teamList[val]
+        #if name == 'team' and val is not None:
+            #val = GameStateGlobal.teamList[val]
 
         return val
 
@@ -474,8 +479,8 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     def fire(self):
-        if self.team.is_viewers():
-            return
+        #if self.team.is_viewers():
+            #return
 
         weapon = self.weapons.active()
         if weapon is None:
@@ -493,16 +498,16 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             print "Agent.fire :: unknown command %s" % (fire_command,)
 
     def add_ammo(self, amt, weapon_type):
-        if self.team.is_viewers():
-            return
+        #if self.team.is_viewers():
+            #return
         for weapon in weapons:
             if weapon.type == weapon_type:
                 weapon.restock(amt)
                 break
 
     def reload(self):
-        if self.team.is_viewers():
-            return
+        #if self.team.is_viewers():
+            #return
         weapon = self.weapons.active()
         if weapon is None:
             return
@@ -511,8 +516,8 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             NetOut.sendMessage(reload_command, self)
 
     def set_active_block(self, block_type=None):
-        if self.team.is_viewers():
-            return
+        #if self.team.is_viewers():
+            #return
         if self.camera is None:
             return
         if block_type is None:
@@ -543,14 +548,14 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
 
     def pickup_item(self, item, index=None):
-        if self.team.is_viewers():
-            return
+        #if self.team.is_viewers():
+            #return
         if self.inventory.can_add(item):
             NetOut.sendMessage.pickup_item(self, item, index)
 
     def drop_item(self, item):
-        if self.team.is_viewers():
-            return
+        #if self.team.is_viewers():
+            #return
         if self.inventory.can_drop(item):
             NetOut.sendMessage.drop_item(self, item)
 

@@ -8,7 +8,7 @@ class GameStateGlobal:
     gameState = None
     agentList = None
     playerList = None
-    teamList = None
+    #teamList = None
     game = None
 
     player = None
@@ -26,22 +26,22 @@ class GameStateGlobal:
         cls.agentList = AgentList()
         cls.playerList = PlayerList()
         cls.weaponList = WeaponList()
-        cls.teamList = game_modes.TeamList()
+        #cls.teamList = game_modes.TeamList()
         cls.exit = False
 
     @classmethod
     def init_1(cls):
         pass
 
-    @classmethod
-    def start_game_mode(cls, mode, **kwargs):
-        mode = mode.lower()
-        cls.game_mode_name = mode
-        cls.game = game_modes.names[mode](**kwargs)
-        if opts.auto_assign_team and \
-           (cls.agent.team is None or cls.agent.team == 1 or cls.agent.team.id == 1): # prevent reassignment on team list update, probably need better team adjust for team update
-            team = cls.game.auto_assign_team()
-            NetOut.sendMessage.join_team(team)
+    #@classmethod
+    #def start_game_mode(cls, mode, **kwargs):
+        #mode = mode.lower()
+        #cls.game_mode_name = mode
+        #cls.game = game_modes.names[mode](**kwargs)
+        #if opts.auto_assign_team and \
+           #(cls.agent.team is None or cls.agent.team == 1 or cls.agent.team.id == 1): # prevent reassignment on team list update, probably need better team adjust for team update
+            #team = cls.game.auto_assign_team()
+            #NetOut.sendMessage.join_team(team)
 
     # for your player
     @classmethod
@@ -129,7 +129,7 @@ from object_lists import AgentList
 from agents import Agent, PlayerAgent
 from object_lists import PlayerList
 from object_lists import WeaponList
-import game_modes
+#import game_modes
 from players import Player
 from net_client import NetClientGlobal
 from net_out import NetOut

@@ -15,7 +15,7 @@ class PlayerList(GenericObjectList):
         player = self._add(connection, name)
         self.client_ids[player.cid] = player.id
         self.names[name] = player.cid
-        GameStateGlobal.game.player_join_team(player)
+        #GameStateGlobal.game.player_join_team(player)
         return player
         
     def leave(self, player):
@@ -54,7 +54,8 @@ class PlayerList(GenericObjectList):
 # represents a "Player" (player score, agents they control etc)
 class Player:
 
-    def __init__(self, connection, name, id=None, team=None):
+    #def __init__(self, connection, name, id=None, team=None):
+    def __init__(self, connection, name, id=None):
         self.kills = 0
         self.deaths = 0
         self.score = 0
@@ -65,7 +66,7 @@ class Player:
             id = GameStateGlobal.new_player_id()
         self.id = id
         self.agent = GameStateGlobal.agentList.create(self.id, connection.id)
-        self.team = team
+        #self.team = team
 
     def json(self, properties=None, agent_properties=None): # json encodable string representation
         d = {
@@ -78,16 +79,16 @@ class Player:
             'name'  : self.name,
             'cid'   : self.cid,
             'agent' : '',
-            'team'  : self.team.id,
+            #'team'  : self.team.id,
         })
         else:
             if type(properties) == str:
                 properties = [properties]
             for prop in properties:
-                if prop == 'team':
-                    d[prop] = self.team.id
-                else:
-                    d[prop] = getattr(self, prop)
+                #if prop == 'team':
+                    #d[prop] = self.team.id
+                #else:
+                d[prop] = getattr(self, prop)
         if 'agent' in d:
             d['agent'] = self.agent.json(agent_properties)
         return d    

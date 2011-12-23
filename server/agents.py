@@ -106,7 +106,8 @@ class Agent(AgentWrapper, AgentPhysics):
     _TICK_RATE = 30       # milliseconds
     RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
 
-    def __init__(self, player_id, client_id, position=None, id=None, team=None):
+    #def __init__(self, player_id, client_id, position=None, id=None, team=None):
+    def __init__(self, player_id, client_id, position=None, id=None):
 
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
@@ -115,7 +116,7 @@ class Agent(AgentWrapper, AgentPhysics):
         AgentWrapper.__init__(self, player_id)
         AgentWrapper.send_id_to_client(self, client_id)
         
-        self.team = team
+        #self.team = team
 
         ### Agent State
         self.d_x = 0 #yaw?
@@ -215,7 +216,7 @@ class Agent(AgentWrapper, AgentPhysics):
                     'active' : self._active_weapon,
                 },
                 'state' : self.state,
-                'team'  : self.team.id,
+                #'team'  : self.team.id,
             })
         else:
             if type(properties) == str:
@@ -231,8 +232,8 @@ class Agent(AgentWrapper, AgentPhysics):
                     val = {
                         'active'    :   int(self._active_weapon),
                     }
-                elif prop == 'team':
-                    val = self.team.id
+                #elif prop == 'team':
+                    #val = self.team.id
                 else:
                     val = getattr(self, prop)
 
@@ -352,11 +353,11 @@ class Agent(AgentWrapper, AgentPhysics):
             sin( self.y_angle),
         ]
 
-    def has_flags(self):
-        flags = [team.flag for team in GameStateGlobal.teamList.values() if team.flag is not None]
-        flags = [flag for flag in flags if flag != self.team.flag]
-        held_flags = [flag for flag in self.inventory if flag in flags]
-        return held_flags
+    #def has_flags(self):
+        #flags = [team.flag for team in GameStateGlobal.teamList.values() if team.flag is not None]
+        #flags = [flag for flag in flags if flag != self.team.flag]
+        #held_flags = [flag for flag in self.inventory if flag in flags]
+        #return held_flags
 
     def take_damage(self, damage, projectile_owner=None, suicidal=False):
         print 'agent %s taking damage %i' % (self.id, damage,)
@@ -368,11 +369,11 @@ class Agent(AgentWrapper, AgentPhysics):
             if not hasattr(projectile_owner, 'id'):
                 projectile_owner = GameStateGlobal.playerList[projectile_owner]
 
-            if suicidal and projectile_owner.agent == self:
-                pass
-            elif projectile_owner.team == self.team and not opts.team_kills:
-                print 'team_kill'
-                return
+            #if suicidal and projectile_owner.agent == self:
+                #pass
+            #elif projectile_owner.team == self.team and not opts.team_kills:
+                #print 'team_kill'
+                #return
             
         old = self.health
         self.health -= damage

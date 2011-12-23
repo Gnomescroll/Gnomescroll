@@ -131,25 +131,25 @@ class DetachableObject(GameObject):
             return self.owner.pos()
 
 
-class TeamItem:
+#class TeamItem:
 
-    def __init__(self, team):
-        self.team = team
+    #def __init__(self, team):
+        #self.team = team
 
-    def can_take(self, new_owner):
-        #print new_owner.team, self.team
-        return (new_owner.team == self.team and self.pickup_by_own_team) or \
-                (new_owner.team != self.team and self.pickup_by_other_team)
+    #def can_take(self, new_owner):
+        ##print new_owner.team, self.team
+        #return (new_owner.team == self.team and self.pickup_by_own_team) or \
+                #(new_owner.team != self.team and self.pickup_by_other_team)
 
-    def json(self, properties=None):
-        if properties is None:
-            d = {
-                'team'  :   self.team
-            }
-        else:
-            d = filter_props(self, properties)
-        if 'team' in d:
-            d['team'] = self.team.id
-        return d
+    #def json(self, properties=None):
+        #if properties is None:
+            #d = {
+                #'team'  :   self.team
+            #}
+        #else:
+            #d = filter_props(self, properties)
+        #if 'team' in d:
+            #d['team'] = self.team.id
+        #return d
 
 from net_out import NetOut

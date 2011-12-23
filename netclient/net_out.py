@@ -67,8 +67,8 @@ def idRequired(f):
 
 def noViewer(f):
     def wrapped(*args, **kwargs):
-        if GameStateGlobal.agent.team and not GameStateGlobal.agent.team.is_viewers():
-            f(*args, **kwargs)
+        #if GameStateGlobal.agent.team and not GameStateGlobal.agent.team.is_viewers():
+        f(*args, **kwargs)
     return wrapped
 
 """ Messages """
@@ -100,11 +100,11 @@ class SendMessage(GenericMessage):
             'id'   :   player_id,
         }
 
-    @sendJSON('request_team')
-    def request_team(self, team_id):
-        return {
-            'id'    :   team_id,
-        }
+    #@sendJSON('request_team')
+    #def request_team(self, team_id):
+        #return {
+            #'id'    :   team_id,
+        #}
 
     @sendJSON('request_weapon')
     def request_weapon(self, wid):
@@ -166,12 +166,12 @@ class SendMessage(GenericMessage):
             'name': name,
         }
 
-    @idRequired
-    @sendJSON('join_team')
-    def join_team(self, team):
-        return {
-            'team'  :   team.id,
-        }
+    #@idRequired
+    #@sendJSON('join_team')
+    #def join_team(self, team):
+        #return {
+            #'team'  :   team.id,
+        #}
 
 class MiscMessage:
     @sendJSON('ping')

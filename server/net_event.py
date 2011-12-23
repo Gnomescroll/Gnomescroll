@@ -11,7 +11,7 @@ class NetEvent:
     mapMessageHandler = None
     playerMessageHandler = None
     weaponMessageHandler = None
-    gameModeMessageHandler = None
+    #gameModeMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
 
@@ -24,7 +24,7 @@ class NetEvent:
         cls.mapMessageHandler = MapMessageHandler()
         cls.playerMessageHandler = PlayerMessageHandler()
         cls.weaponMessageHandler = WeaponMessageHandler()
-        cls.gameModeMessageHandler = GameModeMessageHandler()
+        #cls.gameModeMessageHandler = GameModeMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
 
@@ -126,11 +126,11 @@ class ProcessedItemMessage:
         self.error = error
         self.item = item
 
-class ProcessedTeamMessage:
-    __slots__ = ['error', 'team']
-    def __init__(self, error, team):
-        self.error = error
-        self.team = team
+#class ProcessedTeamMessage:
+    #__slots__ = ['error', 'team']
+    #def __init__(self, error, team):
+        #self.error = error
+        #self.team = team
 
 class Processors:
 
@@ -139,8 +139,8 @@ class Processors:
         err_msg, agent = None, None
         try:
             agent = player.agent
-            if agent.team.is_viewers():
-                err_msg = err.is_viewer(msg)
+            #if agent.team.is_viewers():
+                #err_msg = err.is_viewer(msg)
         except AttributeError:
             err_msg = err.player_has_no_agent(player)
         return ProcessedAgentMessage(err_msg, agent)
@@ -170,8 +170,8 @@ class Processors:
         if m.error:
             return m
 
-        if m.agent.team.is_viewers():
-            m.error = err.is_viewer(msg)
+        #if m.agent.team.is_viewers():
+            #m.error = err.is_viewer(msg)
         if not player.owns(m.agent):
             m.error = err.agent_ownership(player, m.agent)
 
@@ -181,9 +181,9 @@ class Processors:
         m = self._default_thing('item', ProcessedItemMessage, msg, key, err_key)
         return m
 
-    def team(self, msg, key='team', err_key=None):
-        m = self._default_thing('team', ProcessedTeamMessage, msg, key, err_key)
-        return m
+    #def team(self, msg, key='team', err_key=None):
+        #m = self._default_thing('team', ProcessedTeamMessage, msg, key, err_key)
+        #return m
 
 # for iterable items
     def iterable(self, msg, key, size, err_key=None):
@@ -337,16 +337,16 @@ def processItem(key='iid', err_key=None):
         return wrapped
     return outer
 
-def processTeam(key='team', err_key=None):
-    def outer(f, *args, **kwargs):
-        def wrapped(self, msg, *args, **kwargs):
-            a = processor.team(msg, key, err_key)
-            if a.error:
-                return a.error
-            args = _add_arg(args, a.team)
-            return f(self, msg, *args, **kwargs)
-        return wrapped
-    return outer
+#def processTeam(key='team', err_key=None):
+    #def outer(f, *args, **kwargs):
+        #def wrapped(self, msg, *args, **kwargs):
+            #a = processor.team(msg, key, err_key)
+            #if a.error:
+                #return a.error
+            #args = _add_arg(args, a.team)
+            #return f(self, msg, *args, **kwargs)
+        #return wrapped
+    #return outer
 
 
 '''
@@ -467,24 +467,24 @@ class WeaponMessageHandler(GenericMessageHandler):
         agent.drop_weapon(weapon_id, by_id=True)
 
 
-class GameModeMessageHandler(GenericMessageHandler):
+#class GameModeMessageHandler(GenericMessageHandler):
 
-    def events(self):
-        return {
-            'join_team' :   self.join_team,
-            'request_team': self.request_team,
-        }
+    #def events(self):
+        #return {
+            #'join_team' :   self.join_team,
+            #'request_team': self.request_team,
+        #}
 
-    @logError('join_team')
-    @extractPlayer
-    @processTeam()
-    def join_team(self, msg, player, team):
-        GameStateGlobal.game.player_join_team(player, team)
+    #@logError('join_team')
+    #@extractPlayer
+    #@processTeam()
+    #def join_team(self, msg, player, team):
+        #GameStateGlobal.game.player_join_team(player, team)
 
-    @logError('request_team')
-    @requireKey('id')
-    def request_team(self, msg, conn, tid):
-        conn.sendMessage.send_team(tid)
+    #@logError('request_team')
+    #@requireKey('id')
+    #def request_team(self, msg, conn, tid):
+        #conn.sendMessage.send_team(tid)
 
 
 class MiscMessageHandler(GenericMessageHandler):
