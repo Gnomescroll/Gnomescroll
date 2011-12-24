@@ -8,16 +8,13 @@ class ChatServer:
     chat = None
     _msg_id = 0
     
-    @classmethod
-    def init(cls): #calls import methods if needed
-        pass
     def __init__(self): #first pass is declaring
         ChatServer.chat = Chat()
 
     @classmethod
-    def generate_message_id(self):
-        ChatServer._msg_id += 1
-        return self._msg_id
+    def generate_message_id(cls):
+        cls._msg_id += 1
+        return cls._msg_id
 
 '''
 Chat server

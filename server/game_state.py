@@ -23,11 +23,7 @@ class GameStateGlobal:
         GameStateGlobal.weaponList = WeaponList()
 
     @classmethod
-    def init(cls):
-        pass
-
-    @classmethod
-    def disconnect(self, connection):
+    def disconnect(cls, connection):
         if connection.agent is not None:
             connection.agent.quit()
             GameStateGlobal.agentList.destroy(connection.agent)

@@ -71,7 +71,6 @@ class App(object):
 
         init_c_lib.init()
 
-
     def init_inputs(self):
         InputGlobal.init(self)
 
