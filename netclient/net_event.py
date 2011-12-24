@@ -226,7 +226,8 @@ class ClientMessageHandler(GenericMessageHandler):
     }
 
     def _client_quit(self, id, **msg):
-        GameStateGlobal.client_quit(id)
+        pass
+        #GameStateGlobal.client_quit(id)
 
     def _identified(self, **msg):
         note = msg.get('msg', '')
@@ -399,6 +400,9 @@ class AgentMessageHandler(DatastoreMessageInterface):
         id = self._default_destroy(**args)
         if id is not None:
             GameStateGlobal.remove_agent(id)    # this method manages FK relationships
+
+    def _agent_list(self, **args):
+        self._default_list(**args)
 
 
 class WeaponMessageHandler(DatastoreMessageInterface):

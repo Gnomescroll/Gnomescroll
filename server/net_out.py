@@ -292,6 +292,12 @@ class SendMessage: #each connection has one of these
             #'player_list':  GameStateGlobal.playerList.json()
         #}
 
+    @sendJSON('agent_list')
+    def send_agents(self):
+        return {
+            'agent_list':   GameStateGlobal.agentList.json()
+        }
+
     #@sendJSON('player_update')
     #def send_player(self, player, properties=None):
         #if not hasattr(player, 'id'):

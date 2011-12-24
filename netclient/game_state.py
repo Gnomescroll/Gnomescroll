@@ -28,27 +28,27 @@ class GameStateGlobal:
     def init_1(cls):
         pass
 
-    # do something abt this
-    @classmethod
-    def update_your_info(cls, player, data):
-        print data
-        if cls.player is None and player.cid == NetClientGlobal.connection.client_id:
-            print "Assigned GameStateGlobal.player"
-            cls.player = player
+    ## do something abt this
+    #@classmethod
+    #def update_your_info(cls, player, data):
+        #print data
+        #if cls.player is None and player.cid == NetClientGlobal.connection.client_id:
+            #print "Assigned GameStateGlobal.player"
+            #cls.player = player
 
-            if cls.agent is None:
-                agent = data['player'].get('agent', None)
-                if agent is not None:
-                    cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
-                    print 'Assigned GameStateGlobal.agent'
-                    print str(cls.agent)
-                    weapons = agent.get('weapons', None)
-                    if weapons is not None:
-                        cls.agent.weapons.update_info(**weapons)
+            #if cls.agent is None:
+                #agent = data['player'].get('agent', None)
+                #if agent is not None:
+                    #cls.agent = GameStateGlobal.agentList.create_player_agent(**agent)
+                    #print 'Assigned GameStateGlobal.agent'
+                    #print str(cls.agent)
+                    #weapons = agent.get('weapons', None)
+                    #if weapons is not None:
+                        #cls.agent.weapons.update_info(**weapons)
 
-            cls.player.agent = cls.agent
+            #cls.player.agent = cls.agent
             
-        return cls.player
+        #return cls.player
 
     #@classmethod
     #def remove_player(cls, id):

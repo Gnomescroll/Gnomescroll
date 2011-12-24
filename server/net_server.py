@@ -94,7 +94,11 @@ class PyClient:
             return
         self.loaded_once = True
         self._register()
+        self.send_agents()  # temporary, really only for weapons
         self.send_map()
+
+    def send_agents(self):
+        self.sendMessage.send_agents()
 
     def send_map(self):
         self.sendMessage.send_chunk_list()
@@ -142,7 +146,6 @@ class PyClient:
 
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
 
-
 _msg_buffer = True
 
 #function = lambda: 42
@@ -176,8 +179,10 @@ class PyClientPool:
     def push_to_event_buffer(self, client_id, event_id):
         self.event_buffer.append((client_id, event_id))
     def dispatch_event_buffer(self):
+        #print self.event_buffer
         for client_id, event_id in self.event_buffer:
             if event_id == 0:
+                #assert False
                 self.addClient(client_id)
             if event_id == 1:
                 self.removeClient(client_id)

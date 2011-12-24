@@ -108,7 +108,8 @@ class Agent(AgentWrapper, AgentPhysics):
     RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
 
     def __init__(self, client_id, position=None):
-
+        #print client_id
+        #assert False
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
         ### End Global imports ###

@@ -1,7 +1,7 @@
 # generic game object datastore
 # has dictionary interface for retrieving items
 
-from c_lib.c_lib_agents import AgentListWrapper
+import c_lib.c_lib_agents as cAgents
 
 class GenericObjectList:
 
@@ -68,7 +68,7 @@ class GenericObjectList:
     def create(self, *args, **kwargs):
         return self._add(*args, **kwargs)
         
-    def _remove(self, obj):
+    def _remove(self, obj, remove_c=True):
         if hasattr(obj, 'id'):
             id = obj.id
         else:
@@ -76,7 +76,7 @@ class GenericObjectList:
         if id in self.objects:
             del self.objects[id]
             #print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
-            if self._wrapper is not None:
+            if self._wrapper is not None and remove_c:
                 self._wrapper.remove(id)
             return True
         return False
@@ -88,12 +88,16 @@ class GenericObjectList:
         return _objs
 
     def update_or_create(self, **obj):
+        #print obj
+        #assert False
         if 'id' not in obj:
+            #print 'missing id'
             return
         obj_id = obj['id']
         if obj_id in self:
             o = self[obj_id]
             o.update_info(**obj)
+            #print "Exists", self[obj_id]
         else:
             o = self.create(**obj)
         return o
@@ -173,11 +177,19 @@ class AgentList(GenericObjectListWrapper):
         self._metaname = 'AgentList'
         self._itemname = 'Agent'
         self._object_type = Agent
-        self._wrapper = AgentListWrapper
+        self._wrapper = cAgents.AgentListWrapper
 
     def create(self, *args, **agent):
-        agent = self._add(*args, **agent)
-        return agent
+        #print args, agent
+        #assert False
+        #print agent
+        a = self._add(*args, **agent)
+        #print agent.id, cAgents.get_player_agent_id()
+        #assert False
+        if a.id == cAgents.get_player_agent_id():
+            self._remove(a, remove_c=False)
+            a = self.create_player_agent(*args, **agent)
+        return a
 
     def by_client(self, id):
         print self.values()
@@ -186,11 +198,13 @@ class AgentList(GenericObjectListWrapper):
                 return agent
 
     def create_player_agent(self, *args, **agent):
+        #assert False
         from agents import Agent, PlayerAgent
         self._object_type = PlayerAgent
         player_agent = self._add(*args, **agent)
         self._object_type = Agent
-        print "Created python player agent"
+        print "Created python player agent", player_agent,player_agent.id
+        GameStateGlobal.agent = player_agent
         return player_agent
 
     def destroy(self, agent):
@@ -216,6 +230,13 @@ class AgentList(GenericObjectListWrapper):
             if r2 > (x_-x)**2 + (y_-y)**2 + (z_-z)**2:
                 l.append(agent)
         return l
+
+    def load_list(self, objs):
+        _objs = []
+        for obj in objs:
+            #_objs.append(self.update_or_create(**obj))
+            _objs.append(self.create(**obj))
+        return _objs
 
 
 ## datastore for Players
@@ -389,3 +410,5 @@ class WeaponList(GenericMultiObjectList):
 from weapons import Weapon
 
 from game_objects import GameObject
+from net_client import NetClientGlobal
+from game_state import GameStateGlobal

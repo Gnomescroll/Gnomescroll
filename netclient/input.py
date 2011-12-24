@@ -129,6 +129,7 @@ class InputGlobal:
         current_mode = (current_mode + change) % len(modes)
         new_mode_name = modes[current_mode]
         if new_mode_name == 'agent' and GameStateGlobal.agent is None:
+            print "INput:: _toggle_mode -- GameStateGlobal.agent is None"
             return
         setattr(InputGlobal, type, new_mode_name)
         #print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
