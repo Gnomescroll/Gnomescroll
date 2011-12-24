@@ -59,8 +59,9 @@ bool Agent_state::is_you() {
 
 void Agent_state::send_id_to_client(int client_id) {
     #ifdef DC_SERVER
-    PlayerAgent_id_StoC* msg = new PlayerAgent_id_StoC(id);
-    msg->sendToClient(client_id);
+    static PlayerAgent_id_StoC msg;
+    msg.id = id;
+    msg.sendToClient(client_id);
     #endif
 }
 
@@ -69,7 +70,7 @@ void Agent_state::teleport(float x,float y,float z) {
     s.y = y;
     s.z = z;
 
-    Agent_teleport_message A;
+    static Agent_teleport_message A;
 
     A.id = id;
 
@@ -95,7 +96,7 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     s.theta = theta;
     s.phi = phi;
     
-    Agent_teleport_message A;
+    static Agent_teleport_message A;
 
     A.id = id;
 
@@ -808,8 +809,10 @@ Agent_state::Agent_state(int id) : id (id), status(this)
     client_id = -1;
 
     #ifdef DC_SERVER
-    agent_create_StoC* msg = new agent_create_StoC(id, owner);
-    msg->broadcast();
+    static agent_create_StoC msg;
+    msg.id = id;
+    msg.owner = owner;
+    msg.broadcast();
     #endif
 
     #ifdef DC_CLIENT
@@ -846,8 +849,10 @@ Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx,
     client_id = -1;
 
     #ifdef DC_SERVER
-    agent_create_StoC* msg = new agent_create_StoC(id, owner);
-    msg->broadcast();
+    static agent_create_StoC msg;
+    msg.id = id;
+    msg.owner = owner;
+    msg.broadcast();
     #endif
 
     #ifdef DC_CLIENT

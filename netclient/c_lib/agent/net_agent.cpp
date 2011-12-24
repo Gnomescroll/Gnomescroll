@@ -190,8 +190,10 @@ inline void hit_block_CtoS::handle() {
 // fire weapon action
 inline void fire_weapon_CtoS::handle() {
     // forward the packet
-    fire_weapon_StoC* msg = new fire_weapon_StoC(id, weapon_id);
-    msg->broadcast();
+    static fire_weapon_StoC msg;
+    msg.id = id;
+    msg.weapon_id = weapon_id;
+    msg.broadcast();
 }
 
 // hitscan target:agent

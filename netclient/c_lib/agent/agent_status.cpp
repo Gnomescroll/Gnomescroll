@@ -18,16 +18,20 @@ int Agent_status::apply_damage(int dmg, int inflictor_id) {
     if (dead) return health;
     
     // forward dmg indicator packet
-    agent_damage_StoC* dmg_msg = new agent_damage_StoC(a->id, dmg);
-    dmg_msg->broadcast();
+    static agent_damage_StoC dmg_msg;
+    dmg_msg.id = a->id;
+    dmg_msg.dmg = dmg;
+    dmg_msg.broadcast();
 
     if (!dmg) return health;
 
     health -= dmg;
     health = (health < 0) ? 0 : health;
 
-    agent_health_StoC* health_msg = new agent_health_StoC(a->id, health);
-    health_msg->sendToClient(a->client_id);
+    static agent_health_StoC health_msg;
+    health_msg.id = a->id;
+    health_msg.health = health;
+    health_msg.sendToClient(a->client_id);
 
     if (!health) die(inflictor_id);
     
@@ -38,8 +42,10 @@ int Agent_status::die() {
     if (dead) return 0;
     dead = true;
     deaths++;
-    agent_dead_StoC* dead_msg = new agent_dead_StoC(a->id, dead);
-    dead_msg->broadcast();
+    static agent_dead_StoC dead_msg;
+    dead_msg.id = a->id;
+    dead_msg.dead = dead;
+    dead_msg.broadcast();
     return 1;
 }
 
@@ -59,9 +65,6 @@ void Agent_status::kill(int victim_id) {
 }
 
 void Agent_status::get_spawn_point(int* spawn) {
-    // generate a spawn point
-    //spawn[0] = randrange(0, xmax);
-    //spawn[1] = randrange(0, ymax);
     spawn[0] = randrange(0, 128); // use actual map sizes!
     spawn[1] = randrange(0, 128);
     spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)ceil(a->box.b_height));
@@ -81,13 +84,17 @@ void Agent_status::respawn() {
 
     // restore health
     health = AGENT_HEALTH;
-    agent_health_StoC* health_msg = new agent_health_StoC(a->id, health);
-    health_msg->sendToClient(a->client_id);
+    static agent_health_StoC health_msg;
+    health_msg.id = a->id;
+    health_msg.health = health;
+    health_msg.sendToClient(a->client_id);
 
     // revive
     dead = false;
-    agent_dead_StoC* dead_msg = new agent_dead_StoC(a->id, dead);
-    dead_msg->broadcast();
+    static agent_dead_StoC dead_msg;
+    dead_msg.id = a->id;
+    dead_msg.dead = dead;
+    dead_msg.broadcast();
 
     respawn_countdown = RESPAWN_TICKS; // reset timer
 }
