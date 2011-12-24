@@ -16,7 +16,7 @@ class NetEvent:
     datMessageHandler = None
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.messageHandler = MessageHandler()
         cls.adminMessageHandler = AdminMessageHandler()
         cls.agentMessageHandler = AgentMessageHandler()
@@ -25,10 +25,6 @@ class NetEvent:
         cls.weaponMessageHandler = WeaponMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
-
-    @classmethod
-    def init_1(cls):
-        pass
 
     @classmethod
     def register_json_events(cls, events, interface=None):

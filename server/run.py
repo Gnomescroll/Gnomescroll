@@ -247,16 +247,11 @@ class Main:
             print 'Saving map as %s' % (opts.save_map,)
             terrain_map.save_to_disk(opts.save_map)
 
-        NetServer.init_0()
-        NetOut.init_0()
-        NetEvent.init_0()
+        NetServer.init()
+        NetOut.init()
+        NetEvent.init()
         GameStateGlobal().init() #conventions
         ChatServer().init() #conventions
-        #phase 2 inits
-        NetServer.init_1()
-        NetOut.init_1()
-        NetEvent.init_1()
-        #CubeGlobal.init_1()
 
          #detect dat changes
         def _dat_change_reload(f):

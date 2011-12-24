@@ -17,13 +17,9 @@ class NetOut:
     message = None
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.event = EventOut()
         cls.message = MessageOut()
-
-    @classmethod
-    def init_1(cls):
-        cls.event.init()
 
 from game_state import GameStateGlobal
 from net_server import NetServer
@@ -57,9 +53,6 @@ def sendJSONevent(cmd=None, tick=True, zlib=0):
 
 # sends event packets to all clients
 class EventOut:
-
-    def init(self):
-        pass
 
     def __init__(self):
         self.event_packets = []

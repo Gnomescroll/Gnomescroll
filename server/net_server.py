@@ -14,13 +14,9 @@ class NetServer:
     connectionPool = None
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         global OS
         cls.connectionPool = PyClientPool()
-
-    @classmethod
-    def init_1(cls):
-        cls.connectionPool.init()
 
 from chat_server import ChatServer
 from net_out import SendMessage
@@ -136,8 +132,6 @@ _msg_buffer = True
 
 class PyClientPool:
 
-    def init(self):
-        pass
     def __init__(self):
         self._client_count = 0
         self.clients_by_id = {}
