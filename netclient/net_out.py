@@ -177,7 +177,10 @@ class MapMessage:
         return True
 
     @sendJSON('request_chunk')
-    def request_chunk(self, x,y,z):
+    def request_chunk(self, x,y,z, XXX=[0]):
+        #if XXX[0]:
+            #assert False
+        #XXX[0] += 1
         return {
             'value' : (x,y,z),
         }

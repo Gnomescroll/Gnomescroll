@@ -82,7 +82,7 @@ class MessageHandler:
         if msg_type == 3:
             NetEventGlobal.mapMessageHandler._map_chunk(datagram)
         elif msg_type == 4:
-            self._4_
+            raise Exception, "msg_type 4 not implemented"
         else:
             print "MessageHandler.process_binary_event: message type unknown, " + str(msg_type)
 
@@ -194,6 +194,7 @@ class MapMessageHandler(GenericMessageHandler):
     def _chunk_list(self, list, **msg):
         #print str(list)
         print "chunk list"
+        #assert False
         self.mapController.process_chunk_list(list)
         #for chunk in list:
         #    (x,y,z,version ) = chunk

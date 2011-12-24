@@ -89,18 +89,19 @@ class PyClient:
         return False
 
     def ready(self):
-        print "Client is ready"
         if self.loaded_once:
             return
+        print "Client is ready"
         self.loaded_once = True
         self._register()
-        self.send_agents()  # temporary, really only for weapons
         self.send_map()
+        self.send_agents()  # temporary, really only for weapons
 
     def send_agents(self):
         self.sendMessage.send_agents()
 
     def send_map(self):
+        print "Sending map"
         self.sendMessage.send_chunk_list()
 
     def set_dat_loaded(self):

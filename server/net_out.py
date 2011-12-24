@@ -279,7 +279,10 @@ class SendMessage: #each connection has one of these
             'list' : GameStateGlobal.terrainMap.get_server_chunk_list(),
         }
 
-    def send_chunk(self, x, y, z):
+    def send_chunk(self, x, y, z, XXX=[0]):
+        #if XXX[0]:
+            #assert False
+        #XXX[0] += 1
         chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
         if chunk_str != '':
             self.client.send(self.add_prefix(3, chunk_str))

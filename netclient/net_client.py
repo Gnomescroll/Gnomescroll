@@ -75,7 +75,7 @@ class PyClient(object):
             register_client_message_handling(( lambda _client_id, message : self.push_to_buffer(message) ))
 
         register_client_creation(( lambda client_id: self.on_connect(client_id) ))
-        register_client_deletion(( lambda client_id: self.removeClient(client_id) ))
+        register_client_deletion(( lambda client_id: self.on_disconnect(client_id) ))
 
     def __getattribute__(self, k):
         if k == 'client_id':
