@@ -140,12 +140,12 @@ void _3D::RotateFill(double *A, double xAngle, double yAngle, double zAngle)
 struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
 struct Vector euler_rotation(Vector v, float x, float y, float z)
 {   
-    float cx = cos(x);
-    float sx = sin(x);
-    float cy = cos(y);
-    float sy = sin(y);
-    float cz = cos(z);
-    float sz = sin(z);
+    double cx = cos(x);
+    double sx = sin(x);
+    double cy = cos(y);
+    double sy = sin(y);
+    double cz = cos(z);
+    double sz = sin(z);
     
     Vector m[3];
     Vector u;
@@ -154,8 +154,8 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     m[0].y = (cy*sz);
     m[0].z = (-sy);
 
-    float sxsy = sx*sy;
-    float cxsy = cx*sy;
+    double sxsy = sx*sy;
+    double cxsy = cx*sy;
     
     m[1].x = (sxsy*cz-cx*sz);
     m[1].y = (sxsy*sz+cx*cz);
@@ -535,9 +535,7 @@ void Voxel_volume::draw_bounding_box_2()
 
     Vector u;
 
-        v[3] = vector_add4(&vx,&vy,&vz,&center);
-
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     for(i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
@@ -546,8 +544,8 @@ void Voxel_volume::draw_bounding_box_2()
             vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
             vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
 
-
             u = vector_add4(&vx,&vy,&vz,&v[3]);
+            //u = vector_add3(&vx,&vy,&vz);
 
             if(DEBUG)
             {
@@ -580,6 +578,7 @@ void Voxel_volume::draw_bounding_box_2()
             vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
             vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
             vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+            
             u = vector_add4(&vx,&vy,&vz,&v[3]);
             //u = vector_add3(&vx,&vy,&vz);
 
@@ -625,7 +624,7 @@ inline Voxel* Voxel_volume::get(int x, int y, int z) __attribute((always_inline)
 
 void voxel_test()
 {
-
+    //static Voxel_volume vv(1,1,1, 1.0);
     static Voxel_volume vv(4,4,4, 1.0);
     //Voxel* v = vv.get(4,5,6);
 
@@ -635,18 +634,20 @@ void voxel_test()
     //vv.set_center( -5.0, -5.0, 10.0);
 
 
-
-    static float c = 0.0;
-    c += 0.005;
+    static float c0 = 0.0;
+    static float c1 = 0.0;
+    c0 += 0.005;
+    c1 += 0.0025;
 
     printf("start\n");
     printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
-    //vv.set_rotated_unit_axis(0.0f, 0.0f, c);
+    
+    vv.set_rotated_unit_axis(0.0f, c1, c0);
     //vv.set_rotated_unit_axis(0.0f, 0.0f, 0.0f);
-    vv.set_center( 0.0, 0.0, 0.0);
+    vv.set_center( 2.0, 2.0, 2.0);
     printf("2 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
 
-    vv.set_unit_axis();
+    //vv.set_unit_axis();
     printf("3 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
     vv.draw_bounding_box_2();
     printf("4 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
