@@ -1,7 +1,6 @@
 #include "agent_status.hpp"
 
 #include <math.h>
-#include <c_lib/common/random.h>
 
 /*
  * Agent_status has miscellaneous status properties (health, dead, ...)
@@ -64,24 +63,14 @@ void Agent_status::kill(int victim_id) {
     kills++;
 }
 
-void Agent_status::get_spawn_point(int* spawn) {
-    spawn[0] = randrange(0, 128); // use actual map sizes!
-    spawn[1] = randrange(0, 128);
-    spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)ceil(a->box.b_height));
-    printf("Respawning at: %d %d %d\n", spawn[0], spawn[1], spawn[2]);
-}
-
 void Agent_status::respawn() {
     if (!dead) return;  // ignore if not waiting to respawn
     
     respawn_countdown--;                  // decrement
     if (respawn_countdown > 0) return;  // abort if not ready
     
-    // update position
-    int spawn[3];
-    get_spawn_point(spawn);
-    a->teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, 0.5f, 0.0f);
-
+    a->spawn_state();
+    
     // restore health
     health = AGENT_HEALTH;
     static agent_health_StoC health_msg;

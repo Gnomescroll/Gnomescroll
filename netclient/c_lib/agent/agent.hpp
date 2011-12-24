@@ -96,6 +96,8 @@ class Agent_state {
 
         int cs_seq; // <--current counter
 
+        void get_spawn_point(int* spawn);
+
     public:    
         class AgentState s; //state current
         class AgentState state_snapshot;
@@ -125,6 +127,8 @@ class Agent_state {
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
+
+        void spawn_state();
 
         void send_id_to_client(int client_id);
 

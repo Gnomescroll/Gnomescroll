@@ -52,7 +52,6 @@ class Agent_status: public Base_status {
 
     private:
         Agent_state* a;
-        void get_spawn_point(int* spawn);
 
     public:
         Agent_status(Agent_state* agent) : Base_status(), a(agent) {}

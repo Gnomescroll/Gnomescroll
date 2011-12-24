@@ -250,8 +250,8 @@ class Main:
         NetServer.init()
         NetOut.init()
         NetEvent.init()
-        GameStateGlobal().init() #conventions
-        ChatServer().init() #conventions
+        GameStateGlobal().init()
+        ChatServer().init()
 
          #detect dat changes
         def _dat_change_reload(f):
