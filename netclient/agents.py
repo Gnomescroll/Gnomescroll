@@ -480,8 +480,10 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
 
         fire_command = weapon.fire()
 
-        if fire_command == 'hit_block':
-            self.hit_block()
+        if fire_command == 'set_block':
+            NetOut.sendMessage.set_block(agent=self)
+        elif fire_command == 'hit_block':
+            self.hit_block()    # defined in C agent wrapper
         elif fire_command == 'hitscan':
             self.fire_hitscan()
         elif fire_command == 'throw_grenade':

@@ -134,16 +134,16 @@ class Processors:
 
 # for msgs that assume agent is player's agent
     #def player_agent(self, player, msg):
-    def player_agent(self, msg):
-        err_msg, agent = None, None
-        try:
-            #agent = player.agent
-            agent = NetClientGlobal.connection.agent
-            if agent.team.viewers:
-                err_msg = err.is_viewer(msg)
-        except AttributeError:
-            err_msg = err.client_has_no_agent(player)
-        return ProcessedAgentMessage(err_msg, agent)
+    #def player_agent(self, client, msg):
+        #err_msg, agent = None, None
+        #try:
+            ##agent = player.agent
+            #agent = client.agent
+            #if agent.team.viewers:
+                #err_msg = err.is_viewer(msg)
+        #except AttributeError:
+            #err_msg = err.client_has_no_agent(player)
+        #return ProcessedAgentMessage(err_msg, agent)
 
     def _default_thing(self, thing_name, processed_msg_obj, msg, key, err_key=None, datastore=None):
         if datastore is None:
@@ -166,14 +166,14 @@ class Processors:
 
 # for msgs that send agent id and want it extracted and checked against player
     #def agent(self, player, msg, key='id', err_key=None):
-    def agent(self, msg, key='id', err_key=None):
+    def agent(self, client, msg, key='id', err_key=None):
         m = self._default_thing('agent', ProcessedAgentMessage, msg, key, err_key)
         if m.error:
             return m
 
         if m.agent.team.viewers:
             m.error = err.is_viewer(msg)
-        if not NetClientGlobal.connection.agent != m.agent:
+        if client.agent != m.agent:
             m.error = err.agent_ownership(NetClientGlobal.connection, m.agent)
 
         return m
@@ -253,6 +253,7 @@ def requireKey(key, err_key=None):
             except KeyError:
                 return err.key_missing(err_key)
             args = _add_arg(args, thing)
+            print msg, args, kwargs
             return f(self, msg, *args, **kwargs)
         return wrapped
     return outer
@@ -303,14 +304,14 @@ def processAgent(key='id', err_key=None):
         return wrapped
     return outer
 
-def processPlayerAgent(f, *args, **kwargs):
-    def wrapped(self, msg, player, *args, **kwargs):
-        a = processor.player_agent(player, msg)
-        if a.error:
-            return a.error
-        args = _add_arg(args, a.agent)
-        return f(self, msg, player, *args, **kwargs)
-    return wrapped
+#def processPlayerAgent(f, *args, **kwargs):
+    #def wrapped(self, msg, client, *args, **kwargs):
+        #a = processor.player_agent(client, msg)
+        #if a.error:
+            #return a.error
+        #args = _add_arg(args, a.agent)
+        #return f(self, msg, client, *args, **kwargs)
+    #return wrapped
 
 def processIterable(key, size, err_key=None):
     def outer(f, *args, **kwargs):
@@ -413,7 +414,7 @@ class WeaponMessageHandler(GenericMessageHandler):
         return {
             'request_weapon'    :   self.request_weapon, #deprecate
             'reload_weapon'     :   self.reload_weapon, #move to c
-            'drop_weapon'       :   self.drop_weapon, #deprecate
+            #'drop_weapon'       :   self.drop_weapon, #deprecate
             'change_weapon'     :   self.change_weapon, #move to C
         }
 
@@ -426,8 +427,7 @@ class WeaponMessageHandler(GenericMessageHandler):
     #@extractPlayer
     @processAgent('aid')
     @requireKeyType('weapon', int)
-    #def reload_weapon(self, msg, player, agent, weapon_type):
-    def reload_weapon(self, msg, agent, weapon_type):
+    def reload_weapon(self, msg, client, agent, weapon_type):
         try:
             weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
         except ValueError:
@@ -441,19 +441,18 @@ class WeaponMessageHandler(GenericMessageHandler):
     #@extractPlayer
     @processAgent('aid')
     @requireKey('windex', err_key='windex (active_weapon)')
-    #def change_weapon(self, msg, player, agent, active_weapon):
-    def change_weapon(self, msg, agent, active_weapon):
+    def change_weapon(self, msg, client, agent, active_weapon):
+    #def change_weapon(self, msg, agent, active_weapon):
         if active_weapon == -1: # json doesnt have None, but None is a valid input; careful, -1 is a valid index.
             active_weapon = None
         agent.set_active_weapon(active_weapon)
 
-    @logError('drop_weapon')
-    #@extractPlayer
-    @processAgent('aid')
-    @requireKey('wid')
-    #def drop_weapon(self, msg, player, agent, weapon_id):
-    def drop_weapon(self, msg, agent, weapon_id):
-        agent.drop_weapon(weapon_id, by_id=True)
+    #@logError('drop_weapon')
+    ##@extractPlayer
+    #@processAgent('aid')
+    #@requireKey('wid')
+    #def drop_weapon(self, msg, client, agent, weapon_id):
+        #agent.drop_weapon(weapon_id, by_id=True)
 
 
 class MiscMessageHandler(GenericMessageHandler):
@@ -481,7 +480,7 @@ class MapMessageHandler(GenericMessageHandler):
         return {
             'request_chunk' :   self.request_chunk,
             'request_chunk_list':  self.send_chunk_list,
-            'hit_block'     :   self.hit_block,
+            #'hit_block'     :   self.hit_block,
             'set_block'     :   self.set_block,
         }
 
@@ -495,19 +494,19 @@ class MapMessageHandler(GenericMessageHandler):
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
 
-    @logError('hit_block')
-    #@extractPlayer
-    @processAgent('aid')
-    @processIterable('pos', 3)
-    #def hit_block(self, msg, player, agent, pos):
-    def hit_block(self, msg, agent, pos):
-        w = agent.active_weapon()
-        if not (w.fire_command == 'hit_block' and w.fire()): # pick
-            return
-        x,y,z = pos
-        dmg = GameStateGlobal.terrainMap.apply_damage(x, y, z, w.damage)
-        if not dmg: # dmg=0 if block was destroyed
-            NetOut.event.set_map([(x,y,z,0)])
+    #@logError('hit_block')
+    ##@extractPlayer
+    #@processAgent('aid')
+    #@processIterable('pos', 3)
+    ##def hit_block(self, msg, player, agent, pos):
+    #def hit_block(self, msg, agent, pos):
+        #w = agent.active_weapon()
+        #if not (w.fire_command == 'hit_block' and w.fire()): # pick
+            #return
+        #x,y,z = pos
+        #dmg = GameStateGlobal.terrainMap.apply_damage(x, y, z, w.damage)
+        #if not dmg: # dmg=0 if block was destroyed
+            #NetOut.event.set_map([(x,y,z,0)])
 
     @logError('set_block')
     #@extractPlayer
@@ -515,7 +514,7 @@ class MapMessageHandler(GenericMessageHandler):
     @processIterable('pos', 3)
     @requireKeyType('type', int, err_key='type (block)')
     #def set_block(self, msg, agent, pos, block_type):
-    def set_block(self, msg, player, agent, pos, block_type):
+    def set_block(self, msg, client, agent, pos, block_type):
         x,y,z = pos
         block = (x, y, z, block_type,)
         weapon = agent.active_weapon()
@@ -523,7 +522,7 @@ class MapMessageHandler(GenericMessageHandler):
             print 'setting block'
             GameStateGlobal.terrainMap.set(*block)
             NetOut.event.set_map([block])
-            NetClientGlobal.connection.sendMessage.send_weapon(weapon, properties='clip')
+            client.sendMessage.send_weapon(weapon, properties='clip')
 
 
 class ChatMessageHandler(GenericMessageHandler):
