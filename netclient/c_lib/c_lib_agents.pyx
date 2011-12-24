@@ -36,6 +36,10 @@ cdef extern from "./agent/agent_status.hpp":
         int health
         bool dead
         int team
+        int score()
+        int kills
+        int deaths
+        int suicides
         
 #collision box
 cdef extern from "./agent/agent.hpp":
@@ -141,6 +145,10 @@ class AgentWrapper(object):
         'health', 'dead',
         'owner',
         'team',
+        'score',
+        'kills',
+        'deaths',
+        'suicides',
     ]
 
     def __init__(self, int id):
@@ -202,6 +210,15 @@ class AgentWrapper(object):
 
         elif name == 'team':
             return a.status.team
+
+        elif name == 'score':
+            return a.status.score()
+        elif name == 'kills':
+            return a.status.kills
+        elif name == 'deaths':
+            return a.status.deaths
+        elif name == 'suicides':
+            return a.status.suicides
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError

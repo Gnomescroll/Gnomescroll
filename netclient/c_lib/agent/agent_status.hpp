@@ -18,9 +18,6 @@ class Base_status {
         unsigned int kills;
         unsigned int deaths;
         unsigned int suicides;
-        int score() {
-            return kills - suicides;
-        }
 
         char name[PLAYER_NAME_MAX_LENGTH + 1];
 
@@ -61,6 +58,10 @@ class Agent_status: public Base_status {
         int die(int inflictor_id);
         void kill(int victim_id);
         void respawn();
+
+        int score();
+        void send_scores(int client_id);
+        void send_scores();
 
 };
 

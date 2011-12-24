@@ -101,6 +101,24 @@ inline void PlayerAgent_id_StoC::handle() {
     ClientState::set_PlayerAgent_id(id);
 }
 
+inline void AgentKills_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->status.kills = kills;
+}
+
+inline void AgentDeaths_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->status.deaths = deaths;
+}
+
+inline void AgentSuicides_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->status.suicides = suicides;
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}
@@ -115,6 +133,9 @@ inline void ThrowGrenade_CtoS::handle(){}
 // Client -> Server handlers
 #ifdef DC_SERVER
 
+inline void AgentKills_StoC::handle() {}
+inline void AgentDeaths_StoC::handle() {}
+inline void AgentSuicides_StoC::handle() {}
 inline void Agent_state_message::handle() {}
 inline void Agent_teleport_message::handle() {}
 inline void Agent_cs_StoC::handle() {}

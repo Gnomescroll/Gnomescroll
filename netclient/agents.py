@@ -238,6 +238,7 @@ class AgentModel(AgentWrapper):
         self.client_id = id
 
         self.you = False
+        self.name = '' # fix later
 
     def tick(self):
         if not self.dead:

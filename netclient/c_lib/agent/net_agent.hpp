@@ -379,7 +379,7 @@ class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent
         {}
 };
 
-class ThrowGrenade_CtoS: public FixedSizeNetPacketToServer<ThrowGrenade_CtoS>
+class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_CtoS>
 {
     public:
         int id;
@@ -402,4 +402,46 @@ class ThrowGrenade_CtoS: public FixedSizeNetPacketToServer<ThrowGrenade_CtoS>
         ThrowGrenade_CtoS(int id, float x, float y, float z, float vx, float vy, float vz)
         : id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz)
         {}
+};
+
+class AgentKills_StoC: public FixedSizeReliableNetPacketToClient<AgentKills_StoC>
+{
+    public:
+        int id;
+        int kills;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&kills, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentDeaths_StoC: public FixedSizeReliableNetPacketToClient<AgentDeaths_StoC>
+{
+    public:
+        int id;
+        int deaths;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&deaths, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicides_StoC>
+{
+    public:
+        int id;
+        int suicides;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&suicides, buff, buff_n, pack);
+        }
+        inline void handle();
 };

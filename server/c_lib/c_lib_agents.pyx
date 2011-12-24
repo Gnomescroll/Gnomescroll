@@ -21,6 +21,10 @@ cdef extern from "./agent/agent_status.hpp":
         int health
         bool dead
         int team
+        int score()
+        int kills
+        int deaths
+        int suicides
         
 #Agent_state
 cdef extern from "./agent/agent.hpp":
@@ -62,14 +66,16 @@ class AgentWrapper(object):
         #'crouching',
         'owner',
         'team',
+        'score',
+        'kills',
+        'deaths',
+        'suicides',
     ]
 
-#    cdef int id
-    def __init__(self, int owner):
+    def __init__(self, int client_id):
         cdef Agent_state *a
-        a = agent_list.create()
+        a = agent_list.create(client_id)
         self.id = a.id
-        a.owner = owner
 
     def send_id_to_client(self, int client_id):
         cdef Agent_state* a
@@ -123,6 +129,15 @@ class AgentWrapper(object):
 
         elif name == 'team':
             return a.status.team
+
+        elif name == 'score':
+            return a.status.score()
+        elif name == 'kills':
+            return a.status.kills
+        elif name == 'deaths':
+            return a.status.deaths
+        elif name == 'suicides':
+            return a.status.suicides
 
         #elif name == 'crouching':
         #    return a.s.crouching

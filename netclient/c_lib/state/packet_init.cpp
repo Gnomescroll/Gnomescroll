@@ -67,5 +67,9 @@ void RegisterMessages() {
 
     ThrowGrenade_CtoS::register_server_packet();
 
+    AgentKills_StoC::register_client_packet();
+    AgentDeaths_StoC::register_client_packet();
+    AgentSuicides_StoC::register_client_packet();
+
 }
 }

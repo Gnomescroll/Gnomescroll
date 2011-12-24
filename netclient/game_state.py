@@ -45,16 +45,15 @@ class GameStateGlobal:
 
     @classmethod
     def scoreboard(cls):
-        #props = ['name', 'kills', 'deaths', 'score', 'id']
-        props = ['id']
+        props = ['name', 'kills', 'deaths', 'score', 'id']
         defs =  [[] for i in range(len(props))]
         stats = dict(zip(props, defs))
 
         for agent in cls.agentList.values():
-            #stats['name'].append(agent.name)
-            #stats['kills'].append(agent.kills)
-            #stats['deaths'].append(agent.deaths)
-            #stats['score'].append(agent.score)
+            stats['name'].append(NetClientGlobal.name)
+            stats['kills'].append(agent.kills)
+            stats['deaths'].append(agent.deaths)
+            stats['score'].append(agent.score)
             stats['id'].append(agent.id)
 
         return stats
