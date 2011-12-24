@@ -235,6 +235,8 @@ class AgentModel(AgentWrapper):
         self.y_int = int(state[1])
         self.z_int = int(state[2])
 
+        self.client_id = id
+
         self.you = False
 
     def tick(self):

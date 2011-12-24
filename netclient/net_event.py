@@ -20,7 +20,7 @@ class NetEventGlobal:
     clientMessageHandler = None
     mapMessageHandler = None
     agentMessageHandler = None
-    playerMessageHandler = None
+    #playerMessageHandler = None
     miscMessageHandler = None
     #gameModeMessageHandler = None
     weaponMessageHandler = None
@@ -30,7 +30,7 @@ class NetEventGlobal:
     def init_0(cls):
         cls.messageHandler = MessageHandler()
         cls.clientMessageHandler = ClientMessageHandler()
-        cls.playerMessageHandler = PlayerMessageHandler()
+        #cls.playerMessageHandler = PlayerMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
 
@@ -45,7 +45,7 @@ class NetEventGlobal:
     def init_1(cls):
         MessageHandler.init()
         ClientMessageHandler.init()
-        PlayerMessageHandler.init()
+        #PlayerMessageHandler.init()
         ChatMessageHandler.init()
 
         AgentMessageHandler.init()
@@ -59,7 +59,7 @@ class NetEventGlobal:
             cls.messageHandler.json_events[string] = function
 
 class MessageHandler:
-    player = None #move this somewhere else
+    #player = None #move this somewhere else
     @classmethod
     def init(self):
         pass
@@ -355,31 +355,31 @@ class DatastoreMessageInterface(GenericMessageHandler):
         return id
 
 
-class PlayerMessageHandler(DatastoreMessageInterface):
+#class PlayerMessageHandler(DatastoreMessageInterface):
 
-    def __init__(self):
-        self.name = 'player'
-        self.store = GameStateGlobal.playerList
-        DatastoreMessageInterface.__init__(self)
+    #def __init__(self):
+        #self.name = 'player'
+        #self.store = GameStateGlobal.playerList
+        #DatastoreMessageInterface.__init__(self)
 
-    def request_data(self, **data):
-        if 'id' in data:
-            NetOut.sendMessage.request_player(data['id'])
+    #def request_data(self, **data):
+        #if 'id' in data:
+            #NetOut.sendMessage.request_player(data['id'])
 
-    def _player_destroy(self, **args):
-        id = self._default_destroy(**args)
-        if id is not None:
-            GameStateGlobal.remove_player(id)    # this method manages FK relationships
+    #def _player_destroy(self, **args):
+        #id = self._default_destroy(**args)
+        #if id is not None:
+            #GameStateGlobal.remove_player(id)    # this method manages FK relationships
 
-    def _player_list(self, **args):
-        self._default_list(**args)
-        if GameStateGlobal.game is not None:
-            GameStateGlobal.game.update_players()
+    #def _player_list(self, **args):
+        #self._default_list(**args)
+        #if GameStateGlobal.game is not None:
+            #GameStateGlobal.game.update_players()
 
-    def _player_create(self, **args):
-        player = self._default_create(**args)
-        if player is not None and player.cid == NetClientGlobal.connection.client_id:
-            GameStateGlobal.update_your_info(player, args)
+    #def _player_create(self, **args):
+        #player = self._default_create(**args)
+        #if player is not None and player.cid == NetClientGlobal.connection.client_id:
+            #GameStateGlobal.update_your_info(player, args)
             
 
 # agent messages needs to be updated

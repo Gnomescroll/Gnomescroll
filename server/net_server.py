@@ -59,7 +59,8 @@ class PyClient:
         #self.TcpPacketDecoder = TcpPacketDecoder(self)
         self.sendMessage = SendMessage(self)
 
-        self.player = None
+        #self.player = None
+        self.agent = None
         self.name = None
         #self.ec = 0
 
@@ -93,8 +94,6 @@ class PyClient:
             return
         self.loaded_once = True
         self._register()
-        self.start_player()
-        self.send_game_state()
         self.send_map()
 
     def send_map(self):
@@ -105,21 +104,18 @@ class PyClient:
         self.dat_loaded = True
         self.check_ready()
 
-    def start_player(self):
-        NetOut.event.player_create(self.player)
-
-    def send_game_state(self):
-        self.sendMessage.send_players()
-        #self.sendMessage.game_mode()
-
     def _register(self):
         ChatServer.chat.connect(self) # join chat server
-        if self.player is not None and self.player.id in GameStateGlobal.playerList:
-            self.player.update_info(name=self.name)
+        #if self.player is not None and self.player.id in GameStateGlobal.playerList:
+        if self.agent is not None and self.agent.id in GameStateGlobal.agentList:
+            #self.player.update_info(name=self.name)
+            self.agent.update_info(name=self.name)
         else:
             #self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
-            self.player = GameStateGlobal.playerList.join(self)  # create player
-            print 'Created new player'
+            #self.player = GameStateGlobal.playerList.join(self)  # create player
+            #self.agent = GameStateGlobal.agentList.join(self)  # create player
+            self.agent = GameStateGlobal.agentList.create(self.client_id)
+            print 'Created new agent'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
 
     def _valid_player_name(self, name):

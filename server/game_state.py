@@ -11,10 +11,10 @@ class GameStateGlobal:
     gameState = None
     terrainMap = None
     agentList = None
-    playerList = None
+    #playerList = None
     weaponList = None
 
-    player_id = 0
+    #player_id = 0
 
     fps = 30.
     agent_tick_mode = 'jetpack'
@@ -23,30 +23,28 @@ class GameStateGlobal:
         GameStateGlobal.terrainMap = terrain_map
         GameStateGlobal.gameState = GameState()
         GameStateGlobal.agentList = AgentList()
-        GameStateGlobal.playerList = PlayerList()
+        #GameStateGlobal.playerList = PlayerList()
         GameStateGlobal.weaponList = WeaponList()
 
     @classmethod
     def init(cls):
         pass
 
-    @classmethod
-    def new_player_id(cls):
-        cls.player_id += 1
-        return cls.player_id
+    #@classmethod
+    #def new_player_id(cls):
+        #cls.player_id += 1
+        #return cls.player_id
 
     @classmethod
     def disconnect(self, connection):
-        if connection.player is not None:
-            if connection.player.agent is not None:
-                connection.player.agent.quit()
-                GameStateGlobal.agentList.destroy(connection.player.agent)
-            connection.player.quit()
+        if connection.agent is not None:
+            connection.agent.quit()
+            GameStateGlobal.agentList.destroy(connection.agent)
 
 from net_server import NetServer
 
 from agents import AgentList
-from players import PlayerList
+#from players import PlayerList
 from weapons import WeaponList
 
 # main game state wrapper

@@ -94,11 +94,11 @@ class SendMessage(GenericMessage):
             'id'   :   agent_id,
         }
 
-    @sendJSON('request_player')
-    def request_player(self, player_id):
-        return {
-            'id'   :   player_id,
-        }
+    #@sendJSON('request_player')
+    #def request_player(self, player_id):
+        #return {
+            #'id'   :   player_id,
+        #}
 
     @sendJSON('request_weapon')
     def request_weapon(self, wid):

@@ -48,7 +48,7 @@ from game_state import GameStateGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
-from players import Player
+#from players import Player
 from input import Mouse, Keyboard
 from hud import Hud
 from animations import animations

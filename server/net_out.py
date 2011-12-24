@@ -87,11 +87,11 @@ class EventOut:
             'agent' :   agent.json(properties),
         }
 
-    @sendJSONevent('player_update', tick=False)
-    def player_update(self, player, properties=None):
-        return {
-            'player': player.json(properties),
-        }
+    #@sendJSONevent('player_update', tick=False)
+    #def player_update(self, player, properties=None):
+        #return {
+            #'player': player.json(properties),
+        #}
 
     @sendJSONevent('weapon_update')
     def weapon_update(self, weapon, properties=None):
@@ -106,12 +106,12 @@ class EventOut:
             'id'    :   weapon.id,
         }
 
-    #deprecate
-    @sendJSONevent('player_create', tick=False)
-    def player_create(self, player):
-        return {
-            'player'    :   player.json(),
-        }
+    ##deprecate
+    #@sendJSONevent('player_create', tick=False)
+    #def player_create(self, player):
+        #return {
+            #'player'    :   player.json(),
+        #}
 
     @sendJSONevent('client_quit', tick=False)
     def client_quit(self, client_id):
@@ -137,11 +137,11 @@ class EventOut:
             'wtype'     :   weapon_type,
         }
 
-    @sendJSONevent('player_list')
-    def send_players(self):
-        return {
-            'player_list'   :   GameStateGlobal.playerList.json()
-        }
+    #@sendJSONevent('player_list')
+    #def send_players(self):
+        #return {
+            #'player_list'   :   GameStateGlobal.playerList.json()
+        #}
 
     @sendJSONevent('dat', zlib=6)
     def send_dat(self, dat_name=None, type=None, key=None):
@@ -286,20 +286,20 @@ class SendMessage: #each connection has one of these
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
 
-    @sendJSON('player_list')
-    def send_players(self):
-        return {
-            'player_list':  GameStateGlobal.playerList.json()
-        }
+    #@sendJSON('player_list')
+    #def send_players(self):
+        #return {
+            #'player_list':  GameStateGlobal.playerList.json()
+        #}
 
-    @sendJSON('player_update')
-    def send_player(self, player, properties=None):
-        if not hasattr(player, 'id'):
-            player = GameStateGlobal.playerList[player]
-        return {
-            'player': player.json(properties),
-            'full'  :   int(not properties),
-        }
+    #@sendJSON('player_update')
+    #def send_player(self, player, properties=None):
+        #if not hasattr(player, 'id'):
+            #player = GameStateGlobal.playerList[player]
+        #return {
+            #'player': player.json(properties),
+            #'full'  :   int(not properties),
+        #}
 
     @sendJSON('agent_update')
     def send_agent(self, agent, properties=None):
@@ -307,21 +307,6 @@ class SendMessage: #each connection has one of these
             agent = GameStateGlobal.agentList[agent]
         return {
             'agent' :   agent.json(properties),
-            'full'  :   int(not properties),
-        }
-
-    @sendJSON('projectile_list')
-    def send_projectiles(self):
-        return {
-            'projectile_list'   :   GameStateGlobal.projectileList.json(),
-        }
-
-    @sendJSON('projectile_update')
-    def send_projectile(self, projectile, properties=None):
-        if not hasattr(projectile, 'id'):
-            projectile = GameStateGlobal.projectileList[projectile]
-        return {
-            'projectile'    :   projectile.json(properties),
             'full'  :   int(not properties),
         }
 
@@ -340,11 +325,11 @@ class SendMessage: #each connection has one of these
             'full'  :   int(not properties),
         }
 
-    @sendJSON('player_destroy')
-    def remove_player(self, player):
-        return {
-            'id'    : player.id,
-        }
+    #@sendJSON('player_destroy')
+    #def remove_player(self, player):
+        #return {
+            #'id'    : player.id,
+        #}
 
     @sendJSON('agent_destroy')
     def remove_agent(self, agent):

@@ -179,6 +179,12 @@ class AgentList(GenericObjectListWrapper):
         agent = self._add(*args, **agent)
         return agent
 
+    def by_client(self, id):
+        print self.values()
+        for agent in self.values():
+            if id == agent.client_id:
+                return agent
+
     def create_player_agent(self, *args, **agent):
         from agents import Agent, PlayerAgent
         self._object_type = PlayerAgent
@@ -212,49 +218,49 @@ class AgentList(GenericObjectListWrapper):
         return l
 
 
-# datastore for Players
-class PlayerList(GenericObjectList):
+## datastore for Players
+#class PlayerList(GenericObjectList):
 
-    def __init__(self):
-        from players import Player
-        GenericObjectList.__init__(self)
-        self._metaname = 'PlayerList'
-        self._itemname = 'Player'
-        self._object_type = Player
-        self.client_ids = {}
+    #def __init__(self):
+        #from players import Player
+        #GenericObjectList.__init__(self)
+        #self._metaname = 'PlayerList'
+        #self._itemname = 'Player'
+        #self._object_type = Player
+        #self.client_ids = {}
 
-    def create(self, **player):
-        client_id = player.get('cid', None)
-        if client_id is None:
-            print 'player cannot join: player missing client_id or name'
-            print player
-            return
-        player = self._add(**player)
-        if player is not None:
-            self.client_ids[client_id] = player.id
-        return player
+    #def create(self, **player):
+        #client_id = player.get('cid', None)
+        #if client_id is None:
+            #print 'player cannot join: player missing client_id or name'
+            #print player
+            #return
+        #player = self._add(**player)
+        #if player is not None:
+            #self.client_ids[client_id] = player.id
+        #return player
 
-    def destroy(self, player):
-        client_id = player.cid
-        if self._remove(player):
-            if client_id in self.client_ids:
-                del self.client_ids[client_id]
+    #def destroy(self, player):
+        #client_id = player.cid
+        #if self._remove(player):
+            #if client_id in self.client_ids:
+                #del self.client_ids[client_id]
 
-        return player
+        #return player
 
-    def by_client(self, id):    # returns a player
-        if id in self.client_ids:
-            pid = self.client_ids[id]
-            if pid in self.objects:
-                return self.objects[pid]
+    #def by_client(self, id):    # returns a player
+        #if id in self.client_ids:
+            #pid = self.client_ids[id]
+            #if pid in self.objects:
+                #return self.objects[pid]
 
-    def update(self, player, old_id=None, old_cid=None):
-        if old_cid is not None and old_cid in self.client_ids:
-            del self.client_ids[old_cid]
-        if old_id != player.id and old_id in self.objects:
-            del self.objects[old_id]
-        self.objects[player.id] = player
-        self.client_ids[player.cid] = player.id
+    #def update(self, player, old_id=None, old_cid=None):
+        #if old_cid is not None and old_cid in self.client_ids:
+            #del self.client_ids[old_cid]
+        #if old_id != player.id and old_id in self.objects:
+            #del self.objects[old_id]
+        #self.objects[player.id] = player
+        #self.client_ids[player.cid] = player.id
 
 
 # for tracking multiple objects sharing the same unique identifier counts

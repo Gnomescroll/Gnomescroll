@@ -29,8 +29,8 @@ class AgentList(GenericObjectList):
         self._object_type = Agent
         self._wrapper = AgentListWrapper
 
-    def create(self, player_id, client_id, position=None, id=None):
-        return self._add(player_id, client_id, position=position, id=id)
+    def create(self, client_id, position=None):
+        return self._add(client_id, position=position)
 
     def destroy(self, agent):
         if agent is None:
@@ -107,14 +107,13 @@ class Agent(AgentWrapper, AgentPhysics):
     _TICK_RATE = 30       # milliseconds
     RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
 
-    def __init__(self, player_id, client_id, position=None, id=None):
+    def __init__(self, client_id, position=None):
 
         ### Global imports ###
         self.terrainMap = GameStateGlobal.terrainMap
         ### End Global imports ###
 
-        print player_id
-        AgentWrapper.__init__(self, player_id)
+        AgentWrapper.__init__(self, client_id)
         AgentWrapper.send_id_to_client(self, client_id)
         
         ### Agent State
@@ -157,7 +156,7 @@ class Agent(AgentWrapper, AgentPhysics):
         self._active_weapon = 0
         self.inventory = []
 
-        self.owner = player_id
+        #self.owner = player_id
 
     def __getattribute__(self, name):
         try:
@@ -371,56 +370,56 @@ class Agent(AgentWrapper, AgentPhysics):
             if self.health != old:
                 NetOut.event.agent_update(self, 'health')
 
-    def die(self, projectile_owner=None, no_score=False, custom_msg=None, respawn_ticks=None):
-        print 'dying'
-        if self.dead:
-            print "already dead"
-            return
+    #def die(self, projectile_owner=None, no_score=False, custom_msg=None, respawn_ticks=None):
+        #print 'dying'
+        #if self.dead:
+            #print "already dead"
+            #return
             
-        suicide = False
-        try:
-            you_player = GameStateGlobal.playerList[self.owner]
-            you = NetServer.connectionPool.by_client_id(you_player.cid)
-            print you_player, you
-            you_player.died(no_score)
-        except Exception, e:
-            print 'Error obtaining client object that owns dying agent.'
-            print e
-            self.dead = True
-            return
-        if projectile_owner is None:
-            msg = 'You died mysteriously.'
-        else:
-            try:
-                killer = projectile_owner
-                if not hasattr(killer, 'id'):
-                    killer = GameStateGlobal.playerList[projectile_owner]
-                if killer.cid == you_player.cid:
-                    msg = 'You killed yourself.'
-                    suicide = True
-                else:
-                    killer.killed()
-                    msg = 'You were killed by %s' % (killer.name,)
-                if not suicide:
-                    try:
-                        killer_client = NetServer.connectionPool.by_client_id(killer.cid)
-                        kmsg = 'You killed %s' % you.name
-                        killer_client.sendMessage.you_killed(kmsg)
-                    except e:
-                        print 'Killer\'s client was not found'
-                        print e
-            except KeyError:    # race condition, where client quits before his bullet kills
-                msg = 'You were killed by a ghost.'
+        #suicide = False
+        #try:
+            #you_player = GameStateGlobal.playerList[self.owner]
+            #you = NetServer.connectionPool.by_client_id(you_player.cid)
+            #print you_player, you
+            #you_player.died(no_score)
+        #except Exception, e:
+            #print 'Error obtaining client object that owns dying agent.'
+            #print e
+            #self.dead = True
+            #return
+        #if projectile_owner is None:
+            #msg = 'You died mysteriously.'
+        #else:
+            #try:
+                #killer = projectile_owner
+                #if not hasattr(killer, 'id'):
+                    #killer = GameStateGlobal.playerList[projectile_owner]
+                #if killer.cid == you_player.cid:
+                    #msg = 'You killed yourself.'
+                    #suicide = True
+                #else:
+                    #killer.killed()
+                    #msg = 'You were killed by %s' % (killer.name,)
+                #if not suicide:
+                    #try:
+                        #killer_client = NetServer.connectionPool.by_client_id(killer.cid)
+                        #kmsg = 'You killed %s' % you.name
+                        #killer_client.sendMessage.you_killed(kmsg)
+                    #except e:
+                        #print 'Killer\'s client was not found'
+                        #print e
+            #except KeyError:    # race condition, where client quits before his bullet kills
+                #msg = 'You were killed by a ghost.'
 
-        if custom_msg is not None:
-            msg = custom_msg
-        you.sendMessage.you_died(msg)
+        #if custom_msg is not None:
+            #msg = custom_msg
+        #you.sendMessage.you_died(msg)
 
-        self.dead = True
-        if respawn_ticks is not None:
-            self.respawn_countdown = respawn_ticks
-        self.dump_inventory()
-        NetOut.event.agent_update(self, ['dead', 'health'])
+        #self.dead = True
+        #if respawn_ticks is not None:
+            #self.respawn_countdown = respawn_ticks
+        #self.dump_inventory()
+        #NetOut.event.agent_update(self, ['dead', 'health'])
 
     def _revive(self):
         self.health = self.HEALTH_MAX
