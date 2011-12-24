@@ -37,7 +37,6 @@ from init_c_lib import connected, _send_python_net_message
 class PyClient:
 
     MAX_NAME_LENGTH = 15
-    #BUFFER_SIZE = 4096
 
     def __init__(self, client_id):
 
@@ -45,26 +44,17 @@ class PyClient:
         self.id = client_id
         print "PyClient initialized with client_id %d" % (client_id,)
 
-        #self.connection = connection
-        #self.address = address
-
         self.admin = False
 
-        #self.received_id = False
         self.identified = False
         self.dat_loaded = False
         self.loaded_once = False
 
-        #self.fileno = connection.fileno()
-        #self.TcpPacketDecoder = TcpPacketDecoder(self)
         self.sendMessage = SendMessage(self)
 
-        #self.player = None
         self.agent = None
         self.name = None
-        #self.ec = 0
 
-        #self.sendMessage.send_client_id(self) #send client an id upon connection
         self.sendMessage.send_dat()
 
     def identify(self, name):
@@ -111,14 +101,9 @@ class PyClient:
 
     def _register(self):
         ChatServer.chat.connect(self) # join chat server
-        #if self.player is not None and self.player.id in GameStateGlobal.playerList:
         if self.agent is not None and self.agent.id in GameStateGlobal.agentList:
-            #self.player.update_info(name=self.name)
             self.agent.update_info(name=self.name)
         else:
-            #self.player = GameStateGlobal.playerList.join(self, self.name)  # create player
-            #self.player = GameStateGlobal.playerList.join(self)  # create player
-            #self.agent = GameStateGlobal.agentList.join(self)  # create player
             self.agent = GameStateGlobal.agentList.create(self.client_id)
             print 'Created new agent'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
@@ -149,7 +134,6 @@ from init_c_lib import register_client_creation, register_client_deletion, regis
 
 _msg_buffer = True
 
-#function = lambda: 42
 class PyClientPool:
 
     def init(self):
@@ -180,10 +164,8 @@ class PyClientPool:
     def push_to_event_buffer(self, client_id, event_id):
         self.event_buffer.append((client_id, event_id))
     def dispatch_event_buffer(self):
-        #print self.event_buffer
         for client_id, event_id in self.event_buffer:
             if event_id == 0:
-                #assert False
                 self.addClient(client_id)
             if event_id == 1:
                 self.removeClient(client_id)

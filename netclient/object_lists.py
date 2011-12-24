@@ -180,12 +180,7 @@ class AgentList(GenericObjectListWrapper):
         self._wrapper = cAgents.AgentListWrapper
 
     def create(self, *args, **agent):
-        #print args, agent
-        #assert False
-        #print agent
         a = self._add(*args, **agent)
-        #print agent.id, cAgents.get_player_agent_id()
-        #assert False
         if a.id == cAgents.get_player_agent_id():
             self._remove(a, remove_c=False)
             a = self.create_player_agent(*args, **agent)
@@ -198,7 +193,6 @@ class AgentList(GenericObjectListWrapper):
                 return agent
 
     def create_player_agent(self, *args, **agent):
-        #assert False
         from agents import Agent, PlayerAgent
         self._object_type = PlayerAgent
         player_agent = self._add(*args, **agent)
@@ -234,54 +228,8 @@ class AgentList(GenericObjectListWrapper):
     def load_list(self, objs):
         _objs = []
         for obj in objs:
-            #_objs.append(self.update_or_create(**obj))
             _objs.append(self.create(**obj))
         return _objs
-
-
-## datastore for Players
-#class PlayerList(GenericObjectList):
-
-    #def __init__(self):
-        #from players import Player
-        #GenericObjectList.__init__(self)
-        #self._metaname = 'PlayerList'
-        #self._itemname = 'Player'
-        #self._object_type = Player
-        #self.client_ids = {}
-
-    #def create(self, **player):
-        #client_id = player.get('cid', None)
-        #if client_id is None:
-            #print 'player cannot join: player missing client_id or name'
-            #print player
-            #return
-        #player = self._add(**player)
-        #if player is not None:
-            #self.client_ids[client_id] = player.id
-        #return player
-
-    #def destroy(self, player):
-        #client_id = player.cid
-        #if self._remove(player):
-            #if client_id in self.client_ids:
-                #del self.client_ids[client_id]
-
-        #return player
-
-    #def by_client(self, id):    # returns a player
-        #if id in self.client_ids:
-            #pid = self.client_ids[id]
-            #if pid in self.objects:
-                #return self.objects[pid]
-
-    #def update(self, player, old_id=None, old_cid=None):
-        #if old_cid is not None and old_cid in self.client_ids:
-            #del self.client_ids[old_cid]
-        #if old_id != player.id and old_id in self.objects:
-            #del self.objects[old_id]
-        #self.objects[player.id] = player
-        #self.client_ids[player.cid] = player.id
 
 
 # for tracking multiple objects sharing the same unique identifier counts

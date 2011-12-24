@@ -157,8 +157,6 @@ class Agent(AgentWrapper, AgentPhysics):
         self._active_weapon = 0
         self.inventory = []
 
-        #self.owner = player_id
-
     def __getattribute__(self, name):
         try:
             val = AgentWrapper.__getattribute__(self, name)
@@ -371,57 +369,6 @@ class Agent(AgentWrapper, AgentPhysics):
             if self.health != old:
                 NetOut.event.agent_update(self, 'health')
 
-    #def die(self, projectile_owner=None, no_score=False, custom_msg=None, respawn_ticks=None):
-        #print 'dying'
-        #if self.dead:
-            #print "already dead"
-            #return
-            
-        #suicide = False
-        #try:
-            #you_player = GameStateGlobal.playerList[self.owner]
-            #you = NetServer.connectionPool.by_client_id(you_player.cid)
-            #print you_player, you
-            #you_player.died(no_score)
-        #except Exception, e:
-            #print 'Error obtaining client object that owns dying agent.'
-            #print e
-            #self.dead = True
-            #return
-        #if projectile_owner is None:
-            #msg = 'You died mysteriously.'
-        #else:
-            #try:
-                #killer = projectile_owner
-                #if not hasattr(killer, 'id'):
-                    #killer = GameStateGlobal.playerList[projectile_owner]
-                #if killer.cid == you_player.cid:
-                    #msg = 'You killed yourself.'
-                    #suicide = True
-                #else:
-                    #killer.killed()
-                    #msg = 'You were killed by %s' % (killer.name,)
-                #if not suicide:
-                    #try:
-                        #killer_client = NetServer.connectionPool.by_client_id(killer.cid)
-                        #kmsg = 'You killed %s' % you.name
-                        #killer_client.sendMessage.you_killed(kmsg)
-                    #except e:
-                        #print 'Killer\'s client was not found'
-                        #print e
-            #except KeyError:    # race condition, where client quits before his bullet kills
-                #msg = 'You were killed by a ghost.'
-
-        #if custom_msg is not None:
-            #msg = custom_msg
-        #you.sendMessage.you_died(msg)
-
-        #self.dead = True
-        #if respawn_ticks is not None:
-            #self.respawn_countdown = respawn_ticks
-        #self.dump_inventory()
-        #NetOut.event.agent_update(self, ['dead', 'health'])
-
     def _revive(self):
         self.health = self.HEALTH_MAX
         self.dead = False
@@ -444,7 +391,6 @@ class Agent(AgentWrapper, AgentPhysics):
             pos = self._spawn_point()
         x,y,z = map(float, pos)
         teleport_Agent(self.id, x,y,z)
-        #self.pos(pos)
 
     def respawn(self): # or can destroy / recreate Agent
         self._revive()

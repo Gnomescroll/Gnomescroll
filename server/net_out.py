@@ -81,17 +81,10 @@ class EventOut:
     #Deprecate?
     @sendJSONevent('agent_update')
     def agent_update(self, agent, properties=None):
-        #assert False
         print 'sending agent update'
         return {
             'agent' :   agent.json(properties),
         }
-
-    #@sendJSONevent('player_update', tick=False)
-    #def player_update(self, player, properties=None):
-        #return {
-            #'player': player.json(properties),
-        #}
 
     @sendJSONevent('weapon_update')
     def weapon_update(self, weapon, properties=None):
@@ -105,13 +98,6 @@ class EventOut:
         return {
             'id'    :   weapon.id,
         }
-
-    ##deprecate
-    #@sendJSONevent('player_create', tick=False)
-    #def player_create(self, player):
-        #return {
-            #'player'    :   player.json(),
-        #}
 
     @sendJSONevent('client_quit', tick=False)
     def client_quit(self, client_id):
@@ -136,12 +122,6 @@ class EventOut:
             'aid'       :   agent_id,
             'wtype'     :   weapon_type,
         }
-
-    #@sendJSONevent('player_list')
-    #def send_players(self):
-        #return {
-            #'player_list'   :   GameStateGlobal.playerList.json()
-        #}
 
     @sendJSONevent('dat', zlib=6)
     def send_dat(self, dat_name=None, type=None, key=None):
@@ -280,35 +260,17 @@ class SendMessage: #each connection has one of these
         }
 
     def send_chunk(self, x, y, z, XXX=[0]):
-        #if XXX[0]:
-            #assert False
-        #XXX[0] += 1
         chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
         if chunk_str != '':
             self.client.send(self.add_prefix(3, chunk_str))
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
 
-    #@sendJSON('player_list')
-    #def send_players(self):
-        #return {
-            #'player_list':  GameStateGlobal.playerList.json()
-        #}
-
     @sendJSON('agent_list')
     def send_agents(self):
         return {
             'agent_list':   GameStateGlobal.agentList.json()
         }
-
-    #@sendJSON('player_update')
-    #def send_player(self, player, properties=None):
-        #if not hasattr(player, 'id'):
-            #player = GameStateGlobal.playerList[player]
-        #return {
-            #'player': player.json(properties),
-            #'full'  :   int(not properties),
-        #}
 
     @sendJSON('agent_update')
     def send_agent(self, agent, properties=None):
@@ -333,12 +295,6 @@ class SendMessage: #each connection has one of these
             'weapon'    :   weapon.json(properties),
             'full'  :   int(not properties),
         }
-
-    #@sendJSON('player_destroy')
-    #def remove_player(self, player):
-        #return {
-            #'id'    : player.id,
-        #}
 
     @sendJSON('agent_destroy')
     def remove_agent(self, agent):

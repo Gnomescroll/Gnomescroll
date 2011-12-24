@@ -293,7 +293,6 @@ class ChatCommand():
         elif command == 'pm':
             if len(args) < 1:
                 return
-            #client_id = GameStateGlobal.playerList.by_name(args[0])
             client_id = NetClientGlobal.client_id_from_name(args[0])
             if not client_id:
                 _send = self._send_local({
