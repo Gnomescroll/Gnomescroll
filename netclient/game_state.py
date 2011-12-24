@@ -16,14 +16,10 @@ class GameStateGlobal:
     apply_gravity = True
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.agentList = AgentList()
         cls.weaponList = WeaponList()
         cls.exit = False
-
-    @classmethod
-    def init_1(cls):
-        pass
 
     @classmethod
     def remove_agent(cls, id):

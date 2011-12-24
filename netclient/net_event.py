@@ -20,14 +20,12 @@ class NetEventGlobal:
     clientMessageHandler = None
     mapMessageHandler = None
     agentMessageHandler = None
-    #playerMessageHandler = None
     miscMessageHandler = None
-    #gameModeMessageHandler = None
     weaponMessageHandler = None
     datMessageHandler = None
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.messageHandler = MessageHandler()
         cls.clientMessageHandler = ClientMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
@@ -40,24 +38,11 @@ class NetEventGlobal:
         cls.datMessageHandler = DatMessageHandler()
 
     @classmethod
-    def init_1(cls):
-        MessageHandler.init()
-        ClientMessageHandler.init()
-        ChatMessageHandler.init()
-
-        AgentMessageHandler.init()
-        MapMessageHandler.init()
-        WeaponMessageHandler.init()
-
-    @classmethod
     def register_json_events(cls, events):
         for string, function in events.items():
             cls.messageHandler.json_events[string] = function
 
 class MessageHandler:
-    @classmethod
-    def init(self):
-        pass
     def __init__(self):
         self.json_events = {} #map strings to functions
 
@@ -127,9 +112,6 @@ class GenericMessageHandler:
             if ev is not None:
                 self.events[event] = ev
 
-    @classmethod
-    def init(cls):
-        pass
     def __init__(self):
         self._assign_events_to_methods()
         self.register_events()
@@ -158,18 +140,10 @@ class MiscMessageHandler(GenericMessageHandler):
         'ping' : '_ping',
     }
 
-    @classmethod
-    def init(cls):
-        pass
-
     def _ping(self, timestamp, **msg):
         stats.last_ping = c_lib.c_lib_sdl.get_ticks() - timestamp
-        #print "timestamp = %f" % (SDL.gl.get_ticks() - timestamp)
 
 class MapMessageHandler(GenericMessageHandler):
-    #terrainMap = None
-    #mapChunkManager = None
-    mapController = None
 
     events = {
         'chunk_list' : '_chunk_list',
@@ -178,35 +152,20 @@ class MapMessageHandler(GenericMessageHandler):
         'clear_map': '_clear_map',
     }
 
-    @classmethod
-    def init(cls):
-        #cls.terrainMap = GameStateGlobal.terrainMap
-        #cls.mapChunkManager = MapChunkManagerGlobal.mapChunkManager
-        cls.mapController = MapControllerGlobal.mapController
-        assert cls.mapController != None
-
     def _chunk_list(self, list, **msg):
-        #print str(list)
         print "chunk list"
-        #assert False
-        self.mapController.process_chunk_list(list)
-        #for chunk in list:
-        #    (x,y,z,version ) = chunk
+        MapControllerGlobal.mapController.process_chunk_list(list)
 
     def _map_chunk(self, datagram):
         #print "Map Chunk Received"
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
-        self.mapController.incoming_map_chunk(x,y,z)
-        #self.mapChunkManager.set_map(x,y,z) #tells to redraw chunk
+        MapControllerGlobal.mapController.incoming_map_chunk(x,y,z)
 
     def _set_map(self, list, **msg):
-        #if len(list) == 1:
-            #print 'setting block %s' % list[0]
         for x,y,z,value in list:
             terrainMap.set(x,y,z,value)
             if value == 0:
                 animations.BlockCrumbleAnimation([x,y,z]).play()
-            #self.mapChunkManager.set_map(x,y,z) #redraw chunk
 
     def _clear_map(self, **msg):
         terrainMap.clear()
@@ -221,8 +180,8 @@ class ClientMessageHandler(GenericMessageHandler):
     }
 
     def _client_quit(self, id, **msg):
-        pass
         #GameStateGlobal.client_quit(id)
+        pass
 
     def _identified(self, **msg):
         note = msg.get('msg', '')
@@ -289,7 +248,6 @@ class DatastoreMessageInterface(GenericMessageHandler):
         return 'msg %s :: %s' % (msg['cmd'], info_string,)
 
     def _default_update(self, **args):
-        #print args
         err_msg = None
         data = args.get(self.name, None)
         full = args.get('full', 0)
@@ -298,7 +256,7 @@ class DatastoreMessageInterface(GenericMessageHandler):
         if err_msg is not None:
             print self._error_message(err_msg, **args)
             return
-        #print self.store
+
         if full:
             obj = self.store.update_or_create(**data)
         else:

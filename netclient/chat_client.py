@@ -17,13 +17,9 @@ class ChatClientGlobal:
     chatClient = None
 
     @classmethod
-    def init_0(cls): #first pass is declaring
+    def init(cls): #first pass is declaring
         ChatClientGlobal.chatClient = ChatClient()
         ChatClientGlobal.chatRender = ChatRender()
-
-    @classmethod
-    def init_1(cls): #calls import methods if needed
-        pass
 
     @classmethod
     def on_identify(cls): # called after client connects
@@ -748,5 +744,4 @@ class ChatRender:
         return ChatClientGlobal.chatClient.input.cursor
 
 if __name__ == '__main__':
-    ChatClientGlobal.init_0()
-    ChatClientGlobal.init_1()
+    ChatClientGlobal.init()

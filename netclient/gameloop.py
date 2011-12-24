@@ -62,26 +62,18 @@ P2 = c_lib.terrain_map.Profiler()
 class App(object):
 
     def init_globals(self):
-        #stage 1
-        NetClientGlobal.init_0()
-        GameStateGlobal.init_0()
-        NetEventGlobal.init_0()
-        NetOut.init_0()
-        ChatClientGlobal.init_0()
-        MapControllerGlobal.init_0()
-        #stage 2
-        NetClientGlobal.init_1()
-        GameStateGlobal.init_1()
-        NetEventGlobal.init_1()
-        ChatClientGlobal.init_1()
-        MapControllerGlobal.init_1()
+        NetClientGlobal.init()
+        GameStateGlobal.init()
+        NetEventGlobal.init()
+        NetOut.init()
+        ChatClientGlobal.init()
+        MapControllerGlobal.init()
 
         init_c_lib.init()
 
 
     def init_inputs(self):
-        InputGlobal.init_0(self)
-        InputGlobal.init_1(self)
+        InputGlobal.init(self)
 
     def init_sound(self):
         path = './media/sound/wav/'

@@ -105,7 +105,7 @@ class InputGlobal:
     map = False
 
     @classmethod
-    def init_0(cls, main):
+    def init(cls, main):
         #InputEventGlobal.inputGlobal = cls
 
         InputGlobal.app = main
@@ -119,10 +119,6 @@ class InputGlobal:
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
 
-    @classmethod
-    def init_1(cls, main):
-        pass
-        
     @classmethod
     def _toggle_mode(cls, change, current_mode, type):
         modes = getattr(InputGlobal, '_'+type+'s')

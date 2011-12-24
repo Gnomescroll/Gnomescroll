@@ -21,12 +21,9 @@ class NetClientGlobal:
     VERSION = opts.version
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         NetClientGlobal.connection = PyClient()
         NetClientGlobal.sendPacket = SendPacket()
-    @classmethod
-    def init_1(cls):
-        NetClientGlobal.connection.init()
 
     @classmethod
     def client_id_from_name(cls, name):
@@ -58,16 +55,18 @@ _msg_buffer = True
 class PyClient(object):
 
     messageHandler = None
-    @classmethod
-    def init(cls):
-        cls.messageHandler = NetEventGlobal.messageHandler
-        assert cls.messageHandler != None
+    #@classmethod
+    #def init(cls):
+        #cls.messageHandler = NetEventGlobal.messageHandler
+        #assert cls.messageHandler != None
     def __init__(self):
         self.connected = False
         self.out = SendPacket(self)
 
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
+        #PyClient.messageHandler = NetEventGlobal.messageHandler
+        #assert PyClient.messageHandler != None
 
         global _msg_buffer     
         if _msg_buffer: 
@@ -109,7 +108,8 @@ class PyClient(object):
         msg_type = struct.unpack(self.fmt, message[0:2])
         msg_type = msg_type[0]
         message = message[2:]
-        self.messageHandler.process_net_event(msg_type, message)
+        #self.messageHandler.process_net_event(msg_type, message)
+        NetEventGlobal.messageHandler.process_net_event(msg_type, message)
 
     def close(self):
         pass

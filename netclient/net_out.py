@@ -17,7 +17,7 @@ class NetOut:
     datMessage = None
 
     @classmethod
-    def init_0(cls):
+    def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
         cls.sendMessage = SendMessage()
         cls.mapMessage = MapMessage()

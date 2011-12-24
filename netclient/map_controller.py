@@ -4,11 +4,8 @@ from profiler import P
 class MapControllerGlobal:
     mapController = None
     @classmethod
-    def init_0(cls):
+    def init(cls):
         MapControllerGlobal.mapController = MapController()
-    @classmethod
-    def init_1(cls):
-        cls.mapController.init()
 
 from game_state import GameStateGlobal
 from net_out import NetOut
@@ -17,17 +14,13 @@ class MapController:
 
     mapMessage = None
 
-    @classmethod
-    def init(self):
-        assert NetOut.mapMessage != None
-        self.mapMessage = NetOut.mapMessage
-        assert self.mapMessage != None
-
     def __init__(self):
         self.requests = 0
         self.requests_max = 30
         self.max_request_per_frame = 2
         self.r_total = 0 #total requests
+        self.mapMessage = NetOut.mapMessage
+        assert self.mapMessage != None
 
     def process_chunk_list(self, list):
         print "Processing Chunk List: %i chunks" %(len(list))
@@ -80,5 +73,5 @@ class MapController:
         #print "rt= %i" % (self.r_total)
         #print "map chunk request: " + str((x,y,z))
         self.requests += 1
-        self.mapMessage.request_chunk(x,y,z)
+        NetOut.mapMessage.request_chunk(x,y,z)
 
