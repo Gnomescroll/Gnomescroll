@@ -1,24 +1,6 @@
 #pragma once
 
 
-class Orientation_matrix
-{
-    
-    float v[4][4];
-    //x,y,z,offset
-
-    //multiply current by other
-    void multiply(Orientation_matrix* m)
-    {
-        return;
-    }
-
-    Orientation_matrix()
-    {
-        return;
-    }
-
-};
 
 unsigned NextPow2( unsigned x ) {
     --x;
@@ -68,6 +50,422 @@ struct Vector unit_z_rot(float theta)
     u.z = cos(theta * 2*PI);
     return u;
 }
+
+struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
+struct Vector euler_rotation(Vector v, float x, float y, float z)
+{   
+    double cx = cos(x);
+    double sx = sin(x);
+    double cy = cos(y);
+    double sy = sin(y);
+    double cz = cos(z);
+    double sz = sin(z);
+    
+    Vector m[3];
+    Vector u;
+
+    m[0].x = (cy*cz); 
+    m[0].y = (cy*sz);
+    m[0].z = (-sy);
+
+    double sxsy = sx*sy;
+    double cxsy = cx*sy;
+    
+    m[1].x = (sxsy*cz-cx*sz);
+    m[1].y = (sxsy*sz+cx*cz);
+    m[1].z = (sx*cy);
+
+    m[2].x = (cxsy*cz+sx*sz);
+    m[2].y = (cxsy*sz-sx*cz);
+    m[2].z = (cx*cy);
+
+
+    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
+    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
+    u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
+
+    return u;
+}
+
+
+class Voxel_volume
+{
+    public:
+    Vector v[4]; // forward, up, right (x,y,z), offset
+    float scale;    //size of voxels
+    //bounding sphere
+    Vector center;
+    float radius2;
+
+    bool needs_vbo_update;
+
+    int xdim,ydim,zdim;
+    int _xdim,_ydim,_zdim;
+    Voxel* voxel;
+    int index1, index12;
+
+    float hdx,hdy,hdz;  //half of width, height, depth as floats
+
+
+    void set_unit_axis()
+    {
+        v[0] = Vector_init(1.0f,0.0f,0.0f);
+        v[1] = Vector_init(0.0f,1.0f,0.0f);
+        v[2] = Vector_init(0.0f,0.0f,1.0f);
+        update_center();
+
+    }
+    //vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
+    //forward and up vector
+    void set_axis(Vector* f, Vector* u)
+    {
+        v[0] = *f;
+        v[2] = *u; 
+        vector_cross(u, f, &v[1]);
+    }
+
+    //applies rotation
+    //x_angle from 0 to 2
+    //y_angle from 0 to 1
+    void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
+    {
+        Vector vx = Vector_init(1.0f,0.0f,0.0f);
+        vx = euler_rotation(vx, x_angle, y_angle, z_angle);
+
+        Vector vz = Vector_init(0.0f,0.0f,1.0f);
+        vz = euler_rotation(vz, x_angle, y_angle, z_angle);
+
+
+        vector_cross(&vz, &vx, &v[1]); //set v1
+        v[0] = vx;
+        v[2] = vz;
+
+        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
+        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
+        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
+
+        update_center();
+    }
+
+    // testing/tweaking
+/*
+    void translate_center(float dx, float dy, float dz)
+    {
+        center.x += dx;
+        center.y += dy;
+        center.z += dz;
+
+        Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+        Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+        Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+
+        v[3] = vector_add4(&vx,&vy,&vz,&center);
+    }
+*/
+    void update_center()
+    {
+
+        int DEBUG = 0;
+
+        if(DEBUG)
+        {
+            printf("v[0] x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
+            printf("v[1] x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
+            printf("v[2] x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
+            printf("v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+        }
+
+        Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+        Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+        Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+
+        if(DEBUG)
+        {
+            printf("vx x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
+            printf("vy x,y,z= %f, %f, %f \n", vy.x, vy.y, vy.z);
+            printf("vz x,y,z= %f, %f, %f \n", vz.x, vz.y, vz.z);
+        }
+        v[3] = vector_add4(&vx,&vy,&vz,&center);
+
+        if(DEBUG)
+        {
+            printf("out_sum v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+        }
+        //printf("3v x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+    }
+
+    void set_center(float x, float y, float z)
+    {
+        center.x = x;
+        center.y = y;
+        center.z = z;
+
+        //rintf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
+        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
+        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
+        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
+
+        Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+        Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+        Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+
+        //printf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
+
+
+        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
+        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
+        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
+
+        v[3] = vector_add4(&vx,&vy,&vz,&center);
+        //printf("3v x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+
+        //printf("0c x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+
+    }
+
+    inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
+    {
+        //if(x+(y << index1)+(z << index1) != (x+_xdim*y+(_xdim*_ydim*z) ) ) printf("ERROR!\n");
+        //printf("1: %i, %i, %i \n",x, (y << index1), (z << index1) );
+        //printf("2: %i, %i, %i \n", x,_xdim*y, _xdim*_ydim*z );
+        return &voxel[x+(y << index1)+(z << index1)];
+    }
+
+    //external methods
+    void set(int x, int y, int z, Voxel* v)
+    {
+        set(x,y,z,v);
+        needs_vbo_update = true;
+    }
+
+    inline void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+    {
+        set(x,y,z,r,g,b,a);
+        needs_vbo_update = true;
+    }
+
+    //internal methods
+    inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
+    {
+        voxel[x+(y << index1)+(z << index1)] = *v;
+    }
+
+    inline void _set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
+    {
+        Voxel* v = &voxel[x+(y << index1)+(z << index1)];
+        v->r = r;
+        v->g = g;
+        v->b = b;
+        v->a = a;
+    }
+
+    Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
+    {
+        needs_vbo_update = false;
+        scale = _scale;
+
+        v[0] = Vector_init(1.0f,0.0f,0.0f);
+        v[1] = Vector_init(0.0f,1.0f,0.0f);
+        v[2] = Vector_init(0.0f,0.0f,1.0f);
+        //v[3] = Vector_init(0,0,0);  //center
+        this->set_center(0.0,0.0,0.0);
+
+        xdim = __xdim;
+        ydim = __ydim;
+        zdim = __zdim;
+
+        hdx = ((float) xdim) / 2;
+        hdy = ((float) ydim) / 2;
+        hdz = ((float) zdim) / 2;
+
+        radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
+
+        _xdim = pow2_2(__xdim);
+        _ydim = pow2_2(__ydim);
+        _zdim = pow2_2(__zdim);
+        
+        index1 = pow2_1(__xdim);
+        index12 = pow2_1(__xdim) + pow2_1(__ydim);
+
+        printf("__xdim, __ydim, __zdim= %i, %i, %i \n", __xdim, __ydim,__zdim);
+        printf("_xdim, _ydim, _zdim= %i, %i, %i \n", _xdim, _ydim, _zdim);
+        printf("index1, index12= %i, %i \n", index1, index12);
+
+        voxel = new Voxel[_xdim*_ydim*_zdim];
+    }
+
+    ~Voxel_volume()
+    {
+        delete voxel;
+    }
+
+    void draw_bounding_box();
+
+};
+
+static float v_set3[3*8] = {
+        0,0,0,
+        1,0,0,
+        1,1,0,
+        0,1,0,
+        0,0,1,
+        1,0,1,
+        1,1,1,
+        0,1,1,
+    };
+
+static int v_set2[3*8] = {
+        -1,-1,-1,
+        1,-1,-1,
+        1,1,-1,
+        -1,1,-1,
+        -1,-1,1,
+        1,-1,1,
+        1,1,1,
+        -1,1,1,
+        };
+
+static int vertex_index2[2*12] = {
+        0,1,
+        1,2,
+        2,3,
+        3,0,
+
+        4,5,
+        5,6,
+        6,7,
+        7,4,
+
+        0,4,
+        1,5,
+        2,6,
+        3,7,
+};
+
+
+void Voxel_volume::draw_bounding_box()
+{
+#ifdef DC_CLIENT
+
+    //disable to draw over
+    glEnable (GL_DEPTH_TEST);
+
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(5.0f);
+
+    int i,j;
+    float _x,_y,_z;
+
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex3f(center.x,center.y, center.z);
+    glEnd();
+    glPointSize(1.0);
+
+    glBegin(GL_LINES);
+    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+
+    Vector vx;
+    Vector vy;
+    Vector vz;
+
+    Vector u;
+
+    for(i=0; i<12; i++) {
+            j = 3*vertex_index2[2*i+0];
+            
+            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
+            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
+            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+
+            u = vector_add4(&vx,&vy,&vz,&v[3]);
+
+            _x = u.x;
+            _y = u.y;
+            _z = u.z;
+
+            glVertex3f(_x,_y,_z);
+            j = 3*vertex_index2[2*i+1];
+
+            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
+            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
+            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+            
+            u = vector_add4(&vx,&vy,&vz,&v[3]);
+
+            _x = u.x;
+            _y = u.y;
+            _z = u.z;
+
+            glVertex3f(_x,_y,_z);
+    }
+
+    glEnd();
+
+    glDisable (GL_DEPTH_TEST);
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex3f(v[3].x, v[3].y, v[3].z);
+    glEnd();
+    glPointSize(1.0);
+
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+
+
+    glEnable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+
+#endif
+}
+/*
+inline Voxel* Voxel_volume::get(int x, int y, int z) __attribute((always_inline)) = 0;
+{
+    if(x+(index1<<y)+(index12<<z) != (x+_xdim*y+(_xdim*_ydim*z) ) ) printf("ERROR!\n");
+    return &voxel[x+(index1<<y)+(index12<<z)]   ;
+
+}
+*/
+
+void voxel_test()
+{
+    //static Voxel_volume vv(1,1,1, 1.0);
+    static Voxel_volume vv(4,4,4, 1.0);
+    //Voxel* v = vv.get(4,5,6);
+
+    //static float c = 0.0;
+    //c -= 0.02;
+    
+    //vv.set_center( -5.0, -5.0, 10.0);
+
+
+    static float c0 = 0.0;
+    static float c1 = 0.0;
+    static float c2 = 0.0;
+    c0 += 0.0050;
+    c1 += 0.0025;
+    c2 += 0.0100;
+
+
+    c1 = 0.5;
+    c2 = 0.25;
+    //printf("start\n");
+    //printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
+    
+    vv.set_rotated_unit_axis(c0, c1, c2);
+    //vv.set_rotated_unit_axis(0.0f, 0.0f, 0.0f);
+    vv.set_center( 2.0, 2.0, 2.0);
+    //printf("2 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
+
+    //vv.set_unit_axis();
+    //printf("3 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
+    vv.draw_bounding_box();
+    //printf("4 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
+}
+
+
+//Matix reference implementation
 
 /*
 void _3D::RotateFill(double *A, double xAngle, double yAngle, double zAngle)
@@ -136,331 +534,3 @@ void _3D::RotateFill(double *A, double xAngle, double yAngle, double zAngle)
     }
 
 */
-
-struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
-struct Vector euler_rotation(Vector v, float x, float y, float z)
-{   
-    float cx = cos(x);
-    float sx = sin(x);
-    float cy = cos(y);
-    float sy = sin(y);
-    float cz = cos(z);
-    float sz = sin(z);
-    
-    Vector m[3];
-    Vector u;
-
-    m[0].x = (cy*cz); 
-    m[0].y = (cy*sz);
-    m[0].z = (-sy);
-
-    float sxsy = sx*sy;
-    float cxsy = cx*sy;
-    
-    m[1].x = (sxsy*cz-cx*sz);
-    m[1].y = (sxsy*sz+cx*cz);
-    m[1].z = (sx*cy);
-
-    m[2].x = (cxsy*cz+sx*sz);
-    m[2].y = (cxsy*sz-sx*cz);
-    m[2].z = (cx*cy);
-
-
-    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
-    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
-    u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
-
-    return u;
-}
-
-
-class Voxel_volume
-{
-    public:
-    Vector v[4]; // forward, up, right (x,y,z), offset
-    float scale;    //size of voxels
-    //bounding sphere
-    Vector center;
-    float radius2;
-
-    bool needs_vbo_update;
-
-    int xdim,ydim,zdim;
-    int _xdim,_ydim,_zdim;
-    Voxel* voxel;
-    int index1, index12;
-
-    float hdx,hdy,hdz;  //half of width, height, depth as floats
-
-
-    void set_unit_axis()
-    {
-        v[0] = Vector_init(1.0f,0.0f,0.0f);
-        v[1] = Vector_init(0.0f,1.0f,0.0f);
-        v[2] = Vector_init(0.0f,0.0f,1.0f);
-    }
-    //vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
-    //forward and up vector
-    void set_axis(Vector* f, Vector* u)
-    {
-        v[0] = *f;
-        v[2] = *u; 
-        vector_cross(f, u, &v[1]);
-    }
-
-    //applies rotation
-    //x_angle from 0 to 2
-    //y_angle from 0 to 1
-    void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
-    {
-        Vector vx = Vector_init(1.0f,0.0f,0.0f);
-        vx = euler_rotation(vx, x_angle, y_angle, z_angle);
-
-        Vector vz = Vector_init(0.0f,0.0f,1.0f);
-        vz = euler_rotation(vz, x_angle, y_angle, z_angle);
-
-
-        vector_cross(&vx, &vz, &v[1]); //set v1
-        v[0] = vx;
-        v[2] = vz;
-
-        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
-
-        update_center();
-    }
-
-    // testing/tweaking
-/*
-    void translate_center(float dx, float dy, float dz)
-    {
-        center.x += dx;
-        center.y += dy;
-        center.z += dz;
-
-        Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-        Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-        Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
-
-        v[4] = vector_add4(&vx,&vy,&vz,&center);
-    }
-*/
-    void update_center()
-    {
-        Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-        Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-        Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
-
-        v[3] = vector_add4(&vx,&vy,&vz,&center);
-    }
-
-    void set_center(float x, float y, float z)
-    {
-        center.x = x;
-        center.y = y;
-        center.z = z;
-
-        //rintf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
-        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
-
-        Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-        Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-        Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
-
-        //printf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
-
-        v[3] = vector_add4(&vx,&vy,&vz,&center);
-
-
-        //printf("0c x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
-
-    }
-
-    inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
-    {
-        //if(x+(y << index1)+(z << index1) != (x+_xdim*y+(_xdim*_ydim*z) ) ) printf("ERROR!\n");
-        //printf("1: %i, %i, %i \n",x, (y << index1), (z << index1) );
-        //printf("2: %i, %i, %i \n", x,_xdim*y, _xdim*_ydim*z );
-        return &voxel[x+(y << index1)+(z << index1)];
-    }
-
-    inline void set(int x, int y, int z, Voxel* v) __attribute((always_inline))  __attribute((always_inline)) 
-    {
-        voxel[x+(y << index1)+(z << index1)] = *v;
-    }
-
-    inline void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))  __attribute((always_inline)) 
-    {
-        Voxel* v = &voxel[x+(y << index1)+(z << index1)];
-        v->r = r;
-        v->g = g;
-        v->b = b;
-        v->a = a;
-    }
-
-    Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
-    {
-        needs_vbo_update = false;
-        scale = _scale;
-
-        v[0] = Vector_init(1.0f,0.0f,0.0f);
-        v[1] = Vector_init(0.0f,1.0f,0.0f);
-        v[2] = Vector_init(0.0f,0.0f,1.0f);
-        //v[3] = Vector_init(0,0,0);  //center
-        this->set_center(0.0,0.0,0.0);
-
-        xdim = __xdim;
-        ydim = __ydim;
-        zdim = __zdim;
-
-        hdx = ((float) xdim) / 2;
-        hdy = ((float) ydim) / 2;
-        hdz = ((float) zdim) / 2;
-
-        radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
-
-        _xdim = pow2_2(__xdim);
-        _ydim = pow2_2(__ydim);
-        _zdim = pow2_2(__zdim);
-        
-        index1 = pow2_1(__xdim);
-        index12 = pow2_1(__xdim) + pow2_1(__ydim);
-
-        printf("__xdim, __ydim, __zdim= %i, %i, %i \n", __xdim, __ydim,__zdim);
-        printf("_xdim, _ydim, _zdim= %i, %i, %i \n", _xdim, _ydim, _zdim);
-        printf("index1, index12= %i, %i \n", index1, index12);
-
-        voxel = new Voxel[_xdim*_ydim*_zdim];
-    }
-
-    ~Voxel_volume()
-    {
-        delete voxel;
-    }
-
-    void draw_bounding_box();
-
-};
-
-
-static int v_set2[3*8] = {
-        -1,-1,-1,
-        1,-1,-1,
-        1,1,-1,
-        -1,1,-1,
-        -1,-1,1,
-        1,-1,1,
-        1,1,1,
-        -1,1,1,
-        };
-
-static int vertex_index2[2*12] = {
-        0,1,
-        1,2,
-        2,3,
-        3,0,
-
-        4,5,
-        5,6,
-        6,7,
-        7,4,
-
-        0,4,
-        1,5,
-        2,6,
-        3,7,
-};
-
-void Voxel_volume::draw_bounding_box()
-{
-#ifdef DC_CLIENT
-
-    //printf("dfd\n");
-    //glDisable()
-    glDisable(GL_TEXTURE_2D);
-    glLineWidth(5.0f);
-
-    int i,j;
-    float _x,_y,_z;
-
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(center.x,center.y, center.z);
-    glEnd();
-    glPointSize(1.0);
-
-    glBegin(GL_LINES);
-    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-
-    Vector vx;
-    Vector vy;
-    Vector vz;
-
-    Vector u;
-
-        v[3] = vector_add4(&vx,&vy,&vz,&center);
-
-    for(i=0; i<12; i++) {
-            j = 3*vertex_index2[2*i+0];
-            
-            vx = vector_scalar2(&v[0], v_set2[j+0]*hdx*scale);
-            vy = vector_scalar2(&v[1], v_set2[j+1]*hdy*scale);
-            vz = vector_scalar2(&v[2], v_set2[j+2]*hdz*scale);
-            u = vector_add3(&vx,&vy,&vz);
-
-            _x = v[3].x + u.x;
-            _y = v[3].y + u.y;
-            _z = v[3].z + u.z;
-
-            glVertex3f(_x,_y,_z);
-            j = 3*vertex_index2[2*i+1];
-
-            vx = vector_scalar2(&v[0], v_set2[j+0]*hdx*scale);
-            vy = vector_scalar2(&v[1], v_set2[j+1]*hdy*scale);
-            vz = vector_scalar2(&v[2], v_set2[j+2]*hdz*scale);
-            u = vector_add3(&vx,&vy,&vz);
-
-            _x = v[3].x + u.x;
-            _y = v[3].y + u.y;
-            _z = v[3].z + u.z;
-
-            glVertex3f(_x,_y,_z);
-    }
-
-    glEnd();
-    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
-    glEnable(GL_TEXTURE_2D);
-    glLineWidth(1.0f);
-
-#endif
-}
-
-/*
-inline Voxel* Voxel_volume::get(int x, int y, int z) __attribute((always_inline)) = 0;
-{
-    if(x+(index1<<y)+(index12<<z) != (x+_xdim*y+(_xdim*_ydim*z) ) ) printf("ERROR!\n");
-    return &voxel[x+(index1<<y)+(index12<<z)]   ;
-
-}
-*/
-
-void voxel_test()
-{
-
-    static Voxel_volume vv(8,8,8, 1.0);
-    //Voxel* v = vv.get(4,5,6);
-
-    //static float c = 0.0;
-    //c -= 0.02;
-    vv.set_center( -5.0, -5.0, 10.0);
-
-    static float c = 0.0;
-    c += 0.005;
-    vv.set_rotated_unit_axis(0.0f, 0.0f, c);
-
-    vv.draw_bounding_box();
-}
