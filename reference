@@ -1,3 +1,7 @@
+
+!!! Minecraft: "implementing new features that will “reward exploration and combat more."
+<-- inventives
+
 cmmalloc - better than valgrind
 tells you where mallocs are occuring and detects things that have not been freed
 http://cs.ecs.baylor.edu/~donahoo/tools/ccmalloc/test1.log
