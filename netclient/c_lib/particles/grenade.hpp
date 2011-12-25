@@ -28,9 +28,6 @@ class Grenade {
 
         int block_damage(int dist);
         void damage_blocks();
-        void set_owner(int owner) {
-            this->owner = owner;
-        }
         
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);

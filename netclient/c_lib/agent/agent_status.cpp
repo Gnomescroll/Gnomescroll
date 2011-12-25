@@ -66,11 +66,19 @@ int Agent_status::die(int inflictor_id) {
 }
 
 void Agent_status::kill(int victim_id) {
-    kills++;
-    static AgentKills_StoC ak;
-    ak.id = a->id;
-    ak.kills = kills;
-    ak.broadcast();
+    if (victim_id == a->id) {
+        suicides++;
+        static AgentSuicides_StoC as;
+        as.id = a->id;
+        as.suicides = suicides;
+        as.broadcast();
+    } else {
+        kills++;
+        static AgentKills_StoC ak;
+        ak.id = a->id;
+        ak.kills = kills;
+        ak.broadcast();
+    }
 }
 
 int Agent_status::score() {

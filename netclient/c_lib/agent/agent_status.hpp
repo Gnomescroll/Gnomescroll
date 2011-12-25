@@ -37,6 +37,7 @@ class Base_status {
             respawn_countdown(RESPAWN_TICKS),
             kills(0),
             deaths(0),
+            suicides(0),
             team(0)
         {}
 };
