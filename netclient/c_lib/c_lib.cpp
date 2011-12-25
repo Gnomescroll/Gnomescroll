@@ -83,7 +83,12 @@
 #include <c_lib/state/client_state.cpp>
 #include <c_lib/state/packet_init.cpp>
 
+//page size
+#include <unistd.h>
+//(size_t) sysconf(_SC_PAGESIZE);
+
 int init_c_lib() {
+    //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
 
     srand(time(NULL));   // seed the RNG
@@ -109,6 +114,7 @@ int init_c_lib() {
     
     return 0;
 }
+
 
 void close_c_lib() {
     printf("close c_lib() \n");

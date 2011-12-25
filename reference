@@ -1,3 +1,8 @@
+cmmalloc - better than valgrind
+tells you where mallocs are occuring and detects things that have not been freed
+http://cs.ecs.baylor.edu/~donahoo/tools/ccmalloc/test1.log
+http://cs.ecs.baylor.edu/~donahoo/tools/ccmalloc/
+
 eNet Performance issues:
 http://www.leadwerks.com/werkspace/blog/50/entry-248-enet-modifications/
 preventing clients from crashing server

@@ -37,7 +37,13 @@
 #include <c_lib/state/packet_init.cpp>
 #include <c_lib/state/server_state.cpp>
 
+
+//page size
+#include <unistd.h>
+//(size_t) sysconf(_SC_PAGESIZE);
+
 int init_c_lib() {
+    //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
     srand(time(NULL));
     ServerState::ctf.init();

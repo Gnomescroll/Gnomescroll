@@ -3,15 +3,23 @@
 #include <voxel/constants.hpp>
 
 
-void Voxel_volume::register_with_renderer()
-{
-    return;
-}
+#ifdef DC_CLIENT
+    #include <voxel/voxel_render.hpp>
+
+    void Voxel_volume::register_with_renderer(Voxel_render_list* vrl)
+    {
+        vrl->register_voxel_volume(this);
+    }
+#endif
 
 Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
 {
     needs_vbo_update = false;
     scale = _scale;
+
+#ifdef DC_CLIENT
+    Voxel_render_list* voxel_render_list = NULL;
+#endif
 
     v[0] = Vector_init(1.0f,0.0f,0.0f);
     v[1] = Vector_init(0.0f,1.0f,0.0f);
@@ -56,6 +64,9 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
 
 Voxel_volume::~Voxel_volume()
 {
+    #ifdef DC_CLIENT
+    if(voxel_render_list != NULL) voxel_render_list->unregister_voxel_volume(this);
+    #endif
     delete voxel;
 }
 

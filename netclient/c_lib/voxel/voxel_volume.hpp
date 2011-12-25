@@ -58,6 +58,9 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     return u;
 }
 
+#ifdef DC_CLIENT
+    class Voxel_render_list; //forward declaration
+#endif
 
 class Voxel_volume
 {
@@ -78,7 +81,8 @@ class Voxel_volume
     float hdx,hdy,hdz;  //half of width, height, depth as floats
 
 #ifdef DC_CLIENT
-    void register_with_renderer();
+    Voxel_render_list* voxel_render_list;
+    void register_with_renderer(Voxel_render_list* vrl);
 #endif
 
     void set_unit_axis();
