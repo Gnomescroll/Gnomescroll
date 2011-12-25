@@ -348,20 +348,27 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
 {
     public:
         int id;
-        int owner;
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
         }
 
         inline void handle();
-
-        agent_create_StoC() {}
-        agent_create_StoC(int id, int owner) : id(id), owner(owner) {}
 };
 
+class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destroy_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+        
 class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent_id_StoC>
 {
     public:

@@ -104,7 +104,6 @@ class Agent_state {
 
         int id;
         int client_id;
-        int owner;
         
         struct Agent_collision_box box;
 
@@ -174,7 +173,9 @@ class Agent_state {
         }
 
         Agent_state(int id); //default constructor
-        Agent_state(int id, int owner, float x, float y, float z, float vx, float vy, float vz);
+        Agent_state(int id, float x, float y, float z, float vx, float vy, float vz);
+
+        ~Agent_state();
 
         //void server_tick();
         //set_control_state(int[8] _cs, float theta, float phi);

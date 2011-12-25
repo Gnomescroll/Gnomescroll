@@ -170,7 +170,7 @@ void Object_list<Object_state, max_n>::destroy(int id) {
     delete a[id];
     a[id] = NULL;
     num--;
-    //printf("%s_list: Deleted object %i\n",name(), id);
+    printf("%s_list: Deleted object %i\n",name(), id);
 }
 
 template <class Object_state, int max_n>

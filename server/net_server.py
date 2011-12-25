@@ -54,9 +54,7 @@ class PyClient:
         self.sendMessage.send_dat()
 
     def identify(self, name):
-        print "Client identifying as %s" % (name,)
         valid, name, you = self._valid_player_name(name)
-        print valid, name, you
         if valid:
             self.identified = True
             NetServer.connectionPool.name_client(self, name)
@@ -137,7 +135,6 @@ class PyClientPool:
         self.clients_by_id = {}
         self.names = {}
         atexit.register(self.on_exit)
-    
         
         global _msg_buffer     
         if _msg_buffer: 

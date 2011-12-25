@@ -783,14 +783,12 @@ void Agent_state::get_spawn_point(int* spawn) {
     spawn[0] = randrange(0, 128); // use actual map sizes!
     spawn[1] = randrange(0, 128);
     spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)ceil(box.b_height));
-    printf("Respawning at: %d %d %d\n", spawn[0], spawn[1], spawn[2]);
 }
 
 void Agent_state::spawn_state() {
     // update position
     int spawn[3];
     get_spawn_point(spawn);
-    printf("TELEPORTING TO %d %d %d\n", spawn[0], spawn[1], spawn[2]);
     teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, 0.5f, 0.0f);
 }
 
@@ -807,8 +805,6 @@ Agent_state::Agent_state(int id) : id (id), status(this)
     box.box_r = AGENT_BOX_RADIUS;
 
     cs_seq = 0;
-
-    owner = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
 
@@ -827,7 +823,6 @@ Agent_state::Agent_state(int id) : id (id), status(this)
     #ifdef DC_SERVER
     static agent_create_StoC msg;
     msg.id = id;
-    msg.owner = owner;
     msg.broadcast();
 
     spawn_state();
@@ -838,8 +833,8 @@ Agent_state::Agent_state(int id) : id (id), status(this)
     #endif
 }
 
-Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx, float vy, float vz)
-: id(id), owner(owner), status(this)
+Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
+: id(id), status(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
@@ -869,7 +864,6 @@ Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx,
     #ifdef DC_SERVER
     static agent_create_StoC msg;
     msg.id = id;
-    msg.owner = owner;
     msg.broadcast();
 
     spawn_state();
@@ -877,6 +871,15 @@ Agent_state::Agent_state(int id, int owner, float x, float y, float z, float vx,
 
     #ifdef DC_CLIENT
     vox = new Agent_vox();
+    #endif
+}
+
+Agent_state::~Agent_state() {
+
+    #ifdef DC_SERVER
+    static agent_destroy_StoC msg;
+    msg.id = id;
+    msg.broadcast();
     #endif
 }
 
@@ -900,11 +903,11 @@ void Agent_state::server_tick() {
 
 void Agent_list::send_to_client(int client_id) {
     int i;
-    agent_create_StoC* msg;
+    static agent_create_StoC msg;
     for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
         if (a[i]==NULL) continue;
-        msg = new agent_create_StoC(a[i]->id, a[i]->owner);
-        msg->sendToClient(client_id);
+        msg.id = a[i]->id;
+        msg.sendToClient(client_id);
     }
 }
 

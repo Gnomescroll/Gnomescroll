@@ -35,7 +35,6 @@ cdef extern from "./agent/agent.hpp":
 
     cdef cppclass Agent_state:
         int id
-        int owner
         AgentState s
         Agent_collision_box box
         Agent_status status
@@ -64,7 +63,6 @@ class AgentWrapper(object):
         'box_height', 'b_height',
         'box_r',
         #'crouching',
-        'owner',
         'team',
         'score',
         'kills',
@@ -123,9 +121,6 @@ class AgentWrapper(object):
             return a.box.b_height
         elif name == 'box_r':
             return a.box.box_r
-
-        elif name == 'owner':
-            return a.owner
 
         elif name == 'team':
             return a.status.team

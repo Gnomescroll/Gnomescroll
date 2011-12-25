@@ -33,9 +33,10 @@ class AgentList(GenericObjectList):
         return self._add(client_id, position=position)
 
     def destroy(self, agent):
-        if agent is None:
-            return
-        return self._remove(agent)
+        #if agent is None:
+            #return
+        id = self._remove(agent)
+        return id
 
     def agents_near_point(self, x,y,z, radius):
         l=[]
@@ -211,7 +212,6 @@ class Agent(AgentWrapper, AgentPhysics):
             d.update({
                 'health': self.health,
                 'dead'  : int(self.dead),
-                'owner' : self.owner,
                 'weapons': {
                     'weapons': [weapon.json() for weapon in self.weapons],
                     'active' : self._active_weapon,

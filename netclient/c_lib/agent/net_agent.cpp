@@ -93,8 +93,11 @@ inline void agent_health_StoC::handle() {
 
 inline void agent_create_StoC::handle() {
     Agent_state* a = ClientState::agent_list.get_or_create(id);
-    a->owner = owner;
     printf("C Agent created. id: %d\n", a->id);
+}
+
+inline void agent_destroy_StoC::handle() {
+    ClientState::agent_list.destroy(id);
 }
 
 inline void PlayerAgent_id_StoC::handle() {
@@ -144,6 +147,7 @@ inline void fire_weapon_StoC::handle() {}
 inline void agent_health_StoC::handle() {}
 inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
+inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
 //for benchmarking
 //static int _total = 0;

@@ -34,6 +34,7 @@ void RegisterMessages() {
     agent_health_StoC::register_client_packet();
     agent_dead_StoC::register_client_packet();
     agent_create_StoC::register_client_packet();
+    agent_destroy_StoC::register_client_packet();
 
     // block value change
     block_StoC::register_client_packet();

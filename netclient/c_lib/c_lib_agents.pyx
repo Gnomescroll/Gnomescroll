@@ -62,7 +62,6 @@ cdef extern from "./agent/agent.hpp":
  
     cdef cppclass Agent_state:
         int id
-        int owner
         AgentState s
         Agent_collision_box box   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
         Agent_status status
@@ -143,7 +142,6 @@ class AgentWrapper(object):
         'box_r',
         #'crouching',
         'health', 'dead',
-        'owner',
         'team',
         'score',
         'kills',
@@ -204,9 +202,6 @@ class AgentWrapper(object):
             return a.status.health
         elif name == 'dead':
             return a.status.dead
-
-        elif name == 'owner':
-            return a.owner
 
         elif name == 'team':
             return a.status.team
