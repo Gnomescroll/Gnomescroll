@@ -1,10 +1,12 @@
 #pragma once
 
+    //normal is a uniform variable when rendering by sides
     struct Vertex {
         float x,y,z;
         float tx,ty,tz; //12
         unsigned char r,g,b,a; //24
         char normal[4]; //28
+        char ao[4]; //32
     };
 
 

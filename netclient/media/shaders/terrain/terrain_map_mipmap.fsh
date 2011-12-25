@@ -1,49 +1,44 @@
 
-/*
-Fragment shader failed to compile with the following errors:
-ERROR: 0:13: error(#202) No matching overloaded function found pow
-ERROR: 0:13: error(#160) Cannot convert from 'const float' to '3-component vector of float'
-*/
 
-uniform sampler2D color_texture;
+//uniform sampler2D color_texture;
 
 varying float intensity;
 
-void main() {
-	// Set the output color of our current pixel
+uniform sampler2DArray base_texture;
+varying vec3 texCoord;
 
-	//gl_FragColor = texture2D(color_texture, gl_TexCoord[0].st);
+void main() 
+{
+	//gl_FragColor = texture2DArray(base_texture, texCoord.xyz);
 
-	float gamma = 2.2f;
-	vec3 color = intensity*texture2D(color_texture, gl_TexCoord[0].st).rgb;
-	gl_FragColor.rgb = pow(color, vec3(1.0 / gamma) ); 	//this line!!!
+	//float gamma = 2.2f;
+
+	vec3 color = intensity*(texture2DArray(base_texture, texCoord.xyz).rgb);
+	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 	gl_FragColor.a = 1.0;
-	
-	//gl_FragColor.rgb = pow(vec3(finalCol.r, finalCol.g,finalCol.b), 1.0 / 2.2);
-	//gl_FragColor.a = 1.0;
-	//gl_FragColor = vec4( gamma, finalCol.a);
-	//gl_FragColor = intensity*texture2D(color_texture, gl_TexCoord[0].st);
-
-/*
-	vec2 uv = gl_TexCoord[0].xy;
-	if(gl_FragCoord.x < 640)
-	{
-		//gl_FragColor.rgb = vec3(0.0f, 0.5f,0.0f );
-		gl_FragColor = intensity*texture2D(color_texture, gl_TexCoord[0].st);
-	} 
-	else {
-		//gl_FragColor = texture2D(color_texture, gl_TexCoord[0].st);
-		gl_FragColor = gl_Color;
-	}
-*/
-	
-	//gl_FragColor = gl_Color;
-
 }
 
 /*
+	//gl_FragColor = texture2D(color_texture, gl_TexCoord[0].st);
+
+	//vec4 color2 = texture2DArray(textureName,texCoord.xyz).rgb;
+
+	//vec3 color = intensity*texture2DArray(textureName,texCoord.xyz).rgb;
+	//vec3 color = intensity*texture2DArray(textureName, vec(tex2.st,1) ).rgb;
+
+	//gl_FragColor = texture2DArray(textureName, vec3( VaryingTexCoord0.x, VaryingTexCoord0.y, 0 ));
+	gl_FragColor = texture2DArray(textureName, vec3( VaryingTexCoord0.x, VaryingTexCoord0.y, 0.0 ));
+
+	float gamma = 2.2f;
+
+	vec3 color = intensity*texture2DArray(textureName, vec3( tex2.x, tex2.y, 0 )).rgb;
+	gl_FragColor.rgb = pow(color, vec3(1.0 / gamma) );
+	gl_FragColor.a = 1.0;
+*/
+
+/*
 !!!
-X-Plane's physical shader is based on conditional compilation - that is, for any given state vector of "tricks" we want to use, we recompile the shader with some #defines at the front which turn features on and off. The result is a large number of shaders, none of which need conditional logic in-shader. Fill rate isn't consumed by features we don't use.
+X-Plane's physical shader is based on conditional compilation - that is, for any given state vector of "tricks" we want to use, we recompile the shader  with some #defines at the front which turn features on and off. The result is a large number of shaders, none of which need conditional logic in-shader. Fill rate isn't consumed by features we don't use.
 */
 
 /*

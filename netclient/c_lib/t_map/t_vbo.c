@@ -54,7 +54,7 @@ void setShaders2()
     //vs = textFileRead((char*) "./media/shaders/lsd.vsh");
     //fs = textFileRead((char*) "./media/shaders/lsd.fsh");
 
-    printf("loading text files \n");
+    printf("setShaders2: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.fsh");
@@ -106,16 +106,12 @@ void setShaders3()
 
     char *vs, *fs;
 
-    printf("loading text files \n");
+    printf("setShaders3: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
 
-    //glBindAttribLocation(shader_vert2, 1, "InTexCoord0");
 
-    //glBindAttribLocation(shader_prog2, 20, "TexCoordin");
-    //glBindAttribLocation can be called before any vertex shader objects are bound to the specified program object. 
-    
     glShaderSourceARB(shader_vert3, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(shader_frag3, 1, (const GLcharARB**)&fs, NULL);
     glCompileShaderARB(shader_vert3);
@@ -127,27 +123,19 @@ void setShaders3()
     glAttachObjectARB(shader_prog3, shader_vert3);
     glAttachObjectARB(shader_prog3, shader_frag3);
 
-    /* Bind attribute index 0 (coordinates) to in_Position and attribute index 1 (color) to in_Color */
-    /* Attribute locations must be setup before calling glLinkProgram. */
-    
-    //glBindAttribLocation(shaderprogram, 0, "in_Position");
-    //glBindAttribLocation(shaderprogram, 1, "in_Color");
-
-    //glBindAttribLocation(shader_prog3, 0, "vert_pos");
-    //glBindAttribLocation(shader_prog3, 1, "vert_uv");
-    //glBindAttribLocation(shader_prog3, 2, "vert_rgba");
-    //glBindAttribLocation(shader_prog3, 3, "vert_normal");
-
     glLinkProgramARB(shader_prog3);
 
     if(DEBUG) printProgramInfoLog(shader_prog3); // print diagonostic information
     
-    texCoord0Loc = glGetAttribLocation(shader_prog3, "InTexCoord0");     
+    texCoord0Loc = glGetAttribLocation(shader_prog3, "InTexCoord0");
 }
 
 static GLenum shader_vert4 = 0;
 static GLenum shader_frag4 = 0;
 static GLenum shader_prog4 = 0;
+
+int texCoord0Loc_4;
+int LightMatrix0Loc_4;
 
 void setShaders4() 
 {
@@ -160,16 +148,14 @@ void setShaders4()
 
     char *vs, *fs;
 
-    printf("loading text files \n");
+    printf("setShaders4: \n");
 
-    vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap_bilinear_ao.vsh");
-    fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap_bilinear_ao.fsh");
+    vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
 
-    //glBindAttribLocation(shader_vert4, 1, "InTexCoord0");
+    //vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
+    //fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
 
-    //glBindAttribLocation(shader_prog4, 20, "TexCoordin");
-    //glBindAttribLocation can be called before any vertex shader objects are bound to the specified program object. 
-    
     glShaderSourceARB(shader_vert4, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(shader_frag4, 1, (const GLcharARB**)&fs, NULL);
     glCompileShaderARB(shader_vert4);
@@ -181,13 +167,13 @@ void setShaders4()
     glAttachObjectARB(shader_prog4, shader_vert4);
     glAttachObjectARB(shader_prog4, shader_frag4);
 
-;
-
     glLinkProgramARB(shader_prog4);
 
     if(DEBUG) printProgramInfoLog(shader_prog4); // print diagonostic information
     
-    texCoord0Loc = glGetAttribLocation(shader_prog4, "InTexCoord0");     
+    texCoord0Loc_4 = glGetAttribLocation(shader_prog4, "InTexCoord0");
+    LightMatrix0Loc_4 = glGetAttribLocation(shader_prog4, "LightMatrix0");
+             
 }
 
 SDL_Surface *terrain_map_glsl_surface_1;
@@ -547,7 +533,10 @@ int _init_draw_terrain() {
     printf("init glsl mipmapp shader \n");
     
     setShaders3();
+    setShaders4();
+
     initTexture3();
+
 
     printf("init: draw_terrain \n");
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
@@ -779,6 +768,7 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 
 //inline?
 //__attribute((always_inline))
+/*
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -819,6 +809,76 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         occ_debug(CX[5], CX[7], CX[6], &v_list[offset+3]);
     }
 }
+*/
+
+static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
+    int i;
+    int index;
+    int CX[8];
+    for(i=0; i<8; i++) 
+    {
+        index = side*8*3+i*3;
+        CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+    }
+
+    if(1)
+    {
+        int occ1, occ2, occ3, occ4;
+
+        occ1 = calcAdj(CX[7], CX[1], CX[0]);
+        occ2 = calcAdj(CX[1], CX[3], CX[2]);
+        occ3 = calcAdj(CX[3], CX[5], CX[4]);
+        occ4 = calcAdj(CX[5], CX[7], CX[6]);
+
+        //int value = occ1
+        v_list[offset+0].ao[0] = occ1;
+        v_list[offset+0].ao[1] = occ2;
+        v_list[offset+0].ao[2] = occ3;
+        v_list[offset+0].ao[3] = occ4;
+
+        v_list[offset+1].ao[0] = occ1;
+        v_list[offset+1].ao[1] = occ2;
+        v_list[offset+1].ao[2] = occ3;
+        v_list[offset+1].ao[3] = occ4;
+
+        v_list[offset+2].ao[0] = occ1;
+        v_list[offset+2].ao[1] = occ2;
+        v_list[offset+2].ao[2] = occ3;
+        v_list[offset+2].ao[3] = occ4;
+
+        v_list[offset+3].ao[0] = occ1;
+        v_list[offset+3].ao[1] = occ2;
+        v_list[offset+3].ao[2] = occ3;
+        v_list[offset+3].ao[3] = occ4;
+
+        //deprecate when done
+
+        v_list[offset+0].r = occ;
+        v_list[offset+0].g = occ;
+        v_list[offset+0].b = occ;
+
+        v_list[offset+1].r = occ;
+        v_list[offset+1].g = occ;
+        v_list[offset+1].b = occ;
+
+        v_list[offset+2].r = occ;
+        v_list[offset+2].g = occ;
+        v_list[offset+2].b = occ;
+
+        v_list[offset+3].r = occ;
+        v_list[offset+3].g = occ;
+        v_list[offset+3].b = occ;
+
+    } else {
+        occ_debug(CX[7], CX[1], CX[0], &v_list[offset+0]);
+        occ_debug(CX[1], CX[3], CX[2], &v_list[offset+1]);
+        occ_debug(CX[3], CX[5], CX[4], &v_list[offset+2]);
+        occ_debug(CX[5], CX[7], CX[6], &v_list[offset+3]);
+    }
+}
+
+
 
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
     int i;
@@ -1327,6 +1387,18 @@ int _draw_terrain() {
 
     //ShadeModel(GL_FLAT);
 
+        if(SHADER_ON) 
+        {
+            //DRAW_VBOS3();  
+            //DRAW_VBOS4();
+            DRAW_VBOS5();
+        } 
+        else 
+        {
+            DRAW_VBOS2();
+        } 
+
+/*
     if(! GL_PERF) {
        //DRAW_VBOS1();
 
@@ -1360,6 +1432,8 @@ int _draw_terrain() {
         }
 
     }
+*/
+
     //GL_QUERY_RESULT_AVAILABLE
     //GL_QUERY_RESULT  
     
@@ -2098,14 +2172,14 @@ void DRAW_VBOS4() {
 
 void DRAW_VBOS5() {
     
-        //int _vnum = 0; //unused
-
         //printf("attribute loc= %i \n", texCoord0Loc);
+        //printf("attribute loc= %i \n", texCoord0Loc);
+        glUseProgramObjectARB(shader_prog4);
 
-        if(SHADER_ON) glUseProgramObjectARB(shader_prog4);
+        //LightMatrix0Loc = glGetAttribLocation(shader_prog3, "LightMatrix0");
+        glEnableVertexAttribArray(texCoord0Loc_4);
+        glEnableVertexAttribArray(LightMatrix0Loc_4);
 
-        glEnableVertexAttribArray(texCoord0Loc);
-        //add next
 
         glColor3b(255,255,255);
 
@@ -2117,19 +2191,10 @@ void DRAW_VBOS5() {
         //glShadeModel(GL_FLAT);
 
         glEnable (GL_DEPTH_TEST);
-        //glEnable(GL_CULL_FACE);
-
         glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
 
-        //terrain_map_glsl_1
-        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        //glActiveTexture(0);
-
-
         glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
-
         //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
 
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -2147,8 +2212,6 @@ void DRAW_VBOS5() {
         int i;
         struct VBO* vbo;
 
-        //if(draw_vbo_n != 0)
-
         glEnable(GL_CULL_FACE);
         for(i=0;i<draw_vbo_n;i++) {
             vbo = draw_vbo_array[i];
@@ -2160,7 +2223,8 @@ void DRAW_VBOS5() {
             glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
             //glTexCoordPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
             
-            glVertexAttribPointer(texCoord0Loc, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+            glVertexAttribPointer(texCoord0Loc_4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+            glVertexAttribPointer(LightMatrix0Loc_4, 4, GL_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)32);
 
             //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
 
@@ -2178,7 +2242,8 @@ void DRAW_VBOS5() {
             glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         }
 
-        glDisableVertexAttribArray(texCoord0Loc);
+        glDisableVertexAttribArray(texCoord0Loc_4);
+        glDisableVertexAttribArray(LightMatrix0Loc_4);
 
         glUseProgramObjectARB(0);
         glActiveTexture(GL_TEXTURE0);

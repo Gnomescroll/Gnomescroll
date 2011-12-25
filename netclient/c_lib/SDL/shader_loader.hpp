@@ -50,7 +50,7 @@ static inline void printShaderInfoLog(GLuint obj)
     {
         infoLog = (char *)malloc(infologLength);
         glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
-        printf("%s\n",infoLog);
+        printf("%s",infoLog);
         free(infoLog);
     }
 }
@@ -67,7 +67,7 @@ static inline void printProgramInfoLog(GLuint obj)
     {
         infoLog = (char *)malloc(infologLength);
         glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
-        printf("%s\n",infoLog);
+        printf("%s",infoLog);
         free(infoLog);
     }
 }

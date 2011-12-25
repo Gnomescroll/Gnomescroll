@@ -3,23 +3,35 @@
 //attribute - vertex shader read only
 //varying - read/write in vertex shader, read only in fragment
 
-//vec3 vert_pos;
-
-attribute vec2 vert_uv;
-attribute vec4 vert_rgba;
-
 varying float intensity;
 
+//attribute vec3 texCoordin;
+
+attribute vec3 InTexCoord0;
+attribute mat2 LightMatrix0;
+
+varying vec3 texCoord;
+
 void main(void) {			
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-	
-	// Set the position of the current vertex 
+
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
 	intensity = gl_Color.r;
 
-	gl_FrontColor = gl_Color;	//needed for white scale
+	//texCoord =  vec3(vec2(gl_MultiTexCoord0.st), 0.0f);
+	//texCoord = vec3(gl_MultiTexCoord0);
+	texCoord = InTexCoord0;
+
+	//texCoord =  vec3(vec2(InTexCoord0.st), 1.0f);
+
+	//gl_FrontColor = gl_Color;
 }
+
+	
+//tex2 = tex;
+//texCoord = vec2(gl_MultiTexCoord0);
+//gl_TexCoord[0] = gl_MultiTexCoord0;
+	
 
 
 /*
