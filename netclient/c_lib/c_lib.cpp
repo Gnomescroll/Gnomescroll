@@ -114,6 +114,6 @@ void close_c_lib() {
     printf("close c_lib() \n");
     #ifdef DC_CLIENT
         Sound::close();
-        close_SDL();
+        //close_SDL();  //would be called twice, already scheduled for at exit
     #endif
 }
