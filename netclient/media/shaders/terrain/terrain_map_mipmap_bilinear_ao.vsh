@@ -8,9 +8,12 @@ varying float intensity;
 //attribute vec3 texCoordin;
 
 attribute vec3 InTexCoord0;
-attribute mat2 LightMatrix0;
+
+attribute vec2 InLightMatrix0;
+attribute vec2 InLightMatrix1;
 
 varying vec3 texCoord;
+varying mat2 lightMatrix0;
 
 void main(void) {			
 
@@ -18,11 +21,14 @@ void main(void) {
 
 	intensity = gl_Color.r;
 
-	//texCoord =  vec3(vec2(gl_MultiTexCoord0.st), 0.0f);
-	//texCoord = vec3(gl_MultiTexCoord0);
 	texCoord = InTexCoord0;
+	//lightMatrix0 = InLightMatrix0;
+
+	lightMatrix0 = mat2(InLightMatrix0, InLightMatrix1);
 
 	//texCoord =  vec3(vec2(InTexCoord0.st), 1.0f);
+	//texCoord =  vec3(vec2(gl_MultiTexCoord0.st), 0.0f);
+	//texCoord = vec3(gl_MultiTexCoord0);
 
 	//gl_FrontColor = gl_Color;
 }

@@ -154,7 +154,7 @@ cdef extern from './t_map/t_vbo.h':
         float x,y,z
         float tx,ty,tz
         unsigned char r,g,b,a
-        char ao[4]
+        unsigned char ao[4]
     struct VBO:
         int v_num
         Vertex* vlist

@@ -88,7 +88,8 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
-
+    return;
+    
     //disable to draw over
     glEnable (GL_DEPTH_TEST);
 

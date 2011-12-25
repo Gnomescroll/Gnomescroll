@@ -136,6 +136,7 @@ static GLenum shader_prog4 = 0;
 
 int texCoord0Loc_4;
 int LightMatrix0Loc_4;
+int LightMatrix1Loc_4;
 
 void setShaders4() 
 {
@@ -172,8 +173,8 @@ void setShaders4()
     if(DEBUG) printProgramInfoLog(shader_prog4); // print diagonostic information
     
     texCoord0Loc_4 = glGetAttribLocation(shader_prog4, "InTexCoord0");
-    LightMatrix0Loc_4 = glGetAttribLocation(shader_prog4, "LightMatrix0");
-             
+    LightMatrix0Loc_4 = glGetAttribLocation(shader_prog4, "InLightMatrix0");
+    LightMatrix1Loc_4 = glGetAttribLocation(shader_prog4, "InLightMatrix1");      
 }
 
 SDL_Surface *terrain_map_glsl_surface_1;
@@ -730,7 +731,8 @@ void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list)
 
 const static int occ_array[3] = { 255, 128, 64 };
 
-static inline int calcAdj(int side_1, int side_2, int corner) {
+static inline int calcAdj(int side_1, int side_2, int corner) 
+{
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
     return occ_array[occ];
 }
@@ -826,9 +828,16 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         int occ1, occ2, occ3, occ4;
 
         occ1 = calcAdj(CX[7], CX[1], CX[0]);
-        occ2 = calcAdj(CX[1], CX[3], CX[2]);
-        occ3 = calcAdj(CX[3], CX[5], CX[4]);
-        occ4 = calcAdj(CX[5], CX[7], CX[6]);
+        occ3 = calcAdj(CX[1], CX[3], CX[2]);
+        occ4 = calcAdj(CX[3], CX[5], CX[4]);
+        occ2 = calcAdj(CX[5], CX[7], CX[6]);
+
+        //occ1 = 255;
+        //occ2 = 255;
+        //occ3 = 255;
+        //occ4 = 255;
+
+        //printf("occ1= %i \n", occ1);
 
         //int value = occ1
         v_list[offset+0].ao[0] = occ1;
@@ -857,17 +866,17 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+0].g = occ1;
         v_list[offset+0].b = occ1;
 
-        v_list[offset+1].r = occ2;
-        v_list[offset+1].g = occ2;
-        v_list[offset+1].b = occ2;
+        v_list[offset+1].r = occ3;
+        v_list[offset+1].g = occ3;
+        v_list[offset+1].b = occ3;
 
-        v_list[offset+2].r = occ3;
-        v_list[offset+2].g = occ3;
-        v_list[offset+2].b = occ3;
+        v_list[offset+2].r = occ4;
+        v_list[offset+2].g = occ4;
+        v_list[offset+2].b = occ4;
 
-        v_list[offset+3].r = occ4;
-        v_list[offset+3].g = occ4;
-        v_list[offset+3].b = occ4;
+        v_list[offset+3].r = occ2;
+        v_list[offset+3].g = occ2;
+        v_list[offset+3].b = occ2;
     }
 }
 
@@ -2169,10 +2178,12 @@ void DRAW_VBOS5() {
         //printf("attribute loc= %i \n", texCoord0Loc);
         glUseProgramObjectARB(shader_prog4);
 
-        //LightMatrix0Loc = glGetAttribLocation(shader_prog3, "LightMatrix0");
+        //LightMatrix0Loc = glGetAttribLocation(shader_prog3, "InLightMatrix0");
+        //LightMatrix0Loc = glGetAttribLocation(shader_prog3, "InTexCoord0");
+
         glEnableVertexAttribArray(texCoord0Loc_4);
         glEnableVertexAttribArray(LightMatrix0Loc_4);
-
+        glEnableVertexAttribArray(LightMatrix1Loc_4);
 
         glColor3b(255,255,255);
 
@@ -2217,8 +2228,9 @@ void DRAW_VBOS5() {
             //glTexCoordPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
             
             glVertexAttribPointer(texCoord0Loc_4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-            glVertexAttribPointer(LightMatrix0Loc_4, 4, GL_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)32);
 
+            glVertexAttribPointer(LightMatrix0Loc_4, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
+            glVertexAttribPointer(LightMatrix1Loc_4, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)34);
             //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
 
             //glVertexAttribPointer(20, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);

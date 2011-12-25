@@ -6,7 +6,7 @@
         float tx,ty,tz; //12
         unsigned char r,g,b,a; //24
         char normal[4]; //28
-        char ao[4]; //32
+        unsigned char ao[4]; //32
     };
 
 

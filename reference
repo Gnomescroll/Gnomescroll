@@ -8,6 +8,11 @@ http://www.leadwerks.com/werkspace/blog/50/entry-248-enet-modifications/
 preventing clients from crashing server
 track memory allocation / malloc
 
+gDEbugger is great for interrogating your data, catching OpenGL errors and working out where things are going wrong. 
+GPUPerfStudio is much better for performance analysis. It will do a frame break down showing you the exact duration of all your API calls, which can be very enlightening. It will also show you the time taken for each stage in your render pipeline (i.e. each framebuffer switch or swap buffers operation), telling you how costly your post-processing is compared to your lighting stage, or whatever. 
+
+Performance/profiling:  AMD CodeAnalyst
+
 GLSL Tricks:
 
 -use for gamma
