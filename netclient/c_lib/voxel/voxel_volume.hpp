@@ -243,13 +243,10 @@ void voxel_test()
     static float c0 = 0.0;
     static float c1 = 0.0;
     static float c2 = 0.0;
-    c0 += 0.0050;
-    c1 += 0.0025;
-    c2 += 0.0100;
+    c0 += 0.0050 / (2*PI);
+    c1 += 0.0025 / (2*PI);
+    c2 += 0.0100 / (2*PI);
 
-
-    c1 = 0.5;
-    c2 = 0.25;
     //printf("start\n");
     //printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
     
