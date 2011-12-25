@@ -100,15 +100,6 @@ class HitscanLaserGun(Weapon):
         self.clip += amt
         return 'reload_weapon'
 
-    #def animation(self, target=None, agent=None, vector=None):
-        #if agent is None:
-            #agent = GameStateGlobal.agentList[self.owner]
-        #origin = agent.camera_position()
-        #if vector is None:
-            #vector = agent.direction()
-        #anim = self._animation(origin, vector, target)
-        #return anim
-
     def update_info(self, **weapon):
         args = self._update_info(**weapon)
         if 'clip' in weapon:
@@ -143,7 +134,6 @@ class BlockApplier(Weapon):
     def fire(self):
         if self.clip == 0:
             return False
-        #self.clip -= 1
         return 'set_block'
 
     def hud_display(self):
@@ -155,12 +145,8 @@ class BlockApplier(Weapon):
         args = self._update_info(**weapon)
         if 'clip' in weapon:
             self.clip = weapon['clip']
-        #if 'ammo' in weapon:
-            #self.ammo = weapon['ammo']
         if 'clip_size' in weapon:
             self.clip_size = weapon['clip_size']
-        #if 'max_ammo' in weapon:
-            #self.max_ammo = weapon['max_ammo']
         GameStateGlobal.weaponList.update(*args)
 
 class Pick(Weapon):

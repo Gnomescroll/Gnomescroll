@@ -6,15 +6,12 @@ Agents:
 import opts
 opts = opts.opts
 
-import vector_lib
 import c_lib.c_lib_agents as cAgents
 import c_lib._ray_trace as ray_tracer
 import c_lib.terrain_map as terrainMap
-import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_game_modes as cGame
 
-from math import sin, cos, pi, floor, ceil, fabs, pow
 from game_state import GameStateGlobal
 from net_out import NetOut
 from input import InputGlobal
@@ -139,16 +136,8 @@ class AgentModel(cAgents.AgentWrapper):
         self.name = '' # fix later
 
     def update_info(self, **agent):
-        args = []
-
-        if 'id' in agent:
-            args.append(self.id)
-            self.id = agent['id']
-
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
-
-        GameStateGlobal.agentList.update(self, *args)
 
     def __getattribute__(self, name):
         try:
