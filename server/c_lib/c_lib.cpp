@@ -11,6 +11,9 @@
 #include "./ray_trace/ray_trace.c"
 #include "./physics/common.c"
 
+/* Voxel Models */
+#include <c_lib/voxel/voxel_volume.cpp>
+
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>
 

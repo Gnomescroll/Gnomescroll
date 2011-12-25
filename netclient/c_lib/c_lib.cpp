@@ -17,6 +17,9 @@
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/physics/common.c>
 
+/* Voxel Models */
+#include <c_lib/voxel/voxel_volume.cpp>
+
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
 /* Weapons */

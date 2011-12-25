@@ -93,6 +93,8 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     glEnd();
 }
 
+#include <voxel/constants.hpp>
+/*
 int v_set2[3*8] = {
         -1,-1,-1,
         1,-1,-1,
@@ -140,6 +142,7 @@ float v_set3[3*8] = {
         1,1,1,
         0,1,1,
     };
+*/
 
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height, int r, int g, int b) {
 
