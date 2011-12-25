@@ -73,25 +73,3 @@ def _create_neutron(int type, int energy, float x, float y, float z, float vx, f
 
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)
-
-## Does not use TTL!! Can't cook grenades without TTL set
-#def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl, int owner):
-#    cdef Grenade* grenade
-#    grenade = grenade_list.create(x,y,z, vx,vy,vz)
-#    if grenade is not NULL:
-#        grenade.set_owner(owner)
-#        return grenade.particle.id
-#    return -1
-
-def _destroy_grenade(int gid):
-    grenade_list.destroy(gid)
-
-def get_grenade_position(int gid):
-    cdef Grenade* grenade
-    grenade = grenade_list.get(gid)
-    if grenade is not NULL:
-        pos = [grenade.particle.state.p.x, grenade.particle.state.p.y, grenade.particle.state.p.z]
-    else:
-        pos = [0., 0., 0.]
-    return pos
-
