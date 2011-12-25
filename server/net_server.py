@@ -15,7 +15,6 @@ class NetServer:
 
     @classmethod
     def init(cls):
-        global OS
         cls.connectionPool = PyClientPool()
 
 from chat_server import ChatServer
@@ -24,7 +23,7 @@ from net_event import NetEvent
 from game_state import GameStateGlobal
 
 #for creation of client
-#NetServer.connectionPool.addClient(connection, address) #hand off connection to connection pool
+#NetServer.connectionPool.add_client(connection, address) #hand off connection to connection pool
 
 # manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
 
@@ -54,7 +53,7 @@ class PyClient:
         self.sendMessage.send_dat()
 
     def identify(self, name):
-        valid, name, you = self._valid_player_name(name)
+        valid, name, you = self.valid_player_name(name)
         if valid:
             self.identified = True
             NetServer.connectionPool.name_client(self, name)
@@ -102,7 +101,7 @@ class PyClient:
             print 'Created new agent'
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
 
-    def _valid_player_name(self, name):
+    def valid_player_name(self, name):
         valid = True
         try:                                    # must be string
             name = str(name)
@@ -112,8 +111,7 @@ class PyClient:
         if not name:                           # must not be empty
             name = 'Name was empty.'
             valid = False
-        if len(name) > self.MAX_NAME_LENGTH:    # truncate if longer than self.MAX_NAME_LENGTH
-            name = name[0:self.MAX_NAME_LENGTH]
+        name = name[:self.MAX_NAME_LENGTH] #truncate
         avail, you = NetServer.connectionPool.name_available(name, self)
         if not avail:
             if not you:
@@ -131,10 +129,9 @@ _msg_buffer = True
 class PyClientPool:
 
     def __init__(self):
-        self._client_count = 0
         self.clients_by_id = {}
         self.names = {}
-        atexit.register(self.on_exit)
+        atexit.register(lambda: None)
         
         global _msg_buffer     
         if _msg_buffer: 
@@ -146,8 +143,8 @@ class PyClientPool:
 
         else:
             register_client_message_handling(( lambda _client_id, message : self.handleMessage(_client_id, message) ))
-            register_client_creation(( lambda _client_id: self.addClient(_client_id) ))
-            register_client_deletion(( lambda _client_id: self.removeClient(_client_id) ))
+            register_client_creation(( lambda _client_id: self.add_client(_client_id) ))
+            register_client_deletion(( lambda _client_id: self.remove_client(_client_id) ))
         #for messages
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
@@ -157,9 +154,9 @@ class PyClientPool:
     def dispatch_event_buffer(self):
         for client_id, event_id in self.event_buffer:
             if event_id == 0:
-                self.addClient(client_id)
+                self.add_client(client_id)
             if event_id == 1:
-                self.removeClient(client_id)
+                self.remove_client(client_id)
         self.event_buffer = []
 
     def push_to_buffer(self, client_id, message):
@@ -178,8 +175,6 @@ class PyClientPool:
         msg_type = struct.unpack(self.fmt, message[0:2])
         msg_type = msg_type[0]
         message = message[2:]
-        #print "client %i: %s" % (client_id, message)
-        #print "length=%i, msg=%s" % (length, message)
         connection = self.clients_by_id.get(client_id, None)
         if connection == None:
             print "PyClientPool: handleMessage, client id does not exist in pool"
@@ -202,21 +197,14 @@ class PyClientPool:
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
 
-    def on_exit(self):
-        pass
-
     #called when client connection established
-    def addClient(self, _client_id):
-        print "PyClientPool: addClient, id= %i" % (_client_id)
-        self._client_count += 1
+    def add_client(self, _client_id):
         client =  PyClient(_client_id)
         self.clients_by_id[_client_id] = client
-        #self._client_pool[_client_id] = client #save client
-        print "Connection associated with client_id= %s" % (_client_id)
+        print "PyClientPool: connection associated with client_id= %s" % (_client_id)
 
     #called on connection deconstruction
-    def removeClient(self, client_id):
-        print "PyClientPool: removeClient, id= %i" % (client_id)
+    def remove_client(self, client_id):
         client = self.clients_by_id[client_id]
 
         # dispatch event
@@ -230,10 +218,10 @@ class PyClientPool:
 
         # remove from registry
         del self.clients_by_id[client.id]
+        print "PyClientPool: remove_client, id= %i" % (client_id)
 
     def by_client_id(self, client_id):
         if client_id in self.clients_by_id:
-            print self.clients_by_id
             return self.clients_by_id[client_id]
         raise ValueError, "Unknown client_id %d", client_id
 
@@ -265,16 +253,12 @@ Decoders
 # decodes datagram, passes to messageHandler
 class DatagramDecoder:
 
-    def init(self):
-        pass
     def __init__(self):
-        #self.fmt = '<I H'
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
 
     #packet processing entry point
     def decode(self, message, connection):
-        #prefix, datagram = message[0:self.fmtlen], message[self.fmtlen:]
         length, msg_type = struct.unpack(self.fmt, prefix)
         if msg_type == 0:
             print "test message received"
@@ -293,18 +277,6 @@ class DatagramDecoder:
                 print "JSON DECODING ERROR: %s" % (str(datagram),)
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
-
-# decodes tcp packets
-'''
-class TcpPacketDecoder:
-
-    def __init__(self, connection):
-        self.connection = connection
-        self.reset()
-
-    def process_datagram(self, message):
-        NetServer.datagramDecoder.decode(message, self.connection)
-'''
 
 from net_out import NetOut
 

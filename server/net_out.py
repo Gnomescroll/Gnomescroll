@@ -10,6 +10,7 @@ import struct
 import zlib
 
 import dats.loader as dl
+import c_lib.terrain_map as terrain_map
 
 class NetOut:
 
@@ -23,7 +24,6 @@ class NetOut:
 
 from game_state import GameStateGlobal
 from net_server import NetServer
-
 
 def sendJSONevent(cmd=None, zlib=0):
     def outer(f, *args, **kwargs):
@@ -246,11 +246,11 @@ class SendMessage: #each connection has one of these
     def send_chunk_list(self):
         print "Sending chunk list"
         return {
-            'list' : GameStateGlobal.terrainMap.get_server_chunk_list(),
+            'list' : terrain_map.get_server_chunk_list(),
         }
 
     def send_chunk(self, x, y, z, XXX=[0]):
-        chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
+        chunk_str = terrain_map.get_packed_chunk(x,y,z)
         if chunk_str != '':
             self.client.send(self.add_prefix(3, chunk_str))
         else:

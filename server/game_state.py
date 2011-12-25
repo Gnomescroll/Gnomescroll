@@ -8,7 +8,6 @@ import c_lib.c_lib_agents as cAgents
 
 class GameStateGlobal:
 
-    terrainMap = None
     agentList = None
     weaponList = None
 
@@ -16,7 +15,6 @@ class GameStateGlobal:
     agent_tick_mode = 'jetpack'
 
     def __init__(self):
-        GameStateGlobal.terrainMap = terrain_map
         GameStateGlobal.agentList = AgentList()
         GameStateGlobal.weaponList = WeaponList()
 
