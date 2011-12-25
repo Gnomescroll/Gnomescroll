@@ -205,17 +205,6 @@ class AgentList(GenericObjectListWrapper):
         self._remove(agent)
         return agent
 
-    def update(self, agent, id=None):
-        if id is not None:
-            if agent.you and id not in self:
-                id = 0
-            old = self[id]
-        else:
-            old = agent
-        if old.id != agent.id and old.id in self.objects:
-            del self.objects[old.id]
-        self.objects[agent.id] = agent
-
     def agents_near_point(self, x,y,z, radius):
         l=[]
         for agent in self.values():

@@ -132,7 +132,7 @@ class Hud(object):
         elif agent.team.viewers:
             s = 'Viewer Mode'
         else:
-            health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
+            health = '%i/%i' % (agent.health, agent.health_max,)
             weapon = agent.weapons.active()
             if weapon is not None:
                 s = 'HP %s :: Ammo %s' % (health, weapon.hud_display(),)
@@ -151,7 +151,7 @@ class Hud(object):
             if False:
                 pass
             else:
-                health = '%i/%i' % (agent.health, agent.HEALTH_MAX,)
+                health = '%i/%i' % (agent.health, agent.health_max,)
                 weapon = agent.weapons.active()
                 if weapon is None:
                     w = 'No weapon equipped'

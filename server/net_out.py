@@ -25,7 +25,7 @@ from game_state import GameStateGlobal
 from net_server import NetServer
 
 
-def sendJSONevent(cmd=None, tick=True, zlib=0):
+def sendJSONevent(cmd=None, zlib=0):
     def outer(f, *args, **kwargs):
         def wrapped(*args, **kwargs):
             self = args[0]
@@ -40,9 +40,6 @@ def sendJSONevent(cmd=None, tick=True, zlib=0):
                 cmd_final = ''
             if cmd_final or 'cmd' not in json_data:
                 json_data['cmd'] = cmd_final
-
-            if tick:
-                json_data['tick'] = GameStateGlobal.gameState.time
 
             if not zlib:
                 self.add_json_event(json_data)
@@ -92,17 +89,17 @@ class EventOut:
             'id'    :   weapon.id,
         }
 
-    @sendJSONevent('client_quit', tick=False)
+    @sendJSONevent('client_quit')
     def client_quit(self, client_id):
         return {
             'id'    : client_id,
         }
 
-    @sendJSONevent('clear_map', tick=False)
+    @sendJSONevent('clear_map')
     def clear_map(self):
         return True
 
-    @sendJSONevent('set_map', tick=False)
+    @sendJSONevent('set_map')
     def set_map(self, list):
         return {
             'list' : list,

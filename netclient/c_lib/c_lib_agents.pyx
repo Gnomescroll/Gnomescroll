@@ -37,9 +37,10 @@ cdef extern from "./agent/agent_status.hpp":
         bool dead
         int team
         int score()
-        int kills
-        int deaths
-        int suicides
+        unsigned int kills
+        unsigned int deaths
+        unsigned int suicides
+        unsigned int health_max
         
 #collision box
 cdef extern from "./agent/agent.hpp":
@@ -141,7 +142,9 @@ class AgentWrapper(object):
         'box_height', 'b_height',
         'box_r',
         #'crouching',
-        'health', 'dead',
+        'health',
+        'health_max',
+        'dead',
         'team',
         'score',
         'kills',
@@ -200,6 +203,8 @@ class AgentWrapper(object):
 
         elif name == 'health':
             return a.status.health
+        elif name == 'health_max':
+            return a.status.health_max
         elif name == 'dead':
             return a.status.dead
 

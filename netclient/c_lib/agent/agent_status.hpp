@@ -19,6 +19,8 @@ class Base_status {
         unsigned int deaths;
         unsigned int suicides;
 
+        unsigned int health_max;
+
         char name[PLAYER_NAME_MAX_LENGTH + 1];
 
         int team;
@@ -38,6 +40,7 @@ class Base_status {
             kills(0),
             deaths(0),
             suicides(0),
+            health_max(AGENT_HEALTH),
             team(0)
         {}
 };
