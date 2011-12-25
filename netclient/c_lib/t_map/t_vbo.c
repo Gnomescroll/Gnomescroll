@@ -822,7 +822,6 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
 
-    if(1)
     {
         int occ1, occ2, occ3, occ4;
 
@@ -854,27 +853,21 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 
         //deprecate when done
 
-        v_list[offset+0].r = occ;
-        v_list[offset+0].g = occ;
-        v_list[offset+0].b = occ;
+        v_list[offset+0].r = occ1;
+        v_list[offset+0].g = occ1;
+        v_list[offset+0].b = occ1;
 
-        v_list[offset+1].r = occ;
-        v_list[offset+1].g = occ;
-        v_list[offset+1].b = occ;
+        v_list[offset+1].r = occ2;
+        v_list[offset+1].g = occ2;
+        v_list[offset+1].b = occ2;
 
-        v_list[offset+2].r = occ;
-        v_list[offset+2].g = occ;
-        v_list[offset+2].b = occ;
+        v_list[offset+2].r = occ3;
+        v_list[offset+2].g = occ3;
+        v_list[offset+2].b = occ3;
 
-        v_list[offset+3].r = occ;
-        v_list[offset+3].g = occ;
-        v_list[offset+3].b = occ;
-
-    } else {
-        occ_debug(CX[7], CX[1], CX[0], &v_list[offset+0]);
-        occ_debug(CX[1], CX[3], CX[2], &v_list[offset+1]);
-        occ_debug(CX[3], CX[5], CX[4], &v_list[offset+2]);
-        occ_debug(CX[5], CX[7], CX[6], &v_list[offset+3]);
+        v_list[offset+3].r = occ4;
+        v_list[offset+3].g = occ4;
+        v_list[offset+3].b = occ4;
     }
 }
 
