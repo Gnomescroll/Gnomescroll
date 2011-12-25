@@ -30,7 +30,7 @@ void init_server(unsigned short port) {
     printf("init server connection pool: port %i \n", (int) port);
 }
 
-int pool_n_offset = 1;
+int pool_n_offset = 0;
 
 int accept_connection(struct sockaddr_in from) {
     pool_n_offset++;
