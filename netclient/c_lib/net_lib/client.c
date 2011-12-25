@@ -92,8 +92,6 @@ void py_out_test()
 
 class NetPeer* np;
 
-static int _INIT = 0;
-
 void _NetClientConnect(int a, int b,int c, int d, int _port) {
 
     static int INIT = 0;
