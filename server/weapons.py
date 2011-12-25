@@ -1,5 +1,3 @@
-from game_objects import GameObject
-from game_objects import EquippableObject
 from object_lists import GenericMultiObjectList
 from utils import filter_props
 
@@ -17,7 +15,7 @@ class WeaponList(GenericMultiObjectList):
             GrenadePouch,
         ])
         
-class Weapon(EquippableObject):
+class Weapon():
 
     _weapons = {    # maps .__class__.__name__ to type identifier. must be the same on server and client.
         'Weapon'    :   0,

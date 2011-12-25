@@ -64,6 +64,7 @@ def configure(conf):
     '''
 
     extra_options = [ '-fno-exceptions', '-Winline']
+    #extra_options = ['-Winline']
     if OS == 'Windows':
         conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
         conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)

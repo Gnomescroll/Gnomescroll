@@ -1,9 +1,6 @@
-import animations
-
-from game_objects import GameObject, EquippableObject
 from dat_loader import w_dat
 
-class Weapon(EquippableObject):
+class Weapon():
 
     _types = {
         'Weapon'    :   0,
@@ -20,11 +17,10 @@ class Weapon(EquippableObject):
     _hud_undef = '--'
 
     def __init__(self, id, owner=None, state=None):
-        EquippableObject.__init__(self, id, state)
+        self.id = id
         self.owner = owner
         self._set_type()
         self.dat.apply(self)
-        self._animation = animations.Animation
 
     def fire(self):
         return False
@@ -84,7 +80,6 @@ class HitscanLaserGun(Weapon):
         if clip is None:
             clip = self.clip_size
         self.clip = clip
-        self._animation = animations.HitscanLaserGunAnimation
 
     def fire(self):
         if self.clip == 0:

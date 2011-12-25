@@ -88,16 +88,12 @@ class GenericObjectList:
         return _objs
 
     def update_or_create(self, **obj):
-        #print obj
-        #assert False
         if 'id' not in obj:
-            #print 'missing id'
             return
         obj_id = obj['id']
         if obj_id in self:
             o = self[obj_id]
             o.update_info(**obj)
-            #print "Exists", self[obj_id]
         else:
             o = self.create(**obj)
         return o
@@ -204,15 +200,6 @@ class AgentList(GenericObjectListWrapper):
     def destroy(self, agent):
         self._remove(agent)
         return agent
-
-    def agents_near_point(self, x,y,z, radius):
-        l=[]
-        for agent in self.values():
-            x_, y_, z_ = agent.pos()
-            r2 = float(radius)**2
-            if r2 > (x_-x)**2 + (y_-y)**2 + (z_-z)**2:
-                l.append(agent)
-        return l
 
     def load_list(self, objs):
         _objs = []
@@ -345,7 +332,5 @@ class WeaponList(GenericMultiObjectList):
         self._itemname = 'Weapon'
 
 from weapons import Weapon
-
-from game_objects import GameObject
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal

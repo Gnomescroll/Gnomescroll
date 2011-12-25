@@ -95,6 +95,6 @@ class Dat(object):
         return self.dat
 
 w_dat = Dat('weapons')
-i_dat = Dat('items')
+#i_dat = Dat('items')
 #p_dat = Dat('projectiles')
 c_dat = Dat('cubes')
