@@ -100,14 +100,14 @@ class HitscanLaserGun(Weapon):
         self.clip += amt
         return 'reload_weapon'
 
-    def animation(self, target=None, agent=None, vector=None):
-        if agent is None:
-            agent = GameStateGlobal.agentList[self.owner]
-        origin = agent.camera_position()
-        if vector is None:
-            vector = agent.direction()
-        anim = self._animation(origin, vector, target)
-        return anim
+    #def animation(self, target=None, agent=None, vector=None):
+        #if agent is None:
+            #agent = GameStateGlobal.agentList[self.owner]
+        #origin = agent.camera_position()
+        #if vector is None:
+            #vector = agent.direction()
+        #anim = self._animation(origin, vector, target)
+        #return anim
 
     def update_info(self, **weapon):
         args = self._update_info(**weapon)
