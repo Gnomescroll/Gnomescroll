@@ -185,28 +185,6 @@ def _create_billboard_text(float x, float y, float z, float vx, float vy, float 
     bb.set_text(ctext, tlen)
     #print "tlen = %i" % (tlen)
  
-# Does not use TTL!! Can't cook grenades without TTL set
-def _create_grenade(float x, float y, float z, float vx, float vy, float vz, int ttl):
-    cdef Grenade* grenade
-    grenade = grenade_list.create(x,y,z, vx,vy,vz)
-    if grenade is not NULL:
-        grenade.set_ttl(ttl)
-        return grenade.particle.id
-    return -1
-
-def _destroy_grenade(int gid):
-    grenade_list.destroy(gid)
-
-def get_grenade_position(int gid):
-    cdef Grenade* grenade
-    grenade = grenade_list.get(gid)
-    if grenade is not NULL:
-        pos = [grenade.particle.state.p.x, grenade.particle.state.p.y, grenade.particle.state.p.z]
-    else:
-        pos = None
-    return pos
-
-
 '''
 Circuit Tree
 '''
