@@ -5,21 +5,12 @@ Agents:
 import opts
 opts = opts.opts
 
-from math import floor, ceil, pow
-from math import pi, cos, sin
-from random import randrange
-
-from vector_lib import distance
-from weapons import Pick, BlockApplier
 from game_state import GameStateGlobal
 from object_lists import GenericObjectList
 from net_out import NetOut
-from net_server import NetServer
-from c_lib.c_lib_agents import AgentListWrapper, AgentWrapper, teleport_Agent
-import c_lib.terrain_map as terrain_map
-import c_lib.c_lib_game_modes as cGame
 
-collisionDetection = terrain_map.collisionDetection
+import c_lib.c_lib_agents as cAgents
+import c_lib.c_lib_game_modes as cGame
 
 # datastore controller for agents
 class AgentList(GenericObjectList):
@@ -27,127 +18,21 @@ class AgentList(GenericObjectList):
     def __init__(self):
         GenericObjectList.__init__(self)
         self._object_type = Agent
-        self._wrapper = AgentListWrapper
+        self._wrapper = cAgents.AgentListWrapper
 
-    def create(self, client_id, position=None):
-        return self._add(client_id, position=position)
+    def create(self, client_id):
+        return self._add(client_id)
 
     def destroy(self, agent):
-        #if agent is None:
-            #return
         id = self._remove(agent)
         return id
 
-    def agents_near_point(self, x,y,z, radius):
-        l=[]
-        for agent in self.values():
-            x_, y_, z_ = agent.pos()
-            r2 = float(radius)**2
-            if r2 > (x_-x)**2 + (y_-y)**2 + (z_-z)**2:
-                l.append(agent)
-        return l
+class Agent(cAgents.AgentWrapper):
 
-
-class AgentPhysics:
-
-    def compute_state(self):
-        # only v_x and v_y are used
-        v = 1
-        d_x, d_y, v_x, v_y = 0,0,0,0
-        u,d,l,r, jetpack, brake = self.button_state
+    def __init__(self, client_id):
+        cAgents.AgentWrapper.__init__(self, client_id)
+        cAgents.AgentWrapper.send_id_to_client(self, client_id)
         
-        if u:
-                v_x += v*cos( self.x_angle * pi)
-                v_y += v*sin( self.x_angle * pi)
-        if d:
-                v_x += -v*cos( self.x_angle * pi)
-                v_y += -v*sin( self.x_angle * pi)
-        if l:
-                v_x += v*cos( self.x_angle * pi + pi/2)
-                v_y += v*sin( self.x_angle * pi + pi/2)
-        if r:
-                v_x += -v*cos( self.x_angle * pi + pi/2)
-                v_y += -v*sin( self.x_angle * pi + pi/2)
-                
-        return [\
-            d_x,
-            d_y,
-            v_x,
-            v_y,
-            jetpack,
-            brake,
-        ]
-
-    #collision tests
-    def point_collision_test(self, x_,y_,z_):
-        x,y,z = self.pos()
-
-        z_min = z
-        z_max = z + self.b_height
-        x_max = x + self.box_r
-        x_min = x - self.box_r
-        y_max = y + self.box_r
-        y_min = y - self.box_r
-
-        if x_min < x_ and x_ < x_max and y_min < y_ and y_ < y_max and z_min < z_ and z_ < z_max:
-            return True
-        else:
-            return False
-
-    def sphere_collision_test(self, x,y,z,r):
-        pass
-
-    def _tick_physics(self):
-        return
-
-# represents an agent under control of a player
-class Agent(AgentWrapper, AgentPhysics):
-
-    HEALTH_MAX = 100
-    _RESPAWN_TIME = 2000  # milliseconds
-    _TICK_RATE = 30       # milliseconds
-    RESPAWN_TICKS = int(float(_RESPAWN_TIME) / float(_TICK_RATE))
-
-    def __init__(self, client_id, position=None):
-        #print client_id
-        #assert False
-        ### Global imports ###
-        self.terrainMap = GameStateGlobal.terrainMap
-        ### End Global imports ###
-
-        AgentWrapper.__init__(self, client_id)
-        AgentWrapper.send_id_to_client(self, client_id)
-        
-        ### Agent State
-        self.d_x = 0 #yaw?
-        self.d_y = 0 #pitch?
-        self.v_x = 0
-        self.v_y = 0
-        self.x_angle = 0.5
-        self.y_angle = 0.
-        ### End Agent State ###
-
-        #control state variables
-        self.last_control_tick = 0
-        self.jump = 0 #also need to record last jump
-        self.jetpack = 0
-        self.brake = 0
-        #environmental state variables
-        self.on_ground = 0
-
-        #misc state
-        self.respawn_countdown = self.RESPAWN_TICKS
-        self.health = self.HEALTH_MAX
-        self.dead = False
-
-        if position is None:
-            position = self._spawn_point()
-
-        x,y,z = [float(i) for i in position]
-        self.state = [x,y,z, 0.,0.,0., 0.,0.,0.] #position, velocity, acceleration
-
-        self.button_state = [0 for i in range(6)]
-
         wl = GameStateGlobal.weaponList
         self.weapons = [    \
             wl.create('HitscanLaserGun', owner=self),
@@ -156,11 +41,10 @@ class Agent(AgentWrapper, AgentPhysics):
             wl.create('GrenadePouch', owner=self),
         ]
         self._active_weapon = 0
-        self.inventory = []
 
     def __getattribute__(self, name):
         try:
-            val = AgentWrapper.__getattribute__(self, name)
+            val = cAgents.AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             val = object.__getattribute__(self, name)
 
@@ -168,34 +52,6 @@ class Agent(AgentWrapper, AgentPhysics):
             val = cGame.get_team(val)
 
         return val
-
-    def block_height(self):
-        return int(ceil(self.b_height))
-
-    # gets or sets
-    def pos(self, xyz=None):
-        if xyz is None:
-            return self.state[0:3]
-        else:
-            self.x, self.y, self.z = xyz
-
-    def velocity(self):
-        return self.state[3:6]
-
-    def active_weapon(self):
-        return self.weapons[self._active_weapon]
-
-    def quit(self):
-        self.dump_inventory()
-
-    def dump_inventory(self):
-        new_inv = []
-        for item in self.inventory:
-            if item.drop_on_death:
-                item.drop()
-            else:
-                new_inv.append(inv)
-        self.inventory = new_inv
 
     @property
     def state(self):
@@ -210,13 +66,10 @@ class Agent(AgentWrapper, AgentPhysics):
         }
         if properties is None:
             d.update({
-                'health': self.health,
-                'dead'  : int(self.dead),
                 'weapons': {
                     'weapons': [weapon.json() for weapon in self.weapons],
                     'active' : self._active_weapon,
                 },
-                'state' : self.state,
             })
         else:
             if type(properties) == str:
@@ -240,159 +93,15 @@ class Agent(AgentWrapper, AgentPhysics):
                 d[prop] = val
         return d
 
-    def drop_weapon(self, weapon, by_id=False):
-        old_len = len(self.weapons)
-        if by_id:
-            self.weapons = [w for w in self.weapons if w.id != weapon]
-        else:
-            self.weapons = [w for w in self.weapons if w != weapon]
-        if old_len != len(self.weapons):
-            NetOut.event.agent_update(self, 'weapons')
-
     def set_active_weapon(self, weapon_index):
         old = self._active_weapon
         self._active_weapon = weapon_index
         if old != weapon_index:
             NetOut.event.agent_update(self, 'active_weapon')
 
-    def can_take_item(self, item):
-        return (item not in self.inventory and item.can_take(self))
-
-    def can_drop_item(self, item):
-        return (item in self.inventory and item.can_drop(self))
-
-    def pickup_item(self, item, index=None):
-        if self.dead or not self.can_take_item(item):
-            return
-        if index is None:
-            print 'adding %s to inv' % (item,)
-            self.inventory.append(item)
-        else:
-            self.inventory.insert(index, item)
-        item.take(self)
-        
-    def drop_item(self, item):
-        if self.can_drop_item(item):
-            print 'dropping'
-            print self.inventory
-            self.inventory.remove(item)
-            print self.inventory
-            item.drop()
-
-    def near_item(self, item):
-        if distance(self.pos(), item.pos()) < item.radius:
-            return True
-        return False
-
-    # set agent state explicitly
-    def set_control_state(self, state, angle=None, tick=None):
-        old_tick = self.last_control_tick
-        if tick is not None:
-            self.last_control_tick = tick
-
-        old_state = self.control_state()
-        d_x, d_y, v_x, v_y, jetpack, brake = state
-        self.d_x = d_x
-        self.d_y = d_y
-        self.v_x = v_x
-        self.v_y = v_y
-        self.jetpack = jetpack
-        self.brake = brake
-
-        if angle is not None:
-            old_angle = self.angle()
-            self.set_angle(angle)
-
-        ''' Use this if/when tick is actually being used '''
-        #if self.last_control_tick > old_tick and \
-           #(old_state != self or old_angle != angle):
-               #NetOut.event.agent_control_state(self)
-
-        #if old_state != state or old_angle != angle:
-            #NetOut.event.agent_control_state(self)
-
-    def set_angle(self, angle):
-        old_angle = self.angle()
-        self.x_angle, self.y_angle = angle
-        if old_angle != self.angle():
-            NetOut.event.agent_angle(self)
-
-    def angle(self):
-        return [self.x_angle, self.y_angle]
-
-    def control_state(self):
-        return [\
-            self.d_x,
-            self.d_y,
-            self.v_x,
-            self.v_y,
-            self.jetpack,
-            self.brake
-        ]
-
-    # apply physics to agent
-    def tick(self):
-        if self.dead:
-            self._tick_respawn()
-        else:
-            self._tick_physics()
-
-    def _tick_respawn(self):
-        if self.dead:
-            self.respawn_countdown += -1
-        if self.respawn_countdown <= 0:
-            self.respawn()
-
-    def state_vector(self):
-        return [
-            self.x, self.y, self.z,
-            cos( self.x_angle * pi) * cos( self.y_angle * pi),
-            sin( self.x_angle * pi) * cos( self.y_angle * pi),
-            sin( self.y_angle),
-        ]
-
-    def heal_all(self):
-        self.heal(self.HEALTH_MAX)
+    def active_weapon(self):
+        return self.weapons[self._active_weapon]
 
     def restore_ammo(self):
         for weapon in self.weapons:
             weapon.refill()
-
-    def restore_health_and_ammo(self):
-        self.heal_all()
-        self.restore_ammo()
-
-    def heal(self, amount):
-        if not self.dead:
-            old = self.health
-            self.health = min(self.health + amount, self.HEALTH_MAX)
-            if self.health != old:
-                NetOut.event.agent_update(self, 'health')
-
-    def _revive(self):
-        self.health = self.HEALTH_MAX
-        self.dead = False
-        self.respawn_countdown = self.RESPAWN_TICKS
-
-    def _spawn_point(self):
-        # later, add spawn zones/ boundaries to spawn in
-        x,y,z = terrain_map.map_x, terrain_map.map_y, terrain_map.map_z
-        x = randrange(3*(x/8), 5*(x/8))
-        y = randrange(3*(x/8), 5*(y/8))
-        b_height = int(self.block_height())
-        b_height = max(1, b_height)
-        z = terrain_map.get_highest_open_block(x,y, b_height)
-        if z < 0:
-            z = terrain_map.zmax
-        return [x+0.5, y+0.5, z+self.b_height]
-
-    def _set_position(self, pos=None):
-        if pos is None:
-            pos = self._spawn_point()
-        x,y,z = map(float, pos)
-        teleport_Agent(self.id, x,y,z)
-
-    def respawn(self): # or can destroy / recreate Agent
-        self._revive()
-        self._set_position()
-        NetOut.event.agent_update(self, ['health', 'dead', 'state'])
