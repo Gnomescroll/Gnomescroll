@@ -35,6 +35,17 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
     printf("index1, index12= %i, %i \n", index1, index12);
 
     voxel = new Voxel[_xdim*_ydim*_zdim];
+    int r,g,b,a;
+    a = 255;
+    for(int i=0; i < _xdim; i++){
+    for(int j=0; j < _ydim; j++){
+    for(int k=0; k < _zdim; k++){
+        r = i*(256/_xdim);
+        g = j*(256/_ydim);
+        b = k*(256/_zdim);
+        _set(i,j,k,r,g,b,a);
+    }}}
+    needs_vbo_update = true;
 }
 
 Voxel_volume::~Voxel_volume()

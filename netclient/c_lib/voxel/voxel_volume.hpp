@@ -1,40 +1,4 @@
-#pragma once
-
-
-
-unsigned NextPow2( unsigned x ) {
-    --x;
-    x |= x >> 1;
-    x |= x >> 2;
-    x |= x >> 4;
-    x |= x >> 8;
-    x |= x >> 16;
-    return ++x;
-}
-
-int pow2_1(int n)
-{
-    int x = 1;
-    int i = 0;
-    while(x < n) 
-    {
-        i++;
-        x <<= 1;
-    }
-    return i;
-} 
-
-int pow2_2(int n)
-{
-    int x = 1;
-    //int i = 0;
-    while(x < n) 
-    {
-        //i++;
-        x <<= 1;
-    }
-    return x;
-} 
+#pragma once 
 
 #include <voxel/common.h>
 #include <physics/vector.hpp>
@@ -51,9 +15,16 @@ struct Vector unit_z_rot(float theta)
     return u;
 }
 
+/*
+optimization: compute matix and return matrix
+*/
 struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
 struct Vector euler_rotation(Vector v, float x, float y, float z)
 {   
+    x *= 2*PI;
+    y *= 2*PI;
+    z *= 2*PI;
+
     double cx = cos(x);
     double sx = sin(x);
     double cy = cos(y);
@@ -124,9 +95,6 @@ class Voxel_volume
         vector_cross(u, f, &v[1]);
     }
 
-    //applies rotation
-    //x_angle from 0 to 2
-    //y_angle from 0 to 1
     void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
     {
         Vector vx = Vector_init(1.0f,0.0f,0.0f);
@@ -134,15 +102,9 @@ class Voxel_volume
 
         Vector vz = Vector_init(0.0f,0.0f,1.0f);
         vz = euler_rotation(vz, x_angle, y_angle, z_angle);
-
-
         vector_cross(&vz, &vx, &v[1]); //set v1
         v[0] = vx;
         v[2] = vz;
-
-        //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-        //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-        //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
 
         update_center();
     }
@@ -250,7 +212,7 @@ class Voxel_volume
     Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale);
 
     ~Voxel_volume();
-    
+
     void draw_bounding_box();
 
 };
