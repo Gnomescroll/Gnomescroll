@@ -46,6 +46,7 @@ void DRAW_VBOS1a();
 void DRAW_VBOS2(); 
 void DRAW_VBOS3(); //shader version 
 void DRAW_VBOS4();
+void DRAW_VBOS5();
 
 extern int must_lock_block_surface;
 extern SDL_Surface* block_surface;

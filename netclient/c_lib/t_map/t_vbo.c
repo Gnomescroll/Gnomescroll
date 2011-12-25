@@ -9,6 +9,29 @@
 
 //shaders
 
+
+/*
+Optimizations: 
+0> implement benchmarks for measurement
+1> minimize working set size of map to 16x16x16 for cache locality. (dont iterate through whole thing multiple times)
+-try 16x16x8 also
+-the map wont get pushed out of cache multiple times
+2> reduce size of map element to minimize cache size and number of cache lines required
+2> replace int arrays with chars to improve cache performance (benchmark)
+3> replace if statements with switch statements (jump table)
+4> cacheline align map properties and use 64 bit flag table (procomputed, make them less than 64 bytes or enable jump table)
+5> use internal map chunk get()/lookup instead of the pointer one, except for edges
+
+Map Fetches:
+-use the map-get that is not error checked
+-prefetch pointer to ajacent map chunk
+-check each vertex direction seperately (reduces polygon count at later stages, iteration through in cache data)
+
+possibly faster:
+5> first pass through, pushing work onto list for dispatch later
+-map array /property list and quad-cache wont compete for L1/L2 cache
+*/
+
 const int SHADER_ON = 1;
 
 
@@ -66,9 +89,9 @@ void setShaders2()
     if(DEBUG) printProgramInfoLog(shader_prog); // print diagonostic information     
 }
 
-static GLenum shader_vert2 = 0;
-static GLenum shader_frag2 = 0;
-static GLenum shader_prog2 = 0;
+static GLenum shader_vert3 = 0;
+static GLenum shader_frag3 = 0;
+static GLenum shader_prog3 = 0;
 
 int texCoord0Loc; // = glGetAttribLocation(MyShader, "InTexCoord0");
 
@@ -77,9 +100,9 @@ void setShaders3()
 
     int DEBUG = 1;
 
-    shader_prog2 = glCreateProgramObjectARB();
-    shader_vert2 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    shader_frag2 = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    shader_prog3 = glCreateProgramObjectARB();
+    shader_vert3 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    shader_frag3 = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
     char *vs, *fs;
 
@@ -93,16 +116,16 @@ void setShaders3()
     //glBindAttribLocation(shader_prog2, 20, "TexCoordin");
     //glBindAttribLocation can be called before any vertex shader objects are bound to the specified program object. 
     
-    glShaderSourceARB(shader_vert2, 1, (const GLcharARB**)&vs, NULL);
-    glShaderSourceARB(shader_frag2, 1, (const GLcharARB**)&fs, NULL);
-    glCompileShaderARB(shader_vert2);
-    if(DEBUG) printShaderInfoLog(shader_vert2);
+    glShaderSourceARB(shader_vert3, 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(shader_frag3, 1, (const GLcharARB**)&fs, NULL);
+    glCompileShaderARB(shader_vert3);
+    if(DEBUG) printShaderInfoLog(shader_vert3);
 
-    glCompileShaderARB(shader_frag2);
-    if(DEBUG) printShaderInfoLog(shader_frag2);
+    glCompileShaderARB(shader_frag3);
+    if(DEBUG) printShaderInfoLog(shader_frag3);
     
-    glAttachObjectARB(shader_prog2, shader_vert2);
-    glAttachObjectARB(shader_prog2, shader_frag2);
+    glAttachObjectARB(shader_prog3, shader_vert3);
+    glAttachObjectARB(shader_prog3, shader_frag3);
 
     /* Bind attribute index 0 (coordinates) to in_Position and attribute index 1 (color) to in_Color */
     /* Attribute locations must be setup before calling glLinkProgram. */
@@ -110,16 +133,61 @@ void setShaders3()
     //glBindAttribLocation(shaderprogram, 0, "in_Position");
     //glBindAttribLocation(shaderprogram, 1, "in_Color");
 
-    //glBindAttribLocation(shader_prog2, 0, "vert_pos");
-    //glBindAttribLocation(shader_prog2, 1, "vert_uv");
-    //glBindAttribLocation(shader_prog2, 2, "vert_rgba");
-    //glBindAttribLocation(shader_prog2, 3, "vert_normal");
+    //glBindAttribLocation(shader_prog3, 0, "vert_pos");
+    //glBindAttribLocation(shader_prog3, 1, "vert_uv");
+    //glBindAttribLocation(shader_prog3, 2, "vert_rgba");
+    //glBindAttribLocation(shader_prog3, 3, "vert_normal");
 
-    glLinkProgramARB(shader_prog2);
+    glLinkProgramARB(shader_prog3);
 
-    if(DEBUG) printProgramInfoLog(shader_prog2); // print diagonostic information
+    if(DEBUG) printProgramInfoLog(shader_prog3); // print diagonostic information
     
-    texCoord0Loc = glGetAttribLocation(shader_prog2, "InTexCoord0");     
+    texCoord0Loc = glGetAttribLocation(shader_prog3, "InTexCoord0");     
+}
+
+static GLenum shader_vert4 = 0;
+static GLenum shader_frag4 = 0;
+static GLenum shader_prog4 = 0;
+
+void setShaders4() 
+{
+
+    int DEBUG = 1;
+
+    shader_prog4 = glCreateProgramObjectARB();
+    shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    shader_frag4 = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char *vs, *fs;
+
+    printf("loading text files \n");
+
+    vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap_bilinear_ao.vsh");
+    fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap_bilinear_ao.fsh");
+
+    //glBindAttribLocation(shader_vert4, 1, "InTexCoord0");
+
+    //glBindAttribLocation(shader_prog4, 20, "TexCoordin");
+    //glBindAttribLocation can be called before any vertex shader objects are bound to the specified program object. 
+    
+    glShaderSourceARB(shader_vert4, 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(shader_frag4, 1, (const GLcharARB**)&fs, NULL);
+    glCompileShaderARB(shader_vert4);
+    if(DEBUG) printShaderInfoLog(shader_vert4);
+
+    glCompileShaderARB(shader_frag4);
+    if(DEBUG) printShaderInfoLog(shader_frag4);
+    
+    glAttachObjectARB(shader_prog4, shader_vert4);
+    glAttachObjectARB(shader_prog4, shader_frag4);
+
+;
+
+    glLinkProgramARB(shader_prog4);
+
+    if(DEBUG) printProgramInfoLog(shader_prog4); // print diagonostic information
+    
+    texCoord0Loc = glGetAttribLocation(shader_prog4, "InTexCoord0");     
 }
 
 SDL_Surface *terrain_map_glsl_surface_1;
@@ -617,6 +685,7 @@ return 0;
 //struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
 //unsigned int cs_n; //number of vertices in chunk scratch
 
+//cache line optimization; minimize size
 static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
 -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
@@ -1886,9 +1955,157 @@ void DRAW_VBOS4() {
 
         //printf("attribute loc= %i \n", texCoord0Loc);
 
-        if(SHADER_ON) glUseProgramObjectARB(shader_prog2);
+        if(SHADER_ON) glUseProgramObjectARB(shader_prog3);
 
         glEnableVertexAttribArray(texCoord0Loc);
+
+        glColor3b(255,255,255);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable (GL_DEPTH_TEST);
+        
+
+        glShadeModel(GL_SMOOTH);
+        //glShadeModel(GL_FLAT);
+
+        glEnable (GL_DEPTH_TEST);
+        //glEnable(GL_CULL_FACE);
+
+        glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
+
+        //terrain_map_glsl_1
+        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        //glActiveTexture(0);
+
+
+        glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
+
+        //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
+        //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+        //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24);
+        //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
+        
+        //glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+
+        int i;
+        struct VBO* vbo;
+
+        //if(draw_vbo_n != 0)
+
+        glEnable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[0] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            //glTexCoordPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            //glTexCoordPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
+            
+            glVertexAttribPointer(texCoord0Loc, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+
+            //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
+
+            //glVertexAttribPointer(20, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+
+            //comment out and test
+            //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
+            //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+            //glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24);
+            //glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24);
+            //glVertexAttribPointer(4, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
+            //glBindAttribLocation(shader_prog2, 4, "tex");
+
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+        }
+
+        glDisableVertexAttribArray(texCoord0Loc);
+
+        glUseProgramObjectARB(0);
+        glActiveTexture(GL_TEXTURE0);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable (GL_ALPHA_TEST);
+
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[1] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+        }
+
+        glDisable(GL_CULL_FACE);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[2] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+        }
+        
+        glDisable(GL_ALPHA_TEST);   
+
+        glDepthMask(false);
+        for(i=0;i<draw_vbo_n;i++) {
+            vbo = draw_vbo_array[i];
+            if(vbo->_v_num[3] == 0) continue; 
+            glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+            glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            //glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+            glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+        }
+        glDepthMask(true); 
+        glDisable(GL_BLEND);
+        
+    //end draw
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    //glShadeModel(GL_FLAT);
+
+    /*
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    */
+
+    glDisable(GL_TEXTURE_2D);
+        //printf("vnum= %i\n", _vnum);
+
+}
+
+
+void DRAW_VBOS5() {
+    
+        //int _vnum = 0; //unused
+
+        //printf("attribute loc= %i \n", texCoord0Loc);
+
+        if(SHADER_ON) glUseProgramObjectARB(shader_prog4);
+
+        glEnableVertexAttribArray(texCoord0Loc);
+        //add next
 
         glColor3b(255,255,255);
 
