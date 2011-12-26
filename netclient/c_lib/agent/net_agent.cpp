@@ -75,7 +75,7 @@ inline void agent_damage_StoC::handle() {
 inline void fire_weapon_StoC::handle() {
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
-    a->event.fired_weapon(weapon_id);
+    a->event.fired_weapon(type);
 }
 
 inline void agent_dead_StoC::handle() {
@@ -127,6 +127,7 @@ inline void AgentActiveWeapon_StoC::handle() {
     if (a==NULL) return;
     //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
     a->weapons.active = slot;
+    printf("set slot to %d\n", slot);
 }
 
 inline void AgentReloadWeapon_StoC::handle() {
@@ -231,11 +232,17 @@ inline void hit_block_CtoS::handle() {
 
 // fire weapon action
 inline void fire_weapon_CtoS::handle() {
+    // trigger weapon
+    Agent_state* a = ServerState::agent_list.get(id);
+    if (a==NULL) return;
+    bool fired = a->weapons.fire(type);
     // forward the packet
-    static fire_weapon_StoC msg;
-    msg.id = id;
-    msg.weapon_id = weapon_id;
-    msg.broadcast();
+    if (fired) {
+        static fire_weapon_StoC msg;
+        msg.id = id;
+        msg.type = type;
+        msg.broadcast();
+    }
 }
 
 // hitscan target:agent
@@ -248,7 +255,7 @@ inline void hitscan_agent_CtoS::handle() {
     int dmg = 25;
     target->status.apply_damage(dmg, id);
     // TODO: Use weapon dmg. Use body_part
-    printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
+    //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
 }
 
 // hitscan target:block
@@ -258,7 +265,7 @@ inline void hitscan_block_CtoS::handle() {
     // shoot block
     int weapon_block_damage = 12;
     _apply_damage_broadcast(x,y,z, weapon_block_damage);
-    printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
+    //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
 }
 
@@ -285,6 +292,12 @@ inline void AgentReloadWeapon_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
     a->weapons.reload(type);
+    printf("should have reloaded agent %d\n", id);
+    // forward action
+    static AgentReloadWeapon_StoC msg;
+    msg.id = id;
+    msg.type = type;
+    msg.broadcast();
 }
 
 #endif

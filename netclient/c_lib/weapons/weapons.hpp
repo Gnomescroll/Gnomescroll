@@ -57,7 +57,7 @@ class HitscanLaser: public Weapon {
             char max_ammo_str[4+1];
             sprintf(max_ammo_str, "%d", max_ammo);
             
-            sprintf(hud_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
             return hud_string;
         }
 
@@ -84,7 +84,7 @@ class BlockPick: public Weapon {
             const char* clip_size_str = hud_undefined_string;
             const char* ammo_str = hud_undefined_string;
             const char* max_ammo_str = hud_undefined_string;
-            sprintf(hud_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
             return hud_string;
         }
 
@@ -108,7 +108,7 @@ class BlockApplier: public Weapon {
             char max_ammo_str[4+1];
             sprintf(max_ammo_str, "%d", max_ammo);
             
-            sprintf(hud_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
             return hud_string;
         }
 
@@ -135,7 +135,7 @@ class GrenadeThrower: public Weapon {
             char max_ammo_str[4+1];
             sprintf(max_ammo_str, "%d", max_ammo);
             
-            sprintf(hud_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
             return hud_string;
         }
 

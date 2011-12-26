@@ -25,6 +25,10 @@ void PlayerAgent_action::fire() {
             printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
             break;
     }
+    static fire_weapon_CtoS msg;
+    msg.id = p->agent_id;
+    msg.type = a->weapons.active_type();   // just send type for now. weapons arent in a list
+    msg.send();
 }
 
 void PlayerAgent_action::hitscan() {
@@ -33,11 +37,6 @@ void PlayerAgent_action::hitscan() {
     char soundfile[] = "laser_01.wav";
     Sound::play_2d_sound(soundfile);
     
-    // send fire weapon packet
-    const int weapon_id = 1;    // TODO: move this
-    fire_weapon_CtoS* fire_msg = new fire_weapon_CtoS(p->agent_id, weapon_id);
-    fire_msg->send();
-
     // do hitscan detection
     int target;
     int data[3];
@@ -51,24 +50,27 @@ void PlayerAgent_action::hitscan() {
         p->agent_id
     );
 
-    hitscan_agent_CtoS* agent_msg;
-    hitscan_block_CtoS* block_msg;
+    static hitscan_agent_CtoS agent_msg;
+    static hitscan_block_CtoS block_msg;
 
     switch (target) {
         case Hitscan::HITSCAN_TARGET_AGENT:
-            agent_msg = new hitscan_agent_CtoS(p->agent_id, data[0], data[1]);
-            agent_msg->send();
-            //printf("hit agent\n");
+            agent_msg.id = p->agent_id;
+            agent_msg.agent_id = data[0];   // target
+            agent_msg.body_part = data[1];
+            agent_msg.send();
             break;
 
         case Hitscan::HITSCAN_TARGET_BLOCK:
-            block_msg = new hitscan_block_CtoS(p->agent_id, data[0], data[1], data[2]);
-            block_msg->send();
-            //printf("hit block\n");
+            block_msg.id = p->agent_id;
+            block_msg.x = data[0];
+            block_msg.y = data[1];
+            block_msg.z = data[2];
+            block_msg.send();
             break;
             
         case Hitscan::HITSCAN_TARGET_NONE:
-            //printf("hit nothin\n");
+            break;
         default:
             break;
     }

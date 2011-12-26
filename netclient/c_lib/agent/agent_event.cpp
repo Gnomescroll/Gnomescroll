@@ -5,7 +5,7 @@
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/sound/sound.hpp>
 
-void Agent_event::fired_weapon(int weapon_id) {
+void Agent_event::fired_weapon(int type) {
     // play weapon animation & sound
     char soundfile[] = "laser_01.wav";
     if (a->id != ClientState::playerAgent_state.agent_id) { // only play for other agents

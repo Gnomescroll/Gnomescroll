@@ -28,12 +28,14 @@ bool GrenadeThrower::fire() {
 
 
 void HitscanLaser::reload() {
+    printf("clip_size=%d, clip=%d\n", clip_size, clip);
+    printf("max_ammo=%d, ammo=%d\n", max_ammo, ammo);
     int clip_remaining = clip_size - clip;
     // reload amt is lesser of the two: filling the clip or remaining ammo
     int amt = (ammo < clip_remaining) ? ammo : clip_remaining;
     ammo -= amt;
     clip += amt;
-
+    printf("reloaded, amt=%d\n", amt);
     #ifdef DC_SERVER
     if (amt != 0) {
         Agent_state* a = ServerState::agent_list.get(owner);

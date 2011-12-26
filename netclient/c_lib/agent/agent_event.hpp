@@ -8,7 +8,7 @@ class Agent_event {
     private:
         Agent_state* a;
     public:
-        void fired_weapon(int weapon_id);
+        void fired_weapon(int type);
         // side effects of taking damage. dont modify health/death here
         void took_damage(int dmg);
         void died();

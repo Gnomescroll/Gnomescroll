@@ -236,6 +236,28 @@ bool Agent_weapons::fire() {
     return fired;
 }
 
+bool Agent_weapons::fire(int type) {
+    bool fired = false;
+    switch (type) {
+        case Weapons::TYPE_block_applier:
+            fired = blocks.fire();
+            break;
+        case Weapons::TYPE_block_pick:
+            fired = pick.fire();
+            break;
+        case Weapons::TYPE_grenade_thrower:
+            fired = grenades.fire();
+            break;
+        case Weapons::TYPE_hitscan_laser:
+            fired = laser.fire();
+            break;
+        default:
+            printf("Agent_weapons::fire -- unknown or invalid weapon type %d\n", type);
+            break;
+    }
+    return fired;
+}
+
 bool Agent_weapons::can_zoom() {
     bool zoom = false;
     switch (active) {

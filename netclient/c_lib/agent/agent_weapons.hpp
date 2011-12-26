@@ -32,6 +32,7 @@ class Agent_weapons {
         char* hud_display();
 
         bool fire();
+        bool fire(int type);
         void reload();
         void reload(int type);
 
