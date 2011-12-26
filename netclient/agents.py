@@ -20,17 +20,14 @@ import camera
 '''
 Data model for agent
 '''
-class AgentModel(cAgents.AgentWrapper):
+class Agent(cAgents.AgentWrapper):
 
     def __init__(self, id):
-
-        self.button_state = [0 for i in range(11)]
-
         self.id = id
         self.client_id = id
-
         self.you = False
         self.name = '' # fix later
+        print 'Python Agent creation: id %s' % (self.id,)
 
     def update_info(self, **agent):
         pass
@@ -45,21 +42,6 @@ class AgentModel(cAgents.AgentWrapper):
             val = cGame.get_team(val)
                     
         return val
-            
-    @property
-    def state(self):
-        return [self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az]
-    @state.setter
-    def state(self, val):
-        self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
-
-# represents an agent under control of a player
-class Agent(AgentModel):
-
-    def __init__(self, id=None, weapons=None):
-        AgentModel.__init__(self, id)
-        print 'Python Agent creation: id %s' % (self.id,)
-
 
 # decorators
 def noViewer(f):
@@ -79,11 +61,13 @@ def requireCamera(f):
 '''
 Client's player's agent
 '''
-class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
+class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
 
-    def __init__(self, id=None):
-        AgentModel.__init__(self, id)
+    def __init__(self, id):
+        Agent.__init__(self, id)
         cAgents.PlayerAgentWrapper.__init__(self, id)
+
+        self.button_state = [0 for i in range(11)]
 
         self.set_hud_icons()
         self.you = True
