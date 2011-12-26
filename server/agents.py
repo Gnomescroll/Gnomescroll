@@ -93,6 +93,12 @@ class Agent(cAgents.AgentWrapper):
                 #d[prop] = val
         #return d
 
+    def json(self, properties=None):
+        d = {
+            'id':   self.id,
+            }
+        return d
+
     #def set_active_weapon(self, weapon_index):
         #old = self._active_weapon
         #self._active_weapon = weapon_index

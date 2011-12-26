@@ -256,11 +256,11 @@ class SendMessage: #each connection has one of these
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
 
-    #@sendJSON('agent_list')
-    #def send_agents(self):
-        #return {
-            #'agent_list':   GameStateGlobal.agentList.json()
-        #}
+    @sendJSON('agent_list')
+    def send_agents(self):
+        return {
+            'agent_list':   GameStateGlobal.agentList.json()
+        }
 
     #@sendJSON('agent_update')
     #def send_agent(self, agent, properties=None):

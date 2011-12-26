@@ -177,6 +177,7 @@ class PlayerAgentWeapons():
     #def __init__(self, agent, weapons=None):
     def __init__(self, agent):
         #AgentWeapons.__init__(self, agent, weapons)
+        self.agent = agent
         self.set_hud_icons()
 
     def switch(self, weapon_index):
@@ -214,14 +215,14 @@ class PlayerAgentWeapons():
         elif weapon_index == 'down':
             i = -2
         else:
-            i = weapon_index
+            i = weapon_index-1
 
         old = self.agent.active_weapon
         cAgents.PlayerAgentWrapper.switch_weapon(self.agent, i)
         if old != self.agent.active_weapon:
             camera.camera.unzoom()
             #NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
-        print 'weapon is: %s' % (self.active(),)
+        print 'weapon is: %s' % (self.agent.active_weapon,)
 
     #def drop(self, weapon):
         #old_len = len(self.weapons)
@@ -240,7 +241,8 @@ class PlayerAgentWeapons():
 
     def set_hud_icons(self):
         for i in range(4):
-            cHUD.Equipment.set_equipment_icon(i, weapon.icon)
+            #cHUD.Equipment.set_equipment_icon(i, weapon.icon)
+            cHUD.Equipment.set_equipment_icon(i, i+1)
 
         #for i in range(4,8):
             #cHUD.Equipment.set_equipment_icon(i, 0)
@@ -255,11 +257,11 @@ Client's player's agent
 '''
 class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
 
-    def __init__(self, id=None, weapons=None):
+    def __init__(self, id=None):
         AgentModel.__init__(self, id)
         cAgents.PlayerAgentWrapper.__init__(self, id)
 
-        self.weapons = PlayerAgentWeapons(self, weapons)
+        self.weapons = PlayerAgentWeapons(self)
         self.you = True
         self.camera = None
 

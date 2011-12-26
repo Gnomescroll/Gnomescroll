@@ -78,10 +78,10 @@ class PyClient:
         self.loaded_once = True
         self._register()
         self.send_map()
-        #self.send_agents()  # temporary, really only for weapons
+        self.send_agents()  # temporary, really only for weapons
 
-    #def send_agents(self):
-        #self.sendMessage.send_agents()
+    def send_agents(self):
+        self.sendMessage.send_agents()
 
     def send_map(self):
         print "Sending map"
